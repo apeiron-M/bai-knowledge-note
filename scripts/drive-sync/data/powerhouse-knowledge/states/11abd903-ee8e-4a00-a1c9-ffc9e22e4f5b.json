@@ -1,0 +1,115 @@
+{
+  "links": [
+    {
+      "id": "lnk-ef30c62a-bui",
+      "linkType": "BUILDS_ON",
+      "targetDocumentId": "ef30c62a-0043-4bbb-86d1-e1c16a925ee3",
+      "targetTitle": "drive-analytics-dimensions",
+      "reason": "Separates what is still true in the same file from what is not",
+      "confidence": "grounded"
+    },
+    {
+      "id": "lnk-bb0b6db7-bui",
+      "linkType": "BUILDS_ON",
+      "targetDocumentId": "bb0b6db7-14f1-491c-8975-4475ff68481d",
+      "targetTitle": "v6-processor-flat-operations-replace-strands",
+      "reason": "The v6 move to a flat OperationWithContext list is what this README predates, and the note records the migration this one dates",
+      "confidence": "grounded"
+    },
+    {
+      "id": "lnk-8664cea1-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "8664cea1-f1f6-43b0-975e-f26095a8d880",
+      "targetTitle": "Package \u203a common \u203a drive-analytics \u2014 Drive Analytics Processors",
+      "reason": "Extracted from packages/common/drive-analytics/README.md at v6.2.2-dev.74 \u2014 Architecture (IProcessor and InternalTransmitterUpdate strands)",
+      "confidence": "grounded"
+    },
+    {
+      "id": "lnk-97c3a924-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "97c3a924-0ba9-4b89-86f7-b7a5747d41a7",
+      "targetTitle": "relational-spec-stale-v6",
+      "reason": "The same pre-v6 vocabulary survives in two documents, so a reader who checks only one will not notice the drift",
+      "confidence": "grounded"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "The drive-analytics README still describes InternalTransmitterUpdate strands, an interface the reactor replaced with onOperations before v6.2.2-dev.74",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "4ceb6c40-ef4f-404f-8c49-5b9ded211bc3",
+      "name": "processors",
+      "topicDocumentId": null
+    },
+    {
+      "id": "516905dc-fd99-444a-8522-461636d9d73d",
+      "name": "documentation-drift",
+      "topicDocumentId": null
+    },
+    {
+      "id": "9291854b-4df5-4088-895c-49c66085d944",
+      "name": "analytics",
+      "topicDocumentId": null
+    },
+    {
+      "id": "09b51de6-a8c8-4afd-8e71-f39c007fb6d7",
+      "name": "gotchas",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "`packages/common/drive-analytics/README.md` states that the processor \"implements the `IProcessor` interface and processes `InternalTransmitterUpdate` strands, which contain sequences of operations performed on document drives.\"\n\nAt v6.2.2-dev.74 that interface no longer exists. `packages/shared/processors/types.ts:54` declares `onOperations(operations: OperationWithContext[]): Promise<void>`, and a search of the tree finds **no `onStrands` and no `InternalTransmitterUpdate`** in package sources. This is the same drift the relational-DB processor spec shows, from the same v6 processor migration.\n\nWhat the README gets right and is worth trusting: the two processors, the `DriveOperations` counter, all four dimension path formats, the five action-type verbs, chunked processing with a default of 50, and the clear-and-rebuild-from-index-0 behaviour. None of those depend on the delivery interface.\n\nSo the reading rule for this file: **the dimensional model is current, the delivery API is not.** A developer copying its architecture section into a new processor will write a method the reactor never calls \u2014 a failure that is silent, because a processor with no matching method simply receives nothing.\n\n## Provenance\n- `packages/common/drive-analytics/README.md` \u2014 Architecture (IProcessor and InternalTransmitterUpdate strands)\n\n_Extracted from the Powerhouse repository at **v6.2.2-dev.74**._",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": "v6.2.2-dev.74",
+  "computes": null,
+  "filePath": "packages/common/drive-analytics/README.md",
+  "noteType": "OBSERVATION",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "knowledge-agent",
+    "createdAt": "2026-09-03T07:43:27.166Z",
+    "sessionId": null,
+    "updatedAt": "2026-09-03T07:43:28.242Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Its architecture section says the processor implements IProcessor and processes strands; the current IProcessor takes onOperations(OperationWithContext[]). The dimension and chunking behaviour it.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "835fbd38-4f19-4ed3-9e50-4c2d94e64d4b",
+      "actor": "knowledge-agent",
+      "comment": "extracted from packages/common/drive-analytics/README.md at v6.2.2-dev.74",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-09-03T07:43:27.657Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "99dfcc37-5ae1-4411-9652-cef3454f6466",
+      "actor": "liberuum",
+      "comment": "claim checked against the cited file at the pinned tag",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-09-03T07:43:28.242Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

@@ -1,0 +1,550 @@
+[
+  {
+    "index": 0,
+    "hash": "",
+    "timestampUtcMs": "2026-09-02T22:14:08.128Z",
+    "action": {
+      "type": "CREATE_DOCUMENT",
+      "input": {
+        "meta": {},
+        "name": "attachment-upload-hooks",
+        "slug": "",
+        "model": "bai/knowledge-note",
+        "branch": "main",
+        "signing": {
+          "nonce": "",
+          "publicKey": {},
+          "signature": "aeb97065-4d48-41e2-9305-8c90c4d39fcf",
+          "documentType": "bai/knowledge-note",
+          "createdAtUtcIso": "2026-09-02T22:14:08.128Z"
+        },
+        "version": 0,
+        "documentId": "aeb97065-4d48-41e2-9305-8c90c4d39fcf",
+        "protocolVersions": {
+          "base-reducer": 2
+        }
+      },
+      "timestampUtcMs": "2026-09-02T22:14:08.128Z"
+    }
+  },
+  {
+    "index": 0,
+    "hash": "/yo4oTDBhfJqPY41JnwyOUmWuDk=",
+    "timestampUtcMs": "2026-09-02T22:14:07.988Z",
+    "action": {
+      "type": "SET_TITLE",
+      "input": {
+        "title": "useAttachmentUpload now exposes stage, byte progress, result, cancel and reset, and useAttachmentPreview reports the download side with retry visibility",
+        "updatedAt": "2026-09-02T22:14:07.988Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:14:07.988Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "",
+    "timestampUtcMs": "2026-09-02T22:14:08.128Z",
+    "action": {
+      "type": "UPGRADE_DOCUMENT",
+      "input": {
+        "model": "bai/knowledge-note",
+        "toVersion": 1,
+        "documentId": "aeb97065-4d48-41e2-9305-8c90c4d39fcf",
+        "fromVersion": 0,
+        "initialState": {
+          "auth": {
+            "grants": [],
+            "version": 0
+          },
+          "local": {
+            "lastViewedAt": null,
+            "personalTags": []
+          },
+          "global": {
+            "links": [],
+            "model": null,
+            "scope": null,
+            "title": null,
+            "editor": null,
+            "inputs": [],
+            "models": [],
+            "status": "DRAFT",
+            "topics": [],
+            "content": null,
+            "context": null,
+            "modelId": null,
+            "modules": [],
+            "outputs": [],
+            "version": null,
+            "computes": null,
+            "filePath": null,
+            "noteType": null,
+            "severity": null,
+            "hooksUsed": [],
+            "rootCause": null,
+            "confidence": null,
+            "consumedBy": [],
+            "provenance": null,
+            "sourceType": null,
+            "targetType": null,
+            "cardinality": null,
+            "description": null,
+            "alternatives": [],
+            "consequences": [],
+            "errorMessage": null,
+            "relationType": null,
+            "correctPattern": null,
+            "decisionStatus": null,
+            "dispatchTargets": [],
+            "lifecycleEvents": []
+          },
+          "document": {
+            "hash": {
+              "encoding": "base64",
+              "algorithm": "sha1"
+            },
+            "version": 1
+          }
+        }
+      },
+      "timestampUtcMs": "2026-09-02T22:14:08.128Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "P10f4XqvtEojJqeBS7tHqq9Y7ps=",
+    "timestampUtcMs": "2026-09-02T22:14:07.988Z",
+    "action": {
+      "type": "SET_DESCRIPTION",
+      "input": {
+        "updatedAt": "2026-09-02T22:14:07.988Z",
+        "description": "stage is idle, hashing, reserving, uploading, done or error; progress carries percent, loaded, total and indeterminate. On error progress stays put; reset aborts an in-flight transfer."
+      },
+      "timestampUtcMs": "2026-09-02T22:14:07.988Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "",
+    "timestampUtcMs": "2026-09-02T22:25:21.447Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "metadata": {
+          "reason": "Extracted from apps/academy/docs/academy/04-Reference/01-Reactor/09-AttachmentService.md at v6.2.2-dev.74 \u2014 React subsection: the new destructuring, stage/progress/result/error/cancel/reset, useAttachmentPreview",
+          "confidence": "grounded"
+        },
+        "sourceId": "aeb97065-4d48-41e2-9305-8c90c4d39fcf",
+        "targetId": "f6901953-d719-45d2-8b5c-8aaca612562d",
+        "relationshipType": "DERIVED_FROM"
+      },
+      "timestampUtcMs": "2026-09-02T22:25:21.447Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "Y0bvXBNDjSSrQ/E0umgzFfHZa0U=",
+    "timestampUtcMs": "2026-09-02T22:14:07.988Z",
+    "action": {
+      "type": "SET_NOTE_TYPE",
+      "input": {
+        "noteType": "REFERENCE",
+        "updatedAt": "2026-09-02T22:14:07.988Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:14:07.988Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "",
+    "timestampUtcMs": "2026-09-02T22:25:22.610Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "metadata": {
+          "reason": "Presents the same stage and progress model through the React hooks, including the percent field the design-system bar expects",
+          "confidence": "grounded"
+        },
+        "sourceId": "aeb97065-4d48-41e2-9305-8c90c4d39fcf",
+        "targetId": "4c738d9a-44ec-4aaf-8af6-c39182ada242",
+        "relationshipType": "BUILDS_ON"
+      },
+      "timestampUtcMs": "2026-09-02T22:25:22.610Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "j9TCVrA8qylX83fIHV7o+7jdQG4=",
+    "timestampUtcMs": "2026-09-02T22:14:07.988Z",
+    "action": {
+      "type": "SET_CONTENT",
+      "input": {
+        "content": "```tsx\nconst { preprocess, upload, cancel, reset, stage, progress, result, error } = useAttachmentUpload();\n```\n\n- `stage` \u2014 `\"idle\" | \"hashing\" | \"reserving\" | \"uploading\" | \"done\" | \"error\"` (it replaced the older `status`/`UploadStatus` enum).\n- `progress` \u2014 `{ percent, loaded, total, indeterminate }`. `percent` is 0\u2013100, matching the design-system progress bar; `loaded`/`total` are raw bytes for a \"3.2 / 10 MB\" label; `indeterminate` is true while a stage runs whose bytes cannot be observed, and `percent` stays 0 for the whole of it.\n- `result` \u2014 the `AttachmentUploadResult` once done.\n- `error` \u2014 the failure, if any. **Progress is left where it stopped** rather than reset to zero.\n- `cancel()` \u2014 aborts the transfer in flight; the `upload` promise rejects with an `AbortError`.\n- `reset()` \u2014 returns the hook to idle, discarding result and error. A transfer still in flight is aborted, so it cannot keep streaming behind an idle UI.\n\n`upload(results)` now calls `client.upload({ preprocessed: results })`, so progress, dedup reporting and cancellation are identical to the non-React path. The two-call split (`preprocess` then `upload`) is deliberate: **the ref must reach the document before the bytes are committed**, and since the ref only exists after `preprocess` resolves, submission is async \u2014 a ref cannot be produced inside a synchronous action input. `useAttachments()` returns one client per service, shared across every consumer.\n\n`useAttachmentPreview()` reports the same shape for the download side plus retry visibility: `stage`, `progress`, `attempt`, `maxAttempts`, and `lastError` \u2014 the failure of an attempt that is about to be retried, exposed while the hook is still loading. It aborts the download on unmount.\n\n_Source: apps/academy/docs/academy/04-Reference/01-Reactor/09-AttachmentService.md (Powerhouse v6.2.2-dev.74)._\n\n## Provenance\n- `apps/academy/docs/academy/04-Reference/01-Reactor/09-AttachmentService.md` \u2014 React subsection: the new destructuring, stage/progress/result/error/cancel/reset, useAttachmentPreview\n\n_Recorded from the Powerhouse repository at **v6.2.2-dev.74** during the v6.2.2-dev.74 source sync._",
+        "updatedAt": "2026-09-02T22:14:07.988Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:14:07.988Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "",
+    "timestampUtcMs": "2026-09-02T22:25:23.090Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "metadata": {
+          "reason": "The hook wraps the hash-first flow, which is why the ref exists before the bytes and submission has to be async",
+          "confidence": "grounded"
+        },
+        "sourceId": "aeb97065-4d48-41e2-9305-8c90c4d39fcf",
+        "targetId": "bf2d1ef5-01a8-4688-86a6-0db24fa9120a",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-09-02T22:25:23.090Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "AT3NYjTx5zZAZK3CwpHu1jrUD5s=",
+    "timestampUtcMs": "2026-09-02T22:14:07.988Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "96edb95f-1981-4497-bdd1-33876fd64922",
+        "name": "attachments"
+      },
+      "timestampUtcMs": "2026-09-02T22:14:07.988Z"
+    }
+  },
+  {
+    "index": 5,
+    "hash": "",
+    "timestampUtcMs": "2026-09-02T22:25:23.593Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "metadata": {
+          "reason": "Another reactor-browser hook whose data derives from the reactor rather than local state; here the state machine is a transfer lifecycle",
+          "confidence": "established"
+        },
+        "sourceId": "aeb97065-4d48-41e2-9305-8c90c4d39fcf",
+        "targetId": "1a932db8-245d-40f6-bfd8-eea728d9615e",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-09-02T22:25:23.593Z"
+    }
+  },
+  {
+    "index": 5,
+    "hash": "hzrBzCA2bYneyzXlNOwlW/S7Qmw=",
+    "timestampUtcMs": "2026-09-02T22:14:07.988Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "66e10e08-15fd-42d6-8d28-d3766d3dfd61",
+        "name": "react-hooks"
+      },
+      "timestampUtcMs": "2026-09-02T22:14:07.988Z"
+    }
+  },
+  {
+    "index": 6,
+    "hash": "4MMAPvpmOVCXU4Nr5Qc8VUJn4s0=",
+    "timestampUtcMs": "2026-09-02T22:14:07.988Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "a547cb8a-072c-4743-a26c-1cf426753cfb",
+        "name": "reactor-browser"
+      },
+      "timestampUtcMs": "2026-09-02T22:14:07.988Z"
+    }
+  },
+  {
+    "index": 7,
+    "hash": "ZQwwHe4bAQDZRN1fJUYnqUYpPl0=",
+    "timestampUtcMs": "2026-09-02T22:14:07.988Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "31618c77-85ab-49f7-8ddc-575ef6956bae",
+        "name": "upload"
+      },
+      "timestampUtcMs": "2026-09-02T22:14:07.988Z"
+    }
+  },
+  {
+    "index": 8,
+    "hash": "fe4XTdnQzrZ3tMbxxBEGCZsJab8=",
+    "timestampUtcMs": "2026-09-02T22:14:07.988Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "version",
+        "value": "v6.2.2-dev.74",
+        "updatedAt": "2026-09-02T22:14:07.988Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:14:07.988Z"
+    }
+  },
+  {
+    "index": 9,
+    "hash": "xOa74rGmjU4TKf5mXIwfWicrORc=",
+    "timestampUtcMs": "2026-09-02T22:14:07.988Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "filePath",
+        "value": "apps/academy/docs/academy/04-Reference/01-Reactor/09-AttachmentService.md",
+        "updatedAt": "2026-09-02T22:14:07.988Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:14:07.988Z"
+    }
+  },
+  {
+    "index": 10,
+    "hash": "nrgaGFVvlu2XPjbNcRWJ/iclBl0=",
+    "timestampUtcMs": "2026-09-02T22:14:07.988Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "confidence",
+        "value": "grounded",
+        "updatedAt": "2026-09-02T22:14:07.988Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:14:07.988Z"
+    }
+  },
+  {
+    "index": 11,
+    "hash": "uk9XkvcSHI3NEXqd7BhffxmOs1c=",
+    "timestampUtcMs": "2026-09-02T22:14:10.601Z",
+    "action": {
+      "type": "SET_PROVENANCE",
+      "input": {
+        "author": "knowledge-agent",
+        "createdAt": "2026-09-02T22:14:10.601Z",
+        "sourceOrigin": "DERIVED"
+      },
+      "timestampUtcMs": "2026-09-02T22:14:10.601Z"
+    }
+  },
+  {
+    "index": 12,
+    "hash": "sJ5cAMUGw1+oZo0oQyBxSXiAeI8=",
+    "timestampUtcMs": "2026-09-02T22:14:11.299Z",
+    "action": {
+      "type": "SUBMIT_FOR_REVIEW",
+      "input": {
+        "id": "04187709-802b-4a15-a377-bfefdce97bef",
+        "actor": "knowledge-agent",
+        "comment": "extracted from the Powerhouse repository at v6.2.2-dev.74",
+        "timestamp": "2026-09-02T22:14:11.299Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:14:11.299Z"
+    }
+  },
+  {
+    "index": 13,
+    "hash": "ZK+vomtaBihPk5odzUqf+Hqqh9Y=",
+    "timestampUtcMs": "2026-09-02T22:14:11.821Z",
+    "action": {
+      "type": "APPROVE_NOTE",
+      "input": {
+        "id": "ca74ff9b-8cef-4b64-b33f-1c1ac6587821",
+        "actor": "liberuum",
+        "comment": "claim checked against the cited repository file at the pinned tag",
+        "timestamp": "2026-09-02T22:14:11.821Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:14:11.821Z"
+    }
+  },
+  {
+    "index": 14,
+    "hash": "nrzBq6bMDxJAEJqYr379FEMDM7k=",
+    "timestampUtcMs": "2026-09-02T22:16:42.658Z",
+    "action": {
+      "type": "SET_TITLE",
+      "input": {
+        "title": "useAttachmentUpload now exposes stage, byte progress, result, cancel and reset, and useAttachmentPreview reports the download side with retry visibility",
+        "updatedAt": "2026-09-02T22:16:42.658Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:16:42.658Z"
+    }
+  },
+  {
+    "index": 15,
+    "hash": "nrzBq6bMDxJAEJqYr379FEMDM7k=",
+    "timestampUtcMs": "2026-09-02T22:16:42.658Z",
+    "action": {
+      "type": "SET_DESCRIPTION",
+      "input": {
+        "updatedAt": "2026-09-02T22:16:42.658Z",
+        "description": "stage is idle, hashing, reserving, uploading, done or error; progress carries percent, loaded, total and indeterminate. On error progress stays put; reset aborts an in-flight transfer."
+      },
+      "timestampUtcMs": "2026-09-02T22:16:42.658Z"
+    }
+  },
+  {
+    "index": 16,
+    "hash": "nrzBq6bMDxJAEJqYr379FEMDM7k=",
+    "timestampUtcMs": "2026-09-02T22:16:42.658Z",
+    "action": {
+      "type": "SET_NOTE_TYPE",
+      "input": {
+        "noteType": "REFERENCE",
+        "updatedAt": "2026-09-02T22:16:42.658Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:16:42.658Z"
+    }
+  },
+  {
+    "index": 17,
+    "hash": "nrzBq6bMDxJAEJqYr379FEMDM7k=",
+    "timestampUtcMs": "2026-09-02T22:16:42.658Z",
+    "action": {
+      "type": "SET_CONTENT",
+      "input": {
+        "content": "```tsx\nconst { preprocess, upload, cancel, reset, stage, progress, result, error } = useAttachmentUpload();\n```\n\n- `stage` \u2014 `\"idle\" | \"hashing\" | \"reserving\" | \"uploading\" | \"done\" | \"error\"` (it replaced the older `status`/`UploadStatus` enum).\n- `progress` \u2014 `{ percent, loaded, total, indeterminate }`. `percent` is 0\u2013100, matching the design-system progress bar; `loaded`/`total` are raw bytes for a \"3.2 / 10 MB\" label; `indeterminate` is true while a stage runs whose bytes cannot be observed, and `percent` stays 0 for the whole of it.\n- `result` \u2014 the `AttachmentUploadResult` once done.\n- `error` \u2014 the failure, if any. **Progress is left where it stopped** rather than reset to zero.\n- `cancel()` \u2014 aborts the transfer in flight; the `upload` promise rejects with an `AbortError`.\n- `reset()` \u2014 returns the hook to idle, discarding result and error. A transfer still in flight is aborted, so it cannot keep streaming behind an idle UI.\n\n`upload(results)` now calls `client.upload({ preprocessed: results })`, so progress, dedup reporting and cancellation are identical to the non-React path. The two-call split (`preprocess` then `upload`) is deliberate: **the ref must reach the document before the bytes are committed**, and since the ref only exists after `preprocess` resolves, submission is async \u2014 a ref cannot be produced inside a synchronous action input. `useAttachments()` returns one client per service, shared across every consumer.\n\n`useAttachmentPreview()` reports the same shape for the download side plus retry visibility: `stage`, `progress`, `attempt`, `maxAttempts`, and `lastError` \u2014 the failure of an attempt that is about to be retried, exposed while the hook is still loading. It aborts the download on unmount.\n\n_Source: apps/academy/docs/academy/04-Reference/01-Reactor/09-AttachmentService.md (Powerhouse v6.2.2-dev.74)._\n\n## Provenance\n- `apps/academy/docs/academy/04-Reference/01-Reactor/09-AttachmentService.md` \u2014 React subsection: the new destructuring, stage/progress/result/error/cancel/reset, useAttachmentPreview\n\n_Recorded from the Powerhouse repository at **v6.2.2-dev.74** during the v6.2.2-dev.74 source sync._",
+        "updatedAt": "2026-09-02T22:16:42.658Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:16:42.658Z"
+    }
+  },
+  {
+    "index": 18,
+    "hash": "nrzBq6bMDxJAEJqYr379FEMDM7k=",
+    "timestampUtcMs": "2026-09-02T22:16:42.658Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "version",
+        "value": "v6.2.2-dev.74",
+        "updatedAt": "2026-09-02T22:16:42.658Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:16:42.658Z"
+    }
+  },
+  {
+    "index": 19,
+    "hash": "nrzBq6bMDxJAEJqYr379FEMDM7k=",
+    "timestampUtcMs": "2026-09-02T22:16:42.658Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "filePath",
+        "value": "apps/academy/docs/academy/04-Reference/01-Reactor/09-AttachmentService.md",
+        "updatedAt": "2026-09-02T22:16:42.658Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:16:42.658Z"
+    }
+  },
+  {
+    "index": 20,
+    "hash": "nrzBq6bMDxJAEJqYr379FEMDM7k=",
+    "timestampUtcMs": "2026-09-02T22:16:42.658Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "confidence",
+        "value": "grounded",
+        "updatedAt": "2026-09-02T22:16:42.658Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:16:42.658Z"
+    }
+  },
+  {
+    "index": 21,
+    "hash": "o8HM33OF/FmcGGZF9gc8jhYojBA=",
+    "timestampUtcMs": "2026-09-02T22:21:21.993Z",
+    "action": {
+      "type": "SET_TITLE",
+      "input": {
+        "title": "useAttachmentUpload now exposes stage, byte progress, result, cancel and reset, and useAttachmentPreview reports the download side with retry visibility",
+        "updatedAt": "2026-09-02T22:21:21.993Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:21:21.993Z"
+    }
+  },
+  {
+    "index": 22,
+    "hash": "o8HM33OF/FmcGGZF9gc8jhYojBA=",
+    "timestampUtcMs": "2026-09-02T22:21:21.993Z",
+    "action": {
+      "type": "SET_DESCRIPTION",
+      "input": {
+        "updatedAt": "2026-09-02T22:21:21.993Z",
+        "description": "stage is idle, hashing, reserving, uploading, done or error; progress carries percent, loaded, total and indeterminate. On error progress stays put; reset aborts an in-flight transfer."
+      },
+      "timestampUtcMs": "2026-09-02T22:21:21.993Z"
+    }
+  },
+  {
+    "index": 23,
+    "hash": "o8HM33OF/FmcGGZF9gc8jhYojBA=",
+    "timestampUtcMs": "2026-09-02T22:21:21.993Z",
+    "action": {
+      "type": "SET_NOTE_TYPE",
+      "input": {
+        "noteType": "REFERENCE",
+        "updatedAt": "2026-09-02T22:21:21.993Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:21:21.993Z"
+    }
+  },
+  {
+    "index": 24,
+    "hash": "o8HM33OF/FmcGGZF9gc8jhYojBA=",
+    "timestampUtcMs": "2026-09-02T22:21:21.993Z",
+    "action": {
+      "type": "SET_CONTENT",
+      "input": {
+        "content": "```tsx\nconst { preprocess, upload, cancel, reset, stage, progress, result, error } = useAttachmentUpload();\n```\n\n- `stage` \u2014 `\"idle\" | \"hashing\" | \"reserving\" | \"uploading\" | \"done\" | \"error\"` (it replaced the older `status`/`UploadStatus` enum).\n- `progress` \u2014 `{ percent, loaded, total, indeterminate }`. `percent` is 0\u2013100, matching the design-system progress bar; `loaded`/`total` are raw bytes for a \"3.2 / 10 MB\" label; `indeterminate` is true while a stage runs whose bytes cannot be observed, and `percent` stays 0 for the whole of it.\n- `result` \u2014 the `AttachmentUploadResult` once done.\n- `error` \u2014 the failure, if any. **Progress is left where it stopped** rather than reset to zero.\n- `cancel()` \u2014 aborts the transfer in flight; the `upload` promise rejects with an `AbortError`.\n- `reset()` \u2014 returns the hook to idle, discarding result and error. A transfer still in flight is aborted, so it cannot keep streaming behind an idle UI.\n\n`upload(results)` now calls `client.upload({ preprocessed: results })`, so progress, dedup reporting and cancellation are identical to the non-React path. The two-call split (`preprocess` then `upload`) is deliberate: **the ref must reach the document before the bytes are committed**, and since the ref only exists after `preprocess` resolves, submission is async \u2014 a ref cannot be produced inside a synchronous action input. `useAttachments()` returns one client per service, shared across every consumer.\n\n`useAttachmentPreview()` reports the same shape for the download side plus retry visibility: `stage`, `progress`, `attempt`, `maxAttempts`, and `lastError` \u2014 the failure of an attempt that is about to be retried, exposed while the hook is still loading. It aborts the download on unmount.\n\n_Source: apps/academy/docs/academy/04-Reference/01-Reactor/09-AttachmentService.md (Powerhouse v6.2.2-dev.74)._\n\n## Provenance\n- `apps/academy/docs/academy/04-Reference/01-Reactor/09-AttachmentService.md` \u2014 React subsection: the new destructuring, stage/progress/result/error/cancel/reset, useAttachmentPreview\n\n_Recorded from the Powerhouse repository at **v6.2.2-dev.74** during the v6.2.2-dev.74 source sync._",
+        "updatedAt": "2026-09-02T22:21:21.993Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:21:21.993Z"
+    }
+  },
+  {
+    "index": 25,
+    "hash": "o8HM33OF/FmcGGZF9gc8jhYojBA=",
+    "timestampUtcMs": "2026-09-02T22:21:21.993Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "version",
+        "value": "v6.2.2-dev.74",
+        "updatedAt": "2026-09-02T22:21:21.993Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:21:21.993Z"
+    }
+  },
+  {
+    "index": 26,
+    "hash": "o8HM33OF/FmcGGZF9gc8jhYojBA=",
+    "timestampUtcMs": "2026-09-02T22:21:21.993Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "filePath",
+        "value": "apps/academy/docs/academy/04-Reference/01-Reactor/09-AttachmentService.md",
+        "updatedAt": "2026-09-02T22:21:21.993Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:21:21.993Z"
+    }
+  },
+  {
+    "index": 27,
+    "hash": "o8HM33OF/FmcGGZF9gc8jhYojBA=",
+    "timestampUtcMs": "2026-09-02T22:21:21.993Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "confidence",
+        "value": "grounded",
+        "updatedAt": "2026-09-02T22:21:21.993Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:21:21.993Z"
+    }
+  }
+]

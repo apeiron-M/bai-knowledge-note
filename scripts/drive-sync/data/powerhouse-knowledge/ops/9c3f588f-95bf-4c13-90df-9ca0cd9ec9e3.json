@@ -1,0 +1,145 @@
+[
+  {
+    "index": 0,
+    "hash": "",
+    "timestampUtcMs": "2026-09-02T21:44:12.501Z",
+    "action": {
+      "type": "CREATE_DOCUMENT",
+      "input": {
+        "meta": {},
+        "name": "Package \u203a opentelemetry-instrumentation-reactor \u203a taxonomy \u2014 Reactor Metrics Taxonomy",
+        "slug": "",
+        "model": "bai/source",
+        "branch": "main",
+        "signing": {
+          "nonce": "",
+          "publicKey": {},
+          "signature": "9c3f588f-95bf-4c13-90df-9ca0cd9ec9e3",
+          "documentType": "bai/source",
+          "createdAtUtcIso": "2026-09-02T21:44:12.501Z"
+        },
+        "version": 0,
+        "documentId": "9c3f588f-95bf-4c13-90df-9ca0cd9ec9e3",
+        "protocolVersions": {
+          "base-reducer": 2
+        }
+      },
+      "timestampUtcMs": "2026-09-02T21:44:12.501Z"
+    }
+  },
+  {
+    "index": 0,
+    "hash": "Cm04FIoHg10kigWuNTCRDFefvbk=",
+    "timestampUtcMs": "2026-09-02T21:44:12.667Z",
+    "action": {
+      "type": "INGEST_SOURCE",
+      "input": {
+        "url": "https://github.com/powerhouse-inc/powerhouse/blob/v6.2.2-dev.74/packages/opentelemetry-instrumentation-reactor/docs/taxonomy.md",
+        "tool": "sync-repo-docs",
+        "title": "Package \u203a opentelemetry-instrumentation-reactor \u203a taxonomy \u2014 Reactor Metrics Taxonomy",
+        "author": "Powerhouse Inc.",
+        "method": "sha256:90f49f09602e3caabebb7be643fd2ae56628f8a82c477fdc9472e9dd74347959 git:v6.2.2-dev.74",
+        "content": "# Reactor Metrics Taxonomy\n\nAll metrics use the meter name `@powerhousedao/reactor`.\n\n## Units\n\nMetric units follow the [OpenTelemetry Semantic Conventions](https://opentelemetry.io/docs/specs/semconv/general/metrics/#instrument-units)\nwhich use UCUM (Unified Code for Units of Measure). Curly-brace annotations like `{job}`, `{operation}`,\n`{event}`, and `{remote}` denote dimensionless counts of a specific thing. Standard units like `ms`\n(milliseconds) are used for durations.\n\n## Queue (`reactor.queue.*`)\n\n| Name                           | Type            | Unit    | Description                    | Attributes |\n| ------------------------------ | --------------- | ------- | ------------------------------ | ---------- |\n| `reactor.queue.jobs.enqueued`  | Counter         | `{job}` | Jobs enqueued                  |            |\n| `reactor.queue.jobs.dequeued`  | Counter         | `{job}` | Jobs dequeued for execution    |            |\n| `reactor.queue.jobs.completed` | Counter         | `{job}` | Jobs completed (READ_READY)    |            |\n| `reactor.queue.jobs.failed`    | Counter         | `{job}` | Jobs permanently failed        |            |\n| `reactor.queue.depth`          | ObservableGauge | `{job}` | Pending jobs across all queues |            |\n| `reactor.queue.executing`      | ObservableGauge | `{job}` | Jobs currently executing       |            |\n\n## Executor (`reactor.executor.*`)\n\n| Name                                    | Type            | Unit          | Description                                 | Attributes                 |\n| --------------------------------------- | --------------- | ------------- | ------------------------------------------- | -------------------------- |\n| `reactor.executor.job.duration`         | Histogram       | `ms`          | Job execution time (RUNNING to WRITE_READY) | `job.success`              |\n| `reactor.executor.active_jobs`          | ObservableGauge | `{job}`       | Currently executing jobs                    |                            |\n| `reactor.executor.total_processed`      | Counter         | `{job}`       | Total jobs processed                        | `job.success` (true/false) |\n| `reactor.executor.operations_generated` | Counter         | `{operation}` | Operations produced by executors            |                            |\n\n## Job Lifecycle (`reactor.job.*`)\n\n| Name                         | Type      | Unit | Description                                       | Attributes                 |\n| ---------------------------- | --------- | ---- | ------------------------------------------------- | -------------------------- |\n| `reactor.job.total.duration` | Histogram | `ms` | Full job lifecycle (PENDING to READ_READY/FAILED) | `job.success` (true/false) |\n\n## Read Models (`reactor.readmodel.*`)\n\n| Name                               | Type      | Unit | Description                                          | Attributes |\n| ---------------------------------- | --------- | ---- | ---------------------------------------------------- | ---------- |\n| `reactor.readmodel.index.duration` | Histogram | `ms` | Read model indexing time (WRITE_READY to READ_READY) |            |\n\n## Event Bus (`reactor.eventbus.*`)\n\n| Name                              | Type    | Unit      | Description    | Attributes   |\n| --------------------------------- | ------- | --------- | -------------- | ------------ |\n| `reactor.eventbus.events.emitted` | Counter | `{event}` | Events emitted | `event.type` |\n\n## Sync (`reactor.sync.*`)\n\n| Name                              | Type            | Unit          | Description                                  | Attributes    |\n| --------------------------------- | --------------- | ------------- | -------------------------------------------- | ------------- |\n| `reactor.sync.remotes`            | ObservableGauge | `{remote}`    | Active remote count                          |               |\n| `reactor.sync.dead_letters.added` | Counter         | `{operation}` | Sync operations moved to dead letter storage | `remote.name` |\n\n## Event Types Tracked\n\n| Event               | Code  | Metrics Recorded                                                                                                |\n| ------------------- | ----- | --------------------------------------------------------------------------------------------------------------- |\n| `JOB_PENDING`       | 10001 | `queue.jobs.enqueued`, `eventbus.events.emitted`                                                                |\n| `JOB_RUNNING`       | 10002 | `queue.jobs.dequeued`, `eventbus.events.emitted`                                                                |\n| `JOB_WRITE_READY`   | 10003 | `executor.job.duration`, `executor.total_processed`, `executor.operations_generated`, `eventbus.events.emitted` |\n| `JOB_READ_READY`    | 10004 | `readmodel.index.duration`, `job.total.duration`, `queue.jobs.completed`, `eventbus.events.emitted`             |\n| `JOB_FAILED`        | 10005 | `queue.jobs.failed`, `executor.total_processed`, `job.total.duration`, `eventbus.events.emitted`                |\n| `DEAD_LETTER_ADDED` | 20004 | `sync.dead_letters.added`, `eventbus.events.emitted`                                                            |\n\n## Environment Variables\n\nThe package itself reads no environment variables \u2014 all configuration is owned by the host application's OTel bootstrap. The following are the standard OpenTelemetry SDK names that hosts typically wire up to drive the global meter provider this package writes to:\n\n| Variable                      | Default | Description                                                                     |\n| ----------------------------- | ------- | ------------------------------------------------------------------------------- |\n| `OTEL_EXPORTER_OTLP_ENDPOINT` | (none)  | OTLP HTTP endpoint for metrics export. Metrics export is disabled when not set. |\n| `OTEL_METRIC_EXPORT_INTERVAL` | `60000` | Export interval in milliseconds                                                 |\n",
+        "createdAt": "2026-09-02T21:44:12.667Z",
+        "createdBy": "repo-docs-sync",
+        "sourceType": "DOCUMENTATION",
+        "description": "Powerhouse v6.2.2-dev.74 (unchanged since v6.2.2-dev.47) \u2014 All metrics use the meter name @powerhousedao/reactor.",
+        "publishedAt": "2026-05-11T09:03:15.000Z"
+      },
+      "timestampUtcMs": "2026-09-02T21:44:12.667Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "",
+    "timestampUtcMs": "2026-09-02T21:44:12.502Z",
+    "action": {
+      "type": "UPGRADE_DOCUMENT",
+      "input": {
+        "model": "bai/source",
+        "toVersion": 1,
+        "documentId": "9c3f588f-95bf-4c13-90df-9ca0cd9ec9e3",
+        "fromVersion": 0,
+        "initialState": {
+          "auth": {
+            "grants": [],
+            "version": 0
+          },
+          "local": {},
+          "global": {
+            "title": null,
+            "status": "INBOX",
+            "content": null,
+            "createdAt": null,
+            "createdBy": null,
+            "provenance": null,
+            "sourceType": null,
+            "description": null,
+            "extractedClaims": [],
+            "extractionStats": null
+          },
+          "document": {
+            "hash": {
+              "encoding": "base64",
+              "algorithm": "sha1"
+            },
+            "version": 1
+          }
+        }
+      },
+      "timestampUtcMs": "2026-09-02T21:44:12.502Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "OTk37GuhdE19aAje3VgM7MON6T8=",
+    "timestampUtcMs": "2026-09-03T07:45:01.676Z",
+    "action": {
+      "type": "ADD_EXTRACTED_CLAIM",
+      "input": {
+        "claimRef": "3734f5ab-ebc7-4ea7-96a3-8a10128a4265"
+      },
+      "timestampUtcMs": "2026-09-03T07:45:01.676Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "O1epDNAxRssA0XPRgG6iqEM60fA=",
+    "timestampUtcMs": "2026-09-03T07:45:02.174Z",
+    "action": {
+      "type": "ADD_EXTRACTED_CLAIM",
+      "input": {
+        "claimRef": "c88edfd3-97f0-47b0-b103-7276f157eeb2"
+      },
+      "timestampUtcMs": "2026-09-03T07:45:02.174Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "kegkBQF3tNXt2+nJIkGsas82uwY=",
+    "timestampUtcMs": "2026-09-03T07:45:10.690Z",
+    "action": {
+      "type": "RECORD_EXTRACTION_STATS",
+      "input": {
+        "skipRate": 0,
+        "claimCount": 1,
+        "extractedAt": "2026-09-03T07:45:10.690Z",
+        "extractedBy": "knowledge-agent",
+        "skippedCount": 0
+      },
+      "timestampUtcMs": "2026-09-03T07:45:10.690Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "efMHAii9Js14fiFMtKRMkLrXBqk=",
+    "timestampUtcMs": "2026-09-03T07:45:11.256Z",
+    "action": {
+      "type": "SET_SOURCE_STATUS",
+      "input": {
+        "status": "EXTRACTED"
+      },
+      "timestampUtcMs": "2026-09-03T07:45:11.256Z"
+    }
+  }
+]

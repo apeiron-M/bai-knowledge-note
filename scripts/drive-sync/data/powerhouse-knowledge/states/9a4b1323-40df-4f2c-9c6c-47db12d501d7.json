@@ -1,0 +1,107 @@
+{
+  "links": [
+    {
+      "id": "lnk-7252c41c-bui",
+      "linkType": "BUILDS_ON",
+      "targetDocumentId": "7252c41c-7185-4177-aaeb-4fe9dc0505c1",
+      "targetTitle": "lb-pinning-invariant",
+      "reason": "Immutability follows directly from strict pinning: if a document may only ever be served by its hashed peer, changing the peer set orphans documents",
+      "confidence": "grounded"
+    },
+    {
+      "id": "lnk-704020e6-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "704020e6-eefd-4e1f-9fc6-f9ec801d8255",
+      "targetTitle": "App \u203a switchboard-lb \u203a ARCHITECTURE \u2014 switchboard-lb \u2014 Architecture",
+      "reason": "Extracted from apps/switchboard-lb/ARCHITECTURE.md at v6.2.2-dev.74 \u2014 \u00a76.3 Adding / removing backends; \u00a75.4 External directory (deferred); \u00a76.2 Reload semantics; \u00a79 Q3 and Q4",
+      "confidence": "grounded"
+    },
+    {
+      "id": "lnk-6e78066a-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "6e78066a-d726-4d7f-b534-ac8dbd4056a9",
+      "targetTitle": "sb-worker-pool-env",
+      "reason": "Both are the horizontal-scaling story for switchboard: worker threads scale one instance, the LB shards drives across instances at the cost of a fixed backend list",
+      "confidence": "grounded"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "The backend list is effectively immutable in production, because adding or removing a switchboard remaps about 1/N of documents with no migration story",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "fa126932-00b8-4597-aa79-78f6d353e88a",
+      "name": "switchboard-lb",
+      "topicDocumentId": null
+    },
+    {
+      "id": "902a414c-a095-47f0-91ea-550344aa987c",
+      "name": "operations",
+      "topicDocumentId": null
+    },
+    {
+      "id": "a1517d8a-4814-4e97-adcc-5ea5bbadb346",
+      "name": "scaling",
+      "topicDocumentId": null
+    },
+    {
+      "id": "05618845-4f2b-4522-894c-365b0f935fb7",
+      "name": "limitations",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "This is named as **the biggest operational sharp edge of the MVP**, in the architecture document and again in the repo's `CLAUDE.md` so it is not forgotten.\n\n`hash $doc_id consistent` is Ketama-style consistent hashing across the `server` entries, so:\n\n- **adding** a backend remaps ~1/N of documents \u2014 the same fundamental tradeoff any stateless scheme has \u2014 and until `switchboard` supports migration this is a coordinated maintenance event, not a self-serve operation;\n- **removing** a backend makes the documents pinned to it **unroutable**, under the same rule.\n\nThe long-term fix is acknowledged and deferred: an explicit `doc_id \u2192 backend` **directory** (Redis or Postgres) so adding a backend does not remap anything. It requires coordinated migration support in `switchboard`, which does not exist \u2014 recorded as open question 4, \"how do operators migrate a document between backends?\", cross-cutting `switchboard` and `reactor`, to be decided *before operating this at any meaningful scale*.\n\nReload itself is safe and uses nginx's own mechanics: master parses the new config and old workers keep running if it fails; on success new workers start, old workers finish in-flight requests and exit, zero dropped connections. `scripts/reload.sh` wraps `nginx -t` then `nginx -s reload` and fails loudly if validation fails. A long-lived WebSocket survives a reload because old workers drain gracefully \u2014 proven by an integration test that opens a real WS, reloads mid-flight and asserts both the connection and a frame round-trip survive.\n\n## Provenance\n- `apps/switchboard-lb/ARCHITECTURE.md` \u2014 \u00a76.3 Adding / removing backends; \u00a75.4 External directory (deferred); \u00a76.2 Reload semantics; \u00a79 Q3 and Q4\n\n_Extracted from the Powerhouse repository at **v6.2.2-dev.74**._",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": "v6.2.2-dev.74",
+  "computes": null,
+  "filePath": "apps/switchboard-lb/ARCHITECTURE.md",
+  "noteType": "OBSERVATION",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "knowledge-agent",
+    "createdAt": "2026-09-03T07:34:32.525Z",
+    "sessionId": null,
+    "updatedAt": "2026-09-03T07:34:33.791Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Consistent hashing remaps ~1/N of keys on a membership change and removing a server makes its documents unroutable, so both are coordinated maintenance events until the reactor supports document.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "23362f2b-cce3-4595-b24e-f0e7ab0c3909",
+      "actor": "knowledge-agent",
+      "comment": "extracted from apps/switchboard-lb/ARCHITECTURE.md at v6.2.2-dev.74",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-09-03T07:34:33.188Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "d8b6cd4f-15bc-4315-863f-71e8bfeec124",
+      "actor": "liberuum",
+      "comment": "claim checked against the cited file at the pinned tag",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-09-03T07:34:33.791Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

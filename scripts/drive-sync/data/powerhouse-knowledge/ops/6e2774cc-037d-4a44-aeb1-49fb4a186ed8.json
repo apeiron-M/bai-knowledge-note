@@ -1,0 +1,348 @@
+[
+  {
+    "index": 0,
+    "hash": "",
+    "timestampUtcMs": "2026-09-03T07:43:29.232Z",
+    "action": {
+      "type": "CREATE_DOCUMENT",
+      "input": {
+        "meta": {},
+        "name": "registry-verdaccio-cdn",
+        "slug": "",
+        "model": "bai/knowledge-note",
+        "branch": "main",
+        "signing": {
+          "nonce": "",
+          "publicKey": {},
+          "signature": "6e2774cc-037d-4a44-aeb1-49fb4a186ed8",
+          "documentType": "bai/knowledge-note",
+          "createdAtUtcIso": "2026-09-03T07:43:29.232Z"
+        },
+        "version": 0,
+        "documentId": "6e2774cc-037d-4a44-aeb1-49fb4a186ed8",
+        "protocolVersions": {
+          "base-reducer": 2
+        }
+      },
+      "timestampUtcMs": "2026-09-03T07:43:29.232Z"
+    }
+  },
+  {
+    "index": 0,
+    "hash": "P//DCDqJWioIa7mHqytRrXpety0=",
+    "timestampUtcMs": "2026-09-03T07:43:30.495Z",
+    "action": {
+      "type": "SET_TITLE",
+      "input": {
+        "title": "The package registry is Verdaccio serving double duty as an npm registry and an ESM CDN, transparently proxying and caching upstream tarballs",
+        "updatedAt": "2026-09-03T07:43:30.495Z"
+      },
+      "timestampUtcMs": "2026-09-03T07:43:30.495Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "",
+    "timestampUtcMs": "2026-09-03T07:43:29.232Z",
+    "action": {
+      "type": "UPGRADE_DOCUMENT",
+      "input": {
+        "model": "bai/knowledge-note",
+        "toVersion": 1,
+        "documentId": "6e2774cc-037d-4a44-aeb1-49fb4a186ed8",
+        "fromVersion": 0,
+        "initialState": {
+          "auth": {
+            "grants": [],
+            "version": 0
+          },
+          "local": {
+            "lastViewedAt": null,
+            "personalTags": []
+          },
+          "global": {
+            "links": [],
+            "model": null,
+            "scope": null,
+            "title": null,
+            "editor": null,
+            "inputs": [],
+            "models": [],
+            "status": "DRAFT",
+            "topics": [],
+            "content": null,
+            "context": null,
+            "modelId": null,
+            "modules": [],
+            "outputs": [],
+            "version": null,
+            "computes": null,
+            "filePath": null,
+            "noteType": null,
+            "severity": null,
+            "hooksUsed": [],
+            "rootCause": null,
+            "confidence": null,
+            "consumedBy": [],
+            "provenance": null,
+            "sourceType": null,
+            "targetType": null,
+            "cardinality": null,
+            "description": null,
+            "alternatives": [],
+            "consequences": [],
+            "errorMessage": null,
+            "relationType": null,
+            "correctPattern": null,
+            "decisionStatus": null,
+            "dispatchTargets": [],
+            "lifecycleEvents": []
+          },
+          "document": {
+            "hash": {
+              "encoding": "base64",
+              "algorithm": "sha1"
+            },
+            "version": 1
+          }
+        }
+      },
+      "timestampUtcMs": "2026-09-03T07:43:29.232Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "QO1R6JCdQHzRhH9TvsUVw/lIcKI=",
+    "timestampUtcMs": "2026-09-03T07:43:30.495Z",
+    "action": {
+      "type": "SET_DESCRIPTION",
+      "input": {
+        "updatedAt": "2026-09-03T07:43:30.495Z",
+        "description": "GET /-/cdn/<pkg>/<path> extracts a tarball on first request, looking in the package root then cdn/, dist/cdn/ and dist/. An unpublished package is proxied from the uplink and cached exactly like a."
+      },
+      "timestampUtcMs": "2026-09-03T07:43:30.495Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "",
+    "timestampUtcMs": "2026-09-03T07:44:38.537Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "metadata": {
+          "reason": "Extracted from packages/registry/README.md at v6.2.2-dev.74 \u2014 intro; API \u203a Packages; CDN (proxying, cache headers, upstream failure)",
+          "confidence": "grounded"
+        },
+        "sourceId": "6e2774cc-037d-4a44-aeb1-49fb4a186ed8",
+        "targetId": "3759870c-5df6-4d3f-b21c-61430665b0af",
+        "relationshipType": "DERIVED_FROM"
+      },
+      "timestampUtcMs": "2026-09-03T07:44:38.537Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "ad1GymzsPgGKr8XX16WAp+04j6U=",
+    "timestampUtcMs": "2026-09-03T07:43:30.495Z",
+    "action": {
+      "type": "SET_NOTE_TYPE",
+      "input": {
+        "noteType": "ARCHITECTURE",
+        "updatedAt": "2026-09-03T07:43:30.495Z"
+      },
+      "timestampUtcMs": "2026-09-03T07:43:30.495Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "",
+    "timestampUtcMs": "2026-09-03T07:44:39.012Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "metadata": {
+          "reason": "That client is the browser-side consumer of these endpoints, constructed with this CDN base path",
+          "confidence": "grounded"
+        },
+        "sourceId": "6e2774cc-037d-4a44-aeb1-49fb4a186ed8",
+        "targetId": "3c31ddfa-8a8a-4cee-8be1-2812015464e8",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-09-03T07:44:39.012Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "kGMnAEQi+dNCzOKXC/JjvVpFmD4=",
+    "timestampUtcMs": "2026-09-03T07:43:30.495Z",
+    "action": {
+      "type": "SET_CONTENT",
+      "input": {
+        "content": "`@powerhousedao/registry` is a Verdaccio-based registry that is also a **CDN for package bundles (ESM)**, so a browser or Node process can `import()` a package's built files directly.\n\nThe package API is three endpoints \u2014 `GET /packages` (all discovered packages, filterable with `?documentType=`), `GET /packages/by-document-type?type=\u2026` (package names providing a document type), and `GET /packages/<packageName>` (one package, scoped names supported).\n\nThe CDN endpoint is `GET /-/cdn/<packageName>/<filePath>`. On first request it **fetches and extracts the tarball** from Verdaccio, looking for files in the package root and then `cdn/`, `dist/cdn/` and `dist/`. If the package is not published locally, **Verdaccio transparently proxies** metadata and tarballs from the configured upstream (`--uplink`, default `https://registry.npmjs.org/`), and the CDN extracts that upstream tarball into `cdn-cache/<pkg>/<version>/` exactly as it does a local one \u2014 including for `@powerhousedao/*` packages, where the registry prefers its local copy and falls back upstream.\n\nCaching is keyed on the **shape of the request**, which is the part worth remembering: a version-pinned request (`<pkg>@1.2.3/\u2026`) gets `Cache-Control: public, max-age=31536000, immutable`, while a moving request (a dist-tag like `@dev` or `@latest`, or untagged) gets `public, max-age=60, must-revalidate`. A version-derived weak `ETag` is sent and a matching `If-None-Match` returns `304`. And when the **upstream metadata lookup fails** \u2014 as distinct from a genuine not-found \u2014 the endpoint serves the latest cached version if it has one and otherwise answers `503` rather than a cacheable `404`, so a transient upstream outage cannot poison a cache with a negative result.\n\n## Provenance\n- `packages/registry/README.md` \u2014 intro; API \u203a Packages; CDN (proxying, cache headers, upstream failure)\n\n_Extracted from the Powerhouse repository at **v6.2.2-dev.74**._",
+        "updatedAt": "2026-09-03T07:43:30.495Z"
+      },
+      "timestampUtcMs": "2026-09-03T07:43:30.495Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "",
+    "timestampUtcMs": "2026-09-03T07:44:39.466Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "metadata": {
+          "reason": "Publish notifications are the same registry's second responsibility, delivered over SSE and webhooks",
+          "confidence": "grounded"
+        },
+        "sourceId": "6e2774cc-037d-4a44-aeb1-49fb4a186ed8",
+        "targetId": "0883aaf7-f006-4db6-b677-2a6bf702c1b2",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-09-03T07:44:39.466Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "8Kteqn+Rh44voqB5x8w6W444/VM=",
+    "timestampUtcMs": "2026-09-03T07:43:30.495Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "1dbde0c4-96e3-4659-aa76-4509d904e5f8",
+        "name": "registry"
+      },
+      "timestampUtcMs": "2026-09-03T07:43:30.495Z"
+    }
+  },
+  {
+    "index": 5,
+    "hash": "",
+    "timestampUtcMs": "2026-09-03T07:44:39.936Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "metadata": {
+          "reason": "Connect loads packages in the browser from this registry, which is why the image re-syncs its CSP origin to packageRegistryUrl",
+          "confidence": "grounded"
+        },
+        "sourceId": "6e2774cc-037d-4a44-aeb1-49fb4a186ed8",
+        "targetId": "e80cffd2-a26e-426d-b722-dc068817ea7c",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-09-03T07:44:39.936Z"
+    }
+  },
+  {
+    "index": 5,
+    "hash": "wgMwxNzEMUYbQZaF1ySmPr24wH0=",
+    "timestampUtcMs": "2026-09-03T07:43:30.495Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "00dadc90-d8b4-449d-bfcd-3d8c5ea45c4b",
+        "name": "packages"
+      },
+      "timestampUtcMs": "2026-09-03T07:43:30.495Z"
+    }
+  },
+  {
+    "index": 6,
+    "hash": "2ID3mhWgHY2LXLwWa0hOGC/6PGs=",
+    "timestampUtcMs": "2026-09-03T07:43:30.495Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "40b80cad-9d81-4b30-b172-2110eec035a8",
+        "name": "cdn"
+      },
+      "timestampUtcMs": "2026-09-03T07:43:30.495Z"
+    }
+  },
+  {
+    "index": 7,
+    "hash": "32s2OpLFQdqV9OAp6qkVLsvU0vo=",
+    "timestampUtcMs": "2026-09-03T07:43:30.495Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "f0bc27d7-94c6-41f4-b90b-93a080cafb62",
+        "name": "verdaccio"
+      },
+      "timestampUtcMs": "2026-09-03T07:43:30.495Z"
+    }
+  },
+  {
+    "index": 8,
+    "hash": "pbF7EZC1jj4Z+77pU7jDe5SFmKQ=",
+    "timestampUtcMs": "2026-09-03T07:43:30.495Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "version",
+        "value": "v6.2.2-dev.74",
+        "updatedAt": "2026-09-03T07:43:30.495Z"
+      },
+      "timestampUtcMs": "2026-09-03T07:43:30.495Z"
+    }
+  },
+  {
+    "index": 9,
+    "hash": "9g8hKdhXcVCNnhkmmQ3g1k+pfNY=",
+    "timestampUtcMs": "2026-09-03T07:43:30.495Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "filePath",
+        "value": "packages/registry/README.md",
+        "updatedAt": "2026-09-03T07:43:30.495Z"
+      },
+      "timestampUtcMs": "2026-09-03T07:43:30.495Z"
+    }
+  },
+  {
+    "index": 10,
+    "hash": "7VbgvJYn8tUL6S+8uSIYRBhZgbc=",
+    "timestampUtcMs": "2026-09-03T07:43:33.061Z",
+    "action": {
+      "type": "SET_PROVENANCE",
+      "input": {
+        "author": "knowledge-agent",
+        "createdAt": "2026-09-03T07:43:33.061Z",
+        "sourceOrigin": "DERIVED"
+      },
+      "timestampUtcMs": "2026-09-03T07:43:33.061Z"
+    }
+  },
+  {
+    "index": 11,
+    "hash": "60Jrg/KytbpCe7B1T6LL8C9JG50=",
+    "timestampUtcMs": "2026-09-03T07:43:33.570Z",
+    "action": {
+      "type": "SUBMIT_FOR_REVIEW",
+      "input": {
+        "id": "883567bc-fa87-41bf-9191-79be4821adca",
+        "actor": "knowledge-agent",
+        "comment": "extracted from packages/registry/README.md at v6.2.2-dev.74",
+        "timestamp": "2026-09-03T07:43:33.570Z"
+      },
+      "timestampUtcMs": "2026-09-03T07:43:33.570Z"
+    }
+  },
+  {
+    "index": 12,
+    "hash": "p/QdkgB4Mp93C8UrVBmwL2oa/hU=",
+    "timestampUtcMs": "2026-09-03T07:43:34.201Z",
+    "action": {
+      "type": "APPROVE_NOTE",
+      "input": {
+        "id": "19994772-b701-4299-8f57-251cc34de42b",
+        "actor": "liberuum",
+        "comment": "claim checked against the cited file at the pinned tag",
+        "timestamp": "2026-09-03T07:43:34.201Z"
+      },
+      "timestampUtcMs": "2026-09-03T07:43:34.201Z"
+    }
+  }
+]

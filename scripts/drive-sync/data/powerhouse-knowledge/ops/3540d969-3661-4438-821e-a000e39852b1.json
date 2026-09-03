@@ -1,0 +1,321 @@
+[
+  {
+    "index": 0,
+    "hash": "",
+    "timestampUtcMs": "2026-08-14T11:53:04.133Z",
+    "action": {
+      "type": "CREATE_DOCUMENT",
+      "input": {
+        "meta": {},
+        "name": "concurrent-offline-drive-edits-interlace-drive-logs",
+        "slug": "",
+        "model": "bai/knowledge-note",
+        "branch": "main",
+        "signing": {
+          "nonce": "",
+          "publicKey": {},
+          "signature": "3540d969-3661-4438-821e-a000e39852b1",
+          "documentType": "bai/knowledge-note",
+          "createdAtUtcIso": "2026-08-14T11:53:04.133Z"
+        },
+        "version": 0,
+        "documentId": "3540d969-3661-4438-821e-a000e39852b1",
+        "protocolVersions": {
+          "base-reducer": 2
+        }
+      },
+      "timestampUtcMs": "2026-08-14T11:53:04.133Z"
+    }
+  },
+  {
+    "index": 0,
+    "hash": "yAu8ITYXUGPIn9AMei/T/mF3Kv4=",
+    "timestampUtcMs": "2026-08-14T12:35:00.000Z",
+    "action": {
+      "type": "SET_TITLE",
+      "input": {
+        "title": "Concurrent offline drive edits merge by interlacing the drive's operation logs",
+        "updatedAt": "2026-08-14T12:35:00.000Z"
+      },
+      "timestampUtcMs": "2026-08-14T12:35:00.000Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "",
+    "timestampUtcMs": "2026-08-14T11:53:04.133Z",
+    "action": {
+      "type": "UPGRADE_DOCUMENT",
+      "input": {
+        "model": "bai/knowledge-note",
+        "toVersion": 1,
+        "documentId": "3540d969-3661-4438-821e-a000e39852b1",
+        "fromVersion": 0,
+        "initialState": {
+          "auth": {
+            "grants": [],
+            "version": 0
+          },
+          "local": {
+            "lastViewedAt": null,
+            "personalTags": []
+          },
+          "global": {
+            "links": [],
+            "model": null,
+            "scope": null,
+            "title": null,
+            "editor": null,
+            "inputs": [],
+            "models": [],
+            "status": "DRAFT",
+            "topics": [],
+            "content": null,
+            "context": null,
+            "modelId": null,
+            "modules": [],
+            "outputs": [],
+            "version": null,
+            "computes": null,
+            "filePath": null,
+            "noteType": null,
+            "severity": null,
+            "hooksUsed": [],
+            "rootCause": null,
+            "confidence": null,
+            "consumedBy": [],
+            "provenance": null,
+            "sourceType": null,
+            "targetType": null,
+            "cardinality": null,
+            "description": null,
+            "alternatives": [],
+            "consequences": [],
+            "errorMessage": null,
+            "relationType": null,
+            "correctPattern": null,
+            "decisionStatus": null,
+            "dispatchTargets": [],
+            "lifecycleEvents": []
+          },
+          "document": {
+            "hash": {
+              "encoding": "base64",
+              "algorithm": "sha1"
+            },
+            "version": 1
+          }
+        }
+      },
+      "timestampUtcMs": "2026-08-14T11:53:04.133Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "J9lbz9j3vKtWd5XHPvHkGEIT1+c=",
+    "timestampUtcMs": "2026-08-14T12:35:00.000Z",
+    "action": {
+      "type": "SET_DESCRIPTION",
+      "input": {
+        "updatedAt": "2026-08-14T12:35:00.000Z",
+        "description": "Two collaborators adding files offline reconnect and merge drive logs like any other document: no overwrites, no conflicts, just two interlaced operation sequences."
+      },
+      "timestampUtcMs": "2026-08-14T12:35:00.000Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "",
+    "timestampUtcMs": "2026-08-14T12:36:57.251Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "3540d969-3661-4438-821e-a000e39852b1",
+        "targetId": "9eb2d8d8-51b3-47d0-bd44-9b97769fef55",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-08-14T12:36:57.251Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "w/2AfmMcAumBjylqx2YgtsNeykM=",
+    "timestampUtcMs": "2026-08-14T12:35:00.000Z",
+    "action": {
+      "type": "SET_NOTE_TYPE",
+      "input": {
+        "noteType": "ARCHITECTURE",
+        "updatedAt": "2026-08-14T12:35:00.000Z"
+      },
+      "timestampUtcMs": "2026-08-14T12:35:00.000Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "",
+    "timestampUtcMs": "2026-08-14T12:36:57.350Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "3540d969-3661-4438-821e-a000e39852b1",
+        "targetId": "521e4779-3e2e-430c-a933-82b6a774c21e",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-08-14T12:36:57.350Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "2Rtc4G3/OKEMBJQruOUyhLShWh4=",
+    "timestampUtcMs": "2026-08-14T12:35:00.000Z",
+    "action": {
+      "type": "SET_CONTENT",
+      "input": {
+        "content": "Because a drive is itself a document with a full operation log, drive-level concurrency needs no special machinery. Two collaborators can both add files to the same drive while offline. On reconnect, Powerhouse merges their drive operation logs exactly as it would merge edits to any other document: no overwrites, no conflicts, no last-write-wins step \u2014 just two interlaced sequences of operations.\n\nThis is the payoff of making the folder a document rather than a table row. In a snapshot-based system, two offline clients each holding a copy of the folder listing would produce two divergent listings, and reconciling them means writing a merge policy: whose rename wins, does a delete beat a concurrent move, what happens to a file added to a folder someone else removed. Under an operation log, those questions dissolve into ordering. `ADD_FILE(a)` from one peer and `ADD_FILE(b)` from another are independent facts; both land, and replaying the merged log yields a drive containing both files.\n\nThe practical consequence for builders: you do not write conflict-resolution code for drive structure, and you should not design around \"the drive might be stale.\" You design around the log. The same guarantee that lets two people edit a todo list offline lets two people reorganize a drive offline.\n\nThis is also why drive structure survives partition gracefully while a cached *derived* listing does not \u2014 the listing is a projection, the log is the source of truth.\n\n_Source: apps/academy/docs/academy/02-Learn/03-document-models/01-documents-and-drives.mdx (Powerhouse v6.2.2-dev.45)._",
+        "updatedAt": "2026-08-14T12:35:00.000Z"
+      },
+      "timestampUtcMs": "2026-08-14T12:35:00.000Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "",
+    "timestampUtcMs": "2026-08-14T12:36:57.447Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "3540d969-3661-4438-821e-a000e39852b1",
+        "targetId": "64f7c52f-dc21-4446-bad6-e88ef492a25c",
+        "relationshipType": "BUILDS_ON"
+      },
+      "timestampUtcMs": "2026-08-14T12:36:57.447Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "LobmGIKTil5V4PfElKo1DoJ98tY=",
+    "timestampUtcMs": "2026-08-14T12:35:00.000Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "version",
+        "value": "v6.2.2-dev.44",
+        "updatedAt": "2026-08-14T12:35:00.000Z"
+      },
+      "timestampUtcMs": "2026-08-14T12:35:00.000Z"
+    }
+  },
+  {
+    "index": 5,
+    "hash": "T9Yp71BdTtM7jtrsssy5rc2VBFc=",
+    "timestampUtcMs": "2026-08-14T12:35:00.000Z",
+    "action": {
+      "type": "SET_PROVENANCE",
+      "input": {
+        "author": "claude",
+        "createdAt": "2026-08-13T14:35:30.000Z",
+        "sourceOrigin": "DERIVED"
+      },
+      "timestampUtcMs": "2026-08-14T12:35:00.000Z"
+    }
+  },
+  {
+    "index": 6,
+    "hash": "rjjlpIuXRG1r7t4cO0LJl5epvyc=",
+    "timestampUtcMs": "2026-08-14T12:35:00.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "4a08c713-58c1-4d7f-ab00-afcfbc4b6742",
+        "name": "drives",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-08-14T12:35:00.000Z"
+    }
+  },
+  {
+    "index": 7,
+    "hash": "aKO9jFVKh7Febm6DEO9v6n7hWrA=",
+    "timestampUtcMs": "2026-08-14T12:35:00.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "ad9acfb4-cce6-4dba-9b42-0f3bc519b219",
+        "name": "reactor-sync",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-08-14T12:35:00.000Z"
+    }
+  },
+  {
+    "index": 8,
+    "hash": "ee0yiv+hScD3qeA1RJc+CMvPcjY=",
+    "timestampUtcMs": "2026-08-14T12:35:00.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "3afe77a4-2cfd-4e44-9ff0-d81465d78b09",
+        "name": "collaboration",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-08-14T12:35:00.000Z"
+    }
+  },
+  {
+    "index": 9,
+    "hash": "MYuZg/m+S0dfuHGxN+Gm16TQ29o=",
+    "timestampUtcMs": "2026-08-14T14:36:57.000Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "version",
+        "value": "v6.2.2-dev.47",
+        "updatedAt": "2026-08-14T12:00:00.000Z"
+      },
+      "timestampUtcMs": "2026-08-14T14:36:57.000Z"
+    }
+  },
+  {
+    "index": 10,
+    "hash": "iuj7hgUJ3HLbwOE/afRuF0YyDjA=",
+    "timestampUtcMs": "2026-08-14T14:36:57.000Z",
+    "action": {
+      "type": "SUBMIT_FOR_REVIEW",
+      "input": {
+        "id": "946ee151-3169-400e-abcd-bc0ca7f864fa",
+        "actor": "claude",
+        "comment": "Knowledge registered against powerhouse v6.2.2-dev.47",
+        "timestamp": "2026-08-14T12:00:00.000Z"
+      },
+      "timestampUtcMs": "2026-08-14T14:36:57.000Z"
+    }
+  },
+  {
+    "index": 11,
+    "hash": "ueK2JLfs2I++NavlDgIQznRWHtc=",
+    "timestampUtcMs": "2026-08-14T14:36:57.000Z",
+    "action": {
+      "type": "APPROVE_NOTE",
+      "input": {
+        "id": "f409d2e1-5b9c-4597-8aa2-86d132265da4",
+        "actor": "liberuum",
+        "comment": "Canonical as of powerhouse v6.2.2-dev.47",
+        "timestamp": "2026-08-14T12:00:00.000Z"
+      },
+      "timestampUtcMs": "2026-08-14T14:36:57.000Z"
+    }
+  },
+  {
+    "index": 12,
+    "hash": "e/82McYngviYcMXjuobtHM/wYGo=",
+    "timestampUtcMs": "2026-09-03T09:59:30.708Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "version",
+        "updatedAt": "2026-09-03T09:59:30.708Z"
+      },
+      "timestampUtcMs": "2026-09-03T09:59:30.708Z"
+    }
+  }
+]

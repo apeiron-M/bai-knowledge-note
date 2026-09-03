@@ -1,0 +1,120 @@
+{
+  "links": [
+    {
+      "id": "lnk-27438cd8-bui",
+      "linkType": "BUILDS_ON",
+      "targetDocumentId": "27438cd8-5fb0-4ed7-bcbe-665beef8a259",
+      "targetTitle": "package-owned-subgraphs-composed-into-one-endpoint",
+      "reason": "Subgraphs being generated and loaded at runtime is why a checked-in src/subgraphs conflicts and must be deleted",
+      "confidence": "grounded"
+    },
+    {
+      "id": "lnk-eeefd83b-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "eeefd83b-466d-4f35-a5b3-3bdb74b8fcef",
+      "targetTitle": "semantic-search-pglite-vector-content-hash-skip",
+      "reason": "Lazy-loading pglite is the same discipline the knowledge-note package applies so its processor and subgraph register without transitive deps",
+      "confidence": "grounded"
+    },
+    {
+      "id": "lnk-64076557-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "64076557-0fce-4f5f-8912-3acf0ac82e15",
+      "targetTitle": "Academy \u203a ReleaseNotes \u203a Release Notes",
+      "reason": "Extracted from apps/academy/docs/academy/ReleaseNotes/index.md at v6.2.2-dev.74 \u2014 v6.0.0 \u203a Vetra Package Ecosystem; Improvements (bundles, tree-shaking); Breaking Changes (delete src/subgraphs)",
+      "confidence": "grounded"
+    },
+    {
+      "id": "lnk-6e2774cc-bui",
+      "linkType": "BUILDS_ON",
+      "targetDocumentId": "6e2774cc-037d-4a44-aeb1-49fb4a186ed8",
+      "targetTitle": "registry-verdaccio-cdn",
+      "reason": "Runtime loading is served by that registry's CDN endpoint, and auto-discovery is its by-document-type lookup",
+      "confidence": "grounded"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Connect and Switchboard load processors and subgraphs from the HTTP registry at runtime, and Connect auto-installs the package for an unknown document type",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "ea7b3042-f51e-46f4-bbee-dd95d9b37cfe",
+      "name": "packages",
+      "topicDocumentId": null
+    },
+    {
+      "id": "df6622bf-9582-48cd-874e-ccfd177c9d6c",
+      "name": "registry",
+      "topicDocumentId": null
+    },
+    {
+      "id": "20366a4a-1826-48e3-aba1-f0712e5433e7",
+      "name": "connect",
+      "topicDocumentId": null
+    },
+    {
+      "id": "5618a3da-6ce2-45b7-8020-ff6609cbefe4",
+      "name": "switchboard",
+      "topicDocumentId": null
+    },
+    {
+      "id": "611b1c8a-0194-4d35-a6ad-4471873344e7",
+      "name": "v6",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "The Vetra package ecosystem shipped as one of v6.0.0's five highlights, and its behavioural claims are the ones that matter downstream:\n\n- **Dynamic loading** \u2014 Connect and Switchboard load **processors and subgraphs at runtime** from the HTTP registry, with *no rebuild required* when a new package is published.\n- **Auto-discovery** \u2014 Connect **automatically finds and installs the correct package when it encounters an unknown document type**. That is what makes the registry's `by-document-type` lookup a user-facing feature rather than an API curiosity.\n- **Version picker** \u2014 the Connect UI lets a user choose a specific dist-tag version when installing.\n\nThe CLI surface is three commands against a private, npm-compatible, Verdaccio-backed registry:\n\n```bash\nph publish                                  # publish a built package\nph install @your-org/your-package           # install (Powerhouse registry by default)\nph unpublish @your-org/your-package@1.0.0   # unpublish and purge the CDN cache\n```\n\nTwo related v6 improvements that shape how those packages are built: **separate node and browser processor bundles** (processors publish distinct entrypoints), and tree-shaking work \u2014 `sideEffects: false` in generated boilerplate, with **pglite, jszip and renown crypto lazily loaded**. The last one is the same lazy-import discipline the knowledge-note package needs in production.\n\nOne breaking change from the same release still applies to any project carrying old output: **delete `src/subgraphs/`**, because subgraphs are now generated and loaded at runtime and a checked-in copy conflicts.\n\n## Provenance\n- `apps/academy/docs/academy/ReleaseNotes/index.md` \u2014 v6.0.0 \u203a Vetra Package Ecosystem; Improvements (bundles, tree-shaking); Breaking Changes (delete src/subgraphs)\n\n_Extracted from the Powerhouse repository at **v6.2.2-dev.74**._",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": "v6.2.2-dev.74",
+  "computes": null,
+  "filePath": "apps/academy/docs/academy/ReleaseNotes/index.md",
+  "noteType": "OBSERVATION",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "knowledge-agent",
+    "createdAt": "2026-09-03T07:49:06.487Z",
+    "sessionId": null,
+    "updatedAt": "2026-09-03T07:49:07.619Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "No rebuild is needed when a package is published. ph publish, ph install and ph unpublish drive a Verdaccio-backed private registry, and the Connect UI offers a dist-tag version picker.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "3c7ec43a-5ad2-4043-bbd0-9da85c5cffd4",
+      "actor": "knowledge-agent",
+      "comment": "extracted from apps/academy/docs/academy/ReleaseNotes/index.md at v6.2.2-dev.74",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-09-03T07:49:07.127Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "7f6bcf6f-db0e-49df-9db1-d7eb8904ddb6",
+      "actor": "liberuum",
+      "comment": "claim checked against the cited file at the pinned tag",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-09-03T07:49:07.619Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

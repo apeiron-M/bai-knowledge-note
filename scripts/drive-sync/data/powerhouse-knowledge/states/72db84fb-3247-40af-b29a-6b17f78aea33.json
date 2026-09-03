@@ -1,0 +1,123 @@
+{
+  "links": [
+    {
+      "id": "lnk-69327ea6-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "69327ea6-e0a1-4c07-a214-2c4619192862",
+      "targetTitle": "auth-last-grant-wins",
+      "reason": "'Skipped' means the grant is not applicable in the fold, so it neither allows nor denies \u2014 the walk continues past it",
+      "confidence": "grounded"
+    },
+    {
+      "id": "lnk-c8bd64d3-bui",
+      "linkType": "BUILDS_ON",
+      "targetDocumentId": "c8bd64d3-d92e-4f41-beba-983a7e995c26",
+      "targetTitle": "auth-flags-staged",
+      "reason": "Explains what a policy means on a reactor that has only some of the staged flags on",
+      "confidence": "grounded"
+    },
+    {
+      "id": "lnk-17dc46b0-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "17dc46b0-f733-467c-99d7-ae8fbe0fb0e4",
+      "targetTitle": "Academy \u203a Reference \u203a Reactor \u203a Authorization",
+      "reason": "Extracted from apps/academy/docs/academy/04-Reference/01-Reactor/11-Authorization.md at v6.2.2-dev.74 \u2014 'A grant that cannot apply is skipped, not honoured' bullet",
+      "confidence": "grounded"
+    },
+    {
+      "id": "lnk-223bb12a-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "223bb12a-be7f-4209-9ab2-f04f7bb2b6c8",
+      "targetTitle": "Spec \u203a Spec \u2014 Attribute-based access control in the auth scope with DCB",
+      "reason": "Extracted from docs/specs/auth-scope.md at v6.2.2-dev.74 \u2014 Decision algorithm: 'A grant that uses a feature that doesn't yet exist never applies'; version fail-closed; Stage 7 read condition context",
+      "confidence": "grounded"
+    },
+    {
+      "id": "lnk-f2aaccd3-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "f2aaccd3-7c26-4327-881e-f5ad9e267b89",
+      "targetTitle": "Academy \u203a Lookup \u203a Cookbook",
+      "reason": "Extracted from apps/academy/docs/academy/05-Lookup/00-Cookbook.md at v6.2.2-dev.74 \u2014 Document ACL \u203a Non-goals here",
+      "confidence": "grounded"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "A grant that uses a feature the reactor cannot evaluate is skipped, not honoured \u2014 which fails closed for allows but leaves a conditional deny weaker than written",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "7c751589-1871-4e79-bfb4-e0793cd116eb",
+      "name": "auth-scope",
+      "topicDocumentId": null
+    },
+    {
+      "id": "282602fd-f20e-4914-b08b-3d6e95a3ebcf",
+      "name": "feature-flags",
+      "topicDocumentId": null
+    },
+    {
+      "id": "5156d7c8-3b6f-497b-8cc8-945236306cbf",
+      "name": "gotchas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "25381eb4-4985-4209-b9a5-b5ebf6e9b910",
+      "name": "authorization",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "Enforcement is staged, and the stages leave a hole that is easy to misread. A grant whose principal or condition needs an evaluator the running reactor does not have **never applies**: below `authGroups` a `{ group }` principal matches nobody, below `authConditions` a `where` clause never holds and a `{ match }` principal never matches.\n\nSkipping is asymmetric:\n\n- **Skipping an allow withholds access.** An unevaluated allow can never widen a policy, so the system fails closed.\n- **Skipping a deny withholds nothing.** A policy that relies on a conditional or group-scoped *deny* is weaker than it reads on a reactor that cannot evaluate it, until the feature it uses is live.\n\nThe Cookbook's `document-acl` recipe puts the operational form under \"Non-goals\": grants with a `{group}` or `{match}` principal, or a `where` condition, parse and store but never match on a reactor without the `authGroups` / `authConditions` stages \u2014 \"don't demo a group grant on an older release and conclude enforcement is broken.\" Two related fail-closed cases sit next to it: a replica encountering a policy **version** newer than it supports denies every request except the creator's administration of the auth scope until the software knows that version, and a read's condition context carries the scope's own state and no action input, so a condition on `action.input.*` never holds for a read.\n\n_Source: apps/academy/docs/academy/04-Reference/01-Reactor/11-Authorization.md (Powerhouse v6.2.2-dev.74)._\n_Source: docs/specs/auth-scope.md (Powerhouse v6.2.2-dev.74)._\n_Source: apps/academy/docs/academy/05-Lookup/00-Cookbook.md (Powerhouse v6.2.2-dev.74)._\n\n## Provenance\n- `apps/academy/docs/academy/04-Reference/01-Reactor/11-Authorization.md` \u2014 'A grant that cannot apply is skipped, not honoured' bullet\n- `docs/specs/auth-scope.md` \u2014 Decision algorithm: 'A grant that uses a feature that doesn't yet exist never applies'; version fail-closed; Stage 7 read condition context\n- `apps/academy/docs/academy/05-Lookup/00-Cookbook.md` \u2014 Document ACL \u203a Non-goals here\n\n_Recorded from the Powerhouse repository at **v6.2.2-dev.74** during the v6.2.2-dev.74 source sync._",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": "v6.2.2-dev.74",
+  "computes": null,
+  "filePath": "apps/academy/docs/academy/04-Reference/01-Reactor/11-Authorization.md",
+  "noteType": "PATTERN",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": "grounded",
+  "consumedBy": [],
+  "provenance": {
+    "author": "knowledge-agent",
+    "createdAt": "2026-09-02T22:10:44.172Z",
+    "sessionId": null,
+    "updatedAt": "2026-09-02T22:20:27.163Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Below authGroups a {group} principal never matches; below authConditions a where clause never holds. Skipping an allow withholds access; skipping a deny withholds nothing, so a deny reads too strong.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "ba480fe1-4ca4-4e33-98cd-333cdfd101aa",
+      "actor": "knowledge-agent",
+      "comment": "extracted from the Powerhouse repository at v6.2.2-dev.74",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-09-02T22:10:44.658Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "b2c42ff1-b4df-4186-a14c-406d600a0d3a",
+      "actor": "liberuum",
+      "comment": "claim checked against the cited repository file at the pinned tag",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-09-02T22:10:45.133Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

@@ -1,0 +1,94 @@
+{
+  "links": [
+    {
+      "id": "lnk-4d8e59af-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "4d8e59af-51f2-4ab7-b290-e1d5744abbd7",
+      "targetTitle": "Integration-gap tool screen: ERPNext / Frappe (primary-source research, 2026-08-19)"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Frappe tracks changes only on DocTypes a developer has opted in",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "ead75a8d-2298-4f31-bf4a-1d89786a7ad4",
+      "name": "tool-screen",
+      "topicDocumentId": null
+    },
+    {
+      "id": "a58ca39c-fc5d-4822-a9e0-d547b9f96aab",
+      "name": "erpnext",
+      "topicDocumentId": null
+    },
+    {
+      "id": "e07b06a6-91f9-41a8-aacb-ad59376be398",
+      "name": "frappe",
+      "topicDocumentId": null
+    },
+    {
+      "id": "b01c6765-0c78-458a-98d7-65155f82566e",
+      "name": "defaults",
+      "topicDocumentId": null
+    },
+    {
+      "id": "fc8e4893-a025-42a9-9d38-bd4fca178af6",
+      "name": "audit-trail",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "The ERPNext manual describes enabling it: *\"Go to Purchase Order List. Click on Customize from the drop-down menu... Check the field 'Track changes' in the Properties.\"* The framework's `save_version()` checks `track_changes` on the document meta before writing anything.\n\nSo coverage is a per-DocType configuration decision rather than a platform guarantee. Whether a given business event is recorded depends on whether somebody thought to tick a box on that doctype, and there is no signal at the point of the event that it went unrecorded.\n\nCombined with version history being deleted alongside its document, the practical answer to \"is this decision recorded?\" in a Frappe deployment is: only if configured, and only until the record is removed.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "OBSERVATION",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "knowledge-agent",
+    "createdAt": "2026-08-20T08:45:22.278849Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-20T08:45:23.351989Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Versioning is enabled per DocType by ticking Track Changes in Customize Form, so business events on untracked doctypes leave no version record at all.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "d6a62cab-6b6c-4d9f-81fc-ee7eca767fa4",
+      "actor": "knowledge-agent",
+      "comment": "Extracted from the primary-source tool screen; each claim quotable from a cited source.",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-20T08:45:23.198869Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "82e2fc06-8df2-40b3-9f3f-9f4bbfef7d5c",
+      "actor": "liberuum",
+      "comment": "Approved: tool-screen extraction.",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-20T08:45:23.351989Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

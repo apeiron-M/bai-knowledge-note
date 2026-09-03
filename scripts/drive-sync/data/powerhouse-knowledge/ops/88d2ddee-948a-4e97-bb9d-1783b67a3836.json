@@ -1,0 +1,117 @@
+[
+  {
+    "index": 0,
+    "hash": "",
+    "timestampUtcMs": "2026-09-02T21:34:15.404Z",
+    "action": {
+      "type": "CREATE_DOCUMENT",
+      "input": {
+        "meta": {},
+        "name": "Academy \u203a Build \u203a BuildingUserExperiences \u203a DocumentTools \u203a Revision history timeline",
+        "slug": "",
+        "model": "bai/source",
+        "branch": "main",
+        "signing": {
+          "nonce": "",
+          "publicKey": {},
+          "signature": "88d2ddee-948a-4e97-bb9d-1783b67a3836",
+          "documentType": "bai/source",
+          "createdAtUtcIso": "2026-09-02T21:34:15.404Z"
+        },
+        "version": 0,
+        "documentId": "88d2ddee-948a-4e97-bb9d-1783b67a3836",
+        "protocolVersions": {
+          "base-reducer": 2
+        }
+      },
+      "timestampUtcMs": "2026-09-02T21:34:15.404Z"
+    }
+  },
+  {
+    "index": 0,
+    "hash": "RlSi1YnkMGAhQYLQGjTNzLMMErI=",
+    "timestampUtcMs": "2026-09-02T21:34:15.582Z",
+    "action": {
+      "type": "INGEST_SOURCE",
+      "input": {
+        "url": "https://github.com/powerhouse-inc/powerhouse/blob/v6.2.2-dev.74/apps/academy/docs/academy/03-Build/03-BuildingUserExperiences/06-DocumentTools/02-RevisionHistoryTimeline.md",
+        "tool": "sync-repo-docs",
+        "title": "Academy \u203a Build \u203a BuildingUserExperiences \u203a DocumentTools \u203a Revision history timeline",
+        "author": "Powerhouse Inc.",
+        "method": "sha256:1bbd077be2fcb073a9d3e519a4daf815f3fd6b4c9055f656bdb120aed7c61348 git:v6.2.2-dev.74",
+        "content": "# Revision history timeline\n\nThe history timeline feature enables users to view document history and navigate through different revisions of a document. This guide explains how to implement and customize the timeline functionality in your Powerhouse application.\n\n## How to enable the timeline feature\n\nTo enable the timeline feature in your document editor, you need to set `timelineEnabled: true` in your editor module configuration:\n\n```typescript\n// editors/to-do-list/index.ts\nexport const module: EditorModule<ToDoDocument> = {\n  Component: Editor as unknown as FC<\n    EditorProps<ToDoDocument> & Record<string, unknown>\n  >,\n  documentTypes: [\"powerhouse/todo-list\"],\n};\n```\n\nThis setting enables the timeline button in the document toolbar.\n\n:::warning[Heads Up!]\nThe revision history timeline will only become visible once your document model has some operations or 'history'.\nAdd a few to-do's or some data in the model you are working on and the revision history timeline button in the Document Toolbar will be activated.\nClick the button to see the timeline expand and see the first history 'candle' appear.\n:::\n\n<figure className=\"image-container\">\n  <img src={require(\"./images/revision-history-timeline.png\").default} alt=\"revision history timeline\" />\n  <figcaption>Once your document has a few operations added to it's history the revision history timeline gets activated.</figcaption>\n</figure>\n\n## How to implement the timeline feature\n\n### Default Drive-app\n\nWhen using the default Drive-app with `ph connect`, the timeline functionality is handled automatically:\n\n- Document analytics are collected and passed to the document toolbar\n- The timeline button appears in the toolbar when enabled\n- Users can click on timeline items to view document revisions\n\n### Custom Drive-app\n\nFor custom Drive-apps, you need to handle timeline items fetching and user interaction manually. Here's how:\n\n1. First, import the necessary utilities from the Powerhouse common package:\n\n```typescript\nimport { useTimelineItems } from \"@powerhousedao/reactor-browser/analytics\";\nimport { getRevisionFromDate } from \"@powerhousedao/reactor-browser\";\n```\n\n2. Fetch timeline items using the `useTimelineItems` hook:\n\n```typescript\n// In your EditorContainer.tsx\nconst timelineItems = useTimelineItems(documentId);\n```\n\n3. Track the selected timeline item in state:\n\n```typescript\nconst [selectedTimelineItem, setSelectedTimelineItem] =\n  useState<TimelineItem | null>(null);\n```\n\n4. Pass the timeline items to the DocumentToolbar and handle item selection:\n\n```typescript\n<DocumentToolbar\n  // ... other props\n/>\n```\n\n5. Pass the required context values to your editor component:\n\n```typescript\n<EditorComponent\n  context={{\n    ...context,\n    readMode: !!selectedTimelineItem,\n    selectedTimelineRevision: getRevisionFromDate(\n      selectedTimelineItem?.startDate,\n      selectedTimelineItem?.endDate,\n      document.operations.global,\n    ),\n  }}\n  // ... other props\n/>\n```\n\n## Handling timeline revisions in document editor\n\nIn your document editor (e.g., `editors/to-do-list/editor.tsx`), you need to handle the timeline context props:\n\n1. Extract timeline-related properties from the context:\n\n```typescript\nconst {\n  readMode = false,\n  selectedTimelineRevision,\n  getDocumentRevision,\n} = context;\n```\n\n2. Fetch the document at the selected revision when in read mode:\n\n```typescript\nconst [readModeDocument, setReadModeDocument] = useState<ToDoDocument | null>(\n  null,\n);\n\nuseEffect(() => {\n  const getReadModeDocument = async () => {\n    if (\n      getDocumentRevision &&\n      readMode &&\n      typeof selectedTimelineRevision === \"number\"\n    ) {\n      const document = await getDocumentRevision({\n        revisions: { global: selectedTimelineRevision },\n      });\n      setReadModeDocument(document);\n    } else if (!readMode) {\n      setReadModeDocument(null);\n    }\n  };\n  getReadModeDocument();\n}, [getDocumentRevision, readMode, selectedTimelineRevision]);\n\n// Use the appropriate document based on mode\nconst document = readModeDocument || writeModeDocument;\n```\n\n3. Adapt your UI to reflect read mode:\n\n```typescript\n{readMode && (\n  <div className=\"text-gray-500 text-md text-center\">(\ud83d\udd12 Read Mode)</div>\n)}\n\n{!readMode && (\n  // Edit controls here\n)}\n```\n\nThis implementation allows users to navigate through document history while preventing edits to historical revisions.\n",
+        "createdAt": "2026-09-02T21:34:15.582Z",
+        "createdBy": "repo-docs-sync",
+        "sourceType": "DOCUMENTATION",
+        "description": "Powerhouse v6.2.2-dev.74 (unchanged since v6.2.2-dev.47) \u2014 The history timeline feature enables users to view document history and navigate through different revisions of a document. This guide expla\u2026",
+        "publishedAt": "2026-06-17T17:18:45.000Z"
+      },
+      "timestampUtcMs": "2026-09-02T21:34:15.582Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "",
+    "timestampUtcMs": "2026-09-02T21:34:15.404Z",
+    "action": {
+      "type": "UPGRADE_DOCUMENT",
+      "input": {
+        "model": "bai/source",
+        "toVersion": 1,
+        "documentId": "88d2ddee-948a-4e97-bb9d-1783b67a3836",
+        "fromVersion": 0,
+        "initialState": {
+          "auth": {
+            "grants": [],
+            "version": 0
+          },
+          "local": {},
+          "global": {
+            "title": null,
+            "status": "INBOX",
+            "content": null,
+            "createdAt": null,
+            "createdBy": null,
+            "provenance": null,
+            "sourceType": null,
+            "description": null,
+            "extractedClaims": [],
+            "extractionStats": null
+          },
+          "document": {
+            "hash": {
+              "encoding": "base64",
+              "algorithm": "sha1"
+            },
+            "version": 1
+          }
+        }
+      },
+      "timestampUtcMs": "2026-09-02T21:34:15.404Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "S23BhOQRW8svGUKy8BGUtg+ZBUE=",
+    "timestampUtcMs": "2026-09-02T21:34:21.165Z",
+    "action": {
+      "type": "ADD_EXTRACTED_CLAIM",
+      "input": {
+        "claimRef": "7bf0150e-34d9-4cd2-b038-e55a6acb1ea4"
+      },
+      "timestampUtcMs": "2026-09-02T21:34:21.165Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "9LIN/hfqidWv01bR4gSnNiUlZcI=",
+    "timestampUtcMs": "2026-09-02T21:34:28.938Z",
+    "action": {
+      "type": "SET_SOURCE_STATUS",
+      "input": {
+        "status": "EXTRACTED"
+      },
+      "timestampUtcMs": "2026-09-02T21:34:28.938Z"
+    }
+  }
+]

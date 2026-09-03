@@ -1,0 +1,15 @@
+{
+  "title": "Contradiction on authorization",
+  "status": "DISSOLVED",
+  "content": "## Involved claims\n\n- Authorization policy lives in the document's own auth scope as replicated grants, so reducers carry no access-control code \u2014 `96758a5d-09e0-47a6-8c91-f4a1a7fd6b04`\n- Reducer-level RBAC gates operations on action.context.signer.user.address so access control replicates with the document \u2014 `b2987190-d95c-4d89-9075-0716c4eb99fd`\n\n## Why this exists\n\nA `CONTRADICTS` relationship was recorded between these two notes at 2026-09-02T22:08:28.187Z. The vault treats a recorded contradiction as an open question, not a fact to leave implicit: until someone resolves or dissolves this tension, both claims stand and readers should see that they disagree.\n\n## How to close it\n\n- **Resolve** when one claim is correct: say which, and consider `SUPERSEDES` on the winner.\n- **Dissolve** when both are right in different scopes: state the boundary in each note's content.",
+  "observedAt": "2026-09-02T22:08:28.187Z",
+  "observedBy": "graph-indexer",
+  "resolution": "Dissolved: both hold, in different designs. Reducer-level RBAC bakes the rule into the model (no flags, any logic, but a release to change and the refusal is a stored operation); the auth scope makes the rule replicated data (runtime-changeable, refused at admission, but staged behind feature flags and capped by the policy version). The Cookbook ships them as deliberate counterparts \u2014 role-based-auth and document-acl, same outcome, opposite mechanism. The boundary is now stated in both notes.",
+  "resolvedAt": "2026-09-02T22:27:34.232Z",
+  "description": "\u201cAuthorization policy lives in the document's own auth scope as replicated grants, so reducers carry no access-control code\u201d contradicts \u201cReducer-level RBAC gates operations on action.context.signer.user.address so access control replicates with the document\u201d. Opened automatically from a CONTRADICTS link \u2014 resolve if one side is right, dissolve if both hold in different contexts.",
+  "involvedRefs": [
+    "96758a5d-09e0-47a6-8c91-f4a1a7fd6b04",
+    "b2987190-d95c-4d89-9075-0716c4eb99fd"
+  ],
+  "links": []
+}

@@ -1,0 +1,97 @@
+{
+  "links": [
+    {
+      "id": "lnk-f9ff64ef-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "f9ff64ef-4672-4b6d-9f90-62845b9256f3",
+      "targetTitle": "powa-revenue-distribution-model-captures-epoch-based-token-revenue-sharing"
+    },
+    {
+      "id": "lnk-95cda1ce-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "95cda1ce-8aae-47c2-906e-9393d1a85c37",
+      "targetTitle": "epochs-distribute-revenue-proportionally-by-weighted-token-supply"
+    },
+    {
+      "id": "lnk-1c781f1a-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "1c781f1a-a3f9-483e-a15a-ccbc2c431135",
+      "targetTitle": "chat-pss-messaging-history-shipped"
+    },
+    {
+      "id": "lnk-649207b4-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "649207b4-bb53-45aa-aa4a-6570116b7f8e",
+      "targetTitle": "ecosystem-map"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "masterchef accumulator pattern enables per-token revenue tracking",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "1b7413c2-b6c4-41a4-8b80-b9a114f13448",
+      "name": "powa-revenue-distribution",
+      "topicDocumentId": null
+    },
+    {
+      "id": "90eaef15-8407-4bf4-835c-a10a6d826bc3",
+      "name": "on-chain-patterns",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "# masterchef accumulator pattern enables per-token revenue tracking\n\nThe POWA contracts use a well-established DeFi pattern (originating from SushiSwap's MasterChef) where a global `accRevenuePerShare` accumulator tracks total revenue accrued per unit of token supply. Each account stores a `rewardDebt` checkpoint \u2014 the accumulator value at last interaction \u2014 and `pending` unclaimed revenue.\n\nWhen revenue is deposited:\n```\naccRevenuePerShare += (revenueAmount * PRECISION) / totalSupply\n```\n\nWhen an account is updated:\n```\naccumulated = balance * accRevenuePerShare / PRECISION\nearned = accumulated - rewardDebt\npending += earned\nrewardDebt = accumulated\n```\n\nThis is an **on-chain implementation detail** that the off-chain document model should NOT replicate. The document model instead captures the business-level view: epoch config, total revenue, per-epoch allocation percentages, and claim events. The accumulator math runs on-chain; the document model stores inputs and outputs.\n\nKey insight for modeling: the document model needs \"Revenue Configuration\" (inputs) and \"Distribution Records\" (outputs) but NOT the accumulator state itself.\n\n---\n\nRelevant Notes:\n- [[powa-revenue-distribution model captures epoch-based token revenue sharing]]\n- [[powa document model bridges on-chain contracts with off-chain governance]]\n\nTopics:\n- [[schema design]]",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "PATTERN",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "knowledge-agent",
+    "createdAt": "2026-04-03T13:57:03.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-09-03T09:58:54.422Z",
+    "sourceOrigin": "IMPORT"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "accRevenuePerShare grows by amount*PRECISION/totalSupply and each account checkpoints rewardDebt - an on-chain detail the document model must not mirror, storing inputs and outputs only.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "e060d6ff-3b13-4a1e-9446-e923adc6f0cd",
+      "actor": "claude",
+      "comment": "Knowledge registered against powerhouse v6.2.2-dev.47",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-14T12:00:00.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "8039abf8-66c6-4485-a3e5-a970f9387747",
+      "actor": "liberuum",
+      "comment": "Canonical as of powerhouse v6.2.2-dev.47",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-14T12:00:00.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

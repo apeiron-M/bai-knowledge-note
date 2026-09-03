@@ -1,0 +1,149 @@
+{
+  "links": [
+    {
+      "id": "lnk-8ebc083d-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "8ebc083d-b75b-46c0-839d-ebe8fc95d3b9",
+      "targetTitle": "swarm-push-cycle-encrypt-bytes-feed"
+    },
+    {
+      "id": "lnk-86a23fb2-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "86a23fb2-4ba6-43be-b051-49aeb065158d",
+      "targetTitle": "swarm-pull-cycle-manifest-to-inbox"
+    },
+    {
+      "id": "lnk-2ab414f6-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "2ab414f6-938d-40f6-89b9-054bbcbaf4f2",
+      "targetTitle": "reactor-sync-ichannel-three-mailbox-model"
+    },
+    {
+      "id": "lnk-521e4779-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "521e4779-3e2e-430c-a933-82b6a774c21e",
+      "targetTitle": "operations-not-state-log"
+    },
+    {
+      "id": "lnk-52b6107e-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "52b6107e-f0fa-4669-af32-ab2531ec7b69",
+      "targetTitle": "document-manifest-structure"
+    },
+    {
+      "id": "lnk-75ddbb63-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "75ddbb63-c941-4493-bbad-e4e872324cff",
+      "targetTitle": "user-and-drive-manifests"
+    },
+    {
+      "id": "lnk-095bbf51-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "095bbf51-bd7c-4e5f-9c53-01978eb9ab8a",
+      "targetTitle": "recovery-flow-from-wallet"
+    },
+    {
+      "id": "lnk-5725fd76-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "5725fd76-b0d4-4bab-9c10-3c0a890951ca",
+      "targetTitle": "bee-reactor-adapter-package-structure"
+    },
+    {
+      "id": "lnk-1f8f4551-bui",
+      "linkType": "BUILDS_ON",
+      "targetDocumentId": "1f8f4551-682c-4245-94ef-5e5846862ee4",
+      "targetTitle": "ddup-swarm-channel-replaces-gql"
+    },
+    {
+      "id": "lnk-2ab414f6-bui",
+      "linkType": "BUILDS_ON",
+      "targetDocumentId": "2ab414f6-938d-40f6-89b9-054bbcbaf4f2",
+      "targetTitle": "reactor-sync-ichannel-three-mailbox-model"
+    },
+    {
+      "id": "lnk-7ef703d9-bui",
+      "linkType": "BUILDS_ON",
+      "targetDocumentId": "7ef703d9-44ff-4168-b0b5-90d9f1e602a0",
+      "targetTitle": "swarm-manifest-three-tier-hierarchy"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "SwarmChannel push batches ordinals into SyncOperations; pull walks user \u2192 drive \u2192 doc manifests to rebuild inboxes",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "687dcbc1-6f82-4ddb-8b6f-09d94f0ba29c",
+      "name": "swarm-channel",
+      "topicDocumentId": null
+    },
+    {
+      "id": "2093910a-5269-4baa-8687-3b2fed15cb6a",
+      "name": "push-pull-sync",
+      "topicDocumentId": null
+    },
+    {
+      "id": "a7c6d155-c282-4b51-9992-92221693ca8d",
+      "name": "reactor-sync",
+      "topicDocumentId": null
+    },
+    {
+      "id": "14a83d2b-5bf5-496a-9304-3fd47f1b8d92",
+      "name": "manifests",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "SwarmChannel implements two directional flows over the reactor's SyncManager.\n\n**Push (outbox)**: SyncManager detects new ordinals, groups ops into SyncOperations, and hands them to SwarmChannel. The channel serializes, encrypts, uploads to `/bytes`, writes the reference to the per-document feed, and updates drive/user manifests via `ManifestManager`.\n\n**Pull (inbox)**: SwarmChannel polls the user manifest at `ph:v2:user:<address>` to discover drives, reads each drive manifest to enumerate documents, reads document manifests to find operation batches, downloads batches from `/bytes` (auto-decrypted via SWE prefix detection), creates SyncOperations, and adds them to the inbox. SyncManager then applies via `reactor.load(docId, branch, ops)`.\n\nSupporting state is durable: `sync_cursors` in PGlite tracks ordinal progress and survives page reload, and failed operations land in `sync_dead_letters` for persisted, queryable retries. No custom persistence is needed.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "PATTERN",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "knowledge-agent",
+    "createdAt": "2026-04-21T14:21:14.078Z",
+    "sessionId": null,
+    "updatedAt": "2026-09-03T09:58:34.587Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Push encrypts and uploads to /bytes then updates manifests via ManifestManager; pull polls the user manifest, reads drive and doc manifests, downloads batches, and applies via reactor.load().",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "1aa51346-c46f-48d9-ae90-3a23143c440f",
+      "actor": "claude",
+      "comment": "Knowledge registered against powerhouse v6.2.2-dev.47",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-14T12:00:00.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "6f7ac01f-312d-4a5e-9f96-02c9494502fc",
+      "actor": "liberuum",
+      "comment": "Canonical as of powerhouse v6.2.2-dev.47",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-14T12:00:00.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

@@ -1,0 +1,91 @@
+{
+  "links": [
+    {
+      "id": "lnk-b7cb8afe-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "b7cb8afe-41fa-4676-be94-1e73435e1a04",
+      "targetTitle": "mcp-workflows"
+    },
+    {
+      "id": "lnk-ee772782-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "ee772782-5d3e-42c4-a848-f1d3f42cc149",
+      "targetTitle": "service-offering-model-defines-tiered-pricing-with-option-groups-and-service-gro"
+    },
+    {
+      "id": "lnk-3c5885d2-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "3c5885d2-6c0d-47ed-b947-fb8a1434011d",
+      "targetTitle": "most-state-schema-fields-should-be-optional-to-support-empty-documents"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "arrays in state schemas must use mandatory notation",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "67771ace-9e80-47ee-a021-cbaf7c4ce7ce",
+      "name": "service-offering",
+      "topicDocumentId": null
+    },
+    {
+      "id": "2abb461f-9574-4b62-af11-5f08755e7056",
+      "name": "schema-design",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "# arrays in state schemas must use mandatory notation\n\nIn GraphQL state schemas, arrays follow a strict convention:\n\n```graphql\ntype ServiceOfferingState {\n    tiers: [Tier!]!        # \u2705 Correct \u2014 both inner and outer are required\n    items: [Item]           # \u274c Wrong \u2014 must use [Item!]!\n}\n```\n\nObjects inside arrays must include an `OID!` field for unique identification:\n\n```graphql\ntype Tier {\n    id: OID!               # Required for array items\n    name: String\n    label: OLabel          # Optional but useful for metadata\n}\n```\n\nThe `OID!` field enables operations to target specific items within arrays (e.g., \"update the tier with this ID\"). Without it, there is no stable way to reference individual array elements across operations.\n\n---\n\nTopics:\n- [[schema design]]",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "PATTERN",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "knowledge-agent",
+    "createdAt": "2026-04-03T13:56:12.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-09-03T09:58:48.568Z",
+    "sourceOrigin": "IMPORT"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Arrays must be declared as [ObjectType!]! and objects within arrays must include an OID! field for unique identification",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "ebf7117d-9ed1-4ad6-b8f4-f29bfb93dc84",
+      "actor": "claude",
+      "comment": "Knowledge registered against powerhouse v6.2.2-dev.47",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-14T12:00:00.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "4bd8fb83-ea32-41dd-8501-03a1dbb4161b",
+      "actor": "liberuum",
+      "comment": "Canonical as of powerhouse v6.2.2-dev.47",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-14T12:00:00.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

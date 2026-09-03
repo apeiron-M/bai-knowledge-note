@@ -1,0 +1,116 @@
+{
+  "links": [
+    {
+      "id": "lnk-da8a8131-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "da8a8131-7b4e-4849-afd9-fcc21bf68ca4",
+      "targetTitle": "event-driven-architecture-decouples-components-for-parallel-processing"
+    },
+    {
+      "id": "lnk-bdb946ff-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "bdb946ff-d5d0-48f4-a4e4-475c257fcc05",
+      "targetTitle": "docsync-protocol-is-decentralized-storage-agnostic-and-supports-p2p"
+    },
+    {
+      "id": "lnk-498a0de3-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "498a0de3-6fda-4380-8957-378359a94a0b",
+      "targetTitle": "reactor-abort-signal-cancellation"
+    },
+    {
+      "id": "lnk-955cc0e6-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "955cc0e6-a2f8-41f9-963f-bde2b278ab9c",
+      "targetTitle": "consistency-tokens-read-after-write"
+    },
+    {
+      "id": "lnk-83b60ca6-bui",
+      "linkType": "BUILDS_ON",
+      "targetDocumentId": "83b60ca6-793d-4d0c-9b8c-7dc6cb1d3eff",
+      "targetTitle": "reactor-is-backend-service-for-drives"
+    },
+    {
+      "id": "lnk-17ce5f4e-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "17ce5f4e-f152-48e3-a160-9415abf572e1",
+      "targetTitle": "Academy \u203a Reference \u203a Reactor \u203a IReactorClient",
+      "reason": "Backing page found by content match in the v6.2.2-dev.74 source backfill \u2014 identifiers childadded, childremoved, listening from the claim appear in this page (text revised between v6.2.2-dev.47 and v6.2.2-dev.74 \u2014 re-verified in the v6.2.2-dev.74 pass); attribution, not the original extraction record",
+      "confidence": "grounded"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "IReactorClient.subscribe enables real-time document change listening with filter-based event matching returning unsubscribe functions",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "2d609080-9303-4e71-9783-4ba73bb156dc",
+      "name": "subscriptions",
+      "topicDocumentId": null
+    },
+    {
+      "id": "fe68fd76-89af-4afc-b84b-282d61b0a31b",
+      "name": "reactor-client",
+      "topicDocumentId": null
+    },
+    {
+      "id": "9803eb6d-b5ed-496f-a9b9-d08bd594d553",
+      "name": "real-time",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "The `IReactorClient.subscribe(search, callback, view?)` method enables real-time document change listening. It accepts a `SearchFilter` (type, parentId, ids, slugs), a callback receiving `DocumentChangeEvent`, and optional `ViewFilter`. DocumentChangeEvent includes `type`, a `documents` array, and optional `context` with parentId/childId. `subscribe` emits only five `DocumentChangeType` values \u2014 `Created`, `Deleted`, `Updated`, `ChildAdded`, and `ChildRemoved`. `ParentAdded` and `ParentRemoved` exist in the `DocumentChangeType` enum but are not currently emitted by `subscribe`. Returns an unsubscribe function. For the internal event bus (via ReactorModule), subscribe to `ReactorEventTypes.JOB_READ_READY` for completed jobs or `SyncEventTypes.SYNC_FAILED` for sync failures. In GraphQL, real-time updates use the `documentChanges` subscription.\n\n_Corrected 2026-08-13 against Powerhouse v6.2.2-dev.45._",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": "v6.2.2-dev.74",
+  "computes": null,
+  "filePath": "apps/academy/docs/academy/04-Reference/01-Reactor/02-ReactorClient.md",
+  "noteType": "REFERENCE",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "knowledge-agent",
+    "createdAt": "2026-04-02T12:00:00.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-09-02T22:26:25.227Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Subscribe with a SearchFilter (type/parentId/ids/slugs) and a callback; subscribe emits only Created, Deleted, Updated, ChildAdded, ChildRemoved. Returns an unsubscribe function.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "2d61ffa5-2ebc-4f71-ac5e-43e0e639f366",
+      "actor": "claude",
+      "comment": "Knowledge registered against powerhouse v6.2.2-dev.47",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-14T12:00:00.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "a4de4b29-97d3-4442-82c1-b15969bb40bb",
+      "actor": "liberuum",
+      "comment": "Canonical as of powerhouse v6.2.2-dev.47",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-14T12:00:00.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

@@ -1,0 +1,91 @@
+{
+  "links": [
+    {
+      "id": "lnk-197db7c0-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "197db7c0-f59c-4f45-8687-d2195d62c204",
+      "targetTitle": "builders-model-aggregates-builder-collections"
+    },
+    {
+      "id": "lnk-406e4194-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "406e4194-3482-493b-b59e-b57713329e89",
+      "targetTitle": "five-models-form-a-hierarchy-from-facet-through-template-to-offering-to-subscrip"
+    },
+    {
+      "id": "lnk-2428eee2-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "2428eee2-bf36-4e16-b4a4-799ce74a2d32",
+      "targetTitle": "scope-of-work-model-structures-deliverables-and-milestones"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "builder-profile model describes individual contributor identities",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "4ea04217-5535-4805-b2c3-29383be72bf5",
+      "name": "builder-profile",
+      "topicDocumentId": null
+    },
+    {
+      "id": "4d659089-daeb-4488-8742-2204fbb157f6",
+      "name": "organization-identity",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "# builder-profile model describes individual contributor identities\n\n`powerhouse/builder-profile` (12 ops) defines individual contributor identities in the Powerhouse ecosystem. This is the model that `ServiceOffering.operatorId` references via PHID \u2014 the operator who creates and manages a service offering.\n\n## Cross-Model References\n\n- ServiceOffering.`operatorId: PHID` \u2192 BuilderProfile (the offering's operator)\n- Referenced by [[builders model aggregates builder collections]] as individual entries\n- Part of the Organization & Identity zone alongside [[network-profile model represents network-level organizational entities]] and [[operational-hub-profile model defines operational hub configurations]]\n\nSince [[service-offering model defines tiered pricing with option groups and service groups]], the operatorId PHID creates a cross-zone dependency from Service & Pricing to Organization & Identity.\n\n---\n\nTopics:\n- [[ecosystem map]]\n- [[object relations]]",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "ARCHITECTURE",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "knowledge-agent",
+    "createdAt": "2026-04-03T13:41:04.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-09-03T09:58:36.639Z",
+    "sourceOrigin": "IMPORT"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "12 operations \u2014 manages builder (contributor) profiles including skills, contact info, and organizational affiliations; referenced by ServiceOffering.operatorId",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "dfd7532a-5f08-4c89-8444-81599d1168f8",
+      "actor": "claude",
+      "comment": "Knowledge registered against powerhouse v6.2.2-dev.47",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-14T12:00:00.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "1a85d7a0-d60d-4c55-b3b2-8cb6665c1dae",
+      "actor": "liberuum",
+      "comment": "Canonical as of powerhouse v6.2.2-dev.47",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-14T12:00:00.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

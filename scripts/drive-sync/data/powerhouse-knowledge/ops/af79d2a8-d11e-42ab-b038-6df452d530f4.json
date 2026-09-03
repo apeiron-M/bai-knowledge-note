@@ -1,0 +1,276 @@
+[
+  {
+    "index": 0,
+    "hash": "",
+    "timestampUtcMs": "2026-08-19T11:32:33.197Z",
+    "action": {
+      "type": "CREATE_DOCUMENT",
+      "input": {
+        "meta": {},
+        "name": "Replaying a d\u00e9lib\u00e9ration's approval chain after the workflow has been edited is the iparap",
+        "slug": "",
+        "model": "bai/knowledge-note",
+        "branch": "main",
+        "signing": {
+          "nonce": "",
+          "publicKey": {},
+          "signature": "af79d2a8-d11e-42ab-b038-6df452d530f4",
+          "documentType": "bai/knowledge-note",
+          "createdAtUtcIso": "2026-08-19T11:32:33.197Z"
+        },
+        "version": 0,
+        "documentId": "af79d2a8-d11e-42ab-b038-6df452d530f4",
+        "protocolVersions": {
+          "base-reducer": 2
+        }
+      },
+      "timestampUtcMs": "2026-08-19T11:32:33.197Z"
+    }
+  },
+  {
+    "index": 0,
+    "hash": "/cjnkCBzpyZY8LXA+QVF9QCOXvM=",
+    "timestampUtcMs": "2026-08-19T11:32:33.330Z",
+    "action": {
+      "type": "SET_TITLE",
+      "input": {
+        "title": "Replaying a d\u00e9lib\u00e9ration's approval chain after the workflow has been edited is the iparapheur demo",
+        "updatedAt": "2026-08-19T11:32:33.330651Z"
+      },
+      "timestampUtcMs": "2026-08-19T11:32:33.330689Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "",
+    "timestampUtcMs": "2026-08-19T11:32:33.197Z",
+    "action": {
+      "type": "UPGRADE_DOCUMENT",
+      "input": {
+        "model": "bai/knowledge-note",
+        "toVersion": 1,
+        "documentId": "af79d2a8-d11e-42ab-b038-6df452d530f4",
+        "fromVersion": 0,
+        "initialState": {
+          "auth": {
+            "grants": [],
+            "version": 0
+          },
+          "local": {
+            "lastViewedAt": null,
+            "personalTags": []
+          },
+          "global": {
+            "links": [],
+            "model": null,
+            "scope": null,
+            "title": null,
+            "editor": null,
+            "inputs": [],
+            "models": [],
+            "status": "DRAFT",
+            "topics": [],
+            "content": null,
+            "context": null,
+            "modelId": null,
+            "modules": [],
+            "outputs": [],
+            "version": null,
+            "computes": null,
+            "filePath": null,
+            "noteType": null,
+            "severity": null,
+            "hooksUsed": [],
+            "rootCause": null,
+            "confidence": null,
+            "consumedBy": [],
+            "provenance": null,
+            "sourceType": null,
+            "targetType": null,
+            "cardinality": null,
+            "description": null,
+            "alternatives": [],
+            "consequences": [],
+            "errorMessage": null,
+            "relationType": null,
+            "correctPattern": null,
+            "decisionStatus": null,
+            "dispatchTargets": [],
+            "lifecycleEvents": []
+          },
+          "document": {
+            "hash": {
+              "encoding": "base64",
+              "algorithm": "sha1"
+            },
+            "version": 1
+          }
+        }
+      },
+      "timestampUtcMs": "2026-08-19T11:32:33.197Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "r3Gz4d6xO29py+xnVQNOuYFtV2Y=",
+    "timestampUtcMs": "2026-08-19T11:32:33.330Z",
+    "action": {
+      "type": "SET_DESCRIPTION",
+      "input": {
+        "updatedAt": "2026-08-19T11:32:33.330693Z",
+        "description": "A hook dispatches a typed operation per signature step, so the approval chain remains replayable even after the workflow definition that produced it is changed."
+      },
+      "timestampUtcMs": "2026-08-19T11:32:33.330699Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "",
+    "timestampUtcMs": "2026-08-19T11:32:36.559Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "af79d2a8-d11e-42ab-b038-6df452d530f4",
+        "targetId": "7eeaaa19-4e9e-472e-8203-0ebf920e73f6",
+        "relationshipType": "DERIVED_FROM"
+      },
+      "timestampUtcMs": "2026-08-19T11:32:36.559Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "EmCE/2jZVqOtPgAO3V6tmuJnlmE=",
+    "timestampUtcMs": "2026-08-19T11:32:33.330Z",
+    "action": {
+      "type": "SET_NOTE_TYPE",
+      "input": {
+        "noteType": "INTEGRATION",
+        "updatedAt": "2026-08-19T11:32:33.330701Z"
+      },
+      "timestampUtcMs": "2026-08-19T11:32:33.330705Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "rnrCPlosQaDDpf83XUVz68gmqbE=",
+    "timestampUtcMs": "2026-08-19T11:32:33.330Z",
+    "action": {
+      "type": "SET_CONTENT",
+      "input": {
+        "content": "The integration is an iparapheur approval hook dispatching a typed operation per signature step. Per-step rather than per-document matters for a signature workflow: the sequence of who signed in what order is the artefact, not just the final signed state.\n\nThe destructive step is different from the one used elsewhere. Other demos in this corpus delete an instance, purge executions or prune history; this one edits the workflow definition and then replays a d\u00e9lib\u00e9ration's full approval chain. That is a subtler failure mode and a more common one \u2014 workflows are revised as rules change, and once the definition has moved on, a system that stores only the current process cannot reconstruct what the old one required.\n\nThe single lead is Libriciel SCOP in France, recorded as a 90-person SCOP publishing twelve open-source products, marked \"2 \u00b7 next\". A cooperative publishing at that scale is the kind of partner for whom a co-maintained integration is plausible, and the French local-government context supplies the d\u00e9lib\u00e9ration use case directly.\n\n---\n\n## Leads sharing this finding (1)\n\n**2 \u00b7 next**\n- Libriciel SCOP (FR) \u2014 Matthieu Piaumier, Pr\u00e9sident Directeur G\u00e9n\u00e9ral \u00b7 contact@libriciel.coop \u00b7 https://libriciel.fr\n\nVerbatim research text this claim was extracted from:\n\n> iparapheur approval hook dispatching a typed operation per signature step. Replay a d\u00e9lib\u00e9ration's full approval chain after the workflow has been edited. 90-person SCOP, publishes 12 OSS products.",
+        "updatedAt": "2026-08-19T11:32:33.330707Z"
+      },
+      "timestampUtcMs": "2026-08-19T11:32:33.330712Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "z7PJmd27MunRIbV44nCEB9UouEc=",
+    "timestampUtcMs": "2026-08-19T11:32:33.330Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "7d20c089-11b7-4477-8360-2340f09a878e",
+        "name": "leads"
+      },
+      "timestampUtcMs": "2026-08-19T11:32:33.330720Z"
+    }
+  },
+  {
+    "index": 5,
+    "hash": "Oc30bwud944NOuL56TyWZzz/G/c=",
+    "timestampUtcMs": "2026-08-19T11:32:33.330Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "d20de1a7-eaaf-4203-91ce-378d6e50746e",
+        "name": "iparapheur"
+      },
+      "timestampUtcMs": "2026-08-19T11:32:33.330727Z"
+    }
+  },
+  {
+    "index": 6,
+    "hash": "j3AbnTia7m9RO5W8CC/30is5hrw=",
+    "timestampUtcMs": "2026-08-19T11:32:33.330Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "fb21d96a-dae3-4578-a45e-1ae39984a513",
+        "name": "public-sector"
+      },
+      "timestampUtcMs": "2026-08-19T11:32:33.330735Z"
+    }
+  },
+  {
+    "index": 7,
+    "hash": "s8wbysPjTdcdBG1uu5PEcpJEqFk=",
+    "timestampUtcMs": "2026-08-19T11:32:33.330Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "403816f6-c58c-4d93-91d3-10f95328e39b",
+        "name": "demo-design"
+      },
+      "timestampUtcMs": "2026-08-19T11:32:33.330742Z"
+    }
+  },
+  {
+    "index": 8,
+    "hash": "yKeDKIZNGomXyAi6XN1elPkSO3U=",
+    "timestampUtcMs": "2026-08-19T11:32:33.330Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "40a4f49a-7f7f-426a-900c-a84a0c9f4cf6",
+        "name": "replay"
+      },
+      "timestampUtcMs": "2026-08-19T11:32:33.330749Z"
+    }
+  },
+  {
+    "index": 9,
+    "hash": "OkWxobfmJGiujuDzP8oBAS6H6Zo=",
+    "timestampUtcMs": "2026-08-19T11:32:34.578Z",
+    "action": {
+      "type": "SET_PROVENANCE",
+      "input": {
+        "author": "knowledge-agent",
+        "createdAt": "2026-08-19T11:32:34.578924Z",
+        "sessionId": null,
+        "sourceOrigin": "DERIVED"
+      },
+      "timestampUtcMs": "2026-08-19T11:32:34.578958Z"
+    }
+  },
+  {
+    "index": 10,
+    "hash": "wCq4AADJoQin5RUDYQ89/ClP+10=",
+    "timestampUtcMs": "2026-08-19T11:32:36.859Z",
+    "action": {
+      "type": "SUBMIT_FOR_REVIEW",
+      "input": {
+        "id": "181502df-9180-485e-b18f-1cbbc9bc6e8b",
+        "actor": "knowledge-agent",
+        "comment": "Extracted from lead research; claim checked against the source record.",
+        "timestamp": "2026-08-19T11:32:36.859929Z"
+      },
+      "timestampUtcMs": "2026-08-19T11:32:36.859946Z"
+    }
+  },
+  {
+    "index": 11,
+    "hash": "yo6rNovXgYv3ncUT0Klwxq1LVig=",
+    "timestampUtcMs": "2026-08-19T11:32:37.012Z",
+    "action": {
+      "type": "APPROVE_NOTE",
+      "input": {
+        "id": "f981c947-2184-48b7-9048-b9ae12c2bec1",
+        "actor": "liberuum",
+        "comment": "Approved: lead corpus extraction.",
+        "timestamp": "2026-08-19T11:32:37.011967Z"
+      },
+      "timestampUtcMs": "2026-08-19T11:32:37.012000Z"
+    }
+  }
+]

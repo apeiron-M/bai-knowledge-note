@@ -1,0 +1,307 @@
+[
+  {
+    "index": 0,
+    "hash": "",
+    "timestampUtcMs": "2026-08-14T12:03:26.136Z",
+    "action": {
+      "type": "CREATE_DOCUMENT",
+      "input": {
+        "meta": {},
+        "name": "global-and-local-scopes-are-fully-independent-streams",
+        "slug": "",
+        "model": "bai/knowledge-note",
+        "branch": "main",
+        "signing": {
+          "nonce": "",
+          "publicKey": {},
+          "signature": "3485a9d2-df0b-4265-8e7d-5b277a937bf0",
+          "documentType": "bai/knowledge-note",
+          "createdAtUtcIso": "2026-08-14T12:03:26.136Z"
+        },
+        "version": 0,
+        "documentId": "3485a9d2-df0b-4265-8e7d-5b277a937bf0",
+        "protocolVersions": {
+          "base-reducer": 2
+        }
+      },
+      "timestampUtcMs": "2026-08-14T12:03:26.136Z"
+    }
+  },
+  {
+    "index": 0,
+    "hash": "ndMMNoP/rOpRTxiiw630Sko2XOU=",
+    "timestampUtcMs": "2026-08-14T12:35:18.000Z",
+    "action": {
+      "type": "SET_TITLE",
+      "input": {
+        "title": "Global and local scopes are fully independent streams with their own operation logs and indices",
+        "updatedAt": "2026-08-14T12:35:18.000Z"
+      },
+      "timestampUtcMs": "2026-08-14T12:35:18.000Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "",
+    "timestampUtcMs": "2026-08-14T12:03:26.136Z",
+    "action": {
+      "type": "UPGRADE_DOCUMENT",
+      "input": {
+        "model": "bai/knowledge-note",
+        "toVersion": 1,
+        "documentId": "3485a9d2-df0b-4265-8e7d-5b277a937bf0",
+        "fromVersion": 0,
+        "initialState": {
+          "auth": {
+            "grants": [],
+            "version": 0
+          },
+          "local": {
+            "lastViewedAt": null,
+            "personalTags": []
+          },
+          "global": {
+            "links": [],
+            "model": null,
+            "scope": null,
+            "title": null,
+            "editor": null,
+            "inputs": [],
+            "models": [],
+            "status": "DRAFT",
+            "topics": [],
+            "content": null,
+            "context": null,
+            "modelId": null,
+            "modules": [],
+            "outputs": [],
+            "version": null,
+            "computes": null,
+            "filePath": null,
+            "noteType": null,
+            "severity": null,
+            "hooksUsed": [],
+            "rootCause": null,
+            "confidence": null,
+            "consumedBy": [],
+            "provenance": null,
+            "sourceType": null,
+            "targetType": null,
+            "cardinality": null,
+            "description": null,
+            "alternatives": [],
+            "consequences": [],
+            "errorMessage": null,
+            "relationType": null,
+            "correctPattern": null,
+            "decisionStatus": null,
+            "dispatchTargets": [],
+            "lifecycleEvents": []
+          },
+          "document": {
+            "hash": {
+              "encoding": "base64",
+              "algorithm": "sha1"
+            },
+            "version": 1
+          }
+        }
+      },
+      "timestampUtcMs": "2026-08-14T12:03:26.136Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "2eI8Yf1OLQHuG7g6hHDbneL9dCU=",
+    "timestampUtcMs": "2026-08-14T12:35:18.000Z",
+    "action": {
+      "type": "SET_DESCRIPTION",
+      "input": {
+        "updatedAt": "2026-08-14T12:35:18.000Z",
+        "description": "operations.global[5] has no relation to operations.local[5]. The two logs advance separately; sync replicates global only and leaves local completely alone."
+      },
+      "timestampUtcMs": "2026-08-14T12:35:18.000Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "",
+    "timestampUtcMs": "2026-08-14T12:37:35.278Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "3485a9d2-df0b-4265-8e7d-5b277a937bf0",
+        "targetId": "b595843f-e2f9-4172-a43a-eb471fc727a1",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-08-14T12:37:35.278Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "ZYO2V8vFsPSUMPfcyC5fmp3kZCw=",
+    "timestampUtcMs": "2026-08-14T12:35:18.000Z",
+    "action": {
+      "type": "SET_NOTE_TYPE",
+      "input": {
+        "noteType": "ARCHITECTURE",
+        "updatedAt": "2026-08-14T12:35:18.000Z"
+      },
+      "timestampUtcMs": "2026-08-14T12:35:18.000Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "",
+    "timestampUtcMs": "2026-08-14T12:37:35.382Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "3485a9d2-df0b-4265-8e7d-5b277a937bf0",
+        "targetId": "a4fdb6ec-9c95-4930-a45e-e21ca6571528",
+        "relationshipType": "BUILDS_ON"
+      },
+      "timestampUtcMs": "2026-08-14T12:37:35.382Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "uSOgbVp+C8639vvc0p7oz8cULMA=",
+    "timestampUtcMs": "2026-08-14T12:35:18.000Z",
+    "action": {
+      "type": "SET_CONTENT",
+      "input": {
+        "content": "The global/local split is not a partition of one log \u2014 it is two logs. Each scope has its own state shape, its own operation sequence, and its own indices:\n\n```ts\ndoc.state.global;      // shared with everyone\ndoc.state.local;       // yours alone\n\ndoc.operations.global; // replicated log\ndoc.operations.local;  // local-only log\n```\n\nThe operation at index 5 in `global` has **nothing to do** with index 5 in `local`. The two counters advance independently, so you cannot interleave them, compare them, or use one as a proxy for document age. There is no global ordering across the pair, and none is needed: the Reactor's sync engine replicates `global` across peers and leaves `local` completely alone.\n\nThe practical consequences:\n\n- **Indexing is per scope.** When asserting on an operation in a test, the index counts dispatches *into that scope*, not total dispatches against the document. A document with 3 local operations and 1 global operation has the global one at `operations.global[0]`.\n- **A local dispatch is a dead end by design.** Updating your \"show completed\" filter appends to the local log, runs the local reducer, and stops. Teammates never see it \u2014 no sync traffic, no operation for peers to replay.\n- **Revisions track separately.** Per-scope revision tracking follows from per-scope logs; there is no single document revision number spanning both.\n\nThis is also why moving a field between scopes is a schema change rather than a config toggle: you are moving it between two different histories.\n\n_Source: apps/academy/docs/academy/02-Learn/03-document-models/02-state-and-scopes.mdx (Powerhouse v6.2.2-dev.45)._",
+        "updatedAt": "2026-08-14T12:35:18.000Z"
+      },
+      "timestampUtcMs": "2026-08-14T12:35:18.000Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "hj7CuweYwjkQ12u6DwIyad7mB9E=",
+    "timestampUtcMs": "2026-08-14T12:35:18.000Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "version",
+        "value": "v6.2.2-dev.44",
+        "updatedAt": "2026-08-14T12:35:18.000Z"
+      },
+      "timestampUtcMs": "2026-08-14T12:35:18.000Z"
+    }
+  },
+  {
+    "index": 5,
+    "hash": "oa0fzsUnC4BvtuucS5UgLg2/ydw=",
+    "timestampUtcMs": "2026-08-14T12:35:18.000Z",
+    "action": {
+      "type": "SET_PROVENANCE",
+      "input": {
+        "author": "claude",
+        "createdAt": "2026-08-13T14:35:43.000Z",
+        "sourceOrigin": "DERIVED"
+      },
+      "timestampUtcMs": "2026-08-14T12:35:18.000Z"
+    }
+  },
+  {
+    "index": 6,
+    "hash": "5seDprMnx1xBiThhfO4DRYwSk2A=",
+    "timestampUtcMs": "2026-08-14T12:35:18.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "d99985d3-25ac-47b3-a331-947f35e079ff",
+        "name": "state-management",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-08-14T12:35:18.000Z"
+    }
+  },
+  {
+    "index": 7,
+    "hash": "Q6cgM2DhKe3uyxaK5xEnVokj1nM=",
+    "timestampUtcMs": "2026-08-14T12:35:18.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "c6211a2a-22c2-4ab2-9db1-02a7b417193c",
+        "name": "synchronization",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-08-14T12:35:18.000Z"
+    }
+  },
+  {
+    "index": 8,
+    "hash": "9jV7DPjETQZP2A2LYFGGfRiHhbY=",
+    "timestampUtcMs": "2026-08-14T12:35:18.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "1b7988a8-8027-47b3-9687-ea88a5639b2c",
+        "name": "event-sourcing",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-08-14T12:35:18.000Z"
+    }
+  },
+  {
+    "index": 9,
+    "hash": "Was6MkwkKL7ZYBZqnxlHXgtQNWA=",
+    "timestampUtcMs": "2026-08-14T14:36:57.000Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "version",
+        "value": "v6.2.2-dev.47",
+        "updatedAt": "2026-08-14T12:00:00.000Z"
+      },
+      "timestampUtcMs": "2026-08-14T14:36:57.000Z"
+    }
+  },
+  {
+    "index": 10,
+    "hash": "Mt2y8H3RAV9OgPPRhxrQdM/9Ce4=",
+    "timestampUtcMs": "2026-08-14T14:36:57.000Z",
+    "action": {
+      "type": "SUBMIT_FOR_REVIEW",
+      "input": {
+        "id": "09438591-5dc7-4884-94dd-460a13eebb6b",
+        "actor": "claude",
+        "comment": "Knowledge registered against powerhouse v6.2.2-dev.47",
+        "timestamp": "2026-08-14T12:00:00.000Z"
+      },
+      "timestampUtcMs": "2026-08-14T14:36:57.000Z"
+    }
+  },
+  {
+    "index": 11,
+    "hash": "HZYztCam7n2hpX5Tnu7V2XEhoyc=",
+    "timestampUtcMs": "2026-08-14T14:36:57.000Z",
+    "action": {
+      "type": "APPROVE_NOTE",
+      "input": {
+        "id": "f8288f83-cea9-4bb6-9384-8185e42a9c01",
+        "actor": "liberuum",
+        "comment": "Canonical as of powerhouse v6.2.2-dev.47",
+        "timestamp": "2026-08-14T12:00:00.000Z"
+      },
+      "timestampUtcMs": "2026-08-14T14:36:57.000Z"
+    }
+  },
+  {
+    "index": 12,
+    "hash": "jLKnEnxQ7SVVbcXOjerljtfEjN0=",
+    "timestampUtcMs": "2026-09-03T09:59:18.007Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "version",
+        "updatedAt": "2026-09-03T09:59:18.007Z"
+      },
+      "timestampUtcMs": "2026-09-03T09:59:18.007Z"
+    }
+  }
+]

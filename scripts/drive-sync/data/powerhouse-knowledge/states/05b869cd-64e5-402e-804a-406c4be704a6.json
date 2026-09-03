@@ -1,0 +1,110 @@
+{
+  "links": [
+    {
+      "id": "lnk-68acb174-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "68acb174-1d24-4535-a05e-48cbbb6bba19",
+      "targetTitle": "Revision History panel styling requires scoped CSS on document-editor-context since no props are exposed"
+    },
+    {
+      "id": "lnk-64d17fca-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "64d17fca-c9b3-48ae-a012-a5276e64cc82",
+      "targetTitle": "swarm-mantaray-manifests"
+    },
+    {
+      "id": "lnk-bd78f2bf-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "bd78f2bf-44c5-408c-8ac7-85174b6d743b",
+      "targetTitle": "swarm-feeds-mutable-pointers"
+    },
+    {
+      "id": "lnk-158143d5-bui",
+      "linkType": "BUILDS_ON",
+      "targetDocumentId": "158143d5-1e39-44b5-9799-1a84e6de9e72",
+      "targetTitle": "DocumentToolbar exposes className enabledControls and callback props"
+    },
+    {
+      "id": "lnk-e5827507-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "e5827507-dc3b-4466-9efb-166b32ced72f",
+      "targetTitle": "Package \u203a design-system \u203a connect/components/document-toolbar \u2014 DocumentToolbar",
+      "reason": "Backing page found by content match in the v6.2.2-dev.74 source backfill \u2014 identifiers classname, componentoverrides, onclick from the claim appear in this page (text identical at v6.2.2-dev.47 and v6.2.2-dev.74); attribution, not the original extraction record",
+      "confidence": "grounded"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Toolbar buttons accept ToolbarButtonProps and can be replaced via componentOverrides",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "277b9b18-0bc0-4640-b503-51129bbfd378",
+      "name": "document-toolbar",
+      "topicDocumentId": null
+    },
+    {
+      "id": "9117ef5c-5fcc-48f7-aea6-1b71087626c8",
+      "name": "tailwind-css",
+      "topicDocumentId": null
+    },
+    {
+      "id": "83aab829-363d-4d22-89db-61e9c3ef1e23",
+      "name": "editor-styling",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "The buttons inside `DocumentToolbar` accept `ToolbarButtonProps`:\n\n```ts\n{\n  document?: PHDocument;\n  children?: ReactNode;\n  className?: string;\n  onClick?: (document?: PHDocument) => void;\n}\n```\n\n`className` is merged into the button's defaults via `twMerge`, `children` replaces the default button contents, and `onClick` replaces the default behavior. Their default styling is:\n\n- **Undo/Redo/Download/Switchboard/History/Close**: the shared `ToolbarButton` base \u2014 `grid size-fit place-items-center rounded-lg border border-border bg-background p-1 text-foreground` plus hover/active/disabled effects\n- **Download button**: same base, with a `<span className=\"px-1 text-xs\">Download</span>` label instead of an icon\n- **Document name**: `<h1>` with `text-sm font-medium text-muted-foreground` (`ToolbarName` takes `titleClassName` / `inputClassName`)\n\nEvery button is exported individually (`ToolbarButton`, `ToolbarUndoButton`, `ToolbarRedoButton`, `ToolbarDownloadButton`, `ToolbarSwitchboardButton`, `ToolbarHistoryButton`, `ToolbarCloseButton`, `ToolbarName`), so the way to customize one is to wrap it and pass it back through `componentOverrides`:\n\n```tsx\n<DocumentToolbar\n  document={document}\n  componentOverrides={{\n    download: (props) => (\n      <ToolbarDownloadButton\n        {...props}\n        className=\"!bg-[#1e1e2e] !border-white/10\"\n      >\n        <span>Export</span>\n      </ToolbarDownloadButton>\n    ),\n  }}\n/>\n```\n\nOr render the buttons yourself inside `children` for complete control over the toolbar contents.\n\nTailwind arbitrary child selectors (`[&_button]`, `[&_button_svg]`, `[&_h1]`, ...) passed through `toolbarClassName` still work as a blanket theming shortcut, but they are no longer required \u2014 they were a workaround for buttons that did not expose style props, and the buttons now do.\n\n_Corrected 2026-08-13 against Powerhouse v6.2.2-dev.45._",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": "v6.2.2-dev.74",
+  "computes": null,
+  "filePath": "packages/design-system/src/connect/components/document-toolbar/README.md",
+  "noteType": "PATTERN",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "knowledge-agent",
+    "createdAt": "2026-03-30T14:00:00.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-09-02T21:44:03.252Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "className merges through twMerge, children swap contents, onClick replaces behaviour, and every control ships as its own export - so [&_button] selectors are a shortcut, not a workaround.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "6a8281eb-6af0-486e-bcbd-d35b031cbe3d",
+      "actor": "claude",
+      "comment": "Knowledge registered against powerhouse v6.2.2-dev.47",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-14T12:00:00.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "5e686b47-99f8-4447-b09a-899da768ad37",
+      "actor": "liberuum",
+      "comment": "Canonical as of powerhouse v6.2.2-dev.47",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-14T12:00:00.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

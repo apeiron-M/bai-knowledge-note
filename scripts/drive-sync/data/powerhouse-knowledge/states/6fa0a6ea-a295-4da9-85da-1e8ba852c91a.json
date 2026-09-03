@@ -1,0 +1,115 @@
+{
+  "links": [
+    {
+      "id": "lnk-51157ecc-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "51157ecc-b57e-49a9-ad60-9ba3d84ea08e",
+      "targetTitle": "document-permissions-support-groups-and-ops"
+    },
+    {
+      "id": "lnk-d907616b-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "d907616b-cc88-4ea5-8d91-dc6d8e5bace6",
+      "targetTitle": "cli-identity-did-key-ethereum-delegation"
+    },
+    {
+      "id": "lnk-a4fdb6ec-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "a4fdb6ec-9c95-4930-a45e-e21ca6571528",
+      "targetTitle": "document-state-has-global-and-local-scopes"
+    },
+    {
+      "id": "lnk-5646522f-bui",
+      "linkType": "BUILDS_ON",
+      "targetDocumentId": "5646522f-bc2d-4257-bfa7-a455e5855197",
+      "targetTitle": "renown-creates-did-from-ethereum-wallet"
+    },
+    {
+      "id": "lnk-6f6081e9-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "6f6081e9-471b-4d75-90a3-1ff3eba8969c",
+      "targetTitle": "Academy \u203a Build \u203a BuildingUserExperiences \u203a Authorization \u203a Reactor API Authorization",
+      "reason": "Backing page found by content match in the v6.2.2-dev.74 source backfill \u2014 identifiers bypass, bypasses, inherit from the claim appear in this page (text revised between v6.2.2-dev.47 and v6.2.2-dev.74 \u2014 re-verified in the v6.2.2-dev.74 pass); attribution, not the original extraction record",
+      "confidence": "grounded"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Reactor authorization uses a layered model: supreme admin bypass, document protection toggle, and per-document READ/WRITE/ADMIN grants with inheritance",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "00cf8d2a-208d-43f6-b67b-7f6326dbce12",
+      "name": "authorization",
+      "topicDocumentId": null
+    },
+    {
+      "id": "0054acfe-9179-45d0-b532-f6e03580f988",
+      "name": "permissions",
+      "topicDocumentId": null
+    },
+    {
+      "id": "dadc3663-5bd2-466d-af78-0165d00cdb98",
+      "name": "security",
+      "topicDocumentId": null
+    },
+    {
+      "id": "4198819a-832a-48af-ac42-e9e83ecb9225",
+      "name": "reactor",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "Authorization flow: (1) If AUTH_ENABLED=false, all access granted; (2) Validate bearer token, extract ETH address; (3) If address in ADMINS, full access; (4) If document unprotected, anyone reads, authenticated users write; (5) If protected, check explicit grants. Grants support direct user grants and inherited grants (drive -> folder -> document). Permission levels: READ (view), WRITE (edit, includes READ), ADMIN (manage permissions, includes WRITE). Configured via env vars (AUTH_ENABLED, ADMINS, DEFAULT_PROTECTION, DOCUMENT_PERMISSIONS_ENABLED) or `powerhouse.config.json`. Env vars override config file values.\n\n## Auth subgraph query surface\n\nThe authorization state is readable over GraphQL from `packages/reactor-api/src/graphql/auth/schema.graphql`:\n\n- `documentAccess(documentId: String!): DocumentAccessInfo!` (line 57)\n- `userDocumentPermissions: [DocumentPermissionEntry!]!` (line 63)\n- `canExecuteOperation(documentId: String!, operationType: String!): Boolean!` (line 73)\n\n## Group grants were retired, not renamed\n\n`packages/reactor-api/src/migrations/003_remove_group_tables.ts` drops the `Group`, `UserGroup`,\n`DocumentGroupPermission` and `OperationGroupPermission` tables. Its own header states the feature\n\"had no consumers and disclosed ACL/membership metadata (AUTH_REVIEW S-H3/S-H5); it is retired in\nfavor of direct user grants, ownership, and protection.\" Grepping `group` across\n`packages/reactor-api/src/graphql/auth/` returns zero hits. The surviving tables are three:\n`DocumentPermission`, `OperationUserPermission` (migration 001) and `DocumentProtection` (002).\n\n_Source-verified 2026-08-13 against Powerhouse source at v6.2.2-dev.45._",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": "v6.2.2-dev.74",
+  "computes": null,
+  "filePath": "apps/academy/docs/academy/03-Build/03-BuildingUserExperiences/07-Authorization/04-Authorization.md",
+  "noteType": "ARCHITECTURE",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "knowledge-agent",
+    "createdAt": "2026-04-02T12:00:00.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-09-02T22:26:22.498Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "ADMINS env var bypasses all checks; documents can be protected or unprotected; grants inherit down the tree.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "d8cf639a-55da-43ff-a398-02c4c34bce6f",
+      "actor": "claude",
+      "comment": "Knowledge registered against powerhouse v6.2.2-dev.47",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-14T12:00:00.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "d6385f60-e105-40db-8bd5-30cd8017b54d",
+      "actor": "liberuum",
+      "comment": "Canonical as of powerhouse v6.2.2-dev.47",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-14T12:00:00.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

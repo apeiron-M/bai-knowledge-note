@@ -1,0 +1,115 @@
+{
+  "links": [
+    {
+      "id": "lnk-c69178f9-bui",
+      "linkType": "BUILDS_ON",
+      "targetDocumentId": "c69178f9-07b7-4407-94e6-90ed96d3003e",
+      "targetTitle": "registry-keyed-by-type-and-version",
+      "reason": "Names where the keyed registry can actually be reached from each host",
+      "confidence": "grounded"
+    },
+    {
+      "id": "lnk-4c7fdd1a-bui",
+      "linkType": "BUILDS_ON",
+      "targetDocumentId": "4c7fdd1a-3c11-4b55-8a48-52554da800c1",
+      "targetTitle": "usereactorclient-and-sibling-browser-hooks",
+      "reason": "useModelRegistry is one of the browser entry-point hooks that note lists, and this adds its undefined-until-set contract",
+      "confidence": "grounded"
+    },
+    {
+      "id": "lnk-e5905516-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "e5905516-830e-4fac-9464-298c12e958fb",
+      "targetTitle": "vetra-package-module-types",
+      "reason": "Connect reads installed packages through useVetraPackages while model modules come through the registry, so the two enumerations are separate surfaces",
+      "confidence": "grounded"
+    },
+    {
+      "id": "lnk-14416670-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "14416670-d2d3-4de5-9dfd-7c6e175280c2",
+      "targetTitle": "Academy \u203a Reference \u203a Reactor \u203a Document model registry and version upgrades",
+      "reason": "Extracted from apps/academy/docs/academy/04-Reference/01-Reactor/06-DocumentModelRegistry.md at v6.2.2-dev.74 \u2014 Accessing the registry",
+      "confidence": "grounded"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "The registry is reachable as documentModelRegistry on the reactor module or useModelRegistry in the browser, but IReactor does not expose it",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "c31159fd-f1ca-4e99-9667-5b412a794dff",
+      "name": "document-model",
+      "topicDocumentId": null
+    },
+    {
+      "id": "cbac336b-fe5f-4979-a83e-7666b9486612",
+      "name": "registry",
+      "topicDocumentId": null
+    },
+    {
+      "id": "68d6e447-7865-4031-b4b3-5c7600c52307",
+      "name": "react-hooks",
+      "topicDocumentId": null
+    },
+    {
+      "id": "b2a795e1-4896-40f5-8761-e4d12def2a1c",
+      "name": "reactor",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "Three access paths, and knowing which one exists where saves a wrong turn:\n\n- **On the reactor module** \u2014 `documentModelRegistry: IDocumentModelRegistry`, present on **both in-process and worker-backed** reactors. This is the server-side path.\n- **In the browser** \u2014 `useModelRegistry()` from `@powerhousedao/reactor-browser`, typed `IDocumentModelRegistry | undefined`. It returns **`undefined` until the reactor client module is set on the PH global**, so the result must be guarded before any method call.\n- **Through `IReactor`** \u2014 not available. The core interface does **not** expose the registry directly; to list model data through the reactor use `reactor.getDocumentModels(namespace?, paging?, signal?)`, which reads `getAllModules()` internally and filters by document-type prefix.\n\nThe asymmetry is worth internalising: registry *methods* (upgrade paths, single-step reducers, module lookup) need the registry object, while a *listing* of installed models is available from the reactor itself with paging and a namespace filter. Reaching for the registry to enumerate models on the server is the long way round.\n\n## Provenance\n- `apps/academy/docs/academy/04-Reference/01-Reactor/06-DocumentModelRegistry.md` \u2014 Accessing the registry\n\n_Extracted from the Powerhouse repository at **v6.2.2-dev.74**._",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": "v6.2.2-dev.74",
+  "computes": null,
+  "filePath": "apps/academy/docs/academy/04-Reference/01-Reactor/06-DocumentModelRegistry.md",
+  "noteType": "REFERENCE",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "knowledge-agent",
+    "createdAt": "2026-09-03T07:48:36.408Z",
+    "sessionId": null,
+    "updatedAt": "2026-09-03T07:48:37.509Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "The module field is present on both in-process and worker-backed reactors; the hook returns undefined until the client module is set on the PH global. To list models through the reactor use.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "5754a1ea-2ed6-45a3-a003-d21accd8a85c",
+      "actor": "knowledge-agent",
+      "comment": "extracted from apps/academy/docs/academy/04-Reference/01-Reactor/06-DocumentModelRegistry.md at v6.2.2-dev.74",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-09-03T07:48:37.011Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "85ea25c9-930e-4183-a1cb-4c999a1598ff",
+      "actor": "liberuum",
+      "comment": "claim checked against the cited file at the pinned tag",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-09-03T07:48:37.509Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

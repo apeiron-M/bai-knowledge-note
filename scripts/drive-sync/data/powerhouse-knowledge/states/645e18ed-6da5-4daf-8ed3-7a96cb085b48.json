@@ -1,0 +1,98 @@
+{
+  "links": [
+    {
+      "id": "lnk-11da9c61-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "11da9c61-a825-4c70-a57c-f80b10f569c7",
+      "targetTitle": "analytics-engine-interval-time-series"
+    },
+    {
+      "id": "lnk-649207b4-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "649207b4-bb53-45aa-aa4a-6570116b7f8e",
+      "targetTitle": "ecosystem-map"
+    },
+    {
+      "id": "lnk-c1eb4930-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "c1eb4930-caaa-48cf-9c9e-15d597f6e1a1",
+      "targetTitle": "Academy \u203a Build \u203a WorkWithData \u203a Analytics Engine \u203a Getting started",
+      "reason": "Backing page found by content match in the v6.2.2-dev.74 source backfill \u2014 identifiers delimited, mip40c3sp61, specificity from the claim appear in this page (text identical at v6.2.2-dev.47 and v6.2.2-dev.74); attribution, not the original extraction record",
+      "confidence": "grounded"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Analytics dimension paths use slash-delimited hierarchies with LOD parameter controlling aggregation specificity across dimensions",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "76698cbc-10d9-42ba-9319-4cd140274730",
+      "name": "analytics-engine",
+      "topicDocumentId": null
+    },
+    {
+      "id": "29694a4b-65ad-48e0-b08c-aaca2772f2d0",
+      "name": "dimensions",
+      "topicDocumentId": null
+    },
+    {
+      "id": "030fc229-5416-4d12-81df-c1b4c6526bc2",
+      "name": "querying",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "In the Analytics Engine, `AnalyticsDimension` objects have a `path` field using `/`-delimited hierarchical strings (like URIs). Querying with path `/atlas/mip40` matches all dimensions starting with that prefix. The LOD (level of detail) parameter controls result aggregation: LOD 0 groups all results into a single value; LOD 1 groups by the first path segment; LOD 2 by the first two segments, etc. LOD greater than the number of path parts appends `/*` wildcards but returns the same results as the highest meaningful level. Best practice: start with general queries (high LOD, broad path) and narrow down to specific paths and lower LODs for particular metrics. There will be thousands/millions of series objects but far fewer dimension objects.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": "v6.2.2-dev.74",
+  "computes": null,
+  "filePath": "apps/academy/docs/academy/03-Build/04-WorkWithData/_06-Analytics Engine/intro.md",
+  "noteType": "CONCEPT",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "knowledge-agent",
+    "createdAt": "2026-04-02T12:00:00.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-09-02T21:36:04.714Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Paths like /atlas/mip40/MIP40c3SP61 determine query scope; LOD 0 groups all results, increasing LOD increases aggregation specificity.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "bf2879f1-c55a-4eed-b70c-386531762f80",
+      "actor": "claude",
+      "comment": "Knowledge registered against powerhouse v6.2.2-dev.47",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-14T12:00:00.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "aee37a98-3739-4764-bd83-f770ee4a0164",
+      "actor": "liberuum",
+      "comment": "Canonical as of powerhouse v6.2.2-dev.47",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-14T12:00:00.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

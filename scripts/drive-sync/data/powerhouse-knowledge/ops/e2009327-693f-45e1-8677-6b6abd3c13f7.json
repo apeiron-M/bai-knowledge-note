@@ -1,0 +1,266 @@
+[
+  {
+    "index": 0,
+    "hash": "",
+    "timestampUtcMs": "2026-08-16T12:02:07.225Z",
+    "action": {
+      "type": "CREATE_DOCUMENT",
+      "input": {
+        "meta": {},
+        "name": "skill-import",
+        "slug": "",
+        "model": "bai/source",
+        "branch": "main",
+        "signing": {
+          "nonce": "",
+          "publicKey": {},
+          "signature": "e2009327-693f-45e1-8677-6b6abd3c13f7",
+          "documentType": "bai/source",
+          "createdAtUtcIso": "2026-08-16T12:02:07.225Z"
+        },
+        "version": 0,
+        "documentId": "e2009327-693f-45e1-8677-6b6abd3c13f7",
+        "protocolVersions": {
+          "base-reducer": 2
+        }
+      },
+      "timestampUtcMs": "2026-08-16T12:02:07.225Z"
+    }
+  },
+  {
+    "index": 0,
+    "hash": "t4eoBsX3BOVAA0ja7qTlUz9Mv2A=",
+    "timestampUtcMs": "2026-08-16T12:02:07.504Z",
+    "action": {
+      "type": "INGEST_SOURCE",
+      "input": {
+        "url": "https://github.com/liberuum/powerhouse-knowledge/blob/main/skills/import/SKILL.md",
+        "tool": "sync-skills",
+        "title": "Agent skill: import",
+        "author": "powerhouse-knowledge plugin",
+        "method": "sha256:f12764e8039eaf8db6c77186f06b94ec8ec82263a3024812d888517aaf9db4c2",
+        "content": "---\nname: import\ndescription: Bulk import knowledge from external sources \u2014 markdown files, Obsidian vaults, Ars Contexta local vaults, or JSON data. Creates documents in correct folders with links preserved. Use when migrating an existing knowledge base to the vault.\n---\n\n# Bulk Import\n\nImport knowledge from external sources into the Knowledge Vault.\n\n## Supported Sources\n\n- **Markdown files** (with YAML frontmatter)\n- **Obsidian vaults** (wiki links -> typed document links)\n- **Ars Contexta local vaults** (full structure preservation)\n- **JSON data** (array of note objects)\n\n## Import Process\n\n### Step 1: Read the drive and find folder IDs\n```bash\nswitchboard docs tree <drive-slug> --format json\n# Build a folder map: \"knowledge/notes\" -> folder-id, \"sources\" -> folder-id, etc.\n```\n\n### Step 2: First pass \u2014 create all documents (no links)\n\nFor each note/source in the import data:\n```bash\nswitchboard docs create --type bai/knowledge-note --name \"<note-title>\" --drive <drive-slug> --parent-folder <notes-folder-uuid> --format json\n```\n\nThen set content:\n```bash\nswitchboard docs apply <new-doc-id> --actions '[\n  { \"type\": \"SET_TITLE\", \"input\": { \"title\": \"...\", \"updatedAt\": \"...\" }, \"scope\": \"global\" },\n  { \"type\": \"SET_DESCRIPTION\", \"input\": { \"description\": \"...\", \"updatedAt\": \"...\" }, \"scope\": \"global\" },\n  { \"type\": \"SET_CONTENT\", \"input\": { \"content\": \"...\", \"updatedAt\": \"...\" }, \"scope\": \"global\" },\n  { \"type\": \"SET_NOTE_TYPE\", \"input\": { \"noteType\": \"...\", \"updatedAt\": \"...\" }, \"scope\": \"global\" }\n]'\n```\n\nThen set provenance in a **separate batch** (validation failures won't kill content):\n```bash\nswitchboard docs mutate <new-doc-id> --op setProvenance --input '{\"author\": \"...\", \"sourceOrigin\": \"IMPORT\", \"createdAt\": \"...\"}'\n```\n\n**Valid sourceOrigin values:** `DERIVED`, `IMPORT`, `MANUAL`, `SESSION_MINE`. For bulk imports, use `IMPORT`.\n\n**Save a title -> document-id mapping** for link resolution in step 3.\n\n### Step 3: Verify drive nodes (repair missing)\n\nAfter creating all documents, verify every document has a file node in the drive:\n```bash\nswitchboard docs tree <drive-slug> --format json\n# Compare file node IDs against created document IDs\n# For any missing: dispatch ADD_FILE on the drive\n```\n\n```bash\nswitchboard docs mutate <drive-id> --op addFile --input '{\n  \"id\": \"<missing-doc-id>\",\n  \"name\": \"<title>\",\n  \"documentType\": \"bai/knowledge-note\",\n  \"parentFolder\": \"<folder-id>\"\n}'\n```\n\n### Step 4: Second pass \u2014 resolve and create relationships\n\nFor each note that has references (wiki links, related notes):\n1. Look up the target document ID from the title mapping\n2. Create the relationship via `addRelationship` (writes to the reactor's `DocumentRelationship` table \u2014 the indexed source of truth since the drive-override migration):\n```bash\nswitchboard query 'mutation {\n  addRelationship(\n    sourceIdentifier: \"<source-note-id>\",\n    targetIdentifier: \"<resolved-target-id>\",\n    relationshipType: \"RELATES_TO\",\n    branch: \"main\"\n  ) { documentType }\n}'\n```\n\nThe mutation is idempotent on `(source, target, type)`, so re-running an import is safe.\n\n### Step 5: Create MOCs from folder structure or tags (optional)\n\nIf the source has categories/folders/tags with 2+ notes, create MOC documents:\n```bash\nswitchboard docs create --type bai/moc --name \"<topic-name>\" --drive <drive-slug> --parent-folder <knowledge-folder-uuid> --format json\n```\n\nThen add core ideas linking to the notes in that category.\n\n### Step 6: Verify and report\n\n- Count: notes created, links resolved, links unresolved\n- Verify all documents in drive tree (no ghost nodes)\n- Report orphan notes that need manual connection\n\n## Automated Import Scripts\n\nFor large imports (50+ notes), prefer the dedicated scripts which include built-in pacing and verification:\n\n```bash\n# Import research claims (Ars Contexta methodology) via CLI\npython3 scripts/import-methodology.py <drive-slug>\n\n# Import knowledge notes from a vault directory\nnode scripts/import-vault.mjs \\\n  --drive-id <UUID> \\\n  --vault-path /path/to/vault/notes/ \\\n  [--create-mocs] [--dry-run] [--limit N]\n\n# Import research claims via MCP script\nnode scripts/import-research-claims.mjs \\\n  --drive-id <UUID> \\\n  --vault-path /path/to/methodology/ \\\n  [--dry-run] [--limit N]\n```\n\nThese scripts use the Switchboard CLI for bulk creation and include automatic drive node verification + repair.\n\n## Wiki Link Resolution\n\nConvert `[[wiki link]]` to relationship rows:\n\n```\nFor each [[target title]] in note content:\n  1. Find document with matching title in the title-to-id map\n  2. If found: call addRelationship(source, target, RELATES_TO)\n  3. If not found: log as unresolved (may be an external reference)\n```\n\n## Markdown Frontmatter Mapping\n\n```yaml\n---\ntitle: \"Note Title\"           -> SET_TITLE\ndescription: \"Summary\"        -> SET_DESCRIPTION\ntype: pattern                  -> SET_NOTE_TYPE\ntopics: [\"topic-a\", \"topic-b\"] -> ADD_TOPIC (x2)\nconfidence: established        -> SET_METADATA_FIELD\n---\nContent body                   -> SET_CONTENT\n```\n\nIf \"$ARGUMENTS\" is provided, treat it as the path to import from.\n",
+        "createdAt": "2026-08-16T12:02:07.504Z",
+        "createdBy": "skill-sync",
+        "sourceType": "DOCUMENTATION",
+        "description": "Bulk import knowledge from external sources \u2014 markdown files, Obsidian vaults, Ars Contexta local vaults, or JSON data. Creates documents in correct folders with links preserved. Use when migrating an"
+      },
+      "timestampUtcMs": "2026-08-16T12:02:07.504Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "",
+    "timestampUtcMs": "2026-08-16T12:02:07.225Z",
+    "action": {
+      "type": "UPGRADE_DOCUMENT",
+      "input": {
+        "model": "bai/source",
+        "toVersion": 1,
+        "documentId": "e2009327-693f-45e1-8677-6b6abd3c13f7",
+        "fromVersion": 0,
+        "initialState": {
+          "auth": {
+            "grants": [],
+            "version": 0
+          },
+          "local": {},
+          "global": {
+            "title": null,
+            "status": "INBOX",
+            "content": null,
+            "createdAt": null,
+            "createdBy": null,
+            "provenance": null,
+            "sourceType": null,
+            "description": null,
+            "extractedClaims": [],
+            "extractionStats": null
+          },
+          "document": {
+            "hash": {
+              "encoding": "base64",
+              "algorithm": "sha1"
+            },
+            "version": 1
+          }
+        }
+      },
+      "timestampUtcMs": "2026-08-16T12:02:07.225Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "80EOI9BX8eN70hzH3qFIVqPTe8g=",
+    "timestampUtcMs": "2026-08-16T12:02:10.352Z",
+    "action": {
+      "type": "ADD_EXTRACTED_CLAIM",
+      "input": {
+        "claimRef": "ff22d724-4cca-40b7-8791-1e84f47bbb8e"
+      },
+      "timestampUtcMs": "2026-08-16T12:02:10.352Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "4SJ4grJdMnRy4EEoH2fExmwJYmI=",
+    "timestampUtcMs": "2026-08-16T12:02:10.490Z",
+    "action": {
+      "type": "RECORD_EXTRACTION_STATS",
+      "input": {
+        "skipRate": 0,
+        "claimCount": 1,
+        "extractedAt": "2026-08-16T12:02:10.490Z",
+        "extractedBy": "skill-sync",
+        "skippedCount": 0
+      },
+      "timestampUtcMs": "2026-08-16T12:02:10.490Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "WSOPpezCZExNzEs1YiUxjYZHKsA=",
+    "timestampUtcMs": "2026-08-16T12:02:10.627Z",
+    "action": {
+      "type": "SET_SOURCE_STATUS",
+      "input": {
+        "status": "EXTRACTED"
+      },
+      "timestampUtcMs": "2026-08-16T12:02:10.627Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "nw8Cu61K1ZTdAL26ciM4f3YA/ws=",
+    "timestampUtcMs": "2026-08-17T10:55:58.215Z",
+    "action": {
+      "type": "INGEST_SOURCE",
+      "input": {
+        "url": "https://github.com/liberuum/powerhouse-knowledge/blob/main/skills/import/SKILL.md",
+        "tool": "sync-skills",
+        "title": "Agent skill: import",
+        "author": "powerhouse-knowledge plugin",
+        "method": "sha256:62466b335684e227e42bdcbc5440d38e770028d03b94664820477123b93d3e02",
+        "content": "---\nname: import\ndescription: Bulk import knowledge from external sources \u2014 markdown files, Obsidian vaults, Ars Contexta local vaults, or JSON data. Creates documents in correct folders with links preserved. Use when migrating an existing knowledge base to the vault.\n---\n\n# Bulk Import\n\nImport knowledge from external sources into the Knowledge Vault.\n\n## Supported Sources\n\n- **Markdown files** (with YAML frontmatter)\n- **Obsidian vaults** (wiki links -> typed document links)\n- **Ars Contexta local vaults** (full structure preservation)\n- **JSON data** (array of note objects)\n\n## Import Process\n\n### Step 1: Read the drive and find folder IDs\n```bash\nswitchboard docs tree <drive-slug> --format json\n# Build a folder map: \"knowledge/notes\" -> folder-id, \"sources\" -> folder-id, etc.\n```\n\n### Step 2: First pass \u2014 create all documents (no links)\n\nFor each note/source in the import data:\n```bash\nswitchboard docs create --type bai/knowledge-note --name \"<note-title>\" --drive <drive-slug> --parent-folder <notes-folder-uuid> --format json\n```\n\nThen set content:\n```bash\nswitchboard docs apply <new-doc-id> --actions '[\n  { \"type\": \"SET_TITLE\", \"input\": { \"title\": \"...\", \"updatedAt\": \"...\" }, \"scope\": \"global\" },\n  { \"type\": \"SET_DESCRIPTION\", \"input\": { \"description\": \"...\", \"updatedAt\": \"...\" }, \"scope\": \"global\" },\n  { \"type\": \"SET_CONTENT\", \"input\": { \"content\": \"...\", \"updatedAt\": \"...\" }, \"scope\": \"global\" },\n  { \"type\": \"SET_NOTE_TYPE\", \"input\": { \"noteType\": \"...\", \"updatedAt\": \"...\" }, \"scope\": \"global\" }\n]'\n```\n\nThen set provenance in a **separate batch** (validation failures won't kill content):\n```bash\nswitchboard docs mutate <new-doc-id> --op setProvenance --input '{\"author\": \"...\", \"sourceOrigin\": \"IMPORT\", \"createdAt\": \"...\"}'\n```\n\n**Valid sourceOrigin values:** `DERIVED`, `IMPORT`, `MANUAL`, `SESSION_MINE`. For bulk imports, use `IMPORT`.\n\n**Save a title -> document-id mapping** for link resolution in step 3.\n\n### Step 3: Verify drive nodes (repair missing)\n\nAfter creating all documents, verify every document has a file node in the drive:\n```bash\nswitchboard docs tree <drive-slug> --format json\n# Compare file node IDs against created document IDs\n```\n\nFor any missing: re-create the containment by re-running the namespaced create, or use\n`switchboard docs mutate <drive-id> --op addFile` ONLY as a last resort (CLI stamps the envelope;\nnote containment edges since the drive-override migration live in DocumentRelationship \u2014 verify\nwith `docs tree` afterward). CLI-stamped ADD_FILE is sync-safe; the caveat is containment\ncompleteness, not action safety.\n\n```bash\nswitchboard docs mutate <drive-id> --op addFile --input '{\n  \"id\": \"<missing-doc-id>\",\n  \"name\": \"<title>\",\n  \"documentType\": \"bai/knowledge-note\",\n  \"parentFolder\": \"<folder-id>\"\n}'\n```\n\n### Step 4: Second pass \u2014 resolve and create relationships\n\nFor each note that has references (wiki links, related notes):\n1. Look up the target document ID from the title mapping\n2. Create the relationship via `addRelationship` (writes to the reactor's `DocumentRelationship` table \u2014 the indexed source of truth since the drive-override migration):\n```bash\nswitchboard query 'mutation {\n  addRelationship(\n    sourceIdentifier: \"<source-note-id>\",\n    targetIdentifier: \"<resolved-target-id>\",\n    relationshipType: \"RELATES_TO\",\n    branch: \"main\"\n  ) { documentType }\n}'\n```\n\nThe mutation is idempotent on `(source, target, type)`, so re-running an import is safe.\n\n### Step 5: Create MOCs from folder structure or tags (optional)\n\nIf the source has categories/folders/tags with 2+ notes, create MOC documents:\n```bash\nswitchboard docs create --type bai/moc --name \"<topic-name>\" --drive <drive-slug> --parent-folder <knowledge-folder-uuid> --format json\n```\n\nThen add core ideas linking to the notes in that category.\n\n### Step 6: Verify and report\n\n- Count: notes created, links resolved, links unresolved\n- Verify all documents in drive tree (no ghost nodes)\n- Report orphan notes that need manual connection\n\n## Automated Import Scripts\n\nNo bundled import script exists \u2014 for large imports (50+ notes), loop the CLI steps above (Steps 1-4) yourself in a shell/Python driver with pacing and verification.\n\n## Wiki Link Resolution\n\nConvert `[[wiki link]]` to relationship rows:\n\n```\nFor each [[target title]] in note content:\n  1. Find document with matching title in the title-to-id map\n  2. If found: call addRelationship(source, target, RELATES_TO)\n  3. If not found: log as unresolved (may be an external reference)\n```\n\n## Markdown Frontmatter Mapping\n\n```yaml\n---\ntitle: \"Note Title\"           -> SET_TITLE\ndescription: \"Summary\"        -> SET_DESCRIPTION\ntype: pattern                  -> SET_NOTE_TYPE\ntopics: [\"topic-a\", \"topic-b\"] -> ADD_TOPIC (x2)\nconfidence: established        -> SET_METADATA_FIELD\n---\nContent body                   -> SET_CONTENT\n```\n\nIf \"$ARGUMENTS\" is provided, treat it as the path to import from.\n",
+        "createdAt": "2026-08-17T10:55:58.215Z",
+        "createdBy": "skill-sync",
+        "sourceType": "DOCUMENTATION",
+        "description": "Bulk import knowledge from external sources \u2014 markdown files, Obsidian vaults, Ars Contexta local vaults, or JSON data. Creates documents in correct folders with links preserved. Use when migrating an"
+      },
+      "timestampUtcMs": "2026-08-17T10:55:58.215Z"
+    }
+  },
+  {
+    "index": 5,
+    "hash": "CAqtYiwpMKNRo76X9Cy8JKcKY1o=",
+    "timestampUtcMs": "2026-08-17T10:55:59.404Z",
+    "action": {
+      "type": "ADD_EXTRACTED_CLAIM",
+      "input": {
+        "claimRef": "ff22d724-4cca-40b7-8791-1e84f47bbb8e"
+      },
+      "timestampUtcMs": "2026-08-17T10:55:59.404Z"
+    }
+  },
+  {
+    "index": 6,
+    "hash": "f5/sKld6QTrsVhEa4XNnjJ/sLMQ=",
+    "timestampUtcMs": "2026-08-17T10:55:59.532Z",
+    "action": {
+      "type": "RECORD_EXTRACTION_STATS",
+      "input": {
+        "skipRate": 0,
+        "claimCount": 1,
+        "extractedAt": "2026-08-17T10:55:59.532Z",
+        "extractedBy": "skill-sync",
+        "skippedCount": 0
+      },
+      "timestampUtcMs": "2026-08-17T10:55:59.532Z"
+    }
+  },
+  {
+    "index": 7,
+    "hash": "oU/FZ6ZOZsi6Gauo5toMTmxmzhE=",
+    "timestampUtcMs": "2026-08-17T10:55:59.667Z",
+    "action": {
+      "type": "SET_SOURCE_STATUS",
+      "input": {
+        "status": "EXTRACTED"
+      },
+      "timestampUtcMs": "2026-08-17T10:55:59.667Z"
+    }
+  },
+  {
+    "index": 8,
+    "hash": "FUkJH0QqLGVPkpZ8FALBPXo2Y1U=",
+    "timestampUtcMs": "2026-09-02T19:21:46.068Z",
+    "action": {
+      "type": "INGEST_SOURCE",
+      "input": {
+        "url": "https://github.com/liberuum/powerhouse-knowledge/blob/main/skills/import/SKILL.md",
+        "tool": "sync-skills",
+        "title": "Agent skill: import",
+        "author": "powerhouse-knowledge plugin",
+        "method": "sha256:ec2f602807a27c12de5b313b967bfcf25793b1b81b4a5925ca95e9cbe38f9d49",
+        "content": "---\nname: import\ndescription: Bulk import knowledge from external sources \u2014 markdown files, Obsidian vaults, Ars Contexta local vaults, or JSON data. Creates documents in correct folders with links preserved. Use when migrating an existing knowledge base to the vault.\n---\n\n# Bulk Import\n\n> **Target first.** Every command below runs against the Switchboard the\n> active CLI profile points at, and `<UUID>` / `<drive-slug>` mean *that*\n> server's vault drive. If the pre-flight hook printed `Profile: \u2026 -> \u2026` and\n> `VAULT_DRIVE_ID` / `VAULT_DRIVE_SLUG`, use those. Otherwise run\n> `switchboard config show` and the drive detection in AGENT.md \u00a7 *Find the\n> vault drive*. If it is still ambiguous which vault the user means, **ask for\n> the Switchboard URL and the drive** \u2014 never assume an endpoint.\n\nImport knowledge from external sources into the Knowledge Vault.\n\n## Supported Sources\n\n- **Markdown files** (with YAML frontmatter)\n- **Obsidian vaults** (wiki links -> typed document links)\n- **Ars Contexta local vaults** (full structure preservation)\n- **JSON data** (array of note objects)\n\n## Import Process\n\n### Step 1: Read the drive and find folder IDs\n```bash\nswitchboard docs tree <drive-slug> --format json\n# Build a folder map: \"knowledge/notes\" -> folder-id, \"sources\" -> folder-id, etc.\n```\n\n### Step 2: First pass \u2014 create all documents (no links)\n\nFor each note/source in the import data:\n```bash\nswitchboard docs create --type bai/knowledge-note --name \"<note-title>\" --drive <drive-slug> --parent-folder <notes-folder-uuid> --format json\n```\n\nThen set content:\n```bash\nswitchboard docs apply <new-doc-id> --actions '[\n  { \"type\": \"SET_TITLE\", \"input\": { \"title\": \"...\", \"updatedAt\": \"...\" }, \"scope\": \"global\" },\n  { \"type\": \"SET_DESCRIPTION\", \"input\": { \"description\": \"...\", \"updatedAt\": \"...\" }, \"scope\": \"global\" },\n  { \"type\": \"SET_CONTENT\", \"input\": { \"content\": \"...\", \"updatedAt\": \"...\" }, \"scope\": \"global\" },\n  { \"type\": \"SET_NOTE_TYPE\", \"input\": { \"noteType\": \"...\", \"updatedAt\": \"...\" }, \"scope\": \"global\" }\n]'\n```\n\nThen set provenance in a **separate batch** (validation failures won't kill content):\n```bash\nswitchboard docs mutate <new-doc-id> --op setProvenance --input '{\"author\": \"...\", \"sourceOrigin\": \"IMPORT\", \"createdAt\": \"...\"}'\n```\n\n**Valid sourceOrigin values:** `DERIVED`, `IMPORT`, `MANUAL`, `SESSION_MINE`. For bulk imports, use `IMPORT`.\n\n**Save a title -> document-id mapping** for link resolution in step 3.\n\n### Step 3: Verify drive nodes (repair missing)\n\nAfter creating all documents, verify every document has a file node in the drive:\n```bash\nswitchboard docs tree <drive-slug> --format json\n# Compare file node IDs against created document IDs\n```\n\nFor any missing: re-create the containment by re-running the namespaced create, or use\n`switchboard docs mutate <drive-id> --op addFile` ONLY as a last resort (CLI stamps the envelope;\nnote containment edges since the drive-override migration live in DocumentRelationship \u2014 verify\nwith `docs tree` afterward). CLI-stamped ADD_FILE is sync-safe; the caveat is containment\ncompleteness, not action safety.\n\n```bash\nswitchboard docs mutate <drive-id> --op addFile --input '{\n  \"id\": \"<missing-doc-id>\",\n  \"name\": \"<title>\",\n  \"documentType\": \"bai/knowledge-note\",\n  \"parentFolder\": \"<folder-id>\"\n}'\n```\n\n### Step 4: Second pass \u2014 resolve and create relationships\n\nFor each note that has references (wiki links, related notes):\n1. Look up the target document ID from the title mapping\n2. Create the relationship with `docs link` (writes to the reactor's `DocumentRelationship` table \u2014 the indexed source of truth since the drive-override migration \u2014 signed as you). When the import data carries a reason (a sentence around the wiki link, a `related:` note, frontmatter), put it on the edge:\n```bash\nswitchboard docs link <source-note-id> <resolved-target-id> -t RELATES_TO \\\n  --reason \"<the sentence in the source note that made the link>\" --confidence established\n```\n\n**When the import has no reasons** \u2014 a bare `[[wiki link]]` says only that two\nnotes touch \u2014 do not invent one. Run the import with the hook's escape hatch\nand be honest about the result:\n\n```bash\nPOWERHOUSE_KNOWLEDGE_ALLOW_BARE_LINKS=1 switchboard docs link <source-note-id> <resolved-target-id> -t RELATES_TO\n```\n\nThe edges land with `reason: null`; `/health` reports them under LINK_HEALTH\nas unarticulated coverage, and `/connect` works through them with\n`docs annotate` (or unlinks the ones nobody can explain). Report the count of\nbare edges in the import summary so the backlog is visible from day one.\n\nEdges are idempotent on `(source, target, type)`, so re-running an import is safe (a repeat never changes an existing reason \u2014 use `docs annotate` for that).\n\n### Step 5: Create MOCs from folder structure or tags (optional)\n\nIf the source has categories/folders/tags with 3+ notes, create MOC documents (the same threshold `synthesize` and `health` use):\n```bash\nswitchboard docs create --type bai/moc --name \"<topic-name>\" --drive <drive-slug> --parent-folder <knowledge-folder-uuid> --format json\n```\n\nThen attach the notes with `switchboard docs link <moc-uuid> <note-uuid> -t CORE_IDEA` \u2014 one call per note; there is no per-document core-idea operation any more\n\n### Step 6: Verify and report\n\n- Count: notes created, links resolved (articulated vs bare), links unresolved\n- Verify all documents in drive tree (no ghost nodes)\n- Report orphan notes that need manual connection\n\n## Automated Import Scripts\n\nNo bundled import script exists \u2014 for large imports (50+ notes), loop the CLI steps above (Steps 1-4) yourself in a shell/Python driver with pacing and verification.\n\n## Wiki Link Resolution\n\nConvert `[[wiki link]]` to relationship rows:\n\n```\nFor each [[target title]] in note content:\n  1. Find document with matching title in the title-to-id map\n  2. If found: call `switchboard docs link source target -t RELATES_TO --reason \"<sentence around the link>\"` (or bare, under POWERHOUSE_KNOWLEDGE_ALLOW_BARE_LINKS=1, when the source gives no reason)\n  3. If not found: log as unresolved (may be an external reference)\n```\n\n## Markdown Frontmatter Mapping\n\n```yaml\n---\ntitle: \"Note Title\"           -> SET_TITLE\ndescription: \"Summary\"        -> SET_DESCRIPTION\ntype: pattern                  -> SET_NOTE_TYPE\ntopics: [\"topic-a\", \"topic-b\"] -> ADD_TOPIC (x2; each needs its own `id` plus `name`)\nconfidence: established        -> SET_METADATA_FIELD (`field`, `value`, and required `updatedAt`)\nmodels: [...] / inputs: [...]  -> SET_METADATA_LIST_FIELD (`field`, `values[]`, `updatedAt`) \u2014 the scalar op cannot write lists\n---\nContent body                   -> SET_CONTENT\n```\n\nIf \"$ARGUMENTS\" is provided, treat it as the path to import from.\n",
+        "createdAt": "2026-09-02T19:21:46.068Z",
+        "createdBy": "skill-sync",
+        "sourceType": "DOCUMENTATION",
+        "description": "Bulk import knowledge from external sources \u2014 markdown files, Obsidian vaults, Ars Contexta local vaults, or JSON data. Creates documents in correct folders with links preserved. Use when migrating an"
+      },
+      "timestampUtcMs": "2026-09-02T19:21:46.068Z"
+    }
+  },
+  {
+    "index": 9,
+    "hash": "KXzBMUfTPJa0ZWxwxBm/uo1+T38=",
+    "timestampUtcMs": "2026-09-02T19:21:48.280Z",
+    "action": {
+      "type": "RECORD_EXTRACTION_STATS",
+      "input": {
+        "skipRate": 0,
+        "claimCount": 1,
+        "extractedAt": "2026-09-02T19:21:48.280Z",
+        "extractedBy": "skill-sync",
+        "skippedCount": 0
+      },
+      "timestampUtcMs": "2026-09-02T19:21:48.280Z"
+    }
+  },
+  {
+    "index": 10,
+    "hash": "d+ilketK7JP1BzDZQehMhvm5WGE=",
+    "timestampUtcMs": "2026-09-02T19:21:48.743Z",
+    "action": {
+      "type": "SET_SOURCE_STATUS",
+      "input": {
+        "status": "EXTRACTED"
+      },
+      "timestampUtcMs": "2026-09-02T19:21:48.743Z"
+    }
+  },
+  {
+    "index": 11,
+    "hash": "gJkmocZ5E4KKcTtKZbbJTyd5Scg=",
+    "timestampUtcMs": "2026-09-03T13:57:31.704Z",
+    "action": {
+      "type": "REMOVE_EXTRACTED_CLAIM",
+      "input": {
+        "claimRef": "ff22d724-4cca-40b7-8791-1e84f47bbb8e"
+      },
+      "timestampUtcMs": "2026-09-03T13:57:31.704Z"
+    }
+  },
+  {
+    "index": 12,
+    "hash": "0Uxam8Z2SJvfMtC7cLMePExozg0=",
+    "timestampUtcMs": "2026-09-03T13:57:32.314Z",
+    "action": {
+      "type": "ADD_EXTRACTED_CLAIM",
+      "input": {
+        "claimRef": "ff22d724-4cca-40b7-8791-1e84f47bbb8e"
+      },
+      "timestampUtcMs": "2026-09-03T13:57:32.314Z"
+    }
+  }
+]

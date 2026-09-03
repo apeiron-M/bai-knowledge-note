@@ -1,0 +1,102 @@
+{
+  "links": [
+    {
+      "id": "lnk-1e814394-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "1e814394-b2a5-4416-baa5-67b29973a7fc",
+      "targetTitle": "error-classes-in-reducers-are-auto-imported-by-name-reference"
+    },
+    {
+      "id": "lnk-9d9aef7a-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "9d9aef7a-1b68-4f2b-a2ad-c54a48e55d20",
+      "targetTitle": "never-import-error-classes-manually-in-reducer-code"
+    },
+    {
+      "id": "lnk-33ce2d34-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "33ce2d34-4809-4d42-b3d5-5409b726a5df",
+      "targetTitle": "operations-use-verb-noun-naming"
+    },
+    {
+      "id": "lnk-a482a12f-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "a482a12f-0a31-4018-8be2-bed2e27d7e1f",
+      "targetTitle": "operation-design-uses-descriptive-names-and-includes-examples-and-errors"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "error names must end with Error and use PascalCase",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "6d7f943f-2909-4e44-aede-e19c685a7ea7",
+      "name": "reducer patterns",
+      "topicDocumentId": null
+    },
+    {
+      "id": "784a13e2-6d21-40fd-a55d-665178639338",
+      "name": "error handling",
+      "topicDocumentId": null
+    },
+    {
+      "id": "1c34adec-887a-42fc-8e51-30769af7219f",
+      "name": "naming conventions",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "# error names must end with Error and use PascalCase\n\nWhen defining operation errors via `ADD_OPERATION_ERROR`:\n\n- **`code`**: UPPERCASE_SNAKE_CASE (e.g., `\"MISSING_ID\"`, `\"ENTRY_NOT_FOUND\"`)\n- **`name`**: PascalCase ending with \"Error\" (e.g., `\"MissingIdError\"`, `\"EntryNotFoundError\"`)\n- **`description`**: Human-readable description of the error condition\n\n```json\n{\n  \"code\": \"ENTRY_NOT_FOUND\",\n  \"name\": \"EntryNotFoundError\",\n  \"description\": \"The referenced entry does not exist in the collection\"\n}\n```\n\nThe \"Error\" suffix is required \u2014 the code generator uses it to identify error classes. Error names and IDs must be unique across all operations in the document model.\n\nSince [[error classes in reducers are auto-imported by name reference]], the PascalCase name is what you use in reducer code to throw errors.\n\n---\n\nTopics:\n- [[reducer patterns]]",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": "v6.2.2-dev.74",
+  "computes": null,
+  "filePath": null,
+  "noteType": "PATTERN",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "knowledge-agent",
+    "createdAt": "2026-04-03T13:58:42.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-09-03T09:56:54.279Z",
+    "sourceOrigin": "IMPORT"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Error definitions require code in UPPERCASE_SNAKE_CASE, name in PascalCase ending with Error, and a human-readable description",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "9765804c-f6e8-4988-be5a-ce158bc118c2",
+      "actor": "claude",
+      "comment": "Knowledge registered against powerhouse v6.2.2-dev.47",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-14T12:00:00.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "8e1fd95e-efa5-4d0e-a4b0-3387495e5a86",
+      "actor": "liberuum",
+      "comment": "Canonical as of powerhouse v6.2.2-dev.47",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-14T12:00:00.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

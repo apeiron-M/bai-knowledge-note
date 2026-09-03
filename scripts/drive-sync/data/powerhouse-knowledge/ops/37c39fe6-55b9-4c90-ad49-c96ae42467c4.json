@@ -1,0 +1,622 @@
+[
+  {
+    "index": 0,
+    "hash": "",
+    "timestampUtcMs": "2026-09-02T22:10:35.622Z",
+    "action": {
+      "type": "CREATE_DOCUMENT",
+      "input": {
+        "meta": {},
+        "name": "auth-group-served-to-audience",
+        "slug": "",
+        "model": "bai/knowledge-note",
+        "branch": "main",
+        "signing": {
+          "nonce": "",
+          "publicKey": {},
+          "signature": "37c39fe6-55b9-4c90-ad49-c96ae42467c4",
+          "documentType": "bai/knowledge-note",
+          "createdAtUtcIso": "2026-09-02T22:10:35.622Z"
+        },
+        "version": 0,
+        "documentId": "37c39fe6-55b9-4c90-ad49-c96ae42467c4",
+        "protocolVersions": {
+          "base-reducer": 2
+        }
+      },
+      "timestampUtcMs": "2026-09-02T22:10:35.622Z"
+    }
+  },
+  {
+    "index": 0,
+    "hash": "WpnmWBs3P7ni7IggKQ5at6i9Zjc=",
+    "timestampUtcMs": "2026-09-02T22:10:35.522Z",
+    "action": {
+      "type": "SET_TITLE",
+      "input": {
+        "title": "A group document named by a policy is served to that policy's audience regardless of the group's own read grants, under four bounding rules",
+        "updatedAt": "2026-09-02T22:10:35.522Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:10:35.522Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "",
+    "timestampUtcMs": "2026-09-02T22:10:35.622Z",
+    "action": {
+      "type": "UPGRADE_DOCUMENT",
+      "input": {
+        "model": "bai/knowledge-note",
+        "toVersion": 1,
+        "documentId": "37c39fe6-55b9-4c90-ad49-c96ae42467c4",
+        "fromVersion": 0,
+        "initialState": {
+          "auth": {
+            "grants": [],
+            "version": 0
+          },
+          "local": {
+            "lastViewedAt": null,
+            "personalTags": []
+          },
+          "global": {
+            "links": [],
+            "model": null,
+            "scope": null,
+            "title": null,
+            "editor": null,
+            "inputs": [],
+            "models": [],
+            "status": "DRAFT",
+            "topics": [],
+            "content": null,
+            "context": null,
+            "modelId": null,
+            "modules": [],
+            "outputs": [],
+            "version": null,
+            "computes": null,
+            "filePath": null,
+            "noteType": null,
+            "severity": null,
+            "hooksUsed": [],
+            "rootCause": null,
+            "confidence": null,
+            "consumedBy": [],
+            "provenance": null,
+            "sourceType": null,
+            "targetType": null,
+            "cardinality": null,
+            "description": null,
+            "alternatives": [],
+            "consequences": [],
+            "errorMessage": null,
+            "relationType": null,
+            "correctPattern": null,
+            "decisionStatus": null,
+            "dispatchTargets": [],
+            "lifecycleEvents": []
+          },
+          "document": {
+            "hash": {
+              "encoding": "base64",
+              "algorithm": "sha1"
+            },
+            "version": 1
+          }
+        }
+      },
+      "timestampUtcMs": "2026-09-02T22:10:35.622Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "oAaWUou9bO6CVmfovAL+5ICzsZQ=",
+    "timestampUtcMs": "2026-09-02T22:10:35.522Z",
+    "action": {
+      "type": "SET_DESCRIPTION",
+      "input": {
+        "updatedAt": "2026-09-02T22:10:35.522Z",
+        "description": "Only the member list is served; only a referencer's domain scopes decide its audience; one level, so cycles terminate; at most a hundred referencers are examined, beyond which the group is withheld."
+      },
+      "timestampUtcMs": "2026-09-02T22:10:35.522Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "",
+    "timestampUtcMs": "2026-09-02T22:18:30.593Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "metadata": {
+          "reason": "Extracted from docs/specs/auth-scope.md at v6.2.2-dev.74 \u2014 Reads: 'The same reasoning extends to groups. Four rules bound that'; Stage 7 item 2",
+          "confidence": "grounded"
+        },
+        "sourceId": "37c39fe6-55b9-4c90-ad49-c96ae42467c4",
+        "targetId": "223bb12a-be7f-4209-9ab2-f04f7bb2b6c8",
+        "relationshipType": "DERIVED_FROM"
+      },
+      "timestampUtcMs": "2026-09-02T22:18:30.593Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "v4KDqRQ4W93BJ7ooAGp3H6vpA9A=",
+    "timestampUtcMs": "2026-09-02T22:10:35.522Z",
+    "action": {
+      "type": "SET_NOTE_TYPE",
+      "input": {
+        "noteType": "ARCHITECTURE",
+        "updatedAt": "2026-09-02T22:10:35.522Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:10:35.522Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "",
+    "timestampUtcMs": "2026-09-02T22:18:31.889Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "metadata": {
+          "reason": "Extracted from apps/academy/docs/academy/05-Lookup/00-Cookbook.md at v6.2.2-dev.74 \u2014 Scoped Reads: 'Naming a group publishes its roster to that audience'",
+          "confidence": "grounded"
+        },
+        "sourceId": "37c39fe6-55b9-4c90-ad49-c96ae42467c4",
+        "targetId": "f2aaccd3-7c26-4327-881e-f5ad9e267b89",
+        "relationshipType": "DERIVED_FROM"
+      },
+      "timestampUtcMs": "2026-09-02T22:18:31.889Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "81JcwjuCoMcowzIOQhvQJI06DM0=",
+    "timestampUtcMs": "2026-09-02T22:10:35.522Z",
+    "action": {
+      "type": "SET_CONTENT",
+      "input": {
+        "content": "A replica must fold a group's membership to evaluate a policy that names it, so the same reasoning that makes the `auth` and `document` scopes always readable extends to rosters: a group named by a grant is served to any subject the naming document's policy serves, **regardless of the group's own read grants**. The `scoped-reads` recipe shows Carol reading the reviewers roster she is not on, past the roster's Alice-only policy, because a replica must fold that membership to evaluate the report's grants \u2014 while Mallory, whom the report serves nothing, does not, and below `authGroups` nobody does. Naming a group publishes its roster to that audience; a document whose access list must stay confidential cannot have a replicated policy at all.\n\nFour rules bound the exemption (`getGroupReferencers` on the operation index is the lookup):\n\n- **Only the member list is served.** A group's other scopes stay behind its own grants, because the member list is the only thing the audience must fold.\n- **Only a referencing document's *domain* scopes decide its audience.** Every holder reads a document's `auth` and `document` scopes, so testing those would serve every referenced group to everybody.\n- **One level.** A referencer that is itself a group is skipped, and a referencer's own readability comes from its policy alone, so a reference cycle terminates. Cycles are reachable even though the reducer forbids a group naming a group: the reference relation is recorded from an operation's *input*, including an operation later stored denied, so a refused grant leaves a row behind that validation never saw.\n- **At most a hundred referencers are examined.** Each costs a model build and the relation is append-only, so an unbounded scan would make a widely-named group permanently expensive to read. Past the bound the group is withheld \u2014 the direction that fails closed \u2014 and the truncation is logged.\n\n_Source: docs/specs/auth-scope.md (Powerhouse v6.2.2-dev.74)._\n_Source: apps/academy/docs/academy/05-Lookup/00-Cookbook.md (Powerhouse v6.2.2-dev.74)._\n\n## Provenance\n- `docs/specs/auth-scope.md` \u2014 Reads: 'The same reasoning extends to groups. Four rules bound that'; Stage 7 item 2\n- `apps/academy/docs/academy/05-Lookup/00-Cookbook.md` \u2014 Scoped Reads: 'Naming a group publishes its roster to that audience'\n\n_Recorded from the Powerhouse repository at **v6.2.2-dev.74** during the v6.2.2-dev.74 source sync._",
+        "updatedAt": "2026-09-02T22:10:35.522Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:10:35.522Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "",
+    "timestampUtcMs": "2026-09-02T22:18:33.215Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "metadata": {
+          "reason": "Applies the 'a replica must be able to fold what it evaluates' argument from the metadata scopes to referenced rosters",
+          "confidence": "grounded"
+        },
+        "sourceId": "37c39fe6-55b9-4c90-ad49-c96ae42467c4",
+        "targetId": "975d6c29-9797-4051-927e-d487a679f608",
+        "relationshipType": "BUILDS_ON"
+      },
+      "timestampUtcMs": "2026-09-02T22:18:33.215Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "zregywVDzMwgSjN9Z5XPLOkdklw=",
+    "timestampUtcMs": "2026-09-02T22:10:35.522Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "9d316a17-9d10-4210-8867-8d32ce2034cd",
+        "name": "auth-scope"
+      },
+      "timestampUtcMs": "2026-09-02T22:10:35.522Z"
+    }
+  },
+  {
+    "index": 5,
+    "hash": "",
+    "timestampUtcMs": "2026-09-02T22:18:33.676Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "metadata": {
+          "reason": "Group principals need the roster folded on every replica that judges; this note says who therefore gets to read the roster",
+          "confidence": "grounded"
+        },
+        "sourceId": "37c39fe6-55b9-4c90-ad49-c96ae42467c4",
+        "targetId": "12b1e678-bb7c-4a27-b67a-63ab31b726c4",
+        "relationshipType": "BUILDS_ON"
+      },
+      "timestampUtcMs": "2026-09-02T22:18:33.676Z"
+    }
+  },
+  {
+    "index": 5,
+    "hash": "c/hJPaSRj7ihuLPOAjo523iRNWc=",
+    "timestampUtcMs": "2026-09-02T22:10:35.522Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "e04b2b01-70a9-417b-8a16-1709cc8204a7",
+        "name": "groups"
+      },
+      "timestampUtcMs": "2026-09-02T22:10:35.522Z"
+    }
+  },
+  {
+    "index": 6,
+    "hash": "",
+    "timestampUtcMs": "2026-09-02T22:22:45.107Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "metadata": {
+          "reason": "Extracted from docs/specs/auth-scope.md at v6.2.2-dev.74 \u2014 Reads: 'The same reasoning extends to groups. Four rules bound that'; Stage 7 item 2",
+          "confidence": "grounded"
+        },
+        "sourceId": "37c39fe6-55b9-4c90-ad49-c96ae42467c4",
+        "targetId": "223bb12a-be7f-4209-9ab2-f04f7bb2b6c8",
+        "relationshipType": "DERIVED_FROM"
+      },
+      "timestampUtcMs": "2026-09-02T22:22:45.107Z"
+    }
+  },
+  {
+    "index": 6,
+    "hash": "hZn8ULYRMpUirIQx/spLmx+Wuss=",
+    "timestampUtcMs": "2026-09-02T22:10:35.522Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "7f7bffdb-c129-43ba-9a42-d8c970f54649",
+        "name": "reads"
+      },
+      "timestampUtcMs": "2026-09-02T22:10:35.522Z"
+    }
+  },
+  {
+    "index": 7,
+    "hash": "",
+    "timestampUtcMs": "2026-09-02T22:22:45.848Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "metadata": {
+          "reason": "Extracted from apps/academy/docs/academy/05-Lookup/00-Cookbook.md at v6.2.2-dev.74 \u2014 Scoped Reads: 'Naming a group publishes its roster to that audience'",
+          "confidence": "grounded"
+        },
+        "sourceId": "37c39fe6-55b9-4c90-ad49-c96ae42467c4",
+        "targetId": "f2aaccd3-7c26-4327-881e-f5ad9e267b89",
+        "relationshipType": "DERIVED_FROM"
+      },
+      "timestampUtcMs": "2026-09-02T22:22:45.848Z"
+    }
+  },
+  {
+    "index": 7,
+    "hash": "j7eRaEOhX+sfrexPWXFACC/n56g=",
+    "timestampUtcMs": "2026-09-02T22:10:35.522Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "c1223c1a-2efb-4c60-968c-a94ee6d82769",
+        "name": "sync"
+      },
+      "timestampUtcMs": "2026-09-02T22:10:35.522Z"
+    }
+  },
+  {
+    "index": 8,
+    "hash": "",
+    "timestampUtcMs": "2026-09-02T22:22:46.631Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "metadata": {
+          "reason": "Applies the 'a replica must be able to fold what it evaluates' argument from the metadata scopes to referenced rosters",
+          "confidence": "grounded"
+        },
+        "sourceId": "37c39fe6-55b9-4c90-ad49-c96ae42467c4",
+        "targetId": "975d6c29-9797-4051-927e-d487a679f608",
+        "relationshipType": "BUILDS_ON"
+      },
+      "timestampUtcMs": "2026-09-02T22:22:46.631Z"
+    }
+  },
+  {
+    "index": 8,
+    "hash": "2UhrXozNL8qjb5cBHdurqZtTniE=",
+    "timestampUtcMs": "2026-09-02T22:10:35.522Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "version",
+        "value": "v6.2.2-dev.74",
+        "updatedAt": "2026-09-02T22:10:35.522Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:10:35.522Z"
+    }
+  },
+  {
+    "index": 9,
+    "hash": "",
+    "timestampUtcMs": "2026-09-02T22:22:47.120Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "metadata": {
+          "reason": "Group principals need the roster folded on every replica that judges; this note says who therefore gets to read the roster",
+          "confidence": "grounded"
+        },
+        "sourceId": "37c39fe6-55b9-4c90-ad49-c96ae42467c4",
+        "targetId": "12b1e678-bb7c-4a27-b67a-63ab31b726c4",
+        "relationshipType": "BUILDS_ON"
+      },
+      "timestampUtcMs": "2026-09-02T22:22:47.120Z"
+    }
+  },
+  {
+    "index": 9,
+    "hash": "AstiINbKkF7NVd9bRcGNSMVrVjQ=",
+    "timestampUtcMs": "2026-09-02T22:10:35.522Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "filePath",
+        "value": "docs/specs/auth-scope.md",
+        "updatedAt": "2026-09-02T22:10:35.522Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:10:35.522Z"
+    }
+  },
+  {
+    "index": 10,
+    "hash": "Ao3i6Qx2SO/ok5NcGg1yJgK7Oac=",
+    "timestampUtcMs": "2026-09-02T22:10:35.522Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "confidence",
+        "value": "grounded",
+        "updatedAt": "2026-09-02T22:10:35.522Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:10:35.522Z"
+    }
+  },
+  {
+    "index": 11,
+    "hash": "y2R7zA78s4K+AxEqylEPq25FMWs=",
+    "timestampUtcMs": "2026-09-02T22:10:38.111Z",
+    "action": {
+      "type": "SET_PROVENANCE",
+      "input": {
+        "author": "knowledge-agent",
+        "createdAt": "2026-09-02T22:10:38.111Z",
+        "sourceOrigin": "DERIVED"
+      },
+      "timestampUtcMs": "2026-09-02T22:10:38.111Z"
+    }
+  },
+  {
+    "index": 12,
+    "hash": "+Ul6Ibd8T0tYD77Ik1OZ76WNpTU=",
+    "timestampUtcMs": "2026-09-02T22:10:38.626Z",
+    "action": {
+      "type": "SUBMIT_FOR_REVIEW",
+      "input": {
+        "id": "5470b330-211b-4061-abbc-f76b22c5a821",
+        "actor": "knowledge-agent",
+        "comment": "extracted from the Powerhouse repository at v6.2.2-dev.74",
+        "timestamp": "2026-09-02T22:10:38.626Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:10:38.626Z"
+    }
+  },
+  {
+    "index": 13,
+    "hash": "46/pa9HVqgDXnRQFvstgYFLMRDc=",
+    "timestampUtcMs": "2026-09-02T22:10:39.392Z",
+    "action": {
+      "type": "APPROVE_NOTE",
+      "input": {
+        "id": "a4b4c389-1688-473f-aaa2-8050507cd8e8",
+        "actor": "liberuum",
+        "comment": "claim checked against the cited repository file at the pinned tag",
+        "timestamp": "2026-09-02T22:10:39.392Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:10:39.392Z"
+    }
+  },
+  {
+    "index": 14,
+    "hash": "daVVsAGzkR0x081kKt5JmS7aaL0=",
+    "timestampUtcMs": "2026-09-02T22:15:49.550Z",
+    "action": {
+      "type": "SET_TITLE",
+      "input": {
+        "title": "A group document named by a policy is served to that policy's audience regardless of the group's own read grants, under four bounding rules",
+        "updatedAt": "2026-09-02T22:15:49.550Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:15:49.550Z"
+    }
+  },
+  {
+    "index": 15,
+    "hash": "daVVsAGzkR0x081kKt5JmS7aaL0=",
+    "timestampUtcMs": "2026-09-02T22:15:49.550Z",
+    "action": {
+      "type": "SET_DESCRIPTION",
+      "input": {
+        "updatedAt": "2026-09-02T22:15:49.550Z",
+        "description": "Only the member list is served; only a referencer's domain scopes decide its audience; one level, so cycles terminate; at most a hundred referencers are examined, beyond which the group is withheld."
+      },
+      "timestampUtcMs": "2026-09-02T22:15:49.550Z"
+    }
+  },
+  {
+    "index": 16,
+    "hash": "daVVsAGzkR0x081kKt5JmS7aaL0=",
+    "timestampUtcMs": "2026-09-02T22:15:49.551Z",
+    "action": {
+      "type": "SET_NOTE_TYPE",
+      "input": {
+        "noteType": "ARCHITECTURE",
+        "updatedAt": "2026-09-02T22:15:49.550Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:15:49.551Z"
+    }
+  },
+  {
+    "index": 17,
+    "hash": "daVVsAGzkR0x081kKt5JmS7aaL0=",
+    "timestampUtcMs": "2026-09-02T22:15:49.551Z",
+    "action": {
+      "type": "SET_CONTENT",
+      "input": {
+        "content": "A replica must fold a group's membership to evaluate a policy that names it, so the same reasoning that makes the `auth` and `document` scopes always readable extends to rosters: a group named by a grant is served to any subject the naming document's policy serves, **regardless of the group's own read grants**. The `scoped-reads` recipe shows Carol reading the reviewers roster she is not on, past the roster's Alice-only policy, because a replica must fold that membership to evaluate the report's grants \u2014 while Mallory, whom the report serves nothing, does not, and below `authGroups` nobody does. Naming a group publishes its roster to that audience; a document whose access list must stay confidential cannot have a replicated policy at all.\n\nFour rules bound the exemption (`getGroupReferencers` on the operation index is the lookup):\n\n- **Only the member list is served.** A group's other scopes stay behind its own grants, because the member list is the only thing the audience must fold.\n- **Only a referencing document's *domain* scopes decide its audience.** Every holder reads a document's `auth` and `document` scopes, so testing those would serve every referenced group to everybody.\n- **One level.** A referencer that is itself a group is skipped, and a referencer's own readability comes from its policy alone, so a reference cycle terminates. Cycles are reachable even though the reducer forbids a group naming a group: the reference relation is recorded from an operation's *input*, including an operation later stored denied, so a refused grant leaves a row behind that validation never saw.\n- **At most a hundred referencers are examined.** Each costs a model build and the relation is append-only, so an unbounded scan would make a widely-named group permanently expensive to read. Past the bound the group is withheld \u2014 the direction that fails closed \u2014 and the truncation is logged.\n\n_Source: docs/specs/auth-scope.md (Powerhouse v6.2.2-dev.74)._\n_Source: apps/academy/docs/academy/05-Lookup/00-Cookbook.md (Powerhouse v6.2.2-dev.74)._\n\n## Provenance\n- `docs/specs/auth-scope.md` \u2014 Reads: 'The same reasoning extends to groups. Four rules bound that'; Stage 7 item 2\n- `apps/academy/docs/academy/05-Lookup/00-Cookbook.md` \u2014 Scoped Reads: 'Naming a group publishes its roster to that audience'\n\n_Recorded from the Powerhouse repository at **v6.2.2-dev.74** during the v6.2.2-dev.74 source sync._",
+        "updatedAt": "2026-09-02T22:15:49.550Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:15:49.551Z"
+    }
+  },
+  {
+    "index": 18,
+    "hash": "daVVsAGzkR0x081kKt5JmS7aaL0=",
+    "timestampUtcMs": "2026-09-02T22:15:49.551Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "version",
+        "value": "v6.2.2-dev.74",
+        "updatedAt": "2026-09-02T22:15:49.550Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:15:49.551Z"
+    }
+  },
+  {
+    "index": 19,
+    "hash": "daVVsAGzkR0x081kKt5JmS7aaL0=",
+    "timestampUtcMs": "2026-09-02T22:15:49.551Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "filePath",
+        "value": "docs/specs/auth-scope.md",
+        "updatedAt": "2026-09-02T22:15:49.550Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:15:49.551Z"
+    }
+  },
+  {
+    "index": 20,
+    "hash": "daVVsAGzkR0x081kKt5JmS7aaL0=",
+    "timestampUtcMs": "2026-09-02T22:15:49.551Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "confidence",
+        "value": "grounded",
+        "updatedAt": "2026-09-02T22:15:49.550Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:15:49.551Z"
+    }
+  },
+  {
+    "index": 21,
+    "hash": "Din7uUXf/vp52FAReTsKxH8aDrg=",
+    "timestampUtcMs": "2026-09-02T22:20:26.610Z",
+    "action": {
+      "type": "SET_TITLE",
+      "input": {
+        "title": "A group document named by a policy is served to that policy's audience regardless of the group's own read grants, under four bounding rules",
+        "updatedAt": "2026-09-02T22:20:26.610Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:20:26.610Z"
+    }
+  },
+  {
+    "index": 22,
+    "hash": "Din7uUXf/vp52FAReTsKxH8aDrg=",
+    "timestampUtcMs": "2026-09-02T22:20:26.610Z",
+    "action": {
+      "type": "SET_DESCRIPTION",
+      "input": {
+        "updatedAt": "2026-09-02T22:20:26.610Z",
+        "description": "Only the member list is served; only a referencer's domain scopes decide its audience; one level, so cycles terminate; at most a hundred referencers are examined, beyond which the group is withheld."
+      },
+      "timestampUtcMs": "2026-09-02T22:20:26.610Z"
+    }
+  },
+  {
+    "index": 23,
+    "hash": "Din7uUXf/vp52FAReTsKxH8aDrg=",
+    "timestampUtcMs": "2026-09-02T22:20:26.610Z",
+    "action": {
+      "type": "SET_NOTE_TYPE",
+      "input": {
+        "noteType": "ARCHITECTURE",
+        "updatedAt": "2026-09-02T22:20:26.610Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:20:26.610Z"
+    }
+  },
+  {
+    "index": 24,
+    "hash": "Din7uUXf/vp52FAReTsKxH8aDrg=",
+    "timestampUtcMs": "2026-09-02T22:20:26.610Z",
+    "action": {
+      "type": "SET_CONTENT",
+      "input": {
+        "content": "A replica must fold a group's membership to evaluate a policy that names it, so the same reasoning that makes the `auth` and `document` scopes always readable extends to rosters: a group named by a grant is served to any subject the naming document's policy serves, **regardless of the group's own read grants**. The `scoped-reads` recipe shows Carol reading the reviewers roster she is not on, past the roster's Alice-only policy, because a replica must fold that membership to evaluate the report's grants \u2014 while Mallory, whom the report serves nothing, does not, and below `authGroups` nobody does. Naming a group publishes its roster to that audience; a document whose access list must stay confidential cannot have a replicated policy at all.\n\nFour rules bound the exemption (`getGroupReferencers` on the operation index is the lookup):\n\n- **Only the member list is served.** A group's other scopes stay behind its own grants, because the member list is the only thing the audience must fold.\n- **Only a referencing document's *domain* scopes decide its audience.** Every holder reads a document's `auth` and `document` scopes, so testing those would serve every referenced group to everybody.\n- **One level.** A referencer that is itself a group is skipped, and a referencer's own readability comes from its policy alone, so a reference cycle terminates. Cycles are reachable even though the reducer forbids a group naming a group: the reference relation is recorded from an operation's *input*, including an operation later stored denied, so a refused grant leaves a row behind that validation never saw.\n- **At most a hundred referencers are examined.** Each costs a model build and the relation is append-only, so an unbounded scan would make a widely-named group permanently expensive to read. Past the bound the group is withheld \u2014 the direction that fails closed \u2014 and the truncation is logged.\n\n_Source: docs/specs/auth-scope.md (Powerhouse v6.2.2-dev.74)._\n_Source: apps/academy/docs/academy/05-Lookup/00-Cookbook.md (Powerhouse v6.2.2-dev.74)._\n\n## Provenance\n- `docs/specs/auth-scope.md` \u2014 Reads: 'The same reasoning extends to groups. Four rules bound that'; Stage 7 item 2\n- `apps/academy/docs/academy/05-Lookup/00-Cookbook.md` \u2014 Scoped Reads: 'Naming a group publishes its roster to that audience'\n\n_Recorded from the Powerhouse repository at **v6.2.2-dev.74** during the v6.2.2-dev.74 source sync._",
+        "updatedAt": "2026-09-02T22:20:26.610Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:20:26.610Z"
+    }
+  },
+  {
+    "index": 25,
+    "hash": "Din7uUXf/vp52FAReTsKxH8aDrg=",
+    "timestampUtcMs": "2026-09-02T22:20:26.610Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "version",
+        "value": "v6.2.2-dev.74",
+        "updatedAt": "2026-09-02T22:20:26.610Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:20:26.610Z"
+    }
+  },
+  {
+    "index": 26,
+    "hash": "Din7uUXf/vp52FAReTsKxH8aDrg=",
+    "timestampUtcMs": "2026-09-02T22:20:26.610Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "filePath",
+        "value": "docs/specs/auth-scope.md",
+        "updatedAt": "2026-09-02T22:20:26.610Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:20:26.610Z"
+    }
+  },
+  {
+    "index": 27,
+    "hash": "Din7uUXf/vp52FAReTsKxH8aDrg=",
+    "timestampUtcMs": "2026-09-02T22:20:26.610Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "confidence",
+        "value": "grounded",
+        "updatedAt": "2026-09-02T22:20:26.610Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:20:26.610Z"
+    }
+  }
+]

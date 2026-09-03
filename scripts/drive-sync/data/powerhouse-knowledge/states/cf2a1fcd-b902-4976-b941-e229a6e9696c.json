@@ -1,0 +1,131 @@
+{
+  "links": [
+    {
+      "id": "lnk-0ade289f-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "0ade289f-d4fb-44d8-ab3b-316d65bb1c8d",
+      "targetTitle": "auth-positional-judgment",
+      "reason": "Writes are judged at their position and reads at serve time \u2014 the two timing guarantees differ and the difference is stated here",
+      "confidence": "grounded"
+    },
+    {
+      "id": "lnk-395c3ea0-bui",
+      "linkType": "BUILDS_ON",
+      "targetDocumentId": "395c3ea0-ce11-4b25-8bbb-7f68a7b169e1",
+      "targetTitle": "reactor-client-vs-reactor-interface",
+      "reason": "Adds a third difference to the client-vs-IReactor split: the client is also where per-subject read filtering happens",
+      "confidence": "grounded"
+    },
+    {
+      "id": "lnk-975d6c29-bui",
+      "linkType": "BUILDS_ON",
+      "targetDocumentId": "975d6c29-9797-4051-927e-d487a679f608",
+      "targetTitle": "auth-metadata-scopes-readable",
+      "reason": "The gate filters domain scopes only; the always-readable auth and document scopes are the exemption it applies first",
+      "confidence": "grounded"
+    },
+    {
+      "id": "lnk-223bb12a-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "223bb12a-be7f-4209-9ab2-f04f7bb2b6c8",
+      "targetTitle": "Spec \u203a Spec \u2014 Attribute-based access control in the auth scope with DCB",
+      "reason": "Extracted from docs/specs/auth-scope.md at v6.2.2-dev.74 \u2014 Reads section; Stage 7 step 1 (read gate, read side not write cache)",
+      "confidence": "grounded"
+    },
+    {
+      "id": "lnk-17dc46b0-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "17dc46b0-f733-467c-99d7-ae8fbe0fb0e4",
+      "targetTitle": "Academy \u203a Reference \u203a Reactor \u203a Authorization",
+      "reason": "Extracted from apps/academy/docs/academy/04-Reference/01-Reactor/11-Authorization.md at v6.2.2-dev.74 \u2014 'Scopes every holder reads' second paragraph",
+      "confidence": "grounded"
+    },
+    {
+      "id": "lnk-f2aaccd3-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "f2aaccd3-7c26-4327-881e-f5ad9e267b89",
+      "targetTitle": "Academy \u203a Lookup \u203a Cookbook",
+      "reason": "Extracted from apps/academy/docs/academy/05-Lookup/00-Cookbook.md at v6.2.2-dev.74 \u2014 Scoped Reads: 'The gate is on the client', 'It carries no feature flag', 'A write hands back a read'",
+      "confidence": "grounded"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Read filtering happens on IReactorClient, not inside IReactor, so reactor.get() and client.get() return different documents in the same process",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "e3583df4-6a29-4187-8985-2d23afe0a10c",
+      "name": "auth-scope",
+      "topicDocumentId": null
+    },
+    {
+      "id": "8c404313-e159-47f9-b784-237f2e2c869e",
+      "name": "reactor-client",
+      "topicDocumentId": null
+    },
+    {
+      "id": "b29fbbb9-406d-40b8-b02b-8dee69c7c8fd",
+      "name": "reads",
+      "topicDocumentId": null
+    },
+    {
+      "id": "500cddbd-77d6-4fc2-b83c-25f2741d89f7",
+      "name": "architecture",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "A read produces no operation. It has no position in any stream, so admission cannot gate it, replay cannot re-evaluate it and no append condition can guard it \u2014 the positional machinery cannot see reads at all. Read enforcement therefore lives on the reactor's **own read surface**: the `IReactorClient`.\n\nTwo placement facts follow, both demonstrated by the `scoped-reads` recipe on one document in one process:\n\n- **`IReactor` serves everything.** It is inside the trust boundary; internal consumers \u2014 the event bus, read models, processors \u2014 need unfiltered data to build their projections, and whatever they re-expose is their own read surface to gate. So `reactor.getByIdOrSlug()` hands all four scopes to anyone while `client.get()` hands Mallory only `auth` and `document`.\n- **The gate carries no feature flag of its own.** A client over a reactor with `featureFlags: {}` still filters reads, so a policy is enforced against readers before it is enforced against writers. What `authEnforcement` changes is *which model* answers: with it on, the read gate builds the registered decision model at the stream heads and evaluates a `read` request per scope, so `{ group }` and conditional read grants apply; below it, a read evaluates the bare policy alone.\n\nEvery read carries a subject \u2014 the client defaults it to its own signer, a server passes the authenticated caller \u2014 and a write hands back a read: the document `client.execute()` returns is gated exactly like `get()`, as the client's own identity. A custom subgraph or server that reads through the client inherits all of this and cannot forget to enforce.\n\nTwo engineering rules the spec records: the model is built through the **read side, never the write cache** (a reactor whose executors live in worker processes holds parent state no commit invalidates, so a read there would decide against a stale policy); and a read of a document's *operations* fetches the whole document, because evaluating a condition on the gated scope's state needs more than the policy.\n\nTiming differs from writes: an operation is evaluated at its position, so a revocation catches operations accepted before it arrived, but a read is evaluated when it is served \u2014 revoking read only stops future serving and cannot recall bytes a replica already holds.\n\n_Source: docs/specs/auth-scope.md (Powerhouse v6.2.2-dev.74)._\n_Source: apps/academy/docs/academy/04-Reference/01-Reactor/11-Authorization.md (Powerhouse v6.2.2-dev.74)._\n_Source: apps/academy/docs/academy/05-Lookup/00-Cookbook.md (Powerhouse v6.2.2-dev.74)._\n\n## Provenance\n- `docs/specs/auth-scope.md` \u2014 Reads section; Stage 7 step 1 (read gate, read side not write cache)\n- `apps/academy/docs/academy/04-Reference/01-Reactor/11-Authorization.md` \u2014 'Scopes every holder reads' second paragraph\n- `apps/academy/docs/academy/05-Lookup/00-Cookbook.md` \u2014 Scoped Reads: 'The gate is on the client', 'It carries no feature flag', 'A write hands back a read'\n\n_Recorded from the Powerhouse repository at **v6.2.2-dev.74** during the v6.2.2-dev.74 source sync._",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": "v6.2.2-dev.74",
+  "computes": null,
+  "filePath": "docs/specs/auth-scope.md",
+  "noteType": "ARCHITECTURE",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": "grounded",
+  "consumedBy": [],
+  "provenance": {
+    "author": "knowledge-agent",
+    "createdAt": "2026-09-02T22:10:03.159Z",
+    "sessionId": null,
+    "updatedAt": "2026-09-02T22:20:16.030Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "IReactor is inside the trust boundary and serves every scope to every caller; the client evaluates a read request per scope for its subject. No flag gates it: reads are filtered with all flags off.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "d649c3aa-3384-453c-8b90-f0e31e1628cd",
+      "actor": "knowledge-agent",
+      "comment": "extracted from the Powerhouse repository at v6.2.2-dev.74",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-09-02T22:10:03.691Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "e593ebfe-4d49-4249-90d5-97c346fe054d",
+      "actor": "liberuum",
+      "comment": "claim checked against the cited repository file at the pinned tag",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-09-02T22:10:04.169Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

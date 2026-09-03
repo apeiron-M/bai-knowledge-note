@@ -1,0 +1,694 @@
+[
+  {
+    "index": 0,
+    "hash": "",
+    "timestampUtcMs": "2026-09-02T22:09:06.046Z",
+    "action": {
+      "type": "CREATE_DOCUMENT",
+      "input": {
+        "meta": {},
+        "name": "auth-flags-staged",
+        "slug": "",
+        "model": "bai/knowledge-note",
+        "branch": "main",
+        "signing": {
+          "nonce": "",
+          "publicKey": {},
+          "signature": "c8bd64d3-d92e-4f41-beba-983a7e995c26",
+          "documentType": "bai/knowledge-note",
+          "createdAtUtcIso": "2026-09-02T22:09:06.046Z"
+        },
+        "version": 0,
+        "documentId": "c8bd64d3-d92e-4f41-beba-983a7e995c26",
+        "protocolVersions": {
+          "base-reducer": 2
+        }
+      },
+      "timestampUtcMs": "2026-09-02T22:09:06.046Z"
+    }
+  },
+  {
+    "index": 0,
+    "hash": "zK14X6GgvD/TUwVWeLa/OyUvZug=",
+    "timestampUtcMs": "2026-09-02T22:09:06.170Z",
+    "action": {
+      "type": "SET_TITLE",
+      "input": {
+        "title": "Auth enforcement is staged behind four cascading feature flags, and the reactor refuses a flag set that skips a predecessor",
+        "updatedAt": "2026-09-02T22:09:06.170Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:09:06.170Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "",
+    "timestampUtcMs": "2026-09-02T22:09:06.046Z",
+    "action": {
+      "type": "UPGRADE_DOCUMENT",
+      "input": {
+        "model": "bai/knowledge-note",
+        "toVersion": 1,
+        "documentId": "c8bd64d3-d92e-4f41-beba-983a7e995c26",
+        "fromVersion": 0,
+        "initialState": {
+          "auth": {
+            "grants": [],
+            "version": 0
+          },
+          "local": {
+            "lastViewedAt": null,
+            "personalTags": []
+          },
+          "global": {
+            "links": [],
+            "model": null,
+            "scope": null,
+            "title": null,
+            "editor": null,
+            "inputs": [],
+            "models": [],
+            "status": "DRAFT",
+            "topics": [],
+            "content": null,
+            "context": null,
+            "modelId": null,
+            "modules": [],
+            "outputs": [],
+            "version": null,
+            "computes": null,
+            "filePath": null,
+            "noteType": null,
+            "severity": null,
+            "hooksUsed": [],
+            "rootCause": null,
+            "confidence": null,
+            "consumedBy": [],
+            "provenance": null,
+            "sourceType": null,
+            "targetType": null,
+            "cardinality": null,
+            "description": null,
+            "alternatives": [],
+            "consequences": [],
+            "errorMessage": null,
+            "relationType": null,
+            "correctPattern": null,
+            "decisionStatus": null,
+            "dispatchTargets": [],
+            "lifecycleEvents": []
+          },
+          "document": {
+            "hash": {
+              "encoding": "base64",
+              "algorithm": "sha1"
+            },
+            "version": 1
+          }
+        }
+      },
+      "timestampUtcMs": "2026-09-02T22:09:06.046Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "bn4RyuYMrJVROqr35pELdRtRY2o=",
+    "timestampUtcMs": "2026-09-02T22:09:06.170Z",
+    "action": {
+      "type": "SET_DESCRIPTION",
+      "input": {
+        "updatedAt": "2026-09-02T22:09:06.170Z",
+        "description": "documentDecisions \u2192 authEnforcement \u2192 authGroups \u2192 authConditions, each requiring the one before; ReactorBuilder throws on a gap or an unknown name. Switchboard reads them as REACTOR_* env vars."
+      },
+      "timestampUtcMs": "2026-09-02T22:09:06.170Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "",
+    "timestampUtcMs": "2026-09-02T22:17:05.164Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "metadata": {
+          "reason": "Extracted from apps/academy/docs/academy/04-Reference/01-Reactor/11-Authorization.md at v6.2.2-dev.74 \u2014 Feature flags table and the 'flags govern enforcement only' paragraph",
+          "confidence": "grounded"
+        },
+        "sourceId": "c8bd64d3-d92e-4f41-beba-983a7e995c26",
+        "targetId": "17dc46b0-f733-467c-99d7-ae8fbe0fb0e4",
+        "relationshipType": "DERIVED_FROM"
+      },
+      "timestampUtcMs": "2026-09-02T22:17:05.164Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "BG52RIB35UGRkXkx8we8Gisazmk=",
+    "timestampUtcMs": "2026-09-02T22:09:06.170Z",
+    "action": {
+      "type": "SET_NOTE_TYPE",
+      "input": {
+        "noteType": "REFERENCE",
+        "updatedAt": "2026-09-02T22:09:06.170Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:09:06.170Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "",
+    "timestampUtcMs": "2026-09-02T22:17:06.251Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "metadata": {
+          "reason": "Extracted from apps/switchboard/README.md at v6.2.2-dev.74 \u2014 Reactor Enforcement Flags: REACTOR_* env vars, 'refuses to start on a set that skips one'",
+          "confidence": "grounded"
+        },
+        "sourceId": "c8bd64d3-d92e-4f41-beba-983a7e995c26",
+        "targetId": "63e10e2c-9be4-4bd2-a876-8708cd3ac1f9",
+        "relationshipType": "DERIVED_FROM"
+      },
+      "timestampUtcMs": "2026-09-02T22:17:06.251Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "LyiE7RLoAghB2MDkh+bvVEniS4o=",
+    "timestampUtcMs": "2026-09-02T22:09:06.170Z",
+    "action": {
+      "type": "SET_CONTENT",
+      "input": {
+        "content": "Enforcement of the auth scope rolls out in stages, one flag each:\n\n| Flag | Env var (Switchboard) | What it turns on |\n| --- | --- | --- |\n| `documentDecisions` | `REACTOR_DOCUMENT_DECISIONS` | Decide writes from the document stream rather than the meta cache (positional deletion) |\n| `authEnforcement` | `REACTOR_AUTH_ENFORCEMENT` | Enforce the policy at admission, replay and read |\n| `authGroups` | `REACTOR_AUTH_GROUPS` | Let `{ group }` principals match against a roster document |\n| `authConditions` | `REACTOR_AUTH_CONDITIONS` | Evaluate `where` clauses and `{ match }` principals |\n\nEach flag requires the one above it. `ReactorBuilder` validates the set eagerly and **throws** on a combination that skips a predecessor, and on any flag name the running version does not recognise \u2014 a partially enforcing reactor would apply less than the operator asked for. All four default to off.\n\n```ts\nnew ReactorBuilder().withExecutorConfig({\n  featureFlags: { documentDecisions: true, authEnforcement: true },\n});\n```\n\nSwitchboard reads them as the literal string `true` in the `REACTOR_*` variables; Connect carries the same four under `connect.reactor.featureFlags` in its runtime config.\n\nThe flags govern **enforcement only**. The auth data model \u2014 the four actions, the reducer, validation, replication \u2014 is always live, so a grant written on a flags-off reactor is stored and syncs; it is simply not enforced there. That is what makes a policy authored under any flag configuration intact once enforcement turns on.\n\n_Source: apps/academy/docs/academy/04-Reference/01-Reactor/11-Authorization.md (Powerhouse v6.2.2-dev.74)._\n_Source: apps/switchboard/README.md (Powerhouse v6.2.2-dev.74)._\n_Source: docs/specs/auth-scope.md (Powerhouse v6.2.2-dev.74)._\n\n## Provenance\n- `apps/academy/docs/academy/04-Reference/01-Reactor/11-Authorization.md` \u2014 Feature flags table and the 'flags govern enforcement only' paragraph\n- `apps/switchboard/README.md` \u2014 Reactor Enforcement Flags: REACTOR_* env vars, 'refuses to start on a set that skips one'\n- `docs/specs/auth-scope.md` \u2014 Implementation plan \u203a Feature flags\n\n_Recorded from the Powerhouse repository at **v6.2.2-dev.74** during the v6.2.2-dev.74 source sync._",
+        "updatedAt": "2026-09-02T22:09:06.170Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:09:06.170Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "",
+    "timestampUtcMs": "2026-09-02T22:17:07.422Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "metadata": {
+          "reason": "Extracted from docs/specs/auth-scope.md at v6.2.2-dev.74 \u2014 Implementation plan \u203a Feature flags",
+          "confidence": "grounded"
+        },
+        "sourceId": "c8bd64d3-d92e-4f41-beba-983a7e995c26",
+        "targetId": "223bb12a-be7f-4209-9ab2-f04f7bb2b6c8",
+        "relationshipType": "DERIVED_FROM"
+      },
+      "timestampUtcMs": "2026-09-02T22:17:07.422Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "BwY0LrRcuZIw1hkbBzpQXj53t3U=",
+    "timestampUtcMs": "2026-09-02T22:09:06.170Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "e0e63e1b-fb5c-42d4-8cf5-dc12c81ded44",
+        "name": "auth-scope"
+      },
+      "timestampUtcMs": "2026-09-02T22:09:06.170Z"
+    }
+  },
+  {
+    "index": 5,
+    "hash": "",
+    "timestampUtcMs": "2026-09-02T22:17:08.678Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "metadata": {
+          "reason": "Which flags are on is a per-fleet decision because they change replay verdicts; this note is the flag list, that one is the deployment rule",
+          "confidence": "grounded"
+        },
+        "sourceId": "c8bd64d3-d92e-4f41-beba-983a7e995c26",
+        "targetId": "c5419cd5-deac-4f48-b58f-131e5808bd49",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-09-02T22:17:08.678Z"
+    }
+  },
+  {
+    "index": 5,
+    "hash": "WVxtF39xR3TSzc7y33CPV2svFxU=",
+    "timestampUtcMs": "2026-09-02T22:09:06.170Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "2a9bab43-a570-4dd0-bcb9-ed47581d930f",
+        "name": "feature-flags"
+      },
+      "timestampUtcMs": "2026-09-02T22:09:06.170Z"
+    }
+  },
+  {
+    "index": 6,
+    "hash": "",
+    "timestampUtcMs": "2026-09-02T22:17:09.148Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "metadata": {
+          "reason": "documentDecisions is the first flag precisely because positional deletion is the stage-3 change it gates",
+          "confidence": "grounded"
+        },
+        "sourceId": "c8bd64d3-d92e-4f41-beba-983a7e995c26",
+        "targetId": "b6db3b1d-45b4-448b-a43b-23c032b3b9c9",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-09-02T22:17:09.148Z"
+    }
+  },
+  {
+    "index": 6,
+    "hash": "aXmOIQTZyFg/OcUpwIXsYRfxt08=",
+    "timestampUtcMs": "2026-09-02T22:09:06.170Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "eda3b28b-4c74-4d92-ad12-692643c5fa36",
+        "name": "reactor"
+      },
+      "timestampUtcMs": "2026-09-02T22:09:06.170Z"
+    }
+  },
+  {
+    "index": 7,
+    "hash": "",
+    "timestampUtcMs": "2026-09-02T22:17:09.629Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "metadata": {
+          "reason": "Connect must carry the identical set under connect.reactor.featureFlags; a browser replica on different flags diverges from the switchboard",
+          "confidence": "grounded"
+        },
+        "sourceId": "c8bd64d3-d92e-4f41-beba-983a7e995c26",
+        "targetId": "2a908219-6cde-489e-b910-c0d5740409ab",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-09-02T22:17:09.629Z"
+    }
+  },
+  {
+    "index": 7,
+    "hash": "OYSz0mgYbfXQD9m7UGaWZapCyBc=",
+    "timestampUtcMs": "2026-09-02T22:09:06.170Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "747fed41-b20d-48a5-941e-3bd72741b27a",
+        "name": "configuration"
+      },
+      "timestampUtcMs": "2026-09-02T22:09:06.170Z"
+    }
+  },
+  {
+    "index": 8,
+    "hash": "",
+    "timestampUtcMs": "2026-09-02T22:21:40.708Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "metadata": {
+          "reason": "Extracted from apps/academy/docs/academy/04-Reference/01-Reactor/11-Authorization.md at v6.2.2-dev.74 \u2014 Feature flags table and the 'flags govern enforcement only' paragraph",
+          "confidence": "grounded"
+        },
+        "sourceId": "c8bd64d3-d92e-4f41-beba-983a7e995c26",
+        "targetId": "17dc46b0-f733-467c-99d7-ae8fbe0fb0e4",
+        "relationshipType": "DERIVED_FROM"
+      },
+      "timestampUtcMs": "2026-09-02T22:21:40.708Z"
+    }
+  },
+  {
+    "index": 8,
+    "hash": "RzAQZPmBAxKygrsIDnESQcLNb6M=",
+    "timestampUtcMs": "2026-09-02T22:09:06.170Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "version",
+        "value": "v6.2.2-dev.74",
+        "updatedAt": "2026-09-02T22:09:06.170Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:09:06.170Z"
+    }
+  },
+  {
+    "index": 9,
+    "hash": "",
+    "timestampUtcMs": "2026-09-02T22:21:41.304Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "metadata": {
+          "reason": "Extracted from apps/switchboard/README.md at v6.2.2-dev.74 \u2014 Reactor Enforcement Flags: REACTOR_* env vars, 'refuses to start on a set that skips one'",
+          "confidence": "grounded"
+        },
+        "sourceId": "c8bd64d3-d92e-4f41-beba-983a7e995c26",
+        "targetId": "63e10e2c-9be4-4bd2-a876-8708cd3ac1f9",
+        "relationshipType": "DERIVED_FROM"
+      },
+      "timestampUtcMs": "2026-09-02T22:21:41.304Z"
+    }
+  },
+  {
+    "index": 9,
+    "hash": "AmpIZUTT1P5pxWLztrPIdAQdWNg=",
+    "timestampUtcMs": "2026-09-02T22:09:06.170Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "filePath",
+        "value": "apps/academy/docs/academy/04-Reference/01-Reactor/11-Authorization.md",
+        "updatedAt": "2026-09-02T22:09:06.170Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:09:06.170Z"
+    }
+  },
+  {
+    "index": 10,
+    "hash": "",
+    "timestampUtcMs": "2026-09-02T22:21:41.926Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "metadata": {
+          "reason": "Extracted from docs/specs/auth-scope.md at v6.2.2-dev.74 \u2014 Implementation plan \u203a Feature flags",
+          "confidence": "grounded"
+        },
+        "sourceId": "c8bd64d3-d92e-4f41-beba-983a7e995c26",
+        "targetId": "223bb12a-be7f-4209-9ab2-f04f7bb2b6c8",
+        "relationshipType": "DERIVED_FROM"
+      },
+      "timestampUtcMs": "2026-09-02T22:21:41.926Z"
+    }
+  },
+  {
+    "index": 10,
+    "hash": "KVEc9V/rBLCM0Htp860AjFGzeVI=",
+    "timestampUtcMs": "2026-09-02T22:09:06.170Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "confidence",
+        "value": "grounded",
+        "updatedAt": "2026-09-02T22:09:06.170Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:09:06.170Z"
+    }
+  },
+  {
+    "index": 11,
+    "hash": "",
+    "timestampUtcMs": "2026-09-02T22:21:42.615Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "metadata": {
+          "reason": "Which flags are on is a per-fleet decision because they change replay verdicts; this note is the flag list, that one is the deployment rule",
+          "confidence": "grounded"
+        },
+        "sourceId": "c8bd64d3-d92e-4f41-beba-983a7e995c26",
+        "targetId": "c5419cd5-deac-4f48-b58f-131e5808bd49",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-09-02T22:21:42.615Z"
+    }
+  },
+  {
+    "index": 11,
+    "hash": "N8zYcKCJ+awcCnA1H2FrU6ElRuY=",
+    "timestampUtcMs": "2026-09-02T22:09:08.786Z",
+    "action": {
+      "type": "SET_PROVENANCE",
+      "input": {
+        "author": "knowledge-agent",
+        "createdAt": "2026-09-02T22:09:08.786Z",
+        "sourceOrigin": "DERIVED"
+      },
+      "timestampUtcMs": "2026-09-02T22:09:08.786Z"
+    }
+  },
+  {
+    "index": 12,
+    "hash": "",
+    "timestampUtcMs": "2026-09-02T22:21:43.080Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "metadata": {
+          "reason": "documentDecisions is the first flag precisely because positional deletion is the stage-3 change it gates",
+          "confidence": "grounded"
+        },
+        "sourceId": "c8bd64d3-d92e-4f41-beba-983a7e995c26",
+        "targetId": "b6db3b1d-45b4-448b-a43b-23c032b3b9c9",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-09-02T22:21:43.080Z"
+    }
+  },
+  {
+    "index": 12,
+    "hash": "QYLK7MkHJ5g8CaZd8zVOU/1OOGY=",
+    "timestampUtcMs": "2026-09-02T22:09:09.868Z",
+    "action": {
+      "type": "SUBMIT_FOR_REVIEW",
+      "input": {
+        "id": "78db54f5-af24-48fa-b984-c64340391b84",
+        "actor": "knowledge-agent",
+        "comment": "extracted from the Powerhouse repository at v6.2.2-dev.74",
+        "timestamp": "2026-09-02T22:09:09.868Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:09:09.868Z"
+    }
+  },
+  {
+    "index": 13,
+    "hash": "",
+    "timestampUtcMs": "2026-09-02T22:21:43.557Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "metadata": {
+          "reason": "Connect must carry the identical set under connect.reactor.featureFlags; a browser replica on different flags diverges from the switchboard",
+          "confidence": "grounded"
+        },
+        "sourceId": "c8bd64d3-d92e-4f41-beba-983a7e995c26",
+        "targetId": "2a908219-6cde-489e-b910-c0d5740409ab",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-09-02T22:21:43.557Z"
+    }
+  },
+  {
+    "index": 13,
+    "hash": "Zigzp6ZLPKzauv+/g1KKwAtlG2k=",
+    "timestampUtcMs": "2026-09-02T22:09:10.368Z",
+    "action": {
+      "type": "APPROVE_NOTE",
+      "input": {
+        "id": "47100074-02dd-43b9-99e7-7078e019d6f7",
+        "actor": "liberuum",
+        "comment": "claim checked against the cited repository file at the pinned tag",
+        "timestamp": "2026-09-02T22:09:10.368Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:09:10.368Z"
+    }
+  },
+  {
+    "index": 14,
+    "hash": "9yb9rP8CNx7Ucx9yOc67IvHGruE=",
+    "timestampUtcMs": "2026-09-02T22:15:19.349Z",
+    "action": {
+      "type": "SET_TITLE",
+      "input": {
+        "title": "Auth enforcement is staged behind four cascading feature flags, and the reactor refuses a flag set that skips a predecessor",
+        "updatedAt": "2026-09-02T22:15:19.349Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:15:19.349Z"
+    }
+  },
+  {
+    "index": 15,
+    "hash": "9yb9rP8CNx7Ucx9yOc67IvHGruE=",
+    "timestampUtcMs": "2026-09-02T22:15:19.349Z",
+    "action": {
+      "type": "SET_DESCRIPTION",
+      "input": {
+        "updatedAt": "2026-09-02T22:15:19.349Z",
+        "description": "documentDecisions \u2192 authEnforcement \u2192 authGroups \u2192 authConditions, each requiring the one before; ReactorBuilder throws on a gap or an unknown name. Switchboard reads them as REACTOR_* env vars."
+      },
+      "timestampUtcMs": "2026-09-02T22:15:19.349Z"
+    }
+  },
+  {
+    "index": 16,
+    "hash": "9yb9rP8CNx7Ucx9yOc67IvHGruE=",
+    "timestampUtcMs": "2026-09-02T22:15:19.349Z",
+    "action": {
+      "type": "SET_NOTE_TYPE",
+      "input": {
+        "noteType": "REFERENCE",
+        "updatedAt": "2026-09-02T22:15:19.349Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:15:19.349Z"
+    }
+  },
+  {
+    "index": 17,
+    "hash": "9yb9rP8CNx7Ucx9yOc67IvHGruE=",
+    "timestampUtcMs": "2026-09-02T22:15:19.349Z",
+    "action": {
+      "type": "SET_CONTENT",
+      "input": {
+        "content": "Enforcement of the auth scope rolls out in stages, one flag each:\n\n| Flag | Env var (Switchboard) | What it turns on |\n| --- | --- | --- |\n| `documentDecisions` | `REACTOR_DOCUMENT_DECISIONS` | Decide writes from the document stream rather than the meta cache (positional deletion) |\n| `authEnforcement` | `REACTOR_AUTH_ENFORCEMENT` | Enforce the policy at admission, replay and read |\n| `authGroups` | `REACTOR_AUTH_GROUPS` | Let `{ group }` principals match against a roster document |\n| `authConditions` | `REACTOR_AUTH_CONDITIONS` | Evaluate `where` clauses and `{ match }` principals |\n\nEach flag requires the one above it. `ReactorBuilder` validates the set eagerly and **throws** on a combination that skips a predecessor, and on any flag name the running version does not recognise \u2014 a partially enforcing reactor would apply less than the operator asked for. All four default to off.\n\n```ts\nnew ReactorBuilder().withExecutorConfig({\n  featureFlags: { documentDecisions: true, authEnforcement: true },\n});\n```\n\nSwitchboard reads them as the literal string `true` in the `REACTOR_*` variables; Connect carries the same four under `connect.reactor.featureFlags` in its runtime config.\n\nThe flags govern **enforcement only**. The auth data model \u2014 the four actions, the reducer, validation, replication \u2014 is always live, so a grant written on a flags-off reactor is stored and syncs; it is simply not enforced there. That is what makes a policy authored under any flag configuration intact once enforcement turns on.\n\n_Source: apps/academy/docs/academy/04-Reference/01-Reactor/11-Authorization.md (Powerhouse v6.2.2-dev.74)._\n_Source: apps/switchboard/README.md (Powerhouse v6.2.2-dev.74)._\n_Source: docs/specs/auth-scope.md (Powerhouse v6.2.2-dev.74)._\n\n## Provenance\n- `apps/academy/docs/academy/04-Reference/01-Reactor/11-Authorization.md` \u2014 Feature flags table and the 'flags govern enforcement only' paragraph\n- `apps/switchboard/README.md` \u2014 Reactor Enforcement Flags: REACTOR_* env vars, 'refuses to start on a set that skips one'\n- `docs/specs/auth-scope.md` \u2014 Implementation plan \u203a Feature flags\n\n_Recorded from the Powerhouse repository at **v6.2.2-dev.74** during the v6.2.2-dev.74 source sync._",
+        "updatedAt": "2026-09-02T22:15:19.349Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:15:19.349Z"
+    }
+  },
+  {
+    "index": 18,
+    "hash": "9yb9rP8CNx7Ucx9yOc67IvHGruE=",
+    "timestampUtcMs": "2026-09-02T22:15:19.349Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "version",
+        "value": "v6.2.2-dev.74",
+        "updatedAt": "2026-09-02T22:15:19.349Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:15:19.349Z"
+    }
+  },
+  {
+    "index": 19,
+    "hash": "9yb9rP8CNx7Ucx9yOc67IvHGruE=",
+    "timestampUtcMs": "2026-09-02T22:15:19.349Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "filePath",
+        "value": "apps/academy/docs/academy/04-Reference/01-Reactor/11-Authorization.md",
+        "updatedAt": "2026-09-02T22:15:19.349Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:15:19.349Z"
+    }
+  },
+  {
+    "index": 20,
+    "hash": "9yb9rP8CNx7Ucx9yOc67IvHGruE=",
+    "timestampUtcMs": "2026-09-02T22:15:19.349Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "confidence",
+        "value": "grounded",
+        "updatedAt": "2026-09-02T22:15:19.349Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:15:19.349Z"
+    }
+  },
+  {
+    "index": 21,
+    "hash": "bCVyM4XscXmWMwH8T7AIm3/dvUU=",
+    "timestampUtcMs": "2026-09-02T22:20:06.579Z",
+    "action": {
+      "type": "SET_TITLE",
+      "input": {
+        "title": "Auth enforcement is staged behind four cascading feature flags, and the reactor refuses a flag set that skips a predecessor",
+        "updatedAt": "2026-09-02T22:20:06.578Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:20:06.579Z"
+    }
+  },
+  {
+    "index": 22,
+    "hash": "bCVyM4XscXmWMwH8T7AIm3/dvUU=",
+    "timestampUtcMs": "2026-09-02T22:20:06.579Z",
+    "action": {
+      "type": "SET_DESCRIPTION",
+      "input": {
+        "updatedAt": "2026-09-02T22:20:06.578Z",
+        "description": "documentDecisions \u2192 authEnforcement \u2192 authGroups \u2192 authConditions, each requiring the one before; ReactorBuilder throws on a gap or an unknown name. Switchboard reads them as REACTOR_* env vars."
+      },
+      "timestampUtcMs": "2026-09-02T22:20:06.579Z"
+    }
+  },
+  {
+    "index": 23,
+    "hash": "bCVyM4XscXmWMwH8T7AIm3/dvUU=",
+    "timestampUtcMs": "2026-09-02T22:20:06.579Z",
+    "action": {
+      "type": "SET_NOTE_TYPE",
+      "input": {
+        "noteType": "REFERENCE",
+        "updatedAt": "2026-09-02T22:20:06.578Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:20:06.579Z"
+    }
+  },
+  {
+    "index": 24,
+    "hash": "bCVyM4XscXmWMwH8T7AIm3/dvUU=",
+    "timestampUtcMs": "2026-09-02T22:20:06.579Z",
+    "action": {
+      "type": "SET_CONTENT",
+      "input": {
+        "content": "Enforcement of the auth scope rolls out in stages, one flag each:\n\n| Flag | Env var (Switchboard) | What it turns on |\n| --- | --- | --- |\n| `documentDecisions` | `REACTOR_DOCUMENT_DECISIONS` | Decide writes from the document stream rather than the meta cache (positional deletion) |\n| `authEnforcement` | `REACTOR_AUTH_ENFORCEMENT` | Enforce the policy at admission, replay and read |\n| `authGroups` | `REACTOR_AUTH_GROUPS` | Let `{ group }` principals match against a roster document |\n| `authConditions` | `REACTOR_AUTH_CONDITIONS` | Evaluate `where` clauses and `{ match }` principals |\n\nEach flag requires the one above it. `ReactorBuilder` validates the set eagerly and **throws** on a combination that skips a predecessor, and on any flag name the running version does not recognise \u2014 a partially enforcing reactor would apply less than the operator asked for. All four default to off.\n\n```ts\nnew ReactorBuilder().withExecutorConfig({\n  featureFlags: { documentDecisions: true, authEnforcement: true },\n});\n```\n\nSwitchboard reads them as the literal string `true` in the `REACTOR_*` variables; Connect carries the same four under `connect.reactor.featureFlags` in its runtime config.\n\nThe flags govern **enforcement only**. The auth data model \u2014 the four actions, the reducer, validation, replication \u2014 is always live, so a grant written on a flags-off reactor is stored and syncs; it is simply not enforced there. That is what makes a policy authored under any flag configuration intact once enforcement turns on.\n\n_Source: apps/academy/docs/academy/04-Reference/01-Reactor/11-Authorization.md (Powerhouse v6.2.2-dev.74)._\n_Source: apps/switchboard/README.md (Powerhouse v6.2.2-dev.74)._\n_Source: docs/specs/auth-scope.md (Powerhouse v6.2.2-dev.74)._\n\n## Provenance\n- `apps/academy/docs/academy/04-Reference/01-Reactor/11-Authorization.md` \u2014 Feature flags table and the 'flags govern enforcement only' paragraph\n- `apps/switchboard/README.md` \u2014 Reactor Enforcement Flags: REACTOR_* env vars, 'refuses to start on a set that skips one'\n- `docs/specs/auth-scope.md` \u2014 Implementation plan \u203a Feature flags\n\n_Recorded from the Powerhouse repository at **v6.2.2-dev.74** during the v6.2.2-dev.74 source sync._",
+        "updatedAt": "2026-09-02T22:20:06.578Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:20:06.579Z"
+    }
+  },
+  {
+    "index": 25,
+    "hash": "bCVyM4XscXmWMwH8T7AIm3/dvUU=",
+    "timestampUtcMs": "2026-09-02T22:20:06.579Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "version",
+        "value": "v6.2.2-dev.74",
+        "updatedAt": "2026-09-02T22:20:06.578Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:20:06.579Z"
+    }
+  },
+  {
+    "index": 26,
+    "hash": "bCVyM4XscXmWMwH8T7AIm3/dvUU=",
+    "timestampUtcMs": "2026-09-02T22:20:06.579Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "filePath",
+        "value": "apps/academy/docs/academy/04-Reference/01-Reactor/11-Authorization.md",
+        "updatedAt": "2026-09-02T22:20:06.578Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:20:06.579Z"
+    }
+  },
+  {
+    "index": 27,
+    "hash": "bCVyM4XscXmWMwH8T7AIm3/dvUU=",
+    "timestampUtcMs": "2026-09-02T22:20:06.579Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "confidence",
+        "value": "grounded",
+        "updatedAt": "2026-09-02T22:20:06.578Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:20:06.579Z"
+    }
+  }
+]

@@ -1,0 +1,133 @@
+[
+  {
+    "index": 0,
+    "hash": "",
+    "timestampUtcMs": "2026-09-02T21:43:14.562Z",
+    "action": {
+      "type": "CREATE_DOCUMENT",
+      "input": {
+        "meta": {},
+        "name": "CLI \u203a ph-cmd \u203a README",
+        "slug": "",
+        "model": "bai/source",
+        "branch": "main",
+        "signing": {
+          "nonce": "",
+          "publicKey": {},
+          "signature": "f6e9597d-a6fa-4c96-beba-68651cbb2924",
+          "documentType": "bai/source",
+          "createdAtUtcIso": "2026-09-02T21:43:14.562Z"
+        },
+        "version": 0,
+        "documentId": "f6e9597d-a6fa-4c96-beba-68651cbb2924",
+        "protocolVersions": {
+          "base-reducer": 2
+        }
+      },
+      "timestampUtcMs": "2026-09-02T21:43:14.562Z"
+    }
+  },
+  {
+    "index": 0,
+    "hash": "/q3WHb+qzocrrJLUpfasX+kbpog=",
+    "timestampUtcMs": "2026-09-02T21:43:14.504Z",
+    "action": {
+      "type": "INGEST_SOURCE",
+      "input": {
+        "url": "https://github.com/powerhouse-inc/powerhouse/blob/v6.2.2-dev.74/clis/ph-cmd/README.md",
+        "tool": "sync-repo-docs",
+        "title": "CLI \u203a ph-cmd \u203a README",
+        "author": "Powerhouse Inc.",
+        "method": "sha256:0c4503520693730cdc93a60b3de711ec4314057d9c92aee523df085464b17dcb git:v6.2.2-dev.74",
+        "content": "# Powerhouse Command (ph-cmd)\n\n[![npm version](https://img.shields.io/npm/v/ph-cmd.svg)](https://www.npmjs.com/package/ph-cmd)\n[![License](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)\n[![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](CONTRIBUTING.md)\n\nA powerful command-line interface tool for Powerhouse DAO that streamlines project management, dependency handling, and environment configuration. This CLI serves as an intelligent wrapper around `ph-cli`, providing seamless command forwarding and context-aware execution.\n\n## Features\n\n- \ud83d\udd04 Automatic command forwarding to `ph-cli`\n- \ud83c\udfaf Smart project context detection\n- \ud83d\udce6 Multi-package manager support (npm, yarn, pnpm)\n- \ud83c\udf0d Environment management (dev, prod, latest, local)\n- \u26a1 Fast and efficient dependency updates\n- \ud83d\udd27 Global configuration management\n\n## Prerequisites\n\n- Node.js (v14 or higher)\n- npm, yarn, or pnpm installed\n- Git (for version control)\n\n## Installation\n\n```bash\n# Using npm\nnpm install -g ph-cmd --legacy-peer-deps\n\n# Using yarn\nyarn global add ph-cmd\n\n# Using pnpm\npnpm add -g ph-cmd\n```\n\nAfter installation, `ph-cmd` creates a default project in your home directory under `.ph/`. This serves as a fallback context when no other project context is found. The default project comes with basic Powerhouse configurations and can be customized using the `ph setup-globals` command.\n\n## Project Context Detection\n\nThe CLI automatically determines the project context by:\n\n1. Looking for a `powerhouse.config.json` file in the current directory\n2. If not found, searching up the directory tree for the nearest `powerhouse.config.json`\n3. Using the project's package manager (npm, yarn, or pnpm) to execute commands in the correct context\n\n## Core Commands\n\n### Project Initialization\n\n```bash\n# Initialize a new project\nph init my-project\n\n# Initialize in interactive mode\nph init -i\n\n# Initialize with specific version\nph init -v v1.0.0\n\n# Initialize using development version\nph init --dev\n\n# Initialize with specific package manager\nph init --package-manager pnpm\n```\n\n#### Options:\n\n- `-p, --project`: Name of the project\n- `-i, --interactive`: Run the command in interactive mode\n- `-v, --version`: Specify development version to use (defaults to \"main\")\n- `--dev`: Use \"development\" version of the boilerplate\n- `--staging`: Use \"development\" version of the boilerplate\n- `--package-manager <packageManager>`: Force package manager to use\n\n### Environment Management\n\n```bash\n# Switch to latest environment\nph use latest\n\n# Switch to development environment\nph use dev\n\n# Switch to production environment\nph use prod\n\n# Switch to local environment with specific path\nph use local /path/to/local/env\n\n# Use specific package manager\nph use latest --package-manager pnpm\n```\n\n#### Options:\n\n- `--package-manager <packageManager>`: Force package manager to use\n- `--debug`: Show additional logs\n\n### Dependency Updates\n\n```bash\n# Update dependencies based on package.json ranges\nph update\n\n# Force update to latest dev version\nph update --force dev\n\n# Force update to latest stable version\nph update --force prod\n\n# Force update to latest version (same as prod)\nph update --force latest\n\n# Update using specific package manager\nph update --package-manager pnpm\n\n# Update with debug information\nph update --debug\n```\n\n#### Options:\n\n- `--force <env>`: Force update to latest available version for the environment specified (dev, prod, latest)\n- `--package-manager <packageManager>`: Force package manager to use\n- `--debug`: Show additional logs\n\n### Global Configuration\n\n```bash\n# Set up global configurations\nph setup-globals\n\n# Set up with debug information\nph setup-globals --debug\n```\n\n#### Options:\n\n- `--debug`: Show additional logs\n\n## Global Options\n\nMost commands support these global options:\n\n- `--verbose`: Enable debug mode\n- `--package-manager <manager>`: Force the use of a specific package manager\n- `--debug`: Show additional debug logs\n\n## Common Use Cases\n\n### Setting Up a New Project\n\n```bash\n# Initialize a new project with npm\nph init my-project --package-manager npm\n\n# Set up global configurations\nph setup-globals\n\n# Switch to development environment\nph use dev\n```\n\n### Updating Dependencies\n\n```bash\n# Update to latest stable version\nph update --force prod\n\n# Update with specific package manager\nph update --package-manager pnpm\n```\n\n## Troubleshooting\n\n### Common Issues\n\n1. **Command not found**\n   - Ensure `ph-cmd` is installed globally\n   - Check if the installation path is in your system's PATH\n\n2. **Project context not found**\n   - Verify you're in a Powerhouse project directory\n   - Check for the presence of `powerhouse.config.json`\n\n3. **Package manager conflicts**\n   - Use `--package-manager` flag to specify the correct manager\n   - Ensure the specified package manager is installed\n\n### Debug Mode\n\nEnable debug mode to get detailed information about command execution:\n\n```bash\nph <command> --debug\n```\n\n## Contributing\n\nWe welcome contributions! Please see our [Contributing Guidelines](CONTRIBUTING.md) for details on:\n\n- Code of Conduct\n- Development Process\n- Pull Request Process\n- Coding Standards\n\n## License\n\nThis project is licensed under the terms specified in the [LICENSE](LICENSE) file.\n\n## Support\n\nFor support, please:\n\n1. Check the [documentation](https://docs.powerhouse.com)\n2. Open an [issue](https://github.com/powerhouse/ph-cmd/issues)\n3. Join our [Discord community](https://discord.gg/powerhouse)\n",
+        "createdAt": "2026-09-02T21:43:14.504Z",
+        "createdBy": "repo-docs-sync",
+        "sourceType": "DOCUMENTATION",
+        "description": "Powerhouse v6.2.2-dev.74 (unchanged since v6.2.2-dev.47) \u2014 A powerful command-line interface tool for Powerhouse DAO that streamlines project management, dependency handling, and environment configur\u2026",
+        "publishedAt": "2025-10-15T19:44:36.000Z"
+      },
+      "timestampUtcMs": "2026-09-02T21:43:14.504Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "",
+    "timestampUtcMs": "2026-09-02T21:43:14.562Z",
+    "action": {
+      "type": "UPGRADE_DOCUMENT",
+      "input": {
+        "model": "bai/source",
+        "toVersion": 1,
+        "documentId": "f6e9597d-a6fa-4c96-beba-68651cbb2924",
+        "fromVersion": 0,
+        "initialState": {
+          "auth": {
+            "grants": [],
+            "version": 0
+          },
+          "local": {},
+          "global": {
+            "title": null,
+            "status": "INBOX",
+            "content": null,
+            "createdAt": null,
+            "createdBy": null,
+            "provenance": null,
+            "sourceType": null,
+            "description": null,
+            "extractedClaims": [],
+            "extractionStats": null
+          },
+          "document": {
+            "hash": {
+              "encoding": "base64",
+              "algorithm": "sha1"
+            },
+            "version": 1
+          }
+        }
+      },
+      "timestampUtcMs": "2026-09-02T21:43:14.562Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "Pexnkv4Th0qGBlS37iHenuHofQ0=",
+    "timestampUtcMs": "2026-09-03T07:35:08.551Z",
+    "action": {
+      "type": "ADD_EXTRACTED_CLAIM",
+      "input": {
+        "claimRef": "1ebdfe51-ea4e-4d52-81dc-56d98c2f3690"
+      },
+      "timestampUtcMs": "2026-09-03T07:35:08.551Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "4DHMbwAGUeo+jEdjGiJBWzzP35w=",
+    "timestampUtcMs": "2026-09-03T07:35:12.368Z",
+    "action": {
+      "type": "RECORD_EXTRACTION_STATS",
+      "input": {
+        "skipRate": 1,
+        "claimCount": 0,
+        "extractedAt": "2026-09-03T07:35:12.367Z",
+        "extractedBy": "knowledge-agent",
+        "skippedCount": 2
+      },
+      "timestampUtcMs": "2026-09-03T07:35:12.368Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "aQBRIuIV2oRqxTCNKkt+0XIXzk4=",
+    "timestampUtcMs": "2026-09-03T07:58:11.311Z",
+    "action": {
+      "type": "SET_SOURCE_STATUS",
+      "input": {
+        "status": "EXTRACTED"
+      },
+      "timestampUtcMs": "2026-09-03T07:58:11.311Z"
+    }
+  }
+]

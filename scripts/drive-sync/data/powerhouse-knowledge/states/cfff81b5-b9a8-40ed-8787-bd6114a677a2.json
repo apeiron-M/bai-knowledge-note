@@ -1,0 +1,96 @@
+{
+  "links": [
+    {
+      "id": "lnk-0eafe53b-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "0eafe53b-efdf-4310-9a1c-7d3e8b5cc669",
+      "targetTitle": "ph-cli-is-primary-project-tool"
+    },
+    {
+      "id": "lnk-787398c0-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "787398c0-fa8c-4e79-bd9f-71b60d57f482",
+      "targetTitle": "document-model-versioning-system"
+    },
+    {
+      "id": "lnk-64d17fca-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "64d17fca-c9b3-48ae-a012-a5276e64cc82",
+      "targetTitle": "swarm-mantaray-manifests"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "A Powerhouse project has four main directories: document-models, editors, processors, and subgraphs",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "2c5549ce-9d14-4fa2-8e93-45984147f187",
+      "name": "project-structure",
+      "topicDocumentId": null
+    },
+    {
+      "id": "899610bb-1ce2-4913-b7c0-704d8e6c7a32",
+      "name": "scaffolding",
+      "topicDocumentId": null
+    },
+    {
+      "id": "88304dd0-1a89-4f98-9b6e-cd9f1e30300b",
+      "name": "packaging",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "A Powerhouse project initialized with `ph init` creates this structure:\n\n- `document-models/` - Document model implementations (schema, gen/, src/reducers, src/tests)\n- `editors/` - React editor components for document types\n- `processors/` - Event-driven components reacting to document changes\n- `subgraphs/` - Modular GraphQL services for structured data access\n\nConfiguration files:\n- `powerhouse.config.json` - Project and Vetra drive configuration\n- `powerhouse.manifest.json` - Package manifest describing contents\n- `package.json` - NPM package metadata (scoped naming: `@org-ph/package-name`)\n- `tsconfig.json` - TypeScript configuration\n- `vitest.config.ts` - Test configuration (the only test/build config scaffolded; see `packages/codegen/src/file-builders/boilerplate/generated-project-files.ts:81`)\n\nThere is **no** `vite.config.ts` in a generated project -- no such template exists under `packages/codegen/src/templates/boilerplate/`. Vite config is supplied by builder-tools and can only be overridden with `ph connect --vite-config-file`.\n\nFor publishing, `powerhouse.manifest.json` declares document models, editors, and their relationships (which editor serves which document type).\n\n_Source-verified 2026-08-13 against Powerhouse source at v6.2.2-dev.45._",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": "v6.2.2-dev.74",
+  "computes": null,
+  "filePath": null,
+  "noteType": "REFERENCE",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "knowledge-agent",
+    "createdAt": "2026-04-02T12:00:00.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-09-03T09:57:02.148Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "ph init scaffolds document-models/, editors/, processors/, subgraphs/ plus config files for a complete package structure.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "c85a04a1-3b8c-4b66-9c61-9d88c1ae9b42",
+      "actor": "claude",
+      "comment": "Knowledge registered against powerhouse v6.2.2-dev.47",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-14T12:00:00.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "0e0cac16-2469-4d3a-be12-9a1ed3f4e985",
+      "actor": "liberuum",
+      "comment": "Canonical as of powerhouse v6.2.2-dev.47",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-14T12:00:00.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

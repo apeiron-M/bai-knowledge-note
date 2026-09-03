@@ -1,0 +1,115 @@
+{
+  "links": [
+    {
+      "id": "lnk-aeb97065-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "aeb97065-4d48-41e2-9305-8c90c4d39fcf",
+      "targetTitle": "attachment-upload-hooks",
+      "reason": "The React hooks are the surface where these stages and progress values are consumed",
+      "confidence": "grounded"
+    },
+    {
+      "id": "lnk-6f938c9e-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "6f938c9e-85f4-4a4f-b55e-3213b0ae4ef5",
+      "targetTitle": "attachments-keep-binaries-out-of-the-operation-log",
+      "reason": "Dedup finishing an upload without sending bytes is a consequence of content-addressed storage keyed on the sha256 ref",
+      "confidence": "grounded"
+    },
+    {
+      "id": "lnk-bf2d1ef5-bui",
+      "linkType": "BUILDS_ON",
+      "targetDocumentId": "bf2d1ef5-01a8-4688-86a6-0db24fa9120a",
+      "targetTitle": "attachment-uploads-have-two-equal-reservation-modes",
+      "reason": "Adds the observability half to the reserve/send/read flow: what each stage reports and which stages cannot report bytes at all",
+      "confidence": "grounded"
+    },
+    {
+      "id": "lnk-f6901953-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "f6901953-d719-45d2-8b5c-8aaca612562d",
+      "targetTitle": "Academy \u203a Reference \u203a Reactor \u203a Attachment service",
+      "reason": "Extracted from apps/academy/docs/academy/04-Reference/01-Reactor/09-AttachmentService.md at v6.2.2-dev.74 \u2014 Client and hook additions: AttachmentProgress, per-stage denominators, uploadTransport, download asymmetry, batch progress",
+      "confidence": "grounded"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Attachment transfers report byte-level progress per stage, and upload bytes are observable only through an upload transport that can see them \u2014 fetch cannot",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "004d8e0f-e2fa-413b-9fb0-a6e0850e516b",
+      "name": "attachments",
+      "topicDocumentId": null
+    },
+    {
+      "id": "6aa2c41c-3ad6-4618-84e7-095096c19fe1",
+      "name": "upload",
+      "topicDocumentId": null
+    },
+    {
+      "id": "990d9330-0586-4989-89e3-ecc4bf556b1e",
+      "name": "progress",
+      "topicDocumentId": null
+    },
+    {
+      "id": "dd75d22f-115c-48b2-bdd0-07123912412d",
+      "name": "reactor-browser",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "Every single-item attachment method takes an options bag as its second argument carrying `onProgress` and `throttleMs`, and reports `AttachmentProgress` \u2014 `{ stage, loaded, total, indeterminate }` \u2014 where `stage` is one of `hashing`, `reserving`, `uploading`, `requesting-download-target`, `downloading`, `done`, `error`. `loaded`/`total` are **per stage, not per operation**: a per-operation denominator would have to weight hashing against transfer, and a dedup would shrink it mid-flight. Exactly one terminal event is emitted per operation, `done` always carries `loaded === total`, and byte events are throttled to one per 100 ms by default.\n\nWhere bytes are actually observable:\n\n- **Downloads** always report bytes, against `header.sizeBytes`.\n- **Uploads** report bytes only through an upload transport that can observe them. `fetch` cannot \u2014 it has no upload-side progress event \u2014 so the default transport reports `uploading` as **indeterminate** and stays silent until the request resolves. `createXhrUploadTransport()` is the browser opt-in, set on `SwitchboardClientConfig.uploadTransport`; Connect does this already. It registers `xhr.upload.onprogress` only when a caller passes `onProgress`, because that registration alone forces a CORS preflight on a presigned PUT. An explicit `fetchFn` always wins over it.\n- **Hashing** has no byte progress and cannot: `preprocess` runs one `crypto.subtle.digest` over the whole file and WebCrypto has no streaming digest \u2014 a visibly long indeterminate phase for a large file.\n- **Deduplication** finishes having sent nothing: the terminal event carries `deduped: true` with `loaded: 0, total: 0`, and the hook reports 100 %.\n- **`upload.progress` measures bytes handed to the socket, not server acknowledgement.** A small file emits one event at 100 % and then waits for the response, so the stage stays `uploading` until `send()` resolves.\n\n`download()` is the asymmetric case: it resolves as soon as the stream is available, with `downloading` as the last event and `loaded: 0`; byte events and the terminal `done` arrive as the caller reads the stream \u2014 so `downloadMany`'s `concurrency` bounds target negotiation rather than simultaneous transfer. **Abandoning the stream is a failure, not a completion**: cancelling emits the terminal `error` carrying the bytes that did arrive and the cancel reason. Batch progress is per item, stamped with `index`, alongside `onItemSettled` carrying `{ settled, completed, failed, total }`.\n\n_Source: apps/academy/docs/academy/04-Reference/01-Reactor/09-AttachmentService.md (Powerhouse v6.2.2-dev.74)._\n\n## Provenance\n- `apps/academy/docs/academy/04-Reference/01-Reactor/09-AttachmentService.md` \u2014 Client and hook additions: AttachmentProgress, per-stage denominators, uploadTransport, download asymmetry, batch progress\n\n_Recorded from the Powerhouse repository at **v6.2.2-dev.74** during the v6.2.2-dev.74 source sync._",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": "v6.2.2-dev.74",
+  "computes": null,
+  "filePath": "apps/academy/docs/academy/04-Reference/01-Reactor/09-AttachmentService.md",
+  "noteType": "REFERENCE",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": "grounded",
+  "consumedBy": [],
+  "provenance": {
+    "author": "knowledge-agent",
+    "createdAt": "2026-09-02T22:14:04.832Z",
+    "sessionId": null,
+    "updatedAt": "2026-09-02T22:21:20.001Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Single-item methods take onProgress and throttleMs and emit stage, loaded, total and indeterminate, throttled to 100 ms. createXhrUploadTransport() is the browser opt-in; Connect sets it.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "b534cdb3-5627-47ca-a188-fc125bb95a51",
+      "actor": "knowledge-agent",
+      "comment": "extracted from the Powerhouse repository at v6.2.2-dev.74",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-09-02T22:14:05.455Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "ef3ea808-3316-4cab-8136-e4c7f4f74b7c",
+      "actor": "liberuum",
+      "comment": "claim checked against the cited repository file at the pinned tag",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-09-02T22:14:05.977Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

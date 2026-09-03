@@ -1,0 +1,94 @@
+{
+  "links": [
+    {
+      "id": "lnk-8a776f82-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "8a776f82-6a04-465e-aa49-09e516d88025",
+      "targetTitle": "publicplan GmbH \u2014 Drupal"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "A Drupal workflow-state hook produces an approval trail distinct from node revisions",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "8a40dc35-9e53-4437-affd-5a53b0dda8b1",
+      "name": "leads",
+      "topicDocumentId": null
+    },
+    {
+      "id": "190e6afb-9167-4b78-a7c1-0f6d6c46f1b2",
+      "name": "drupal",
+      "topicDocumentId": null
+    },
+    {
+      "id": "8da26031-9ec9-4b1f-bb79-4a9f5c7fec39",
+      "name": "public-sector",
+      "topicDocumentId": null
+    },
+    {
+      "id": "30aa82aa-4788-4134-a61d-59194547a80a",
+      "name": "demo-design",
+      "topicDocumentId": null
+    },
+    {
+      "id": "f3e48951-91d3-4a18-96eb-b1eb0c41b765",
+      "name": "audit-trail",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "The integration is a Drupal hook on workflow state change, dispatching a typed operation for a public-sector approval. The claim is a separation: the approval trail is distinct from node revisions.\n\nThis is the third appearance of the same distinction in this part of the corpus. Alfresco records versions rather than decisions, Nextcloud cannot tell a sign-off from a move, and Drupal's revision history records content edits rather than approvals. In each case the tool has a detailed change log and still cannot answer what a change meant, which is what makes the record-layer argument portable across content systems rather than specific to one of them.\n\nThe single lead is publicplan GmbH in Duesseldorf, marked \"2 \u00b7 next\". The public-sector framing matters for the demo: an approval on a government content workflow is the case where the difference between \"this page changed\" and \"this was approved for publication\" has consequences outside the organisation.\n\n---\n\n## Leads sharing this finding (1)\n\n**2 \u00b7 next**\n- publicplan GmbH (DE Duesseldorf) \u2014 Stefan Seltmann, Gesch\u00e4ftsf\u00fchrer \u00b7 info@publicplan.de \u00b7 https://publicplan.de\n\nVerbatim research text this claim was extracted from:\n\n> Drupal hook dispatching a typed operation on workflow state change for a public-sector approval \u2014 an approval trail distinct from node revisions.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "INTEGRATION",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "knowledge-agent",
+    "createdAt": "2026-08-19T11:31:59.293928Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-19T11:32:00.836406Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "The typed operation fires on workflow state change for a public-sector approval, separating the record of the decision from the content revision that carried it.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "f07a50ef-41cd-46b9-9781-d8392eec26a9",
+      "actor": "knowledge-agent",
+      "comment": "Extracted from lead research; claim checked against the source record.",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-19T11:32:00.689537Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "946064fc-4353-48d9-9d10-d6404c3eb30a",
+      "actor": "liberuum",
+      "comment": "Approved: lead corpus extraction.",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-19T11:32:00.836406Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

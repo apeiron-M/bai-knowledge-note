@@ -1,0 +1,85 @@
+{
+  "links": [
+    {
+      "id": "lnk-0c93f25f-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "0c93f25f-e382-441d-a17b-71f6c459debd",
+      "targetTitle": "document-native-systems-construction"
+    },
+    {
+      "id": "lnk-4e650379-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "4e650379-926b-4f72-9918-6805bf976a69",
+      "targetTitle": "powerhouse-high-level-bi-positioning"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Deterministic validation must not be routed through a language model",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "2f0bef6c-ebbb-4488-8642-4d30fe92189b",
+      "name": "validation",
+      "topicDocumentId": null
+    },
+    {
+      "id": "1b3881bb-6f1c-44bf-831a-173613b482ac",
+      "name": "construction",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "When a requirement is machine-checkable, the temptation is to hand the model and the requirement to a language model and ask whether the requirement is met. This is a category error, and it degrades the system below what it replaced.\n\nA check has two properties worth protecting: it returns the same verdict on the same input, and its verdict can be traced to the rule that produced it. Set arithmetic over identifiers and property lookups have both. An LLM has neither. Substituting it converts an auditable check into a probabilistic assertion \u2014 worse than the spreadsheet it replaced, because the spreadsheet never claimed compliance it could not demonstrate.\n\nThe division of labour that holds: **the deterministic engine owns the verdict; the model owns everything downstream of it.** Writing the plain-language explanation of a failure, grouping findings by likely cause, drafting the message to the responsible party, and authoring the requirement in the first place are all tasks where fluency is the requirement and no auditable ground truth is being asserted. Reaching a verdict is not.\n\nThe practical test is whether a disputed result can be reproduced and attributed. If the answer depends on which model version ran and at what temperature, the check has stopped being evidence.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "CONCEPT",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "apeiron",
+    "createdAt": "2026-08-14T16:00:00.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-17T12:50:13.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Routing a compliance check through an LLM replaces an auditable verdict with an unauditable one, which is worse than the spreadsheet it replaced because the spreadsheet never claimed false compliance.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "5dd02f2b-5f22-448a-9f14-1ce92f1b7e8c",
+      "actor": "knowledge-agent",
+      "comment": "rescued incident notes \u2014 lifecycle normalization",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-17T12:50:13.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "cfd4fea0-38fe-49e6-ad3e-63a75907b23c",
+      "actor": "liberuum",
+      "comment": "approved for canonical",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-17T12:50:13.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

@@ -1,0 +1,141 @@
+[
+  {
+    "index": 0,
+    "hash": "",
+    "timestampUtcMs": "2026-09-02T21:38:20.217Z",
+    "action": {
+      "type": "CREATE_DOCUMENT",
+      "input": {
+        "meta": {},
+        "name": "Academy \u203a Reference \u203a Reactor \u203a Storage backends and scaling",
+        "slug": "",
+        "model": "bai/source",
+        "branch": "main",
+        "signing": {
+          "nonce": "",
+          "publicKey": {},
+          "signature": "c1116781-e617-4620-bb42-f622cbf113cd",
+          "documentType": "bai/source",
+          "createdAtUtcIso": "2026-09-02T21:38:20.217Z"
+        },
+        "version": 0,
+        "documentId": "c1116781-e617-4620-bb42-f622cbf113cd",
+        "protocolVersions": {
+          "base-reducer": 2
+        }
+      },
+      "timestampUtcMs": "2026-09-02T21:38:20.217Z"
+    }
+  },
+  {
+    "index": 0,
+    "hash": "jm6gF5m1CtP+jyBxDR8h78ojVFU=",
+    "timestampUtcMs": "2026-09-02T21:38:20.590Z",
+    "action": {
+      "type": "INGEST_SOURCE",
+      "input": {
+        "url": "https://github.com/powerhouse-inc/powerhouse/blob/v6.2.2-dev.74/apps/academy/docs/academy/04-Reference/01-Reactor/07-StorageAndScaling.md",
+        "tool": "sync-repo-docs",
+        "title": "Academy \u203a Reference \u203a Reactor \u203a Storage backends and scaling",
+        "author": "Powerhouse Inc.",
+        "method": "sha256:3ddf3485ad28a5a8e59f7a6780b2354dbe14e9629ee43d4c1415cd63abccb58b git:v6.2.2-dev.74",
+        "content": "---\ntoc_max_heading_level: 3\n---\n\n# Storage backends and scaling\n\nThe reactor persists every operation through a Kysely-backed storage layer. You pick the backend and the execution topology on the [`ReactorBuilder`](/academy/Reference/Reactor/WorkingWithTheReactor) before you call `build()`. This page covers the default in-memory backend, switching to Postgres, and the two scaling paths: an executor worker pool and sharded projection workers.\n\nBoth scaling features are recent and design-doc-tracked. Where a path is not yet stable, this page says so.\n\n## Default: in-memory PGlite\n\nOut of the box the builder gives you an in-memory [PGlite](https://pglite.dev/) database. When you build a reactor with only document models registered, the builder calls an internal `createDefaultDatabase()` that constructs `new Kysely({ dialect: new PGliteDialect(new PGlite()) })`.\n\n```typescript\nimport { ReactorBuilder } from \"@powerhousedao/reactor\";\n\nconst reactor = await new ReactorBuilder()\n  .withDocumentModelSources([myDocumentModel])\n  .build();\n```\n\n`new PGlite()` with no arguments is **in-memory**. Nothing is written to disk and nothing survives the process. This is the right backend for unit tests and local development, where you want a fresh, isolated database every run with no external service.\n\nWhat you get in this path:\n\n- Migrations run automatically. The migration strategy defaults to `\"auto\"`, so the builder runs `runMigrations(db, REACTOR_SCHEMA)` to create the `reactor` schema and apply the current migration set.\n- All storage operates under the `\"reactor\"` Postgres schema (`REACTOR_SCHEMA === \"reactor\"`).\n- A single in-process executor runs jobs (`maxConcurrency` defaults to `1`).\n- An in-process read-model coordinator keeps the document view and indexer up to date.\n- `module.pools` is `[]` \u2014 there is no `pg.Pool` to instrument.\n\nState is ephemeral. Move to Postgres when you need data to survive a restart, when more than one process must share storage, or when you scale to a worker pool or projection shards (neither can run on PGlite \u2014 see below).\n\n## Choosing a backend\n\nThe builder picks the base database in this precedence order, inside `buildModule()`:\n\n1. The instance you passed to `withKysely(...)`, if any.\n2. A Postgres pool, if the worker pool is enabled and a worker DB config is set.\n3. The in-memory PGlite default.\n\n### Bring your own Kysely instance\n\n`withKysely` injects a pre-built Kysely instance and overrides default database creation.\n\n```typescript\nwithKysely(kysely: Kysely<Database>): this\n```\n\n`Database` is the combined schema the reactor operates over:\n\n```typescript\ntype Database = StorageDatabase & DocumentViewDatabase & DocumentIndexerDatabase;\n```\n\n`StorageDatabase` holds the operation log and sync tables (`Operation`, `Keyframe`, `document_collections`, `operation_index_operations`, `sync_remotes`, `sync_cursors`, `sync_dead_letters`); the other two cover the document view and the document indexer. `Database`, `StorageDatabase`, `DocumentIndexerDatabase`, and `OperationTable` are exported from the package root.\n\nA persistent backend needs a Postgres-compatible dialect and the `reactor` schema. Pass a real Postgres `Kysely` here when you want to control pool construction yourself; otherwise use the worker pool's `db` (next section), which builds the pool for you. If you build the pool yourself, register its instrumentation with `withInstrumentedPool(instrumentation)` so pool stats surface through `module.pools`.\n\n### Postgres via the worker pool's db\n\nWhen the worker pool is configured with a `db` (below), the builder builds the parent reactor's Postgres pool for you from that same `DbConfig`. The internal `createPostgresDatabase` constructs a `pg.Pool` and wraps it in a `PostgresDialect`:\n\n```typescript\nnew Pool({\n  host: config.host,\n  port: config.port,\n  database: config.database,\n  user: config.user,\n  password: config.password,\n  ssl: config.ssl ? { rejectUnauthorized: false } : undefined,\n  application_name: config.applicationName,\n  max: config.poolSize,\n  connectionTimeoutMillis: config.connectionTimeoutMillis,\n  idleTimeoutMillis: config.idleTimeoutMillis,\n});\n```\n\nThe pool is instrumented with `instrumentPgPool(pool, config.applicationName ?? \"reactor-host\")` and exposed via `module.pools`.\n\n### Migrations\n\nThe migration strategy is set with `withMigrationStrategy`:\n\n```typescript\nwithMigrationStrategy(strategy: MigrationStrategy): this\n// MigrationStrategy = \"auto\" | \"manual\" | \"none\"\n```\n\nDefault is `\"auto\"`. Only `\"auto\"` runs migrations during `buildModule()`. A migration failure throws `` `Database migration failed: ${error.message}` ``. For `\"manual\"` or `\"none\"`, run migrations yourself with the exported helpers:\n\n```typescript\nimport { runMigrations, getMigrationStatus, REACTOR_SCHEMA } from \"@powerhousedao/reactor\";\n\nconst result = await runMigrations(db, REACTOR_SCHEMA);\nif (!result.success && result.error) {\n  throw result.error;\n}\n```\n\n`runMigrations` returns `{ success, migrationsExecuted, error? }` and never throws on a migration error \u2014 it reports the error in the result. Use `getMigrationStatus(db, REACTOR_SCHEMA)` to inspect applied versus pending migrations without running them.\n\n## Scaling with a worker pool\n\nThe executor worker pool moves job execution out of the main thread into N `node:worker_threads` workers. Each worker opens its own Postgres pool and runs document models in isolation. Jobs route to a worker stickily by document id, so all work for one document lands on the same worker.\n\nEnable it with `withWorkerPool` \u2014 calling it enables the pool; there is no `enabled` flag \u2014 and register document models as **importable sources** (`{ filePath }` or `{ packageName }` \u2014 workers re-import them; a live module cannot cross the thread boundary):\n\n```typescript\nimport { ReactorBuilder } from \"@powerhousedao/reactor\";\n\nconst reactor = await new ReactorBuilder()\n  .withDocumentModelSources([\n    { packageName: \"@my-org/account-document-model\", subpath: \"document-models\" },\n  ])\n  .withWorkerPool({\n    numWorkers: 4,\n    db: {\n      host: \"localhost\",\n      port: 5432,\n      database: \"reactor\",\n      user: \"reactor\",\n      password: process.env.PGPASSWORD!,\n    },\n  })\n  .build();\n```\n\n### Config shapes\n\n`WorkerPoolOptions`:\n\n```typescript\ntype WorkerPoolOptions =\n  | { numWorkers: number; db: DbConfig; verifier?: SignatureVerifierSpec; factory?: WorkerFactory }\n  | { numWorkers: number; factory: WorkerFactory; db?: DbConfig; verifier?: SignatureVerifierSpec };\n```\n\n`numWorkers` is the number of workers the manager spawns at `start()` and the modulus used for sticky routing. Either `db` (the default thread transport; each worker opens its own Postgres pool) or a custom `factory` is required **by construction** \u2014 an enabled pool without connection info is unrepresentable rather than a runtime error.\n\n`DbConfig`:\n\n```typescript\ntype DbConfig = {\n  host: string;\n  port: number;\n  database: string;\n  user: string;\n  password: string;\n  ssl?: boolean;\n  applicationName?: string;\n  poolSize?: number;\n  connectionTimeoutMillis?: number; // pg defaults to 0 (unlimited wait) if omitted\n  idleTimeoutMillis?: number;       // pg defaults to 10000 if omitted\n};\n```\n\n`DbConfig` is sent across worker IPC, so it must be JSON-clonable. `ssl: true` maps to `{ rejectUnauthorized: false }`; `poolSize` maps to pg's `max`; `applicationName` maps to `application_name`.\n\nThe `verifier` field is optional: when omitted, workers perform no executor-side signature verification (parity with the in-process executor's default). To opt in, pass a `FactorySpec`: a `ModuleRef` (one of `{ packageName, exportName }` or `{ filePath, exportName }`) plus optional JSON-clonable `initArgs`. The worker imports the named export and invokes it to construct its signature verifier.\n\n### How sources resolve\n\n`buildModule()` resolves every registered source in one pass: file and package sources are imported host-side and their exports scanned for `DocumentModelModule` values; the resulting modules are registered on the host registry (identically in both executor modes), and the importable sources form the manifest each worker imports at boot. The host and workers are derived from the same list, so they cannot diverge.\n\n### Build-time constraints that throw\n\nWhen a worker pool is configured, `buildModule()` enforces the model wiring up front. Each of these throws:\n\n- No importable sources: `\"withWorkerPool requires at least one worker-importable document-model source ({ filePath } or { packageName }).\"`\n- A model registered only as a live module: `\"withWorkerPool requires worker-importable sources, but these models were registered only as live modules: ...\"` \u2014 provide a `{ filePath }` or `{ packageName }` source for each (a live module for the same `documentType@version` may coexist; the importable source covers it).\n\nConnection info is not a runtime check: the `WorkerPoolOptions` type requires `db` or a custom `factory`, so a misconfigured pool fails at compile time.\n\nThe worker pool requires a real Postgres server. PGlite cannot be shared across threads, so the parent and the workers must point at the same Postgres instance. When the pool carries a `db`, the builder builds the parent's database from that same config (unless `withKysely` overrides it).\n\n### Custom transports\n\nPassing `factory` in the pool options injects a custom `WorkerFactory`, skipping the default thread-transport wiring:\n\n```typescript\ntype WorkerFactory = (index: number) => IExecutorWorker;\n```\n\nUse this for tests or an alternative transport (e.g. a child-process adapter); `db` and `verifier` are then optional, since the builder is not constructing the default transport.\n\n## Projection shards\n\nProjection shards move read-model indexing out of the main thread. Instead of the in-process read-model coordinator, the builder installs a shard manager that fans `JOB_WRITE_READY` events to N projection workers, sharded by document id. Each worker materializes the built-in read models against its own Postgres pool and re-emits `JOB_READ_READY` and read-model events back to the host bus, so [synchronization](/academy/Reference/Reactor/Synchronization), awaiters, and observers see them exactly once per job.\n\nConfigure shards with `withProjectionShards`. Projection workers open their own Postgres pools from the config's `db`; when the executor worker pool is also configured with a `db`, it may be omitted here and is reused.\n\n```typescript\nimport { ReactorBuilder } from \"@powerhousedao/reactor\";\n\nconst reactor = await new ReactorBuilder()\n  .withDocumentModelSources([\n    { packageName: \"@my-org/account-document-model\", subpath: \"document-models\" },\n  ])\n  .withProjectionShards({\n    db: {\n      host: \"localhost\",\n      port: 5432,\n      database: \"reactor\",\n      user: \"reactor\",\n      password: process.env.PGPASSWORD!,\n    },\n    shardCount: 4,\n    preReadyKinds: [\"document-view\"],\n    postReadyKinds: [\"document-indexer\"],\n  })\n  .build();\n```\n\n### Config shape\n\n`ProjectionShardBuilderConfig`:\n\n```typescript\ntype ProjectionShardBuilderConfig = {\n  shardCount: number;\n  preReadyKinds: BuiltInReadModelKind[];\n  postReadyKinds: BuiltInReadModelKind[];\n  poolSize?: number;\n  initTimeoutMs?: number;\n  shutdownGraceMs?: number;\n  drainTimeoutMs?: number;\n  chainDepthReportIntervalMs?: number;\n};\n// BuiltInReadModelKind = \"document-view\" | \"document-indexer\"\n```\n\n`preReadyKinds` run before a job reaches `READ_READY`; `postReadyKinds` run after. `poolSize` overrides the reused worker DB pool size for the shard pools only; the builder forces their `application_name` to `\"reactor-projection-shard\"`.\n\nDefaults applied when the optional fields are omitted: `initTimeoutMs` 30000, `shutdownGraceMs` 5000, `drainTimeoutMs` 30000, `chainDepthReportIntervalMs` 250.\n\n### Build-time constraints that throw\n\n- `withProjectionShards` without a `db` anywhere: `\"withProjectionShards requires a db (or an executor worker pool configured with one); projection workers need connection info to open their own pools.\"`\n- `shardCount < 1`: `` `ProjectionShardManager: shardCount must be >= 1 (got ${shardCount})` ``.\n\nShards can run on their own or alongside the worker pool. They replace the read-model coordinator; the executor side is independent. As with the worker pool, projection shards require real Postgres \u2014 the workers open their own pools and PGlite cannot be shared across threads.\n\n`withProjectionWorkerFactory` injects a custom `ProjectionWorkerFactory` and skips the default thread-transport wiring, mirroring the pool options' `factory`:\n\n```typescript\ntype ProjectionWorkerFactory = (shardIndex: number, shardId: string) => IProjectionTransport;\n```\n\n:::warning Not yet stable\nProjection shards are a recent, design-doc-tracked feature. The shard-manager class itself is internal; you configure it through `withProjectionShards` and the public `ProjectionShardBuilderConfig`, `BuiltInReadModelKind`, `ProjectionWorkerFactory`, and `IProjectionTransport` types.\n:::\n\n## Decision guide\n\n- **In-memory PGlite (default).** Dev and tests. Zero setup, ephemeral, single process. Use it unless you need one of the below.\n- **Postgres (`withKysely` or the worker pool's `db`).** When state must survive a restart or be shared across processes.\n- **Worker pool (`withWorkerPool`).** When job execution is CPU-bound and one thread is the bottleneck. Requires Postgres and importable document-model sources.\n- **Projection shards (`withProjectionShards`).** When read-model indexing is the bottleneck. Requires Postgres. Combine with the worker pool when both write and read paths need to scale.\n\nBoth scaling paths require real Postgres and trade simplicity for throughput. Start in-memory, move to Postgres for persistence, and reach for the worker pool or shards only when a single thread is the proven bottleneck.\n\nFor the full list of builder methods, see the builder table on [Advanced Reactor Usage](/academy/Reference/Reactor/AdvancedReactorUsage). For the read-model and processor side of indexing, see [Processors](/academy/Reference/Reactor/Processors) and [Document model registry](/academy/Reference/Reactor/DocumentModelRegistry). For the client surface that talks to a built reactor, see [IReactorClient](/academy/Reference/Reactor/ReactorClient).\n",
+        "createdAt": "2026-09-02T21:38:20.590Z",
+        "createdBy": "repo-docs-sync",
+        "sourceType": "DOCUMENTATION",
+        "description": "Powerhouse v6.2.2-dev.74 (unchanged since v6.2.2-dev.47) \u2014 The reactor persists every operation through a Kysely-backed storage layer. You pick the backend and the execution topology on the ReactorBu\u2026",
+        "publishedAt": "2026-07-16T20:21:33.000Z"
+      },
+      "timestampUtcMs": "2026-09-02T21:38:20.590Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "",
+    "timestampUtcMs": "2026-09-02T21:38:20.217Z",
+    "action": {
+      "type": "UPGRADE_DOCUMENT",
+      "input": {
+        "model": "bai/source",
+        "toVersion": 1,
+        "documentId": "c1116781-e617-4620-bb42-f622cbf113cd",
+        "fromVersion": 0,
+        "initialState": {
+          "auth": {
+            "grants": [],
+            "version": 0
+          },
+          "local": {},
+          "global": {
+            "title": null,
+            "status": "INBOX",
+            "content": null,
+            "createdAt": null,
+            "createdBy": null,
+            "provenance": null,
+            "sourceType": null,
+            "description": null,
+            "extractedClaims": [],
+            "extractionStats": null
+          },
+          "document": {
+            "hash": {
+              "encoding": "base64",
+              "algorithm": "sha1"
+            },
+            "version": 1
+          }
+        }
+      },
+      "timestampUtcMs": "2026-09-02T21:38:20.217Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "/4RJWDsHJSNJMScIX0SN1DeOl1w=",
+    "timestampUtcMs": "2026-09-02T21:38:40.092Z",
+    "action": {
+      "type": "ADD_EXTRACTED_CLAIM",
+      "input": {
+        "claimRef": "290fd86b-db3b-4d33-b278-fd7b84838929"
+      },
+      "timestampUtcMs": "2026-09-02T21:38:40.092Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "E7tezoH+2g4nK5BLVItoveBChOc=",
+    "timestampUtcMs": "2026-09-02T21:38:42.727Z",
+    "action": {
+      "type": "ADD_EXTRACTED_CLAIM",
+      "input": {
+        "claimRef": "c8d8d9db-8357-4560-a323-a3bc43a71161"
+      },
+      "timestampUtcMs": "2026-09-02T21:38:42.727Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "biBSfWHxEqQut/fF4ckbWlx+CvU=",
+    "timestampUtcMs": "2026-09-02T21:38:44.380Z",
+    "action": {
+      "type": "ADD_EXTRACTED_CLAIM",
+      "input": {
+        "claimRef": "e2d88f92-bbe5-4879-ac0a-820abd56a4b8"
+      },
+      "timestampUtcMs": "2026-09-02T21:38:44.380Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "UQ5s+OCEeTg7NaLPvrfGIgxmklY=",
+    "timestampUtcMs": "2026-09-02T21:38:48.922Z",
+    "action": {
+      "type": "SET_SOURCE_STATUS",
+      "input": {
+        "status": "EXTRACTED"
+      },
+      "timestampUtcMs": "2026-09-02T21:38:48.922Z"
+    }
+  }
+]

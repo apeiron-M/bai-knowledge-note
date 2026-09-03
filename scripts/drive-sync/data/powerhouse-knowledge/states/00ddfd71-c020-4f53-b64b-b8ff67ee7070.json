@@ -1,0 +1,121 @@
+{
+  "links": [
+    {
+      "id": "lnk-024b7402-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "024b7402-1650-49a1-a594-4ffb8cb621e8",
+      "targetTitle": "customization-layer-enables-organization-specific-deployments"
+    },
+    {
+      "id": "lnk-ce88373e-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "ce88373e-5007-4dac-b8a6-7665528d2bb7",
+      "targetTitle": "style-editors-with-tailwind-classes-or-scoped-style-tags"
+    },
+    {
+      "id": "lnk-6672c3a6-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "6672c3a6-386d-44c7-baf2-3278b1add051",
+      "targetTitle": "adapter-src-infrastructure-layout"
+    },
+    {
+      "id": "lnk-43733227-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "43733227-b9d3-424b-8fa0-83dda8a2001b",
+      "targetTitle": "builder-platform-enables-creation-of-reusable-modules-with-value-sharing"
+    },
+    {
+      "id": "lnk-9cad3b48-bui",
+      "linkType": "BUILDS_ON",
+      "targetDocumentId": "9cad3b48-9640-4de2-a559-002468eda15d",
+      "targetTitle": "editor-hooks-connect-react-to-documents"
+    },
+    {
+      "id": "lnk-5209455a-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "5209455a-7f8f-4dc6-8bdd-8a32b0d181e6",
+      "targetTitle": "Academy \u203a Build \u203a ManualTodoTutorial \u203a Build a to-do list editor",
+      "reason": "Backing page found by content match (score 0.19) in the v6.2.2-dev.74 source backfill; no distinctive identifier verified, attribution by topic overlap \u2014 not the original extraction record (text identical at v6.2.2-dev.47 and v6.2.2-dev.74)",
+      "confidence": "established"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Document editors follow a component-based React architecture with Tailwind CSS styling",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "60aea496-f467-4fff-a91c-3c729318730e",
+      "name": "editors",
+      "topicDocumentId": null
+    },
+    {
+      "id": "8c6943bd-e744-41e7-b0b8-2cfe2bb0f474",
+      "name": "react",
+      "topicDocumentId": null
+    },
+    {
+      "id": "bfa4efcd-a055-490a-a13c-5e994e994aab",
+      "name": "component-architecture",
+      "topicDocumentId": null
+    },
+    {
+      "id": "cf9dd11b-8c1d-49e4-8ec2-c4a80ad050bc",
+      "name": "tailwind",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "Document editors in Powerhouse are React components following a component-based architecture:\n\n- `editor.tsx` - Main editor wrapper (entry point)\n- Container component (e.g., `TodoList.tsx`) - Orchestrates child components, reads state via hook\n- List component (e.g., `Todos.tsx`) - Renders collections\n- Item component (e.g., `Todo.tsx`) - Individual items with edit/delete\n- Form component (e.g., `AddTodo.tsx`) - Handles new item creation\n\nStyling options:\n1. **Default HTML styling** - Standard tags render with boilerplate styles\n2. **Tailwind CSS** - Built into Connect, use utility classes directly\n3. **Custom CSS files** - Import traditional .css files\n\nPattern details:\n- Use `useSelectedTodoListDocument()` hook for state + dispatch in any component\n- Import action creators from generated code\n- Use React local state (`useState`) for UI-only state (e.g., `isEditing` toggle)\n- Use document dispatch for persistent data changes\n- Built-in actions like `setName` from `document-model/document` for document metadata\n- `DocumentToolbar` component from design system provides standard document actions",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": "v6.2.2-dev.74",
+  "computes": null,
+  "filePath": "apps/academy/docs/academy/03-Build/01-ManualTodoTutorial/05-BuildToDoListEditor.md",
+  "noteType": "PATTERN",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "knowledge-agent",
+    "createdAt": "2026-04-02T12:00:00.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-09-02T21:33:12.566Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Editors decompose into container, list, item, and form components. Styling options: default HTML, Tailwind CSS, or custom CSS.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "e466dc72-01fb-4b80-8d1a-197bd83392fa",
+      "actor": "claude",
+      "comment": "Knowledge registered against powerhouse v6.2.2-dev.47",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-14T12:00:00.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "47528d4b-0200-4ea2-905f-e82a7ebf1df5",
+      "actor": "liberuum",
+      "comment": "Canonical as of powerhouse v6.2.2-dev.47",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-14T12:00:00.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

@@ -1,0 +1,376 @@
+[
+  {
+    "index": 0,
+    "hash": "",
+    "timestampUtcMs": "2026-08-14T11:55:46.798Z",
+    "action": {
+      "type": "CREATE_DOCUMENT",
+      "input": {
+        "meta": {},
+        "name": "ddup-pglite-primary-swarm-backup",
+        "slug": "",
+        "model": "bai/knowledge-note",
+        "branch": "main",
+        "signing": {
+          "nonce": "",
+          "publicKey": {},
+          "signature": "30c759d9-9abf-427e-b0e8-c9c382064883",
+          "documentType": "bai/knowledge-note",
+          "createdAtUtcIso": "2026-08-14T11:55:46.798Z"
+        },
+        "version": 0,
+        "documentId": "30c759d9-9abf-427e-b0e8-c9c382064883",
+        "protocolVersions": {
+          "base-reducer": 2
+        }
+      },
+      "timestampUtcMs": "2026-08-14T11:55:46.798Z"
+    }
+  },
+  {
+    "index": 0,
+    "hash": "uaGX0XMDmGxmbmELflctN1SWpZI=",
+    "timestampUtcMs": "2026-08-14T12:35:05.000Z",
+    "action": {
+      "type": "SET_TITLE",
+      "input": {
+        "title": "PGlite is the primary store and Swarm /bytes is the durable backup for raw operations",
+        "updatedAt": "2026-08-14T12:35:05.000Z"
+      },
+      "timestampUtcMs": "2026-08-14T12:35:05.000Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "",
+    "timestampUtcMs": "2026-08-14T11:55:46.798Z",
+    "action": {
+      "type": "UPGRADE_DOCUMENT",
+      "input": {
+        "model": "bai/knowledge-note",
+        "toVersion": 1,
+        "documentId": "30c759d9-9abf-427e-b0e8-c9c382064883",
+        "fromVersion": 0,
+        "initialState": {
+          "auth": {
+            "grants": [],
+            "version": 0
+          },
+          "local": {
+            "lastViewedAt": null,
+            "personalTags": []
+          },
+          "global": {
+            "links": [],
+            "model": null,
+            "scope": null,
+            "title": null,
+            "editor": null,
+            "inputs": [],
+            "models": [],
+            "status": "DRAFT",
+            "topics": [],
+            "content": null,
+            "context": null,
+            "modelId": null,
+            "modules": [],
+            "outputs": [],
+            "version": null,
+            "computes": null,
+            "filePath": null,
+            "noteType": null,
+            "severity": null,
+            "hooksUsed": [],
+            "rootCause": null,
+            "confidence": null,
+            "consumedBy": [],
+            "provenance": null,
+            "sourceType": null,
+            "targetType": null,
+            "cardinality": null,
+            "description": null,
+            "alternatives": [],
+            "consequences": [],
+            "errorMessage": null,
+            "relationType": null,
+            "correctPattern": null,
+            "decisionStatus": null,
+            "dispatchTargets": [],
+            "lifecycleEvents": []
+          },
+          "document": {
+            "hash": {
+              "encoding": "base64",
+              "algorithm": "sha1"
+            },
+            "version": 1
+          }
+        }
+      },
+      "timestampUtcMs": "2026-08-14T11:55:46.798Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "CeY44gN0Sp/NNPU/4d96IS8SznM=",
+    "timestampUtcMs": "2026-08-14T12:35:05.000Z",
+    "action": {
+      "type": "SET_DESCRIPTION",
+      "input": {
+        "updatedAt": "2026-08-14T12:35:05.000Z",
+        "description": "Operations are primary in PGlite (hot reads), backed up to Swarm /bytes. Document state is derived from operations and never stored on Swarm."
+      },
+      "timestampUtcMs": "2026-08-14T12:35:05.000Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "",
+    "timestampUtcMs": "2026-08-14T12:37:06.209Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "30c759d9-9abf-427e-b0e8-c9c382064883",
+        "targetId": "6443a5a6-47e6-4336-b701-017757a9ff9e",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-08-14T12:37:06.209Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "flm86lrb2G8eeqd27Bl8zvAOlf4=",
+    "timestampUtcMs": "2026-08-14T12:35:05.000Z",
+    "action": {
+      "type": "SET_NOTE_TYPE",
+      "input": {
+        "noteType": "architecture",
+        "updatedAt": "2026-08-14T12:35:05.000Z"
+      },
+      "timestampUtcMs": "2026-08-14T12:35:05.000Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "",
+    "timestampUtcMs": "2026-08-14T12:37:06.299Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "30c759d9-9abf-427e-b0e8-c9c382064883",
+        "targetId": "ab44d9c0-a981-4c37-8afe-a6858911dc82",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-08-14T12:37:06.299Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "UonljBBmqqU4VX3A+IthNA/FamQ=",
+    "timestampUtcMs": "2026-08-14T12:35:05.000Z",
+    "action": {
+      "type": "SET_CONTENT",
+      "input": {
+        "content": "Operations have a clear primary/backup relationship across layers:\n\n| Data | PGlite | Swarm /bytes | Swarm feeds | IndexedDB |\n|---|---|---|---|---|\n| Operations (raw) | PRIMARY | BACKUP | \u2014 | pending only |\n| Document state (computed) | DERIVED | not stored | \u2014 | \u2014 |\n| Doc/drive/user manifests | \u2014 | PAYLOAD | POINTER | \u2014 |\n| Signer key | \u2014 | \u2014 | \u2014 | cache only (re-derivable from wallet) |\n| Pending ops buffer | \u2014 | \u2014 | \u2014 | temporary (cleared after flush) |\n\nKey consequences:\n- **Document state is derived**, never stored on Swarm \u2014 always recomputed from operations on load.\n- **Manifests exist in both /bytes and feeds**: the /bytes chunk holds the payload, the feed holds the pointer to the latest version.\n- **The signer key is a cache only**, re-derivable from the wallet signature.\n- **Pending ops are temporary** \u2014 cleared once flushed to Swarm.\n\nThis split is intentional: PGlite optimizes hot reads, Swarm optimizes durability, manifests use the feed-as-pointer pattern to make \"latest version\" lookups cheap.",
+        "updatedAt": "2026-08-14T12:35:05.000Z"
+      },
+      "timestampUtcMs": "2026-08-14T12:35:05.000Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "",
+    "timestampUtcMs": "2026-08-14T12:37:06.385Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "30c759d9-9abf-427e-b0e8-c9c382064883",
+        "targetId": "4e6413ee-22bf-4d64-964f-ca8b28917cec",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-08-14T12:37:06.385Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "/d+PYjDlMJbUfRhUYm0H51luTJU=",
+    "timestampUtcMs": "2026-08-14T12:35:05.000Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "version",
+        "value": "v6.2.2-dev.44",
+        "updatedAt": "2026-08-14T12:35:05.000Z"
+      },
+      "timestampUtcMs": "2026-08-14T12:35:05.000Z"
+    }
+  },
+  {
+    "index": 5,
+    "hash": "",
+    "timestampUtcMs": "2026-08-14T12:37:06.475Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "30c759d9-9abf-427e-b0e8-c9c382064883",
+        "targetId": "eb3ddfcc-c606-4705-b9c9-42f5e26e2384",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-08-14T12:37:06.475Z"
+    }
+  },
+  {
+    "index": 5,
+    "hash": "IrTyt7I+irBcKu7gxtgdiTTQrk8=",
+    "timestampUtcMs": "2026-08-14T12:35:05.000Z",
+    "action": {
+      "type": "SET_PROVENANCE",
+      "input": {
+        "author": "knowledge-agent",
+        "createdAt": "2026-04-21T14:41:55.863Z",
+        "sourceOrigin": "DERIVED"
+      },
+      "timestampUtcMs": "2026-08-14T12:35:05.000Z"
+    }
+  },
+  {
+    "index": 6,
+    "hash": "",
+    "timestampUtcMs": "2026-08-14T12:37:06.567Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "30c759d9-9abf-427e-b0e8-c9c382064883",
+        "targetId": "6443a5a6-47e6-4336-b701-017757a9ff9e",
+        "relationshipType": "BUILDS_ON"
+      },
+      "timestampUtcMs": "2026-08-14T12:37:06.567Z"
+    }
+  },
+  {
+    "index": 6,
+    "hash": "lKpw2Ik05rTY7c7PjmWiQMX8MNY=",
+    "timestampUtcMs": "2026-08-14T12:35:05.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "1e7a90a7-f398-47de-926d-692044c96f9c",
+        "name": "data-duplication",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-08-14T12:35:05.000Z"
+    }
+  },
+  {
+    "index": 7,
+    "hash": "kCyX67JT8Isc832Ui1VJLoikejw=",
+    "timestampUtcMs": "2026-08-14T12:35:05.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "44a563eb-2e37-4953-9e92-87e7aebb6060",
+        "name": "primary-backup",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-08-14T12:35:05.000Z"
+    }
+  },
+  {
+    "index": 8,
+    "hash": "wwL5oRxKb2wbV31MNNWXmiKD/KE=",
+    "timestampUtcMs": "2026-08-14T12:35:05.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "6dcc233a-6ce6-476a-95ea-e60255197c9e",
+        "name": "swarm-bytes",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-08-14T12:35:05.000Z"
+    }
+  },
+  {
+    "index": 9,
+    "hash": "7MWl6vwJbCUvm5yTHfuDfmd3mf8=",
+    "timestampUtcMs": "2026-08-14T12:35:05.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "9e1c24c8-5edc-4dcd-8d1e-069eb2f63440",
+        "name": "pglite",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-08-14T12:35:05.000Z"
+    }
+  },
+  {
+    "index": 10,
+    "hash": "SS9piD61v0ioaQAHoTNixA6Rajw=",
+    "timestampUtcMs": "2026-08-14T14:36:56.000Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "version",
+        "value": "v6.2.2-dev.47",
+        "updatedAt": "2026-08-14T12:00:00.000Z"
+      },
+      "timestampUtcMs": "2026-08-14T14:36:56.000Z"
+    }
+  },
+  {
+    "index": 11,
+    "hash": "TqSgkpDoET/fM8QbM1VKc0TqsHM=",
+    "timestampUtcMs": "2026-08-14T14:36:56.000Z",
+    "action": {
+      "type": "SUBMIT_FOR_REVIEW",
+      "input": {
+        "id": "e21ba02e-7aa1-4087-876a-566190ed6b01",
+        "actor": "claude",
+        "comment": "Knowledge registered against powerhouse v6.2.2-dev.47",
+        "timestamp": "2026-08-14T12:00:00.000Z"
+      },
+      "timestampUtcMs": "2026-08-14T14:36:56.000Z"
+    }
+  },
+  {
+    "index": 12,
+    "hash": "wgETNi7QJg6R0lnEvP6tJLmHR0k=",
+    "timestampUtcMs": "2026-08-14T14:36:56.000Z",
+    "action": {
+      "type": "APPROVE_NOTE",
+      "input": {
+        "id": "2b1a6fc7-3a7b-4e1d-9279-85bb9c09a57a",
+        "actor": "liberuum",
+        "comment": "Canonical as of powerhouse v6.2.2-dev.47",
+        "timestamp": "2026-08-14T12:00:00.000Z"
+      },
+      "timestampUtcMs": "2026-08-14T14:36:56.000Z"
+    }
+  },
+  {
+    "index": 13,
+    "hash": "Zo+xDBEln0+fx1p5mUUviIWZOgc=",
+    "timestampUtcMs": "2026-08-16T09:49:42.000Z",
+    "action": {
+      "type": "SET_NOTE_TYPE",
+      "input": {
+        "noteType": "ARCHITECTURE",
+        "updatedAt": "2026-08-16T09:49:42.000Z"
+      },
+      "timestampUtcMs": "2026-08-16T09:49:42.000Z"
+    }
+  },
+  {
+    "index": 14,
+    "hash": "ONawsnm06gnCjRkckuZWHOeGLZI=",
+    "timestampUtcMs": "2026-09-03T09:58:26.625Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "version",
+        "updatedAt": "2026-09-03T09:58:26.625Z"
+      },
+      "timestampUtcMs": "2026-09-03T09:58:26.625Z"
+    }
+  }
+]

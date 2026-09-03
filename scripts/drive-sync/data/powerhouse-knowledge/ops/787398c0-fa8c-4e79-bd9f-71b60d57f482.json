@@ -1,0 +1,354 @@
+[
+  {
+    "index": 0,
+    "hash": "",
+    "timestampUtcMs": "2026-08-14T12:33:30.495Z",
+    "action": {
+      "type": "CREATE_DOCUMENT",
+      "input": {
+        "meta": {},
+        "name": "document-model-versioning-system",
+        "slug": "",
+        "model": "bai/knowledge-note",
+        "branch": "main",
+        "signing": {
+          "nonce": "",
+          "publicKey": {},
+          "signature": "787398c0-fa8c-4e79-bd9f-71b60d57f482",
+          "documentType": "bai/knowledge-note",
+          "createdAtUtcIso": "2026-08-14T12:33:30.495Z"
+        },
+        "version": 0,
+        "documentId": "787398c0-fa8c-4e79-bd9f-71b60d57f482",
+        "protocolVersions": {
+          "base-reducer": 2
+        }
+      },
+      "timestampUtcMs": "2026-08-14T12:33:30.495Z"
+    }
+  },
+  {
+    "index": 0,
+    "hash": "6lq6s4q5ZaMGPe8eYTnyNPLWRRk=",
+    "timestampUtcMs": "2026-08-14T12:35:08.000Z",
+    "action": {
+      "type": "SET_TITLE",
+      "input": {
+        "title": "Document model versioning allows schema evolution while maintaining backward compatibility",
+        "updatedAt": "2026-08-14T12:35:08.000Z"
+      },
+      "timestampUtcMs": "2026-08-14T12:35:08.000Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "",
+    "timestampUtcMs": "2026-08-14T12:33:30.495Z",
+    "action": {
+      "type": "UPGRADE_DOCUMENT",
+      "input": {
+        "model": "bai/knowledge-note",
+        "toVersion": 1,
+        "documentId": "787398c0-fa8c-4e79-bd9f-71b60d57f482",
+        "fromVersion": 0,
+        "initialState": {
+          "auth": {
+            "grants": [],
+            "version": 0
+          },
+          "local": {
+            "lastViewedAt": null,
+            "personalTags": []
+          },
+          "global": {
+            "links": [],
+            "model": null,
+            "scope": null,
+            "title": null,
+            "editor": null,
+            "inputs": [],
+            "models": [],
+            "status": "DRAFT",
+            "topics": [],
+            "content": null,
+            "context": null,
+            "modelId": null,
+            "modules": [],
+            "outputs": [],
+            "version": null,
+            "computes": null,
+            "filePath": null,
+            "noteType": null,
+            "severity": null,
+            "hooksUsed": [],
+            "rootCause": null,
+            "confidence": null,
+            "consumedBy": [],
+            "provenance": null,
+            "sourceType": null,
+            "targetType": null,
+            "cardinality": null,
+            "description": null,
+            "alternatives": [],
+            "consequences": [],
+            "errorMessage": null,
+            "relationType": null,
+            "correctPattern": null,
+            "decisionStatus": null,
+            "dispatchTargets": [],
+            "lifecycleEvents": []
+          },
+          "document": {
+            "hash": {
+              "encoding": "base64",
+              "algorithm": "sha1"
+            },
+            "version": 1
+          }
+        }
+      },
+      "timestampUtcMs": "2026-08-14T12:33:30.495Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "s6C4yFuF7GnfNNgPTNVo+FkjnBk=",
+    "timestampUtcMs": "2026-08-14T12:35:08.000Z",
+    "action": {
+      "type": "SET_DESCRIPTION",
+      "input": {
+        "updatedAt": "2026-08-14T12:35:08.000Z",
+        "description": "Multiple versions coexist with separate v1/, v2/ folders. Upgrade manifests and reducers handle migration between versions."
+      },
+      "timestampUtcMs": "2026-08-14T12:35:08.000Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "",
+    "timestampUtcMs": "2026-08-14T12:37:14.188Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "787398c0-fa8c-4e79-bd9f-71b60d57f482",
+        "targetId": "24f3780c-3494-474d-808f-72f8fc1f9c70",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-08-14T12:37:14.188Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "lrl8IBnQA2b8CMg3wID8uMHhQXM=",
+    "timestampUtcMs": "2026-08-14T12:35:08.000Z",
+    "action": {
+      "type": "SET_NOTE_TYPE",
+      "input": {
+        "noteType": "ARCHITECTURE",
+        "updatedAt": "2026-08-14T12:35:08.000Z"
+      },
+      "timestampUtcMs": "2026-08-14T12:35:08.000Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "",
+    "timestampUtcMs": "2026-08-14T12:37:14.287Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "787398c0-fa8c-4e79-bd9f-71b60d57f482",
+        "targetId": "2da32aa1-65cb-4de6-a7d1-9961a94d8f17",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-08-14T12:37:14.287Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "banxKj1zqUysCh9FhPzzGYTefD4=",
+    "timestampUtcMs": "2026-08-14T12:35:08.000Z",
+    "action": {
+      "type": "SET_CONTENT",
+      "input": {
+        "content": "Because document models are event-sourced, changing a schema would break existing documents. Versioning solves this with four components:\n\n1. **Version Folders** - Separate `v1/`, `v2/` directories with version-specific gen/ and src/ code\n2. **DocumentModelModule** - Each version exports a module with an explicit `version` number\n3. **Upgrade Manifest** - Declares supported versions and upgrade paths for a document type\n4. **Upgrade Reducer** - Pure function that transforms document state from one version to another\n\nKey rules:\n- V1 documents continue to work with v1 reducers\n- New documents are created at the latest version by default\n- Upgrade reducers must handle both `state` and `initialState`\n- Never remove operations from newer versions\n- Don't change existing input schemas; add new operations instead\n- Upgrade reducers must be pure (no side effects)\n- Always provide sensible defaults for new fields\n- Never lose data during upgrades\n\nConnect and Switchboard automatically load all versions and upgrade manifests, handling version detection and migration transparently.",
+        "updatedAt": "2026-08-14T12:35:08.000Z"
+      },
+      "timestampUtcMs": "2026-08-14T12:35:08.000Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "",
+    "timestampUtcMs": "2026-08-14T12:37:14.370Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "787398c0-fa8c-4e79-bd9f-71b60d57f482",
+        "targetId": "e09876c1-7be7-4958-a147-6032c84d9bb8",
+        "relationshipType": "BUILDS_ON"
+      },
+      "timestampUtcMs": "2026-08-14T12:37:14.370Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "qp9Dun0RZV+XFnAtr5xv9ZXbNss=",
+    "timestampUtcMs": "2026-08-14T12:35:08.000Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "version",
+        "value": "v6.2.2-dev.44",
+        "updatedAt": "2026-08-14T12:35:08.000Z"
+      },
+      "timestampUtcMs": "2026-08-14T12:35:08.000Z"
+    }
+  },
+  {
+    "index": 5,
+    "hash": "",
+    "timestampUtcMs": "2026-09-02T21:33:51.979Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "metadata": {
+          "reason": "Backing page found by content match (score 0.31) in the v6.2.2-dev.74 source backfill; no distinctive identifier verified, attribution by topic overlap \u2014 not the original extraction record (text identical at v6.2.2-dev.47 and v6.2.2-dev.74)",
+          "confidence": "established"
+        },
+        "sourceId": "787398c0-fa8c-4e79-bd9f-71b60d57f482",
+        "targetId": "695cc893-3d94-481c-8fe2-49c684957bdf",
+        "relationshipType": "DERIVED_FROM"
+      },
+      "timestampUtcMs": "2026-09-02T21:33:51.979Z"
+    }
+  },
+  {
+    "index": 5,
+    "hash": "0kRG9SMJSS3VhxZK0LO9VPEHAGk=",
+    "timestampUtcMs": "2026-08-14T12:35:08.000Z",
+    "action": {
+      "type": "SET_PROVENANCE",
+      "input": {
+        "author": "knowledge-agent",
+        "createdAt": "2026-04-02T12:00:00.000Z",
+        "sourceOrigin": "DERIVED"
+      },
+      "timestampUtcMs": "2026-08-14T12:35:08.000Z"
+    }
+  },
+  {
+    "index": 6,
+    "hash": "v0Po2EUEISAvVPBtDL9d79e9Tk0=",
+    "timestampUtcMs": "2026-08-14T12:35:08.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "c9cd6679-ea98-4bc4-9d83-444413634f61",
+        "name": "versioning",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-08-14T12:35:08.000Z"
+    }
+  },
+  {
+    "index": 7,
+    "hash": "UTmj6TUQG6v5iydt7WhuZh6yL18=",
+    "timestampUtcMs": "2026-08-14T12:35:08.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "2a25fe8d-771b-416c-8d3c-5b341b840b39",
+        "name": "schema-evolution",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-08-14T12:35:08.000Z"
+    }
+  },
+  {
+    "index": 8,
+    "hash": "o7DaMg1VL8lnV9xGq/BMOFWfBZ0=",
+    "timestampUtcMs": "2026-08-14T12:35:08.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "97754887-3cd4-4af1-bd39-4bd7c85d3170",
+        "name": "backward-compatibility",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-08-14T12:35:08.000Z"
+    }
+  },
+  {
+    "index": 9,
+    "hash": "6QyYJRZ9fYYI8ToBUMvoEAhRa0s=",
+    "timestampUtcMs": "2026-08-14T14:37:16.000Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "version",
+        "value": "v6.2.2-dev.47",
+        "updatedAt": "2026-08-14T12:00:00.000Z"
+      },
+      "timestampUtcMs": "2026-08-14T14:37:16.000Z"
+    }
+  },
+  {
+    "index": 10,
+    "hash": "jEIFkNkufZJ2H5wVpVcnambpoq4=",
+    "timestampUtcMs": "2026-08-14T14:37:16.000Z",
+    "action": {
+      "type": "SUBMIT_FOR_REVIEW",
+      "input": {
+        "id": "23a60cfe-e4ae-401f-be97-c684ff90ab12",
+        "actor": "claude",
+        "comment": "Knowledge registered against powerhouse v6.2.2-dev.47",
+        "timestamp": "2026-08-14T12:00:00.000Z"
+      },
+      "timestampUtcMs": "2026-08-14T14:37:16.000Z"
+    }
+  },
+  {
+    "index": 11,
+    "hash": "mIn4cQn49Zz4wWhk34xxElvG8Zk=",
+    "timestampUtcMs": "2026-08-14T14:37:16.000Z",
+    "action": {
+      "type": "APPROVE_NOTE",
+      "input": {
+        "id": "40655043-193d-4a2a-9b93-acedc2c29efa",
+        "actor": "liberuum",
+        "comment": "Canonical as of powerhouse v6.2.2-dev.47",
+        "timestamp": "2026-08-14T12:00:00.000Z"
+      },
+      "timestampUtcMs": "2026-08-14T14:37:16.000Z"
+    }
+  },
+  {
+    "index": 12,
+    "hash": "o4LQcHwrt8fhmeTg+eeSfKEVwlw=",
+    "timestampUtcMs": "2026-09-02T21:33:52.627Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "filePath",
+        "value": "apps/academy/docs/academy/03-Build/02-DocumentModelCreation/08-DocumentModelVersioning.md",
+        "updatedAt": "2026-09-02T21:33:52.627Z"
+      },
+      "timestampUtcMs": "2026-09-02T21:33:52.627Z"
+    }
+  },
+  {
+    "index": 13,
+    "hash": "hvYF19Oh25MtctOrRJPksPJSuR0=",
+    "timestampUtcMs": "2026-09-02T21:33:52.627Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "version",
+        "value": "v6.2.2-dev.74",
+        "updatedAt": "2026-09-02T21:33:52.627Z"
+      },
+      "timestampUtcMs": "2026-09-02T21:33:52.627Z"
+    }
+  }
+]

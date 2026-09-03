@@ -1,0 +1,321 @@
+[
+  {
+    "index": 0,
+    "hash": "",
+    "timestampUtcMs": "2026-08-14T12:15:02.614Z",
+    "action": {
+      "type": "CREATE_DOCUMENT",
+      "input": {
+        "meta": {},
+        "name": "processors-are-materialised-views-replayable-from-zero",
+        "slug": "",
+        "model": "bai/knowledge-note",
+        "branch": "main",
+        "signing": {
+          "nonce": "",
+          "publicKey": {},
+          "signature": "cba7b65a-7071-4790-b61f-055cde3b4cae",
+          "documentType": "bai/knowledge-note",
+          "createdAtUtcIso": "2026-08-14T12:15:02.614Z"
+        },
+        "version": 0,
+        "documentId": "cba7b65a-7071-4790-b61f-055cde3b4cae",
+        "protocolVersions": {
+          "base-reducer": 2
+        }
+      },
+      "timestampUtcMs": "2026-08-14T12:15:02.614Z"
+    }
+  },
+  {
+    "index": 0,
+    "hash": "wcfDCCzlVP9NXUeeDZteNenb8vs=",
+    "timestampUtcMs": "2026-08-14T12:35:40.000Z",
+    "action": {
+      "type": "SET_TITLE",
+      "input": {
+        "title": "Processors are materialised views over the operation log and can be rebuilt by replaying from zero",
+        "updatedAt": "2026-08-14T12:35:40.000Z"
+      },
+      "timestampUtcMs": "2026-08-14T12:35:40.000Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "",
+    "timestampUtcMs": "2026-08-14T12:15:02.614Z",
+    "action": {
+      "type": "UPGRADE_DOCUMENT",
+      "input": {
+        "model": "bai/knowledge-note",
+        "toVersion": 1,
+        "documentId": "cba7b65a-7071-4790-b61f-055cde3b4cae",
+        "fromVersion": 0,
+        "initialState": {
+          "auth": {
+            "grants": [],
+            "version": 0
+          },
+          "local": {
+            "lastViewedAt": null,
+            "personalTags": []
+          },
+          "global": {
+            "links": [],
+            "model": null,
+            "scope": null,
+            "title": null,
+            "editor": null,
+            "inputs": [],
+            "models": [],
+            "status": "DRAFT",
+            "topics": [],
+            "content": null,
+            "context": null,
+            "modelId": null,
+            "modules": [],
+            "outputs": [],
+            "version": null,
+            "computes": null,
+            "filePath": null,
+            "noteType": null,
+            "severity": null,
+            "hooksUsed": [],
+            "rootCause": null,
+            "confidence": null,
+            "consumedBy": [],
+            "provenance": null,
+            "sourceType": null,
+            "targetType": null,
+            "cardinality": null,
+            "description": null,
+            "alternatives": [],
+            "consequences": [],
+            "errorMessage": null,
+            "relationType": null,
+            "correctPattern": null,
+            "decisionStatus": null,
+            "dispatchTargets": [],
+            "lifecycleEvents": []
+          },
+          "document": {
+            "hash": {
+              "encoding": "base64",
+              "algorithm": "sha1"
+            },
+            "version": 1
+          }
+        }
+      },
+      "timestampUtcMs": "2026-08-14T12:15:02.614Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "HhR8DYUfIp+lbNzYzXF6K6PHwPk=",
+    "timestampUtcMs": "2026-08-14T12:35:40.000Z",
+    "action": {
+      "type": "SET_DESCRIPTION",
+      "input": {
+        "updatedAt": "2026-08-14T12:35:40.000Z",
+        "description": "Because a processor only reduces an immutable log, changing its code cannot corrupt the source of truth \u2014 drop the read model and replay from operation zero."
+      },
+      "timestampUtcMs": "2026-08-14T12:35:40.000Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "",
+    "timestampUtcMs": "2026-08-14T12:38:17.706Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "cba7b65a-7071-4790-b61f-055cde3b4cae",
+        "targetId": "43b82c81-4d28-4e69-9a0a-84c0dddb87ef",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-08-14T12:38:17.706Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "twMKveW2jRI3edzrnItEUB3YaPU=",
+    "timestampUtcMs": "2026-08-14T12:35:40.000Z",
+    "action": {
+      "type": "SET_NOTE_TYPE",
+      "input": {
+        "noteType": "CONCEPT",
+        "updatedAt": "2026-08-14T12:35:40.000Z"
+      },
+      "timestampUtcMs": "2026-08-14T12:35:40.000Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "",
+    "timestampUtcMs": "2026-08-14T12:38:17.805Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "cba7b65a-7071-4790-b61f-055cde3b4cae",
+        "targetId": "6ddb3f1f-b6dd-42d8-85f3-3d956294006e",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-08-14T12:38:17.805Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "oYUvmWlW7rlWS2GvH7PDk+WpjyM=",
+    "timestampUtcMs": "2026-08-14T12:35:40.000Z",
+    "action": {
+      "type": "SET_CONTENT",
+      "input": {
+        "content": "## The mental model: a lens, not a store of record\n\nA document's operation log is authoritative but not always convenient. Asking \"which todos did Alice complete last week?\" should not mean replaying an entire log on every request. That is what processors are for: event-driven handlers that subscribe to the operation stream and maintain a **read model** on the side.\n\nThink of each processor as a materialised view. It:\n\n1. Subscribes to one or more document types (or specific documents).\n2. Receives every operation as it is appended, in order, exactly once.\n3. Updates its own storage \u2014 a table, an index, a counter.\n\nReducers stay lean; queries stay fast; neither side has to know about the other.\n\n## Why replayability is the important property\n\nA processor's only input is an append-only log it does not own. That makes its output *derived data*, and derived data is disposable. Add a counter, fix an aggregation bug, reshape the output \u2014 then drop the processor's state and replay from operation zero. The log never changed; only the lens did.\n\nThis is what makes processors forgiving in a way that a schema migration on a mutable table is not. A bad migration destroys information. A bad processor produces a wrong view over information that is still fully intact upstream, so the fix is mechanical rather than archaeological.\n\n## Where the line falls\n\nThe division of labour is sharp:\n\n- **Reducer** \u2014 \"what is this document now?\" Validation, state transitions. Must be pure.\n- **Processor** \u2014 \"what else should happen because of that operation?\" Aggregates, indexes, notifications, side effects.\n\nCounting completed todos across all history belongs in a processor: doing it in the reducer couples the document's state size to its age. Sending mail on assignment belongs in a processor too, because reducers cannot perform I/O. Rejecting an empty title belongs in the reducer, because that check must run *before* the action becomes an operation.\n\n_Source: apps/academy/docs/academy/02-Learn/06-switchboard/03-processors-and-read-models.mdx (Powerhouse v6.2.2-dev.45)._",
+        "updatedAt": "2026-08-14T12:35:40.000Z"
+      },
+      "timestampUtcMs": "2026-08-14T12:35:40.000Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "",
+    "timestampUtcMs": "2026-08-14T12:38:17.884Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "cba7b65a-7071-4790-b61f-055cde3b4cae",
+        "targetId": "6a3275cd-d71e-4342-8cd3-3fb29b8fe58c",
+        "relationshipType": "BUILDS_ON"
+      },
+      "timestampUtcMs": "2026-08-14T12:38:17.884Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "Ly+Ww4m5jveWg5ioOmGkMKbJDrE=",
+    "timestampUtcMs": "2026-08-14T12:35:40.000Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "version",
+        "value": "v6.2.2-dev.44",
+        "updatedAt": "2026-08-14T12:35:40.000Z"
+      },
+      "timestampUtcMs": "2026-08-14T12:35:40.000Z"
+    }
+  },
+  {
+    "index": 5,
+    "hash": "MwzHPjnMO92z8bOgVK5tdiOx2AA=",
+    "timestampUtcMs": "2026-08-14T12:35:40.000Z",
+    "action": {
+      "type": "SET_PROVENANCE",
+      "input": {
+        "author": "claude",
+        "createdAt": "2026-08-13T14:36:17.000Z",
+        "sourceOrigin": "DERIVED"
+      },
+      "timestampUtcMs": "2026-08-14T12:35:40.000Z"
+    }
+  },
+  {
+    "index": 6,
+    "hash": "bGDToYV4404DNoiNeYCXBwS6zLQ=",
+    "timestampUtcMs": "2026-08-14T12:35:40.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "1597062a-4ad5-48fe-a242-61c9a384d520",
+        "name": "processors",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-08-14T12:35:40.000Z"
+    }
+  },
+  {
+    "index": 7,
+    "hash": "cRNsioP9R3i41/Y6w3EVcxSieL4=",
+    "timestampUtcMs": "2026-08-14T12:35:40.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "5f73520b-8383-43cd-a9eb-0d557311b68b",
+        "name": "read-models",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-08-14T12:35:40.000Z"
+    }
+  },
+  {
+    "index": 8,
+    "hash": "RLgw/F4DcXkqpMq/hoKIiDazfR0=",
+    "timestampUtcMs": "2026-08-14T12:35:40.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "4fd9dc6d-f154-4cf2-ab22-2759c142b927",
+        "name": "event-sourcing",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-08-14T12:35:40.000Z"
+    }
+  },
+  {
+    "index": 9,
+    "hash": "ts+YgH/EFSVcDXkMxFoeqMkEQdE=",
+    "timestampUtcMs": "2026-08-14T14:37:36.000Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "version",
+        "value": "v6.2.2-dev.47",
+        "updatedAt": "2026-08-14T12:00:00.000Z"
+      },
+      "timestampUtcMs": "2026-08-14T14:37:36.000Z"
+    }
+  },
+  {
+    "index": 10,
+    "hash": "nlrixiGlpEc447Yse+2IQvGg2yA=",
+    "timestampUtcMs": "2026-08-14T14:37:36.000Z",
+    "action": {
+      "type": "SUBMIT_FOR_REVIEW",
+      "input": {
+        "id": "03f77d2f-671a-4e7b-ac67-6c8b53dacc98",
+        "actor": "claude",
+        "comment": "Knowledge registered against powerhouse v6.2.2-dev.47",
+        "timestamp": "2026-08-14T12:00:00.000Z"
+      },
+      "timestampUtcMs": "2026-08-14T14:37:36.000Z"
+    }
+  },
+  {
+    "index": 11,
+    "hash": "FF8v9CvPyUfM9FylLcPElin+BSA=",
+    "timestampUtcMs": "2026-08-14T14:37:36.000Z",
+    "action": {
+      "type": "APPROVE_NOTE",
+      "input": {
+        "id": "19508a7a-cf4b-44cc-a3ba-de25cbf0a310",
+        "actor": "liberuum",
+        "comment": "Canonical as of powerhouse v6.2.2-dev.47",
+        "timestamp": "2026-08-14T12:00:00.000Z"
+      },
+      "timestampUtcMs": "2026-08-14T14:37:36.000Z"
+    }
+  },
+  {
+    "index": 12,
+    "hash": "P4tCmUU1nOa4GVUZklgLLFldFq4=",
+    "timestampUtcMs": "2026-09-03T09:59:19.600Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "version",
+        "updatedAt": "2026-09-03T09:59:19.600Z"
+      },
+      "timestampUtcMs": "2026-09-03T09:59:19.600Z"
+    }
+  }
+]

@@ -1,0 +1,161 @@
+[
+  {
+    "index": 0,
+    "hash": "",
+    "timestampUtcMs": "2026-09-02T21:44:59.470Z",
+    "action": {
+      "type": "CREATE_DOCUMENT",
+      "input": {
+        "meta": {},
+        "name": "Package \u203a reactor \u203a sync/design",
+        "slug": "",
+        "model": "bai/source",
+        "branch": "main",
+        "signing": {
+          "nonce": "",
+          "publicKey": {},
+          "signature": "badfd6db-33c2-4612-bcff-d37d2159f0a7",
+          "documentType": "bai/source",
+          "createdAtUtcIso": "2026-09-02T21:44:59.470Z"
+        },
+        "version": 0,
+        "documentId": "badfd6db-33c2-4612-bcff-d37d2159f0a7",
+        "protocolVersions": {
+          "base-reducer": 2
+        }
+      },
+      "timestampUtcMs": "2026-09-02T21:44:59.470Z"
+    }
+  },
+  {
+    "index": 0,
+    "hash": "Zxx7Vq/4s7f1eeb5nhuXok2Yxqc=",
+    "timestampUtcMs": "2026-09-02T21:44:59.660Z",
+    "action": {
+      "type": "INGEST_SOURCE",
+      "input": {
+        "url": "https://github.com/powerhouse-inc/powerhouse/blob/v6.2.2-dev.74/packages/reactor/src/sync/design.md",
+        "tool": "sync-repo-docs",
+        "title": "Package \u203a reactor \u203a sync/design",
+        "author": "Powerhouse Inc.",
+        "method": "sha256:44b92949c5671b04f41caf773db6290764a5d07dc0798b15599ffcbf9b708701 git:v6.2.2-dev.74",
+        "content": "## High Level Gql Sync Design\n\nThere are four main flows to handle: Inbox Add, Inbox Remove, Outbox Add, Outbox Remove. These operate differently in Switchboard (GqlResponseChannel) than on Connect (GqlRequestChannel).\n\n### Gql Mutations\n\n#### pushSyncOperations\n\n- Requires only the envelope.\n- No cursor updates.\n\n#### pollSyncEnvelopes\n\n##### Request Body\n\n- `channelId` - The ID of the channel to poll.\n- `outboxAck` - Used to acknowledge successful application of pulled operations.\n- `outboxLatest` - Used to filter operations to return.\n\n##### Response Body\n\n- `envelopes` - A list of sync envelopes.\n- `ackOrdinal` - The ordinal to acknowledge successful application of pushed operations.\n\n## GqlRequestChannel\n\n### Outbox\n\n#### Add\n\n1. The reactor fires a JOB_WRITE_READY event.\n2. The SyncManager aggregates into batches.\n3. When a batch is complete, the SyncManager finds the appropriate remotes and adds to their outboxes.\n4. The GqlRequestChannel pushes the batch to the remote via a GraphQL mutation.\n\n```mermaid\nsequenceDiagram\n    participant Reactor\n    participant SyncManager\n    participant GqlRequestChannel\n    participant Remote\n\n    Reactor->>SyncManager: JOB_WRITE_READY event\n    SyncManager->>SyncManager: Aggregate into batch\n    SyncManager->>GqlRequestChannel: Add to outbox\n    GqlRequestChannel->>Remote: pushSyncOperations (GraphQL mutation)\n```\n\n#### Remove\n\n1. The pollSyncEnvelopes GraphQL mutation returns an ackOrdinal.\n2. The channel trims the outbox using the ackOrdinal.\n\n```mermaid\nsequenceDiagram\n    participant GqlRequestChannel\n    participant Remote\n\n    GqlRequestChannel->>Remote: pollSyncEnvelopes (GraphQL mutation)\n    Remote-->>GqlRequestChannel: response with ackOrdinal\n    GqlRequestChannel->>GqlRequestChannel: Trim outbox using ackOrdinal\n```\n\n### Inbox\n\n#### Add\n\n1. The GqlRequestChannel polls the remote for new sync envelopes, using an ordinal.\n2. The pollSyncEnvelopes GraphQL mutation returns a list of sync envelopes.\n3. The GqlRequestChannel adds the sync envelopes to the inbox.\n4. The SyncManager processes the sync envelopes as \"load\" jobs for the reactor.\n\n```mermaid\nsequenceDiagram\n    participant GqlRequestChannel\n    participant Remote\n    participant SyncManager\n    participant Reactor\n\n    GqlRequestChannel->>Remote: pollSyncEnvelopes (ordinal)\n    Remote-->>GqlRequestChannel: sync envelopes\n    GqlRequestChannel->>GqlRequestChannel: Add to inbox\n    SyncManager->>Reactor: Load jobs from inbox\n```\n\n#### Remove\n\n1. The Reactor fires a JOB_LOAD_READY event.\n2. The SyncManager aggregates into batches.\n3. When a batch is complete, the SyncManager finds the appropriate remotes and trims the inbox.\n\n```mermaid\nsequenceDiagram\n    participant Reactor\n    participant SyncManager\n    participant GqlRequestChannel\n\n    Reactor->>SyncManager: JOB_LOAD_READY event\n    SyncManager->>SyncManager: Aggregate into batch\n    SyncManager->>GqlRequestChannel: Trim inbox\n```\n\n### GqlResponseChannel\n\n### Outbox\n\n#### Add\n\n1. The reactor fires a JOB_WRITE_READY event.\n2. The SyncManager aggregates into batches.\n3. When a batch is complete, the SyncManager finds the appropriate remotes and adds to their outboxes.\n4. Later, the pollSyncEnvelopes GraphQL resolver will return these operations as sync envelopes.\n\n```mermaid\nsequenceDiagram\n    participant Reactor\n    participant SyncManager\n    participant GqlResponseChannel\n    participant Client\n\n    Reactor->>SyncManager: JOB_WRITE_READY event\n    SyncManager->>SyncManager: Aggregate into batch\n    SyncManager->>GqlResponseChannel: Add to outbox\n    Note over GqlResponseChannel,Client: Later...\n    Client->>GqlResponseChannel: pollSyncEnvelopes (resolver)\n    GqlResponseChannel-->>Client: sync envelopes from outbox\n```\n\n#### Remove\n\n1. The pollSyncEnvelopes resolver takes the ackOrdinal on the client's request and trims the outbox.\n\n```mermaid\nsequenceDiagram\n    participant Client\n    participant GqlResponseChannel\n\n    Client->>GqlResponseChannel: pollSyncEnvelopes (with ackOrdinal)\n    GqlResponseChannel->>GqlResponseChannel: Trim outbox using ackOrdinal\n```\n\n### Inbox\n\n#### Add\n\n1. The pushSyncOperations resolver finds the appropriate remotes and adds to their inboxes.\n2. The SyncManager processes the sync envelopes as \"load\" jobs for the reactor.\n\n```mermaid\nsequenceDiagram\n    participant Client\n    participant GqlResponseChannel\n    participant SyncManager\n    participant Reactor\n\n    Client->>GqlResponseChannel: pushSyncOperations (resolver)\n    GqlResponseChannel->>GqlResponseChannel: Add to inbox\n    SyncManager->>Reactor: Load jobs from inbox\n```\n\n#### Remove\n\n1. The Reactor fires a JOB_LOAD_READY event.\n2. The SyncManager aggregates into batches.\n3. When a batch is complete, the SyncManager finds the appropriate remotes and trims the inbox.\n\n```mermaid\nsequenceDiagram\n    participant Reactor\n    participant SyncManager\n    participant GqlResponseChannel\n\n    Reactor->>SyncManager: JOB_LOAD_READY event\n    SyncManager->>SyncManager: Aggregate into batch\n    SyncManager->>GqlResponseChannel: Trim inbox\n```\n\n## Ordinal Semantics\n\nOrdinals are local to each reactor instance. Each reactor has its own operation\nindex that assigns monotonically increasing ordinals to operations as they are\ncommitted. The same logical operation has different ordinals on different reactor\ninstances.\n\nThe `pollSyncEnvelopes` exchange uses ordinals from two different frames of\nreference:\n\n| Field                        | Direction             | Whose ordinals? | Purpose                                                          |\n| ---------------------------- | --------------------- | --------------- | ---------------------------------------------------------------- |\n| `outboxAck` (request)        | Client -> Switchboard | Switchboard's   | Client acknowledges switchboard outbox operations it has applied |\n| `outboxLatest` (request)     | Client -> Switchboard | Switchboard's   | Highest switchboard ordinal the client has seen                  |\n| `ackOrdinal` (response)      | Switchboard -> Client | Client's        | Switchboard acknowledges client-pushed operations it has applied |\n| envelope ordinals (response) | Switchboard -> Client | Switchboard's   | Ordinals on outbox operations for the client to track            |\n\n`ackOrdinal` must be in terms of the client's ordinals because the client uses\nit to trim its outbox (`trimMailboxFromAckOrdinal`), and the outbox items have\nordinals from the client's operation index.\n\n`outboxAck` is in terms of the switchboard's ordinals because the switchboard\nuses it to trim its outbox.\n\nThis means the client's ordinals must be preserved through the push path\n(`pushSyncEnvelopes`) so that the switchboard's inbox mailbox can track them\nand return the correct `ackOrdinal` in the poll response.\n",
+        "createdAt": "2026-09-02T21:44:59.660Z",
+        "createdBy": "repo-docs-sync",
+        "sourceType": "DOCUMENTATION",
+        "description": "Powerhouse v6.2.2-dev.74 (unchanged since v6.2.2-dev.47) \u2014 There are four main flows to handle: Inbox Add, Inbox Remove, Outbox Add, Outbox Remove. These operate differently in Switchboard\u2026",
+        "publishedAt": "2026-02-18T20:51:10.000Z"
+      },
+      "timestampUtcMs": "2026-09-02T21:44:59.660Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "",
+    "timestampUtcMs": "2026-09-02T21:44:59.470Z",
+    "action": {
+      "type": "UPGRADE_DOCUMENT",
+      "input": {
+        "model": "bai/source",
+        "toVersion": 1,
+        "documentId": "badfd6db-33c2-4612-bcff-d37d2159f0a7",
+        "fromVersion": 0,
+        "initialState": {
+          "auth": {
+            "grants": [],
+            "version": 0
+          },
+          "local": {},
+          "global": {
+            "title": null,
+            "status": "INBOX",
+            "content": null,
+            "createdAt": null,
+            "createdBy": null,
+            "provenance": null,
+            "sourceType": null,
+            "description": null,
+            "extractedClaims": [],
+            "extractionStats": null
+          },
+          "document": {
+            "hash": {
+              "encoding": "base64",
+              "algorithm": "sha1"
+            },
+            "version": 1
+          }
+        }
+      },
+      "timestampUtcMs": "2026-09-02T21:44:59.470Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "mxJs4/nRzXoUIhYEyKFd1eUqgO4=",
+    "timestampUtcMs": "2026-09-03T07:21:48.511Z",
+    "action": {
+      "type": "ADD_EXTRACTED_CLAIM",
+      "input": {
+        "claimRef": "936ddc46-3b5a-40d1-b69f-6a3f6c3c6b8f"
+      },
+      "timestampUtcMs": "2026-09-03T07:21:48.511Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "SeCkPJNfbR1sS8bXCVa218GyrM0=",
+    "timestampUtcMs": "2026-09-03T07:21:49.027Z",
+    "action": {
+      "type": "ADD_EXTRACTED_CLAIM",
+      "input": {
+        "claimRef": "9c453091-8c7b-4210-af2f-600fead66af7"
+      },
+      "timestampUtcMs": "2026-09-03T07:21:49.027Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "Cb8GnJa43+IPo+HqwRzcWxggnow=",
+    "timestampUtcMs": "2026-09-03T07:22:00.179Z",
+    "action": {
+      "type": "RECORD_EXTRACTION_STATS",
+      "input": {
+        "skipRate": 0.333,
+        "claimCount": 2,
+        "extractedAt": "2026-09-03T07:22:00.179Z",
+        "extractedBy": "knowledge-agent",
+        "skippedCount": 1
+      },
+      "timestampUtcMs": "2026-09-03T07:22:00.179Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "CnAHsrI0zSLSZeetjR0VST/vziw=",
+    "timestampUtcMs": "2026-09-03T07:22:00.796Z",
+    "action": {
+      "type": "SET_SOURCE_STATUS",
+      "input": {
+        "status": "EXTRACTED"
+      },
+      "timestampUtcMs": "2026-09-03T07:22:00.796Z"
+    }
+  },
+  {
+    "index": 5,
+    "hash": "xbCOKm3ZcktAP4jVzLjkdybv6rM=",
+    "timestampUtcMs": "2026-09-03T07:23:37.215Z",
+    "action": {
+      "type": "RECORD_EXTRACTION_STATS",
+      "input": {
+        "skipRate": 0.333,
+        "claimCount": 2,
+        "extractedAt": "2026-09-03T07:23:37.215Z",
+        "extractedBy": "knowledge-agent",
+        "skippedCount": 1
+      },
+      "timestampUtcMs": "2026-09-03T07:23:37.215Z"
+    }
+  }
+]

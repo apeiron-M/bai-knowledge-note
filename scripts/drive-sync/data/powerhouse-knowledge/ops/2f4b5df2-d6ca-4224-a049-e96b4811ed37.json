@@ -1,0 +1,340 @@
+[
+  {
+    "index": 0,
+    "hash": "",
+    "timestampUtcMs": "2026-08-14T12:34:08.253Z",
+    "action": {
+      "type": "CREATE_DOCUMENT",
+      "input": {
+        "meta": {},
+        "name": "upgrade-reducer-must-patch-state-and-initialstate",
+        "slug": "",
+        "model": "bai/knowledge-note",
+        "branch": "main",
+        "signing": {
+          "nonce": "",
+          "publicKey": {},
+          "signature": "2f4b5df2-d6ca-4224-a049-e96b4811ed37",
+          "documentType": "bai/knowledge-note",
+          "createdAtUtcIso": "2026-08-14T12:34:08.253Z"
+        },
+        "version": 0,
+        "documentId": "2f4b5df2-d6ca-4224-a049-e96b4811ed37",
+        "protocolVersions": {
+          "base-reducer": 2
+        }
+      },
+      "timestampUtcMs": "2026-08-14T12:34:08.253Z"
+    }
+  },
+  {
+    "index": 0,
+    "hash": "1GeoS2hb/9SGDMmopPJ1sZ9j5rI=",
+    "timestampUtcMs": "2026-08-14T12:36:04.000Z",
+    "action": {
+      "type": "SET_TITLE",
+      "input": {
+        "title": "An upgrade reducer must patch state and initialState together or replay fails with a hash mismatch",
+        "updatedAt": "2026-08-14T12:36:04.000Z"
+      },
+      "timestampUtcMs": "2026-08-14T12:36:04.000Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "",
+    "timestampUtcMs": "2026-08-14T12:34:08.253Z",
+    "action": {
+      "type": "UPGRADE_DOCUMENT",
+      "input": {
+        "model": "bai/knowledge-note",
+        "toVersion": 1,
+        "documentId": "2f4b5df2-d6ca-4224-a049-e96b4811ed37",
+        "fromVersion": 0,
+        "initialState": {
+          "auth": {
+            "grants": [],
+            "version": 0
+          },
+          "local": {
+            "lastViewedAt": null,
+            "personalTags": []
+          },
+          "global": {
+            "links": [],
+            "model": null,
+            "scope": null,
+            "title": null,
+            "editor": null,
+            "inputs": [],
+            "models": [],
+            "status": "DRAFT",
+            "topics": [],
+            "content": null,
+            "context": null,
+            "modelId": null,
+            "modules": [],
+            "outputs": [],
+            "version": null,
+            "computes": null,
+            "filePath": null,
+            "noteType": null,
+            "severity": null,
+            "hooksUsed": [],
+            "rootCause": null,
+            "confidence": null,
+            "consumedBy": [],
+            "provenance": null,
+            "sourceType": null,
+            "targetType": null,
+            "cardinality": null,
+            "description": null,
+            "alternatives": [],
+            "consequences": [],
+            "errorMessage": null,
+            "relationType": null,
+            "correctPattern": null,
+            "decisionStatus": null,
+            "dispatchTargets": [],
+            "lifecycleEvents": []
+          },
+          "document": {
+            "hash": {
+              "encoding": "base64",
+              "algorithm": "sha1"
+            },
+            "version": 1
+          }
+        }
+      },
+      "timestampUtcMs": "2026-08-14T12:34:08.253Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "QfKcEtIgfD24wWnU1gYNHppuLF8=",
+    "timestampUtcMs": "2026-08-14T12:36:04.000Z",
+    "action": {
+      "type": "SET_DESCRIPTION",
+      "input": {
+        "updatedAt": "2026-08-14T12:36:04.000Z",
+        "description": "Replay folds domain ops from the stored initialState and never re-runs the upgrade, so a state-only migration leaves v1-shaped seed data and the document errors on load."
+      },
+      "timestampUtcMs": "2026-08-14T12:36:04.000Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "",
+    "timestampUtcMs": "2026-08-14T12:39:01.595Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "2f4b5df2-d6ca-4224-a049-e96b4811ed37",
+        "targetId": "787398c0-fa8c-4e79-bd9f-71b60d57f482",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-08-14T12:39:01.595Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "otR1TI4MgdIFjsCuU5NI4rY8QbE=",
+    "timestampUtcMs": "2026-08-14T12:36:04.000Z",
+    "action": {
+      "type": "SET_NOTE_TYPE",
+      "input": {
+        "noteType": "PATTERN",
+        "updatedAt": "2026-08-14T12:36:04.000Z"
+      },
+      "timestampUtcMs": "2026-08-14T12:36:04.000Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "",
+    "timestampUtcMs": "2026-08-14T12:39:01.691Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "2f4b5df2-d6ca-4224-a049-e96b4811ed37",
+        "targetId": "e09876c1-7be7-4958-a147-6032c84d9bb8",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-08-14T12:39:01.691Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "tXCP0UOigUsc0jKhgvO/4+qdeQI=",
+    "timestampUtcMs": "2026-08-14T12:36:04.000Z",
+    "action": {
+      "type": "SET_CONTENT",
+      "input": {
+        "content": "The upgrade runs exactly **once**, when `UPGRADE_DOCUMENT` is dispatched. Replay never re-runs it: loading a document (`baseLoadFromInput` \u2192 `replayDocument`) starts from the stored `initialState` and folds the domain operations through the latest reducer. The `document`-scope log where the upgrade was recorded is not part of that fold.\n\nThat asymmetry is the whole trap. A migration that patches `state` but forgets `initialState` produces a document that looks perfectly healthy in the running system \u2014 and is unrecoverable:\n\n- anything seeded into `initialState`, i.e. data that was never created by an operation, is still v1-shaped there;\n- so a rebuild can no longer reproduce the stored state;\n- so the replayed final state fails the recorded hash check.\n\nThe document then errors on load with a `HashMismatchError` whose message embeds `Hash mismatch on document \u2026, scope global`. The recipe's tests match it with `/Hash mismatch/`.\n\nThe failure mode is worth dwelling on: nothing goes wrong at upgrade time, nothing goes wrong while the process stays up, and the break surfaces later on a cold load or on a peer that never held the live document. The `document-versioning` recipe ships a deliberately broken state-only transition specifically so the failure is visible in a test rather than in production.\n\nTwo supporting constraints from the same recipe. Upgrade reducers **must be pure** \u2014 they run on every peer that loads the document, so no `Date.now()`, no randomness, no I/O \u2014 and they must **return** a new document spread-style, because there is no immer/Mutative draft in an upgrade reducer and in-place mutation is simply lost. And `supportedVersions` is ordered and every hop must be covered: upgrading a v1 document on a package already at v3 composes v1\u2192v2 then v2\u2192v3, with a missing intermediate entry throwing at upgrade time.\n\nProvenance: academy `05-Lookup/00-Cookbook.md`, Document Versioning recipe (\"Critical pitfall: patch state and initialState together\"), academy 6.2.2-dev.45.",
+        "updatedAt": "2026-08-14T12:36:04.000Z"
+      },
+      "timestampUtcMs": "2026-08-14T12:36:04.000Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "",
+    "timestampUtcMs": "2026-09-02T21:40:52.709Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "metadata": {
+          "reason": "Backing page found by content match in the v6.2.2-dev.74 source backfill \u2014 identifiers initialstate, shaped from the claim appear in this page (text revised between v6.2.2-dev.47 and v6.2.2-dev.74 \u2014 re-verified in the v6.2.2-dev.74 pass); attribution, not the original extraction record",
+          "confidence": "grounded"
+        },
+        "sourceId": "2f4b5df2-d6ca-4224-a049-e96b4811ed37",
+        "targetId": "f2aaccd3-7c26-4327-881e-f5ad9e267b89",
+        "relationshipType": "DERIVED_FROM"
+      },
+      "timestampUtcMs": "2026-09-02T21:40:52.709Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "n1QGDkKqrPiLyexv/RTI8hk8WlE=",
+    "timestampUtcMs": "2026-08-14T12:36:04.000Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "version",
+        "value": "v6.2.2-dev.44",
+        "updatedAt": "2026-08-14T12:36:04.000Z"
+      },
+      "timestampUtcMs": "2026-08-14T12:36:04.000Z"
+    }
+  },
+  {
+    "index": 5,
+    "hash": "PumOJdhv2Jwm6i4OxS1wN8OhHO0=",
+    "timestampUtcMs": "2026-08-14T12:36:04.000Z",
+    "action": {
+      "type": "SET_PROVENANCE",
+      "input": {
+        "author": "claude",
+        "createdAt": "2026-08-13T14:39:07.000Z",
+        "sourceOrigin": "DERIVED"
+      },
+      "timestampUtcMs": "2026-08-14T12:36:04.000Z"
+    }
+  },
+  {
+    "index": 6,
+    "hash": "Dme1GDhApY2KJDv63Z7Ad3TC7R0=",
+    "timestampUtcMs": "2026-08-14T12:36:04.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "5a1168e8-7d24-4ad7-b1d0-271bf40baae3",
+        "name": "versioning",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-08-14T12:36:04.000Z"
+    }
+  },
+  {
+    "index": 7,
+    "hash": "o/t1TzR023BrDdMz8rEpuuan3b0=",
+    "timestampUtcMs": "2026-08-14T12:36:04.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "054f24f6-d66a-4377-a6ac-4b1068ae4b44",
+        "name": "gotchas",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-08-14T12:36:04.000Z"
+    }
+  },
+  {
+    "index": 8,
+    "hash": "kmKIabj5tt4V4pCorW8rYfO1HjY=",
+    "timestampUtcMs": "2026-08-14T12:36:04.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "603af217-eac0-44db-84e8-12f45e3ab3b6",
+        "name": "event-sourcing",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-08-14T12:36:04.000Z"
+    }
+  },
+  {
+    "index": 9,
+    "hash": "uyqlIcH+1kJn/Q0vLDycMd803YY=",
+    "timestampUtcMs": "2026-08-14T14:36:55.000Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "version",
+        "value": "v6.2.2-dev.47",
+        "updatedAt": "2026-08-14T12:00:00.000Z"
+      },
+      "timestampUtcMs": "2026-08-14T14:36:55.000Z"
+    }
+  },
+  {
+    "index": 10,
+    "hash": "cS6lj0YxXwJULOb8WWbL2PBAijc=",
+    "timestampUtcMs": "2026-08-14T14:36:55.000Z",
+    "action": {
+      "type": "SUBMIT_FOR_REVIEW",
+      "input": {
+        "id": "57b63164-af63-4c72-98bb-7f9de69a20a0",
+        "actor": "claude",
+        "comment": "Knowledge registered against powerhouse v6.2.2-dev.47",
+        "timestamp": "2026-08-14T12:00:00.000Z"
+      },
+      "timestampUtcMs": "2026-08-14T14:36:55.000Z"
+    }
+  },
+  {
+    "index": 11,
+    "hash": "TmVjWcRiFeVWhpAxfY9po5Yvwew=",
+    "timestampUtcMs": "2026-08-14T14:36:55.000Z",
+    "action": {
+      "type": "APPROVE_NOTE",
+      "input": {
+        "id": "430be7f7-b8f0-464d-902b-ba52244c31ca",
+        "actor": "liberuum",
+        "comment": "Canonical as of powerhouse v6.2.2-dev.47",
+        "timestamp": "2026-08-14T12:00:00.000Z"
+      },
+      "timestampUtcMs": "2026-08-14T14:36:55.000Z"
+    }
+  },
+  {
+    "index": 12,
+    "hash": "jVCEsD9Vtts0PyFe1a+RF6dWdZQ=",
+    "timestampUtcMs": "2026-09-02T21:40:53.392Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "filePath",
+        "value": "apps/academy/docs/academy/05-Lookup/00-Cookbook.md",
+        "updatedAt": "2026-09-02T21:40:53.392Z"
+      },
+      "timestampUtcMs": "2026-09-02T21:40:53.392Z"
+    }
+  },
+  {
+    "index": 13,
+    "hash": "y9Ugy+OlTYiLpKmi4LLuyQoU8mU=",
+    "timestampUtcMs": "2026-09-02T22:26:43.674Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "version",
+        "value": "v6.2.2-dev.74",
+        "updatedAt": "2026-09-02T22:26:43.674Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:26:43.674Z"
+    }
+  }
+]

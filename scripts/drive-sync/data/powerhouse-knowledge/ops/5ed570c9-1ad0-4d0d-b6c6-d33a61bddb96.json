@@ -1,0 +1,671 @@
+[
+  {
+    "index": 0,
+    "hash": "",
+    "timestampUtcMs": "2026-09-02T22:11:34.982Z",
+    "action": {
+      "type": "CREATE_DOCUMENT",
+      "input": {
+        "meta": {},
+        "name": "auth-remaining-stages",
+        "slug": "",
+        "model": "bai/knowledge-note",
+        "branch": "main",
+        "signing": {
+          "nonce": "",
+          "publicKey": {},
+          "signature": "5ed570c9-1ad0-4d0d-b6c6-d33a61bddb96",
+          "documentType": "bai/knowledge-note",
+          "createdAtUtcIso": "2026-09-02T22:11:34.981Z"
+        },
+        "version": 0,
+        "documentId": "5ed570c9-1ad0-4d0d-b6c6-d33a61bddb96",
+        "protocolVersions": {
+          "base-reducer": 2
+        }
+      },
+      "timestampUtcMs": "2026-09-02T22:11:34.982Z"
+    }
+  },
+  {
+    "index": 0,
+    "hash": "JQfoXt0O/uPuGtgdsvIXrXrcQlU=",
+    "timestampUtcMs": "2026-09-02T22:11:34.885Z",
+    "action": {
+      "type": "SET_TITLE",
+      "input": {
+        "title": "Stages 8\u201310 are designed but unshipped: sync serving withholds whole scope runs per poll and holds rather than consumes them, the permission tables migrate into ordered grant lists, then the host stops consulting them",
+        "updatedAt": "2026-09-02T22:11:34.885Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:11:34.885Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "",
+    "timestampUtcMs": "2026-09-02T22:11:34.982Z",
+    "action": {
+      "type": "UPGRADE_DOCUMENT",
+      "input": {
+        "model": "bai/knowledge-note",
+        "toVersion": 1,
+        "documentId": "5ed570c9-1ad0-4d0d-b6c6-d33a61bddb96",
+        "fromVersion": 0,
+        "initialState": {
+          "auth": {
+            "grants": [],
+            "version": 0
+          },
+          "local": {
+            "lastViewedAt": null,
+            "personalTags": []
+          },
+          "global": {
+            "links": [],
+            "model": null,
+            "scope": null,
+            "title": null,
+            "editor": null,
+            "inputs": [],
+            "models": [],
+            "status": "DRAFT",
+            "topics": [],
+            "content": null,
+            "context": null,
+            "modelId": null,
+            "modules": [],
+            "outputs": [],
+            "version": null,
+            "computes": null,
+            "filePath": null,
+            "noteType": null,
+            "severity": null,
+            "hooksUsed": [],
+            "rootCause": null,
+            "confidence": null,
+            "consumedBy": [],
+            "provenance": null,
+            "sourceType": null,
+            "targetType": null,
+            "cardinality": null,
+            "description": null,
+            "alternatives": [],
+            "consequences": [],
+            "errorMessage": null,
+            "relationType": null,
+            "correctPattern": null,
+            "decisionStatus": null,
+            "dispatchTargets": [],
+            "lifecycleEvents": []
+          },
+          "document": {
+            "hash": {
+              "encoding": "base64",
+              "algorithm": "sha1"
+            },
+            "version": 1
+          }
+        }
+      },
+      "timestampUtcMs": "2026-09-02T22:11:34.982Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "NUwOEFbEni1HnUlxzdoRrfCpFY8=",
+    "timestampUtcMs": "2026-09-02T22:11:34.885Z",
+    "action": {
+      "type": "SET_DESCRIPTION",
+      "input": {
+        "updatedAt": "2026-09-02T22:11:34.885Z",
+        "description": "Serving never withholds auth/document scopes and intersects with the host check; channels bind to a subject by adoption. Migration: one INITIALIZE_AUTH per document; untranslatable rows are refused."
+      },
+      "timestampUtcMs": "2026-09-02T22:11:34.885Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "",
+    "timestampUtcMs": "2026-09-02T22:19:20.333Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "metadata": {
+          "reason": "Extracted from docs/specs/auth-scope.md at v6.2.2-dev.74 \u2014 Reads (serving, per-poll subject); Stage 8; Stage 9; Stage 10",
+          "confidence": "grounded"
+        },
+        "sourceId": "5ed570c9-1ad0-4d0d-b6c6-d33a61bddb96",
+        "targetId": "223bb12a-be7f-4209-9ab2-f04f7bb2b6c8",
+        "relationshipType": "DERIVED_FROM"
+      },
+      "timestampUtcMs": "2026-09-02T22:19:20.333Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "HCE3Kp3nu+j6q+I5qRAWpYzdtaA=",
+    "timestampUtcMs": "2026-09-02T22:11:34.885Z",
+    "action": {
+      "type": "SET_NOTE_TYPE",
+      "input": {
+        "noteType": "ARCHITECTURE",
+        "updatedAt": "2026-09-02T22:11:34.885Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:11:34.885Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "",
+    "timestampUtcMs": "2026-09-02T22:19:21.609Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "metadata": {
+          "reason": "Picks up where the shipped stages stop and records the designed remainder",
+          "confidence": "grounded"
+        },
+        "sourceId": "5ed570c9-1ad0-4d0d-b6c6-d33a61bddb96",
+        "targetId": "839214d6-813a-4de6-bf55-f23d0730c69a",
+        "relationshipType": "BUILDS_ON"
+      },
+      "timestampUtcMs": "2026-09-02T22:19:21.609Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "jOGRTNiaLX3UBqBGaXHtTPMfxWA=",
+    "timestampUtcMs": "2026-09-02T22:11:34.885Z",
+    "action": {
+      "type": "SET_CONTENT",
+      "input": {
+        "content": "Design intent as of v6.2.2-dev.74 \u2014 nothing in this note has shipped.\n\n**Stage 8 \u2014 the serving path (`authEnforcement`).** `pollSyncEnvelopes` withholds scopes the polling subject may not read, instead of asking the host's tables which whole documents to drop. Three rules make that safe. *Whole runs only*: an outbox entry is one `(document, scope, branch)` run; withholding part of one is silent corruption, because the receiving executor renumbers arriving operations against its own head and validates no hashes. *Hold, never consume*: the present filter marks a refused entry delivered and the acknowledgement trim evicts it irreversibly \u2014 and a channel has no identity, so a subject polling while logged out would evict operations its logged-in identity was owed; held entries cost memory instead, the persisted cursor never advances past the lowest unserved entry, and a capped outbox evicts newest-first without marking delivered. *The metadata scopes are never withheld*, so a peer can always reach the decision the origin reached. The verdict is **intersected** with the host's existing check, never unioned, which is what makes it safe before migration. Because the subject is per poll and possibly absent, a channel comes to belong to a subject **by adoption**: created authenticated it is bound at once; created anonymously it serves what the policy serves anonymous callers until the first authenticated poll claims it, after which polls under another address are refused with the shape of a read denial.\n\n**Stage 9 \u2014 migrating the tables (no flag).** The tables are the fleet's live access control and every existing auth scope is empty, so enforcement cannot turn on until the tables are grants. A migration submits one `INITIALIZE_AUTH` per document through the executor (grants are event-sourced; it cannot write rows) with an **ordered** list in which each step claws back what the previous one granted too widely: READ rows \u2192 allow read `*`; WRITE rows \u2192 allow read and execute `*`; restricted operations \u2192 deny `{anyone}` then re-allow the named addresses; then deny `{anyone}` execute on `auth`; then owner and ADMIN rows \u2192 read and execute `*`. Reclaiming by order rather than enumerating scopes keeps a scope added later covered. Every migrated policy must name an explicit `execute`-on-`auth` administrator, because no existing document has a signed header. What has no faithful translation \u2014 inherited protection, more than 100 principals, node-local administrators \u2014 is refused and reported, never approximated; migrating also publishes every access list to every replica, accepted rather than mitigated. It runs on one replica with auth writes quiesced and is idempotent.\n\n**Stage 10 \u2014 retiring the tables (`authEnforcement`).** The host stops consulting them on the read path; the auth scope becomes the only read authorization, while the host's own closed-by-default setting survives as one read-surface setting. A reactor refuses to boot with `authEnforcement` on while untranslated rows remain (unless the host closes by default), and listings keep dropping whole documents rather than leaking ids, slugs and names.\n\n_Source: docs/specs/auth-scope.md (Powerhouse v6.2.2-dev.74)._\n\n## Provenance\n- `docs/specs/auth-scope.md` \u2014 Reads (serving, per-poll subject); Stage 8; Stage 9; Stage 10\n\n_Recorded from the Powerhouse repository at **v6.2.2-dev.74** during the v6.2.2-dev.74 source sync._",
+        "updatedAt": "2026-09-02T22:11:34.885Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:11:34.885Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "",
+    "timestampUtcMs": "2026-09-02T22:19:22.090Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "metadata": {
+          "reason": "Never withholding the auth and document scopes when serving is the sync-side form of the always-readable rule",
+          "confidence": "grounded"
+        },
+        "sourceId": "5ed570c9-1ad0-4d0d-b6c6-d33a61bddb96",
+        "targetId": "975d6c29-9797-4051-927e-d487a679f608",
+        "relationshipType": "BUILDS_ON"
+      },
+      "timestampUtcMs": "2026-09-02T22:19:22.090Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "ZJf4VkZl9UiKP0qO0hytxA226L0=",
+    "timestampUtcMs": "2026-09-02T22:11:34.885Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "3fc25a42-a6c9-4846-8074-20bc79675997",
+        "name": "auth-scope"
+      },
+      "timestampUtcMs": "2026-09-02T22:11:34.885Z"
+    }
+  },
+  {
+    "index": 5,
+    "hash": "",
+    "timestampUtcMs": "2026-09-02T22:19:22.545Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "metadata": {
+          "reason": "These are the stages that collapse the host tables into the document policy",
+          "confidence": "grounded"
+        },
+        "sourceId": "5ed570c9-1ad0-4d0d-b6c6-d33a61bddb96",
+        "targetId": "01daefb6-d6ad-4d19-8642-3e2aa97831d0",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-09-02T22:19:22.545Z"
+    }
+  },
+  {
+    "index": 5,
+    "hash": "FCzSvgf+4ACzvOSJn76Ng54QRMw=",
+    "timestampUtcMs": "2026-09-02T22:11:34.885Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "370239d2-a156-4c04-b7a6-1bd6c7db9d4d",
+        "name": "sync"
+      },
+      "timestampUtcMs": "2026-09-02T22:11:34.885Z"
+    }
+  },
+  {
+    "index": 6,
+    "hash": "",
+    "timestampUtcMs": "2026-09-02T22:19:23.014Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "metadata": {
+          "reason": "The migration's ordered claw-back exists because a bare execute grant on '*' would hand out both administration and every read",
+          "confidence": "grounded"
+        },
+        "sourceId": "5ed570c9-1ad0-4d0d-b6c6-d33a61bddb96",
+        "targetId": "8693600d-a81d-49c8-a2aa-b5f76e7ad5f5",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-09-02T22:19:23.014Z"
+    }
+  },
+  {
+    "index": 6,
+    "hash": "bq7kajVI80LRVpMnYDU3Zmh0QF8=",
+    "timestampUtcMs": "2026-09-02T22:11:34.885Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "cc0ef2ce-f633-4852-8f63-fc0131d5c76c",
+        "name": "migration"
+      },
+      "timestampUtcMs": "2026-09-02T22:11:34.885Z"
+    }
+  },
+  {
+    "index": 7,
+    "hash": "",
+    "timestampUtcMs": "2026-09-02T22:23:22.669Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "metadata": {
+          "reason": "Extracted from docs/specs/auth-scope.md at v6.2.2-dev.74 \u2014 Reads (serving, per-poll subject); Stage 8; Stage 9; Stage 10",
+          "confidence": "grounded"
+        },
+        "sourceId": "5ed570c9-1ad0-4d0d-b6c6-d33a61bddb96",
+        "targetId": "223bb12a-be7f-4209-9ab2-f04f7bb2b6c8",
+        "relationshipType": "DERIVED_FROM"
+      },
+      "timestampUtcMs": "2026-09-02T22:23:22.669Z"
+    }
+  },
+  {
+    "index": 7,
+    "hash": "l8bCJpEZgDRrzMjfUgbEzl1MEc4=",
+    "timestampUtcMs": "2026-09-02T22:11:34.885Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "52b7e19c-f0a0-41bb-8ada-890a665997b4",
+        "name": "design"
+      },
+      "timestampUtcMs": "2026-09-02T22:11:34.885Z"
+    }
+  },
+  {
+    "index": 8,
+    "hash": "",
+    "timestampUtcMs": "2026-09-02T22:23:23.409Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "metadata": {
+          "reason": "Picks up where the shipped stages stop and records the designed remainder",
+          "confidence": "grounded"
+        },
+        "sourceId": "5ed570c9-1ad0-4d0d-b6c6-d33a61bddb96",
+        "targetId": "839214d6-813a-4de6-bf55-f23d0730c69a",
+        "relationshipType": "BUILDS_ON"
+      },
+      "timestampUtcMs": "2026-09-02T22:23:23.409Z"
+    }
+  },
+  {
+    "index": 8,
+    "hash": "ZvNg57mLZLoKfYQdwrgW2HYZNQI=",
+    "timestampUtcMs": "2026-09-02T22:11:34.885Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "b03983b3-dcf6-4026-af25-9ca9e65a0c05",
+        "name": "permissions"
+      },
+      "timestampUtcMs": "2026-09-02T22:11:34.885Z"
+    }
+  },
+  {
+    "index": 9,
+    "hash": "",
+    "timestampUtcMs": "2026-09-02T22:23:23.886Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "metadata": {
+          "reason": "Never withholding the auth and document scopes when serving is the sync-side form of the always-readable rule",
+          "confidence": "grounded"
+        },
+        "sourceId": "5ed570c9-1ad0-4d0d-b6c6-d33a61bddb96",
+        "targetId": "975d6c29-9797-4051-927e-d487a679f608",
+        "relationshipType": "BUILDS_ON"
+      },
+      "timestampUtcMs": "2026-09-02T22:23:23.886Z"
+    }
+  },
+  {
+    "index": 9,
+    "hash": "A6PuaNnmCjjEhb7aNpuOKwGDkN4=",
+    "timestampUtcMs": "2026-09-02T22:11:34.885Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "version",
+        "value": "v6.2.2-dev.74",
+        "updatedAt": "2026-09-02T22:11:34.885Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:11:34.885Z"
+    }
+  },
+  {
+    "index": 10,
+    "hash": "",
+    "timestampUtcMs": "2026-09-02T22:23:24.345Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "metadata": {
+          "reason": "These are the stages that collapse the host tables into the document policy",
+          "confidence": "grounded"
+        },
+        "sourceId": "5ed570c9-1ad0-4d0d-b6c6-d33a61bddb96",
+        "targetId": "01daefb6-d6ad-4d19-8642-3e2aa97831d0",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-09-02T22:23:24.345Z"
+    }
+  },
+  {
+    "index": 10,
+    "hash": "SiAMaonKvyeXp2YGtaxT1MckIm0=",
+    "timestampUtcMs": "2026-09-02T22:11:34.885Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "filePath",
+        "value": "docs/specs/auth-scope.md",
+        "updatedAt": "2026-09-02T22:11:34.885Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:11:34.885Z"
+    }
+  },
+  {
+    "index": 11,
+    "hash": "",
+    "timestampUtcMs": "2026-09-02T22:23:24.816Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "metadata": {
+          "reason": "The migration's ordered claw-back exists because a bare execute grant on '*' would hand out both administration and every read",
+          "confidence": "grounded"
+        },
+        "sourceId": "5ed570c9-1ad0-4d0d-b6c6-d33a61bddb96",
+        "targetId": "8693600d-a81d-49c8-a2aa-b5f76e7ad5f5",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-09-02T22:23:24.816Z"
+    }
+  },
+  {
+    "index": 11,
+    "hash": "vyQ6oW+aZwqhNYH5dQ0GyqkatYo=",
+    "timestampUtcMs": "2026-09-02T22:11:34.885Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "confidence",
+        "value": "grounded",
+        "updatedAt": "2026-09-02T22:11:34.885Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:11:34.885Z"
+    }
+  },
+  {
+    "index": 12,
+    "hash": "/wZA3hyP2ZFOX7kxUtv0q7HvGRQ=",
+    "timestampUtcMs": "2026-09-02T22:11:37.638Z",
+    "action": {
+      "type": "SET_PROVENANCE",
+      "input": {
+        "author": "knowledge-agent",
+        "createdAt": "2026-09-02T22:11:37.637Z",
+        "sourceOrigin": "DERIVED"
+      },
+      "timestampUtcMs": "2026-09-02T22:11:37.638Z"
+    }
+  },
+  {
+    "index": 13,
+    "hash": "PCoByr/EkF8qc9OBrj5lB5NX/fQ=",
+    "timestampUtcMs": "2026-09-02T22:11:38.387Z",
+    "action": {
+      "type": "SUBMIT_FOR_REVIEW",
+      "input": {
+        "id": "e546460d-5428-4c5d-988f-98ac9809f0c4",
+        "actor": "knowledge-agent",
+        "comment": "extracted from the Powerhouse repository at v6.2.2-dev.74",
+        "timestamp": "2026-09-02T22:11:38.387Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:11:38.387Z"
+    }
+  },
+  {
+    "index": 14,
+    "hash": "9RWWGOH+xx/H0nXjhKgNHrocTNw=",
+    "timestampUtcMs": "2026-09-02T22:11:38.982Z",
+    "action": {
+      "type": "APPROVE_NOTE",
+      "input": {
+        "id": "9f371c5d-2602-44f5-808f-bf0fde96160e",
+        "actor": "liberuum",
+        "comment": "claim checked against the cited repository file at the pinned tag",
+        "timestamp": "2026-09-02T22:11:38.982Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:11:38.982Z"
+    }
+  },
+  {
+    "index": 15,
+    "hash": "QqdXHv+ukCEf0FunIZ+znxk/rGg=",
+    "timestampUtcMs": "2026-09-02T22:16:04.608Z",
+    "action": {
+      "type": "SET_TITLE",
+      "input": {
+        "title": "Stages 8\u201310 are designed but unshipped: sync serving withholds whole scope runs per poll and holds rather than consumes them, the permission tables migrate into ordered grant lists, then the host stops consulting them",
+        "updatedAt": "2026-09-02T22:16:04.607Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:16:04.608Z"
+    }
+  },
+  {
+    "index": 16,
+    "hash": "QqdXHv+ukCEf0FunIZ+znxk/rGg=",
+    "timestampUtcMs": "2026-09-02T22:16:04.608Z",
+    "action": {
+      "type": "SET_DESCRIPTION",
+      "input": {
+        "updatedAt": "2026-09-02T22:16:04.607Z",
+        "description": "Serving never withholds auth/document scopes and intersects with the host check; channels bind to a subject by adoption. Migration: one INITIALIZE_AUTH per document; untranslatable rows are refused."
+      },
+      "timestampUtcMs": "2026-09-02T22:16:04.608Z"
+    }
+  },
+  {
+    "index": 17,
+    "hash": "QqdXHv+ukCEf0FunIZ+znxk/rGg=",
+    "timestampUtcMs": "2026-09-02T22:16:04.608Z",
+    "action": {
+      "type": "SET_NOTE_TYPE",
+      "input": {
+        "noteType": "ARCHITECTURE",
+        "updatedAt": "2026-09-02T22:16:04.607Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:16:04.608Z"
+    }
+  },
+  {
+    "index": 18,
+    "hash": "QqdXHv+ukCEf0FunIZ+znxk/rGg=",
+    "timestampUtcMs": "2026-09-02T22:16:04.608Z",
+    "action": {
+      "type": "SET_CONTENT",
+      "input": {
+        "content": "Design intent as of v6.2.2-dev.74 \u2014 nothing in this note has shipped.\n\n**Stage 8 \u2014 the serving path (`authEnforcement`).** `pollSyncEnvelopes` withholds scopes the polling subject may not read, instead of asking the host's tables which whole documents to drop. Three rules make that safe. *Whole runs only*: an outbox entry is one `(document, scope, branch)` run; withholding part of one is silent corruption, because the receiving executor renumbers arriving operations against its own head and validates no hashes. *Hold, never consume*: the present filter marks a refused entry delivered and the acknowledgement trim evicts it irreversibly \u2014 and a channel has no identity, so a subject polling while logged out would evict operations its logged-in identity was owed; held entries cost memory instead, the persisted cursor never advances past the lowest unserved entry, and a capped outbox evicts newest-first without marking delivered. *The metadata scopes are never withheld*, so a peer can always reach the decision the origin reached. The verdict is **intersected** with the host's existing check, never unioned, which is what makes it safe before migration. Because the subject is per poll and possibly absent, a channel comes to belong to a subject **by adoption**: created authenticated it is bound at once; created anonymously it serves what the policy serves anonymous callers until the first authenticated poll claims it, after which polls under another address are refused with the shape of a read denial.\n\n**Stage 9 \u2014 migrating the tables (no flag).** The tables are the fleet's live access control and every existing auth scope is empty, so enforcement cannot turn on until the tables are grants. A migration submits one `INITIALIZE_AUTH` per document through the executor (grants are event-sourced; it cannot write rows) with an **ordered** list in which each step claws back what the previous one granted too widely: READ rows \u2192 allow read `*`; WRITE rows \u2192 allow read and execute `*`; restricted operations \u2192 deny `{anyone}` then re-allow the named addresses; then deny `{anyone}` execute on `auth`; then owner and ADMIN rows \u2192 read and execute `*`. Reclaiming by order rather than enumerating scopes keeps a scope added later covered. Every migrated policy must name an explicit `execute`-on-`auth` administrator, because no existing document has a signed header. What has no faithful translation \u2014 inherited protection, more than 100 principals, node-local administrators \u2014 is refused and reported, never approximated; migrating also publishes every access list to every replica, accepted rather than mitigated. It runs on one replica with auth writes quiesced and is idempotent.\n\n**Stage 10 \u2014 retiring the tables (`authEnforcement`).** The host stops consulting them on the read path; the auth scope becomes the only read authorization, while the host's own closed-by-default setting survives as one read-surface setting. A reactor refuses to boot with `authEnforcement` on while untranslated rows remain (unless the host closes by default), and listings keep dropping whole documents rather than leaking ids, slugs and names.\n\n_Source: docs/specs/auth-scope.md (Powerhouse v6.2.2-dev.74)._\n\n## Provenance\n- `docs/specs/auth-scope.md` \u2014 Reads (serving, per-poll subject); Stage 8; Stage 9; Stage 10\n\n_Recorded from the Powerhouse repository at **v6.2.2-dev.74** during the v6.2.2-dev.74 source sync._",
+        "updatedAt": "2026-09-02T22:16:04.607Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:16:04.608Z"
+    }
+  },
+  {
+    "index": 19,
+    "hash": "QqdXHv+ukCEf0FunIZ+znxk/rGg=",
+    "timestampUtcMs": "2026-09-02T22:16:04.608Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "version",
+        "value": "v6.2.2-dev.74",
+        "updatedAt": "2026-09-02T22:16:04.607Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:16:04.608Z"
+    }
+  },
+  {
+    "index": 20,
+    "hash": "QqdXHv+ukCEf0FunIZ+znxk/rGg=",
+    "timestampUtcMs": "2026-09-02T22:16:04.608Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "filePath",
+        "value": "docs/specs/auth-scope.md",
+        "updatedAt": "2026-09-02T22:16:04.607Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:16:04.608Z"
+    }
+  },
+  {
+    "index": 21,
+    "hash": "QqdXHv+ukCEf0FunIZ+znxk/rGg=",
+    "timestampUtcMs": "2026-09-02T22:16:04.608Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "confidence",
+        "value": "grounded",
+        "updatedAt": "2026-09-02T22:16:04.607Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:16:04.608Z"
+    }
+  },
+  {
+    "index": 22,
+    "hash": "VPx1o8zpmJZV4dkaWLF4XX0WE8k=",
+    "timestampUtcMs": "2026-09-02T22:20:40.866Z",
+    "action": {
+      "type": "SET_TITLE",
+      "input": {
+        "title": "Stages 8\u201310 are designed but unshipped: sync serving withholds whole scope runs per poll and holds rather than consumes them, the permission tables migrate into ordered grant lists, then the host stops consulting them",
+        "updatedAt": "2026-09-02T22:20:40.866Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:20:40.866Z"
+    }
+  },
+  {
+    "index": 23,
+    "hash": "VPx1o8zpmJZV4dkaWLF4XX0WE8k=",
+    "timestampUtcMs": "2026-09-02T22:20:40.866Z",
+    "action": {
+      "type": "SET_DESCRIPTION",
+      "input": {
+        "updatedAt": "2026-09-02T22:20:40.866Z",
+        "description": "Serving never withholds auth/document scopes and intersects with the host check; channels bind to a subject by adoption. Migration: one INITIALIZE_AUTH per document; untranslatable rows are refused."
+      },
+      "timestampUtcMs": "2026-09-02T22:20:40.866Z"
+    }
+  },
+  {
+    "index": 24,
+    "hash": "VPx1o8zpmJZV4dkaWLF4XX0WE8k=",
+    "timestampUtcMs": "2026-09-02T22:20:40.866Z",
+    "action": {
+      "type": "SET_NOTE_TYPE",
+      "input": {
+        "noteType": "ARCHITECTURE",
+        "updatedAt": "2026-09-02T22:20:40.866Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:20:40.866Z"
+    }
+  },
+  {
+    "index": 25,
+    "hash": "VPx1o8zpmJZV4dkaWLF4XX0WE8k=",
+    "timestampUtcMs": "2026-09-02T22:20:40.866Z",
+    "action": {
+      "type": "SET_CONTENT",
+      "input": {
+        "content": "Design intent as of v6.2.2-dev.74 \u2014 nothing in this note has shipped.\n\n**Stage 8 \u2014 the serving path (`authEnforcement`).** `pollSyncEnvelopes` withholds scopes the polling subject may not read, instead of asking the host's tables which whole documents to drop. Three rules make that safe. *Whole runs only*: an outbox entry is one `(document, scope, branch)` run; withholding part of one is silent corruption, because the receiving executor renumbers arriving operations against its own head and validates no hashes. *Hold, never consume*: the present filter marks a refused entry delivered and the acknowledgement trim evicts it irreversibly \u2014 and a channel has no identity, so a subject polling while logged out would evict operations its logged-in identity was owed; held entries cost memory instead, the persisted cursor never advances past the lowest unserved entry, and a capped outbox evicts newest-first without marking delivered. *The metadata scopes are never withheld*, so a peer can always reach the decision the origin reached. The verdict is **intersected** with the host's existing check, never unioned, which is what makes it safe before migration. Because the subject is per poll and possibly absent, a channel comes to belong to a subject **by adoption**: created authenticated it is bound at once; created anonymously it serves what the policy serves anonymous callers until the first authenticated poll claims it, after which polls under another address are refused with the shape of a read denial.\n\n**Stage 9 \u2014 migrating the tables (no flag).** The tables are the fleet's live access control and every existing auth scope is empty, so enforcement cannot turn on until the tables are grants. A migration submits one `INITIALIZE_AUTH` per document through the executor (grants are event-sourced; it cannot write rows) with an **ordered** list in which each step claws back what the previous one granted too widely: READ rows \u2192 allow read `*`; WRITE rows \u2192 allow read and execute `*`; restricted operations \u2192 deny `{anyone}` then re-allow the named addresses; then deny `{anyone}` execute on `auth`; then owner and ADMIN rows \u2192 read and execute `*`. Reclaiming by order rather than enumerating scopes keeps a scope added later covered. Every migrated policy must name an explicit `execute`-on-`auth` administrator, because no existing document has a signed header. What has no faithful translation \u2014 inherited protection, more than 100 principals, node-local administrators \u2014 is refused and reported, never approximated; migrating also publishes every access list to every replica, accepted rather than mitigated. It runs on one replica with auth writes quiesced and is idempotent.\n\n**Stage 10 \u2014 retiring the tables (`authEnforcement`).** The host stops consulting them on the read path; the auth scope becomes the only read authorization, while the host's own closed-by-default setting survives as one read-surface setting. A reactor refuses to boot with `authEnforcement` on while untranslated rows remain (unless the host closes by default), and listings keep dropping whole documents rather than leaking ids, slugs and names.\n\n_Source: docs/specs/auth-scope.md (Powerhouse v6.2.2-dev.74)._\n\n## Provenance\n- `docs/specs/auth-scope.md` \u2014 Reads (serving, per-poll subject); Stage 8; Stage 9; Stage 10\n\n_Recorded from the Powerhouse repository at **v6.2.2-dev.74** during the v6.2.2-dev.74 source sync._",
+        "updatedAt": "2026-09-02T22:20:40.866Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:20:40.866Z"
+    }
+  },
+  {
+    "index": 26,
+    "hash": "VPx1o8zpmJZV4dkaWLF4XX0WE8k=",
+    "timestampUtcMs": "2026-09-02T22:20:40.866Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "version",
+        "value": "v6.2.2-dev.74",
+        "updatedAt": "2026-09-02T22:20:40.866Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:20:40.866Z"
+    }
+  },
+  {
+    "index": 27,
+    "hash": "VPx1o8zpmJZV4dkaWLF4XX0WE8k=",
+    "timestampUtcMs": "2026-09-02T22:20:40.866Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "filePath",
+        "value": "docs/specs/auth-scope.md",
+        "updatedAt": "2026-09-02T22:20:40.866Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:20:40.866Z"
+    }
+  },
+  {
+    "index": 28,
+    "hash": "VPx1o8zpmJZV4dkaWLF4XX0WE8k=",
+    "timestampUtcMs": "2026-09-02T22:20:40.866Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "confidence",
+        "value": "grounded",
+        "updatedAt": "2026-09-02T22:20:40.866Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:20:40.866Z"
+    }
+  }
+]

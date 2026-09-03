@@ -1,0 +1,98 @@
+{
+  "links": [
+    {
+      "id": "lnk-7bf0150e-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "7bf0150e-34d9-4cd2-b038-e55a6acb1ea4",
+      "targetTitle": "revision-history-timeline-in-editors"
+    },
+    {
+      "id": "lnk-1a932db8-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "1a932db8-245d-40f6-bfd8-eea728d9615e",
+      "targetTitle": "reactor-browser-hooks-provide-document-state"
+    },
+    {
+      "id": "lnk-aeb9b5e6-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "aeb9b5e6-8fce-4339-95e8-375bd0a0cc01",
+      "targetTitle": "Academy \u203a Reference \u203a EditorsUI \u203a React Hooks",
+      "reason": "The note names apps/academy/docs/academy/04-Reference/05-EditorsUI/01-ReactHooks.md as its source; page text revised between v6.2.2-dev.47 and v6.2.2-dev.74 \u2014 re-verified in the v6.2.2-dev.74 pass",
+      "confidence": "grounded"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Timeline selection is global state exposed through useSelectedTimelineItem and useSelectedTimelineRevision",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "5ccd76e5-2697-4cd3-a21c-603e824ef1e0",
+      "name": "timeline",
+      "topicDocumentId": null
+    },
+    {
+      "id": "4d3ef65a-2549-4d7f-a4f3-3988426e34ba",
+      "name": "react-hooks",
+      "topicDocumentId": null
+    },
+    {
+      "id": "f5d88ff2-59fe-437c-9637-bfa2bc697152",
+      "name": "reactor-browser",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "Which revision the timeline is parked on is not editor-local state. It lives in the same global store the rest of `reactor-browser`'s selection state uses, so an editor, a drive app and Connect's own chrome all observe the same value.\n\nTwo getter/setter pairs:\n\n```ts\nfunction useSelectedTimelineItem(): TimelineItem | null | undefined;\nfunction setSelectedTimelineItem(item: TimelineItem | null | undefined): void;\n\nfunction useSelectedTimelineRevision(): string | number | null | undefined;\nfunction setSelectedTimelineRevision(rev: string | number | null | undefined): void;\n```\n\nThe setters are plain functions, not hooks \u2014 call them from an event handler without violating the rules of hooks.\n\n`TimelineItem` is a union of two shapes. `TimelineBarItem` (`type: \"bar\"`) is a change candle: `revision`, `timestampUtcMs`, `startDate`/`endDate`, raw `additions`/`deletions` counts, and the bucketed `addSize`/`delSize` fields typed as `0 | 1 | 2 | 3 | 4`. That bucketing is worth noticing \u2014 the render height is a five-step scale, not a raw count, so the bar is comparable across documents of wildly different churn. `TimelineDividerItem` (`type: \"divider\"`) is a labelled separator instead: `title`, `subtitle`, plus the same `revision`, `timestampUtcMs` and date fields.\n\nEvery field except `id` and `type` is optional on both variants, so a consumer reading `item.revision` must handle `undefined`.\n\nNote the two values are tracked separately: the *item* and the *revision* are distinct pieces of state, and `useSelectedTimelineRevision` accepts a `string | number`, so it can hold a revision identifier the timeline never produced a bar for. Reading revision directly is the cheaper path when all you need is \"which point in history am I rendering\".\n\n_Source: apps/academy/docs/academy/04-Reference/05-EditorsUI/01-ReactHooks.md (Powerhouse v6.2.2-dev.45)._",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": "v6.2.2-dev.74",
+  "computes": null,
+  "filePath": "apps/academy/docs/academy/04-Reference/05-EditorsUI/01-ReactHooks.md",
+  "noteType": "REFERENCE",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "claude",
+    "createdAt": "2026-08-13T14:38:03.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-09-02T22:26:30.983Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Each getter has a paired setter. Items are TimelineBarItem or TimelineDividerItem, both carrying revision, timestamps and dates; bars add addSize/delSize and additions/deletions.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "0db0ba11-658a-48b3-8658-0db9a5eb2079",
+      "actor": "claude",
+      "comment": "Knowledge registered against powerhouse v6.2.2-dev.47",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-14T12:00:00.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "7a44fdf9-66e5-40be-a7b4-f2fd965dece6",
+      "actor": "liberuum",
+      "comment": "Canonical as of powerhouse v6.2.2-dev.47",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-14T12:00:00.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

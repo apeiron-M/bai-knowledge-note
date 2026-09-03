@@ -1,0 +1,107 @@
+{
+  "links": [
+    {
+      "id": "lnk-4090fa00-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "4090fa00-da1c-4c2e-9c4a-2dba085341fb",
+      "targetTitle": "analytics-store-benchmarks",
+      "reason": "The generated SQL a logger reveals is what the benchmark numbers are measuring",
+      "confidence": "grounded"
+    },
+    {
+      "id": "lnk-34c5aaca-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "34c5aaca-70ea-4568-9ae9-ee993503b5fa",
+      "targetTitle": "Academy \u203a Build \u203a WorkWithData \u203a Analytics Engine \u203a typescript \u203a Utilities",
+      "reason": "Extracted from apps/academy/docs/academy/03-Build/04-WorkWithData/_06-Analytics Engine/typescript/utilities.md at v6.2.2-dev.74 \u2014 SqlQueryLogger and SqlResultsLogger; IAnalyticsProfiler",
+      "confidence": "grounded"
+    },
+    {
+      "id": "lnk-ceb2e2c7-bui",
+      "linkType": "BUILDS_ON",
+      "targetDocumentId": "ceb2e2c7-7965-431d-ac3d-1409a89529ce",
+      "targetTitle": "analytics-store-compatibility-matrix",
+      "reason": "These are the shared optional constructor arguments every one of those four stores accepts",
+      "confidence": "grounded"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Analytics stores accept a query logger and a results logger whose indices match, so an asynchronous query can be paired with its own result",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "b1b18c63-b2ec-4aa3-8087-70ac90057686",
+      "name": "analytics",
+      "topicDocumentId": null
+    },
+    {
+      "id": "1212fd22-09df-422c-bcf4-4292917f38ca",
+      "name": "debugging",
+      "topicDocumentId": null
+    },
+    {
+      "id": "a9274361-15c1-485e-bb2f-df09057a656b",
+      "name": "logging",
+      "topicDocumentId": null
+    },
+    {
+      "id": "1e5aba7c-fb0b-430f-93a3-8e16ed7bf5e1",
+      "name": "observability",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "Every `IAnalyticsStore` implementation \u2014 `KnexAnalyticsStore`, `PostgresAnalyticsStore`, `MemoryAnalyticsStore`, `BrowserAnalyticsStore` \u2014 takes two optional logging hooks in its constructor options:\n\n```ts\nconst queryLogger   = (index, query)   => console.log(`[Q:${index}] ${query}`);\nconst resultsLogger = (index, results) => console.log(`[R:${index}] ${JSON.stringify(results)}`);\nconst store = new MemoryAnalyticsStore({ queryLogger, resultsLogger });\n```\n\nThe detail that makes them useful rather than noisy: **\"since queries are asynchronous operations, indices match between query and results functions.\"** So a log line can be paired with its own result even when several queries are in flight \u2014 which is exactly the case where an unindexed log is useless.\n\n`defaultQueryLogger(tag)` and `defaultResultsLogger(tag)` are the included implementations, appending a tag to each line so two stores in one process stay distinguishable.\n\nFor measurement rather than debugging there is `IAnalyticsProfiler`, consumed by each store, with a default `AnalyticsProfiler` in `@powerhousedao/analytics-engine-core` and a `PassthroughAnalyticsProfiler` for when profiling should be inert.\n\nWhy this matters beyond convenience: these stores generate SQL from typed TypeScript objects, so the logger is the only way to see what a dimensional query actually became \u2014 which is where an unexpectedly slow rollup usually explains itself.\n\n## Provenance\n- `apps/academy/docs/academy/03-Build/04-WorkWithData/_06-Analytics Engine/typescript/utilities.md` \u2014 SqlQueryLogger and SqlResultsLogger; IAnalyticsProfiler\n\n_Extracted from the Powerhouse repository at **v6.2.2-dev.74**._",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": "v6.2.2-dev.74",
+  "computes": null,
+  "filePath": "apps/academy/docs/academy/03-Build/04-WorkWithData/_06-Analytics Engine/typescript/utilities.md",
+  "noteType": "REFERENCE",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "knowledge-agent",
+    "createdAt": "2026-09-03T07:55:12.929Z",
+    "sessionId": null,
+    "updatedAt": "2026-09-03T07:55:13.919Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "SqlQueryLogger and SqlResultsLogger are synchronous optional constructor inputs on every store; defaultQueryLogger and defaultResultsLogger tag each line. IAnalyticsProfiler is the metrics seam.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "3fce5e37-9a79-4fe9-add8-c7c0c6c0552c",
+      "actor": "knowledge-agent",
+      "comment": "extracted from apps/academy/docs/academy/03-Build/04-WorkWithData/_06-Analytics Engine/typescript/utilities.md at v6.2.2-dev.74",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-09-03T07:55:13.424Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "bc022594-6466-4b5f-9cb3-0744543d8413",
+      "actor": "liberuum",
+      "comment": "claim checked against the cited file at the pinned tag",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-09-03T07:55:13.919Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

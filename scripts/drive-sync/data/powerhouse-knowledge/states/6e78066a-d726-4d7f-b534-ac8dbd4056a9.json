@@ -1,0 +1,112 @@
+{
+  "links": [
+    {
+      "id": "lnk-15121fe4-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "15121fe4-c0d6-44bf-b8fd-cc5d4e4dda61",
+      "targetTitle": "docker-switchboard-storage",
+      "reason": "Worker mode is the one configuration where the PGlite fallback is refused rather than silently taken",
+      "confidence": "grounded"
+    },
+    {
+      "id": "lnk-290fd86b-bui",
+      "linkType": "BUILDS_ON",
+      "targetDocumentId": "290fd86b-db3b-4d33-b278-fd7b84838929",
+      "targetTitle": "withworkerpool-requires-postgres-and-importable-sources",
+      "reason": "The withWorkerPool requirements (real Postgres, worker-importable models) are what these environment variables switch on in a switchboard deployment, plus the auto-sizing rule",
+      "confidence": "grounded"
+    },
+    {
+      "id": "lnk-63e10e2c-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "63e10e2c-9be4-4bd2-a876-8708cd3ac1f9",
+      "targetTitle": "App \u203a switchboard \u203a README",
+      "reason": "Extracted from apps/switchboard/README.md at v6.2.2-dev.74 \u2014 Executor Worker Pool section",
+      "confidence": "grounded"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "REACTOR_WORKERS moves job execution into worker threads routed stickily by document id, and 'auto' sizes the pool as max(1, min(8, cores \u2212 2))",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "ac06f530-2dbf-4273-bf73-88cccbc870a3",
+      "name": "switchboard",
+      "topicDocumentId": null
+    },
+    {
+      "id": "2109b32b-7207-4518-a9a3-2f10964d812d",
+      "name": "reactor",
+      "topicDocumentId": null
+    },
+    {
+      "id": "ffdd4a65-0f23-42b5-9485-f1f2c4290a5d",
+      "name": "worker-pool",
+      "topicDocumentId": null
+    },
+    {
+      "id": "29be861b-dfb4-4ae5-8154-32f6d7b0f5ac",
+      "name": "configuration",
+      "topicDocumentId": null
+    },
+    {
+      "id": "e3da2b27-68f1-4e0e-bf6f-6cc28077bd0c",
+      "name": "scaling",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "By default the reactor executes jobs on a single in-process executor. `REACTOR_WORKERS > 0` moves execution into N `node:worker_threads` workers; jobs route to a worker **stickily by document id**, and each worker opens its own Postgres pool.\n\n| Variable | Description | Default |\n| --- | --- | --- |\n| `REACTOR_WORKERS` | Executor worker threads: a number (0 = in-process) or `auto` | `0` |\n| `REACTOR_DB_POOL_SIZE_WORKER` | Per-worker Postgres pool size | `2` |\n| `REACTOR_DB_ACQUIRE_TIMEOUT_MS` | Pool connection acquire timeout | `5000` |\n\n`auto` sizes the pool from `os.availableParallelism()` (which respects container CPU limits) as **`max(1, min(8, cores - 2))`**: two cores stay reserved for the host event loop, the cap bounds the connection budget, and `auto` always enables worker mode with at least one worker.\n\nRequirements when workers are on: **Postgres only** \u2014 the reactor database must be a `postgres://` URL with explicit credentials (`PH_REACTOR_DATABASE_URL` or `PH_SWITCHBOARD_DATABASE_URL`), because PGlite cannot be shared across threads and switchboard refuses to start on local PGlite storage; **built packages only** \u2014 workers import document models by file path, so every configured package needs a built `document-models` entry and `dev` mode (Vite-loaded models, e.g. `ph vetra`) is rejected; and a **connection budget** of roughly `host pool + REACTOR_WORKERS \u00d7 REACTOR_DB_POOL_SIZE_WORKER`, to keep under the server's `max_connections`. The same settings are available programmatically via `startSwitchboard({ workerPool: { numWorkers, dbPoolSizePerWorker, acquireTimeoutMs } })`, which takes precedence over the environment.\n\n_Source: apps/switchboard/README.md (Powerhouse v6.2.2-dev.74)._\n\n## Provenance\n- `apps/switchboard/README.md` \u2014 Executor Worker Pool section\n\n_Recorded from the Powerhouse repository at **v6.2.2-dev.74** during the v6.2.2-dev.74 source sync._",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": "v6.2.2-dev.74",
+  "computes": null,
+  "filePath": "apps/switchboard/README.md",
+  "noteType": "REFERENCE",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": "grounded",
+  "consumedBy": [],
+  "provenance": {
+    "author": "knowledge-agent",
+    "createdAt": "2026-09-02T22:12:36.356Z",
+    "sessionId": null,
+    "updatedAt": "2026-09-02T22:20:57.655Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Default 0 = one in-process executor. Workers need a postgres:// URL with credentials (PGlite cannot be shared across threads) and built packages; connections \u2248 host pool + workers \u00d7 per-worker pool.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "22d51f03-c975-4817-8df3-0dce669aae11",
+      "actor": "knowledge-agent",
+      "comment": "extracted from the Powerhouse repository at v6.2.2-dev.74",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-09-02T22:12:36.842Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "486518b0-6e37-473b-85b9-9ae59124cfcb",
+      "actor": "liberuum",
+      "comment": "claim checked against the cited repository file at the pinned tag",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-09-02T22:12:37.375Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

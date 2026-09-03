@@ -1,0 +1,115 @@
+{
+  "links": [
+    {
+      "id": "lnk-27438cd8-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "27438cd8-5fb0-4ed7-bcbe-665beef8a259",
+      "targetTitle": "package-owned-subgraphs-composed-into-one-endpoint",
+      "reason": "A package's own subgraph is the consumer this flag exists for: it can authorize per caller while the switchboard itself stays OPEN",
+      "confidence": "grounded"
+    },
+    {
+      "id": "lnk-c281c173-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "c281c173-8126-4ade-9c50-240e30eaff23",
+      "targetTitle": "sb-credential-recheck",
+      "reason": "The identity it resolves goes through the same credential re-check, so an invalid token remains a 401",
+      "confidence": "grounded"
+    },
+    {
+      "id": "lnk-6fa0a6ea-bui",
+      "linkType": "BUILDS_ON",
+      "targetDocumentId": "6fa0a6ea-a295-4da9-85da-1e8ba852c91a",
+      "targetTitle": "authorization-uses-layered-model",
+      "reason": "Adds a fourth knob to the host authorization flow: identity resolution decoupled from the OPEN/ADMIN_ONLY policy selection that AUTH_ENABLED drives",
+      "confidence": "grounded"
+    },
+    {
+      "id": "lnk-3729bcb2-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "3729bcb2-e103-4c58-9152-ba3d3782bf19",
+      "targetTitle": "App \u203a switchboard \u203a Auth \u2014 Powerhouse Authentication System Tutorial",
+      "reason": "Extracted from apps/switchboard/Auth.md at v6.2.2-dev.74 \u2014 Basic Configuration \u203a Environment Variables Method: RESOLVE_CALLER_IDENTITY matrix",
+      "confidence": "grounded"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "RESOLVE_CALLER_IDENTITY makes Switchboard verify the bearer and populate ctx.user without switching the policy from OPEN to ADMIN_ONLY",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "d215c74a-6bf4-4ffc-86cf-5b9e4902c42a",
+      "name": "switchboard",
+      "topicDocumentId": null
+    },
+    {
+      "id": "dd25399b-c5f2-469f-998c-f152982261c1",
+      "name": "authentication",
+      "topicDocumentId": null
+    },
+    {
+      "id": "7d9b44a8-df82-41a6-b88c-90f9e402ad00",
+      "name": "configuration",
+      "topicDocumentId": null
+    },
+    {
+      "id": "796f8178-eef7-484d-905d-4a5320950122",
+      "name": "subgraphs",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "`AUTH_ENABLED=true` does two things: it selects the authorization policy (`ADMIN_ONLY` instead of `OPEN`) **and** it makes the middleware verify the bearer so `ctx.user` is populated. `RESOLVE_CALLER_IDENTITY` separates the second from the first:\n\n| | `AUTH_ENABLED` unset | `AUTH_ENABLED=true` |\n| --- | --- | --- |\n| `RESOLVE_CALLER_IDENTITY` unset | no user, `OPEN` | user resolved, `ADMIN_ONLY` |\n| `RESOLVE_CALLER_IDENTITY=true` | **user resolved, `OPEN`** | user resolved, `ADMIN_ONLY` |\n\nIt defaults to whatever `AUTH_ENABLED` is, so a deployment that never sets it behaves exactly as before. The bold cell is the combination `AUTH_ENABLED` alone cannot express, and the one a **custom subgraph needs when it does its own authorization**: its resolvers learn who is calling without every non-admin being locked out of the switchboard.\n\nIt *resolves* an identity and enforces nothing \u2014 a request with no token is still admitted, with no user. Verification is otherwise identical to `AUTH_ENABLED=true`, Renown credential check included, so an invalid token is still a 401. (Upstream, this landed in 6.2.2-dev.73 and dev.74 fixed a regression it introduced: with the flag on, a tokenless WebSocket subscription was refused until dev.74 admitted it when only resolving identity.)\n\n_Source: apps/switchboard/Auth.md (Powerhouse v6.2.2-dev.74)._\n\n## Provenance\n- `apps/switchboard/Auth.md` \u2014 Basic Configuration \u203a Environment Variables Method: RESOLVE_CALLER_IDENTITY matrix\n\n_Recorded from the Powerhouse repository at **v6.2.2-dev.74** during the v6.2.2-dev.74 source sync._",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": "v6.2.2-dev.74",
+  "computes": null,
+  "filePath": "apps/switchboard/Auth.md",
+  "noteType": "REFERENCE",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": "grounded",
+  "consumedBy": [],
+  "provenance": {
+    "author": "knowledge-agent",
+    "createdAt": "2026-09-02T22:11:43.571Z",
+    "sessionId": null,
+    "updatedAt": "2026-09-02T22:20:42.849Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "AUTH_ENABLED both selects ADMIN_ONLY and verifies tokens; this flag separates the two. It defaults to AUTH_ENABLED, resolves an identity but enforces nothing, and an invalid token is still a 401.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "4e3298f8-182e-4a9d-adec-ab66da53ca84",
+      "actor": "knowledge-agent",
+      "comment": "extracted from the Powerhouse repository at v6.2.2-dev.74",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-09-02T22:11:44.174Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "7c7067d7-6093-45f3-acf3-af5004fb8558",
+      "actor": "liberuum",
+      "comment": "claim checked against the cited repository file at the pinned tag",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-09-02T22:11:44.704Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

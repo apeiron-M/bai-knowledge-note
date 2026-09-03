@@ -1,0 +1,110 @@
+{
+  "links": [
+    {
+      "id": "lnk-645e18ed-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "645e18ed-6da5-4daf-8ed3-7a96cb085b48",
+      "targetTitle": "analytics-paths-lod-dimension-querying"
+    },
+    {
+      "id": "lnk-955cc0e6-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "955cc0e6-a2f8-41f9-963f-bde2b278ab9c",
+      "targetTitle": "consistency-tokens-read-after-write"
+    },
+    {
+      "id": "lnk-6ddb3f1f-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "6ddb3f1f-b6dd-42d8-85f3-3d956294006e",
+      "targetTitle": "cqrs-separates-write-commands-from-read-queries-for-independent-scaling"
+    },
+    {
+      "id": "lnk-9c9ffb95-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "9c9ffb95-9100-4839-b00e-57ec8b6ccbe6",
+      "targetTitle": "account-transactions-model-tracks-financial-transaction-records"
+    },
+    {
+      "id": "lnk-c1eb4930-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "c1eb4930-caaa-48cf-9c9e-15d597f6e1a1",
+      "targetTitle": "Academy \u203a Build \u203a WorkWithData \u203a Analytics Engine \u203a Getting started",
+      "reason": "Backing page found by content match in the v6.2.2-dev.74 source backfill \u2014 identifiers interpolation, totals, tuples from the claim appear in this page (text identical at v6.2.2-dev.47 and v6.2.2-dev.74); attribution, not the original extraction record",
+      "confidence": "grounded"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "The Powerhouse Analytics Engine stores time-series as value-interval triples instead of value-time tuples enabling delta and interpolation queries",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "daf501ed-fc80-4879-be1f-c9f032e0ef47",
+      "name": "analytics-engine",
+      "topicDocumentId": null
+    },
+    {
+      "id": "bc4430fc-22e3-4800-ad22-0960d43fb87b",
+      "name": "time-series",
+      "topicDocumentId": null
+    },
+    {
+      "id": "fc12c0a6-d47e-477d-8621-3367f012f0ed",
+      "name": "architecture",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "The Powerhouse Analytics Engine is a TypeScript time-series analytics system with optional GraphQL interface, designed to run anywhere (browsers, servers, CLI). Unlike typical time-series databases that store `(time, value)` tuples, it stores `(value, start, end)` intervals, enabling interpolation functions (default: constant) and first-class delta queries. `AnalyticsSeries` are the individual metric values; `AnalyticsDimension` objects decorate series with `name` and `path` information for cross-series querying and aggregation. Paths are `/`-delimited strings determining query specificity (e.g., `/atlas/mip40/MIP40c3SP61`). LOD (level of detail) controls aggregation across dimensions; granularity (total/annual/quarterly/monthly/weekly/daily/hourly) controls time aggregation. Data cannot be input through GraphQL, only through the TypeScript API.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": "v6.2.2-dev.74",
+  "computes": null,
+  "filePath": "apps/academy/docs/academy/03-Build/04-WorkWithData/_06-Analytics Engine/intro.md",
+  "noteType": "CONCEPT",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "knowledge-agent",
+    "createdAt": "2026-04-02T12:00:00.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-09-02T21:36:03.240Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Series values have start and end times (not just a point), supporting interval interpolation, running totals, and delta calculations.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "cf85ca4d-5bce-4914-a3d7-9954d1a970a4",
+      "actor": "claude",
+      "comment": "Knowledge registered against powerhouse v6.2.2-dev.47",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-14T12:00:00.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "2f994cfc-176e-48f8-b855-23d0c4f535c0",
+      "actor": "liberuum",
+      "comment": "Canonical as of powerhouse v6.2.2-dev.47",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-14T12:00:00.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

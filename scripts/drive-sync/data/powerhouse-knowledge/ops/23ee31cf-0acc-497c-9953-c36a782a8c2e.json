@@ -1,0 +1,451 @@
+[
+  {
+    "index": 0,
+    "hash": "",
+    "timestampUtcMs": "2026-09-03T07:18:41.783Z",
+    "action": {
+      "type": "CREATE_DOCUMENT",
+      "input": {
+        "meta": {},
+        "name": "branching-not-implemented",
+        "slug": "",
+        "model": "bai/knowledge-note",
+        "branch": "main",
+        "signing": {
+          "nonce": "",
+          "publicKey": {},
+          "signature": "23ee31cf-0acc-497c-9953-c36a782a8c2e",
+          "documentType": "bai/knowledge-note",
+          "createdAtUtcIso": "2026-09-03T07:18:41.783Z"
+        },
+        "version": 0,
+        "documentId": "23ee31cf-0acc-497c-9953-c36a782a8c2e",
+        "protocolVersions": {
+          "base-reducer": 2
+        }
+      },
+      "timestampUtcMs": "2026-09-03T07:18:41.783Z"
+    }
+  },
+  {
+    "index": 0,
+    "hash": "sFXH2aSnfsD9xuTO8EJP0j99w7c=",
+    "timestampUtcMs": "2026-09-03T07:18:43.263Z",
+    "action": {
+      "type": "SET_TITLE",
+      "input": {
+        "title": "Documents carry a branch on every operation, but branching and merging operations are planned rather than implemented",
+        "updatedAt": "2026-09-03T07:18:43.262Z"
+      },
+      "timestampUtcMs": "2026-09-03T07:18:43.263Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "",
+    "timestampUtcMs": "2026-09-03T07:18:41.783Z",
+    "action": {
+      "type": "UPGRADE_DOCUMENT",
+      "input": {
+        "model": "bai/knowledge-note",
+        "toVersion": 1,
+        "documentId": "23ee31cf-0acc-497c-9953-c36a782a8c2e",
+        "fromVersion": 0,
+        "initialState": {
+          "auth": {
+            "grants": [],
+            "version": 0
+          },
+          "local": {
+            "lastViewedAt": null,
+            "personalTags": []
+          },
+          "global": {
+            "links": [],
+            "model": null,
+            "scope": null,
+            "title": null,
+            "editor": null,
+            "inputs": [],
+            "models": [],
+            "status": "DRAFT",
+            "topics": [],
+            "content": null,
+            "context": null,
+            "modelId": null,
+            "modules": [],
+            "outputs": [],
+            "version": null,
+            "computes": null,
+            "filePath": null,
+            "noteType": null,
+            "severity": null,
+            "hooksUsed": [],
+            "rootCause": null,
+            "confidence": null,
+            "consumedBy": [],
+            "provenance": null,
+            "sourceType": null,
+            "targetType": null,
+            "cardinality": null,
+            "description": null,
+            "alternatives": [],
+            "consequences": [],
+            "errorMessage": null,
+            "relationType": null,
+            "correctPattern": null,
+            "decisionStatus": null,
+            "dispatchTargets": [],
+            "lifecycleEvents": []
+          },
+          "document": {
+            "hash": {
+              "encoding": "base64",
+              "algorithm": "sha1"
+            },
+            "version": 1
+          }
+        }
+      },
+      "timestampUtcMs": "2026-09-03T07:18:41.783Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "Kkwcxxy7Y5GNj4nnHC+i9+QDHC4=",
+    "timestampUtcMs": "2026-09-03T07:18:43.263Z",
+    "action": {
+      "type": "SET_DESCRIPTION",
+      "input": {
+        "updatedAt": "2026-09-03T07:18:43.262Z",
+        "description": "Operations are isolated per branch and main is the default, so the data model supports draft/published workflows \u2014 but nothing in the reactor creates or merges a branch yet."
+      },
+      "timestampUtcMs": "2026-09-03T07:18:43.263Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "",
+    "timestampUtcMs": "2026-09-03T07:20:57.883Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "metadata": {
+          "reason": "Extracted from packages/reactor/docs/ARCHITECTURE.md at v6.2.2-dev.74 \u2014 Core Concepts \u203a Branch",
+          "confidence": "grounded"
+        },
+        "sourceId": "23ee31cf-0acc-497c-9953-c36a782a8c2e",
+        "targetId": "e4ef060b-4d61-41b4-95bd-2f562eea3cfa",
+        "relationshipType": "DERIVED_FROM"
+      },
+      "timestampUtcMs": "2026-09-03T07:20:57.883Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "6gXE7deCg1CyjtWng2sjj7bUATU=",
+    "timestampUtcMs": "2026-09-03T07:18:43.263Z",
+    "action": {
+      "type": "SET_NOTE_TYPE",
+      "input": {
+        "noteType": "OBSERVATION",
+        "updatedAt": "2026-09-03T07:18:43.262Z"
+      },
+      "timestampUtcMs": "2026-09-03T07:18:43.263Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "",
+    "timestampUtcMs": "2026-09-03T07:20:58.339Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "metadata": {
+          "reason": "Branch is the third component of the storage triple, so the data model is ready for branches even though no operation creates or merges one",
+          "confidence": "grounded"
+        },
+        "sourceId": "23ee31cf-0acc-497c-9953-c36a782a8c2e",
+        "targetId": "0ef319a9-520b-4759-b30b-a08146b567a9",
+        "relationshipType": "BUILDS_ON"
+      },
+      "timestampUtcMs": "2026-09-03T07:20:58.339Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "/gry15Ld6ZprQVXTg8Zh/AdSypc=",
+    "timestampUtcMs": "2026-09-03T07:18:43.263Z",
+    "action": {
+      "type": "SET_CONTENT",
+      "input": {
+        "content": "Every operation is keyed by branch as well as document and scope, and `main` is the default \u2014 typically the published version. Custom branches are described as drafts, experiments or parallel versions, and operations are **isolated per branch**.\n\nWhat does not exist yet is the machinery to use them: the architecture states plainly that **branching and merging operations are planned but not yet implemented.** So the storage layer will hold operations on any branch name a caller supplies, and nothing will create a branch from another, diff two branches, or merge one into another.\n\nFor anyone designing on top of this: a draft/published workflow can be *stored* today by writing to a second branch name, but the promotion step has to be implemented in application code (re-submitting the actions against `main`), and there is no reactor-level guarantee about how the two histories relate.\n\n## Provenance\n- `packages/reactor/docs/ARCHITECTURE.md` \u2014 Core Concepts \u203a Branch\n\n_Extracted from the Powerhouse repository at **v6.2.2-dev.74**._",
+        "updatedAt": "2026-09-03T07:18:43.262Z"
+      },
+      "timestampUtcMs": "2026-09-03T07:18:43.263Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "",
+    "timestampUtcMs": "2026-09-03T07:20:58.842Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "metadata": {
+          "reason": "Execution is serialized per document across branches too, so parallel branches of one document do not buy write concurrency",
+          "confidence": "grounded"
+        },
+        "sourceId": "23ee31cf-0acc-497c-9953-c36a782a8c2e",
+        "targetId": "4a5a9901-a0e2-4e7e-8ff2-9c155cccb2f7",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-09-03T07:20:58.842Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "lUDUDSsseSCUZ+gQi8Ag42wyRxU=",
+    "timestampUtcMs": "2026-09-03T07:18:43.263Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "99612fae-8978-4eef-b615-3b54491cbd6c",
+        "name": "reactor"
+      },
+      "timestampUtcMs": "2026-09-03T07:18:43.263Z"
+    }
+  },
+  {
+    "index": 5,
+    "hash": "",
+    "timestampUtcMs": "2026-09-03T07:22:51.651Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "metadata": {
+          "reason": "Extracted from packages/reactor/docs/ARCHITECTURE.md at v6.2.2-dev.74 \u2014 Core Concepts \u203a Branch",
+          "confidence": "grounded"
+        },
+        "sourceId": "23ee31cf-0acc-497c-9953-c36a782a8c2e",
+        "targetId": "e4ef060b-4d61-41b4-95bd-2f562eea3cfa",
+        "relationshipType": "DERIVED_FROM"
+      },
+      "timestampUtcMs": "2026-09-03T07:22:51.651Z"
+    }
+  },
+  {
+    "index": 5,
+    "hash": "gQH9B/csjCe3J4Ue35yygPROAuY=",
+    "timestampUtcMs": "2026-09-03T07:18:43.263Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "c6790f7b-3e53-45a6-bacc-3e308a1c893e",
+        "name": "branches"
+      },
+      "timestampUtcMs": "2026-09-03T07:18:43.263Z"
+    }
+  },
+  {
+    "index": 6,
+    "hash": "",
+    "timestampUtcMs": "2026-09-03T07:22:52.095Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "metadata": {
+          "reason": "Branch is the third component of the storage triple, so the data model is ready for branches even though no operation creates or merges one",
+          "confidence": "grounded"
+        },
+        "sourceId": "23ee31cf-0acc-497c-9953-c36a782a8c2e",
+        "targetId": "0ef319a9-520b-4759-b30b-a08146b567a9",
+        "relationshipType": "BUILDS_ON"
+      },
+      "timestampUtcMs": "2026-09-03T07:22:52.095Z"
+    }
+  },
+  {
+    "index": 6,
+    "hash": "c2X/PwV2giRx71EbrqQL/eJLww8=",
+    "timestampUtcMs": "2026-09-03T07:18:43.263Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "282fe839-6ff3-43a0-a72e-6030101caf07",
+        "name": "roadmap"
+      },
+      "timestampUtcMs": "2026-09-03T07:18:43.263Z"
+    }
+  },
+  {
+    "index": 7,
+    "hash": "",
+    "timestampUtcMs": "2026-09-03T07:22:52.583Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "metadata": {
+          "reason": "Execution is serialized per document across branches too, so parallel branches of one document do not buy write concurrency",
+          "confidence": "grounded"
+        },
+        "sourceId": "23ee31cf-0acc-497c-9953-c36a782a8c2e",
+        "targetId": "4a5a9901-a0e2-4e7e-8ff2-9c155cccb2f7",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-09-03T07:22:52.583Z"
+    }
+  },
+  {
+    "index": 7,
+    "hash": "mXuIWUe6aQSqg5t3REbSA8wwWWw=",
+    "timestampUtcMs": "2026-09-03T07:18:43.263Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "version",
+        "value": "v6.2.2-dev.74",
+        "updatedAt": "2026-09-03T07:18:43.262Z"
+      },
+      "timestampUtcMs": "2026-09-03T07:18:43.263Z"
+    }
+  },
+  {
+    "index": 8,
+    "hash": "xHyh1BeaolClMaWNAvnukerSWbs=",
+    "timestampUtcMs": "2026-09-03T07:18:43.263Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "filePath",
+        "value": "packages/reactor/docs/ARCHITECTURE.md",
+        "updatedAt": "2026-09-03T07:18:43.262Z"
+      },
+      "timestampUtcMs": "2026-09-03T07:18:43.263Z"
+    }
+  },
+  {
+    "index": 9,
+    "hash": "wdpRG96CU2FFWYJ5BO796yTc1iA=",
+    "timestampUtcMs": "2026-09-03T07:18:45.446Z",
+    "action": {
+      "type": "SET_PROVENANCE",
+      "input": {
+        "author": "knowledge-agent",
+        "createdAt": "2026-09-03T07:18:45.446Z",
+        "sourceOrigin": "DERIVED"
+      },
+      "timestampUtcMs": "2026-09-03T07:18:45.446Z"
+    }
+  },
+  {
+    "index": 10,
+    "hash": "27zc8HXccvF9wZ1qkH2B2A71xqw=",
+    "timestampUtcMs": "2026-09-03T07:18:47.430Z",
+    "action": {
+      "type": "SUBMIT_FOR_REVIEW",
+      "input": {
+        "id": "29a98849-ad16-41a2-9441-3590dcabab1a",
+        "actor": "knowledge-agent",
+        "comment": "extracted from packages/reactor/docs/ARCHITECTURE.md at v6.2.2-dev.74",
+        "timestamp": "2026-09-03T07:18:47.430Z"
+      },
+      "timestampUtcMs": "2026-09-03T07:18:47.430Z"
+    }
+  },
+  {
+    "index": 11,
+    "hash": "3ia+A2uNj1Pu2f/mF+ceuw8ZoEw=",
+    "timestampUtcMs": "2026-09-03T07:18:47.941Z",
+    "action": {
+      "type": "APPROVE_NOTE",
+      "input": {
+        "id": "bf63805e-4e22-4060-bc46-0d909c665172",
+        "actor": "liberuum",
+        "comment": "claim checked against the cited file at the pinned tag",
+        "timestamp": "2026-09-03T07:18:47.941Z"
+      },
+      "timestampUtcMs": "2026-09-03T07:18:47.941Z"
+    }
+  },
+  {
+    "index": 12,
+    "hash": "Wa8g9qTUnO3p1rAC2L4NF75YY8U=",
+    "timestampUtcMs": "2026-09-03T07:22:21.496Z",
+    "action": {
+      "type": "SET_TITLE",
+      "input": {
+        "title": "Documents carry a branch on every operation, but branching and merging operations are planned rather than implemented",
+        "updatedAt": "2026-09-03T07:22:21.496Z"
+      },
+      "timestampUtcMs": "2026-09-03T07:22:21.496Z"
+    }
+  },
+  {
+    "index": 13,
+    "hash": "Wa8g9qTUnO3p1rAC2L4NF75YY8U=",
+    "timestampUtcMs": "2026-09-03T07:22:21.496Z",
+    "action": {
+      "type": "SET_DESCRIPTION",
+      "input": {
+        "updatedAt": "2026-09-03T07:22:21.496Z",
+        "description": "Operations are isolated per branch and main is the default, so the data model supports draft/published workflows \u2014 but nothing in the reactor creates or merges a branch yet."
+      },
+      "timestampUtcMs": "2026-09-03T07:22:21.496Z"
+    }
+  },
+  {
+    "index": 14,
+    "hash": "Wa8g9qTUnO3p1rAC2L4NF75YY8U=",
+    "timestampUtcMs": "2026-09-03T07:22:21.496Z",
+    "action": {
+      "type": "SET_NOTE_TYPE",
+      "input": {
+        "noteType": "OBSERVATION",
+        "updatedAt": "2026-09-03T07:22:21.496Z"
+      },
+      "timestampUtcMs": "2026-09-03T07:22:21.496Z"
+    }
+  },
+  {
+    "index": 15,
+    "hash": "Wa8g9qTUnO3p1rAC2L4NF75YY8U=",
+    "timestampUtcMs": "2026-09-03T07:22:21.496Z",
+    "action": {
+      "type": "SET_CONTENT",
+      "input": {
+        "content": "Every operation is keyed by branch as well as document and scope, and `main` is the default \u2014 typically the published version. Custom branches are described as drafts, experiments or parallel versions, and operations are **isolated per branch**.\n\nWhat does not exist yet is the machinery to use them: the architecture states plainly that **branching and merging operations are planned but not yet implemented.** So the storage layer will hold operations on any branch name a caller supplies, and nothing will create a branch from another, diff two branches, or merge one into another.\n\nFor anyone designing on top of this: a draft/published workflow can be *stored* today by writing to a second branch name, but the promotion step has to be implemented in application code (re-submitting the actions against `main`), and there is no reactor-level guarantee about how the two histories relate.\n\n## Provenance\n- `packages/reactor/docs/ARCHITECTURE.md` \u2014 Core Concepts \u203a Branch\n\n_Extracted from the Powerhouse repository at **v6.2.2-dev.74**._",
+        "updatedAt": "2026-09-03T07:22:21.496Z"
+      },
+      "timestampUtcMs": "2026-09-03T07:22:21.496Z"
+    }
+  },
+  {
+    "index": 16,
+    "hash": "Wa8g9qTUnO3p1rAC2L4NF75YY8U=",
+    "timestampUtcMs": "2026-09-03T07:22:21.496Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "version",
+        "value": "v6.2.2-dev.74",
+        "updatedAt": "2026-09-03T07:22:21.496Z"
+      },
+      "timestampUtcMs": "2026-09-03T07:22:21.496Z"
+    }
+  },
+  {
+    "index": 17,
+    "hash": "Wa8g9qTUnO3p1rAC2L4NF75YY8U=",
+    "timestampUtcMs": "2026-09-03T07:22:21.496Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "filePath",
+        "value": "packages/reactor/docs/ARCHITECTURE.md",
+        "updatedAt": "2026-09-03T07:22:21.496Z"
+      },
+      "timestampUtcMs": "2026-09-03T07:22:21.496Z"
+    }
+  }
+]

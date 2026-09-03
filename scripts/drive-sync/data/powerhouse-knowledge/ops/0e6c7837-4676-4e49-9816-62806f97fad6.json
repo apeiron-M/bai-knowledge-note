@@ -1,0 +1,276 @@
+[
+  {
+    "index": 0,
+    "hash": "",
+    "timestampUtcMs": "2026-08-20T08:45:52.378Z",
+    "action": {
+      "type": "CREATE_DOCUMENT",
+      "input": {
+        "meta": {},
+        "name": "Odoo's audit trail is in the free edition and on by default since version 19",
+        "slug": "",
+        "model": "bai/knowledge-note",
+        "branch": "main",
+        "signing": {
+          "nonce": "",
+          "publicKey": {},
+          "signature": "0e6c7837-4676-4e49-9816-62806f97fad6",
+          "documentType": "bai/knowledge-note",
+          "createdAtUtcIso": "2026-08-20T08:45:52.378Z"
+        },
+        "version": 0,
+        "documentId": "0e6c7837-4676-4e49-9816-62806f97fad6",
+        "protocolVersions": {
+          "base-reducer": 2
+        }
+      },
+      "timestampUtcMs": "2026-08-20T08:45:52.378Z"
+    }
+  },
+  {
+    "index": 0,
+    "hash": "dbVOp3GuYwcmJgIR45k0MgKgSBk=",
+    "timestampUtcMs": "2026-08-20T08:45:52.974Z",
+    "action": {
+      "type": "SET_TITLE",
+      "input": {
+        "title": "Odoo's audit trail is in the free edition and on by default since version 19",
+        "updatedAt": "2026-08-20T08:45:52.974072Z"
+      },
+      "timestampUtcMs": "2026-08-20T08:45:52.974116Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "",
+    "timestampUtcMs": "2026-08-20T08:45:52.378Z",
+    "action": {
+      "type": "UPGRADE_DOCUMENT",
+      "input": {
+        "model": "bai/knowledge-note",
+        "toVersion": 1,
+        "documentId": "0e6c7837-4676-4e49-9816-62806f97fad6",
+        "fromVersion": 0,
+        "initialState": {
+          "auth": {
+            "grants": [],
+            "version": 0
+          },
+          "local": {
+            "lastViewedAt": null,
+            "personalTags": []
+          },
+          "global": {
+            "links": [],
+            "model": null,
+            "scope": null,
+            "title": null,
+            "editor": null,
+            "inputs": [],
+            "models": [],
+            "status": "DRAFT",
+            "topics": [],
+            "content": null,
+            "context": null,
+            "modelId": null,
+            "modules": [],
+            "outputs": [],
+            "version": null,
+            "computes": null,
+            "filePath": null,
+            "noteType": null,
+            "severity": null,
+            "hooksUsed": [],
+            "rootCause": null,
+            "confidence": null,
+            "consumedBy": [],
+            "provenance": null,
+            "sourceType": null,
+            "targetType": null,
+            "cardinality": null,
+            "description": null,
+            "alternatives": [],
+            "consequences": [],
+            "errorMessage": null,
+            "relationType": null,
+            "correctPattern": null,
+            "decisionStatus": null,
+            "dispatchTargets": [],
+            "lifecycleEvents": []
+          },
+          "document": {
+            "hash": {
+              "encoding": "base64",
+              "algorithm": "sha1"
+            },
+            "version": 1
+          }
+        }
+      },
+      "timestampUtcMs": "2026-08-20T08:45:52.378Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "XGvEzAVMMzzFtI32lcJdRPT2cp4=",
+    "timestampUtcMs": "2026-08-20T08:45:52.974Z",
+    "action": {
+      "type": "SET_DESCRIPTION",
+      "input": {
+        "updatedAt": "2026-08-20T08:45:52.974120Z",
+        "description": "The Audit Trail lives in addons/account under LGPL-3 and the non-restrictive mode was made available by default for everyone, so no open-core paywall exists on audit."
+      },
+      "timestampUtcMs": "2026-08-20T08:45:52.974126Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "",
+    "timestampUtcMs": "2026-08-20T08:45:54.242Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "0e6c7837-4676-4e49-9816-62806f97fad6",
+        "targetId": "4d8e59af-51f2-4ab7-b290-e1d5744abbd7",
+        "relationshipType": "DERIVED_FROM"
+      },
+      "timestampUtcMs": "2026-08-20T08:45:54.242Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "rrZ7tSrGOCoJh75HaScEY6bUMu8=",
+    "timestampUtcMs": "2026-08-20T08:45:52.974Z",
+    "action": {
+      "type": "SET_NOTE_TYPE",
+      "input": {
+        "noteType": "OBSERVATION",
+        "updatedAt": "2026-08-20T08:45:52.974128Z"
+      },
+      "timestampUtcMs": "2026-08-20T08:45:52.974134Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "g341tkswYr3rBlc5iv7Ot6lzUPg=",
+    "timestampUtcMs": "2026-08-20T08:45:52.974Z",
+    "action": {
+      "type": "SET_CONTENT",
+      "input": {
+        "content": "The Odoo 19 release notes state: *\"The non-restrictive audit trail has been made available by default for everyone.\"* The code sits in `addons/account` inside `odoo/odoo`, whose manifest declares `'license': 'LGPL-3'`, and a repository-scoped code search for `audit_trail` returns files only in the LGPL repository. There is no separate audit module among the Community addons.\n\nThe report tracks, per the documentation, *\"the date and time of the changes, the user who made the changes, the type of change, the previous value, and the updated value\"* \u2014 field-level attribution, shipped free.\n\nThis refutes the natural hypothesis about Odoo, which is that its open-core split puts audit behind the Enterprise paywall and thereby creates a sovereignty wedge. Audit falls entirely on the LGPL side, so that wedge does not exist.",
+        "updatedAt": "2026-08-20T08:45:52.974136Z"
+      },
+      "timestampUtcMs": "2026-08-20T08:45:52.974140Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "1SBwzWONUHqZEQNys4CmM/Dwv1s=",
+    "timestampUtcMs": "2026-08-20T08:45:52.974Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "d79ea082-1e3a-47ad-a2d5-28a2d90522bb",
+        "name": "tool-screen"
+      },
+      "timestampUtcMs": "2026-08-20T08:45:52.974150Z"
+    }
+  },
+  {
+    "index": 5,
+    "hash": "k3COB/IKgossUSxrRy3KCGwDPfM=",
+    "timestampUtcMs": "2026-08-20T08:45:52.974Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "f1807110-5a91-47e2-b8f6-bc86da2fa697",
+        "name": "odoo"
+      },
+      "timestampUtcMs": "2026-08-20T08:45:52.974158Z"
+    }
+  },
+  {
+    "index": 6,
+    "hash": "F1GqeqKviR2igdur7/6t8SLJXhs=",
+    "timestampUtcMs": "2026-08-20T08:45:52.974Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "914a4954-cd48-431d-9b60-f7df7c034137",
+        "name": "audit-trail"
+      },
+      "timestampUtcMs": "2026-08-20T08:45:52.974166Z"
+    }
+  },
+  {
+    "index": 7,
+    "hash": "WKU+x5Fme/biSkCvxk9/17hNU+Q=",
+    "timestampUtcMs": "2026-08-20T08:45:52.974Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "b6436385-9de8-4786-81ce-feb6b373dbb1",
+        "name": "licensing"
+      },
+      "timestampUtcMs": "2026-08-20T08:45:52.974174Z"
+    }
+  },
+  {
+    "index": 8,
+    "hash": "xrschwOSyB0CGzHFW+C9THKvW5Q=",
+    "timestampUtcMs": "2026-08-20T08:45:52.974Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "433119ae-b0dd-4afa-a38e-613f7fb9e0ce",
+        "name": "slot-occupied"
+      },
+      "timestampUtcMs": "2026-08-20T08:45:52.974181Z"
+    }
+  },
+  {
+    "index": 9,
+    "hash": "iMBieJs337QFmlmtMipjPMlyuS4=",
+    "timestampUtcMs": "2026-08-20T08:45:53.394Z",
+    "action": {
+      "type": "SET_PROVENANCE",
+      "input": {
+        "author": "knowledge-agent",
+        "createdAt": "2026-08-20T08:45:53.393992Z",
+        "sessionId": null,
+        "sourceOrigin": "DERIVED"
+      },
+      "timestampUtcMs": "2026-08-20T08:45:53.394044Z"
+    }
+  },
+  {
+    "index": 10,
+    "hash": "2aGKOeMq2eZLOLbcWN71oTbj2Y0=",
+    "timestampUtcMs": "2026-08-20T08:45:54.450Z",
+    "action": {
+      "type": "SUBMIT_FOR_REVIEW",
+      "input": {
+        "id": "a6f1eff6-5d1e-4a43-ba09-c66e8c777796",
+        "actor": "knowledge-agent",
+        "comment": "Extracted from the primary-source tool screen; each claim quotable from a cited source.",
+        "timestamp": "2026-08-20T08:45:54.450534Z"
+      },
+      "timestampUtcMs": "2026-08-20T08:45:54.450557Z"
+    }
+  },
+  {
+    "index": 11,
+    "hash": "hT4CcT1fVqcj8Zx82I+j2rebFzM=",
+    "timestampUtcMs": "2026-08-20T08:45:54.597Z",
+    "action": {
+      "type": "APPROVE_NOTE",
+      "input": {
+        "id": "cabbed5f-2e91-437f-9827-cdabf9508e8f",
+        "actor": "liberuum",
+        "comment": "Approved: tool-screen extraction.",
+        "timestamp": "2026-08-20T08:45:54.597463Z"
+      },
+      "timestampUtcMs": "2026-08-20T08:45:54.597485Z"
+    }
+  }
+]

@@ -1,0 +1,500 @@
+[
+  {
+    "index": 0,
+    "hash": "",
+    "timestampUtcMs": "2026-09-03T07:18:29.627Z",
+    "action": {
+      "type": "CREATE_DOCUMENT",
+      "input": {
+        "meta": {},
+        "name": "reactor-kysely-tables",
+        "slug": "",
+        "model": "bai/knowledge-note",
+        "branch": "main",
+        "signing": {
+          "nonce": "",
+          "publicKey": {},
+          "signature": "3c9df40d-1f3d-4bb5-b01a-f2d16e6ec0e4",
+          "documentType": "bai/knowledge-note",
+          "createdAtUtcIso": "2026-09-03T07:18:29.627Z"
+        },
+        "version": 0,
+        "documentId": "3c9df40d-1f3d-4bb5-b01a-f2d16e6ec0e4",
+        "protocolVersions": {
+          "base-reducer": 2
+        }
+      },
+      "timestampUtcMs": "2026-09-03T07:18:29.627Z"
+    }
+  },
+  {
+    "index": 0,
+    "hash": "VyUZAxEwfkq316B3JsOs3dbr2Q4=",
+    "timestampUtcMs": "2026-09-03T07:18:31.062Z",
+    "action": {
+      "type": "SET_TITLE",
+      "input": {
+        "title": "The reactor's Kysely storage is twelve tables, and read-model progress is tracked separately from the operations themselves",
+        "updatedAt": "2026-09-03T07:18:31.062Z"
+      },
+      "timestampUtcMs": "2026-09-03T07:18:31.062Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "",
+    "timestampUtcMs": "2026-09-03T07:18:29.628Z",
+    "action": {
+      "type": "UPGRADE_DOCUMENT",
+      "input": {
+        "model": "bai/knowledge-note",
+        "toVersion": 1,
+        "documentId": "3c9df40d-1f3d-4bb5-b01a-f2d16e6ec0e4",
+        "fromVersion": 0,
+        "initialState": {
+          "auth": {
+            "grants": [],
+            "version": 0
+          },
+          "local": {
+            "lastViewedAt": null,
+            "personalTags": []
+          },
+          "global": {
+            "links": [],
+            "model": null,
+            "scope": null,
+            "title": null,
+            "editor": null,
+            "inputs": [],
+            "models": [],
+            "status": "DRAFT",
+            "topics": [],
+            "content": null,
+            "context": null,
+            "modelId": null,
+            "modules": [],
+            "outputs": [],
+            "version": null,
+            "computes": null,
+            "filePath": null,
+            "noteType": null,
+            "severity": null,
+            "hooksUsed": [],
+            "rootCause": null,
+            "confidence": null,
+            "consumedBy": [],
+            "provenance": null,
+            "sourceType": null,
+            "targetType": null,
+            "cardinality": null,
+            "description": null,
+            "alternatives": [],
+            "consequences": [],
+            "errorMessage": null,
+            "relationType": null,
+            "correctPattern": null,
+            "decisionStatus": null,
+            "dispatchTargets": [],
+            "lifecycleEvents": []
+          },
+          "document": {
+            "hash": {
+              "encoding": "base64",
+              "algorithm": "sha1"
+            },
+            "version": 1
+          }
+        }
+      },
+      "timestampUtcMs": "2026-09-03T07:18:29.628Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "hFe+lx8k67MDwMHREnIExDnrfJ8=",
+    "timestampUtcMs": "2026-09-03T07:18:31.062Z",
+    "action": {
+      "type": "SET_DESCRIPTION",
+      "input": {
+        "updatedAt": "2026-09-03T07:18:31.062Z",
+        "description": "Operation, Keyframe, Document, DocumentSnapshot, DocumentRelationship, SlugMapping, ViewState, IndexerState, document_collections, operation_index_operations, sync_remotes, sync_cursors."
+      },
+      "timestampUtcMs": "2026-09-03T07:18:31.062Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "",
+    "timestampUtcMs": "2026-09-03T07:20:53.196Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "metadata": {
+          "reason": "Extracted from packages/reactor/docs/ARCHITECTURE.md at v6.2.2-dev.74 \u2014 Storage Layer \u203a Database Schema",
+          "confidence": "grounded"
+        },
+        "sourceId": "3c9df40d-1f3d-4bb5-b01a-f2d16e6ec0e4",
+        "targetId": "e4ef060b-4d61-41b4-95bd-2f562eea3cfa",
+        "relationshipType": "DERIVED_FROM"
+      },
+      "timestampUtcMs": "2026-09-03T07:20:53.196Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "2OMcZLk2o7UbjWpLmsQXe9rTbfY=",
+    "timestampUtcMs": "2026-09-03T07:18:31.062Z",
+    "action": {
+      "type": "SET_NOTE_TYPE",
+      "input": {
+        "noteType": "REFERENCE",
+        "updatedAt": "2026-09-03T07:18:31.062Z"
+      },
+      "timestampUtcMs": "2026-09-03T07:18:31.062Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "",
+    "timestampUtcMs": "2026-09-03T07:20:53.672Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "metadata": {
+          "reason": "Names the actual table, DocumentRelationship, that makes container membership O(1) instead of a growing nodes array",
+          "confidence": "grounded"
+        },
+        "sourceId": "3c9df40d-1f3d-4bb5-b01a-f2d16e6ec0e4",
+        "targetId": "b7ea248d-d62f-4463-8036-8e19b7444edf",
+        "relationshipType": "BUILDS_ON"
+      },
+      "timestampUtcMs": "2026-09-03T07:20:53.672Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "gkujZYAmypvPQO2WusOqgkFcLX0=",
+    "timestampUtcMs": "2026-09-03T07:18:31.062Z",
+    "action": {
+      "type": "SET_CONTENT",
+      "input": {
+        "content": "The Kysely-backed storage layer is worth knowing table by table, because each answers a different question:\n\n| Table | Holds |\n| --- | --- |\n| `Operation` | operation storage with per-scope sequencing and action payloads |\n| `Keyframe` | optional snapshots for fast replay |\n| `Document` | document metadata cache (creation and update timestamps) |\n| `DocumentSnapshot` | read-model snapshots per document, scope and branch |\n| `DocumentRelationship` | graph edges for typed relationships |\n| `SlugMapping` | slug-to-id mapping behind `getBySlug` |\n| `ViewState`, `IndexerState` | read-model progress tracking |\n| `document_collections` | collection membership for sync |\n| `operation_index_operations` | the global operation index carrying `ordinal` |\n| `sync_remotes`, `sync_cursors` | sync configuration and progress |\n\nTwo things follow from the shape. **Progress is stored, not inferred**: `ViewState` and `IndexerState` mean a read model resumes where it stopped rather than rescanning, and a corrupted watermark is a data problem rather than a code problem. And **the graph is a table, not document state**: `DocumentRelationship` is why a container can track children without growing its own document.\n\nThe naming split (PascalCase versus snake_case) tracks age rather than meaning \u2014 the newer sync and index tables use snake_case. The authoritative schema is `src/storage/migrations/`.\n\n## Provenance\n- `packages/reactor/docs/ARCHITECTURE.md` \u2014 Storage Layer \u203a Database Schema\n\n_Extracted from the Powerhouse repository at **v6.2.2-dev.74**._",
+        "updatedAt": "2026-09-03T07:18:31.062Z"
+      },
+      "timestampUtcMs": "2026-09-03T07:18:31.062Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "",
+    "timestampUtcMs": "2026-09-03T07:20:54.106Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "metadata": {
+          "reason": "The reactor's SQL schema holds the same sync concerns (remotes, cursors) that the browser deployment keeps in PGlite tables",
+          "confidence": "established"
+        },
+        "sourceId": "3c9df40d-1f3d-4bb5-b01a-f2d16e6ec0e4",
+        "targetId": "752bee27-d361-4981-b353-d8082ef05b25",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-09-03T07:20:54.106Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "3x6+9Gv7P7+Y0lJ11C3LdvGL6QM=",
+    "timestampUtcMs": "2026-09-03T07:18:31.062Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "ed4c665b-b04f-49bc-a9e3-16fd0638ed16",
+        "name": "reactor"
+      },
+      "timestampUtcMs": "2026-09-03T07:18:31.062Z"
+    }
+  },
+  {
+    "index": 5,
+    "hash": "",
+    "timestampUtcMs": "2026-09-03T07:20:54.608Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "metadata": {
+          "reason": "The Keyframe table is where the cache's second-tier lookup reads from",
+          "confidence": "grounded"
+        },
+        "sourceId": "3c9df40d-1f3d-4bb5-b01a-f2d16e6ec0e4",
+        "targetId": "e9149b87-dc40-4388-895a-010c1bb3058a",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-09-03T07:20:54.608Z"
+    }
+  },
+  {
+    "index": 5,
+    "hash": "Z6DHMw1tQDGYelgt7oRUpXlVD6Q=",
+    "timestampUtcMs": "2026-09-03T07:18:31.062Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "7355690c-13b9-4fa9-878d-383b764fb366",
+        "name": "storage"
+      },
+      "timestampUtcMs": "2026-09-03T07:18:31.062Z"
+    }
+  },
+  {
+    "index": 6,
+    "hash": "",
+    "timestampUtcMs": "2026-09-03T07:22:46.993Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "metadata": {
+          "reason": "Extracted from packages/reactor/docs/ARCHITECTURE.md at v6.2.2-dev.74 \u2014 Storage Layer \u203a Database Schema",
+          "confidence": "grounded"
+        },
+        "sourceId": "3c9df40d-1f3d-4bb5-b01a-f2d16e6ec0e4",
+        "targetId": "e4ef060b-4d61-41b4-95bd-2f562eea3cfa",
+        "relationshipType": "DERIVED_FROM"
+      },
+      "timestampUtcMs": "2026-09-03T07:22:46.993Z"
+    }
+  },
+  {
+    "index": 6,
+    "hash": "+YeIiq0Yj8j1oOnLpoMC4yRoXFY=",
+    "timestampUtcMs": "2026-09-03T07:18:31.062Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "888736a9-073b-4151-abd2-6fc2097c2e25",
+        "name": "kysely"
+      },
+      "timestampUtcMs": "2026-09-03T07:18:31.062Z"
+    }
+  },
+  {
+    "index": 7,
+    "hash": "",
+    "timestampUtcMs": "2026-09-03T07:22:47.468Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "metadata": {
+          "reason": "Names the actual table, DocumentRelationship, that makes container membership O(1) instead of a growing nodes array",
+          "confidence": "grounded"
+        },
+        "sourceId": "3c9df40d-1f3d-4bb5-b01a-f2d16e6ec0e4",
+        "targetId": "b7ea248d-d62f-4463-8036-8e19b7444edf",
+        "relationshipType": "BUILDS_ON"
+      },
+      "timestampUtcMs": "2026-09-03T07:22:47.468Z"
+    }
+  },
+  {
+    "index": 7,
+    "hash": "PMETONVf1DtM5fLl/t8xRCPrEvc=",
+    "timestampUtcMs": "2026-09-03T07:18:31.062Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "22e9f5f2-7e68-4628-9e96-27b30dde1a31",
+        "name": "schema"
+      },
+      "timestampUtcMs": "2026-09-03T07:18:31.062Z"
+    }
+  },
+  {
+    "index": 8,
+    "hash": "",
+    "timestampUtcMs": "2026-09-03T07:22:47.918Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "metadata": {
+          "reason": "The reactor's SQL schema holds the same sync concerns (remotes, cursors) that the browser deployment keeps in PGlite tables",
+          "confidence": "established"
+        },
+        "sourceId": "3c9df40d-1f3d-4bb5-b01a-f2d16e6ec0e4",
+        "targetId": "752bee27-d361-4981-b353-d8082ef05b25",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-09-03T07:22:47.918Z"
+    }
+  },
+  {
+    "index": 8,
+    "hash": "6dudl6R1GaSe7UnXpYNfHwEpH1w=",
+    "timestampUtcMs": "2026-09-03T07:18:31.062Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "version",
+        "value": "v6.2.2-dev.74",
+        "updatedAt": "2026-09-03T07:18:31.062Z"
+      },
+      "timestampUtcMs": "2026-09-03T07:18:31.062Z"
+    }
+  },
+  {
+    "index": 9,
+    "hash": "",
+    "timestampUtcMs": "2026-09-03T07:22:48.369Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "metadata": {
+          "reason": "The Keyframe table is where the cache's second-tier lookup reads from",
+          "confidence": "grounded"
+        },
+        "sourceId": "3c9df40d-1f3d-4bb5-b01a-f2d16e6ec0e4",
+        "targetId": "e9149b87-dc40-4388-895a-010c1bb3058a",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-09-03T07:22:48.369Z"
+    }
+  },
+  {
+    "index": 9,
+    "hash": "Y2YAEVcUUbK8Zoh3j4F+UXfVcW0=",
+    "timestampUtcMs": "2026-09-03T07:18:31.062Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "filePath",
+        "value": "packages/reactor/docs/ARCHITECTURE.md",
+        "updatedAt": "2026-09-03T07:18:31.062Z"
+      },
+      "timestampUtcMs": "2026-09-03T07:18:31.062Z"
+    }
+  },
+  {
+    "index": 10,
+    "hash": "uId0jP/si9eaQY4hRGAigUckNas=",
+    "timestampUtcMs": "2026-09-03T07:18:34.207Z",
+    "action": {
+      "type": "SET_PROVENANCE",
+      "input": {
+        "author": "knowledge-agent",
+        "createdAt": "2026-09-03T07:18:34.207Z",
+        "sourceOrigin": "DERIVED"
+      },
+      "timestampUtcMs": "2026-09-03T07:18:34.207Z"
+    }
+  },
+  {
+    "index": 11,
+    "hash": "0Tg83+qjNTA5sgRz0OQBRoUNKA4=",
+    "timestampUtcMs": "2026-09-03T07:18:34.704Z",
+    "action": {
+      "type": "SUBMIT_FOR_REVIEW",
+      "input": {
+        "id": "d732719b-7bb1-4c88-b81a-31fe1ac015a9",
+        "actor": "knowledge-agent",
+        "comment": "extracted from packages/reactor/docs/ARCHITECTURE.md at v6.2.2-dev.74",
+        "timestamp": "2026-09-03T07:18:34.704Z"
+      },
+      "timestampUtcMs": "2026-09-03T07:18:34.704Z"
+    }
+  },
+  {
+    "index": 12,
+    "hash": "M6PtCNTWJFs4NSuuQU/Vbf8qItI=",
+    "timestampUtcMs": "2026-09-03T07:18:35.304Z",
+    "action": {
+      "type": "APPROVE_NOTE",
+      "input": {
+        "id": "5038c697-eaf7-476b-a03e-5ca6999a8810",
+        "actor": "liberuum",
+        "comment": "claim checked against the cited file at the pinned tag",
+        "timestamp": "2026-09-03T07:18:35.304Z"
+      },
+      "timestampUtcMs": "2026-09-03T07:18:35.304Z"
+    }
+  },
+  {
+    "index": 13,
+    "hash": "AJQijsbChkviehR9xRkCDDn7Svg=",
+    "timestampUtcMs": "2026-09-03T07:22:20.424Z",
+    "action": {
+      "type": "SET_TITLE",
+      "input": {
+        "title": "The reactor's Kysely storage is twelve tables, and read-model progress is tracked separately from the operations themselves",
+        "updatedAt": "2026-09-03T07:22:20.424Z"
+      },
+      "timestampUtcMs": "2026-09-03T07:22:20.424Z"
+    }
+  },
+  {
+    "index": 14,
+    "hash": "AJQijsbChkviehR9xRkCDDn7Svg=",
+    "timestampUtcMs": "2026-09-03T07:22:20.424Z",
+    "action": {
+      "type": "SET_DESCRIPTION",
+      "input": {
+        "updatedAt": "2026-09-03T07:22:20.424Z",
+        "description": "Operation, Keyframe, Document, DocumentSnapshot, DocumentRelationship, SlugMapping, ViewState, IndexerState, document_collections, operation_index_operations, sync_remotes, sync_cursors."
+      },
+      "timestampUtcMs": "2026-09-03T07:22:20.424Z"
+    }
+  },
+  {
+    "index": 15,
+    "hash": "AJQijsbChkviehR9xRkCDDn7Svg=",
+    "timestampUtcMs": "2026-09-03T07:22:20.424Z",
+    "action": {
+      "type": "SET_NOTE_TYPE",
+      "input": {
+        "noteType": "REFERENCE",
+        "updatedAt": "2026-09-03T07:22:20.424Z"
+      },
+      "timestampUtcMs": "2026-09-03T07:22:20.424Z"
+    }
+  },
+  {
+    "index": 16,
+    "hash": "AJQijsbChkviehR9xRkCDDn7Svg=",
+    "timestampUtcMs": "2026-09-03T07:22:20.424Z",
+    "action": {
+      "type": "SET_CONTENT",
+      "input": {
+        "content": "The Kysely-backed storage layer is worth knowing table by table, because each answers a different question:\n\n| Table | Holds |\n| --- | --- |\n| `Operation` | operation storage with per-scope sequencing and action payloads |\n| `Keyframe` | optional snapshots for fast replay |\n| `Document` | document metadata cache (creation and update timestamps) |\n| `DocumentSnapshot` | read-model snapshots per document, scope and branch |\n| `DocumentRelationship` | graph edges for typed relationships |\n| `SlugMapping` | slug-to-id mapping behind `getBySlug` |\n| `ViewState`, `IndexerState` | read-model progress tracking |\n| `document_collections` | collection membership for sync |\n| `operation_index_operations` | the global operation index carrying `ordinal` |\n| `sync_remotes`, `sync_cursors` | sync configuration and progress |\n\nTwo things follow from the shape. **Progress is stored, not inferred**: `ViewState` and `IndexerState` mean a read model resumes where it stopped rather than rescanning, and a corrupted watermark is a data problem rather than a code problem. And **the graph is a table, not document state**: `DocumentRelationship` is why a container can track children without growing its own document.\n\nThe naming split (PascalCase versus snake_case) tracks age rather than meaning \u2014 the newer sync and index tables use snake_case. The authoritative schema is `src/storage/migrations/`.\n\n## Provenance\n- `packages/reactor/docs/ARCHITECTURE.md` \u2014 Storage Layer \u203a Database Schema\n\n_Extracted from the Powerhouse repository at **v6.2.2-dev.74**._",
+        "updatedAt": "2026-09-03T07:22:20.424Z"
+      },
+      "timestampUtcMs": "2026-09-03T07:22:20.424Z"
+    }
+  },
+  {
+    "index": 17,
+    "hash": "AJQijsbChkviehR9xRkCDDn7Svg=",
+    "timestampUtcMs": "2026-09-03T07:22:20.424Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "version",
+        "value": "v6.2.2-dev.74",
+        "updatedAt": "2026-09-03T07:22:20.424Z"
+      },
+      "timestampUtcMs": "2026-09-03T07:22:20.424Z"
+    }
+  },
+  {
+    "index": 18,
+    "hash": "AJQijsbChkviehR9xRkCDDn7Svg=",
+    "timestampUtcMs": "2026-09-03T07:22:20.424Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "filePath",
+        "value": "packages/reactor/docs/ARCHITECTURE.md",
+        "updatedAt": "2026-09-03T07:22:20.424Z"
+      },
+      "timestampUtcMs": "2026-09-03T07:22:20.424Z"
+    }
+  }
+]

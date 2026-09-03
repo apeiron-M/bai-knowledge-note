@@ -1,0 +1,102 @@
+{
+  "links": [
+    {
+      "id": "lnk-d4203c64-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "d4203c64-d626-48a8-9e9a-cf72cfa937f8",
+      "targetTitle": "cde-platforms-vary-in-openness"
+    },
+    {
+      "id": "lnk-9efc61f5-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "9efc61f5-cf42-409b-90ce-bf8392d6e203",
+      "targetTitle": "unstructured-data-over-silos"
+    },
+    {
+      "id": "lnk-64912b90-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "64912b90-98cd-4097-9938-5a4c3804cd60",
+      "targetTitle": "reactor-mcp-bridges-ai-agents"
+    },
+    {
+      "id": "lnk-3908a38a-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "3908a38a-c1d9-421c-b360-3aeeb2a7afbd",
+      "targetTitle": "meeting-notes-2026-08-12-14"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "DT BAU centralizes AI behind Langdock for hosting locality, multi-model access, and agent skills",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "41f050bf-0416-4f82-a4b0-08de6bea9b62",
+      "name": "ai-tooling",
+      "topicDocumentId": null
+    },
+    {
+      "id": "44dd10ef-0f7d-41e0-8eac-416636fbce90",
+      "name": "automation",
+      "topicDocumentId": null
+    },
+    {
+      "id": "b587386c-1938-47a8-b72c-384f39e1a627",
+      "name": "construction",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "How a BIM consultancy actually deploys AI today (DT BAU, 00:00:58\u201301:01:06):\n\n- **Langdock** is the primary AI/automation tool \u2014 chosen because it is **hosted in Germany** (data sovereignty) and provides multiple language models (OpenAI, Gemini) in one package\n- Central chat interface: model selection, token usage, data upload (PowerPoint/Word templates) **vectorized for agent building**; SharePoint integration for retrieval \u2014 limited to DT BAU's internal environment by stakeholder access restrictions (00:05:52)\n- **Skills**: agents execute active processes (e.g. HR onboarding creating Microsoft Planner tasks). If skills are well-described, agents successfully pick them from user-input keywords \u2014 description quality is the routing mechanism (01:01:06)\n- Division of labor: Langdock for AI integration; **Microsoft Power Automate** for Microsoft-environment triggers (Forms); formerly N8N (00:55:13)\n- Workflow example (Novo project): public registration form \u2192 Excel database \u2192 auto-created Planner tasks \u2192 automated onboarding emails (00:41:07)\n\nConstraint worth remembering: platforms like Langdock restrict installing custom agents or software (02:05:54) \u2014 the same closed-platform ceiling as CDEs, and the opening for local-first flexibility.\n\n## Methodology grounding\n- **[[descriptions are retrieval filters not summaries]]** \u2014 BUILDS_ON: Langdock agents select skills purely from how well the skill is described, matching the claim that descriptions function as retrieval filters; description quality is the routing mechanism in both systems.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "REFERENCE",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "knowledge-agent",
+    "createdAt": "2026-08-14T18:13:48.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-14T18:17:24.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Langdock (German-hosted) bundles OpenAI/Gemini access, vectorized uploads, SharePoint retrieval, and 'skills' \u2014 agents pick well-described skills from user keywords. Power Automate covers triggers.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "901fc11f-bb8c-4ec7-bb90-f98f65f67434",
+      "actor": "knowledge-agent",
+      "comment": "Extracted from Aug 12-14 meeting sources; links + methodology grounding applied",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-14T18:17:23.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "7680a48e-c91f-42ea-aa98-51621415703c",
+      "actor": "liberuum",
+      "comment": "Pipeline verify: quality gate passed",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-14T18:17:24.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

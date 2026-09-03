@@ -1,0 +1,115 @@
+{
+  "links": [
+    {
+      "id": "lnk-43b82c81-bui",
+      "linkType": "BUILDS_ON",
+      "targetDocumentId": "43b82c81-4d28-4e69-9a0a-84c0dddb87ef",
+      "targetTitle": "reactor-read-models-pre-ready-phase",
+      "reason": "Explains what the operations handed to a pre-ready read model actually carry, and why a read model can index without replaying",
+      "confidence": "grounded"
+    },
+    {
+      "id": "lnk-0ef319a9-bui",
+      "linkType": "BUILDS_ON",
+      "targetDocumentId": "0ef319a9-520b-4759-b30b-a08146b567a9",
+      "targetTitle": "op-stored-per-triple",
+      "reason": "The context supplies exactly the scope and branch the operation itself omits, plus the two derived fields consumers cannot compute themselves",
+      "confidence": "grounded"
+    },
+    {
+      "id": "lnk-e4ef060b-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "e4ef060b-4d61-41b4-95bd-2f562eea3cfa",
+      "targetTitle": "Package \u203a reactor \u203a ARCHITECTURE \u2014 Reactor Architecture",
+      "reason": "Extracted from packages/reactor/docs/ARCHITECTURE.md at v6.2.2-dev.74 \u2014 Core Concepts \u203a OperationWithContext; Components \u203a DocumentView",
+      "confidence": "grounded"
+    },
+    {
+      "id": "lnk-562d84eb-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "562d84eb-ef1d-40b7-81b0-b6b7438544e1",
+      "targetTitle": "collection-based-sync",
+      "reason": "The ordinal in this context is the value a collection cursor advances through",
+      "confidence": "grounded"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Read models and sync depend on resultingState and a global ordinal in OperationContext, and DocumentView will not rebuild state from operations",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "a40bc074-6e97-42a8-b091-45fa621a5835",
+      "name": "reactor",
+      "topicDocumentId": null
+    },
+    {
+      "id": "ee57aaa0-8f39-41b7-9e22-a9bd29522811",
+      "name": "read-models",
+      "topicDocumentId": null
+    },
+    {
+      "id": "dfe820b7-a5ea-45ee-a7a8-b68910ce9725",
+      "name": "sync",
+      "topicDocumentId": null
+    },
+    {
+      "id": "0be7a296-3468-467d-946d-150b2edab7d1",
+      "name": "operations",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "Every operation travels with its context:\n\n```ts\ntype OperationWithContext = {\n  operation: Operation;\n  context: {\n    documentId: string;\n    documentType: string;\n    scope: string;\n    branch: string;\n    resultingState?: string;\n    ordinal: number; // global ordering across ALL operations\n  };\n};\n```\n\nTwo of those fields are load-bearing rather than informational.\n\n**`resultingState`** is what `IDocumentView` applies. The architecture is explicit that the view *requires* it and **does not rebuild from operations** \u2014 so a producer that omits it does not merely slow the read model down, it leaves the snapshot unable to advance. This is the price of a read model that never replays: the writer must hand it the state.\n\n**`ordinal`** is a global sequence across every operation in the reactor, assigned by the operation index. It is what sync cursors track, because a cursor over a flattened multi-document stream cannot use per-scope `index` values.\n\nThe distinction matters when writing a processor or a custom read model: `operation.index` is a position inside one scope, `context.ordinal` is a position in the reactor's whole history.\n\n## Provenance\n- `packages/reactor/docs/ARCHITECTURE.md` \u2014 Core Concepts \u203a OperationWithContext; Components \u203a DocumentView\n\n_Extracted from the Powerhouse repository at **v6.2.2-dev.74**._",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": "v6.2.2-dev.74",
+  "computes": null,
+  "filePath": "packages/reactor/docs/ARCHITECTURE.md",
+  "noteType": "ARCHITECTURE",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "knowledge-agent",
+    "createdAt": "2026-09-03T07:18:14.626Z",
+    "sessionId": null,
+    "updatedAt": "2026-09-03T07:22:17.332Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "OperationWithContext adds documentId, documentType, scope, branch, resultingState and ordinal. DocumentView needs resultingState to advance a snapshot; ordinal is what sync cursors track.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "cb04c5e6-42e7-49a7-878f-2a403867a72c",
+      "actor": "knowledge-agent",
+      "comment": "extracted from packages/reactor/docs/ARCHITECTURE.md at v6.2.2-dev.74",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-09-03T07:18:15.300Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "c1f38ba2-918e-4b08-a992-2c85abe8085e",
+      "actor": "liberuum",
+      "comment": "claim checked against the cited file at the pinned tag",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-09-03T07:18:15.888Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

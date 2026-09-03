@@ -1,0 +1,276 @@
+[
+  {
+    "index": 0,
+    "hash": "",
+    "timestampUtcMs": "2026-08-19T11:28:03.938Z",
+    "action": {
+      "type": "CREATE_DOCUMENT",
+      "input": {
+        "meta": {},
+        "name": "Open Zaak holds the zaak in a mutable API, so municipal audit has no history the case syst",
+        "slug": "",
+        "model": "bai/knowledge-note",
+        "branch": "main",
+        "signing": {
+          "nonce": "",
+          "publicKey": {},
+          "signature": "33630643-e27d-4f3b-a54b-36b49a3a1df0",
+          "documentType": "bai/knowledge-note",
+          "createdAtUtcIso": "2026-08-19T11:28:03.938Z"
+        },
+        "version": 0,
+        "documentId": "33630643-e27d-4f3b-a54b-36b49a3a1df0",
+        "protocolVersions": {
+          "base-reducer": 2
+        }
+      },
+      "timestampUtcMs": "2026-08-19T11:28:03.938Z"
+    }
+  },
+  {
+    "index": 0,
+    "hash": "b3Pj3PLXl5id+Yrp/0VgMr5KUvY=",
+    "timestampUtcMs": "2026-08-19T11:28:05.324Z",
+    "action": {
+      "type": "SET_TITLE",
+      "input": {
+        "title": "Open Zaak holds the zaak in a mutable API, so municipal audit has no history the case system cannot rewrite",
+        "updatedAt": "2026-08-19T11:28:05.324706Z"
+      },
+      "timestampUtcMs": "2026-08-19T11:28:05.324765Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "",
+    "timestampUtcMs": "2026-08-19T11:28:03.938Z",
+    "action": {
+      "type": "UPGRADE_DOCUMENT",
+      "input": {
+        "model": "bai/knowledge-note",
+        "toVersion": 1,
+        "documentId": "33630643-e27d-4f3b-a54b-36b49a3a1df0",
+        "fromVersion": 0,
+        "initialState": {
+          "auth": {
+            "grants": [],
+            "version": 0
+          },
+          "local": {
+            "lastViewedAt": null,
+            "personalTags": []
+          },
+          "global": {
+            "links": [],
+            "model": null,
+            "scope": null,
+            "title": null,
+            "editor": null,
+            "inputs": [],
+            "models": [],
+            "status": "DRAFT",
+            "topics": [],
+            "content": null,
+            "context": null,
+            "modelId": null,
+            "modules": [],
+            "outputs": [],
+            "version": null,
+            "computes": null,
+            "filePath": null,
+            "noteType": null,
+            "severity": null,
+            "hooksUsed": [],
+            "rootCause": null,
+            "confidence": null,
+            "consumedBy": [],
+            "provenance": null,
+            "sourceType": null,
+            "targetType": null,
+            "cardinality": null,
+            "description": null,
+            "alternatives": [],
+            "consequences": [],
+            "errorMessage": null,
+            "relationType": null,
+            "correctPattern": null,
+            "decisionStatus": null,
+            "dispatchTargets": [],
+            "lifecycleEvents": []
+          },
+          "document": {
+            "hash": {
+              "encoding": "base64",
+              "algorithm": "sha1"
+            },
+            "version": 1
+          }
+        }
+      },
+      "timestampUtcMs": "2026-08-19T11:28:03.938Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "eqbZzOghR1ws/pGoQbfpnobYhZA=",
+    "timestampUtcMs": "2026-08-19T11:28:05.324Z",
+    "action": {
+      "type": "SET_DESCRIPTION",
+      "input": {
+        "updatedAt": "2026-08-19T11:28:05.324770Z",
+        "description": "Dutch municipal audit needs an independent, replayable record of status changes; today that record lives inside the very system whose behaviour is being audited."
+      },
+      "timestampUtcMs": "2026-08-19T11:28:05.324780Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "",
+    "timestampUtcMs": "2026-08-19T11:28:07.866Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "33630643-e27d-4f3b-a54b-36b49a3a1df0",
+        "targetId": "8ee8f963-3022-4ac1-b0c9-b4703c9c6b43",
+        "relationshipType": "DERIVED_FROM"
+      },
+      "timestampUtcMs": "2026-08-19T11:28:07.866Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "Jfrsps/ZgRx94M9gVWu1X7Ksn9c=",
+    "timestampUtcMs": "2026-08-19T11:28:05.324Z",
+    "action": {
+      "type": "SET_NOTE_TYPE",
+      "input": {
+        "noteType": "OBSERVATION",
+        "updatedAt": "2026-08-19T11:28:05.324782Z"
+      },
+      "timestampUtcMs": "2026-08-19T11:28:05.324788Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "nnyJV7+RQgXrh0lwC/ofz5ZwYrM=",
+    "timestampUtcMs": "2026-08-19T11:28:05.324Z",
+    "action": {
+      "type": "SET_CONTENT",
+      "input": {
+        "content": "Open Zaak is the Common Ground component that holds the zaak \u2014 the case \u2014 and it exposes it through an API that carries its current state, status included. Status changes are writes against that API, and the account of them lives in the same store that performs them.\n\nThe requirement the research names is independence. Dutch municipal audit needs a replayable history of status changes that the case system itself cannot rewrite. When the record and the system producing it are the same store, the audit rests on the trustworthiness of the thing being audited, which is a structural problem rather than a configuration one \u2014 more logging inside the case system does not resolve it.\n\nMaykin's position as a Common Ground implementer means the gap sits at a shared interface rather than in bespoke code. Status transitions look the same across municipalities, so the dispatch point is predictable: one interface, many tenants. That is what makes this fit reusable instead of a single engagement.\n\n---\n\n## Leads sharing this finding (1)\n\n**1 \u00b7 start here**\n- Maykin (NL Amsterdam) \u2014 not published (first names only) \u00b7 info@maykinmedia.nl \u00b7 https://maykin.nl\n\nVerbatim research text this claim was extracted from:\n\n> Open Zaak holds the case (zaak) in a mutable API. Dutch municipal audit needs an independent, replayable history of status changes that the case system itself cannot rewrite.",
+        "updatedAt": "2026-08-19T11:28:05.324791Z"
+      },
+      "timestampUtcMs": "2026-08-19T11:28:05.324963Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "EH0Ql92ZqyIJG2F2nlUnBFV5r5g=",
+    "timestampUtcMs": "2026-08-19T11:28:05.324Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "8d6e6e06-c0f4-40b4-b7ec-4c79782abb59",
+        "name": "leads"
+      },
+      "timestampUtcMs": "2026-08-19T11:28:05.324976Z"
+    }
+  },
+  {
+    "index": 5,
+    "hash": "9yuo3WCZ6U6E85LGEmNh40H1hFI=",
+    "timestampUtcMs": "2026-08-19T11:28:05.324Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "3a703e29-93cf-4eeb-b677-7cd31d2f04ee",
+        "name": "open-zaak"
+      },
+      "timestampUtcMs": "2026-08-19T11:28:05.324992Z"
+    }
+  },
+  {
+    "index": 6,
+    "hash": "17uZ9U70RzLOcAy+W9V7NC5Mg/Q=",
+    "timestampUtcMs": "2026-08-19T11:28:05.325Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "78e3a9fc-c81d-499a-8900-ca3a9e8d01f6",
+        "name": "common-ground"
+      },
+      "timestampUtcMs": "2026-08-19T11:28:05.325002Z"
+    }
+  },
+  {
+    "index": 7,
+    "hash": "SN5hIg7mQOWALol59sVR0pnZ3Qo=",
+    "timestampUtcMs": "2026-08-19T11:28:05.325Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "153c0269-4934-4b09-8e23-892d72cfc1af",
+        "name": "public-sector"
+      },
+      "timestampUtcMs": "2026-08-19T11:28:05.325010Z"
+    }
+  },
+  {
+    "index": 8,
+    "hash": "zw5mIWTzkp2GD9B483Guxp+bQrM=",
+    "timestampUtcMs": "2026-08-19T11:28:05.325Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "d54062a6-0ee3-413c-bf44-9bc3a40f34bf",
+        "name": "audit-trail"
+      },
+      "timestampUtcMs": "2026-08-19T11:28:05.325018Z"
+    }
+  },
+  {
+    "index": 9,
+    "hash": "iMdhU0x+HnvrJikLHLHRltoLN3Y=",
+    "timestampUtcMs": "2026-08-19T11:28:05.903Z",
+    "action": {
+      "type": "SET_PROVENANCE",
+      "input": {
+        "author": "knowledge-agent",
+        "createdAt": "2026-08-19T11:28:05.903128Z",
+        "sessionId": null,
+        "sourceOrigin": "DERIVED"
+      },
+      "timestampUtcMs": "2026-08-19T11:28:05.903211Z"
+    }
+  },
+  {
+    "index": 10,
+    "hash": "A7JwzEfM5Y1aHrHfqLLJX8jhxps=",
+    "timestampUtcMs": "2026-08-19T11:28:07.252Z",
+    "action": {
+      "type": "SUBMIT_FOR_REVIEW",
+      "input": {
+        "id": "f3541c5b-8694-4f28-b0d5-7a31148cb66c",
+        "actor": "knowledge-agent",
+        "comment": "Extracted from lead research; claim checked against the source record.",
+        "timestamp": "2026-08-19T11:28:07.252439Z"
+      },
+      "timestampUtcMs": "2026-08-19T11:28:07.252462Z"
+    }
+  },
+  {
+    "index": 11,
+    "hash": "Cd5jRgRskD6GiswRkl+ZfqHMTP8=",
+    "timestampUtcMs": "2026-08-19T11:28:07.451Z",
+    "action": {
+      "type": "APPROVE_NOTE",
+      "input": {
+        "id": "d52cf966-2036-4bc2-bb0f-c5798fbf6026",
+        "actor": "liberuum",
+        "comment": "Approved: lead corpus extraction.",
+        "timestamp": "2026-08-19T11:28:07.451455Z"
+      },
+      "timestampUtcMs": "2026-08-19T11:28:07.451476Z"
+    }
+  }
+]

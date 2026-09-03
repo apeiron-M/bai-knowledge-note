@@ -1,0 +1,107 @@
+{
+  "links": [
+    {
+      "id": "lnk-3635589b-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "3635589b-57a3-4a38-9a41-81c4e41e62f7",
+      "targetTitle": "operations-history-is-event-sourced"
+    },
+    {
+      "id": "lnk-91b96b84-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "91b96b84-43aa-4403-892d-445fd04a5f35",
+      "targetTitle": "document-models-have-37-available-operations-across-7-categories"
+    },
+    {
+      "id": "lnk-4379a9fa-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "4379a9fa-7d7b-428e-aaa8-95938183ef0b",
+      "targetTitle": "arrays-in-state-schemas-must-use-mandatory-notation"
+    },
+    {
+      "id": "lnk-4e6413ee-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "4e6413ee-22bf-4d64-964f-ca8b28917cec",
+      "targetTitle": "present-document-model-proposals-to-user-before-implementing"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "actions become operations after dispatch adding metadata",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "234bb357-bc0d-4c88-ae38-ad6eeb68f389",
+      "name": "architecture decisions",
+      "topicDocumentId": null
+    },
+    {
+      "id": "1a309d50-26d3-48e4-9d38-796c3ea8ff05",
+      "name": "reducer patterns",
+      "topicDocumentId": null
+    },
+    {
+      "id": "33a5bd4a-51f1-49ac-8921-60fc3cdd84e3",
+      "name": "event sourcing",
+      "topicDocumentId": null
+    },
+    {
+      "id": "dd3664a7-74f7-4211-863f-c44c159adde9",
+      "name": "document model",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "# actions become operations after dispatch adding metadata\n\nThe distinction between actions and operations is fundamental to the Powerhouse document model:\n\n- **Action** \u2014 A proposed change. A JSON object with `type` (action name) and `input` (payload). This is what you dispatch.\n- **Operation** \u2014 A completed change. Contains the original action plus system metadata: `index`, `timestamp`, `hash`, and optional `error`.\n\nActions become operations after dispatch through `addActions`. The system appends metadata that enables event sourcing \u2014 the index provides ordering, the hash enables integrity verification, and the timestamp records when it happened.\n\nSince [[operation errors are recorded on operations not thrown to callers]], even failed actions produce operations (with the error captured in the `error` field).\n\n---\n\nTopics:\n- [[architecture decisions]]\n- [[reducer patterns]]",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "CONCEPT",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "knowledge-agent",
+    "createdAt": "2026-04-03T14:08:09.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-09-03T09:59:25.389Z",
+    "sourceOrigin": "IMPORT"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "An action is a proposed change (JSON with type and input); an operation adds index, timestamp, hash, and optional error",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "3b93bc59-2487-45be-bd74-1bba1d1fa5ff",
+      "actor": "claude",
+      "comment": "Knowledge registered against powerhouse v6.2.2-dev.47",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-14T12:00:00.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "9f855387-bd88-4a70-bc32-20c78a06ce84",
+      "actor": "liberuum",
+      "comment": "Canonical as of powerhouse v6.2.2-dev.47",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-14T12:00:00.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

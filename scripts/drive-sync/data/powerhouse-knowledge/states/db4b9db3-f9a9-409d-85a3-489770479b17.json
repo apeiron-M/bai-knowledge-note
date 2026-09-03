@@ -1,0 +1,115 @@
+{
+  "links": [
+    {
+      "id": "lnk-a03b65ff-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "a03b65ff-4cf9-47ca-965a-3f01d3773e82",
+      "targetTitle": "style-imports-must-be-in-styles-css"
+    },
+    {
+      "id": "lnk-024b7402-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "024b7402-1650-49a1-a594-4ffb8cb621e8",
+      "targetTitle": "customization-layer-enables-organization-specific-deployments"
+    },
+    {
+      "id": "lnk-64f7c52f-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "64f7c52f-dc21-4446-bad6-e88ef492a25c",
+      "targetTitle": "drives-are-documents-in-reactors"
+    },
+    {
+      "id": "lnk-c7c4d4a6-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "c7c4d4a6-bec7-456d-9d58-fbf8557bd2b1",
+      "targetTitle": "usephtoast-replaces-direct-toast-library-imports-in-editors"
+    },
+    {
+      "id": "lnk-2391600a-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "2391600a-da55-4ec5-baf0-1c12e3b2a484",
+      "targetTitle": "Academy \u203a Build \u203a BuildingUserExperiences \u203a CSS Customization for Connect Integration",
+      "reason": "Backing page found by content match in the v6.2.2-dev.74 source backfill \u2014 identifiers selectors from the claim appear in this page (text identical at v6.2.2-dev.47 and v6.2.2-dev.74); attribution, not the original extraction record",
+      "confidence": "grounded"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Connect wraps editors in containers with data-editor and data-document-type attributes enabling scoped CSS without affecting other editors",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "9ce30d1f-2016-4795-bc86-69d0d36e88b6",
+      "name": "css",
+      "topicDocumentId": null
+    },
+    {
+      "id": "79cedbeb-cb73-4c42-9046-125da947c1ff",
+      "name": "editors",
+      "topicDocumentId": null
+    },
+    {
+      "id": "e49e8a14-9a3e-4744-8cfc-ffa0f9cdf9bc",
+      "name": "connect",
+      "topicDocumentId": null
+    },
+    {
+      "id": "e54e179b-d889-4356-824f-95b91d3bfa6d",
+      "name": "styling",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "Connect renders editors inside `#document-editor-container` (outer, `flex-1`) and `#document-editor-context` (inner, `relative h-full`). Both carry `data-document-type` attributes; the inner also has `data-editor`. To scope styles to one editor: `#document-editor-context[data-editor=\"my-editor-id\"] { ... }`. The `data-editor` value comes from the `id` field in the editor module config. Targeting container IDs without data-attribute scoping affects ALL editors. Style imports must go in `styles.css` (not `.tsx` files) for production builds, because `tailwindcss/cli` only processes file imports.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": "v6.2.2-dev.74",
+  "computes": null,
+  "filePath": "apps/academy/docs/academy/03-Build/03-BuildingUserExperiences/04-CSSCustomization.md",
+  "noteType": "PATTERN",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "knowledge-agent",
+    "createdAt": "2026-04-02T12:00:00.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-09-02T21:34:28.404Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "CSS selectors like #document-editor-context[data-editor='my-editor'] scope styles to a specific editor.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "a368c69a-ec48-4f72-9bcb-329439cdad68",
+      "actor": "claude",
+      "comment": "Knowledge registered against powerhouse v6.2.2-dev.47",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-14T12:00:00.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "725f722a-6a59-475f-a5a9-650dfa27479f",
+      "actor": "liberuum",
+      "comment": "Canonical as of powerhouse v6.2.2-dev.47",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-14T12:00:00.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

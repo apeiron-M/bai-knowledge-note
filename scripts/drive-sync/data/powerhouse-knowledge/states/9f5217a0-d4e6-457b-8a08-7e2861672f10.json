@@ -1,0 +1,108 @@
+{
+  "links": [
+    {
+      "id": "lnk-d1737634-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "d1737634-2378-431a-8cf8-4dcfba38ea5c",
+      "targetTitle": "collaboration-index-feed-structure"
+    },
+    {
+      "id": "lnk-ae9c98a6-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "ae9c98a6-00eb-4aa9-92e8-40ad3bc9513d",
+      "targetTitle": "chat-polish-backlog-items"
+    },
+    {
+      "id": "lnk-713006f2-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "713006f2-2448-40a6-a531-918f99915577",
+      "targetTitle": "chat-uses-pss-for-messages-and-gsoc-for-notifications-matchi"
+    },
+    {
+      "id": "lnk-1c781f1a-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "1c781f1a-a3f9-483e-a15a-ccbc2c431135",
+      "targetTitle": "chat-pss-messaging-history-shipped"
+    },
+    {
+      "id": "lnk-9250acee-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "9250acee-7e5a-454c-8515-977ded38a34d",
+      "targetTitle": "collab-adapter-surface-window-ph-swarm-collab"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Collaboration uses a mesh of per-user owner-only feeds because only the feed owner can write to their own Swarm feed",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "t-e5cd2108-1",
+      "name": "live-collaboration",
+      "topicDocumentId": null
+    },
+    {
+      "id": "t-e5cd2108-2",
+      "name": "swarm-feeds",
+      "topicDocumentId": null
+    },
+    {
+      "id": "t-e5cd2108-3",
+      "name": "data-model",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "## Why a mesh of per-user feeds is the only option\n\nSwarm enforces a hard constraint at the protocol level: **only the owner can write to their own feed**. There is no shared multi-writer feed primitive. This rules out the naive \"one collaborative feed everyone appends to\" data model.\n\nCollaboration therefore must be structured as a **mesh of per-user feeds that everyone reads**. Each collaborator owns and writes their own set of topics; every other collaborator subscribes to and pulls from those peer-owned feeds.\n\nConcretely, each collaborator gets their own ACT-protected feeds:\n\n```\nTopic: ph:v2:collab:<collabId>:ops:<driveId>         (drive-level ops)\n       ph:v2:collab:<collabId>:ops:<driveId>:<docId> (doc-level ops)\nOwner: each collaborator owns their own topic(s)\nACT:   grantees = all participants' Bee node pubkeys\n```\n\nEach collaborator appends their own ops to their own feeds (debounced + batched, same pipeline as the existing SwarmChannel push). On the read side, every participant registers pull sources for every *other* participant's collab feeds. This mesh topology is a direct consequence of the owner-only-write rule and shapes the rest of the design (GSOC pings per peer, cursor-per-peer-source, etc.).",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "ARCHITECTURE",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "knowledge-agent",
+    "createdAt": "2026-04-21T14:16:54.676Z",
+    "sessionId": null,
+    "updatedAt": "2026-09-03T09:58:00.263Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "No multi-writer primitive exists, so each participant appends to ph:v2:collab:<id>:ops:... and registers pull sources for everyone else - which is what forces per-peer pings and cursors.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "1bd15a93-f72d-45b7-abb9-460755528bfd",
+      "actor": "claude",
+      "comment": "Knowledge registered against powerhouse v6.2.2-dev.47",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-14T12:00:00.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "c02c3e64-9c33-4973-ab83-74fb3c3f53b7",
+      "actor": "liberuum",
+      "comment": "Canonical as of powerhouse v6.2.2-dev.47",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-14T12:00:00.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

@@ -1,0 +1,127 @@
+{
+  "tier": "TOPIC",
+  "title": "ACT Encryption and Sharing",
+  "version": "v6.2.2-dev.47",
+  "tensions": [],
+  "childRefs": [],
+  "coreIdeas": [
+    {
+      "id": "ci-18419c72",
+      "noteRef": "18419c72-7f82-41a8-820b-085cf5e925a5",
+      "contextPhrase": "",
+      "sortOrder": 0,
+      "addedAt": "2026-09-03T20:22:40.000Z",
+      "addedBy": "knowledge-agent"
+    },
+    {
+      "id": "ci-d8ef5f5c",
+      "noteRef": "d8ef5f5c-a4cc-4cc9-b45b-b7d52ab7184b",
+      "contextPhrase": "",
+      "sortOrder": 1,
+      "addedAt": "2026-09-03T20:22:40.000Z",
+      "addedBy": "knowledge-agent"
+    },
+    {
+      "id": "ci-a7502472",
+      "noteRef": "a7502472-d2b4-4bc3-828f-b051ff7bee62",
+      "contextPhrase": "",
+      "sortOrder": 2,
+      "addedAt": "2026-09-03T20:22:40.000Z",
+      "addedBy": "knowledge-agent"
+    },
+    {
+      "id": "ci-8ebc083d",
+      "noteRef": "8ebc083d-b75b-46c0-839d-ebe8fc95d3b9",
+      "contextPhrase": "",
+      "sortOrder": 3,
+      "addedAt": "2026-09-03T20:22:40.000Z",
+      "addedBy": "knowledge-agent"
+    },
+    {
+      "id": "ci-f30bc628",
+      "noteRef": "f30bc628-b9c9-4c74-a58c-37b3e36956ac",
+      "contextPhrase": "",
+      "sortOrder": 4,
+      "addedAt": "2026-09-03T20:22:40.000Z",
+      "addedBy": "knowledge-agent"
+    },
+    {
+      "id": "ci-7b0dedff",
+      "noteRef": "7b0dedff-326d-4d34-a752-46db7f2327ac",
+      "contextPhrase": "",
+      "sortOrder": 5,
+      "addedAt": "2026-09-03T20:22:40.000Z",
+      "addedBy": "knowledge-agent"
+    },
+    {
+      "id": "ci-eb3ddfcc",
+      "noteRef": "eb3ddfcc-c606-4705-b9c9-42f5e26e2384",
+      "contextPhrase": "",
+      "sortOrder": 6,
+      "addedAt": "2026-09-03T20:22:40.000Z",
+      "addedBy": "knowledge-agent"
+    },
+    {
+      "id": "ci-30c28798",
+      "noteRef": "30c28798-aa11-4a72-86c9-d0ff39ec4dd9",
+      "contextPhrase": "",
+      "sortOrder": 7,
+      "addedAt": "2026-09-03T20:22:40.000Z",
+      "addedBy": "knowledge-agent"
+    },
+    {
+      "id": "ci-c6ce116a",
+      "noteRef": "c6ce116a-daaa-4be5-a9de-25b63600f6a0",
+      "contextPhrase": "",
+      "sortOrder": 8,
+      "addedAt": "2026-09-03T20:22:40.000Z",
+      "addedBy": "knowledge-agent"
+    },
+    {
+      "id": "ci-222a0fc3",
+      "noteRef": "222a0fc3-0e04-446f-9acd-78716799f3c0",
+      "contextPhrase": "",
+      "sortOrder": 9,
+      "addedAt": "2026-09-03T20:22:40.000Z",
+      "addedBy": "knowledge-agent"
+    },
+    {
+      "id": "ci-2d979101",
+      "noteRef": "2d979101-1dec-42b5-a74e-abbbc6af0950",
+      "contextPhrase": "",
+      "sortOrder": 10,
+      "addedAt": "2026-09-03T20:22:40.000Z",
+      "addedBy": "knowledge-agent"
+    },
+    {
+      "id": "ci-36dd9702",
+      "noteRef": "36dd9702-790b-493d-b59c-dc7d9307f0af",
+      "contextPhrase": "",
+      "sortOrder": 11,
+      "addedAt": "2026-09-03T20:22:40.000Z",
+      "addedBy": "knowledge-agent"
+    }
+  ],
+  "createdAt": "2026-04-21T19:32:16.008Z",
+  "noteCount": 0,
+  "parentRef": null,
+  "updatedAt": "2026-08-14T12:00:00.000Z",
+  "agentNotes": [],
+  "description": "How Connect encrypts data at the Swarm /bytes layer with AES-256-GCM and uses ACT+ECDH for cross-user sharing without leaking the wallet key.",
+  "orientation": "Connect's privacy story has two layers. At rest, every payload uploaded to /bytes is AES-256-GCM encrypted with a deterministic key derived from a one-time wallet signature so any device with the wallet can recover state. For sharing across users, Connect uses Swarm's ACT with ECDH-derived per-session keys and per-grantee manifests \u2014 replacing the older deriveShareKey approach that leaked through publicly derivable SHA-256. This MOC collects the notes that define the encryption layer, the ACT model, and the concrete flows (chat sharing, raw-file sharing, session keys) that depend on them.",
+  "openQuestions": [],
+  "links": [
+    {
+      "id": "lnk-8c9a8f25-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "8c9a8f25-336b-492e-baf4-e8e11f2cbfa0",
+      "targetTitle": "collab-initial-state-via-share-bundle"
+    },
+    {
+      "id": "lnk-b33a151e-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "b33a151e-f4cf-4dbc-9ad8-dbc90b34a863",
+      "targetTitle": "wallet-derived-aes-key"
+    }
+  ]
+}

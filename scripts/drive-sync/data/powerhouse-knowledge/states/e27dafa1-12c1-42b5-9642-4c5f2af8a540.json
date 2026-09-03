@@ -1,0 +1,21 @@
+{
+  "title": "Academy \u203a Lookup \u203a LLM docs",
+  "status": "EXTRACTED",
+  "content": "# LLM docs\n\nThe Powerhouse Academy follows the [llms.txt standard](https://llmstxt.org) to provide machine-readable documentation for LLMs and AI coding tools.\n\n## Context7\n\n[Context7](https://context7.com) is the easiest way to load up-to-date Powerhouse documentation directly into your AI coding assistant (Cursor, Windsurf, Zed, etc.).\nSearch for **powerhouse-inc/powerhouse** in the Context7 library, or use the library ID `/powerhouse-inc/powerhouse`.\n\n```\nuse context7\n```\n\n## Paste into Claude or ChatGPT\n\nLoad the full documentation into a context window at once by pasting the URL directly into your chat:\n\n```\nhttps://academy.vetra.io/llms-full.txt\n```\n\n## Programmatic access\n\n```bash\n# Index (llms.txt) \u2014 links to every page with a short description (~22KB)\ncurl https://academy.vetra.io/llms.txt\n\n# Full content (llms-full.txt) \u2014 all docs concatenated (~1MB)\ncurl https://academy.vetra.io/llms-full.txt\n```\n\n## Files\n\n| File                            | Purpose                                                                 | Size  |\n| ------------------------------- | ----------------------------------------------------------------------- | ----- |\n| [llms.txt](/llms.txt)           | Navigation index \u2014 links to every doc page with a short description     | ~22KB |\n| [llms-full.txt](/llms-full.txt) | All documentation concatenated into one file for full-context ingestion | ~1MB  |\n\n## Regenerating the files\n\nThe files are generated from the academy source docs by the script at `scripts/generate-llm-docs.ts`.\nRun it with:\n\n```bash\nnpm run generate:llm-docs\n```\n\nThis writes both `static/llms.txt` and `static/llms-full.txt`, which Docusaurus serves at the site root.\n",
+  "createdAt": "2026-09-02T21:41:02.010Z",
+  "createdBy": "repo-docs-sync",
+  "provenance": {
+    "url": "https://github.com/powerhouse-inc/powerhouse/blob/v6.2.2-dev.74/apps/academy/docs/academy/05-Lookup/02-LLMDocs.md",
+    "tool": "sync-repo-docs",
+    "author": "Powerhouse Inc.",
+    "method": "sha256:92448cd5aee3d61c5e7dde2aabced5ffb737dee745c586a6ce156a6e337122d4 git:v6.2.2-dev.74",
+    "publishedAt": "2026-06-17T17:18:45.000Z"
+  },
+  "sourceType": "DOCUMENTATION",
+  "description": "Powerhouse v6.2.2-dev.74 (unchanged since v6.2.2-dev.47) \u2014 The Powerhouse Academy follows the llms.txt standard to provide machine-readable documentation for LLMs and AI coding tools.",
+  "extractedClaims": [
+    "4e3c14d9-a688-4fdb-8151-6eb46d0f9a02"
+  ],
+  "extractionStats": null,
+  "links": []
+}

@@ -1,0 +1,482 @@
+[
+  {
+    "index": 0,
+    "hash": "",
+    "timestampUtcMs": "2026-09-03T07:28:44.470Z",
+    "action": {
+      "type": "CREATE_DOCUMENT",
+      "input": {
+        "meta": {},
+        "name": "lazy-sync-proposed-not-shipped",
+        "slug": "",
+        "model": "bai/knowledge-note",
+        "branch": "main",
+        "signing": {
+          "nonce": "",
+          "publicKey": {},
+          "signature": "55fcb6f8-c6d7-48ed-b56b-fe4a0ff3303e",
+          "documentType": "bai/knowledge-note",
+          "createdAtUtcIso": "2026-09-03T07:28:44.470Z"
+        },
+        "version": 0,
+        "documentId": "55fcb6f8-c6d7-48ed-b56b-fe4a0ff3303e",
+        "protocolVersions": {
+          "base-reducer": 2
+        }
+      },
+      "timestampUtcMs": "2026-09-03T07:28:44.470Z"
+    }
+  },
+  {
+    "index": 0,
+    "hash": "B6g2I7zWEoFKvs0yzAlfDuGxQKo=",
+    "timestampUtcMs": "2026-09-03T07:28:45.920Z",
+    "action": {
+      "type": "SET_TITLE",
+      "input": {
+        "title": "Lazy drive sync is a Proposed ADR, not shipped behaviour: today opening a remote drive still streams every document's history from timestamp zero",
+        "updatedAt": "2026-09-03T07:28:45.914Z"
+      },
+      "timestampUtcMs": "2026-09-03T07:28:45.920Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "",
+    "timestampUtcMs": "2026-09-03T07:28:44.470Z",
+    "action": {
+      "type": "UPGRADE_DOCUMENT",
+      "input": {
+        "model": "bai/knowledge-note",
+        "toVersion": 1,
+        "documentId": "55fcb6f8-c6d7-48ed-b56b-fe4a0ff3303e",
+        "fromVersion": 0,
+        "initialState": {
+          "auth": {
+            "grants": [],
+            "version": 0
+          },
+          "local": {
+            "lastViewedAt": null,
+            "personalTags": []
+          },
+          "global": {
+            "links": [],
+            "model": null,
+            "scope": null,
+            "title": null,
+            "editor": null,
+            "inputs": [],
+            "models": [],
+            "status": "DRAFT",
+            "topics": [],
+            "content": null,
+            "context": null,
+            "modelId": null,
+            "modules": [],
+            "outputs": [],
+            "version": null,
+            "computes": null,
+            "filePath": null,
+            "noteType": null,
+            "severity": null,
+            "hooksUsed": [],
+            "rootCause": null,
+            "confidence": null,
+            "consumedBy": [],
+            "provenance": null,
+            "sourceType": null,
+            "targetType": null,
+            "cardinality": null,
+            "description": null,
+            "alternatives": [],
+            "consequences": [],
+            "errorMessage": null,
+            "relationType": null,
+            "correctPattern": null,
+            "decisionStatus": null,
+            "dispatchTargets": [],
+            "lifecycleEvents": []
+          },
+          "document": {
+            "hash": {
+              "encoding": "base64",
+              "algorithm": "sha1"
+            },
+            "version": 1
+          }
+        }
+      },
+      "timestampUtcMs": "2026-09-03T07:28:44.470Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "RUZGWW8M4UArNNImfzxw9D+/KhQ=",
+    "timestampUtcMs": "2026-09-03T07:28:45.920Z",
+    "action": {
+      "type": "SET_DESCRIPTION",
+      "input": {
+        "updatedAt": "2026-09-03T07:28:45.920Z",
+        "description": "ADR 0001, status Proposed, 2026-07-16. It would sync the drive document first and each document's operations only when opened, behind an opt-in preloadDocuments flag defaulting to today's eager mode."
+      },
+      "timestampUtcMs": "2026-09-03T07:28:45.920Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "",
+    "timestampUtcMs": "2026-09-03T07:30:09.941Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "metadata": {
+          "reason": "Extracted from docs/adr/0001-lazy-drive-sync.md at v6.2.2-dev.74 \u2014 Status header; Context; Decision (opening paragraphs)",
+          "confidence": "grounded"
+        },
+        "sourceId": "55fcb6f8-c6d7-48ed-b56b-fe4a0ff3303e",
+        "targetId": "a90ccd64-6898-41f6-a845-242b8929612a",
+        "relationshipType": "DERIVED_FROM"
+      },
+      "timestampUtcMs": "2026-09-03T07:30:09.941Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "cENGYwwb+NXj2Us7iitCcPLzBFo=",
+    "timestampUtcMs": "2026-09-03T07:28:45.920Z",
+    "action": {
+      "type": "SET_NOTE_TYPE",
+      "input": {
+        "noteType": "DECISION",
+        "updatedAt": "2026-09-03T07:28:45.920Z"
+      },
+      "timestampUtcMs": "2026-09-03T07:28:45.920Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "",
+    "timestampUtcMs": "2026-09-03T07:30:10.400Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "metadata": {
+          "reason": "The document-channel mechanism is how this proposal would be implemented if accepted",
+          "confidence": "grounded"
+        },
+        "sourceId": "55fcb6f8-c6d7-48ed-b56b-fe4a0ff3303e",
+        "targetId": "fe8f33f5-b69c-4080-878a-1cd2cbe6bb17",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-09-03T07:30:10.400Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "atxJRUjARJLYZ/GKkir9tMoFFJ8=",
+    "timestampUtcMs": "2026-09-03T07:28:45.920Z",
+    "action": {
+      "type": "SET_CONTENT",
+      "input": {
+        "content": "ADR 0001 is marked **Status: Proposed** (2026-07-16, decider acaldas, \"Implements: TBD\"), so nothing in it describes current behaviour. What it describes is the problem and a design.\n\nThe problem: Connect eagerly syncs an entire drive on connect. Opening a remote drive on a Switchboard reactor streams the **full operation history of every document from timestamp 0** and replays it locally. Two costs follow \u2014 a cold load proportional to the whole drive regardless of what the user looks at, and **no prioritization**, so the document the user actually opened has no priority over the thousands they never touch.\n\nThe proposed design is lazy sync built on the sync protocol (explicitly *not* on the fetch/GraphQL document subgraphs, which would introduce a second divergent read path), opt-in, with minimal Connect changes: sync the drive document first because it lists its children, then sync a document's operations when it is opened; opening waits for that initial sync and is writable afterwards.\n\nTwo facts constrain any alternative and are worth remembering independently of the ADR. The **sync cursor is per-channel, collection-wide and forward-only**, so a live channel's filter cannot be widened to backfill a document whose operations predate the cursor. And a document's operation log is reachable **only through a collection it belongs to** \u2014 `operation-index.find` inner-joins on `document_collections`.\n\nThe ADR targets the legacy `powerhouse/document-drive` model, whose node list can diverge from `document_collections`.\n\n## Provenance\n- `docs/adr/0001-lazy-drive-sync.md` \u2014 Status header; Context; Decision (opening paragraphs)\n\n_Extracted from the Powerhouse repository at **v6.2.2-dev.74**._",
+        "updatedAt": "2026-09-03T07:28:45.920Z"
+      },
+      "timestampUtcMs": "2026-09-03T07:28:45.920Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "",
+    "timestampUtcMs": "2026-09-03T07:30:11.063Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "metadata": {
+          "reason": "Eager whole-drive replay is what makes a cold open expensive; both notes describe consequences of the drive being one interlaced operation stream",
+          "confidence": "established"
+        },
+        "sourceId": "55fcb6f8-c6d7-48ed-b56b-fe4a0ff3303e",
+        "targetId": "3540d969-3661-4438-821e-a000e39852b1",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-09-03T07:30:11.063Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "lvzOJ2ZfooZLlznw6lJTg6zYa/A=",
+    "timestampUtcMs": "2026-09-03T07:28:45.920Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "87add047-7e8d-4f0a-b24d-92cec61d7b45",
+        "name": "reactor-sync"
+      },
+      "timestampUtcMs": "2026-09-03T07:28:45.920Z"
+    }
+  },
+  {
+    "index": 5,
+    "hash": "",
+    "timestampUtcMs": "2026-09-03T07:31:17.597Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "metadata": {
+          "reason": "Extracted from docs/adr/0001-lazy-drive-sync.md at v6.2.2-dev.74 \u2014 Status header; Context; Decision (opening paragraphs)",
+          "confidence": "grounded"
+        },
+        "sourceId": "55fcb6f8-c6d7-48ed-b56b-fe4a0ff3303e",
+        "targetId": "a90ccd64-6898-41f6-a845-242b8929612a",
+        "relationshipType": "DERIVED_FROM"
+      },
+      "timestampUtcMs": "2026-09-03T07:31:17.597Z"
+    }
+  },
+  {
+    "index": 5,
+    "hash": "kwApnThucHaKiizs7ZKu68orcX0=",
+    "timestampUtcMs": "2026-09-03T07:28:45.920Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "bd085d61-b19b-4c43-862f-9f065c766e43",
+        "name": "lazy-sync"
+      },
+      "timestampUtcMs": "2026-09-03T07:28:45.920Z"
+    }
+  },
+  {
+    "index": 6,
+    "hash": "",
+    "timestampUtcMs": "2026-09-03T07:31:18.081Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "metadata": {
+          "reason": "The forward-only collection cursor described there is exactly the constraint that forces a per-document channel rather than a widened filter",
+          "confidence": "grounded"
+        },
+        "sourceId": "55fcb6f8-c6d7-48ed-b56b-fe4a0ff3303e",
+        "targetId": "562d84eb-ef1d-40b7-81b0-b6b7438544e1",
+        "relationshipType": "BUILDS_ON"
+      },
+      "timestampUtcMs": "2026-09-03T07:31:18.081Z"
+    }
+  },
+  {
+    "index": 6,
+    "hash": "qNmvjiCpg2Vk1BdKUVl8qHaNSVI=",
+    "timestampUtcMs": "2026-09-03T07:28:45.920Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "71bb32c6-3df8-471b-953b-8b3d84949340",
+        "name": "adr"
+      },
+      "timestampUtcMs": "2026-09-03T07:28:45.920Z"
+    }
+  },
+  {
+    "index": 7,
+    "hash": "",
+    "timestampUtcMs": "2026-09-03T07:31:18.532Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "metadata": {
+          "reason": "The document-channel mechanism is how this proposal would be implemented if accepted",
+          "confidence": "grounded"
+        },
+        "sourceId": "55fcb6f8-c6d7-48ed-b56b-fe4a0ff3303e",
+        "targetId": "fe8f33f5-b69c-4080-878a-1cd2cbe6bb17",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-09-03T07:31:18.532Z"
+    }
+  },
+  {
+    "index": 7,
+    "hash": "tSt18wxxie9I4anEknp7ilGMA0k=",
+    "timestampUtcMs": "2026-09-03T07:28:45.920Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "8559dbc4-4d13-4227-9513-1c240b328063",
+        "name": "roadmap"
+      },
+      "timestampUtcMs": "2026-09-03T07:28:45.920Z"
+    }
+  },
+  {
+    "index": 8,
+    "hash": "",
+    "timestampUtcMs": "2026-09-03T07:31:19.007Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "metadata": {
+          "reason": "Eager whole-drive replay is what makes a cold open expensive; both notes describe consequences of the drive being one interlaced operation stream",
+          "confidence": "established"
+        },
+        "sourceId": "55fcb6f8-c6d7-48ed-b56b-fe4a0ff3303e",
+        "targetId": "3540d969-3661-4438-821e-a000e39852b1",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-09-03T07:31:19.007Z"
+    }
+  },
+  {
+    "index": 8,
+    "hash": "Au6P/lZodZ1jC8nXBYUOxW4a2qE=",
+    "timestampUtcMs": "2026-09-03T07:28:45.920Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "version",
+        "value": "v6.2.2-dev.74",
+        "updatedAt": "2026-09-03T07:28:45.920Z"
+      },
+      "timestampUtcMs": "2026-09-03T07:28:45.920Z"
+    }
+  },
+  {
+    "index": 9,
+    "hash": "tMAkOCoZZkCM3U/6NJWdy2J5wh4=",
+    "timestampUtcMs": "2026-09-03T07:28:45.920Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "filePath",
+        "value": "docs/adr/0001-lazy-drive-sync.md",
+        "updatedAt": "2026-09-03T07:28:45.920Z"
+      },
+      "timestampUtcMs": "2026-09-03T07:28:45.920Z"
+    }
+  },
+  {
+    "index": 10,
+    "hash": "sWbLk0mnuy0XvQLil5ezj68h3FA=",
+    "timestampUtcMs": "2026-09-03T07:28:48.612Z",
+    "action": {
+      "type": "SET_PROVENANCE",
+      "input": {
+        "author": "knowledge-agent",
+        "createdAt": "2026-09-03T07:28:48.612Z",
+        "sourceOrigin": "DERIVED"
+      },
+      "timestampUtcMs": "2026-09-03T07:28:48.612Z"
+    }
+  },
+  {
+    "index": 11,
+    "hash": "K8+alNALaOgBANjXaGnYm2P5k0Q=",
+    "timestampUtcMs": "2026-09-03T07:28:49.836Z",
+    "action": {
+      "type": "SUBMIT_FOR_REVIEW",
+      "input": {
+        "id": "b3ed9f2a-6279-4063-82cf-c97f6e59f09e",
+        "actor": "knowledge-agent",
+        "comment": "extracted from docs/adr/0001-lazy-drive-sync.md at v6.2.2-dev.74",
+        "timestamp": "2026-09-03T07:28:49.836Z"
+      },
+      "timestampUtcMs": "2026-09-03T07:28:49.836Z"
+    }
+  },
+  {
+    "index": 12,
+    "hash": "mwkMSogLlSRu0tXhxeb+g4CeOAM=",
+    "timestampUtcMs": "2026-09-03T07:28:50.411Z",
+    "action": {
+      "type": "APPROVE_NOTE",
+      "input": {
+        "id": "3a4f9a92-aa21-4873-9574-9f72ffd45a33",
+        "actor": "liberuum",
+        "comment": "claim checked against the cited file at the pinned tag",
+        "timestamp": "2026-09-03T07:28:50.411Z"
+      },
+      "timestampUtcMs": "2026-09-03T07:28:50.411Z"
+    }
+  },
+  {
+    "index": 13,
+    "hash": "xJyDv5C/BsocLJa4gHthClJ3RaY=",
+    "timestampUtcMs": "2026-09-03T07:31:08.920Z",
+    "action": {
+      "type": "SET_TITLE",
+      "input": {
+        "title": "Lazy drive sync is a Proposed ADR, not shipped behaviour: today opening a remote drive still streams every document's history from timestamp zero",
+        "updatedAt": "2026-09-03T07:31:08.919Z"
+      },
+      "timestampUtcMs": "2026-09-03T07:31:08.920Z"
+    }
+  },
+  {
+    "index": 14,
+    "hash": "xJyDv5C/BsocLJa4gHthClJ3RaY=",
+    "timestampUtcMs": "2026-09-03T07:31:08.920Z",
+    "action": {
+      "type": "SET_DESCRIPTION",
+      "input": {
+        "updatedAt": "2026-09-03T07:31:08.919Z",
+        "description": "ADR 0001, status Proposed, 2026-07-16. It would sync the drive document first and each document's operations only when opened, behind an opt-in preloadDocuments flag defaulting to today's eager mode."
+      },
+      "timestampUtcMs": "2026-09-03T07:31:08.920Z"
+    }
+  },
+  {
+    "index": 15,
+    "hash": "xJyDv5C/BsocLJa4gHthClJ3RaY=",
+    "timestampUtcMs": "2026-09-03T07:31:08.920Z",
+    "action": {
+      "type": "SET_NOTE_TYPE",
+      "input": {
+        "noteType": "DECISION",
+        "updatedAt": "2026-09-03T07:31:08.919Z"
+      },
+      "timestampUtcMs": "2026-09-03T07:31:08.920Z"
+    }
+  },
+  {
+    "index": 16,
+    "hash": "xJyDv5C/BsocLJa4gHthClJ3RaY=",
+    "timestampUtcMs": "2026-09-03T07:31:08.920Z",
+    "action": {
+      "type": "SET_CONTENT",
+      "input": {
+        "content": "ADR 0001 is marked **Status: Proposed** (2026-07-16, decider acaldas, \"Implements: TBD\"), so nothing in it describes current behaviour. What it describes is the problem and a design.\n\nThe problem: Connect eagerly syncs an entire drive on connect. Opening a remote drive on a Switchboard reactor streams the **full operation history of every document from timestamp 0** and replays it locally. Two costs follow \u2014 a cold load proportional to the whole drive regardless of what the user looks at, and **no prioritization**, so the document the user actually opened has no priority over the thousands they never touch.\n\nThe proposed design is lazy sync built on the sync protocol (explicitly *not* on the fetch/GraphQL document subgraphs, which would introduce a second divergent read path), opt-in, with minimal Connect changes: sync the drive document first because it lists its children, then sync a document's operations when it is opened; opening waits for that initial sync and is writable afterwards.\n\nTwo facts constrain any alternative and are worth remembering independently of the ADR. The **sync cursor is per-channel, collection-wide and forward-only**, so a live channel's filter cannot be widened to backfill a document whose operations predate the cursor. And a document's operation log is reachable **only through a collection it belongs to** \u2014 `operation-index.find` inner-joins on `document_collections`.\n\nThe ADR targets the legacy `powerhouse/document-drive` model, whose node list can diverge from `document_collections`.\n\n## Provenance\n- `docs/adr/0001-lazy-drive-sync.md` \u2014 Status header; Context; Decision (opening paragraphs)\n\n_Extracted from the Powerhouse repository at **v6.2.2-dev.74**._",
+        "updatedAt": "2026-09-03T07:31:08.919Z"
+      },
+      "timestampUtcMs": "2026-09-03T07:31:08.920Z"
+    }
+  },
+  {
+    "index": 17,
+    "hash": "xJyDv5C/BsocLJa4gHthClJ3RaY=",
+    "timestampUtcMs": "2026-09-03T07:31:08.920Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "version",
+        "value": "v6.2.2-dev.74",
+        "updatedAt": "2026-09-03T07:31:08.919Z"
+      },
+      "timestampUtcMs": "2026-09-03T07:31:08.920Z"
+    }
+  },
+  {
+    "index": 18,
+    "hash": "xJyDv5C/BsocLJa4gHthClJ3RaY=",
+    "timestampUtcMs": "2026-09-03T07:31:08.920Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "filePath",
+        "value": "docs/adr/0001-lazy-drive-sync.md",
+        "updatedAt": "2026-09-03T07:31:08.919Z"
+      },
+      "timestampUtcMs": "2026-09-03T07:31:08.920Z"
+    }
+  }
+]

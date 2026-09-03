@@ -1,0 +1,98 @@
+{
+  "links": [
+    {
+      "id": "lnk-e5905516-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "e5905516-830e-4fac-9464-298c12e958fb",
+      "targetTitle": "vetra-package-module-types"
+    },
+    {
+      "id": "lnk-2c856393-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "2c856393-31e4-4c1f-96aa-46c0a23cd072",
+      "targetTitle": "packages-published-to-npm-installed-with-ph"
+    },
+    {
+      "id": "lnk-08ab83db-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "08ab83db-f40f-4ed7-9928-c19f547104e1",
+      "targetTitle": "Academy \u203a Build \u203a Launch \u203a Configure the PWA",
+      "reason": "The note names apps/academy/docs/academy/03-Build/05-Launch/06-ConfigurePWA.md as its source; page text identical at v6.2.2-dev.47 and v6.2.2-dev.74",
+      "confidence": "grounded"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Packages contribute PWA config through powerhouse.manifest.json, and the array fields merge additively so a later layer can never drop them",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "62486362-a2bd-409c-84ae-4ad72a2b895a",
+      "name": "pwa",
+      "topicDocumentId": null
+    },
+    {
+      "id": "3ba52fd6-a641-4c04-8fac-db21d9f0ca9e",
+      "name": "packages",
+      "topicDocumentId": null
+    },
+    {
+      "id": "734e868b-bc2f-4800-a336-e334613ed308",
+      "name": "manifests",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "## A package can ship its own offline story\n\nA package declares PWA defaults in the `powerhouse.manifest.json` it publishes, using the same shape as `connect.pwa`, so installing it works offline out of the box:\n\n```json\n{ \"name\": \"@acme/todos\",\n  \"pwa\": { \"runtimeCaching\": [\n    { \"urlPattern\": { \"source\": \"^https://api\\\\.acme\\\\.io/\" }, \"handler\": \"NetworkFirst\" } ] } }\n```\n\nThe build collects fragments from the project's own root manifest, from bundled packages (`provider: \"local\"`, read from `node_modules`), and from non-bundled packages (`registry`, `npm`, `github`, or omitted) fetched from the registry CDN using the same version-pinned spec Connect loads at runtime. An unreachable registry is not fatal: the build warns, skips the fragment, and succeeds. A malformed fragment is likewise warned about (naming package and field) and skipped.\n\n## The merge rule is the design decision\n\nPrecedence runs `Connect defaults < package fragments (declared order) < the project's own manifest < project connect.pwa`, with per-field-type strategies:\n\n| Field type | Strategy |\n| --- | --- |\n| Manifest scalars, incl. `launch_handler` | Deep-merge \u2014 **project wins** |\n| `icons`, `file_handlers`, derived `categories`, globs, `runtimeCaching`, denylist | **Additive** |\n| `maximumFileSizeToCacheInBytes` | The **max** across layers |\n\nAdditive arrays are the point: a package can always *add* offline coverage, and no later layer can quietly remove it. When two packages set the same scalar differently and the project does not settle it, the build warns and last-loaded wins \u2014 pin it in `connect.pwa` to decide explicitly.\n\n`file_handlers` hands the OS a launch, so it is constrained: a fragment declares only *what* it accepts, never *where* it opens (a fragment setting its own `action` fails validation), extensions must start with a dot, and contributed entries are appended after Connect's built-in `.phd`/`.phdm` handler \u2014 browsers give each extension to the first claimant, so a package cannot hijack the built-in association.\n\nPackages installed **at runtime** are not baked into the worker but are not ignored either: the worker serves the web-app manifest dynamically and merges their fragments in. Two extra guardrails apply there, since the end user rather than the deployer chose them \u2014 `start_url` and `scope` stay Connect's, and built-in handlers stay first.\n\n_Source: `apps/academy/docs/academy/03-Build/05-Launch/06-ConfigurePWA.md`, Powerhouse v6.2.2-dev.45._",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": "v6.2.2-dev.74",
+  "computes": null,
+  "filePath": "apps/academy/docs/academy/03-Build/05-Launch/06-ConfigurePWA.md",
+  "noteType": "ARCHITECTURE",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "claude",
+    "createdAt": "2026-08-13T14:37:16.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-09-02T21:37:19.298Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Precedence is Connect defaults < package fragments < project manifest < project connect.pwa. Scalars deep-merge project-wins; icons, handlers, globs and caching rules append.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "4c4b36d2-e309-48f2-ac70-96ad79623f89",
+      "actor": "claude",
+      "comment": "Knowledge registered against powerhouse v6.2.2-dev.47",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-14T12:00:00.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "7169b786-a28e-4fc3-b4aa-a0c117a332e8",
+      "actor": "liberuum",
+      "comment": "Canonical as of powerhouse v6.2.2-dev.47",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-14T12:00:00.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

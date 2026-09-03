@@ -1,0 +1,290 @@
+[
+  {
+    "index": 0,
+    "hash": "",
+    "timestampUtcMs": "2026-08-16T12:01:47.271Z",
+    "action": {
+      "type": "CREATE_DOCUMENT",
+      "input": {
+        "meta": {},
+        "name": "skill-connect",
+        "slug": "",
+        "model": "bai/source",
+        "branch": "main",
+        "signing": {
+          "nonce": "",
+          "publicKey": {},
+          "signature": "073894d8-49e7-4f6b-9716-5fa9cc37d42f",
+          "documentType": "bai/source",
+          "createdAtUtcIso": "2026-08-16T12:01:47.271Z"
+        },
+        "version": 0,
+        "documentId": "073894d8-49e7-4f6b-9716-5fa9cc37d42f",
+        "protocolVersions": {
+          "base-reducer": 2
+        }
+      },
+      "timestampUtcMs": "2026-08-16T12:01:47.271Z"
+    }
+  },
+  {
+    "index": 0,
+    "hash": "/K7/sb++T40Tx9GZ4Ctl8JKq3gc=",
+    "timestampUtcMs": "2026-08-16T12:01:47.560Z",
+    "action": {
+      "type": "INGEST_SOURCE",
+      "input": {
+        "url": "https://github.com/liberuum/powerhouse-knowledge/blob/main/skills/connect/SKILL.md",
+        "tool": "sync-skills",
+        "title": "Agent skill: connect",
+        "author": "powerhouse-knowledge plugin",
+        "method": "sha256:2c076cc385b4a949c673b43dbba121993168142b1463511ed7e132d118fbdbcd",
+        "content": "---\nname: connect\ndescription: Find connections between knowledge notes and create links. Use after extracting notes, when exploring relationships, or when a topic needs synthesis.\n---\n\n# Connect Knowledge Notes\n\nFind genuine connections between notes and create typed links. This is the \"reflect\" phase \u2014 the step that transforms isolated claims into a knowledge graph.\n\n## Connection discovery process\n\n1. **Identify the target note** \u2014 which note are we connecting?\n2. **Search for candidates** using multiple strategies:\n   - `knowledgeGraphSimilar(documentId)` \u2014 AI-powered semantic similarity (finds conceptually related notes even without keyword overlap)\n   - `knowledgeGraphSemanticSearch(query, mode: SEMANTIC)` \u2014 semantic search from the note's core claim phrased as a question (pkg \u2265 1.0.50; falls back to keyword transparently)\n   - `knowledgeGraphRelatedByTopic(documentId)` \u2014 notes sharing the most topics\n   - `knowledgeGraphSearch(query)` \u2014 keyword search on title + description\n   - `knowledgeGraphFullSearch(query)` \u2014 full-text search; ANDs terms, so use 1-2 keywords\n3. **Apply the articulation test** \u2014 for each candidate, answer: \"[[A]] connects to [[B]] because [specific reason]\"\n4. **If the connection is genuine**, create a relationship via the `addRelationship` GraphQL mutation. Since the drive-override migration, edges live in the reactor's `DocumentRelationship` table (one row per ADD_RELATIONSHIP system action) \u2014 not in the source note's `links[]` array. The legacy `--op addLink` writes to the old per-doc array and is **not** indexed by the graph subgraph.\n\n```bash\nswitchboard query 'mutation {\n  addRelationship(\n    sourceIdentifier: \"<source-note-id>\",\n    targetIdentifier: \"<target-note-id>\",\n    relationshipType: \"RELATES_TO\",\n    branch: \"main\"\n  ) { documentType }\n}'\n```\n\nOr via direct HTTP to `/graphql/r` (faster for batch loops):\n\n```bash\ncurl -s \"$READ_ENDPOINT\" -H 'content-type: application/json' -d '{\n  \"query\": \"mutation($s:String!,$t:String!,$r:String!,$b:String){ addRelationship(sourceIdentifier:$s,targetIdentifier:$t,relationshipType:$r,branch:$b){ documentType } }\",\n  \"variables\": {\"s\":\"<source-id>\",\"t\":\"<target-id>\",\"r\":\"RELATES_TO\",\"b\":\"main\"}\n}'\n```\n\nTo remove a relationship, use `removeRelationship` with the same argument shape.\n\n## Link types\n\n- **RELATES_TO** \u2014 general thematic connection\n- **BUILDS_ON** \u2014 this note extends or strengthens the target\n- **CONTRADICTS** \u2014 this note challenges or conflicts with the target\n- **SUPERSEDES** \u2014 this note replaces the target (newer/better understanding)\n- **DERIVED_FROM** \u2014 this note was extracted or derived from the target\n\n## Methodology cross-reference\n\nAfter connecting notes to each other, **search the local methodology files** for research backing. The 249 Ars Contexta research claims are bundled with the plugin in `data/methodology/*.md` \u2014 they are **not** stored in the remote vault.\n\n1. For each new note, search the local methodology files by topic and keywords:\n```bash\n# Search methodology files by keyword (from the plugin directory)\ngrep -rl \"<keyword from note>\" data/methodology/*.md\n```\n\nOr use the Grep tool to search file contents and the Glob tool to list all `data/methodology/*.md` files. Each file has YAML frontmatter with `description`, `topics`, and `methodology` fields that help match against the note.\n\n2. For each matching claim, **record the methodology reference in the note's content** rather than creating a document link (since the claim has no remote document ID):\n\nAdd a \"Methodology grounding\" section to the note's content via `SET_CONTENT`:\n```markdown\n## Methodology grounding\n- **[[claim title]]** \u2014 how this note relates to the claim (BUILDS_ON / CONTRADICTS / RELATES_TO)\n```\n\n```bash\nswitchboard docs mutate <note-id> --op setContent --input '{\n  \"content\": \"<existing content + methodology grounding section>\",\n  \"updatedAt\": \"<ISO>\"\n}'\n```\n\n**Relationship types for methodology:**\n- `BUILDS_ON` \u2014 note implements or validates the research claim\n- `CONTRADICTS` \u2014 note's findings challenge the methodology claim\n- `RELATES_TO` \u2014 thematic connection without direct support/conflict\n\n**Why this matters:** Cross-referencing grounds working knowledge in the methodology foundation. The claims live locally as plugin reference data \u2014 the agent reads them directly from disk, which is faster and requires no remote import step.\n\n## Tension detection\n\nWhen you find a CONTRADICTS link, check whether this is a genuine unresolved tension:\n\n- Do two notes make opposing claims about the same topic?\n- Is the contradiction substantive (not just different wording)?\n- Is it unresolved (no existing note reconciles the two positions)?\n\nIf yes, create a `bai/tension` document:\n```bash\nswitchboard docs create --type bai/tension --name \"<what contradicts what>\" --drive <drive-slug> --parent-folder <ops-folder-uuid> --format json\n```\n\nThen populate it:\n```bash\nswitchboard docs apply <tension-id> --actions '[{\n  \"type\": \"CREATE_TENSION\",\n  \"input\": {\n    \"title\": \"<tension title>\",\n    \"description\": \"<brief summary>\",\n    \"content\": \"<Side A says... Side B says... This matters because...>\",\n    \"involvedRefs\": [\"<note-id-1>\", \"<note-id-2>\"],\n    \"observedAt\": \"<ISO>\",\n    \"observedBy\": \"knowledge-agent\"\n  },\n  \"scope\": \"global\"\n}]'\n```\n\nAlso add the tension to the relevant MOC if one exists:\n```bash\nswitchboard docs mutate <moc-id> --op addTension --input '{\n  \"id\": \"<unique-id>\",\n  \"description\": \"<tension summary>\",\n  \"involvedRefs\": [\"<note-id-1>\", \"<note-id-2>\"],\n  \"addedAt\": \"<ISO>\"\n}'\n```\n\n## Quality rules\n\n- Every connection must pass the **articulation test** \u2014 bare links without reasons are address books, not knowledge graphs\n- Prefer specific link types over generic RELATES_TO when the relationship is clear\n- Create bidirectional links when appropriate (if A builds on B, B may also relate to A)\n- Minimum 2 connections per note \u2014 orphan notes indicate incomplete processing\n- Update the target note's content if the connection reveals new context\n- When creating CONTRADICTS links, always check if a `bai/tension` document should be created\n\nIf \"$ARGUMENTS\" is provided, find connections for that specific note.\n",
+        "createdAt": "2026-08-16T12:01:47.560Z",
+        "createdBy": "skill-sync",
+        "sourceType": "DOCUMENTATION",
+        "description": "Find connections between knowledge notes and create links. Use after extracting notes, when exploring relationships, or when a topic needs synthesis."
+      },
+      "timestampUtcMs": "2026-08-16T12:01:47.560Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "",
+    "timestampUtcMs": "2026-08-16T12:01:47.271Z",
+    "action": {
+      "type": "UPGRADE_DOCUMENT",
+      "input": {
+        "model": "bai/source",
+        "toVersion": 1,
+        "documentId": "073894d8-49e7-4f6b-9716-5fa9cc37d42f",
+        "fromVersion": 0,
+        "initialState": {
+          "auth": {
+            "grants": [],
+            "version": 0
+          },
+          "local": {},
+          "global": {
+            "title": null,
+            "status": "INBOX",
+            "content": null,
+            "createdAt": null,
+            "createdBy": null,
+            "provenance": null,
+            "sourceType": null,
+            "description": null,
+            "extractedClaims": [],
+            "extractionStats": null
+          },
+          "document": {
+            "hash": {
+              "encoding": "base64",
+              "algorithm": "sha1"
+            },
+            "version": 1
+          }
+        }
+      },
+      "timestampUtcMs": "2026-08-16T12:01:47.271Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "9fFNsPGKmHBQ9epNEANRQ2y7rWw=",
+    "timestampUtcMs": "2026-08-16T12:01:49.984Z",
+    "action": {
+      "type": "ADD_EXTRACTED_CLAIM",
+      "input": {
+        "claimRef": "109e58fe-db16-4e28-a21e-0756bf96ad64"
+      },
+      "timestampUtcMs": "2026-08-16T12:01:49.984Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "6QM1hXHIzmViefwLPYilmRdLb6s=",
+    "timestampUtcMs": "2026-08-16T12:01:50.121Z",
+    "action": {
+      "type": "RECORD_EXTRACTION_STATS",
+      "input": {
+        "skipRate": 0,
+        "claimCount": 1,
+        "extractedAt": "2026-08-16T12:01:50.121Z",
+        "extractedBy": "skill-sync",
+        "skippedCount": 0
+      },
+      "timestampUtcMs": "2026-08-16T12:01:50.121Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "x6b4Ykb7Hh3xwatgxVLnpltAKOc=",
+    "timestampUtcMs": "2026-08-16T12:01:50.269Z",
+    "action": {
+      "type": "SET_SOURCE_STATUS",
+      "input": {
+        "status": "EXTRACTED"
+      },
+      "timestampUtcMs": "2026-08-16T12:01:50.269Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "xtg9mmjbSa7866Ik1BNufHf8iGA=",
+    "timestampUtcMs": "2026-08-17T10:55:54.932Z",
+    "action": {
+      "type": "INGEST_SOURCE",
+      "input": {
+        "url": "https://github.com/liberuum/powerhouse-knowledge/blob/main/skills/connect/SKILL.md",
+        "tool": "sync-skills",
+        "title": "Agent skill: connect",
+        "author": "powerhouse-knowledge plugin",
+        "method": "sha256:5ad101d708c5dec0344074f0ce6e97fbe16d23cc5c438d4fa895bf76133b2a6f",
+        "content": "---\nname: connect\ndescription: Find connections between knowledge notes and create links. Use after extracting notes, when exploring relationships, or when a topic needs synthesis.\n---\n\n# Connect Knowledge Notes\n\nFind genuine connections between notes and create typed links. This is the \"reflect\" phase \u2014 the step that transforms isolated claims into a knowledge graph.\n\n## Connection discovery process\n\n1. **Identify the target note** \u2014 which note are we connecting?\n2. **Search for candidates** using multiple strategies:\n   - `knowledgeGraphSimilar(documentId)` \u2014 AI-powered semantic similarity (finds conceptually related notes even without keyword overlap)\n   - `knowledgeGraphSemanticSearch(query, mode: SEMANTIC)` \u2014 semantic search from the note's core claim phrased as a question (pkg \u2265 1.0.50; falls back to keyword transparently)\n   - `knowledgeGraphRelatedByTopic(documentId)` \u2014 notes sharing the most topics\n   - `knowledgeGraphSearch(query)` \u2014 keyword search on title + description\n   - `knowledgeGraphFullSearch(query)` \u2014 full-text search; ANDs terms, so use 1-2 keywords\n3. **Apply the articulation test** \u2014 for each candidate, answer: \"[[A]] connects to [[B]] because [specific reason]\"\n4. **If the connection is genuine**, create a relationship via the `addRelationship` GraphQL mutation. Since the drive-override migration, edges live in the reactor's `DocumentRelationship` table (one row per ADD_RELATIONSHIP system action) \u2014 not in the source note's `links[]` array. The legacy `--op addLink` writes to the old per-doc array and is **not** indexed by the graph subgraph.\n\n```bash\nswitchboard query 'mutation {\n  addRelationship(\n    sourceIdentifier: \"<source-uuid>\",\n    targetIdentifier: \"<target-uuid>\",\n    relationshipType: \"RELATES_TO\",\n    branch: \"main\"\n  ) { documentType }\n}'\n```\n\nOr via direct HTTP to `/graphql/r` (faster for batch loops):\n\n```bash\nGRAPHQL_ENDPOINT=<switchboard>/graphql\ncurl -s \"$GRAPHQL_ENDPOINT\" -H 'content-type: application/json' -d '{\n  \"query\": \"mutation($s:String!,$t:String!,$r:String!,$b:String){ addRelationship(sourceIdentifier:$s,targetIdentifier:$t,relationshipType:$r,branch:$b){ documentType } }\",\n  \"variables\": {\"s\":\"<source-uuid>\",\"t\":\"<target-uuid>\",\"r\":\"RELATES_TO\",\"b\":\"main\"}\n}'\n```\n\nThis curl pattern is safe ONLY because `addRelationship` constructs the action server-side. Do\nnot extend it to `mutateDocument` without stamping `id`/`timestampUtcMs` on every action.\n\nTo remove a relationship, use `removeRelationship` with the same argument shape.\n\n## Link types\n\n- **RELATES_TO** \u2014 general thematic connection\n- **BUILDS_ON** \u2014 this note extends or strengthens the target\n- **CONTRADICTS** \u2014 this note challenges or conflicts with the target\n- **SUPERSEDES** \u2014 this note replaces the target (newer/better understanding)\n- **DERIVED_FROM** \u2014 this note was extracted or derived from the target\n\n## Methodology cross-reference\n\nAfter connecting notes to each other, **search the local methodology files** for research backing. The 249 Ars Contexta research claims are bundled with the plugin in `data/methodology/*.md` \u2014 they are **not** stored in the remote vault.\n\n1. For each new note, search the local methodology files by topic and keywords:\n```bash\n# Search methodology files by keyword (from the plugin directory)\ngrep -rl \"<keyword from note>\" data/methodology/*.md\n```\n\nOr use the Grep tool to search file contents and the Glob tool to list all `data/methodology/*.md` files. Each file has YAML frontmatter with `description`, `topics`, and `methodology` fields that help match against the note.\n\n2. For each matching claim, **record the methodology reference in the note's content** rather than creating a document link (since the claim has no remote document ID):\n\nAdd a \"Methodology grounding\" section to the note's content via `SET_CONTENT`:\n```markdown\n## Methodology grounding\n- **[[claim title]]** \u2014 how this note relates to the claim (BUILDS_ON / CONTRADICTS / RELATES_TO)\n```\n\n```bash\nswitchboard docs mutate <note-id> --op setContent --input '{\n  \"content\": \"<existing content + methodology grounding section>\",\n  \"updatedAt\": \"<ISO>\"\n}'\n```\n\n**Relationship types for methodology:**\n- `BUILDS_ON` \u2014 note implements or validates the research claim\n- `CONTRADICTS` \u2014 note's findings challenge the methodology claim\n- `RELATES_TO` \u2014 thematic connection without direct support/conflict\n\n**Why this matters:** Cross-referencing grounds working knowledge in the methodology foundation. The claims live locally as plugin reference data \u2014 the agent reads them directly from disk, which is faster and requires no remote import step.\n\n## Tension detection\n\nWhen you find a CONTRADICTS link, check whether this is a genuine unresolved tension:\n\n- Do two notes make opposing claims about the same topic?\n- Is the contradiction substantive (not just different wording)?\n- Is it unresolved (no existing note reconciles the two positions)?\n\nIf yes, create a `bai/tension` document:\n```bash\nswitchboard docs create --type bai/tension --name \"<what contradicts what>\" --drive <drive-slug> --parent-folder <ops-folder-uuid> --format json\n```\n\nThen populate it:\n```bash\nswitchboard docs apply <tension-id> --actions '[{\n  \"type\": \"CREATE_TENSION\",\n  \"input\": {\n    \"title\": \"<tension title>\",\n    \"description\": \"<brief summary>\",\n    \"content\": \"<Side A says... Side B says... This matters because...>\",\n    \"involvedRefs\": [\"<note-id-1>\", \"<note-id-2>\"],\n    \"observedAt\": \"<ISO>\",\n    \"observedBy\": \"knowledge-agent\"\n  },\n  \"scope\": \"global\"\n}]'\n```\n\nAlso add the tension to the relevant MOC if one exists:\n```bash\nswitchboard docs mutate <moc-id> --op addTension --input '{\n  \"id\": \"<unique-id>\",\n  \"description\": \"<tension summary>\",\n  \"involvedRefs\": [\"<note-id-1>\", \"<note-id-2>\"],\n  \"addedAt\": \"<ISO>\"\n}'\n```\n\n## Quality rules\n\n- Every connection must pass the **articulation test** \u2014 bare links without reasons are address books, not knowledge graphs\n- Prefer specific link types over generic RELATES_TO when the relationship is clear\n- Create bidirectional links when appropriate (if A builds on B, B may also relate to A)\n- Minimum 2 connections per note \u2014 orphan notes indicate incomplete processing\n- Update the target note's content if the connection reveals new context\n- When creating CONTRADICTS links, always check if a `bai/tension` document should be created\n\nIf \"$ARGUMENTS\" is provided, find connections for that specific note.\n",
+        "createdAt": "2026-08-17T10:55:54.932Z",
+        "createdBy": "skill-sync",
+        "sourceType": "DOCUMENTATION",
+        "description": "Find connections between knowledge notes and create links. Use after extracting notes, when exploring relationships, or when a topic needs synthesis."
+      },
+      "timestampUtcMs": "2026-08-17T10:55:54.932Z"
+    }
+  },
+  {
+    "index": 5,
+    "hash": "6uYElWxhSsiNuP1O/mdtrlGefoY=",
+    "timestampUtcMs": "2026-08-17T10:55:56.042Z",
+    "action": {
+      "type": "ADD_EXTRACTED_CLAIM",
+      "input": {
+        "claimRef": "109e58fe-db16-4e28-a21e-0756bf96ad64"
+      },
+      "timestampUtcMs": "2026-08-17T10:55:56.042Z"
+    }
+  },
+  {
+    "index": 6,
+    "hash": "XmhM+0oPHMl52k/hqrQY557JSO4=",
+    "timestampUtcMs": "2026-08-17T10:55:56.178Z",
+    "action": {
+      "type": "RECORD_EXTRACTION_STATS",
+      "input": {
+        "skipRate": 0,
+        "claimCount": 1,
+        "extractedAt": "2026-08-17T10:55:56.178Z",
+        "extractedBy": "skill-sync",
+        "skippedCount": 0
+      },
+      "timestampUtcMs": "2026-08-17T10:55:56.178Z"
+    }
+  },
+  {
+    "index": 7,
+    "hash": "nNCB9I0s6mSyCLCqkJqaTQH0jPQ=",
+    "timestampUtcMs": "2026-08-17T10:55:56.307Z",
+    "action": {
+      "type": "SET_SOURCE_STATUS",
+      "input": {
+        "status": "EXTRACTED"
+      },
+      "timestampUtcMs": "2026-08-17T10:55:56.307Z"
+    }
+  },
+  {
+    "index": 8,
+    "hash": "YJlSrht2Ji+gHzcnh1Vh5ldrcco=",
+    "timestampUtcMs": "2026-09-02T19:21:26.340Z",
+    "action": {
+      "type": "INGEST_SOURCE",
+      "input": {
+        "url": "https://github.com/liberuum/powerhouse-knowledge/blob/main/skills/connect/SKILL.md",
+        "tool": "sync-skills",
+        "title": "Agent skill: connect",
+        "author": "powerhouse-knowledge plugin",
+        "method": "sha256:369a160468b69dfb7ec3ef8b4468eccec4190ae017dd685456182ab64e3aa1b9",
+        "content": "---\nname: connect\ndescription: Find connections between knowledge notes and create links. Use after extracting notes, when exploring relationships, or when a topic needs synthesis.\n---\n\n# Connect Knowledge Notes\n\n> **Target first.** Every command below runs against the Switchboard the\n> active CLI profile points at, and `<UUID>` / `<drive-slug>` mean *that*\n> server's vault drive. If the pre-flight hook printed `Profile: \u2026 -> \u2026` and\n> `VAULT_DRIVE_ID` / `VAULT_DRIVE_SLUG`, use those. Otherwise run\n> `switchboard config show` and the drive detection in AGENT.md \u00a7 *Find the\n> vault drive*. If it is still ambiguous which vault the user means, **ask for\n> the Switchboard URL and the drive** \u2014 never assume an endpoint.\n\nFind genuine connections between notes and create typed links. This is the \"reflect\" phase \u2014 the step that transforms isolated claims into a knowledge graph.\n\n## Connection discovery process\n\n1. **Identify the target note** \u2014 which note are we connecting?\n2. **Search for candidates** using multiple strategies:\n   - `knowledgeGraphSimilar(documentId)` \u2014 AI-powered semantic similarity (finds conceptually related notes even without keyword overlap)\n   - `knowledgeGraphSemanticSearch(query, mode: SEMANTIC)` \u2014 semantic search from the note's core claim phrased as a question (pkg \u2265 1.0.50; falls back to keyword transparently)\n   - `knowledgeGraphRelatedByTopic(documentId)` \u2014 notes sharing the most topics\n   - `knowledgeGraphSearch(query)` \u2014 keyword search on title + description\n   - `knowledgeGraphFullSearch(query)` \u2014 full-text search; ANDs terms, so use 1-2 keywords\n3. **Apply the articulation test** \u2014 for each candidate, answer: \"[[A]] connects to [[B]] because [specific reason]\". The sentence you write here IS the edge's `--reason` in the next step; if you cannot write it, there is no link.\n4. **If the connection is genuine**, create the edge with `docs link --reason`. Since the drive-override migration, edges live in the reactor's `DocumentRelationship` table (one row per ADD_RELATIONSHIP system action) \u2014 not in the source note's `links[]` array. The legacy `--op addLink` writes to the old per-doc array and is **not** indexed by the graph subgraph.\n\n```bash\nswitchboard docs link <source-uuid> <target-uuid> -t BUILDS_ON \\\n  --reason \"<A> extends <B>'s claim that X holds for one read model to every read model\" \\\n  --confidence established\n```\n\n**The reason lives on the edge.** `--reason` (CLI \u2265 1.0.36) is stored as\nrelationship metadata and comes back on every edge read\n(`knowledgeGraphEdges { reason confidence }`, the Links panel, the sidebar's\nConnections list, the chat's `linked_notes`); `/health` reports the share of\nknowledge edges that carry one. The pre-write hook **blocks** a `RELATES_TO`,\n`BUILDS_ON`, `CONTRADICTS`, `SUPERSEDES` or `DERIVED_FROM` link without a\nreal one (\u2265 20 chars; not the type name, not \"because\"). Write it as the\nspecific sentence you would give a reader \u2014 name the claim, not the titles.\n`--confidence` says how well-founded the link is: `grounded` (evidence or a\nsource backs it), `established` (well accepted, not evidenced here),\n`speculative` (a lead worth recording). `CORE_IDEA` / `CHILD_MOC` edges have\nno reason to give \u2014 their meaning is the type.\n\n**Existing bare edges** (created before 1.0.36, or by an import) are the\nbacklog this skill works through: `knowledgeGraphForwardLinks` returns\n`reason: null` for them. Articulate each one in place \u2014 a repeated\n`docs link` is a no-op, metadata included:\n\n```bash\nswitchboard docs annotate <source-uuid> <target-uuid> -t RELATES_TO \\\n  --reason \"\u2026\" --confidence grounded\n```\n\nIf you cannot articulate an existing edge after reading both notes, that is\nthe finding: `docs unlink` it rather than invent a sentence.\n\n`docs link` sends the `ADD_RELATIONSHIP` action **signed as you**\nwhen the profile has a signing identity (`switchboard auth login --renown` \u2014\nthe plugin's pre-write hook requires it), so the edge is attributable like any\nother agent write: the vault shows `powerhouse-knowledge` acting for your\naddress. The raw `addRelationship` GraphQL mutation builds the action\nserver-side, cannot carry a reason and is always signed by the Switchboard's\nown identity; the hook steers you away from it. Idempotent on\n`(source, target, type)`.\n\nTo remove an edge: `switchboard docs unlink <source-uuid> <target-uuid> -t RELATES_TO`.\n\n## Link types\n\n- **RELATES_TO** \u2014 general thematic connection\n- **BUILDS_ON** \u2014 this note extends or strengthens the target\n- **CONTRADICTS** \u2014 this note challenges or conflicts with the target\n- **SUPERSEDES** \u2014 this note replaces the target (newer/better understanding)\n- **DERIVED_FROM** \u2014 this note was extracted or derived from the target\n\n## Methodology cross-reference\n\nAfter connecting notes to each other, **search the local methodology files** for research backing. The 249 Ars Contexta research claims are bundled with the plugin in `data/methodology/*.md` \u2014 they are **not** stored in the remote vault.\n\n1. For each new note, search the local methodology files by topic and keywords:\n```bash\n# Search methodology files by keyword (from the plugin directory)\ngrep -rl \"<keyword from note>\" data/methodology/*.md\n```\n\nOr use the Grep tool to search file contents and the Glob tool to list all `data/methodology/*.md` files. Each file has YAML frontmatter with `description`, `topics`, and `methodology` fields that help match against the note.\n\n2. For each matching claim, **record the methodology reference in the note's content** rather than creating a document link (since the claim has no remote document ID):\n\nAdd a \"Methodology grounding\" section to the note's content via `SET_CONTENT`:\n```markdown\n## Methodology grounding\n- **[[claim title]]** \u2014 how this note relates to the claim (BUILDS_ON / CONTRADICTS / RELATES_TO)\n```\n\n```bash\nswitchboard docs mutate <note-id> --op setContent --input '{\n  \"content\": \"<existing content + methodology grounding section>\",\n  \"updatedAt\": \"<ISO>\"\n}'\n```\n\n**Relationship types for methodology:**\n- `BUILDS_ON` \u2014 note implements or validates the research claim\n- `CONTRADICTS` \u2014 note's findings challenge the methodology claim\n- `RELATES_TO` \u2014 thematic connection without direct support/conflict\n\n**Why this matters:** Cross-referencing grounds working knowledge in the methodology foundation. The claims live locally as plugin reference data \u2014 the agent reads them directly from disk, which is faster and requires no remote import step.\n\n## Tension detection\n\n**The indexer opens tensions for you.** Since the graph-indexer automation\n(vault package \u2265 1.0.55), every `CONTRADICTS` edge that lands on the\nSwitchboard makes the server create a `bai/tension` in `/ops` \u2014 a short\ntitle (`Contradiction on <shared topics or words>`), both claims in full in\nthe description, `involvedRefs [a, b]`, `observedBy: graph-indexer` \u2014 and add an\n`ADD_TENSION` entry (id = the tension's document id) to every MoC that holds\neither note as a `CORE_IDEA`. One tension per unordered pair, ever: a pair\nthat already has a tension (any status) is left alone.\n\nSo after creating a CONTRADICTS link, **do not create a tension by hand**.\nInstead, within a couple of seconds:\n\n```bash\n# The tension the indexer opened for this pair (INVOLVES edges point at both notes)\nswitchboard query '{ knowledgeGraphBacklinks(driveId:\"<UUID>\", documentId:\"<note-a>\") { sourceDocumentId linkType } }'\n# \u2192 the INVOLVES source is the tension id. Read it:\nswitchboard docs get <tension-id> --state --format json\n```\n\nThen **articulate it** \u2014 this is the part only you can do. The automation\nknows the two titles; you know why they conflict. The tension model has no\ncontent-update operation after `CREATE_TENSION`, so the articulation goes\nwhere readers meet it: append a short **\"Contradicts\"** paragraph to each\nnote's content naming the other note and the specific point of conflict\n(`SET_CONTENT` on each note, whole body, real newlines). If more notes are\nparty to the same disagreement, add them to the tension:\n\n```bash\nswitchboard docs mutate <tension-id> --op addInvolvedRef --input '{\"ref\":\"<note-id-3>\"}'\n```\n\nIf the contradiction turns out NOT to be substantive (different wording, or\nboth true in different scopes), **dissolve** the tension with the reason:\n\n```bash\nswitchboard docs mutate <tension-id> --op dissolveTension --input '{\"resolution\":\"<why both hold>\",\"resolvedAt\":\"<ISO>\"}'\n```\n\nIf one side is right, **resolve** it and consider `SUPERSEDES` on the winner:\n\n```bash\nswitchboard docs mutate <tension-id> --op resolveTension --input '{\"resolution\":\"<which side and why>\",\"resolvedAt\":\"<ISO>\"}'\n```\n\nOnly when the Switchboard predates the automation (no tension appears after\na few seconds and `knowledgeGraphNodesByType(driveId, documentType:\"bai/tension\")`\nis unsupported) fall back to creating it yourself:\n\n```bash\nswitchboard docs create --type bai/tension --name \"<what contradicts what>\" --drive <drive-slug> --parent-folder <ops-folder-uuid> --format json\nswitchboard docs apply <tension-id> --actions '[{\"type\":\"CREATE_TENSION\",\"input\":{\"title\":\"<title>\",\"description\":\"<summary>\",\"content\":\"<Side A says\u2026 Side B says\u2026 This matters because\u2026>\",\"involvedRefs\":[\"<note-id-1>\",\"<note-id-2>\"],\"observedAt\":\"<ISO>\",\"observedBy\":\"knowledge-agent\"},\"scope\":\"global\"}]'\nswitchboard docs mutate <moc-id> --op addTension --input '{\"id\":\"<tension-id>\",\"description\":\"<summary>\",\"involvedRefs\":[\"<note-id-1>\",\"<note-id-2>\"],\"addedAt\":\"<ISO>\"}'\n```\n\n## Quality rules\n\n- Every connection must pass the **articulation test** \u2014 and the sentence goes on the edge (`--reason`). Bare links without reasons are address books, not knowledge graphs; a reason that only restates the type or the titles is a bare link in disguise\n- Prefer specific link types over generic RELATES_TO when the relationship is clear\n- Create bidirectional links when appropriate (if A builds on B, B may also relate to A)\n- Minimum 2 connections per note. Separately, an **orphan** is a note with zero *incoming* edges (what `knowledgeGraphOrphans` returns) \u2014 adding outgoing links from it does not fix that; a link *to* it does\n- Update the target note's content if the connection reveals new context\n- After a CONTRADICTS link, read back the tension the indexer opened and enrich or dissolve it \u2014 never open a duplicate by hand\n\nIf \"$ARGUMENTS\" is provided, find connections for that specific note.\n",
+        "createdAt": "2026-09-02T19:21:26.339Z",
+        "createdBy": "skill-sync",
+        "sourceType": "DOCUMENTATION",
+        "description": "Find connections between knowledge notes and create links. Use after extracting notes, when exploring relationships, or when a topic needs synthesis."
+      },
+      "timestampUtcMs": "2026-09-02T19:21:26.340Z"
+    }
+  },
+  {
+    "index": 9,
+    "hash": "95qO5eRSerEXDULK0mMR4hNTsJ0=",
+    "timestampUtcMs": "2026-09-02T19:21:28.624Z",
+    "action": {
+      "type": "RECORD_EXTRACTION_STATS",
+      "input": {
+        "skipRate": 0,
+        "claimCount": 1,
+        "extractedAt": "2026-09-02T19:21:28.624Z",
+        "extractedBy": "skill-sync",
+        "skippedCount": 0
+      },
+      "timestampUtcMs": "2026-09-02T19:21:28.624Z"
+    }
+  },
+  {
+    "index": 10,
+    "hash": "2ccNiYzVMduBP/QvjeXxdBz+mMA=",
+    "timestampUtcMs": "2026-09-02T19:21:29.095Z",
+    "action": {
+      "type": "SET_SOURCE_STATUS",
+      "input": {
+        "status": "EXTRACTED"
+      },
+      "timestampUtcMs": "2026-09-02T19:21:29.095Z"
+    }
+  },
+  {
+    "index": 11,
+    "hash": "8oQBs0DnTc3RybnAqugfbST+hCI=",
+    "timestampUtcMs": "2026-09-03T13:57:14.923Z",
+    "action": {
+      "type": "REMOVE_EXTRACTED_CLAIM",
+      "input": {
+        "claimRef": "109e58fe-db16-4e28-a21e-0756bf96ad64"
+      },
+      "timestampUtcMs": "2026-09-03T13:57:14.923Z"
+    }
+  },
+  {
+    "index": 12,
+    "hash": "7C/LCgyo1BbngffgYzWuwX2btRU=",
+    "timestampUtcMs": "2026-09-03T13:57:15.593Z",
+    "action": {
+      "type": "ADD_EXTRACTED_CLAIM",
+      "input": {
+        "claimRef": "109e58fe-db16-4e28-a21e-0756bf96ad64"
+      },
+      "timestampUtcMs": "2026-09-03T13:57:15.593Z"
+    }
+  },
+  {
+    "index": 13,
+    "hash": "8oQBs0DnTc3RybnAqugfbST+hCI=",
+    "timestampUtcMs": "2026-09-03T13:57:27.507Z",
+    "action": {
+      "type": "REMOVE_EXTRACTED_CLAIM",
+      "input": {
+        "claimRef": "109e58fe-db16-4e28-a21e-0756bf96ad64"
+      },
+      "timestampUtcMs": "2026-09-03T13:57:27.507Z"
+    }
+  },
+  {
+    "index": 14,
+    "hash": "7C/LCgyo1BbngffgYzWuwX2btRU=",
+    "timestampUtcMs": "2026-09-03T13:57:28.168Z",
+    "action": {
+      "type": "ADD_EXTRACTED_CLAIM",
+      "input": {
+        "claimRef": "109e58fe-db16-4e28-a21e-0756bf96ad64"
+      },
+      "timestampUtcMs": "2026-09-03T13:57:28.168Z"
+    }
+  }
+]

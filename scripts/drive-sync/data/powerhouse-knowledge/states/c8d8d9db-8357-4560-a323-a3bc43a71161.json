@@ -1,0 +1,110 @@
+{
+  "links": [
+    {
+      "id": "lnk-30c759d9-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "30c759d9-9abf-427e-b0e8-c9c382064883",
+      "targetTitle": "ddup-pglite-primary-swarm-backup"
+    },
+    {
+      "id": "lnk-291bfd93-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "291bfd93-8d9f-4836-b791-d5d656545eb4",
+      "targetTitle": "ddup-reactor-native-sync-2x"
+    },
+    {
+      "id": "lnk-bc0da529-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "bc0da529-6bf7-422e-952b-518c16751c2c",
+      "targetTitle": "ddup-layer-mutability-lifespan"
+    },
+    {
+      "id": "lnk-501f87dd-bui",
+      "linkType": "BUILDS_ON",
+      "targetDocumentId": "501f87dd-ff84-4a59-8894-033f209dfdf0",
+      "targetTitle": "reactor-builder-fluent-api-construction"
+    },
+    {
+      "id": "lnk-c1116781-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "c1116781-e617-4620-bb42-f622cbf113cd",
+      "targetTitle": "Academy \u203a Reference \u203a Reactor \u203a Storage backends and scaling",
+      "reason": "The note names apps/academy/docs/academy/04-Reference/01-Reactor/07-StorageAndScaling.md as its source; page text identical at v6.2.2-dev.47 and v6.2.2-dev.74",
+      "confidence": "grounded"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "The reactor's default database is an ephemeral in-memory PGlite; persistence requires an explicit choice",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "c38d2995-f805-4cf9-8a31-2ed5754e1e08",
+      "name": "reactor",
+      "topicDocumentId": null
+    },
+    {
+      "id": "38e55a6f-4497-4e93-8b69-814a8bd44935",
+      "name": "storage",
+      "topicDocumentId": null
+    },
+    {
+      "id": "f2791e80-68dc-4673-bdf6-dd7e08d6e2c0",
+      "name": "pglite",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "Build a reactor with nothing but document models registered and you get an **in-memory** PGlite database. The builder calls an internal `createDefaultDatabase()` that constructs `new Kysely({ dialect: new PGliteDialect(new PGlite()) })` \u2014 and `new PGlite()` with no arguments is in-memory. Nothing is written to disk and nothing survives the process.\n\n```typescript\nconst reactor = await new ReactorBuilder()\n  .withDocumentModelSources([myDocumentModel])\n  .build();\n```\n\n`buildModule()` picks the base database in a strict precedence order:\n\n1. The instance passed to `withKysely(...)`, if any.\n2. A Postgres pool, if the worker pool is enabled and a worker `db` config is set.\n3. The in-memory PGlite default.\n\nSo persistence is never inferred \u2014 there is no auto-detection, no environment sniffing. If you did not pass a Kysely instance or a worker-pool `db`, your data is gone at process exit. That is the correct backend for unit tests and local development (fresh isolated database every run, no external service), and a silent data-loss bug in anything else.\n\nWhat you get on the default path: migrations run automatically (strategy defaults to `\"auto\"`, running `runMigrations(db, REACTOR_SCHEMA)`), all storage under the `\"reactor\"` Postgres schema, a single in-process executor (`maxConcurrency` defaults to `1`), an in-process read-model coordinator, and `module.pools === []` since there is no `pg.Pool` to instrument.\n\nMove to Postgres when state must survive a restart, when more than one process must share storage, or when you scale \u2014 and note that **neither scaling path can run on PGlite at all**, because PGlite cannot be shared across threads. Both `withWorkerPool` and `withProjectionShards` therefore require a real Postgres server.\n\nFor `\"manual\"` or `\"none\"` migration strategies, run migrations yourself. `runMigrations` never throws on a migration error \u2014 it returns `{ success, migrationsExecuted, error? }`, so you must check the result:\n\n```typescript\nconst result = await runMigrations(db, REACTOR_SCHEMA);\nif (!result.success && result.error) throw result.error;\n```\n\n_Source: apps/academy/docs/academy/04-Reference/01-Reactor/07-StorageAndScaling.md (Powerhouse v6.2.2-dev.45)._",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": "v6.2.2-dev.74",
+  "computes": null,
+  "filePath": "apps/academy/docs/academy/04-Reference/01-Reactor/07-StorageAndScaling.md",
+  "noteType": "ARCHITECTURE",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "claude",
+    "createdAt": "2026-08-13T14:34:37.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-09-02T21:38:43.226Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Precedence in buildModule(): withKysely instance, then the worker pool's Postgres db, then in-memory PGlite. Nothing survives the process on the default path.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "e7f30427-fd85-4580-a4d9-96b6fc60ddc3",
+      "actor": "claude",
+      "comment": "Knowledge registered against powerhouse v6.2.2-dev.47",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-14T12:00:00.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "74c60e67-133f-4b05-b262-b68a7e8be9ff",
+      "actor": "liberuum",
+      "comment": "Canonical as of powerhouse v6.2.2-dev.47",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-14T12:00:00.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

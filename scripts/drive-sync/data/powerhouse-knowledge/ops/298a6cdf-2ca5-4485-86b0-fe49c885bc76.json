@@ -1,0 +1,289 @@
+[
+  {
+    "index": 0,
+    "hash": "",
+    "timestampUtcMs": "2026-08-19T11:28:42.245Z",
+    "action": {
+      "type": "CREATE_DOCUMENT",
+      "input": {
+        "meta": {},
+        "name": "iparapheur captures the signature but keeps the approval record in a mutable application",
+        "slug": "",
+        "model": "bai/knowledge-note",
+        "branch": "main",
+        "signing": {
+          "nonce": "",
+          "publicKey": {},
+          "signature": "298a6cdf-2ca5-4485-86b0-fe49c885bc76",
+          "documentType": "bai/knowledge-note",
+          "createdAtUtcIso": "2026-08-19T11:28:42.244Z"
+        },
+        "version": 0,
+        "documentId": "298a6cdf-2ca5-4485-86b0-fe49c885bc76",
+        "protocolVersions": {
+          "base-reducer": 2
+        }
+      },
+      "timestampUtcMs": "2026-08-19T11:28:42.245Z"
+    }
+  },
+  {
+    "index": 0,
+    "hash": "II1ZKmqRvN9btXYcGzZF0sHLSuE=",
+    "timestampUtcMs": "2026-08-19T11:28:42.074Z",
+    "action": {
+      "type": "SET_TITLE",
+      "input": {
+        "title": "iparapheur captures the signature but keeps the approval record in a mutable application",
+        "updatedAt": "2026-08-19T11:28:42.074214Z"
+      },
+      "timestampUtcMs": "2026-08-19T11:28:42.074250Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "",
+    "timestampUtcMs": "2026-08-19T11:28:42.245Z",
+    "action": {
+      "type": "UPGRADE_DOCUMENT",
+      "input": {
+        "model": "bai/knowledge-note",
+        "toVersion": 1,
+        "documentId": "298a6cdf-2ca5-4485-86b0-fe49c885bc76",
+        "fromVersion": 0,
+        "initialState": {
+          "auth": {
+            "grants": [],
+            "version": 0
+          },
+          "local": {
+            "lastViewedAt": null,
+            "personalTags": []
+          },
+          "global": {
+            "links": [],
+            "model": null,
+            "scope": null,
+            "title": null,
+            "editor": null,
+            "inputs": [],
+            "models": [],
+            "status": "DRAFT",
+            "topics": [],
+            "content": null,
+            "context": null,
+            "modelId": null,
+            "modules": [],
+            "outputs": [],
+            "version": null,
+            "computes": null,
+            "filePath": null,
+            "noteType": null,
+            "severity": null,
+            "hooksUsed": [],
+            "rootCause": null,
+            "confidence": null,
+            "consumedBy": [],
+            "provenance": null,
+            "sourceType": null,
+            "targetType": null,
+            "cardinality": null,
+            "description": null,
+            "alternatives": [],
+            "consequences": [],
+            "errorMessage": null,
+            "relationType": null,
+            "correctPattern": null,
+            "decisionStatus": null,
+            "dispatchTargets": [],
+            "lifecycleEvents": []
+          },
+          "document": {
+            "hash": {
+              "encoding": "base64",
+              "algorithm": "sha1"
+            },
+            "version": 1
+          }
+        }
+      },
+      "timestampUtcMs": "2026-08-19T11:28:42.245Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "FYkOV92u6w/twtAxqetA5IhvIQs=",
+    "timestampUtcMs": "2026-08-19T11:28:42.074Z",
+    "action": {
+      "type": "SET_DESCRIPTION",
+      "input": {
+        "updatedAt": "2026-08-19T11:28:42.074253Z",
+        "description": "French collectivit\u00e9s need to know who approved under which delegation, and to replay it years later; an approval circuit stores the signature, not that history."
+      },
+      "timestampUtcMs": "2026-08-19T11:28:42.074259Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "",
+    "timestampUtcMs": "2026-08-19T11:28:45.453Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "298a6cdf-2ca5-4485-86b0-fe49c885bc76",
+        "targetId": "7eeaaa19-4e9e-472e-8203-0ebf920e73f6",
+        "relationshipType": "DERIVED_FROM"
+      },
+      "timestampUtcMs": "2026-08-19T11:28:45.453Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "SAJVG15U9xoq2wmnmNH2MJIwHKg=",
+    "timestampUtcMs": "2026-08-19T11:28:42.074Z",
+    "action": {
+      "type": "SET_NOTE_TYPE",
+      "input": {
+        "noteType": "OBSERVATION",
+        "updatedAt": "2026-08-19T11:28:42.074260Z"
+      },
+      "timestampUtcMs": "2026-08-19T11:28:42.074264Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "j4/VBofmrar7HkJqewSXwWN9cz0=",
+    "timestampUtcMs": "2026-08-19T11:28:42.074Z",
+    "action": {
+      "type": "SET_CONTENT",
+      "input": {
+        "content": "iparapheur is an electronic approval circuit for French local government: documents follow a defined route and are signed at the points that require it. The signature is captured. The surrounding record \u2014 that this person approved, in this role, on this delegation \u2014 lives in the application's own mutable store.\n\nThe research frames the collectivit\u00e9's question in exactly the terms this project is built around: who approved, under which delegation, and can it be replayed years later. Delegation is what makes mutability expensive. Signing authority in local government is delegated and re-delegated over time, so a store that holds only the current arrangement cannot explain why a signature made three years ago was valid when it was made.\n\nThe replay horizon compounds the problem, because approvals have to stay defensible long after the application has been upgraded, migrated or replaced. Libriciel is a cooperative building for that constituency, which means the requirement reaches them as an obligation from their clients rather than as a feature idea of their own.\n\n---\n\n## Leads sharing this finding (1)\n\n**2 \u00b7 next**\n- Libriciel SCOP (FR) \u2014 Matthieu Piaumier, Pr\u00e9sident Directeur G\u00e9n\u00e9ral \u00b7 contact@libriciel.coop \u00b7 https://libriciel.fr\n\nVerbatim research text this claim was extracted from:\n\n> iparapheur is an electronic approval circuit for French local government \u2014 it captures signatures but the record lives in a mutable application. For collectivit\u00e9s the question is exactly ours: who approved, under which delegation, and can it be replayed years later.",
+        "updatedAt": "2026-08-19T11:28:42.074266Z"
+      },
+      "timestampUtcMs": "2026-08-19T11:28:42.074269Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "PoCoh/Ndu6Aew8IQXPw4WnyvxWk=",
+    "timestampUtcMs": "2026-08-19T11:28:42.074Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "1b355ad3-adb8-409f-8ec9-20b0b0e0980f",
+        "name": "leads"
+      },
+      "timestampUtcMs": "2026-08-19T11:28:42.074277Z"
+    }
+  },
+  {
+    "index": 5,
+    "hash": "DH42qZ1aBipaM+OinnN5/BCblCI=",
+    "timestampUtcMs": "2026-08-19T11:28:42.074Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "be72f51a-6f04-4ae0-9e57-9b6f6eda48f7",
+        "name": "iparapheur"
+      },
+      "timestampUtcMs": "2026-08-19T11:28:42.074283Z"
+    }
+  },
+  {
+    "index": 6,
+    "hash": "0bC/ydIyv0AYIXmxhsIqjZhGP8A=",
+    "timestampUtcMs": "2026-08-19T11:28:42.074Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "2265dd68-1349-4fe0-a572-9e0653537e91",
+        "name": "france"
+      },
+      "timestampUtcMs": "2026-08-19T11:28:42.074289Z"
+    }
+  },
+  {
+    "index": 7,
+    "hash": "7ZueKRUAvO6c3hBTJys1EIdNCu8=",
+    "timestampUtcMs": "2026-08-19T11:28:42.074Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "a7074068-4a76-4c70-b12d-ebe40949dbd8",
+        "name": "public-sector"
+      },
+      "timestampUtcMs": "2026-08-19T11:28:42.074295Z"
+    }
+  },
+  {
+    "index": 8,
+    "hash": "eYzth1crvO/++XjIP+7Vds3ZNH4=",
+    "timestampUtcMs": "2026-08-19T11:28:42.074Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "2ddeac5b-bac2-4ad2-bf9c-1b926a5edbd8",
+        "name": "audit-trail"
+      },
+      "timestampUtcMs": "2026-08-19T11:28:42.074302Z"
+    }
+  },
+  {
+    "index": 9,
+    "hash": "jnLV2jz4aPNGWem6pjUZAy3Y9mY=",
+    "timestampUtcMs": "2026-08-19T11:28:42.074Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "c74a131f-80b5-48d1-99ed-f13bc3a34181",
+        "name": "delegation"
+      },
+      "timestampUtcMs": "2026-08-19T11:28:42.074308Z"
+    }
+  },
+  {
+    "index": 10,
+    "hash": "CkXiWwiogx9PUcEQCuiYkP1qPlg=",
+    "timestampUtcMs": "2026-08-19T11:28:43.490Z",
+    "action": {
+      "type": "SET_PROVENANCE",
+      "input": {
+        "author": "knowledge-agent",
+        "createdAt": "2026-08-19T11:28:43.490181Z",
+        "sessionId": null,
+        "sourceOrigin": "DERIVED"
+      },
+      "timestampUtcMs": "2026-08-19T11:28:43.490217Z"
+    }
+  },
+  {
+    "index": 11,
+    "hash": "BNF/KP0gPCNa0ruZdk8KJ4tyDj4=",
+    "timestampUtcMs": "2026-08-19T11:28:44.821Z",
+    "action": {
+      "type": "SUBMIT_FOR_REVIEW",
+      "input": {
+        "id": "4267bd68-ee6a-4a51-987f-80ed70520122",
+        "actor": "knowledge-agent",
+        "comment": "Extracted from lead research; claim checked against the source record.",
+        "timestamp": "2026-08-19T11:28:44.821811Z"
+      },
+      "timestampUtcMs": "2026-08-19T11:28:44.821833Z"
+    }
+  },
+  {
+    "index": 12,
+    "hash": "ngsjKlAmE+Pn0/C8JwHMy0y0q2g=",
+    "timestampUtcMs": "2026-08-19T11:28:44.972Z",
+    "action": {
+      "type": "APPROVE_NOTE",
+      "input": {
+        "id": "9842434f-bc10-4746-a528-f2d875d35090",
+        "actor": "liberuum",
+        "comment": "Approved: lead corpus extraction.",
+        "timestamp": "2026-08-19T11:28:44.972657Z"
+      },
+      "timestampUtcMs": "2026-08-19T11:28:44.972690Z"
+    }
+  }
+]

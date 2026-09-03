@@ -1,0 +1,658 @@
+[
+  {
+    "index": 0,
+    "hash": "",
+    "timestampUtcMs": "2026-09-02T22:10:47.274Z",
+    "action": {
+      "type": "CREATE_DOCUMENT",
+      "input": {
+        "meta": {},
+        "name": "auth-unsigned-header-open",
+        "slug": "",
+        "model": "bai/knowledge-note",
+        "branch": "main",
+        "signing": {
+          "nonce": "",
+          "publicKey": {},
+          "signature": "46257dbf-5319-4042-8ac2-30c2a08c43d8",
+          "documentType": "bai/knowledge-note",
+          "createdAtUtcIso": "2026-09-02T22:10:47.274Z"
+        },
+        "version": 0,
+        "documentId": "46257dbf-5319-4042-8ac2-30c2a08c43d8",
+        "protocolVersions": {
+          "base-reducer": 2
+        }
+      },
+      "timestampUtcMs": "2026-09-02T22:10:47.274Z"
+    }
+  },
+  {
+    "index": 0,
+    "hash": "ayVQLIQshA+Wp0TkFZJKNYBn1oE=",
+    "timestampUtcMs": "2026-09-02T22:10:47.415Z",
+    "action": {
+      "type": "SET_TITLE",
+      "input": {
+        "title": "Auth on an unsigned-header document does not resist an adversary, so an enforceable policy needs a signed header \u2014 ideally with INITIALIZE_AUTH in the create batch",
+        "updatedAt": "2026-09-02T22:10:47.415Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:10:47.415Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "",
+    "timestampUtcMs": "2026-09-02T22:10:47.274Z",
+    "action": {
+      "type": "UPGRADE_DOCUMENT",
+      "input": {
+        "model": "bai/knowledge-note",
+        "toVersion": 1,
+        "documentId": "46257dbf-5319-4042-8ac2-30c2a08c43d8",
+        "fromVersion": 0,
+        "initialState": {
+          "auth": {
+            "grants": [],
+            "version": 0
+          },
+          "local": {
+            "lastViewedAt": null,
+            "personalTags": []
+          },
+          "global": {
+            "links": [],
+            "model": null,
+            "scope": null,
+            "title": null,
+            "editor": null,
+            "inputs": [],
+            "models": [],
+            "status": "DRAFT",
+            "topics": [],
+            "content": null,
+            "context": null,
+            "modelId": null,
+            "modules": [],
+            "outputs": [],
+            "version": null,
+            "computes": null,
+            "filePath": null,
+            "noteType": null,
+            "severity": null,
+            "hooksUsed": [],
+            "rootCause": null,
+            "confidence": null,
+            "consumedBy": [],
+            "provenance": null,
+            "sourceType": null,
+            "targetType": null,
+            "cardinality": null,
+            "description": null,
+            "alternatives": [],
+            "consequences": [],
+            "errorMessage": null,
+            "relationType": null,
+            "correctPattern": null,
+            "decisionStatus": null,
+            "dispatchTargets": [],
+            "lifecycleEvents": []
+          },
+          "document": {
+            "hash": {
+              "encoding": "base64",
+              "algorithm": "sha1"
+            },
+            "version": 1
+          }
+        }
+      },
+      "timestampUtcMs": "2026-09-02T22:10:47.274Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "SZQ/++P082SdBtybN4ZEeNVpJm0=",
+    "timestampUtcMs": "2026-09-02T22:10:47.415Z",
+    "action": {
+      "type": "SET_DESCRIPTION",
+      "input": {
+        "updatedAt": "2026-09-02T22:10:47.415Z",
+        "description": "With no creator the genesis is open: anyone can run INITIALIZE_AUTH first, or backdate one that re-evaluates the whole history under a policy of their choosing. Migrated documents all lack a creator."
+      },
+      "timestampUtcMs": "2026-09-02T22:10:47.415Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "",
+    "timestampUtcMs": "2026-09-02T22:18:40.299Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "metadata": {
+          "reason": "Extracted from docs/specs/auth-scope.md at v6.2.2-dev.74 \u2014 Administration and bootstrap: 'Auth on an unsigned-header document does not resist an adversary'; Stage 9 creator paragraph",
+          "confidence": "grounded"
+        },
+        "sourceId": "46257dbf-5319-4042-8ac2-30c2a08c43d8",
+        "targetId": "223bb12a-be7f-4209-9ab2-f04f7bb2b6c8",
+        "relationshipType": "DERIVED_FROM"
+      },
+      "timestampUtcMs": "2026-09-02T22:18:40.299Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "qXefljbVX9m+XvGWSyqMaHmO7rI=",
+    "timestampUtcMs": "2026-09-02T22:10:47.415Z",
+    "action": {
+      "type": "SET_NOTE_TYPE",
+      "input": {
+        "noteType": "PATTERN",
+        "updatedAt": "2026-09-02T22:10:47.415Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:10:47.415Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "",
+    "timestampUtcMs": "2026-09-02T22:18:41.678Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "metadata": {
+          "reason": "Extracted from apps/academy/docs/academy/05-Lookup/00-Cookbook.md at v6.2.2-dev.74 \u2014 Document ACL / Group Principals: signer context attached by hand vs ReactorClient.withSigner",
+          "confidence": "grounded"
+        },
+        "sourceId": "46257dbf-5319-4042-8ac2-30c2a08c43d8",
+        "targetId": "f2aaccd3-7c26-4327-881e-f5ad9e267b89",
+        "relationshipType": "DERIVED_FROM"
+      },
+      "timestampUtcMs": "2026-09-02T22:18:41.678Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "jVKt5K79r3U6UuFZrP9mlh9dixc=",
+    "timestampUtcMs": "2026-09-02T22:10:47.415Z",
+    "action": {
+      "type": "SET_CONTENT",
+      "input": {
+        "content": "A document's policy begins with `INITIALIZE_AUTH`, and its creator is whoever signed the header. An **unsigned-header document has no creator**, so its genesis is open: anyone can run `INITIALIZE_AUTH` first, and \u2014 because judgment is positional \u2014 anyone can *backdate* one that retroactively re-evaluates the whole history under a policy of their choosing. The spec states it flatly: auth on such a document does not resist an adversary.\n\nThe rule that follows: a document that wants an enforceable policy is **created with a signed header**, ideally with `INITIALIZE_AUTH` in its create batch so no window exists between existence and policy. The recipes attach unsigned `action.context.signer` by hand only to play several callers from one process; in production the `ReactorClient` populates and signs it via `.withSigner(...)` (the `audit-trail` recipe shows a real `RenownCryptoSigner`).\n\nThe same fact shapes the migration of the host's permission tables (stage 9): no existing document has a signed header, so a genesis binds no creator whoever signs it, and every migrated policy must therefore carry an explicit `execute`-on-`auth` grant naming the table's owner \u2014 or be refused as born locked out. A document with no owner is refused and reported rather than given an administrator its access list never mentioned.\n\n_Source: docs/specs/auth-scope.md (Powerhouse v6.2.2-dev.74)._\n_Source: apps/academy/docs/academy/05-Lookup/00-Cookbook.md (Powerhouse v6.2.2-dev.74)._\n\n## Provenance\n- `docs/specs/auth-scope.md` \u2014 Administration and bootstrap: 'Auth on an unsigned-header document does not resist an adversary'; Stage 9 creator paragraph\n- `apps/academy/docs/academy/05-Lookup/00-Cookbook.md` \u2014 Document ACL / Group Principals: signer context attached by hand vs ReactorClient.withSigner\n\n_Recorded from the Powerhouse repository at **v6.2.2-dev.74** during the v6.2.2-dev.74 source sync._",
+        "updatedAt": "2026-09-02T22:10:47.415Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:10:47.415Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "",
+    "timestampUtcMs": "2026-09-02T22:18:43.008Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "metadata": {
+          "reason": "The creator carve-out is what an unsigned document lacks, and its absence is the attack surface described here",
+          "confidence": "grounded"
+        },
+        "sourceId": "46257dbf-5319-4042-8ac2-30c2a08c43d8",
+        "targetId": "20f4f796-28d4-4b9c-aa3f-4b71a8b0df1a",
+        "relationshipType": "BUILDS_ON"
+      },
+      "timestampUtcMs": "2026-09-02T22:18:43.008Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "e6OX89LkFyQM+kICbeNkFjPszTQ=",
+    "timestampUtcMs": "2026-09-02T22:10:47.415Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "3e53d5e7-d15a-4902-999d-0c8ec4fd8997",
+        "name": "auth-scope"
+      },
+      "timestampUtcMs": "2026-09-02T22:10:47.415Z"
+    }
+  },
+  {
+    "index": 5,
+    "hash": "",
+    "timestampUtcMs": "2026-09-02T22:18:43.505Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "metadata": {
+          "reason": "Header signing (document id = signature of the creator) is the mechanism that gives a document a verifiable creator at all",
+          "confidence": "grounded"
+        },
+        "sourceId": "46257dbf-5319-4042-8ac2-30c2a08c43d8",
+        "targetId": "8cbea140-21d6-4b63-8780-5d44831018aa",
+        "relationshipType": "BUILDS_ON"
+      },
+      "timestampUtcMs": "2026-09-02T22:18:43.505Z"
+    }
+  },
+  {
+    "index": 5,
+    "hash": "4wKwG+92Xj41RI9qFVyRPJsZ8b4=",
+    "timestampUtcMs": "2026-09-02T22:10:47.415Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "e4b60ff3-2e27-43e3-a093-b63de923eb2c",
+        "name": "signing"
+      },
+      "timestampUtcMs": "2026-09-02T22:10:47.415Z"
+    }
+  },
+  {
+    "index": 6,
+    "hash": "",
+    "timestampUtcMs": "2026-09-02T22:18:43.972Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "metadata": {
+          "reason": "ReactorClient's automatic action signing is the production path that supplies the signer context the recipes fake by hand",
+          "confidence": "established"
+        },
+        "sourceId": "46257dbf-5319-4042-8ac2-30c2a08c43d8",
+        "targetId": "851f3b4d-92aa-4601-b6f8-06f27ba514a5",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-09-02T22:18:43.972Z"
+    }
+  },
+  {
+    "index": 6,
+    "hash": "VXY/S465MXwRUsI76VDMIkaHmko=",
+    "timestampUtcMs": "2026-09-02T22:10:47.415Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "bdcb1bf5-7f2d-4fe3-adde-e8a96eca152e",
+        "name": "security"
+      },
+      "timestampUtcMs": "2026-09-02T22:10:47.415Z"
+    }
+  },
+  {
+    "index": 7,
+    "hash": "",
+    "timestampUtcMs": "2026-09-02T22:22:52.102Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "metadata": {
+          "reason": "Extracted from docs/specs/auth-scope.md at v6.2.2-dev.74 \u2014 Administration and bootstrap: 'Auth on an unsigned-header document does not resist an adversary'; Stage 9 creator paragraph",
+          "confidence": "grounded"
+        },
+        "sourceId": "46257dbf-5319-4042-8ac2-30c2a08c43d8",
+        "targetId": "223bb12a-be7f-4209-9ab2-f04f7bb2b6c8",
+        "relationshipType": "DERIVED_FROM"
+      },
+      "timestampUtcMs": "2026-09-02T22:22:52.102Z"
+    }
+  },
+  {
+    "index": 7,
+    "hash": "YDSBGYYPVNoJLF61xlFGJ7lt6sI=",
+    "timestampUtcMs": "2026-09-02T22:10:47.415Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "71e2bda6-a87d-453d-b1c8-af459754b29b",
+        "name": "gotchas"
+      },
+      "timestampUtcMs": "2026-09-02T22:10:47.415Z"
+    }
+  },
+  {
+    "index": 8,
+    "hash": "",
+    "timestampUtcMs": "2026-09-02T22:22:52.869Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "metadata": {
+          "reason": "Extracted from apps/academy/docs/academy/05-Lookup/00-Cookbook.md at v6.2.2-dev.74 \u2014 Document ACL / Group Principals: signer context attached by hand vs ReactorClient.withSigner",
+          "confidence": "grounded"
+        },
+        "sourceId": "46257dbf-5319-4042-8ac2-30c2a08c43d8",
+        "targetId": "f2aaccd3-7c26-4327-881e-f5ad9e267b89",
+        "relationshipType": "DERIVED_FROM"
+      },
+      "timestampUtcMs": "2026-09-02T22:22:52.869Z"
+    }
+  },
+  {
+    "index": 8,
+    "hash": "rCuYG/1h6jF9+ofMi1DQvRgMDBo=",
+    "timestampUtcMs": "2026-09-02T22:10:47.415Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "version",
+        "value": "v6.2.2-dev.74",
+        "updatedAt": "2026-09-02T22:10:47.415Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:10:47.415Z"
+    }
+  },
+  {
+    "index": 9,
+    "hash": "",
+    "timestampUtcMs": "2026-09-02T22:22:53.653Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "metadata": {
+          "reason": "The creator carve-out is what an unsigned document lacks, and its absence is the attack surface described here",
+          "confidence": "grounded"
+        },
+        "sourceId": "46257dbf-5319-4042-8ac2-30c2a08c43d8",
+        "targetId": "20f4f796-28d4-4b9c-aa3f-4b71a8b0df1a",
+        "relationshipType": "BUILDS_ON"
+      },
+      "timestampUtcMs": "2026-09-02T22:22:53.653Z"
+    }
+  },
+  {
+    "index": 9,
+    "hash": "eotFwBCZmm6E09RgPGKqDlpka2s=",
+    "timestampUtcMs": "2026-09-02T22:10:47.415Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "filePath",
+        "value": "docs/specs/auth-scope.md",
+        "updatedAt": "2026-09-02T22:10:47.415Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:10:47.415Z"
+    }
+  },
+  {
+    "index": 10,
+    "hash": "",
+    "timestampUtcMs": "2026-09-02T22:22:54.137Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "metadata": {
+          "reason": "Header signing (document id = signature of the creator) is the mechanism that gives a document a verifiable creator at all",
+          "confidence": "grounded"
+        },
+        "sourceId": "46257dbf-5319-4042-8ac2-30c2a08c43d8",
+        "targetId": "8cbea140-21d6-4b63-8780-5d44831018aa",
+        "relationshipType": "BUILDS_ON"
+      },
+      "timestampUtcMs": "2026-09-02T22:22:54.137Z"
+    }
+  },
+  {
+    "index": 10,
+    "hash": "Xt6fAHv9ir6rRr2qMcBxhbu2QyQ=",
+    "timestampUtcMs": "2026-09-02T22:10:47.415Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "confidence",
+        "value": "grounded",
+        "updatedAt": "2026-09-02T22:10:47.415Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:10:47.415Z"
+    }
+  },
+  {
+    "index": 11,
+    "hash": "",
+    "timestampUtcMs": "2026-09-02T22:22:54.623Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "metadata": {
+          "reason": "ReactorClient's automatic action signing is the production path that supplies the signer context the recipes fake by hand",
+          "confidence": "established"
+        },
+        "sourceId": "46257dbf-5319-4042-8ac2-30c2a08c43d8",
+        "targetId": "851f3b4d-92aa-4601-b6f8-06f27ba514a5",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-09-02T22:22:54.623Z"
+    }
+  },
+  {
+    "index": 11,
+    "hash": "Gi/US9OixJAkjXhV7odROMn3phg=",
+    "timestampUtcMs": "2026-09-02T22:10:50.091Z",
+    "action": {
+      "type": "SET_PROVENANCE",
+      "input": {
+        "author": "knowledge-agent",
+        "createdAt": "2026-09-02T22:10:50.091Z",
+        "sourceOrigin": "DERIVED"
+      },
+      "timestampUtcMs": "2026-09-02T22:10:50.091Z"
+    }
+  },
+  {
+    "index": 12,
+    "hash": "T1STkGq22NBv6enmIchPw/tkh5U=",
+    "timestampUtcMs": "2026-09-02T22:10:50.626Z",
+    "action": {
+      "type": "SUBMIT_FOR_REVIEW",
+      "input": {
+        "id": "ec58f3d9-0f9a-45c8-9bfd-bbf2e2c08b40",
+        "actor": "knowledge-agent",
+        "comment": "extracted from the Powerhouse repository at v6.2.2-dev.74",
+        "timestamp": "2026-09-02T22:10:50.626Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:10:50.626Z"
+    }
+  },
+  {
+    "index": 13,
+    "hash": "jc2+t/aLXyNKNDbInjG8bmhMy2Y=",
+    "timestampUtcMs": "2026-09-02T22:10:51.124Z",
+    "action": {
+      "type": "APPROVE_NOTE",
+      "input": {
+        "id": "78f47175-73b7-4eb4-aa0c-90145193498c",
+        "actor": "liberuum",
+        "comment": "claim checked against the cited repository file at the pinned tag",
+        "timestamp": "2026-09-02T22:10:51.124Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:10:51.124Z"
+    }
+  },
+  {
+    "index": 14,
+    "hash": "J+ImJinjHjAiY053cER9nnAdzVw=",
+    "timestampUtcMs": "2026-09-02T22:15:53.381Z",
+    "action": {
+      "type": "SET_TITLE",
+      "input": {
+        "title": "Auth on an unsigned-header document does not resist an adversary, so an enforceable policy needs a signed header \u2014 ideally with INITIALIZE_AUTH in the create batch",
+        "updatedAt": "2026-09-02T22:15:53.381Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:15:53.381Z"
+    }
+  },
+  {
+    "index": 15,
+    "hash": "J+ImJinjHjAiY053cER9nnAdzVw=",
+    "timestampUtcMs": "2026-09-02T22:15:53.381Z",
+    "action": {
+      "type": "SET_DESCRIPTION",
+      "input": {
+        "updatedAt": "2026-09-02T22:15:53.381Z",
+        "description": "With no creator the genesis is open: anyone can run INITIALIZE_AUTH first, or backdate one that re-evaluates the whole history under a policy of their choosing. Migrated documents all lack a creator."
+      },
+      "timestampUtcMs": "2026-09-02T22:15:53.381Z"
+    }
+  },
+  {
+    "index": 16,
+    "hash": "J+ImJinjHjAiY053cER9nnAdzVw=",
+    "timestampUtcMs": "2026-09-02T22:15:53.381Z",
+    "action": {
+      "type": "SET_NOTE_TYPE",
+      "input": {
+        "noteType": "PATTERN",
+        "updatedAt": "2026-09-02T22:15:53.381Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:15:53.381Z"
+    }
+  },
+  {
+    "index": 17,
+    "hash": "J+ImJinjHjAiY053cER9nnAdzVw=",
+    "timestampUtcMs": "2026-09-02T22:15:53.381Z",
+    "action": {
+      "type": "SET_CONTENT",
+      "input": {
+        "content": "A document's policy begins with `INITIALIZE_AUTH`, and its creator is whoever signed the header. An **unsigned-header document has no creator**, so its genesis is open: anyone can run `INITIALIZE_AUTH` first, and \u2014 because judgment is positional \u2014 anyone can *backdate* one that retroactively re-evaluates the whole history under a policy of their choosing. The spec states it flatly: auth on such a document does not resist an adversary.\n\nThe rule that follows: a document that wants an enforceable policy is **created with a signed header**, ideally with `INITIALIZE_AUTH` in its create batch so no window exists between existence and policy. The recipes attach unsigned `action.context.signer` by hand only to play several callers from one process; in production the `ReactorClient` populates and signs it via `.withSigner(...)` (the `audit-trail` recipe shows a real `RenownCryptoSigner`).\n\nThe same fact shapes the migration of the host's permission tables (stage 9): no existing document has a signed header, so a genesis binds no creator whoever signs it, and every migrated policy must therefore carry an explicit `execute`-on-`auth` grant naming the table's owner \u2014 or be refused as born locked out. A document with no owner is refused and reported rather than given an administrator its access list never mentioned.\n\n_Source: docs/specs/auth-scope.md (Powerhouse v6.2.2-dev.74)._\n_Source: apps/academy/docs/academy/05-Lookup/00-Cookbook.md (Powerhouse v6.2.2-dev.74)._\n\n## Provenance\n- `docs/specs/auth-scope.md` \u2014 Administration and bootstrap: 'Auth on an unsigned-header document does not resist an adversary'; Stage 9 creator paragraph\n- `apps/academy/docs/academy/05-Lookup/00-Cookbook.md` \u2014 Document ACL / Group Principals: signer context attached by hand vs ReactorClient.withSigner\n\n_Recorded from the Powerhouse repository at **v6.2.2-dev.74** during the v6.2.2-dev.74 source sync._",
+        "updatedAt": "2026-09-02T22:15:53.381Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:15:53.381Z"
+    }
+  },
+  {
+    "index": 18,
+    "hash": "J+ImJinjHjAiY053cER9nnAdzVw=",
+    "timestampUtcMs": "2026-09-02T22:15:53.381Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "version",
+        "value": "v6.2.2-dev.74",
+        "updatedAt": "2026-09-02T22:15:53.381Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:15:53.381Z"
+    }
+  },
+  {
+    "index": 19,
+    "hash": "J+ImJinjHjAiY053cER9nnAdzVw=",
+    "timestampUtcMs": "2026-09-02T22:15:53.381Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "filePath",
+        "value": "docs/specs/auth-scope.md",
+        "updatedAt": "2026-09-02T22:15:53.381Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:15:53.381Z"
+    }
+  },
+  {
+    "index": 20,
+    "hash": "J+ImJinjHjAiY053cER9nnAdzVw=",
+    "timestampUtcMs": "2026-09-02T22:15:53.381Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "confidence",
+        "value": "grounded",
+        "updatedAt": "2026-09-02T22:15:53.381Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:15:53.381Z"
+    }
+  },
+  {
+    "index": 21,
+    "hash": "XWokaw522NP2Yn1Q0yRDqAbsoW0=",
+    "timestampUtcMs": "2026-09-02T22:20:27.738Z",
+    "action": {
+      "type": "SET_TITLE",
+      "input": {
+        "title": "Auth on an unsigned-header document does not resist an adversary, so an enforceable policy needs a signed header \u2014 ideally with INITIALIZE_AUTH in the create batch",
+        "updatedAt": "2026-09-02T22:20:27.738Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:20:27.738Z"
+    }
+  },
+  {
+    "index": 22,
+    "hash": "XWokaw522NP2Yn1Q0yRDqAbsoW0=",
+    "timestampUtcMs": "2026-09-02T22:20:27.738Z",
+    "action": {
+      "type": "SET_DESCRIPTION",
+      "input": {
+        "updatedAt": "2026-09-02T22:20:27.738Z",
+        "description": "With no creator the genesis is open: anyone can run INITIALIZE_AUTH first, or backdate one that re-evaluates the whole history under a policy of their choosing. Migrated documents all lack a creator."
+      },
+      "timestampUtcMs": "2026-09-02T22:20:27.738Z"
+    }
+  },
+  {
+    "index": 23,
+    "hash": "XWokaw522NP2Yn1Q0yRDqAbsoW0=",
+    "timestampUtcMs": "2026-09-02T22:20:27.738Z",
+    "action": {
+      "type": "SET_NOTE_TYPE",
+      "input": {
+        "noteType": "PATTERN",
+        "updatedAt": "2026-09-02T22:20:27.738Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:20:27.738Z"
+    }
+  },
+  {
+    "index": 24,
+    "hash": "XWokaw522NP2Yn1Q0yRDqAbsoW0=",
+    "timestampUtcMs": "2026-09-02T22:20:27.738Z",
+    "action": {
+      "type": "SET_CONTENT",
+      "input": {
+        "content": "A document's policy begins with `INITIALIZE_AUTH`, and its creator is whoever signed the header. An **unsigned-header document has no creator**, so its genesis is open: anyone can run `INITIALIZE_AUTH` first, and \u2014 because judgment is positional \u2014 anyone can *backdate* one that retroactively re-evaluates the whole history under a policy of their choosing. The spec states it flatly: auth on such a document does not resist an adversary.\n\nThe rule that follows: a document that wants an enforceable policy is **created with a signed header**, ideally with `INITIALIZE_AUTH` in its create batch so no window exists between existence and policy. The recipes attach unsigned `action.context.signer` by hand only to play several callers from one process; in production the `ReactorClient` populates and signs it via `.withSigner(...)` (the `audit-trail` recipe shows a real `RenownCryptoSigner`).\n\nThe same fact shapes the migration of the host's permission tables (stage 9): no existing document has a signed header, so a genesis binds no creator whoever signs it, and every migrated policy must therefore carry an explicit `execute`-on-`auth` grant naming the table's owner \u2014 or be refused as born locked out. A document with no owner is refused and reported rather than given an administrator its access list never mentioned.\n\n_Source: docs/specs/auth-scope.md (Powerhouse v6.2.2-dev.74)._\n_Source: apps/academy/docs/academy/05-Lookup/00-Cookbook.md (Powerhouse v6.2.2-dev.74)._\n\n## Provenance\n- `docs/specs/auth-scope.md` \u2014 Administration and bootstrap: 'Auth on an unsigned-header document does not resist an adversary'; Stage 9 creator paragraph\n- `apps/academy/docs/academy/05-Lookup/00-Cookbook.md` \u2014 Document ACL / Group Principals: signer context attached by hand vs ReactorClient.withSigner\n\n_Recorded from the Powerhouse repository at **v6.2.2-dev.74** during the v6.2.2-dev.74 source sync._",
+        "updatedAt": "2026-09-02T22:20:27.738Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:20:27.738Z"
+    }
+  },
+  {
+    "index": 25,
+    "hash": "XWokaw522NP2Yn1Q0yRDqAbsoW0=",
+    "timestampUtcMs": "2026-09-02T22:20:27.738Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "version",
+        "value": "v6.2.2-dev.74",
+        "updatedAt": "2026-09-02T22:20:27.738Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:20:27.738Z"
+    }
+  },
+  {
+    "index": 26,
+    "hash": "XWokaw522NP2Yn1Q0yRDqAbsoW0=",
+    "timestampUtcMs": "2026-09-02T22:20:27.738Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "filePath",
+        "value": "docs/specs/auth-scope.md",
+        "updatedAt": "2026-09-02T22:20:27.738Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:20:27.738Z"
+    }
+  },
+  {
+    "index": 27,
+    "hash": "XWokaw522NP2Yn1Q0yRDqAbsoW0=",
+    "timestampUtcMs": "2026-09-02T22:20:27.738Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "confidence",
+        "value": "grounded",
+        "updatedAt": "2026-09-02T22:20:27.738Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:20:27.738Z"
+    }
+  }
+]

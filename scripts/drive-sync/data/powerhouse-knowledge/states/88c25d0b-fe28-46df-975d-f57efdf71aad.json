@@ -1,0 +1,115 @@
+{
+  "links": [
+    {
+      "id": "lnk-72db84fb-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "72db84fb-3247-40af-b29a-6b17f78aea33",
+      "targetTitle": "auth-unavailable-feature-skipped",
+      "reason": "An unsupported policy version is the other fail-closed case next to unevaluable grants",
+      "confidence": "grounded"
+    },
+    {
+      "id": "lnk-4f23f5d4-bui",
+      "linkType": "BUILDS_ON",
+      "targetDocumentId": "4f23f5d4-b93e-430c-8dc3-b9835a6b83dc",
+      "targetTitle": "auth-grant-anatomy",
+      "reason": "Bounds the grant and condition shapes defined there",
+      "confidence": "grounded"
+    },
+    {
+      "id": "lnk-17dc46b0-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "17dc46b0-f733-467c-99d7-ae8fbe0fb0e4",
+      "targetTitle": "Academy \u203a Reference \u203a Reactor \u203a Authorization",
+      "reason": "Extracted from apps/academy/docs/academy/04-Reference/01-Reactor/11-Authorization.md at v6.2.2-dev.74 \u2014 'Limits' section",
+      "confidence": "grounded"
+    },
+    {
+      "id": "lnk-223bb12a-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "223bb12a-be7f-4209-9ab2-f04f7bb2b6c8",
+      "targetTitle": "Spec \u203a Spec \u2014 Attribute-based access control in the auth scope with DCB",
+      "reason": "Extracted from docs/specs/auth-scope.md at v6.2.2-dev.74 \u2014 Condition language: validation rules and versioning",
+      "confidence": "grounded"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "A version-1 policy holds at most 100 grants and a condition at most 100 nodes 10 deep, because every replica re-evaluates the policy at every operation's position",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "79068c8c-ea27-4601-9d16-e397171aa97c",
+      "name": "auth-scope",
+      "topicDocumentId": null
+    },
+    {
+      "id": "cddedc45-cc8e-44e8-af14-2e81bd70c610",
+      "name": "limits",
+      "topicDocumentId": null
+    },
+    {
+      "id": "4b157525-e009-4dde-b871-ce7bb3dfe8ee",
+      "name": "conditions",
+      "topicDocumentId": null
+    },
+    {
+      "id": "67e65066-acfb-4964-ae7c-8c5bf7edd023",
+      "name": "reactor",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "`INITIALIZE_AUTH` and `SET_GRANT` validate what they carry:\n\n- a policy holds **at most 100 grants**;\n- a condition tree has **at most 100 nodes** and nests **at most 10 deep**;\n- an execute capability lists **at most 100 operations**;\n- a condition path that names a scope other than the capability's own is rejected \u2014 conditions read only the executing scope, so such a path could never resolve.\n\nThese caps exist because **every replica re-evaluates the policy at every operation's position**; they bound the work a single decision can cost. They are part of what a `version` means: version 1 ships its rules complete and never changes them, since accepted operations are permanent history every replica must fold identically. Any rule change requires a new version, and a replica that meets a policy version newer than it supports fails closed \u2014 every request denied except the creator's administration of the auth scope \u2014 until the software knows that version.\n\nThe condition language itself is kept small and total on purpose: `eq`, `ne`, `in`, `notIn`, `lt`, `lte`, `gt`, `gte`, `exists`, `and`, `or`, `not` over `{ attr: \"doc.global.status\" }` / `{ lit: \u2026 }` operands; mixed-type comparisons are false, numbers compare numerically, strings by code point, an unresolved path (or one resolving to an object or array) is undefined and every comparison with undefined is false. The evaluator is a small pure function in `shared/document-model` that must never throw for any state shape.\n\n_Source: apps/academy/docs/academy/04-Reference/01-Reactor/11-Authorization.md (Powerhouse v6.2.2-dev.74)._\n_Source: docs/specs/auth-scope.md (Powerhouse v6.2.2-dev.74)._\n\n## Provenance\n- `apps/academy/docs/academy/04-Reference/01-Reactor/11-Authorization.md` \u2014 'Limits' section\n- `docs/specs/auth-scope.md` \u2014 Condition language: validation rules and versioning\n\n_Recorded from the Powerhouse repository at **v6.2.2-dev.74** during the v6.2.2-dev.74 source sync._",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": "v6.2.2-dev.74",
+  "computes": null,
+  "filePath": "apps/academy/docs/academy/04-Reference/01-Reactor/11-Authorization.md",
+  "noteType": "REFERENCE",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": "grounded",
+  "consumedBy": [],
+  "provenance": {
+    "author": "knowledge-agent",
+    "createdAt": "2026-09-02T22:10:55.839Z",
+    "sessionId": null,
+    "updatedAt": "2026-09-02T22:20:29.908Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Also at most 100 operations per execute capability, and a condition path may not name another scope. Version-1 rules are frozen; an unsupported policy version fails closed except for the creator.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "93082ad5-42fd-4cd9-bca5-87da9c6fe885",
+      "actor": "knowledge-agent",
+      "comment": "extracted from the Powerhouse repository at v6.2.2-dev.74",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-09-02T22:10:56.406Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "082a9723-9b2b-48ac-a3bf-8ae98cd6941f",
+      "actor": "liberuum",
+      "comment": "claim checked against the cited repository file at the pinned tag",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-09-02T22:10:56.902Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

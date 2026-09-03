@@ -1,0 +1,79 @@
+{
+  "links": [
+    {
+      "id": "lnk-7f34022e-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "7f34022e-0c9c-410c-8f67-31abda6d8bd3",
+      "targetTitle": "skill-theme-styling"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Agent skill: /theme-styling \u2014 Theme a Powerhouse editor or drive-app UI correctly in light and dark.",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "bda01336-2bc1-4858-9d51-3544e82d6316",
+      "name": "agent-skills",
+      "topicDocumentId": null
+    },
+    {
+      "id": "f3ca9d6d-5666-442a-bd7c-2cd52d71e63f",
+      "name": "theme-styling",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "## When to use\nTheme a Powerhouse editor or drive-app UI correctly in light and dark. Covers the bai token system ([data-bai-theme] + --bai-* vars + ThemeProvider, for vault-style packages) and design-system semantic tokens (--foreground/--background/--primary + .dark, for packages built on document-engineering, e.g. the invoice demo) plus theming third-party widgets (Select, DatePicker) whose dark: variants never generate in a consumer build, and native widgets (date/select/checkbox) via color-scheme/accent-color. Read before building or restyling any editor UI.\n\n## What it covers\n- Two systems \u2014 pick the one that matches the package\n- System A: the bai token system\n- System B: design-system semantic tokens\n- Third-party widget theming \u2014 the invoice lesson\n- Native browser widgets\n- Verification checklist\n\n## Where the full skill lives\n- Vault source: **Agent skill: theme-styling** (full text, DERIVED_FROM below) \u2014 the vault is this skill's home.\n\n## Invocation\nRead the vault source content and follow it. Not a plugin command.\n\n_Added via add-skill; content hash sha256:36dd98f74250\u2026_",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "PROCEDURE",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "skill-add",
+    "createdAt": "2026-08-16T20:23:01.682Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-16T20:28:01.500Z",
+    "sourceOrigin": "IMPORT"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Theme a Powerhouse editor or drive-app UI correctly in light and dark. Covers the bai token system ([data-bai-theme] + --bai-* vars + ThemeProvider, for vault-style packages) and design-system semanti",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "413127c0-582a-4a50-95b8-742b49a6863e",
+      "actor": "skill-add",
+      "comment": "skill added to vault",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-16T20:23:02.681Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "e6d2dc61-f360-4113-b464-381999f7dc93",
+      "actor": "knowledge-agent",
+      "comment": "vault-native skill",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-16T20:23:02.836Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

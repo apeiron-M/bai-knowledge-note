@@ -1,0 +1,1042 @@
+[
+  {
+    "index": 0,
+    "hash": "",
+    "timestampUtcMs": "2026-08-17T21:36:53.324Z",
+    "action": {
+      "type": "CREATE_DOCUMENT",
+      "input": {
+        "meta": {},
+        "name": "Auth Scope Enforcement \u2014 WBS",
+        "slug": "",
+        "model": "bai/wbs",
+        "branch": "main",
+        "signing": {
+          "nonce": "",
+          "publicKey": {},
+          "signature": "e5b269a3-0a86-44ad-845b-3f7a62736192",
+          "documentType": "bai/wbs",
+          "createdAtUtcIso": "2026-08-17T21:36:53.324Z"
+        },
+        "version": 0,
+        "documentId": "e5b269a3-0a86-44ad-845b-3f7a62736192",
+        "protocolVersions": {
+          "base-reducer": 2
+        }
+      },
+      "timestampUtcMs": "2026-08-17T21:36:53.324Z"
+    }
+  },
+  {
+    "index": 0,
+    "hash": "xyQvg3PH5eOw+oXkKHUq3evkris=",
+    "timestampUtcMs": "2026-08-17T21:37:17.855Z",
+    "action": {
+      "type": "SET_PROJECT_REF",
+      "input": {
+        "projectRef": "8360bb12-3c20-4a31-88cf-7258d957c24b"
+      },
+      "timestampUtcMs": "2026-08-17T21:37:17.855Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "",
+    "timestampUtcMs": "2026-08-17T21:36:53.324Z",
+    "action": {
+      "type": "UPGRADE_DOCUMENT",
+      "input": {
+        "model": "bai/wbs",
+        "toVersion": 1,
+        "documentId": "e5b269a3-0a86-44ad-845b-3f7a62736192",
+        "fromVersion": 0,
+        "initialState": {
+          "auth": {
+            "grants": [],
+            "version": 0
+          },
+          "local": {},
+          "global": {
+            "goals": [],
+            "owner": null,
+            "projectRef": null,
+            "references": []
+          },
+          "document": {
+            "hash": {
+              "encoding": "base64",
+              "algorithm": "sha1"
+            },
+            "version": 1
+          }
+        }
+      },
+      "timestampUtcMs": "2026-08-17T21:36:53.324Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "aW2tbqbmW29RBZLRgJiyckQgjQE=",
+    "timestampUtcMs": "2026-08-17T21:37:18.779Z",
+    "action": {
+      "type": "SET_OWNER",
+      "input": {
+        "owner": "thegoldenmule"
+      },
+      "timestampUtcMs": "2026-08-17T21:37:18.779Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "lLNONAAVpJsxHBY+pF7xI6fu8X8=",
+    "timestampUtcMs": "2026-08-17T21:38:32.499Z",
+    "action": {
+      "type": "CREATE_GOAL",
+      "input": {
+        "id": "s8",
+        "description": "Stage 8 \u2014 sync serving evaluates the policy (authEnforcement)"
+      },
+      "timestampUtcMs": "2026-08-17T21:38:32.499Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "IzUL+a1TXI25kLsU0etZ+eY05Zw=",
+    "timestampUtcMs": "2026-08-17T21:38:33.528Z",
+    "action": {
+      "type": "CREATE_GOAL",
+      "input": {
+        "id": "s8-poll",
+        "parentId": "s8",
+        "description": "pollSyncEnvelopes decides per poll instead of asking the host tables which whole documents to drop (resolvers.ts:1065 forbiddenIds)"
+      },
+      "timestampUtcMs": "2026-08-17T21:38:33.528Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "PaqiyEp0qXqyg+zymXH3A937kcc=",
+    "timestampUtcMs": "2026-08-17T21:38:34.565Z",
+    "action": {
+      "type": "CREATE_GOAL",
+      "input": {
+        "id": "s8-runs",
+        "parentId": "s8",
+        "description": "Withhold whole outbox entries only \u2014 a partial run applies as though complete, because the receiver renumbers and validates no hashes"
+      },
+      "timestampUtcMs": "2026-08-17T21:38:34.565Z"
+    }
+  },
+  {
+    "index": 5,
+    "hash": "ZE0z26Cjc7I6VTHqZMGqLfv6ldE=",
+    "timestampUtcMs": "2026-08-17T21:38:35.635Z",
+    "action": {
+      "type": "CREATE_GOAL",
+      "input": {
+        "id": "s8-hold",
+        "parentId": "s8",
+        "description": "Hold a refused entry, never consume it \u2014 today it is marked fully delivered and trimmed, irreversibly, by whichever subject polled"
+      },
+      "timestampUtcMs": "2026-08-17T21:38:35.635Z"
+    }
+  },
+  {
+    "index": 6,
+    "hash": "+JV5TcRVBION7fW9GElRWrVud64=",
+    "timestampUtcMs": "2026-08-17T21:38:36.670Z",
+    "action": {
+      "type": "CREATE_GOAL",
+      "input": {
+        "id": "s8-meta",
+        "parentId": "s8",
+        "description": "Never withhold the auth and document scopes \u2014 they are what a replica folds to reach the origin's decision"
+      },
+      "timestampUtcMs": "2026-08-17T21:38:36.670Z"
+    }
+  },
+  {
+    "index": 7,
+    "hash": "QOzyLzDRyJnl/2vuW3bQNAeZ1nI=",
+    "timestampUtcMs": "2026-08-17T21:38:37.710Z",
+    "action": {
+      "type": "CREATE_GOAL",
+      "input": {
+        "id": "s8-intersect",
+        "parentId": "s8",
+        "description": "Intersect the policy verdict with the host's existing check, never union \u2014 this is what makes stage 8 safe before the migration"
+      },
+      "timestampUtcMs": "2026-08-17T21:38:37.710Z"
+    }
+  },
+  {
+    "index": 8,
+    "hash": "WetTacb7Rlic+562dwZFCdHEJrE=",
+    "timestampUtcMs": "2026-08-17T21:38:38.759Z",
+    "action": {
+      "type": "CREATE_GOAL",
+      "input": {
+        "id": "s8-channel",
+        "parentId": "s8",
+        "description": "Bind a channel to the address that created it and refuse a poll under a different one, since the subject is per poll and may be absent"
+      },
+      "timestampUtcMs": "2026-08-17T21:38:38.759Z"
+    }
+  },
+  {
+    "index": 9,
+    "hash": "Whg4xLX+K9uEjOpHgfGba/FrzwE=",
+    "timestampUtcMs": "2026-08-17T21:38:39.819Z",
+    "action": {
+      "type": "CREATE_GOAL",
+      "input": {
+        "id": "s8-hostdefault",
+        "parentId": "s8",
+        "description": "Implement the host 'closes by default' read-surface setting \u2014 nothing in packages/ implements it today, and stages 8 and 10 both need it"
+      },
+      "timestampUtcMs": "2026-08-17T21:38:39.819Z"
+    }
+  },
+  {
+    "index": 10,
+    "hash": "uhm2B25+w+sFZB5KVBf/NataqYc=",
+    "timestampUtcMs": "2026-08-17T21:38:40.872Z",
+    "action": {
+      "type": "CREATE_GOAL",
+      "input": {
+        "id": "s8-exit",
+        "parentId": "s8",
+        "description": "Exit test: a peer converges on one granted scope, keeps auth+document, raises no dead letter, and backfills when the grant widens"
+      },
+      "timestampUtcMs": "2026-08-17T21:38:40.872Z"
+    }
+  },
+  {
+    "index": 11,
+    "hash": "CgJXyDh531beBEhBPCq51Hl9qTg=",
+    "timestampUtcMs": "2026-08-17T21:38:41.905Z",
+    "action": {
+      "type": "CREATE_GOAL",
+      "input": {
+        "id": "s9",
+        "description": "Stage 9 \u2014 migrate the host permission tables into grants (no flag)"
+      },
+      "timestampUtcMs": "2026-08-17T21:38:41.905Z"
+    }
+  },
+  {
+    "index": 12,
+    "hash": "eh0kmjdUpUG+5bUQat92vJ1Utbg=",
+    "timestampUtcMs": "2026-08-17T21:38:42.961Z",
+    "action": {
+      "type": "CREATE_GOAL",
+      "input": {
+        "id": "s9-tool",
+        "parentId": "s9",
+        "description": "Build the migration: one INITIALIZE_AUTH per document through the executor, using the five-step ordered grant list (grants cannot be written as rows)"
+      },
+      "timestampUtcMs": "2026-08-17T21:38:42.961Z"
+    }
+  },
+  {
+    "index": 13,
+    "hash": "e080U+yucc5bspJYaeKwauJtkHY=",
+    "timestampUtcMs": "2026-08-17T21:38:44.011Z",
+    "action": {
+      "type": "CREATE_GOAL",
+      "input": {
+        "id": "s9-refuse",
+        "parentId": "s9",
+        "description": "Refuse and report what has no faithful translation \u2014 inherited protection, over-cap documents, owner-less documents; drop node-local admins"
+      },
+      "timestampUtcMs": "2026-08-17T21:38:44.011Z"
+    }
+  },
+  {
+    "index": 14,
+    "hash": "DvByy3PjpOo4yM3+UjNm73DKIek=",
+    "timestampUtcMs": "2026-08-17T21:38:45.073Z",
+    "action": {
+      "type": "CREATE_GOAL",
+      "input": {
+        "id": "s9-dryrun",
+        "parentId": "s9",
+        "description": "Dry run writes nothing and reports exactly what it cannot express; a real run is idempotent by skipping an initialized auth scope"
+      },
+      "timestampUtcMs": "2026-08-17T21:38:45.073Z"
+    }
+  },
+  {
+    "index": 15,
+    "hash": "LFjK1hFFfTOV/L2bTmzuwy2zwyw=",
+    "timestampUtcMs": "2026-08-17T21:38:46.126Z",
+    "action": {
+      "type": "CREATE_GOAL",
+      "input": {
+        "id": "s9-runbook",
+        "parentId": "s9",
+        "description": "Runbook: one replica with auth writes quiesced \u2014 two writers produce tied timestamps the monotonic rule refuses and nothing repairs"
+      },
+      "timestampUtcMs": "2026-08-17T21:38:46.126Z"
+    }
+  },
+  {
+    "index": 16,
+    "hash": "KlPHNO2s8YXYwqHHn0/d+4uHJ7k=",
+    "timestampUtcMs": "2026-08-17T21:38:47.150Z",
+    "action": {
+      "type": "CREATE_GOAL",
+      "input": {
+        "id": "s9-exit",
+        "parentId": "s9",
+        "description": "Exit test: on a fixture holding every construct, the read gate and the tables answer identically after migration and preflight:auth reports clean"
+      },
+      "timestampUtcMs": "2026-08-17T21:38:47.150Z"
+    }
+  },
+  {
+    "index": 17,
+    "hash": "ZdSEp7pr2M7/KNuCRg7V+Sak+sY=",
+    "timestampUtcMs": "2026-08-17T21:38:48.205Z",
+    "action": {
+      "type": "CREATE_GOAL",
+      "input": {
+        "id": "s10",
+        "description": "Stage 10 \u2014 retire the permission tables (authEnforcement)"
+      },
+      "timestampUtcMs": "2026-08-17T21:38:48.205Z"
+    }
+  },
+  {
+    "index": 18,
+    "hash": "2J8adcSdfsOm/DRdiu8qBV0+g54=",
+    "timestampUtcMs": "2026-08-17T21:38:49.259Z",
+    "action": {
+      "type": "CREATE_GOAL",
+      "input": {
+        "id": "s10-reads",
+        "parentId": "s10",
+        "description": "Stop consulting the tables on the read path: subgraph read helpers, per-item list filters, subscription predicates, attachment gate, stage-8 intersection"
+      },
+      "timestampUtcMs": "2026-08-17T21:38:49.259Z"
+    }
+  },
+  {
+    "index": 19,
+    "hash": "STP9WDgxuBGuVtU7zwqBkMsbHJw=",
+    "timestampUtcMs": "2026-08-17T21:38:50.316Z",
+    "action": {
+      "type": "CREATE_GOAL",
+      "input": {
+        "id": "s10-listing",
+        "parentId": "s10",
+        "description": "Listings synthesize a document-level verdict \u2014 readable if any gated scope is \u2014 or every id, slug and access list stays enumerable"
+      },
+      "timestampUtcMs": "2026-08-17T21:38:50.316Z"
+    }
+  },
+  {
+    "index": 20,
+    "hash": "2+BdN9Q73+WhTWTWYNkgauCyWjo=",
+    "timestampUtcMs": "2026-08-17T21:38:51.363Z",
+    "action": {
+      "type": "CREATE_GOAL",
+      "input": {
+        "id": "s10-writedoor",
+        "parentId": "s10",
+        "description": "Keep the host default on the receiving write door as a local refusal that never records a denial into any history"
+      },
+      "timestampUtcMs": "2026-08-17T21:38:51.363Z"
+    }
+  },
+  {
+    "index": 21,
+    "hash": "qzQz3uM+9/uu0fxzPeR4huLrEHk=",
+    "timestampUtcMs": "2026-08-17T21:38:52.393Z",
+    "action": {
+      "type": "CREATE_GOAL",
+      "input": {
+        "id": "s10-boot",
+        "parentId": "s10",
+        "description": "Boot assertion: refuse to start with authEnforcement on against untranslated rows, unless the host closes by default"
+      },
+      "timestampUtcMs": "2026-08-17T21:38:52.393Z"
+    }
+  },
+  {
+    "index": 22,
+    "hash": "A3Gty2G0+FKTjvFDzkuUL5HXANY=",
+    "timestampUtcMs": "2026-08-17T21:38:53.461Z",
+    "action": {
+      "type": "CREATE_GOAL",
+      "input": {
+        "id": "s10-retire",
+        "parentId": "s10",
+        "description": "Delete authorization.service.ts and document-permission.service.ts once nothing reads them; the node-operator check stays"
+      },
+      "timestampUtcMs": "2026-08-17T21:38:53.461Z"
+    }
+  },
+  {
+    "index": 23,
+    "hash": "guEMhG0cJVQAbF6ZyTTJJy6j9Bg=",
+    "timestampUtcMs": "2026-08-17T21:38:54.554Z",
+    "action": {
+      "type": "CREATE_GOAL",
+      "input": {
+        "id": "s10-exit",
+        "parentId": "s10",
+        "description": "Exit test: the read-denial suites pass against the migrated fixture, restated to what the caller received; an unmigrated store fails to boot"
+      },
+      "timestampUtcMs": "2026-08-17T21:38:54.554Z"
+    }
+  },
+  {
+    "index": 24,
+    "hash": "st4At4/Kbeax7+Gly1zxNlQ/IMM=",
+    "timestampUtcMs": "2026-08-17T21:38:55.546Z",
+    "action": {
+      "type": "CREATE_GOAL",
+      "input": {
+        "id": "rollout",
+        "description": "Rollout \u2014 turn the four flags on, fleet by fleet"
+      },
+      "timestampUtcMs": "2026-08-17T21:38:55.546Z"
+    }
+  },
+  {
+    "index": 25,
+    "hash": "qQEnSnBSvjuOdWxUz2x8Dzi4gPo=",
+    "timestampUtcMs": "2026-08-17T21:38:56.608Z",
+    "action": {
+      "type": "CREATE_GOAL",
+      "input": {
+        "id": "ro-2909",
+        "parentId": "rollout",
+        "description": "Land PR #2909 so the flags are reachable in switchboard and Connect alike (branch feat/auth-flags-connect)"
+      },
+      "timestampUtcMs": "2026-08-17T21:38:56.608Z"
+    }
+  },
+  {
+    "index": 26,
+    "hash": "6yztZj0PisoXyk5v+oqg2B66OAk=",
+    "timestampUtcMs": "2026-08-17T21:38:57.662Z",
+    "action": {
+      "type": "CREATE_GOAL",
+      "input": {
+        "id": "ro-preflight",
+        "parentId": "rollout",
+        "description": "Run preflight:auth against each fleet's own store and resolve what it reports \u2014 exit 1 gates authEnforcement, exit 2 gates authConditions"
+      },
+      "timestampUtcMs": "2026-08-17T21:38:57.662Z"
+    }
+  },
+  {
+    "index": 27,
+    "hash": "Add73PT7hI5XKctG9AQQJyr5kGg=",
+    "timestampUtcMs": "2026-08-17T21:38:58.687Z",
+    "action": {
+      "type": "CREATE_GOAL",
+      "input": {
+        "id": "ro-flags",
+        "parentId": "rollout",
+        "description": "Flip the flags per fleet in prerequisite order: documentDecisions, authEnforcement, authGroups, authConditions \u2014 a flag flips per fleet, not per node"
+      },
+      "timestampUtcMs": "2026-08-17T21:38:58.687Z"
+    }
+  },
+  {
+    "index": 28,
+    "hash": "mdD6uoXsMqDhJ0kUG95qwmQsRdI=",
+    "timestampUtcMs": "2026-08-17T21:38:59.734Z",
+    "action": {
+      "type": "CREATE_GOAL",
+      "input": {
+        "id": "ro-metacache",
+        "parentId": "rollout",
+        "description": "Once documentDecisions defaults on, retire the document meta cache, rebuildAtRevision, the eager putDocumentMeta calls and its ExecutionStores slot"
+      },
+      "timestampUtcMs": "2026-08-17T21:38:59.734Z"
+    }
+  },
+  {
+    "index": 29,
+    "hash": "pPG/QZBufLwfkTy/TKkKs8xAluc=",
+    "timestampUtcMs": "2026-08-17T21:39:00.805Z",
+    "action": {
+      "type": "CREATE_GOAL",
+      "input": {
+        "id": "ro-interimgate",
+        "parentId": "rollout",
+        "description": "Once authEnforcement defaults on, retire the stage-1 interim admission gate on auth-scope writes"
+      },
+      "timestampUtcMs": "2026-08-17T21:39:00.805Z"
+    }
+  },
+  {
+    "index": 30,
+    "hash": "BmV4nPbgfw0CD9uyMFoCW8BdF3w=",
+    "timestampUtcMs": "2026-08-17T21:39:01.843Z",
+    "action": {
+      "type": "CREATE_GOAL",
+      "input": {
+        "id": "surface",
+        "description": "Make the policy reachable \u2014 authoring, query surface, UI, docs (scope unconfirmed: the spec never mentions these)"
+      },
+      "timestampUtcMs": "2026-08-17T21:39:01.843Z"
+    }
+  },
+  {
+    "index": 31,
+    "hash": "vdcMIX1yc83kmvCUq6KQpAgg7Tg=",
+    "timestampUtcMs": "2026-08-17T21:39:02.880Z",
+    "action": {
+      "type": "CREATE_GOAL",
+      "input": {
+        "id": "su-authoring",
+        "parentId": "surface",
+        "description": "No way to author a policy at all: no mutation, CLI, SDK helper or UI for INITIALIZE_AUTH / SET_GRANT / REMOVE_GRANT / MOVE_GRANT outside tests"
+      },
+      "timestampUtcMs": "2026-08-17T21:39:02.880Z"
+    }
+  },
+  {
+    "index": 32,
+    "hash": "d0kmnNsuEY3H/hhaamo9312mAOg=",
+    "timestampUtcMs": "2026-08-17T21:39:03.935Z",
+    "action": {
+      "type": "CREATE_GOAL",
+      "input": {
+        "id": "su-subgraph",
+        "parentId": "surface",
+        "description": "The auth subgraph answers only from the old tables \u2014 no query for a document's grants, policy version, creator, or 'may I?'"
+      },
+      "timestampUtcMs": "2026-08-17T21:39:03.935Z"
+    }
+  },
+  {
+    "index": 33,
+    "hash": "wlmSWJ1rmXT5SPd2NppEW64WFpU=",
+    "timestampUtcMs": "2026-08-17T21:39:04.974Z",
+    "action": {
+      "type": "CREATE_GOAL",
+      "input": {
+        "id": "su-hooks",
+        "parentId": "surface",
+        "description": "No authorization React hooks exist; permission-aware UI must query the subgraph directly, and the read gate's predicate is async so a hook needs a caching story"
+      },
+      "timestampUtcMs": "2026-08-17T21:39:04.974Z"
+    }
+  },
+  {
+    "index": 34,
+    "hash": "ZiTXxFdXV/kvPJ6fKcuEy55RpRo=",
+    "timestampUtcMs": "2026-08-17T21:39:06.041Z",
+    "action": {
+      "type": "CREATE_GOAL",
+      "input": {
+        "id": "su-groupui",
+        "parentId": "surface",
+        "description": "reactor-group ships a document model with no editor \u2014 group membership can only be changed programmatically"
+      },
+      "timestampUtcMs": "2026-08-17T21:39:06.041Z"
+    }
+  },
+  {
+    "index": 35,
+    "hash": "syDR97CAicv7zRuPEZhe2K7DKCk=",
+    "timestampUtcMs": "2026-08-17T21:39:07.078Z",
+    "action": {
+      "type": "CREATE_GOAL",
+      "input": {
+        "id": "su-academy",
+        "parentId": "surface",
+        "description": "Write the auth-scope academy docs, and rewrite the Authorization pages and switchboard Auth.md that stage 10 makes wrong"
+      },
+      "timestampUtcMs": "2026-08-17T21:39:07.078Z"
+    }
+  },
+  {
+    "index": 36,
+    "hash": "DJLMdu/WKwT6c6gtz0Jb4h4Bq9M=",
+    "timestampUtcMs": "2026-08-17T21:39:08.131Z",
+    "action": {
+      "type": "CREATE_GOAL",
+      "input": {
+        "id": "su-e2e",
+        "parentId": "surface",
+        "description": "No e2e coverage: every stage exit test is a cross-process scenario unit tests cannot reach"
+      },
+      "timestampUtcMs": "2026-08-17T21:39:08.131Z"
+    }
+  },
+  {
+    "index": 37,
+    "hash": "7eIKkvtvjs+aQri5CXJOYafgw90=",
+    "timestampUtcMs": "2026-08-17T21:39:09.191Z",
+    "action": {
+      "type": "CREATE_GOAL",
+      "input": {
+        "id": "su-vault",
+        "parentId": "surface",
+        "description": "The knowledge vault holds no note on grants, conditions or groups \u2014 its auth cluster describes the pre-scope model"
+      },
+      "timestampUtcMs": "2026-08-17T21:39:09.191Z"
+    }
+  },
+  {
+    "index": 38,
+    "hash": "pJPe+6tIYCRz32HkFVhF+lEPyuA=",
+    "timestampUtcMs": "2026-08-17T21:39:10.255Z",
+    "action": {
+      "type": "CREATE_GOAL",
+      "input": {
+        "id": "debt",
+        "description": "Known limitations carried forward"
+      },
+      "timestampUtcMs": "2026-08-17T21:39:10.255Z"
+    }
+  },
+  {
+    "index": 39,
+    "hash": "LZ1D4JjVML7MQIjI3x1i0hTGgW0=",
+    "timestampUtcMs": "2026-08-17T21:39:11.273Z",
+    "action": {
+      "type": "CREATE_GOAL",
+      "input": {
+        "id": "dt-boundary",
+        "parentId": "debt",
+        "description": "Extract the write cache's twice-duplicated upgrade-boundary segmentation \u2014 the prerequisite for an upgrade-aware walk"
+      },
+      "timestampUtcMs": "2026-08-17T21:39:11.273Z"
+    }
+  },
+  {
+    "index": 40,
+    "hash": "KpQsVRZukagV0l/HdhfCHuLDEhg=",
+    "timestampUtcMs": "2026-08-17T21:39:12.329Z",
+    "action": {
+      "type": "CREATE_GOAL",
+      "input": {
+        "id": "dt-walk",
+        "parentId": "debt",
+        "description": "foldEvaluatedScope folds a versioned document with the pre-upgrade reducer, so admission and re-evaluation can disagree and retract a tail for no reason"
+      },
+      "timestampUtcMs": "2026-08-17T21:39:12.329Z"
+    }
+  },
+  {
+    "index": 41,
+    "hash": "VVcAjSlx+4IrfjMGH/nai8tqRl8=",
+    "timestampUtcMs": "2026-08-17T21:39:13.393Z",
+    "action": {
+      "type": "CREATE_GOAL",
+      "input": {
+        "id": "dt-browser",
+        "parentId": "debt",
+        "description": "The reactor-browser pull path selects deniedReason from a static document and cannot degrade against a server on the older schema"
+      },
+      "timestampUtcMs": "2026-08-17T21:39:13.393Z"
+    }
+  },
+  {
+    "index": 42,
+    "hash": "xLHJdhgibbk0ibsz5H0UOWJuxwM=",
+    "timestampUtcMs": "2026-08-17T21:39:14.437Z",
+    "action": {
+      "type": "CREATE_GOAL",
+      "input": {
+        "id": "dt-grouprefs",
+        "parentId": "debt",
+        "description": "group_references compaction \u2014 reclaiming stale references is a cost question the spec leaves open"
+      },
+      "timestampUtcMs": "2026-08-17T21:39:14.437Z"
+    }
+  },
+  {
+    "index": 43,
+    "hash": "fddfmM2GpGPry5PqEFroI4q6cPY=",
+    "timestampUtcMs": "2026-08-17T21:39:15.495Z",
+    "action": {
+      "type": "CREATE_GOAL",
+      "input": {
+        "id": "dt-surfaces",
+        "parentId": "debt",
+        "description": "Gate the read surfaces that never consulted the tables: drive node trees, analytics, package listings, the MCP endpoint"
+      },
+      "timestampUtcMs": "2026-08-17T21:39:15.495Z"
+    }
+  },
+  {
+    "index": 44,
+    "hash": "XbXhOZFvpDkXQ24BfBiSjC9gQNc=",
+    "timestampUtcMs": "2026-08-17T21:40:02.383Z",
+    "action": {
+      "type": "ADD_DEPENDENCIES",
+      "input": {
+        "id": "s10",
+        "dependencies": [
+          "s9"
+        ]
+      },
+      "timestampUtcMs": "2026-08-17T21:40:02.383Z"
+    }
+  },
+  {
+    "index": 45,
+    "hash": "50itPiLhEEuwE6P0hzpgWYFNykQ=",
+    "timestampUtcMs": "2026-08-17T21:40:03.414Z",
+    "action": {
+      "type": "ADD_DEPENDENCIES",
+      "input": {
+        "id": "s10-reads",
+        "dependencies": [
+          "s8-intersect"
+        ]
+      },
+      "timestampUtcMs": "2026-08-17T21:40:03.414Z"
+    }
+  },
+  {
+    "index": 46,
+    "hash": "TQyjLocxH696N5wbjlNgsI08r6c=",
+    "timestampUtcMs": "2026-08-17T21:40:04.421Z",
+    "action": {
+      "type": "ADD_DEPENDENCIES",
+      "input": {
+        "id": "s10-writedoor",
+        "dependencies": [
+          "s8-hostdefault"
+        ]
+      },
+      "timestampUtcMs": "2026-08-17T21:40:04.421Z"
+    }
+  },
+  {
+    "index": 47,
+    "hash": "U3N+CreojXz7j4gCogMi0UUtFLQ=",
+    "timestampUtcMs": "2026-08-17T21:42:07.866Z",
+    "action": {
+      "type": "ADD_DEPENDENCIES",
+      "input": {
+        "id": "s9-exit",
+        "dependencies": [
+          "s9-tool",
+          "s9-refuse",
+          "s9-dryrun"
+        ]
+      },
+      "timestampUtcMs": "2026-08-17T21:42:07.866Z"
+    }
+  },
+  {
+    "index": 48,
+    "hash": "59SNJrfWT1MR4eS/hHQAVsGabQA=",
+    "timestampUtcMs": "2026-08-17T21:42:08.846Z",
+    "action": {
+      "type": "ADD_DEPENDENCIES",
+      "input": {
+        "id": "s10-exit",
+        "dependencies": [
+          "s10-reads",
+          "s10-boot"
+        ]
+      },
+      "timestampUtcMs": "2026-08-17T21:42:08.846Z"
+    }
+  },
+  {
+    "index": 49,
+    "hash": "CYmulyoemIDqEQPtnl61GL5Vfn4=",
+    "timestampUtcMs": "2026-08-17T21:42:09.741Z",
+    "action": {
+      "type": "ADD_DEPENDENCIES",
+      "input": {
+        "id": "ro-flags",
+        "dependencies": [
+          "ro-2909",
+          "ro-preflight",
+          "s9"
+        ]
+      },
+      "timestampUtcMs": "2026-08-17T21:42:09.741Z"
+    }
+  },
+  {
+    "index": 50,
+    "hash": "mYVZbpBYQGVuVt5uU8RCVObiSHQ=",
+    "timestampUtcMs": "2026-08-17T21:42:10.674Z",
+    "action": {
+      "type": "ADD_DEPENDENCIES",
+      "input": {
+        "id": "ro-metacache",
+        "dependencies": [
+          "ro-flags"
+        ]
+      },
+      "timestampUtcMs": "2026-08-17T21:42:10.674Z"
+    }
+  },
+  {
+    "index": 51,
+    "hash": "uF0wS7YaKqqH8I3CNxYeravYYAI=",
+    "timestampUtcMs": "2026-08-17T21:42:11.644Z",
+    "action": {
+      "type": "ADD_DEPENDENCIES",
+      "input": {
+        "id": "ro-interimgate",
+        "dependencies": [
+          "ro-flags"
+        ]
+      },
+      "timestampUtcMs": "2026-08-17T21:42:11.644Z"
+    }
+  },
+  {
+    "index": 52,
+    "hash": "27p80oDjWxJWaGsRdb7lTXtidUw=",
+    "timestampUtcMs": "2026-08-17T21:42:12.713Z",
+    "action": {
+      "type": "ADD_DEPENDENCIES",
+      "input": {
+        "id": "dt-walk",
+        "dependencies": [
+          "dt-boundary"
+        ]
+      },
+      "timestampUtcMs": "2026-08-17T21:42:12.713Z"
+    }
+  },
+  {
+    "index": 53,
+    "hash": "Z+QT9lGutW2ZvSWtdwjS52ba2Z4=",
+    "timestampUtcMs": "2026-08-17T21:42:13.739Z",
+    "action": {
+      "type": "ADD_DEPENDENCIES",
+      "input": {
+        "id": "su-hooks",
+        "dependencies": [
+          "su-subgraph"
+        ]
+      },
+      "timestampUtcMs": "2026-08-17T21:42:13.739Z"
+    }
+  },
+  {
+    "index": 54,
+    "hash": "cH1IeJ6gRmjVIzi5ihvRHc0sum0=",
+    "timestampUtcMs": "2026-08-17T21:42:14.805Z",
+    "action": {
+      "type": "ASSIGN_GOAL",
+      "input": {
+        "id": "ro-2909",
+        "assignee": "thegoldenmule"
+      },
+      "timestampUtcMs": "2026-08-17T21:42:14.805Z"
+    }
+  },
+  {
+    "index": 55,
+    "hash": "MrxpF5W3xGi98b5bC2Da1e9cOoA=",
+    "timestampUtcMs": "2026-08-17T21:42:15.858Z",
+    "action": {
+      "type": "SET_GOAL_STATUS",
+      "input": {
+        "id": "ro-2909",
+        "status": "IN_PROGRESS"
+      },
+      "timestampUtcMs": "2026-08-17T21:42:15.858Z"
+    }
+  },
+  {
+    "index": 56,
+    "hash": "ogP2CXGkioy5mlwre5HDqFJm9I0=",
+    "timestampUtcMs": "2026-08-17T21:42:16.908Z",
+    "action": {
+      "type": "ADD_NOTE",
+      "input": {
+        "note": "Eight commits ahead of main, MERGEABLE, not draft. The check job failed on a0592c973 (playwright not found); 653349ee0 was pushed to fix it and CI was still running at the time of writing \u2014 verify green before merging.",
+        "author": "knowledge-agent",
+        "goalId": "ro-2909",
+        "noteId": "n-2909-ci",
+        "timestamp": "2026-08-17T21:45:00.000Z"
+      },
+      "timestampUtcMs": "2026-08-17T21:42:16.908Z"
+    }
+  },
+  {
+    "index": 57,
+    "hash": "0L1IHIv1ycKUimH3gLjDeZiTx/U=",
+    "timestampUtcMs": "2026-08-17T21:42:17.940Z",
+    "action": {
+      "type": "ADD_NOTE",
+      "input": {
+        "note": "This is the hard blocker for rollout: nothing in production has ever emitted INITIALIZE_AUTH, so every document's policy is uninitialized and an uninitialized policy allows everything.",
+        "author": "knowledge-agent",
+        "goalId": "s9",
+        "noteId": "n-s9-blocker",
+        "timestamp": "2026-08-17T21:45:00.000Z"
+      },
+      "timestampUtcMs": "2026-08-17T21:42:17.940Z"
+    }
+  },
+  {
+    "index": 58,
+    "hash": "1UQPT4wI+eSsD9Y6N0wXP7rTHb4=",
+    "timestampUtcMs": "2026-08-17T21:42:18.979Z",
+    "action": {
+      "type": "ADD_NOTE",
+      "input": {
+        "note": "Resolved as a documented limitation rather than an upgrade-aware walk. The mitigation is operational: preflight:auth reports the documents that cross a reducer version (exit 2) and authConditions must not be enabled on a fleet it reports.",
+        "author": "knowledge-agent",
+        "goalId": "dt-walk",
+        "noteId": "n-dt-walk",
+        "timestamp": "2026-08-17T21:45:00.000Z"
+      },
+      "timestampUtcMs": "2026-08-17T21:42:18.979Z"
+    }
+  },
+  {
+    "index": 59,
+    "hash": "etw6ajoBVv6qBK7/douWWWdDUoo=",
+    "timestampUtcMs": "2026-08-17T21:42:20.040Z",
+    "action": {
+      "type": "ADD_NOTE",
+      "input": {
+        "note": "Scope unconfirmed. docs/specs/auth-scope.md never mentions an authoring API or a UI, so these may be deliberately out of scope. Flagged because without an authoring surface, only the stage-9 migration can ever create a policy.",
+        "author": "knowledge-agent",
+        "goalId": "surface",
+        "noteId": "n-surface-scope",
+        "timestamp": "2026-08-17T21:45:00.000Z"
+      },
+      "timestampUtcMs": "2026-08-17T21:42:20.040Z"
+    }
+  },
+  {
+    "index": 60,
+    "hash": "hOzDohQj0cjOVMoXQTMrLN5hDbQ=",
+    "timestampUtcMs": "2026-08-17T21:42:21.079Z",
+    "action": {
+      "type": "ADD_NOTE",
+      "input": {
+        "note": "Greps for closedByDefault / withholdUninitialized / serveUninitialized return nothing across packages/. ModelReadGate takes no such option; defaultProtection lives only in the old reactor-api service.",
+        "author": "knowledge-agent",
+        "goalId": "s8-hostdefault",
+        "noteId": "n-hostdefault",
+        "timestamp": "2026-08-17T21:45:00.000Z"
+      },
+      "timestampUtcMs": "2026-08-17T21:42:21.079Z"
+    }
+  },
+  {
+    "index": 61,
+    "hash": "YpTd/vY8FXX72tZpCSUZA7lbTHw=",
+    "timestampUtcMs": "2026-08-17T21:42:50.983Z",
+    "action": {
+      "type": "ADD_DEPENDENCIES",
+      "input": {
+        "id": "s8-exit",
+        "dependencies": [
+          "s8-poll",
+          "s8-runs",
+          "s8-hold",
+          "s8-meta",
+          "s8-channel",
+          "s8-hostdefault"
+        ]
+      },
+      "timestampUtcMs": "2026-08-17T21:42:50.983Z"
+    }
+  },
+  {
+    "index": 62,
+    "hash": "1yW6qQTR2euZv/3w3/Iu0kjbkOQ=",
+    "timestampUtcMs": "2026-08-18T14:58:55.021Z",
+    "action": {
+      "type": "SET_GOAL_STATUS",
+      "input": {
+        "id": "ro-2909",
+        "status": "COMPLETED",
+        "outcome": "Merged to main as 3c0b735b9 (feat: turn auth enforcement fully on, in switchboard and Connect alike, #2909); published in 6.2.2-dev.50. The flags are reachable in switchboard and Connect."
+      },
+      "timestampUtcMs": "2026-08-18T14:58:55.021Z"
+    }
+  },
+  {
+    "index": 63,
+    "hash": "cApP2KUMawHUhLh9sTQRBPU9+9M=",
+    "timestampUtcMs": "2026-08-18T14:58:55.988Z",
+    "action": {
+      "type": "ADD_NOTE",
+      "input": {
+        "note": "CI concern resolved: 653349ee0 fixed the playwright install and the PR merged green. This unblocks ro-preflight and leaves ro-flags gated only on s9 \u2014 stage 9 is now the sole critical path to rollout.",
+        "author": "knowledge-agent",
+        "goalId": "ro-2909",
+        "noteId": "n-ro2909-done",
+        "timestamp": "2026-08-18T00:00:00.000Z"
+      },
+      "timestampUtcMs": "2026-08-18T14:58:55.988Z"
+    }
+  },
+  {
+    "index": 64,
+    "hash": "R0ZJZB7VZfniBx64j5YA+D1jFEE=",
+    "timestampUtcMs": "2026-08-18T14:58:56.910Z",
+    "action": {
+      "type": "SET_GOAL_STATUS",
+      "input": {
+        "id": "dt-walk",
+        "status": "WONT_DO",
+        "outcome": "Resolved as a documented limitation rather than an upgrade-aware walk: preflight:auth reports documents that cross a reducer version (exit 2), and authConditions must not be enabled on a fleet until that report is clean."
+      },
+      "timestampUtcMs": "2026-08-18T14:58:56.910Z"
+    }
+  },
+  {
+    "index": 65,
+    "hash": "ijhOPRG0O3EMO5btljzPuDvCHfA=",
+    "timestampUtcMs": "2026-08-18T14:58:57.867Z",
+    "action": {
+      "type": "ADD_DEPENDENCIES",
+      "input": {
+        "id": "s8-exit",
+        "dependencies": [
+          "s8-intersect"
+        ]
+      },
+      "timestampUtcMs": "2026-08-18T14:58:57.867Z"
+    }
+  },
+  {
+    "index": 66,
+    "hash": "oXJWP8AqXJ2fr+8QpNpvbbXGVHc=",
+    "timestampUtcMs": "2026-08-18T14:58:58.780Z",
+    "action": {
+      "type": "ADD_DEPENDENCIES",
+      "input": {
+        "id": "s10-exit",
+        "dependencies": [
+          "s10-listing",
+          "s10-writedoor"
+        ]
+      },
+      "timestampUtcMs": "2026-08-18T14:58:58.780Z"
+    }
+  },
+  {
+    "index": 67,
+    "hash": "kG72Hr0ZY9g9GRCUM49iHQwd0v4=",
+    "timestampUtcMs": "2026-08-18T14:58:59.762Z",
+    "action": {
+      "type": "SET_REFERENCES",
+      "input": {
+        "references": [
+          "https://github.com/powerhouse-inc/powerhouse/blob/main/docs/specs/auth-scope.md",
+          "https://github.com/powerhouse-inc/powerhouse/pull/2909"
+        ]
+      },
+      "timestampUtcMs": "2026-08-18T14:58:59.762Z"
+    }
+  }
+]

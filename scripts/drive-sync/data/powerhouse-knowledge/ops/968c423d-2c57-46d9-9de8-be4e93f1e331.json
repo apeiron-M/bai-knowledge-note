@@ -1,0 +1,141 @@
+[
+  {
+    "index": 0,
+    "hash": "",
+    "timestampUtcMs": "2026-09-02T21:35:15.374Z",
+    "action": {
+      "type": "CREATE_DOCUMENT",
+      "input": {
+        "meta": {},
+        "name": "Academy \u203a Build \u203a WorkWithData \u203a Using subgraphs",
+        "slug": "",
+        "model": "bai/source",
+        "branch": "main",
+        "signing": {
+          "nonce": "",
+          "publicKey": {},
+          "signature": "968c423d-2c57-46d9-9de8-be4e93f1e331",
+          "documentType": "bai/source",
+          "createdAtUtcIso": "2026-09-02T21:35:15.374Z"
+        },
+        "version": 0,
+        "documentId": "968c423d-2c57-46d9-9de8-be4e93f1e331",
+        "protocolVersions": {
+          "base-reducer": 2
+        }
+      },
+      "timestampUtcMs": "2026-09-02T21:35:15.374Z"
+    }
+  },
+  {
+    "index": 0,
+    "hash": "qVTkTPdz1H7+3uGuoLdDeauAsic=",
+    "timestampUtcMs": "2026-09-02T21:35:15.403Z",
+    "action": {
+      "type": "INGEST_SOURCE",
+      "input": {
+        "url": "https://github.com/powerhouse-inc/powerhouse/blob/v6.2.2-dev.74/apps/academy/docs/academy/03-Build/04-WorkWithData/03-UsingSubgraphs.md",
+        "tool": "sync-repo-docs",
+        "title": "Academy \u203a Build \u203a WorkWithData \u203a Using subgraphs",
+        "author": "Powerhouse Inc.",
+        "method": "sha256:5b18f01043fc30da4f8d5c256c7e10163500711c391c73eafcadf50e35b502ba git:v6.2.2-dev.74",
+        "content": "# Using subgraphs\n\nCreate and customize a subgraph, using the to-do list project as an example. This starts with the basics and adds more complex features as it goes.\n\n## What is a subgraph?\n\nA subgraph in Powerhouse is a **GraphQL-based modular data component** that extends the functionality of your document models. While document models handle the core state and operations, subgraphs can:\n\n1. Connect to external APIs or databases\n2. Add custom queries and mutations\n3. Automate interactions between different document models\n4. Provide additional backend functionality\n\n### Subgraphs can retrieve data from\n\n- **The Reactor** \u2013 The core Powerhouse data system or network node.\n- **Relational Data Stores** \u2013 Structured data storage for operational processes, offering real-time updates, for querying structured data.\n- **Analytics Stores** \u2013 Aggregated historical data, useful for insights, reporting and business intelligence.\n\n### Subgraphs consist of\n\n- **A schema** \u2014 Which defines the GraphQL Queries and Mutations.\n- **Resolvers** \u2014 Which handle data fetching and logic.\n- **Context Fields** \u2014 Additional metadata that helps in resolving data efficiently.\n\n#### Additionally, context fields allow resolvers to access extra information, such as:\n\n- **User authentication** (e.g., checking if a user is an admin).\n- **External data sources** (e.g., analytics).\n\n## Example: Implement a search subgraph based on data from the reactor\n\nIn this example we implement a subgraph which allows to search through todo-list documents in a specific document drive.\n\nFirst we will generate the subgraph with the help of the Powerhouse CLI, then we will define the GraphQL schema and implement the resolvers and finally we will start the reactor and execute a query through the GraphQL Gateway.\n\n### 1. Generate the subgraph\n\nGenerate a new subgraph within the to-do list project you created in the previous chapters. Open your project and start your terminal.\nThe Powerhouse Vetra toolkit has a command-line utility to create new subgraphs.\n\n```bash title=\"Run the following command to generate a new subgraph\"\nph generate subgraph --name search-todos\n```\n\n```bash title=\"Expected Output\"\n       FORCED: ./subgraphs/search-todos/index.ts\n       FORCED: ./subgraphs/search-todos/resolvers.ts\n       FORCED: ./subgraphs/search-todos/schema.ts\n```\n\nAfter generating the subgraph, build your project with a build step.\n\n```bash title=\"Build your project\"\npnpm build\n```\n\n### What happened?\n\n1. A new subgraph was created in `./subgraphs/search-todos/`\n2. The subgraph was automatically registered in your project's registry\n3. Basic boilerplate code was generated with an example query\n\nIf we now run `ph reactor` we will see the new subgraph being registered during the startup of the Reactor.\n\n> Registered /graphql/search-todos subgraph.\n\n```\nInitializing Subgraph Manager...\n> Registered /graphql/auth subgraph.\n> Registered /graphql/r subgraph.\n> Registered /graphql/analytics subgraph.\n> Registered /d/:drive subgraph.\n> Updating router\n> Registered /graphql supergraph\n> Registered /graphql/document-drive subgraph.\n> Registered /graphql/to-do-list subgraph.\n> **Registered /graphql/search-todos subgraph.**\n> Updating router\n> Registered /graphql supergraph\n  \u279c  Reactor:   http://localhost:4001/d/powerhouse\n```\n\n## 2. Building a search subgraph\n\nNow that we've generated our subgraph its time to define the GraphQL schema and implement the resolvers.\n\n**Step 1: Define the schema in `subgraphs/search-todos/schema.ts` by creating the file:**\n\n```typescript\nimport { gql } from \"graphql-tag\";\nimport type { DocumentNode } from \"graphql\";\n\nexport const schema: DocumentNode = gql`\n  \"\"\"\n  Subgraph definition\n  \"\"\"\n  type Query {\n    searchTodos(driveId: String!, searchTerm: String!): [String!]!\n  }\n`;\n```\n\n**Step 2: Create resolvers in `subgraphs/search-todos/resolvers.ts`:**\n\n```typescript\n// subgraphs/search-todos/resolvers.ts\nimport type { BaseSubgraph } from \"@powerhousedao/reactor-api\";\nimport { type TodoListDocument } from \"todo-tutorial/document-models/todo-list\";\n\nexport const getResolvers = (subgraph: BaseSubgraph) => {\n  const reactorClient = subgraph.reactorClient;\n\n  return {\n    Query: {\n      searchTodos: async (\n        parent: unknown,\n        args: { driveId: string; searchTerm: string },\n      ) => {\n        const children = await reactorClient.getOutgoingRelationships(\n          args.driveId,\n          \"child\",\n        );\n        const todoItems: string[] = [];\n        for (const doc of children.results) {\n          if (doc.header.documentType !== \"powerhouse/todo-list\") {\n            continue;\n          }\n          const todoDoc = doc as TodoListDocument;\n          const amountEntries = todoDoc.state.global.items.filter((e) =>\n            e.text.includes(args.searchTerm),\n          ).length;\n          if (amountEntries > 0) {\n            todoItems.push(doc.header.id);\n          }\n        }\n        return todoItems;\n      },\n    },\n  };\n};\n```\n\n:::warning[Enforce authorization in your resolvers]\nThe resolver above returns data with no permission check. Custom subgraphs run\nwith full access to the Reactor, so guarding reads, writes, and document\ncreation is **your** responsibility. See\n[Enforcing Authorization in Subgraphs](../03-BuildingUserExperiences/07-Authorization/05-EnforcingAuthorizationInSubgraphs.md)\nfor the `assertCanRead` / `assertCanWrite` / `canReadDocument` patterns.\n:::\n\n## 3. Testing the to-do list subgraph\n\n### 3.1. Start the reactor\n\nTo activate the subgraph, run:\n\n```bash\nph reactor\n```\n\nYou should see the subgraph being registered in the console output:\n\n```\n> Registered /graphql/search-todos subgraph.\n```\n\n### 3.2. Create some test data\n\nBefore testing queries, create some to-do list documents with test data:\n\n1. Start Connect\n\n```bash\nph connect\n```\n\n1. Open Connect at `http://localhost:3000` in the browser\n2. Add the 'remote' drive that is running locally via the (+) 'Add Drive' button. Add 'http://localhost:4001/d/powerhouse'\n3. Create a new to-do list document\n4. Add some test items:\n   - \"Learn about subgraphs\" (leave unchecked)\n   - \"Build a to-do list subgraph\" (mark as checked)\n   - \"Test the subgraph\" (leave unchecked)\n\n### 3.3. Access GraphQL playground\n\nOpen your browser and go to:\n\n```bash\nhttp://localhost:4001/graphql\n```\n\n### 3.4. Test the queries\n\n**Query 1: Search for Todos**\n\n```graphql\nquery {\n  searchTodos(driveId: \"powerhouse\", searchTerm: \"test\")\n}\n```\n\nYou should get a list of the document Ids which contain the search term \"Test\".\n\nIf you want to see the full state of your document use this query.\n\n```graphql\nquery GetDocument($identifier: String!) {\n  ToDoList {\n    document(identifier: $identifier) {\n      document {\n        state {\n          global {\n            items {\n              checked\n              id\n              text\n            }\n          }\n        }\n      }\n    }\n  }\n}\n```\n\n### 3.5. Test real-time updates\n\nTo verify that your subgraph stays synchronized with document changes:\n\n1. Keep the GraphQL playground open\n2. In another tab, open your to-do list document in Connect\n3. Add a new item or check/uncheck an existing item\n4. Return to the GraphQL playground and re-run your queries\n5. You should see the updated data immediately\n\nThis demonstrates the real-time synchronization between the document model and the subgraph through event processing.\n\n:::tip\nSince you've gotten this far we'll explain a bit more in depth how the GraphQL API or Gateway works!\n:::\n\n## 4. Working with the GraphQL Gateway\n\nThe GraphQL Gateway is a GraphQL schema that combines multiple underlying GraphQL APIs, known as subgraphs, into a single, unified graph. This architecture allows different teams to work independently on their respective services (subgraphs) while providing a single entry point for clients or users to query all available data.\n\n### 4.1 Key concepts\n\n- **Subgraph:** An independent GraphQL service with its own schema. Each subgraph typically represents a specific domain or microservice within a larger system.\n- **Gateway/Router:** A server that sits in front of the subgraphs. It receives client queries, consults the supergraph schema, and routes parts of the query to the relevant subgraphs. It then stitches the results back together before sending the final response to the client.\n\n### 4.2 Benefits of using a supergraph\n\n- **Federated Architecture:** Enables a microservices-based approach where different teams can own and operate their services independently.\n- **Scalability:** Individual subgraphs can be scaled independently based on their specific needs.\n- **Improved Developer Experience:** Clients interact with a single, consistent GraphQL API, simplifying data fetching and reducing the need to manage multiple endpoints.\n- **Schema Evolution:** Subgraphs can evolve their schemas independently, and the supergraph can be updated without breaking existing clients, as long as breaking changes are managed carefully.\n- **Clear Separation of Concerns:** Each subgraph focuses on a specific domain, leading to more maintainable and understandable codebases.\n\n### 4.3 Use the Powerhouse supergraph\n\nThe Powerhouse supergraph for any given remote drive or reactor can be found under `http://localhost:4001/graphql`. The gateway / supergraph available on `/graphql` combines all the subgraphs, except for the drive subgraph (which is accessible via `/d/:driveId`). To access the endpoint, start the reactor and navigate to the URL with `graphql` appended. The following commands explain how you can test & try the supergraph.\n\n- Start the reactor:\n\n  ```bash\n  ph reactor\n  ```\n\n- Open the GraphQL editor in your browser:\n\n  ```\n  http://localhost:4001/graphql\n  ```\n\nThe supergraph allows you to both query & mutate data from the same endpoint.\n\n**Example: Using the supergraph with to-do list documents**\n\n1. Create a todo document in the `powerhouse` drive using the `ToDoList` `createDocument` mutation:\n\n   ```graphql\n   mutation CreateTodoList($name: String!, $parentIdentifier: String) {\n     ToDoList {\n       createDocument(name: $name, parentIdentifier: $parentIdentifier) {\n         id\n         name\n       }\n     }\n   }\n   ```\n\n   Variables:\n\n   ```json\n   {\n     \"name\": \"My Test To-do List\",\n     \"parentIdentifier\": \"powerhouse\"\n   }\n   ```\n\n   This returns the document with its ID (e.g., `\"abc123\"`). Save this ID for the next steps.\n\n2. Add some items to your to-do list using the `addTodoItem` mutation:\n\n   ```graphql\n   mutation AddTodoItem($docId: PHID!, $input: ToDoList_AddTodoItemInput!) {\n     ToDoList {\n       addTodoItem(docId: $docId, input: $input) {\n         id\n         name\n         revisionsList {\n           scope\n           revision\n         }\n       }\n     }\n   }\n   ```\n\n   Variables:\n\n   ```json\n   {\n     \"docId\": \"abc123\",\n     \"input\": {\n       \"text\": \"Learn about supergraphs\"\n     }\n   }\n   ```\n\n   This returns the updated document with its new revision.\n\n3. Query the document state using the `document` query:\n\n   ```graphql\n   query GetTodoList($identifier: String!) {\n     ToDoList {\n       document(identifier: $identifier) {\n         document {\n           id\n           name\n           state {\n             global {\n               items {\n                 id\n                 text\n                 checked\n               }\n             }\n           }\n         }\n       }\n     }\n   }\n   ```\n\n   Variables:\n\n   ```json\n   {\n     \"identifier\": \"abc123\"\n   }\n   ```\n\n4. Use the `searchTodos` subgraph query to search for items across your to-do lists:\n\n   ```graphql\n   query SearchTodos($driveId: String!, $searchTerm: String!) {\n     searchTodos(driveId: $driveId, searchTerm: $searchTerm)\n   }\n   ```\n\n   Variables:\n\n   ```json\n   {\n     \"driveId\": \"powerhouse\",\n     \"searchTerm\": \"supergraph\"\n   }\n   ```\n\nThis demonstrates how the supergraph provides a unified interface to both your document models and your custom subgraphs, allowing you to query and mutate data from the same endpoint.\n\n## 5. What you built\n\nYou now have a to-do list subgraph: an operational data store, event processing that keeps it in sync with the document model, and a supergraph that exposes it through a single GraphQL endpoint.\n\n## Subgraphs are particularly useful for\n\n1. **Cross-Document Interactions**: For example, connecting a to-do list with an Invoice document model:\n   - When an invoice-related task is marked complete, update the invoice status\n   - When an invoice is paid, automatically check off related tasks\n\n2. **External Integrations**:\n   - Sync tasks with external project management tools\n   - Connect with notification systems\n   - Integrate with analytics platforms\n\n3. **Custom Business Logic**:\n   - Implement complex task prioritization\n   - Add automated task assignments\n   - Create custom reporting functionality\n\n### Future enhancements\n\nBridge Processors and Subgraphs \u2014 Currently, there's a gap in how processors and subgraphs interact. Powerhouse might improve this in future updates.\n",
+        "createdAt": "2026-09-02T21:35:15.403Z",
+        "createdBy": "repo-docs-sync",
+        "sourceType": "DOCUMENTATION",
+        "description": "Powerhouse v6.2.2-dev.74 (unchanged since v6.2.2-dev.47) \u2014 Create and customize a subgraph, using the to-do list project as an example. This starts with the basics and adds more complex features as i\u2026",
+        "publishedAt": "2026-06-24T00:07:15.000Z"
+      },
+      "timestampUtcMs": "2026-09-02T21:35:15.403Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "",
+    "timestampUtcMs": "2026-09-02T21:35:15.374Z",
+    "action": {
+      "type": "UPGRADE_DOCUMENT",
+      "input": {
+        "model": "bai/source",
+        "toVersion": 1,
+        "documentId": "968c423d-2c57-46d9-9de8-be4e93f1e331",
+        "fromVersion": 0,
+        "initialState": {
+          "auth": {
+            "grants": [],
+            "version": 0
+          },
+          "local": {},
+          "global": {
+            "title": null,
+            "status": "INBOX",
+            "content": null,
+            "createdAt": null,
+            "createdBy": null,
+            "provenance": null,
+            "sourceType": null,
+            "description": null,
+            "extractedClaims": [],
+            "extractionStats": null
+          },
+          "document": {
+            "hash": {
+              "encoding": "base64",
+              "algorithm": "sha1"
+            },
+            "version": 1
+          }
+        }
+      },
+      "timestampUtcMs": "2026-09-02T21:35:15.374Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "xfgbs1qKbbSdKf7dMnBAwiLoyu0=",
+    "timestampUtcMs": "2026-09-02T21:35:19.454Z",
+    "action": {
+      "type": "ADD_EXTRACTED_CLAIM",
+      "input": {
+        "claimRef": "161a92b3-f23f-4483-86c3-68faacb42e96"
+      },
+      "timestampUtcMs": "2026-09-02T21:35:19.454Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "iy15dTK9oIWSeZ/tFwzGk/8ngNg=",
+    "timestampUtcMs": "2026-09-02T21:35:22.415Z",
+    "action": {
+      "type": "ADD_EXTRACTED_CLAIM",
+      "input": {
+        "claimRef": "a442a64c-1ed5-41ef-ba49-96dc33c81fa5"
+      },
+      "timestampUtcMs": "2026-09-02T21:35:22.415Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "Ikm18Eg+5tYOONqMsbs/7g+kIlE=",
+    "timestampUtcMs": "2026-09-02T21:35:23.902Z",
+    "action": {
+      "type": "ADD_EXTRACTED_CLAIM",
+      "input": {
+        "claimRef": "f0f04c79-b5c1-4198-956b-fa1c1ee7e4b9"
+      },
+      "timestampUtcMs": "2026-09-02T21:35:23.902Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "XBXZDCQ/2Kw3tDhEEsILMtMwIvo=",
+    "timestampUtcMs": "2026-09-02T21:35:29.254Z",
+    "action": {
+      "type": "SET_SOURCE_STATUS",
+      "input": {
+        "status": "EXTRACTED"
+      },
+      "timestampUtcMs": "2026-09-02T21:35:29.254Z"
+    }
+  }
+]

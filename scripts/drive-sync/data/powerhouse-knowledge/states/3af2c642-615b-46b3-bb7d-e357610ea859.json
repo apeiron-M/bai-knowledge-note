@@ -1,0 +1,107 @@
+{
+  "links": [
+    {
+      "id": "lnk-cf6d15b1-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "cf6d15b1-ad92-4544-b28e-2ba6c6911f60",
+      "targetTitle": "Spec \u203a GraphQL Code Generator \u2013 Technical Spec",
+      "reason": "Extracted from docs/specs/gql-gen.md at v6.2.2-dev.74 \u2014 Goal; Solution; Example",
+      "confidence": "grounded"
+    },
+    {
+      "id": "lnk-5a6d937e-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "5a6d937e-1813-4ee6-a8f2-549468a06274",
+      "targetTitle": "one-tokenprovider-is-the-single-auth-seam",
+      "reason": "The generated SDK this spec calls for is what the light client's single tokenProvider seam authenticates",
+      "confidence": "established"
+    },
+    {
+      "id": "lnk-12279c44-bui",
+      "linkType": "BUILDS_ON",
+      "targetDocumentId": "12279c44-5030-4886-b208-f4247e648a4c",
+      "targetTitle": "gql-codegen-untyped-sync-break",
+      "reason": "Each element of the stack answers one of the three reasons the actionId break went undetected: no schema checking, no runtime decode, no mapping assertions",
+      "confidence": "grounded"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "The GraphQL layer is meant to be typed by The Guild's codegen with Zod-generated parsers validating responses and dropping unknown fields",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "1a539059-abe5-450a-bbd7-6efab9c89eee",
+      "name": "graphql",
+      "topicDocumentId": null
+    },
+    {
+      "id": "68bfe675-d481-4d9b-851d-3c17f42d4c93",
+      "name": "codegen",
+      "topicDocumentId": null
+    },
+    {
+      "id": "ea097ac9-94a4-4147-ba26-aa53efc400cd",
+      "name": "validation",
+      "topicDocumentId": null
+    },
+    {
+      "id": "a784e59b-03c2-4e86-a298-5624fc0b6202",
+      "name": "zod",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "The spec's goal is \"type-safe, stable, and validated communication across the system's GraphQL layer, enabling both compile-time **and runtime** guarantees\" \u2014 and the second half is the part that distinguishes it from ordinary codegen.\n\nThe chosen stack:\n\n- **`@graphql-codegen/client-preset`** \u2014 typed `DocumentNode`s, operations and helpers, giving compile-time safety for fragments and operations;\n- **`@graphql-codegen/typescript`** + **`typescript-operations`** \u2014 TypeScript definitions for schema types and operations;\n- a **fetcher plugin** chosen per client \u2014 `typescript-graphql-request` for a lightweight auto-typed SDK in Node or the browser, or `typescript-react-apollo` when integrating with Apollo;\n- **`typescript-validation-schema` (Zod)** \u2014 generated parsers that validate responses **and drop unknown fields**.\n\nFour outcomes are named: typed operations, runtime validation, a **single source of truth** through shared fragments (for example an `OperationFields` fragment enforcing field requirements across every client), and client code consuming a generated SDK instead of ad-hoc query strings.\n\nThe worked example is deliberate about layering: one file holds the typed document (`graphql(...)` from the generated helpers), the DTOs with their Zod validation, and the consumer call \u2014 so the mapping from wire shape to domain shape has exactly one home per operation rather than one per call site.\n\n## Provenance\n- `docs/specs/gql-gen.md` \u2014 Goal; Solution; Example\n\n_Extracted from the Powerhouse repository at **v6.2.2-dev.74**._",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": "v6.2.2-dev.74",
+  "computes": null,
+  "filePath": "docs/specs/gql-gen.md",
+  "noteType": "DECISION",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "knowledge-agent",
+    "createdAt": "2026-09-03T07:29:30.197Z",
+    "sessionId": null,
+    "updatedAt": "2026-09-03T07:31:12.358Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "client-preset for typed DocumentNodes, typescript and typescript-operations for schema and operation types, a fetcher plugin, and typescript-validation-schema for runtime decode.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "5f61300f-0e98-4a9f-a28d-3bb501c86b03",
+      "actor": "knowledge-agent",
+      "comment": "extracted from docs/specs/gql-gen.md at v6.2.2-dev.74",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-09-03T07:29:30.683Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "2fa92a3e-f077-48b2-af5c-2be173f603f6",
+      "actor": "liberuum",
+      "comment": "claim checked against the cited file at the pinned tag",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-09-03T07:29:31.314Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

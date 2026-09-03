@@ -1,0 +1,785 @@
+[
+  {
+    "index": 0,
+    "hash": "",
+    "timestampUtcMs": "2026-08-14T12:34:31.972Z",
+    "action": {
+      "type": "CREATE_DOCUMENT",
+      "input": {
+        "meta": {},
+        "name": "moc-data-processing-and-cqrs",
+        "slug": "",
+        "model": "bai/moc",
+        "branch": "main",
+        "signing": {
+          "nonce": "",
+          "publicKey": {},
+          "signature": "b3fc78f5-f8e5-4077-b4cb-345516ed68ad",
+          "documentType": "bai/moc",
+          "createdAtUtcIso": "2026-08-14T12:34:31.972Z"
+        },
+        "version": 0,
+        "documentId": "b3fc78f5-f8e5-4077-b4cb-345516ed68ad",
+        "protocolVersions": {
+          "base-reducer": 2
+        }
+      },
+      "timestampUtcMs": "2026-08-14T12:34:31.972Z"
+    }
+  },
+  {
+    "index": 0,
+    "hash": "IEUBh6E7BPxpciH9EPKkdVepwsg=",
+    "timestampUtcMs": "2026-08-14T12:36:12.000Z",
+    "action": {
+      "type": "CREATE_MOC",
+      "input": {
+        "tier": "DOMAIN",
+        "title": "Data Processing and CQRS",
+        "createdAt": "2026-04-02T13:00:00.000Z",
+        "description": "Processors, subgraphs, relational database projections, live queries, and the analytics engine that transform event-sourced documents into queryable read models.",
+        "orientation": "The write side of Powerhouse captures intent through operations on event-sourced documents, but real-world applications need to query, aggregate, and analyze that data in ways the document model alone cannot efficiently support. This is where the CQRS read side comes in. Subgraphs extend document models with custom GraphQL resolvers. Processors receive operation streams and project them into relational databases for SQL-friendly querying. The RelationalDBProcessor base class standardizes this pattern with PgLite for live queries that push updates to connected clients. And the analytics engine adds time-series aggregation with interval-based bucketing and level-of-detail dimension querying. Together, these components transform a stream of document operations into the rich, queryable data surfaces that dashboards, reports, and integrations demand."
+      },
+      "timestampUtcMs": "2026-08-14T12:36:12.000Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "",
+    "timestampUtcMs": "2026-08-14T12:34:31.972Z",
+    "action": {
+      "type": "UPGRADE_DOCUMENT",
+      "input": {
+        "model": "bai/moc",
+        "toVersion": 1,
+        "documentId": "b3fc78f5-f8e5-4077-b4cb-345516ed68ad",
+        "fromVersion": 0,
+        "initialState": {
+          "auth": {
+            "grants": [],
+            "version": 0
+          },
+          "local": {},
+          "global": {
+            "tier": null,
+            "title": null,
+            "version": null,
+            "tensions": [],
+            "childRefs": [],
+            "coreIdeas": [],
+            "createdAt": null,
+            "noteCount": 0,
+            "parentRef": null,
+            "updatedAt": null,
+            "agentNotes": [],
+            "description": null,
+            "orientation": null,
+            "openQuestions": []
+          },
+          "document": {
+            "hash": {
+              "encoding": "base64",
+              "algorithm": "sha1"
+            },
+            "version": 1
+          }
+        }
+      },
+      "timestampUtcMs": "2026-08-14T12:34:31.972Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "0zWhgB3Hxd9tvG0Gx7G99nNvht4=",
+    "timestampUtcMs": "2026-08-14T14:37:29.000Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "version",
+        "value": "v6.2.2-dev.47",
+        "updatedAt": "2026-08-14T12:00:00.000Z"
+      },
+      "timestampUtcMs": "2026-08-14T14:37:29.000Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "",
+    "timestampUtcMs": "2026-08-14T12:39:27.091Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "b3fc78f5-f8e5-4077-b4cb-345516ed68ad",
+        "targetId": "a442a64c-1ed5-41ef-ba49-96dc33c81fa5",
+        "relationshipType": "CORE_IDEA"
+      },
+      "timestampUtcMs": "2026-08-14T12:39:27.091Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "c3OAG1dSdJ0CeX6BftdeXgXD7uQ=",
+    "timestampUtcMs": "2026-08-16T22:31:34.983Z",
+    "action": {
+      "type": "ADD_TENSION",
+      "input": {
+        "id": "1ef73908-f346-4cda-9696-80ebbc4070ba",
+        "addedAt": "2026-08-16T23:55:00.000Z",
+        "description": "DISSOLVED 2026-08-16 - does a ProcessorFilter \"*\" apply outside documentId? reactor 6.2.2-dev.47 matchesFilter() special-cases the wildcard in the documentId branch only, and the note that generalized it was corrected on 2026-08-13, so the pair now agrees. Full adjudication: bai/tension 1ef73908 in /ops/.",
+        "involvedRefs": [
+          "d7ef28bc-9d89-4db7-a043-0818e8914b5b",
+          "6a3275cd-d71e-4342-8cd3-3fb29b8fe58c"
+        ]
+      },
+      "timestampUtcMs": "2026-08-16T22:31:34.983Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "",
+    "timestampUtcMs": "2026-08-14T12:39:27.186Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "b3fc78f5-f8e5-4077-b4cb-345516ed68ad",
+        "targetId": "6a3275cd-d71e-4342-8cd3-3fb29b8fe58c",
+        "relationshipType": "CORE_IDEA"
+      },
+      "timestampUtcMs": "2026-08-14T12:39:27.186Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "G3pT3sEGGe65ItrgII/pviPhghk=",
+    "timestampUtcMs": "2026-09-03T07:30:31.673Z",
+    "action": {
+      "type": "ADD_TENSION",
+      "input": {
+        "id": "24a46cc9-59dd-418f-9de0-cd76b2ee3535",
+        "addedAt": "2026-09-03T07:30:30.172Z",
+        "description": "\u201cThe relational-DB processor spec describes an API the code no longer has: onStrands, InternalTransmitterUpdate, PowerhouseDB and packages/d\u2026\u201d contradicts \u201cRelationalDbProcessor provides a type-safe base class with per-drive namespace isolation and lifecycle migration hooks\u201d. Opened automatically from a CONTRADICTS link \u2014 resolve if one side is right, dissolve if both hold in different contexts.",
+        "involvedRefs": [
+          "97c3a924-0ba9-4b89-86f7-b7a5747d41a7",
+          "f7e6d116-bd5d-4052-9f2a-974e4d7cb7e2"
+        ]
+      },
+      "timestampUtcMs": "2026-09-03T07:30:31.673Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "",
+    "timestampUtcMs": "2026-08-14T12:39:27.267Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "b3fc78f5-f8e5-4077-b4cb-345516ed68ad",
+        "targetId": "04374aa9-c0dc-477b-86c2-35841f3c8857",
+        "relationshipType": "CORE_IDEA"
+      },
+      "timestampUtcMs": "2026-08-14T12:39:27.267Z"
+    }
+  },
+  {
+    "index": 5,
+    "hash": "",
+    "timestampUtcMs": "2026-08-14T12:39:27.360Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "b3fc78f5-f8e5-4077-b4cb-345516ed68ad",
+        "targetId": "f7e6d116-bd5d-4052-9f2a-974e4d7cb7e2",
+        "relationshipType": "CORE_IDEA"
+      },
+      "timestampUtcMs": "2026-08-14T12:39:27.360Z"
+    }
+  },
+  {
+    "index": 6,
+    "hash": "",
+    "timestampUtcMs": "2026-08-14T12:39:27.446Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "b3fc78f5-f8e5-4077-b4cb-345516ed68ad",
+        "targetId": "495ad2bd-8606-4b51-afc3-3a3a4c3f72e7",
+        "relationshipType": "CORE_IDEA"
+      },
+      "timestampUtcMs": "2026-08-14T12:39:27.446Z"
+    }
+  },
+  {
+    "index": 7,
+    "hash": "",
+    "timestampUtcMs": "2026-08-14T12:39:27.542Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "b3fc78f5-f8e5-4077-b4cb-345516ed68ad",
+        "targetId": "11da9c61-a825-4c70-a57c-f80b10f569c7",
+        "relationshipType": "CORE_IDEA"
+      },
+      "timestampUtcMs": "2026-08-14T12:39:27.542Z"
+    }
+  },
+  {
+    "index": 8,
+    "hash": "",
+    "timestampUtcMs": "2026-08-14T12:39:27.634Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "b3fc78f5-f8e5-4077-b4cb-345516ed68ad",
+        "targetId": "645e18ed-6da5-4daf-8ed3-7a96cb085b48",
+        "relationshipType": "CORE_IDEA"
+      },
+      "timestampUtcMs": "2026-08-14T12:39:27.634Z"
+    }
+  },
+  {
+    "index": 9,
+    "hash": "",
+    "timestampUtcMs": "2026-08-14T12:39:27.717Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "b3fc78f5-f8e5-4077-b4cb-345516ed68ad",
+        "targetId": "4287517c-647b-4115-bf7e-d9442631d3b9",
+        "relationshipType": "CORE_IDEA"
+      },
+      "timestampUtcMs": "2026-08-14T12:39:27.717Z"
+    }
+  },
+  {
+    "index": 10,
+    "hash": "",
+    "timestampUtcMs": "2026-08-14T12:39:27.803Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "b3fc78f5-f8e5-4077-b4cb-345516ed68ad",
+        "targetId": "b595843f-e2f9-4172-a43a-eb471fc727a1",
+        "relationshipType": "CORE_IDEA"
+      },
+      "timestampUtcMs": "2026-08-14T12:39:27.803Z"
+    }
+  },
+  {
+    "index": 11,
+    "hash": "",
+    "timestampUtcMs": "2026-08-16T10:35:45.373Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "b3fc78f5-f8e5-4077-b4cb-345516ed68ad",
+        "targetId": "87e21eda-709d-48c8-835f-912b186841d3",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-08-16T10:35:45.373Z"
+    }
+  },
+  {
+    "index": 12,
+    "hash": "",
+    "timestampUtcMs": "2026-08-16T10:35:45.557Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "b3fc78f5-f8e5-4077-b4cb-345516ed68ad",
+        "targetId": "bf77ab80-2d29-47ce-9fc1-3aedd3589eb3",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-08-16T10:35:45.557Z"
+    }
+  },
+  {
+    "index": 13,
+    "hash": "",
+    "timestampUtcMs": "2026-08-16T10:35:45.859Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "b3fc78f5-f8e5-4077-b4cb-345516ed68ad",
+        "targetId": "496fc267-9bc4-4820-8f9b-442eddcd587c",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-08-16T10:35:45.859Z"
+    }
+  },
+  {
+    "index": 14,
+    "hash": "",
+    "timestampUtcMs": "2026-08-16T10:35:47.129Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "b3fc78f5-f8e5-4077-b4cb-345516ed68ad",
+        "targetId": "9b1bec19-6bcc-4f87-80b9-5f25360e4b7e",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-08-16T10:35:47.129Z"
+    }
+  },
+  {
+    "index": 15,
+    "hash": "",
+    "timestampUtcMs": "2026-08-16T10:35:47.574Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "b3fc78f5-f8e5-4077-b4cb-345516ed68ad",
+        "targetId": "24911714-14b6-42d9-bba3-2692bdbc27f3",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-08-16T10:35:47.574Z"
+    }
+  },
+  {
+    "index": 16,
+    "hash": "",
+    "timestampUtcMs": "2026-08-16T10:35:49.794Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "b3fc78f5-f8e5-4077-b4cb-345516ed68ad",
+        "targetId": "2b94bc30-a50f-4818-8f6c-f7d5e4b00a06",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-08-16T10:35:49.794Z"
+    }
+  },
+  {
+    "index": 17,
+    "hash": "",
+    "timestampUtcMs": "2026-08-16T10:35:57.267Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "b3fc78f5-f8e5-4077-b4cb-345516ed68ad",
+        "targetId": "b69f8c2b-0f19-4373-8839-e10f697e9e26",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-08-16T10:35:57.267Z"
+    }
+  },
+  {
+    "index": 18,
+    "hash": "",
+    "timestampUtcMs": "2026-08-16T10:35:58.617Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "b3fc78f5-f8e5-4077-b4cb-345516ed68ad",
+        "targetId": "3feb1e05-6dc0-4dd3-abe9-01d7a569ae3f",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-08-16T10:35:58.617Z"
+    }
+  },
+  {
+    "index": 19,
+    "hash": "",
+    "timestampUtcMs": "2026-08-16T10:35:59.786Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "b3fc78f5-f8e5-4077-b4cb-345516ed68ad",
+        "targetId": "50f8ea0a-9861-48fc-899b-9f063a038d6e",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-08-16T10:35:59.786Z"
+    }
+  },
+  {
+    "index": 20,
+    "hash": "",
+    "timestampUtcMs": "2026-08-16T10:36:00.077Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "b3fc78f5-f8e5-4077-b4cb-345516ed68ad",
+        "targetId": "73426591-2d5e-431c-bdd8-f8a2502bed0a",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-08-16T10:36:00.077Z"
+    }
+  },
+  {
+    "index": 21,
+    "hash": "",
+    "timestampUtcMs": "2026-08-16T10:36:01.433Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "b3fc78f5-f8e5-4077-b4cb-345516ed68ad",
+        "targetId": "be290531-8d4f-45d3-be74-39e0ab90c900",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-08-16T10:36:01.433Z"
+    }
+  },
+  {
+    "index": 22,
+    "hash": "",
+    "timestampUtcMs": "2026-08-21T10:30:24.731Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "b3fc78f5-f8e5-4077-b4cb-345516ed68ad",
+        "targetId": "3f1f4f03-daeb-4fc3-b106-a0b35e298d6b",
+        "relationshipType": "CORE_IDEA"
+      },
+      "timestampUtcMs": "2026-08-21T10:30:24.731Z"
+    }
+  },
+  {
+    "index": 23,
+    "hash": "",
+    "timestampUtcMs": "2026-08-21T10:30:25.506Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "b3fc78f5-f8e5-4077-b4cb-345516ed68ad",
+        "targetId": "cfb4fd8d-46bb-4581-b7f9-3b00ec8c1e19",
+        "relationshipType": "CORE_IDEA"
+      },
+      "timestampUtcMs": "2026-08-21T10:30:25.506Z"
+    }
+  },
+  {
+    "index": 24,
+    "hash": "",
+    "timestampUtcMs": "2026-09-02T22:25:17.418Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "b3fc78f5-f8e5-4077-b4cb-345516ed68ad",
+        "targetId": "2ddae2ce-5409-4173-b76b-54a55b475c07",
+        "relationshipType": "CORE_IDEA"
+      },
+      "timestampUtcMs": "2026-09-02T22:25:17.418Z"
+    }
+  },
+  {
+    "index": 25,
+    "hash": "",
+    "timestampUtcMs": "2026-09-03T07:20:49.358Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "b3fc78f5-f8e5-4077-b4cb-345516ed68ad",
+        "targetId": "14d47019-4ebc-4d7d-acfd-352b344a291f",
+        "relationshipType": "CORE_IDEA"
+      },
+      "timestampUtcMs": "2026-09-03T07:20:49.358Z"
+    }
+  },
+  {
+    "index": 26,
+    "hash": "",
+    "timestampUtcMs": "2026-09-03T07:21:02.651Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "b3fc78f5-f8e5-4077-b4cb-345516ed68ad",
+        "targetId": "b5474b61-a140-4704-b812-4021fe7c8f9b",
+        "relationshipType": "CORE_IDEA"
+      },
+      "timestampUtcMs": "2026-09-03T07:21:02.651Z"
+    }
+  },
+  {
+    "index": 27,
+    "hash": "",
+    "timestampUtcMs": "2026-09-03T07:22:42.810Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "b3fc78f5-f8e5-4077-b4cb-345516ed68ad",
+        "targetId": "14d47019-4ebc-4d7d-acfd-352b344a291f",
+        "relationshipType": "CORE_IDEA"
+      },
+      "timestampUtcMs": "2026-09-03T07:22:42.810Z"
+    }
+  },
+  {
+    "index": 28,
+    "hash": "",
+    "timestampUtcMs": "2026-09-03T07:22:55.346Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "b3fc78f5-f8e5-4077-b4cb-345516ed68ad",
+        "targetId": "b5474b61-a140-4704-b812-4021fe7c8f9b",
+        "relationshipType": "CORE_IDEA"
+      },
+      "timestampUtcMs": "2026-09-03T07:22:55.346Z"
+    }
+  },
+  {
+    "index": 29,
+    "hash": "",
+    "timestampUtcMs": "2026-09-03T07:30:32.017Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "b3fc78f5-f8e5-4077-b4cb-345516ed68ad",
+        "targetId": "97c3a924-0ba9-4b89-86f7-b7a5747d41a7",
+        "relationshipType": "CORE_IDEA"
+      },
+      "timestampUtcMs": "2026-09-03T07:30:32.017Z"
+    }
+  },
+  {
+    "index": 30,
+    "hash": "",
+    "timestampUtcMs": "2026-09-03T07:30:35.607Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "b3fc78f5-f8e5-4077-b4cb-345516ed68ad",
+        "targetId": "1c87346f-6aaf-4e31-aa3a-0137ec638ba1",
+        "relationshipType": "CORE_IDEA"
+      },
+      "timestampUtcMs": "2026-09-03T07:30:35.607Z"
+    }
+  },
+  {
+    "index": 31,
+    "hash": "",
+    "timestampUtcMs": "2026-09-03T07:30:37.500Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "b3fc78f5-f8e5-4077-b4cb-345516ed68ad",
+        "targetId": "f760ca02-0de5-45a0-bf21-519bd9e4c0fa",
+        "relationshipType": "CORE_IDEA"
+      },
+      "timestampUtcMs": "2026-09-03T07:30:37.500Z"
+    }
+  },
+  {
+    "index": 32,
+    "hash": "",
+    "timestampUtcMs": "2026-09-03T07:31:38.242Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "b3fc78f5-f8e5-4077-b4cb-345516ed68ad",
+        "targetId": "97c3a924-0ba9-4b89-86f7-b7a5747d41a7",
+        "relationshipType": "CORE_IDEA"
+      },
+      "timestampUtcMs": "2026-09-03T07:31:38.242Z"
+    }
+  },
+  {
+    "index": 33,
+    "hash": "",
+    "timestampUtcMs": "2026-09-03T07:31:40.559Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "b3fc78f5-f8e5-4077-b4cb-345516ed68ad",
+        "targetId": "1c87346f-6aaf-4e31-aa3a-0137ec638ba1",
+        "relationshipType": "CORE_IDEA"
+      },
+      "timestampUtcMs": "2026-09-03T07:31:40.559Z"
+    }
+  },
+  {
+    "index": 34,
+    "hash": "",
+    "timestampUtcMs": "2026-09-03T07:31:42.449Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "b3fc78f5-f8e5-4077-b4cb-345516ed68ad",
+        "targetId": "f760ca02-0de5-45a0-bf21-519bd9e4c0fa",
+        "relationshipType": "CORE_IDEA"
+      },
+      "timestampUtcMs": "2026-09-03T07:31:42.449Z"
+    }
+  },
+  {
+    "index": 35,
+    "hash": "",
+    "timestampUtcMs": "2026-09-03T07:39:17.560Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "b3fc78f5-f8e5-4077-b4cb-345516ed68ad",
+        "targetId": "dcc03b01-d39e-4a0d-80c5-3700ada5f79b",
+        "relationshipType": "CORE_IDEA"
+      },
+      "timestampUtcMs": "2026-09-03T07:39:17.560Z"
+    }
+  },
+  {
+    "index": 36,
+    "hash": "",
+    "timestampUtcMs": "2026-09-03T07:39:25.207Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "b3fc78f5-f8e5-4077-b4cb-345516ed68ad",
+        "targetId": "58b438ff-5b3e-4e51-afa3-a9676f8b1beb",
+        "relationshipType": "CORE_IDEA"
+      },
+      "timestampUtcMs": "2026-09-03T07:39:25.207Z"
+    }
+  },
+  {
+    "index": 37,
+    "hash": "",
+    "timestampUtcMs": "2026-09-03T07:39:27.725Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "b3fc78f5-f8e5-4077-b4cb-345516ed68ad",
+        "targetId": "a8824d76-26b8-48fb-99c2-93072ed70dc2",
+        "relationshipType": "CORE_IDEA"
+      },
+      "timestampUtcMs": "2026-09-03T07:39:27.725Z"
+    }
+  },
+  {
+    "index": 38,
+    "hash": "",
+    "timestampUtcMs": "2026-09-03T07:39:30.554Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "b3fc78f5-f8e5-4077-b4cb-345516ed68ad",
+        "targetId": "6cd88ded-d8e5-4645-8dc1-8dab23dd6dc4",
+        "relationshipType": "CORE_IDEA"
+      },
+      "timestampUtcMs": "2026-09-03T07:39:30.554Z"
+    }
+  },
+  {
+    "index": 39,
+    "hash": "",
+    "timestampUtcMs": "2026-09-03T07:44:33.381Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "b3fc78f5-f8e5-4077-b4cb-345516ed68ad",
+        "targetId": "c88edfd3-97f0-47b0-b103-7276f157eeb2",
+        "relationshipType": "CORE_IDEA"
+      },
+      "timestampUtcMs": "2026-09-03T07:44:33.381Z"
+    }
+  },
+  {
+    "index": 40,
+    "hash": "",
+    "timestampUtcMs": "2026-09-03T07:44:35.222Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "b3fc78f5-f8e5-4077-b4cb-345516ed68ad",
+        "targetId": "ef30c62a-0043-4bbb-86d1-e1c16a925ee3",
+        "relationshipType": "CORE_IDEA"
+      },
+      "timestampUtcMs": "2026-09-03T07:44:35.222Z"
+    }
+  },
+  {
+    "index": 41,
+    "hash": "",
+    "timestampUtcMs": "2026-09-03T07:44:37.560Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "b3fc78f5-f8e5-4077-b4cb-345516ed68ad",
+        "targetId": "11abd903-ee8e-4a00-a1c9-ffc9e22e4f5b",
+        "relationshipType": "CORE_IDEA"
+      },
+      "timestampUtcMs": "2026-09-03T07:44:37.560Z"
+    }
+  },
+  {
+    "index": 42,
+    "hash": "",
+    "timestampUtcMs": "2026-09-03T07:44:55.733Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "b3fc78f5-f8e5-4077-b4cb-345516ed68ad",
+        "targetId": "97837c71-1ce0-493d-8400-9d14222ff5cd",
+        "relationshipType": "CORE_IDEA"
+      },
+      "timestampUtcMs": "2026-09-03T07:44:55.733Z"
+    }
+  },
+  {
+    "index": 43,
+    "hash": "",
+    "timestampUtcMs": "2026-09-03T07:55:36.628Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "b3fc78f5-f8e5-4077-b4cb-345516ed68ad",
+        "targetId": "ceb2e2c7-7965-431d-ac3d-1409a89529ce",
+        "relationshipType": "CORE_IDEA"
+      },
+      "timestampUtcMs": "2026-09-03T07:55:36.628Z"
+    }
+  },
+  {
+    "index": 44,
+    "hash": "",
+    "timestampUtcMs": "2026-09-03T07:55:38.516Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "b3fc78f5-f8e5-4077-b4cb-345516ed68ad",
+        "targetId": "4090fa00-da1c-4c2e-9c4a-2dba085341fb",
+        "relationshipType": "CORE_IDEA"
+      },
+      "timestampUtcMs": "2026-09-03T07:55:38.516Z"
+    }
+  },
+  {
+    "index": 45,
+    "hash": "",
+    "timestampUtcMs": "2026-09-03T07:55:40.811Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "b3fc78f5-f8e5-4077-b4cb-345516ed68ad",
+        "targetId": "d1df6fc5-ad16-455b-9462-257008df48f8",
+        "relationshipType": "CORE_IDEA"
+      },
+      "timestampUtcMs": "2026-09-03T07:55:40.811Z"
+    }
+  },
+  {
+    "index": 46,
+    "hash": "",
+    "timestampUtcMs": "2026-09-03T07:55:42.669Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "b3fc78f5-f8e5-4077-b4cb-345516ed68ad",
+        "targetId": "b22a5f73-8f8b-4808-9539-447525cf333c",
+        "relationshipType": "CORE_IDEA"
+      },
+      "timestampUtcMs": "2026-09-03T07:55:42.669Z"
+    }
+  },
+  {
+    "index": 47,
+    "hash": "",
+    "timestampUtcMs": "2026-09-03T07:55:44.569Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "b3fc78f5-f8e5-4077-b4cb-345516ed68ad",
+        "targetId": "04286cce-121f-43cb-ad60-e9b02cfdf3b9",
+        "relationshipType": "CORE_IDEA"
+      },
+      "timestampUtcMs": "2026-09-03T07:55:44.569Z"
+    }
+  }
+]

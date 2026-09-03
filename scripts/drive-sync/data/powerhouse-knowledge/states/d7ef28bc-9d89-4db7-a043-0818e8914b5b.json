@@ -1,0 +1,98 @@
+{
+  "links": [
+    {
+      "id": "lnk-04374aa9-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "04374aa9-c0dc-477b-86c2-35841f3c8857",
+      "targetTitle": "relational-db-processor-for-sql-projections"
+    },
+    {
+      "id": "lnk-6a3275cd-con",
+      "linkType": "CONTRADICTS",
+      "targetDocumentId": "6a3275cd-d71e-4342-8cd3-3fb29b8fe58c",
+      "targetTitle": "processors-receive-operations-with-context"
+    },
+    {
+      "id": "lnk-c12de121-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "c12de121-f575-4c71-95f7-bd298533dd51",
+      "targetTitle": "Academy \u203a Reference \u203a Reactor \u203a Processors",
+      "reason": "The note names apps/academy/docs/academy/04-Reference/01-Reactor/05-Processors.md as its source; page text revised between v6.2.2-dev.47 and v6.2.2-dev.74 \u2014 re-verified in the v6.2.2-dev.74 pass",
+      "confidence": "grounded"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "The \"*\" wildcard in a ProcessorFilter is honored only in documentId",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "4f882800-5630-408e-bf19-dead62dc0f6c",
+      "name": "processors",
+      "topicDocumentId": null
+    },
+    {
+      "id": "634e19dd-6d0e-4004-909d-269f3e126586",
+      "name": "gotchas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "0b50852c-e067-484b-8136-eb91f40fb3ef",
+      "name": "filters",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "`ProcessorFilter` looks uniform, which is the source of the bug:\n\n```typescript\ntype ProcessorFilter = {\n  documentType?: string[];\n  scope?: string[];\n  branch?: string[];\n  documentId?: string[];\n};\n```\n\nMatching is per field, and all present fields must match. A field that is `undefined` or `[]` matches everything; a field with values matches an operation whose corresponding context value is in the array.\n\nThe `\"*\"` wildcard is special-cased in **`documentId` only**. There it means \"any document\". In `documentType`, `scope`, and `branch` there is no wildcard handling at all \u2014 a literal `\"*\"` is compared as a plain string, so it matches only an operation whose value *is* the string `\"*\"`. Since no real operation has a scope named `\"*\"`, `scope: [\"*\"]` matches **nothing** and the processor silently receives zero operations.\n\nThe correct way to match all scopes is to omit the field or set it to `[]`:\n\n```typescript\nconst filter: ProcessorFilter = {\n  documentType: [\"powerhouse/todo\"],\n  scope: [\"global\"],   // concrete scopes, or omit entirely\n  branch: [\"main\"],\n  documentId: [\"*\"],   // \"*\" is honored here\n};\n```\n\nThis is not hypothetical: the docs flag a **latent inconsistency** in the codegen analytics template, which emits `scope: [\"*\"]`. Scaffold an analytics processor and you get a filter that cannot match, with no error to tell you. Set `scope` to the concrete scopes you want, or drop the key.\n\nBe aware this **contradicts** the guidance in the existing note \"Processors implement IProcessor with onOperations\u2026\", which states that `ProcessorFilter` arrays take `[\"*\"]` for all. That generalization holds for `documentId` and fails for the other three fields; the per-field rule above is the current behavior.\n\nAlso note the division of labour: the filter decides *which* operations reach a processor, while `startFrom` on the `ProcessorRecord` decides *where in history* it starts. They are unrelated knobs.\n\n_Source: apps/academy/docs/academy/04-Reference/01-Reactor/05-Processors.md (Powerhouse v6.2.2-dev.45)._\n\n_Correction 2026-08-16, verified against installed v6.2.2-dev.47:_ the per-field rule above still holds exactly - `matchesFilter()` in `@powerhousedao/reactor` tests for `\"*\"` only in the `documentId` branch. Two surrounding claims have gone stale, though. (1) **The codegen template is fixed.** At `@powerhousedao/codegen@6.2.2-dev.47` the analytics template omits `scope` entirely and the relational template emits `scope: [\"global\"]`; both carry the comment that only `documentId` honours the wildcard. Nothing in codegen emits `scope: [\"*\"]` any more. (2) **The note contradicted above was itself corrected on 2026-08-13** and now states the same per-field rule, so the two notes no longer disagree; the CONTRADICTS edge is kept as provenance of that correction. Recorded and dissolved as a `bai/tension` in `/ops/` (\"Does a ProcessorFilter \\\"*\\\" wildcard apply outside documentId?\").",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": "v6.2.2-dev.74",
+  "computes": null,
+  "filePath": "apps/academy/docs/academy/04-Reference/01-Reactor/05-Processors.md",
+  "noteType": "PATTERN",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "claude",
+    "createdAt": "2026-08-13T14:34:29.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-09-02T22:26:29.989Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "In documentType, scope and branch a literal \"*\" matches only the string \"*\". Omit the field or use [] to match all \u2014 the codegen analytics template's scope [\"*\"] matches nothing.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "3ddfce72-e92b-4cc5-b0a0-f30bd2d39413",
+      "actor": "claude",
+      "comment": "Knowledge registered against powerhouse v6.2.2-dev.47",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-14T12:00:00.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "e7a22779-312b-439d-a00c-f13b3e0f7e50",
+      "actor": "liberuum",
+      "comment": "Canonical as of powerhouse v6.2.2-dev.47",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-14T12:00:00.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

@@ -1,0 +1,107 @@
+{
+  "links": [
+    {
+      "id": "lnk-1a01ee55-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "1a01ee55-bace-4345-ad27-1994f2136b5a",
+      "targetTitle": "Package \u203a reactor-browser \u203a relational \u2014 Relational Database Layer",
+      "reason": "Extracted from packages/reactor-browser/src/relational/README.md at v6.2.2-dev.74 \u2014 Overview; Quick Start; API Reference \u203a createProcessorQuery; Dynamic Parameters; Advanced Features",
+      "confidence": "grounded"
+    },
+    {
+      "id": "lnk-04374aa9-bui",
+      "linkType": "BUILDS_ON",
+      "targetDocumentId": "04374aa9-c0dc-477b-86c2-35841f3c8857",
+      "targetTitle": "relational-db-processor-for-sql-projections",
+      "reason": "A relational processor projects operations into SQL tables; this layer is how a component reads those tables back with the same schema type and live updates",
+      "confidence": "grounded"
+    },
+    {
+      "id": "lnk-58b438ff-bui",
+      "linkType": "BUILDS_ON",
+      "targetDocumentId": "58b438ff-5b3e-4e51-afa3-a9676f8b1beb",
+      "targetTitle": "pglite-window-global-state",
+      "reason": "Live queries run against the single PGlite connection that lower layer manages",
+      "confidence": "grounded"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "The relational layer wraps PGlite in Kysely and turns a processor's schema into typed live-query hooks with automatic parameter memoization",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "0d084afa-791f-4768-8957-7d873fac5ec6",
+      "name": "reactor-browser",
+      "topicDocumentId": null
+    },
+    {
+      "id": "0b1249d5-b040-44cb-9d07-3b256eba44ed",
+      "name": "relational-db",
+      "topicDocumentId": null
+    },
+    {
+      "id": "e6448a72-616f-4df8-a3e4-a23ea4773b19",
+      "name": "kysely",
+      "topicDocumentId": null
+    },
+    {
+      "id": "5571145f-b040-4fd2-acfa-9d6b4f701530",
+      "name": "live-queries",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "`@powerhousedao/reactor-browser` ships a high-level relational layer over PGlite: **type-safe operations through Kysely** plus **live queries with real-time updates**. The workflow it documents is three steps \u2014 define the database schema as a TypeScript type, create a typed query hook, use it in a component.\n\n`createProcessorQuery<Schema>()` is the factory. It supports **static queries** with no parameters and **parameterised** ones, taking a query callback that receives the Kysely builder, and returns a hook whose result carries loading state. Two ergonomics are called out explicitly:\n\n- **automatic memoization** of parameters, including \"parameters that change over time\" \u2014 so passing an inline object does not re-run the query on every render, which is the classic live-query footgun;\n- **automatic optimization** and full type safety from the schema type, so a column rename is a compile error rather than a runtime empty result.\n\nThe documented usage range goes from a basic select through conditional queries and custom SQL to complex joins \u2014 meaning the escape hatch to raw SQL is part of the design, not an omission.\n\nThe layer's reason for existing is the pairing: a processor writes into its namespaced tables, and a component reads the same tables reactively, with the schema type shared between them. That is what makes a relational processor's output usable in a UI without an intermediate API.\n\n## Provenance\n- `packages/reactor-browser/src/relational/README.md` \u2014 Overview; Quick Start; API Reference \u203a createProcessorQuery; Dynamic Parameters; Advanced Features\n\n_Extracted from the Powerhouse repository at **v6.2.2-dev.74**._",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": "v6.2.2-dev.74",
+  "computes": null,
+  "filePath": "packages/reactor-browser/src/relational/README.md",
+  "noteType": "REFERENCE",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "knowledge-agent",
+    "createdAt": "2026-09-03T07:38:53.275Z",
+    "sessionId": null,
+    "updatedAt": "2026-09-03T07:38:54.292Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "createProcessorQuery<Schema>() builds a hook from a query callback; static and parameterised forms are both supported, and parameters that change over time are memoized so an inline object does not.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "61d3d70e-c036-4254-bd5f-3b88bfc4bb7b",
+      "actor": "knowledge-agent",
+      "comment": "extracted from packages/reactor-browser/src/relational/README.md at v6.2.2-dev.74",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-09-03T07:38:53.753Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "92f0e0e4-ba2b-40d5-b2fb-ad89c4e3314d",
+      "actor": "liberuum",
+      "comment": "claim checked against the cited file at the pinned tag",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-09-03T07:38:54.292Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

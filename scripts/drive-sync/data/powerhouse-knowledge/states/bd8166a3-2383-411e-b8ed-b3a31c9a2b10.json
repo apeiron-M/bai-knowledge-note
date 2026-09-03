@@ -1,0 +1,27 @@
+{
+  "title": "Academy \u203a Build \u203a WorkWithData \u203a Analytics Engine \u203a typescript \u203a Postgres store",
+  "status": "EXTRACTED",
+  "content": "---\nsidebar_position: 3\n---\n\n# Postgres store\n\nThe `PostgresAnalyticsStore` is an `IAnalyticsStore` implementation that leverages a Postgres database. It requires some APIs that do not run in a browser, and is intended for server-side applications.\n\n<aside class=\"notice\">\nSee the <a href=\"#compatibility\">Compatibility</a> section for details on which stores are intended to be used in different execution environments.\n</aside>\n\n## Construction\n\nThe `PostgresAnalyticsStore` uses the [`pg`](https://www.npmjs.com/package/pg) package and requires Postgres connection information.\n\nBy providing a PG connection string, the store will automatically create a `pg` instance, internally.\n\nA docker-compose file is provided [here](https://github.com/powerhouse-inc/analytics-engine/blob/main/pg/docker-compose.test.yml) that will spin up an instance quickly. Note that it cannot be copy/pasted but must be run in the checked out repository to access the correct initialization scripts. See the [developer documentation](https://github.com/powerhouse-inc/analytics-engine/tree/main?tab=readme-ov-file#pg) for more information.\n\n> Create with only a connection string.\n\n```typescript\n// connects to a local postgres instance, configured by the provided docker-compose file\nconst store = new PostgresAnalyticsStore({\n  connectionString: \"postgresql://postgres:password@localhost:5555/analytics\",\n});\n```\n\n> Instead, create with a `knex` object.\n\n```typescript\nimport knexFactory from \"knex\";\n\nconst knex = knexFactory({\n  client: \"pg\",\n  connection: \"...\",\n});\n\nconst store = new PostgresAnalyticsStore({\n  knex,\n});\n```\n\n> The `PostgresAnalyticsStore` may also be created with optional contructor arguments that may be helpful for debugging or metrics collection.\n\n```typescript\nconst store = new PostgresAnalyticsStore({\n  queryLogger: querydefaultQueryLogger(\"memory\"),\n  resultsLogger: defaultResultsLogger(\"memory\"),\n  profiler: new PassthroughAnalyticsProfiler(),\n});\n```\n\nFor more details on these optional constructor parameters, see the [Utilities](#utilities) section.\n\n## Raw queries\n\nThough there is no method on `IAnalyticsStore` for running arbitrary queries, the `PostgresAnalyticsStore` implementation provides a `raw(sql: string)` method. This is used only in development, testing, and [benchmarking](https://github.com/powerhouse-inc/analytics-engine/blob/main/benchmarks/src/wasm.ts) situations and is not intended for production use cases.\n\n```typescript\nconst results = store.raw(`select distinct unit from \"AnalyticsSeries\"`);\n```\n",
+  "createdAt": "2026-09-02T21:36:27.411Z",
+  "createdBy": "repo-docs-sync",
+  "provenance": {
+    "url": "https://github.com/powerhouse-inc/powerhouse/blob/v6.2.2-dev.74/apps/academy/docs/academy/03-Build/04-WorkWithData/_06-Analytics Engine/typescript/pg.md",
+    "tool": "sync-repo-docs",
+    "author": "Powerhouse Inc.",
+    "method": "sha256:2b1c6942d3c4bbbd3aafb167ef10ead12b6208b2a523a81c19b970be4ff9ef45 git:v6.2.2-dev.74",
+    "publishedAt": "2026-06-17T17:18:45.000Z"
+  },
+  "sourceType": "DOCUMENTATION",
+  "description": "Powerhouse v6.2.2-dev.74 (unchanged since v6.2.2-dev.47) \u2014 The PostgresAnalyticsStore is an IAnalyticsStore implementation that leverages a Postgres database. It requires some APIs that do not run in\u2026",
+  "extractedClaims": [
+    "ceb2e2c7-7965-431d-ac3d-1409a89529ce"
+  ],
+  "extractionStats": {
+    "skipRate": 1,
+    "claimCount": 0,
+    "extractedAt": "2026-09-03T07:56:06.281Z",
+    "extractedBy": "knowledge-agent",
+    "skippedCount": 1
+  },
+  "links": []
+}

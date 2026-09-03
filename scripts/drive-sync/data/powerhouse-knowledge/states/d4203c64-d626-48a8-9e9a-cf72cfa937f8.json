@@ -1,0 +1,96 @@
+{
+  "links": [
+    {
+      "id": "lnk-f7c92110-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "f7c92110-27a7-4921-8fd9-7fbdddfcf920",
+      "targetTitle": "bcf-model-tasks-vs-org-tasks"
+    },
+    {
+      "id": "lnk-3908a38a-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "3908a38a-c1d9-421c-b360-3aeeb2a7afbd",
+      "targetTitle": "meeting-notes-2026-08-12-14"
+    },
+    {
+      "id": "lnk-c720df00-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "c720df00-e3a4-49d1-b583-e7ed14c256f8",
+      "targetTitle": "bim-demo-scenario-briefing"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "CDE platforms share the federated model with stakeholders but vary sharply in API openness",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "a6529b92-24be-4c81-8ef2-c6ba1d520f1b",
+      "name": "cde",
+      "topicDocumentId": null
+    },
+    {
+      "id": "8d15049e-75bc-4b66-a2e2-3eee740b9054",
+      "name": "bim",
+      "topicDocumentId": null
+    },
+    {
+      "id": "3dda3729-0454-426e-9d0e-ae628c64595a",
+      "name": "integrations",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "A Common Data Environment (CDE) is used for sharing 3D models and directly associated data with all stakeholders. What lives there is the **federated model**: discipline-specific part models \u2014 structural engineering (load-bearing design), MEPF (mechanical, electricity, plumbing, fire safety), ventilation/HVAC \u2014 broken up as required by the BEP and combined in the CDE for **collision detection and management**, a core BIM activity (01:13:06). Deep collision analysis is typically done by architects and engineers, not BIM management (01:14:28).\n\nThe platform landscape (BIM briefing + DT BAU walkthrough):\n- **Autodesk Construction Cloud (ACC)**, now the Autodesk Forma family\n- **Dalux** \u2014 Danish, closed-source, limited API; explicitly called out as difficult to integrate because it is a closed system (00:07:31)\n- **Catenda** \u2014 open API but lacking some richer features\n- **Squirrel** \u2014 another entrant\n\nOpenness is the integration bottleneck: closed CDEs restrict custom agents and software (02:05:54), which is precisely the gap a local-first, integrable platform can exploit. Data sovereignty adds another axis: tools can be prohibited when technology or hosting is not EU-based \u2014 e.g. Autodesk Forma on some projects (01:38:41).",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "REFERENCE",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "knowledge-agent",
+    "createdAt": "2026-08-14T18:13:39.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-14T18:17:21.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Common Data Environments host the federated BIM model (discipline models + collision checks). ACC/Forma, Dalux, Catenda, Squirrel differ in openness \u2014 closed CDEs resist integration.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "96f3b6f2-8a01-4317-ba14-86b39a9da105",
+      "actor": "knowledge-agent",
+      "comment": "Extracted from Aug 12-14 meeting sources; links + methodology grounding applied",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-14T18:17:21.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "331d6ed8-2b7e-4568-a54c-e68a133eeff8",
+      "actor": "liberuum",
+      "comment": "Pipeline verify: quality gate passed",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-14T18:17:21.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

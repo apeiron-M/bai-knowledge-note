@@ -1,0 +1,102 @@
+{
+  "links": [
+    {
+      "id": "lnk-b7cb8afe-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "b7cb8afe-41fa-4676-be94-1e73435e1a04",
+      "targetTitle": "mcp-workflows"
+    },
+    {
+      "id": "lnk-1c949f59-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "1c949f59-bfde-4bf8-ac7e-d378d6bc0b0d",
+      "targetTitle": "batch-multiple-actions-in-a-single-addactions-call-to-minimize-round-trips"
+    },
+    {
+      "id": "lnk-1f5493d5-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "1f5493d5-17ad-4bf2-b36d-dcf26dd7c917",
+      "targetTitle": "delete-nodes-with-deletenode-not-deletefile"
+    },
+    {
+      "id": "lnk-434297eb-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "434297eb-533d-4e8c-9a50-c987e268f85e",
+      "targetTitle": "document-models-must-be-added-to-the-vetra-drive-by-default"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "always check document model schema before calling addActions",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "3822f0b6-dffe-4057-bd34-df9365cdb2e0",
+      "name": "MCP workflows",
+      "topicDocumentId": null
+    },
+    {
+      "id": "647a7248-b5d3-463c-812d-a28a563b9bab",
+      "name": "schema validation",
+      "topicDocumentId": null
+    },
+    {
+      "id": "852370c8-3243-4196-841f-e2284deb1bd4",
+      "name": "best practices",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "# always check document model schema before calling addActions\n\nBefore dispatching any actions via `addActions`, always call `getDocumentModelSchema` to understand the input requirements:\n\n```\nmcp__reactor-mcp__getDocumentModelSchema({ type: \"powerhouse/document-model\" })\n```\n\nThis reveals required fields (like `id` or `scope`), valid enum values, and input shapes. Without this step, actions frequently fail due to missing or malformed parameters.\n\nThis applies to all document types \u2014 document models, editors, apps, and drives. Since [[document model changes require both MCP update and src file update]], understanding the schema prevents wasted round trips on both sides.\n\n---\n\nTopics:\n- [[mcp workflows]]",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": "v6.2.2-dev.74",
+  "computes": null,
+  "filePath": null,
+  "noteType": "PATTERN",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "knowledge-agent",
+    "createdAt": "2026-04-03T14:01:00.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-09-03T09:56:59.582Z",
+    "sourceOrigin": "IMPORT"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Using getDocumentModelSchema first prevents failed calls by ensuring required parameters and input shapes are known",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "ecfdc658-d070-468f-871f-f211c58916e3",
+      "actor": "claude",
+      "comment": "Knowledge registered against powerhouse v6.2.2-dev.47",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-14T12:00:00.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "ee862700-dabb-4177-953a-ea7741808104",
+      "actor": "liberuum",
+      "comment": "Canonical as of powerhouse v6.2.2-dev.47",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-14T12:00:00.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

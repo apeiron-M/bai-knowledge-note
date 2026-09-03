@@ -1,0 +1,107 @@
+{
+  "links": [
+    {
+      "id": "lnk-752bee27-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "752bee27-d361-4981-b353-d8082ef05b25",
+      "targetTitle": "pglite-sync-tables-persist-remote-state"
+    },
+    {
+      "id": "lnk-efadc8b1-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "efadc8b1-15b7-47b1-b82a-311821d37557",
+      "targetTitle": "vetra-brand-identity"
+    },
+    {
+      "id": "lnk-1fda1684-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "1fda1684-4919-46c0-a377-2a0eff091d4f",
+      "targetTitle": "ddup-typical-user-sizing-120kb"
+    },
+    {
+      "id": "lnk-6443a5a6-bui",
+      "linkType": "BUILDS_ON",
+      "targetDocumentId": "6443a5a6-47e6-4336-b701-017757a9ff9e",
+      "targetTitle": "ddup-four-storage-layers"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Each storage copy serves a distinct role: local reads, multi-device sync, or self-sovereign recovery",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "e72df2ea-c001-4101-a14e-942469f8500c",
+      "name": "recovery-roles",
+      "topicDocumentId": null
+    },
+    {
+      "id": "437f5a9a-90c3-4ea3-8ca3-995bf714c729",
+      "name": "trust-model",
+      "topicDocumentId": null
+    },
+    {
+      "id": "e7e909ee-42f7-48c3-98c9-f69bcbd487f4",
+      "name": "data-duplication",
+      "topicDocumentId": null
+    },
+    {
+      "id": "c55a91f2-ab47-4f9b-994e-8098cd75e11b",
+      "name": "self-sovereignty",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "Not every copy of the data plays the same role. Evaluating duplication requires understanding what each copy is for:\n\n| Copy | Where | Purpose | Can recover from it alone? |\n|---|---|---|:---:|\n| PGlite | Browser | Fast local reads, UI rendering | No (ephemeral) |\n| PostgreSQL | Switchboard | Multi-device sync, team collaboration, server-side processing | Yes (authoritative) |\n| Swarm /bytes | Decentralized network | Censorship-resistant backup, serverless recovery, wallet-based access | Yes (self-sovereign) |\n\n**Key points**:\n- PGlite is **not** a recovery store \u2014 it's a performance layer. Losing it is annoying but not catastrophic as long as a remote exists.\n- PostgreSQL and Swarm are both recovery-complete, but with different trust models: PostgreSQL requires a server operator, Swarm requires only a wallet signature.\n- Switchboard supports server-side processing (document models, auth, etc.); Swarm alone does not.\n- Swarm is censorship-resistant in ways PostgreSQL cannot be.\n\n**Consequence**: \"duplicate\" is the wrong frame for comparing Switchboard and Swarm. They are **alternative recovery stores** with different trust and capability profiles. Only when both run simultaneously (Architecture C) does the word \"duplicate\" genuinely apply \u2014 and even then the motivation is redundancy, not waste.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "CONCEPT",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "knowledge-agent",
+    "createdAt": "2026-04-21T14:42:40.589Z",
+    "sessionId": null,
+    "updatedAt": "2026-09-03T09:58:14.984Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "PGlite (fast reads, not recoverable alone), PostgreSQL (multi-device, server-side), Swarm /bytes (censorship-resistant, wallet-based) \u2014 each copy has its own recovery role.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "2bb6ddd8-b9d4-4aae-9d0f-2943f0ed2948",
+      "actor": "claude",
+      "comment": "Knowledge registered against powerhouse v6.2.2-dev.47",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-14T12:00:00.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "0f912e18-47f5-4db8-90d4-433f002d686c",
+      "actor": "liberuum",
+      "comment": "Canonical as of powerhouse v6.2.2-dev.47",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-14T12:00:00.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

@@ -1,0 +1,101 @@
+{
+  "links": [
+    {
+      "id": "lnk-e2186433-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "e2186433-6a5b-4e9a-90e8-37c698b35e89",
+      "targetTitle": "moc-attributable-skills-provenance"
+    },
+    {
+      "id": "lnk-fdc3d342-bui",
+      "linkType": "BUILDS_ON",
+      "targetDocumentId": "fdc3d342-bb38-468d-82d1-440b2af01587",
+      "targetTitle": "document-model-three-parts"
+    },
+    {
+      "id": "lnk-2b423487-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "2b423487-123f-414c-bd20-edce7de891f4",
+      "targetTitle": "skills-as-attributable-transformations"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Operational reshuffle preserves immutable actions where CRDTs and OT cannot",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "457bbacd-02de-4a23-a3d3-29afefbb5b91",
+      "name": "event-sourcing",
+      "topicDocumentId": null
+    },
+    {
+      "id": "ab27c17c-1e4b-4254-882f-f4ed73af5f87",
+      "name": "powerhouse",
+      "topicDocumentId": null
+    },
+    {
+      "id": "96ccca0d-d2c3-4089-be64-85e9285e6689",
+      "name": "concurrency",
+      "topicDocumentId": null
+    },
+    {
+      "id": "c5a42ea2-4a62-4cf3-8f0f-2c2949bfeef3",
+      "name": "provenance",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "## Claim\n\nFor arbitrary reducers with attribution requirements, CRDTs and operational transformation fall short:\n\n- **CRDTs** require commutative ops and cannot express state-dependent validation (e.g. balance checks)\n- **OT** transforms/rewrites operations to preserve intent, breaking append-only auditability\n\n**Operational reshuffle** (Powerhouse) keeps actions immutable; only ordering and replayed result hashes change when streams merge.\n\n## Why provenance cares\n\nIf operations are rewritten, authorship and mechanism trails become unstable. Immutable actions keep the audit surface intact under concurrency.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "ARCHITECTURE",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "knowledge-agent",
+    "createdAt": "2026-08-16T20:32:36.879Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-16T20:32:37.979Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "CRDTs lack state-dependent validation; OT rewrites operations. Operational reshuffle keeps actions immutable and only reorders/replays hashes.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "3946c3cb-3333-4580-a0ff-8e803c69cc22",
+      "actor": "knowledge-agent",
+      "comment": "pipeline extract",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-16T20:32:37.828Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "a8eec975-c56e-4fa8-b0fd-74650cabebb9",
+      "actor": "pipeline-reviewer",
+      "comment": "pipeline verify",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-16T20:32:37.979Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

@@ -1,0 +1,104 @@
+{
+  "links": [
+    {
+      "id": "lnk-307601bd-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "307601bd-2919-4e27-9a76-97281d276518",
+      "targetTitle": "apps-use-useselecteddrive-to-access-drive-state-and-filter-nodes"
+    },
+    {
+      "id": "lnk-87edb655-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "87edb655-2431-4b23-8c7f-53ca7a468fba",
+      "targetTitle": "drive-apps-are-custom-drive-editors"
+    },
+    {
+      "id": "lnk-1a932db8-bui",
+      "linkType": "BUILDS_ON",
+      "targetDocumentId": "1a932db8-245d-40f6-bfd8-eea728d9615e",
+      "targetTitle": "reactor-browser-hooks-provide-document-state"
+    },
+    {
+      "id": "lnk-aeb9b5e6-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "aeb9b5e6-8fce-4339-95e8-375bd0a0cc01",
+      "targetTitle": "Academy \u203a Reference \u203a EditorsUI \u203a React Hooks",
+      "reason": "Backing page found by content match in the v6.2.2-dev.74 source backfill \u2014 identifiers showcreatedocumentmodal, usedocumentsinselecteddrive from the claim appear in this page (text revised between v6.2.2-dev.47 and v6.2.2-dev.74 \u2014 re-verified in the v6.2.2-dev.74 pass); attribution, not the original extraction record",
+      "confidence": "grounded"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Drive apps read drive-wide data with useDocumentsInSelectedDrive() and start creation with showCreateDocumentModal()",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "0fee5a6c-07eb-443d-b235-6e26e1ba2580",
+      "name": "drive-apps",
+      "topicDocumentId": null
+    },
+    {
+      "id": "440e8d41-3306-4c20-b3bd-b8aa05208786",
+      "name": "react-hooks",
+      "topicDocumentId": null
+    },
+    {
+      "id": "27af5195-71b7-4b75-afe0-daf67b1ada73",
+      "name": "reactor-browser",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "## The two calls a drive app almost always needs\n\nA drive app's job is cross-document: list, aggregate, board, dashboard. Two primitives from `@powerhousedao/reactor-browser` cover most of that surface.\n\n```tsx\nimport {\n  useDocumentsInSelectedDrive,\n  showCreateDocumentModal,\n} from \"@powerhousedao/reactor-browser\";\n\nfunction DriveContents() {\n  const documents = useDocumentsInSelectedDrive();\n\n  if (!documents) return <Spinner />;\n\n  return (\n    <>\n      <button onClick={() => showCreateDocumentModal(/* ... */)}>\n        New document\n      </button>\n      <ul>\n        {documents.map((d) => (\n          <li key={d.header.id}>{d.header.name}</li>\n        ))}\n      </ul>\n    </>\n  );\n}\n```\n\n`useDocumentsInSelectedDrive()` returns every document in the currently selected drive \u2014 the read that an editor legitimately cannot make, since an editor is scoped to one document. Its return type is `PHDocument[] | undefined`, and the `undefined` is load-bearing: it means \"the selected drive is not resolved yet\", which is a different state from \"the drive is empty\". Rendering `documents.length` without the guard is the classic first crash in a new drive app.\n\n`showCreateDocumentModal()` is an imperative call, not a hook \u2014 it opens Connect's standard creation flow rather than making you build your own type-picker and dispatch a create action by hand. That keeps drive apps consistent with the rest of Connect and means new document types appear in your drive app's create flow without any change to your code.\n\nThe pair reflects a broader rule: a drive app reaches the Reactor **only** through these hooks. It never constructs a client of its own.\n\n_Source: apps/academy/docs/academy/02-Learn/05-connect/02-drive-apps.mdx, packages/reactor-browser/src/hooks/{items-in-selected-drive,modals}.ts (Powerhouse v6.2.2-dev.45)._\n\n## Boundary: lazy drive sync (v6.2.2-dev.74)\nThis whole-drive read is correct **today**, because `preloadDocuments` defaults to eager and every child document of an opened drive is synced. ADR 0001 (status *Proposed*) would change that: with `preloadDocuments: false` a drive syncs only its drive document, and `useDocumentsInSelectedDrive` / `useDocuments(childIds)` / `find({parentId})` return **a silent partial list** rather than suspending. The ADR names auditing every whole-drive-assuming caller as a prerequisite for flipping the flag, so treat this pattern as safe until a deployment opts in.\n",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": "v6.2.2-dev.74",
+  "computes": null,
+  "filePath": "apps/academy/docs/academy/04-Reference/05-EditorsUI/01-ReactHooks.md",
+  "noteType": "REFERENCE",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "claude",
+    "createdAt": "2026-08-13T14:36:23.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-09-03T07:59:22.181Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Both come from @powerhousedao/reactor-browser and give a drive app cross-document reads plus the standard new-document flow, without touching the Reactor directly.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "4c9394b5-2568-401e-902c-e38926f08cd5",
+      "actor": "claude",
+      "comment": "Knowledge registered against powerhouse v6.2.2-dev.47",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-14T12:00:00.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "cb0f7b7c-3c7a-4f18-b4e9-0aec642075f6",
+      "actor": "liberuum",
+      "comment": "Canonical as of powerhouse v6.2.2-dev.47",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-14T12:00:00.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

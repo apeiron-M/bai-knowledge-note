@@ -1,0 +1,131 @@
+{
+  "links": [
+    {
+      "id": "lnk-22eb0712-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "22eb0712-588e-48a2-bfa1-a32cd4e5d4ac",
+      "targetTitle": "Academy \u203a Build \u203a WorkWithData \u203a Analytics Engine \u203a typescript \u203a Memory store",
+      "reason": "Extracted from apps/academy/docs/academy/03-Build/04-WorkWithData/_06-Analytics Engine/typescript/memory.md at v6.2.2-dev.74 \u2014 Construction; Initialization",
+      "confidence": "grounded"
+    },
+    {
+      "id": "lnk-5990538f-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "5990538f-2c9b-4e4c-b8f4-57f5c1ae8f88",
+      "targetTitle": "Academy \u203a Build \u203a WorkWithData \u203a Analytics Engine \u203a typescript \u203a Compatibility",
+      "reason": "Extracted from apps/academy/docs/academy/03-Build/04-WorkWithData/_06-Analytics Engine/typescript/compatibility.md at v6.2.2-dev.74 \u2014 whole compatibility matrix",
+      "confidence": "grounded"
+    },
+    {
+      "id": "lnk-bd8166a3-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "bd8166a3-2383-411e-b8ed-b3a31c9a2b10",
+      "targetTitle": "Academy \u203a Build \u203a WorkWithData \u203a Analytics Engine \u203a typescript \u203a Postgres store",
+      "reason": "Extracted from apps/academy/docs/academy/03-Build/04-WorkWithData/_06-Analytics Engine/typescript/pg.md at v6.2.2-dev.74 \u2014 Construction; Raw queries",
+      "confidence": "grounded"
+    },
+    {
+      "id": "lnk-58b438ff-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "58b438ff-5b3e-4e51-afa3-a9676f8b1beb",
+      "targetTitle": "pglite-window-global-state",
+      "reason": "A shared PGlite instance can be passed into the memory store, which is why connection management belongs in one place",
+      "confidence": "grounded"
+    },
+    {
+      "id": "lnk-4090fa00-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "4090fa00-da1c-4c2e-9c4a-2dba085341fb",
+      "targetTitle": "analytics-store-benchmarks",
+      "reason": "The two stores that are interchangeable across runtimes are the two the benchmarks compare",
+      "confidence": "grounded"
+    },
+    {
+      "id": "lnk-97837c71-bui",
+      "linkType": "BUILDS_ON",
+      "targetDocumentId": "97837c71-1ce0-493d-8400-9d14222ff5cd",
+      "targetTitle": "analytics-engine-module-split",
+      "reason": "The core-plus-storage-modules split is what produces these four stores, and this is the matrix that decides which one a host can use",
+      "confidence": "grounded"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Four analytics stores split by runtime: MemoryAnalyticsStore and KnexAnalyticsStore run everywhere, BrowserAnalyticsStore is browser-only and PostgresAnalyticsStore is server-only",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "75d3472c-12c4-4b6f-8818-f9936dee2450",
+      "name": "analytics",
+      "topicDocumentId": null
+    },
+    {
+      "id": "d2f1ed63-c362-4091-a25a-a9ced4b47645",
+      "name": "storage",
+      "topicDocumentId": null
+    },
+    {
+      "id": "8430be7b-d3d4-432c-a8bf-6f5d282a9a07",
+      "name": "pglite",
+      "topicDocumentId": null
+    },
+    {
+      "id": "c7ad7a21-a0ac-4cba-8ec4-05413582bf3c",
+      "name": "compatibility",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "| Store | Browser | Node | Bun |\n| --- | --- | --- | --- |\n| `MemoryAnalyticsStore` | \u2705 | \u2705 | \u2705 |\n| `BrowserAnalyticsStore` | \u2705 | | |\n| `KnexAnalyticsStore` | \u2705 | \u2705 | \u2705 |\n| `PostgresAnalyticsStore` | | \u2705 | \u2705 |\n\nTwo of the four have behaviour worth knowing before choosing.\n\n**`MemoryAnalyticsStore`** is in-memory by way of **a WASM build of Postgres \u2014 PGlite**. It requires an asynchronous `await store.init()` for two reasons: downloading and initialising the WASM build when no `PGlite` instance was supplied, and initialising the in-memory database's schema. The initialisation is **idempotent** (existing tables are not recreated), and \u2014 importantly \u2014 `init()` **is not on the `IAnalyticsStore` interface**, only on the concrete type, so a caller holding the interface cannot initialise it. Both `knex` and `pglite` objects can be passed in, which is how it shares a database with other consumers.\n\n**`PostgresAnalyticsStore`** uses the `pg` package and **assumes a fully-initialised Postgres database already exists** \u2014 the opposite contract. It takes a connection string or a `knex` instance, and adds a `raw(sql: string)` method that is *not* on the interface and is explicitly \"not intended for production use cases\".\n\nBoth accept the same optional constructor extras for observability: `queryLogger`, `resultsLogger` and a `profiler`.\n\n## Provenance\n- `apps/academy/docs/academy/03-Build/04-WorkWithData/_06-Analytics Engine/typescript/compatibility.md` \u2014 whole compatibility matrix\n- `apps/academy/docs/academy/03-Build/04-WorkWithData/_06-Analytics Engine/typescript/memory.md` \u2014 Construction; Initialization\n- `apps/academy/docs/academy/03-Build/04-WorkWithData/_06-Analytics Engine/typescript/pg.md` \u2014 Construction; Raw queries\n\n_Extracted from the Powerhouse repository at **v6.2.2-dev.74**._",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": "v6.2.2-dev.74",
+  "computes": null,
+  "filePath": "apps/academy/docs/academy/03-Build/04-WorkWithData/_06-Analytics Engine/typescript/compatibility.md",
+  "noteType": "REFERENCE",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "knowledge-agent",
+    "createdAt": "2026-09-03T07:54:44.701Z",
+    "sessionId": null,
+    "updatedAt": "2026-09-03T07:54:45.676Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "MemoryAnalyticsStore loads a WASM Postgres (PGlite) and needs an async init() that is not on IAnalyticsStore; PostgresAnalyticsStore assumes an already-initialized database and adds a dev-only.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "2219a785-641b-4690-9c8a-44bb03e2ce45",
+      "actor": "knowledge-agent",
+      "comment": "extracted from apps/academy/docs/academy/03-Build/04-WorkWithData/_06-Analytics Engine/typescript/compatibility.md at v6.2.2-dev.74",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-09-03T07:54:45.177Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "fc801455-4460-4c5e-a577-33842fcf273e",
+      "actor": "liberuum",
+      "comment": "claim checked against the cited file at the pinned tag",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-09-03T07:54:45.676Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

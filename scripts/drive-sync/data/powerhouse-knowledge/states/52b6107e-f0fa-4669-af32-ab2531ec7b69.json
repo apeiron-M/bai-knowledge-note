@@ -1,0 +1,107 @@
+{
+  "links": [
+    {
+      "id": "lnk-067b2d2b-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "067b2d2b-e395-4307-8ae2-07d090f11be9",
+      "targetTitle": "document-manifest-feed-structure"
+    },
+    {
+      "id": "lnk-4e6413ee-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "4e6413ee-22bf-4d64-964f-ca8b28917cec",
+      "targetTitle": "present-document-model-proposals-to-user-before-implementing"
+    },
+    {
+      "id": "lnk-6672c3a6-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "6672c3a6-386d-44c7-baf2-3278b1add051",
+      "targetTitle": "adapter-src-infrastructure-layout"
+    },
+    {
+      "id": "lnk-75ddbb63-bui",
+      "linkType": "BUILDS_ON",
+      "targetDocumentId": "75ddbb63-c941-4493-bbad-e4e872324cff",
+      "targetTitle": "user-and-drive-manifests"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Each document has a feed at ph:v2:doc:<id> pointing to a manifest that indexes operation batches on /bytes",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "05e3baf3-320f-4c0d-b73d-6f7bf0c0f2fd",
+      "name": "document-manifest",
+      "topicDocumentId": null
+    },
+    {
+      "id": "88d28644-a837-46ac-829f-7b7e7889246c",
+      "name": "manifests",
+      "topicDocumentId": null
+    },
+    {
+      "id": "11fc1cfa-10bc-42e5-9ee9-e972a215c356",
+      "name": "operations-log",
+      "topicDocumentId": null
+    },
+    {
+      "id": "c6c246b4-dd2a-4c16-b27d-4b2a556e123f",
+      "name": "data-model",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "Each document on Swarm has a feed at topic `ph:v2:doc:<documentId>`. The feed points to a JSON manifest that indexes operation batches uploaded to `/bytes`:\n\n```json\n{\n  \"documentId\": \"abc-123\",\n  \"documentType\": \"powerhouse/budget-statement\",\n  \"latestRevision\": { \"global\": 47 },\n  \"operationBatches\": [\n    { \"reference\": \"a1b2c3d4...\", \"scope\": \"global\", \"branch\": \"main\", \"startIndex\": 0,  \"endIndex\": 23, \"timestamp\": \"...\" },\n    { \"reference\": \"e5f6a7b8...\", \"scope\": \"global\", \"branch\": \"main\", \"startIndex\": 24, \"endIndex\": 47, \"timestamp\": \"...\" }\n  ],\n  \"encrypted\": true,\n  \"updatedAt\": \"2026-04-07T10:05:00Z\"\n}\n```\n\nEach `reference` points to a `/bytes` upload containing the encrypted batch. `latestRevision` is keyed by scope, allowing multi-scope documents. `encrypted: true` signals the payload format; readers validate via the SWE prefix at `/bytes`.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "REFERENCE",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "knowledge-agent",
+    "createdAt": "2026-04-21T14:21:15.700Z",
+    "sessionId": null,
+    "updatedAt": "2026-09-03T09:58:25.574Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Document manifest carries documentId, documentType, latestRevision per scope, and an operationBatches array with reference, scope, branch, startIndex, endIndex, and timestamp.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "80a7a3b0-0baa-405e-983a-fa23b9763613",
+      "actor": "claude",
+      "comment": "Knowledge registered against powerhouse v6.2.2-dev.47",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-14T12:00:00.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "5624d98f-d74f-422a-9276-dfa65a4f7b18",
+      "actor": "liberuum",
+      "comment": "Canonical as of powerhouse v6.2.2-dev.47",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-14T12:00:00.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

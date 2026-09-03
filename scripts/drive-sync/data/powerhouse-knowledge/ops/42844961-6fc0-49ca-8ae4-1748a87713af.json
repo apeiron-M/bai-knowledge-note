@@ -1,0 +1,348 @@
+[
+  {
+    "index": 0,
+    "hash": "",
+    "timestampUtcMs": "2026-08-14T12:17:22.813Z",
+    "action": {
+      "type": "CREATE_DOCUMENT",
+      "input": {
+        "meta": {},
+        "name": "redundancy-hot-path-collab-ops-feed",
+        "slug": "",
+        "model": "bai/knowledge-note",
+        "branch": "main",
+        "signing": {
+          "nonce": "",
+          "publicKey": {},
+          "signature": "42844961-6fc0-49ca-8ae4-1748a87713af",
+          "documentType": "bai/knowledge-note",
+          "createdAtUtcIso": "2026-08-14T12:17:22.812Z"
+        },
+        "version": 0,
+        "documentId": "42844961-6fc0-49ca-8ae4-1748a87713af",
+        "protocolVersions": {
+          "base-reducer": 2
+        }
+      },
+      "timestampUtcMs": "2026-08-14T12:17:22.813Z"
+    }
+  },
+  {
+    "index": 0,
+    "hash": "GEvD8KWNE4CxwaeYwiycBMl3daY=",
+    "timestampUtcMs": "2026-08-14T12:35:47.000Z",
+    "action": {
+      "type": "SET_TITLE",
+      "input": {
+        "title": "The highest-impact redundancy target is the collab-ops-feed upload",
+        "updatedAt": "2026-08-14T12:35:47.000Z"
+      },
+      "timestampUtcMs": "2026-08-14T12:35:47.000Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "",
+    "timestampUtcMs": "2026-08-14T12:17:22.813Z",
+    "action": {
+      "type": "UPGRADE_DOCUMENT",
+      "input": {
+        "model": "bai/knowledge-note",
+        "toVersion": 1,
+        "documentId": "42844961-6fc0-49ca-8ae4-1748a87713af",
+        "fromVersion": 0,
+        "initialState": {
+          "auth": {
+            "grants": [],
+            "version": 0
+          },
+          "local": {
+            "lastViewedAt": null,
+            "personalTags": []
+          },
+          "global": {
+            "links": [],
+            "model": null,
+            "scope": null,
+            "title": null,
+            "editor": null,
+            "inputs": [],
+            "models": [],
+            "status": "DRAFT",
+            "topics": [],
+            "content": null,
+            "context": null,
+            "modelId": null,
+            "modules": [],
+            "outputs": [],
+            "version": null,
+            "computes": null,
+            "filePath": null,
+            "noteType": null,
+            "severity": null,
+            "hooksUsed": [],
+            "rootCause": null,
+            "confidence": null,
+            "consumedBy": [],
+            "provenance": null,
+            "sourceType": null,
+            "targetType": null,
+            "cardinality": null,
+            "description": null,
+            "alternatives": [],
+            "consequences": [],
+            "errorMessage": null,
+            "relationType": null,
+            "correctPattern": null,
+            "decisionStatus": null,
+            "dispatchTargets": [],
+            "lifecycleEvents": []
+          },
+          "document": {
+            "hash": {
+              "encoding": "base64",
+              "algorithm": "sha1"
+            },
+            "version": 1
+          }
+        }
+      },
+      "timestampUtcMs": "2026-08-14T12:17:22.813Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "ZMh9LZ9Xirt23KwsxONduSV/uMc=",
+    "timestampUtcMs": "2026-08-14T12:35:47.000Z",
+    "action": {
+      "type": "SET_DESCRIPTION",
+      "input": {
+        "updatedAt": "2026-08-14T12:35:47.000Z",
+        "description": "collab-ops-feed.ts:138 uploadFile is read on every peer ping and every /bzz fetch on ping-miss, sitting directly on the 10s collab critical path \u2014 highest read frequency \u00d7 tail-latency impact."
+      },
+      "timestampUtcMs": "2026-08-14T12:35:47.000Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "",
+    "timestampUtcMs": "2026-08-14T12:38:29.960Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "42844961-6fc0-49ca-8ae4-1748a87713af",
+        "targetId": "ab44d9c0-a981-4c37-8afe-a6858911dc82",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-08-14T12:38:29.960Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "ok8d8jf4qF91Oii8xE8TDw1UBfY=",
+    "timestampUtcMs": "2026-08-14T12:35:47.000Z",
+    "action": {
+      "type": "SET_NOTE_TYPE",
+      "input": {
+        "noteType": "reference",
+        "updatedAt": "2026-08-14T12:35:47.000Z"
+      },
+      "timestampUtcMs": "2026-08-14T12:35:47.000Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "",
+    "timestampUtcMs": "2026-08-14T12:38:30.055Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "42844961-6fc0-49ca-8ae4-1748a87713af",
+        "targetId": "7c8d97ac-5d8b-446c-8c7a-747e2d301708",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-08-14T12:38:30.055Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "ducNFGQuRJ56XfcU2o2qlP5VX5I=",
+    "timestampUtcMs": "2026-08-14T12:35:47.000Z",
+    "action": {
+      "type": "SET_CONTENT",
+      "input": {
+        "content": "## Ranked targets for `RedundancyLevel` (read-frequency \u00d7 tail-impact)\n\n| Hot path | Call site | Read frequency | Impact |\n|---|---|---|---|\n| Collab ops batch | `collab-ops-feed.ts:138` (`uploadFile act:true`) | Every peer ping + every /bzz fetch on ping-miss | **HIGH** \u2014 on the 10s critical path |\n| Drive share bundle | `lifecycle.ts:169` (`uploadFile act:true`) | Once per accept (cold, urgent) | HIGH \u2014 currently retries with 0-2-5s backoff |\n| Collab manifest snapshot | `collab-manifest-feed.ts:106` | On accept + every member add/revoke | MEDIUM |\n| Drive manifest snapshot | `swarm-client.ts:503` | On recovery + push merges | MEDIUM |\n| Chat history page | `chat-history.ts:215` | On open + pagination | LOW |\n| Public profile feed | `share-manager.ts:29` | Sporadic peer lookups | LOW-MEDIUM \u2014 redundancy helps payload, not feed HEAD |\n\n**Minimal path:** thread `redundancyLevel` through `SwarmClient.uploadFile` / `uploadData` (`swarm-client.ts:212` and `:225-260`), then pass `RedundancyLevel.MEDIUM` at `collab-ops-feed.ts:138` only. Measure before expanding.",
+        "updatedAt": "2026-08-14T12:35:47.000Z"
+      },
+      "timestampUtcMs": "2026-08-14T12:35:47.000Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "",
+    "timestampUtcMs": "2026-08-14T12:38:30.148Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "42844961-6fc0-49ca-8ae4-1748a87713af",
+        "targetId": "e071271c-5589-4590-a5ac-e95da03b9c0f",
+        "relationshipType": "BUILDS_ON"
+      },
+      "timestampUtcMs": "2026-08-14T12:38:30.148Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "PItycCH+I7SFNXPnbWEaFbSVbLo=",
+    "timestampUtcMs": "2026-08-14T12:35:47.000Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "version",
+        "value": "v6.2.2-dev.44",
+        "updatedAt": "2026-08-14T12:35:47.000Z"
+      },
+      "timestampUtcMs": "2026-08-14T12:35:47.000Z"
+    }
+  },
+  {
+    "index": 5,
+    "hash": "FQ0gxm1+xoqqz0nlK+RBG6k/Knk=",
+    "timestampUtcMs": "2026-08-14T12:35:47.000Z",
+    "action": {
+      "type": "SET_PROVENANCE",
+      "input": {
+        "author": "knowledge-agent",
+        "createdAt": "2026-04-21T14:41:57.182Z",
+        "sourceOrigin": "DERIVED"
+      },
+      "timestampUtcMs": "2026-08-14T12:35:47.000Z"
+    }
+  },
+  {
+    "index": 6,
+    "hash": "Vhpgi4PP0x0WOY9Ed5wQOYzJ+c8=",
+    "timestampUtcMs": "2026-08-14T12:35:47.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "70dbd295-a5c7-4867-834e-9fd4e8e40549",
+        "name": "collab-ops-feed",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-08-14T12:35:47.000Z"
+    }
+  },
+  {
+    "index": 7,
+    "hash": "gQyZTY5VcdlXcqpfDXqtmZSVoaA=",
+    "timestampUtcMs": "2026-08-14T12:35:47.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "f84decaf-12bf-47f7-8833-bc180b4c1b18",
+        "name": "redundancy-level",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-08-14T12:35:47.000Z"
+    }
+  },
+  {
+    "index": 8,
+    "hash": "Y8lEBY96BV1GcTF8MJwjByu0pPQ=",
+    "timestampUtcMs": "2026-08-14T12:35:47.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "29bedc91-6abe-455c-885c-f1f1bbb74ae1",
+        "name": "hot-paths",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-08-14T12:35:47.000Z"
+    }
+  },
+  {
+    "index": 9,
+    "hash": "yJ553J912yOQzcPO/1h3rns0zs8=",
+    "timestampUtcMs": "2026-08-14T12:35:47.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "f610a605-856e-43c6-97b2-0041859ee3ef",
+        "name": "tail-latency",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-08-14T12:35:47.000Z"
+    }
+  },
+  {
+    "index": 10,
+    "hash": "sUoTnEoyQRO5Y01sORxPUSYUo5o=",
+    "timestampUtcMs": "2026-08-14T14:37:01.000Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "version",
+        "value": "v6.2.2-dev.47",
+        "updatedAt": "2026-08-14T12:00:00.000Z"
+      },
+      "timestampUtcMs": "2026-08-14T14:37:01.000Z"
+    }
+  },
+  {
+    "index": 11,
+    "hash": "EYVl5DHz/wchWB17Yr2YuE+Ykug=",
+    "timestampUtcMs": "2026-08-14T14:37:01.000Z",
+    "action": {
+      "type": "SUBMIT_FOR_REVIEW",
+      "input": {
+        "id": "51ea5696-e19d-4c96-a359-b1ac91412840",
+        "actor": "claude",
+        "comment": "Knowledge registered against powerhouse v6.2.2-dev.47",
+        "timestamp": "2026-08-14T12:00:00.000Z"
+      },
+      "timestampUtcMs": "2026-08-14T14:37:01.000Z"
+    }
+  },
+  {
+    "index": 12,
+    "hash": "E4HhOGA/2u2FSwSnhyEN/n5m4eA=",
+    "timestampUtcMs": "2026-08-14T14:37:01.000Z",
+    "action": {
+      "type": "APPROVE_NOTE",
+      "input": {
+        "id": "d2d2ae7e-ddc4-4528-8c49-cbdadeb3940f",
+        "actor": "liberuum",
+        "comment": "Canonical as of powerhouse v6.2.2-dev.47",
+        "timestamp": "2026-08-14T12:00:00.000Z"
+      },
+      "timestampUtcMs": "2026-08-14T14:37:01.000Z"
+    }
+  },
+  {
+    "index": 13,
+    "hash": "l1oaKoZNm6NF7p01OWLcK49z1zI=",
+    "timestampUtcMs": "2026-08-16T09:49:42.000Z",
+    "action": {
+      "type": "SET_NOTE_TYPE",
+      "input": {
+        "noteType": "REFERENCE",
+        "updatedAt": "2026-08-16T09:49:42.000Z"
+      },
+      "timestampUtcMs": "2026-08-16T09:49:42.000Z"
+    }
+  },
+  {
+    "index": 14,
+    "hash": "Fj6J/C8+MQFnsINPCRZDRq7TkKo=",
+    "timestampUtcMs": "2026-09-03T09:58:33.569Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "version",
+        "updatedAt": "2026-09-03T09:58:33.569Z"
+      },
+      "timestampUtcMs": "2026-09-03T09:58:33.569Z"
+    }
+  }
+]

@@ -1,0 +1,340 @@
+[
+  {
+    "index": 0,
+    "hash": "",
+    "timestampUtcMs": "2026-08-14T12:16:48.510Z",
+    "action": {
+      "type": "CREATE_DOCUMENT",
+      "input": {
+        "meta": {},
+        "name": "reactorclient-mutations-throw-bare-error-losing-type",
+        "slug": "",
+        "model": "bai/knowledge-note",
+        "branch": "main",
+        "signing": {
+          "nonce": "",
+          "publicKey": {},
+          "signature": "ae215942-cc33-442a-9e76-a00caafe9644",
+          "documentType": "bai/knowledge-note",
+          "createdAtUtcIso": "2026-08-14T12:16:48.510Z"
+        },
+        "version": 0,
+        "documentId": "ae215942-cc33-442a-9e76-a00caafe9644",
+        "protocolVersions": {
+          "base-reducer": 2
+        }
+      },
+      "timestampUtcMs": "2026-08-14T12:16:48.510Z"
+    }
+  },
+  {
+    "index": 0,
+    "hash": "OwXCgJoGwRHO+qgt+jRGK9/vB7c=",
+    "timestampUtcMs": "2026-08-14T12:35:45.000Z",
+    "action": {
+      "type": "SET_TITLE",
+      "input": {
+        "title": "IReactorClient mutations throw a bare Error carrying only job.error?.message, losing the typed class and stack",
+        "updatedAt": "2026-08-14T12:35:45.000Z"
+      },
+      "timestampUtcMs": "2026-08-14T12:35:45.000Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "",
+    "timestampUtcMs": "2026-08-14T12:16:48.510Z",
+    "action": {
+      "type": "UPGRADE_DOCUMENT",
+      "input": {
+        "model": "bai/knowledge-note",
+        "toVersion": 1,
+        "documentId": "ae215942-cc33-442a-9e76-a00caafe9644",
+        "fromVersion": 0,
+        "initialState": {
+          "auth": {
+            "grants": [],
+            "version": 0
+          },
+          "local": {
+            "lastViewedAt": null,
+            "personalTags": []
+          },
+          "global": {
+            "links": [],
+            "model": null,
+            "scope": null,
+            "title": null,
+            "editor": null,
+            "inputs": [],
+            "models": [],
+            "status": "DRAFT",
+            "topics": [],
+            "content": null,
+            "context": null,
+            "modelId": null,
+            "modules": [],
+            "outputs": [],
+            "version": null,
+            "computes": null,
+            "filePath": null,
+            "noteType": null,
+            "severity": null,
+            "hooksUsed": [],
+            "rootCause": null,
+            "confidence": null,
+            "consumedBy": [],
+            "provenance": null,
+            "sourceType": null,
+            "targetType": null,
+            "cardinality": null,
+            "description": null,
+            "alternatives": [],
+            "consequences": [],
+            "errorMessage": null,
+            "relationType": null,
+            "correctPattern": null,
+            "decisionStatus": null,
+            "dispatchTargets": [],
+            "lifecycleEvents": []
+          },
+          "document": {
+            "hash": {
+              "encoding": "base64",
+              "algorithm": "sha1"
+            },
+            "version": 1
+          }
+        }
+      },
+      "timestampUtcMs": "2026-08-14T12:16:48.510Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "SkTJaRbjuBZj7GPompJnB5BWOW8=",
+    "timestampUtcMs": "2026-08-14T12:35:45.000Z",
+    "action": {
+      "type": "SET_DESCRIPTION",
+      "input": {
+        "updatedAt": "2026-08-14T12:35:45.000Z",
+        "description": "Class, stack and errorHistory are dropped at the client boundary. Drop to IReactor.getJobStatus(jobId) to read JobInfo.error, errorHistory and job."
+      },
+      "timestampUtcMs": "2026-08-14T12:35:45.000Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "",
+    "timestampUtcMs": "2026-08-14T12:38:27.305Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "ae215942-cc33-442a-9e76-a00caafe9644",
+        "targetId": "395c3ea0-ce11-4b25-8bbb-7f68a7b169e1",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-08-14T12:38:27.305Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "KtpTwcIPpStJiVG/VzeophBVQI4=",
+    "timestampUtcMs": "2026-08-14T12:35:45.000Z",
+    "action": {
+      "type": "SET_NOTE_TYPE",
+      "input": {
+        "noteType": "PATTERN",
+        "updatedAt": "2026-08-14T12:35:45.000Z"
+      },
+      "timestampUtcMs": "2026-08-14T12:35:45.000Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "",
+    "timestampUtcMs": "2026-08-14T12:38:27.399Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "ae215942-cc33-442a-9e76-a00caafe9644",
+        "targetId": "3289f3d4-7ee0-453a-8811-a7e2027fb5de",
+        "relationshipType": "BUILDS_ON"
+      },
+      "timestampUtcMs": "2026-08-14T12:38:27.399Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "P7spDehDffc0Pkq3jNQ2xGfYsJ4=",
+    "timestampUtcMs": "2026-08-14T12:35:45.000Z",
+    "action": {
+      "type": "SET_CONTENT",
+      "input": {
+        "content": "The convenience of `IReactorClient` costs you error fidelity. On a `FAILED` job the client rethrows the message and nothing else:\n\n```typescript\n// inside ReactorClient, after the job reaches a terminal status\nif (job.status === JobStatus.FAILED) {\n  throw new Error(job.error?.message);\n}\n```\n\nThe same pattern runs in `execute`, `executeBatch`, `create`, `deleteDocument`, `deleteDocuments`, `addRelationship`, and `removeRelationship`. Two consequences:\n\n- The thrown `Error.message` equals `job.error?.message`, which **can be `undefined`** if `error` was never set. Guard before displaying it.\n- The original error class, stack, and `errorHistory` are gone. You cannot `instanceof` your way to a diagnosis at this boundary.\n\nTo recover the detail, drop to the lower-level `IReactor.getJobStatus(jobId)` and read the `JobInfo`:\n\n```typescript\ntype JobInfo = {\n  id: string; documentId: string; status: JobStatus;\n  error?: { message: string; stack: string };        // the failing error\n  errorHistory?: Array<{ message: string; stack: string }>; // one per attempt, oldest first\n  job?: Job;                                          // populated on failure for debugging\n  consistencyToken: ConsistencyToken; meta: JobMeta;\n  // ...\n};\n```\n\n`errorHistory` is the payoff: a job the queue retried carries **every** failure, with `error` being the most recent. That is invisible from the client boundary, where you see one message. The `{ message, stack }` shape is structural \u2014 treat it as a type you match, not one you import; the barrel's exported `ErrorInfo` is a different (worker-protocol) type aliased as `WorkerErrorInfo`.\n\nSeveral internal write-path errors lose their typed identity at this edge and survive only as a message string: `DocumentDeletedError`, `DocumentNotFoundError`, `CreateDocumentRequiredError`, `InvalidSignatureError`, and `UpgradeManifestNotFoundError`. None are exported, so branching on them means matching `err.message` \u2014 brittle by construction.\n\nRelated edge: `ReactorClient.deleteDocument` throws a plain `new Error(\"Operation aborted\")` rather than an `AbortError` when its signal fires during cascade traversal, so prefer handling that call without relying on `err.name === \"AbortError\"`.\n\n_Source: apps/academy/docs/academy/04-Reference/01-Reactor/08-ErrorHandling.md (Powerhouse v6.2.2-dev.45)._",
+        "updatedAt": "2026-08-14T12:35:45.000Z"
+      },
+      "timestampUtcMs": "2026-08-14T12:35:45.000Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "",
+    "timestampUtcMs": "2026-09-02T21:38:24.352Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "metadata": {
+          "reason": "The note names apps/academy/docs/academy/04-Reference/01-Reactor/08-ErrorHandling.md as its source; page text identical at v6.2.2-dev.47 and v6.2.2-dev.74",
+          "confidence": "grounded"
+        },
+        "sourceId": "ae215942-cc33-442a-9e76-a00caafe9644",
+        "targetId": "e68bbef5-e64a-41e2-9334-57198b78284e",
+        "relationshipType": "DERIVED_FROM"
+      },
+      "timestampUtcMs": "2026-09-02T21:38:24.352Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "CSEdBrp7ePX3VSs3H8uCCvdLPN4=",
+    "timestampUtcMs": "2026-08-14T12:35:45.000Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "version",
+        "value": "v6.2.2-dev.44",
+        "updatedAt": "2026-08-14T12:35:45.000Z"
+      },
+      "timestampUtcMs": "2026-08-14T12:35:45.000Z"
+    }
+  },
+  {
+    "index": 5,
+    "hash": "MApbD043wZoqF8ypgKp49w49Ojw=",
+    "timestampUtcMs": "2026-08-14T12:35:45.000Z",
+    "action": {
+      "type": "SET_PROVENANCE",
+      "input": {
+        "author": "claude",
+        "createdAt": "2026-08-13T14:34:46.000Z",
+        "sourceOrigin": "DERIVED"
+      },
+      "timestampUtcMs": "2026-08-14T12:35:45.000Z"
+    }
+  },
+  {
+    "index": 6,
+    "hash": "0zjxYiHPX//0lfMf7U07yxVv35E=",
+    "timestampUtcMs": "2026-08-14T12:35:45.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "c32539bc-c16d-4e2f-b126-965d0a80493f",
+        "name": "error-handling",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-08-14T12:35:45.000Z"
+    }
+  },
+  {
+    "index": 7,
+    "hash": "YV/I7WdgiWjXdm5h/ShaAJfQY8o=",
+    "timestampUtcMs": "2026-08-14T12:35:45.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "8ca17199-3469-418f-93af-7e3e36a00e4b",
+        "name": "reactor-client",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-08-14T12:35:45.000Z"
+    }
+  },
+  {
+    "index": 8,
+    "hash": "lADvH5HT3917mxDgS1Z91+XsVDo=",
+    "timestampUtcMs": "2026-08-14T12:35:45.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "973dc3d1-90e4-4abe-9221-324c64daf837",
+        "name": "gotchas",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-08-14T12:35:45.000Z"
+    }
+  },
+  {
+    "index": 9,
+    "hash": "NsDSn5ki+81JESat0oNUB13zfJM=",
+    "timestampUtcMs": "2026-08-14T14:37:28.000Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "version",
+        "value": "v6.2.2-dev.47",
+        "updatedAt": "2026-08-14T12:00:00.000Z"
+      },
+      "timestampUtcMs": "2026-08-14T14:37:28.000Z"
+    }
+  },
+  {
+    "index": 10,
+    "hash": "FFKkLD3DRJKOpCqx5UQnmk7saHs=",
+    "timestampUtcMs": "2026-08-14T14:37:28.000Z",
+    "action": {
+      "type": "SUBMIT_FOR_REVIEW",
+      "input": {
+        "id": "fd637e09-da66-4818-8a84-25ff99db44c5",
+        "actor": "claude",
+        "comment": "Knowledge registered against powerhouse v6.2.2-dev.47",
+        "timestamp": "2026-08-14T12:00:00.000Z"
+      },
+      "timestampUtcMs": "2026-08-14T14:37:28.000Z"
+    }
+  },
+  {
+    "index": 11,
+    "hash": "nHvsykU8XGMWefzikD9AceI6jBc=",
+    "timestampUtcMs": "2026-08-14T14:37:28.000Z",
+    "action": {
+      "type": "APPROVE_NOTE",
+      "input": {
+        "id": "24a89ab6-dc7a-44a3-ad5c-ea385bea4dd1",
+        "actor": "liberuum",
+        "comment": "Canonical as of powerhouse v6.2.2-dev.47",
+        "timestamp": "2026-08-14T12:00:00.000Z"
+      },
+      "timestampUtcMs": "2026-08-14T14:37:28.000Z"
+    }
+  },
+  {
+    "index": 12,
+    "hash": "/ZSK1GlsHWBTeAc8Dam+JTm5btA=",
+    "timestampUtcMs": "2026-09-02T21:38:25.083Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "filePath",
+        "value": "apps/academy/docs/academy/04-Reference/01-Reactor/08-ErrorHandling.md",
+        "updatedAt": "2026-09-02T21:38:25.083Z"
+      },
+      "timestampUtcMs": "2026-09-02T21:38:25.083Z"
+    }
+  },
+  {
+    "index": 13,
+    "hash": "WZiaU7oW8MUv5AOcSRPhjRw8Oe4=",
+    "timestampUtcMs": "2026-09-02T21:38:25.083Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "version",
+        "value": "v6.2.2-dev.74",
+        "updatedAt": "2026-09-02T21:38:25.083Z"
+      },
+      "timestampUtcMs": "2026-09-02T21:38:25.083Z"
+    }
+  }
+]

@@ -1,0 +1,276 @@
+[
+  {
+    "index": 0,
+    "hash": "",
+    "timestampUtcMs": "2026-08-20T08:45:57.539Z",
+    "action": {
+      "type": "CREATE_DOCUMENT",
+      "input": {
+        "meta": {},
+        "name": "Odoo's deletion protection covers five accounting models and nothing else",
+        "slug": "",
+        "model": "bai/knowledge-note",
+        "branch": "main",
+        "signing": {
+          "nonce": "",
+          "publicKey": {},
+          "signature": "3a655b89-195d-4173-9771-bf1601da006d",
+          "documentType": "bai/knowledge-note",
+          "createdAtUtcIso": "2026-08-20T08:45:57.539Z"
+        },
+        "version": 0,
+        "documentId": "3a655b89-195d-4173-9771-bf1601da006d",
+        "protocolVersions": {
+          "base-reducer": 2
+        }
+      },
+      "timestampUtcMs": "2026-08-20T08:45:57.539Z"
+    }
+  },
+  {
+    "index": 0,
+    "hash": "qBjsubrCXS1xdkq382FAlqGzjps=",
+    "timestampUtcMs": "2026-08-20T08:45:58.157Z",
+    "action": {
+      "type": "SET_TITLE",
+      "input": {
+        "title": "Odoo's deletion protection covers five accounting models and nothing else",
+        "updatedAt": "2026-08-20T08:45:58.157051Z"
+      },
+      "timestampUtcMs": "2026-08-20T08:45:58.157091Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "",
+    "timestampUtcMs": "2026-08-20T08:45:57.539Z",
+    "action": {
+      "type": "UPGRADE_DOCUMENT",
+      "input": {
+        "model": "bai/knowledge-note",
+        "toVersion": 1,
+        "documentId": "3a655b89-195d-4173-9771-bf1601da006d",
+        "fromVersion": 0,
+        "initialState": {
+          "auth": {
+            "grants": [],
+            "version": 0
+          },
+          "local": {
+            "lastViewedAt": null,
+            "personalTags": []
+          },
+          "global": {
+            "links": [],
+            "model": null,
+            "scope": null,
+            "title": null,
+            "editor": null,
+            "inputs": [],
+            "models": [],
+            "status": "DRAFT",
+            "topics": [],
+            "content": null,
+            "context": null,
+            "modelId": null,
+            "modules": [],
+            "outputs": [],
+            "version": null,
+            "computes": null,
+            "filePath": null,
+            "noteType": null,
+            "severity": null,
+            "hooksUsed": [],
+            "rootCause": null,
+            "confidence": null,
+            "consumedBy": [],
+            "provenance": null,
+            "sourceType": null,
+            "targetType": null,
+            "cardinality": null,
+            "description": null,
+            "alternatives": [],
+            "consequences": [],
+            "errorMessage": null,
+            "relationType": null,
+            "correctPattern": null,
+            "decisionStatus": null,
+            "dispatchTargets": [],
+            "lifecycleEvents": []
+          },
+          "document": {
+            "hash": {
+              "encoding": "base64",
+              "algorithm": "sha1"
+            },
+            "version": 1
+          }
+        }
+      },
+      "timestampUtcMs": "2026-08-20T08:45:57.539Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "I9tDNN676+eK3cTvDj1ErLb9ZEc=",
+    "timestampUtcMs": "2026-08-20T08:45:58.157Z",
+    "action": {
+      "type": "SET_DESCRIPTION",
+      "input": {
+        "updatedAt": "2026-08-20T08:45:58.157094Z",
+        "description": "The DOMAINS dict in the account module lists account.move, account.account, account.tax, res.partner and res.company, so approvals outside accounting have no protection."
+      },
+      "timestampUtcMs": "2026-08-20T08:45:58.157100Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "",
+    "timestampUtcMs": "2026-08-20T08:45:59.391Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "3a655b89-195d-4173-9771-bf1601da006d",
+        "targetId": "4d8e59af-51f2-4ab7-b290-e1d5744abbd7",
+        "relationshipType": "DERIVED_FROM"
+      },
+      "timestampUtcMs": "2026-08-20T08:45:59.391Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "NxaQi7vmckjlK03holHq1VzT+pU=",
+    "timestampUtcMs": "2026-08-20T08:45:58.157Z",
+    "action": {
+      "type": "SET_NOTE_TYPE",
+      "input": {
+        "noteType": "OBSERVATION",
+        "updatedAt": "2026-08-20T08:45:58.157103Z"
+      },
+      "timestampUtcMs": "2026-08-20T08:45:58.157107Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "Gd0eJ74EkBmNSwGCtOzcL7VL40o=",
+    "timestampUtcMs": "2026-08-20T08:45:58.157Z",
+    "action": {
+      "type": "SET_CONTENT",
+      "input": {
+        "content": "`addons/account/models/mail_message.py` defines a module-level `DOMAINS` dict whose keys are exactly `res.company`, `account.move`, `account.account`, `account.tax` and `res.partner`, and the guard applies only where `message_type == 'tracking'`.\n\nEverything outside that set has no deletion protection at all: purchase approvals, expense approvals, HR decisions, contract and grant awards, inventory adjustments, CRM stage changes, permission grants on `res.users`. The `@api.ondelete` hook that raises *\"You cannot remove parts of a restricted audit trail\"* simply does not fire for them.\n\nThe boundary is coherent \u2014 Odoo defends the statutory books, which is what it is certified for \u2014 but it means the protection an evaluator sees on a posted journal entry does not generalise to the business decisions surrounding it.",
+        "updatedAt": "2026-08-20T08:45:58.157110Z"
+      },
+      "timestampUtcMs": "2026-08-20T08:45:58.157115Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "N4AMgKXtdQGQ4mUr/2vMH9M9W74=",
+    "timestampUtcMs": "2026-08-20T08:45:58.157Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "9159e47b-b8b0-4b24-ada4-711d096a05d3",
+        "name": "tool-screen"
+      },
+      "timestampUtcMs": "2026-08-20T08:45:58.157124Z"
+    }
+  },
+  {
+    "index": 5,
+    "hash": "aeZ9j8QF+gCqiSrqRVFQlF0RuSU=",
+    "timestampUtcMs": "2026-08-20T08:45:58.157Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "edb6cd4b-f8ed-45df-bbbf-783c58cc2915",
+        "name": "odoo"
+      },
+      "timestampUtcMs": "2026-08-20T08:45:58.157132Z"
+    }
+  },
+  {
+    "index": 6,
+    "hash": "bRzx6skm6W9ntgXyOy/UT2KVP9M=",
+    "timestampUtcMs": "2026-08-20T08:45:58.157Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "7680bea4-0f5a-487d-bfa4-3572c02e10e6",
+        "name": "audit-trail"
+      },
+      "timestampUtcMs": "2026-08-20T08:45:58.157140Z"
+    }
+  },
+  {
+    "index": 7,
+    "hash": "YgMRbcS4kmSzoijRyUxq+DqnrcY=",
+    "timestampUtcMs": "2026-08-20T08:45:58.157Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "14477c42-9c86-467d-813f-6ce3961f8994",
+        "name": "scope"
+      },
+      "timestampUtcMs": "2026-08-20T08:45:58.157148Z"
+    }
+  },
+  {
+    "index": 8,
+    "hash": "Gv29w+hTHTew1cRCSaaNem4APsI=",
+    "timestampUtcMs": "2026-08-20T08:45:58.157Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "84015be3-3738-49c0-ada8-bd6bee544469",
+        "name": "business-events"
+      },
+      "timestampUtcMs": "2026-08-20T08:45:58.157155Z"
+    }
+  },
+  {
+    "index": 9,
+    "hash": "JfPmjZREbckr31+KWpcc4ZtdM88=",
+    "timestampUtcMs": "2026-08-20T08:45:58.562Z",
+    "action": {
+      "type": "SET_PROVENANCE",
+      "input": {
+        "author": "knowledge-agent",
+        "createdAt": "2026-08-20T08:45:58.562293Z",
+        "sessionId": null,
+        "sourceOrigin": "DERIVED"
+      },
+      "timestampUtcMs": "2026-08-20T08:45:58.562330Z"
+    }
+  },
+  {
+    "index": 10,
+    "hash": "L80M24I80yYvnI3YKmZLI8x4vsc=",
+    "timestampUtcMs": "2026-08-20T08:45:59.585Z",
+    "action": {
+      "type": "SUBMIT_FOR_REVIEW",
+      "input": {
+        "id": "4976e69e-5312-4804-8bbd-4f89e6e4404f",
+        "actor": "knowledge-agent",
+        "comment": "Extracted from the primary-source tool screen; each claim quotable from a cited source.",
+        "timestamp": "2026-08-20T08:45:59.584972Z"
+      },
+      "timestampUtcMs": "2026-08-20T08:45:59.585110Z"
+    }
+  },
+  {
+    "index": 11,
+    "hash": "UbX9zYPYMt/GheW46jG2I0o7wLI=",
+    "timestampUtcMs": "2026-08-20T08:45:59.744Z",
+    "action": {
+      "type": "APPROVE_NOTE",
+      "input": {
+        "id": "ee921f67-9bca-4852-aaf1-39e31d0e2042",
+        "actor": "liberuum",
+        "comment": "Approved: tool-screen extraction.",
+        "timestamp": "2026-08-20T08:45:59.744934Z"
+      },
+      "timestampUtcMs": "2026-08-20T08:45:59.744954Z"
+    }
+  }
+]

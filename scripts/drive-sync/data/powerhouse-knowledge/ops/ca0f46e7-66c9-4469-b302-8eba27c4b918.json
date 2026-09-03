@@ -1,0 +1,330 @@
+[
+  {
+    "index": 0,
+    "hash": "",
+    "timestampUtcMs": "2026-09-03T07:38:16.220Z",
+    "action": {
+      "type": "CREATE_DOCUMENT",
+      "input": {
+        "meta": {},
+        "name": "api-graphql-generated",
+        "slug": "",
+        "model": "bai/knowledge-note",
+        "branch": "main",
+        "signing": {
+          "nonce": "",
+          "publicKey": {},
+          "signature": "ca0f46e7-66c9-4469-b302-8eba27c4b918",
+          "documentType": "bai/knowledge-note",
+          "createdAtUtcIso": "2026-09-03T07:38:16.220Z"
+        },
+        "version": 0,
+        "documentId": "ca0f46e7-66c9-4469-b302-8eba27c4b918",
+        "protocolVersions": {
+          "base-reducer": 2
+        }
+      },
+      "timestampUtcMs": "2026-09-03T07:38:16.220Z"
+    }
+  },
+  {
+    "index": 0,
+    "hash": "HDK6HxO2YqtzOFL/dKq4bD6GxhA=",
+    "timestampUtcMs": "2026-09-03T07:38:17.525Z",
+    "action": {
+      "type": "SET_TITLE",
+      "input": {
+        "title": "The Reactor GraphQL API is generated from .graphql files with pnpm codegen, so the schema is edited as SDL rather than as resolver types",
+        "updatedAt": "2026-09-03T07:38:17.525Z"
+      },
+      "timestampUtcMs": "2026-09-03T07:38:17.525Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "",
+    "timestampUtcMs": "2026-09-03T07:38:16.220Z",
+    "action": {
+      "type": "UPGRADE_DOCUMENT",
+      "input": {
+        "model": "bai/knowledge-note",
+        "toVersion": 1,
+        "documentId": "ca0f46e7-66c9-4469-b302-8eba27c4b918",
+        "fromVersion": 0,
+        "initialState": {
+          "auth": {
+            "grants": [],
+            "version": 0
+          },
+          "local": {
+            "lastViewedAt": null,
+            "personalTags": []
+          },
+          "global": {
+            "links": [],
+            "model": null,
+            "scope": null,
+            "title": null,
+            "editor": null,
+            "inputs": [],
+            "models": [],
+            "status": "DRAFT",
+            "topics": [],
+            "content": null,
+            "context": null,
+            "modelId": null,
+            "modules": [],
+            "outputs": [],
+            "version": null,
+            "computes": null,
+            "filePath": null,
+            "noteType": null,
+            "severity": null,
+            "hooksUsed": [],
+            "rootCause": null,
+            "confidence": null,
+            "consumedBy": [],
+            "provenance": null,
+            "sourceType": null,
+            "targetType": null,
+            "cardinality": null,
+            "description": null,
+            "alternatives": [],
+            "consequences": [],
+            "errorMessage": null,
+            "relationType": null,
+            "correctPattern": null,
+            "decisionStatus": null,
+            "dispatchTargets": [],
+            "lifecycleEvents": []
+          },
+          "document": {
+            "hash": {
+              "encoding": "base64",
+              "algorithm": "sha1"
+            },
+            "version": 1
+          }
+        }
+      },
+      "timestampUtcMs": "2026-09-03T07:38:16.220Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "cNr1XD1ujmHNlJwZtfF305k9PkA=",
+    "timestampUtcMs": "2026-09-03T07:38:17.525Z",
+    "action": {
+      "type": "SET_DESCRIPTION",
+      "input": {
+        "updatedAt": "2026-09-03T07:38:17.525Z",
+        "description": "Source lives in src/graphql/reactor and output lands in src/graphql/reactor/generated. Hand-editing the generated tree is lost on the next run, which is the same rule the document-model gen folders."
+      },
+      "timestampUtcMs": "2026-09-03T07:38:17.525Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "",
+    "timestampUtcMs": "2026-09-03T07:39:13.316Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "metadata": {
+          "reason": "Extracted from packages/reactor-api/src/graphql/reactor/README.md at v6.2.2-dev.74 \u2014 whole file (generation source and output directories)",
+          "confidence": "grounded"
+        },
+        "sourceId": "ca0f46e7-66c9-4469-b302-8eba27c4b918",
+        "targetId": "d4d7135b-1ed7-4642-b5bb-3f53fc91a3f5",
+        "relationshipType": "DERIVED_FROM"
+      },
+      "timestampUtcMs": "2026-09-03T07:39:13.316Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "XHuVXDBsjFWz7dZION8xtB6vPTU=",
+    "timestampUtcMs": "2026-09-03T07:38:17.525Z",
+    "action": {
+      "type": "SET_NOTE_TYPE",
+      "input": {
+        "noteType": "REFERENCE",
+        "updatedAt": "2026-09-03T07:38:17.525Z"
+      },
+      "timestampUtcMs": "2026-09-03T07:38:17.525Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "",
+    "timestampUtcMs": "2026-09-03T07:39:13.803Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "metadata": {
+          "reason": "Generated schema types are one half of the safety the codegen spec asks for; the break came from the hand-written mapping the generator does not cover",
+          "confidence": "grounded"
+        },
+        "sourceId": "ca0f46e7-66c9-4469-b302-8eba27c4b918",
+        "targetId": "12279c44-5030-4886-b208-f4247e648a4c",
+        "relationshipType": "BUILDS_ON"
+      },
+      "timestampUtcMs": "2026-09-03T07:39:13.803Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "e3p2oYqVZb6BcZfKJBSKDPBFHpM=",
+    "timestampUtcMs": "2026-09-03T07:38:17.525Z",
+    "action": {
+      "type": "SET_CONTENT",
+      "input": {
+        "content": "The Reactor GraphQL API is \"primarily generated from `.graphql` files in the `src/graphql/reactor` directory\". Regenerating is one command:\n\n```bash\npnpm codegen\n```\n\nwhich writes into `src/graphql/reactor/generated`.\n\nTwo consequences worth stating even though the README leaves them implicit. The **SDL is the source of truth** for that API surface: a change to the reactor's GraphQL types is a change to a `.graphql` file followed by codegen, not a change to a TypeScript type. And the `generated` directory is a **derived artefact** \u2014 the same rule that governs a document model's `gen/` tree \u2014 so editing it appears to work until the next run.\n\nThis is also why a GraphQL-layer break is usually a *mapping* problem rather than a schema problem: the schema and its types are generated together, while the code translating a wire payload into a domain object is hand-written, which is precisely where the actionId sync break happened.\n\n## Provenance\n- `packages/reactor-api/src/graphql/reactor/README.md` \u2014 whole file (generation source and output directories)\n\n_Extracted from the Powerhouse repository at **v6.2.2-dev.74**._",
+        "updatedAt": "2026-09-03T07:38:17.525Z"
+      },
+      "timestampUtcMs": "2026-09-03T07:38:17.525Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "",
+    "timestampUtcMs": "2026-09-03T07:39:14.286Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "metadata": {
+          "reason": "These generated schemas are what the gateway adapter compiles into FetchHandlers",
+          "confidence": "grounded"
+        },
+        "sourceId": "ca0f46e7-66c9-4469-b302-8eba27c4b918",
+        "targetId": "49106443-8aa1-4246-971c-a934ef9313fb",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-09-03T07:39:14.286Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "EkcDm3aoWC0KTVM90yxopF65cBM=",
+    "timestampUtcMs": "2026-09-03T07:38:17.525Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "44d879ee-5fcd-4e09-bff5-8b708e2076a4",
+        "name": "reactor-api"
+      },
+      "timestampUtcMs": "2026-09-03T07:38:17.525Z"
+    }
+  },
+  {
+    "index": 5,
+    "hash": "FYrPnDjC5q1yrC7PKSfZb+0xErA=",
+    "timestampUtcMs": "2026-09-03T07:38:17.525Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "99c16acc-080e-40ff-8d2a-3d6bd1629685",
+        "name": "graphql"
+      },
+      "timestampUtcMs": "2026-09-03T07:38:17.525Z"
+    }
+  },
+  {
+    "index": 6,
+    "hash": "OBxVFndbVfQK0cmWTzUporYVbIs=",
+    "timestampUtcMs": "2026-09-03T07:38:17.525Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "01b32538-bf79-48ab-91e5-b6e0bfb999b7",
+        "name": "codegen"
+      },
+      "timestampUtcMs": "2026-09-03T07:38:17.525Z"
+    }
+  },
+  {
+    "index": 7,
+    "hash": "oFRTuzSfHL2AVim+Kxzq846u14k=",
+    "timestampUtcMs": "2026-09-03T07:38:17.525Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "a6d81330-876c-4030-a77a-c5a24c18587b",
+        "name": "schema"
+      },
+      "timestampUtcMs": "2026-09-03T07:38:17.525Z"
+    }
+  },
+  {
+    "index": 8,
+    "hash": "XpV7gnCpnWXSwQ5kKlXc4d+EaYc=",
+    "timestampUtcMs": "2026-09-03T07:38:17.525Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "version",
+        "value": "v6.2.2-dev.74",
+        "updatedAt": "2026-09-03T07:38:17.525Z"
+      },
+      "timestampUtcMs": "2026-09-03T07:38:17.525Z"
+    }
+  },
+  {
+    "index": 9,
+    "hash": "II4B0pXkbvNHy/PKQJq+XGv9Wgs=",
+    "timestampUtcMs": "2026-09-03T07:38:17.525Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "filePath",
+        "value": "packages/reactor-api/src/graphql/reactor/README.md",
+        "updatedAt": "2026-09-03T07:38:17.525Z"
+      },
+      "timestampUtcMs": "2026-09-03T07:38:17.525Z"
+    }
+  },
+  {
+    "index": 10,
+    "hash": "vNXi1PAu3he1a61uHyYhAct/sno=",
+    "timestampUtcMs": "2026-09-03T07:38:19.926Z",
+    "action": {
+      "type": "SET_PROVENANCE",
+      "input": {
+        "author": "knowledge-agent",
+        "createdAt": "2026-09-03T07:38:19.926Z",
+        "sourceOrigin": "DERIVED"
+      },
+      "timestampUtcMs": "2026-09-03T07:38:19.926Z"
+    }
+  },
+  {
+    "index": 11,
+    "hash": "vmvqF5my48uONCT51VB2LJGI7To=",
+    "timestampUtcMs": "2026-09-03T07:38:20.415Z",
+    "action": {
+      "type": "SUBMIT_FOR_REVIEW",
+      "input": {
+        "id": "2fbf1969-b27f-4d0b-a66b-0274f57947e2",
+        "actor": "knowledge-agent",
+        "comment": "extracted from packages/reactor-api/src/graphql/reactor/README.md at v6.2.2-dev.74",
+        "timestamp": "2026-09-03T07:38:20.415Z"
+      },
+      "timestampUtcMs": "2026-09-03T07:38:20.415Z"
+    }
+  },
+  {
+    "index": 12,
+    "hash": "bm4TIBF77cA7VqZjIyG+39EBj14=",
+    "timestampUtcMs": "2026-09-03T07:38:20.982Z",
+    "action": {
+      "type": "APPROVE_NOTE",
+      "input": {
+        "id": "bceb6a6f-5d4b-417e-bceb-ba008a580ce3",
+        "actor": "liberuum",
+        "comment": "claim checked against the cited file at the pinned tag",
+        "timestamp": "2026-09-03T07:38:20.982Z"
+      },
+      "timestampUtcMs": "2026-09-03T07:38:20.982Z"
+    }
+  }
+]

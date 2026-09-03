@@ -1,0 +1,98 @@
+{
+  "links": [
+    {
+      "id": "lnk-9b3ba4de-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "9b3ba4de-4e1a-46a3-8865-200c4d1280e9",
+      "targetTitle": "vetra-studio-is-builder-environment"
+    },
+    {
+      "id": "lnk-7ced7cf3-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "7ced7cf3-63c4-4ce1-8dc6-e52544a6a620",
+      "targetTitle": "vetra-drive-holds-source-documents-while-preview-drive-holds-instances"
+    },
+    {
+      "id": "lnk-66daa536-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "66daa536-c7eb-4fde-98b0-7f815c1eff7e",
+      "targetTitle": "Academy \u203a GetStarted \u203a Vetra Studio",
+      "reason": "The note names apps/academy/docs/academy/01-GetStarted/00-VetraStudio.md as its source; page text identical at v6.2.2-dev.47 and v6.2.2-dev.74",
+      "confidence": "grounded"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "The Vetra Studio BUILD preview is a dev render where processors never run and preview drives are ephemeral",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "1b25598e-aa7f-478c-99e0-be2692be7065",
+      "name": "vetra-studio",
+      "topicDocumentId": null
+    },
+    {
+      "id": "9b7efdcb-32ab-4414-8a78-8e6a2e75827e",
+      "name": "gotchas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "a4ef2c6d-741b-4751-b210-42e8c5d6e18b",
+      "name": "processors",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "## What the preview actually is\n\nThe BUILD pane deep-links into the **reactor project** the agent spawned for the session \u2014 a dev-mode process, one per active build. The sequence: the agent calls `reactor-project-init` then `reactor-project-start` (both visible as tool cards), the dev server warms up in roughly 10\u201330 seconds, and the agent calls `spec-preview-show` with a project, drive and app reference to surface the app. From then on Vite HMR picks up generated code without a full reload.\n\nA running reactor project is **not sufficient on its own** \u2014 until the agent explicitly surfaces a preview the pane reads *\"No preview yet \u2014 The BUILD preview appears once the agent scaffolds a project for this session.\"*\n\n## Two things the preview cannot show you\n\n**Processors do not run.** They execute server-side in Switchboard, only once the studio is deployed. So any behaviour mediated by a processor \u2014 the doc's example is syncing a guest order to a staff board \u2014 looks broken in preview and starts working after deploy, with no code change in between. If you are debugging a missing read model or an unfired side effect in preview, the absence *is* the expected behaviour, not a bug to chase.\n\n**Preview drives are ephemeral and reset between sessions.** Documents you create to exercise the UI are not durable, so preview is not a place to build up test fixtures. This mirrors the local convention where the `vetra` drive holds source documents (models, editors, apps) and the preview drive holds instances \u2014 with the cloud preview drive additionally being disposable.\n\nBoth limits follow from the same fact: preview is a *dev render of the editors and apps*, not a runtime. Editors and drive apps are exactly the parts that live in the browser, so those are the parts you can see. Anything whose execution belongs to a host \u2014 processors, subgraph resolvers, sync channels \u2014 needs the real Switchboard.\n\nBecause the product is pre-alpha, the preview also does not always mount at all; if it stays on \"No preview yet\", deploy the app to see it end to end.\n\n_Source: `apps/academy/docs/academy/01-GetStarted/00-VetraStudio.md` (The BUILD preview), Powerhouse v6.2.2-dev.45._",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": "v6.2.2-dev.74",
+  "computes": null,
+  "filePath": "apps/academy/docs/academy/01-GetStarted/00-VetraStudio.md",
+  "noteType": "OBSERVATION",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "claude",
+    "createdAt": "2026-08-13T14:37:38.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-09-02T21:32:23.792Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Preview runs editors and apps in a local dev reactor; processor-mediated behaviour only works after deploying to Switchboard, and drives reset between sessions.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "7db2770b-d9d7-4514-b9a7-0ac4467ee79d",
+      "actor": "claude",
+      "comment": "Knowledge registered against powerhouse v6.2.2-dev.47",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-14T12:00:00.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "8c0185f7-89c0-4b81-a694-c50cf0dee1fb",
+      "actor": "liberuum",
+      "comment": "Canonical as of powerhouse v6.2.2-dev.47",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-14T12:00:00.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

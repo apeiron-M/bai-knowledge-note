@@ -1,0 +1,334 @@
+[
+  {
+    "index": 0,
+    "hash": "",
+    "timestampUtcMs": "2026-08-14T12:34:23.682Z",
+    "action": {
+      "type": "CREATE_DOCUMENT",
+      "input": {
+        "meta": {},
+        "name": "with-sync-wiring-avoids-monkey-patching",
+        "slug": "",
+        "model": "bai/knowledge-note",
+        "branch": "main",
+        "signing": {
+          "nonce": "",
+          "publicKey": {},
+          "signature": "90ce5eef-d899-430a-abcd-d4a679738cc1",
+          "documentType": "bai/knowledge-note",
+          "createdAtUtcIso": "2026-08-14T12:34:23.682Z"
+        },
+        "version": 0,
+        "documentId": "90ce5eef-d899-430a-abcd-d4a679738cc1",
+        "protocolVersions": {
+          "base-reducer": 2
+        }
+      },
+      "timestampUtcMs": "2026-08-14T12:34:23.682Z"
+    }
+  },
+  {
+    "index": 0,
+    "hash": "1wwdLkneXmCK2uIyl//PinBbIXs=",
+    "timestampUtcMs": "2026-08-14T12:36:10.000Z",
+    "action": {
+      "type": "SET_TITLE",
+      "input": {
+        "title": "Wiring the Swarm channel via ReactorBuilder.withSync() avoids monkey-patching the reactor.",
+        "updatedAt": "2026-08-14T12:36:10.000Z"
+      },
+      "timestampUtcMs": "2026-08-14T12:36:10.000Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "",
+    "timestampUtcMs": "2026-08-14T12:34:23.682Z",
+    "action": {
+      "type": "UPGRADE_DOCUMENT",
+      "input": {
+        "model": "bai/knowledge-note",
+        "toVersion": 1,
+        "documentId": "90ce5eef-d899-430a-abcd-d4a679738cc1",
+        "fromVersion": 0,
+        "initialState": {
+          "auth": {
+            "grants": [],
+            "version": 0
+          },
+          "local": {
+            "lastViewedAt": null,
+            "personalTags": []
+          },
+          "global": {
+            "links": [],
+            "model": null,
+            "scope": null,
+            "title": null,
+            "editor": null,
+            "inputs": [],
+            "models": [],
+            "status": "DRAFT",
+            "topics": [],
+            "content": null,
+            "context": null,
+            "modelId": null,
+            "modules": [],
+            "outputs": [],
+            "version": null,
+            "computes": null,
+            "filePath": null,
+            "noteType": null,
+            "severity": null,
+            "hooksUsed": [],
+            "rootCause": null,
+            "confidence": null,
+            "consumedBy": [],
+            "provenance": null,
+            "sourceType": null,
+            "targetType": null,
+            "cardinality": null,
+            "description": null,
+            "alternatives": [],
+            "consequences": [],
+            "errorMessage": null,
+            "relationType": null,
+            "correctPattern": null,
+            "decisionStatus": null,
+            "dispatchTargets": [],
+            "lifecycleEvents": []
+          },
+          "document": {
+            "hash": {
+              "encoding": "base64",
+              "algorithm": "sha1"
+            },
+            "version": 1
+          }
+        }
+      },
+      "timestampUtcMs": "2026-08-14T12:34:23.682Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "DSVna1YMBL/jJJvBPxJanZ+XaQY=",
+    "timestampUtcMs": "2026-08-14T12:36:10.000Z",
+    "action": {
+      "type": "SET_DESCRIPTION",
+      "input": {
+        "updatedAt": "2026-08-14T12:36:10.000Z",
+        "description": "ReactorBuilder has two code paths; using the syncBuilder path instead of channelScheme gives full control over channel types without patching."
+      },
+      "timestampUtcMs": "2026-08-14T12:36:10.000Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "",
+    "timestampUtcMs": "2026-08-14T12:39:11.455Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "90ce5eef-d899-430a-abcd-d4a679738cc1",
+        "targetId": "98e36a08-78cd-4c60-942c-338d4a460334",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-08-14T12:39:11.455Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "I526Ml7I88gD3XXH9wQrEjWSvF4=",
+    "timestampUtcMs": "2026-08-14T12:36:10.000Z",
+    "action": {
+      "type": "SET_NOTE_TYPE",
+      "input": {
+        "noteType": "decision",
+        "updatedAt": "2026-08-14T12:36:10.000Z"
+      },
+      "timestampUtcMs": "2026-08-14T12:36:10.000Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "",
+    "timestampUtcMs": "2026-08-14T12:39:11.542Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "90ce5eef-d899-430a-abcd-d4a679738cc1",
+        "targetId": "27cf7cb6-160b-439b-ac23-001d3e43abde",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-08-14T12:39:11.542Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "D+21W8FI+c4eXFLPANDwZpUFgDs=",
+    "timestampUtcMs": "2026-08-14T12:36:10.000Z",
+    "action": {
+      "type": "SET_CONTENT",
+      "input": {
+        "content": "## Claim\nIn `createBrowserReactor()`, the Swarm channel is wired through `ReactorBuilder.withSync(syncBuilder)` rather than `withChannelScheme(...)`. This avoids monkey-patching or SQL hacks.\n\n## Evidence\nFrom the source: \"The ReactorBuilder has two code paths: 1) `if (this.channelScheme)` \u2014 auto-creates a single factory type; 2) `else if (this.syncBuilder)` \u2014 uses YOUR factory. By using path 2, we get full control over which channel types are available.\"\n\nThe build-time registration looks like:\n\n```typescript\nconst { syncBuilder, registerGqlFactory } = createSwarmSyncBuilder(logger, jwtHandler);\nnew ReactorBuilder().withSync(syncBuilder).withJwtHandler(jwtHandler);\n```\n\n## Consequences\n- Swarm remotes persist in `sync_remotes` and are recreated natively on startup.\n- No dynamic re-registration or private-API reach-ins.\n- Rejects hacks: \"No monkey-patching. No SQL hacks. No dynamic re-registration.\"\n\n## Source\n`connect/src/utils/reactor.ts`; Swarm Channel Architecture, \"Wiring Into createBrowserReactor\".",
+        "updatedAt": "2026-08-14T12:36:10.000Z"
+      },
+      "timestampUtcMs": "2026-08-14T12:36:10.000Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "",
+    "timestampUtcMs": "2026-08-14T12:39:11.642Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "90ce5eef-d899-430a-abcd-d4a679738cc1",
+        "targetId": "87c0fd87-df8a-474d-8689-7ace5709b14e",
+        "relationshipType": "BUILDS_ON"
+      },
+      "timestampUtcMs": "2026-08-14T12:39:11.642Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "vKTw9LUsJE2DJVHZmhTlJ1j1eUY=",
+    "timestampUtcMs": "2026-08-14T12:36:10.000Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "version",
+        "value": "v6.2.2-dev.44",
+        "updatedAt": "2026-08-14T12:36:10.000Z"
+      },
+      "timestampUtcMs": "2026-08-14T12:36:10.000Z"
+    }
+  },
+  {
+    "index": 5,
+    "hash": "jCXBw7yErzc8q3KFX42ceUW8N60=",
+    "timestampUtcMs": "2026-08-14T12:36:10.000Z",
+    "action": {
+      "type": "SET_PROVENANCE",
+      "input": {
+        "author": "knowledge-agent",
+        "createdAt": "2026-04-21T14:19:49.348Z",
+        "sourceOrigin": "DERIVED"
+      },
+      "timestampUtcMs": "2026-08-14T12:36:10.000Z"
+    }
+  },
+  {
+    "index": 6,
+    "hash": "noR3GZPkc+IYHojfRH4iLkLNCvo=",
+    "timestampUtcMs": "2026-08-14T12:36:10.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "t-cc3fbe68-1",
+        "name": "reactor-builder",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-08-14T12:36:10.000Z"
+    }
+  },
+  {
+    "index": 7,
+    "hash": "2HeaOG25a8iGJtuEdYH7XyBkC3E=",
+    "timestampUtcMs": "2026-08-14T12:36:10.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "t-cc3fbe68-2",
+        "name": "wiring",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-08-14T12:36:10.000Z"
+    }
+  },
+  {
+    "index": 8,
+    "hash": "iMGJRuyMtXbXCWsYcor785bB18c=",
+    "timestampUtcMs": "2026-08-14T12:36:10.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "t-cc3fbe68-3",
+        "name": "architecture-decision",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-08-14T12:36:10.000Z"
+    }
+  },
+  {
+    "index": 9,
+    "hash": "mLxCgrPljIyrIQ8Qf/T2NBtwhG0=",
+    "timestampUtcMs": "2026-08-14T14:37:21.000Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "version",
+        "value": "v6.2.2-dev.47",
+        "updatedAt": "2026-08-14T12:00:00.000Z"
+      },
+      "timestampUtcMs": "2026-08-14T14:37:21.000Z"
+    }
+  },
+  {
+    "index": 10,
+    "hash": "xzK7FBFGAOF0R8mdrHZJOvK8h1A=",
+    "timestampUtcMs": "2026-08-14T14:37:21.000Z",
+    "action": {
+      "type": "SUBMIT_FOR_REVIEW",
+      "input": {
+        "id": "6c5f6313-d4e2-45b4-a2e9-95d350abe87d",
+        "actor": "claude",
+        "comment": "Knowledge registered against powerhouse v6.2.2-dev.47",
+        "timestamp": "2026-08-14T12:00:00.000Z"
+      },
+      "timestampUtcMs": "2026-08-14T14:37:21.000Z"
+    }
+  },
+  {
+    "index": 11,
+    "hash": "PtEG0YHcrB5uwCtXcVR3f3cL0N0=",
+    "timestampUtcMs": "2026-08-14T14:37:21.000Z",
+    "action": {
+      "type": "APPROVE_NOTE",
+      "input": {
+        "id": "c364d55b-b61b-4358-b2af-bc5a70d98d19",
+        "actor": "liberuum",
+        "comment": "Canonical as of powerhouse v6.2.2-dev.47",
+        "timestamp": "2026-08-14T12:00:00.000Z"
+      },
+      "timestampUtcMs": "2026-08-14T14:37:21.000Z"
+    }
+  },
+  {
+    "index": 12,
+    "hash": "Bnzj8kHWOCGDpZ8jQ3rB4BDKEUE=",
+    "timestampUtcMs": "2026-08-16T09:49:55.000Z",
+    "action": {
+      "type": "SET_NOTE_TYPE",
+      "input": {
+        "noteType": "DECISION",
+        "updatedAt": "2026-08-16T09:49:55.000Z"
+      },
+      "timestampUtcMs": "2026-08-16T09:49:55.000Z"
+    }
+  },
+  {
+    "index": 13,
+    "hash": "aW9j5vlllfmMMb1+7X6e5wG2fF4=",
+    "timestampUtcMs": "2026-09-03T09:58:11.254Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "version",
+        "updatedAt": "2026-09-03T09:58:11.254Z"
+      },
+      "timestampUtcMs": "2026-09-03T09:58:11.254Z"
+    }
+  }
+]

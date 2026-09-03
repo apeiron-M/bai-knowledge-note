@@ -1,0 +1,276 @@
+[
+  {
+    "index": 0,
+    "hash": "",
+    "timestampUtcMs": "2026-08-20T08:45:39.559Z",
+    "action": {
+      "type": "CREATE_DOCUMENT",
+      "input": {
+        "meta": {},
+        "name": "Flowable shipped an immutable business audit trail in December 2025",
+        "slug": "",
+        "model": "bai/knowledge-note",
+        "branch": "main",
+        "signing": {
+          "nonce": "",
+          "publicKey": {},
+          "signature": "98292b40-d27c-4bde-adf9-4014efc6f84b",
+          "documentType": "bai/knowledge-note",
+          "createdAtUtcIso": "2026-08-20T08:45:39.559Z"
+        },
+        "version": 0,
+        "documentId": "98292b40-d27c-4bde-adf9-4014efc6f84b",
+        "protocolVersions": {
+          "base-reducer": 2
+        }
+      },
+      "timestampUtcMs": "2026-08-20T08:45:39.559Z"
+    }
+  },
+  {
+    "index": 0,
+    "hash": "xgxa0P4dm8O8xcm4H4p648m1vqE=",
+    "timestampUtcMs": "2026-08-20T08:45:40.148Z",
+    "action": {
+      "type": "SET_TITLE",
+      "input": {
+        "title": "Flowable shipped an immutable business audit trail in December 2025",
+        "updatedAt": "2026-08-20T08:45:40.148670Z"
+      },
+      "timestampUtcMs": "2026-08-20T08:45:40.148708Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "",
+    "timestampUtcMs": "2026-08-20T08:45:39.559Z",
+    "action": {
+      "type": "UPGRADE_DOCUMENT",
+      "input": {
+        "model": "bai/knowledge-note",
+        "toVersion": 1,
+        "documentId": "98292b40-d27c-4bde-adf9-4014efc6f84b",
+        "fromVersion": 0,
+        "initialState": {
+          "auth": {
+            "grants": [],
+            "version": 0
+          },
+          "local": {
+            "lastViewedAt": null,
+            "personalTags": []
+          },
+          "global": {
+            "links": [],
+            "model": null,
+            "scope": null,
+            "title": null,
+            "editor": null,
+            "inputs": [],
+            "models": [],
+            "status": "DRAFT",
+            "topics": [],
+            "content": null,
+            "context": null,
+            "modelId": null,
+            "modules": [],
+            "outputs": [],
+            "version": null,
+            "computes": null,
+            "filePath": null,
+            "noteType": null,
+            "severity": null,
+            "hooksUsed": [],
+            "rootCause": null,
+            "confidence": null,
+            "consumedBy": [],
+            "provenance": null,
+            "sourceType": null,
+            "targetType": null,
+            "cardinality": null,
+            "description": null,
+            "alternatives": [],
+            "consequences": [],
+            "errorMessage": null,
+            "relationType": null,
+            "correctPattern": null,
+            "decisionStatus": null,
+            "dispatchTargets": [],
+            "lifecycleEvents": []
+          },
+          "document": {
+            "hash": {
+              "encoding": "base64",
+              "algorithm": "sha1"
+            },
+            "version": 1
+          }
+        }
+      },
+      "timestampUtcMs": "2026-08-20T08:45:39.559Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "RXMNP1PVpdoLBwGPuc5aUfCG/vg=",
+    "timestampUtcMs": "2026-08-20T08:45:40.148Z",
+    "action": {
+      "type": "SET_DESCRIPTION",
+      "input": {
+        "updatedAt": "2026-08-20T08:45:40.148712Z",
+        "description": "Release 2025.2.01 added a business audit trail view and the Enterprise AuditService documents its records as immutable, closing the gap in the vendor's own product."
+      },
+      "timestampUtcMs": "2026-08-20T08:45:40.148719Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "",
+    "timestampUtcMs": "2026-08-20T08:45:41.490Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "98292b40-d27c-4bde-adf9-4014efc6f84b",
+        "targetId": "4d8e59af-51f2-4ab7-b290-e1d5744abbd7",
+        "relationshipType": "DERIVED_FROM"
+      },
+      "timestampUtcMs": "2026-08-20T08:45:41.490Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "aeO0dau3FaLN5R+g+5pLKhd6CcQ=",
+    "timestampUtcMs": "2026-08-20T08:45:40.148Z",
+    "action": {
+      "type": "SET_NOTE_TYPE",
+      "input": {
+        "noteType": "OBSERVATION",
+        "updatedAt": "2026-08-20T08:45:40.148721Z"
+      },
+      "timestampUtcMs": "2026-08-20T08:45:40.148726Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "JpU+aNvxQ3pCtFV11uKu5HH/RMQ=",
+    "timestampUtcMs": "2026-08-20T08:45:40.148Z",
+    "action": {
+      "type": "SET_CONTENT",
+      "input": {
+        "content": "The release notes for 2025.2.01, dated 16 December 2025, state: *\"Added support to see the business audit trail of a case or process instance.\"* The Enterprise `AuditService` documentation asserts *\"Created AuditInstances are immutable\"*, with a builder carrying `creatorId()` for user attribution, `type()`, `subType()` and `payload()`, stored in `flw_audit_instance` and publishable as an audit stream.\n\nControlled code search confirms which side of the line it falls on: `AuditService`, `AuditInstance` and `flw_audit_instance` each return zero hits in `flowable-engine`, against 628 for `HistoryService` as a control. The capability is Enterprise-only, and it exists.\n\nAny pitch asserting that Flowable has no immutable business audit log is factually wrong against the commercial product. The claim survives only when scoped explicitly to the Apache-2.0 edition.",
+        "updatedAt": "2026-08-20T08:45:40.148745Z"
+      },
+      "timestampUtcMs": "2026-08-20T08:45:40.148754Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "18oOSADNJZXynCwX+QeKELvChKM=",
+    "timestampUtcMs": "2026-08-20T08:45:40.148Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "9513d89f-5432-4a25-8832-17fc3eb33482",
+        "name": "tool-screen"
+      },
+      "timestampUtcMs": "2026-08-20T08:45:40.148765Z"
+    }
+  },
+  {
+    "index": 5,
+    "hash": "I2XQaeX4PS9QKnX+pFFkFVs+uUo=",
+    "timestampUtcMs": "2026-08-20T08:45:40.148Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "5b6e310c-c9be-4b68-bdf5-b76024bf9a7e",
+        "name": "flowable"
+      },
+      "timestampUtcMs": "2026-08-20T08:45:40.148773Z"
+    }
+  },
+  {
+    "index": 6,
+    "hash": "Mn+6Wxz6u4uX0FT0RSWibn9hXdY=",
+    "timestampUtcMs": "2026-08-20T08:45:40.148Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "74173945-d96a-4886-97a1-8c597ad2146c",
+        "name": "slot-occupied"
+      },
+      "timestampUtcMs": "2026-08-20T08:45:40.148782Z"
+    }
+  },
+  {
+    "index": 7,
+    "hash": "GKNGlvb9l4oToNI68OJ9tfVVaUY=",
+    "timestampUtcMs": "2026-08-20T08:45:40.148Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "ba259f56-dda6-4cd6-b348-3f2b3e8df058",
+        "name": "audit-trail"
+      },
+      "timestampUtcMs": "2026-08-20T08:45:40.148790Z"
+    }
+  },
+  {
+    "index": 8,
+    "hash": "1RUwrATADpI03ViZ59/lqI0Y36k=",
+    "timestampUtcMs": "2026-08-20T08:45:40.148Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "d713e9ad-de3f-4228-95cc-113ba636f0be",
+        "name": "competitive-landscape"
+      },
+      "timestampUtcMs": "2026-08-20T08:45:40.148798Z"
+    }
+  },
+  {
+    "index": 9,
+    "hash": "B1F82x19SnODFOpU5s2y67PtVm4=",
+    "timestampUtcMs": "2026-08-20T08:45:40.600Z",
+    "action": {
+      "type": "SET_PROVENANCE",
+      "input": {
+        "author": "knowledge-agent",
+        "createdAt": "2026-08-20T08:45:40.600465Z",
+        "sessionId": null,
+        "sourceOrigin": "DERIVED"
+      },
+      "timestampUtcMs": "2026-08-20T08:45:40.600502Z"
+    }
+  },
+  {
+    "index": 10,
+    "hash": "NyEbkA+26imLzRnDP0V2x1vVclY=",
+    "timestampUtcMs": "2026-08-20T08:45:41.694Z",
+    "action": {
+      "type": "SUBMIT_FOR_REVIEW",
+      "input": {
+        "id": "665fe671-c1c5-49a1-8412-aa6576e11a36",
+        "actor": "knowledge-agent",
+        "comment": "Extracted from the primary-source tool screen; each claim quotable from a cited source.",
+        "timestamp": "2026-08-20T08:45:41.694639Z"
+      },
+      "timestampUtcMs": "2026-08-20T08:45:41.694659Z"
+    }
+  },
+  {
+    "index": 11,
+    "hash": "KzltqVZHTnNPvG84RSGYcqOksiw=",
+    "timestampUtcMs": "2026-08-20T08:45:41.840Z",
+    "action": {
+      "type": "APPROVE_NOTE",
+      "input": {
+        "id": "26487fe0-0697-4c5a-a063-6df53de3d71e",
+        "actor": "liberuum",
+        "comment": "Approved: tool-screen extraction.",
+        "timestamp": "2026-08-20T08:45:41.840462Z"
+      },
+      "timestampUtcMs": "2026-08-20T08:45:41.840486Z"
+    }
+  }
+]

@@ -1,0 +1,173 @@
+[
+  {
+    "index": 0,
+    "hash": "",
+    "timestampUtcMs": "2026-09-02T21:43:22.106Z",
+    "action": {
+      "type": "CREATE_DOCUMENT",
+      "input": {
+        "meta": {},
+        "name": "ADR \u203a lazy-drive-sync",
+        "slug": "",
+        "model": "bai/source",
+        "branch": "main",
+        "signing": {
+          "nonce": "",
+          "publicKey": {},
+          "signature": "a90ccd64-6898-41f6-a845-242b8929612a",
+          "documentType": "bai/source",
+          "createdAtUtcIso": "2026-09-02T21:43:22.106Z"
+        },
+        "version": 0,
+        "documentId": "a90ccd64-6898-41f6-a845-242b8929612a",
+        "protocolVersions": {
+          "base-reducer": 2
+        }
+      },
+      "timestampUtcMs": "2026-09-02T21:43:22.106Z"
+    }
+  },
+  {
+    "index": 0,
+    "hash": "O9jIpbkgqubPOLu/HjUReW5TZMU=",
+    "timestampUtcMs": "2026-09-02T21:43:21.985Z",
+    "action": {
+      "type": "INGEST_SOURCE",
+      "input": {
+        "url": "https://github.com/powerhouse-inc/powerhouse/blob/v6.2.2-dev.74/docs/adr/0001-lazy-drive-sync.md",
+        "tool": "sync-repo-docs",
+        "title": "ADR \u203a lazy-drive-sync",
+        "author": "Powerhouse Inc.",
+        "method": "sha256:528f2a8437915901543dccd9eeb8b017a00e083e7f2a9ff57007200409bb44ac git:v6.2.2-dev.74",
+        "content": "# ADR 0001 \u2014 Lazy drive sync (on-demand document sync)\n\n- **Status:** Proposed\n- **Date:** 2026-07-16\n- **Deciders:** acaldas\n- **Implements:** TBD (proposal)\n\n## Context\n\nConnect eagerly syncs an entire drive on connect. When it (or any frontend on\nthe sync adapter) opens a remote drive on a Switchboard reactor, it streams the\nfull operation history of every document from timestamp 0 and replays it locally.\nTwo costs follow:\n\n1. **Cold load** \u2014 opening a drive pulls all operations of all documents,\n   regardless of what the user looks at.\n2. **No prioritization** \u2014 the document the user opens has no priority over the\n   thousands they never touch.\n\nThe goal is **lazy sync**: sync the drive document first (it lists its children),\nthen sync an individual document's operations only when it is opened. Opening a\ndocument waits for its initial sync, after which it is writable. Lazy sync must\nbe built on the sync protocol (not the fetch/GraphQL document subgraphs), be\nopt-in, and require minimal changes in Connect.\n\nFour verified facts about the current stack shape the decision. The sync cursor\nis per-channel, collection-wide, and forward-only, so a live channel's filter\ncannot be widened to backfill a document whose operations predate the cursor. A\ndocument's operation log is global and reachable only through a collection it is\na member of (`operation-index.find` inner-joins on `document_collections`). Two\ndrive models coexist, and this ADR targets the legacy `powerhouse/document-drive`\nmodel, whose node list can diverge from `document_collections`. The full verified\nlist, with file and code references, is in the implementation issue.\n\n## Decision\n\nIntroduce **lazy drive sync** as an opt-in mode built on scoped sync channels.\nThe unit of laziness is a **document channel**, created on demand.\n\n- **Document channels are forced, not chosen.** The forward-only cursor\n  forbids mutating the drive channel's filter to add a document, so each lazily\n  opened document gets its own channel scoped by `filter.documentId`. A fresh\n  channel auto-backfills that document's full history from ordinal 0. Channels\n  dedup by `documentId` and stay synced for the session.\n- **`preloadDocuments` makes it opt-in.** `addRemoteDrive(url, { preloadDocuments })`\n  defaults to eager (today's behavior); with `false` it registers only a\n  drive-only channel, and child contents sync on demand. New `addRemoteDocument`/\n  `removeRemoteDocument` verbs open and release document channels.\n- **Status is a six-state model, not a binary.** A shared, mutating document\n  needs more than loading-vs-loaded: `available` (listed, not synced),\n  `loading` (backfilling), `synced` (caught up, writable), `missing` (caught up,\n  a member, nothing materialized), `unreachable` (a node exists but no live\n  membership), `not-referenced` (unknown). The `missing` verdict is\n  membership-authoritative: assert it only after confirming membership via\n  `getCollectionsForDocuments`; a node with no membership is `unreachable`.\n- **Completion is a channel-level signal.** `waitForInitialSync(remoteName)`\n  resolves when the initial backfill drains. It cannot come from `SyncStatus`,\n  which is document-keyed and returns `undefined` for exactly the empty/missing\n  case that must be detected.\n- **Suspense rides a client decorator, not the cache.** A `LazyReactorClient`\n  wraps `IReactorClient.get`, injected only when `preloadDocuments:false`, and\n  blocks on the `waitForInitialSync` gate before re-reading. `document-cache.ts`\n  is unchanged. Never cache a \"not-yet\" rejection, to avoid poisoning the promise\n  cache.\n- **Provisioning is an internal strategy.** `preloadDocuments` stays a boolean in\n  the public API, but which channels opening a drive creates is a strategy, so\n  future policies are not new booleans. The eager default stays byte-identical to\n  today.\n\nSee the implementation issue for the public API surface, routing/re-homing\nmechanics, transport (coalesced batch polling), and the optional server-side\nwork.\n\n## Abstractions: kept, modified, dropped\n\n- **Keep** \u2014 route via `getCollectionsForDocuments`; the `LazyReactorClient`\n  decorator seam (zero cache changes); the `preloadDocuments` boolean plus an\n  internal provisioning strategy.\n- **Modify** \u2014 no single `DriveMembershipProvider`; routing runs on the uniform\n  `document_collections` index (no abstraction needed), and only the model-specific\n  tree/existence signal sits behind a thin provider. Combining them would invite\n  using the tree for routing \u2014 the divergence bug.\n- **Drop** \u2014 initial-sync-complete as a `SyncStatus` field (must be channel-level);\n  a generic reference-counted subscription manager (one flavor, one consumer \u2014\n  build the concrete document registry).\n\n## Consequences\n\n### Positive\n\n- Opening a lazy drive transfers only the drive document; child contents load on\n  demand. First paint is proportional to the drive doc, not the drive.\n- No reactor-core, operation-store, cursor, keyframe, or server changes are\n  required for the client-only design. Multi-channel-per-collection and\n  `add`/`remove` already exist.\n- Connect changes reduce to one flag plus its existing `<Suspense>` + error\n  boundary; the explicit `addRemoteDocument` verb remains for programmatic callers.\n- The write/push path is unchanged: a lazily-synced document's writes push on its\n  own channel, and the drive-only channel ignores them.\n\n### Negative / risks\n\n- **N open documents = N logical channels**, forced by the cursor model. Coalesced\n  batch polling with chunking (in the issue) collapses poll cost to `ceil(N / chunk)`\n  requests per endpoint per tick, so this is not a scaling ceiling \u2014 but that\n  transport work is a prerequisite for opening lazy drives at scale.\n- **`preloadDocuments:false` breaks whole-drive-assuming consumers.** Code that\n  iterates `state.global.nodes` and calls `useDocuments(childIds)` / `find({parentId})`\n  hits misses/suspends for un-opened documents; `useDocuments` returns a silent\n  partial list. Audit every such caller before flipping the flag.\n- **Promise-cache poisoning** if a \"not-yet\" state rejects before drain. Mitigated\n  by the never-reject-before-drain rule.\n\n### Confidence and revisit\n\nConfidence is high in the channel model \u2014 it is built on existing primitives\n(multi-channel-per-collection, `add`/`remove`, ordinal-0 backfill). Confidence is\nmedium in the batch-poll scaling claim, which is unverified at thousands of open\ndocuments. Revisit if per-endpoint request size or server parse cost regresses,\nor if `reactor-drive` becomes the default drive model.\n\n## Known limitations (not solved in iteration 1)\n\n- A document with no drive-collection membership (created outside any drive, or\n  after leaving every drive) is unsyncable \u2014 there is no non-drive collection\n  concept. Rendered as `unreachable`.\n- Targets the legacy `powerhouse/document-drive` model. `reactor-drive` needs a\n  different tree/existence provider (NodeProcessor read model + child headers);\n  the routing/registry layer is already model-agnostic.\n\n## Alternatives considered\n\n- **Keep eager-only sync** (do nothing). Rejected: cold load scales with drive\n  size, not usage.\n- **Preview via the fetch/GraphQL document subgraphs** (`document` query returns\n  materialized `state` without history). Rejected: the requirement is to stay on\n  the sync protocol; it would introduce a second, divergent read path.\n- **Widen the drive channel's filter on demand.** Impossible under the current\n  cursor model (collection-wide, forward-only; `touchChannel` discards changed\n  filters). This is what forces document channels.\n- **Write directly on a snapshot before history loads.** Deferred: requires a\n  baseline-revision concept in the operation store and a keyframe/state-at-revision\n  server query. Iteration 1 waits for initial sync, then writes.\n",
+        "createdAt": "2026-09-02T21:43:21.985Z",
+        "createdBy": "repo-docs-sync",
+        "sourceType": "DOCUMENTATION",
+        "description": "Powerhouse v6.2.2-dev.74 (unchanged since v6.2.2-dev.47) \u2014 - Status: Proposed - Date: 2026-07-16 - Deciders: acaldas - Implements: TBD (proposal)",
+        "publishedAt": "2026-07-20T13:49:46.000Z"
+      },
+      "timestampUtcMs": "2026-09-02T21:43:21.985Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "",
+    "timestampUtcMs": "2026-09-02T21:43:22.106Z",
+    "action": {
+      "type": "UPGRADE_DOCUMENT",
+      "input": {
+        "model": "bai/source",
+        "toVersion": 1,
+        "documentId": "a90ccd64-6898-41f6-a845-242b8929612a",
+        "fromVersion": 0,
+        "initialState": {
+          "auth": {
+            "grants": [],
+            "version": 0
+          },
+          "local": {},
+          "global": {
+            "title": null,
+            "status": "INBOX",
+            "content": null,
+            "createdAt": null,
+            "createdBy": null,
+            "provenance": null,
+            "sourceType": null,
+            "description": null,
+            "extractedClaims": [],
+            "extractionStats": null
+          },
+          "document": {
+            "hash": {
+              "encoding": "base64",
+              "algorithm": "sha1"
+            },
+            "version": 1
+          }
+        }
+      },
+      "timestampUtcMs": "2026-09-02T21:43:22.106Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "bS5VM1MnAwCm0GoVzk2mFwhVq6I=",
+    "timestampUtcMs": "2026-09-03T07:30:45.119Z",
+    "action": {
+      "type": "ADD_EXTRACTED_CLAIM",
+      "input": {
+        "claimRef": "55fcb6f8-c6d7-48ed-b56b-fe4a0ff3303e"
+      },
+      "timestampUtcMs": "2026-09-03T07:30:45.119Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "rWuKT023Kd4Af6fXKm1sr+YhOkI=",
+    "timestampUtcMs": "2026-09-03T07:30:45.615Z",
+    "action": {
+      "type": "ADD_EXTRACTED_CLAIM",
+      "input": {
+        "claimRef": "fe8f33f5-b69c-4080-878a-1cd2cbe6bb17"
+      },
+      "timestampUtcMs": "2026-09-03T07:30:45.615Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "eZl5XYX1gL99s6lKOzxbMcWDlZo=",
+    "timestampUtcMs": "2026-09-03T07:30:46.080Z",
+    "action": {
+      "type": "ADD_EXTRACTED_CLAIM",
+      "input": {
+        "claimRef": "150f7dd7-3669-41d0-8472-ee0f51f40634"
+      },
+      "timestampUtcMs": "2026-09-03T07:30:46.080Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "QS6aykA5qgrzYWYcYrNW5sGNYAE=",
+    "timestampUtcMs": "2026-09-03T07:30:52.624Z",
+    "action": {
+      "type": "RECORD_EXTRACTION_STATS",
+      "input": {
+        "skipRate": 0.4,
+        "claimCount": 3,
+        "extractedAt": "2026-09-03T07:30:52.624Z",
+        "extractedBy": "knowledge-agent",
+        "skippedCount": 2
+      },
+      "timestampUtcMs": "2026-09-03T07:30:52.624Z"
+    }
+  },
+  {
+    "index": 5,
+    "hash": "97ccqieWXChQBCggTp0/ufzGd84=",
+    "timestampUtcMs": "2026-09-03T07:30:53.204Z",
+    "action": {
+      "type": "SET_SOURCE_STATUS",
+      "input": {
+        "status": "EXTRACTED"
+      },
+      "timestampUtcMs": "2026-09-03T07:30:53.204Z"
+    }
+  },
+  {
+    "index": 6,
+    "hash": "apCqe49ehPADwT6BgyabVe/Z6fk=",
+    "timestampUtcMs": "2026-09-03T07:31:50.537Z",
+    "action": {
+      "type": "RECORD_EXTRACTION_STATS",
+      "input": {
+        "skipRate": 0.4,
+        "claimCount": 3,
+        "extractedAt": "2026-09-03T07:31:50.536Z",
+        "extractedBy": "knowledge-agent",
+        "skippedCount": 2
+      },
+      "timestampUtcMs": "2026-09-03T07:31:50.537Z"
+    }
+  }
+]

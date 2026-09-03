@@ -1,0 +1,115 @@
+{
+  "links": [
+    {
+      "id": "lnk-14416670-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "14416670-d2d3-4de5-9dfd-7c6e175280c2",
+      "targetTitle": "Academy \u203a Reference \u203a Reactor \u203a Document model registry and version upgrades",
+      "reason": "Extracted from apps/academy/docs/academy/04-Reference/01-Reactor/06-DocumentModelRegistry.md at v6.2.2-dev.74 \u2014 Version upgrades \u203a Upgrade types; Authoring a manifest",
+      "confidence": "grounded"
+    },
+    {
+      "id": "lnk-2f4b5df2-bui",
+      "linkType": "BUILDS_ON",
+      "targetDocumentId": "2f4b5df2-d6ca-4224-a049-e96b4811ed37",
+      "targetTitle": "upgrade-reducer-must-patch-state-and-initialstate",
+      "reason": "That note warns an upgrade reducer must patch state and initialState together; this one is the manifest that declares which reducer runs for which step",
+      "confidence": "grounded"
+    },
+    {
+      "id": "lnk-63cdce40-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "63cdce40-628c-49e9-b13c-9efc59073c6a",
+      "targetTitle": "registry-upgrade-path-errors",
+      "reason": "The v2..vN keying is exactly what computeUpgradePath walks, and a missing key is what makes it throw",
+      "confidence": "grounded"
+    },
+    {
+      "id": "lnk-d2734cd9-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "d2734cd9-d7b1-4ede-b4d7-ee69e5d178c4",
+      "targetTitle": "registry-registration-non-fatal",
+      "reason": "Manifests replace rather than append on the builder, and a mismatched one registers without complaint, so both silent modes belong together",
+      "confidence": "grounded"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "An upgrade manifest keys its transitions v2..vN with no v1, because v1 is the base \u2014 and the registry never cross-checks a manifest against registered modules",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "0bb271d3-2d6b-4e5e-9d9f-434b435629b1",
+      "name": "document-model",
+      "topicDocumentId": null
+    },
+    {
+      "id": "738e4669-f2d5-4771-ba04-5ba1b5610caf",
+      "name": "versioning",
+      "topicDocumentId": null
+    },
+    {
+      "id": "3ddc10f9-7493-4d54-8cae-a0b567f74c7f",
+      "name": "upgrades",
+      "topicDocumentId": null
+    },
+    {
+      "id": "c4bcd2ad-333d-457e-aba6-c6dd8ba30da7",
+      "name": "codegen",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "```ts\nexport type UpgradeTransition = {\n  toVersion: number;\n  upgradeReducer: UpgradeReducer<any, any>;   // (document, action) => PHDocument<TTo>\n  description?: string;\n};\n\nexport type UpgradeManifest<TVersions extends readonly number[]> = {\n  documentType: string;\n  latestVersion: TupleMember<TVersions>;   // 1 | 2 | 3\n  supportedVersions: TVersions;            // [1, 2, 3]\n  upgrades: { [V in Exclude<TupleMember<TVersions>, 1> as `v${V}`]: UpgradeTransition };\n};\n```\n\n`TVersions` is passed as a `readonly number[]` tuple (`as const`), and the mapped type **forces an `upgrades` key for every supported version except `1`** \u2014 a manifest for `[1, 2, 3]` requires `v2` and `v3`, and there is no `v1` key because v1 is the base. A manifest with only v1 therefore has `upgrades: {}`. Registry methods type it loosely as `UpgradeManifest<readonly number[]>`.\n\nTwo things that catch people:\n\n- **The registry does not cross-check.** Registering a manifest whose `supportedVersions` do not match the registered module versions **succeeds** \u2014 so a manifest can promise a v3 that no module provides, and the failure appears later at `computeUpgradePath`.\n- **Manifests are codegen output** carrying a `WARNING: DO NOT EDIT` header. You author them by adding versions and upgrade reducers through codegen, across three files: `versions.ts` (`export const supportedVersions = [1, 2] as const`), one transition file per step (`v2.ts` exporting an `UpgradeTransition`), and `upgrade-manifest.ts` assembling them.\n\n## Provenance\n- `apps/academy/docs/academy/04-Reference/01-Reactor/06-DocumentModelRegistry.md` \u2014 Version upgrades \u203a Upgrade types; Authoring a manifest\n\n_Extracted from the Powerhouse repository at **v6.2.2-dev.74**._",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": "v6.2.2-dev.74",
+  "computes": null,
+  "filePath": "apps/academy/docs/academy/04-Reference/01-Reactor/06-DocumentModelRegistry.md",
+  "noteType": "REFERENCE",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "knowledge-agent",
+    "createdAt": "2026-09-03T07:48:42.314Z",
+    "sessionId": null,
+    "updatedAt": "2026-09-03T07:48:43.330Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "supportedVersions is a readonly tuple passed as const; the type forces an upgrades key for every version except 1. A manifest whose versions do not match the registered modules registers successfully.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "1e41d935-d0d7-4831-beaf-519e485051d9",
+      "actor": "knowledge-agent",
+      "comment": "extracted from apps/academy/docs/academy/04-Reference/01-Reactor/06-DocumentModelRegistry.md at v6.2.2-dev.74",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-09-03T07:48:42.867Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "ca24d3b5-3aa9-4c0e-ba06-2b03830d0d07",
+      "actor": "liberuum",
+      "comment": "claim checked against the cited file at the pinned tag",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-09-03T07:48:43.330Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

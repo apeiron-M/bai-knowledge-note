@@ -1,0 +1,532 @@
+[
+  {
+    "index": 0,
+    "hash": "",
+    "timestampUtcMs": "2026-09-02T22:14:22.953Z",
+    "action": {
+      "type": "CREATE_DOCUMENT",
+      "input": {
+        "meta": {},
+        "name": "outbox-index-order-measured",
+        "slug": "",
+        "model": "bai/knowledge-note",
+        "branch": "main",
+        "signing": {
+          "nonce": "",
+          "publicKey": {},
+          "signature": "c93f6c0f-5040-4734-a616-a824634feebb",
+          "documentType": "bai/knowledge-note",
+          "createdAtUtcIso": "2026-09-02T22:14:22.953Z"
+        },
+        "version": 0,
+        "documentId": "c93f6c0f-5040-4734-a616-a824634feebb",
+        "protocolVersions": {
+          "base-reducer": 2
+        }
+      },
+      "timestampUtcMs": "2026-09-02T22:14:22.953Z"
+    }
+  },
+  {
+    "index": 0,
+    "hash": "8CgzxypWVTXH6zYhaovYjUc6pjw=",
+    "timestampUtcMs": "2026-09-02T22:14:22.880Z",
+    "action": {
+      "type": "SET_TITLE",
+      "input": {
+        "title": "Serving a backfill page in the operation index's own order costs 2.5\u00d7 the load jobs and does not buy cross-scope ordering, because replay regroups by scope anyway",
+        "updatedAt": "2026-09-02T22:14:22.880Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:14:22.880Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "",
+    "timestampUtcMs": "2026-09-02T22:14:22.953Z",
+    "action": {
+      "type": "UPGRADE_DOCUMENT",
+      "input": {
+        "model": "bai/knowledge-note",
+        "toVersion": 1,
+        "documentId": "c93f6c0f-5040-4734-a616-a824634feebb",
+        "fromVersion": 0,
+        "initialState": {
+          "auth": {
+            "grants": [],
+            "version": 0
+          },
+          "local": {
+            "lastViewedAt": null,
+            "personalTags": []
+          },
+          "global": {
+            "links": [],
+            "model": null,
+            "scope": null,
+            "title": null,
+            "editor": null,
+            "inputs": [],
+            "models": [],
+            "status": "DRAFT",
+            "topics": [],
+            "content": null,
+            "context": null,
+            "modelId": null,
+            "modules": [],
+            "outputs": [],
+            "version": null,
+            "computes": null,
+            "filePath": null,
+            "noteType": null,
+            "severity": null,
+            "hooksUsed": [],
+            "rootCause": null,
+            "confidence": null,
+            "consumedBy": [],
+            "provenance": null,
+            "sourceType": null,
+            "targetType": null,
+            "cardinality": null,
+            "description": null,
+            "alternatives": [],
+            "consequences": [],
+            "errorMessage": null,
+            "relationType": null,
+            "correctPattern": null,
+            "decisionStatus": null,
+            "dispatchTargets": [],
+            "lifecycleEvents": []
+          },
+          "document": {
+            "hash": {
+              "encoding": "base64",
+              "algorithm": "sha1"
+            },
+            "version": 1
+          }
+        }
+      },
+      "timestampUtcMs": "2026-09-02T22:14:22.953Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "/uEGGBJVhox0EN5pdrHlWybT80A=",
+    "timestampUtcMs": "2026-09-02T22:14:22.880Z",
+    "action": {
+      "type": "SET_DESCRIPTION",
+      "input": {
+        "updatedAt": "2026-09-02T22:14:22.880Z",
+        "description": "Measured on a 410-document, 7,056-operation fixture: 817 jobs at 8.6 ops each by document and scope versus 2,016 at 3.5 by ordinal, and 2.64x the wall clock. Replay reduces scope by scope."
+      },
+      "timestampUtcMs": "2026-09-02T22:14:22.880Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "",
+    "timestampUtcMs": "2026-09-02T22:25:29.511Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "metadata": {
+          "reason": "Extracted from docs/updateoutbox-scope-ordering.md at v6.2.2-dev.74 \u2014 'What the fix is, and what it is not': the two counts, the measurement table, and 'The cycle that surfaced while trying the index order'",
+          "confidence": "grounded"
+        },
+        "sourceId": "c93f6c0f-5040-4734-a616-a824634feebb",
+        "targetId": "4c1161cd-c718-4604-83dc-39b07e09d602",
+        "relationshipType": "DERIVED_FROM"
+      },
+      "timestampUtcMs": "2026-09-02T22:25:29.511Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "8/rkLSeni1Z+NYtGZcNuzRYn0/U=",
+    "timestampUtcMs": "2026-09-02T22:14:22.880Z",
+    "action": {
+      "type": "SET_NOTE_TYPE",
+      "input": {
+        "noteType": "DECISION",
+        "updatedAt": "2026-09-02T22:14:22.880Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:14:22.880Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "",
+    "timestampUtcMs": "2026-09-02T22:25:30.679Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "metadata": {
+          "reason": "Records why the tempting fix for that bug was rejected and what was shipped instead",
+          "confidence": "grounded"
+        },
+        "sourceId": "c93f6c0f-5040-4734-a616-a824634feebb",
+        "targetId": "2021b696-e605-4b1b-b579-7f568949c1b2",
+        "relationshipType": "BUILDS_ON"
+      },
+      "timestampUtcMs": "2026-09-02T22:25:30.679Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "jLvHbTHpRfgXCxBxV5cx5nwZGwE=",
+    "timestampUtcMs": "2026-09-02T22:14:22.880Z",
+    "action": {
+      "type": "SET_CONTENT",
+      "input": {
+        "content": "The obvious fix for the scope-ordering inversion was to drop the sort and serve each page in the index's ordinal order. It was tried and rejected on two counts.\n\n**It costs a factor of 2.5 in load jobs.** Measured against the hub-spoke fixture (410 documents, 7,056 operations, 407 documents carrying exactly two scopes):\n\n| batching | load jobs | operations per job |\n| --- | --- | --- |\n| by (document, scope) | 817 | 8.6 |\n| by (document, ordinal) | 2,016 | 3.5 |\n\nConvergence time tracked that ratio almost exactly \u2014 2.47\u00d7 the jobs for 2.64\u00d7 the wall clock \u2014 so the cost is per-job overhead, not per-operation work. On CI it took the 3-spoke leg past its 300 s cap and then took Postgres down with it.\n\n**It does not buy the ordering it appears to buy.** Delivery order is not what decides the order a document's scopes are applied in: `replayDocument` replays `Object.values(operations).flatMap(...)` \u2014 scope by scope, with no cross-scope sort \u2014 so given `global@1000, local@2000, global@3000, local@4000` it applies `global@1000, global@3000, local@2000, local@4000`. The one place operations from different streams are ordered by timestamp, `mergeByPosition`/`comparePositions`, is reached only from the auth walk and does not feed state derivation. So an `UPGRADE_DOCUMENT` is **not** applied at the position its timestamp implies relative to other scopes today, whatever order it is delivered in. If that semantics is wanted it belongs in replay, and batching per document rather than per (document, scope) is the enabler \u2014 410 jobs on the fixture against 817.\n\nA related defect surfaced while trying the index order and is reachable on `main`: `consolidateSyncOperations` merged **every** SyncOperation sharing a `(documentId, scope, branch)` wherever it sat in the chain, so an alternating chain `j1 document \u2192 j2 auth \u2192 j3 document \u2192 j4 auth` collapsed into `j1 \u2192 [j2]` and `j2 \u2192 [j1]`, which `validateBatchStructure` rejects for the whole batch. Merging only contiguous runs keeps the chain linear.\n\n_Source: docs/updateoutbox-scope-ordering.md (Powerhouse v6.2.2-dev.74)._\n\n## Provenance\n- `docs/updateoutbox-scope-ordering.md` \u2014 'What the fix is, and what it is not': the two counts, the measurement table, and 'The cycle that surfaced while trying the index order'\n\n_Recorded from the Powerhouse repository at **v6.2.2-dev.74** during the v6.2.2-dev.74 source sync._",
+        "updatedAt": "2026-09-02T22:14:22.880Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:14:22.880Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "",
+    "timestampUtcMs": "2026-09-02T22:25:31.203Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "metadata": {
+          "reason": "Cross-stream timestamp ordering exists in the reactor only for the auth walk; state derivation still folds scope by scope, so reshuffle semantics do not extend across scopes",
+          "confidence": "grounded"
+        },
+        "sourceId": "c93f6c0f-5040-4734-a616-a824634feebb",
+        "targetId": "5ba85b55-4ac1-4cd5-a9d2-e1855c5b9633",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-09-02T22:25:31.203Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "EqmwOQbdZv0jxANN/52/DzailO0=",
+    "timestampUtcMs": "2026-09-02T22:14:22.880Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "92c26e87-865e-4d54-9082-98041738c4bb",
+        "name": "reactor-sync"
+      },
+      "timestampUtcMs": "2026-09-02T22:14:22.880Z"
+    }
+  },
+  {
+    "index": 5,
+    "hash": "xkqOJJMwYv7cEQh8fAUtEAH/RRo=",
+    "timestampUtcMs": "2026-09-02T22:14:22.880Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "d4056fa1-81a6-434b-b5f9-109f4139b699",
+        "name": "outbox"
+      },
+      "timestampUtcMs": "2026-09-02T22:14:22.880Z"
+    }
+  },
+  {
+    "index": 6,
+    "hash": "a6HzUyLf5BQ8Hpmd+/s9JUv4luQ=",
+    "timestampUtcMs": "2026-09-02T22:14:22.880Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "c7f8de3d-405b-4069-9f2f-516b9ab9e1bf",
+        "name": "performance"
+      },
+      "timestampUtcMs": "2026-09-02T22:14:22.880Z"
+    }
+  },
+  {
+    "index": 7,
+    "hash": "KObCn3Kn5sCX35tIjwpoDkTHeZ8=",
+    "timestampUtcMs": "2026-09-02T22:14:22.880Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "3e56050e-66ce-43de-8d13-afd9e0c4ea56",
+        "name": "replay"
+      },
+      "timestampUtcMs": "2026-09-02T22:14:22.880Z"
+    }
+  },
+  {
+    "index": 8,
+    "hash": "Pr6cTMV58XtrUg8lZwJQntEK8Qo=",
+    "timestampUtcMs": "2026-09-02T22:14:22.880Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "version",
+        "value": "v6.2.2-dev.74",
+        "updatedAt": "2026-09-02T22:14:22.880Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:14:22.880Z"
+    }
+  },
+  {
+    "index": 9,
+    "hash": "r7M0B5+ILt1ktm0P1qEk29QUX4E=",
+    "timestampUtcMs": "2026-09-02T22:14:22.880Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "filePath",
+        "value": "docs/updateoutbox-scope-ordering.md",
+        "updatedAt": "2026-09-02T22:14:22.880Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:14:22.880Z"
+    }
+  },
+  {
+    "index": 10,
+    "hash": "6ENnm58bR9LTgsvGZujx7Ep0RG4=",
+    "timestampUtcMs": "2026-09-02T22:14:22.880Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "confidence",
+        "value": "grounded",
+        "updatedAt": "2026-09-02T22:14:22.880Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:14:22.880Z"
+    }
+  },
+  {
+    "index": 11,
+    "hash": "2GDCuYN5kRKmyOlrBuExIP5SvOA=",
+    "timestampUtcMs": "2026-09-02T22:14:25.517Z",
+    "action": {
+      "type": "SET_PROVENANCE",
+      "input": {
+        "author": "knowledge-agent",
+        "createdAt": "2026-09-02T22:14:25.517Z",
+        "sourceOrigin": "DERIVED"
+      },
+      "timestampUtcMs": "2026-09-02T22:14:25.517Z"
+    }
+  },
+  {
+    "index": 12,
+    "hash": "cBxhBP/a2aoa1MktKXchz9xGSUc=",
+    "timestampUtcMs": "2026-09-02T22:14:27.457Z",
+    "action": {
+      "type": "SUBMIT_FOR_REVIEW",
+      "input": {
+        "id": "2d39a320-011c-48b9-b4e5-24b71b2b44a9",
+        "actor": "knowledge-agent",
+        "comment": "extracted from the Powerhouse repository at v6.2.2-dev.74",
+        "timestamp": "2026-09-02T22:14:27.457Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:14:27.457Z"
+    }
+  },
+  {
+    "index": 13,
+    "hash": "rzTHHTGngoVbPxCa2zwI7CDM9r0=",
+    "timestampUtcMs": "2026-09-02T22:14:27.954Z",
+    "action": {
+      "type": "APPROVE_NOTE",
+      "input": {
+        "id": "1ef30f48-3e77-449b-bde1-297086503e62",
+        "actor": "liberuum",
+        "comment": "claim checked against the cited repository file at the pinned tag",
+        "timestamp": "2026-09-02T22:14:27.954Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:14:27.954Z"
+    }
+  },
+  {
+    "index": 14,
+    "hash": "ic8KdOet+LVcOcsBp0ThYwdxxic=",
+    "timestampUtcMs": "2026-09-02T22:16:46.476Z",
+    "action": {
+      "type": "SET_TITLE",
+      "input": {
+        "title": "Serving a backfill page in the operation index's own order costs 2.5\u00d7 the load jobs and does not buy cross-scope ordering, because replay regroups by scope anyway",
+        "updatedAt": "2026-09-02T22:16:46.476Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:16:46.476Z"
+    }
+  },
+  {
+    "index": 15,
+    "hash": "ic8KdOet+LVcOcsBp0ThYwdxxic=",
+    "timestampUtcMs": "2026-09-02T22:16:46.476Z",
+    "action": {
+      "type": "SET_DESCRIPTION",
+      "input": {
+        "updatedAt": "2026-09-02T22:16:46.476Z",
+        "description": "Measured on a 410-document, 7,056-operation fixture: 817 jobs at 8.6 ops each by document and scope versus 2,016 at 3.5 by ordinal, and 2.64x the wall clock. Replay reduces scope by scope."
+      },
+      "timestampUtcMs": "2026-09-02T22:16:46.476Z"
+    }
+  },
+  {
+    "index": 16,
+    "hash": "ic8KdOet+LVcOcsBp0ThYwdxxic=",
+    "timestampUtcMs": "2026-09-02T22:16:46.476Z",
+    "action": {
+      "type": "SET_NOTE_TYPE",
+      "input": {
+        "noteType": "DECISION",
+        "updatedAt": "2026-09-02T22:16:46.476Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:16:46.476Z"
+    }
+  },
+  {
+    "index": 17,
+    "hash": "ic8KdOet+LVcOcsBp0ThYwdxxic=",
+    "timestampUtcMs": "2026-09-02T22:16:46.476Z",
+    "action": {
+      "type": "SET_CONTENT",
+      "input": {
+        "content": "The obvious fix for the scope-ordering inversion was to drop the sort and serve each page in the index's ordinal order. It was tried and rejected on two counts.\n\n**It costs a factor of 2.5 in load jobs.** Measured against the hub-spoke fixture (410 documents, 7,056 operations, 407 documents carrying exactly two scopes):\n\n| batching | load jobs | operations per job |\n| --- | --- | --- |\n| by (document, scope) | 817 | 8.6 |\n| by (document, ordinal) | 2,016 | 3.5 |\n\nConvergence time tracked that ratio almost exactly \u2014 2.47\u00d7 the jobs for 2.64\u00d7 the wall clock \u2014 so the cost is per-job overhead, not per-operation work. On CI it took the 3-spoke leg past its 300 s cap and then took Postgres down with it.\n\n**It does not buy the ordering it appears to buy.** Delivery order is not what decides the order a document's scopes are applied in: `replayDocument` replays `Object.values(operations).flatMap(...)` \u2014 scope by scope, with no cross-scope sort \u2014 so given `global@1000, local@2000, global@3000, local@4000` it applies `global@1000, global@3000, local@2000, local@4000`. The one place operations from different streams are ordered by timestamp, `mergeByPosition`/`comparePositions`, is reached only from the auth walk and does not feed state derivation. So an `UPGRADE_DOCUMENT` is **not** applied at the position its timestamp implies relative to other scopes today, whatever order it is delivered in. If that semantics is wanted it belongs in replay, and batching per document rather than per (document, scope) is the enabler \u2014 410 jobs on the fixture against 817.\n\nA related defect surfaced while trying the index order and is reachable on `main`: `consolidateSyncOperations` merged **every** SyncOperation sharing a `(documentId, scope, branch)` wherever it sat in the chain, so an alternating chain `j1 document \u2192 j2 auth \u2192 j3 document \u2192 j4 auth` collapsed into `j1 \u2192 [j2]` and `j2 \u2192 [j1]`, which `validateBatchStructure` rejects for the whole batch. Merging only contiguous runs keeps the chain linear.\n\n_Source: docs/updateoutbox-scope-ordering.md (Powerhouse v6.2.2-dev.74)._\n\n## Provenance\n- `docs/updateoutbox-scope-ordering.md` \u2014 'What the fix is, and what it is not': the two counts, the measurement table, and 'The cycle that surfaced while trying the index order'\n\n_Recorded from the Powerhouse repository at **v6.2.2-dev.74** during the v6.2.2-dev.74 source sync._",
+        "updatedAt": "2026-09-02T22:16:46.476Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:16:46.476Z"
+    }
+  },
+  {
+    "index": 18,
+    "hash": "ic8KdOet+LVcOcsBp0ThYwdxxic=",
+    "timestampUtcMs": "2026-09-02T22:16:46.476Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "version",
+        "value": "v6.2.2-dev.74",
+        "updatedAt": "2026-09-02T22:16:46.476Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:16:46.476Z"
+    }
+  },
+  {
+    "index": 19,
+    "hash": "ic8KdOet+LVcOcsBp0ThYwdxxic=",
+    "timestampUtcMs": "2026-09-02T22:16:46.476Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "filePath",
+        "value": "docs/updateoutbox-scope-ordering.md",
+        "updatedAt": "2026-09-02T22:16:46.476Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:16:46.476Z"
+    }
+  },
+  {
+    "index": 20,
+    "hash": "ic8KdOet+LVcOcsBp0ThYwdxxic=",
+    "timestampUtcMs": "2026-09-02T22:16:46.476Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "confidence",
+        "value": "grounded",
+        "updatedAt": "2026-09-02T22:16:46.476Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:16:46.476Z"
+    }
+  },
+  {
+    "index": 21,
+    "hash": "tkh0JuU5Xc1jUv21HdJaZ8kJkJU=",
+    "timestampUtcMs": "2026-09-02T22:21:25.959Z",
+    "action": {
+      "type": "SET_TITLE",
+      "input": {
+        "title": "Serving a backfill page in the operation index's own order costs 2.5\u00d7 the load jobs and does not buy cross-scope ordering, because replay regroups by scope anyway",
+        "updatedAt": "2026-09-02T22:21:25.959Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:21:25.959Z"
+    }
+  },
+  {
+    "index": 22,
+    "hash": "tkh0JuU5Xc1jUv21HdJaZ8kJkJU=",
+    "timestampUtcMs": "2026-09-02T22:21:25.959Z",
+    "action": {
+      "type": "SET_DESCRIPTION",
+      "input": {
+        "updatedAt": "2026-09-02T22:21:25.959Z",
+        "description": "Measured on a 410-document, 7,056-operation fixture: 817 jobs at 8.6 ops each by document and scope versus 2,016 at 3.5 by ordinal, and 2.64x the wall clock. Replay reduces scope by scope."
+      },
+      "timestampUtcMs": "2026-09-02T22:21:25.959Z"
+    }
+  },
+  {
+    "index": 23,
+    "hash": "tkh0JuU5Xc1jUv21HdJaZ8kJkJU=",
+    "timestampUtcMs": "2026-09-02T22:21:25.959Z",
+    "action": {
+      "type": "SET_NOTE_TYPE",
+      "input": {
+        "noteType": "DECISION",
+        "updatedAt": "2026-09-02T22:21:25.959Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:21:25.959Z"
+    }
+  },
+  {
+    "index": 24,
+    "hash": "tkh0JuU5Xc1jUv21HdJaZ8kJkJU=",
+    "timestampUtcMs": "2026-09-02T22:21:25.959Z",
+    "action": {
+      "type": "SET_CONTENT",
+      "input": {
+        "content": "The obvious fix for the scope-ordering inversion was to drop the sort and serve each page in the index's ordinal order. It was tried and rejected on two counts.\n\n**It costs a factor of 2.5 in load jobs.** Measured against the hub-spoke fixture (410 documents, 7,056 operations, 407 documents carrying exactly two scopes):\n\n| batching | load jobs | operations per job |\n| --- | --- | --- |\n| by (document, scope) | 817 | 8.6 |\n| by (document, ordinal) | 2,016 | 3.5 |\n\nConvergence time tracked that ratio almost exactly \u2014 2.47\u00d7 the jobs for 2.64\u00d7 the wall clock \u2014 so the cost is per-job overhead, not per-operation work. On CI it took the 3-spoke leg past its 300 s cap and then took Postgres down with it.\n\n**It does not buy the ordering it appears to buy.** Delivery order is not what decides the order a document's scopes are applied in: `replayDocument` replays `Object.values(operations).flatMap(...)` \u2014 scope by scope, with no cross-scope sort \u2014 so given `global@1000, local@2000, global@3000, local@4000` it applies `global@1000, global@3000, local@2000, local@4000`. The one place operations from different streams are ordered by timestamp, `mergeByPosition`/`comparePositions`, is reached only from the auth walk and does not feed state derivation. So an `UPGRADE_DOCUMENT` is **not** applied at the position its timestamp implies relative to other scopes today, whatever order it is delivered in. If that semantics is wanted it belongs in replay, and batching per document rather than per (document, scope) is the enabler \u2014 410 jobs on the fixture against 817.\n\nA related defect surfaced while trying the index order and is reachable on `main`: `consolidateSyncOperations` merged **every** SyncOperation sharing a `(documentId, scope, branch)` wherever it sat in the chain, so an alternating chain `j1 document \u2192 j2 auth \u2192 j3 document \u2192 j4 auth` collapsed into `j1 \u2192 [j2]` and `j2 \u2192 [j1]`, which `validateBatchStructure` rejects for the whole batch. Merging only contiguous runs keeps the chain linear.\n\n_Source: docs/updateoutbox-scope-ordering.md (Powerhouse v6.2.2-dev.74)._\n\n## Provenance\n- `docs/updateoutbox-scope-ordering.md` \u2014 'What the fix is, and what it is not': the two counts, the measurement table, and 'The cycle that surfaced while trying the index order'\n\n_Recorded from the Powerhouse repository at **v6.2.2-dev.74** during the v6.2.2-dev.74 source sync._",
+        "updatedAt": "2026-09-02T22:21:25.959Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:21:25.959Z"
+    }
+  },
+  {
+    "index": 25,
+    "hash": "tkh0JuU5Xc1jUv21HdJaZ8kJkJU=",
+    "timestampUtcMs": "2026-09-02T22:21:25.959Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "version",
+        "value": "v6.2.2-dev.74",
+        "updatedAt": "2026-09-02T22:21:25.959Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:21:25.959Z"
+    }
+  },
+  {
+    "index": 26,
+    "hash": "tkh0JuU5Xc1jUv21HdJaZ8kJkJU=",
+    "timestampUtcMs": "2026-09-02T22:21:25.959Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "filePath",
+        "value": "docs/updateoutbox-scope-ordering.md",
+        "updatedAt": "2026-09-02T22:21:25.959Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:21:25.959Z"
+    }
+  },
+  {
+    "index": 27,
+    "hash": "tkh0JuU5Xc1jUv21HdJaZ8kJkJU=",
+    "timestampUtcMs": "2026-09-02T22:21:25.959Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "confidence",
+        "value": "grounded",
+        "updatedAt": "2026-09-02T22:21:25.959Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:21:25.959Z"
+    }
+  }
+]

@@ -1,0 +1,115 @@
+{
+  "links": [
+    {
+      "id": "lnk-7bf0150e-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "7bf0150e-34d9-4cd2-b038-e55a6acb1ea4",
+      "targetTitle": "revision-history-timeline-in-editors"
+    },
+    {
+      "id": "lnk-bdb946ff-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "bdb946ff-d5d0-48f4-a4e4-475c257fcc05",
+      "targetTitle": "docsync-protocol-is-decentralized-storage-agnostic-and-supports-p2p"
+    },
+    {
+      "id": "lnk-37987f5c-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "37987f5c-8193-493a-96f6-7d0ab6d25287",
+      "targetTitle": "dispatch-accepts-onerrors-callback"
+    },
+    {
+      "id": "lnk-3ad47c38-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "3ad47c38-5fd4-41f4-b873-2b6a9aa0517d",
+      "targetTitle": "event-sourcing-guarantees-audit-trails-but-complicates-querying"
+    },
+    {
+      "id": "lnk-1396e770-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "1396e770-6037-489c-985a-4c5259d19453",
+      "targetTitle": "Academy \u203a Build \u203a BuildingUserExperiences \u203a DocumentTools \u203a Inspector Modal",
+      "reason": "Backing page found by content match in the v6.2.2-dev.74 source backfill \u2014 identifiers footer, sidebar from the claim appear in this page (text identical at v6.2.2-dev.47 and v6.2.2-dev.74); attribution, not the original extraction record",
+      "confidence": "grounded"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "The Inspector Modal exposes the local PGlite database and sync remote channel states (inbox, outbox, dead letter) for debugging",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "d04c6ede-35d1-4c06-bc1f-0f60f9ebf188",
+      "name": "debugging",
+      "topicDocumentId": null
+    },
+    {
+      "id": "bcdc79f5-5c43-4119-b689-584a9fdfc977",
+      "name": "inspector",
+      "topicDocumentId": null
+    },
+    {
+      "id": "be84d0a5-1cb5-42b5-b244-3a77bd0dc447",
+      "name": "sync",
+      "topicDocumentId": null
+    },
+    {
+      "id": "537fceaa-12dc-4df6-aa30-27cb1fc89713",
+      "name": "connect",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "The Inspector Modal is a Connect development tool with two tabs: Database (explore local PGlite tables with schema tree, pagination, sorting, and export/import) and Remotes (view sync remotes and their channel states). Each remote has Inbox (received operations), Outbox (pending send), and Dead Letter (failed sync with error info). Operations have statuses: Pending, Applied, or Error. The Inspector is generally available to every Connect user \u2014 there is no feature flag. To open it, click the **Settings** (gear) button in the Connect sidebar footer, select the **About** tab, then click **Open Inspector**.\n\n_Corrected 2026-08-13 against Powerhouse v6.2.2-dev.45._",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": "v6.2.2-dev.74",
+  "computes": null,
+  "filePath": "apps/academy/docs/academy/03-Build/03-BuildingUserExperiences/06-DocumentTools/03-InspectorModal.md",
+  "noteType": "REFERENCE",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "knowledge-agent",
+    "createdAt": "2026-04-02T12:00:00.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-09-02T21:34:23.811Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Generally available (no feature flag): Connect sidebar footer > Settings > About > Open Inspector. Shows DB tables, remote sync channel states, and DB export/import.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "e438ca3d-18bc-4acd-8f4f-d80e0a788ca9",
+      "actor": "claude",
+      "comment": "Knowledge registered against powerhouse v6.2.2-dev.47",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-14T12:00:00.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "0cbcd6d1-4ffa-4279-b44b-e78579bbfbf0",
+      "actor": "liberuum",
+      "comment": "Canonical as of powerhouse v6.2.2-dev.47",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-14T12:00:00.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

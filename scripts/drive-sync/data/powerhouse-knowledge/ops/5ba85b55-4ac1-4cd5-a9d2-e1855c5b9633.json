@@ -1,0 +1,290 @@
+[
+  {
+    "index": 0,
+    "hash": "",
+    "timestampUtcMs": "2026-08-16T20:32:36.515Z",
+    "action": {
+      "type": "CREATE_DOCUMENT",
+      "input": {
+        "meta": {},
+        "name": "operational-reshuffle-vs-crdt-ot",
+        "slug": "",
+        "model": "bai/knowledge-note",
+        "branch": "main",
+        "signing": {
+          "nonce": "",
+          "publicKey": {},
+          "signature": "5ba85b55-4ac1-4cd5-a9d2-e1855c5b9633",
+          "documentType": "bai/knowledge-note",
+          "createdAtUtcIso": "2026-08-16T20:32:36.515Z"
+        },
+        "version": 0,
+        "documentId": "5ba85b55-4ac1-4cd5-a9d2-e1855c5b9633",
+        "protocolVersions": {
+          "base-reducer": 2
+        }
+      },
+      "timestampUtcMs": "2026-08-16T20:32:36.515Z"
+    }
+  },
+  {
+    "index": 0,
+    "hash": "tip2waB4mr/q3B25Z9nSgmnFfAQ=",
+    "timestampUtcMs": "2026-08-16T20:32:36.879Z",
+    "action": {
+      "type": "SET_TITLE",
+      "input": {
+        "title": "Operational reshuffle preserves immutable actions where CRDTs and OT cannot",
+        "updatedAt": "2026-08-16T20:32:36.879Z"
+      },
+      "timestampUtcMs": "2026-08-16T20:32:36.879Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "",
+    "timestampUtcMs": "2026-08-16T20:32:36.515Z",
+    "action": {
+      "type": "UPGRADE_DOCUMENT",
+      "input": {
+        "model": "bai/knowledge-note",
+        "toVersion": 1,
+        "documentId": "5ba85b55-4ac1-4cd5-a9d2-e1855c5b9633",
+        "fromVersion": 0,
+        "initialState": {
+          "auth": {
+            "grants": [],
+            "version": 0
+          },
+          "local": {
+            "lastViewedAt": null,
+            "personalTags": []
+          },
+          "global": {
+            "links": [],
+            "model": null,
+            "scope": null,
+            "title": null,
+            "editor": null,
+            "inputs": [],
+            "models": [],
+            "status": "DRAFT",
+            "topics": [],
+            "content": null,
+            "context": null,
+            "modelId": null,
+            "modules": [],
+            "outputs": [],
+            "version": null,
+            "computes": null,
+            "filePath": null,
+            "noteType": null,
+            "severity": null,
+            "hooksUsed": [],
+            "rootCause": null,
+            "confidence": null,
+            "consumedBy": [],
+            "provenance": null,
+            "sourceType": null,
+            "targetType": null,
+            "cardinality": null,
+            "description": null,
+            "alternatives": [],
+            "consequences": [],
+            "errorMessage": null,
+            "relationType": null,
+            "correctPattern": null,
+            "decisionStatus": null,
+            "dispatchTargets": [],
+            "lifecycleEvents": []
+          },
+          "document": {
+            "hash": {
+              "encoding": "base64",
+              "algorithm": "sha1"
+            },
+            "version": 1
+          }
+        }
+      },
+      "timestampUtcMs": "2026-08-16T20:32:36.515Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "/jtxhJ1kIArCYJ7jdpzwabZIsFk=",
+    "timestampUtcMs": "2026-08-16T20:32:36.879Z",
+    "action": {
+      "type": "SET_DESCRIPTION",
+      "input": {
+        "updatedAt": "2026-08-16T20:32:36.879Z",
+        "description": "CRDTs lack state-dependent validation; OT rewrites operations. Operational reshuffle keeps actions immutable and only reorders/replays hashes."
+      },
+      "timestampUtcMs": "2026-08-16T20:32:36.879Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "",
+    "timestampUtcMs": "2026-08-16T20:32:49.333Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "5ba85b55-4ac1-4cd5-a9d2-e1855c5b9633",
+        "targetId": "2b423487-123f-414c-bd20-edce7de891f4",
+        "relationshipType": "DERIVED_FROM"
+      },
+      "timestampUtcMs": "2026-08-16T20:32:49.333Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "6riVlAJS7fSQqbS/Qmbwny/0y8o=",
+    "timestampUtcMs": "2026-08-16T20:32:36.879Z",
+    "action": {
+      "type": "SET_NOTE_TYPE",
+      "input": {
+        "noteType": "ARCHITECTURE",
+        "updatedAt": "2026-08-16T20:32:36.879Z"
+      },
+      "timestampUtcMs": "2026-08-16T20:32:36.879Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "",
+    "timestampUtcMs": "2026-08-16T20:32:51.018Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "5ba85b55-4ac1-4cd5-a9d2-e1855c5b9633",
+        "targetId": "fdc3d342-bb38-468d-82d1-440b2af01587",
+        "relationshipType": "BUILDS_ON"
+      },
+      "timestampUtcMs": "2026-08-16T20:32:51.018Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "gVEpb8Laxfi9ldjcLUv3TNRFHb4=",
+    "timestampUtcMs": "2026-08-16T20:32:36.879Z",
+    "action": {
+      "type": "SET_CONTENT",
+      "input": {
+        "content": "## Claim\n\nFor arbitrary reducers with attribution requirements, CRDTs and operational transformation fall short:\n\n- **CRDTs** require commutative ops and cannot express state-dependent validation (e.g. balance checks)\n- **OT** transforms/rewrites operations to preserve intent, breaking append-only auditability\n\n**Operational reshuffle** (Powerhouse) keeps actions immutable; only ordering and replayed result hashes change when streams merge.\n\n## Why provenance cares\n\nIf operations are rewritten, authorship and mechanism trails become unstable. Immutable actions keep the audit surface intact under concurrency.",
+        "updatedAt": "2026-08-16T20:32:36.879Z"
+      },
+      "timestampUtcMs": "2026-08-16T20:32:36.879Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "",
+    "timestampUtcMs": "2026-08-16T20:32:55.932Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "5ba85b55-4ac1-4cd5-a9d2-e1855c5b9633",
+        "targetId": "e2186433-6a5b-4e9a-90e8-37c698b35e89",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-08-16T20:32:55.932Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "YgjIBjYr7vnlzyHskD7py5IDQ60=",
+    "timestampUtcMs": "2026-08-16T20:32:36.879Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "457bbacd-02de-4a23-a3d3-29afefbb5b91",
+        "name": "event-sourcing"
+      },
+      "timestampUtcMs": "2026-08-16T20:32:36.879Z"
+    }
+  },
+  {
+    "index": 5,
+    "hash": "FYLAOIct8jw/8tHNU21uTNgYInY=",
+    "timestampUtcMs": "2026-08-16T20:32:36.879Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "ab27c17c-1e4b-4254-882f-f4ed73af5f87",
+        "name": "powerhouse"
+      },
+      "timestampUtcMs": "2026-08-16T20:32:36.879Z"
+    }
+  },
+  {
+    "index": 6,
+    "hash": "dvshHd9NP4Gkee+yOqZupi7xtSM=",
+    "timestampUtcMs": "2026-08-16T20:32:36.879Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "96ccca0d-d2c3-4089-be64-85e9285e6689",
+        "name": "concurrency"
+      },
+      "timestampUtcMs": "2026-08-16T20:32:36.879Z"
+    }
+  },
+  {
+    "index": 7,
+    "hash": "qRgLjhpHiPov5nV7279A32MrTWs=",
+    "timestampUtcMs": "2026-08-16T20:32:36.879Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "c5a42ea2-4a62-4cf3-8f0f-2c2949bfeef3",
+        "name": "provenance"
+      },
+      "timestampUtcMs": "2026-08-16T20:32:36.879Z"
+    }
+  },
+  {
+    "index": 8,
+    "hash": "1/lFyrCXp6VGz0RWUtMAB7RTX+A=",
+    "timestampUtcMs": "2026-08-16T20:32:37.265Z",
+    "action": {
+      "type": "SET_PROVENANCE",
+      "input": {
+        "author": "knowledge-agent",
+        "createdAt": "2026-08-16T20:32:36.879Z",
+        "sourceOrigin": "DERIVED"
+      },
+      "timestampUtcMs": "2026-08-16T20:32:37.265Z"
+    }
+  },
+  {
+    "index": 9,
+    "hash": "FF75oxS5mHmqCMX6UVt+KhjZZD8=",
+    "timestampUtcMs": "2026-08-16T20:32:37.828Z",
+    "action": {
+      "type": "SUBMIT_FOR_REVIEW",
+      "input": {
+        "id": "3946c3cb-3333-4580-a0ff-8e803c69cc22",
+        "actor": "knowledge-agent",
+        "comment": "pipeline extract",
+        "timestamp": "2026-08-16T20:32:37.828Z"
+      },
+      "timestampUtcMs": "2026-08-16T20:32:37.828Z"
+    }
+  },
+  {
+    "index": 10,
+    "hash": "SXxfJWo46Gq98/4D3dJmZopaNTg=",
+    "timestampUtcMs": "2026-08-16T20:32:37.979Z",
+    "action": {
+      "type": "APPROVE_NOTE",
+      "input": {
+        "id": "a8eec975-c56e-4fa8-b0fd-74650cabebb9",
+        "actor": "pipeline-reviewer",
+        "comment": "pipeline verify",
+        "timestamp": "2026-08-16T20:32:37.979Z"
+      },
+      "timestampUtcMs": "2026-08-16T20:32:37.979Z"
+    }
+  }
+]

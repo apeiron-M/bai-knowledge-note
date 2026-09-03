@@ -1,0 +1,15 @@
+{
+  "title": "Contradiction on relational-db, processors",
+  "status": "RESOLVED",
+  "content": "## Involved claims\n\n- The relational-DB processor spec describes an API the code no longer has: onStrands, InternalTransmitterUpdate, PowerhouseDB and packages/document-drive are all gone at v6.2.2-dev.74 \u2014 `97c3a924-0ba9-4b89-86f7-b7a5747d41a7`\n- RelationalDbProcessor provides a type-safe base class with per-drive namespace isolation and lifecycle migration hooks \u2014 `f7e6d116-bd5d-4052-9f2a-974e4d7cb7e2`\n\n## Why this exists\n\nA `CONTRADICTS` relationship was recorded between these two notes at 2026-09-03T07:30:30.172Z. The vault treats a recorded contradiction as an open question, not a fact to leave implicit: until someone resolves or dissolves this tension, both claims stand and readers should see that they disagree.\n\n## How to close it\n\n- **Resolve** when one claim is correct: say which, and consider `SUPERSEDES` on the winner.\n- **Dissolve** when both are right in different scopes: state the boundary in each note's content.",
+  "observedAt": "2026-09-03T07:30:30.172Z",
+  "observedBy": "graph-indexer",
+  "resolution": "Resolved in favour of the code. The spec's claim that the base class discovers and applies migrations automatically does not hold at v6.2.2-dev.74: the generated relational-DB processor template overrides initAndUpgrade() and calls up(this.relationalDb) itself. Namespace isolation and the type-safe query surface do hold. The older note has been corrected in place rather than archived, since only its lifecycle claim was wrong.",
+  "resolvedAt": "2026-09-03T07:59:24.935Z",
+  "description": "\u201cThe relational-DB processor spec describes an API the code no longer has: onStrands, InternalTransmitterUpdate, PowerhouseDB and packages/d\u2026\u201d contradicts \u201cRelationalDbProcessor provides a type-safe base class with per-drive namespace isolation and lifecycle migration hooks\u201d. Opened automatically from a CONTRADICTS link \u2014 resolve if one side is right, dissolve if both hold in different contexts.",
+  "involvedRefs": [
+    "97c3a924-0ba9-4b89-86f7-b7a5747d41a7",
+    "f7e6d116-bd5d-4052-9f2a-974e4d7cb7e2"
+  ],
+  "links": []
+}

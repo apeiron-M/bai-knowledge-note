@@ -1,0 +1,115 @@
+{
+  "links": [
+    {
+      "id": "lnk-a90ccd64-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "a90ccd64-6898-41f6-a845-242b8929612a",
+      "targetTitle": "ADR \u203a lazy-drive-sync",
+      "reason": "Extracted from docs/adr/0001-lazy-drive-sync.md at v6.2.2-dev.74 \u2014 Status header; Context; Decision (opening paragraphs)",
+      "confidence": "grounded"
+    },
+    {
+      "id": "lnk-fe8f33f5-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "fe8f33f5-b69c-4080-878a-1cd2cbe6bb17",
+      "targetTitle": "lazy-sync-document-channels",
+      "reason": "The document-channel mechanism is how this proposal would be implemented if accepted",
+      "confidence": "grounded"
+    },
+    {
+      "id": "lnk-3540d969-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "3540d969-3661-4438-821e-a000e39852b1",
+      "targetTitle": "concurrent-offline-drive-edits-interlace-drive-logs",
+      "reason": "Eager whole-drive replay is what makes a cold open expensive; both notes describe consequences of the drive being one interlaced operation stream",
+      "confidence": "established"
+    },
+    {
+      "id": "lnk-562d84eb-bui",
+      "linkType": "BUILDS_ON",
+      "targetDocumentId": "562d84eb-ef1d-40b7-81b0-b6b7438544e1",
+      "targetTitle": "collection-based-sync",
+      "reason": "The forward-only collection cursor described there is exactly the constraint that forces a per-document channel rather than a widened filter",
+      "confidence": "grounded"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Lazy drive sync is a Proposed ADR, not shipped behaviour: today opening a remote drive still streams every document's history from timestamp zero",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "87add047-7e8d-4f0a-b24d-92cec61d7b45",
+      "name": "reactor-sync",
+      "topicDocumentId": null
+    },
+    {
+      "id": "bd085d61-b19b-4c43-862f-9f065c766e43",
+      "name": "lazy-sync",
+      "topicDocumentId": null
+    },
+    {
+      "id": "71bb32c6-3df8-471b-953b-8b3d84949340",
+      "name": "adr",
+      "topicDocumentId": null
+    },
+    {
+      "id": "8559dbc4-4d13-4227-9513-1c240b328063",
+      "name": "roadmap",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "ADR 0001 is marked **Status: Proposed** (2026-07-16, decider acaldas, \"Implements: TBD\"), so nothing in it describes current behaviour. What it describes is the problem and a design.\n\nThe problem: Connect eagerly syncs an entire drive on connect. Opening a remote drive on a Switchboard reactor streams the **full operation history of every document from timestamp 0** and replays it locally. Two costs follow \u2014 a cold load proportional to the whole drive regardless of what the user looks at, and **no prioritization**, so the document the user actually opened has no priority over the thousands they never touch.\n\nThe proposed design is lazy sync built on the sync protocol (explicitly *not* on the fetch/GraphQL document subgraphs, which would introduce a second divergent read path), opt-in, with minimal Connect changes: sync the drive document first because it lists its children, then sync a document's operations when it is opened; opening waits for that initial sync and is writable afterwards.\n\nTwo facts constrain any alternative and are worth remembering independently of the ADR. The **sync cursor is per-channel, collection-wide and forward-only**, so a live channel's filter cannot be widened to backfill a document whose operations predate the cursor. And a document's operation log is reachable **only through a collection it belongs to** \u2014 `operation-index.find` inner-joins on `document_collections`.\n\nThe ADR targets the legacy `powerhouse/document-drive` model, whose node list can diverge from `document_collections`.\n\n## Provenance\n- `docs/adr/0001-lazy-drive-sync.md` \u2014 Status header; Context; Decision (opening paragraphs)\n\n_Extracted from the Powerhouse repository at **v6.2.2-dev.74**._",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": "v6.2.2-dev.74",
+  "computes": null,
+  "filePath": "docs/adr/0001-lazy-drive-sync.md",
+  "noteType": "DECISION",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "knowledge-agent",
+    "createdAt": "2026-09-03T07:28:48.612Z",
+    "sessionId": null,
+    "updatedAt": "2026-09-03T07:31:08.919Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "ADR 0001, status Proposed, 2026-07-16. It would sync the drive document first and each document's operations only when opened, behind an opt-in preloadDocuments flag defaulting to today's eager mode.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "b3ed9f2a-6279-4063-82cf-c97f6e59f09e",
+      "actor": "knowledge-agent",
+      "comment": "extracted from docs/adr/0001-lazy-drive-sync.md at v6.2.2-dev.74",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-09-03T07:28:49.836Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "3a4f9a92-aa21-4873-9574-9f72ffd45a33",
+      "actor": "liberuum",
+      "comment": "claim checked against the cited file at the pinned tag",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-09-03T07:28:50.411Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

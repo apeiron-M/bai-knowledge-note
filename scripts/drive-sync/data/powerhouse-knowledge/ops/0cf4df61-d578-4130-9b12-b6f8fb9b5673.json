@@ -1,0 +1,129 @@
+[
+  {
+    "index": 0,
+    "hash": "",
+    "timestampUtcMs": "2026-09-02T21:35:40.108Z",
+    "action": {
+      "type": "CREATE_DOCUMENT",
+      "input": {
+        "meta": {},
+        "name": "Academy \u203a Build \u203a WorkWithData \u203a Analytics processors",
+        "slug": "",
+        "model": "bai/source",
+        "branch": "main",
+        "signing": {
+          "nonce": "",
+          "publicKey": {},
+          "signature": "0cf4df61-d578-4130-9b12-b6f8fb9b5673",
+          "documentType": "bai/source",
+          "createdAtUtcIso": "2026-09-02T21:35:40.107Z"
+        },
+        "version": 0,
+        "documentId": "0cf4df61-d578-4130-9b12-b6f8fb9b5673",
+        "protocolVersions": {
+          "base-reducer": 2
+        }
+      },
+      "timestampUtcMs": "2026-09-02T21:35:40.108Z"
+    }
+  },
+  {
+    "index": 0,
+    "hash": "e4Ekwpby0cP9YORFWSNTAKjTVyQ=",
+    "timestampUtcMs": "2026-09-02T21:35:40.217Z",
+    "action": {
+      "type": "INGEST_SOURCE",
+      "input": {
+        "url": "https://github.com/powerhouse-inc/powerhouse/blob/v6.2.2-dev.74/apps/academy/docs/academy/03-Build/04-WorkWithData/_04-analytics-processor.md",
+        "tool": "sync-repo-docs",
+        "title": "Academy \u203a Build \u203a WorkWithData \u203a Analytics processors",
+        "author": "Powerhouse Inc.",
+        "method": "sha256:02db86b54bd21800d340fc9f43ee07fdb0eb259663768e5bf3806d881da656c1 git:v6.2.2-dev.74",
+        "content": "# Analytics processors\n\nAn Analytics Processor is an object that can track analytics for operations and state changes on a set of document models. These analytics can be used to generate bespoke dashboards and reports, specific to the type or implementation of the document model.\n\n:::info[Import paths]\nThe code examples below import from `@powerhousedao/reactor-browser`, which re-exports all reactor types for convenience in browser environments (editors, drive-apps, subgraphs). If you are working outside the browser \u2014 for example in a standalone Node.js script, CLI tool, or server-side processor \u2014 import directly from `@powerhousedao/reactor`.\n:::\n\n## Generating an analytics processor with the CLI\n\nThe `ph-cli` utility can be used to generate the scaffolding for an Analytics Processor.\n\n```\nph generate -p MyAnalyticsProcessor --processor-type analytics\n```\n\nThis will generate two files: a class that implements `IProcessor` and a `ProcessorFactory` function that creates an instance of your processor. We can start with the factory.\n\n### `ProcessorFactory`\n\nIf one has not already been created, the generator will create a `factory.ts` that contains a `processorFactory` function:\n\n```typescript\nimport type {\n  ProcessorRecord,\n  IProcessorHostModule,\n} from \"@powerhousedao/reactor-browser\";\nimport { type PHDocumentHeader } from \"document-model\";\nimport type { ProcessorApp } from \"@powerhousedao/common\";\nimport { MyAnalyticsProcessorProcessor } from \"./index.js\";\n\nexport const myAnalyticsProcessorProcessorFactory =\n  (module: IProcessorHostModule) =>\n  (\n    driveHeader: PHDocumentHeader,\n    processorApp?: ProcessorApp,\n  ): ProcessorRecord[] => {\n    return [\n      {\n        processor: new MyAnalyticsProcessorProcessor(module.analyticsStore),\n        filter: {\n          branch: [\"main\"],\n          documentId: [\"*\"],\n          scope: [\"*\"],\n          documentType: [\"*\"],\n        },\n      },\n    ];\n  };\n```\n\nThis function appears complicated at first, but provides for great flexibility.\n\nThe outside function (`(module: IProcessorHostModule) => ProcessorFactory`) will be called by the host application (`Reactor`, `Connect`, etc) a single time at initialization. This is intended to resolve external dependencies through the `module` object. In the case of this processor, you can see how the `module` object contains the `analyticsStore`.\n\nNext, for each drive created, the returned function (`(driveHeader: PHDocumentHeader): ProcessorRecord[]`) will be called. The `driveHeader` provides access to `driveHeader.id`, `driveHeader.documentType`, `driveHeader.name`, and other document header fields. Applications are free to reuse processors or pass in application-specific dependencies in to each processor.\n\nThe `filter` parameter allows a user to tune which updates the processor receives. Usage is straightforward: each field of the filter parameter can receive one to many patterns. The array for each field describes an `OR` operator. That is, `[\"a\", \"b\"]` would match `\"a\"` or `\"b\"`. However, matches across fields describe an `AND` operator. That is, an update must match on `branch` `AND` `documentId` `AND` `documentType` `AND` `scope`.\n\nUse `\"*\"` as a wildcard to match all values for a field. Exact string matching is used otherwise.\n\n```\n{\n  branch: [\"main\"],\n  documentId: [\"*\"],\n  documentType: [\"doc-type-a\", \"doc-type-b\"],\n  scope: [\"global\", \"local\"],\n}\n```\n\nThis example would match updates for:\n\n```\n(\"main\" branch) AND (any documentId) AND (\"doc-type-a\" OR \"doc-type-b\" documentType) AND (\"global\" OR \"local\" scope)\n```\n\n### `onOperations`\n\nThe `onOperations` method is the core of the processor. This is the function called for all the operations matching the filter. Here is what the generated scaffold looks like:\n\n```typescript\nimport type {\n  AnalyticsSeriesInput,\n  IAnalyticsStore,\n} from \"@powerhousedao/analytics-engine-core\";\nimport { AnalyticsPath } from \"@powerhousedao/analytics-engine-core\";\nimport type {\n  OperationWithContext,\n  IProcessor,\n} from \"@powerhousedao/reactor-browser\";\n\nexport class MyAnalyticsProcessorProcessor implements IProcessor {\n  private readonly NAMESPACE = \"MyAnalyticsProcessor\";\n\n  private readonly inputs: AnalyticsSeriesInput[] = [];\n\n  constructor(private readonly analyticsStore: IAnalyticsStore) {\n    //\n  }\n\n  onOperations(operations: OperationWithContext[]): Promise<void> {\n    return Promise.resolve();\n  }\n\n  onDisconnect(): Promise<void> {\n    return Promise.resolve();\n  }\n\n  private async clearSource(source: AnalyticsPath) {\n    try {\n      await this.analyticsStore.clearSeriesBySource(source, true);\n    } catch (e) {\n      console.error(e);\n    }\n  }\n}\n```\n\nThis method receives a flat list of `OperationWithContext` items. Each item destructures as `{ operation, context }`:\n\n- **`context`** carries metadata about where the operation came from:\n  - `documentId` \u2014 the document this operation belongs to\n  - `documentType` \u2014 the document model type (e.g. `\"powerhouse/document-drive\"`)\n  - `scope` \u2014 the scope of the operation (e.g. `\"global\"`, `\"local\"`)\n  - `branch` \u2014 the branch (e.g. `\"main\"`)\n  - `resultingState` \u2014 JSON string of the document state after this operation\n  - `ordinal` \u2014 a global monotonically increasing number for cross-document ordering\n\n- **`operation`** carries the operation itself:\n  - `action` \u2014 an `Action` object with `type` (the action name), `input` (the action payload), `timestampUtcMs` (when the action was created), `id`, and `scope`\n  - `index` \u2014 the operation's position in the document's history\n  - `timestampUtcMs` \u2014 when the operation was recorded (also available on the action)\n  - `hash` \u2014 hash of the resulting document data\n\n> It is best practice to batch insert all updates to the analytics system. The examples below demonstrate buffering inputs and flushing in chunks for optimal performance.\n\n## Learn by example: DriveAnalyticsProcessor\n\nThe `DriveAnalyticsProcessor` tracks file-system-level operations on `powerhouse/document-drive` documents \u2014 adds, moves, copies, deletes, and updates of nodes within a drive.\n\nSource: [`packages/shared/processors/drive-analytics/drive-processor.ts`](https://github.com/powerhouse-inc/powerhouse/blob/main/packages/shared/processors/drive-analytics/drive-processor.ts)\n\n```typescript\nimport { DateTime } from \"luxon\";\nimport { AnalyticsPath } from \"../../analytics/analytics-path.js\";\nimport type {\n  AnalyticsSeriesInput,\n  IAnalyticsStore,\n} from \"../../analytics/types.js\";\nimport type { OperationWithContext } from \"../../document-model/index.js\";\nimport type { IProcessor } from \"../types.js\";\nimport type { ActionType, NodeTarget } from \"./types.js\";\n\nconst CREATE_NODE_ACTIONS = [\"ADD_FILE\", \"ADD_FOLDER\"];\nconst DUPLICATE_NODE_ACTIONS = [\"COPY_NODE\"];\nconst UPDATE_NODE_ACTIONS = [\"UPDATE_FILE\", \"UPDATE_NODE\"];\nconst MOVE_NODE_ACTIONS = [\"MOVE_NODE\"];\nconst REMOVE_NODE_ACTIONS = [\"DELETE_NODE\"];\n\nconst NODE_ACTIONS = [\n  ...CREATE_NODE_ACTIONS,\n  ...DUPLICATE_NODE_ACTIONS,\n  ...UPDATE_NODE_ACTIONS,\n  ...MOVE_NODE_ACTIONS,\n  ...REMOVE_NODE_ACTIONS,\n];\n\nfunction getActionType(action: string): ActionType {\n  if (CREATE_NODE_ACTIONS.includes(action)) return \"CREATED\";\n  if (DUPLICATE_NODE_ACTIONS.includes(action)) return \"DUPLICATED\";\n  if (REMOVE_NODE_ACTIONS.includes(action)) return \"REMOVED\";\n  if (MOVE_NODE_ACTIONS.includes(action)) return \"MOVED\";\n  return \"UPDATED\";\n}\n\ntype NodeActionInput = { id?: string; targetId?: string; srcFolder?: string };\n\nexport class DriveAnalyticsProcessor implements IProcessor {\n  constructor(private readonly analyticsStore: IAnalyticsStore) {\n    //\n  }\n\n  async onOperations(operations: OperationWithContext[]): Promise<void> {\n    if (operations.length === 0) {\n      return;\n    }\n\n    const CHUNK_SIZE = 50;\n    const buffer: AnalyticsSeriesInput[] = [];\n\n    for (const { operation, context } of operations) {\n      const { documentType, documentId, branch, scope } = context;\n      if (documentType !== \"powerhouse/document-drive\") {\n        continue;\n      }\n\n      const {\n        action: { type, input, timestampUtcMs },\n      } = operation;\n      const source = AnalyticsPath.fromString(\n        `ph/drive/${documentId}/${branch}/${scope}`,\n      );\n\n      const revision = operation.index;\n      const actionType = getActionType(type);\n\n      const target: NodeTarget = NODE_ACTIONS.includes(type) ? \"NODE\" : \"DRIVE\";\n\n      let targetId = documentId;\n      if (target === \"NODE\") {\n        const operationInput = input as NodeActionInput;\n        targetId =\n          operationInput.id ||\n          operationInput.targetId ||\n          operationInput.srcFolder ||\n          documentId;\n      }\n\n      const seriesInput: AnalyticsSeriesInput = {\n        source,\n        metric: \"DriveOperations\",\n        start: DateTime.fromISO(timestampUtcMs),\n        value: 1,\n        dimensions: {\n          drive: AnalyticsPath.fromString(\n            `ph/drive/${documentId}/${branch}/${scope}/${revision}`,\n          ),\n          operation: AnalyticsPath.fromString(\n            `ph/drive/operation/${operation.action.type}/${operation.index}`,\n          ),\n          target: AnalyticsPath.fromString(\n            `ph/drive/target/${target}/${targetId}`,\n          ),\n          actionType: AnalyticsPath.fromString(\n            `ph/drive/actionType/${actionType}/${targetId}`,\n          ),\n        },\n      };\n\n      buffer.push(seriesInput);\n\n      while (buffer.length >= CHUNK_SIZE) {\n        const batch = buffer.splice(0, CHUNK_SIZE);\n        await this.analyticsStore.addSeriesValues(batch);\n      }\n    }\n\n    if (buffer.length > 0) {\n      await this.analyticsStore.addSeriesValues(buffer);\n    }\n  }\n\n  async onDisconnect() {}\n}\n```\n\nKey things to notice:\n\n- **Destructuring**: `for (const { operation, context } of operations)` \u2014 each item in the flat list provides both the operation and its context.\n- **Context fields**: `context.documentType`, `context.documentId`, `context.branch`, `context.scope` identify which document and scope the operation belongs to.\n- **Operation fields**: `operation.action.type` and `operation.action.input` give you the action name and payload. `operation.index` is the operation's position in the document history. `operation.timestampUtcMs` is the creation timestamp.\n- **Chunked batch insert**: Operations are buffered into an array and flushed in chunks of `CHUNK_SIZE` for optimal database performance.\n\n## Learn by example: DocumentAnalyticsProcessor\n\nThe `DocumentAnalyticsProcessor` is a simpler variant that tracks operations across _all_ document types, not just drives. It records per-document operation metrics.\n\nSource: [`packages/shared/processors/drive-analytics/document-processor.ts`](https://github.com/powerhouse-inc/powerhouse/blob/main/packages/shared/processors/drive-analytics/document-processor.ts)\n\n```typescript\nimport { DateTime } from \"luxon\";\nimport { AnalyticsPath } from \"../../analytics/analytics-path.js\";\nimport type {\n  AnalyticsSeriesInput,\n  IAnalyticsStore,\n} from \"../../analytics/types.js\";\nimport type { OperationWithContext } from \"../../document-model/index.js\";\nimport type { IProcessor } from \"../types.js\";\nimport type { NodeTarget } from \"./types.js\";\n\nexport class DocumentAnalyticsProcessor implements IProcessor {\n  constructor(private readonly analyticsStore: IAnalyticsStore) {\n    //\n  }\n\n  async onOperations(operations: OperationWithContext[]): Promise<void> {\n    if (operations.length === 0) {\n      return;\n    }\n\n    const CHUNK_SIZE = 50;\n    const buffer: AnalyticsSeriesInput[] = [];\n\n    for (const { operation, context } of operations) {\n      const { documentType, documentId, branch, scope } = context;\n\n      const source = AnalyticsPath.fromString(\n        `ph/doc/${documentId}/${branch}/${scope}`,\n      );\n\n      const target: NodeTarget =\n        documentType === \"powerhouse/document-drive\" ? \"DRIVE\" : \"NODE\";\n\n      const revision = operation.index;\n\n      const seriesInput: AnalyticsSeriesInput = {\n        source,\n        metric: \"DocumentOperations\",\n        start: DateTime.fromISO(operation.timestampUtcMs),\n        value: 1,\n        dimensions: {\n          drive: AnalyticsPath.fromString(\n            `ph/doc/drive/${documentId}/${branch}/${scope}/${revision}`,\n          ),\n          operation: AnalyticsPath.fromString(\n            `ph/doc/operation/${operation.action.type}/${operation.index}`,\n          ),\n          target: AnalyticsPath.fromString(\n            `ph/doc/target/${target}/${documentId}`,\n          ),\n        },\n      };\n\n      buffer.push(seriesInput);\n\n      while (buffer.length >= CHUNK_SIZE) {\n        const batch = buffer.splice(0, CHUNK_SIZE);\n        await this.analyticsStore.addSeriesValues(batch);\n      }\n    }\n\n    if (buffer.length > 0) {\n      await this.analyticsStore.addSeriesValues(buffer);\n    }\n  }\n\n  async onDisconnect() {}\n}\n```\n\nThis processor follows the same `onOperations` pattern but tracks a different metric (`DocumentOperations`) and uses a different source/dimension design. It demonstrates how multiple processors can coexist, each capturing different analytics from the same operation stream.\n\n## Factory: registering multiple processors per drive\n\nThe factory below shows how both processors are registered together, so a single factory produces multiple `ProcessorRecord` entries per drive:\n\nSource: [`packages/shared/processors/drive-analytics/index.ts`](https://github.com/powerhouse-inc/powerhouse/blob/main/packages/shared/processors/drive-analytics/index.ts)\n\n```typescript\nimport type { IAnalyticsStore } from \"../../analytics/types.js\";\nimport type { PHDocumentHeader } from \"../../document-model/core/documents.js\";\nimport type { ProcessorRecord } from \"../types.js\";\nimport { DocumentAnalyticsProcessor } from \"./document-processor.js\";\nimport { DriveAnalyticsProcessor } from \"./drive-processor.js\";\n\nexport const processorFactory =\n  (module: { analyticsStore: IAnalyticsStore }) =>\n  (driveHeader: PHDocumentHeader): ProcessorRecord[] => {\n    return [\n      {\n        processor: new DriveAnalyticsProcessor(module.analyticsStore),\n        filter: {\n          branch: [\"main\"],\n          documentId: [\"*\"],\n          scope: [\"*\"],\n          documentType: [\"powerhouse/document-drive\"],\n        },\n      },\n      {\n        processor: new DocumentAnalyticsProcessor(module.analyticsStore),\n        filter: {\n          branch: [\"main\"],\n          documentId: [\"*\"],\n          scope: [\"*\"],\n          documentType: [\"*\"],\n        },\n      },\n    ];\n  };\n```\n\nNote how the `DriveAnalyticsProcessor` filters only for `powerhouse/document-drive` documents, while the `DocumentAnalyticsProcessor` listens to all document types (`\"*\"`). Each processor gets its own filter, and the factory returns them all in a single array.\n",
+        "createdAt": "2026-09-02T21:35:40.217Z",
+        "createdBy": "repo-docs-sync",
+        "sourceType": "DOCUMENTATION",
+        "description": "Powerhouse v6.2.2-dev.74 (unchanged since v6.2.2-dev.47) \u2014 An Analytics Processor is an object that can track analytics for operations and state changes on a set of document models. These analytics c\u2026",
+        "publishedAt": "2026-06-17T17:18:45.000Z"
+      },
+      "timestampUtcMs": "2026-09-02T21:35:40.217Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "",
+    "timestampUtcMs": "2026-09-02T21:35:40.108Z",
+    "action": {
+      "type": "UPGRADE_DOCUMENT",
+      "input": {
+        "model": "bai/source",
+        "toVersion": 1,
+        "documentId": "0cf4df61-d578-4130-9b12-b6f8fb9b5673",
+        "fromVersion": 0,
+        "initialState": {
+          "auth": {
+            "grants": [],
+            "version": 0
+          },
+          "local": {},
+          "global": {
+            "title": null,
+            "status": "INBOX",
+            "content": null,
+            "createdAt": null,
+            "createdBy": null,
+            "provenance": null,
+            "sourceType": null,
+            "description": null,
+            "extractedClaims": [],
+            "extractionStats": null
+          },
+          "document": {
+            "hash": {
+              "encoding": "base64",
+              "algorithm": "sha1"
+            },
+            "version": 1
+          }
+        }
+      },
+      "timestampUtcMs": "2026-09-02T21:35:40.108Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "QSiFAsWQHwN8SVKHPgFrFvEUUEo=",
+    "timestampUtcMs": "2026-09-02T21:35:45.829Z",
+    "action": {
+      "type": "ADD_EXTRACTED_CLAIM",
+      "input": {
+        "claimRef": "73426591-2d5e-431c-bdd8-f8a2502bed0a"
+      },
+      "timestampUtcMs": "2026-09-02T21:35:45.829Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "fclz+NTQmjboO+v+S6F9FA04+TU=",
+    "timestampUtcMs": "2026-09-02T21:35:47.350Z",
+    "action": {
+      "type": "ADD_EXTRACTED_CLAIM",
+      "input": {
+        "claimRef": "9db63873-1874-438f-b06c-f0bb91b6bf9d"
+      },
+      "timestampUtcMs": "2026-09-02T21:35:47.350Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "osj3usvu9vAVvX82bIqCNKw6cyk=",
+    "timestampUtcMs": "2026-09-02T21:35:51.049Z",
+    "action": {
+      "type": "SET_SOURCE_STATUS",
+      "input": {
+        "status": "EXTRACTED"
+      },
+      "timestampUtcMs": "2026-09-02T21:35:51.049Z"
+    }
+  }
+]

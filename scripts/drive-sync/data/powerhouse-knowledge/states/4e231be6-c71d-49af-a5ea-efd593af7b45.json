@@ -1,0 +1,108 @@
+{
+  "links": [
+    {
+      "id": "lnk-27cf7cb6-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "27cf7cb6-160b-439b-ac23-001d3e43abde",
+      "targetTitle": "channel-directory-file-layout"
+    },
+    {
+      "id": "lnk-564746c1-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "564746c1-f39c-4f87-83fa-b873a615174b",
+      "targetTitle": "composite-channel-factory-routing"
+    },
+    {
+      "id": "lnk-5725fd76-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "5725fd76-b0d4-4bab-9c10-3c0a890951ca",
+      "targetTitle": "bee-reactor-adapter-package-structure"
+    },
+    {
+      "id": "lnk-8c9a8f25-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "8c9a8f25-336b-492e-baf4-e8e11f2cbfa0",
+      "targetTitle": "collab-initial-state-via-share-bundle"
+    },
+    {
+      "id": "lnk-251a0c70-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "251a0c70-2e17-44d6-9441-024a9e18c1c5",
+      "targetTitle": "new-device-recovery-via-wallet-and-manifest"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "SwarmChannel extends to register peer feeds as additional pull sources per collab",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "t-b0298458-1",
+      "name": "live-collaboration",
+      "topicDocumentId": null
+    },
+    {
+      "id": "t-b0298458-2",
+      "name": "swarm-channel",
+      "topicDocumentId": null
+    },
+    {
+      "id": "t-b0298458-3",
+      "name": "sync-cursors",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "## Extending SwarmChannel with peer pull sources\n\nExisting SwarmChannel push/pull is per-drive and per-owner. To support collaboration, each collab registers **additional pull sources** on the SwarmChannel \u2014 one per participant's feed(s).\n\n```typescript\nclass SwarmChannel implements IChannel {\n  private peerFeeds: Array<{\n    participantAddress: string;\n    driveFeedTopic: string;\n    docFeedTopics: string[];\n    cursor: number;\n  }> = [];\n\n  async registerCollab(collab: CollabSummary) {\n    for (const p of collab.participants) {\n      if (p.address === this.ownerAddress) continue; // skip self\n      this.peerFeeds.push(/* topics derived from driveId/docIds */);\n      await this.subscribePeerGsoc(p);\n    }\n  }\n\n  // GSOC triggers \u2014 bypasses the poll timer\n  private async onPeerOpCommitted(evt: GsocNotification) {\n    await this.pullPeerFeedNow(evt.writerAddress, evt.collabId);\n  }\n}\n```\n\nEach peer source has its own cursor row in `sync_cursors`, so pulls are incremental and idempotent across reloads. The polling walker iterates `peerSources` alongside the owner's own feeds. Nothing changes about how the reactor applies ops \u2014 `reactor.load()` remains the entry point and already preserves signer signatures.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "PATTERN",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "knowledge-agent",
+    "createdAt": "2026-04-21T14:16:54.676Z",
+    "sessionId": null,
+    "updatedAt": "2026-09-03T09:58:34.083Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Every source keeps its own row in sync_cursors so pulls stay incremental and idempotent across reloads; GSOC events bypass the poll timer and reactor.load() still preserves signatures.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "0735bded-150f-4abe-8b1e-62417f933b1a",
+      "actor": "claude",
+      "comment": "Knowledge registered against powerhouse v6.2.2-dev.47",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-14T12:00:00.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "9f7a8cc1-3d0b-4919-8089-a4099ca64f7d",
+      "actor": "liberuum",
+      "comment": "Canonical as of powerhouse v6.2.2-dev.47",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-14T12:00:00.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

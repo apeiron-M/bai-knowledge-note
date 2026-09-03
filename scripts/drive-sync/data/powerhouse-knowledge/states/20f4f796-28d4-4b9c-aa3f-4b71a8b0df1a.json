@@ -1,0 +1,131 @@
+{
+  "links": [
+    {
+      "id": "lnk-46257dbf-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "46257dbf-5319-4042-8ac2-30c2a08c43d8",
+      "targetTitle": "auth-unsigned-header-open",
+      "reason": "No creator on an unsigned document is also why such a document cannot resist an adversary at genesis",
+      "confidence": "grounded"
+    },
+    {
+      "id": "lnk-69327ea6-bui",
+      "linkType": "BUILDS_ON",
+      "targetDocumentId": "69327ea6-e0a1-4c07-a214-2c4619192862",
+      "targetTitle": "auth-last-grant-wins",
+      "reason": "Reachability has to be judged over the ordered list because a later deny shadows an earlier administration grant",
+      "confidence": "grounded"
+    },
+    {
+      "id": "lnk-8cbea140-bui",
+      "linkType": "BUILDS_ON",
+      "targetDocumentId": "8cbea140-21d6-4b63-8780-5d44831018aa",
+      "targetTitle": "two-signing-mechanisms-header-and-action",
+      "reason": "Header signing makes the creator a fact every replica can verify, which is what lets the carve-out live inside decide()",
+      "confidence": "grounded"
+    },
+    {
+      "id": "lnk-17dc46b0-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "17dc46b0-f733-467c-99d7-ae8fbe0fb0e4",
+      "targetTitle": "Academy \u203a Reference \u203a Reactor \u203a Authorization",
+      "reason": "Extracted from apps/academy/docs/academy/04-Reference/01-Reactor/11-Authorization.md at v6.2.2-dev.74 \u2014 'The creator keeps the auth scope' bullet",
+      "confidence": "grounded"
+    },
+    {
+      "id": "lnk-223bb12a-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "223bb12a-be7f-4209-9ab2-f04f7bb2b6c8",
+      "targetTitle": "Spec \u203a Spec \u2014 Attribute-based access control in the auth scope with DCB",
+      "reason": "Extracted from docs/specs/auth-scope.md at v6.2.2-dev.74 \u2014 Decision algorithm (creator check) and 'Administration and bootstrap' reachability rule",
+      "confidence": "grounded"
+    },
+    {
+      "id": "lnk-f2aaccd3-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "f2aaccd3-7c26-4327-881e-f5ad9e267b89",
+      "targetTitle": "Academy \u203a Lookup \u203a Cookbook",
+      "reason": "Extracted from apps/academy/docs/academy/05-Lookup/00-Cookbook.md at v6.2.2-dev.74 \u2014 Document ACL: self-lockout guardrail, 'Unsigned documents have no creator carve-out'",
+      "confidence": "grounded"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "The key that signed the document header always keeps execute on the auth scope, and a creator-less policy is refused if it would leave nobody able to administer it",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "4cc75ff9-7e58-43ca-8718-4cc4a43c2a85",
+      "name": "auth-scope",
+      "topicDocumentId": null
+    },
+    {
+      "id": "461f049f-01f1-4948-a236-5da9b11e4f55",
+      "name": "authorization",
+      "topicDocumentId": null
+    },
+    {
+      "id": "fa54102f-b192-4188-bd18-2165bf38cc8f",
+      "name": "signing",
+      "topicDocumentId": null
+    },
+    {
+      "id": "65a4fa7d-8a5d-4909-bc9c-b05ceb00675a",
+      "name": "gotchas",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "A policy cannot brick its own owner: the key that signed the document's header may **always execute in `scope: \"auth\"`**, even against a grant list that tries to deny it. The carve-out is deliberately narrow \u2014 the creator gets no special access to domain operations or reads \u2014 and it is safe because every replica can verify it from the header. An administrator list held outside the reactor (say on the Switchboard) could not serve the purpose: replicas could hold different lists and reach different decisions.\n\nThe creator is bound once, when `INITIALIZE_AUTH` is accepted and the signer's key is stored in the auth state as `creator`; after that `decide` reads the stored key.\n\n**An unsigned document has no creator.** There validation takes over with a *reachability* rule rather than a presence rule: because evaluation is last-applicable-grant-wins, an administration grant shadowed by a later deny keeps nothing reachable. All four ways of taking administration away without removing a grant \u2014 `REMOVE_GRANT`, a `SET_GRANT` that replaces the grant in place, a `SET_GRANT` that appends a deny covering `auth`, and a `MOVE_GRANT` that reorders the administration grant into shadow \u2014 are rejected on a creator-less policy, and `INITIALIZE_AUTH` rejects a genesis born unreachable. A consequence: a creator-less policy cannot carry a blanket `deny` on `execute` for `*`, because that denies its own administration.\n\nThe `document-acl` recipe surfaces this as the \"self-lockout guardrail\" (reported as `operation.error`, not a failed job) and warns that a document created without a signing key must include a reachable auth-administration grant in its initial policy or `initializeAuth` is refused. A duplicated document inherits its source's policy, and duplication fails rather than produce a policy that cannot be administered.\n\n_Source: apps/academy/docs/academy/04-Reference/01-Reactor/11-Authorization.md (Powerhouse v6.2.2-dev.74)._\n_Source: docs/specs/auth-scope.md (Powerhouse v6.2.2-dev.74)._\n_Source: apps/academy/docs/academy/05-Lookup/00-Cookbook.md (Powerhouse v6.2.2-dev.74)._\n\n## Provenance\n- `apps/academy/docs/academy/04-Reference/01-Reactor/11-Authorization.md` \u2014 'The creator keeps the auth scope' bullet\n- `docs/specs/auth-scope.md` \u2014 Decision algorithm (creator check) and 'Administration and bootstrap' reachability rule\n- `apps/academy/docs/academy/05-Lookup/00-Cookbook.md` \u2014 Document ACL: self-lockout guardrail, 'Unsigned documents have no creator carve-out'\n\n_Recorded from the Powerhouse repository at **v6.2.2-dev.74** during the v6.2.2-dev.74 source sync._",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": "v6.2.2-dev.74",
+  "computes": null,
+  "filePath": "apps/academy/docs/academy/04-Reference/01-Reactor/11-Authorization.md",
+  "noteType": "CONCEPT",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": "grounded",
+  "consumedBy": [],
+  "provenance": {
+    "author": "knowledge-agent",
+    "createdAt": "2026-09-02T22:09:51.330Z",
+    "sessionId": null,
+    "updatedAt": "2026-09-02T22:20:12.121Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "The carve-out covers auth-scope execution only, no domain access. Unsigned documents have no creator, so every auth action that would leave administration unreachable is rejected instead.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "fe084f97-8fa9-469f-8be6-2e039c36c0e8",
+      "actor": "knowledge-agent",
+      "comment": "extracted from the Powerhouse repository at v6.2.2-dev.74",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-09-02T22:09:51.847Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "e6196050-2ae6-4a83-aece-7e4717721f02",
+      "actor": "liberuum",
+      "comment": "claim checked against the cited repository file at the pinned tag",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-09-02T22:09:52.309Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

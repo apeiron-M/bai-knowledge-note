@@ -1,0 +1,115 @@
+{
+  "links": [
+    {
+      "id": "lnk-1faafab7-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "1faafab7-6eb6-45af-b81d-711926ffa7b8",
+      "targetTitle": "host-applications-are-empty-shells-gaining-functionality-through-plugins"
+    },
+    {
+      "id": "lnk-18419c72-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "18419c72-7f82-41a8-820b-085cf5e925a5",
+      "targetTitle": "wallet-derived-aes256-encryption"
+    },
+    {
+      "id": "lnk-8cbea140-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "8cbea140-21d6-4b63-8780-5d44831018aa",
+      "targetTitle": "two-signing-mechanisms-header-and-action"
+    },
+    {
+      "id": "lnk-2ae31ea4-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "2ae31ea4-b8f4-4128-8531-93b932d6b6bb",
+      "targetTitle": "renown-sdk-decentralized-identity-auth"
+    },
+    {
+      "id": "lnk-a7186ab5-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "a7186ab5-9e32-4c1a-bf03-8d485203504b",
+      "targetTitle": "Academy \u203a Build \u203a BuildingUserExperiences \u203a Authorization \u203a Renown authentication flow",
+      "reason": "Backing page found by content match in the v6.2.2-dev.74 source backfill \u2014 identifiers pseudonymous from the claim appear in this page (text revised between v6.2.2-dev.47 and v6.2.2-dev.74 \u2014 re-verified in the v6.2.2-dev.74 pass); attribution, not the original extraction record",
+      "confidence": "grounded"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Renown authentication creates a Decentralized Identifier (DID) from the user's Ethereum wallet, enabling pseudonymous but verifiable identity",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "15c849ab-f922-4bfd-8c47-4c6dac0cba64",
+      "name": "renown",
+      "topicDocumentId": null
+    },
+    {
+      "id": "6e4af37d-fb2d-415d-a74e-745e7f4b7dd6",
+      "name": "authentication",
+      "topicDocumentId": null
+    },
+    {
+      "id": "5b028dce-1884-4c81-99ad-f86e7c7b02b5",
+      "name": "DID",
+      "topicDocumentId": null
+    },
+    {
+      "id": "6c6bdeb3-1c60-493f-980c-e9f21b567a8f",
+      "name": "identity",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "The Renown login flow: (1) User signs a message with their Ethereum wallet; (2) A DID (`did:example:123456789abcdefghijk`) is created from the ETH key; (3) A credential is generated and stored on a Powerhouse-hosted identity node; (4) Connect uses the DID to sign operations; (5) Switchboard verifies the DID's credential and signature. Renown addresses trust in DAOs where contributors are pseudonymous -- it lets them build reputation and share cryptographic resumes across organizations without revealing real-world identity. Powerhouse plans to decentralize the identity reactor over time.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": "v6.2.2-dev.74",
+  "computes": null,
+  "filePath": "apps/academy/docs/academy/03-Build/03-BuildingUserExperiences/07-Authorization/01-RenownAuthenticationFlow.md",
+  "noteType": "ARCHITECTURE",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "knowledge-agent",
+    "createdAt": "2026-04-02T12:00:00.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-09-02T22:26:20.910Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Users sign with their ETH wallet to create a DID; credentials are stored on a Powerhouse identity node.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "6b6a2bc2-301d-43a2-94ee-6fd92f89904f",
+      "actor": "claude",
+      "comment": "Knowledge registered against powerhouse v6.2.2-dev.47",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-14T12:00:00.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "4531a8cf-6c3f-4d6c-8bcb-d4939d66db0d",
+      "actor": "liberuum",
+      "comment": "Canonical as of powerhouse v6.2.2-dev.47",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-14T12:00:00.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

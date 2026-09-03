@@ -1,0 +1,108 @@
+{
+  "links": [
+    {
+      "id": "lnk-6a3275cd-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "6a3275cd-d71e-4342-8cd3-3fb29b8fe58c",
+      "targetTitle": "processors-receive-operations-with-context"
+    },
+    {
+      "id": "lnk-43b82c81-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "43b82c81-4d28-4e69-9a0a-84c0dddb87ef",
+      "targetTitle": "reactor-read-models-pre-ready-phase"
+    },
+    {
+      "id": "lnk-7ef703d9-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "7ef703d9-44ff-4168-b0b5-90d9f1e602a0",
+      "targetTitle": "swarm-manifest-three-tier-hierarchy"
+    },
+    {
+      "id": "lnk-f2124247-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "f2124247-9efa-48bb-bda6-c929f59e4f12",
+      "targetTitle": "push-flow-encrypt-upload-manifest"
+    },
+    {
+      "id": "lnk-bb0b6db7-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "bb0b6db7-14f1-491c-8975-4475ff68481d",
+      "targetTitle": "v6-processor-flat-operations-replace-strands"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Operation batches stored at /bytes carry full OperationWithContext entries including signer signatures, preserving authorship on recovery.",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "t1",
+      "name": "operation-batch",
+      "topicDocumentId": null
+    },
+    {
+      "id": "t2",
+      "name": "data-model",
+      "topicDocumentId": null
+    },
+    {
+      "id": "t3",
+      "name": "swarm-bytes",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "## Batch payload shape\n\nEach operation batch uploaded to `/bytes` is an encrypted JSON array of `OperationWithContext`:\n\n```\n{\n  operation: {\n    id: \"c6401aec-...\",\n    index: 0,\n    skip: 0,\n    timestampUtcMs: \"2026-04-11T18:06:34.210Z\",\n    hash: \"gfgqmD...\",\n    action: {\n      type: \"CREATE_DOCUMENT\",\n      input: { name: \"push\", model: \"powerhouse/document-model\", ... },\n      scope: \"document\",\n      context: { signer: { user: { address: \"0xadbA7C2F...\" } } }\n    }\n  },\n  context: {\n    documentId: \"57033542-...\",\n    documentType: \"powerhouse/document-model\",\n    scope: \"document\",\n    branch: \"main\",\n    ordinal: 5\n  }\n}\n```\n\n## Why this shape matters\n\n- `operation.id` is stable across replays \u2014 recovery produces the same op IDs.\n- `action.context.signer.signatures` is preserved verbatim, so authorship stays intact across device migration.\n- `context.ordinal` is the global ordinal from `operation_index_operations`, enabling deterministic ordering even when batches arrive out of order.\n- The reference address is a **content hash** of the ciphertext, so identical batches deduplicate naturally on Swarm.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "REFERENCE",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "knowledge-agent",
+    "createdAt": "2026-04-21T14:47:10.583Z",
+    "sessionId": null,
+    "updatedAt": "2026-09-03T09:58:27.717Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Each encrypted batch contains an array of OperationWithContext with the action, its scope, timestamp, hash, signer context, plus documentId, branch, and ordinal metadata.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "ab11737c-d849-4970-8e4e-008b78495b7c",
+      "actor": "claude",
+      "comment": "Knowledge registered against powerhouse v6.2.2-dev.47",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-14T12:00:00.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "87deff01-54c6-41a4-b268-f31803cd40a1",
+      "actor": "liberuum",
+      "comment": "Canonical as of powerhouse v6.2.2-dev.47",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-14T12:00:00.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

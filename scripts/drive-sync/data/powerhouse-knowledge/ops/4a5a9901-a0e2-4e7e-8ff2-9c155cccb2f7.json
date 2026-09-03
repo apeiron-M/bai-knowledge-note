@@ -1,0 +1,464 @@
+[
+  {
+    "index": 0,
+    "hash": "",
+    "timestampUtcMs": "2026-09-03T07:18:16.679Z",
+    "action": {
+      "type": "CREATE_DOCUMENT",
+      "input": {
+        "meta": {},
+        "name": "queue-serializes-per-document",
+        "slug": "",
+        "model": "bai/knowledge-note",
+        "branch": "main",
+        "signing": {
+          "nonce": "",
+          "publicKey": {},
+          "signature": "4a5a9901-a0e2-4e7e-8ff2-9c155cccb2f7",
+          "documentType": "bai/knowledge-note",
+          "createdAtUtcIso": "2026-09-03T07:18:16.679Z"
+        },
+        "version": 0,
+        "documentId": "4a5a9901-a0e2-4e7e-8ff2-9c155cccb2f7",
+        "protocolVersions": {
+          "base-reducer": 2
+        }
+      },
+      "timestampUtcMs": "2026-09-03T07:18:16.679Z"
+    }
+  },
+  {
+    "index": 0,
+    "hash": "kFApGbgPHEeRWgH5XBmzaUTyzpI=",
+    "timestampUtcMs": "2026-09-03T07:18:18.095Z",
+    "action": {
+      "type": "SET_TITLE",
+      "input": {
+        "title": "The job queue keys work by (documentId, scope, branch) but serializes execution per document, so two scopes of one document never run concurrently",
+        "updatedAt": "2026-09-03T07:18:18.095Z"
+      },
+      "timestampUtcMs": "2026-09-03T07:18:18.095Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "",
+    "timestampUtcMs": "2026-09-03T07:18:16.679Z",
+    "action": {
+      "type": "UPGRADE_DOCUMENT",
+      "input": {
+        "model": "bai/knowledge-note",
+        "toVersion": 1,
+        "documentId": "4a5a9901-a0e2-4e7e-8ff2-9c155cccb2f7",
+        "fromVersion": 0,
+        "initialState": {
+          "auth": {
+            "grants": [],
+            "version": 0
+          },
+          "local": {
+            "lastViewedAt": null,
+            "personalTags": []
+          },
+          "global": {
+            "links": [],
+            "model": null,
+            "scope": null,
+            "title": null,
+            "editor": null,
+            "inputs": [],
+            "models": [],
+            "status": "DRAFT",
+            "topics": [],
+            "content": null,
+            "context": null,
+            "modelId": null,
+            "modules": [],
+            "outputs": [],
+            "version": null,
+            "computes": null,
+            "filePath": null,
+            "noteType": null,
+            "severity": null,
+            "hooksUsed": [],
+            "rootCause": null,
+            "confidence": null,
+            "consumedBy": [],
+            "provenance": null,
+            "sourceType": null,
+            "targetType": null,
+            "cardinality": null,
+            "description": null,
+            "alternatives": [],
+            "consequences": [],
+            "errorMessage": null,
+            "relationType": null,
+            "correctPattern": null,
+            "decisionStatus": null,
+            "dispatchTargets": [],
+            "lifecycleEvents": []
+          },
+          "document": {
+            "hash": {
+              "encoding": "base64",
+              "algorithm": "sha1"
+            },
+            "version": 1
+          }
+        }
+      },
+      "timestampUtcMs": "2026-09-03T07:18:16.679Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "sgoeNZpUw2GD+lnQesaqTDTW8Ls=",
+    "timestampUtcMs": "2026-09-03T07:18:18.095Z",
+    "action": {
+      "type": "SET_DESCRIPTION",
+      "input": {
+        "updatedAt": "2026-09-03T07:18:18.095Z",
+        "description": "Jobs for different documents run in parallel; jobs for one document run sequentially even across scopes and branches. Ordering, retry with error history and queueHint dependencies are its work."
+      },
+      "timestampUtcMs": "2026-09-03T07:18:18.095Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "",
+    "timestampUtcMs": "2026-09-03T07:20:49.851Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "metadata": {
+          "reason": "Extracted from packages/reactor/docs/ARCHITECTURE.md at v6.2.2-dev.74 \u2014 Core Concepts \u203a Job; Components \u203a Queue; Design Decisions \u203a Why Async Job Processing",
+          "confidence": "grounded"
+        },
+        "sourceId": "4a5a9901-a0e2-4e7e-8ff2-9c155cccb2f7",
+        "targetId": "e4ef060b-4d61-41b4-95bd-2f562eea3cfa",
+        "relationshipType": "DERIVED_FROM"
+      },
+      "timestampUtcMs": "2026-09-03T07:20:49.851Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "UF7UUiKANPpof4RgaVOKFJsq3tY=",
+    "timestampUtcMs": "2026-09-03T07:18:18.095Z",
+    "action": {
+      "type": "SET_NOTE_TYPE",
+      "input": {
+        "noteType": "ARCHITECTURE",
+        "updatedAt": "2026-09-03T07:18:18.095Z"
+      },
+      "timestampUtcMs": "2026-09-03T07:18:18.095Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "",
+    "timestampUtcMs": "2026-09-03T07:20:50.319Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "metadata": {
+          "reason": "Adds the queueing rules beneath the five job statuses: what runs in parallel, what is serialized, and what a job carries between retries",
+          "confidence": "grounded"
+        },
+        "sourceId": "4a5a9901-a0e2-4e7e-8ff2-9c155cccb2f7",
+        "targetId": "48b95d6d-2b69-4999-9e79-dddfc7e9ed3f",
+        "relationshipType": "BUILDS_ON"
+      },
+      "timestampUtcMs": "2026-09-03T07:20:50.319Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "ghaIG9hZk5C+ZTBG0NaKnl5idPM=",
+    "timestampUtcMs": "2026-09-03T07:18:18.095Z",
+    "action": {
+      "type": "SET_CONTENT",
+      "input": {
+        "content": "The queue organises jobs in a Map keyed by `(documentId, scope, branch)`, but the guarantee it gives is stronger than that key suggests: **execution is serialized per document even across scopes and branches.** Jobs for different documents proceed in parallel; two jobs touching the same document never overlap, whichever scopes they name.\n\nThat is why the architecture lists ordering, not throughput, as the first reason for async job processing \u2014 and it is what makes a decision that reads one scope to authorize a write in another safe on the local reactor, without any additional lock.\n\nA job carries its own retry state:\n\n```ts\ntype Job = {\n  id: string;\n  kind: \"mutation\" | \"load\";\n  documentId: string; scope: string; branch: string;\n  actions: Action[];        // for mutations\n  operations: Operation[];  // for loads (sync)\n  queueHint: string[];      // job dependencies\n  maxRetries: number;\n  errorHistory: ErrorInfo[];\n};\n```\n\n`kind` splits the two entry points: a **mutation** carries actions to reduce, a **load** carries operations that already exist elsewhere and arrived by sync. `queueHint` is how one job waits for another, and `errorHistory` accumulates across retries rather than being overwritten, so a job that failed three different ways can be diagnosed after the fact.\n\n## Provenance\n- `packages/reactor/docs/ARCHITECTURE.md` \u2014 Core Concepts \u203a Job; Components \u203a Queue; Design Decisions \u203a Why Async Job Processing\n\n_Extracted from the Powerhouse repository at **v6.2.2-dev.74**._",
+        "updatedAt": "2026-09-03T07:18:18.095Z"
+      },
+      "timestampUtcMs": "2026-09-03T07:18:18.095Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "",
+    "timestampUtcMs": "2026-09-03T07:20:50.807Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "metadata": {
+          "reason": "The queue keys on the same triple the operation store sequences by, but deliberately serializes more coarsely than that key",
+          "confidence": "grounded"
+        },
+        "sourceId": "4a5a9901-a0e2-4e7e-8ff2-9c155cccb2f7",
+        "targetId": "0ef319a9-520b-4759-b30b-a08146b567a9",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-09-03T07:20:50.807Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "d1AHDepoHI1hLgLGah9yyQo/W8E=",
+    "timestampUtcMs": "2026-09-03T07:18:18.095Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "4cea10d5-bcc8-4339-b374-236326185f94",
+        "name": "reactor"
+      },
+      "timestampUtcMs": "2026-09-03T07:18:18.095Z"
+    }
+  },
+  {
+    "index": 5,
+    "hash": "",
+    "timestampUtcMs": "2026-09-03T07:22:43.270Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "metadata": {
+          "reason": "Extracted from packages/reactor/docs/ARCHITECTURE.md at v6.2.2-dev.74 \u2014 Core Concepts \u203a Job; Components \u203a Queue; Design Decisions \u203a Why Async Job Processing",
+          "confidence": "grounded"
+        },
+        "sourceId": "4a5a9901-a0e2-4e7e-8ff2-9c155cccb2f7",
+        "targetId": "e4ef060b-4d61-41b4-95bd-2f562eea3cfa",
+        "relationshipType": "DERIVED_FROM"
+      },
+      "timestampUtcMs": "2026-09-03T07:22:43.270Z"
+    }
+  },
+  {
+    "index": 5,
+    "hash": "BP3lhoaEi+vdITX2SEuQd9srpXI=",
+    "timestampUtcMs": "2026-09-03T07:18:18.095Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "e56788fb-4709-4122-86fb-e6278cac5947",
+        "name": "queue"
+      },
+      "timestampUtcMs": "2026-09-03T07:18:18.095Z"
+    }
+  },
+  {
+    "index": 6,
+    "hash": "",
+    "timestampUtcMs": "2026-09-03T07:22:43.749Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "metadata": {
+          "reason": "Adds the queueing rules beneath the five job statuses: what runs in parallel, what is serialized, and what a job carries between retries",
+          "confidence": "grounded"
+        },
+        "sourceId": "4a5a9901-a0e2-4e7e-8ff2-9c155cccb2f7",
+        "targetId": "48b95d6d-2b69-4999-9e79-dddfc7e9ed3f",
+        "relationshipType": "BUILDS_ON"
+      },
+      "timestampUtcMs": "2026-09-03T07:22:43.749Z"
+    }
+  },
+  {
+    "index": 6,
+    "hash": "nHcywgWzZcV6hT5XL597gPoGv44=",
+    "timestampUtcMs": "2026-09-03T07:18:18.095Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "f584ede5-2344-49fd-a285-833d85d3dda4",
+        "name": "jobs"
+      },
+      "timestampUtcMs": "2026-09-03T07:18:18.095Z"
+    }
+  },
+  {
+    "index": 7,
+    "hash": "",
+    "timestampUtcMs": "2026-09-03T07:22:44.225Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "metadata": {
+          "reason": "The queue keys on the same triple the operation store sequences by, but deliberately serializes more coarsely than that key",
+          "confidence": "grounded"
+        },
+        "sourceId": "4a5a9901-a0e2-4e7e-8ff2-9c155cccb2f7",
+        "targetId": "0ef319a9-520b-4759-b30b-a08146b567a9",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-09-03T07:22:44.225Z"
+    }
+  },
+  {
+    "index": 7,
+    "hash": "GHfOvFZFiMDQVxlnal3mlsuWY/U=",
+    "timestampUtcMs": "2026-09-03T07:18:18.095Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "03ddd4ec-d634-4ba4-8729-c59412bd11b8",
+        "name": "concurrency"
+      },
+      "timestampUtcMs": "2026-09-03T07:18:18.095Z"
+    }
+  },
+  {
+    "index": 8,
+    "hash": "5ByNgMSGy9yZb8Rxz/KEU17p8iQ=",
+    "timestampUtcMs": "2026-09-03T07:18:18.095Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "version",
+        "value": "v6.2.2-dev.74",
+        "updatedAt": "2026-09-03T07:18:18.095Z"
+      },
+      "timestampUtcMs": "2026-09-03T07:18:18.095Z"
+    }
+  },
+  {
+    "index": 9,
+    "hash": "rnDI/5oFF80xmv8f2R2jQovejQg=",
+    "timestampUtcMs": "2026-09-03T07:18:18.095Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "filePath",
+        "value": "packages/reactor/docs/ARCHITECTURE.md",
+        "updatedAt": "2026-09-03T07:18:18.095Z"
+      },
+      "timestampUtcMs": "2026-09-03T07:18:18.095Z"
+    }
+  },
+  {
+    "index": 10,
+    "hash": "MVbVCwNuRHLJLVs5N7GGh1lE0GQ=",
+    "timestampUtcMs": "2026-09-03T07:18:20.502Z",
+    "action": {
+      "type": "SET_PROVENANCE",
+      "input": {
+        "author": "knowledge-agent",
+        "createdAt": "2026-09-03T07:18:20.502Z",
+        "sourceOrigin": "DERIVED"
+      },
+      "timestampUtcMs": "2026-09-03T07:18:20.502Z"
+    }
+  },
+  {
+    "index": 11,
+    "hash": "06tVDXRYzEBr2wj979nVJopeffQ=",
+    "timestampUtcMs": "2026-09-03T07:18:22.435Z",
+    "action": {
+      "type": "SUBMIT_FOR_REVIEW",
+      "input": {
+        "id": "54068b08-274f-418d-b684-b9bdd4cf2377",
+        "actor": "knowledge-agent",
+        "comment": "extracted from packages/reactor/docs/ARCHITECTURE.md at v6.2.2-dev.74",
+        "timestamp": "2026-09-03T07:18:22.435Z"
+      },
+      "timestampUtcMs": "2026-09-03T07:18:22.435Z"
+    }
+  },
+  {
+    "index": 12,
+    "hash": "AGbwVSfnhugPcqfS+1Ep10OJ+VI=",
+    "timestampUtcMs": "2026-09-03T07:18:22.916Z",
+    "action": {
+      "type": "APPROVE_NOTE",
+      "input": {
+        "id": "a707a1d2-e3b9-4ac5-9652-ad3869cfd5b9",
+        "actor": "liberuum",
+        "comment": "claim checked against the cited file at the pinned tag",
+        "timestamp": "2026-09-03T07:18:22.916Z"
+      },
+      "timestampUtcMs": "2026-09-03T07:18:22.916Z"
+    }
+  },
+  {
+    "index": 13,
+    "hash": "pWOWqz5u0iOTsWMWLcGIVd5CPZE=",
+    "timestampUtcMs": "2026-09-03T07:22:19.256Z",
+    "action": {
+      "type": "SET_TITLE",
+      "input": {
+        "title": "The job queue keys work by (documentId, scope, branch) but serializes execution per document, so two scopes of one document never run concurrently",
+        "updatedAt": "2026-09-03T07:22:19.256Z"
+      },
+      "timestampUtcMs": "2026-09-03T07:22:19.256Z"
+    }
+  },
+  {
+    "index": 14,
+    "hash": "pWOWqz5u0iOTsWMWLcGIVd5CPZE=",
+    "timestampUtcMs": "2026-09-03T07:22:19.256Z",
+    "action": {
+      "type": "SET_DESCRIPTION",
+      "input": {
+        "updatedAt": "2026-09-03T07:22:19.256Z",
+        "description": "Jobs for different documents run in parallel; jobs for one document run sequentially even across scopes and branches. Ordering, retry with error history and queueHint dependencies are its work."
+      },
+      "timestampUtcMs": "2026-09-03T07:22:19.256Z"
+    }
+  },
+  {
+    "index": 15,
+    "hash": "pWOWqz5u0iOTsWMWLcGIVd5CPZE=",
+    "timestampUtcMs": "2026-09-03T07:22:19.256Z",
+    "action": {
+      "type": "SET_NOTE_TYPE",
+      "input": {
+        "noteType": "ARCHITECTURE",
+        "updatedAt": "2026-09-03T07:22:19.256Z"
+      },
+      "timestampUtcMs": "2026-09-03T07:22:19.256Z"
+    }
+  },
+  {
+    "index": 16,
+    "hash": "pWOWqz5u0iOTsWMWLcGIVd5CPZE=",
+    "timestampUtcMs": "2026-09-03T07:22:19.256Z",
+    "action": {
+      "type": "SET_CONTENT",
+      "input": {
+        "content": "The queue organises jobs in a Map keyed by `(documentId, scope, branch)`, but the guarantee it gives is stronger than that key suggests: **execution is serialized per document even across scopes and branches.** Jobs for different documents proceed in parallel; two jobs touching the same document never overlap, whichever scopes they name.\n\nThat is why the architecture lists ordering, not throughput, as the first reason for async job processing \u2014 and it is what makes a decision that reads one scope to authorize a write in another safe on the local reactor, without any additional lock.\n\nA job carries its own retry state:\n\n```ts\ntype Job = {\n  id: string;\n  kind: \"mutation\" | \"load\";\n  documentId: string; scope: string; branch: string;\n  actions: Action[];        // for mutations\n  operations: Operation[];  // for loads (sync)\n  queueHint: string[];      // job dependencies\n  maxRetries: number;\n  errorHistory: ErrorInfo[];\n};\n```\n\n`kind` splits the two entry points: a **mutation** carries actions to reduce, a **load** carries operations that already exist elsewhere and arrived by sync. `queueHint` is how one job waits for another, and `errorHistory` accumulates across retries rather than being overwritten, so a job that failed three different ways can be diagnosed after the fact.\n\n## Provenance\n- `packages/reactor/docs/ARCHITECTURE.md` \u2014 Core Concepts \u203a Job; Components \u203a Queue; Design Decisions \u203a Why Async Job Processing\n\n_Extracted from the Powerhouse repository at **v6.2.2-dev.74**._",
+        "updatedAt": "2026-09-03T07:22:19.256Z"
+      },
+      "timestampUtcMs": "2026-09-03T07:22:19.256Z"
+    }
+  },
+  {
+    "index": 17,
+    "hash": "pWOWqz5u0iOTsWMWLcGIVd5CPZE=",
+    "timestampUtcMs": "2026-09-03T07:22:19.256Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "version",
+        "value": "v6.2.2-dev.74",
+        "updatedAt": "2026-09-03T07:22:19.256Z"
+      },
+      "timestampUtcMs": "2026-09-03T07:22:19.256Z"
+    }
+  },
+  {
+    "index": 18,
+    "hash": "pWOWqz5u0iOTsWMWLcGIVd5CPZE=",
+    "timestampUtcMs": "2026-09-03T07:22:19.256Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "filePath",
+        "value": "packages/reactor/docs/ARCHITECTURE.md",
+        "updatedAt": "2026-09-03T07:22:19.256Z"
+      },
+      "timestampUtcMs": "2026-09-03T07:22:19.256Z"
+    }
+  }
+]

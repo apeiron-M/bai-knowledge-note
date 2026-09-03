@@ -1,0 +1,90 @@
+{
+  "links": [
+    {
+      "id": "lnk-b595843f-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "b595843f-e2f9-4172-a43a-eb471fc727a1",
+      "targetTitle": "operation-error-index-must-match-the-number-of-prior-dispatches"
+    },
+    {
+      "id": "lnk-a4fdb6ec-bui",
+      "linkType": "BUILDS_ON",
+      "targetDocumentId": "a4fdb6ec-9c95-4930-a45e-e21ca6571528",
+      "targetTitle": "document-state-has-global-and-local-scopes"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Global and local scopes are fully independent streams with their own operation logs and indices",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "d99985d3-25ac-47b3-a331-947f35e079ff",
+      "name": "state-management",
+      "topicDocumentId": null
+    },
+    {
+      "id": "c6211a2a-22c2-4ab2-9db1-02a7b417193c",
+      "name": "synchronization",
+      "topicDocumentId": null
+    },
+    {
+      "id": "1b7988a8-8027-47b3-9687-ea88a5639b2c",
+      "name": "event-sourcing",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "The global/local split is not a partition of one log \u2014 it is two logs. Each scope has its own state shape, its own operation sequence, and its own indices:\n\n```ts\ndoc.state.global;      // shared with everyone\ndoc.state.local;       // yours alone\n\ndoc.operations.global; // replicated log\ndoc.operations.local;  // local-only log\n```\n\nThe operation at index 5 in `global` has **nothing to do** with index 5 in `local`. The two counters advance independently, so you cannot interleave them, compare them, or use one as a proxy for document age. There is no global ordering across the pair, and none is needed: the Reactor's sync engine replicates `global` across peers and leaves `local` completely alone.\n\nThe practical consequences:\n\n- **Indexing is per scope.** When asserting on an operation in a test, the index counts dispatches *into that scope*, not total dispatches against the document. A document with 3 local operations and 1 global operation has the global one at `operations.global[0]`.\n- **A local dispatch is a dead end by design.** Updating your \"show completed\" filter appends to the local log, runs the local reducer, and stops. Teammates never see it \u2014 no sync traffic, no operation for peers to replay.\n- **Revisions track separately.** Per-scope revision tracking follows from per-scope logs; there is no single document revision number spanning both.\n\nThis is also why moving a field between scopes is a schema change rather than a config toggle: you are moving it between two different histories.\n\n_Source: apps/academy/docs/academy/02-Learn/03-document-models/02-state-and-scopes.mdx (Powerhouse v6.2.2-dev.45)._",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "ARCHITECTURE",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "claude",
+    "createdAt": "2026-08-13T14:35:43.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-09-03T09:59:18.007Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "operations.global[5] has no relation to operations.local[5]. The two logs advance separately; sync replicates global only and leaves local completely alone.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "09438591-5dc7-4884-94dd-460a13eebb6b",
+      "actor": "claude",
+      "comment": "Knowledge registered against powerhouse v6.2.2-dev.47",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-14T12:00:00.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "f8288f83-cea9-4bb6-9384-8185e42a9c01",
+      "actor": "liberuum",
+      "comment": "Canonical as of powerhouse v6.2.2-dev.47",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-14T12:00:00.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

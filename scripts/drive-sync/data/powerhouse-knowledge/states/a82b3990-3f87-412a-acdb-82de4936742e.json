@@ -1,0 +1,123 @@
+{
+  "links": [
+    {
+      "id": "lnk-955cc0e6-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "955cc0e6-a2f8-41f9-963f-bde2b278ab9c",
+      "targetTitle": "consistency-tokens-read-after-write",
+      "reason": "A batch returns a placeholder consistency token, so the usual read-after-write guarantee does not apply to it",
+      "confidence": "grounded"
+    },
+    {
+      "id": "lnk-48b95d6d-bui",
+      "linkType": "BUILDS_ON",
+      "targetDocumentId": "48b95d6d-2b69-4999-9e79-dddfc7e9ed3f",
+      "targetTitle": "reactor-job-five-statuses-two-terminal",
+      "reason": "Because every batch JobInfo comes back PENDING, the five-status job lifecycle is the only place a batch's real outcome can be read",
+      "confidence": "grounded"
+    },
+    {
+      "id": "lnk-408db5b8-sup",
+      "linkType": "SUPERSEDES",
+      "targetDocumentId": "408db5b8-156d-485b-9f51-bf47d6a2bc76",
+      "targetTitle": "reactor-executebatch-dependency-ordered-jobs",
+      "reason": "Corrects that note's framing: executeBatch orders and parallelises but is not atomic, its result is a PENDING receipt rather than an outcome, and a failed job does not stop its dependents",
+      "confidence": "grounded"
+    },
+    {
+      "id": "lnk-3e9f2bb1-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "3e9f2bb1-f86c-478f-8ee1-5a915ba3ce12",
+      "targetTitle": "Academy \u203a Reference \u203a Reactor \u203a Advanced reactor usage",
+      "reason": "Extracted from apps/academy/docs/academy/04-Reference/01-Reactor/03-AdvancedReactorUsage.md at v6.2.2-dev.74 \u2014 Batch operations: the four new paragraphs on ordering, failure, receipt and idempotency",
+      "confidence": "grounded"
+    },
+    {
+      "id": "lnk-43f0b3b4-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "43f0b3b4-51f3-4d18-8c6c-b033d94e8bbc",
+      "targetTitle": "Academy \u203a Reference \u203a Reactor \u203a Working with the Reactor",
+      "reason": "Extracted from apps/academy/docs/academy/04-Reference/01-Reactor/01-WorkingWithTheReactor.md at v6.2.2-dev.74 \u2014 method table: executeBatch 'Submit multiple jobs in dependency order and wait for all to settle'",
+      "confidence": "grounded"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "executeBatch guarantees ordering and nothing else: a dependsOn edge waits for the job before it to finish, not to succeed, and there is no batch-level rollback",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "f30cb2fa-dc37-4116-a917-b4de40f16479",
+      "name": "reactor",
+      "topicDocumentId": null
+    },
+    {
+      "id": "34cc7e5a-33d1-498b-9b0b-c155eb8cf98e",
+      "name": "batching",
+      "topicDocumentId": null
+    },
+    {
+      "id": "aab1a52b-eab2-49f8-a398-5027c5c7a8b4",
+      "name": "jobs",
+      "topicDocumentId": null
+    },
+    {
+      "id": "43fd38fc-d876-44df-a2a1-8bc89557f4bf",
+      "name": "gotchas",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "`executeBatch` submits multiple mutation jobs with declared dependencies and lets the reactor schedule them. What it guarantees is **ordering, and only ordering** \u2014 the v6.2.2-dev.74 Academy hardened the wording from \"multi-document atomic operations\" to \"multi-document operations with dependency ordering\", and spelled out four consequences:\n\n- **Not atomic, not transactional.** Each job commits on its own; there is no batch-level rollback, status, or consistency token.\n- **A `dependsOn` edge waits for the job before it to *finish*, not to *succeed*.** A failed job leaves the queue exactly as a successful one does, so its dependents still run \u2014 against whatever state the failure left behind. Jobs that committed stay committed.\n- **The return value is a submission receipt.** Every `JobInfo` comes back `PENDING`, with a placeholder consistency token. To learn what happened, poll `getJobStatus` per job id, or subscribe to `JOB_FAILED` and correlate through `job.meta.batchId` and `job.meta.batchJobIds`.\n- **No idempotency key on a job plan.** Re-submitting a batch after a partial failure re-applies the entries that already succeeded; any compensation is the caller's to write.\n\nThe mechanism is unchanged: jobs are `{ key, documentId, actions, dependsOn }`, independent jobs run in parallel and dependents wait, and the EventBus (`JOB_PENDING` \u2192 `JOB_RUNNING` \u2192 `JOB_WRITE_READY` \u2192 `JOB_READ_READY`, or `JOB_FAILED`) is where progress is observed. It lives on `IReactor`, not on the Promise-based `IReactorClient`, and it is not on the light `IReactorBrowserClient` either.\n\n_Source: apps/academy/docs/academy/04-Reference/01-Reactor/03-AdvancedReactorUsage.md (Powerhouse v6.2.2-dev.74)._\n_Source: apps/academy/docs/academy/04-Reference/01-Reactor/01-WorkingWithTheReactor.md (Powerhouse v6.2.2-dev.74)._\n\n## Provenance\n- `apps/academy/docs/academy/04-Reference/01-Reactor/03-AdvancedReactorUsage.md` \u2014 Batch operations: the four new paragraphs on ordering, failure, receipt and idempotency\n- `apps/academy/docs/academy/04-Reference/01-Reactor/01-WorkingWithTheReactor.md` \u2014 method table: executeBatch 'Submit multiple jobs in dependency order and wait for all to settle'\n\n_Recorded from the Powerhouse repository at **v6.2.2-dev.74** during the v6.2.2-dev.74 source sync._",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": "v6.2.2-dev.74",
+  "computes": null,
+  "filePath": "apps/academy/docs/academy/04-Reference/01-Reactor/03-AdvancedReactorUsage.md",
+  "noteType": "PATTERN",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": "grounded",
+  "consumedBy": [],
+  "provenance": {
+    "author": "knowledge-agent",
+    "createdAt": "2026-09-02T22:13:41.540Z",
+    "sessionId": null,
+    "updatedAt": "2026-09-02T22:21:15.746Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Every JobInfo returns PENDING with a placeholder token, so the result is a submission receipt. Poll getJobStatus or correlate JOB_FAILED via job.meta.batchId; re-submitting re-applies successes.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "d78c3eb5-6f4e-4c78-9d13-3036dac33c61",
+      "actor": "knowledge-agent",
+      "comment": "extracted from the Powerhouse repository at v6.2.2-dev.74",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-09-02T22:13:42.057Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "5f0e5f96-bdf7-4592-ae3e-4d988fcbd6df",
+      "actor": "liberuum",
+      "comment": "claim checked against the cited repository file at the pinned tag",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-09-02T22:13:44.160Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

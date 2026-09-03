@@ -1,0 +1,108 @@
+{
+  "links": [
+    {
+      "id": "lnk-ae9c98a6-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "ae9c98a6-00eb-4aa9-92e8-40ad3bc9513d",
+      "targetTitle": "chat-polish-backlog-items"
+    },
+    {
+      "id": "lnk-d1737634-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "d1737634-2378-431a-8cf8-4dcfba38ea5c",
+      "targetTitle": "collaboration-index-feed-structure"
+    },
+    {
+      "id": "lnk-114fdc9b-bui",
+      "linkType": "BUILDS_ON",
+      "targetDocumentId": "114fdc9b-1231-43d8-b265-3825fc46457a",
+      "targetTitle": "live-collaboration-uses-per-user-op-feeds-plus-gsoc-pings-to"
+    },
+    {
+      "id": "lnk-d1fb47c0-bui",
+      "linkType": "BUILDS_ON",
+      "targetDocumentId": "d1fb47c0-c4f4-40c0-9f3b-55669eef4f0d",
+      "targetTitle": "live-collab-per-user-feeds-manifest"
+    },
+    {
+      "id": "lnk-1c781f1a-bui",
+      "linkType": "BUILDS_ON",
+      "targetDocumentId": "1c781f1a-a3f9-483e-a15a-ccbc2c431135",
+      "targetTitle": "chat-pss-messaging-history-shipped"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Live collaboration via ACT + GSOC is the next major track",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "7bc9772d-e7b3-430d-9785-412c37a8fa68",
+      "name": "chat-roadmap",
+      "topicDocumentId": null
+    },
+    {
+      "id": "a452c58b-5098-429a-9694-3a9ded893528",
+      "name": "live-collab-track",
+      "topicDocumentId": null
+    },
+    {
+      "id": "5c9462a4-2958-4b86-9da5-868c6a9bbafc",
+      "name": "roadmap-next",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "## The next track\n\nLive collaboration via ACT + GSOC is the remaining major track on the chat roadmap as of 2026-04-18. Detailed plan in `live-collaboration-design.md`.\n\n## What \"live\" means\n\nBoth users have the document open. When one commits an op, the other sees it appear in the **toolbar's History view within a second or two**, attributed to the correct signer.\n\n## Explicit non-goals\n\n- **No cursor overlays.**\n- **No caret labels.**\n- **No per-editor presence.**\n\nPowerhouse editors are too varied -- tables, visual canvases, dashboards, button grids -- for any of that to be meaningful across the surface.\n\n## Supporting foundation\n\nSignatures are already preserved end-to-end (shipped 2026-04-17), so the toolbar history shows the real author of every revision as soon as the pull mechanism lands. That's what makes attribution in live collab trivially correct.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "DECISION",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "knowledge-agent",
+    "createdAt": "2026-04-21T14:38:00.466Z",
+    "sessionId": null,
+    "updatedAt": "2026-09-03T09:57:27.594Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Live collab scope: both users see committed ops in toolbar History within 1-2s with correct signer. No cursor overlays or per-editor presence.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "54ee92ea-611c-4df9-a5da-5ee4cdf9eeb8",
+      "actor": "claude",
+      "comment": "Knowledge registered against powerhouse v6.2.2-dev.47",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-14T12:00:00.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "6a66f9c2-21b4-46f9-9343-cc61791f5763",
+      "actor": "liberuum",
+      "comment": "Canonical as of powerhouse v6.2.2-dev.47",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-14T12:00:00.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

@@ -1,0 +1,94 @@
+{
+  "links": [
+    {
+      "id": "lnk-4d8e59af-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "4d8e59af-51f2-4ab7-b290-e1d5744abbd7",
+      "targetTitle": "Integration-gap tool screen: ERPNext / Frappe (primary-source research, 2026-08-19)"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Alfresco's extension points are all node verbs, so a decision can only be inferred",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "9bc7e83d-5fe1-47cd-92b8-ca107925c6d7",
+      "name": "tool-screen",
+      "topicDocumentId": null
+    },
+    {
+      "id": "b0e9cbcf-def6-43f3-bfce-7c78b9243e9c",
+      "name": "alfresco",
+      "topicDocumentId": null
+    },
+    {
+      "id": "2aca1a4a-0660-4aca-a9d8-61aee5214a05",
+      "name": "integration-seam",
+      "topicDocumentId": null
+    },
+    {
+      "id": "c1cb9de5-2ec2-4187-aa1e-eb511729a007",
+      "name": "business-events",
+      "topicDocumentId": null
+    },
+    {
+      "id": "41548402-1ceb-4bb0-8736-946bf26bf44a",
+      "name": "impedance-mismatch",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "The registered policy interfaces are `BeforeCreateNodePolicy`, `OnCreateNodePolicy`, `OnMoveNodePolicy`, `OnUpdatePropertiesPolicy`, `OnAddAspectPolicy`, `BeforeDeleteNodePolicy` and their siblings. Every one is keyed to a document verb.\n\nThere is no `OnDecisionPolicy` and no `OnApprovalPolicy` \u2014 no business-event vocabulary anywhere in the extension surface. An integration that wants to capture \"this application was accepted\" has to infer it from an aspect being added or a property changing, which is the impedance mismatch stated in the platform's own API.\n\nThe vocabulary of a tool's extension points is a reliable predictor of what it can record. Where the hooks are node verbs, the records will be node events, however the feature is marketed.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "ARCHITECTURE",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "knowledge-agent",
+    "createdAt": "2026-08-20T08:45:06.447521Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-20T08:45:07.646425Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Every NodeServicePolicies hook is create, move, update, delete or aspect-change. There is no OnDecisionPolicy, so an approval must be detected from an aspect being added.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "ef38430a-7f18-4880-a268-4ab132e2ddb3",
+      "actor": "knowledge-agent",
+      "comment": "Extracted from the primary-source tool screen; each claim quotable from a cited source.",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-20T08:45:07.502662Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "a767ddb0-2703-4e13-827a-d18c0edfc1d1",
+      "actor": "liberuum",
+      "comment": "Approved: tool-screen extraction.",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-20T08:45:07.646425Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

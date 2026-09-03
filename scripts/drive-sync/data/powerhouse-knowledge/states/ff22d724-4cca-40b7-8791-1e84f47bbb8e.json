@@ -1,0 +1,81 @@
+{
+  "links": [
+    {
+      "id": "lnk-e2009327-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "e2009327-693f-45e1-8677-6b6abd3c13f7",
+      "targetTitle": "skill-import",
+      "reason": "Discovery note distilled by sync-skills from the skill's SKILL.md frontmatter description and its section headings (source hash sha256:ec2f602807a2); the full procedure is the source text",
+      "confidence": "grounded"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Agent skill: /import \u2014 Bulk import knowledge from external sources \u2014 markdown files, Obsidian vaults, Ars Contexta local vaults, or JSON data.",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "c9374a0a-4687-4aed-8e20-f0caf605418c",
+      "name": "agent-skills",
+      "topicDocumentId": null
+    },
+    {
+      "id": "aabd8e17-9040-4977-b5eb-c8c4a378ec74",
+      "name": "import",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "## When to use\nBulk import knowledge from external sources \u2014 markdown files, Obsidian vaults, Ars Contexta local vaults, or JSON data. Creates documents in correct folders with links preserved. Use when migrating an existing knowledge base to the vault.\n\n## What it covers\n- Supported Sources\n- Import Process\n- Automated Import Scripts\n- Wiki Link Resolution\n- Markdown Frontmatter Mapping\n\n## Where the full skill lives\n- Vault source: **Agent skill: import** (full SKILL.md text, DERIVED_FROM below)\n- Canonical copy: plugin repo `skills/import/SKILL.md` \u2014 always execute from the repo copy; this note is the discovery layer.\n\n## Invocation\n`/powerhouse-knowledge:import` in Claude Code (plugin installed), or read the source content and follow it manually.\n\n_Synced by sync-skills; source hash sha256:ec2f602807a2\u2026_",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": "skills/import/SKILL.md",
+  "noteType": "PROCEDURE",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "skill-sync",
+    "createdAt": "2026-08-16T12:02:08.774Z",
+    "sessionId": null,
+    "updatedAt": "2026-09-02T19:21:46.573Z",
+    "sourceOrigin": "IMPORT"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Bulk import knowledge from external sources \u2014 markdown files, Obsidian vaults, Ars Contexta local vaults, or JSON data. Creates documents in correct folders with links preserved. Use when migrating an",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "e8929cea-4af7-4699-8e62-22627470698b",
+      "actor": "skill-sync",
+      "comment": "skill sync",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-16T12:02:09.503Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "25c4e71f-5791-497c-9050-26a6dc3c734a",
+      "actor": "knowledge-agent",
+      "comment": "mechanical sync from canonical repo copy",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-16T12:02:09.934Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

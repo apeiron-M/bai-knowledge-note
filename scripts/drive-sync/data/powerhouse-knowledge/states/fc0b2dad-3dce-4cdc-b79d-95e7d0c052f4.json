@@ -1,0 +1,115 @@
+{
+  "links": [
+    {
+      "id": "lnk-b0fb7240-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "b0fb7240-9c5c-49fa-a03f-3aa6a9b44360",
+      "targetTitle": "Academy \u203a Build \u203a GettingStartedBuilding \u203a Prerequisites",
+      "reason": "Extracted from apps/academy/docs/academy/03-Build/00-GettingStartedBuilding/01-Prerequisites.md at v6.2.2-dev.74 \u2014 tip 'Two ways to build: manual vs. AI-guided'; Overview; Windows Users: Consider Using WSL",
+      "confidence": "grounded"
+    },
+    {
+      "id": "lnk-f58a582c-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "f58a582c-749b-4327-973e-a70457c28c6b",
+      "targetTitle": "monorepo-build-prereqs",
+      "reason": "Both state a Node 24 floor, but for different audiences: this one for a package builder, that one for a contributor to the monorepo who also needs bun and pnpm",
+      "confidence": "grounded"
+    },
+    {
+      "id": "lnk-8b9f2900-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "8b9f2900-211b-4dd7-80ad-406e13082cb1",
+      "targetTitle": "vetra-studio-auto-generates-from-specs",
+      "reason": "Vetra Studio's code generation from specification documents is what makes the agent path produce the same package as the manual one",
+      "confidence": "grounded"
+    },
+    {
+      "id": "lnk-7073a0d6-bui",
+      "linkType": "BUILDS_ON",
+      "targetDocumentId": "7073a0d6-b9fb-41f5-8bd9-33b84c8b3a5c",
+      "targetTitle": "v6-node-24-minimum",
+      "reason": "The Node 24 requirement here is the same floor v6.0.0 made a breaking change",
+      "confidence": "grounded"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "The Build track is the manual path and Vetra Studio is the AI-guided one, and both produce the same kind of package so a project can switch between them",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "4ed1aa1d-e9a7-4bb8-85e1-2ce4293529d9",
+      "name": "vetra",
+      "topicDocumentId": null
+    },
+    {
+      "id": "3b4a29b2-a99c-44e6-98a8-700e1229422e",
+      "name": "onboarding",
+      "topicDocumentId": null
+    },
+    {
+      "id": "e293ea41-a2f8-41d1-a79c-8b024ed81b8f",
+      "name": "development",
+      "topicDocumentId": null
+    },
+    {
+      "id": "d09f129e-2fb2-40d9-a6ba-f533656fb36a",
+      "name": "tooling",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "The Academy states the fork explicitly at the top of the Build chapter: this is the **manual experience** \u2014 building packages by hand with the Powerhouse CLI, controlling document models, editors, processors and publishing \u2014 while the **AI-guided experience** lives in Vetra Studio, where you describe what you want in chat and the agent writes the specs and code, with **no local setup required**.\n\nThe important part is the sentence that follows: \"the two paths produce the same kind of package, so you can mix and match \u2014 prototype with the agent, then drop down to the manual workflow for fine-grained control.\" That makes the choice reversible rather than architectural.\n\nFor the manual path the machine needs three things \u2014 **Node.js 24** to run the code, **VS Code** to write it, **Git** to manage it \u2014 plus the CLI: `pnpm install -g ph-cmd` (or npm), with a global install recommended so the command works from any directory. If those three are already present, installing `ph-cmd` is the only step.\n\n**Windows users are steered to WSL** rather than native Windows: `wsl --install` in an Administrator PowerShell, restart, create a Linux user, then follow the Linux (Ubuntu/Debian) instructions throughout. The stated reason is a development experience consistent with production environments and with most tutorials; VS Code still runs on Windows through the Remote-WSL extension.\n\n## Provenance\n- `apps/academy/docs/academy/03-Build/00-GettingStartedBuilding/01-Prerequisites.md` \u2014 tip 'Two ways to build: manual vs. AI-guided'; Overview; Windows Users: Consider Using WSL\n\n_Extracted from the Powerhouse repository at **v6.2.2-dev.74**._",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": "v6.2.2-dev.74",
+  "computes": null,
+  "filePath": "apps/academy/docs/academy/03-Build/00-GettingStartedBuilding/01-Prerequisites.md",
+  "noteType": "CONCEPT",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "knowledge-agent",
+    "createdAt": "2026-09-03T07:54:12.168Z",
+    "sessionId": null,
+    "updatedAt": "2026-09-03T07:54:13.196Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "The manual path needs Node 24, VS Code, Git and a global ph-cmd install; the agent path needs no local setup. Windows users are steered to WSL and then the Linux instructions.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "61794ee1-8a81-4e19-97ab-da44d47b3065",
+      "actor": "knowledge-agent",
+      "comment": "extracted from apps/academy/docs/academy/03-Build/00-GettingStartedBuilding/01-Prerequisites.md at v6.2.2-dev.74",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-09-03T07:54:12.673Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "a8d78c92-bd39-40f6-a336-40d0d8709d43",
+      "actor": "liberuum",
+      "comment": "claim checked against the cited file at the pinned tag",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-09-03T07:54:13.196Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

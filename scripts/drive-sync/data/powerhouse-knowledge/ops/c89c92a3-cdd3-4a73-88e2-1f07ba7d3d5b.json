@@ -1,0 +1,464 @@
+[
+  {
+    "index": 0,
+    "hash": "",
+    "timestampUtcMs": "2026-09-03T07:20:19.672Z",
+    "action": {
+      "type": "CREATE_DOCUMENT",
+      "input": {
+        "meta": {},
+        "name": "hashfirst-concurrent-reservations",
+        "slug": "",
+        "model": "bai/knowledge-note",
+        "branch": "main",
+        "signing": {
+          "nonce": "",
+          "publicKey": {},
+          "signature": "c89c92a3-cdd3-4a73-88e2-1f07ba7d3d5b",
+          "documentType": "bai/knowledge-note",
+          "createdAtUtcIso": "2026-09-03T07:20:19.672Z"
+        },
+        "version": 0,
+        "documentId": "c89c92a3-cdd3-4a73-88e2-1f07ba7d3d5b",
+        "protocolVersions": {
+          "base-reducer": 2
+        }
+      },
+      "timestampUtcMs": "2026-09-03T07:20:19.672Z"
+    }
+  },
+  {
+    "index": 0,
+    "hash": "cXCbrx5Gf2d+f5XunxxYF7/Qrl0=",
+    "timestampUtcMs": "2026-09-03T07:20:21.159Z",
+    "action": {
+      "type": "SET_TITLE",
+      "input": {
+        "title": "Multiple live reservations may claim the same hash on purpose, because rejecting the second would let a client squat on content for the reservation TTL",
+        "updatedAt": "2026-09-03T07:20:21.159Z"
+      },
+      "timestampUtcMs": "2026-09-03T07:20:21.159Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "",
+    "timestampUtcMs": "2026-09-03T07:20:19.672Z",
+    "action": {
+      "type": "UPGRADE_DOCUMENT",
+      "input": {
+        "model": "bai/knowledge-note",
+        "toVersion": 1,
+        "documentId": "c89c92a3-cdd3-4a73-88e2-1f07ba7d3d5b",
+        "fromVersion": 0,
+        "initialState": {
+          "auth": {
+            "grants": [],
+            "version": 0
+          },
+          "local": {
+            "lastViewedAt": null,
+            "personalTags": []
+          },
+          "global": {
+            "links": [],
+            "model": null,
+            "scope": null,
+            "title": null,
+            "editor": null,
+            "inputs": [],
+            "models": [],
+            "status": "DRAFT",
+            "topics": [],
+            "content": null,
+            "context": null,
+            "modelId": null,
+            "modules": [],
+            "outputs": [],
+            "version": null,
+            "computes": null,
+            "filePath": null,
+            "noteType": null,
+            "severity": null,
+            "hooksUsed": [],
+            "rootCause": null,
+            "confidence": null,
+            "consumedBy": [],
+            "provenance": null,
+            "sourceType": null,
+            "targetType": null,
+            "cardinality": null,
+            "description": null,
+            "alternatives": [],
+            "consequences": [],
+            "errorMessage": null,
+            "relationType": null,
+            "correctPattern": null,
+            "decisionStatus": null,
+            "dispatchTargets": [],
+            "lifecycleEvents": []
+          },
+          "document": {
+            "hash": {
+              "encoding": "base64",
+              "algorithm": "sha1"
+            },
+            "version": 1
+          }
+        }
+      },
+      "timestampUtcMs": "2026-09-03T07:20:19.672Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "fOHx0z7ZeC+A3igBJ62q/ytQR3k=",
+    "timestampUtcMs": "2026-09-03T07:20:21.159Z",
+    "action": {
+      "type": "SET_DESCRIPTION",
+      "input": {
+        "updatedAt": "2026-09-03T07:20:21.159Z",
+        "description": "One-live-reservation-per-hash needs a partial unique index (broken under the schema-scoped migrations) or app locking, and strands the second client. Commit-time convergence handles it instead."
+      },
+      "timestampUtcMs": "2026-09-03T07:20:21.159Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "",
+    "timestampUtcMs": "2026-09-03T07:21:34.595Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "metadata": {
+          "reason": "Extracted from packages/reactor/docs/attachments-hash-first.md at v6.2.2-dev.74 \u2014 Reservation semantics \u203a Concurrent reservations for the same hash",
+          "confidence": "grounded"
+        },
+        "sourceId": "c89c92a3-cdd3-4a73-88e2-1f07ba7d3d5b",
+        "targetId": "e25bc920-d3bc-4b36-9c7f-cb35b64c27b9",
+        "relationshipType": "DERIVED_FROM"
+      },
+      "timestampUtcMs": "2026-09-03T07:21:34.595Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "/3g4LTBxIrOUA6F4AFcZUKBw7sc=",
+    "timestampUtcMs": "2026-09-03T07:20:21.159Z",
+    "action": {
+      "type": "SET_NOTE_TYPE",
+      "input": {
+        "noteType": "DECISION",
+        "updatedAt": "2026-09-03T07:20:21.159Z"
+      },
+      "timestampUtcMs": "2026-09-03T07:20:21.159Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "",
+    "timestampUtcMs": "2026-09-03T07:21:35.101Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "metadata": {
+          "reason": "Fills in the third row of that decision table: a live reservation for the same hash is not a reason to refuse a second one",
+          "confidence": "grounded"
+        },
+        "sourceId": "c89c92a3-cdd3-4a73-88e2-1f07ba7d3d5b",
+        "targetId": "f595aee3-5141-4260-9e58-b1d516999ed8",
+        "relationshipType": "BUILDS_ON"
+      },
+      "timestampUtcMs": "2026-09-03T07:21:35.101Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "0+I73vqLnRY6yUb0MLBd/SyGKgk=",
+    "timestampUtcMs": "2026-09-03T07:20:21.159Z",
+    "action": {
+      "type": "SET_CONTENT",
+      "input": {
+        "content": "Concurrent reservations for the same `client_hash` are allowed deliberately, for three reasons:\n\n- **No uniqueness race.** Enforcing one live reservation per hash needs either a partial unique index \u2014 known broken under the `withSchema(\"attachments\")` migration setup, per the comment in migration 001 \u2014 or application-level locking, and it creates a rejected-reserver problem: what is the second client supposed to do while the first uploads?\n- **No reservation squatting.** If the second reserve were rejected in favour of an existing reservation, a client could reserve a hash it never intends to upload and **block that content for the 24-hour TTL**. Independent reservations make squatting harmless: anyone with the bytes can upload them.\n- **Commit-time convergence already exists.** Whichever upload finishes first inserts the row (`INSERT \u2026 ON CONFLICT (hash) DO NOTHING`); a later `send()` for the same hash lands in the dedup path and returns the existing record. Each `send()` soft-deletes only its own reservation, and stragglers age out via the TTL.\n\nThe cost is a bounded amount of duplicate upload bandwidth in the rare concurrent case \u2014 **strictly no worse than today**, where every duplicate upload transmits all bytes before dedup is detectable.\n\n## Provenance\n- `packages/reactor/docs/attachments-hash-first.md` \u2014 Reservation semantics \u203a Concurrent reservations for the same hash\n\n_Extracted from the Powerhouse repository at **v6.2.2-dev.74**._",
+        "updatedAt": "2026-09-03T07:20:21.159Z"
+      },
+      "timestampUtcMs": "2026-09-03T07:20:21.159Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "",
+    "timestampUtcMs": "2026-09-03T07:21:35.563Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "metadata": {
+          "reason": "Convergence relies on the ON CONFLICT (hash) DO NOTHING upsert in the attachment table and on reservations being separate, soft-deleted rows",
+          "confidence": "grounded"
+        },
+        "sourceId": "c89c92a3-cdd3-4a73-88e2-1f07ba7d3d5b",
+        "targetId": "0a6393ba-6798-445d-8b24-d325b50e262e",
+        "relationshipType": "BUILDS_ON"
+      },
+      "timestampUtcMs": "2026-09-03T07:21:35.563Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "QGBoPqobWGVEEy6oz2sxG6ao5kU=",
+    "timestampUtcMs": "2026-09-03T07:20:21.159Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "5981fa43-7330-4c5f-a3d8-5cf6c49445c5",
+        "name": "attachments"
+      },
+      "timestampUtcMs": "2026-09-03T07:20:21.159Z"
+    }
+  },
+  {
+    "index": 5,
+    "hash": "",
+    "timestampUtcMs": "2026-09-03T07:23:26.903Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "metadata": {
+          "reason": "Extracted from packages/reactor/docs/attachments-hash-first.md at v6.2.2-dev.74 \u2014 Reservation semantics \u203a Concurrent reservations for the same hash",
+          "confidence": "grounded"
+        },
+        "sourceId": "c89c92a3-cdd3-4a73-88e2-1f07ba7d3d5b",
+        "targetId": "e25bc920-d3bc-4b36-9c7f-cb35b64c27b9",
+        "relationshipType": "DERIVED_FROM"
+      },
+      "timestampUtcMs": "2026-09-03T07:23:26.903Z"
+    }
+  },
+  {
+    "index": 5,
+    "hash": "AB8Zz74CQAdpHKz0t9m976ubHe4=",
+    "timestampUtcMs": "2026-09-03T07:20:21.159Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "5383531c-bffa-4d50-a4cf-80a92c9ffe4d",
+        "name": "hash-first"
+      },
+      "timestampUtcMs": "2026-09-03T07:20:21.159Z"
+    }
+  },
+  {
+    "index": 6,
+    "hash": "",
+    "timestampUtcMs": "2026-09-03T07:23:27.385Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "metadata": {
+          "reason": "Fills in the third row of that decision table: a live reservation for the same hash is not a reason to refuse a second one",
+          "confidence": "grounded"
+        },
+        "sourceId": "c89c92a3-cdd3-4a73-88e2-1f07ba7d3d5b",
+        "targetId": "f595aee3-5141-4260-9e58-b1d516999ed8",
+        "relationshipType": "BUILDS_ON"
+      },
+      "timestampUtcMs": "2026-09-03T07:23:27.385Z"
+    }
+  },
+  {
+    "index": 6,
+    "hash": "5XsJ/hk1g7VcqCFOW6oAdr7z7+w=",
+    "timestampUtcMs": "2026-09-03T07:20:21.159Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "94c383cc-06a9-44ce-aede-c9ed43b3d363",
+        "name": "concurrency"
+      },
+      "timestampUtcMs": "2026-09-03T07:20:21.159Z"
+    }
+  },
+  {
+    "index": 7,
+    "hash": "",
+    "timestampUtcMs": "2026-09-03T07:23:27.858Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "metadata": {
+          "reason": "Convergence relies on the ON CONFLICT (hash) DO NOTHING upsert in the attachment table and on reservations being separate, soft-deleted rows",
+          "confidence": "grounded"
+        },
+        "sourceId": "c89c92a3-cdd3-4a73-88e2-1f07ba7d3d5b",
+        "targetId": "0a6393ba-6798-445d-8b24-d325b50e262e",
+        "relationshipType": "BUILDS_ON"
+      },
+      "timestampUtcMs": "2026-09-03T07:23:27.858Z"
+    }
+  },
+  {
+    "index": 7,
+    "hash": "cFUftNdoakj0fxTZzaAdZuNjFpU=",
+    "timestampUtcMs": "2026-09-03T07:20:21.159Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "cf9abce3-337f-48fe-b6ea-79de1564a0ef",
+        "name": "reservations"
+      },
+      "timestampUtcMs": "2026-09-03T07:20:21.159Z"
+    }
+  },
+  {
+    "index": 8,
+    "hash": "kzSecpjhfE1b8EDU80ACW13LpUk=",
+    "timestampUtcMs": "2026-09-03T07:20:21.159Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "version",
+        "value": "v6.2.2-dev.74",
+        "updatedAt": "2026-09-03T07:20:21.159Z"
+      },
+      "timestampUtcMs": "2026-09-03T07:20:21.159Z"
+    }
+  },
+  {
+    "index": 9,
+    "hash": "3Y+FuHEkcwX7ekpJj08npVGlK6U=",
+    "timestampUtcMs": "2026-09-03T07:20:21.159Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "filePath",
+        "value": "packages/reactor/docs/attachments-hash-first.md",
+        "updatedAt": "2026-09-03T07:20:21.159Z"
+      },
+      "timestampUtcMs": "2026-09-03T07:20:21.159Z"
+    }
+  },
+  {
+    "index": 10,
+    "hash": "pqF9uZEeQnANISjmsYSJPfsaX/I=",
+    "timestampUtcMs": "2026-09-03T07:20:23.793Z",
+    "action": {
+      "type": "SET_PROVENANCE",
+      "input": {
+        "author": "knowledge-agent",
+        "createdAt": "2026-09-03T07:20:23.793Z",
+        "sourceOrigin": "DERIVED"
+      },
+      "timestampUtcMs": "2026-09-03T07:20:23.793Z"
+    }
+  },
+  {
+    "index": 11,
+    "hash": "iYz3jOHv6c7DCFS8/fU6PnAIwGw=",
+    "timestampUtcMs": "2026-09-03T07:20:24.375Z",
+    "action": {
+      "type": "SUBMIT_FOR_REVIEW",
+      "input": {
+        "id": "993ce05a-99ca-4555-b9af-38522ec0fb63",
+        "actor": "knowledge-agent",
+        "comment": "extracted from packages/reactor/docs/attachments-hash-first.md at v6.2.2-dev.74",
+        "timestamp": "2026-09-03T07:20:24.374Z"
+      },
+      "timestampUtcMs": "2026-09-03T07:20:24.375Z"
+    }
+  },
+  {
+    "index": 12,
+    "hash": "kespDfi9fI/XaPz6rwAXTqHJTKA=",
+    "timestampUtcMs": "2026-09-03T07:20:24.952Z",
+    "action": {
+      "type": "APPROVE_NOTE",
+      "input": {
+        "id": "63c7392f-b441-4bd8-9ac2-044d48baed3b",
+        "actor": "liberuum",
+        "comment": "claim checked against the cited file at the pinned tag",
+        "timestamp": "2026-09-03T07:20:24.952Z"
+      },
+      "timestampUtcMs": "2026-09-03T07:20:24.952Z"
+    }
+  },
+  {
+    "index": 13,
+    "hash": "mUgQAenfCumZ3jZYGt6MYzwPkuI=",
+    "timestampUtcMs": "2026-09-03T07:22:35.708Z",
+    "action": {
+      "type": "SET_TITLE",
+      "input": {
+        "title": "Multiple live reservations may claim the same hash on purpose, because rejecting the second would let a client squat on content for the reservation TTL",
+        "updatedAt": "2026-09-03T07:22:35.708Z"
+      },
+      "timestampUtcMs": "2026-09-03T07:22:35.708Z"
+    }
+  },
+  {
+    "index": 14,
+    "hash": "mUgQAenfCumZ3jZYGt6MYzwPkuI=",
+    "timestampUtcMs": "2026-09-03T07:22:35.708Z",
+    "action": {
+      "type": "SET_DESCRIPTION",
+      "input": {
+        "updatedAt": "2026-09-03T07:22:35.708Z",
+        "description": "One-live-reservation-per-hash needs a partial unique index (broken under the schema-scoped migrations) or app locking, and strands the second client. Commit-time convergence handles it instead."
+      },
+      "timestampUtcMs": "2026-09-03T07:22:35.708Z"
+    }
+  },
+  {
+    "index": 15,
+    "hash": "mUgQAenfCumZ3jZYGt6MYzwPkuI=",
+    "timestampUtcMs": "2026-09-03T07:22:35.708Z",
+    "action": {
+      "type": "SET_NOTE_TYPE",
+      "input": {
+        "noteType": "DECISION",
+        "updatedAt": "2026-09-03T07:22:35.708Z"
+      },
+      "timestampUtcMs": "2026-09-03T07:22:35.708Z"
+    }
+  },
+  {
+    "index": 16,
+    "hash": "mUgQAenfCumZ3jZYGt6MYzwPkuI=",
+    "timestampUtcMs": "2026-09-03T07:22:35.708Z",
+    "action": {
+      "type": "SET_CONTENT",
+      "input": {
+        "content": "Concurrent reservations for the same `client_hash` are allowed deliberately, for three reasons:\n\n- **No uniqueness race.** Enforcing one live reservation per hash needs either a partial unique index \u2014 known broken under the `withSchema(\"attachments\")` migration setup, per the comment in migration 001 \u2014 or application-level locking, and it creates a rejected-reserver problem: what is the second client supposed to do while the first uploads?\n- **No reservation squatting.** If the second reserve were rejected in favour of an existing reservation, a client could reserve a hash it never intends to upload and **block that content for the 24-hour TTL**. Independent reservations make squatting harmless: anyone with the bytes can upload them.\n- **Commit-time convergence already exists.** Whichever upload finishes first inserts the row (`INSERT \u2026 ON CONFLICT (hash) DO NOTHING`); a later `send()` for the same hash lands in the dedup path and returns the existing record. Each `send()` soft-deletes only its own reservation, and stragglers age out via the TTL.\n\nThe cost is a bounded amount of duplicate upload bandwidth in the rare concurrent case \u2014 **strictly no worse than today**, where every duplicate upload transmits all bytes before dedup is detectable.\n\n## Provenance\n- `packages/reactor/docs/attachments-hash-first.md` \u2014 Reservation semantics \u203a Concurrent reservations for the same hash\n\n_Extracted from the Powerhouse repository at **v6.2.2-dev.74**._",
+        "updatedAt": "2026-09-03T07:22:35.708Z"
+      },
+      "timestampUtcMs": "2026-09-03T07:22:35.708Z"
+    }
+  },
+  {
+    "index": 17,
+    "hash": "mUgQAenfCumZ3jZYGt6MYzwPkuI=",
+    "timestampUtcMs": "2026-09-03T07:22:35.708Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "version",
+        "value": "v6.2.2-dev.74",
+        "updatedAt": "2026-09-03T07:22:35.708Z"
+      },
+      "timestampUtcMs": "2026-09-03T07:22:35.708Z"
+    }
+  },
+  {
+    "index": 18,
+    "hash": "mUgQAenfCumZ3jZYGt6MYzwPkuI=",
+    "timestampUtcMs": "2026-09-03T07:22:35.708Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "filePath",
+        "value": "packages/reactor/docs/attachments-hash-first.md",
+        "updatedAt": "2026-09-03T07:22:35.708Z"
+      },
+      "timestampUtcMs": "2026-09-03T07:22:35.708Z"
+    }
+  }
+]

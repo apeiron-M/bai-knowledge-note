@@ -1,0 +1,276 @@
+[
+  {
+    "index": 0,
+    "hash": "",
+    "timestampUtcMs": "2026-08-20T08:45:29.155Z",
+    "action": {
+      "type": "CREATE_DOCUMENT",
+      "input": {
+        "meta": {},
+        "name": "Camunda closed the audit gap in 8.9 with a User Operations Audit Log",
+        "slug": "",
+        "model": "bai/knowledge-note",
+        "branch": "main",
+        "signing": {
+          "nonce": "",
+          "publicKey": {},
+          "signature": "ea9bdf83-9c2c-4b17-ac35-f2c99a1b83b8",
+          "documentType": "bai/knowledge-note",
+          "createdAtUtcIso": "2026-08-20T08:45:29.155Z"
+        },
+        "version": 0,
+        "documentId": "ea9bdf83-9c2c-4b17-ac35-f2c99a1b83b8",
+        "protocolVersions": {
+          "base-reducer": 2
+        }
+      },
+      "timestampUtcMs": "2026-08-20T08:45:29.155Z"
+    }
+  },
+  {
+    "index": 0,
+    "hash": "2UpPqpu/5rYJxM5jXZR/M9egEvo=",
+    "timestampUtcMs": "2026-08-20T08:45:29.826Z",
+    "action": {
+      "type": "SET_TITLE",
+      "input": {
+        "title": "Camunda closed the audit gap in 8.9 with a User Operations Audit Log",
+        "updatedAt": "2026-08-20T08:45:29.826688Z"
+      },
+      "timestampUtcMs": "2026-08-20T08:45:29.826747Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "",
+    "timestampUtcMs": "2026-08-20T08:45:29.155Z",
+    "action": {
+      "type": "UPGRADE_DOCUMENT",
+      "input": {
+        "model": "bai/knowledge-note",
+        "toVersion": 1,
+        "documentId": "ea9bdf83-9c2c-4b17-ac35-f2c99a1b83b8",
+        "fromVersion": 0,
+        "initialState": {
+          "auth": {
+            "grants": [],
+            "version": 0
+          },
+          "local": {
+            "lastViewedAt": null,
+            "personalTags": []
+          },
+          "global": {
+            "links": [],
+            "model": null,
+            "scope": null,
+            "title": null,
+            "editor": null,
+            "inputs": [],
+            "models": [],
+            "status": "DRAFT",
+            "topics": [],
+            "content": null,
+            "context": null,
+            "modelId": null,
+            "modules": [],
+            "outputs": [],
+            "version": null,
+            "computes": null,
+            "filePath": null,
+            "noteType": null,
+            "severity": null,
+            "hooksUsed": [],
+            "rootCause": null,
+            "confidence": null,
+            "consumedBy": [],
+            "provenance": null,
+            "sourceType": null,
+            "targetType": null,
+            "cardinality": null,
+            "description": null,
+            "alternatives": [],
+            "consequences": [],
+            "errorMessage": null,
+            "relationType": null,
+            "correctPattern": null,
+            "decisionStatus": null,
+            "dispatchTargets": [],
+            "lifecycleEvents": []
+          },
+          "document": {
+            "hash": {
+              "encoding": "base64",
+              "algorithm": "sha1"
+            },
+            "version": 1
+          }
+        }
+      },
+      "timestampUtcMs": "2026-08-20T08:45:29.155Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "nbyiHWOBbBFbS18LIE0XBiH1ko8=",
+    "timestampUtcMs": "2026-08-20T08:45:29.826Z",
+    "action": {
+      "type": "SET_DESCRIPTION",
+      "input": {
+        "updatedAt": "2026-08-20T08:45:29.826751Z",
+        "description": "The 8.9 release adds a queryable cross-domain log of who did what to which entity across process, identity and user-task domains, with retention disabled by default."
+      },
+      "timestampUtcMs": "2026-08-20T08:45:29.826757Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "",
+    "timestampUtcMs": "2026-08-20T08:45:31.087Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "ea9bdf83-9c2c-4b17-ac35-f2c99a1b83b8",
+        "targetId": "4d8e59af-51f2-4ab7-b290-e1d5744abbd7",
+        "relationshipType": "DERIVED_FROM"
+      },
+      "timestampUtcMs": "2026-08-20T08:45:31.087Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "aSNEyw0yNjuApjsJ7V/eglG4ras=",
+    "timestampUtcMs": "2026-08-20T08:45:29.826Z",
+    "action": {
+      "type": "SET_NOTE_TYPE",
+      "input": {
+        "noteType": "OBSERVATION",
+        "updatedAt": "2026-08-20T08:45:29.826759Z"
+      },
+      "timestampUtcMs": "2026-08-20T08:45:29.826763Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "URaamPIemvlyejG0QasltupttV8=",
+    "timestampUtcMs": "2026-08-20T08:45:29.826Z",
+    "action": {
+      "type": "SET_CONTENT",
+      "input": {
+        "content": "The Orchestration Cluster API gained a user-task audit-log search marked *\"Added in 8.9\"*, and Camunda's own roadmap frames the pre-8.9 state as exactly the gap in question: organisations lacked a unified trail recording who did what, when, and to which entities. Release 8.9.16 shipped on 2026-08-14; the audit-log follow-up epic closed on 2026-03-10.\n\nRetention ships disabled (`retention.enabled: false`, 30-day minimum age when switched on), which is a genuinely better default than most tools in this class.\n\nThe residual technical differences are real but too subtle to carry an argument: the log is documented as \"Eventually Consistent\" rather than transactionally coupled to the decision, and records live in ordinary mutable Elasticsearch indices with no hash chain. A demo asserting that Camunda cannot say who decided something would be factually wrong against 8.9 and corrected in the room.",
+        "updatedAt": "2026-08-20T08:45:29.826765Z"
+      },
+      "timestampUtcMs": "2026-08-20T08:45:29.826769Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "ZUf3Y8vj5sAqE0YWis4CP8DJDxs=",
+    "timestampUtcMs": "2026-08-20T08:45:29.826Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "ab3b88af-9f98-49da-8750-43d5e9fd09cb",
+        "name": "tool-screen"
+      },
+      "timestampUtcMs": "2026-08-20T08:45:29.826777Z"
+    }
+  },
+  {
+    "index": 5,
+    "hash": "TP3hyZYiXDpAX/u4ieYRf/CGOKk=",
+    "timestampUtcMs": "2026-08-20T08:45:29.826Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "54eb61c5-a5b8-43df-b25f-69017dc9fd92",
+        "name": "camunda"
+      },
+      "timestampUtcMs": "2026-08-20T08:45:29.826784Z"
+    }
+  },
+  {
+    "index": 6,
+    "hash": "ztb+TMrH98yMgaetNn/k4cufisU=",
+    "timestampUtcMs": "2026-08-20T08:45:29.826Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "86be474c-d539-44a5-89f8-8e29e9bb1d7d",
+        "name": "audit-trail"
+      },
+      "timestampUtcMs": "2026-08-20T08:45:29.826792Z"
+    }
+  },
+  {
+    "index": 7,
+    "hash": "2Mh1KSp+R4VRCU/Om9fi+0G2UIg=",
+    "timestampUtcMs": "2026-08-20T08:45:29.826Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "9c74883e-06b7-49bc-8549-33026ae28152",
+        "name": "slot-occupied"
+      },
+      "timestampUtcMs": "2026-08-20T08:45:29.826799Z"
+    }
+  },
+  {
+    "index": 8,
+    "hash": "4opq7WLKgRrpPNFj18OBgm8jEUg=",
+    "timestampUtcMs": "2026-08-20T08:45:29.826Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "c5a9b7ed-d0ef-4770-80c6-947fe2f39e04",
+        "name": "competitive-landscape"
+      },
+      "timestampUtcMs": "2026-08-20T08:45:29.826806Z"
+    }
+  },
+  {
+    "index": 9,
+    "hash": "IWmvyTL49aisjsqKoQ/TiYqJUGU=",
+    "timestampUtcMs": "2026-08-20T08:45:30.242Z",
+    "action": {
+      "type": "SET_PROVENANCE",
+      "input": {
+        "author": "knowledge-agent",
+        "createdAt": "2026-08-20T08:45:30.242150Z",
+        "sessionId": null,
+        "sourceOrigin": "DERIVED"
+      },
+      "timestampUtcMs": "2026-08-20T08:45:30.242186Z"
+    }
+  },
+  {
+    "index": 10,
+    "hash": "Twe3sqxUrJ15h5Bye6LRcQqnAlo=",
+    "timestampUtcMs": "2026-08-20T08:45:31.302Z",
+    "action": {
+      "type": "SUBMIT_FOR_REVIEW",
+      "input": {
+        "id": "a2c00b67-dca9-4e3f-9919-8363ff10f2ca",
+        "actor": "knowledge-agent",
+        "comment": "Extracted from the primary-source tool screen; each claim quotable from a cited source.",
+        "timestamp": "2026-08-20T08:45:31.302269Z"
+      },
+      "timestampUtcMs": "2026-08-20T08:45:31.302292Z"
+    }
+  },
+  {
+    "index": 11,
+    "hash": "lhlOUuOsmnMkzTHrt+38l5BEk88=",
+    "timestampUtcMs": "2026-08-20T08:45:31.444Z",
+    "action": {
+      "type": "APPROVE_NOTE",
+      "input": {
+        "id": "f4c41729-3419-4998-98df-4e065a93a38e",
+        "actor": "liberuum",
+        "comment": "Approved: tool-screen extraction.",
+        "timestamp": "2026-08-20T08:45:31.444191Z"
+      },
+      "timestampUtcMs": "2026-08-20T08:45:31.444212Z"
+    }
+  }
+]

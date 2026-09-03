@@ -1,0 +1,100 @@
+{
+  "links": [
+    {
+      "id": "lnk-f27b73b4-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "f27b73b4-2438-4696-966f-75b8a4822b00",
+      "targetTitle": "usegroup / Mustangproject \u2014 ZUGFeRD / Factur-X"
+    },
+    {
+      "id": "lnk-0e2e2819-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "0e2e2819-7717-4cdd-8363-9f728b5d2cc0",
+      "targetTitle": "agorum Software GmbH \u2014 ZUGFeRD / Factur-X"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Format validity and approval authority are separable, and the e-invoicing demo shows both on one screen",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "f6796c7c-b698-498c-a258-4003ec07f4f4",
+      "name": "leads",
+      "topicDocumentId": null
+    },
+    {
+      "id": "45544df0-4ecc-487c-bb25-e954b460d1f4",
+      "name": "zugferd",
+      "topicDocumentId": null
+    },
+    {
+      "id": "8f630bc0-466c-40fd-a343-35aa6866e756",
+      "name": "e-invoicing",
+      "topicDocumentId": null
+    },
+    {
+      "id": "f5738365-f764-412c-b01b-d29440760ab3",
+      "name": "demo-design",
+      "topicDocumentId": null
+    },
+    {
+      "id": "c8deb3cd-4717-40ef-8bb4-85892f14303e",
+      "name": "audit-trail",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "The demo is three components in one view. Mustangproject parses an XRechnung, the KoSIT validator computes an acceptance result, and Switchboard records who accepted it, under which rule, with the prior state. Putting them side by side is the argument: format and approval are different questions and are answered by different layers.\n\nThe reason to stage it visually rather than explain it is that the two are routinely collapsed. A validator that returns \"conformant\" looks like an approval, and for a well-formed invoice the distinction never surfaces. It surfaces on the ambiguous case, where a human has to decide whether to accept something the validator flagged \u2014 and that decision has no home in either the parser or the validator.\n\nTwo German leads carry this demo: usegroup / Mustangproject in Frankfurt at \"2 \u00b7 next\" and agorum Software in Ostfildern at \"3 \u00b7 later\". The first is notable because the lead is the maintainer of one of the components the demo uses, which makes the format half of the screen theirs rather than a claim about their product.\n\n---\n\n## Leads sharing this finding (2)\n\n**2 \u00b7 next**\n- usegroup / Mustangproject (DE Frankfurt am Main) \u2014 Jochen St\u00e4rk, Inhaber \u00b7 info@usegroup.de \u00b7 https://mustangproject.org\n\n**3 \u00b7 later**\n- agorum Software GmbH (DE Ostfildern) \u2014 https://agorum.com\n\nVerbatim research text this claim was extracted from:\n\n> Mustangproject parses an XRechnung, KoSIT computes acceptance, Switchboard records WHO accepted it, under which rule, with the prior state. Format vs approval, side by side on one screen.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "INTEGRATION",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "knowledge-agent",
+    "createdAt": "2026-08-19T11:31:21.299482Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-19T11:31:23.322601Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Mustangproject parses an XRechnung, the KoSIT validator computes acceptance, and Switchboard records who accepted it, under which rule, with the prior state.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "212eb10b-669a-4872-a1cb-360a9513091c",
+      "actor": "knowledge-agent",
+      "comment": "Extracted from lead research; claim checked against the source record.",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-19T11:31:23.171432Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "2b3b672a-55b1-445c-bc27-cd1dce2d810f",
+      "actor": "liberuum",
+      "comment": "Approved: lead corpus extraction.",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-19T11:31:23.322601Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

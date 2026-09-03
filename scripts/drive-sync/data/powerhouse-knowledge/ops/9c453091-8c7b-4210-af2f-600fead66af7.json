@@ -1,0 +1,495 @@
+[
+  {
+    "index": 0,
+    "hash": "",
+    "timestampUtcMs": "2026-09-03T07:19:01.552Z",
+    "action": {
+      "type": "CREATE_DOCUMENT",
+      "input": {
+        "meta": {},
+        "name": "gql-channel-four-flows",
+        "slug": "",
+        "model": "bai/knowledge-note",
+        "branch": "main",
+        "signing": {
+          "nonce": "",
+          "publicKey": {},
+          "signature": "9c453091-8c7b-4210-af2f-600fead66af7",
+          "documentType": "bai/knowledge-note",
+          "createdAtUtcIso": "2026-09-03T07:19:01.552Z"
+        },
+        "version": 0,
+        "documentId": "9c453091-8c7b-4210-af2f-600fead66af7",
+        "protocolVersions": {
+          "base-reducer": 2
+        }
+      },
+      "timestampUtcMs": "2026-09-03T07:19:01.552Z"
+    }
+  },
+  {
+    "index": 0,
+    "hash": "7uouozYmRDlszfEz9egDz8alauw=",
+    "timestampUtcMs": "2026-09-03T07:19:02.991Z",
+    "action": {
+      "type": "SET_TITLE",
+      "input": {
+        "title": "GraphQL sync is four flows across two channel roles: the requesting channel pushes and polls, the responding channel serves from its outbox and receives into its inbox",
+        "updatedAt": "2026-09-03T07:19:02.991Z"
+      },
+      "timestampUtcMs": "2026-09-03T07:19:02.991Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "",
+    "timestampUtcMs": "2026-09-03T07:19:01.552Z",
+    "action": {
+      "type": "UPGRADE_DOCUMENT",
+      "input": {
+        "model": "bai/knowledge-note",
+        "toVersion": 1,
+        "documentId": "9c453091-8c7b-4210-af2f-600fead66af7",
+        "fromVersion": 0,
+        "initialState": {
+          "auth": {
+            "grants": [],
+            "version": 0
+          },
+          "local": {
+            "lastViewedAt": null,
+            "personalTags": []
+          },
+          "global": {
+            "links": [],
+            "model": null,
+            "scope": null,
+            "title": null,
+            "editor": null,
+            "inputs": [],
+            "models": [],
+            "status": "DRAFT",
+            "topics": [],
+            "content": null,
+            "context": null,
+            "modelId": null,
+            "modules": [],
+            "outputs": [],
+            "version": null,
+            "computes": null,
+            "filePath": null,
+            "noteType": null,
+            "severity": null,
+            "hooksUsed": [],
+            "rootCause": null,
+            "confidence": null,
+            "consumedBy": [],
+            "provenance": null,
+            "sourceType": null,
+            "targetType": null,
+            "cardinality": null,
+            "description": null,
+            "alternatives": [],
+            "consequences": [],
+            "errorMessage": null,
+            "relationType": null,
+            "correctPattern": null,
+            "decisionStatus": null,
+            "dispatchTargets": [],
+            "lifecycleEvents": []
+          },
+          "document": {
+            "hash": {
+              "encoding": "base64",
+              "algorithm": "sha1"
+            },
+            "version": 1
+          }
+        }
+      },
+      "timestampUtcMs": "2026-09-03T07:19:01.552Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "232fmrBcvJT5Pwq5tCWRiyQndHc=",
+    "timestampUtcMs": "2026-09-03T07:19:02.991Z",
+    "action": {
+      "type": "SET_DESCRIPTION",
+      "input": {
+        "updatedAt": "2026-09-03T07:19:02.991Z",
+        "description": "pushSyncOperations needs only the envelope and updates no cursor; pollSyncEnvelopes carries channelId, outboxAck and outboxLatest and returns envelopes plus an ackOrdinal. JOB_LOAD_READY trims inboxes"
+      },
+      "timestampUtcMs": "2026-09-03T07:19:02.991Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "",
+    "timestampUtcMs": "2026-09-03T07:21:06.002Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "metadata": {
+          "reason": "Extracted from packages/reactor/src/sync/design.md at v6.2.2-dev.74 \u2014 High Level Gql Sync Design; GqlRequestChannel; GqlResponseChannel",
+          "confidence": "grounded"
+        },
+        "sourceId": "9c453091-8c7b-4210-af2f-600fead66af7",
+        "targetId": "badfd6db-33c2-4612-bcff-d37d2159f0a7",
+        "relationshipType": "DERIVED_FROM"
+      },
+      "timestampUtcMs": "2026-09-03T07:21:06.002Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "td3KeXRZ2u+y0jdOU+ISbHpsqCY=",
+    "timestampUtcMs": "2026-09-03T07:19:02.991Z",
+    "action": {
+      "type": "SET_NOTE_TYPE",
+      "input": {
+        "noteType": "ARCHITECTURE",
+        "updatedAt": "2026-09-03T07:19:02.991Z"
+      },
+      "timestampUtcMs": "2026-09-03T07:19:02.991Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "",
+    "timestampUtcMs": "2026-09-03T07:21:06.472Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "metadata": {
+          "reason": "The three mailboxes are the structure; this note is what actually fills and drains the inbox and outbox on each side of a GraphQL connection",
+          "confidence": "grounded"
+        },
+        "sourceId": "9c453091-8c7b-4210-af2f-600fead66af7",
+        "targetId": "2ab414f6-938d-40f6-89b9-054bbcbaf4f2",
+        "relationshipType": "BUILDS_ON"
+      },
+      "timestampUtcMs": "2026-09-03T07:21:06.472Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "447C8RgOWYv/O4dih+I6Nh3e6X0=",
+    "timestampUtcMs": "2026-09-03T07:19:02.991Z",
+    "action": {
+      "type": "SET_CONTENT",
+      "input": {
+        "content": "The same four flows \u2014 inbox add, inbox remove, outbox add, outbox remove \u2014 behave differently depending on which side of the connection a channel sits on. `GqlRequestChannel` runs on Connect and drives the exchange; `GqlResponseChannel` runs on the Switchboard and answers it.\n\nTwo mutations carry everything:\n\n- **`pushSyncOperations`** requires only the envelope and updates no cursor.\n- **`pollSyncEnvelopes`** takes `channelId`, `outboxAck` (acknowledging pulled operations) and `outboxLatest` (filtering what to return), and answers with `envelopes` plus an `ackOrdinal` acknowledging pushed operations.\n\nOn the **requesting** side: an outbox add begins with the reactor's `JOB_WRITE_READY`, which the SyncManager aggregates into a batch, routes to the matching remotes' outboxes, and the channel pushes as a mutation; an outbox remove trims from the `ackOrdinal` in a poll response. An inbox add is the poll itself \u2014 envelopes land in the inbox and the SyncManager submits them as **load** jobs.\n\nOn the **responding** side the same events fill an outbox, but nothing is pushed: the `pollSyncEnvelopes` *resolver* serves those operations later, and trims its outbox using the `ackOrdinal` the client sends. Its inbox is filled by the `pushSyncOperations` resolver.\n\nInbox removal is symmetric on both sides and driven by a different event: the reactor fires **`JOB_LOAD_READY`**, the SyncManager batches, and the channel's inbox is trimmed.\n\n## Provenance\n- `packages/reactor/src/sync/design.md` \u2014 High Level Gql Sync Design; GqlRequestChannel; GqlResponseChannel\n\n_Extracted from the Powerhouse repository at **v6.2.2-dev.74**._",
+        "updatedAt": "2026-09-03T07:19:02.991Z"
+      },
+      "timestampUtcMs": "2026-09-03T07:19:02.991Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "",
+    "timestampUtcMs": "2026-09-03T07:21:06.998Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "metadata": {
+          "reason": "The ackOrdinal these flows exchange is only meaningful given the two ordinal frames of reference",
+          "confidence": "grounded"
+        },
+        "sourceId": "9c453091-8c7b-4210-af2f-600fead66af7",
+        "targetId": "936ddc46-3b5a-40d1-b69f-6a3f6c3c6b8f",
+        "relationshipType": "BUILDS_ON"
+      },
+      "timestampUtcMs": "2026-09-03T07:21:06.998Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "a16vNSKevD1XVVsCqLq6qYdWmww=",
+    "timestampUtcMs": "2026-09-03T07:19:02.991Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "349fc6e4-3925-43c1-8783-2e1d27e6c7bb",
+        "name": "reactor-sync"
+      },
+      "timestampUtcMs": "2026-09-03T07:19:02.991Z"
+    }
+  },
+  {
+    "index": 5,
+    "hash": "",
+    "timestampUtcMs": "2026-09-03T07:22:58.570Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "metadata": {
+          "reason": "Extracted from packages/reactor/src/sync/design.md at v6.2.2-dev.74 \u2014 High Level Gql Sync Design; GqlRequestChannel; GqlResponseChannel",
+          "confidence": "grounded"
+        },
+        "sourceId": "9c453091-8c7b-4210-af2f-600fead66af7",
+        "targetId": "badfd6db-33c2-4612-bcff-d37d2159f0a7",
+        "relationshipType": "DERIVED_FROM"
+      },
+      "timestampUtcMs": "2026-09-03T07:22:58.570Z"
+    }
+  },
+  {
+    "index": 5,
+    "hash": "xfUWMQiXy+an/PGY8V5zTgI+IBE=",
+    "timestampUtcMs": "2026-09-03T07:19:02.991Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "9f086b10-9791-4304-90de-55c45d646e1a",
+        "name": "gql-channel"
+      },
+      "timestampUtcMs": "2026-09-03T07:19:02.991Z"
+    }
+  },
+  {
+    "index": 6,
+    "hash": "",
+    "timestampUtcMs": "2026-09-03T07:22:59.013Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "metadata": {
+          "reason": "The three mailboxes are the structure; this note is what actually fills and drains the inbox and outbox on each side of a GraphQL connection",
+          "confidence": "grounded"
+        },
+        "sourceId": "9c453091-8c7b-4210-af2f-600fead66af7",
+        "targetId": "2ab414f6-938d-40f6-89b9-054bbcbaf4f2",
+        "relationshipType": "BUILDS_ON"
+      },
+      "timestampUtcMs": "2026-09-03T07:22:59.013Z"
+    }
+  },
+  {
+    "index": 6,
+    "hash": "b5F7KMh068XvRXrMA+BiqmbPkAk=",
+    "timestampUtcMs": "2026-09-03T07:19:02.991Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "bd9b8e64-1223-407f-b35b-61a57b49f59c",
+        "name": "switchboard"
+      },
+      "timestampUtcMs": "2026-09-03T07:19:02.991Z"
+    }
+  },
+  {
+    "index": 7,
+    "hash": "",
+    "timestampUtcMs": "2026-09-03T07:22:59.462Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "metadata": {
+          "reason": "The ackOrdinal these flows exchange is only meaningful given the two ordinal frames of reference",
+          "confidence": "grounded"
+        },
+        "sourceId": "9c453091-8c7b-4210-af2f-600fead66af7",
+        "targetId": "936ddc46-3b5a-40d1-b69f-6a3f6c3c6b8f",
+        "relationshipType": "BUILDS_ON"
+      },
+      "timestampUtcMs": "2026-09-03T07:22:59.462Z"
+    }
+  },
+  {
+    "index": 7,
+    "hash": "FYOIU/bl+SbdXaIP40msUAbSoDw=",
+    "timestampUtcMs": "2026-09-03T07:19:02.991Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "e2054655-efaa-4376-9206-2b1efb488c97",
+        "name": "connect"
+      },
+      "timestampUtcMs": "2026-09-03T07:19:02.991Z"
+    }
+  },
+  {
+    "index": 8,
+    "hash": "",
+    "timestampUtcMs": "2026-09-03T07:22:59.913Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "metadata": {
+          "reason": "The outbox-add flow described here is where updateOutbox re-sorts a page and inverted a document's scope order",
+          "confidence": "grounded"
+        },
+        "sourceId": "9c453091-8c7b-4210-af2f-600fead66af7",
+        "targetId": "2021b696-e605-4b1b-b579-7f568949c1b2",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-09-03T07:22:59.913Z"
+    }
+  },
+  {
+    "index": 8,
+    "hash": "r9fARquDpsysfou9+z2lyW1cgkM=",
+    "timestampUtcMs": "2026-09-03T07:19:02.991Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "version",
+        "value": "v6.2.2-dev.74",
+        "updatedAt": "2026-09-03T07:19:02.991Z"
+      },
+      "timestampUtcMs": "2026-09-03T07:19:02.991Z"
+    }
+  },
+  {
+    "index": 9,
+    "hash": "T2JSUps8N3ZznU0SZnWvf+BYb60=",
+    "timestampUtcMs": "2026-09-03T07:19:02.991Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "filePath",
+        "value": "packages/reactor/src/sync/design.md",
+        "updatedAt": "2026-09-03T07:19:02.991Z"
+      },
+      "timestampUtcMs": "2026-09-03T07:19:02.991Z"
+    }
+  },
+  {
+    "index": 10,
+    "hash": "8owXeD7VwONiow0s+uyRJuELOp0=",
+    "timestampUtcMs": "2026-09-03T07:19:05.620Z",
+    "action": {
+      "type": "SET_PROVENANCE",
+      "input": {
+        "author": "knowledge-agent",
+        "createdAt": "2026-09-03T07:19:05.620Z",
+        "sourceOrigin": "DERIVED"
+      },
+      "timestampUtcMs": "2026-09-03T07:19:05.620Z"
+    }
+  },
+  {
+    "index": 11,
+    "hash": "5KcPxbQ5LlN8Es35SPSnUx7608A=",
+    "timestampUtcMs": "2026-09-03T07:19:06.342Z",
+    "action": {
+      "type": "SUBMIT_FOR_REVIEW",
+      "input": {
+        "id": "8c10218e-4976-4c40-88a7-f2d6bd5c914b",
+        "actor": "knowledge-agent",
+        "comment": "extracted from packages/reactor/src/sync/design.md at v6.2.2-dev.74",
+        "timestamp": "2026-09-03T07:19:06.342Z"
+      },
+      "timestampUtcMs": "2026-09-03T07:19:06.342Z"
+    }
+  },
+  {
+    "index": 12,
+    "hash": "GyTnLztgzXfu3FFHt7OVCyDvGYM=",
+    "timestampUtcMs": "2026-09-03T07:19:06.885Z",
+    "action": {
+      "type": "APPROVE_NOTE",
+      "input": {
+        "id": "0bdfbfdc-4adb-4f6d-82ed-00ea24690b33",
+        "actor": "liberuum",
+        "comment": "claim checked against the cited file at the pinned tag",
+        "timestamp": "2026-09-03T07:19:06.885Z"
+      },
+      "timestampUtcMs": "2026-09-03T07:19:06.885Z"
+    }
+  },
+  {
+    "index": 13,
+    "hash": "7j+wQB99s1hah8x5bVDaHXxthUw=",
+    "timestampUtcMs": "2026-09-03T07:22:24.421Z",
+    "action": {
+      "type": "SET_TITLE",
+      "input": {
+        "title": "GraphQL sync is four flows across two channel roles: the requesting channel pushes and polls, the responding channel serves from its outbox and receives into its inbox",
+        "updatedAt": "2026-09-03T07:22:24.421Z"
+      },
+      "timestampUtcMs": "2026-09-03T07:22:24.421Z"
+    }
+  },
+  {
+    "index": 14,
+    "hash": "7j+wQB99s1hah8x5bVDaHXxthUw=",
+    "timestampUtcMs": "2026-09-03T07:22:24.421Z",
+    "action": {
+      "type": "SET_DESCRIPTION",
+      "input": {
+        "updatedAt": "2026-09-03T07:22:24.421Z",
+        "description": "pushSyncOperations needs only the envelope and updates no cursor; pollSyncEnvelopes carries channelId, outboxAck and outboxLatest and returns envelopes plus an ackOrdinal. JOB_LOAD_READY trims inboxes"
+      },
+      "timestampUtcMs": "2026-09-03T07:22:24.421Z"
+    }
+  },
+  {
+    "index": 15,
+    "hash": "7j+wQB99s1hah8x5bVDaHXxthUw=",
+    "timestampUtcMs": "2026-09-03T07:22:24.421Z",
+    "action": {
+      "type": "SET_NOTE_TYPE",
+      "input": {
+        "noteType": "ARCHITECTURE",
+        "updatedAt": "2026-09-03T07:22:24.421Z"
+      },
+      "timestampUtcMs": "2026-09-03T07:22:24.421Z"
+    }
+  },
+  {
+    "index": 16,
+    "hash": "7j+wQB99s1hah8x5bVDaHXxthUw=",
+    "timestampUtcMs": "2026-09-03T07:22:24.421Z",
+    "action": {
+      "type": "SET_CONTENT",
+      "input": {
+        "content": "The same four flows \u2014 inbox add, inbox remove, outbox add, outbox remove \u2014 behave differently depending on which side of the connection a channel sits on. `GqlRequestChannel` runs on Connect and drives the exchange; `GqlResponseChannel` runs on the Switchboard and answers it.\n\nTwo mutations carry everything:\n\n- **`pushSyncOperations`** requires only the envelope and updates no cursor.\n- **`pollSyncEnvelopes`** takes `channelId`, `outboxAck` (acknowledging pulled operations) and `outboxLatest` (filtering what to return), and answers with `envelopes` plus an `ackOrdinal` acknowledging pushed operations.\n\nOn the **requesting** side: an outbox add begins with the reactor's `JOB_WRITE_READY`, which the SyncManager aggregates into a batch, routes to the matching remotes' outboxes, and the channel pushes as a mutation; an outbox remove trims from the `ackOrdinal` in a poll response. An inbox add is the poll itself \u2014 envelopes land in the inbox and the SyncManager submits them as **load** jobs.\n\nOn the **responding** side the same events fill an outbox, but nothing is pushed: the `pollSyncEnvelopes` *resolver* serves those operations later, and trims its outbox using the `ackOrdinal` the client sends. Its inbox is filled by the `pushSyncOperations` resolver.\n\nInbox removal is symmetric on both sides and driven by a different event: the reactor fires **`JOB_LOAD_READY`**, the SyncManager batches, and the channel's inbox is trimmed.\n\n## Provenance\n- `packages/reactor/src/sync/design.md` \u2014 High Level Gql Sync Design; GqlRequestChannel; GqlResponseChannel\n\n_Extracted from the Powerhouse repository at **v6.2.2-dev.74**._",
+        "updatedAt": "2026-09-03T07:22:24.421Z"
+      },
+      "timestampUtcMs": "2026-09-03T07:22:24.421Z"
+    }
+  },
+  {
+    "index": 17,
+    "hash": "7j+wQB99s1hah8x5bVDaHXxthUw=",
+    "timestampUtcMs": "2026-09-03T07:22:24.421Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "version",
+        "value": "v6.2.2-dev.74",
+        "updatedAt": "2026-09-03T07:22:24.421Z"
+      },
+      "timestampUtcMs": "2026-09-03T07:22:24.421Z"
+    }
+  },
+  {
+    "index": 18,
+    "hash": "7j+wQB99s1hah8x5bVDaHXxthUw=",
+    "timestampUtcMs": "2026-09-03T07:22:24.421Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "filePath",
+        "value": "packages/reactor/src/sync/design.md",
+        "updatedAt": "2026-09-03T07:22:24.421Z"
+      },
+      "timestampUtcMs": "2026-09-03T07:22:24.421Z"
+    }
+  },
+  {
+    "index": 19,
+    "hash": "r04SmSYev3fZsor4XQPEsj04MAA=",
+    "timestampUtcMs": "2026-09-03T07:59:28.707Z",
+    "action": {
+      "type": "SET_CONTENT",
+      "input": {
+        "content": "The same four flows \u2014 inbox add, inbox remove, outbox add, outbox remove \u2014 behave differently depending on which side of the connection a channel sits on. `GqlRequestChannel` runs on Connect and drives the exchange; `GqlResponseChannel` runs on the Switchboard and answers it.\n\nTwo mutations carry everything:\n\n- **`pushSyncOperations`** requires only the envelope and updates no cursor.\n- **`pollSyncEnvelopes`** takes `channelId`, `outboxAck` (acknowledging pulled operations) and `outboxLatest` (filtering what to return), and answers with `envelopes` plus an `ackOrdinal` acknowledging pushed operations.\n\nOn the **requesting** side: an outbox add begins with the reactor's `JOB_WRITE_READY`, which the SyncManager aggregates into a batch, routes to the matching remotes' outboxes, and the channel pushes as a mutation; an outbox remove trims from the `ackOrdinal` in a poll response. An inbox add is the poll itself \u2014 envelopes land in the inbox and the SyncManager submits them as **load** jobs.\n\nOn the **responding** side the same events fill an outbox, but nothing is pushed: the `pollSyncEnvelopes` *resolver* serves those operations later, and trims its outbox using the `ackOrdinal` the client sends. Its inbox is filled by the `pushSyncOperations` resolver.\n\nInbox removal is symmetric on both sides and driven by a different event: the reactor fires **`JOB_LOAD_READY`**, the SyncManager batches, and the channel's inbox is trimmed.\n\n## Provenance\n- `packages/reactor/src/sync/design.md` \u2014 High Level Gql Sync Design; GqlRequestChannel; GqlResponseChannel\n\n_Extracted from the Powerhouse repository at **v6.2.2-dev.74**._\n\n## Contradicts: a batch can be emitted incomplete\n\"When a batch is complete, the SyncManager finds the appropriate remotes and adds to their outboxes\" describes the intent, not the guarantee. If a job fails while the aggregator is collecting, `handleJobFailed` deletes the pending batch and emits whatever had arrived \u2014 the failed job's operations are dropped **with no notification of incompleteness** (`batch-aggregator.ts:40-55`, recorded as open gap 7b). A partial batch is indistinguishable on the wire from a complete one, and the receiver renumbers arriving operations against its own head without validating hashes, so nothing downstream detects the gap. The origin's log is intact and a later refill can derive the operations again; what is lost is any signal that this batch was short. The tension stays open until the aggregator reports incompleteness.\n",
+        "updatedAt": "2026-09-03T07:59:28.707Z"
+      },
+      "timestampUtcMs": "2026-09-03T07:59:28.707Z"
+    }
+  }
+]

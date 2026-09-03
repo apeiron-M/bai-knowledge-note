@@ -1,0 +1,276 @@
+[
+  {
+    "index": 0,
+    "hash": "",
+    "timestampUtcMs": "2026-08-19T11:31:54.306Z",
+    "action": {
+      "type": "CREATE_DOCUMENT",
+      "input": {
+        "meta": {},
+        "name": "A Dagster asset sensor puts lineage and attribution side by side at materialisation accept",
+        "slug": "",
+        "model": "bai/knowledge-note",
+        "branch": "main",
+        "signing": {
+          "nonce": "",
+          "publicKey": {},
+          "signature": "04e99098-4e17-4086-8233-78b2f94d3b72",
+          "documentType": "bai/knowledge-note",
+          "createdAtUtcIso": "2026-08-19T11:31:54.306Z"
+        },
+        "version": 0,
+        "documentId": "04e99098-4e17-4086-8233-78b2f94d3b72",
+        "protocolVersions": {
+          "base-reducer": 2
+        }
+      },
+      "timestampUtcMs": "2026-08-19T11:31:54.306Z"
+    }
+  },
+  {
+    "index": 0,
+    "hash": "2mf4GdsYkc75yNAzjwtZGH75tXc=",
+    "timestampUtcMs": "2026-08-19T11:31:54.096Z",
+    "action": {
+      "type": "SET_TITLE",
+      "input": {
+        "title": "A Dagster asset sensor puts lineage and attribution side by side at materialisation acceptance",
+        "updatedAt": "2026-08-19T11:31:54.096233Z"
+      },
+      "timestampUtcMs": "2026-08-19T11:31:54.096274Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "",
+    "timestampUtcMs": "2026-08-19T11:31:54.306Z",
+    "action": {
+      "type": "UPGRADE_DOCUMENT",
+      "input": {
+        "model": "bai/knowledge-note",
+        "toVersion": 1,
+        "documentId": "04e99098-4e17-4086-8233-78b2f94d3b72",
+        "fromVersion": 0,
+        "initialState": {
+          "auth": {
+            "grants": [],
+            "version": 0
+          },
+          "local": {
+            "lastViewedAt": null,
+            "personalTags": []
+          },
+          "global": {
+            "links": [],
+            "model": null,
+            "scope": null,
+            "title": null,
+            "editor": null,
+            "inputs": [],
+            "models": [],
+            "status": "DRAFT",
+            "topics": [],
+            "content": null,
+            "context": null,
+            "modelId": null,
+            "modules": [],
+            "outputs": [],
+            "version": null,
+            "computes": null,
+            "filePath": null,
+            "noteType": null,
+            "severity": null,
+            "hooksUsed": [],
+            "rootCause": null,
+            "confidence": null,
+            "consumedBy": [],
+            "provenance": null,
+            "sourceType": null,
+            "targetType": null,
+            "cardinality": null,
+            "description": null,
+            "alternatives": [],
+            "consequences": [],
+            "errorMessage": null,
+            "relationType": null,
+            "correctPattern": null,
+            "decisionStatus": null,
+            "dispatchTargets": [],
+            "lifecycleEvents": []
+          },
+          "document": {
+            "hash": {
+              "encoding": "base64",
+              "algorithm": "sha1"
+            },
+            "version": 1
+          }
+        }
+      },
+      "timestampUtcMs": "2026-08-19T11:31:54.306Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "vLkVVe+D9giU4eq9/y+iRZtASi8=",
+    "timestampUtcMs": "2026-08-19T11:31:54.096Z",
+    "action": {
+      "type": "SET_DESCRIPTION",
+      "input": {
+        "updatedAt": "2026-08-19T11:31:54.096279Z",
+        "description": "The sensor dispatches a typed operation when a materialisation is accepted, so who accepted the data is recorded next to where the data came from."
+      },
+      "timestampUtcMs": "2026-08-19T11:31:54.096289Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "",
+    "timestampUtcMs": "2026-08-19T11:31:57.145Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "04e99098-4e17-4086-8233-78b2f94d3b72",
+        "targetId": "97c04013-9740-4399-ab41-7304c5fd099e",
+        "relationshipType": "DERIVED_FROM"
+      },
+      "timestampUtcMs": "2026-08-19T11:31:57.145Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "4zyE6quuRrYvltRyvKICBlitPlA=",
+    "timestampUtcMs": "2026-08-19T11:31:54.096Z",
+    "action": {
+      "type": "SET_NOTE_TYPE",
+      "input": {
+        "noteType": "INTEGRATION",
+        "updatedAt": "2026-08-19T11:31:54.096292Z"
+      },
+      "timestampUtcMs": "2026-08-19T11:31:54.096298Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "PjrQh5VzuAL0eoyEzBXcz1fZw+s=",
+    "timestampUtcMs": "2026-08-19T11:31:54.096Z",
+    "action": {
+      "type": "SET_CONTENT",
+      "input": {
+        "content": "The integration is a Dagster asset sensor dispatching a typed operation on materialisation acceptance. The framing is additive rather than corrective: lineage plus attribution, side by side. Nothing is claimed to be wrong with the lineage graph; a second question is being answered next to it.\n\nThose questions are genuinely different. Lineage answers where a dataset came from and what it was computed from. Attribution answers who accepted the result as fit to use, and under what rule. In a pipeline where materialisation is gated on a human or policy decision, the second answer is the one an auditor or a downstream consumer needs, and it is not derivable from the dependency graph.\n\nThe single lead is Neurospace in the Aarhus area of Denmark, marked \"3 \u00b7 later\". This is the only data-pipeline framing in this slice that leads with provenance rather than with retention \u2014 the Kestra demo, by contrast, leads with purge-and-replay.\n\n---\n\n## Leads sharing this finding (1)\n\n**3 \u00b7 later**\n- Neurospace (DK (Aarhus area)) \u2014 https://neurospace.io\n\nVerbatim research text this claim was extracted from:\n\n> Dagster asset sensor dispatching a typed operation on materialisation acceptance \u2014 lineage plus attribution, side by side.",
+        "updatedAt": "2026-08-19T11:31:54.096300Z"
+      },
+      "timestampUtcMs": "2026-08-19T11:31:54.096304Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "/5HxXXIbsCcyS1JNYJePRJJzKvA=",
+    "timestampUtcMs": "2026-08-19T11:31:54.096Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "da63e4d6-aa92-4504-9c2d-070028d743e4",
+        "name": "leads"
+      },
+      "timestampUtcMs": "2026-08-19T11:31:54.096311Z"
+    }
+  },
+  {
+    "index": 5,
+    "hash": "4JygIhl1IA1Qr+e9FbHQ0FcE5xY=",
+    "timestampUtcMs": "2026-08-19T11:31:54.096Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "e9d33db2-c4cc-4fed-81fc-38c7a0d67633",
+        "name": "dagster"
+      },
+      "timestampUtcMs": "2026-08-19T11:31:54.096317Z"
+    }
+  },
+  {
+    "index": 6,
+    "hash": "59l6U1JG9s/tZaPBX/9eXFsGtpg=",
+    "timestampUtcMs": "2026-08-19T11:31:54.096Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "f93263c2-4651-45c1-ac01-bfee2a91a775",
+        "name": "data-pipelines"
+      },
+      "timestampUtcMs": "2026-08-19T11:31:54.096324Z"
+    }
+  },
+  {
+    "index": 7,
+    "hash": "aHZ3Ew5jjVJr72WNyZrqQR+vWZk=",
+    "timestampUtcMs": "2026-08-19T11:31:54.096Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "0fc946a1-24ef-4f38-abf8-33aca1c085d1",
+        "name": "demo-design"
+      },
+      "timestampUtcMs": "2026-08-19T11:31:54.096330Z"
+    }
+  },
+  {
+    "index": 8,
+    "hash": "YnlmMzSD5EY/Tl2ddPDcNX7mXdg=",
+    "timestampUtcMs": "2026-08-19T11:31:54.096Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "f62a9f3b-1846-47f5-beb6-4628d2c33e0d",
+        "name": "provenance"
+      },
+      "timestampUtcMs": "2026-08-19T11:31:54.096336Z"
+    }
+  },
+  {
+    "index": 9,
+    "hash": "d2rW6Qw3+NONCluC3btKnIPqnqk=",
+    "timestampUtcMs": "2026-08-19T11:31:55.308Z",
+    "action": {
+      "type": "SET_PROVENANCE",
+      "input": {
+        "author": "knowledge-agent",
+        "createdAt": "2026-08-19T11:31:55.308518Z",
+        "sessionId": null,
+        "sourceOrigin": "DERIVED"
+      },
+      "timestampUtcMs": "2026-08-19T11:31:55.308556Z"
+    }
+  },
+  {
+    "index": 10,
+    "hash": "5L0Dqe1D4NA5COgekF1RaPhlwOM=",
+    "timestampUtcMs": "2026-08-19T11:31:56.534Z",
+    "action": {
+      "type": "SUBMIT_FOR_REVIEW",
+      "input": {
+        "id": "9d968c5d-4c9f-496d-a15b-79fe654451a2",
+        "actor": "knowledge-agent",
+        "comment": "Extracted from lead research; claim checked against the source record.",
+        "timestamp": "2026-08-19T11:31:56.534301Z"
+      },
+      "timestampUtcMs": "2026-08-19T11:31:56.534335Z"
+    }
+  },
+  {
+    "index": 11,
+    "hash": "w22tbMtI4inryE8ZwooXX+SUHZE=",
+    "timestampUtcMs": "2026-08-19T11:31:56.686Z",
+    "action": {
+      "type": "APPROVE_NOTE",
+      "input": {
+        "id": "3b592c90-d266-4a1c-b0f9-7198b7c349d8",
+        "actor": "liberuum",
+        "comment": "Approved: lead corpus extraction.",
+        "timestamp": "2026-08-19T11:31:56.686058Z"
+      },
+      "timestampUtcMs": "2026-08-19T11:31:56.686078Z"
+    }
+  }
+]

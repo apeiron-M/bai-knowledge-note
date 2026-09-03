@@ -1,0 +1,115 @@
+{
+  "links": [
+    {
+      "id": "lnk-9d492c64-bui",
+      "linkType": "BUILDS_ON",
+      "targetDocumentId": "9d492c64-ed5b-4f00-8efe-98354c9fd6b4",
+      "targetTitle": "hashfirst-trust-model",
+      "reason": "Ingest verification is precisely what keeps the store as trustworthy as before while the ref becomes a client claim",
+      "confidence": "grounded"
+    },
+    {
+      "id": "lnk-e25bc920-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "e25bc920-d3bc-4b36-9c7f-cb35b64c27b9",
+      "targetTitle": "Package \u203a reactor \u203a attachments-hash-first \u2014 Hash-First Attachment Refs",
+      "reason": "Extracted from packages/reactor/docs/attachments-hash-first.md at v6.2.2-dev.74 \u2014 Reservation semantics \u203a Hash verification on ingest",
+      "confidence": "grounded"
+    },
+    {
+      "id": "lnk-04232cfe-bui",
+      "linkType": "BUILDS_ON",
+      "targetDocumentId": "04232cfe-983e-46ba-ba27-64b2107a9f12",
+      "targetTitle": "hashfirst-why-client-hashing",
+      "reason": "Client-computed hashes are only safe because the server re-derives the digest from the streamed bytes and refuses a mismatch",
+      "confidence": "grounded"
+    },
+    {
+      "id": "lnk-5680dcb7-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "5680dcb7-27ba-42be-9cd4-045217cc5323",
+      "targetTitle": "attachment-upload-handles",
+      "reason": "This is the switchboard handle's verification strategy, next to S3's HeadObject checksum path",
+      "confidence": "grounded"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Ingest hashing must be streaming and never buffered, and the declared size is a contract checked mid-stream rather than a hint",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "063c854e-37b4-4767-ba9a-0c0363a25575",
+      "name": "attachments",
+      "topicDocumentId": null
+    },
+    {
+      "id": "3b033eef-66b3-4488-8dde-e55c7719b2fc",
+      "name": "hash-first",
+      "topicDocumentId": null
+    },
+    {
+      "id": "f6ebfcfe-5ff4-47c4-85e6-b9d4df3c1c83",
+      "name": "streaming",
+      "topicDocumentId": null
+    },
+    {
+      "id": "d79e786b-1c50-4794-b5d6-725066bd14a0",
+      "name": "verification",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "The switchboard's upload endpoint pipes the request body through the hasher and to the temp file in the **same pass**:\n\n```ts\nconst hasher = crypto.createHash(\"sha256\");\nfor await (const chunk of body) {\n  hasher.update(chunk);   // ...written to the temp file in the same pass\n}\nconst actual = hasher.digest(\"hex\");\n```\n\nThis is called out as a **normative requirement of the design, not an implementation detail**: server memory per upload is O(chunk), independent of file size, which preserves the stream-large-files property that motivated the attachment system in the first place. At no point may the upload body be collected into memory on the server \u2014 no `Buffer.concat`, no Blob. (Client-side buffering is a separate, browser-only limitation.)\n\nIn hash-first mode the handle verifies two claims against the streamed bytes before committing:\n\n1. **Size, during the stream.** The handle counts bytes; the moment the count exceeds the declared `sizeBytes` it aborts **without consuming the rest of the stream**, deletes the temp file, retains the reservation and throws `SizeMismatch`. A stream that ends short gets the same outcome at stream end.\n2. **Hash, at stream end.** The streamed digest is compared to the reservation's `client_hash`; on mismatch the temp file is deleted, the reservation retained, and `HashMismatch` thrown.\n3. **Both match** \u2014 commit as before: insert or dedup/restore, soft-delete the reservation, return the result.\n\nSize is checked first because it can fail early, but the hash is the integrity guarantee; the size check exists so the declared `sizeBytes` is a contract rather than a hint. Verification therefore costs a byte counter and a string comparison on the existing pass \u2014 no second read.\n\nBecause verification happens on ingest, **the content-addressed store can never serve wrong bytes for a hash**, whatever a client claims.\n\n## Provenance\n- `packages/reactor/docs/attachments-hash-first.md` \u2014 Reservation semantics \u203a Hash verification on ingest\n\n_Extracted from the Powerhouse repository at **v6.2.2-dev.74**._",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": "v6.2.2-dev.74",
+  "computes": null,
+  "filePath": "packages/reactor/docs/attachments-hash-first.md",
+  "noteType": "PATTERN",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "knowledge-agent",
+    "createdAt": "2026-09-03T07:20:29.824Z",
+    "sessionId": null,
+    "updatedAt": "2026-09-03T07:22:36.197Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Server memory per upload is O(chunk) whatever the file size, so no Buffer.concat and no Blob. Size failure aborts mid-stream with SizeMismatch; the hash is compared at stream end.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "db398145-0786-49c1-a8d4-65b1a255bbda",
+      "actor": "knowledge-agent",
+      "comment": "extracted from packages/reactor/docs/attachments-hash-first.md at v6.2.2-dev.74",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-09-03T07:20:30.325Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "030b7072-2687-4aa3-ae44-7cd975f08d85",
+      "actor": "liberuum",
+      "comment": "claim checked against the cited file at the pinned tag",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-09-03T07:20:30.868Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

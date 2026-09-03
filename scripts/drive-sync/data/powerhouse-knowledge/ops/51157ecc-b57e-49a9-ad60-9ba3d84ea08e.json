@@ -1,0 +1,427 @@
+[
+  {
+    "index": 0,
+    "hash": "",
+    "timestampUtcMs": "2026-08-14T11:59:00.665Z",
+    "action": {
+      "type": "CREATE_DOCUMENT",
+      "input": {
+        "meta": {},
+        "name": "document-permissions-support-groups-and-ops",
+        "slug": "",
+        "model": "bai/knowledge-note",
+        "branch": "main",
+        "signing": {
+          "nonce": "",
+          "publicKey": {},
+          "signature": "51157ecc-b57e-49a9-ad60-9ba3d84ea08e",
+          "documentType": "bai/knowledge-note",
+          "createdAtUtcIso": "2026-08-14T11:59:00.665Z"
+        },
+        "version": 0,
+        "documentId": "51157ecc-b57e-49a9-ad60-9ba3d84ea08e",
+        "protocolVersions": {
+          "base-reducer": 2
+        }
+      },
+      "timestampUtcMs": "2026-08-14T11:59:00.665Z"
+    }
+  },
+  {
+    "index": 0,
+    "hash": "sB4zaIJn6sqhSAC3am1sYCYhkqo=",
+    "timestampUtcMs": "2026-08-14T12:35:10.000Z",
+    "action": {
+      "type": "SET_TITLE",
+      "input": {
+        "title": "Document permissions support group-based access control and operation-level restrictions, stored across six database tables",
+        "updatedAt": "2026-08-14T12:35:10.000Z"
+      },
+      "timestampUtcMs": "2026-08-14T12:35:10.000Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "",
+    "timestampUtcMs": "2026-08-14T11:59:00.665Z",
+    "action": {
+      "type": "UPGRADE_DOCUMENT",
+      "input": {
+        "model": "bai/knowledge-note",
+        "toVersion": 1,
+        "documentId": "51157ecc-b57e-49a9-ad60-9ba3d84ea08e",
+        "fromVersion": 0,
+        "initialState": {
+          "auth": {
+            "grants": [],
+            "version": 0
+          },
+          "local": {
+            "lastViewedAt": null,
+            "personalTags": []
+          },
+          "global": {
+            "links": [],
+            "model": null,
+            "scope": null,
+            "title": null,
+            "editor": null,
+            "inputs": [],
+            "models": [],
+            "status": "DRAFT",
+            "topics": [],
+            "content": null,
+            "context": null,
+            "modelId": null,
+            "modules": [],
+            "outputs": [],
+            "version": null,
+            "computes": null,
+            "filePath": null,
+            "noteType": null,
+            "severity": null,
+            "hooksUsed": [],
+            "rootCause": null,
+            "confidence": null,
+            "consumedBy": [],
+            "provenance": null,
+            "sourceType": null,
+            "targetType": null,
+            "cardinality": null,
+            "description": null,
+            "alternatives": [],
+            "consequences": [],
+            "errorMessage": null,
+            "relationType": null,
+            "correctPattern": null,
+            "decisionStatus": null,
+            "dispatchTargets": [],
+            "lifecycleEvents": []
+          },
+          "document": {
+            "hash": {
+              "encoding": "base64",
+              "algorithm": "sha1"
+            },
+            "version": 1
+          }
+        }
+      },
+      "timestampUtcMs": "2026-08-14T11:59:00.665Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "6nU3X1WFyHcAhA9AE+YRl5AretY=",
+    "timestampUtcMs": "2026-08-14T12:35:10.000Z",
+    "action": {
+      "type": "SET_DESCRIPTION",
+      "input": {
+        "updatedAt": "2026-08-14T12:35:10.000Z",
+        "description": "Groups organize users; permissions cascade from drive to folder to document; specific operations can be restricted."
+      },
+      "timestampUtcMs": "2026-08-14T12:35:10.000Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "",
+    "timestampUtcMs": "2026-08-14T12:37:17.131Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "51157ecc-b57e-49a9-ad60-9ba3d84ea08e",
+        "targetId": "6fa0a6ea-a295-4da9-85da-1e8ba852c91a",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-08-14T12:37:17.131Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "u1EUWvWMr9Ozf4cMheDHPHI+2Ps=",
+    "timestampUtcMs": "2026-08-14T12:35:10.000Z",
+    "action": {
+      "type": "SET_NOTE_TYPE",
+      "input": {
+        "noteType": "ARCHITECTURE",
+        "updatedAt": "2026-08-14T12:35:10.000Z"
+      },
+      "timestampUtcMs": "2026-08-14T12:35:10.000Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "",
+    "timestampUtcMs": "2026-08-14T12:37:17.233Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "51157ecc-b57e-49a9-ad60-9ba3d84ea08e",
+        "targetId": "8cbea140-21d6-4b63-8780-5d44831018aa",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-08-14T12:37:17.233Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "5eK8wLlFAjBc95uAC2VQ9zXYBSo=",
+    "timestampUtcMs": "2026-08-14T12:35:10.000Z",
+    "action": {
+      "type": "SET_CONTENT",
+      "input": {
+        "content": "Permission resolution order: (1) Auth/admin check; (2) Direct user permission on document; (3) Group permission; (4) Parent inheritance recursively. Six tables: `DocumentPermission` (user-document), `Group`, `UserGroup` (memberships), `DocumentGroupPermission` (group-document), `OperationUserPermission` (user-operation), `OperationGroupPermission` (group-operation). Operation-level permissions restrict specific actions (e.g., only certain users can execute DELETE_NODE). Tables are auto-created by migrations when `DOCUMENT_PERMISSIONS_ENABLED=true`. GraphQL queries like `documentAccess`, `userDocumentPermissions`, `canExecuteOperation` expose the permission state.",
+        "updatedAt": "2026-08-14T12:35:10.000Z"
+      },
+      "timestampUtcMs": "2026-08-14T12:35:10.000Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "",
+    "timestampUtcMs": "2026-08-14T12:37:17.324Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "51157ecc-b57e-49a9-ad60-9ba3d84ea08e",
+        "targetId": "4e6413ee-22bf-4d64-964f-ca8b28917cec",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-08-14T12:37:17.324Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "7l4qesAyMYxzLGKq54f6FKrXU4s=",
+    "timestampUtcMs": "2026-08-14T12:35:10.000Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "version",
+        "value": "v6.2.2-dev.44",
+        "updatedAt": "2026-08-14T12:35:10.000Z"
+      },
+      "timestampUtcMs": "2026-08-14T12:35:10.000Z"
+    }
+  },
+  {
+    "index": 5,
+    "hash": "",
+    "timestampUtcMs": "2026-08-14T12:37:17.418Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "51157ecc-b57e-49a9-ad60-9ba3d84ea08e",
+        "targetId": "eb3ddfcc-c606-4705-b9c9-42f5e26e2384",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-08-14T12:37:17.418Z"
+    }
+  },
+  {
+    "index": 5,
+    "hash": "fW7XHc2PF0eQLb8o/Ur2VW8DLzI=",
+    "timestampUtcMs": "2026-08-14T12:35:10.000Z",
+    "action": {
+      "type": "SET_PROVENANCE",
+      "input": {
+        "author": "knowledge-agent",
+        "createdAt": "2026-04-02T12:00:00.000Z",
+        "sourceOrigin": "DERIVED"
+      },
+      "timestampUtcMs": "2026-08-14T12:35:10.000Z"
+    }
+  },
+  {
+    "index": 6,
+    "hash": "",
+    "timestampUtcMs": "2026-09-02T21:34:43.226Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "metadata": {
+          "reason": "Backing page found by content match (score 0.15) in the v6.2.2-dev.74 source backfill; no distinctive identifier verified, attribution by topic overlap \u2014 not the original extraction record (text revised between v6.2.2-dev.47 and v6.2.2-dev.74 \u2014 re-verified in the v6.2.2-dev.74 pass)",
+          "confidence": "established"
+        },
+        "sourceId": "51157ecc-b57e-49a9-ad60-9ba3d84ea08e",
+        "targetId": "500d9a33-45a5-45e4-8df1-e9eee8d3f11a",
+        "relationshipType": "DERIVED_FROM"
+      },
+      "timestampUtcMs": "2026-09-02T21:34:43.226Z"
+    }
+  },
+  {
+    "index": 6,
+    "hash": "8Gle0L73JWyJ26v7DCM3/IwOYXc=",
+    "timestampUtcMs": "2026-08-14T12:35:10.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "27b13447-1d33-4c1a-8397-74b404ab99cb",
+        "name": "permissions",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-08-14T12:35:10.000Z"
+    }
+  },
+  {
+    "index": 7,
+    "hash": "",
+    "timestampUtcMs": "2026-09-03T09:57:14.860Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "metadata": {
+          "reason": "Re-read against apps/academy/docs/academy/03-Build/03-BuildingUserExperiences/07-Authorization/02-DocumentPermissions.md at v6.2.2-dev.74 during the version audit",
+          "confidence": "grounded"
+        },
+        "sourceId": "51157ecc-b57e-49a9-ad60-9ba3d84ea08e",
+        "targetId": "500d9a33-45a5-45e4-8df1-e9eee8d3f11a",
+        "relationshipType": "DERIVED_FROM"
+      },
+      "timestampUtcMs": "2026-09-03T09:57:14.860Z"
+    }
+  },
+  {
+    "index": 7,
+    "hash": "sdEhe/PnZuKVW8vseroSOyquSwg=",
+    "timestampUtcMs": "2026-08-14T12:35:10.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "4d1eb49c-e79a-4c85-9830-9cd7f854e121",
+        "name": "groups",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-08-14T12:35:10.000Z"
+    }
+  },
+  {
+    "index": 8,
+    "hash": "QnTyjHb1x0w6A+3+Ang0I7TKX3c=",
+    "timestampUtcMs": "2026-08-14T12:35:10.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "586a4885-a27c-4d9f-9be1-e3c358df1654",
+        "name": "access-control",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-08-14T12:35:10.000Z"
+    }
+  },
+  {
+    "index": 9,
+    "hash": "k2UqfZAd3fPXOTkGB/e7NyMvXsU=",
+    "timestampUtcMs": "2026-08-14T12:35:10.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "47b4bb55-3611-4f28-9a9c-e3c05d6b086e",
+        "name": "database",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-08-14T12:35:10.000Z"
+    }
+  },
+  {
+    "index": 10,
+    "hash": "W5V1uaevHHTBXbl4cS12H/ntyeY=",
+    "timestampUtcMs": "2026-08-14T14:37:05.000Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "version",
+        "value": "v6.2.2-dev.47",
+        "updatedAt": "2026-08-14T12:00:00.000Z"
+      },
+      "timestampUtcMs": "2026-08-14T14:37:05.000Z"
+    }
+  },
+  {
+    "index": 11,
+    "hash": "3szW2aX+Q3xHaYvAjtGAt0KEAvc=",
+    "timestampUtcMs": "2026-08-14T14:37:05.000Z",
+    "action": {
+      "type": "SUBMIT_FOR_REVIEW",
+      "input": {
+        "id": "e029c3d6-decd-4343-bec0-8ff52a6e37b7",
+        "actor": "claude",
+        "comment": "Knowledge registered against powerhouse v6.2.2-dev.47",
+        "timestamp": "2026-08-14T12:00:00.000Z"
+      },
+      "timestampUtcMs": "2026-08-14T14:37:05.000Z"
+    }
+  },
+  {
+    "index": 12,
+    "hash": "KPboLddcnYSuQnqZvdDJEUky6gc=",
+    "timestampUtcMs": "2026-08-14T14:37:05.000Z",
+    "action": {
+      "type": "APPROVE_NOTE",
+      "input": {
+        "id": "5115d237-b08e-4e73-907a-f950f4406251",
+        "actor": "liberuum",
+        "comment": "Canonical as of powerhouse v6.2.2-dev.47",
+        "timestamp": "2026-08-14T12:00:00.000Z"
+      },
+      "timestampUtcMs": "2026-08-14T14:37:05.000Z"
+    }
+  },
+  {
+    "index": 13,
+    "hash": "qHMIXWQJWvtoTn1cyTfYIy9gqZk=",
+    "timestampUtcMs": "2026-09-02T21:34:43.923Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "filePath",
+        "value": "apps/academy/docs/academy/03-Build/03-BuildingUserExperiences/07-Authorization/02-DocumentPermissions.md",
+        "updatedAt": "2026-09-02T21:34:43.923Z"
+      },
+      "timestampUtcMs": "2026-09-02T21:34:43.923Z"
+    }
+  },
+  {
+    "index": 14,
+    "hash": "E87tfArYKNPPgMWccQ6BTWOgeBs=",
+    "timestampUtcMs": "2026-09-02T22:26:51.878Z",
+    "action": {
+      "type": "SET_CONTENT",
+      "input": {
+        "content": "Permission resolution order: (1) Auth/admin check; (2) Direct user permission on document; (3) Group permission; (4) Parent inheritance recursively. Six tables: `DocumentPermission` (user-document), `Group`, `UserGroup` (memberships), `DocumentGroupPermission` (group-document), `OperationUserPermission` (user-operation), `OperationGroupPermission` (group-operation). Operation-level permissions restrict specific actions (e.g., only certain users can execute DELETE_NODE). Tables are auto-created by migrations when `DOCUMENT_PERMISSIONS_ENABLED=true`. GraphQL queries like `documentAccess`, `userDocumentPermissions`, `canExecuteOperation` expose the permission state.\n\n## Stale as of v6.2.2-dev.74\nThe six-table shape and the group-based access control described here came from the Academy's Document Permissions page, which still documents groups \u2014 but the code does not have them. `packages/reactor-api/src/migrations/003_remove_group_tables.ts` drops `Group`, `UserGroup`, `DocumentGroupPermission` and `OperationGroupPermission`, and grepping `group` across `packages/reactor-api/src/graphql/auth/` returns zero hits. **Three** tables survive: `DocumentPermission`, `OperationUserPermission` and `DocumentProtection`. The permission-resolution order (auth/admin check, direct user permission, parent inheritance) still holds with the group step removed. Treat the page as stale and the migration as authoritative.\n",
+        "updatedAt": "2026-09-02T22:26:51.878Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:26:51.878Z"
+    }
+  },
+  {
+    "index": 15,
+    "hash": "oeJWAZtEesD5uPFuY9+7/ocA23E=",
+    "timestampUtcMs": "2026-09-03T09:57:14.002Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "version",
+        "value": "v6.2.2-dev.74",
+        "updatedAt": "2026-09-03T09:57:14.002Z"
+      },
+      "timestampUtcMs": "2026-09-03T09:57:14.002Z"
+    }
+  },
+  {
+    "index": 16,
+    "hash": "oeJWAZtEesD5uPFuY9+7/ocA23E=",
+    "timestampUtcMs": "2026-09-03T09:57:14.002Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "filePath",
+        "value": "apps/academy/docs/academy/03-Build/03-BuildingUserExperiences/07-Authorization/02-DocumentPermissions.md",
+        "updatedAt": "2026-09-03T09:57:14.002Z"
+      },
+      "timestampUtcMs": "2026-09-03T09:57:14.002Z"
+    }
+  }
+]

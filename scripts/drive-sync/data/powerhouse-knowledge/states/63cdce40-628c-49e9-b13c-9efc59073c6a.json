@@ -1,0 +1,107 @@
+{
+  "links": [
+    {
+      "id": "lnk-14416670-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "14416670-d2d3-4de5-9dfd-7c6e175280c2",
+      "targetTitle": "Academy \u203a Reference \u203a Reactor \u203a Document model registry and version upgrades",
+      "reason": "Extracted from apps/academy/docs/academy/04-Reference/01-Reactor/06-DocumentModelRegistry.md at v6.2.2-dev.74 \u2014 Upgrade API (registerUpgradeManifests, unregisterUpgradeManifests, getUpgradeManifest, computeUpgradePath, getUpgradeReducer); Upgrade path example",
+      "confidence": "grounded"
+    },
+    {
+      "id": "lnk-2f4b5df2-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "2f4b5df2-d6ca-4224-a049-e96b4811ed37",
+      "targetTitle": "upgrade-reducer-must-patch-state-and-initialstate",
+      "reason": "Composing multiple hops is what makes a single missing intermediate transition fatal at upgrade time",
+      "confidence": "grounded"
+    },
+    {
+      "id": "lnk-30a67455-bui",
+      "linkType": "BUILDS_ON",
+      "targetDocumentId": "30a67455-2be8-4c97-b0d6-1a11397c5af7",
+      "targetTitle": "registry-upgrade-manifest-shape",
+      "reason": "These methods walk exactly the v2..vN keys the manifest type forces, so a manifest gap and a MissingUpgradeTransitionError are the same fact",
+      "confidence": "grounded"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "The upgrade API's error checks run in a deliberate order, so a same-version path and a downgrade both answer without a manifest lookup",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "182a3664-78ff-4aa3-b3cf-391843e4ed70",
+      "name": "document-model",
+      "topicDocumentId": null
+    },
+    {
+      "id": "18e54ab1-5afc-452b-b228-25a4ebd702d1",
+      "name": "versioning",
+      "topicDocumentId": null
+    },
+    {
+      "id": "c6bfd082-5346-4610-bfb5-0739da238668",
+      "name": "upgrades",
+      "topicDocumentId": null
+    },
+    {
+      "id": "e04aa1c0-1051-4fb1-8fd7-305ff5ea3e86",
+      "name": "error-handling",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "Two methods move a document between versions, and their **ordering of checks** is the part worth memorising because it decides which error you get.\n\n`computeUpgradePath(documentType, fromVersion, toVersion): UpgradeTransition[]` walks the keys `v(from+1)..v(to)`:\n\n- `from === to` \u2192 returns `[]` **and skips the manifest lookup**, so it does not throw even when no manifest is registered;\n- `to < from` \u2192 throws `DowngradeNotSupportedError` **before** the manifest lookup;\n- no manifest for the type \u2192 `ManifestNotFoundError`;\n- a missing step inside the range \u2192 `MissingUpgradeTransitionError`.\n\n`getUpgradeReducer(documentType, fromVersion, toVersion)` returns the reducer for a **single** step, so `toVersion` must equal `fromVersion + 1`. The single-step check **runs before the manifest lookup**, which is why `getUpgradeReducer(\"test/todo\", 1, 3)` throws `InvalidUpgradeStepError` even with no v3 manifest registered.\n\nWorked, with `supportedVersions = [1, 2]`:\n\n```ts\nregistry.computeUpgradePath(\"test/todo\", 1, 2); // [v2 transition]\nregistry.computeUpgradePath(\"test/todo\", 2, 2); // [] \u2014 no manifest needed\nregistry.getUpgradeReducer(\"test/todo\", 1, 2);  // the v1 -> v2 reducer\nregistry.computeUpgradePath(\"test/todo\", 2, 1); // DowngradeNotSupportedError\nregistry.getUpgradeReducer(\"test/todo\", 1, 3);  // InvalidUpgradeStepError\n```\n\nAlso on the API: `registerUpgradeManifests` never throws and returns one result per input (a falsy `documentType` or an already-registered type yields `DuplicateManifestError`); `unregisterUpgradeManifests(...types)` returns `true` **only if every** type had a manifest, while still removing those that exist; `getUpgradeManifest` throws `ManifestNotFoundError`.\n\n## Provenance\n- `apps/academy/docs/academy/04-Reference/01-Reactor/06-DocumentModelRegistry.md` \u2014 Upgrade API (registerUpgradeManifests, unregisterUpgradeManifests, getUpgradeManifest, computeUpgradePath, getUpgradeReducer); Upgrade path example\n\n_Extracted from the Powerhouse repository at **v6.2.2-dev.74**._",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": "v6.2.2-dev.74",
+  "computes": null,
+  "filePath": "apps/academy/docs/academy/04-Reference/01-Reactor/06-DocumentModelRegistry.md",
+  "noteType": "REFERENCE",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "knowledge-agent",
+    "createdAt": "2026-09-03T07:48:48.080Z",
+    "sessionId": null,
+    "updatedAt": "2026-09-03T07:48:49.185Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "computeUpgradePath: from === to returns [] and skips the lookup, to < from throws DowngradeNotSupportedError first, a missing step throws MissingUpgradeTransitionError. getUpgradeReducer checks.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "9e53060b-a1ff-4bbc-a35b-6d78ddcff262",
+      "actor": "knowledge-agent",
+      "comment": "extracted from apps/academy/docs/academy/04-Reference/01-Reactor/06-DocumentModelRegistry.md at v6.2.2-dev.74",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-09-03T07:48:48.540Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "cb9eddbc-39f4-456c-b141-d82fa16ed65f",
+      "actor": "liberuum",
+      "comment": "claim checked against the cited file at the pinned tag",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-09-03T07:48:49.185Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

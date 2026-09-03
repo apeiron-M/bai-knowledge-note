@@ -1,0 +1,500 @@
+[
+  {
+    "index": 0,
+    "hash": "",
+    "timestampUtcMs": "2026-09-03T07:20:38.138Z",
+    "action": {
+      "type": "CREATE_DOCUMENT",
+      "input": {
+        "meta": {},
+        "name": "hashfirst-pending-state",
+        "slug": "",
+        "model": "bai/knowledge-note",
+        "branch": "main",
+        "signing": {
+          "nonce": "",
+          "publicKey": {},
+          "signature": "00e447c2-721a-4806-9d74-21a45ed4361c",
+          "documentType": "bai/knowledge-note",
+          "createdAtUtcIso": "2026-09-03T07:20:38.137Z"
+        },
+        "version": 0,
+        "documentId": "00e447c2-721a-4806-9d74-21a45ed4361c",
+        "protocolVersions": {
+          "base-reducer": 2
+        }
+      },
+      "timestampUtcMs": "2026-09-03T07:20:38.138Z"
+    }
+  },
+  {
+    "index": 0,
+    "hash": "yodUKngmRPgPklYp032M5G2g8go=",
+    "timestampUtcMs": "2026-09-03T07:20:39.582Z",
+    "action": {
+      "type": "SET_TITLE",
+      "input": {
+        "title": "Pending is a transport-visible attachment state, so a peer holding an action that references an in-flight upload can tell 'coming, retry later' from 'unknown, possibly never'",
+        "updatedAt": "2026-09-03T07:20:39.582Z"
+      },
+      "timestampUtcMs": "2026-09-03T07:20:39.582Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "",
+    "timestampUtcMs": "2026-09-03T07:20:38.138Z",
+    "action": {
+      "type": "UPGRADE_DOCUMENT",
+      "input": {
+        "model": "bai/knowledge-note",
+        "toVersion": 1,
+        "documentId": "00e447c2-721a-4806-9d74-21a45ed4361c",
+        "fromVersion": 0,
+        "initialState": {
+          "auth": {
+            "grants": [],
+            "version": 0
+          },
+          "local": {
+            "lastViewedAt": null,
+            "personalTags": []
+          },
+          "global": {
+            "links": [],
+            "model": null,
+            "scope": null,
+            "title": null,
+            "editor": null,
+            "inputs": [],
+            "models": [],
+            "status": "DRAFT",
+            "topics": [],
+            "content": null,
+            "context": null,
+            "modelId": null,
+            "modules": [],
+            "outputs": [],
+            "version": null,
+            "computes": null,
+            "filePath": null,
+            "noteType": null,
+            "severity": null,
+            "hooksUsed": [],
+            "rootCause": null,
+            "confidence": null,
+            "consumedBy": [],
+            "provenance": null,
+            "sourceType": null,
+            "targetType": null,
+            "cardinality": null,
+            "description": null,
+            "alternatives": [],
+            "consequences": [],
+            "errorMessage": null,
+            "relationType": null,
+            "correctPattern": null,
+            "decisionStatus": null,
+            "dispatchTargets": [],
+            "lifecycleEvents": []
+          },
+          "document": {
+            "hash": {
+              "encoding": "base64",
+              "algorithm": "sha1"
+            },
+            "version": 1
+          }
+        }
+      },
+      "timestampUtcMs": "2026-09-03T07:20:38.138Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "CCBeqYUyyrtKQ1jYdTwlDUYbwO0=",
+    "timestampUtcMs": "2026-09-03T07:20:39.582Z",
+    "action": {
+      "type": "SET_DESCRIPTION",
+      "input": {
+        "updatedAt": "2026-09-03T07:20:39.582Z",
+        "description": "stat() reports pending with the declared sizeBytes and expiresAtUtc while get() throws AttachmentPending, deliberately not a subclass of AttachmentNotFound. Backoff is bounded by the expiry."
+      },
+      "timestampUtcMs": "2026-09-03T07:20:39.582Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "",
+    "timestampUtcMs": "2026-09-03T07:21:41.794Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "metadata": {
+          "reason": "Extracted from packages/reactor/docs/attachments-hash-first.md at v6.2.2-dev.74 \u2014 Summary (commitment 3); Pending status; Syncing pending state through the transport; Failure modes",
+          "confidence": "grounded"
+        },
+        "sourceId": "00e447c2-721a-4806-9d74-21a45ed4361c",
+        "targetId": "e25bc920-d3bc-4b36-9c7f-cb35b64c27b9",
+        "relationshipType": "DERIVED_FROM"
+      },
+      "timestampUtcMs": "2026-09-03T07:21:41.794Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "j6dhBcJUF2GLtoaeATsF0cuPitc=",
+    "timestampUtcMs": "2026-09-03T07:20:39.582Z",
+    "action": {
+      "type": "SET_NOTE_TYPE",
+      "input": {
+        "noteType": "ARCHITECTURE",
+        "updatedAt": "2026-09-03T07:20:39.582Z"
+      },
+      "timestampUtcMs": "2026-09-03T07:20:39.582Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "",
+    "timestampUtcMs": "2026-09-03T07:21:42.284Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "metadata": {
+          "reason": "Submitting the action before the bytes exist is what creates a window that needs a distinct pending state at all",
+          "confidence": "grounded"
+        },
+        "sourceId": "00e447c2-721a-4806-9d74-21a45ed4361c",
+        "targetId": "04232cfe-983e-46ba-ba27-64b2107a9f12",
+        "relationshipType": "BUILDS_ON"
+      },
+      "timestampUtcMs": "2026-09-03T07:21:42.284Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "K2qQsyXTE75Yk4ZX+TvlDMFZMuU=",
+    "timestampUtcMs": "2026-09-03T07:20:39.582Z",
+    "action": {
+      "type": "SET_CONTENT",
+      "input": {
+        "content": "The third design commitment of hash-first is that a hash which is reserved but not yet uploaded is **queryable as `pending`** \u2014 locally through `stat()` and across reactors through `IAttachmentTransport`. Without it, a peer receiving an action that references an in-flight upload could not distinguish a byte stream that is coming from one that will never exist.\n\nThe two local surfaces behave differently on purpose: `stat()` **succeeds**, returning `status: \"pending\"` with the declared `sizeBytes` and `expiresAtUtc`, while `get()` **throws `AttachmentPending`** \u2014 a class deliberately *not* derived from `AttachmentNotFound`, because pending means \"retry later\", not \"unknown\". A UI can therefore render a placeholder with a known size and a known deadline.\n\nAcross reactors the transport returns `pending` with the expiry, and the peer backs off and retries **until that expiry** \u2014 bounded, so there is no infinite polling; after expiry the peer treats the hash as not found.\n\nThe failure table follows from this. An upload abandoned after the action was submitted reads `pending` until the reservation expires and then `AttachmentNotFound`, leaving the already-tolerated dangling ref; the client can retry by re-reserving the same hash, since no attachment row exists. A client that crashes mid-upload loses only the upload \u2014 the action is already durable server-side \u2014 and a pending-upload queue in `reactor-browser` re-drives it on the next visit.\n\n## Provenance\n- `packages/reactor/docs/attachments-hash-first.md` \u2014 Summary (commitment 3); Pending status; Syncing pending state through the transport; Failure modes\n\n_Extracted from the Powerhouse repository at **v6.2.2-dev.74**._",
+        "updatedAt": "2026-09-03T07:20:39.582Z"
+      },
+      "timestampUtcMs": "2026-09-03T07:20:39.582Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "",
+    "timestampUtcMs": "2026-09-03T07:21:42.734Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "metadata": {
+          "reason": "Pending has to be visible through the transport, so it extends the store-transport pair with a third answer besides available and absent",
+          "confidence": "grounded"
+        },
+        "sourceId": "00e447c2-721a-4806-9d74-21a45ed4361c",
+        "targetId": "0d8024a6-332f-457f-86eb-414251cd65a3",
+        "relationshipType": "BUILDS_ON"
+      },
+      "timestampUtcMs": "2026-09-03T07:21:42.734Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "ERlwOjdDL4ZjrfpB7rldO1vGHBo=",
+    "timestampUtcMs": "2026-09-03T07:20:39.582Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "b7565543-52da-49c8-8601-98ac28bf7302",
+        "name": "attachments"
+      },
+      "timestampUtcMs": "2026-09-03T07:20:39.582Z"
+    }
+  },
+  {
+    "index": 5,
+    "hash": "",
+    "timestampUtcMs": "2026-09-03T07:21:43.174Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "metadata": {
+          "reason": "A dangling ref after an abandoned or rejected upload is the same state pending decays into once the reservation expires",
+          "confidence": "grounded"
+        },
+        "sourceId": "00e447c2-721a-4806-9d74-21a45ed4361c",
+        "targetId": "9d492c64-ed5b-4f00-8efe-98354c9fd6b4",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-09-03T07:21:43.174Z"
+    }
+  },
+  {
+    "index": 5,
+    "hash": "3i2gBi82bzLZLuGhdBp9tNz95ME=",
+    "timestampUtcMs": "2026-09-03T07:20:39.582Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "0d79fa02-14c7-4f0f-b593-2d5eb19d814b",
+        "name": "hash-first"
+      },
+      "timestampUtcMs": "2026-09-03T07:20:39.582Z"
+    }
+  },
+  {
+    "index": 6,
+    "hash": "",
+    "timestampUtcMs": "2026-09-03T07:23:33.912Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "metadata": {
+          "reason": "Extracted from packages/reactor/docs/attachments-hash-first.md at v6.2.2-dev.74 \u2014 Summary (commitment 3); Pending status; Syncing pending state through the transport; Failure modes",
+          "confidence": "grounded"
+        },
+        "sourceId": "00e447c2-721a-4806-9d74-21a45ed4361c",
+        "targetId": "e25bc920-d3bc-4b36-9c7f-cb35b64c27b9",
+        "relationshipType": "DERIVED_FROM"
+      },
+      "timestampUtcMs": "2026-09-03T07:23:33.912Z"
+    }
+  },
+  {
+    "index": 6,
+    "hash": "SySLGwgcUaVMVVVSdPQ/XED7mP4=",
+    "timestampUtcMs": "2026-09-03T07:20:39.582Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "26b7d7ff-9fa9-4906-8d8f-b017b8168189",
+        "name": "sync"
+      },
+      "timestampUtcMs": "2026-09-03T07:20:39.582Z"
+    }
+  },
+  {
+    "index": 7,
+    "hash": "",
+    "timestampUtcMs": "2026-09-03T07:23:34.369Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "metadata": {
+          "reason": "Submitting the action before the bytes exist is what creates a window that needs a distinct pending state at all",
+          "confidence": "grounded"
+        },
+        "sourceId": "00e447c2-721a-4806-9d74-21a45ed4361c",
+        "targetId": "04232cfe-983e-46ba-ba27-64b2107a9f12",
+        "relationshipType": "BUILDS_ON"
+      },
+      "timestampUtcMs": "2026-09-03T07:23:34.369Z"
+    }
+  },
+  {
+    "index": 7,
+    "hash": "oS9dHIa1+712KF/FbJEoio00HlI=",
+    "timestampUtcMs": "2026-09-03T07:20:39.582Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "a84e4295-346b-446e-b075-cc37439850f4",
+        "name": "status"
+      },
+      "timestampUtcMs": "2026-09-03T07:20:39.582Z"
+    }
+  },
+  {
+    "index": 8,
+    "hash": "",
+    "timestampUtcMs": "2026-09-03T07:23:34.855Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "metadata": {
+          "reason": "Pending has to be visible through the transport, so it extends the store-transport pair with a third answer besides available and absent",
+          "confidence": "grounded"
+        },
+        "sourceId": "00e447c2-721a-4806-9d74-21a45ed4361c",
+        "targetId": "0d8024a6-332f-457f-86eb-414251cd65a3",
+        "relationshipType": "BUILDS_ON"
+      },
+      "timestampUtcMs": "2026-09-03T07:23:34.855Z"
+    }
+  },
+  {
+    "index": 8,
+    "hash": "yyzPPpl6U1KXO3uJa2JrSbm9rH8=",
+    "timestampUtcMs": "2026-09-03T07:20:39.582Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "version",
+        "value": "v6.2.2-dev.74",
+        "updatedAt": "2026-09-03T07:20:39.582Z"
+      },
+      "timestampUtcMs": "2026-09-03T07:20:39.582Z"
+    }
+  },
+  {
+    "index": 9,
+    "hash": "",
+    "timestampUtcMs": "2026-09-03T07:23:35.317Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "metadata": {
+          "reason": "A dangling ref after an abandoned or rejected upload is the same state pending decays into once the reservation expires",
+          "confidence": "grounded"
+        },
+        "sourceId": "00e447c2-721a-4806-9d74-21a45ed4361c",
+        "targetId": "9d492c64-ed5b-4f00-8efe-98354c9fd6b4",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-09-03T07:23:35.317Z"
+    }
+  },
+  {
+    "index": 9,
+    "hash": "W3c0WHu4P3eQjpz3ORyTXttu6Ys=",
+    "timestampUtcMs": "2026-09-03T07:20:39.582Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "filePath",
+        "value": "packages/reactor/docs/attachments-hash-first.md",
+        "updatedAt": "2026-09-03T07:20:39.582Z"
+      },
+      "timestampUtcMs": "2026-09-03T07:20:39.582Z"
+    }
+  },
+  {
+    "index": 10,
+    "hash": "7BoAmRr3a7cHi/k1LafMoQIThyE=",
+    "timestampUtcMs": "2026-09-03T07:20:42.182Z",
+    "action": {
+      "type": "SET_PROVENANCE",
+      "input": {
+        "author": "knowledge-agent",
+        "createdAt": "2026-09-03T07:20:42.182Z",
+        "sourceOrigin": "DERIVED"
+      },
+      "timestampUtcMs": "2026-09-03T07:20:42.182Z"
+    }
+  },
+  {
+    "index": 11,
+    "hash": "QTwK1qlus3gGnb7zy/wKPZakMOg=",
+    "timestampUtcMs": "2026-09-03T07:20:42.721Z",
+    "action": {
+      "type": "SUBMIT_FOR_REVIEW",
+      "input": {
+        "id": "b3b02e00-4080-4faa-8344-1e3ec450755c",
+        "actor": "knowledge-agent",
+        "comment": "extracted from packages/reactor/docs/attachments-hash-first.md at v6.2.2-dev.74",
+        "timestamp": "2026-09-03T07:20:42.721Z"
+      },
+      "timestampUtcMs": "2026-09-03T07:20:42.721Z"
+    }
+  },
+  {
+    "index": 12,
+    "hash": "LLWoTnqnApGV4dzxlFXio0tU4gw=",
+    "timestampUtcMs": "2026-09-03T07:20:43.346Z",
+    "action": {
+      "type": "APPROVE_NOTE",
+      "input": {
+        "id": "eb24b151-15ff-49a5-b2ad-112289f77f60",
+        "actor": "liberuum",
+        "comment": "claim checked against the cited file at the pinned tag",
+        "timestamp": "2026-09-03T07:20:43.346Z"
+      },
+      "timestampUtcMs": "2026-09-03T07:20:43.346Z"
+    }
+  },
+  {
+    "index": 13,
+    "hash": "1VLwlGPir4uKesyDf3UwzsNBmpM=",
+    "timestampUtcMs": "2026-09-03T07:22:37.182Z",
+    "action": {
+      "type": "SET_TITLE",
+      "input": {
+        "title": "Pending is a transport-visible attachment state, so a peer holding an action that references an in-flight upload can tell 'coming, retry later' from 'unknown, possibly never'",
+        "updatedAt": "2026-09-03T07:22:37.182Z"
+      },
+      "timestampUtcMs": "2026-09-03T07:22:37.182Z"
+    }
+  },
+  {
+    "index": 14,
+    "hash": "1VLwlGPir4uKesyDf3UwzsNBmpM=",
+    "timestampUtcMs": "2026-09-03T07:22:37.182Z",
+    "action": {
+      "type": "SET_DESCRIPTION",
+      "input": {
+        "updatedAt": "2026-09-03T07:22:37.182Z",
+        "description": "stat() reports pending with the declared sizeBytes and expiresAtUtc while get() throws AttachmentPending, deliberately not a subclass of AttachmentNotFound. Backoff is bounded by the expiry."
+      },
+      "timestampUtcMs": "2026-09-03T07:22:37.182Z"
+    }
+  },
+  {
+    "index": 15,
+    "hash": "1VLwlGPir4uKesyDf3UwzsNBmpM=",
+    "timestampUtcMs": "2026-09-03T07:22:37.182Z",
+    "action": {
+      "type": "SET_NOTE_TYPE",
+      "input": {
+        "noteType": "ARCHITECTURE",
+        "updatedAt": "2026-09-03T07:22:37.182Z"
+      },
+      "timestampUtcMs": "2026-09-03T07:22:37.182Z"
+    }
+  },
+  {
+    "index": 16,
+    "hash": "1VLwlGPir4uKesyDf3UwzsNBmpM=",
+    "timestampUtcMs": "2026-09-03T07:22:37.182Z",
+    "action": {
+      "type": "SET_CONTENT",
+      "input": {
+        "content": "The third design commitment of hash-first is that a hash which is reserved but not yet uploaded is **queryable as `pending`** \u2014 locally through `stat()` and across reactors through `IAttachmentTransport`. Without it, a peer receiving an action that references an in-flight upload could not distinguish a byte stream that is coming from one that will never exist.\n\nThe two local surfaces behave differently on purpose: `stat()` **succeeds**, returning `status: \"pending\"` with the declared `sizeBytes` and `expiresAtUtc`, while `get()` **throws `AttachmentPending`** \u2014 a class deliberately *not* derived from `AttachmentNotFound`, because pending means \"retry later\", not \"unknown\". A UI can therefore render a placeholder with a known size and a known deadline.\n\nAcross reactors the transport returns `pending` with the expiry, and the peer backs off and retries **until that expiry** \u2014 bounded, so there is no infinite polling; after expiry the peer treats the hash as not found.\n\nThe failure table follows from this. An upload abandoned after the action was submitted reads `pending` until the reservation expires and then `AttachmentNotFound`, leaving the already-tolerated dangling ref; the client can retry by re-reserving the same hash, since no attachment row exists. A client that crashes mid-upload loses only the upload \u2014 the action is already durable server-side \u2014 and a pending-upload queue in `reactor-browser` re-drives it on the next visit.\n\n## Provenance\n- `packages/reactor/docs/attachments-hash-first.md` \u2014 Summary (commitment 3); Pending status; Syncing pending state through the transport; Failure modes\n\n_Extracted from the Powerhouse repository at **v6.2.2-dev.74**._",
+        "updatedAt": "2026-09-03T07:22:37.182Z"
+      },
+      "timestampUtcMs": "2026-09-03T07:22:37.182Z"
+    }
+  },
+  {
+    "index": 17,
+    "hash": "1VLwlGPir4uKesyDf3UwzsNBmpM=",
+    "timestampUtcMs": "2026-09-03T07:22:37.182Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "version",
+        "value": "v6.2.2-dev.74",
+        "updatedAt": "2026-09-03T07:22:37.182Z"
+      },
+      "timestampUtcMs": "2026-09-03T07:22:37.182Z"
+    }
+  },
+  {
+    "index": 18,
+    "hash": "1VLwlGPir4uKesyDf3UwzsNBmpM=",
+    "timestampUtcMs": "2026-09-03T07:22:37.182Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "filePath",
+        "value": "packages/reactor/docs/attachments-hash-first.md",
+        "updatedAt": "2026-09-03T07:22:37.182Z"
+      },
+      "timestampUtcMs": "2026-09-03T07:22:37.182Z"
+    }
+  }
+]

@@ -1,0 +1,173 @@
+[
+  {
+    "index": 0,
+    "hash": "",
+    "timestampUtcMs": "2026-09-02T21:43:27.265Z",
+    "action": {
+      "type": "CREATE_DOCUMENT",
+      "input": {
+        "meta": {},
+        "name": "ADR \u203a reactor-browser-client-interface",
+        "slug": "",
+        "model": "bai/source",
+        "branch": "main",
+        "signing": {
+          "nonce": "",
+          "publicKey": {},
+          "signature": "d4009255-3f1f-4e06-872a-9f8142896eea",
+          "documentType": "bai/source",
+          "createdAtUtcIso": "2026-09-02T21:43:27.265Z"
+        },
+        "version": 0,
+        "documentId": "d4009255-3f1f-4e06-872a-9f8142896eea",
+        "protocolVersions": {
+          "base-reducer": 2
+        }
+      },
+      "timestampUtcMs": "2026-09-02T21:43:27.265Z"
+    }
+  },
+  {
+    "index": 0,
+    "hash": "Zv9yVwZyfMOpi6knKmcsHIVCWq0=",
+    "timestampUtcMs": "2026-09-02T21:43:27.210Z",
+    "action": {
+      "type": "INGEST_SOURCE",
+      "input": {
+        "url": "https://github.com/powerhouse-inc/powerhouse/blob/v6.2.2-dev.74/docs/adr/0002-reactor-browser-client-interface.md",
+        "tool": "sync-repo-docs",
+        "title": "ADR \u203a reactor-browser-client-interface",
+        "author": "Powerhouse Inc.",
+        "method": "sha256:22200118be0d5ae23bb120b19bb6568d92402a62fd1763f05efa84ce108b2fae git:v6.2.2-dev.74",
+        "content": "# ADR 0002 \u2014 `IReactorBrowserClient`: a swappable client interface for the reactor-browser hooks\n\n- **Status:** Accepted\n- **Date:** 2026-07-16\n- **Deciders:** acaldas\n- **Implemented by:** `packages/reactor-browser/src/graphql-client/`, on branch\n  `feat/reactor-browser-client`\n- **Implementation notes:** the MVP shipped. Batch signing, local-first writes\n  and point-in-time reads are deferred; the full list of what the shipped client\n  does not do is the Limitations section of\n  `packages/reactor-browser/src/graphql-client/README.md`, restated for readers\n  in the Academy under\n  `apps/academy/docs/academy/04-Reference/08-ReactorBrowserClient/`.\n\n## Context\n\n`@powerhousedao/reactor-browser` ships two unrelated ways for a React app to\nwork with document models, and they share almost no code.\n\n1. **The full-reactor path.** Hooks (`useDocument`, `useDocuments`,\n   `useDispatch`, `useDocumentOperations`, `useDrives`) read and write through\n   `window.ph.reactorClient`, an `IReactorClient` from `@powerhousedao/reactor`.\n   Behind it sits the whole runtime: PGLite, a job queue, the sync manager and\n   its GraphQL channels, a document indexer. It is local-first, but heavy.\n   Connect and Studio use it.\n\n2. **The `RemoteDocumentController` path.** A lightweight class that wraps a\n   `PHDocumentController` (the model reducer + generated action methods) and\n   syncs over plain GraphQL (`MutateDocument` / `GetDocument` /\n   `GetDocumentOperations`). A plain webapp uses it when it only wants to talk to\n   a remote Switchboard and does not want to boot the full reactor. `vetra.to`\n   uses it for its document models.\n\nThe second path has structural problems that block the local-first flow a\nwebapp wants (edit while offline, push on reconnect):\n\n- **No persistence.** State and the pending-action queue live only in memory; a\n  refresh loses un-pushed edits.\n- **No offline model.** No reconnect flush, no durable retry.\n- **No shared cache.** Two controllers for the same document diverge.\n- **Not React friendly.** Imperative methods and non-reactive objects.\n- **It reimplements sync** on weaker primitives instead of reusing what already\n  exists, and gets no realtime.\n\nThe two paths duplicate the same concepts (a reducer wrapper, an action tracker,\na document cache) in incompatible shapes, so a webapp cannot adopt the ergonomic\nhooks (`useDocument`/`useDispatch`) without adopting the whole reactor.\n\nThe objective is one React integration, two interchangeable implementations \u2014\nthe full reactor for Connect/Studio, and the light client for webapps \u2014\nwith local-first writing available behind the light client. Migrating a webapp\nfrom the light client to a reactor should be a matter of configuration.\n\n### Implementation details\n\nSeveral codebase facts constrain the design (the hooks touch only ~9\n`IReactorClient` methods; the server materializes head state; operation hashes\nare state-based via `hashDocumentStateForScope`; the server reshuffles rather\nthan hard-rejecting stale writes; Switchboard already exposes sync primitives;\n`ViewFilter.revision` is not honored over GraphQL; `createClient` is server-safe\nbut the hooks are not; Renown is client-only; `window.ph` is both a React store\nand an ambient service locator). These are catalogued in the implementation issue under \"Codebase constraints\".\n\n## Decision\n\n### 1. Define `IReactorBrowserClient` as a subset of `IReactorClient`\n\nDefine `IReactorBrowserClient` as a type-only `Pick` subset of `IReactorClient`,\nso the reactor is a drop-in with zero changes and any implementation is checked\nagainst the reactor's own signatures. The interfaces includes the read primitives\n(`get`/`subscribe`), the write method (`execute`), and the document-lifecycle\nmethods a standalone webapp needs (`create`, `deleteDocument`); drive-scoped and\nnode/relationship variants stay off it.\n\n### 2. Hooks depend on the subset; the injection mechanism is unchanged\n\nRetype the existing `window.ph` client slot (`setReactorClient` /\n`useReactorClient`) to `IReactorBrowserClient`, and on the `DocumentCache`\nconstructor (read subset) and `queueActions` (`execute`) accordingly.\n\n### 3. Ship a GraphQL implementation: `GraphQLReactorClient`\n\nImplement `GraphQLReactorClient implements IReactorBrowserClient` over\n`createClient(url)`, mapping each method to an existing Switchboard operation.\nThe local-first machinery (IndexedDB cache, outbox, reducer) lives inside the\nclass, invisible to the hooks, so `RemoteDocumentController`'s responsibilities\n(wrap a reducer, track actions, sign, push) collapse into `execute`.\n\n### 4. Read path \u2014 preview the current remote state, no point-in-time replay\n\n`get` returns the current `state` on the remote server; the read path never fetches\nor replays operations. The operation list stays available (`getOperations` is part\nof the interface, and `useDocumentOperations` already reads it, which is enough for an\naudit log / revision list). Reconstructing state as of revision N is out of\nscope: it would need client-side replay or a server-side `revision` view filter,\nneither part of this decision. This keeps the default read a single cheap query.\n\n### 5. Write path \u2014 local-first `execute`\n\n`execute` applies actions locally, by running the reducer, and pushes them to the\nremote server when available.. It needs, beyond the current state, the reducer, the\ndocument type, and the current revision for the operation scope. It reduces each action\nonto the current state, persists to IndexedDB, returns the optimistic document immediately,\nand enqueues the operations for push.\n\n### 6. Signer support carries over\n\nPreserve `RemoteDocumentController`'s per-action signing, but make it ambient:\nthe client resolves the current session's `ISigner` (supplied by the provider)\nat push time and signs in the `execute` write path, using the same\n`signer.signAction` + `context.signer` shape. If a signer is set, every write is\nsigned automatically; if none is set, writes push unsigned. Signing needs only the\ncurrent state \u2014 the `previousStateHash` is the synthetic tail's hash from decision 5\n\u2014 `getOperations` to fetch the operation history is not necessary to sign a new action.\n\n### 7. Abstract `window.ph` behind a base `ReactorProvider` that defaults to the window\n\nReplace `window.ph`'s two roles with two coordinated pieces. For the component\nrole, a client-only base `ReactorProvider` publishes a resolved client through\nReact Context, and a `GraphQLReactorProvider` wrapper builds the light client\nfrom config (and mounts Renown when given `app`) before delegating to the base;\n`useReactorClient()` reads context first and falls back to the `window.ph` store,\nso Connect/Studio keep working with no provider mounted. For the ambient role\n(~40+ non-component imperative call sites that cannot use `useContext`), add a\n`getReactorClient()` getter over the existing `setReactorClient` writer,\ndefaulting to `window.ph.reactorClient`. The window stays the default backing\nstore, so the imperative layer migrates one module at a time with nothing\nbreaking in between. The migration is non-breaking: swapping an internal\n`window.ph.reactorClient` read for `getReactorClient()` changes zero call sites,\nand only a signature change would break callers (bounded to ~20 in-repo sites).\nThe light client is built in a `useState` initializer, never at module scope, so\na shared SSR instance cannot leak a per-session token or signer between requests.\nProvider code and the SSR construction rule are in the issue.\n\n### 8. React-friendly write hooks over the imperative actions\n\nWrap the imperative action layer in thin hooks that resolve the client via\n`useReactorClient()` and return a mutation-hook shape (a memoized callback plus\n`{ isPending, error }`), following the manual-`useState` pattern already in\n`useDocumentOperations` so the shared hooks stay dependency-free. The document\nlifecycle hooks (`useCreateDocument`, `useDeleteDocument`, `useRenameDocument`)\nwork against both implementations; reads and per-document writes\n(`useDocument`, `useDispatch`, `useDocumentOperations`) already exist and stay.\nDrive / node-tree actions (`addFile`, `moveNode`, \u2026) call `client.drives.*`,\noff the interface, so their hooks stay on the full-reactor surface.\n\n## Choosing an implementation: full reactor vs. light client\n\nBoth implementations sit behind the same `IReactorBrowserClient` and the same\nhooks, so this is a deployment choice, not an API choice. Because migrating\nbetween them is a configuration swap (decision 1), choosing \"wrong\" early is\ncheap. Two questions decide it.\n\n**Q1 \u2014 who is authoritative for the data?** The light client treats a central\nSwitchboard as authoritative: it reads materialized head state and the server\nowns reconciliation (and, optionally, signature verification), so local\nverifiability is redundant. The full reactor is for when the app must be an\nauthority itself \u2014 materializing state locally, being the executor, reconciling\nwith no central server (peer-to-peer, multi-drive) \u2014 where local verifiability\nmatters because there is no trusted server to defer to. Rule of thumb: one\ntrusted Switchboard \u2192 light client; no single authority, or the app is itself a\nsync node \u2192 full reactor.\n\n**Q2 \u2014 does the app need reactor-node capabilities?** Some capabilities exist\nonly on the full reactor because they are kept off the shared interface (decision 1):\nmulti-drive management, relationships, jobs, batch and node mutations;\npeer-to-peer sync and being a sync target; full offline authority; richer\nclient-side conflict/merge beyond the server reshuffle. Everything a standalone\nwebapp needs \u2014 read/edit/create/delete documents against a remote, local-first\noptimistic writes with reconnect flush, SSR + hydration, smallest bundle \u2014 the\nlight client provides.\n\n## Abstractions: kept, modified, dropped\n\n- **Kept:** the `window.ph` injection mechanism (`makePHEventFunctions`), the\n  hook surface, `PHDocumentController`, the document-model registry, `ISigner`\n  and its `context.signer` shape, `DocumentCache`.\n- **Modified:** `useReactorClient` / `DocumentCache` / `queueActions` retyped to\n  `IReactorBrowserClient`; `useReactorClient` gains a context-first,\n  `window.ph`-fallback lookup; `DocumentCache` gains an additive `seed(docs)`.\n- **Added:** the base `ReactorProvider` and the `GraphQLReactorProvider` wrapper;\n  a `getReactorClient()` ambient getter; `useReactorAuth`; the\n  `@powerhousedao/reactor-browser/graphql` server-safe import path; interface-level\n  mutation hooks (`useCreateDocument`/`useDeleteDocument`/`useRenameDocument`,\n  optional `useDocumentHistory`).\n- **Dropped (superseded):** `RemoteDocumentController` and its per-document React\n  glue; its logic moves into `GraphQLReactorClient.execute` and the shared hooks.\n\n## Consequences\n\n### Positive\n\n- Webapps get the ergonomic hooks (`useDocument`/`useDispatch`) without the full\n  reactor runtime.\n- One interface, two implementations: Connect/Studio and webapps share the whole\n  hook surface, and the full reactor needs no change.\n- Local-first (offline edit + reconnect push) becomes an `execute`\n  implementation detail, not a per-consumer concern.\n- A shared cache and realtime reactivity for the GraphQL path (via\n  `DocumentCache` + `documentChanges`), which `RemoteDocumentController` lacked.\n- Less duplication: the reducer-wrapper / action-tracker / cache concepts stop\n  existing in two incompatible shapes.\n- No `@powerhousedao/reactor` changes, so the interface lands without touching\n  the reactor's release surface.\n- SSR supper: public documents render on the server (no auth,\n  materialized state), Renown-gated features stay client-only, and server-fetched\n  data hydrates the shared `DocumentCache` via `seed` with no flash or refetch.\n- Explicit, testable client injection via `ReactorProvider`, without breaking the\n  ambient `window.ph` consumers.\n\n### Negative / risks\n\n- Local hashing must match the server exactly; if `hashDocumentStateForScope`\n  semantics drift between client and server, locally-stamped hashes disagree.\n  Mitigated by importing the shared function rather than reimplementing.\n- Two implementations to keep behaviorally aligned (`execute` return shape, error\n  semantics). The interface constrains but does not guarantee this \u2014 hence the\n  conformance suite run against both.\n- The ambient accessor is still a service locator. Imperative code that calls\n  `getReactorClient()` keeps locator-style coupling until migrated to explicit\n  injection \u2014 a deliberate, incremental compromise.\n\n### Confidence and revisit\n\nConfidence is high: the design reuses existing primitives (the `Pick` subset,\n`makePHEventFunctions`, `hashDocumentStateForScope`, the Switchboard sync\nprotocol) and adds no reactor changes. Reopen this ADR if `hashDocumentStateForScope`\nsemantics diverge between client and server (the local write path assumes they\nmatch), or if a webapp needs multi-drive / node capabilities that the shared interface omits\nby design (that would push it onto the full reactor or force widening the `Pick`).\n\n## Known limitations (not solved here)\n\n- No point-in-time preview over GraphQL (missing `ViewFilterInput.revision`);\n  a future server-side view filter would close it (decision 4).\n- Conflict semantics are the server's reshuffle model, surfaced only as the\n  reconciled result; richer client-side merge UX is out of scope.\n- Outbox durability format (IndexedDB schema, retry/backoff policy) is left to\n  the implementation; only the requirement is fixed here.\n\n## Alternatives considered\n\n- **Keep `RemoteDocumentController`, add persistence + an outbox to it.** Fixes\n  offline but leaves the second, divergent abstraction and the per-document React\n  glue in place, and never gives webapps the shared hooks.\n- **Reuse the full reactor with a lighter storage backend** (IndexedDB instead\n  of PGLite) behind the same `IReactorClient`. Still pulls in the job queue and\n  sync engine; heavier than webapps need.\n- **Rebuild the whole client on React Query.** React Query fits the read path\n  well (`useDocument` \u2192 `useQuery`, with dedup, SWR, Suspense, and\n  `dehydrate`/`HydrationBoundary` for SSR), and vetra.to already depends on it.\n  It is the wrong core for the event-sourced write path: its mutation model is a\n  fire-and-forget optimistic overlay that reverts on settle and owns no operation\n  log, causal ordering, state-based hashing, or reconciliation.\n",
+        "createdAt": "2026-09-02T21:43:27.210Z",
+        "createdBy": "repo-docs-sync",
+        "sourceType": "DOCUMENTATION",
+        "description": "Powerhouse v6.2.2-dev.74 (unchanged since v6.2.2-dev.47) \u2014 - Status: Accepted - Date: 2026-07-16 - Deciders: acaldas - Implemented by: packages/reactor-browser/src/graphql-client/, on branch\u2026",
+        "publishedAt": "2026-07-30T19:41:14.000Z"
+      },
+      "timestampUtcMs": "2026-09-02T21:43:27.210Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "",
+    "timestampUtcMs": "2026-09-02T21:43:27.265Z",
+    "action": {
+      "type": "UPGRADE_DOCUMENT",
+      "input": {
+        "model": "bai/source",
+        "toVersion": 1,
+        "documentId": "d4009255-3f1f-4e06-872a-9f8142896eea",
+        "fromVersion": 0,
+        "initialState": {
+          "auth": {
+            "grants": [],
+            "version": 0
+          },
+          "local": {},
+          "global": {
+            "title": null,
+            "status": "INBOX",
+            "content": null,
+            "createdAt": null,
+            "createdBy": null,
+            "provenance": null,
+            "sourceType": null,
+            "description": null,
+            "extractedClaims": [],
+            "extractionStats": null
+          },
+          "document": {
+            "hash": {
+              "encoding": "base64",
+              "algorithm": "sha1"
+            },
+            "version": 1
+          }
+        }
+      },
+      "timestampUtcMs": "2026-09-02T21:43:27.265Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "qr2IeFXPpuc9dO1A1ZcqKHOB0is=",
+    "timestampUtcMs": "2026-09-03T07:30:46.694Z",
+    "action": {
+      "type": "ADD_EXTRACTED_CLAIM",
+      "input": {
+        "claimRef": "9d055359-868c-442c-99ad-052a2101e9da"
+      },
+      "timestampUtcMs": "2026-09-03T07:30:46.694Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "A4AFMN5xSHa8kExZLvpLmjsQktY=",
+    "timestampUtcMs": "2026-09-03T07:30:47.179Z",
+    "action": {
+      "type": "ADD_EXTRACTED_CLAIM",
+      "input": {
+        "claimRef": "fcefdde1-5ef2-4977-a708-8f431ac612d3"
+      },
+      "timestampUtcMs": "2026-09-03T07:30:47.179Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "lyqrBCooxvFUT56PIZ82UjAoKFM=",
+    "timestampUtcMs": "2026-09-03T07:30:47.699Z",
+    "action": {
+      "type": "ADD_EXTRACTED_CLAIM",
+      "input": {
+        "claimRef": "bc541b8a-1284-4f85-96ac-216753565cb1"
+      },
+      "timestampUtcMs": "2026-09-03T07:30:47.699Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "teHfZlRhJFKpKUv2dirPHzd/Yjk=",
+    "timestampUtcMs": "2026-09-03T07:30:53.688Z",
+    "action": {
+      "type": "RECORD_EXTRACTION_STATS",
+      "input": {
+        "skipRate": 0.4,
+        "claimCount": 3,
+        "extractedAt": "2026-09-03T07:30:53.688Z",
+        "extractedBy": "knowledge-agent",
+        "skippedCount": 2
+      },
+      "timestampUtcMs": "2026-09-03T07:30:53.688Z"
+    }
+  },
+  {
+    "index": 5,
+    "hash": "LrNxKUmGMYZB7ydQLxN6AnreF3M=",
+    "timestampUtcMs": "2026-09-03T07:30:54.292Z",
+    "action": {
+      "type": "SET_SOURCE_STATUS",
+      "input": {
+        "status": "EXTRACTED"
+      },
+      "timestampUtcMs": "2026-09-03T07:30:54.292Z"
+    }
+  },
+  {
+    "index": 6,
+    "hash": "r0OR2PSe0Rqp/D94whUE7GYxjKo=",
+    "timestampUtcMs": "2026-09-03T07:31:51.449Z",
+    "action": {
+      "type": "RECORD_EXTRACTION_STATS",
+      "input": {
+        "skipRate": 0.4,
+        "claimCount": 3,
+        "extractedAt": "2026-09-03T07:31:51.449Z",
+        "extractedBy": "knowledge-agent",
+        "skippedCount": 2
+      },
+      "timestampUtcMs": "2026-09-03T07:31:51.449Z"
+    }
+  }
+]

@@ -1,0 +1,424 @@
+[
+  {
+    "index": 0,
+    "hash": "",
+    "timestampUtcMs": "2026-08-14T12:01:09.928Z",
+    "action": {
+      "type": "CREATE_DOCUMENT",
+      "input": {
+        "meta": {},
+        "name": "editor-hooks-connect-react-to-documents",
+        "slug": "",
+        "model": "bai/knowledge-note",
+        "branch": "main",
+        "signing": {
+          "nonce": "",
+          "publicKey": {},
+          "signature": "9cad3b48-9640-4de2-a559-002468eda15d",
+          "documentType": "bai/knowledge-note",
+          "createdAtUtcIso": "2026-08-14T12:01:09.928Z"
+        },
+        "version": 0,
+        "documentId": "9cad3b48-9640-4de2-a559-002468eda15d",
+        "protocolVersions": {
+          "base-reducer": 2
+        }
+      },
+      "timestampUtcMs": "2026-08-14T12:01:09.928Z"
+    }
+  },
+  {
+    "index": 0,
+    "hash": "CHKVDqLOqXb1wsiVxfHeDROMWD4=",
+    "timestampUtcMs": "2026-08-14T12:35:13.000Z",
+    "action": {
+      "type": "SET_TITLE",
+      "input": {
+        "title": "Generated hooks like useSelectedDocument connect React editors to document state and dispatch",
+        "updatedAt": "2026-08-14T12:35:13.000Z"
+      },
+      "timestampUtcMs": "2026-08-14T12:35:13.000Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "",
+    "timestampUtcMs": "2026-08-14T12:01:09.928Z",
+    "action": {
+      "type": "UPGRADE_DOCUMENT",
+      "input": {
+        "model": "bai/knowledge-note",
+        "toVersion": 1,
+        "documentId": "9cad3b48-9640-4de2-a559-002468eda15d",
+        "fromVersion": 0,
+        "initialState": {
+          "auth": {
+            "grants": [],
+            "version": 0
+          },
+          "local": {
+            "lastViewedAt": null,
+            "personalTags": []
+          },
+          "global": {
+            "links": [],
+            "model": null,
+            "scope": null,
+            "title": null,
+            "editor": null,
+            "inputs": [],
+            "models": [],
+            "status": "DRAFT",
+            "topics": [],
+            "content": null,
+            "context": null,
+            "modelId": null,
+            "modules": [],
+            "outputs": [],
+            "version": null,
+            "computes": null,
+            "filePath": null,
+            "noteType": null,
+            "severity": null,
+            "hooksUsed": [],
+            "rootCause": null,
+            "confidence": null,
+            "consumedBy": [],
+            "provenance": null,
+            "sourceType": null,
+            "targetType": null,
+            "cardinality": null,
+            "description": null,
+            "alternatives": [],
+            "consequences": [],
+            "errorMessage": null,
+            "relationType": null,
+            "correctPattern": null,
+            "decisionStatus": null,
+            "dispatchTargets": [],
+            "lifecycleEvents": []
+          },
+          "document": {
+            "hash": {
+              "encoding": "base64",
+              "algorithm": "sha1"
+            },
+            "version": 1
+          }
+        }
+      },
+      "timestampUtcMs": "2026-08-14T12:01:09.928Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "ctaUXdKWCkPdkZs5JrzAgC1aTrQ=",
+    "timestampUtcMs": "2026-08-14T12:35:13.000Z",
+    "action": {
+      "type": "SET_DESCRIPTION",
+      "input": {
+        "updatedAt": "2026-08-14T12:35:13.000Z",
+        "description": "The hook returns [document, dispatch] \u2014 the first element is the whole document (state.global, header, operations), not just the state slice."
+      },
+      "timestampUtcMs": "2026-08-14T12:35:13.000Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "",
+    "timestampUtcMs": "2026-08-14T12:37:24.856Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "9cad3b48-9640-4de2-a559-002468eda15d",
+        "targetId": "00147bfc-06e3-4c4b-975e-fa3220726fb2",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-08-14T12:37:24.856Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "E+4lTOV3f+s+AojWjDiTyGMpBJc=",
+    "timestampUtcMs": "2026-08-14T12:35:13.000Z",
+    "action": {
+      "type": "SET_NOTE_TYPE",
+      "input": {
+        "noteType": "PATTERN",
+        "updatedAt": "2026-08-14T12:35:13.000Z"
+      },
+      "timestampUtcMs": "2026-08-14T12:35:13.000Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "",
+    "timestampUtcMs": "2026-08-14T12:37:24.952Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "9cad3b48-9640-4de2-a559-002468eda15d",
+        "targetId": "37987f5c-8193-493a-96f6-7d0ab6d25287",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-08-14T12:37:24.952Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "dUduDrmLTLPUkXLMpbmZG39VM8E=",
+    "timestampUtcMs": "2026-08-14T12:35:13.000Z",
+    "action": {
+      "type": "SET_CONTENT",
+      "input": {
+        "content": "When Powerhouse generates code for a document model, it creates React hooks for editor integration. For a `TodoList` model, the generated hook is `useSelectedTodoListDocument`.\n\nUsage pattern:\n```tsx\nconst [selectedTodoList, dispatch] = useSelectedTodoListDocument();\n```\n\nThis provides:\n1. **Document state** (`selectedTodoList`) - The current document including `state.global`, `name`, `operations`, etc.\n2. **Dispatch function** - Send actions to the reducer to modify the document\n\nThe dispatch function works with generated action creators:\n```tsx\nimport { addTodoItem, updateTodoItem, deleteTodoItem } from \"...\";\n\ndispatch(addTodoItem({ text: \"Buy groceries\" }));\ndispatch(updateTodoItem({ id: itemId, checked: true }));\ndispatch(deleteTodoItem({ id: itemId }));\n```\n\nThis follows React's `useReducer` pattern. Any component can use the same hook - you don't need to be in the parent component to dispatch updates. The hook automatically connects to the currently selected document.",
+        "updatedAt": "2026-08-14T12:35:13.000Z"
+      },
+      "timestampUtcMs": "2026-08-14T12:35:13.000Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "",
+    "timestampUtcMs": "2026-08-14T12:37:25.045Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "9cad3b48-9640-4de2-a559-002468eda15d",
+        "targetId": "8ecff716-905e-4cac-a435-80e6aa8f0849",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-08-14T12:37:25.045Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "/7ZD2cb0ja71pXAgeUkanBh95uk=",
+    "timestampUtcMs": "2026-08-14T12:35:13.000Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "version",
+        "value": "v6.2.2-dev.44",
+        "updatedAt": "2026-08-14T12:35:13.000Z"
+      },
+      "timestampUtcMs": "2026-08-14T12:35:13.000Z"
+    }
+  },
+  {
+    "index": 5,
+    "hash": "",
+    "timestampUtcMs": "2026-08-14T12:37:25.135Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "9cad3b48-9640-4de2-a559-002468eda15d",
+        "targetId": "90d6a737-9bc9-43e9-9eb8-6a6a33d20786",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-08-14T12:37:25.135Z"
+    }
+  },
+  {
+    "index": 5,
+    "hash": "T4JdRbqYYYtlWtM9KXnFN/26yUg=",
+    "timestampUtcMs": "2026-08-14T12:35:13.000Z",
+    "action": {
+      "type": "SET_PROVENANCE",
+      "input": {
+        "author": "knowledge-agent",
+        "createdAt": "2026-04-02T12:00:00.000Z",
+        "sourceOrigin": "DERIVED"
+      },
+      "timestampUtcMs": "2026-08-14T12:35:13.000Z"
+    }
+  },
+  {
+    "index": 6,
+    "hash": "",
+    "timestampUtcMs": "2026-08-14T12:37:25.230Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "9cad3b48-9640-4de2-a559-002468eda15d",
+        "targetId": "43733227-b9d3-424b-8fa0-83dda8a2001b",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-08-14T12:37:25.230Z"
+    }
+  },
+  {
+    "index": 6,
+    "hash": "OgSMAKU7SEMSGYkrbnxdvZZJl1E=",
+    "timestampUtcMs": "2026-08-14T12:35:13.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "13e13970-c68d-4d4f-b970-cb5620f96542",
+        "name": "editors",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-08-14T12:35:13.000Z"
+    }
+  },
+  {
+    "index": 7,
+    "hash": "",
+    "timestampUtcMs": "2026-08-14T12:37:25.324Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "9cad3b48-9640-4de2-a559-002468eda15d",
+        "targetId": "9f62d615-9bb6-4683-98d8-5a20316099df",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-08-14T12:37:25.324Z"
+    }
+  },
+  {
+    "index": 7,
+    "hash": "801utRTnsoDoMQLZg0zQfAlf1Ns=",
+    "timestampUtcMs": "2026-08-14T12:35:13.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "d3086823-9ed8-4fe2-9fe9-373edeeca4ce",
+        "name": "react-hooks",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-08-14T12:35:13.000Z"
+    }
+  },
+  {
+    "index": 8,
+    "hash": "",
+    "timestampUtcMs": "2026-08-14T12:37:25.415Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "9cad3b48-9640-4de2-a559-002468eda15d",
+        "targetId": "1a932db8-245d-40f6-bfd8-eea728d9615e",
+        "relationshipType": "BUILDS_ON"
+      },
+      "timestampUtcMs": "2026-08-14T12:37:25.415Z"
+    }
+  },
+  {
+    "index": 8,
+    "hash": "ic3ZrWVXZN+2DabzhSdUxPqnk+0=",
+    "timestampUtcMs": "2026-08-14T12:35:13.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "fbac14b6-c4e1-4803-b303-f2494310f05c",
+        "name": "state-management",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-08-14T12:35:13.000Z"
+    }
+  },
+  {
+    "index": 9,
+    "hash": "",
+    "timestampUtcMs": "2026-08-14T12:37:25.525Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "9cad3b48-9640-4de2-a559-002468eda15d",
+        "targetId": "efb965b9-c4df-473a-bf8b-c087c2ceae7f",
+        "relationshipType": "BUILDS_ON"
+      },
+      "timestampUtcMs": "2026-08-14T12:37:25.525Z"
+    }
+  },
+  {
+    "index": 9,
+    "hash": "VnHUg+R7hJYIECDVmyE8iosVX1I=",
+    "timestampUtcMs": "2026-08-14T14:37:24.000Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "version",
+        "value": "v6.2.2-dev.47",
+        "updatedAt": "2026-08-14T12:00:00.000Z"
+      },
+      "timestampUtcMs": "2026-08-14T14:37:24.000Z"
+    }
+  },
+  {
+    "index": 10,
+    "hash": "",
+    "timestampUtcMs": "2026-09-02T21:33:13.401Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "metadata": {
+          "reason": "Backing page found by content match in the v6.2.2-dev.74 source backfill \u2014 identifiers state.global from the claim appear in this page (text identical at v6.2.2-dev.47 and v6.2.2-dev.74); attribution, not the original extraction record",
+          "confidence": "grounded"
+        },
+        "sourceId": "9cad3b48-9640-4de2-a559-002468eda15d",
+        "targetId": "5209455a-7f8f-4dc6-8bdd-8a32b0d181e6",
+        "relationshipType": "DERIVED_FROM"
+      },
+      "timestampUtcMs": "2026-09-02T21:33:13.401Z"
+    }
+  },
+  {
+    "index": 10,
+    "hash": "/qSXp7QtLN0cCalTPSg2EnGJHKQ=",
+    "timestampUtcMs": "2026-08-14T14:37:24.000Z",
+    "action": {
+      "type": "SUBMIT_FOR_REVIEW",
+      "input": {
+        "id": "e17caee6-b3d4-48c3-9942-d328c68656f3",
+        "actor": "claude",
+        "comment": "Knowledge registered against powerhouse v6.2.2-dev.47",
+        "timestamp": "2026-08-14T12:00:00.000Z"
+      },
+      "timestampUtcMs": "2026-08-14T14:37:24.000Z"
+    }
+  },
+  {
+    "index": 11,
+    "hash": "RKoi24RxXMHIyujfegaWDIUZBjw=",
+    "timestampUtcMs": "2026-08-14T14:37:24.000Z",
+    "action": {
+      "type": "APPROVE_NOTE",
+      "input": {
+        "id": "f1fb3dbd-692b-4eef-b29f-fa55a3601649",
+        "actor": "liberuum",
+        "comment": "Canonical as of powerhouse v6.2.2-dev.47",
+        "timestamp": "2026-08-14T12:00:00.000Z"
+      },
+      "timestampUtcMs": "2026-08-14T14:37:24.000Z"
+    }
+  },
+  {
+    "index": 12,
+    "hash": "nqWTOdcyD6TAXIDpbnYx+gQhfa8=",
+    "timestampUtcMs": "2026-09-02T21:33:14.069Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "filePath",
+        "value": "apps/academy/docs/academy/03-Build/01-ManualTodoTutorial/05-BuildToDoListEditor.md",
+        "updatedAt": "2026-09-02T21:33:14.069Z"
+      },
+      "timestampUtcMs": "2026-09-02T21:33:14.069Z"
+    }
+  },
+  {
+    "index": 13,
+    "hash": "p481+cLcjqOOIcZFz5onurkq6F0=",
+    "timestampUtcMs": "2026-09-02T21:33:14.069Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "version",
+        "value": "v6.2.2-dev.74",
+        "updatedAt": "2026-09-02T21:33:14.069Z"
+      },
+      "timestampUtcMs": "2026-09-02T21:33:14.069Z"
+    }
+  }
+]

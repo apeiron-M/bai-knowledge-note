@@ -1,0 +1,362 @@
+[
+  {
+    "index": 0,
+    "hash": "",
+    "timestampUtcMs": "2026-08-14T12:24:54.393Z",
+    "action": {
+      "type": "CREATE_DOCUMENT",
+      "input": {
+        "meta": {},
+        "name": "swarm-feed-write-per-topic-lock",
+        "slug": "",
+        "model": "bai/knowledge-note",
+        "branch": "main",
+        "signing": {
+          "nonce": "",
+          "publicKey": {},
+          "signature": "e05f0d99-31d2-4612-bd7b-aecfd4e7063d",
+          "documentType": "bai/knowledge-note",
+          "createdAtUtcIso": "2026-08-14T12:24:54.392Z"
+        },
+        "version": 0,
+        "documentId": "e05f0d99-31d2-4612-bd7b-aecfd4e7063d",
+        "protocolVersions": {
+          "base-reducer": 2
+        }
+      },
+      "timestampUtcMs": "2026-08-14T12:24:54.393Z"
+    }
+  },
+  {
+    "index": 0,
+    "hash": "X3T3oSn8Lgy3CnXl2OxhGAy5s1I=",
+    "timestampUtcMs": "2026-08-14T12:35:57.000Z",
+    "action": {
+      "type": "SET_TITLE",
+      "input": {
+        "title": "Per-topic write locks are required because SOC feed indices are monotonic and write-once",
+        "updatedAt": "2026-08-14T12:35:57.000Z"
+      },
+      "timestampUtcMs": "2026-08-14T12:35:57.000Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "",
+    "timestampUtcMs": "2026-08-14T12:24:54.393Z",
+    "action": {
+      "type": "UPGRADE_DOCUMENT",
+      "input": {
+        "model": "bai/knowledge-note",
+        "toVersion": 1,
+        "documentId": "e05f0d99-31d2-4612-bd7b-aecfd4e7063d",
+        "fromVersion": 0,
+        "initialState": {
+          "auth": {
+            "grants": [],
+            "version": 0
+          },
+          "local": {
+            "lastViewedAt": null,
+            "personalTags": []
+          },
+          "global": {
+            "links": [],
+            "model": null,
+            "scope": null,
+            "title": null,
+            "editor": null,
+            "inputs": [],
+            "models": [],
+            "status": "DRAFT",
+            "topics": [],
+            "content": null,
+            "context": null,
+            "modelId": null,
+            "modules": [],
+            "outputs": [],
+            "version": null,
+            "computes": null,
+            "filePath": null,
+            "noteType": null,
+            "severity": null,
+            "hooksUsed": [],
+            "rootCause": null,
+            "confidence": null,
+            "consumedBy": [],
+            "provenance": null,
+            "sourceType": null,
+            "targetType": null,
+            "cardinality": null,
+            "description": null,
+            "alternatives": [],
+            "consequences": [],
+            "errorMessage": null,
+            "relationType": null,
+            "correctPattern": null,
+            "decisionStatus": null,
+            "dispatchTargets": [],
+            "lifecycleEvents": []
+          },
+          "document": {
+            "hash": {
+              "encoding": "base64",
+              "algorithm": "sha1"
+            },
+            "version": 1
+          }
+        }
+      },
+      "timestampUtcMs": "2026-08-14T12:24:54.393Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "zQoVK1n3VTOLvsmOShuKCKVzLVo=",
+    "timestampUtcMs": "2026-08-14T12:35:57.000Z",
+    "action": {
+      "type": "SET_DESCRIPTION",
+      "input": {
+        "updatedAt": "2026-08-14T12:35:57.000Z",
+        "description": "Each feed index can only be written once; concurrent writes to the same feed race on the index. The adapter's feedWriteLocks map enforces serialization per topic."
+      },
+      "timestampUtcMs": "2026-08-14T12:35:57.000Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "",
+    "timestampUtcMs": "2026-08-14T12:38:47.350Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "e05f0d99-31d2-4612-bd7b-aecfd4e7063d",
+        "targetId": "55775f8c-67a2-4559-a18c-4892ae0d13d6",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-08-14T12:38:47.350Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "sN1bKwXtzE1lLeG9aMB4+aVoU6U=",
+    "timestampUtcMs": "2026-08-14T12:35:57.000Z",
+    "action": {
+      "type": "SET_NOTE_TYPE",
+      "input": {
+        "noteType": "pattern",
+        "updatedAt": "2026-08-14T12:35:57.000Z"
+      },
+      "timestampUtcMs": "2026-08-14T12:35:57.000Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "",
+    "timestampUtcMs": "2026-08-14T12:38:47.438Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "e05f0d99-31d2-4612-bd7b-aecfd4e7063d",
+        "targetId": "1e3e3772-e865-4797-aebe-8b64a3f34fdd",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-08-14T12:38:47.438Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "e8Km38GMezyB0oyPsKaSPw/NSCY=",
+    "timestampUtcMs": "2026-08-14T12:35:57.000Z",
+    "action": {
+      "type": "SET_CONTENT",
+      "input": {
+        "content": "## Claim\n\nFeed writes must be **serialized per topic** because SOC feed indices are monotonic and write-once \u2014 concurrent writes to the same topic race on the next index, and Bee rejects duplicates.\n\n## Evidence\n\n- Bee processes feed writes sequentially per topic (SOC index is monotonic)\n- Each index slot can only be written once; two parallel writers both targeting index N produces a conflict\n- The adapter's **per-topic `feedWriteLocks`** map guarantees that writes to the same topic are serialized\n- Cross-topic parallelism is still fine: the throttled flush allows up to 5 concurrent writes across different topics\n\n## Why it matters\n\nDropping the per-topic lock would not just slow things down \u2014 it would produce silent index collisions where only one of the concurrent updates survives. This lock is correctness-critical, not a performance optimization. The 3-second debounce already batches rapid edits on the same topic into a single write, minimizing contention on the lock.\n",
+        "updatedAt": "2026-08-14T12:35:57.000Z"
+      },
+      "timestampUtcMs": "2026-08-14T12:35:57.000Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "",
+    "timestampUtcMs": "2026-08-14T12:38:47.532Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "e05f0d99-31d2-4612-bd7b-aecfd4e7063d",
+        "targetId": "1e814394-b2a5-4416-baa5-67b29973a7fc",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-08-14T12:38:47.532Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "eIujCV//xidBwJOtFc2es/ZOdKs=",
+    "timestampUtcMs": "2026-08-14T12:35:57.000Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "version",
+        "value": "v6.2.2-dev.44",
+        "updatedAt": "2026-08-14T12:35:57.000Z"
+      },
+      "timestampUtcMs": "2026-08-14T12:35:57.000Z"
+    }
+  },
+  {
+    "index": 5,
+    "hash": "",
+    "timestampUtcMs": "2026-08-14T12:38:47.621Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "e05f0d99-31d2-4612-bd7b-aecfd4e7063d",
+        "targetId": "f117ea02-9036-4519-8ac5-d62272dc8647",
+        "relationshipType": "BUILDS_ON"
+      },
+      "timestampUtcMs": "2026-08-14T12:38:47.621Z"
+    }
+  },
+  {
+    "index": 5,
+    "hash": "CnSX4Nsx6Q3nFksDPI1TQzY39aY=",
+    "timestampUtcMs": "2026-08-14T12:35:57.000Z",
+    "action": {
+      "type": "SET_PROVENANCE",
+      "input": {
+        "author": "knowledge-agent",
+        "createdAt": "2026-04-21T14:24:54.753Z",
+        "sourceOrigin": "DERIVED"
+      },
+      "timestampUtcMs": "2026-08-14T12:35:57.000Z"
+    }
+  },
+  {
+    "index": 6,
+    "hash": "ZXZbn5Ze/jqATkasdZaX872m0+c=",
+    "timestampUtcMs": "2026-08-14T12:35:57.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "ec3a8b53-984a-4510-b418-075ebd6a65ed",
+        "name": "swarm-feeds",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-08-14T12:35:57.000Z"
+    }
+  },
+  {
+    "index": 7,
+    "hash": "0a5cgoR0TIilQK9npJ5hL7uKPBk=",
+    "timestampUtcMs": "2026-08-14T12:35:57.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "e85f7ae6-f754-439b-aa7a-f4c5f49cba79",
+        "name": "concurrency",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-08-14T12:35:57.000Z"
+    }
+  },
+  {
+    "index": 8,
+    "hash": "skC88n+BcsRCoxuGalbf3n4vd3Q=",
+    "timestampUtcMs": "2026-08-14T12:35:57.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "6f37fe4c-c5eb-4ec1-a10f-53ca0269d759",
+        "name": "adapter",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-08-14T12:35:57.000Z"
+    }
+  },
+  {
+    "index": 9,
+    "hash": "rm2p1jsXTpDurL+/DEI1WBbQQOs=",
+    "timestampUtcMs": "2026-08-14T12:35:57.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "b647396c-8c23-4267-9420-0c9bdd6ee0b0",
+        "name": "soc",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-08-14T12:35:57.000Z"
+    }
+  },
+  {
+    "index": 10,
+    "hash": "zsm0a0WWL8zz+ycqjkqKIZkQD3U=",
+    "timestampUtcMs": "2026-08-14T14:37:40.000Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "version",
+        "value": "v6.2.2-dev.47",
+        "updatedAt": "2026-08-14T12:00:00.000Z"
+      },
+      "timestampUtcMs": "2026-08-14T14:37:40.000Z"
+    }
+  },
+  {
+    "index": 11,
+    "hash": "euqA6HggwP+14pmsavXAN6m6ckI=",
+    "timestampUtcMs": "2026-08-14T14:37:40.000Z",
+    "action": {
+      "type": "SUBMIT_FOR_REVIEW",
+      "input": {
+        "id": "caee784d-82fc-4719-bdb3-0f92e60f66a7",
+        "actor": "claude",
+        "comment": "Knowledge registered against powerhouse v6.2.2-dev.47",
+        "timestamp": "2026-08-14T12:00:00.000Z"
+      },
+      "timestampUtcMs": "2026-08-14T14:37:40.000Z"
+    }
+  },
+  {
+    "index": 12,
+    "hash": "3/VSY8jvQl3e4x3/MFORZkcIYrc=",
+    "timestampUtcMs": "2026-08-14T14:37:40.000Z",
+    "action": {
+      "type": "APPROVE_NOTE",
+      "input": {
+        "id": "adf8dc5a-a698-4726-b118-b53019482873",
+        "actor": "liberuum",
+        "comment": "Canonical as of powerhouse v6.2.2-dev.47",
+        "timestamp": "2026-08-14T12:00:00.000Z"
+      },
+      "timestampUtcMs": "2026-08-14T14:37:40.000Z"
+    }
+  },
+  {
+    "index": 13,
+    "hash": "+KSHbgOoYj0A0UnZwHX2n0bp9pg=",
+    "timestampUtcMs": "2026-08-16T09:49:52.000Z",
+    "action": {
+      "type": "SET_NOTE_TYPE",
+      "input": {
+        "noteType": "PATTERN",
+        "updatedAt": "2026-08-16T09:49:52.000Z"
+      },
+      "timestampUtcMs": "2026-08-16T09:49:52.000Z"
+    }
+  },
+  {
+    "index": 14,
+    "hash": "izHqhGzi2cWrUWRiP8D+JX/kPkk=",
+    "timestampUtcMs": "2026-09-03T09:58:04.523Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "version",
+        "updatedAt": "2026-09-03T09:58:04.523Z"
+      },
+      "timestampUtcMs": "2026-09-03T09:58:04.523Z"
+    }
+  }
+]

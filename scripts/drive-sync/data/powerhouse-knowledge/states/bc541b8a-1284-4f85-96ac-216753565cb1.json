@@ -1,0 +1,115 @@
+{
+  "links": [
+    {
+      "id": "lnk-44abd2b0-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "44abd2b0-e3b0-4484-8b27-f5b5080ecbf5",
+      "targetTitle": "graphqlreactorprovider-props-read-once",
+      "reason": "The provider building the client once and never rebuilding is the shipped behaviour of the GraphQLReactorProvider this decision introduced",
+      "confidence": "grounded"
+    },
+    {
+      "id": "lnk-9d055359-bui",
+      "linkType": "BUILDS_ON",
+      "targetDocumentId": "9d055359-868c-442c-99ad-052a2101e9da",
+      "targetTitle": "browser-client-adr-accepted",
+      "reason": "The provider and interface decisions are how the ADR achieves the one-integration-two-implementations objective it sets out",
+      "confidence": "grounded"
+    },
+    {
+      "id": "lnk-d4009255-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "d4009255-3f1f-4e06-872a-9f8142896eea",
+      "targetTitle": "ADR \u203a reactor-browser-client-interface",
+      "reason": "Extracted from docs/adr/0002-reactor-browser-client-interface.md at v6.2.2-dev.74 \u2014 Decision 1 (Pick subset), 2 (hooks depend on the subset), 3 (GraphQLReactorClient), 7 (ReactorProvider); Implementation details",
+      "confidence": "grounded"
+    },
+    {
+      "id": "lnk-0f228193-bui",
+      "linkType": "BUILDS_ON",
+      "targetDocumentId": "0f228193-a299-4bab-8f34-bb5e9d0b28b7",
+      "targetTitle": "ireactorbrowserclient-pick-of-six-members",
+      "reason": "Explains why the interface is a type-only Pick: so the reactor satisfies it for free and no implementation can drift from its signatures",
+      "confidence": "grounded"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "ADR 0002 splits window.ph's two roles: a client-only ReactorProvider publishes a resolved client through context while the window slot stays the ambient locator",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "b53cee65-ff3f-4e80-9405-ee38b6634a2a",
+      "name": "reactor-browser",
+      "topicDocumentId": null
+    },
+    {
+      "id": "38afa74d-7d00-43a6-bb4a-1052eefaa0e1",
+      "name": "providers",
+      "topicDocumentId": null
+    },
+    {
+      "id": "ba2787d3-2656-4f9b-80c1-03a56e2ff2e1",
+      "name": "react",
+      "topicDocumentId": null
+    },
+    {
+      "id": "cee14b47-fb35-4e16-9155-ba6612da1c2e",
+      "name": "adr",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "Three of the ADR's decisions are about the seam rather than the transport.\n\n**The interface is a type-only `Pick`.** `IReactorBrowserClient` is defined as a subset of `IReactorClient`, which buys two things at once: the full reactor is a **drop-in with zero changes**, and any other implementation is type-checked against the reactor's *own* signatures rather than a hand-copied shape that can drift. The subset holds the read primitives (`get`, `subscribe`), the write method (`execute`), and the document-lifecycle methods a standalone webapp needs (`create`, `deleteDocument`); drive-scoped and node/relationship variants stay off it deliberately.\n\n**The hooks depend on the subset, and the injection mechanism is unchanged.** The existing `window.ph` client slot (`setReactorClient` / `useReactorClient`) is retyped to `IReactorBrowserClient`, as are the `DocumentCache` constructor (read subset) and `queueActions` (`execute`). Nothing about how the client is published changes.\n\n**`window.ph` had two roles, and they are separated.** For the component role, a client-only base `ReactorProvider` publishes a resolved client through React **Context**, and a `GraphQLReactorProvider` wrapper builds the light client \u2014 while the window slot remains available as the ambient service locator it always was. The ADR notes the constraint that made this necessary: `createClient` is server-safe but the hooks are not, and Renown is client-only.\n\nThe codebase facts the design leans on are catalogued rather than assumed: the hooks touch only about **nine** `IReactorClient` methods, the server materializes head state, operation hashes are state-based via `hashDocumentStateForScope`, the server **reshuffles rather than hard-rejecting** stale writes, and `ViewFilter.revision` is not honoured over GraphQL.\n\n## Provenance\n- `docs/adr/0002-reactor-browser-client-interface.md` \u2014 Decision 1 (Pick subset), 2 (hooks depend on the subset), 3 (GraphQLReactorClient), 7 (ReactorProvider); Implementation details\n\n_Extracted from the Powerhouse repository at **v6.2.2-dev.74**._",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": "v6.2.2-dev.74",
+  "computes": null,
+  "filePath": "docs/adr/0002-reactor-browser-client-interface.md",
+  "noteType": "ARCHITECTURE",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "knowledge-agent",
+    "createdAt": "2026-09-03T07:29:18.709Z",
+    "sessionId": null,
+    "updatedAt": "2026-09-03T07:31:11.380Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "IReactorBrowserClient is a type-only Pick of IReactorClient, so the full reactor is a drop-in and any implementation is checked against the reactor's own signatures. Injection is unchanged.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "6d5569d2-1892-445a-939d-1555dd681009",
+      "actor": "knowledge-agent",
+      "comment": "extracted from docs/adr/0002-reactor-browser-client-interface.md at v6.2.2-dev.74",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-09-03T07:29:19.288Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "ed5d62ae-5e80-4398-aeeb-c8352800020c",
+      "actor": "liberuum",
+      "comment": "claim checked against the cited file at the pinned tag",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-09-03T07:29:19.821Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

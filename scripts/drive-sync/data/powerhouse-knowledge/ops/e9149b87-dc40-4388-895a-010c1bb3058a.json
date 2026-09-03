@@ -1,0 +1,446 @@
+[
+  {
+    "index": 0,
+    "hash": "",
+    "timestampUtcMs": "2026-09-03T07:18:23.593Z",
+    "action": {
+      "type": "CREATE_DOCUMENT",
+      "input": {
+        "meta": {},
+        "name": "write-cache-keyframes",
+        "slug": "",
+        "model": "bai/knowledge-note",
+        "branch": "main",
+        "signing": {
+          "nonce": "",
+          "publicKey": {},
+          "signature": "e9149b87-dc40-4388-895a-010c1bb3058a",
+          "documentType": "bai/knowledge-note",
+          "createdAtUtcIso": "2026-09-03T07:18:23.593Z"
+        },
+        "version": 0,
+        "documentId": "e9149b87-dc40-4388-895a-010c1bb3058a",
+        "protocolVersions": {
+          "base-reducer": 2
+        }
+      },
+      "timestampUtcMs": "2026-09-03T07:18:23.593Z"
+    }
+  },
+  {
+    "index": 0,
+    "hash": "OrVssd1HkS2ShBuA3rxP1DKiJn0=",
+    "timestampUtcMs": "2026-09-03T07:18:25.077Z",
+    "action": {
+      "type": "SET_TITLE",
+      "input": {
+        "title": "The write cache reconstructs state from a ring buffer, then the nearest keyframe, then operation zero, and keyframes buy replay time with storage",
+        "updatedAt": "2026-09-03T07:18:25.076Z"
+      },
+      "timestampUtcMs": "2026-09-03T07:18:25.077Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "",
+    "timestampUtcMs": "2026-09-03T07:18:23.593Z",
+    "action": {
+      "type": "UPGRADE_DOCUMENT",
+      "input": {
+        "model": "bai/knowledge-note",
+        "toVersion": 1,
+        "documentId": "e9149b87-dc40-4388-895a-010c1bb3058a",
+        "fromVersion": 0,
+        "initialState": {
+          "auth": {
+            "grants": [],
+            "version": 0
+          },
+          "local": {
+            "lastViewedAt": null,
+            "personalTags": []
+          },
+          "global": {
+            "links": [],
+            "model": null,
+            "scope": null,
+            "title": null,
+            "editor": null,
+            "inputs": [],
+            "models": [],
+            "status": "DRAFT",
+            "topics": [],
+            "content": null,
+            "context": null,
+            "modelId": null,
+            "modules": [],
+            "outputs": [],
+            "version": null,
+            "computes": null,
+            "filePath": null,
+            "noteType": null,
+            "severity": null,
+            "hooksUsed": [],
+            "rootCause": null,
+            "confidence": null,
+            "consumedBy": [],
+            "provenance": null,
+            "sourceType": null,
+            "targetType": null,
+            "cardinality": null,
+            "description": null,
+            "alternatives": [],
+            "consequences": [],
+            "errorMessage": null,
+            "relationType": null,
+            "correctPattern": null,
+            "decisionStatus": null,
+            "dispatchTargets": [],
+            "lifecycleEvents": []
+          },
+          "document": {
+            "hash": {
+              "encoding": "base64",
+              "algorithm": "sha1"
+            },
+            "version": 1
+          }
+        }
+      },
+      "timestampUtcMs": "2026-09-03T07:18:23.593Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "gdrWYzXqOsDPzRtGeyjs0dUQGQM=",
+    "timestampUtcMs": "2026-09-03T07:18:25.077Z",
+    "action": {
+      "type": "SET_DESCRIPTION",
+      "input": {
+        "updatedAt": "2026-09-03T07:18:25.077Z",
+        "description": "IKeyframeStore exposes putKeyframe and findNearestKeyframe(targetRevision). Keyframes are optional: without them a cache miss on a long-lived document replays from the beginning of the scope."
+      },
+      "timestampUtcMs": "2026-09-03T07:18:25.077Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "",
+    "timestampUtcMs": "2026-09-03T07:20:51.780Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "metadata": {
+          "reason": "Extracted from packages/reactor/docs/ARCHITECTURE.md at v6.2.2-dev.74 \u2014 Components \u203a WriteCache; Storage Layer \u203a Keyframes",
+          "confidence": "grounded"
+        },
+        "sourceId": "e9149b87-dc40-4388-895a-010c1bb3058a",
+        "targetId": "e4ef060b-4d61-41b4-95bd-2f562eea3cfa",
+        "relationshipType": "DERIVED_FROM"
+      },
+      "timestampUtcMs": "2026-09-03T07:20:51.780Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "s/UIBwxNy/AS2bXJSDISedv4yIQ=",
+    "timestampUtcMs": "2026-09-03T07:18:25.077Z",
+    "action": {
+      "type": "SET_NOTE_TYPE",
+      "input": {
+        "noteType": "ARCHITECTURE",
+        "updatedAt": "2026-09-03T07:18:25.077Z"
+      },
+      "timestampUtcMs": "2026-09-03T07:18:25.077Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "",
+    "timestampUtcMs": "2026-09-03T07:20:52.239Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "metadata": {
+          "reason": "The executor loads state from this cache inside the per-document serialized slot the queue grants it",
+          "confidence": "grounded"
+        },
+        "sourceId": "e9149b87-dc40-4388-895a-010c1bb3058a",
+        "targetId": "4a5a9901-a0e2-4e7e-8ff2-9c155cccb2f7",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-09-03T07:20:52.239Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "7NPmkKGe00b9SOD7R1PW0KJ3b2M=",
+    "timestampUtcMs": "2026-09-03T07:18:25.077Z",
+    "action": {
+      "type": "SET_CONTENT",
+      "input": {
+        "content": "`IWriteCache` exists so the executor does not replay a document's whole history on every mutation. Its lookup is three-tiered:\n\n1. check the **ring buffer** for a cached state at or before the target revision;\n2. on a miss, replay from the **nearest keyframe**;\n3. failing that, replay from **operation 0**.\n\nKeyframes are optional snapshots, stored per scope and branch:\n\n```ts\ninterface IKeyframeStore {\n  putKeyframe(docId, scope, branch, revision, document): Promise<void>;\n  findNearestKeyframe(docId, scope, branch, targetRevision):\n    Promise<{ revision; document }>;\n}\n```\n\nThe trade is stated plainly: keyframes **trade storage space for reduced replay time** on documents with many operations. A deployment with short-lived documents can skip them; one with long-lived, heavily-edited documents pays for a full replay on every cache miss without them.\n\nThe cache is also where two guarantees the auth decision model depends on live: a stored snapshot never changes after it is stored, and a read for the head is answered only by a snapshot recorded as the head.\n\n## Provenance\n- `packages/reactor/docs/ARCHITECTURE.md` \u2014 Components \u203a WriteCache; Storage Layer \u203a Keyframes\n\n_Extracted from the Powerhouse repository at **v6.2.2-dev.74**._",
+        "updatedAt": "2026-09-03T07:18:25.077Z"
+      },
+      "timestampUtcMs": "2026-09-03T07:18:25.077Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "",
+    "timestampUtcMs": "2026-09-03T07:22:45.173Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "metadata": {
+          "reason": "Extracted from packages/reactor/docs/ARCHITECTURE.md at v6.2.2-dev.74 \u2014 Components \u203a WriteCache; Storage Layer \u203a Keyframes",
+          "confidence": "grounded"
+        },
+        "sourceId": "e9149b87-dc40-4388-895a-010c1bb3058a",
+        "targetId": "e4ef060b-4d61-41b4-95bd-2f562eea3cfa",
+        "relationshipType": "DERIVED_FROM"
+      },
+      "timestampUtcMs": "2026-09-03T07:22:45.173Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "nfRa5DX8GmCKwaHMDvttAOH4N0Q=",
+    "timestampUtcMs": "2026-09-03T07:18:25.077Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "94cb01ca-6060-4e99-ad52-c9757cab57a8",
+        "name": "reactor"
+      },
+      "timestampUtcMs": "2026-09-03T07:18:25.077Z"
+    }
+  },
+  {
+    "index": 5,
+    "hash": "",
+    "timestampUtcMs": "2026-09-03T07:22:45.640Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "metadata": {
+          "reason": "The executor loads state from this cache inside the per-document serialized slot the queue grants it",
+          "confidence": "grounded"
+        },
+        "sourceId": "e9149b87-dc40-4388-895a-010c1bb3058a",
+        "targetId": "4a5a9901-a0e2-4e7e-8ff2-9c155cccb2f7",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-09-03T07:22:45.640Z"
+    }
+  },
+  {
+    "index": 5,
+    "hash": "DelsEopjeEpErlwzey5cGrSnbH4=",
+    "timestampUtcMs": "2026-09-03T07:18:25.077Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "df5cc103-1940-42a5-bfc9-870c9d7a0c25",
+        "name": "write-cache"
+      },
+      "timestampUtcMs": "2026-09-03T07:18:25.077Z"
+    }
+  },
+  {
+    "index": 6,
+    "hash": "",
+    "timestampUtcMs": "2026-09-03T07:22:46.079Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "metadata": {
+          "reason": "The decision model folds through this cache, which is why its immutability and head-read guarantees are load-bearing for authorization",
+          "confidence": "grounded"
+        },
+        "sourceId": "e9149b87-dc40-4388-895a-010c1bb3058a",
+        "targetId": "c7c935e2-6f6c-48c6-8ef1-0dd6d99811e0",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-09-03T07:22:46.079Z"
+    }
+  },
+  {
+    "index": 6,
+    "hash": "y1QjFPdDPlD6ZFj30O/8qRNjOYM=",
+    "timestampUtcMs": "2026-09-03T07:18:25.077Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "958db021-816c-42fe-900e-4bcf2751d864",
+        "name": "keyframes"
+      },
+      "timestampUtcMs": "2026-09-03T07:18:25.077Z"
+    }
+  },
+  {
+    "index": 7,
+    "hash": "O9pU5QXmhQnzKQpsy7QlhHnqX/A=",
+    "timestampUtcMs": "2026-09-03T07:18:25.077Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "712f66bf-d624-48dd-90fd-e1c1ad15b8ee",
+        "name": "performance"
+      },
+      "timestampUtcMs": "2026-09-03T07:18:25.077Z"
+    }
+  },
+  {
+    "index": 8,
+    "hash": "VFD/uSJYvebC2x7yovigW+3v4Lc=",
+    "timestampUtcMs": "2026-09-03T07:18:25.077Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "version",
+        "value": "v6.2.2-dev.74",
+        "updatedAt": "2026-09-03T07:18:25.077Z"
+      },
+      "timestampUtcMs": "2026-09-03T07:18:25.077Z"
+    }
+  },
+  {
+    "index": 9,
+    "hash": "HrbgyEhmvfU9BEaNC45CICvjIuo=",
+    "timestampUtcMs": "2026-09-03T07:18:25.077Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "filePath",
+        "value": "packages/reactor/docs/ARCHITECTURE.md",
+        "updatedAt": "2026-09-03T07:18:25.077Z"
+      },
+      "timestampUtcMs": "2026-09-03T07:18:25.077Z"
+    }
+  },
+  {
+    "index": 10,
+    "hash": "Oxpwla89I4ahLTsPpveJmsjGIwY=",
+    "timestampUtcMs": "2026-09-03T07:18:27.522Z",
+    "action": {
+      "type": "SET_PROVENANCE",
+      "input": {
+        "author": "knowledge-agent",
+        "createdAt": "2026-09-03T07:18:27.522Z",
+        "sourceOrigin": "DERIVED"
+      },
+      "timestampUtcMs": "2026-09-03T07:18:27.522Z"
+    }
+  },
+  {
+    "index": 11,
+    "hash": "qrg3RKFC7NbB8N7/FCHImGxPyYY=",
+    "timestampUtcMs": "2026-09-03T07:18:28.229Z",
+    "action": {
+      "type": "SUBMIT_FOR_REVIEW",
+      "input": {
+        "id": "c94bda2e-30c2-43f1-87f4-a422f45b419c",
+        "actor": "knowledge-agent",
+        "comment": "extracted from packages/reactor/docs/ARCHITECTURE.md at v6.2.2-dev.74",
+        "timestamp": "2026-09-03T07:18:28.229Z"
+      },
+      "timestampUtcMs": "2026-09-03T07:18:28.229Z"
+    }
+  },
+  {
+    "index": 12,
+    "hash": "WwOk0Mj7ezwJMR9BtyHaQDoeLUY=",
+    "timestampUtcMs": "2026-09-03T07:18:28.782Z",
+    "action": {
+      "type": "APPROVE_NOTE",
+      "input": {
+        "id": "7ab23ead-c291-4eee-8654-47412381800d",
+        "actor": "liberuum",
+        "comment": "claim checked against the cited file at the pinned tag",
+        "timestamp": "2026-09-03T07:18:28.782Z"
+      },
+      "timestampUtcMs": "2026-09-03T07:18:28.782Z"
+    }
+  },
+  {
+    "index": 13,
+    "hash": "jSjsGgT5nAgwZQVGYkwnZvENExc=",
+    "timestampUtcMs": "2026-09-03T07:22:19.775Z",
+    "action": {
+      "type": "SET_TITLE",
+      "input": {
+        "title": "The write cache reconstructs state from a ring buffer, then the nearest keyframe, then operation zero, and keyframes buy replay time with storage",
+        "updatedAt": "2026-09-03T07:22:19.775Z"
+      },
+      "timestampUtcMs": "2026-09-03T07:22:19.775Z"
+    }
+  },
+  {
+    "index": 14,
+    "hash": "jSjsGgT5nAgwZQVGYkwnZvENExc=",
+    "timestampUtcMs": "2026-09-03T07:22:19.775Z",
+    "action": {
+      "type": "SET_DESCRIPTION",
+      "input": {
+        "updatedAt": "2026-09-03T07:22:19.775Z",
+        "description": "IKeyframeStore exposes putKeyframe and findNearestKeyframe(targetRevision). Keyframes are optional: without them a cache miss on a long-lived document replays from the beginning of the scope."
+      },
+      "timestampUtcMs": "2026-09-03T07:22:19.775Z"
+    }
+  },
+  {
+    "index": 15,
+    "hash": "jSjsGgT5nAgwZQVGYkwnZvENExc=",
+    "timestampUtcMs": "2026-09-03T07:22:19.775Z",
+    "action": {
+      "type": "SET_NOTE_TYPE",
+      "input": {
+        "noteType": "ARCHITECTURE",
+        "updatedAt": "2026-09-03T07:22:19.775Z"
+      },
+      "timestampUtcMs": "2026-09-03T07:22:19.775Z"
+    }
+  },
+  {
+    "index": 16,
+    "hash": "jSjsGgT5nAgwZQVGYkwnZvENExc=",
+    "timestampUtcMs": "2026-09-03T07:22:19.775Z",
+    "action": {
+      "type": "SET_CONTENT",
+      "input": {
+        "content": "`IWriteCache` exists so the executor does not replay a document's whole history on every mutation. Its lookup is three-tiered:\n\n1. check the **ring buffer** for a cached state at or before the target revision;\n2. on a miss, replay from the **nearest keyframe**;\n3. failing that, replay from **operation 0**.\n\nKeyframes are optional snapshots, stored per scope and branch:\n\n```ts\ninterface IKeyframeStore {\n  putKeyframe(docId, scope, branch, revision, document): Promise<void>;\n  findNearestKeyframe(docId, scope, branch, targetRevision):\n    Promise<{ revision; document }>;\n}\n```\n\nThe trade is stated plainly: keyframes **trade storage space for reduced replay time** on documents with many operations. A deployment with short-lived documents can skip them; one with long-lived, heavily-edited documents pays for a full replay on every cache miss without them.\n\nThe cache is also where two guarantees the auth decision model depends on live: a stored snapshot never changes after it is stored, and a read for the head is answered only by a snapshot recorded as the head.\n\n## Provenance\n- `packages/reactor/docs/ARCHITECTURE.md` \u2014 Components \u203a WriteCache; Storage Layer \u203a Keyframes\n\n_Extracted from the Powerhouse repository at **v6.2.2-dev.74**._",
+        "updatedAt": "2026-09-03T07:22:19.775Z"
+      },
+      "timestampUtcMs": "2026-09-03T07:22:19.775Z"
+    }
+  },
+  {
+    "index": 17,
+    "hash": "jSjsGgT5nAgwZQVGYkwnZvENExc=",
+    "timestampUtcMs": "2026-09-03T07:22:19.775Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "version",
+        "value": "v6.2.2-dev.74",
+        "updatedAt": "2026-09-03T07:22:19.775Z"
+      },
+      "timestampUtcMs": "2026-09-03T07:22:19.775Z"
+    }
+  },
+  {
+    "index": 18,
+    "hash": "jSjsGgT5nAgwZQVGYkwnZvENExc=",
+    "timestampUtcMs": "2026-09-03T07:22:19.775Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "filePath",
+        "value": "packages/reactor/docs/ARCHITECTURE.md",
+        "updatedAt": "2026-09-03T07:22:19.775Z"
+      },
+      "timestampUtcMs": "2026-09-03T07:22:19.775Z"
+    }
+  }
+]

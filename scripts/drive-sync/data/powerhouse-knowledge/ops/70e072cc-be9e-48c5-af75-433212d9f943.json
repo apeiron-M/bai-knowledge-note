@@ -1,0 +1,276 @@
+[
+  {
+    "index": 0,
+    "hash": "",
+    "timestampUtcMs": "2026-08-20T08:45:05.401Z",
+    "action": {
+      "type": "CREATE_DOCUMENT",
+      "input": {
+        "meta": {},
+        "name": "Alfresco's extension points are all node verbs, so a decision can only be inferred",
+        "slug": "",
+        "model": "bai/knowledge-note",
+        "branch": "main",
+        "signing": {
+          "nonce": "",
+          "publicKey": {},
+          "signature": "70e072cc-be9e-48c5-af75-433212d9f943",
+          "documentType": "bai/knowledge-note",
+          "createdAtUtcIso": "2026-08-20T08:45:05.401Z"
+        },
+        "version": 0,
+        "documentId": "70e072cc-be9e-48c5-af75-433212d9f943",
+        "protocolVersions": {
+          "base-reducer": 2
+        }
+      },
+      "timestampUtcMs": "2026-08-20T08:45:05.401Z"
+    }
+  },
+  {
+    "index": 0,
+    "hash": "4tJs6n9RQsSpYaB70iqhwu2GD2w=",
+    "timestampUtcMs": "2026-08-20T08:45:06.024Z",
+    "action": {
+      "type": "SET_TITLE",
+      "input": {
+        "title": "Alfresco's extension points are all node verbs, so a decision can only be inferred",
+        "updatedAt": "2026-08-20T08:45:06.024237Z"
+      },
+      "timestampUtcMs": "2026-08-20T08:45:06.024275Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "",
+    "timestampUtcMs": "2026-08-20T08:45:05.401Z",
+    "action": {
+      "type": "UPGRADE_DOCUMENT",
+      "input": {
+        "model": "bai/knowledge-note",
+        "toVersion": 1,
+        "documentId": "70e072cc-be9e-48c5-af75-433212d9f943",
+        "fromVersion": 0,
+        "initialState": {
+          "auth": {
+            "grants": [],
+            "version": 0
+          },
+          "local": {
+            "lastViewedAt": null,
+            "personalTags": []
+          },
+          "global": {
+            "links": [],
+            "model": null,
+            "scope": null,
+            "title": null,
+            "editor": null,
+            "inputs": [],
+            "models": [],
+            "status": "DRAFT",
+            "topics": [],
+            "content": null,
+            "context": null,
+            "modelId": null,
+            "modules": [],
+            "outputs": [],
+            "version": null,
+            "computes": null,
+            "filePath": null,
+            "noteType": null,
+            "severity": null,
+            "hooksUsed": [],
+            "rootCause": null,
+            "confidence": null,
+            "consumedBy": [],
+            "provenance": null,
+            "sourceType": null,
+            "targetType": null,
+            "cardinality": null,
+            "description": null,
+            "alternatives": [],
+            "consequences": [],
+            "errorMessage": null,
+            "relationType": null,
+            "correctPattern": null,
+            "decisionStatus": null,
+            "dispatchTargets": [],
+            "lifecycleEvents": []
+          },
+          "document": {
+            "hash": {
+              "encoding": "base64",
+              "algorithm": "sha1"
+            },
+            "version": 1
+          }
+        }
+      },
+      "timestampUtcMs": "2026-08-20T08:45:05.401Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "0SOwV++D0rQwSlyTc0Dc4mshRik=",
+    "timestampUtcMs": "2026-08-20T08:45:06.024Z",
+    "action": {
+      "type": "SET_DESCRIPTION",
+      "input": {
+        "updatedAt": "2026-08-20T08:45:06.024279Z",
+        "description": "Every NodeServicePolicies hook is create, move, update, delete or aspect-change. There is no OnDecisionPolicy, so an approval must be detected from an aspect being added."
+      },
+      "timestampUtcMs": "2026-08-20T08:45:06.024285Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "",
+    "timestampUtcMs": "2026-08-20T08:45:07.303Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "70e072cc-be9e-48c5-af75-433212d9f943",
+        "targetId": "4d8e59af-51f2-4ab7-b290-e1d5744abbd7",
+        "relationshipType": "DERIVED_FROM"
+      },
+      "timestampUtcMs": "2026-08-20T08:45:07.303Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "Xf9rXTOtTlSwr5i1UvCuCYb/zYg=",
+    "timestampUtcMs": "2026-08-20T08:45:06.024Z",
+    "action": {
+      "type": "SET_NOTE_TYPE",
+      "input": {
+        "noteType": "ARCHITECTURE",
+        "updatedAt": "2026-08-20T08:45:06.024288Z"
+      },
+      "timestampUtcMs": "2026-08-20T08:45:06.024293Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "qdXOhl0uOYGFdrDaGS38YQY8LM0=",
+    "timestampUtcMs": "2026-08-20T08:45:06.024Z",
+    "action": {
+      "type": "SET_CONTENT",
+      "input": {
+        "content": "The registered policy interfaces are `BeforeCreateNodePolicy`, `OnCreateNodePolicy`, `OnMoveNodePolicy`, `OnUpdatePropertiesPolicy`, `OnAddAspectPolicy`, `BeforeDeleteNodePolicy` and their siblings. Every one is keyed to a document verb.\n\nThere is no `OnDecisionPolicy` and no `OnApprovalPolicy` \u2014 no business-event vocabulary anywhere in the extension surface. An integration that wants to capture \"this application was accepted\" has to infer it from an aspect being added or a property changing, which is the impedance mismatch stated in the platform's own API.\n\nThe vocabulary of a tool's extension points is a reliable predictor of what it can record. Where the hooks are node verbs, the records will be node events, however the feature is marketed.",
+        "updatedAt": "2026-08-20T08:45:06.024295Z"
+      },
+      "timestampUtcMs": "2026-08-20T08:45:06.024300Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "QZ+3e8ckJgMsVPCzsGruqIpdngg=",
+    "timestampUtcMs": "2026-08-20T08:45:06.024Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "9bc7e83d-5fe1-47cd-92b8-ca107925c6d7",
+        "name": "tool-screen"
+      },
+      "timestampUtcMs": "2026-08-20T08:45:06.024309Z"
+    }
+  },
+  {
+    "index": 5,
+    "hash": "t0xPlTULOLijH4nSVmyTqdpHDdo=",
+    "timestampUtcMs": "2026-08-20T08:45:06.024Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "b0e9cbcf-def6-43f3-bfce-7c78b9243e9c",
+        "name": "alfresco"
+      },
+      "timestampUtcMs": "2026-08-20T08:45:06.024317Z"
+    }
+  },
+  {
+    "index": 6,
+    "hash": "F1ch/hMEdIz1J7IBMj4SM7gDAFI=",
+    "timestampUtcMs": "2026-08-20T08:45:06.024Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "2aca1a4a-0660-4aca-a9d8-61aee5214a05",
+        "name": "integration-seam"
+      },
+      "timestampUtcMs": "2026-08-20T08:45:06.024324Z"
+    }
+  },
+  {
+    "index": 7,
+    "hash": "UtjLTzp4KgBU34nvw+mnljUlsYM=",
+    "timestampUtcMs": "2026-08-20T08:45:06.024Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "c1cb9de5-2ec2-4187-aa1e-eb511729a007",
+        "name": "business-events"
+      },
+      "timestampUtcMs": "2026-08-20T08:45:06.024332Z"
+    }
+  },
+  {
+    "index": 8,
+    "hash": "KBH9vvz84l/So+2uI41yVmRbMas=",
+    "timestampUtcMs": "2026-08-20T08:45:06.024Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "41548402-1ceb-4bb0-8736-946bf26bf44a",
+        "name": "impedance-mismatch"
+      },
+      "timestampUtcMs": "2026-08-20T08:45:06.024339Z"
+    }
+  },
+  {
+    "index": 9,
+    "hash": "cB9wt2LvxN6vynOty4d7hEMzRv0=",
+    "timestampUtcMs": "2026-08-20T08:45:06.447Z",
+    "action": {
+      "type": "SET_PROVENANCE",
+      "input": {
+        "author": "knowledge-agent",
+        "createdAt": "2026-08-20T08:45:06.447521Z",
+        "sessionId": null,
+        "sourceOrigin": "DERIVED"
+      },
+      "timestampUtcMs": "2026-08-20T08:45:06.447598Z"
+    }
+  },
+  {
+    "index": 10,
+    "hash": "p9WbSAgY5TZTI2Ep79vxDbZQxHs=",
+    "timestampUtcMs": "2026-08-20T08:45:07.502Z",
+    "action": {
+      "type": "SUBMIT_FOR_REVIEW",
+      "input": {
+        "id": "ef38430a-7f18-4880-a268-4ab132e2ddb3",
+        "actor": "knowledge-agent",
+        "comment": "Extracted from the primary-source tool screen; each claim quotable from a cited source.",
+        "timestamp": "2026-08-20T08:45:07.502662Z"
+      },
+      "timestampUtcMs": "2026-08-20T08:45:07.502681Z"
+    }
+  },
+  {
+    "index": 11,
+    "hash": "qNkjtq2E4xb7PXY7vGjNZ2+HyOs=",
+    "timestampUtcMs": "2026-08-20T08:45:07.646Z",
+    "action": {
+      "type": "APPROVE_NOTE",
+      "input": {
+        "id": "a767ddb0-2703-4e13-827a-d18c0edfc1d1",
+        "actor": "liberuum",
+        "comment": "Approved: tool-screen extraction.",
+        "timestamp": "2026-08-20T08:45:07.646425Z"
+      },
+      "timestampUtcMs": "2026-08-20T08:45:07.646446Z"
+    }
+  }
+]

@@ -1,0 +1,107 @@
+{
+  "links": [
+    {
+      "id": "lnk-7b0dbf17-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "7b0dbf17-479c-469c-8a93-1200be434870",
+      "targetTitle": "process-level-evaluation"
+    },
+    {
+      "id": "lnk-e2186433-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "e2186433-6a5b-4e9a-90e8-37c698b35e89",
+      "targetTitle": "moc-attributable-skills-provenance"
+    },
+    {
+      "id": "lnk-aea7368d-bui",
+      "linkType": "BUILDS_ON",
+      "targetDocumentId": "aea7368d-394c-44c6-b605-24265f3b871b",
+      "targetTitle": "skills-as-attributable-transformations"
+    },
+    {
+      "id": "lnk-2b423487-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "2b423487-123f-414c-bd20-edce7de891f4",
+      "targetTitle": "skills-as-attributable-transformations"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Signed operation logs enable post-hoc safety auditing beyond sandboxes",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "a18662fa-aea5-49a2-bf04-83c76029fe8a",
+      "name": "safety",
+      "topicDocumentId": null
+    },
+    {
+      "id": "00ed001a-b8b6-4acf-9c08-8b811191a690",
+      "name": "provenance",
+      "topicDocumentId": null
+    },
+    {
+      "id": "59fb3362-597d-4c76-8b56-0036235070d4",
+      "name": "agent-skills",
+      "topicDocumentId": null
+    },
+    {
+      "id": "1fbf1217-56f9-413b-bbe9-483dd5241ae8",
+      "name": "audit",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "## Claim\n\nSandboxes, permission prompts, and filters are preventative. They cannot answer post-hoc questions such as which skill exfiltrated data or whether provenance matches access policy.\n\nA signed operation log carrying actor, skill, inputs read, and state written makes those questions decidable. Compromised or divergent skill versions leave detectable traces against expected reducer output.\n\n## Co-signing\n\nHigh-stakes workflows can co-sign actions with input state hash or previous operation ID so swapped context between dispatch and execution fails to apply.\n\n## Scope of claim\n\nProvenance does not prevent attacks; it makes them attributable so defense is not guesswork.\n\n## Methodology grounding\nThe claims below live in the plugin's `data/methodology/` corpus; the relationship is stated per claim.\n\n- **[[agent session boundaries create natural automation checkpoints that human-operated systems lack]]** \u2014 BUILDS_ON. That claim locates enforcement at lifecycle boundaries, where a check fires because the event happened rather than because anyone remembered. A signed operation log extends the same logic past the session: the record is auditable after the fact, so a boundary that was never instrumented can still be examined.\n- **[[hook enforcement guarantees quality while instruction enforcement merely suggests it]]** \u2014 RELATES_TO. A sandbox instructs; a signature guarantees. The methodology's distinction between enforcement and suggestion is the same one that separates a permission prompt from an immutable signed record.\n",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "PATTERN",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "knowledge-agent",
+    "createdAt": "2026-08-16T20:32:40.813Z",
+    "sessionId": null,
+    "updatedAt": "2026-09-03T10:03:25.706Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Preventative controls intervene at action time; signed logs make exfiltration, credential access, and supply-chain skill divergence attributable after the fact.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "4a3c9d85-6312-414a-a04b-9172b3dc4449",
+      "actor": "knowledge-agent",
+      "comment": "pipeline extract",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-16T20:32:41.795Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "7a9b6260-a220-4f3f-aced-c9a4c0753540",
+      "actor": "pipeline-reviewer",
+      "comment": "pipeline verify",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-16T20:32:41.945Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

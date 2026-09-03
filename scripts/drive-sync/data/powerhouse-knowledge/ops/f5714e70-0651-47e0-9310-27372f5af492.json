@@ -1,0 +1,117 @@
+[
+  {
+    "index": 0,
+    "hash": "",
+    "timestampUtcMs": "2026-09-02T21:39:53.158Z",
+    "action": {
+      "type": "CREATE_DOCUMENT",
+      "input": {
+        "meta": {},
+        "name": "Academy \u203a Reference \u203a Authorization \u203a renown-sdk \u203a Authentication Guide",
+        "slug": "",
+        "model": "bai/source",
+        "branch": "main",
+        "signing": {
+          "nonce": "",
+          "publicKey": {},
+          "signature": "f5714e70-0651-47e0-9310-27372f5af492",
+          "documentType": "bai/source",
+          "createdAtUtcIso": "2026-09-02T21:39:53.158Z"
+        },
+        "version": 0,
+        "documentId": "f5714e70-0651-47e0-9310-27372f5af492",
+        "protocolVersions": {
+          "base-reducer": 2
+        }
+      },
+      "timestampUtcMs": "2026-09-02T21:39:53.158Z"
+    }
+  },
+  {
+    "index": 0,
+    "hash": "WeB1EmwfR9sggewEPF0AM9ywgfQ=",
+    "timestampUtcMs": "2026-09-02T21:39:53.015Z",
+    "action": {
+      "type": "INGEST_SOURCE",
+      "input": {
+        "url": "https://github.com/powerhouse-inc/powerhouse/blob/v6.2.2-dev.74/apps/academy/docs/academy/04-Reference/06-Authorization/renown-sdk/01-Authentication.md",
+        "tool": "sync-repo-docs",
+        "title": "Academy \u203a Reference \u203a Authorization \u203a renown-sdk \u203a Authentication Guide",
+        "author": "Powerhouse Inc.",
+        "method": "sha256:aa4013e6d21012c9a174ea34c481c07eb039d7efab24aa961ff8e46b510062af git:v6.2.2-dev.74",
+        "content": "# Authentication Guide\n\nComprehensive guide to implementing authentication with the Renown SDK.\n\n## Table of Contents\n\n- [Overview](#overview)\n- [Authentication Flow](#authentication-flow)\n- [Setup](#setup)\n- [Implementation](#implementation)\n- [Advanced Patterns](#advanced-patterns)\n- [Security Considerations](#security-considerations)\n\n## Overview\n\nThe Renown SDK provides a complete authentication system that:\n\n1. **Auto-initializes** the Renown SDK and ConnectCrypto (zero configuration!)\n2. **Manages** user sessions across page reloads\n3. **Handles** authentication redirects from Renown portal\n4. **Fetches** user profile data automatically\n5. **Provides** React hooks, components, and context for easy integration\n\n## Authentication Flow\n\n### 1. Initial Load\n\n```\nUser visits app\n    \u2193\nRenownUserProvider initializes\n    \u2193\nCheck sessionStorage for existing session\n    \u2193\n\u251c\u2500 Session found \u2192 Restore user \u2192 Authorized\n\u2514\u2500 No session \u2192 Check URL params \u2192 Initialize SDK \u2192 Not Authorized\n```\n\n### 2. Login Flow\n\n```\nUser clicks \"Login\"\n    \u2193\nopenRenown() called\n    \u2193\nRedirect to Renown Portal\n    \u2193\nUser authenticates\n    \u2193\nRedirect back to app with DID\n    \u2193\nhandleRenownReturn() processes\n    \u2193\nlogin() called\n    \u2193\nFetch user profile\n    \u2193\nStore in sessionStorage\n    \u2193\nUpdate auth state \u2192 Authorized\n```\n\n#### In-page sign-in (wallet adapters)\n\nThe redirect above is the default. A host app can instead sign in **in-page** by\nconfiguring a Switchboard URL and one or more wallet adapters (RainbowKit for\nexternal wallets, Privy for social/email). The user picks a method inside the\napp, signs the credential with the resulting wallet session, and `renown.signIn(session)`\nwrites and logs it in \u2014 no redirect. It falls back to the redirect flow when no\nswitchboard/adapter is available. See\n[Renown authentication flow \u2192 In-page sign-in in Connect](../../../03-Build/03-BuildingUserExperiences/07-Authorization/01-RenownAuthenticationFlow.md)\nand the `@renown/sdk/wallet` section of the SDK README for configuration.\n\n### 3. Session Restoration\n\n```\nUser refreshes page\n    \u2193\nRenownUserProvider checks sessionStorage\n    \u2193\nValid session found\n    \u2193\nFetch latest profile data\n    \u2193\nRestore auth state \u2192 Authorized\n```\n\n## Setup\n\n### Step 1: Wrap Your App with RenownUserProvider\n\nThe RenownUserProvider automatically initializes the Renown SDK - no manual setup required!\n\n```typescript\n// app/layout.tsx (Next.js App Router)\nimport { RenownUserProvider } from '@renown/sdk'\n\nexport default function RootLayout({\n  children,\n}: {\n  children: React.ReactNode\n}) {\n  return (\n    <html lang=\"en\">\n      <body>\n        <RenownUserProvider>\n          {children}\n        </RenownUserProvider>\n      </body>\n    </html>\n  )\n}\n```\n\nThat's it! The SDK is now initialized and ready to use.\n\n### Optional: Customize Configuration\n\nYou can customize the Renown URL, network, and chain:\n\n```typescript\n<RenownUserProvider\n  renownUrl={process.env.NEXT_PUBLIC_RENOWN_URL || 'https://www.renown.id'}\n  networkId=\"eip155\"\n  chainId=\"1\"\n>\n  {children}\n</RenownUserProvider>\n```\n\n### Optional: Add Loading/Error Screens\n\nProvide custom UI for initialization states:\n\n```typescript\n<RenownUserProvider\n  loadingComponent={\n    <div className=\"loading-screen\">\n      <Spinner />\n      <p>Initializing authentication...</p>\n    </div>\n  }\n  errorComponent={(error, retry) => (\n    <div className=\"error-screen\">\n      <h2>Authentication Failed</h2>\n      <p>{error.message}</p>\n      <button onClick={retry}>Try Again</button>\n    </div>\n  )}\n>\n  {children}\n</RenownUserProvider>\n```\n\n## Implementation\n\n### Using the RenownAuthButton Component\n\nThe simplest way to add authentication is to use the built-in `RenownAuthButton` component:\n\n```typescript\n'use client'\n\nimport { RenownAuthButton } from '@renown/sdk'\n\nexport function Header() {\n  return (\n    <header>\n      <h1>My App</h1>\n      <RenownAuthButton showLogoutButton showUsername />\n    </header>\n  )\n}\n```\n\n### Custom Login Component with useUser Hook\n\nFor full control, build your own component using the `useUser` hook:\n\n```typescript\n'use client'\n\nimport { useUser } from '@renown/sdk'\n\nexport function CustomRenownAuthButton() {\n  const { user, loginStatus, isLoading, openRenown, logout } = useUser()\n\n  if (isLoading) {\n    return (\n      <button disabled>\n        <Spinner />\n        Loading...\n      </button>\n    )\n  }\n\n  if (loginStatus === 'authorized' && user) {\n    return (\n      <div className=\"flex items-center gap-2\">\n        {user.avatar && (\n          <img\n            src={user.avatar}\n            alt={user.name || 'User'}\n            className=\"w-8 h-8 rounded-full\"\n          />\n        )}\n        <span>{user.name || user.did.slice(0, 15)}...</span>\n        <button onClick={logout}>Logout</button>\n      </div>\n    )\n  }\n\n  return (\n    <button onClick={openRenown}>\n      Login with Renown\n    </button>\n  )\n}\n```\n\n### Protected Route Component\n\n```typescript\n'use client'\n\nimport { useUser } from '@renown/sdk'\nimport { useRouter } from 'next/navigation'\nimport { useEffect } from 'react'\n\nexport function ProtectedRoute({ children }: { children: React.ReactNode }) {\n  const { user, loginStatus, isLoading, openRenown } = useUser()\n  const router = useRouter()\n\n  useEffect(() => {\n    if (!isLoading && loginStatus !== 'authorized') {\n      // Redirect to login or show login prompt\n      router.push('/login')\n    }\n  }, [isLoading, loginStatus, router])\n\n  if (isLoading) {\n    return <div>Loading...</div>\n  }\n\n  if (loginStatus !== 'authorized' || !user) {\n    return (\n      <div className=\"flex flex-col items-center justify-center min-h-screen\">\n        <h1>Authentication Required</h1>\n        <p>Please log in to access this page</p>\n        <button onClick={openRenown}>Login</button>\n      </div>\n    )\n  }\n\n  return <>{children}</>\n}\n```\n\n### User Profile Display\n\n```typescript\n'use client'\n\nimport { useUser } from '@renown/sdk'\n\nexport function UserProfile() {\n  const { user, logout } = useUser()\n\n  if (!user) return null\n\n  return (\n    <div className=\"profile-card\">\n      <header>\n        {user.avatar && (\n          <img\n            src={user.avatar}\n            alt={user.name || 'User avatar'}\n            className=\"avatar\"\n          />\n        )}\n        <h2>{user.name || 'Anonymous User'}</h2>\n      </header>\n\n      <dl className=\"profile-details\">\n        <dt>DID</dt>\n        <dd>{user.did}</dd>\n\n        {user.ethAddress && (\n          <>\n            <dt>Ethereum Address</dt>\n            <dd>{user.ethAddress}</dd>\n          </>\n        )}\n\n        {user.email && (\n          <>\n            <dt>Email</dt>\n            <dd>{user.email}</dd>\n          </>\n        )}\n      </dl>\n\n      <button onClick={logout}>Logout</button>\n    </div>\n  )\n}\n```\n\n## Advanced Patterns\n\n### Conditional Navigation Based on Auth\n\n```typescript\n'use client'\n\nimport { useUser } from '@renown/sdk'\nimport Link from 'next/link'\n\nexport function Navigation() {\n  const { user, loginStatus } = useUser()\n\n  const isAuthorized = loginStatus === 'authorized'\n\n  return (\n    <nav>\n      <Link href=\"/\">Home</Link>\n\n      {isAuthorized ? (\n        <>\n          <Link href=\"/dashboard\">Dashboard</Link>\n          <Link href=\"/profile\">Profile</Link>\n          <Link href=\"/settings\">Settings</Link>\n        </>\n      ) : (\n        <>\n          <Link href=\"/about\">About</Link>\n          <Link href=\"/pricing\">Pricing</Link>\n        </>\n      )}\n    </nav>\n  )\n}\n```\n\n### Auth State Listener\n\n```typescript\n\"use client\";\n\nimport { useUser } from \"@renown/sdk\";\nimport { useEffect } from \"react\";\nimport { useRouter } from \"next/navigation\";\nimport { toast } from \"react-hot-toast\";\n\nexport function AuthStateListener() {\n  const { user, loginStatus } = useUser();\n  const router = useRouter();\n\n  useEffect(() => {\n    if (loginStatus === \"authorized\" && user) {\n      // User just logged in\n      toast.success(`Welcome back, ${user.name || \"User\"}!`);\n\n      // Track analytics\n      analytics.identify(user.did, {\n        name: user.name,\n        ethAddress: user.ethAddress,\n      });\n\n      // Redirect to dashboard\n      router.push(\"/dashboard\");\n    }\n  }, [loginStatus, user, router]);\n\n  useEffect(() => {\n    if (loginStatus === \"not-authorized\") {\n      // User logged out\n      toast.info(\"You have been logged out\");\n\n      // Clear analytics\n      analytics.reset();\n\n      // Redirect to home\n      router.push(\"/\");\n    }\n  }, [loginStatus, router]);\n\n  return null; // This is a listener component\n}\n```\n\n### Custom Auth Hook with Additional Logic\n\n```typescript\n\"use client\";\n\nimport { useUser as useRenownAuth } from \"@renown/sdk\";\nimport { useEffect, useState } from \"react\";\n\ninterface ExtendedAuthState {\n  user: User | null;\n  isAuthenticated: boolean;\n  isLoading: boolean;\n  hasCompletedProfile: boolean;\n  login: () => void;\n  logout: () => Promise<void>;\n}\n\nexport function useUser(): ExtendedAuthState {\n  const auth = useRenownAuth();\n  const [hasCompletedProfile, setHasCompletedProfile] = useState(false);\n\n  useEffect(() => {\n    if (auth.user) {\n      // Check if user has completed their profile\n      const isComplete = !!(\n        auth.user.name &&\n        auth.user.avatar &&\n        auth.user.email\n      );\n      setHasCompletedProfile(isComplete);\n    } else {\n      setHasCompletedProfile(false);\n    }\n  }, [auth.user]);\n\n  return {\n    user: auth.user,\n    isAuthenticated: auth.loginStatus === \"authorized\",\n    isLoading: auth.isLoading,\n    hasCompletedProfile,\n    login: auth.openRenown,\n    logout: auth.logout,\n  };\n}\n```\n\n### Role-Based Access Control\n\n```typescript\n'use client'\n\nimport { useUser } from '@renown/sdk'\nimport { ReactNode } from 'react'\n\ninterface RBACProps {\n  children: ReactNode\n  allowedRoles?: string[]\n  fallback?: ReactNode\n}\n\nexport function RoleBasedAccess({\n  children,\n  allowedRoles = [],\n  fallback = <div>Access Denied</div>\n}: RBACProps) {\n  const { user, loginStatus } = useUser()\n\n  if (loginStatus !== 'authorized' || !user) {\n    return fallback\n  }\n\n  // Check user roles (you'd fetch this from your backend)\n  const userRoles = getUserRoles(user.did) // Implement this\n\n  const hasAccess = allowedRoles.length === 0 ||\n    allowedRoles.some(role => userRoles.includes(role))\n\n  return hasAccess ? <>{children}</> : fallback\n}\n\n// Usage\nfunction AdminPanel() {\n  return (\n    <RoleBasedAccess allowedRoles={['admin', 'moderator']}>\n      <h1>Admin Panel</h1>\n      {/* Admin content */}\n    </RoleBasedAccess>\n  )\n}\n```\n\n## Security Considerations\n\n### 1. Token Storage\n\nThe SDK stores session data in `sessionStorage` (not `localStorage`) for security:\n\n- \u2705 Session data clears when tab closes\n- \u2705 Not accessible across tabs\n- \u2705 Not persisted across browser sessions\n- \u2705 Protected from XSS via httpOnly (for API tokens)\n\n### 2. DID Validation\n\nAlways validate DIDs before processing:\n\n```typescript\nfunction isValidDID(did: string): boolean {\n  // Must start with did:pkh:\n  if (!did.startsWith(\"did:pkh:\")) return false;\n\n  // Must have correct number of parts\n  const parts = did.split(\":\");\n  if (parts.length !== 5) return false;\n\n  // Validate ethereum address format\n  const address = parts[4];\n  if (!address.match(/^0x[a-fA-F0-9]{40}$/)) return false;\n\n  return true;\n}\n```\n\n### 3. Secure Communication\n\nAlways use HTTPS for Renown URLs:\n\n```typescript\nconst RENOWN_URL = process.env.NEXT_PUBLIC_RENOWN_URL;\n\nif (RENOWN_URL && !RENOWN_URL.startsWith(\"https://\")) {\n  console.warn(\"WARNING: Renown URL should use HTTPS\");\n}\n```\n\n### 4. Session Timeout\n\nImplement session timeout for security:\n\n```typescript\nconst SESSION_TIMEOUT = 24 * 60 * 60 * 1000; // 24 hours\n\nfunction isSessionValid(timestamp: number): boolean {\n  const now = Date.now();\n  const age = now - timestamp;\n  return age < SESSION_TIMEOUT;\n}\n```\n\n### 5. Server-Side Verification\n\n**Never trust client-side auth alone**. To verify a raw bearer token (e.g. from an `Authorization` header), use `verifyAuthBearerToken` from `@renown/sdk/node`:\n\n```typescript\nimport { verifyAuthBearerToken } from \"@renown/sdk/node\";\n\nexport async function GET(request: Request) {\n  const token = request.headers.get(\"authorization\")?.replace(/^Bearer /, \"\");\n  if (!token) return new Response(\"Unauthorized\", { status: 401 });\n\n  const verified = await verifyAuthBearerToken(token);\n  if (!verified) return new Response(\"Invalid credentials\", { status: 403 });\n\n  const { address } = verified.verifiableCredential.credentialSubject;\n  return Response.json({ address });\n}\n```\n\n#### SSR session cookie\n\nTo render authenticated pages on the server (Next.js and similar):\n\n1. On login the client mints a bearer token (`renown.getBearerToken()`) and stores it \u2014 with a `RenownSessionProfile` display hint (`name`/`avatar` plus `documentId`/`username`/`userImage`) \u2014 in an HttpOnly cookie (name exported as `RENOWN_SESSION_COOKIE`, value built with `serializeRenownSessionCookie`). `RenownProvider`'s session-cookie sync does this automatically when given a `session`. Type your route handler with the exported `RenownSessionCookie` instead of redeclaring the payload shape.\n2. A Data Access Layer reads the cookie and calls `verifyRenownSession`, memoized per request:\n\n```typescript\nimport { RENOWN_SESSION_COOKIE, verifyRenownSession } from \"@renown/sdk/node\";\nimport { cookies } from \"next/headers\";\nimport { cache } from \"react\";\n\nexport const verifySession = cache(async () => {\n  const cookie = (await cookies()).get(RENOWN_SESSION_COOKIE)?.value;\n  if (!cookie) return null;\n  return (await verifyRenownSession(cookie, { switchboardUrl: SWITCHBOARD_URL })) ?? null;\n});\n```\n\n`verifyRenownSession` takes the cookie value, verifies the JWT (signature + expiry), and merges the display hint into `user` (unverified \u2014 display only), rebuilding `user.ens` and, when `documentId` is present, `user.profile`. Pass `verifyCredential: true` to also re-check the credential against the switchboard so a **revoked/expired** credential is rejected; it defaults to `false` (token-only, no network). `readSessionClaims(cookieValue)` gives a cheap, signature-free decode for optimistic checks only (e.g. an edge redirect) \u2014 never trust it for access control.\n\n3. Pass the result to `RenownProvider session={await verifySession()}` so the server render is authenticated (no flash), and consumers read it via `useRenownAuth()`.\n\nA `null` session is as useful as a populated one: it tells the first render the visitor is definitively signed out, so `useRenownAuthAsync()` reports `\"unauthenticated\"` immediately instead of spinning. The cookie seeds the server render and hydration; `localStorage` takes over after mount, since that holds the credential the SDK restores.\n\n#### Revalidation and profile refresh on the client\n\nOn mount the client re-checks the restored credential against the switchboard and logs out if it was revoked/expired (`revalidate` prop on `RenownProvider`, default `\"always\"`). In the browser this is **non-blocking and fail-open** (a transient outage keeps the session); Node scripts block on it. `renown.revalidate()` runs the same check on demand.\n\nSeparately, `renown.refreshProfile()` re-reads `username`/`userImage` and updates the store only if they changed. It runs on every browser start **regardless of `revalidate`**, because it can never log anyone out \u2014 so apps that set `revalidate: \"never\"` still pick up a renamed user or a new avatar.\n\n## Best Practices\n\n### 1. Handle Loading States\n\nAlways handle loading states to provide good UX:\n\n```typescript\nfunction MyComponent() {\n  const { user, isLoading, loginStatus } = useUser()\n\n  if (isLoading) {\n    return <Skeleton /> // Show skeleton/spinner\n  }\n\n  // Now safe to use user/loginStatus\n}\n```\n\n### 2. Graceful Degradation\n\nProvide fallbacks for unauthenticated users:\n\n```typescript\nfunction FeatureSection() {\n  const { user } = useUser()\n\n  return (\n    <section>\n      {user ? (\n        <PersonalizedContent user={user} />\n      ) : (\n        <GenericContent />\n      )}\n    </section>\n  )\n}\n```\n\n### 3. Cleanup on Unmount\n\nClean up subscriptions and listeners:\n\n```typescript\nuseEffect(() => {\n  const handleAuthChange = () => {\n    // Handle auth changes\n  };\n\n  // Subscribe to auth events\n  const unsubscribe = subscribeToAuthEvents(handleAuthChange);\n\n  return () => {\n    unsubscribe(); // Cleanup\n  };\n}, []);\n```\n\n### 4. Error Boundaries\n\nWrap auth components in error boundaries:\n\n```typescript\n<ErrorBoundary fallback={<AuthError />}>\n  <RenownUserProvider>\n    <App />\n  </RenownUserProvider>\n</ErrorBoundary>\n```\n\n## Troubleshooting\n\n### Issue: Auth state not updating\n\n**Cause:** Component not re-rendering when auth changes\n\n**Solution:** Ensure you're using `useUser()` hook, not accessing `window.renown` directly\n\n```typescript\n// \u274c Wrong\nconst user = window.renown?.user;\n\n// \u2705 Correct\nconst { user } = useUser();\n```\n\n### Issue: Session not persisting\n\n**Cause:** SessionStorage might be disabled or cleared\n\n**Solution:** Check browser settings and handle gracefully\n\n```typescript\ntry {\n  SessionStorageManager.setUserData(data);\n} catch (error) {\n  console.warn(\"SessionStorage not available:\", error);\n  // Fallback to in-memory storage\n}\n```\n\n### Issue: Multiple login popups\n\n**Cause:** `openRenown()` called multiple times\n\n**Solution:** Debounce the login button\n\n```typescript\nconst handleLogin = useCallback(\n  debounce(() => {\n    openRenown();\n  }, 1000),\n  [openRenown],\n);\n```\n\n## Next Steps\n\n- Read the [API Reference](./02-APIReference.md) for detailed documentation\n",
+        "createdAt": "2026-09-02T21:39:53.015Z",
+        "createdBy": "repo-docs-sync",
+        "sourceType": "DOCUMENTATION",
+        "description": "Powerhouse v6.2.2-dev.74 (unchanged since v6.2.2-dev.47) \u2014 Comprehensive guide to implementing authentication with the Renown SDK.",
+        "publishedAt": "2026-07-28T14:42:12.000Z"
+      },
+      "timestampUtcMs": "2026-09-02T21:39:53.015Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "",
+    "timestampUtcMs": "2026-09-02T21:39:53.158Z",
+    "action": {
+      "type": "UPGRADE_DOCUMENT",
+      "input": {
+        "model": "bai/source",
+        "toVersion": 1,
+        "documentId": "f5714e70-0651-47e0-9310-27372f5af492",
+        "fromVersion": 0,
+        "initialState": {
+          "auth": {
+            "grants": [],
+            "version": 0
+          },
+          "local": {},
+          "global": {
+            "title": null,
+            "status": "INBOX",
+            "content": null,
+            "createdAt": null,
+            "createdBy": null,
+            "provenance": null,
+            "sourceType": null,
+            "description": null,
+            "extractedClaims": [],
+            "extractionStats": null
+          },
+          "document": {
+            "hash": {
+              "encoding": "base64",
+              "algorithm": "sha1"
+            },
+            "version": 1
+          }
+        }
+      },
+      "timestampUtcMs": "2026-09-02T21:39:53.158Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "pEUEGcB28YW4lhZ7aavAijGcH6s=",
+    "timestampUtcMs": "2026-09-02T21:40:11.866Z",
+    "action": {
+      "type": "ADD_EXTRACTED_CLAIM",
+      "input": {
+        "claimRef": "ac5fe2b4-d3c6-40b2-98b4-bf89b25ad4ba"
+      },
+      "timestampUtcMs": "2026-09-02T21:40:11.866Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "ZvgXbbpF1g74d2ho2imTwdVUCww=",
+    "timestampUtcMs": "2026-09-02T21:40:17.852Z",
+    "action": {
+      "type": "SET_SOURCE_STATUS",
+      "input": {
+        "status": "EXTRACTED"
+      },
+      "timestampUtcMs": "2026-09-02T21:40:17.852Z"
+    }
+  }
+]

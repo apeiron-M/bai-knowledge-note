@@ -1,0 +1,378 @@
+[
+  {
+    "index": 0,
+    "hash": "",
+    "timestampUtcMs": "2026-08-14T12:07:15.921Z",
+    "action": {
+      "type": "CREATE_DOCUMENT",
+      "input": {
+        "meta": {},
+        "name": "mcp-workflows",
+        "slug": "",
+        "model": "bai/knowledge-note",
+        "branch": "main",
+        "signing": {
+          "nonce": "",
+          "publicKey": {},
+          "signature": "b7cb8afe-41fa-4676-be94-1e73435e1a04",
+          "documentType": "bai/knowledge-note",
+          "createdAtUtcIso": "2026-08-14T12:07:15.921Z"
+        },
+        "version": 0,
+        "documentId": "b7cb8afe-41fa-4676-be94-1e73435e1a04",
+        "protocolVersions": {
+          "base-reducer": 2
+        }
+      },
+      "timestampUtcMs": "2026-08-14T12:07:15.921Z"
+    }
+  },
+  {
+    "index": 0,
+    "hash": "eZeMlJK58KMxZkwtFWrIwMMDyno=",
+    "timestampUtcMs": "2026-08-14T12:35:24.000Z",
+    "action": {
+      "type": "SET_TITLE",
+      "input": {
+        "title": "mcp workflows",
+        "updatedAt": "2026-08-14T12:35:24.000Z"
+      },
+      "timestampUtcMs": "2026-08-14T12:35:24.000Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "",
+    "timestampUtcMs": "2026-08-14T12:07:15.921Z",
+    "action": {
+      "type": "UPGRADE_DOCUMENT",
+      "input": {
+        "model": "bai/knowledge-note",
+        "toVersion": 1,
+        "documentId": "b7cb8afe-41fa-4676-be94-1e73435e1a04",
+        "fromVersion": 0,
+        "initialState": {
+          "auth": {
+            "grants": [],
+            "version": 0
+          },
+          "local": {
+            "lastViewedAt": null,
+            "personalTags": []
+          },
+          "global": {
+            "links": [],
+            "model": null,
+            "scope": null,
+            "title": null,
+            "editor": null,
+            "inputs": [],
+            "models": [],
+            "status": "DRAFT",
+            "topics": [],
+            "content": null,
+            "context": null,
+            "modelId": null,
+            "modules": [],
+            "outputs": [],
+            "version": null,
+            "computes": null,
+            "filePath": null,
+            "noteType": null,
+            "severity": null,
+            "hooksUsed": [],
+            "rootCause": null,
+            "confidence": null,
+            "consumedBy": [],
+            "provenance": null,
+            "sourceType": null,
+            "targetType": null,
+            "cardinality": null,
+            "description": null,
+            "alternatives": [],
+            "consequences": [],
+            "errorMessage": null,
+            "relationType": null,
+            "correctPattern": null,
+            "decisionStatus": null,
+            "dispatchTargets": [],
+            "lifecycleEvents": []
+          },
+          "document": {
+            "hash": {
+              "encoding": "base64",
+              "algorithm": "sha1"
+            },
+            "version": 1
+          }
+        }
+      },
+      "timestampUtcMs": "2026-08-14T12:07:15.921Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "DJGlkaPvyXz2va6p13muyvNMNzY=",
+    "timestampUtcMs": "2026-08-14T12:35:24.000Z",
+    "action": {
+      "type": "SET_DESCRIPTION",
+      "input": {
+        "updatedAt": "2026-08-14T12:35:24.000Z",
+        "description": "reactor-mcp tool sequencing, batch operations, and the two-step document modification rule"
+      },
+      "timestampUtcMs": "2026-08-14T12:35:24.000Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "",
+    "timestampUtcMs": "2026-08-14T12:37:46.813Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "b7cb8afe-41fa-4676-be94-1e73435e1a04",
+        "targetId": "1c949f59-bfde-4bf8-ac7e-d378d6bc0b0d",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-08-14T12:37:46.813Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "1M0FBjTDa+xxMA4RU+Hyi54fGr0=",
+    "timestampUtcMs": "2026-08-14T12:35:24.000Z",
+    "action": {
+      "type": "SET_NOTE_TYPE",
+      "input": {
+        "noteType": "REFERENCE",
+        "updatedAt": "2026-08-14T12:35:24.000Z"
+      },
+      "timestampUtcMs": "2026-08-14T12:35:24.000Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "",
+    "timestampUtcMs": "2026-08-14T12:37:46.916Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "b7cb8afe-41fa-4676-be94-1e73435e1a04",
+        "targetId": "68fe4e47-7ca5-45f2-8d9e-5f862682eadc",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-08-14T12:37:46.916Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "7uheo0Wdjwe7OJdlDZR8TO7nKho=",
+    "timestampUtcMs": "2026-08-14T12:35:24.000Z",
+    "action": {
+      "type": "SET_CONTENT",
+      "input": {
+        "content": "# mcp workflows\n\nWorkflows and sequencing rules for interacting with the reactor-mcp toolset.\n\n## Schema-First Rule\n- [[always check document model schema before calling addActions]] \u2014 prevents failed calls from missing required parameters\n\n## Batch Operations\n- [[batch multiple actions in a single addActions call to minimize round trips]] \u2014 combine related operations\n\n## Two-Step Modification\n- [[document model changes require both MCP update and src file update]] \u2014 never skip either step\n\n## Document Creation\n- [[document IDs are auto-generated by createDocument never set manually]] \u2014 let the system generate IDs\n- [[document models must be added to the vetra drive by default]] \u2014 source documents go to vetra drive\n- [[present document model proposals to user before implementing]] \u2014 planning phase is mandatory\n\n## App Creation\n- [[SET_APP_STATUS with CONFIRMED triggers code generation for apps]] \u2014 CONFIRMED status kicks off generation\n\n## Drive Operations\n- [[delete nodes with DELETE_NODE not DELETE_FILE]] \u2014 correct operation name for removing nodes\n- [[vetra drive holds source documents while preview drive holds instances]] \u2014 two drives, different purposes\n\n## Reducer Code via MCP\n- [[reducer code goes into SET_OPERATION_REDUCER without function headers]] \u2014 body only, no wrapper\n- [[external imports go in src reducer files not in SET_OPERATION_REDUCER]] \u2014 imports in src/ only\n\n## Prerequisites\n- [[reactor-mcp must be running before document operations]] \u2014 user must start with `ph vetra`\n\n## Reference\n- [[document models have 37 available operations across 7 categories]] \u2014 full operation taxonomy\n\n---\n\nTopics:\n- [[index]]",
+        "updatedAt": "2026-08-14T12:35:24.000Z"
+      },
+      "timestampUtcMs": "2026-08-14T12:35:24.000Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "",
+    "timestampUtcMs": "2026-08-14T12:37:47.010Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "b7cb8afe-41fa-4676-be94-1e73435e1a04",
+        "targetId": "4e6413ee-22bf-4d64-964f-ca8b28917cec",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-08-14T12:37:47.010Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "kpnhyhISu81wu06Ak5JIVqKipTo=",
+    "timestampUtcMs": "2026-08-14T12:35:24.000Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "version",
+        "value": "v6.2.2-dev.44",
+        "updatedAt": "2026-08-14T12:35:24.000Z"
+      },
+      "timestampUtcMs": "2026-08-14T12:35:24.000Z"
+    }
+  },
+  {
+    "index": 5,
+    "hash": "",
+    "timestampUtcMs": "2026-08-14T12:37:47.102Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "b7cb8afe-41fa-4676-be94-1e73435e1a04",
+        "targetId": "aa8af970-5fbc-42ad-9bcc-6692a50a3793",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-08-14T12:37:47.102Z"
+    }
+  },
+  {
+    "index": 5,
+    "hash": "1kySNB+KTsdUpmKIK/3bsq+oDCU=",
+    "timestampUtcMs": "2026-08-14T12:35:24.000Z",
+    "action": {
+      "type": "SET_PROVENANCE",
+      "input": {
+        "author": "knowledge-agent",
+        "createdAt": "2026-04-03T14:04:58.000Z",
+        "sourceOrigin": "IMPORT"
+      },
+      "timestampUtcMs": "2026-08-14T12:35:24.000Z"
+    }
+  },
+  {
+    "index": 6,
+    "hash": "",
+    "timestampUtcMs": "2026-08-14T12:37:47.195Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "b7cb8afe-41fa-4676-be94-1e73435e1a04",
+        "targetId": "18b3eacd-e10b-4e71-b886-bdfcaf10bdf8",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-08-14T12:37:47.195Z"
+    }
+  },
+  {
+    "index": 6,
+    "hash": "baeGrR8RoU/zcsNr2k8p4QHUxyQ=",
+    "timestampUtcMs": "2026-08-14T12:35:24.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "91635f19-38ee-44b5-b3e9-85af4382a0cf",
+        "name": "MCP workflows",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-08-14T12:35:24.000Z"
+    }
+  },
+  {
+    "index": 7,
+    "hash": "",
+    "timestampUtcMs": "2026-08-14T12:37:47.291Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "b7cb8afe-41fa-4676-be94-1e73435e1a04",
+        "targetId": "6316525e-aced-4628-bf15-cb6587d7a23e",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-08-14T12:37:47.291Z"
+    }
+  },
+  {
+    "index": 7,
+    "hash": "txVIJ3nAqd36R0yrjHZ/y2dqarY=",
+    "timestampUtcMs": "2026-08-14T12:35:24.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "08ee8a4b-f954-41b1-a894-abb85add6c9c",
+        "name": "reactor-mcp",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-08-14T12:35:24.000Z"
+    }
+  },
+  {
+    "index": 8,
+    "hash": "t59FBbgofWkJtKE+d5kZFOV4aX8=",
+    "timestampUtcMs": "2026-08-14T12:35:24.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "a750f4ec-6f8a-4d48-99d2-7f1f211ff307",
+        "name": "document operations",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-08-14T12:35:24.000Z"
+    }
+  },
+  {
+    "index": 9,
+    "hash": "JCDF/iSLjH2+CnKY5YI5mXJVqjE=",
+    "timestampUtcMs": "2026-08-14T12:35:24.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "f2acd384-9d2e-41ab-9add-cab877167a67",
+        "name": "MOC",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-08-14T12:35:24.000Z"
+    }
+  },
+  {
+    "index": 10,
+    "hash": "x7nFzToE6iDKXGvy0pmtpZWymPU=",
+    "timestampUtcMs": "2026-08-14T14:37:31.000Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "version",
+        "value": "v6.2.2-dev.47",
+        "updatedAt": "2026-08-14T12:00:00.000Z"
+      },
+      "timestampUtcMs": "2026-08-14T14:37:31.000Z"
+    }
+  },
+  {
+    "index": 11,
+    "hash": "L1pM2Am11CFn27vt9T8hxHD0Yrc=",
+    "timestampUtcMs": "2026-08-14T14:37:31.000Z",
+    "action": {
+      "type": "SUBMIT_FOR_REVIEW",
+      "input": {
+        "id": "d1eb0c94-de40-45b0-8911-512cee96ed8d",
+        "actor": "claude",
+        "comment": "Knowledge registered against powerhouse v6.2.2-dev.47",
+        "timestamp": "2026-08-14T12:00:00.000Z"
+      },
+      "timestampUtcMs": "2026-08-14T14:37:31.000Z"
+    }
+  },
+  {
+    "index": 12,
+    "hash": "usRp0tsQwm3n2S2SWGzwl9x4a+w=",
+    "timestampUtcMs": "2026-08-14T14:37:31.000Z",
+    "action": {
+      "type": "APPROVE_NOTE",
+      "input": {
+        "id": "03cba277-367d-4c1e-b610-1ad957ddcb26",
+        "actor": "liberuum",
+        "comment": "Canonical as of powerhouse v6.2.2-dev.47",
+        "timestamp": "2026-08-14T12:00:00.000Z"
+      },
+      "timestampUtcMs": "2026-08-14T14:37:31.000Z"
+    }
+  },
+  {
+    "index": 13,
+    "hash": "reokKhRUfDUC4eqyGoVuClZ9ZS0=",
+    "timestampUtcMs": "2026-09-03T09:56:53.711Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "version",
+        "value": "v6.2.2-dev.74",
+        "updatedAt": "2026-09-03T09:56:53.711Z"
+      },
+      "timestampUtcMs": "2026-09-03T09:56:53.711Z"
+    }
+  }
+]

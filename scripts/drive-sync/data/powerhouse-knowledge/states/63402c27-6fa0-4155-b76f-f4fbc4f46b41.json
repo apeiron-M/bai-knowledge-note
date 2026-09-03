@@ -1,0 +1,130 @@
+{
+  "links": [
+    {
+      "id": "lnk-ee4a5cf2-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "ee4a5cf2-de0c-4e25-9976-208b71321c1e",
+      "targetTitle": "XeniT (AmeXio Group) \u2014 Alfresco"
+    },
+    {
+      "id": "lnk-18249d4b-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "18249d4b-2208-42cd-8c26-9378827fe466",
+      "targetTitle": "Zylk \u2014 Alfresco"
+    },
+    {
+      "id": "lnk-3ad66f81-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "3ad66f81-1daa-4ce7-98a4-139a2c4bf33b",
+      "targetTitle": "Ancud IT-Beratung GmbH \u2014 Alfresco"
+    },
+    {
+      "id": "lnk-df5285a3-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "df5285a3-ab03-4356-9bd6-a96d02905ea7",
+      "targetTitle": "CONTENTREICH \u2014 Alfresco"
+    },
+    {
+      "id": "lnk-1be7fc9c-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "1be7fc9c-5464-4fbf-9906-8c74938c9c6f",
+      "targetTitle": "IT IS AG \u2014 Alfresco"
+    },
+    {
+      "id": "lnk-30f4d9d6-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "30f4d9d6-14eb-4c9b-9a06-a48d649089e2",
+      "targetTitle": "Redpill Linpro \u2014 Alfresco"
+    },
+    {
+      "id": "lnk-1dbc0954-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "1dbc0954-b629-4728-95cf-9473d0f7fb12",
+      "targetTitle": "fme AG \u2014 Alfresco"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "An Alfresco rule dispatching a typed APPROVE operation makes the approval a business event, not a file version",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "54c0a890-399b-40a3-bdbd-8ff020061d50",
+      "name": "leads",
+      "topicDocumentId": null
+    },
+    {
+      "id": "96d989dd-7a6c-4c9e-83c2-670f35de5e0e",
+      "name": "alfresco",
+      "topicDocumentId": null
+    },
+    {
+      "id": "1c0a1703-f145-4785-bef2-89da837efcdd",
+      "name": "demo-design",
+      "topicDocumentId": null
+    },
+    {
+      "id": "c28cec7c-110b-4ae3-8b2a-8419654720a0",
+      "name": "dms",
+      "topicDocumentId": null
+    },
+    {
+      "id": "e8c4b830-dbac-4d12-9060-c49c22cb44e7",
+      "name": "audit-trail",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "The Alfresco demo uses a behaviour or rule bound to a content state change, dispatching a typed APPROVE operation into Powerhouse. The design choice being demonstrated is the separation itself: the approval is modelled as a business event with its own identity, rather than as a side effect of the document version that happened to carry it.\n\nThat framing exists because of the paired fit finding for the same seven partners \u2014 Alfresco records document events (versions, uploads, moves) and not the decision behind them. Emitting APPROVE as its own typed operation makes the decision addressable, replayable and attributable independently of the file's revision history, which is the property an approval workflow is actually audited on.\n\nThe cohort is seven Alfresco partners: BE, ES, two in DE plus one German multi-site, one Nordic (NO/SE/DK) and one DE with RO/IN delivery. Two are at \"2 \u00b7 next\" and five at \"3 \u00b7 later\", with no do-not-pitch entries. As with Odoo, the integration point is specific enough to be estimated without further research.\n\n---\n\n## Leads sharing this finding (7)\n\n**2 \u00b7 next**\n- XeniT (AmeXio Group) (BE Leuven) \u2014 Ronny Timmermans, Managing Director \u00b7 info@xenit.eu \u00b7 https://xenit.eu\n- Zylk (ES Bilbao + Madrid) \u2014 not published \u00b7 sales@zylk.net \u00b7 https://zylk.net\n\n**3 \u00b7 later**\n- Ancud IT-Beratung GmbH (DE Nuremberg + Berlin) \u2014 https://ancud.de\n- CONTENTREICH (DE) \u2014 https://contentreich.de\n- IT IS AG (DE Altheim (Bavaria)) \u2014 https://itis-fresco.de\n- Redpill Linpro (NO/SE/DK) \u2014 https://redpill-linpro.com\n- fme AG (DE Braunschweig + RO/IN) \u2014 https://fme.de\n\nVerbatim research text this claim was extracted from:\n\n> Alfresco behaviour/rule dispatching a typed APPROVE operation on content state change \u2014 the approval as a business event, not a file-version event.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "INTEGRATION",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "knowledge-agent",
+    "createdAt": "2026-08-19T11:23:34.468150Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-19T11:23:38.179485Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "A behaviour or rule fires on content state change and dispatches APPROVE into Powerhouse, separating the decision from the document revision it happens to touch.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "8f6dc724-7fad-4e7e-883a-56f7306e927d",
+      "actor": "knowledge-agent",
+      "comment": "Extracted from lead research; claim checked against the source record.",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-19T11:23:38.020747Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "eda76ed1-6572-4380-a260-162b089389f4",
+      "actor": "liberuum",
+      "comment": "Approved: lead corpus extraction.",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-19T11:23:38.179485Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

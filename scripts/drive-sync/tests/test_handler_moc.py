@@ -52,10 +52,23 @@ def test_core_ideas_in_crossref_phase(tmp_path):
              ],
              "tensions": [], "openQuestions": [], "childRefs": []}
     scalars, crossrefs = build_actions(state, id_map)
-    assert all(a["type"] != "ADD_CORE_IDEA" for a in scalars)
+    assert all(a["type"] not in ("ADD_CORE_IDEA", "ADD_RELATIONSHIP") for a in scalars)
     assert len(crossrefs) == 1
-    assert crossrefs[0]["type"] == "ADD_CORE_IDEA"
-    assert crossrefs[0]["input"]["noteRef"] == "note-new"
+    assert crossrefs[0]["type"] == "ADD_RELATIONSHIP"
+    assert crossrefs[0]["input"]["relationshipType"] == "CORE_IDEA"
+    assert crossrefs[0]["input"]["targetId"] == "note-new"
+    # contextPhrase is where download.py keeps the edge's reason
+    assert crossrefs[0]["input"]["metadata"] == {"reason": "p"}
+
+
+def test_core_idea_without_context_phrase_has_no_metadata(tmp_path):
+    id_map = _idmap(tmp_path); id_map.set("n", "N")
+    state = {"title": "T", "description": "D", "orientation": "O", "tier": "TOPIC",
+             "coreIdeas": [{"id": "ci1", "noteRef": "n", "contextPhrase": "", "sortOrder": 0,
+                            "addedAt": "2026-01-01T00:00:00.000Z", "addedBy": "a"}],
+             "tensions": [], "openQuestions": [], "childRefs": []}
+    _, crossrefs = build_actions(state, id_map)
+    assert "metadata" not in crossrefs[0]["input"]
 
 
 def test_child_mocs_in_crossref_phase(tmp_path):
@@ -66,8 +79,9 @@ def test_child_mocs_in_crossref_phase(tmp_path):
              "coreIdeas": [], "tensions": [], "openQuestions": [],
              "childRefs": ["child-old", "unknown"]}
     _, crossrefs = build_actions(id_map=id_map, state=state, drop_unmapped=True)
-    children = [a for a in crossrefs if a["type"] == "ADD_CHILD_MOC"]
-    assert [a["input"]["childRef"] for a in children] == ["child-new"]
+    children = [a for a in crossrefs
+                if a["type"] == "ADD_RELATIONSHIP" and a["input"]["relationshipType"] == "CHILD_MOC"]
+    assert [a["input"]["targetId"] for a in children] == ["child-new"]
 
 
 def test_tensions_in_crossref_phase_remapped(tmp_path):

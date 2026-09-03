@@ -1,0 +1,362 @@
+[
+  {
+    "index": 0,
+    "hash": "",
+    "timestampUtcMs": "2026-08-14T12:09:02.595Z",
+    "action": {
+      "type": "CREATE_DOCUMENT",
+      "input": {
+        "meta": {},
+        "name": "operation-batch-payload-shape",
+        "slug": "",
+        "model": "bai/knowledge-note",
+        "branch": "main",
+        "signing": {
+          "nonce": "",
+          "publicKey": {},
+          "signature": "d0fb4287-d439-46f1-a60f-777a702235d9",
+          "documentType": "bai/knowledge-note",
+          "createdAtUtcIso": "2026-08-14T12:09:02.595Z"
+        },
+        "version": 0,
+        "documentId": "d0fb4287-d439-46f1-a60f-777a702235d9",
+        "protocolVersions": {
+          "base-reducer": 2
+        }
+      },
+      "timestampUtcMs": "2026-08-14T12:09:02.595Z"
+    }
+  },
+  {
+    "index": 0,
+    "hash": "62PVBH44IoBOKqzywnKUivPJVqQ=",
+    "timestampUtcMs": "2026-08-14T12:35:30.000Z",
+    "action": {
+      "type": "SET_TITLE",
+      "input": {
+        "title": "Operation batches stored at /bytes carry full OperationWithContext entries including signer signatures, preserving authorship on recovery.",
+        "updatedAt": "2026-08-14T12:35:30.000Z"
+      },
+      "timestampUtcMs": "2026-08-14T12:35:30.000Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "",
+    "timestampUtcMs": "2026-08-14T12:09:02.595Z",
+    "action": {
+      "type": "UPGRADE_DOCUMENT",
+      "input": {
+        "model": "bai/knowledge-note",
+        "toVersion": 1,
+        "documentId": "d0fb4287-d439-46f1-a60f-777a702235d9",
+        "fromVersion": 0,
+        "initialState": {
+          "auth": {
+            "grants": [],
+            "version": 0
+          },
+          "local": {
+            "lastViewedAt": null,
+            "personalTags": []
+          },
+          "global": {
+            "links": [],
+            "model": null,
+            "scope": null,
+            "title": null,
+            "editor": null,
+            "inputs": [],
+            "models": [],
+            "status": "DRAFT",
+            "topics": [],
+            "content": null,
+            "context": null,
+            "modelId": null,
+            "modules": [],
+            "outputs": [],
+            "version": null,
+            "computes": null,
+            "filePath": null,
+            "noteType": null,
+            "severity": null,
+            "hooksUsed": [],
+            "rootCause": null,
+            "confidence": null,
+            "consumedBy": [],
+            "provenance": null,
+            "sourceType": null,
+            "targetType": null,
+            "cardinality": null,
+            "description": null,
+            "alternatives": [],
+            "consequences": [],
+            "errorMessage": null,
+            "relationType": null,
+            "correctPattern": null,
+            "decisionStatus": null,
+            "dispatchTargets": [],
+            "lifecycleEvents": []
+          },
+          "document": {
+            "hash": {
+              "encoding": "base64",
+              "algorithm": "sha1"
+            },
+            "version": 1
+          }
+        }
+      },
+      "timestampUtcMs": "2026-08-14T12:09:02.595Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "5Xvd75b3WatWygoL0DuZLEb4LDc=",
+    "timestampUtcMs": "2026-08-14T12:35:30.000Z",
+    "action": {
+      "type": "SET_DESCRIPTION",
+      "input": {
+        "updatedAt": "2026-08-14T12:35:30.000Z",
+        "description": "Each encrypted batch contains an array of OperationWithContext with the action, its scope, timestamp, hash, signer context, plus documentId, branch, and ordinal metadata."
+      },
+      "timestampUtcMs": "2026-08-14T12:35:30.000Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "",
+    "timestampUtcMs": "2026-08-14T12:37:59.093Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "d0fb4287-d439-46f1-a60f-777a702235d9",
+        "targetId": "6a3275cd-d71e-4342-8cd3-3fb29b8fe58c",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-08-14T12:37:59.093Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "z0mWv4DECe1nqeZoUxp9BMMufLU=",
+    "timestampUtcMs": "2026-08-14T12:35:30.000Z",
+    "action": {
+      "type": "SET_NOTE_TYPE",
+      "input": {
+        "noteType": "reference",
+        "updatedAt": "2026-08-14T12:35:30.000Z"
+      },
+      "timestampUtcMs": "2026-08-14T12:35:30.000Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "",
+    "timestampUtcMs": "2026-08-14T12:37:59.193Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "d0fb4287-d439-46f1-a60f-777a702235d9",
+        "targetId": "43b82c81-4d28-4e69-9a0a-84c0dddb87ef",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-08-14T12:37:59.193Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "ZXm68HIvWAsMVZzd1zyqdCHdkjo=",
+    "timestampUtcMs": "2026-08-14T12:35:30.000Z",
+    "action": {
+      "type": "SET_CONTENT",
+      "input": {
+        "content": "## Batch payload shape\n\nEach operation batch uploaded to `/bytes` is an encrypted JSON array of `OperationWithContext`:\n\n```\n{\n  operation: {\n    id: \"c6401aec-...\",\n    index: 0,\n    skip: 0,\n    timestampUtcMs: \"2026-04-11T18:06:34.210Z\",\n    hash: \"gfgqmD...\",\n    action: {\n      type: \"CREATE_DOCUMENT\",\n      input: { name: \"push\", model: \"powerhouse/document-model\", ... },\n      scope: \"document\",\n      context: { signer: { user: { address: \"0xadbA7C2F...\" } } }\n    }\n  },\n  context: {\n    documentId: \"57033542-...\",\n    documentType: \"powerhouse/document-model\",\n    scope: \"document\",\n    branch: \"main\",\n    ordinal: 5\n  }\n}\n```\n\n## Why this shape matters\n\n- `operation.id` is stable across replays \u2014 recovery produces the same op IDs.\n- `action.context.signer.signatures` is preserved verbatim, so authorship stays intact across device migration.\n- `context.ordinal` is the global ordinal from `operation_index_operations`, enabling deterministic ordering even when batches arrive out of order.\n- The reference address is a **content hash** of the ciphertext, so identical batches deduplicate naturally on Swarm.",
+        "updatedAt": "2026-08-14T12:35:30.000Z"
+      },
+      "timestampUtcMs": "2026-08-14T12:35:30.000Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "",
+    "timestampUtcMs": "2026-08-14T12:37:59.272Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "d0fb4287-d439-46f1-a60f-777a702235d9",
+        "targetId": "7ef703d9-44ff-4168-b0b5-90d9f1e602a0",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-08-14T12:37:59.272Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "NBc2tYJzObA+7VdfBttWPVawN/U=",
+    "timestampUtcMs": "2026-08-14T12:35:30.000Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "version",
+        "value": "v6.2.2-dev.44",
+        "updatedAt": "2026-08-14T12:35:30.000Z"
+      },
+      "timestampUtcMs": "2026-08-14T12:35:30.000Z"
+    }
+  },
+  {
+    "index": 5,
+    "hash": "",
+    "timestampUtcMs": "2026-08-14T12:37:59.364Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "d0fb4287-d439-46f1-a60f-777a702235d9",
+        "targetId": "f2124247-9efa-48bb-bda6-c929f59e4f12",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-08-14T12:37:59.364Z"
+    }
+  },
+  {
+    "index": 5,
+    "hash": "Mp6aHVeCZ3eV5rIbPSb8wJ/I8rE=",
+    "timestampUtcMs": "2026-08-14T12:35:30.000Z",
+    "action": {
+      "type": "SET_PROVENANCE",
+      "input": {
+        "author": "knowledge-agent",
+        "createdAt": "2026-04-21T14:47:10.583Z",
+        "sourceOrigin": "DERIVED"
+      },
+      "timestampUtcMs": "2026-08-14T12:35:30.000Z"
+    }
+  },
+  {
+    "index": 6,
+    "hash": "",
+    "timestampUtcMs": "2026-08-14T12:37:59.458Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "d0fb4287-d439-46f1-a60f-777a702235d9",
+        "targetId": "bb0b6db7-14f1-491c-8975-4475ff68481d",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-08-14T12:37:59.458Z"
+    }
+  },
+  {
+    "index": 6,
+    "hash": "iK5xD2pEoON40fLq7PwzUBas+P0=",
+    "timestampUtcMs": "2026-08-14T12:35:30.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "t1",
+        "name": "operation-batch",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-08-14T12:35:30.000Z"
+    }
+  },
+  {
+    "index": 7,
+    "hash": "jbl4NFKIiiu3nuXM6tvtqdsecyY=",
+    "timestampUtcMs": "2026-08-14T12:35:30.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "t2",
+        "name": "data-model",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-08-14T12:35:30.000Z"
+    }
+  },
+  {
+    "index": 8,
+    "hash": "QopB/6d6dZiQQ41kITGtg49f1aQ=",
+    "timestampUtcMs": "2026-08-14T12:35:30.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "t3",
+        "name": "swarm-bytes",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-08-14T12:35:30.000Z"
+    }
+  },
+  {
+    "index": 9,
+    "hash": "yZWLeUuQgMhXeTdqfJOGs3i0Ox0=",
+    "timestampUtcMs": "2026-08-14T14:37:37.000Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "version",
+        "value": "v6.2.2-dev.47",
+        "updatedAt": "2026-08-14T12:00:00.000Z"
+      },
+      "timestampUtcMs": "2026-08-14T14:37:37.000Z"
+    }
+  },
+  {
+    "index": 10,
+    "hash": "8lJiJoEI6prM8xVJnFLPrIlE8eA=",
+    "timestampUtcMs": "2026-08-14T14:37:37.000Z",
+    "action": {
+      "type": "SUBMIT_FOR_REVIEW",
+      "input": {
+        "id": "ab11737c-d849-4970-8e4e-008b78495b7c",
+        "actor": "claude",
+        "comment": "Knowledge registered against powerhouse v6.2.2-dev.47",
+        "timestamp": "2026-08-14T12:00:00.000Z"
+      },
+      "timestampUtcMs": "2026-08-14T14:37:37.000Z"
+    }
+  },
+  {
+    "index": 11,
+    "hash": "F4ByEkmmks3pIKopsmd128kwIG8=",
+    "timestampUtcMs": "2026-08-14T14:37:37.000Z",
+    "action": {
+      "type": "APPROVE_NOTE",
+      "input": {
+        "id": "87deff01-54c6-41a4-b268-f31803cd40a1",
+        "actor": "liberuum",
+        "comment": "Canonical as of powerhouse v6.2.2-dev.47",
+        "timestamp": "2026-08-14T12:00:00.000Z"
+      },
+      "timestampUtcMs": "2026-08-14T14:37:37.000Z"
+    }
+  },
+  {
+    "index": 12,
+    "hash": "xO5CVMydyQ2sF+KfCFZ+nuddeKw=",
+    "timestampUtcMs": "2026-08-16T09:50:02.000Z",
+    "action": {
+      "type": "SET_NOTE_TYPE",
+      "input": {
+        "noteType": "REFERENCE",
+        "updatedAt": "2026-08-16T09:50:02.000Z"
+      },
+      "timestampUtcMs": "2026-08-16T09:50:02.000Z"
+    }
+  },
+  {
+    "index": 13,
+    "hash": "ejReXtYpy13rUO2+pYluwb2LCYQ=",
+    "timestampUtcMs": "2026-09-03T09:58:27.717Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "version",
+        "updatedAt": "2026-09-03T09:58:27.717Z"
+      },
+      "timestampUtcMs": "2026-09-03T09:58:27.717Z"
+    }
+  }
+]

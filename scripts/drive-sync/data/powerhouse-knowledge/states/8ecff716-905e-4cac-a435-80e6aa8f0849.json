@@ -1,0 +1,122 @@
+{
+  "links": [
+    {
+      "id": "lnk-64f7c52f-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "64f7c52f-dc21-4446-bad6-e88ef492a25c",
+      "targetTitle": "drives-are-documents-in-reactors"
+    },
+    {
+      "id": "lnk-87edb655-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "87edb655-2431-4b23-8c7f-53ca7a468fba",
+      "targetTitle": "drive-apps-are-custom-drive-editors"
+    },
+    {
+      "id": "lnk-1f5493d5-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "1f5493d5-17ad-4bf2-b36d-dcf26dd7c917",
+      "targetTitle": "delete-nodes-with-deletenode-not-deletefile"
+    },
+    {
+      "id": "lnk-4e6413ee-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "4e6413ee-22bf-4d64-964f-ca8b28917cec",
+      "targetTitle": "present-document-model-proposals-to-user-before-implementing"
+    },
+    {
+      "id": "lnk-eb3ddfcc-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "eb3ddfcc-c606-4705-b9c9-42f5e26e2384",
+      "targetTitle": "act-sharing-ecdh-publisher-grantee"
+    },
+    {
+      "id": "lnk-1a932db8-bui",
+      "linkType": "BUILDS_ON",
+      "targetDocumentId": "1a932db8-245d-40f6-bfd8-eea728d9615e",
+      "targetTitle": "reactor-browser-hooks-provide-document-state"
+    },
+    {
+      "id": "lnk-aeb9b5e6-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "aeb9b5e6-8fce-4339-95e8-375bd0a0cc01",
+      "targetTitle": "Academy \u203a Reference \u203a EditorsUI \u203a React Hooks",
+      "reason": "Backing page found by content match in the v6.2.2-dev.74 source backfill \u2014 identifiers onaddandselectnewfolder, onaddfile, onaddfolder from the claim appear in this page (text revised between v6.2.2-dev.47 and v6.2.2-dev.74 \u2014 re-verified in the v6.2.2-dev.74 pass); attribution, not the original extraction record",
+      "confidence": "grounded"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "useNodeActions returns functions for file/folder CRUD operations including add, rename, copy, move, and duplicate within drives",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "34e61cf4-dffb-4d16-98fb-457fbd46c8e1",
+      "name": "react-hooks",
+      "topicDocumentId": null
+    },
+    {
+      "id": "4643542e-5812-48cb-a710-844e1cc47457",
+      "name": "node-actions",
+      "topicDocumentId": null
+    },
+    {
+      "id": "fcb9ca35-d85b-4f78-a5c4-cf0568c89661",
+      "name": "drive-operations",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "The `useNodeActions()` hook from `@powerhousedao/reactor-browser` returns an object with drive file/folder operations: `onAddFile(file: File, parent: Node | undefined)` adds a file under a parent folder; `onAddFolder(name, parent)` creates a folder; `onRenameNode(newName, node)` renames; `onCopyNode(src, target)` copies to a target folder; `onMoveNode(src, target)` moves; `onDuplicateNode(src)` duplicates in the current folder; `onAddAndSelectNewFolder(name)` creates and selects a new folder; `onRenameDriveNodes` renames drive nodes (defined `packages/reactor-browser/src/hooks/node-actions.ts:130`, returned at `:157`). That is **eight** functions, not seven. All return Promises. The drive structure uses `Node` (FileNode | FolderNode) hierarchy, queryable via `useNodesInSelectedDrive`, `useFileNodesInSelectedDrive`, `useFolderNodesInSelectedDrive`, and their folder-scoped variants.\n\n_Source-verified 2026-08-13 against Powerhouse source at v6.2.2-dev.45._",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": "v6.2.2-dev.74",
+  "computes": null,
+  "filePath": "apps/academy/docs/academy/04-Reference/05-EditorsUI/01-ReactHooks.md",
+  "noteType": "REFERENCE",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "knowledge-agent",
+    "createdAt": "2026-04-02T12:00:00.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-09-02T22:26:33.528Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Returns eight: onAddFile, onAddFolder, onRenameNode, onCopyNode, onMoveNode, onDuplicateNode, onAddAndSelectNewFolder, onRenameDriveNodes.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "2065db15-5945-47ae-b12f-493bf27c30ca",
+      "actor": "claude",
+      "comment": "Knowledge registered against powerhouse v6.2.2-dev.47",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-14T12:00:00.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "6f6d0a3b-c3f2-4971-9cf6-225ac77fdf3a",
+      "actor": "liberuum",
+      "comment": "Canonical as of powerhouse v6.2.2-dev.47",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-14T12:00:00.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

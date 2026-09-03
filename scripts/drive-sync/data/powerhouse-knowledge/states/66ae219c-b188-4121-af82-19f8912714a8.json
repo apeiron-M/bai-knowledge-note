@@ -1,0 +1,81 @@
+{
+  "links": [
+    {
+      "id": "lnk-3085eeb8-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "3085eeb8-5720-4921-b903-fb468cbd21c7",
+      "targetTitle": "skill-verify",
+      "reason": "Discovery note distilled by sync-skills from the skill's SKILL.md frontmatter description and its section headings (source hash sha256:14989aa102af); the full procedure is the source text",
+      "confidence": "grounded"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Agent skill: /verify \u2014 Run verification checks on knowledge notes \u2014 recite test, schema validation, and health checks.",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "d395c3ea-6c8d-40c3-afa6-5a2e6238ad01",
+      "name": "agent-skills",
+      "topicDocumentId": null
+    },
+    {
+      "id": "70d04112-346c-4415-b2f1-7a29022cc70e",
+      "name": "verify",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "## When to use\nRun verification checks on knowledge notes \u2014 recite test, schema validation, and health checks. Automatically repairs common issues (missing descriptions, provenance). Use as a quality gate after extraction or editing.\n\n## What it covers\n- Verification process\n- Auto-repair (fix before reporting)\n- Batch verification\n- Output format\n- Recording verification\n- Pipeline integration\n- After auto-repair: refresh the health report\n\n## Where the full skill lives\n- Vault source: **Agent skill: verify** (full SKILL.md text, DERIVED_FROM below)\n- Canonical copy: plugin repo `skills/verify/SKILL.md` \u2014 always execute from the repo copy; this note is the discovery layer.\n\n## Invocation\n`/powerhouse-knowledge:verify` in Claude Code (plugin installed), or read the source content and follow it manually.\n\n_Synced by sync-skills; source hash sha256:14989aa102af\u2026_",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": "skills/verify/SKILL.md",
+  "noteType": "PROCEDURE",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "skill-sync",
+    "createdAt": "2026-08-16T12:02:37.728Z",
+    "sessionId": null,
+    "updatedAt": "2026-09-02T19:22:16.676Z",
+    "sourceOrigin": "IMPORT"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Run verification checks on knowledge notes \u2014 recite test, schema validation, and health checks. Automatically repairs common issues (missing descriptions, provenance). Use as a quality gate after extr",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "172c15a7-28cd-4e85-b586-4b0677b34a60",
+      "actor": "skill-sync",
+      "comment": "skill sync",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-16T12:02:38.476Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "893fab11-8b03-45ae-ad8f-40b9269b1cf0",
+      "actor": "knowledge-agent",
+      "comment": "mechanical sync from canonical repo copy",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-16T12:02:38.619Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

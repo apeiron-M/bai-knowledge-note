@@ -1,0 +1,276 @@
+[
+  {
+    "index": 0,
+    "hash": "",
+    "timestampUtcMs": "2026-08-20T08:45:08.021Z",
+    "action": {
+      "type": "CREATE_DOCUMENT",
+      "input": {
+        "meta": {},
+        "name": "n8n deletes its execution history after fourteen days by default",
+        "slug": "",
+        "model": "bai/knowledge-note",
+        "branch": "main",
+        "signing": {
+          "nonce": "",
+          "publicKey": {},
+          "signature": "7f21461a-c6a6-4f54-b0b9-9293b437e045",
+          "documentType": "bai/knowledge-note",
+          "createdAtUtcIso": "2026-08-20T08:45:08.021Z"
+        },
+        "version": 0,
+        "documentId": "7f21461a-c6a6-4f54-b0b9-9293b437e045",
+        "protocolVersions": {
+          "base-reducer": 2
+        }
+      },
+      "timestampUtcMs": "2026-08-20T08:45:08.021Z"
+    }
+  },
+  {
+    "index": 0,
+    "hash": "rpUz79Fh7nxP0/K2zPjYqGgwO04=",
+    "timestampUtcMs": "2026-08-20T08:45:08.642Z",
+    "action": {
+      "type": "SET_TITLE",
+      "input": {
+        "title": "n8n deletes its execution history after fourteen days by default",
+        "updatedAt": "2026-08-20T08:45:08.642706Z"
+      },
+      "timestampUtcMs": "2026-08-20T08:45:08.642781Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "",
+    "timestampUtcMs": "2026-08-20T08:45:08.021Z",
+    "action": {
+      "type": "UPGRADE_DOCUMENT",
+      "input": {
+        "model": "bai/knowledge-note",
+        "toVersion": 1,
+        "documentId": "7f21461a-c6a6-4f54-b0b9-9293b437e045",
+        "fromVersion": 0,
+        "initialState": {
+          "auth": {
+            "grants": [],
+            "version": 0
+          },
+          "local": {
+            "lastViewedAt": null,
+            "personalTags": []
+          },
+          "global": {
+            "links": [],
+            "model": null,
+            "scope": null,
+            "title": null,
+            "editor": null,
+            "inputs": [],
+            "models": [],
+            "status": "DRAFT",
+            "topics": [],
+            "content": null,
+            "context": null,
+            "modelId": null,
+            "modules": [],
+            "outputs": [],
+            "version": null,
+            "computes": null,
+            "filePath": null,
+            "noteType": null,
+            "severity": null,
+            "hooksUsed": [],
+            "rootCause": null,
+            "confidence": null,
+            "consumedBy": [],
+            "provenance": null,
+            "sourceType": null,
+            "targetType": null,
+            "cardinality": null,
+            "description": null,
+            "alternatives": [],
+            "consequences": [],
+            "errorMessage": null,
+            "relationType": null,
+            "correctPattern": null,
+            "decisionStatus": null,
+            "dispatchTargets": [],
+            "lifecycleEvents": []
+          },
+          "document": {
+            "hash": {
+              "encoding": "base64",
+              "algorithm": "sha1"
+            },
+            "version": 1
+          }
+        }
+      },
+      "timestampUtcMs": "2026-08-20T08:45:08.021Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "sWtRQcEhCYy2JSyaNWugRuFyuAk=",
+    "timestampUtcMs": "2026-08-20T08:45:08.642Z",
+    "action": {
+      "type": "SET_DESCRIPTION",
+      "input": {
+        "updatedAt": "2026-08-20T08:45:08.642786Z",
+        "description": "EXECUTIONS_DATA_PRUNE ships true with EXECUTIONS_DATA_MAX_AGE at 336 hours, so the free edition forgets by design rather than by misconfiguration."
+      },
+      "timestampUtcMs": "2026-08-20T08:45:08.642792Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "",
+    "timestampUtcMs": "2026-08-20T08:45:09.818Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "7f21461a-c6a6-4f54-b0b9-9293b437e045",
+        "targetId": "4d8e59af-51f2-4ab7-b290-e1d5744abbd7",
+        "relationshipType": "DERIVED_FROM"
+      },
+      "timestampUtcMs": "2026-08-20T08:45:09.818Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "m/ve5gflNvooB7hp9D2rQe8Ipsw=",
+    "timestampUtcMs": "2026-08-20T08:45:08.642Z",
+    "action": {
+      "type": "SET_NOTE_TYPE",
+      "input": {
+        "noteType": "OBSERVATION",
+        "updatedAt": "2026-08-20T08:45:08.642795Z"
+      },
+      "timestampUtcMs": "2026-08-20T08:45:08.642801Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "/yx1dZXMp8s+86VmMl4KXsJimS4=",
+    "timestampUtcMs": "2026-08-20T08:45:08.642Z",
+    "action": {
+      "type": "SET_CONTENT",
+      "input": {
+        "content": "The shipped defaults are `EXECUTIONS_DATA_PRUNE=true`, `EXECUTIONS_DATA_MAX_AGE=336` hours and `EXECUTIONS_DATA_PRUNE_MAX_COUNT=10000`. The documentation confirms the behaviour rather than merely permitting it: *\"n8n enables pruning by default\"*, removing *\"finished executions along with their execution data and binary data\"* when either the age or the count threshold trips.\n\nBeing fair to n8n, it does save successful runs \u2014 `EXECUTIONS_DATA_SAVE_ON_SUCCESS` defaults to `all`. The gap is not that it never records. It is that it records and then deletes on a timer, 336 hours being fourteen days.\n\nThat is a defensible design for an orchestrator whose execution log is a debugging aid. It is disqualifying for anything expected to answer a question a year later.",
+        "updatedAt": "2026-08-20T08:45:08.642804Z"
+      },
+      "timestampUtcMs": "2026-08-20T08:45:08.642808Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "3iJrOTgVsmaRSuQC3Z0AizleBzk=",
+    "timestampUtcMs": "2026-08-20T08:45:08.642Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "99e7e9b7-d400-4b94-8ba3-8620012529ea",
+        "name": "tool-screen"
+      },
+      "timestampUtcMs": "2026-08-20T08:45:08.642818Z"
+    }
+  },
+  {
+    "index": 5,
+    "hash": "B+i9VJKYiTGElZSY9jCdoJsgXTw=",
+    "timestampUtcMs": "2026-08-20T08:45:08.642Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "6f974ab6-8f01-48cb-b59e-f9373cd5b91b",
+        "name": "n8n"
+      },
+      "timestampUtcMs": "2026-08-20T08:45:08.642826Z"
+    }
+  },
+  {
+    "index": 6,
+    "hash": "DzDVY2hl1yUVLYSA1OHltLuI37A=",
+    "timestampUtcMs": "2026-08-20T08:45:08.642Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "0a989bac-001b-470b-b0f5-7b5a185fa747",
+        "name": "retention"
+      },
+      "timestampUtcMs": "2026-08-20T08:45:08.642835Z"
+    }
+  },
+  {
+    "index": 7,
+    "hash": "mi4J1f+6vyPECeobc63p/6IY4L4=",
+    "timestampUtcMs": "2026-08-20T08:45:08.642Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "d31c45cc-a0db-4474-af1a-7c9d6c5c0145",
+        "name": "pruning"
+      },
+      "timestampUtcMs": "2026-08-20T08:45:08.642843Z"
+    }
+  },
+  {
+    "index": 8,
+    "hash": "YRtBpADGMJjougtfKPo1M7Ap+qY=",
+    "timestampUtcMs": "2026-08-20T08:45:08.642Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "fd6039f3-84f7-416d-9978-93d3b702b604",
+        "name": "audit-trail"
+      },
+      "timestampUtcMs": "2026-08-20T08:45:08.642851Z"
+    }
+  },
+  {
+    "index": 9,
+    "hash": "K+TQ0Eftsdkh+P/I0+fRer38mUQ=",
+    "timestampUtcMs": "2026-08-20T08:45:09.027Z",
+    "action": {
+      "type": "SET_PROVENANCE",
+      "input": {
+        "author": "knowledge-agent",
+        "createdAt": "2026-08-20T08:45:09.027145Z",
+        "sessionId": null,
+        "sourceOrigin": "DERIVED"
+      },
+      "timestampUtcMs": "2026-08-20T08:45:09.027185Z"
+    }
+  },
+  {
+    "index": 10,
+    "hash": "U2e5vsMGB6gwpgdzVbX7JFH7cSw=",
+    "timestampUtcMs": "2026-08-20T08:45:09.992Z",
+    "action": {
+      "type": "SUBMIT_FOR_REVIEW",
+      "input": {
+        "id": "6de7324b-d4ee-4473-81f3-6c6f8624bd27",
+        "actor": "knowledge-agent",
+        "comment": "Extracted from the primary-source tool screen; each claim quotable from a cited source.",
+        "timestamp": "2026-08-20T08:45:09.992269Z"
+      },
+      "timestampUtcMs": "2026-08-20T08:45:09.992291Z"
+    }
+  },
+  {
+    "index": 11,
+    "hash": "9HAe9NPL78ooz4JKYdaO/T6rEP0=",
+    "timestampUtcMs": "2026-08-20T08:45:10.143Z",
+    "action": {
+      "type": "APPROVE_NOTE",
+      "input": {
+        "id": "5f004be8-920d-4125-b1ab-44aa6a69faaa",
+        "actor": "liberuum",
+        "comment": "Approved: tool-screen extraction.",
+        "timestamp": "2026-08-20T08:45:10.143960Z"
+      },
+      "timestampUtcMs": "2026-08-20T08:45:10.143983Z"
+    }
+  }
+]

@@ -1,0 +1,94 @@
+{
+  "links": [
+    {
+      "id": "lnk-4d8e59af-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "4d8e59af-51f2-4ab7-b290-e1d5744abbd7",
+      "targetTitle": "Integration-gap tool screen: ERPNext / Frappe (primary-source research, 2026-08-19)"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Odoo forces its restrictive audit trail on for German companies and blocks disabling it",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "54c76c2a-9ed6-4c67-8cee-6f3455ee7344",
+      "name": "tool-screen",
+      "topicDocumentId": null
+    },
+    {
+      "id": "553c7892-7f44-4a9b-b3a2-8db874eef314",
+      "name": "odoo",
+      "topicDocumentId": null
+    },
+    {
+      "id": "49d2d202-7933-4538-97f8-01e525c426d4",
+      "name": "germany",
+      "topicDocumentId": null
+    },
+    {
+      "id": "5348fe7f-b5ff-466b-978f-176110832435",
+      "name": "compliance",
+      "topicDocumentId": null
+    },
+    {
+      "id": "3aa727cd-4294-4dc0-a628-465f004cd9c8",
+      "name": "audit-trail",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "`addons/l10n_de/models/res_company.py` contains `company.force_restrictive_audit_trail |= company.country_code == 'DE'`, and `addons/account/models/company.py` enforces it: attempting to disable raises *\"Can't disable restricted audit trail: forced by localization.\"*\n\nThe German fiscal documentation states that *\"Odoo is certified GoBD-compliant\"* and that with the German localization *\"Odoo is in standard configured in such a way that the inalterability clause can be adhered to without any further customization.\"* A SHA-256 hash chain over eight accounting fields backs it, each entry incorporating the previous entry's hash.\n\nFor a German buyer this makes Odoo the statutory books rather than a candidate for replacement. An external record layer should not attempt to be a parallel ledger here; the honest role is integration.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "REFERENCE",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "knowledge-agent",
+    "createdAt": "2026-08-20T08:45:55.922202Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-20T08:45:57.167011Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "l10n_de sets force_restrictive_audit_trail for country code DE, and a constraint raises an error if anyone tries to switch it off, in service of GoBD compliance.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "ec3ee6e5-bc75-4fb7-8177-7d31c1a0e6b0",
+      "actor": "knowledge-agent",
+      "comment": "Extracted from the primary-source tool screen; each claim quotable from a cited source.",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-20T08:45:57.010041Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "7b43aed0-8b6e-4073-aa54-db7371c38d5b",
+      "actor": "liberuum",
+      "comment": "Approved: tool-screen extraction.",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-20T08:45:57.167011Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

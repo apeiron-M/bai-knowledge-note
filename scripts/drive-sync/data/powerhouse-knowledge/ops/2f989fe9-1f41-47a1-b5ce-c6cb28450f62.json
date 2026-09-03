@@ -1,0 +1,362 @@
+[
+  {
+    "index": 0,
+    "hash": "",
+    "timestampUtcMs": "2026-08-14T11:48:45.052Z",
+    "action": {
+      "type": "CREATE_DOCUMENT",
+      "input": {
+        "meta": {},
+        "name": "bee-reactor-adapter-sync-flow",
+        "slug": "",
+        "model": "bai/knowledge-note",
+        "branch": "main",
+        "signing": {
+          "nonce": "",
+          "publicKey": {},
+          "signature": "2f989fe9-1f41-47a1-b5ce-c6cb28450f62",
+          "documentType": "bai/knowledge-note",
+          "createdAtUtcIso": "2026-08-14T11:48:45.052Z"
+        },
+        "version": 0,
+        "documentId": "2f989fe9-1f41-47a1-b5ce-c6cb28450f62",
+        "protocolVersions": {
+          "base-reducer": 2
+        }
+      },
+      "timestampUtcMs": "2026-08-14T11:48:45.052Z"
+    }
+  },
+  {
+    "index": 0,
+    "hash": "3e/o3nv8+iUJ0g/NJ8FfBUZyRXY=",
+    "timestampUtcMs": "2026-08-14T12:34:52.000Z",
+    "action": {
+      "type": "SET_TITLE",
+      "input": {
+        "title": "Adapter sync flow: reactor ops encrypted, uploaded to Swarm, replayed on recovery",
+        "updatedAt": "2026-08-14T12:34:52.000Z"
+      },
+      "timestampUtcMs": "2026-08-14T12:34:52.000Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "",
+    "timestampUtcMs": "2026-08-14T11:48:45.052Z",
+    "action": {
+      "type": "UPGRADE_DOCUMENT",
+      "input": {
+        "model": "bai/knowledge-note",
+        "toVersion": 1,
+        "documentId": "2f989fe9-1f41-47a1-b5ce-c6cb28450f62",
+        "fromVersion": 0,
+        "initialState": {
+          "auth": {
+            "grants": [],
+            "version": 0
+          },
+          "local": {
+            "lastViewedAt": null,
+            "personalTags": []
+          },
+          "global": {
+            "links": [],
+            "model": null,
+            "scope": null,
+            "title": null,
+            "editor": null,
+            "inputs": [],
+            "models": [],
+            "status": "DRAFT",
+            "topics": [],
+            "content": null,
+            "context": null,
+            "modelId": null,
+            "modules": [],
+            "outputs": [],
+            "version": null,
+            "computes": null,
+            "filePath": null,
+            "noteType": null,
+            "severity": null,
+            "hooksUsed": [],
+            "rootCause": null,
+            "confidence": null,
+            "consumedBy": [],
+            "provenance": null,
+            "sourceType": null,
+            "targetType": null,
+            "cardinality": null,
+            "description": null,
+            "alternatives": [],
+            "consequences": [],
+            "errorMessage": null,
+            "relationType": null,
+            "correctPattern": null,
+            "decisionStatus": null,
+            "dispatchTargets": [],
+            "lifecycleEvents": []
+          },
+          "document": {
+            "hash": {
+              "encoding": "base64",
+              "algorithm": "sha1"
+            },
+            "version": 1
+          }
+        }
+      },
+      "timestampUtcMs": "2026-08-14T11:48:45.052Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "srCtLE2gifgDXcJZ5NkxAkjx3ZU=",
+    "timestampUtcMs": "2026-08-14T12:34:52.000Z",
+    "action": {
+      "type": "SET_DESCRIPTION",
+      "input": {
+        "updatedAt": "2026-08-14T12:34:52.000Z",
+        "description": "SyncManager detects new ordinals, SwarmChannel encrypts and uploads ops to /bytes and updates feed pointers; a new device replays ops after a wallet signature re-derives the key."
+      },
+      "timestampUtcMs": "2026-08-14T12:34:52.000Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "",
+    "timestampUtcMs": "2026-08-14T12:36:42.616Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "2f989fe9-1f41-47a1-b5ce-c6cb28450f62",
+        "targetId": "8ebc083d-b75b-46c0-839d-ebe8fc95d3b9",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-08-14T12:36:42.616Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "M++Y9RkHE0UyX7CwLI0FivUCiOw=",
+    "timestampUtcMs": "2026-08-14T12:34:52.000Z",
+    "action": {
+      "type": "SET_NOTE_TYPE",
+      "input": {
+        "noteType": "architecture",
+        "updatedAt": "2026-08-14T12:34:52.000Z"
+      },
+      "timestampUtcMs": "2026-08-14T12:34:52.000Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "",
+    "timestampUtcMs": "2026-08-14T12:36:42.718Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "2f989fe9-1f41-47a1-b5ce-c6cb28450f62",
+        "targetId": "86a23fb2-4ba6-43be-b051-49aeb065158d",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-08-14T12:36:42.718Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "jv5F3+CJCTNn2A489IZWJ0WpseQ=",
+    "timestampUtcMs": "2026-08-14T12:34:52.000Z",
+    "action": {
+      "type": "SET_CONTENT",
+      "input": {
+        "content": "End-to-end sync flow from document edit to cross-device recovery:\n\n```\nUser edits document in Connect\n       \u2193\nReactor stores operation in local PGlite\n       \u2193\nSyncManager detects new ordinal \u2192 populates SwarmChannel outbox\n       \u2193\nSwarmChannel encrypts ops \u2192 uploads to Swarm /bytes \u2192 updates feed pointer\n       \u2193\nOn new device: wallet signature \u2192 same key \u2192 read feeds \u2192 download ops \u2192 replay \u2192 restored\n```\n\nKey properties:\n- Local writes hit PGlite first, so edits never block on network I/O.\n- The outbox is populated reactively by ordinal, not polled.\n- Encryption happens at the SwarmChannel layer before `/bytes` upload.\n- Feed pointers are the only mutable primitive \u2014 the op blobs themselves are immutable.\n- Cross-device recovery is deterministic from the wallet signature alone, no backup seed phrase or extra credentials needed.",
+        "updatedAt": "2026-08-14T12:34:52.000Z"
+      },
+      "timestampUtcMs": "2026-08-14T12:34:52.000Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "",
+    "timestampUtcMs": "2026-08-14T12:36:42.807Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "2f989fe9-1f41-47a1-b5ce-c6cb28450f62",
+        "targetId": "873daffa-52d3-49f3-adac-b538bb82ba99",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-08-14T12:36:42.807Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "xxMqBgQpfYVcmt+cC1RCuKHvaKE=",
+    "timestampUtcMs": "2026-08-14T12:34:52.000Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "version",
+        "value": "v6.2.2-dev.44",
+        "updatedAt": "2026-08-14T12:34:52.000Z"
+      },
+      "timestampUtcMs": "2026-08-14T12:34:52.000Z"
+    }
+  },
+  {
+    "index": 5,
+    "hash": "",
+    "timestampUtcMs": "2026-08-14T12:36:42.886Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "2f989fe9-1f41-47a1-b5ce-c6cb28450f62",
+        "targetId": "97c0a282-5f24-47bd-a2cd-f5d563fa8d11",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-08-14T12:36:42.886Z"
+    }
+  },
+  {
+    "index": 5,
+    "hash": "c7/xLZcNpA7u6VJ56nJO5UKfKq4=",
+    "timestampUtcMs": "2026-08-14T12:34:52.000Z",
+    "action": {
+      "type": "SET_PROVENANCE",
+      "input": {
+        "author": "knowledge-agent",
+        "createdAt": "2026-04-21T14:52:46.944Z",
+        "sourceOrigin": "DERIVED"
+      },
+      "timestampUtcMs": "2026-08-14T12:34:52.000Z"
+    }
+  },
+  {
+    "index": 6,
+    "hash": "",
+    "timestampUtcMs": "2026-08-14T12:36:42.985Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "2f989fe9-1f41-47a1-b5ce-c6cb28450f62",
+        "targetId": "1e3e3772-e865-4797-aebe-8b64a3f34fdd",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-08-14T12:36:42.985Z"
+    }
+  },
+  {
+    "index": 6,
+    "hash": "S5IqHt10QPngFxG4NOXZijXEhvM=",
+    "timestampUtcMs": "2026-08-14T12:34:52.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "sync-flow",
+        "name": "sync-flow",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-08-14T12:34:52.000Z"
+    }
+  },
+  {
+    "index": 7,
+    "hash": "7F8bjz/EyGjPSs7gzVoFiNAVzWk=",
+    "timestampUtcMs": "2026-08-14T12:34:52.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "swarm-channel",
+        "name": "swarm-channel",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-08-14T12:34:52.000Z"
+    }
+  },
+  {
+    "index": 8,
+    "hash": "W5kFoo0X8nF3lOWKYaU+Rti/Kos=",
+    "timestampUtcMs": "2026-08-14T12:34:52.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "cross-device-recovery",
+        "name": "cross-device-recovery",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-08-14T12:34:52.000Z"
+    }
+  },
+  {
+    "index": 9,
+    "hash": "9Vxb0WsPpWm5q1Wll1+iuRnAscA=",
+    "timestampUtcMs": "2026-08-14T14:36:56.000Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "version",
+        "value": "v6.2.2-dev.47",
+        "updatedAt": "2026-08-14T12:00:00.000Z"
+      },
+      "timestampUtcMs": "2026-08-14T14:36:56.000Z"
+    }
+  },
+  {
+    "index": 10,
+    "hash": "ebnL7G6ehBPpx+ZBx77MhU8CmHI=",
+    "timestampUtcMs": "2026-08-14T14:36:56.000Z",
+    "action": {
+      "type": "SUBMIT_FOR_REVIEW",
+      "input": {
+        "id": "7d04f619-0f6b-4c3a-964c-f3e68239eab5",
+        "actor": "claude",
+        "comment": "Knowledge registered against powerhouse v6.2.2-dev.47",
+        "timestamp": "2026-08-14T12:00:00.000Z"
+      },
+      "timestampUtcMs": "2026-08-14T14:36:56.000Z"
+    }
+  },
+  {
+    "index": 11,
+    "hash": "eTW33LSwj8+dWBn1VG8CTnmQmIs=",
+    "timestampUtcMs": "2026-08-14T14:36:56.000Z",
+    "action": {
+      "type": "APPROVE_NOTE",
+      "input": {
+        "id": "6ed5b4dc-41cd-470c-8c76-a8851a2a5f5c",
+        "actor": "liberuum",
+        "comment": "Canonical as of powerhouse v6.2.2-dev.47",
+        "timestamp": "2026-08-14T12:00:00.000Z"
+      },
+      "timestampUtcMs": "2026-08-14T14:36:56.000Z"
+    }
+  },
+  {
+    "index": 12,
+    "hash": "B5hxcUMHWaFwWo/hJFeiCc0HM4A=",
+    "timestampUtcMs": "2026-08-16T09:49:41.000Z",
+    "action": {
+      "type": "SET_NOTE_TYPE",
+      "input": {
+        "noteType": "ARCHITECTURE",
+        "updatedAt": "2026-08-16T09:49:41.000Z"
+      },
+      "timestampUtcMs": "2026-08-16T09:49:41.000Z"
+    }
+  },
+  {
+    "index": 13,
+    "hash": "slFFgJNw+qk0GEhHuo3NLnWui4Q=",
+    "timestampUtcMs": "2026-09-03T09:58:23.944Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "version",
+        "updatedAt": "2026-09-03T09:58:23.944Z"
+      },
+      "timestampUtcMs": "2026-09-03T09:58:23.944Z"
+    }
+  }
+]

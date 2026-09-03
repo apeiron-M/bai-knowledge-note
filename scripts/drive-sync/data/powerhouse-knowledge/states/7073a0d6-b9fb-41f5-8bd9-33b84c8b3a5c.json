@@ -1,0 +1,115 @@
+{
+  "links": [
+    {
+      "id": "lnk-4c8af140-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "4c8af140-a351-402e-9a1b-d83ac3a81788",
+      "targetTitle": "v6-runtime-package-loading",
+      "reason": "Deleting src/subgraphs is a consequence of subgraphs moving to runtime loading",
+      "confidence": "grounded"
+    },
+    {
+      "id": "lnk-64076557-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "64076557-0fce-4f5f-8912-3acf0ac82e15",
+      "targetTitle": "Academy \u203a ReleaseNotes \u203a Release Notes",
+      "reason": "Extracted from apps/academy/docs/academy/ReleaseNotes/index.md at v6.2.2-dev.74 \u2014 v6.0.0 \u203a \u26a0\ufe0f Breaking Changes",
+      "confidence": "grounded"
+    },
+    {
+      "id": "lnk-b384b065-bui",
+      "linkType": "BUILDS_ON",
+      "targetDocumentId": "b384b065-6a1d-4498-b6ac-0acccdde2e48",
+      "targetTitle": "breaking-changes-four-types",
+      "reason": "These are a Type 4 dependency break and two Type 1 API breaks, landing in the major version the guide requires",
+      "confidence": "grounded"
+    },
+    {
+      "id": "lnk-f58a582c-bui",
+      "linkType": "BUILDS_ON",
+      "targetDocumentId": "f58a582c-749b-4327-973e-a70457c28c6b",
+      "targetTitle": "monorepo-build-prereqs",
+      "reason": "Node >= 24 is the same floor the monorepo's engines field declares for a contributor's toolchain",
+      "confidence": "grounded"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Node.js 24 is the minimum supported version since v6.0.0, and the DriveEditor rename was applied in bulk across every package",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "3b49ca1e-bacb-4752-b8b0-de5f28b91499",
+      "name": "versioning",
+      "topicDocumentId": null
+    },
+    {
+      "id": "536a52c0-2443-48f0-b149-e288a27e8155",
+      "name": "breaking-changes",
+      "topicDocumentId": null
+    },
+    {
+      "id": "bb411cf5-0512-464c-997c-a7f27758ae06",
+      "name": "node",
+      "topicDocumentId": null
+    },
+    {
+      "id": "601e7a8c-92a2-4f57-bde8-0b6456e871b6",
+      "name": "v6",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "v6.0.0's breaking changes are short and each one is mechanical:\n\n**Node.js 24 is the minimum.**\n\n```bash\nnode --version          # must be >= 24.0.0\nnvm install 24 && nvm use 24\n```\n\nThis is also the floor the monorepo's own `engines.node` declares, so it applies to contributors and consumers alike.\n\n**`DriveEditor` renamed** \u2014 a bulk rename applied across all packages; search for old `DriveEditor` references and follow TypeScript's errors.\n\n**Delete generated subgraph code** \u2014 `rm -rf src/subgraphs/`, because subgraphs are now generated and loaded at runtime and a stale directory conflicts.\n\nWorth pairing with the breaking-changes guide's rule that breaking changes ship only in a major version after a 3\u20136 month deprecation: these three arrived in `x.0.0`, which is exactly where the process puts them. The Node bump is the kind that cannot be deprecated gradually \u2014 a runtime floor is a cliff \u2014 which is why it is announced with the command to check and the command to fix.\n\n## Provenance\n- `apps/academy/docs/academy/ReleaseNotes/index.md` \u2014 v6.0.0 \u203a \u26a0\ufe0f Breaking Changes\n\n_Extracted from the Powerhouse repository at **v6.2.2-dev.74**._",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": "v6.2.2-dev.74",
+  "computes": null,
+  "filePath": "apps/academy/docs/academy/ReleaseNotes/index.md",
+  "noteType": "REFERENCE",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "knowledge-agent",
+    "createdAt": "2026-09-03T07:49:12.302Z",
+    "sessionId": null,
+    "updatedAt": "2026-09-03T07:49:13.277Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Three breaking changes shipped together: the Node floor, a codebase-wide DriveEditor rename to be followed with TypeScript's guidance, and deleting any checked-in src/subgraphs directory.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "30e370bf-1e3d-49df-9b55-8a20b20ff868",
+      "actor": "knowledge-agent",
+      "comment": "extracted from apps/academy/docs/academy/ReleaseNotes/index.md at v6.2.2-dev.74",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-09-03T07:49:12.809Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "59a13a4b-bc33-4f79-93dd-7c0395351264",
+      "actor": "liberuum",
+      "comment": "claim checked against the cited file at the pinned tag",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-09-03T07:49:13.277Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

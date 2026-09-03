@@ -1,0 +1,115 @@
+{
+  "links": [
+    {
+      "id": "lnk-2cb501f3-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "2cb501f3-7675-4e67-b758-e6ea6db16a8e",
+      "targetTitle": "docker-images-registry",
+      "reason": "The LB fronts the same switchboard image the registry publishes, one reactor per instance",
+      "confidence": "established"
+    },
+    {
+      "id": "lnk-704020e6-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "704020e6-eefd-4e1f-9fc6-f9ec801d8255",
+      "targetTitle": "App \u203a switchboard-lb \u203a ARCHITECTURE \u2014 switchboard-lb \u2014 Architecture",
+      "reason": "Extracted from apps/switchboard-lb/ARCHITECTURE.md at v6.2.2-dev.74 \u2014 \u00a74.1 Route classes; \u00a74.3 Header rules; \u00a79 Q5 (decided 2026-05-05)",
+      "confidence": "grounded"
+    },
+    {
+      "id": "lnk-7252c41c-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "7252c41c-7185-4177-aaeb-4fe9dc0505c1",
+      "targetTitle": "lb-pinning-invariant",
+      "reason": "Hashing the header is the mechanism; the invariant it exists to serve is that one drive always reaches the same instance",
+      "confidence": "grounded"
+    },
+    {
+      "id": "lnk-5cac8a4f-bui",
+      "linkType": "BUILDS_ON",
+      "targetDocumentId": "5cac8a4f-0c18-4d48-8403-065c072dd00b",
+      "targetTitle": "lb-openresty-choice",
+      "reason": "OpenResty was chosen partly for body access, and the header model then made that capability unnecessary on the hot path",
+      "confidence": "grounded"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "switchboard-lb routes by hashing a Drive-Id request header and never reads the request body, which is what keeps it GraphQL-agnostic",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "3f5b8696-427b-4a8e-b5e2-ae50675e82fd",
+      "name": "switchboard-lb",
+      "topicDocumentId": null
+    },
+    {
+      "id": "abacb4bc-9291-43db-bf1f-127da2fb980a",
+      "name": "routing",
+      "topicDocumentId": null
+    },
+    {
+      "id": "20abf93e-4700-44ed-b79d-a37870755875",
+      "name": "openresty",
+      "topicDocumentId": null
+    },
+    {
+      "id": "7be84507-d5d6-4b2f-b383-f989e7d357c3",
+      "name": "sharding",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "`switchboard-lb` is an OpenResty (nginx + Lua) load balancer whose whole routing decision is one header. In the nginx **rewrite phase** \u2014 after headers are parsed, before the upstream is chosen \u2014 a two-line Lua module copies the `Drive-Id` request header (exposed by nginx as `$http_drive_id`) into `$doc_id`, and the upstream block's `hash $doc_id consistent` reads it when picking a backend.\n\nFive header rules make up the contract:\n\n1. `Drive-Id` becomes `$doc_id`.\n2. **Empty or missing header \u2192 round-robin.** An empty hash key falls back to round-robin across the peers (documented nginx behaviour), which serves legacy clients and any operation with no single owning drive \u2014 `node` queries by id, introspection, the supergraph's `_service` call.\n3. **The header is advisory.** The LB does not validate it; a misrouted request gets a *structured wrong-shard error* from the switchboard's drive-validation middleware (`packages/reactor-api/src/graphql/gateway/drive-middleware.ts`). Routing is optimistic, correctness lives downstream.\n4. **No body inspection.** The LB never calls `ngx.req.read_body()` on `/graphql`; bodies stream straight through. This is what lets it stay agnostic to POST, GET-with-query, request batches, persisted queries and future schema changes.\n5. **The header name is part of the contract** \u2014 renaming it is a coordinated client-and-server change.\n\nAn earlier implementation *did* parse the body to find a document id and rejected header-less requests with `409 Conflict`. That model, and the `lua/errors.lua` that powered it, were deleted: under the header model the LB never needs a routing key for correctness, so round-robin is both safe and strictly more useful than rejecting.\n\n## Provenance\n- `apps/switchboard-lb/ARCHITECTURE.md` \u2014 \u00a74.1 Route classes; \u00a74.3 Header rules; \u00a79 Q5 (decided 2026-05-05)\n\n_Extracted from the Powerhouse repository at **v6.2.2-dev.74**._",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": "v6.2.2-dev.74",
+  "computes": null,
+  "filePath": "apps/switchboard-lb/ARCHITECTURE.md",
+  "noteType": "ARCHITECTURE",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "knowledge-agent",
+    "createdAt": "2026-09-03T07:34:08.241Z",
+    "sessionId": null,
+    "updatedAt": "2026-09-03T07:34:09.692Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Lua copies $http_drive_id into $doc_id in the rewrite phase and hash $doc_id consistent picks the peer. A missing or empty header falls back to round-robin; the header name is part of the client.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "a79a9f06-2a04-4b42-b41f-bd74904f29d3",
+      "actor": "knowledge-agent",
+      "comment": "extracted from apps/switchboard-lb/ARCHITECTURE.md at v6.2.2-dev.74",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-09-03T07:34:09.224Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "eddb5b95-6272-4149-96af-76ec35a96c7d",
+      "actor": "liberuum",
+      "comment": "claim checked against the cited file at the pinned tag",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-09-03T07:34:09.692Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

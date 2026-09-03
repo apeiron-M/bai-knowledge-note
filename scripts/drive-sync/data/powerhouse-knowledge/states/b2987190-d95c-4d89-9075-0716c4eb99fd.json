@@ -1,0 +1,98 @@
+{
+  "links": [
+    {
+      "id": "lnk-851f3b4d-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "851f3b4d-92aa-4601-b6f8-06f27ba514a5",
+      "targetTitle": "reactor-client-auto-signs-all-actions"
+    },
+    {
+      "id": "lnk-8cbea140-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "8cbea140-21d6-4b63-8780-5d44831018aa",
+      "targetTitle": "two-signing-mechanisms-header-and-action"
+    },
+    {
+      "id": "lnk-f3fb0f62-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "f3fb0f62-f805-48cc-a853-86df6077d977",
+      "targetTitle": "Academy \u203a Reference \u203a Reactor \u203a Recipes",
+      "reason": "Backing page found by content match in the v6.2.2-dev.74 source backfill \u2014 identifiers action.context.signer.user.address, operation.error, rejections from the claim appear in this page (text identical at v6.2.2-dev.47 and v6.2.2-dev.74); attribution, not the original extraction record",
+      "confidence": "grounded"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Reducer-level RBAC gates operations on action.context.signer.user.address so access control replicates with the document",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "c2c24106-7933-44a4-bd9b-a8e3a300c8ca",
+      "name": "authorization",
+      "topicDocumentId": null
+    },
+    {
+      "id": "5a019441-7b09-4061-b9af-d0e4f446c7c8",
+      "name": "reducer-patterns",
+      "topicDocumentId": null
+    },
+    {
+      "id": "c5b6102e-6cac-454d-b29b-ca3ed835fe47",
+      "name": "security",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "The `role-based-auth` recipe puts authorization **inside the reducer**, reading the signer off the action context. Because roles are ordinary document state, they replicate with the document \u2014 every peer enforces the same rules without a central policy service, and the rules hold no matter which editor, subgraph, or script fired the action.\n\nThe state is just address lists:\n\n```graphql\ntype RoleBasedAuthState {\n  creator: String\n  admins: [String!]!\n  members: [String!]!\n  notes: [Note!]!\n}\n```\n\nEvery operation opens with the same guard, and role-mutating operations add `requireAdmin(state, address)`:\n\n```ts\nconst address = action.context?.signer?.user?.address;\nif (!address) throw new NotAuthorized(\"User is not authenticated\");\n```\n\nThe permission model is small and worth copying: `bootstrap` may be called by anyone but only once, and it makes the caller the permanent `creator` and first admin \u2014 creator auto-promotion, with no demotion path (`revokeAdmin` throws `CannotRevokeCreator`). It also throws `LastAdmin` rather than allowing the admin set to be emptied, so the document cannot be locked out. The domain action `writeNote` is gated on member-or-higher and throws `NotAuthorized` for a caller with no role.\n\n**How rejection surfaces is the part that trips people up.** A thrown reducer error does not propagate to the caller as an exception. The framework captures it and records it as `operation.error` on the resulting document \u2014 the operation is still appended, and the state is unchanged. Callers detect rejection by inspecting the operation log, and tests must read `operations.global[n].error` rather than using `.toThrow()`.\n\nErrors are a typed taxonomy generated into `gen/access/error.ts` (`AlreadyBootstrapped`, `CannotRevokeCreator`, `LastAdmin`, `AddressAlreadyAdmin`, `NotAuthorized`), so each failure is distinguishable rather than one generic denial.\n\nNote the scope of the guarantee: this gates *writes* deterministically on every replica, but it does not hide state \u2014 anyone who can read the document reads the whole document, roles included.\n\nProvenance: academy `05-Lookup/00-Cookbook.md`, Role-Based Auth recipe, academy 6.2.2-dev.45.\n\n## Contradicts: policy in the auth scope (v6.2.2-dev.74)\nThe vault also holds the opposite mechanism: since v6.2.2-dev.74 the reactor can decide the same question from a **policy stored in the document's `auth` scope**, enforced at admission, replay and read, with no access check in any reducer. Both designs replicate with the document and both are supported \u2014 the Cookbook ships them as deliberate counterparts (`role-based-auth` here, `document-acl` there), \"same outcome, opposite mechanism\".\n\nThe boundary is where the rule lives, and it decides three things. **Reducer RBAC** bakes the rule into the model: it needs no feature flags, works on every reactor today, and can express anything code can \u2014 but changing the rule means shipping a new model version, and the check runs *inside* the reducer, so a refused write is still a stored operation carrying an error. **The auth scope** makes the rule data: inspectable, replicated, changeable at runtime, and refused *at admission* so nothing is stored \u2014 but it is staged behind feature flags, bounded by the version-1 grant and condition caps, and enforces nothing on a document whose policy was never initialized. Choose reducer RBAC for invariants that are part of what the model *is*; choose the auth scope for access that operators need to change without a release.\n",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": "v6.2.2-dev.74",
+  "computes": null,
+  "filePath": "apps/academy/docs/academy/04-Reference/01-Reactor/10-Recipes.md",
+  "noteType": "PATTERN",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "claude",
+    "createdAt": "2026-08-13T14:39:24.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-09-02T22:27:33.687Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Roles live in document state and every operation reads the signer address, throwing a typed error when unauthorized. Rejections surface as operation.error, not as thrown exceptions to callers.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "368565cb-1f14-4842-8da8-e9d221437211",
+      "actor": "claude",
+      "comment": "Knowledge registered against powerhouse v6.2.2-dev.47",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-14T12:00:00.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "382f8887-4a20-4241-a438-91746831717a",
+      "actor": "liberuum",
+      "comment": "Canonical as of powerhouse v6.2.2-dev.47",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-14T12:00:00.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

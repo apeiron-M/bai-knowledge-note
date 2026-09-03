@@ -1,7 +1,7 @@
 # drive-sync — upload, download, reindex, repair a Powerhouse knowledge vault
 
 This folder holds the canonical scripts and a committed dataset
-(`data/knowledge-vault/`, 543 docs) so anyone with a fresh clone can
+(`data/knowledge-vault/`, 543 docs, plus the 2026-09 remote snapshot in `data/powerhouse-knowledge/` — see *Datasets*) so anyone with a fresh clone can
 recreate the vault on a clean local reactor in one command.
 
 ---
@@ -189,6 +189,62 @@ per type (`RELATES_TO`, `BUILDS_ON`, `CONTRADICTS`, `SUPERSEDES`,
 upload handlers consume. Caches per-doc (skips refetch if the state
 file already exists) — `rm -rf data/knowledge-vault/states/` to force a
 full refresh.
+
+---
+
+## Datasets
+
+| Directory | Source | Snapshot | Contents |
+|---|---|---|---|
+| `data/knowledge-vault/` | the original local vault | 2026-05 | 543 docs, 2,211 cross-refs — the historical baseline |
+| `data/powerhouse-knowledge/` | **the remote vault** `powerhouse-knowledge` (`c5893e1b-854b-49b1-b8aa-6b133ab87969` on `light-colt-c497cfbd-switchboard.vetra.io`) | **2026-09-03**, corpus at Powerhouse `v6.2.2-dev.74`, package `1.0.54-dev.6` | 1,465 docs: 982 notes, 403 sources, 58 MoCs, 13 tensions, 3 projects, 3 WBS, 3 singletons; 12 folders; **4,718 edges, 843 with a reason** |
+
+The second snapshot exists so a full copy of the production vault can be
+stood up on a local reactor — first use: **testing Switchboard authorization**
+(`AUTH_ENABLED`, `DOCUMENT_PERMISSIONS_ENABLED`, `ADMINS`, …) against real
+data before touching the remote. Verified against the live drive at download
+time with `verify-backup.py` (completeness, per-type edge totals, and a
+12-document sample of the relationship table against the graph dump: 0
+mismatches).
+
+### Two files the newer snapshot adds
+
+- **`edges.json`** — every knowledge edge in the drive from **one**
+  `knowledgeGraphEdges` call, with `reason` and `confidence`. This is now the
+  default source for the per-doc `links[]` / `coreIdeas[]` / `childRefs[]`
+  arrays (`download.py --relationships graph`): one request instead of seven
+  per document, and the only read path that sees edge metadata —
+  `documentOutgoingRelationships` returns documents, not edge rows. The old
+  per-type fan-out remains as `--relationships table` for a Switchboard
+  without the knowledgeGraph subgraph. The dump is a projection, so
+  `verify-backup.py` spot-checks it against the table.
+- **`auth.json`** — `{docId: state.auth}` for every document: the access
+  policy in the document's own auth scope. All 1,465 are uninitialized
+  (`version: 0`) today; after an authorization experiment, diffing this file
+  shows exactly which documents gained a policy.
+
+### Restoring it locally — what comes back and what does not
+
+`upload.py` restores everything it has a handler for: notes, MoCs, sources
+and the three singletons (1,446 docs) with their topics, provenance,
+metadata and **articulated edges** — a link carrying `reason`/`confidence`
+is dispatched as an `ADD_RELATIONSHIP` action with `metadata`, which is how
+`switchboard docs link --reason` writes it; the native `addRelationship`
+mutation has no metadata argument and would silently drop all 843 reasons.
+
+**Not restored yet:** the 13 `bai/tension`, 3 `bai/project` and 3 `bai/wbs`
+documents (no handlers in `handlers/`, and `lib/gql.py`'s namespace map
+lacks project/wbs), and the 27 `INVOLVES` edges that hang off tensions.
+They are all in the snapshot (`states/`, `edges.json`); only the upload side
+is missing. `upload.py` skips unknown types rather than failing.
+
+### Verify a snapshot
+
+```bash
+python3 scripts/drive-sync/verify-backup.py \
+    --data scripts/drive-sync/data/powerhouse-knowledge \
+    --endpoint https://<switchboard-host>/graphql/r --sample 12
+```
 
 ---
 

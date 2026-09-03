@@ -1,0 +1,157 @@
+{
+  "tier": "TOPIC",
+  "title": "PSS Chat Messaging",
+  "version": "v6.2.2-dev.47",
+  "tensions": [],
+  "childRefs": [],
+  "coreIdeas": [
+    {
+      "id": "ci-d1c32d1e",
+      "noteRef": "d1c32d1e-c285-46b0-b0f7-402fbec15641",
+      "contextPhrase": "",
+      "sortOrder": 0,
+      "addedAt": "2026-09-03T20:23:59.000Z",
+      "addedBy": "knowledge-agent"
+    },
+    {
+      "id": "ci-2fe08037",
+      "noteRef": "2fe08037-fc17-4fec-97f0-ac7d33baafc8",
+      "contextPhrase": "",
+      "sortOrder": 1,
+      "addedAt": "2026-09-03T20:23:59.000Z",
+      "addedBy": "knowledge-agent"
+    },
+    {
+      "id": "ci-713006f2",
+      "noteRef": "713006f2-2448-40a6-a531-918f99915577",
+      "contextPhrase": "",
+      "sortOrder": 2,
+      "addedAt": "2026-09-03T20:23:59.000Z",
+      "addedBy": "knowledge-agent"
+    },
+    {
+      "id": "ci-fa8008ac",
+      "noteRef": "fa8008ac-2ec5-4fe1-b902-c203a56107c2",
+      "contextPhrase": "",
+      "sortOrder": 3,
+      "addedAt": "2026-09-03T20:23:59.000Z",
+      "addedBy": "knowledge-agent"
+    },
+    {
+      "id": "ci-1e3e3772",
+      "noteRef": "1e3e3772-e865-4797-aebe-8b64a3f34fdd",
+      "contextPhrase": "",
+      "sortOrder": 4,
+      "addedAt": "2026-09-03T20:23:59.000Z",
+      "addedBy": "knowledge-agent"
+    },
+    {
+      "id": "ci-880f8e09",
+      "noteRef": "880f8e09-d314-49e7-a095-232cf1246969",
+      "contextPhrase": "",
+      "sortOrder": 5,
+      "addedAt": "2026-09-03T20:23:59.000Z",
+      "addedBy": "knowledge-agent"
+    },
+    {
+      "id": "ci-f4b5163e",
+      "noteRef": "f4b5163e-b3d0-4e5b-9d0e-768a9284d53f",
+      "contextPhrase": "",
+      "sortOrder": 6,
+      "addedAt": "2026-09-03T20:23:59.000Z",
+      "addedBy": "knowledge-agent"
+    },
+    {
+      "id": "ci-311d15b4",
+      "noteRef": "311d15b4-17e5-4e70-8132-0733220d6010",
+      "contextPhrase": "",
+      "sortOrder": 7,
+      "addedAt": "2026-09-03T20:23:59.000Z",
+      "addedBy": "knowledge-agent"
+    },
+    {
+      "id": "ci-530ee607",
+      "noteRef": "530ee607-9d92-4589-9037-8df877c5a1b0",
+      "contextPhrase": "",
+      "sortOrder": 8,
+      "addedAt": "2026-09-03T20:23:59.000Z",
+      "addedBy": "knowledge-agent"
+    },
+    {
+      "id": "ci-bda80293",
+      "noteRef": "bda80293-c43b-4441-a2be-bf6ca6489ed8",
+      "contextPhrase": "",
+      "sortOrder": 9,
+      "addedAt": "2026-09-03T20:23:59.000Z",
+      "addedBy": "knowledge-agent"
+    },
+    {
+      "id": "ci-40899d26",
+      "noteRef": "40899d26-0390-462d-8db7-efd3d67915fe",
+      "contextPhrase": "",
+      "sortOrder": 10,
+      "addedAt": "2026-09-03T20:23:59.000Z",
+      "addedBy": "knowledge-agent"
+    },
+    {
+      "id": "ci-d9a9b371",
+      "noteRef": "d9a9b371-05e8-49a6-a4fb-76d85797d69d",
+      "contextPhrase": "",
+      "sortOrder": 11,
+      "addedAt": "2026-09-03T20:23:59.000Z",
+      "addedBy": "knowledge-agent"
+    }
+  ],
+  "createdAt": "2026-04-21T19:31:52.944Z",
+  "noteCount": 0,
+  "parentRef": null,
+  "updatedAt": "2026-08-14T12:00:00.000Z",
+  "agentNotes": [],
+  "description": "The messaging primitives and decisions behind Connect chat on Swarm: PSS for 1-to-1, GSOC for notifications, ACT-protected feed for history.",
+  "orientation": "Chat in Connect-on-Swarm is built by matching latency to purpose: PSS trojan chunks deliver 1-to-1 encrypted messages, GSOC gives many-to-one sub-second notifications, and an ACT-protected feed persists history past PSS stamp TTLs. This MOC collects the primitives (PSS, GSOC), the operational constraints (full Bee nodes, sorted-topic derivation), the integration points (share bundles, chat code layout), and the decisions (typing indicators cut, PSS+GSOC combination). It is the reference surface for anyone extending the chat runtime.",
+  "openQuestions": [],
+  "links": [
+    {
+      "id": "lnk-1c781f1a-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "1c781f1a-a3f9-483e-a15a-ccbc2c431135",
+      "targetTitle": "chat-pss-messaging-history-shipped"
+    },
+    {
+      "id": "lnk-fcf49d63-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "fcf49d63-4d9f-4ff7-a937-88d53820e999",
+      "targetTitle": "chat-file-sharing-previews-shipped"
+    },
+    {
+      "id": "lnk-97c0a282-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "97c0a282-5f24-47bd-a2cd-f5d563fa8d11",
+      "targetTitle": "bee-reactor-adapter-chat-settings-features"
+    },
+    {
+      "id": "lnk-ae9c98a6-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "ae9c98a6-00eb-4aa9-92e8-40ad3bc9513d",
+      "targetTitle": "chat-polish-backlog-items"
+    },
+    {
+      "id": "lnk-c7c48a1f-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "c7c48a1f-024c-44e7-94e4-0165689abe96",
+      "targetTitle": "swarm-pss-trojan-chunks"
+    },
+    {
+      "id": "lnk-67e62207-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "67e62207-2fa5-4ed9-84bd-c673f60474fb",
+      "targetTitle": "typing-indicators-scratched-decision"
+    },
+    {
+      "id": "lnk-d842218d-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "d842218d-18b5-4c71-aede-2427fd22cc64",
+      "targetTitle": "collab-risks-mining-mutable-stamps-full-nodes"
+    }
+  ]
+}

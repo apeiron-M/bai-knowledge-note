@@ -1,0 +1,151 @@
+[
+  {
+    "index": 0,
+    "hash": "",
+    "timestampUtcMs": "2026-09-02T21:43:10.295Z",
+    "action": {
+      "type": "CREATE_DOCUMENT",
+      "input": {
+        "meta": {},
+        "name": "CLI \u203a ph-cmd \u203a COMMANDS \u2014 PH-CMD CLI Commands (6.2.2-dev.73)",
+        "slug": "",
+        "model": "bai/source",
+        "branch": "main",
+        "signing": {
+          "nonce": "",
+          "publicKey": {},
+          "signature": "4cb7ca6f-0890-401d-9b38-25178e294c0e",
+          "documentType": "bai/source",
+          "createdAtUtcIso": "2026-09-02T21:43:10.295Z"
+        },
+        "version": 0,
+        "documentId": "4cb7ca6f-0890-401d-9b38-25178e294c0e",
+        "protocolVersions": {
+          "base-reducer": 2
+        }
+      },
+      "timestampUtcMs": "2026-09-02T21:43:10.295Z"
+    }
+  },
+  {
+    "index": 0,
+    "hash": "S5FSlBswUScmFAypQa1uw7cMHWg=",
+    "timestampUtcMs": "2026-09-02T21:43:10.178Z",
+    "action": {
+      "type": "INGEST_SOURCE",
+      "input": {
+        "url": "https://github.com/powerhouse-inc/powerhouse/blob/v6.2.2-dev.47/clis/ph-cmd/COMMANDS.md",
+        "tool": "sync-repo-docs",
+        "title": "CLI \u203a ph-cmd \u203a COMMANDS \u2014 PH-CMD CLI Commands (6.2.2-dev.73)",
+        "author": "Powerhouse Inc.",
+        "method": "sha256:e76e43278da93279391f73d04e60e3d27df896f944a059f1cf270d77aa8c977b git:v6.2.2-dev.47 (baseline recorded 2026-09-02)",
+        "content": "# PH-CMD CLI Commands (6.2.2-dev.46)<br>\nThis document provides detailed information about the available commands in the PH-CMD CLI. The CLI is published as `ph-cmd` and is invoked with the `ph` command.<br><br>\nThe Powerhouse CLI (ph-cmd) is a command-line interface tool that provides essential commands for managing Powerhouse projects.\nThe tool and it's commands are fundamental for creating, building, and running Document Models as a builder in studio mode.<br>\n## Table of Contents\n- [Init](#init)\n- [Use](#use)\n- [Update](#update)\n- [Setup Globals](#setup-globals)\n- [Use Local](#use-local)\n<br>\n## Init\nInitialize a new project\n### arguments\n#### Name <br>\nThe name of your project. A new directory will be created in your current directory with this name.<br><br>\n**usage:** `[name]`<br>\n\n\n### options\n#### Name <br>\nThe name of your project. A new directory will be created in your current directory with this name.<br><br>\n**usage:** `--name, -n <str>`<br>\n\n#### Package Manager <br>\nSpecify the package manager to use for your project. Can be one of: `npm`, `pnpm`, `yarn`, or `bun`. Defaults to your environment package manager.<br><br>\n**usage:** `--package-manager, -p <value>`<br>\n\n#### Tag <br>\nSpecify the release tag to use for your project. Can be one of: \"latest\", \"staging\", \"dev\", or \"rc\".<br><br>\n**usage:** `--tag, -t <value>`<br>\n\n#### Version <br>\nSpecify the exact semver release version to use for your project.<br><br>\n**usage:** `--version, -v <str>`<br>\n\n#### Remote Drive <br>\nRemote drive identifier.<br><br>\n**usage:** `--remote-drive, -r <str>`<br>\n\n#### Clone <br>\nPath to an existing scaffolded project to clone instead of resolving deps from scratch. Install runs offline from the cloned project's pnpm-lock.yaml (requires --pnpm; --version/--tag are ignored).<br><br>\n**usage:** `--clone <str>`<br>\n\n\n### flags\n#### Npm <br>\nUse 'npm' as package manager<br><br>\n**usage:** `--npm`<br>\n\n#### Pnpm <br>\nUse 'pnpm' as package manager<br><br>\n**usage:** `--pnpm`<br>\n\n#### Yarn <br>\nUse 'yarn' as package manager<br><br>\n**usage:** `--yarn`<br>\n\n#### Bun <br>\nUse 'bun' as package manager<br><br>\n**usage:** `--bun`<br>\n\n#### Dev <br>\nUse the `dev` release tag.<br><br>\n**usage:** `--dev, -d`<br>\n\n#### Staging <br>\nUse the `staging` release tag.<br><br>\n**usage:** `--staging, -s`<br>\n\n#### Rc <br>\nUse the `rc` release tag.<br><br>\n**usage:** `--rc`<br>\n\n#### Debug <br>\nLog arguments passed to this command<br><br>\n**usage:** `--debug`<br>\n\n#### Help <br>\nshow help<br><br>\n**usage:** `--help, -h`<br>\n\n\n## Use\nSpecify the release version of Powerhouse dependencies to use.\n### arguments\n#### Tag <br>\nSpecify the release tag to use for your project. Can be one of: \"latest\", \"staging\", \"dev\", or \"rc\".<br><br>\n**usage:** `[tag]`<br>\n\n\n### options\n#### Tag <br>\nSpecify the release tag to use for your project. Can be one of: \"latest\", \"staging\", \"dev\", or \"rc\".<br><br>\n**usage:** `--tag, -t <value>`<br>\n\n#### Version <br>\nSpecify the exact semver release version to use for your project.<br><br>\n**usage:** `--version, -v <str>`<br>\n\n\n### flags\n#### Skip Install <br>\nSkip running `install` with your package manager<br><br>\n**usage:** `--skip-install, -s`<br>\n\n#### Debug <br>\nLog arguments passed to this command<br><br>\n**usage:** `--debug`<br>\n\n#### Help <br>\nshow help<br><br>\n**usage:** `--help, -h`<br>\n\n\n## Update\nUpdate your powerhouse dependencies to their latest tagged version\n### flags\n#### Skip Install <br>\nSkip running `install` with your package manager<br><br>\n**usage:** `--skip-install, -s`<br>\n\n#### Debug <br>\nLog arguments passed to this command<br><br>\n**usage:** `--debug`<br>\n\n#### Help <br>\nshow help<br><br>\n**usage:** `--help, -h`<br>\n\n\n## Setup Globals\nInitialize a new global project\n### arguments\n#### Name <br>\nThe name of your project. A new directory will be created in your current directory with this name.<br><br>\n**usage:** `[name]`<br>\n\n\n### options\n#### Name <br>\nThe name of your project. A new directory will be created in your current directory with this name.<br><br>\n**usage:** `--name, -n <str>`<br>\n\n#### Package Manager <br>\nSpecify the package manager to use for your project. Can be one of: `npm`, `pnpm`, `yarn`, or `bun`. Defaults to your environment package manager.<br><br>\n**usage:** `--package-manager, -p <value>`<br>\n\n#### Tag <br>\nSpecify the release tag to use for your project. Can be one of: \"latest\", \"staging\", \"dev\", or \"rc\".<br><br>\n**usage:** `--tag, -t <value>`<br>\n\n#### Version <br>\nSpecify the exact semver release version to use for your project.<br><br>\n**usage:** `--version, -v <str>`<br>\n\n#### Remote Drive <br>\nRemote drive identifier.<br><br>\n**usage:** `--remote-drive, -r <str>`<br>\n\n#### Clone <br>\nPath to an existing scaffolded project to clone instead of resolving deps from scratch. Install runs offline from the cloned project's pnpm-lock.yaml (requires --pnpm; --version/--tag are ignored).<br><br>\n**usage:** `--clone <str>`<br>\n\n\n### flags\n#### Npm <br>\nUse 'npm' as package manager<br><br>\n**usage:** `--npm`<br>\n\n#### Pnpm <br>\nUse 'pnpm' as package manager<br><br>\n**usage:** `--pnpm`<br>\n\n#### Yarn <br>\nUse 'yarn' as package manager<br><br>\n**usage:** `--yarn`<br>\n\n#### Bun <br>\nUse 'bun' as package manager<br><br>\n**usage:** `--bun`<br>\n\n#### Dev <br>\nUse the `dev` release tag.<br><br>\n**usage:** `--dev, -d`<br>\n\n#### Staging <br>\nUse the `staging` release tag.<br><br>\n**usage:** `--staging, -s`<br>\n\n#### Rc <br>\nUse the `rc` release tag.<br><br>\n**usage:** `--rc`<br>\n\n#### Debug <br>\nLog arguments passed to this command<br><br>\n**usage:** `--debug`<br>\n\n#### Help <br>\nshow help<br><br>\n**usage:** `--help, -h`<br>\n\n\n## Use Local\nUse your local `powerhouse` monorepo dependencies the current project.\n### arguments\n#### Monorepo Path <br>\nPath to your local powerhouse monorepo relative to this project<br><br>\n**usage:** `[monorepo path]`<br>\n\n\n### options\n#### Path <br>\nPath to your local powerhouse monorepo relative to this project<br><br>\n**usage:** `--path, -p <str>`<br>\n\n\n### flags\n#### Skip Install <br>\nSkip running `install` with `pnpm`<br><br>\n**usage:** `--skip-install, -s`<br>\n\n#### Debug <br>\nLog arguments passed to this command<br><br>\n**usage:** `--debug`<br>\n\n#### Help <br>\nshow help<br><br>\n**usage:** `--help, -h`<br>\n\n\n\n",
+        "createdAt": "2026-09-02T21:43:10.178Z",
+        "createdBy": "repo-docs-sync",
+        "sourceType": "DOCUMENTATION",
+        "description": "Powerhouse v6.2.2-dev.47 \u2014 PH-CMD CLI Commands (6.2.2-dev.73)",
+        "publishedAt": "2026-08-14T04:09:36.000Z"
+      },
+      "timestampUtcMs": "2026-09-02T21:43:10.178Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "",
+    "timestampUtcMs": "2026-09-02T21:43:10.295Z",
+    "action": {
+      "type": "UPGRADE_DOCUMENT",
+      "input": {
+        "model": "bai/source",
+        "toVersion": 1,
+        "documentId": "4cb7ca6f-0890-401d-9b38-25178e294c0e",
+        "fromVersion": 0,
+        "initialState": {
+          "auth": {
+            "grants": [],
+            "version": 0
+          },
+          "local": {},
+          "global": {
+            "title": null,
+            "status": "INBOX",
+            "content": null,
+            "createdAt": null,
+            "createdBy": null,
+            "provenance": null,
+            "sourceType": null,
+            "description": null,
+            "extractedClaims": [],
+            "extractionStats": null
+          },
+          "document": {
+            "hash": {
+              "encoding": "base64",
+              "algorithm": "sha1"
+            },
+            "version": 1
+          }
+        }
+      },
+      "timestampUtcMs": "2026-09-02T21:43:10.295Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "WAMNZobYEWoc5dDju0TVdrdSTck=",
+    "timestampUtcMs": "2026-09-02T21:43:10.753Z",
+    "action": {
+      "type": "INGEST_SOURCE",
+      "input": {
+        "url": "https://github.com/powerhouse-inc/powerhouse/blob/v6.2.2-dev.74/clis/ph-cmd/COMMANDS.md",
+        "tool": "sync-repo-docs",
+        "title": "CLI \u203a ph-cmd \u203a COMMANDS \u2014 PH-CMD CLI Commands (6.2.2-dev.73)",
+        "author": "Powerhouse Inc.",
+        "method": "sha256:c65a3f90acce19f476c3b7721f12eac8560562d698056e1e15918f80cb273b90 git:v6.2.2-dev.74",
+        "content": "# PH-CMD CLI Commands (6.2.2-dev.73)<br>\nThis document provides detailed information about the available commands in the PH-CMD CLI. The CLI is published as `ph-cmd` and is invoked with the `ph` command.<br><br>\nThe Powerhouse CLI (ph-cmd) is a command-line interface tool that provides essential commands for managing Powerhouse projects.\nThe tool and it's commands are fundamental for creating, building, and running Document Models as a builder in studio mode.<br>\n## Table of Contents\n- [Init](#init)\n- [Use](#use)\n- [Update](#update)\n- [Setup Globals](#setup-globals)\n- [Use Local](#use-local)\n<br>\n## Init\nInitialize a new project\n### arguments\n#### Name <br>\nThe name of your project. A new directory will be created in your current directory with this name.<br><br>\n**usage:** `[name]`<br>\n\n\n### options\n#### Name <br>\nThe name of your project. A new directory will be created in your current directory with this name.<br><br>\n**usage:** `--name, -n <str>`<br>\n\n#### Package Manager <br>\nSpecify the package manager to use for your project. Can be one of: `npm`, `pnpm`, `yarn`, or `bun`. Defaults to your environment package manager.<br><br>\n**usage:** `--package-manager, -p <value>`<br>\n\n#### Tag <br>\nSpecify the release tag to use for your project. Can be one of: \"latest\", \"staging\", \"dev\", or \"rc\".<br><br>\n**usage:** `--tag, -t <value>`<br>\n\n#### Version <br>\nSpecify the exact semver release version to use for your project.<br><br>\n**usage:** `--version, -v <str>`<br>\n\n#### Remote Drive <br>\nRemote drive identifier.<br><br>\n**usage:** `--remote-drive, -r <str>`<br>\n\n#### Clone <br>\nPath to an existing scaffolded project to clone instead of resolving deps from scratch. Install runs offline from the cloned project's pnpm-lock.yaml (requires --pnpm; --version/--tag are ignored).<br><br>\n**usage:** `--clone <str>`<br>\n\n\n### flags\n#### Npm <br>\nUse 'npm' as package manager<br><br>\n**usage:** `--npm`<br>\n\n#### Pnpm <br>\nUse 'pnpm' as package manager<br><br>\n**usage:** `--pnpm`<br>\n\n#### Yarn <br>\nUse 'yarn' as package manager<br><br>\n**usage:** `--yarn`<br>\n\n#### Bun <br>\nUse 'bun' as package manager<br><br>\n**usage:** `--bun`<br>\n\n#### Dev <br>\nUse the `dev` release tag.<br><br>\n**usage:** `--dev, -d`<br>\n\n#### Staging <br>\nUse the `staging` release tag.<br><br>\n**usage:** `--staging, -s`<br>\n\n#### Rc <br>\nUse the `rc` release tag.<br><br>\n**usage:** `--rc`<br>\n\n#### Debug <br>\nLog arguments passed to this command<br><br>\n**usage:** `--debug`<br>\n\n#### Help <br>\nshow help<br><br>\n**usage:** `--help, -h`<br>\n\n\n## Use\nSpecify the release version of Powerhouse dependencies to use.\n### arguments\n#### Tag <br>\nSpecify the release tag to use for your project. Can be one of: \"latest\", \"staging\", \"dev\", or \"rc\".<br><br>\n**usage:** `[tag]`<br>\n\n\n### options\n#### Tag <br>\nSpecify the release tag to use for your project. Can be one of: \"latest\", \"staging\", \"dev\", or \"rc\".<br><br>\n**usage:** `--tag, -t <value>`<br>\n\n#### Version <br>\nSpecify the exact semver release version to use for your project.<br><br>\n**usage:** `--version, -v <str>`<br>\n\n\n### flags\n#### Skip Install <br>\nSkip running `install` with your package manager<br><br>\n**usage:** `--skip-install, -s`<br>\n\n#### Debug <br>\nLog arguments passed to this command<br><br>\n**usage:** `--debug`<br>\n\n#### Help <br>\nshow help<br><br>\n**usage:** `--help, -h`<br>\n\n\n## Update\nUpdate your powerhouse dependencies to their latest tagged version\n### flags\n#### Skip Install <br>\nSkip running `install` with your package manager<br><br>\n**usage:** `--skip-install, -s`<br>\n\n#### Debug <br>\nLog arguments passed to this command<br><br>\n**usage:** `--debug`<br>\n\n#### Help <br>\nshow help<br><br>\n**usage:** `--help, -h`<br>\n\n\n## Setup Globals\nInitialize a new global project\n### arguments\n#### Name <br>\nThe name of your project. A new directory will be created in your current directory with this name.<br><br>\n**usage:** `[name]`<br>\n\n\n### options\n#### Name <br>\nThe name of your project. A new directory will be created in your current directory with this name.<br><br>\n**usage:** `--name, -n <str>`<br>\n\n#### Package Manager <br>\nSpecify the package manager to use for your project. Can be one of: `npm`, `pnpm`, `yarn`, or `bun`. Defaults to your environment package manager.<br><br>\n**usage:** `--package-manager, -p <value>`<br>\n\n#### Tag <br>\nSpecify the release tag to use for your project. Can be one of: \"latest\", \"staging\", \"dev\", or \"rc\".<br><br>\n**usage:** `--tag, -t <value>`<br>\n\n#### Version <br>\nSpecify the exact semver release version to use for your project.<br><br>\n**usage:** `--version, -v <str>`<br>\n\n#### Remote Drive <br>\nRemote drive identifier.<br><br>\n**usage:** `--remote-drive, -r <str>`<br>\n\n#### Clone <br>\nPath to an existing scaffolded project to clone instead of resolving deps from scratch. Install runs offline from the cloned project's pnpm-lock.yaml (requires --pnpm; --version/--tag are ignored).<br><br>\n**usage:** `--clone <str>`<br>\n\n\n### flags\n#### Npm <br>\nUse 'npm' as package manager<br><br>\n**usage:** `--npm`<br>\n\n#### Pnpm <br>\nUse 'pnpm' as package manager<br><br>\n**usage:** `--pnpm`<br>\n\n#### Yarn <br>\nUse 'yarn' as package manager<br><br>\n**usage:** `--yarn`<br>\n\n#### Bun <br>\nUse 'bun' as package manager<br><br>\n**usage:** `--bun`<br>\n\n#### Dev <br>\nUse the `dev` release tag.<br><br>\n**usage:** `--dev, -d`<br>\n\n#### Staging <br>\nUse the `staging` release tag.<br><br>\n**usage:** `--staging, -s`<br>\n\n#### Rc <br>\nUse the `rc` release tag.<br><br>\n**usage:** `--rc`<br>\n\n#### Debug <br>\nLog arguments passed to this command<br><br>\n**usage:** `--debug`<br>\n\n#### Help <br>\nshow help<br><br>\n**usage:** `--help, -h`<br>\n\n\n## Use Local\nUse your local `powerhouse` monorepo dependencies the current project.\n### arguments\n#### Monorepo Path <br>\nPath to your local powerhouse monorepo relative to this project<br><br>\n**usage:** `[monorepo path]`<br>\n\n\n### options\n#### Path <br>\nPath to your local powerhouse monorepo relative to this project<br><br>\n**usage:** `--path, -p <str>`<br>\n\n\n### flags\n#### Skip Install <br>\nSkip running `install` with `pnpm`<br><br>\n**usage:** `--skip-install, -s`<br>\n\n#### Debug <br>\nLog arguments passed to this command<br><br>\n**usage:** `--debug`<br>\n\n#### Help <br>\nshow help<br><br>\n**usage:** `--help, -h`<br>\n\n\n\n",
+        "createdAt": "2026-09-02T21:43:10.752Z",
+        "createdBy": "repo-docs-sync",
+        "sourceType": "DOCUMENTATION",
+        "description": "Powerhouse v6.2.2-dev.74 (revised between v6.2.2-dev.47 and v6.2.2-dev.74) \u2014 PH-CMD CLI Commands (6.2.2-dev.73)",
+        "publishedAt": "2026-09-02T17:52:18.000Z"
+      },
+      "timestampUtcMs": "2026-09-02T21:43:10.753Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "USTTZGjiKZ69aBm2gMLN8t1KD28=",
+    "timestampUtcMs": "2026-09-02T21:43:24.678Z",
+    "action": {
+      "type": "ADD_EXTRACTED_CLAIM",
+      "input": {
+        "claimRef": "62477739-6479-4856-8796-5204cb7e51a1"
+      },
+      "timestampUtcMs": "2026-09-02T21:43:24.678Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "LIx9GKGoRC+RbTPGpYbeBrfxWWE=",
+    "timestampUtcMs": "2026-09-02T21:43:28.448Z",
+    "action": {
+      "type": "SET_SOURCE_STATUS",
+      "input": {
+        "status": "EXTRACTED"
+      },
+      "timestampUtcMs": "2026-09-02T21:43:28.448Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "+YMN2r0S4WbElr63CgrLmMMykPI=",
+    "timestampUtcMs": "2026-09-02T22:25:55.185Z",
+    "action": {
+      "type": "ADD_EXTRACTED_CLAIM",
+      "input": {
+        "claimRef": "c1d0a3c5-93dc-400e-b68a-ef27521f89ed"
+      },
+      "timestampUtcMs": "2026-09-02T22:25:55.185Z"
+    }
+  }
+]

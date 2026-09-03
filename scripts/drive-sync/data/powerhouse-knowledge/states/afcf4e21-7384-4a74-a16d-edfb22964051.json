@@ -1,0 +1,110 @@
+{
+  "links": [
+    {
+      "id": "lnk-cfff81b5-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "cfff81b5-b9a8-40ed-8787-bd6114a677a2",
+      "targetTitle": "project-structure-four-directories"
+    },
+    {
+      "id": "lnk-9d9aef7a-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "9d9aef7a-1b68-4f2b-a2ad-c54a48e55d20",
+      "targetTitle": "never-import-error-classes-manually-in-reducer-code"
+    },
+    {
+      "id": "lnk-43733227-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "43733227-b9d3-424b-8fa0-83dda8a2001b",
+      "targetTitle": "builder-platform-enables-creation-of-reusable-modules-with-value-sharing"
+    },
+    {
+      "id": "lnk-ccc35ccd-bui",
+      "linkType": "BUILDS_ON",
+      "targetDocumentId": "ccc35ccd-8646-4748-babf-ef0d0933f07f",
+      "targetTitle": "vetra-auto-generates-code-on-spec-change"
+    },
+    {
+      "id": "lnk-33ea7676-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "33ea7676-b8e7-44b7-8932-e49bd823b286",
+      "targetTitle": "Academy \u203a Build \u203a DocumentModelCreation \u203a Use the Document Model Generator",
+      "reason": "Backing page found by content match in the v6.2.2-dev.74 source backfill \u2014 identifiers overwritten, typescript from the claim appear in this page (text identical at v6.2.2-dev.47 and v6.2.2-dev.74); attribution, not the original extraction record",
+      "confidence": "grounded"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "The gen/ folder contains auto-generated code and must never be manually edited",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "d7468b95-e29e-49aa-bd73-e6e3f0d91756",
+      "name": "code-generation",
+      "topicDocumentId": null
+    },
+    {
+      "id": "de5095b4-c1f7-462e-944f-1423bdaa432f",
+      "name": "project-structure",
+      "topicDocumentId": null
+    },
+    {
+      "id": "c282ada0-ea00-4762-81b6-219783e5dd2a",
+      "name": "document-model",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "When Powerhouse generates code for a document model (either automatically via Vetra or manually via `ph generate`), it creates two key directories:\n\n- **`gen/`** - Auto-generated code that must NOT be manually edited. It will be overwritten on regeneration. Contains:\n  - `types.ts` - TypeScript interfaces from GraphQL schema (state types, input types)\n  - `creators.ts` - Action creator functions (e.g., `addTodoItem({ text: '...' })`)\n  - `utils.ts` - Utility functions including `createDocument()`\n  - `reducer.ts` - Reducer interface definition\n  - Module-specific operation types\n\n- **`src/`** - Your custom implementation. Contains:\n  - `reducers/` - Skeleton reducer files with function stubs for each operation\n  - `tests/` - Test file scaffolding\n\nThis separation ensures generated code stays in sync with specifications while preserving your custom business logic.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": "v6.2.2-dev.74",
+  "computes": null,
+  "filePath": "apps/academy/docs/academy/03-Build/02-DocumentModelCreation/04-UseTheDocumentModelGenerator.md",
+  "noteType": "PATTERN",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "knowledge-agent",
+    "createdAt": "2026-04-02T12:00:00.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-09-02T21:33:30.605Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Generated TypeScript types, action creators, and utilities in gen/ are overwritten on regeneration. Custom logic goes in src/.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "fc1e0f68-9a0a-4cd2-881c-5e1d7cdaaa44",
+      "actor": "claude",
+      "comment": "Knowledge registered against powerhouse v6.2.2-dev.47",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-14T12:00:00.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "e6890e61-f697-4cb4-8eec-b557b53a7fb7",
+      "actor": "liberuum",
+      "comment": "Canonical as of powerhouse v6.2.2-dev.47",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-14T12:00:00.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

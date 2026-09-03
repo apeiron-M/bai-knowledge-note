@@ -1,0 +1,107 @@
+{
+  "links": [
+    {
+      "id": "lnk-7a7703dc-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "7a7703dc-3080-49be-8957-835233957a8a",
+      "targetTitle": "Package \u203a reactor-browser \u203a analytics \u2014 Analytics for Reactor Browser",
+      "reason": "Extracted from packages/reactor-browser/src/analytics/README.md at v6.2.2-dev.74 \u2014 Setup (AnalyticsProvider, registering the store with the processor manager); Available Hooks \u203a useAnalyticsQuery",
+      "confidence": "grounded"
+    },
+    {
+      "id": "lnk-a8824d76-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "a8824d76-26b8-48fb-99c2-93072ed70dc2",
+      "targetTitle": "relational-live-queries",
+      "reason": "Both are read surfaces for processor output in the browser: one dimensional and time-bucketed, the other relational and live",
+      "confidence": "grounded"
+    },
+    {
+      "id": "lnk-21cb9dda-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "21cb9dda-02f2-4af8-a32d-2bfedcefb9dc",
+      "targetTitle": "processors-run-only-on-in-process-reactor-path",
+      "reason": "Registration through the processor manager is exactly the path that only exists on the in-process reactor, which is why a browser analytics processor is wired by hand in a component",
+      "confidence": "grounded"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Browser analytics is a React Query provider requiring a database name, and a processor's analytics store must be registered with the processor manager by hand",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "2d8831c5-7bb0-4254-95a4-3ed87b3761a3",
+      "name": "reactor-browser",
+      "topicDocumentId": null
+    },
+    {
+      "id": "95da9150-ca43-494d-a4a1-5188d62d770e",
+      "name": "analytics",
+      "topicDocumentId": null
+    },
+    {
+      "id": "cbe011ed-e665-46ae-8350-1e6224ee35cf",
+      "name": "react-query",
+      "topicDocumentId": null
+    },
+    {
+      "id": "3c08a740-e452-429d-ae4b-f6668b987eca",
+      "name": "processors",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "The browser analytics module is React hooks and context over the analytics engine, using **React Query** for data management and caching. Setup is a provider with one required prop:\n\n```tsx\n<AnalyticsProvider databaseName=\"my-app:analytics\">{children}</AnalyticsProvider>\n```\n\n`databaseName` must be unique (it names the analytics database); `queryClient` is optional if the app already has one.\n\nThe part worth remembering is that **integration with document processors is not automatic**. A component reads both the store and the manager and registers them together:\n\n```tsx\nfunction CustomProcessor() {\n  const store = useAnalyticsStore();\n  const manager = useProcessorManager();\n  useEffect(() => {\n    if (!store || !manager) return;\n    registerProcessor(manager, store).catch(console.error);\n  }, [store, manager]);\n  return null;\n}\n```\n\nBoth hooks can return undefined before the provider and the manager exist, hence the guard \u2014 and the registration lives in an effect precisely because it must not run during render.\n\nQueries are then declarative: `useAnalyticsQuery({ start, end, granularity, metrics, select })` with luxon `DateTime` bounds and an `AnalyticsGranularity`, returning React Query's `{ data, isLoading }`.\n\n## Provenance\n- `packages/reactor-browser/src/analytics/README.md` \u2014 Setup (AnalyticsProvider, registering the store with the processor manager); Available Hooks \u203a useAnalyticsQuery\n\n_Extracted from the Powerhouse repository at **v6.2.2-dev.74**._",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": "v6.2.2-dev.74",
+  "computes": null,
+  "filePath": "packages/reactor-browser/src/analytics/README.md",
+  "noteType": "INTEGRATION",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "knowledge-agent",
+    "createdAt": "2026-09-03T07:38:59.145Z",
+    "sessionId": null,
+    "updatedAt": "2026-09-03T07:39:00.288Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "AnalyticsProvider takes databaseName and an optional queryClient; a component reads useAnalyticsStore and useProcessorManager and calls registerProcessor(manager, store) in an effect.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "20768214-a94c-421a-859b-e948fe628b4e",
+      "actor": "knowledge-agent",
+      "comment": "extracted from packages/reactor-browser/src/analytics/README.md at v6.2.2-dev.74",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-09-03T07:38:59.618Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "b4c860d8-2df1-45f0-b6f4-5dd33894f059",
+      "actor": "liberuum",
+      "comment": "claim checked against the cited file at the pinned tag",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-09-03T07:39:00.288Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

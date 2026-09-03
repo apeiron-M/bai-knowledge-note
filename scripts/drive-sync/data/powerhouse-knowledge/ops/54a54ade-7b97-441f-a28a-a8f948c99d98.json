@@ -1,0 +1,121 @@
+[
+  {
+    "index": 0,
+    "hash": "",
+    "timestampUtcMs": "2026-09-02T21:39:48.420Z",
+    "action": {
+      "type": "CREATE_DOCUMENT",
+      "input": {
+        "meta": {},
+        "name": "Academy \u203a Reference \u203a EditorsUI \u203a Step 2: Integrate Your Scalar into a React Component",
+        "slug": "",
+        "model": "bai/source",
+        "branch": "main",
+        "signing": {
+          "nonce": "",
+          "publicKey": {},
+          "signature": "54a54ade-7b97-441f-a28a-a8f948c99d98",
+          "documentType": "bai/source",
+          "createdAtUtcIso": "2026-09-02T21:39:48.420Z"
+        },
+        "version": 0,
+        "documentId": "54a54ade-7b97-441f-a28a-a8f948c99d98",
+        "protocolVersions": {
+          "base-reducer": 2
+        }
+      },
+      "timestampUtcMs": "2026-09-02T21:39:48.420Z"
+    }
+  },
+  {
+    "index": 0,
+    "hash": "1zNHxh+G4eAoY0VbSutrr31aVXI=",
+    "timestampUtcMs": "2026-09-02T21:39:48.665Z",
+    "action": {
+      "type": "INGEST_SOURCE",
+      "input": {
+        "url": "https://github.com/powerhouse-inc/powerhouse/blob/v6.2.2-dev.74/apps/academy/docs/academy/04-Reference/05-EditorsUI/_03-IntegrateIntoAReactComponent.md",
+        "tool": "sync-repo-docs",
+        "title": "Academy \u203a Reference \u203a EditorsUI \u203a Step 2: Integrate Your Scalar into a React Component",
+        "author": "Powerhouse Inc.",
+        "method": "sha256:0efe7b5e68ef83d64c3b6cf9fcaadc5f211645fb93fa11700c49eb9be91b76ec git:v6.2.2-dev.74",
+        "content": "# Step 2: Integrate Your Scalar into a React Component\n\nThis guide explains how to use a custom scalar (created as described in the previous step) within a React component. You'll learn how to leverage the scalar's validation schema for form input, display errors, and ensure a seamless user experience.\n\n## Table of Contents\n\n- [Overview](#overview)\n- [Step 1: Import the Scalar and Dependencies](#step-1-import-the-scalar-and-dependencies)\n- [Step 2: Define Component Props](#step-2-define-component-props)\n- [Step 3: Implement the Component](#step-3-implement-the-component)\n- [Step 4: Render the Input and Error](#step-4-render-the-input-and-error)\n- [Step 5: Example Usage](#step-5-example-usage)\n- [Best Practices](#best-practices)\n- [Tips](#tips)\n\n## Overview\n\nCustom scalars provide type-safe validation and parsing for your data. Integrating them into React components ensures that user input is validated consistently with your backend and schema definitions. This is especially useful for form fields like email, phone number, Ethereum address, etc.\n\n## Step 1: Import the Scalar and Dependencies\n\nImport your scalar and React hooks. You may use any input component to capture user input. In the following example, `FormInput` is used for demonstration purposes, but you can use a standard `<input>`, a custom component, or any UI library input.\n\n```typescript\nimport { useState } from \"react\";\nimport { EthereumAddress as EthereumAddressScalar } from \"@powerhousedao/document-engineering/graphql\";\n// FormInput is just an example. You can use any input component you prefer.\nimport { FormInput } from \"@powerhousedao/design-system\";\n```\n\nReplace `EthereumAddress` with your scalar's name as needed.\n\n## Step 2: Define Component Props\n\nDefine the props for your component. Typically, you'll want an `onChange` callback to notify the parent of the value and its validity:\n\n```typescript\nexport interface EthereumAddressProps {\n  onChange?: (address: string, isValidAddress: boolean) => void;\n}\n```\n\nAdapt the prop names and types to your scalar (e.g., `PhoneNumberProps`, `onChange(phone: string, isValid: boolean)`).\n\n## Step 3: Implement the Component\n\nUse React state to track the input value. Use the scalar's Zod schema for validation. Call `onChange` with the value and validity whenever the input changes.\n\n> **Note:** The input component in this example is `FormInput`, but you can use any input or UI component to capture user input. The key is to validate the value using the scalar's schema.\n\n```typescript\nexport const EthereumAddress: React.FC<EthereumAddressProps> = ({ onChange }) => {\n  const [address, setAddress] = useState(\"\");\n\n  // Validate using the scalar's Zod schema\n  const result = EthereumAddressScalar.schema.safeParse(address);\n  const errors = result.error?.errors.map((error) => error.message).join(\", \");\n\n  // Notify parent of value and validity\n  if (onChange) {\n    onChange(address, result.success);\n  }\n\n  return (\n    <div>\n      {/* Replace FormInput with any input component you prefer */}\n      <FormInput\n        id=\"eth-address-input\"\n        value={address}\n        onChange={(e) => setAddress(e.target.value)}\n        placeholder=\"0x....\"\n        aria-label=\"Ethereum address input\"\n      />\n      <label htmlFor=\"eth-address-input\">\n        {address !== \"\" && errors}\n      </label>\n    </div>\n  );\n};\n```\n\n**Key Points:**\n\n- Use the scalar's `.schema.safeParse(value)` for validation.\n- Display error messages if validation fails.\n- Call `onChange` with both the value and its validity.\n- Use accessible labels and attributes.\n- The input component is flexible\u2014use what fits your UI best.\n\n## Step 4: Render the Input and Error\n\n- Use any form input component (e.g., `FormInput`, `<input>`, or a custom UI input) for the field.\n- Show error messages below the input when validation fails.\n- Add accessibility attributes (`aria-label`, `htmlFor`).\n\n## Step 5: Example Usage\n\nHere's how you might use your component in a parent form:\n\n```typescript\n<EthereumAddress\n  onChange={(address, isValid) => {\n    // Handle the address and its validity\n    console.log(\"Address:\", address, \"Valid:\", isValid);\n  }}\n/>\n```\n\nReplace `EthereumAddress` with your scalar component as needed.\n\n## Best Practices\n\n- **Validation:** Always use the scalar's schema for validation to ensure consistency with your backend.\n- **Accessibility:** Use proper labels, `aria-*` attributes, and keyboard navigation.\n- **Error Handling:** Display clear, user-friendly error messages.\n- **DRY Principle:** Reuse the scalar's schema and avoid duplicating validation logic.\n- **Type Safety:** Use TypeScript types for props and state.\n\n## Tips\n\n- Keep your UI clean and intuitive.\n- Sync your component with any updates to the scalar's schema.\n- Test edge cases (empty input, invalid formats, etc.).\n- Use meaningful placeholder text and labels.\n- Consider supporting additional props (e.g., `disabled`, `required`) for flexibility.\n",
+        "createdAt": "2026-09-02T21:39:48.665Z",
+        "createdBy": "repo-docs-sync",
+        "sourceType": "DOCUMENTATION",
+        "description": "Powerhouse v6.2.2-dev.74 (unchanged since v6.2.2-dev.47) \u2014 This guide explains how to use a custom scalar (created as described in the previous step) within a React component. You'll learn how to lev\u2026",
+        "publishedAt": "2026-06-17T17:18:45.000Z"
+      },
+      "timestampUtcMs": "2026-09-02T21:39:48.665Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "",
+    "timestampUtcMs": "2026-09-02T21:39:48.420Z",
+    "action": {
+      "type": "UPGRADE_DOCUMENT",
+      "input": {
+        "model": "bai/source",
+        "toVersion": 1,
+        "documentId": "54a54ade-7b97-441f-a28a-a8f948c99d98",
+        "fromVersion": 0,
+        "initialState": {
+          "auth": {
+            "grants": [],
+            "version": 0
+          },
+          "local": {},
+          "global": {
+            "title": null,
+            "status": "INBOX",
+            "content": null,
+            "createdAt": null,
+            "createdBy": null,
+            "provenance": null,
+            "sourceType": null,
+            "description": null,
+            "extractedClaims": [],
+            "extractionStats": null
+          },
+          "document": {
+            "hash": {
+              "encoding": "base64",
+              "algorithm": "sha1"
+            },
+            "version": 1
+          }
+        }
+      },
+      "timestampUtcMs": "2026-09-02T21:39:48.420Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "sNbtoFCY4TjA+ZfCPCH4QY13E+w=",
+    "timestampUtcMs": "2026-09-03T07:49:47.947Z",
+    "action": {
+      "type": "RECORD_EXTRACTION_STATS",
+      "input": {
+        "skipRate": 1,
+        "claimCount": 0,
+        "extractedAt": "2026-09-03T07:49:47.947Z",
+        "extractedBy": "knowledge-agent",
+        "skippedCount": 2
+      },
+      "timestampUtcMs": "2026-09-03T07:49:47.947Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "ka1MV82S8N7mdUBQQn0XsDKcCuc=",
+    "timestampUtcMs": "2026-09-03T07:56:54.864Z",
+    "action": {
+      "type": "SET_SOURCE_STATUS",
+      "input": {
+        "status": "EXTRACTED"
+      },
+      "timestampUtcMs": "2026-09-03T07:56:54.864Z"
+    }
+  }
+]

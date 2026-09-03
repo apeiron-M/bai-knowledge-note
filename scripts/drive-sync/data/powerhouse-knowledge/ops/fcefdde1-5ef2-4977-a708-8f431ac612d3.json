@@ -1,0 +1,500 @@
+[
+  {
+    "index": 0,
+    "hash": "",
+    "timestampUtcMs": "2026-09-03T07:29:08.968Z",
+    "action": {
+      "type": "CREATE_DOCUMENT",
+      "input": {
+        "meta": {},
+        "name": "browser-client-read-write-decisions",
+        "slug": "",
+        "model": "bai/knowledge-note",
+        "branch": "main",
+        "signing": {
+          "nonce": "",
+          "publicKey": {},
+          "signature": "fcefdde1-5ef2-4977-a708-8f431ac612d3",
+          "documentType": "bai/knowledge-note",
+          "createdAtUtcIso": "2026-09-03T07:29:08.968Z"
+        },
+        "version": 0,
+        "documentId": "fcefdde1-5ef2-4977-a708-8f431ac612d3",
+        "protocolVersions": {
+          "base-reducer": 2
+        }
+      },
+      "timestampUtcMs": "2026-09-03T07:29:08.968Z"
+    }
+  },
+  {
+    "index": 0,
+    "hash": "ajnq/uwd/0TZgDxtaXOkBgzHL+U=",
+    "timestampUtcMs": "2026-09-03T07:29:10.315Z",
+    "action": {
+      "type": "SET_TITLE",
+      "input": {
+        "title": "The light client reads the remote's current state with no replay and writes local-first, so point-in-time reads are out of scope by decision rather than by omission",
+        "updatedAt": "2026-09-03T07:29:10.315Z"
+      },
+      "timestampUtcMs": "2026-09-03T07:29:10.315Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "",
+    "timestampUtcMs": "2026-09-03T07:29:08.968Z",
+    "action": {
+      "type": "UPGRADE_DOCUMENT",
+      "input": {
+        "model": "bai/knowledge-note",
+        "toVersion": 1,
+        "documentId": "fcefdde1-5ef2-4977-a708-8f431ac612d3",
+        "fromVersion": 0,
+        "initialState": {
+          "auth": {
+            "grants": [],
+            "version": 0
+          },
+          "local": {
+            "lastViewedAt": null,
+            "personalTags": []
+          },
+          "global": {
+            "links": [],
+            "model": null,
+            "scope": null,
+            "title": null,
+            "editor": null,
+            "inputs": [],
+            "models": [],
+            "status": "DRAFT",
+            "topics": [],
+            "content": null,
+            "context": null,
+            "modelId": null,
+            "modules": [],
+            "outputs": [],
+            "version": null,
+            "computes": null,
+            "filePath": null,
+            "noteType": null,
+            "severity": null,
+            "hooksUsed": [],
+            "rootCause": null,
+            "confidence": null,
+            "consumedBy": [],
+            "provenance": null,
+            "sourceType": null,
+            "targetType": null,
+            "cardinality": null,
+            "description": null,
+            "alternatives": [],
+            "consequences": [],
+            "errorMessage": null,
+            "relationType": null,
+            "correctPattern": null,
+            "decisionStatus": null,
+            "dispatchTargets": [],
+            "lifecycleEvents": []
+          },
+          "document": {
+            "hash": {
+              "encoding": "base64",
+              "algorithm": "sha1"
+            },
+            "version": 1
+          }
+        }
+      },
+      "timestampUtcMs": "2026-09-03T07:29:08.968Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "1FiPdYQO4dxTOI3cR4Ua9shstKk=",
+    "timestampUtcMs": "2026-09-03T07:29:10.315Z",
+    "action": {
+      "type": "SET_DESCRIPTION",
+      "input": {
+        "updatedAt": "2026-09-03T07:29:10.315Z",
+        "description": "get returns the server's materialized state in one cheap query; getOperations stays on the interface for audit logs. execute reduces locally, persists to IndexedDB and returns optimistically."
+      },
+      "timestampUtcMs": "2026-09-03T07:29:10.315Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "",
+    "timestampUtcMs": "2026-09-03T07:30:19.877Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "metadata": {
+          "reason": "Extracted from docs/adr/0002-reactor-browser-client-interface.md at v6.2.2-dev.74 \u2014 Decision 4 (read path), 5 (write path), 6 (signer support)",
+          "confidence": "grounded"
+        },
+        "sourceId": "fcefdde1-5ef2-4977-a708-8f431ac612d3",
+        "targetId": "d4009255-3f1f-4e06-872a-9f8142896eea",
+        "relationshipType": "DERIVED_FROM"
+      },
+      "timestampUtcMs": "2026-09-03T07:30:19.877Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "tQBebD796bXpz5pPIdrn6LAest8=",
+    "timestampUtcMs": "2026-09-03T07:29:10.315Z",
+    "action": {
+      "type": "SET_NOTE_TYPE",
+      "input": {
+        "noteType": "DECISION",
+        "updatedAt": "2026-09-03T07:29:10.315Z"
+      },
+      "timestampUtcMs": "2026-09-03T07:29:10.315Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "",
+    "timestampUtcMs": "2026-09-03T07:30:20.341Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "metadata": {
+          "reason": "These are the numbered decisions of the ADR whose context and status the parent note records",
+          "confidence": "grounded"
+        },
+        "sourceId": "fcefdde1-5ef2-4977-a708-8f431ac612d3",
+        "targetId": "9d055359-868c-442c-99ad-052a2101e9da",
+        "relationshipType": "BUILDS_ON"
+      },
+      "timestampUtcMs": "2026-09-03T07:30:20.341Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "Z8/zTKdnfeyuIJeumhj08jFdYGI=",
+    "timestampUtcMs": "2026-09-03T07:29:10.315Z",
+    "action": {
+      "type": "SET_CONTENT",
+      "input": {
+        "content": "Two of ADR 0002's numbered decisions are the ones a consumer feels.\n\n**Read path \u2014 preview the current remote state, no point-in-time replay.** `get` returns the **current `state` on the remote server**; the read path never fetches or replays operations. The operation list stays available (`getOperations` is on the interface and `useDocumentOperations` already reads it, which is enough for an audit log or revision list), but reconstructing state as of revision N is **explicitly out of scope**: it would need client-side replay or a server-side `revision` view filter, neither part of the decision. The payoff is that the default read is a single cheap query \u2014 and the cost is that `ViewFilter.revision` throwing on this client is a design consequence, not a bug.\n\n**Write path \u2014 local-first `execute`.** It needs the current state, the reducer, the document type and the current revision for the scope; it reduces each action onto the current state, **persists to IndexedDB, returns the optimistic document immediately, and enqueues the operations for push**. The local-first machinery (IndexedDB cache, outbox, reducer) lives *inside* the class, invisible to the hooks \u2014 which is how `RemoteDocumentController`'s four responsibilities (wrap a reducer, track actions, sign, push) collapse into one method.\n\n**Signing carries over but becomes ambient.** The client resolves the current session's `ISigner` at push time and signs in the `execute` path using the same `signer.signAction` + `context.signer` shape. With a signer set every write is signed automatically; without one, writes push unsigned. Signing needs only current state \u2014 the `previousStateHash` is the synthetic tail's hash \u2014 so no operation history fetch is required to sign a new action.\n\n## Provenance\n- `docs/adr/0002-reactor-browser-client-interface.md` \u2014 Decision 4 (read path), 5 (write path), 6 (signer support)\n\n_Extracted from the Powerhouse repository at **v6.2.2-dev.74**._",
+        "updatedAt": "2026-09-03T07:29:10.315Z"
+      },
+      "timestampUtcMs": "2026-09-03T07:29:10.315Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "",
+    "timestampUtcMs": "2026-09-03T07:30:20.800Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "metadata": {
+          "reason": "Ambient per-action signing in execute is why a single-action dispatch is signed while a multi-action batch is pushed unsigned with a warning",
+          "confidence": "grounded"
+        },
+        "sourceId": "fcefdde1-5ef2-4977-a708-8f431ac612d3",
+        "targetId": "6785869b-e28b-4019-95ae-05d003efa1ab",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-09-03T07:30:20.800Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "noGfysD5t5lFCr04jKrnlykW+X4=",
+    "timestampUtcMs": "2026-09-03T07:29:10.315Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "58ad1c90-8357-4757-ae87-28a0a967b4c3",
+        "name": "reactor-browser"
+      },
+      "timestampUtcMs": "2026-09-03T07:29:10.315Z"
+    }
+  },
+  {
+    "index": 5,
+    "hash": "",
+    "timestampUtcMs": "2026-09-03T07:30:21.253Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "metadata": {
+          "reason": "A read path that never replays is what makes realtime an enhancement rather than a requirement for correctness",
+          "confidence": "established"
+        },
+        "sourceId": "fcefdde1-5ef2-4977-a708-8f431ac612d3",
+        "targetId": "568f0344-dc8a-40ee-9226-7f8b54065cb2",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-09-03T07:30:21.253Z"
+    }
+  },
+  {
+    "index": 5,
+    "hash": "MSjiEi3aCg82Aj5kgoJZQEoxGMU=",
+    "timestampUtcMs": "2026-09-03T07:29:10.315Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "a3dc4d28-2022-44b7-9f1f-cafaebe2d8af",
+        "name": "graphql-client"
+      },
+      "timestampUtcMs": "2026-09-03T07:29:10.315Z"
+    }
+  },
+  {
+    "index": 6,
+    "hash": "",
+    "timestampUtcMs": "2026-09-03T07:31:27.036Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "metadata": {
+          "reason": "Extracted from docs/adr/0002-reactor-browser-client-interface.md at v6.2.2-dev.74 \u2014 Decision 4 (read path), 5 (write path), 6 (signer support)",
+          "confidence": "grounded"
+        },
+        "sourceId": "fcefdde1-5ef2-4977-a708-8f431ac612d3",
+        "targetId": "d4009255-3f1f-4e06-872a-9f8142896eea",
+        "relationshipType": "DERIVED_FROM"
+      },
+      "timestampUtcMs": "2026-09-03T07:31:27.036Z"
+    }
+  },
+  {
+    "index": 6,
+    "hash": "IdBqz3ksIOJofbDZCgeXDJ9MfwQ=",
+    "timestampUtcMs": "2026-09-03T07:29:10.315Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "7dc7dac4-1489-428d-be2d-e117303572b0",
+        "name": "local-first"
+      },
+      "timestampUtcMs": "2026-09-03T07:29:10.315Z"
+    }
+  },
+  {
+    "index": 7,
+    "hash": "",
+    "timestampUtcMs": "2026-09-03T07:31:27.496Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "metadata": {
+          "reason": "These are the numbered decisions of the ADR whose context and status the parent note records",
+          "confidence": "grounded"
+        },
+        "sourceId": "fcefdde1-5ef2-4977-a708-8f431ac612d3",
+        "targetId": "9d055359-868c-442c-99ad-052a2101e9da",
+        "relationshipType": "BUILDS_ON"
+      },
+      "timestampUtcMs": "2026-09-03T07:31:27.496Z"
+    }
+  },
+  {
+    "index": 7,
+    "hash": "aeYunDY52JwnTkV2Yk+qnBEhos4=",
+    "timestampUtcMs": "2026-09-03T07:29:10.315Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "ba469246-41fa-49dc-8aa9-30541619c4a4",
+        "name": "adr"
+      },
+      "timestampUtcMs": "2026-09-03T07:29:10.315Z"
+    }
+  },
+  {
+    "index": 8,
+    "hash": "",
+    "timestampUtcMs": "2026-09-03T07:31:27.946Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "metadata": {
+          "reason": "Ambient per-action signing in execute is why a single-action dispatch is signed while a multi-action batch is pushed unsigned with a warning",
+          "confidence": "grounded"
+        },
+        "sourceId": "fcefdde1-5ef2-4977-a708-8f431ac612d3",
+        "targetId": "6785869b-e28b-4019-95ae-05d003efa1ab",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-09-03T07:31:27.946Z"
+    }
+  },
+  {
+    "index": 8,
+    "hash": "4j43g4aGZJuqe3tpsye9vGp76ds=",
+    "timestampUtcMs": "2026-09-03T07:29:10.315Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "version",
+        "value": "v6.2.2-dev.74",
+        "updatedAt": "2026-09-03T07:29:10.315Z"
+      },
+      "timestampUtcMs": "2026-09-03T07:29:10.315Z"
+    }
+  },
+  {
+    "index": 9,
+    "hash": "",
+    "timestampUtcMs": "2026-09-03T07:31:28.409Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "metadata": {
+          "reason": "A read path that never replays is what makes realtime an enhancement rather than a requirement for correctness",
+          "confidence": "established"
+        },
+        "sourceId": "fcefdde1-5ef2-4977-a708-8f431ac612d3",
+        "targetId": "568f0344-dc8a-40ee-9226-7f8b54065cb2",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-09-03T07:31:28.409Z"
+    }
+  },
+  {
+    "index": 9,
+    "hash": "K9tkfgtV0iXqaPLwl58h3X16rh8=",
+    "timestampUtcMs": "2026-09-03T07:29:10.315Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "filePath",
+        "value": "docs/adr/0002-reactor-browser-client-interface.md",
+        "updatedAt": "2026-09-03T07:29:10.315Z"
+      },
+      "timestampUtcMs": "2026-09-03T07:29:10.315Z"
+    }
+  },
+  {
+    "index": 10,
+    "hash": "BWkpoTAqKnF5PImCo8Xk7dwSSxo=",
+    "timestampUtcMs": "2026-09-03T07:29:12.945Z",
+    "action": {
+      "type": "SET_PROVENANCE",
+      "input": {
+        "author": "knowledge-agent",
+        "createdAt": "2026-09-03T07:29:12.945Z",
+        "sourceOrigin": "DERIVED"
+      },
+      "timestampUtcMs": "2026-09-03T07:29:12.945Z"
+    }
+  },
+  {
+    "index": 11,
+    "hash": "jCgKmm15If7pMgWdfz5NqHTmb3c=",
+    "timestampUtcMs": "2026-09-03T07:29:13.440Z",
+    "action": {
+      "type": "SUBMIT_FOR_REVIEW",
+      "input": {
+        "id": "b3a3110b-a8d2-4568-bd74-edf24478cf1d",
+        "actor": "knowledge-agent",
+        "comment": "extracted from docs/adr/0002-reactor-browser-client-interface.md at v6.2.2-dev.74",
+        "timestamp": "2026-09-03T07:29:13.440Z"
+      },
+      "timestampUtcMs": "2026-09-03T07:29:13.440Z"
+    }
+  },
+  {
+    "index": 12,
+    "hash": "Y4TN6SCb5JekFMVkB8YZUavHSXc=",
+    "timestampUtcMs": "2026-09-03T07:29:13.958Z",
+    "action": {
+      "type": "APPROVE_NOTE",
+      "input": {
+        "id": "199d5753-2887-414c-b5c4-97bbd140476c",
+        "actor": "liberuum",
+        "comment": "claim checked against the cited file at the pinned tag",
+        "timestamp": "2026-09-03T07:29:13.957Z"
+      },
+      "timestampUtcMs": "2026-09-03T07:29:13.958Z"
+    }
+  },
+  {
+    "index": 13,
+    "hash": "UUUSE2NdMoeYLpN8FGbQpi/QC6M=",
+    "timestampUtcMs": "2026-09-03T07:31:10.865Z",
+    "action": {
+      "type": "SET_TITLE",
+      "input": {
+        "title": "The light client reads the remote's current state with no replay and writes local-first, so point-in-time reads are out of scope by decision rather than by omission",
+        "updatedAt": "2026-09-03T07:31:10.865Z"
+      },
+      "timestampUtcMs": "2026-09-03T07:31:10.865Z"
+    }
+  },
+  {
+    "index": 14,
+    "hash": "UUUSE2NdMoeYLpN8FGbQpi/QC6M=",
+    "timestampUtcMs": "2026-09-03T07:31:10.865Z",
+    "action": {
+      "type": "SET_DESCRIPTION",
+      "input": {
+        "updatedAt": "2026-09-03T07:31:10.865Z",
+        "description": "get returns the server's materialized state in one cheap query; getOperations stays on the interface for audit logs. execute reduces locally, persists to IndexedDB and returns optimistically."
+      },
+      "timestampUtcMs": "2026-09-03T07:31:10.865Z"
+    }
+  },
+  {
+    "index": 15,
+    "hash": "UUUSE2NdMoeYLpN8FGbQpi/QC6M=",
+    "timestampUtcMs": "2026-09-03T07:31:10.865Z",
+    "action": {
+      "type": "SET_NOTE_TYPE",
+      "input": {
+        "noteType": "DECISION",
+        "updatedAt": "2026-09-03T07:31:10.865Z"
+      },
+      "timestampUtcMs": "2026-09-03T07:31:10.865Z"
+    }
+  },
+  {
+    "index": 16,
+    "hash": "UUUSE2NdMoeYLpN8FGbQpi/QC6M=",
+    "timestampUtcMs": "2026-09-03T07:31:10.865Z",
+    "action": {
+      "type": "SET_CONTENT",
+      "input": {
+        "content": "Two of ADR 0002's numbered decisions are the ones a consumer feels.\n\n**Read path \u2014 preview the current remote state, no point-in-time replay.** `get` returns the **current `state` on the remote server**; the read path never fetches or replays operations. The operation list stays available (`getOperations` is on the interface and `useDocumentOperations` already reads it, which is enough for an audit log or revision list), but reconstructing state as of revision N is **explicitly out of scope**: it would need client-side replay or a server-side `revision` view filter, neither part of the decision. The payoff is that the default read is a single cheap query \u2014 and the cost is that `ViewFilter.revision` throwing on this client is a design consequence, not a bug.\n\n**Write path \u2014 local-first `execute`.** It needs the current state, the reducer, the document type and the current revision for the scope; it reduces each action onto the current state, **persists to IndexedDB, returns the optimistic document immediately, and enqueues the operations for push**. The local-first machinery (IndexedDB cache, outbox, reducer) lives *inside* the class, invisible to the hooks \u2014 which is how `RemoteDocumentController`'s four responsibilities (wrap a reducer, track actions, sign, push) collapse into one method.\n\n**Signing carries over but becomes ambient.** The client resolves the current session's `ISigner` at push time and signs in the `execute` path using the same `signer.signAction` + `context.signer` shape. With a signer set every write is signed automatically; without one, writes push unsigned. Signing needs only current state \u2014 the `previousStateHash` is the synthetic tail's hash \u2014 so no operation history fetch is required to sign a new action.\n\n## Provenance\n- `docs/adr/0002-reactor-browser-client-interface.md` \u2014 Decision 4 (read path), 5 (write path), 6 (signer support)\n\n_Extracted from the Powerhouse repository at **v6.2.2-dev.74**._",
+        "updatedAt": "2026-09-03T07:31:10.865Z"
+      },
+      "timestampUtcMs": "2026-09-03T07:31:10.865Z"
+    }
+  },
+  {
+    "index": 17,
+    "hash": "UUUSE2NdMoeYLpN8FGbQpi/QC6M=",
+    "timestampUtcMs": "2026-09-03T07:31:10.865Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "version",
+        "value": "v6.2.2-dev.74",
+        "updatedAt": "2026-09-03T07:31:10.865Z"
+      },
+      "timestampUtcMs": "2026-09-03T07:31:10.865Z"
+    }
+  },
+  {
+    "index": 18,
+    "hash": "UUUSE2NdMoeYLpN8FGbQpi/QC6M=",
+    "timestampUtcMs": "2026-09-03T07:31:10.865Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "filePath",
+        "value": "docs/adr/0002-reactor-browser-client-interface.md",
+        "updatedAt": "2026-09-03T07:31:10.865Z"
+      },
+      "timestampUtcMs": "2026-09-03T07:31:10.865Z"
+    }
+  }
+]

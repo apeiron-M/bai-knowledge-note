@@ -1,0 +1,113 @@
+{
+  "links": [
+    {
+      "id": "lnk-5725fd76-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "5725fd76-b0d4-4bab-9c10-3c0a890951ca",
+      "targetTitle": "bee-reactor-adapter-package-structure"
+    },
+    {
+      "id": "lnk-eb3ddfcc-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "eb3ddfcc-c606-4705-b9c9-42f5e26e2384",
+      "targetTitle": "act-sharing-ecdh-publisher-grantee"
+    },
+    {
+      "id": "lnk-98e36a08-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "98e36a08-78cd-4c60-942c-338d4a460334",
+      "targetTitle": "bee-reactor-adapter-overview"
+    },
+    {
+      "id": "lnk-8cfc4e95-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "8cfc4e95-98d9-4744-bc62-364dfe09396e",
+      "targetTitle": "adapter-key-source-files"
+    },
+    {
+      "id": "lnk-c6ce116a-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "c6ce116a-daaa-4be5-a9de-25b63600f6a0",
+      "targetTitle": "bee-reactor-adapter-storage-sharing-features"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Adapter chat uses PSS+GSOC with ACT-encrypted history; settings surface live Bee diagnostics",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "chat-features",
+      "name": "chat-features",
+      "topicDocumentId": null
+    },
+    {
+      "id": "pss-gsoc",
+      "name": "pss-gsoc",
+      "topicDocumentId": null
+    },
+    {
+      "id": "settings-ui",
+      "name": "settings-ui",
+      "topicDocumentId": null
+    },
+    {
+      "id": "feature-categories",
+      "name": "feature-categories",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "Chat (PSS + GSOC) features:\n- **1-to-1 encrypted messaging** via PSS, with GSOC-backed offline delivery.\n- **Discord-style UI** with unread badge on the sidebar.\n- **Persistent history** in ACT-encrypted feeds, paginated backwards.\n- **File sharing** for images, GIFs, PDFs, audio, video, and text \u2014 all ACT-encrypted.\n- **External `bzz://<hash>` previews** for files uploaded outside the chat.\n- **Drag-and-drop uploads**, inline previews, lightbox, **200 MB cap**.\n- **Pre-flight codec check for video** so unplayable formats fall back to a download instead of failing mid-playback.\n\nSettings features:\n- **Live chain-price fetching** for stamp top-ups (no hardcoded price drift).\n- **Real Bee error surfacing** on stamp operations. The UI parses `BeeResponseError.responseBody`, so users see the actual on-chain reason instead of a generic `500`.\n- **Bucket-utilization diagnostics** with dilute, expand, and top-up actions.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "REFERENCE",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "knowledge-agent",
+    "createdAt": "2026-04-21T14:52:46.944Z",
+    "sessionId": null,
+    "updatedAt": "2026-09-03T09:57:56.134Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Chat delivers 1-to-1 encrypted messaging via PSS with offline delivery, persistent ACT-encrypted history, file sharing up to 200 MB; settings show live chain prices and real Bee error reasons.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "18701eee-96cc-4284-9b72-a4bdffedb736",
+      "actor": "claude",
+      "comment": "Knowledge registered against powerhouse v6.2.2-dev.47",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-14T12:00:00.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "6993a8f8-4fbf-4d5d-81e6-8d08929ac92b",
+      "actor": "liberuum",
+      "comment": "Canonical as of powerhouse v6.2.2-dev.47",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-14T12:00:00.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

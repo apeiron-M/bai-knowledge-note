@@ -1,0 +1,133 @@
+[
+  {
+    "index": 0,
+    "hash": "",
+    "timestampUtcMs": "2026-09-02T21:36:24.133Z",
+    "action": {
+      "type": "CREATE_DOCUMENT",
+      "input": {
+        "meta": {},
+        "name": "Academy \u203a Build \u203a WorkWithData \u203a Analytics Engine \u203a typescript \u203a Memory store",
+        "slug": "",
+        "model": "bai/source",
+        "branch": "main",
+        "signing": {
+          "nonce": "",
+          "publicKey": {},
+          "signature": "22eb0712-588e-48a2-bfa1-a32cd4e5d4ac",
+          "documentType": "bai/source",
+          "createdAtUtcIso": "2026-09-02T21:36:24.133Z"
+        },
+        "version": 0,
+        "documentId": "22eb0712-588e-48a2-bfa1-a32cd4e5d4ac",
+        "protocolVersions": {
+          "base-reducer": 2
+        }
+      },
+      "timestampUtcMs": "2026-09-02T21:36:24.133Z"
+    }
+  },
+  {
+    "index": 0,
+    "hash": "jA3k15OKPg73s+ahVKETpUWMg+A=",
+    "timestampUtcMs": "2026-09-02T21:36:24.137Z",
+    "action": {
+      "type": "INGEST_SOURCE",
+      "input": {
+        "url": "https://github.com/powerhouse-inc/powerhouse/blob/v6.2.2-dev.74/apps/academy/docs/academy/03-Build/04-WorkWithData/_06-Analytics Engine/typescript/memory.md",
+        "tool": "sync-repo-docs",
+        "title": "Academy \u203a Build \u203a WorkWithData \u203a Analytics Engine \u203a typescript \u203a Memory store",
+        "author": "Powerhouse Inc.",
+        "method": "sha256:cc8806b0c7aec02d95427d9baf2eb780ede3d98e5091f698b1ab264ca60fd381 git:v6.2.2-dev.74",
+        "content": "---\nsidebar_position: 1\n---\n\n# Memory store\n\nThe `MemoryAnalyticsStore` is an `IAnalyticsStore` implementation that uses a an in-memory database as its storage mechanism. Under the hood, we load a WASM build of Postgres, called [PGlite](https://pglite.dev/).\n\n<aside class=\"notice\">\nSee the <a href=\"#compatibility\">Compatibility</a> section for details on which stores are intended to be used in different execution environments.\n</aside>\n\n## Construction\n\nThe `MemoryAnalyticsStore` is simple to create.\n\n> Create with no arguments.\n\n```typescript\nconst store = new MemoryAnalyticsStore();\n```\n\n> The `MemoryAnalyticsStore` may also be created with optional contructor arguments that may be helpful for debugging or metrics collection.\n\n```typescript\nconst store = new MemoryAnalyticsStore({\n  queryLogger: querydefaultQueryLogger(\"memory\"),\n  resultsLogger: defaultResultsLogger(\"memory\"),\n  profiler: new PassthroughAnalyticsProfiler(),\n});\n```\n\nFor more details on these optional constructor parameters, see the [Utilities](#utilities) section.\n\n> Additionally, both `knex` and `pglite` objects may be passed in. This is helpful in contexts where multiple objects are sharing the same database.\n\n```typescript\n// knex must be created with these options\nconst knex = knexFactory({ client: \"pg\", useNullAsDefault: true });\n\n// create your own Pglite instance and pass it in\n// See (https://github.com/electric-sql/pglite/blob/main/packages/pglite/src/interface.ts) for full list of options.\nconst pgLiteFactory = () =>\n  PGlite.create({\n    debug: 3,\n    relaxedDurability: false,\n  });\n\nconst store = new MemoryAnalyticsStore({\n  knex,\n  pgLiteFactory,\n});\n```\n\n## Initialization\n\nWhile easy to use, the `MemoryAnalyticsStore` requires an asynchronous initialization step. This is for two reasons.\n\nIn cases where the `MemoryAnalyticsStore` was not provided a `PGlite` instance, it needs time to download and initialize the WASM build.\n\nAdditionally, it also needs to initialize the database schema of the in-memory database. This is distinct from the <a href=\"#postgres\">Postgres implementation</a>, which assumes a fully-initialized Postgres database already exists. The initialization is idempotent, so tables already created will not be recreated.\n\nThe full SQL query used can be found in the [`MemoryAnalyticsStore` source](https://github.com/powerhouse-inc/analytics-engine/blob/main/browser/src/MemoryAnalyticsStore.ts).\n\n> Note that this method is not available on the `IAnalyticsStore` interface, but only on the `MemoryAnalyticsStore` type.\n\n```typescript\n// create the store\nconst store = new MemoryAnalyticsStore();\n\n// initialize it\nawait store.init();\n```\n",
+        "createdAt": "2026-09-02T21:36:24.137Z",
+        "createdBy": "repo-docs-sync",
+        "sourceType": "DOCUMENTATION",
+        "description": "Powerhouse v6.2.2-dev.74 (unchanged since v6.2.2-dev.47) \u2014 The MemoryAnalyticsStore is an IAnalyticsStore implementation that uses a an in-memory database as its storage mechanism. Under the hood, we\u2026",
+        "publishedAt": "2026-06-17T17:18:45.000Z"
+      },
+      "timestampUtcMs": "2026-09-02T21:36:24.137Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "",
+    "timestampUtcMs": "2026-09-02T21:36:24.133Z",
+    "action": {
+      "type": "UPGRADE_DOCUMENT",
+      "input": {
+        "model": "bai/source",
+        "toVersion": 1,
+        "documentId": "22eb0712-588e-48a2-bfa1-a32cd4e5d4ac",
+        "fromVersion": 0,
+        "initialState": {
+          "auth": {
+            "grants": [],
+            "version": 0
+          },
+          "local": {},
+          "global": {
+            "title": null,
+            "status": "INBOX",
+            "content": null,
+            "createdAt": null,
+            "createdBy": null,
+            "provenance": null,
+            "sourceType": null,
+            "description": null,
+            "extractedClaims": [],
+            "extractionStats": null
+          },
+          "document": {
+            "hash": {
+              "encoding": "base64",
+              "algorithm": "sha1"
+            },
+            "version": 1
+          }
+        }
+      },
+      "timestampUtcMs": "2026-09-02T21:36:24.133Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "wDGtJ/3ULhXvmek/WKzXqHSua6M=",
+    "timestampUtcMs": "2026-09-03T07:55:51.439Z",
+    "action": {
+      "type": "ADD_EXTRACTED_CLAIM",
+      "input": {
+        "claimRef": "ceb2e2c7-7965-431d-ac3d-1409a89529ce"
+      },
+      "timestampUtcMs": "2026-09-03T07:55:51.439Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "B+WtdG+XlVFNoMsgW04LlFeRLdE=",
+    "timestampUtcMs": "2026-09-03T07:56:05.730Z",
+    "action": {
+      "type": "RECORD_EXTRACTION_STATS",
+      "input": {
+        "skipRate": 1,
+        "claimCount": 0,
+        "extractedAt": "2026-09-03T07:56:05.730Z",
+        "extractedBy": "knowledge-agent",
+        "skippedCount": 1
+      },
+      "timestampUtcMs": "2026-09-03T07:56:05.730Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "nIixdv8IuhCj0kBjI33K6qFEdnc=",
+    "timestampUtcMs": "2026-09-03T07:58:04.131Z",
+    "action": {
+      "type": "SET_SOURCE_STATUS",
+      "input": {
+        "status": "EXTRACTED"
+      },
+      "timestampUtcMs": "2026-09-03T07:58:04.131Z"
+    }
+  }
+]

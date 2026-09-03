@@ -1,0 +1,110 @@
+{
+  "links": [
+    {
+      "id": "lnk-5da3c507-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "5da3c507-24f8-4373-ac80-0a50d814d59e",
+      "targetTitle": "powerhouse-operates-at-intersection-of-software-legal-and-oss-business-models"
+    },
+    {
+      "id": "lnk-6672c3a6-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "6672c3a6-386d-44c7-baf2-3278b1add051",
+      "targetTitle": "adapter-src-infrastructure-layout"
+    },
+    {
+      "id": "lnk-43733227-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "43733227-b9d3-424b-8fa0-83dda8a2001b",
+      "targetTitle": "builder-platform-enables-creation-of-reusable-modules-with-value-sharing"
+    },
+    {
+      "id": "lnk-5e0d9f69-bui",
+      "linkType": "BUILDS_ON",
+      "targetDocumentId": "5e0d9f69-442f-41a1-9e47-06d35dc7fe2a",
+      "targetTitle": "three-layer-architecture-separates-infrastructure-host-and-customization"
+    },
+    {
+      "id": "lnk-410260ef-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "410260ef-66c1-4241-987e-c42dcf23cddb",
+      "targetTitle": "book-of-powerhouse-part-2-software-architecture",
+      "reason": "Backing page found by content match (score 0.34) in the v6.2.2-dev.74 source backfill; no distinctive identifier verified, attribution by topic overlap \u2014 not the original extraction record (text identical at v6.2.2-dev.47 and v6.2.2-dev.74)",
+      "confidence": "established"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Powerhouse architecture has three layers: Data Infrastructure (Reactor), Host Application (Connect/Switchboard/Fusion), and Customization (plugins)",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "634719f6-6ed0-4a4b-9e37-f9f42e117752",
+      "name": "architecture",
+      "topicDocumentId": null
+    },
+    {
+      "id": "babc0ebd-2121-4d2e-a308-10082f3d942a",
+      "name": "three-layers",
+      "topicDocumentId": null
+    },
+    {
+      "id": "6b43d106-61d8-462d-9bf8-4695758183e3",
+      "name": "platform",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "Powerhouse's software architecture consists of three layers: (1) **Data Infrastructure Layer** -- the Reactor as storage node supporting multiple adapters (local, cloud, decentralized like IPFS), plus network components (event buses, queues, caching, load balancers); (2) **Host Application Layer** -- empty shell applications gaining functionality through plugins: Connect (contributor tools), Switchboard (scalable API service for read models), Fusion (public-facing collaboration/marketplaces), Renown (decentralized auth/reputation), Academy (onboarding/training); (3) **Customization Layer** -- organization-specific plugins for each host application. This modular approach means Connect plugins provide tailored contributor apps, Switchboard plugins aggregate data into specialized read models, and Fusion plugins build custom marketplaces.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": "v6.2.2-dev.74",
+  "computes": null,
+  "filePath": "apps/academy/docs/bookofpowerhouse/03-PowerhouseSoftwareArchitecture.md",
+  "noteType": "ARCHITECTURE",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "knowledge-agent",
+    "createdAt": "2026-04-02T12:00:00.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-09-02T21:41:50.700Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "The Reactor handles storage/sync, host apps are plugin shells, and the customization layer provides organization-specific extensions.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "bbd16fbe-481f-4393-9c4d-6bba51a7cd4d",
+      "actor": "claude",
+      "comment": "Knowledge registered against powerhouse v6.2.2-dev.47",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-14T12:00:00.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "edee75f8-aac3-4e27-b335-2ae95c3d1489",
+      "actor": "liberuum",
+      "comment": "Canonical as of powerhouse v6.2.2-dev.47",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-14T12:00:00.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

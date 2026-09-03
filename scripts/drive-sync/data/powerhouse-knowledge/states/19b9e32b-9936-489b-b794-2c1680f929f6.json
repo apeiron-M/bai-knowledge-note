@@ -1,0 +1,101 @@
+{
+  "links": [
+    {
+      "id": "lnk-e2186433-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "e2186433-6a5b-4e9a-90e8-37c698b35e89",
+      "targetTitle": "moc-attributable-skills-provenance"
+    },
+    {
+      "id": "lnk-28ad70dd-bui",
+      "linkType": "BUILDS_ON",
+      "targetDocumentId": "28ad70dd-0252-43ba-bc60-83c32a506581",
+      "targetTitle": "knowledge-layer-contamination"
+    },
+    {
+      "id": "lnk-2b423487-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "2b423487-123f-414c-bd20-edce7de891f4",
+      "targetTitle": "skills-as-attributable-transformations"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "A KnowledgeUnit schema forces epistemic standing at every long-lived memory write",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "a876edc0-8a3c-49df-85ec-77f2d61431c1",
+      "name": "knowledge-vault",
+      "topicDocumentId": null
+    },
+    {
+      "id": "2f8fb76a-5ebf-4a3c-88ce-d3d596fdbcac",
+      "name": "document-models",
+      "topicDocumentId": null
+    },
+    {
+      "id": "a4d902c3-0b88-46b3-a239-2b9060ebd6f2",
+      "name": "provenance",
+      "topicDocumentId": null
+    },
+    {
+      "id": "f0760509-bd2c-4c9f-ba1d-b84d70c608e6",
+      "name": "epistemology",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "## Claim\n\nAny skill writing into a long-lived knowledge layer should emit operations against a `KnowledgeUnit` (or equivalent) document model whose state requires epistemic context at write time.\n\n## Required standing\n\n- `author` (human or agent)\n- `producer` skill ref when agent-authored\n- `epistemicMode` (OBSERVATION, INFERENCE, RETRIEVAL, SYNTHESIS, SPECULATION)\n- optional `confidence`\n- `sources` and `derivedFrom`\n- `reviewStatus` and `scope`\n\n## Payoff\n\nThe vault becomes queryable: everything I asserted; exclude low-confidence agent units; all units derived from skill X. The human/agent boundary stays legible after the session ends.\n\n```graphql\ntype KnowledgeUnit {\n  id: ID!\n  claim: String!\n  author: Actor!\n  producer: SkillRef\n  epistemicMode: EpistemicMode!\n  confidence: Float\n  sources: [Source!]!\n  derivedFrom: [ID!]!\n  reviewStatus: ReviewStatus!\n  scope: Scope!\n  createdAt: DateTime!\n}\n```\n\n## Methodology grounding\nThe claims below live in the plugin's `data/methodology/` corpus; the relationship is stated per claim.\n\n- **[[agent self-memory should be architecturally separate from user knowledge systems]]** \u2014 BUILDS_ON. The methodology claim separates an agent's working preferences from the research graph on the grounds that self-knowledge need not pass the composability test. A typed KnowledgeUnit is the mechanism that makes the boundary enforceable rather than conventional: the schema is what refuses an untyped write into the long-lived layer.\n- **[[IBIS framework maps claim-based architecture to structured argumentation]]** \u2014 RELATES_TO. Both hold that a knowledge record's *kind* is load-bearing. IBIS types a contribution as issue, position or argument; a KnowledgeUnit types it by epistemic standing. Neither leaves the reader to infer status from prose.\n",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "ARCHITECTURE",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "knowledge-agent",
+    "createdAt": "2026-08-16T20:32:44.708Z",
+    "sessionId": null,
+    "updatedAt": "2026-09-03T10:03:23.304Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Mandatory fields for author, producer skill, epistemic mode, confidence, sources, derivation, and review status keep vault contributions attributable.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "689b02bb-79e6-4354-9787-381516e3b5be",
+      "actor": "knowledge-agent",
+      "comment": "pipeline extract",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-16T20:32:45.861Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "b6ea2bab-b297-49c8-854b-16be176499b9",
+      "actor": "pipeline-reviewer",
+      "comment": "pipeline verify",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-16T20:32:46.035Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

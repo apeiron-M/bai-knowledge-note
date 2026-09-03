@@ -1,0 +1,133 @@
+[
+  {
+    "index": 0,
+    "hash": "",
+    "timestampUtcMs": "2026-09-02T21:36:07.336Z",
+    "action": {
+      "type": "CREATE_DOCUMENT",
+      "input": {
+        "meta": {},
+        "name": "Academy \u203a Build \u203a WorkWithData \u203a Analytics Engine \u203a typescript \u203a Benchmarks",
+        "slug": "",
+        "model": "bai/source",
+        "branch": "main",
+        "signing": {
+          "nonce": "",
+          "publicKey": {},
+          "signature": "c9be562d-5a7e-4a12-afc0-3d1a51c5700b",
+          "documentType": "bai/source",
+          "createdAtUtcIso": "2026-09-02T21:36:07.336Z"
+        },
+        "version": 0,
+        "documentId": "c9be562d-5a7e-4a12-afc0-3d1a51c5700b",
+        "protocolVersions": {
+          "base-reducer": 2
+        }
+      },
+      "timestampUtcMs": "2026-09-02T21:36:07.336Z"
+    }
+  },
+  {
+    "index": 0,
+    "hash": "yPtzfOwKYB1KBct8CJnl5/ia1XI=",
+    "timestampUtcMs": "2026-09-02T21:36:07.338Z",
+    "action": {
+      "type": "INGEST_SOURCE",
+      "input": {
+        "url": "https://github.com/powerhouse-inc/powerhouse/blob/v6.2.2-dev.74/apps/academy/docs/academy/03-Build/04-WorkWithData/_06-Analytics Engine/typescript/benchmarks.md",
+        "tool": "sync-repo-docs",
+        "title": "Academy \u203a Build \u203a WorkWithData \u203a Analytics Engine \u203a typescript \u203a Benchmarks",
+        "author": "Powerhouse Inc.",
+        "method": "sha256:98a98023dc0827f7928861226e16a4ccec66ccfe96776f1bf2b1052368805b1b git:v6.2.2-dev.74",
+        "content": "---\nsidebar_position: 102\n---\n\n# Benchmarks\n\nDue to the performance-sensitive nature of metrics collection, we include a [suite of benchmarks](https://github.com/powerhouse-inc/analytics-engine/tree/main/benchmarks) that compare the various analytics store implementations. These are run every publish and stored in the associated [GitHub action history](https://github.com/powerhouse-inc/analytics-engine/actions/runs/12123429624/job/33798972072).\n\nWe also include results from major releases [here](https://github.com/powerhouse-inc/analytics-engine/tree/main/benchmarks/results).\n\nIn summary, we have found that the `MemoryAnalyticsStore` and `PostgresAnalyticsStore` implementations are very close in performance, with the Postgres implementation slightly faster in most applications.\n\n## Query-list\n\nIn [this benchmark](https://github.com/powerhouse-inc/analytics-engine/blob/main/benchmarks/results/query-list/), we ran the most frequent 600+ real-world queries against matching tables of around 200k records.\n\nWe found that, on average, the `MemoryAnalyticsStore` implementation took about `1.36x` the time it took `PostgresAnalyticsStore`. Full results [here](https://github.com/powerhouse-inc/analytics-engine/blob/main/benchmarks/results/query-list/pglite.txt).\n\n## WASM\n\nIn [this benchmark](https://github.com/powerhouse-inc/analytics-engine/blob/main/benchmarks/results/wasm/), we analyze the startup and insert time for the `MemoryAnalyticsStore` implementation.\n\n| Operation    | Ops per Sec | Average Time |\n| ------------ | ----------- | ------------ |\n| Init         | 3           | 323.00 ms    |\n| 100 Inserts  | 478         | 2.08 ms      |\n| 200k Inserts | 0           | 4448.10 ms   |\n",
+        "createdAt": "2026-09-02T21:36:07.338Z",
+        "createdBy": "repo-docs-sync",
+        "sourceType": "DOCUMENTATION",
+        "description": "Powerhouse v6.2.2-dev.74 (unchanged since v6.2.2-dev.47) \u2014 Due to the performance-sensitive nature of metrics collection, we include a suite of benchmarks that compare the various analytics store\u2026",
+        "publishedAt": "2026-06-17T17:18:45.000Z"
+      },
+      "timestampUtcMs": "2026-09-02T21:36:07.338Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "",
+    "timestampUtcMs": "2026-09-02T21:36:07.336Z",
+    "action": {
+      "type": "UPGRADE_DOCUMENT",
+      "input": {
+        "model": "bai/source",
+        "toVersion": 1,
+        "documentId": "c9be562d-5a7e-4a12-afc0-3d1a51c5700b",
+        "fromVersion": 0,
+        "initialState": {
+          "auth": {
+            "grants": [],
+            "version": 0
+          },
+          "local": {},
+          "global": {
+            "title": null,
+            "status": "INBOX",
+            "content": null,
+            "createdAt": null,
+            "createdBy": null,
+            "provenance": null,
+            "sourceType": null,
+            "description": null,
+            "extractedClaims": [],
+            "extractionStats": null
+          },
+          "document": {
+            "hash": {
+              "encoding": "base64",
+              "algorithm": "sha1"
+            },
+            "version": 1
+          }
+        }
+      },
+      "timestampUtcMs": "2026-09-02T21:36:07.336Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "pvp3dRA6j4MHgfgcKtwgx/TrhXc=",
+    "timestampUtcMs": "2026-09-03T07:55:52.597Z",
+    "action": {
+      "type": "ADD_EXTRACTED_CLAIM",
+      "input": {
+        "claimRef": "4090fa00-da1c-4c2e-9c4a-2dba085341fb"
+      },
+      "timestampUtcMs": "2026-09-03T07:55:52.597Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "RNyDwIdnhDOsDy5/5vDVzsDe91U=",
+    "timestampUtcMs": "2026-09-03T07:56:06.846Z",
+    "action": {
+      "type": "RECORD_EXTRACTION_STATS",
+      "input": {
+        "skipRate": 0,
+        "claimCount": 1,
+        "extractedAt": "2026-09-03T07:56:06.846Z",
+        "extractedBy": "knowledge-agent",
+        "skippedCount": 0
+      },
+      "timestampUtcMs": "2026-09-03T07:56:06.846Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "Uf1IGTrOY61k43J4rnq/W2IcLQw=",
+    "timestampUtcMs": "2026-09-03T07:56:07.402Z",
+    "action": {
+      "type": "SET_SOURCE_STATUS",
+      "input": {
+        "status": "EXTRACTED"
+      },
+      "timestampUtcMs": "2026-09-03T07:56:07.402Z"
+    }
+  }
+]

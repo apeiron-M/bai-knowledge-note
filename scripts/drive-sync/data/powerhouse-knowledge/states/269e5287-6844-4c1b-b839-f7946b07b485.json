@@ -1,0 +1,15 @@
+{
+  "title": "Contradiction: RemoteDocumentController does no conflict check\u2026 / Operational reshuffle preserves immutable actions\u2026",
+  "status": "DISSOLVED",
+  "content": "## Involved claims\n\n- RemoteDocumentController does no conflict check by default, so concurrent editors are last-write-wins until onConflict is set to reject, rebase or a custom merge \u2014 `981a7608-312e-4df7-bae3-942491b9e023`\n- Operational reshuffle preserves immutable actions where CRDTs and OT cannot \u2014 `5ba85b55-4ac1-4cd5-a9d2-e1855c5b9633`\n\n## Why this exists\n\nA `CONTRADICTS` relationship was recorded between these two notes at 2026-09-03T07:39:21.382Z. The vault treats a recorded contradiction as an open question, not a fact to leave implicit: until someone resolves or dissolves this tension, both claims stand and readers should see that they disagree.\n\n## How to close it\n\n- **Resolve** when one claim is correct: say which, and consider `SUPERSEDES` on the winner.\n- **Dissolve** when both are right in different scopes: state the boundary in each note's content.",
+  "observedAt": "2026-09-03T07:39:21.382Z",
+  "observedBy": "graph-indexer",
+  "resolution": "Dissolved: the two claims are about different layers. Operational reshuffle is how the reactor merges immutable operations it already stores, by timestamp, on every replica. RemoteDocumentController is a client pushing actions over GraphQL that has not reached that machinery yet, and its default is last-write-wins until onConflict is set. Nothing the controller does changes how stored operations merge; nothing reshuffle does gives the client a pull-before-push check.",
+  "resolvedAt": "2026-09-03T07:59:26.576Z",
+  "description": "\u201cRemoteDocumentController does no conflict check by default, so concurrent editors are last-write-wins until onConflict is set to reject, re\u2026\u201d contradicts \u201cOperational reshuffle preserves immutable actions where CRDTs and OT cannot\u201d. Opened automatically from a CONTRADICTS link \u2014 resolve if one side is right, dissolve if both hold in different contexts.",
+  "involvedRefs": [
+    "981a7608-312e-4df7-bae3-942491b9e023",
+    "5ba85b55-4ac1-4cd5-a9d2-e1855c5b9633"
+  ],
+  "links": []
+}

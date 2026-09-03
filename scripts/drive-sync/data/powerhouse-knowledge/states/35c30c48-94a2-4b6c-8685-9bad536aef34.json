@@ -1,0 +1,108 @@
+{
+  "links": [
+    {
+      "id": "lnk-6316525e-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "6316525e-aced-4628-bf15-cb6587d7a23e",
+      "targetTitle": "decentralized-operations-platform-is-the-programmable-coordination-engine"
+    },
+    {
+      "id": "lnk-d1737634-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "d1737634-2378-431a-8cf8-4dcfba38ea5c",
+      "targetTitle": "collaboration-index-feed-structure"
+    },
+    {
+      "id": "lnk-ae9c98a6-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "ae9c98a6-00eb-4aa9-92e8-40ad3bc9513d",
+      "targetTitle": "chat-polish-backlog-items"
+    },
+    {
+      "id": "lnk-1c7a3c1c-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "1c7a3c1c-95e7-4bc8-a921-277863c4f346",
+      "targetTitle": "collab-three-milestone-build-order"
+    },
+    {
+      "id": "lnk-075115a4-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "075115a4-d269-4515-91df-5b40568ca4b4",
+      "targetTitle": "document-model-driven-architecture-rad"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Collaboration management lives in a new Collaborate tab inside the existing chat panel",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "t-ccbd016f-1",
+      "name": "live-collaboration",
+      "topicDocumentId": null
+    },
+    {
+      "id": "t-ccbd016f-2",
+      "name": "ux-design",
+      "topicDocumentId": null
+    },
+    {
+      "id": "t-ccbd016f-3",
+      "name": "chat-panel",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "## UX: Collaborate tab inside the Chat panel\n\n### Why the chat panel?\n\nThe chat panel already owns everything collab needs:\n\n- Peer address resolution.\n- Public profile lookup (Bee pubkey for ACT).\n- Multi-user picker patterns (from the existing document-share picker).\n- Notification plumbing.\n\nAdding Collaborate next to the existing conversation list keeps everything multi-peer in one place rather than scattering peer-oriented UI across the app.\n\n### Layout\n\n```\nChat Panel (left pane)\n  \u251c\u2500\u2500 [Conversations] tab    \u2190 existing\n  \u2514\u2500\u2500 [Collaborate]    tab   \u2190 NEW\n        \u251c\u2500\u2500 \"+ New collaboration\" button\n        \u251c\u2500\u2500 Pending invitations  (I received)\n        \u2514\u2500\u2500 Active collaborations (I'm part of)\n```\n\n### Key flows\n\n- **Create:** pick target (Drive or Document), pick participants (multi-select from known chat peers or paste a Swarm ID), optional caption, click Invite.\n- **Accept:** recipient sees a `CollabInviteCard` in chat \u2014 mirrors `DocumentShareCard` but with `[Join]` instead of `[Import]`.\n- **Active row:** drive/doc name, participant avatars (initials \u2014 allowed as a list, not a per-editor overlay), last activity timestamp. Click opens the drive/doc in Connect.\n- **Leave:** local-only stop (feed writes/pulls stop); initiator can later remove from manifest.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "ARCHITECTURE",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "knowledge-agent",
+    "createdAt": "2026-04-21T14:16:54.676Z",
+    "sessionId": null,
+    "updatedAt": "2026-09-03T09:58:14.459Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "The Collaborate tab is added to the existing chat panel \u2014 reuses peer resolution, public-profile lookup, multi-user picker, and notification plumbing already built for chat.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "434a5062-38d3-43bd-b371-c904263f6985",
+      "actor": "claude",
+      "comment": "Knowledge registered against powerhouse v6.2.2-dev.47",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-14T12:00:00.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "775e32cd-6ae9-4f5d-8871-60edacbeebf5",
+      "actor": "liberuum",
+      "comment": "Canonical as of powerhouse v6.2.2-dev.47",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-14T12:00:00.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

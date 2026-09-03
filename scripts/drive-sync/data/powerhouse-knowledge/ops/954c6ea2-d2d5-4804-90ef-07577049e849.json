@@ -1,0 +1,340 @@
+[
+  {
+    "index": 0,
+    "hash": "",
+    "timestampUtcMs": "2026-08-14T11:50:56.186Z",
+    "action": {
+      "type": "CREATE_DOCUMENT",
+      "input": {
+        "meta": {},
+        "name": "client-drives-namespace-addfile-creates-documents",
+        "slug": "",
+        "model": "bai/knowledge-note",
+        "branch": "main",
+        "signing": {
+          "nonce": "",
+          "publicKey": {},
+          "signature": "954c6ea2-d2d5-4804-90ef-07577049e849",
+          "documentType": "bai/knowledge-note",
+          "createdAtUtcIso": "2026-08-14T11:50:56.185Z"
+        },
+        "version": 0,
+        "documentId": "954c6ea2-d2d5-4804-90ef-07577049e849",
+        "protocolVersions": {
+          "base-reducer": 2
+        }
+      },
+      "timestampUtcMs": "2026-08-14T11:50:56.186Z"
+    }
+  },
+  {
+    "index": 0,
+    "hash": "IWf5uwIkuQfK+bLrUDXT3OaKiRs=",
+    "timestampUtcMs": "2026-08-14T12:34:56.000Z",
+    "action": {
+      "type": "SET_TITLE",
+      "input": {
+        "title": "client.drives is the drive-aware namespace, and addFile is the only correct way to create a document in a drive",
+        "updatedAt": "2026-08-14T12:34:56.000Z"
+      },
+      "timestampUtcMs": "2026-08-14T12:34:56.000Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "",
+    "timestampUtcMs": "2026-08-14T11:50:56.186Z",
+    "action": {
+      "type": "UPGRADE_DOCUMENT",
+      "input": {
+        "model": "bai/knowledge-note",
+        "toVersion": 1,
+        "documentId": "954c6ea2-d2d5-4804-90ef-07577049e849",
+        "fromVersion": 0,
+        "initialState": {
+          "auth": {
+            "grants": [],
+            "version": 0
+          },
+          "local": {
+            "lastViewedAt": null,
+            "personalTags": []
+          },
+          "global": {
+            "links": [],
+            "model": null,
+            "scope": null,
+            "title": null,
+            "editor": null,
+            "inputs": [],
+            "models": [],
+            "status": "DRAFT",
+            "topics": [],
+            "content": null,
+            "context": null,
+            "modelId": null,
+            "modules": [],
+            "outputs": [],
+            "version": null,
+            "computes": null,
+            "filePath": null,
+            "noteType": null,
+            "severity": null,
+            "hooksUsed": [],
+            "rootCause": null,
+            "confidence": null,
+            "consumedBy": [],
+            "provenance": null,
+            "sourceType": null,
+            "targetType": null,
+            "cardinality": null,
+            "description": null,
+            "alternatives": [],
+            "consequences": [],
+            "errorMessage": null,
+            "relationType": null,
+            "correctPattern": null,
+            "decisionStatus": null,
+            "dispatchTargets": [],
+            "lifecycleEvents": []
+          },
+          "document": {
+            "hash": {
+              "encoding": "base64",
+              "algorithm": "sha1"
+            },
+            "version": 1
+          }
+        }
+      },
+      "timestampUtcMs": "2026-08-14T11:50:56.186Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "5xZH6xE+qklC5rf/7i/WdORDOIM=",
+    "timestampUtcMs": "2026-08-14T12:34:56.000Z",
+    "action": {
+      "type": "SET_DESCRIPTION",
+      "input": {
+        "updatedAt": "2026-08-14T12:34:56.000Z",
+        "description": "It issues CREATE_DOCUMENT, UPGRADE_DOCUMENT, ADD_RELATIONSHIP and ADD_FILE as one dependent batch. Flat client methods are not drive-aware."
+      },
+      "timestampUtcMs": "2026-08-14T12:34:56.000Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "",
+    "timestampUtcMs": "2026-08-14T12:36:50.492Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "954c6ea2-d2d5-4804-90ef-07577049e849",
+        "targetId": "395c3ea0-ce11-4b25-8bbb-7f68a7b169e1",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-08-14T12:36:50.492Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "DBTJ6TcYxPbD0jjDtOR7IZw2/M0=",
+    "timestampUtcMs": "2026-08-14T12:34:56.000Z",
+    "action": {
+      "type": "SET_NOTE_TYPE",
+      "input": {
+        "noteType": "REFERENCE",
+        "updatedAt": "2026-08-14T12:34:56.000Z"
+      },
+      "timestampUtcMs": "2026-08-14T12:34:56.000Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "",
+    "timestampUtcMs": "2026-08-14T12:36:50.591Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "954c6ea2-d2d5-4804-90ef-07577049e849",
+        "targetId": "095fcd1a-1b4c-4f4c-bf24-6646cbe023f5",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-08-14T12:36:50.591Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "e8Y7USduif8S9E4fSdsw2r7R5uU=",
+    "timestampUtcMs": "2026-08-14T12:34:56.000Z",
+    "action": {
+      "type": "SET_CONTENT",
+      "input": {
+        "content": "`IReactorClient` has two surfaces, and picking the wrong one leaves a drive internally inconsistent. The flat methods (`get`, `find`, `execute`, `create`, `createEmpty`) are document-level and know nothing about drives. `client.drives` is a `readonly` `IDriveClient` namespace whose methods orchestrate the multi-action, multi-document work needed to keep a drive's `state.global.nodes` array consistent with the relationship index and with the underlying documents.\n\nTo create a document inside a drive, use `client.drives.addFile`:\n\n```typescript\naddFile<TDocument extends PHDocument = PHDocument>(\n  driveIdentifier: string,\n  document: PHDocument,\n  parentFolder?: string,\n  signal?: AbortSignal,\n): Promise<TDocument>\n```\n\nA single `addFile` call issues four actions as one **dependent batch**: `CREATE_DOCUMENT`, `UPGRADE_DOCUMENT`, and `ADD_RELATIONSHIP` on the new document, plus `ADD_FILE` on the drive itself. Reaching for `client.createEmpty()` instead gets you a document that exists but is not a member of any drive \u2014 no node entry, no parent relationship \u2014 and nothing in the drive UI will show it.\n\nThe rest of the namespace follows the same principle of keeping node state and document state in step:\n\n- `create(input)` \u2014 create a new drive document.\n- `addFolder(driveId, name, parentFolder?)` \u2014 add a folder node.\n- `removeNode(driveId, nodeId)` \u2014 folder nodes **cascade**: descendant file documents are deleted first, then the folder node entry.\n- `renameNode(driveId, nodeId, name)` \u2014 updates both the underlying document header and the drive's node entry.\n- `moveNode` / `copyNode` \u2014 pass `undefined` as `targetParentFolderId` to target the drive root; each copied file gets a new id and a duplicated document.\n- `setPreferredEditorOnNode(nodeId, preferredEditor)` \u2014 `null` clears it.\n\nEvery method takes a trailing optional `signal?: AbortSignal`. The rule of thumb: if an operation has to touch both a drive's node list and a document, it belongs to `client.drives`.\n\n_Source: apps/academy/docs/academy/04-Reference/01-Reactor/02-ReactorClient.md (Powerhouse v6.2.2-dev.45)._",
+        "updatedAt": "2026-08-14T12:34:56.000Z"
+      },
+      "timestampUtcMs": "2026-08-14T12:34:56.000Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "",
+    "timestampUtcMs": "2026-09-02T21:37:50.347Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "metadata": {
+          "reason": "The note names apps/academy/docs/academy/04-Reference/01-Reactor/02-ReactorClient.md as its source; page text revised between v6.2.2-dev.47 and v6.2.2-dev.74 \u2014 re-verified in the v6.2.2-dev.74 pass",
+          "confidence": "grounded"
+        },
+        "sourceId": "954c6ea2-d2d5-4804-90ef-07577049e849",
+        "targetId": "17ce5f4e-f152-48e3-a160-9415abf572e1",
+        "relationshipType": "DERIVED_FROM"
+      },
+      "timestampUtcMs": "2026-09-02T21:37:50.347Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "5QE478WDAxsORoGDv0OnCKUBLdU=",
+    "timestampUtcMs": "2026-08-14T12:34:56.000Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "version",
+        "value": "v6.2.2-dev.44",
+        "updatedAt": "2026-08-14T12:34:56.000Z"
+      },
+      "timestampUtcMs": "2026-08-14T12:34:56.000Z"
+    }
+  },
+  {
+    "index": 5,
+    "hash": "KZN2Cl04aFwFeGL9Q+lZxgOlLhA=",
+    "timestampUtcMs": "2026-08-14T12:34:56.000Z",
+    "action": {
+      "type": "SET_PROVENANCE",
+      "input": {
+        "author": "claude",
+        "createdAt": "2026-08-13T14:34:05.000Z",
+        "sourceOrigin": "DERIVED"
+      },
+      "timestampUtcMs": "2026-08-14T12:34:56.000Z"
+    }
+  },
+  {
+    "index": 6,
+    "hash": "APqM5LbHi2kwEeYxYN2MYe8kDv8=",
+    "timestampUtcMs": "2026-08-14T12:34:56.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "4b448149-e477-4c6b-b95b-283d5159135d",
+        "name": "reactor-client",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-08-14T12:34:56.000Z"
+    }
+  },
+  {
+    "index": 7,
+    "hash": "cqFHtPdNCDjpOFkpZ2PIlwMy+yg=",
+    "timestampUtcMs": "2026-08-14T12:34:56.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "7a56f879-554e-49ab-9e26-a3cfd7a63a45",
+        "name": "drives",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-08-14T12:34:56.000Z"
+    }
+  },
+  {
+    "index": 8,
+    "hash": "OMT9ezM0ws9CxhWvj/r99wi0tqY=",
+    "timestampUtcMs": "2026-08-14T12:34:56.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "2bd36889-bf81-449c-b0de-4f719dba283a",
+        "name": "api",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-08-14T12:34:56.000Z"
+    }
+  },
+  {
+    "index": 9,
+    "hash": "LoHp+B7j+LCQbb+yDCwTwuswDtE=",
+    "timestampUtcMs": "2026-08-14T14:37:22.000Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "version",
+        "value": "v6.2.2-dev.47",
+        "updatedAt": "2026-08-14T12:00:00.000Z"
+      },
+      "timestampUtcMs": "2026-08-14T14:37:22.000Z"
+    }
+  },
+  {
+    "index": 10,
+    "hash": "prCXKaDEwOJxGaS4MWeZKOb7qs8=",
+    "timestampUtcMs": "2026-08-14T14:37:22.000Z",
+    "action": {
+      "type": "SUBMIT_FOR_REVIEW",
+      "input": {
+        "id": "166b732b-527e-4e6a-a3c4-ea15ea6f2daf",
+        "actor": "claude",
+        "comment": "Knowledge registered against powerhouse v6.2.2-dev.47",
+        "timestamp": "2026-08-14T12:00:00.000Z"
+      },
+      "timestampUtcMs": "2026-08-14T14:37:22.000Z"
+    }
+  },
+  {
+    "index": 11,
+    "hash": "jH3FzuaFHPRiei5el75e0lwp02o=",
+    "timestampUtcMs": "2026-08-14T14:37:22.000Z",
+    "action": {
+      "type": "APPROVE_NOTE",
+      "input": {
+        "id": "0ca96d1a-246b-405a-8a45-12062f408c99",
+        "actor": "liberuum",
+        "comment": "Canonical as of powerhouse v6.2.2-dev.47",
+        "timestamp": "2026-08-14T12:00:00.000Z"
+      },
+      "timestampUtcMs": "2026-08-14T14:37:22.000Z"
+    }
+  },
+  {
+    "index": 12,
+    "hash": "QlPemMhyK6Jr4IYjz8EyW5SbbDo=",
+    "timestampUtcMs": "2026-09-02T21:37:50.987Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "filePath",
+        "value": "apps/academy/docs/academy/04-Reference/01-Reactor/02-ReactorClient.md",
+        "updatedAt": "2026-09-02T21:37:50.987Z"
+      },
+      "timestampUtcMs": "2026-09-02T21:37:50.987Z"
+    }
+  },
+  {
+    "index": 13,
+    "hash": "JAnR1S5ztfTfl1eIKX8fUOXPNvw=",
+    "timestampUtcMs": "2026-09-02T22:26:25.726Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "version",
+        "value": "v6.2.2-dev.74",
+        "updatedAt": "2026-09-02T22:26:25.726Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:26:25.726Z"
+    }
+  }
+]

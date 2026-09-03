@@ -1,0 +1,330 @@
+[
+  {
+    "index": 0,
+    "hash": "",
+    "timestampUtcMs": "2026-09-03T07:38:55.196Z",
+    "action": {
+      "type": "CREATE_DOCUMENT",
+      "input": {
+        "meta": {},
+        "name": "pglite-relational-hooks-context",
+        "slug": "",
+        "model": "bai/knowledge-note",
+        "branch": "main",
+        "signing": {
+          "nonce": "",
+          "publicKey": {},
+          "signature": "6cd88ded-d8e5-4645-8dc1-8dab23dd6dc4",
+          "documentType": "bai/knowledge-note",
+          "createdAtUtcIso": "2026-09-03T07:38:55.196Z"
+        },
+        "version": 0,
+        "documentId": "6cd88ded-d8e5-4645-8dc1-8dab23dd6dc4",
+        "protocolVersions": {
+          "base-reducer": 2
+        }
+      },
+      "timestampUtcMs": "2026-09-03T07:38:55.196Z"
+    }
+  },
+  {
+    "index": 0,
+    "hash": "bIj7Ec6eBHK8Y4l3/4Vb/Y2wuCU=",
+    "timestampUtcMs": "2026-09-03T07:38:56.542Z",
+    "action": {
+      "type": "SET_TITLE",
+      "input": {
+        "title": "Browser analytics is a React Query provider requiring a database name, and a processor's analytics store must be registered with the processor manager by hand",
+        "updatedAt": "2026-09-03T07:38:56.542Z"
+      },
+      "timestampUtcMs": "2026-09-03T07:38:56.542Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "",
+    "timestampUtcMs": "2026-09-03T07:38:55.196Z",
+    "action": {
+      "type": "UPGRADE_DOCUMENT",
+      "input": {
+        "model": "bai/knowledge-note",
+        "toVersion": 1,
+        "documentId": "6cd88ded-d8e5-4645-8dc1-8dab23dd6dc4",
+        "fromVersion": 0,
+        "initialState": {
+          "auth": {
+            "grants": [],
+            "version": 0
+          },
+          "local": {
+            "lastViewedAt": null,
+            "personalTags": []
+          },
+          "global": {
+            "links": [],
+            "model": null,
+            "scope": null,
+            "title": null,
+            "editor": null,
+            "inputs": [],
+            "models": [],
+            "status": "DRAFT",
+            "topics": [],
+            "content": null,
+            "context": null,
+            "modelId": null,
+            "modules": [],
+            "outputs": [],
+            "version": null,
+            "computes": null,
+            "filePath": null,
+            "noteType": null,
+            "severity": null,
+            "hooksUsed": [],
+            "rootCause": null,
+            "confidence": null,
+            "consumedBy": [],
+            "provenance": null,
+            "sourceType": null,
+            "targetType": null,
+            "cardinality": null,
+            "description": null,
+            "alternatives": [],
+            "consequences": [],
+            "errorMessage": null,
+            "relationType": null,
+            "correctPattern": null,
+            "decisionStatus": null,
+            "dispatchTargets": [],
+            "lifecycleEvents": []
+          },
+          "document": {
+            "hash": {
+              "encoding": "base64",
+              "algorithm": "sha1"
+            },
+            "version": 1
+          }
+        }
+      },
+      "timestampUtcMs": "2026-09-03T07:38:55.196Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "/HXhLGBM8ILzrvRqaSa6Oift/14=",
+    "timestampUtcMs": "2026-09-03T07:38:56.542Z",
+    "action": {
+      "type": "SET_DESCRIPTION",
+      "input": {
+        "updatedAt": "2026-09-03T07:38:56.542Z",
+        "description": "AnalyticsProvider takes databaseName and an optional queryClient; a component reads useAnalyticsStore and useProcessorManager and calls registerProcessor(manager, store) in an effect."
+      },
+      "timestampUtcMs": "2026-09-03T07:38:56.542Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "",
+    "timestampUtcMs": "2026-09-03T07:39:28.641Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "metadata": {
+          "reason": "Extracted from packages/reactor-browser/src/analytics/README.md at v6.2.2-dev.74 \u2014 Setup (AnalyticsProvider, registering the store with the processor manager); Available Hooks \u203a useAnalyticsQuery",
+          "confidence": "grounded"
+        },
+        "sourceId": "6cd88ded-d8e5-4645-8dc1-8dab23dd6dc4",
+        "targetId": "7a7703dc-3080-49be-8957-835233957a8a",
+        "relationshipType": "DERIVED_FROM"
+      },
+      "timestampUtcMs": "2026-09-03T07:39:28.641Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "fPNOjp6usa7224vSwRRh8bWl824=",
+    "timestampUtcMs": "2026-09-03T07:38:56.542Z",
+    "action": {
+      "type": "SET_NOTE_TYPE",
+      "input": {
+        "noteType": "INTEGRATION",
+        "updatedAt": "2026-09-03T07:38:56.542Z"
+      },
+      "timestampUtcMs": "2026-09-03T07:38:56.542Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "",
+    "timestampUtcMs": "2026-09-03T07:39:29.119Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "metadata": {
+          "reason": "Registration through the processor manager is exactly the path that only exists on the in-process reactor, which is why a browser analytics processor is wired by hand in a component",
+          "confidence": "grounded"
+        },
+        "sourceId": "6cd88ded-d8e5-4645-8dc1-8dab23dd6dc4",
+        "targetId": "21cb9dda-02f2-4af8-a32d-2bfedcefb9dc",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-09-03T07:39:29.119Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "ReVPFXw1V7RfDZRldw+7MiYPois=",
+    "timestampUtcMs": "2026-09-03T07:38:56.542Z",
+    "action": {
+      "type": "SET_CONTENT",
+      "input": {
+        "content": "The browser analytics module is React hooks and context over the analytics engine, using **React Query** for data management and caching. Setup is a provider with one required prop:\n\n```tsx\n<AnalyticsProvider databaseName=\"my-app:analytics\">{children}</AnalyticsProvider>\n```\n\n`databaseName` must be unique (it names the analytics database); `queryClient` is optional if the app already has one.\n\nThe part worth remembering is that **integration with document processors is not automatic**. A component reads both the store and the manager and registers them together:\n\n```tsx\nfunction CustomProcessor() {\n  const store = useAnalyticsStore();\n  const manager = useProcessorManager();\n  useEffect(() => {\n    if (!store || !manager) return;\n    registerProcessor(manager, store).catch(console.error);\n  }, [store, manager]);\n  return null;\n}\n```\n\nBoth hooks can return undefined before the provider and the manager exist, hence the guard \u2014 and the registration lives in an effect precisely because it must not run during render.\n\nQueries are then declarative: `useAnalyticsQuery({ start, end, granularity, metrics, select })` with luxon `DateTime` bounds and an `AnalyticsGranularity`, returning React Query's `{ data, isLoading }`.\n\n## Provenance\n- `packages/reactor-browser/src/analytics/README.md` \u2014 Setup (AnalyticsProvider, registering the store with the processor manager); Available Hooks \u203a useAnalyticsQuery\n\n_Extracted from the Powerhouse repository at **v6.2.2-dev.74**._",
+        "updatedAt": "2026-09-03T07:38:56.542Z"
+      },
+      "timestampUtcMs": "2026-09-03T07:38:56.542Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "",
+    "timestampUtcMs": "2026-09-03T07:39:29.614Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "metadata": {
+          "reason": "Both are read surfaces for processor output in the browser: one dimensional and time-bucketed, the other relational and live",
+          "confidence": "grounded"
+        },
+        "sourceId": "6cd88ded-d8e5-4645-8dc1-8dab23dd6dc4",
+        "targetId": "a8824d76-26b8-48fb-99c2-93072ed70dc2",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-09-03T07:39:29.614Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "Xa4PhyDKj64Zr3+tjRtUOyueuT0=",
+    "timestampUtcMs": "2026-09-03T07:38:56.542Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "2d8831c5-7bb0-4254-95a4-3ed87b3761a3",
+        "name": "reactor-browser"
+      },
+      "timestampUtcMs": "2026-09-03T07:38:56.542Z"
+    }
+  },
+  {
+    "index": 5,
+    "hash": "S4tJURvtAO5tOg7rP2qZB7+ZbcA=",
+    "timestampUtcMs": "2026-09-03T07:38:56.542Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "95da9150-ca43-494d-a4a1-5188d62d770e",
+        "name": "analytics"
+      },
+      "timestampUtcMs": "2026-09-03T07:38:56.542Z"
+    }
+  },
+  {
+    "index": 6,
+    "hash": "Y2/vEmJw34ucaeC2vxdsqsEopzk=",
+    "timestampUtcMs": "2026-09-03T07:38:56.542Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "cbe011ed-e665-46ae-8350-1e6224ee35cf",
+        "name": "react-query"
+      },
+      "timestampUtcMs": "2026-09-03T07:38:56.542Z"
+    }
+  },
+  {
+    "index": 7,
+    "hash": "o4ulUwxNUM2LeXbnYMsp8YBYnS0=",
+    "timestampUtcMs": "2026-09-03T07:38:56.542Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "3c08a740-e452-429d-ae4b-f6668b987eca",
+        "name": "processors"
+      },
+      "timestampUtcMs": "2026-09-03T07:38:56.542Z"
+    }
+  },
+  {
+    "index": 8,
+    "hash": "6yf75LTXMyKeZSvnOQWoFG7F29s=",
+    "timestampUtcMs": "2026-09-03T07:38:56.542Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "version",
+        "value": "v6.2.2-dev.74",
+        "updatedAt": "2026-09-03T07:38:56.542Z"
+      },
+      "timestampUtcMs": "2026-09-03T07:38:56.542Z"
+    }
+  },
+  {
+    "index": 9,
+    "hash": "xmcd941QV/qE4XCt76hXTQz1wt4=",
+    "timestampUtcMs": "2026-09-03T07:38:56.542Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "filePath",
+        "value": "packages/reactor-browser/src/analytics/README.md",
+        "updatedAt": "2026-09-03T07:38:56.542Z"
+      },
+      "timestampUtcMs": "2026-09-03T07:38:56.542Z"
+    }
+  },
+  {
+    "index": 10,
+    "hash": "7OuWZDSXwhRRlX++oDtHJBjpWBY=",
+    "timestampUtcMs": "2026-09-03T07:38:59.145Z",
+    "action": {
+      "type": "SET_PROVENANCE",
+      "input": {
+        "author": "knowledge-agent",
+        "createdAt": "2026-09-03T07:38:59.145Z",
+        "sourceOrigin": "DERIVED"
+      },
+      "timestampUtcMs": "2026-09-03T07:38:59.145Z"
+    }
+  },
+  {
+    "index": 11,
+    "hash": "fiSYncXKWOSX0bYqS7AlLN1oySM=",
+    "timestampUtcMs": "2026-09-03T07:38:59.618Z",
+    "action": {
+      "type": "SUBMIT_FOR_REVIEW",
+      "input": {
+        "id": "20768214-a94c-421a-859b-e948fe628b4e",
+        "actor": "knowledge-agent",
+        "comment": "extracted from packages/reactor-browser/src/analytics/README.md at v6.2.2-dev.74",
+        "timestamp": "2026-09-03T07:38:59.618Z"
+      },
+      "timestampUtcMs": "2026-09-03T07:38:59.618Z"
+    }
+  },
+  {
+    "index": 12,
+    "hash": "BeZfryfJqzGkyfuiSWlSU42ku/w=",
+    "timestampUtcMs": "2026-09-03T07:39:00.288Z",
+    "action": {
+      "type": "APPROVE_NOTE",
+      "input": {
+        "id": "b4c860d8-2df1-45f0-b6f4-5dd33894f059",
+        "actor": "liberuum",
+        "comment": "claim checked against the cited file at the pinned tag",
+        "timestamp": "2026-09-03T07:39:00.288Z"
+      },
+      "timestampUtcMs": "2026-09-03T07:39:00.288Z"
+    }
+  }
+]

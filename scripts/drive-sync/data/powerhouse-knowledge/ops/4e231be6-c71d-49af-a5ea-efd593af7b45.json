@@ -1,0 +1,375 @@
+[
+  {
+    "index": 0,
+    "hash": "",
+    "timestampUtcMs": "2026-08-14T12:33:57.521Z",
+    "action": {
+      "type": "CREATE_DOCUMENT",
+      "input": {
+        "meta": {},
+        "name": "swarmchannel-peer-feed-registration",
+        "slug": "",
+        "model": "bai/knowledge-note",
+        "branch": "main",
+        "signing": {
+          "nonce": "",
+          "publicKey": {},
+          "signature": "4e231be6-c71d-49af-a5ea-efd593af7b45",
+          "documentType": "bai/knowledge-note",
+          "createdAtUtcIso": "2026-08-14T12:33:57.521Z"
+        },
+        "version": 0,
+        "documentId": "4e231be6-c71d-49af-a5ea-efd593af7b45",
+        "protocolVersions": {
+          "base-reducer": 2
+        }
+      },
+      "timestampUtcMs": "2026-08-14T12:33:57.521Z"
+    }
+  },
+  {
+    "index": 0,
+    "hash": "qDZI9DpSoHziG/qKOlmXdGf8i0M=",
+    "timestampUtcMs": "2026-08-14T12:36:00.000Z",
+    "action": {
+      "type": "SET_TITLE",
+      "input": {
+        "title": "SwarmChannel extends to register peer feeds as additional pull sources per collab",
+        "updatedAt": "2026-08-14T12:36:00.000Z"
+      },
+      "timestampUtcMs": "2026-08-14T12:36:00.000Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "",
+    "timestampUtcMs": "2026-08-14T12:33:57.521Z",
+    "action": {
+      "type": "UPGRADE_DOCUMENT",
+      "input": {
+        "model": "bai/knowledge-note",
+        "toVersion": 1,
+        "documentId": "4e231be6-c71d-49af-a5ea-efd593af7b45",
+        "fromVersion": 0,
+        "initialState": {
+          "auth": {
+            "grants": [],
+            "version": 0
+          },
+          "local": {
+            "lastViewedAt": null,
+            "personalTags": []
+          },
+          "global": {
+            "links": [],
+            "model": null,
+            "scope": null,
+            "title": null,
+            "editor": null,
+            "inputs": [],
+            "models": [],
+            "status": "DRAFT",
+            "topics": [],
+            "content": null,
+            "context": null,
+            "modelId": null,
+            "modules": [],
+            "outputs": [],
+            "version": null,
+            "computes": null,
+            "filePath": null,
+            "noteType": null,
+            "severity": null,
+            "hooksUsed": [],
+            "rootCause": null,
+            "confidence": null,
+            "consumedBy": [],
+            "provenance": null,
+            "sourceType": null,
+            "targetType": null,
+            "cardinality": null,
+            "description": null,
+            "alternatives": [],
+            "consequences": [],
+            "errorMessage": null,
+            "relationType": null,
+            "correctPattern": null,
+            "decisionStatus": null,
+            "dispatchTargets": [],
+            "lifecycleEvents": []
+          },
+          "document": {
+            "hash": {
+              "encoding": "base64",
+              "algorithm": "sha1"
+            },
+            "version": 1
+          }
+        }
+      },
+      "timestampUtcMs": "2026-08-14T12:33:57.521Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "xW9+oJbpde/5PjURq2rTlxWHm6I=",
+    "timestampUtcMs": "2026-08-14T12:36:00.000Z",
+    "action": {
+      "type": "SET_DESCRIPTION",
+      "input": {
+        "updatedAt": "2026-08-14T12:36:00.000Z",
+        "description": "SwarmChannel registers additional per-peer pull sources for each collab, each with its own cursor row, and subscribes to each peer's GSOC signer."
+      },
+      "timestampUtcMs": "2026-08-14T12:36:00.000Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "",
+    "timestampUtcMs": "2026-08-14T12:38:53.458Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "4e231be6-c71d-49af-a5ea-efd593af7b45",
+        "targetId": "27cf7cb6-160b-439b-ac23-001d3e43abde",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-08-14T12:38:53.458Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "Yv5jyYzOInp3/IbC5PIB8XOJO8s=",
+    "timestampUtcMs": "2026-08-14T12:36:00.000Z",
+    "action": {
+      "type": "SET_NOTE_TYPE",
+      "input": {
+        "noteType": "pattern",
+        "updatedAt": "2026-08-14T12:36:00.000Z"
+      },
+      "timestampUtcMs": "2026-08-14T12:36:00.000Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "",
+    "timestampUtcMs": "2026-08-14T12:38:53.550Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "4e231be6-c71d-49af-a5ea-efd593af7b45",
+        "targetId": "564746c1-f39c-4f87-83fa-b873a615174b",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-08-14T12:38:53.550Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "ZqDkE3cvhePfdPkQunhXsMlBAdM=",
+    "timestampUtcMs": "2026-08-14T12:36:00.000Z",
+    "action": {
+      "type": "SET_CONTENT",
+      "input": {
+        "content": "## Extending SwarmChannel with peer pull sources\n\nExisting SwarmChannel push/pull is per-drive and per-owner. To support collaboration, each collab registers **additional pull sources** on the SwarmChannel \u2014 one per participant's feed(s).\n\n```typescript\nclass SwarmChannel implements IChannel {\n  private peerFeeds: Array<{\n    participantAddress: string;\n    driveFeedTopic: string;\n    docFeedTopics: string[];\n    cursor: number;\n  }> = [];\n\n  async registerCollab(collab: CollabSummary) {\n    for (const p of collab.participants) {\n      if (p.address === this.ownerAddress) continue; // skip self\n      this.peerFeeds.push(/* topics derived from driveId/docIds */);\n      await this.subscribePeerGsoc(p);\n    }\n  }\n\n  // GSOC triggers \u2014 bypasses the poll timer\n  private async onPeerOpCommitted(evt: GsocNotification) {\n    await this.pullPeerFeedNow(evt.writerAddress, evt.collabId);\n  }\n}\n```\n\nEach peer source has its own cursor row in `sync_cursors`, so pulls are incremental and idempotent across reloads. The polling walker iterates `peerSources` alongside the owner's own feeds. Nothing changes about how the reactor applies ops \u2014 `reactor.load()` remains the entry point and already preserves signer signatures.",
+        "updatedAt": "2026-08-14T12:36:00.000Z"
+      },
+      "timestampUtcMs": "2026-08-14T12:36:00.000Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "",
+    "timestampUtcMs": "2026-08-14T12:38:53.639Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "4e231be6-c71d-49af-a5ea-efd593af7b45",
+        "targetId": "5725fd76-b0d4-4bab-9c10-3c0a890951ca",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-08-14T12:38:53.639Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "TIC9JrVVOAIi5mtPirEzG50uXPM=",
+    "timestampUtcMs": "2026-08-14T12:36:00.000Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "version",
+        "value": "v6.2.2-dev.44",
+        "updatedAt": "2026-08-14T12:36:00.000Z"
+      },
+      "timestampUtcMs": "2026-08-14T12:36:00.000Z"
+    }
+  },
+  {
+    "index": 5,
+    "hash": "",
+    "timestampUtcMs": "2026-08-14T12:38:53.732Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "4e231be6-c71d-49af-a5ea-efd593af7b45",
+        "targetId": "8c9a8f25-336b-492e-baf4-e8e11f2cbfa0",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-08-14T12:38:53.732Z"
+    }
+  },
+  {
+    "index": 5,
+    "hash": "eh6QxiwPwE9ScejZhkLRt/FGLXk=",
+    "timestampUtcMs": "2026-08-14T12:36:00.000Z",
+    "action": {
+      "type": "SET_PROVENANCE",
+      "input": {
+        "author": "knowledge-agent",
+        "createdAt": "2026-04-21T14:16:54.676Z",
+        "sourceOrigin": "DERIVED"
+      },
+      "timestampUtcMs": "2026-08-14T12:36:00.000Z"
+    }
+  },
+  {
+    "index": 6,
+    "hash": "",
+    "timestampUtcMs": "2026-08-14T12:38:53.832Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "4e231be6-c71d-49af-a5ea-efd593af7b45",
+        "targetId": "251a0c70-2e17-44d6-9441-024a9e18c1c5",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-08-14T12:38:53.832Z"
+    }
+  },
+  {
+    "index": 6,
+    "hash": "lHc5ZftSB9AOGbolpcF4W+v0jF4=",
+    "timestampUtcMs": "2026-08-14T12:36:00.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "t-b0298458-1",
+        "name": "live-collaboration",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-08-14T12:36:00.000Z"
+    }
+  },
+  {
+    "index": 7,
+    "hash": "+CQ/ailXRyKUdLBsc60FVUb2ops=",
+    "timestampUtcMs": "2026-08-14T12:36:00.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "t-b0298458-2",
+        "name": "swarm-channel",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-08-14T12:36:00.000Z"
+    }
+  },
+  {
+    "index": 8,
+    "hash": "SntcBk7vaAUNtpwD2BklcXQ/ju8=",
+    "timestampUtcMs": "2026-08-14T12:36:00.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "t-b0298458-3",
+        "name": "sync-cursors",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-08-14T12:36:00.000Z"
+    }
+  },
+  {
+    "index": 9,
+    "hash": "UHmQCcxL5kufNRSKVTSObM2suJA=",
+    "timestampUtcMs": "2026-08-14T14:37:04.000Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "version",
+        "value": "v6.2.2-dev.47",
+        "updatedAt": "2026-08-14T12:00:00.000Z"
+      },
+      "timestampUtcMs": "2026-08-14T14:37:04.000Z"
+    }
+  },
+  {
+    "index": 10,
+    "hash": "5t46iFgPT6KRkJXwInvcwvPWBa4=",
+    "timestampUtcMs": "2026-08-14T14:37:04.000Z",
+    "action": {
+      "type": "SUBMIT_FOR_REVIEW",
+      "input": {
+        "id": "0735bded-150f-4abe-8b1e-62417f933b1a",
+        "actor": "claude",
+        "comment": "Knowledge registered against powerhouse v6.2.2-dev.47",
+        "timestamp": "2026-08-14T12:00:00.000Z"
+      },
+      "timestampUtcMs": "2026-08-14T14:37:04.000Z"
+    }
+  },
+  {
+    "index": 11,
+    "hash": "dHHMMmsutWELgjXSxXrmPJ206U8=",
+    "timestampUtcMs": "2026-08-14T14:37:04.000Z",
+    "action": {
+      "type": "APPROVE_NOTE",
+      "input": {
+        "id": "9f7a8cc1-3d0b-4919-8089-a4099ca64f7d",
+        "actor": "liberuum",
+        "comment": "Canonical as of powerhouse v6.2.2-dev.47",
+        "timestamp": "2026-08-14T12:00:00.000Z"
+      },
+      "timestampUtcMs": "2026-08-14T14:37:04.000Z"
+    }
+  },
+  {
+    "index": 12,
+    "hash": "H+azzHfQ+bLz0idTdo6qmQk4wxM=",
+    "timestampUtcMs": "2026-08-16T09:49:44.000Z",
+    "action": {
+      "type": "SET_NOTE_TYPE",
+      "input": {
+        "noteType": "PATTERN",
+        "updatedAt": "2026-08-16T09:49:44.000Z"
+      },
+      "timestampUtcMs": "2026-08-16T09:49:44.000Z"
+    }
+  },
+  {
+    "index": 13,
+    "hash": "WBWiXc3lVeevT/XmzrGrOLisi2k=",
+    "timestampUtcMs": "2026-08-16T22:22:08.542Z",
+    "action": {
+      "type": "SET_DESCRIPTION",
+      "input": {
+        "updatedAt": "2026-08-16T23:30:00.000Z",
+        "description": "Every source keeps its own row in sync_cursors so pulls stay incremental and idempotent across reloads; GSOC events bypass the poll timer and reactor.load() still preserves signatures."
+      },
+      "timestampUtcMs": "2026-08-16T22:22:08.542Z"
+    }
+  },
+  {
+    "index": 14,
+    "hash": "BeYLXwjcJJiQMO8oVKw5DYz09L0=",
+    "timestampUtcMs": "2026-09-03T09:58:34.083Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "version",
+        "updatedAt": "2026-09-03T09:58:34.083Z"
+      },
+      "timestampUtcMs": "2026-09-03T09:58:34.083Z"
+    }
+  }
+]

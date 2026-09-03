@@ -1,0 +1,694 @@
+[
+  {
+    "index": 0,
+    "hash": "",
+    "timestampUtcMs": "2026-09-02T22:09:54.553Z",
+    "action": {
+      "type": "CREATE_DOCUMENT",
+      "input": {
+        "meta": {},
+        "name": "auth-metadata-scopes-readable",
+        "slug": "",
+        "model": "bai/knowledge-note",
+        "branch": "main",
+        "signing": {
+          "nonce": "",
+          "publicKey": {},
+          "signature": "975d6c29-9797-4051-927e-d487a679f608",
+          "documentType": "bai/knowledge-note",
+          "createdAtUtcIso": "2026-09-02T22:09:54.553Z"
+        },
+        "version": 0,
+        "documentId": "975d6c29-9797-4051-927e-d487a679f608",
+        "protocolVersions": {
+          "base-reducer": 2
+        }
+      },
+      "timestampUtcMs": "2026-09-02T22:09:54.553Z"
+    }
+  },
+  {
+    "index": 0,
+    "hash": "wJK3MtAxPQk2fhoJ3lHpYr5RL4A=",
+    "timestampUtcMs": "2026-09-02T22:09:54.607Z",
+    "action": {
+      "type": "SET_TITLE",
+      "input": {
+        "title": "The auth and document scopes are readable by every holder of a document, whatever the grants say, because a replica that could not read the policy would allow everything",
+        "updatedAt": "2026-09-02T22:09:54.607Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:09:54.607Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "",
+    "timestampUtcMs": "2026-09-02T22:09:54.553Z",
+    "action": {
+      "type": "UPGRADE_DOCUMENT",
+      "input": {
+        "model": "bai/knowledge-note",
+        "toVersion": 1,
+        "documentId": "975d6c29-9797-4051-927e-d487a679f608",
+        "fromVersion": 0,
+        "initialState": {
+          "auth": {
+            "grants": [],
+            "version": 0
+          },
+          "local": {
+            "lastViewedAt": null,
+            "personalTags": []
+          },
+          "global": {
+            "links": [],
+            "model": null,
+            "scope": null,
+            "title": null,
+            "editor": null,
+            "inputs": [],
+            "models": [],
+            "status": "DRAFT",
+            "topics": [],
+            "content": null,
+            "context": null,
+            "modelId": null,
+            "modules": [],
+            "outputs": [],
+            "version": null,
+            "computes": null,
+            "filePath": null,
+            "noteType": null,
+            "severity": null,
+            "hooksUsed": [],
+            "rootCause": null,
+            "confidence": null,
+            "consumedBy": [],
+            "provenance": null,
+            "sourceType": null,
+            "targetType": null,
+            "cardinality": null,
+            "description": null,
+            "alternatives": [],
+            "consequences": [],
+            "errorMessage": null,
+            "relationType": null,
+            "correctPattern": null,
+            "decisionStatus": null,
+            "dispatchTargets": [],
+            "lifecycleEvents": []
+          },
+          "document": {
+            "hash": {
+              "encoding": "base64",
+              "algorithm": "sha1"
+            },
+            "version": 1
+          }
+        }
+      },
+      "timestampUtcMs": "2026-09-02T22:09:54.553Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "/tND6hs3I04afRnAJInT7hUjhnY=",
+    "timestampUtcMs": "2026-09-02T22:09:54.607Z",
+    "action": {
+      "type": "SET_DESCRIPTION",
+      "input": {
+        "updatedAt": "2026-09-02T22:09:54.607Z",
+        "description": "Grants gate domain scopes only. A peer denied the policy would sync a document, see it uninitialized and admit every operation, so replicas would diverge. A withheld domain scope is absent, not empty."
+      },
+      "timestampUtcMs": "2026-09-02T22:09:54.607Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "",
+    "timestampUtcMs": "2026-09-02T22:17:51.887Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "metadata": {
+          "reason": "Extracted from docs/specs/auth-scope.md at v6.2.2-dev.74 \u2014 Reads: 'One exemption is required\u2026'; filtering per scope incl. initialState",
+          "confidence": "grounded"
+        },
+        "sourceId": "975d6c29-9797-4051-927e-d487a679f608",
+        "targetId": "223bb12a-be7f-4209-9ab2-f04f7bb2b6c8",
+        "relationshipType": "DERIVED_FROM"
+      },
+      "timestampUtcMs": "2026-09-02T22:17:51.887Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "cwS9k/0jPO3kRsw7HIFgrtUnBTw=",
+    "timestampUtcMs": "2026-09-02T22:09:54.607Z",
+    "action": {
+      "type": "SET_NOTE_TYPE",
+      "input": {
+        "noteType": "ARCHITECTURE",
+        "updatedAt": "2026-09-02T22:09:54.607Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:09:54.607Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "",
+    "timestampUtcMs": "2026-09-02T22:17:53.135Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "metadata": {
+          "reason": "Extracted from apps/academy/docs/academy/04-Reference/01-Reactor/11-Authorization.md at v6.2.2-dev.74 \u2014 'Scopes every holder reads'",
+          "confidence": "grounded"
+        },
+        "sourceId": "975d6c29-9797-4051-927e-d487a679f608",
+        "targetId": "17dc46b0-f733-467c-99d7-ae8fbe0fb0e4",
+        "relationshipType": "DERIVED_FROM"
+      },
+      "timestampUtcMs": "2026-09-02T22:17:53.135Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "f3O7TWurth0rnRgIoZ41/vN05nE=",
+    "timestampUtcMs": "2026-09-02T22:09:54.607Z",
+    "action": {
+      "type": "SET_CONTENT",
+      "input": {
+        "content": "Suppose a policy could deny reading the `auth` scope itself. A peer could then sync a document *without* its policy, see an uninitialized auth scope, and allow every operation it holds; replicas would diverge permanently. The `auth` and `document` scopes therefore **bypass the grants**: the policy and the document's metadata are visible to any holder of the document, and grants gate domain-scope reads only.\n\nThe same reasoning carries the rule into every read path. A read that narrows scopes has the `auth` scope added back before the fetch, because a model built without the policy reads as uninitialized; `initialState` is filtered alongside `state` since it holds the same scope names; and a replica denied a domain scope simply never receives that stream, so partial replication stays consistent \u2014 it never holds or evaluates what it may not read.\n\nFor consumers this means a `PHDocument` has four state scopes \u2014 `auth`, `document`, `global`, `local` \u2014 of which only `global` and `local` are gateable. The `scoped-reads` recipe uses exactly that pair: expenses in `global`, reviewers' confidential notes in `local` (conventionally node-local data, used here as the second gateable scope because there is no third). A scope the subject may not read comes back **absent from `document.state`**, not present and empty.\n\nThe exemption extends to group rosters: a replica must fold a group's membership to evaluate a policy that names it, so a named group's member list is served to that policy's audience regardless of the group's own read grants \u2014 bounded by the rules in the group-serving note.\n\n_Source: docs/specs/auth-scope.md (Powerhouse v6.2.2-dev.74)._\n_Source: apps/academy/docs/academy/04-Reference/01-Reactor/11-Authorization.md (Powerhouse v6.2.2-dev.74)._\n_Source: apps/academy/docs/academy/05-Lookup/00-Cookbook.md (Powerhouse v6.2.2-dev.74)._\n\n## Provenance\n- `docs/specs/auth-scope.md` \u2014 Reads: 'One exemption is required\u2026'; filtering per scope incl. initialState\n- `apps/academy/docs/academy/04-Reference/01-Reactor/11-Authorization.md` \u2014 'Scopes every holder reads'\n- `apps/academy/docs/academy/05-Lookup/00-Cookbook.md` \u2014 Scoped Reads: 'The two domain scopes', 'Per scope, not per document'\n\n_Recorded from the Powerhouse repository at **v6.2.2-dev.74** during the v6.2.2-dev.74 source sync._",
+        "updatedAt": "2026-09-02T22:09:54.607Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:09:54.607Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "",
+    "timestampUtcMs": "2026-09-02T22:17:54.195Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "metadata": {
+          "reason": "Extracted from apps/academy/docs/academy/05-Lookup/00-Cookbook.md at v6.2.2-dev.74 \u2014 Scoped Reads: 'The two domain scopes', 'Per scope, not per document'",
+          "confidence": "grounded"
+        },
+        "sourceId": "975d6c29-9797-4051-927e-d487a679f608",
+        "targetId": "f2aaccd3-7c26-4327-881e-f5ad9e267b89",
+        "relationshipType": "DERIVED_FROM"
+      },
+      "timestampUtcMs": "2026-09-02T22:17:54.195Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "CTpRLTaHmEx7m/ntcZoIrvusvcE=",
+    "timestampUtcMs": "2026-09-02T22:09:54.607Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "7042d579-2692-4566-9c34-c3e38f67c102",
+        "name": "auth-scope"
+      },
+      "timestampUtcMs": "2026-09-02T22:09:54.607Z"
+    }
+  },
+  {
+    "index": 5,
+    "hash": "",
+    "timestampUtcMs": "2026-09-02T22:17:55.528Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "metadata": {
+          "reason": "This is the exemption the client-side read gate applies before filtering the domain scopes",
+          "confidence": "grounded"
+        },
+        "sourceId": "975d6c29-9797-4051-927e-d487a679f608",
+        "targetId": "cf2a1fcd-b902-4976-b941-e229a6e9696c",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-09-02T22:17:55.528Z"
+    }
+  },
+  {
+    "index": 5,
+    "hash": "qbTIFxEk5PmhTg36tLzDLWXgn9s=",
+    "timestampUtcMs": "2026-09-02T22:09:54.607Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "7935dfbe-ce5c-46a9-b262-67d5d98f712b",
+        "name": "reads"
+      },
+      "timestampUtcMs": "2026-09-02T22:09:54.607Z"
+    }
+  },
+  {
+    "index": 6,
+    "hash": "",
+    "timestampUtcMs": "2026-09-02T22:17:56.001Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "metadata": {
+          "reason": "The same 'a replica must be able to fold what it evaluates' argument is what serves a named group's roster to the referencing policy's audience",
+          "confidence": "grounded"
+        },
+        "sourceId": "975d6c29-9797-4051-927e-d487a679f608",
+        "targetId": "37c39fe6-55b9-4c90-ad49-c96ae42467c4",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-09-02T22:17:56.001Z"
+    }
+  },
+  {
+    "index": 6,
+    "hash": "h4Fdn+RB/NzZWgUoUaPIKo7hJKY=",
+    "timestampUtcMs": "2026-09-02T22:09:54.607Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "8c7453ab-6ba8-45a3-8b13-2878fecb4f05",
+        "name": "sync"
+      },
+      "timestampUtcMs": "2026-09-02T22:09:54.607Z"
+    }
+  },
+  {
+    "index": 7,
+    "hash": "",
+    "timestampUtcMs": "2026-09-02T22:17:56.449Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "metadata": {
+          "reason": "Because global and local are independent streams with their own logs, a read can withhold one scope's stream without touching the other",
+          "confidence": "grounded"
+        },
+        "sourceId": "975d6c29-9797-4051-927e-d487a679f608",
+        "targetId": "3485a9d2-df0b-4265-8e7d-5b277a937bf0",
+        "relationshipType": "BUILDS_ON"
+      },
+      "timestampUtcMs": "2026-09-02T22:17:56.449Z"
+    }
+  },
+  {
+    "index": 7,
+    "hash": "xiQUsIDZKHzAaIySwftNlsEhgKo=",
+    "timestampUtcMs": "2026-09-02T22:09:54.607Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "5800dc0d-eba5-4a5f-9dad-d2e540da54e2",
+        "name": "architecture"
+      },
+      "timestampUtcMs": "2026-09-02T22:09:54.607Z"
+    }
+  },
+  {
+    "index": 8,
+    "hash": "",
+    "timestampUtcMs": "2026-09-02T22:22:15.022Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "metadata": {
+          "reason": "Extracted from docs/specs/auth-scope.md at v6.2.2-dev.74 \u2014 Reads: 'One exemption is required\u2026'; filtering per scope incl. initialState",
+          "confidence": "grounded"
+        },
+        "sourceId": "975d6c29-9797-4051-927e-d487a679f608",
+        "targetId": "223bb12a-be7f-4209-9ab2-f04f7bb2b6c8",
+        "relationshipType": "DERIVED_FROM"
+      },
+      "timestampUtcMs": "2026-09-02T22:22:15.022Z"
+    }
+  },
+  {
+    "index": 8,
+    "hash": "2EskIyDHUPhAN/0uU1yofzsjdVo=",
+    "timestampUtcMs": "2026-09-02T22:09:54.607Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "version",
+        "value": "v6.2.2-dev.74",
+        "updatedAt": "2026-09-02T22:09:54.607Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:09:54.607Z"
+    }
+  },
+  {
+    "index": 9,
+    "hash": "",
+    "timestampUtcMs": "2026-09-02T22:22:15.834Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "metadata": {
+          "reason": "Extracted from apps/academy/docs/academy/04-Reference/01-Reactor/11-Authorization.md at v6.2.2-dev.74 \u2014 'Scopes every holder reads'",
+          "confidence": "grounded"
+        },
+        "sourceId": "975d6c29-9797-4051-927e-d487a679f608",
+        "targetId": "17dc46b0-f733-467c-99d7-ae8fbe0fb0e4",
+        "relationshipType": "DERIVED_FROM"
+      },
+      "timestampUtcMs": "2026-09-02T22:22:15.834Z"
+    }
+  },
+  {
+    "index": 9,
+    "hash": "asdl3r5rOBos5GDpmopMhbo5mOQ=",
+    "timestampUtcMs": "2026-09-02T22:09:54.607Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "filePath",
+        "value": "docs/specs/auth-scope.md",
+        "updatedAt": "2026-09-02T22:09:54.607Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:09:54.607Z"
+    }
+  },
+  {
+    "index": 10,
+    "hash": "",
+    "timestampUtcMs": "2026-09-02T22:22:16.523Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "metadata": {
+          "reason": "Extracted from apps/academy/docs/academy/05-Lookup/00-Cookbook.md at v6.2.2-dev.74 \u2014 Scoped Reads: 'The two domain scopes', 'Per scope, not per document'",
+          "confidence": "grounded"
+        },
+        "sourceId": "975d6c29-9797-4051-927e-d487a679f608",
+        "targetId": "f2aaccd3-7c26-4327-881e-f5ad9e267b89",
+        "relationshipType": "DERIVED_FROM"
+      },
+      "timestampUtcMs": "2026-09-02T22:22:16.523Z"
+    }
+  },
+  {
+    "index": 10,
+    "hash": "OWC8mfKKaDt+05hjh2PgPUF87C8=",
+    "timestampUtcMs": "2026-09-02T22:09:54.607Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "confidence",
+        "value": "grounded",
+        "updatedAt": "2026-09-02T22:09:54.607Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:09:54.607Z"
+    }
+  },
+  {
+    "index": 11,
+    "hash": "",
+    "timestampUtcMs": "2026-09-02T22:22:17.499Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "metadata": {
+          "reason": "This is the exemption the client-side read gate applies before filtering the domain scopes",
+          "confidence": "grounded"
+        },
+        "sourceId": "975d6c29-9797-4051-927e-d487a679f608",
+        "targetId": "cf2a1fcd-b902-4976-b941-e229a6e9696c",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-09-02T22:22:17.499Z"
+    }
+  },
+  {
+    "index": 11,
+    "hash": "7BL/yXhHBmLjnbI/b8OL+XL2eXc=",
+    "timestampUtcMs": "2026-09-02T22:09:57.234Z",
+    "action": {
+      "type": "SET_PROVENANCE",
+      "input": {
+        "author": "knowledge-agent",
+        "createdAt": "2026-09-02T22:09:57.234Z",
+        "sourceOrigin": "DERIVED"
+      },
+      "timestampUtcMs": "2026-09-02T22:09:57.234Z"
+    }
+  },
+  {
+    "index": 12,
+    "hash": "",
+    "timestampUtcMs": "2026-09-02T22:22:18.094Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "metadata": {
+          "reason": "The same 'a replica must be able to fold what it evaluates' argument is what serves a named group's roster to the referencing policy's audience",
+          "confidence": "grounded"
+        },
+        "sourceId": "975d6c29-9797-4051-927e-d487a679f608",
+        "targetId": "37c39fe6-55b9-4c90-ad49-c96ae42467c4",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-09-02T22:22:18.094Z"
+    }
+  },
+  {
+    "index": 12,
+    "hash": "RG9O5xMEBj89O/HQSy5QQI0N5Wc=",
+    "timestampUtcMs": "2026-09-02T22:09:57.691Z",
+    "action": {
+      "type": "SUBMIT_FOR_REVIEW",
+      "input": {
+        "id": "5105208f-56c4-4d9c-af16-758236a6e729",
+        "actor": "knowledge-agent",
+        "comment": "extracted from the Powerhouse repository at v6.2.2-dev.74",
+        "timestamp": "2026-09-02T22:09:57.691Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:09:57.691Z"
+    }
+  },
+  {
+    "index": 13,
+    "hash": "",
+    "timestampUtcMs": "2026-09-02T22:22:18.636Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "metadata": {
+          "reason": "Because global and local are independent streams with their own logs, a read can withhold one scope's stream without touching the other",
+          "confidence": "grounded"
+        },
+        "sourceId": "975d6c29-9797-4051-927e-d487a679f608",
+        "targetId": "3485a9d2-df0b-4265-8e7d-5b277a937bf0",
+        "relationshipType": "BUILDS_ON"
+      },
+      "timestampUtcMs": "2026-09-02T22:22:18.636Z"
+    }
+  },
+  {
+    "index": 13,
+    "hash": "QazX73zUw93msAb6S0rD1+Rs834=",
+    "timestampUtcMs": "2026-09-02T22:09:58.385Z",
+    "action": {
+      "type": "APPROVE_NOTE",
+      "input": {
+        "id": "49f5225b-e630-4ccc-af41-b7b31bca8fa4",
+        "actor": "liberuum",
+        "comment": "claim checked against the cited repository file at the pinned tag",
+        "timestamp": "2026-09-02T22:09:58.385Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:09:58.385Z"
+    }
+  },
+  {
+    "index": 14,
+    "hash": "D0BukjrmiAfcITAvIYb6hdj9HRU=",
+    "timestampUtcMs": "2026-09-02T22:15:35.805Z",
+    "action": {
+      "type": "SET_TITLE",
+      "input": {
+        "title": "The auth and document scopes are readable by every holder of a document, whatever the grants say, because a replica that could not read the policy would allow everything",
+        "updatedAt": "2026-09-02T22:15:35.805Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:15:35.805Z"
+    }
+  },
+  {
+    "index": 15,
+    "hash": "D0BukjrmiAfcITAvIYb6hdj9HRU=",
+    "timestampUtcMs": "2026-09-02T22:15:35.805Z",
+    "action": {
+      "type": "SET_DESCRIPTION",
+      "input": {
+        "updatedAt": "2026-09-02T22:15:35.805Z",
+        "description": "Grants gate domain scopes only. A peer denied the policy would sync a document, see it uninitialized and admit every operation, so replicas would diverge. A withheld domain scope is absent, not empty."
+      },
+      "timestampUtcMs": "2026-09-02T22:15:35.805Z"
+    }
+  },
+  {
+    "index": 16,
+    "hash": "D0BukjrmiAfcITAvIYb6hdj9HRU=",
+    "timestampUtcMs": "2026-09-02T22:15:35.805Z",
+    "action": {
+      "type": "SET_NOTE_TYPE",
+      "input": {
+        "noteType": "ARCHITECTURE",
+        "updatedAt": "2026-09-02T22:15:35.805Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:15:35.805Z"
+    }
+  },
+  {
+    "index": 17,
+    "hash": "D0BukjrmiAfcITAvIYb6hdj9HRU=",
+    "timestampUtcMs": "2026-09-02T22:15:35.805Z",
+    "action": {
+      "type": "SET_CONTENT",
+      "input": {
+        "content": "Suppose a policy could deny reading the `auth` scope itself. A peer could then sync a document *without* its policy, see an uninitialized auth scope, and allow every operation it holds; replicas would diverge permanently. The `auth` and `document` scopes therefore **bypass the grants**: the policy and the document's metadata are visible to any holder of the document, and grants gate domain-scope reads only.\n\nThe same reasoning carries the rule into every read path. A read that narrows scopes has the `auth` scope added back before the fetch, because a model built without the policy reads as uninitialized; `initialState` is filtered alongside `state` since it holds the same scope names; and a replica denied a domain scope simply never receives that stream, so partial replication stays consistent \u2014 it never holds or evaluates what it may not read.\n\nFor consumers this means a `PHDocument` has four state scopes \u2014 `auth`, `document`, `global`, `local` \u2014 of which only `global` and `local` are gateable. The `scoped-reads` recipe uses exactly that pair: expenses in `global`, reviewers' confidential notes in `local` (conventionally node-local data, used here as the second gateable scope because there is no third). A scope the subject may not read comes back **absent from `document.state`**, not present and empty.\n\nThe exemption extends to group rosters: a replica must fold a group's membership to evaluate a policy that names it, so a named group's member list is served to that policy's audience regardless of the group's own read grants \u2014 bounded by the rules in the group-serving note.\n\n_Source: docs/specs/auth-scope.md (Powerhouse v6.2.2-dev.74)._\n_Source: apps/academy/docs/academy/04-Reference/01-Reactor/11-Authorization.md (Powerhouse v6.2.2-dev.74)._\n_Source: apps/academy/docs/academy/05-Lookup/00-Cookbook.md (Powerhouse v6.2.2-dev.74)._\n\n## Provenance\n- `docs/specs/auth-scope.md` \u2014 Reads: 'One exemption is required\u2026'; filtering per scope incl. initialState\n- `apps/academy/docs/academy/04-Reference/01-Reactor/11-Authorization.md` \u2014 'Scopes every holder reads'\n- `apps/academy/docs/academy/05-Lookup/00-Cookbook.md` \u2014 Scoped Reads: 'The two domain scopes', 'Per scope, not per document'\n\n_Recorded from the Powerhouse repository at **v6.2.2-dev.74** during the v6.2.2-dev.74 source sync._",
+        "updatedAt": "2026-09-02T22:15:35.805Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:15:35.805Z"
+    }
+  },
+  {
+    "index": 18,
+    "hash": "D0BukjrmiAfcITAvIYb6hdj9HRU=",
+    "timestampUtcMs": "2026-09-02T22:15:35.805Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "version",
+        "value": "v6.2.2-dev.74",
+        "updatedAt": "2026-09-02T22:15:35.805Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:15:35.805Z"
+    }
+  },
+  {
+    "index": 19,
+    "hash": "D0BukjrmiAfcITAvIYb6hdj9HRU=",
+    "timestampUtcMs": "2026-09-02T22:15:35.805Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "filePath",
+        "value": "docs/specs/auth-scope.md",
+        "updatedAt": "2026-09-02T22:15:35.805Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:15:35.805Z"
+    }
+  },
+  {
+    "index": 20,
+    "hash": "D0BukjrmiAfcITAvIYb6hdj9HRU=",
+    "timestampUtcMs": "2026-09-02T22:15:35.805Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "confidence",
+        "value": "grounded",
+        "updatedAt": "2026-09-02T22:15:35.805Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:15:35.805Z"
+    }
+  },
+  {
+    "index": 21,
+    "hash": "S6htl/3rxUNO3ny6sPVhqkX/bhg=",
+    "timestampUtcMs": "2026-09-02T22:20:14.107Z",
+    "action": {
+      "type": "SET_TITLE",
+      "input": {
+        "title": "The auth and document scopes are readable by every holder of a document, whatever the grants say, because a replica that could not read the policy would allow everything",
+        "updatedAt": "2026-09-02T22:20:14.107Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:20:14.107Z"
+    }
+  },
+  {
+    "index": 22,
+    "hash": "S6htl/3rxUNO3ny6sPVhqkX/bhg=",
+    "timestampUtcMs": "2026-09-02T22:20:14.107Z",
+    "action": {
+      "type": "SET_DESCRIPTION",
+      "input": {
+        "updatedAt": "2026-09-02T22:20:14.107Z",
+        "description": "Grants gate domain scopes only. A peer denied the policy would sync a document, see it uninitialized and admit every operation, so replicas would diverge. A withheld domain scope is absent, not empty."
+      },
+      "timestampUtcMs": "2026-09-02T22:20:14.107Z"
+    }
+  },
+  {
+    "index": 23,
+    "hash": "S6htl/3rxUNO3ny6sPVhqkX/bhg=",
+    "timestampUtcMs": "2026-09-02T22:20:14.107Z",
+    "action": {
+      "type": "SET_NOTE_TYPE",
+      "input": {
+        "noteType": "ARCHITECTURE",
+        "updatedAt": "2026-09-02T22:20:14.107Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:20:14.107Z"
+    }
+  },
+  {
+    "index": 24,
+    "hash": "S6htl/3rxUNO3ny6sPVhqkX/bhg=",
+    "timestampUtcMs": "2026-09-02T22:20:14.107Z",
+    "action": {
+      "type": "SET_CONTENT",
+      "input": {
+        "content": "Suppose a policy could deny reading the `auth` scope itself. A peer could then sync a document *without* its policy, see an uninitialized auth scope, and allow every operation it holds; replicas would diverge permanently. The `auth` and `document` scopes therefore **bypass the grants**: the policy and the document's metadata are visible to any holder of the document, and grants gate domain-scope reads only.\n\nThe same reasoning carries the rule into every read path. A read that narrows scopes has the `auth` scope added back before the fetch, because a model built without the policy reads as uninitialized; `initialState` is filtered alongside `state` since it holds the same scope names; and a replica denied a domain scope simply never receives that stream, so partial replication stays consistent \u2014 it never holds or evaluates what it may not read.\n\nFor consumers this means a `PHDocument` has four state scopes \u2014 `auth`, `document`, `global`, `local` \u2014 of which only `global` and `local` are gateable. The `scoped-reads` recipe uses exactly that pair: expenses in `global`, reviewers' confidential notes in `local` (conventionally node-local data, used here as the second gateable scope because there is no third). A scope the subject may not read comes back **absent from `document.state`**, not present and empty.\n\nThe exemption extends to group rosters: a replica must fold a group's membership to evaluate a policy that names it, so a named group's member list is served to that policy's audience regardless of the group's own read grants \u2014 bounded by the rules in the group-serving note.\n\n_Source: docs/specs/auth-scope.md (Powerhouse v6.2.2-dev.74)._\n_Source: apps/academy/docs/academy/04-Reference/01-Reactor/11-Authorization.md (Powerhouse v6.2.2-dev.74)._\n_Source: apps/academy/docs/academy/05-Lookup/00-Cookbook.md (Powerhouse v6.2.2-dev.74)._\n\n## Provenance\n- `docs/specs/auth-scope.md` \u2014 Reads: 'One exemption is required\u2026'; filtering per scope incl. initialState\n- `apps/academy/docs/academy/04-Reference/01-Reactor/11-Authorization.md` \u2014 'Scopes every holder reads'\n- `apps/academy/docs/academy/05-Lookup/00-Cookbook.md` \u2014 Scoped Reads: 'The two domain scopes', 'Per scope, not per document'\n\n_Recorded from the Powerhouse repository at **v6.2.2-dev.74** during the v6.2.2-dev.74 source sync._",
+        "updatedAt": "2026-09-02T22:20:14.107Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:20:14.107Z"
+    }
+  },
+  {
+    "index": 25,
+    "hash": "S6htl/3rxUNO3ny6sPVhqkX/bhg=",
+    "timestampUtcMs": "2026-09-02T22:20:14.107Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "version",
+        "value": "v6.2.2-dev.74",
+        "updatedAt": "2026-09-02T22:20:14.107Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:20:14.107Z"
+    }
+  },
+  {
+    "index": 26,
+    "hash": "S6htl/3rxUNO3ny6sPVhqkX/bhg=",
+    "timestampUtcMs": "2026-09-02T22:20:14.107Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "filePath",
+        "value": "docs/specs/auth-scope.md",
+        "updatedAt": "2026-09-02T22:20:14.107Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:20:14.107Z"
+    }
+  },
+  {
+    "index": 27,
+    "hash": "S6htl/3rxUNO3ny6sPVhqkX/bhg=",
+    "timestampUtcMs": "2026-09-02T22:20:14.107Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "confidence",
+        "value": "grounded",
+        "updatedAt": "2026-09-02T22:20:14.107Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:20:14.107Z"
+    }
+  }
+]

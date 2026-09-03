@@ -1,0 +1,81 @@
+{
+  "links": [
+    {
+      "id": "lnk-7e192a76-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "7e192a76-7b3f-4f80-9c80-db847f767a82",
+      "targetTitle": "skill-pipeline",
+      "reason": "Discovery note distilled by sync-skills from the skill's SKILL.md frontmatter description and its section headings (source hash sha256:4776cbe67d2b); the full procedure is the source text",
+      "confidence": "grounded"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Agent skill: /pipeline \u2014 Run the knowledge processing pipeline on a source or batch of notes.",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "2c791a8c-3e13-4892-915f-2b84e53a9680",
+      "name": "agent-skills",
+      "topicDocumentId": null
+    },
+    {
+      "id": "8ba7603b-24cf-4fa2-80ce-5e0dab40178a",
+      "name": "pipeline",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "## When to use\nRun the knowledge processing pipeline on a source or batch of notes. Chains extract -> connect -> reweave -> verify phases with handoff tracking. Use when processing source material end-to-end or advancing notes through the pipeline.\n\n## What it covers\n- Pipeline Phases\n- CRITICAL: Pipeline tracking is MANDATORY\n- Pre-flight: Verify methodology files are available locally\n- Full Pipeline Run\n- Subgraph Queries\n- Quick Pipeline (Single Note)\n- Batch Pipeline\n- Quality summary after pipeline\n\n## Where the full skill lives\n- Vault source: **Agent skill: pipeline** (full SKILL.md text, DERIVED_FROM below)\n- Canonical copy: plugin repo `skills/pipeline/SKILL.md` \u2014 always execute from the repo copy; this note is the discovery layer.\n\n## Invocation\n`/powerhouse-knowledge:pipeline` in Claude Code (plugin installed), or read the source content and follow it manually.\n\n_Synced by sync-skills; source hash sha256:4776cbe67d2b\u2026_",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": "skills/pipeline/SKILL.md",
+  "noteType": "PROCEDURE",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "skill-sync",
+    "createdAt": "2026-08-16T12:02:12.990Z",
+    "sessionId": null,
+    "updatedAt": "2026-09-02T19:21:50.284Z",
+    "sourceOrigin": "IMPORT"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Run the knowledge processing pipeline on a source or batch of notes. Chains extract -> connect -> reweave -> verify phases with handoff tracking. Use when processing source material end-to-end or adva",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "8ef88eab-4abe-4156-8aa3-1a7db3dec7ff",
+      "actor": "skill-sync",
+      "comment": "skill sync",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-16T12:02:13.798Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "4a934bdc-2f90-4772-b4ba-fdc16c73eee6",
+      "actor": "knowledge-agent",
+      "comment": "mechanical sync from canonical repo copy",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-16T12:02:13.937Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

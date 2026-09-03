@@ -1,0 +1,115 @@
+{
+  "links": [
+    {
+      "id": "lnk-c5419cd5-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "c5419cd5-deac-4f48-b58f-131e5808bd49",
+      "targetTitle": "auth-flags-per-fleet",
+      "reason": "This is the second of the two unsafe conditions the preflight sweep exists to catch before a fleet flips its flags",
+      "confidence": "grounded"
+    },
+    {
+      "id": "lnk-2f4b5df2-bui",
+      "linkType": "BUILDS_ON",
+      "targetDocumentId": "2f4b5df2-d6ca-4224-a049-e96b4811ed37",
+      "targetTitle": "upgrade-reducer-must-patch-state-and-initialstate",
+      "reason": "An upgrade reducer that patches state and initialState is exactly the version boundary the positional walk cannot cross",
+      "confidence": "grounded"
+    },
+    {
+      "id": "lnk-223bb12a-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "223bb12a-be7f-4209-9ab2-f04f7bb2b6c8",
+      "targetTitle": "Spec \u203a Spec \u2014 Attribute-based access control in the auth scope with DCB",
+      "reason": "Extracted from docs/specs/auth-scope.md at v6.2.2-dev.74 \u2014 Stage 7 step 5: 'Close the versioned-documents gap in the positional walk\u2026 Resolved as a documented limitation'; preflight:auth paragraph",
+      "confidence": "grounded"
+    },
+    {
+      "id": "lnk-63e10e2c-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "63e10e2c-9be4-4bd2-a876-8708cd3ac1f9",
+      "targetTitle": "App \u203a switchboard \u203a README",
+      "reason": "Extracted from apps/switchboard/README.md at v6.2.2-dev.74 \u2014 Reactor Enforcement Flags: preflight exit codes 0/1/2/3/68",
+      "confidence": "grounded"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "authConditions must not be enabled on a fleet where preflight:auth reports documents that cross a reducer version, because the positional walk folds with the pre-upgrade reducer",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "802872f1-3e0b-40a7-9268-8ca841ff5121",
+      "name": "auth-scope",
+      "topicDocumentId": null
+    },
+    {
+      "id": "75d54a2b-a2aa-4988-987d-049d2eca1e06",
+      "name": "versioning",
+      "topicDocumentId": null
+    },
+    {
+      "id": "50c843fa-887e-455d-a1ae-64d9af118322",
+      "name": "gotchas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "558fcab6-5473-47d2-8b89-3f964e33b369",
+      "name": "conditions",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "The positional walk that re-evaluates conditional grants reads its base state *below every upgrade boundary*, and the write cache deliberately withholds version-changing upgrades from a positional read. So the base carries the document's creation-time version, the migration never runs during the walk, and the whole range folds with the **pre-upgrade reducer** against un-migrated state. A `where` clause that reads a field a migration introduced reads `undefined` for the entire history.\n\nThat is worse than one stale answer, because **admission and re-evaluation disagree**: admission reads the condition's state at the head, where every upgrade has been applied, while a re-evaluation pass walks from below them. An operation admitted against post-upgrade state can be refused when a later arrival makes the walk visit it again \u2014 retracting a tail for no reason.\n\nThe spec resolves this as a **documented limitation** rather than an upgrade-aware walk. Making the walk version-aware means growing the fold's signature with a version context and first extracting the write cache's twice-duplicated boundary segmentation into something shared \u2014 a refactor of the hottest rebuild path that does not belong in the read-path stage. Instead `preflight:auth` reports the documents that cross a reducer version alongside the streams it already checks, and `authConditions` **must not be enabled on a fleet the sweep reports**. The two findings are reported separately (exit code `1` streams unsafe for `authEnforcement`, `2` documents unsafe for `authConditions`, `3` both) because a fleet can be safe for one and not the other. Creation-time upgrades from version zero are not boundaries: `reactor.create` submits one in the create batch and the rebuild applies it inline.\n\n_Source: docs/specs/auth-scope.md (Powerhouse v6.2.2-dev.74)._\n_Source: apps/switchboard/README.md (Powerhouse v6.2.2-dev.74)._\n\n## Provenance\n- `docs/specs/auth-scope.md` \u2014 Stage 7 step 5: 'Close the versioned-documents gap in the positional walk\u2026 Resolved as a documented limitation'; preflight:auth paragraph\n- `apps/switchboard/README.md` \u2014 Reactor Enforcement Flags: preflight exit codes 0/1/2/3/68\n\n_Recorded from the Powerhouse repository at **v6.2.2-dev.74** during the v6.2.2-dev.74 source sync._",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": "v6.2.2-dev.74",
+  "computes": null,
+  "filePath": "docs/specs/auth-scope.md",
+  "noteType": "PATTERN",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": "grounded",
+  "consumedBy": [],
+  "provenance": {
+    "author": "knowledge-agent",
+    "createdAt": "2026-09-02T22:11:08.333Z",
+    "sessionId": null,
+    "updatedAt": "2026-09-02T22:20:33.803Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "The walk resolves one reducer version from below every upgrade boundary, so a condition on a migrated field sees undefined and admission and re-evaluation disagree. Documented limit; preflight exit 2.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "2b16db3c-d5fb-4cc7-8147-0bf5870d92e2",
+      "actor": "knowledge-agent",
+      "comment": "extracted from the Powerhouse repository at v6.2.2-dev.74",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-09-02T22:11:08.811Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "eee86ba8-f7eb-4e6a-ae93-9fc43af3abb7",
+      "actor": "liberuum",
+      "comment": "claim checked against the cited repository file at the pinned tag",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-09-02T22:11:09.281Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

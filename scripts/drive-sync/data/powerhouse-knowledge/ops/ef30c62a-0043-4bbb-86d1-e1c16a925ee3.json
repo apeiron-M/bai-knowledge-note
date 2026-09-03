@@ -1,0 +1,330 @@
+[
+  {
+    "index": 0,
+    "hash": "",
+    "timestampUtcMs": "2026-09-03T07:43:17.357Z",
+    "action": {
+      "type": "CREATE_DOCUMENT",
+      "input": {
+        "meta": {},
+        "name": "drive-analytics-dimensions",
+        "slug": "",
+        "model": "bai/knowledge-note",
+        "branch": "main",
+        "signing": {
+          "nonce": "",
+          "publicKey": {},
+          "signature": "ef30c62a-0043-4bbb-86d1-e1c16a925ee3",
+          "documentType": "bai/knowledge-note",
+          "createdAtUtcIso": "2026-09-03T07:43:17.356Z"
+        },
+        "version": 0,
+        "documentId": "ef30c62a-0043-4bbb-86d1-e1c16a925ee3",
+        "protocolVersions": {
+          "base-reducer": 2
+        }
+      },
+      "timestampUtcMs": "2026-09-03T07:43:17.357Z"
+    }
+  },
+  {
+    "index": 0,
+    "hash": "XEfIMtGjyahs4gstTRy3sNRckYg=",
+    "timestampUtcMs": "2026-09-03T07:43:18.654Z",
+    "action": {
+      "type": "SET_TITLE",
+      "input": {
+        "title": "Drive analytics writes one counter per operation with four dimension paths, so a question like which files were moved last week is a dimension filter rather than a scan",
+        "updatedAt": "2026-09-03T07:43:18.654Z"
+      },
+      "timestampUtcMs": "2026-09-03T07:43:18.654Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "",
+    "timestampUtcMs": "2026-09-03T07:43:17.357Z",
+    "action": {
+      "type": "UPGRADE_DOCUMENT",
+      "input": {
+        "model": "bai/knowledge-note",
+        "toVersion": 1,
+        "documentId": "ef30c62a-0043-4bbb-86d1-e1c16a925ee3",
+        "fromVersion": 0,
+        "initialState": {
+          "auth": {
+            "grants": [],
+            "version": 0
+          },
+          "local": {
+            "lastViewedAt": null,
+            "personalTags": []
+          },
+          "global": {
+            "links": [],
+            "model": null,
+            "scope": null,
+            "title": null,
+            "editor": null,
+            "inputs": [],
+            "models": [],
+            "status": "DRAFT",
+            "topics": [],
+            "content": null,
+            "context": null,
+            "modelId": null,
+            "modules": [],
+            "outputs": [],
+            "version": null,
+            "computes": null,
+            "filePath": null,
+            "noteType": null,
+            "severity": null,
+            "hooksUsed": [],
+            "rootCause": null,
+            "confidence": null,
+            "consumedBy": [],
+            "provenance": null,
+            "sourceType": null,
+            "targetType": null,
+            "cardinality": null,
+            "description": null,
+            "alternatives": [],
+            "consequences": [],
+            "errorMessage": null,
+            "relationType": null,
+            "correctPattern": null,
+            "decisionStatus": null,
+            "dispatchTargets": [],
+            "lifecycleEvents": []
+          },
+          "document": {
+            "hash": {
+              "encoding": "base64",
+              "algorithm": "sha1"
+            },
+            "version": 1
+          }
+        }
+      },
+      "timestampUtcMs": "2026-09-03T07:43:17.357Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "E+TcH/rHxPLkXZmOx23y0dOJ9l0=",
+    "timestampUtcMs": "2026-09-03T07:43:18.654Z",
+    "action": {
+      "type": "SET_DESCRIPTION",
+      "input": {
+        "updatedAt": "2026-09-03T07:43:18.654Z",
+        "description": "DriveOperations counts 1 per operation across drive, operation, target and actionType dimensions. Action types map many operations onto CREATED, DUPLICATED, UPDATED, MOVED and REMOVED."
+      },
+      "timestampUtcMs": "2026-09-03T07:43:18.654Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "",
+    "timestampUtcMs": "2026-09-03T07:44:33.846Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "metadata": {
+          "reason": "Extracted from packages/common/drive-analytics/README.md at v6.2.2-dev.74 \u2014 Overview; Metrics Collected; Dimensions; Supported Operations; Data Source Structure; Key Components",
+          "confidence": "grounded"
+        },
+        "sourceId": "ef30c62a-0043-4bbb-86d1-e1c16a925ee3",
+        "targetId": "8664cea1-f1f6-43b0-975e-f26095a8d880",
+        "relationshipType": "DERIVED_FROM"
+      },
+      "timestampUtcMs": "2026-09-03T07:44:33.846Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "f0vNWeW46U+ss6bYZzHhPPmdoh0=",
+    "timestampUtcMs": "2026-09-03T07:43:18.654Z",
+    "action": {
+      "type": "SET_NOTE_TYPE",
+      "input": {
+        "noteType": "ARCHITECTURE",
+        "updatedAt": "2026-09-03T07:43:18.654Z"
+      },
+      "timestampUtcMs": "2026-09-03T07:43:18.654Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "",
+    "timestampUtcMs": "2026-09-03T07:44:34.314Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "metadata": {
+          "reason": "This is the worked example of the analytics engine's own selection criterion: an aggregate metric grouped by dimension over a period, which is exactly when the engine beats a SQL read model",
+          "confidence": "grounded"
+        },
+        "sourceId": "ef30c62a-0043-4bbb-86d1-e1c16a925ee3",
+        "targetId": "9b1bec19-6bcc-4f87-80b9-5f25360e4b7e",
+        "relationshipType": "BUILDS_ON"
+      },
+      "timestampUtcMs": "2026-09-03T07:44:34.314Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "bbGxxaAqnfYvL6lSXi9p0l3gg/k=",
+    "timestampUtcMs": "2026-09-03T07:43:18.654Z",
+    "action": {
+      "type": "SET_CONTENT",
+      "input": {
+        "content": "The `drive-analytics` package ships two processors \u2014 `DriveAnalyticsProcessor` for document-drive operations and `DocumentAnalyticsProcessor` for individual document operations \u2014 both converting operations into time-series points with dimensions.\n\nThe primary metric is deliberately trivial: **`DriveOperations`, a counter whose value is 1 for each operation**, at per-operation timestamp precision. All the analytical power sits in four dimension paths:\n\n| Dimension | Path format | Example |\n| --- | --- | --- |\n| Drive | `ph/drive/{driveId}/{branch}/{scope}/{revision}` | `ph/drive/abc123/main/global/42` |\n| Operation | `ph/drive/operation/{operationType}/{operationIndex}` | `ph/drive/operation/ADD_FILE/5` |\n| Target | `ph/drive/target/{targetType}/{targetId}` \u2014 `DRIVE` or `NODE` | `ph/drive/target/NODE/file123` |\n| Action type | `ph/drive/actionType/{actionType}/{targetId}` | `ph/drive/actionType/CREATED/file123` |\n\nThe **action-type dimension is the interpretive one**, folding raw operations into five verbs: `CREATED` (`ADD_FILE`, `ADD_FOLDER`), `DUPLICATED` (`COPY_NODE`), `UPDATED` (`UPDATE_FILE`, `UPDATE_NODE`), `MOVED` (`MOVE_NODE`), `REMOVED` (`DELETE_NODE`). That is what lets a dashboard ask \"how much creation happened\" without enumerating operation names.\n\nTwo operational behaviours: operations are processed in **configurable chunks (default 50)**, and the processor **clears and rebuilds analytics data when processing from index 0** \u2014 so a replay from the start is idempotent rather than doubling every count. Analytics data is organised under the source path `ph/drive/{documentId}/{branch}/{scope}`.\n\n## Provenance\n- `packages/common/drive-analytics/README.md` \u2014 Overview; Metrics Collected; Dimensions; Supported Operations; Data Source Structure; Key Components\n\n_Extracted from the Powerhouse repository at **v6.2.2-dev.74**._",
+        "updatedAt": "2026-09-03T07:43:18.654Z"
+      },
+      "timestampUtcMs": "2026-09-03T07:43:18.654Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "",
+    "timestampUtcMs": "2026-09-03T07:44:34.777Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "metadata": {
+          "reason": "The same README describes the processor interface in pre-v6 terms, which is that note's finding",
+          "confidence": "grounded"
+        },
+        "sourceId": "ef30c62a-0043-4bbb-86d1-e1c16a925ee3",
+        "targetId": "11abd903-ee8e-4a00-a1c9-ffc9e22e4f5b",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-09-03T07:44:34.777Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "sXTYbMCqkizwsIUM2IeVToHNEC8=",
+    "timestampUtcMs": "2026-09-03T07:43:18.654Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "3bac41cc-9db1-4121-ba35-97c4854e7036",
+        "name": "analytics"
+      },
+      "timestampUtcMs": "2026-09-03T07:43:18.654Z"
+    }
+  },
+  {
+    "index": 5,
+    "hash": "6YRArVn20O59FNANLJNQ2g1/Fqk=",
+    "timestampUtcMs": "2026-09-03T07:43:18.654Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "67f54942-fa79-4f3d-a837-0c41d2189dc4",
+        "name": "drive-analytics"
+      },
+      "timestampUtcMs": "2026-09-03T07:43:18.654Z"
+    }
+  },
+  {
+    "index": 6,
+    "hash": "xVYnUQxAyjsvhnb6L71zpqI2l+A=",
+    "timestampUtcMs": "2026-09-03T07:43:18.654Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "29728239-19da-4fa0-a7cd-61440fdd0487",
+        "name": "processors"
+      },
+      "timestampUtcMs": "2026-09-03T07:43:18.654Z"
+    }
+  },
+  {
+    "index": 7,
+    "hash": "x99Qd65jAsDypyJybuB2HIe0erg=",
+    "timestampUtcMs": "2026-09-03T07:43:18.654Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "0be9168c-e484-4552-b8af-ee075c5cb0ba",
+        "name": "dimensions"
+      },
+      "timestampUtcMs": "2026-09-03T07:43:18.654Z"
+    }
+  },
+  {
+    "index": 8,
+    "hash": "CKmKpC59jaDvCzIZK6jwKZH2iWk=",
+    "timestampUtcMs": "2026-09-03T07:43:18.654Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "version",
+        "value": "v6.2.2-dev.74",
+        "updatedAt": "2026-09-03T07:43:18.654Z"
+      },
+      "timestampUtcMs": "2026-09-03T07:43:18.654Z"
+    }
+  },
+  {
+    "index": 9,
+    "hash": "c9kSt/bB7MK3PGQGpEl3bNMgM/M=",
+    "timestampUtcMs": "2026-09-03T07:43:18.654Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "filePath",
+        "value": "packages/common/drive-analytics/README.md",
+        "updatedAt": "2026-09-03T07:43:18.654Z"
+      },
+      "timestampUtcMs": "2026-09-03T07:43:18.654Z"
+    }
+  },
+  {
+    "index": 10,
+    "hash": "z+eERIZ1EHkOM2UxkIXBwlaKfU8=",
+    "timestampUtcMs": "2026-09-03T07:43:21.266Z",
+    "action": {
+      "type": "SET_PROVENANCE",
+      "input": {
+        "author": "knowledge-agent",
+        "createdAt": "2026-09-03T07:43:21.266Z",
+        "sourceOrigin": "DERIVED"
+      },
+      "timestampUtcMs": "2026-09-03T07:43:21.266Z"
+    }
+  },
+  {
+    "index": 11,
+    "hash": "rJx/eQyNJ9ZamqyKcXkdoI7tzig=",
+    "timestampUtcMs": "2026-09-03T07:43:21.731Z",
+    "action": {
+      "type": "SUBMIT_FOR_REVIEW",
+      "input": {
+        "id": "34a41538-faa6-46f9-bc9e-a40b7256d76e",
+        "actor": "knowledge-agent",
+        "comment": "extracted from packages/common/drive-analytics/README.md at v6.2.2-dev.74",
+        "timestamp": "2026-09-03T07:43:21.731Z"
+      },
+      "timestampUtcMs": "2026-09-03T07:43:21.731Z"
+    }
+  },
+  {
+    "index": 12,
+    "hash": "Wfd5dQHFyE+GWTbidQz+4ONQ2sk=",
+    "timestampUtcMs": "2026-09-03T07:43:22.266Z",
+    "action": {
+      "type": "APPROVE_NOTE",
+      "input": {
+        "id": "39cfcd9a-50fa-468a-aff5-099b21750b83",
+        "actor": "liberuum",
+        "comment": "claim checked against the cited file at the pinned tag",
+        "timestamp": "2026-09-03T07:43:22.266Z"
+      },
+      "timestampUtcMs": "2026-09-03T07:43:22.266Z"
+    }
+  }
+]

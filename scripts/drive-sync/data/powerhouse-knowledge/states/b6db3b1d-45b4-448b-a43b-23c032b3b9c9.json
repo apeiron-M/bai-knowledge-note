@@ -1,0 +1,128 @@
+{
+  "links": [
+    {
+      "id": "lnk-82d40b14-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "82d40b14-6aae-45a5-8335-e07c0ee29ae9",
+      "targetTitle": "auth-denied-operations",
+      "reason": "'document deleted' is one of the four closed-set refusal reasons stored on the operation",
+      "confidence": "grounded"
+    },
+    {
+      "id": "lnk-c8bd64d3-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "c8bd64d3-d92e-4f41-beba-983a7e995c26",
+      "targetTitle": "auth-flags-staged",
+      "reason": "documentDecisions is the flag that switches deletion from the meta cache to the decision model",
+      "confidence": "grounded"
+    },
+    {
+      "id": "lnk-0ade289f-bui",
+      "linkType": "BUILDS_ON",
+      "targetDocumentId": "0ade289f-d4fb-44d8-ab3b-316d65bb1c8d",
+      "targetTitle": "auth-positional-judgment",
+      "reason": "Deletion is the first decision judged positionally; the auth policy rides the same machinery one stage later",
+      "confidence": "grounded"
+    },
+    {
+      "id": "lnk-f2aaccd3-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "f2aaccd3-7c26-4327-881e-f5ad9e267b89",
+      "targetTitle": "Academy \u203a Lookup \u203a Cookbook",
+      "reason": "Extracted from apps/academy/docs/academy/05-Lookup/00-Cookbook.md at v6.2.2-dev.74 \u2014 Positional Delete recipe: what it demonstrates, 'How it works', scope note",
+      "confidence": "grounded"
+    },
+    {
+      "id": "lnk-223bb12a-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "223bb12a-be7f-4209-9ab2-f04f7bb2b6c8",
+      "targetTitle": "Spec \u203a Spec \u2014 Attribute-based access control in the auth scope with DCB",
+      "reason": "Extracted from docs/specs/auth-scope.md at v6.2.2-dev.74 \u2014 Stage 3 (documentDecisions); Reads: deletion-boundary read vs listings; Stage 7 item 4",
+      "confidence": "grounded"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Deletion is a position in the merged order, not a document-wide tombstone: DELETE_DOCUMENT refuses only the operations that sort after it",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "6d8b3bb9-9860-4222-ac1d-9826b6e50a1d",
+      "name": "auth-scope",
+      "topicDocumentId": null
+    },
+    {
+      "id": "ab11a334-1574-41db-abf8-eb90666e64fd",
+      "name": "deletion",
+      "topicDocumentId": null
+    },
+    {
+      "id": "fe89248f-4563-4d2a-8851-581c38b70fb6",
+      "name": "sync",
+      "topicDocumentId": null
+    },
+    {
+      "id": "d370c738-0406-46ea-a940-8884089800ae",
+      "name": "reactor",
+      "topicDocumentId": null
+    },
+    {
+      "id": "aa3e4f19-10f0-4dcf-97e2-eff6d037af75",
+      "name": "documentDecisions",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "With the `documentDecisions` flag on, the executor's old meta-cache `isDeleted` check is replaced by a decision model built over the document stream, and deletion becomes **positional**. The `positional-delete` recipe is a plain split-brain with a `field-log` model: Station B keeps logging while Station A deletes the document; B's second observation genuinely happens after the delete in wall-clock time, B just does not know yet. After syncing both ways, both reactors agree \u2014 the observation that sorts before the delete is applied, the one after it is denied with `deniedReason: \"document deleted\"`.\n\n- **Denied, not dropped** \u2014 the refused operation keeps its place in the stored stream; inspect with `isDenied` / `garbageCollect(sortOperations(...))`.\n- **Origin refusal** \u2014 once a reactor knows the delete, a newly submitted write fails its job with `DocumentDeletedError`; nothing is stored.\n- **Reading a deleted document** \u2014 a single-document read serves the state *as of the deletion boundary* rather than a hole. This is a load-path guarantee: a reactor that had already applied an operation before learning of the delete keeps its materialized view, while the retraction lands in the effective operation stream, which is the consensus artifact any rebuild sees.\n- **Listings still omit it.** `find` and its relatives keep dropping deleted documents, or every drive listing would start returning them; and deleting destroys the slug mappings, so a slug never resolves to a deleted document.\n- **The legacy cliff** \u2014 without the decision model, one deleted flag rejects a whole incoming load, discarding even the history that sorts before the delete.\n\nDeletion never touches model code: `DELETE_DOCUMENT` is a platform action on the `document` scope, and all of these semantics live in the platform. Positional deletion is the corrected semantics on every reactor and would not need a flag on its own; it carries one because it changes replay outcomes and so must roll out per fleet. One defect fixed by stage 7: the read model keyed its deletion branch on the action type alone, so a `DELETE_DOCUMENT` stored *denied* still marked every snapshot row deleted and destroyed the slug mappings.\n\n_Source: apps/academy/docs/academy/05-Lookup/00-Cookbook.md (Powerhouse v6.2.2-dev.74)._\n_Source: docs/specs/auth-scope.md (Powerhouse v6.2.2-dev.74)._\n\n## Provenance\n- `apps/academy/docs/academy/05-Lookup/00-Cookbook.md` \u2014 Positional Delete recipe: what it demonstrates, 'How it works', scope note\n- `docs/specs/auth-scope.md` \u2014 Stage 3 (documentDecisions); Reads: deletion-boundary read vs listings; Stage 7 item 4\n\n_Recorded from the Powerhouse repository at **v6.2.2-dev.74** during the v6.2.2-dev.74 source sync._",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": "v6.2.2-dev.74",
+  "computes": null,
+  "filePath": "apps/academy/docs/academy/05-Lookup/00-Cookbook.md",
+  "noteType": "ARCHITECTURE",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": "grounded",
+  "consumedBy": [],
+  "provenance": {
+    "author": "knowledge-agent",
+    "createdAt": "2026-09-02T22:10:20.784Z",
+    "sessionId": null,
+    "updatedAt": "2026-09-02T22:20:20.683Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Operations sorting before the delete apply even when they arrive later over sync; later ones are stored denied (document deleted). A single read serves the deletion-boundary state; listings omit it.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "29c27182-6c69-4130-97c3-bd9355357d20",
+      "actor": "knowledge-agent",
+      "comment": "extracted from the Powerhouse repository at v6.2.2-dev.74",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-09-02T22:10:21.266Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "48894807-79c5-4fc1-9410-74f0e16ad3a0",
+      "actor": "liberuum",
+      "comment": "claim checked against the cited repository file at the pinned tag",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-09-02T22:10:21.817Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

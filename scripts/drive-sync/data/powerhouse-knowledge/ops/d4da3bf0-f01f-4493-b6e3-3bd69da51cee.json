@@ -1,0 +1,348 @@
+[
+  {
+    "index": 0,
+    "hash": "",
+    "timestampUtcMs": "2026-09-03T07:48:56.221Z",
+    "action": {
+      "type": "CREATE_DOCUMENT",
+      "input": {
+        "meta": {},
+        "name": "v6-sync-quarantine-per-document",
+        "slug": "",
+        "model": "bai/knowledge-note",
+        "branch": "main",
+        "signing": {
+          "nonce": "",
+          "publicKey": {},
+          "signature": "d4da3bf0-f01f-4493-b6e3-3bd69da51cee",
+          "documentType": "bai/knowledge-note",
+          "createdAtUtcIso": "2026-09-03T07:48:56.221Z"
+        },
+        "version": 0,
+        "documentId": "d4da3bf0-f01f-4493-b6e3-3bd69da51cee",
+        "protocolVersions": {
+          "base-reducer": 2
+        }
+      },
+      "timestampUtcMs": "2026-09-03T07:48:56.221Z"
+    }
+  },
+  {
+    "index": 0,
+    "hash": "Wn8W4yJcrqZYB7OaAmMm7EuBcdg=",
+    "timestampUtcMs": "2026-09-03T07:48:57.447Z",
+    "action": {
+      "type": "SET_TITLE",
+      "input": {
+        "title": "The v6 sync rewrite quarantines a poisoned document instead of blocking the whole remote, and adds a persistent dead-letter store with cursor-based paging",
+        "updatedAt": "2026-09-03T07:48:57.447Z"
+      },
+      "timestampUtcMs": "2026-09-03T07:48:57.447Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "",
+    "timestampUtcMs": "2026-09-03T07:48:56.221Z",
+    "action": {
+      "type": "UPGRADE_DOCUMENT",
+      "input": {
+        "model": "bai/knowledge-note",
+        "toVersion": 1,
+        "documentId": "d4da3bf0-f01f-4493-b6e3-3bd69da51cee",
+        "fromVersion": 0,
+        "initialState": {
+          "auth": {
+            "grants": [],
+            "version": 0
+          },
+          "local": {
+            "lastViewedAt": null,
+            "personalTags": []
+          },
+          "global": {
+            "links": [],
+            "model": null,
+            "scope": null,
+            "title": null,
+            "editor": null,
+            "inputs": [],
+            "models": [],
+            "status": "DRAFT",
+            "topics": [],
+            "content": null,
+            "context": null,
+            "modelId": null,
+            "modules": [],
+            "outputs": [],
+            "version": null,
+            "computes": null,
+            "filePath": null,
+            "noteType": null,
+            "severity": null,
+            "hooksUsed": [],
+            "rootCause": null,
+            "confidence": null,
+            "consumedBy": [],
+            "provenance": null,
+            "sourceType": null,
+            "targetType": null,
+            "cardinality": null,
+            "description": null,
+            "alternatives": [],
+            "consequences": [],
+            "errorMessage": null,
+            "relationType": null,
+            "correctPattern": null,
+            "decisionStatus": null,
+            "dispatchTargets": [],
+            "lifecycleEvents": []
+          },
+          "document": {
+            "hash": {
+              "encoding": "base64",
+              "algorithm": "sha1"
+            },
+            "version": 1
+          }
+        }
+      },
+      "timestampUtcMs": "2026-09-03T07:48:56.221Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "/qtnwQScSXmS17FM2JO3XpTPzu0=",
+    "timestampUtcMs": "2026-09-03T07:48:57.447Z",
+    "action": {
+      "type": "SET_DESCRIPTION",
+      "input": {
+        "updatedAt": "2026-09-03T07:48:57.447Z",
+        "description": "Also in the rewrite: DocumentIntegrityService validating and rebuilding keyframes and snapshots, getOperations paging across scopes, job timeouts via abort signals, and exponential backoff with."
+      },
+      "timestampUtcMs": "2026-09-03T07:48:57.447Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "",
+    "timestampUtcMs": "2026-09-03T07:49:31.252Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "metadata": {
+          "reason": "Extracted from apps/academy/docs/academy/ReleaseNotes/index.md at v6.2.2-dev.74 \u2014 v6.0.0 \u203a New Features \u203a Reactor \u2014 Rewritten Write Model & Sync Engine; Bug Fixes",
+          "confidence": "grounded"
+        },
+        "sourceId": "d4da3bf0-f01f-4493-b6e3-3bd69da51cee",
+        "targetId": "64076557-0fce-4f5f-8912-3acf0ac82e15",
+        "relationshipType": "DERIVED_FROM"
+      },
+      "timestampUtcMs": "2026-09-03T07:49:31.252Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "CpkAveWfsPsOwnSaccHKGNsYmgw=",
+    "timestampUtcMs": "2026-09-03T07:48:57.447Z",
+    "action": {
+      "type": "SET_NOTE_TYPE",
+      "input": {
+        "noteType": "OBSERVATION",
+        "updatedAt": "2026-09-03T07:48:57.447Z"
+      },
+      "timestampUtcMs": "2026-09-03T07:48:57.447Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "",
+    "timestampUtcMs": "2026-09-03T07:49:31.884Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "metadata": {
+          "reason": "Dates and sources the per-document quarantine behaviour that note describes, and adds the persistent dead-letter store it lands in",
+          "confidence": "grounded"
+        },
+        "sourceId": "d4da3bf0-f01f-4493-b6e3-3bd69da51cee",
+        "targetId": "e57e23ae-2f05-414a-bb77-c74ab23f64e8",
+        "relationshipType": "BUILDS_ON"
+      },
+      "timestampUtcMs": "2026-09-03T07:49:31.884Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "CpefXyLGMO+zTsyD6uiBYPAFciA=",
+    "timestampUtcMs": "2026-09-03T07:48:57.447Z",
+    "action": {
+      "type": "SET_CONTENT",
+      "input": {
+        "content": "The v6.0.0 notes describe the reactor's write model and sync pipeline as a **complete rewrite**, and the reliability changes are the substance:\n\n- **per-document quarantine** \u2014 a failing document is isolated *instead of blocking the entire remote*;\n- a **persistent dead-letter store**;\n- **buffered batched mailboxes** and abort signals on GQL channels;\n- **cursor-based paging** for large sync batches, with `getOperations` now paging **across scopes**;\n- **`DocumentIntegrityService`** \u2014 validates and rebuilds document keyframes and snapshots;\n- **job timeout** via abort signals propagated through the whole job pipeline;\n- **yield utilities** for cooperative scheduling in the job executor;\n- **exponential backoff with jitter** on retries;\n- a **`test-sync-queue` CLI app** for detecting sync drift on large drives, plus `profiling/reactor-direct.ts --docs 1000 --otel` for direct reactor performance testing.\n\nBug fixes from the same release that describe current behaviour: orphan reshuffle and cross-batch FIFO bugs fixed, documents with out-of-order `ADD_RELATIONSHIP` now correctly backfilled, deleted documents no longer returned by queries and jobs targeting them not retried, and the GQL channel handling abort signals, backpressure and dead-letter placement correctly.\n\nTwo of these are load-bearing for anything built on sync today: quarantine is why one bad document does not stall a drive, and the integrity service is why a corrupted keyframe is repairable rather than terminal.\n\n## Provenance\n- `apps/academy/docs/academy/ReleaseNotes/index.md` \u2014 v6.0.0 \u203a New Features \u203a Reactor \u2014 Rewritten Write Model & Sync Engine; Bug Fixes\n\n_Extracted from the Powerhouse repository at **v6.2.2-dev.74**._",
+        "updatedAt": "2026-09-03T07:48:57.447Z"
+      },
+      "timestampUtcMs": "2026-09-03T07:48:57.447Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "",
+    "timestampUtcMs": "2026-09-03T07:49:32.365Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "metadata": {
+          "reason": "DocumentIntegrityService validates and rebuilds the keyframes and snapshots that cache and read path depend on",
+          "confidence": "grounded"
+        },
+        "sourceId": "d4da3bf0-f01f-4493-b6e3-3bd69da51cee",
+        "targetId": "e9149b87-dc40-4388-895a-010c1bb3058a",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-09-03T07:49:32.365Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "XCx20jjbs93TlvHjLlZ942Xs3UI=",
+    "timestampUtcMs": "2026-09-03T07:48:57.447Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "c2dae486-086c-42d6-934a-f75f47ad3f6c",
+        "name": "reactor-sync"
+      },
+      "timestampUtcMs": "2026-09-03T07:48:57.447Z"
+    }
+  },
+  {
+    "index": 5,
+    "hash": "",
+    "timestampUtcMs": "2026-09-03T07:49:32.916Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "metadata": {
+          "reason": "The store shipped in v6 but the management API to retry or resolve its entries is still missing",
+          "confidence": "grounded"
+        },
+        "sourceId": "d4da3bf0-f01f-4493-b6e3-3bd69da51cee",
+        "targetId": "f3c2f9bb-e554-44c6-9551-05273aaf5720",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-09-03T07:49:32.916Z"
+    }
+  },
+  {
+    "index": 5,
+    "hash": "BkPmWxhirXxKBKp8rfxSxYY8rzg=",
+    "timestampUtcMs": "2026-09-03T07:48:57.447Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "c90eeede-75d0-4547-9ad2-01dfe649bfd5",
+        "name": "release-notes"
+      },
+      "timestampUtcMs": "2026-09-03T07:48:57.447Z"
+    }
+  },
+  {
+    "index": 6,
+    "hash": "VsreNKX9acvBevm/qOPZ+SBacVU=",
+    "timestampUtcMs": "2026-09-03T07:48:57.447Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "1af8ff75-9cd6-4c20-8425-6ca8e3fe8ae2",
+        "name": "reliability"
+      },
+      "timestampUtcMs": "2026-09-03T07:48:57.447Z"
+    }
+  },
+  {
+    "index": 7,
+    "hash": "kq+AoE89sS/9nHr35o/u70F3ZyQ=",
+    "timestampUtcMs": "2026-09-03T07:48:57.447Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "e06d1d56-3a67-4f5c-b482-c41a8645503b",
+        "name": "v6"
+      },
+      "timestampUtcMs": "2026-09-03T07:48:57.447Z"
+    }
+  },
+  {
+    "index": 8,
+    "hash": "Yn2xSvDz513kquCiatvSaMeYKMM=",
+    "timestampUtcMs": "2026-09-03T07:48:57.447Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "version",
+        "value": "v6.2.2-dev.74",
+        "updatedAt": "2026-09-03T07:48:57.447Z"
+      },
+      "timestampUtcMs": "2026-09-03T07:48:57.447Z"
+    }
+  },
+  {
+    "index": 9,
+    "hash": "4RK71SjYIv0cMI32Db6N8JB3XeE=",
+    "timestampUtcMs": "2026-09-03T07:48:57.447Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "filePath",
+        "value": "apps/academy/docs/academy/ReleaseNotes/index.md",
+        "updatedAt": "2026-09-03T07:48:57.447Z"
+      },
+      "timestampUtcMs": "2026-09-03T07:48:57.447Z"
+    }
+  },
+  {
+    "index": 10,
+    "hash": "4ByaudS3/9JB6BU6UIAVO6uCnlk=",
+    "timestampUtcMs": "2026-09-03T07:49:00.029Z",
+    "action": {
+      "type": "SET_PROVENANCE",
+      "input": {
+        "author": "knowledge-agent",
+        "createdAt": "2026-09-03T07:49:00.029Z",
+        "sourceOrigin": "DERIVED"
+      },
+      "timestampUtcMs": "2026-09-03T07:49:00.029Z"
+    }
+  },
+  {
+    "index": 11,
+    "hash": "zS3JUq5MsJPILz3Tq1nIXGa+ZS4=",
+    "timestampUtcMs": "2026-09-03T07:49:00.516Z",
+    "action": {
+      "type": "SUBMIT_FOR_REVIEW",
+      "input": {
+        "id": "f20e6714-6ff9-4e64-bc9f-41e9c9805e31",
+        "actor": "knowledge-agent",
+        "comment": "extracted from apps/academy/docs/academy/ReleaseNotes/index.md at v6.2.2-dev.74",
+        "timestamp": "2026-09-03T07:49:00.516Z"
+      },
+      "timestampUtcMs": "2026-09-03T07:49:00.516Z"
+    }
+  },
+  {
+    "index": 12,
+    "hash": "cWZdgyRnL3XdQhvKSnvbffCXzTY=",
+    "timestampUtcMs": "2026-09-03T07:49:01.711Z",
+    "action": {
+      "type": "APPROVE_NOTE",
+      "input": {
+        "id": "7cb8e2de-fd07-455f-948e-81576485f4aa",
+        "actor": "liberuum",
+        "comment": "claim checked against the cited file at the pinned tag",
+        "timestamp": "2026-09-03T07:49:01.711Z"
+      },
+      "timestampUtcMs": "2026-09-03T07:49:01.711Z"
+    }
+  }
+]

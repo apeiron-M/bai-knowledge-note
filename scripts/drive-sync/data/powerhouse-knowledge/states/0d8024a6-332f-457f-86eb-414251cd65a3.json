@@ -1,0 +1,115 @@
+{
+  "links": [
+    {
+      "id": "lnk-2ab414f6-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "2ab414f6-938d-40f6-89b9-054bbcbaf4f2",
+      "targetTitle": "reactor-sync-ichannel-three-mailbox-model",
+      "reason": "The store-transport pair is the attachment analogue of the channel's mailboxes: pluggable transport, local queueing, explicit hand-off",
+      "confidence": "established"
+    },
+    {
+      "id": "lnk-5b4a52c0-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "5b4a52c0-6345-4bfc-a279-76ea1f37db5d",
+      "targetTitle": "Package \u203a reactor \u203a attachments",
+      "reason": "Extracted from packages/reactor/docs/attachments.md at v6.2.2-dev.74 \u2014 Design \u203a IAttachmentStore and IAttachmentTransport",
+      "confidence": "grounded"
+    },
+    {
+      "id": "lnk-6f938c9e-bui",
+      "linkType": "BUILDS_ON",
+      "targetDocumentId": "6f938c9e-85f4-4a4f-b55e-3213b0ae4ef5",
+      "targetTitle": "attachments-keep-binaries-out-of-the-operation-log",
+      "reason": "That note establishes the ref as an opaque value in state; this one is the machinery that makes the bytes behind the ref available on demand, including transparent restore after eviction",
+      "confidence": "grounded"
+    },
+    {
+      "id": "lnk-c2fedf9c-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "c2fedf9c-464c-422f-bf81-7f505b87e335",
+      "targetTitle": "attachment-lru-gc",
+      "reason": "evict() and storageUsed() are the two methods the LRU policy drives",
+      "confidence": "grounded"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "IAttachmentStore and IAttachmentTransport are a bidirectional pair, and get() transparently re-fetches evicted bytes so it always succeeds for a known hash",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "a73d4290-d528-4484-99d9-1f83edd7d304",
+      "name": "attachments",
+      "topicDocumentId": null
+    },
+    {
+      "id": "6a460628-f68a-4da1-a7ee-7b0a3f56ef60",
+      "name": "storage",
+      "topicDocumentId": null
+    },
+    {
+      "id": "4eab2d45-5be0-42c7-bf14-756eee91a21f",
+      "name": "transport",
+      "topicDocumentId": null
+    },
+    {
+      "id": "845eb537-0776-4d22-ad41-caf1981c53af",
+      "name": "reactor",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "Attachment data movement mirrors operation sync: `IChannel` moves operations, `IAttachmentTransport` moves bytes, and each pairs with a store.\n\n- **Outbound** \u2014 the store notifies the transport when new data is available; the transport announces or pushes to peers.\n- **Inbound** \u2014 the transport receives data from a peer and calls `IAttachmentStore.put()`.\n\n`IAttachmentStore` is deliberately separate from `IAttachmentService` (the client upload flow) even when one class implements both, because \"manage local bytes\" and \"let a client upload\" are different concerns. Its four methods:\n\n- `has(hash)` \u2014 is it servable locally, **without** triggering a remote fetch;\n- `get(hash, signal)` \u2014 header plus data stream, touching `lastAccessedAtUtc`. **If the data was evicted it re-fetches through the transport, restores it via `put()`, and returns it** \u2014 so `get()` always succeeds for a known hash and throws `AttachmentNotFound` only when no metadata row exists;\n- `put(hash, metadata, data)` \u2014 insert when there is no row (`source='sync'`, `status='available'`), restore when the row is `evicted`, no-op when already `available`;\n- `evict(hash)` \u2014 drop the bytes, keep the row, set `status='evicted'`. **Eviction must not destroy data while a `get()` stream is in flight**: implementations skip hashes with active readers and revisit them on the next GC pass. On immutable backends it unpins rather than deletes;\n- `storageUsed()` \u2014 the number the GC policy decides against.\n\nThe transport side is `fetch` (returns `TransportResponse | null` \u2014 a remote cannot populate local concerns like status or source), plus `announce` and `push`, which are no-ops or unused for the client-server transports and exist for future peer-to-peer topologies.\n\n## Provenance\n- `packages/reactor/docs/attachments.md` \u2014 Design \u203a IAttachmentStore and IAttachmentTransport\n\n_Extracted from the Powerhouse repository at **v6.2.2-dev.74**._",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": "v6.2.2-dev.74",
+  "computes": null,
+  "filePath": "packages/reactor/docs/attachments.md",
+  "noteType": "ARCHITECTURE",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "knowledge-agent",
+    "createdAt": "2026-09-03T07:19:36.780Z",
+    "sessionId": null,
+    "updatedAt": "2026-09-03T07:22:31.215Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "The store calls announce/push when data arrives locally; the transport calls store.put() when it arrives from a remote. put() distinguishes no row, evicted and available; an unknown hash throws.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "51212e3c-c01b-4279-a15e-5d6c13f64ad3",
+      "actor": "knowledge-agent",
+      "comment": "extracted from packages/reactor/docs/attachments.md at v6.2.2-dev.74",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-09-03T07:19:37.368Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "607f024d-7085-406a-8471-4cdabc66e544",
+      "actor": "liberuum",
+      "comment": "claim checked against the cited file at the pinned tag",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-09-03T07:19:37.914Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

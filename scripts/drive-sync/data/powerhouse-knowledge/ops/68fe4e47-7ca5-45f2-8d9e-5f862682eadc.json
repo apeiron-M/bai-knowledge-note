@@ -1,0 +1,336 @@
+[
+  {
+    "index": 0,
+    "hash": "",
+    "timestampUtcMs": "2026-08-14T11:46:02.534Z",
+    "action": {
+      "type": "CREATE_DOCUMENT",
+      "input": {
+        "meta": {},
+        "name": "always-check-document-model-schema-before-calling-addactions",
+        "slug": "",
+        "model": "bai/knowledge-note",
+        "branch": "main",
+        "signing": {
+          "nonce": "",
+          "publicKey": {},
+          "signature": "68fe4e47-7ca5-45f2-8d9e-5f862682eadc",
+          "documentType": "bai/knowledge-note",
+          "createdAtUtcIso": "2026-08-14T11:46:02.533Z"
+        },
+        "version": 0,
+        "documentId": "68fe4e47-7ca5-45f2-8d9e-5f862682eadc",
+        "protocolVersions": {
+          "base-reducer": 2
+        }
+      },
+      "timestampUtcMs": "2026-08-14T11:46:02.534Z"
+    }
+  },
+  {
+    "index": 0,
+    "hash": "cQM6bpF7mDAEOBJryz4h77gnHvk=",
+    "timestampUtcMs": "2026-08-14T12:34:48.000Z",
+    "action": {
+      "type": "SET_TITLE",
+      "input": {
+        "title": "always check document model schema before calling addActions",
+        "updatedAt": "2026-08-14T12:34:48.000Z"
+      },
+      "timestampUtcMs": "2026-08-14T12:34:48.000Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "",
+    "timestampUtcMs": "2026-08-14T11:46:02.534Z",
+    "action": {
+      "type": "UPGRADE_DOCUMENT",
+      "input": {
+        "model": "bai/knowledge-note",
+        "toVersion": 1,
+        "documentId": "68fe4e47-7ca5-45f2-8d9e-5f862682eadc",
+        "fromVersion": 0,
+        "initialState": {
+          "auth": {
+            "grants": [],
+            "version": 0
+          },
+          "local": {
+            "lastViewedAt": null,
+            "personalTags": []
+          },
+          "global": {
+            "links": [],
+            "model": null,
+            "scope": null,
+            "title": null,
+            "editor": null,
+            "inputs": [],
+            "models": [],
+            "status": "DRAFT",
+            "topics": [],
+            "content": null,
+            "context": null,
+            "modelId": null,
+            "modules": [],
+            "outputs": [],
+            "version": null,
+            "computes": null,
+            "filePath": null,
+            "noteType": null,
+            "severity": null,
+            "hooksUsed": [],
+            "rootCause": null,
+            "confidence": null,
+            "consumedBy": [],
+            "provenance": null,
+            "sourceType": null,
+            "targetType": null,
+            "cardinality": null,
+            "description": null,
+            "alternatives": [],
+            "consequences": [],
+            "errorMessage": null,
+            "relationType": null,
+            "correctPattern": null,
+            "decisionStatus": null,
+            "dispatchTargets": [],
+            "lifecycleEvents": []
+          },
+          "document": {
+            "hash": {
+              "encoding": "base64",
+              "algorithm": "sha1"
+            },
+            "version": 1
+          }
+        }
+      },
+      "timestampUtcMs": "2026-08-14T11:46:02.534Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "XhijdmD7irkBgHZhjbs0k6mDHhw=",
+    "timestampUtcMs": "2026-08-14T12:34:48.000Z",
+    "action": {
+      "type": "SET_DESCRIPTION",
+      "input": {
+        "updatedAt": "2026-08-14T12:34:48.000Z",
+        "description": "Using getDocumentModelSchema first prevents failed calls by ensuring required parameters and input shapes are known"
+      },
+      "timestampUtcMs": "2026-08-14T12:34:48.000Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "",
+    "timestampUtcMs": "2026-08-14T12:36:35.376Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "68fe4e47-7ca5-45f2-8d9e-5f862682eadc",
+        "targetId": "b7cb8afe-41fa-4676-be94-1e73435e1a04",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-08-14T12:36:35.376Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "CbDnW/Dz2DNhT33Q5yxn+IWNSqw=",
+    "timestampUtcMs": "2026-08-14T12:34:48.000Z",
+    "action": {
+      "type": "SET_NOTE_TYPE",
+      "input": {
+        "noteType": "PATTERN",
+        "updatedAt": "2026-08-14T12:34:48.000Z"
+      },
+      "timestampUtcMs": "2026-08-14T12:34:48.000Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "",
+    "timestampUtcMs": "2026-08-14T12:36:35.491Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "68fe4e47-7ca5-45f2-8d9e-5f862682eadc",
+        "targetId": "1c949f59-bfde-4bf8-ac7e-d378d6bc0b0d",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-08-14T12:36:35.491Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "kyMkGkTu5KkK/gLqdFrfAEjRb24=",
+    "timestampUtcMs": "2026-08-14T12:34:48.000Z",
+    "action": {
+      "type": "SET_CONTENT",
+      "input": {
+        "content": "# always check document model schema before calling addActions\n\nBefore dispatching any actions via `addActions`, always call `getDocumentModelSchema` to understand the input requirements:\n\n```\nmcp__reactor-mcp__getDocumentModelSchema({ type: \"powerhouse/document-model\" })\n```\n\nThis reveals required fields (like `id` or `scope`), valid enum values, and input shapes. Without this step, actions frequently fail due to missing or malformed parameters.\n\nThis applies to all document types \u2014 document models, editors, apps, and drives. Since [[document model changes require both MCP update and src file update]], understanding the schema prevents wasted round trips on both sides.\n\n---\n\nTopics:\n- [[mcp workflows]]",
+        "updatedAt": "2026-08-14T12:34:48.000Z"
+      },
+      "timestampUtcMs": "2026-08-14T12:34:48.000Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "",
+    "timestampUtcMs": "2026-08-14T12:36:35.576Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "68fe4e47-7ca5-45f2-8d9e-5f862682eadc",
+        "targetId": "1f5493d5-17ad-4bf2-b36d-dcf26dd7c917",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-08-14T12:36:35.576Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "s6bOfk6vFuvX9c5ET18uOF99s38=",
+    "timestampUtcMs": "2026-08-14T12:34:48.000Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "version",
+        "value": "v6.2.2-dev.44",
+        "updatedAt": "2026-08-14T12:34:48.000Z"
+      },
+      "timestampUtcMs": "2026-08-14T12:34:48.000Z"
+    }
+  },
+  {
+    "index": 5,
+    "hash": "",
+    "timestampUtcMs": "2026-08-14T12:36:35.659Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "68fe4e47-7ca5-45f2-8d9e-5f862682eadc",
+        "targetId": "434297eb-533d-4e8c-9a50-c987e268f85e",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-08-14T12:36:35.659Z"
+    }
+  },
+  {
+    "index": 5,
+    "hash": "SAARdEqsI3+1GiNVbTripDjFoeE=",
+    "timestampUtcMs": "2026-08-14T12:34:48.000Z",
+    "action": {
+      "type": "SET_PROVENANCE",
+      "input": {
+        "author": "knowledge-agent",
+        "createdAt": "2026-04-03T14:01:00.000Z",
+        "sourceOrigin": "IMPORT"
+      },
+      "timestampUtcMs": "2026-08-14T12:34:48.000Z"
+    }
+  },
+  {
+    "index": 6,
+    "hash": "1YPgXpx+jI/KjEKQ/gYlVm+Fa20=",
+    "timestampUtcMs": "2026-08-14T12:34:48.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "3822f0b6-dffe-4057-bd34-df9365cdb2e0",
+        "name": "MCP workflows",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-08-14T12:34:48.000Z"
+    }
+  },
+  {
+    "index": 7,
+    "hash": "HX6BBRJOqRBB8KNy9tNpmV2xJ9Q=",
+    "timestampUtcMs": "2026-08-14T12:34:48.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "647a7248-b5d3-463c-812d-a28a563b9bab",
+        "name": "schema validation",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-08-14T12:34:48.000Z"
+    }
+  },
+  {
+    "index": 8,
+    "hash": "r9NivZM/iRJuZSAZmTbTiphwQV4=",
+    "timestampUtcMs": "2026-08-14T12:34:48.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "852370c8-3243-4196-841f-e2284deb1bd4",
+        "name": "best practices",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-08-14T12:34:48.000Z"
+    }
+  },
+  {
+    "index": 9,
+    "hash": "/Ab6bkxtBoCpkozi3GnRBjoGfKk=",
+    "timestampUtcMs": "2026-08-14T14:37:12.000Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "version",
+        "value": "v6.2.2-dev.47",
+        "updatedAt": "2026-08-14T12:00:00.000Z"
+      },
+      "timestampUtcMs": "2026-08-14T14:37:12.000Z"
+    }
+  },
+  {
+    "index": 10,
+    "hash": "/YBcOrSg1TCgHuZCkS8s4RVmLrA=",
+    "timestampUtcMs": "2026-08-14T14:37:12.000Z",
+    "action": {
+      "type": "SUBMIT_FOR_REVIEW",
+      "input": {
+        "id": "ecfdc658-d070-468f-871f-f211c58916e3",
+        "actor": "claude",
+        "comment": "Knowledge registered against powerhouse v6.2.2-dev.47",
+        "timestamp": "2026-08-14T12:00:00.000Z"
+      },
+      "timestampUtcMs": "2026-08-14T14:37:12.000Z"
+    }
+  },
+  {
+    "index": 11,
+    "hash": "gwfAKf6r/eogaCL7p2+WKvIFf1s=",
+    "timestampUtcMs": "2026-08-14T14:37:12.000Z",
+    "action": {
+      "type": "APPROVE_NOTE",
+      "input": {
+        "id": "ee862700-dabb-4177-953a-ea7741808104",
+        "actor": "liberuum",
+        "comment": "Canonical as of powerhouse v6.2.2-dev.47",
+        "timestamp": "2026-08-14T12:00:00.000Z"
+      },
+      "timestampUtcMs": "2026-08-14T14:37:12.000Z"
+    }
+  },
+  {
+    "index": 12,
+    "hash": "E+kw/MYqqqr97oZE3GFvvciPLqE=",
+    "timestampUtcMs": "2026-09-03T09:56:59.582Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "version",
+        "value": "v6.2.2-dev.74",
+        "updatedAt": "2026-09-03T09:56:59.582Z"
+      },
+      "timestampUtcMs": "2026-09-03T09:56:59.582Z"
+    }
+  }
+]

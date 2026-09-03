@@ -1,0 +1,123 @@
+{
+  "links": [
+    {
+      "id": "lnk-e57e23ae-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "e57e23ae-2f05-414a-bb77-c74ab23f64e8",
+      "targetTitle": "dead-letter-quarantines-document-not-drive",
+      "reason": "The non-converging auth conflict surfaces as a dead letter, which quarantines just that document rather than the drive",
+      "confidence": "grounded"
+    },
+    {
+      "id": "lnk-adb20e84-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "adb20e84-cdcd-4ed1-9542-07b80baf6c33",
+      "targetTitle": "auth-four-actions",
+      "reason": "These are the ordering constraints the four auth actions are held to on top of their validation rules",
+      "confidence": "grounded"
+    },
+    {
+      "id": "lnk-0ade289f-bui",
+      "linkType": "BUILDS_ON",
+      "targetDocumentId": "0ade289f-d4fb-44d8-ab3b-316d65bb1c8d",
+      "targetTitle": "auth-positional-judgment",
+      "reason": "Positional judgment of domain operations presupposes the single authoritative order this rule gives the policy stream",
+      "confidence": "grounded"
+    },
+    {
+      "id": "lnk-223bb12a-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "223bb12a-be7f-4209-9ab2-f04f7bb2b6c8",
+      "targetTitle": "Spec \u203a Spec \u2014 Attribute-based access control in the auth scope with DCB",
+      "reason": "Extracted from docs/specs/auth-scope.md at v6.2.2-dev.74 \u2014 Ordering Consistency (three rules); Stage 4 exit ('Conflicting auth operations\u2026 do not converge'); re-evaluation dedup-before-monotonic rule",
+      "confidence": "grounded"
+    },
+    {
+      "id": "lnk-f2aaccd3-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "f2aaccd3-7c26-4327-881e-f5ad9e267b89",
+      "targetTitle": "Academy \u203a Lookup \u203a Cookbook",
+      "reason": "Extracted from apps/academy/docs/academy/05-Lookup/00-Cookbook.md at v6.2.2-dev.74 \u2014 Document ACL gotcha 'The auth stream is strictly timestamp-monotonic'; Revocation Race 'Policy setup' (only Alice writes auth)",
+      "confidence": "grounded"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "The auth stream is strictly timestamp-monotonic and never reshuffled, so concurrent policy edits from two reactors do not converge \u2014 keep one policy-writing home",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "660db5c4-365c-4976-aebc-5a4de01a57e7",
+      "name": "auth-scope",
+      "topicDocumentId": null
+    },
+    {
+      "id": "a7498048-d510-4912-a64e-5f8035bf0091",
+      "name": "ordering",
+      "topicDocumentId": null
+    },
+    {
+      "id": "60042a67-d999-4325-bd38-e93783361c52",
+      "name": "sync",
+      "topicDocumentId": null
+    },
+    {
+      "id": "7fde66c1-7506-43da-8ce6-15b10877e3d3",
+      "name": "gotchas",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "Ordering across streams needs rules a single stream never needed, and the spec gives three:\n\n1. **Auth-scope operation timestamps must strictly increase**, and an operation that does not is rejected \u2014 as an exception, not a logged operation. This is unlike every other scope, and deliberate: an auth decision cannot be resolved on the basis of which way a hash function leans.\n2. **In timestamp tie-breaks, auth-scope operations win** over domain operations.\n3. All other streams order by timestamp, then action id, then operation id \u2014 never by local-only information such as a logical index.\n\nTwo consequences bite in practice. The `document-acl` recipe notes that two policy edits in the same millisecond are refused (`AuthTimestampNotMonotonicError`), so its demo and tests space auth writes by a few milliseconds. And **conflicting auth operations from two reactors do not converge**: the monotonic rule is not symmetric \u2014 the replica whose auth stream already ran ahead rejects the arrival and dead-letters it, while the replica behind accepts, and the two hold different policies until the application reconciles them from the dead letters. The `revocation-race` recipe therefore has only Alice's reactor ever write the auth scope and calls that a pattern, not a demo simplification: a single policy-writing home, or coordinated administration, avoids the class entirely. The stage-9 migration runs on one replica with auth writes quiesced for the same reason.\n\nPositional judgment of domain operations only works *because* the policy stream itself has one authoritative order. One nuance: a re-appended auth operation from a re-evaluation pass keeps its original timestamp, so the monotonic check on arrival runs *after* the action-id dedup \u2014 otherwise it would reject traffic both replicas already agree about.\n\n_Source: docs/specs/auth-scope.md (Powerhouse v6.2.2-dev.74)._\n_Source: apps/academy/docs/academy/05-Lookup/00-Cookbook.md (Powerhouse v6.2.2-dev.74)._\n\n## Provenance\n- `docs/specs/auth-scope.md` \u2014 Ordering Consistency (three rules); Stage 4 exit ('Conflicting auth operations\u2026 do not converge'); re-evaluation dedup-before-monotonic rule\n- `apps/academy/docs/academy/05-Lookup/00-Cookbook.md` \u2014 Document ACL gotcha 'The auth stream is strictly timestamp-monotonic'; Revocation Race 'Policy setup' (only Alice writes auth)\n\n_Recorded from the Powerhouse repository at **v6.2.2-dev.74** during the v6.2.2-dev.74 source sync._",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": "v6.2.2-dev.74",
+  "computes": null,
+  "filePath": "docs/specs/auth-scope.md",
+  "noteType": "PATTERN",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": "grounded",
+  "consumedBy": [],
+  "provenance": {
+    "author": "knowledge-agent",
+    "createdAt": "2026-09-02T22:10:26.679Z",
+    "sessionId": null,
+    "updatedAt": "2026-09-02T22:20:22.663Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Same-millisecond or backdated auth edits are refused with AuthTimestampNotMonotonicError; in tie-breaks auth wins over domain scopes. The replica whose auth stream ran ahead dead-letters the arrival.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "e1cc9617-70f7-4275-a3b4-4516fa6615ea",
+      "actor": "knowledge-agent",
+      "comment": "extracted from the Powerhouse repository at v6.2.2-dev.74",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-09-02T22:10:27.159Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "d832318a-deb7-4d7a-ac78-355d0a08e16a",
+      "actor": "liberuum",
+      "comment": "claim checked against the cited repository file at the pinned tag",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-09-02T22:10:27.658Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

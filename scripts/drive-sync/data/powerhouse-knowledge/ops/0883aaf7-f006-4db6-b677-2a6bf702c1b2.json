@@ -1,0 +1,330 @@
+[
+  {
+    "index": 0,
+    "hash": "",
+    "timestampUtcMs": "2026-09-03T07:43:35.160Z",
+    "action": {
+      "type": "CREATE_DOCUMENT",
+      "input": {
+        "meta": {},
+        "name": "registry-publish-notifications",
+        "slug": "",
+        "model": "bai/knowledge-note",
+        "branch": "main",
+        "signing": {
+          "nonce": "",
+          "publicKey": {},
+          "signature": "0883aaf7-f006-4db6-b677-2a6bf702c1b2",
+          "documentType": "bai/knowledge-note",
+          "createdAtUtcIso": "2026-09-03T07:43:35.160Z"
+        },
+        "version": 0,
+        "documentId": "0883aaf7-f006-4db6-b677-2a6bf702c1b2",
+        "protocolVersions": {
+          "base-reducer": 2
+        }
+      },
+      "timestampUtcMs": "2026-09-03T07:43:35.160Z"
+    }
+  },
+  {
+    "index": 0,
+    "hash": "1Lmtp8kgz0L3V0yJWO888Nn30tc=",
+    "timestampUtcMs": "2026-09-03T07:43:36.438Z",
+    "action": {
+      "type": "SET_TITLE",
+      "input": {
+        "title": "The registry notifies subscribers of a publish over both SSE and disk-persisted webhooks, and predefined webhooks cannot be deleted through the API",
+        "updatedAt": "2026-09-03T07:43:36.438Z"
+      },
+      "timestampUtcMs": "2026-09-03T07:43:36.438Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "",
+    "timestampUtcMs": "2026-09-03T07:43:35.160Z",
+    "action": {
+      "type": "UPGRADE_DOCUMENT",
+      "input": {
+        "model": "bai/knowledge-note",
+        "toVersion": 1,
+        "documentId": "0883aaf7-f006-4db6-b677-2a6bf702c1b2",
+        "fromVersion": 0,
+        "initialState": {
+          "auth": {
+            "grants": [],
+            "version": 0
+          },
+          "local": {
+            "lastViewedAt": null,
+            "personalTags": []
+          },
+          "global": {
+            "links": [],
+            "model": null,
+            "scope": null,
+            "title": null,
+            "editor": null,
+            "inputs": [],
+            "models": [],
+            "status": "DRAFT",
+            "topics": [],
+            "content": null,
+            "context": null,
+            "modelId": null,
+            "modules": [],
+            "outputs": [],
+            "version": null,
+            "computes": null,
+            "filePath": null,
+            "noteType": null,
+            "severity": null,
+            "hooksUsed": [],
+            "rootCause": null,
+            "confidence": null,
+            "consumedBy": [],
+            "provenance": null,
+            "sourceType": null,
+            "targetType": null,
+            "cardinality": null,
+            "description": null,
+            "alternatives": [],
+            "consequences": [],
+            "errorMessage": null,
+            "relationType": null,
+            "correctPattern": null,
+            "decisionStatus": null,
+            "dispatchTargets": [],
+            "lifecycleEvents": []
+          },
+          "document": {
+            "hash": {
+              "encoding": "base64",
+              "algorithm": "sha1"
+            },
+            "version": 1
+          }
+        }
+      },
+      "timestampUtcMs": "2026-09-03T07:43:35.160Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "IfAS6EeRYi1njJeNCbQunU/5QX8=",
+    "timestampUtcMs": "2026-09-03T07:43:36.438Z",
+    "action": {
+      "type": "SET_DESCRIPTION",
+      "input": {
+        "updatedAt": "2026-09-03T07:43:36.438Z",
+        "description": "GET /-/events emits a connected event then publish events carrying packageName and version. Webhooks survive restarts, can be supplied by configuration, and DELETE removes only dynamic ones."
+      },
+      "timestampUtcMs": "2026-09-03T07:43:36.438Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "",
+    "timestampUtcMs": "2026-09-03T07:44:41.273Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "metadata": {
+          "reason": "Extracted from packages/registry/README.md at v6.2.2-dev.74 \u2014 Publish Notifications \u203a SSE and Webhooks",
+          "confidence": "grounded"
+        },
+        "sourceId": "0883aaf7-f006-4db6-b677-2a6bf702c1b2",
+        "targetId": "3759870c-5df6-4d3f-b21c-61430665b0af",
+        "relationshipType": "DERIVED_FROM"
+      },
+      "timestampUtcMs": "2026-09-03T07:44:41.273Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "L2efwhgzW+u1hU9lGXtjQcTtitE=",
+    "timestampUtcMs": "2026-09-03T07:43:36.438Z",
+    "action": {
+      "type": "SET_NOTE_TYPE",
+      "input": {
+        "noteType": "REFERENCE",
+        "updatedAt": "2026-09-03T07:43:36.438Z"
+      },
+      "timestampUtcMs": "2026-09-03T07:43:36.438Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "",
+    "timestampUtcMs": "2026-09-03T07:44:41.754Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "metadata": {
+          "reason": "Same service: the CDN serves the bundles and these endpoints announce when a new one exists",
+          "confidence": "grounded"
+        },
+        "sourceId": "0883aaf7-f006-4db6-b677-2a6bf702c1b2",
+        "targetId": "6e2774cc-037d-4a44-aeb1-49fb4a186ed8",
+        "relationshipType": "BUILDS_ON"
+      },
+      "timestampUtcMs": "2026-09-03T07:44:41.754Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "0N+TGZMT9NZ737kdhmMDN+xr4DA=",
+    "timestampUtcMs": "2026-09-03T07:43:36.438Z",
+    "action": {
+      "type": "SET_CONTENT",
+      "input": {
+        "content": "When a package is published the registry can tell subscribers in real time, two ways.\n\n**SSE \u2014 `GET /-/events`.** A persistent connection receiving a `connected` event on open, then a `publish` event per publish with `{ \"packageName\": \"@scope/pkg\", \"version\": \"1.0.0\" }`. In a browser that is a plain `EventSource` with an event listener.\n\n**Webhooks**, which are **persisted to disk and survive restarts**, and can additionally be supplied through configuration:\n\n- `GET /-/webhooks` \u2014 all registered webhooks, predefined plus dynamic;\n- `POST /-/webhooks` \u2014 register `{ endpoint, headers? }`, returning `201`; **duplicate endpoints are ignored** rather than erroring;\n- `DELETE /-/webhooks` \u2014 remove a dynamic webhook by endpoint, `204` on success and `404` if unknown. **Predefined webhooks cannot be removed** \u2014 a deliberate asymmetry, since a configured integration should not be deletable by whoever can reach the API.\n\nEach webhook receives a POST when a package is published.\n\nThe pairing matters for a host: SSE is right for a UI that wants to react while a user is looking at it, webhooks for automation that must not miss an event while nothing is connected.\n\n## Provenance\n- `packages/registry/README.md` \u2014 Publish Notifications \u203a SSE and Webhooks\n\n_Extracted from the Powerhouse repository at **v6.2.2-dev.74**._",
+        "updatedAt": "2026-09-03T07:43:36.438Z"
+      },
+      "timestampUtcMs": "2026-09-03T07:43:36.438Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "",
+    "timestampUtcMs": "2026-09-03T07:44:42.212Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "metadata": {
+          "reason": "onPublish in the browser client is a consumer of this SSE stream, which is why it returns an unsubscribe function",
+          "confidence": "grounded"
+        },
+        "sourceId": "0883aaf7-f006-4db6-b677-2a6bf702c1b2",
+        "targetId": "3c31ddfa-8a8a-4cee-8be1-2812015464e8",
+        "relationshipType": "BUILDS_ON"
+      },
+      "timestampUtcMs": "2026-09-03T07:44:42.212Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "IZjXwZ/JVH3Fn0uIMWvSf2fVV7g=",
+    "timestampUtcMs": "2026-09-03T07:43:36.438Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "d94bff22-67b4-4638-a726-7d71df8da663",
+        "name": "registry"
+      },
+      "timestampUtcMs": "2026-09-03T07:43:36.438Z"
+    }
+  },
+  {
+    "index": 5,
+    "hash": "xdxJFDRc9bzxbrw2GlIH9/y5Kvs=",
+    "timestampUtcMs": "2026-09-03T07:43:36.438Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "bf53d233-5d0f-4e30-aad7-a991020ce7be",
+        "name": "packages"
+      },
+      "timestampUtcMs": "2026-09-03T07:43:36.438Z"
+    }
+  },
+  {
+    "index": 6,
+    "hash": "VhyfAMp5PDMfL0Aaw2BHrJIAv2A=",
+    "timestampUtcMs": "2026-09-03T07:43:36.438Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "8f3003b1-3bc5-46ab-b71e-a17851ff9321",
+        "name": "sse"
+      },
+      "timestampUtcMs": "2026-09-03T07:43:36.438Z"
+    }
+  },
+  {
+    "index": 7,
+    "hash": "ACd/iyrfCtHHssrDBM8MDdO1tB0=",
+    "timestampUtcMs": "2026-09-03T07:43:36.438Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "1d1baf39-1199-49df-8c24-a4856c6262e4",
+        "name": "webhooks"
+      },
+      "timestampUtcMs": "2026-09-03T07:43:36.438Z"
+    }
+  },
+  {
+    "index": 8,
+    "hash": "PUXqOM8sZbeiwPht8IsdxL7Uz6s=",
+    "timestampUtcMs": "2026-09-03T07:43:36.438Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "version",
+        "value": "v6.2.2-dev.74",
+        "updatedAt": "2026-09-03T07:43:36.438Z"
+      },
+      "timestampUtcMs": "2026-09-03T07:43:36.438Z"
+    }
+  },
+  {
+    "index": 9,
+    "hash": "az3cfwq58i7M56ZJWzlxbMhDOVg=",
+    "timestampUtcMs": "2026-09-03T07:43:36.438Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "filePath",
+        "value": "packages/registry/README.md",
+        "updatedAt": "2026-09-03T07:43:36.438Z"
+      },
+      "timestampUtcMs": "2026-09-03T07:43:36.438Z"
+    }
+  },
+  {
+    "index": 10,
+    "hash": "s4LTyfXMXGtNt6RYaA97KX0wIZo=",
+    "timestampUtcMs": "2026-09-03T07:43:38.980Z",
+    "action": {
+      "type": "SET_PROVENANCE",
+      "input": {
+        "author": "knowledge-agent",
+        "createdAt": "2026-09-03T07:43:38.979Z",
+        "sourceOrigin": "DERIVED"
+      },
+      "timestampUtcMs": "2026-09-03T07:43:38.980Z"
+    }
+  },
+  {
+    "index": 11,
+    "hash": "634E26O3mXEmn9jLV80na/0iE3A=",
+    "timestampUtcMs": "2026-09-03T07:43:39.459Z",
+    "action": {
+      "type": "SUBMIT_FOR_REVIEW",
+      "input": {
+        "id": "2d59a299-3dae-4597-87de-3819929d5bf1",
+        "actor": "knowledge-agent",
+        "comment": "extracted from packages/registry/README.md at v6.2.2-dev.74",
+        "timestamp": "2026-09-03T07:43:39.459Z"
+      },
+      "timestampUtcMs": "2026-09-03T07:43:39.459Z"
+    }
+  },
+  {
+    "index": 12,
+    "hash": "YwbNXvwgx7+ojyh3mAmX5k+5D4w=",
+    "timestampUtcMs": "2026-09-03T07:43:41.440Z",
+    "action": {
+      "type": "APPROVE_NOTE",
+      "input": {
+        "id": "f9f3f9ee-b661-4c37-8bb7-e74e8a8a24b4",
+        "actor": "liberuum",
+        "comment": "claim checked against the cited file at the pinned tag",
+        "timestamp": "2026-09-03T07:43:41.440Z"
+      },
+      "timestampUtcMs": "2026-09-03T07:43:41.440Z"
+    }
+  }
+]

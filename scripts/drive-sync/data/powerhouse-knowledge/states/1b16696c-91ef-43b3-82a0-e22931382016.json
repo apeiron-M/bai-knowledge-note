@@ -1,0 +1,94 @@
+{
+  "links": [
+    {
+      "id": "lnk-4d8e59af-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "4d8e59af-51f2-4ab7-b290-e1d5744abbd7",
+      "targetTitle": "Integration-gap tool screen: ERPNext / Frappe (primary-source research, 2026-08-19)"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "n8n attributes an execution to a workflow, never to the human who decided",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "0f0c64ee-60e8-40b9-9a54-be874ed7b6f3",
+      "name": "tool-screen",
+      "topicDocumentId": null
+    },
+    {
+      "id": "8f661e51-113b-4879-961d-8b223172b296",
+      "name": "n8n",
+      "topicDocumentId": null
+    },
+    {
+      "id": "bb324b2f-609c-4f4c-8293-c5c1d076b162",
+      "name": "attribution",
+      "topicDocumentId": null
+    },
+    {
+      "id": "94496674-bc57-4383-a9e9-c2b5dd2d1ad4",
+      "name": "business-events",
+      "topicDocumentId": null
+    },
+    {
+      "id": "c54afbc3-5ccb-4026-958f-71ea6f5a8b63",
+      "name": "audit-trail",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "`execution_entity` carries `id`, `status`, `mode`, `createdAt`, `startedAt` and a `DeleteDateColumn` for soft deletion. `mode` is an enum over how the run was triggered: `webhook`, `trigger`, `manual`, `cli`, `retry`. The payload sits in `execution_data` as a single `text` blob, cascade-deleted with its parent row.\n\nNowhere in either entity is there a field for the deciding actor, the rule applied, or the prior state. An execution is attributed to a *workflow* \u2014 to the automation that ran, not to the person on whose authority it ran.\n\nThis is the structural reason an n8n execution log cannot answer \"who approved this, under which rule\", independently of retention. Even a run preserved forever would not carry the attribution.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "ARCHITECTURE",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "knowledge-agent",
+    "createdAt": "2026-08-20T08:45:14.330384Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-20T08:45:15.494307Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "The mode field is an enum of trigger types \u2014 webhook, trigger, manual, cli, retry \u2014 so there is no field recording which person made the decision under which rule.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "930cc635-ddea-4363-a2a2-6a8fa21b0f3c",
+      "actor": "knowledge-agent",
+      "comment": "Extracted from the primary-source tool screen; each claim quotable from a cited source.",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-20T08:45:15.343766Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "c3a8bedd-b8a1-4ed2-ba98-10b3896b18e6",
+      "actor": "liberuum",
+      "comment": "Approved: tool-screen extraction.",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-20T08:45:15.494307Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

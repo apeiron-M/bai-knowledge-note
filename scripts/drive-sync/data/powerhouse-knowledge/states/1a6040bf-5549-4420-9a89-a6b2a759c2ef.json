@@ -1,0 +1,27 @@
+{
+  "title": "Agent skill: export",
+  "status": "EXTRACTED",
+  "content": "---\nname: export\ndescription: Export knowledge vault data \u2014 full backup, filtered export, or markdown conversion. Uses consistency tokens for reliable snapshots. Use for backup, migration, or sharing.\n---\n\n# Export Knowledge Vault\n\n> **Target first.** Every command below runs against the Switchboard the\n> active CLI profile points at, and `<UUID>` / `<drive-slug>` mean *that*\n> server's vault drive. If the pre-flight hook printed `Profile: \u2026 -> \u2026` and\n> `VAULT_DRIVE_ID` / `VAULT_DRIVE_SLUG`, use those. Otherwise run\n> `switchboard config show` and the drive detection in AGENT.md \u00a7 *Find the\n> vault drive*. If it is still ambiguous which vault the user means, **ask for\n> the Switchboard URL and the drive** \u2014 never assume an endpoint.\n\nExport vault data with guaranteed consistency.\n\n## Export Methods\n\n### Full Vault Backup (via Switchboard CLI)\n```bash\nswitchboard export drive <drive-uuid> -o ./backup/ --format json\n```\n\n### Filtered Export (by date range)\n```bash\nswitchboard export drive <drive-uuid> --from 2026-01-01T00:00:00Z --to 2026-03-26T00:00:00Z -o ./q1/ --format json\n```\n\n### Incremental Export (since last sync)\n```bash\nswitchboard export drive <drive-uuid> --since-revision 50 -o ./incremental/ --format json\n```\n\n### Single Document Export\n```bash\nswitchboard export doc <doc-id> --drive <drive-uuid> -o note.phd --format json\n```\n\n## Export to Markdown\n\nFor each note in the vault:\n\n1. Read the document state:\n```bash\nswitchboard docs get <doc-id> --state --format json\n```\n\n2. Convert state to markdown with YAML frontmatter:\n```markdown\n---\ntitle: \"<state.global.title>\"\ndescription: \"<state.global.description>\"\ntype: <state.global.noteType>\nstatus: <state.global.status>\ntopics: [<state.global.topics[].name>]\nauthor: <state.global.provenance.author>\ncreated: <state.global.provenance.createdAt>\n---\n\n<state.global.content>\n\n---\nLinks:\n- [[<edge.targetTitle>]] \u2014 <edge.linkType>\n```\n\nRead the links from the **graph**, not from `state.global.links[]` \u2014 that array is empty for anything linked since the relationship migration, so an export built from it has no links. One call per note (`knowledgeGraphForwardLinks(driveId, documentId) { targetDocumentId targetTitle linkType }`) or one call for the vault (`knowledgeGraphEdges(driveId)`), then join on the note id.\n\nNote that `knowledgeGraphDebug` returns only the indexed types (`bai/knowledge-note`, `bai/moc`): sources, tensions, observations, projects and WBS are not in it, so it is not a complete export on its own.\n\n3. Write to local filesystem:\n```\nWrite to: ./export/notes/<title-slug>.md\n```\n\n## Consistency Guarantee\n\nThe Powerhouse reactor uses consistency tokens to ensure exports reflect a complete state:\n- Each write returns a consistency token\n- Reads with a token are guaranteed to see all writes up to that point\n- The switchboard CLI handles this automatically\n\n## Graph Export\n\nExport the knowledge graph structure:\n\n```bash\nswitchboard query '{ knowledgeGraphDebug(driveId: \"<UUID>\") { rawNodes { documentId title noteType status description } rawEdges { sourceDocumentId targetDocumentId linkType targetTitle } } }'\n```\n\nThis gives the full graph as JSON \u2014 useful for visualization tools, analysis, or migration.\n\nIf \"$ARGUMENTS\" is provided, treat it as the export destination path.\n",
+  "createdAt": "2026-09-02T19:21:29.960Z",
+  "createdBy": "skill-sync",
+  "provenance": {
+    "url": "https://github.com/liberuum/powerhouse-knowledge/blob/main/skills/export/SKILL.md",
+    "tool": "sync-skills",
+    "author": "powerhouse-knowledge plugin",
+    "method": "sha256:2e0e25b5f03deadb730493f46d92614614e61512d3820e7823011ba2a1980948",
+    "publishedAt": null
+  },
+  "sourceType": "DOCUMENTATION",
+  "description": "Export knowledge vault data \u2014 full backup, filtered export, or markdown conversion. Uses consistency tokens for reliable snapshots. Use for backup, migration, or sharing.",
+  "extractedClaims": [
+    "45c6dc83-1410-4cea-aa6e-f60631240ea3"
+  ],
+  "extractionStats": {
+    "skipRate": 0,
+    "claimCount": 1,
+    "extractedAt": "2026-09-02T19:21:32.156Z",
+    "extractedBy": "skill-sync",
+    "skippedCount": 0
+  },
+  "links": []
+}

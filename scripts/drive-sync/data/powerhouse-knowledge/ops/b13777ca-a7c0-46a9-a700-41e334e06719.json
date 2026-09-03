@@ -1,0 +1,141 @@
+[
+  {
+    "index": 0,
+    "hash": "",
+    "timestampUtcMs": "2026-09-02T21:33:34.163Z",
+    "action": {
+      "type": "CREATE_DOCUMENT",
+      "input": {
+        "meta": {},
+        "name": "Academy \u203a Build \u203a DocumentModelCreation \u203a Implement document reducers",
+        "slug": "",
+        "model": "bai/source",
+        "branch": "main",
+        "signing": {
+          "nonce": "",
+          "publicKey": {},
+          "signature": "b13777ca-a7c0-46a9-a700-41e334e06719",
+          "documentType": "bai/source",
+          "createdAtUtcIso": "2026-09-02T21:33:34.163Z"
+        },
+        "version": 0,
+        "documentId": "b13777ca-a7c0-46a9-a700-41e334e06719",
+        "protocolVersions": {
+          "base-reducer": 2
+        }
+      },
+      "timestampUtcMs": "2026-09-02T21:33:34.163Z"
+    }
+  },
+  {
+    "index": 0,
+    "hash": "i3E/1nuehLw9OXspwDsQMWWFFyU=",
+    "timestampUtcMs": "2026-09-02T21:33:34.161Z",
+    "action": {
+      "type": "INGEST_SOURCE",
+      "input": {
+        "url": "https://github.com/powerhouse-inc/powerhouse/blob/v6.2.2-dev.74/apps/academy/docs/academy/03-Build/02-DocumentModelCreation/05-ImplementDocumentReducers.md",
+        "tool": "sync-repo-docs",
+        "title": "Academy \u203a Build \u203a DocumentModelCreation \u203a Implement document reducers",
+        "author": "Powerhouse Inc.",
+        "method": "sha256:40f2a0edea608e4f58658a67a59afa893141cde6f402a2d6dd6913ed6bdb0184 git:v6.2.2-dev.74",
+        "content": "# Implement document reducers\n\n:::note[Builds on the Manual Todo tutorial]\nThis is the same step from the [Manual Todo tutorial](/academy/Build/ManualTodoTutorial/ImplementOperationReducers), covered here in depth. The Mastery Track's only addition is the reducer logic for the computed `stats` field \u2014 if you've done the basic build, skim to the stats parts.\n:::\n\n## The heart of document logic\n\nIn our journey through Powerhouse Document Model creation, we've defined the \"what\" \u2013 the structure of our data ([State Schema](02-SpecifyTheStateSchema.md)) and the ways it can be changed ([Document Operations](03-SpecifyDocumentOperations.md)). We've also seen how the [Document Model Generator](04-UseTheDocumentModelGenerator.md) translates these specifications into a coded scaffold. Now, we arrive at the \"how\": implementing **Document Reducers**.\n\nReducers are the core logic units of your document model. They are the functions that take the current state of your document and an operation (an \"action\"), and then determine the _new_ state of the document. They are the embodiment of your business rules and the engine that drives state transitions in a predictable, auditable, and immutable way.\n\n## Recap: The journey to reducer implementation\n\nBefore diving into the specifics of writing reducers, let's recall the preceding steps:\n\n1.  **State Schema Definition**: You designed the GraphQL `type` definitions for your document's data structure (e.g., `TodoListState`, `TodoItem`).\n2.  **Document Operation Specification**: You defined the GraphQL `input` types that specify the parameters for each allowed modification to your document (e.g., `AddTodoItemInput`, `UpdateTodoItemInput`). These were then associated with named operations (e.g., `ADD_TODO_ITEM`) in the Connect application.\n3.  **Code Generation**: You used `ph generate <YourModelName.phd>` to create the necessary TypeScript types, action creators, and, crucially, the skeleton file for your reducers (typically `document-models/<your-model-name>/src/reducers/todos.ts`).\n\nThis generated reducer file is our starting point. It will contain function stubs or an object structure expecting your reducer implementations, all typed according to your schema.\n\n## What is a reducer?\n\n### The core principles\n\nIn the context of Powerhouse and inspired by patterns like Redux, a reducer is a **pure function** with the following signature (conceptually):\n\n`(currentState, action) => newState`\n\nLet's break down its components and principles:\n\n- **`currentState`**: This is the complete, current state of your document model instance before the operation is applied. It's crucial to treat this as **immutable**.\n- **`action`**: This is an object describing the operation to be performed. It typically has:\n  - A `type` property: A string identifying the operation (e.g., `'ADD_TODO_ITEM'`).\n  - An `input` property (or similar, like `payload`): An object containing the data necessary for the operation, matching the GraphQL `input` type you defined (e.g., `{ text: 'Buy groceries' }` for `AddTodoItemInput`).\n- **`newState`**: The reducer must return a _new_ state object representing the state after the operation has been applied. If the operation does not result in a state change, the reducer should return the `currentState` object itself.\n\n### Key principles guiding reducer implementation:\n\n1.  **Purity**:\n    - **Deterministic**: Given the same `currentState` and `action`, a reducer must _always_ produce the same `newState`.\n    - **No Side Effects**: Reducers must not perform any side effects. This means no API calls, no direct DOM manipulation, no `Math.random()` (unless seeded deterministically for specific testing scenarios), and no modification of variables outside their own scope. Their sole job is to compute the next state.\n\n2.  **Immutability**:\n    - **Never Mutate `currentState`**: You must never directly modify the `currentState` object or any of its nested properties.\n    - **Always Return a New Object for Changes**: If the state changes, you must create and return a brand new object. If the state does not change, you return the original `currentState` object.\n    - This is fundamental to Powerhouse's event sourcing architecture, enabling time travel, efficient change detection, and a clear audit trail.\n\n    :::tip[Powerhouse uses Immer.js]\n    Powerhouse uses **Immer.js** under the hood, which means you can write code that _looks like_ it's mutating the state directly (e.g., `state.items.push(...)`), but Immer ensures it results in an immutable update. This gives you the best of both worlds: readable code and immutable state.\n    :::\n\n3.  **Single Source of Truth**: The document state managed by reducers is the single source of truth for that document instance. All UI rendering and data queries are derived from this state.\n\n4.  **Delegation to specific operation handlers**:\n    While you can write one large reducer that uses a `switch` statement or `if/else if` blocks based on `action.type`, Powerhouse's generated code typically encourages a more modular approach. You'll often implement a separate function for each operation, which are then combined into a main reducer object or map. The `ph generate` command usually sets up this structure for you. For example, in your `document-models/todo-list/src/reducers/todos.ts`, you'll find an object structure like this:\n\n    ```typescript\n    import type { TodoListTodosOperations } from \"todo-tutorial/document-models/todo-list\";\n\n    export const todoListTodosOperations: TodoListTodosOperations = {\n      addTodoItemOperation(state, action) {\n        // Your logic for ADD_TODO_ITEM\n      },\n      updateTodoItemOperation(state, action) {\n        // Your logic for UPDATE_TODO_ITEM\n      },\n      deleteTodoItemOperation(state, action) {\n        // Your logic for DELETE_TODO_ITEM\n      },\n    };\n    ```\n\n    The `TodoListTodosOperations` type is generated by Powerhouse and ensures your reducer object correctly implements all defined operations. The `state` and `action` parameters within these methods will also be strongly typed based on your schema.\n\n## Implementing reducer logic: A practical guide\n\nLet's use our familiar `TodoList` example to illustrate common patterns.\n\n### Basic implementation (matching the Manual Todo tutorial)\n\nThe basic implementation matches what you built in the Manual Todo tutorial:\n\n```typescript\nimport { generateId } from \"document-model/core\";\nimport type { TodoListTodosOperations } from \"todo-tutorial/document-models/todo-list\";\n\nexport const todoListTodosOperations: TodoListTodosOperations = {\n  addTodoItemOperation(state, action) {\n    // Generate a unique ID for the new todo item\n    const id = generateId();\n\n    // Add the new item to the state (Immer handles immutability)\n    state.items.push({ ...action.input, id, checked: false });\n  },\n\n  updateTodoItemOperation(state, action) {\n    // Find the item to update by its ID\n    const item = state.items.find((item) => item.id === action.input.id);\n\n    // Return early if item not found\n    if (!item) return;\n\n    // Update only the fields that are provided (partial update)\n    item.text = action.input.text ?? item.text;\n    item.checked = action.input.checked ?? item.checked;\n  },\n\n  deleteTodoItemOperation(state, action) {\n    // Filter out the item with the matching ID\n    state.items = state.items.filter((item) => item.id !== action.input.id);\n  },\n};\n```\n\n:::info[Key Pattern: ID Generation]\nNotice that `addTodoItemOperation` uses `generateId()` from `document-model/core` to create a unique ID. This is the recommended pattern \u2014 the ID is generated in the reducer, not passed from the UI. This ensures consistent, unique IDs across all operations.\n:::\n\n### Advanced implementation (with statistics tracking)\n\n:::info[Advanced Feature]\nThis section extends the basic reducers with statistics tracking, matching the advanced schema from the previous section. This demonstrates how to update computed/derived state alongside your primary data.\n:::\n\nFor the advanced version with `stats`, we need to update the statistics whenever items are added, updated, or deleted:\n\n```typescript\nimport { generateId } from \"document-model/core\";\nimport type { TodoListTodosOperations } from \"todo-tutorial/document-models/todo-list\";\n\nexport const todoListTodosOperations: TodoListTodosOperations = {\n  addTodoItemOperation(state, action) {\n    // Generate a unique ID for the new todo item\n    const id = generateId();\n\n    // Update statistics\n    state.stats.total += 1;\n    state.stats.unchecked += 1;\n\n    // Add the new item to the state\n    state.items.push({\n      id,\n      text: action.input.text,\n      checked: false, // New items always start as unchecked\n    });\n  },\n\n  updateTodoItemOperation(state, action) {\n    // Find the specific item we want to update\n    const item = state.items.find((item) => item.id === action.input.id);\n\n    if (!item) {\n      throw new Error(`Item with id ${action.input.id} not found`);\n    }\n\n    // Update text if provided\n    if (action.input.text !== undefined) {\n      item.text = action.input.text;\n    }\n\n    // Handle checked status changes and update stats\n    if (\n      action.input.checked !== undefined &&\n      action.input.checked !== item.checked\n    ) {\n      if (action.input.checked) {\n        state.stats.unchecked -= 1;\n        state.stats.checked += 1;\n      } else {\n        state.stats.unchecked += 1;\n        state.stats.checked -= 1;\n      }\n      item.checked = action.input.checked;\n    }\n  },\n\n  deleteTodoItemOperation(state, action) {\n    // Find the item to determine its checked status for stats\n    const item = state.items.find((item) => item.id === action.input.id);\n\n    if (item) {\n      // Update statistics\n      state.stats.total -= 1;\n      if (item.checked) {\n        state.stats.checked -= 1;\n      } else {\n        state.stats.unchecked -= 1;\n      }\n    }\n\n    // Remove the item from the list\n    state.items = state.items.filter((item) => item.id !== action.input.id);\n  },\n};\n```\n\n### Common patterns explained\n\n#### 1. Adding an item\n\n```typescript\naddTodoItemOperation(state, action) {\n  const id = generateId();  // Generate unique ID\n  state.items.push({ ...action.input, id, checked: false });\n}\n```\n\n- We use `generateId()` to create a unique identifier\n- We spread `action.input` to get the text, add the generated ID and default `checked: false`\n- With Immer, this \"mutation\" is actually immutable\n\n#### 2. Updating an item\n\n```typescript\nupdateTodoItemOperation(state, action) {\n  const item = state.items.find((item) => item.id === action.input.id);\n  if (!item) return;\n\n  item.text = action.input.text ?? item.text;\n  item.checked = action.input.checked ?? item.checked;\n}\n```\n\n- We find the item by ID\n- We use nullish coalescing (`??`) to only update fields that were provided\n- This allows partial updates (e.g., just changing `checked` without touching `text`)\n\n#### 3. Deleting an item\n\n```typescript\ndeleteTodoItemOperation(state, action) {\n  state.items = state.items.filter((item) => item.id !== action.input.id);\n}\n```\n\n- We use `filter` to create a new array without the deleted item\n- Immer handles making this immutable\n\n## Leveraging generated types\n\nAs highlighted in [Using the Document Model Generator](04-UseTheDocumentModelGenerator.md), `ph generate` produces TypeScript types for your state (e.g., `TodoListState`, `TodoItem`) and the inputs for your operations (e.g., `AddTodoItemInput`, `UpdateTodoItemInput`).\n\n**Always use these generated types in your reducer implementations!**\n\n```typescript\nimport { generateId } from \"document-model/core\";\nimport type { TodoListTodosOperations } from \"todo-tutorial/document-models/todo-list\";\n\nexport const todoListTodosOperations: TodoListTodosOperations = {\n  addTodoItemOperation(state, action) {\n    // TypeScript knows action.input has { text: string }\n    const id = generateId();\n    state.items.push({ id, text: action.input.text, checked: false });\n  },\n  // ... other reducers\n};\n```\n\nUsing these types provides:\n\n- **Compile-time safety**: Catch errors related to incorrect property names or data types before runtime.\n- **Autocompletion and IntelliSense**: Improved developer experience in your IDE.\n- **Clearer code**: Types serve as documentation for the expected data structures.\n\n## Practical implementation: Writing the `TodoList` reducers\n\nNow that you understand the principles, let's put them into practice by implementing the reducers for our `TodoList` document model.\n\n<details>\n<summary>Tutorial: Implementing the TodoList reducers</summary>\n\nThis tutorial assumes you have followed the steps in the previous chapters, especially using `ph generate TodoList.phd` to scaffold your document model's code.\n\n### Implement the operation reducers\n\nNavigate to `document-models/todo-list/src/reducers/todos.ts`. The generator will have created a skeleton file. Replace its contents with the following logic.\n\n**Basic version (without stats):**\n\n```typescript\nimport { generateId } from \"document-model/core\";\nimport type { TodoListTodosOperations } from \"todo-tutorial/document-models/todo-list\";\n\nexport const todoListTodosOperations: TodoListTodosOperations = {\n  addTodoItemOperation(state, action) {\n    const id = generateId();\n    state.items.push({ ...action.input, id, checked: false });\n  },\n\n  updateTodoItemOperation(state, action) {\n    const item = state.items.find((item) => item.id === action.input.id);\n    if (!item) return;\n\n    item.text = action.input.text ?? item.text;\n    item.checked = action.input.checked ?? item.checked;\n  },\n\n  deleteTodoItemOperation(state, action) {\n    state.items = state.items.filter((item) => item.id !== action.input.id);\n  },\n};\n```\n\n**Advanced version (with stats):**\n\n```typescript\nimport { generateId } from \"document-model/core\";\nimport type { TodoListTodosOperations } from \"todo-tutorial/document-models/todo-list\";\n\nexport const todoListTodosOperations: TodoListTodosOperations = {\n  addTodoItemOperation(state, action) {\n    const id = generateId();\n\n    state.stats.total += 1;\n    state.stats.unchecked += 1;\n\n    state.items.push({\n      id,\n      text: action.input.text,\n      checked: false,\n    });\n  },\n\n  updateTodoItemOperation(state, action) {\n    const item = state.items.find((item) => item.id === action.input.id);\n    if (!item) {\n      throw new Error(`Item with id ${action.input.id} not found`);\n    }\n\n    if (action.input.text !== undefined) {\n      item.text = action.input.text;\n    }\n\n    if (\n      action.input.checked !== undefined &&\n      action.input.checked !== item.checked\n    ) {\n      if (action.input.checked) {\n        state.stats.unchecked -= 1;\n        state.stats.checked += 1;\n      } else {\n        state.stats.unchecked += 1;\n        state.stats.checked -= 1;\n      }\n      item.checked = action.input.checked;\n    }\n  },\n\n  deleteTodoItemOperation(state, action) {\n    const item = state.items.find((item) => item.id === action.input.id);\n\n    if (item) {\n      state.stats.total -= 1;\n      if (item.checked) {\n        state.stats.checked -= 1;\n      } else {\n        state.stats.unchecked -= 1;\n      }\n    }\n\n    state.items = state.items.filter((item) => item.id !== action.input.id);\n  },\n};\n```\n\n</details>\n\n## Reducers and the event sourcing model\n\nEvery time a reducer processes an operation and returns a new state, Powerhouse records the original operation (the \"event\") in an append-only log associated with the document instance. The current state of the document is effectively a \"fold\" or \"reduction\" of all past events, applied sequentially by the reducers.\n\nThis is why purity and immutability are so critical:\n\n- **Purity** ensures that replaying the same sequence of events will always yield the exact same final state.\n- **Immutability** ensures that each event clearly defines a discrete state transition, making it easy to audit changes and understand the document's history.\n\n## Conclusion\n\nImplementing document reducers is where you breathe life into your document model's specification. By adhering to the principles of purity and immutability, and by leveraging the type safety provided by Powerhouse's code generation, you can build predictable, testable, and maintainable business logic. These reducers form the immutable backbone of your document's state management, perfectly aligning with the event sourcing architecture that underpins Powerhouse.\n\nWith your reducers implemented, your document model is now functionally complete from a data manipulation perspective. The next chapter covers how to write tests for this logic to ensure its correctness and reliability.\n",
+        "createdAt": "2026-09-02T21:33:34.161Z",
+        "createdBy": "repo-docs-sync",
+        "sourceType": "DOCUMENTATION",
+        "description": "Powerhouse v6.2.2-dev.74 (unchanged since v6.2.2-dev.47) \u2014 In our journey through Powerhouse Document Model creation, we've defined the \"what\" \u2013 the structure of our data (State Schema) and the ways\u2026",
+        "publishedAt": "2026-06-24T00:07:16.000Z"
+      },
+      "timestampUtcMs": "2026-09-02T21:33:34.161Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "",
+    "timestampUtcMs": "2026-09-02T21:33:34.163Z",
+    "action": {
+      "type": "UPGRADE_DOCUMENT",
+      "input": {
+        "model": "bai/source",
+        "toVersion": 1,
+        "documentId": "b13777ca-a7c0-46a9-a700-41e334e06719",
+        "fromVersion": 0,
+        "initialState": {
+          "auth": {
+            "grants": [],
+            "version": 0
+          },
+          "local": {},
+          "global": {
+            "title": null,
+            "status": "INBOX",
+            "content": null,
+            "createdAt": null,
+            "createdBy": null,
+            "provenance": null,
+            "sourceType": null,
+            "description": null,
+            "extractedClaims": [],
+            "extractionStats": null
+          },
+          "document": {
+            "hash": {
+              "encoding": "base64",
+              "algorithm": "sha1"
+            },
+            "version": 1
+          }
+        }
+      },
+      "timestampUtcMs": "2026-09-02T21:33:34.163Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "03oiTwSaK5FK/znmf+RZE+P/hds=",
+    "timestampUtcMs": "2026-09-02T21:33:36.329Z",
+    "action": {
+      "type": "ADD_EXTRACTED_CLAIM",
+      "input": {
+        "claimRef": "149f9e7a-c087-45f2-85c0-a7df7c785b55"
+      },
+      "timestampUtcMs": "2026-09-02T21:33:36.329Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "qRGSUflDLECwVMUA6pxYdI37YyQ=",
+    "timestampUtcMs": "2026-09-02T21:33:37.889Z",
+    "action": {
+      "type": "ADD_EXTRACTED_CLAIM",
+      "input": {
+        "claimRef": "a31f2966-dc57-423e-bb23-8176dcac81f6"
+      },
+      "timestampUtcMs": "2026-09-02T21:33:37.889Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "mh/QwPCEfm8YAAsGdYLR1DezmM0=",
+    "timestampUtcMs": "2026-09-02T21:33:39.376Z",
+    "action": {
+      "type": "ADD_EXTRACTED_CLAIM",
+      "input": {
+        "claimRef": "db144dcd-42c6-467b-a108-ddebd1d421d6"
+      },
+      "timestampUtcMs": "2026-09-02T21:33:39.376Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "ZS74BDR/xwOEhIaNZzEXlj8UvXw=",
+    "timestampUtcMs": "2026-09-02T21:33:48.413Z",
+    "action": {
+      "type": "SET_SOURCE_STATUS",
+      "input": {
+        "status": "EXTRACTED"
+      },
+      "timestampUtcMs": "2026-09-02T21:33:48.413Z"
+    }
+  }
+]

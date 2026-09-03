@@ -1,0 +1,276 @@
+[
+  {
+    "index": 0,
+    "hash": "",
+    "timestampUtcMs": "2026-08-19T11:24:31.779Z",
+    "action": {
+      "type": "CREATE_DOCUMENT",
+      "input": {
+        "meta": {},
+        "name": "An openEHR composition event dispatching a typed operation gives clinical data an attribut",
+        "slug": "",
+        "model": "bai/knowledge-note",
+        "branch": "main",
+        "signing": {
+          "nonce": "",
+          "publicKey": {},
+          "signature": "8fe00e48-6d02-4703-9011-12abc71bc379",
+          "documentType": "bai/knowledge-note",
+          "createdAtUtcIso": "2026-08-19T11:24:31.779Z"
+        },
+        "version": 0,
+        "documentId": "8fe00e48-6d02-4703-9011-12abc71bc379",
+        "protocolVersions": {
+          "base-reducer": 2
+        }
+      },
+      "timestampUtcMs": "2026-08-19T11:24:31.779Z"
+    }
+  },
+  {
+    "index": 0,
+    "hash": "sDiMo9Ik8bZsLpKgRAnehGkJ+2Q=",
+    "timestampUtcMs": "2026-08-19T11:24:31.450Z",
+    "action": {
+      "type": "SET_TITLE",
+      "input": {
+        "title": "An openEHR composition event dispatching a typed operation gives clinical data an attributed decision record",
+        "updatedAt": "2026-08-19T11:24:31.450125Z"
+      },
+      "timestampUtcMs": "2026-08-19T11:24:31.450162Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "",
+    "timestampUtcMs": "2026-08-19T11:24:31.779Z",
+    "action": {
+      "type": "UPGRADE_DOCUMENT",
+      "input": {
+        "model": "bai/knowledge-note",
+        "toVersion": 1,
+        "documentId": "8fe00e48-6d02-4703-9011-12abc71bc379",
+        "fromVersion": 0,
+        "initialState": {
+          "auth": {
+            "grants": [],
+            "version": 0
+          },
+          "local": {
+            "lastViewedAt": null,
+            "personalTags": []
+          },
+          "global": {
+            "links": [],
+            "model": null,
+            "scope": null,
+            "title": null,
+            "editor": null,
+            "inputs": [],
+            "models": [],
+            "status": "DRAFT",
+            "topics": [],
+            "content": null,
+            "context": null,
+            "modelId": null,
+            "modules": [],
+            "outputs": [],
+            "version": null,
+            "computes": null,
+            "filePath": null,
+            "noteType": null,
+            "severity": null,
+            "hooksUsed": [],
+            "rootCause": null,
+            "confidence": null,
+            "consumedBy": [],
+            "provenance": null,
+            "sourceType": null,
+            "targetType": null,
+            "cardinality": null,
+            "description": null,
+            "alternatives": [],
+            "consequences": [],
+            "errorMessage": null,
+            "relationType": null,
+            "correctPattern": null,
+            "decisionStatus": null,
+            "dispatchTargets": [],
+            "lifecycleEvents": []
+          },
+          "document": {
+            "hash": {
+              "encoding": "base64",
+              "algorithm": "sha1"
+            },
+            "version": 1
+          }
+        }
+      },
+      "timestampUtcMs": "2026-08-19T11:24:31.779Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "CyBl4xJP0sV1URoW72sW9yAAgjg=",
+    "timestampUtcMs": "2026-08-19T11:24:31.450Z",
+    "action": {
+      "type": "SET_DESCRIPTION",
+      "input": {
+        "updatedAt": "2026-08-19T11:24:31.450166Z",
+        "description": "Demo design for Better: openEHR already keeps the clinical data vendor-neutral, and the typed operation adds an attributed record of the decision captured alongside it."
+      },
+      "timestampUtcMs": "2026-08-19T11:24:31.450173Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "",
+    "timestampUtcMs": "2026-08-19T11:24:33.764Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "8fe00e48-6d02-4703-9011-12abc71bc379",
+        "targetId": "d8590b31-43d0-4b0e-865e-c686c5caf4b6",
+        "relationshipType": "DERIVED_FROM"
+      },
+      "timestampUtcMs": "2026-08-19T11:24:33.764Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "W+QQ76jxDuS2M2aUoHTp7ru8oL0=",
+    "timestampUtcMs": "2026-08-19T11:24:31.450Z",
+    "action": {
+      "type": "SET_NOTE_TYPE",
+      "input": {
+        "noteType": "PATTERN",
+        "updatedAt": "2026-08-19T11:24:31.450175Z"
+      },
+      "timestampUtcMs": "2026-08-19T11:24:31.450180Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "ZyNyEHle6LJUfvr0eu5+kzDWOII=",
+    "timestampUtcMs": "2026-08-19T11:24:31.450Z",
+    "action": {
+      "type": "SET_CONTENT",
+      "input": {
+        "content": "openEHR models clinical information as compositions, and the demo takes a composition event as its trigger: when a clinical decision is captured, a typed operation is dispatched with it. The result pairs data that is already vendor-neutral by standard with an attributed record of the decision that produced it.\n\nThe two halves answer different questions. openEHR answers where the data can live and who can read it without a vendor's permission; the typed operation answers who decided, and in what sequence. Because Better's product is built on the standard, the demo argues from inside their own thesis rather than against it, which is a materially easier conversation than proposing a replacement.\n\nThe pairing is also the commercial argument. A vendor-neutral clinical record that cannot say who accepted a finding is incomplete for audit purposes, and an attributed decision log bound to a proprietary data model would reintroduce exactly the lock-in openEHR exists to prevent. The demo is small because it changes neither side \u2014 it only connects them.\n\n---\n\n## Leads sharing this finding (1)\n\n**1 \u00b7 start here**\n- Better (ex-Marand) (SI \u00b7 150)\n\nVerbatim research text this claim was extracted from:\n\n> openEHR composition event dispatching a typed operation on clinical decision \u2014 vendor-neutral clinical data with an attributed decision record.",
+        "updatedAt": "2026-08-19T11:24:31.450182Z"
+      },
+      "timestampUtcMs": "2026-08-19T11:24:31.450187Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "+rka6lpYIAo5o6ACY1IHEY2HKW0=",
+    "timestampUtcMs": "2026-08-19T11:24:31.450Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "1279a570-0afb-4205-993d-b4caedf8da1e",
+        "name": "leads"
+      },
+      "timestampUtcMs": "2026-08-19T11:24:31.450196Z"
+    }
+  },
+  {
+    "index": 5,
+    "hash": "Va2fv05rarT8BVJukmNuS+jfnKI=",
+    "timestampUtcMs": "2026-08-19T11:24:31.450Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "0c1e9915-a4f3-4b89-b575-f56b5ae8a207",
+        "name": "demo-design"
+      },
+      "timestampUtcMs": "2026-08-19T11:24:31.450204Z"
+    }
+  },
+  {
+    "index": 6,
+    "hash": "VQv8NMrVtTpsNwLE3xlVn3eMykI=",
+    "timestampUtcMs": "2026-08-19T11:24:31.450Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "cb605a1a-d9e7-48a7-8c87-0aed95374a3e",
+        "name": "openehr"
+      },
+      "timestampUtcMs": "2026-08-19T11:24:31.450211Z"
+    }
+  },
+  {
+    "index": 7,
+    "hash": "diq8HsrhoI7uc9FHBzLuhcGGQtk=",
+    "timestampUtcMs": "2026-08-19T11:24:31.450Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "5be08468-ee2b-4e2a-91b7-cd4350f697f3",
+        "name": "healthcare"
+      },
+      "timestampUtcMs": "2026-08-19T11:24:31.450219Z"
+    }
+  },
+  {
+    "index": 8,
+    "hash": "Y/+Kewegd6LjfiS7SoMPqFrsLRQ=",
+    "timestampUtcMs": "2026-08-19T11:24:31.450Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "17f3a416-8c78-4adf-ad3b-d9c12ff49e30",
+        "name": "audit-trail"
+      },
+      "timestampUtcMs": "2026-08-19T11:24:31.450226Z"
+    }
+  },
+  {
+    "index": 9,
+    "hash": "6JvGmG0itSmX5+SmDzy36HuVHzk=",
+    "timestampUtcMs": "2026-08-19T11:24:31.862Z",
+    "action": {
+      "type": "SET_PROVENANCE",
+      "input": {
+        "author": "knowledge-agent",
+        "createdAt": "2026-08-19T11:24:31.862624Z",
+        "sessionId": null,
+        "sourceOrigin": "DERIVED"
+      },
+      "timestampUtcMs": "2026-08-19T11:24:31.862663Z"
+    }
+  },
+  {
+    "index": 10,
+    "hash": "2FNnO1zLCpaZXpd+lpYoIGr4qJY=",
+    "timestampUtcMs": "2026-08-19T11:24:33.067Z",
+    "action": {
+      "type": "SUBMIT_FOR_REVIEW",
+      "input": {
+        "id": "4bf85ae3-3914-40a5-b34a-ac2b3c98f186",
+        "actor": "knowledge-agent",
+        "comment": "Extracted from lead research; claim checked against the source record.",
+        "timestamp": "2026-08-19T11:24:33.067716Z"
+      },
+      "timestampUtcMs": "2026-08-19T11:24:33.067735Z"
+    }
+  },
+  {
+    "index": 11,
+    "hash": "H7EIYgtX+tTtF/tnIxuJH8FeQKg=",
+    "timestampUtcMs": "2026-08-19T11:24:33.216Z",
+    "action": {
+      "type": "APPROVE_NOTE",
+      "input": {
+        "id": "0cdebbe8-9156-4e81-857e-90bcb938db72",
+        "actor": "liberuum",
+        "comment": "Approved: lead corpus extraction.",
+        "timestamp": "2026-08-19T11:24:33.216126Z"
+      },
+      "timestampUtcMs": "2026-08-19T11:24:33.216145Z"
+    }
+  }
+]

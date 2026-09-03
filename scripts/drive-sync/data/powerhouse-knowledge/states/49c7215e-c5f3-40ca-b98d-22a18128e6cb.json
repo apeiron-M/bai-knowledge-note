@@ -1,0 +1,123 @@
+{
+  "links": [
+    {
+      "id": "lnk-ce850860-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "ce850860-7675-496f-93a1-c03ea25706c4",
+      "targetTitle": "Package \u203a renown \u203a COMPONENTS \u2014 Renown React Components",
+      "reason": "Extracted from packages/renown/COMPONENTS.md at v6.2.2-dev.74 \u2014 intro (components live in reactor-browser); Setup",
+      "confidence": "grounded"
+    },
+    {
+      "id": "lnk-a8d60c71-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "a8d60c71-1ba9-4c16-b7c4-75bdbed309d2",
+      "targetTitle": "sb-renown-source",
+      "reason": "The switchboard's own identity authenticates against the same base URL this builder configures",
+      "confidence": "grounded"
+    },
+    {
+      "id": "lnk-f9130651-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "f9130651-34e1-42fc-b706-8c8939a865fc",
+      "targetTitle": "Package \u203a renown \u203a README",
+      "reason": "Extracted from packages/renown/README.md at v6.2.2-dev.74 \u2014 intro; RenownBuilder and builder methods",
+      "confidence": "grounded"
+    },
+    {
+      "id": "lnk-2ae31ea4-bui",
+      "linkType": "BUILDS_ON",
+      "targetDocumentId": "2ae31ea4-b8f4-4128-8531-93b932d6b6bb",
+      "targetTitle": "renown-sdk-decentralized-identity-auth",
+      "reason": "Adds the construction surface behind the DID-based authentication that note describes, including which pieces a host can replace",
+      "confidence": "grounded"
+    },
+    {
+      "id": "lnk-4fe5345d-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "4fe5345d-698e-4432-9957-0babd6d29fed",
+      "targetTitle": "renownprovider-is-ssr-safe",
+      "reason": "RenownProvider in reactor-browser is the React wrapper this split puts outside the SDK",
+      "confidence": "grounded"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "The Renown SDK is built through a RenownBuilder whose every dependency is injectable, and its React components live in reactor-browser rather than in the SDK",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "ea6b8f22-0f1a-4569-9919-830bdd6ef236",
+      "name": "renown",
+      "topicDocumentId": null
+    },
+    {
+      "id": "11c92bd1-38f8-4439-858c-c8545c44ce6d",
+      "name": "authentication",
+      "topicDocumentId": null
+    },
+    {
+      "id": "31f1c6fe-c470-4d1a-b739-fa8ab2ad568b",
+      "name": "sdk",
+      "topicDocumentId": null
+    },
+    {
+      "id": "9447a112-397d-4a43-aa11-390ebf6c85d2",
+      "name": "builders",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "`@renown/sdk` is the core authentication SDK \u2014 credential verification, session management, cryptographic operations \u2014 and it is constructed through a builder:\n\n```ts\nconst renown = await new RenownBuilder(\"my-app\")\n  .withBaseUrl(\"https://www.renown.id\")\n  .build();\n```\n\nEvery dependency is injectable, which is what makes the SDK testable and re-hostable:\n\n- `withBaseUrl(url)` \u2014 the Renown server, default `https://www.renown.id`;\n- `withStorage(storage)` \u2014 user-data persistence, **default in-memory** (so a host that wants a session to survive a reload must supply one);\n- `withEventEmitter(emitter)` \u2014 for state changes;\n- `withCrypto(crypto)` \u2014 a pre-built crypto instance;\n- `withKeyPairStorage(storage)` \u2014 key-pair storage, **from which crypto is built** if no instance is given;\n- `withProfileFetcher(fetcher)` \u2014 a custom profile-enrichment strategy.\n\nThe division of labour with React is stated explicitly in `COMPONENTS.md`: **React components and hooks for Renown are provided by `@powerhousedao/reactor-browser`, not by `@renown/sdk` directly** \u2014 initialised with either a `<Renown appName onError>` component or the `useRenownInit` hook. So a Node or CLI consumer takes the SDK alone, and a React host takes reactor-browser, which wraps it.\n\n## Provenance\n- `packages/renown/README.md` \u2014 intro; RenownBuilder and builder methods\n- `packages/renown/COMPONENTS.md` \u2014 intro (components live in reactor-browser); Setup\n\n_Extracted from the Powerhouse repository at **v6.2.2-dev.74**._",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": "v6.2.2-dev.74",
+  "computes": null,
+  "filePath": "packages/renown/README.md",
+  "noteType": "REFERENCE",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "knowledge-agent",
+    "createdAt": "2026-09-03T07:43:46.299Z",
+    "sessionId": null,
+    "updatedAt": "2026-09-03T07:43:47.281Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "withBaseUrl, withStorage, withEventEmitter, withCrypto, withKeyPairStorage and withProfileFetcher; crypto is built from key-pair storage. Defaults are the hosted renown.id and in-memory persistence.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "237f0c51-40e7-4f33-a63b-2b816ff81802",
+      "actor": "knowledge-agent",
+      "comment": "extracted from packages/renown/README.md at v6.2.2-dev.74",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-09-03T07:43:46.763Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "9ef0ed12-6bd5-498f-b820-00710614fd19",
+      "actor": "liberuum",
+      "comment": "claim checked against the cited file at the pinned tag",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-09-03T07:43:47.281Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

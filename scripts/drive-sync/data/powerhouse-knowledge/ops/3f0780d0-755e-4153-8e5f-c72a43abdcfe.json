@@ -1,0 +1,622 @@
+[
+  {
+    "index": 0,
+    "hash": "",
+    "timestampUtcMs": "2026-09-02T22:11:41.060Z",
+    "action": {
+      "type": "CREATE_DOCUMENT",
+      "input": {
+        "meta": {},
+        "name": "sb-resolve-caller-identity",
+        "slug": "",
+        "model": "bai/knowledge-note",
+        "branch": "main",
+        "signing": {
+          "nonce": "",
+          "publicKey": {},
+          "signature": "3f0780d0-755e-4153-8e5f-c72a43abdcfe",
+          "documentType": "bai/knowledge-note",
+          "createdAtUtcIso": "2026-09-02T22:11:41.060Z"
+        },
+        "version": 0,
+        "documentId": "3f0780d0-755e-4153-8e5f-c72a43abdcfe",
+        "protocolVersions": {
+          "base-reducer": 2
+        }
+      },
+      "timestampUtcMs": "2026-09-02T22:11:41.060Z"
+    }
+  },
+  {
+    "index": 0,
+    "hash": "di9Jwuno1JstbAHpdXlEttaiYVQ=",
+    "timestampUtcMs": "2026-09-02T22:11:40.981Z",
+    "action": {
+      "type": "SET_TITLE",
+      "input": {
+        "title": "RESOLVE_CALLER_IDENTITY makes Switchboard verify the bearer and populate ctx.user without switching the policy from OPEN to ADMIN_ONLY",
+        "updatedAt": "2026-09-02T22:11:40.981Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:11:40.981Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "",
+    "timestampUtcMs": "2026-09-02T22:11:41.060Z",
+    "action": {
+      "type": "UPGRADE_DOCUMENT",
+      "input": {
+        "model": "bai/knowledge-note",
+        "toVersion": 1,
+        "documentId": "3f0780d0-755e-4153-8e5f-c72a43abdcfe",
+        "fromVersion": 0,
+        "initialState": {
+          "auth": {
+            "grants": [],
+            "version": 0
+          },
+          "local": {
+            "lastViewedAt": null,
+            "personalTags": []
+          },
+          "global": {
+            "links": [],
+            "model": null,
+            "scope": null,
+            "title": null,
+            "editor": null,
+            "inputs": [],
+            "models": [],
+            "status": "DRAFT",
+            "topics": [],
+            "content": null,
+            "context": null,
+            "modelId": null,
+            "modules": [],
+            "outputs": [],
+            "version": null,
+            "computes": null,
+            "filePath": null,
+            "noteType": null,
+            "severity": null,
+            "hooksUsed": [],
+            "rootCause": null,
+            "confidence": null,
+            "consumedBy": [],
+            "provenance": null,
+            "sourceType": null,
+            "targetType": null,
+            "cardinality": null,
+            "description": null,
+            "alternatives": [],
+            "consequences": [],
+            "errorMessage": null,
+            "relationType": null,
+            "correctPattern": null,
+            "decisionStatus": null,
+            "dispatchTargets": [],
+            "lifecycleEvents": []
+          },
+          "document": {
+            "hash": {
+              "encoding": "base64",
+              "algorithm": "sha1"
+            },
+            "version": 1
+          }
+        }
+      },
+      "timestampUtcMs": "2026-09-02T22:11:41.060Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "U/d5/zwzUeCl+IczwHjdWsjZuYY=",
+    "timestampUtcMs": "2026-09-02T22:11:40.981Z",
+    "action": {
+      "type": "SET_DESCRIPTION",
+      "input": {
+        "updatedAt": "2026-09-02T22:11:40.981Z",
+        "description": "AUTH_ENABLED both selects ADMIN_ONLY and verifies tokens; this flag separates the two. It defaults to AUTH_ENABLED, resolves an identity but enforces nothing, and an invalid token is still a 401."
+      },
+      "timestampUtcMs": "2026-09-02T22:11:40.981Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "",
+    "timestampUtcMs": "2026-09-02T22:19:24.424Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "metadata": {
+          "reason": "Extracted from apps/switchboard/Auth.md at v6.2.2-dev.74 \u2014 Basic Configuration \u203a Environment Variables Method: RESOLVE_CALLER_IDENTITY matrix",
+          "confidence": "grounded"
+        },
+        "sourceId": "3f0780d0-755e-4153-8e5f-c72a43abdcfe",
+        "targetId": "3729bcb2-e103-4c58-9152-ba3d3782bf19",
+        "relationshipType": "DERIVED_FROM"
+      },
+      "timestampUtcMs": "2026-09-02T22:19:24.424Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "2b2dwJtD4xvfHe0U3/4b3lP+DyI=",
+    "timestampUtcMs": "2026-09-02T22:11:40.981Z",
+    "action": {
+      "type": "SET_NOTE_TYPE",
+      "input": {
+        "noteType": "REFERENCE",
+        "updatedAt": "2026-09-02T22:11:40.981Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:11:40.981Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "",
+    "timestampUtcMs": "2026-09-02T22:19:26.060Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "metadata": {
+          "reason": "Adds a fourth knob to the host authorization flow: identity resolution decoupled from the OPEN/ADMIN_ONLY policy selection that AUTH_ENABLED drives",
+          "confidence": "grounded"
+        },
+        "sourceId": "3f0780d0-755e-4153-8e5f-c72a43abdcfe",
+        "targetId": "6fa0a6ea-a295-4da9-85da-1e8ba852c91a",
+        "relationshipType": "BUILDS_ON"
+      },
+      "timestampUtcMs": "2026-09-02T22:19:26.060Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "YawzQuPz5BLgVM0KcJ947OkE70A=",
+    "timestampUtcMs": "2026-09-02T22:11:40.981Z",
+    "action": {
+      "type": "SET_CONTENT",
+      "input": {
+        "content": "`AUTH_ENABLED=true` does two things: it selects the authorization policy (`ADMIN_ONLY` instead of `OPEN`) **and** it makes the middleware verify the bearer so `ctx.user` is populated. `RESOLVE_CALLER_IDENTITY` separates the second from the first:\n\n| | `AUTH_ENABLED` unset | `AUTH_ENABLED=true` |\n| --- | --- | --- |\n| `RESOLVE_CALLER_IDENTITY` unset | no user, `OPEN` | user resolved, `ADMIN_ONLY` |\n| `RESOLVE_CALLER_IDENTITY=true` | **user resolved, `OPEN`** | user resolved, `ADMIN_ONLY` |\n\nIt defaults to whatever `AUTH_ENABLED` is, so a deployment that never sets it behaves exactly as before. The bold cell is the combination `AUTH_ENABLED` alone cannot express, and the one a **custom subgraph needs when it does its own authorization**: its resolvers learn who is calling without every non-admin being locked out of the switchboard.\n\nIt *resolves* an identity and enforces nothing \u2014 a request with no token is still admitted, with no user. Verification is otherwise identical to `AUTH_ENABLED=true`, Renown credential check included, so an invalid token is still a 401. (Upstream, this landed in 6.2.2-dev.73 and dev.74 fixed a regression it introduced: with the flag on, a tokenless WebSocket subscription was refused until dev.74 admitted it when only resolving identity.)\n\n_Source: apps/switchboard/Auth.md (Powerhouse v6.2.2-dev.74)._\n\n## Provenance\n- `apps/switchboard/Auth.md` \u2014 Basic Configuration \u203a Environment Variables Method: RESOLVE_CALLER_IDENTITY matrix\n\n_Recorded from the Powerhouse repository at **v6.2.2-dev.74** during the v6.2.2-dev.74 source sync._",
+        "updatedAt": "2026-09-02T22:11:40.981Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:11:40.981Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "",
+    "timestampUtcMs": "2026-09-02T22:19:26.526Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "metadata": {
+          "reason": "A package's own subgraph is the consumer this flag exists for: it can authorize per caller while the switchboard itself stays OPEN",
+          "confidence": "grounded"
+        },
+        "sourceId": "3f0780d0-755e-4153-8e5f-c72a43abdcfe",
+        "targetId": "27438cd8-5fb0-4ed7-bcbe-665beef8a259",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-09-02T22:19:26.526Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "pgx8Rk0psFR99Enxo3pnEw61dVA=",
+    "timestampUtcMs": "2026-09-02T22:11:40.981Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "d215c74a-6bf4-4ffc-86cf-5b9e4902c42a",
+        "name": "switchboard"
+      },
+      "timestampUtcMs": "2026-09-02T22:11:40.981Z"
+    }
+  },
+  {
+    "index": 5,
+    "hash": "",
+    "timestampUtcMs": "2026-09-02T22:19:27.019Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "metadata": {
+          "reason": "The identity it resolves goes through the same credential re-check, so an invalid token remains a 401",
+          "confidence": "grounded"
+        },
+        "sourceId": "3f0780d0-755e-4153-8e5f-c72a43abdcfe",
+        "targetId": "c281c173-8126-4ade-9c50-240e30eaff23",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-09-02T22:19:27.019Z"
+    }
+  },
+  {
+    "index": 5,
+    "hash": "Dkj7zlc1in3x1xfj4Y8phZuUAeY=",
+    "timestampUtcMs": "2026-09-02T22:11:40.981Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "dd25399b-c5f2-469f-998c-f152982261c1",
+        "name": "authentication"
+      },
+      "timestampUtcMs": "2026-09-02T22:11:40.981Z"
+    }
+  },
+  {
+    "index": 6,
+    "hash": "",
+    "timestampUtcMs": "2026-09-02T22:23:26.786Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "metadata": {
+          "reason": "Extracted from apps/switchboard/Auth.md at v6.2.2-dev.74 \u2014 Basic Configuration \u203a Environment Variables Method: RESOLVE_CALLER_IDENTITY matrix",
+          "confidence": "grounded"
+        },
+        "sourceId": "3f0780d0-755e-4153-8e5f-c72a43abdcfe",
+        "targetId": "3729bcb2-e103-4c58-9152-ba3d3782bf19",
+        "relationshipType": "DERIVED_FROM"
+      },
+      "timestampUtcMs": "2026-09-02T22:23:26.786Z"
+    }
+  },
+  {
+    "index": 6,
+    "hash": "hIB0FJsS5j9jkT3TM8yMIFcoXew=",
+    "timestampUtcMs": "2026-09-02T22:11:40.981Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "7d9b44a8-df82-41a6-b88c-90f9e402ad00",
+        "name": "configuration"
+      },
+      "timestampUtcMs": "2026-09-02T22:11:40.981Z"
+    }
+  },
+  {
+    "index": 7,
+    "hash": "",
+    "timestampUtcMs": "2026-09-02T22:23:27.425Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "metadata": {
+          "reason": "Adds a fourth knob to the host authorization flow: identity resolution decoupled from the OPEN/ADMIN_ONLY policy selection that AUTH_ENABLED drives",
+          "confidence": "grounded"
+        },
+        "sourceId": "3f0780d0-755e-4153-8e5f-c72a43abdcfe",
+        "targetId": "6fa0a6ea-a295-4da9-85da-1e8ba852c91a",
+        "relationshipType": "BUILDS_ON"
+      },
+      "timestampUtcMs": "2026-09-02T22:23:27.425Z"
+    }
+  },
+  {
+    "index": 7,
+    "hash": "soIl1MNiL4hFH1ZoRSwkAu2SZ5g=",
+    "timestampUtcMs": "2026-09-02T22:11:40.981Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "796f8178-eef7-484d-905d-4a5320950122",
+        "name": "subgraphs"
+      },
+      "timestampUtcMs": "2026-09-02T22:11:40.981Z"
+    }
+  },
+  {
+    "index": 8,
+    "hash": "",
+    "timestampUtcMs": "2026-09-02T22:23:27.910Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "metadata": {
+          "reason": "A package's own subgraph is the consumer this flag exists for: it can authorize per caller while the switchboard itself stays OPEN",
+          "confidence": "grounded"
+        },
+        "sourceId": "3f0780d0-755e-4153-8e5f-c72a43abdcfe",
+        "targetId": "27438cd8-5fb0-4ed7-bcbe-665beef8a259",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-09-02T22:23:27.910Z"
+    }
+  },
+  {
+    "index": 8,
+    "hash": "Td/oOioNTaZYsFIeA7qupNNQU1w=",
+    "timestampUtcMs": "2026-09-02T22:11:40.981Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "version",
+        "value": "v6.2.2-dev.74",
+        "updatedAt": "2026-09-02T22:11:40.981Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:11:40.981Z"
+    }
+  },
+  {
+    "index": 9,
+    "hash": "",
+    "timestampUtcMs": "2026-09-02T22:23:28.425Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "metadata": {
+          "reason": "The identity it resolves goes through the same credential re-check, so an invalid token remains a 401",
+          "confidence": "grounded"
+        },
+        "sourceId": "3f0780d0-755e-4153-8e5f-c72a43abdcfe",
+        "targetId": "c281c173-8126-4ade-9c50-240e30eaff23",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-09-02T22:23:28.425Z"
+    }
+  },
+  {
+    "index": 9,
+    "hash": "DZ+jMURX0+JVSFy/13mKx1uDJCA=",
+    "timestampUtcMs": "2026-09-02T22:11:40.981Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "filePath",
+        "value": "apps/switchboard/Auth.md",
+        "updatedAt": "2026-09-02T22:11:40.981Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:11:40.981Z"
+    }
+  },
+  {
+    "index": 10,
+    "hash": "FvJqpAhata9tHkx+/IDQH4DT6PA=",
+    "timestampUtcMs": "2026-09-02T22:11:40.981Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "confidence",
+        "value": "grounded",
+        "updatedAt": "2026-09-02T22:11:40.981Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:11:40.981Z"
+    }
+  },
+  {
+    "index": 11,
+    "hash": "IYJCPAAxFtZfyi+jKbEn2BM+png=",
+    "timestampUtcMs": "2026-09-02T22:11:43.571Z",
+    "action": {
+      "type": "SET_PROVENANCE",
+      "input": {
+        "author": "knowledge-agent",
+        "createdAt": "2026-09-02T22:11:43.571Z",
+        "sourceOrigin": "DERIVED"
+      },
+      "timestampUtcMs": "2026-09-02T22:11:43.571Z"
+    }
+  },
+  {
+    "index": 12,
+    "hash": "w/z9XICk/aw8c+ZTgh/myVbTNes=",
+    "timestampUtcMs": "2026-09-02T22:11:44.174Z",
+    "action": {
+      "type": "SUBMIT_FOR_REVIEW",
+      "input": {
+        "id": "4e3298f8-182e-4a9d-adec-ab66da53ca84",
+        "actor": "knowledge-agent",
+        "comment": "extracted from the Powerhouse repository at v6.2.2-dev.74",
+        "timestamp": "2026-09-02T22:11:44.174Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:11:44.174Z"
+    }
+  },
+  {
+    "index": 13,
+    "hash": "syW1eZ7Ev5q/1Yqe94oNalXSuL0=",
+    "timestampUtcMs": "2026-09-02T22:11:44.704Z",
+    "action": {
+      "type": "APPROVE_NOTE",
+      "input": {
+        "id": "7c7067d7-6093-45f3-acf3-af5004fb8558",
+        "actor": "liberuum",
+        "comment": "claim checked against the cited repository file at the pinned tag",
+        "timestamp": "2026-09-02T22:11:44.704Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:11:44.704Z"
+    }
+  },
+  {
+    "index": 14,
+    "hash": "MBgB2Offyw0KmZOqAki9doI6xQM=",
+    "timestampUtcMs": "2026-09-02T22:16:06.502Z",
+    "action": {
+      "type": "SET_TITLE",
+      "input": {
+        "title": "RESOLVE_CALLER_IDENTITY makes Switchboard verify the bearer and populate ctx.user without switching the policy from OPEN to ADMIN_ONLY",
+        "updatedAt": "2026-09-02T22:16:06.502Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:16:06.502Z"
+    }
+  },
+  {
+    "index": 15,
+    "hash": "MBgB2Offyw0KmZOqAki9doI6xQM=",
+    "timestampUtcMs": "2026-09-02T22:16:06.502Z",
+    "action": {
+      "type": "SET_DESCRIPTION",
+      "input": {
+        "updatedAt": "2026-09-02T22:16:06.502Z",
+        "description": "AUTH_ENABLED both selects ADMIN_ONLY and verifies tokens; this flag separates the two. It defaults to AUTH_ENABLED, resolves an identity but enforces nothing, and an invalid token is still a 401."
+      },
+      "timestampUtcMs": "2026-09-02T22:16:06.502Z"
+    }
+  },
+  {
+    "index": 16,
+    "hash": "MBgB2Offyw0KmZOqAki9doI6xQM=",
+    "timestampUtcMs": "2026-09-02T22:16:06.502Z",
+    "action": {
+      "type": "SET_NOTE_TYPE",
+      "input": {
+        "noteType": "REFERENCE",
+        "updatedAt": "2026-09-02T22:16:06.502Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:16:06.502Z"
+    }
+  },
+  {
+    "index": 17,
+    "hash": "MBgB2Offyw0KmZOqAki9doI6xQM=",
+    "timestampUtcMs": "2026-09-02T22:16:06.502Z",
+    "action": {
+      "type": "SET_CONTENT",
+      "input": {
+        "content": "`AUTH_ENABLED=true` does two things: it selects the authorization policy (`ADMIN_ONLY` instead of `OPEN`) **and** it makes the middleware verify the bearer so `ctx.user` is populated. `RESOLVE_CALLER_IDENTITY` separates the second from the first:\n\n| | `AUTH_ENABLED` unset | `AUTH_ENABLED=true` |\n| --- | --- | --- |\n| `RESOLVE_CALLER_IDENTITY` unset | no user, `OPEN` | user resolved, `ADMIN_ONLY` |\n| `RESOLVE_CALLER_IDENTITY=true` | **user resolved, `OPEN`** | user resolved, `ADMIN_ONLY` |\n\nIt defaults to whatever `AUTH_ENABLED` is, so a deployment that never sets it behaves exactly as before. The bold cell is the combination `AUTH_ENABLED` alone cannot express, and the one a **custom subgraph needs when it does its own authorization**: its resolvers learn who is calling without every non-admin being locked out of the switchboard.\n\nIt *resolves* an identity and enforces nothing \u2014 a request with no token is still admitted, with no user. Verification is otherwise identical to `AUTH_ENABLED=true`, Renown credential check included, so an invalid token is still a 401. (Upstream, this landed in 6.2.2-dev.73 and dev.74 fixed a regression it introduced: with the flag on, a tokenless WebSocket subscription was refused until dev.74 admitted it when only resolving identity.)\n\n_Source: apps/switchboard/Auth.md (Powerhouse v6.2.2-dev.74)._\n\n## Provenance\n- `apps/switchboard/Auth.md` \u2014 Basic Configuration \u203a Environment Variables Method: RESOLVE_CALLER_IDENTITY matrix\n\n_Recorded from the Powerhouse repository at **v6.2.2-dev.74** during the v6.2.2-dev.74 source sync._",
+        "updatedAt": "2026-09-02T22:16:06.502Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:16:06.502Z"
+    }
+  },
+  {
+    "index": 18,
+    "hash": "MBgB2Offyw0KmZOqAki9doI6xQM=",
+    "timestampUtcMs": "2026-09-02T22:16:06.502Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "version",
+        "value": "v6.2.2-dev.74",
+        "updatedAt": "2026-09-02T22:16:06.502Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:16:06.502Z"
+    }
+  },
+  {
+    "index": 19,
+    "hash": "MBgB2Offyw0KmZOqAki9doI6xQM=",
+    "timestampUtcMs": "2026-09-02T22:16:06.502Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "filePath",
+        "value": "apps/switchboard/Auth.md",
+        "updatedAt": "2026-09-02T22:16:06.502Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:16:06.502Z"
+    }
+  },
+  {
+    "index": 20,
+    "hash": "MBgB2Offyw0KmZOqAki9doI6xQM=",
+    "timestampUtcMs": "2026-09-02T22:16:06.502Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "confidence",
+        "value": "grounded",
+        "updatedAt": "2026-09-02T22:16:06.502Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:16:06.502Z"
+    }
+  },
+  {
+    "index": 21,
+    "hash": "1pePecZpoyGPi4D/7VuLWmqNlZk=",
+    "timestampUtcMs": "2026-09-02T22:20:42.849Z",
+    "action": {
+      "type": "SET_TITLE",
+      "input": {
+        "title": "RESOLVE_CALLER_IDENTITY makes Switchboard verify the bearer and populate ctx.user without switching the policy from OPEN to ADMIN_ONLY",
+        "updatedAt": "2026-09-02T22:20:42.849Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:20:42.849Z"
+    }
+  },
+  {
+    "index": 22,
+    "hash": "1pePecZpoyGPi4D/7VuLWmqNlZk=",
+    "timestampUtcMs": "2026-09-02T22:20:42.849Z",
+    "action": {
+      "type": "SET_DESCRIPTION",
+      "input": {
+        "updatedAt": "2026-09-02T22:20:42.849Z",
+        "description": "AUTH_ENABLED both selects ADMIN_ONLY and verifies tokens; this flag separates the two. It defaults to AUTH_ENABLED, resolves an identity but enforces nothing, and an invalid token is still a 401."
+      },
+      "timestampUtcMs": "2026-09-02T22:20:42.849Z"
+    }
+  },
+  {
+    "index": 23,
+    "hash": "1pePecZpoyGPi4D/7VuLWmqNlZk=",
+    "timestampUtcMs": "2026-09-02T22:20:42.849Z",
+    "action": {
+      "type": "SET_NOTE_TYPE",
+      "input": {
+        "noteType": "REFERENCE",
+        "updatedAt": "2026-09-02T22:20:42.849Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:20:42.849Z"
+    }
+  },
+  {
+    "index": 24,
+    "hash": "1pePecZpoyGPi4D/7VuLWmqNlZk=",
+    "timestampUtcMs": "2026-09-02T22:20:42.849Z",
+    "action": {
+      "type": "SET_CONTENT",
+      "input": {
+        "content": "`AUTH_ENABLED=true` does two things: it selects the authorization policy (`ADMIN_ONLY` instead of `OPEN`) **and** it makes the middleware verify the bearer so `ctx.user` is populated. `RESOLVE_CALLER_IDENTITY` separates the second from the first:\n\n| | `AUTH_ENABLED` unset | `AUTH_ENABLED=true` |\n| --- | --- | --- |\n| `RESOLVE_CALLER_IDENTITY` unset | no user, `OPEN` | user resolved, `ADMIN_ONLY` |\n| `RESOLVE_CALLER_IDENTITY=true` | **user resolved, `OPEN`** | user resolved, `ADMIN_ONLY` |\n\nIt defaults to whatever `AUTH_ENABLED` is, so a deployment that never sets it behaves exactly as before. The bold cell is the combination `AUTH_ENABLED` alone cannot express, and the one a **custom subgraph needs when it does its own authorization**: its resolvers learn who is calling without every non-admin being locked out of the switchboard.\n\nIt *resolves* an identity and enforces nothing \u2014 a request with no token is still admitted, with no user. Verification is otherwise identical to `AUTH_ENABLED=true`, Renown credential check included, so an invalid token is still a 401. (Upstream, this landed in 6.2.2-dev.73 and dev.74 fixed a regression it introduced: with the flag on, a tokenless WebSocket subscription was refused until dev.74 admitted it when only resolving identity.)\n\n_Source: apps/switchboard/Auth.md (Powerhouse v6.2.2-dev.74)._\n\n## Provenance\n- `apps/switchboard/Auth.md` \u2014 Basic Configuration \u203a Environment Variables Method: RESOLVE_CALLER_IDENTITY matrix\n\n_Recorded from the Powerhouse repository at **v6.2.2-dev.74** during the v6.2.2-dev.74 source sync._",
+        "updatedAt": "2026-09-02T22:20:42.849Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:20:42.849Z"
+    }
+  },
+  {
+    "index": 25,
+    "hash": "1pePecZpoyGPi4D/7VuLWmqNlZk=",
+    "timestampUtcMs": "2026-09-02T22:20:42.849Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "version",
+        "value": "v6.2.2-dev.74",
+        "updatedAt": "2026-09-02T22:20:42.849Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:20:42.849Z"
+    }
+  },
+  {
+    "index": 26,
+    "hash": "1pePecZpoyGPi4D/7VuLWmqNlZk=",
+    "timestampUtcMs": "2026-09-02T22:20:42.849Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "filePath",
+        "value": "apps/switchboard/Auth.md",
+        "updatedAt": "2026-09-02T22:20:42.849Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:20:42.849Z"
+    }
+  },
+  {
+    "index": 27,
+    "hash": "1pePecZpoyGPi4D/7VuLWmqNlZk=",
+    "timestampUtcMs": "2026-09-02T22:20:42.849Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "confidence",
+        "value": "grounded",
+        "updatedAt": "2026-09-02T22:20:42.849Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:20:42.849Z"
+    }
+  }
+]

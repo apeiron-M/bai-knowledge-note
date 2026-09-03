@@ -1,0 +1,500 @@
+[
+  {
+    "index": 0,
+    "hash": "",
+    "timestampUtcMs": "2026-09-03T07:18:04.805Z",
+    "action": {
+      "type": "CREATE_DOCUMENT",
+      "input": {
+        "meta": {},
+        "name": "op-stored-per-triple",
+        "slug": "",
+        "model": "bai/knowledge-note",
+        "branch": "main",
+        "signing": {
+          "nonce": "",
+          "publicKey": {},
+          "signature": "0ef319a9-520b-4759-b30b-a08146b567a9",
+          "documentType": "bai/knowledge-note",
+          "createdAtUtcIso": "2026-09-03T07:18:04.805Z"
+        },
+        "version": 0,
+        "documentId": "0ef319a9-520b-4759-b30b-a08146b567a9",
+        "protocolVersions": {
+          "base-reducer": 2
+        }
+      },
+      "timestampUtcMs": "2026-09-03T07:18:04.805Z"
+    }
+  },
+  {
+    "index": 0,
+    "hash": "jrWpYkhixYELxqfkOYjoNO0xKco=",
+    "timestampUtcMs": "2026-09-03T07:18:06.261Z",
+    "action": {
+      "type": "SET_TITLE",
+      "input": {
+        "title": "Operations are stored per (documentId, scope, branch) triple, and scope and branch live in OperationContext rather than on the operation",
+        "updatedAt": "2026-09-03T07:18:06.253Z"
+      },
+      "timestampUtcMs": "2026-09-03T07:18:06.261Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "",
+    "timestampUtcMs": "2026-09-03T07:18:04.805Z",
+    "action": {
+      "type": "UPGRADE_DOCUMENT",
+      "input": {
+        "model": "bai/knowledge-note",
+        "toVersion": 1,
+        "documentId": "0ef319a9-520b-4759-b30b-a08146b567a9",
+        "fromVersion": 0,
+        "initialState": {
+          "auth": {
+            "grants": [],
+            "version": 0
+          },
+          "local": {
+            "lastViewedAt": null,
+            "personalTags": []
+          },
+          "global": {
+            "links": [],
+            "model": null,
+            "scope": null,
+            "title": null,
+            "editor": null,
+            "inputs": [],
+            "models": [],
+            "status": "DRAFT",
+            "topics": [],
+            "content": null,
+            "context": null,
+            "modelId": null,
+            "modules": [],
+            "outputs": [],
+            "version": null,
+            "computes": null,
+            "filePath": null,
+            "noteType": null,
+            "severity": null,
+            "hooksUsed": [],
+            "rootCause": null,
+            "confidence": null,
+            "consumedBy": [],
+            "provenance": null,
+            "sourceType": null,
+            "targetType": null,
+            "cardinality": null,
+            "description": null,
+            "alternatives": [],
+            "consequences": [],
+            "errorMessage": null,
+            "relationType": null,
+            "correctPattern": null,
+            "decisionStatus": null,
+            "dispatchTargets": [],
+            "lifecycleEvents": []
+          },
+          "document": {
+            "hash": {
+              "encoding": "base64",
+              "algorithm": "sha1"
+            },
+            "version": 1
+          }
+        }
+      },
+      "timestampUtcMs": "2026-09-03T07:18:04.805Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "ObxGVTDBy8jRWlI5A8N5Oj8+Af4=",
+    "timestampUtcMs": "2026-09-03T07:18:06.261Z",
+    "action": {
+      "type": "SET_DESCRIPTION",
+      "input": {
+        "updatedAt": "2026-09-03T07:18:06.260Z",
+        "description": "An Operation carries id, index, skip, timestampUtcMs, hash, optional error and resultingState, plus its action. Each triple keeps an independent sequence, so scopes advance separately on one document."
+      },
+      "timestampUtcMs": "2026-09-03T07:18:06.261Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "",
+    "timestampUtcMs": "2026-09-03T07:20:44.288Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "metadata": {
+          "reason": "Extracted from packages/reactor/docs/ARCHITECTURE.md at v6.2.2-dev.74 \u2014 Core Concepts \u203a Operation and Scope",
+          "confidence": "grounded"
+        },
+        "sourceId": "0ef319a9-520b-4759-b30b-a08146b567a9",
+        "targetId": "e4ef060b-4d61-41b4-95bd-2f562eea3cfa",
+        "relationshipType": "DERIVED_FROM"
+      },
+      "timestampUtcMs": "2026-09-03T07:20:44.288Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "B1AsOxMvo9Ce832/esbvI2K35mM=",
+    "timestampUtcMs": "2026-09-03T07:18:06.261Z",
+    "action": {
+      "type": "SET_NOTE_TYPE",
+      "input": {
+        "noteType": "ARCHITECTURE",
+        "updatedAt": "2026-09-03T07:18:06.260Z"
+      },
+      "timestampUtcMs": "2026-09-03T07:18:06.261Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "",
+    "timestampUtcMs": "2026-09-03T07:20:44.727Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "metadata": {
+          "reason": "Gives the storage-level reason the global and local streams are independent: the sequence key is the (documentId, scope, branch) triple, so index is only meaningful within a scope",
+          "confidence": "grounded"
+        },
+        "sourceId": "0ef319a9-520b-4759-b30b-a08146b567a9",
+        "targetId": "3485a9d2-df0b-4265-8e7d-5b277a937bf0",
+        "relationshipType": "BUILDS_ON"
+      },
+      "timestampUtcMs": "2026-09-03T07:20:44.727Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "nJBBWLMo5NnYwhHK8P8CRz/Jvc8=",
+    "timestampUtcMs": "2026-09-03T07:18:06.261Z",
+    "action": {
+      "type": "SET_CONTENT",
+      "input": {
+        "content": "The reactor's unit of storage is not the document \u2014 it is the `(documentId, scope, branch)` triple. Each triple maintains its own operation sequence, which is what lets a private draft in `local` and published content in `global` advance independently on the same document.\n\nThe operation itself is deliberately narrow:\n\n```ts\ntype Operation = {\n  id: string;              // stable derived operation id\n  index: number;           // sequential index WITHIN the scope\n  skip: number;            // skip count for reshuffle/undo\n  timestampUtcMs: string;\n  hash: string;            // content hash for verification\n  error?: string;          // message from a failed action\n  resultingState?: string; // serialized state after applying\n  action: Action;\n};\n```\n\nNote what is absent: **scope and branch are not fields on the operation.** They are carried in `OperationContext` alongside it. So `index` only means anything relative to a scope, and an operation moved between contexts would be meaningless \u2014 which is why the reactor always passes operations as `OperationWithContext`.\n\nFour scopes are recognised by convention: `global` (shared state), `local` (per-user state such as preferences), `document` (system operations \u2014 `CREATE_DOCUMENT`, `DELETE_DOCUMENT`, `UPGRADE_DOCUMENT`, relationships), and any custom scope an application defines.\n\n## Provenance\n- `packages/reactor/docs/ARCHITECTURE.md` \u2014 Core Concepts \u203a Operation and Scope\n\n_Extracted from the Powerhouse repository at **v6.2.2-dev.74**._",
+        "updatedAt": "2026-09-03T07:18:06.260Z"
+      },
+      "timestampUtcMs": "2026-09-03T07:18:06.261Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "",
+    "timestampUtcMs": "2026-09-03T07:20:45.239Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "metadata": {
+          "reason": "Because scope and branch are not on the operation, every consumer receives the operation wrapped in the context this note's companion describes",
+          "confidence": "grounded"
+        },
+        "sourceId": "0ef319a9-520b-4759-b30b-a08146b567a9",
+        "targetId": "14d47019-4ebc-4d7d-acfd-352b344a291f",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-09-03T07:20:45.239Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "UNSzUR3DOfccXk1Bd0xdKB1Yjas=",
+    "timestampUtcMs": "2026-09-03T07:18:06.261Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "c190a114-bddf-4eec-a278-dfe10e37514a",
+        "name": "reactor"
+      },
+      "timestampUtcMs": "2026-09-03T07:18:06.261Z"
+    }
+  },
+  {
+    "index": 5,
+    "hash": "",
+    "timestampUtcMs": "2026-09-03T07:20:45.735Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "metadata": {
+          "reason": "The skip field named in this shape is the reshuffle/undo mechanism that note explains",
+          "confidence": "grounded"
+        },
+        "sourceId": "0ef319a9-520b-4759-b30b-a08146b567a9",
+        "targetId": "c12e6c2c-a727-4dbe-a6f0-65802b70c94b",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-09-03T07:20:45.735Z"
+    }
+  },
+  {
+    "index": 5,
+    "hash": "TY3Ea6YfQ78m+8rQSYEwlIiOT7A=",
+    "timestampUtcMs": "2026-09-03T07:18:06.261Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "39e32990-e4dc-42cd-a067-ed0a15d9b21f",
+        "name": "operations"
+      },
+      "timestampUtcMs": "2026-09-03T07:18:06.261Z"
+    }
+  },
+  {
+    "index": 6,
+    "hash": "",
+    "timestampUtcMs": "2026-09-03T07:22:37.971Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "metadata": {
+          "reason": "Extracted from packages/reactor/docs/ARCHITECTURE.md at v6.2.2-dev.74 \u2014 Core Concepts \u203a Operation and Scope",
+          "confidence": "grounded"
+        },
+        "sourceId": "0ef319a9-520b-4759-b30b-a08146b567a9",
+        "targetId": "e4ef060b-4d61-41b4-95bd-2f562eea3cfa",
+        "relationshipType": "DERIVED_FROM"
+      },
+      "timestampUtcMs": "2026-09-03T07:22:37.971Z"
+    }
+  },
+  {
+    "index": 6,
+    "hash": "yCx3QwuRKe9O1zLtVGRQdhFtdbM=",
+    "timestampUtcMs": "2026-09-03T07:18:06.261Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "f0c59370-5502-4863-b6e1-6ebda1d2c7e9",
+        "name": "scopes"
+      },
+      "timestampUtcMs": "2026-09-03T07:18:06.261Z"
+    }
+  },
+  {
+    "index": 7,
+    "hash": "",
+    "timestampUtcMs": "2026-09-03T07:22:38.422Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "metadata": {
+          "reason": "Gives the storage-level reason the global and local streams are independent: the sequence key is the (documentId, scope, branch) triple, so index is only meaningful within a scope",
+          "confidence": "grounded"
+        },
+        "sourceId": "0ef319a9-520b-4759-b30b-a08146b567a9",
+        "targetId": "3485a9d2-df0b-4265-8e7d-5b277a937bf0",
+        "relationshipType": "BUILDS_ON"
+      },
+      "timestampUtcMs": "2026-09-03T07:22:38.422Z"
+    }
+  },
+  {
+    "index": 7,
+    "hash": "KGJrNELi6YxpH4QQQuNvsCN8hV0=",
+    "timestampUtcMs": "2026-09-03T07:18:06.261Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "6ef7d30f-12c1-446f-bb8f-5e196356cb57",
+        "name": "event-sourcing"
+      },
+      "timestampUtcMs": "2026-09-03T07:18:06.261Z"
+    }
+  },
+  {
+    "index": 8,
+    "hash": "",
+    "timestampUtcMs": "2026-09-03T07:22:38.884Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "metadata": {
+          "reason": "Because scope and branch are not on the operation, every consumer receives the operation wrapped in the context this note's companion describes",
+          "confidence": "grounded"
+        },
+        "sourceId": "0ef319a9-520b-4759-b30b-a08146b567a9",
+        "targetId": "14d47019-4ebc-4d7d-acfd-352b344a291f",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-09-03T07:22:38.884Z"
+    }
+  },
+  {
+    "index": 8,
+    "hash": "Jg+CpF/kyeOPtHC/MJKtesUiCPg=",
+    "timestampUtcMs": "2026-09-03T07:18:06.261Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "version",
+        "value": "v6.2.2-dev.74",
+        "updatedAt": "2026-09-03T07:18:06.261Z"
+      },
+      "timestampUtcMs": "2026-09-03T07:18:06.261Z"
+    }
+  },
+  {
+    "index": 9,
+    "hash": "",
+    "timestampUtcMs": "2026-09-03T07:22:39.352Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "metadata": {
+          "reason": "The skip field named in this shape is the reshuffle/undo mechanism that note explains",
+          "confidence": "grounded"
+        },
+        "sourceId": "0ef319a9-520b-4759-b30b-a08146b567a9",
+        "targetId": "c12e6c2c-a727-4dbe-a6f0-65802b70c94b",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-09-03T07:22:39.352Z"
+    }
+  },
+  {
+    "index": 9,
+    "hash": "KTyvP0NRCKamwUsFhwpmsJNBnuQ=",
+    "timestampUtcMs": "2026-09-03T07:18:06.261Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "filePath",
+        "value": "packages/reactor/docs/ARCHITECTURE.md",
+        "updatedAt": "2026-09-03T07:18:06.261Z"
+      },
+      "timestampUtcMs": "2026-09-03T07:18:06.261Z"
+    }
+  },
+  {
+    "index": 10,
+    "hash": "J6cdIFyQTK5lvjO+5E5aUgs4iws=",
+    "timestampUtcMs": "2026-09-03T07:18:08.961Z",
+    "action": {
+      "type": "SET_PROVENANCE",
+      "input": {
+        "author": "knowledge-agent",
+        "createdAt": "2026-09-03T07:18:08.961Z",
+        "sourceOrigin": "DERIVED"
+      },
+      "timestampUtcMs": "2026-09-03T07:18:08.961Z"
+    }
+  },
+  {
+    "index": 11,
+    "hash": "UoLYG9B+JErUQrbMeY2WcAsEuww=",
+    "timestampUtcMs": "2026-09-03T07:18:09.532Z",
+    "action": {
+      "type": "SUBMIT_FOR_REVIEW",
+      "input": {
+        "id": "54752884-1598-4f84-b951-cc3516319bf8",
+        "actor": "knowledge-agent",
+        "comment": "extracted from packages/reactor/docs/ARCHITECTURE.md at v6.2.2-dev.74",
+        "timestamp": "2026-09-03T07:18:09.532Z"
+      },
+      "timestampUtcMs": "2026-09-03T07:18:09.532Z"
+    }
+  },
+  {
+    "index": 12,
+    "hash": "+F5vQ6BLhWd7A1gNQH9/YF1G0TM=",
+    "timestampUtcMs": "2026-09-03T07:18:10.061Z",
+    "action": {
+      "type": "APPROVE_NOTE",
+      "input": {
+        "id": "fed6f702-55b1-4d2e-8242-92a7272daedd",
+        "actor": "liberuum",
+        "comment": "claim checked against the cited file at the pinned tag",
+        "timestamp": "2026-09-03T07:18:10.061Z"
+      },
+      "timestampUtcMs": "2026-09-03T07:18:10.061Z"
+    }
+  },
+  {
+    "index": 13,
+    "hash": "5c6mcYU6HvWeIL9JAZ764BMtnOk=",
+    "timestampUtcMs": "2026-09-03T07:22:16.814Z",
+    "action": {
+      "type": "SET_TITLE",
+      "input": {
+        "title": "Operations are stored per (documentId, scope, branch) triple, and scope and branch live in OperationContext rather than on the operation",
+        "updatedAt": "2026-09-03T07:22:16.814Z"
+      },
+      "timestampUtcMs": "2026-09-03T07:22:16.814Z"
+    }
+  },
+  {
+    "index": 14,
+    "hash": "5c6mcYU6HvWeIL9JAZ764BMtnOk=",
+    "timestampUtcMs": "2026-09-03T07:22:16.814Z",
+    "action": {
+      "type": "SET_DESCRIPTION",
+      "input": {
+        "updatedAt": "2026-09-03T07:22:16.814Z",
+        "description": "An Operation carries id, index, skip, timestampUtcMs, hash, optional error and resultingState, plus its action. Each triple keeps an independent sequence, so scopes advance separately on one document."
+      },
+      "timestampUtcMs": "2026-09-03T07:22:16.814Z"
+    }
+  },
+  {
+    "index": 15,
+    "hash": "5c6mcYU6HvWeIL9JAZ764BMtnOk=",
+    "timestampUtcMs": "2026-09-03T07:22:16.814Z",
+    "action": {
+      "type": "SET_NOTE_TYPE",
+      "input": {
+        "noteType": "ARCHITECTURE",
+        "updatedAt": "2026-09-03T07:22:16.814Z"
+      },
+      "timestampUtcMs": "2026-09-03T07:22:16.814Z"
+    }
+  },
+  {
+    "index": 16,
+    "hash": "5c6mcYU6HvWeIL9JAZ764BMtnOk=",
+    "timestampUtcMs": "2026-09-03T07:22:16.814Z",
+    "action": {
+      "type": "SET_CONTENT",
+      "input": {
+        "content": "The reactor's unit of storage is not the document \u2014 it is the `(documentId, scope, branch)` triple. Each triple maintains its own operation sequence, which is what lets a private draft in `local` and published content in `global` advance independently on the same document.\n\nThe operation itself is deliberately narrow:\n\n```ts\ntype Operation = {\n  id: string;              // stable derived operation id\n  index: number;           // sequential index WITHIN the scope\n  skip: number;            // skip count for reshuffle/undo\n  timestampUtcMs: string;\n  hash: string;            // content hash for verification\n  error?: string;          // message from a failed action\n  resultingState?: string; // serialized state after applying\n  action: Action;\n};\n```\n\nNote what is absent: **scope and branch are not fields on the operation.** They are carried in `OperationContext` alongside it. So `index` only means anything relative to a scope, and an operation moved between contexts would be meaningless \u2014 which is why the reactor always passes operations as `OperationWithContext`.\n\nFour scopes are recognised by convention: `global` (shared state), `local` (per-user state such as preferences), `document` (system operations \u2014 `CREATE_DOCUMENT`, `DELETE_DOCUMENT`, `UPGRADE_DOCUMENT`, relationships), and any custom scope an application defines.\n\n## Provenance\n- `packages/reactor/docs/ARCHITECTURE.md` \u2014 Core Concepts \u203a Operation and Scope\n\n_Extracted from the Powerhouse repository at **v6.2.2-dev.74**._",
+        "updatedAt": "2026-09-03T07:22:16.814Z"
+      },
+      "timestampUtcMs": "2026-09-03T07:22:16.814Z"
+    }
+  },
+  {
+    "index": 17,
+    "hash": "5c6mcYU6HvWeIL9JAZ764BMtnOk=",
+    "timestampUtcMs": "2026-09-03T07:22:16.814Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "version",
+        "value": "v6.2.2-dev.74",
+        "updatedAt": "2026-09-03T07:22:16.814Z"
+      },
+      "timestampUtcMs": "2026-09-03T07:22:16.814Z"
+    }
+  },
+  {
+    "index": 18,
+    "hash": "5c6mcYU6HvWeIL9JAZ764BMtnOk=",
+    "timestampUtcMs": "2026-09-03T07:22:16.814Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "filePath",
+        "value": "packages/reactor/docs/ARCHITECTURE.md",
+        "updatedAt": "2026-09-03T07:22:16.814Z"
+      },
+      "timestampUtcMs": "2026-09-03T07:22:16.814Z"
+    }
+  }
+]

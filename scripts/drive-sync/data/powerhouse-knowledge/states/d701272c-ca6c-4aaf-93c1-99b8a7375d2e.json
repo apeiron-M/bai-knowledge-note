@@ -1,0 +1,95 @@
+{
+  "links": [
+    {
+      "id": "lnk-98e36a08-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "98e36a08-78cd-4c60-942c-338d4a460334",
+      "targetTitle": "bee-reactor-adapter-overview"
+    },
+    {
+      "id": "lnk-8cfc4e95-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "8cfc4e95-98d9-4744-bc62-364dfe09396e",
+      "targetTitle": "adapter-key-source-files"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Bee Reactor Adapter requires full Bee node, mutable stamp, wallet, and open P2P ports",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "prerequisites",
+      "name": "prerequisites",
+      "topicDocumentId": null
+    },
+    {
+      "id": "bee-node",
+      "name": "bee-node",
+      "topicDocumentId": null
+    },
+    {
+      "id": "postage-stamp",
+      "name": "postage-stamp",
+      "topicDocumentId": null
+    },
+    {
+      "id": "wallet-login",
+      "name": "wallet-login",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "Prerequisites for running the Bee Reactor Adapter:\n\n- **Full Bee node** reachable from the browser. Chat requires full-node PSS + GSOC support \u2014 light nodes can send messages but not receive them.\n- **Mutable postage stamp** at depth 22+ (~7.7 GB capacity). Mutability is required so feed updates reuse bucket slots rather than re-paying for storage.\n- **Ethereum wallet** (MetaMask or any Web3 wallet) for Renown login and for deriving the encryption key.\n- **Open inbound ports** `1634` (TCP) and `1635` (WSS) for libp2p WebSocket transport used by peer-to-peer chat.\n\nIf chat cannot start, the chat panel surfaces a requirements screen showing the exact Bee config keys needed. Wallet signatures double as both authentication and the seed for device-portable decryption keys, which is what enables cross-device recovery from just a wallet.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "REFERENCE",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "knowledge-agent",
+    "createdAt": "2026-04-21T14:52:46.944Z",
+    "sessionId": null,
+    "updatedAt": "2026-09-03T09:57:59.229Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Light nodes can send chat but never receive it; depth 22+ (~7.7GB) mutability lets feed updates reuse bucket slots; 1634/TCP and 1635/WSS carry libp2p. Signatures double as key seed.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "801532c6-0808-413b-b633-7aa04170d969",
+      "actor": "claude",
+      "comment": "Knowledge registered against powerhouse v6.2.2-dev.47",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-14T12:00:00.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "de8dd93d-cf0a-44d8-8cb2-1c44e9abc247",
+      "actor": "liberuum",
+      "comment": "Canonical as of powerhouse v6.2.2-dev.47",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-14T12:00:00.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

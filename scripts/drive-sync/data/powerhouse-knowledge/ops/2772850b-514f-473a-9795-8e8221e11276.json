@@ -1,0 +1,330 @@
+[
+  {
+    "index": 0,
+    "hash": "",
+    "timestampUtcMs": "2026-09-03T07:43:48.278Z",
+    "action": {
+      "type": "CREATE_DOCUMENT",
+      "input": {
+        "meta": {},
+        "name": "shared-package-no-deps-rule",
+        "slug": "",
+        "model": "bai/knowledge-note",
+        "branch": "main",
+        "signing": {
+          "nonce": "",
+          "publicKey": {},
+          "signature": "2772850b-514f-473a-9795-8e8221e11276",
+          "documentType": "bai/knowledge-note",
+          "createdAtUtcIso": "2026-09-03T07:43:48.278Z"
+        },
+        "version": 0,
+        "documentId": "2772850b-514f-473a-9795-8e8221e11276",
+        "protocolVersions": {
+          "base-reducer": 2
+        }
+      },
+      "timestampUtcMs": "2026-09-03T07:43:48.278Z"
+    }
+  },
+  {
+    "index": 0,
+    "hash": "2K0bl6/rGlXUt3OioOTjD6gUZFM=",
+    "timestampUtcMs": "2026-09-03T07:43:49.582Z",
+    "action": {
+      "type": "SET_TITLE",
+      "input": {
+        "title": "The shared package must never depend on another package in the monorepo, which is what makes it safe to import from anywhere",
+        "updatedAt": "2026-09-03T07:43:49.582Z"
+      },
+      "timestampUtcMs": "2026-09-03T07:43:49.582Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "",
+    "timestampUtcMs": "2026-09-03T07:43:48.278Z",
+    "action": {
+      "type": "UPGRADE_DOCUMENT",
+      "input": {
+        "model": "bai/knowledge-note",
+        "toVersion": 1,
+        "documentId": "2772850b-514f-473a-9795-8e8221e11276",
+        "fromVersion": 0,
+        "initialState": {
+          "auth": {
+            "grants": [],
+            "version": 0
+          },
+          "local": {
+            "lastViewedAt": null,
+            "personalTags": []
+          },
+          "global": {
+            "links": [],
+            "model": null,
+            "scope": null,
+            "title": null,
+            "editor": null,
+            "inputs": [],
+            "models": [],
+            "status": "DRAFT",
+            "topics": [],
+            "content": null,
+            "context": null,
+            "modelId": null,
+            "modules": [],
+            "outputs": [],
+            "version": null,
+            "computes": null,
+            "filePath": null,
+            "noteType": null,
+            "severity": null,
+            "hooksUsed": [],
+            "rootCause": null,
+            "confidence": null,
+            "consumedBy": [],
+            "provenance": null,
+            "sourceType": null,
+            "targetType": null,
+            "cardinality": null,
+            "description": null,
+            "alternatives": [],
+            "consequences": [],
+            "errorMessage": null,
+            "relationType": null,
+            "correctPattern": null,
+            "decisionStatus": null,
+            "dispatchTargets": [],
+            "lifecycleEvents": []
+          },
+          "document": {
+            "hash": {
+              "encoding": "base64",
+              "algorithm": "sha1"
+            },
+            "version": 1
+          }
+        }
+      },
+      "timestampUtcMs": "2026-09-03T07:43:48.278Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "JmTeC2P9K2lAKKmdKQTgT+X9P7Q=",
+    "timestampUtcMs": "2026-09-03T07:43:49.582Z",
+    "action": {
+      "type": "SET_DESCRIPTION",
+      "input": {
+        "updatedAt": "2026-09-03T07:43:49.582Z",
+        "description": "It exists for simple constants, base types that need no imports from elsewhere, and utility functions with no monorepo dependencies \u2014 the rule that keeps circular imports impossible."
+      },
+      "timestampUtcMs": "2026-09-03T07:43:49.582Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "",
+    "timestampUtcMs": "2026-09-03T07:44:45.926Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "metadata": {
+          "reason": "Extracted from packages/shared/README.md at v6.2.2-dev.74 \u2014 whole file (the never-depend rule and what belongs there)",
+          "confidence": "grounded"
+        },
+        "sourceId": "2772850b-514f-473a-9795-8e8221e11276",
+        "targetId": "d6e0ca51-7efb-460a-8034-760afb394e74",
+        "relationshipType": "DERIVED_FROM"
+      },
+      "timestampUtcMs": "2026-09-03T07:44:45.926Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "r+hCPY0o44HKT9wf7KDfBHRheDQ=",
+    "timestampUtcMs": "2026-09-03T07:43:49.582Z",
+    "action": {
+      "type": "SET_NOTE_TYPE",
+      "input": {
+        "noteType": "DECISION",
+        "updatedAt": "2026-09-03T07:43:49.582Z"
+      },
+      "timestampUtcMs": "2026-09-03T07:43:49.582Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "",
+    "timestampUtcMs": "2026-09-03T07:44:46.377Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "metadata": {
+          "reason": "The three-package host-module layering is this rule in practice: the base in shared, client added by reactor, attachments added by the host packages",
+          "confidence": "grounded"
+        },
+        "sourceId": "2772850b-514f-473a-9795-8e8221e11276",
+        "targetId": "2ddae2ce-5409-4173-b76b-54a55b475c07",
+        "relationshipType": "BUILDS_ON"
+      },
+      "timestampUtcMs": "2026-09-03T07:44:46.377Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "MI4mLYQ83BEWImbphXct+uyORjI=",
+    "timestampUtcMs": "2026-09-03T07:43:49.582Z",
+    "action": {
+      "type": "SET_CONTENT",
+      "input": {
+        "content": "`packages/shared` is an npm package for code shared across the monorepo, and it carries one rule in bold: it **\"should never depend on any other package in this monorepo.\"** The reason is stated directly \u2014 so the code kept there can be used in *any* other package without circular imports.\n\nWhat belongs there follows from the rule:\n\n- simple constants usable anywhere;\n- **base** types worth sharing easily \u2014 explicitly **not** derived types that require imports from elsewhere;\n- simple utility functions that do not depend on code from elsewhere in the monorepo.\n\nThis constraint is visible in the reactor's own layering. `IProcessorHostModuleBase` lives in shared and carries only host-agnostic fields; `client` is added by `@powerhousedao/reactor` and `attachments` by reactor-browser and reactor-api, \"since neither shared nor reactor can depend on reactor-attachments\". The layering is not stylistic \u2014 it is this rule applied.\n\nSo when a type feels like it belongs in shared but needs an import, the answer is a base type in shared plus an extension in the package that owns the dependency.\n\n## Provenance\n- `packages/shared/README.md` \u2014 whole file (the never-depend rule and what belongs there)\n\n_Extracted from the Powerhouse repository at **v6.2.2-dev.74**._",
+        "updatedAt": "2026-09-03T07:43:49.582Z"
+      },
+      "timestampUtcMs": "2026-09-03T07:43:49.582Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "",
+    "timestampUtcMs": "2026-09-03T07:44:46.842Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "metadata": {
+          "reason": "Both are constraints on how the monorepo is wired: one on dependency direction, one on the toolchain a build needs",
+          "confidence": "grounded"
+        },
+        "sourceId": "2772850b-514f-473a-9795-8e8221e11276",
+        "targetId": "f58a582c-749b-4327-973e-a70457c28c6b",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-09-03T07:44:46.842Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "YvFeRtKs07rKPsNHUvGeIuLWVu8=",
+    "timestampUtcMs": "2026-09-03T07:43:49.582Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "f38ea649-9559-421e-8fde-e2e3f9e73e98",
+        "name": "monorepo"
+      },
+      "timestampUtcMs": "2026-09-03T07:43:49.582Z"
+    }
+  },
+  {
+    "index": 5,
+    "hash": "cVODKar1YkBOCxBGlKpcAGobkv0=",
+    "timestampUtcMs": "2026-09-03T07:43:49.582Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "2e4a9faa-2717-40a1-80f2-6b9f0b13c911",
+        "name": "shared"
+      },
+      "timestampUtcMs": "2026-09-03T07:43:49.582Z"
+    }
+  },
+  {
+    "index": 6,
+    "hash": "MDmW/LAO0VlVjGHj4iEdL6eDraU=",
+    "timestampUtcMs": "2026-09-03T07:43:49.582Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "b0973c52-b546-43d7-ac77-3eb75c54d901",
+        "name": "architecture"
+      },
+      "timestampUtcMs": "2026-09-03T07:43:49.582Z"
+    }
+  },
+  {
+    "index": 7,
+    "hash": "UqtkaiG0u6HsJfHQqNDACUJU6+k=",
+    "timestampUtcMs": "2026-09-03T07:43:49.582Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "3ed07a27-0202-469f-9970-ca7dbef11a92",
+        "name": "dependencies"
+      },
+      "timestampUtcMs": "2026-09-03T07:43:49.582Z"
+    }
+  },
+  {
+    "index": 8,
+    "hash": "QVTL1lQrrlnoBM3W+sq/Ev+mrfY=",
+    "timestampUtcMs": "2026-09-03T07:43:49.582Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "version",
+        "value": "v6.2.2-dev.74",
+        "updatedAt": "2026-09-03T07:43:49.582Z"
+      },
+      "timestampUtcMs": "2026-09-03T07:43:49.582Z"
+    }
+  },
+  {
+    "index": 9,
+    "hash": "1/AY7lS0z2/v0VYYR5ScipLIqIw=",
+    "timestampUtcMs": "2026-09-03T07:43:49.582Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "filePath",
+        "value": "packages/shared/README.md",
+        "updatedAt": "2026-09-03T07:43:49.582Z"
+      },
+      "timestampUtcMs": "2026-09-03T07:43:49.582Z"
+    }
+  },
+  {
+    "index": 10,
+    "hash": "AZwHlLoCmmbM3QUcq58tTCCcSrY=",
+    "timestampUtcMs": "2026-09-03T07:43:51.935Z",
+    "action": {
+      "type": "SET_PROVENANCE",
+      "input": {
+        "author": "knowledge-agent",
+        "createdAt": "2026-09-03T07:43:51.935Z",
+        "sourceOrigin": "DERIVED"
+      },
+      "timestampUtcMs": "2026-09-03T07:43:51.935Z"
+    }
+  },
+  {
+    "index": 11,
+    "hash": "Z3qRCCayGoYIdXSWK5T8nXRhQV8=",
+    "timestampUtcMs": "2026-09-03T07:43:52.431Z",
+    "action": {
+      "type": "SUBMIT_FOR_REVIEW",
+      "input": {
+        "id": "5ff343f4-3454-4657-9742-c6943e3d55eb",
+        "actor": "knowledge-agent",
+        "comment": "extracted from packages/shared/README.md at v6.2.2-dev.74",
+        "timestamp": "2026-09-03T07:43:52.431Z"
+      },
+      "timestampUtcMs": "2026-09-03T07:43:52.431Z"
+    }
+  },
+  {
+    "index": 12,
+    "hash": "CA6F/7bdz3Wimakgnt0NRJZYVSw=",
+    "timestampUtcMs": "2026-09-03T07:43:52.990Z",
+    "action": {
+      "type": "APPROVE_NOTE",
+      "input": {
+        "id": "2c1a14c7-c25c-478e-83b9-ab9e39670a35",
+        "actor": "liberuum",
+        "comment": "claim checked against the cited file at the pinned tag",
+        "timestamp": "2026-09-03T07:43:52.990Z"
+      },
+      "timestampUtcMs": "2026-09-03T07:43:52.990Z"
+    }
+  }
+]

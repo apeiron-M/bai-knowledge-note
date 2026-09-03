@@ -1,0 +1,90 @@
+{
+  "links": [
+    {
+      "id": "lnk-426c4cdc-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "426c4cdc-3e53-4ab7-aae8-de68d7029161",
+      "targetTitle": "ifc-semantics-dwg-derivative"
+    },
+    {
+      "id": "lnk-a80b000c-bui",
+      "linkType": "BUILDS_ON",
+      "targetDocumentId": "a80b000c-cc7a-46ce-990e-586f649f98c7",
+      "targetTitle": "ifc-fixed-shape-six-branches"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "A property set can be present on every object while the required property inside it is missing",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "d08c054f-c8ee-43c4-9457-b94653db3997",
+      "name": "ifc",
+      "topicDocumentId": null
+    },
+    {
+      "id": "a572c96c-1cdf-4f61-9d17-6cd9a77d5090",
+      "name": "bim",
+      "topicDocumentId": null
+    },
+    {
+      "id": "18a6b71a-a708-4650-a05a-acc8cb069bf3",
+      "name": "data-quality",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "Requirement checking in BIM is usually specified as \"the model must carry the agreed properties\", and the obvious implementation asks whether the relevant property set is attached to each object. That implementation is wrong, and the failure is silent.\n\nOn a real 3,714-element residential model, `Pset_DoorCommon` was attached to 205 of 205 doors. Within it, `IsExternal` was populated on 205 of 205, while `FireRating`, `AcousticRating`, `ThermalTransmittance` and `GlazingAreaFraction` were each populated on exactly 30. The exporter wrote a complete property set for 30 doors and a stub containing one field for the remaining 175. Counting property-set attachment therefore reports 100% compliance on a building where **190 of 205 doors carry no usable fire rating** \u2014 175 with the property absent and 15 with it present but blank.\n\nTwo further wrinkles matter for anyone writing the rule. Populated values were free text in the project language (`30 minuten brandwerend en zelfsluitend`, `Geen`, `Zelfsluitend`), so value-legality checking needs a controlled vocabulary the data does not supply; presence-and-non-blank is the defensible scope. And properties arrive on both the occurrence and its type, so the query must merge inherited and instance-level property sets rather than reading one.\n\nThe general form: a check must interrogate the leaf it actually cares about. Any level of indirection above the leaf is a container that can be present and empty.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "ARCHITECTURE",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "apeiron",
+    "createdAt": "2026-08-14T16:00:00.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-17T12:53:01.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Pset_DoorCommon sat on 205 of 205 doors while FireRating sat on 30. A check that stops at property-set presence reports full compliance on a building where 190 doors have no fire rating.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "89773d40-081c-491c-adef-8fc5f7eec966",
+      "actor": "knowledge-agent",
+      "comment": "rescued incident notes \u2014 lifecycle normalization",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-17T12:53:01.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "48eb4944-a55d-47e8-a40e-d133b87352f0",
+      "actor": "liberuum",
+      "comment": "approved for canonical",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-17T12:53:01.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

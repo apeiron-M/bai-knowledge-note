@@ -1,0 +1,367 @@
+[
+  {
+    "index": 0,
+    "hash": "",
+    "timestampUtcMs": "2026-08-14T12:00:34.275Z",
+    "action": {
+      "type": "CREATE_DOCUMENT",
+      "input": {
+        "meta": {},
+        "name": "drive-app-hooks-documents-in-drive-and-create-modal",
+        "slug": "",
+        "model": "bai/knowledge-note",
+        "branch": "main",
+        "signing": {
+          "nonce": "",
+          "publicKey": {},
+          "signature": "af8252cd-271d-41ea-b99d-9fe2a7123cea",
+          "documentType": "bai/knowledge-note",
+          "createdAtUtcIso": "2026-08-14T12:00:34.275Z"
+        },
+        "version": 0,
+        "documentId": "af8252cd-271d-41ea-b99d-9fe2a7123cea",
+        "protocolVersions": {
+          "base-reducer": 2
+        }
+      },
+      "timestampUtcMs": "2026-08-14T12:00:34.275Z"
+    }
+  },
+  {
+    "index": 0,
+    "hash": "o0bouIhKLkKGKD9wXH+l72yIoFM=",
+    "timestampUtcMs": "2026-08-14T12:35:11.000Z",
+    "action": {
+      "type": "SET_TITLE",
+      "input": {
+        "title": "Drive apps read drive-wide data with useDocumentsInSelectedDrive() and start creation with showCreateDocumentModal()",
+        "updatedAt": "2026-08-14T12:35:11.000Z"
+      },
+      "timestampUtcMs": "2026-08-14T12:35:11.000Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "",
+    "timestampUtcMs": "2026-08-14T12:00:34.275Z",
+    "action": {
+      "type": "UPGRADE_DOCUMENT",
+      "input": {
+        "model": "bai/knowledge-note",
+        "toVersion": 1,
+        "documentId": "af8252cd-271d-41ea-b99d-9fe2a7123cea",
+        "fromVersion": 0,
+        "initialState": {
+          "auth": {
+            "grants": [],
+            "version": 0
+          },
+          "local": {
+            "lastViewedAt": null,
+            "personalTags": []
+          },
+          "global": {
+            "links": [],
+            "model": null,
+            "scope": null,
+            "title": null,
+            "editor": null,
+            "inputs": [],
+            "models": [],
+            "status": "DRAFT",
+            "topics": [],
+            "content": null,
+            "context": null,
+            "modelId": null,
+            "modules": [],
+            "outputs": [],
+            "version": null,
+            "computes": null,
+            "filePath": null,
+            "noteType": null,
+            "severity": null,
+            "hooksUsed": [],
+            "rootCause": null,
+            "confidence": null,
+            "consumedBy": [],
+            "provenance": null,
+            "sourceType": null,
+            "targetType": null,
+            "cardinality": null,
+            "description": null,
+            "alternatives": [],
+            "consequences": [],
+            "errorMessage": null,
+            "relationType": null,
+            "correctPattern": null,
+            "decisionStatus": null,
+            "dispatchTargets": [],
+            "lifecycleEvents": []
+          },
+          "document": {
+            "hash": {
+              "encoding": "base64",
+              "algorithm": "sha1"
+            },
+            "version": 1
+          }
+        }
+      },
+      "timestampUtcMs": "2026-08-14T12:00:34.275Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "uHFtWbXrNAdz9tYY17orOwYiLC4=",
+    "timestampUtcMs": "2026-08-14T12:35:11.000Z",
+    "action": {
+      "type": "SET_DESCRIPTION",
+      "input": {
+        "updatedAt": "2026-08-14T12:35:11.000Z",
+        "description": "Both come from @powerhousedao/reactor-browser and give a drive app cross-document reads plus the standard new-document flow, without touching the Reactor directly."
+      },
+      "timestampUtcMs": "2026-08-14T12:35:11.000Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "",
+    "timestampUtcMs": "2026-08-14T12:37:20.216Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "af8252cd-271d-41ea-b99d-9fe2a7123cea",
+        "targetId": "307601bd-2919-4e27-9a76-97281d276518",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-08-14T12:37:20.216Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "h7mKqI548OsIMVXTKC0q+Wc3d2g=",
+    "timestampUtcMs": "2026-08-14T12:35:11.000Z",
+    "action": {
+      "type": "SET_NOTE_TYPE",
+      "input": {
+        "noteType": "REFERENCE",
+        "updatedAt": "2026-08-14T12:35:11.000Z"
+      },
+      "timestampUtcMs": "2026-08-14T12:35:11.000Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "",
+    "timestampUtcMs": "2026-08-14T12:37:20.314Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "af8252cd-271d-41ea-b99d-9fe2a7123cea",
+        "targetId": "87edb655-2431-4b23-8c7f-53ca7a468fba",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-08-14T12:37:20.314Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "VbvTPpWpMOlawL9Nrx/zmilUO2Y=",
+    "timestampUtcMs": "2026-08-14T12:35:11.000Z",
+    "action": {
+      "type": "SET_CONTENT",
+      "input": {
+        "content": "## The two calls a drive app almost always needs\n\nA drive app's job is cross-document: list, aggregate, board, dashboard. Two primitives from `@powerhousedao/reactor-browser` cover most of that surface.\n\n```tsx\nimport {\n  useDocumentsInSelectedDrive,\n  showCreateDocumentModal,\n} from \"@powerhousedao/reactor-browser\";\n\nfunction DriveContents() {\n  const documents = useDocumentsInSelectedDrive();\n\n  if (!documents) return <Spinner />;\n\n  return (\n    <>\n      <button onClick={() => showCreateDocumentModal(/* ... */)}>\n        New document\n      </button>\n      <ul>\n        {documents.map((d) => (\n          <li key={d.header.id}>{d.header.name}</li>\n        ))}\n      </ul>\n    </>\n  );\n}\n```\n\n`useDocumentsInSelectedDrive()` returns every document in the currently selected drive \u2014 the read that an editor legitimately cannot make, since an editor is scoped to one document. Its return type is `PHDocument[] | undefined`, and the `undefined` is load-bearing: it means \"the selected drive is not resolved yet\", which is a different state from \"the drive is empty\". Rendering `documents.length` without the guard is the classic first crash in a new drive app.\n\n`showCreateDocumentModal()` is an imperative call, not a hook \u2014 it opens Connect's standard creation flow rather than making you build your own type-picker and dispatch a create action by hand. That keeps drive apps consistent with the rest of Connect and means new document types appear in your drive app's create flow without any change to your code.\n\nThe pair reflects a broader rule: a drive app reaches the Reactor **only** through these hooks. It never constructs a client of its own.\n\n_Source: apps/academy/docs/academy/02-Learn/05-connect/02-drive-apps.mdx, packages/reactor-browser/src/hooks/{items-in-selected-drive,modals}.ts (Powerhouse v6.2.2-dev.45)._",
+        "updatedAt": "2026-08-14T12:35:11.000Z"
+      },
+      "timestampUtcMs": "2026-08-14T12:35:11.000Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "",
+    "timestampUtcMs": "2026-08-14T12:37:20.411Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "af8252cd-271d-41ea-b99d-9fe2a7123cea",
+        "targetId": "1a932db8-245d-40f6-bfd8-eea728d9615e",
+        "relationshipType": "BUILDS_ON"
+      },
+      "timestampUtcMs": "2026-08-14T12:37:20.411Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "n0A3rIqIeBzssUOOyDBOXcyLCwk=",
+    "timestampUtcMs": "2026-08-14T12:35:11.000Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "version",
+        "value": "v6.2.2-dev.44",
+        "updatedAt": "2026-08-14T12:35:11.000Z"
+      },
+      "timestampUtcMs": "2026-08-14T12:35:11.000Z"
+    }
+  },
+  {
+    "index": 5,
+    "hash": "",
+    "timestampUtcMs": "2026-09-02T21:39:31.211Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "metadata": {
+          "reason": "Backing page found by content match in the v6.2.2-dev.74 source backfill \u2014 identifiers showcreatedocumentmodal, usedocumentsinselecteddrive from the claim appear in this page (text revised between v6.2.2-dev.47 and v6.2.2-dev.74 \u2014 re-verified in the v6.2.2-dev.74 pass); attribution, not the original extraction record",
+          "confidence": "grounded"
+        },
+        "sourceId": "af8252cd-271d-41ea-b99d-9fe2a7123cea",
+        "targetId": "aeb9b5e6-8fce-4339-95e8-375bd0a0cc01",
+        "relationshipType": "DERIVED_FROM"
+      },
+      "timestampUtcMs": "2026-09-02T21:39:31.211Z"
+    }
+  },
+  {
+    "index": 5,
+    "hash": "7DpSKFNMpHi86b1EHbeniwoHKwo=",
+    "timestampUtcMs": "2026-08-14T12:35:11.000Z",
+    "action": {
+      "type": "SET_PROVENANCE",
+      "input": {
+        "author": "claude",
+        "createdAt": "2026-08-13T14:36:23.000Z",
+        "sourceOrigin": "DERIVED"
+      },
+      "timestampUtcMs": "2026-08-14T12:35:11.000Z"
+    }
+  },
+  {
+    "index": 6,
+    "hash": "SrDtsqKGPOqdJI8Dkq0b6nmzCkM=",
+    "timestampUtcMs": "2026-08-14T12:35:11.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "0fee5a6c-07eb-443d-b235-6e26e1ba2580",
+        "name": "drive-apps",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-08-14T12:35:11.000Z"
+    }
+  },
+  {
+    "index": 7,
+    "hash": "FaseuBHofdPdjd8s25XL24wg7zA=",
+    "timestampUtcMs": "2026-08-14T12:35:11.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "440e8d41-3306-4c20-b3bd-b8aa05208786",
+        "name": "react-hooks",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-08-14T12:35:11.000Z"
+    }
+  },
+  {
+    "index": 8,
+    "hash": "B6roAH0+6TUEbI0G8+FRDJDG9aw=",
+    "timestampUtcMs": "2026-08-14T12:35:11.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "27af5195-71b7-4b75-afe0-daf67b1ada73",
+        "name": "reactor-browser",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-08-14T12:35:11.000Z"
+    }
+  },
+  {
+    "index": 9,
+    "hash": "t5puX4c3UXnz+VxZvdmJSMotAf8=",
+    "timestampUtcMs": "2026-08-14T14:37:28.000Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "version",
+        "value": "v6.2.2-dev.47",
+        "updatedAt": "2026-08-14T12:00:00.000Z"
+      },
+      "timestampUtcMs": "2026-08-14T14:37:28.000Z"
+    }
+  },
+  {
+    "index": 10,
+    "hash": "YHS8h2mRXthRnDkjJlibws9s5D0=",
+    "timestampUtcMs": "2026-08-14T14:37:28.000Z",
+    "action": {
+      "type": "SUBMIT_FOR_REVIEW",
+      "input": {
+        "id": "4c9394b5-2568-401e-902c-e38926f08cd5",
+        "actor": "claude",
+        "comment": "Knowledge registered against powerhouse v6.2.2-dev.47",
+        "timestamp": "2026-08-14T12:00:00.000Z"
+      },
+      "timestampUtcMs": "2026-08-14T14:37:28.000Z"
+    }
+  },
+  {
+    "index": 11,
+    "hash": "A75Dn3PAy3g7R5+PNBxMYZDCUnw=",
+    "timestampUtcMs": "2026-08-14T14:37:28.000Z",
+    "action": {
+      "type": "APPROVE_NOTE",
+      "input": {
+        "id": "cb0f7b7c-3c7a-4f18-b4e9-0aec642075f6",
+        "actor": "liberuum",
+        "comment": "Canonical as of powerhouse v6.2.2-dev.47",
+        "timestamp": "2026-08-14T12:00:00.000Z"
+      },
+      "timestampUtcMs": "2026-08-14T14:37:28.000Z"
+    }
+  },
+  {
+    "index": 12,
+    "hash": "R9cfETSKOrnym/wO8ugY+NfxDug=",
+    "timestampUtcMs": "2026-09-02T21:39:31.870Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "filePath",
+        "value": "apps/academy/docs/academy/04-Reference/05-EditorsUI/01-ReactHooks.md",
+        "updatedAt": "2026-09-02T21:39:31.870Z"
+      },
+      "timestampUtcMs": "2026-09-02T21:39:31.870Z"
+    }
+  },
+  {
+    "index": 13,
+    "hash": "T+FHlYoj9yML9vs8MQQW8aHzJuM=",
+    "timestampUtcMs": "2026-09-02T22:26:34.561Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "version",
+        "value": "v6.2.2-dev.74",
+        "updatedAt": "2026-09-02T22:26:34.561Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:26:34.561Z"
+    }
+  },
+  {
+    "index": 14,
+    "hash": "mNoUyb65Yk1Q0Q2xcnjPqmqnoYs=",
+    "timestampUtcMs": "2026-09-03T07:59:22.181Z",
+    "action": {
+      "type": "SET_CONTENT",
+      "input": {
+        "content": "## The two calls a drive app almost always needs\n\nA drive app's job is cross-document: list, aggregate, board, dashboard. Two primitives from `@powerhousedao/reactor-browser` cover most of that surface.\n\n```tsx\nimport {\n  useDocumentsInSelectedDrive,\n  showCreateDocumentModal,\n} from \"@powerhousedao/reactor-browser\";\n\nfunction DriveContents() {\n  const documents = useDocumentsInSelectedDrive();\n\n  if (!documents) return <Spinner />;\n\n  return (\n    <>\n      <button onClick={() => showCreateDocumentModal(/* ... */)}>\n        New document\n      </button>\n      <ul>\n        {documents.map((d) => (\n          <li key={d.header.id}>{d.header.name}</li>\n        ))}\n      </ul>\n    </>\n  );\n}\n```\n\n`useDocumentsInSelectedDrive()` returns every document in the currently selected drive \u2014 the read that an editor legitimately cannot make, since an editor is scoped to one document. Its return type is `PHDocument[] | undefined`, and the `undefined` is load-bearing: it means \"the selected drive is not resolved yet\", which is a different state from \"the drive is empty\". Rendering `documents.length` without the guard is the classic first crash in a new drive app.\n\n`showCreateDocumentModal()` is an imperative call, not a hook \u2014 it opens Connect's standard creation flow rather than making you build your own type-picker and dispatch a create action by hand. That keeps drive apps consistent with the rest of Connect and means new document types appear in your drive app's create flow without any change to your code.\n\nThe pair reflects a broader rule: a drive app reaches the Reactor **only** through these hooks. It never constructs a client of its own.\n\n_Source: apps/academy/docs/academy/02-Learn/05-connect/02-drive-apps.mdx, packages/reactor-browser/src/hooks/{items-in-selected-drive,modals}.ts (Powerhouse v6.2.2-dev.45)._\n\n## Boundary: lazy drive sync (v6.2.2-dev.74)\nThis whole-drive read is correct **today**, because `preloadDocuments` defaults to eager and every child document of an opened drive is synced. ADR 0001 (status *Proposed*) would change that: with `preloadDocuments: false` a drive syncs only its drive document, and `useDocumentsInSelectedDrive` / `useDocuments(childIds)` / `find({parentId})` return **a silent partial list** rather than suspending. The ADR names auditing every whole-drive-assuming caller as a prerequisite for flipping the flag, so treat this pattern as safe until a deployment opts in.\n",
+        "updatedAt": "2026-09-03T07:59:22.181Z"
+      },
+      "timestampUtcMs": "2026-09-03T07:59:22.181Z"
+    }
+  }
+]

@@ -1,0 +1,103 @@
+[
+  {
+    "index": 0,
+    "hash": "",
+    "timestampUtcMs": "2026-09-03T07:21:10.681Z",
+    "action": {
+      "type": "CREATE_DOCUMENT",
+      "input": {
+        "meta": {},
+        "name": "Contradiction on reactor-sync",
+        "slug": "",
+        "model": "bai/tension",
+        "branch": "main",
+        "signing": {
+          "nonce": "",
+          "publicKey": {},
+          "signature": "96c0eec8-b22c-4300-82b5-0371eed1dfd2",
+          "documentType": "bai/tension",
+          "createdAtUtcIso": "2026-09-03T07:21:10.681Z"
+        },
+        "version": 0,
+        "documentId": "96c0eec8-b22c-4300-82b5-0371eed1dfd2",
+        "protocolVersions": {
+          "base-reducer": 2
+        }
+      },
+      "timestampUtcMs": "2026-09-03T07:21:10.681Z"
+    }
+  },
+  {
+    "index": 0,
+    "hash": "h9c7S5W7cfcBJZtUZCwE627BevM=",
+    "timestampUtcMs": "2026-09-03T07:21:11.112Z",
+    "action": {
+      "type": "CREATE_TENSION",
+      "input": {
+        "title": "Contradiction on reactor-sync",
+        "content": "## Involved claims\n\n- A failed job silently drops its operations from the sync batch: handleJobFailed deletes the pending batch and emits whatever arrived, with no notification of incompleteness \u2014 `bb823a22-5304-40dd-b087-5ae6a35e9755`\n- GraphQL sync is four flows across two channel roles: the requesting channel pushes and polls, the responding channel serves from its outbox and receives into its inbox \u2014 `9c453091-8c7b-4210-af2f-600fead66af7`\n\n## Why this exists\n\nA `CONTRADICTS` relationship was recorded between these two notes at 2026-09-03T07:21:10.676Z. The vault treats a recorded contradiction as an open question, not a fact to leave implicit: until someone resolves or dissolves this tension, both claims stand and readers should see that they disagree.\n\n## How to close it\n\n- **Resolve** when one claim is correct: say which, and consider `SUPERSEDES` on the winner.\n- **Dissolve** when both are right in different scopes: state the boundary in each note's content.",
+        "observedAt": "2026-09-03T07:21:10.676Z",
+        "observedBy": "graph-indexer",
+        "description": "\u201cA failed job silently drops its operations from the sync batch: handleJobFailed deletes the pending batch and emits whatever arrived, with \u2026\u201d contradicts \u201cGraphQL sync is four flows across two channel roles: the requesting channel pushes and polls, the responding channel serves from its outbox\u2026\u201d. Opened automatically from a CONTRADICTS link \u2014 resolve if one side is right, dissolve if both hold in different contexts.",
+        "involvedRefs": [
+          "bb823a22-5304-40dd-b087-5ae6a35e9755",
+          "9c453091-8c7b-4210-af2f-600fead66af7"
+        ]
+      },
+      "timestampUtcMs": "2026-09-03T07:21:11.112Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "",
+    "timestampUtcMs": "2026-09-03T07:21:10.681Z",
+    "action": {
+      "type": "UPGRADE_DOCUMENT",
+      "input": {
+        "model": "bai/tension",
+        "toVersion": 1,
+        "documentId": "96c0eec8-b22c-4300-82b5-0371eed1dfd2",
+        "fromVersion": 0,
+        "initialState": {
+          "auth": {
+            "grants": [],
+            "version": 0
+          },
+          "local": {},
+          "global": {
+            "title": null,
+            "status": "OPEN",
+            "content": null,
+            "observedAt": null,
+            "observedBy": null,
+            "resolution": null,
+            "resolvedAt": null,
+            "description": null,
+            "involvedRefs": []
+          },
+          "document": {
+            "hash": {
+              "encoding": "base64",
+              "algorithm": "sha1"
+            },
+            "version": 1
+          }
+        }
+      },
+      "timestampUtcMs": "2026-09-03T07:21:10.681Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "NCDPr5pzMYMPN38+vtOzLBoyvU8=",
+    "timestampUtcMs": "2026-09-03T10:14:59.956Z",
+    "action": {
+      "type": "DISSOLVE_TENSION",
+      "input": {
+        "resolution": "Dissolved: both claims hold, in different scopes. The four-flow description is the designed path and is accurate for a batch that completes; the gap note describes the failure path, where handleJobFailed drops the failed job's operations and emits the batch anyway with no signal of incompleteness. Neither corrects the other, so the boundary was what was missing, and it is now written into the flow note. The defect itself stays tracked as a note and as a health recommendation to file upstream \u2014 a tension is for an unresolved knowledge conflict, not for an open bug.",
+        "resolvedAt": "2026-09-03T10:14:59.956Z"
+      },
+      "timestampUtcMs": "2026-09-03T10:14:59.956Z"
+    }
+  }
+]

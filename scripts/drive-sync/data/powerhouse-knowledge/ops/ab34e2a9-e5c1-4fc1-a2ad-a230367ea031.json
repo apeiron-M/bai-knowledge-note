@@ -1,0 +1,276 @@
+[
+  {
+    "index": 0,
+    "hash": "",
+    "timestampUtcMs": "2026-08-19T11:24:54.240Z",
+    "action": {
+      "type": "CREATE_DOCUMENT",
+      "input": {
+        "meta": {},
+        "name": "Kestra keeps execution history in its own mutable backend, so an approval inside a pipelin",
+        "slug": "",
+        "model": "bai/knowledge-note",
+        "branch": "main",
+        "signing": {
+          "nonce": "",
+          "publicKey": {},
+          "signature": "ab34e2a9-e5c1-4fc1-a2ad-a230367ea031",
+          "documentType": "bai/knowledge-note",
+          "createdAtUtcIso": "2026-08-19T11:24:54.240Z"
+        },
+        "version": 0,
+        "documentId": "ab34e2a9-e5c1-4fc1-a2ad-a230367ea031",
+        "protocolVersions": {
+          "base-reducer": 2
+        }
+      },
+      "timestampUtcMs": "2026-08-19T11:24:54.240Z"
+    }
+  },
+  {
+    "index": 0,
+    "hash": "EWCCl06yuDhmKHsqujoAUVhP+00=",
+    "timestampUtcMs": "2026-08-19T11:24:53.983Z",
+    "action": {
+      "type": "SET_TITLE",
+      "input": {
+        "title": "Kestra keeps execution history in its own mutable backend, so an approval inside a pipeline has nowhere to live",
+        "updatedAt": "2026-08-19T11:24:53.983455Z"
+      },
+      "timestampUtcMs": "2026-08-19T11:24:53.983492Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "",
+    "timestampUtcMs": "2026-08-19T11:24:54.240Z",
+    "action": {
+      "type": "UPGRADE_DOCUMENT",
+      "input": {
+        "model": "bai/knowledge-note",
+        "toVersion": 1,
+        "documentId": "ab34e2a9-e5c1-4fc1-a2ad-a230367ea031",
+        "fromVersion": 0,
+        "initialState": {
+          "auth": {
+            "grants": [],
+            "version": 0
+          },
+          "local": {
+            "lastViewedAt": null,
+            "personalTags": []
+          },
+          "global": {
+            "links": [],
+            "model": null,
+            "scope": null,
+            "title": null,
+            "editor": null,
+            "inputs": [],
+            "models": [],
+            "status": "DRAFT",
+            "topics": [],
+            "content": null,
+            "context": null,
+            "modelId": null,
+            "modules": [],
+            "outputs": [],
+            "version": null,
+            "computes": null,
+            "filePath": null,
+            "noteType": null,
+            "severity": null,
+            "hooksUsed": [],
+            "rootCause": null,
+            "confidence": null,
+            "consumedBy": [],
+            "provenance": null,
+            "sourceType": null,
+            "targetType": null,
+            "cardinality": null,
+            "description": null,
+            "alternatives": [],
+            "consequences": [],
+            "errorMessage": null,
+            "relationType": null,
+            "correctPattern": null,
+            "decisionStatus": null,
+            "dispatchTargets": [],
+            "lifecycleEvents": []
+          },
+          "document": {
+            "hash": {
+              "encoding": "base64",
+              "algorithm": "sha1"
+            },
+            "version": 1
+          }
+        }
+      },
+      "timestampUtcMs": "2026-08-19T11:24:54.240Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "DT3PBHcU9TYaueS+R2n2xjBSHqk=",
+    "timestampUtcMs": "2026-08-19T11:24:53.983Z",
+    "action": {
+      "type": "SET_DESCRIPTION",
+      "input": {
+        "updatedAt": "2026-08-19T11:24:53.983496Z",
+        "description": "Orchestration records that a task ran, not that a figure was approved by a named person \u2014 the business event inside the data workflow is the object that goes unrecorded."
+      },
+      "timestampUtcMs": "2026-08-19T11:24:53.983503Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "",
+    "timestampUtcMs": "2026-08-19T11:24:56.390Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "ab34e2a9-e5c1-4fc1-a2ad-a230367ea031",
+        "targetId": "315ffb64-27fb-443a-a8c2-250d278c8c1e",
+        "relationshipType": "DERIVED_FROM"
+      },
+      "timestampUtcMs": "2026-08-19T11:24:56.390Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "wn0Wj/GshGVodlG2BCexUEgQDrI=",
+    "timestampUtcMs": "2026-08-19T11:24:53.983Z",
+    "action": {
+      "type": "SET_NOTE_TYPE",
+      "input": {
+        "noteType": "OBSERVATION",
+        "updatedAt": "2026-08-19T11:24:53.983505Z"
+      },
+      "timestampUtcMs": "2026-08-19T11:24:53.983509Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "mMTdPhXIH2JA2k3nLSqlF/5QMhQ=",
+    "timestampUtcMs": "2026-08-19T11:24:53.983Z",
+    "action": {
+      "type": "SET_CONTENT",
+      "input": {
+        "content": "Kestra orchestrates data workflows and keeps its execution history in its own backend, which is mutable. That history is about runs: which task executed, when, with what status. It is the operational record of the pipeline, not a record of the business events that occur inside it.\n\nThe research names the missing object exactly \u2014 'this figure was approved, by this person' has nowhere to live. An orchestrator can encode the approval as a step and can show that the step completed, but the completion is a row it owns and can rewrite, and preserving the meaning of the approval is not what an orchestrator is built to do.\n\nFor conapi, which delivers Kestra-based pipelines, this is the seam. The pipeline is already the place where the approval happens, so dispatching that moment as a typed operation moves the business event out of the mutable execution log and into a record that outlives the run it came from.\n\n---\n\n## Leads sharing this finding (1)\n\n**3 \u00b7 later**\n- conapi GmbH (AT Winzendorf) \u2014 https://conapi.at\n\nVerbatim research text this claim was extracted from:\n\n> Kestra orchestrates data workflows and stores execution history in its own mutable backend. The business event inside the pipeline \u2014 this figure was approved, by this person \u2014 has nowhere to live.",
+        "updatedAt": "2026-08-19T11:24:53.983512Z"
+      },
+      "timestampUtcMs": "2026-08-19T11:24:53.983516Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "YVRUgKQK1n1F0UWEqxMfve4J93c=",
+    "timestampUtcMs": "2026-08-19T11:24:53.983Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "12baeac9-cf8b-4daa-a5fa-899b82a184b8",
+        "name": "leads"
+      },
+      "timestampUtcMs": "2026-08-19T11:24:53.983525Z"
+    }
+  },
+  {
+    "index": 5,
+    "hash": "kJiKUHf267s9deJfLrWW1CS9vvI=",
+    "timestampUtcMs": "2026-08-19T11:24:53.983Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "f36ffafd-385c-4a88-8560-ee8faf820334",
+        "name": "kestra"
+      },
+      "timestampUtcMs": "2026-08-19T11:24:53.983533Z"
+    }
+  },
+  {
+    "index": 6,
+    "hash": "UrinnLj8Pt0AjSADC2GpTBPnm8k=",
+    "timestampUtcMs": "2026-08-19T11:24:53.983Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "51728ed0-f64c-4e07-b194-f487a366fcc8",
+        "name": "process-orchestration"
+      },
+      "timestampUtcMs": "2026-08-19T11:24:53.983582Z"
+    }
+  },
+  {
+    "index": 7,
+    "hash": "yF+sdZf1w8rqFYiUjYsIHnuPqVY=",
+    "timestampUtcMs": "2026-08-19T11:24:53.983Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "87d13403-ea9b-4279-8c68-7c26a4c69c7f",
+        "name": "audit-trail"
+      },
+      "timestampUtcMs": "2026-08-19T11:24:53.983591Z"
+    }
+  },
+  {
+    "index": 8,
+    "hash": "ZQ14/0pFgFe05LGOshuGqvEtZPk=",
+    "timestampUtcMs": "2026-08-19T11:24:53.983Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "f978ccfe-3e40-4f69-8265-0e64c395e3bf",
+        "name": "system-of-record"
+      },
+      "timestampUtcMs": "2026-08-19T11:24:53.983599Z"
+    }
+  },
+  {
+    "index": 9,
+    "hash": "FQG1yGgixInm5xT/LAMxCAk4fV0=",
+    "timestampUtcMs": "2026-08-19T11:24:54.410Z",
+    "action": {
+      "type": "SET_PROVENANCE",
+      "input": {
+        "author": "knowledge-agent",
+        "createdAt": "2026-08-19T11:24:54.410843Z",
+        "sessionId": null,
+        "sourceOrigin": "DERIVED"
+      },
+      "timestampUtcMs": "2026-08-19T11:24:54.410881Z"
+    }
+  },
+  {
+    "index": 10,
+    "hash": "deWNWwVU/eKs6Su+5kl6Js9hzR4=",
+    "timestampUtcMs": "2026-08-19T11:24:55.708Z",
+    "action": {
+      "type": "SUBMIT_FOR_REVIEW",
+      "input": {
+        "id": "59caea01-403c-47ad-bc3c-55ccc6445015",
+        "actor": "knowledge-agent",
+        "comment": "Extracted from lead research; claim checked against the source record.",
+        "timestamp": "2026-08-19T11:24:55.708444Z"
+      },
+      "timestampUtcMs": "2026-08-19T11:24:55.708466Z"
+    }
+  },
+  {
+    "index": 11,
+    "hash": "knzGTEYdwi9bdXLcncWck/bDPC8=",
+    "timestampUtcMs": "2026-08-19T11:24:55.858Z",
+    "action": {
+      "type": "APPROVE_NOTE",
+      "input": {
+        "id": "69df598a-e3ee-44c0-8bbd-ebad7c0db2ef",
+        "actor": "liberuum",
+        "comment": "Approved: lead corpus extraction.",
+        "timestamp": "2026-08-19T11:24:55.858369Z"
+      },
+      "timestampUtcMs": "2026-08-19T11:24:55.858392Z"
+    }
+  }
+]

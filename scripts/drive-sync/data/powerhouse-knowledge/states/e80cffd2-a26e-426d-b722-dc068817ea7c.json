@@ -1,0 +1,128 @@
+{
+  "links": [
+    {
+      "id": "lnk-a1016584-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "a1016584-5dba-460b-9dc8-2728d09c1058",
+      "targetTitle": "connect-runtime-config",
+      "reason": "The image serves the dist powerhouse.config.json that the runtime-config ladder produces",
+      "confidence": "grounded"
+    },
+    {
+      "id": "lnk-96efe6c1-bui",
+      "linkType": "BUILDS_ON",
+      "targetDocumentId": "96efe6c1-9193-4319-8ac2-c30f3933b832",
+      "targetTitle": "ph-connect-config-json-operator-wins-merge",
+      "reason": "Step 2 of the entrypoint is the operator-wins merge described there; this note places it in the full startup sequence",
+      "confidence": "grounded"
+    },
+    {
+      "id": "lnk-b153c532-sup",
+      "linkType": "SUPERSEDES",
+      "targetDocumentId": "b153c532-0abc-4400-8448-4ac08046fcad",
+      "targetTitle": "docker-images-for-connect-and-switchboard",
+      "reason": "Replaces the old Connect-image claims: no build at container start, no ph CLI or Node in the image, packages load in-browser from packageRegistryUrl rather than via PH_REGISTRY_PACKAGES at startup",
+      "confidence": "grounded"
+    },
+    {
+      "id": "lnk-56edb93f-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "56edb93f-5c3b-4c8b-a11f-5cfdcc252dee",
+      "targetTitle": "Academy \u203a Build \u203a Launch \u203a Docker deployment guide",
+      "reason": "Extracted from apps/academy/docs/academy/03-Build/05-Launch/05-DockerDeployment.md at v6.2.2-dev.74 \u2014 Connect Environment Variables; Installing Custom Packages (Connect); Image Architecture \u203a Connect Image; Permission Issues; Building Custom Images",
+      "confidence": "grounded"
+    },
+    {
+      "id": "lnk-8ff57495-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "8ff57495-42b3-47d4-9c91-1811281bfb34",
+      "targetTitle": "Design \u203a Design: Docker Compose files per release channel",
+      "reason": "Extracted from docs/plans/2026-08-24-docker-compose-channels-design.md at v6.2.2-dev.74 \u2014 Common service shape: connect port 3001, wget healthcheck",
+      "confidence": "grounded"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "The Connect image is nginx:alpine serving a SPA built at image-build time and running as UID 101, so there is no Node or ph CLI in the container and packages load in the browser from the registry",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "8de5cd93-3152-4e3e-8866-3b387329a4dc",
+      "name": "docker",
+      "topicDocumentId": null
+    },
+    {
+      "id": "b319e50c-d7b1-4775-afbb-8fed1fface50",
+      "name": "connect",
+      "topicDocumentId": null
+    },
+    {
+      "id": "cfb777b9-27ab-4be9-a784-47163811ad80",
+      "name": "deployment",
+      "topicDocumentId": null
+    },
+    {
+      "id": "eca9596e-940b-4543-8f30-cbfe4852f041",
+      "name": "nginx",
+      "topicDocumentId": null
+    },
+    {
+      "id": "d5ae514d-5f3a-4816-a6c4-9d401fa443a2",
+      "name": "packages",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "The Connect target is **nginx:alpine serving the static SPA** \u2014 the frontend is built at **image build time** (`ph connect build`), not at container start, so the container has no Node.js and no `ph` CLI. It runs as the non-root `nginx` user (UID 101), which lets pods set `runAsNonRoot: true`; bind-mounted files must be readable by UID 101 (`chown -R 101:101`). Switchboard, by contrast, runs as root.\n\nAt startup the entrypoint:\n\n1. Renders the nginx config from `nginx.conf.template` via envsubst (`PORT`, default `3001`; `PH_CONNECT_BASE_PATH`, default `/`)\n2. Deep-merges `PH_CONNECT_CONFIG_JSON` into the dist `powerhouse.config.json` (operator-wins)\n3. Re-syncs the Content-Security-Policy registry origin in `index.html` to the effective `packageRegistryUrl`\n4. Validates the config (`nginx -t`) and starts nginx\n\nConnect does **not** read any database variables \u2014 it is a static frontend; connection strings belong on Switchboard. Custom packages load **in the browser at runtime** from the package registry named by the top-level `packageRegistryUrl` (baked in at image build); to change packages or registry per deployment, override those top-level fields through the same env var: `PH_CONNECT_CONFIG_JSON='{\"packageRegistryUrl\":\"https://registry.example\",\"packages\":[{\"name\":\"@powerhousedao/todo-demo-package\",\"version\":\"1.0.0\"}]}'`. Because the image is plain nginx, \"building a custom Connect image\" means overriding runtime config at deploy time or swapping the served files / `nginx.conf.template` \u2014 there is nothing to `ph install` into it. The health check is `wget -q --spider http://127.0.0.1:3001/health` (nginx:alpine has no curl).\n\n_Source: apps/academy/docs/academy/03-Build/05-Launch/05-DockerDeployment.md (Powerhouse v6.2.2-dev.74)._\n_Source: docs/plans/2026-08-24-docker-compose-channels-design.md (Powerhouse v6.2.2-dev.74)._\n\n## Provenance\n- `apps/academy/docs/academy/03-Build/05-Launch/05-DockerDeployment.md` \u2014 Connect Environment Variables; Installing Custom Packages (Connect); Image Architecture \u203a Connect Image; Permission Issues; Building Custom Images\n- `docs/plans/2026-08-24-docker-compose-channels-design.md` \u2014 Common service shape: connect port 3001, wget healthcheck\n\n_Recorded from the Powerhouse repository at **v6.2.2-dev.74** during the v6.2.2-dev.74 source sync._",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": "v6.2.2-dev.74",
+  "computes": null,
+  "filePath": "apps/academy/docs/academy/03-Build/05-Launch/05-DockerDeployment.md",
+  "noteType": "ARCHITECTURE",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": "grounded",
+  "consumedBy": [],
+  "provenance": {
+    "author": "knowledge-agent",
+    "createdAt": "2026-09-02T22:12:53.944Z",
+    "sessionId": null,
+    "updatedAt": "2026-09-02T22:21:02.443Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Entrypoint: render nginx config via envsubst (PORT=3001, PH_CONNECT_BASE_PATH), deep-merge PH_CONNECT_CONFIG_JSON, re-sync the CSP registry origin, nginx -t, start. Packages load in the browser.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "f6e6fa0a-173e-4d04-b080-57aa84e2eb4b",
+      "actor": "knowledge-agent",
+      "comment": "extracted from the Powerhouse repository at v6.2.2-dev.74",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-09-02T22:12:54.489Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "a8ef8d28-618f-41bf-a4ce-1d309301eb8c",
+      "actor": "liberuum",
+      "comment": "claim checked against the cited repository file at the pinned tag",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-09-02T22:12:54.978Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

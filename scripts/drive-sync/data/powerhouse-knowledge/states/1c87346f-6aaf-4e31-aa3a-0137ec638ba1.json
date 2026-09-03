@@ -1,0 +1,107 @@
+{
+  "links": [
+    {
+      "id": "lnk-04374aa9-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "04374aa9-c0dc-477b-86c2-35841f3c8857",
+      "targetTitle": "relational-db-processor-for-sql-projections",
+      "reason": "Per-drive namespace isolation is the mechanism that makes the shared-tables goal safe",
+      "confidence": "grounded"
+    },
+    {
+      "id": "lnk-97c3a924-bui",
+      "linkType": "BUILDS_ON",
+      "targetDocumentId": "97c3a924-0ba9-4b89-86f7-b7a5747d41a7",
+      "targetTitle": "relational-spec-stale-v6",
+      "reason": "Separates the spec's durable intent from the API names that have since changed, so the document stays useful without misleading a reader",
+      "confidence": "grounded"
+    },
+    {
+      "id": "lnk-d1e93347-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "d1e93347-954b-46be-b494-2176482e67a8",
+      "targetTitle": "Spec \u203a Relational Db Processor Technical Specification",
+      "reason": "Extracted from docs/specs/relational-db-processor.md at v6.2.2-dev.74 \u2014 Goals (Primary and Supporting); Database Abstractions \u203a Migration Management",
+      "confidence": "grounded"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "The relational-DB processor design exists to stop every processor reinventing database setup, and it names sharing tables within a project as an explicit goal",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "37d9ab86-cb2a-42bb-b592-e2fa5920c564",
+      "name": "processors",
+      "topicDocumentId": null
+    },
+    {
+      "id": "b876815d-5a55-477c-b482-ac7d9f6b76b4",
+      "name": "relational-db",
+      "topicDocumentId": null
+    },
+    {
+      "id": "904c4bf6-06ba-46cc-adcd-64575a78f3f8",
+      "name": "design-goals",
+      "topicDocumentId": null
+    },
+    {
+      "id": "31095c46-7da7-4f6a-8d9b-9baa77d17934",
+      "name": "migrations",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "Stripped of the stale API names, the spec's goal list is the clearest statement of *why* relational processors have a base class at all:\n\n- a **unified interface** for processors that need persistent relational storage;\n- **type-safe** database operations;\n- **migration management standardised at the project level**, not per processor;\n- **less boilerplate** \u2014 the author writes business logic, not database setup;\n- **consistent error handling and resource management**;\n- **multiple processors sharing database tables within a project** \u2014 an explicit goal, which is why namespacing is a first-class concern rather than a convention;\n- automatic schema generation and migration; a clear split between infrastructure and business logic; easy testing and debugging of processor logic.\n\nThe problem it names is worth quoting in spirit: before it, processor implementations were inconsistent, database setup was manual, and there was no type safety.\n\nTwo design consequences that did survive into the shipped code: the **namespace** is part of the processor's identity (the generated template overrides `static getNamespace(driveId)` with the default `` `${this.name}_${driveId.replaceAll(\"-\", \"_\")}` ``, which is how two processors can share a database without colliding), and migrations live with the processor as an `up` / `down` pair rather than in a central migration folder.\n\n## Provenance\n- `docs/specs/relational-db-processor.md` \u2014 Goals (Primary and Supporting); Database Abstractions \u203a Migration Management\n\n_Extracted from the Powerhouse repository at **v6.2.2-dev.74**._",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": "v6.2.2-dev.74",
+  "computes": null,
+  "filePath": "docs/specs/relational-db-processor.md",
+  "noteType": "DECISION",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "knowledge-agent",
+    "createdAt": "2026-09-03T07:29:42.430Z",
+    "sessionId": null,
+    "updatedAt": "2026-09-03T07:31:13.519Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Primary goals: one interface with DB integration, type-safe operations, project-level migration management, less boilerplate, consistent resource management, and processors sharing tables.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "d8dec1a4-36c1-474f-93c5-2eeca45d6f6a",
+      "actor": "knowledge-agent",
+      "comment": "extracted from docs/specs/relational-db-processor.md at v6.2.2-dev.74",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-09-03T07:29:42.947Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "70801675-5a61-40dd-a20a-7349b1ed0722",
+      "actor": "liberuum",
+      "comment": "claim checked against the cited file at the pinned tag",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-09-03T07:29:43.423Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

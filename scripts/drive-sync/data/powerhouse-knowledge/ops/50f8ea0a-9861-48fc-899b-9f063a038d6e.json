@@ -1,0 +1,404 @@
+[
+  {
+    "index": 0,
+    "hash": "",
+    "timestampUtcMs": "2026-08-14T12:22:14.226Z",
+    "action": {
+      "type": "CREATE_DOCUMENT",
+      "input": {
+        "meta": {},
+        "name": "startfrom-applies-only-at-first-cursor-creation",
+        "slug": "",
+        "model": "bai/knowledge-note",
+        "branch": "main",
+        "signing": {
+          "nonce": "",
+          "publicKey": {},
+          "signature": "50f8ea0a-9861-48fc-899b-9f063a038d6e",
+          "documentType": "bai/knowledge-note",
+          "createdAtUtcIso": "2026-08-14T12:22:14.226Z"
+        },
+        "version": 0,
+        "documentId": "50f8ea0a-9861-48fc-899b-9f063a038d6e",
+        "protocolVersions": {
+          "base-reducer": 2
+        }
+      },
+      "timestampUtcMs": "2026-08-14T12:22:14.226Z"
+    }
+  },
+  {
+    "index": 0,
+    "hash": "4P4Kn770CuO7r7fE+m5A14YEphY=",
+    "timestampUtcMs": "2026-08-14T12:35:53.000Z",
+    "action": {
+      "type": "SET_TITLE",
+      "input": {
+        "title": "startFrom applies only when a processor's cursor row is first created; afterwards the persisted cursor wins",
+        "updatedAt": "2026-08-14T12:35:53.000Z"
+      },
+      "timestampUtcMs": "2026-08-14T12:35:53.000Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "",
+    "timestampUtcMs": "2026-08-14T12:22:14.226Z",
+    "action": {
+      "type": "UPGRADE_DOCUMENT",
+      "input": {
+        "model": "bai/knowledge-note",
+        "toVersion": 1,
+        "documentId": "50f8ea0a-9861-48fc-899b-9f063a038d6e",
+        "fromVersion": 0,
+        "initialState": {
+          "auth": {
+            "grants": [],
+            "version": 0
+          },
+          "local": {
+            "lastViewedAt": null,
+            "personalTags": []
+          },
+          "global": {
+            "links": [],
+            "model": null,
+            "scope": null,
+            "title": null,
+            "editor": null,
+            "inputs": [],
+            "models": [],
+            "status": "DRAFT",
+            "topics": [],
+            "content": null,
+            "context": null,
+            "modelId": null,
+            "modules": [],
+            "outputs": [],
+            "version": null,
+            "computes": null,
+            "filePath": null,
+            "noteType": null,
+            "severity": null,
+            "hooksUsed": [],
+            "rootCause": null,
+            "confidence": null,
+            "consumedBy": [],
+            "provenance": null,
+            "sourceType": null,
+            "targetType": null,
+            "cardinality": null,
+            "description": null,
+            "alternatives": [],
+            "consequences": [],
+            "errorMessage": null,
+            "relationType": null,
+            "correctPattern": null,
+            "decisionStatus": null,
+            "dispatchTargets": [],
+            "lifecycleEvents": []
+          },
+          "document": {
+            "hash": {
+              "encoding": "base64",
+              "algorithm": "sha1"
+            },
+            "version": 1
+          }
+        }
+      },
+      "timestampUtcMs": "2026-08-14T12:22:14.226Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "0eM/b1YdjnKbVx12V4NiLSJW13s=",
+    "timestampUtcMs": "2026-08-14T12:35:53.000Z",
+    "action": {
+      "type": "SET_DESCRIPTION",
+      "input": {
+        "updatedAt": "2026-08-14T12:35:53.000Z",
+        "description": "\"beginning\" (default) backfills full history, \"current\" starts at the manager's ordinal. Restarting never re-runs startFrom."
+      },
+      "timestampUtcMs": "2026-08-14T12:35:53.000Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "",
+    "timestampUtcMs": "2026-08-14T12:38:42.507Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "50f8ea0a-9861-48fc-899b-9f063a038d6e",
+        "targetId": "43b82c81-4d28-4e69-9a0a-84c0dddb87ef",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-08-14T12:38:42.507Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "D4o/7ei48SBDkByEAJf3j4/JseU=",
+    "timestampUtcMs": "2026-08-14T12:35:53.000Z",
+    "action": {
+      "type": "SET_NOTE_TYPE",
+      "input": {
+        "noteType": "PATTERN",
+        "updatedAt": "2026-08-14T12:35:53.000Z"
+      },
+      "timestampUtcMs": "2026-08-14T12:35:53.000Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "",
+    "timestampUtcMs": "2026-08-14T12:38:42.606Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "50f8ea0a-9861-48fc-899b-9f063a038d6e",
+        "targetId": "6a3275cd-d71e-4342-8cd3-3fb29b8fe58c",
+        "relationshipType": "BUILDS_ON"
+      },
+      "timestampUtcMs": "2026-08-14T12:38:42.606Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "zusGbUs9UGs7Fl8/Oky6reqIWEc=",
+    "timestampUtcMs": "2026-08-14T12:35:53.000Z",
+    "action": {
+      "type": "SET_CONTENT",
+      "input": {
+        "content": "`startFrom` is the third, optional field on a `ProcessorRecord`:\n\n```typescript\ntype ProcessorRecord = {\n  processor: IProcessor;\n  filter: ProcessorFilter;\n  startFrom?: \"beginning\" | \"current\";\n};\n```\n\nIts semantics are narrower than the name suggests. It is consulted **only when a processor is first created and no cursor row exists yet**:\n\n- `\"beginning\"` (the default) starts the cursor at ordinal 0, so the processor backfills the drive's full history.\n- `\"current\"` starts the cursor at the manager's current ordinal, so the processor sees only operations from now on.\n\nOnce a cursor row exists, `startFrom` is **ignored** \u2014 the persisted cursor wins. Restarting the reactor never re-runs `startFrom`. This is the point most people get wrong: flipping a deployed processor from `\"current\"` to `\"beginning\"` will not backfill it, because its cursor row already exists. To actually replay, you must call `tracked.retry()` (which re-activates and re-runs backfill) or clear the cursor row; changing the declaration alone is inert.\n\nCursors live in the `ProcessorCursor` table keyed by `processorId` (`${factoryId}:${driveId}:${index}`) and survive restarts. On startup the manager rehydrates every cursor and catch-up replays the gap.\n\nThe advance rule has its own subtlety. On each batch the manager filters to operations with `ordinal > lastOrdinal`, applies the filter, calls `onOperations` on the matches, and on success advances `lastOrdinal` to **the maximum ordinal in the batch, including unmatched operations**. The cursor therefore moves forward even when nothing matched \u2014 a narrowly filtered processor does not accumulate an ever-growing backlog of skipped work.\n\nBackfill uses `operationIndex.getSinceOrdinal(lastOrdinal)`, paging through history, filtering each page, calling `onOperations`, advancing and persisting the cursor per page, and following the continuation until exhausted. That path runs in three situations: registering a factory against a drive that already has history, restarting after downtime, and `retry()` on an errored processor.\n\n_Source: apps/academy/docs/academy/04-Reference/01-Reactor/05-Processors.md (Powerhouse v6.2.2-dev.45)._",
+        "updatedAt": "2026-08-14T12:35:53.000Z"
+      },
+      "timestampUtcMs": "2026-08-14T12:35:53.000Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "",
+    "timestampUtcMs": "2026-08-14T12:38:42.697Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "50f8ea0a-9861-48fc-899b-9f063a038d6e",
+        "targetId": "bb0b6db7-14f1-491c-8975-4475ff68481d",
+        "relationshipType": "BUILDS_ON"
+      },
+      "timestampUtcMs": "2026-08-14T12:38:42.697Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "5DC1W+2awInexRRiezngc27cVgs=",
+    "timestampUtcMs": "2026-08-14T12:35:53.000Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "version",
+        "value": "v6.2.2-dev.44",
+        "updatedAt": "2026-08-14T12:35:53.000Z"
+      },
+      "timestampUtcMs": "2026-08-14T12:35:53.000Z"
+    }
+  },
+  {
+    "index": 5,
+    "hash": "",
+    "timestampUtcMs": "2026-09-02T21:29:20.480Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "metadata": {
+          "reason": "The note names apps/academy/docs/academy/04-Reference/01-Reactor/05-Processors.md as its source; page text revised between v6.2.2-dev.47 and v6.2.2-dev.74 \u2014 re-verified in the v6.2.2-dev.74 pass",
+          "confidence": "grounded"
+        },
+        "sourceId": "50f8ea0a-9861-48fc-899b-9f063a038d6e",
+        "targetId": "c12de121-f575-4c71-95f7-bd298533dd51",
+        "relationshipType": "DERIVED_FROM"
+      },
+      "timestampUtcMs": "2026-09-02T21:29:20.480Z"
+    }
+  },
+  {
+    "index": 5,
+    "hash": "8ry5iJP5klRW0ZYcJq0Y8QkOqzU=",
+    "timestampUtcMs": "2026-08-14T12:35:53.000Z",
+    "action": {
+      "type": "SET_PROVENANCE",
+      "input": {
+        "author": "claude",
+        "createdAt": "2026-08-13T14:34:32.000Z",
+        "sourceOrigin": "DERIVED"
+      },
+      "timestampUtcMs": "2026-08-14T12:35:53.000Z"
+    }
+  },
+  {
+    "index": 6,
+    "hash": "",
+    "timestampUtcMs": "2026-09-02T21:31:23.146Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "metadata": {
+          "reason": "The note names apps/academy/docs/academy/04-Reference/01-Reactor/05-Processors.md as its source; page text revised between v6.2.2-dev.47 and v6.2.2-dev.74 \u2014 re-verified in the v6.2.2-dev.74 pass",
+          "confidence": "grounded"
+        },
+        "sourceId": "50f8ea0a-9861-48fc-899b-9f063a038d6e",
+        "targetId": "c12de121-f575-4c71-95f7-bd298533dd51",
+        "relationshipType": "DERIVED_FROM"
+      },
+      "timestampUtcMs": "2026-09-02T21:31:23.146Z"
+    }
+  },
+  {
+    "index": 6,
+    "hash": "NYRQPwSfXLkiLt09+Jw2deYFLcg=",
+    "timestampUtcMs": "2026-08-14T12:35:53.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "0c8bf4fa-5320-45f8-9a37-99fca72e1912",
+        "name": "processors",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-08-14T12:35:53.000Z"
+    }
+  },
+  {
+    "index": 7,
+    "hash": "",
+    "timestampUtcMs": "2026-09-02T21:38:08.613Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "metadata": {
+          "reason": "The note names apps/academy/docs/academy/04-Reference/01-Reactor/05-Processors.md as its source; page text revised between v6.2.2-dev.47 and v6.2.2-dev.74 \u2014 re-verified in the v6.2.2-dev.74 pass",
+          "confidence": "grounded"
+        },
+        "sourceId": "50f8ea0a-9861-48fc-899b-9f063a038d6e",
+        "targetId": "c12de121-f575-4c71-95f7-bd298533dd51",
+        "relationshipType": "DERIVED_FROM"
+      },
+      "timestampUtcMs": "2026-09-02T21:38:08.613Z"
+    }
+  },
+  {
+    "index": 7,
+    "hash": "gQZIRD/SmAqyhZtNuuX79r/5RR4=",
+    "timestampUtcMs": "2026-08-14T12:35:53.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "af564998-3eae-4d4c-b2b6-92ef074248db",
+        "name": "cursors",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-08-14T12:35:53.000Z"
+    }
+  },
+  {
+    "index": 8,
+    "hash": "edxE7uvsT/N46NJgaUsAXZwDoAg=",
+    "timestampUtcMs": "2026-08-14T14:37:05.000Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "version",
+        "value": "v6.2.2-dev.47",
+        "updatedAt": "2026-08-14T12:00:00.000Z"
+      },
+      "timestampUtcMs": "2026-08-14T14:37:05.000Z"
+    }
+  },
+  {
+    "index": 9,
+    "hash": "UiLhLo4+EPHvN92F69uCvBxFqOE=",
+    "timestampUtcMs": "2026-08-14T14:37:05.000Z",
+    "action": {
+      "type": "SUBMIT_FOR_REVIEW",
+      "input": {
+        "id": "36cb04be-b381-4625-a8f1-1e70971a1cca",
+        "actor": "claude",
+        "comment": "Knowledge registered against powerhouse v6.2.2-dev.47",
+        "timestamp": "2026-08-14T12:00:00.000Z"
+      },
+      "timestampUtcMs": "2026-08-14T14:37:05.000Z"
+    }
+  },
+  {
+    "index": 10,
+    "hash": "IZ1PsPtKXo/W7qp5p7NklOOuXwM=",
+    "timestampUtcMs": "2026-08-14T14:37:05.000Z",
+    "action": {
+      "type": "APPROVE_NOTE",
+      "input": {
+        "id": "db18a944-e692-4ed8-898e-0471bbce6733",
+        "actor": "liberuum",
+        "comment": "Canonical as of powerhouse v6.2.2-dev.47",
+        "timestamp": "2026-08-14T12:00:00.000Z"
+      },
+      "timestampUtcMs": "2026-08-14T14:37:05.000Z"
+    }
+  },
+  {
+    "index": 11,
+    "hash": "JBJrcWyduk4adW+TR8LG2N5ywds=",
+    "timestampUtcMs": "2026-09-02T21:29:21.216Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "filePath",
+        "value": "apps/academy/docs/academy/04-Reference/01-Reactor/05-Processors.md",
+        "updatedAt": "2026-09-02T21:29:21.216Z"
+      },
+      "timestampUtcMs": "2026-09-02T21:29:21.216Z"
+    }
+  },
+  {
+    "index": 12,
+    "hash": "lsrVAevC6gd2h6tFW6Nm3VbY5nA=",
+    "timestampUtcMs": "2026-09-02T21:31:23.298Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "filePath",
+        "value": "apps/academy/docs/academy/04-Reference/01-Reactor/05-Processors.md",
+        "updatedAt": "2026-09-02T21:31:23.298Z"
+      },
+      "timestampUtcMs": "2026-09-02T21:31:23.298Z"
+    }
+  },
+  {
+    "index": 13,
+    "hash": "yhDUoPCGvhY3RVvcKV3KZ+B8GLY=",
+    "timestampUtcMs": "2026-09-02T21:38:08.780Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "filePath",
+        "value": "apps/academy/docs/academy/04-Reference/01-Reactor/05-Processors.md",
+        "updatedAt": "2026-09-02T21:38:08.780Z"
+      },
+      "timestampUtcMs": "2026-09-02T21:38:08.780Z"
+    }
+  },
+  {
+    "index": 14,
+    "hash": "vPDjLl30I8DIFHk1lGaIg6eXTrE=",
+    "timestampUtcMs": "2026-09-02T22:26:28.953Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "version",
+        "value": "v6.2.2-dev.74",
+        "updatedAt": "2026-09-02T22:26:28.953Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:26:28.953Z"
+    }
+  }
+]

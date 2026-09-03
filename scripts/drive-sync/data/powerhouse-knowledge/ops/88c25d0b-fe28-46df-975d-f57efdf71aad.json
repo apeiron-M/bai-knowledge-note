@@ -1,0 +1,622 @@
+[
+  {
+    "index": 0,
+    "hash": "",
+    "timestampUtcMs": "2026-09-02T22:10:53.250Z",
+    "action": {
+      "type": "CREATE_DOCUMENT",
+      "input": {
+        "meta": {},
+        "name": "auth-limits-conditions",
+        "slug": "",
+        "model": "bai/knowledge-note",
+        "branch": "main",
+        "signing": {
+          "nonce": "",
+          "publicKey": {},
+          "signature": "88c25d0b-fe28-46df-975d-f57efdf71aad",
+          "documentType": "bai/knowledge-note",
+          "createdAtUtcIso": "2026-09-02T22:10:53.250Z"
+        },
+        "version": 0,
+        "documentId": "88c25d0b-fe28-46df-975d-f57efdf71aad",
+        "protocolVersions": {
+          "base-reducer": 2
+        }
+      },
+      "timestampUtcMs": "2026-09-02T22:10:53.250Z"
+    }
+  },
+  {
+    "index": 0,
+    "hash": "PVHo6L2Xqan8864CfbEOOWtq85E=",
+    "timestampUtcMs": "2026-09-02T22:10:53.256Z",
+    "action": {
+      "type": "SET_TITLE",
+      "input": {
+        "title": "A version-1 policy holds at most 100 grants and a condition at most 100 nodes 10 deep, because every replica re-evaluates the policy at every operation's position",
+        "updatedAt": "2026-09-02T22:10:53.256Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:10:53.256Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "",
+    "timestampUtcMs": "2026-09-02T22:10:53.250Z",
+    "action": {
+      "type": "UPGRADE_DOCUMENT",
+      "input": {
+        "model": "bai/knowledge-note",
+        "toVersion": 1,
+        "documentId": "88c25d0b-fe28-46df-975d-f57efdf71aad",
+        "fromVersion": 0,
+        "initialState": {
+          "auth": {
+            "grants": [],
+            "version": 0
+          },
+          "local": {
+            "lastViewedAt": null,
+            "personalTags": []
+          },
+          "global": {
+            "links": [],
+            "model": null,
+            "scope": null,
+            "title": null,
+            "editor": null,
+            "inputs": [],
+            "models": [],
+            "status": "DRAFT",
+            "topics": [],
+            "content": null,
+            "context": null,
+            "modelId": null,
+            "modules": [],
+            "outputs": [],
+            "version": null,
+            "computes": null,
+            "filePath": null,
+            "noteType": null,
+            "severity": null,
+            "hooksUsed": [],
+            "rootCause": null,
+            "confidence": null,
+            "consumedBy": [],
+            "provenance": null,
+            "sourceType": null,
+            "targetType": null,
+            "cardinality": null,
+            "description": null,
+            "alternatives": [],
+            "consequences": [],
+            "errorMessage": null,
+            "relationType": null,
+            "correctPattern": null,
+            "decisionStatus": null,
+            "dispatchTargets": [],
+            "lifecycleEvents": []
+          },
+          "document": {
+            "hash": {
+              "encoding": "base64",
+              "algorithm": "sha1"
+            },
+            "version": 1
+          }
+        }
+      },
+      "timestampUtcMs": "2026-09-02T22:10:53.250Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "orNSF1L5/vTni/ZcSMcaR+uNces=",
+    "timestampUtcMs": "2026-09-02T22:10:53.256Z",
+    "action": {
+      "type": "SET_DESCRIPTION",
+      "input": {
+        "updatedAt": "2026-09-02T22:10:53.256Z",
+        "description": "Also at most 100 operations per execute capability, and a condition path may not name another scope. Version-1 rules are frozen; an unsupported policy version fails closed except for the creator."
+      },
+      "timestampUtcMs": "2026-09-02T22:10:53.256Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "",
+    "timestampUtcMs": "2026-09-02T22:18:45.412Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "metadata": {
+          "reason": "Extracted from apps/academy/docs/academy/04-Reference/01-Reactor/11-Authorization.md at v6.2.2-dev.74 \u2014 'Limits' section",
+          "confidence": "grounded"
+        },
+        "sourceId": "88c25d0b-fe28-46df-975d-f57efdf71aad",
+        "targetId": "17dc46b0-f733-467c-99d7-ae8fbe0fb0e4",
+        "relationshipType": "DERIVED_FROM"
+      },
+      "timestampUtcMs": "2026-09-02T22:18:45.412Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "8LYmMJftgP2z6y+MWxDqx805GiU=",
+    "timestampUtcMs": "2026-09-02T22:10:53.256Z",
+    "action": {
+      "type": "SET_NOTE_TYPE",
+      "input": {
+        "noteType": "REFERENCE",
+        "updatedAt": "2026-09-02T22:10:53.256Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:10:53.256Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "",
+    "timestampUtcMs": "2026-09-02T22:18:46.529Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "metadata": {
+          "reason": "Extracted from docs/specs/auth-scope.md at v6.2.2-dev.74 \u2014 Condition language: validation rules and versioning",
+          "confidence": "grounded"
+        },
+        "sourceId": "88c25d0b-fe28-46df-975d-f57efdf71aad",
+        "targetId": "223bb12a-be7f-4209-9ab2-f04f7bb2b6c8",
+        "relationshipType": "DERIVED_FROM"
+      },
+      "timestampUtcMs": "2026-09-02T22:18:46.529Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "ekdYY8LbWDegOivcWrS+IlYkAGE=",
+    "timestampUtcMs": "2026-09-02T22:10:53.256Z",
+    "action": {
+      "type": "SET_CONTENT",
+      "input": {
+        "content": "`INITIALIZE_AUTH` and `SET_GRANT` validate what they carry:\n\n- a policy holds **at most 100 grants**;\n- a condition tree has **at most 100 nodes** and nests **at most 10 deep**;\n- an execute capability lists **at most 100 operations**;\n- a condition path that names a scope other than the capability's own is rejected \u2014 conditions read only the executing scope, so such a path could never resolve.\n\nThese caps exist because **every replica re-evaluates the policy at every operation's position**; they bound the work a single decision can cost. They are part of what a `version` means: version 1 ships its rules complete and never changes them, since accepted operations are permanent history every replica must fold identically. Any rule change requires a new version, and a replica that meets a policy version newer than it supports fails closed \u2014 every request denied except the creator's administration of the auth scope \u2014 until the software knows that version.\n\nThe condition language itself is kept small and total on purpose: `eq`, `ne`, `in`, `notIn`, `lt`, `lte`, `gt`, `gte`, `exists`, `and`, `or`, `not` over `{ attr: \"doc.global.status\" }` / `{ lit: \u2026 }` operands; mixed-type comparisons are false, numbers compare numerically, strings by code point, an unresolved path (or one resolving to an object or array) is undefined and every comparison with undefined is false. The evaluator is a small pure function in `shared/document-model` that must never throw for any state shape.\n\n_Source: apps/academy/docs/academy/04-Reference/01-Reactor/11-Authorization.md (Powerhouse v6.2.2-dev.74)._\n_Source: docs/specs/auth-scope.md (Powerhouse v6.2.2-dev.74)._\n\n## Provenance\n- `apps/academy/docs/academy/04-Reference/01-Reactor/11-Authorization.md` \u2014 'Limits' section\n- `docs/specs/auth-scope.md` \u2014 Condition language: validation rules and versioning\n\n_Recorded from the Powerhouse repository at **v6.2.2-dev.74** during the v6.2.2-dev.74 source sync._",
+        "updatedAt": "2026-09-02T22:10:53.256Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:10:53.256Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "",
+    "timestampUtcMs": "2026-09-02T22:18:47.783Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "metadata": {
+          "reason": "Bounds the grant and condition shapes defined there",
+          "confidence": "grounded"
+        },
+        "sourceId": "88c25d0b-fe28-46df-975d-f57efdf71aad",
+        "targetId": "4f23f5d4-b93e-430c-8dc3-b9835a6b83dc",
+        "relationshipType": "BUILDS_ON"
+      },
+      "timestampUtcMs": "2026-09-02T22:18:47.783Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "Sl8zcv5BQMrFOgN8YED0nWon0NI=",
+    "timestampUtcMs": "2026-09-02T22:10:53.256Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "79068c8c-ea27-4601-9d16-e397171aa97c",
+        "name": "auth-scope"
+      },
+      "timestampUtcMs": "2026-09-02T22:10:53.256Z"
+    }
+  },
+  {
+    "index": 5,
+    "hash": "",
+    "timestampUtcMs": "2026-09-02T22:18:48.253Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "metadata": {
+          "reason": "An unsupported policy version is the other fail-closed case next to unevaluable grants",
+          "confidence": "grounded"
+        },
+        "sourceId": "88c25d0b-fe28-46df-975d-f57efdf71aad",
+        "targetId": "72db84fb-3247-40af-b29a-6b17f78aea33",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-09-02T22:18:48.253Z"
+    }
+  },
+  {
+    "index": 5,
+    "hash": "VvEit/0Kd7+wAv6HiVbm80c+B5w=",
+    "timestampUtcMs": "2026-09-02T22:10:53.256Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "cddedc45-cc8e-44e8-af14-2e81bd70c610",
+        "name": "limits"
+      },
+      "timestampUtcMs": "2026-09-02T22:10:53.256Z"
+    }
+  },
+  {
+    "index": 6,
+    "hash": "",
+    "timestampUtcMs": "2026-09-02T22:22:56.020Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "metadata": {
+          "reason": "Extracted from apps/academy/docs/academy/04-Reference/01-Reactor/11-Authorization.md at v6.2.2-dev.74 \u2014 'Limits' section",
+          "confidence": "grounded"
+        },
+        "sourceId": "88c25d0b-fe28-46df-975d-f57efdf71aad",
+        "targetId": "17dc46b0-f733-467c-99d7-ae8fbe0fb0e4",
+        "relationshipType": "DERIVED_FROM"
+      },
+      "timestampUtcMs": "2026-09-02T22:22:56.020Z"
+    }
+  },
+  {
+    "index": 6,
+    "hash": "B6zYjfx0gFj+KfgZgdra69rZaJ8=",
+    "timestampUtcMs": "2026-09-02T22:10:53.256Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "4b157525-e009-4dde-b871-ce7bb3dfe8ee",
+        "name": "conditions"
+      },
+      "timestampUtcMs": "2026-09-02T22:10:53.256Z"
+    }
+  },
+  {
+    "index": 7,
+    "hash": "",
+    "timestampUtcMs": "2026-09-02T22:22:56.619Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "metadata": {
+          "reason": "Extracted from docs/specs/auth-scope.md at v6.2.2-dev.74 \u2014 Condition language: validation rules and versioning",
+          "confidence": "grounded"
+        },
+        "sourceId": "88c25d0b-fe28-46df-975d-f57efdf71aad",
+        "targetId": "223bb12a-be7f-4209-9ab2-f04f7bb2b6c8",
+        "relationshipType": "DERIVED_FROM"
+      },
+      "timestampUtcMs": "2026-09-02T22:22:56.619Z"
+    }
+  },
+  {
+    "index": 7,
+    "hash": "vlyVjuOLq95HYfiS9Mqi7jkZKQs=",
+    "timestampUtcMs": "2026-09-02T22:10:53.256Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "67e65066-acfb-4964-ae7c-8c5bf7edd023",
+        "name": "reactor"
+      },
+      "timestampUtcMs": "2026-09-02T22:10:53.256Z"
+    }
+  },
+  {
+    "index": 8,
+    "hash": "",
+    "timestampUtcMs": "2026-09-02T22:22:57.390Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "metadata": {
+          "reason": "Bounds the grant and condition shapes defined there",
+          "confidence": "grounded"
+        },
+        "sourceId": "88c25d0b-fe28-46df-975d-f57efdf71aad",
+        "targetId": "4f23f5d4-b93e-430c-8dc3-b9835a6b83dc",
+        "relationshipType": "BUILDS_ON"
+      },
+      "timestampUtcMs": "2026-09-02T22:22:57.390Z"
+    }
+  },
+  {
+    "index": 8,
+    "hash": "Eu1JL8k3f2BceZ8bWl1WX3qQERw=",
+    "timestampUtcMs": "2026-09-02T22:10:53.256Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "version",
+        "value": "v6.2.2-dev.74",
+        "updatedAt": "2026-09-02T22:10:53.256Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:10:53.256Z"
+    }
+  },
+  {
+    "index": 9,
+    "hash": "",
+    "timestampUtcMs": "2026-09-02T22:22:57.873Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "metadata": {
+          "reason": "An unsupported policy version is the other fail-closed case next to unevaluable grants",
+          "confidence": "grounded"
+        },
+        "sourceId": "88c25d0b-fe28-46df-975d-f57efdf71aad",
+        "targetId": "72db84fb-3247-40af-b29a-6b17f78aea33",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-09-02T22:22:57.873Z"
+    }
+  },
+  {
+    "index": 9,
+    "hash": "Ye0GtUTlCsIhOBcdjQpQk/jbzt4=",
+    "timestampUtcMs": "2026-09-02T22:10:53.256Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "filePath",
+        "value": "apps/academy/docs/academy/04-Reference/01-Reactor/11-Authorization.md",
+        "updatedAt": "2026-09-02T22:10:53.256Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:10:53.256Z"
+    }
+  },
+  {
+    "index": 10,
+    "hash": "b0Qdgpyn7HAOOMVgwGI+gxQaWLM=",
+    "timestampUtcMs": "2026-09-02T22:10:53.256Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "confidence",
+        "value": "grounded",
+        "updatedAt": "2026-09-02T22:10:53.256Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:10:53.256Z"
+    }
+  },
+  {
+    "index": 11,
+    "hash": "9rvFyV6+9DLAIM8ZERRJrFzLhCA=",
+    "timestampUtcMs": "2026-09-02T22:10:55.839Z",
+    "action": {
+      "type": "SET_PROVENANCE",
+      "input": {
+        "author": "knowledge-agent",
+        "createdAt": "2026-09-02T22:10:55.839Z",
+        "sourceOrigin": "DERIVED"
+      },
+      "timestampUtcMs": "2026-09-02T22:10:55.839Z"
+    }
+  },
+  {
+    "index": 12,
+    "hash": "cjOiJkTE/YdG+ZuK34XSwlZyZR0=",
+    "timestampUtcMs": "2026-09-02T22:10:56.406Z",
+    "action": {
+      "type": "SUBMIT_FOR_REVIEW",
+      "input": {
+        "id": "93082ad5-42fd-4cd9-bca5-87da9c6fe885",
+        "actor": "knowledge-agent",
+        "comment": "extracted from the Powerhouse repository at v6.2.2-dev.74",
+        "timestamp": "2026-09-02T22:10:56.406Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:10:56.406Z"
+    }
+  },
+  {
+    "index": 13,
+    "hash": "olLDPtzH/+kRhpSCbZ4NelzVCrs=",
+    "timestampUtcMs": "2026-09-02T22:10:56.902Z",
+    "action": {
+      "type": "APPROVE_NOTE",
+      "input": {
+        "id": "082a9723-9b2b-48ac-a3bf-8ae98cd6941f",
+        "actor": "liberuum",
+        "comment": "claim checked against the cited repository file at the pinned tag",
+        "timestamp": "2026-09-02T22:10:56.902Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:10:56.902Z"
+    }
+  },
+  {
+    "index": 14,
+    "hash": "YvxSEhB0g1KP58y8eIZQer4ityI=",
+    "timestampUtcMs": "2026-09-02T22:15:55.378Z",
+    "action": {
+      "type": "SET_TITLE",
+      "input": {
+        "title": "A version-1 policy holds at most 100 grants and a condition at most 100 nodes 10 deep, because every replica re-evaluates the policy at every operation's position",
+        "updatedAt": "2026-09-02T22:15:55.378Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:15:55.378Z"
+    }
+  },
+  {
+    "index": 15,
+    "hash": "YvxSEhB0g1KP58y8eIZQer4ityI=",
+    "timestampUtcMs": "2026-09-02T22:15:55.378Z",
+    "action": {
+      "type": "SET_DESCRIPTION",
+      "input": {
+        "updatedAt": "2026-09-02T22:15:55.378Z",
+        "description": "Also at most 100 operations per execute capability, and a condition path may not name another scope. Version-1 rules are frozen; an unsupported policy version fails closed except for the creator."
+      },
+      "timestampUtcMs": "2026-09-02T22:15:55.378Z"
+    }
+  },
+  {
+    "index": 16,
+    "hash": "YvxSEhB0g1KP58y8eIZQer4ityI=",
+    "timestampUtcMs": "2026-09-02T22:15:55.378Z",
+    "action": {
+      "type": "SET_NOTE_TYPE",
+      "input": {
+        "noteType": "REFERENCE",
+        "updatedAt": "2026-09-02T22:15:55.378Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:15:55.378Z"
+    }
+  },
+  {
+    "index": 17,
+    "hash": "YvxSEhB0g1KP58y8eIZQer4ityI=",
+    "timestampUtcMs": "2026-09-02T22:15:55.378Z",
+    "action": {
+      "type": "SET_CONTENT",
+      "input": {
+        "content": "`INITIALIZE_AUTH` and `SET_GRANT` validate what they carry:\n\n- a policy holds **at most 100 grants**;\n- a condition tree has **at most 100 nodes** and nests **at most 10 deep**;\n- an execute capability lists **at most 100 operations**;\n- a condition path that names a scope other than the capability's own is rejected \u2014 conditions read only the executing scope, so such a path could never resolve.\n\nThese caps exist because **every replica re-evaluates the policy at every operation's position**; they bound the work a single decision can cost. They are part of what a `version` means: version 1 ships its rules complete and never changes them, since accepted operations are permanent history every replica must fold identically. Any rule change requires a new version, and a replica that meets a policy version newer than it supports fails closed \u2014 every request denied except the creator's administration of the auth scope \u2014 until the software knows that version.\n\nThe condition language itself is kept small and total on purpose: `eq`, `ne`, `in`, `notIn`, `lt`, `lte`, `gt`, `gte`, `exists`, `and`, `or`, `not` over `{ attr: \"doc.global.status\" }` / `{ lit: \u2026 }` operands; mixed-type comparisons are false, numbers compare numerically, strings by code point, an unresolved path (or one resolving to an object or array) is undefined and every comparison with undefined is false. The evaluator is a small pure function in `shared/document-model` that must never throw for any state shape.\n\n_Source: apps/academy/docs/academy/04-Reference/01-Reactor/11-Authorization.md (Powerhouse v6.2.2-dev.74)._\n_Source: docs/specs/auth-scope.md (Powerhouse v6.2.2-dev.74)._\n\n## Provenance\n- `apps/academy/docs/academy/04-Reference/01-Reactor/11-Authorization.md` \u2014 'Limits' section\n- `docs/specs/auth-scope.md` \u2014 Condition language: validation rules and versioning\n\n_Recorded from the Powerhouse repository at **v6.2.2-dev.74** during the v6.2.2-dev.74 source sync._",
+        "updatedAt": "2026-09-02T22:15:55.378Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:15:55.378Z"
+    }
+  },
+  {
+    "index": 18,
+    "hash": "YvxSEhB0g1KP58y8eIZQer4ityI=",
+    "timestampUtcMs": "2026-09-02T22:15:55.378Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "version",
+        "value": "v6.2.2-dev.74",
+        "updatedAt": "2026-09-02T22:15:55.378Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:15:55.378Z"
+    }
+  },
+  {
+    "index": 19,
+    "hash": "YvxSEhB0g1KP58y8eIZQer4ityI=",
+    "timestampUtcMs": "2026-09-02T22:15:55.378Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "filePath",
+        "value": "apps/academy/docs/academy/04-Reference/01-Reactor/11-Authorization.md",
+        "updatedAt": "2026-09-02T22:15:55.378Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:15:55.378Z"
+    }
+  },
+  {
+    "index": 20,
+    "hash": "YvxSEhB0g1KP58y8eIZQer4ityI=",
+    "timestampUtcMs": "2026-09-02T22:15:55.378Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "confidence",
+        "value": "grounded",
+        "updatedAt": "2026-09-02T22:15:55.378Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:15:55.378Z"
+    }
+  },
+  {
+    "index": 21,
+    "hash": "zK5aa1J/oEEhIoK2T1HPc8p8tcE=",
+    "timestampUtcMs": "2026-09-02T22:20:29.908Z",
+    "action": {
+      "type": "SET_TITLE",
+      "input": {
+        "title": "A version-1 policy holds at most 100 grants and a condition at most 100 nodes 10 deep, because every replica re-evaluates the policy at every operation's position",
+        "updatedAt": "2026-09-02T22:20:29.908Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:20:29.908Z"
+    }
+  },
+  {
+    "index": 22,
+    "hash": "zK5aa1J/oEEhIoK2T1HPc8p8tcE=",
+    "timestampUtcMs": "2026-09-02T22:20:29.908Z",
+    "action": {
+      "type": "SET_DESCRIPTION",
+      "input": {
+        "updatedAt": "2026-09-02T22:20:29.908Z",
+        "description": "Also at most 100 operations per execute capability, and a condition path may not name another scope. Version-1 rules are frozen; an unsupported policy version fails closed except for the creator."
+      },
+      "timestampUtcMs": "2026-09-02T22:20:29.908Z"
+    }
+  },
+  {
+    "index": 23,
+    "hash": "zK5aa1J/oEEhIoK2T1HPc8p8tcE=",
+    "timestampUtcMs": "2026-09-02T22:20:29.908Z",
+    "action": {
+      "type": "SET_NOTE_TYPE",
+      "input": {
+        "noteType": "REFERENCE",
+        "updatedAt": "2026-09-02T22:20:29.908Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:20:29.908Z"
+    }
+  },
+  {
+    "index": 24,
+    "hash": "zK5aa1J/oEEhIoK2T1HPc8p8tcE=",
+    "timestampUtcMs": "2026-09-02T22:20:29.908Z",
+    "action": {
+      "type": "SET_CONTENT",
+      "input": {
+        "content": "`INITIALIZE_AUTH` and `SET_GRANT` validate what they carry:\n\n- a policy holds **at most 100 grants**;\n- a condition tree has **at most 100 nodes** and nests **at most 10 deep**;\n- an execute capability lists **at most 100 operations**;\n- a condition path that names a scope other than the capability's own is rejected \u2014 conditions read only the executing scope, so such a path could never resolve.\n\nThese caps exist because **every replica re-evaluates the policy at every operation's position**; they bound the work a single decision can cost. They are part of what a `version` means: version 1 ships its rules complete and never changes them, since accepted operations are permanent history every replica must fold identically. Any rule change requires a new version, and a replica that meets a policy version newer than it supports fails closed \u2014 every request denied except the creator's administration of the auth scope \u2014 until the software knows that version.\n\nThe condition language itself is kept small and total on purpose: `eq`, `ne`, `in`, `notIn`, `lt`, `lte`, `gt`, `gte`, `exists`, `and`, `or`, `not` over `{ attr: \"doc.global.status\" }` / `{ lit: \u2026 }` operands; mixed-type comparisons are false, numbers compare numerically, strings by code point, an unresolved path (or one resolving to an object or array) is undefined and every comparison with undefined is false. The evaluator is a small pure function in `shared/document-model` that must never throw for any state shape.\n\n_Source: apps/academy/docs/academy/04-Reference/01-Reactor/11-Authorization.md (Powerhouse v6.2.2-dev.74)._\n_Source: docs/specs/auth-scope.md (Powerhouse v6.2.2-dev.74)._\n\n## Provenance\n- `apps/academy/docs/academy/04-Reference/01-Reactor/11-Authorization.md` \u2014 'Limits' section\n- `docs/specs/auth-scope.md` \u2014 Condition language: validation rules and versioning\n\n_Recorded from the Powerhouse repository at **v6.2.2-dev.74** during the v6.2.2-dev.74 source sync._",
+        "updatedAt": "2026-09-02T22:20:29.908Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:20:29.908Z"
+    }
+  },
+  {
+    "index": 25,
+    "hash": "zK5aa1J/oEEhIoK2T1HPc8p8tcE=",
+    "timestampUtcMs": "2026-09-02T22:20:29.908Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "version",
+        "value": "v6.2.2-dev.74",
+        "updatedAt": "2026-09-02T22:20:29.908Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:20:29.908Z"
+    }
+  },
+  {
+    "index": 26,
+    "hash": "zK5aa1J/oEEhIoK2T1HPc8p8tcE=",
+    "timestampUtcMs": "2026-09-02T22:20:29.908Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "filePath",
+        "value": "apps/academy/docs/academy/04-Reference/01-Reactor/11-Authorization.md",
+        "updatedAt": "2026-09-02T22:20:29.908Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:20:29.908Z"
+    }
+  },
+  {
+    "index": 27,
+    "hash": "zK5aa1J/oEEhIoK2T1HPc8p8tcE=",
+    "timestampUtcMs": "2026-09-02T22:20:29.908Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "confidence",
+        "value": "grounded",
+        "updatedAt": "2026-09-02T22:20:29.908Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:20:29.908Z"
+    }
+  }
+]

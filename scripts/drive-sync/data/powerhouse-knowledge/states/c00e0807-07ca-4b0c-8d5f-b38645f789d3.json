@@ -1,0 +1,107 @@
+{
+  "links": [
+    {
+      "id": "lnk-29dd086c-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "29dd086c-f1d5-4a40-819e-82d03bba5506",
+      "targetTitle": "schema-design"
+    },
+    {
+      "id": "lnk-0d2d90e4-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "0d2d90e4-65f8-4475-a19f-4aeb36199100",
+      "targetTitle": "one-operation-per-user-intent-keeps-concerns-separated"
+    },
+    {
+      "id": "lnk-4e6413ee-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "4e6413ee-22bf-4d64-964f-ca8b28917cec",
+      "targetTitle": "present-document-model-proposals-to-user-before-implementing"
+    },
+    {
+      "id": "lnk-4aa16a10-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "4aa16a10-b7ac-4ef0-8d70-03ce08d3a8d4",
+      "targetTitle": "The DocumentToolbar className prop merges with defaults via twMerge"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "input types should reflect user intent with simple specific fields",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "f195f563-d22f-47e7-9186-d42f656b1f8e",
+      "name": "schema design",
+      "topicDocumentId": null
+    },
+    {
+      "id": "f65f50c7-b0f7-4afd-b18e-fb07877efe5f",
+      "name": "input types",
+      "topicDocumentId": null
+    },
+    {
+      "id": "fa298fa6-d426-41dc-9970-b37838bf1c63",
+      "name": "operation design",
+      "topicDocumentId": null
+    },
+    {
+      "id": "b26c4f93-62b4-429b-9bef-eb324d1ffc05",
+      "name": "GraphQL",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "# input types should reflect user intent with simple specific fields\n\nOperation input types should be designed around user intent:\n\n```graphql\n// \u2705 Simple, specific \u2014 reflects what the user provides\ninput AddLineItemInput {\n    id: OID!\n    description: String!\n    quantity: Int!\n    unitPrice: Amount_Money!\n}\n\n// \u274c Complex nested structure \u2014 harder to use and validate\ninput AddLineItemInput {\n    item: LineItemInput!\n    metadata: MetadataInput\n    options: OptionsInput\n}\n```\n\nKeep inputs flat and focused. The system auto-generates `OID` for new objects \u2014 callers provide IDs through the input schema because [[reducer purity requires all dynamic values from action input]].\n\n---\n\nTopics:\n- [[schema design]]",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": "v6.2.2-dev.74",
+  "computes": null,
+  "filePath": null,
+  "noteType": "PATTERN",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "knowledge-agent",
+    "createdAt": "2026-04-03T13:58:10.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-09-03T09:57:09.779Z",
+    "sourceOrigin": "IMPORT"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Prefer descriptive input names and simple fields over complex nested types; the system auto-generates OID for new objects",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "ac610d1a-8412-4862-8525-13c70b12c0e4",
+      "actor": "claude",
+      "comment": "Knowledge registered against powerhouse v6.2.2-dev.47",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-14T12:00:00.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "c8e82e39-ed52-4477-92f1-f55ad54e5d11",
+      "actor": "liberuum",
+      "comment": "Canonical as of powerhouse v6.2.2-dev.47",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-14T12:00:00.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

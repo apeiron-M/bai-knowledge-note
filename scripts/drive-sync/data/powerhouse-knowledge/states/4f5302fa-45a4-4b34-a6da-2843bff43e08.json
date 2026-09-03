@@ -1,0 +1,81 @@
+{
+  "links": [
+    {
+      "id": "lnk-e6c313f7-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "e6c313f7-304d-44e2-a00a-a5fefe83d4d2",
+      "targetTitle": "skill-seed",
+      "reason": "Discovery note distilled by sync-skills from the skill's SKILL.md frontmatter description and its section headings (source hash sha256:c5d340428b01); the full procedure is the source text",
+      "confidence": "grounded"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Agent skill: /seed \u2014 Ingest source material into the Knowledge Vault for processing.",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "5b9491fe-ea8c-4e55-bd57-efac03f2dd73",
+      "name": "agent-skills",
+      "topicDocumentId": null
+    },
+    {
+      "id": "5edecb98-59cf-4078-90b5-06b5521bb993",
+      "name": "seed",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "## When to use\nIngest source material into the Knowledge Vault for processing. Use when the user has an article, transcript, documentation, or any text they want to add to the knowledge base.\n\n## What it covers\n- Seeding process\n- Source types\n- Quality checklist\n\n## Where the full skill lives\n- Vault source: **Agent skill: seed** (full SKILL.md text, DERIVED_FROM below)\n- Canonical copy: plugin repo `skills/seed/SKILL.md` \u2014 always execute from the repo copy; this note is the discovery layer.\n\n## Invocation\n`/powerhouse-knowledge:seed` in Claude Code (plugin installed), or read the source content and follow it manually.\n\n_Synced by sync-skills; source hash sha256:c5d340428b01\u2026_",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": "skills/seed/SKILL.md",
+  "noteType": "PROCEDURE",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "skill-sync",
+    "createdAt": "2026-08-16T12:02:21.202Z",
+    "sessionId": null,
+    "updatedAt": "2026-09-02T19:22:02.457Z",
+    "sourceOrigin": "IMPORT"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Ingest source material into the Knowledge Vault for processing. Use when the user has an article, transcript, documentation, or any text they want to add to the knowledge base.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "5b43d829-9ca1-40fc-b86d-d3904f8e75d7",
+      "actor": "skill-sync",
+      "comment": "skill sync",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-16T12:02:21.855Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "0d986ef0-e19c-4659-9857-17d985cc7a9a",
+      "actor": "knowledge-agent",
+      "comment": "mechanical sync from canonical repo copy",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-16T12:02:22.191Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

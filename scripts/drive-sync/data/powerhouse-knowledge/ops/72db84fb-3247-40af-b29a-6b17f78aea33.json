@@ -1,0 +1,658 @@
+[
+  {
+    "index": 0,
+    "hash": "",
+    "timestampUtcMs": "2026-09-02T22:10:41.524Z",
+    "action": {
+      "type": "CREATE_DOCUMENT",
+      "input": {
+        "meta": {},
+        "name": "auth-unavailable-feature-skipped",
+        "slug": "",
+        "model": "bai/knowledge-note",
+        "branch": "main",
+        "signing": {
+          "nonce": "",
+          "publicKey": {},
+          "signature": "72db84fb-3247-40af-b29a-6b17f78aea33",
+          "documentType": "bai/knowledge-note",
+          "createdAtUtcIso": "2026-09-02T22:10:41.524Z"
+        },
+        "version": 0,
+        "documentId": "72db84fb-3247-40af-b29a-6b17f78aea33",
+        "protocolVersions": {
+          "base-reducer": 2
+        }
+      },
+      "timestampUtcMs": "2026-09-02T22:10:41.524Z"
+    }
+  },
+  {
+    "index": 0,
+    "hash": "uQWoBpzju/4/D4GJqirakU2MleQ=",
+    "timestampUtcMs": "2026-09-02T22:10:41.477Z",
+    "action": {
+      "type": "SET_TITLE",
+      "input": {
+        "title": "A grant that uses a feature the reactor cannot evaluate is skipped, not honoured \u2014 which fails closed for allows but leaves a conditional deny weaker than written",
+        "updatedAt": "2026-09-02T22:10:41.477Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:10:41.477Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "",
+    "timestampUtcMs": "2026-09-02T22:10:41.524Z",
+    "action": {
+      "type": "UPGRADE_DOCUMENT",
+      "input": {
+        "model": "bai/knowledge-note",
+        "toVersion": 1,
+        "documentId": "72db84fb-3247-40af-b29a-6b17f78aea33",
+        "fromVersion": 0,
+        "initialState": {
+          "auth": {
+            "grants": [],
+            "version": 0
+          },
+          "local": {
+            "lastViewedAt": null,
+            "personalTags": []
+          },
+          "global": {
+            "links": [],
+            "model": null,
+            "scope": null,
+            "title": null,
+            "editor": null,
+            "inputs": [],
+            "models": [],
+            "status": "DRAFT",
+            "topics": [],
+            "content": null,
+            "context": null,
+            "modelId": null,
+            "modules": [],
+            "outputs": [],
+            "version": null,
+            "computes": null,
+            "filePath": null,
+            "noteType": null,
+            "severity": null,
+            "hooksUsed": [],
+            "rootCause": null,
+            "confidence": null,
+            "consumedBy": [],
+            "provenance": null,
+            "sourceType": null,
+            "targetType": null,
+            "cardinality": null,
+            "description": null,
+            "alternatives": [],
+            "consequences": [],
+            "errorMessage": null,
+            "relationType": null,
+            "correctPattern": null,
+            "decisionStatus": null,
+            "dispatchTargets": [],
+            "lifecycleEvents": []
+          },
+          "document": {
+            "hash": {
+              "encoding": "base64",
+              "algorithm": "sha1"
+            },
+            "version": 1
+          }
+        }
+      },
+      "timestampUtcMs": "2026-09-02T22:10:41.524Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "Iunvo1KEpKfLhU0A+tFWVATIy7E=",
+    "timestampUtcMs": "2026-09-02T22:10:41.477Z",
+    "action": {
+      "type": "SET_DESCRIPTION",
+      "input": {
+        "updatedAt": "2026-09-02T22:10:41.477Z",
+        "description": "Below authGroups a {group} principal never matches; below authConditions a where clause never holds. Skipping an allow withholds access; skipping a deny withholds nothing, so a deny reads too strong."
+      },
+      "timestampUtcMs": "2026-09-02T22:10:41.477Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "",
+    "timestampUtcMs": "2026-09-02T22:18:34.581Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "metadata": {
+          "reason": "Extracted from apps/academy/docs/academy/04-Reference/01-Reactor/11-Authorization.md at v6.2.2-dev.74 \u2014 'A grant that cannot apply is skipped, not honoured' bullet",
+          "confidence": "grounded"
+        },
+        "sourceId": "72db84fb-3247-40af-b29a-6b17f78aea33",
+        "targetId": "17dc46b0-f733-467c-99d7-ae8fbe0fb0e4",
+        "relationshipType": "DERIVED_FROM"
+      },
+      "timestampUtcMs": "2026-09-02T22:18:34.581Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "0nqOaoLVYRQUO4a+SdW8FlT4ORo=",
+    "timestampUtcMs": "2026-09-02T22:10:41.477Z",
+    "action": {
+      "type": "SET_NOTE_TYPE",
+      "input": {
+        "noteType": "PATTERN",
+        "updatedAt": "2026-09-02T22:10:41.477Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:10:41.477Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "",
+    "timestampUtcMs": "2026-09-02T22:18:35.653Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "metadata": {
+          "reason": "Extracted from docs/specs/auth-scope.md at v6.2.2-dev.74 \u2014 Decision algorithm: 'A grant that uses a feature that doesn't yet exist never applies'; version fail-closed; Stage 7 read condition context",
+          "confidence": "grounded"
+        },
+        "sourceId": "72db84fb-3247-40af-b29a-6b17f78aea33",
+        "targetId": "223bb12a-be7f-4209-9ab2-f04f7bb2b6c8",
+        "relationshipType": "DERIVED_FROM"
+      },
+      "timestampUtcMs": "2026-09-02T22:18:35.653Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "n5nMYn68j8yc8k9P+t24QsZArTE=",
+    "timestampUtcMs": "2026-09-02T22:10:41.477Z",
+    "action": {
+      "type": "SET_CONTENT",
+      "input": {
+        "content": "Enforcement is staged, and the stages leave a hole that is easy to misread. A grant whose principal or condition needs an evaluator the running reactor does not have **never applies**: below `authGroups` a `{ group }` principal matches nobody, below `authConditions` a `where` clause never holds and a `{ match }` principal never matches.\n\nSkipping is asymmetric:\n\n- **Skipping an allow withholds access.** An unevaluated allow can never widen a policy, so the system fails closed.\n- **Skipping a deny withholds nothing.** A policy that relies on a conditional or group-scoped *deny* is weaker than it reads on a reactor that cannot evaluate it, until the feature it uses is live.\n\nThe Cookbook's `document-acl` recipe puts the operational form under \"Non-goals\": grants with a `{group}` or `{match}` principal, or a `where` condition, parse and store but never match on a reactor without the `authGroups` / `authConditions` stages \u2014 \"don't demo a group grant on an older release and conclude enforcement is broken.\" Two related fail-closed cases sit next to it: a replica encountering a policy **version** newer than it supports denies every request except the creator's administration of the auth scope until the software knows that version, and a read's condition context carries the scope's own state and no action input, so a condition on `action.input.*` never holds for a read.\n\n_Source: apps/academy/docs/academy/04-Reference/01-Reactor/11-Authorization.md (Powerhouse v6.2.2-dev.74)._\n_Source: docs/specs/auth-scope.md (Powerhouse v6.2.2-dev.74)._\n_Source: apps/academy/docs/academy/05-Lookup/00-Cookbook.md (Powerhouse v6.2.2-dev.74)._\n\n## Provenance\n- `apps/academy/docs/academy/04-Reference/01-Reactor/11-Authorization.md` \u2014 'A grant that cannot apply is skipped, not honoured' bullet\n- `docs/specs/auth-scope.md` \u2014 Decision algorithm: 'A grant that uses a feature that doesn't yet exist never applies'; version fail-closed; Stage 7 read condition context\n- `apps/academy/docs/academy/05-Lookup/00-Cookbook.md` \u2014 Document ACL \u203a Non-goals here\n\n_Recorded from the Powerhouse repository at **v6.2.2-dev.74** during the v6.2.2-dev.74 source sync._",
+        "updatedAt": "2026-09-02T22:10:41.477Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:10:41.477Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "",
+    "timestampUtcMs": "2026-09-02T22:18:36.890Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "metadata": {
+          "reason": "Extracted from apps/academy/docs/academy/05-Lookup/00-Cookbook.md at v6.2.2-dev.74 \u2014 Document ACL \u203a Non-goals here",
+          "confidence": "grounded"
+        },
+        "sourceId": "72db84fb-3247-40af-b29a-6b17f78aea33",
+        "targetId": "f2aaccd3-7c26-4327-881e-f5ad9e267b89",
+        "relationshipType": "DERIVED_FROM"
+      },
+      "timestampUtcMs": "2026-09-02T22:18:36.890Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "/oHOVeHplBu/DYFnlpuHHqhW1Dw=",
+    "timestampUtcMs": "2026-09-02T22:10:41.477Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "7c751589-1871-4e79-bfb4-e0793cd116eb",
+        "name": "auth-scope"
+      },
+      "timestampUtcMs": "2026-09-02T22:10:41.477Z"
+    }
+  },
+  {
+    "index": 5,
+    "hash": "",
+    "timestampUtcMs": "2026-09-02T22:18:38.259Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "metadata": {
+          "reason": "Explains what a policy means on a reactor that has only some of the staged flags on",
+          "confidence": "grounded"
+        },
+        "sourceId": "72db84fb-3247-40af-b29a-6b17f78aea33",
+        "targetId": "c8bd64d3-d92e-4f41-beba-983a7e995c26",
+        "relationshipType": "BUILDS_ON"
+      },
+      "timestampUtcMs": "2026-09-02T22:18:38.259Z"
+    }
+  },
+  {
+    "index": 5,
+    "hash": "B7cSe+gylViFWFl2/YSqRJtC+rA=",
+    "timestampUtcMs": "2026-09-02T22:10:41.477Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "282602fd-f20e-4914-b08b-3d6e95a3ebcf",
+        "name": "feature-flags"
+      },
+      "timestampUtcMs": "2026-09-02T22:10:41.477Z"
+    }
+  },
+  {
+    "index": 6,
+    "hash": "",
+    "timestampUtcMs": "2026-09-02T22:18:38.747Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "metadata": {
+          "reason": "'Skipped' means the grant is not applicable in the fold, so it neither allows nor denies \u2014 the walk continues past it",
+          "confidence": "grounded"
+        },
+        "sourceId": "72db84fb-3247-40af-b29a-6b17f78aea33",
+        "targetId": "69327ea6-e0a1-4c07-a214-2c4619192862",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-09-02T22:18:38.747Z"
+    }
+  },
+  {
+    "index": 6,
+    "hash": "2Wcd+rBcvhWzcWavb9J0v/1xrL0=",
+    "timestampUtcMs": "2026-09-02T22:10:41.477Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "5156d7c8-3b6f-497b-8cc8-945236306cbf",
+        "name": "gotchas"
+      },
+      "timestampUtcMs": "2026-09-02T22:10:41.477Z"
+    }
+  },
+  {
+    "index": 7,
+    "hash": "",
+    "timestampUtcMs": "2026-09-02T22:22:48.068Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "metadata": {
+          "reason": "Extracted from apps/academy/docs/academy/04-Reference/01-Reactor/11-Authorization.md at v6.2.2-dev.74 \u2014 'A grant that cannot apply is skipped, not honoured' bullet",
+          "confidence": "grounded"
+        },
+        "sourceId": "72db84fb-3247-40af-b29a-6b17f78aea33",
+        "targetId": "17dc46b0-f733-467c-99d7-ae8fbe0fb0e4",
+        "relationshipType": "DERIVED_FROM"
+      },
+      "timestampUtcMs": "2026-09-02T22:22:48.068Z"
+    }
+  },
+  {
+    "index": 7,
+    "hash": "Xvvc0JO1FP/SjrJKvr4OPjmtQoY=",
+    "timestampUtcMs": "2026-09-02T22:10:41.477Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "25381eb4-4985-4209-b9a5-b5ebf6e9b910",
+        "name": "authorization"
+      },
+      "timestampUtcMs": "2026-09-02T22:10:41.477Z"
+    }
+  },
+  {
+    "index": 8,
+    "hash": "",
+    "timestampUtcMs": "2026-09-02T22:22:48.662Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "metadata": {
+          "reason": "Extracted from docs/specs/auth-scope.md at v6.2.2-dev.74 \u2014 Decision algorithm: 'A grant that uses a feature that doesn't yet exist never applies'; version fail-closed; Stage 7 read condition context",
+          "confidence": "grounded"
+        },
+        "sourceId": "72db84fb-3247-40af-b29a-6b17f78aea33",
+        "targetId": "223bb12a-be7f-4209-9ab2-f04f7bb2b6c8",
+        "relationshipType": "DERIVED_FROM"
+      },
+      "timestampUtcMs": "2026-09-02T22:22:48.662Z"
+    }
+  },
+  {
+    "index": 8,
+    "hash": "0be4hZtRZQI8X9bX2xOPR3KTLss=",
+    "timestampUtcMs": "2026-09-02T22:10:41.477Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "version",
+        "value": "v6.2.2-dev.74",
+        "updatedAt": "2026-09-02T22:10:41.477Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:10:41.477Z"
+    }
+  },
+  {
+    "index": 9,
+    "hash": "",
+    "timestampUtcMs": "2026-09-02T22:22:49.392Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "metadata": {
+          "reason": "Extracted from apps/academy/docs/academy/05-Lookup/00-Cookbook.md at v6.2.2-dev.74 \u2014 Document ACL \u203a Non-goals here",
+          "confidence": "grounded"
+        },
+        "sourceId": "72db84fb-3247-40af-b29a-6b17f78aea33",
+        "targetId": "f2aaccd3-7c26-4327-881e-f5ad9e267b89",
+        "relationshipType": "DERIVED_FROM"
+      },
+      "timestampUtcMs": "2026-09-02T22:22:49.392Z"
+    }
+  },
+  {
+    "index": 9,
+    "hash": "hX8uQc9X4jFy4ZSXFACg4mdnv0M=",
+    "timestampUtcMs": "2026-09-02T22:10:41.477Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "filePath",
+        "value": "apps/academy/docs/academy/04-Reference/01-Reactor/11-Authorization.md",
+        "updatedAt": "2026-09-02T22:10:41.477Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:10:41.477Z"
+    }
+  },
+  {
+    "index": 10,
+    "hash": "",
+    "timestampUtcMs": "2026-09-02T22:22:50.171Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "metadata": {
+          "reason": "Explains what a policy means on a reactor that has only some of the staged flags on",
+          "confidence": "grounded"
+        },
+        "sourceId": "72db84fb-3247-40af-b29a-6b17f78aea33",
+        "targetId": "c8bd64d3-d92e-4f41-beba-983a7e995c26",
+        "relationshipType": "BUILDS_ON"
+      },
+      "timestampUtcMs": "2026-09-02T22:22:50.171Z"
+    }
+  },
+  {
+    "index": 10,
+    "hash": "8wgSixBt6KW+R21INDC8BiXZfKI=",
+    "timestampUtcMs": "2026-09-02T22:10:41.477Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "confidence",
+        "value": "grounded",
+        "updatedAt": "2026-09-02T22:10:41.477Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:10:41.477Z"
+    }
+  },
+  {
+    "index": 11,
+    "hash": "",
+    "timestampUtcMs": "2026-09-02T22:22:50.643Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "metadata": {
+          "reason": "'Skipped' means the grant is not applicable in the fold, so it neither allows nor denies \u2014 the walk continues past it",
+          "confidence": "grounded"
+        },
+        "sourceId": "72db84fb-3247-40af-b29a-6b17f78aea33",
+        "targetId": "69327ea6-e0a1-4c07-a214-2c4619192862",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-09-02T22:22:50.643Z"
+    }
+  },
+  {
+    "index": 11,
+    "hash": "6t7aQwoG6fCG6oiuqrV/Aq88f1A=",
+    "timestampUtcMs": "2026-09-02T22:10:44.172Z",
+    "action": {
+      "type": "SET_PROVENANCE",
+      "input": {
+        "author": "knowledge-agent",
+        "createdAt": "2026-09-02T22:10:44.172Z",
+        "sourceOrigin": "DERIVED"
+      },
+      "timestampUtcMs": "2026-09-02T22:10:44.172Z"
+    }
+  },
+  {
+    "index": 12,
+    "hash": "OsB1nNtzlq/QKl+frZQleJBtpKM=",
+    "timestampUtcMs": "2026-09-02T22:10:44.659Z",
+    "action": {
+      "type": "SUBMIT_FOR_REVIEW",
+      "input": {
+        "id": "ba480fe1-4ca4-4e33-98cd-333cdfd101aa",
+        "actor": "knowledge-agent",
+        "comment": "extracted from the Powerhouse repository at v6.2.2-dev.74",
+        "timestamp": "2026-09-02T22:10:44.658Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:10:44.659Z"
+    }
+  },
+  {
+    "index": 13,
+    "hash": "0TzhoXTrGHO0zYo/kNDSaIzyEcw=",
+    "timestampUtcMs": "2026-09-02T22:10:45.133Z",
+    "action": {
+      "type": "APPROVE_NOTE",
+      "input": {
+        "id": "b2c42ff1-b4df-4186-a14c-406d600a0d3a",
+        "actor": "liberuum",
+        "comment": "claim checked against the cited repository file at the pinned tag",
+        "timestamp": "2026-09-02T22:10:45.133Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:10:45.133Z"
+    }
+  },
+  {
+    "index": 14,
+    "hash": "uzmdtL9s+7DuzTr27RYgH74HmEw=",
+    "timestampUtcMs": "2026-09-02T22:15:51.456Z",
+    "action": {
+      "type": "SET_TITLE",
+      "input": {
+        "title": "A grant that uses a feature the reactor cannot evaluate is skipped, not honoured \u2014 which fails closed for allows but leaves a conditional deny weaker than written",
+        "updatedAt": "2026-09-02T22:15:51.456Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:15:51.456Z"
+    }
+  },
+  {
+    "index": 15,
+    "hash": "uzmdtL9s+7DuzTr27RYgH74HmEw=",
+    "timestampUtcMs": "2026-09-02T22:15:51.456Z",
+    "action": {
+      "type": "SET_DESCRIPTION",
+      "input": {
+        "updatedAt": "2026-09-02T22:15:51.456Z",
+        "description": "Below authGroups a {group} principal never matches; below authConditions a where clause never holds. Skipping an allow withholds access; skipping a deny withholds nothing, so a deny reads too strong."
+      },
+      "timestampUtcMs": "2026-09-02T22:15:51.456Z"
+    }
+  },
+  {
+    "index": 16,
+    "hash": "uzmdtL9s+7DuzTr27RYgH74HmEw=",
+    "timestampUtcMs": "2026-09-02T22:15:51.456Z",
+    "action": {
+      "type": "SET_NOTE_TYPE",
+      "input": {
+        "noteType": "PATTERN",
+        "updatedAt": "2026-09-02T22:15:51.456Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:15:51.456Z"
+    }
+  },
+  {
+    "index": 17,
+    "hash": "uzmdtL9s+7DuzTr27RYgH74HmEw=",
+    "timestampUtcMs": "2026-09-02T22:15:51.456Z",
+    "action": {
+      "type": "SET_CONTENT",
+      "input": {
+        "content": "Enforcement is staged, and the stages leave a hole that is easy to misread. A grant whose principal or condition needs an evaluator the running reactor does not have **never applies**: below `authGroups` a `{ group }` principal matches nobody, below `authConditions` a `where` clause never holds and a `{ match }` principal never matches.\n\nSkipping is asymmetric:\n\n- **Skipping an allow withholds access.** An unevaluated allow can never widen a policy, so the system fails closed.\n- **Skipping a deny withholds nothing.** A policy that relies on a conditional or group-scoped *deny* is weaker than it reads on a reactor that cannot evaluate it, until the feature it uses is live.\n\nThe Cookbook's `document-acl` recipe puts the operational form under \"Non-goals\": grants with a `{group}` or `{match}` principal, or a `where` condition, parse and store but never match on a reactor without the `authGroups` / `authConditions` stages \u2014 \"don't demo a group grant on an older release and conclude enforcement is broken.\" Two related fail-closed cases sit next to it: a replica encountering a policy **version** newer than it supports denies every request except the creator's administration of the auth scope until the software knows that version, and a read's condition context carries the scope's own state and no action input, so a condition on `action.input.*` never holds for a read.\n\n_Source: apps/academy/docs/academy/04-Reference/01-Reactor/11-Authorization.md (Powerhouse v6.2.2-dev.74)._\n_Source: docs/specs/auth-scope.md (Powerhouse v6.2.2-dev.74)._\n_Source: apps/academy/docs/academy/05-Lookup/00-Cookbook.md (Powerhouse v6.2.2-dev.74)._\n\n## Provenance\n- `apps/academy/docs/academy/04-Reference/01-Reactor/11-Authorization.md` \u2014 'A grant that cannot apply is skipped, not honoured' bullet\n- `docs/specs/auth-scope.md` \u2014 Decision algorithm: 'A grant that uses a feature that doesn't yet exist never applies'; version fail-closed; Stage 7 read condition context\n- `apps/academy/docs/academy/05-Lookup/00-Cookbook.md` \u2014 Document ACL \u203a Non-goals here\n\n_Recorded from the Powerhouse repository at **v6.2.2-dev.74** during the v6.2.2-dev.74 source sync._",
+        "updatedAt": "2026-09-02T22:15:51.456Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:15:51.456Z"
+    }
+  },
+  {
+    "index": 18,
+    "hash": "uzmdtL9s+7DuzTr27RYgH74HmEw=",
+    "timestampUtcMs": "2026-09-02T22:15:51.456Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "version",
+        "value": "v6.2.2-dev.74",
+        "updatedAt": "2026-09-02T22:15:51.456Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:15:51.456Z"
+    }
+  },
+  {
+    "index": 19,
+    "hash": "uzmdtL9s+7DuzTr27RYgH74HmEw=",
+    "timestampUtcMs": "2026-09-02T22:15:51.456Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "filePath",
+        "value": "apps/academy/docs/academy/04-Reference/01-Reactor/11-Authorization.md",
+        "updatedAt": "2026-09-02T22:15:51.456Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:15:51.456Z"
+    }
+  },
+  {
+    "index": 20,
+    "hash": "uzmdtL9s+7DuzTr27RYgH74HmEw=",
+    "timestampUtcMs": "2026-09-02T22:15:51.456Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "confidence",
+        "value": "grounded",
+        "updatedAt": "2026-09-02T22:15:51.456Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:15:51.456Z"
+    }
+  },
+  {
+    "index": 21,
+    "hash": "h+AH1oh85XpFjBLj2LNpbPoFR3Q=",
+    "timestampUtcMs": "2026-09-02T22:20:27.163Z",
+    "action": {
+      "type": "SET_TITLE",
+      "input": {
+        "title": "A grant that uses a feature the reactor cannot evaluate is skipped, not honoured \u2014 which fails closed for allows but leaves a conditional deny weaker than written",
+        "updatedAt": "2026-09-02T22:20:27.163Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:20:27.163Z"
+    }
+  },
+  {
+    "index": 22,
+    "hash": "h+AH1oh85XpFjBLj2LNpbPoFR3Q=",
+    "timestampUtcMs": "2026-09-02T22:20:27.163Z",
+    "action": {
+      "type": "SET_DESCRIPTION",
+      "input": {
+        "updatedAt": "2026-09-02T22:20:27.163Z",
+        "description": "Below authGroups a {group} principal never matches; below authConditions a where clause never holds. Skipping an allow withholds access; skipping a deny withholds nothing, so a deny reads too strong."
+      },
+      "timestampUtcMs": "2026-09-02T22:20:27.163Z"
+    }
+  },
+  {
+    "index": 23,
+    "hash": "h+AH1oh85XpFjBLj2LNpbPoFR3Q=",
+    "timestampUtcMs": "2026-09-02T22:20:27.163Z",
+    "action": {
+      "type": "SET_NOTE_TYPE",
+      "input": {
+        "noteType": "PATTERN",
+        "updatedAt": "2026-09-02T22:20:27.163Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:20:27.163Z"
+    }
+  },
+  {
+    "index": 24,
+    "hash": "h+AH1oh85XpFjBLj2LNpbPoFR3Q=",
+    "timestampUtcMs": "2026-09-02T22:20:27.163Z",
+    "action": {
+      "type": "SET_CONTENT",
+      "input": {
+        "content": "Enforcement is staged, and the stages leave a hole that is easy to misread. A grant whose principal or condition needs an evaluator the running reactor does not have **never applies**: below `authGroups` a `{ group }` principal matches nobody, below `authConditions` a `where` clause never holds and a `{ match }` principal never matches.\n\nSkipping is asymmetric:\n\n- **Skipping an allow withholds access.** An unevaluated allow can never widen a policy, so the system fails closed.\n- **Skipping a deny withholds nothing.** A policy that relies on a conditional or group-scoped *deny* is weaker than it reads on a reactor that cannot evaluate it, until the feature it uses is live.\n\nThe Cookbook's `document-acl` recipe puts the operational form under \"Non-goals\": grants with a `{group}` or `{match}` principal, or a `where` condition, parse and store but never match on a reactor without the `authGroups` / `authConditions` stages \u2014 \"don't demo a group grant on an older release and conclude enforcement is broken.\" Two related fail-closed cases sit next to it: a replica encountering a policy **version** newer than it supports denies every request except the creator's administration of the auth scope until the software knows that version, and a read's condition context carries the scope's own state and no action input, so a condition on `action.input.*` never holds for a read.\n\n_Source: apps/academy/docs/academy/04-Reference/01-Reactor/11-Authorization.md (Powerhouse v6.2.2-dev.74)._\n_Source: docs/specs/auth-scope.md (Powerhouse v6.2.2-dev.74)._\n_Source: apps/academy/docs/academy/05-Lookup/00-Cookbook.md (Powerhouse v6.2.2-dev.74)._\n\n## Provenance\n- `apps/academy/docs/academy/04-Reference/01-Reactor/11-Authorization.md` \u2014 'A grant that cannot apply is skipped, not honoured' bullet\n- `docs/specs/auth-scope.md` \u2014 Decision algorithm: 'A grant that uses a feature that doesn't yet exist never applies'; version fail-closed; Stage 7 read condition context\n- `apps/academy/docs/academy/05-Lookup/00-Cookbook.md` \u2014 Document ACL \u203a Non-goals here\n\n_Recorded from the Powerhouse repository at **v6.2.2-dev.74** during the v6.2.2-dev.74 source sync._",
+        "updatedAt": "2026-09-02T22:20:27.163Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:20:27.163Z"
+    }
+  },
+  {
+    "index": 25,
+    "hash": "h+AH1oh85XpFjBLj2LNpbPoFR3Q=",
+    "timestampUtcMs": "2026-09-02T22:20:27.163Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "version",
+        "value": "v6.2.2-dev.74",
+        "updatedAt": "2026-09-02T22:20:27.163Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:20:27.163Z"
+    }
+  },
+  {
+    "index": 26,
+    "hash": "h+AH1oh85XpFjBLj2LNpbPoFR3Q=",
+    "timestampUtcMs": "2026-09-02T22:20:27.163Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "filePath",
+        "value": "apps/academy/docs/academy/04-Reference/01-Reactor/11-Authorization.md",
+        "updatedAt": "2026-09-02T22:20:27.163Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:20:27.163Z"
+    }
+  },
+  {
+    "index": 27,
+    "hash": "h+AH1oh85XpFjBLj2LNpbPoFR3Q=",
+    "timestampUtcMs": "2026-09-02T22:20:27.163Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "confidence",
+        "value": "grounded",
+        "updatedAt": "2026-09-02T22:20:27.163Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:20:27.163Z"
+    }
+  }
+]

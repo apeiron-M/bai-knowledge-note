@@ -1,0 +1,109 @@
+{
+  "links": [
+    {
+      "id": "lnk-4e6413ee-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "4e6413ee-22bf-4d64-964f-ca8b28917cec",
+      "targetTitle": "present-document-model-proposals-to-user-before-implementing"
+    },
+    {
+      "id": "lnk-eb3ddfcc-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "eb3ddfcc-c606-4705-b9c9-42f5e26e2384",
+      "targetTitle": "act-sharing-ecdh-publisher-grantee"
+    },
+    {
+      "id": "lnk-6a3275cd-bui",
+      "linkType": "BUILDS_ON",
+      "targetDocumentId": "6a3275cd-d71e-4342-8cd3-3fb29b8fe58c",
+      "targetTitle": "processors-receive-operations-with-context"
+    },
+    {
+      "id": "lnk-abee0d48-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "abee0d48-af08-42e8-a869-a67c9e11c953",
+      "targetTitle": "Academy \u203a Build \u203a WorkWithData \u203a Relational database processor",
+      "reason": "Backing page found by content match in the v6.2.2-dev.74 source backfill \u2014 identifiers isolate, namespaced, namespaces from the claim appear in this page (text identical at v6.2.2-dev.47 and v6.2.2-dev.74); attribution, not the original extraction record",
+      "confidence": "grounded"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "RelationalDbProcessor extends IProcessor to project document operations into SQL tables with type-safe migrations and namespaced databases per drive",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "c34fba22-589c-4866-9606-d477bc1c1416",
+      "name": "processors",
+      "topicDocumentId": null
+    },
+    {
+      "id": "a469c8b8-5c1e-4daa-8c20-b5de8f114ad9",
+      "name": "relational-database",
+      "topicDocumentId": null
+    },
+    {
+      "id": "1eaea6d6-0d2d-4c71-abb5-122e887aa2b1",
+      "name": "migrations",
+      "topicDocumentId": null
+    },
+    {
+      "id": "0442b194-8251-447a-bcca-7388dfd90ccd",
+      "name": "CQRS",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "Generate with `ph generate processor --name <name> --type relationalDb --document-types <type>`. Creates: processor class (extends `RelationalDbProcessor<DB>`), migrations.ts (up/down functions with Kysely-style schema builder), factory.ts (creates namespaced DB per drive), schema.ts (generated TypeScript types from migration via `ph generate migration-file --path <migrations-file>`). The processor lifecycle: `initAndUpgrade()` runs migrations on startup, `onOperations()` handles each batch, `onDisconnect()` cleans up. Namespaces (`getNamespace(driveId)`) prevent data collisions between drives. Data is exposed through subgraphs via `TodoIndexerProcessor.query(driveId, relationalDb)` for type-safe SQL queries.\n\n_Corrected 2026-08-13 against Powerhouse v6.2.2-dev.45._",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": "v6.2.2-dev.74",
+  "computes": null,
+  "filePath": "apps/academy/docs/academy/03-Build/04-WorkWithData/06-RelationalDbProcessor.md",
+  "noteType": "PATTERN",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "knowledge-agent",
+    "createdAt": "2026-04-02T12:00:00.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-09-02T21:35:44.751Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Generated with `ph generate processor --type relationalDb`; uses migrations for schema, namespaces to isolate per-drive data.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "e181087c-6892-459a-8f8d-9aa9a1a881a2",
+      "actor": "claude",
+      "comment": "Knowledge registered against powerhouse v6.2.2-dev.47",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-14T12:00:00.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "d151d86d-b383-4f03-9421-94b78ae73b21",
+      "actor": "liberuum",
+      "comment": "Canonical as of powerhouse v6.2.2-dev.47",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-14T12:00:00.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

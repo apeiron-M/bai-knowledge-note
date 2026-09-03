@@ -1,0 +1,123 @@
+{
+  "links": [
+    {
+      "id": "lnk-0eafe53b-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "0eafe53b-efdf-4310-9a1c-7d3e8b5cc669",
+      "targetTitle": "ph-cli-is-primary-project-tool",
+      "reason": "The generated COMMANDS references are the authority for the CLI surface that note summarises, and their version stamp says which release they describe",
+      "confidence": "grounded"
+    },
+    {
+      "id": "lnk-8b9f2900-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "8b9f2900-211b-4dd7-80ad-406e13082cb1",
+      "targetTitle": "vetra-studio-auto-generates-from-specs",
+      "reason": "ph vetra is the command that starts Vetra Studio's codegen loop, so its option surface is the entry point to that workflow",
+      "confidence": "established"
+    },
+    {
+      "id": "lnk-cef816d8-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "cef816d8-96f7-402f-bbaf-e0c8afa1cc18",
+      "targetTitle": "Academy \u203a Reference \u203a CLITooling \u203a Powerhouse CLI",
+      "reason": "Extracted from apps/academy/docs/academy/04-Reference/07-CLITooling/00-PowerhouseCLI.md at v6.2.2-dev.74 \u2014 ph vetra Options: the 'Default: 3001' line removed",
+      "confidence": "grounded"
+    },
+    {
+      "id": "lnk-30f0f150-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "30f0f150-ccba-4895-b167-2f28fa9fee89",
+      "targetTitle": "CLI \u203a ph-cli \u203a COMMANDS \u2014 Powerhouse CLI Commands (6.2.2-dev.73)",
+      "reason": "Extracted from clis/ph-cli/COMMANDS.md at v6.2.2-dev.74 \u2014 H1 version stamp 6.2.2-dev.46 \u2192 6.2.2-dev.73; default 3001 entry removed",
+      "confidence": "grounded"
+    },
+    {
+      "id": "lnk-4cb7ca6f-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "4cb7ca6f-0890-401d-9b38-25178e294c0e",
+      "targetTitle": "CLI \u203a ph-cmd \u203a COMMANDS \u2014 PH-CMD CLI Commands (6.2.2-dev.73)",
+      "reason": "Extracted from clis/ph-cmd/COMMANDS.md at v6.2.2-dev.74 \u2014 H1 version stamp 6.2.2-dev.46 \u2192 6.2.2-dev.73",
+      "confidence": "grounded"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "The Vetra CLI's --connect-port has no documented default any more, and the generated COMMANDS reference is stamped with the release it was generated from",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "f0258bac-fd3a-471a-a587-a9acf6cd1706",
+      "name": "cli",
+      "topicDocumentId": null
+    },
+    {
+      "id": "c8befe49-4b0d-4e2d-a07c-835e98102c4c",
+      "name": "vetra",
+      "topicDocumentId": null
+    },
+    {
+      "id": "01704df8-34b0-4fcf-b2fc-956a2f8e825a",
+      "name": "documentation",
+      "topicDocumentId": null
+    },
+    {
+      "id": "e57fb056-4bcc-4d7d-86d2-3fbf9e57c425",
+      "name": "versioning",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "Two small documentation facts worth pinning, because they date the CLI surface a note may have been written against.\n\n`ph vetra`'s option list in the Academy's CLI reference carried a stray `**Default:** `3001`` line between `--connect-port` and `--remote-drive`; it was **removed** in v6.2.2-dev.74, and `clis/ph-cli/COMMANDS.md` dropped the matching `**default**: `3001`` entry. Do not rely on a documented default for `--connect-port`; pass it explicitly, or read the port the command prints.\n\nBoth generated command references carry the release they were generated from in their H1: `# Powerhouse CLI Commands (6.2.2-dev.73)` and `# PH-CMD CLI Commands (6.2.2-dev.73)`, up from `6.2.2-dev.46`. That header is the cheapest way to tell how stale a claim about the CLI surface is \u2014 and because the files are generated, an apparent change in them reflects the CLI's own flags rather than an editorial decision.\n\nThe rest of `ph vetra`'s options are unchanged: `--switchboard-port`, `--connect-port`, `--remote-drive` (skips switchboard initialization), `--drives-public-base` (advertise `<base>/d/<slug>` when behind a reverse proxy), `--db-path` (a `postgres://` URL for Postgres, otherwise a PGlite filesystem path; unset means in-memory PGlite).\n\n_Source: apps/academy/docs/academy/04-Reference/07-CLITooling/00-PowerhouseCLI.md (Powerhouse v6.2.2-dev.74)._\n_Source: clis/ph-cli/COMMANDS.md (Powerhouse v6.2.2-dev.74)._\n_Source: clis/ph-cmd/COMMANDS.md (Powerhouse v6.2.2-dev.74)._\n\n## Provenance\n- `apps/academy/docs/academy/04-Reference/07-CLITooling/00-PowerhouseCLI.md` \u2014 ph vetra Options: the 'Default: 3001' line removed\n- `clis/ph-cli/COMMANDS.md` \u2014 H1 version stamp 6.2.2-dev.46 \u2192 6.2.2-dev.73; default 3001 entry removed\n- `clis/ph-cmd/COMMANDS.md` \u2014 H1 version stamp 6.2.2-dev.46 \u2192 6.2.2-dev.73\n\n_Recorded from the Powerhouse repository at **v6.2.2-dev.74** during the v6.2.2-dev.74 source sync._",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": "v6.2.2-dev.74",
+  "computes": null,
+  "filePath": "apps/academy/docs/academy/04-Reference/07-CLITooling/00-PowerhouseCLI.md",
+  "noteType": "OBSERVATION",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": "grounded",
+  "consumedBy": [],
+  "provenance": {
+    "author": "knowledge-agent",
+    "createdAt": "2026-09-02T22:14:44.652Z",
+    "sessionId": null,
+    "updatedAt": "2026-09-02T22:21:32.192Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "A stray Default: 3001 line under ph vetra's options was removed at dev.74, and the ph-cli and ph-cmd COMMANDS headers moved from 6.2.2-dev.46 to dev.73. They are generated files.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "b83aa779-bbc8-4d9e-8820-bfc2d72d33d3",
+      "actor": "knowledge-agent",
+      "comment": "extracted from the Powerhouse repository at v6.2.2-dev.74",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-09-02T22:14:45.223Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "ce064bc4-c4f3-4982-84e4-1fcdaee42c18",
+      "actor": "liberuum",
+      "comment": "claim checked against the cited repository file at the pinned tag",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-09-02T22:14:45.800Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

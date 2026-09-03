@@ -1,0 +1,117 @@
+[
+  {
+    "index": 0,
+    "hash": "",
+    "timestampUtcMs": "2026-09-02T21:35:09.309Z",
+    "action": {
+      "type": "CREATE_DOCUMENT",
+      "input": {
+        "meta": {},
+        "name": "Academy \u203a Build \u203a WorkWithData \u203a Configure a drive",
+        "slug": "",
+        "model": "bai/source",
+        "branch": "main",
+        "signing": {
+          "nonce": "",
+          "publicKey": {},
+          "signature": "c22060e9-4caf-4561-bbcc-c244edf8d8d2",
+          "documentType": "bai/source",
+          "createdAtUtcIso": "2026-09-02T21:35:09.309Z"
+        },
+        "version": 0,
+        "documentId": "c22060e9-4caf-4561-bbcc-c244edf8d8d2",
+        "protocolVersions": {
+          "base-reducer": 2
+        }
+      },
+      "timestampUtcMs": "2026-09-02T21:35:09.309Z"
+    }
+  },
+  {
+    "index": 0,
+    "hash": "iODiTKqiEgrUjnGSkDLwtMmmAGc=",
+    "timestampUtcMs": "2026-09-02T21:35:09.208Z",
+    "action": {
+      "type": "INGEST_SOURCE",
+      "input": {
+        "url": "https://github.com/powerhouse-inc/powerhouse/blob/v6.2.2-dev.74/apps/academy/docs/academy/03-Build/04-WorkWithData/01-ConfiguringDrives.md",
+        "tool": "sync-repo-docs",
+        "title": "Academy \u203a Build \u203a WorkWithData \u203a Configure a drive",
+        "author": "Powerhouse Inc.",
+        "method": "sha256:226f2753aed13657ea1f41f1a873feddb2ba1556368e2d12c51d8e195ece615d git:v6.2.2-dev.74",
+        "content": "# Configure a drive\n\nA drive in Powerhouse is a container for documents and data. It's a place where you can organize and store your documents and share them with others. This guide walks you through configuring and managing drives in your Powerhouse environment.\n\n:::info[**Prerequisites**]\n\nBefore configuring a drive, ensure you have:\n\n- Powerhouse [CLI installed](/academy/Build/GettingStartedBuilding/Prerequisites)\n- Access to a Powerhouse instance\n- Appropriate permissions to create and manage drives\n  :::\n\n## Understanding drives\n\n### Local drives\n\nA local drive is a container for local documents and data, hosted on your local machine. Technically, a drive is itself a document that contains a list of the documents inside it. When you run Connect locally with `ph connect`, a local drive is automatically added. You can also create a new local drive by clicking **'Create New Drive'** in Connect.\n\n### Remote drives vs. reactors\n\nRemote drives let you connect to and work with data stored in external systems or cloud services. They act as bridges between Powerhouse contributors or other data sources, syncing data between them. Drives can exist in three types of locations:\n\n- **Local Storage**: For offline or on-device access.\n- **Cloud Storage**: For centralized, scalable data management.\n- **Decentralized Storage**: Such as Ceramic or IPFS, enabling distributed and blockchain-based storage options.\n\n:::tip[**Explainer**]\n**Powerhouse Reactors** are the nodes in the network that store and synchronize documents and drives, resolve conflicts, and rerun operations to verify document event histories.\nReactors can be configured for local storage, centralized cloud storage, or a decentralized storage network.\n\nA reactor allows you to store multiple documents and host **drives** and Drive-apps with different organizational purposes, users, access rights, and more.\n:::\n\nA drive uses a reactor and its underlying storage layer. A reactor is the low-level component that enables the synchronization of documents and drives.\n\n### Drive-apps\n\n**Drive-apps** are specialized interfaces that enhance how users interact with documents within a drive. As mentioned, a drive is technically just another document containing a list of other documents. This means you can create a custom editor for your drive document.\n\nThese customized editors are called Drive-apps. They provide custom views, organization tools, and interactive features tailored to specific use cases. For example, a Drive-app might present data as a Kanban board, provide aggregated insights, or offer specialized widgets for data processing.\n\nTo learn more about building and customizing Drive-apps, check out our [Building a Drive-app](/academy/Build/BuildingUserExperiences/BuildingADriveExplorer) guide.\n\n## Creating a new drive\n\n<figure className=\"image-container\">\n  <img src={require(\"./images/CreateDrive.png\").default} alt=\"Create a new drive\" />\n  <figcaption>The drive management modal after clicking the 'Create New Drive' button.</figcaption>\n</figure>\n\nTo create a new drive in Powerhouse, follow these steps:\n\n1. Click the \"**Create New Drive**\" button in the Connect interface or the **+** icon in the Connect sidebar.\n2. In the modal that appears, enter a name for your drive in the \"**Drive Name**\" field.\n3. Select the desired Drive-app (such as the Generic Drive-app, or any other Drive-app you've installed).\n4. Choose the location for your drive: **Local** (only available to you), **Cloud** (available to people in this drive), or **Public** (available to everyone).\n5. (Optional) Enable the \"Make available offline\" toggle if you want to keep a local backup of your drive.\n6. Once all options are set, click the \"Create new drive\" button to finalize and create your drive.\n\n## Add a new remote drive via GraphQL mutation\n\nYou can also add a new remote drive to your Connect environment programmatically using GraphQL mutations. This is especially useful for automation, scripting, or integrating with external systems.\n\n:::info[**Prerequisites**]\n\n- Access to the Switchboard or remote reactor (server node) of your Connect instance. In your local project, you can start your Reactor by running the following command in a different terminal from Connect Studio.\n  `bash\nph reactor\n`\n- The GraphQL endpoint of your instance. For example, for the staging environment, use: `https://staging.switchboard.phd/graphql` (this is a supergraph gateway. Read more about [subgraphs and supergraphs here](/academy/Build/WorkWithData/UsingSubgraphs).\n- Appropriate permissions to perform mutations.\n  :::\n\n<figure className=\"image-container\">\n  <img src={require(\"./images/CreateNewDrive.png\").default} alt=\"Create a new drive\" />\n  <figcaption>The GraphQL interface for creating a new drive through a mutation.</figcaption>\n</figure>\n\n### 1. **Navigate to the GraphQL Playground or use a GraphQL client**\n\n- Open [https://switchboard.phd/graphql](https://switchboard.phd/graphql) in your browser, or use a tool like [GraphQL Playground](https://www.apollographql.com/docs/apollo-server/testing/graphql-playground/).\n\n### 2. **Prepare the Mutation**\n\n- Use the following mutation to create a new drive. Since a drive is itself a document of type `DocumentDrive`, you use the `DocumentDrive` mutation namespace:\n\n```graphql title=\"Create Drive Mutation\"\nmutation CreateDrive($name: String!, $slug: String) {\n  DocumentDrive {\n    createDocument(name: $name, slug: $slug) {\n      id\n      name\n      slug\n      documentType\n      state {\n        global {\n          name\n          icon\n        }\n      }\n    }\n  }\n}\n```\n\n- These are the example variables; change them as needed:\n\n```json title=\"Example Variables\"\n{\n  \"name\": \"AcademyTest\",\n  \"slug\": null\n}\n```\n\n- You can also provide a custom `slug` if needed.\n\n### 3. **Execute the Mutation**\n\n- Run the mutation. On success, you will receive a response containing the new drive's details:\n\n```json title=\"Successful Response\"\n{\n  \"data\": {\n    \"DocumentDrive\": {\n      \"createDocument\": {\n        \"id\": \"6461580b-d317-4596-942d-f6b3d1bfc8fd\",\n        \"name\": \"AcademyTest\",\n        \"slug\": \"6461580b-d317-4596-942d-f6b3d1bfc8fd\",\n        \"documentType\": \"powerhouse/document-drive\",\n        \"state\": {\n          \"global\": {\n            \"name\": \"AcademyTest\",\n            \"icon\": null\n          }\n        }\n      }\n    }\n  }\n}\n```\n\n### 4. **Construct the Drive URL**\n\n- Once you have the `id` or `slug`, you can construct the drive URL for Connect:\n  - Format: `domain/d/<driveId>` or `domain/d/<driveSlug>`\n  - Depending on whether you are using a hosted or a local environment, the domain in your URL will change.\n  - Example: `https://connect.phd/d/6461580b-d317-4596-942d-f6b3d1bfc8fd`\n  - Example: `https://localhost:4001/d/6461580b-d317-4596-942d-f6b3d1bfc8fd`\n\n### 5. **Add the Drive in Connect**\n\n- Use the constructed URL to add or access the drive in your Connect environment via the 'Add Drive' button.\n\n<figure className=\"image-container\">\n  <img src={require(\"./images/AddDrive.png\").default} alt=\"Create a new drive\" />\n  <figcaption>The 'Add Drive' button that allows you to enter your constructed Drive URL.</figcaption>\n</figure>\n\n---\n\nThis approach allows you to automate drive creation and integration with other systems, making it easy to manage drives at scale.\n\n## Up next\n\nYou've now experienced the use of GraphQL to modify or read data captured in Powerhouse for the first time.\nYou can now either continue with:\n\n- User interfaces and [build custom Drive-apps](/academy/Build/BuildingUserExperiences/BuildingADriveExplorer)\n- Keep playing with data and the [Switchboard API](/academy/Build/WorkWithData/UsingTheAPI)\n\nEnjoy!\n",
+        "createdAt": "2026-09-02T21:35:09.208Z",
+        "createdBy": "repo-docs-sync",
+        "sourceType": "DOCUMENTATION",
+        "description": "Powerhouse v6.2.2-dev.74 (unchanged since v6.2.2-dev.47) \u2014 A drive in Powerhouse is a container for documents and data. It's a place where you can organize and store your documents and share them wit\u2026",
+        "publishedAt": "2026-06-24T16:01:33.000Z"
+      },
+      "timestampUtcMs": "2026-09-02T21:35:09.208Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "",
+    "timestampUtcMs": "2026-09-02T21:35:09.309Z",
+    "action": {
+      "type": "UPGRADE_DOCUMENT",
+      "input": {
+        "model": "bai/source",
+        "toVersion": 1,
+        "documentId": "c22060e9-4caf-4561-bbcc-c244edf8d8d2",
+        "fromVersion": 0,
+        "initialState": {
+          "auth": {
+            "grants": [],
+            "version": 0
+          },
+          "local": {},
+          "global": {
+            "title": null,
+            "status": "INBOX",
+            "content": null,
+            "createdAt": null,
+            "createdBy": null,
+            "provenance": null,
+            "sourceType": null,
+            "description": null,
+            "extractedClaims": [],
+            "extractionStats": null
+          },
+          "document": {
+            "hash": {
+              "encoding": "base64",
+              "algorithm": "sha1"
+            },
+            "version": 1
+          }
+        }
+      },
+      "timestampUtcMs": "2026-09-02T21:35:09.309Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "Es/kOhsGpwk6jVXyvBl/yoJR9sk=",
+    "timestampUtcMs": "2026-09-02T21:35:12.311Z",
+    "action": {
+      "type": "ADD_EXTRACTED_CLAIM",
+      "input": {
+        "claimRef": "64f7c52f-dc21-4446-bad6-e88ef492a25c"
+      },
+      "timestampUtcMs": "2026-09-02T21:35:12.311Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "ykuZM5Plga1kOW7jOmqzH0sKgS0=",
+    "timestampUtcMs": "2026-09-02T21:35:15.995Z",
+    "action": {
+      "type": "SET_SOURCE_STATUS",
+      "input": {
+        "status": "EXTRACTED"
+      },
+      "timestampUtcMs": "2026-09-02T21:35:15.995Z"
+    }
+  }
+]

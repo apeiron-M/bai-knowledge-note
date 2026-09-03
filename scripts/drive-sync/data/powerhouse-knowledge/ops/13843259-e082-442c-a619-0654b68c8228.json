@@ -1,0 +1,133 @@
+[
+  {
+    "index": 0,
+    "hash": "",
+    "timestampUtcMs": "2026-09-02T21:44:39.118Z",
+    "action": {
+      "type": "CREATE_DOCUMENT",
+      "input": {
+        "meta": {},
+        "name": "Package \u203a reactor-browser \u203a registry \u2014 Registry Client",
+        "slug": "",
+        "model": "bai/source",
+        "branch": "main",
+        "signing": {
+          "nonce": "",
+          "publicKey": {},
+          "signature": "13843259-e082-442c-a619-0654b68c8228",
+          "documentType": "bai/source",
+          "createdAtUtcIso": "2026-09-02T21:44:39.118Z"
+        },
+        "version": 0,
+        "documentId": "13843259-e082-442c-a619-0654b68c8228",
+        "protocolVersions": {
+          "base-reducer": 2
+        }
+      },
+      "timestampUtcMs": "2026-09-02T21:44:39.118Z"
+    }
+  },
+  {
+    "index": 0,
+    "hash": "L+J8SIeazFCT857/fU4yFV5QYJQ=",
+    "timestampUtcMs": "2026-09-02T21:44:39.094Z",
+    "action": {
+      "type": "INGEST_SOURCE",
+      "input": {
+        "url": "https://github.com/powerhouse-inc/powerhouse/blob/v6.2.2-dev.74/packages/reactor-browser/src/registry/README.md",
+        "tool": "sync-repo-docs",
+        "title": "Package \u203a reactor-browser \u203a registry \u2014 Registry Client",
+        "author": "Powerhouse Inc.",
+        "method": "sha256:a57acb8ce26d26938b9b9cd669fc5dc73ac5e97a104db24ae1a2f1b69de32b2d git:v6.2.2-dev.74",
+        "content": "# Registry Client\n\nClient for interacting with a Powerhouse package registry. Provides methods to query packages and subscribe to real-time publish notifications via SSE.\n\n```ts\nimport { RegistryClient } from \"@powerhousedao/reactor-browser\";\n\nconst client = new RegistryClient(\"http://localhost:8080/-/cdn/\");\n```\n\n## `getPackages`\n\nReturns all packages from the registry.\n\n```ts\nconst packages = await client.getPackages();\n// [{ name, description, version, category, publisher, publisherUrl }, ...]\n```\n\n## `getPackagesByDocumentType`\n\nReturns package names that contain the specified document type.\n\n```ts\nconst names = await client.getPackagesByDocumentType(\n  \"powerhouse/document-model\",\n);\n```\n\n## `searchPackages`\n\nClient-side search through all packages by name or description.\n\n```ts\nconst results = await client.searchPackages(\"vetra\");\n```\n\n## `onPublish`\n\nSubscribes to real-time publish notifications via Server-Sent Events. Calls the callback whenever a package is published. Returns an unsubscribe function.\n\n```ts\nconst unsubscribe = client.onPublish((event) => {\n  console.log(`${event.packageName}@${event.version} published`);\n});\n\n// later...\nunsubscribe();\n```\n",
+        "createdAt": "2026-09-02T21:44:39.094Z",
+        "createdBy": "repo-docs-sync",
+        "sourceType": "DOCUMENTATION",
+        "description": "Powerhouse v6.2.2-dev.74 (unchanged since v6.2.2-dev.47) \u2014 Client for interacting with a Powerhouse package registry. Provides methods to query packages and subscribe to real-time publish notificatio\u2026",
+        "publishedAt": "2026-03-24T14:42:01.000Z"
+      },
+      "timestampUtcMs": "2026-09-02T21:44:39.094Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "",
+    "timestampUtcMs": "2026-09-02T21:44:39.118Z",
+    "action": {
+      "type": "UPGRADE_DOCUMENT",
+      "input": {
+        "model": "bai/source",
+        "toVersion": 1,
+        "documentId": "13843259-e082-442c-a619-0654b68c8228",
+        "fromVersion": 0,
+        "initialState": {
+          "auth": {
+            "grants": [],
+            "version": 0
+          },
+          "local": {},
+          "global": {
+            "title": null,
+            "status": "INBOX",
+            "content": null,
+            "createdAt": null,
+            "createdBy": null,
+            "provenance": null,
+            "sourceType": null,
+            "description": null,
+            "extractedClaims": [],
+            "extractionStats": null
+          },
+          "document": {
+            "hash": {
+              "encoding": "base64",
+              "algorithm": "sha1"
+            },
+            "version": 1
+          }
+        }
+      },
+      "timestampUtcMs": "2026-09-02T21:44:39.118Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "0DEamVYDozf+80zCMy4+N+1P/rE=",
+    "timestampUtcMs": "2026-09-03T07:39:38.606Z",
+    "action": {
+      "type": "ADD_EXTRACTED_CLAIM",
+      "input": {
+        "claimRef": "3c31ddfa-8a8a-4cee-8be1-2812015464e8"
+      },
+      "timestampUtcMs": "2026-09-03T07:39:38.606Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "Aw5SFRIh75gIUjy6S85FdPSfA1w=",
+    "timestampUtcMs": "2026-09-03T07:39:47.782Z",
+    "action": {
+      "type": "RECORD_EXTRACTION_STATS",
+      "input": {
+        "skipRate": 0,
+        "claimCount": 1,
+        "extractedAt": "2026-09-03T07:39:47.782Z",
+        "extractedBy": "knowledge-agent",
+        "skippedCount": 0
+      },
+      "timestampUtcMs": "2026-09-03T07:39:47.782Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "Pmpx9kZ/dvgP7nfsmTbxnyM6W0g=",
+    "timestampUtcMs": "2026-09-03T07:39:48.379Z",
+    "action": {
+      "type": "SET_SOURCE_STATUS",
+      "input": {
+        "status": "EXTRACTED"
+      },
+      "timestampUtcMs": "2026-09-03T07:39:48.379Z"
+    }
+  }
+]

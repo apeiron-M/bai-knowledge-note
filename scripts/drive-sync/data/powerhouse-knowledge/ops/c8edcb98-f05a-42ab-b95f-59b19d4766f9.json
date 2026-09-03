@@ -1,0 +1,181 @@
+[
+  {
+    "index": 0,
+    "hash": "",
+    "timestampUtcMs": "2026-08-16T12:02:23.586Z",
+    "action": {
+      "type": "CREATE_DOCUMENT",
+      "input": {
+        "meta": {},
+        "name": "skill-setup",
+        "slug": "",
+        "model": "bai/source",
+        "branch": "main",
+        "signing": {
+          "nonce": "",
+          "publicKey": {},
+          "signature": "c8edcb98-f05a-42ab-b95f-59b19d4766f9",
+          "documentType": "bai/source",
+          "createdAtUtcIso": "2026-08-16T12:02:23.586Z"
+        },
+        "version": 0,
+        "documentId": "c8edcb98-f05a-42ab-b95f-59b19d4766f9",
+        "protocolVersions": {
+          "base-reducer": 2
+        }
+      },
+      "timestampUtcMs": "2026-08-16T12:02:23.586Z"
+    }
+  },
+  {
+    "index": 0,
+    "hash": "EKxMjsgAtnfZ3QP24Xpt8cFVPHI=",
+    "timestampUtcMs": "2026-08-16T12:02:23.796Z",
+    "action": {
+      "type": "INGEST_SOURCE",
+      "input": {
+        "url": "https://github.com/liberuum/powerhouse-knowledge/blob/main/skills/setup/SKILL.md",
+        "tool": "sync-skills",
+        "title": "Agent skill: setup",
+        "author": "powerhouse-knowledge plugin",
+        "method": "sha256:3c9a1232d7ea3eb777337236d7a859115ce97723f9dbdfa4093e4dbbf86fe653",
+        "content": "---\nname: setup\ndescription: Initialize a Knowledge Vault \u2014 verify drive structure, folder layout, and singleton documents are in place. The Ars Contexta methodology (249 research claims) is bundled locally with the plugin and does NOT need to be imported into the vault.\n---\n\n# Vault Setup\n\nVerify that a Knowledge Vault drive is ready for use \u2014 correct folder structure, singleton documents exist, and the plugin's local methodology files are accessible.\n\n## When to use\n\n- First time connecting the plugin to a vault drive\n- After creating a new vault drive\n- When the user asks to set up or initialize the vault\n- When `/setup` is invoked explicitly\n\n## Prerequisites\n\n- Reactor running (`ph vetra --watch` or remote reactor)\n- A vault drive exists (created via Connect UI or CLI)\n- `switchboard` CLI installed and configured (`switchboard config use local` or appropriate profile, `switchboard introspect` run once)\n\n## Setup Process\n\n### Step 0: Establish which reactor \u2014 ask, never assume\n\nThere is no default vault. If the session hasn't already established a target\n(active `switchboard config show` profile the user set up, project\n`.mcp.json`, or the user naming one), **ask the user for the Switchboard URL**\n(local `ph vetra` at `http://localhost:4001/graphql`, or their deployment's\n`/graphql` endpoint) before touching anything.\n\n### Step 1: Find the vault drive\n\n```bash\nswitchboard drives list --format json\n```\n\nIf multiple drives exist, ask the user which one to set up. If only one non-vetra drive exists, confirm it with the user and use that.\n\n### Step 2: Verify folder structure\n\n```bash\nswitchboard docs tree <drive-slug> --format json\n```\n\nThe vault needs these folders:\n| Folder | Purpose |\n|--------|---------|\n| `/knowledge/` | MOCs |\n| `/knowledge/notes/` | Atomic knowledge notes |\n| `/sources/` | Source material |\n| `/ops/` | Operational documents |\n| `/ops/queue/` | Pipeline queue singleton |\n| `/ops/health/` | Health report singleton |\n| `/self/` | Config and graph singletons |\n\nIf folders are missing, the vault hasn't been initialized \u2014 suggest opening it in Connect first (the Knowledge Vault app auto-creates the folder structure).\n\n### Step 3: Verify singleton documents\n\n```bash\nswitchboard docs list --drive <drive-slug> --format json\n```\n\nCheck that these exist:\n- `bai/vault-config` in `/self/`\n- `bai/knowledge-graph` in `/self/`\n- `bai/pipeline-queue` in `/ops/queue/`\n\nIf missing, create them:\n```bash\nswitchboard docs create --type bai/pipeline-queue --name \"Pipeline Queue\" --drive <drive-slug> --parent-folder <ops-queue-folder-uuid> --format json\n```\n\n### Step 4: Verify local methodology files\n\nThe 249 Ars Contexta research claims are bundled with the plugin in `data/methodology/*.md`. They are **not** imported into the vault \u2014 the agent reads them directly from disk during connect, verify, and pipeline phases.\n\n```bash\nls data/methodology/*.md | wc -l\n# Should be 249\n```\n\nIf the `data/methodology/` directory is missing (marketplace install), clone from GitHub:\n```bash\ngit clone --depth 1 --filter=blob:none --sparse https://github.com/liberuum/powerhouse-knowledge.git /tmp/pk-methodology\ncd /tmp/pk-methodology && git sparse-checkout set data/methodology\ncp -r /tmp/pk-methodology/data/methodology/ <plugin-dir>/data/methodology/\n```\n\n### Step 5: Report results\n\n```\n=== Vault Setup Complete ===\nDrive: <drive-name> (<drive-uuid>)\nFolders: \u2713 all present\nSingletons: \u2713 pipeline-queue, vault-config, knowledge-graph\nMethodology: \u2713 249 claims available locally (not imported to vault)\nStatus: Ready for use\n```\n\n## What the methodology provides (locally)\n\nThe 249 claims are the theoretical foundation for how the Knowledge Vault works:\n- **Processing pipeline design** \u2014 why 6Rs, why each phase matters\n- **Note architecture** \u2014 why atomic claims, why typed links, why progressive disclosure\n- **Quality principles** \u2014 what makes a good note, link, MOC\n- **Cognitive science backing** \u2014 attention management, cognitive offloading, memory systems\n- **Agent design patterns** \u2014 how AI agents should operate knowledge systems\n\nThe agent reads these files directly from `data/methodology/` during:\n- **Connect phase** \u2014 searching for methodology backing when creating note connections\n- **Verify phase** \u2014 checking if notes are grounded in methodology\n- **Health check** \u2014 reporting methodology-grounding status (in `recommendations`; there is no matching HealthCategory value)\n\nNo remote import, no `bai/research-claim` documents, no `/research/` folder needed.\n\n## Idempotency\n\nThis skill is safe to run multiple times \u2014 it only checks and creates missing structure, never duplicates.\n",
+        "createdAt": "2026-08-16T12:02:23.796Z",
+        "createdBy": "skill-sync",
+        "sourceType": "DOCUMENTATION",
+        "description": "Initialize a Knowledge Vault \u2014 verify drive structure, folder layout, and singleton documents are in place. The Ars Contexta methodology (249 research claims) is bundled locally with the plugin and do"
+      },
+      "timestampUtcMs": "2026-08-16T12:02:23.796Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "",
+    "timestampUtcMs": "2026-08-16T12:02:23.586Z",
+    "action": {
+      "type": "UPGRADE_DOCUMENT",
+      "input": {
+        "model": "bai/source",
+        "toVersion": 1,
+        "documentId": "c8edcb98-f05a-42ab-b95f-59b19d4766f9",
+        "fromVersion": 0,
+        "initialState": {
+          "auth": {
+            "grants": [],
+            "version": 0
+          },
+          "local": {},
+          "global": {
+            "title": null,
+            "status": "INBOX",
+            "content": null,
+            "createdAt": null,
+            "createdBy": null,
+            "provenance": null,
+            "sourceType": null,
+            "description": null,
+            "extractedClaims": [],
+            "extractionStats": null
+          },
+          "document": {
+            "hash": {
+              "encoding": "base64",
+              "algorithm": "sha1"
+            },
+            "version": 1
+          }
+        }
+      },
+      "timestampUtcMs": "2026-08-16T12:02:23.586Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "EJ8PBcOFmLrcAJVxgnueuy9n9gQ=",
+    "timestampUtcMs": "2026-08-16T12:02:26.250Z",
+    "action": {
+      "type": "ADD_EXTRACTED_CLAIM",
+      "input": {
+        "claimRef": "36bfa375-0c6c-4b73-9ae0-419e3acc72f7"
+      },
+      "timestampUtcMs": "2026-08-16T12:02:26.250Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "gxdcXFSFOU0aQmwqmhsXj0xzU/I=",
+    "timestampUtcMs": "2026-08-16T12:02:26.391Z",
+    "action": {
+      "type": "RECORD_EXTRACTION_STATS",
+      "input": {
+        "skipRate": 0,
+        "claimCount": 1,
+        "extractedAt": "2026-08-16T12:02:26.390Z",
+        "extractedBy": "skill-sync",
+        "skippedCount": 0
+      },
+      "timestampUtcMs": "2026-08-16T12:02:26.391Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "pSITDZK4VnGIHOBaOe+lMxCH7Ak=",
+    "timestampUtcMs": "2026-08-16T12:02:26.536Z",
+    "action": {
+      "type": "SET_SOURCE_STATUS",
+      "input": {
+        "status": "EXTRACTED"
+      },
+      "timestampUtcMs": "2026-08-16T12:02:26.536Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "iasOaGoB6p6RwhuRlTQIUNNZHug=",
+    "timestampUtcMs": "2026-09-02T19:22:05.565Z",
+    "action": {
+      "type": "INGEST_SOURCE",
+      "input": {
+        "url": "https://github.com/liberuum/powerhouse-knowledge/blob/main/skills/setup/SKILL.md",
+        "tool": "sync-skills",
+        "title": "Agent skill: setup",
+        "author": "powerhouse-knowledge plugin",
+        "method": "sha256:d0a401636fbc87a1ef790b0cebb36ec454b5064b6ee1cb00b7ce8d0116602e8f",
+        "content": "---\nname: setup\ndescription: Initialize a Knowledge Vault \u2014 verify drive structure, folder layout, and singleton documents are in place. The Ars Contexta methodology (249 research claims) is bundled locally with the plugin and does NOT need to be imported into the vault.\n---\n\n# Vault Setup\n\n> **Target first.** Every command below runs against the Switchboard the\n> active CLI profile points at, and `<UUID>` / `<drive-slug>` mean *that*\n> server's vault drive. If the pre-flight hook printed `Profile: \u2026 -> \u2026` and\n> `VAULT_DRIVE_ID` / `VAULT_DRIVE_SLUG`, use those. Otherwise run\n> `switchboard config show` and the drive detection in AGENT.md \u00a7 *Find the\n> vault drive*. If it is still ambiguous which vault the user means, **ask for\n> the Switchboard URL and the drive** \u2014 never assume an endpoint.\n\nVerify that a Knowledge Vault drive is ready for use \u2014 correct folder structure, singleton documents exist, and the plugin's local methodology files are accessible.\n\n## When to use\n\n- First time connecting the plugin to a vault drive\n- After creating a new vault drive\n- When the user asks to set up or initialize the vault\n- When `/setup` is invoked explicitly\n\n## Prerequisites\n\n- Reactor running (`ph vetra --watch` or remote reactor)\n- A vault drive exists (created via Connect UI or CLI)\n- `switchboard` CLI \u2265 1.0.36 installed and configured (`switchboard config use local` or appropriate profile, `switchboard introspect` run once)\n- A signing identity on that profile: `ph login` (once per machine), then `switchboard auth login --renown`. The plugin's pre-write hook blocks every vault write until `switchboard auth status` reports `Signing: on` \u2014 see AGENT.md \u00a7 Signed writes.\n\n## Setup Process\n\n### Step 0: Establish which reactor \u2014 ask, never assume\n\nThere is no default vault. If the session hasn't already established a target\n(active `switchboard config show` profile the user set up, project\n`.mcp.json`, or the user naming one), **ask the user for the Switchboard URL**\n(local `ph vetra` at `http://localhost:4001/graphql`, or their deployment's\n`/graphql` endpoint) before touching anything.\n\n### Step 0b: Confirm the profile signs\n\n```bash\nswitchboard auth status --format json   # expect \"signing\": true\n```\n\nIf it is `false`, stop and give the user the two commands (`ph login`, then\n`switchboard auth login --renown [--ph-dir <dir>]`). Nothing below writes\nuntil this is true; the hook enforces it.\n\n### Step 1: Find the vault drive\n\n```bash\nswitchboard drives list --format json\n```\n\nIf multiple drives exist, ask the user which one to set up. If only one non-vetra drive exists, confirm it with the user and use that.\n\n### Step 2: Verify folder structure\n\n```bash\nswitchboard docs tree <drive-slug> --format json\n```\n\nThe vault needs these folders:\n| Folder | Purpose |\n|--------|---------|\n| `/knowledge/` | MOCs |\n| `/knowledge/notes/` | Atomic knowledge notes |\n| `/sources/` | Source material |\n| `/ops/` | Operational documents |\n| `/ops/queue/` | Pipeline queue singleton |\n| `/ops/health/` | Health report singleton |\n| `/self/` | Config singleton |\n| `/knowledge/inbox/` | Notes awaiting processing |\n| `/knowledge/insights/` | Synthesised insights |\n| `/projects/` | Projects and their WBS |\n| `/ops/sessions/` | Session records |\n| `/self/methodology/` | Reserved (methodology is read from the plugin, not the vault) |\n\nIf folders are missing, the vault hasn't been initialized \u2014 suggest opening it in Connect first (the Knowledge Vault app auto-creates the folder structure).\n\n### Step 3: Verify singleton documents\n\n```bash\nswitchboard docs list --drive <drive-slug> --format json\n```\n\nCheck that these exist:\n- `bai/vault-config` in `/self/`\n- `bai/health-report` in `/ops/health/`\n- `bai/pipeline-queue` in `/ops/queue/`\n\nThere is **no** `bai/knowledge-graph` document \u2014 the graph lives in the indexer's tables and is read through `knowledgeGraph*` queries. If a checklist ever asks for a graph singleton, it is stale.\n\nIf missing, create them:\n```bash\nswitchboard docs create --type bai/pipeline-queue --name \"Pipeline Queue\" --drive <drive-slug> --parent-folder <ops-queue-folder-uuid> --format json\n```\n\n### Step 4: Verify local methodology files\n\nThe 249 Ars Contexta research claims are bundled with the plugin in `data/methodology/*.md`. They are **not** imported into the vault \u2014 the agent reads them directly from disk during connect, verify, and pipeline phases.\n\n```bash\nls data/methodology/*.md | wc -l\n# Should be 249\n```\n\nIf the `data/methodology/` directory is missing (marketplace install), clone from GitHub:\n```bash\ngit clone --depth 1 --filter=blob:none --sparse https://github.com/liberuum/powerhouse-knowledge.git /tmp/pk-methodology\ncd /tmp/pk-methodology && git sparse-checkout set data/methodology\ncp -r /tmp/pk-methodology/data/methodology/ <plugin-dir>/data/methodology/\n```\n\n### Step 5: Report results\n\n```\n=== Vault Setup Complete ===\nDrive: <drive-name> (<drive-uuid>)\nFolders: \u2713 all present\nSingletons: \u2713 pipeline-queue, health-report, vault-config\nMethodology: \u2713 249 claims available locally (not imported to vault)\nStatus: Ready for use\n```\n\n## What the methodology provides (locally)\n\nThe 249 claims are the theoretical foundation for how the Knowledge Vault works:\n- **Processing pipeline design** \u2014 why 6Rs, why each phase matters\n- **Note architecture** \u2014 why atomic claims, why typed links, why progressive disclosure\n- **Quality principles** \u2014 what makes a good note, link, MOC\n- **Cognitive science backing** \u2014 attention management, cognitive offloading, memory systems\n- **Agent design patterns** \u2014 how AI agents should operate knowledge systems\n\nThe agent reads these files directly from `data/methodology/` during:\n- **Connect phase** \u2014 searching for methodology backing when creating note connections\n- **Verify phase** \u2014 checking if notes are grounded in methodology\n- **Health check** \u2014 reporting methodology-grounding status (in `recommendations`; there is no matching HealthCategory value)\n\nNo remote import, no `bai/research-claim` documents, no `/research/` folder needed.\n\n## Idempotency\n\nThis skill is safe to run multiple times \u2014 it only checks and creates missing structure, never duplicates.\n",
+        "createdAt": "2026-09-02T19:22:05.565Z",
+        "createdBy": "skill-sync",
+        "sourceType": "DOCUMENTATION",
+        "description": "Initialize a Knowledge Vault \u2014 verify drive structure, folder layout, and singleton documents are in place. The Ars Contexta methodology (249 research claims) is bundled locally with the plugin and do"
+      },
+      "timestampUtcMs": "2026-09-02T19:22:05.565Z"
+    }
+  },
+  {
+    "index": 5,
+    "hash": "IuPtyzWIO1IKjeYAG/mZ0106B9c=",
+    "timestampUtcMs": "2026-09-02T19:22:07.861Z",
+    "action": {
+      "type": "RECORD_EXTRACTION_STATS",
+      "input": {
+        "skipRate": 0,
+        "claimCount": 1,
+        "extractedAt": "2026-09-02T19:22:07.861Z",
+        "extractedBy": "skill-sync",
+        "skippedCount": 0
+      },
+      "timestampUtcMs": "2026-09-02T19:22:07.861Z"
+    }
+  },
+  {
+    "index": 6,
+    "hash": "H6Vyz1KaUqKh94AB3Cqxo6XDvWo=",
+    "timestampUtcMs": "2026-09-02T19:22:08.336Z",
+    "action": {
+      "type": "SET_SOURCE_STATUS",
+      "input": {
+        "status": "EXTRACTED"
+      },
+      "timestampUtcMs": "2026-09-02T19:22:08.336Z"
+    }
+  }
+]

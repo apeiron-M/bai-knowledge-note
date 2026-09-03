@@ -1,0 +1,104 @@
+{
+  "links": [
+    {
+      "id": "lnk-1faafab7-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "1faafab7-6eb6-45af-b81d-711926ffa7b8",
+      "targetTitle": "host-applications-are-empty-shells-gaining-functionality-through-plugins"
+    },
+    {
+      "id": "lnk-18419c72-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "18419c72-7f82-41a8-820b-085cf5e925a5",
+      "targetTitle": "wallet-derived-aes256-encryption"
+    },
+    {
+      "id": "lnk-5646522f-bui",
+      "linkType": "BUILDS_ON",
+      "targetDocumentId": "5646522f-bc2d-4257-bfa7-a455e5855197",
+      "targetTitle": "renown-creates-did-from-ethereum-wallet"
+    },
+    {
+      "id": "lnk-f488c1ad-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "f488c1ad-e925-4639-b671-ececc3549181",
+      "targetTitle": "Academy \u203a Reference \u203a Authorization \u203a renown-sdk \u203a API Reference",
+      "reason": "Backing page found by content match in the v6.2.2-dev.74 source backfill \u2014 identifiers sessionstorage, useuser from the claim appear in this page (text identical at v6.2.2-dev.47 and v6.2.2-dev.74); attribution, not the original extraction record",
+      "confidence": "grounded"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "The Renown SDK provides DID-based authentication using did:pkh, with hook-based init, cookie sessions, and profile enrichment",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "9573f171-cccb-42fb-8065-0501bc879f12",
+      "name": "renown",
+      "topicDocumentId": null
+    },
+    {
+      "id": "0e847afd-a75c-48b4-acb2-90f17e9e5809",
+      "name": "authentication",
+      "topicDocumentId": null
+    },
+    {
+      "id": "4a0ec617-ab8b-409b-b229-eefbd97c6bba",
+      "name": "decentralized-identity",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "The `@renown/sdk` provides decentralized identity authentication for Powerhouse apps. There is **no provider component**: `RenownUserProvider` returns zero hits in source. Initialization runs through the `useRenownInit` hook (`packages/reactor-browser/src/hooks/renown.ts`), and no `window.renown` / `window.connectCrypto` globals exist. `useUser()` returns `User | undefined` (`renown.ts:29`) -- not an object bundle; the other values come from sibling hooks (`useRenown`, `useLoginStatus`, `useRenownLoginMethods`, `useRenownInitialUser`). Users are identified by DIDs in `did:pkh:eip155:<chainId>:<ethAddress>` format. The `User` type includes `did`, `address`, `name`, `email`, `avatar`, and `ethAddress`. Sessions are **not** in `sessionStorage` -- that identifier has zero hits in the entire monorepo. The session lives in a cookie, `RENOWN_SESSION_COOKIE = \"renown_session\"` (`packages/renown/src/constants.ts:6`), with a localStorage seed used only to cover the first paint before the SDK becomes authoritative. The `RenownAuthButton` is a headless component with render props for customization. LoginStatus flows: `initial` -> `checking` -> `authorized` | `not-authorized`.\n\n_Source-verified 2026-08-13 against Powerhouse source at v6.2.2-dev.45._",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": "v6.2.2-dev.74",
+  "computes": null,
+  "filePath": "apps/academy/docs/academy/04-Reference/06-Authorization/renown-sdk/02-APIReference.md",
+  "noteType": "CONCEPT",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "knowledge-agent",
+    "createdAt": "2026-04-02T12:00:00.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-09-02T21:39:59.857Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "No provider component: init is via useRenownInit. useUser() returns User|undefined. Sessions live in the renown_session cookie, not sessionStorage.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "4e0ed207-7fb1-4f50-90b2-e15f25c0c730",
+      "actor": "claude",
+      "comment": "Knowledge registered against powerhouse v6.2.2-dev.47",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-14T12:00:00.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "039f85ef-7f60-468b-aeb9-0136048c0aae",
+      "actor": "liberuum",
+      "comment": "Canonical as of powerhouse v6.2.2-dev.47",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-14T12:00:00.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

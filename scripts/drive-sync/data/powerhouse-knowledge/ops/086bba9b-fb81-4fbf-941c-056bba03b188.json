@@ -1,0 +1,276 @@
+[
+  {
+    "index": 0,
+    "hash": "",
+    "timestampUtcMs": "2026-08-20T08:45:37.094Z",
+    "action": {
+      "type": "CREATE_DOCUMENT",
+      "input": {
+        "meta": {},
+        "name": "Camunda 7 refuses to deploy a process model that does not declare when its history will be",
+        "slug": "",
+        "model": "bai/knowledge-note",
+        "branch": "main",
+        "signing": {
+          "nonce": "",
+          "publicKey": {},
+          "signature": "086bba9b-fb81-4fbf-941c-056bba03b188",
+          "documentType": "bai/knowledge-note",
+          "createdAtUtcIso": "2026-08-20T08:45:37.094Z"
+        },
+        "version": 0,
+        "documentId": "086bba9b-fb81-4fbf-941c-056bba03b188",
+        "protocolVersions": {
+          "base-reducer": 2
+        }
+      },
+      "timestampUtcMs": "2026-08-20T08:45:37.094Z"
+    }
+  },
+  {
+    "index": 0,
+    "hash": "8vG4vBOt/NiYfGdSoYHimN3wO0U=",
+    "timestampUtcMs": "2026-08-20T08:45:37.654Z",
+    "action": {
+      "type": "SET_TITLE",
+      "input": {
+        "title": "Camunda 7 refuses to deploy a process model that does not declare when its history will be deleted",
+        "updatedAt": "2026-08-20T08:45:37.654245Z"
+      },
+      "timestampUtcMs": "2026-08-20T08:45:37.654397Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "",
+    "timestampUtcMs": "2026-08-20T08:45:37.094Z",
+    "action": {
+      "type": "UPGRADE_DOCUMENT",
+      "input": {
+        "model": "bai/knowledge-note",
+        "toVersion": 1,
+        "documentId": "086bba9b-fb81-4fbf-941c-056bba03b188",
+        "fromVersion": 0,
+        "initialState": {
+          "auth": {
+            "grants": [],
+            "version": 0
+          },
+          "local": {
+            "lastViewedAt": null,
+            "personalTags": []
+          },
+          "global": {
+            "links": [],
+            "model": null,
+            "scope": null,
+            "title": null,
+            "editor": null,
+            "inputs": [],
+            "models": [],
+            "status": "DRAFT",
+            "topics": [],
+            "content": null,
+            "context": null,
+            "modelId": null,
+            "modules": [],
+            "outputs": [],
+            "version": null,
+            "computes": null,
+            "filePath": null,
+            "noteType": null,
+            "severity": null,
+            "hooksUsed": [],
+            "rootCause": null,
+            "confidence": null,
+            "consumedBy": [],
+            "provenance": null,
+            "sourceType": null,
+            "targetType": null,
+            "cardinality": null,
+            "description": null,
+            "alternatives": [],
+            "consequences": [],
+            "errorMessage": null,
+            "relationType": null,
+            "correctPattern": null,
+            "decisionStatus": null,
+            "dispatchTargets": [],
+            "lifecycleEvents": []
+          },
+          "document": {
+            "hash": {
+              "encoding": "base64",
+              "algorithm": "sha1"
+            },
+            "version": 1
+          }
+        }
+      },
+      "timestampUtcMs": "2026-08-20T08:45:37.094Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "jHP4nSPajjy/QIIRR7FrhX/ybmU=",
+    "timestampUtcMs": "2026-08-20T08:45:37.654Z",
+    "action": {
+      "type": "SET_DESCRIPTION",
+      "input": {
+        "updatedAt": "2026-08-20T08:45:37.654402Z",
+        "description": "historyTimeToLive is mandatory, and any deployment containing a null value is prevented \u2014 the engine will not accept a model intended to keep a permanent record."
+      },
+      "timestampUtcMs": "2026-08-20T08:45:37.654408Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "",
+    "timestampUtcMs": "2026-08-20T08:45:38.838Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "086bba9b-fb81-4fbf-941c-056bba03b188",
+        "targetId": "4d8e59af-51f2-4ab7-b290-e1d5744abbd7",
+        "relationshipType": "DERIVED_FROM"
+      },
+      "timestampUtcMs": "2026-08-20T08:45:38.838Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "n55rSnvR+ZNUQfUDDueAi+jNasQ=",
+    "timestampUtcMs": "2026-08-20T08:45:37.654Z",
+    "action": {
+      "type": "SET_NOTE_TYPE",
+      "input": {
+        "noteType": "OBSERVATION",
+        "updatedAt": "2026-08-20T08:45:37.654411Z"
+      },
+      "timestampUtcMs": "2026-08-20T08:45:37.654416Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "IAjR0y81D45eT/FV/uN+ZT+bz4Y=",
+    "timestampUtcMs": "2026-08-20T08:45:37.654Z",
+    "action": {
+      "type": "SET_CONTENT",
+      "input": {
+        "content": "From the history-cleanup documentation: *\"The history time to live is mandatory, any deployment or re-deployment of any model resource (BPMN, DMN, CMMN) that contains a historyTimeToLive of null will be prevented.\"*\n\nCleanup itself is opt-in \u2014 no cleanup window is configured by default, so nothing is actually removed until an administrator schedules it. But the declaration is compulsory: you cannot deploy a process without stating a date on which its history becomes disposable.\n\nIt is a revealing design choice. The engine treats process history as operational data with a lifespan, to the point of refusing work that declines to specify one. That is a coherent position for an orchestrator and an incompatible one for a system of record.",
+        "updatedAt": "2026-08-20T08:45:37.654418Z"
+      },
+      "timestampUtcMs": "2026-08-20T08:45:37.654422Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "VOmVJmqj7HDHSwUxvc5YFfe/nhg=",
+    "timestampUtcMs": "2026-08-20T08:45:37.654Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "4bfc8a18-8194-4fe6-b98f-b03e7cc7c0b6",
+        "name": "tool-screen"
+      },
+      "timestampUtcMs": "2026-08-20T08:45:37.654431Z"
+    }
+  },
+  {
+    "index": 5,
+    "hash": "R5wFSj4ntxi2VHfNzj13RXwcbEM=",
+    "timestampUtcMs": "2026-08-20T08:45:37.654Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "9f968af0-68aa-4fe4-8125-fd5d2f46abd0",
+        "name": "camunda"
+      },
+      "timestampUtcMs": "2026-08-20T08:45:37.654438Z"
+    }
+  },
+  {
+    "index": 6,
+    "hash": "evvntDSesKKCxJnF4eHHgcvPJVw=",
+    "timestampUtcMs": "2026-08-20T08:45:37.654Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "1e41e56e-a43b-479e-ae08-a6e594341800",
+        "name": "retention"
+      },
+      "timestampUtcMs": "2026-08-20T08:45:37.654447Z"
+    }
+  },
+  {
+    "index": 7,
+    "hash": "Lr0kTbjmbI/cdKTaWuOLZ26l4GA=",
+    "timestampUtcMs": "2026-08-20T08:45:37.654Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "344ed7d9-e12e-4671-ab00-6638a6fd1e3a",
+        "name": "defaults"
+      },
+      "timestampUtcMs": "2026-08-20T08:45:37.654456Z"
+    }
+  },
+  {
+    "index": 8,
+    "hash": "KQSlxzc1FOxRinvCDiiLahcT9m4=",
+    "timestampUtcMs": "2026-08-20T08:45:37.654Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "77e79023-d306-4ad7-91d8-999838f0a74b",
+        "name": "audit-trail"
+      },
+      "timestampUtcMs": "2026-08-20T08:45:37.654464Z"
+    }
+  },
+  {
+    "index": 9,
+    "hash": "NdFjzDg2kFDmfZT4O3mTIkaUgTM=",
+    "timestampUtcMs": "2026-08-20T08:45:38.099Z",
+    "action": {
+      "type": "SET_PROVENANCE",
+      "input": {
+        "author": "knowledge-agent",
+        "createdAt": "2026-08-20T08:45:38.099120Z",
+        "sessionId": null,
+        "sourceOrigin": "DERIVED"
+      },
+      "timestampUtcMs": "2026-08-20T08:45:38.099164Z"
+    }
+  },
+  {
+    "index": 10,
+    "hash": "6Q/bTOxu1kkzvBp2OZUIMntuICE=",
+    "timestampUtcMs": "2026-08-20T08:45:39.021Z",
+    "action": {
+      "type": "SUBMIT_FOR_REVIEW",
+      "input": {
+        "id": "92386b1d-0192-4053-83f4-8cb7b8247143",
+        "actor": "knowledge-agent",
+        "comment": "Extracted from the primary-source tool screen; each claim quotable from a cited source.",
+        "timestamp": "2026-08-20T08:45:39.021537Z"
+      },
+      "timestampUtcMs": "2026-08-20T08:45:39.021559Z"
+    }
+  },
+  {
+    "index": 11,
+    "hash": "INtRLJ8R4PzmWDbPPmGKiLGo1Tc=",
+    "timestampUtcMs": "2026-08-20T08:45:39.185Z",
+    "action": {
+      "type": "APPROVE_NOTE",
+      "input": {
+        "id": "78679ed4-9381-4188-8f05-40ccb61e672d",
+        "actor": "liberuum",
+        "comment": "Approved: tool-screen extraction.",
+        "timestamp": "2026-08-20T08:45:39.185207Z"
+      },
+      "timestampUtcMs": "2026-08-20T08:45:39.185231Z"
+    }
+  }
+]

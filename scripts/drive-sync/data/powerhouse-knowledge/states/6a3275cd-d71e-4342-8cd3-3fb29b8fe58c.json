@@ -1,0 +1,123 @@
+{
+  "links": [
+    {
+      "id": "lnk-bb0b6db7-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "bb0b6db7-14f1-491c-8975-4475ff68481d",
+      "targetTitle": "v6-processor-flat-operations-replace-strands"
+    },
+    {
+      "id": "lnk-43b82c81-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "43b82c81-4d28-4e69-9a0a-84c0dddb87ef",
+      "targetTitle": "reactor-read-models-pre-ready-phase"
+    },
+    {
+      "id": "lnk-f2124247-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "f2124247-9efa-48bb-bda6-c929f59e4f12",
+      "targetTitle": "push-flow-encrypt-upload-manifest"
+    },
+    {
+      "id": "lnk-da8a8131-bui",
+      "linkType": "BUILDS_ON",
+      "targetDocumentId": "da8a8131-7b4e-4849-afd9-fcc21bf68ca4",
+      "targetTitle": "event-driven-architecture-decouples-components-for-parallel-processing"
+    },
+    {
+      "id": "lnk-c12de121-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "c12de121-f575-4c71-95f7-bd298533dd51",
+      "targetTitle": "Academy \u203a Reference \u203a Reactor \u203a Processors",
+      "reason": "Backing page found by content match in the v6.2.2-dev.74 source backfill \u2014 identifiers onoperations, operationwithcontext, processorfilter from the claim appear in this page (text revised between v6.2.2-dev.47 and v6.2.2-dev.74 \u2014 re-verified in the v6.2.2-dev.74 pass); attribution, not the original extraction record",
+      "confidence": "grounded"
+    },
+    {
+      "id": "lnk-f79ca4d1-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "f79ca4d1-3d30-4fdb-9d01-60f55655faeb",
+      "targetTitle": "Academy \u203a Build \u203a WorkWithData \u203a Building a processor",
+      "reason": "Backing page found by content match in the v6.2.2-dev.74 source backfill \u2014 identifiers onoperations, operationwithcontext, processorfilter from the claim appear in this page (text identical at v6.2.2-dev.47 and v6.2.2-dev.74); attribution, not the original extraction record",
+      "confidence": "grounded"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Processors implement IProcessor with onOperations receiving OperationWithContext items filtered by document type, scope, branch, and document ID",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "411e65dd-7231-44e7-898c-941743f5171e",
+      "name": "processors",
+      "topicDocumentId": null
+    },
+    {
+      "id": "d1033059-2c24-4372-9448-79e7c6c23653",
+      "name": "operations",
+      "topicDocumentId": null
+    },
+    {
+      "id": "4468e921-6a96-4687-a2d2-fa6e1aa56125",
+      "name": "factory-pattern",
+      "topicDocumentId": null
+    },
+    {
+      "id": "aa65c3be-396b-48d8-b3d1-51c9409cb940",
+      "name": "CQRS",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "A processor implements `IProcessor` with `onOperations(operations: OperationWithContext[])` and `onDisconnect()`. Each `OperationWithContext` pairs an `Operation` (action type, input, index, hash, timestamp) with `OperationContext` (documentId, documentType, scope, branch, ordinal for cross-document ordering, resultingState as JSON). `ProcessorFilter` has optional arrays: `documentType`, `scope`, `branch`, `documentId`. A field that is `undefined` or `[]` matches everything; a field with values matches when the operation's context value is in the array; all present fields must match. The `\"*\"` wildcard is honored **only in `documentId`** \u2014 in `documentType`, `scope`, and `branch` a literal `\"*\"` matches only an operation whose value is the string `\"*\"`, i.e. nothing real. To match all scopes, omit `scope` or set it to `[]`; never write `scope: [\"*\"]` (the codegen analytics template emits exactly that, and it silently matches no operations). The factory pattern: outer function receives `IProcessorHostModule` (shared resources), inner function receives `driveHeader` per drive, returns `ProcessorRecord[]`. By default processors replay all history; set `startFrom: \"current\"` to skip historical operations.\n\n_Corrected 2026-08-13 against Powerhouse v6.2.2-dev.45._",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": "v6.2.2-dev.74",
+  "computes": null,
+  "filePath": "apps/academy/docs/academy/03-Build/04-WorkWithData/04-BuildingAProcessor.md",
+  "noteType": "ARCHITECTURE",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "knowledge-agent",
+    "createdAt": "2026-04-02T12:00:00.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-09-02T22:26:29.463Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "ProcessorFilter determines which ops a processor receives; factory creates instances per drive with configurable filters.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "8a17c6d4-3b69-4d53-98fc-a2c768184561",
+      "actor": "claude",
+      "comment": "Knowledge registered against powerhouse v6.2.2-dev.47",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-14T12:00:00.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "51151cb4-d44e-45de-9161-e5f6fbff2322",
+      "actor": "liberuum",
+      "comment": "Canonical as of powerhouse v6.2.2-dev.47",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-14T12:00:00.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

@@ -1,0 +1,340 @@
+[
+  {
+    "index": 0,
+    "hash": "",
+    "timestampUtcMs": "2026-08-14T11:46:04.500Z",
+    "action": {
+      "type": "CREATE_DOCUMENT",
+      "input": {
+        "meta": {},
+        "name": "analytics-graphql-single-series-query-read-only",
+        "slug": "",
+        "model": "bai/knowledge-note",
+        "branch": "main",
+        "signing": {
+          "nonce": "",
+          "publicKey": {},
+          "signature": "496fc267-9bc4-4820-8f9b-442eddcd587c",
+          "documentType": "bai/knowledge-note",
+          "createdAtUtcIso": "2026-08-14T11:46:04.500Z"
+        },
+        "version": 0,
+        "documentId": "496fc267-9bc4-4820-8f9b-442eddcd587c",
+        "protocolVersions": {
+          "base-reducer": 2
+        }
+      },
+      "timestampUtcMs": "2026-08-14T11:46:04.500Z"
+    }
+  },
+  {
+    "index": 0,
+    "hash": "Kb3/WL99xcRekWuS3hfFwZTYRU4=",
+    "timestampUtcMs": "2026-08-14T12:34:48.000Z",
+    "action": {
+      "type": "SET_TITLE",
+      "input": {
+        "title": "The Analytics GraphQL API exposes a single analytics.series(filter) query and accepts no writes at all",
+        "updatedAt": "2026-08-14T12:34:48.000Z"
+      },
+      "timestampUtcMs": "2026-08-14T12:34:48.000Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "",
+    "timestampUtcMs": "2026-08-14T11:46:04.500Z",
+    "action": {
+      "type": "UPGRADE_DOCUMENT",
+      "input": {
+        "model": "bai/knowledge-note",
+        "toVersion": 1,
+        "documentId": "496fc267-9bc4-4820-8f9b-442eddcd587c",
+        "fromVersion": 0,
+        "initialState": {
+          "auth": {
+            "grants": [],
+            "version": 0
+          },
+          "local": {
+            "lastViewedAt": null,
+            "personalTags": []
+          },
+          "global": {
+            "links": [],
+            "model": null,
+            "scope": null,
+            "title": null,
+            "editor": null,
+            "inputs": [],
+            "models": [],
+            "status": "DRAFT",
+            "topics": [],
+            "content": null,
+            "context": null,
+            "modelId": null,
+            "modules": [],
+            "outputs": [],
+            "version": null,
+            "computes": null,
+            "filePath": null,
+            "noteType": null,
+            "severity": null,
+            "hooksUsed": [],
+            "rootCause": null,
+            "confidence": null,
+            "consumedBy": [],
+            "provenance": null,
+            "sourceType": null,
+            "targetType": null,
+            "cardinality": null,
+            "description": null,
+            "alternatives": [],
+            "consequences": [],
+            "errorMessage": null,
+            "relationType": null,
+            "correctPattern": null,
+            "decisionStatus": null,
+            "dispatchTargets": [],
+            "lifecycleEvents": []
+          },
+          "document": {
+            "hash": {
+              "encoding": "base64",
+              "algorithm": "sha1"
+            },
+            "version": 1
+          }
+        }
+      },
+      "timestampUtcMs": "2026-08-14T11:46:04.500Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "vxqVTd92FtZL85tJT9Bt9bhfJ0I=",
+    "timestampUtcMs": "2026-08-14T12:34:48.000Z",
+    "action": {
+      "type": "SET_DESCRIPTION",
+      "input": {
+        "updatedAt": "2026-08-14T12:34:48.000Z",
+        "description": "AnalyticsQuery has exactly one field, series(filter: AnalyticsFilter), reached via extend type Query { analytics }. There is no Mutation, and a partial filter errors out."
+      },
+      "timestampUtcMs": "2026-08-14T12:34:48.000Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "",
+    "timestampUtcMs": "2026-08-14T12:36:36.415Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "496fc267-9bc4-4820-8f9b-442eddcd587c",
+        "targetId": "11da9c61-a825-4c70-a57c-f80b10f569c7",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-08-14T12:36:36.415Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "11IyeXlfXE+ybvZGbIDB3h+aHUw=",
+    "timestampUtcMs": "2026-08-14T12:34:48.000Z",
+    "action": {
+      "type": "SET_NOTE_TYPE",
+      "input": {
+        "noteType": "REFERENCE",
+        "updatedAt": "2026-08-14T12:34:48.000Z"
+      },
+      "timestampUtcMs": "2026-08-14T12:34:48.000Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "",
+    "timestampUtcMs": "2026-08-14T12:36:36.517Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "496fc267-9bc4-4820-8f9b-442eddcd587c",
+        "targetId": "645e18ed-6da5-4daf-8ed3-7a96cb085b48",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-08-14T12:36:36.517Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "+ofpbIy3bNkTn9W4Y5pkl3gpqkc=",
+    "timestampUtcMs": "2026-08-14T12:34:48.000Z",
+    "action": {
+      "type": "SET_CONTENT",
+      "input": {
+        "content": "The entire GraphQL surface of the Analytics Engine is one field:\n\n```graphql\ntype AnalyticsQuery {\n  series(filter: AnalyticsFilter): [AnalyticsPeriod]\n}\n\nextend type Query {\n  analytics: AnalyticsQuery\n}\n```\n\nNo mutations are declared anywhere in the schema, and the docs state it plainly: data cannot be input through GraphQL. Writes go through `IAnalyticsStore` in TypeScript, from a processor or a script. Treat the GraphQL layer as strictly a reporting surface.\n\n`AnalyticsFilter` must be **fully populated** \u2014 it is not a partial where the engine fills in defaults. All six of `start`, `end`, `granularity`, `metrics`, `dimensions` (each with `name`, `select`, `lod`), and `currency` are required for the query to function. The characteristic symptom of a partial filter is not a validation message but a bare `\"Cannot read properties of undefined (reading 'filter')\"`.\n\nCase sensitivity is the other common failure. Metric names and granularity values are matched exactly, so `Monthlyu` produces an enum error suggesting `monthly`, and a mistyped metric produces an error listing the valid names.\n\nA useful exploration technique from the best-practices page: start with a broad `select` and a high `lod` (e.g. `select: \"atlas\"`, `lod: 5`) to *discover* which sub-paths exist under a dimension, then narrow the `select` path once you know the hierarchy. The high-lod response is effectively a directory listing of the dimension tree.\n\nProvenance: drafts `03-Build/04-WorkWithData/_06-Analytics Engine/graphql/index.md` and `.../best-practices.md`; schema verified in `packages/analytics-engine/graphql/src/schema.ts` (zero occurrences of `Mutation`) and the read-only statement in `.../_06-Analytics Engine/intro.md`, at 6.2.2-dev.45.",
+        "updatedAt": "2026-08-14T12:34:48.000Z"
+      },
+      "timestampUtcMs": "2026-08-14T12:34:48.000Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "",
+    "timestampUtcMs": "2026-08-14T12:36:36.606Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "496fc267-9bc4-4820-8f9b-442eddcd587c",
+        "targetId": "a442a64c-1ed5-41ef-ba49-96dc33c81fa5",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-08-14T12:36:36.606Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "AtxQFkYaw8n5frJQqlcDxfLzhN0=",
+    "timestampUtcMs": "2026-08-14T12:34:48.000Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "version",
+        "value": "v6.2.2-dev.44",
+        "updatedAt": "2026-08-14T12:34:48.000Z"
+      },
+      "timestampUtcMs": "2026-08-14T12:34:48.000Z"
+    }
+  },
+  {
+    "index": 5,
+    "hash": "",
+    "timestampUtcMs": "2026-09-02T21:35:59.088Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "metadata": {
+          "reason": "Backing page found by content match in the v6.2.2-dev.74 source backfill \u2014 identifiers analyticsfilter, graphql from the claim appear in this page (text identical at v6.2.2-dev.47 and v6.2.2-dev.74); attribution, not the original extraction record",
+          "confidence": "grounded"
+        },
+        "sourceId": "496fc267-9bc4-4820-8f9b-442eddcd587c",
+        "targetId": "36a529b2-8e2b-48c0-bee1-7d7a64163b3e",
+        "relationshipType": "DERIVED_FROM"
+      },
+      "timestampUtcMs": "2026-09-02T21:35:59.088Z"
+    }
+  },
+  {
+    "index": 5,
+    "hash": "0ggIbsCIiqQhrMbh1HH/h7IugFQ=",
+    "timestampUtcMs": "2026-08-14T12:34:48.000Z",
+    "action": {
+      "type": "SET_PROVENANCE",
+      "input": {
+        "author": "claude",
+        "createdAt": "2026-08-13T14:38:54.000Z",
+        "sourceOrigin": "DERIVED"
+      },
+      "timestampUtcMs": "2026-08-14T12:34:48.000Z"
+    }
+  },
+  {
+    "index": 6,
+    "hash": "iDgq0arL+mqRbOq1fY3U9CNKxG8=",
+    "timestampUtcMs": "2026-08-14T12:34:48.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "2c603fd6-1405-4299-89f4-26cb50c35515",
+        "name": "analytics-engine",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-08-14T12:34:48.000Z"
+    }
+  },
+  {
+    "index": 7,
+    "hash": "7b0y5c5SnapcCz92vc13VXGUnGw=",
+    "timestampUtcMs": "2026-08-14T12:34:48.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "b76d9182-c8ea-466f-ae43-cd42811bad3a",
+        "name": "graphql",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-08-14T12:34:48.000Z"
+    }
+  },
+  {
+    "index": 8,
+    "hash": "dgrzoqehz3daHXZJTa4jV+gPOj0=",
+    "timestampUtcMs": "2026-08-14T14:37:03.000Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "version",
+        "value": "v6.2.2-dev.47",
+        "updatedAt": "2026-08-14T12:00:00.000Z"
+      },
+      "timestampUtcMs": "2026-08-14T14:37:03.000Z"
+    }
+  },
+  {
+    "index": 9,
+    "hash": "Mvbh7dTa61h575siGDwVlsaciSw=",
+    "timestampUtcMs": "2026-08-14T14:37:03.000Z",
+    "action": {
+      "type": "SUBMIT_FOR_REVIEW",
+      "input": {
+        "id": "edee12a9-6f96-43f4-93e6-b26b0e714425",
+        "actor": "claude",
+        "comment": "Knowledge registered against powerhouse v6.2.2-dev.47",
+        "timestamp": "2026-08-14T12:00:00.000Z"
+      },
+      "timestampUtcMs": "2026-08-14T14:37:03.000Z"
+    }
+  },
+  {
+    "index": 10,
+    "hash": "F/4js5ZfnOnt7uVonzWmn3hMrTY=",
+    "timestampUtcMs": "2026-08-14T14:37:03.000Z",
+    "action": {
+      "type": "APPROVE_NOTE",
+      "input": {
+        "id": "bc9272f0-b486-4648-8002-6b813d266bb9",
+        "actor": "liberuum",
+        "comment": "Canonical as of powerhouse v6.2.2-dev.47",
+        "timestamp": "2026-08-14T12:00:00.000Z"
+      },
+      "timestampUtcMs": "2026-08-14T14:37:03.000Z"
+    }
+  },
+  {
+    "index": 11,
+    "hash": "7WTHY5xRtoidcSt+CknWUH6ldd8=",
+    "timestampUtcMs": "2026-09-02T21:35:59.855Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "filePath",
+        "value": "apps/academy/docs/academy/03-Build/04-WorkWithData/_06-Analytics Engine/graphql/index.md",
+        "updatedAt": "2026-09-02T21:35:59.855Z"
+      },
+      "timestampUtcMs": "2026-09-02T21:35:59.855Z"
+    }
+  },
+  {
+    "index": 12,
+    "hash": "xP9+oSlHDZZI9d2hbkM1/Gt7w70=",
+    "timestampUtcMs": "2026-09-02T21:35:59.855Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "version",
+        "value": "v6.2.2-dev.74",
+        "updatedAt": "2026-09-02T21:35:59.855Z"
+      },
+      "timestampUtcMs": "2026-09-02T21:35:59.855Z"
+    }
+  }
+]

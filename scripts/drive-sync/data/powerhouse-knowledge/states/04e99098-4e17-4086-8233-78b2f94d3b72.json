@@ -1,0 +1,94 @@
+{
+  "links": [
+    {
+      "id": "lnk-97c04013-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "97c04013-9740-4399-ab41-7304c5fd099e",
+      "targetTitle": "Neurospace \u2014 Dagster"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "A Dagster asset sensor puts lineage and attribution side by side at materialisation acceptance",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "da63e4d6-aa92-4504-9c2d-070028d743e4",
+      "name": "leads",
+      "topicDocumentId": null
+    },
+    {
+      "id": "e9d33db2-c4cc-4fed-81fc-38c7a0d67633",
+      "name": "dagster",
+      "topicDocumentId": null
+    },
+    {
+      "id": "f93263c2-4651-45c1-ac01-bfee2a91a775",
+      "name": "data-pipelines",
+      "topicDocumentId": null
+    },
+    {
+      "id": "0fc946a1-24ef-4f38-abf8-33aca1c085d1",
+      "name": "demo-design",
+      "topicDocumentId": null
+    },
+    {
+      "id": "f62a9f3b-1846-47f5-beb6-4628d2c33e0d",
+      "name": "provenance",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "The integration is a Dagster asset sensor dispatching a typed operation on materialisation acceptance. The framing is additive rather than corrective: lineage plus attribution, side by side. Nothing is claimed to be wrong with the lineage graph; a second question is being answered next to it.\n\nThose questions are genuinely different. Lineage answers where a dataset came from and what it was computed from. Attribution answers who accepted the result as fit to use, and under what rule. In a pipeline where materialisation is gated on a human or policy decision, the second answer is the one an auditor or a downstream consumer needs, and it is not derivable from the dependency graph.\n\nThe single lead is Neurospace in the Aarhus area of Denmark, marked \"3 \u00b7 later\". This is the only data-pipeline framing in this slice that leads with provenance rather than with retention \u2014 the Kestra demo, by contrast, leads with purge-and-replay.\n\n---\n\n## Leads sharing this finding (1)\n\n**3 \u00b7 later**\n- Neurospace (DK (Aarhus area)) \u2014 https://neurospace.io\n\nVerbatim research text this claim was extracted from:\n\n> Dagster asset sensor dispatching a typed operation on materialisation acceptance \u2014 lineage plus attribution, side by side.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "INTEGRATION",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "knowledge-agent",
+    "createdAt": "2026-08-19T11:31:55.308518Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-19T11:31:56.686058Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "The sensor dispatches a typed operation when a materialisation is accepted, so who accepted the data is recorded next to where the data came from.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "9d968c5d-4c9f-496d-a15b-79fe654451a2",
+      "actor": "knowledge-agent",
+      "comment": "Extracted from lead research; claim checked against the source record.",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-19T11:31:56.534301Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "3b592c90-d266-4a1c-b0f9-7198b7c349d8",
+      "actor": "liberuum",
+      "comment": "Approved: lead corpus extraction.",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-19T11:31:56.686058Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

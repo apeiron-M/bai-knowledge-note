@@ -1,0 +1,123 @@
+{
+  "links": [
+    {
+      "id": "lnk-15121fe4-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "15121fe4-c0d6-44bf-b8fd-cc5d4e4dda61",
+      "targetTitle": "docker-switchboard-storage",
+      "reason": "Step 2 of the entrypoint is gated by the reactor storage variable that note explains",
+      "confidence": "grounded"
+    },
+    {
+      "id": "lnk-d6732865-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "d6732865-1509-4c80-9515-95839f1bdd5e",
+      "targetTitle": "sb-observability-bootstrap",
+      "reason": "The monitoring variables listed here are read by the observability bootstrap module",
+      "confidence": "grounded"
+    },
+    {
+      "id": "lnk-b153c532-sup",
+      "linkType": "SUPERSEDES",
+      "targetDocumentId": "b153c532-0abc-4400-8448-4ac08046fcad",
+      "targetTitle": "docker-images-for-connect-and-switchboard",
+      "reason": "Replaces the old Switchboard-image claims: Kysely migrations instead of Prisma, the package installed from npm at the tag instead of a pre-initialized project, container port 3000, and the storage variables that replaced DATABASE_URL='dev.db'",
+      "confidence": "grounded"
+    },
+    {
+      "id": "lnk-56edb93f-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "56edb93f-5c3b-4c8b-a11f-5cfdcc252dee",
+      "targetTitle": "Academy \u203a Build \u203a Launch \u203a Docker deployment guide",
+      "reason": "Extracted from apps/academy/docs/academy/03-Build/05-Launch/05-DockerDeployment.md at v6.2.2-dev.74 \u2014 Switchboard Environment Variables (Core, Monitoring); Installing Custom Packages (Switchboard); Image Architecture \u203a Switchboard Image; Building Custom Images",
+      "confidence": "grounded"
+    },
+    {
+      "id": "lnk-8ff57495-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "8ff57495-42b3-47d4-9c91-1811281bfb34",
+      "targetTitle": "Design \u203a Design: Docker Compose files per release channel",
+      "reason": "Extracted from docs/plans/2026-08-24-docker-compose-channels-design.md at v6.2.2-dev.74 \u2014 Common service shape: switchboard port 3000, curl healthcheck, depends_on postgres",
+      "confidence": "grounded"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "The Switchboard image is Node 24 Alpine with @powerhousedao/switchboard installed from npm at the release tag; its entrypoint installs PH_PACKAGES, runs Kysely migrations when PH_REACTOR_DATABASE_URL is Postgres, then starts the server",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "1e9a5d18-2827-420b-bf89-330b5b1b123a",
+      "name": "docker",
+      "topicDocumentId": null
+    },
+    {
+      "id": "aafa2c19-d9c9-4c22-ac70-512dae228f36",
+      "name": "switchboard",
+      "topicDocumentId": null
+    },
+    {
+      "id": "0748da92-45a4-43c5-84ce-9782cfada8cb",
+      "name": "deployment",
+      "topicDocumentId": null
+    },
+    {
+      "id": "ab94a846-e9bd-449f-b2ab-44c8c0593466",
+      "name": "packages",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "The Switchboard target is **Node.js 24 (Alpine)** with pnpm and the `@powerhousedao/switchboard` package installed at image build time from the npm registry at the requested release tag \u2014 not a pre-initialized project with Prisma, as the earlier image was. At startup the entrypoint:\n\n1. Installs any packages listed in `PH_PACKAGES` (pnpm)\n2. Runs the reactor Postgres migrations (**Kysely**) if `PH_REACTOR_DATABASE_URL` points at a Postgres URL \u2014 PGlite migrations run automatically inside the server\n3. Starts the Switchboard server\n\nTwo ways to load custom packages server-side, matching where they run: `PH_PACKAGES` \u2014 comma-separated packages installed from the npm registry via pnpm before start \u2014 or `PH_REGISTRY_PACKAGES` \u2014 comma-separated packages loaded over HTTP from `PH_REGISTRY_URL` (default `https://registry.vetra.io`) at start. A custom image adds server-side packages at build time with `RUN pnpm add --shamefully-hoist @powerhousedao/my-custom-package`.\n\nCore variables: `PORT` (`3000`, exported as `PH_SWITCHBOARD_PORT`), `PH_SWITCHBOARD_PORT` (explicit override), `PH_DEFAULT_DRIVE_TYPE` (`powerhouse/document-drive` or `powerhouse/reactor-drive`), `PH_SWITCHBOARD_PUBLIC_URL` (public origin used for the remote attachment service, default `http://localhost:$PORT`), `LOG_LEVEL` (`info`). Monitoring: `SENTRY_DSN`, `SENTRY_ENV`, `SENTRY_TRACING_ENABLED` (`false` = errors-only), `TEMPO_ENDPOINT` (OTLP HTTP traces), `PYROSCOPE_SERVER_ADDRESS`. Health check: `curl -f http://127.0.0.1:3000/health`; the service starts only after Postgres reports healthy.\n\n_Source: apps/academy/docs/academy/03-Build/05-Launch/05-DockerDeployment.md (Powerhouse v6.2.2-dev.74)._\n_Source: docs/plans/2026-08-24-docker-compose-channels-design.md (Powerhouse v6.2.2-dev.74)._\n\n## Provenance\n- `apps/academy/docs/academy/03-Build/05-Launch/05-DockerDeployment.md` \u2014 Switchboard Environment Variables (Core, Monitoring); Installing Custom Packages (Switchboard); Image Architecture \u203a Switchboard Image; Building Custom Images\n- `docs/plans/2026-08-24-docker-compose-channels-design.md` \u2014 Common service shape: switchboard port 3000, curl healthcheck, depends_on postgres\n\n_Recorded from the Powerhouse repository at **v6.2.2-dev.74** during the v6.2.2-dev.74 source sync._",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": "v6.2.2-dev.74",
+  "computes": null,
+  "filePath": "apps/academy/docs/academy/03-Build/05-Launch/05-DockerDeployment.md",
+  "noteType": "ARCHITECTURE",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": "grounded",
+  "consumedBy": [],
+  "provenance": {
+    "author": "knowledge-agent",
+    "createdAt": "2026-09-02T22:12:59.631Z",
+    "sessionId": null,
+    "updatedAt": "2026-09-02T22:21:04.434Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Container port 3000 (PORT, exported as PH_SWITCHBOARD_PORT). Packages: PH_PACKAGES via pnpm or PH_REGISTRY_PACKAGES over HTTP from PH_REGISTRY_URL. PH_SWITCHBOARD_PUBLIC_URL feeds attachments.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "29c78f01-e18b-4230-831e-12bf2620905b",
+      "actor": "knowledge-agent",
+      "comment": "extracted from the Powerhouse repository at v6.2.2-dev.74",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-09-02T22:13:00.297Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "3ec3d025-b908-486f-851a-a3a7473af1c7",
+      "actor": "liberuum",
+      "comment": "claim checked against the cited repository file at the pinned tag",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-09-02T22:13:00.851Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

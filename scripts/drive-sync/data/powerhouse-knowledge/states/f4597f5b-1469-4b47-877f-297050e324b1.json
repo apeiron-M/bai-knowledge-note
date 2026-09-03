@@ -1,0 +1,94 @@
+{
+  "links": [
+    {
+      "id": "lnk-4d8e59af-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "4d8e59af-51f2-4ab7-b290-e1d5744abbd7",
+      "targetTitle": "Integration-gap tool screen: ERPNext / Frappe (primary-source research, 2026-08-19)"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "n8n's /audit endpoint is a vulnerability scanner, not an audit log",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "32972c07-02c2-439e-8003-df2e6a2f2aa4",
+      "name": "tool-screen",
+      "topicDocumentId": null
+    },
+    {
+      "id": "9eaf9342-fa25-4448-a28c-eb203af83f1b",
+      "name": "n8n",
+      "topicDocumentId": null
+    },
+    {
+      "id": "1cae648d-8187-4111-89d8-d8dfb0f9361c",
+      "name": "audit-trail",
+      "topicDocumentId": null
+    },
+    {
+      "id": "be0ecf01-feb3-43cd-9d91-2b66d72d6c29",
+      "name": "naming",
+      "topicDocumentId": null
+    },
+    {
+      "id": "05529ed4-bd5a-4597-9186-629b5b7273f9",
+      "name": "evaluation-trap",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "The API description reads *\"Generate a security audit for your n8n instance\"*, returning a *\"Credentials Risk Report\"*, *\"Database Risk Report\"*, *\"Filesystem Risk Report\"*, *\"Nodes Risk Report\"* and *\"Instance Risk Report\"*. It is a static posture scan, not a history of events.\n\nThe audit *events* that do exist elsewhere in n8n cover identity and administration only \u2014 login success and failure, signup, credential changes, MFA toggles, package installation, `User execution deleted`, `Execution data revealed`. None of them describes a business decision.\n\nThere is an irony worth noting for anyone relying on it: `User execution deleted` is itself only observable through log streaming, which is Enterprise-only. In the free edition the deletion of an execution is unobservable by the very mechanism nominally meant to record it.\n\nAnyone screening tools by searching documentation for \"audit\" will score this endpoint as a hit. It is worth checking what a feature does rather than what it is called.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "OBSERVATION",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "knowledge-agent",
+    "createdAt": "2026-08-20T08:45:11.688009Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-20T08:45:12.956763Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "The endpoint generates security risk reports about the instance; the name suggests a record of what happened, and it is nothing of the kind.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "20b7a11d-19d2-4264-98c5-4e193842f275",
+      "actor": "knowledge-agent",
+      "comment": "Extracted from the primary-source tool screen; each claim quotable from a cited source.",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-20T08:45:12.805200Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "a18c20e8-0317-4f5e-b5c2-3826f44c9e3c",
+      "actor": "liberuum",
+      "comment": "Approved: tool-screen extraction.",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-20T08:45:12.956763Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

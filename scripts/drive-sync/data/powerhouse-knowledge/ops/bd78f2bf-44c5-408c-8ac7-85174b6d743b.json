@@ -1,0 +1,362 @@
+[
+  {
+    "index": 0,
+    "hash": "",
+    "timestampUtcMs": "2026-08-14T12:24:55.073Z",
+    "action": {
+      "type": "CREATE_DOCUMENT",
+      "input": {
+        "meta": {},
+        "name": "swarm-feeds-mutable-pointers",
+        "slug": "",
+        "model": "bai/knowledge-note",
+        "branch": "main",
+        "signing": {
+          "nonce": "",
+          "publicKey": {},
+          "signature": "bd78f2bf-44c5-408c-8ac7-85174b6d743b",
+          "documentType": "bai/knowledge-note",
+          "createdAtUtcIso": "2026-08-14T12:24:55.072Z"
+        },
+        "version": 0,
+        "documentId": "bd78f2bf-44c5-408c-8ac7-85174b6d743b",
+        "protocolVersions": {
+          "base-reducer": 2
+        }
+      },
+      "timestampUtcMs": "2026-08-14T12:24:55.073Z"
+    }
+  },
+  {
+    "index": 0,
+    "hash": "qVCNmsmChrKatUgXP014picQawY=",
+    "timestampUtcMs": "2026-08-14T12:35:57.000Z",
+    "action": {
+      "type": "SET_TITLE",
+      "input": {
+        "title": "Swarm feeds are sequences of SOCs at predictable addresses that act as mutable pointers",
+        "updatedAt": "2026-08-14T12:35:57.000Z"
+      },
+      "timestampUtcMs": "2026-08-14T12:35:57.000Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "",
+    "timestampUtcMs": "2026-08-14T12:24:55.073Z",
+    "action": {
+      "type": "UPGRADE_DOCUMENT",
+      "input": {
+        "model": "bai/knowledge-note",
+        "toVersion": 1,
+        "documentId": "bd78f2bf-44c5-408c-8ac7-85174b6d743b",
+        "fromVersion": 0,
+        "initialState": {
+          "auth": {
+            "grants": [],
+            "version": 0
+          },
+          "local": {
+            "lastViewedAt": null,
+            "personalTags": []
+          },
+          "global": {
+            "links": [],
+            "model": null,
+            "scope": null,
+            "title": null,
+            "editor": null,
+            "inputs": [],
+            "models": [],
+            "status": "DRAFT",
+            "topics": [],
+            "content": null,
+            "context": null,
+            "modelId": null,
+            "modules": [],
+            "outputs": [],
+            "version": null,
+            "computes": null,
+            "filePath": null,
+            "noteType": null,
+            "severity": null,
+            "hooksUsed": [],
+            "rootCause": null,
+            "confidence": null,
+            "consumedBy": [],
+            "provenance": null,
+            "sourceType": null,
+            "targetType": null,
+            "cardinality": null,
+            "description": null,
+            "alternatives": [],
+            "consequences": [],
+            "errorMessage": null,
+            "relationType": null,
+            "correctPattern": null,
+            "decisionStatus": null,
+            "dispatchTargets": [],
+            "lifecycleEvents": []
+          },
+          "document": {
+            "hash": {
+              "encoding": "base64",
+              "algorithm": "sha1"
+            },
+            "version": 1
+          }
+        }
+      },
+      "timestampUtcMs": "2026-08-14T12:24:55.073Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "C0gRPUyWGQsxbDgJDtBZgdjF+CY=",
+    "timestampUtcMs": "2026-08-14T12:35:57.000Z",
+    "action": {
+      "type": "SET_DESCRIPTION",
+      "input": {
+        "updatedAt": "2026-08-14T12:35:57.000Z",
+        "description": "Feed address = Keccak256(Keccak256(topic || index) || owner). Sequential or epoch-based indexing; only owner writes. Used for manifests in our adapter."
+      },
+      "timestampUtcMs": "2026-08-14T12:35:57.000Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "",
+    "timestampUtcMs": "2026-08-14T12:38:47.705Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "bd78f2bf-44c5-408c-8ac7-85174b6d743b",
+        "targetId": "28caec8a-4efa-4c90-b1bd-8dad84e62858",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-08-14T12:38:47.705Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "kwE8OwAN4DM64uy247chOWMdHE8=",
+    "timestampUtcMs": "2026-08-14T12:35:57.000Z",
+    "action": {
+      "type": "SET_NOTE_TYPE",
+      "input": {
+        "noteType": "concept",
+        "updatedAt": "2026-08-14T12:35:57.000Z"
+      },
+      "timestampUtcMs": "2026-08-14T12:35:57.000Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "",
+    "timestampUtcMs": "2026-08-14T12:38:47.802Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "bd78f2bf-44c5-408c-8ac7-85174b6d743b",
+        "targetId": "32921fdd-c4ba-4ade-b4e7-9a257346440f",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-08-14T12:38:47.802Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "zysYqTR3oym0+kNxUnty6jHp/VA=",
+    "timestampUtcMs": "2026-08-14T12:35:57.000Z",
+    "action": {
+      "type": "SET_CONTENT",
+      "input": {
+        "content": "## Claim\n\nSwarm **feeds** are mutable pointers built as a sequence of SOCs whose addresses are deterministically derivable from `(owner, topic, index)`.\n\n## Evidence\n\n- Feed address: `Keccak256(Keccak256(topic || index) || owner_address)`\n- Topic is an arbitrary 32-byte identifier (the adapter uses `ph:v2:doc:<docId>`, `ph:v2:drive:<driveId>`, etc.)\n- Only the owner private key can publish updates; anyone knowing `owner + topic` can read\n- Typical feed payload is 8-byte timestamp + 32-byte Swarm reference\n- Two indexing schemes:\n  - **Sequential**: 0, 1, 2, ... \u2014 best for ordered updates and messaging\n  - **Epoch-based**: nested time epochs with binary search \u2014 best for sporadic/irregular updates\n- The adapter uses sequential indexing via bee-js `feedIndexNext` header auto-detection\n\n## Why it matters\n\nFeeds let Swarm support named, mutable resources despite chunks being immutable. They are the transport for every manifest update our adapter writes.\n",
+        "updatedAt": "2026-08-14T12:35:57.000Z"
+      },
+      "timestampUtcMs": "2026-08-14T12:35:57.000Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "",
+    "timestampUtcMs": "2026-08-14T12:38:47.883Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "bd78f2bf-44c5-408c-8ac7-85174b6d743b",
+        "targetId": "6149d3ce-04a5-4968-9069-63930a1fe179",
+        "relationshipType": "BUILDS_ON"
+      },
+      "timestampUtcMs": "2026-08-14T12:38:47.883Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "KiR8H/9HDpovjdyzQpwt1YT3mgo=",
+    "timestampUtcMs": "2026-08-14T12:35:57.000Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "version",
+        "value": "v6.2.2-dev.44",
+        "updatedAt": "2026-08-14T12:35:57.000Z"
+      },
+      "timestampUtcMs": "2026-08-14T12:35:57.000Z"
+    }
+  },
+  {
+    "index": 5,
+    "hash": "",
+    "timestampUtcMs": "2026-08-14T12:38:47.976Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "bd78f2bf-44c5-408c-8ac7-85174b6d743b",
+        "targetId": "914767af-8aaa-4713-860d-0801224734c4",
+        "relationshipType": "BUILDS_ON"
+      },
+      "timestampUtcMs": "2026-08-14T12:38:47.976Z"
+    }
+  },
+  {
+    "index": 5,
+    "hash": "Yps7tGpYJ6eDrDHyMGWwiuVI9sU=",
+    "timestampUtcMs": "2026-08-14T12:35:57.000Z",
+    "action": {
+      "type": "SET_PROVENANCE",
+      "input": {
+        "author": "knowledge-agent",
+        "createdAt": "2026-04-21T14:24:54.753Z",
+        "sourceOrigin": "DERIVED"
+      },
+      "timestampUtcMs": "2026-08-14T12:35:57.000Z"
+    }
+  },
+  {
+    "index": 6,
+    "hash": "hYqWHv/MBjDk6WYjpXLWXGG18zY=",
+    "timestampUtcMs": "2026-08-14T12:35:57.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "5d3d26ea-32d6-4973-ab2e-740e4f10e537",
+        "name": "swarm-feeds",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-08-14T12:35:57.000Z"
+    }
+  },
+  {
+    "index": 7,
+    "hash": "wh7rm07vVr6GAyt2daE/147ZtjE=",
+    "timestampUtcMs": "2026-08-14T12:35:57.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "9a5591ed-8bf0-4326-87fd-0cf111190cc1",
+        "name": "soc",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-08-14T12:35:57.000Z"
+    }
+  },
+  {
+    "index": 8,
+    "hash": "mXGZ9Ydmc3CnEupjYhx7iE26B9w=",
+    "timestampUtcMs": "2026-08-14T12:35:57.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "96d2ab95-0efc-4fa9-aeef-398db191cddc",
+        "name": "swarm",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-08-14T12:35:57.000Z"
+    }
+  },
+  {
+    "index": 9,
+    "hash": "M50MTw5HeFpo87LDAmYiQK4q4/Q=",
+    "timestampUtcMs": "2026-08-14T12:35:57.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "570313cf-b54e-42e4-95e3-1108cd3ee154",
+        "name": "mutable-state",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-08-14T12:35:57.000Z"
+    }
+  },
+  {
+    "index": 10,
+    "hash": "lCIZlQTX6VAoojvsuTlsHyOMXng=",
+    "timestampUtcMs": "2026-08-14T14:37:32.000Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "version",
+        "value": "v6.2.2-dev.47",
+        "updatedAt": "2026-08-14T12:00:00.000Z"
+      },
+      "timestampUtcMs": "2026-08-14T14:37:32.000Z"
+    }
+  },
+  {
+    "index": 11,
+    "hash": "Kp/7hj8+Nod6Bqb63t+bFuYrMdE=",
+    "timestampUtcMs": "2026-08-14T14:37:32.000Z",
+    "action": {
+      "type": "SUBMIT_FOR_REVIEW",
+      "input": {
+        "id": "29619e08-8fdb-4f09-8d9b-542f8cee87bc",
+        "actor": "claude",
+        "comment": "Knowledge registered against powerhouse v6.2.2-dev.47",
+        "timestamp": "2026-08-14T12:00:00.000Z"
+      },
+      "timestampUtcMs": "2026-08-14T14:37:32.000Z"
+    }
+  },
+  {
+    "index": 12,
+    "hash": "UxpWqlRp5BDdVzJyIT+WByYKkNE=",
+    "timestampUtcMs": "2026-08-14T14:37:32.000Z",
+    "action": {
+      "type": "APPROVE_NOTE",
+      "input": {
+        "id": "41ca8fd4-7046-456f-8abb-f4fe4f757c3d",
+        "actor": "liberuum",
+        "comment": "Canonical as of powerhouse v6.2.2-dev.47",
+        "timestamp": "2026-08-14T12:00:00.000Z"
+      },
+      "timestampUtcMs": "2026-08-14T14:37:32.000Z"
+    }
+  },
+  {
+    "index": 13,
+    "hash": "QlxAFezuB5Z71c89pzb20+y7qQ4=",
+    "timestampUtcMs": "2026-08-16T09:50:02.000Z",
+    "action": {
+      "type": "SET_NOTE_TYPE",
+      "input": {
+        "noteType": "CONCEPT",
+        "updatedAt": "2026-08-16T09:50:02.000Z"
+      },
+      "timestampUtcMs": "2026-08-16T09:50:02.000Z"
+    }
+  },
+  {
+    "index": 14,
+    "hash": "2j2H0qxk2+Z3IqFg9JweOHzY6TM=",
+    "timestampUtcMs": "2026-09-03T09:58:10.725Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "version",
+        "updatedAt": "2026-09-03T09:58:10.725Z"
+      },
+      "timestampUtcMs": "2026-09-03T09:58:10.725Z"
+    }
+  }
+]

@@ -1,0 +1,115 @@
+{
+  "links": [
+    {
+      "id": "lnk-e1173fcb-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "e1173fcb-3648-4578-88e5-1b5de043cf30",
+      "targetTitle": "Docs \u203a Breaking Changes Best Practices Guide",
+      "reason": "Extracted from docs/BREAKING-CHANGES-GUIDE.md at v6.2.2-dev.74 \u2014 Overview \u203a Types of Breaking Changes; General Principles; Semantic Versioning \u203a TLDR",
+      "confidence": "grounded"
+    },
+    {
+      "id": "lnk-c8bd64d3-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "c8bd64d3-d92e-4f41-beba-983a7e995c26",
+      "targetTitle": "auth-flags-staged",
+      "reason": "Staging enforcement behind feature flags is exactly the gradual-rollout strategy this guide prescribes for a behavioural break",
+      "confidence": "grounded"
+    },
+    {
+      "id": "lnk-6914ee1a-bui",
+      "linkType": "BUILDS_ON",
+      "targetDocumentId": "6914ee1a-5136-4979-b372-2b1f822b0219",
+      "targetTitle": "release-channels",
+      "reason": "The pre-release carve-out is what makes the dev channel's nightly X.Y.Z-dev.N builds a legitimate home for a breaking change while patch and minor releases are not",
+      "confidence": "grounded"
+    },
+    {
+      "id": "lnk-2f4b5df2-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "2f4b5df2-d6ca-4224-a049-e96b4811ed37",
+      "targetTitle": "upgrade-reducer-must-patch-state-and-initialstate",
+      "reason": "A document-model schema change is the Type 2 data break this process governs, and the upgrade reducer is its migration path",
+      "confidence": "established"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Breaking changes are classified into four types with their own checklists, and the hard rule is that they ship only in a major version after a 3-6 month deprecation",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "8c370d9d-93b2-42ec-9a9a-f5181d2a9a73",
+      "name": "release",
+      "topicDocumentId": null
+    },
+    {
+      "id": "49754c99-e790-4c40-bbe9-3898682aeb47",
+      "name": "versioning",
+      "topicDocumentId": null
+    },
+    {
+      "id": "9b002722-2aac-4fa3-ade7-e45939ae8e3d",
+      "name": "breaking-changes",
+      "topicDocumentId": null
+    },
+    {
+      "id": "1c0cdd3b-6626-4c41-b411-e136956e9692",
+      "name": "process",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "The guide splits breaking changes into four types, each with its own checklist:\n\n- **Type 1 \u2014 API**: signature changes, removals, renames;\n- **Type 2 \u2014 Data**: schema changes, field modifications;\n- **Type 3 \u2014 Behavioural**: how an API works changes *without* its signature changing;\n- **Type 4 \u2014 Dependency**: major dependency upgrades, runtime requirements.\n\nEvery checklist runs the same five phases: **planning** (evaluate necessity and impact), **implementation** (build it with backward compatibility), **documentation** (migration guide, docs), **release** (roll out with communication), and **removal or enforcement** in the next major version.\n\nThe general principles are stated as rules, not preferences: breaking changes **only in `x.0.0`**; **deprecate first**; provide migration paths; give a minimum **3\u20136 month deprecation period**; keep old APIs working during deprecation; document with before/after examples in `RELEASE-NOTES.md`; and use **feature flags** to control rollout.\n\nSemantic versioning is followed strictly, with one carve-out that matters in a monorepo publishing `-dev.N` builds nightly: **pre-release versions may include breaking changes** (`1.0.0-alpha.1`, `-beta.2`, `-rc.1`), clearly labelled with the matching npm tag. So a breaking change in a `dev` build is within the rules; the same change in a published minor or patch is not \u2014 \"a hard rule with no exceptions\". Version bumps ride `@jscutlery/semver` and conventional commits, with `!` or `BREAKING CHANGE:` triggering a major.\n\n## Provenance\n- `docs/BREAKING-CHANGES-GUIDE.md` \u2014 Overview \u203a Types of Breaking Changes; General Principles; Semantic Versioning \u203a TLDR\n\n_Extracted from the Powerhouse repository at **v6.2.2-dev.74**._",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": "v6.2.2-dev.74",
+  "computes": null,
+  "filePath": "docs/BREAKING-CHANGES-GUIDE.md",
+  "noteType": "PROCEDURE",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "knowledge-agent",
+    "createdAt": "2026-09-03T07:30:06.150Z",
+    "sessionId": null,
+    "updatedAt": "2026-09-03T07:31:16.497Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Type 1 API (signatures, removals, renames), Type 2 data (schema and field changes), Type 3 behavioural (same signature, new behaviour), Type 4 dependency (major upgrades, runtime needs).",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "39200cea-df47-4be4-adbe-00740889d3c6",
+      "actor": "knowledge-agent",
+      "comment": "extracted from docs/BREAKING-CHANGES-GUIDE.md at v6.2.2-dev.74",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-09-03T07:30:06.649Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "6a03ca50-22d6-478b-9479-ea8e4b4c3525",
+      "actor": "liberuum",
+      "comment": "claim checked against the cited file at the pinned tag",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-09-03T07:30:07.273Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

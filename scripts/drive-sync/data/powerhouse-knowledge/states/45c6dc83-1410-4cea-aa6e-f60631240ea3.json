@@ -1,0 +1,81 @@
+{
+  "links": [
+    {
+      "id": "lnk-1a6040bf-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "1a6040bf-5549-4420-9a89-a6b2a759c2ef",
+      "targetTitle": "skill-export",
+      "reason": "Discovery note distilled by sync-skills from the skill's SKILL.md frontmatter description and its section headings (source hash sha256:2e0e25b5f03d); the full procedure is the source text",
+      "confidence": "grounded"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Agent skill: /export \u2014 Export knowledge vault data \u2014 full backup, filtered export, or markdown conversion.",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "18831d9c-2f8e-4f9a-8afb-38038daf5bfd",
+      "name": "agent-skills",
+      "topicDocumentId": null
+    },
+    {
+      "id": "be161f4e-3598-4ebe-b675-cf1cde31bcd5",
+      "name": "export",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "## When to use\nExport knowledge vault data \u2014 full backup, filtered export, or markdown conversion. Uses consistency tokens for reliable snapshots. Use for backup, migration, or sharing.\n\n## What it covers\n- Export Methods\n- Export to Markdown\n- Consistency Guarantee\n- Graph Export\n\n## Where the full skill lives\n- Vault source: **Agent skill: export** (full SKILL.md text, DERIVED_FROM below)\n- Canonical copy: plugin repo `skills/export/SKILL.md` \u2014 always execute from the repo copy; this note is the discovery layer.\n\n## Invocation\n`/powerhouse-knowledge:export` in Claude Code (plugin installed), or read the source content and follow it manually.\n\n_Synced by sync-skills; source hash sha256:2e0e25b5f03d\u2026_",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": "skills/export/SKILL.md",
+  "noteType": "PROCEDURE",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "skill-sync",
+    "createdAt": "2026-08-16T12:01:52.431Z",
+    "sessionId": null,
+    "updatedAt": "2026-09-02T19:21:30.476Z",
+    "sourceOrigin": "IMPORT"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Export knowledge vault data \u2014 full backup, filtered export, or markdown conversion. Uses consistency tokens for reliable snapshots. Use for backup, migration, or sharing.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "7f9af7a1-c035-4c2e-b43e-b21a9e04c686",
+      "actor": "skill-sync",
+      "comment": "skill sync",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-16T12:01:53.078Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "983c45f1-711a-46d8-b4f0-524029fc3944",
+      "actor": "knowledge-agent",
+      "comment": "mechanical sync from canonical repo copy",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-16T12:01:53.217Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

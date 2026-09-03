@@ -1,0 +1,115 @@
+{
+  "links": [
+    {
+      "id": "lnk-e0c114b2-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "e0c114b2-9d22-4040-b24c-50fc4da594a6",
+      "targetTitle": "tla-model-limits",
+      "reason": "The same run's bounds are what limit how far the proof can be carried, which is that note's subject",
+      "confidence": "grounded"
+    },
+    {
+      "id": "lnk-fff29bdc-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "fff29bdc-424a-4a8e-902c-fb6d07b040b4",
+      "targetTitle": "Package \u203a reactor \u203a specs/tla \u2014 TLA+ Specifications for Reactor Synchronization",
+      "reason": "Extracted from packages/reactor/specs/tla/README.md at v6.2.2-dev.74 \u2014 Phase 1 Model; Properties Verified; What is Proven (Phase 1); Verification Results",
+      "confidence": "grounded"
+    },
+    {
+      "id": "lnk-5ba85b55-bui",
+      "linkType": "BUILDS_ON",
+      "targetDocumentId": "5ba85b55-4ac1-4cd5-a9d2-e1855c5b9633",
+      "targetTitle": "operational-reshuffle-vs-crdt-ot",
+      "reason": "Gives the reshuffle claim a machine-checked basis: the model merges divergent streams by timestamp and TLC finds no state where uniqueness or monotonicity breaks",
+      "confidence": "grounded"
+    },
+    {
+      "id": "lnk-936ddc46-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "936ddc46-3b5a-40d1-b69f-6a3f6c3c6b8f",
+      "targetTitle": "ordinal-frames-of-reference",
+      "reason": "CursorMonotonicity is proven over the model's abstract cursors, while the real protocol's cursors carry two different reactors' ordinals",
+      "confidence": "speculative"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "The reactor's sync protocol has a machine-checked proof of four safety properties, but only for two reactors, one document and five operations",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "0a7bcae8-00e3-4e0a-bff5-ef77407da368",
+      "name": "reactor-sync",
+      "topicDocumentId": null
+    },
+    {
+      "id": "6d1a2970-eda8-4d75-a250-672ad5d2aa07",
+      "name": "formal-verification",
+      "topicDocumentId": null
+    },
+    {
+      "id": "9b5b1e33-5c2d-47d8-a06b-efcbb2318fe5",
+      "name": "tla-plus",
+      "topicDocumentId": null
+    },
+    {
+      "id": "3d29d513-1a9c-41f5-8c2b-e523cf2aae0e",
+      "name": "correctness",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "`packages/reactor/specs/tla/ReactorSync.tla` models the sync protocol in TLA+ and TLC checks it. The Phase-1 configuration is deliberately tiny \u2014 2 reactors (`r1`, `r2`), 1 document, 3 operations per reactor, bounded by `nextOpId <= 5` \u2014 and explores **357,574 distinct states (1,806,603 generated, max depth 42) in about 11 seconds.**\n\nFour **safety** invariants hold in every state explored:\n\n1. `TypeOK` \u2014 all variables well-typed;\n2. `OperationUniqueness` \u2014 no duplicate operation ids anywhere;\n3. `StreamMonotonicity` \u2014 operation indices within a stream never decrease;\n4. `CursorMonotonicity` \u2014 sync cursors never move backwards.\n\nThe **liveness** property, `EventualConsistency` (all reactors converge once nothing is in transit), is specified but **not checked** in Phase 1, because the unbounded temporal property is expensive. So \"verified\" here means safety only.\n\nWhat the model proves, in the authors' own framing: no data corruption, operation uniqueness within a stream, stream and cursor monotonicity, **idempotency** (an operation received repeatedly creates no duplicate), and that the reshuffle algorithm merges divergent streams deterministically by timestamp.\n\n## Provenance\n- `packages/reactor/specs/tla/README.md` \u2014 Phase 1 Model; Properties Verified; What is Proven (Phase 1); Verification Results\n\n_Extracted from the Powerhouse repository at **v6.2.2-dev.74**._",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": "v6.2.2-dev.74",
+  "computes": null,
+  "filePath": "packages/reactor/specs/tla/README.md",
+  "noteType": "OBSERVATION",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "knowledge-agent",
+    "createdAt": "2026-09-03T07:19:23.558Z",
+    "sessionId": null,
+    "updatedAt": "2026-09-03T07:22:28.827Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "TLC explored 357,574 distinct states in 11 seconds and verified TypeOK, OperationUniqueness, StreamMonotonicity and CursorMonotonicity. Eventual consistency is specified but not checked here.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "219bf154-3217-4935-bec8-e6a3c5038640",
+      "actor": "knowledge-agent",
+      "comment": "extracted from packages/reactor/specs/tla/README.md at v6.2.2-dev.74",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-09-03T07:19:24.232Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "2205a3e6-3a22-4f18-b69b-1dd4e8593ffb",
+      "actor": "liberuum",
+      "comment": "claim checked against the cited file at the pinned tag",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-09-03T07:19:24.842Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

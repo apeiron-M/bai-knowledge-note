@@ -1,0 +1,330 @@
+[
+  {
+    "index": 0,
+    "hash": "",
+    "timestampUtcMs": "2026-09-03T07:55:01.824Z",
+    "action": {
+      "type": "CREATE_DOCUMENT",
+      "input": {
+        "meta": {},
+        "name": "analytics-currency-separate-queries",
+        "slug": "",
+        "model": "bai/knowledge-note",
+        "branch": "main",
+        "signing": {
+          "nonce": "",
+          "publicKey": {},
+          "signature": "b22a5f73-8f8b-4808-9539-447525cf333c",
+          "documentType": "bai/knowledge-note",
+          "createdAtUtcIso": "2026-09-03T07:55:01.824Z"
+        },
+        "version": 0,
+        "documentId": "b22a5f73-8f8b-4808-9539-447525cf333c",
+        "protocolVersions": {
+          "base-reducer": 2
+        }
+      },
+      "timestampUtcMs": "2026-09-03T07:55:01.824Z"
+    }
+  },
+  {
+    "index": 0,
+    "hash": "iOF40ofkc35ar2Tu+wgcW5j4VJ0=",
+    "timestampUtcMs": "2026-09-03T07:55:03.009Z",
+    "action": {
+      "type": "SET_TITLE",
+      "input": {
+        "title": "Currency is a filter field on an analytics query rather than a dimension, so comparing two currencies means two queries whose results are labelled separately",
+        "updatedAt": "2026-09-03T07:55:03.009Z"
+      },
+      "timestampUtcMs": "2026-09-03T07:55:03.009Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "",
+    "timestampUtcMs": "2026-09-03T07:55:01.824Z",
+    "action": {
+      "type": "UPGRADE_DOCUMENT",
+      "input": {
+        "model": "bai/knowledge-note",
+        "toVersion": 1,
+        "documentId": "b22a5f73-8f8b-4808-9539-447525cf333c",
+        "fromVersion": 0,
+        "initialState": {
+          "auth": {
+            "grants": [],
+            "version": 0
+          },
+          "local": {
+            "lastViewedAt": null,
+            "personalTags": []
+          },
+          "global": {
+            "links": [],
+            "model": null,
+            "scope": null,
+            "title": null,
+            "editor": null,
+            "inputs": [],
+            "models": [],
+            "status": "DRAFT",
+            "topics": [],
+            "content": null,
+            "context": null,
+            "modelId": null,
+            "modules": [],
+            "outputs": [],
+            "version": null,
+            "computes": null,
+            "filePath": null,
+            "noteType": null,
+            "severity": null,
+            "hooksUsed": [],
+            "rootCause": null,
+            "confidence": null,
+            "consumedBy": [],
+            "provenance": null,
+            "sourceType": null,
+            "targetType": null,
+            "cardinality": null,
+            "description": null,
+            "alternatives": [],
+            "consequences": [],
+            "errorMessage": null,
+            "relationType": null,
+            "correctPattern": null,
+            "decisionStatus": null,
+            "dispatchTargets": [],
+            "lifecycleEvents": []
+          },
+          "document": {
+            "hash": {
+              "encoding": "base64",
+              "algorithm": "sha1"
+            },
+            "version": 1
+          }
+        }
+      },
+      "timestampUtcMs": "2026-09-03T07:55:01.824Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "BF7X8hhu4NOarRMootGkGf2+1fo=",
+    "timestampUtcMs": "2026-09-03T07:55:03.009Z",
+    "action": {
+      "type": "SET_DESCRIPTION",
+      "input": {
+        "updatedAt": "2026-09-03T07:55:03.009Z",
+        "description": "The Sky dashboard's model sets currency to DAI or MKR in the filter object; the guidance is to be consistent per query and to run separate queries when comparing, since the choice changes what the."
+      },
+      "timestampUtcMs": "2026-09-03T07:55:03.009Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "",
+    "timestampUtcMs": "2026-09-03T07:55:41.261Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "metadata": {
+          "reason": "Extracted from apps/academy/docs/academy/03-Build/04-WorkWithData/_06-Analytics Engine/use-cases/maker.md at v6.2.2-dev.74 \u2014 Currency (setting, query example, consistency, impact of choice)",
+          "confidence": "grounded"
+        },
+        "sourceId": "b22a5f73-8f8b-4808-9539-447525cf333c",
+        "targetId": "d153c199-c714-4fb5-8ecc-6e388abae029",
+        "relationshipType": "DERIVED_FROM"
+      },
+      "timestampUtcMs": "2026-09-03T07:55:41.261Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "lg/iz2PKVq0gtl+5Ib17GtgAKkM=",
+    "timestampUtcMs": "2026-09-03T07:55:03.009Z",
+    "action": {
+      "type": "SET_NOTE_TYPE",
+      "input": {
+        "noteType": "PATTERN",
+        "updatedAt": "2026-09-03T07:55:03.009Z"
+      },
+      "timestampUtcMs": "2026-09-03T07:55:03.009Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "",
+    "timestampUtcMs": "2026-09-03T07:55:41.740Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "metadata": {
+          "reason": "Both are shape decisions in the same filter object: what varies per row belongs in dimensions, what must hold for the whole series belongs beside them",
+          "confidence": "grounded"
+        },
+        "sourceId": "b22a5f73-8f8b-4808-9539-447525cf333c",
+        "targetId": "d1df6fc5-ad16-455b-9462-257008df48f8",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-09-03T07:55:41.740Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "GQel9Z9G7eVR81mGKhLQCV1cEYg=",
+    "timestampUtcMs": "2026-09-03T07:55:03.009Z",
+    "action": {
+      "type": "SET_CONTENT",
+      "input": {
+        "content": "In the Sky dashboard's analytics model, **currency is a top-level filter field**, not a dimension:\n\n```json\n{ \"filter\": { \"start\": \"2023-01-01\", \"end\": \"2024-01-01\", \"granularity\": \"total\",\n              \"metrics\": [\"Budget\"], \"dimensions\": [{ \"name\": \"budget\", \"select\": \"atlas\", \"lod\": 3 }],\n              \"currency\": \"MKR\" } }\n```\n\nThree consequences the page draws out:\n\n- **Be consistent per query.** A currency is set once for the whole query, so every row in a series is in that currency.\n- **Comparing currencies means separate queries.** \"If your analysis involves comparing data across both DAI and MKR, ensure that separate queries are made for each currency and the results are appropriately labeled and distinguished.\" There is no cross-currency series.\n- **The choice changes the question.** DAI \"provides a stable measure for financial planning and tracking\" while MKR \"offers insights into governance and decision-making aspects of the ecosystem\" \u2014 so the same metric in two currencies answers two different questions rather than the same one in two units.\n\nThe modelling lesson generalises beyond Sky: a unit of account belongs in the filter when a series must be internally consistent, and in a dimension only when mixed-unit rows are meaningful. The engine returns `unit` on every row, which is what makes the distinction checkable rather than assumed.\n\n## Provenance\n- `apps/academy/docs/academy/03-Build/04-WorkWithData/_06-Analytics Engine/use-cases/maker.md` \u2014 Currency (setting, query example, consistency, impact of choice)\n\n_Extracted from the Powerhouse repository at **v6.2.2-dev.74**._",
+        "updatedAt": "2026-09-03T07:55:03.009Z"
+      },
+      "timestampUtcMs": "2026-09-03T07:55:03.009Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "",
+    "timestampUtcMs": "2026-09-03T07:55:42.214Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "metadata": {
+          "reason": "Compensating entries and business-time dating are the other modelling constraints that follow from choosing the analytics engine",
+          "confidence": "grounded"
+        },
+        "sourceId": "b22a5f73-8f8b-4808-9539-447525cf333c",
+        "targetId": "9b1bec19-6bcc-4f87-80b9-5f25360e4b7e",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-09-03T07:55:42.214Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "tvxUB4iTMjtw0jTmE8v1pEw1398=",
+    "timestampUtcMs": "2026-09-03T07:55:03.009Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "c8f99d4d-00c4-4f87-8d06-a4dc232f39c9",
+        "name": "analytics"
+      },
+      "timestampUtcMs": "2026-09-03T07:55:03.009Z"
+    }
+  },
+  {
+    "index": 5,
+    "hash": "H2zeVOKLP/GPrGqsegxmVUmdRVg=",
+    "timestampUtcMs": "2026-09-03T07:55:03.009Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "79f56253-f535-4186-b80f-0fdd7865e186",
+        "name": "currency"
+      },
+      "timestampUtcMs": "2026-09-03T07:55:03.009Z"
+    }
+  },
+  {
+    "index": 6,
+    "hash": "5lpkahBLbdVQbknHg9Kjsc4+Gcs=",
+    "timestampUtcMs": "2026-09-03T07:55:03.009Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "84850f9f-a314-4ad5-b512-991268b0571d",
+        "name": "querying"
+      },
+      "timestampUtcMs": "2026-09-03T07:55:03.009Z"
+    }
+  },
+  {
+    "index": 7,
+    "hash": "5FzYjmo9r2HVDVM/CNvDxMNLcL0=",
+    "timestampUtcMs": "2026-09-03T07:55:03.009Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "1f17274f-7527-4153-8be2-654701d03c8f",
+        "name": "modelling"
+      },
+      "timestampUtcMs": "2026-09-03T07:55:03.009Z"
+    }
+  },
+  {
+    "index": 8,
+    "hash": "WEJii7G+xfMyFTTK1R4ToaOYnPM=",
+    "timestampUtcMs": "2026-09-03T07:55:03.009Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "version",
+        "value": "v6.2.2-dev.74",
+        "updatedAt": "2026-09-03T07:55:03.009Z"
+      },
+      "timestampUtcMs": "2026-09-03T07:55:03.009Z"
+    }
+  },
+  {
+    "index": 9,
+    "hash": "enWsd9U35rZDlrUPpV8Nvc0IfrU=",
+    "timestampUtcMs": "2026-09-03T07:55:03.009Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "filePath",
+        "value": "apps/academy/docs/academy/03-Build/04-WorkWithData/_06-Analytics Engine/use-cases/maker.md",
+        "updatedAt": "2026-09-03T07:55:03.009Z"
+      },
+      "timestampUtcMs": "2026-09-03T07:55:03.009Z"
+    }
+  },
+  {
+    "index": 10,
+    "hash": "zNmIsXTGPN5o/SKTGjT1O+gMRQk=",
+    "timestampUtcMs": "2026-09-03T07:55:05.629Z",
+    "action": {
+      "type": "SET_PROVENANCE",
+      "input": {
+        "author": "knowledge-agent",
+        "createdAt": "2026-09-03T07:55:05.629Z",
+        "sourceOrigin": "DERIVED"
+      },
+      "timestampUtcMs": "2026-09-03T07:55:05.629Z"
+    }
+  },
+  {
+    "index": 11,
+    "hash": "IV9AtipPz1j5oyD4UdfTZDbwh64=",
+    "timestampUtcMs": "2026-09-03T07:55:06.198Z",
+    "action": {
+      "type": "SUBMIT_FOR_REVIEW",
+      "input": {
+        "id": "cc66c6b0-238a-4402-855d-962a5a978a0b",
+        "actor": "knowledge-agent",
+        "comment": "extracted from apps/academy/docs/academy/03-Build/04-WorkWithData/_06-Analytics Engine/use-cases/maker.md at v6.2.2-dev.74",
+        "timestamp": "2026-09-03T07:55:06.198Z"
+      },
+      "timestampUtcMs": "2026-09-03T07:55:06.198Z"
+    }
+  },
+  {
+    "index": 12,
+    "hash": "iZq2mCvlVUi9oLiqBrVV+puGj/Q=",
+    "timestampUtcMs": "2026-09-03T07:55:08.120Z",
+    "action": {
+      "type": "APPROVE_NOTE",
+      "input": {
+        "id": "a820fc1e-2426-4f83-98b4-fe101605254b",
+        "actor": "liberuum",
+        "comment": "claim checked against the cited file at the pinned tag",
+        "timestamp": "2026-09-03T07:55:08.120Z"
+      },
+      "timestampUtcMs": "2026-09-03T07:55:08.120Z"
+    }
+  }
+]

@@ -1,0 +1,103 @@
+{
+  "links": [
+    {
+      "id": "lnk-851f3b4d-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "851f3b4d-92aa-4601-b6f8-06f27ba514a5",
+      "targetTitle": "reactor-client-auto-signs-all-actions"
+    },
+    {
+      "id": "lnk-8cbea140-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "8cbea140-21d6-4b63-8780-5d44831018aa",
+      "targetTitle": "two-signing-mechanisms-header-and-action"
+    },
+    {
+      "id": "lnk-2ca5f8f5-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "2ca5f8f5-c423-4a7c-ae88-846fd0d1e659",
+      "targetTitle": "Academy \u203a Reference \u203a ReactorBrowserClient \u203a API reference",
+      "reason": "The note names apps/academy/docs/academy/04-Reference/08-ReactorBrowserClient/02-ApiReference.md as its source; page text revised between v6.2.2-dev.47 and v6.2.2-dev.74 \u2014 re-verified in the v6.2.2-dev.74 pass",
+      "confidence": "grounded"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "A non-empty signatures list is not proof of client-side signing \u2014 check context.signer.user.address",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "19e164f2-886f-44d9-af26-ad8e28a606c2",
+      "name": "signing",
+      "topicDocumentId": null
+    },
+    {
+      "id": "1ce06deb-bd08-4945-8ae2-b95f4b601945",
+      "name": "switchboard",
+      "topicDocumentId": null
+    },
+    {
+      "id": "64dff100-576f-4d87-8d16-2420c25b8d44",
+      "name": "gotchas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "a37d541a-ed58-454d-8ea3-c37b65a75d47",
+      "name": "verification",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "## Two traps when verifying signatures\n\n**1. The Switchboard signs unsigned actions itself.** When an action arrives with no signature, the Switchboard signs it with its own `did:key`. The resulting operation therefore has a **non-empty `signatures` list** \u2014 which means the presence of signatures is *not* evidence that the client signed anything. A test or audit that asserts `signatures.length > 0` passes just as happily for a server-signed action as for a user-signed one.\n\nThe field to check is `context.signer.user.address`. That is what tells you *whose* identity is attached, and it is the only way to distinguish a user-attributed operation from a server-attributed one.\n\n**2. The server does not validate `prevOpHash`.** A wrong hash is accepted and the write succeeds. So conformance with the stamping contract cannot be inferred from a mutation returning successfully \u2014 it has to be asserted directly in tests, by reading the operation back and comparing `prevOpHash` against the hash you expect for that scope and revision.\n\n## Why this matters beyond tests\n\nTogether these two facts mean a write path can look fully signed and hash-chained while being neither. The failure is silent in both directions: the server fills in the signature you did not produce, and it accepts the hash you got wrong. Any claim that \"operations in this deployment are user-signed\" needs to be backed by checking the signer identity on real operations, not by the write path not erroring.\n\nThe practical check, on an operation read back from the Switchboard:\n\n```typescript\nconst signer = operation.action.context?.signer;\nconst wasClientSigned = Boolean(signer?.user?.address);\n```\n\n_Source: apps/academy/docs/academy/04-Reference/08-ReactorBrowserClient/02-ApiReference.md (Powerhouse v6.2.2-dev.45)._",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": "v6.2.2-dev.74",
+  "computes": null,
+  "filePath": "apps/academy/docs/academy/04-Reference/08-ReactorBrowserClient/02-ApiReference.md",
+  "noteType": "OBSERVATION",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "claude",
+    "createdAt": "2026-08-13T14:33:29.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-09-02T22:26:41.430Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "The Switchboard signs unsigned actions with its own did:key, and the server does not validate prevOpHash, so a wrong hash is silently accepted.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "91849b40-3d9b-40e2-b66d-ed5abbe3e2a8",
+      "actor": "claude",
+      "comment": "Knowledge registered against powerhouse v6.2.2-dev.47",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-14T12:00:00.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "ca3e64b0-af25-4115-8d98-bc5a500e2fcc",
+      "actor": "liberuum",
+      "comment": "Canonical as of powerhouse v6.2.2-dev.47",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-14T12:00:00.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

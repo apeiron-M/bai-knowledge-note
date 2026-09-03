@@ -1,0 +1,121 @@
+{
+  "links": [
+    {
+      "id": "lnk-6ddb3f1f-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "6ddb3f1f-b6dd-42d8-85f3-3d956294006e",
+      "targetTitle": "cqrs-separates-write-commands-from-read-queries-for-independent-scaling"
+    },
+    {
+      "id": "lnk-29dd086c-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "29dd086c-f1d5-4a40-819e-82d03bba5506",
+      "targetTitle": "schema-design"
+    },
+    {
+      "id": "lnk-63fd1ffa-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "63fd1ffa-4125-4d0c-8e29-c3a14683290b",
+      "targetTitle": "billing-statement-model-captures-periodic-billing-summaries"
+    },
+    {
+      "id": "lnk-1d925ef9-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "1d925ef9-db00-485b-a414-41ecf3210e76",
+      "targetTitle": "billing-utils-computes-subscription-billing-breakdowns-and-metric-overages"
+    },
+    {
+      "id": "lnk-ed65375c-bui",
+      "linkType": "BUILDS_ON",
+      "targetDocumentId": "ed65375c-87bc-49fe-8463-9393235daff8",
+      "targetTitle": "graphql-sdl-defines-schemas-and-operations"
+    },
+    {
+      "id": "lnk-355c8453-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "355c8453-f12d-43dd-acc3-93702a4ae263",
+      "targetTitle": "book-of-powerhouse-part-3-development-approaches",
+      "reason": "Backing page found by content match in the v6.2.2-dev.74 source backfill \u2014 identifiers graphql from the claim appear in this page (text identical at v6.2.2-dev.47 and v6.2.2-dev.74); attribution, not the original extraction record",
+      "confidence": "grounded"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Powerhouse uses GraphQL schemas as a lingua franca between stakeholders and pairs naturally with CQRS separating queries, mutations, and subscriptions",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "2f08bcf3-e166-4e47-8193-fb85ac9df932",
+      "name": "graphql",
+      "topicDocumentId": null
+    },
+    {
+      "id": "a860c59c-e52c-45bc-bf65-c5a94dd2d616",
+      "name": "cqrs",
+      "topicDocumentId": null
+    },
+    {
+      "id": "1a3e5ba9-0363-4d12-8b20-a088672a72c1",
+      "name": "design-philosophy",
+      "topicDocumentId": null
+    },
+    {
+      "id": "00d32f0e-2245-48d7-b0df-01485ac93a08",
+      "name": "typescript",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "Powerhouse chose GraphQL schemas as the common language (lingua franca) bridging designers, developers, and non-technical stakeholders. Schemas provide a structured representation of data types, relationships, and operations accessible as a single source of truth. For non-technical contributors, schemas offer a readable map of data flows; for developers, they serve as implementation contracts. GraphQL pairs naturally with CQRS (Command Query Responsibility Segregation): queries retrieve data, mutations handle modifications, subscriptions enable real-time updates. Combined with TypeScript, auto-generated types ensure consistency between client and server, eliminating runtime errors. This approach enables Rapid Application Development (RAD) by allowing front-end developers to plug into any document model without managing backend or state management.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": "v6.2.2-dev.74",
+  "computes": null,
+  "filePath": "apps/academy/docs/bookofpowerhouse/04-DevelopmentApproaches.md",
+  "noteType": "DECISION",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "knowledge-agent",
+    "createdAt": "2026-04-02T12:00:00.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-09-02T21:42:06.276Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "GraphQL schemas serve as single source of truth readable by both technical and non-technical stakeholders, aligning with CQRS patterns.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "b388f73f-2622-46ea-8cdf-783b7c7b3820",
+      "actor": "claude",
+      "comment": "Knowledge registered against powerhouse v6.2.2-dev.47",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-14T12:00:00.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "3ca7b571-ff52-45e0-9bf7-0642645d58ba",
+      "actor": "liberuum",
+      "comment": "Canonical as of powerhouse v6.2.2-dev.47",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-14T12:00:00.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

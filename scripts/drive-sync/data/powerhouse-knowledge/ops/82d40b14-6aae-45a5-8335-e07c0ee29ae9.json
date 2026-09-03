@@ -1,0 +1,694 @@
+[
+  {
+    "index": 0,
+    "hash": "",
+    "timestampUtcMs": "2026-09-02T22:10:06.319Z",
+    "action": {
+      "type": "CREATE_DOCUMENT",
+      "input": {
+        "meta": {},
+        "name": "auth-denied-operations",
+        "slug": "",
+        "model": "bai/knowledge-note",
+        "branch": "main",
+        "signing": {
+          "nonce": "",
+          "publicKey": {},
+          "signature": "82d40b14-6aae-45a5-8335-e07c0ee29ae9",
+          "documentType": "bai/knowledge-note",
+          "createdAtUtcIso": "2026-09-02T22:10:06.319Z"
+        },
+        "version": 0,
+        "documentId": "82d40b14-6aae-45a5-8335-e07c0ee29ae9",
+        "protocolVersions": {
+          "base-reducer": 2
+        }
+      },
+      "timestampUtcMs": "2026-09-02T22:10:06.319Z"
+    }
+  },
+  {
+    "index": 0,
+    "hash": "Av0rehmcgU4hYw/qPVzurLbbu5M=",
+    "timestampUtcMs": "2026-09-02T22:10:06.291Z",
+    "action": {
+      "type": "SET_TITLE",
+      "input": {
+        "title": "A refused operation is stored as a denied operation with a deniedReason from a closed set, never dropped and never rewritten",
+        "updatedAt": "2026-09-02T22:10:06.291Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:10:06.291Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "",
+    "timestampUtcMs": "2026-09-02T22:10:06.320Z",
+    "action": {
+      "type": "UPGRADE_DOCUMENT",
+      "input": {
+        "model": "bai/knowledge-note",
+        "toVersion": 1,
+        "documentId": "82d40b14-6aae-45a5-8335-e07c0ee29ae9",
+        "fromVersion": 0,
+        "initialState": {
+          "auth": {
+            "grants": [],
+            "version": 0
+          },
+          "local": {
+            "lastViewedAt": null,
+            "personalTags": []
+          },
+          "global": {
+            "links": [],
+            "model": null,
+            "scope": null,
+            "title": null,
+            "editor": null,
+            "inputs": [],
+            "models": [],
+            "status": "DRAFT",
+            "topics": [],
+            "content": null,
+            "context": null,
+            "modelId": null,
+            "modules": [],
+            "outputs": [],
+            "version": null,
+            "computes": null,
+            "filePath": null,
+            "noteType": null,
+            "severity": null,
+            "hooksUsed": [],
+            "rootCause": null,
+            "confidence": null,
+            "consumedBy": [],
+            "provenance": null,
+            "sourceType": null,
+            "targetType": null,
+            "cardinality": null,
+            "description": null,
+            "alternatives": [],
+            "consequences": [],
+            "errorMessage": null,
+            "relationType": null,
+            "correctPattern": null,
+            "decisionStatus": null,
+            "dispatchTargets": [],
+            "lifecycleEvents": []
+          },
+          "document": {
+            "hash": {
+              "encoding": "base64",
+              "algorithm": "sha1"
+            },
+            "version": 1
+          }
+        }
+      },
+      "timestampUtcMs": "2026-09-02T22:10:06.320Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "yHrPYO3373th9nTJcNK7UfXpzWg=",
+    "timestampUtcMs": "2026-09-02T22:10:06.291Z",
+    "action": {
+      "type": "SET_DESCRIPTION",
+      "input": {
+        "updatedAt": "2026-09-02T22:10:06.291Z",
+        "description": "The outcome lives on the operation (applied | reducer-error | denied), not in a NOOP substitute or new action type. Reasons: no grant permits, denied by grant, document deleted, version unsupported."
+      },
+      "timestampUtcMs": "2026-09-02T22:10:06.291Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "",
+    "timestampUtcMs": "2026-09-02T22:18:03.142Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "metadata": {
+          "reason": "Extracted from docs/specs/auth-scope.md at v6.2.2-dev.74 \u2014 'The outcome belongs on the operation'; Stage 4 step 9 (degrade against older remotes)",
+          "confidence": "grounded"
+        },
+        "sourceId": "82d40b14-6aae-45a5-8335-e07c0ee29ae9",
+        "targetId": "223bb12a-be7f-4209-9ab2-f04f7bb2b6c8",
+        "relationshipType": "DERIVED_FROM"
+      },
+      "timestampUtcMs": "2026-09-02T22:18:03.142Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "9EN9htpzp4RY/NTlM0qb/JGEXJA=",
+    "timestampUtcMs": "2026-09-02T22:10:06.291Z",
+    "action": {
+      "type": "SET_NOTE_TYPE",
+      "input": {
+        "noteType": "ARCHITECTURE",
+        "updatedAt": "2026-09-02T22:10:06.291Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:10:06.291Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "",
+    "timestampUtcMs": "2026-09-02T22:18:04.441Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "metadata": {
+          "reason": "Extracted from apps/academy/docs/academy/04-Reference/01-Reactor/11-Authorization.md at v6.2.2-dev.74 \u2014 'Refusal reasons' table",
+          "confidence": "grounded"
+        },
+        "sourceId": "82d40b14-6aae-45a5-8335-e07c0ee29ae9",
+        "targetId": "17dc46b0-f733-467c-99d7-ae8fbe0fb0e4",
+        "relationshipType": "DERIVED_FROM"
+      },
+      "timestampUtcMs": "2026-09-02T22:18:04.441Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "NtZzj0SfnJXnb2pBlppSSmaj5v0=",
+    "timestampUtcMs": "2026-09-02T22:10:06.291Z",
+    "action": {
+      "type": "SET_CONTENT",
+      "input": {
+        "content": "At **admission** a denied write fails the job outright and stores nothing. On **replay** it cannot: a later-arriving but earlier-sorting operation may flip the verdict, so a refused operation from synced history is appended anyway, keeps its index, and carries an outcome:\n\n```ts\ntype OperationOutcome =\n  | { kind: \"applied\" }\n  | { kind: \"reducer-error\"; message: string }\n  | { kind: \"denied\"; reason: string };\n```\n\n`applied` is the default and needs no storage. The other two are the ways an operation occupies an index without contributing state, and they are kept distinguishable: telling a policy denial from a reducer failure by prefix-matching a human-readable message would make a consensus decision depend on a string.\n\nWhy not rewrite the action? Substituting `NOOP` collides with the base reducer, where a `NOOP` carrying a skip is the marker that supersedes earlier operations (`garbageCollectV2` counts those markers and ignores skip magnitude, so a denied operation that also carried a reshuffle skip would retract one operation where it meant several). A new `DENIED` action type discards what was attempted, and three consumers need the original: the client matches its own action id to learn which action was refused, sync deduplicates by action id, and re-evaluation must re-append the original if the verdict changes back.\n\nThe reasons are a **closed set**, compared as strings during re-evaluation and therefore consensus data carrying no grant id, subject or timestamp:\n\n| Reason | Meaning |\n| --- | --- |\n| `no grant permits this operation` | Default deny; nothing applied |\n| `denied by grant` | The last applicable grant had `effect: \"deny\"` |\n| `document deleted` | The document was deleted at this position |\n| `auth policy version unsupported` | The policy declares a version this build cannot evaluate |\n\nInspect with `isDenied(operation)` and resolve the effective stream with `garbageCollect(sortOperations(...))` from `@powerhousedao/shared/document-model`. The outcome is persisted and travels by sync, so it rolls out per fleet like the flags that produce it. Sync degrades against older remotes: `GqlRequestChannel` selects the new `deniedReason`/`errorType` fields only while the remote is known to serve them.\n\n_Source: docs/specs/auth-scope.md (Powerhouse v6.2.2-dev.74)._\n_Source: apps/academy/docs/academy/04-Reference/01-Reactor/11-Authorization.md (Powerhouse v6.2.2-dev.74)._\n_Source: apps/academy/docs/academy/05-Lookup/00-Cookbook.md (Powerhouse v6.2.2-dev.74)._\n\n## Provenance\n- `docs/specs/auth-scope.md` \u2014 'The outcome belongs on the operation'; Stage 4 step 9 (degrade against older remotes)\n- `apps/academy/docs/academy/04-Reference/01-Reactor/11-Authorization.md` \u2014 'Refusal reasons' table\n- `apps/academy/docs/academy/05-Lookup/00-Cookbook.md` \u2014 Positional Delete: 'Denied, not dropped'; Revocation Race: 'Denials are consensus artifacts'\n\n_Recorded from the Powerhouse repository at **v6.2.2-dev.74** during the v6.2.2-dev.74 source sync._",
+        "updatedAt": "2026-09-02T22:10:06.291Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:10:06.291Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "",
+    "timestampUtcMs": "2026-09-02T22:18:06.014Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "metadata": {
+          "reason": "Extracted from apps/academy/docs/academy/05-Lookup/00-Cookbook.md at v6.2.2-dev.74 \u2014 Positional Delete: 'Denied, not dropped'; Revocation Race: 'Denials are consensus artifacts'",
+          "confidence": "grounded"
+        },
+        "sourceId": "82d40b14-6aae-45a5-8335-e07c0ee29ae9",
+        "targetId": "f2aaccd3-7c26-4327-881e-f5ad9e267b89",
+        "relationshipType": "DERIVED_FROM"
+      },
+      "timestampUtcMs": "2026-09-02T22:18:06.014Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "K3L1WMVmGgqntNL+6bM9aG+yhNU=",
+    "timestampUtcMs": "2026-09-02T22:10:06.291Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "38b67873-da32-404c-a139-97b254b0811f",
+        "name": "auth-scope"
+      },
+      "timestampUtcMs": "2026-09-02T22:10:06.291Z"
+    }
+  },
+  {
+    "index": 5,
+    "hash": "",
+    "timestampUtcMs": "2026-09-02T22:18:07.331Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "metadata": {
+          "reason": "The skip field's NOOP-with-skip marker is exactly the collision that rules out substituting NOOP for a denied action",
+          "confidence": "grounded"
+        },
+        "sourceId": "82d40b14-6aae-45a5-8335-e07c0ee29ae9",
+        "targetId": "c12e6c2c-a727-4dbe-a6f0-65802b70c94b",
+        "relationshipType": "BUILDS_ON"
+      },
+      "timestampUtcMs": "2026-09-02T22:18:07.331Z"
+    }
+  },
+  {
+    "index": 5,
+    "hash": "N8h/EKhrhOm1yxgdztvWMclmexc=",
+    "timestampUtcMs": "2026-09-02T22:10:06.291Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "9fca573d-d456-4bb2-b382-2550651cfb0e",
+        "name": "operations"
+      },
+      "timestampUtcMs": "2026-09-02T22:10:06.291Z"
+    }
+  },
+  {
+    "index": 6,
+    "hash": "",
+    "timestampUtcMs": "2026-09-02T22:18:07.811Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "metadata": {
+          "reason": "Storing rather than dropping the refusal is what lets every replica reach the same verdict when history is judged at its position",
+          "confidence": "grounded"
+        },
+        "sourceId": "82d40b14-6aae-45a5-8335-e07c0ee29ae9",
+        "targetId": "0ade289f-d4fb-44d8-ab3b-316d65bb1c8d",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-09-02T22:18:07.811Z"
+    }
+  },
+  {
+    "index": 6,
+    "hash": "LhFGr5edwLBij6O/ztLOBaXAtOc=",
+    "timestampUtcMs": "2026-09-02T22:10:06.291Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "19fdf34a-47ac-4425-9e6e-c46b7cafcd6b",
+        "name": "consensus"
+      },
+      "timestampUtcMs": "2026-09-02T22:10:06.291Z"
+    }
+  },
+  {
+    "index": 7,
+    "hash": "",
+    "timestampUtcMs": "2026-09-02T22:18:08.298Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "metadata": {
+          "reason": "An admission-time denial surfaces as a FAILED job, one of the two terminal job statuses; a replay-time denial is a stored operation instead",
+          "confidence": "grounded"
+        },
+        "sourceId": "82d40b14-6aae-45a5-8335-e07c0ee29ae9",
+        "targetId": "48b95d6d-2b69-4999-9e79-dddfc7e9ed3f",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-09-02T22:18:08.298Z"
+    }
+  },
+  {
+    "index": 7,
+    "hash": "TzWtQjM37FZBRmyZpE4ugDxyNoA=",
+    "timestampUtcMs": "2026-09-02T22:10:06.291Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "11ecab60-4049-49b2-b854-4eeae9cb4e6c",
+        "name": "reactor"
+      },
+      "timestampUtcMs": "2026-09-02T22:10:06.291Z"
+    }
+  },
+  {
+    "index": 8,
+    "hash": "",
+    "timestampUtcMs": "2026-09-02T22:22:24.161Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "metadata": {
+          "reason": "Extracted from docs/specs/auth-scope.md at v6.2.2-dev.74 \u2014 'The outcome belongs on the operation'; Stage 4 step 9 (degrade against older remotes)",
+          "confidence": "grounded"
+        },
+        "sourceId": "82d40b14-6aae-45a5-8335-e07c0ee29ae9",
+        "targetId": "223bb12a-be7f-4209-9ab2-f04f7bb2b6c8",
+        "relationshipType": "DERIVED_FROM"
+      },
+      "timestampUtcMs": "2026-09-02T22:22:24.161Z"
+    }
+  },
+  {
+    "index": 8,
+    "hash": "/DAKda1GKPCJhZNrzR5XbvHiXow=",
+    "timestampUtcMs": "2026-09-02T22:10:06.291Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "version",
+        "value": "v6.2.2-dev.74",
+        "updatedAt": "2026-09-02T22:10:06.291Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:10:06.291Z"
+    }
+  },
+  {
+    "index": 9,
+    "hash": "",
+    "timestampUtcMs": "2026-09-02T22:22:24.904Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "metadata": {
+          "reason": "Extracted from apps/academy/docs/academy/04-Reference/01-Reactor/11-Authorization.md at v6.2.2-dev.74 \u2014 'Refusal reasons' table",
+          "confidence": "grounded"
+        },
+        "sourceId": "82d40b14-6aae-45a5-8335-e07c0ee29ae9",
+        "targetId": "17dc46b0-f733-467c-99d7-ae8fbe0fb0e4",
+        "relationshipType": "DERIVED_FROM"
+      },
+      "timestampUtcMs": "2026-09-02T22:22:24.904Z"
+    }
+  },
+  {
+    "index": 9,
+    "hash": "/vVtoCC3RwKv4tqvwyuY+MLd+pw=",
+    "timestampUtcMs": "2026-09-02T22:10:06.291Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "filePath",
+        "value": "docs/specs/auth-scope.md",
+        "updatedAt": "2026-09-02T22:10:06.291Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:10:06.291Z"
+    }
+  },
+  {
+    "index": 10,
+    "hash": "",
+    "timestampUtcMs": "2026-09-02T22:22:25.456Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "metadata": {
+          "reason": "Extracted from apps/academy/docs/academy/05-Lookup/00-Cookbook.md at v6.2.2-dev.74 \u2014 Positional Delete: 'Denied, not dropped'; Revocation Race: 'Denials are consensus artifacts'",
+          "confidence": "grounded"
+        },
+        "sourceId": "82d40b14-6aae-45a5-8335-e07c0ee29ae9",
+        "targetId": "f2aaccd3-7c26-4327-881e-f5ad9e267b89",
+        "relationshipType": "DERIVED_FROM"
+      },
+      "timestampUtcMs": "2026-09-02T22:22:25.456Z"
+    }
+  },
+  {
+    "index": 10,
+    "hash": "laAbHuzbjzdFCu7RnZGl6tXYyIE=",
+    "timestampUtcMs": "2026-09-02T22:10:06.291Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "confidence",
+        "value": "grounded",
+        "updatedAt": "2026-09-02T22:10:06.291Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:10:06.291Z"
+    }
+  },
+  {
+    "index": 11,
+    "hash": "",
+    "timestampUtcMs": "2026-09-02T22:22:26.254Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "metadata": {
+          "reason": "The skip field's NOOP-with-skip marker is exactly the collision that rules out substituting NOOP for a denied action",
+          "confidence": "grounded"
+        },
+        "sourceId": "82d40b14-6aae-45a5-8335-e07c0ee29ae9",
+        "targetId": "c12e6c2c-a727-4dbe-a6f0-65802b70c94b",
+        "relationshipType": "BUILDS_ON"
+      },
+      "timestampUtcMs": "2026-09-02T22:22:26.254Z"
+    }
+  },
+  {
+    "index": 11,
+    "hash": "ERnbm8LXgjVF4tY4wS2Lmddtay0=",
+    "timestampUtcMs": "2026-09-02T22:10:08.886Z",
+    "action": {
+      "type": "SET_PROVENANCE",
+      "input": {
+        "author": "knowledge-agent",
+        "createdAt": "2026-09-02T22:10:08.886Z",
+        "sourceOrigin": "DERIVED"
+      },
+      "timestampUtcMs": "2026-09-02T22:10:08.886Z"
+    }
+  },
+  {
+    "index": 12,
+    "hash": "",
+    "timestampUtcMs": "2026-09-02T22:22:26.727Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "metadata": {
+          "reason": "Storing rather than dropping the refusal is what lets every replica reach the same verdict when history is judged at its position",
+          "confidence": "grounded"
+        },
+        "sourceId": "82d40b14-6aae-45a5-8335-e07c0ee29ae9",
+        "targetId": "0ade289f-d4fb-44d8-ab3b-316d65bb1c8d",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-09-02T22:22:26.727Z"
+    }
+  },
+  {
+    "index": 12,
+    "hash": "67ObuHvzgPRTZxiYgy/6Lk0+Ca8=",
+    "timestampUtcMs": "2026-09-02T22:10:09.375Z",
+    "action": {
+      "type": "SUBMIT_FOR_REVIEW",
+      "input": {
+        "id": "2d1de07f-d303-45e0-8d20-cd71ad962ff5",
+        "actor": "knowledge-agent",
+        "comment": "extracted from the Powerhouse repository at v6.2.2-dev.74",
+        "timestamp": "2026-09-02T22:10:09.375Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:10:09.375Z"
+    }
+  },
+  {
+    "index": 13,
+    "hash": "",
+    "timestampUtcMs": "2026-09-02T22:22:27.180Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "metadata": {
+          "reason": "An admission-time denial surfaces as a FAILED job, one of the two terminal job statuses; a replay-time denial is a stored operation instead",
+          "confidence": "grounded"
+        },
+        "sourceId": "82d40b14-6aae-45a5-8335-e07c0ee29ae9",
+        "targetId": "48b95d6d-2b69-4999-9e79-dddfc7e9ed3f",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-09-02T22:22:27.180Z"
+    }
+  },
+  {
+    "index": 13,
+    "hash": "x2IgObPz3St0juN7PunC6xERjNo=",
+    "timestampUtcMs": "2026-09-02T22:10:09.854Z",
+    "action": {
+      "type": "APPROVE_NOTE",
+      "input": {
+        "id": "1ea47723-3659-47d0-8398-5e7f0ce1690c",
+        "actor": "liberuum",
+        "comment": "claim checked against the cited repository file at the pinned tag",
+        "timestamp": "2026-09-02T22:10:09.854Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:10:09.854Z"
+    }
+  },
+  {
+    "index": 14,
+    "hash": "SVl2NbbvdSLGQ5NObP088cfmIXI=",
+    "timestampUtcMs": "2026-09-02T22:15:39.753Z",
+    "action": {
+      "type": "SET_TITLE",
+      "input": {
+        "title": "A refused operation is stored as a denied operation with a deniedReason from a closed set, never dropped and never rewritten",
+        "updatedAt": "2026-09-02T22:15:39.753Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:15:39.753Z"
+    }
+  },
+  {
+    "index": 15,
+    "hash": "SVl2NbbvdSLGQ5NObP088cfmIXI=",
+    "timestampUtcMs": "2026-09-02T22:15:39.753Z",
+    "action": {
+      "type": "SET_DESCRIPTION",
+      "input": {
+        "updatedAt": "2026-09-02T22:15:39.753Z",
+        "description": "The outcome lives on the operation (applied | reducer-error | denied), not in a NOOP substitute or new action type. Reasons: no grant permits, denied by grant, document deleted, version unsupported."
+      },
+      "timestampUtcMs": "2026-09-02T22:15:39.753Z"
+    }
+  },
+  {
+    "index": 16,
+    "hash": "SVl2NbbvdSLGQ5NObP088cfmIXI=",
+    "timestampUtcMs": "2026-09-02T22:15:39.754Z",
+    "action": {
+      "type": "SET_NOTE_TYPE",
+      "input": {
+        "noteType": "ARCHITECTURE",
+        "updatedAt": "2026-09-02T22:15:39.753Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:15:39.754Z"
+    }
+  },
+  {
+    "index": 17,
+    "hash": "SVl2NbbvdSLGQ5NObP088cfmIXI=",
+    "timestampUtcMs": "2026-09-02T22:15:39.754Z",
+    "action": {
+      "type": "SET_CONTENT",
+      "input": {
+        "content": "At **admission** a denied write fails the job outright and stores nothing. On **replay** it cannot: a later-arriving but earlier-sorting operation may flip the verdict, so a refused operation from synced history is appended anyway, keeps its index, and carries an outcome:\n\n```ts\ntype OperationOutcome =\n  | { kind: \"applied\" }\n  | { kind: \"reducer-error\"; message: string }\n  | { kind: \"denied\"; reason: string };\n```\n\n`applied` is the default and needs no storage. The other two are the ways an operation occupies an index without contributing state, and they are kept distinguishable: telling a policy denial from a reducer failure by prefix-matching a human-readable message would make a consensus decision depend on a string.\n\nWhy not rewrite the action? Substituting `NOOP` collides with the base reducer, where a `NOOP` carrying a skip is the marker that supersedes earlier operations (`garbageCollectV2` counts those markers and ignores skip magnitude, so a denied operation that also carried a reshuffle skip would retract one operation where it meant several). A new `DENIED` action type discards what was attempted, and three consumers need the original: the client matches its own action id to learn which action was refused, sync deduplicates by action id, and re-evaluation must re-append the original if the verdict changes back.\n\nThe reasons are a **closed set**, compared as strings during re-evaluation and therefore consensus data carrying no grant id, subject or timestamp:\n\n| Reason | Meaning |\n| --- | --- |\n| `no grant permits this operation` | Default deny; nothing applied |\n| `denied by grant` | The last applicable grant had `effect: \"deny\"` |\n| `document deleted` | The document was deleted at this position |\n| `auth policy version unsupported` | The policy declares a version this build cannot evaluate |\n\nInspect with `isDenied(operation)` and resolve the effective stream with `garbageCollect(sortOperations(...))` from `@powerhousedao/shared/document-model`. The outcome is persisted and travels by sync, so it rolls out per fleet like the flags that produce it. Sync degrades against older remotes: `GqlRequestChannel` selects the new `deniedReason`/`errorType` fields only while the remote is known to serve them.\n\n_Source: docs/specs/auth-scope.md (Powerhouse v6.2.2-dev.74)._\n_Source: apps/academy/docs/academy/04-Reference/01-Reactor/11-Authorization.md (Powerhouse v6.2.2-dev.74)._\n_Source: apps/academy/docs/academy/05-Lookup/00-Cookbook.md (Powerhouse v6.2.2-dev.74)._\n\n## Provenance\n- `docs/specs/auth-scope.md` \u2014 'The outcome belongs on the operation'; Stage 4 step 9 (degrade against older remotes)\n- `apps/academy/docs/academy/04-Reference/01-Reactor/11-Authorization.md` \u2014 'Refusal reasons' table\n- `apps/academy/docs/academy/05-Lookup/00-Cookbook.md` \u2014 Positional Delete: 'Denied, not dropped'; Revocation Race: 'Denials are consensus artifacts'\n\n_Recorded from the Powerhouse repository at **v6.2.2-dev.74** during the v6.2.2-dev.74 source sync._",
+        "updatedAt": "2026-09-02T22:15:39.753Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:15:39.754Z"
+    }
+  },
+  {
+    "index": 18,
+    "hash": "SVl2NbbvdSLGQ5NObP088cfmIXI=",
+    "timestampUtcMs": "2026-09-02T22:15:39.754Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "version",
+        "value": "v6.2.2-dev.74",
+        "updatedAt": "2026-09-02T22:15:39.753Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:15:39.754Z"
+    }
+  },
+  {
+    "index": 19,
+    "hash": "SVl2NbbvdSLGQ5NObP088cfmIXI=",
+    "timestampUtcMs": "2026-09-02T22:15:39.754Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "filePath",
+        "value": "docs/specs/auth-scope.md",
+        "updatedAt": "2026-09-02T22:15:39.753Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:15:39.754Z"
+    }
+  },
+  {
+    "index": 20,
+    "hash": "SVl2NbbvdSLGQ5NObP088cfmIXI=",
+    "timestampUtcMs": "2026-09-02T22:15:39.754Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "confidence",
+        "value": "grounded",
+        "updatedAt": "2026-09-02T22:15:39.753Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:15:39.754Z"
+    }
+  },
+  {
+    "index": 21,
+    "hash": "GjNqp1R0/1QLlc4yWc0PlAkCSx4=",
+    "timestampUtcMs": "2026-09-02T22:20:18.010Z",
+    "action": {
+      "type": "SET_TITLE",
+      "input": {
+        "title": "A refused operation is stored as a denied operation with a deniedReason from a closed set, never dropped and never rewritten",
+        "updatedAt": "2026-09-02T22:20:18.009Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:20:18.010Z"
+    }
+  },
+  {
+    "index": 22,
+    "hash": "GjNqp1R0/1QLlc4yWc0PlAkCSx4=",
+    "timestampUtcMs": "2026-09-02T22:20:18.010Z",
+    "action": {
+      "type": "SET_DESCRIPTION",
+      "input": {
+        "updatedAt": "2026-09-02T22:20:18.009Z",
+        "description": "The outcome lives on the operation (applied | reducer-error | denied), not in a NOOP substitute or new action type. Reasons: no grant permits, denied by grant, document deleted, version unsupported."
+      },
+      "timestampUtcMs": "2026-09-02T22:20:18.010Z"
+    }
+  },
+  {
+    "index": 23,
+    "hash": "GjNqp1R0/1QLlc4yWc0PlAkCSx4=",
+    "timestampUtcMs": "2026-09-02T22:20:18.010Z",
+    "action": {
+      "type": "SET_NOTE_TYPE",
+      "input": {
+        "noteType": "ARCHITECTURE",
+        "updatedAt": "2026-09-02T22:20:18.009Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:20:18.010Z"
+    }
+  },
+  {
+    "index": 24,
+    "hash": "GjNqp1R0/1QLlc4yWc0PlAkCSx4=",
+    "timestampUtcMs": "2026-09-02T22:20:18.010Z",
+    "action": {
+      "type": "SET_CONTENT",
+      "input": {
+        "content": "At **admission** a denied write fails the job outright and stores nothing. On **replay** it cannot: a later-arriving but earlier-sorting operation may flip the verdict, so a refused operation from synced history is appended anyway, keeps its index, and carries an outcome:\n\n```ts\ntype OperationOutcome =\n  | { kind: \"applied\" }\n  | { kind: \"reducer-error\"; message: string }\n  | { kind: \"denied\"; reason: string };\n```\n\n`applied` is the default and needs no storage. The other two are the ways an operation occupies an index without contributing state, and they are kept distinguishable: telling a policy denial from a reducer failure by prefix-matching a human-readable message would make a consensus decision depend on a string.\n\nWhy not rewrite the action? Substituting `NOOP` collides with the base reducer, where a `NOOP` carrying a skip is the marker that supersedes earlier operations (`garbageCollectV2` counts those markers and ignores skip magnitude, so a denied operation that also carried a reshuffle skip would retract one operation where it meant several). A new `DENIED` action type discards what was attempted, and three consumers need the original: the client matches its own action id to learn which action was refused, sync deduplicates by action id, and re-evaluation must re-append the original if the verdict changes back.\n\nThe reasons are a **closed set**, compared as strings during re-evaluation and therefore consensus data carrying no grant id, subject or timestamp:\n\n| Reason | Meaning |\n| --- | --- |\n| `no grant permits this operation` | Default deny; nothing applied |\n| `denied by grant` | The last applicable grant had `effect: \"deny\"` |\n| `document deleted` | The document was deleted at this position |\n| `auth policy version unsupported` | The policy declares a version this build cannot evaluate |\n\nInspect with `isDenied(operation)` and resolve the effective stream with `garbageCollect(sortOperations(...))` from `@powerhousedao/shared/document-model`. The outcome is persisted and travels by sync, so it rolls out per fleet like the flags that produce it. Sync degrades against older remotes: `GqlRequestChannel` selects the new `deniedReason`/`errorType` fields only while the remote is known to serve them.\n\n_Source: docs/specs/auth-scope.md (Powerhouse v6.2.2-dev.74)._\n_Source: apps/academy/docs/academy/04-Reference/01-Reactor/11-Authorization.md (Powerhouse v6.2.2-dev.74)._\n_Source: apps/academy/docs/academy/05-Lookup/00-Cookbook.md (Powerhouse v6.2.2-dev.74)._\n\n## Provenance\n- `docs/specs/auth-scope.md` \u2014 'The outcome belongs on the operation'; Stage 4 step 9 (degrade against older remotes)\n- `apps/academy/docs/academy/04-Reference/01-Reactor/11-Authorization.md` \u2014 'Refusal reasons' table\n- `apps/academy/docs/academy/05-Lookup/00-Cookbook.md` \u2014 Positional Delete: 'Denied, not dropped'; Revocation Race: 'Denials are consensus artifacts'\n\n_Recorded from the Powerhouse repository at **v6.2.2-dev.74** during the v6.2.2-dev.74 source sync._",
+        "updatedAt": "2026-09-02T22:20:18.009Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:20:18.010Z"
+    }
+  },
+  {
+    "index": 25,
+    "hash": "GjNqp1R0/1QLlc4yWc0PlAkCSx4=",
+    "timestampUtcMs": "2026-09-02T22:20:18.010Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "version",
+        "value": "v6.2.2-dev.74",
+        "updatedAt": "2026-09-02T22:20:18.009Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:20:18.010Z"
+    }
+  },
+  {
+    "index": 26,
+    "hash": "GjNqp1R0/1QLlc4yWc0PlAkCSx4=",
+    "timestampUtcMs": "2026-09-02T22:20:18.010Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "filePath",
+        "value": "docs/specs/auth-scope.md",
+        "updatedAt": "2026-09-02T22:20:18.009Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:20:18.010Z"
+    }
+  },
+  {
+    "index": 27,
+    "hash": "D8CSMqkofwyJwlEhrVAqLBYrMbQ=",
+    "timestampUtcMs": "2026-09-02T22:20:18.010Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "confidence",
+        "value": "grounded",
+        "updatedAt": "2026-09-02T22:20:18.010Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:20:18.010Z"
+    }
+  }
+]

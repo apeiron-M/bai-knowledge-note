@@ -1,0 +1,102 @@
+{
+  "links": [
+    {
+      "id": "lnk-fe43a555-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "fe43a555-7b3a-4089-8054-f5d7590c5a2c",
+      "targetTitle": "documentation-post-bim-bottleneck"
+    },
+    {
+      "id": "lnk-bac74e0b-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "bac74e0b-85cc-411a-9217-58cf3bb97214",
+      "targetTitle": "bac74e0b-85cc-411a-9217-58cf3bb97214"
+    },
+    {
+      "id": "lnk-f9d5e4f0-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "f9d5e4f0-badd-42e2-8ea8-9df149f2412f",
+      "targetTitle": "f9d5e4f0-badd-42e2-8ea8-9df149f2412f"
+    },
+    {
+      "id": "lnk-a80b000c-bui",
+      "linkType": "BUILDS_ON",
+      "targetDocumentId": "a80b000c-cc7a-46ce-990e-586f649f98c7",
+      "targetTitle": "ifc-fixed-shape-six-branches"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "IFC task dependencies exist in the schema but are populated only by 4D exporters, and carry no dates",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "de960e83-aa6e-4e0b-ac0c-c8bf92661e6d",
+      "name": "ifc",
+      "topicDocumentId": null
+    },
+    {
+      "id": "7e7be284-2a71-48be-b4e0-99ffd004d620",
+      "name": "bim",
+      "topicDocumentId": null
+    },
+    {
+      "id": "07261452-d988-4bc4-bc4f-1462da8d8458",
+      "name": "scheduling",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "`IfcRelSequence` is a standardised, typed task dependency inside the IFC schema, with predecessor logic (`FINISH_START`, `START_START`, `FINISH_FINISH`, `START_FINISH`) and a `TimeLag`. It is widely assumed to be unused. The sharper rule, measured on one project delivered two ways, is that **design-tool exports carry nothing and 4D-tool exports carry the graph**.\n\nThe 48 MB ArchiCAD design model contained no `IfcTask` and no `IfcRelSequence`. The weekly as-planned models of the same building, exported by Synchro's IFC 4D exporter, contained **125 `IfcTask` and 42 `IfcRelSequence`** (41 `FINISH_START`, 1 `START_START`) with real activity names \u2014 setting out, pour, prefab stairs, calcium-silicate blockwork.\n\nSo the dependency edge is not missing from the industry. It is trapped in 4D exports that nobody queries, which is a materially different problem and a much cheaper one to solve.\n\nTwo caveats bound what can be built on it. **0 of 125 tasks carried `IfcTaskTime`**, so scheduled start, finish and duration are absent; the sequence topology travels and the dates do not, and anything date-dependent needs another source. And edges frequently run from an activity to itself by name (`Maatvoering \u2192 Maatvoering`), because the exporter emitted per-zone task instances rather than a clean activity network, so deduplication or zone-awareness is required before the graph reads sensibly.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "ARCHITECTURE",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "apeiron",
+    "createdAt": "2026-08-14T16:00:00.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-17T12:48:21.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "A design export held 0 tasks; the Synchro 4D export of the same project held 125 IfcTask and 42 IfcRelSequence edges, but 0 of 125 carried IfcTaskTime. Topology travels, dates do not.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "a98d4499-a817-45cb-98d8-6a15d5e19154",
+      "actor": "knowledge-agent",
+      "comment": "rescued incident notes \u2014 lifecycle normalization",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-17T12:48:21.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "37845951-7aeb-4248-977d-e836884c49f6",
+      "actor": "liberuum",
+      "comment": "approved for canonical",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-17T12:48:21.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

@@ -1,0 +1,334 @@
+[
+  {
+    "index": 0,
+    "hash": "",
+    "timestampUtcMs": "2026-08-14T12:34:21.861Z",
+    "action": {
+      "type": "CREATE_DOCUMENT",
+      "input": {
+        "meta": {},
+        "name": "wallet-derived-aes256-encryption",
+        "slug": "",
+        "model": "bai/knowledge-note",
+        "branch": "main",
+        "signing": {
+          "nonce": "",
+          "publicKey": {},
+          "signature": "18419c72-7f82-41a8-820b-085cf5e925a5",
+          "documentType": "bai/knowledge-note",
+          "createdAtUtcIso": "2026-08-14T12:34:21.861Z"
+        },
+        "version": 0,
+        "documentId": "18419c72-7f82-41a8-820b-085cf5e925a5",
+        "protocolVersions": {
+          "base-reducer": 2
+        }
+      },
+      "timestampUtcMs": "2026-08-14T12:34:21.861Z"
+    }
+  },
+  {
+    "index": 0,
+    "hash": "N9F91b6DuVQzOzD/hDXtcHUmZ3M=",
+    "timestampUtcMs": "2026-08-14T12:36:10.000Z",
+    "action": {
+      "type": "SET_TITLE",
+      "input": {
+        "title": "Connect derives a deterministic AES-256-GCM key from a one-time wallet signature, caches it, and encrypts every operation batch before Swarm upload.",
+        "updatedAt": "2026-08-14T12:36:10.000Z"
+      },
+      "timestampUtcMs": "2026-08-14T12:36:10.000Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "",
+    "timestampUtcMs": "2026-08-14T12:34:21.861Z",
+    "action": {
+      "type": "UPGRADE_DOCUMENT",
+      "input": {
+        "model": "bai/knowledge-note",
+        "toVersion": 1,
+        "documentId": "18419c72-7f82-41a8-820b-085cf5e925a5",
+        "fromVersion": 0,
+        "initialState": {
+          "auth": {
+            "grants": [],
+            "version": 0
+          },
+          "local": {
+            "lastViewedAt": null,
+            "personalTags": []
+          },
+          "global": {
+            "links": [],
+            "model": null,
+            "scope": null,
+            "title": null,
+            "editor": null,
+            "inputs": [],
+            "models": [],
+            "status": "DRAFT",
+            "topics": [],
+            "content": null,
+            "context": null,
+            "modelId": null,
+            "modules": [],
+            "outputs": [],
+            "version": null,
+            "computes": null,
+            "filePath": null,
+            "noteType": null,
+            "severity": null,
+            "hooksUsed": [],
+            "rootCause": null,
+            "confidence": null,
+            "consumedBy": [],
+            "provenance": null,
+            "sourceType": null,
+            "targetType": null,
+            "cardinality": null,
+            "description": null,
+            "alternatives": [],
+            "consequences": [],
+            "errorMessage": null,
+            "relationType": null,
+            "correctPattern": null,
+            "decisionStatus": null,
+            "dispatchTargets": [],
+            "lifecycleEvents": []
+          },
+          "document": {
+            "hash": {
+              "encoding": "base64",
+              "algorithm": "sha1"
+            },
+            "version": 1
+          }
+        }
+      },
+      "timestampUtcMs": "2026-08-14T12:34:21.861Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "1KeUFL0nJfs8M1meJbDskVJFU68=",
+    "timestampUtcMs": "2026-08-14T12:36:10.000Z",
+    "action": {
+      "type": "SET_DESCRIPTION",
+      "input": {
+        "updatedAt": "2026-08-14T12:36:10.000Z",
+        "description": "personal_sign with a fixed message yields a keccak256 key cached in IndexedDB; every /bytes upload is AES-256-GCM with format SWE-prefix || IV(12) || ciphertext."
+      },
+      "timestampUtcMs": "2026-08-14T12:36:10.000Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "",
+    "timestampUtcMs": "2026-08-14T12:39:10.336Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "18419c72-7f82-41a8-820b-085cf5e925a5",
+        "targetId": "8cfc4e95-98d9-4744-bc62-364dfe09396e",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-08-14T12:39:10.336Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "e72VxMdreEYTGRM62yhGsoRoJDg=",
+    "timestampUtcMs": "2026-08-14T12:36:10.000Z",
+    "action": {
+      "type": "SET_NOTE_TYPE",
+      "input": {
+        "noteType": "architecture",
+        "updatedAt": "2026-08-14T12:36:10.000Z"
+      },
+      "timestampUtcMs": "2026-08-14T12:36:10.000Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "",
+    "timestampUtcMs": "2026-08-14T12:39:10.422Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "18419c72-7f82-41a8-820b-085cf5e925a5",
+        "targetId": "251a0c70-2e17-44d6-9441-024a9e18c1c5",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-08-14T12:39:10.422Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "FSbULqv4Koe95+Bm/sq3zMZj7+Y=",
+    "timestampUtcMs": "2026-08-14T12:36:10.000Z",
+    "action": {
+      "type": "SET_CONTENT",
+      "input": {
+        "content": "## Key derivation (one-time)\n\n```\npersonal_sign(\"Sign to derive Swarm key...\")\n  -> keccak256(signature)\n  -> 32-byte private key\n  -> cached in IndexedDB  (no repeated signing)\n```\n\nBecause `personal_sign` is deterministic per message, **same wallet = same key = same access**. Recovery on a new device only needs the wallet.\n\n## Operation batch encryption\n\nEvery batch uploaded to `/bytes` is AES-256-GCM encrypted before upload and decrypted after download. Payload format:\n\n```\n[SWE prefix (3B)] [IV (12B)] [ciphertext]\n```\n\nThe SWE prefix is a magic-byte marker that lets the client reject any payload it accidentally reads that was not produced by this pipeline.\n\n## Feed authentication\n\nFeeds are signed with the same wallet-derived Swarm private key \u2014 only the owner can write, but anyone with the owner's public key (i.e. anyone who knows the Ethereum address) can read.\n\n## Where it lives\n\n- `adapter/src/swarm-crypto.ts` \u2014 AES-256-GCM encrypt/decrypt.\n- `adapter/src/wallet-signer.ts` \u2014 wallet signature to key derivation.",
+        "updatedAt": "2026-08-14T12:36:10.000Z"
+      },
+      "timestampUtcMs": "2026-08-14T12:36:10.000Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "",
+    "timestampUtcMs": "2026-08-14T12:39:10.528Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "18419c72-7f82-41a8-820b-085cf5e925a5",
+        "targetId": "d8ef5f5c-a4cc-4cc9-b45b-b7d52ab7184b",
+        "relationshipType": "BUILDS_ON"
+      },
+      "timestampUtcMs": "2026-08-14T12:39:10.528Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "1C/T4QVAWtj4T672tUZltnVZw44=",
+    "timestampUtcMs": "2026-08-14T12:36:10.000Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "version",
+        "value": "v6.2.2-dev.44",
+        "updatedAt": "2026-08-14T12:36:10.000Z"
+      },
+      "timestampUtcMs": "2026-08-14T12:36:10.000Z"
+    }
+  },
+  {
+    "index": 5,
+    "hash": "IkAorGLj/6kmoRXAi5GgZcrwc3Q=",
+    "timestampUtcMs": "2026-08-14T12:36:10.000Z",
+    "action": {
+      "type": "SET_PROVENANCE",
+      "input": {
+        "author": "knowledge-agent",
+        "createdAt": "2026-04-21T14:47:10.583Z",
+        "sourceOrigin": "DERIVED"
+      },
+      "timestampUtcMs": "2026-08-14T12:36:10.000Z"
+    }
+  },
+  {
+    "index": 6,
+    "hash": "v38aOcApCTRyJrSIWEzzHXoKWH0=",
+    "timestampUtcMs": "2026-08-14T12:36:10.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "t1",
+        "name": "encryption",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-08-14T12:36:10.000Z"
+    }
+  },
+  {
+    "index": 7,
+    "hash": "KV21mSMlM6pliMGvoSHbwB0sPYY=",
+    "timestampUtcMs": "2026-08-14T12:36:10.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "t2",
+        "name": "security-model",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-08-14T12:36:10.000Z"
+    }
+  },
+  {
+    "index": 8,
+    "hash": "EYnLupzQ8CvZxWBFGp38vMEAvGc=",
+    "timestampUtcMs": "2026-08-14T12:36:10.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "t3",
+        "name": "wallet-signer",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-08-14T12:36:10.000Z"
+    }
+  },
+  {
+    "index": 9,
+    "hash": "Efg6zjnqM5sqjfFtUMXYc+YPvF4=",
+    "timestampUtcMs": "2026-08-14T14:36:48.000Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "version",
+        "value": "v6.2.2-dev.47",
+        "updatedAt": "2026-08-14T12:00:00.000Z"
+      },
+      "timestampUtcMs": "2026-08-14T14:36:48.000Z"
+    }
+  },
+  {
+    "index": 10,
+    "hash": "r1fA4n9Sl63xxb1dWk77nAME7Rc=",
+    "timestampUtcMs": "2026-08-14T14:36:48.000Z",
+    "action": {
+      "type": "SUBMIT_FOR_REVIEW",
+      "input": {
+        "id": "6999ba35-7436-40e0-9503-7d137f891dce",
+        "actor": "claude",
+        "comment": "Knowledge registered against powerhouse v6.2.2-dev.47",
+        "timestamp": "2026-08-14T12:00:00.000Z"
+      },
+      "timestampUtcMs": "2026-08-14T14:36:48.000Z"
+    }
+  },
+  {
+    "index": 11,
+    "hash": "gHS2ozUGOV/1OQyA4b/Lw/IlU54=",
+    "timestampUtcMs": "2026-08-14T14:36:48.000Z",
+    "action": {
+      "type": "APPROVE_NOTE",
+      "input": {
+        "id": "608d203c-f327-4192-8bcc-f99d302c26b2",
+        "actor": "liberuum",
+        "comment": "Canonical as of powerhouse v6.2.2-dev.47",
+        "timestamp": "2026-08-14T12:00:00.000Z"
+      },
+      "timestampUtcMs": "2026-08-14T14:36:48.000Z"
+    }
+  },
+  {
+    "index": 12,
+    "hash": "2wqLzfW4XxZUoUmtOTU+O0Mt9xg=",
+    "timestampUtcMs": "2026-08-16T09:49:57.000Z",
+    "action": {
+      "type": "SET_NOTE_TYPE",
+      "input": {
+        "noteType": "ARCHITECTURE",
+        "updatedAt": "2026-08-16T09:49:57.000Z"
+      },
+      "timestampUtcMs": "2026-08-16T09:49:57.000Z"
+    }
+  },
+  {
+    "index": 13,
+    "hash": "plfQmAo7OhITLFYpJB4klmC8d0k=",
+    "timestampUtcMs": "2026-09-03T09:58:22.376Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "version",
+        "updatedAt": "2026-09-03T09:58:22.376Z"
+      },
+      "timestampUtcMs": "2026-09-03T09:58:22.376Z"
+    }
+  }
+]

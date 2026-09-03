@@ -1,0 +1,107 @@
+{
+  "links": [
+    {
+      "id": "lnk-6b999de1-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "6b999de1-e726-4029-b56f-6ccf6b887d83",
+      "targetTitle": "Package \u203a reactor \u203a sync-gaps",
+      "reason": "Extracted from packages/reactor/sync-gaps.md at v6.2.2-dev.74 \u2014 4. Dead Letter Handling \u203a 4a",
+      "confidence": "grounded"
+    },
+    {
+      "id": "lnk-e57e23ae-bui",
+      "linkType": "BUILDS_ON",
+      "targetDocumentId": "e57e23ae-2f05-414a-bb77-c74ab23f64e8",
+      "targetTitle": "dead-letter-quarantines-document-not-drive",
+      "reason": "Quarantining one document instead of stalling the drive is the right containment, but that note stops before the operational question this one answers: nothing in the public interface can clear the quarantine",
+      "confidence": "grounded"
+    },
+    {
+      "id": "lnk-5ca28e07-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "5ca28e07-65de-4faf-9b18-43a21567a734",
+      "targetTitle": "auth-stream-monotonic",
+      "reason": "Conflicting auth operations are the case the design expects an application to reconcile from dead letters, which this gap makes unsupportable through ISyncManager",
+      "confidence": "grounded"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Dead letters can be stored but not managed: ISyncManager exposes no retry or resolution API even though the storage layer has remove and removeByRemote",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "447f6bc4-8768-4c8a-8148-c2b78e4c2edd",
+      "name": "reactor-sync",
+      "topicDocumentId": null
+    },
+    {
+      "id": "a57bec38-ab8d-4f70-b3ad-04afafac047f",
+      "name": "dead-letters",
+      "topicDocumentId": null
+    },
+    {
+      "id": "439b2a1b-57b2-4a37-b065-48de964ba26c",
+      "name": "gaps",
+      "topicDocumentId": null
+    },
+    {
+      "id": "6f22b414-0955-4765-9481-bab999c16df4",
+      "name": "operations",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "The reactor's own open-issue list records this as gap 4a. `KyselySyncDeadLetterStorage` implements `remove(id)` and `removeByRemote()`, but **`ISyncManager` has no methods for dead-letter management**, so nothing above the storage layer can retry or resolve one.\n\nThe consequence for an operator: a document that dead-letters is quarantined until someone reaches past the sync manager into storage. There is no supported \"retry this dead letter\" call, no way to drain a remote's dead letters as a batch through the public interface, and therefore no UI that can offer it without depending on storage internals.\n\nThis pairs badly with the one failure mode that is guaranteed *not* to converge on its own \u2014 two reactors writing conflicting auth-scope operations, where the replica whose stream ran ahead dead-letters the arrival and holds a different policy until an application reconciles it. The reconciliation the design assumes has no interface to perform it through.\n\n## Provenance\n- `packages/reactor/sync-gaps.md` \u2014 4. Dead Letter Handling \u203a 4a\n\n_Extracted from the Powerhouse repository at **v6.2.2-dev.74**._",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": "v6.2.2-dev.74",
+  "computes": null,
+  "filePath": "packages/reactor/sync-gaps.md",
+  "noteType": "BUG-PATTERN",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "knowledge-agent",
+    "createdAt": "2026-09-03T07:19:11.669Z",
+    "sessionId": null,
+    "updatedAt": "2026-09-03T07:22:26.344Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "KyselySyncDeadLetterStorage implements remove(id) and removeByRemote(), neither of which is reachable through ISyncManager \u2014 so a quarantined document needs direct storage access to clear.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "417c338c-2fdd-48f3-8d65-3b76a70b2a2d",
+      "actor": "knowledge-agent",
+      "comment": "extracted from packages/reactor/sync-gaps.md at v6.2.2-dev.74",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-09-03T07:19:12.329Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "1fcd4bcf-ffa0-42b9-b348-224a5db9bacd",
+      "actor": "liberuum",
+      "comment": "claim checked against the cited file at the pinned tag",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-09-03T07:19:12.959Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

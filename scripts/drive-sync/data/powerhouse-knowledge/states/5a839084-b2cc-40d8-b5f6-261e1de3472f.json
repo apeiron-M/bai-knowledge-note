@@ -1,0 +1,96 @@
+{
+  "links": [
+    {
+      "id": "lnk-35c30c48-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "35c30c48-94a2-4b6c-8685-9bad536aef34",
+      "targetTitle": "collaborate-tab-in-chat-panel"
+    },
+    {
+      "id": "lnk-787398c0-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "787398c0-fa8c-4e79-bd9f-71b60d57f482",
+      "targetTitle": "document-model-versioning-system"
+    },
+    {
+      "id": "lnk-7ef703d9-bui",
+      "linkType": "BUILDS_ON",
+      "targetDocumentId": "7ef703d9-44ff-4168-b0b5-90d9f1e602a0",
+      "targetTitle": "swarm-manifest-three-tier-hierarchy"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "User manifest feed stores drive index, stamps, and standalone documents",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "c42b9329-1e31-4c31-8226-139e4bd39232",
+      "name": "user-manifest",
+      "topicDocumentId": null
+    },
+    {
+      "id": "2b8bef92-1e16-44ed-b777-0557e054da31",
+      "name": "swarm-feeds",
+      "topicDocumentId": null
+    },
+    {
+      "id": "1a615cdb-33da-4f25-a11b-122c4157060a",
+      "name": "feed-structure",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "# User Manifest Feed Structure\n\nThe user manifest feed lives at topic `ph:v2:user:<address>` and is owned by the user's signer address. Each feed index points to a `/bytes` upload containing encrypted JSON.\n\n## Schema\n\n```json\n{\n  \"address\": \"0xAlice\",\n  \"drives\": {\n    \"drive-abc\": {\n      \"name\": \"Finance Drive\",\n      \"documentIds\": [],\n      \"lastUpdated\": \"2026-04-10T12:00:00Z\"\n    }\n  },\n  \"stamps\": {},\n  \"documents\": {},\n  \"updatedAt\": \"2026-04-10T12:00:00Z\"\n}\n```\n\n## Role\n\n- Serves as the top-level index into a user's data on Swarm\n- Points to drives (each with its own manifest feed)\n- Tracks postage stamps and standalone documents\n- Recovery starts here: read the user manifest, then descend into drive manifests, then document manifests\n",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "REFERENCE",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "knowledge-agent",
+    "createdAt": "2026-04-21T14:45:54.611Z",
+    "sessionId": null,
+    "updatedAt": "2026-09-03T09:58:12.330Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Topic ph:v2:user:<address> points at encrypted JSON on /bytes and is where recovery begins - read it, descend into each drive, then into per-document topics.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "e6f340ed-969d-4c84-863f-cd6170df4377",
+      "actor": "claude",
+      "comment": "Knowledge registered against powerhouse v6.2.2-dev.47",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-14T12:00:00.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "4fe5762d-d267-4d93-b2dc-10f8df337737",
+      "actor": "liberuum",
+      "comment": "Canonical as of powerhouse v6.2.2-dev.47",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-14T12:00:00.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

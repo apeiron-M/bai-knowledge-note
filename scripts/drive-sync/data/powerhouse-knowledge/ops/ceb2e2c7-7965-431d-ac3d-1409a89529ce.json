@@ -1,0 +1,384 @@
+[
+  {
+    "index": 0,
+    "hash": "",
+    "timestampUtcMs": "2026-09-03T07:54:40.920Z",
+    "action": {
+      "type": "CREATE_DOCUMENT",
+      "input": {
+        "meta": {},
+        "name": "analytics-store-compatibility-matrix",
+        "slug": "",
+        "model": "bai/knowledge-note",
+        "branch": "main",
+        "signing": {
+          "nonce": "",
+          "publicKey": {},
+          "signature": "ceb2e2c7-7965-431d-ac3d-1409a89529ce",
+          "documentType": "bai/knowledge-note",
+          "createdAtUtcIso": "2026-09-03T07:54:40.920Z"
+        },
+        "version": 0,
+        "documentId": "ceb2e2c7-7965-431d-ac3d-1409a89529ce",
+        "protocolVersions": {
+          "base-reducer": 2
+        }
+      },
+      "timestampUtcMs": "2026-09-03T07:54:40.920Z"
+    }
+  },
+  {
+    "index": 0,
+    "hash": "rOBhpbJ6WW06yxiIIy37zuW8UiE=",
+    "timestampUtcMs": "2026-09-03T07:54:42.099Z",
+    "action": {
+      "type": "SET_TITLE",
+      "input": {
+        "title": "Four analytics stores split by runtime: MemoryAnalyticsStore and KnexAnalyticsStore run everywhere, BrowserAnalyticsStore is browser-only and PostgresAnalyticsStore is server-only",
+        "updatedAt": "2026-09-03T07:54:42.099Z"
+      },
+      "timestampUtcMs": "2026-09-03T07:54:42.099Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "",
+    "timestampUtcMs": "2026-09-03T07:54:40.920Z",
+    "action": {
+      "type": "UPGRADE_DOCUMENT",
+      "input": {
+        "model": "bai/knowledge-note",
+        "toVersion": 1,
+        "documentId": "ceb2e2c7-7965-431d-ac3d-1409a89529ce",
+        "fromVersion": 0,
+        "initialState": {
+          "auth": {
+            "grants": [],
+            "version": 0
+          },
+          "local": {
+            "lastViewedAt": null,
+            "personalTags": []
+          },
+          "global": {
+            "links": [],
+            "model": null,
+            "scope": null,
+            "title": null,
+            "editor": null,
+            "inputs": [],
+            "models": [],
+            "status": "DRAFT",
+            "topics": [],
+            "content": null,
+            "context": null,
+            "modelId": null,
+            "modules": [],
+            "outputs": [],
+            "version": null,
+            "computes": null,
+            "filePath": null,
+            "noteType": null,
+            "severity": null,
+            "hooksUsed": [],
+            "rootCause": null,
+            "confidence": null,
+            "consumedBy": [],
+            "provenance": null,
+            "sourceType": null,
+            "targetType": null,
+            "cardinality": null,
+            "description": null,
+            "alternatives": [],
+            "consequences": [],
+            "errorMessage": null,
+            "relationType": null,
+            "correctPattern": null,
+            "decisionStatus": null,
+            "dispatchTargets": [],
+            "lifecycleEvents": []
+          },
+          "document": {
+            "hash": {
+              "encoding": "base64",
+              "algorithm": "sha1"
+            },
+            "version": 1
+          }
+        }
+      },
+      "timestampUtcMs": "2026-09-03T07:54:40.920Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "8N8oca23Z2DY3nzqbyZPAgZ4814=",
+    "timestampUtcMs": "2026-09-03T07:54:42.099Z",
+    "action": {
+      "type": "SET_DESCRIPTION",
+      "input": {
+        "updatedAt": "2026-09-03T07:54:42.099Z",
+        "description": "MemoryAnalyticsStore loads a WASM Postgres (PGlite) and needs an async init() that is not on IAnalyticsStore; PostgresAnalyticsStore assumes an already-initialized database and adds a dev-only."
+      },
+      "timestampUtcMs": "2026-09-03T07:54:42.099Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "",
+    "timestampUtcMs": "2026-09-03T07:55:33.838Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "metadata": {
+          "reason": "Extracted from apps/academy/docs/academy/03-Build/04-WorkWithData/_06-Analytics Engine/typescript/compatibility.md at v6.2.2-dev.74 \u2014 whole compatibility matrix",
+          "confidence": "grounded"
+        },
+        "sourceId": "ceb2e2c7-7965-431d-ac3d-1409a89529ce",
+        "targetId": "5990538f-2c9b-4e4c-b8f4-57f5c1ae8f88",
+        "relationshipType": "DERIVED_FROM"
+      },
+      "timestampUtcMs": "2026-09-03T07:55:33.838Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "qRSB9dSQlnuUWAe5MgtaxLY6DuE=",
+    "timestampUtcMs": "2026-09-03T07:54:42.099Z",
+    "action": {
+      "type": "SET_NOTE_TYPE",
+      "input": {
+        "noteType": "REFERENCE",
+        "updatedAt": "2026-09-03T07:54:42.099Z"
+      },
+      "timestampUtcMs": "2026-09-03T07:54:42.099Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "",
+    "timestampUtcMs": "2026-09-03T07:55:34.320Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "metadata": {
+          "reason": "Extracted from apps/academy/docs/academy/03-Build/04-WorkWithData/_06-Analytics Engine/typescript/memory.md at v6.2.2-dev.74 \u2014 Construction; Initialization",
+          "confidence": "grounded"
+        },
+        "sourceId": "ceb2e2c7-7965-431d-ac3d-1409a89529ce",
+        "targetId": "22eb0712-588e-48a2-bfa1-a32cd4e5d4ac",
+        "relationshipType": "DERIVED_FROM"
+      },
+      "timestampUtcMs": "2026-09-03T07:55:34.320Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "IBUlDxrgdVrC9HxkjPKFhPSBLaM=",
+    "timestampUtcMs": "2026-09-03T07:54:42.099Z",
+    "action": {
+      "type": "SET_CONTENT",
+      "input": {
+        "content": "| Store | Browser | Node | Bun |\n| --- | --- | --- | --- |\n| `MemoryAnalyticsStore` | \u2705 | \u2705 | \u2705 |\n| `BrowserAnalyticsStore` | \u2705 | | |\n| `KnexAnalyticsStore` | \u2705 | \u2705 | \u2705 |\n| `PostgresAnalyticsStore` | | \u2705 | \u2705 |\n\nTwo of the four have behaviour worth knowing before choosing.\n\n**`MemoryAnalyticsStore`** is in-memory by way of **a WASM build of Postgres \u2014 PGlite**. It requires an asynchronous `await store.init()` for two reasons: downloading and initialising the WASM build when no `PGlite` instance was supplied, and initialising the in-memory database's schema. The initialisation is **idempotent** (existing tables are not recreated), and \u2014 importantly \u2014 `init()` **is not on the `IAnalyticsStore` interface**, only on the concrete type, so a caller holding the interface cannot initialise it. Both `knex` and `pglite` objects can be passed in, which is how it shares a database with other consumers.\n\n**`PostgresAnalyticsStore`** uses the `pg` package and **assumes a fully-initialised Postgres database already exists** \u2014 the opposite contract. It takes a connection string or a `knex` instance, and adds a `raw(sql: string)` method that is *not* on the interface and is explicitly \"not intended for production use cases\".\n\nBoth accept the same optional constructor extras for observability: `queryLogger`, `resultsLogger` and a `profiler`.\n\n## Provenance\n- `apps/academy/docs/academy/03-Build/04-WorkWithData/_06-Analytics Engine/typescript/compatibility.md` \u2014 whole compatibility matrix\n- `apps/academy/docs/academy/03-Build/04-WorkWithData/_06-Analytics Engine/typescript/memory.md` \u2014 Construction; Initialization\n- `apps/academy/docs/academy/03-Build/04-WorkWithData/_06-Analytics Engine/typescript/pg.md` \u2014 Construction; Raw queries\n\n_Extracted from the Powerhouse repository at **v6.2.2-dev.74**._",
+        "updatedAt": "2026-09-03T07:54:42.099Z"
+      },
+      "timestampUtcMs": "2026-09-03T07:54:42.099Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "",
+    "timestampUtcMs": "2026-09-03T07:55:34.774Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "metadata": {
+          "reason": "Extracted from apps/academy/docs/academy/03-Build/04-WorkWithData/_06-Analytics Engine/typescript/pg.md at v6.2.2-dev.74 \u2014 Construction; Raw queries",
+          "confidence": "grounded"
+        },
+        "sourceId": "ceb2e2c7-7965-431d-ac3d-1409a89529ce",
+        "targetId": "bd8166a3-2383-411e-b8ed-b3a31c9a2b10",
+        "relationshipType": "DERIVED_FROM"
+      },
+      "timestampUtcMs": "2026-09-03T07:55:34.774Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "yEyrSpROJzcz0GoUuI1lK/uSv4s=",
+    "timestampUtcMs": "2026-09-03T07:54:42.099Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "75d3472c-12c4-4b6f-8818-f9936dee2450",
+        "name": "analytics"
+      },
+      "timestampUtcMs": "2026-09-03T07:54:42.099Z"
+    }
+  },
+  {
+    "index": 5,
+    "hash": "",
+    "timestampUtcMs": "2026-09-03T07:55:35.225Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "metadata": {
+          "reason": "The core-plus-storage-modules split is what produces these four stores, and this is the matrix that decides which one a host can use",
+          "confidence": "grounded"
+        },
+        "sourceId": "ceb2e2c7-7965-431d-ac3d-1409a89529ce",
+        "targetId": "97837c71-1ce0-493d-8400-9d14222ff5cd",
+        "relationshipType": "BUILDS_ON"
+      },
+      "timestampUtcMs": "2026-09-03T07:55:35.225Z"
+    }
+  },
+  {
+    "index": 5,
+    "hash": "12+OTB+OaROWpbPwugvV7sWFt/I=",
+    "timestampUtcMs": "2026-09-03T07:54:42.099Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "d2f1ed63-c362-4091-a25a-a9ced4b47645",
+        "name": "storage"
+      },
+      "timestampUtcMs": "2026-09-03T07:54:42.099Z"
+    }
+  },
+  {
+    "index": 6,
+    "hash": "",
+    "timestampUtcMs": "2026-09-03T07:55:35.712Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "metadata": {
+          "reason": "A shared PGlite instance can be passed into the memory store, which is why connection management belongs in one place",
+          "confidence": "grounded"
+        },
+        "sourceId": "ceb2e2c7-7965-431d-ac3d-1409a89529ce",
+        "targetId": "58b438ff-5b3e-4e51-afa3-a9676f8b1beb",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-09-03T07:55:35.712Z"
+    }
+  },
+  {
+    "index": 6,
+    "hash": "XfOXbEsPjuhV5U2SqFhWrol5Rug=",
+    "timestampUtcMs": "2026-09-03T07:54:42.099Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "8430be7b-d3d4-432c-a8bf-6f5d282a9a07",
+        "name": "pglite"
+      },
+      "timestampUtcMs": "2026-09-03T07:54:42.099Z"
+    }
+  },
+  {
+    "index": 7,
+    "hash": "",
+    "timestampUtcMs": "2026-09-03T07:55:36.167Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "metadata": {
+          "reason": "The two stores that are interchangeable across runtimes are the two the benchmarks compare",
+          "confidence": "grounded"
+        },
+        "sourceId": "ceb2e2c7-7965-431d-ac3d-1409a89529ce",
+        "targetId": "4090fa00-da1c-4c2e-9c4a-2dba085341fb",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-09-03T07:55:36.167Z"
+    }
+  },
+  {
+    "index": 7,
+    "hash": "3DJAMj3/oVX3dLb7KzjHB1tJx9s=",
+    "timestampUtcMs": "2026-09-03T07:54:42.099Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "c7ad7a21-a0ac-4cba-8ec4-05413582bf3c",
+        "name": "compatibility"
+      },
+      "timestampUtcMs": "2026-09-03T07:54:42.099Z"
+    }
+  },
+  {
+    "index": 8,
+    "hash": "3VnVGulMAA0gXph9ifguLxVaabE=",
+    "timestampUtcMs": "2026-09-03T07:54:42.099Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "version",
+        "value": "v6.2.2-dev.74",
+        "updatedAt": "2026-09-03T07:54:42.099Z"
+      },
+      "timestampUtcMs": "2026-09-03T07:54:42.099Z"
+    }
+  },
+  {
+    "index": 9,
+    "hash": "bme3RfIQIVXdL9HeNwdAnMZu4gw=",
+    "timestampUtcMs": "2026-09-03T07:54:42.099Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "filePath",
+        "value": "apps/academy/docs/academy/03-Build/04-WorkWithData/_06-Analytics Engine/typescript/compatibility.md",
+        "updatedAt": "2026-09-03T07:54:42.099Z"
+      },
+      "timestampUtcMs": "2026-09-03T07:54:42.099Z"
+    }
+  },
+  {
+    "index": 10,
+    "hash": "Fd+1zsjT4CRqGMW3ffnUS7RWBGI=",
+    "timestampUtcMs": "2026-09-03T07:54:44.702Z",
+    "action": {
+      "type": "SET_PROVENANCE",
+      "input": {
+        "author": "knowledge-agent",
+        "createdAt": "2026-09-03T07:54:44.701Z",
+        "sourceOrigin": "DERIVED"
+      },
+      "timestampUtcMs": "2026-09-03T07:54:44.702Z"
+    }
+  },
+  {
+    "index": 11,
+    "hash": "SsQ6YVlbdjz8XUKkG5X/0uaNTtM=",
+    "timestampUtcMs": "2026-09-03T07:54:45.177Z",
+    "action": {
+      "type": "SUBMIT_FOR_REVIEW",
+      "input": {
+        "id": "2219a785-641b-4690-9c8a-44bb03e2ce45",
+        "actor": "knowledge-agent",
+        "comment": "extracted from apps/academy/docs/academy/03-Build/04-WorkWithData/_06-Analytics Engine/typescript/compatibility.md at v6.2.2-dev.74",
+        "timestamp": "2026-09-03T07:54:45.177Z"
+      },
+      "timestampUtcMs": "2026-09-03T07:54:45.177Z"
+    }
+  },
+  {
+    "index": 12,
+    "hash": "Zq8fhza4gNB9+IZtoo4pl/xhV0w=",
+    "timestampUtcMs": "2026-09-03T07:54:45.676Z",
+    "action": {
+      "type": "APPROVE_NOTE",
+      "input": {
+        "id": "fc801455-4460-4c5e-a577-33842fcf273e",
+        "actor": "liberuum",
+        "comment": "claim checked against the cited file at the pinned tag",
+        "timestamp": "2026-09-03T07:54:45.676Z"
+      },
+      "timestampUtcMs": "2026-09-03T07:54:45.676Z"
+    }
+  }
+]

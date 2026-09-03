@@ -1,0 +1,103 @@
+[
+  {
+    "index": 0,
+    "hash": "",
+    "timestampUtcMs": "2026-08-16T22:29:03.689Z",
+    "action": {
+      "type": "CREATE_DOCUMENT",
+      "input": {
+        "meta": {},
+        "name": "Tension \u2014 ProcessorFilter wildcard scope",
+        "slug": "",
+        "model": "bai/tension",
+        "branch": "main",
+        "signing": {
+          "nonce": "",
+          "publicKey": {},
+          "signature": "1ef73908-f346-4cda-9696-80ebbc4070ba",
+          "documentType": "bai/tension",
+          "createdAtUtcIso": "2026-08-16T22:29:03.689Z"
+        },
+        "version": 0,
+        "documentId": "1ef73908-f346-4cda-9696-80ebbc4070ba",
+        "protocolVersions": {
+          "base-reducer": 2
+        }
+      },
+      "timestampUtcMs": "2026-08-16T22:29:03.689Z"
+    }
+  },
+  {
+    "index": 0,
+    "hash": "e7uG84FaJNFo6Nyf82egRdRqvDE=",
+    "timestampUtcMs": "2026-08-16T22:30:12.716Z",
+    "action": {
+      "type": "CREATE_TENSION",
+      "input": {
+        "title": "Does a ProcessorFilter \"*\" wildcard apply outside documentId?",
+        "content": "## The disagreement\n\nTwo notes carried a CONTRADICTS edge over `ProcessorFilter` semantics:\n\n- **d7ef28bc** - \"The `\"*\"` wildcard in a ProcessorFilter is honored only in documentId\": `\"*\"` is special-cased for `documentId` alone; in `documentType`, `scope` and `branch` it is compared as a literal string and therefore matches nothing real.\n- **6a3275cd** - \"Processors implement IProcessor with onOperations...\": as originally written, generalized that ProcessorFilter arrays take `[\"*\"]` to mean \"all\".\n\n## Evidence (installed source, not documentation)\n\n`@powerhousedao/reactor@6.2.2-dev.47`, `dist/index.js`, `matchesFilter(op, filter)`:\n\n```js\nif (filter.documentType && filter.documentType.length > 0) {\n  if (!filter.documentType.includes(op.context.documentType)) return false;\n}\nif (filter.scope && filter.scope.length > 0) {\n  if (!filter.scope.includes(op.context.scope)) return false;\n}\nif (filter.branch && filter.branch.length > 0) {\n  if (!filter.branch.includes(op.context.branch)) return false;\n}\nif (filter.documentId && filter.documentId.length > 0) {\n  if (!filter.documentId.includes(\"*\") && !filter.documentId.includes(op.context.documentId)) return false;\n}\nreturn true;\n```\n\nOnly the `documentId` branch tests for `\"*\"`. The other three do a plain `includes` against the operation's context value. d7ef28bc describes the shipped behaviour exactly.\n\nTwo further facts checked at 6.2.2-dev.47:\n\n1. **6a3275cd was already corrected on 2026-08-13.** Its current body states the same per-field rule verbatim - \"The `\"*\"` wildcard is honored **only in `documentId`**\" - so the two notes no longer disagree. The CONTRADICTS edge points at a superseded revision.\n2. **The codegen defect d7ef28bc flagged has since been fixed.** `@powerhousedao/codegen@6.2.2-dev.47` emits `documentId: [\"*\"]` together with `scope: [\"global\"]` (relational template) or with no `scope` key at all (analytics template), and both templates now carry the comment `Only \\`documentId\\` honours \"*\", so \"*\" elsewhere would match nothing.` No template emits `scope: [\"*\"]` any more.\n\n## Disposition\n\nDissolved. There is no live disagreement: both notes assert the rule the source implements. What remained wrong was d7ef28bc's own framing - it still described the sibling note as mistaken and the codegen template as broken, both true at v6.2.2-dev.45 and false at v6.2.2-dev.47. A dated correction paragraph was appended to that note on 2026-08-16. The CONTRADICTS edge is retained as provenance of the correction rather than deleted.",
+        "observedAt": "2026-08-16T23:45:00.000Z",
+        "observedBy": "knowledge-agent",
+        "description": "Two processor notes carried a CONTRADICTS edge over whether ProcessorFilter's \"*\" is a general wildcard or documentId-only. Reactor 6.2.2-dev.47 source settles it: documentId-only.",
+        "involvedRefs": [
+          "d7ef28bc-9d89-4db7-a043-0818e8914b5b",
+          "6a3275cd-d71e-4342-8cd3-3fb29b8fe58c"
+        ]
+      },
+      "timestampUtcMs": "2026-08-16T22:30:12.716Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "",
+    "timestampUtcMs": "2026-08-16T22:29:03.689Z",
+    "action": {
+      "type": "UPGRADE_DOCUMENT",
+      "input": {
+        "model": "bai/tension",
+        "toVersion": 1,
+        "documentId": "1ef73908-f346-4cda-9696-80ebbc4070ba",
+        "fromVersion": 0,
+        "initialState": {
+          "auth": {
+            "grants": [],
+            "version": 0
+          },
+          "local": {},
+          "global": {
+            "title": null,
+            "status": "OPEN",
+            "content": null,
+            "observedAt": null,
+            "observedBy": null,
+            "resolution": null,
+            "resolvedAt": null,
+            "description": null,
+            "involvedRefs": []
+          },
+          "document": {
+            "hash": {
+              "encoding": "base64",
+              "algorithm": "sha1"
+            },
+            "version": 1
+          }
+        }
+      },
+      "timestampUtcMs": "2026-08-16T22:29:03.689Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "5jbXgGzbYLqLyyBl6rSKw5KJ7fA=",
+    "timestampUtcMs": "2026-08-16T22:30:40.273Z",
+    "action": {
+      "type": "DISSOLVE_TENSION",
+      "input": {
+        "resolution": "Dissolved. @powerhousedao/reactor@6.2.2-dev.47 matchesFilter() tests for \"*\" only inside the documentId branch, so d7ef28bc describes the shipped behaviour exactly. 6a3275cd's 2026-08-13 correction already asserts the identical per-field rule, so the two notes no longer disagree - the CONTRADICTS edge points at a superseded revision rather than a live conflict. The codegen defect d7ef28bc cited is also gone: neither the analytics nor the relational template in @powerhousedao/codegen@6.2.2-dev.47 emits scope: [\"*\"], and both now carry a comment stating that only documentId honours the wildcard. A dated correction paragraph was appended to d7ef28bc so its now-stale claims about the sibling note and the template stop misleading readers; the CONTRADICTS edge is kept as provenance of the correction.",
+        "resolvedAt": "2026-08-16T23:50:00.000Z"
+      },
+      "timestampUtcMs": "2026-08-16T22:30:40.273Z"
+    }
+  }
+]

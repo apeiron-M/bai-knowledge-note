@@ -1,0 +1,291 @@
+[
+  {
+    "index": 0,
+    "hash": "",
+    "timestampUtcMs": "2026-08-16T20:32:34.670Z",
+    "action": {
+      "type": "CREATE_DOCUMENT",
+      "input": {
+        "meta": {},
+        "name": "document-model-three-parts",
+        "slug": "",
+        "model": "bai/knowledge-note",
+        "branch": "main",
+        "signing": {
+          "nonce": "",
+          "publicKey": {},
+          "signature": "fdc3d342-bb38-468d-82d1-440b2af01587",
+          "documentType": "bai/knowledge-note",
+          "createdAtUtcIso": "2026-08-16T20:32:34.669Z"
+        },
+        "version": 0,
+        "documentId": "fdc3d342-bb38-468d-82d1-440b2af01587",
+        "protocolVersions": {
+          "base-reducer": 2
+        }
+      },
+      "timestampUtcMs": "2026-08-16T20:32:34.670Z"
+    }
+  },
+  {
+    "index": 0,
+    "hash": "FKfohvOWq9G8fEv4dNceQ3bzPHE=",
+    "timestampUtcMs": "2026-08-16T20:32:35.007Z",
+    "action": {
+      "type": "SET_TITLE",
+      "input": {
+        "title": "A document model is a state schema, an action schema, and a pure reducer",
+        "updatedAt": "2026-08-16T20:32:35.007Z"
+      },
+      "timestampUtcMs": "2026-08-16T20:32:35.007Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "",
+    "timestampUtcMs": "2026-08-16T20:32:34.670Z",
+    "action": {
+      "type": "UPGRADE_DOCUMENT",
+      "input": {
+        "model": "bai/knowledge-note",
+        "toVersion": 1,
+        "documentId": "fdc3d342-bb38-468d-82d1-440b2af01587",
+        "fromVersion": 0,
+        "initialState": {
+          "auth": {
+            "grants": [],
+            "version": 0
+          },
+          "local": {
+            "lastViewedAt": null,
+            "personalTags": []
+          },
+          "global": {
+            "links": [],
+            "model": null,
+            "scope": null,
+            "title": null,
+            "editor": null,
+            "inputs": [],
+            "models": [],
+            "status": "DRAFT",
+            "topics": [],
+            "content": null,
+            "context": null,
+            "modelId": null,
+            "modules": [],
+            "outputs": [],
+            "version": null,
+            "computes": null,
+            "filePath": null,
+            "noteType": null,
+            "severity": null,
+            "hooksUsed": [],
+            "rootCause": null,
+            "confidence": null,
+            "consumedBy": [],
+            "provenance": null,
+            "sourceType": null,
+            "targetType": null,
+            "cardinality": null,
+            "description": null,
+            "alternatives": [],
+            "consequences": [],
+            "errorMessage": null,
+            "relationType": null,
+            "correctPattern": null,
+            "decisionStatus": null,
+            "dispatchTargets": [],
+            "lifecycleEvents": []
+          },
+          "document": {
+            "hash": {
+              "encoding": "base64",
+              "algorithm": "sha1"
+            },
+            "version": 1
+          }
+        }
+      },
+      "timestampUtcMs": "2026-08-16T20:32:34.670Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "XTiGKsUh5tHxmamko2dbQ4jgpGA=",
+    "timestampUtcMs": "2026-08-16T20:32:35.007Z",
+    "action": {
+      "type": "SET_DESCRIPTION",
+      "input": {
+        "updatedAt": "2026-08-16T20:32:35.007Z",
+        "description": "Document models define what a document contains, which mutations are allowed, and how state updates deterministically from signed actions."
+      },
+      "timestampUtcMs": "2026-08-16T20:32:35.007Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "",
+    "timestampUtcMs": "2026-08-16T20:32:49.162Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "fdc3d342-bb38-468d-82d1-440b2af01587",
+        "targetId": "2b423487-123f-414c-bd20-edce7de891f4",
+        "relationshipType": "DERIVED_FROM"
+      },
+      "timestampUtcMs": "2026-08-16T20:32:49.162Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "0bux7kvP8U8eHWMjZkB7V4x5tSs=",
+    "timestampUtcMs": "2026-08-16T20:32:35.007Z",
+    "action": {
+      "type": "SET_NOTE_TYPE",
+      "input": {
+        "noteType": "ARCHITECTURE",
+        "updatedAt": "2026-08-16T20:32:35.007Z"
+      },
+      "timestampUtcMs": "2026-08-16T20:32:35.007Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "",
+    "timestampUtcMs": "2026-08-16T20:32:52.528Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "fdc3d342-bb38-468d-82d1-440b2af01587",
+        "targetId": "873daffa-52d3-49f3-adac-b538bb82ba99",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-08-16T20:32:52.528Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "h5aM5K19iBSqphf7hnLX1Da3mt8=",
+    "timestampUtcMs": "2026-08-16T20:32:35.007Z",
+    "action": {
+      "type": "SET_CONTENT",
+      "input": {
+        "content": "## Claim\n\nA document model has three parts:\n\n1. **State schema** \u2014 what the document contains\n2. **Action schema** \u2014 what changes are allowed\n3. **Reducer** \u2014 a pure function `(state, action) \u2192 state`\n\n## Runtime behavior\n\nActions are signed expressions of intent. The runtime applies them through the reducer and emits operations (action + ordinal + timestamp + result hash). Replay re-executes the reducer rather than replaying pre-computed domain events.\n\n## Why it fits skills\n\nSkills become thin wrappers that emit allowed actions against declared document models, which makes their contributions attributable and replayable.",
+        "updatedAt": "2026-08-16T20:32:35.007Z"
+      },
+      "timestampUtcMs": "2026-08-16T20:32:35.007Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "",
+    "timestampUtcMs": "2026-08-16T20:32:52.799Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "fdc3d342-bb38-468d-82d1-440b2af01587",
+        "targetId": "c12e6c2c-a727-4dbe-a6f0-65802b70c94b",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-08-16T20:32:52.799Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "Cl4BACW4XJicQbHfoav9ScuBvF4=",
+    "timestampUtcMs": "2026-08-16T20:32:35.007Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "0adab7d8-b400-4de8-a6e5-743727970336",
+        "name": "document-models"
+      },
+      "timestampUtcMs": "2026-08-16T20:32:35.007Z"
+    }
+  },
+  {
+    "index": 5,
+    "hash": "",
+    "timestampUtcMs": "2026-08-16T20:32:55.639Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "fdc3d342-bb38-468d-82d1-440b2af01587",
+        "targetId": "e2186433-6a5b-4e9a-90e8-37c698b35e89",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-08-16T20:32:55.639Z"
+    }
+  },
+  {
+    "index": 5,
+    "hash": "P0fcbIJVKB9qIunFov5mK0IqPcg=",
+    "timestampUtcMs": "2026-08-16T20:32:35.007Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "e12bf0e8-856b-43ed-98d7-097beb6da155",
+        "name": "event-sourcing"
+      },
+      "timestampUtcMs": "2026-08-16T20:32:35.007Z"
+    }
+  },
+  {
+    "index": 6,
+    "hash": "/Dgz4YAbw3xSfR9KIo4XHE/pZ8Q=",
+    "timestampUtcMs": "2026-08-16T20:32:35.007Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "b39081bf-dddc-4b4c-9d7c-907f5b4bcd8a",
+        "name": "powerhouse"
+      },
+      "timestampUtcMs": "2026-08-16T20:32:35.007Z"
+    }
+  },
+  {
+    "index": 7,
+    "hash": "i5A///LTAtECkMfM2VF7q2/Q3lc=",
+    "timestampUtcMs": "2026-08-16T20:32:35.369Z",
+    "action": {
+      "type": "SET_PROVENANCE",
+      "input": {
+        "author": "knowledge-agent",
+        "createdAt": "2026-08-16T20:32:35.007Z",
+        "sourceOrigin": "DERIVED"
+      },
+      "timestampUtcMs": "2026-08-16T20:32:35.369Z"
+    }
+  },
+  {
+    "index": 8,
+    "hash": "aKBINf1KCp39WplKxVpUBHOy/1o=",
+    "timestampUtcMs": "2026-08-16T20:32:35.904Z",
+    "action": {
+      "type": "SUBMIT_FOR_REVIEW",
+      "input": {
+        "id": "ad248eba-a58d-49ca-95ab-a03ff1926815",
+        "actor": "knowledge-agent",
+        "comment": "pipeline extract",
+        "timestamp": "2026-08-16T20:32:35.904Z"
+      },
+      "timestampUtcMs": "2026-08-16T20:32:35.904Z"
+    }
+  },
+  {
+    "index": 9,
+    "hash": "hooFCh62umFIfNLQVNdxeNCjHxU=",
+    "timestampUtcMs": "2026-08-16T20:32:36.051Z",
+    "action": {
+      "type": "APPROVE_NOTE",
+      "input": {
+        "id": "44f5aec8-eb6c-4774-9869-26e20526b8d4",
+        "actor": "pipeline-reviewer",
+        "comment": "pipeline verify",
+        "timestamp": "2026-08-16T20:32:36.051Z"
+      },
+      "timestampUtcMs": "2026-08-16T20:32:36.051Z"
+    }
+  }
+]

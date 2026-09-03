@@ -1,0 +1,96 @@
+{
+  "links": [
+    {
+      "id": "lnk-1c781f1a-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "1c781f1a-a3f9-483e-a15a-ccbc2c431135",
+      "targetTitle": "chat-pss-messaging-history-shipped"
+    },
+    {
+      "id": "lnk-da8a8131-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "da8a8131-7b4e-4849-afd9-fcc21bf68ca4",
+      "targetTitle": "event-driven-architecture-decouples-components-for-parallel-processing"
+    },
+    {
+      "id": "lnk-97c0a282-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "97c0a282-5f24-47bd-a2cd-f5d563fa8d11",
+      "targetTitle": "bee-reactor-adapter-chat-settings-features"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Chat polish backlog: Swarm-link previews, search, avatars, reactions",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "6423032f-8cb8-42c8-8e7c-11de4030b688",
+      "name": "chat-roadmap",
+      "topicDocumentId": null
+    },
+    {
+      "id": "801ea3c3-4aad-461f-a169-f209669eeb4a",
+      "name": "polish-backlog",
+      "topicDocumentId": null
+    },
+    {
+      "id": "1623e316-5461-4e19-b58a-241336289985",
+      "name": "nice-to-have",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "## Smaller polish items (pick up any time)\n\nAll items are known gaps in the shipped chat; none are blocked on the live-collab track.\n\n- **Swarm-link previews in the Files tab.** `MessageBody` already detects `bzz://` URLs and renders inline, but `FilesTab` only iterates `msg.attachment`. Extend the `files` `useMemo` to also sweep `msg.text` for references and synthesize `AttachedFile` entries.\n- **Search inside messages.** Current search only scans the Files tab.\n- **Profile avatars.** Conversation list and message bubbles use initials today. The public profile already carries an optional image ref -- wire it through.\n- **Message deletion / edit.** No UI, no adapter flow. Feeds are append-only, so \"delete\" means writing a tombstone message.\n- **Message reactions.** Small GSOC payloads keyed by message id.\n\n## Explicit out-of-scope\n\n**Group chat is out of scope for live collab** and needs its own design pass. Don't conflate multi-user document collaboration with group-chat conversations -- the data model and invariants differ.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "OBSERVATION",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "knowledge-agent",
+    "createdAt": "2026-04-21T14:38:00.466Z",
+    "sessionId": null,
+    "updatedAt": "2026-09-03T09:58:15.501Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "None are blocked on the live-collab track: FilesTab must sweep msg.text for bzz refs, deletion means writing tombstones to append-only feeds, and group messaging needs its own design pass.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "c73bc08e-9701-4892-9a17-67763ac4f9f7",
+      "actor": "claude",
+      "comment": "Knowledge registered against powerhouse v6.2.2-dev.47",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-14T12:00:00.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "3086c81b-3244-4fc4-9d17-dfe5193004b4",
+      "actor": "liberuum",
+      "comment": "Canonical as of powerhouse v6.2.2-dev.47",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-14T12:00:00.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

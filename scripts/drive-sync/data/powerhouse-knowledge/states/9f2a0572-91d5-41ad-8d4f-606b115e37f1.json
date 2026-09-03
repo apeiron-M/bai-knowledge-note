@@ -1,0 +1,104 @@
+{
+  "links": [
+    {
+      "id": "lnk-e1f81c50-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "e1f81c50-7a5e-4df8-a746-e80c7f58df36",
+      "targetTitle": "ph-service-setup-configures-nginx-pm2-ssl"
+    },
+    {
+      "id": "lnk-b153c532-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "b153c532-0abc-4400-8448-4ac08046fcad",
+      "targetTitle": "docker-images-for-connect-and-switchboard"
+    },
+    {
+      "id": "lnk-83b60ca6-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "83b60ca6-793d-4d0c-9b8c-7dc6cb1d3eff",
+      "targetTitle": "reactor-is-backend-service-for-drives"
+    },
+    {
+      "id": "lnk-c94a8813-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "c94a8813-6fc8-43b7-a37d-01ec85228e42",
+      "targetTitle": "Academy \u203a GetStarted \u203a Vetra Cloud",
+      "reason": "The note names apps/academy/docs/academy/01-GetStarted/01-VetraCloud.md as its source; page text identical at v6.2.2-dev.47 and v6.2.2-dev.74",
+      "confidence": "grounded"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "A Vetra Cloud environment is a named subdomain running up to three independently sized and version-pinned services",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "95dc1bfc-d31a-4a5c-970b-94b69602e1d8",
+      "name": "vetra-cloud",
+      "topicDocumentId": null
+    },
+    {
+      "id": "3d8cdf39-7834-469c-bb4d-8713e989a96f",
+      "name": "deployment",
+      "topicDocumentId": null
+    },
+    {
+      "id": "68b88de6-c215-4ff3-869d-6fa0537a5040",
+      "name": "hosting",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "## The hosted alternative to `ph service setup`\n\nVetra Cloud is the hosted infrastructure layer for Powerhouse applications \u2014 the managed counterpart to standing up Nginx, PM2 and Postgres on your own VM. Authenticate in the Cloud section with an Ethereum wallet via Renown, then create an environment by name. Each environment gets **its own subdomain and its own isolated set of services**.\n\nThree services per environment, each independently toggled, sized (a **Size** dropdown picks the compute tier) and version-pinned:\n\n| Service | Role |\n| --- | --- |\n| Powerhouse Connect | The document-editor UI |\n| Powerhouse Switchboard | The GraphQL API server, at `/graphql` |\n| Powerhouse Fusion | Optional data-fusion layer, **disabled by default** |\n\nThat the three are separately sized and pinned is the architecturally interesting part: Connect and Switchboard are the same Reactor with different outward surfaces, so you can pin the API to a known-good release while moving the UI forward, or scale the API tier alone under processor load. **Change version** pins one service; **Update All** applies every available update at once.\n\n## Packages stage before they land\n\nPackages extend Connect and Switchboard with additional document models, editors and reactor modules. **+ Add package** searches the Vetra registry (`@powerhousedao/builder-profile`, `@powerhousedao/contributor-billing`, `@powerhousedao/knowledge-note`, `@arbitrum/arbgrants`, and community entries). Selecting one does not deploy it: a **Pending change** banner appears and you must click **Approve**, which applies the change and redeploys the environment. Installs are therefore a reviewed, batched operation rather than a live mutation of a running environment.\n\nOnce running you can point a local `ph` CLI at the environment, or share the Connect URL with collaborators.\n\nOne documentation discrepancy to be aware of: the Vetra Cloud page gives the service hostnames as `connect.<env>.vetra.io` and `switchboard.<env>.vetra.io/graphql`, while the Vetra Studio Deploy section writes them hyphenated as `<env-slug>-connect.vetra.io` and `<env-slug>-switchboard.vetra.io/graphql`. Read the URL off the environment card rather than constructing it.\n\n_Source: `apps/academy/docs/academy/01-GetStarted/01-VetraCloud.md` (with `00-VetraStudio.md` Deploy section), Powerhouse v6.2.2-dev.45._",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": "v6.2.2-dev.74",
+  "computes": null,
+  "filePath": "apps/academy/docs/academy/01-GetStarted/01-VetraCloud.md",
+  "noteType": "ARCHITECTURE",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "claude",
+    "createdAt": "2026-08-13T14:37:30.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-09-02T21:32:33.814Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Connect, Switchboard and the optional Fusion layer are toggled and sized per environment; package installs stage as a Pending change until approved.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "6531c10d-b028-456a-a663-15a0fefd841e",
+      "actor": "claude",
+      "comment": "Knowledge registered against powerhouse v6.2.2-dev.47",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-14T12:00:00.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "56b5735d-af3a-4cf0-b8d1-694a62f6aba6",
+      "actor": "liberuum",
+      "comment": "Canonical as of powerhouse v6.2.2-dev.47",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-14T12:00:00.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

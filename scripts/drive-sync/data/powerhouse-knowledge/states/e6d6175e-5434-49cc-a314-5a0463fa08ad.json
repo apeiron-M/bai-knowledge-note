@@ -1,0 +1,98 @@
+{
+  "links": [
+    {
+      "id": "lnk-1a932db8-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "1a932db8-245d-40f6-bfd8-eea728d9615e",
+      "targetTitle": "reactor-browser-hooks-provide-document-state"
+    },
+    {
+      "id": "lnk-9cad3b48-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "9cad3b48-9640-4de2-a559-002468eda15d",
+      "targetTitle": "editor-hooks-connect-react-to-documents"
+    },
+    {
+      "id": "lnk-aeb9b5e6-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "aeb9b5e6-8fce-4339-95e8-375bd0a0cc01",
+      "targetTitle": "Academy \u203a Reference \u203a EditorsUI \u203a React Hooks",
+      "reason": "The note names apps/academy/docs/academy/04-Reference/05-EditorsUI/01-ReactHooks.md as its source; page text revised between v6.2.2-dev.47 and v6.2.2-dev.74 \u2014 re-verified in the v6.2.2-dev.74 pass",
+      "confidence": "grounded"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "useSelectedDocument throws NoSelectedDocumentError while useSelectedDocumentSafe returns undefined",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "3e80f793-5b3e-409b-8f3d-3518c6bf28b4",
+      "name": "react-hooks",
+      "topicDocumentId": null
+    },
+    {
+      "id": "db08fde7-1858-4543-a7e3-138f46c0be9f",
+      "name": "reactor-browser",
+      "topicDocumentId": null
+    },
+    {
+      "id": "6b5fe2d1-a237-4b3e-9405-5a85190e08c6",
+      "name": "error-handling",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "Three hooks read the selected document, and they differ only in how they handle absence.\n\n`useSelectedDocument()` resolves the selected node id, calls `useDocumentById`, and throws if nothing came back:\n\n```ts\nconst [document, dispatch] = useDocumentById(selectedDocumentId);\nif (!document) throw new NoSelectedDocumentError();\nreturn [document, dispatch] as const;\n```\n\nThe error message is self-documenting: *\"There is no selected document. Did you mean to call 'useSelectedDocumentSafe' instead?\"* Because it throws, `document` is non-nullable in the returned tuple \u2014 that is the whole point of the variant, and it means an `if (!document)` guard after the call is dead code.\n\n`useSelectedDocumentSafe()` is the same lookup with the throw removed \u2014 it is literally `return useDocumentById(selectedDocumentId)` \u2014 so it yields `[PHDocument | undefined, dispatch]`. Reach for it whenever \"no document selected\" is a state your component should render, not an invariant violation. Note that `undefined` is also what you get while a real document is still loading, so the Safe variant cannot distinguish \"nothing selected\" from \"not here yet\".\n\n`useSelectedDocumentOfType(documentType)` layers a type check on top. It throws `NoSelectedDocumentError` when no document is selected and `DocumentTypeMismatchError` when the selected document is a different type. It has one quirk: passing a `null`/`undefined` `documentType` returns an empty array (`never[]`) rather than throwing, so the hook can be called conditionally on a type that is not known yet.\n\n**Documentation caveat:** the React Hooks reference page attaches a copy-pasted *\"Throws: NoSelectedDocumentError\"* block to the `useSelectedDocumentSafe` section, and its example calls the non-Safe hook. That contradicts both the same section's own prose and the source. The Safe variant does not throw.\n\n_Source: packages/reactor-browser/src/hooks/selected-document.ts and src/errors.ts, cross-checked against apps/academy/docs/academy/04-Reference/05-EditorsUI/01-ReactHooks.md (Powerhouse v6.2.2-dev.45)._",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": "v6.2.2-dev.74",
+  "computes": null,
+  "filePath": "apps/academy/docs/academy/04-Reference/05-EditorsUI/01-ReactHooks.md",
+  "noteType": "REFERENCE",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "claude",
+    "createdAt": "2026-08-13T14:37:54.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-09-02T22:26:36.122Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Pick the Safe variant when \"no document selected\" is a legitimate state. useSelectedDocumentOfType additionally throws DocumentTypeMismatchError on a type mismatch.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "ee5c316b-61da-47f5-ab6c-0c1a2d8f2d86",
+      "actor": "claude",
+      "comment": "Knowledge registered against powerhouse v6.2.2-dev.47",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-14T12:00:00.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "52d24678-bbda-4783-acac-b36b4edc9aaf",
+      "actor": "liberuum",
+      "comment": "Canonical as of powerhouse v6.2.2-dev.47",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-14T12:00:00.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

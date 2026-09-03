@@ -1,0 +1,87 @@
+{
+  "links": [
+    {
+      "id": "lnk-b7cb8afe-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "b7cb8afe-41fa-4676-be94-1e73435e1a04",
+      "targetTitle": "mcp-workflows"
+    },
+    {
+      "id": "lnk-e27dafa1-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "e27dafa1-12c1-42b5-9642-4c5f2af8a540",
+      "targetTitle": "Academy \u203a Lookup \u203a LLM docs",
+      "reason": "Backing page found by content match in the v6.2.2-dev.74 source backfill \u2014 identifiers context7, full.txt, ingestion from the claim appear in this page (text identical at v6.2.2-dev.47 and v6.2.2-dev.74); attribution, not the original extraction record",
+      "confidence": "grounded"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Powerhouse docs ship as llms.txt / llms-full.txt and as a Context7 library",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "464b1ac2-b69f-423e-b941-7840ad081619",
+      "name": "documentation",
+      "topicDocumentId": null
+    },
+    {
+      "id": "f89ad403-9c1a-4be1-8b01-afb78b2b7dc6",
+      "name": "ai-tooling",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "The academy follows the [llms.txt standard](https://llmstxt.org) and publishes two machine-readable artifacts at the site root:\n\n| File | Purpose | Size |\n| --- | --- | --- |\n| `https://academy.vetra.io/llms.txt` | Navigation index \u2014 links to every doc page with a short description | ~22KB |\n| `https://academy.vetra.io/llms-full.txt` | All documentation concatenated for full-context ingestion | ~1MB |\n\nThree consumption paths are documented:\n\n- **Context7** \u2014 search `powerhouse-inc/powerhouse` or use library id `/powerhouse-inc/powerhouse`, then `use context7` in Cursor, Windsurf, Zed, etc.\n- **Paste the URL** \u2014 dropping `https://academy.vetra.io/llms-full.txt` into a Claude or ChatGPT message loads the whole corpus at once.\n- **`curl`** either file for programmatic access.\n\nThe size split is the practical bit. The ~22KB index fits comfortably in a prompt and is a page directory, so it is the right artifact for \"which doc covers X\" routing; the ~1MB full corpus is for one-shot ingestion when you want everything and can afford the context.\n\nOne caveat that matters when relying on these: the files are **generated from the academy source docs** by `scripts/generate-llm-docs.ts` (`npm run generate:llm-docs`), writing `static/llms.txt` and `static/llms-full.txt` for Docusaurus to serve. So they are a snapshot at generation time, and they inherit whatever staleness the source pages carry \u2014 including Docusaurus-published pages whose guidance has drifted from the shipped code. They are a fast index, not an authority.\n\nProvenance: academy `05-Lookup/02-LLMDocs.md`, academy 6.2.2-dev.45.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": "v6.2.2-dev.74",
+  "computes": null,
+  "filePath": "apps/academy/docs/academy/05-Lookup/02-LLMDocs.md",
+  "noteType": "REFERENCE",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "claude",
+    "createdAt": "2026-08-13T14:39:41.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-09-02T21:41:08.045Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "The ~22KB index answers 'which page covers X' inside a prompt; the ~1MB corpus suits one-shot ingestion. Both are generated snapshots and inherit academy staleness.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "63f16758-ecf7-4db6-aefb-3a3e918929a1",
+      "actor": "claude",
+      "comment": "Knowledge registered against powerhouse v6.2.2-dev.47",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-14T12:00:00.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "9a8c6240-3d90-4cd0-8ab9-2b3b272027ca",
+      "actor": "liberuum",
+      "comment": "Canonical as of powerhouse v6.2.2-dev.47",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-14T12:00:00.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

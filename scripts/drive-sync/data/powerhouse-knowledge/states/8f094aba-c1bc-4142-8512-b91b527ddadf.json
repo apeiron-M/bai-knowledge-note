@@ -1,0 +1,101 @@
+{
+  "links": [
+    {
+      "id": "lnk-29dd086c-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "29dd086c-f1d5-4a40-819e-82d03bba5506",
+      "targetTitle": "schema-design"
+    },
+    {
+      "id": "lnk-1c7a3c1c-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "1c7a3c1c-95e7-4bc8-a921-277863c4f346",
+      "targetTitle": "collab-three-milestone-build-order"
+    },
+    {
+      "id": "lnk-4e6413ee-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "4e6413ee-22bf-4d64-964f-ca8b28917cec",
+      "targetTitle": "present-document-model-proposals-to-user-before-implementing"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "nullable input types require explicit coalescing to match state types",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "9d97444b-95e3-468e-9cfd-e756fbbd2dfe",
+      "name": "reducer patterns",
+      "topicDocumentId": null
+    },
+    {
+      "id": "20a94cde-7170-4799-8c38-ae5bd5cf95f4",
+      "name": "gotchas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "c5dc3b72-f4f4-4a84-9114-1b515a3e17e0",
+      "name": "TypeScript",
+      "topicDocumentId": null
+    },
+    {
+      "id": "69fe1a8e-df34-4fe7-b5a3-7079ef70bc50",
+      "name": "null coalescing",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "# nullable input types require explicit coalescing to match state types\n\nOptional input types and optional state types have different nullability:\n\n- **Input**: `InputMaybe<T>` = `null | undefined | T`\n- **State**: `Maybe<T>` = `T | null`\n\nTypeScript won't accept `undefined` where `null` is expected, so you must coalesce:\n\n```typescript\n// \u274c Type error \u2014 undefined not assignable to T | null\namount: action.input.amount,\nnotes: action.input.notes,\n\n// \u2705 Correct \u2014 coalesce to match Maybe<T>\namount: action.input.amount || null,\nnotes: action.input.notes || [],\n```\n\nSince [[truthy checks are safer than undefined checks for optional state assignment]], prefer `if (action.input.field)` over `if (action.input.field !== undefined)` for conditional updates.\n\n---\n\nTopics:\n- [[reducer patterns]]\n- [[gotchas]]",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": "v6.2.2-dev.74",
+  "computes": null,
+  "filePath": null,
+  "noteType": "OBSERVATION",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "knowledge-agent",
+    "createdAt": "2026-04-03T13:58:00.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-09-03T09:56:52.639Z",
+    "sourceOrigin": "IMPORT"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "InputMaybe<T> allows null | undefined | T but state uses Maybe<T> = T | null, so coalesce with || null or || [] to satisfy TypeScript",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "0425733e-0f23-4f12-8f26-e529c084d003",
+      "actor": "claude",
+      "comment": "Knowledge registered against powerhouse v6.2.2-dev.47",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-14T12:00:00.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "3ca3760c-cd96-4b36-bafb-c683f8509e69",
+      "actor": "liberuum",
+      "comment": "Canonical as of powerhouse v6.2.2-dev.47",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-14T12:00:00.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

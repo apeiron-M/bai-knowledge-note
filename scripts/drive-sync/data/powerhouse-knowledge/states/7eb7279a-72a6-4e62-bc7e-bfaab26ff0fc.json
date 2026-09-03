@@ -1,0 +1,101 @@
+{
+  "links": [
+    {
+      "id": "lnk-e05f0d99-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "e05f0d99-31d2-4612-bd7b-aecfd4e7063d",
+      "targetTitle": "swarm-feed-write-per-topic-lock"
+    },
+    {
+      "id": "lnk-83b60ca6-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "83b60ca6-793d-4d0c-9b8c-7dc6cb1d3eff",
+      "targetTitle": "reactor-is-backend-service-for-drives"
+    },
+    {
+      "id": "lnk-650ecf22-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "650ecf22-c9ae-48a9-a02b-7aa78f21ac7c",
+      "targetTitle": "swarm-gsoc-many-to-one"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Feed updates have no native WebSocket subscription and require polling or a notification side channel",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "7dfdf9d5-d74b-413b-b9fd-80bca0fc2825",
+      "name": "swarm-feeds",
+      "topicDocumentId": null
+    },
+    {
+      "id": "fd6f733c-2549-4eb5-b880-fae16ae8c15b",
+      "name": "websocket",
+      "topicDocumentId": null
+    },
+    {
+      "id": "ed933a26-e7dd-4fcd-a0e0-b80d9a4d65dc",
+      "name": "real-time",
+      "topicDocumentId": null
+    },
+    {
+      "id": "8e51c472-9bb5-4bb9-8784-da974b013129",
+      "name": "adapter",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "## Claim\n\nThe Bee HTTP API exposes WebSocket subscriptions only for PSS, GSOC, and chunk streaming \u2014 **feed updates have no native WS subscription**, so real-time feed watching must be built out of other primitives.\n\n## Evidence\n\nWebSocket endpoints:\n\n| Endpoint                        | Purpose                             |\n|---------------------------------|-------------------------------------|\n| `WS /pss/subscribe/{topic}`     | Stream decrypted PSS messages       |\n| `WS /gsoc/subscribe/{address}`  | Stream GSOC updates                 |\n| `WS /chunks/stream`             | Stream chunk uploads (parallel)     |\n\nOptions for watching feed updates:\n1. **Poll** `GET /feeds/{owner}/{topic}` at intervals (what the adapter does today)\n2. **GSOC notification**: publisher sends a GSOC on update; subscriber polls only on notification\n3. **PSS notification**: same pattern via PSS instead of GSOC\n4. **Advance retrieve requests** (protocol level, not API-exposed): request the next feed index before it exists; the node holds the request until the update arrives \u2014 gives sub-second latency without polling\n\n## Why it matters\n\nExplains why sub-second collaboration latency needs a sidecar notification channel (GSOC or PSS) rather than just a WebSocket on the feed. Also flags \"advance retrieve requests\" as a future path if exposed in bee-js.\n",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "REFERENCE",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "knowledge-agent",
+    "createdAt": "2026-04-21T14:24:54.753Z",
+    "sessionId": null,
+    "updatedAt": "2026-09-03T09:57:56.654Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Bee WS only streams PSS, GSOC, and chunk uploads. Real-time feed watching requires polling, or combining with PSS/GSOC notifications, or advance retrieve requests.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "fae3a504-410a-4452-a5fd-ede75b24e037",
+      "actor": "claude",
+      "comment": "Knowledge registered against powerhouse v6.2.2-dev.47",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-14T12:00:00.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "e9563d86-07a0-47bf-9d73-7561e624bcfe",
+      "actor": "liberuum",
+      "comment": "Canonical as of powerhouse v6.2.2-dev.47",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-14T12:00:00.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

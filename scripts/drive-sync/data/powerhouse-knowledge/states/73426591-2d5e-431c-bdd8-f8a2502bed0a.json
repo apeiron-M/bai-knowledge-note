@@ -1,0 +1,98 @@
+{
+  "links": [
+    {
+      "id": "lnk-11da9c61-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "11da9c61-a825-4c70-a57c-f80b10f569c7",
+      "targetTitle": "analytics-engine-interval-time-series"
+    },
+    {
+      "id": "lnk-bb0b6db7-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "bb0b6db7-14f1-491c-8975-4475ff68481d",
+      "targetTitle": "v6-processor-flat-operations-replace-strands"
+    },
+    {
+      "id": "lnk-0cf4df61-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "0cf4df61-d578-4130-9b12-b6f8fb9b5673",
+      "targetTitle": "Academy \u203a Build \u203a WorkWithData \u203a Analytics processors",
+      "reason": "Backing page found by content match in the v6.2.2-dev.74 source backfill \u2014 identifiers addseriesvalues, analyticsseriesinput, chunk_size from the claim appear in this page (text identical at v6.2.2-dev.47 and v6.2.2-dev.74); attribution, not the original extraction record",
+      "confidence": "grounded"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Analytics processors must buffer series inputs and flush in chunks rather than inserting per operation",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "91105b93-ca0c-4046-946b-e3c0d4c077c4",
+      "name": "analytics",
+      "topicDocumentId": null
+    },
+    {
+      "id": "56b4ee47-cb08-4ab9-893d-4dd67f6070bc",
+      "name": "processors",
+      "topicDocumentId": null
+    },
+    {
+      "id": "507b6afc-879c-441e-95f0-1b8c73d20981",
+      "name": "performance",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "`onOperations` receives a flat list that can be arbitrarily long \u2014 a backfill over a drive's full history arrives page by page, not operation by operation. Writing one row per operation turns that into one database round-trip per operation. Both shipped analytics processors use the same buffer-and-chunk shape, and the migration guide names it as the recommended pattern:\n\n```typescript\nconst CHUNK_SIZE = 50;\nconst buffer: AnalyticsSeriesInput[] = [];\n\nfor (const { operation, context } of operations) {\n  // ...build seriesInput...\n  buffer.push(seriesInput);\n\n  while (buffer.length >= CHUNK_SIZE) {\n    const batch = buffer.splice(0, CHUNK_SIZE);\n    await this.analyticsStore.addSeriesValues(batch);\n  }\n}\n\nif (buffer.length > 0) {\n  await this.analyticsStore.addSeriesValues(buffer);\n}\n```\n\nTwo details are easy to get wrong. The flush uses `while`, not `if` \u2014 with `splice` draining the front, `while` is correct for a buffer that could already be over the threshold, and it keeps the invariant \"never hold more than CHUNK_SIZE-1 items\". And the trailing `if (buffer.length > 0)` is not optional: without it every partial final chunk is silently dropped.\n\n`IAnalyticsStore` exposes both `addSeriesValue(input)` and `addSeriesValues(inputs)`. The chunked pattern uses the plural form; the singular is a convenience for one-off writes and is what the older Analytics Engine prose shows.\n\nBecause a processor registered with `startFrom: \"beginning\"` can be re-delivered its entire history \u2014 on first registration against a drive with history, after a restart gap, or after `tracked.retry()` \u2014 chunked inserts alone are not idempotent. The `clearSource` companion pattern handles that: on seeing operation index 0 again for a known document, call `clearSeriesBySource(source, true)` and rebuild, so reprocessing converges on the same totals.\n\nProvenance: academy `04-Reference/04-Processors/08-ProcessorMigrationGuide.md` (published) and the draft `03-Build/04-WorkWithData/_04-analytics-processor.md`; code verified byte-for-byte in `packages/shared/processors/drive-analytics/{drive,document}-processor.ts` at 6.2.2-dev.45.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": "v6.2.2-dev.74",
+  "computes": null,
+  "filePath": "apps/academy/docs/academy/03-Build/04-WorkWithData/_04-analytics-processor.md",
+  "noteType": "PATTERN",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "claude",
+    "createdAt": "2026-08-13T14:38:31.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-09-02T21:35:46.327Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "The shipped pattern buffers AnalyticsSeriesInput[] and calls addSeriesValues whenever the buffer reaches CHUNK_SIZE (50), then flushes the remainder after the loop.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "e6c93e82-4b9d-4f58-b6b0-1fe1fc58c642",
+      "actor": "claude",
+      "comment": "Knowledge registered against powerhouse v6.2.2-dev.47",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-14T12:00:00.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "3b4af015-b869-4226-aa4a-32dfb046181e",
+      "actor": "liberuum",
+      "comment": "Canonical as of powerhouse v6.2.2-dev.47",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-14T12:00:00.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

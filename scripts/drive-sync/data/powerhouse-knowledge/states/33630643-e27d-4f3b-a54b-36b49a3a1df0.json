@@ -1,0 +1,94 @@
+{
+  "links": [
+    {
+      "id": "lnk-8ee8f963-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "8ee8f963-3022-4ac1-b0c9-b4703c9c6b43",
+      "targetTitle": "Maykin \u2014 Open Zaak / Common Ground"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Open Zaak holds the zaak in a mutable API, so municipal audit has no history the case system cannot rewrite",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "8d6e6e06-c0f4-40b4-b7ec-4c79782abb59",
+      "name": "leads",
+      "topicDocumentId": null
+    },
+    {
+      "id": "3a703e29-93cf-4eeb-b677-7cd31d2f04ee",
+      "name": "open-zaak",
+      "topicDocumentId": null
+    },
+    {
+      "id": "78e3a9fc-c81d-499a-8900-ca3a9e8d01f6",
+      "name": "common-ground",
+      "topicDocumentId": null
+    },
+    {
+      "id": "153c0269-4934-4b09-8e23-892d72cfc1af",
+      "name": "public-sector",
+      "topicDocumentId": null
+    },
+    {
+      "id": "d54062a6-0ee3-413c-bf44-9bc3a40f34bf",
+      "name": "audit-trail",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "Open Zaak is the Common Ground component that holds the zaak \u2014 the case \u2014 and it exposes it through an API that carries its current state, status included. Status changes are writes against that API, and the account of them lives in the same store that performs them.\n\nThe requirement the research names is independence. Dutch municipal audit needs a replayable history of status changes that the case system itself cannot rewrite. When the record and the system producing it are the same store, the audit rests on the trustworthiness of the thing being audited, which is a structural problem rather than a configuration one \u2014 more logging inside the case system does not resolve it.\n\nMaykin's position as a Common Ground implementer means the gap sits at a shared interface rather than in bespoke code. Status transitions look the same across municipalities, so the dispatch point is predictable: one interface, many tenants. That is what makes this fit reusable instead of a single engagement.\n\n---\n\n## Leads sharing this finding (1)\n\n**1 \u00b7 start here**\n- Maykin (NL Amsterdam) \u2014 not published (first names only) \u00b7 info@maykinmedia.nl \u00b7 https://maykin.nl\n\nVerbatim research text this claim was extracted from:\n\n> Open Zaak holds the case (zaak) in a mutable API. Dutch municipal audit needs an independent, replayable history of status changes that the case system itself cannot rewrite.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "OBSERVATION",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "knowledge-agent",
+    "createdAt": "2026-08-19T11:28:05.903128Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-19T11:28:07.451455Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Dutch municipal audit needs an independent, replayable record of status changes; today that record lives inside the very system whose behaviour is being audited.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "f3541c5b-8694-4f28-b0d5-7a31148cb66c",
+      "actor": "knowledge-agent",
+      "comment": "Extracted from lead research; claim checked against the source record.",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-19T11:28:07.252439Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "d52cf966-2036-4bc2-bb0f-c5798fbf6026",
+      "actor": "liberuum",
+      "comment": "Approved: lead corpus extraction.",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-19T11:28:07.451455Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

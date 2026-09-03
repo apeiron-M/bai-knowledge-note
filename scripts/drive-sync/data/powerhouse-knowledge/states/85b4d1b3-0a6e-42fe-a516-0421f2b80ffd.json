@@ -1,0 +1,94 @@
+{
+  "links": [
+    {
+      "id": "lnk-8a776f82-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "8a776f82-6a04-465e-aa49-09e516d88025",
+      "targetTitle": "publicplan GmbH \u2014 Drupal"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Drupal node revisions are not business-event records, so a public-sector approval loses its actor and rule",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "dc6e8d5b-92d1-478c-b158-b2b520fee16f",
+      "name": "leads",
+      "topicDocumentId": null
+    },
+    {
+      "id": "646b5c83-0d51-4dd0-9fde-29c738e948ed",
+      "name": "drupal",
+      "topicDocumentId": null
+    },
+    {
+      "id": "d4f7ff47-243e-42d3-b005-d002dc407966",
+      "name": "public-sector",
+      "topicDocumentId": null
+    },
+    {
+      "id": "3223bb6e-beca-43c5-9912-15f7ae8978b7",
+      "name": "audit-trail",
+      "topicDocumentId": null
+    },
+    {
+      "id": "d905817f-eedc-4fc1-8ecb-1fbe2cbaf6b8",
+      "name": "system-of-record",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "Drupal keeps node revisions: successive versions of content, each with a timestamp and the author of the edit. The research draws the distinction that matters for public administration \u2014 a revision records that text changed, whereas an approval is a decision, taken by an actor, under a rule.\n\nThese are different objects. A revision can show that a page moved from unpublished to published; it cannot express that the publication was authorised, by whom in what role, or against which requirement. Reconstructing the decision from revision history means inferring intent from field diffs, which is exactly the kind of evidence an auditor will not accept.\n\npublicplan delivers Drupal into the public sector, so the gap appears at the point where content workflow meets administrative accountability. The addressable unit is small: the approval events already occur as user actions inside the CMS, but nothing durable is written at the moment they happen.\n\n---\n\n## Leads sharing this finding (1)\n\n**2 \u00b7 next**\n- publicplan GmbH (DE Duesseldorf) \u2014 Stefan Seltmann, Gesch\u00e4ftsf\u00fchrer \u00b7 info@publicplan.de \u00b7 https://publicplan.de\n\nVerbatim research text this claim was extracted from:\n\n> Drupal has node revisions, not business-event records. A public-sector content approval is a decision with an actor and a rule, and revisions do not capture that.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "OBSERVATION",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "knowledge-agent",
+    "createdAt": "2026-08-19T11:24:51.447277Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-19T11:24:52.899823Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "A revision records that text changed; an approval is a decision taken by an actor under a rule. Reconstructing one from the other means inferring intent from field diffs.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "4767a4af-3256-42f0-8c25-1c5da930323a",
+      "actor": "knowledge-agent",
+      "comment": "Extracted from lead research; claim checked against the source record.",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-19T11:24:52.752556Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "8f76ab5b-e380-4735-a8ee-b45be6e37b5f",
+      "actor": "liberuum",
+      "comment": "Approved: lead corpus extraction.",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-19T11:24:52.899823Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

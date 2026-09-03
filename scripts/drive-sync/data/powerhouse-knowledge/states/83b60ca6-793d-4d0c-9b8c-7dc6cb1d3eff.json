@@ -1,0 +1,116 @@
+{
+  "links": [
+    {
+      "id": "lnk-64f7c52f-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "64f7c52f-dc21-4446-bad6-e88ef492a25c",
+      "targetTitle": "drives-are-documents-in-reactors"
+    },
+    {
+      "id": "lnk-64912b90-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "64912b90-98cd-4097-9938-5a4c3804cd60",
+      "targetTitle": "reactor-mcp-bridges-ai-agents"
+    },
+    {
+      "id": "lnk-98e36a08-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "98e36a08-78cd-4c60-942c-338d4a460334",
+      "targetTitle": "bee-reactor-adapter-overview"
+    },
+    {
+      "id": "lnk-6ddb3f1f-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "6ddb3f1f-b6dd-42d8-85f3-3d956294006e",
+      "targetTitle": "cqrs-separates-write-commands-from-read-queries-for-independent-scaling"
+    },
+    {
+      "id": "lnk-870af605-bui",
+      "linkType": "BUILDS_ON",
+      "targetDocumentId": "870af605-ae8c-49c0-8c3f-0b443985850e",
+      "targetTitle": "reactor-is-a-storage-node-supporting-multiple-adapters"
+    },
+    {
+      "id": "lnk-04aab390-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "04aab390-a057-4c2a-8b54-093a2a859a95",
+      "targetTitle": "Academy \u203a Build \u203a GettingStartedBuilding \u203a Vetra builder tooling",
+      "reason": "Backing page found by content match in the v6.2.2-dev.74 source backfill \u2014 identifiers graphql from the claim appear in this page (text identical at v6.2.2-dev.47 and v6.2.2-dev.74); attribution, not the original extraction record",
+      "confidence": "grounded"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "A Reactor is a library, not a service: it stores and syncs documents while a host application like Switchboard exposes the API",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "77380361-e27d-46cc-9648-fef98047c8b2",
+      "name": "reactor",
+      "topicDocumentId": null
+    },
+    {
+      "id": "97013c90-b70d-4235-b6c8-c8a982dcec8b",
+      "name": "backend",
+      "topicDocumentId": null
+    },
+    {
+      "id": "2ce488e9-baa2-42b9-8538-262dce43413a",
+      "name": "infrastructure",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "A **Reactor** is the Powerhouse library (`@powerhousedao/reactor`) that applies reducers, orders operations into a deterministic log, and routes them to processors and sync channels. It is *not* a service: it has no `main()` and it does not open a port. A **host application** embeds it and supplies storage, network, UI surfaces, and the package registry. When you run `ph vetra --watch`, a local host application starts and embeds a Reactor for you. Reactors provide:\n\n- Document storage and hosting\n- Document synchronization across clients\n- Conflict resolution\n- Operation history verification (by rerunning operations)\n\nReactors can be configured for:\n- Local storage (development/Studio Mode)\n- Centralized cloud storage\n- Decentralized storage networks\n\nThe Reactor has no public API of its own \u2014 that surface belongs to the host. **Switchboard**, the API host that wraps a Reactor, is what exposes the GraphQL subgraphs: system, analytics, and per-model subgraphs such as document-editor, vetra-package, subgraph-module, processor-module and app-module, plus vetra-read-model. Switchboard also provides the WebSocket server for subscriptions and the MCP server for AI agent integration.\n\n_Corrected 2026-08-13 against Powerhouse v6.2.2-dev.45._",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": "v6.2.2-dev.74",
+  "computes": null,
+  "filePath": "apps/academy/docs/academy/03-Build/00-GettingStartedBuilding/04-BuilderTools.md",
+  "noteType": "CONCEPT",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "knowledge-agent",
+    "createdAt": "2026-04-02T12:00:00.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-09-02T21:32:49.216Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "The Reactor is a library handling document storage, conflict resolution, and operation verification. Host applications such as Switchboard expose the GraphQL/MCP API.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "466bb55f-3d15-495e-9a74-55c6e85db5dd",
+      "actor": "claude",
+      "comment": "Knowledge registered against powerhouse v6.2.2-dev.47",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-14T12:00:00.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "e0e1a918-5b3e-45d5-a273-ab6416370d42",
+      "actor": "liberuum",
+      "comment": "Canonical as of powerhouse v6.2.2-dev.47",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-14T12:00:00.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

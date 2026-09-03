@@ -1,0 +1,98 @@
+{
+  "links": [
+    {
+      "id": "lnk-c12de121-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "c12de121-f575-4c71-95f7-bd298533dd51",
+      "targetTitle": "Academy \u203a Reference \u203a Reactor \u203a Processors",
+      "reason": "The note names apps/academy/docs/academy/04-Reference/01-Reactor/05-Processors.md as its source; page text revised between v6.2.2-dev.47 and v6.2.2-dev.74 \u2014 re-verified in the v6.2.2-dev.74 pass",
+      "confidence": "grounded"
+    },
+    {
+      "id": "lnk-6a3275cd-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "6a3275cd-d71e-4342-8cd3-3fb29b8fe58c",
+      "targetTitle": "processors-receive-operations-with-context"
+    },
+    {
+      "id": "lnk-3289f3d4-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "3289f3d4-7ee0-453a-8811-a7e2027fb5de",
+      "targetTitle": "Error Handling"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "A throwing processor is isolated and never retried automatically \u2014 it goes to errored and its cursor freezes",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "b415333e-5ece-4c80-ab66-9b6244729480",
+      "name": "processors",
+      "topicDocumentId": null
+    },
+    {
+      "id": "af21700b-be8e-4a7e-bb49-46eea06c34ec",
+      "name": "error-handling",
+      "topicDocumentId": null
+    },
+    {
+      "id": "995afd39-4a5a-4720-bef1-64b50bc0dbf3",
+      "name": "resilience",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "Processors run in parallel, each wrapped in its own try/catch. When `onOperations` throws, the manager does three things and then stops:\n\n1. The processor moves to `status: \"errored\"`.\n2. `lastError` and `lastErrorTimestamp` are recorded on its `TrackedProcessor`.\n3. **Its cursor stops advancing.**\n\nOther processors are unaffected \u2014 a failure is contained to one processor on one drive, not the batch and not the reactor. The frozen cursor is the deliberate half of the design: because `lastOrdinal` does not move past the failing batch, no operations are lost. Once the processor is revived it resumes from exactly where it broke.\n\nThe part that surprises people is that **there is no automatic retry.** An errored processor stays errored and is skipped on every later batch, indefinitely. Recovery is explicitly triggered, by one of:\n\n- `tracked.retry()` \u2014 re-activates the processor and re-runs backfill from its frozen cursor.\n- Re-registering its factory \u2014 registering the same `identifier` unregisters the prior factory first, so this is idempotent.\n\nNothing about this is visible unless you look. Inspect via the manager: `get(processorId)` for one, `getAll()` for every tracked processor across all drives.\n\n```typescript\ntype TrackedProcessor = {\n  processorId: string;       // `${factoryId}:${driveId}:${index}`\n  factoryId: string;\n  driveId: string;\n  processorIndex: number;\n  record: ProcessorRecord;\n  lastOrdinal: number;\n  status: ProcessorStatus;   // \"active\" | \"errored\"\n  lastError: string | undefined;\n  lastErrorTimestamp: Date | undefined;\n  retry: () => Promise<void>;\n};\n```\n\nPractically, this means any production processor needs a health check that walks `getAll()` looking for `status: \"errored\"` \u2014 otherwise a read model quietly stops updating and the only symptom is stale data. Note that `onDisconnect` is treated differently: a throw there is caught and logged, never propagated, and does not error the processor.\n\n_Source: apps/academy/docs/academy/04-Reference/01-Reactor/05-Processors.md (Powerhouse v6.2.2-dev.45)._",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": "v6.2.2-dev.74",
+  "computes": null,
+  "filePath": "apps/academy/docs/academy/04-Reference/01-Reactor/05-Processors.md",
+  "noteType": "ARCHITECTURE",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "claude",
+    "createdAt": "2026-08-13T14:34:34.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-09-02T22:26:28.391Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Other processors are unaffected. Recovery requires tracked.retry() or re-registering the factory. Inspect via getAll().",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "2a545833-916e-4f04-ac13-80dbe04d004b",
+      "actor": "claude",
+      "comment": "Knowledge registered against powerhouse v6.2.2-dev.47",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-14T12:00:00.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "d54b6036-fa70-4038-8397-8c7e8f6769af",
+      "actor": "liberuum",
+      "comment": "Canonical as of powerhouse v6.2.2-dev.47",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-14T12:00:00.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

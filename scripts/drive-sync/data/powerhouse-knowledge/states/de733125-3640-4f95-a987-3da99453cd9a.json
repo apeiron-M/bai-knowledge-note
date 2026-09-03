@@ -1,0 +1,115 @@
+{
+  "links": [
+    {
+      "id": "lnk-2e37783f-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "2e37783f-f7f2-4276-8860-38855654a0d2",
+      "targetTitle": "Package \u203a reactor-api \u203a ARCHITECTURE \u2014 HTTP & Gateway Abstraction",
+      "reason": "Extracted from packages/reactor-api/ARCHITECTURE.md at v6.2.2-dev.74 \u2014 Auth threading (types, how it works, WeakMap lifecycle); Request lifecycle",
+      "confidence": "grounded"
+    },
+    {
+      "id": "lnk-3f0780d0-bui",
+      "linkType": "BUILDS_ON",
+      "targetDocumentId": "3f0780d0-755e-4153-8e5f-c72a43abdcfe",
+      "targetTitle": "sb-resolve-caller-identity",
+      "reason": "RESOLVE_CALLER_IDENTITY changes exactly this middleware's behaviour: it populates ctx.user without switching the policy, so resolvers see a caller under an OPEN policy",
+      "confidence": "grounded"
+    },
+    {
+      "id": "lnk-c281c173-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "c281c173-8126-4ade-9c50-240e30eaff23",
+      "targetTitle": "sb-credential-recheck",
+      "reason": "authenticateRequest is where the five-step credential verification runs before any context is stored",
+      "confidence": "grounded"
+    },
+    {
+      "id": "lnk-49106443-bui",
+      "linkType": "BUILDS_ON",
+      "targetDocumentId": "49106443-8aa1-4246-971c-a934ef9313fb",
+      "targetTitle": "api-fetch-handler-boundary",
+      "reason": "The WeakMap key is the Request that crosses the FetchHandler boundary, so the auth handoff is a consequence of that design rather than an addition to it",
+      "confidence": "grounded"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Auth context reaches GraphQL resolvers through a WeakMap keyed on the Fetch Request object, so nothing is mutated and nothing leaks",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "0963dbb6-5217-42bf-860f-2284c96a50b6",
+      "name": "reactor-api",
+      "topicDocumentId": null
+    },
+    {
+      "id": "3397af79-062b-4f1e-b6f8-1b7451265841",
+      "name": "authentication",
+      "topicDocumentId": null
+    },
+    {
+      "id": "9cda503c-7598-4bf2-a664-a84c70a9495f",
+      "name": "graphql",
+      "topicDocumentId": null
+    },
+    {
+      "id": "4b7a92e3-321e-40c2-b8b0-ff0174b90e92",
+      "name": "architecture",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "Authentication runs at the HTTP edge but resolvers need its result, and `reactor-api` threads it with a `WeakMap` keyed on the Fetch API `Request` object:\n\n```ts\ninterface AuthContext { user?: User; admins: string[]; auth_enabled: boolean; }\ntype AuthFetchMiddleware = (handler: FetchHandler) => FetchHandler;\n```\n\nThe flow: the HTTP adapter bridges the framework request into a Fetch `Request`; `authFetchMiddleware` calls `AuthService.authenticateRequest(request)` \u2014 an **invalid token returns a 401 immediately**, while a valid token or no token yields an `AuthContext`; the middleware does `authContextMap.set(request, authCtx)` and calls the wrapped handler; the gateway's `contextFactory(request)` does `getAuthContext(request)` and builds the GraphQL `Context { user, isAdmin, headers, db, \u2026 }`.\n\nTwo properties make this better than the alternatives. Because **the same `Request` instance** travels from `mount()` through to `createHandler()`, the lookup is guaranteed to find the context \u2014 without mutating shared state or threading an extra argument through every signature. And `WeakMap` entries are **garbage-collected with the `Request`**, so there is no manual cleanup and no leak on a long-lived server.\n\nTwo API notes: `getAuthContext` is deliberately **not exported** from the package index \u2014 it is an internal coupling point between `auth-middleware.ts` and `graphql-manager.ts`; and `AuthService.authenticate()`, the old Express middleware signature, is kept for backwards compatibility but is `@deprecated` in favour of `authenticateRequest()`.\n\nThe middleware's own branch table is the authoritative answer to \"when is there no user\": auth disabled, an `OPTIONS`/`GET` request, or no token \u2014 all produce a context without a user; only a **bad** token short-circuits with a 401.\n\n## Provenance\n- `packages/reactor-api/ARCHITECTURE.md` \u2014 Auth threading (types, how it works, WeakMap lifecycle); Request lifecycle\n\n_Extracted from the Powerhouse repository at **v6.2.2-dev.74**._",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": "v6.2.2-dev.74",
+  "computes": null,
+  "filePath": "packages/reactor-api/ARCHITECTURE.md",
+  "noteType": "PATTERN",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "knowledge-agent",
+    "createdAt": "2026-09-03T07:38:14.274Z",
+    "sessionId": null,
+    "updatedAt": "2026-09-03T07:38:15.280Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "The same Request instance travels from mount() to createHandler(), so the lookup always finds the context set during authentication; entries are collected with the Request, so long-lived servers.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "eb6a97a5-15e3-4a8a-b6ab-92d884142111",
+      "actor": "knowledge-agent",
+      "comment": "extracted from packages/reactor-api/ARCHITECTURE.md at v6.2.2-dev.74",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-09-03T07:38:14.760Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "03574058-4414-49ec-9edf-e30fce9ac177",
+      "actor": "liberuum",
+      "comment": "claim checked against the cited file at the pinned tag",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-09-03T07:38:15.280Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

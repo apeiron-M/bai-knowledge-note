@@ -1,0 +1,622 @@
+[
+  {
+    "index": 0,
+    "hash": "",
+    "timestampUtcMs": "2026-09-02T22:11:46.814Z",
+    "action": {
+      "type": "CREATE_DOCUMENT",
+      "input": {
+        "meta": {},
+        "name": "sb-credential-recheck",
+        "slug": "",
+        "model": "bai/knowledge-note",
+        "branch": "main",
+        "signing": {
+          "nonce": "",
+          "publicKey": {},
+          "signature": "c281c173-8126-4ade-9c50-240e30eaff23",
+          "documentType": "bai/knowledge-note",
+          "createdAtUtcIso": "2026-09-02T22:11:46.814Z"
+        },
+        "version": 0,
+        "documentId": "c281c173-8126-4ade-9c50-240e30eaff23",
+        "protocolVersions": {
+          "base-reducer": 2
+        }
+      },
+      "timestampUtcMs": "2026-09-02T22:11:46.814Z"
+    }
+  },
+  {
+    "index": 0,
+    "hash": "mNKj/HGXooTERIIiPQXuo9ibeWU=",
+    "timestampUtcMs": "2026-09-02T22:11:46.708Z",
+    "action": {
+      "type": "SET_TITLE",
+      "input": {
+        "title": "The Renown credential re-check is the only binding between a token's claimed address and its signing key, so skipCredentialVerification is refused at boot outside test",
+        "updatedAt": "2026-09-02T22:11:46.708Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:11:46.708Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "",
+    "timestampUtcMs": "2026-09-02T22:11:46.814Z",
+    "action": {
+      "type": "UPGRADE_DOCUMENT",
+      "input": {
+        "model": "bai/knowledge-note",
+        "toVersion": 1,
+        "documentId": "c281c173-8126-4ade-9c50-240e30eaff23",
+        "fromVersion": 0,
+        "initialState": {
+          "auth": {
+            "grants": [],
+            "version": 0
+          },
+          "local": {
+            "lastViewedAt": null,
+            "personalTags": []
+          },
+          "global": {
+            "links": [],
+            "model": null,
+            "scope": null,
+            "title": null,
+            "editor": null,
+            "inputs": [],
+            "models": [],
+            "status": "DRAFT",
+            "topics": [],
+            "content": null,
+            "context": null,
+            "modelId": null,
+            "modules": [],
+            "outputs": [],
+            "version": null,
+            "computes": null,
+            "filePath": null,
+            "noteType": null,
+            "severity": null,
+            "hooksUsed": [],
+            "rootCause": null,
+            "confidence": null,
+            "consumedBy": [],
+            "provenance": null,
+            "sourceType": null,
+            "targetType": null,
+            "cardinality": null,
+            "description": null,
+            "alternatives": [],
+            "consequences": [],
+            "errorMessage": null,
+            "relationType": null,
+            "correctPattern": null,
+            "decisionStatus": null,
+            "dispatchTargets": [],
+            "lifecycleEvents": []
+          },
+          "document": {
+            "hash": {
+              "encoding": "base64",
+              "algorithm": "sha1"
+            },
+            "version": 1
+          }
+        }
+      },
+      "timestampUtcMs": "2026-09-02T22:11:46.814Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "2aiZRdR5VRYX6gzLbwFptJvTn1k=",
+    "timestampUtcMs": "2026-09-02T22:11:46.708Z",
+    "action": {
+      "type": "SET_DESCRIPTION",
+      "input": {
+        "updatedAt": "2026-09-02T22:11:46.708Z",
+        "description": "Decode the JWT, validate the W3C credential and issuer, re-check the credential still exists, extract the user. Skipping the re-check allows spoofing; boot refuses it unless in test or forced."
+      },
+      "timestampUtcMs": "2026-09-02T22:11:46.708Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "",
+    "timestampUtcMs": "2026-09-02T22:19:28.540Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "metadata": {
+          "reason": "Extracted from apps/switchboard/Auth.md at v6.2.2-dev.74 \u2014 Verifiable Credentials System \u203a Verification Process; Authorization \u203a AuthConfig.skipCredentialVerification; 'Which Renown Instance Is Used' (TTL cache)",
+          "confidence": "grounded"
+        },
+        "sourceId": "c281c173-8126-4ade-9c50-240e30eaff23",
+        "targetId": "3729bcb2-e103-4c58-9152-ba3d3782bf19",
+        "relationshipType": "DERIVED_FROM"
+      },
+      "timestampUtcMs": "2026-09-02T22:19:28.540Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "F5Aj2jiQLGXg9BzwmFYwKv7c06Q=",
+    "timestampUtcMs": "2026-09-02T22:11:46.708Z",
+    "action": {
+      "type": "SET_NOTE_TYPE",
+      "input": {
+        "noteType": "PATTERN",
+        "updatedAt": "2026-09-02T22:11:46.708Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:11:46.708Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "",
+    "timestampUtcMs": "2026-09-02T22:19:29.703Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "metadata": {
+          "reason": "The DID and credential minted at Renown login are what step 4 re-checks on every switchboard request",
+          "confidence": "grounded"
+        },
+        "sourceId": "c281c173-8126-4ade-9c50-240e30eaff23",
+        "targetId": "5646522f-bc2d-4257-bfa7-a455e5855197",
+        "relationshipType": "BUILDS_ON"
+      },
+      "timestampUtcMs": "2026-09-02T22:19:29.703Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "lXe4ckTJ2faryd51MlqnUf+GiYQ=",
+    "timestampUtcMs": "2026-09-02T22:11:46.708Z",
+    "action": {
+      "type": "SET_CONTENT",
+      "input": {
+        "content": "Switchboard authentication is challenge\u2013response with a wallet signature that ends in a JWT bearer carrying a W3C Verifiable Credential (`credentialSubject: { chainId, networkId, address }`, an issuer DID and a proof). Every request's token is verified in five steps:\n\n1. **Token decoding** \u2014 extract the credential from the JWT\n2. **Credential validation** \u2014 verify against W3C standards\n3. **Issuer verification** \u2014 check the issuer's authenticity\n4. **Credential existence check** \u2014 validate the credential still exists and is valid, against a remote Renown/Switchboard or this switchboard's own read model\n5. **User extraction** \u2014 build the user object from the verified credential\n\nStep 4 is the load-bearing one. The `AuthConfig` type documents `skipCredentialVerification` with a warning in capitals: it \"skips the Renown credential re-check, **the only binding between a token's claimed address and its signing key** \u2014 allows identity spoofing.\" It is therefore **refused at boot** unless `VITEST` / `NODE_ENV=test` is set or the operator passes `ALLOW_INSECURE_SKIP_CREDENTIAL_VERIFICATION=true`.\n\nEither verification source re-verifies the credential's EIP-712 proof and re-checks expiry and delegation binding, so a locally stored credential is held to the same standard as a remote one. Successful checks are cached per identity for `CREDENTIAL_VERIFICATION_CACHE_TTL_MS` (60 s default), so revocation lags by up to that TTL.\n\nAuthentication produces a verified user; authorization is then a separate decision \u2014 the global `admins` list bypasses every check, document owners hold implicit ADMIN, and per-document READ / WRITE / ADMIN grants are inherited from protected ancestors.\n\n_Source: apps/switchboard/Auth.md (Powerhouse v6.2.2-dev.74)._\n\n## Provenance\n- `apps/switchboard/Auth.md` \u2014 Verifiable Credentials System \u203a Verification Process; Authorization \u203a AuthConfig.skipCredentialVerification; 'Which Renown Instance Is Used' (TTL cache)\n\n_Recorded from the Powerhouse repository at **v6.2.2-dev.74** during the v6.2.2-dev.74 source sync._",
+        "updatedAt": "2026-09-02T22:11:46.708Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:11:46.708Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "",
+    "timestampUtcMs": "2026-09-02T22:19:30.177Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "metadata": {
+          "reason": "Both notes make the same point from two sides: a signature or token is not proof of identity until the address\u2194key binding is verified",
+          "confidence": "grounded"
+        },
+        "sourceId": "c281c173-8126-4ade-9c50-240e30eaff23",
+        "targetId": "7219d48a-f02f-491d-8f12-403450e2909c",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-09-02T22:19:30.177Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "yr8F9D3/E6AYDVyBO5f0VBJp/Ak=",
+    "timestampUtcMs": "2026-09-02T22:11:46.708Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "d7a96fe8-3fa2-4367-a920-0ee6575dffa6",
+        "name": "switchboard"
+      },
+      "timestampUtcMs": "2026-09-02T22:11:46.708Z"
+    }
+  },
+  {
+    "index": 5,
+    "hash": "",
+    "timestampUtcMs": "2026-09-02T22:19:30.634Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "metadata": {
+          "reason": "auth.renown.source decides which instance answers the existence check in step 4",
+          "confidence": "grounded"
+        },
+        "sourceId": "c281c173-8126-4ade-9c50-240e30eaff23",
+        "targetId": "a8d60c71-1ba9-4c16-b7c4-75bdbed309d2",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-09-02T22:19:30.634Z"
+    }
+  },
+  {
+    "index": 5,
+    "hash": "/gxNJ+Do3MagAYiKywvzFSTrgPE=",
+    "timestampUtcMs": "2026-09-02T22:11:46.708Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "fed59fee-fa8d-4d1f-bb1d-6e47ec9b80f3",
+        "name": "authentication"
+      },
+      "timestampUtcMs": "2026-09-02T22:11:46.708Z"
+    }
+  },
+  {
+    "index": 6,
+    "hash": "",
+    "timestampUtcMs": "2026-09-02T22:23:29.869Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "metadata": {
+          "reason": "Extracted from apps/switchboard/Auth.md at v6.2.2-dev.74 \u2014 Verifiable Credentials System \u203a Verification Process; Authorization \u203a AuthConfig.skipCredentialVerification; 'Which Renown Instance Is Used' (TTL cache)",
+          "confidence": "grounded"
+        },
+        "sourceId": "c281c173-8126-4ade-9c50-240e30eaff23",
+        "targetId": "3729bcb2-e103-4c58-9152-ba3d3782bf19",
+        "relationshipType": "DERIVED_FROM"
+      },
+      "timestampUtcMs": "2026-09-02T22:23:29.869Z"
+    }
+  },
+  {
+    "index": 6,
+    "hash": "gwXSf/8RePyesvWQDtZI3YbuEd8=",
+    "timestampUtcMs": "2026-09-02T22:11:46.708Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "60e172bf-f90f-4fe9-8837-21eea1560209",
+        "name": "security"
+      },
+      "timestampUtcMs": "2026-09-02T22:11:46.708Z"
+    }
+  },
+  {
+    "index": 7,
+    "hash": "",
+    "timestampUtcMs": "2026-09-02T22:23:30.462Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "metadata": {
+          "reason": "The DID and credential minted at Renown login are what step 4 re-checks on every switchboard request",
+          "confidence": "grounded"
+        },
+        "sourceId": "c281c173-8126-4ade-9c50-240e30eaff23",
+        "targetId": "5646522f-bc2d-4257-bfa7-a455e5855197",
+        "relationshipType": "BUILDS_ON"
+      },
+      "timestampUtcMs": "2026-09-02T22:23:30.462Z"
+    }
+  },
+  {
+    "index": 7,
+    "hash": "nxmZACBOWfX0DeClVCWQPbWH8UI=",
+    "timestampUtcMs": "2026-09-02T22:11:46.708Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "9537f9ef-717c-442e-b455-f087409d5244",
+        "name": "renown"
+      },
+      "timestampUtcMs": "2026-09-02T22:11:46.708Z"
+    }
+  },
+  {
+    "index": 8,
+    "hash": "",
+    "timestampUtcMs": "2026-09-02T22:23:30.942Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "metadata": {
+          "reason": "Both notes make the same point from two sides: a signature or token is not proof of identity until the address\u2194key binding is verified",
+          "confidence": "grounded"
+        },
+        "sourceId": "c281c173-8126-4ade-9c50-240e30eaff23",
+        "targetId": "7219d48a-f02f-491d-8f12-403450e2909c",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-09-02T22:23:30.942Z"
+    }
+  },
+  {
+    "index": 8,
+    "hash": "iPbj4HUa/kgWLUZn7VXSwprcRvM=",
+    "timestampUtcMs": "2026-09-02T22:11:46.708Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "version",
+        "value": "v6.2.2-dev.74",
+        "updatedAt": "2026-09-02T22:11:46.708Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:11:46.708Z"
+    }
+  },
+  {
+    "index": 9,
+    "hash": "",
+    "timestampUtcMs": "2026-09-02T22:23:31.401Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "metadata": {
+          "reason": "auth.renown.source decides which instance answers the existence check in step 4",
+          "confidence": "grounded"
+        },
+        "sourceId": "c281c173-8126-4ade-9c50-240e30eaff23",
+        "targetId": "a8d60c71-1ba9-4c16-b7c4-75bdbed309d2",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-09-02T22:23:31.401Z"
+    }
+  },
+  {
+    "index": 9,
+    "hash": "pxK5bUEpkrdsgGj2wHQVXNAMqZI=",
+    "timestampUtcMs": "2026-09-02T22:11:46.708Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "filePath",
+        "value": "apps/switchboard/Auth.md",
+        "updatedAt": "2026-09-02T22:11:46.708Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:11:46.708Z"
+    }
+  },
+  {
+    "index": 10,
+    "hash": "cuE2NQS5wsYFndxIFwZEC6WnCoo=",
+    "timestampUtcMs": "2026-09-02T22:11:46.708Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "confidence",
+        "value": "grounded",
+        "updatedAt": "2026-09-02T22:11:46.708Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:11:46.708Z"
+    }
+  },
+  {
+    "index": 11,
+    "hash": "6wmW+IOmBCKG7f0l+rFDpIv/AuQ=",
+    "timestampUtcMs": "2026-09-02T22:11:49.323Z",
+    "action": {
+      "type": "SET_PROVENANCE",
+      "input": {
+        "author": "knowledge-agent",
+        "createdAt": "2026-09-02T22:11:49.323Z",
+        "sourceOrigin": "DERIVED"
+      },
+      "timestampUtcMs": "2026-09-02T22:11:49.323Z"
+    }
+  },
+  {
+    "index": 12,
+    "hash": "omqdRyXmQCmXvwOO0VAE9H7z19c=",
+    "timestampUtcMs": "2026-09-02T22:11:49.797Z",
+    "action": {
+      "type": "SUBMIT_FOR_REVIEW",
+      "input": {
+        "id": "f7cd4135-439d-42e9-8bd0-621b2ad5959f",
+        "actor": "knowledge-agent",
+        "comment": "extracted from the Powerhouse repository at v6.2.2-dev.74",
+        "timestamp": "2026-09-02T22:11:49.797Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:11:49.797Z"
+    }
+  },
+  {
+    "index": 13,
+    "hash": "DKC2MfsVwTwYBMSUhMesjH9rROc=",
+    "timestampUtcMs": "2026-09-02T22:11:50.351Z",
+    "action": {
+      "type": "APPROVE_NOTE",
+      "input": {
+        "id": "b53cb72b-f17e-4714-ad49-9d0b327b13d5",
+        "actor": "liberuum",
+        "comment": "claim checked against the cited repository file at the pinned tag",
+        "timestamp": "2026-09-02T22:11:50.351Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:11:50.351Z"
+    }
+  },
+  {
+    "index": 14,
+    "hash": "JoFgsq2xS8ukGuSjCVBmuigdCR0=",
+    "timestampUtcMs": "2026-09-02T22:16:08.423Z",
+    "action": {
+      "type": "SET_TITLE",
+      "input": {
+        "title": "The Renown credential re-check is the only binding between a token's claimed address and its signing key, so skipCredentialVerification is refused at boot outside test",
+        "updatedAt": "2026-09-02T22:16:08.423Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:16:08.423Z"
+    }
+  },
+  {
+    "index": 15,
+    "hash": "JoFgsq2xS8ukGuSjCVBmuigdCR0=",
+    "timestampUtcMs": "2026-09-02T22:16:08.423Z",
+    "action": {
+      "type": "SET_DESCRIPTION",
+      "input": {
+        "updatedAt": "2026-09-02T22:16:08.423Z",
+        "description": "Decode the JWT, validate the W3C credential and issuer, re-check the credential still exists, extract the user. Skipping the re-check allows spoofing; boot refuses it unless in test or forced."
+      },
+      "timestampUtcMs": "2026-09-02T22:16:08.423Z"
+    }
+  },
+  {
+    "index": 16,
+    "hash": "JoFgsq2xS8ukGuSjCVBmuigdCR0=",
+    "timestampUtcMs": "2026-09-02T22:16:08.423Z",
+    "action": {
+      "type": "SET_NOTE_TYPE",
+      "input": {
+        "noteType": "PATTERN",
+        "updatedAt": "2026-09-02T22:16:08.423Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:16:08.423Z"
+    }
+  },
+  {
+    "index": 17,
+    "hash": "JoFgsq2xS8ukGuSjCVBmuigdCR0=",
+    "timestampUtcMs": "2026-09-02T22:16:08.423Z",
+    "action": {
+      "type": "SET_CONTENT",
+      "input": {
+        "content": "Switchboard authentication is challenge\u2013response with a wallet signature that ends in a JWT bearer carrying a W3C Verifiable Credential (`credentialSubject: { chainId, networkId, address }`, an issuer DID and a proof). Every request's token is verified in five steps:\n\n1. **Token decoding** \u2014 extract the credential from the JWT\n2. **Credential validation** \u2014 verify against W3C standards\n3. **Issuer verification** \u2014 check the issuer's authenticity\n4. **Credential existence check** \u2014 validate the credential still exists and is valid, against a remote Renown/Switchboard or this switchboard's own read model\n5. **User extraction** \u2014 build the user object from the verified credential\n\nStep 4 is the load-bearing one. The `AuthConfig` type documents `skipCredentialVerification` with a warning in capitals: it \"skips the Renown credential re-check, **the only binding between a token's claimed address and its signing key** \u2014 allows identity spoofing.\" It is therefore **refused at boot** unless `VITEST` / `NODE_ENV=test` is set or the operator passes `ALLOW_INSECURE_SKIP_CREDENTIAL_VERIFICATION=true`.\n\nEither verification source re-verifies the credential's EIP-712 proof and re-checks expiry and delegation binding, so a locally stored credential is held to the same standard as a remote one. Successful checks are cached per identity for `CREDENTIAL_VERIFICATION_CACHE_TTL_MS` (60 s default), so revocation lags by up to that TTL.\n\nAuthentication produces a verified user; authorization is then a separate decision \u2014 the global `admins` list bypasses every check, document owners hold implicit ADMIN, and per-document READ / WRITE / ADMIN grants are inherited from protected ancestors.\n\n_Source: apps/switchboard/Auth.md (Powerhouse v6.2.2-dev.74)._\n\n## Provenance\n- `apps/switchboard/Auth.md` \u2014 Verifiable Credentials System \u203a Verification Process; Authorization \u203a AuthConfig.skipCredentialVerification; 'Which Renown Instance Is Used' (TTL cache)\n\n_Recorded from the Powerhouse repository at **v6.2.2-dev.74** during the v6.2.2-dev.74 source sync._",
+        "updatedAt": "2026-09-02T22:16:08.423Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:16:08.423Z"
+    }
+  },
+  {
+    "index": 18,
+    "hash": "JoFgsq2xS8ukGuSjCVBmuigdCR0=",
+    "timestampUtcMs": "2026-09-02T22:16:08.423Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "version",
+        "value": "v6.2.2-dev.74",
+        "updatedAt": "2026-09-02T22:16:08.423Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:16:08.423Z"
+    }
+  },
+  {
+    "index": 19,
+    "hash": "JoFgsq2xS8ukGuSjCVBmuigdCR0=",
+    "timestampUtcMs": "2026-09-02T22:16:08.423Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "filePath",
+        "value": "apps/switchboard/Auth.md",
+        "updatedAt": "2026-09-02T22:16:08.423Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:16:08.423Z"
+    }
+  },
+  {
+    "index": 20,
+    "hash": "JoFgsq2xS8ukGuSjCVBmuigdCR0=",
+    "timestampUtcMs": "2026-09-02T22:16:08.423Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "confidence",
+        "value": "grounded",
+        "updatedAt": "2026-09-02T22:16:08.423Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:16:08.423Z"
+    }
+  },
+  {
+    "index": 21,
+    "hash": "LPdtgqANlsMU/F4ot5uJ0smyURM=",
+    "timestampUtcMs": "2026-09-02T22:20:44.812Z",
+    "action": {
+      "type": "SET_TITLE",
+      "input": {
+        "title": "The Renown credential re-check is the only binding between a token's claimed address and its signing key, so skipCredentialVerification is refused at boot outside test",
+        "updatedAt": "2026-09-02T22:20:44.812Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:20:44.812Z"
+    }
+  },
+  {
+    "index": 22,
+    "hash": "LPdtgqANlsMU/F4ot5uJ0smyURM=",
+    "timestampUtcMs": "2026-09-02T22:20:44.812Z",
+    "action": {
+      "type": "SET_DESCRIPTION",
+      "input": {
+        "updatedAt": "2026-09-02T22:20:44.812Z",
+        "description": "Decode the JWT, validate the W3C credential and issuer, re-check the credential still exists, extract the user. Skipping the re-check allows spoofing; boot refuses it unless in test or forced."
+      },
+      "timestampUtcMs": "2026-09-02T22:20:44.812Z"
+    }
+  },
+  {
+    "index": 23,
+    "hash": "LPdtgqANlsMU/F4ot5uJ0smyURM=",
+    "timestampUtcMs": "2026-09-02T22:20:44.812Z",
+    "action": {
+      "type": "SET_NOTE_TYPE",
+      "input": {
+        "noteType": "PATTERN",
+        "updatedAt": "2026-09-02T22:20:44.812Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:20:44.812Z"
+    }
+  },
+  {
+    "index": 24,
+    "hash": "LPdtgqANlsMU/F4ot5uJ0smyURM=",
+    "timestampUtcMs": "2026-09-02T22:20:44.812Z",
+    "action": {
+      "type": "SET_CONTENT",
+      "input": {
+        "content": "Switchboard authentication is challenge\u2013response with a wallet signature that ends in a JWT bearer carrying a W3C Verifiable Credential (`credentialSubject: { chainId, networkId, address }`, an issuer DID and a proof). Every request's token is verified in five steps:\n\n1. **Token decoding** \u2014 extract the credential from the JWT\n2. **Credential validation** \u2014 verify against W3C standards\n3. **Issuer verification** \u2014 check the issuer's authenticity\n4. **Credential existence check** \u2014 validate the credential still exists and is valid, against a remote Renown/Switchboard or this switchboard's own read model\n5. **User extraction** \u2014 build the user object from the verified credential\n\nStep 4 is the load-bearing one. The `AuthConfig` type documents `skipCredentialVerification` with a warning in capitals: it \"skips the Renown credential re-check, **the only binding between a token's claimed address and its signing key** \u2014 allows identity spoofing.\" It is therefore **refused at boot** unless `VITEST` / `NODE_ENV=test` is set or the operator passes `ALLOW_INSECURE_SKIP_CREDENTIAL_VERIFICATION=true`.\n\nEither verification source re-verifies the credential's EIP-712 proof and re-checks expiry and delegation binding, so a locally stored credential is held to the same standard as a remote one. Successful checks are cached per identity for `CREDENTIAL_VERIFICATION_CACHE_TTL_MS` (60 s default), so revocation lags by up to that TTL.\n\nAuthentication produces a verified user; authorization is then a separate decision \u2014 the global `admins` list bypasses every check, document owners hold implicit ADMIN, and per-document READ / WRITE / ADMIN grants are inherited from protected ancestors.\n\n_Source: apps/switchboard/Auth.md (Powerhouse v6.2.2-dev.74)._\n\n## Provenance\n- `apps/switchboard/Auth.md` \u2014 Verifiable Credentials System \u203a Verification Process; Authorization \u203a AuthConfig.skipCredentialVerification; 'Which Renown Instance Is Used' (TTL cache)\n\n_Recorded from the Powerhouse repository at **v6.2.2-dev.74** during the v6.2.2-dev.74 source sync._",
+        "updatedAt": "2026-09-02T22:20:44.812Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:20:44.812Z"
+    }
+  },
+  {
+    "index": 25,
+    "hash": "LPdtgqANlsMU/F4ot5uJ0smyURM=",
+    "timestampUtcMs": "2026-09-02T22:20:44.812Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "version",
+        "value": "v6.2.2-dev.74",
+        "updatedAt": "2026-09-02T22:20:44.812Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:20:44.812Z"
+    }
+  },
+  {
+    "index": 26,
+    "hash": "LPdtgqANlsMU/F4ot5uJ0smyURM=",
+    "timestampUtcMs": "2026-09-02T22:20:44.812Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "filePath",
+        "value": "apps/switchboard/Auth.md",
+        "updatedAt": "2026-09-02T22:20:44.812Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:20:44.812Z"
+    }
+  },
+  {
+    "index": 27,
+    "hash": "LPdtgqANlsMU/F4ot5uJ0smyURM=",
+    "timestampUtcMs": "2026-09-02T22:20:44.812Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "confidence",
+        "value": "grounded",
+        "updatedAt": "2026-09-02T22:20:44.812Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:20:44.812Z"
+    }
+  }
+]

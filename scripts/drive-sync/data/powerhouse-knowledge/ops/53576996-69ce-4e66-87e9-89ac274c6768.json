@@ -1,0 +1,276 @@
+[
+  {
+    "index": 0,
+    "hash": "",
+    "timestampUtcMs": "2026-08-19T11:32:02.024Z",
+    "action": {
+      "type": "CREATE_DOCUMENT",
+      "input": {
+        "meta": {},
+        "name": "A Kestra plugin lets pipeline decisions be replayed after Kestra's executions are purged",
+        "slug": "",
+        "model": "bai/knowledge-note",
+        "branch": "main",
+        "signing": {
+          "nonce": "",
+          "publicKey": {},
+          "signature": "53576996-69ce-4e66-87e9-89ac274c6768",
+          "documentType": "bai/knowledge-note",
+          "createdAtUtcIso": "2026-08-19T11:32:02.024Z"
+        },
+        "version": 0,
+        "documentId": "53576996-69ce-4e66-87e9-89ac274c6768",
+        "protocolVersions": {
+          "base-reducer": 2
+        }
+      },
+      "timestampUtcMs": "2026-08-19T11:32:02.024Z"
+    }
+  },
+  {
+    "index": 0,
+    "hash": "SPrQ/wTsq0vdGGETy8KZkS9tNyg=",
+    "timestampUtcMs": "2026-08-19T11:32:01.994Z",
+    "action": {
+      "type": "SET_TITLE",
+      "input": {
+        "title": "A Kestra plugin lets pipeline decisions be replayed after Kestra's executions are purged",
+        "updatedAt": "2026-08-19T11:32:01.994490Z"
+      },
+      "timestampUtcMs": "2026-08-19T11:32:01.994528Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "",
+    "timestampUtcMs": "2026-08-19T11:32:02.024Z",
+    "action": {
+      "type": "UPGRADE_DOCUMENT",
+      "input": {
+        "model": "bai/knowledge-note",
+        "toVersion": 1,
+        "documentId": "53576996-69ce-4e66-87e9-89ac274c6768",
+        "fromVersion": 0,
+        "initialState": {
+          "auth": {
+            "grants": [],
+            "version": 0
+          },
+          "local": {
+            "lastViewedAt": null,
+            "personalTags": []
+          },
+          "global": {
+            "links": [],
+            "model": null,
+            "scope": null,
+            "title": null,
+            "editor": null,
+            "inputs": [],
+            "models": [],
+            "status": "DRAFT",
+            "topics": [],
+            "content": null,
+            "context": null,
+            "modelId": null,
+            "modules": [],
+            "outputs": [],
+            "version": null,
+            "computes": null,
+            "filePath": null,
+            "noteType": null,
+            "severity": null,
+            "hooksUsed": [],
+            "rootCause": null,
+            "confidence": null,
+            "consumedBy": [],
+            "provenance": null,
+            "sourceType": null,
+            "targetType": null,
+            "cardinality": null,
+            "description": null,
+            "alternatives": [],
+            "consequences": [],
+            "errorMessage": null,
+            "relationType": null,
+            "correctPattern": null,
+            "decisionStatus": null,
+            "dispatchTargets": [],
+            "lifecycleEvents": []
+          },
+          "document": {
+            "hash": {
+              "encoding": "base64",
+              "algorithm": "sha1"
+            },
+            "version": 1
+          }
+        }
+      },
+      "timestampUtcMs": "2026-08-19T11:32:02.024Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "9S3RRIOX+n9o5Wc5wqd4/Yi4dbA=",
+    "timestampUtcMs": "2026-08-19T11:32:01.994Z",
+    "action": {
+      "type": "SET_DESCRIPTION",
+      "input": {
+        "updatedAt": "2026-08-19T11:32:01.994532Z",
+        "description": "The plugin dispatches a typed operation at a pipeline decision point; purging Kestra executions then leaves the business decisions intact and replayable from Powerhouse."
+      },
+      "timestampUtcMs": "2026-08-19T11:32:01.994538Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "",
+    "timestampUtcMs": "2026-08-19T11:32:04.935Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "53576996-69ce-4e66-87e9-89ac274c6768",
+        "targetId": "315ffb64-27fb-443a-a8c2-250d278c8c1e",
+        "relationshipType": "DERIVED_FROM"
+      },
+      "timestampUtcMs": "2026-08-19T11:32:04.935Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "1CAdabTY6KkLnyEIuXfgObT+Pf8=",
+    "timestampUtcMs": "2026-08-19T11:32:01.994Z",
+    "action": {
+      "type": "SET_NOTE_TYPE",
+      "input": {
+        "noteType": "INTEGRATION",
+        "updatedAt": "2026-08-19T11:32:01.994540Z"
+      },
+      "timestampUtcMs": "2026-08-19T11:32:01.994545Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "WqDhsidGJSTQV0ktgZ5PT68yOCE=",
+    "timestampUtcMs": "2026-08-19T11:32:01.994Z",
+    "action": {
+      "type": "SET_CONTENT",
+      "input": {
+        "content": "The integration is a Kestra plugin dispatching a typed operation at a pipeline decision point, followed by the now-familiar destructive demonstration: purge Kestra executions and replay the business decisions from Powerhouse.\n\nThe shape matches the n8n demo exactly, which is the useful observation. Orchestrators of every kind treat execution history as operational telemetry with a retention policy, not as a business record, so the same purge-and-replay demonstration lands against a workflow automator and a data orchestrator alike. What differs is the deliverable: n8n needs only its stock HTTP Request node, while Kestra needs a plugin written and maintained.\n\nThe single lead is conapi GmbH in Winzendorf, Austria, marked \"3 \u00b7 later\". A plugin-shaped deliverable against a priority-3 lead is a worse cost ratio than the equivalent n8n work, so this is a candidate for reuse of an existing pattern rather than for original build effort.\n\n---\n\n## Leads sharing this finding (1)\n\n**3 \u00b7 later**\n- conapi GmbH (AT Winzendorf) \u2014 https://conapi.at\n\nVerbatim research text this claim was extracted from:\n\n> Kestra plugin dispatching a typed operation at a pipeline decision point; purge Kestra executions and replay the business decisions from Powerhouse.",
+        "updatedAt": "2026-08-19T11:32:01.994548Z"
+      },
+      "timestampUtcMs": "2026-08-19T11:32:01.994552Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "ib1ckRdIqvFHa8H7ELlIY60YZLk=",
+    "timestampUtcMs": "2026-08-19T11:32:01.994Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "1cb98066-db7e-483a-b1a6-8968a4fd2d13",
+        "name": "leads"
+      },
+      "timestampUtcMs": "2026-08-19T11:32:01.994561Z"
+    }
+  },
+  {
+    "index": 5,
+    "hash": "Tgdx3DJ/+lU3C1i1jqCk/UO/pQI=",
+    "timestampUtcMs": "2026-08-19T11:32:01.994Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "29b09d6f-4545-405e-8a2a-af43e069a424",
+        "name": "kestra"
+      },
+      "timestampUtcMs": "2026-08-19T11:32:01.994569Z"
+    }
+  },
+  {
+    "index": 6,
+    "hash": "MazUnIPc+EVALIDGxTPF4AAJyPg=",
+    "timestampUtcMs": "2026-08-19T11:32:01.994Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "692c2ff7-97ed-4233-b3e1-9eb354b40cf9",
+        "name": "data-pipelines"
+      },
+      "timestampUtcMs": "2026-08-19T11:32:01.994578Z"
+    }
+  },
+  {
+    "index": 7,
+    "hash": "ZhFsrX6Y8vBo4IszWdL9B1Sb3zY=",
+    "timestampUtcMs": "2026-08-19T11:32:01.994Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "cf42eb32-68ec-42cc-92a6-965cffa19c50",
+        "name": "demo-design"
+      },
+      "timestampUtcMs": "2026-08-19T11:32:01.994586Z"
+    }
+  },
+  {
+    "index": 8,
+    "hash": "RbZmKLtmlBH65w/wShVjeMGAxFA=",
+    "timestampUtcMs": "2026-08-19T11:32:01.994Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "b541cbb2-4093-4a4b-b47d-9a430f286953",
+        "name": "replay"
+      },
+      "timestampUtcMs": "2026-08-19T11:32:01.994594Z"
+    }
+  },
+  {
+    "index": 9,
+    "hash": "sY3WdgHvXvFRK53UIZs4k1dragU=",
+    "timestampUtcMs": "2026-08-19T11:32:03.125Z",
+    "action": {
+      "type": "SET_PROVENANCE",
+      "input": {
+        "author": "knowledge-agent",
+        "createdAt": "2026-08-19T11:32:03.125042Z",
+        "sessionId": null,
+        "sourceOrigin": "DERIVED"
+      },
+      "timestampUtcMs": "2026-08-19T11:32:03.125080Z"
+    }
+  },
+  {
+    "index": 10,
+    "hash": "fjkg/FPj5I4T0iEj48s24AZLxqY=",
+    "timestampUtcMs": "2026-08-19T11:32:04.313Z",
+    "action": {
+      "type": "SUBMIT_FOR_REVIEW",
+      "input": {
+        "id": "272f1069-6332-4721-9e06-13403ef0b92d",
+        "actor": "knowledge-agent",
+        "comment": "Extracted from lead research; claim checked against the source record.",
+        "timestamp": "2026-08-19T11:32:04.313709Z"
+      },
+      "timestampUtcMs": "2026-08-19T11:32:04.313731Z"
+    }
+  },
+  {
+    "index": 11,
+    "hash": "p6uAw7tyhfFk5QEDXZ/b61xbzpU=",
+    "timestampUtcMs": "2026-08-19T11:32:04.465Z",
+    "action": {
+      "type": "APPROVE_NOTE",
+      "input": {
+        "id": "41f1e105-f7cf-4407-9020-5e623e8c4604",
+        "actor": "liberuum",
+        "comment": "Approved: lead corpus extraction.",
+        "timestamp": "2026-08-19T11:32:04.465592Z"
+      },
+      "timestampUtcMs": "2026-08-19T11:32:04.465614Z"
+    }
+  }
+]

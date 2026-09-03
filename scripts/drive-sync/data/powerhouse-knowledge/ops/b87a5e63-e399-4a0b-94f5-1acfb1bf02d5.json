@@ -1,0 +1,276 @@
+[
+  {
+    "index": 0,
+    "hash": "",
+    "timestampUtcMs": "2026-08-19T11:24:48.476Z",
+    "action": {
+      "type": "CREATE_DOCUMENT",
+      "input": {
+        "meta": {},
+        "name": "Dagster tracks which data produced which data but not who accepted a materialisation, or u",
+        "slug": "",
+        "model": "bai/knowledge-note",
+        "branch": "main",
+        "signing": {
+          "nonce": "",
+          "publicKey": {},
+          "signature": "b87a5e63-e399-4a0b-94f5-1acfb1bf02d5",
+          "documentType": "bai/knowledge-note",
+          "createdAtUtcIso": "2026-08-19T11:24:48.476Z"
+        },
+        "version": 0,
+        "documentId": "b87a5e63-e399-4a0b-94f5-1acfb1bf02d5",
+        "protocolVersions": {
+          "base-reducer": 2
+        }
+      },
+      "timestampUtcMs": "2026-08-19T11:24:48.476Z"
+    }
+  },
+  {
+    "index": 0,
+    "hash": "H23mWytTLlhW3AuzyEm8DHVBmhs=",
+    "timestampUtcMs": "2026-08-19T11:24:48.157Z",
+    "action": {
+      "type": "SET_TITLE",
+      "input": {
+        "title": "Dagster tracks which data produced which data but not who accepted a materialisation, or under which rule",
+        "updatedAt": "2026-08-19T11:24:48.157523Z"
+      },
+      "timestampUtcMs": "2026-08-19T11:24:48.157577Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "",
+    "timestampUtcMs": "2026-08-19T11:24:48.476Z",
+    "action": {
+      "type": "UPGRADE_DOCUMENT",
+      "input": {
+        "model": "bai/knowledge-note",
+        "toVersion": 1,
+        "documentId": "b87a5e63-e399-4a0b-94f5-1acfb1bf02d5",
+        "fromVersion": 0,
+        "initialState": {
+          "auth": {
+            "grants": [],
+            "version": 0
+          },
+          "local": {
+            "lastViewedAt": null,
+            "personalTags": []
+          },
+          "global": {
+            "links": [],
+            "model": null,
+            "scope": null,
+            "title": null,
+            "editor": null,
+            "inputs": [],
+            "models": [],
+            "status": "DRAFT",
+            "topics": [],
+            "content": null,
+            "context": null,
+            "modelId": null,
+            "modules": [],
+            "outputs": [],
+            "version": null,
+            "computes": null,
+            "filePath": null,
+            "noteType": null,
+            "severity": null,
+            "hooksUsed": [],
+            "rootCause": null,
+            "confidence": null,
+            "consumedBy": [],
+            "provenance": null,
+            "sourceType": null,
+            "targetType": null,
+            "cardinality": null,
+            "description": null,
+            "alternatives": [],
+            "consequences": [],
+            "errorMessage": null,
+            "relationType": null,
+            "correctPattern": null,
+            "decisionStatus": null,
+            "dispatchTargets": [],
+            "lifecycleEvents": []
+          },
+          "document": {
+            "hash": {
+              "encoding": "base64",
+              "algorithm": "sha1"
+            },
+            "version": 1
+          }
+        }
+      },
+      "timestampUtcMs": "2026-08-19T11:24:48.476Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "/gMf5NE3NVD6U7hg/M0qOveHlj8=",
+    "timestampUtcMs": "2026-08-19T11:24:48.157Z",
+    "action": {
+      "type": "SET_DESCRIPTION",
+      "input": {
+        "updatedAt": "2026-08-19T11:24:48.157581Z",
+        "description": "Asset lineage answers 'how' and carries no human accountability; the gap at Neurospace is authority over a materialisation, not provenance of the data itself."
+      },
+      "timestampUtcMs": "2026-08-19T11:24:48.157587Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "",
+    "timestampUtcMs": "2026-08-19T11:24:50.544Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "b87a5e63-e399-4a0b-94f5-1acfb1bf02d5",
+        "targetId": "97c04013-9740-4399-ab41-7304c5fd099e",
+        "relationshipType": "DERIVED_FROM"
+      },
+      "timestampUtcMs": "2026-08-19T11:24:50.544Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "M5tsXhDcVJ8xAZQlnO0+lRT3/Ao=",
+    "timestampUtcMs": "2026-08-19T11:24:48.157Z",
+    "action": {
+      "type": "SET_NOTE_TYPE",
+      "input": {
+        "noteType": "OBSERVATION",
+        "updatedAt": "2026-08-19T11:24:48.157589Z"
+      },
+      "timestampUtcMs": "2026-08-19T11:24:48.157592Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "6vRw86ItPCsVbNctL752OQEuUmE=",
+    "timestampUtcMs": "2026-08-19T11:24:48.157Z",
+    "action": {
+      "type": "SET_CONTENT",
+      "input": {
+        "content": "Dagster's lineage graph is about data: which asset was produced from which other asset, by which computation. That answers how a number came to exist. It does not record that a person accepted a materialisation, or the rule under which they were entitled to accept it.\n\nThe research states the split precisely \u2014 lineage answers 'how', while a decision record answers 'who and under what authority'. The two are not substitutes, and the distinction matters because only the second carries accountability. A pipeline can be perfectly reproducible and still leave nobody answerable for the output that was released downstream.\n\nAt Neurospace, whose work sits on Dagster, that makes the fit additive rather than competitive. Nothing about the lineage graph has to change. What is missing is a separate, attributed record of the human acceptance events that the orchestration already implies but never stores, which is a smaller ask than replacing any part of the data platform.\n\n---\n\n## Leads sharing this finding (1)\n\n**3 \u00b7 later**\n- Neurospace (DK (Aarhus area)) \u2014 https://neurospace.io\n\nVerbatim research text this claim was extracted from:\n\n> Dagster tracks asset lineage \u2014 which data produced which data. It does not track human accountability: who accepted a materialisation, under which rule. Lineage answers 'how'; Powerhouse answers 'who and under what authority'.",
+        "updatedAt": "2026-08-19T11:24:48.157594Z"
+      },
+      "timestampUtcMs": "2026-08-19T11:24:48.157598Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "GkNe0LDkV2WdxwQ+Kjj08P1XTfo=",
+    "timestampUtcMs": "2026-08-19T11:24:48.157Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "7641ddd4-dde4-41d3-a291-d9e7f44132f4",
+        "name": "leads"
+      },
+      "timestampUtcMs": "2026-08-19T11:24:48.157606Z"
+    }
+  },
+  {
+    "index": 5,
+    "hash": "Ft6pgNDis0SKc8DD+k4/YVZrtoE=",
+    "timestampUtcMs": "2026-08-19T11:24:48.157Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "e30651d7-df48-4080-ad22-2b503a4f0222",
+        "name": "dagster"
+      },
+      "timestampUtcMs": "2026-08-19T11:24:48.157612Z"
+    }
+  },
+  {
+    "index": 6,
+    "hash": "yXq4eDoiOEgJwMGR2R9zZEQfOoY=",
+    "timestampUtcMs": "2026-08-19T11:24:48.157Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "5b590033-2f88-4cbb-9fe9-01513c294f2c",
+        "name": "data-lineage"
+      },
+      "timestampUtcMs": "2026-08-19T11:24:48.157619Z"
+    }
+  },
+  {
+    "index": 7,
+    "hash": "TDwXWx+aBo5JiJxzSMbNkCbaD/w=",
+    "timestampUtcMs": "2026-08-19T11:24:48.157Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "a6d2a2b7-3178-4a96-b3f0-a6c4e45802c2",
+        "name": "accountability"
+      },
+      "timestampUtcMs": "2026-08-19T11:24:48.157625Z"
+    }
+  },
+  {
+    "index": 8,
+    "hash": "CVgAv7jupSPBSOQzyPOfvTvBLtk=",
+    "timestampUtcMs": "2026-08-19T11:24:48.157Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "d7a5bbc8-62df-4c28-9729-2013be2b522c",
+        "name": "audit-trail"
+      },
+      "timestampUtcMs": "2026-08-19T11:24:48.157631Z"
+    }
+  },
+  {
+    "index": 9,
+    "hash": "75Kfvid3zzYZpviyIoOozvjtK/E=",
+    "timestampUtcMs": "2026-08-19T11:24:48.578Z",
+    "action": {
+      "type": "SET_PROVENANCE",
+      "input": {
+        "author": "knowledge-agent",
+        "createdAt": "2026-08-19T11:24:48.578364Z",
+        "sessionId": null,
+        "sourceOrigin": "DERIVED"
+      },
+      "timestampUtcMs": "2026-08-19T11:24:48.578402Z"
+    }
+  },
+  {
+    "index": 10,
+    "hash": "Nm68brFUikaWKRP/PrgZfIbujRw=",
+    "timestampUtcMs": "2026-08-19T11:24:49.854Z",
+    "action": {
+      "type": "SUBMIT_FOR_REVIEW",
+      "input": {
+        "id": "d0989003-4f72-4383-aa27-048edc0c2bdd",
+        "actor": "knowledge-agent",
+        "comment": "Extracted from lead research; claim checked against the source record.",
+        "timestamp": "2026-08-19T11:24:49.854403Z"
+      },
+      "timestampUtcMs": "2026-08-19T11:24:49.854423Z"
+    }
+  },
+  {
+    "index": 11,
+    "hash": "ftikhLzwqhls1DNwkaaFD90Y0wM=",
+    "timestampUtcMs": "2026-08-19T11:24:49.999Z",
+    "action": {
+      "type": "APPROVE_NOTE",
+      "input": {
+        "id": "50fd8fd9-7475-4be8-a045-af02e13151f4",
+        "actor": "liberuum",
+        "comment": "Approved: lead corpus extraction.",
+        "timestamp": "2026-08-19T11:24:49.999624Z"
+      },
+      "timestampUtcMs": "2026-08-19T11:24:49.999644Z"
+    }
+  }
+]

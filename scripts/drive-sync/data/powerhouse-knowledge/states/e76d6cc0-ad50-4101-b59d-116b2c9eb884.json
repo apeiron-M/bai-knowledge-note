@@ -1,0 +1,91 @@
+{
+  "links": [
+    {
+      "id": "lnk-ee772782-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "ee772782-5d3e-42c4-a848-f1d3f42cc149",
+      "targetTitle": "service-offering-model-defines-tiered-pricing-with-option-groups-and-service-gro"
+    },
+    {
+      "id": "lnk-11da9c61-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "11da9c61-a825-4c70-a57c-f80b10f569c7",
+      "targetTitle": "analytics-engine-interval-time-series"
+    },
+    {
+      "id": "lnk-16b93b75-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "16b93b75-d1dc-4962-bdf6-4efd9d4e18dd",
+      "targetTitle": "invoice-model-generates-formal-payment-requests"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "pricing-utils provides editor-level formatting and tier price calculations",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "61317784-d44c-40da-9594-27c26c667bfa",
+      "name": "service-offering",
+      "topicDocumentId": null
+    },
+    {
+      "id": "c6af1762-ef36-41b0-9098-7460388f7b9d",
+      "name": "editor-utilities",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "# pricing-utils provides editor-level formatting and tier price calculations\n\nLocated at `editors/service-offering-editor/components/pricing-utils.ts`, this module provides UI-level pricing utilities.\n\n## Key Exports\n\n| Function | Purpose | Used By |\n|----------|---------|--------|\n| `formatPrice(amount, currency)` | Currency formatting with symbol | ServiceCatalog, TheMatrix, TierDefinition, TierPricingOptionsPanel |\n| `calculateTierRecurringPrice(groups, cycle, tierId)` | Sum regular group monthly prices for a tier | TierDefinition |\n| `calculateEffectiveSetupPrice(setupCost)` | Apply setup discount, return base/effective/savings | ServiceCatalog, ServiceGroupSetupCostPanel |\n| `detectMajorityCycle(groups, currentCycle, overrides)` | Find majority billing cycle among groups | TheMatrix |\n| `BILLING_CYCLE_LABELS` / `BILLING_CYCLE_SHORT_LABELS` | Human-readable cycle names | Various dropdowns |\n\nRe-exports `BILLING_CYCLE_MONTHS` from the document model.\n\n---\n\nTopics:\n- [[helper functions]]",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "PATTERN",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "knowledge-agent",
+    "createdAt": "2026-04-03T13:56:00.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-09-03T09:58:59.588Z",
+    "sourceOrigin": "IMPORT"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Located in service-offering-editor/components \u2014 re-exports BILLING_CYCLE_MONTHS and adds formatPrice, calculateTierRecurringPrice, calculateEffectiveSetupPrice, detectMajorityCycle",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "db7df482-f990-48c3-aac8-996aa0833c4e",
+      "actor": "claude",
+      "comment": "Knowledge registered against powerhouse v6.2.2-dev.47",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-14T12:00:00.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "a6f29847-12cb-4eb6-a613-9d754d60fac2",
+      "actor": "liberuum",
+      "comment": "Canonical as of powerhouse v6.2.2-dev.47",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-14T12:00:00.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

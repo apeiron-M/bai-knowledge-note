@@ -1,0 +1,327 @@
+[
+  {
+    "index": 0,
+    "hash": "",
+    "timestampUtcMs": "2026-08-16T12:02:27.269Z",
+    "action": {
+      "type": "CREATE_DOCUMENT",
+      "input": {
+        "meta": {},
+        "name": "skill-skills",
+        "slug": "",
+        "model": "bai/source",
+        "branch": "main",
+        "signing": {
+          "nonce": "",
+          "publicKey": {},
+          "signature": "44c8743e-29ac-41c6-9b24-fc51fc98f733",
+          "documentType": "bai/source",
+          "createdAtUtcIso": "2026-08-16T12:02:27.269Z"
+        },
+        "version": 0,
+        "documentId": "44c8743e-29ac-41c6-9b24-fc51fc98f733",
+        "protocolVersions": {
+          "base-reducer": 2
+        }
+      },
+      "timestampUtcMs": "2026-08-16T12:02:27.269Z"
+    }
+  },
+  {
+    "index": 0,
+    "hash": "pDqPN+3GDybS5/Piz0cv+IL5/Og=",
+    "timestampUtcMs": "2026-08-16T12:02:27.539Z",
+    "action": {
+      "type": "INGEST_SOURCE",
+      "input": {
+        "url": "https://github.com/liberuum/powerhouse-knowledge/blob/main/skills/skills/SKILL.md",
+        "tool": "sync-skills",
+        "title": "Agent skill: skills",
+        "author": "powerhouse-knowledge plugin",
+        "method": "sha256:8a6cca6c01e446b7ac74c33a3ab097cc03b68cb506bd8631cc70cc0941023a7a",
+        "content": "---\nname: skills\ndescription: Find, read, and add agent skills stored in the Knowledge Vault. Use when you need a procedure for working on the vault or the Powerhouse stack and don't know which skill covers it \u2014 ask for what you need in natural language.\n---\n\n# Skill Discovery\n\nThe vault stores every agent skill as knowledge: one PROCEDURE note per\nskill (the searchable index) paired with a `bai/source` holding the full\nSKILL.md text. **Git is canonical** \u2014 the vault is the discovery layer.\nSync is mechanical and incremental (`scripts/sync-skills.mjs`, keyed on\ncontent hash), so the two never drift silently.\n\n## Find a skill (by need, not by name)\n\n```bash\nswitchboard query '{ knowledgeGraphSemanticSearch(driveId: \"<UUID>\", query: \"<what you need to do>\", mode: HYBRID, limit: 5) { similarity node { documentId title description } } }'\n```\n\nSkill notes are recognizable by their `Agent skill: /<name>` title prefix\nand the `agent-skills` topic. To list them all:\n\n```bash\nswitchboard query '{ knowledgeGraphByTopic(driveId: \"<UUID>\", topic: \"agent-skills\") { documentId title description } }'\n```\n\n## Read a skill\n\nThe note is the summary; the FULL executable text lives in the paired\nsource (follow the note's DERIVED_FROM edge, or search sources by title\n`Agent skill: <name>`):\n\n```bash\n# note -> its source\nswitchboard query '{ knowledgeGraphForwardLinks(driveId: \"<UUID>\", documentId: \"<note-id>\") { targetDocumentId linkType } }'\n# read the full SKILL.md text\nswitchboard docs get <source-id> --state --format json   # state.global.content\n```\n\nIf the plugin is installed locally, prefer executing via the command\n(`/powerhouse-knowledge:<name>`) or reading the repo copy \u2014 that is the\ncanonical version. The vault copy is for discovery and for agents that\nonly have Switchboard access.\n\n## Add or update skills\n\n1. Write/edit the `SKILL.md` in the plugin repo under `skills/<name>/`\n   (or any skills directory) \u2014 normal git flow, reviewed like code.\n2. Sync (incremental \u2014 unchanged files are skipped, changed ones update\n   the SAME documents in place, new ones are created; nothing is deleted):\n\n```bash\nnode scripts/sync-skills.mjs --endpoint <switchboard /graphql URL> --drive <uuid-or-slug>\n# extra skill directories:\nnode scripts/sync-skills.mjs --endpoint ... --drive ... --skills-dir /path/to/other/skills\n# preview without writing:\nnode scripts/sync-skills.mjs --endpoint ... --drive ... --dry-run\n```\n\nThere is **no default endpoint** \u2014 ask the user which vault to sync into.\n\nThe script performs the full close-out per skill (source \u2192 EXTRACTED with\nstats, note \u2192 CANONICAL, DERIVED_FROM + MOC CORE_IDEA edges) and verifies\nevery write by read-back. Run it twice: the second run must report\n`0 created, 0 updated, N skipped` \u2014 that is the idempotency proof.\n\n## Staleness detection\n\nEach source stores `sha256:<hash>` of its SKILL.md in the `method` field.\nA health or verify pass can recompute hashes from the repo and flag vault\ncopies that are behind \u2014 treat a mismatch as \"re-run sync\", never as\n\"edit the vault copy\".\n\nIf \"$ARGUMENTS\" is provided, treat it as the need description and run the\nsemantic search with it.\n",
+        "createdAt": "2026-08-16T12:02:27.539Z",
+        "createdBy": "skill-sync",
+        "sourceType": "DOCUMENTATION",
+        "description": "Find, read, and add agent skills stored in the Knowledge Vault. Use when you need a procedure for working on the vault or the Powerhouse stack and don't know which skill covers it \u2014 ask for what you n"
+      },
+      "timestampUtcMs": "2026-08-16T12:02:27.539Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "",
+    "timestampUtcMs": "2026-08-16T12:02:27.269Z",
+    "action": {
+      "type": "UPGRADE_DOCUMENT",
+      "input": {
+        "model": "bai/source",
+        "toVersion": 1,
+        "documentId": "44c8743e-29ac-41c6-9b24-fc51fc98f733",
+        "fromVersion": 0,
+        "initialState": {
+          "auth": {
+            "grants": [],
+            "version": 0
+          },
+          "local": {},
+          "global": {
+            "title": null,
+            "status": "INBOX",
+            "content": null,
+            "createdAt": null,
+            "createdBy": null,
+            "provenance": null,
+            "sourceType": null,
+            "description": null,
+            "extractedClaims": [],
+            "extractionStats": null
+          },
+          "document": {
+            "hash": {
+              "encoding": "base64",
+              "algorithm": "sha1"
+            },
+            "version": 1
+          }
+        }
+      },
+      "timestampUtcMs": "2026-08-16T12:02:27.269Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "U/cV1APO+1AGBaeADybjSAkluc4=",
+    "timestampUtcMs": "2026-08-16T12:02:31.121Z",
+    "action": {
+      "type": "ADD_EXTRACTED_CLAIM",
+      "input": {
+        "claimRef": "01e9bbd1-2eeb-49c4-85b7-550605eee012"
+      },
+      "timestampUtcMs": "2026-08-16T12:02:31.121Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "e9A6qQt0aBLewU+Jc897fjUEw6E=",
+    "timestampUtcMs": "2026-08-16T12:02:31.273Z",
+    "action": {
+      "type": "RECORD_EXTRACTION_STATS",
+      "input": {
+        "skipRate": 0,
+        "claimCount": 1,
+        "extractedAt": "2026-08-16T12:02:31.273Z",
+        "extractedBy": "skill-sync",
+        "skippedCount": 0
+      },
+      "timestampUtcMs": "2026-08-16T12:02:31.273Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "cw8TrTMr2NOrNOXNnQHZTYZOUeI=",
+    "timestampUtcMs": "2026-08-16T12:02:31.419Z",
+    "action": {
+      "type": "SET_SOURCE_STATUS",
+      "input": {
+        "status": "EXTRACTED"
+      },
+      "timestampUtcMs": "2026-08-16T12:02:31.419Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "E/OVD/7xjgOsEElSwl7fnXqpuGE=",
+    "timestampUtcMs": "2026-08-16T12:12:22.237Z",
+    "action": {
+      "type": "INGEST_SOURCE",
+      "input": {
+        "url": "https://github.com/liberuum/powerhouse-knowledge/blob/main/skills/skills/SKILL.md",
+        "tool": "sync-skills",
+        "title": "Agent skill: skills",
+        "author": "powerhouse-knowledge plugin",
+        "method": "sha256:0fd352817273de4e874ac292b0cd1c71abfdef760caca27654ad72a0aac778d9",
+        "content": "---\nname: skills\ndescription: Find, read, and add agent skills stored in the Knowledge Vault. Use when you need a procedure for working on the vault or the Powerhouse stack and don't know which skill covers it \u2014 ask for what you need in natural language.\n---\n\n# Skill Discovery\n\nThe vault stores every agent skill as knowledge: one PROCEDURE note per\nskill (the searchable index) paired with a `bai/source` holding the full\nSKILL.md text. **Git is canonical** \u2014 the vault is the discovery layer.\nSync is mechanical and incremental (`scripts/sync-skills.mjs`, keyed on\ncontent hash), so the two never drift silently.\n\n## Find a skill (by need, not by name)\n\n```bash\nswitchboard query '{ knowledgeGraphSemanticSearch(driveId: \"<UUID>\", query: \"<what you need to do>\", mode: HYBRID, limit: 5) { similarity node { documentId title description } } }'\n```\n\nSkill notes are recognizable by their `Agent skill: /<name>` title prefix\nand the `agent-skills` topic. To list them all:\n\n```bash\nswitchboard query '{ knowledgeGraphByTopic(driveId: \"<UUID>\", topic: \"agent-skills\") { documentId title description } }'\n```\n\n## Read a skill\n\nThe note is the summary; the FULL executable text lives in the paired\nsource (follow the note's DERIVED_FROM edge, or search sources by title\n`Agent skill: <name>`):\n\n```bash\n# note -> its source\nswitchboard query '{ knowledgeGraphForwardLinks(driveId: \"<UUID>\", documentId: \"<note-id>\") { targetDocumentId linkType } }'\n# read the full SKILL.md text\nswitchboard docs get <source-id> --state --format json   # state.global.content\n```\n\nIf the plugin is installed locally, prefer executing via the command\n(`/powerhouse-knowledge:<name>`) or reading the repo copy \u2014 that is the\ncanonical version. The vault copy is for discovery and for agents that\nonly have Switchboard access.\n\n## Add or update skills\n\n1. Write/edit the `SKILL.md` in the plugin repo under `skills/<name>/`\n   (or any skills directory) \u2014 normal git flow, reviewed like code.\n2. Sync (incremental \u2014 unchanged files are skipped, changed ones update\n   the SAME documents in place, new ones are created; nothing is deleted):\n\n```bash\nnode scripts/sync-skills.mjs --endpoint <switchboard /graphql URL> --drive <uuid-or-slug>\n# extra skill directories:\nnode scripts/sync-skills.mjs --endpoint ... --drive ... --skills-dir /path/to/other/skills\n# preview without writing:\nnode scripts/sync-skills.mjs --endpoint ... --drive ... --dry-run\n```\n\nThere is **no default endpoint** \u2014 ask the user which vault to sync into.\n\nThe script performs the full close-out per skill (source \u2192 EXTRACTED with\nstats, note \u2192 CANONICAL, DERIVED_FROM + MOC CORE_IDEA edges) and verifies\nevery write by read-back. Run it twice: the second run must report\n`0 created, 0 updated, N skipped` \u2014 that is the idempotency proof.\n\n## Skills born in the vault (no canonical repo copy)\n\nUploading a skill directly into the vault (hand-created source titled\n`Agent skill: <name>`) is allowed \u2014 it works for discovery immediately \u2014\nbut it violates the trust rule until resolved: there is no repo copy to\nexecute from and no hash to verify. The sync **never deletes** it, and\nnever writes through it; every run flags it:\n\n```\n\u26a0 vault-only skill '<name>' \u2026 NO canonical repo copy\n```\n\nResolve one of two ways:\n- **Promote**: copy the content into `skills/<name>/SKILL.md` in the repo\n  and re-run the sync. Name matching finds the existing vault document and\n  the sync **adopts it in place** \u2014 same ids, history preserved, ownership\n  and hash recorded.\n- **Archive**: `SET_SOURCE_STATUS` \u2192 `ARCHIVED` (and archive its note if\n  one exists). Archived vault-only skills are considered resolved and are\n  no longer flagged.\n\nSame-name collisions are safe: if a hand-made source shares a title with a\nrepo skill, the sync prefers the copy it owns (`createdBy: skill-sync`)\nand refuses to write through the other, warning instead.\n\n## Staleness detection\n\nEach source stores `sha256:<hash>` of its SKILL.md in the `method` field.\nA health or verify pass can recompute hashes from the repo and flag vault\ncopies that are behind \u2014 treat a mismatch as \"re-run sync\", never as\n\"edit the vault copy\".\n\nIf \"$ARGUMENTS\" is provided, treat it as the need description and run the\nsemantic search with it.\n",
+        "createdAt": "2026-08-16T12:12:22.237Z",
+        "createdBy": "skill-sync",
+        "sourceType": "DOCUMENTATION",
+        "description": "Find, read, and add agent skills stored in the Knowledge Vault. Use when you need a procedure for working on the vault or the Powerhouse stack and don't know which skill covers it \u2014 ask for what you n"
+      },
+      "timestampUtcMs": "2026-08-16T12:12:22.237Z"
+    }
+  },
+  {
+    "index": 5,
+    "hash": "ye2OdboS3OPDzz94rfq7ss8dels=",
+    "timestampUtcMs": "2026-08-16T12:12:23.600Z",
+    "action": {
+      "type": "ADD_EXTRACTED_CLAIM",
+      "input": {
+        "claimRef": "01e9bbd1-2eeb-49c4-85b7-550605eee012"
+      },
+      "timestampUtcMs": "2026-08-16T12:12:23.600Z"
+    }
+  },
+  {
+    "index": 6,
+    "hash": "wjmjPaokxb1ZjKaLDeGu/Y9DvpQ=",
+    "timestampUtcMs": "2026-08-16T12:12:23.752Z",
+    "action": {
+      "type": "RECORD_EXTRACTION_STATS",
+      "input": {
+        "skipRate": 0,
+        "claimCount": 1,
+        "extractedAt": "2026-08-16T12:12:23.752Z",
+        "extractedBy": "skill-sync",
+        "skippedCount": 0
+      },
+      "timestampUtcMs": "2026-08-16T12:12:23.752Z"
+    }
+  },
+  {
+    "index": 7,
+    "hash": "eq1vT4R7zCiLQQ8C9TWDi5v4xA8=",
+    "timestampUtcMs": "2026-08-16T12:12:23.910Z",
+    "action": {
+      "type": "SET_SOURCE_STATUS",
+      "input": {
+        "status": "EXTRACTED"
+      },
+      "timestampUtcMs": "2026-08-16T12:12:23.910Z"
+    }
+  },
+  {
+    "index": 8,
+    "hash": "2f7vLu/migGxE3Ltje4yR/uGlB0=",
+    "timestampUtcMs": "2026-08-17T10:56:04.187Z",
+    "action": {
+      "type": "INGEST_SOURCE",
+      "input": {
+        "url": "https://github.com/liberuum/powerhouse-knowledge/blob/main/skills/skills/SKILL.md",
+        "tool": "sync-skills",
+        "title": "Agent skill: skills",
+        "author": "powerhouse-knowledge plugin",
+        "method": "sha256:ebfa93fbbdb9249a9bb7964c5ed34386358a6c04bdfc9d23abf40a23191d1667",
+        "content": "---\nname: skills\ndescription: Find, read, and add agent skills stored in the Knowledge Vault. Use when you need a procedure for working on the vault or the Powerhouse stack and don't know which skill covers it \u2014 ask for what you need in natural language.\n---\n\n# Skill Discovery\n\nThe vault stores every agent skill as knowledge: one PROCEDURE note per\nskill (the searchable index) paired with a `bai/source` holding the full\nSKILL.md text. **Git is canonical** \u2014 the vault is the discovery layer.\nSync is mechanical and incremental (`scripts/sync-skills.mjs`, keyed on\ncontent hash), so the two never drift silently.\n\n## Find a skill (by need, not by name)\n\n```bash\nswitchboard query '{ knowledgeGraphSemanticSearch(driveId: \"<UUID>\", query: \"<what you need to do>\", mode: HYBRID, limit: 5) { similarity node { documentId title description } } }'\n```\n\nSkill notes are recognizable by their `Agent skill: /<name>` title prefix\nand the `agent-skills` topic. To list them all:\n\n```bash\nswitchboard query '{ knowledgeGraphByTopic(driveId: \"<UUID>\", topic: \"agent-skills\") { documentId title description } }'\n```\n\n## Read a skill\n\nThe note is the summary; the FULL executable text lives in the paired\nsource (follow the note's DERIVED_FROM edge, or search sources by title\n`Agent skill: <name>`):\n\n```bash\n# note -> its source\nswitchboard query '{ knowledgeGraphForwardLinks(driveId: \"<UUID>\", documentId: \"<note-id>\") { targetDocumentId linkType } }'\n# read the full SKILL.md text\nswitchboard docs get <source-id> --state --format json   # state.global.content\n```\n\nIf the plugin is installed locally, prefer executing via the command\n(`/powerhouse-knowledge:<name>`) or reading the repo copy \u2014 that is the\ncanonical version. The vault copy is for discovery and for agents that\nonly have Switchboard access.\n\n## Add or update skills\n\n1. Write/edit the `SKILL.md` in the plugin repo under `skills/<name>/`\n   (or any skills directory) \u2014 normal git flow, reviewed like code.\n2. Sync (incremental \u2014 unchanged files are skipped, changed ones update\n   the SAME documents in place, new ones are created; nothing is deleted):\n\n```bash\nnode scripts/sync-skills.mjs --endpoint <switchboard /graphql URL> --drive <uuid-or-slug>\n# extra skill directories:\nnode scripts/sync-skills.mjs --endpoint ... --drive ... --skills-dir /path/to/other/skills\n# preview without writing:\nnode scripts/sync-skills.mjs --endpoint ... --drive ... --dry-run\n```\n\nThere is **no default endpoint** \u2014 ask the user which vault to sync into.\n\nThe script performs the full close-out per skill (source \u2192 EXTRACTED with\nstats, note \u2192 CANONICAL, DERIVED_FROM + MOC CORE_IDEA edges) and verifies\nevery write by read-back. Run it twice: the second run must report\n`0 created, 0 updated, N skipped` \u2014 that is the idempotency proof.\n\n## Adding skills: the vault is the home\n\nAdding a skill is a **vault operation** \u2014 no plugin release, no repo\ncommit, no sync run. One command handles fetch/read, source + note +\nedges + close-out, and read-back verification, and it is idempotent by\ntitle (re-adding updates the same documents in place):\n\n```bash\n# from a URL (e.g. a skill kept in another repo)\nnode scripts/add-skill.mjs --endpoint <.../graphql> --drive <id> --url <raw-md-url>\n\n# from a local file\nnode scripts/add-skill.mjs --endpoint <.../graphql> --drive <id> --file ./my-skill.md --name my-skill\n\n# update after upstream changes: run the same command again\n```\n\nOr simply ask the agent: \"add this skill to the vault: <url or file>\" \u2014\nit runs the same pattern. Skills added this way are **vault-native**:\nthe vault copy IS the executable copy. If the skill originated at a URL,\nthe source records it as `Upstream origin` for reference. To retire one,\narchive it (`SET_SOURCE_STATUS` \u2192 `ARCHIVED` + archive its note).\n\nThe sync script below manages ONLY the plugin's bundled skills \u2014 it lists\nvault-native skills informationally and never touches them. Same-name\ncollisions are safe: the sync writes only through documents it owns\n(`createdBy: skill-sync`) and warns about the rest.\n\n## Staleness detection\n\nEach source stores `sha256:<hash>` of its SKILL.md in the `method` field.\nA health or verify pass can recompute hashes from the repo and flag vault\ncopies that are behind \u2014 treat a mismatch as \"re-run sync\", never as\n\"edit the vault copy\".\n\nIf \"$ARGUMENTS\" is provided, treat it as the need description and run the\nsemantic search with it.\n",
+        "createdAt": "2026-08-17T10:56:04.187Z",
+        "createdBy": "skill-sync",
+        "sourceType": "DOCUMENTATION",
+        "description": "Find, read, and add agent skills stored in the Knowledge Vault. Use when you need a procedure for working on the vault or the Powerhouse stack and don't know which skill covers it \u2014 ask for what you n"
+      },
+      "timestampUtcMs": "2026-08-17T10:56:04.187Z"
+    }
+  },
+  {
+    "index": 9,
+    "hash": "MUxSYygIPNSYLYsBZPPK6ulWHKM=",
+    "timestampUtcMs": "2026-08-17T10:56:05.376Z",
+    "action": {
+      "type": "ADD_EXTRACTED_CLAIM",
+      "input": {
+        "claimRef": "01e9bbd1-2eeb-49c4-85b7-550605eee012"
+      },
+      "timestampUtcMs": "2026-08-17T10:56:05.376Z"
+    }
+  },
+  {
+    "index": 10,
+    "hash": "c4XfoL+zDqMsaHFB0xJdfZvjSpc=",
+    "timestampUtcMs": "2026-08-17T10:56:05.504Z",
+    "action": {
+      "type": "RECORD_EXTRACTION_STATS",
+      "input": {
+        "skipRate": 0,
+        "claimCount": 1,
+        "extractedAt": "2026-08-17T10:56:05.504Z",
+        "extractedBy": "skill-sync",
+        "skippedCount": 0
+      },
+      "timestampUtcMs": "2026-08-17T10:56:05.504Z"
+    }
+  },
+  {
+    "index": 11,
+    "hash": "FJXRJtScRKi2C1XGV/iFkEIJYtg=",
+    "timestampUtcMs": "2026-08-17T10:56:05.656Z",
+    "action": {
+      "type": "SET_SOURCE_STATUS",
+      "input": {
+        "status": "EXTRACTED"
+      },
+      "timestampUtcMs": "2026-08-17T10:56:05.656Z"
+    }
+  },
+  {
+    "index": 12,
+    "hash": "7XX/TR8Ypo1QkqZ22fvdqUBG1Gw=",
+    "timestampUtcMs": "2026-09-02T19:22:09.108Z",
+    "action": {
+      "type": "INGEST_SOURCE",
+      "input": {
+        "url": "https://github.com/liberuum/powerhouse-knowledge/blob/main/skills/skills/SKILL.md",
+        "tool": "sync-skills",
+        "title": "Agent skill: skills",
+        "author": "powerhouse-knowledge plugin",
+        "method": "sha256:ee71863f90504ec163687d85606d92d791050a02fbddfa370b446cb2138df091",
+        "content": "---\nname: skills\ndescription: Find, read, and add agent skills stored in the Knowledge Vault. Use when you need a procedure for working on the vault or the Powerhouse stack and don't know which skill covers it \u2014 ask for what you need in natural language.\n---\n\n# Skill Discovery\n\n> **Target first.** Every command below runs against the Switchboard the\n> active CLI profile points at, and `<UUID>` / `<drive-slug>` mean *that*\n> server's vault drive. If the pre-flight hook printed `Profile: \u2026 -> \u2026` and\n> `VAULT_DRIVE_ID` / `VAULT_DRIVE_SLUG`, use those. Otherwise run\n> `switchboard config show` and the drive detection in AGENT.md \u00a7 *Find the\n> vault drive*. If it is still ambiguous which vault the user means, **ask for\n> the Switchboard URL and the drive** \u2014 never assume an endpoint.\n\nThe vault stores every agent skill as knowledge: one PROCEDURE note per\nskill (the searchable index) paired with a `bai/source` holding the full\nSKILL.md text. **Git is canonical** \u2014 the vault is the discovery layer.\nSync is mechanical and incremental (`scripts/sync-skills.mjs`, keyed on\ncontent hash), so the two never drift silently.\n\n## Find a skill (by need, not by name)\n\n```bash\nswitchboard query '{ knowledgeGraphSemanticSearch(driveId: \"<UUID>\", query: \"<what you need to do>\", mode: HYBRID, limit: 5) { similarity node { documentId title description } } }'\n```\n\nSkill notes are recognizable by their `Agent skill: /<name>` title prefix\nand the `agent-skills` topic. To list them all:\n\n```bash\nswitchboard query '{ knowledgeGraphByTopic(driveId: \"<UUID>\", topic: \"agent-skills\") { documentId title description } }'\n```\n\n## Read a skill\n\nThe note is the summary; the FULL executable text lives in the paired\nsource (follow the note's DERIVED_FROM edge, or search sources by title\n`Agent skill: <name>`):\n\n```bash\n# note -> its source\nswitchboard query '{ knowledgeGraphForwardLinks(driveId: \"<UUID>\", documentId: \"<note-id>\") { targetDocumentId linkType } }'\n# read the full SKILL.md text\nswitchboard docs get <source-id> --state --format json   # state.global.content\n```\n\nIf the plugin is installed locally, prefer executing via the command\n(`/powerhouse-knowledge:<name>`) or reading the repo copy \u2014 that is the\ncanonical version. The vault copy is for discovery and for agents that\nonly have Switchboard access.\n\n## Add or update skills\n\n1. Write/edit the `SKILL.md` in the plugin repo under `skills/<name>/`\n   (or any skills directory) \u2014 normal git flow, reviewed like code.\n2. Sync (incremental \u2014 unchanged files are skipped, changed ones update\n   the SAME documents in place, new ones are created; nothing is deleted):\n\n```bash\nnode scripts/sync-skills.mjs --endpoint <switchboard /graphql URL> --drive <uuid-or-slug>\n# extra skill directories:\nnode scripts/sync-skills.mjs --endpoint ... --drive ... --skills-dir /path/to/other/skills\n# preview without writing:\nnode scripts/sync-skills.mjs --endpoint ... --drive ... --dry-run\n```\n\nThere is **no default endpoint** \u2014 ask the user which vault to sync into.\n\nThe script performs the full close-out per skill (source \u2192 EXTRACTED with\nstats, note \u2192 CANONICAL, DERIVED_FROM + MOC CORE_IDEA edges) and verifies\nevery write by read-back. Run it twice: the second run must report\n`0 created, 0 updated, N skipped` \u2014 that is the idempotency proof.\n\n## Adding skills: the vault is the home\n\nAdding a skill is a **vault operation** \u2014 no plugin release, no repo\ncommit, no sync run. One command handles fetch/read, source + note +\nedges + close-out, and read-back verification, and it is idempotent by\ntitle (re-adding updates the same documents in place):\n\n```bash\n# from a URL (e.g. a skill kept in another repo)\nnode scripts/add-skill.mjs --endpoint <.../graphql> --drive <id> --url <raw-md-url>\n\n# from a local file\nnode scripts/add-skill.mjs --endpoint <.../graphql> --drive <id> --file ./my-skill.md --name my-skill\n\n# update after upstream changes: run the same command again\n```\n\nOr simply ask the agent: \"add this skill to the vault: <url or file>\" \u2014\nit runs the same pattern. Skills added this way are **vault-native**:\nthe vault copy IS the executable copy. If the skill originated at a URL,\nthe source records it as `Upstream origin` for reference. To retire one,\narchive it (`SET_SOURCE_STATUS` \u2192 `ARCHIVED` + archive its note).\n\nThe sync script below manages ONLY the plugin's bundled skills \u2014 it lists\nvault-native skills informationally and never touches them. Same-name\ncollisions are safe: the sync writes only through documents it owns\n(`createdBy: skill-sync`) and warns about the rest.\n\n## Staleness detection\n\nEach source stores `sha256:<hash>` of its SKILL.md in the `method` field.\nA health or verify pass can recompute hashes from the repo and flag vault\ncopies that are behind \u2014 treat a mismatch as \"re-run sync\", never as\n\"edit the vault copy\".\n\nIf \"$ARGUMENTS\" is provided, treat it as the need description and run the\nsemantic search with it.\n",
+        "createdAt": "2026-09-02T19:22:09.107Z",
+        "createdBy": "skill-sync",
+        "sourceType": "DOCUMENTATION",
+        "description": "Find, read, and add agent skills stored in the Knowledge Vault. Use when you need a procedure for working on the vault or the Powerhouse stack and don't know which skill covers it \u2014 ask for what you n"
+      },
+      "timestampUtcMs": "2026-09-02T19:22:09.108Z"
+    }
+  },
+  {
+    "index": 13,
+    "hash": "Es4CQp0783QWmYi7dSJz0YPb7+M=",
+    "timestampUtcMs": "2026-09-02T19:22:11.352Z",
+    "action": {
+      "type": "RECORD_EXTRACTION_STATS",
+      "input": {
+        "skipRate": 0,
+        "claimCount": 1,
+        "extractedAt": "2026-09-02T19:22:11.352Z",
+        "extractedBy": "skill-sync",
+        "skippedCount": 0
+      },
+      "timestampUtcMs": "2026-09-02T19:22:11.352Z"
+    }
+  },
+  {
+    "index": 14,
+    "hash": "VD7bpdtvqDxSyaad4ND1OwyrzoQ=",
+    "timestampUtcMs": "2026-09-02T19:22:11.853Z",
+    "action": {
+      "type": "SET_SOURCE_STATUS",
+      "input": {
+        "status": "EXTRACTED"
+      },
+      "timestampUtcMs": "2026-09-02T19:22:11.853Z"
+    }
+  },
+  {
+    "index": 15,
+    "hash": "/yMf8Fhw+6h4pfNBa8s4699Pqds=",
+    "timestampUtcMs": "2026-09-03T13:57:32.983Z",
+    "action": {
+      "type": "REMOVE_EXTRACTED_CLAIM",
+      "input": {
+        "claimRef": "01e9bbd1-2eeb-49c4-85b7-550605eee012"
+      },
+      "timestampUtcMs": "2026-09-03T13:57:32.983Z"
+    }
+  },
+  {
+    "index": 16,
+    "hash": "OIYNCXsdKndxzoEvIUHsgKR6nL4=",
+    "timestampUtcMs": "2026-09-03T13:57:33.622Z",
+    "action": {
+      "type": "ADD_EXTRACTED_CLAIM",
+      "input": {
+        "claimRef": "01e9bbd1-2eeb-49c4-85b7-550605eee012"
+      },
+      "timestampUtcMs": "2026-09-03T13:57:33.622Z"
+    }
+  }
+]

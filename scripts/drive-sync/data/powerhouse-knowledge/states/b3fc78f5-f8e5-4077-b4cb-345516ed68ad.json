@@ -1,0 +1,344 @@
+{
+  "tier": "DOMAIN",
+  "title": "Data Processing and CQRS",
+  "version": "v6.2.2-dev.47",
+  "tensions": [
+    {
+      "id": "1ef73908-f346-4cda-9696-80ebbc4070ba",
+      "addedAt": "2026-08-16T23:55:00.000Z",
+      "description": "DISSOLVED 2026-08-16 - does a ProcessorFilter \"*\" apply outside documentId? reactor 6.2.2-dev.47 matchesFilter() special-cases the wildcard in the documentId branch only, and the note that generalized it was corrected on 2026-08-13, so the pair now agrees. Full adjudication: bai/tension 1ef73908 in /ops/.",
+      "involvedRefs": [
+        "d7ef28bc-9d89-4db7-a043-0818e8914b5b",
+        "6a3275cd-d71e-4342-8cd3-3fb29b8fe58c"
+      ]
+    },
+    {
+      "id": "24a46cc9-59dd-418f-9de0-cd76b2ee3535",
+      "addedAt": "2026-09-03T07:30:30.172Z",
+      "description": "\u201cThe relational-DB processor spec describes an API the code no longer has: onStrands, InternalTransmitterUpdate, PowerhouseDB and packages/d\u2026\u201d contradicts \u201cRelationalDbProcessor provides a type-safe base class with per-drive namespace isolation and lifecycle migration hooks\u201d. Opened automatically from a CONTRADICTS link \u2014 resolve if one side is right, dissolve if both hold in different contexts.",
+      "involvedRefs": [
+        "97c3a924-0ba9-4b89-86f7-b7a5747d41a7",
+        "f7e6d116-bd5d-4052-9f2a-974e4d7cb7e2"
+      ]
+    }
+  ],
+  "childRefs": [],
+  "coreIdeas": [
+    {
+      "id": "ci-b5474b61",
+      "noteRef": "b5474b61-a140-4704-b812-4021fe7c8f9b",
+      "contextPhrase": "",
+      "sortOrder": 0,
+      "addedAt": "2026-09-03T20:23:27.000Z",
+      "addedBy": "knowledge-agent"
+    },
+    {
+      "id": "ci-1c87346f",
+      "noteRef": "1c87346f-6aaf-4e31-aa3a-0137ec638ba1",
+      "contextPhrase": "",
+      "sortOrder": 1,
+      "addedAt": "2026-09-03T20:23:27.000Z",
+      "addedBy": "knowledge-agent"
+    },
+    {
+      "id": "ci-14d47019",
+      "noteRef": "14d47019-4ebc-4d7d-acfd-352b344a291f",
+      "contextPhrase": "",
+      "sortOrder": 2,
+      "addedAt": "2026-09-03T20:23:27.000Z",
+      "addedBy": "knowledge-agent"
+    },
+    {
+      "id": "ci-97c3a924",
+      "noteRef": "97c3a924-0ba9-4b89-86f7-b7a5747d41a7",
+      "contextPhrase": "",
+      "sortOrder": 3,
+      "addedAt": "2026-09-03T20:23:27.000Z",
+      "addedBy": "knowledge-agent"
+    },
+    {
+      "id": "ci-f760ca02",
+      "noteRef": "f760ca02-0de5-45a0-bf21-519bd9e4c0fa",
+      "contextPhrase": "",
+      "sortOrder": 4,
+      "addedAt": "2026-09-03T20:23:27.000Z",
+      "addedBy": "knowledge-agent"
+    },
+    {
+      "id": "ci-6cd88ded",
+      "noteRef": "6cd88ded-d8e5-4645-8dc1-8dab23dd6dc4",
+      "contextPhrase": "",
+      "sortOrder": 5,
+      "addedAt": "2026-09-03T20:23:27.000Z",
+      "addedBy": "knowledge-agent"
+    },
+    {
+      "id": "ci-dcc03b01",
+      "noteRef": "dcc03b01-d39e-4a0d-80c5-3700ada5f79b",
+      "contextPhrase": "",
+      "sortOrder": 6,
+      "addedAt": "2026-09-03T20:23:27.000Z",
+      "addedBy": "knowledge-agent"
+    },
+    {
+      "id": "ci-a8824d76",
+      "noteRef": "a8824d76-26b8-48fb-99c2-93072ed70dc2",
+      "contextPhrase": "",
+      "sortOrder": 7,
+      "addedAt": "2026-09-03T20:23:27.000Z",
+      "addedBy": "knowledge-agent"
+    },
+    {
+      "id": "ci-58b438ff",
+      "noteRef": "58b438ff-5b3e-4e51-afa3-a9676f8b1beb",
+      "contextPhrase": "",
+      "sortOrder": 8,
+      "addedAt": "2026-09-03T20:23:27.000Z",
+      "addedBy": "knowledge-agent"
+    },
+    {
+      "id": "ci-11abd903",
+      "noteRef": "11abd903-ee8e-4a00-a1c9-ffc9e22e4f5b",
+      "contextPhrase": "",
+      "sortOrder": 9,
+      "addedAt": "2026-09-03T20:23:27.000Z",
+      "addedBy": "knowledge-agent"
+    },
+    {
+      "id": "ci-ef30c62a",
+      "noteRef": "ef30c62a-0043-4bbb-86d1-e1c16a925ee3",
+      "contextPhrase": "",
+      "sortOrder": 10,
+      "addedAt": "2026-09-03T20:23:27.000Z",
+      "addedBy": "knowledge-agent"
+    },
+    {
+      "id": "ci-c88edfd3",
+      "noteRef": "c88edfd3-97f0-47b0-b103-7276f157eeb2",
+      "contextPhrase": "",
+      "sortOrder": 11,
+      "addedAt": "2026-09-03T20:23:27.000Z",
+      "addedBy": "knowledge-agent"
+    },
+    {
+      "id": "ci-97837c71",
+      "noteRef": "97837c71-1ce0-493d-8400-9d14222ff5cd",
+      "contextPhrase": "",
+      "sortOrder": 12,
+      "addedAt": "2026-09-03T20:23:27.000Z",
+      "addedBy": "knowledge-agent"
+    },
+    {
+      "id": "ci-ceb2e2c7",
+      "noteRef": "ceb2e2c7-7965-431d-ac3d-1409a89529ce",
+      "contextPhrase": "",
+      "sortOrder": 13,
+      "addedAt": "2026-09-03T20:23:27.000Z",
+      "addedBy": "knowledge-agent"
+    },
+    {
+      "id": "ci-4090fa00",
+      "noteRef": "4090fa00-da1c-4c2e-9c4a-2dba085341fb",
+      "contextPhrase": "",
+      "sortOrder": 14,
+      "addedAt": "2026-09-03T20:23:27.000Z",
+      "addedBy": "knowledge-agent"
+    },
+    {
+      "id": "ci-b22a5f73",
+      "noteRef": "b22a5f73-8f8b-4808-9539-447525cf333c",
+      "contextPhrase": "",
+      "sortOrder": 15,
+      "addedAt": "2026-09-03T20:23:27.000Z",
+      "addedBy": "knowledge-agent"
+    },
+    {
+      "id": "ci-d1df6fc5",
+      "noteRef": "d1df6fc5-ad16-455b-9462-257008df48f8",
+      "contextPhrase": "",
+      "sortOrder": 16,
+      "addedAt": "2026-09-03T20:23:27.000Z",
+      "addedBy": "knowledge-agent"
+    },
+    {
+      "id": "ci-04286cce",
+      "noteRef": "04286cce-121f-43cb-ad60-e9b02cfdf3b9",
+      "contextPhrase": "",
+      "sortOrder": 17,
+      "addedAt": "2026-09-03T20:23:27.000Z",
+      "addedBy": "knowledge-agent"
+    },
+    {
+      "id": "ci-a442a64c",
+      "noteRef": "a442a64c-1ed5-41ef-ba49-96dc33c81fa5",
+      "contextPhrase": "",
+      "sortOrder": 18,
+      "addedAt": "2026-09-03T20:23:27.000Z",
+      "addedBy": "knowledge-agent"
+    },
+    {
+      "id": "ci-6a3275cd",
+      "noteRef": "6a3275cd-d71e-4342-8cd3-3fb29b8fe58c",
+      "contextPhrase": "",
+      "sortOrder": 19,
+      "addedAt": "2026-09-03T20:23:27.000Z",
+      "addedBy": "knowledge-agent"
+    },
+    {
+      "id": "ci-04374aa9",
+      "noteRef": "04374aa9-c0dc-477b-86c2-35841f3c8857",
+      "contextPhrase": "",
+      "sortOrder": 20,
+      "addedAt": "2026-09-03T20:23:27.000Z",
+      "addedBy": "knowledge-agent"
+    },
+    {
+      "id": "ci-f7e6d116",
+      "noteRef": "f7e6d116-bd5d-4052-9f2a-974e4d7cb7e2",
+      "contextPhrase": "",
+      "sortOrder": 21,
+      "addedAt": "2026-09-03T20:23:27.000Z",
+      "addedBy": "knowledge-agent"
+    },
+    {
+      "id": "ci-495ad2bd",
+      "noteRef": "495ad2bd-8606-4b51-afc3-3a3a4c3f72e7",
+      "contextPhrase": "",
+      "sortOrder": 22,
+      "addedAt": "2026-09-03T20:23:27.000Z",
+      "addedBy": "knowledge-agent"
+    },
+    {
+      "id": "ci-11da9c61",
+      "noteRef": "11da9c61-a825-4c70-a57c-f80b10f569c7",
+      "contextPhrase": "",
+      "sortOrder": 23,
+      "addedAt": "2026-09-03T20:23:27.000Z",
+      "addedBy": "knowledge-agent"
+    },
+    {
+      "id": "ci-645e18ed",
+      "noteRef": "645e18ed-6da5-4daf-8ed3-7a96cb085b48",
+      "contextPhrase": "",
+      "sortOrder": 24,
+      "addedAt": "2026-09-03T20:23:27.000Z",
+      "addedBy": "knowledge-agent"
+    },
+    {
+      "id": "ci-4287517c",
+      "noteRef": "4287517c-647b-4115-bf7e-d9442631d3b9",
+      "contextPhrase": "",
+      "sortOrder": 25,
+      "addedAt": "2026-09-03T20:23:27.000Z",
+      "addedBy": "knowledge-agent"
+    },
+    {
+      "id": "ci-b595843f",
+      "noteRef": "b595843f-e2f9-4172-a43a-eb471fc727a1",
+      "contextPhrase": "",
+      "sortOrder": 26,
+      "addedAt": "2026-09-03T20:23:27.000Z",
+      "addedBy": "knowledge-agent"
+    },
+    {
+      "id": "ci-3f1f4f03",
+      "noteRef": "3f1f4f03-daeb-4fc3-b106-a0b35e298d6b",
+      "contextPhrase": "",
+      "sortOrder": 27,
+      "addedAt": "2026-09-03T20:23:27.000Z",
+      "addedBy": "knowledge-agent"
+    },
+    {
+      "id": "ci-cfb4fd8d",
+      "noteRef": "cfb4fd8d-46bb-4581-b7f9-3b00ec8c1e19",
+      "contextPhrase": "",
+      "sortOrder": 28,
+      "addedAt": "2026-09-03T20:23:27.000Z",
+      "addedBy": "knowledge-agent"
+    },
+    {
+      "id": "ci-2ddae2ce",
+      "noteRef": "2ddae2ce-5409-4173-b76b-54a55b475c07",
+      "contextPhrase": "",
+      "sortOrder": 29,
+      "addedAt": "2026-09-03T20:23:27.000Z",
+      "addedBy": "knowledge-agent"
+    }
+  ],
+  "createdAt": "2026-04-02T13:00:00.000Z",
+  "noteCount": 0,
+  "parentRef": null,
+  "updatedAt": "2026-08-14T12:00:00.000Z",
+  "agentNotes": [],
+  "description": "Processors, subgraphs, relational database projections, live queries, and the analytics engine that transform event-sourced documents into queryable read models.",
+  "orientation": "The write side of Powerhouse captures intent through operations on event-sourced documents, but real-world applications need to query, aggregate, and analyze that data in ways the document model alone cannot efficiently support. This is where the CQRS read side comes in. Subgraphs extend document models with custom GraphQL resolvers. Processors receive operation streams and project them into relational databases for SQL-friendly querying. The RelationalDBProcessor base class standardizes this pattern with PgLite for live queries that push updates to connected clients. And the analytics engine adds time-series aggregation with interval-based bucketing and level-of-detail dimension querying. Together, these components transform a stream of document operations into the rich, queryable data surfaces that dashboards, reports, and integrations demand.",
+  "openQuestions": [],
+  "links": [
+    {
+      "id": "lnk-87e21eda-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "87e21eda-709d-48c8-835f-912b186841d3",
+      "targetTitle": "analytics-engine-three-tables-many-to-many"
+    },
+    {
+      "id": "lnk-bf77ab80-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "bf77ab80-2d29-47ce-9fc1-3aedd3589eb3",
+      "targetTitle": "analytics-engine-uses-luxon-not-js-date"
+    },
+    {
+      "id": "lnk-496fc267-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "496fc267-9bc4-4820-8f9b-442eddcd587c",
+      "targetTitle": "analytics-graphql-single-series-query-read-only"
+    },
+    {
+      "id": "lnk-9b1bec19-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "9b1bec19-6bcc-4f87-80b9-5f25360e4b7e",
+      "targetTitle": "choose-analytics-vs-read-model-vs-relational-by-query-shape"
+    },
+    {
+      "id": "lnk-24911714-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "24911714-14b6-42d9-bba3-2692bdbc27f3",
+      "targetTitle": "analyticsqueryengine-execute-groupedperiodresult"
+    },
+    {
+      "id": "lnk-2b94bc30-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "2b94bc30-a50f-4818-8f6c-f7d5e4b00a06",
+      "targetTitle": "ianalyticsstore-one-implementation-per-environment"
+    },
+    {
+      "id": "lnk-b69f8c2b-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "b69f8c2b-0f19-4373-8839-e10f697e9e26",
+      "targetTitle": "iprocessorhostmodule-factory-outer-parameter"
+    },
+    {
+      "id": "lnk-3feb1e05-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "3feb1e05-6dc0-4dd3-abe9-01d7a569ae3f",
+      "targetTitle": "react-analytics-hooks-raw-query-vs-friendly-filters"
+    },
+    {
+      "id": "lnk-50f8ea0a-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "50f8ea0a-9861-48fc-899b-9f063a038d6e",
+      "targetTitle": "startfrom-applies-only-at-first-cursor-creation"
+    },
+    {
+      "id": "lnk-73426591-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "73426591-2d5e-431c-bdd8-f8a2502bed0a",
+      "targetTitle": "analytics-processor-buffer-and-flush-in-chunks"
+    },
+    {
+      "id": "lnk-be290531-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "be290531-8d4f-45d3-be74-39e0ab90c900",
+      "targetTitle": "drive-analytics-source-paths-and-dimensions"
+    }
+  ]
+}

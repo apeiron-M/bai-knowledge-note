@@ -1,0 +1,117 @@
+[
+  {
+    "index": 0,
+    "hash": "",
+    "timestampUtcMs": "2026-09-02T21:43:19.798Z",
+    "action": {
+      "type": "CREATE_DOCUMENT",
+      "input": {
+        "meta": {},
+        "name": "Docs \u203a Local Registry Setup Guide",
+        "slug": "",
+        "model": "bai/source",
+        "branch": "main",
+        "signing": {
+          "nonce": "",
+          "publicKey": {},
+          "signature": "efa6bc18-e38b-462a-a2c0-6cf90e69ae2c",
+          "documentType": "bai/source",
+          "createdAtUtcIso": "2026-09-02T21:43:19.798Z"
+        },
+        "version": 0,
+        "documentId": "efa6bc18-e38b-462a-a2c0-6cf90e69ae2c",
+        "protocolVersions": {
+          "base-reducer": 2
+        }
+      },
+      "timestampUtcMs": "2026-09-02T21:43:19.798Z"
+    }
+  },
+  {
+    "index": 0,
+    "hash": "TIeyU/REU5AHecuOqSoalbn9jGA=",
+    "timestampUtcMs": "2026-09-02T21:43:19.944Z",
+    "action": {
+      "type": "INGEST_SOURCE",
+      "input": {
+        "url": "https://github.com/powerhouse-inc/powerhouse/blob/v6.2.2-dev.74/docs/LOCAL-REGISTRY-SETUP.md",
+        "tool": "sync-repo-docs",
+        "title": "Docs \u203a Local Registry Setup Guide",
+        "author": "Powerhouse Inc.",
+        "method": "sha256:693b76debe8d6766d11106029297c226d925ac72dba60c950fe190d0868e9208 git:v6.2.2-dev.74",
+        "content": "# Local Registry Setup Guide\n\nDeveloper guide for running a local Verdaccio registry and manually starting Connect and Switchboard to work with it.\n\n## Table of Contents\n\n- [Overview](#overview)\n- [Prerequisites](#prerequisites)\n- [1. Start the Local Registry](#1-start-the-local-registry)\n- [2. Authenticate](#2-authenticate)\n- [3. Build and Publish a Package](#3-build-and-publish-a-package)\n- [4. Configure powerhouse.config.json](#4-configure-powerhouseconfigjson)\n- [5. Start Connect with the Registry](#5-start-connect-with-the-registry)\n- [6. Start Switchboard with the Registry](#6-start-switchboard-with-the-registry)\n- [7. Start ph vetra with the Registry](#7-start-ph-vetra-with-the-registry)\n- [8. Using ph connect preview with the Registry](#8-using-ph-connect-preview-with-the-registry)\n- [9. Verifying the Setup](#9-verifying-the-setup)\n- [10. Environment Variables Reference](#10-environment-variables-reference)\n\n---\n\n## Overview\n\nThe Powerhouse Registry is a [Verdaccio](https://verdaccio.org/)-based npm registry with a built-in CDN layer. When a package is published, the registry extracts its tarball and serves individual files via CDN endpoints. This allows Connect (browser) and Switchboard (Node.js) to load packages at runtime without a full npm install.\n\n```\nRegistry (Verdaccio + CDN)\n  http://localhost:8080\n        |\n        \u251c\u2500\u2500 /-/cdn/<pkg>/index.js          \u2192 Connect (browser bundle)\n        \u251c\u2500\u2500 /-/cdn/<pkg>/style.css         \u2192 Connect (styles)\n        \u251c\u2500\u2500 /-/cdn/<pkg>/document-models/  \u2192 Switchboard (server models)\n        \u251c\u2500\u2500 /packages                      \u2192 Package discovery API\n        \u2514\u2500\u2500 npm publish/install            \u2192 Standard npm protocol\n```\n\n## Prerequisites\n\n- Node.js >= 20\n- pnpm installed\n- Bun installed (registry dev mode uses `bun run`)\n- Monorepo cloned and dependencies installed (`pnpm install`)\n\n## 1. Start the Local Registry\n\n```bash\ncd packages/registry\npnpm dev\n```\n\nThis runs the registry via `bun run ./cli.ts` and starts Verdaccio on `http://localhost:8080` with the CDN layer. Storage defaults to `./storage` and CDN cache to `./cdn-cache` relative to `packages/registry/`.\n\nTo use a custom port:\n\n```bash\npnpm dev --port 9090\n```\n\n**Other optional flags:**\n\n| Flag              | Default       | Description               |\n| ----------------- | ------------- | ------------------------- |\n| `--port`          | `8080`        | Server port               |\n| `--storage-dir`   | `./storage`   | Verdaccio storage path    |\n| `--cdn-cache-dir` | `./cdn-cache` | CDN cache path            |\n| `--uplink`        | \u2014             | Upstream npm registry URL |\n| `--web-enabled`   | `true`        | Enable Verdaccio web UI   |\n\n**Verify it's running:**\n\n```bash\ncurl http://localhost:8080/-/ping\n```\n\nYou can also open `http://localhost:8080` in a browser to see the Verdaccio web UI.\n\n## 2. Authenticate\n\nVerdaccio accepts any username/password for new local registrations.\n\n**Interactive:**\n\n```bash\nnpm adduser --registry http://localhost:8080\n```\n\nEnter any username, password, and email when prompted.\n\n**Non-interactive (useful for scripts):**\n\n```bash\ncurl -X PUT http://localhost:8080/-/user/org.couchdb.user:testuser \\\n  -H \"Content-Type: application/json\" \\\n  -d '{\"name\":\"testuser\",\"password\":\"testpassword\"}'\n```\n\nThe response contains a token. Write it to `.npmrc` in your project directory:\n\n```bash\necho \"//localhost:8080/:_authToken=<token>\" > .npmrc\n```\n\n**Verify authentication:**\n\n```bash\nnpm whoami --registry http://localhost:8080\n```\n\n## 3. Build and Publish a Package\n\nBuild your package first:\n\n```bash\ncd your-package-directory\nph build\n```\n\nThis runs `tsdown` with the correct entry points (document-models, editors, processors, subgraphs), copies `powerhouse.manifest.json` to `dist/`, and builds the CSS via Tailwind.\n\nPublish using npm:\n\n```bash\nnpm publish --registry http://localhost:8080\n```\n\nOr using `ph publish` (which wraps `npm publish`):\n\n```bash\nph publish --registry http://localhost:8080\n```\n\nIf the version already exists, unpublish first:\n\n```bash\nnpm unpublish @your-scope/your-package@<version> --registry http://localhost:8080 --force\nnpm publish --registry http://localhost:8080\n```\n\n**`ph publish` registry URL resolution order:**\n\n`--registry` flag > `PH_REGISTRY_URL` env > `powerhouse.config.json packageRegistryUrl` > default production URL\n\n## 4. Configure powerhouse.config.json\n\nThe `powerhouse.config.json` file is the central configuration. Both Connect (when run via ph-cli) and Switchboard read from it.\n\n**Setting the registry URL:**\n\n```json\n{\n  \"packageRegistryUrl\": \"http://localhost:8080\"\n}\n```\n\n**Full example (from `test/vetra-e2e/powerhouse.config.json`):**\n\n```json\n{\n  \"logLevel\": \"debug\",\n  \"documentModelsDir\": \"./document-models\",\n  \"editorsDir\": \"./editors\",\n  \"processorsDir\": \"./processors\",\n  \"subgraphsDir\": \"./subgraphs\",\n  \"studio\": {\n    \"port\": 3001\n  },\n  \"reactor\": {\n    \"port\": 4002,\n    \"storage\": \"memory\"\n  },\n  \"packages\": [],\n  \"packageRegistryUrl\": \"http://localhost:8080\"\n}\n```\n\n**Key fields:**\n\n| Field                | Description                                                                                                                                         |\n| -------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------- |\n| `packageRegistryUrl` | Base URL of the registry (no trailing `/-/cdn/`). Used by Connect, Switchboard, `ph publish`, and `ph install`.                                     |\n| `packages`           | Array of packages to load. Each entry has `packageName` (required), `provider` (set to `\"registry\"` for registry packages), and optional `version`. |\n\n## 5. Start Connect with the Registry\n\nConnect loads packages from the registry at runtime via the CDN.\n\n### Running Connect directly (`pnpm dev`)\n\nWhen running Connect directly from `apps/connect`, the registry URL is read from `apps/connect/public/powerhouse.config.json` at the top level (`packageRegistryUrl`). Set or update that file before starting:\n\n```jsonc\n// apps/connect/public/powerhouse.config.json\n{\n  \"packageRegistryUrl\": \"http://localhost:8080\",\n  // \u2026\n}\n```\n\n```bash\ncd apps/connect\npnpm dev\n```\n\nTo auto-load specific packages on startup, also set them in the same file under `packages[]`.\n\nOnce Connect is running, open it in the browser and go to **Settings > Package Manager** to see and install available packages from the registry.\n\n### Running Connect via `ph connect studio`\n\nWhen using the CLI, Connect reads from `powerhouse.config.json` in the current directory:\n\n```bash\ncd your-project  # must have a powerhouse.config.json with packageRegistryUrl\nph connect studio\n```\n\n**Resolution order for the registry URL:** CLI override (`--packages-registry` on `ph connect build`) > top-level `packageRegistryUrl` in `powerhouse.config.json` > null. Env vars are not a source for Connect's runtime configuration.\n\n## 6. Start Switchboard with the Registry\n\nSwitchboard loads document models from the registry at startup.\n\n### Using powerhouse.config.json (recommended)\n\nEnsure your `powerhouse.config.json` has `packageRegistryUrl` and `packages` configured (see [section 4](#4-configure-powerhouseconfigjson)), then:\n\n```bash\ncd apps/switchboard\npnpm dev\n```\n\nSwitchboard reads the config and loads packages where `provider === \"registry\"`.\n\n### Using environment variables\n\n```bash\ncd apps/switchboard\nPH_REGISTRY_URL=\"http://localhost:8080\" \\\nPH_REGISTRY_PACKAGES=\"@your-scope/your-package\" \\\npnpm dev\n```\n\n**Resolution order:**\n\n- Registry URL: `PH_REGISTRY_URL` env > `powerhouse.config.json packageRegistryUrl`\n- Packages: `PH_REGISTRY_PACKAGES` env (comma-separated) > `powerhouse.config.json packages` filtered by `provider === \"registry\"`\n\n### Dynamic model loading\n\nEnable on-demand loading of unknown document types during sync:\n\n```bash\ncd apps/switchboard\nDYNAMIC_MODEL_LOADING=true pnpm dev\n```\n\nThis queries the registry's `/packages/by-document-type?type=X` endpoint to find and load the right package automatically.\n\n## 7. Start ph vetra with the Registry\n\n`ph vetra` starts both Switchboard and Connect Studio. Both read from the same `powerhouse.config.json`.\n\n1. Make sure the local registry is running (see [section 1](#1-start-the-local-registry))\n2. Ensure `powerhouse.config.json` has `packageRegistryUrl` set (see [section 4](#4-configure-powerhouseconfigjson))\n3. Run vetra from your project directory:\n\n```bash\ncd your-project\nph vetra\n```\n\nDefault ports: Connect on 3001, Switchboard on 4001 (configurable via `studio.port` and `reactor.port` in config, or `--connect-port` / `--switchboard-port` flags).\n\nSwitchboard loads registry packages at startup. Connect loads them at runtime via the CDN when the user installs them through the Package Manager UI or when they're listed in `packages`.\n\n## 8. Using ph connect preview with the Registry\n\n`ph connect preview` serves a production build of Connect. The registry URL is baked in at build time.\n\n1. Make sure `powerhouse.config.json` has `packageRegistryUrl` set\n2. Build Connect:\n\n```bash\ncd your-project\nph connect build\n```\n\n3. Preview the build:\n\n```bash\nph connect preview --port 4173\n```\n\nOpen `http://localhost:4173` in the browser, go to **Settings > Package Manager**, and install packages from the registry.\n\n**Note:** The registry URL is embedded during build. If you change `packageRegistryUrl`, you must rebuild.\n\n## 9. Verifying the Setup\n\n### Package discovery\n\n```bash\n# List all packages\ncurl http://localhost:8080/packages\n\n# Single package info\ncurl http://localhost:8080/packages/@your-scope/your-package\n\n# Find packages by document type\ncurl \"http://localhost:8080/packages/by-document-type?type=your/document-type\"\n```\n\n### CDN file serving\n\n```bash\n# Connect browser bundle\ncurl -s http://localhost:8080/-/cdn/@your-scope/your-package/index.js | head -5\n\n# Connect styles\ncurl -s http://localhost:8080/-/cdn/@your-scope/your-package/style.css | head -5\n\n# Switchboard document models\ncurl -s http://localhost:8080/-/cdn/@your-scope/your-package/document-models/index.js | head -5\n\n# Package manifest\ncurl http://localhost:8080/-/cdn/@your-scope/your-package/powerhouse.manifest.json\n```\n\n### Health check\n\n```bash\ncurl http://localhost:8080/-/ping\n```\n\n## 10. Environment Variables Reference\n\n### Registry Server\n\n| Variable             | Default       | Description                                            |\n| -------------------- | ------------- | ------------------------------------------------------ |\n| `PORT`               | `8080`        | Registry server port                                   |\n| `REGISTRY_STORAGE`   | `./storage`   | Verdaccio storage directory                            |\n| `REGISTRY_CDN_CACHE` | `./cdn-cache` | CDN cache directory                                    |\n| `REGISTRY_UPLINK`    | \u2014             | Upstream npm registry URL                              |\n| `REGISTRY_WEB`       | `true`        | Enable Verdaccio web UI                                |\n| `REGISTRY_WEBHOOKS`  | \u2014             | Comma-separated webhook URLs for publish notifications |\n\n### Connect\n\nConnect's runtime configuration is read from `powerhouse.config.json`, not from env vars. Set the registry URL via the top-level `packageRegistryUrl` field, or pass `--packages-registry <url>` to `ph connect build`. The `packages[]` array in the same file controls auto-loaded packages. `PH_PACKAGES` (comma-separated names) is still honoured as a build-time override for the package list.\n\n### Switchboard\n\n| Variable                | Description                                                               |\n| ----------------------- | ------------------------------------------------------------------------- |\n| `PH_REGISTRY_URL`       | Registry base URL. Overrides `powerhouse.config.json packageRegistryUrl`. |\n| `PH_REGISTRY_PACKAGES`  | Comma-separated package names to load from registry.                      |\n| `DYNAMIC_MODEL_LOADING` | Set to `true` for on-demand model loading from registry.                  |\n\n### Publishing\n\n| Variable          | Description                                                                               |\n| ----------------- | ----------------------------------------------------------------------------------------- |\n| `PH_REGISTRY_URL` | Default registry URL for `ph publish` and `ph install` (overridden by `--registry` flag). |\n",
+        "createdAt": "2026-09-02T21:43:19.944Z",
+        "createdBy": "repo-docs-sync",
+        "sourceType": "DOCUMENTATION",
+        "description": "Powerhouse v6.2.2-dev.74 (unchanged since v6.2.2-dev.47) \u2014 Developer guide for running a local Verdaccio registry and manually starting Connect and Switchboard to work with it.",
+        "publishedAt": "2026-06-02T23:51:11.000Z"
+      },
+      "timestampUtcMs": "2026-09-02T21:43:19.944Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "",
+    "timestampUtcMs": "2026-09-02T21:43:19.798Z",
+    "action": {
+      "type": "UPGRADE_DOCUMENT",
+      "input": {
+        "model": "bai/source",
+        "toVersion": 1,
+        "documentId": "efa6bc18-e38b-462a-a2c0-6cf90e69ae2c",
+        "fromVersion": 0,
+        "initialState": {
+          "auth": {
+            "grants": [],
+            "version": 0
+          },
+          "local": {},
+          "global": {
+            "title": null,
+            "status": "INBOX",
+            "content": null,
+            "createdAt": null,
+            "createdBy": null,
+            "provenance": null,
+            "sourceType": null,
+            "description": null,
+            "extractedClaims": [],
+            "extractionStats": null
+          },
+          "document": {
+            "hash": {
+              "encoding": "base64",
+              "algorithm": "sha1"
+            },
+            "version": 1
+          }
+        }
+      },
+      "timestampUtcMs": "2026-09-02T21:43:19.798Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "YbXDWqBEuiuJbEVNCsaDeOdm624=",
+    "timestampUtcMs": "2026-09-02T21:43:23.033Z",
+    "action": {
+      "type": "ADD_EXTRACTED_CLAIM",
+      "input": {
+        "claimRef": "15a216b2-f6e8-40ba-bfcb-604c1059297a"
+      },
+      "timestampUtcMs": "2026-09-02T21:43:23.033Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "5F3TDiBY1fZVV/uIvi8fWEU8/vU=",
+    "timestampUtcMs": "2026-09-02T21:43:27.959Z",
+    "action": {
+      "type": "SET_SOURCE_STATUS",
+      "input": {
+        "status": "EXTRACTED"
+      },
+      "timestampUtcMs": "2026-09-02T21:43:27.959Z"
+    }
+  }
+]

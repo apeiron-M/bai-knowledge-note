@@ -1,0 +1,96 @@
+{
+  "links": [
+    {
+      "id": "lnk-2d979101-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "2d979101-1dec-42b5-a74e-abbbc6af0950",
+      "targetTitle": "phase-2b-added-raw-file-sharing-in-chat-with-act-encrypted-b"
+    },
+    {
+      "id": "lnk-97c0a282-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "97c0a282-5f24-47bd-a2cd-f5d563fa8d11",
+      "targetTitle": "bee-reactor-adapter-chat-settings-features"
+    },
+    {
+      "id": "lnk-1c781f1a-bui",
+      "linkType": "BUILDS_ON",
+      "targetDocumentId": "1c781f1a-a3f9-483e-a15a-ccbc2c431135",
+      "targetTitle": "chat-pss-messaging-history-shipped"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Chat file uploads and inline previews shipped with 200 MB cap",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "0dcd284b-eb8b-40a1-ac7f-2e1caa419eec",
+      "name": "chat-roadmap",
+      "topicDocumentId": null
+    },
+    {
+      "id": "d83405be-4066-4856-8520-297ddbddc2ee",
+      "name": "shipped-features",
+      "topicDocumentId": null
+    },
+    {
+      "id": "b97c4e7e-e647-49fa-a1e0-66be35def9e3",
+      "name": "file-sharing",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "## What shipped\n\nChat file sharing is feature-complete for the current scope:\n\n- **Raw file uploads** via `swarm-file.ts` with cached ACT grantees - images, PDF, audio, video, text.\n- **Inline previews** in `message-bubble.tsx` and `files-tab.tsx` - image / GIF / PDF iframe / audio / video / text.\n- **Drag-and-drop** via `ThreadDropZone` in `chat-panel.tsx`.\n- **Lightbox + universal preview modal** in the Files tab, portaled with `data-chat-overlay` so the chat panel stays open underneath.\n- **External Swarm-link previews** for `bzz://<hash>` and `https://.../bzz/<hash>` - detected in `MessageBody`, probed via `ChatManager.probeSwarmReference`.\n- **200 MB upload cap** - `MAX_FILE_SIZE` enforced in adapter and client.\n- **Video codec pre-flight** with `canPlayType` and an `onError` download fallback on `<video>`.\n- **Broad mime-guess** - MKV, FLV, 3GP, TS/MTS, WMV, VOB, etc. in `mime-guess.ts`.\n- **Unread badge** on sidebar chat icon via `useUnreadCount` + custom-event dispatch.\n\n## Implication\n\nThe media-sharing surface is done; remaining gap is Swarm-link detection inside the Files tab list.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "OBSERVATION",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "knowledge-agent",
+    "createdAt": "2026-04-21T14:38:00.466Z",
+    "sessionId": null,
+    "updatedAt": "2026-09-03T09:57:29.716Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "swarm-file.ts caches ACT grantees; bubbles and the Files tab render per-mime cards with codec pre-flight and download fallback. Only bzz-reference sweeping in the list remains.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "79016c60-0047-4dfa-96d3-083ea006f920",
+      "actor": "claude",
+      "comment": "Knowledge registered against powerhouse v6.2.2-dev.47",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-14T12:00:00.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "f67b2407-ce8a-4c7c-9ef1-2e5d43471b37",
+      "actor": "liberuum",
+      "comment": "Canonical as of powerhouse v6.2.2-dev.47",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-14T12:00:00.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

@@ -1,0 +1,115 @@
+{
+  "links": [
+    {
+      "id": "lnk-c6071a9e-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "c6071a9e-85de-41e9-9517-7c893f3d57ef",
+      "targetTitle": "Academy \u203a Build \u203a ExampleUsecases \u203a TodoList \u203a Todo List (reference implementation)",
+      "reason": "Extracted from apps/academy/docs/academy/03-Build/06-ExampleUsecases/TodoList/TodoList.md at v6.2.2-dev.74 \u2014 whole page: the reference repository, branch conventions, what the finished package demonstrates",
+      "confidence": "grounded"
+    },
+    {
+      "id": "lnk-544f7cc3-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "544f7cc3-5187-4909-bbfd-3bea807b113a",
+      "targetTitle": "Academy \u203a Build \u203a ManualTodoTutorial \u203a Create a new to-do list document",
+      "reason": "Extracted from apps/academy/docs/academy/03-Build/01-ManualTodoTutorial/01-CreateNewPowerhouseProject.md at v6.2.2-dev.74 \u2014 Setup: create your project and connect to tutorial repo; Compare your work with reference steps",
+      "confidence": "grounded"
+    },
+    {
+      "id": "lnk-fc0b2dad-bui",
+      "linkType": "BUILDS_ON",
+      "targetDocumentId": "fc0b2dad-3dce-4cdc-b79d-95e7d0c052f4",
+      "targetTitle": "build-two-paths-manual-or-agent",
+      "reason": "This is the worked example the manual path builds, and the branch-per-step layout is what makes the manual path resumable",
+      "confidence": "grounded"
+    },
+    {
+      "id": "lnk-952fe228-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "952fe228-b9bc-4a40-b402-b66774053a96",
+      "targetTitle": "state-schema-design-guidance",
+      "reason": "The TodoList schema is the artefact those design rules are demonstrated on, including the advanced computed stats extension",
+      "confidence": "grounded"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "The Todo tutorial repository keeps one branch per step with a matching complete branch, so a learner can start anywhere or diff against a checkpoint",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "aa7524ff-ea71-4547-b1b5-4ddb902ec2b6",
+      "name": "tutorials",
+      "topicDocumentId": null
+    },
+    {
+      "id": "827c0329-028a-42ee-b818-1469fed9dab9",
+      "name": "onboarding",
+      "topicDocumentId": null
+    },
+    {
+      "id": "a48ab288-cab4-4033-903d-968c4a93d869",
+      "name": "git",
+      "topicDocumentId": null
+    },
+    {
+      "id": "89ac3b89-eb49-4e59-b69a-b2c0a23e2016",
+      "name": "development",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "The Todo List is the worked example used throughout the Build track, and the reference implementation at **`powerhouse-inc/todo-tutorial`** is organised so a learner never has to start from scratch:\n\n- each step has a **starting branch** (`step-1-\u2026`) and a **completed branch** (`step-1-complete-\u2026`);\n- the `step-1-` branch **matches what `ph init todo-tutorial` produces**, so a local project and the repository begin identical;\n- comparing work against a checkpoint is `git diff your-branch step-1-complete-\u2026`, or \"compare with branch\" in the GitHub UI.\n\nOne setup detail is easy to get wrong and expensive: when forking, **uncheck \"copy the main branch only\"** \u2014 otherwise every step branch is lost and the diff workflow the tutorial is built on stops working. Then clone the fork and `pnpm install`.\n\nWhat the finished package demonstrates, which doubles as a map of the Build track: a `TodoList` document model with state schema and operations; reducer operation handlers **and their unit tests**; a document editor wired to the model's operations; a custom **Drive Explorer** for managing many Todo Lists in a drive; and a shared component displaying stats in **both** the editor and the Drive Explorer \u2014 the last one being the piece that shows a component crossing the editor/drive-app boundary.\n\nThe same example is taught twice on purpose: the Manual Todo tutorial builds a basic package by hand, and the Document Model Creation mastery track re-derives it with the theory plus advanced extensions (computed `stats`, the Drive Explorer, the shared component).\n\n## Provenance\n- `apps/academy/docs/academy/03-Build/06-ExampleUsecases/TodoList/TodoList.md` \u2014 whole page: the reference repository, branch conventions, what the finished package demonstrates\n- `apps/academy/docs/academy/03-Build/01-ManualTodoTutorial/01-CreateNewPowerhouseProject.md` \u2014 Setup: create your project and connect to tutorial repo; Compare your work with reference steps\n\n_Extracted from the Powerhouse repository at **v6.2.2-dev.74**._",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": "v6.2.2-dev.74",
+  "computes": null,
+  "filePath": "apps/academy/docs/academy/03-Build/06-ExampleUsecases/TodoList/TodoList.md",
+  "noteType": "PROCEDURE",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "knowledge-agent",
+    "createdAt": "2026-09-03T07:54:31.427Z",
+    "sessionId": null,
+    "updatedAt": "2026-09-03T07:54:32.648Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "step-N-\u2026 starts a step and step-N-complete-\u2026 finishes it; step-1- matches what ph init todo-tutorial produces. Fork without copying only the main branch, or the step branches are lost.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "cd91782b-d0ab-4808-9a0d-9af3f8a80ae6",
+      "actor": "knowledge-agent",
+      "comment": "extracted from apps/academy/docs/academy/03-Build/06-ExampleUsecases/TodoList/TodoList.md at v6.2.2-dev.74",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-09-03T07:54:32.149Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "cfa44949-fe3b-4a85-9f0d-fb4a93ebdc99",
+      "actor": "liberuum",
+      "comment": "claim checked against the cited file at the pinned tag",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-09-03T07:54:32.648Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

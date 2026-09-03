@@ -1,0 +1,330 @@
+[
+  {
+    "index": 0,
+    "hash": "",
+    "timestampUtcMs": "2026-09-03T07:34:16.621Z",
+    "action": {
+      "type": "CREATE_DOCUMENT",
+      "input": {
+        "meta": {},
+        "name": "lb-openresty-choice",
+        "slug": "",
+        "model": "bai/knowledge-note",
+        "branch": "main",
+        "signing": {
+          "nonce": "",
+          "publicKey": {},
+          "signature": "5cac8a4f-0c18-4d48-8403-065c072dd00b",
+          "documentType": "bai/knowledge-note",
+          "createdAtUtcIso": "2026-09-03T07:34:16.621Z"
+        },
+        "version": 0,
+        "documentId": "5cac8a4f-0c18-4d48-8403-065c072dd00b",
+        "protocolVersions": {
+          "base-reducer": 2
+        }
+      },
+      "timestampUtcMs": "2026-09-03T07:34:16.621Z"
+    }
+  },
+  {
+    "index": 0,
+    "hash": "HTTx0NFTm/N8ly/w5kCbZtW3zC0=",
+    "timestampUtcMs": "2026-09-03T07:34:17.922Z",
+    "action": {
+      "type": "SET_TITLE",
+      "input": {
+        "title": "OpenResty was chosen over a custom daemon, plain nginx and HAProxy because plain nginx cannot read a JSON body and the interesting problems are language-independent",
+        "updatedAt": "2026-09-03T07:34:17.922Z"
+      },
+      "timestampUtcMs": "2026-09-03T07:34:17.922Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "",
+    "timestampUtcMs": "2026-09-03T07:34:16.621Z",
+    "action": {
+      "type": "UPGRADE_DOCUMENT",
+      "input": {
+        "model": "bai/knowledge-note",
+        "toVersion": 1,
+        "documentId": "5cac8a4f-0c18-4d48-8403-065c072dd00b",
+        "fromVersion": 0,
+        "initialState": {
+          "auth": {
+            "grants": [],
+            "version": 0
+          },
+          "local": {
+            "lastViewedAt": null,
+            "personalTags": []
+          },
+          "global": {
+            "links": [],
+            "model": null,
+            "scope": null,
+            "title": null,
+            "editor": null,
+            "inputs": [],
+            "models": [],
+            "status": "DRAFT",
+            "topics": [],
+            "content": null,
+            "context": null,
+            "modelId": null,
+            "modules": [],
+            "outputs": [],
+            "version": null,
+            "computes": null,
+            "filePath": null,
+            "noteType": null,
+            "severity": null,
+            "hooksUsed": [],
+            "rootCause": null,
+            "confidence": null,
+            "consumedBy": [],
+            "provenance": null,
+            "sourceType": null,
+            "targetType": null,
+            "cardinality": null,
+            "description": null,
+            "alternatives": [],
+            "consequences": [],
+            "errorMessage": null,
+            "relationType": null,
+            "correctPattern": null,
+            "decisionStatus": null,
+            "dispatchTargets": [],
+            "lifecycleEvents": []
+          },
+          "document": {
+            "hash": {
+              "encoding": "base64",
+              "algorithm": "sha1"
+            },
+            "version": 1
+          }
+        }
+      },
+      "timestampUtcMs": "2026-09-03T07:34:16.621Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "7C0KGAvq9obGOsWDNSbuMBLzFbM=",
+    "timestampUtcMs": "2026-09-03T07:34:17.922Z",
+    "action": {
+      "type": "SET_DESCRIPTION",
+      "input": {
+        "updatedAt": "2026-09-03T07:34:17.922Z",
+        "description": "Verdicts: a custom C daemon is too much surface for an MVP whose hard problems are pinning and migration; plain nginx cannot hash on a body; HAProxy plus Lua is viable but less mature for this shape."
+      },
+      "timestampUtcMs": "2026-09-03T07:34:17.922Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "",
+    "timestampUtcMs": "2026-09-03T07:34:51.954Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "metadata": {
+          "reason": "Extracted from apps/switchboard-lb/ARCHITECTURE.md at v6.2.2-dev.74 \u2014 \u00a72 Why OpenResty (and not X); \u00a77 Concurrency model; \u00a71 Goals",
+          "confidence": "grounded"
+        },
+        "sourceId": "5cac8a4f-0c18-4d48-8403-065c072dd00b",
+        "targetId": "704020e6-eefd-4e1f-9fc6-f9ec801d8255",
+        "relationshipType": "DERIVED_FROM"
+      },
+      "timestampUtcMs": "2026-09-03T07:34:51.954Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "e8nWmdWdoO5Pu0RYq2LgeMMlJs0=",
+    "timestampUtcMs": "2026-09-03T07:34:17.922Z",
+    "action": {
+      "type": "SET_NOTE_TYPE",
+      "input": {
+        "noteType": "DECISION",
+        "updatedAt": "2026-09-03T07:34:17.922Z"
+      },
+      "timestampUtcMs": "2026-09-03T07:34:17.922Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "",
+    "timestampUtcMs": "2026-09-03T07:34:52.422Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "metadata": {
+          "reason": "The capability that decided the platform choice (body access) is unused by the shipped routing model, which reads a header instead",
+          "confidence": "grounded"
+        },
+        "sourceId": "5cac8a4f-0c18-4d48-8403-065c072dd00b",
+        "targetId": "60b0a1d3-b299-4a56-817a-de602de7ea6a",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-09-03T07:34:52.422Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "HcUNZyqR3aOpeXGQvq/OhhYOIQo=",
+    "timestampUtcMs": "2026-09-03T07:34:17.922Z",
+    "action": {
+      "type": "SET_CONTENT",
+      "input": {
+        "content": "Four strategies were evaluated, and the reasoning transfers beyond this component:\n\n| Approach | Verdict |\n| --- | --- |\n| Custom C daemon | **Rejected for MVP.** Large surface area, long timeline, and the interesting problems \u2014 the pinning invariant, the migration story \u2014 are *independent of language*. Revisit only if OpenResty is outgrown |\n| Plain nginx | **Rejected.** `hash $var consistent` can hash on URL params or headers but **cannot read a JSON request body**, so the path-scoped route would work and `POST /graphql` would not |\n| HAProxy + Lua | **Viable.** `http-buffer-request` plus a Lua converter can set a variable for `balance hash <var> consistent`; slightly less mature Lua ecosystem for this shape |\n| **OpenResty** | **Chosen.** First-class body access, mature `cjson`, native `hash $var consistent`, rich `lua-resty-*` ecosystem |\n\nWhat nginx supplies for free is the real argument: the accept loop, HTTP parsing, keep-alive, upstream pooling, **graceful reload** and worker supervision. `worker_processes auto` gives one worker per core, `listen \u2026 reuseport` lets the kernel balance accepts, Lua state is per-worker with `lua_shared_dict` for anything shared, and there is no thread pool and no work stealing \u2014 each request is handled end to end on the worker that accepted it. \"We do not write our own event loop; we do not manage our own thread pool. This is a feature.\"\n\nThe accepted tradeoff is Lua on the hot path: for sub-MB payloads `cjson.decode` costs tens of microseconds, dominated by the network round trip \u2014 and the target is LB-added latency in the **low hundreds of microseconds**, regression-checked against a k6 baseline (M0 measured 84 \u00b5s median, 172 \u00b5s p95). Note the irony worth remembering: body access was the deciding capability, and the shipped header model never uses it.\n\n## Provenance\n- `apps/switchboard-lb/ARCHITECTURE.md` \u2014 \u00a72 Why OpenResty (and not X); \u00a77 Concurrency model; \u00a71 Goals\n\n_Extracted from the Powerhouse repository at **v6.2.2-dev.74**._",
+        "updatedAt": "2026-09-03T07:34:17.922Z"
+      },
+      "timestampUtcMs": "2026-09-03T07:34:17.922Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "",
+    "timestampUtcMs": "2026-09-03T07:34:52.904Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "metadata": {
+          "reason": "Both notes are about keeping the surface small: one by picking a stock binary, the other by refusing features nginx could do",
+          "confidence": "grounded"
+        },
+        "sourceId": "5cac8a4f-0c18-4d48-8403-065c072dd00b",
+        "targetId": "52290f19-9dff-44ff-8ae0-7c3fb12b0893",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-09-03T07:34:52.904Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "ExLtoGbz4hqQpMRSnoIM7kr9rfg=",
+    "timestampUtcMs": "2026-09-03T07:34:17.922Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "28fd119f-3b1e-43c7-b8de-e780814df067",
+        "name": "switchboard-lb"
+      },
+      "timestampUtcMs": "2026-09-03T07:34:17.922Z"
+    }
+  },
+  {
+    "index": 5,
+    "hash": "LQUoINYDMa7eT95QytOOXe8xgl0=",
+    "timestampUtcMs": "2026-09-03T07:34:17.922Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "e13184ba-34f7-40e2-9014-7e398956c61e",
+        "name": "openresty"
+      },
+      "timestampUtcMs": "2026-09-03T07:34:17.922Z"
+    }
+  },
+  {
+    "index": 6,
+    "hash": "z1tNeKL7IT7yf0ijd4MfN0ZyKaM=",
+    "timestampUtcMs": "2026-09-03T07:34:17.922Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "3adee8ed-dbac-466d-84ad-9d7dad969067",
+        "name": "nginx"
+      },
+      "timestampUtcMs": "2026-09-03T07:34:17.922Z"
+    }
+  },
+  {
+    "index": 7,
+    "hash": "dgftdOxJLC2PMez2eBP6gQ5tenE=",
+    "timestampUtcMs": "2026-09-03T07:34:17.922Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "bd1681ad-fbc1-49d6-82b0-07d31e12a294",
+        "name": "design-decisions"
+      },
+      "timestampUtcMs": "2026-09-03T07:34:17.922Z"
+    }
+  },
+  {
+    "index": 8,
+    "hash": "9BtCqV+AY8Mn/BpyMXfQ+U+DIns=",
+    "timestampUtcMs": "2026-09-03T07:34:17.922Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "version",
+        "value": "v6.2.2-dev.74",
+        "updatedAt": "2026-09-03T07:34:17.922Z"
+      },
+      "timestampUtcMs": "2026-09-03T07:34:17.922Z"
+    }
+  },
+  {
+    "index": 9,
+    "hash": "+0/w8gFqzf+zC5hCyGCP8b452ns=",
+    "timestampUtcMs": "2026-09-03T07:34:17.922Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "filePath",
+        "value": "apps/switchboard-lb/ARCHITECTURE.md",
+        "updatedAt": "2026-09-03T07:34:17.922Z"
+      },
+      "timestampUtcMs": "2026-09-03T07:34:17.922Z"
+    }
+  },
+  {
+    "index": 10,
+    "hash": "SjcYl6YxM5qQUi4Fp7ShFZTnCQg=",
+    "timestampUtcMs": "2026-09-03T07:34:20.762Z",
+    "action": {
+      "type": "SET_PROVENANCE",
+      "input": {
+        "author": "knowledge-agent",
+        "createdAt": "2026-09-03T07:34:20.762Z",
+        "sourceOrigin": "DERIVED"
+      },
+      "timestampUtcMs": "2026-09-03T07:34:20.762Z"
+    }
+  },
+  {
+    "index": 11,
+    "hash": "NNIixfUR7om7zGOv6NI9f5GFzQY=",
+    "timestampUtcMs": "2026-09-03T07:34:21.334Z",
+    "action": {
+      "type": "SUBMIT_FOR_REVIEW",
+      "input": {
+        "id": "881b9011-b232-4b61-b986-7a9830d5d54e",
+        "actor": "knowledge-agent",
+        "comment": "extracted from apps/switchboard-lb/ARCHITECTURE.md at v6.2.2-dev.74",
+        "timestamp": "2026-09-03T07:34:21.334Z"
+      },
+      "timestampUtcMs": "2026-09-03T07:34:21.334Z"
+    }
+  },
+  {
+    "index": 12,
+    "hash": "Eu+ubN3BRdUVuwd21tmFwCyKtpA=",
+    "timestampUtcMs": "2026-09-03T07:34:21.847Z",
+    "action": {
+      "type": "APPROVE_NOTE",
+      "input": {
+        "id": "040a6c9e-422e-4556-be7a-5bb60b8dea49",
+        "actor": "liberuum",
+        "comment": "claim checked against the cited file at the pinned tag",
+        "timestamp": "2026-09-03T07:34:21.847Z"
+      },
+      "timestampUtcMs": "2026-09-03T07:34:21.847Z"
+    }
+  }
+]

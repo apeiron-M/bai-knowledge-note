@@ -1,0 +1,410 @@
+[
+  {
+    "index": 0,
+    "hash": "",
+    "timestampUtcMs": "2026-08-14T11:56:51.933Z",
+    "action": {
+      "type": "CREATE_DOCUMENT",
+      "input": {
+        "meta": {},
+        "name": "docker-images-for-connect-and-switchboard",
+        "slug": "",
+        "model": "bai/knowledge-note",
+        "branch": "main",
+        "signing": {
+          "nonce": "",
+          "publicKey": {},
+          "signature": "b153c532-0abc-4400-8448-4ac08046fcad",
+          "documentType": "bai/knowledge-note",
+          "createdAtUtcIso": "2026-08-14T11:56:51.933Z"
+        },
+        "version": 0,
+        "documentId": "b153c532-0abc-4400-8448-4ac08046fcad",
+        "protocolVersions": {
+          "base-reducer": 2
+        }
+      },
+      "timestampUtcMs": "2026-08-14T11:56:51.933Z"
+    }
+  },
+  {
+    "index": 0,
+    "hash": "wZr9RmpJCorwAXmLBLdcZ3frSB8=",
+    "timestampUtcMs": "2026-08-14T12:35:07.000Z",
+    "action": {
+      "type": "SET_TITLE",
+      "input": {
+        "title": "Powerhouse publishes official Docker images for Connect (frontend + Nginx) and Switchboard (backend API) to ghcr.io",
+        "updatedAt": "2026-08-14T12:35:07.000Z"
+      },
+      "timestampUtcMs": "2026-08-14T12:35:07.000Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "",
+    "timestampUtcMs": "2026-08-14T11:56:51.933Z",
+    "action": {
+      "type": "UPGRADE_DOCUMENT",
+      "input": {
+        "model": "bai/knowledge-note",
+        "toVersion": 1,
+        "documentId": "b153c532-0abc-4400-8448-4ac08046fcad",
+        "fromVersion": 0,
+        "initialState": {
+          "auth": {
+            "grants": [],
+            "version": 0
+          },
+          "local": {
+            "lastViewedAt": null,
+            "personalTags": []
+          },
+          "global": {
+            "links": [],
+            "model": null,
+            "scope": null,
+            "title": null,
+            "editor": null,
+            "inputs": [],
+            "models": [],
+            "status": "DRAFT",
+            "topics": [],
+            "content": null,
+            "context": null,
+            "modelId": null,
+            "modules": [],
+            "outputs": [],
+            "version": null,
+            "computes": null,
+            "filePath": null,
+            "noteType": null,
+            "severity": null,
+            "hooksUsed": [],
+            "rootCause": null,
+            "confidence": null,
+            "consumedBy": [],
+            "provenance": null,
+            "sourceType": null,
+            "targetType": null,
+            "cardinality": null,
+            "description": null,
+            "alternatives": [],
+            "consequences": [],
+            "errorMessage": null,
+            "relationType": null,
+            "correctPattern": null,
+            "decisionStatus": null,
+            "dispatchTargets": [],
+            "lifecycleEvents": []
+          },
+          "document": {
+            "hash": {
+              "encoding": "base64",
+              "algorithm": "sha1"
+            },
+            "version": 1
+          }
+        }
+      },
+      "timestampUtcMs": "2026-08-14T11:56:51.933Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "Ha2li8QCoqM4cYXfnyZtZ0Y1q24=",
+    "timestampUtcMs": "2026-08-14T12:35:07.000Z",
+    "action": {
+      "type": "SET_DESCRIPTION",
+      "input": {
+        "updatedAt": "2026-08-14T12:35:07.000Z",
+        "description": "Connect image builds the frontend and serves via Nginx; Switchboard optionally runs Prisma migrations, then starts the API server."
+      },
+      "timestampUtcMs": "2026-08-14T12:35:07.000Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "",
+    "timestampUtcMs": "2026-08-14T12:37:10.790Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "b153c532-0abc-4400-8448-4ac08046fcad",
+        "targetId": "e1f81c50-7a5e-4df8-a746-e80c7f58df36",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-08-14T12:37:10.790Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "jX9xNX3FpA4bM13qJAeJHh2PD/I=",
+    "timestampUtcMs": "2026-08-14T12:35:07.000Z",
+    "action": {
+      "type": "SET_NOTE_TYPE",
+      "input": {
+        "noteType": "REFERENCE",
+        "updatedAt": "2026-08-14T12:35:07.000Z"
+      },
+      "timestampUtcMs": "2026-08-14T12:35:07.000Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "",
+    "timestampUtcMs": "2026-08-14T12:37:10.889Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "b153c532-0abc-4400-8448-4ac08046fcad",
+        "targetId": "79987290-fb65-4d66-a549-fd41370db753",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-08-14T12:37:10.889Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "/dgF7fKFPhX4NmJWEUw2JxMD5yQ=",
+    "timestampUtcMs": "2026-08-14T12:35:07.000Z",
+    "action": {
+      "type": "SET_CONTENT",
+      "input": {
+        "content": "Three official images on `ghcr.io/powerhouse-inc/powerhouse/`: connect (Alpine + Node + Nginx with Brotli), switchboard (Node 24 + Prisma), academy (docs). Tags: latest, dev, staging, vX.Y.Z. Docker Compose stack: connect + switchboard + postgres:16.1. Connect startup: load packages from `PH_REGISTRY_PACKAGES`, `ph connect build`, configure/start Nginx. Switchboard startup: install packages from `PH_PACKAGES`, run Prisma migrations (only if `PH_REACTOR_DATABASE_URL` is set), start the server. Custom packages use a different env var per service: Connect reads `PH_REGISTRY_PACKAGES` (comma-separated, written to a registry config at startup), Switchboard reads `PH_PACKAGES` (comma-separated). Production: use specific version tags, persist postgres with volumes, bind to 127.0.0.1 behind a reverse proxy for SSL termination. `DATABASE_URL` is Switchboard-only -- Connect never uses it -- and it accepts a PostgreSQL *or* SQLite connection string (default `\"dev.db\"`).\n\n_Corrected 2026-08-13 against Powerhouse v6.2.2-dev.45._",
+        "updatedAt": "2026-08-14T12:35:07.000Z"
+      },
+      "timestampUtcMs": "2026-08-14T12:35:07.000Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "",
+    "timestampUtcMs": "2026-08-14T12:37:10.996Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "b153c532-0abc-4400-8448-4ac08046fcad",
+        "targetId": "83b60ca6-793d-4d0c-9b8c-7dc6cb1d3eff",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-08-14T12:37:10.996Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "h/i+6srbUjnREFhFE/Y+8jVpjpY=",
+    "timestampUtcMs": "2026-08-14T12:35:07.000Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "version",
+        "value": "v6.2.2-dev.44",
+        "updatedAt": "2026-08-14T12:35:07.000Z"
+      },
+      "timestampUtcMs": "2026-08-14T12:35:07.000Z"
+    }
+  },
+  {
+    "index": 5,
+    "hash": "",
+    "timestampUtcMs": "2026-08-14T12:37:11.085Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "b153c532-0abc-4400-8448-4ac08046fcad",
+        "targetId": "5725fd76-b0d4-4bab-9c10-3c0a890951ca",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-08-14T12:37:11.085Z"
+    }
+  },
+  {
+    "index": 5,
+    "hash": "mkutB9IPDvLfrL7yVVnzAwCgZ4M=",
+    "timestampUtcMs": "2026-08-14T12:35:07.000Z",
+    "action": {
+      "type": "SET_PROVENANCE",
+      "input": {
+        "author": "knowledge-agent",
+        "createdAt": "2026-04-02T12:00:00.000Z",
+        "sourceOrigin": "DERIVED"
+      },
+      "timestampUtcMs": "2026-08-14T12:35:07.000Z"
+    }
+  },
+  {
+    "index": 6,
+    "hash": "",
+    "timestampUtcMs": "2026-08-14T12:37:11.178Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "b153c532-0abc-4400-8448-4ac08046fcad",
+        "targetId": "158143d5-1e39-44b5-9799-1a84e6de9e72",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-08-14T12:37:11.178Z"
+    }
+  },
+  {
+    "index": 6,
+    "hash": "mLnheWbWU/6Ha0wwEkP8MBLmtuc=",
+    "timestampUtcMs": "2026-08-14T12:35:07.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "a82cb3eb-e236-4bf5-a8d7-4178b9525ee7",
+        "name": "docker",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-08-14T12:35:07.000Z"
+    }
+  },
+  {
+    "index": 7,
+    "hash": "",
+    "timestampUtcMs": "2026-09-02T21:36:59.085Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "metadata": {
+          "reason": "Backing page found by content match in the v6.2.2-dev.74 source backfill \u2014 identifiers ghcr.io, prisma from the claim appear in this page (text revised between v6.2.2-dev.47 and v6.2.2-dev.74 \u2014 re-verified in the v6.2.2-dev.74 pass); attribution, not the original extraction record",
+          "confidence": "grounded"
+        },
+        "sourceId": "b153c532-0abc-4400-8448-4ac08046fcad",
+        "targetId": "56edb93f-5c3b-4c8b-a11f-5cfdcc252dee",
+        "relationshipType": "DERIVED_FROM"
+      },
+      "timestampUtcMs": "2026-09-02T21:36:59.085Z"
+    }
+  },
+  {
+    "index": 7,
+    "hash": "mNPHvU1ez5sV2OuV1XmOa6Dqijk=",
+    "timestampUtcMs": "2026-08-14T12:35:07.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "1f4a4d51-1aa5-440e-923b-620dab2d3a21",
+        "name": "deployment",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-08-14T12:35:07.000Z"
+    }
+  },
+  {
+    "index": 8,
+    "hash": "SnZXZu6b30W0cCZRZM1iF++LQRQ=",
+    "timestampUtcMs": "2026-08-14T12:35:07.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "108be46c-9036-4630-8a3f-ed38e20ae7b4",
+        "name": "connect",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-08-14T12:35:07.000Z"
+    }
+  },
+  {
+    "index": 9,
+    "hash": "mL3ADpDPdZPYh4R/ZejrAMKGuQU=",
+    "timestampUtcMs": "2026-08-14T12:35:07.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "8a114f86-0ab7-4ef4-bf0b-5b18facd7962",
+        "name": "switchboard",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-08-14T12:35:07.000Z"
+    }
+  },
+  {
+    "index": 10,
+    "hash": "crXZzXl365ytble4GmmTgvnAWRg=",
+    "timestampUtcMs": "2026-08-14T14:37:29.000Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "version",
+        "value": "v6.2.2-dev.47",
+        "updatedAt": "2026-08-14T12:00:00.000Z"
+      },
+      "timestampUtcMs": "2026-08-14T14:37:29.000Z"
+    }
+  },
+  {
+    "index": 11,
+    "hash": "oQGRqzfe8pH3byUs74e3hCcjAWc=",
+    "timestampUtcMs": "2026-08-14T14:37:29.000Z",
+    "action": {
+      "type": "SUBMIT_FOR_REVIEW",
+      "input": {
+        "id": "c4629c5f-e97e-43e7-a458-8b797e6fd46f",
+        "actor": "claude",
+        "comment": "Knowledge registered against powerhouse v6.2.2-dev.47",
+        "timestamp": "2026-08-14T12:00:00.000Z"
+      },
+      "timestampUtcMs": "2026-08-14T14:37:29.000Z"
+    }
+  },
+  {
+    "index": 12,
+    "hash": "DlrqjkgjAxEoS7j1uNfp+sUT31g=",
+    "timestampUtcMs": "2026-08-14T14:37:29.000Z",
+    "action": {
+      "type": "APPROVE_NOTE",
+      "input": {
+        "id": "7d73539d-1139-4462-9033-409d61cf2096",
+        "actor": "liberuum",
+        "comment": "Canonical as of powerhouse v6.2.2-dev.47",
+        "timestamp": "2026-08-14T12:00:00.000Z"
+      },
+      "timestampUtcMs": "2026-08-14T14:37:29.000Z"
+    }
+  },
+  {
+    "index": 13,
+    "hash": "UHm2WLZyA94e4ECLamk7X4CtsLg=",
+    "timestampUtcMs": "2026-09-02T21:36:59.739Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "filePath",
+        "value": "apps/academy/docs/academy/03-Build/05-Launch/05-DockerDeployment.md",
+        "updatedAt": "2026-09-02T21:36:59.739Z"
+      },
+      "timestampUtcMs": "2026-09-02T21:36:59.739Z"
+    }
+  },
+  {
+    "index": 14,
+    "hash": "mHwL0vdFnZ9QMnLueKOoAHu7y8E=",
+    "timestampUtcMs": "2026-09-02T22:26:52.915Z",
+    "action": {
+      "type": "SET_CONTENT",
+      "input": {
+        "content": "Three official images on `ghcr.io/powerhouse-inc/powerhouse/`: connect (Alpine + Node + Nginx with Brotli), switchboard (Node 24 + Prisma), academy (docs). Tags: latest, dev, staging, vX.Y.Z. Docker Compose stack: connect + switchboard + postgres:16.1. Connect startup: load packages from `PH_REGISTRY_PACKAGES`, `ph connect build`, configure/start Nginx. Switchboard startup: install packages from `PH_PACKAGES`, run Prisma migrations (only if `PH_REACTOR_DATABASE_URL` is set), start the server. Custom packages use a different env var per service: Connect reads `PH_REGISTRY_PACKAGES` (comma-separated, written to a registry config at startup), Switchboard reads `PH_PACKAGES` (comma-separated). Production: use specific version tags, persist postgres with volumes, bind to 127.0.0.1 behind a reverse proxy for SSL termination. `DATABASE_URL` is Switchboard-only -- Connect never uses it -- and it accepts a PostgreSQL *or* SQLite connection string (default `\"dev.db\"`).\n\n_Corrected 2026-08-13 against Powerhouse v6.2.2-dev.45._\n\n## Superseded at v6.2.2-dev.74\nThis note describes the pre-redesign Docker layout and is retired. What changed: images are published to the **Vetra Harbor registry** `cr.vetra.io/powerhouse-inc-powerhouse/*` (the `ghcr.io` copies are frozen at the old builds), the tag set gained `rc`, the Connect image is **nginx serving a SPA built at image-build time** with no Node or `ph` CLI (so `PH_REGISTRY_PACKAGES` is not how Connect loads packages any more \u2014 the browser loads them from `packageRegistryUrl`), the Switchboard image installs `@powerhousedao/switchboard` from npm and runs **Kysely** rather than Prisma migrations, and `DATABASE_URL` no longer means \"PostgreSQL or SQLite, default dev.db\" \u2014 storage is `PH_REACTOR_DATABASE_URL` / `PH_SWITCHBOARD_DATABASE_URL` with an embedded-PGlite fallback. See the four notes that supersede it.\n",
+        "updatedAt": "2026-09-02T22:26:52.915Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:26:52.915Z"
+    }
+  },
+  {
+    "index": 15,
+    "hash": "uMZdJqa+8LsBGIZjtU6DSYz/58s=",
+    "timestampUtcMs": "2026-09-02T22:26:54.029Z",
+    "action": {
+      "type": "ARCHIVE_NOTE",
+      "input": {
+        "id": "517f1714-4599-4272-a025-ef36302e395a",
+        "actor": "liberuum",
+        "comment": "superseded at v6.2.2-dev.74 by docker-images-registry, docker-connect-image, docker-switchboard-image, docker-switchboard-storage",
+        "timestamp": "2026-09-02T22:26:54.029Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:26:54.029Z"
+    }
+  }
+]

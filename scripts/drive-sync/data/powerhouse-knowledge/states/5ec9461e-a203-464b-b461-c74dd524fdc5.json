@@ -1,0 +1,107 @@
+{
+  "links": [
+    {
+      "id": "lnk-17a0ed86-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "17a0ed86-0b8d-4374-9114-bea5b95737ed",
+      "targetTitle": "three-layer-swarm-stack"
+    },
+    {
+      "id": "lnk-b9ba8893-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "b9ba8893-c118-4f14-b9b4-5da5f9847fcb",
+      "targetTitle": "ddup-four-architecture-options"
+    },
+    {
+      "id": "lnk-ab44d9c0-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "ab44d9c0-a981-4c37-8afe-a6858911dc82",
+      "targetTitle": "ddup-copy-distinct-recovery-role"
+    },
+    {
+      "id": "lnk-291bfd93-bui",
+      "linkType": "BUILDS_ON",
+      "targetDocumentId": "291bfd93-8d9f-4836-b791-d5d656545eb4",
+      "targetTitle": "ddup-reactor-native-sync-2x"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "The Swarm plugin mirrors the Switchboard duplication pattern, swapping the remote layer",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "84320fc6-8e76-4493-a7af-f584b4042a17",
+      "name": "data-duplication",
+      "topicDocumentId": null
+    },
+    {
+      "id": "0d55249c-950f-4b7e-a8c0-85f1eabac1c0",
+      "name": "swarm-plugin",
+      "topicDocumentId": null
+    },
+    {
+      "id": "8444aafc-d5e2-4404-9755-bb9f389659e9",
+      "name": "architecture-comparison",
+      "topicDocumentId": null
+    },
+    {
+      "id": "fff0d19d-6479-4864-b03a-62747eeb5d5f",
+      "name": "sync-channel",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "Our Swarm plugin follows the same duplication pattern as the native Switchboard sync, with Swarm substituted for PostgreSQL:\n\n```\nCONNECT (browser)                    SWARM NETWORK\nPGlite (local)                       /bytes (encrypted ops)\n  - operations                         - operation batches (SAME ops)\n  - documents                        Feeds (pointers)\n  - relationships                      - doc/drive/user manifests\n```\n\n**Same 2x duplication pattern** \u2014 operations exist in PGlite AND on Swarm. The structural contract is identical:\n- Local primary (PGlite) for hot reads\n- Durable remote (Swarm instead of PostgreSQL) for recovery and cross-device\n\nWhat changes:\n- **Access control**: API key/auth token -> postage stamp + encryption\n- **Operator**: server-operator-controlled -> decentralized, no single operator\n- **Trust model**: trusted server -> self-sovereign (wallet-based)\n- **Durability model**: row-deletable -> immutable content-addressed chunks\n\nThis is why the Swarm plugin slots into the reactor architecture cleanly \u2014 it preserves the same local+remote shape the SyncManager already expects, just routes traffic through a different channel.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "PATTERN",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "knowledge-agent",
+    "createdAt": "2026-04-21T14:41:55.863Z",
+    "sessionId": null,
+    "updatedAt": "2026-09-03T09:57:16.153Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Connect + Swarm plugin has the same 2x duplication as Connect + Switchboard \u2014 operations in PGlite and on Swarm. Swarm replaces PostgreSQL as the durable remote.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "71f3ea1c-1e7f-4ee7-99b0-dab63a49a325",
+      "actor": "claude",
+      "comment": "Knowledge registered against powerhouse v6.2.2-dev.47",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-14T12:00:00.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "26b0857f-171f-4ef8-9bce-972cad383fc9",
+      "actor": "liberuum",
+      "comment": "Canonical as of powerhouse v6.2.2-dev.47",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-14T12:00:00.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

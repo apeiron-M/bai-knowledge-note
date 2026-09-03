@@ -1,0 +1,340 @@
+[
+  {
+    "index": 0,
+    "hash": "",
+    "timestampUtcMs": "2026-08-14T12:00:36.662Z",
+    "action": {
+      "type": "CREATE_DOCUMENT",
+      "input": {
+        "meta": {},
+        "name": "driveexplorer-receives-editor-as-children",
+        "slug": "",
+        "model": "bai/knowledge-note",
+        "branch": "main",
+        "signing": {
+          "nonce": "",
+          "publicKey": {},
+          "signature": "54da46f6-f573-4438-b12e-369830aff095",
+          "documentType": "bai/knowledge-note",
+          "createdAtUtcIso": "2026-08-14T12:00:36.662Z"
+        },
+        "version": 0,
+        "documentId": "54da46f6-f573-4438-b12e-369830aff095",
+        "protocolVersions": {
+          "base-reducer": 2
+        }
+      },
+      "timestampUtcMs": "2026-08-14T12:00:36.662Z"
+    }
+  },
+  {
+    "index": 0,
+    "hash": "jurwUTel98y6R6WQca94YizGe9o=",
+    "timestampUtcMs": "2026-08-14T12:35:12.000Z",
+    "action": {
+      "type": "SET_TITLE",
+      "input": {
+        "title": "DriveExplorer receives the active document's editor as children and decides where to render it",
+        "updatedAt": "2026-08-14T12:35:12.000Z"
+      },
+      "timestampUtcMs": "2026-08-14T12:35:12.000Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "",
+    "timestampUtcMs": "2026-08-14T12:00:36.662Z",
+    "action": {
+      "type": "UPGRADE_DOCUMENT",
+      "input": {
+        "model": "bai/knowledge-note",
+        "toVersion": 1,
+        "documentId": "54da46f6-f573-4438-b12e-369830aff095",
+        "fromVersion": 0,
+        "initialState": {
+          "auth": {
+            "grants": [],
+            "version": 0
+          },
+          "local": {
+            "lastViewedAt": null,
+            "personalTags": []
+          },
+          "global": {
+            "links": [],
+            "model": null,
+            "scope": null,
+            "title": null,
+            "editor": null,
+            "inputs": [],
+            "models": [],
+            "status": "DRAFT",
+            "topics": [],
+            "content": null,
+            "context": null,
+            "modelId": null,
+            "modules": [],
+            "outputs": [],
+            "version": null,
+            "computes": null,
+            "filePath": null,
+            "noteType": null,
+            "severity": null,
+            "hooksUsed": [],
+            "rootCause": null,
+            "confidence": null,
+            "consumedBy": [],
+            "provenance": null,
+            "sourceType": null,
+            "targetType": null,
+            "cardinality": null,
+            "description": null,
+            "alternatives": [],
+            "consequences": [],
+            "errorMessage": null,
+            "relationType": null,
+            "correctPattern": null,
+            "decisionStatus": null,
+            "dispatchTargets": [],
+            "lifecycleEvents": []
+          },
+          "document": {
+            "hash": {
+              "encoding": "base64",
+              "algorithm": "sha1"
+            },
+            "version": 1
+          }
+        }
+      },
+      "timestampUtcMs": "2026-08-14T12:00:36.662Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "R4JTghB7pGN8ir75KHmze70oPdQ=",
+    "timestampUtcMs": "2026-08-14T12:35:12.000Z",
+    "action": {
+      "type": "SET_DESCRIPTION",
+      "input": {
+        "updatedAt": "2026-08-14T12:35:12.000Z",
+        "description": "The scaffolded drive app takes children \u2014 the mounted editor \u2014 so it can wrap the document view in its own shell or show custom drive contents instead."
+      },
+      "timestampUtcMs": "2026-08-14T12:35:12.000Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "",
+    "timestampUtcMs": "2026-08-14T12:37:21.720Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "54da46f6-f573-4438-b12e-369830aff095",
+        "targetId": "307601bd-2919-4e27-9a76-97281d276518",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-08-14T12:37:21.720Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "swFgMRxC+m3NrpgnzqIWAGILqMg=",
+    "timestampUtcMs": "2026-08-14T12:35:12.000Z",
+    "action": {
+      "type": "SET_NOTE_TYPE",
+      "input": {
+        "noteType": "PATTERN",
+        "updatedAt": "2026-08-14T12:35:12.000Z"
+      },
+      "timestampUtcMs": "2026-08-14T12:35:12.000Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "",
+    "timestampUtcMs": "2026-08-14T12:37:21.831Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "54da46f6-f573-4438-b12e-369830aff095",
+        "targetId": "87edb655-2431-4b23-8c7f-53ca7a468fba",
+        "relationshipType": "BUILDS_ON"
+      },
+      "timestampUtcMs": "2026-08-14T12:37:21.831Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "EduUHJH+sLKVjHW36Gb3D3QueWg=",
+    "timestampUtcMs": "2026-08-14T12:35:12.000Z",
+    "action": {
+      "type": "SET_CONTENT",
+      "input": {
+        "content": "## The composition seam\n\nCodegen scaffolds a drive app as a `DriveExplorer` component, and the key detail is its props: it receives `children`, and `children` **is the mounted editor for the currently open document**. The drive app therefore decides where \u2014 and whether \u2014 the editor appears.\n\n```tsx\nexport function DriveExplorer({ children }: EditorProps) {\n  const showDocumentEditor = !!children;\n\n  return (\n    <div className=\"flex h-full\">\n      <FolderTree />\n      <div className=\"flex-1 overflow-y-auto p-4\">\n        {showDocumentEditor ? children : <DriveContents />}\n      </div>\n    </div>\n  );\n}\n```\n\n`!!children` is the whole selection test. When a document is open, `children` is truthy and the editor renders inside the drive app's layout. Otherwise the custom `DriveContents` fills the space \u2014 a Kanban board, a document grid, whatever the product needs.\n\n## Why children rather than a route swap\n\nPassing the editor as `children` means the drive app is not *replaced* when a document opens; it stays mounted and wraps the editor. That buys three things that a hard route switch does not:\n\n- **Persistent chrome.** A sidebar, breadcrumb, or filter panel keeps its state while the user moves between documents.\n- **Free choice of placement.** The editor can go in a main pane, a split view, a slide-over panel, or a modal \u2014 the drive app owns the layout decision, not Connect.\n- **The option to ignore it.** A drive app that never renders `children` simply never shows the editor, which is a legitimate design for a read-only dashboard.\n\nThe trade is that forgetting to render `children` produces a drive app where opening a document appears to do nothing. There is no error \u2014 the editor mounted correctly and was handed to a parent that dropped it.\n\n_Source: apps/academy/docs/academy/02-Learn/05-connect/02-drive-apps.mdx (Powerhouse v6.2.2-dev.45)._",
+        "updatedAt": "2026-08-14T12:35:12.000Z"
+      },
+      "timestampUtcMs": "2026-08-14T12:35:12.000Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "",
+    "timestampUtcMs": "2026-09-02T21:34:24.713Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "metadata": {
+          "reason": "Backing page found by content match in the v6.2.2-dev.74 source backfill \u2014 identifiers driveexplorer from the claim appear in this page (text identical at v6.2.2-dev.47 and v6.2.2-dev.74); attribution, not the original extraction record",
+          "confidence": "grounded"
+        },
+        "sourceId": "54da46f6-f573-4438-b12e-369830aff095",
+        "targetId": "2391600a-da55-4ec5-baf0-1c12e3b2a484",
+        "relationshipType": "DERIVED_FROM"
+      },
+      "timestampUtcMs": "2026-09-02T21:34:24.713Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "L5erncoWSi1cxipENBa/51eqwAY=",
+    "timestampUtcMs": "2026-08-14T12:35:12.000Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "version",
+        "value": "v6.2.2-dev.44",
+        "updatedAt": "2026-08-14T12:35:12.000Z"
+      },
+      "timestampUtcMs": "2026-08-14T12:35:12.000Z"
+    }
+  },
+  {
+    "index": 5,
+    "hash": "pwkSW1aCXg4UjGuj45GJyumfuqg=",
+    "timestampUtcMs": "2026-08-14T12:35:12.000Z",
+    "action": {
+      "type": "SET_PROVENANCE",
+      "input": {
+        "author": "claude",
+        "createdAt": "2026-08-13T14:36:20.000Z",
+        "sourceOrigin": "DERIVED"
+      },
+      "timestampUtcMs": "2026-08-14T12:35:12.000Z"
+    }
+  },
+  {
+    "index": 6,
+    "hash": "8nR+JC/4mF+LNavVbJUbExtoNvs=",
+    "timestampUtcMs": "2026-08-14T12:35:12.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "4e86f1b8-4b9f-43c4-90eb-ef289b4f6321",
+        "name": "drive-apps",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-08-14T12:35:12.000Z"
+    }
+  },
+  {
+    "index": 7,
+    "hash": "08zDmrhI+yrShy03pNeUPBl6M48=",
+    "timestampUtcMs": "2026-08-14T12:35:12.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "84cd37c0-06dc-4eb1-887d-7167adf35a3a",
+        "name": "editors",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-08-14T12:35:12.000Z"
+    }
+  },
+  {
+    "index": 8,
+    "hash": "OIlOU92Pt9ZYJR+YoXddph8xIZM=",
+    "timestampUtcMs": "2026-08-14T12:35:12.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "b25d3c8c-f8a2-4cb0-bbb7-be71b9ce1db2",
+        "name": "connect",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-08-14T12:35:12.000Z"
+    }
+  },
+  {
+    "index": 9,
+    "hash": "bl8HKTe3zF4bZzzt23DI8zaed8s=",
+    "timestampUtcMs": "2026-08-14T14:37:06.000Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "version",
+        "value": "v6.2.2-dev.47",
+        "updatedAt": "2026-08-14T12:00:00.000Z"
+      },
+      "timestampUtcMs": "2026-08-14T14:37:06.000Z"
+    }
+  },
+  {
+    "index": 10,
+    "hash": "xWc1EzOQqUdgG/CECe0lXhjClBc=",
+    "timestampUtcMs": "2026-08-14T14:37:06.000Z",
+    "action": {
+      "type": "SUBMIT_FOR_REVIEW",
+      "input": {
+        "id": "ee88073d-c1ff-4caf-a814-a58f0b58bcca",
+        "actor": "claude",
+        "comment": "Knowledge registered against powerhouse v6.2.2-dev.47",
+        "timestamp": "2026-08-14T12:00:00.000Z"
+      },
+      "timestampUtcMs": "2026-08-14T14:37:06.000Z"
+    }
+  },
+  {
+    "index": 11,
+    "hash": "ln/htJ7uAdjeuiZQeypA2XFky2g=",
+    "timestampUtcMs": "2026-08-14T14:37:06.000Z",
+    "action": {
+      "type": "APPROVE_NOTE",
+      "input": {
+        "id": "04188b24-c487-4c2c-8a0b-a2ae321a73d5",
+        "actor": "liberuum",
+        "comment": "Canonical as of powerhouse v6.2.2-dev.47",
+        "timestamp": "2026-08-14T12:00:00.000Z"
+      },
+      "timestampUtcMs": "2026-08-14T14:37:06.000Z"
+    }
+  },
+  {
+    "index": 12,
+    "hash": "og3f210RcjArEtwt7xAjp9/s5cs=",
+    "timestampUtcMs": "2026-09-02T21:34:25.371Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "filePath",
+        "value": "apps/academy/docs/academy/03-Build/03-BuildingUserExperiences/04-CSSCustomization.md",
+        "updatedAt": "2026-09-02T21:34:25.371Z"
+      },
+      "timestampUtcMs": "2026-09-02T21:34:25.371Z"
+    }
+  },
+  {
+    "index": 13,
+    "hash": "zNw10atfpF8V55PTI2/ekyVFS0g=",
+    "timestampUtcMs": "2026-09-02T21:34:25.371Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "version",
+        "value": "v6.2.2-dev.74",
+        "updatedAt": "2026-09-02T21:34:25.371Z"
+      },
+      "timestampUtcMs": "2026-09-02T21:34:25.371Z"
+    }
+  }
+]

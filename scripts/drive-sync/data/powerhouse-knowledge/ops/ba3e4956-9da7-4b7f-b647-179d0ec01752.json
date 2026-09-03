@@ -1,0 +1,329 @@
+[
+  {
+    "index": 0,
+    "hash": "",
+    "timestampUtcMs": "2026-08-14T12:34:32.899Z",
+    "action": {
+      "type": "CREATE_DOCUMENT",
+      "input": {
+        "meta": {},
+        "name": "moc-live-collaboration",
+        "slug": "",
+        "model": "bai/moc",
+        "branch": "main",
+        "signing": {
+          "nonce": "",
+          "publicKey": {},
+          "signature": "ba3e4956-9da7-4b7f-b647-179d0ec01752",
+          "documentType": "bai/moc",
+          "createdAtUtcIso": "2026-08-14T12:34:32.899Z"
+        },
+        "version": 0,
+        "documentId": "ba3e4956-9da7-4b7f-b647-179d0ec01752",
+        "protocolVersions": {
+          "base-reducer": 2
+        }
+      },
+      "timestampUtcMs": "2026-08-14T12:34:32.899Z"
+    }
+  },
+  {
+    "index": 0,
+    "hash": "dS0+PWbqF8fcNvUI6ualsS9UtHw=",
+    "timestampUtcMs": "2026-08-14T12:36:13.000Z",
+    "action": {
+      "type": "CREATE_MOC",
+      "input": {
+        "tier": "TOPIC",
+        "title": "Live Collaboration Track",
+        "createdAt": "2026-04-21T19:32:25.350Z",
+        "description": "Next-track design for live collaboration on Swarm: per-user op feeds, ACT-gated collab manifest, GSOC-triggered debounced pulls, no CRDT.",
+        "orientation": "Live collaboration is the next major feature track after chat. This MOC consolidates the design notes: per-user operation feeds (not a shared feed, to avoid SOC write contention), ACT-gated collab manifests for participant discovery, and GSOC pings as the sub-second wake-up signal that triggers debounced pulls. The reactor's operation-based model handles concurrent edits natively, so no CRDT is needed. UX-wise the only surface is the document toolbar's History view \u2014 not per-editor presence \u2014 scoping the track tightly to what the primitives support."
+      },
+      "timestampUtcMs": "2026-08-14T12:36:13.000Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "",
+    "timestampUtcMs": "2026-08-14T12:34:32.899Z",
+    "action": {
+      "type": "UPGRADE_DOCUMENT",
+      "input": {
+        "model": "bai/moc",
+        "toVersion": 1,
+        "documentId": "ba3e4956-9da7-4b7f-b647-179d0ec01752",
+        "fromVersion": 0,
+        "initialState": {
+          "auth": {
+            "grants": [],
+            "version": 0
+          },
+          "local": {},
+          "global": {
+            "tier": null,
+            "title": null,
+            "version": null,
+            "tensions": [],
+            "childRefs": [],
+            "coreIdeas": [],
+            "createdAt": null,
+            "noteCount": 0,
+            "parentRef": null,
+            "updatedAt": null,
+            "agentNotes": [],
+            "description": null,
+            "orientation": null,
+            "openQuestions": []
+          },
+          "document": {
+            "hash": {
+              "encoding": "base64",
+              "algorithm": "sha1"
+            },
+            "version": 1
+          }
+        }
+      },
+      "timestampUtcMs": "2026-08-14T12:34:32.899Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "Uudjnh+I2tbXzu/3nudewx4saxs=",
+    "timestampUtcMs": "2026-08-14T14:37:31.000Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "version",
+        "value": "v6.2.2-dev.47",
+        "updatedAt": "2026-08-14T12:00:00.000Z"
+      },
+      "timestampUtcMs": "2026-08-14T14:37:31.000Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "",
+    "timestampUtcMs": "2026-08-14T12:39:28.784Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "ba3e4956-9da7-4b7f-b647-179d0ec01752",
+        "targetId": "405c1bd7-26bf-4bc2-9f6d-261123e97072",
+        "relationshipType": "CORE_IDEA"
+      },
+      "timestampUtcMs": "2026-08-14T12:39:28.784Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "",
+    "timestampUtcMs": "2026-08-14T12:39:28.871Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "ba3e4956-9da7-4b7f-b647-179d0ec01752",
+        "targetId": "114fdc9b-1231-43d8-b265-3825fc46457a",
+        "relationshipType": "CORE_IDEA"
+      },
+      "timestampUtcMs": "2026-08-14T12:39:28.871Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "",
+    "timestampUtcMs": "2026-08-14T12:39:28.957Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "ba3e4956-9da7-4b7f-b647-179d0ec01752",
+        "targetId": "d1fb47c0-c4f4-40c0-9f3b-55669eef4f0d",
+        "relationshipType": "CORE_IDEA"
+      },
+      "timestampUtcMs": "2026-08-14T12:39:28.957Z"
+    }
+  },
+  {
+    "index": 5,
+    "hash": "",
+    "timestampUtcMs": "2026-08-14T12:39:29.053Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "ba3e4956-9da7-4b7f-b647-179d0ec01752",
+        "targetId": "9eb2d8d8-51b3-47d0-bd44-9b97769fef55",
+        "relationshipType": "CORE_IDEA"
+      },
+      "timestampUtcMs": "2026-08-14T12:39:29.053Z"
+    }
+  },
+  {
+    "index": 6,
+    "hash": "",
+    "timestampUtcMs": "2026-08-14T12:39:29.141Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "ba3e4956-9da7-4b7f-b647-179d0ec01752",
+        "targetId": "9e26b0dd-ae39-4a33-ab4b-f47f1fc6edaf",
+        "relationshipType": "CORE_IDEA"
+      },
+      "timestampUtcMs": "2026-08-14T12:39:29.141Z"
+    }
+  },
+  {
+    "index": 7,
+    "hash": "",
+    "timestampUtcMs": "2026-08-14T12:39:29.228Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "ba3e4956-9da7-4b7f-b647-179d0ec01752",
+        "targetId": "b108a878-0a30-491e-aff0-2d8915a00d99",
+        "relationshipType": "CORE_IDEA"
+      },
+      "timestampUtcMs": "2026-08-14T12:39:29.228Z"
+    }
+  },
+  {
+    "index": 8,
+    "hash": "",
+    "timestampUtcMs": "2026-08-14T12:39:29.317Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "ba3e4956-9da7-4b7f-b647-179d0ec01752",
+        "targetId": "d1737634-2378-431a-8cf8-4dcfba38ea5c",
+        "relationshipType": "CORE_IDEA"
+      },
+      "timestampUtcMs": "2026-08-14T12:39:29.317Z"
+    }
+  },
+  {
+    "index": 9,
+    "hash": "",
+    "timestampUtcMs": "2026-08-16T10:35:45.051Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "ba3e4956-9da7-4b7f-b647-179d0ec01752",
+        "targetId": "0e4efc8b-43d3-447b-a779-a20fbf19c715",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-08-16T10:35:45.051Z"
+    }
+  },
+  {
+    "index": 10,
+    "hash": "",
+    "timestampUtcMs": "2026-08-16T10:35:47.280Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "ba3e4956-9da7-4b7f-b647-179d0ec01752",
+        "targetId": "956599e8-619e-45f6-8ec5-71f5bceed06f",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-08-16T10:35:47.280Z"
+    }
+  },
+  {
+    "index": 11,
+    "hash": "",
+    "timestampUtcMs": "2026-08-16T10:35:48.031Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "ba3e4956-9da7-4b7f-b647-179d0ec01752",
+        "targetId": "35c30c48-94a2-4b6c-8685-9bad536aef34",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-08-16T10:35:48.031Z"
+    }
+  },
+  {
+    "index": 12,
+    "hash": "",
+    "timestampUtcMs": "2026-08-16T10:35:50.529Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "ba3e4956-9da7-4b7f-b647-179d0ec01752",
+        "targetId": "42844961-6fc0-49ca-8ae4-1748a87713af",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-08-16T10:35:50.529Z"
+    }
+  },
+  {
+    "index": 13,
+    "hash": "",
+    "timestampUtcMs": "2026-08-16T10:35:51.259Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "ba3e4956-9da7-4b7f-b647-179d0ec01752",
+        "targetId": "55325ce3-8d29-44b3-a8db-00a5e0af94b2",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-08-16T10:35:51.259Z"
+    }
+  },
+  {
+    "index": 14,
+    "hash": "",
+    "timestampUtcMs": "2026-08-16T10:35:55.012Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "ba3e4956-9da7-4b7f-b647-179d0ec01752",
+        "targetId": "9250acee-7e5a-454c-8515-977ded38a34d",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-08-16T10:35:55.012Z"
+    }
+  },
+  {
+    "index": 15,
+    "hash": "",
+    "timestampUtcMs": "2026-08-16T10:35:55.788Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "ba3e4956-9da7-4b7f-b647-179d0ec01752",
+        "targetId": "bae27a7b-5aaf-4cbb-bc36-088b816ffae9",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-08-16T10:35:55.788Z"
+    }
+  },
+  {
+    "index": 16,
+    "hash": "",
+    "timestampUtcMs": "2026-08-16T10:35:58.321Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "ba3e4956-9da7-4b7f-b647-179d0ec01752",
+        "targetId": "1c7a3c1c-95e7-4bc8-a921-277863c4f346",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-08-16T10:35:58.321Z"
+    }
+  },
+  {
+    "index": 17,
+    "hash": "",
+    "timestampUtcMs": "2026-08-16T10:35:58.762Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "ba3e4956-9da7-4b7f-b647-179d0ec01752",
+        "targetId": "1fc90712-091c-4d1b-b39a-923a4b6a1968",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-08-16T10:35:58.762Z"
+    }
+  }
+]

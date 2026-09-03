@@ -1,0 +1,107 @@
+{
+  "links": [
+    {
+      "id": "lnk-e2b3e87f-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "e2b3e87f-3df0-4940-9352-b648ed4e527d",
+      "targetTitle": "testing-uses-vitest-and-generatemock",
+      "reason": "The functional actions/reducer/utils triple this README teaches is what the current test pattern exercises",
+      "confidence": "grounded"
+    },
+    {
+      "id": "lnk-84e1df68-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "84e1df68-e7c3-4048-bd23-78eb5ec14f7c",
+      "targetTitle": "Package \u203a document-model \u203a README",
+      "reason": "Extracted from packages/document-model/README.md at v6.2.2-dev.74 \u2014 Getting started (install line and docs link); Functional example",
+      "confidence": "grounded"
+    },
+    {
+      "id": "lnk-5de28cc0-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "5de28cc0-64fd-4daf-a8ac-3f8640749648",
+      "targetTitle": "generate-mock-subpath",
+      "reason": "Both are about where document-model code is imported from, and this README predates even the package rename that the mock subpath belongs to",
+      "confidence": "grounded"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "The document-model README still installs @acaldas/document-model-libs and points at a personal docs site, so its package name and links predate the Powerhouse namespace",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "1132f7dd-cd2a-40fe-81e0-b403a76eebba",
+      "name": "document-model",
+      "topicDocumentId": null
+    },
+    {
+      "id": "9831dde2-82b2-49cd-9d42-eb0dc75e2b23",
+      "name": "documentation-drift",
+      "topicDocumentId": null
+    },
+    {
+      "id": "f692e141-c6c1-4fa2-b407-dcdbe80d9bfe",
+      "name": "packaging",
+      "topicDocumentId": null
+    },
+    {
+      "id": "6b186c5a-61e5-440a-a2af-4870f828b0d2",
+      "name": "gotchas",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "`packages/document-model/README.md` opens with:\n\n```\nnpm install @acaldas/document-model-libs\n```\n\nand documents interaction with a document through imports like `@acaldas/document-model-libs/budget-statement`, pointing at `acaldas.github.io/document-model-libs` for full documentation.\n\nThat is the package's pre-Powerhouse identity. The directory now publishes **`document-model`**, which is what every current import in the monorepo and in generated projects uses \u2014 including the `document-model/mock` subpath that the Academy's test tutorials were corrected to at this tag.\n\nWhat is still useful in the file is the *shape* it teaches: a document can be driven **functionally** (`actions`, `reducer`, `utils` \u2014 `utils.createDocument(...)` then `reducer(doc, actions.addAccount(...))`) as well as through a class-style controller. That functional triple is exactly what generated document models still export.\n\nThe reading rule: take the API shape, ignore every package name and URL in it. A newcomer following its install line gets an unrelated, unmaintained package.\n\n## Provenance\n- `packages/document-model/README.md` \u2014 Getting started (install line and docs link); Functional example\n\n_Extracted from the Powerhouse repository at **v6.2.2-dev.74**._",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": "v6.2.2-dev.74",
+  "computes": null,
+  "filePath": "packages/document-model/README.md",
+  "noteType": "OBSERVATION",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "knowledge-agent",
+    "createdAt": "2026-09-03T07:44:25.387Z",
+    "sessionId": null,
+    "updatedAt": "2026-09-03T07:44:27.785Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "It shows npm install @acaldas/document-model-libs and imports from @acaldas/document-model-libs/budget-statement, while the package published from this directory is document-model.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "d8f6ea21-2e0d-4ee4-83f2-22b866dc1a6d",
+      "actor": "knowledge-agent",
+      "comment": "extracted from packages/document-model/README.md at v6.2.2-dev.74",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-09-03T07:44:27.302Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "b555b1c1-29af-486d-a1e1-d24173820bf2",
+      "actor": "liberuum",
+      "comment": "claim checked against the cited file at the pinned tag",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-09-03T07:44:27.785Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

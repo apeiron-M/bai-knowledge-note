@@ -1,0 +1,549 @@
+{
+  "goals": [
+    {
+      "id": "s8",
+      "notes": [],
+      "status": "TODO",
+      "outcome": null,
+      "assignee": null,
+      "parentId": null,
+      "blockReason": null,
+      "description": "Stage 8 \u2014 sync serving evaluates the policy (authEnforcement)",
+      "dependencies": []
+    },
+    {
+      "id": "s8-poll",
+      "notes": [],
+      "status": "TODO",
+      "outcome": null,
+      "assignee": null,
+      "parentId": "s8",
+      "blockReason": null,
+      "description": "pollSyncEnvelopes decides per poll instead of asking the host tables which whole documents to drop (resolvers.ts:1065 forbiddenIds)",
+      "dependencies": []
+    },
+    {
+      "id": "s8-runs",
+      "notes": [],
+      "status": "TODO",
+      "outcome": null,
+      "assignee": null,
+      "parentId": "s8",
+      "blockReason": null,
+      "description": "Withhold whole outbox entries only \u2014 a partial run applies as though complete, because the receiver renumbers and validates no hashes",
+      "dependencies": []
+    },
+    {
+      "id": "s8-hold",
+      "notes": [],
+      "status": "TODO",
+      "outcome": null,
+      "assignee": null,
+      "parentId": "s8",
+      "blockReason": null,
+      "description": "Hold a refused entry, never consume it \u2014 today it is marked fully delivered and trimmed, irreversibly, by whichever subject polled",
+      "dependencies": []
+    },
+    {
+      "id": "s8-meta",
+      "notes": [],
+      "status": "TODO",
+      "outcome": null,
+      "assignee": null,
+      "parentId": "s8",
+      "blockReason": null,
+      "description": "Never withhold the auth and document scopes \u2014 they are what a replica folds to reach the origin's decision",
+      "dependencies": []
+    },
+    {
+      "id": "s8-intersect",
+      "notes": [],
+      "status": "TODO",
+      "outcome": null,
+      "assignee": null,
+      "parentId": "s8",
+      "blockReason": null,
+      "description": "Intersect the policy verdict with the host's existing check, never union \u2014 this is what makes stage 8 safe before the migration",
+      "dependencies": []
+    },
+    {
+      "id": "s8-channel",
+      "notes": [],
+      "status": "TODO",
+      "outcome": null,
+      "assignee": null,
+      "parentId": "s8",
+      "blockReason": null,
+      "description": "Bind a channel to the address that created it and refuse a poll under a different one, since the subject is per poll and may be absent",
+      "dependencies": []
+    },
+    {
+      "id": "s8-hostdefault",
+      "notes": [
+        {
+          "id": "n-hostdefault",
+          "note": "Greps for closedByDefault / withholdUninitialized / serveUninitialized return nothing across packages/. ModelReadGate takes no such option; defaultProtection lives only in the old reactor-api service.",
+          "author": "knowledge-agent",
+          "timestamp": "2026-08-17T21:45:00.000Z"
+        }
+      ],
+      "status": "TODO",
+      "outcome": null,
+      "assignee": null,
+      "parentId": "s8",
+      "blockReason": null,
+      "description": "Implement the host 'closes by default' read-surface setting \u2014 nothing in packages/ implements it today, and stages 8 and 10 both need it",
+      "dependencies": []
+    },
+    {
+      "id": "s8-exit",
+      "notes": [],
+      "status": "TODO",
+      "outcome": null,
+      "assignee": null,
+      "parentId": "s8",
+      "blockReason": null,
+      "description": "Exit test: a peer converges on one granted scope, keeps auth+document, raises no dead letter, and backfills when the grant widens",
+      "dependencies": [
+        "s8-poll",
+        "s8-runs",
+        "s8-hold",
+        "s8-meta",
+        "s8-channel",
+        "s8-hostdefault",
+        "s8-intersect"
+      ]
+    },
+    {
+      "id": "s9",
+      "notes": [
+        {
+          "id": "n-s9-blocker",
+          "note": "This is the hard blocker for rollout: nothing in production has ever emitted INITIALIZE_AUTH, so every document's policy is uninitialized and an uninitialized policy allows everything.",
+          "author": "knowledge-agent",
+          "timestamp": "2026-08-17T21:45:00.000Z"
+        }
+      ],
+      "status": "TODO",
+      "outcome": null,
+      "assignee": null,
+      "parentId": null,
+      "blockReason": null,
+      "description": "Stage 9 \u2014 migrate the host permission tables into grants (no flag)",
+      "dependencies": []
+    },
+    {
+      "id": "s9-tool",
+      "notes": [],
+      "status": "TODO",
+      "outcome": null,
+      "assignee": null,
+      "parentId": "s9",
+      "blockReason": null,
+      "description": "Build the migration: one INITIALIZE_AUTH per document through the executor, using the five-step ordered grant list (grants cannot be written as rows)",
+      "dependencies": []
+    },
+    {
+      "id": "s9-refuse",
+      "notes": [],
+      "status": "TODO",
+      "outcome": null,
+      "assignee": null,
+      "parentId": "s9",
+      "blockReason": null,
+      "description": "Refuse and report what has no faithful translation \u2014 inherited protection, over-cap documents, owner-less documents; drop node-local admins",
+      "dependencies": []
+    },
+    {
+      "id": "s9-dryrun",
+      "notes": [],
+      "status": "TODO",
+      "outcome": null,
+      "assignee": null,
+      "parentId": "s9",
+      "blockReason": null,
+      "description": "Dry run writes nothing and reports exactly what it cannot express; a real run is idempotent by skipping an initialized auth scope",
+      "dependencies": []
+    },
+    {
+      "id": "s9-runbook",
+      "notes": [],
+      "status": "TODO",
+      "outcome": null,
+      "assignee": null,
+      "parentId": "s9",
+      "blockReason": null,
+      "description": "Runbook: one replica with auth writes quiesced \u2014 two writers produce tied timestamps the monotonic rule refuses and nothing repairs",
+      "dependencies": []
+    },
+    {
+      "id": "s9-exit",
+      "notes": [],
+      "status": "TODO",
+      "outcome": null,
+      "assignee": null,
+      "parentId": "s9",
+      "blockReason": null,
+      "description": "Exit test: on a fixture holding every construct, the read gate and the tables answer identically after migration and preflight:auth reports clean",
+      "dependencies": [
+        "s9-tool",
+        "s9-refuse",
+        "s9-dryrun"
+      ]
+    },
+    {
+      "id": "s10",
+      "notes": [],
+      "status": "TODO",
+      "outcome": null,
+      "assignee": null,
+      "parentId": null,
+      "blockReason": null,
+      "description": "Stage 10 \u2014 retire the permission tables (authEnforcement)",
+      "dependencies": [
+        "s9"
+      ]
+    },
+    {
+      "id": "s10-reads",
+      "notes": [],
+      "status": "TODO",
+      "outcome": null,
+      "assignee": null,
+      "parentId": "s10",
+      "blockReason": null,
+      "description": "Stop consulting the tables on the read path: subgraph read helpers, per-item list filters, subscription predicates, attachment gate, stage-8 intersection",
+      "dependencies": [
+        "s8-intersect"
+      ]
+    },
+    {
+      "id": "s10-listing",
+      "notes": [],
+      "status": "TODO",
+      "outcome": null,
+      "assignee": null,
+      "parentId": "s10",
+      "blockReason": null,
+      "description": "Listings synthesize a document-level verdict \u2014 readable if any gated scope is \u2014 or every id, slug and access list stays enumerable",
+      "dependencies": []
+    },
+    {
+      "id": "s10-writedoor",
+      "notes": [],
+      "status": "TODO",
+      "outcome": null,
+      "assignee": null,
+      "parentId": "s10",
+      "blockReason": null,
+      "description": "Keep the host default on the receiving write door as a local refusal that never records a denial into any history",
+      "dependencies": [
+        "s8-hostdefault"
+      ]
+    },
+    {
+      "id": "s10-boot",
+      "notes": [],
+      "status": "TODO",
+      "outcome": null,
+      "assignee": null,
+      "parentId": "s10",
+      "blockReason": null,
+      "description": "Boot assertion: refuse to start with authEnforcement on against untranslated rows, unless the host closes by default",
+      "dependencies": []
+    },
+    {
+      "id": "s10-retire",
+      "notes": [],
+      "status": "TODO",
+      "outcome": null,
+      "assignee": null,
+      "parentId": "s10",
+      "blockReason": null,
+      "description": "Delete authorization.service.ts and document-permission.service.ts once nothing reads them; the node-operator check stays",
+      "dependencies": []
+    },
+    {
+      "id": "s10-exit",
+      "notes": [],
+      "status": "TODO",
+      "outcome": null,
+      "assignee": null,
+      "parentId": "s10",
+      "blockReason": null,
+      "description": "Exit test: the read-denial suites pass against the migrated fixture, restated to what the caller received; an unmigrated store fails to boot",
+      "dependencies": [
+        "s10-reads",
+        "s10-boot",
+        "s10-listing",
+        "s10-writedoor"
+      ]
+    },
+    {
+      "id": "rollout",
+      "notes": [],
+      "status": "TODO",
+      "outcome": null,
+      "assignee": null,
+      "parentId": null,
+      "blockReason": null,
+      "description": "Rollout \u2014 turn the four flags on, fleet by fleet",
+      "dependencies": []
+    },
+    {
+      "id": "ro-2909",
+      "notes": [
+        {
+          "id": "n-2909-ci",
+          "note": "Eight commits ahead of main, MERGEABLE, not draft. The check job failed on a0592c973 (playwright not found); 653349ee0 was pushed to fix it and CI was still running at the time of writing \u2014 verify green before merging.",
+          "author": "knowledge-agent",
+          "timestamp": "2026-08-17T21:45:00.000Z"
+        },
+        {
+          "id": "n-ro2909-done",
+          "note": "CI concern resolved: 653349ee0 fixed the playwright install and the PR merged green. This unblocks ro-preflight and leaves ro-flags gated only on s9 \u2014 stage 9 is now the sole critical path to rollout.",
+          "author": "knowledge-agent",
+          "timestamp": "2026-08-18T00:00:00.000Z"
+        }
+      ],
+      "status": "COMPLETED",
+      "outcome": "Merged to main as 3c0b735b9 (feat: turn auth enforcement fully on, in switchboard and Connect alike, #2909); published in 6.2.2-dev.50. The flags are reachable in switchboard and Connect.",
+      "assignee": "thegoldenmule",
+      "parentId": "rollout",
+      "blockReason": null,
+      "description": "Land PR #2909 so the flags are reachable in switchboard and Connect alike (branch feat/auth-flags-connect)",
+      "dependencies": []
+    },
+    {
+      "id": "ro-preflight",
+      "notes": [],
+      "status": "TODO",
+      "outcome": null,
+      "assignee": null,
+      "parentId": "rollout",
+      "blockReason": null,
+      "description": "Run preflight:auth against each fleet's own store and resolve what it reports \u2014 exit 1 gates authEnforcement, exit 2 gates authConditions",
+      "dependencies": []
+    },
+    {
+      "id": "ro-flags",
+      "notes": [],
+      "status": "TODO",
+      "outcome": null,
+      "assignee": null,
+      "parentId": "rollout",
+      "blockReason": null,
+      "description": "Flip the flags per fleet in prerequisite order: documentDecisions, authEnforcement, authGroups, authConditions \u2014 a flag flips per fleet, not per node",
+      "dependencies": [
+        "ro-2909",
+        "ro-preflight",
+        "s9"
+      ]
+    },
+    {
+      "id": "ro-metacache",
+      "notes": [],
+      "status": "TODO",
+      "outcome": null,
+      "assignee": null,
+      "parentId": "rollout",
+      "blockReason": null,
+      "description": "Once documentDecisions defaults on, retire the document meta cache, rebuildAtRevision, the eager putDocumentMeta calls and its ExecutionStores slot",
+      "dependencies": [
+        "ro-flags"
+      ]
+    },
+    {
+      "id": "ro-interimgate",
+      "notes": [],
+      "status": "TODO",
+      "outcome": null,
+      "assignee": null,
+      "parentId": "rollout",
+      "blockReason": null,
+      "description": "Once authEnforcement defaults on, retire the stage-1 interim admission gate on auth-scope writes",
+      "dependencies": [
+        "ro-flags"
+      ]
+    },
+    {
+      "id": "surface",
+      "notes": [
+        {
+          "id": "n-surface-scope",
+          "note": "Scope unconfirmed. docs/specs/auth-scope.md never mentions an authoring API or a UI, so these may be deliberately out of scope. Flagged because without an authoring surface, only the stage-9 migration can ever create a policy.",
+          "author": "knowledge-agent",
+          "timestamp": "2026-08-17T21:45:00.000Z"
+        }
+      ],
+      "status": "TODO",
+      "outcome": null,
+      "assignee": null,
+      "parentId": null,
+      "blockReason": null,
+      "description": "Make the policy reachable \u2014 authoring, query surface, UI, docs (scope unconfirmed: the spec never mentions these)",
+      "dependencies": []
+    },
+    {
+      "id": "su-authoring",
+      "notes": [],
+      "status": "TODO",
+      "outcome": null,
+      "assignee": null,
+      "parentId": "surface",
+      "blockReason": null,
+      "description": "No way to author a policy at all: no mutation, CLI, SDK helper or UI for INITIALIZE_AUTH / SET_GRANT / REMOVE_GRANT / MOVE_GRANT outside tests",
+      "dependencies": []
+    },
+    {
+      "id": "su-subgraph",
+      "notes": [],
+      "status": "TODO",
+      "outcome": null,
+      "assignee": null,
+      "parentId": "surface",
+      "blockReason": null,
+      "description": "The auth subgraph answers only from the old tables \u2014 no query for a document's grants, policy version, creator, or 'may I?'",
+      "dependencies": []
+    },
+    {
+      "id": "su-hooks",
+      "notes": [],
+      "status": "TODO",
+      "outcome": null,
+      "assignee": null,
+      "parentId": "surface",
+      "blockReason": null,
+      "description": "No authorization React hooks exist; permission-aware UI must query the subgraph directly, and the read gate's predicate is async so a hook needs a caching story",
+      "dependencies": [
+        "su-subgraph"
+      ]
+    },
+    {
+      "id": "su-groupui",
+      "notes": [],
+      "status": "TODO",
+      "outcome": null,
+      "assignee": null,
+      "parentId": "surface",
+      "blockReason": null,
+      "description": "reactor-group ships a document model with no editor \u2014 group membership can only be changed programmatically",
+      "dependencies": []
+    },
+    {
+      "id": "su-academy",
+      "notes": [],
+      "status": "TODO",
+      "outcome": null,
+      "assignee": null,
+      "parentId": "surface",
+      "blockReason": null,
+      "description": "Write the auth-scope academy docs, and rewrite the Authorization pages and switchboard Auth.md that stage 10 makes wrong",
+      "dependencies": []
+    },
+    {
+      "id": "su-e2e",
+      "notes": [],
+      "status": "TODO",
+      "outcome": null,
+      "assignee": null,
+      "parentId": "surface",
+      "blockReason": null,
+      "description": "No e2e coverage: every stage exit test is a cross-process scenario unit tests cannot reach",
+      "dependencies": []
+    },
+    {
+      "id": "su-vault",
+      "notes": [],
+      "status": "TODO",
+      "outcome": null,
+      "assignee": null,
+      "parentId": "surface",
+      "blockReason": null,
+      "description": "The knowledge vault holds no note on grants, conditions or groups \u2014 its auth cluster describes the pre-scope model",
+      "dependencies": []
+    },
+    {
+      "id": "debt",
+      "notes": [],
+      "status": "TODO",
+      "outcome": null,
+      "assignee": null,
+      "parentId": null,
+      "blockReason": null,
+      "description": "Known limitations carried forward",
+      "dependencies": []
+    },
+    {
+      "id": "dt-boundary",
+      "notes": [],
+      "status": "TODO",
+      "outcome": null,
+      "assignee": null,
+      "parentId": "debt",
+      "blockReason": null,
+      "description": "Extract the write cache's twice-duplicated upgrade-boundary segmentation \u2014 the prerequisite for an upgrade-aware walk",
+      "dependencies": []
+    },
+    {
+      "id": "dt-walk",
+      "notes": [
+        {
+          "id": "n-dt-walk",
+          "note": "Resolved as a documented limitation rather than an upgrade-aware walk. The mitigation is operational: preflight:auth reports the documents that cross a reducer version (exit 2) and authConditions must not be enabled on a fleet it reports.",
+          "author": "knowledge-agent",
+          "timestamp": "2026-08-17T21:45:00.000Z"
+        }
+      ],
+      "status": "WONT_DO",
+      "outcome": "Resolved as a documented limitation rather than an upgrade-aware walk: preflight:auth reports documents that cross a reducer version (exit 2), and authConditions must not be enabled on a fleet until that report is clean.",
+      "assignee": null,
+      "parentId": "debt",
+      "blockReason": null,
+      "description": "foldEvaluatedScope folds a versioned document with the pre-upgrade reducer, so admission and re-evaluation can disagree and retract a tail for no reason",
+      "dependencies": [
+        "dt-boundary"
+      ]
+    },
+    {
+      "id": "dt-browser",
+      "notes": [],
+      "status": "TODO",
+      "outcome": null,
+      "assignee": null,
+      "parentId": "debt",
+      "blockReason": null,
+      "description": "The reactor-browser pull path selects deniedReason from a static document and cannot degrade against a server on the older schema",
+      "dependencies": []
+    },
+    {
+      "id": "dt-grouprefs",
+      "notes": [],
+      "status": "TODO",
+      "outcome": null,
+      "assignee": null,
+      "parentId": "debt",
+      "blockReason": null,
+      "description": "group_references compaction \u2014 reclaiming stale references is a cost question the spec leaves open",
+      "dependencies": []
+    },
+    {
+      "id": "dt-surfaces",
+      "notes": [],
+      "status": "TODO",
+      "outcome": null,
+      "assignee": null,
+      "parentId": "debt",
+      "blockReason": null,
+      "description": "Gate the read surfaces that never consulted the tables: drive node trees, analytics, package listings, the MCP endpoint",
+      "dependencies": []
+    }
+  ],
+  "owner": "thegoldenmule",
+  "projectRef": "8360bb12-3c20-4a31-88cf-7258d957c24b",
+  "references": [
+    "https://github.com/powerhouse-inc/powerhouse/blob/main/docs/specs/auth-scope.md",
+    "https://github.com/powerhouse-inc/powerhouse/pull/2909"
+  ],
+  "links": []
+}

@@ -1,0 +1,368 @@
+[
+  {
+    "index": 0,
+    "hash": "",
+    "timestampUtcMs": "2026-08-14T12:17:55.180Z",
+    "action": {
+      "type": "CREATE_DOCUMENT",
+      "input": {
+        "meta": {},
+        "name": "relational-db-processor-for-sql-projections",
+        "slug": "",
+        "model": "bai/knowledge-note",
+        "branch": "main",
+        "signing": {
+          "nonce": "",
+          "publicKey": {},
+          "signature": "04374aa9-c0dc-477b-86c2-35841f3c8857",
+          "documentType": "bai/knowledge-note",
+          "createdAtUtcIso": "2026-08-14T12:17:55.179Z"
+        },
+        "version": 0,
+        "documentId": "04374aa9-c0dc-477b-86c2-35841f3c8857",
+        "protocolVersions": {
+          "base-reducer": 2
+        }
+      },
+      "timestampUtcMs": "2026-08-14T12:17:55.180Z"
+    }
+  },
+  {
+    "index": 0,
+    "hash": "w7nuoOPjliFtoHRs8IG9nWfvPWs=",
+    "timestampUtcMs": "2026-08-14T12:35:47.000Z",
+    "action": {
+      "type": "SET_TITLE",
+      "input": {
+        "title": "RelationalDbProcessor extends IProcessor to project document operations into SQL tables with type-safe migrations and namespaced databases per drive",
+        "updatedAt": "2026-08-14T12:35:47.000Z"
+      },
+      "timestampUtcMs": "2026-08-14T12:35:47.000Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "",
+    "timestampUtcMs": "2026-08-14T12:17:55.180Z",
+    "action": {
+      "type": "UPGRADE_DOCUMENT",
+      "input": {
+        "model": "bai/knowledge-note",
+        "toVersion": 1,
+        "documentId": "04374aa9-c0dc-477b-86c2-35841f3c8857",
+        "fromVersion": 0,
+        "initialState": {
+          "auth": {
+            "grants": [],
+            "version": 0
+          },
+          "local": {
+            "lastViewedAt": null,
+            "personalTags": []
+          },
+          "global": {
+            "links": [],
+            "model": null,
+            "scope": null,
+            "title": null,
+            "editor": null,
+            "inputs": [],
+            "models": [],
+            "status": "DRAFT",
+            "topics": [],
+            "content": null,
+            "context": null,
+            "modelId": null,
+            "modules": [],
+            "outputs": [],
+            "version": null,
+            "computes": null,
+            "filePath": null,
+            "noteType": null,
+            "severity": null,
+            "hooksUsed": [],
+            "rootCause": null,
+            "confidence": null,
+            "consumedBy": [],
+            "provenance": null,
+            "sourceType": null,
+            "targetType": null,
+            "cardinality": null,
+            "description": null,
+            "alternatives": [],
+            "consequences": [],
+            "errorMessage": null,
+            "relationType": null,
+            "correctPattern": null,
+            "decisionStatus": null,
+            "dispatchTargets": [],
+            "lifecycleEvents": []
+          },
+          "document": {
+            "hash": {
+              "encoding": "base64",
+              "algorithm": "sha1"
+            },
+            "version": 1
+          }
+        }
+      },
+      "timestampUtcMs": "2026-08-14T12:17:55.180Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "fBVQP7Iyje/no3S9uM6KKQW9OjQ=",
+    "timestampUtcMs": "2026-08-14T12:35:47.000Z",
+    "action": {
+      "type": "SET_DESCRIPTION",
+      "input": {
+        "updatedAt": "2026-08-14T12:35:47.000Z",
+        "description": "Generated with `ph generate processor --type relationalDb`; uses migrations for schema, namespaces to isolate per-drive data."
+      },
+      "timestampUtcMs": "2026-08-14T12:35:47.000Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "",
+    "timestampUtcMs": "2026-08-14T12:38:31.260Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "04374aa9-c0dc-477b-86c2-35841f3c8857",
+        "targetId": "4e6413ee-22bf-4d64-964f-ca8b28917cec",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-08-14T12:38:31.260Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "7awFmys8rFbA9NsHm5yK3hoDpFc=",
+    "timestampUtcMs": "2026-08-14T12:35:47.000Z",
+    "action": {
+      "type": "SET_NOTE_TYPE",
+      "input": {
+        "noteType": "PATTERN",
+        "updatedAt": "2026-08-14T12:35:47.000Z"
+      },
+      "timestampUtcMs": "2026-08-14T12:35:47.000Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "",
+    "timestampUtcMs": "2026-08-14T12:38:31.402Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "04374aa9-c0dc-477b-86c2-35841f3c8857",
+        "targetId": "eb3ddfcc-c606-4705-b9c9-42f5e26e2384",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-08-14T12:38:31.402Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "nONk76BO7mBpg9Zi8hsVb+3glLk=",
+    "timestampUtcMs": "2026-08-14T12:35:47.000Z",
+    "action": {
+      "type": "SET_CONTENT",
+      "input": {
+        "content": "Generate with `ph generate processor --name <name> --type relationalDb --document-types <type>`. Creates: processor class (extends `RelationalDbProcessor<DB>`), migrations.ts (up/down functions with Kysely-style schema builder), factory.ts (creates namespaced DB per drive), schema.ts (generated TypeScript types from migration via `ph generate migration-file --path <migrations-file>`). The processor lifecycle: `initAndUpgrade()` runs migrations on startup, `onOperations()` handles each batch, `onDisconnect()` cleans up. Namespaces (`getNamespace(driveId)`) prevent data collisions between drives. Data is exposed through subgraphs via `TodoIndexerProcessor.query(driveId, relationalDb)` for type-safe SQL queries.\n\n_Corrected 2026-08-13 against Powerhouse v6.2.2-dev.45._",
+        "updatedAt": "2026-08-14T12:35:47.000Z"
+      },
+      "timestampUtcMs": "2026-08-14T12:35:47.000Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "",
+    "timestampUtcMs": "2026-08-14T12:38:31.496Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "04374aa9-c0dc-477b-86c2-35841f3c8857",
+        "targetId": "6a3275cd-d71e-4342-8cd3-3fb29b8fe58c",
+        "relationshipType": "BUILDS_ON"
+      },
+      "timestampUtcMs": "2026-08-14T12:38:31.496Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "CJbEnKxv6qiboixwbBguu0Drygo=",
+    "timestampUtcMs": "2026-08-14T12:35:47.000Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "version",
+        "value": "v6.2.2-dev.44",
+        "updatedAt": "2026-08-14T12:35:47.000Z"
+      },
+      "timestampUtcMs": "2026-08-14T12:35:47.000Z"
+    }
+  },
+  {
+    "index": 5,
+    "hash": "",
+    "timestampUtcMs": "2026-09-02T21:35:44.077Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "metadata": {
+          "reason": "Backing page found by content match in the v6.2.2-dev.74 source backfill \u2014 identifiers isolate, namespaced, namespaces from the claim appear in this page (text identical at v6.2.2-dev.47 and v6.2.2-dev.74); attribution, not the original extraction record",
+          "confidence": "grounded"
+        },
+        "sourceId": "04374aa9-c0dc-477b-86c2-35841f3c8857",
+        "targetId": "abee0d48-af08-42e8-a869-a67c9e11c953",
+        "relationshipType": "DERIVED_FROM"
+      },
+      "timestampUtcMs": "2026-09-02T21:35:44.077Z"
+    }
+  },
+  {
+    "index": 5,
+    "hash": "j2KB2u9Yhxxn+ik86hPRwD+6Bmk=",
+    "timestampUtcMs": "2026-08-14T12:35:47.000Z",
+    "action": {
+      "type": "SET_PROVENANCE",
+      "input": {
+        "author": "knowledge-agent",
+        "createdAt": "2026-04-02T12:00:00.000Z",
+        "sourceOrigin": "DERIVED"
+      },
+      "timestampUtcMs": "2026-08-14T12:35:47.000Z"
+    }
+  },
+  {
+    "index": 6,
+    "hash": "uQqMKAq9L8+/uKV2L2VOBVe/jPE=",
+    "timestampUtcMs": "2026-08-14T12:35:47.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "c34fba22-589c-4866-9606-d477bc1c1416",
+        "name": "processors",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-08-14T12:35:47.000Z"
+    }
+  },
+  {
+    "index": 7,
+    "hash": "1JXi6w5puCUuHe+rP4vggtf/Kkc=",
+    "timestampUtcMs": "2026-08-14T12:35:47.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "a469c8b8-5c1e-4daa-8c20-b5de8f114ad9",
+        "name": "relational-database",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-08-14T12:35:47.000Z"
+    }
+  },
+  {
+    "index": 8,
+    "hash": "p/RBiFbOdujHSfB5HescpRm/pDc=",
+    "timestampUtcMs": "2026-08-14T12:35:47.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "1eaea6d6-0d2d-4c71-abb5-122e887aa2b1",
+        "name": "migrations",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-08-14T12:35:47.000Z"
+    }
+  },
+  {
+    "index": 9,
+    "hash": "f9RwvCMYddKPLdsSOlIGZOo9YBc=",
+    "timestampUtcMs": "2026-08-14T12:35:47.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "0442b194-8251-447a-bcca-7388dfd90ccd",
+        "name": "CQRS",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-08-14T12:35:47.000Z"
+    }
+  },
+  {
+    "index": 10,
+    "hash": "NRx+RXEiJzeabdeAdWNjYQjWU5s=",
+    "timestampUtcMs": "2026-08-14T14:36:43.000Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "version",
+        "value": "v6.2.2-dev.47",
+        "updatedAt": "2026-08-14T12:00:00.000Z"
+      },
+      "timestampUtcMs": "2026-08-14T14:36:43.000Z"
+    }
+  },
+  {
+    "index": 11,
+    "hash": "h5d1rdtesc1MM3eL7+rDttSkjdc=",
+    "timestampUtcMs": "2026-08-14T14:36:43.000Z",
+    "action": {
+      "type": "SUBMIT_FOR_REVIEW",
+      "input": {
+        "id": "e181087c-6892-459a-8f8d-9aa9a1a881a2",
+        "actor": "claude",
+        "comment": "Knowledge registered against powerhouse v6.2.2-dev.47",
+        "timestamp": "2026-08-14T12:00:00.000Z"
+      },
+      "timestampUtcMs": "2026-08-14T14:36:43.000Z"
+    }
+  },
+  {
+    "index": 12,
+    "hash": "xLBn5PZjwGO0CHcLbWgHO4vndkw=",
+    "timestampUtcMs": "2026-08-14T14:36:43.000Z",
+    "action": {
+      "type": "APPROVE_NOTE",
+      "input": {
+        "id": "d151d86d-b383-4f03-9421-94b78ae73b21",
+        "actor": "liberuum",
+        "comment": "Canonical as of powerhouse v6.2.2-dev.47",
+        "timestamp": "2026-08-14T12:00:00.000Z"
+      },
+      "timestampUtcMs": "2026-08-14T14:36:43.000Z"
+    }
+  },
+  {
+    "index": 13,
+    "hash": "emM1Q4tudCcjeoI6r9FebOuebpw=",
+    "timestampUtcMs": "2026-09-02T21:35:44.751Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "filePath",
+        "value": "apps/academy/docs/academy/03-Build/04-WorkWithData/06-RelationalDbProcessor.md",
+        "updatedAt": "2026-09-02T21:35:44.751Z"
+      },
+      "timestampUtcMs": "2026-09-02T21:35:44.751Z"
+    }
+  },
+  {
+    "index": 14,
+    "hash": "LAOrPP6fzO9ePC40Q6hZfGYGkdc=",
+    "timestampUtcMs": "2026-09-02T21:35:44.751Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "version",
+        "value": "v6.2.2-dev.74",
+        "updatedAt": "2026-09-02T21:35:44.751Z"
+      },
+      "timestampUtcMs": "2026-09-02T21:35:44.751Z"
+    }
+  }
+]

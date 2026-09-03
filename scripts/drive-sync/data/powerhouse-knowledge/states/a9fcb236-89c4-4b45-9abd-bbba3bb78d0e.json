@@ -1,0 +1,81 @@
+{
+  "links": [
+    {
+      "id": "lnk-69cbda24-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "69cbda24-b383-4f33-a8f5-0291f0146a26",
+      "targetTitle": "skill-projects",
+      "reason": "Discovery note distilled by sync-skills from the skill's SKILL.md frontmatter description and its section headings (source hash sha256:1c3c0969cd4d); the full procedure is the source text",
+      "confidence": "grounded"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Agent skill: /projects \u2014 Manage bai/project and bai/wbs documents \u2014 find/read a project and its Work Breakdown Structure, run the agent goal-working loop (assign a g",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "4bd0d261-b784-4ae6-a635-4ce9820f8578",
+      "name": "agent-skills",
+      "topicDocumentId": null
+    },
+    {
+      "id": "bb57c50e-1f65-4e5b-91fd-11317bf088a8",
+      "name": "projects",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "## When to use\nManage bai/project and bai/wbs documents \u2014 find/read a project and its Work Breakdown Structure, run the agent goal-working loop (assign a goal, start it, do the work, log progress, complete or block it), and close out linked deliverables. All operations run through the Switchboard CLI against the live reactor; bai/project and bai/wbs are not graph-indexed.\n\n## What it covers\n- When to use\n- Pre-flight\n- Step 1: Find the projects folder and existing docs\n- Step 2: Create a new project + WBS (if none exists yet)\n- Step 3: Read a project and its linked WBS\n- Step 4: The goal-working loop\n- Step 5: Deliverable close-out\n- Operations: `bai/project` (4 modules, 16 ops)\n- Operations: `bai/wbs` (3 modules, 14 ops)\n- Enums (write exactly these values)\n- Key semantics\n- Rules\n\n## Where the full skill lives\n- Vault source: **Agent skill: projects** (full SKILL.md text, DERIVED_FROM below)\n- Canonical copy: plugin repo `skills/projects/SKILL.md` \u2014 always execute from the repo copy; this note is the discovery layer.\n\n## Invocation\n`/powerhouse-knowledge:projects` in Claude Code (plugin installed), or read the source content and follow it manually.\n\n_Synced by sync-skills; source hash sha256:1c3c0969cd4d\u2026_",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": "skills/projects/SKILL.md",
+  "noteType": "PROCEDURE",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "skill-sync",
+    "createdAt": "2026-08-17T10:56:01.884Z",
+    "sessionId": null,
+    "updatedAt": "2026-09-03T09:57:48.598Z",
+    "sourceOrigin": "IMPORT"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Six steps plus the full operation surface: bai/project has 4 modules and 16 operations, bai/wbs 3 modules and 14, with the exact enum values and the goal-working loop's semantics.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "b846aeff-b28a-4478-a3dc-1fc6d8e766b0",
+      "actor": "skill-sync",
+      "comment": "skill sync",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-17T10:56:02.793Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "2e1d63d2-b75b-4b45-be31-c3e9ee98fa08",
+      "actor": "knowledge-agent",
+      "comment": "mechanical sync from canonical repo copy",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-17T10:56:02.931Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

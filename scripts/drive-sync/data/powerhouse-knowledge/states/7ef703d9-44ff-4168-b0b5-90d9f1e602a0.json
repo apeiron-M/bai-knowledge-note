@@ -1,0 +1,96 @@
+{
+  "links": [
+    {
+      "id": "lnk-bd78f2bf-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "bd78f2bf-44c5-408c-8ac7-85174b6d743b",
+      "targetTitle": "swarm-feeds-mutable-pointers"
+    },
+    {
+      "id": "lnk-8cfc4e95-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "8cfc4e95-98d9-4744-bc62-364dfe09396e",
+      "targetTitle": "adapter-key-source-files"
+    },
+    {
+      "id": "lnk-6dec0695-bui",
+      "linkType": "BUILDS_ON",
+      "targetDocumentId": "6dec0695-b44f-41ef-bf66-3c363c87b587",
+      "targetTitle": "swarm-feed-topic-naming-convention"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Swarm manifests form a three-tier hierarchy of user, drive, and document feeds keyed by deterministic keccak256 topics.",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "t1",
+      "name": "manifest",
+      "topicDocumentId": null
+    },
+    {
+      "id": "t2",
+      "name": "swarm-feeds",
+      "topicDocumentId": null
+    },
+    {
+      "id": "t3",
+      "name": "data-model",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "## Three-tier structure\n\n### 1. User Manifest\n- Topic: `keccak256(\"ph:v2:user:\" + ownerAddress)`\n- One per user, keyed by Ethereum address.\n- Contents: `{ address, drives: { [driveId]: { name, preferredEditor, documentIds, lastUpdated } }, documents, stamps }`.\n- Acts as the discovery index used on recovery.\n\n### 2. Drive Manifest\n- Topic: `keccak256(\"ph:v2:drive:\" + driveId)`\n- One per drive.\n- Contents: `{ driveId, name, preferredEditor, documents: { [docId]: { documentType, name, parentFolder? } }, folders: { [folderId]: { name, parentFolder } } }`.\n- Lets recovery reconstruct folder topology without replaying ops first.\n\n### 3. Document Manifest\n- Topic: `keccak256(\"ph:v2:doc:\" + docId)`\n- One per document.\n- Contents: `{ documentId, documentType, operationBatches: [{ reference, scope, startIndex, endIndex }], latestRevision: { document, global }, keyframes }`.\n- `reference` is the content hash of an encrypted `OperationWithContext[]` payload stored at `/bytes`.\n\n### Deterministic topics\n\nBecause topics are hashes of stable strings, any client with the owner's address can find any drive without external coordination \u2014 the key to serverless recovery.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "ARCHITECTURE",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "knowledge-agent",
+    "createdAt": "2026-04-21T14:47:10.583Z",
+    "sessionId": null,
+    "updatedAt": "2026-09-03T09:57:58.683Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "User manifest lists drives, drive manifest lists documents and folders, document manifest lists operation batch references. Each is a SOC feed with a deterministic topic.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "56f40cbe-f8e5-4648-8af0-e667ecfe2af5",
+      "actor": "claude",
+      "comment": "Knowledge registered against powerhouse v6.2.2-dev.47",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-14T12:00:00.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "34cbe3e7-b976-4592-b1b7-1a98dca7eeb5",
+      "actor": "liberuum",
+      "comment": "Canonical as of powerhouse v6.2.2-dev.47",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-14T12:00:00.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

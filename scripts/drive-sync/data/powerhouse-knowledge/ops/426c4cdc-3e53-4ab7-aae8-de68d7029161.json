@@ -1,0 +1,328 @@
+[
+  {
+    "index": 0,
+    "hash": "",
+    "timestampUtcMs": "2026-08-14T18:11:37.279Z",
+    "action": {
+      "type": "CREATE_DOCUMENT",
+      "input": {
+        "meta": {},
+        "name": "ifc-semantics-dwg-derivative",
+        "slug": "",
+        "model": "bai/knowledge-note",
+        "branch": "main",
+        "signing": {
+          "nonce": "",
+          "publicKey": {},
+          "signature": "426c4cdc-3e53-4ab7-aae8-de68d7029161",
+          "documentType": "bai/knowledge-note",
+          "createdAtUtcIso": "2026-08-14T18:11:37.279Z"
+        },
+        "version": 0,
+        "documentId": "426c4cdc-3e53-4ab7-aae8-de68d7029161",
+        "protocolVersions": {
+          "base-reducer": 2
+        }
+      },
+      "timestampUtcMs": "2026-08-14T18:11:37.279Z"
+    }
+  },
+  {
+    "index": 0,
+    "hash": "9eXWGZSkUsIquYDE9C+w9NV+Qkw=",
+    "timestampUtcMs": "2026-08-14T18:11:36.000Z",
+    "action": {
+      "type": "SET_TITLE",
+      "input": {
+        "title": "IFC carries the semantics in BIM; DWG is a non-semantic derivative generated from 3D models",
+        "updatedAt": "2026-08-14T18:11:36.886935+00:00"
+      },
+      "timestampUtcMs": "2026-08-14T18:11:36.000Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "",
+    "timestampUtcMs": "2026-08-14T18:11:37.279Z",
+    "action": {
+      "type": "UPGRADE_DOCUMENT",
+      "input": {
+        "model": "bai/knowledge-note",
+        "toVersion": 1,
+        "documentId": "426c4cdc-3e53-4ab7-aae8-de68d7029161",
+        "fromVersion": 0,
+        "initialState": {
+          "auth": {
+            "grants": [],
+            "version": 0
+          },
+          "local": {
+            "lastViewedAt": null,
+            "personalTags": []
+          },
+          "global": {
+            "links": [],
+            "model": null,
+            "scope": null,
+            "title": null,
+            "editor": null,
+            "inputs": [],
+            "models": [],
+            "status": "DRAFT",
+            "topics": [],
+            "content": null,
+            "context": null,
+            "modelId": null,
+            "modules": [],
+            "outputs": [],
+            "version": null,
+            "computes": null,
+            "filePath": null,
+            "noteType": null,
+            "severity": null,
+            "hooksUsed": [],
+            "rootCause": null,
+            "confidence": null,
+            "consumedBy": [],
+            "provenance": null,
+            "sourceType": null,
+            "targetType": null,
+            "cardinality": null,
+            "description": null,
+            "alternatives": [],
+            "consequences": [],
+            "errorMessage": null,
+            "relationType": null,
+            "correctPattern": null,
+            "decisionStatus": null,
+            "dispatchTargets": [],
+            "lifecycleEvents": []
+          },
+          "document": {
+            "hash": {
+              "encoding": "base64",
+              "algorithm": "sha1"
+            },
+            "version": 1
+          }
+        }
+      },
+      "timestampUtcMs": "2026-08-14T18:11:37.279Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "9eXWGZSkUsIquYDE9C+w9NV+Qkw=",
+    "timestampUtcMs": "2026-08-14T18:11:36.000Z",
+    "action": {
+      "type": "SET_DESCRIPTION",
+      "input": {
+        "updatedAt": "2026-08-14T18:11:36.886955+00:00",
+        "description": "DWG files are 2D CAD without semantic meaning, today generated from RVT/IFC. IFC is the semantic BIM standard; the industry builds 3D-first and derives plans from models."
+      },
+      "timestampUtcMs": "2026-08-14T18:11:36.000Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "",
+    "timestampUtcMs": "2026-08-14T18:11:38.349Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "426c4cdc-3e53-4ab7-aae8-de68d7029161",
+        "targetId": "c720df00-e3a4-49d1-b583-e7ed14c256f8",
+        "relationshipType": "DERIVED_FROM"
+      },
+      "timestampUtcMs": "2026-08-14T18:11:38.349Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "9eXWGZSkUsIquYDE9C+w9NV+Qkw=",
+    "timestampUtcMs": "2026-08-14T18:11:36.000Z",
+    "action": {
+      "type": "SET_NOTE_TYPE",
+      "input": {
+        "noteType": "CONCEPT",
+        "updatedAt": "2026-08-14T18:11:36.886958+00:00"
+      },
+      "timestampUtcMs": "2026-08-14T18:11:36.000Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "9eXWGZSkUsIquYDE9C+w9NV+Qkw=",
+    "timestampUtcMs": "2026-08-14T18:11:36.000Z",
+    "action": {
+      "type": "SET_CONTENT",
+      "input": {
+        "content": "DWG files are building/construction CAD files **without semantic meaning** \u2014 these days typically generated from RVT or IFC files as 2D drawings, cuts, and projections. IFC is the BIM standard for 3D construction files **with semantic meaning**; Autodesk Revit's RVT is the most common proprietary 3D format.\n\nThe industry is mid-transition: from 2D-DWG-first workflows to building 3D BIM models first and deriving 2D plans from them, so that elements \u2014 a door, a duct \u2014 carry semantic tags rather than being anonymous line work (DT BAU walkthrough, 00:11:26\u201300:14:11).\n\nTwo practical consequences:\n- DWG survives as an interchange and precise-measurement format, not as the source of truth.\n- The construction toolchain is 90\u201395% Windows because Revit and most industry tools lack Mac support; Mac-based architecture studios fall back to DWG interchange to participate (00:35:39).\n\nSemantic 3D-first modeling is what makes model data machine-readable at all \u2014 every automation ambition downstream (collision checks, AI review, structured BCF workflows) depends on it.",
+        "updatedAt": "2026-08-14T18:11:36.886961+00:00"
+      },
+      "timestampUtcMs": "2026-08-14T18:11:36.000Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "IDOjb1KVF62lb7R1VQB8WKT2o1Y=",
+    "timestampUtcMs": "2026-08-14T18:11:36.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "c5b2a1a7-31aa-4cee-b1b7-aa923c7cd713",
+        "name": "bim"
+      },
+      "timestampUtcMs": "2026-08-14T18:11:36.000Z"
+    }
+  },
+  {
+    "index": 5,
+    "hash": "OQW3Y8oq563v/6OtQJrYI05/4UY=",
+    "timestampUtcMs": "2026-08-14T18:11:36.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "2671f1f4-9ee0-4272-902c-fc5d6ba7cefa",
+        "name": "ifc"
+      },
+      "timestampUtcMs": "2026-08-14T18:11:36.000Z"
+    }
+  },
+  {
+    "index": 6,
+    "hash": "p04pVsfX//YdjPbS4qx8mrZQJCM=",
+    "timestampUtcMs": "2026-08-14T18:11:36.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "ba9d73ca-c7cb-43de-9eb6-53d770935cee",
+        "name": "file-formats"
+      },
+      "timestampUtcMs": "2026-08-14T18:11:36.000Z"
+    }
+  },
+  {
+    "index": 7,
+    "hash": "DubquYKhJx8c32Pp53LdIEctuYU=",
+    "timestampUtcMs": "2026-08-14T18:11:36.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "a8a371fd-075e-465a-8823-056f3e4f0f34",
+        "name": "construction"
+      },
+      "timestampUtcMs": "2026-08-14T18:11:36.000Z"
+    }
+  },
+  {
+    "index": 8,
+    "hash": "DubquYKhJx8c32Pp53LdIEctuYU=",
+    "timestampUtcMs": "2026-08-14T18:11:37.000Z",
+    "action": {
+      "type": "SET_PROVENANCE",
+      "input": {
+        "author": "knowledge-agent",
+        "createdAt": "2026-08-14T18:11:37.250719+00:00",
+        "sourceOrigin": "DERIVED"
+      },
+      "timestampUtcMs": "2026-08-14T18:11:37.000Z"
+    }
+  },
+  {
+    "index": 9,
+    "hash": "90KcCT4/JsLxtMTpnu0BK8Yv8Xc=",
+    "timestampUtcMs": "2026-08-14T18:13:35.000Z",
+    "action": {
+      "type": "SET_TITLE",
+      "input": {
+        "title": "IFC carries the semantics in BIM; DWG is a non-semantic derivative generated from 3D models",
+        "updatedAt": "2026-08-14T18:13:35.000Z"
+      },
+      "timestampUtcMs": "2026-08-14T18:13:35.000Z"
+    }
+  },
+  {
+    "index": 10,
+    "hash": "SSvvyTb7s2vruAEvhbA7odgeYiY=",
+    "timestampUtcMs": "2026-08-14T18:13:35.000Z",
+    "action": {
+      "type": "SET_DESCRIPTION",
+      "input": {
+        "updatedAt": "2026-08-14T18:13:35.000Z",
+        "description": "DWG files are 2D CAD without semantic meaning, today generated from RVT/IFC. IFC is the semantic BIM standard; the industry builds 3D-first and derives plans from models."
+      },
+      "timestampUtcMs": "2026-08-14T18:13:35.000Z"
+    }
+  },
+  {
+    "index": 11,
+    "hash": "yPhwqCWvvNu0q7YPIBfBuSge+hw=",
+    "timestampUtcMs": "2026-08-14T18:13:35.000Z",
+    "action": {
+      "type": "SET_NOTE_TYPE",
+      "input": {
+        "noteType": "CONCEPT",
+        "updatedAt": "2026-08-14T18:13:35.000Z"
+      },
+      "timestampUtcMs": "2026-08-14T18:13:35.000Z"
+    }
+  },
+  {
+    "index": 12,
+    "hash": "JXhPUYs7F8WfyLWPJDQHGEH5kCA=",
+    "timestampUtcMs": "2026-08-14T18:13:35.000Z",
+    "action": {
+      "type": "SET_CONTENT",
+      "input": {
+        "content": "DWG files are building/construction CAD files **without semantic meaning** \u2014 these days typically generated from RVT or IFC files as 2D drawings, cuts, and projections. IFC is the BIM standard for 3D construction files **with semantic meaning**; Autodesk Revit's RVT is the most common proprietary 3D format.\n\nThe industry is mid-transition: from 2D-DWG-first workflows to building 3D BIM models first and deriving 2D plans from them, so that elements \u2014 a door, a duct \u2014 carry semantic tags rather than being anonymous line work (DT BAU walkthrough, 00:11:26\u201300:14:11).\n\nTwo practical consequences:\n- DWG survives as an interchange and precise-measurement format, not as the source of truth.\n- The construction toolchain is 90\u201395% Windows because Revit and most industry tools lack Mac support; Mac-based architecture studios fall back to DWG interchange to participate (00:35:39).\n\nSemantic 3D-first modeling is what makes model data machine-readable at all \u2014 every automation ambition downstream (collision checks, AI review, structured BCF workflows) depends on it.",
+        "updatedAt": "2026-08-14T18:13:35.000Z"
+      },
+      "timestampUtcMs": "2026-08-14T18:13:35.000Z"
+    }
+  },
+  {
+    "index": 13,
+    "hash": "Al7jSvkybS1b4sYtlcSvFSPHjBg=",
+    "timestampUtcMs": "2026-08-14T18:13:36.000Z",
+    "action": {
+      "type": "SET_PROVENANCE",
+      "input": {
+        "author": "knowledge-agent",
+        "createdAt": "2026-08-14T18:13:36.000Z",
+        "sourceOrigin": "DERIVED"
+      },
+      "timestampUtcMs": "2026-08-14T18:13:36.000Z"
+    }
+  },
+  {
+    "index": 14,
+    "hash": "TSyObf2Z60/wmblR3r3RVW421Sc=",
+    "timestampUtcMs": "2026-08-14T18:17:19.000Z",
+    "action": {
+      "type": "SUBMIT_FOR_REVIEW",
+      "input": {
+        "id": "737ebcbc-c67a-4601-a556-26e8a3c1e6f7",
+        "actor": "knowledge-agent",
+        "comment": "Extracted from Aug 12-14 meeting sources; links + methodology grounding applied",
+        "timestamp": "2026-08-14T18:17:19.000Z"
+      },
+      "timestampUtcMs": "2026-08-14T18:17:19.000Z"
+    }
+  },
+  {
+    "index": 15,
+    "hash": "/R5gaCPFlRds2kPwCh71k68G+XE=",
+    "timestampUtcMs": "2026-08-14T18:17:20.000Z",
+    "action": {
+      "type": "APPROVE_NOTE",
+      "input": {
+        "id": "33552f66-12d9-4efe-99da-cfd6184196ef",
+        "actor": "liberuum",
+        "comment": "Pipeline verify: quality gate passed",
+        "timestamp": "2026-08-14T18:17:20.000Z"
+      },
+      "timestampUtcMs": "2026-08-14T18:17:20.000Z"
+    }
+  }
+]

@@ -1,0 +1,276 @@
+[
+  {
+    "index": 0,
+    "hash": "",
+    "timestampUtcMs": "2026-08-20T08:45:54.946Z",
+    "action": {
+      "type": "CREATE_DOCUMENT",
+      "input": {
+        "meta": {},
+        "name": "Odoo forces its restrictive audit trail on for German companies and blocks disabling it",
+        "slug": "",
+        "model": "bai/knowledge-note",
+        "branch": "main",
+        "signing": {
+          "nonce": "",
+          "publicKey": {},
+          "signature": "9f119da0-540b-4c20-b7f4-af9308e1ae85",
+          "documentType": "bai/knowledge-note",
+          "createdAtUtcIso": "2026-08-20T08:45:54.946Z"
+        },
+        "version": 0,
+        "documentId": "9f119da0-540b-4c20-b7f4-af9308e1ae85",
+        "protocolVersions": {
+          "base-reducer": 2
+        }
+      },
+      "timestampUtcMs": "2026-08-20T08:45:54.946Z"
+    }
+  },
+  {
+    "index": 0,
+    "hash": "6uSSH/Noz0YW7bXmQ8vElYw9kTQ=",
+    "timestampUtcMs": "2026-08-20T08:45:55.525Z",
+    "action": {
+      "type": "SET_TITLE",
+      "input": {
+        "title": "Odoo forces its restrictive audit trail on for German companies and blocks disabling it",
+        "updatedAt": "2026-08-20T08:45:55.525297Z"
+      },
+      "timestampUtcMs": "2026-08-20T08:45:55.525331Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "",
+    "timestampUtcMs": "2026-08-20T08:45:54.946Z",
+    "action": {
+      "type": "UPGRADE_DOCUMENT",
+      "input": {
+        "model": "bai/knowledge-note",
+        "toVersion": 1,
+        "documentId": "9f119da0-540b-4c20-b7f4-af9308e1ae85",
+        "fromVersion": 0,
+        "initialState": {
+          "auth": {
+            "grants": [],
+            "version": 0
+          },
+          "local": {
+            "lastViewedAt": null,
+            "personalTags": []
+          },
+          "global": {
+            "links": [],
+            "model": null,
+            "scope": null,
+            "title": null,
+            "editor": null,
+            "inputs": [],
+            "models": [],
+            "status": "DRAFT",
+            "topics": [],
+            "content": null,
+            "context": null,
+            "modelId": null,
+            "modules": [],
+            "outputs": [],
+            "version": null,
+            "computes": null,
+            "filePath": null,
+            "noteType": null,
+            "severity": null,
+            "hooksUsed": [],
+            "rootCause": null,
+            "confidence": null,
+            "consumedBy": [],
+            "provenance": null,
+            "sourceType": null,
+            "targetType": null,
+            "cardinality": null,
+            "description": null,
+            "alternatives": [],
+            "consequences": [],
+            "errorMessage": null,
+            "relationType": null,
+            "correctPattern": null,
+            "decisionStatus": null,
+            "dispatchTargets": [],
+            "lifecycleEvents": []
+          },
+          "document": {
+            "hash": {
+              "encoding": "base64",
+              "algorithm": "sha1"
+            },
+            "version": 1
+          }
+        }
+      },
+      "timestampUtcMs": "2026-08-20T08:45:54.946Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "OemkgJ1xRqmMMuqPHiUpXZmyDsc=",
+    "timestampUtcMs": "2026-08-20T08:45:55.525Z",
+    "action": {
+      "type": "SET_DESCRIPTION",
+      "input": {
+        "updatedAt": "2026-08-20T08:45:55.525335Z",
+        "description": "l10n_de sets force_restrictive_audit_trail for country code DE, and a constraint raises an error if anyone tries to switch it off, in service of GoBD compliance."
+      },
+      "timestampUtcMs": "2026-08-20T08:45:55.525340Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "",
+    "timestampUtcMs": "2026-08-20T08:45:56.809Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "9f119da0-540b-4c20-b7f4-af9308e1ae85",
+        "targetId": "4d8e59af-51f2-4ab7-b290-e1d5744abbd7",
+        "relationshipType": "DERIVED_FROM"
+      },
+      "timestampUtcMs": "2026-08-20T08:45:56.809Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "DwpRayzpwsi/91JGGLBbK1FkGnc=",
+    "timestampUtcMs": "2026-08-20T08:45:55.525Z",
+    "action": {
+      "type": "SET_NOTE_TYPE",
+      "input": {
+        "noteType": "REFERENCE",
+        "updatedAt": "2026-08-20T08:45:55.525342Z"
+      },
+      "timestampUtcMs": "2026-08-20T08:45:55.525346Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "+BVyQvUITAbzrZjfzuL8ccdEkFw=",
+    "timestampUtcMs": "2026-08-20T08:45:55.525Z",
+    "action": {
+      "type": "SET_CONTENT",
+      "input": {
+        "content": "`addons/l10n_de/models/res_company.py` contains `company.force_restrictive_audit_trail |= company.country_code == 'DE'`, and `addons/account/models/company.py` enforces it: attempting to disable raises *\"Can't disable restricted audit trail: forced by localization.\"*\n\nThe German fiscal documentation states that *\"Odoo is certified GoBD-compliant\"* and that with the German localization *\"Odoo is in standard configured in such a way that the inalterability clause can be adhered to without any further customization.\"* A SHA-256 hash chain over eight accounting fields backs it, each entry incorporating the previous entry's hash.\n\nFor a German buyer this makes Odoo the statutory books rather than a candidate for replacement. An external record layer should not attempt to be a parallel ledger here; the honest role is integration.",
+        "updatedAt": "2026-08-20T08:45:55.525348Z"
+      },
+      "timestampUtcMs": "2026-08-20T08:45:55.525352Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "/b06iOgqsKQ9aaYc0WcnmYzg3GA=",
+    "timestampUtcMs": "2026-08-20T08:45:55.525Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "54c76c2a-9ed6-4c67-8cee-6f3455ee7344",
+        "name": "tool-screen"
+      },
+      "timestampUtcMs": "2026-08-20T08:45:55.525360Z"
+    }
+  },
+  {
+    "index": 5,
+    "hash": "JX/X5U7MwfHFyDgxa8fcWRhD9NU=",
+    "timestampUtcMs": "2026-08-20T08:45:55.525Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "553c7892-7f44-4a9b-b3a2-8db874eef314",
+        "name": "odoo"
+      },
+      "timestampUtcMs": "2026-08-20T08:45:55.525367Z"
+    }
+  },
+  {
+    "index": 6,
+    "hash": "Er4dl84x2rdyxLAHaFMHAQHeYZw=",
+    "timestampUtcMs": "2026-08-20T08:45:55.525Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "49d2d202-7933-4538-97f8-01e525c426d4",
+        "name": "germany"
+      },
+      "timestampUtcMs": "2026-08-20T08:45:55.525373Z"
+    }
+  },
+  {
+    "index": 7,
+    "hash": "3IDxhsFsU7F2xMA4AZbbKLKg+TI=",
+    "timestampUtcMs": "2026-08-20T08:45:55.525Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "5348fe7f-b5ff-466b-978f-176110832435",
+        "name": "compliance"
+      },
+      "timestampUtcMs": "2026-08-20T08:45:55.525379Z"
+    }
+  },
+  {
+    "index": 8,
+    "hash": "kCOnoO8VX0EdPz3gPKoT6CU71CM=",
+    "timestampUtcMs": "2026-08-20T08:45:55.525Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "3aa727cd-4294-4dc0-a628-465f004cd9c8",
+        "name": "audit-trail"
+      },
+      "timestampUtcMs": "2026-08-20T08:45:55.525385Z"
+    }
+  },
+  {
+    "index": 9,
+    "hash": "V1Miniyfl+crOGb9bZ6zIj5LxOc=",
+    "timestampUtcMs": "2026-08-20T08:45:55.922Z",
+    "action": {
+      "type": "SET_PROVENANCE",
+      "input": {
+        "author": "knowledge-agent",
+        "createdAt": "2026-08-20T08:45:55.922202Z",
+        "sessionId": null,
+        "sourceOrigin": "DERIVED"
+      },
+      "timestampUtcMs": "2026-08-20T08:45:55.922240Z"
+    }
+  },
+  {
+    "index": 10,
+    "hash": "qmNGq54+6GGvbW2Zr9NPuKLhhD8=",
+    "timestampUtcMs": "2026-08-20T08:45:57.010Z",
+    "action": {
+      "type": "SUBMIT_FOR_REVIEW",
+      "input": {
+        "id": "ec3ee6e5-bc75-4fb7-8177-7d31c1a0e6b0",
+        "actor": "knowledge-agent",
+        "comment": "Extracted from the primary-source tool screen; each claim quotable from a cited source.",
+        "timestamp": "2026-08-20T08:45:57.010041Z"
+      },
+      "timestampUtcMs": "2026-08-20T08:45:57.010063Z"
+    }
+  },
+  {
+    "index": 11,
+    "hash": "oDjtgg6ry+Gn2nho60pTt6ZtAd4=",
+    "timestampUtcMs": "2026-08-20T08:45:57.167Z",
+    "action": {
+      "type": "APPROVE_NOTE",
+      "input": {
+        "id": "7b43aed0-8b6e-4073-aa54-db7371c38d5b",
+        "actor": "liberuum",
+        "comment": "Approved: tool-screen extraction.",
+        "timestamp": "2026-08-20T08:45:57.167011Z"
+      },
+      "timestampUtcMs": "2026-08-20T08:45:57.167033Z"
+    }
+  }
+]

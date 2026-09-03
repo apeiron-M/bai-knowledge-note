@@ -1,0 +1,104 @@
+{
+  "links": [
+    {
+      "id": "lnk-a868ced4-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "a868ced4-62b7-4fb4-bd2a-b07921b05ef9",
+      "targetTitle": "editors-use-the-modern-react-hooks-pattern-from-reactor-browser"
+    },
+    {
+      "id": "lnk-495ad2bd-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "495ad2bd-8606-4b51-afc3-3a3a4c3f72e7",
+      "targetTitle": "relational-db-live-queries-pglite"
+    },
+    {
+      "id": "lnk-1a932db8-bui",
+      "linkType": "BUILDS_ON",
+      "targetDocumentId": "1a932db8-245d-40f6-bfd8-eea728d9615e",
+      "targetTitle": "reactor-browser-hooks-provide-document-state"
+    },
+    {
+      "id": "lnk-43f0b3b4-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "43f0b3b4-51f3-4d18-8c6c-b033d94e8bbc",
+      "targetTitle": "Academy \u203a Reference \u203a Reactor \u203a Working with the Reactor",
+      "reason": "The note names apps/academy/docs/academy/04-Reference/01-Reactor/01-WorkingWithTheReactor.md as its source; page text revised between v6.2.2-dev.47 and v6.2.2-dev.74 \u2014 re-verified in the v6.2.2-dev.74 pass",
+      "confidence": "grounded"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "useReactorClient() and its sibling hooks are the browser entry point to every reactor subsystem",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "175cb90f-f3f5-4ab6-93f6-1a2e18be090f",
+      "name": "react-hooks",
+      "topicDocumentId": null
+    },
+    {
+      "id": "d6cb9557-3a07-4631-a1b7-439cc696d731",
+      "name": "reactor-browser",
+      "topicDocumentId": null
+    },
+    {
+      "id": "095a1d9a-0676-4fda-b868-fc604a7ed37d",
+      "name": "reactor-client",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "Where your code runs decides how you obtain an `IReactorClient`. In React, you never construct one \u2014 you read the running reactor's client off a hook:\n\n```typescript\nimport { useReactorClient } from \"@powerhousedao/reactor-browser\";\n\nconst client = useReactorClient();\n```\n\n`@powerhousedao/reactor-browser` exposes a matching hook for each major subsystem, so the whole reactor graph is reachable from an editor or drive app without threading anything through props:\n\n- `useSync()` \u2014 the `ISyncManager`, or `undefined` when sync was never wired.\n- `useSyncList()` \u2014 its remotes (`Remote[]`).\n- `useModelRegistry()` \u2014 the document-model registry.\n- `useDatabase()` \u2014 the Kysely database.\n- `usePGlite()` \u2014 the PGlite instance.\n\nOutside React there are two other routes. **Standalone** (scripts, tests, servers) uses `ReactorClientBuilder`: wire a reactor with `.withReactorBuilder(builder)` or `.withReactor(reactor, eventBus, documentIndexer, documentView)`, add `.withSigner(...)` / `.withDocumentModelLoader(...)`, then `.build()`. `buildModule()` throws if neither `withReactorBuilder` nor `withReactor` was set.\n\n**In a generated subgraph**, the client is a property on the class: `BaseSubgraph` holds it as `reactorClient`, and `getResolvers(subgraph)` reads it off the instance. The GraphQL resolver `context` does **not** carry the reactor.\n\n**In a generated processor**, the client is `module.client` \u2014 but the factory parameter is typed as the base `IProcessorHostModule`, which exposes `relationalDb`, `analyticsStore`, `dispatch`, and `getReadModel` and *not* `client`. Widen it to reach the client:\n\n```typescript\nconst { client } = module as IReactorProcessorHostModule;\n```\n\nOne import-path caveat: reactor-browser re-exports only a curated subset of reactor types. `ViewFilter`, `SearchFilter`, `PagingOptions`, `JobInfo`, `JobStatus`, `IReactor`, `ReactorEventTypes`, and `SyncEventTypes` are not among them \u2014 import those from `@powerhousedao/reactor`.\n\n_Source: apps/academy/docs/academy/04-Reference/01-Reactor/01-WorkingWithTheReactor.md (Powerhouse v6.2.2-dev.45)._\n\n## Correction at v6.2.2-dev.74\nThe code sample above casts the factory-builder parameter \u2014 `const { client } = module as IReactorProcessorHostModule` \u2014 and that cast is **no longer needed**. `IProcessorHostModule` now carries `client` and `attachments` itself, and `IReactorProcessorHostModule` survives only as a deprecated alias, so the scaffold reads `const { client } = module;`. Everything else here still holds.\n",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": "v6.2.2-dev.74",
+  "computes": null,
+  "filePath": "apps/academy/docs/academy/04-Reference/01-Reactor/01-WorkingWithTheReactor.md",
+  "noteType": "REFERENCE",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "claude",
+    "createdAt": "2026-08-13T14:34:07.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-09-02T22:26:47.654Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "reactor-browser exports useReactorClient, useSync, useSyncList, useModelRegistry, useDatabase and usePGlite.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "807f2132-eb9d-42a8-a95a-d7b5deb2c969",
+      "actor": "claude",
+      "comment": "Knowledge registered against powerhouse v6.2.2-dev.47",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-14T12:00:00.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "f8336c46-7b71-4dcf-b27a-1a176fe39b4d",
+      "actor": "liberuum",
+      "comment": "Canonical as of powerhouse v6.2.2-dev.47",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-14T12:00:00.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

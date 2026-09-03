@@ -1,0 +1,94 @@
+{
+  "links": [
+    {
+      "id": "lnk-4d8e59af-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "4d8e59af-51f2-4ab7-b290-e1d5744abbd7",
+      "targetTitle": "Integration-gap tool screen: ERPNext / Frappe (primary-source research, 2026-08-19)"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Every internal Odoo user can delete the chatter record of a decision",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "d9cd5bf7-e93c-45d8-aa4e-5b5a068b8277",
+      "name": "tool-screen",
+      "topicDocumentId": null
+    },
+    {
+      "id": "500601d0-184e-4c3e-994b-184b904586c7",
+      "name": "odoo",
+      "topicDocumentId": null
+    },
+    {
+      "id": "fd24a99f-0c33-4696-8614-86f00f440d8e",
+      "name": "access-control",
+      "topicDocumentId": null
+    },
+    {
+      "id": "bc79d5d5-cb3e-49b3-a87a-56e24df5dbd3",
+      "name": "deletion",
+      "topicDocumentId": null
+    },
+    {
+      "id": "370cf235-f5f0-4c0f-b01d-d697a4ce270c",
+      "name": "audit-trail",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "`addons/mail/security/ir.model.access.csv` grants `base.group_user` the permission tuple `1,1,1,1` on `model_mail_message` \u2014 read, write, create and unlink. `base.group_user` is every internal employee, not an administrative group. `mail.tracking.value.mail_message_id` is declared `ondelete='cascade'`, so removing the message silently takes the field-level diffs with it.\n\n`mail.message.unlink()` is an ordinary model method gated only by `check_access('unlink')`, which that ACL satisfies. Three documented context switches \u2014 `tracking_disable`, `mail_notrack` and a blessed `bypass_audit` token \u2014 provide further ways past tracking, and `account.lock_exception` is a first-class bypass model whose `reason` is nullable, which applies to everyone when `user_id` is null and never expires when `end_datetime` is null.\n\nWorth stating in Odoo's favour: editing is blocked \u2014 *\"Messages with tracking values cannot be modified\"* \u2014 and there is no automatic pruning of `mail.message`. The weakness is deletion by ordinary users, not mutation or drift.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "OBSERVATION",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "knowledge-agent",
+    "createdAt": "2026-08-20T08:46:01.152418Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-20T08:46:02.639884Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "The ACL grants base.group_user full CRUD including unlink on mail.message, and tracking values cascade with it, so no administrative privilege is needed.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "64a31ad6-efa0-42fd-8f50-d4178ef3311c",
+      "actor": "knowledge-agent",
+      "comment": "Extracted from the primary-source tool screen; each claim quotable from a cited source.",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-20T08:46:02.493925Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "32a2efc8-b7ea-4daf-94da-f29c145fe096",
+      "actor": "liberuum",
+      "comment": "Approved: tool-screen extraction.",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-20T08:46:02.639884Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

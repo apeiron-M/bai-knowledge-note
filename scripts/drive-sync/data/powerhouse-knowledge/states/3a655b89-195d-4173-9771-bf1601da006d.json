@@ -1,0 +1,94 @@
+{
+  "links": [
+    {
+      "id": "lnk-4d8e59af-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "4d8e59af-51f2-4ab7-b290-e1d5744abbd7",
+      "targetTitle": "Integration-gap tool screen: ERPNext / Frappe (primary-source research, 2026-08-19)"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Odoo's deletion protection covers five accounting models and nothing else",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "9159e47b-b8b0-4b24-ada4-711d096a05d3",
+      "name": "tool-screen",
+      "topicDocumentId": null
+    },
+    {
+      "id": "edb6cd4b-f8ed-45df-bbbf-783c58cc2915",
+      "name": "odoo",
+      "topicDocumentId": null
+    },
+    {
+      "id": "7680bea4-0f5a-487d-bfa4-3572c02e10e6",
+      "name": "audit-trail",
+      "topicDocumentId": null
+    },
+    {
+      "id": "14477c42-9c86-467d-813f-6ce3961f8994",
+      "name": "scope",
+      "topicDocumentId": null
+    },
+    {
+      "id": "84015be3-3738-49c0-ada8-bd6bee544469",
+      "name": "business-events",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "`addons/account/models/mail_message.py` defines a module-level `DOMAINS` dict whose keys are exactly `res.company`, `account.move`, `account.account`, `account.tax` and `res.partner`, and the guard applies only where `message_type == 'tracking'`.\n\nEverything outside that set has no deletion protection at all: purchase approvals, expense approvals, HR decisions, contract and grant awards, inventory adjustments, CRM stage changes, permission grants on `res.users`. The `@api.ondelete` hook that raises *\"You cannot remove parts of a restricted audit trail\"* simply does not fire for them.\n\nThe boundary is coherent \u2014 Odoo defends the statutory books, which is what it is certified for \u2014 but it means the protection an evaluator sees on a posted journal entry does not generalise to the business decisions surrounding it.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "OBSERVATION",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "knowledge-agent",
+    "createdAt": "2026-08-20T08:45:58.562293Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-20T08:45:59.744934Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "The DOMAINS dict in the account module lists account.move, account.account, account.tax, res.partner and res.company, so approvals outside accounting have no protection.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "4976e69e-5312-4804-8bbd-4f89e6e4404f",
+      "actor": "knowledge-agent",
+      "comment": "Extracted from the primary-source tool screen; each claim quotable from a cited source.",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-20T08:45:59.584972Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "ee921f67-9bca-4852-aaf1-39e31d0e2042",
+      "actor": "liberuum",
+      "comment": "Approved: tool-screen extraction.",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-20T08:45:59.744934Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

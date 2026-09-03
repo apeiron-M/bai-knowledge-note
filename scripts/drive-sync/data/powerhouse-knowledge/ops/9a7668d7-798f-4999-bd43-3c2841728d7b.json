@@ -1,0 +1,181 @@
+[
+  {
+    "index": 0,
+    "hash": "",
+    "timestampUtcMs": "2026-08-16T12:01:58.325Z",
+    "action": {
+      "type": "CREATE_DOCUMENT",
+      "input": {
+        "meta": {},
+        "name": "skill-graph",
+        "slug": "",
+        "model": "bai/source",
+        "branch": "main",
+        "signing": {
+          "nonce": "",
+          "publicKey": {},
+          "signature": "9a7668d7-798f-4999-bd43-3c2841728d7b",
+          "documentType": "bai/source",
+          "createdAtUtcIso": "2026-08-16T12:01:58.325Z"
+        },
+        "version": 0,
+        "documentId": "9a7668d7-798f-4999-bd43-3c2841728d7b",
+        "protocolVersions": {
+          "base-reducer": 2
+        }
+      },
+      "timestampUtcMs": "2026-08-16T12:01:58.325Z"
+    }
+  },
+  {
+    "index": 0,
+    "hash": "5upkdmuxlQeNZT7fUJSGxSmcUUc=",
+    "timestampUtcMs": "2026-08-16T12:01:58.565Z",
+    "action": {
+      "type": "INGEST_SOURCE",
+      "input": {
+        "url": "https://github.com/liberuum/powerhouse-knowledge/blob/main/skills/graph/SKILL.md",
+        "tool": "sync-skills",
+        "title": "Agent skill: graph",
+        "author": "powerhouse-knowledge plugin",
+        "method": "sha256:16564b08b4004ab72755bda2b8554198d3b78276479dec381ab08bda657edabb",
+        "content": "---\nname: graph\ndescription: Interactive knowledge graph analysis \u2014 find synthesis opportunities, bridges, clusters, topic structure, and semantic neighborhoods. Use for deep graph exploration and strategic knowledge management.\n---\n\n# Graph Analysis\n\nStructural, topical, and semantic analysis of the knowledge graph to find patterns, gaps, and opportunities.\n\n## Core queries\n\n```bash\n# Stats\nswitchboard query '{ knowledgeGraphStats(driveId: \"<UUID>\") { nodeCount edgeCount orphanCount } }'\n\n# Density\nswitchboard query '{ knowledgeGraphDensity(driveId: \"<UUID>\") }'\n\n# Triangles (synthesis opportunities)\nswitchboard query '{ knowledgeGraphTriangles(driveId: \"<UUID>\", limit: 10) { noteA { title documentId } noteB { title documentId } sharedTarget { title } } }'\n\n# Bridges (critical nodes)\nswitchboard query '{ knowledgeGraphBridges(driveId: \"<UUID>\") { title documentId } }'\n\n# Orphans\nswitchboard query '{ knowledgeGraphOrphans(driveId: \"<UUID>\") { title documentId noteType } }'\n```\n\n## Neighborhood exploration\n\n```bash\n# N-hop connections from a note\nswitchboard query '{ knowledgeGraphConnections(driveId: \"<UUID>\", documentId: \"<NOTE-ID>\", depth: 3) { node { title } depth viaLinkType } }'\n\n# Backlinks (who links to this note?)\nswitchboard query '{ knowledgeGraphBacklinks(driveId: \"<UUID>\", documentId: \"<NOTE-ID>\") { sourceDocumentId linkType } }'\n\n# Forward links (what does this note link to?)\nswitchboard query '{ knowledgeGraphForwardLinks(driveId: \"<UUID>\", documentId: \"<NOTE-ID>\") { targetDocumentId linkType targetTitle } }'\n```\n\n## Topic structure\n\n```bash\n# All topics with note counts \u2014 shows knowledge distribution\nswitchboard query '{ knowledgeGraphTopics(driveId: \"<UUID>\") { name noteCount } }'\n\n# Notes in a specific topic\nswitchboard query '{ knowledgeGraphByTopic(driveId: \"<UUID>\", topic: \"reactor\") { documentId title noteType status } }'\n\n# Notes sharing topics with a given note (topic affinity)\nswitchboard query '{ knowledgeGraphRelatedByTopic(driveId: \"<UUID>\", documentId: \"<NOTE-ID>\", limit: 10) { node { title documentId } sharedTopics sharedTopicCount } }'\n```\n\n## Semantic neighborhoods\n\nAI-powered queries over server-computed embeddings (the graph-indexer processor embeds every note; package \u2265 1.0.50). Find conceptually related notes even without shared topics or direct links:\n\n```bash\n# Find notes semantically similar to a given note\nswitchboard query '{ knowledgeGraphSimilar(driveId: \"<UUID>\", documentId: \"<NOTE-ID>\", limit: 10) { node { documentId title noteType } similarity } }'\n\n# Semantic search for a concept \u2014 natural language works verbatim\nswitchboard query '{ knowledgeGraphSemanticSearch(driveId: \"<UUID>\", query: \"how do reducers report errors?\", mode: SEMANTIC, limit: 10) { similarity node { documentId title } } }'\n```\n\nUse `knowledgeGraphSimilar` during connection analysis \u2014 it reveals non-obvious relationships that topic overlap and link structure miss.\n\n## Analysis types\n\n### Triangles (Synthesis Opportunities)\nFind note pairs (A, B) that both connect to C but not to each other. These are synthesis opportunities \u2014 if A and B share a common reference, they may relate directly.\n\nUse `knowledgeGraphTriangles` query. For each triangle, suggest a link type and articulation.\n\n### Bridges (Critical Nodes)\nFind notes whose removal would disconnect parts of the graph. These need extra verification and connection redundancy.\n\nUse `knowledgeGraphBridges` query. Recommend adding redundant links to reduce single-point-of-failure risk.\n\n### Topic Landscape\nUse `knowledgeGraphTopics` to see the full topic distribution. Identify:\n- **Dense topics** (many notes) \u2014 may need MOC organization\n- **Sparse topics** (1-2 notes) \u2014 may need more extraction or may be candidates for merging\n- **Overlapping notes** \u2014 use `knowledgeGraphRelatedByTopic` to find notes that span multiple topics\n\n### Hubs & Authorities\nFind notes with the most connections:\n- **Authority nodes**: High incoming links (widely referenced) \u2014 via backlinks query\n- **Hub nodes**: High outgoing links \u2014 via forwardLinks query\n\n### Density Analysis\n- Overall: `knowledgeGraphDensity` query\n- Per-topic: use `knowledgeGraphByTopic` for each major topic, count edges within the group\n- Identify sparse topics that need more connections\n\n### Orphan Recovery\nUse `knowledgeGraphOrphans` to find disconnected notes. For each orphan:\n1. Try `knowledgeGraphSimilar` to find semantically related notes\n2. Try `knowledgeGraphRelatedByTopic` to find topic neighbors\n3. Suggest specific connections with articulation\n\n### Semantic Cluster Discovery\nUse `knowledgeGraphSimilar` on multiple seed notes to map out conceptual regions. Notes that appear as similar to several seeds form an implicit cluster \u2014 even if they don't share topics or links.\n\n## Output format\n\nPresent findings as actionable recommendations:\n```\n=== GRAPH ANALYSIS ===\nNodes: N | Edges: N | Density: N% | Topics: N\n\nTopic landscape:\n  reactor (25 notes) | document-model (18 notes) | legal (12 notes) ...\n\nTriangles: N synthesis opportunities\n  Top 3: \"A\" <-> \"B\" (via \"C\") -- suggest: RELATES_TO because ...\n\nBridges: N critical nodes\n  \"title\" -- N connections would break if removed\n\nOrphans: N disconnected notes\n  \"title\" -- semantically similar to: \"related note\" (0.82)\n\nHubs: Top 5 by connection count\n  \"title\" -- N incoming, N outgoing\n```\n\nIf \"$ARGUMENTS\" is provided, focus analysis on that topic or note.\n",
+        "createdAt": "2026-08-16T12:01:58.565Z",
+        "createdBy": "skill-sync",
+        "sourceType": "DOCUMENTATION",
+        "description": "Interactive knowledge graph analysis \u2014 find synthesis opportunities, bridges, clusters, topic structure, and semantic neighborhoods. Use for deep graph exploration and strategic knowledge management."
+      },
+      "timestampUtcMs": "2026-08-16T12:01:58.565Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "",
+    "timestampUtcMs": "2026-08-16T12:01:58.325Z",
+    "action": {
+      "type": "UPGRADE_DOCUMENT",
+      "input": {
+        "model": "bai/source",
+        "toVersion": 1,
+        "documentId": "9a7668d7-798f-4999-bd43-3c2841728d7b",
+        "fromVersion": 0,
+        "initialState": {
+          "auth": {
+            "grants": [],
+            "version": 0
+          },
+          "local": {},
+          "global": {
+            "title": null,
+            "status": "INBOX",
+            "content": null,
+            "createdAt": null,
+            "createdBy": null,
+            "provenance": null,
+            "sourceType": null,
+            "description": null,
+            "extractedClaims": [],
+            "extractionStats": null
+          },
+          "document": {
+            "hash": {
+              "encoding": "base64",
+              "algorithm": "sha1"
+            },
+            "version": 1
+          }
+        }
+      },
+      "timestampUtcMs": "2026-08-16T12:01:58.325Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "218fjcSGx4pGlSlSb6e25ZDvM9E=",
+    "timestampUtcMs": "2026-08-16T12:02:02.051Z",
+    "action": {
+      "type": "ADD_EXTRACTED_CLAIM",
+      "input": {
+        "claimRef": "a58138bc-0db2-4f98-9213-09d3fab315a6"
+      },
+      "timestampUtcMs": "2026-08-16T12:02:02.051Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "ylyz5yOcK71nL98EWycFlJsjhvI=",
+    "timestampUtcMs": "2026-08-16T12:02:02.195Z",
+    "action": {
+      "type": "RECORD_EXTRACTION_STATS",
+      "input": {
+        "skipRate": 0,
+        "claimCount": 1,
+        "extractedAt": "2026-08-16T12:02:02.195Z",
+        "extractedBy": "skill-sync",
+        "skippedCount": 0
+      },
+      "timestampUtcMs": "2026-08-16T12:02:02.195Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "rsfSiPGGN9iARkqEucfRI9u/1Pc=",
+    "timestampUtcMs": "2026-08-16T12:02:02.335Z",
+    "action": {
+      "type": "SET_SOURCE_STATUS",
+      "input": {
+        "status": "EXTRACTED"
+      },
+      "timestampUtcMs": "2026-08-16T12:02:02.335Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "vI/nQbk4FI307iBWRRHCFtV8HC0=",
+    "timestampUtcMs": "2026-09-02T19:21:37.091Z",
+    "action": {
+      "type": "INGEST_SOURCE",
+      "input": {
+        "url": "https://github.com/liberuum/powerhouse-knowledge/blob/main/skills/graph/SKILL.md",
+        "tool": "sync-skills",
+        "title": "Agent skill: graph",
+        "author": "powerhouse-knowledge plugin",
+        "method": "sha256:1589dae88c638ef183ead4b1a9603322dee397fea3c7d1b9631725b54c4488ff",
+        "content": "---\nname: graph\ndescription: Interactive knowledge graph analysis \u2014 find synthesis opportunities, bridges, clusters, topic structure, and semantic neighborhoods. Use for deep graph exploration and strategic knowledge management.\n---\n\n# Graph Analysis\n\n> **Target first.** Every command below runs against the Switchboard the\n> active CLI profile points at, and `<UUID>` / `<drive-slug>` mean *that*\n> server's vault drive. If the pre-flight hook printed `Profile: \u2026 -> \u2026` and\n> `VAULT_DRIVE_ID` / `VAULT_DRIVE_SLUG`, use those. Otherwise run\n> `switchboard config show` and the drive detection in AGENT.md \u00a7 *Find the\n> vault drive*. If it is still ambiguous which vault the user means, **ask for\n> the Switchboard URL and the drive** \u2014 never assume an endpoint.\n\nStructural, topical, and semantic analysis of the knowledge graph to find patterns, gaps, and opportunities.\n\n> `knowledgeGraphStats.nodeCount`, `density`, `orphans`, `triangles` and `bridges` all include **MoC nodes** (`status = \"MOC\"`, `noteType = \"MOC (<tier>)\"`). \"N orphan notes\" may be MoCs \u2014 check `noteType` before reporting. For a vault-wide ranking of hubs/authorities use one `knowledgeGraphEdges(driveId)` call and count in Python, not `backlinks`/`forwardLinks` per note. Also available: `knowledgeGraphHistory(documentId)`, `knowledgeGraphActivity(since)`, `knowledgeGraphActivityByType(operationType)`, `knowledgeGraphStale(since)`, `knowledgeGraphNodesByStatus(status)`, `knowledgeGraphNodeByDocumentId(documentId)`.\n\n## Core queries\n\n```bash\n# Stats\nswitchboard query '{ knowledgeGraphStats(driveId: \"<UUID>\") { nodeCount edgeCount orphanCount } }'\n\n# Density\nswitchboard query '{ knowledgeGraphDensity(driveId: \"<UUID>\") }'\n\n# Triangles (synthesis opportunities)\nswitchboard query '{ knowledgeGraphTriangles(driveId: \"<UUID>\", limit: 10) { noteA { title documentId } noteB { title documentId } sharedTarget { title } } }'\n\n# Bridges (critical nodes)\nswitchboard query '{ knowledgeGraphBridges(driveId: \"<UUID>\") { title documentId } }'\n\n# Orphans\nswitchboard query '{ knowledgeGraphOrphans(driveId: \"<UUID>\") { title documentId noteType } }'\n```\n\n## Neighborhood exploration\n\n```bash\n# N-hop connections from a note\nswitchboard query '{ knowledgeGraphConnections(driveId: \"<UUID>\", documentId: \"<NOTE-ID>\", depth: 3) { node { title } depth viaLinkType } }'\n\n# Backlinks (who links to this note?)\nswitchboard query '{ knowledgeGraphBacklinks(driveId: \"<UUID>\", documentId: \"<NOTE-ID>\") { sourceDocumentId linkType } }'\n\n# Forward links (what does this note link to?)\nswitchboard query '{ knowledgeGraphForwardLinks(driveId: \"<UUID>\", documentId: \"<NOTE-ID>\") { targetDocumentId linkType targetTitle } }'\n```\n\n## Topic structure\n\n```bash\n# All topics with note counts \u2014 shows knowledge distribution\nswitchboard query '{ knowledgeGraphTopics(driveId: \"<UUID>\") { name noteCount } }'\n\n# Notes in a specific topic\nswitchboard query '{ knowledgeGraphByTopic(driveId: \"<UUID>\", topic: \"reactor\") { documentId title noteType status } }'\n\n# Notes sharing topics with a given note (topic affinity)\nswitchboard query '{ knowledgeGraphRelatedByTopic(driveId: \"<UUID>\", documentId: \"<NOTE-ID>\", limit: 10) { node { title documentId } sharedTopics sharedTopicCount } }'\n```\n\n## Semantic neighborhoods\n\nAI-powered queries over server-computed embeddings (the graph-indexer processor embeds every note; package \u2265 1.0.50). Find conceptually related notes even without shared topics or direct links:\n\n```bash\n# Find notes semantically similar to a given note\nswitchboard query '{ knowledgeGraphSimilar(driveId: \"<UUID>\", documentId: \"<NOTE-ID>\", limit: 10) { node { documentId title noteType } similarity } }'\n\n# Semantic search for a concept \u2014 natural language works verbatim\nswitchboard query '{ knowledgeGraphSemanticSearch(driveId: \"<UUID>\", query: \"how do reducers report errors?\", mode: SEMANTIC, limit: 10) { similarity node { documentId title } } }'\n```\n\nUse `knowledgeGraphSimilar` during connection analysis \u2014 it reveals non-obvious relationships that topic overlap and link structure miss.\n\n## Analysis types\n\n### Triangles (Synthesis Opportunities)\nFind note pairs (A, B) that both connect to C but not to each other. These are synthesis opportunities \u2014 if A and B share a common reference, they may relate directly.\n\nUse `knowledgeGraphTriangles` query. For each triangle, suggest a link type and articulation.\n\n### Bridges (Critical Nodes)\nFind notes whose removal would disconnect parts of the graph. These need extra verification and connection redundancy.\n\nUse `knowledgeGraphBridges` query. Recommend adding redundant links to reduce single-point-of-failure risk.\n\n### Topic Landscape\nUse `knowledgeGraphTopics` to see the full topic distribution. Identify:\n- **Dense topics** (many notes) \u2014 may need MOC organization\n- **Sparse topics** (1-2 notes) \u2014 may need more extraction or may be candidates for merging\n- **Overlapping notes** \u2014 use `knowledgeGraphRelatedByTopic` to find notes that span multiple topics\n\n### Hubs & Authorities\nFind notes with the most connections:\n- **Authority nodes**: High incoming links (widely referenced) \u2014 via backlinks query\n- **Hub nodes**: High outgoing links \u2014 via forwardLinks query\n\n### Density Analysis\n- Overall: `knowledgeGraphDensity` query\n- Per-topic: use `knowledgeGraphByTopic` for each major topic, count edges within the group\n- Identify sparse topics that need more connections\n\n### Orphan Recovery\nUse `knowledgeGraphOrphans` to find disconnected notes. For each orphan:\n1. Try `knowledgeGraphSimilar` to find semantically related notes\n2. Try `knowledgeGraphRelatedByTopic` to find topic neighbors\n3. Suggest specific connections with articulation\n\n### Semantic Cluster Discovery\nUse `knowledgeGraphSimilar` on multiple seed notes to map out conceptual regions. Notes that appear as similar to several seeds form an implicit cluster \u2014 even if they don't share topics or links.\n\n## Output format\n\nPresent findings as actionable recommendations:\n```\n=== GRAPH ANALYSIS ===\nNodes: N | Edges: N | Density: N% | Topics: N\n\nTopic landscape:\n  reactor (25 notes) | document-model (18 notes) | legal (12 notes) ...\n\nTriangles: N synthesis opportunities\n  Top 3: \"A\" <-> \"B\" (via \"C\") -- suggest: RELATES_TO because ...\n\nBridges: N critical nodes\n  \"title\" -- N connections would break if removed\n\nOrphans: N disconnected notes\n  \"title\" -- semantically similar to: \"related note\" (0.82)\n\nHubs: Top 5 by connection count\n  \"title\" -- N incoming, N outgoing\n```\n\nIf \"$ARGUMENTS\" is provided, focus analysis on that topic or note.\n",
+        "createdAt": "2026-09-02T19:21:37.091Z",
+        "createdBy": "skill-sync",
+        "sourceType": "DOCUMENTATION",
+        "description": "Interactive knowledge graph analysis \u2014 find synthesis opportunities, bridges, clusters, topic structure, and semantic neighborhoods. Use for deep graph exploration and strategic knowledge management."
+      },
+      "timestampUtcMs": "2026-09-02T19:21:37.091Z"
+    }
+  },
+  {
+    "index": 5,
+    "hash": "SJPbrktxb30dFkPbu81OKo3LET4=",
+    "timestampUtcMs": "2026-09-02T19:21:39.263Z",
+    "action": {
+      "type": "RECORD_EXTRACTION_STATS",
+      "input": {
+        "skipRate": 0,
+        "claimCount": 1,
+        "extractedAt": "2026-09-02T19:21:39.263Z",
+        "extractedBy": "skill-sync",
+        "skippedCount": 0
+      },
+      "timestampUtcMs": "2026-09-02T19:21:39.263Z"
+    }
+  },
+  {
+    "index": 6,
+    "hash": "4twMirJ7Du0Y2H+aXv53Kyi4EDU=",
+    "timestampUtcMs": "2026-09-02T19:21:39.731Z",
+    "action": {
+      "type": "SET_SOURCE_STATUS",
+      "input": {
+        "status": "EXTRACTED"
+      },
+      "timestampUtcMs": "2026-09-02T19:21:39.731Z"
+    }
+  }
+]

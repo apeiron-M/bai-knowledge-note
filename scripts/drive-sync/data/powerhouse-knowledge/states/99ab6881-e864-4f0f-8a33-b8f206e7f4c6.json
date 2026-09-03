@@ -1,0 +1,115 @@
+{
+  "links": [
+    {
+      "id": "lnk-2a908219-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "2a908219-6cde-489e-b910-c0d5740409ab",
+      "targetTitle": "connect-reactor-flags",
+      "reason": "Same delivery path: values the SharedWorker cannot read from runtime config travel in its construct message",
+      "confidence": "grounded"
+    },
+    {
+      "id": "lnk-d1b581d2-bui",
+      "linkType": "BUILDS_ON",
+      "targetDocumentId": "d1b581d2-1f07-434f-8192-dbabeae7b7db",
+      "targetTitle": "sign-in-binds-to-one-chain-via-the-did",
+      "reason": "The DID carries the chain; this note is the configuration knob that sets it and everything that has to move with it",
+      "confidence": "grounded"
+    },
+    {
+      "id": "lnk-158af865-bui",
+      "linkType": "BUILDS_ON",
+      "targetDocumentId": "158af865-c94d-4b6b-b86f-fe23db3f8828",
+      "targetTitle": "connect-in-page-renown-sign-in-adapters",
+      "reason": "Adds the chain and adapter constraints to the in-page sign-in configuration",
+      "confidence": "grounded"
+    },
+    {
+      "id": "lnk-067ef151-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "067ef151-e1a1-4a1a-91de-faaef1614f94",
+      "targetTitle": "App \u203a connect \u203a RUNTIME-CONFIG \u2014 Connect Runtime Configuration",
+      "reason": "Extracted from apps/connect/RUNTIME-CONFIG.md at v6.2.2-dev.74 \u2014 renown block: chainId paragraph, bundled chains, networkId unread",
+      "confidence": "grounded"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "connect.renown.chainId moves three things together \u2014 the credential, the bearer token including the reactor worker's, and the chain the wallet UI offers \u2014 and only bundled chains can be used",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "c2b12d07-ed99-4689-9b46-27b13804a04e",
+      "name": "connect",
+      "topicDocumentId": null
+    },
+    {
+      "id": "220a4fed-823b-4a72-889f-34061d59c6bc",
+      "name": "renown",
+      "topicDocumentId": null
+    },
+    {
+      "id": "0eba88b4-b29c-403f-95a7-90d401b4ee03",
+      "name": "configuration",
+      "topicDocumentId": null
+    },
+    {
+      "id": "7ffc7d52-cc7e-4543-8f98-a9a4095114d3",
+      "name": "identity",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "`chainId` (default `1`) is the chain Renown issues credentials on. Because it is part of the user's `did:pkh`, the same wallet on another chain is a different user, and sign-in from a wallet on a different chain is rejected. Setting it moves **three things together**:\n\n- the **credential** Renown issues;\n- the **bearer token** \u2014 including the reactor worker's, which builds its own crypto and receives the chain through its construct message since a worker cannot read runtime config;\n- the **chain the wallet UI offers**, so the user is prompted to switch rather than rejected at the end of the flow.\n\nOnly chains Connect bundles can be offered: `1` (mainnet), `11155111` (Sepolia), `137` (Polygon), `10` (Optimism), `42161` (Arbitrum), `8453` (Base). Any other id logs an error and leaves in-page sign-in unusable. `networkId` remains unread \u2014 `did:pkh` identities here are always `eip155`.\n\nOnly public identifiers belong in this block (`walletConnectProjectId`, a Privy `appId`); `switchboardUrl` can be overridden at build time with `ph connect config --renown-switchboard-url <url>` or via `PH_CONNECT_CONFIG_JSON`, and `adapters` is set through the config file or that env var.\n\n_Source: apps/connect/RUNTIME-CONFIG.md (Powerhouse v6.2.2-dev.74)._\n\n## Provenance\n- `apps/connect/RUNTIME-CONFIG.md` \u2014 renown block: chainId paragraph, bundled chains, networkId unread\n\n_Recorded from the Powerhouse repository at **v6.2.2-dev.74** during the v6.2.2-dev.74 source sync._",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": "v6.2.2-dev.74",
+  "computes": null,
+  "filePath": "apps/connect/RUNTIME-CONFIG.md",
+  "noteType": "REFERENCE",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": "grounded",
+  "consumedBy": [],
+  "provenance": {
+    "author": "knowledge-agent",
+    "createdAt": "2026-09-02T22:12:17.948Z",
+    "sessionId": null,
+    "updatedAt": "2026-09-02T22:20:54.595Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Default 1. It is part of the user DID, so the same wallet on another chain is another user. Bundled ids: 1, 11155111, 137, 10, 42161, 8453; any other logs an error and disables in-page sign-in.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "3a8f72ae-1312-4554-a3db-83b4f006550a",
+      "actor": "knowledge-agent",
+      "comment": "extracted from the Powerhouse repository at v6.2.2-dev.74",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-09-02T22:12:18.427Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "b60a2553-d226-4e04-9fdc-5a8656f10e27",
+      "actor": "liberuum",
+      "comment": "claim checked against the cited repository file at the pinned tag",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-09-02T22:12:18.889Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

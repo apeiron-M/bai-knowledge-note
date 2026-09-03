@@ -1,0 +1,102 @@
+{
+  "links": [
+    {
+      "id": "lnk-158143d5-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "158143d5-1e39-44b5-9799-1a84e6de9e72",
+      "targetTitle": "DocumentToolbar exposes className enabledControls and callback props"
+    },
+    {
+      "id": "lnk-68acb174-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "68acb174-1d24-4535-a05e-48cbbb6bba19",
+      "targetTitle": "Revision History panel styling requires scoped CSS on document-editor-context since no props are exposed"
+    },
+    {
+      "id": "lnk-d701272c-bui",
+      "linkType": "BUILDS_ON",
+      "targetDocumentId": "d701272c-ca6c-4aaf-93c1-99b8a7375d2e",
+      "targetTitle": "bee-reactor-adapter-prerequisites"
+    },
+    {
+      "id": "lnk-0217ca63-bui",
+      "linkType": "BUILDS_ON",
+      "targetDocumentId": "0217ca63-9624-4687-99c5-451ff5832e70",
+      "targetTitle": "swarm-postage-stamps-bucket-mechanics"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Adapter requires Bee v2.7.1+ with a depth-22+ stamp; bee dev lacks SOC/feeds so the adapter falls back to /bytes mode",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "8cefa838-a860-4e4e-8995-ba3afd97e462",
+      "name": "bee-node",
+      "topicDocumentId": null
+    },
+    {
+      "id": "6ec3a3d4-4001-4539-9823-fb1efd691ac4",
+      "name": "bee-dev-mode",
+      "topicDocumentId": null
+    },
+    {
+      "id": "60941159-a161-4195-9ec3-49c85d407be1",
+      "name": "postage-stamps",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "# Bee Node Prerequisites and Dev Mode Constraints\n\nThe adapter requires a running Bee node (v2.7.1+ recommended), a funded postage stamp of depth 22+ (~7.7 GB capacity), and an Ethereum wallet for key derivation.\n\nTests run against `bee dev` \u2014 a memory-only Bee node with no blockchain and no real tokens:\n\n- Full HTTP API on port 1633\n- Postage stamps work but are free\n- Data is stored in memory only (lost on restart)\n- **SOC/Feeds are not supported in dev mode** \u2014 the adapter automatically falls back to `/bytes` mode when it detects dev\n\nThis dev-mode `/bytes`-only fallback is a meaningful behavioral branch: the mutable-feed pointer pattern that powers production recovery does not actually exercise in dev tests; only the immutable upload path is covered.\n\nA test stamp can be minted with:\n\n```bash\ncurl -s -X POST http://localhost:1633/stamps/10000000/24 | jq .batchID\n```\n\nThe 12 E2E tests live in the adapter package and require `bee dev` running in a separate terminal before `pnpm test`.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "REFERENCE",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "knowledge-agent",
+    "createdAt": "2026-04-21T14:57:41.685Z",
+    "sessionId": null,
+    "updatedAt": "2026-09-03T09:57:28.105Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Needs a funded depth-22 stamp (~7.7GB) and an Ethereum wallet for key derivation. Tests run on memory-only bee dev, where missing SOC/feeds support silently degrades sync to /bytes mode.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "045bcec9-8edc-4a93-bbae-d2c96ad29242",
+      "actor": "claude",
+      "comment": "Knowledge registered against powerhouse v6.2.2-dev.47",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-14T12:00:00.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "46a375b9-10f9-46dd-9292-669fc20c3ef0",
+      "actor": "liberuum",
+      "comment": "Canonical as of powerhouse v6.2.2-dev.47",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-14T12:00:00.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

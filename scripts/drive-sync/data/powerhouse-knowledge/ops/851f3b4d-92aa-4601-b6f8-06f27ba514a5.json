@@ -1,0 +1,396 @@
+[
+  {
+    "index": 0,
+    "hash": "",
+    "timestampUtcMs": "2026-08-14T12:16:11.210Z",
+    "action": {
+      "type": "CREATE_DOCUMENT",
+      "input": {
+        "meta": {},
+        "name": "reactor-client-auto-signs-all-actions",
+        "slug": "",
+        "model": "bai/knowledge-note",
+        "branch": "main",
+        "signing": {
+          "nonce": "",
+          "publicKey": {},
+          "signature": "851f3b4d-92aa-4601-b6f8-06f27ba514a5",
+          "documentType": "bai/knowledge-note",
+          "createdAtUtcIso": "2026-08-14T12:16:11.210Z"
+        },
+        "version": 0,
+        "documentId": "851f3b4d-92aa-4601-b6f8-06f27ba514a5",
+        "protocolVersions": {
+          "base-reducer": 2
+        }
+      },
+      "timestampUtcMs": "2026-08-14T12:16:11.210Z"
+    }
+  },
+  {
+    "index": 0,
+    "hash": "QGZ3GeJUnrfaBpvYYk5cscwtT7Q=",
+    "timestampUtcMs": "2026-08-14T12:35:42.000Z",
+    "action": {
+      "type": "SET_TITLE",
+      "input": {
+        "title": "ReactorClient automatically signs all actions before submitting them to the reactor, skipping already-signed actions",
+        "updatedAt": "2026-08-14T12:35:42.000Z"
+      },
+      "timestampUtcMs": "2026-08-14T12:35:42.000Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "",
+    "timestampUtcMs": "2026-08-14T12:16:11.210Z",
+    "action": {
+      "type": "UPGRADE_DOCUMENT",
+      "input": {
+        "model": "bai/knowledge-note",
+        "toVersion": 1,
+        "documentId": "851f3b4d-92aa-4601-b6f8-06f27ba514a5",
+        "fromVersion": 0,
+        "initialState": {
+          "auth": {
+            "grants": [],
+            "version": 0
+          },
+          "local": {
+            "lastViewedAt": null,
+            "personalTags": []
+          },
+          "global": {
+            "links": [],
+            "model": null,
+            "scope": null,
+            "title": null,
+            "editor": null,
+            "inputs": [],
+            "models": [],
+            "status": "DRAFT",
+            "topics": [],
+            "content": null,
+            "context": null,
+            "modelId": null,
+            "modules": [],
+            "outputs": [],
+            "version": null,
+            "computes": null,
+            "filePath": null,
+            "noteType": null,
+            "severity": null,
+            "hooksUsed": [],
+            "rootCause": null,
+            "confidence": null,
+            "consumedBy": [],
+            "provenance": null,
+            "sourceType": null,
+            "targetType": null,
+            "cardinality": null,
+            "description": null,
+            "alternatives": [],
+            "consequences": [],
+            "errorMessage": null,
+            "relationType": null,
+            "correctPattern": null,
+            "decisionStatus": null,
+            "dispatchTargets": [],
+            "lifecycleEvents": []
+          },
+          "document": {
+            "hash": {
+              "encoding": "base64",
+              "algorithm": "sha1"
+            },
+            "version": 1
+          }
+        }
+      },
+      "timestampUtcMs": "2026-08-14T12:16:11.210Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "7st08l6hknL6gSKzz08Ph3YVIJM=",
+    "timestampUtcMs": "2026-08-14T12:35:42.000Z",
+    "action": {
+      "type": "SET_DESCRIPTION",
+      "input": {
+        "updatedAt": "2026-08-14T12:35:42.000Z",
+        "description": "Every mutation method calls signActions() internally; pre-signed actions pass through unchanged."
+      },
+      "timestampUtcMs": "2026-08-14T12:35:42.000Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "",
+    "timestampUtcMs": "2026-08-14T12:38:22.486Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "851f3b4d-92aa-4601-b6f8-06f27ba514a5",
+        "targetId": "6fa0a6ea-a295-4da9-85da-1e8ba852c91a",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-08-14T12:38:22.486Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "pi+uJWhN+D8M8El/R1tLN1q0buw=",
+    "timestampUtcMs": "2026-08-14T12:35:42.000Z",
+    "action": {
+      "type": "SET_NOTE_TYPE",
+      "input": {
+        "noteType": "ARCHITECTURE",
+        "updatedAt": "2026-08-14T12:35:42.000Z"
+      },
+      "timestampUtcMs": "2026-08-14T12:35:42.000Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "",
+    "timestampUtcMs": "2026-08-14T12:38:22.582Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "851f3b4d-92aa-4601-b6f8-06f27ba514a5",
+        "targetId": "de06fba3-5cdf-413c-b6e0-f1a094c62f34",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-08-14T12:38:22.582Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "O8ussjcXKAsRuuFZJivRXK1LHdc=",
+    "timestampUtcMs": "2026-08-14T12:35:42.000Z",
+    "action": {
+      "type": "SET_CONTENT",
+      "input": {
+        "content": "The `ReactorClient` holds an `ISigner` instance and every mutation method (`execute()`, `create()`, `createEmpty()`, `rename()`, `addRelationship()`, `removeRelationship()`, `moveRelationship()`) calls `signActions()` internally before submission. If `action.context.signer.signatures` already has entries, the action passes through unchanged. `ReactorClientBuilder.withSigner()` accepts an `ISigner` or `SignerConfig` (signer + optional verifier). Without a signer, `PassthroughSigner` is used (no-op, empty signatures). The production implementation is `RenownCryptoSigner` from the `renown` package, using ECDSA P-256 with `did:key` identity. Signature verification is optional and runs in the reactor's executor pipeline via `SignatureVerifier`.\n\n_Corrected 2026-08-13 against Powerhouse v6.2.2-dev.45._",
+        "updatedAt": "2026-08-14T12:35:42.000Z"
+      },
+      "timestampUtcMs": "2026-08-14T12:35:42.000Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "",
+    "timestampUtcMs": "2026-08-14T12:38:22.661Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "851f3b4d-92aa-4601-b6f8-06f27ba514a5",
+        "targetId": "79ab27b6-f387-4761-b7f4-39aca36f0d68",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-08-14T12:38:22.661Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "Eg4+lQIjAnclsIGdsxuV8a0piRU=",
+    "timestampUtcMs": "2026-08-14T12:35:42.000Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "version",
+        "value": "v6.2.2-dev.44",
+        "updatedAt": "2026-08-14T12:35:42.000Z"
+      },
+      "timestampUtcMs": "2026-08-14T12:35:42.000Z"
+    }
+  },
+  {
+    "index": 5,
+    "hash": "",
+    "timestampUtcMs": "2026-08-14T12:38:22.742Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "851f3b4d-92aa-4601-b6f8-06f27ba514a5",
+        "targetId": "8cbea140-21d6-4b63-8780-5d44831018aa",
+        "relationshipType": "BUILDS_ON"
+      },
+      "timestampUtcMs": "2026-08-14T12:38:22.742Z"
+    }
+  },
+  {
+    "index": 5,
+    "hash": "pF+xyZT7+xhy7oqwEs3MmVbfhyw=",
+    "timestampUtcMs": "2026-08-14T12:35:42.000Z",
+    "action": {
+      "type": "SET_PROVENANCE",
+      "input": {
+        "author": "knowledge-agent",
+        "createdAt": "2026-04-02T12:00:00.000Z",
+        "sourceOrigin": "DERIVED"
+      },
+      "timestampUtcMs": "2026-08-14T12:35:42.000Z"
+    }
+  },
+  {
+    "index": 6,
+    "hash": "",
+    "timestampUtcMs": "2026-08-14T12:38:22.829Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "851f3b4d-92aa-4601-b6f8-06f27ba514a5",
+        "targetId": "395c3ea0-ce11-4b25-8bbb-7f68a7b169e1",
+        "relationshipType": "BUILDS_ON"
+      },
+      "timestampUtcMs": "2026-08-14T12:38:22.829Z"
+    }
+  },
+  {
+    "index": 6,
+    "hash": "hPOcIVBeEJXkB+rlEzcf65+vyuQ=",
+    "timestampUtcMs": "2026-08-14T12:35:42.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "146f836c-2b76-40f7-9eb1-c15f005d167a",
+        "name": "reactor-client",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-08-14T12:35:42.000Z"
+    }
+  },
+  {
+    "index": 7,
+    "hash": "",
+    "timestampUtcMs": "2026-09-02T21:34:44.710Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "metadata": {
+          "reason": "Backing page found by content match in the v6.2.2-dev.74 source backfill \u2014 identifiers reactorclient, signactions from the claim appear in this page (text identical at v6.2.2-dev.47 and v6.2.2-dev.74); attribution, not the original extraction record",
+          "confidence": "grounded"
+        },
+        "sourceId": "851f3b4d-92aa-4601-b6f8-06f27ba514a5",
+        "targetId": "7f901536-7510-41b6-ac5d-62932646871c",
+        "relationshipType": "DERIVED_FROM"
+      },
+      "timestampUtcMs": "2026-09-02T21:34:44.710Z"
+    }
+  },
+  {
+    "index": 7,
+    "hash": "t3sSFrgaAAaibABdp8JP9ylqSKY=",
+    "timestampUtcMs": "2026-08-14T12:35:42.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "c241c9ea-911d-4e9e-99f9-67be065fac7a",
+        "name": "signing",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-08-14T12:35:42.000Z"
+    }
+  },
+  {
+    "index": 8,
+    "hash": "r55Qtjz0wMcMHM54E77CbrfUT+U=",
+    "timestampUtcMs": "2026-08-14T12:35:42.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "961317c3-23b3-4320-974e-46428d1936e4",
+        "name": "auto-signing",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-08-14T12:35:42.000Z"
+    }
+  },
+  {
+    "index": 9,
+    "hash": "magCwf6zvDhwjA0NGQpnWSg9y8s=",
+    "timestampUtcMs": "2026-08-14T12:35:42.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "0d7d31cd-a584-45ef-8844-c243b14e58d3",
+        "name": "signer",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-08-14T12:35:42.000Z"
+    }
+  },
+  {
+    "index": 10,
+    "hash": "YvgFILYp3YGuF2fe+eI7oUYOOFo=",
+    "timestampUtcMs": "2026-08-14T14:37:18.000Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "version",
+        "value": "v6.2.2-dev.47",
+        "updatedAt": "2026-08-14T12:00:00.000Z"
+      },
+      "timestampUtcMs": "2026-08-14T14:37:18.000Z"
+    }
+  },
+  {
+    "index": 11,
+    "hash": "OdeoNtsCBQ+28vyM6GMGMjZNwe4=",
+    "timestampUtcMs": "2026-08-14T14:37:18.000Z",
+    "action": {
+      "type": "SUBMIT_FOR_REVIEW",
+      "input": {
+        "id": "39a645db-f3c5-4784-abba-48192b839a2e",
+        "actor": "claude",
+        "comment": "Knowledge registered against powerhouse v6.2.2-dev.47",
+        "timestamp": "2026-08-14T12:00:00.000Z"
+      },
+      "timestampUtcMs": "2026-08-14T14:37:18.000Z"
+    }
+  },
+  {
+    "index": 12,
+    "hash": "OdvzTqO8UQyBA3TYWjsE5PpSOfY=",
+    "timestampUtcMs": "2026-08-14T14:37:18.000Z",
+    "action": {
+      "type": "APPROVE_NOTE",
+      "input": {
+        "id": "e0f2be5f-06f5-4e08-a826-d33fdb3df9c0",
+        "actor": "liberuum",
+        "comment": "Canonical as of powerhouse v6.2.2-dev.47",
+        "timestamp": "2026-08-14T12:00:00.000Z"
+      },
+      "timestampUtcMs": "2026-08-14T14:37:18.000Z"
+    }
+  },
+  {
+    "index": 13,
+    "hash": "1ItnI/sAKz2z9YuJzJolB7COdkE=",
+    "timestampUtcMs": "2026-09-02T21:34:45.375Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "filePath",
+        "value": "apps/academy/docs/academy/03-Build/03-BuildingUserExperiences/07-Authorization/03-Signing.md",
+        "updatedAt": "2026-09-02T21:34:45.375Z"
+      },
+      "timestampUtcMs": "2026-09-02T21:34:45.375Z"
+    }
+  },
+  {
+    "index": 14,
+    "hash": "cdxr6x+ds7+ozQVIWFu+lUOG0uk=",
+    "timestampUtcMs": "2026-09-02T21:34:45.375Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "version",
+        "value": "v6.2.2-dev.74",
+        "updatedAt": "2026-09-02T21:34:45.375Z"
+      },
+      "timestampUtcMs": "2026-09-02T21:34:45.375Z"
+    }
+  }
+]

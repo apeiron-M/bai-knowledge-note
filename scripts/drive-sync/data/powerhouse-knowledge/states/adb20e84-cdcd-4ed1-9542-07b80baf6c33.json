@@ -1,0 +1,126 @@
+{
+  "links": [
+    {
+      "id": "lnk-4f23f5d4-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "4f23f5d4-b93e-430c-8dc3-b9835a6b83dc",
+      "targetTitle": "auth-grant-anatomy",
+      "reason": "These actions carry grants; the grant shape they validate is the anatomy note",
+      "confidence": "grounded"
+    },
+    {
+      "id": "lnk-5ca28e07-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "5ca28e07-65de-4faf-9b18-43a21567a734",
+      "targetTitle": "auth-stream-monotonic",
+      "reason": "Auth-scope operations are the ones held to the strictly-monotonic timestamp rule and never reshuffled",
+      "confidence": "grounded"
+    },
+    {
+      "id": "lnk-2f4b5df2-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "2f4b5df2-d6ca-4224-a049-e96b4811ed37",
+      "targetTitle": "upgrade-reducer-must-patch-state-and-initialstate",
+      "reason": "UPGRADE_DOCUMENT rewrites initialState wholesale, which is why the auth scope must be resolved rather than assigned from a snapshot",
+      "confidence": "established"
+    },
+    {
+      "id": "lnk-17dc46b0-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "17dc46b0-f733-467c-99d7-ae8fbe0fb0e4",
+      "targetTitle": "Academy \u203a Reference \u203a Reactor \u203a Authorization",
+      "reason": "Extracted from apps/academy/docs/academy/04-Reference/01-Reactor/11-Authorization.md at v6.2.2-dev.74 \u2014 'The policy' action table; UNDO/REDO/PRUNE refused",
+      "confidence": "grounded"
+    },
+    {
+      "id": "lnk-223bb12a-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "223bb12a-be7f-4209-9ab2-f04f7bb2b6c8",
+      "targetTitle": "Spec \u203a Spec \u2014 Attribute-based access control in the auth scope with DCB",
+      "reason": "Extracted from docs/specs/auth-scope.md at v6.2.2-dev.74 \u2014 Auth Scope Data Model \u203a Actions; 'A state snapshot is not a door onto the policy'",
+      "confidence": "grounded"
+    },
+    {
+      "id": "lnk-f2aaccd3-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "f2aaccd3-7c26-4327-881e-f5ad9e267b89",
+      "targetTitle": "Academy \u203a Lookup \u203a Cookbook",
+      "reason": "Extracted from apps/academy/docs/academy/05-Lookup/00-Cookbook.md at v6.2.2-dev.74 \u2014 Document ACL \u203a Gotchas: 'One scope per execute'",
+      "confidence": "grounded"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Four platform actions write the auth scope \u2014 INITIALIZE_AUTH, SET_GRANT, REMOVE_GRANT, MOVE_GRANT \u2014 and UNDO, REDO and PRUNE are refused there",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "daa98561-6e03-46bc-a500-3bc18d049508",
+      "name": "auth-scope",
+      "topicDocumentId": null
+    },
+    {
+      "id": "4a4af6e6-ee9b-46e9-9975-f88f28576bb7",
+      "name": "actions",
+      "topicDocumentId": null
+    },
+    {
+      "id": "5b611d0a-0231-4faf-b639-46339aadf326",
+      "name": "reactor",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "| Action | Effect |\n| --- | --- |\n| `INITIALIZE_AUTH` | Installs the initial policy. Genesis only |\n| `SET_GRANT` | Adds a grant, or replaces the one with that `id` |\n| `REMOVE_GRANT` | Removes a grant by `id` |\n| `MOVE_GRANT` | Reorders a grant, which can change the outcome |\n\n`UNDO`, `REDO` and `PRUNE` are refused on the `auth` scope. Grants have stable ids, so `SET_GRANT` is an upsert.\n\nThree rules make these the *only* door into `state.auth`:\n\n- **A state snapshot is not a door onto the policy.** `UPGRADE_DOCUMENT`'s `initialState` and `LOAD_STATE`'s `data` replace whole scopes and are authorized as `document`-scope writes; without a rule a subject with `execute` on `document` could install a policy of its choosing or wipe one. A snapshot's auth scope is therefore *resolved* rather than assigned: an empty or uninitialized one leaves the document's own policy standing, and a snapshot reaching an initialized document must carry that same policy exactly.\n- **One scope per `execute`.** All actions in one `reactor.execute` call share a scope, so policy changes (`scope: \"auth\"`) cannot be batched with domain actions (`scope: \"global\"`) \u2014 the `document-acl` recipe lists this first among its gotchas.\n- **Validation is part of the version.** `INITIALIZE_AUTH` and `SET_GRANT` validate the grants they carry against the version-1 rules (caps on grants, condition size, operation lists; no path naming another scope), and version 1 never changes those rules because accepted operations are permanent history every replica must fold identically.\n\n_Source: apps/academy/docs/academy/04-Reference/01-Reactor/11-Authorization.md (Powerhouse v6.2.2-dev.74)._\n_Source: docs/specs/auth-scope.md (Powerhouse v6.2.2-dev.74)._\n_Source: apps/academy/docs/academy/05-Lookup/00-Cookbook.md (Powerhouse v6.2.2-dev.74)._\n\n## Provenance\n- `apps/academy/docs/academy/04-Reference/01-Reactor/11-Authorization.md` \u2014 'The policy' action table; UNDO/REDO/PRUNE refused\n- `docs/specs/auth-scope.md` \u2014 Auth Scope Data Model \u203a Actions; 'A state snapshot is not a door onto the policy'\n- `apps/academy/docs/academy/05-Lookup/00-Cookbook.md` \u2014 Document ACL \u203a Gotchas: 'One scope per execute'\n\n_Recorded from the Powerhouse repository at **v6.2.2-dev.74** during the v6.2.2-dev.74 source sync._",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": "v6.2.2-dev.74",
+  "computes": null,
+  "filePath": "apps/academy/docs/academy/04-Reference/01-Reactor/11-Authorization.md",
+  "noteType": "REFERENCE",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": "grounded",
+  "consumedBy": [],
+  "provenance": {
+    "author": "knowledge-agent",
+    "createdAt": "2026-09-02T22:09:26.455Z",
+    "sessionId": null,
+    "updatedAt": "2026-09-02T22:20:09.660Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "INITIALIZE_AUTH is genesis-only; SET_GRANT adds or replaces by id; REMOVE_GRANT deletes by id; MOVE_GRANT reorders and can change the outcome. State snapshots are not a door onto the policy.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "5a6f04cc-be3d-40b3-851c-bedf1626af3c",
+      "actor": "knowledge-agent",
+      "comment": "extracted from the Powerhouse repository at v6.2.2-dev.74",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-09-02T22:09:26.954Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "8590afc2-72f1-4a35-b040-404303c58ddc",
+      "actor": "liberuum",
+      "comment": "claim checked against the cited repository file at the pinned tag",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-09-02T22:09:28.908Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

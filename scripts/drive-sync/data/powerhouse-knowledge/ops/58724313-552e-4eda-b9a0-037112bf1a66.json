@@ -1,0 +1,368 @@
+[
+  {
+    "index": 0,
+    "hash": "",
+    "timestampUtcMs": "2026-08-14T12:12:49.850Z",
+    "action": {
+      "type": "CREATE_DOCUMENT",
+      "input": {
+        "meta": {},
+        "name": "phdocument-v4-header-consolidation",
+        "slug": "",
+        "model": "bai/knowledge-note",
+        "branch": "main",
+        "signing": {
+          "nonce": "",
+          "publicKey": {},
+          "signature": "58724313-552e-4eda-b9a0-037112bf1a66",
+          "documentType": "bai/knowledge-note",
+          "createdAtUtcIso": "2026-08-14T12:12:49.850Z"
+        },
+        "version": 0,
+        "documentId": "58724313-552e-4eda-b9a0-037112bf1a66",
+        "protocolVersions": {
+          "base-reducer": 2
+        }
+      },
+      "timestampUtcMs": "2026-08-14T12:12:49.850Z"
+    }
+  },
+  {
+    "index": 0,
+    "hash": "Bwdvbtv2MiTrernON6vLhYvavNI=",
+    "timestampUtcMs": "2026-08-14T12:35:36.000Z",
+    "action": {
+      "type": "SET_TITLE",
+      "input": {
+        "title": "PHDocument v4.0.0 consolidated all metadata into a header field with signature support and per-scope revision tracking",
+        "updatedAt": "2026-08-14T12:35:36.000Z"
+      },
+      "timestampUtcMs": "2026-08-14T12:35:36.000Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "",
+    "timestampUtcMs": "2026-08-14T12:12:49.850Z",
+    "action": {
+      "type": "UPGRADE_DOCUMENT",
+      "input": {
+        "model": "bai/knowledge-note",
+        "toVersion": 1,
+        "documentId": "58724313-552e-4eda-b9a0-037112bf1a66",
+        "fromVersion": 0,
+        "initialState": {
+          "auth": {
+            "grants": [],
+            "version": 0
+          },
+          "local": {
+            "lastViewedAt": null,
+            "personalTags": []
+          },
+          "global": {
+            "links": [],
+            "model": null,
+            "scope": null,
+            "title": null,
+            "editor": null,
+            "inputs": [],
+            "models": [],
+            "status": "DRAFT",
+            "topics": [],
+            "content": null,
+            "context": null,
+            "modelId": null,
+            "modules": [],
+            "outputs": [],
+            "version": null,
+            "computes": null,
+            "filePath": null,
+            "noteType": null,
+            "severity": null,
+            "hooksUsed": [],
+            "rootCause": null,
+            "confidence": null,
+            "consumedBy": [],
+            "provenance": null,
+            "sourceType": null,
+            "targetType": null,
+            "cardinality": null,
+            "description": null,
+            "alternatives": [],
+            "consequences": [],
+            "errorMessage": null,
+            "relationType": null,
+            "correctPattern": null,
+            "decisionStatus": null,
+            "dispatchTargets": [],
+            "lifecycleEvents": []
+          },
+          "document": {
+            "hash": {
+              "encoding": "base64",
+              "algorithm": "sha1"
+            },
+            "version": 1
+          }
+        }
+      },
+      "timestampUtcMs": "2026-08-14T12:12:49.850Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "oUUinmYJzSFAUcqn4axbXk84a8w=",
+    "timestampUtcMs": "2026-08-14T12:35:36.000Z",
+    "action": {
+      "type": "SET_DESCRIPTION",
+      "input": {
+        "updatedAt": "2026-08-14T12:35:36.000Z",
+        "description": "Previously scattered root-level properties moved under document.header, revision became an object with scope keys, timestamps renamed."
+      },
+      "timestampUtcMs": "2026-08-14T12:35:36.000Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "",
+    "timestampUtcMs": "2026-08-14T12:38:09.301Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "58724313-552e-4eda-b9a0-037112bf1a66",
+        "targetId": "8cbea140-21d6-4b63-8780-5d44831018aa",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-08-14T12:38:09.301Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "jQdG/c4Fc8rMPBi/+HEShT38mQY=",
+    "timestampUtcMs": "2026-08-14T12:35:36.000Z",
+    "action": {
+      "type": "SET_NOTE_TYPE",
+      "input": {
+        "noteType": "DECISION",
+        "updatedAt": "2026-08-14T12:35:36.000Z"
+      },
+      "timestampUtcMs": "2026-08-14T12:35:36.000Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "",
+    "timestampUtcMs": "2026-08-14T12:38:09.404Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "58724313-552e-4eda-b9a0-037112bf1a66",
+        "targetId": "158143d5-1e39-44b5-9799-1a84e6de9e72",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-08-14T12:38:09.404Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "Qykz5lpOcqEIjFu/GDZfNkUYMJ0=",
+    "timestampUtcMs": "2026-08-14T12:35:36.000Z",
+    "action": {
+      "type": "SET_CONTENT",
+      "input": {
+        "content": "Powerhouse v4.0.0 introduced a breaking refactor of `PHDocument` structure. All metadata moved from root-level to `document.header`: `id`, `name`, `slug`, `documentType`, `branch`, `meta`. Key renames: `created` -> `createdAtUtcIso`, `lastModified` -> `lastModifiedAtUtcIso`. The `revision` field changed from a number to an object with scope keys: `{ global: 5, local: 0 }`. A new `sig` field was added with `nonce` and `publicKey` for cryptographic document verification. The `id` field now supports Ed25519 signatures for signed documents. The GraphQL API maintains backward compatibility through response transformation, but application code must use the new header structure.",
+        "updatedAt": "2026-08-14T12:35:36.000Z"
+      },
+      "timestampUtcMs": "2026-08-14T12:35:36.000Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "",
+    "timestampUtcMs": "2026-08-14T12:38:09.503Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "58724313-552e-4eda-b9a0-037112bf1a66",
+        "targetId": "bb0b6db7-14f1-491c-8975-4475ff68481d",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-08-14T12:38:09.503Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "ArpYR/EtEjbDnutHAno43JmhciQ=",
+    "timestampUtcMs": "2026-08-14T12:35:36.000Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "version",
+        "value": "v6.2.2-dev.44",
+        "updatedAt": "2026-08-14T12:35:36.000Z"
+      },
+      "timestampUtcMs": "2026-08-14T12:35:36.000Z"
+    }
+  },
+  {
+    "index": 5,
+    "hash": "",
+    "timestampUtcMs": "2026-08-14T12:38:09.599Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "58724313-552e-4eda-b9a0-037112bf1a66",
+        "targetId": "787398c0-fa8c-4e79-bd9f-71b60d57f482",
+        "relationshipType": "BUILDS_ON"
+      },
+      "timestampUtcMs": "2026-08-14T12:38:09.599Z"
+    }
+  },
+  {
+    "index": 5,
+    "hash": "17qwtEu9re181LGJWPKGGPzndWA=",
+    "timestampUtcMs": "2026-08-14T12:35:36.000Z",
+    "action": {
+      "type": "SET_PROVENANCE",
+      "input": {
+        "author": "knowledge-agent",
+        "createdAt": "2026-04-02T12:00:00.000Z",
+        "sourceOrigin": "DERIVED"
+      },
+      "timestampUtcMs": "2026-08-14T12:35:36.000Z"
+    }
+  },
+  {
+    "index": 6,
+    "hash": "",
+    "timestampUtcMs": "2026-09-02T21:38:56.887Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "metadata": {
+          "reason": "Backing page found by content match in the v6.2.2-dev.74 source backfill \u2014 identifiers document.header, scattered, v4.0.0 from the claim appear in this page (text identical at v6.2.2-dev.47 and v6.2.2-dev.74); attribution, not the original extraction record",
+          "confidence": "grounded"
+        },
+        "sourceId": "58724313-552e-4eda-b9a0-037112bf1a66",
+        "targetId": "547fd75e-166d-4c79-8a44-84e6741018a1",
+        "relationshipType": "DERIVED_FROM"
+      },
+      "timestampUtcMs": "2026-09-02T21:38:56.887Z"
+    }
+  },
+  {
+    "index": 6,
+    "hash": "YBtoSuU8HcnhImtS/bPxtWTMMWo=",
+    "timestampUtcMs": "2026-08-14T12:35:36.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "feb0b819-deda-4ac2-a83a-d706bffa39ab",
+        "name": "phdocument",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-08-14T12:35:36.000Z"
+    }
+  },
+  {
+    "index": 7,
+    "hash": "JS162JDQgZ113EhJYiXbNPzFNcw=",
+    "timestampUtcMs": "2026-08-14T12:35:36.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "04bac4ef-0e8c-456e-a84e-282db52c42c1",
+        "name": "migration",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-08-14T12:35:36.000Z"
+    }
+  },
+  {
+    "index": 8,
+    "hash": "XvA0DDubgjG6Uct/zz7eHogy+A0=",
+    "timestampUtcMs": "2026-08-14T12:35:36.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "56029f4e-9d19-422c-8aa7-f74138520b9c",
+        "name": "versioning",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-08-14T12:35:36.000Z"
+    }
+  },
+  {
+    "index": 9,
+    "hash": "3AdLj0afsNXpyo0nlyqPY7p3OIE=",
+    "timestampUtcMs": "2026-08-14T14:37:07.000Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "version",
+        "value": "v6.2.2-dev.47",
+        "updatedAt": "2026-08-14T12:00:00.000Z"
+      },
+      "timestampUtcMs": "2026-08-14T14:37:07.000Z"
+    }
+  },
+  {
+    "index": 10,
+    "hash": "/PKmh5871Naf/hieTEVC21ERJQo=",
+    "timestampUtcMs": "2026-08-14T14:37:07.000Z",
+    "action": {
+      "type": "SUBMIT_FOR_REVIEW",
+      "input": {
+        "id": "4f8fe49b-e4a0-4109-8a55-cd6aa3c4eb13",
+        "actor": "claude",
+        "comment": "Knowledge registered against powerhouse v6.2.2-dev.47",
+        "timestamp": "2026-08-14T12:00:00.000Z"
+      },
+      "timestampUtcMs": "2026-08-14T14:37:07.000Z"
+    }
+  },
+  {
+    "index": 11,
+    "hash": "GKibZtQk7zVeNTBF+cP9y4W/uis=",
+    "timestampUtcMs": "2026-08-14T14:37:07.000Z",
+    "action": {
+      "type": "APPROVE_NOTE",
+      "input": {
+        "id": "0296e4c1-b9b0-451e-8a9f-b97baaf34e49",
+        "actor": "liberuum",
+        "comment": "Canonical as of powerhouse v6.2.2-dev.47",
+        "timestamp": "2026-08-14T12:00:00.000Z"
+      },
+      "timestampUtcMs": "2026-08-14T14:37:07.000Z"
+    }
+  },
+  {
+    "index": 12,
+    "hash": "eyztS+mHENpE4RuKHkuSo8h+CcI=",
+    "timestampUtcMs": "2026-09-02T21:38:57.556Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "filePath",
+        "value": "apps/academy/docs/academy/04-Reference/02-DocumentModels/05-PHDocumentMigrationGuide.md",
+        "updatedAt": "2026-09-02T21:38:57.556Z"
+      },
+      "timestampUtcMs": "2026-09-02T21:38:57.556Z"
+    }
+  },
+  {
+    "index": 13,
+    "hash": "OYlhVPEzgBF7Ryp4/IbZdvq7+uk=",
+    "timestampUtcMs": "2026-09-02T21:38:57.556Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "version",
+        "value": "v6.2.2-dev.74",
+        "updatedAt": "2026-09-02T21:38:57.556Z"
+      },
+      "timestampUtcMs": "2026-09-02T21:38:57.556Z"
+    }
+  }
+]

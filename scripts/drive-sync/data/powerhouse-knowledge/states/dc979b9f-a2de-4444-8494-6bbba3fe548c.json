@@ -1,0 +1,99 @@
+{
+  "links": [
+    {
+      "id": "lnk-27e57696-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "27e57696-1d4a-41a9-8b51-3b269e0f9c96",
+      "targetTitle": "Makina Corpus \u2014 (generalist \u2014 see fit)"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Territorial data changes in Geotrek need attribution that a Django model does not keep",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "db20ddab-5d25-4635-9582-3c8a04ffd32c",
+      "name": "leads",
+      "topicDocumentId": null
+    },
+    {
+      "id": "a7a2aa64-aacf-4e94-a02a-0c669a754919",
+      "name": "geotrek",
+      "topicDocumentId": null
+    },
+    {
+      "id": "cdbb7bd3-d4f2-4640-841d-b58639cdfa44",
+      "name": "django",
+      "topicDocumentId": null
+    },
+    {
+      "id": "2bff33f0-3a2a-46ba-a778-0b8734e088b2",
+      "name": "france",
+      "topicDocumentId": null
+    },
+    {
+      "id": "f74ae526-bf02-49e1-bd97-6c8f6314842d",
+      "name": "audit-trail",
+      "topicDocumentId": null
+    },
+    {
+      "id": "dceac6b7-7e26-480f-8822-20e8c7b38824",
+      "name": "open-source-screening",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "Makina Corpus works exclusively in free software \u2014 an SSLL in the French sense \u2014 on Python/Django, Symfony and PostgreSQL/GIS. One of its products, Geotrek, is used by French public bodies, which puts public data in a stack the firm controls from schema to interface.\n\nThe gap sits at the framework level. A Django model stores the current value of each field, so when a territorial dataset changes, the change itself is not retained as an attributed event. For data that public bodies publish and act on, the missing part is who changed what and when, and an ORM was never designed to keep it.\n\nTwo things make this lead unusually workable. The stack is one the firm builds in every day, so the record layer attaches at a familiar seam rather than arriving as an unfamiliar dependency, and the exclusive free-software commitment removes the licensing objection before it is raised. The gap itself is ordinary; the alignment is what makes it worth pursuing.\n\n---\n\n## Leads sharing this finding (1)\n\n**2 \u00b7 next**\n- Makina Corpus (FR Nantes/Paris/Toulouse + BE) \u2014 Catherine Tillous, Directrice g\u00e9n\u00e9rale \u00b7 contact@makina-corpus.com \u00b7 https://makina-corpus.com\n\nVerbatim research text this claim was extracted from:\n\n> Exclusively free software (SSLL) on Python/Django, Symfony, PostgreSQL/GIS \u2014 including Geotrek, used by French public bodies. Territorial data changes need attribution that a Django model does not keep.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "OBSERVATION",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "knowledge-agent",
+    "createdAt": "2026-08-19T11:28:51.337368Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-19T11:28:52.972990Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Makina Corpus is an exclusively free-software house on Python/Django, Symfony and PostgreSQL/GIS; Geotrek puts French public bodies' data in a stack the firm controls.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "8876ee07-6292-41e0-bd94-2fcc6058b16f",
+      "actor": "knowledge-agent",
+      "comment": "Extracted from lead research; claim checked against the source record.",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-19T11:28:52.819367Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "c7a75ff9-f6e1-483d-8bf3-8834588a33cb",
+      "actor": "liberuum",
+      "comment": "Approved: lead corpus extraction.",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-19T11:28:52.972990Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

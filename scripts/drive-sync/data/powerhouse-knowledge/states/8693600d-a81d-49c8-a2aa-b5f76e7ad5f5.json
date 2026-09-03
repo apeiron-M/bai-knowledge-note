@@ -1,0 +1,131 @@
+{
+  "links": [
+    {
+      "id": "lnk-cf2a1fcd-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "cf2a1fcd-b902-4976-b941-e229a6e9696c",
+      "targetTitle": "auth-read-gate-client",
+      "reason": "The read this rule confers is enforced by the client-side read gate, per scope",
+      "confidence": "grounded"
+    },
+    {
+      "id": "lnk-4f23f5d4-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "4f23f5d4-b93e-430c-8dc3-b9835a6b83dc",
+      "targetTitle": "auth-grant-anatomy",
+      "reason": "Explains why the canonical administration grant's scope should be 'auth', not '*'",
+      "confidence": "grounded"
+    },
+    {
+      "id": "lnk-69327ea6-bui",
+      "linkType": "BUILDS_ON",
+      "targetDocumentId": "69327ea6-e0a1-4c07-a214-2c4619192862",
+      "targetTitle": "auth-last-grant-wins",
+      "reason": "Refines the covers() predicate of the decision fold for read requests",
+      "confidence": "grounded"
+    },
+    {
+      "id": "lnk-223bb12a-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "223bb12a-be7f-4209-9ab2-f04f7bb2b6c8",
+      "targetTitle": "Spec \u203a Spec \u2014 Attribute-based access control in the auth scope with DCB",
+      "reason": "Extracted from docs/specs/auth-scope.md at v6.2.2-dev.74 \u2014 Decision algorithm: revised covers(); 'This makes the shape of an administration grant matter'; toll example g-admin comment",
+      "confidence": "grounded"
+    },
+    {
+      "id": "lnk-17dc46b0-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "17dc46b0-f733-467c-99d7-ae8fbe0fb0e4",
+      "targetTitle": "Academy \u203a Reference \u203a Reactor \u203a Authorization",
+      "reason": "Extracted from apps/academy/docs/academy/04-Reference/01-Reactor/11-Authorization.md at v6.2.2-dev.74 \u2014 'How a decision is made' first bullet",
+      "confidence": "grounded"
+    },
+    {
+      "id": "lnk-f2aaccd3-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "f2aaccd3-7c26-4327-881e-f5ad9e267b89",
+      "targetTitle": "Academy \u203a Lookup \u203a Cookbook",
+      "reason": "Extracted from apps/academy/docs/academy/05-Lookup/00-Cookbook.md at v6.2.2-dev.74 \u2014 Scoped Reads: 'An allow on execute confers read', 'The administration grant'",
+      "confidence": "grounded"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "An allow on execute confers read of that scope, so an administration grant should name scope 'auth' rather than '*'",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "8f75b856-7893-40b0-a506-80806fcfe3a3",
+      "name": "auth-scope",
+      "topicDocumentId": null
+    },
+    {
+      "id": "d9302d13-7eb4-44ae-aaf3-fa9005c138e7",
+      "name": "authorization",
+      "topicDocumentId": null
+    },
+    {
+      "id": "4c1b91ec-83af-4468-b26c-9102c9a955e7",
+      "name": "gotchas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "f1dc6179-be70-4517-b84c-6eadb8d66d58",
+      "name": "reads",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "Executing an operation means reading the state it applies to, so `covers` was extended: a read request is covered by a grant that **allows execute** on the same scope, as well as by an explicit read grant.\n\n```\ncovers(grant, request):\n   scopeReaches(grant.capability.scope, request.scope)\n   and ( <the verb the grant names>\n      or (request.verb == \"read\" and grant.effect == \"allow\" and grant.capability.can == \"execute\") )\n```\n\nTwo exclusions keep the implication from reaching further:\n\n- A **deny on execute withholds the write and says nothing about the read** \u2014 otherwise a policy locking writes down would silently revoke a read grant standing before it.\n- The **`operation` list is not consulted for a read**. It restricts which operations may be executed, not whether the scope is visible; consulting it would mean a narrowed execute grant conferred *less* read than a broad one. The `scoped-reads` recipe shows Alice, whose only grant names a single operation, reading the whole `global` scope \u2014 and Carol, who holds a read grant, reading the expenses and still unable to submit one.\n\nThis makes the **shape of an administration grant matter**. `{ can: \"execute\", scope: \"*\" }` now also serves every domain scope of the document to whoever it names. A policy that means \"administration stays reachable\" should name the `auth` scope, which is all the retention rule requires; the spec's worked toll example dropped its separate `g-admin-read` grant for exactly this reason, and the `scoped-reads` recipe scopes every administration grant to `auth` while noting that `document-acl`, `revocation-race` and `group-principals` still use `*`.\n\n_Source: docs/specs/auth-scope.md (Powerhouse v6.2.2-dev.74)._\n_Source: apps/academy/docs/academy/04-Reference/01-Reactor/11-Authorization.md (Powerhouse v6.2.2-dev.74)._\n_Source: apps/academy/docs/academy/05-Lookup/00-Cookbook.md (Powerhouse v6.2.2-dev.74)._\n\n## Provenance\n- `docs/specs/auth-scope.md` \u2014 Decision algorithm: revised covers(); 'This makes the shape of an administration grant matter'; toll example g-admin comment\n- `apps/academy/docs/academy/04-Reference/01-Reactor/11-Authorization.md` \u2014 'How a decision is made' first bullet\n- `apps/academy/docs/academy/05-Lookup/00-Cookbook.md` \u2014 Scoped Reads: 'An allow on execute confers read', 'The administration grant'\n\n_Recorded from the Powerhouse repository at **v6.2.2-dev.74** during the v6.2.2-dev.74 source sync._",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": "v6.2.2-dev.74",
+  "computes": null,
+  "filePath": "docs/specs/auth-scope.md",
+  "noteType": "PATTERN",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": "grounded",
+  "consumedBy": [],
+  "provenance": {
+    "author": "knowledge-agent",
+    "createdAt": "2026-09-02T22:09:45.739Z",
+    "sessionId": null,
+    "updatedAt": "2026-09-02T22:20:11.599Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Executing means reading the state it applies to. The converse does not hold, a deny on execute says nothing about read, and reads ignore the operation list; execute on '*' publishes all scopes.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "643b07d2-c974-42dc-aa43-3bb64516c867",
+      "actor": "knowledge-agent",
+      "comment": "extracted from the Powerhouse repository at v6.2.2-dev.74",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-09-02T22:09:46.322Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "79ca368b-2ff8-47a3-aca0-12f66cf72143",
+      "actor": "liberuum",
+      "comment": "claim checked against the cited repository file at the pinned tag",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-09-02T22:09:46.820Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

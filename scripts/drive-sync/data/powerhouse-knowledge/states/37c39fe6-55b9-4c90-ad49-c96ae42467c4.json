@@ -1,0 +1,115 @@
+{
+  "links": [
+    {
+      "id": "lnk-223bb12a-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "223bb12a-be7f-4209-9ab2-f04f7bb2b6c8",
+      "targetTitle": "Spec \u203a Spec \u2014 Attribute-based access control in the auth scope with DCB",
+      "reason": "Extracted from docs/specs/auth-scope.md at v6.2.2-dev.74 \u2014 Reads: 'The same reasoning extends to groups. Four rules bound that'; Stage 7 item 2",
+      "confidence": "grounded"
+    },
+    {
+      "id": "lnk-f2aaccd3-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "f2aaccd3-7c26-4327-881e-f5ad9e267b89",
+      "targetTitle": "Academy \u203a Lookup \u203a Cookbook",
+      "reason": "Extracted from apps/academy/docs/academy/05-Lookup/00-Cookbook.md at v6.2.2-dev.74 \u2014 Scoped Reads: 'Naming a group publishes its roster to that audience'",
+      "confidence": "grounded"
+    },
+    {
+      "id": "lnk-975d6c29-bui",
+      "linkType": "BUILDS_ON",
+      "targetDocumentId": "975d6c29-9797-4051-927e-d487a679f608",
+      "targetTitle": "auth-metadata-scopes-readable",
+      "reason": "Applies the 'a replica must be able to fold what it evaluates' argument from the metadata scopes to referenced rosters",
+      "confidence": "grounded"
+    },
+    {
+      "id": "lnk-12b1e678-bui",
+      "linkType": "BUILDS_ON",
+      "targetDocumentId": "12b1e678-bb7c-4a27-b67a-63ab31b726c4",
+      "targetTitle": "auth-group-principals",
+      "reason": "Group principals need the roster folded on every replica that judges; this note says who therefore gets to read the roster",
+      "confidence": "grounded"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "A group document named by a policy is served to that policy's audience regardless of the group's own read grants, under four bounding rules",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "9d316a17-9d10-4210-8867-8d32ce2034cd",
+      "name": "auth-scope",
+      "topicDocumentId": null
+    },
+    {
+      "id": "e04b2b01-70a9-417b-8a16-1709cc8204a7",
+      "name": "groups",
+      "topicDocumentId": null
+    },
+    {
+      "id": "7f7bffdb-c129-43ba-9a42-d8c970f54649",
+      "name": "reads",
+      "topicDocumentId": null
+    },
+    {
+      "id": "c1223c1a-2efb-4c60-968c-a94ee6d82769",
+      "name": "sync",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "A replica must fold a group's membership to evaluate a policy that names it, so the same reasoning that makes the `auth` and `document` scopes always readable extends to rosters: a group named by a grant is served to any subject the naming document's policy serves, **regardless of the group's own read grants**. The `scoped-reads` recipe shows Carol reading the reviewers roster she is not on, past the roster's Alice-only policy, because a replica must fold that membership to evaluate the report's grants \u2014 while Mallory, whom the report serves nothing, does not, and below `authGroups` nobody does. Naming a group publishes its roster to that audience; a document whose access list must stay confidential cannot have a replicated policy at all.\n\nFour rules bound the exemption (`getGroupReferencers` on the operation index is the lookup):\n\n- **Only the member list is served.** A group's other scopes stay behind its own grants, because the member list is the only thing the audience must fold.\n- **Only a referencing document's *domain* scopes decide its audience.** Every holder reads a document's `auth` and `document` scopes, so testing those would serve every referenced group to everybody.\n- **One level.** A referencer that is itself a group is skipped, and a referencer's own readability comes from its policy alone, so a reference cycle terminates. Cycles are reachable even though the reducer forbids a group naming a group: the reference relation is recorded from an operation's *input*, including an operation later stored denied, so a refused grant leaves a row behind that validation never saw.\n- **At most a hundred referencers are examined.** Each costs a model build and the relation is append-only, so an unbounded scan would make a widely-named group permanently expensive to read. Past the bound the group is withheld \u2014 the direction that fails closed \u2014 and the truncation is logged.\n\n_Source: docs/specs/auth-scope.md (Powerhouse v6.2.2-dev.74)._\n_Source: apps/academy/docs/academy/05-Lookup/00-Cookbook.md (Powerhouse v6.2.2-dev.74)._\n\n## Provenance\n- `docs/specs/auth-scope.md` \u2014 Reads: 'The same reasoning extends to groups. Four rules bound that'; Stage 7 item 2\n- `apps/academy/docs/academy/05-Lookup/00-Cookbook.md` \u2014 Scoped Reads: 'Naming a group publishes its roster to that audience'\n\n_Recorded from the Powerhouse repository at **v6.2.2-dev.74** during the v6.2.2-dev.74 source sync._",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": "v6.2.2-dev.74",
+  "computes": null,
+  "filePath": "docs/specs/auth-scope.md",
+  "noteType": "ARCHITECTURE",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": "grounded",
+  "consumedBy": [],
+  "provenance": {
+    "author": "knowledge-agent",
+    "createdAt": "2026-09-02T22:10:38.111Z",
+    "sessionId": null,
+    "updatedAt": "2026-09-02T22:20:26.610Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Only the member list is served; only a referencer's domain scopes decide its audience; one level, so cycles terminate; at most a hundred referencers are examined, beyond which the group is withheld.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "5470b330-211b-4061-abbc-f76b22c5a821",
+      "actor": "knowledge-agent",
+      "comment": "extracted from the Powerhouse repository at v6.2.2-dev.74",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-09-02T22:10:38.626Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "a4b4c389-1688-473f-aaa2-8050507cd8e8",
+      "actor": "liberuum",
+      "comment": "claim checked against the cited repository file at the pinned tag",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-09-02T22:10:39.392Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

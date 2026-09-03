@@ -1,0 +1,104 @@
+{
+  "links": [
+    {
+      "id": "lnk-495ad2bd-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "495ad2bd-8606-4b51-afc3-3a3a4c3f72e7",
+      "targetTitle": "relational-db-live-queries-pglite"
+    },
+    {
+      "id": "lnk-1a932db8-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "1a932db8-245d-40f6-bfd8-eea728d9615e",
+      "targetTitle": "reactor-browser-hooks-provide-document-state"
+    },
+    {
+      "id": "lnk-645e18ed-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "645e18ed-6da5-4daf-8ed3-7a96cb085b48",
+      "targetTitle": "analytics-paths-lod-dimension-querying"
+    },
+    {
+      "id": "lnk-d71f1ec6-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "d71f1ec6-73f2-461b-b4e2-129158c22efa",
+      "targetTitle": "Academy \u203a Reference \u203a Processors \u203a Drive analytics",
+      "reason": "Backing page found by content match in the v6.2.2-dev.74 source backfill \u2014 identifiers analyticspath, analyticsquery, levelofdetail from the claim appear in this page (text identical at v6.2.2-dev.47 and v6.2.2-dev.74); attribution, not the original extraction record",
+      "confidence": "grounded"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "React reads analytics through useAnalyticsQuery plus the specialized useDriveAnalytics and useDocumentAnalytics hooks",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "0536de20-8544-4fe4-afc9-ca9cc072fc63",
+      "name": "analytics",
+      "topicDocumentId": null
+    },
+    {
+      "id": "8c07cb3e-376b-4a66-9024-f7ea2c021534",
+      "name": "react-hooks",
+      "topicDocumentId": null
+    },
+    {
+      "id": "75399e95-1578-44ef-9471-3e9ba551c38e",
+      "name": "reactor-browser",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "There are two tiers, and the difference is how much analytics-path vocabulary leaks into your component.\n\n**Raw tier** \u2014 `useAnalyticsQuery` from `@powerhousedao/reactor-browser/analytics` takes the same `AnalyticsQuery` the engine takes: luxon `DateTime` bounds, an `AnalyticsGranularity`, and `select`/`lod` maps keyed by dimension name with `AnalyticsPath.fromString(...)` values.\n\n```tsx\nconst { data, isLoading } = useAnalyticsQuery({\n  start: DateTime.now().minus({ days: 7 }),\n  end: DateTime.now(),\n  granularity: AnalyticsGranularity.Daily,\n  metrics: [\"DriveOperations\"],\n  select: { drive: [AnalyticsPath.fromString(`ph/drive/${driveId}`)] },\n  lod: { drive: 1 },\n});\n```\n\n**Friendly tier** \u2014 `useDriveAnalytics` and `useDocumentAnalytics` from `@powerhousedao/common/drive-analytics` take plain strings and a different time vocabulary: `filters` (`driveId`, `operation`, `actionType`, `documentId`, `target`, `branch`, `scope`), `from`/`to` as ISO strings, `granularity`, and `levelOfDetail` instead of `lod`. They build the paths for you and delegate to `useAnalyticsQuery`.\n\nThe second argument of `useAnalyticsQuery` is where live updating lives. Pass `{ sources: [AnalyticsPath.fromString(...)] }` and the query refetches when new series land at or under that source; add `refetchInterval` for polled monitoring. Without `sources` the result is a one-shot read.\n\nBoth tiers return the standard query-state shape (`data`, `isLoading`), and `data.rows[].dimensions` is what you read to label a chart \u2014 e.g. `row.dimensions.find(d => d.name === \"actionType\")?.path`.\n\nProvenance: draft `04-Reference/04-Processors/_07-DriveAnalyticsHooks.md`; hooks confirmed to exist at `packages/reactor-browser/src/analytics/hooks/analytics-query.ts` and `packages/common/drive-analytics/{useDriveAnalytics,useDocumentAnalytics}.ts` at 6.2.2-dev.45.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": "v6.2.2-dev.74",
+  "computes": null,
+  "filePath": "apps/academy/docs/academy/04-Reference/04-Processors/_07-DriveAnalyticsHooks.md",
+  "noteType": "REFERENCE",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "claude",
+    "createdAt": "2026-08-13T14:38:46.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-09-02T21:39:43.877Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "useAnalyticsQuery takes a raw AnalyticsQuery with AnalyticsPath select and lod; the @powerhousedao/common/drive-analytics hooks take plain-string filters plus from/to and levelOfDetail.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "3ec052fd-4465-4c12-acb8-69bcb8a78e3a",
+      "actor": "claude",
+      "comment": "Knowledge registered against powerhouse v6.2.2-dev.47",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-14T12:00:00.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "40f42b64-2b9d-466d-b8de-7bfb79541745",
+      "actor": "liberuum",
+      "comment": "Canonical as of powerhouse v6.2.2-dev.47",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-14T12:00:00.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

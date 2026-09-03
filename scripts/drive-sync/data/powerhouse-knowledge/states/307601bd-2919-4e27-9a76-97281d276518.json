@@ -1,0 +1,121 @@
+{
+  "links": [
+    {
+      "id": "lnk-a868ced4-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "a868ced4-62b7-4fb4-bd2a-b07921b05ef9",
+      "targetTitle": "editors-use-the-modern-react-hooks-pattern-from-reactor-browser"
+    },
+    {
+      "id": "lnk-64f7c52f-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "64f7c52f-dc21-4446-bad6-e88ef492a25c",
+      "targetTitle": "drives-are-documents-in-reactors"
+    },
+    {
+      "id": "lnk-ff6348c1-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "ff6348c1-970e-44eb-94e4-71ddd42e1a08",
+      "targetTitle": "setappstatus-with-confirmed-triggers-code-generation-for-apps"
+    },
+    {
+      "id": "lnk-1adbf0db-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "1adbf0db-0ab1-4801-9ee9-cbbc9a875beb",
+      "targetTitle": "document-model-vs-document-editor-vs-app-serves-different-purposes"
+    },
+    {
+      "id": "lnk-9f62d615-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "9f62d615-9bb6-4683-98d8-5a20316099df",
+      "targetTitle": "model-editor-wiring"
+    },
+    {
+      "id": "lnk-d3e5fb27-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "d3e5fb27-1622-448b-b2d5-1b7378f8aebb",
+      "targetTitle": "Academy \u203a Build \u203a BuildingUserExperiences \u203a Build a Drive-app",
+      "reason": "Backing page found by content match in the v6.2.2-dev.74 source backfill \u2014 identifiers documenttype from the claim appear in this page (text identical at v6.2.2-dev.47 and v6.2.2-dev.74); attribution, not the original extraction record",
+      "confidence": "grounded"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "apps use useSelectedDrive to access drive state and filter nodes",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "995ddd2a-75b4-462d-aa76-564615486997",
+      "name": "editor patterns",
+      "topicDocumentId": null
+    },
+    {
+      "id": "d3d6d064-e04f-4582-988c-e93a2c554eb8",
+      "name": "model-editor wiring",
+      "topicDocumentId": null
+    },
+    {
+      "id": "631ba27b-5c26-4c56-a752-16e0f8c170f8",
+      "name": "React hooks",
+      "topicDocumentId": null
+    },
+    {
+      "id": "bb997cb5-e05e-423f-811b-f019432f1897",
+      "name": "drive operations",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "# apps use useSelectedDrive to access drive state and filter nodes\n\nApps (drive editors) use the `useSelectedDrive()` hook to access the drive document, then filter nodes to display specific document types:\n\n```typescript\nconst [document] = useSelectedDrive();\n\n// Get file nodes from the drive\nconst fileNodes = document?.state.global.nodes.filter(\n  (node) => node.kind === \"file\"\n) || [];\n\n// Filter by document type\nconst documentModels = fileNodes.filter(\n  (node) => node.documentType === \"powerhouse/document-model\"\n);\n```\n\nReference implementation: `packages/vetra/editors/vetra-drive-app/`.\n\nSince [[document model vs document editor vs app serves different purposes]], apps manage collections while editors handle individual documents.\n\n---\n\nTopics:\n- [[editor patterns]]\n- [[model-editor wiring]]",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": "v6.2.2-dev.74",
+  "computes": null,
+  "filePath": "apps/academy/docs/academy/03-Build/03-BuildingUserExperiences/03-BuildingADriveExplorer.md",
+  "noteType": "PATTERN",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "knowledge-agent",
+    "createdAt": "2026-04-03T14:01:56.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-09-02T21:34:10.036Z",
+    "sourceOrigin": "IMPORT"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Drive editors filter document.state.global.nodes by kind and documentType to display documents within a drive",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "621c8b9d-081b-4b15-a125-28a3cd710c0b",
+      "actor": "claude",
+      "comment": "Knowledge registered against powerhouse v6.2.2-dev.47",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-14T12:00:00.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "f68fe40e-c728-48d5-83ab-d663c4f852e7",
+      "actor": "liberuum",
+      "comment": "Canonical as of powerhouse v6.2.2-dev.47",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-14T12:00:00.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

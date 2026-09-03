@@ -1,0 +1,103 @@
+{
+  "links": [
+    {
+      "id": "lnk-a442a64c-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "a442a64c-1ed5-41ef-ba49-96dc33c81fa5",
+      "targetTitle": "subgraphs-extend-document-models-via-graphql"
+    },
+    {
+      "id": "lnk-de06fba3-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "de06fba3-5cdf-413c-b6e0-f1a094c62f34",
+      "targetTitle": "custom-subgraphs-v6-reactor-client-access"
+    },
+    {
+      "id": "lnk-10452b8a-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "10452b8a-c680-4346-b1ad-f81e503c88d6",
+      "targetTitle": "Academy \u203a Reference \u203a ReactorBrowserClient \u203a Subgraphs and attachments",
+      "reason": "The note names apps/academy/docs/academy/04-Reference/08-ReactorBrowserClient/03-SubgraphsAndAttachments.md as its source; page text identical at v6.2.2-dev.47 and v6.2.2-dev.74",
+      "confidence": "grounded"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "client.subgraph(name, getSdk) gives typed, authenticated access to a project's own subgraphs",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "9567311e-ffc6-4fd8-85d4-03364244a4fd",
+      "name": "reactor-browser",
+      "topicDocumentId": null
+    },
+    {
+      "id": "c353da82-de4d-48aa-bb47-ac9f68317bd7",
+      "name": "subgraphs",
+      "topicDocumentId": null
+    },
+    {
+      "id": "d05ccccf-c855-4ded-a924-91586e2faeb6",
+      "name": "graphql",
+      "topicDocumentId": null
+    },
+    {
+      "id": "219271b0-f190-4c22-96a3-b885ede6b391",
+      "name": "codegen",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "## URL derivation and caching\n\nA subgraph is served at `<graphql base>/<name>` \u2014 for a Switchboard on `http://localhost:4001/graphql`, the `renown-read-model` subgraph is at `http://localhost:4001/graphql/renown-read-model`. `client.subgraph(name, getSdk)` derives that URL from the client's own `url`, keeps **one transport per name**, and hands the SDK the same auth middleware every reactor call goes through.\n\n```tsx\nconst client = useSwitchboardClient();\nconst sdk = client.subgraph(\"renown-read-model\", getRenownReadModelSdk);\nconst { renownUsers } = await sdk.RenownUsers([UNKNOWN_ADDRESS]);\n```\n\nThe registry caches the **transport** per name but reuses the **SDK** only when the same factory function is passed again. Two callers with two different generated SDKs each get their own, rather than the first caller's methods appearing under the second caller's type.\n\n## What you get, and what you don't\n\n`subgraph` gives transport, auth and typing \u2014 nothing more. Results are **not cached**, produce **no change events** and never reach `useDocument`. Cache them with whatever the app already uses for server state.\n\n## Generating the SDK\n\nPoint `graphql-codegen` at the subgraph's endpoint with the plugins `typescript`, `typescript-operations` and `typescript-graphql-request`. That last plugin emits `getSdk(client, withWrapper?)`, which is exactly the factory signature `subgraph` expects:\n\n```typescript\nexport type SubgraphSdkFactory<TSdk> = (\n  client: GraphQLClient,\n  withWrapper?: SdkFunctionWrapper,\n) => TSdk;\n```\n\nPass the generated function straight in. `SdkFunctionWrapper` is re-exported from `@powerhousedao/reactor-browser`, so a hand-written SDK can name the type without depending on `graphql-request`. An SDK the client builds is **always** called with the auth wrapper, so a hand-written one must apply it to every operation, exactly as generated code does.\n\nFor a one-off query not worth generating an SDK for, `client.request` runs against the Switchboard's own endpoint through the same transport and auth.\n\n**Verification tip:** the root supergraph federates every subgraph, so a subgraph's field is usually reachable at the base URL too. To prove a request hit the subgraph's own endpoint, query `_service { sdl }` \u2014 the root has no `_service` field.\n\n_Source: apps/academy/docs/academy/04-Reference/08-ReactorBrowserClient/03-SubgraphsAndAttachments.md (Powerhouse v6.2.2-dev.45)._",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": "v6.2.2-dev.74",
+  "computes": null,
+  "filePath": "apps/academy/docs/academy/04-Reference/08-ReactorBrowserClient/03-SubgraphsAndAttachments.md",
+  "noteType": "PATTERN",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "claude",
+    "createdAt": "2026-08-13T14:33:44.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-09-02T21:40:44.941Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Derives <graphql base>/<name>, caches one transport per name, and reuses the SDK only when the same factory is passed again. Results are uncached and emit no change events.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "f4ed83b9-516a-468e-8000-f29c5c05d23f",
+      "actor": "claude",
+      "comment": "Knowledge registered against powerhouse v6.2.2-dev.47",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-14T12:00:00.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "271912d2-fd62-4fcd-ae13-ff6f68846824",
+      "actor": "liberuum",
+      "comment": "Canonical as of powerhouse v6.2.2-dev.47",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-14T12:00:00.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

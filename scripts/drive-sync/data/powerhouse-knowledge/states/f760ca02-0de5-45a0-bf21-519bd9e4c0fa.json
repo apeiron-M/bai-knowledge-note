@@ -1,0 +1,107 @@
+{
+  "links": [
+    {
+      "id": "lnk-d1e93347-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "d1e93347-954b-46be-b494-2176482e67a8",
+      "targetTitle": "Spec \u203a Relational Db Processor Technical Specification",
+      "reason": "Extracted from docs/specs/relational-db-processor.md at v6.2.2-dev.74 \u2014 Security \u203a Worst Case Scenarios, Data Protection, Security Measures",
+      "confidence": "grounded"
+    },
+    {
+      "id": "lnk-97c3a924-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "97c3a924-0ba9-4b89-86f7-b7a5747d41a7",
+      "targetTitle": "relational-spec-stale-v6",
+      "reason": "The same document's API description is out of date, which is the reason to treat its security measures as intent until verified",
+      "confidence": "grounded"
+    },
+    {
+      "id": "lnk-cf2a1fcd-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "cf2a1fcd-b902-4976-b941-e229a6e9696c",
+      "targetTitle": "auth-read-gate-client",
+      "reason": "Both note that internal consumers sit inside the trust boundary and see unfiltered data, so whatever they re-expose is their own surface to gate",
+      "confidence": "grounded"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "The relational processor spec names migration injection and a compromised processor as its worst cases, and answers them with per-project database isolation",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "f851d566-bcf6-4cb9-b0ea-95488bf50434",
+      "name": "processors",
+      "topicDocumentId": null
+    },
+    {
+      "id": "0bf5b699-d7a0-4a62-9c32-a9b8ab72ab9c",
+      "name": "security",
+      "topicDocumentId": null
+    },
+    {
+      "id": "532e18c7-7f06-40b8-8f46-b5babded0466",
+      "name": "relational-db",
+      "topicDocumentId": null
+    },
+    {
+      "id": "57f9e760-f859-4684-b05c-9e02401367af",
+      "name": "threat-model",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "The spec's security section is one of the few written threat models in the repository, and its two scenarios are worth knowing because they follow from the shared-database goal.\n\n**Compromised processor instance.** A processor could access sensitive document data from the relational database, **modify database schema through migration injection**, exfiltrate data through malicious business logic, or impact other processors sharing the same database. The stated mitigations: database isolation per project, **migrations validated and signed before execution**, input sanitisation of document operations, and audit logging of database operations.\n\n**Database access compromise.** Unauthorised access could expose all processed document data, modify processor-generated data, or disrupt operations. Mitigations: TLS on all connections, access restricted to processor instances, sensitive data encrypted at rest, encrypted and access-controlled backups.\n\nTwo of these are worth flagging as *aspirations rather than observed behaviour* \u2014 signed migrations and complete audit trails are listed as measures in a spec whose API description is otherwise out of date, so a reader should verify before relying on either. What is structurally true and independent of the spec's age: a processor runs inside the trust boundary, sees unfiltered operations, and shares a database with its siblings, so \"principle of least privilege\" for a processor means limiting which **tables** it touches \u2014 the namespace \u2014 not which documents it sees.\n\n## Provenance\n- `docs/specs/relational-db-processor.md` \u2014 Security \u203a Worst Case Scenarios, Data Protection, Security Measures\n\n_Extracted from the Powerhouse repository at **v6.2.2-dev.74**._",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": "v6.2.2-dev.74",
+  "computes": null,
+  "filePath": "docs/specs/relational-db-processor.md",
+  "noteType": "OBSERVATION",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "knowledge-agent",
+    "createdAt": "2026-09-03T07:29:48.143Z",
+    "sessionId": null,
+    "updatedAt": "2026-09-03T07:31:14.116Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "A compromised processor could read document data, alter schema through migration injection, exfiltrate through business logic, or affect its siblings' tables. Mitigations: isolation and audit logs.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "597d0f74-1741-4ce7-ba7d-4292c300e593",
+      "actor": "knowledge-agent",
+      "comment": "extracted from docs/specs/relational-db-processor.md at v6.2.2-dev.74",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-09-03T07:29:48.655Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "610040b9-05b7-4b71-a799-73def1d1652c",
+      "actor": "liberuum",
+      "comment": "claim checked against the cited file at the pinned tag",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-09-03T07:29:49.302Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

@@ -1,0 +1,404 @@
+[
+  {
+    "index": 0,
+    "hash": "",
+    "timestampUtcMs": "2026-08-14T12:34:04.139Z",
+    "action": {
+      "type": "CREATE_DOCUMENT",
+      "input": {
+        "meta": {},
+        "name": "throwing-processor-is-isolated-and-never-auto-retried",
+        "slug": "",
+        "model": "bai/knowledge-note",
+        "branch": "main",
+        "signing": {
+          "nonce": "",
+          "publicKey": {},
+          "signature": "2ecb99d3-0646-4077-a416-6a64eb79fb9e",
+          "documentType": "bai/knowledge-note",
+          "createdAtUtcIso": "2026-08-14T12:34:04.139Z"
+        },
+        "version": 0,
+        "documentId": "2ecb99d3-0646-4077-a416-6a64eb79fb9e",
+        "protocolVersions": {
+          "base-reducer": 2
+        }
+      },
+      "timestampUtcMs": "2026-08-14T12:34:04.139Z"
+    }
+  },
+  {
+    "index": 0,
+    "hash": "vf5Oay5vLDlViS6YTQkDrvmodRs=",
+    "timestampUtcMs": "2026-08-14T12:36:02.000Z",
+    "action": {
+      "type": "SET_TITLE",
+      "input": {
+        "title": "A throwing processor is isolated and never retried automatically \u2014 it goes to errored and its cursor freezes",
+        "updatedAt": "2026-08-14T12:36:02.000Z"
+      },
+      "timestampUtcMs": "2026-08-14T12:36:02.000Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "",
+    "timestampUtcMs": "2026-08-14T12:34:04.139Z",
+    "action": {
+      "type": "UPGRADE_DOCUMENT",
+      "input": {
+        "model": "bai/knowledge-note",
+        "toVersion": 1,
+        "documentId": "2ecb99d3-0646-4077-a416-6a64eb79fb9e",
+        "fromVersion": 0,
+        "initialState": {
+          "auth": {
+            "grants": [],
+            "version": 0
+          },
+          "local": {
+            "lastViewedAt": null,
+            "personalTags": []
+          },
+          "global": {
+            "links": [],
+            "model": null,
+            "scope": null,
+            "title": null,
+            "editor": null,
+            "inputs": [],
+            "models": [],
+            "status": "DRAFT",
+            "topics": [],
+            "content": null,
+            "context": null,
+            "modelId": null,
+            "modules": [],
+            "outputs": [],
+            "version": null,
+            "computes": null,
+            "filePath": null,
+            "noteType": null,
+            "severity": null,
+            "hooksUsed": [],
+            "rootCause": null,
+            "confidence": null,
+            "consumedBy": [],
+            "provenance": null,
+            "sourceType": null,
+            "targetType": null,
+            "cardinality": null,
+            "description": null,
+            "alternatives": [],
+            "consequences": [],
+            "errorMessage": null,
+            "relationType": null,
+            "correctPattern": null,
+            "decisionStatus": null,
+            "dispatchTargets": [],
+            "lifecycleEvents": []
+          },
+          "document": {
+            "hash": {
+              "encoding": "base64",
+              "algorithm": "sha1"
+            },
+            "version": 1
+          }
+        }
+      },
+      "timestampUtcMs": "2026-08-14T12:34:04.139Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "YD3sM24Y+0HLZm4cHKrqauESeSs=",
+    "timestampUtcMs": "2026-08-14T12:36:02.000Z",
+    "action": {
+      "type": "SET_DESCRIPTION",
+      "input": {
+        "updatedAt": "2026-08-14T12:36:02.000Z",
+        "description": "Other processors are unaffected. Recovery requires tracked.retry() or re-registering the factory. Inspect via getAll()."
+      },
+      "timestampUtcMs": "2026-08-14T12:36:02.000Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "",
+    "timestampUtcMs": "2026-08-14T12:38:59.069Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "2ecb99d3-0646-4077-a416-6a64eb79fb9e",
+        "targetId": "6a3275cd-d71e-4342-8cd3-3fb29b8fe58c",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-08-14T12:38:59.069Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "UoZs6kPvxhSVzFXPgQgfKTFg//w=",
+    "timestampUtcMs": "2026-08-14T12:36:02.000Z",
+    "action": {
+      "type": "SET_NOTE_TYPE",
+      "input": {
+        "noteType": "ARCHITECTURE",
+        "updatedAt": "2026-08-14T12:36:02.000Z"
+      },
+      "timestampUtcMs": "2026-08-14T12:36:02.000Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "",
+    "timestampUtcMs": "2026-08-14T12:38:59.173Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "2ecb99d3-0646-4077-a416-6a64eb79fb9e",
+        "targetId": "3289f3d4-7ee0-453a-8811-a7e2027fb5de",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-08-14T12:38:59.173Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "epVo7Il0aJSXN5zbYibC2cV6o64=",
+    "timestampUtcMs": "2026-08-14T12:36:02.000Z",
+    "action": {
+      "type": "SET_CONTENT",
+      "input": {
+        "content": "Processors run in parallel, each wrapped in its own try/catch. When `onOperations` throws, the manager does three things and then stops:\n\n1. The processor moves to `status: \"errored\"`.\n2. `lastError` and `lastErrorTimestamp` are recorded on its `TrackedProcessor`.\n3. **Its cursor stops advancing.**\n\nOther processors are unaffected \u2014 a failure is contained to one processor on one drive, not the batch and not the reactor. The frozen cursor is the deliberate half of the design: because `lastOrdinal` does not move past the failing batch, no operations are lost. Once the processor is revived it resumes from exactly where it broke.\n\nThe part that surprises people is that **there is no automatic retry.** An errored processor stays errored and is skipped on every later batch, indefinitely. Recovery is explicitly triggered, by one of:\n\n- `tracked.retry()` \u2014 re-activates the processor and re-runs backfill from its frozen cursor.\n- Re-registering its factory \u2014 registering the same `identifier` unregisters the prior factory first, so this is idempotent.\n\nNothing about this is visible unless you look. Inspect via the manager: `get(processorId)` for one, `getAll()` for every tracked processor across all drives.\n\n```typescript\ntype TrackedProcessor = {\n  processorId: string;       // `${factoryId}:${driveId}:${index}`\n  factoryId: string;\n  driveId: string;\n  processorIndex: number;\n  record: ProcessorRecord;\n  lastOrdinal: number;\n  status: ProcessorStatus;   // \"active\" | \"errored\"\n  lastError: string | undefined;\n  lastErrorTimestamp: Date | undefined;\n  retry: () => Promise<void>;\n};\n```\n\nPractically, this means any production processor needs a health check that walks `getAll()` looking for `status: \"errored\"` \u2014 otherwise a read model quietly stops updating and the only symptom is stale data. Note that `onDisconnect` is treated differently: a throw there is caught and logged, never propagated, and does not error the processor.\n\n_Source: apps/academy/docs/academy/04-Reference/01-Reactor/05-Processors.md (Powerhouse v6.2.2-dev.45)._",
+        "updatedAt": "2026-08-14T12:36:02.000Z"
+      },
+      "timestampUtcMs": "2026-08-14T12:36:02.000Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "",
+    "timestampUtcMs": "2026-09-02T21:29:18.852Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "metadata": {
+          "reason": "The note names apps/academy/docs/academy/04-Reference/01-Reactor/05-Processors.md as its source; page text revised between v6.2.2-dev.47 and v6.2.2-dev.74 \u2014 re-verified in the v6.2.2-dev.74 pass",
+          "confidence": "grounded"
+        },
+        "sourceId": "2ecb99d3-0646-4077-a416-6a64eb79fb9e",
+        "targetId": "c12de121-f575-4c71-95f7-bd298533dd51",
+        "relationshipType": "DERIVED_FROM"
+      },
+      "timestampUtcMs": "2026-09-02T21:29:18.852Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "mjSbw3IWl4YEOcUrNdHfX1YYH+o=",
+    "timestampUtcMs": "2026-08-14T12:36:02.000Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "version",
+        "value": "v6.2.2-dev.44",
+        "updatedAt": "2026-08-14T12:36:02.000Z"
+      },
+      "timestampUtcMs": "2026-08-14T12:36:02.000Z"
+    }
+  },
+  {
+    "index": 5,
+    "hash": "",
+    "timestampUtcMs": "2026-09-02T21:31:22.229Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "metadata": {
+          "reason": "The note names apps/academy/docs/academy/04-Reference/01-Reactor/05-Processors.md as its source; page text revised between v6.2.2-dev.47 and v6.2.2-dev.74 \u2014 re-verified in the v6.2.2-dev.74 pass",
+          "confidence": "grounded"
+        },
+        "sourceId": "2ecb99d3-0646-4077-a416-6a64eb79fb9e",
+        "targetId": "c12de121-f575-4c71-95f7-bd298533dd51",
+        "relationshipType": "DERIVED_FROM"
+      },
+      "timestampUtcMs": "2026-09-02T21:31:22.229Z"
+    }
+  },
+  {
+    "index": 5,
+    "hash": "yvxrnTg74EM2gDnvjZmFJlwyu7U=",
+    "timestampUtcMs": "2026-08-14T12:36:02.000Z",
+    "action": {
+      "type": "SET_PROVENANCE",
+      "input": {
+        "author": "claude",
+        "createdAt": "2026-08-13T14:34:34.000Z",
+        "sourceOrigin": "DERIVED"
+      },
+      "timestampUtcMs": "2026-08-14T12:36:02.000Z"
+    }
+  },
+  {
+    "index": 6,
+    "hash": "",
+    "timestampUtcMs": "2026-09-02T21:38:07.620Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "metadata": {
+          "reason": "The note names apps/academy/docs/academy/04-Reference/01-Reactor/05-Processors.md as its source; page text revised between v6.2.2-dev.47 and v6.2.2-dev.74 \u2014 re-verified in the v6.2.2-dev.74 pass",
+          "confidence": "grounded"
+        },
+        "sourceId": "2ecb99d3-0646-4077-a416-6a64eb79fb9e",
+        "targetId": "c12de121-f575-4c71-95f7-bd298533dd51",
+        "relationshipType": "DERIVED_FROM"
+      },
+      "timestampUtcMs": "2026-09-02T21:38:07.620Z"
+    }
+  },
+  {
+    "index": 6,
+    "hash": "UvXarAbzZZXxcBPDlcNaVKQDaZQ=",
+    "timestampUtcMs": "2026-08-14T12:36:02.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "b415333e-5ece-4c80-ab66-9b6244729480",
+        "name": "processors",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-08-14T12:36:02.000Z"
+    }
+  },
+  {
+    "index": 7,
+    "hash": "A2jjee+Q+yDCFqoZqtsSoQf3ZfM=",
+    "timestampUtcMs": "2026-08-14T12:36:02.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "af21700b-be8e-4a7e-bb49-46eea06c34ec",
+        "name": "error-handling",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-08-14T12:36:02.000Z"
+    }
+  },
+  {
+    "index": 8,
+    "hash": "H48z36YiRoxU+2KqTp/2l4Qk5EM=",
+    "timestampUtcMs": "2026-08-14T12:36:02.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "995afd39-4a5a-4720-bef1-64b50bc0dbf3",
+        "name": "resilience",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-08-14T12:36:02.000Z"
+    }
+  },
+  {
+    "index": 9,
+    "hash": "zF1C0huz6/8nW4jsJXVJ/z5hvoc=",
+    "timestampUtcMs": "2026-08-14T14:36:55.000Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "version",
+        "value": "v6.2.2-dev.47",
+        "updatedAt": "2026-08-14T12:00:00.000Z"
+      },
+      "timestampUtcMs": "2026-08-14T14:36:55.000Z"
+    }
+  },
+  {
+    "index": 10,
+    "hash": "9kZsgpBQ0vissjGM5dSzN09q8iY=",
+    "timestampUtcMs": "2026-08-14T14:36:55.000Z",
+    "action": {
+      "type": "SUBMIT_FOR_REVIEW",
+      "input": {
+        "id": "2a545833-916e-4f04-ac13-80dbe04d004b",
+        "actor": "claude",
+        "comment": "Knowledge registered against powerhouse v6.2.2-dev.47",
+        "timestamp": "2026-08-14T12:00:00.000Z"
+      },
+      "timestampUtcMs": "2026-08-14T14:36:55.000Z"
+    }
+  },
+  {
+    "index": 11,
+    "hash": "8w/z/Istz+Wh9Z/RTYSDrPiIrEY=",
+    "timestampUtcMs": "2026-08-14T14:36:55.000Z",
+    "action": {
+      "type": "APPROVE_NOTE",
+      "input": {
+        "id": "d54b6036-fa70-4038-8397-8c7e8f6769af",
+        "actor": "liberuum",
+        "comment": "Canonical as of powerhouse v6.2.2-dev.47",
+        "timestamp": "2026-08-14T12:00:00.000Z"
+      },
+      "timestampUtcMs": "2026-08-14T14:36:55.000Z"
+    }
+  },
+  {
+    "index": 12,
+    "hash": "fsaZQ5weJwJdH6Ho3ukL5OUwxBw=",
+    "timestampUtcMs": "2026-09-02T21:29:19.520Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "filePath",
+        "value": "apps/academy/docs/academy/04-Reference/01-Reactor/05-Processors.md",
+        "updatedAt": "2026-09-02T21:29:19.520Z"
+      },
+      "timestampUtcMs": "2026-09-02T21:29:19.520Z"
+    }
+  },
+  {
+    "index": 13,
+    "hash": "COZ40dem7v394yI05cQJb+rx2N8=",
+    "timestampUtcMs": "2026-09-02T21:31:22.370Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "filePath",
+        "value": "apps/academy/docs/academy/04-Reference/01-Reactor/05-Processors.md",
+        "updatedAt": "2026-09-02T21:31:22.370Z"
+      },
+      "timestampUtcMs": "2026-09-02T21:31:22.370Z"
+    }
+  },
+  {
+    "index": 14,
+    "hash": "NR+5m8Rwxd1ZjlskePUnK2963Hg=",
+    "timestampUtcMs": "2026-09-02T21:38:07.790Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "filePath",
+        "value": "apps/academy/docs/academy/04-Reference/01-Reactor/05-Processors.md",
+        "updatedAt": "2026-09-02T21:38:07.790Z"
+      },
+      "timestampUtcMs": "2026-09-02T21:38:07.790Z"
+    }
+  },
+  {
+    "index": 15,
+    "hash": "9tIgxpu+k6VBsFK3whRDqKlcyUg=",
+    "timestampUtcMs": "2026-09-02T22:26:28.391Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "version",
+        "value": "v6.2.2-dev.74",
+        "updatedAt": "2026-09-02T22:26:28.391Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:26:28.391Z"
+    }
+  }
+]

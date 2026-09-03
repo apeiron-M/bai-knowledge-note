@@ -1,0 +1,21 @@
+{
+  "title": "Academy \u203a Build \u203a WorkWithData \u203a Analytics Engine \u203a typescript \u203a Database schema",
+  "status": "EXTRACTED",
+  "content": "# Database schema\n\n![untitled](../images/dbs.png)\n_Database table structures for the analytics engine._\n\nAnalytics information is stored in three database tables:\n\n- `AnalyticsSeries`: This table stores the raw data over a period with its metric, value, unit, function and parameters.\n- `AnalyticsDimension`: This table stores all available dimensions for each series.\n- `AnalyticsSeries_AnalyticsDimension`: Many to many lookup table, storing relationships between series and dimensions.\n\nThe `browser` package automatically creates this schema in the PGLite instance.\n\nThe `postgres` package, on the other hand, [contains an init script](https://github.com/powerhouse-inc/analytics-engine/blob/main/pg/test/scripts/initdb.sh) that can be used to create the correct schema in your database.\n",
+  "createdAt": "2026-09-02T21:36:29.738Z",
+  "createdBy": "repo-docs-sync",
+  "provenance": {
+    "url": "https://github.com/powerhouse-inc/powerhouse/blob/v6.2.2-dev.74/apps/academy/docs/academy/03-Build/04-WorkWithData/_06-Analytics Engine/typescript/schema.md",
+    "tool": "sync-repo-docs",
+    "author": "Powerhouse Inc.",
+    "method": "sha256:33db9d3ae715770e022cc30e3641526a5affdc1e25614e2551241f7326dafad7 git:v6.2.2-dev.74",
+    "publishedAt": "2026-06-17T17:18:45.000Z"
+  },
+  "sourceType": "DOCUMENTATION",
+  "description": "Powerhouse v6.2.2-dev.74 (unchanged since v6.2.2-dev.47) \u2014 Analytics information is stored in three database tables:",
+  "extractedClaims": [
+    "87e21eda-709d-48c8-835f-912b186841d3"
+  ],
+  "extractionStats": null,
+  "links": []
+}

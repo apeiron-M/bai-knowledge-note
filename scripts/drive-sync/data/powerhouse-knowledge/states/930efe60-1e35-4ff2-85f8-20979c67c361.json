@@ -1,0 +1,81 @@
+{
+  "links": [
+    {
+      "id": "lnk-6f938c9e-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "6f938c9e-85f4-4a4f-b55e-3213b0ae4ef5",
+      "targetTitle": "attachments-keep-binaries-out-of-the-operation-log"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Generic attachment-slot discovery needs ranking, not first-match",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "IN_REVIEW",
+  "topics": [
+    {
+      "id": "e0956afc-ace9-47de-93b8-832b79b93542",
+      "name": "attachments",
+      "topicDocumentId": null
+    },
+    {
+      "id": "1179bb90-4273-4969-9a3b-1655468ecc55",
+      "name": "processors",
+      "topicDocumentId": null
+    },
+    {
+      "id": "ac355000-f749-4449-aacd-fe6d0a4944ea",
+      "name": "invoice",
+      "topicDocumentId": null
+    },
+    {
+      "id": "861272b2-5b09-4242-af01-fe49a0775d5e",
+      "name": "paperless",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "An integration that attaches a source file to a target document without hard-coding the target's shape has to find the field to put it in. The obvious implementation walks the target model's schema for a field of attachment type and uses the first one it finds.\n\nThat is wrong whenever the model has more than one such field, and business document models usually do. A `powerhouse/invoice` document exposes several `AttachmentRef` fields for different purposes: `baseInvoice` for the invoice document itself, `timeTrackingReport` for a supporting report, and further slots for per-line-item receipts. Schema field order is not semantic ranking, so first-match picks whichever the schema happens to declare first.\n\n**The failure is silent, which is what makes it worth a note.** Attaching to the wrong slot is a type-correct write: the field accepts the reference, the reducer succeeds, no validation fires, and the document is left internally consistent. The scanned invoice simply sits in the receipts slot, where nothing looks for it. Nobody sees an error; someone eventually sees a missing invoice.\n\nSo slot selection needs two things instead of one. **Rank the candidates** \u2014 score field names against what is actually being attached, so `baseInvoice` wins for a scanned invoice rather than merely being tied with everything else. And **exclude by role** \u2014 receipt and report slots hold supporting evidence, not the primary document, so they should be disqualified as targets for the source scan rather than left in the ranking to be won by accident. Where ranking produces no confident winner, that is a case to surface, not to resolve by position.\n\nFound while building generic attachment handling for the Paperless x Powerhouse sync, 21 Aug 2026.\n\n## Connections\n\n- **RELATES_TO [[Attachments keep binaries out of the operation log: state holds an opaque attachment://v1:<sha256> ref]]** \u2014 the value written into whichever slot is chosen is that opaque content-addressed ref, which is why a wrong slot is indistinguishable from a right one by inspecting state: every slot holds the same shape of value.\n- **RELATES_TO [[Safe-merge beats overwrite when re-syncing externally sourced documents]]** \u2014 both describe an automated write that the target model accepts as valid and that is nonetheless wrong, so neither can be caught by validation and both have to be prevented at the decision point.\n\n## Methodology grounding\n\nPicking by schema position is a mechanical answer to a question that needs judgment, which is the gap [[confidence thresholds gate automated action between the mechanical and judgment zones]] describes: the operation is not deterministic enough for position to decide it, but is tractable above a confidence threshold \u2014 hence rank, and defer when nothing ranks clearly. And because a mis-slotted attachment passes every validation the model has, it is the invisible-write case from [[automated detection is always safe because it only reads state while automated remediation risks content corruption]] \u2014 the wrong state becomes the trusted state.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "PATTERN",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "knowledge-agent",
+    "createdAt": "2026-08-21T15:40:00.000Z",
+    "sessionId": "paperless-eng-2026-08-21",
+    "updatedAt": "2026-08-21T15:55:00.000Z",
+    "sourceOrigin": "SESSION_MINE"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "When a target model exposes several AttachmentRef fields such as baseInvoice, timeTrackingReport and line-item receipts, first-match files the source scan in the wrong slot with no error raised.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "ffd55424-3e3d-44c0-b574-3d643387d2f5",
+      "actor": "knowledge-agent",
+      "comment": "Extracted from the 21 Aug 2026 Paperless x Powerhouse working session; each claim was observed in working code or against the live Paperless-ngx 3.0.5 instance. Needs a second actor to approve - the authoring agent cannot legitimately be its own reviewer.",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-21T15:55:00.000Z",
+      "fromStatus": "DRAFT"
+    }
+  ]
+}

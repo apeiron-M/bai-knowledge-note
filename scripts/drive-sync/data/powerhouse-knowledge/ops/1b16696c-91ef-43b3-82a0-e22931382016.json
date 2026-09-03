@@ -1,0 +1,276 @@
+[
+  {
+    "index": 0,
+    "hash": "",
+    "timestampUtcMs": "2026-08-20T08:45:13.335Z",
+    "action": {
+      "type": "CREATE_DOCUMENT",
+      "input": {
+        "meta": {},
+        "name": "n8n attributes an execution to a workflow, never to the human who decided",
+        "slug": "",
+        "model": "bai/knowledge-note",
+        "branch": "main",
+        "signing": {
+          "nonce": "",
+          "publicKey": {},
+          "signature": "1b16696c-91ef-43b3-82a0-e22931382016",
+          "documentType": "bai/knowledge-note",
+          "createdAtUtcIso": "2026-08-20T08:45:13.335Z"
+        },
+        "version": 0,
+        "documentId": "1b16696c-91ef-43b3-82a0-e22931382016",
+        "protocolVersions": {
+          "base-reducer": 2
+        }
+      },
+      "timestampUtcMs": "2026-08-20T08:45:13.335Z"
+    }
+  },
+  {
+    "index": 0,
+    "hash": "8FYZwXpseoP0EZER7J6+uTuIElU=",
+    "timestampUtcMs": "2026-08-20T08:45:13.927Z",
+    "action": {
+      "type": "SET_TITLE",
+      "input": {
+        "title": "n8n attributes an execution to a workflow, never to the human who decided",
+        "updatedAt": "2026-08-20T08:45:13.927450Z"
+      },
+      "timestampUtcMs": "2026-08-20T08:45:13.927486Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "",
+    "timestampUtcMs": "2026-08-20T08:45:13.335Z",
+    "action": {
+      "type": "UPGRADE_DOCUMENT",
+      "input": {
+        "model": "bai/knowledge-note",
+        "toVersion": 1,
+        "documentId": "1b16696c-91ef-43b3-82a0-e22931382016",
+        "fromVersion": 0,
+        "initialState": {
+          "auth": {
+            "grants": [],
+            "version": 0
+          },
+          "local": {
+            "lastViewedAt": null,
+            "personalTags": []
+          },
+          "global": {
+            "links": [],
+            "model": null,
+            "scope": null,
+            "title": null,
+            "editor": null,
+            "inputs": [],
+            "models": [],
+            "status": "DRAFT",
+            "topics": [],
+            "content": null,
+            "context": null,
+            "modelId": null,
+            "modules": [],
+            "outputs": [],
+            "version": null,
+            "computes": null,
+            "filePath": null,
+            "noteType": null,
+            "severity": null,
+            "hooksUsed": [],
+            "rootCause": null,
+            "confidence": null,
+            "consumedBy": [],
+            "provenance": null,
+            "sourceType": null,
+            "targetType": null,
+            "cardinality": null,
+            "description": null,
+            "alternatives": [],
+            "consequences": [],
+            "errorMessage": null,
+            "relationType": null,
+            "correctPattern": null,
+            "decisionStatus": null,
+            "dispatchTargets": [],
+            "lifecycleEvents": []
+          },
+          "document": {
+            "hash": {
+              "encoding": "base64",
+              "algorithm": "sha1"
+            },
+            "version": 1
+          }
+        }
+      },
+      "timestampUtcMs": "2026-08-20T08:45:13.335Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "gvbxStJfGnLU0cas16THKAHYlp8=",
+    "timestampUtcMs": "2026-08-20T08:45:13.927Z",
+    "action": {
+      "type": "SET_DESCRIPTION",
+      "input": {
+        "updatedAt": "2026-08-20T08:45:13.927490Z",
+        "description": "The mode field is an enum of trigger types \u2014 webhook, trigger, manual, cli, retry \u2014 so there is no field recording which person made the decision under which rule."
+      },
+      "timestampUtcMs": "2026-08-20T08:45:13.927495Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "",
+    "timestampUtcMs": "2026-08-20T08:45:15.143Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "1b16696c-91ef-43b3-82a0-e22931382016",
+        "targetId": "4d8e59af-51f2-4ab7-b290-e1d5744abbd7",
+        "relationshipType": "DERIVED_FROM"
+      },
+      "timestampUtcMs": "2026-08-20T08:45:15.143Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "/9XYVGVbkvKHr/6I6THGv8SkLww=",
+    "timestampUtcMs": "2026-08-20T08:45:13.927Z",
+    "action": {
+      "type": "SET_NOTE_TYPE",
+      "input": {
+        "noteType": "ARCHITECTURE",
+        "updatedAt": "2026-08-20T08:45:13.927497Z"
+      },
+      "timestampUtcMs": "2026-08-20T08:45:13.927500Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "Dsqf392f7CPDSxGM/I+e2fpCLKo=",
+    "timestampUtcMs": "2026-08-20T08:45:13.927Z",
+    "action": {
+      "type": "SET_CONTENT",
+      "input": {
+        "content": "`execution_entity` carries `id`, `status`, `mode`, `createdAt`, `startedAt` and a `DeleteDateColumn` for soft deletion. `mode` is an enum over how the run was triggered: `webhook`, `trigger`, `manual`, `cli`, `retry`. The payload sits in `execution_data` as a single `text` blob, cascade-deleted with its parent row.\n\nNowhere in either entity is there a field for the deciding actor, the rule applied, or the prior state. An execution is attributed to a *workflow* \u2014 to the automation that ran, not to the person on whose authority it ran.\n\nThis is the structural reason an n8n execution log cannot answer \"who approved this, under which rule\", independently of retention. Even a run preserved forever would not carry the attribution.",
+        "updatedAt": "2026-08-20T08:45:13.927502Z"
+      },
+      "timestampUtcMs": "2026-08-20T08:45:13.927507Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "FEBcpoVKa7yd9/EPtNbZuJMISaA=",
+    "timestampUtcMs": "2026-08-20T08:45:13.927Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "0f0c64ee-60e8-40b9-9a54-be874ed7b6f3",
+        "name": "tool-screen"
+      },
+      "timestampUtcMs": "2026-08-20T08:45:13.927515Z"
+    }
+  },
+  {
+    "index": 5,
+    "hash": "taOzzJZl1OlYgtPX7ykp84/V5Q8=",
+    "timestampUtcMs": "2026-08-20T08:45:13.927Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "8f661e51-113b-4879-961d-8b223172b296",
+        "name": "n8n"
+      },
+      "timestampUtcMs": "2026-08-20T08:45:13.927521Z"
+    }
+  },
+  {
+    "index": 6,
+    "hash": "1rylUlS5BT8sEwzU2x6wlRA+Q4A=",
+    "timestampUtcMs": "2026-08-20T08:45:13.927Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "bb324b2f-609c-4f4c-8293-c5c1d076b162",
+        "name": "attribution"
+      },
+      "timestampUtcMs": "2026-08-20T08:45:13.927528Z"
+    }
+  },
+  {
+    "index": 7,
+    "hash": "D8zDOo6dM8bAQt5rDD/9MOOQw0o=",
+    "timestampUtcMs": "2026-08-20T08:45:13.927Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "94496674-bc57-4383-a9e9-c2b5dd2d1ad4",
+        "name": "business-events"
+      },
+      "timestampUtcMs": "2026-08-20T08:45:13.927567Z"
+    }
+  },
+  {
+    "index": 8,
+    "hash": "hloLMKND7ogrjEBRjw3DdIRN/vU=",
+    "timestampUtcMs": "2026-08-20T08:45:13.927Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "c54afbc3-5ccb-4026-958f-71ea6f5a8b63",
+        "name": "audit-trail"
+      },
+      "timestampUtcMs": "2026-08-20T08:45:13.927574Z"
+    }
+  },
+  {
+    "index": 9,
+    "hash": "8zdlh0o64TJvCL+KeDHIuDcv77o=",
+    "timestampUtcMs": "2026-08-20T08:45:14.330Z",
+    "action": {
+      "type": "SET_PROVENANCE",
+      "input": {
+        "author": "knowledge-agent",
+        "createdAt": "2026-08-20T08:45:14.330384Z",
+        "sessionId": null,
+        "sourceOrigin": "DERIVED"
+      },
+      "timestampUtcMs": "2026-08-20T08:45:14.330423Z"
+    }
+  },
+  {
+    "index": 10,
+    "hash": "ZKgnzp5iMDRg16uWqe9/h+D1uS8=",
+    "timestampUtcMs": "2026-08-20T08:45:15.343Z",
+    "action": {
+      "type": "SUBMIT_FOR_REVIEW",
+      "input": {
+        "id": "930cc635-ddea-4363-a2a2-6a8fa21b0f3c",
+        "actor": "knowledge-agent",
+        "comment": "Extracted from the primary-source tool screen; each claim quotable from a cited source.",
+        "timestamp": "2026-08-20T08:45:15.343766Z"
+      },
+      "timestampUtcMs": "2026-08-20T08:45:15.343787Z"
+    }
+  },
+  {
+    "index": 11,
+    "hash": "bSrX2aQq0YoP2dP5CkIlbenp4rY=",
+    "timestampUtcMs": "2026-08-20T08:45:15.494Z",
+    "action": {
+      "type": "APPROVE_NOTE",
+      "input": {
+        "id": "c3a8bedd-b8a1-4ed2-ba98-10b3896b18e6",
+        "actor": "liberuum",
+        "comment": "Approved: tool-screen extraction.",
+        "timestamp": "2026-08-20T08:45:15.494307Z"
+      },
+      "timestampUtcMs": "2026-08-20T08:45:15.494328Z"
+    }
+  }
+]

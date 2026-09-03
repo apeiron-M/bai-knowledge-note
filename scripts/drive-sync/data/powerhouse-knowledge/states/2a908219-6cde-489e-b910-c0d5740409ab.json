@@ -1,0 +1,128 @@
+{
+  "links": [
+    {
+      "id": "lnk-21cb9dda-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "21cb9dda-02f2-4af8-a32d-2bfedcefb9dc",
+      "targetTitle": "processors-run-only-on-in-process-reactor-path",
+      "reason": "Another case where the SharedWorker and in-process reactor paths must be configured in step \u2014 here the flags travel to the worker in its construct message",
+      "confidence": "grounded"
+    },
+    {
+      "id": "lnk-c5419cd5-bui",
+      "linkType": "BUILDS_ON",
+      "targetDocumentId": "c5419cd5-deac-4f48-b58f-131e5808bd49",
+      "targetTitle": "auth-flags-per-fleet",
+      "reason": "The fleet rule is what forbids a per-tab override and what the fingerprint reload enforces on the browser side",
+      "confidence": "grounded"
+    },
+    {
+      "id": "lnk-a1016584-bui",
+      "linkType": "BUILDS_ON",
+      "targetDocumentId": "a1016584-5dba-460b-9dc8-2728d09c1058",
+      "targetTitle": "connect-runtime-config",
+      "reason": "Rides the same single-file runtime config as every other connect.* value, with the exception that it may not be overridden per tab",
+      "confidence": "grounded"
+    },
+    {
+      "id": "lnk-067ef151-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "067ef151-e1a1-4a1a-91de-faaef1614f94",
+      "targetTitle": "App \u203a connect \u203a RUNTIME-CONFIG \u2014 Connect Runtime Configuration",
+      "reason": "Extracted from apps/connect/RUNTIME-CONFIG.md at v6.2.2-dev.74 \u2014 'Reactor enforcement flags (connect.reactor.featureFlags)' and the 'I'm turning auth enforcement on for this fleet' recipe",
+      "confidence": "grounded"
+    },
+    {
+      "id": "lnk-63e10e2c-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "63e10e2c-9be4-4bd2-a876-8708cd3ac1f9",
+      "targetTitle": "App \u203a switchboard \u203a README",
+      "reason": "Extracted from apps/switchboard/README.md at v6.2.2-dev.74 \u2014 Reactor Enforcement Flags: 'Connect carries the same flags in connect.reactor.featureFlags'",
+      "confidence": "grounded"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Connect carries the four reactor enforcement flags in connect.reactor.featureFlags with deliberately no per-tab override, and a flag flip reloads tabs onto a fresh SharedWorker",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "a03aa040-f267-42a4-bc9e-7259397326a5",
+      "name": "connect",
+      "topicDocumentId": null
+    },
+    {
+      "id": "b4a2e7f4-8c23-47d8-81a1-100b13a31ece",
+      "name": "feature-flags",
+      "topicDocumentId": null
+    },
+    {
+      "id": "b147ce25-6fda-4fb4-b53e-868633099365",
+      "name": "auth-scope",
+      "topicDocumentId": null
+    },
+    {
+      "id": "6c451647-47d5-4a0c-b41a-0adfa152a98c",
+      "name": "configuration",
+      "topicDocumentId": null
+    },
+    {
+      "id": "520eab8b-ca7c-44c0-95c9-1ce96f91a5c4",
+      "name": "shared-worker",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "```jsonc\n\"reactor\": { \"featureFlags\": { \"documentDecisions\": true, \"authEnforcement\": true, \"authGroups\": true, \"authConditions\": true } }\n```\n\nThe reactor Connect runs in the browser takes the same four enforcement flags a switchboard does; each requires the one before it, the reactor refuses to build a set that skips one, and all default `false`. They are **the one part of `connect.*` that is not a local preference**: a flag changes how stored history is replayed, and a replay verdict is a consensus outcome, so a Connect must carry the same flags as the fleet it syncs with \u2014 set them alongside the switchboard's `REACTOR_*` variables. Partial sets are rejected at boot.\n\nBoth reactor hosts read them. The main-thread reactor takes the value from the runtime config directly; the **SharedWorker gets it in its construct message**, for the same reason it gets `renown.chainId` \u2014 a worker has no runtime config of its own. There is deliberately **no query-param or localStorage override**, unlike `connect.instance.reactorWorker`: a per-tab flag would be a per-node flag.\n\nThe flag set is part of the **worker's version fingerprint**, so a flip is picked up even though it is not a rebuild: a tab whose flags differ from the running worker's is told to reload onto a fresh worker, exactly as after a new build \u2014 otherwise the worker would keep enforcing the flags it booted with while the tab believed the new set was live. Other tabs still on the old worker reload as they refresh. In worker mode, confirm what is actually enforced in the inspector modal's worker panel (\"Enforcement flags\"). At deploy time the whole set rides in `PH_CONNECT_CONFIG_JSON` like every other runtime field.\n\n_Source: apps/connect/RUNTIME-CONFIG.md (Powerhouse v6.2.2-dev.74)._\n_Source: apps/switchboard/README.md (Powerhouse v6.2.2-dev.74)._\n\n## Provenance\n- `apps/connect/RUNTIME-CONFIG.md` \u2014 'Reactor enforcement flags (connect.reactor.featureFlags)' and the 'I'm turning auth enforcement on for this fleet' recipe\n- `apps/switchboard/README.md` \u2014 Reactor Enforcement Flags: 'Connect carries the same flags in connect.reactor.featureFlags'\n\n_Recorded from the Powerhouse repository at **v6.2.2-dev.74** during the v6.2.2-dev.74 source sync._",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": "v6.2.2-dev.74",
+  "computes": null,
+  "filePath": "apps/connect/RUNTIME-CONFIG.md",
+  "noteType": "REFERENCE",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": "grounded",
+  "consumedBy": [],
+  "provenance": {
+    "author": "knowledge-agent",
+    "createdAt": "2026-09-02T22:11:59.662Z",
+    "sessionId": null,
+    "updatedAt": "2026-09-02T22:20:48.706Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Both hosts read them: the main-thread reactor from runtime config, the SharedWorker from its construct message. The set is part of the worker version fingerprint, so a mismatch reloads the tab.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "558e4ab0-4204-46f0-b665-0dbc7164ac9e",
+      "actor": "knowledge-agent",
+      "comment": "extracted from the Powerhouse repository at v6.2.2-dev.74",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-09-02T22:12:00.794Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "c147e5d5-2004-436a-acde-de4f0333f8f9",
+      "actor": "liberuum",
+      "comment": "claim checked against the cited repository file at the pinned tag",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-09-02T22:12:01.362Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

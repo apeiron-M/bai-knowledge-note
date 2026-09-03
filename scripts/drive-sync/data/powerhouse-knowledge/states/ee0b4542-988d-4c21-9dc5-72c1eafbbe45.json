@@ -1,0 +1,90 @@
+{
+  "links": [
+    {
+      "id": "lnk-e2186433-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "e2186433-6a5b-4e9a-90e8-37c698b35e89",
+      "targetTitle": "moc-attributable-skills-provenance"
+    },
+    {
+      "id": "lnk-2b423487-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "2b423487-123f-414c-bd20-edce7de891f4",
+      "targetTitle": "skills-as-attributable-transformations"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Agent systems are provenance-blind when skills are treated as tool calls",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "8b85d7d8-8934-4d32-8cc4-6ddb13aa991f",
+      "name": "provenance",
+      "topicDocumentId": null
+    },
+    {
+      "id": "8224bd45-6d45-4c4d-bb28-1f9ce4587c53",
+      "name": "agent-skills",
+      "topicDocumentId": null
+    },
+    {
+      "id": "64cf3bff-05c5-4fa0-93f5-03b5d7a48b8b",
+      "name": "attribution",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "## Claim\n\nWhen skill invocations are recorded only as tool calls and log lines, the downstream artifact carries no structured trace of which skill produced which fragment under whose authority.\n\n## Why it matters\n\nWithout that trace, evaluation collapses to output scoring, safety auditing has only the prompt and final string to inspect, and knowledge claims become unfalsifiable\u2014even a true answer cannot be shown to come from a reliable process.\n\n## Evidence from source\n\nThe paper frames this as the missing fourth question in the Agent Skills literature: not only how to design, evaluate, and secure skills, but how to *record what a skill did*.\n\n## Methodology grounding\nThe claims below live in the plugin's `data/methodology/` corpus; the relationship is stated per claim.\n\n- **[[agents are simultaneously methodology executors and subjects creating a unique trust asymmetry]]** \u2014 BUILDS_ON. Provenance blindness is obliviousness seen from the outside: the methodology claim borrows Kiczales' term for base code that cannot observe the aspects modifying it, and a tool call is exactly a transformation whose provenance the calling agent cannot see.\n- **[[prospective memory requires externalization]]** \u2014 RELATES_TO. A tool call leaves nothing for a later session to read, so any obligation it created is lost at the session boundary \u2014 the failure mode that claim generalises.\n",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "CONCEPT",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "knowledge-agent",
+    "createdAt": "2026-08-16T20:32:31.340Z",
+    "sessionId": null,
+    "updatedAt": "2026-09-03T10:03:30.116Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Tool-call logs record arguments and returns but not which skill wrote which artifact fragment, so evaluation and audit collapse.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "c8618f15-6053-40b2-b7bc-27e35839b326",
+      "actor": "knowledge-agent",
+      "comment": "pipeline extract",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-16T20:32:32.202Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "862f12f4-8ee3-4377-b787-07cb9305b9d8",
+      "actor": "pipeline-reviewer",
+      "comment": "pipeline verify",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-16T20:32:32.344Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

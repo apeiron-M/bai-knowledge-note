@@ -102,15 +102,20 @@ def build_actions(
             if drop_unmapped:
                 continue
             target_new = target_old
-        crossref.append({
-            "type": "ADD_RELATIONSHIP",
-            "scope": "document",
-            "input": {
-                # sourceId injected by upload.py phase 4
-                "targetId": target_new,
-                "relationshipType": ln.get("linkType") or "RELATES_TO",
-            },
-        })
+        inp: dict = {
+            # sourceId injected by upload.py phase 4
+            "targetId": target_new,
+            "relationshipType": ln.get("linkType") or "RELATES_TO",
+        }
+        # An edge's reason and confidence live in relationship metadata (that is
+        # what `switchboard docs link --reason` writes). The native
+        # `addRelationship` GraphQL mutation has no metadata argument, so phase 4
+        # dispatches an entry that carries metadata as an ADD_RELATIONSHIP action
+        # instead — otherwise a restore silently drops every articulated edge.
+        metadata = {k: ln[k] for k in ("reason", "confidence") if ln.get(k)}
+        if metadata:
+            inp["metadata"] = metadata
+        crossref.append({"type": "ADD_RELATIONSHIP", "scope": "document", "input": inp})
 
     return scalar, crossref
 

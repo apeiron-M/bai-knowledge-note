@@ -1,0 +1,115 @@
+{
+  "links": [
+    {
+      "id": "lnk-00ddfd71-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "00ddfd71-c020-4f53-b64b-b8ff67ee7070",
+      "targetTitle": "editors-use-component-based-architecture"
+    },
+    {
+      "id": "lnk-307601bd-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "307601bd-2919-4e27-9a76-97281d276518",
+      "targetTitle": "apps-use-useselecteddrive-to-access-drive-state-and-filter-nodes"
+    },
+    {
+      "id": "lnk-68fe4e47-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "68fe4e47-7ca5-45f2-8d9e-5f862682eadc",
+      "targetTitle": "always-check-document-model-schema-before-calling-addactions"
+    },
+    {
+      "id": "lnk-582a19d0-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "582a19d0-456f-427c-a04a-ffb5992145de",
+      "targetTitle": "bee-node-prerequisites-and-dev-mode"
+    },
+    {
+      "id": "lnk-0d96b03f-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "0d96b03f-d5db-4c76-b0bb-549f48d232d6",
+      "targetTitle": "Academy \u203a Build \u203a BuildingUserExperiences \u203a Build document editors",
+      "reason": "Backing page found by content match in the v6.2.2-dev.74 source backfill \u2014 identifiers drilling from the claim appear in this page (text identical at v6.2.2-dev.47 and v6.2.2-dev.74); attribution, not the original extraction record",
+      "confidence": "grounded"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Powerhouse editors use generated React hooks as the recommended pattern for accessing document state and dispatching actions",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "18189490-2e1c-4968-949d-f23174f65b12",
+      "name": "editors",
+      "topicDocumentId": null
+    },
+    {
+      "id": "e93a21b4-6dda-4d39-a0ba-53b38dac3518",
+      "name": "react",
+      "topicDocumentId": null
+    },
+    {
+      "id": "e335af16-0778-49cd-a49d-b73429e661a1",
+      "name": "state-management",
+      "topicDocumentId": null
+    },
+    {
+      "id": "68ec7f35-dd22-41a9-9ced-1038a06e207f",
+      "name": "hooks",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "Each document model gets a generated hook like `useSelectedTodoListDocument()` that returns `[document, dispatch]`. This is the recommended approach over the props-based `EditorProps<T>` pattern because it makes components self-contained, eliminates prop drilling, and follows modern React conventions. The props approach (`document` and `dispatch` passed from parent) is reserved for reusable UI components that should work outside the Powerhouse context or for testing with mock state. Action creators are imported from the generated document model package and passed to `dispatch()`.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": "v6.2.2-dev.74",
+  "computes": null,
+  "filePath": "apps/academy/docs/academy/03-Build/03-BuildingUserExperiences/01-BuildingDocumentEditors.md",
+  "noteType": "PATTERN",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "knowledge-agent",
+    "createdAt": "2026-04-02T12:00:00.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-09-03T11:40:30.734Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "useSelectedXDocument hook returns [document, dispatch] and is preferred over prop-drilling for editor components.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "72cbea29-46a7-42a4-bed0-535c6a311ace",
+      "actor": "claude",
+      "comment": "Knowledge registered against powerhouse v6.2.2-dev.47",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-14T12:00:00.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "a4bdbcae-5fd7-4626-b54c-fbf7cd08ef9f",
+      "actor": "liberuum",
+      "comment": "Canonical as of powerhouse v6.2.2-dev.47",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-14T12:00:00.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

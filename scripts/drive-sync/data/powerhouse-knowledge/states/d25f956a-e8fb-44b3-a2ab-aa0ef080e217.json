@@ -1,0 +1,101 @@
+{
+  "links": [
+    {
+      "id": "lnk-2fe08037-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "2fe08037-fc17-4fec-97f0-ac7d33baafc8",
+      "targetTitle": "gsoc-provides-many-to-one-notifications-with-sub-second-late"
+    },
+    {
+      "id": "lnk-650ecf22-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "650ecf22-c9ae-48a9-a02b-7aa78f21ac7c",
+      "targetTitle": "swarm-gsoc-many-to-one"
+    },
+    {
+      "id": "lnk-a768272f-bui",
+      "linkType": "BUILDS_ON",
+      "targetDocumentId": "a768272f-b90f-47a7-9cc6-8d1da7512f6a",
+      "targetTitle": "swarm-chunks-4kb-content-addressing"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Swarm uses Kademlia proximity order routing with 4+ redundant copies per neighborhood",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "2b0a5b20-c447-4702-8fbd-ea0501d8bacd",
+      "name": "swarm",
+      "topicDocumentId": null
+    },
+    {
+      "id": "d94912e9-e369-4292-ad4e-f3218a47ddd0",
+      "name": "kademlia",
+      "topicDocumentId": null
+    },
+    {
+      "id": "023074c8-572c-4932-a335-98eb88c0a46a",
+      "name": "topology",
+      "topicDocumentId": null
+    },
+    {
+      "id": "79eea7e3-04b2-40c4-a653-55697ca4329e",
+      "name": "redundancy",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "## Claim\n\nSwarm's data layer is a **Kademlia overlay** where chunks are stored by the nodes whose 256-bit overlay addresses share the highest Proximity Order (PO) with the chunk address, with at least 4 replicas inside each responsible neighborhood.\n\n## Evidence\n\n- Each node has a 256-bit overlay address\n- **Proximity Order (PO)**: the number of leading bits two addresses share\n- Chunks are stored by the nodes with highest PO to the chunk address (the \"responsible neighborhood\")\n- **Push-sync** moves chunks from the uploader to the responsible neighborhood\n- **Pull-sync** replicates chunks within a neighborhood \u2014 ensures at least 4 copies\n- **Cross-neighborhood**: erasure coding (Reed-Solomon) distributes parity chunks across neighborhoods\n- **PSS-based recovery**: if a chunk is unavailable, a recovery protocol contacts known pinners who re-upload it\n\n### Offline behavior\n\n- Data uploaded to Swarm is held by the neighborhood, not just the uploading node \u2014 peers serve our data while we are offline\n- When the local node comes back, pull-sync catches up on missed chunks\n- **Stamps must still be valid** \u2014 expired stamps evict chunks from reserves to the cache, then LRU-evicted entirely\n\n## Why it matters\n\nExplains why the adapter's availability does not depend on our own Bee node staying online \u2014 as long as stamps are funded, the neighborhood replicates our data. It also frames why erasure coding is worth enabling for critical manifests.\n",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "REFERENCE",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "knowledge-agent",
+    "createdAt": "2026-04-21T14:24:54.753Z",
+    "sessionId": null,
+    "updatedAt": "2026-09-03T09:58:35.623Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Each node has a 256-bit overlay address; chunks stored by nodes with highest PO to the chunk address. Neighborhoods keep 4+ copies; erasure coding crosses neighborhoods.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "63235752-d379-4a6c-9bfb-936ab127ad67",
+      "actor": "claude",
+      "comment": "Knowledge registered against powerhouse v6.2.2-dev.47",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-14T12:00:00.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "c1acb705-0137-483d-9709-f9c73bf9a65c",
+      "actor": "liberuum",
+      "comment": "Canonical as of powerhouse v6.2.2-dev.47",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-14T12:00:00.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

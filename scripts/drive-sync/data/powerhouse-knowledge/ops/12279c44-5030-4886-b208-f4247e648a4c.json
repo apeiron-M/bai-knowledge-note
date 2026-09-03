@@ -1,0 +1,464 @@
+[
+  {
+    "index": 0,
+    "hash": "",
+    "timestampUtcMs": "2026-09-03T07:29:20.626Z",
+    "action": {
+      "type": "CREATE_DOCUMENT",
+      "input": {
+        "meta": {},
+        "name": "gql-codegen-untyped-sync-break",
+        "slug": "",
+        "model": "bai/knowledge-note",
+        "branch": "main",
+        "signing": {
+          "nonce": "",
+          "publicKey": {},
+          "signature": "12279c44-5030-4886-b208-f4247e648a4c",
+          "documentType": "bai/knowledge-note",
+          "createdAtUtcIso": "2026-09-03T07:29:20.626Z"
+        },
+        "version": 0,
+        "documentId": "12279c44-5030-4886-b208-f4247e648a4c",
+        "protocolVersions": {
+          "base-reducer": 2
+        }
+      },
+      "timestampUtcMs": "2026-09-03T07:29:20.626Z"
+    }
+  },
+  {
+    "index": 0,
+    "hash": "EzUhCj2FCRVSaUtGheHplzwzl9E=",
+    "timestampUtcMs": "2026-09-03T07:29:22.034Z",
+    "action": {
+      "type": "SET_TITLE",
+      "input": {
+        "title": "A missing actionId in one sync query compiled cleanly and produced undefined at runtime, which is the concrete break the GraphQL codegen spec exists to prevent",
+        "updatedAt": "2026-09-03T07:29:22.034Z"
+      },
+      "timestampUtcMs": "2026-09-03T07:29:22.034Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "",
+    "timestampUtcMs": "2026-09-03T07:29:20.626Z",
+    "action": {
+      "type": "UPGRADE_DOCUMENT",
+      "input": {
+        "model": "bai/knowledge-note",
+        "toVersion": 1,
+        "documentId": "12279c44-5030-4886-b208-f4247e648a4c",
+        "fromVersion": 0,
+        "initialState": {
+          "auth": {
+            "grants": [],
+            "version": 0
+          },
+          "local": {
+            "lastViewedAt": null,
+            "personalTags": []
+          },
+          "global": {
+            "links": [],
+            "model": null,
+            "scope": null,
+            "title": null,
+            "editor": null,
+            "inputs": [],
+            "models": [],
+            "status": "DRAFT",
+            "topics": [],
+            "content": null,
+            "context": null,
+            "modelId": null,
+            "modules": [],
+            "outputs": [],
+            "version": null,
+            "computes": null,
+            "filePath": null,
+            "noteType": null,
+            "severity": null,
+            "hooksUsed": [],
+            "rootCause": null,
+            "confidence": null,
+            "consumedBy": [],
+            "provenance": null,
+            "sourceType": null,
+            "targetType": null,
+            "cardinality": null,
+            "description": null,
+            "alternatives": [],
+            "consequences": [],
+            "errorMessage": null,
+            "relationType": null,
+            "correctPattern": null,
+            "decisionStatus": null,
+            "dispatchTargets": [],
+            "lifecycleEvents": []
+          },
+          "document": {
+            "hash": {
+              "encoding": "base64",
+              "algorithm": "sha1"
+            },
+            "version": 1
+          }
+        }
+      },
+      "timestampUtcMs": "2026-09-03T07:29:20.626Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "rkbPinMRMMKJ0mMKj3Ow31BYFxA=",
+    "timestampUtcMs": "2026-09-03T07:29:22.034Z",
+    "action": {
+      "type": "SET_DESCRIPTION",
+      "input": {
+        "updatedAt": "2026-09-03T07:29:22.034Z",
+        "description": "The PullResponder query omitted actionId though Operation.action.id requires it, and a DriveSubgraph resolver spread GraphQL fields into the domain shape, putting type at the wrong level."
+      },
+      "timestampUtcMs": "2026-09-03T07:29:22.034Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "",
+    "timestampUtcMs": "2026-09-03T07:30:24.503Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "metadata": {
+          "reason": "Extracted from docs/specs/gql-gen.md at v6.2.2-dev.74 \u2014 Concrete Break Example: Sync Path",
+          "confidence": "grounded"
+        },
+        "sourceId": "12279c44-5030-4886-b208-f4247e648a4c",
+        "targetId": "cf6d15b1-ad92-4544-b28e-2ba6c6911f60",
+        "relationshipType": "DERIVED_FROM"
+      },
+      "timestampUtcMs": "2026-09-03T07:30:24.503Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "wROu7AaW+tRMCA1s7a+hrKahOw0=",
+    "timestampUtcMs": "2026-09-03T07:29:22.034Z",
+    "action": {
+      "type": "SET_NOTE_TYPE",
+      "input": {
+        "noteType": "BUG-PATTERN",
+        "updatedAt": "2026-09-03T07:29:22.034Z"
+      },
+      "timestampUtcMs": "2026-09-03T07:29:22.034Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "",
+    "timestampUtcMs": "2026-09-03T07:30:24.969Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "metadata": {
+          "reason": "This is the break the chosen codegen and validation stack is meant to make impossible",
+          "confidence": "grounded"
+        },
+        "sourceId": "12279c44-5030-4886-b208-f4247e648a4c",
+        "targetId": "3af2c642-615b-46b3-bb7d-e357610ea859",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-09-03T07:30:24.969Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "h4IR0vB682HiAHtYGUIx8qLN1Xg=",
+    "timestampUtcMs": "2026-09-03T07:29:22.034Z",
+    "action": {
+      "type": "SET_CONTENT",
+      "input": {
+        "content": "The spec opens with the failure that motivated it, and the failure is worth keeping on its own.\n\nMapping between GraphQL payloads and the domain `Operation` was manual and done in **several places**, so it drifted:\n\n- the **PullResponder query omitted `actionId`**, yet the domain `Operation.action.id` requires it \u2014 this compiled and produced `undefined` at runtime;\n- in the **DriveSubgraph resolver**, GraphQL op fields were spread into the domain `Operation`, which put `type` at the operation root and duplicated `scope` / `branch` at the wrong level instead of nesting them under `action`.\n\nWhy the tests did not catch it is the more transferable part:\n\n1. the GraphQL query and mutation **strings were not type-checked against the schema** \u2014 there was no codegen;\n2. there was **no runtime decoding or validation** at the boundaries;\n3. the unit tests **did not assert on the exact DTO\u2194domain mapping**, nor on required fields like `actionId`.\n\nAny hand-written GraphQL string in this codebase is exposed to all three, which is the argument for generated documents and a validating decode step rather than for more careful review.\n\n## Provenance\n- `docs/specs/gql-gen.md` \u2014 Concrete Break Example: Sync Path\n\n_Extracted from the Powerhouse repository at **v6.2.2-dev.74**._",
+        "updatedAt": "2026-09-03T07:29:22.034Z"
+      },
+      "timestampUtcMs": "2026-09-03T07:29:22.034Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "",
+    "timestampUtcMs": "2026-09-03T07:30:25.422Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "metadata": {
+          "reason": "Every package's subgraph is composed into one endpoint, so a hand-mapped resolver in any of them can drift from the domain shape the same way",
+          "confidence": "established"
+        },
+        "sourceId": "12279c44-5030-4886-b208-f4247e648a4c",
+        "targetId": "27438cd8-5fb0-4ed7-bcbe-665beef8a259",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-09-03T07:30:25.422Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "IyIJNimBUxZ1IE9jUpdsSbCsu8E=",
+    "timestampUtcMs": "2026-09-03T07:29:22.034Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "a328547d-1cc5-41fa-abe5-b9bbae4bfdfa",
+        "name": "graphql"
+      },
+      "timestampUtcMs": "2026-09-03T07:29:22.034Z"
+    }
+  },
+  {
+    "index": 5,
+    "hash": "",
+    "timestampUtcMs": "2026-09-03T07:31:31.727Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "metadata": {
+          "reason": "Extracted from docs/specs/gql-gen.md at v6.2.2-dev.74 \u2014 Concrete Break Example: Sync Path",
+          "confidence": "grounded"
+        },
+        "sourceId": "12279c44-5030-4886-b208-f4247e648a4c",
+        "targetId": "cf6d15b1-ad92-4544-b28e-2ba6c6911f60",
+        "relationshipType": "DERIVED_FROM"
+      },
+      "timestampUtcMs": "2026-09-03T07:31:31.727Z"
+    }
+  },
+  {
+    "index": 5,
+    "hash": "QhUhjxn/RGrgvs56GQAyikkHm64=",
+    "timestampUtcMs": "2026-09-03T07:29:22.034Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "4062be0d-9cc4-42f1-b3a1-3ba7a71bdf16",
+        "name": "codegen"
+      },
+      "timestampUtcMs": "2026-09-03T07:29:22.034Z"
+    }
+  },
+  {
+    "index": 6,
+    "hash": "",
+    "timestampUtcMs": "2026-09-03T07:31:32.191Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "metadata": {
+          "reason": "This is the break the chosen codegen and validation stack is meant to make impossible",
+          "confidence": "grounded"
+        },
+        "sourceId": "12279c44-5030-4886-b208-f4247e648a4c",
+        "targetId": "3af2c642-615b-46b3-bb7d-e357610ea859",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-09-03T07:31:32.191Z"
+    }
+  },
+  {
+    "index": 6,
+    "hash": "X4M86U9px+Y6QwnklMmtOYJ/U+c=",
+    "timestampUtcMs": "2026-09-03T07:29:22.034Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "9608ac08-a300-4ca8-9a1c-22abfd3080a6",
+        "name": "sync"
+      },
+      "timestampUtcMs": "2026-09-03T07:29:22.034Z"
+    }
+  },
+  {
+    "index": 7,
+    "hash": "",
+    "timestampUtcMs": "2026-09-03T07:31:32.670Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "metadata": {
+          "reason": "Every package's subgraph is composed into one endpoint, so a hand-mapped resolver in any of them can drift from the domain shape the same way",
+          "confidence": "established"
+        },
+        "sourceId": "12279c44-5030-4886-b208-f4247e648a4c",
+        "targetId": "27438cd8-5fb0-4ed7-bcbe-665beef8a259",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-09-03T07:31:32.670Z"
+    }
+  },
+  {
+    "index": 7,
+    "hash": "wpFdCEMnP8tvnSdY9XaOWW+kVSw=",
+    "timestampUtcMs": "2026-09-03T07:29:22.034Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "94a0ce57-fdeb-4a80-bb2f-f8a5349fa228",
+        "name": "gotchas"
+      },
+      "timestampUtcMs": "2026-09-03T07:29:22.034Z"
+    }
+  },
+  {
+    "index": 8,
+    "hash": "CZ8SmHxIKZQU5bHqbfwxSKThxdg=",
+    "timestampUtcMs": "2026-09-03T07:29:22.034Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "version",
+        "value": "v6.2.2-dev.74",
+        "updatedAt": "2026-09-03T07:29:22.034Z"
+      },
+      "timestampUtcMs": "2026-09-03T07:29:22.034Z"
+    }
+  },
+  {
+    "index": 9,
+    "hash": "rWizaHQtWdLl1Vj+tjjIVKfZJic=",
+    "timestampUtcMs": "2026-09-03T07:29:22.034Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "filePath",
+        "value": "docs/specs/gql-gen.md",
+        "updatedAt": "2026-09-03T07:29:22.034Z"
+      },
+      "timestampUtcMs": "2026-09-03T07:29:22.034Z"
+    }
+  },
+  {
+    "index": 10,
+    "hash": "Cs3T37OzHCFo2yZVX2X9cgUyhck=",
+    "timestampUtcMs": "2026-09-03T07:29:24.364Z",
+    "action": {
+      "type": "SET_PROVENANCE",
+      "input": {
+        "author": "knowledge-agent",
+        "createdAt": "2026-09-03T07:29:24.364Z",
+        "sourceOrigin": "DERIVED"
+      },
+      "timestampUtcMs": "2026-09-03T07:29:24.364Z"
+    }
+  },
+  {
+    "index": 11,
+    "hash": "wLri2UEIzX1qxT8WCnI2pRHPg8g=",
+    "timestampUtcMs": "2026-09-03T07:29:24.865Z",
+    "action": {
+      "type": "SUBMIT_FOR_REVIEW",
+      "input": {
+        "id": "2284dd84-5faa-4e2f-8668-983be42576ed",
+        "actor": "knowledge-agent",
+        "comment": "extracted from docs/specs/gql-gen.md at v6.2.2-dev.74",
+        "timestamp": "2026-09-03T07:29:24.864Z"
+      },
+      "timestampUtcMs": "2026-09-03T07:29:24.865Z"
+    }
+  },
+  {
+    "index": 12,
+    "hash": "ZEXRRL7WGmnuQooZeKFLBnRpkQ4=",
+    "timestampUtcMs": "2026-09-03T07:29:25.356Z",
+    "action": {
+      "type": "APPROVE_NOTE",
+      "input": {
+        "id": "b3d41789-8b64-4852-8bfc-ec3b2ea1d6fd",
+        "actor": "liberuum",
+        "comment": "claim checked against the cited file at the pinned tag",
+        "timestamp": "2026-09-03T07:29:25.356Z"
+      },
+      "timestampUtcMs": "2026-09-03T07:29:25.356Z"
+    }
+  },
+  {
+    "index": 13,
+    "hash": "G+eaZqLPqxu3hgD7PVF3ZLF+4nY=",
+    "timestampUtcMs": "2026-09-03T07:31:11.872Z",
+    "action": {
+      "type": "SET_TITLE",
+      "input": {
+        "title": "A missing actionId in one sync query compiled cleanly and produced undefined at runtime, which is the concrete break the GraphQL codegen spec exists to prevent",
+        "updatedAt": "2026-09-03T07:31:11.872Z"
+      },
+      "timestampUtcMs": "2026-09-03T07:31:11.872Z"
+    }
+  },
+  {
+    "index": 14,
+    "hash": "G+eaZqLPqxu3hgD7PVF3ZLF+4nY=",
+    "timestampUtcMs": "2026-09-03T07:31:11.872Z",
+    "action": {
+      "type": "SET_DESCRIPTION",
+      "input": {
+        "updatedAt": "2026-09-03T07:31:11.872Z",
+        "description": "The PullResponder query omitted actionId though Operation.action.id requires it, and a DriveSubgraph resolver spread GraphQL fields into the domain shape, putting type at the wrong level."
+      },
+      "timestampUtcMs": "2026-09-03T07:31:11.872Z"
+    }
+  },
+  {
+    "index": 15,
+    "hash": "G+eaZqLPqxu3hgD7PVF3ZLF+4nY=",
+    "timestampUtcMs": "2026-09-03T07:31:11.872Z",
+    "action": {
+      "type": "SET_NOTE_TYPE",
+      "input": {
+        "noteType": "BUG-PATTERN",
+        "updatedAt": "2026-09-03T07:31:11.872Z"
+      },
+      "timestampUtcMs": "2026-09-03T07:31:11.872Z"
+    }
+  },
+  {
+    "index": 16,
+    "hash": "G+eaZqLPqxu3hgD7PVF3ZLF+4nY=",
+    "timestampUtcMs": "2026-09-03T07:31:11.872Z",
+    "action": {
+      "type": "SET_CONTENT",
+      "input": {
+        "content": "The spec opens with the failure that motivated it, and the failure is worth keeping on its own.\n\nMapping between GraphQL payloads and the domain `Operation` was manual and done in **several places**, so it drifted:\n\n- the **PullResponder query omitted `actionId`**, yet the domain `Operation.action.id` requires it \u2014 this compiled and produced `undefined` at runtime;\n- in the **DriveSubgraph resolver**, GraphQL op fields were spread into the domain `Operation`, which put `type` at the operation root and duplicated `scope` / `branch` at the wrong level instead of nesting them under `action`.\n\nWhy the tests did not catch it is the more transferable part:\n\n1. the GraphQL query and mutation **strings were not type-checked against the schema** \u2014 there was no codegen;\n2. there was **no runtime decoding or validation** at the boundaries;\n3. the unit tests **did not assert on the exact DTO\u2194domain mapping**, nor on required fields like `actionId`.\n\nAny hand-written GraphQL string in this codebase is exposed to all three, which is the argument for generated documents and a validating decode step rather than for more careful review.\n\n## Provenance\n- `docs/specs/gql-gen.md` \u2014 Concrete Break Example: Sync Path\n\n_Extracted from the Powerhouse repository at **v6.2.2-dev.74**._",
+        "updatedAt": "2026-09-03T07:31:11.872Z"
+      },
+      "timestampUtcMs": "2026-09-03T07:31:11.872Z"
+    }
+  },
+  {
+    "index": 17,
+    "hash": "G+eaZqLPqxu3hgD7PVF3ZLF+4nY=",
+    "timestampUtcMs": "2026-09-03T07:31:11.872Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "version",
+        "value": "v6.2.2-dev.74",
+        "updatedAt": "2026-09-03T07:31:11.872Z"
+      },
+      "timestampUtcMs": "2026-09-03T07:31:11.872Z"
+    }
+  },
+  {
+    "index": 18,
+    "hash": "G+eaZqLPqxu3hgD7PVF3ZLF+4nY=",
+    "timestampUtcMs": "2026-09-03T07:31:11.872Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "filePath",
+        "value": "docs/specs/gql-gen.md",
+        "updatedAt": "2026-09-03T07:31:11.872Z"
+      },
+      "timestampUtcMs": "2026-09-03T07:31:11.872Z"
+    }
+  }
+]

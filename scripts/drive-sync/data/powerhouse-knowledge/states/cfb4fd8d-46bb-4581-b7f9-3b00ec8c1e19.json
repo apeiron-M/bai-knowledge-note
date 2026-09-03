@@ -1,0 +1,93 @@
+{
+  "links": [
+    {
+      "id": "lnk-d3af066b-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "d3af066b-b7a2-4f2f-8161-9e1d7ad2e370",
+      "targetTitle": "paperless-ngx-pushes-document-events-so-integrations-need-no-polling"
+    },
+    {
+      "id": "lnk-0b3e1672-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "0b3e1672-24bb-45a0-bd5e-078c3e482dc7",
+      "targetTitle": "idempotent-ingestion-checkpoint-lives-in-document-state"
+    },
+    {
+      "id": "lnk-eeefd83b-bui",
+      "linkType": "BUILDS_ON",
+      "targetDocumentId": "eeefd83b-466d-4f35-a5b3-3bdb74b8fcef",
+      "targetTitle": "semantic-search-pglite-vector-content-hash-skip"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Content-hash gating avoids paying for redundant AI extraction",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "IN_REVIEW",
+  "topics": [
+    {
+      "id": "3236a436-b799-4af5-8599-64a68a2c8ff2",
+      "name": "idempotency",
+      "topicDocumentId": null
+    },
+    {
+      "id": "277a7ee3-f246-432e-b28a-9ba1326baedf",
+      "name": "processors",
+      "topicDocumentId": null
+    },
+    {
+      "id": "beeef469-8a6e-45ca-aa7b-e9ba2581566c",
+      "name": "ai-integration",
+      "topicDocumentId": null
+    },
+    {
+      "id": "7373bea1-13de-4578-bb2c-def254c5b2b5",
+      "name": "paperless",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "In a document-sync pipeline the expensive step is the model call: extracting structured fields from OCR text costs real money per document, and unlike the rest of the pipeline that cost does not amortise.\n\nThe trap is that \"document updated\" from a source system does not mean \"the document's content changed\". In Paperless-ngx, a Document Updated event fires when someone adds a tag, renames the document, changes its correspondent or moves its storage location. None of those change a single character of the OCR text the extractor reads. A pipeline that reacts to the event by re-extracting pays the full model cost for an input it has already processed, and \u2014 because model output is not deterministic \u2014 may also produce a slightly different answer, generating a spurious update downstream.\n\nThe fix is to hash the extractor's actual input, not the event: store the hash of the OCR text alongside the extraction result, and on each event compare the incoming text's hash against the stored one. Equal hash means the extractor's input is unchanged, so the previous result still stands and the model call is skipped entirely. Metadata-only edits \u2014 which are the majority of update events in a system where humans curate tags \u2014 then cost nothing.\n\nNote what the hash is taken over: it must cover exactly the bytes fed to the model. Hashing a whole API payload would include the metadata that just changed and defeat the purpose; hashing a document ID or modification timestamp would never match. The gate works only when its key is the extractor's input.\n\n## Connections\n\n- **BUILDS_ON [[Semantic search over documents runs on PGlite's vector extension with content-hash re-embed skipping]]** \u2014 that note establishes content-hash skipping for embedding; this one carries the same mechanism to LLM extraction, where the skipped operation costs money per call and returns non-deterministic output, so the gate buys more than a saved cycle.\n- **RELATES_TO [[Paperless-ngx can push document events to external systems, so integrations do not need polling]]** \u2014 the Document Updated trigger described there is exactly what produces the redundant events this gate absorbs; adopting push is what makes the gate necessary.\n- **RELATES_TO [[Idempotent external ingestion stores the dedup set and the watermark in document state, not in worker memory]]** \u2014 the stored hash is the same kind of durable comparison key, and it must survive a worker restart for the same reason.\n\n## Methodology grounding\n\nThis is compare-before-acting from [[idempotent maintenance operations are safe to automate because running them twice produces the same result as running them once]], with a specific reason for wanting it: the operation being made repeat-safe is expensive and non-deterministic, so the cost of running it twice is both a bill and a spurious diff, not merely a wasted cycle.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "PATTERN",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "knowledge-agent",
+    "createdAt": "2026-08-21T15:40:00.000Z",
+    "sessionId": "paperless-eng-2026-08-21",
+    "updatedAt": "2026-08-21T15:55:00.000Z",
+    "sourceOrigin": "SESSION_MINE"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Source systems fire document-updated events for metadata-only changes like tags and titles, so hashing the OCR text and skipping extraction when it is unchanged removes most repeat LLM cost.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "9f39f91e-653a-4928-85cc-aff72cc4bdad",
+      "actor": "knowledge-agent",
+      "comment": "Extracted from the 21 Aug 2026 Paperless x Powerhouse working session; each claim was observed in working code or against the live Paperless-ngx 3.0.5 instance. Needs a second actor to approve - the authoring agent cannot legitimately be its own reviewer.",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-21T15:55:00.000Z",
+      "fromStatus": "DRAFT"
+    }
+  ]
+}

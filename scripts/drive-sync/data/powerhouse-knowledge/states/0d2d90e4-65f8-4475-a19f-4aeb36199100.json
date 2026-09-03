@@ -1,0 +1,101 @@
+{
+  "links": [
+    {
+      "id": "lnk-a482a12f-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "a482a12f-0a31-4018-8be2-bed2e27d7e1f",
+      "targetTitle": "operation-design-uses-descriptive-names-and-includes-examples-and-errors"
+    },
+    {
+      "id": "lnk-4e6413ee-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "4e6413ee-22bf-4d64-964f-ca8b28917cec",
+      "targetTitle": "present-document-model-proposals-to-user-before-implementing"
+    },
+    {
+      "id": "lnk-eb3ddfcc-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "eb3ddfcc-c606-4705-b9c9-42f5e26e2384",
+      "targetTitle": "act-sharing-ecdh-publisher-grantee"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "one operation per user intent keeps concerns separated",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "7dc60f18-a4b5-48c1-891b-2e06177d973b",
+      "name": "reducer patterns",
+      "topicDocumentId": null
+    },
+    {
+      "id": "84a8b562-90ab-4783-ae24-3f02ddc68fb8",
+      "name": "schema design",
+      "topicDocumentId": null
+    },
+    {
+      "id": "a0244260-26d6-40cb-9f6f-58649d03ae3b",
+      "name": "operation design",
+      "topicDocumentId": null
+    },
+    {
+      "id": "8151ad1a-a41a-4c4d-8597-904a6c1780bc",
+      "name": "separation of concerns",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "# one operation per user intent keeps concerns separated\n\nEach operation should correspond to a single user action. This keeps operations atomic, testable, and replayable:\n\n```\n\u2705 ADD_LINE_ITEM \u2014 adds one line item\n\u2705 UPDATE_RECIPIENT \u2014 changes the recipient\n\u2705 SET_DUE_DATE \u2014 sets the due date\n\n\u274c UPDATE_INVOICE \u2014 changes recipient, adds items, and sets date in one operation\n```\n\nDescriptive operation names (e.g., `ADD_LINE_ITEM`, `UPDATE_RECIPIENT`) communicate intent better than generic names (e.g., `UPDATE_DATA`).\n\nSince [[operation design uses descriptive names and includes examples and errors]], each operation should also define error types and include examples in the document model.\n\n---\n\nTopics:\n- [[reducer patterns]]\n- [[schema design]]",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "PATTERN",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "knowledge-agent",
+    "createdAt": "2026-04-03T14:00:02.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-09-03T09:58:46.364Z",
+    "sourceOrigin": "IMPORT"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Operations should map to distinct user actions like ADD_LINE_ITEM rather than batching multiple intents into one operation",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "e01188a3-686b-4f36-85df-11d6793bede1",
+      "actor": "claude",
+      "comment": "Knowledge registered against powerhouse v6.2.2-dev.47",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-14T12:00:00.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "780e4a26-636d-462f-ac6e-a79fb48b0758",
+      "actor": "liberuum",
+      "comment": "Canonical as of powerhouse v6.2.2-dev.47",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-14T12:00:00.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

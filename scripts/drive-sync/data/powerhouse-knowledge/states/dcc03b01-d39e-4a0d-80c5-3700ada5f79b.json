@@ -1,0 +1,115 @@
+{
+  "links": [
+    {
+      "id": "lnk-2f407e6a-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "2f407e6a-97fd-44d0-a80a-b03cbe750cbc",
+      "targetTitle": "Package \u203a reactor-browser \u203a document-cache \u2014 Document Cache",
+      "reason": "Extracted from packages/reactor-browser/docs/document-cache.md at v6.2.2-dev.74 \u2014 Architecture Overview; Core Components \u203a DocumentCache Class and Internal State",
+      "confidence": "grounded"
+    },
+    {
+      "id": "lnk-1a932db8-bui",
+      "linkType": "BUILDS_ON",
+      "targetDocumentId": "1a932db8-245d-40f6-bfd8-eea728d9615e",
+      "targetTitle": "reactor-browser-hooks-provide-document-state",
+      "reason": "The hooks that note describes all read through this cache, which is what makes their data derive from the reactor rather than from component state",
+      "confidence": "grounded"
+    },
+    {
+      "id": "lnk-150f7dd7-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "150f7dd7-3669-41d0-8472-ee0f51f40634",
+      "targetTitle": "lazy-sync-six-state-status",
+      "reason": "The never-cache-a-not-yet-rejection rule in the lazy-sync ADR is a rule about this promise map",
+      "confidence": "grounded"
+    },
+    {
+      "id": "lnk-bc541b8a-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "bc541b8a-1284-4f85-96ac-216753565cb1",
+      "targetTitle": "browser-client-provider-seam",
+      "reason": "The cache constructor was retyped to the read subset of the client interface, so it works under either implementation",
+      "confidence": "grounded"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "The document cache keeps three maps \u2014 document promises, batch promises and listeners \u2014 so useDocuments returns a stable reference and Suspense does not thrash",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "7b219247-48a2-47ae-8d86-e08f236044e0",
+      "name": "reactor-browser",
+      "topicDocumentId": null
+    },
+    {
+      "id": "ea076791-16dc-4659-b1fa-d0deb3b3f1d3",
+      "name": "document-cache",
+      "topicDocumentId": null
+    },
+    {
+      "id": "ac533317-4613-42e1-aa60-85bc74e42dfc",
+      "name": "react",
+      "topicDocumentId": null
+    },
+    {
+      "id": "87ff5ce0-e7bb-48ea-88de-b8005e899881",
+      "name": "suspense",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "`DocumentCache` (`src/document-cache.ts`, implementing `IDocumentCache`) is the layer between React components and the reactor, and its internal state explains its behaviour:\n\n```ts\nprivate documents = new Map<string, Promise<PHDocument>>();\nprivate batchPromises = new Map<string, {\n  promises: Promise<PHDocument>[];\n  promise: Promise<PHDocument[]>;\n}>();\nprivate listeners = new Map<string, (() => void)[]>();\n```\n\nThree responsibilities, one per map. **Document promise caching** stores the *promise* rather than the resolved document, which is what deduplicates concurrent fetches for the same id \u2014 two components asking at once share one round trip. **Batch promise caching** keeps a stable object for `useDocuments`, which matters because a new array identity on every render would re-suspend the component forever. **Subscription management** tracks listeners per document, and the cache subscribes to reactor events so cached data updates automatically rather than on a poll.\n\nCaching promises is also what makes React Suspense integration work at all: a hook throws the pending promise, React re-renders on resolution, and the second render finds the settled promise in the same map. It is the reason a \"not-yet\" rejection must never be cached \u2014 a rejected promise in that map poisons every later render of the same id.\n\n## Provenance\n- `packages/reactor-browser/docs/document-cache.md` \u2014 Architecture Overview; Core Components \u203a DocumentCache Class and Internal State\n\n_Extracted from the Powerhouse repository at **v6.2.2-dev.74**._",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": "v6.2.2-dev.74",
+  "computes": null,
+  "filePath": "packages/reactor-browser/docs/document-cache.md",
+  "noteType": "ARCHITECTURE",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "knowledge-agent",
+    "createdAt": "2026-09-03T07:38:27.682Z",
+    "sessionId": null,
+    "updatedAt": "2026-09-03T07:38:28.727Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "It sits between React components and the reactor, caching promises rather than values so a duplicate fetch is deduplicated, subscribing to reactor events for automatic updates.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "3b9c3baf-eb14-454e-9422-e1766ee78e29",
+      "actor": "knowledge-agent",
+      "comment": "extracted from packages/reactor-browser/docs/document-cache.md at v6.2.2-dev.74",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-09-03T07:38:28.229Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "fe655647-7a40-4532-8ce8-1d65133ed7b8",
+      "actor": "liberuum",
+      "comment": "claim checked against the cited file at the pinned tag",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-09-03T07:38:28.727Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

@@ -1,0 +1,145 @@
+[
+  {
+    "index": 0,
+    "hash": "",
+    "timestampUtcMs": "2026-09-02T21:44:15.622Z",
+    "action": {
+      "type": "CREATE_DOCUMENT",
+      "input": {
+        "meta": {},
+        "name": "Package \u203a reactor-api \u203a ARCHITECTURE \u2014 HTTP & Gateway Abstraction",
+        "slug": "",
+        "model": "bai/source",
+        "branch": "main",
+        "signing": {
+          "nonce": "",
+          "publicKey": {},
+          "signature": "2e37783f-f7f2-4276-8860-38855654a0d2",
+          "documentType": "bai/source",
+          "createdAtUtcIso": "2026-09-02T21:44:15.622Z"
+        },
+        "version": 0,
+        "documentId": "2e37783f-f7f2-4276-8860-38855654a0d2",
+        "protocolVersions": {
+          "base-reducer": 2
+        }
+      },
+      "timestampUtcMs": "2026-09-02T21:44:15.622Z"
+    }
+  },
+  {
+    "index": 0,
+    "hash": "9kI8xtvWh9Bt01PeSkbQpdUolhU=",
+    "timestampUtcMs": "2026-09-02T21:44:15.575Z",
+    "action": {
+      "type": "INGEST_SOURCE",
+      "input": {
+        "url": "https://github.com/powerhouse-inc/powerhouse/blob/v6.2.2-dev.74/packages/reactor-api/ARCHITECTURE.md",
+        "tool": "sync-repo-docs",
+        "title": "Package \u203a reactor-api \u203a ARCHITECTURE \u2014 HTTP & Gateway Abstraction",
+        "author": "Powerhouse Inc.",
+        "method": "sha256:e4183dd4b5a2c6b60d23dd6c0b3672e5cd8ae41605eb442479520b58927ea594 git:v6.2.2-dev.74",
+        "content": "# HTTP & Gateway Abstraction\n\n`reactor-api` separates GraphQL and HTTP concerns into two independent interfaces,\n`IGatewayAdapter` and `IHttpAdapter`, with authentication threaded between them\nusing the Fetch API `Request` object as a shared key. This makes it possible to\nswap the underlying HTTP framework (currently Express) or GraphQL execution engine\n(currently Apollo) without touching application logic.\n\n---\n\n## Interfaces\n\n### `IHttpAdapter`: HTTP transport\n\nOwns everything related to the underlying HTTP server: binding ports, registering\nroutes, and bridging framework-native request/response objects into the Fetch API\ntypes that the rest of the system speaks.\n\n```\nsrc/graphql/gateway/types.ts\n```\n\n| Method                           | Purpose                                                                                                                                                                                                                       |\n| -------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |\n| `setupMiddleware(config)`        | Install CORS and body-parser. Called once during init.                                                                                                                                                                        |\n| `mount(path, handler, opts?)`    | Register a `FetchHandler` at a path. `exact: false` (default) is an exact-path match stored in an internal dispatch map; `exact: true` is a prefix match (router `.use()` semantics).                                         |\n| `getRoute(path, handler)`        | Register a read-only GET route directly on the underlying app (used for `/health`, `/explorer`).                                                                                                                              |\n| `mountRawMiddleware(middleware)` | Mount a raw Connect/Express-compatible middleware function (e.g. the Vite dev server). The cast to the framework's native type is contained inside the adapter implementation; call sites need no framework-specific imports. |\n| `listen(port, tls?)`             | Start the HTTP server. Returns the `http.Server` so callers can attach WebSocket servers. Supports three TLS modes: `true` (devcert), `{ keyPath, certPath }` (files), `{ cert, key }` (in-memory buffers).                   |\n| `handle`                         | Read-only escape hatch returning the raw framework object (e.g. the Express `app`). Use only for integrations that have no framework-agnostic equivalent yet (e.g. Express-specific SSE handlers with a path argument).       |\n\n### `IGatewayAdapter<TContext>`: GraphQL execution\n\nHandles GraphQL-specific concerns: compiling schemas into request handlers,\ncomposing a federation supergraph, and attaching WebSocket subscription support.\n\n```\nsrc/graphql/gateway/types.ts\n```\n\n| Method                                                              | Purpose                                                                                                                                                                 |\n| ------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------- |\n| `start(httpServer)`                                                 | One-time startup (e.g. drain-on-close plugin).                                                                                                                          |\n| `createHandler(schema, contextFactory)`                             | Returns a `FetchHandler` for a single subgraph schema.                                                                                                                  |\n| `createSupergraphHandler(getSubgraphs, httpServer, contextFactory)` | Composes all subgraphs via federation and returns a single `FetchHandler` for the supergraph. `getSubgraphs` is called eagerly and again on every `updateSupergraph()`. |\n| `updateSupergraph()`                                                | Re-composes the supergraph SDL from the current subgraph list and hot-reloads the running gateway. No-op before `createSupergraphHandler` is called.                    |\n| `attachWebSocket(wsServer, schema, contextFactory)`                 | Attaches WebSocket subscription support. Returns a `WsDisposer` for cleanup.                                                                                            |\n| `stop()`                                                            | Graceful shutdown.                                                                                                                                                      |\n\n### `FetchHandler`: the boundary\n\n```typescript\ntype FetchHandler = (request: Request) => Promise<Response>;\n```\n\nThis is the shared contract between the two interfaces. `IGatewayAdapter` produces\n`FetchHandler` values; `IHttpAdapter` consumes them via `mount()`. Both use the\nstandard Fetch API `Request` and `Response` types. No Express types cross this\nboundary.\n\n---\n\n## Auth threading\n\nAuthentication context flows from the HTTP edge to GraphQL resolvers via a\n`WeakMap` keyed on the Fetch API `Request` object. Because the same `Request`\ninstance travels from `IHttpAdapter.mount()` through to `IGatewayAdapter.createHandler()`,\nthe WeakMap lookup is always guaranteed to find the context set during\nauthentication, without mutating shared state or passing extra arguments.\n\n```\nsrc/graphql/gateway/auth-middleware.ts\nsrc/services/auth.service.ts\n```\n\n### Types\n\n```typescript\n// The context stored per-request\ninterface AuthContext {\n  user?: User; // undefined when the request carries no token\n  admins: string[];\n  auth_enabled: boolean;\n}\n\n// Middleware wraps a FetchHandler, adding auth\ntype AuthFetchMiddleware = (handler: FetchHandler) => FetchHandler;\n```\n\n### How it works\n\n```\nIncoming HTTP request\n  \u2192 IHttpAdapter  (bridges Express req \u2192 Fetch Request)\n  \u2192 authFetchMiddleware(handler)(request)\n      \u2192 AuthService.authenticateRequest(request)\n          \u2192 invalid token  \u2500\u2500\u2192  401 Response returned immediately\n          \u2192 valid / no token \u2500\u2500\u2192  AuthContext\n      \u2192 authContextMap.set(request, authCtx)   // WeakMap entry\n      \u2192 next(request)   // original FetchHandler\n  \u2192 IGatewayAdapter FetchHandler (Apollo Server)\n      \u2192 contextFactory(request)\n          \u2192 getAuthContext(request)   // WeakMap lookup (same Request instance)\n          \u2192 builds GraphQL Context { user, isAdmin, headers, db, ... }\n  \u2192 Resolver receives Context\n```\n\n`getAuthContext` is intentionally not exported from the package index. It is an\ninternal coupling point between `auth-middleware.ts` and `graphql-manager.ts`.\n\n`AuthService.authenticate()` (the old Express middleware signature) is kept for\nbackwards compatibility but is `@deprecated`. New code uses `authenticateRequest()`.\n\n### WeakMap lifecycle\n\n`WeakMap` entries are garbage-collected automatically when the `Request` object is\ncollected. There is no manual cleanup or risk of memory leaks for long-lived servers.\n\n---\n\n## Request lifecycle\n\n```\nClient HTTP request\n  \u2502\n  \u25bc\nExpressHttpAdapter.#serveFetchHandler()\n  \u251c\u2500\u2500 Converts Express req \u2192 Fetch Request (URL, headers, body)\n  \u2514\u2500\u2500 Calls FetchHandler (which is the auth-wrapped handler)\n        \u2502\n        \u25bc\n      createAuthFetchMiddleware(authService)(graphqlHandler)\n        \u251c\u2500\u2500 AuthService.authenticateRequest(request)\n        \u2502     \u251c\u2500\u2500 auth disabled \u2192 AuthContext { auth_enabled: false }\n        \u2502     \u251c\u2500\u2500 OPTIONS/GET  \u2192 AuthContext (no user)\n        \u2502     \u251c\u2500\u2500 no token     \u2192 AuthContext (no user)\n        \u2502     \u251c\u2500\u2500 bad token    \u2192 401 Response  \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2192 client\n        \u2502     \u2514\u2500\u2500 good token   \u2192 AuthContext { user, ... }\n        \u251c\u2500\u2500 authContextMap.set(request, authCtx)\n        \u2514\u2500\u2500 graphqlHandler(request)\n              \u2502\n              \u25bc\n            ApolloGatewayAdapter FetchHandler\n              \u251c\u2500\u2500 contextFactory(request)\n              \u2502     \u2514\u2500\u2500 getAuthContext(request)  \u2192 AuthContext\n              \u2502         \u2192 Context { user, isAdmin, headers, db }\n              \u2514\u2500\u2500 Executes GraphQL \u2192 Fetch Response\n        \u2502\n        \u25bc\nExpressHttpAdapter converts Fetch Response \u2192 Express res\n```\n\n---\n\n## Current implementations\n\n### `ExpressHttpAdapter`\n\n```\nsrc/graphql/gateway/adapter-http-express.ts\n```\n\nOwns an Express `app` internally (creates one if none is provided). GraphQL\n`FetchHandler` values are registered in an internal `Map` and dispatched through a\nsingle Express middleware registered after `bodyParser`, so `req.body` is already\nparsed when the Fetch `Request` is constructed.\n\nThe `handle` getter returns the Express `app`, which is needed at a small number of\ncall sites for Express-specific integrations (Vite dev server, SSE handlers).\n\n### `ApolloGatewayAdapter`\n\n```\nsrc/graphql/gateway/adapter-gateway-apollo.ts\n```\n\nWraps Apollo Server and Apollo Gateway. `createHandler()` starts an `ApolloServer`\nfor a single subgraph schema and exposes it as a `FetchHandler` via\n`expressMiddleware`. `createSupergraphHandler()` wires up an `ApolloGateway` using\n`LocalCompose` and returns a `FetchHandler` for the composed supergraph.\n`AuthenticatedDataSource` forwards the `authorization` header to each federated\nsubgraph so token verification works end-to-end.\n\n---\n\n## Factory functions\n\n```\nsrc/graphql/gateway/factory.ts\n```\n\n```typescript\n// Create a gateway adapter\nconst gatewayAdapter = createGatewayAdapter(\"apollo\", logger);\n// \u2192 ApolloGatewayAdapter\n\n// Create an HTTP adapter (optionally wrapping an existing Express app)\nconst { adapter: httpAdapter } = createHttpAdapter(\"express\", existingApp);\n// \u2192 ExpressHttpAdapter\n```\n\nThe factory is the only place that names a concrete implementation. Everything\nupstream (`GraphQLManager`, `server.ts`, subgraphs) works against the interfaces.\n\n---\n\n## Adding a new HTTP adapter (e.g. Fastify)\n\n1. Implement `IHttpAdapter` in a new file `adapter-http-fastify.ts`:\n   - `setupMiddleware`: install `@fastify/cors` and body parsing\n   - `mount`: register a Fastify route that converts `FastifyRequest` to a Fetch `Request`, calls the handler, and writes the Fetch `Response` back to `FastifyReply`\n   - `getRoute`: register a GET route on the Fastify instance\n   - `mountRawMiddleware`: use `@fastify/middie` to mount the Connect-compatible middleware function\n   - `listen`: call `fastify.listen({ port })` and return the underlying `http.Server` via `fastify.server`\n   - `handle`: return the Fastify instance\n\n2. Add `\"fastify\"` to `HttpAdapterType` in `factory.ts` and add a `case \"fastify\":` to `createHttpAdapter()`.\n\n3. No other files change. `GraphQLManager`, `AuthService`, and all resolvers are\n   unaware of which HTTP framework is in use.\n\n---\n\n## Adding a new gateway adapter (e.g. Yoga)\n\n1. Implement `IGatewayAdapter<Context>` in a new file `adapter-gateway-yoga.ts`.\n   The key method is `createHandler()`: construct a Yoga server and return a\n   handler of type `(request: Request) => Promise<Response>`. Yoga's\n   `handleRequest` already matches this signature.\n\n2. Add `\"yoga\"` to `GatewayAdapterType` in `factory.ts` and add a case to\n   `createGatewayAdapter()`.\n\n3. Everything else (auth middleware, context factory, `IHttpAdapter.mount()`) is\n   unchanged.\n",
+        "createdAt": "2026-09-02T21:44:15.575Z",
+        "createdBy": "repo-docs-sync",
+        "sourceType": "DOCUMENTATION",
+        "description": "Powerhouse v6.2.2-dev.74 (unchanged since v6.2.2-dev.47) \u2014 reactor-api separates GraphQL and HTTP concerns into two independent interfaces, IGatewayAdapter and IHttpAdapter, with authentication threa\u2026",
+        "publishedAt": "2026-03-24T16:12:50.000Z"
+      },
+      "timestampUtcMs": "2026-09-02T21:44:15.575Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "",
+    "timestampUtcMs": "2026-09-02T21:44:15.622Z",
+    "action": {
+      "type": "UPGRADE_DOCUMENT",
+      "input": {
+        "model": "bai/source",
+        "toVersion": 1,
+        "documentId": "2e37783f-f7f2-4276-8860-38855654a0d2",
+        "fromVersion": 0,
+        "initialState": {
+          "auth": {
+            "grants": [],
+            "version": 0
+          },
+          "local": {},
+          "global": {
+            "title": null,
+            "status": "INBOX",
+            "content": null,
+            "createdAt": null,
+            "createdBy": null,
+            "provenance": null,
+            "sourceType": null,
+            "description": null,
+            "extractedClaims": [],
+            "extractionStats": null
+          },
+          "document": {
+            "hash": {
+              "encoding": "base64",
+              "algorithm": "sha1"
+            },
+            "version": 1
+          }
+        }
+      },
+      "timestampUtcMs": "2026-09-02T21:44:15.622Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "97ejmk6UWYh3ClzXEHOYCjTj7Vw=",
+    "timestampUtcMs": "2026-09-03T07:39:32.744Z",
+    "action": {
+      "type": "ADD_EXTRACTED_CLAIM",
+      "input": {
+        "claimRef": "49106443-8aa1-4246-971c-a934ef9313fb"
+      },
+      "timestampUtcMs": "2026-09-03T07:39:32.744Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "1PVpaEqE1HDP73YaGb7S/WBtAaE=",
+    "timestampUtcMs": "2026-09-03T07:39:33.285Z",
+    "action": {
+      "type": "ADD_EXTRACTED_CLAIM",
+      "input": {
+        "claimRef": "de733125-3640-4f95-a987-3da99453cd9a"
+      },
+      "timestampUtcMs": "2026-09-03T07:39:33.285Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "Stdk9XsHkrBpzbiostHljR0wMBI=",
+    "timestampUtcMs": "2026-09-03T07:39:39.109Z",
+    "action": {
+      "type": "RECORD_EXTRACTION_STATS",
+      "input": {
+        "skipRate": 0.5,
+        "claimCount": 2,
+        "extractedAt": "2026-09-03T07:39:39.109Z",
+        "extractedBy": "knowledge-agent",
+        "skippedCount": 2
+      },
+      "timestampUtcMs": "2026-09-03T07:39:39.109Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "qiwKEpybjA4CYLUAiCObd9BoCJw=",
+    "timestampUtcMs": "2026-09-03T07:39:39.723Z",
+    "action": {
+      "type": "SET_SOURCE_STATUS",
+      "input": {
+        "status": "EXTRACTED"
+      },
+      "timestampUtcMs": "2026-09-03T07:39:39.723Z"
+    }
+  }
+]

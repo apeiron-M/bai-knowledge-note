@@ -1,0 +1,107 @@
+{
+  "links": [
+    {
+      "id": "lnk-9b1bec19-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "9b1bec19-6bcc-4f87-80b9-5f25360e4b7e",
+      "targetTitle": "choose-analytics-vs-read-model-vs-relational-by-query-shape",
+      "reason": "The core module's query and aggregation components are the surface that decision note's selection criterion is about",
+      "confidence": "grounded"
+    },
+    {
+      "id": "lnk-6b800511-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "6b800511-b337-4e52-8bd3-03eab8254ec9",
+      "targetTitle": "Package \u203a analytics-engine \u203a README",
+      "reason": "Extracted from packages/analytics-engine/README.md at v6.2.2-dev.74 \u2014 Overview; Development Quickstart (module layout, tooling, workspace)",
+      "confidence": "grounded"
+    },
+    {
+      "id": "lnk-6cd88ded-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "6cd88ded-d8e5-4645-8dc1-8dab23dd6dc4",
+      "targetTitle": "pglite-relational-hooks-context",
+      "reason": "The browser storage module is what the analytics provider and hooks in reactor-browser sit on top of",
+      "confidence": "grounded"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "The analytics engine is a distributed time-series system split into a core interface module and per-backend storage modules for knex, pg and browser",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "567c8cbe-3ccb-4391-8a60-fb538f557c8f",
+      "name": "analytics",
+      "topicDocumentId": null
+    },
+    {
+      "id": "e6340adc-1218-46d5-8f37-91a5b6f51124",
+      "name": "architecture",
+      "topicDocumentId": null
+    },
+    {
+      "id": "2bde41f6-8080-4d56-af5e-bc0a795b73c7",
+      "name": "packaging",
+      "topicDocumentId": null
+    },
+    {
+      "id": "397f3aff-b1bc-4a63-ab34-3737dbab97a9",
+      "name": "storage",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "The `analytics-engine` is described as \"a powerful, distributed, time-series analytics system, written in Typescript\", and its shape is a module split that mirrors the reactor's storage-agnostic design:\n\n- **`core/`** \u2014 the primary interface for interacting with the engine, and the home of the **query and aggregation** components;\n- **`knex/`, `pg/`, `browser/`** \u2014 the backing **storage engines**.\n\nSo the query surface is written once and the persistence is chosen per host: `pg` for a server, `browser` for an in-page store, `knex` for anything else it can reach. That is the same separation the reactor makes between `IOperationStore` and its Kysely implementation, and it is why the analytics hooks in reactor-browser can present the same query API a switchboard uses.\n\nToolchain notes for anyone working in it: `pnpm` as the package manager, `tsc-watch` as the filewatcher, `vitest` for tests, every module extending the root `tsconfig.json`, and the repository configured as a **pnpm workspace** so `pnpm install` at the root installs for every module and `pnpm test` runs every suite.\n\n## Provenance\n- `packages/analytics-engine/README.md` \u2014 Overview; Development Quickstart (module layout, tooling, workspace)\n\n_Extracted from the Powerhouse repository at **v6.2.2-dev.74**._",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": "v6.2.2-dev.74",
+  "computes": null,
+  "filePath": "packages/analytics-engine/README.md",
+  "noteType": "ARCHITECTURE",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "knowledge-agent",
+    "createdAt": "2026-09-03T07:44:17.914Z",
+    "sessionId": null,
+    "updatedAt": "2026-09-03T07:44:18.892Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "core/ holds the primary interface plus query and aggregation components; knex/, pg/ and browser/ are the backing storage engines. Every module extends the root tsconfig in a pnpm workspace.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "5fc30ed5-6983-4620-956d-1a005a537c30",
+      "actor": "knowledge-agent",
+      "comment": "extracted from packages/analytics-engine/README.md at v6.2.2-dev.74",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-09-03T07:44:18.395Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "936f3c74-493b-4575-96e5-d243e302c597",
+      "actor": "liberuum",
+      "comment": "claim checked against the cited file at the pinned tag",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-09-03T07:44:18.892Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

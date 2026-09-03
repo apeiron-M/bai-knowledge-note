@@ -1,0 +1,123 @@
+{
+  "links": [
+    {
+      "id": "lnk-fc23038e-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "fc23038e-5fd2-444c-a2d2-79ae8439beb6",
+      "targetTitle": "editor-dispatch-onsuccess-third-parameter",
+      "reason": "The preflight only disables controls; the dispatch callbacks remain where a refusal is actually handled",
+      "confidence": "established"
+    },
+    {
+      "id": "lnk-d6f1f6ec-bui",
+      "linkType": "BUILDS_ON",
+      "targetDocumentId": "d6f1f6ec-4348-4079-9c4f-ba2b4b214272",
+      "targetTitle": "auth-evaluate-actions",
+      "reason": "Wraps the client call and adds identity settling, revision-driven refetch and the 'unsupported' status",
+      "confidence": "grounded"
+    },
+    {
+      "id": "lnk-df244809-bui",
+      "linkType": "BUILDS_ON",
+      "targetDocumentId": "df244809-9adf-4f2f-8fb8-1d19fb743520",
+      "targetTitle": "light-graphql-client-document-hooks-only",
+      "reason": "Extends the list of what the light client cannot do: no authorization preflight, so the hook reports unsupported there",
+      "confidence": "grounded"
+    },
+    {
+      "id": "lnk-aeb9b5e6-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "aeb9b5e6-8fce-4339-95e8-375bd0a0cc01",
+      "targetTitle": "Academy \u203a Reference \u203a EditorsUI \u203a React Hooks",
+      "reason": "Extracted from apps/academy/docs/academy/04-Reference/05-EditorsUI/01-ReactHooks.md at v6.2.2-dev.74 \u2014 new 'Authorization \u203a useCanExecute' section",
+      "confidence": "grounded"
+    },
+    {
+      "id": "lnk-2ca5f8f5-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "2ca5f8f5-c423-4a7c-ae88-846fd0d1e659",
+      "targetTitle": "Academy \u203a Reference \u203a ReactorBrowserClient \u203a API reference",
+      "reason": "Extracted from apps/academy/docs/academy/04-Reference/08-ReactorBrowserClient/02-ApiReference.md at v6.2.2-dev.74 \u2014 Limitations: 'No authorization preflight'",
+      "confidence": "grounded"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "useCanExecute wraps evaluateActions for React and reports the flags-off case as status 'unsupported', which is not a denial",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "31cf1c52-6ba8-48fd-968f-5027e8dcb431",
+      "name": "auth-scope",
+      "topicDocumentId": null
+    },
+    {
+      "id": "79bb2519-0d46-47fc-8497-cc26719e2f57",
+      "name": "react-hooks",
+      "topicDocumentId": null
+    },
+    {
+      "id": "59ed64a7-f6f3-4947-badb-ef49aebb4304",
+      "name": "reactor-browser",
+      "topicDocumentId": null
+    },
+    {
+      "id": "581dc7de-54a9-4dce-a876-70cef7952ad8",
+      "name": "authorization",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "```ts\nfunction useCanExecute(documentId: string | null | undefined, candidates: ActionCandidate[],\n                       branch?: string /* \"main\" */, subject?: AuthSubject /* signed-in user */): CanExecuteState;\n\ntype CanExecuteState = {\n  status: \"idle\" | \"loading\" | \"ready\" | \"unsupported\" | \"error\";\n  evaluations?: Evaluation[]; allAllowed?: boolean; anyAllowed?: boolean;\n  allDenied?: boolean; anyDenied?: boolean; error?: Error; refetch: () => void;\n};\n```\n\n`status: \"unsupported\"` **is not a denial.** It means this deployment answers no authorization preflight \u2014 no reactor client module is set, or the reactor runs without `authEnforcement` \u2014 so render controls as you would have without asking. Treating it as a denial disables every control on a deployment that never enabled enforcement. The idiom is `const disabled = status === \"ready\" && !allAllowed`, with `evaluations[0].reason` as the tooltip.\n\nBehaviour worth relying on: the hook **waits for the signed-in identity to settle** before evaluating, so a toolbar does not grey itself on first paint and then ungrey; it **re-evaluates when the document's revision moves**; and candidates are read **by content rather than identity**, so an inline array does not re-request on every render. Two gaps are documented: a `{ group }` grant depends on a roster held in a different document, whose membership change fires no event for this one; and a change event carries no scope, so *any* write to the document re-evaluates.\n\nOn the light GraphQL client (`GraphQLReactorProvider`) the hook always reports `unsupported`: it reads the reactor client module, which that setup never sets, and `evaluateActions` is not on `IReactorBrowserClient`. Controls render as if unasked; the submit still refuses. As with the underlying call, an allow means the control is worth offering, not that the write will succeed \u2014 keep handling the failure from `dispatch`.\n\n_Source: apps/academy/docs/academy/04-Reference/05-EditorsUI/01-ReactHooks.md (Powerhouse v6.2.2-dev.74)._\n_Source: apps/academy/docs/academy/04-Reference/08-ReactorBrowserClient/02-ApiReference.md (Powerhouse v6.2.2-dev.74)._\n\n## Provenance\n- `apps/academy/docs/academy/04-Reference/05-EditorsUI/01-ReactHooks.md` \u2014 new 'Authorization \u203a useCanExecute' section\n- `apps/academy/docs/academy/04-Reference/08-ReactorBrowserClient/02-ApiReference.md` \u2014 Limitations: 'No authorization preflight'\n\n_Recorded from the Powerhouse repository at **v6.2.2-dev.74** during the v6.2.2-dev.74 source sync._",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": "v6.2.2-dev.74",
+  "computes": null,
+  "filePath": "apps/academy/docs/academy/04-Reference/05-EditorsUI/01-ReactHooks.md",
+  "noteType": "REFERENCE",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": "grounded",
+  "consumedBy": [],
+  "provenance": {
+    "author": "knowledge-agent",
+    "createdAt": "2026-09-02T22:11:19.479Z",
+    "sessionId": null,
+    "updatedAt": "2026-09-02T22:20:37.782Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Returns status idle|loading|ready|unsupported|error plus evaluations, aggregates and refetch. Waits for the signed-in identity, re-evaluates when the revision moves; light client: always unsupported.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "4553f75b-7480-40a1-8afb-785b0dced953",
+      "actor": "knowledge-agent",
+      "comment": "extracted from the Powerhouse repository at v6.2.2-dev.74",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-09-02T22:11:20.588Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "6535e433-dda8-4c52-9ff2-18fc38f92371",
+      "actor": "liberuum",
+      "comment": "claim checked against the cited repository file at the pinned tag",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-09-02T22:11:21.058Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

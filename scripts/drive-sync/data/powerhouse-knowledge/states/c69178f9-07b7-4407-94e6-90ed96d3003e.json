@@ -1,0 +1,115 @@
+{
+  "links": [
+    {
+      "id": "lnk-14416670-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "14416670-d2d3-4de5-9dfd-7c6e175280c2",
+      "targetTitle": "Academy \u203a Reference \u203a Reactor \u203a Document model registry and version upgrades",
+      "reason": "Extracted from apps/academy/docs/academy/04-Reference/01-Reactor/06-DocumentModelRegistry.md at v6.2.2-dev.74 \u2014 intro; IDocumentModelRegistry reference \u203a Module management \u203a registerModules",
+      "confidence": "grounded"
+    },
+    {
+      "id": "lnk-d2734cd9-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "d2734cd9-d7b1-4ede-b4d7-ee69e5d178c4",
+      "targetTitle": "registry-registration-non-fatal",
+      "reason": "Never-throwing registration is what makes a silent failure possible, which is that note's warning",
+      "confidence": "grounded"
+    },
+    {
+      "id": "lnk-63cdce40-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "63cdce40-628c-49e9-b13c-9efc59073c6a",
+      "targetTitle": "registry-upgrade-path-errors",
+      "reason": "Version is the second half of the key, and the upgrade API is what moves a document between two of them",
+      "confidence": "grounded"
+    },
+    {
+      "id": "lnk-501f87dd-bui",
+      "linkType": "BUILDS_ON",
+      "targetDocumentId": "501f87dd-ff84-4a59-8894-033f209dfdf0",
+      "targetTitle": "reactor-builder-fluent-api-construction",
+      "reason": "withDocumentModelSources on the builder is how modules reach this registry, so the builder's fluent API and the registry's keying are two halves of one mechanism",
+      "confidence": "grounded"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "The document model registry is keyed by document type and version, with an absent version treated as 1, so two versions of one type coexist",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "036b7f16-59eb-4cf0-bf6b-e54e8baeb9f7",
+      "name": "document-model",
+      "topicDocumentId": null
+    },
+    {
+      "id": "8e1d8e4b-46cf-44c0-8949-e0a45825417b",
+      "name": "registry",
+      "topicDocumentId": null
+    },
+    {
+      "id": "2c411c0a-8910-4b69-9ff5-a91212307c56",
+      "name": "versioning",
+      "topicDocumentId": null
+    },
+    {
+      "id": "e15dd166-10a0-459a-9bb5-23ee791c9b63",
+      "name": "reactor",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "The registry holds document model modules keyed by **document type and version**, and the reactor reads it to resolve the reducer, utils and specification for a document when it executes a job. It also holds the **upgrade manifests** describing how to migrate a document up one version step.\n\nTwo details decide how lookups behave. The document type used as the key is `module.documentModel.global.id` \u2014 not a name or a package \u2014 and a module's version comes from its optional `version` field, which the registry **treats as `1` when absent**. So two different versions of the same type coexist happily, and an unversioned legacy module simply occupies slot 1.\n\n`registerModules(...modules)` returns `RegistrationResult<DocumentModelModule>[]` \u2014 one per input, **in input order** \u2014 and **never throws**. A module whose `(documentType, version)` pair is already registered produces a `DuplicateModuleError` *in its result*, and invalid or duplicate modules are skipped without affecting the rest. The default in-memory implementation is `DocumentModelRegistry`; both it and the interface are exported from `@powerhousedao/reactor`.\n\nThe practical consequence for error handling is the next note's subject: because nothing throws, a registration failure is only visible if you read the results or the logs.\n\n## Provenance\n- `apps/academy/docs/academy/04-Reference/01-Reactor/06-DocumentModelRegistry.md` \u2014 intro; IDocumentModelRegistry reference \u203a Module management \u203a registerModules\n\n_Extracted from the Powerhouse repository at **v6.2.2-dev.74**._",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": "v6.2.2-dev.74",
+  "computes": null,
+  "filePath": "apps/academy/docs/academy/04-Reference/01-Reactor/06-DocumentModelRegistry.md",
+  "noteType": "REFERENCE",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "knowledge-agent",
+    "createdAt": "2026-09-03T07:48:23.795Z",
+    "sessionId": null,
+    "updatedAt": "2026-09-03T07:48:25.220Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "The lookup key is module.documentModel.global.id. registerModules returns one RegistrationResult per input and never throws; a duplicate (type, version) pair yields a DuplicateModuleError result.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "61b236a1-3aa1-4321-b4f2-d21ef59803ad",
+      "actor": "knowledge-agent",
+      "comment": "extracted from apps/academy/docs/academy/04-Reference/01-Reactor/06-DocumentModelRegistry.md at v6.2.2-dev.74",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-09-03T07:48:24.668Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "d7061c3e-331d-4e00-b87a-e50f67f49f00",
+      "actor": "liberuum",
+      "comment": "claim checked against the cited file at the pinned tag",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-09-03T07:48:25.220Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

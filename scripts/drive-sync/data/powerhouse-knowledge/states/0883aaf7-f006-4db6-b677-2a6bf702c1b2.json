@@ -1,0 +1,107 @@
+{
+  "links": [
+    {
+      "id": "lnk-6e2774cc-bui",
+      "linkType": "BUILDS_ON",
+      "targetDocumentId": "6e2774cc-037d-4a44-aeb1-49fb4a186ed8",
+      "targetTitle": "registry-verdaccio-cdn",
+      "reason": "Same service: the CDN serves the bundles and these endpoints announce when a new one exists",
+      "confidence": "grounded"
+    },
+    {
+      "id": "lnk-3759870c-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "3759870c-5df6-4d3f-b21c-61430665b0af",
+      "targetTitle": "Package \u203a registry \u203a README",
+      "reason": "Extracted from packages/registry/README.md at v6.2.2-dev.74 \u2014 Publish Notifications \u203a SSE and Webhooks",
+      "confidence": "grounded"
+    },
+    {
+      "id": "lnk-3c31ddfa-bui",
+      "linkType": "BUILDS_ON",
+      "targetDocumentId": "3c31ddfa-8a8a-4cee-8be1-2812015464e8",
+      "targetTitle": "registry-client-sse",
+      "reason": "onPublish in the browser client is a consumer of this SSE stream, which is why it returns an unsubscribe function",
+      "confidence": "grounded"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "The registry notifies subscribers of a publish over both SSE and disk-persisted webhooks, and predefined webhooks cannot be deleted through the API",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "d94bff22-67b4-4638-a726-7d71df8da663",
+      "name": "registry",
+      "topicDocumentId": null
+    },
+    {
+      "id": "bf53d233-5d0f-4e30-aad7-a991020ce7be",
+      "name": "packages",
+      "topicDocumentId": null
+    },
+    {
+      "id": "8f3003b1-3bc5-46ab-b71e-a17851ff9321",
+      "name": "sse",
+      "topicDocumentId": null
+    },
+    {
+      "id": "1d1baf39-1199-49df-8c24-a4856c6262e4",
+      "name": "webhooks",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "When a package is published the registry can tell subscribers in real time, two ways.\n\n**SSE \u2014 `GET /-/events`.** A persistent connection receiving a `connected` event on open, then a `publish` event per publish with `{ \"packageName\": \"@scope/pkg\", \"version\": \"1.0.0\" }`. In a browser that is a plain `EventSource` with an event listener.\n\n**Webhooks**, which are **persisted to disk and survive restarts**, and can additionally be supplied through configuration:\n\n- `GET /-/webhooks` \u2014 all registered webhooks, predefined plus dynamic;\n- `POST /-/webhooks` \u2014 register `{ endpoint, headers? }`, returning `201`; **duplicate endpoints are ignored** rather than erroring;\n- `DELETE /-/webhooks` \u2014 remove a dynamic webhook by endpoint, `204` on success and `404` if unknown. **Predefined webhooks cannot be removed** \u2014 a deliberate asymmetry, since a configured integration should not be deletable by whoever can reach the API.\n\nEach webhook receives a POST when a package is published.\n\nThe pairing matters for a host: SSE is right for a UI that wants to react while a user is looking at it, webhooks for automation that must not miss an event while nothing is connected.\n\n## Provenance\n- `packages/registry/README.md` \u2014 Publish Notifications \u203a SSE and Webhooks\n\n_Extracted from the Powerhouse repository at **v6.2.2-dev.74**._",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": "v6.2.2-dev.74",
+  "computes": null,
+  "filePath": "packages/registry/README.md",
+  "noteType": "REFERENCE",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "knowledge-agent",
+    "createdAt": "2026-09-03T07:43:38.979Z",
+    "sessionId": null,
+    "updatedAt": "2026-09-03T07:43:41.440Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "GET /-/events emits a connected event then publish events carrying packageName and version. Webhooks survive restarts, can be supplied by configuration, and DELETE removes only dynamic ones.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "2d59a299-3dae-4597-87de-3819929d5bf1",
+      "actor": "knowledge-agent",
+      "comment": "extracted from packages/registry/README.md at v6.2.2-dev.74",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-09-03T07:43:39.459Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "f9f3f9ee-b661-4c37-8bb7-e74e8a8a24b4",
+      "actor": "liberuum",
+      "comment": "claim checked against the cited file at the pinned tag",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-09-03T07:43:41.440Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

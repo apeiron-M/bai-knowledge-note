@@ -1,0 +1,81 @@
+{
+  "links": [
+    {
+      "id": "lnk-e8e03713-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "e8e03713-7284-4dc3-b6ba-380f4b5ca16c",
+      "targetTitle": "skill-watch",
+      "reason": "Discovery note distilled by sync-skills from the skill's SKILL.md frontmatter description and its section headings (source hash sha256:05de6e09d39a); the full procedure is the source text",
+      "confidence": "grounded"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Agent skill: /watch \u2014 Start a live watch session on the Knowledge Vault.",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "ca0e8d90-0f7d-4ef4-8713-ff8b13bcb9b2",
+      "name": "agent-skills",
+      "topicDocumentId": null
+    },
+    {
+      "id": "5a2c11eb-5c8c-44af-8690-1506307be9f6",
+      "name": "watch",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "## When to use\nStart a live watch session on the Knowledge Vault. Monitors note changes in real-time via WebSocket and suggests actions (auto-connect, verify, health alerts). Use when the user wants continuous vault monitoring or autonomous knowledge management.\n\n## What it covers\n- How to Watch\n- What to Watch For\n- Autonomous Actions\n- GraphQL Subscription (Advanced)\n- Mutate via GraphQL (Bidirectional)\n\n## Where the full skill lives\n- Vault source: **Agent skill: watch** (full SKILL.md text, DERIVED_FROM below)\n- Canonical copy: plugin repo `skills/watch/SKILL.md` \u2014 always execute from the repo copy; this note is the discovery layer.\n\n## Invocation\n`/powerhouse-knowledge:watch` in Claude Code (plugin installed), or read the source content and follow it manually.\n\n_Synced by sync-skills; source hash sha256:05de6e09d39a\u2026_",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": "skills/watch/SKILL.md",
+  "noteType": "PROCEDURE",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "skill-sync",
+    "createdAt": "2026-08-16T12:02:41.958Z",
+    "sessionId": null,
+    "updatedAt": "2026-09-02T19:16:27.837Z",
+    "sourceOrigin": "IMPORT"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Start a live watch session on the Knowledge Vault. Monitors note changes in real-time via WebSocket and suggests actions (auto-connect, verify, health alerts). Use when the user wants continuous vault",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "58798b72-b234-4979-a6f0-fabac3207415",
+      "actor": "skill-sync",
+      "comment": "skill sync",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-16T12:02:42.689Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "e49de22b-d542-47a1-8008-ad73bb212c2f",
+      "actor": "knowledge-agent",
+      "comment": "mechanical sync from canonical repo copy",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-16T12:02:42.836Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

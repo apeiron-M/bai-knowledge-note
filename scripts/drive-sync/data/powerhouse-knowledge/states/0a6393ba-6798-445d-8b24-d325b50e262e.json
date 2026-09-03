@@ -1,0 +1,115 @@
+{
+  "links": [
+    {
+      "id": "lnk-5b4a52c0-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "5b4a52c0-6345-4bfc-a279-76ea1f37db5d",
+      "targetTitle": "Package \u203a reactor \u203a attachments",
+      "reason": "Extracted from packages/reactor/docs/attachments.md at v6.2.2-dev.74 \u2014 Implementation: Switchboard-Backed \u203a Storage (schema and 'How each path writes')",
+      "confidence": "grounded"
+    },
+    {
+      "id": "lnk-c2fedf9c-bui",
+      "linkType": "BUILDS_ON",
+      "targetDocumentId": "c2fedf9c-464c-422f-bf81-7f505b87e335",
+      "targetTitle": "attachment-lru-gc",
+      "reason": "The LRU index and the two separate sweeps are visible in this schema: one over attachment, one over attachment_reservation",
+      "confidence": "grounded"
+    },
+    {
+      "id": "lnk-0d8024a6-bui",
+      "linkType": "BUILDS_ON",
+      "targetDocumentId": "0d8024a6-332f-457f-86eb-414251cd65a3",
+      "targetTitle": "attachment-store-transport-pair",
+      "reason": "put() is the sync path's entry point, and it needs no reservation precisely because the two tables are separate",
+      "confidence": "grounded"
+    },
+    {
+      "id": "lnk-c89c92a3-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "c89c92a3-cdd3-4a73-88e2-1f07ba7d3d5b",
+      "targetTitle": "hashfirst-concurrent-reservations",
+      "reason": "Commit-time convergence under concurrent reservations rests on this ON CONFLICT (hash) DO NOTHING upsert",
+      "confidence": "grounded"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Reservations and attachments are separate tables because a reservation is transient upload coordination while an attachment is a permanent content-addressed record",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "ed4a7f54-ecba-40bb-a76b-12b70811ff48",
+      "name": "attachments",
+      "topicDocumentId": null
+    },
+    {
+      "id": "3714c26a-edb8-4dcb-873a-d84a949c604b",
+      "name": "storage",
+      "topicDocumentId": null
+    },
+    {
+      "id": "99d42aab-f075-4238-9eb1-efa933f57cc5",
+      "name": "schema",
+      "topicDocumentId": null
+    },
+    {
+      "id": "05c7d68f-1cab-47a7-80bd-0b1acf622ebc",
+      "name": "postgres",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "Attachment metadata lives in Postgres in two tables, and the separation is the point:\n\n```sql\nCREATE TABLE attachment_reservation (\n  reservation_id TEXT PRIMARY KEY,\n  mime_type TEXT NOT NULL, file_name TEXT NOT NULL, extension TEXT,\n  created_at_utc TEXT NOT NULL, expires_at_utc TEXT NOT NULL);\n\nCREATE TABLE attachment (\n  hash TEXT PRIMARY KEY,\n  mime_type TEXT NOT NULL, file_name TEXT NOT NULL, size_bytes BIGINT NOT NULL,\n  extension TEXT, status TEXT NOT NULL DEFAULT 'available',\n  storage_path TEXT NOT NULL, source TEXT NOT NULL DEFAULT 'local', -- local | sync\n  created_at_utc TEXT NOT NULL, last_accessed_at_utc TEXT NOT NULL);\n```\n\nwith `idx_attachment_lru ON attachment(last_accessed_at_utc ASC) WHERE status = 'available'` \u2014 the GC's access path made explicit in the schema.\n\nHow each path writes:\n\n- **`reserve()`** inserts a reservation row. No attachment row yet.\n- **`upload.send(data)`** streams bytes to storage, computes the hash, reads the reservation, upserts `attachment` (`INSERT \u2026 ON CONFLICT (hash) DO NOTHING`), then deletes the reservation. An existing hash makes the insert a no-op and returns the existing ref.\n- **`put(hash, metadata, data)`** upserts with `DO UPDATE SET status='available'` when the row is `evicted` and `DO NOTHING` when available. **Concurrent puts for the same hash are safe** \u2014 at most one restores the data, the rest are no-ops \u2014 and no reservation is involved, which is the whole reason for the split.\n- **`get(hash)`** returns the data and touches `last_accessed_at_utc`.\n\n## Provenance\n- `packages/reactor/docs/attachments.md` \u2014 Implementation: Switchboard-Backed \u203a Storage (schema and 'How each path writes')\n\n_Extracted from the Powerhouse repository at **v6.2.2-dev.74**._",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": "v6.2.2-dev.74",
+  "computes": null,
+  "filePath": "packages/reactor/docs/attachments.md",
+  "noteType": "ARCHITECTURE",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "knowledge-agent",
+    "createdAt": "2026-09-03T07:19:49.182Z",
+    "sessionId": null,
+    "updatedAt": "2026-09-03T07:22:32.198Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "attachment_reservation is created by reserve() and removed by send() or the expiry sweep; attachment is upserted on hash. The split gives the sync path's put() an entry point with no reservation.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "d03fe1c2-f0b3-4cca-9f1b-ad05ab558a45",
+      "actor": "knowledge-agent",
+      "comment": "extracted from packages/reactor/docs/attachments.md at v6.2.2-dev.74",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-09-03T07:19:49.792Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "23980a51-f2df-4030-8b13-3d42535eb473",
+      "actor": "liberuum",
+      "comment": "claim checked against the cited file at the pinned tag",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-09-03T07:19:50.340Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

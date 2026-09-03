@@ -1,0 +1,132 @@
+[
+  {
+    "index": 0,
+    "hash": "",
+    "timestampUtcMs": "2026-08-17T12:11:49.524Z",
+    "action": {
+      "type": "CREATE_DOCUMENT",
+      "input": {
+        "meta": {},
+        "name": "skill-fusion-page",
+        "slug": "",
+        "model": "bai/source",
+        "branch": "main",
+        "signing": {
+          "nonce": "",
+          "publicKey": {},
+          "signature": "df23e257-c4c7-454f-8d42-0f1cd720b7fa",
+          "documentType": "bai/source",
+          "createdAtUtcIso": "2026-08-17T12:11:49.524Z"
+        },
+        "version": 0,
+        "documentId": "df23e257-c4c7-454f-8d42-0f1cd720b7fa",
+        "protocolVersions": {
+          "base-reducer": 2
+        }
+      },
+      "timestampUtcMs": "2026-08-17T12:11:49.524Z"
+    }
+  },
+  {
+    "index": 0,
+    "hash": "P5XweUluySUdjBL/x6RxhRdBQHM=",
+    "timestampUtcMs": "2026-08-17T12:11:49.773Z",
+    "action": {
+      "type": "INGEST_SOURCE",
+      "input": {
+        "url": "https://github.com/powerhouse-inc/powerhouse-dev-skills/tree/main/skills/fusion-page",
+        "tool": "add-skill",
+        "title": "Agent skill: fusion-page",
+        "author": "skill-add",
+        "method": "sha256:97d4c0707f0b5bc3df080c08c8bbb567ba3d34eb91188124ae0f7336632b69dc",
+        "content": "---\nname: fusion-page\ndescription: Use when implementing or changing a page or route in a Powerhouse Fusion application, including the GraphQL queries it runs against Switchboard.\n---\n\n# Fusion Page\n\nA Fusion page is a Next.js App Router route backed by a GraphQL query against a Switchboard\ninstance. There's no scaffolding command for it (no `ph generate page` equivalent) and typically\nno separate architecture docs \u2014 the existing routes under `app/` and their `modules/**` files are\nthe only source of truth here. Read them before creating anything new.\n\n## Workflow\n\nSee [00-implement-fusion-page.md](references/00-implement-fusion-page.md) for the full sequence:\n\n1. **FD.00.1** \u2014 ensure the route exists with its base files, following the layout the project's\n   existing pages already use.\n2. **FD.00.2** \u2014 prepare the GraphQL query: identify the right query root (don't pick a document\n   model by name alone if several similarly-shaped candidates exist \u2014 match state shape to the\n   requirement instead), then **verify it returns real data against the live Switchboard before\n   generating types or writing any UI**. A listing page checked against an empty result set isn't\n   verified.\n3. **FD.00.3** \u2014 implement the read-only page components, typecheck/lint, and verify the\n   rendered page in a browser.\n\n## Common mistakes\n\n- **Trusting the codegen run to produce types for your new query.** A pre-existing, unrelated\n  broken `.graphql` document elsewhere can abort the whole run, blocking your own query too.\n  Fixing those is out of scope for adding a page \u2014 don't burn the run on that side quest. Instead\n  hand-write the fetch call and its types in your own module (e.g. `modules/<feature>/lib/api.ts`),\n  calling the existing fetcher directly, with a comment explaining the deviation.\n- **Skipping live verification of the query.** Curl the exact query against the Switchboard\n  endpoint and read the response before building components \u2014 a 200 with an empty list is not the\n  same as a verified query.\n- **Guessing which document model is \"the\" one by name alone**, when several similarly-named\n  models sit side by side as query roots. Introspect each candidate's state shape and match it to\n  the requirement \u2014 but don't stop if shapes tie: two candidates can be structurally identical;\n  break ties on which holds non-empty documents, matching `documentType` (reference file has\n  details).\n- **Assuming a route/module layout instead of discovering it.** No scaffolding command exists;\n  read existing routes and supporting files first.\n- **Concluding the wiring is broken because an unrelated pre-existing route 500s** (e.g. the\n  boilerplate homepage querying a field the current schema no longer has). That's a pre-existing,\n  application-level bug, not something adding a page caused.\n- **Carrying over the reactor project's QA commands.** The Fusion boilerplate uses eslint, not\n  oxlint \u2014 run its own `lint` script, and typecheck with `npx tsc --noEmit`.\n- **Running a bare `switchboard` command.** It acts on its configured profile, which may default\n  to a remote/cloud reactor. Always pass an explicit `--profile`; if none suitable exists, stop and\n  give the user the exact profile stanza \u2014 see the `fusion-project` skill's FPM.01.3 for the sole\n  unattended exception.\n\n\n---\n\n# Reference: 00-implement-fusion-page.md\n\n# FD.00 Implement a Fusion page\n\nConfirm the Reactor Package backend is running (per the `reactor-project` skill) and the Fusion\nproject is running (per the `fusion-project` skill) \u2014 start either if needed rather than assuming.\n\nFamiliarize yourself with the existing code base of the Fusion project: there is no scaffolding\ncommand for a new page (no `ph generate page` or equivalent), and typically no separate\narchitecture docs, so the existing routes under `app/` and their supporting `modules/**` files are\nthe only source of truth for \"how a page is built here.\" Read them before creating anything new\nrather than assuming a layout.\n\n## FD.00.1 Ensure the correct route exists with the required base files\n\n- Identify the route you want to use, e.g. '/category/[category-slug]/products/[product-id]/'\n\n- Determine the project's route and module layout by reading its existing routes rather than\n  assuming one \u2014 e.g. a page lives at `app/<route>/page.tsx` (Next.js App Router, async Server\n  Component) with supporting query code and hand-written types under `modules/<feature>/{graphql,lib}/`.\n  Follow whatever pattern the project's own existing pages actually use, even if it differs from\n  this example.\n\n- Create any missing `/app/...` folders and their `page.tsx`\n\n- Add the component function with a `<PageName>Props` interface to the page.tsx that captures the route parameters.\n  For example:\n\n  ```typescript\n  interface DrivePageProps {\n    params: Promise<{ driveId: string, docId: string }>\n  }\n\n  export default async function DrivePage({ params }: DrivePageProps) {\n    const { driveId, docId } = await params; // params is a Promise in the App Router \u2014 await it, don't read it synchronously\n    return <div>{`DrivePage(${driveId}, ${docId})`}</div>\n  }\n  ```\n\n- Consider which folders need a `layout.tsx` and create the missing ones\n\n## FD.00.2 Prepare the Graphql queries\n\n**Identify the GraphQL queries you will use**\n\n- Inspect the GraphQL backend and make sure you understand its capabilities. Introspect the live\n  schema rather than trusting existing `.graphql` files or already-generated types \u2014 both can\n  predate or mismatch the document models actually present on this Switchboard.\n- **Introspect in this order, not the reverse.** First read `__schema.queryType.fields` and check\n  the `type` of the specific field you care about (e.g. the root field `PizzaOrderDesk` on `Query`\n  resolves to `PizzaOrderDeskQueries!`). Only then introspect *that returned type* by name with\n  `__type(name: ...)`. A type can share its literal name with an unrelated root query field \u2014 e.g.\n  a raw per-document OBJECT type also named `PizzaOrderDesk`, distinct from the\n  `PizzaOrderDeskQueries` namespace the field itself actually returns. Introspecting\n  `__type(name: \"<field name>\")` first, before checking what the field resolves to, can silently\n  hand you a plausible-looking but wrong type.\n- If several similarly-named document models sit side by side as query roots and any one of them\n  could plausibly be \"the\" target, do not pick by name alone. Introspect each candidate's state\n  shape first and match it against what the page actually needs to display. **If two or more\n  candidates turn out to have identical state shapes** (same field names and types \u2014 shape alone\n  doesn't always discriminate), break the tie by querying each candidate's `documents { totalCount\n  items { documentType } }` directly: the real target is the one actually holding non-empty\n  documents, and its `documentType` string will literally name the document model the task\n  describes. A candidate returning `totalCount: 0` is a decoy no matter how plausible its shape or\n  name looked.\n- Expect an extra layer of indirection between the query root and a document's declared state:\n  `<Model> { documents { items { ... } } }`'s `items` are typed `<Model>MutationResult` (despite\n  being a read path), and that type's `state` field is a `<Model>_FullState` wrapper, not the state\n  itself \u2014 the document's actual declared fields (e.g. `menu`/`basket`/`basketTotalCents`) live one\n  level further down, under `state.global`. Querying `state { basketTotalCents }` directly on a\n  `<Model>_FullState` fails (\"Cannot query field...\"); the correct shape is\n  `state { global { basketTotalCents ... } } }`.\n- Explore the existing `/modules/**/graphql/*.graphql` and identify any useful ones.\n- Consider which additional GraphQL queries are needed for the new page you are creating\n  and put them in the appropriate `/modules/**/graphql/*.graphql` file(s).\n\n**Verify the query against the live Switchboard before building anything on it**\n\n- Run the exact query you intend to use directly against the Switchboard endpoint (e.g. with\n  `curl`) and read the actual response body, not just its status code.\n- Confirm it returns real data, not merely a 200 with an empty list \u2014 a listing page built and\n  \"verified\" against an empty result set has not been verified at all. If the result is empty,\n  find or seed real data before proceeding rather than coding blind against an assumed shape.\n- Only once you've seen real data in the right shape should you move on to generating types or\n  writing any UI code.\n\n**Generate the client types**\n\n- After writing the `.graphql` files, run the project's codegen command (e.g. `npm run codegen`).\n- Verify that `/modules/__generated__` (or equivalent) is updated with the expected types and\n  helper functions.\n- **If codegen fails project-wide**: codegen commonly validates every `.graphql` document in the\n  project in a single pass, so a pre-existing, unrelated query elsewhere in the project \u2014 broken\n  against the current Switchboard schema \u2014 can abort the whole run, blocking your own valid query\n  too. Fixing those broken queries is **not** part of adding a page; do not attempt it, and do not\n  edit the unrelated `.graphql` files to make codegen pass. Instead, hand-write the fetch call and\n  its types inside your own module (e.g. `modules/<feature>/lib/api.ts`), calling the project's\n  existing fetcher directly with the query string you already verified above and TypeScript\n  interfaces matching the real response shape. Leave a comment in that file explaining the\n  deviation so a later reader doesn't mistake it for an accidental inconsistency with the\n  generated-hook convention used elsewhere in the project.\n\n**Define the query helper functions in page.tsx**\n\nFor every GraphQL query that you will use, add a function to the page.tsx file (or to the\nhand-written module from above, if codegen wasn't usable).\n\n1. Consider if the page is a client-side or a server-side component\n\n2. For server-side pages, create a helper function that utilizes the fetcher factory function, for example like this:\n\n   ```typescript\n   async function getDrive(slug: string) {\n     // NOT `.driveDocument` \u2014 that field (and the root `driveDocuments` query) doesn't exist on\n     // current Switchboard schemas; use `findDocuments`/`document` instead, per\n     // fusion-project/references/02-run-and-capture-endpoint.md.\n     return (await useDriveQuery.fetcher({ idOrSlug: slug })()).document;\n   }\n   ```\n\n3. For client-side pages, consider using the `useYourQuery` hook directly.\n\n4. Verify that the data is correctly fetched and inspect its return value with placeholder code. For example:\n\n   ```typescript\n   const { driveId } = await params;\n   const data = await getDrive(driveId);\n   return <pre>{JSON.stringify(data, undefined, 2)}</pre>;\n   ```\n\nThis completes the GraphQL query preparation.\n\n## FD.00.3 Implement the read-only page components.\n\n- Generate the React code to display the prepared data in a user-friendly way.\n- Typecheck with `npx tsc --noEmit` and lint with the project's own lint script \u2014 the Fusion\n  boilerplate uses eslint, not the oxlint used in reactor packages. Fix anything either reports.\n- Fetch the page (e.g. with `curl`) to verify it renders as expected, checking the raw response for\n  the actual data, not just a 200 status code.\n- Visually verify in a real browser: use the `playwright-cli` skill. If the `playwright-cli`\n  binary isn't installed, fall back to any `mcp__*playwright*` browser-automation MCP tools\n  available in the session. If neither is available, degrade to static verification instead of\n  skipping this step \u2014 re-run the typecheck/lint and re-read the final page against this checklist,\n  and say explicitly in your report that visual verification wasn't possible in this environment.\n\n### Expected outcome\nThe page is correctly implemented and it shows all the required data.\n\nAn unrelated pre-existing route failing (e.g. the boilerplate's own homepage returning HTTP 500\nbecause it queries a field a current Switchboard schema no longer exposes) is a pre-existing,\napplication-level bug in the boilerplate \u2014 not a wiring fault, and not something adding this page\ncaused. Don't treat it as a sign that something you did broke the app.\n",
+        "createdAt": "2026-08-17T12:11:49.773Z",
+        "createdBy": "skill-add",
+        "sourceType": "DOCUMENTATION",
+        "description": "Use when implementing or changing a page or route in a Powerhouse Fusion application, including the GraphQL queries it runs against Switchboard."
+      },
+      "timestampUtcMs": "2026-08-17T12:11:49.773Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "",
+    "timestampUtcMs": "2026-08-17T12:11:49.524Z",
+    "action": {
+      "type": "UPGRADE_DOCUMENT",
+      "input": {
+        "model": "bai/source",
+        "toVersion": 1,
+        "documentId": "df23e257-c4c7-454f-8d42-0f1cd720b7fa",
+        "fromVersion": 0,
+        "initialState": {
+          "auth": {
+            "grants": [],
+            "version": 0
+          },
+          "local": {},
+          "global": {
+            "title": null,
+            "status": "INBOX",
+            "content": null,
+            "createdAt": null,
+            "createdBy": null,
+            "provenance": null,
+            "sourceType": null,
+            "description": null,
+            "extractedClaims": [],
+            "extractionStats": null
+          },
+          "document": {
+            "hash": {
+              "encoding": "base64",
+              "algorithm": "sha1"
+            },
+            "version": 1
+          }
+        }
+      },
+      "timestampUtcMs": "2026-08-17T12:11:49.524Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "8/AMN4YKmEe7h9HVsQPhBaRRYKA=",
+    "timestampUtcMs": "2026-08-17T12:11:52.088Z",
+    "action": {
+      "type": "ADD_EXTRACTED_CLAIM",
+      "input": {
+        "claimRef": "18b8fab6-853b-4e10-a1d6-59ba01cc308f"
+      },
+      "timestampUtcMs": "2026-08-17T12:11:52.088Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "cwQtoIj7ojnwnaHua7zNVt7lN2s=",
+    "timestampUtcMs": "2026-08-17T12:11:52.236Z",
+    "action": {
+      "type": "RECORD_EXTRACTION_STATS",
+      "input": {
+        "skipRate": 0,
+        "claimCount": 1,
+        "extractedAt": "2026-08-17T12:11:52.236Z",
+        "extractedBy": "skill-add",
+        "skippedCount": 0
+      },
+      "timestampUtcMs": "2026-08-17T12:11:52.236Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "peDtfm/8dOUktJ+fdlC1ToWqN9A=",
+    "timestampUtcMs": "2026-08-17T12:11:52.372Z",
+    "action": {
+      "type": "SET_SOURCE_STATUS",
+      "input": {
+        "status": "EXTRACTED"
+      },
+      "timestampUtcMs": "2026-08-17T12:11:52.372Z"
+    }
+  }
+]

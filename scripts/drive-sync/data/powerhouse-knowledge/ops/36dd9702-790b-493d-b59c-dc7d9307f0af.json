@@ -1,0 +1,334 @@
+[
+  {
+    "index": 0,
+    "hash": "",
+    "timestampUtcMs": "2026-08-14T11:59:01.215Z",
+    "action": {
+      "type": "CREATE_DOCUMENT",
+      "input": {
+        "meta": {},
+        "name": "document-share-chat-bundle-via-act",
+        "slug": "",
+        "model": "bai/knowledge-note",
+        "branch": "main",
+        "signing": {
+          "nonce": "",
+          "publicKey": {},
+          "signature": "36dd9702-790b-493d-b59c-dc7d9307f0af",
+          "documentType": "bai/knowledge-note",
+          "createdAtUtcIso": "2026-08-14T11:59:01.215Z"
+        },
+        "version": 0,
+        "documentId": "36dd9702-790b-493d-b59c-dc7d9307f0af",
+        "protocolVersions": {
+          "base-reducer": 2
+        }
+      },
+      "timestampUtcMs": "2026-08-14T11:59:01.215Z"
+    }
+  },
+  {
+    "index": 0,
+    "hash": "vEuzQco6DwwUPFRdOQNJCo4vVTo=",
+    "timestampUtcMs": "2026-08-14T12:35:10.000Z",
+    "action": {
+      "type": "SET_TITLE",
+      "input": {
+        "title": "Sharing documents in chat bundles reactor state plus unflushed outbox ops, uploads via ACT, and delivers the reference through a PSS attachment.",
+        "updatedAt": "2026-08-14T12:35:10.000Z"
+      },
+      "timestampUtcMs": "2026-08-14T12:35:10.000Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "",
+    "timestampUtcMs": "2026-08-14T11:59:01.215Z",
+    "action": {
+      "type": "UPGRADE_DOCUMENT",
+      "input": {
+        "model": "bai/knowledge-note",
+        "toVersion": 1,
+        "documentId": "36dd9702-790b-493d-b59c-dc7d9307f0af",
+        "fromVersion": 0,
+        "initialState": {
+          "auth": {
+            "grants": [],
+            "version": 0
+          },
+          "local": {
+            "lastViewedAt": null,
+            "personalTags": []
+          },
+          "global": {
+            "links": [],
+            "model": null,
+            "scope": null,
+            "title": null,
+            "editor": null,
+            "inputs": [],
+            "models": [],
+            "status": "DRAFT",
+            "topics": [],
+            "content": null,
+            "context": null,
+            "modelId": null,
+            "modules": [],
+            "outputs": [],
+            "version": null,
+            "computes": null,
+            "filePath": null,
+            "noteType": null,
+            "severity": null,
+            "hooksUsed": [],
+            "rootCause": null,
+            "confidence": null,
+            "consumedBy": [],
+            "provenance": null,
+            "sourceType": null,
+            "targetType": null,
+            "cardinality": null,
+            "description": null,
+            "alternatives": [],
+            "consequences": [],
+            "errorMessage": null,
+            "relationType": null,
+            "correctPattern": null,
+            "decisionStatus": null,
+            "dispatchTargets": [],
+            "lifecycleEvents": []
+          },
+          "document": {
+            "hash": {
+              "encoding": "base64",
+              "algorithm": "sha1"
+            },
+            "version": 1
+          }
+        }
+      },
+      "timestampUtcMs": "2026-08-14T11:59:01.215Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "8YuM5hO+49gmP/fPN/ahkaRP7fw=",
+    "timestampUtcMs": "2026-08-14T12:35:10.000Z",
+    "action": {
+      "type": "SET_DESCRIPTION",
+      "input": {
+        "updatedAt": "2026-08-14T12:35:10.000Z",
+        "description": "buildDriveShareBundle gathers docs via reactorClient, preserves signatures, uploads with createGrantees+ACT, and sends a document-share PSS message for recipient import."
+      },
+      "timestampUtcMs": "2026-08-14T12:35:10.000Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "",
+    "timestampUtcMs": "2026-08-14T12:37:17.514Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "36dd9702-790b-493d-b59c-dc7d9307f0af",
+        "targetId": "956599e8-619e-45f6-8ec5-71f5bceed06f",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-08-14T12:37:17.514Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "JKVNaEeRhsodQ+jPmXeZxzeE7Y8=",
+    "timestampUtcMs": "2026-08-14T12:35:10.000Z",
+    "action": {
+      "type": "SET_NOTE_TYPE",
+      "input": {
+        "noteType": "workflow",
+        "updatedAt": "2026-08-14T12:35:10.000Z"
+      },
+      "timestampUtcMs": "2026-08-14T12:35:10.000Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "",
+    "timestampUtcMs": "2026-08-14T12:37:17.619Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "36dd9702-790b-493d-b59c-dc7d9307f0af",
+        "targetId": "7b0dedff-326d-4d34-a752-46db7f2327ac",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-08-14T12:37:17.619Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "+nep+VsXx65XZIieLwcnRWWfEgo=",
+    "timestampUtcMs": "2026-08-14T12:35:10.000Z",
+    "action": {
+      "type": "SET_CONTENT",
+      "input": {
+        "content": "## Document share in chat\n\n### Build bundle (sender side)\n\n`buildDriveShareBundle(driveId, [docIds])`:\n\n- `reactorClient.get(docId)` for each doc \u2014 **local reactor is source of truth**.\n- `reactorClient.getOperations(...)` includes unflushed outbox ops (so the recipient gets the absolute latest state, not just what's on Swarm).\n- Fallback to Swarm manifest if a doc is not in the local reactor.\n- Preserves `action.context.signer.signatures` verbatim, so authorship stays intact on import.\n\nReturns: `{ documents[], folders, docFolders, preferredEditor }`.\n\n### ACT upload\n\n```\ncreateGrantees([bob.beeNodePubKey])  -> granteeRef, historyRef\nuploadFile(bundle, { act:true, historyRef, skipEncryption:true })\n                                      -> shareRef, actHistoryAddress\n```\n\n### PSS delivery\n\nAttachment payload:\n\n```\n{\n  kind: \"document-share\",\n  driveId, driveName,\n  shareReference, actHistoryAddress,\n  publisherBeeNodePubKey,\n  documents: [{ id, name, documentType }]\n}\n```\n\n### Recipient side\n\nBob receives PSS, `DocumentShareCard` renders, user clicks **Import**, `downloadFile` with ACT params, then `applyDocumentBundle()` materializes the drive, folders, and docs in Bob's reactor with original IDs and signatures intact.",
+        "updatedAt": "2026-08-14T12:35:10.000Z"
+      },
+      "timestampUtcMs": "2026-08-14T12:35:10.000Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "",
+    "timestampUtcMs": "2026-08-14T12:37:17.715Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "36dd9702-790b-493d-b59c-dc7d9307f0af",
+        "targetId": "222a0fc3-0e04-446f-9acd-78716799f3c0",
+        "relationshipType": "BUILDS_ON"
+      },
+      "timestampUtcMs": "2026-08-14T12:37:17.715Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "Al4vFz7VnEkYTeQ9bXUEPjC0U7o=",
+    "timestampUtcMs": "2026-08-14T12:35:10.000Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "version",
+        "value": "v6.2.2-dev.44",
+        "updatedAt": "2026-08-14T12:35:10.000Z"
+      },
+      "timestampUtcMs": "2026-08-14T12:35:10.000Z"
+    }
+  },
+  {
+    "index": 5,
+    "hash": "cbzkbPaTfAFa9bOqZYnW9tgGot0=",
+    "timestampUtcMs": "2026-08-14T12:35:10.000Z",
+    "action": {
+      "type": "SET_PROVENANCE",
+      "input": {
+        "author": "knowledge-agent",
+        "createdAt": "2026-04-21T14:47:10.583Z",
+        "sourceOrigin": "DERIVED"
+      },
+      "timestampUtcMs": "2026-08-14T12:35:10.000Z"
+    }
+  },
+  {
+    "index": 6,
+    "hash": "4uNmnCXFU7RBm8HuiBdrU/xEZOo=",
+    "timestampUtcMs": "2026-08-14T12:35:10.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "t1",
+        "name": "document-share",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-08-14T12:35:10.000Z"
+    }
+  },
+  {
+    "index": 7,
+    "hash": "hiVcZPuJv4pSCei0O2PZoFY2BvY=",
+    "timestampUtcMs": "2026-08-14T12:35:10.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "t2",
+        "name": "chat",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-08-14T12:35:10.000Z"
+    }
+  },
+  {
+    "index": 8,
+    "hash": "t3zuYCyiQ3KbEBlxkIwAjdw2xnQ=",
+    "timestampUtcMs": "2026-08-14T12:35:10.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "t3",
+        "name": "act",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-08-14T12:35:10.000Z"
+    }
+  },
+  {
+    "index": 9,
+    "hash": "v0AzYo++wF43DyVLenygTfvuroo=",
+    "timestampUtcMs": "2026-08-14T14:36:58.000Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "version",
+        "value": "v6.2.2-dev.47",
+        "updatedAt": "2026-08-14T12:00:00.000Z"
+      },
+      "timestampUtcMs": "2026-08-14T14:36:58.000Z"
+    }
+  },
+  {
+    "index": 10,
+    "hash": "he2FroRjIIsJRNgN1kcffvhfsqQ=",
+    "timestampUtcMs": "2026-08-14T14:36:58.000Z",
+    "action": {
+      "type": "SUBMIT_FOR_REVIEW",
+      "input": {
+        "id": "21cfe7dc-cbfd-4551-b8cd-7aca368315b0",
+        "actor": "claude",
+        "comment": "Knowledge registered against powerhouse v6.2.2-dev.47",
+        "timestamp": "2026-08-14T12:00:00.000Z"
+      },
+      "timestampUtcMs": "2026-08-14T14:36:58.000Z"
+    }
+  },
+  {
+    "index": 11,
+    "hash": "4OYhTrvEjcj7SsEvvqtM3XlB2vc=",
+    "timestampUtcMs": "2026-08-14T14:36:58.000Z",
+    "action": {
+      "type": "APPROVE_NOTE",
+      "input": {
+        "id": "b949d9ba-9da6-495e-bccf-c2014741545b",
+        "actor": "liberuum",
+        "comment": "Canonical as of powerhouse v6.2.2-dev.47",
+        "timestamp": "2026-08-14T12:00:00.000Z"
+      },
+      "timestampUtcMs": "2026-08-14T14:36:58.000Z"
+    }
+  },
+  {
+    "index": 12,
+    "hash": "ByzV8ZyyGoMdIIM0s/IOMefWSjQ=",
+    "timestampUtcMs": "2026-08-16T09:49:43.000Z",
+    "action": {
+      "type": "SET_NOTE_TYPE",
+      "input": {
+        "noteType": "WORKFLOW",
+        "updatedAt": "2026-08-16T09:49:43.000Z"
+      },
+      "timestampUtcMs": "2026-08-16T09:49:43.000Z"
+    }
+  },
+  {
+    "index": 13,
+    "hash": "VjtC+pH2+TbqFso2zIAMONTXyRo=",
+    "timestampUtcMs": "2026-09-03T09:57:34.541Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "version",
+        "updatedAt": "2026-09-03T09:57:34.540Z"
+      },
+      "timestampUtcMs": "2026-09-03T09:57:34.541Z"
+    }
+  }
+]

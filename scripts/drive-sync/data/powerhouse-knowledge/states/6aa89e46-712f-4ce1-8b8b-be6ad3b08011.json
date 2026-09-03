@@ -1,0 +1,113 @@
+{
+  "links": [
+    {
+      "id": "lnk-f9f4bcbc-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "f9f4bcbc-efd1-49c8-a8c0-8a8f8991b772",
+      "targetTitle": "document-models-are-the-core-unit-of-powerhouse-architecture"
+    },
+    {
+      "id": "lnk-a80b000c-bui",
+      "linkType": "BUILDS_ON",
+      "targetDocumentId": "a80b000c-cc7a-46ce-990e-586f649f98c7",
+      "targetTitle": "ifc-fixed-shape-six-branches"
+    },
+    {
+      "id": "lnk-f7c92110-bui",
+      "linkType": "BUILDS_ON",
+      "targetDocumentId": "f7c92110-27a7-4921-8fd9-7fbdddfcf920",
+      "targetTitle": "bcf-model-tasks-vs-org-tasks"
+    },
+    {
+      "id": "lnk-b703fc49-bui",
+      "linkType": "BUILDS_ON",
+      "targetDocumentId": "b703fc49-f327-49f2-bbf7-a9f912c2bd83",
+      "targetTitle": "eir-bep-govern-bim-projects"
+    },
+    {
+      "id": "lnk-c720df00-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "c720df00-e3a4-49d1-b583-e7ed14c256f8",
+      "targetTitle": "bim-demo-scenario-briefing"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "The dtbau demo aggregates IFC hierarchy, BCF comments, and a PM document model into role-tailored views",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "c7e38408-d0c6-4f70-9fe8-cba888f56db1",
+      "name": "demo",
+      "topicDocumentId": null
+    },
+    {
+      "id": "2a7c6d79-235e-44aa-926b-93fb769d02c9",
+      "name": "bim",
+      "topicDocumentId": null
+    },
+    {
+      "id": "09197302-7e0f-4582-bdb9-8f49f8fe8a31",
+      "name": "integrations",
+      "topicDocumentId": null
+    },
+    {
+      "id": "9c107730-2c69-47b8-850c-8b15e9e3d837",
+      "name": "ifc",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "Intended outcome (BIM briefing): demonstrate to dtbau that Powerhouse can on-board users and give each an information view **tailored to their role and identity**, aggregating three sources from the existing backup solution:\n\n- **Source 1 \u2014 IFC object hierarchy**, extracted per IFC file, exposed to LLMs as a conceptual snapshot (\"this file has one building with one floor and two rooms with IDs \u2026\")\n- **Source 2 \u2014 BCF comments** carrying IFC object references, joined to Source 1 objects (by GlobalId)\n- **Source 3 \u2014 a PM-level document model** that references and depends on Sources 1 and 2; inspiration: Plannerly's document types (EIR, BEP)\n\nDemo scenario (WIP): a dtbau admin invites the MEPF-responsible manager; on accepting, the manager sees **only** the BCF comments on relevant IFC classes (ducts, pipes, cables) plus related IFC files. User types get their own drive scoped to the documents they should access (PFN\u00dcR project structure).\n\nCross-silo AI work to illustrate: flagging MEPF IFC files with mismatching objects; auto-tagging non-BCF comments related to MEPF work; progress auto-updating in the MEPF section of the PM document.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "ARCHITECTURE",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "knowledge-agent",
+    "createdAt": "2026-08-14T18:13:45.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-14T18:17:22.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Demo intent: onboard users by role/identity, combining 3 sources \u2014 LLM-readable IFC object hierarchy, BCF comments joined by GlobalId, and a PM document that references both.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "6fd5e49e-c6e8-4a7f-8bed-544a97062d0c",
+      "actor": "knowledge-agent",
+      "comment": "Extracted from Aug 12-14 meeting sources; links + methodology grounding applied",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-14T18:17:22.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "bf7b31cf-fa93-4413-b4d3-565f5c1f4816",
+      "actor": "liberuum",
+      "comment": "Pipeline verify: quality gate passed",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-14T18:17:22.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

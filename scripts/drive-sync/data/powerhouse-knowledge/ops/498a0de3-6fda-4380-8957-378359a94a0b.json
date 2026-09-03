@@ -1,0 +1,340 @@
+[
+  {
+    "index": 0,
+    "hash": "",
+    "timestampUtcMs": "2026-08-14T12:16:09.420Z",
+    "action": {
+      "type": "CREATE_DOCUMENT",
+      "input": {
+        "meta": {},
+        "name": "reactor-abort-signal-cancellation",
+        "slug": "",
+        "model": "bai/knowledge-note",
+        "branch": "main",
+        "signing": {
+          "nonce": "",
+          "publicKey": {},
+          "signature": "498a0de3-6fda-4380-8957-378359a94a0b",
+          "documentType": "bai/knowledge-note",
+          "createdAtUtcIso": "2026-08-14T12:16:09.419Z"
+        },
+        "version": 0,
+        "documentId": "498a0de3-6fda-4380-8957-378359a94a0b",
+        "protocolVersions": {
+          "base-reducer": 2
+        }
+      },
+      "timestampUtcMs": "2026-08-14T12:16:09.420Z"
+    }
+  },
+  {
+    "index": 0,
+    "hash": "fXQUu2D4cxIKz499Jm51yOLD+4U=",
+    "timestampUtcMs": "2026-08-14T12:35:42.000Z",
+    "action": {
+      "type": "SET_TITLE",
+      "input": {
+        "title": "IReactorClient methods accept AbortSignal for cancelling in-flight requests without stopping server-side processing",
+        "updatedAt": "2026-08-14T12:35:42.000Z"
+      },
+      "timestampUtcMs": "2026-08-14T12:35:42.000Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "",
+    "timestampUtcMs": "2026-08-14T12:16:09.420Z",
+    "action": {
+      "type": "UPGRADE_DOCUMENT",
+      "input": {
+        "model": "bai/knowledge-note",
+        "toVersion": 1,
+        "documentId": "498a0de3-6fda-4380-8957-378359a94a0b",
+        "fromVersion": 0,
+        "initialState": {
+          "auth": {
+            "grants": [],
+            "version": 0
+          },
+          "local": {
+            "lastViewedAt": null,
+            "personalTags": []
+          },
+          "global": {
+            "links": [],
+            "model": null,
+            "scope": null,
+            "title": null,
+            "editor": null,
+            "inputs": [],
+            "models": [],
+            "status": "DRAFT",
+            "topics": [],
+            "content": null,
+            "context": null,
+            "modelId": null,
+            "modules": [],
+            "outputs": [],
+            "version": null,
+            "computes": null,
+            "filePath": null,
+            "noteType": null,
+            "severity": null,
+            "hooksUsed": [],
+            "rootCause": null,
+            "confidence": null,
+            "consumedBy": [],
+            "provenance": null,
+            "sourceType": null,
+            "targetType": null,
+            "cardinality": null,
+            "description": null,
+            "alternatives": [],
+            "consequences": [],
+            "errorMessage": null,
+            "relationType": null,
+            "correctPattern": null,
+            "decisionStatus": null,
+            "dispatchTargets": [],
+            "lifecycleEvents": []
+          },
+          "document": {
+            "hash": {
+              "encoding": "base64",
+              "algorithm": "sha1"
+            },
+            "version": 1
+          }
+        }
+      },
+      "timestampUtcMs": "2026-08-14T12:16:09.420Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "BjL2NvTSfTOBWcO1z/FHUxVhU/c=",
+    "timestampUtcMs": "2026-08-14T12:35:42.000Z",
+    "action": {
+      "type": "SET_DESCRIPTION",
+      "input": {
+        "updatedAt": "2026-08-14T12:35:42.000Z",
+        "description": "Aborting cancels the client-side wait only; the underlying reactor job may still complete on the server side."
+      },
+      "timestampUtcMs": "2026-08-14T12:35:42.000Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "",
+    "timestampUtcMs": "2026-08-14T12:38:21.547Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "498a0de3-6fda-4380-8957-378359a94a0b",
+        "targetId": "955cc0e6-a2f8-41f9-963f-bde2b278ab9c",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-08-14T12:38:21.547Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "5mm7EP+5aZ/7czZfKUWJVb6u6KI=",
+    "timestampUtcMs": "2026-08-14T12:35:42.000Z",
+    "action": {
+      "type": "SET_NOTE_TYPE",
+      "input": {
+        "noteType": "PATTERN",
+        "updatedAt": "2026-08-14T12:35:42.000Z"
+      },
+      "timestampUtcMs": "2026-08-14T12:35:42.000Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "",
+    "timestampUtcMs": "2026-08-14T12:38:21.650Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "498a0de3-6fda-4380-8957-378359a94a0b",
+        "targetId": "395c3ea0-ce11-4b25-8bbb-7f68a7b169e1",
+        "relationshipType": "BUILDS_ON"
+      },
+      "timestampUtcMs": "2026-08-14T12:38:21.650Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "P5lGr4ZJPdvjRqMJvkQJcodPuCQ=",
+    "timestampUtcMs": "2026-08-14T12:35:42.000Z",
+    "action": {
+      "type": "SET_CONTENT",
+      "input": {
+        "content": "Most `IReactorClient` methods accept an optional `AbortSignal` parameter for cancellation. Use cases: cancel on React component unmount via `useEffect` cleanup with `AbortController`, cancel with timeout via `AbortSignal.timeout(5000)`, and cancel long-running writes where `execute()` waits for `READ_READY`. When aborted, methods throw `AbortError`. Important: aborting only cancels the client-side wait, not the server-side processing -- the underlying reactor job may still complete. Write methods like `execute()` wait for `READ_READY` status; `executeAsync()` returns immediately with a `PENDING` JobInfo, and `waitForJob()` can be used separately for tracking.",
+        "updatedAt": "2026-08-14T12:35:42.000Z"
+      },
+      "timestampUtcMs": "2026-08-14T12:35:42.000Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "",
+    "timestampUtcMs": "2026-09-02T21:37:47.315Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "metadata": {
+          "reason": "Backing page found by content match in the v6.2.2-dev.74 source backfill \u2014 identifiers aborting, abortsignal, cancels from the claim appear in this page (text revised between v6.2.2-dev.47 and v6.2.2-dev.74 \u2014 re-verified in the v6.2.2-dev.74 pass); attribution, not the original extraction record",
+          "confidence": "grounded"
+        },
+        "sourceId": "498a0de3-6fda-4380-8957-378359a94a0b",
+        "targetId": "17ce5f4e-f152-48e3-a160-9415abf572e1",
+        "relationshipType": "DERIVED_FROM"
+      },
+      "timestampUtcMs": "2026-09-02T21:37:47.315Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "Qd5lqR+OH9slsAc3ntiahWGMd5g=",
+    "timestampUtcMs": "2026-08-14T12:35:42.000Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "version",
+        "value": "v6.2.2-dev.44",
+        "updatedAt": "2026-08-14T12:35:42.000Z"
+      },
+      "timestampUtcMs": "2026-08-14T12:35:42.000Z"
+    }
+  },
+  {
+    "index": 5,
+    "hash": "QoYheHO+4nvkeDrKvLsPGG0+6z4=",
+    "timestampUtcMs": "2026-08-14T12:35:42.000Z",
+    "action": {
+      "type": "SET_PROVENANCE",
+      "input": {
+        "author": "knowledge-agent",
+        "createdAt": "2026-04-02T12:00:00.000Z",
+        "sourceOrigin": "DERIVED"
+      },
+      "timestampUtcMs": "2026-08-14T12:35:42.000Z"
+    }
+  },
+  {
+    "index": 6,
+    "hash": "N+0EBKv1drLyZb+odQ87+96ju/s=",
+    "timestampUtcMs": "2026-08-14T12:35:42.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "c4cd3ed6-fe99-4266-81ef-5495eef855dd",
+        "name": "abort-signal",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-08-14T12:35:42.000Z"
+    }
+  },
+  {
+    "index": 7,
+    "hash": "9eIIDyVzP5+LjSShTZOZ0aBuTHw=",
+    "timestampUtcMs": "2026-08-14T12:35:42.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "127d4710-4a4d-4891-bfb7-41537173fe10",
+        "name": "reactor-client",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-08-14T12:35:42.000Z"
+    }
+  },
+  {
+    "index": 8,
+    "hash": "pAAj0Ev7n08n6SoO/cGpD3n/H+0=",
+    "timestampUtcMs": "2026-08-14T12:35:42.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "24f36a05-b607-47dc-ad48-a3be6933161e",
+        "name": "pattern",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-08-14T12:35:42.000Z"
+    }
+  },
+  {
+    "index": 9,
+    "hash": "em/kdQYyAUwzzqji9aebL96NUZ4=",
+    "timestampUtcMs": "2026-08-14T14:37:03.000Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "version",
+        "value": "v6.2.2-dev.47",
+        "updatedAt": "2026-08-14T12:00:00.000Z"
+      },
+      "timestampUtcMs": "2026-08-14T14:37:03.000Z"
+    }
+  },
+  {
+    "index": 10,
+    "hash": "S9mWAvZDXAy7QIRb9P4eERvZ/1U=",
+    "timestampUtcMs": "2026-08-14T14:37:03.000Z",
+    "action": {
+      "type": "SUBMIT_FOR_REVIEW",
+      "input": {
+        "id": "522cac3f-d958-4a8c-ba32-53590ac200d4",
+        "actor": "claude",
+        "comment": "Knowledge registered against powerhouse v6.2.2-dev.47",
+        "timestamp": "2026-08-14T12:00:00.000Z"
+      },
+      "timestampUtcMs": "2026-08-14T14:37:03.000Z"
+    }
+  },
+  {
+    "index": 11,
+    "hash": "e21QwKlLv9hNl7taoktqorI9S6E=",
+    "timestampUtcMs": "2026-08-14T14:37:03.000Z",
+    "action": {
+      "type": "APPROVE_NOTE",
+      "input": {
+        "id": "71fe7ee8-ed2f-47ea-839a-20470782f74d",
+        "actor": "liberuum",
+        "comment": "Canonical as of powerhouse v6.2.2-dev.47",
+        "timestamp": "2026-08-14T12:00:00.000Z"
+      },
+      "timestampUtcMs": "2026-08-14T14:37:03.000Z"
+    }
+  },
+  {
+    "index": 12,
+    "hash": "H81LF3Ri/hf7wMzHiYnE5WYVt4w=",
+    "timestampUtcMs": "2026-09-02T21:37:48.025Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "filePath",
+        "value": "apps/academy/docs/academy/04-Reference/01-Reactor/02-ReactorClient.md",
+        "updatedAt": "2026-09-02T21:37:48.024Z"
+      },
+      "timestampUtcMs": "2026-09-02T21:37:48.025Z"
+    }
+  },
+  {
+    "index": 13,
+    "hash": "DxcfvbKL6AZextePBdJccZnCJ6E=",
+    "timestampUtcMs": "2026-09-02T22:26:24.675Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "version",
+        "value": "v6.2.2-dev.74",
+        "updatedAt": "2026-09-02T22:26:24.675Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:26:24.675Z"
+    }
+  }
+]

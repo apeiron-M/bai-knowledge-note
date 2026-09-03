@@ -1,0 +1,464 @@
+[
+  {
+    "index": 0,
+    "hash": "",
+    "timestampUtcMs": "2026-09-03T07:18:48.686Z",
+    "action": {
+      "type": "CREATE_DOCUMENT",
+      "input": {
+        "meta": {},
+        "name": "document-indexer-traversal",
+        "slug": "",
+        "model": "bai/knowledge-note",
+        "branch": "main",
+        "signing": {
+          "nonce": "",
+          "publicKey": {},
+          "signature": "b5474b61-a140-4704-b812-4021fe7c8f9b",
+          "documentType": "bai/knowledge-note",
+          "createdAtUtcIso": "2026-09-03T07:18:48.686Z"
+        },
+        "version": 0,
+        "documentId": "b5474b61-a140-4704-b812-4021fe7c8f9b",
+        "protocolVersions": {
+          "base-reducer": 2
+        }
+      },
+      "timestampUtcMs": "2026-09-03T07:18:48.686Z"
+    }
+  },
+  {
+    "index": 0,
+    "hash": "vltGm1Ue/J72rVXH+cu4DH9r7FE=",
+    "timestampUtcMs": "2026-09-03T07:18:50.083Z",
+    "action": {
+      "type": "SET_TITLE",
+      "input": {
+        "title": "DocumentIndexer answers graph questions the document itself cannot: getOutgoing, getIncoming, findPath by BFS and findAncestors over the full graph",
+        "updatedAt": "2026-09-03T07:18:50.083Z"
+      },
+      "timestampUtcMs": "2026-09-03T07:18:50.083Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "",
+    "timestampUtcMs": "2026-09-03T07:18:48.686Z",
+    "action": {
+      "type": "UPGRADE_DOCUMENT",
+      "input": {
+        "model": "bai/knowledge-note",
+        "toVersion": 1,
+        "documentId": "b5474b61-a140-4704-b812-4021fe7c8f9b",
+        "fromVersion": 0,
+        "initialState": {
+          "auth": {
+            "grants": [],
+            "version": 0
+          },
+          "local": {
+            "lastViewedAt": null,
+            "personalTags": []
+          },
+          "global": {
+            "links": [],
+            "model": null,
+            "scope": null,
+            "title": null,
+            "editor": null,
+            "inputs": [],
+            "models": [],
+            "status": "DRAFT",
+            "topics": [],
+            "content": null,
+            "context": null,
+            "modelId": null,
+            "modules": [],
+            "outputs": [],
+            "version": null,
+            "computes": null,
+            "filePath": null,
+            "noteType": null,
+            "severity": null,
+            "hooksUsed": [],
+            "rootCause": null,
+            "confidence": null,
+            "consumedBy": [],
+            "provenance": null,
+            "sourceType": null,
+            "targetType": null,
+            "cardinality": null,
+            "description": null,
+            "alternatives": [],
+            "consequences": [],
+            "errorMessage": null,
+            "relationType": null,
+            "correctPattern": null,
+            "decisionStatus": null,
+            "dispatchTargets": [],
+            "lifecycleEvents": []
+          },
+          "document": {
+            "hash": {
+              "encoding": "base64",
+              "algorithm": "sha1"
+            },
+            "version": 1
+          }
+        }
+      },
+      "timestampUtcMs": "2026-09-03T07:18:48.686Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "D7rVfuMJSHPl/8a5sH2qajh+Tzo=",
+    "timestampUtcMs": "2026-09-03T07:18:50.083Z",
+    "action": {
+      "type": "SET_DESCRIPTION",
+      "input": {
+        "updatedAt": "2026-09-03T07:18:50.083Z",
+        "description": "It indexes ADD_RELATIONSHIP and REMOVE_RELATIONSHIP into DocumentRelationship edges, so traversal is a SQL-backed query rather than a walk over document state."
+      },
+      "timestampUtcMs": "2026-09-03T07:18:50.083Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "",
+    "timestampUtcMs": "2026-09-03T07:20:59.742Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "metadata": {
+          "reason": "Extracted from packages/reactor/docs/ARCHITECTURE.md at v6.2.2-dev.74 \u2014 Components \u203a DocumentIndexer",
+          "confidence": "grounded"
+        },
+        "sourceId": "b5474b61-a140-4704-b812-4021fe7c8f9b",
+        "targetId": "e4ef060b-4d61-41b4-95bd-2f562eea3cfa",
+        "relationshipType": "DERIVED_FROM"
+      },
+      "timestampUtcMs": "2026-09-03T07:20:59.742Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "mnvxAg4DRqD+VXBmVcyj9YN6az4=",
+    "timestampUtcMs": "2026-09-03T07:18:50.083Z",
+    "action": {
+      "type": "SET_NOTE_TYPE",
+      "input": {
+        "noteType": "REFERENCE",
+        "updatedAt": "2026-09-03T07:18:50.083Z"
+      },
+      "timestampUtcMs": "2026-09-03T07:18:50.083Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "",
+    "timestampUtcMs": "2026-09-03T07:21:00.205Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "metadata": {
+          "reason": "That note establishes relationships as table rows rather than container state; this one is the query surface that makes the table usable, including BFS path finding",
+          "confidence": "grounded"
+        },
+        "sourceId": "b5474b61-a140-4704-b812-4021fe7c8f9b",
+        "targetId": "b7ea248d-d62f-4463-8036-8e19b7444edf",
+        "relationshipType": "BUILDS_ON"
+      },
+      "timestampUtcMs": "2026-09-03T07:21:00.205Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "wYnPR2f1yyWTfVksyGYcfG/pcHQ=",
+    "timestampUtcMs": "2026-09-03T07:18:50.083Z",
+    "action": {
+      "type": "SET_CONTENT",
+      "input": {
+        "content": "`IDocumentIndexer` (`src/storage/kysely/document-indexer.ts`) is the read model behind every relationship question. It indexes exactly two operations \u2014 `ADD_RELATIONSHIP` creates an edge, `REMOVE_RELATIONSHIP` removes one \u2014 and exposes four queries:\n\n- **`getOutgoing()`** \u2014 children and other targets of a document;\n- **`getIncoming()`** \u2014 parents and other sources;\n- **`findPath()`** \u2014 path finding by breadth-first search;\n- **`findAncestors()`** \u2014 the full ancestor graph.\n\nThe last two are the ones worth remembering, because they are not derivable from a document's own state at any reasonable cost: a path or an ancestor set spans documents, and each document knows nothing about its parents. The relationship table is indexed on both `sourceId` and `targetId`, which is what makes the graph genuinely bidirectional rather than a parent pointer plus a scan.\n\n`getOutgoing` / `getIncoming` are paged (`{ cursor, limit }`), so enumeration of a large container is DB-native rather than a state read.\n\n## Provenance\n- `packages/reactor/docs/ARCHITECTURE.md` \u2014 Components \u203a DocumentIndexer\n\n_Extracted from the Powerhouse repository at **v6.2.2-dev.74**._",
+        "updatedAt": "2026-09-03T07:18:50.083Z"
+      },
+      "timestampUtcMs": "2026-09-03T07:18:50.083Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "",
+    "timestampUtcMs": "2026-09-03T07:21:00.690Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "metadata": {
+          "reason": "The edges it maintains are the DocumentRelationship table in the reactor schema",
+          "confidence": "grounded"
+        },
+        "sourceId": "b5474b61-a140-4704-b812-4021fe7c8f9b",
+        "targetId": "3c9df40d-1f3d-4bb5-b01a-f2d16e6ec0e4",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-09-03T07:21:00.690Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "SW7qWh8IGVV3Xe9sNiLJFt/dYs0=",
+    "timestampUtcMs": "2026-09-03T07:18:50.083Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "6b5ea340-e195-44cf-b27d-cd2f5875d635",
+        "name": "reactor"
+      },
+      "timestampUtcMs": "2026-09-03T07:18:50.083Z"
+    }
+  },
+  {
+    "index": 5,
+    "hash": "",
+    "timestampUtcMs": "2026-09-03T07:22:53.507Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "metadata": {
+          "reason": "Extracted from packages/reactor/docs/ARCHITECTURE.md at v6.2.2-dev.74 \u2014 Components \u203a DocumentIndexer",
+          "confidence": "grounded"
+        },
+        "sourceId": "b5474b61-a140-4704-b812-4021fe7c8f9b",
+        "targetId": "e4ef060b-4d61-41b4-95bd-2f562eea3cfa",
+        "relationshipType": "DERIVED_FROM"
+      },
+      "timestampUtcMs": "2026-09-03T07:22:53.507Z"
+    }
+  },
+  {
+    "index": 5,
+    "hash": "tY7fKI3IUcM1yE/xU4blQpppH3o=",
+    "timestampUtcMs": "2026-09-03T07:18:50.083Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "4e6d400e-7f76-437b-bd56-fe8b1839c952",
+        "name": "relationships"
+      },
+      "timestampUtcMs": "2026-09-03T07:18:50.083Z"
+    }
+  },
+  {
+    "index": 6,
+    "hash": "",
+    "timestampUtcMs": "2026-09-03T07:22:53.947Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "metadata": {
+          "reason": "That note establishes relationships as table rows rather than container state; this one is the query surface that makes the table usable, including BFS path finding",
+          "confidence": "grounded"
+        },
+        "sourceId": "b5474b61-a140-4704-b812-4021fe7c8f9b",
+        "targetId": "b7ea248d-d62f-4463-8036-8e19b7444edf",
+        "relationshipType": "BUILDS_ON"
+      },
+      "timestampUtcMs": "2026-09-03T07:22:53.947Z"
+    }
+  },
+  {
+    "index": 6,
+    "hash": "k896QfOe/pLWo2lBDoa35qyc5fE=",
+    "timestampUtcMs": "2026-09-03T07:18:50.083Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "805b9d3b-23a6-4e00-ac02-3969757e6927",
+        "name": "graph"
+      },
+      "timestampUtcMs": "2026-09-03T07:18:50.083Z"
+    }
+  },
+  {
+    "index": 7,
+    "hash": "",
+    "timestampUtcMs": "2026-09-03T07:22:54.416Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "metadata": {
+          "reason": "The edges it maintains are the DocumentRelationship table in the reactor schema",
+          "confidence": "grounded"
+        },
+        "sourceId": "b5474b61-a140-4704-b812-4021fe7c8f9b",
+        "targetId": "3c9df40d-1f3d-4bb5-b01a-f2d16e6ec0e4",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-09-03T07:22:54.416Z"
+    }
+  },
+  {
+    "index": 7,
+    "hash": "PM/yhlRbhD9wBNME1wupdqBAYCI=",
+    "timestampUtcMs": "2026-09-03T07:18:50.083Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "5731c0ad-06fe-4d6a-bb7e-450a79bae58e",
+        "name": "read-models"
+      },
+      "timestampUtcMs": "2026-09-03T07:18:50.083Z"
+    }
+  },
+  {
+    "index": 8,
+    "hash": "V2lRs9kaON8azpdxOWWwRXHs6aU=",
+    "timestampUtcMs": "2026-09-03T07:18:50.083Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "version",
+        "value": "v6.2.2-dev.74",
+        "updatedAt": "2026-09-03T07:18:50.083Z"
+      },
+      "timestampUtcMs": "2026-09-03T07:18:50.083Z"
+    }
+  },
+  {
+    "index": 9,
+    "hash": "AxMt/rFU0JV+19jOJZxo97xKdNA=",
+    "timestampUtcMs": "2026-09-03T07:18:50.083Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "filePath",
+        "value": "packages/reactor/docs/ARCHITECTURE.md",
+        "updatedAt": "2026-09-03T07:18:50.083Z"
+      },
+      "timestampUtcMs": "2026-09-03T07:18:50.083Z"
+    }
+  },
+  {
+    "index": 10,
+    "hash": "mPUtgOlbY1SP9txZG6p/MRaZcNE=",
+    "timestampUtcMs": "2026-09-03T07:18:52.520Z",
+    "action": {
+      "type": "SET_PROVENANCE",
+      "input": {
+        "author": "knowledge-agent",
+        "createdAt": "2026-09-03T07:18:52.520Z",
+        "sourceOrigin": "DERIVED"
+      },
+      "timestampUtcMs": "2026-09-03T07:18:52.520Z"
+    }
+  },
+  {
+    "index": 11,
+    "hash": "48V4KA4h5w85QyUuZDGkoPfM8i4=",
+    "timestampUtcMs": "2026-09-03T07:18:53.723Z",
+    "action": {
+      "type": "SUBMIT_FOR_REVIEW",
+      "input": {
+        "id": "8ce616d3-da02-41b6-b27c-7634e596b369",
+        "actor": "knowledge-agent",
+        "comment": "extracted from packages/reactor/docs/ARCHITECTURE.md at v6.2.2-dev.74",
+        "timestamp": "2026-09-03T07:18:53.723Z"
+      },
+      "timestampUtcMs": "2026-09-03T07:18:53.723Z"
+    }
+  },
+  {
+    "index": 12,
+    "hash": "+eb9Qd373S+s8w99S8pTnNQe8Rc=",
+    "timestampUtcMs": "2026-09-03T07:18:54.252Z",
+    "action": {
+      "type": "APPROVE_NOTE",
+      "input": {
+        "id": "0a70fd23-33c7-4dc3-a43e-b8715944da2c",
+        "actor": "liberuum",
+        "comment": "claim checked against the cited file at the pinned tag",
+        "timestamp": "2026-09-03T07:18:54.252Z"
+      },
+      "timestampUtcMs": "2026-09-03T07:18:54.252Z"
+    }
+  },
+  {
+    "index": 13,
+    "hash": "KSvN/G33IsxkXzLyygDuyKm4r8Y=",
+    "timestampUtcMs": "2026-09-03T07:22:23.426Z",
+    "action": {
+      "type": "SET_TITLE",
+      "input": {
+        "title": "DocumentIndexer answers graph questions the document itself cannot: getOutgoing, getIncoming, findPath by BFS and findAncestors over the full graph",
+        "updatedAt": "2026-09-03T07:22:23.426Z"
+      },
+      "timestampUtcMs": "2026-09-03T07:22:23.426Z"
+    }
+  },
+  {
+    "index": 14,
+    "hash": "KSvN/G33IsxkXzLyygDuyKm4r8Y=",
+    "timestampUtcMs": "2026-09-03T07:22:23.426Z",
+    "action": {
+      "type": "SET_DESCRIPTION",
+      "input": {
+        "updatedAt": "2026-09-03T07:22:23.426Z",
+        "description": "It indexes ADD_RELATIONSHIP and REMOVE_RELATIONSHIP into DocumentRelationship edges, so traversal is a SQL-backed query rather than a walk over document state."
+      },
+      "timestampUtcMs": "2026-09-03T07:22:23.426Z"
+    }
+  },
+  {
+    "index": 15,
+    "hash": "KSvN/G33IsxkXzLyygDuyKm4r8Y=",
+    "timestampUtcMs": "2026-09-03T07:22:23.426Z",
+    "action": {
+      "type": "SET_NOTE_TYPE",
+      "input": {
+        "noteType": "REFERENCE",
+        "updatedAt": "2026-09-03T07:22:23.426Z"
+      },
+      "timestampUtcMs": "2026-09-03T07:22:23.426Z"
+    }
+  },
+  {
+    "index": 16,
+    "hash": "KSvN/G33IsxkXzLyygDuyKm4r8Y=",
+    "timestampUtcMs": "2026-09-03T07:22:23.426Z",
+    "action": {
+      "type": "SET_CONTENT",
+      "input": {
+        "content": "`IDocumentIndexer` (`src/storage/kysely/document-indexer.ts`) is the read model behind every relationship question. It indexes exactly two operations \u2014 `ADD_RELATIONSHIP` creates an edge, `REMOVE_RELATIONSHIP` removes one \u2014 and exposes four queries:\n\n- **`getOutgoing()`** \u2014 children and other targets of a document;\n- **`getIncoming()`** \u2014 parents and other sources;\n- **`findPath()`** \u2014 path finding by breadth-first search;\n- **`findAncestors()`** \u2014 the full ancestor graph.\n\nThe last two are the ones worth remembering, because they are not derivable from a document's own state at any reasonable cost: a path or an ancestor set spans documents, and each document knows nothing about its parents. The relationship table is indexed on both `sourceId` and `targetId`, which is what makes the graph genuinely bidirectional rather than a parent pointer plus a scan.\n\n`getOutgoing` / `getIncoming` are paged (`{ cursor, limit }`), so enumeration of a large container is DB-native rather than a state read.\n\n## Provenance\n- `packages/reactor/docs/ARCHITECTURE.md` \u2014 Components \u203a DocumentIndexer\n\n_Extracted from the Powerhouse repository at **v6.2.2-dev.74**._",
+        "updatedAt": "2026-09-03T07:22:23.426Z"
+      },
+      "timestampUtcMs": "2026-09-03T07:22:23.426Z"
+    }
+  },
+  {
+    "index": 17,
+    "hash": "KSvN/G33IsxkXzLyygDuyKm4r8Y=",
+    "timestampUtcMs": "2026-09-03T07:22:23.426Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "version",
+        "value": "v6.2.2-dev.74",
+        "updatedAt": "2026-09-03T07:22:23.426Z"
+      },
+      "timestampUtcMs": "2026-09-03T07:22:23.426Z"
+    }
+  },
+  {
+    "index": 18,
+    "hash": "KSvN/G33IsxkXzLyygDuyKm4r8Y=",
+    "timestampUtcMs": "2026-09-03T07:22:23.426Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "filePath",
+        "value": "packages/reactor/docs/ARCHITECTURE.md",
+        "updatedAt": "2026-09-03T07:22:23.426Z"
+      },
+      "timestampUtcMs": "2026-09-03T07:22:23.426Z"
+    }
+  }
+]

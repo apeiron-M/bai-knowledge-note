@@ -1,0 +1,126 @@
+{
+  "links": [
+    {
+      "id": "lnk-69327ea6-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "69327ea6-e0a1-4c07-a214-2c4619192862",
+      "targetTitle": "auth-last-grant-wins",
+      "reason": "Default deny after genesis is the base case of the walk in which the last applicable grant wins",
+      "confidence": "grounded"
+    },
+    {
+      "id": "lnk-20f4f796-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "20f4f796-28d4-4b9c-aa3f-4b71a8b0df1a",
+      "targetTitle": "auth-creator-keeps-auth",
+      "reason": "INITIALIZE_AUTH is where the creator is bound; the creator carve-out and the self-lockout guardrail both hang off that genesis",
+      "confidence": "grounded"
+    },
+    {
+      "id": "lnk-c5419cd5-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "c5419cd5-deac-4f48-b58f-131e5808bd49",
+      "targetTitle": "auth-flags-per-fleet",
+      "reason": "The open default is why turning enforcement on protects nothing that already exists",
+      "confidence": "grounded"
+    },
+    {
+      "id": "lnk-17dc46b0-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "17dc46b0-f733-467c-99d7-ae8fbe0fb0e4",
+      "targetTitle": "Academy \u203a Reference \u203a Reactor \u203a Authorization",
+      "reason": "Extracted from apps/academy/docs/academy/04-Reference/01-Reactor/11-Authorization.md at v6.2.2-dev.74 \u2014 'Behind feature flags' admonition and 'The policy' section",
+      "confidence": "grounded"
+    },
+    {
+      "id": "lnk-223bb12a-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "223bb12a-be7f-4209-9ab2-f04f7bb2b6c8",
+      "targetTitle": "Spec \u203a Spec \u2014 Attribute-based access control in the auth scope with DCB",
+      "reason": "Extracted from docs/specs/auth-scope.md at v6.2.2-dev.74 \u2014 Administration and bootstrap; Reads (host default)",
+      "confidence": "grounded"
+    },
+    {
+      "id": "lnk-f2aaccd3-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "f2aaccd3-7c26-4327-881e-f5ad9e267b89",
+      "targetTitle": "Academy \u203a Lookup \u203a Cookbook",
+      "reason": "Extracted from apps/academy/docs/academy/05-Lookup/00-Cookbook.md at v6.2.2-dev.74 \u2014 Document ACL recipe: 'Open until initialized' and the demo walkthrough",
+      "confidence": "grounded"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "An uninitialized auth policy leaves a document open; INITIALIZE_AUTH flips the default to deny",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "d0ebdb7f-6462-4aaa-90d5-137581a07248",
+      "name": "auth-scope",
+      "topicDocumentId": null
+    },
+    {
+      "id": "1eb48235-948d-401f-ba10-a761f41c8c9b",
+      "name": "authorization",
+      "topicDocumentId": null
+    },
+    {
+      "id": "50ba3c20-1a07-4065-8345-7da63e7f4620",
+      "name": "reactor",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "Every document carries a `PHAuthState` with `version: 0` until something initializes it. In that state the policy is **uninitialized** and the decision model allows everything \u2014 which is exactly what keeps the fleet's existing documents unaffected when enforcement turns on: nothing in production has ever emitted `INITIALIZE_AUTH`, so every existing document is open.\n\n`INITIALIZE_AUTH` installs the first grant list and is genesis-only. From then on the default is **deny**: if no grant applies to a request, it is refused with `deniedReason: \"no grant permits this operation\"`. The `document-acl` recipe's demo makes the flip visible \u2014 Bob writes freely before any policy exists, then Alice initializes a three-grant policy and Bob's `SET_TITLE` / `PIN_ENTRY` / `SET_GRANT` are refused while the `{anyone}` grant on `ADD_ENTRY` still lets his entries land.\n\nThe open default is also a trap for hosts that think the other way round. Hosts exist whose own access control closes a document until something opens it; for them \"no policy\" has always meant closed. The spec lets such a host configure its **read surface** to withhold every gated scope of an uninitialized document \u2014 a host-local second system that is safe only because it never widens: it withholds, and a read decision is never part of any document's history.\n\nOn acceptance of the genesis, the signer's key is stored as `creator` in the auth state and the header is consulted only at that one binding.\n\n_Source: apps/academy/docs/academy/04-Reference/01-Reactor/11-Authorization.md (Powerhouse v6.2.2-dev.74)._\n_Source: docs/specs/auth-scope.md (Powerhouse v6.2.2-dev.74)._\n_Source: apps/academy/docs/academy/05-Lookup/00-Cookbook.md (Powerhouse v6.2.2-dev.74)._\n\n## Provenance\n- `apps/academy/docs/academy/04-Reference/01-Reactor/11-Authorization.md` \u2014 'Behind feature flags' admonition and 'The policy' section\n- `docs/specs/auth-scope.md` \u2014 Administration and bootstrap; Reads (host default)\n- `apps/academy/docs/academy/05-Lookup/00-Cookbook.md` \u2014 Document ACL recipe: 'Open until initialized' and the demo walkthrough\n\n_Recorded from the Powerhouse repository at **v6.2.2-dev.74** during the v6.2.2-dev.74 source sync._",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": "v6.2.2-dev.74",
+  "computes": null,
+  "filePath": "apps/academy/docs/academy/04-Reference/01-Reactor/11-Authorization.md",
+  "noteType": "CONCEPT",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": "grounded",
+  "consumedBy": [],
+  "provenance": {
+    "author": "knowledge-agent",
+    "createdAt": "2026-09-02T22:09:20.562Z",
+    "sessionId": null,
+    "updatedAt": "2026-09-02T22:20:09.106Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "A document that never emitted INITIALIZE_AUTH (state.auth.version === 0) allows everything, which keeps existing documents unaffected by enforcement. After genesis only a grant can permit anything.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "efc0be7a-3917-4467-808a-387b7d317abe",
+      "actor": "knowledge-agent",
+      "comment": "extracted from the Powerhouse repository at v6.2.2-dev.74",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-09-02T22:09:21.174Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "3b786c91-299c-442d-a0a0-f6a52e0c356f",
+      "actor": "liberuum",
+      "comment": "claim checked against the cited repository file at the pinned tag",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-09-02T22:09:21.701Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

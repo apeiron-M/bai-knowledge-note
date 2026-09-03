@@ -1,0 +1,123 @@
+{
+  "links": [
+    {
+      "id": "lnk-96efe6c1-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "96efe6c1-9193-4319-8ac2-c30f3933b832",
+      "targetTitle": "ph-connect-config-json-operator-wins-merge",
+      "reason": "Explains why the operator-wins merge carves basePath out of the payload",
+      "confidence": "grounded"
+    },
+    {
+      "id": "lnk-65c75a60-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "65c75a60-42b7-45db-b968-10a1dde1879d",
+      "targetTitle": "connect-ships-as-pwa-precaching-service-worker",
+      "reason": "connect.app.offline's hybrid build/boot behaviour is about the precaching service worker described there",
+      "confidence": "grounded"
+    },
+    {
+      "id": "lnk-a1016584-bui",
+      "linkType": "BUILDS_ON",
+      "targetDocumentId": "a1016584-5dba-460b-9dc8-2728d09c1058",
+      "targetTitle": "connect-runtime-config",
+      "reason": "The exception to the ladder: a value that cannot be set through the runtime file because it is compiled into the assets",
+      "confidence": "grounded"
+    },
+    {
+      "id": "lnk-067ef151-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "067ef151-e1a1-4a1a-91de-faaef1614f94",
+      "targetTitle": "App \u203a connect \u203a RUNTIME-CONFIG \u2014 Connect Runtime Configuration",
+      "reason": "Extracted from apps/connect/RUNTIME-CONFIG.md at v6.2.2-dev.74 \u2014 '--base is build-time only'; caveats on connect.pwa and connect.app.offline",
+      "confidence": "grounded"
+    },
+    {
+      "id": "lnk-56edb93f-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "56edb93f-5c3b-4c8b-a11f-5cfdcc252dee",
+      "targetTitle": "Academy \u203a Build \u203a Launch \u203a Docker deployment guide",
+      "reason": "Extracted from apps/academy/docs/academy/03-Build/05-Launch/05-DockerDeployment.md at v6.2.2-dev.74 \u2014 PH_CONNECT_CONFIG_JSON: 'connect.app.basePath is ignored'",
+      "confidence": "grounded"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "The base path is build-time only: ph connect build --base bakes it into asset URLs and the nginx template, so ph connect config rejects --base",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "16e84da6-a077-4be0-bf6c-193cb8ffd000",
+      "name": "connect",
+      "topicDocumentId": null
+    },
+    {
+      "id": "ab118dd7-2b9a-41c1-a69e-e03dcc363f53",
+      "name": "deployment",
+      "topicDocumentId": null
+    },
+    {
+      "id": "c733a56f-2835-49dc-91aa-4ac45aaa3b1c",
+      "name": "configuration",
+      "topicDocumentId": null
+    },
+    {
+      "id": "79ab791e-3aa9-4d50-9d9f-dfaf998d8156",
+      "name": "gotchas",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "`ph connect build --base /foo` does three things at once: writes `connect.app.basePath`, **bakes the value into the Vite bundle's asset URLs**, and templates the nginx config. `ph connect config --base /foo` would do only the first, leaving the SPA's router and the deployed assets disagreeing \u2014 so `ph connect config` rejects `--base` up front with an error pointing at `ph connect build --base`.\n\nThe Docker entrypoint applies the same rule from the other side: `connect.app.basePath` is **stripped** from a `PH_CONNECT_CONFIG_JSON` payload, because the base path cannot be changed at runtime. The two ways out are a rebuild with `--base`, or building once with `--dynamic-base` so the base resolves at serve time. The shell layer keeps `PH_CONNECT_BASE_PATH` separate because nginx needs it for URL templating before any JSON is touched.\n\nTwo other fields share the build-time nature and are worth knowing next to it: the project's own `connect.pwa` block (merged into the web manifest and the service worker at build; carried in the dist file for transparency but never read by the SPA), and `connect.app.offline`, which is hybrid \u2014 at build it decides whether a precaching or a self-destroying worker is emitted, at boot the SPA reads it to register or unregister, so flipping it to `false` at deploy time unregisters the worker but flipping it to `true` cannot conjure a worker the build did not emit.\n\n_Source: apps/connect/RUNTIME-CONFIG.md (Powerhouse v6.2.2-dev.74)._\n_Source: apps/academy/docs/academy/03-Build/05-Launch/05-DockerDeployment.md (Powerhouse v6.2.2-dev.74)._\n\n## Provenance\n- `apps/connect/RUNTIME-CONFIG.md` \u2014 '--base is build-time only'; caveats on connect.pwa and connect.app.offline\n- `apps/academy/docs/academy/03-Build/05-Launch/05-DockerDeployment.md` \u2014 PH_CONNECT_CONFIG_JSON: 'connect.app.basePath is ignored'\n\n_Recorded from the Powerhouse repository at **v6.2.2-dev.74** during the v6.2.2-dev.74 source sync._",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": "v6.2.2-dev.74",
+  "computes": null,
+  "filePath": "apps/connect/RUNTIME-CONFIG.md",
+  "noteType": "PATTERN",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": "grounded",
+  "consumedBy": [],
+  "provenance": {
+    "author": "knowledge-agent",
+    "createdAt": "2026-09-02T22:12:11.975Z",
+    "sessionId": null,
+    "updatedAt": "2026-09-02T22:20:52.613Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Setting connect.app.basePath alone leaves the router and the deployed assets disagreeing. Rebuild with --base or build once with --dynamic-base; PH_CONNECT_CONFIG_JSON strips basePath likewise.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "f5281c84-6861-46b0-9eb7-63e42c9b6cc5",
+      "actor": "knowledge-agent",
+      "comment": "extracted from the Powerhouse repository at v6.2.2-dev.74",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-09-02T22:12:12.445Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "cfeb50c7-52c2-4f33-8426-2085fb088008",
+      "actor": "liberuum",
+      "comment": "claim checked against the cited repository file at the pinned tag",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-09-02T22:12:12.924Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

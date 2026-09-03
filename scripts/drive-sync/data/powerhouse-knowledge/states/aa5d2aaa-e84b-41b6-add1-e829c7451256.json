@@ -1,0 +1,108 @@
+{
+  "links": [
+    {
+      "id": "lnk-325f2eb3-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "325f2eb3-04f5-4f04-b985-ac81b4582b8f",
+      "targetTitle": "ddup-collab-envelope-overhead"
+    },
+    {
+      "id": "lnk-98e36a08-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "98e36a08-78cd-4c60-942c-338d4a460334",
+      "targetTitle": "bee-reactor-adapter-overview"
+    },
+    {
+      "id": "lnk-956599e8-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "956599e8-619e-45f6-8ec5-71f5bceed06f",
+      "targetTitle": "chat-document-share-parity-shipped"
+    },
+    {
+      "id": "lnk-6d2446ce-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "6d2446ce-613b-4a29-8be6-7c853decb521",
+      "targetTitle": "bridge-pattern-gql-swarm-dual-sync"
+    },
+    {
+      "id": "lnk-6ddb3f1f-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "6ddb3f1f-b6dd-42d8-85f3-3d956294006e",
+      "targetTitle": "cqrs-separates-write-commands-from-read-queries-for-independent-scaling"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Feed count scales linearly with drives and documents; op-feed reads fan out across N-1 peers",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "5623152c-4aa2-4db0-8e62-0a923e89ca37",
+      "name": "scaling",
+      "topicDocumentId": null
+    },
+    {
+      "id": "9880fedd-b824-400d-a9cd-708d0ec1850c",
+      "name": "feed-count",
+      "topicDocumentId": null
+    },
+    {
+      "id": "24159945-63e8-4115-a28a-9bb084b035e1",
+      "name": "collaboration",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "# Feed and Upload Counts\n\n## Single-user totals (for 1 drive + 2 docs)\n\n- 1 user manifest feed\n- 1 drive manifest feed (per drive)\n- 1 document manifest feed (per document)\n- Total: `1 + 1 + 2 = 4 feeds`\n\n## /bytes uploads\n\n- 1 per feed index update (the manifest JSON)\n- 1 per operation batch\n- Example: `4 manifest uploads + 2 op batch uploads = 6 /bytes refs`\n\n## Collaboration scaling (N users)\n\n- Each user writes to exactly 1 op feed per collaborative document\n- Each user reads N-1 op feeds per collaborative document\n- With GSOC/PSS push notifications, reads happen only on actual edits \u2014 bandwidth scales with edit frequency, not user count\n- Without push, every reader polls every peer feed \u2014 O(N) polling load\n\n## Design consequence\n\nFeed count grows linearly with documents, not sub-linearly \u2014 there is no \"one big feed\" compression. This is acceptable because feed creation is cheap; the expensive operation is `/bytes` uploads (stamp cost).\n",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "OBSERVATION",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "knowledge-agent",
+    "createdAt": "2026-04-21T14:45:54.611Z",
+    "sessionId": null,
+    "updatedAt": "2026-09-03T09:58:26.100Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "A user's feed count is 1 user manifest + 1 per drive + 1 per document; for N collaborators each reads N-1 op feeds and writes to 1, so read fanout grows with participants.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "abb12e5e-aebb-44ca-bdd6-88ab961c7207",
+      "actor": "claude",
+      "comment": "Knowledge registered against powerhouse v6.2.2-dev.47",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-14T12:00:00.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "ed2898d4-1b7b-4bc9-a987-26c502eefe26",
+      "actor": "liberuum",
+      "comment": "Canonical as of powerhouse v6.2.2-dev.47",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-14T12:00:00.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

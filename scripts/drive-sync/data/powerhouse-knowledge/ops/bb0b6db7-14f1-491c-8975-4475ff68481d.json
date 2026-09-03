@@ -1,0 +1,368 @@
+[
+  {
+    "index": 0,
+    "hash": "",
+    "timestampUtcMs": "2026-08-14T12:34:12.785Z",
+    "action": {
+      "type": "CREATE_DOCUMENT",
+      "input": {
+        "meta": {},
+        "name": "v6-processor-flat-operations-replace-strands",
+        "slug": "",
+        "model": "bai/knowledge-note",
+        "branch": "main",
+        "signing": {
+          "nonce": "",
+          "publicKey": {},
+          "signature": "bb0b6db7-14f1-491c-8975-4475ff68481d",
+          "documentType": "bai/knowledge-note",
+          "createdAtUtcIso": "2026-08-14T12:34:12.784Z"
+        },
+        "version": 0,
+        "documentId": "bb0b6db7-14f1-491c-8975-4475ff68481d",
+        "protocolVersions": {
+          "base-reducer": 2
+        }
+      },
+      "timestampUtcMs": "2026-08-14T12:34:12.785Z"
+    }
+  },
+  {
+    "index": 0,
+    "hash": "1tAIdVv74Zhc8dKgUkIJiaGGiOQ=",
+    "timestampUtcMs": "2026-08-14T12:36:06.000Z",
+    "action": {
+      "type": "SET_TITLE",
+      "input": {
+        "title": "V6 processors receive a flat OperationWithContext list via onOperations instead of grouped strands via onStrands",
+        "updatedAt": "2026-08-14T12:36:06.000Z"
+      },
+      "timestampUtcMs": "2026-08-14T12:36:06.000Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "",
+    "timestampUtcMs": "2026-08-14T12:34:12.785Z",
+    "action": {
+      "type": "UPGRADE_DOCUMENT",
+      "input": {
+        "model": "bai/knowledge-note",
+        "toVersion": 1,
+        "documentId": "bb0b6db7-14f1-491c-8975-4475ff68481d",
+        "fromVersion": 0,
+        "initialState": {
+          "auth": {
+            "grants": [],
+            "version": 0
+          },
+          "local": {
+            "lastViewedAt": null,
+            "personalTags": []
+          },
+          "global": {
+            "links": [],
+            "model": null,
+            "scope": null,
+            "title": null,
+            "editor": null,
+            "inputs": [],
+            "models": [],
+            "status": "DRAFT",
+            "topics": [],
+            "content": null,
+            "context": null,
+            "modelId": null,
+            "modules": [],
+            "outputs": [],
+            "version": null,
+            "computes": null,
+            "filePath": null,
+            "noteType": null,
+            "severity": null,
+            "hooksUsed": [],
+            "rootCause": null,
+            "confidence": null,
+            "consumedBy": [],
+            "provenance": null,
+            "sourceType": null,
+            "targetType": null,
+            "cardinality": null,
+            "description": null,
+            "alternatives": [],
+            "consequences": [],
+            "errorMessage": null,
+            "relationType": null,
+            "correctPattern": null,
+            "decisionStatus": null,
+            "dispatchTargets": [],
+            "lifecycleEvents": []
+          },
+          "document": {
+            "hash": {
+              "encoding": "base64",
+              "algorithm": "sha1"
+            },
+            "version": 1
+          }
+        }
+      },
+      "timestampUtcMs": "2026-08-14T12:34:12.785Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "ymZzc1tVsyBIVrVoFN1BbP4Kmv8=",
+    "timestampUtcMs": "2026-08-14T12:36:06.000Z",
+    "action": {
+      "type": "SET_DESCRIPTION",
+      "input": {
+        "updatedAt": "2026-08-14T12:36:06.000Z",
+        "description": "The IProcessor interface simplified from strand-based to flat operation-based with per-operation context including global ordinal."
+      },
+      "timestampUtcMs": "2026-08-14T12:36:06.000Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "",
+    "timestampUtcMs": "2026-08-14T12:39:03.888Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "bb0b6db7-14f1-491c-8975-4475ff68481d",
+        "targetId": "43b82c81-4d28-4e69-9a0a-84c0dddb87ef",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-08-14T12:39:03.888Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "JouoxEFmbxvKZ+HfZml+0VtFs2E=",
+    "timestampUtcMs": "2026-08-14T12:36:06.000Z",
+    "action": {
+      "type": "SET_NOTE_TYPE",
+      "input": {
+        "noteType": "ARCHITECTURE",
+        "updatedAt": "2026-08-14T12:36:06.000Z"
+      },
+      "timestampUtcMs": "2026-08-14T12:36:06.000Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "",
+    "timestampUtcMs": "2026-08-14T12:39:03.975Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "bb0b6db7-14f1-491c-8975-4475ff68481d",
+        "targetId": "04374aa9-c0dc-477b-86c2-35841f3c8857",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-08-14T12:39:03.975Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "nx/YH2xwlWRDbmHk6it1Me7h3pE=",
+    "timestampUtcMs": "2026-08-14T12:36:06.000Z",
+    "action": {
+      "type": "SET_CONTENT",
+      "input": {
+        "content": "The v6 Reactor replaced `onStrands(strands: InternalTransmitterUpdate[])` with `onOperations(operations: OperationWithContext[])`. Each OperationWithContext destructures as `{ operation, context }` where context has `documentId`, `documentType`, `scope`, `branch`, `ordinal` (global monotonic counter for cross-document ordering), and optional `resultingState` (JSON string). Operation access changed: `operation.type` -> `operation.action.type`, `operation.input` -> `operation.action.input`, `operation.timestamp` -> `operation.action.timestampUtcMs`. Steady-state live routing delivers each matching operation once, in global-ordinal order, but delivery is not exactly-once overall: backfill and replay are an explicit part of the processor contract, so idempotence guards (`clearSource` / `index === 0` rebuilds) are still recommended. The manager pages through history via `operationIndex.getSinceOrdinal(lastOrdinal)` when a factory registers against a drive that already has history, after a restart to replay the gap missed while the reactor was down, and when `tracked.retry()` re-activates an errored processor and re-runs backfill. Cursors persist in the `ProcessorCursor` table keyed by `processorId`, and on startup the manager rehydrates them and catch-up replays the gap. Factory signature changed from `(driveId: string)` to `(driveHeader: PHDocumentHeader, processorApp?: ProcessorApp)` with outer parameter changing from direct dependencies to `IProcessorHostModule`.\n\n_Corrected 2026-08-13 against Powerhouse v6.2.2-dev.45._",
+        "updatedAt": "2026-08-14T12:36:06.000Z"
+      },
+      "timestampUtcMs": "2026-08-14T12:36:06.000Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "",
+    "timestampUtcMs": "2026-08-14T12:39:04.064Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "bb0b6db7-14f1-491c-8975-4475ff68481d",
+        "targetId": "f2124247-9efa-48bb-bda6-c929f59e4f12",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-08-14T12:39:04.064Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "wdJisEX8TaKvFP5zxk5tB2NVF6w=",
+    "timestampUtcMs": "2026-08-14T12:36:06.000Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "version",
+        "value": "v6.2.2-dev.44",
+        "updatedAt": "2026-08-14T12:36:06.000Z"
+      },
+      "timestampUtcMs": "2026-08-14T12:36:06.000Z"
+    }
+  },
+  {
+    "index": 5,
+    "hash": "",
+    "timestampUtcMs": "2026-08-14T12:39:04.158Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "bb0b6db7-14f1-491c-8975-4475ff68481d",
+        "targetId": "7ef703d9-44ff-4168-b0b5-90d9f1e602a0",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-08-14T12:39:04.158Z"
+    }
+  },
+  {
+    "index": 5,
+    "hash": "k9nG23v0p+LPdfRwQk3gkM1xkAs=",
+    "timestampUtcMs": "2026-08-14T12:36:06.000Z",
+    "action": {
+      "type": "SET_PROVENANCE",
+      "input": {
+        "author": "knowledge-agent",
+        "createdAt": "2026-04-02T12:00:00.000Z",
+        "sourceOrigin": "DERIVED"
+      },
+      "timestampUtcMs": "2026-08-14T12:36:06.000Z"
+    }
+  },
+  {
+    "index": 6,
+    "hash": "",
+    "timestampUtcMs": "2026-09-02T21:39:11.571Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "metadata": {
+          "reason": "Backing page found by content match in the v6.2.2-dev.74 source backfill \u2014 identifiers onoperations, onstrands, operationwithcontext from the claim appear in this page (text identical at v6.2.2-dev.47 and v6.2.2-dev.74); attribution, not the original extraction record",
+          "confidence": "grounded"
+        },
+        "sourceId": "bb0b6db7-14f1-491c-8975-4475ff68481d",
+        "targetId": "3c684b04-0bf3-4736-9a8f-c08bd90bd384",
+        "relationshipType": "DERIVED_FROM"
+      },
+      "timestampUtcMs": "2026-09-02T21:39:11.571Z"
+    }
+  },
+  {
+    "index": 6,
+    "hash": "BOtn6gzCvCcygaW67rUo5f+Se/A=",
+    "timestampUtcMs": "2026-08-14T12:36:06.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "d350c950-3171-4994-ac26-ece8f3b73e64",
+        "name": "processors",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-08-14T12:36:06.000Z"
+    }
+  },
+  {
+    "index": 7,
+    "hash": "Bqj4dLLEgfGUDTMJ69zNH+3z/Wk=",
+    "timestampUtcMs": "2026-08-14T12:36:06.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "6d41d369-b468-4747-af62-41d7ab614c35",
+        "name": "migration",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-08-14T12:36:06.000Z"
+    }
+  },
+  {
+    "index": 8,
+    "hash": "BGsTcFGXifZ09ktD+AL0qpwu8AQ=",
+    "timestampUtcMs": "2026-08-14T12:36:06.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "8537e9e9-b931-4787-b390-e0fc0ed72168",
+        "name": "v6-reactor",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-08-14T12:36:06.000Z"
+    }
+  },
+  {
+    "index": 9,
+    "hash": "sxAz9bpnHELsZvV8A/tEFqvLZyU=",
+    "timestampUtcMs": "2026-08-14T14:37:32.000Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "version",
+        "value": "v6.2.2-dev.47",
+        "updatedAt": "2026-08-14T12:00:00.000Z"
+      },
+      "timestampUtcMs": "2026-08-14T14:37:32.000Z"
+    }
+  },
+  {
+    "index": 10,
+    "hash": "LhhmZAQJe2QAsDtK4bxZzferdHw=",
+    "timestampUtcMs": "2026-08-14T14:37:32.000Z",
+    "action": {
+      "type": "SUBMIT_FOR_REVIEW",
+      "input": {
+        "id": "f4a224fe-a259-4fff-94b8-c4f853417902",
+        "actor": "claude",
+        "comment": "Knowledge registered against powerhouse v6.2.2-dev.47",
+        "timestamp": "2026-08-14T12:00:00.000Z"
+      },
+      "timestampUtcMs": "2026-08-14T14:37:32.000Z"
+    }
+  },
+  {
+    "index": 11,
+    "hash": "kfRx8tZlrpNmupqOqVMDcIlpj7s=",
+    "timestampUtcMs": "2026-08-14T14:37:32.000Z",
+    "action": {
+      "type": "APPROVE_NOTE",
+      "input": {
+        "id": "91122859-0a19-4998-8f75-ce188362f639",
+        "actor": "liberuum",
+        "comment": "Canonical as of powerhouse v6.2.2-dev.47",
+        "timestamp": "2026-08-14T12:00:00.000Z"
+      },
+      "timestampUtcMs": "2026-08-14T14:37:32.000Z"
+    }
+  },
+  {
+    "index": 12,
+    "hash": "RXzH2iqnB23jyrMY6xP6QQ7dXyQ=",
+    "timestampUtcMs": "2026-09-02T21:39:12.343Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "filePath",
+        "value": "apps/academy/docs/academy/04-Reference/04-Processors/08-ProcessorMigrationGuide.md",
+        "updatedAt": "2026-09-02T21:39:12.343Z"
+      },
+      "timestampUtcMs": "2026-09-02T21:39:12.343Z"
+    }
+  },
+  {
+    "index": 13,
+    "hash": "yfPK49bd63zq+gIjBBH39CeUdL4=",
+    "timestampUtcMs": "2026-09-02T21:39:12.343Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "version",
+        "value": "v6.2.2-dev.74",
+        "updatedAt": "2026-09-02T21:39:12.343Z"
+      },
+      "timestampUtcMs": "2026-09-02T21:39:12.343Z"
+    }
+  }
+]

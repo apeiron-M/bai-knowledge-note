@@ -1,0 +1,276 @@
+[
+  {
+    "index": 0,
+    "hash": "",
+    "timestampUtcMs": "2026-08-19T11:24:45.554Z",
+    "action": {
+      "type": "CREATE_DOCUMENT",
+      "input": {
+        "meta": {},
+        "name": "CiviCRM keeps membership, donation and event data as mutable rows behind an optional, thin",
+        "slug": "",
+        "model": "bai/knowledge-note",
+        "branch": "main",
+        "signing": {
+          "nonce": "",
+          "publicKey": {},
+          "signature": "81b3d1a2-9955-4b2b-ac53-8f9a0e41c6f8",
+          "documentType": "bai/knowledge-note",
+          "createdAtUtcIso": "2026-08-19T11:24:45.554Z"
+        },
+        "version": 0,
+        "documentId": "81b3d1a2-9955-4b2b-ac53-8f9a0e41c6f8",
+        "protocolVersions": {
+          "base-reducer": 2
+        }
+      },
+      "timestampUtcMs": "2026-08-19T11:24:45.554Z"
+    }
+  },
+  {
+    "index": 0,
+    "hash": "cvSclcEZZjtsd/dXZgm9+dVZ6G8=",
+    "timestampUtcMs": "2026-08-19T11:24:45.290Z",
+    "action": {
+      "type": "SET_TITLE",
+      "input": {
+        "title": "CiviCRM keeps membership, donation and event data as mutable rows behind an optional, thin logging module",
+        "updatedAt": "2026-08-19T11:24:45.290742Z"
+      },
+      "timestampUtcMs": "2026-08-19T11:24:45.290780Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "",
+    "timestampUtcMs": "2026-08-19T11:24:45.554Z",
+    "action": {
+      "type": "UPGRADE_DOCUMENT",
+      "input": {
+        "model": "bai/knowledge-note",
+        "toVersion": 1,
+        "documentId": "81b3d1a2-9955-4b2b-ac53-8f9a0e41c6f8",
+        "fromVersion": 0,
+        "initialState": {
+          "auth": {
+            "grants": [],
+            "version": 0
+          },
+          "local": {
+            "lastViewedAt": null,
+            "personalTags": []
+          },
+          "global": {
+            "links": [],
+            "model": null,
+            "scope": null,
+            "title": null,
+            "editor": null,
+            "inputs": [],
+            "models": [],
+            "status": "DRAFT",
+            "topics": [],
+            "content": null,
+            "context": null,
+            "modelId": null,
+            "modules": [],
+            "outputs": [],
+            "version": null,
+            "computes": null,
+            "filePath": null,
+            "noteType": null,
+            "severity": null,
+            "hooksUsed": [],
+            "rootCause": null,
+            "confidence": null,
+            "consumedBy": [],
+            "provenance": null,
+            "sourceType": null,
+            "targetType": null,
+            "cardinality": null,
+            "description": null,
+            "alternatives": [],
+            "consequences": [],
+            "errorMessage": null,
+            "relationType": null,
+            "correctPattern": null,
+            "decisionStatus": null,
+            "dispatchTargets": [],
+            "lifecycleEvents": []
+          },
+          "document": {
+            "hash": {
+              "encoding": "base64",
+              "algorithm": "sha1"
+            },
+            "version": 1
+          }
+        }
+      },
+      "timestampUtcMs": "2026-08-19T11:24:45.554Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "OvKLPX2jYD02DhwVoTmQzgndZxo=",
+    "timestampUtcMs": "2026-08-19T11:24:45.290Z",
+    "action": {
+      "type": "SET_DESCRIPTION",
+      "input": {
+        "updatedAt": "2026-08-19T11:24:45.290784Z",
+        "description": "The log is opt-in and shallow, so the membership lifecycle has current state but no auditable spine: the CRM says what is true now and is silent on when it became true."
+      },
+      "timestampUtcMs": "2026-08-19T11:24:45.290790Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "",
+    "timestampUtcMs": "2026-08-19T11:24:47.737Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "81b3d1a2-9955-4b2b-ac53-8f9a0e41c6f8",
+        "targetId": "5d09d7dd-0503-4751-9d0c-d9f188a65841",
+        "relationshipType": "DERIVED_FROM"
+      },
+      "timestampUtcMs": "2026-08-19T11:24:47.737Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "+O24FkMlbo8+/OeL0i3NL5qPoZw=",
+    "timestampUtcMs": "2026-08-19T11:24:45.290Z",
+    "action": {
+      "type": "SET_NOTE_TYPE",
+      "input": {
+        "noteType": "OBSERVATION",
+        "updatedAt": "2026-08-19T11:24:45.290792Z"
+      },
+      "timestampUtcMs": "2026-08-19T11:24:45.290797Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "GgXG38nY7JEPLXUp13kI5NS60WI=",
+    "timestampUtcMs": "2026-08-19T11:24:45.290Z",
+    "action": {
+      "type": "SET_CONTENT",
+      "input": {
+        "content": "CiviCRM-class membership tooling stores memberships, donations and event registrations as rows that are updated in place. The research adds the detail that decides the case: the logging module is optional and thin, so even where it is switched on the trail is a side-channel rather than the system's spine.\n\nThe consequence is that the membership lifecycle \u2014 joined, lapsed, reinstated, upgraded, refunded \u2014 can be read as a current state but not reconstructed as a history. For an organisation whose obligations follow from that history, a row is the wrong shape of evidence: it says what is true now and is silent about when it became true and who made it so.\n\nSYSTOPIA's business is a delivery practice built on this tooling, which places the gap at a layer they already control. The move is not a replacement CRM but an auditable record sitting under the lifecycle events the CRM already produces, which keeps the proposal additive to the practice they sell.\n\n---\n\n## Leads sharing this finding (1)\n\n**1 \u00b7 start here**\n- SYSTOPIA GmbH (DE Bonn) \u2014 Fabian Schuttenberg + Martin Peth, Gesch\u00e4ftsf\u00fchrer \u00b7 info@systopia.de \u00b7 https://systopia.de\n\nVerbatim research text this claim was extracted from:\n\n> CiviCRM membership, donation and event data are mutable rows; the logging module is optional and thin. Powerhouse gives the membership lifecycle an auditable spine.",
+        "updatedAt": "2026-08-19T11:24:45.290799Z"
+      },
+      "timestampUtcMs": "2026-08-19T11:24:45.290804Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "aq7MO9+n4Rew37IgrxqAfnbXfWE=",
+    "timestampUtcMs": "2026-08-19T11:24:45.290Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "dbd1e65d-ef7c-4ee8-b384-8c6aa955282b",
+        "name": "leads"
+      },
+      "timestampUtcMs": "2026-08-19T11:24:45.290813Z"
+    }
+  },
+  {
+    "index": 5,
+    "hash": "15wWDs53IhntCULdPS1THhywGBE=",
+    "timestampUtcMs": "2026-08-19T11:24:45.290Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "82e50378-c072-4715-bf3f-627dbfa25a79",
+        "name": "civicrm"
+      },
+      "timestampUtcMs": "2026-08-19T11:24:45.290820Z"
+    }
+  },
+  {
+    "index": 6,
+    "hash": "E+gFSqWwolXENM2Q1KPJPys1vTA=",
+    "timestampUtcMs": "2026-08-19T11:24:45.290Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "86f14bc9-f958-4ccf-a445-fbfe2c8241c4",
+        "name": "membership"
+      },
+      "timestampUtcMs": "2026-08-19T11:24:45.290828Z"
+    }
+  },
+  {
+    "index": 7,
+    "hash": "jrfDCN/eRIMRSizFIjtfbiVsaLE=",
+    "timestampUtcMs": "2026-08-19T11:24:45.290Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "b6e3a42a-feb7-400f-a417-348a8b7d8b30",
+        "name": "audit-trail"
+      },
+      "timestampUtcMs": "2026-08-19T11:24:45.290835Z"
+    }
+  },
+  {
+    "index": 8,
+    "hash": "QByJoRTLT6PoQE1izBHbUY5TfEA=",
+    "timestampUtcMs": "2026-08-19T11:24:45.290Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "b5a4defa-0b0b-4f4b-926b-66bd00cd0070",
+        "name": "system-of-record"
+      },
+      "timestampUtcMs": "2026-08-19T11:24:45.290842Z"
+    }
+  },
+  {
+    "index": 9,
+    "hash": "AR/rE+dsnE3FmgUi004sLpRJQrU=",
+    "timestampUtcMs": "2026-08-19T11:24:45.720Z",
+    "action": {
+      "type": "SET_PROVENANCE",
+      "input": {
+        "author": "knowledge-agent",
+        "createdAt": "2026-08-19T11:24:45.720349Z",
+        "sessionId": null,
+        "sourceOrigin": "DERIVED"
+      },
+      "timestampUtcMs": "2026-08-19T11:24:45.720419Z"
+    }
+  },
+  {
+    "index": 10,
+    "hash": "Qo7AloiygPhDvxEoOZ6NcaP9VXA=",
+    "timestampUtcMs": "2026-08-19T11:24:47.051Z",
+    "action": {
+      "type": "SUBMIT_FOR_REVIEW",
+      "input": {
+        "id": "af8b0924-4006-4cb0-8c0f-8d2aec64de50",
+        "actor": "knowledge-agent",
+        "comment": "Extracted from lead research; claim checked against the source record.",
+        "timestamp": "2026-08-19T11:24:47.051294Z"
+      },
+      "timestampUtcMs": "2026-08-19T11:24:47.051316Z"
+    }
+  },
+  {
+    "index": 11,
+    "hash": "AaoDgV3NV3zdGwX7FJil1uzhYkQ=",
+    "timestampUtcMs": "2026-08-19T11:24:47.199Z",
+    "action": {
+      "type": "APPROVE_NOTE",
+      "input": {
+        "id": "018b6d65-e714-4868-a701-b7a2f707f119",
+        "actor": "liberuum",
+        "comment": "Approved: lead corpus extraction.",
+        "timestamp": "2026-08-19T11:24:47.199147Z"
+      },
+      "timestampUtcMs": "2026-08-19T11:24:47.199200Z"
+    }
+  }
+]

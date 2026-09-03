@@ -1,0 +1,115 @@
+{
+  "links": [
+    {
+      "id": "lnk-7a3b6263-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "7a3b6263-a16c-4fd4-83f3-7df6bdfc44a5",
+      "targetTitle": "tla-phase1-safety",
+      "reason": "Both are about not letting two instances hold divergent histories of one document: the model proves the merge, the LB avoids creating the split in the first place",
+      "confidence": "speculative"
+    },
+    {
+      "id": "lnk-60b0a1d3-bui",
+      "linkType": "BUILDS_ON",
+      "targetDocumentId": "60b0a1d3-b299-4a56-817a-de602de7ea6a",
+      "targetTitle": "lb-drive-id-header-routing",
+      "reason": "Consistent hashing on the header only preserves the invariant because peer mark-down is disabled on both the passive and active paths",
+      "confidence": "grounded"
+    },
+    {
+      "id": "lnk-704020e6-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "704020e6-eefd-4e1f-9fc6-f9ec801d8255",
+      "targetTitle": "App \u203a switchboard-lb \u203a ARCHITECTURE \u2014 switchboard-lb \u2014 Architecture",
+      "reason": "Extracted from apps/switchboard-lb/ARCHITECTURE.md at v6.2.2-dev.74 \u2014 \u00a75.1 Invariant; \u00a75.2 Mechanism (pinning under failure); \u00a74.5 Failure modes; \u00a78 M3",
+      "confidence": "grounded"
+    },
+    {
+      "id": "lnk-9a4b1323-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "9a4b1323-40df-4f2c-9c6c-47db12d501d7",
+      "targetTitle": "lb-immutable-backend-list",
+      "reason": "The same invariant is what makes adding or removing a backend a coordinated maintenance event",
+      "confidence": "grounded"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "The load balancer deliberately keeps sending a pinned drive to a dead backend, because silently re-routing it would split-brain that document's write log",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "8da50859-fa17-4880-a770-7ca8c5a84310",
+      "name": "switchboard-lb",
+      "topicDocumentId": null
+    },
+    {
+      "id": "4ef8f6af-8d14-4348-9895-487c676c3d3b",
+      "name": "sharding",
+      "topicDocumentId": null
+    },
+    {
+      "id": "a23574e3-8f37-41a9-a0b0-945f003f32ff",
+      "name": "failure-modes",
+      "topicDocumentId": null
+    },
+    {
+      "id": "7e8e6311-8055-4184-8235-2da2f1828eb3",
+      "name": "correctness",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "The invariant is stated as the heart of the system: *for a given document id `D`, all successful mutations land on the same backend `B(D)` for as long as `D` exists.* Reads may go anywhere, but the MVP routes them with the same function for simplicity and cache affinity.\n\nStandard nginx behaviour is the enemy of that invariant. nginx skips peers marked `down` \u2014 whether by passive `max_fails` tracking or by an active healthcheck calling `set_peer_down` \u2014 and picks the next slot in the ring. Under the pinning invariant that is **catastrophic**: a document pinned to a dead backend would silently re-route to a different instance and split-brain its write log.\n\nSo both paths are disabled, and the disabling is the load-bearing design:\n\n- `upstreams.conf` sets **`max_fails=0`** per `server`, so passive checks never mark a peer down;\n- `lua/healthcheck.lua` runs its own probe loop (every 2 s, 1 s timeout, fall 3 / rise 2, against `GET /health`), tracks state in `lua_shared_dict healthcheck` for `/__hc/status` to render, and **never calls `set_peer_down`**;\n- `proxy_next_upstream off` means no retry across backends;\n- the resulting TCP refusal or timeout is translated to a uniform **503** via `proxy_intercept_errors on; error_page 502 504 = @no_backend;`, with nginx's finer distinction preserved in `$upstream_status` for operators.\n\nNet effect: every peer always looks \"up\" to the upstream module, the hash module always picks the originally-hashed peer, and **the healthcheck's job is observability, not routing**. A dead pin fails closed. The integration test asserts the strict property directly: 5/5 requests pinned to a stopped backend get 503, never a 200 from a different one.\n\n## Provenance\n- `apps/switchboard-lb/ARCHITECTURE.md` \u2014 \u00a75.1 Invariant; \u00a75.2 Mechanism (pinning under failure); \u00a74.5 Failure modes; \u00a78 M3\n\n_Extracted from the Powerhouse repository at **v6.2.2-dev.74**._",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": "v6.2.2-dev.74",
+  "computes": null,
+  "filePath": "apps/switchboard-lb/ARCHITECTURE.md",
+  "noteType": "DECISION",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "knowledge-agent",
+    "createdAt": "2026-09-03T07:34:14.543Z",
+    "sessionId": null,
+    "updatedAt": "2026-09-03T07:34:15.773Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "max_fails=0 disables passive mark-down and the active healthcheck never calls set_peer_down, so the hash always picks the originally-hashed peer. A dead pin fails at TCP and is translated to 503.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "c103f8dc-1a9a-4a73-8e33-705ffb7dcbda",
+      "actor": "knowledge-agent",
+      "comment": "extracted from apps/switchboard-lb/ARCHITECTURE.md at v6.2.2-dev.74",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-09-03T07:34:15.180Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "56e07051-bbae-4669-a6a7-a64dd7c0b154",
+      "actor": "liberuum",
+      "comment": "claim checked against the cited file at the pinned tag",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-09-03T07:34:15.773Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

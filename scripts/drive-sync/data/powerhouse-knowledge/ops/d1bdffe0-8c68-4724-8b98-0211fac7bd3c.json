@@ -1,0 +1,276 @@
+[
+  {
+    "index": 0,
+    "hash": "",
+    "timestampUtcMs": "2026-08-19T11:31:50.573Z",
+    "action": {
+      "type": "CREATE_DOCUMENT",
+      "input": {
+        "meta": {},
+        "name": "A CiviCRM post-hook on membership state change yields a lifecycle record that survives an ",
+        "slug": "",
+        "model": "bai/knowledge-note",
+        "branch": "main",
+        "signing": {
+          "nonce": "",
+          "publicKey": {},
+          "signature": "d1bdffe0-8c68-4724-8b98-0211fac7bd3c",
+          "documentType": "bai/knowledge-note",
+          "createdAtUtcIso": "2026-08-19T11:31:50.573Z"
+        },
+        "version": 0,
+        "documentId": "d1bdffe0-8c68-4724-8b98-0211fac7bd3c",
+        "protocolVersions": {
+          "base-reducer": 2
+        }
+      },
+      "timestampUtcMs": "2026-08-19T11:31:50.573Z"
+    }
+  },
+  {
+    "index": 0,
+    "hash": "dnjpBlXO0X0x2fmrOEM71ydKoWg=",
+    "timestampUtcMs": "2026-08-19T11:31:50.487Z",
+    "action": {
+      "type": "SET_TITLE",
+      "input": {
+        "title": "A CiviCRM post-hook on membership state change yields a lifecycle record that survives an upgrade",
+        "updatedAt": "2026-08-19T11:31:50.487375Z"
+      },
+      "timestampUtcMs": "2026-08-19T11:31:50.487413Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "",
+    "timestampUtcMs": "2026-08-19T11:31:50.573Z",
+    "action": {
+      "type": "UPGRADE_DOCUMENT",
+      "input": {
+        "model": "bai/knowledge-note",
+        "toVersion": 1,
+        "documentId": "d1bdffe0-8c68-4724-8b98-0211fac7bd3c",
+        "fromVersion": 0,
+        "initialState": {
+          "auth": {
+            "grants": [],
+            "version": 0
+          },
+          "local": {
+            "lastViewedAt": null,
+            "personalTags": []
+          },
+          "global": {
+            "links": [],
+            "model": null,
+            "scope": null,
+            "title": null,
+            "editor": null,
+            "inputs": [],
+            "models": [],
+            "status": "DRAFT",
+            "topics": [],
+            "content": null,
+            "context": null,
+            "modelId": null,
+            "modules": [],
+            "outputs": [],
+            "version": null,
+            "computes": null,
+            "filePath": null,
+            "noteType": null,
+            "severity": null,
+            "hooksUsed": [],
+            "rootCause": null,
+            "confidence": null,
+            "consumedBy": [],
+            "provenance": null,
+            "sourceType": null,
+            "targetType": null,
+            "cardinality": null,
+            "description": null,
+            "alternatives": [],
+            "consequences": [],
+            "errorMessage": null,
+            "relationType": null,
+            "correctPattern": null,
+            "decisionStatus": null,
+            "dispatchTargets": [],
+            "lifecycleEvents": []
+          },
+          "document": {
+            "hash": {
+              "encoding": "base64",
+              "algorithm": "sha1"
+            },
+            "version": 1
+          }
+        }
+      },
+      "timestampUtcMs": "2026-08-19T11:31:50.573Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "4laBs1xUlaDs4fU3OJx0issgHts=",
+    "timestampUtcMs": "2026-08-19T11:31:50.487Z",
+    "action": {
+      "type": "SET_DESCRIPTION",
+      "input": {
+        "updatedAt": "2026-08-19T11:31:50.487417Z",
+        "description": "Typed operations on membership transitions build the record an association's audit asks for, and the demo's acceptance test is that it outlives a CiviCRM upgrade."
+      },
+      "timestampUtcMs": "2026-08-19T11:31:50.487424Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "",
+    "timestampUtcMs": "2026-08-19T11:31:53.521Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "d1bdffe0-8c68-4724-8b98-0211fac7bd3c",
+        "targetId": "5d09d7dd-0503-4751-9d0c-d9f188a65841",
+        "relationshipType": "DERIVED_FROM"
+      },
+      "timestampUtcMs": "2026-08-19T11:31:53.521Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "yiycFZF4JhAGuEVuSpMVIqYySKg=",
+    "timestampUtcMs": "2026-08-19T11:31:50.487Z",
+    "action": {
+      "type": "SET_NOTE_TYPE",
+      "input": {
+        "noteType": "INTEGRATION",
+        "updatedAt": "2026-08-19T11:31:50.487425Z"
+      },
+      "timestampUtcMs": "2026-08-19T11:31:50.487430Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "t0T5ja292EPpKE6Bayfz66isdQw=",
+    "timestampUtcMs": "2026-08-19T11:31:50.487Z",
+    "action": {
+      "type": "SET_CONTENT",
+      "input": {
+        "content": "The integration is a CiviCRM post-hook dispatching typed operations on membership state change. Membership transitions are the right unit because they are the events an association is actually asked about: when someone joined, when their status changed, and who changed it.\n\nTwo acceptance criteria are recorded, and both are external to CiviCRM's own guarantees. The record must survive a CiviCRM upgrade, and it must satisfy an association's audit. The second is a stronger test than a technical one \u2014 the record has to be legible to an auditor, not merely present in a table.\n\nThe single lead is SYSTOPIA GmbH in Bonn, marked \"1 \u00b7 start here\". Its tool column reads \"CiviCRM-class membership tooling\" rather than CiviCRM outright, so the specific product is characterised by category rather than confirmed; the hook name in the demo text presumes CiviCRM itself, and that presumption is worth checking before the demo is scoped.\n\n---\n\n## Leads sharing this finding (1)\n\n**1 \u00b7 start here**\n- SYSTOPIA GmbH (DE Bonn) \u2014 Fabian Schuttenberg + Martin Peth, Gesch\u00e4ftsf\u00fchrer \u00b7 info@systopia.de \u00b7 https://systopia.de\n\nVerbatim research text this claim was extracted from:\n\n> CiviCRM post-hook dispatching typed operations on membership state change \u2014 a lifecycle record that survives a CiviCRM upgrade and satisfies an association's audit.",
+        "updatedAt": "2026-08-19T11:31:50.487432Z"
+      },
+      "timestampUtcMs": "2026-08-19T11:31:50.487436Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "EAaTegRsvIR1flU5o9vxgQhW3yA=",
+    "timestampUtcMs": "2026-08-19T11:31:50.487Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "c3fb375c-bc4c-4a93-8396-e3afab0d27ca",
+        "name": "leads"
+      },
+      "timestampUtcMs": "2026-08-19T11:31:50.487446Z"
+    }
+  },
+  {
+    "index": 5,
+    "hash": "CiJ3ts10NL7SBTd8b8sbpFbjibg=",
+    "timestampUtcMs": "2026-08-19T11:31:50.487Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "128b8a06-fb0b-4dec-930d-5c72344ed2df",
+        "name": "civicrm"
+      },
+      "timestampUtcMs": "2026-08-19T11:31:50.487454Z"
+    }
+  },
+  {
+    "index": 6,
+    "hash": "PWnech7u5EE6LKpTV/J+iVKegTA=",
+    "timestampUtcMs": "2026-08-19T11:31:50.487Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "c9a874fe-8c10-4961-b485-b55c27e753fe",
+        "name": "demo-design"
+      },
+      "timestampUtcMs": "2026-08-19T11:31:50.487462Z"
+    }
+  },
+  {
+    "index": 7,
+    "hash": "ZkrL5RVmY/0SacORqkKf5MnrBis=",
+    "timestampUtcMs": "2026-08-19T11:31:50.487Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "9ee5eeea-5c1c-4002-8d7f-466e3eed39ed",
+        "name": "audit-trail"
+      },
+      "timestampUtcMs": "2026-08-19T11:31:50.487469Z"
+    }
+  },
+  {
+    "index": 8,
+    "hash": "UBP1B1SxaJyA1V8Mg4wZfaJma+M=",
+    "timestampUtcMs": "2026-08-19T11:31:50.487Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "4a428738-e009-497a-ada0-663efc93bdaa",
+        "name": "membership"
+      },
+      "timestampUtcMs": "2026-08-19T11:31:50.487477Z"
+    }
+  },
+  {
+    "index": 9,
+    "hash": "l2uwut1296UoFspN2wcGhtMskrk=",
+    "timestampUtcMs": "2026-08-19T11:31:51.615Z",
+    "action": {
+      "type": "SET_PROVENANCE",
+      "input": {
+        "author": "knowledge-agent",
+        "createdAt": "2026-08-19T11:31:51.615403Z",
+        "sessionId": null,
+        "sourceOrigin": "DERIVED"
+      },
+      "timestampUtcMs": "2026-08-19T11:31:51.615440Z"
+    }
+  },
+  {
+    "index": 10,
+    "hash": "if0BbLeU7v4fS+6vpdFNdi5aKcQ=",
+    "timestampUtcMs": "2026-08-19T11:31:52.955Z",
+    "action": {
+      "type": "SUBMIT_FOR_REVIEW",
+      "input": {
+        "id": "8fa8279e-e885-4c2b-af79-2302457bb284",
+        "actor": "knowledge-agent",
+        "comment": "Extracted from lead research; claim checked against the source record.",
+        "timestamp": "2026-08-19T11:31:52.955921Z"
+      },
+      "timestampUtcMs": "2026-08-19T11:31:52.955942Z"
+    }
+  },
+  {
+    "index": 11,
+    "hash": "vKORhJ+dOofkX1Zn25iFKi+l0QQ=",
+    "timestampUtcMs": "2026-08-19T11:31:53.097Z",
+    "action": {
+      "type": "APPROVE_NOTE",
+      "input": {
+        "id": "bf87b1e7-27b0-4c54-8934-541bc0bbcd86",
+        "actor": "liberuum",
+        "comment": "Approved: lead corpus extraction.",
+        "timestamp": "2026-08-19T11:31:53.097178Z"
+      },
+      "timestampUtcMs": "2026-08-19T11:31:53.097200Z"
+    }
+  }
+]

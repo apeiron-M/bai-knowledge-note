@@ -1,0 +1,110 @@
+{
+  "links": [
+    {
+      "id": "lnk-8cbea140-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "8cbea140-21d6-4b63-8780-5d44831018aa",
+      "targetTitle": "two-signing-mechanisms-header-and-action"
+    },
+    {
+      "id": "lnk-158143d5-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "158143d5-1e39-44b5-9799-1a84e6de9e72",
+      "targetTitle": "DocumentToolbar exposes className enabledControls and callback props"
+    },
+    {
+      "id": "lnk-bb0b6db7-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "bb0b6db7-14f1-491c-8975-4475ff68481d",
+      "targetTitle": "v6-processor-flat-operations-replace-strands"
+    },
+    {
+      "id": "lnk-787398c0-bui",
+      "linkType": "BUILDS_ON",
+      "targetDocumentId": "787398c0-fa8c-4e79-bd9f-71b60d57f482",
+      "targetTitle": "document-model-versioning-system"
+    },
+    {
+      "id": "lnk-547fd75e-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "547fd75e-166d-4c79-8a44-84e6741018a1",
+      "targetTitle": "Academy \u203a Reference \u203a DocumentModels \u203a PHDocument Migration Guide",
+      "reason": "Backing page found by content match in the v6.2.2-dev.74 source backfill \u2014 identifiers document.header, scattered, v4.0.0 from the claim appear in this page (text identical at v6.2.2-dev.47 and v6.2.2-dev.74); attribution, not the original extraction record",
+      "confidence": "grounded"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "PHDocument v4.0.0 consolidated all metadata into a header field with signature support and per-scope revision tracking",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "feb0b819-deda-4ac2-a83a-d706bffa39ab",
+      "name": "phdocument",
+      "topicDocumentId": null
+    },
+    {
+      "id": "04bac4ef-0e8c-456e-a84e-282db52c42c1",
+      "name": "migration",
+      "topicDocumentId": null
+    },
+    {
+      "id": "56029f4e-9d19-422c-8aa7-f74138520b9c",
+      "name": "versioning",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "Powerhouse v4.0.0 introduced a breaking refactor of `PHDocument` structure. All metadata moved from root-level to `document.header`: `id`, `name`, `slug`, `documentType`, `branch`, `meta`. Key renames: `created` -> `createdAtUtcIso`, `lastModified` -> `lastModifiedAtUtcIso`. The `revision` field changed from a number to an object with scope keys: `{ global: 5, local: 0 }`. A new `sig` field was added with `nonce` and `publicKey` for cryptographic document verification. The `id` field now supports Ed25519 signatures for signed documents. The GraphQL API maintains backward compatibility through response transformation, but application code must use the new header structure.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": "v6.2.2-dev.74",
+  "computes": null,
+  "filePath": "apps/academy/docs/academy/04-Reference/02-DocumentModels/05-PHDocumentMigrationGuide.md",
+  "noteType": "DECISION",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "knowledge-agent",
+    "createdAt": "2026-04-02T12:00:00.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-09-02T21:38:57.556Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Previously scattered root-level properties moved under document.header, revision became an object with scope keys, timestamps renamed.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "4f8fe49b-e4a0-4109-8a55-cd6aa3c4eb13",
+      "actor": "claude",
+      "comment": "Knowledge registered against powerhouse v6.2.2-dev.47",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-14T12:00:00.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "0296e4c1-b9b0-451e-8a9f-b97baaf34e49",
+      "actor": "liberuum",
+      "comment": "Canonical as of powerhouse v6.2.2-dev.47",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-14T12:00:00.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

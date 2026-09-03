@@ -1,0 +1,276 @@
+[
+  {
+    "index": 0,
+    "hash": "",
+    "timestampUtcMs": "2026-08-20T08:45:18.616Z",
+    "action": {
+      "type": "CREATE_DOCUMENT",
+      "input": {
+        "meta": {},
+        "name": "Frappe deletes a document's version history along with the document",
+        "slug": "",
+        "model": "bai/knowledge-note",
+        "branch": "main",
+        "signing": {
+          "nonce": "",
+          "publicKey": {},
+          "signature": "e9acb759-e1b0-46d6-afb5-2ba40e65809e",
+          "documentType": "bai/knowledge-note",
+          "createdAtUtcIso": "2026-08-20T08:45:18.616Z"
+        },
+        "version": 0,
+        "documentId": "e9acb759-e1b0-46d6-afb5-2ba40e65809e",
+        "protocolVersions": {
+          "base-reducer": 2
+        }
+      },
+      "timestampUtcMs": "2026-08-20T08:45:18.616Z"
+    }
+  },
+  {
+    "index": 0,
+    "hash": "y4BRBpR9UDyHph+c5LXoutMZsqU=",
+    "timestampUtcMs": "2026-08-20T08:45:19.258Z",
+    "action": {
+      "type": "SET_TITLE",
+      "input": {
+        "title": "Frappe deletes a document's version history along with the document",
+        "updatedAt": "2026-08-20T08:45:19.258612Z"
+      },
+      "timestampUtcMs": "2026-08-20T08:45:19.258689Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "",
+    "timestampUtcMs": "2026-08-20T08:45:18.616Z",
+    "action": {
+      "type": "UPGRADE_DOCUMENT",
+      "input": {
+        "model": "bai/knowledge-note",
+        "toVersion": 1,
+        "documentId": "e9acb759-e1b0-46d6-afb5-2ba40e65809e",
+        "fromVersion": 0,
+        "initialState": {
+          "auth": {
+            "grants": [],
+            "version": 0
+          },
+          "local": {
+            "lastViewedAt": null,
+            "personalTags": []
+          },
+          "global": {
+            "links": [],
+            "model": null,
+            "scope": null,
+            "title": null,
+            "editor": null,
+            "inputs": [],
+            "models": [],
+            "status": "DRAFT",
+            "topics": [],
+            "content": null,
+            "context": null,
+            "modelId": null,
+            "modules": [],
+            "outputs": [],
+            "version": null,
+            "computes": null,
+            "filePath": null,
+            "noteType": null,
+            "severity": null,
+            "hooksUsed": [],
+            "rootCause": null,
+            "confidence": null,
+            "consumedBy": [],
+            "provenance": null,
+            "sourceType": null,
+            "targetType": null,
+            "cardinality": null,
+            "description": null,
+            "alternatives": [],
+            "consequences": [],
+            "errorMessage": null,
+            "relationType": null,
+            "correctPattern": null,
+            "decisionStatus": null,
+            "dispatchTargets": [],
+            "lifecycleEvents": []
+          },
+          "document": {
+            "hash": {
+              "encoding": "base64",
+              "algorithm": "sha1"
+            },
+            "version": 1
+          }
+        }
+      },
+      "timestampUtcMs": "2026-08-20T08:45:18.616Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "WnQHqlA1M+2wVi9UcL0BNwy+JMc=",
+    "timestampUtcMs": "2026-08-20T08:45:19.258Z",
+    "action": {
+      "type": "SET_DESCRIPTION",
+      "input": {
+        "updatedAt": "2026-08-20T08:45:19.258697Z",
+        "description": "delete_doc cascades delete_references on the Version doctype, so an audit trail scoped to the lifetime of the row it audits disappears the moment the row does."
+      },
+      "timestampUtcMs": "2026-08-20T08:45:19.258706Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "",
+    "timestampUtcMs": "2026-08-20T08:45:20.417Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "e9acb759-e1b0-46d6-afb5-2ba40e65809e",
+        "targetId": "4d8e59af-51f2-4ab7-b290-e1d5744abbd7",
+        "relationshipType": "DERIVED_FROM"
+      },
+      "timestampUtcMs": "2026-08-20T08:45:20.417Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "sqDH7vEH0CgQuBweSbyV2Lyj4L4=",
+    "timestampUtcMs": "2026-08-20T08:45:19.258Z",
+    "action": {
+      "type": "SET_NOTE_TYPE",
+      "input": {
+        "noteType": "OBSERVATION",
+        "updatedAt": "2026-08-20T08:45:19.258709Z"
+      },
+      "timestampUtcMs": "2026-08-20T08:45:19.258717Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "+uXM2eZybDXP/gT22sQW793nYEU=",
+    "timestampUtcMs": "2026-08-20T08:45:19.258Z",
+    "action": {
+      "type": "SET_CONTENT",
+      "input": {
+        "content": "`frappe/model/delete_doc.py` calls `delete_references(\"Version\", doctype, name, \"ref_doctype\", \"docname\")`. Deleting a Purchase Order therefore removes both the order and every Version record describing how it changed.\n\nAn append-only record has to outlive its subject to be worth anything \u2014 the question an audit answers is usually asked after something has gone wrong, and often after someone has tidied up. Frappe's version history is scoped to the lifetime of the row, so the act that most warrants investigation is also the act that destroys the evidence.\n\nNothing here is careless: Version records are ordinary DocType rows, and cascading them keeps the database consistent. The design is coherent; it just isn't an audit log.",
+        "updatedAt": "2026-08-20T08:45:19.258719Z"
+      },
+      "timestampUtcMs": "2026-08-20T08:45:19.258726Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "T7UK9KuqAW292uwdbkyekJoh2KI=",
+    "timestampUtcMs": "2026-08-20T08:45:19.258Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "c6d15e17-79a5-468b-ab14-273a813d5ead",
+        "name": "tool-screen"
+      },
+      "timestampUtcMs": "2026-08-20T08:45:19.258739Z"
+    }
+  },
+  {
+    "index": 5,
+    "hash": "FT9kq987XXZ8Xq7/2G6glaO/iP8=",
+    "timestampUtcMs": "2026-08-20T08:45:19.258Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "238d8ba9-5b1f-4e6f-8ab4-240407d3ae2c",
+        "name": "erpnext"
+      },
+      "timestampUtcMs": "2026-08-20T08:45:19.258874Z"
+    }
+  },
+  {
+    "index": 6,
+    "hash": "noVkcEQM94gIw1szsacIUbeomKk=",
+    "timestampUtcMs": "2026-08-20T08:45:19.258Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "4d0b36e6-e694-4a13-97b9-45d40d64af4b",
+        "name": "frappe"
+      },
+      "timestampUtcMs": "2026-08-20T08:45:19.258896Z"
+    }
+  },
+  {
+    "index": 7,
+    "hash": "2TYILwzQdmruHVfF5qhjN4hrBGs=",
+    "timestampUtcMs": "2026-08-20T08:45:19.258Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "a98d4500-73fd-4a46-8b7b-658e996706e8",
+        "name": "audit-trail"
+      },
+      "timestampUtcMs": "2026-08-20T08:45:19.258906Z"
+    }
+  },
+  {
+    "index": 8,
+    "hash": "UDOQrS99nUGtkgxzuL+97C2CHfY=",
+    "timestampUtcMs": "2026-08-20T08:45:19.258Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "af99fe08-3909-4ace-b1a1-f01097d51e4f",
+        "name": "deletion"
+      },
+      "timestampUtcMs": "2026-08-20T08:45:19.258915Z"
+    }
+  },
+  {
+    "index": 9,
+    "hash": "pjRSnOTbsRmffTarjg7abAqrAeI=",
+    "timestampUtcMs": "2026-08-20T08:45:19.669Z",
+    "action": {
+      "type": "SET_PROVENANCE",
+      "input": {
+        "author": "knowledge-agent",
+        "createdAt": "2026-08-20T08:45:19.669272Z",
+        "sessionId": null,
+        "sourceOrigin": "DERIVED"
+      },
+      "timestampUtcMs": "2026-08-20T08:45:19.669311Z"
+    }
+  },
+  {
+    "index": 10,
+    "hash": "GdEdYJH/Ejw54P+NJ7ZB5qcs9Ks=",
+    "timestampUtcMs": "2026-08-20T08:45:20.609Z",
+    "action": {
+      "type": "SUBMIT_FOR_REVIEW",
+      "input": {
+        "id": "8572e93b-43dd-4fcb-9653-3c36967ceea3",
+        "actor": "knowledge-agent",
+        "comment": "Extracted from the primary-source tool screen; each claim quotable from a cited source.",
+        "timestamp": "2026-08-20T08:45:20.609501Z"
+      },
+      "timestampUtcMs": "2026-08-20T08:45:20.609521Z"
+    }
+  },
+  {
+    "index": 11,
+    "hash": "g5GPdYSzjOO1xN+8K3w5MGlSPYk=",
+    "timestampUtcMs": "2026-08-20T08:45:20.766Z",
+    "action": {
+      "type": "APPROVE_NOTE",
+      "input": {
+        "id": "f8936ec5-31e9-4ac5-aae3-c3ccf92464a5",
+        "actor": "liberuum",
+        "comment": "Approved: tool-screen extraction.",
+        "timestamp": "2026-08-20T08:45:20.766840Z"
+      },
+      "timestampUtcMs": "2026-08-20T08:45:20.766863Z"
+    }
+  }
+]

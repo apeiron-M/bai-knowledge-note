@@ -1,0 +1,276 @@
+[
+  {
+    "index": 0,
+    "hash": "",
+    "timestampUtcMs": "2026-08-20T08:44:57.217Z",
+    "action": {
+      "type": "CREATE_DOCUMENT",
+      "input": {
+        "meta": {},
+        "name": "Alfresco records no content audit trail until an administrator switches one on",
+        "slug": "",
+        "model": "bai/knowledge-note",
+        "branch": "main",
+        "signing": {
+          "nonce": "",
+          "publicKey": {},
+          "signature": "3407f8f4-748e-4075-8911-5a17c7354cfd",
+          "documentType": "bai/knowledge-note",
+          "createdAtUtcIso": "2026-08-20T08:44:57.217Z"
+        },
+        "version": 0,
+        "documentId": "3407f8f4-748e-4075-8911-5a17c7354cfd",
+        "protocolVersions": {
+          "base-reducer": 2
+        }
+      },
+      "timestampUtcMs": "2026-08-20T08:44:57.217Z"
+    }
+  },
+  {
+    "index": 0,
+    "hash": "CZshd37hJdov/NS4MlxrYIBVNpQ=",
+    "timestampUtcMs": "2026-08-20T08:44:57.888Z",
+    "action": {
+      "type": "SET_TITLE",
+      "input": {
+        "title": "Alfresco records no content audit trail until an administrator switches one on",
+        "updatedAt": "2026-08-20T08:44:57.888362Z"
+      },
+      "timestampUtcMs": "2026-08-20T08:44:57.888410Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "",
+    "timestampUtcMs": "2026-08-20T08:44:57.217Z",
+    "action": {
+      "type": "UPGRADE_DOCUMENT",
+      "input": {
+        "model": "bai/knowledge-note",
+        "toVersion": 1,
+        "documentId": "3407f8f4-748e-4075-8911-5a17c7354cfd",
+        "fromVersion": 0,
+        "initialState": {
+          "auth": {
+            "grants": [],
+            "version": 0
+          },
+          "local": {
+            "lastViewedAt": null,
+            "personalTags": []
+          },
+          "global": {
+            "links": [],
+            "model": null,
+            "scope": null,
+            "title": null,
+            "editor": null,
+            "inputs": [],
+            "models": [],
+            "status": "DRAFT",
+            "topics": [],
+            "content": null,
+            "context": null,
+            "modelId": null,
+            "modules": [],
+            "outputs": [],
+            "version": null,
+            "computes": null,
+            "filePath": null,
+            "noteType": null,
+            "severity": null,
+            "hooksUsed": [],
+            "rootCause": null,
+            "confidence": null,
+            "consumedBy": [],
+            "provenance": null,
+            "sourceType": null,
+            "targetType": null,
+            "cardinality": null,
+            "description": null,
+            "alternatives": [],
+            "consequences": [],
+            "errorMessage": null,
+            "relationType": null,
+            "correctPattern": null,
+            "decisionStatus": null,
+            "dispatchTargets": [],
+            "lifecycleEvents": []
+          },
+          "document": {
+            "hash": {
+              "encoding": "base64",
+              "algorithm": "sha1"
+            },
+            "version": 1
+          }
+        }
+      },
+      "timestampUtcMs": "2026-08-20T08:44:57.217Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "d7CiHIn30IajtNriDlT30Il8ZD8=",
+    "timestampUtcMs": "2026-08-20T08:44:57.888Z",
+    "action": {
+      "type": "SET_DESCRIPTION",
+      "input": {
+        "updatedAt": "2026-08-20T08:44:57.888414Z",
+        "description": "audit.enabled=true only arms the framework; audit.alfresco-access.enabled is false by default, so a stock install generates no audit data at all."
+      },
+      "timestampUtcMs": "2026-08-20T08:44:57.888421Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "",
+    "timestampUtcMs": "2026-08-20T08:44:59.109Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "3407f8f4-748e-4075-8911-5a17c7354cfd",
+        "targetId": "4d8e59af-51f2-4ab7-b290-e1d5744abbd7",
+        "relationshipType": "DERIVED_FROM"
+      },
+      "timestampUtcMs": "2026-08-20T08:44:59.109Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "/RVerGESbUhips5pY/OTgrMdPo4=",
+    "timestampUtcMs": "2026-08-20T08:44:57.888Z",
+    "action": {
+      "type": "SET_NOTE_TYPE",
+      "input": {
+        "noteType": "OBSERVATION",
+        "updatedAt": "2026-08-20T08:44:57.888423Z"
+      },
+      "timestampUtcMs": "2026-08-20T08:44:57.888428Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "vHXixnzYnBP6w4D7oaV/jpSVrbc=",
+    "timestampUtcMs": "2026-08-20T08:44:57.888Z",
+    "action": {
+      "type": "SET_CONTENT",
+      "input": {
+        "content": "`repository.properties` ships `audit.enabled=true` alongside `audit.alfresco-access.enabled=false`. The first property is a decoy: it arms the auditing framework without producing any records. Alfresco's own documentation says so directly \u2014 *\"enabling this property does not necessarily result in the generation of audit data\"* \u2014 and elsewhere, *\"The auditing system is disabled by default, as it has the potential to impact performance.\"*\n\nThe consequence is that a default Alfresco Community install has no content audit trail whatsoever. DoD 5015 auditing (`audit.dod5015.enabled=false`) and download auditing are off for the same reason.\n\nThis matters more than a missing feature would. An organisation that believes it has an audit trail because the config says `audit.enabled=true` has a governance gap it cannot see, and will discover it at the moment it needs the record.",
+        "updatedAt": "2026-08-20T08:44:57.888430Z"
+      },
+      "timestampUtcMs": "2026-08-20T08:44:57.888434Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "1knyLedpoLCGx0Pgf0IQaJLZnA8=",
+    "timestampUtcMs": "2026-08-20T08:44:57.888Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "6ae9619d-f1f9-4228-a6d1-43747871bc79",
+        "name": "tool-screen"
+      },
+      "timestampUtcMs": "2026-08-20T08:44:57.888443Z"
+    }
+  },
+  {
+    "index": 5,
+    "hash": "IsKo1CIVcN6FpJ5upPSMVVPdeQw=",
+    "timestampUtcMs": "2026-08-20T08:44:57.888Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "64973073-1322-4fe1-82ed-0a275abaab56",
+        "name": "alfresco"
+      },
+      "timestampUtcMs": "2026-08-20T08:44:57.888450Z"
+    }
+  },
+  {
+    "index": 6,
+    "hash": "pYtZSdg7SlS8aoFJTyoy/kJ5wWg=",
+    "timestampUtcMs": "2026-08-20T08:44:57.888Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "f12d6541-401c-4bcc-b3ef-62eadc290f43",
+        "name": "audit-trail"
+      },
+      "timestampUtcMs": "2026-08-20T08:44:57.888456Z"
+    }
+  },
+  {
+    "index": 7,
+    "hash": "3sdBZW/gYZaWp4elF0JI46MIOOk=",
+    "timestampUtcMs": "2026-08-20T08:44:57.888Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "96e37c4c-46cb-42a9-b5ab-fd6bc329c42d",
+        "name": "defaults"
+      },
+      "timestampUtcMs": "2026-08-20T08:44:57.888462Z"
+    }
+  },
+  {
+    "index": 8,
+    "hash": "3GQxKpxyBNuLYMH6omC6U47JkO8=",
+    "timestampUtcMs": "2026-08-20T08:44:57.888Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "5d449c70-48ef-4cb1-85b2-f2b0c4a293c6",
+        "name": "system-of-record"
+      },
+      "timestampUtcMs": "2026-08-20T08:44:57.888468Z"
+    }
+  },
+  {
+    "index": 9,
+    "hash": "JyqAUcYghYm1L0EpqKCZHnT7dow=",
+    "timestampUtcMs": "2026-08-20T08:44:58.310Z",
+    "action": {
+      "type": "SET_PROVENANCE",
+      "input": {
+        "author": "knowledge-agent",
+        "createdAt": "2026-08-20T08:44:58.310795Z",
+        "sessionId": null,
+        "sourceOrigin": "DERIVED"
+      },
+      "timestampUtcMs": "2026-08-20T08:44:58.310831Z"
+    }
+  },
+  {
+    "index": 10,
+    "hash": "MGz858p4fc7BgezYi3zKK+/sgWY=",
+    "timestampUtcMs": "2026-08-20T08:44:59.341Z",
+    "action": {
+      "type": "SUBMIT_FOR_REVIEW",
+      "input": {
+        "id": "6fa2f34b-c7ad-40ff-81de-5878c20e132d",
+        "actor": "knowledge-agent",
+        "comment": "Extracted from the primary-source tool screen; each claim quotable from a cited source.",
+        "timestamp": "2026-08-20T08:44:59.341188Z"
+      },
+      "timestampUtcMs": "2026-08-20T08:44:59.341213Z"
+    }
+  },
+  {
+    "index": 11,
+    "hash": "3zBVZMOi4Yy6wiNVm9+9ubcztvg=",
+    "timestampUtcMs": "2026-08-20T08:44:59.502Z",
+    "action": {
+      "type": "APPROVE_NOTE",
+      "input": {
+        "id": "8905fff1-ebc0-42bb-86a3-1eb2664c12f7",
+        "actor": "liberuum",
+        "comment": "Approved: tool-screen extraction.",
+        "timestamp": "2026-08-20T08:44:59.502057Z"
+      },
+      "timestampUtcMs": "2026-08-20T08:44:59.502091Z"
+    }
+  }
+]

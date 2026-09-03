@@ -1,0 +1,141 @@
+[
+  {
+    "index": 0,
+    "hash": "",
+    "timestampUtcMs": "2026-09-02T21:34:05.944Z",
+    "action": {
+      "type": "CREATE_DOCUMENT",
+      "input": {
+        "meta": {},
+        "name": "Academy \u203a Build \u203a BuildingUserExperiences \u203a CSS Customization for Connect Integration",
+        "slug": "",
+        "model": "bai/source",
+        "branch": "main",
+        "signing": {
+          "nonce": "",
+          "publicKey": {},
+          "signature": "2391600a-da55-4ec5-baf0-1c12e3b2a484",
+          "documentType": "bai/source",
+          "createdAtUtcIso": "2026-09-02T21:34:05.944Z"
+        },
+        "version": 0,
+        "documentId": "2391600a-da55-4ec5-baf0-1c12e3b2a484",
+        "protocolVersions": {
+          "base-reducer": 2
+        }
+      },
+      "timestampUtcMs": "2026-09-02T21:34:05.944Z"
+    }
+  },
+  {
+    "index": 0,
+    "hash": "/48kl0iVwfbxhFXeQo+IVVyqJiE=",
+    "timestampUtcMs": "2026-09-02T21:34:05.863Z",
+    "action": {
+      "type": "INGEST_SOURCE",
+      "input": {
+        "url": "https://github.com/powerhouse-inc/powerhouse/blob/v6.2.2-dev.74/apps/academy/docs/academy/03-Build/03-BuildingUserExperiences/04-CSSCustomization.md",
+        "tool": "sync-repo-docs",
+        "title": "Academy \u203a Build \u203a BuildingUserExperiences \u203a CSS Customization for Connect Integration",
+        "author": "Powerhouse Inc.",
+        "method": "sha256:fa3072c87d019f39eec39802192a2366eb1f89030c683dff4df2acd11629a3f6 git:v6.2.2-dev.74",
+        "content": "# CSS Customization for Connect Integration\n\nWhen your editor runs inside Connect, it's rendered within a specific container hierarchy. Understanding this structure allows you to customize your editor's appearance to match your application's design requirements.\n\n## Understanding the Editor Container Hierarchy\n\nConnect wraps your editor component in two key containers that you can target for styling:\n\n```\n<div id=\"document-editor-container\"\n     class=\"flex-1\"\n     data-document-type=\"[type]\">\n  \u2514\u2500\u2500 <DocumentEditor />\n       \u2514\u2500\u2500 <div id=\"document-editor-context\"\n                class=\"relative h-full\"\n                data-editor=\"[editorId]\"\n                data-document-type=\"[type]\">\n            \u2514\u2500\u2500 <YourEditorComponent />\n```\n\n### Container Details\n\n| Container ID                 | Default Classes   | Data Attributes                     | Purpose                                                     |\n| ---------------------------- | ----------------- | ----------------------------------- | ----------------------------------------------------------- |\n| `#document-editor-container` | `flex-1`          | `data-document-type`                | Outermost wrapper, controls overall editor space allocation |\n| `#document-editor-context`   | `relative h-full` | `data-editor`, `data-document-type` | Inner context, provides positioning context and full height |\n\nThese containers are defined in Connect's source:\n\n- [`document-editor-container.tsx`](https://github.com/powerhouse-inc/ph-monorepo/blob/main/apps/connect/src/components/document-editor-container.tsx) (line 94)\n- [`editors.tsx`](https://github.com/powerhouse-inc/ph-monorepo/blob/main/apps/connect/src/components/editors.tsx) (line 173)\n\n## Customizing Your Editor's Appearance\n\n### Method 1: Inline Styles in Your Editor Component (Recommended)\n\nThe simplest and most maintainable approach is to apply styles directly to your editor's root element. This keeps your styling self-contained within your editor.\n\n```tsx\nexport function Editor() {\n  return (\n    <div style={{ height: \"100%\" }} className=\"bg-gray-50 p-6\">\n      {/* Your editor content */}\n    </div>\n  );\n}\n```\n\n:::tip\nUsing `height: \"100%\"` ensures your editor fills the available vertical space within Connect's container hierarchy.\n:::\n\n### Method 2: CSS File with Container Selectors\n\nFor more complex customizations or when you need to override Connect's default container styles, you can target the container IDs directly in a CSS file:\n\n:::danger[Affects All Editors]\nTargeting container IDs directly will apply styles to **ALL** editors in your Connect application. For editor-specific styling, use [Method 3: Scoped Styling with Data Attributes](#method-3-scoped-styling-with-data-attributes) instead.\n:::\n\n```css\n/* editors/my-editor/editor.css */\n#document-editor-container {\n  /* Customize the outer container */\n  background-color: #f8fafc;\n}\n\n#document-editor-context {\n  /* Customize the inner context */\n  max-width: 1200px;\n  margin: 0 auto;\n}\n\n/* Scope styles to your editor within the context */\n#document-editor-context .my-editor-root {\n  padding: 2rem;\n}\n```\n\n:::warning[Best Practice: Centralize Style Imports]\nRemember to import styles in your `styles.css` file rather than directly in `.tsx` files. Direct imports work in development but won't be included in production builds.\n\n```css\n/* styles.css */\n@import \"./editors/my-editor/editor.css\";\n```\n\n:::\n\n### Method 3: Scoped Styling with Data Attributes\n\nConnect adds `data-editor` and `data-document-type` attributes to editor containers, allowing you to scope CSS rules to specific editors without affecting others.\n\n```css\n/* Only applies to a specific editor */\n#document-editor-context[data-editor=\"document-editor-editor\"] {\n  background-color: #f0f9ff;\n}\n\n/* Only applies to a specific document type */\n#document-editor-context[data-document-type=\"powerhouse/document-editor\"] {\n  max-width: 900px;\n  margin: 0 auto;\n}\n\n/* Combine both for precise targeting */\n#document-editor-context[data-editor=\"document-editor-editor\"][data-document-type=\"powerhouse/document-editor\"] {\n  padding: 1rem;\n}\n```\n\n#### Finding Your Editor ID\n\nThe `data-editor` value comes from the `id` property in your editor module configuration:\n\n```typescript\n// editors/my-editor/module.ts\nimport type { EditorModule } from \"document-model\";\n\nexport const MyEditor: EditorModule = {\n  config: {\n    id: \"my-custom-editor\", // <-- This becomes the data-editor value\n    documentTypes: [\"my-org/my-document-model\"],\n  },\n  Component: MyEditorComponent,\n};\n```\n\n#### Common Editor IDs\n\n| Editor ID                | Document Type                | Description     |\n| ------------------------ | ---------------------------- | --------------- |\n| `document-editor-editor` | `powerhouse/document-editor` | Document Editor |\n| `vetra-drive-app`        | `powerhouse/document-drive`  | Drive Explorer  |\n| `app-editor`             | `powerhouse/app`             | App Editor      |\n\n:::tip[Runtime Inspection]\nYou can inspect the `data-editor` and `data-document-type` attributes in your browser's developer tools when editing a document to find the exact values for your target editor.\n:::\n\n## Reference Implementation: Vetra Drive App\n\nThe Vetra Drive App provides a real-world example of CSS customization. Here's how it styles its editor wrapper:\n\n```tsx\n// From: packages/vetra/editors/vetra-drive-app/editor.tsx\n<div\n  style={{ height: \"100%\" }}\n  className=\"bg-gray-50 p-6 after:pointer-events-none after:absolute after:inset-0 after:bg-blue-500 after:opacity-0 after:transition after:content-['']\"\n>\n  <DriveExplorer {/* ... */} />\n</div>\n```\n\nThis example demonstrates:\n\n- **`height: \"100%\"`** - Ensures the editor fills the full container height\n- **`bg-gray-50`** - Applies a light gray background color\n- **`p-6`** - Adds consistent padding around the content\n- **`after:*` pseudo-element** - Creates a visual effect layer for transitions\n\n## Common Use Cases\n\n### Full-Height Editor with Scrollable Content\n\nWhen your editor needs a fixed header/toolbar with scrollable main content:\n\n```tsx\nexport function Editor() {\n  return (\n    <div style={{ height: \"100%\" }} className=\"flex flex-col\">\n      <header className=\"flex-shrink-0 border-b p-4\">\n        <h1>Document Title</h1>\n        {/* Toolbar buttons */}\n      </header>\n      <main className=\"flex-1 overflow-auto p-4\">\n        {/* Scrollable content area */}\n      </main>\n    </div>\n  );\n}\n```\n\n### Custom Background and Theming\n\nApply custom backgrounds or gradients to match your application's theme:\n\n```tsx\nexport function Editor() {\n  return (\n    <div\n      style={{ height: \"100%\" }}\n      className=\"bg-gradient-to-b from-slate-50 to-white\"\n    >\n      {/* Themed content */}\n    </div>\n  );\n}\n```\n\n### Centered Content with Max Width\n\nConstrain content width for better readability:\n\n```tsx\nexport function Editor() {\n  return (\n    <div style={{ height: \"100%\" }} className=\"bg-gray-50 p-6\">\n      <div className=\"mx-auto max-w-4xl\">\n        {/* Centered, width-constrained content */}\n      </div>\n    </div>\n  );\n}\n```\n\n## Troubleshooting\n\n### Editor Doesn't Fill Available Height\n\n**Problem:** Your editor content appears squished or doesn't use the full height.\n\n**Solution:** Ensure your root element has `height: \"100%\"` or uses flex utilities:\n\n```tsx\n// Option 1: Inline style\n<div style={{ height: \"100%\" }}>\n\n// Option 2: Tailwind class\n<div className=\"h-full\">\n```\n\n### Styles Not Applied in Production\n\n**Problem:** Styles work in development but not in production builds.\n\n**Solution:** Move style imports from `.tsx` files to your `styles.css` file:\n\n```css\n/* styles.css - correct location for imports */\n@import \"./editors/my-editor/editor.css\";\n```\n\n### Z-Index Conflicts\n\n**Problem:** Overlays, modals, or dropdowns appear behind other elements.\n\n**Solution:** The `#document-editor-context` has `position: relative`. Use this as your positioning context:\n\n```tsx\n<div style={{ height: \"100%\" }} className=\"relative\">\n  {/* Your content */}\n  <div className=\"absolute right-0 top-0 z-10\">{/* Positioned overlay */}</div>\n</div>\n```\n\n### Content Overflows Container\n\n**Problem:** Content extends beyond the editor boundaries.\n\n**Solution:** Add overflow handling to your root element:\n\n```tsx\n<div style={{ height: \"100%\" }} className=\"overflow-auto\">\n  {/* Scrollable when content overflows */}\n</div>\n\n// Or hide overflow\n<div style={{ height: \"100%\" }} className=\"overflow-hidden\">\n  {/* Content is clipped */}\n</div>\n```\n\n## Further Reading\n\n- [Building Document Editors](/academy/Build/BuildingUserExperiences/BuildingDocumentEditors) - Fundamentals of editor development including basic styling\n- [Building a Drive Explorer](/academy/Build/BuildingUserExperiences/BuildingADriveExplorer) - Creating custom drive apps with styling\n",
+        "createdAt": "2026-09-02T21:34:05.863Z",
+        "createdBy": "repo-docs-sync",
+        "sourceType": "DOCUMENTATION",
+        "description": "Powerhouse v6.2.2-dev.74 (unchanged since v6.2.2-dev.47) \u2014 When your editor runs inside Connect, it's rendered within a specific container hierarchy. Understanding this structure allows you to custom\u2026",
+        "publishedAt": "2026-06-17T17:18:45.000Z"
+      },
+      "timestampUtcMs": "2026-09-02T21:34:05.863Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "",
+    "timestampUtcMs": "2026-09-02T21:34:05.944Z",
+    "action": {
+      "type": "UPGRADE_DOCUMENT",
+      "input": {
+        "model": "bai/source",
+        "toVersion": 1,
+        "documentId": "2391600a-da55-4ec5-baf0-1c12e3b2a484",
+        "fromVersion": 0,
+        "initialState": {
+          "auth": {
+            "grants": [],
+            "version": 0
+          },
+          "local": {},
+          "global": {
+            "title": null,
+            "status": "INBOX",
+            "content": null,
+            "createdAt": null,
+            "createdBy": null,
+            "provenance": null,
+            "sourceType": null,
+            "description": null,
+            "extractedClaims": [],
+            "extractionStats": null
+          },
+          "document": {
+            "hash": {
+              "encoding": "base64",
+              "algorithm": "sha1"
+            },
+            "version": 1
+          }
+        }
+      },
+      "timestampUtcMs": "2026-09-02T21:34:05.944Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "dQiP69zYQVE4ERhebDNBLtXOqw0=",
+    "timestampUtcMs": "2026-09-02T21:34:24.887Z",
+    "action": {
+      "type": "ADD_EXTRACTED_CLAIM",
+      "input": {
+        "claimRef": "54da46f6-f573-4438-b12e-369830aff095"
+      },
+      "timestampUtcMs": "2026-09-02T21:34:24.887Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "7h4TAA1vvFeZp0MPLFO/MfafR4M=",
+    "timestampUtcMs": "2026-09-02T21:34:26.390Z",
+    "action": {
+      "type": "ADD_EXTRACTED_CLAIM",
+      "input": {
+        "claimRef": "ce88373e-5007-4dac-b8a6-7665528d2bb7"
+      },
+      "timestampUtcMs": "2026-09-02T21:34:26.390Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "vXfbbaAUsshRrDBH8yv5qdehTRo=",
+    "timestampUtcMs": "2026-09-02T21:34:27.908Z",
+    "action": {
+      "type": "ADD_EXTRACTED_CLAIM",
+      "input": {
+        "claimRef": "db4b9db3-f9a9-409d-85a3-489770479b17"
+      },
+      "timestampUtcMs": "2026-09-02T21:34:27.908Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "37i6vlwgnRkKca925VSg3LYAv7s=",
+    "timestampUtcMs": "2026-09-02T21:34:32.676Z",
+    "action": {
+      "type": "SET_SOURCE_STATUS",
+      "input": {
+        "status": "EXTRACTED"
+      },
+      "timestampUtcMs": "2026-09-02T21:34:32.676Z"
+    }
+  }
+]

@@ -1,0 +1,106 @@
+{
+  "links": [
+    {
+      "id": "lnk-38452ce8-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "38452ce8-8dd3-474a-8caa-2fe877fb937b",
+      "targetTitle": "Arawa \u2014 Nextcloud"
+    },
+    {
+      "id": "lnk-43f416a2-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "43f416a2-61ec-4b84-9fc6-07a8b9fa9fd6",
+      "targetTitle": "Compaso GmbH \u2014 Nextcloud"
+    },
+    {
+      "id": "lnk-b2941a86-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "b2941a86-6870-47b0-ab07-0e9336fe6930",
+      "targetTitle": "Linuxfabrik GmbH \u2014 Nextcloud"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "A Nextcloud Flow webhook makes the sign-off survive the file being moved, renamed or deleted",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "685f6789-9d30-4601-a84a-86f92bce3367",
+      "name": "leads",
+      "topicDocumentId": null
+    },
+    {
+      "id": "1c90e1b4-c0c1-4772-b405-e22a9332f7c9",
+      "name": "nextcloud",
+      "topicDocumentId": null
+    },
+    {
+      "id": "448edc5e-5fdc-4861-a8ea-5bd5577da115",
+      "name": "demo-design",
+      "topicDocumentId": null
+    },
+    {
+      "id": "02eb4582-bae6-4cfd-a86c-a91f40c5fe19",
+      "name": "dms",
+      "topicDocumentId": null
+    },
+    {
+      "id": "e5f06d4e-11ca-405d-8bee-fdaa04c8afce",
+      "name": "audit-trail",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "The integration uses Nextcloud Flow or a webhook, firing when a document reaches an approval state and dispatching a typed operation into Powerhouse. The claim being demonstrated is a survival property: the sign-off outlives the file being moved, renamed or deleted.\n\nThose three verbs are chosen because they are ordinary file operations, not incidents. In a shared-file system documents get reorganised, renamed to match a convention and deleted when superseded, and none of that is misuse. If the approval lives only as a property of the file, ordinary housekeeping destroys the audit answer. Emitting the approval as its own record decouples the decision from the object's lifecycle.\n\nThree leads carry this demo \u2014 one each in FR, DE and CH \u2014 all at \"3 \u00b7 later\". The integration surface is a stock Nextcloud feature rather than custom code, so the build cost is low even though the cohort is cold.\n\n---\n\n## Leads sharing this finding (3)\n\n**3 \u00b7 later**\n- Arawa (FR) \u2014 https://arawa.fr\n- Compaso GmbH (DE) \u2014 https://compaso.de\n- Linuxfabrik GmbH (CH Zurich) \u2014 https://linuxfabrik.ch\n\nVerbatim research text this claim was extracted from:\n\n> Nextcloud Flow / webhook dispatching a typed operation when a document reaches an approval state \u2014 the sign-off survives the file being moved, renamed or deleted.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "INTEGRATION",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "knowledge-agent",
+    "createdAt": "2026-08-19T11:27:05.947197Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-19T11:27:08.096910Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "A typed operation is dispatched when a document reaches an approval state, so the decision stops being an attribute of the file object that happened to carry it.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "21e7f403-08bd-4dfc-8554-85453302e1f1",
+      "actor": "knowledge-agent",
+      "comment": "Extracted from lead research; claim checked against the source record.",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-19T11:27:07.949659Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "1c70dff9-84d2-4605-bb15-eab438ca8529",
+      "actor": "liberuum",
+      "comment": "Approved: lead corpus extraction.",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-19T11:27:08.096910Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

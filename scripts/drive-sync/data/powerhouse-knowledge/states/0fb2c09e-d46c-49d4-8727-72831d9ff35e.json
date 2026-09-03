@@ -1,0 +1,109 @@
+{
+  "links": [
+    {
+      "id": "lnk-2c856393-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "2c856393-31e4-4c1f-96aa-46c0a23cd072",
+      "targetTitle": "packages-published-to-npm-installed-with-ph"
+    },
+    {
+      "id": "lnk-15a216b2-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "15a216b2-f6e8-40ba-bfcb-604c1059297a",
+      "targetTitle": "packages-publish-to-npm-install-via-ph"
+    },
+    {
+      "id": "lnk-e5905516-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "e5905516-830e-4fac-9464-298c12e958fb",
+      "targetTitle": "vetra-package-module-types"
+    },
+    {
+      "id": "lnk-43a48858-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "43a48858-0991-4aa0-92aa-147e78b4f78c",
+      "targetTitle": "Academy \u203a Build \u203a Launch \u203a Publish your package",
+      "reason": "The note names apps/academy/docs/academy/03-Build/05-Launch/02-PublishYourProject.md as its source; page text identical at v6.2.2-dev.47 and v6.2.2-dev.74",
+      "confidence": "grounded"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "ph publish pushes a package to the Vetra registry so Connect can offer to install it on demand",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "0bac9e73-dbaf-4042-b49f-6e8c625038b8",
+      "name": "packaging",
+      "topicDocumentId": null
+    },
+    {
+      "id": "fa350e1b-12d8-4584-9dc9-70b97c228abf",
+      "name": "publishing",
+      "topicDocumentId": null
+    },
+    {
+      "id": "09e54568-16b7-4e18-900b-d1c017a00ce3",
+      "name": "vetra-registry",
+      "topicDocumentId": null
+    },
+    {
+      "id": "c2ed890f-e59c-4222-8d01-ab8e3c865758",
+      "name": "cli",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "## The registry publish path\n\n`ph publish` is a thin wrapper around `npm publish` that resolves and injects the registry URL for you. Resolution order is `--registry` flag > `PH_REGISTRY_URL` env > `powerhouse.config.json` > built-in default. Everything after the recognised flags is forwarded verbatim to `npm publish`.\n\n### First publish\n\nTwo files must agree before the first push: `powerhouse.manifest.json` (set `name`, `description`, `publisher`) and `package.json` (`name` must match). Then authenticate. The academy still teaches the htpasswd path:\n\n```bash\nnpm adduser --registry=https://registry.vetra.io\nph publish --registry=https://registry.vetra.io\n```\n\nThe CLI source has moved ahead of that: `publish` first tries to mint a **Renown** bearer token bound to the registry (5-minute TTL) from the identity created by `ph login`, and only falls back to `npm whoami` / `npm adduser` if that fails. If both fail it prints `Run: ph login (recommended) or npm adduser --registry <url>` and exits 1. `ph registry-login` does the token-to-`~/.npmrc` step on its own.\n\n### The prerelease guard\n\nIf `package.json`'s version carries a prerelease id (`1.1.0-beta.0`) and no `--tag` was passed, npm refuses to publish without an explicit dist-tag. `ph publish` detects this: in a TTY it prompts *\"Publish with --tag beta?\"*; in CI (or any non-TTY) it exits 1 with instructions rather than guessing. Numeric-only prerelease ids (`1.0.0-0`) are skipped because npm requires an alphanumeric dist-tag.\n\n### Why it matters\n\nRegistry publishing is what unlocks **dynamic package loading**: drop an exported document into a local drive in Connect, and Connect reads the required package from the file, then offers to install it from the registry \u2014 no pre-provisioned environment. Bump `version` before every subsequent publish. This flow landed in `ph-cmd` 6.0.0-dev.153; projects scaffolded earlier need migrating.\n\n_Source: `apps/academy/docs/academy/03-Build/05-Launch/02-PublishYourProject.md` and `clis/ph-cli/src/commands/publish.ts`, Powerhouse v6.2.2-dev.45._",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": "v6.2.2-dev.74",
+  "computes": null,
+  "filePath": "apps/academy/docs/academy/03-Build/05-Launch/02-PublishYourProject.md",
+  "noteType": "WORKFLOW",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "claude",
+    "createdAt": "2026-08-13T14:37:05.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-09-02T21:37:04.806Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "`ph publish --registry=https://registry.vetra.io` wraps npm publish. Connect then detects a dropped document's required package and prompts to install it from the registry.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "3edc4815-7e7a-4b9e-9add-3a9e63772799",
+      "actor": "claude",
+      "comment": "Knowledge registered against powerhouse v6.2.2-dev.47",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-14T12:00:00.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "5c956312-73b9-4186-8cff-9f05b55e132b",
+      "actor": "liberuum",
+      "comment": "Canonical as of powerhouse v6.2.2-dev.47",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-14T12:00:00.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

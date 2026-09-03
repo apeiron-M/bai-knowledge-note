@@ -1,0 +1,658 @@
+[
+  {
+    "index": 0,
+    "hash": "",
+    "timestampUtcMs": "2026-09-02T22:10:23.978Z",
+    "action": {
+      "type": "CREATE_DOCUMENT",
+      "input": {
+        "meta": {},
+        "name": "auth-stream-monotonic",
+        "slug": "",
+        "model": "bai/knowledge-note",
+        "branch": "main",
+        "signing": {
+          "nonce": "",
+          "publicKey": {},
+          "signature": "5ca28e07-65de-4faf-9b18-43a21567a734",
+          "documentType": "bai/knowledge-note",
+          "createdAtUtcIso": "2026-09-02T22:10:23.978Z"
+        },
+        "version": 0,
+        "documentId": "5ca28e07-65de-4faf-9b18-43a21567a734",
+        "protocolVersions": {
+          "base-reducer": 2
+        }
+      },
+      "timestampUtcMs": "2026-09-02T22:10:23.978Z"
+    }
+  },
+  {
+    "index": 0,
+    "hash": "q9opb46rWCSY0NMJPWGxgLmFvfA=",
+    "timestampUtcMs": "2026-09-02T22:10:24.059Z",
+    "action": {
+      "type": "SET_TITLE",
+      "input": {
+        "title": "The auth stream is strictly timestamp-monotonic and never reshuffled, so concurrent policy edits from two reactors do not converge \u2014 keep one policy-writing home",
+        "updatedAt": "2026-09-02T22:10:24.059Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:10:24.059Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "",
+    "timestampUtcMs": "2026-09-02T22:10:23.978Z",
+    "action": {
+      "type": "UPGRADE_DOCUMENT",
+      "input": {
+        "model": "bai/knowledge-note",
+        "toVersion": 1,
+        "documentId": "5ca28e07-65de-4faf-9b18-43a21567a734",
+        "fromVersion": 0,
+        "initialState": {
+          "auth": {
+            "grants": [],
+            "version": 0
+          },
+          "local": {
+            "lastViewedAt": null,
+            "personalTags": []
+          },
+          "global": {
+            "links": [],
+            "model": null,
+            "scope": null,
+            "title": null,
+            "editor": null,
+            "inputs": [],
+            "models": [],
+            "status": "DRAFT",
+            "topics": [],
+            "content": null,
+            "context": null,
+            "modelId": null,
+            "modules": [],
+            "outputs": [],
+            "version": null,
+            "computes": null,
+            "filePath": null,
+            "noteType": null,
+            "severity": null,
+            "hooksUsed": [],
+            "rootCause": null,
+            "confidence": null,
+            "consumedBy": [],
+            "provenance": null,
+            "sourceType": null,
+            "targetType": null,
+            "cardinality": null,
+            "description": null,
+            "alternatives": [],
+            "consequences": [],
+            "errorMessage": null,
+            "relationType": null,
+            "correctPattern": null,
+            "decisionStatus": null,
+            "dispatchTargets": [],
+            "lifecycleEvents": []
+          },
+          "document": {
+            "hash": {
+              "encoding": "base64",
+              "algorithm": "sha1"
+            },
+            "version": 1
+          }
+        }
+      },
+      "timestampUtcMs": "2026-09-02T22:10:23.978Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "yBcgmhA384XFJg3DXug4/ks7k0c=",
+    "timestampUtcMs": "2026-09-02T22:10:24.059Z",
+    "action": {
+      "type": "SET_DESCRIPTION",
+      "input": {
+        "updatedAt": "2026-09-02T22:10:24.059Z",
+        "description": "Same-millisecond or backdated auth edits are refused with AuthTimestampNotMonotonicError; in tie-breaks auth wins over domain scopes. The replica whose auth stream ran ahead dead-letters the arrival."
+      },
+      "timestampUtcMs": "2026-09-02T22:10:24.059Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "",
+    "timestampUtcMs": "2026-09-02T22:18:19.785Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "metadata": {
+          "reason": "Extracted from docs/specs/auth-scope.md at v6.2.2-dev.74 \u2014 Ordering Consistency (three rules); Stage 4 exit ('Conflicting auth operations\u2026 do not converge'); re-evaluation dedup-before-monotonic rule",
+          "confidence": "grounded"
+        },
+        "sourceId": "5ca28e07-65de-4faf-9b18-43a21567a734",
+        "targetId": "223bb12a-be7f-4209-9ab2-f04f7bb2b6c8",
+        "relationshipType": "DERIVED_FROM"
+      },
+      "timestampUtcMs": "2026-09-02T22:18:19.785Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "L603yh0v/5I1nJY6m0rnGAvd5N8=",
+    "timestampUtcMs": "2026-09-02T22:10:24.059Z",
+    "action": {
+      "type": "SET_NOTE_TYPE",
+      "input": {
+        "noteType": "PATTERN",
+        "updatedAt": "2026-09-02T22:10:24.059Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:10:24.059Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "",
+    "timestampUtcMs": "2026-09-02T22:18:21.018Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "metadata": {
+          "reason": "Extracted from apps/academy/docs/academy/05-Lookup/00-Cookbook.md at v6.2.2-dev.74 \u2014 Document ACL gotcha 'The auth stream is strictly timestamp-monotonic'; Revocation Race 'Policy setup' (only Alice writes auth)",
+          "confidence": "grounded"
+        },
+        "sourceId": "5ca28e07-65de-4faf-9b18-43a21567a734",
+        "targetId": "f2aaccd3-7c26-4327-881e-f5ad9e267b89",
+        "relationshipType": "DERIVED_FROM"
+      },
+      "timestampUtcMs": "2026-09-02T22:18:21.018Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "zM1cppLzrYAG68k79MDyL1fnmes=",
+    "timestampUtcMs": "2026-09-02T22:10:24.059Z",
+    "action": {
+      "type": "SET_CONTENT",
+      "input": {
+        "content": "Ordering across streams needs rules a single stream never needed, and the spec gives three:\n\n1. **Auth-scope operation timestamps must strictly increase**, and an operation that does not is rejected \u2014 as an exception, not a logged operation. This is unlike every other scope, and deliberate: an auth decision cannot be resolved on the basis of which way a hash function leans.\n2. **In timestamp tie-breaks, auth-scope operations win** over domain operations.\n3. All other streams order by timestamp, then action id, then operation id \u2014 never by local-only information such as a logical index.\n\nTwo consequences bite in practice. The `document-acl` recipe notes that two policy edits in the same millisecond are refused (`AuthTimestampNotMonotonicError`), so its demo and tests space auth writes by a few milliseconds. And **conflicting auth operations from two reactors do not converge**: the monotonic rule is not symmetric \u2014 the replica whose auth stream already ran ahead rejects the arrival and dead-letters it, while the replica behind accepts, and the two hold different policies until the application reconciles them from the dead letters. The `revocation-race` recipe therefore has only Alice's reactor ever write the auth scope and calls that a pattern, not a demo simplification: a single policy-writing home, or coordinated administration, avoids the class entirely. The stage-9 migration runs on one replica with auth writes quiesced for the same reason.\n\nPositional judgment of domain operations only works *because* the policy stream itself has one authoritative order. One nuance: a re-appended auth operation from a re-evaluation pass keeps its original timestamp, so the monotonic check on arrival runs *after* the action-id dedup \u2014 otherwise it would reject traffic both replicas already agree about.\n\n_Source: docs/specs/auth-scope.md (Powerhouse v6.2.2-dev.74)._\n_Source: apps/academy/docs/academy/05-Lookup/00-Cookbook.md (Powerhouse v6.2.2-dev.74)._\n\n## Provenance\n- `docs/specs/auth-scope.md` \u2014 Ordering Consistency (three rules); Stage 4 exit ('Conflicting auth operations\u2026 do not converge'); re-evaluation dedup-before-monotonic rule\n- `apps/academy/docs/academy/05-Lookup/00-Cookbook.md` \u2014 Document ACL gotcha 'The auth stream is strictly timestamp-monotonic'; Revocation Race 'Policy setup' (only Alice writes auth)\n\n_Recorded from the Powerhouse repository at **v6.2.2-dev.74** during the v6.2.2-dev.74 source sync._",
+        "updatedAt": "2026-09-02T22:10:24.059Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:10:24.059Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "",
+    "timestampUtcMs": "2026-09-02T22:18:22.299Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "metadata": {
+          "reason": "Positional judgment of domain operations presupposes the single authoritative order this rule gives the policy stream",
+          "confidence": "grounded"
+        },
+        "sourceId": "5ca28e07-65de-4faf-9b18-43a21567a734",
+        "targetId": "0ade289f-d4fb-44d8-ab3b-316d65bb1c8d",
+        "relationshipType": "BUILDS_ON"
+      },
+      "timestampUtcMs": "2026-09-02T22:18:22.299Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "8F8tIIcttrcT99WjOUwRCtApmBk=",
+    "timestampUtcMs": "2026-09-02T22:10:24.059Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "660db5c4-365c-4976-aebc-5a4de01a57e7",
+        "name": "auth-scope"
+      },
+      "timestampUtcMs": "2026-09-02T22:10:24.059Z"
+    }
+  },
+  {
+    "index": 5,
+    "hash": "",
+    "timestampUtcMs": "2026-09-02T22:18:22.792Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "metadata": {
+          "reason": "The non-converging auth conflict surfaces as a dead letter, which quarantines just that document rather than the drive",
+          "confidence": "grounded"
+        },
+        "sourceId": "5ca28e07-65de-4faf-9b18-43a21567a734",
+        "targetId": "e57e23ae-2f05-414a-bb77-c74ab23f64e8",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-09-02T22:18:22.792Z"
+    }
+  },
+  {
+    "index": 5,
+    "hash": "zcD42Zasy4LeCW/evKk4se8RHzc=",
+    "timestampUtcMs": "2026-09-02T22:10:24.059Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "a7498048-d510-4912-a64e-5f8035bf0091",
+        "name": "ordering"
+      },
+      "timestampUtcMs": "2026-09-02T22:10:24.059Z"
+    }
+  },
+  {
+    "index": 6,
+    "hash": "",
+    "timestampUtcMs": "2026-09-02T22:18:23.259Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "metadata": {
+          "reason": "These are the ordering constraints the four auth actions are held to on top of their validation rules",
+          "confidence": "grounded"
+        },
+        "sourceId": "5ca28e07-65de-4faf-9b18-43a21567a734",
+        "targetId": "adb20e84-cdcd-4ed1-9542-07b80baf6c33",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-09-02T22:18:23.259Z"
+    }
+  },
+  {
+    "index": 6,
+    "hash": "hg7YGS6T433CjSbDSBtBiR4kJcg=",
+    "timestampUtcMs": "2026-09-02T22:10:24.059Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "60042a67-d999-4325-bd38-e93783361c52",
+        "name": "sync"
+      },
+      "timestampUtcMs": "2026-09-02T22:10:24.059Z"
+    }
+  },
+  {
+    "index": 7,
+    "hash": "",
+    "timestampUtcMs": "2026-09-02T22:22:36.565Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "metadata": {
+          "reason": "Extracted from docs/specs/auth-scope.md at v6.2.2-dev.74 \u2014 Ordering Consistency (three rules); Stage 4 exit ('Conflicting auth operations\u2026 do not converge'); re-evaluation dedup-before-monotonic rule",
+          "confidence": "grounded"
+        },
+        "sourceId": "5ca28e07-65de-4faf-9b18-43a21567a734",
+        "targetId": "223bb12a-be7f-4209-9ab2-f04f7bb2b6c8",
+        "relationshipType": "DERIVED_FROM"
+      },
+      "timestampUtcMs": "2026-09-02T22:22:36.565Z"
+    }
+  },
+  {
+    "index": 7,
+    "hash": "vF3RmU19arFuEPJw1T/T7WjRErc=",
+    "timestampUtcMs": "2026-09-02T22:10:24.059Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "7fde66c1-7506-43da-8ce6-15b10877e3d3",
+        "name": "gotchas"
+      },
+      "timestampUtcMs": "2026-09-02T22:10:24.059Z"
+    }
+  },
+  {
+    "index": 8,
+    "hash": "",
+    "timestampUtcMs": "2026-09-02T22:22:37.298Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "metadata": {
+          "reason": "Extracted from apps/academy/docs/academy/05-Lookup/00-Cookbook.md at v6.2.2-dev.74 \u2014 Document ACL gotcha 'The auth stream is strictly timestamp-monotonic'; Revocation Race 'Policy setup' (only Alice writes auth)",
+          "confidence": "grounded"
+        },
+        "sourceId": "5ca28e07-65de-4faf-9b18-43a21567a734",
+        "targetId": "f2aaccd3-7c26-4327-881e-f5ad9e267b89",
+        "relationshipType": "DERIVED_FROM"
+      },
+      "timestampUtcMs": "2026-09-02T22:22:37.298Z"
+    }
+  },
+  {
+    "index": 8,
+    "hash": "Dc5uE6h2tjVZwmWNEJLw9a9MWvQ=",
+    "timestampUtcMs": "2026-09-02T22:10:24.059Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "version",
+        "value": "v6.2.2-dev.74",
+        "updatedAt": "2026-09-02T22:10:24.059Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:10:24.059Z"
+    }
+  },
+  {
+    "index": 9,
+    "hash": "",
+    "timestampUtcMs": "2026-09-02T22:22:38.069Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "metadata": {
+          "reason": "Positional judgment of domain operations presupposes the single authoritative order this rule gives the policy stream",
+          "confidence": "grounded"
+        },
+        "sourceId": "5ca28e07-65de-4faf-9b18-43a21567a734",
+        "targetId": "0ade289f-d4fb-44d8-ab3b-316d65bb1c8d",
+        "relationshipType": "BUILDS_ON"
+      },
+      "timestampUtcMs": "2026-09-02T22:22:38.069Z"
+    }
+  },
+  {
+    "index": 9,
+    "hash": "xfI3i/G7zFS3ca5R7xUzS82VUBw=",
+    "timestampUtcMs": "2026-09-02T22:10:24.059Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "filePath",
+        "value": "docs/specs/auth-scope.md",
+        "updatedAt": "2026-09-02T22:10:24.059Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:10:24.059Z"
+    }
+  },
+  {
+    "index": 10,
+    "hash": "",
+    "timestampUtcMs": "2026-09-02T22:22:38.544Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "metadata": {
+          "reason": "The non-converging auth conflict surfaces as a dead letter, which quarantines just that document rather than the drive",
+          "confidence": "grounded"
+        },
+        "sourceId": "5ca28e07-65de-4faf-9b18-43a21567a734",
+        "targetId": "e57e23ae-2f05-414a-bb77-c74ab23f64e8",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-09-02T22:22:38.544Z"
+    }
+  },
+  {
+    "index": 10,
+    "hash": "WyBRgspnFqivQz0d+/gCrVU0qao=",
+    "timestampUtcMs": "2026-09-02T22:10:24.059Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "confidence",
+        "value": "grounded",
+        "updatedAt": "2026-09-02T22:10:24.059Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:10:24.059Z"
+    }
+  },
+  {
+    "index": 11,
+    "hash": "",
+    "timestampUtcMs": "2026-09-02T22:22:39.042Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "metadata": {
+          "reason": "These are the ordering constraints the four auth actions are held to on top of their validation rules",
+          "confidence": "grounded"
+        },
+        "sourceId": "5ca28e07-65de-4faf-9b18-43a21567a734",
+        "targetId": "adb20e84-cdcd-4ed1-9542-07b80baf6c33",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-09-02T22:22:39.042Z"
+    }
+  },
+  {
+    "index": 11,
+    "hash": "PsJOuTIg/wQhHKC0ahiVMgY7Mbc=",
+    "timestampUtcMs": "2026-09-02T22:10:26.679Z",
+    "action": {
+      "type": "SET_PROVENANCE",
+      "input": {
+        "author": "knowledge-agent",
+        "createdAt": "2026-09-02T22:10:26.679Z",
+        "sourceOrigin": "DERIVED"
+      },
+      "timestampUtcMs": "2026-09-02T22:10:26.679Z"
+    }
+  },
+  {
+    "index": 12,
+    "hash": "tuMH7E2zNHjy2oYRkKgTfG7rXpo=",
+    "timestampUtcMs": "2026-09-02T22:10:27.159Z",
+    "action": {
+      "type": "SUBMIT_FOR_REVIEW",
+      "input": {
+        "id": "e1cc9617-70f7-4275-a3b4-4516fa6615ea",
+        "actor": "knowledge-agent",
+        "comment": "extracted from the Powerhouse repository at v6.2.2-dev.74",
+        "timestamp": "2026-09-02T22:10:27.159Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:10:27.159Z"
+    }
+  },
+  {
+    "index": 13,
+    "hash": "RWau5cJqYv3AURFDtK48n98gRpA=",
+    "timestampUtcMs": "2026-09-02T22:10:27.658Z",
+    "action": {
+      "type": "APPROVE_NOTE",
+      "input": {
+        "id": "d832318a-deb7-4d7a-ac78-355d0a08e16a",
+        "actor": "liberuum",
+        "comment": "claim checked against the cited repository file at the pinned tag",
+        "timestamp": "2026-09-02T22:10:27.658Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:10:27.658Z"
+    }
+  },
+  {
+    "index": 14,
+    "hash": "p+jcb/CChay3/pDbc/PRk7BsP+E=",
+    "timestampUtcMs": "2026-09-02T22:15:45.745Z",
+    "action": {
+      "type": "SET_TITLE",
+      "input": {
+        "title": "The auth stream is strictly timestamp-monotonic and never reshuffled, so concurrent policy edits from two reactors do not converge \u2014 keep one policy-writing home",
+        "updatedAt": "2026-09-02T22:15:45.745Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:15:45.745Z"
+    }
+  },
+  {
+    "index": 15,
+    "hash": "p+jcb/CChay3/pDbc/PRk7BsP+E=",
+    "timestampUtcMs": "2026-09-02T22:15:45.745Z",
+    "action": {
+      "type": "SET_DESCRIPTION",
+      "input": {
+        "updatedAt": "2026-09-02T22:15:45.745Z",
+        "description": "Same-millisecond or backdated auth edits are refused with AuthTimestampNotMonotonicError; in tie-breaks auth wins over domain scopes. The replica whose auth stream ran ahead dead-letters the arrival."
+      },
+      "timestampUtcMs": "2026-09-02T22:15:45.745Z"
+    }
+  },
+  {
+    "index": 16,
+    "hash": "p+jcb/CChay3/pDbc/PRk7BsP+E=",
+    "timestampUtcMs": "2026-09-02T22:15:45.745Z",
+    "action": {
+      "type": "SET_NOTE_TYPE",
+      "input": {
+        "noteType": "PATTERN",
+        "updatedAt": "2026-09-02T22:15:45.745Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:15:45.745Z"
+    }
+  },
+  {
+    "index": 17,
+    "hash": "p+jcb/CChay3/pDbc/PRk7BsP+E=",
+    "timestampUtcMs": "2026-09-02T22:15:45.745Z",
+    "action": {
+      "type": "SET_CONTENT",
+      "input": {
+        "content": "Ordering across streams needs rules a single stream never needed, and the spec gives three:\n\n1. **Auth-scope operation timestamps must strictly increase**, and an operation that does not is rejected \u2014 as an exception, not a logged operation. This is unlike every other scope, and deliberate: an auth decision cannot be resolved on the basis of which way a hash function leans.\n2. **In timestamp tie-breaks, auth-scope operations win** over domain operations.\n3. All other streams order by timestamp, then action id, then operation id \u2014 never by local-only information such as a logical index.\n\nTwo consequences bite in practice. The `document-acl` recipe notes that two policy edits in the same millisecond are refused (`AuthTimestampNotMonotonicError`), so its demo and tests space auth writes by a few milliseconds. And **conflicting auth operations from two reactors do not converge**: the monotonic rule is not symmetric \u2014 the replica whose auth stream already ran ahead rejects the arrival and dead-letters it, while the replica behind accepts, and the two hold different policies until the application reconciles them from the dead letters. The `revocation-race` recipe therefore has only Alice's reactor ever write the auth scope and calls that a pattern, not a demo simplification: a single policy-writing home, or coordinated administration, avoids the class entirely. The stage-9 migration runs on one replica with auth writes quiesced for the same reason.\n\nPositional judgment of domain operations only works *because* the policy stream itself has one authoritative order. One nuance: a re-appended auth operation from a re-evaluation pass keeps its original timestamp, so the monotonic check on arrival runs *after* the action-id dedup \u2014 otherwise it would reject traffic both replicas already agree about.\n\n_Source: docs/specs/auth-scope.md (Powerhouse v6.2.2-dev.74)._\n_Source: apps/academy/docs/academy/05-Lookup/00-Cookbook.md (Powerhouse v6.2.2-dev.74)._\n\n## Provenance\n- `docs/specs/auth-scope.md` \u2014 Ordering Consistency (three rules); Stage 4 exit ('Conflicting auth operations\u2026 do not converge'); re-evaluation dedup-before-monotonic rule\n- `apps/academy/docs/academy/05-Lookup/00-Cookbook.md` \u2014 Document ACL gotcha 'The auth stream is strictly timestamp-monotonic'; Revocation Race 'Policy setup' (only Alice writes auth)\n\n_Recorded from the Powerhouse repository at **v6.2.2-dev.74** during the v6.2.2-dev.74 source sync._",
+        "updatedAt": "2026-09-02T22:15:45.745Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:15:45.745Z"
+    }
+  },
+  {
+    "index": 18,
+    "hash": "p+jcb/CChay3/pDbc/PRk7BsP+E=",
+    "timestampUtcMs": "2026-09-02T22:15:45.745Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "version",
+        "value": "v6.2.2-dev.74",
+        "updatedAt": "2026-09-02T22:15:45.745Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:15:45.745Z"
+    }
+  },
+  {
+    "index": 19,
+    "hash": "p+jcb/CChay3/pDbc/PRk7BsP+E=",
+    "timestampUtcMs": "2026-09-02T22:15:45.745Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "filePath",
+        "value": "docs/specs/auth-scope.md",
+        "updatedAt": "2026-09-02T22:15:45.745Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:15:45.745Z"
+    }
+  },
+  {
+    "index": 20,
+    "hash": "p+jcb/CChay3/pDbc/PRk7BsP+E=",
+    "timestampUtcMs": "2026-09-02T22:15:45.745Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "confidence",
+        "value": "grounded",
+        "updatedAt": "2026-09-02T22:15:45.745Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:15:45.745Z"
+    }
+  },
+  {
+    "index": 21,
+    "hash": "fZOmOUTGED79DV+nfpz1pl6NALY=",
+    "timestampUtcMs": "2026-09-02T22:20:22.663Z",
+    "action": {
+      "type": "SET_TITLE",
+      "input": {
+        "title": "The auth stream is strictly timestamp-monotonic and never reshuffled, so concurrent policy edits from two reactors do not converge \u2014 keep one policy-writing home",
+        "updatedAt": "2026-09-02T22:20:22.663Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:20:22.663Z"
+    }
+  },
+  {
+    "index": 22,
+    "hash": "fZOmOUTGED79DV+nfpz1pl6NALY=",
+    "timestampUtcMs": "2026-09-02T22:20:22.663Z",
+    "action": {
+      "type": "SET_DESCRIPTION",
+      "input": {
+        "updatedAt": "2026-09-02T22:20:22.663Z",
+        "description": "Same-millisecond or backdated auth edits are refused with AuthTimestampNotMonotonicError; in tie-breaks auth wins over domain scopes. The replica whose auth stream ran ahead dead-letters the arrival."
+      },
+      "timestampUtcMs": "2026-09-02T22:20:22.663Z"
+    }
+  },
+  {
+    "index": 23,
+    "hash": "fZOmOUTGED79DV+nfpz1pl6NALY=",
+    "timestampUtcMs": "2026-09-02T22:20:22.663Z",
+    "action": {
+      "type": "SET_NOTE_TYPE",
+      "input": {
+        "noteType": "PATTERN",
+        "updatedAt": "2026-09-02T22:20:22.663Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:20:22.663Z"
+    }
+  },
+  {
+    "index": 24,
+    "hash": "fZOmOUTGED79DV+nfpz1pl6NALY=",
+    "timestampUtcMs": "2026-09-02T22:20:22.663Z",
+    "action": {
+      "type": "SET_CONTENT",
+      "input": {
+        "content": "Ordering across streams needs rules a single stream never needed, and the spec gives three:\n\n1. **Auth-scope operation timestamps must strictly increase**, and an operation that does not is rejected \u2014 as an exception, not a logged operation. This is unlike every other scope, and deliberate: an auth decision cannot be resolved on the basis of which way a hash function leans.\n2. **In timestamp tie-breaks, auth-scope operations win** over domain operations.\n3. All other streams order by timestamp, then action id, then operation id \u2014 never by local-only information such as a logical index.\n\nTwo consequences bite in practice. The `document-acl` recipe notes that two policy edits in the same millisecond are refused (`AuthTimestampNotMonotonicError`), so its demo and tests space auth writes by a few milliseconds. And **conflicting auth operations from two reactors do not converge**: the monotonic rule is not symmetric \u2014 the replica whose auth stream already ran ahead rejects the arrival and dead-letters it, while the replica behind accepts, and the two hold different policies until the application reconciles them from the dead letters. The `revocation-race` recipe therefore has only Alice's reactor ever write the auth scope and calls that a pattern, not a demo simplification: a single policy-writing home, or coordinated administration, avoids the class entirely. The stage-9 migration runs on one replica with auth writes quiesced for the same reason.\n\nPositional judgment of domain operations only works *because* the policy stream itself has one authoritative order. One nuance: a re-appended auth operation from a re-evaluation pass keeps its original timestamp, so the monotonic check on arrival runs *after* the action-id dedup \u2014 otherwise it would reject traffic both replicas already agree about.\n\n_Source: docs/specs/auth-scope.md (Powerhouse v6.2.2-dev.74)._\n_Source: apps/academy/docs/academy/05-Lookup/00-Cookbook.md (Powerhouse v6.2.2-dev.74)._\n\n## Provenance\n- `docs/specs/auth-scope.md` \u2014 Ordering Consistency (three rules); Stage 4 exit ('Conflicting auth operations\u2026 do not converge'); re-evaluation dedup-before-monotonic rule\n- `apps/academy/docs/academy/05-Lookup/00-Cookbook.md` \u2014 Document ACL gotcha 'The auth stream is strictly timestamp-monotonic'; Revocation Race 'Policy setup' (only Alice writes auth)\n\n_Recorded from the Powerhouse repository at **v6.2.2-dev.74** during the v6.2.2-dev.74 source sync._",
+        "updatedAt": "2026-09-02T22:20:22.663Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:20:22.663Z"
+    }
+  },
+  {
+    "index": 25,
+    "hash": "fZOmOUTGED79DV+nfpz1pl6NALY=",
+    "timestampUtcMs": "2026-09-02T22:20:22.663Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "version",
+        "value": "v6.2.2-dev.74",
+        "updatedAt": "2026-09-02T22:20:22.663Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:20:22.663Z"
+    }
+  },
+  {
+    "index": 26,
+    "hash": "fZOmOUTGED79DV+nfpz1pl6NALY=",
+    "timestampUtcMs": "2026-09-02T22:20:22.663Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "filePath",
+        "value": "docs/specs/auth-scope.md",
+        "updatedAt": "2026-09-02T22:20:22.663Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:20:22.663Z"
+    }
+  },
+  {
+    "index": 27,
+    "hash": "fZOmOUTGED79DV+nfpz1pl6NALY=",
+    "timestampUtcMs": "2026-09-02T22:20:22.663Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "confidence",
+        "value": "grounded",
+        "updatedAt": "2026-09-02T22:20:22.663Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:20:22.663Z"
+    }
+  }
+]

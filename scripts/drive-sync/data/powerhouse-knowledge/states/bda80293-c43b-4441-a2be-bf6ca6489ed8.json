@@ -1,0 +1,108 @@
+{
+  "links": [
+    {
+      "id": "lnk-1e3e3772-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "1e3e3772-e865-4797-aebe-8b64a3f34fdd",
+      "targetTitle": "chat-history-persists-in-an-act-protected-feed-because-pss-m"
+    },
+    {
+      "id": "lnk-c00e0807-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "c00e0807-07ca-4b0c-8d5f-b38645f789d3",
+      "targetTitle": "input-types-should-reflect-user-intent-with-simple-specific-fields"
+    },
+    {
+      "id": "lnk-d1c32d1e-bui",
+      "linkType": "BUILDS_ON",
+      "targetDocumentId": "d1c32d1e-c285-46b0-b0f7-402fbec15641",
+      "targetTitle": "pss-provides-1-to-1-asymmetrically-encrypted-messaging-with-"
+    },
+    {
+      "id": "lnk-2fe08037-bui",
+      "linkType": "BUILDS_ON",
+      "targetDocumentId": "2fe08037-fc17-4fec-97f0-ac7d33baafc8",
+      "targetTitle": "gsoc-provides-many-to-one-notifications-with-sub-second-late"
+    },
+    {
+      "id": "lnk-d701272c-bui",
+      "linkType": "BUILDS_ON",
+      "targetDocumentId": "d701272c-ca6c-4aaf-93c1-99b8a7375d2e",
+      "targetTitle": "bee-reactor-adapter-prerequisites"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Chat requires both users to run full Bee nodes because light nodes cannot receive PSS or GSOC.",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "topic-cf31ed4f845a",
+      "name": "bee-node",
+      "topicDocumentId": null
+    },
+    {
+      "id": "topic-c0d1d799aabb",
+      "name": "pss-chat",
+      "topicDocumentId": null
+    },
+    {
+      "id": "topic-41701de83d21",
+      "name": "deployment",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "## Hard requirement\n\nThe Swarm chat/collab feature requires **both users to run full Bee nodes**. This is not a soft recommendation \u2014 light nodes lack the neighborhood-sync capability needed to receive PSS Trojan chunks and GSOC SOC updates.\n\n## Capability matrix\n\n| Feature | Full Node | Light Node | Ultra-Light |\n|---------|-----------|------------|-------------|\n| PSS send | Yes | Yes | No |\n| PSS receive | **Yes** | No | No |\n| GSOC subscribe | **Yes** | No | No |\n| GSOC send | Yes | Yes | No |\n| Feed read/write | Yes | Yes | Read only |\n\n## Minimum viable Bee config\n\n- `full-node: true`\n- `swap-enable: true`\n- A funded **mutable** postage stamp (GSOC requires mutable)\n- Connected to Gnosis Chain RPC\n\n## Dev mode caveat\n\nPSS and GSOC do function in `bee dev` mode, but only within the same node \u2014 there are no peers. Multi-node testing requires either a real Swarm network or a local multi-node setup.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "REFERENCE",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "knowledge-agent",
+    "createdAt": "2026-04-21T14:29:32.951Z",
+    "sessionId": null,
+    "updatedAt": "2026-09-03T09:57:31.317Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "PSS receive and GSOC subscribe both require full-node capability. Light and ultra-light nodes can send PSS/GSOC but cannot subscribe to incoming messages.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "55de1bdb-253f-49f4-a6c9-d86444d2b539",
+      "actor": "claude",
+      "comment": "Knowledge registered against powerhouse v6.2.2-dev.47",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-14T12:00:00.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "850bfd96-cb2a-4a59-8333-f272eeeb7c95",
+      "actor": "liberuum",
+      "comment": "Canonical as of powerhouse v6.2.2-dev.47",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-14T12:00:00.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

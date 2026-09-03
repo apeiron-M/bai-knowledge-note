@@ -1,0 +1,101 @@
+{
+  "links": [
+    {
+      "id": "lnk-eb3ddfcc-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "eb3ddfcc-c606-4705-b9c9-42f5e26e2384",
+      "targetTitle": "act-sharing-ecdh-publisher-grantee"
+    },
+    {
+      "id": "lnk-c6ce116a-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "c6ce116a-daaa-4be5-a9de-25b63600f6a0",
+      "targetTitle": "bee-reactor-adapter-storage-sharing-features"
+    },
+    {
+      "id": "lnk-f117ea02-bui",
+      "linkType": "BUILDS_ON",
+      "targetDocumentId": "f117ea02-9036-4519-8ac5-d62272dc8647",
+      "targetTitle": "swarm-manifest-as-reference-pattern"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Manifests are uploaded encrypted to /bytes and only the 64-char hash is written to the feed",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "164fbe4d-037b-4b2b-891a-d4713245efcf",
+      "name": "manifest-pattern",
+      "topicDocumentId": null
+    },
+    {
+      "id": "a4762aae-8802-4ee1-8872-05894d310640",
+      "name": "feeds",
+      "topicDocumentId": null
+    },
+    {
+      "id": "df2b28a4-2821-49c7-9a9e-8ac36960d2d3",
+      "name": "bytes-storage",
+      "topicDocumentId": null
+    },
+    {
+      "id": "a499b2a0-6236-404d-8660-242d7962ff26",
+      "name": "regenerate-publish",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "Rather than inlining large manifest JSON into a feed chunk, Connect uses a regenerate-and-publish pattern:\n\n1. Serialize the manifest to a JSON string.\n2. Encrypt it with AES-256-GCM \u2192 encrypted bytes.\n3. Upload to `/bytes` \u2192 receive a 64-char content hash.\n4. Write ONLY the hash to the feed \u2192 a 72-byte SOC (8-byte timestamp + 64-byte reference).\n\nReading reverses the flow: read the feed to get the hash, download the encrypted bytes from `/bytes`, decrypt, and parse JSON.\n\nThis pattern keeps feed writes fast (tiny SOC payloads) and is why feeds are a cheap mutable index over large, otherwise-immutable data. It applies uniformly to document, drive, and user manifests.\n\nThe `SwarmClient` also auto-detects legacy feeds: a feed that contains inline JSON instead of a 64-char hex reference is read with the legacy path for backward compatibility.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "PATTERN",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "knowledge-agent",
+    "createdAt": "2026-04-21T14:21:20.005Z",
+    "sessionId": null,
+    "updatedAt": "2026-09-03T09:57:32.397Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "The regenerate-and-publish pattern keeps feed SOCs tiny (8-byte timestamp + 64-byte reference = 72 bytes) and moves manifest size/latency to /bytes where it belongs.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "8ef234ca-1818-4bed-8cdf-58b0ef09cd4c",
+      "actor": "claude",
+      "comment": "Knowledge registered against powerhouse v6.2.2-dev.47",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-14T12:00:00.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "337e3152-8dc5-4dcc-8dd3-7a1fa9f35def",
+      "actor": "liberuum",
+      "comment": "Canonical as of powerhouse v6.2.2-dev.47",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-14T12:00:00.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

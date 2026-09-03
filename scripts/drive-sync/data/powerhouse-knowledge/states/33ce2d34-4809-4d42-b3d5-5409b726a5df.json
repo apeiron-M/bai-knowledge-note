@@ -1,0 +1,110 @@
+{
+  "links": [
+    {
+      "id": "lnk-4379a9fa-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "4379a9fa-7d7b-428e-aaa8-95938183ef0b",
+      "targetTitle": "arrays-in-state-schemas-must-use-mandatory-notation"
+    },
+    {
+      "id": "lnk-90d6a737-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "90d6a737-9bc9-43e9-9eb8-6a6a33d20786",
+      "targetTitle": "useselecteddocument-hook-is-auto-generated-per-document-model"
+    },
+    {
+      "id": "lnk-efb965b9-bui",
+      "linkType": "BUILDS_ON",
+      "targetDocumentId": "efb965b9-c4df-473a-bf8b-c087c2ceae7f",
+      "targetTitle": "document-model-three-components"
+    },
+    {
+      "id": "lnk-ed65375c-bui",
+      "linkType": "BUILDS_ON",
+      "targetDocumentId": "ed65375c-87bc-49fe-8463-9393235daff8",
+      "targetTitle": "graphql-sdl-defines-schemas-and-operations"
+    },
+    {
+      "id": "lnk-35187c13-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "35187c13-5029-4cc3-ac35-e34ba1453251",
+      "targetTitle": "Academy \u203a Build \u203a DocumentModelCreation \u203a Specify document operations",
+      "reason": "Backing page found by content match in the v6.2.2-dev.74 source backfill \u2014 identifiers add_todo_item, addtodoiteminput, graphql from the claim appear in this page (text identical at v6.2.2-dev.47 and v6.2.2-dev.74); attribution, not the original extraction record",
+      "confidence": "grounded"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Document operations follow VERB_NOUN naming convention with corresponding Input types",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "591cc21d-2653-4400-b10d-93a834ae507a",
+      "name": "operations",
+      "topicDocumentId": null
+    },
+    {
+      "id": "1f46addf-77dd-4ac1-88d9-b00c61e29f76",
+      "name": "naming-conventions",
+      "topicDocumentId": null
+    },
+    {
+      "id": "d334e0bd-76e7-4010-89cf-774b2e1ebc22",
+      "name": "document-model",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "Document operations in Powerhouse follow specific naming conventions:\n\n- **Operation names**: `VERB_NOUN` or `VERB_NOUN_SUBJECT` in SCREAMING_SNAKE_CASE (e.g., `ADD_TODO_ITEM`, `UPDATE_USER_PROFILE`)\n- **Input types**: PascalCase with `Input` suffix (e.g., `AddTodoItemInput`)\n- **Reducer functions**: camelCase with `Operation` suffix (e.g., `addTodoItemOperation`)\n\nWhen adding operations in Vetra Studio, you only provide the operation name (e.g., `ADD_TODO_ITEM`) and the `Input` suffix is generated automatically.\n\nOperations are organized into **modules** (e.g., a `todos` module containing ADD_TODO_ITEM, UPDATE_TODO_ITEM, DELETE_TODO_ITEM). This modular organization helps manage complexity as document models grow.\n\nDesign principles for operations:\n- Should be granular enough to represent distinct user intentions\n- Input types should contain all necessary info and nothing more\n- Use optional fields for partial updates (e.g., `text: String` without `!` in UpdateTodoItemInput)",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": "v6.2.2-dev.74",
+  "computes": null,
+  "filePath": "apps/academy/docs/academy/03-Build/02-DocumentModelCreation/03-SpecifyDocumentOperations.md",
+  "noteType": "PATTERN",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "knowledge-agent",
+    "createdAt": "2026-04-02T12:00:00.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-09-02T21:33:27.551Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Operations are named like ADD_TODO_ITEM with a matching GraphQL input type AddTodoItemInput defining the payload.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "8278aec8-bb99-4db0-b6e3-67a32edcc439",
+      "actor": "claude",
+      "comment": "Knowledge registered against powerhouse v6.2.2-dev.47",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-14T12:00:00.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "f1c3241e-e0b6-43e9-9605-04d77fba9d66",
+      "actor": "liberuum",
+      "comment": "Canonical as of powerhouse v6.2.2-dev.47",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-14T12:00:00.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

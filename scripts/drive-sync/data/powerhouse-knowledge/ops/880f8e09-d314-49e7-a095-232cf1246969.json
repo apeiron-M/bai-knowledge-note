@@ -1,0 +1,362 @@
+[
+  {
+    "index": 0,
+    "hash": "",
+    "timestampUtcMs": "2026-08-14T11:50:24.480Z",
+    "action": {
+      "type": "CREATE_DOCUMENT",
+      "input": {
+        "meta": {},
+        "name": "chat-topics-are-derived-from-sorted-participant-addresses-so",
+        "slug": "",
+        "model": "bai/knowledge-note",
+        "branch": "main",
+        "signing": {
+          "nonce": "",
+          "publicKey": {},
+          "signature": "880f8e09-d314-49e7-a095-232cf1246969",
+          "documentType": "bai/knowledge-note",
+          "createdAtUtcIso": "2026-08-14T11:50:24.480Z"
+        },
+        "version": 0,
+        "documentId": "880f8e09-d314-49e7-a095-232cf1246969",
+        "protocolVersions": {
+          "base-reducer": 2
+        }
+      },
+      "timestampUtcMs": "2026-08-14T11:50:24.480Z"
+    }
+  },
+  {
+    "index": 0,
+    "hash": "2QUFC/+bCtnCRdyFbOFRNx79M0E=",
+    "timestampUtcMs": "2026-08-14T12:34:56.000Z",
+    "action": {
+      "type": "SET_TITLE",
+      "input": {
+        "title": "Chat topics are derived from sorted participant addresses so both peers compute the same topic.",
+        "updatedAt": "2026-08-14T12:34:56.000Z"
+      },
+      "timestampUtcMs": "2026-08-14T12:34:56.000Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "",
+    "timestampUtcMs": "2026-08-14T11:50:24.480Z",
+    "action": {
+      "type": "UPGRADE_DOCUMENT",
+      "input": {
+        "model": "bai/knowledge-note",
+        "toVersion": 1,
+        "documentId": "880f8e09-d314-49e7-a095-232cf1246969",
+        "fromVersion": 0,
+        "initialState": {
+          "auth": {
+            "grants": [],
+            "version": 0
+          },
+          "local": {
+            "lastViewedAt": null,
+            "personalTags": []
+          },
+          "global": {
+            "links": [],
+            "model": null,
+            "scope": null,
+            "title": null,
+            "editor": null,
+            "inputs": [],
+            "models": [],
+            "status": "DRAFT",
+            "topics": [],
+            "content": null,
+            "context": null,
+            "modelId": null,
+            "modules": [],
+            "outputs": [],
+            "version": null,
+            "computes": null,
+            "filePath": null,
+            "noteType": null,
+            "severity": null,
+            "hooksUsed": [],
+            "rootCause": null,
+            "confidence": null,
+            "consumedBy": [],
+            "provenance": null,
+            "sourceType": null,
+            "targetType": null,
+            "cardinality": null,
+            "description": null,
+            "alternatives": [],
+            "consequences": [],
+            "errorMessage": null,
+            "relationType": null,
+            "correctPattern": null,
+            "decisionStatus": null,
+            "dispatchTargets": [],
+            "lifecycleEvents": []
+          },
+          "document": {
+            "hash": {
+              "encoding": "base64",
+              "algorithm": "sha1"
+            },
+            "version": 1
+          }
+        }
+      },
+      "timestampUtcMs": "2026-08-14T11:50:24.480Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "oCNQqM7jkqjkeBXoljjVaFkWKT8=",
+    "timestampUtcMs": "2026-08-14T12:34:56.000Z",
+    "action": {
+      "type": "SET_DESCRIPTION",
+      "input": {
+        "updatedAt": "2026-08-14T12:34:56.000Z",
+        "description": "Topics like ph:v2:chat:<sorted(alice,bob)> sort the two addresses alphabetically, ensuring symmetric derivation regardless of who initiates."
+      },
+      "timestampUtcMs": "2026-08-14T12:34:56.000Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "",
+    "timestampUtcMs": "2026-08-14T12:36:48.932Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "880f8e09-d314-49e7-a095-232cf1246969",
+        "targetId": "bda80293-c43b-4441-a2be-bf6ca6489ed8",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-08-14T12:36:48.932Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "GxPNZMFDBXYSu8CkC2UMfnAPV0I=",
+    "timestampUtcMs": "2026-08-14T12:34:56.000Z",
+    "action": {
+      "type": "SET_NOTE_TYPE",
+      "input": {
+        "noteType": "pattern",
+        "updatedAt": "2026-08-14T12:34:56.000Z"
+      },
+      "timestampUtcMs": "2026-08-14T12:34:56.000Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "",
+    "timestampUtcMs": "2026-08-14T12:36:49.018Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "880f8e09-d314-49e7-a095-232cf1246969",
+        "targetId": "bd78f2bf-44c5-408c-8ac7-85174b6d743b",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-08-14T12:36:49.018Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "41Ve85DWOgu+VsJU9aoCIMyTtVQ=",
+    "timestampUtcMs": "2026-08-14T12:34:56.000Z",
+    "action": {
+      "type": "SET_CONTENT",
+      "input": {
+        "content": "## Pattern\n\nChat, collab, and chat-history topics are all derived by concatenating the two participants' Swarm signer addresses in **sorted** order. Sorting guarantees both parties compute the same topic string regardless of who initiates the conversation.\n\n## Topic conventions\n\n```\nChat topic:    ph:v2:chat:<sorted(alice, bob)>\nGSOC notify:   ph:v2:notify:<targetAddress>\nCollab topic:  ph:v2:collab:<documentId>:<sorted(alice, bob)>\nChat history:  ph:v2:chatlog:<sorted(alice, bob)>    // feed, append-only\n```\n\n## Why sorting\n\nWithout sorting, Alice would compute `chat:alice:bob` while Bob would compute `chat:bob:alice`, and PSS subscriptions would never meet. Sorting collapses the asymmetry.\n\n## Namespace versioning\n\nThe `ph:v2:` prefix (vs v1) signals the current Swarm protocol revision. Bumping the prefix is how the app will roll out breaking changes to topic shape or payload schema in the future without colliding with old clients.",
+        "updatedAt": "2026-08-14T12:34:56.000Z"
+      },
+      "timestampUtcMs": "2026-08-14T12:34:56.000Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "",
+    "timestampUtcMs": "2026-08-14T12:36:49.099Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "880f8e09-d314-49e7-a095-232cf1246969",
+        "targetId": "9250acee-7e5a-454c-8515-977ded38a34d",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-08-14T12:36:49.099Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "6scPsMfKw1EvagjA0vbHYNzf4CQ=",
+    "timestampUtcMs": "2026-08-14T12:34:56.000Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "version",
+        "value": "v6.2.2-dev.44",
+        "updatedAt": "2026-08-14T12:34:56.000Z"
+      },
+      "timestampUtcMs": "2026-08-14T12:34:56.000Z"
+    }
+  },
+  {
+    "index": 5,
+    "hash": "",
+    "timestampUtcMs": "2026-08-14T12:36:49.182Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "880f8e09-d314-49e7-a095-232cf1246969",
+        "targetId": "650ecf22-c9ae-48a9-a02b-7aa78f21ac7c",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-08-14T12:36:49.182Z"
+    }
+  },
+  {
+    "index": 5,
+    "hash": "+W34yH0QbNU0L/Bw0tZw7+DC92E=",
+    "timestampUtcMs": "2026-08-14T12:34:56.000Z",
+    "action": {
+      "type": "SET_PROVENANCE",
+      "input": {
+        "author": "knowledge-agent",
+        "createdAt": "2026-04-21T14:27:13.426Z",
+        "sourceOrigin": "DERIVED"
+      },
+      "timestampUtcMs": "2026-08-14T12:34:56.000Z"
+    }
+  },
+  {
+    "index": 6,
+    "hash": "",
+    "timestampUtcMs": "2026-08-14T12:36:49.271Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "880f8e09-d314-49e7-a095-232cf1246969",
+        "targetId": "d1c32d1e-c285-46b0-b0f7-402fbec15641",
+        "relationshipType": "BUILDS_ON"
+      },
+      "timestampUtcMs": "2026-08-14T12:36:49.271Z"
+    }
+  },
+  {
+    "index": 6,
+    "hash": "90q8gLNB73ZrK3J690XCBPWhjOw=",
+    "timestampUtcMs": "2026-08-14T12:34:56.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "topic-5c5ce24c7858",
+        "name": "pss-chat",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-08-14T12:34:56.000Z"
+    }
+  },
+  {
+    "index": 7,
+    "hash": "zFhC8K2+kEeF7v3mJtrs5GTL5HU=",
+    "timestampUtcMs": "2026-08-14T12:34:56.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "topic-d2d68e6884e3",
+        "name": "topic-convention",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-08-14T12:34:56.000Z"
+    }
+  },
+  {
+    "index": 8,
+    "hash": "l72ur1oYRX4besW0wZwvJ6ySCak=",
+    "timestampUtcMs": "2026-08-14T12:34:56.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "topic-b1dbf6c65e84",
+        "name": "swarm-feeds",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-08-14T12:34:56.000Z"
+    }
+  },
+  {
+    "index": 9,
+    "hash": "bPgPZahbAYe+Q/AkMKn0htzUm34=",
+    "timestampUtcMs": "2026-08-14T14:37:19.000Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "version",
+        "value": "v6.2.2-dev.47",
+        "updatedAt": "2026-08-14T12:00:00.000Z"
+      },
+      "timestampUtcMs": "2026-08-14T14:37:19.000Z"
+    }
+  },
+  {
+    "index": 10,
+    "hash": "hxFu9mMyNFIBTrjBiXCL0R0o9d4=",
+    "timestampUtcMs": "2026-08-14T14:37:19.000Z",
+    "action": {
+      "type": "SUBMIT_FOR_REVIEW",
+      "input": {
+        "id": "90e696bd-e9b4-4454-8f73-61982924c80a",
+        "actor": "claude",
+        "comment": "Knowledge registered against powerhouse v6.2.2-dev.47",
+        "timestamp": "2026-08-14T12:00:00.000Z"
+      },
+      "timestampUtcMs": "2026-08-14T14:37:19.000Z"
+    }
+  },
+  {
+    "index": 11,
+    "hash": "4AeDu6muXt651Z9nIYesq8BjmJM=",
+    "timestampUtcMs": "2026-08-14T14:37:19.000Z",
+    "action": {
+      "type": "APPROVE_NOTE",
+      "input": {
+        "id": "00434635-a6a0-4c73-b0f5-87c19ce1ab3e",
+        "actor": "liberuum",
+        "comment": "Canonical as of powerhouse v6.2.2-dev.47",
+        "timestamp": "2026-08-14T12:00:00.000Z"
+      },
+      "timestampUtcMs": "2026-08-14T14:37:19.000Z"
+    }
+  },
+  {
+    "index": 12,
+    "hash": "DNgXN+KEWbqwrwbfUP68geWbT8Q=",
+    "timestampUtcMs": "2026-08-16T09:49:49.000Z",
+    "action": {
+      "type": "SET_NOTE_TYPE",
+      "input": {
+        "noteType": "PATTERN",
+        "updatedAt": "2026-08-16T09:49:49.000Z"
+      },
+      "timestampUtcMs": "2026-08-16T09:49:49.000Z"
+    }
+  },
+  {
+    "index": 13,
+    "hash": "X57ykyyWCvUoOTqCqtK83XHpmtc=",
+    "timestampUtcMs": "2026-09-03T09:57:53.513Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "version",
+        "updatedAt": "2026-09-03T09:57:53.513Z"
+      },
+      "timestampUtcMs": "2026-09-03T09:57:53.513Z"
+    }
+  }
+]

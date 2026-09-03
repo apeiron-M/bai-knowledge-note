@@ -1,0 +1,622 @@
+[
+  {
+    "index": 0,
+    "hash": "",
+    "timestampUtcMs": "2026-09-02T22:11:05.727Z",
+    "action": {
+      "type": "CREATE_DOCUMENT",
+      "input": {
+        "meta": {},
+        "name": "auth-conditions-versioned-limit",
+        "slug": "",
+        "model": "bai/knowledge-note",
+        "branch": "main",
+        "signing": {
+          "nonce": "",
+          "publicKey": {},
+          "signature": "d726eab9-c3d0-4387-b900-256cee1b1b9f",
+          "documentType": "bai/knowledge-note",
+          "createdAtUtcIso": "2026-09-02T22:11:05.727Z"
+        },
+        "version": 0,
+        "documentId": "d726eab9-c3d0-4387-b900-256cee1b1b9f",
+        "protocolVersions": {
+          "base-reducer": 2
+        }
+      },
+      "timestampUtcMs": "2026-09-02T22:11:05.727Z"
+    }
+  },
+  {
+    "index": 0,
+    "hash": "e2ZrHkg9QY8r02DspfnohTftGeU=",
+    "timestampUtcMs": "2026-09-02T22:11:05.645Z",
+    "action": {
+      "type": "SET_TITLE",
+      "input": {
+        "title": "authConditions must not be enabled on a fleet where preflight:auth reports documents that cross a reducer version, because the positional walk folds with the pre-upgrade reducer",
+        "updatedAt": "2026-09-02T22:11:05.645Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:11:05.645Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "",
+    "timestampUtcMs": "2026-09-02T22:11:05.727Z",
+    "action": {
+      "type": "UPGRADE_DOCUMENT",
+      "input": {
+        "model": "bai/knowledge-note",
+        "toVersion": 1,
+        "documentId": "d726eab9-c3d0-4387-b900-256cee1b1b9f",
+        "fromVersion": 0,
+        "initialState": {
+          "auth": {
+            "grants": [],
+            "version": 0
+          },
+          "local": {
+            "lastViewedAt": null,
+            "personalTags": []
+          },
+          "global": {
+            "links": [],
+            "model": null,
+            "scope": null,
+            "title": null,
+            "editor": null,
+            "inputs": [],
+            "models": [],
+            "status": "DRAFT",
+            "topics": [],
+            "content": null,
+            "context": null,
+            "modelId": null,
+            "modules": [],
+            "outputs": [],
+            "version": null,
+            "computes": null,
+            "filePath": null,
+            "noteType": null,
+            "severity": null,
+            "hooksUsed": [],
+            "rootCause": null,
+            "confidence": null,
+            "consumedBy": [],
+            "provenance": null,
+            "sourceType": null,
+            "targetType": null,
+            "cardinality": null,
+            "description": null,
+            "alternatives": [],
+            "consequences": [],
+            "errorMessage": null,
+            "relationType": null,
+            "correctPattern": null,
+            "decisionStatus": null,
+            "dispatchTargets": [],
+            "lifecycleEvents": []
+          },
+          "document": {
+            "hash": {
+              "encoding": "base64",
+              "algorithm": "sha1"
+            },
+            "version": 1
+          }
+        }
+      },
+      "timestampUtcMs": "2026-09-02T22:11:05.727Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "Dg3w8N1U5A7HGrVIEOTPcEddTzk=",
+    "timestampUtcMs": "2026-09-02T22:11:05.645Z",
+    "action": {
+      "type": "SET_DESCRIPTION",
+      "input": {
+        "updatedAt": "2026-09-02T22:11:05.645Z",
+        "description": "The walk resolves one reducer version from below every upgrade boundary, so a condition on a migrated field sees undefined and admission and re-evaluation disagree. Documented limit; preflight exit 2."
+      },
+      "timestampUtcMs": "2026-09-02T22:11:05.645Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "",
+    "timestampUtcMs": "2026-09-02T22:18:52.809Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "metadata": {
+          "reason": "Extracted from docs/specs/auth-scope.md at v6.2.2-dev.74 \u2014 Stage 7 step 5: 'Close the versioned-documents gap in the positional walk\u2026 Resolved as a documented limitation'; preflight:auth paragraph",
+          "confidence": "grounded"
+        },
+        "sourceId": "d726eab9-c3d0-4387-b900-256cee1b1b9f",
+        "targetId": "223bb12a-be7f-4209-9ab2-f04f7bb2b6c8",
+        "relationshipType": "DERIVED_FROM"
+      },
+      "timestampUtcMs": "2026-09-02T22:18:52.809Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "hm+x13WPNeGyAV4CRz8Ngqey/KA=",
+    "timestampUtcMs": "2026-09-02T22:11:05.645Z",
+    "action": {
+      "type": "SET_NOTE_TYPE",
+      "input": {
+        "noteType": "PATTERN",
+        "updatedAt": "2026-09-02T22:11:05.645Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:11:05.645Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "",
+    "timestampUtcMs": "2026-09-02T22:18:54.076Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "metadata": {
+          "reason": "Extracted from apps/switchboard/README.md at v6.2.2-dev.74 \u2014 Reactor Enforcement Flags: preflight exit codes 0/1/2/3/68",
+          "confidence": "grounded"
+        },
+        "sourceId": "d726eab9-c3d0-4387-b900-256cee1b1b9f",
+        "targetId": "63e10e2c-9be4-4bd2-a876-8708cd3ac1f9",
+        "relationshipType": "DERIVED_FROM"
+      },
+      "timestampUtcMs": "2026-09-02T22:18:54.076Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "89NIBUWWn2sY+RXFpaBswjcegI4=",
+    "timestampUtcMs": "2026-09-02T22:11:05.645Z",
+    "action": {
+      "type": "SET_CONTENT",
+      "input": {
+        "content": "The positional walk that re-evaluates conditional grants reads its base state *below every upgrade boundary*, and the write cache deliberately withholds version-changing upgrades from a positional read. So the base carries the document's creation-time version, the migration never runs during the walk, and the whole range folds with the **pre-upgrade reducer** against un-migrated state. A `where` clause that reads a field a migration introduced reads `undefined` for the entire history.\n\nThat is worse than one stale answer, because **admission and re-evaluation disagree**: admission reads the condition's state at the head, where every upgrade has been applied, while a re-evaluation pass walks from below them. An operation admitted against post-upgrade state can be refused when a later arrival makes the walk visit it again \u2014 retracting a tail for no reason.\n\nThe spec resolves this as a **documented limitation** rather than an upgrade-aware walk. Making the walk version-aware means growing the fold's signature with a version context and first extracting the write cache's twice-duplicated boundary segmentation into something shared \u2014 a refactor of the hottest rebuild path that does not belong in the read-path stage. Instead `preflight:auth` reports the documents that cross a reducer version alongside the streams it already checks, and `authConditions` **must not be enabled on a fleet the sweep reports**. The two findings are reported separately (exit code `1` streams unsafe for `authEnforcement`, `2` documents unsafe for `authConditions`, `3` both) because a fleet can be safe for one and not the other. Creation-time upgrades from version zero are not boundaries: `reactor.create` submits one in the create batch and the rebuild applies it inline.\n\n_Source: docs/specs/auth-scope.md (Powerhouse v6.2.2-dev.74)._\n_Source: apps/switchboard/README.md (Powerhouse v6.2.2-dev.74)._\n\n## Provenance\n- `docs/specs/auth-scope.md` \u2014 Stage 7 step 5: 'Close the versioned-documents gap in the positional walk\u2026 Resolved as a documented limitation'; preflight:auth paragraph\n- `apps/switchboard/README.md` \u2014 Reactor Enforcement Flags: preflight exit codes 0/1/2/3/68\n\n_Recorded from the Powerhouse repository at **v6.2.2-dev.74** during the v6.2.2-dev.74 source sync._",
+        "updatedAt": "2026-09-02T22:11:05.645Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:11:05.645Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "",
+    "timestampUtcMs": "2026-09-02T22:18:55.164Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "metadata": {
+          "reason": "An upgrade reducer that patches state and initialState is exactly the version boundary the positional walk cannot cross",
+          "confidence": "grounded"
+        },
+        "sourceId": "d726eab9-c3d0-4387-b900-256cee1b1b9f",
+        "targetId": "2f4b5df2-d6ca-4224-a049-e96b4811ed37",
+        "relationshipType": "BUILDS_ON"
+      },
+      "timestampUtcMs": "2026-09-02T22:18:55.164Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "sTC9A/FwhdSxQ9lGZeHE/TDKaP4=",
+    "timestampUtcMs": "2026-09-02T22:11:05.645Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "802872f1-3e0b-40a7-9268-8ca841ff5121",
+        "name": "auth-scope"
+      },
+      "timestampUtcMs": "2026-09-02T22:11:05.645Z"
+    }
+  },
+  {
+    "index": 5,
+    "hash": "",
+    "timestampUtcMs": "2026-09-02T22:18:55.657Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "metadata": {
+          "reason": "This is the second of the two unsafe conditions the preflight sweep exists to catch before a fleet flips its flags",
+          "confidence": "grounded"
+        },
+        "sourceId": "d726eab9-c3d0-4387-b900-256cee1b1b9f",
+        "targetId": "c5419cd5-deac-4f48-b58f-131e5808bd49",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-09-02T22:18:55.657Z"
+    }
+  },
+  {
+    "index": 5,
+    "hash": "4lMWo8sj1XFTkGm+YcxfWoi0WFA=",
+    "timestampUtcMs": "2026-09-02T22:11:05.645Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "75d54a2b-a2aa-4988-987d-049d2eca1e06",
+        "name": "versioning"
+      },
+      "timestampUtcMs": "2026-09-02T22:11:05.645Z"
+    }
+  },
+  {
+    "index": 6,
+    "hash": "",
+    "timestampUtcMs": "2026-09-02T22:23:01.943Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "metadata": {
+          "reason": "Extracted from docs/specs/auth-scope.md at v6.2.2-dev.74 \u2014 Stage 7 step 5: 'Close the versioned-documents gap in the positional walk\u2026 Resolved as a documented limitation'; preflight:auth paragraph",
+          "confidence": "grounded"
+        },
+        "sourceId": "d726eab9-c3d0-4387-b900-256cee1b1b9f",
+        "targetId": "223bb12a-be7f-4209-9ab2-f04f7bb2b6c8",
+        "relationshipType": "DERIVED_FROM"
+      },
+      "timestampUtcMs": "2026-09-02T22:23:01.943Z"
+    }
+  },
+  {
+    "index": 6,
+    "hash": "6BeBc8/fHw8/aphu8UI9rfURLfQ=",
+    "timestampUtcMs": "2026-09-02T22:11:05.645Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "50c843fa-887e-455d-a1ae-64d9af118322",
+        "name": "gotchas"
+      },
+      "timestampUtcMs": "2026-09-02T22:11:05.645Z"
+    }
+  },
+  {
+    "index": 7,
+    "hash": "",
+    "timestampUtcMs": "2026-09-02T22:23:02.689Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "metadata": {
+          "reason": "Extracted from apps/switchboard/README.md at v6.2.2-dev.74 \u2014 Reactor Enforcement Flags: preflight exit codes 0/1/2/3/68",
+          "confidence": "grounded"
+        },
+        "sourceId": "d726eab9-c3d0-4387-b900-256cee1b1b9f",
+        "targetId": "63e10e2c-9be4-4bd2-a876-8708cd3ac1f9",
+        "relationshipType": "DERIVED_FROM"
+      },
+      "timestampUtcMs": "2026-09-02T22:23:02.689Z"
+    }
+  },
+  {
+    "index": 7,
+    "hash": "Mb0GAfdpADUmgWlppN2bMYIVpNM=",
+    "timestampUtcMs": "2026-09-02T22:11:05.645Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "558fcab6-5473-47d2-8b89-3f964e33b369",
+        "name": "conditions"
+      },
+      "timestampUtcMs": "2026-09-02T22:11:05.645Z"
+    }
+  },
+  {
+    "index": 8,
+    "hash": "",
+    "timestampUtcMs": "2026-09-02T22:23:03.344Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "metadata": {
+          "reason": "An upgrade reducer that patches state and initialState is exactly the version boundary the positional walk cannot cross",
+          "confidence": "grounded"
+        },
+        "sourceId": "d726eab9-c3d0-4387-b900-256cee1b1b9f",
+        "targetId": "2f4b5df2-d6ca-4224-a049-e96b4811ed37",
+        "relationshipType": "BUILDS_ON"
+      },
+      "timestampUtcMs": "2026-09-02T22:23:03.344Z"
+    }
+  },
+  {
+    "index": 8,
+    "hash": "egWR6Db1dGeTXUvS4hOoCQJewQk=",
+    "timestampUtcMs": "2026-09-02T22:11:05.645Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "version",
+        "value": "v6.2.2-dev.74",
+        "updatedAt": "2026-09-02T22:11:05.645Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:11:05.645Z"
+    }
+  },
+  {
+    "index": 9,
+    "hash": "",
+    "timestampUtcMs": "2026-09-02T22:23:03.831Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "metadata": {
+          "reason": "This is the second of the two unsafe conditions the preflight sweep exists to catch before a fleet flips its flags",
+          "confidence": "grounded"
+        },
+        "sourceId": "d726eab9-c3d0-4387-b900-256cee1b1b9f",
+        "targetId": "c5419cd5-deac-4f48-b58f-131e5808bd49",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-09-02T22:23:03.831Z"
+    }
+  },
+  {
+    "index": 9,
+    "hash": "t+6pv5m2YQ/R/ln2zz/auaiOY5I=",
+    "timestampUtcMs": "2026-09-02T22:11:05.645Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "filePath",
+        "value": "docs/specs/auth-scope.md",
+        "updatedAt": "2026-09-02T22:11:05.645Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:11:05.645Z"
+    }
+  },
+  {
+    "index": 10,
+    "hash": "ido53wpdAoNtP9+nZk0SLLa0EiM=",
+    "timestampUtcMs": "2026-09-02T22:11:05.645Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "confidence",
+        "value": "grounded",
+        "updatedAt": "2026-09-02T22:11:05.645Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:11:05.645Z"
+    }
+  },
+  {
+    "index": 11,
+    "hash": "ZvDTvb9bn9kp5+BKOhM3OZOZl4w=",
+    "timestampUtcMs": "2026-09-02T22:11:08.333Z",
+    "action": {
+      "type": "SET_PROVENANCE",
+      "input": {
+        "author": "knowledge-agent",
+        "createdAt": "2026-09-02T22:11:08.333Z",
+        "sourceOrigin": "DERIVED"
+      },
+      "timestampUtcMs": "2026-09-02T22:11:08.333Z"
+    }
+  },
+  {
+    "index": 12,
+    "hash": "YLDQMlAtiouR0cRQJubygqCQWwg=",
+    "timestampUtcMs": "2026-09-02T22:11:08.811Z",
+    "action": {
+      "type": "SUBMIT_FOR_REVIEW",
+      "input": {
+        "id": "2b16db3c-d5fb-4cc7-8147-0bf5870d92e2",
+        "actor": "knowledge-agent",
+        "comment": "extracted from the Powerhouse repository at v6.2.2-dev.74",
+        "timestamp": "2026-09-02T22:11:08.811Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:11:08.811Z"
+    }
+  },
+  {
+    "index": 13,
+    "hash": "g6RUFCTG5xG00gc9xxXIxIm0w3k=",
+    "timestampUtcMs": "2026-09-02T22:11:09.281Z",
+    "action": {
+      "type": "APPROVE_NOTE",
+      "input": {
+        "id": "eee86ba8-f7eb-4e6a-ae93-9fc43af3abb7",
+        "actor": "liberuum",
+        "comment": "claim checked against the cited repository file at the pinned tag",
+        "timestamp": "2026-09-02T22:11:09.281Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:11:09.281Z"
+    }
+  },
+  {
+    "index": 14,
+    "hash": "WMrC760O6beDwlGFSAw6cx8hZ2Y=",
+    "timestampUtcMs": "2026-09-02T22:15:59.243Z",
+    "action": {
+      "type": "SET_TITLE",
+      "input": {
+        "title": "authConditions must not be enabled on a fleet where preflight:auth reports documents that cross a reducer version, because the positional walk folds with the pre-upgrade reducer",
+        "updatedAt": "2026-09-02T22:15:59.243Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:15:59.243Z"
+    }
+  },
+  {
+    "index": 15,
+    "hash": "WMrC760O6beDwlGFSAw6cx8hZ2Y=",
+    "timestampUtcMs": "2026-09-02T22:15:59.243Z",
+    "action": {
+      "type": "SET_DESCRIPTION",
+      "input": {
+        "updatedAt": "2026-09-02T22:15:59.243Z",
+        "description": "The walk resolves one reducer version from below every upgrade boundary, so a condition on a migrated field sees undefined and admission and re-evaluation disagree. Documented limit; preflight exit 2."
+      },
+      "timestampUtcMs": "2026-09-02T22:15:59.243Z"
+    }
+  },
+  {
+    "index": 16,
+    "hash": "WMrC760O6beDwlGFSAw6cx8hZ2Y=",
+    "timestampUtcMs": "2026-09-02T22:15:59.243Z",
+    "action": {
+      "type": "SET_NOTE_TYPE",
+      "input": {
+        "noteType": "PATTERN",
+        "updatedAt": "2026-09-02T22:15:59.243Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:15:59.243Z"
+    }
+  },
+  {
+    "index": 17,
+    "hash": "WMrC760O6beDwlGFSAw6cx8hZ2Y=",
+    "timestampUtcMs": "2026-09-02T22:15:59.243Z",
+    "action": {
+      "type": "SET_CONTENT",
+      "input": {
+        "content": "The positional walk that re-evaluates conditional grants reads its base state *below every upgrade boundary*, and the write cache deliberately withholds version-changing upgrades from a positional read. So the base carries the document's creation-time version, the migration never runs during the walk, and the whole range folds with the **pre-upgrade reducer** against un-migrated state. A `where` clause that reads a field a migration introduced reads `undefined` for the entire history.\n\nThat is worse than one stale answer, because **admission and re-evaluation disagree**: admission reads the condition's state at the head, where every upgrade has been applied, while a re-evaluation pass walks from below them. An operation admitted against post-upgrade state can be refused when a later arrival makes the walk visit it again \u2014 retracting a tail for no reason.\n\nThe spec resolves this as a **documented limitation** rather than an upgrade-aware walk. Making the walk version-aware means growing the fold's signature with a version context and first extracting the write cache's twice-duplicated boundary segmentation into something shared \u2014 a refactor of the hottest rebuild path that does not belong in the read-path stage. Instead `preflight:auth` reports the documents that cross a reducer version alongside the streams it already checks, and `authConditions` **must not be enabled on a fleet the sweep reports**. The two findings are reported separately (exit code `1` streams unsafe for `authEnforcement`, `2` documents unsafe for `authConditions`, `3` both) because a fleet can be safe for one and not the other. Creation-time upgrades from version zero are not boundaries: `reactor.create` submits one in the create batch and the rebuild applies it inline.\n\n_Source: docs/specs/auth-scope.md (Powerhouse v6.2.2-dev.74)._\n_Source: apps/switchboard/README.md (Powerhouse v6.2.2-dev.74)._\n\n## Provenance\n- `docs/specs/auth-scope.md` \u2014 Stage 7 step 5: 'Close the versioned-documents gap in the positional walk\u2026 Resolved as a documented limitation'; preflight:auth paragraph\n- `apps/switchboard/README.md` \u2014 Reactor Enforcement Flags: preflight exit codes 0/1/2/3/68\n\n_Recorded from the Powerhouse repository at **v6.2.2-dev.74** during the v6.2.2-dev.74 source sync._",
+        "updatedAt": "2026-09-02T22:15:59.243Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:15:59.243Z"
+    }
+  },
+  {
+    "index": 18,
+    "hash": "WMrC760O6beDwlGFSAw6cx8hZ2Y=",
+    "timestampUtcMs": "2026-09-02T22:15:59.243Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "version",
+        "value": "v6.2.2-dev.74",
+        "updatedAt": "2026-09-02T22:15:59.243Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:15:59.243Z"
+    }
+  },
+  {
+    "index": 19,
+    "hash": "WMrC760O6beDwlGFSAw6cx8hZ2Y=",
+    "timestampUtcMs": "2026-09-02T22:15:59.243Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "filePath",
+        "value": "docs/specs/auth-scope.md",
+        "updatedAt": "2026-09-02T22:15:59.243Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:15:59.243Z"
+    }
+  },
+  {
+    "index": 20,
+    "hash": "WMrC760O6beDwlGFSAw6cx8hZ2Y=",
+    "timestampUtcMs": "2026-09-02T22:15:59.243Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "confidence",
+        "value": "grounded",
+        "updatedAt": "2026-09-02T22:15:59.243Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:15:59.243Z"
+    }
+  },
+  {
+    "index": 21,
+    "hash": "9ZN1J8beAWfzh+GMUgpkYfLzuyg=",
+    "timestampUtcMs": "2026-09-02T22:20:33.803Z",
+    "action": {
+      "type": "SET_TITLE",
+      "input": {
+        "title": "authConditions must not be enabled on a fleet where preflight:auth reports documents that cross a reducer version, because the positional walk folds with the pre-upgrade reducer",
+        "updatedAt": "2026-09-02T22:20:33.803Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:20:33.803Z"
+    }
+  },
+  {
+    "index": 22,
+    "hash": "9ZN1J8beAWfzh+GMUgpkYfLzuyg=",
+    "timestampUtcMs": "2026-09-02T22:20:33.803Z",
+    "action": {
+      "type": "SET_DESCRIPTION",
+      "input": {
+        "updatedAt": "2026-09-02T22:20:33.803Z",
+        "description": "The walk resolves one reducer version from below every upgrade boundary, so a condition on a migrated field sees undefined and admission and re-evaluation disagree. Documented limit; preflight exit 2."
+      },
+      "timestampUtcMs": "2026-09-02T22:20:33.803Z"
+    }
+  },
+  {
+    "index": 23,
+    "hash": "9ZN1J8beAWfzh+GMUgpkYfLzuyg=",
+    "timestampUtcMs": "2026-09-02T22:20:33.803Z",
+    "action": {
+      "type": "SET_NOTE_TYPE",
+      "input": {
+        "noteType": "PATTERN",
+        "updatedAt": "2026-09-02T22:20:33.803Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:20:33.803Z"
+    }
+  },
+  {
+    "index": 24,
+    "hash": "9ZN1J8beAWfzh+GMUgpkYfLzuyg=",
+    "timestampUtcMs": "2026-09-02T22:20:33.803Z",
+    "action": {
+      "type": "SET_CONTENT",
+      "input": {
+        "content": "The positional walk that re-evaluates conditional grants reads its base state *below every upgrade boundary*, and the write cache deliberately withholds version-changing upgrades from a positional read. So the base carries the document's creation-time version, the migration never runs during the walk, and the whole range folds with the **pre-upgrade reducer** against un-migrated state. A `where` clause that reads a field a migration introduced reads `undefined` for the entire history.\n\nThat is worse than one stale answer, because **admission and re-evaluation disagree**: admission reads the condition's state at the head, where every upgrade has been applied, while a re-evaluation pass walks from below them. An operation admitted against post-upgrade state can be refused when a later arrival makes the walk visit it again \u2014 retracting a tail for no reason.\n\nThe spec resolves this as a **documented limitation** rather than an upgrade-aware walk. Making the walk version-aware means growing the fold's signature with a version context and first extracting the write cache's twice-duplicated boundary segmentation into something shared \u2014 a refactor of the hottest rebuild path that does not belong in the read-path stage. Instead `preflight:auth` reports the documents that cross a reducer version alongside the streams it already checks, and `authConditions` **must not be enabled on a fleet the sweep reports**. The two findings are reported separately (exit code `1` streams unsafe for `authEnforcement`, `2` documents unsafe for `authConditions`, `3` both) because a fleet can be safe for one and not the other. Creation-time upgrades from version zero are not boundaries: `reactor.create` submits one in the create batch and the rebuild applies it inline.\n\n_Source: docs/specs/auth-scope.md (Powerhouse v6.2.2-dev.74)._\n_Source: apps/switchboard/README.md (Powerhouse v6.2.2-dev.74)._\n\n## Provenance\n- `docs/specs/auth-scope.md` \u2014 Stage 7 step 5: 'Close the versioned-documents gap in the positional walk\u2026 Resolved as a documented limitation'; preflight:auth paragraph\n- `apps/switchboard/README.md` \u2014 Reactor Enforcement Flags: preflight exit codes 0/1/2/3/68\n\n_Recorded from the Powerhouse repository at **v6.2.2-dev.74** during the v6.2.2-dev.74 source sync._",
+        "updatedAt": "2026-09-02T22:20:33.803Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:20:33.803Z"
+    }
+  },
+  {
+    "index": 25,
+    "hash": "9ZN1J8beAWfzh+GMUgpkYfLzuyg=",
+    "timestampUtcMs": "2026-09-02T22:20:33.803Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "version",
+        "value": "v6.2.2-dev.74",
+        "updatedAt": "2026-09-02T22:20:33.803Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:20:33.803Z"
+    }
+  },
+  {
+    "index": 26,
+    "hash": "9ZN1J8beAWfzh+GMUgpkYfLzuyg=",
+    "timestampUtcMs": "2026-09-02T22:20:33.803Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "filePath",
+        "value": "docs/specs/auth-scope.md",
+        "updatedAt": "2026-09-02T22:20:33.803Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:20:33.803Z"
+    }
+  },
+  {
+    "index": 27,
+    "hash": "9ZN1J8beAWfzh+GMUgpkYfLzuyg=",
+    "timestampUtcMs": "2026-09-02T22:20:33.803Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "confidence",
+        "value": "grounded",
+        "updatedAt": "2026-09-02T22:20:33.803Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:20:33.803Z"
+    }
+  }
+]

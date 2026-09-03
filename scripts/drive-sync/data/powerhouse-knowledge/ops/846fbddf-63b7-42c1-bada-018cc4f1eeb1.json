@@ -1,0 +1,117 @@
+[
+  {
+    "index": 0,
+    "hash": "",
+    "timestampUtcMs": "2026-09-02T21:36:10.507Z",
+    "action": {
+      "type": "CREATE_DOCUMENT",
+      "input": {
+        "meta": {},
+        "name": "Academy \u203a Build \u203a WorkWithData \u203a Analytics Engine \u203a typescript \u203a Browser store",
+        "slug": "",
+        "model": "bai/source",
+        "branch": "main",
+        "signing": {
+          "nonce": "",
+          "publicKey": {},
+          "signature": "846fbddf-63b7-42c1-bada-018cc4f1eeb1",
+          "documentType": "bai/source",
+          "createdAtUtcIso": "2026-09-02T21:36:10.507Z"
+        },
+        "version": 0,
+        "documentId": "846fbddf-63b7-42c1-bada-018cc4f1eeb1",
+        "protocolVersions": {
+          "base-reducer": 2
+        }
+      },
+      "timestampUtcMs": "2026-09-02T21:36:10.507Z"
+    }
+  },
+  {
+    "index": 0,
+    "hash": "At2bGR60xhO03UagJVUx5UzXbYg=",
+    "timestampUtcMs": "2026-09-02T21:36:10.878Z",
+    "action": {
+      "type": "INGEST_SOURCE",
+      "input": {
+        "url": "https://github.com/powerhouse-inc/powerhouse/blob/v6.2.2-dev.74/apps/academy/docs/academy/03-Build/04-WorkWithData/_06-Analytics Engine/typescript/browser.md",
+        "tool": "sync-repo-docs",
+        "title": "Academy \u203a Build \u203a WorkWithData \u203a Analytics Engine \u203a typescript \u203a Browser store",
+        "author": "Powerhouse Inc.",
+        "method": "sha256:f62da1854b34631e016ec43f06675c60f4df7b89f1e64fa6193b0717fef5453c git:v6.2.2-dev.74",
+        "content": "---\nsidebar_position: 2\n---\n\n# Browser store\n\nThe `BrowserAnalyticsStore` is an `IAnalyticsStore` implementation that sits on top of [`MemoryAnalyticsStore`](#memory) but adds an `IndexedDB` plugin for persistence.\n\n<aside class=\"notice\">\nSee the <a href=\"#compatibility\">Compatibility</a> section for details on which stores are intended to be used in different execution environments.\n</aside>\n\n## Construction\n\nA default implementation of the `BrowserAnalyticsStore` may be created with no arguments, or options are provided for specialized needs.\n\n```typescript\n// creates a database named \"analytics\"\nconst store = new BrowserAnalyticsStore();\n```\n\n> Create with a specific database name.\n\n```typescript\nconst store = new BrowserAnalyticsStore({ databaseName: \"analytics\" });\n```\n\n> It may also be created with optional contructor arguments that may be helpful for debugging or metrics collection.\n\n```typescript\nconst store = new BrowserAnalyticsStore({\n  databaseName: \"analytics\",\n\n  queryLogger: defaultQueryLogger(\"browser\"),\n  resultsLogger: defaultResultsLogger(\"browser\"),\n  profiler: new PassthroughAnalyticsProfiler(),\n});\n```\n\nFor more details on these optional constructor parameters, see the [Utilities](#utilities) section.\n\nSince the constructor options argument extends the `MemoryAnalyticsStore` options argument, see the [`MemoryAnalyticsStore`](#memory) documentation for further details on other optional parameters.\n\n## Initialization\n\nSimilar to the [`MemoryAnalyticsStore`](#memory), this implementation requires an asynchronous initialization step.\n\n> Note that this method is not available on the `IAnalyticsStore` interface, but only on the concrete type.\n\n```typescript\n// create the store\nconst store = new BrowserAnalyticsStore();\n\n// initialize it\nawait store.init();\n```\n\n## Persistence\n\nThe `databaseName` constructor argument namespaces the database. This allows users to create multiple stores, if needed, which will not conflict with each other. You can use your browser's developer tools to see these databases, usually through the \"Storage\" tab.\n\n<aside class=\"notice\">\nWhile manipulating the data manually is not recommended, this allows you to easily delete and recreate databases if needed.\n</aside>\n\n![dev-tools](../images/indexeddb.png)\n\nThe store interface is intended to be immutable, meaning that it does not provide a general method of wiping a DB. However, an IDB database may be deleted via the standard [IDB API](https://developer.mozilla.org/en-US/docs/Web/API/IndexedDB_API).\n\n```typescript\n// creates the database\nconst store = new BrowserAnalyticsStore({ databaseName: \"my-analytics\" });\nawait store.init();\n\n// use the browser API to delete the database\nwindow.indexedDB.deleteDatabase(\"my-analytics\");\n```\n",
+        "createdAt": "2026-09-02T21:36:10.878Z",
+        "createdBy": "repo-docs-sync",
+        "sourceType": "DOCUMENTATION",
+        "description": "Powerhouse v6.2.2-dev.74 (unchanged since v6.2.2-dev.47) \u2014 The BrowserAnalyticsStore is an IAnalyticsStore implementation that sits on top of MemoryAnalyticsStore but adds an IndexedDB plugin for per\u2026",
+        "publishedAt": "2026-06-17T17:18:45.000Z"
+      },
+      "timestampUtcMs": "2026-09-02T21:36:10.878Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "",
+    "timestampUtcMs": "2026-09-02T21:36:10.507Z",
+    "action": {
+      "type": "UPGRADE_DOCUMENT",
+      "input": {
+        "model": "bai/source",
+        "toVersion": 1,
+        "documentId": "846fbddf-63b7-42c1-bada-018cc4f1eeb1",
+        "fromVersion": 0,
+        "initialState": {
+          "auth": {
+            "grants": [],
+            "version": 0
+          },
+          "local": {},
+          "global": {
+            "title": null,
+            "status": "INBOX",
+            "content": null,
+            "createdAt": null,
+            "createdBy": null,
+            "provenance": null,
+            "sourceType": null,
+            "description": null,
+            "extractedClaims": [],
+            "extractionStats": null
+          },
+          "document": {
+            "hash": {
+              "encoding": "base64",
+              "algorithm": "sha1"
+            },
+            "version": 1
+          }
+        }
+      },
+      "timestampUtcMs": "2026-09-02T21:36:10.507Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "rRVcR91/8fXLNGrg6xivwjPCVVs=",
+    "timestampUtcMs": "2026-09-02T21:36:16.885Z",
+    "action": {
+      "type": "ADD_EXTRACTED_CLAIM",
+      "input": {
+        "claimRef": "2b94bc30-a50f-4818-8f6c-f7d5e4b00a06"
+      },
+      "timestampUtcMs": "2026-09-02T21:36:16.885Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "J9II9vPZMcB8WLU9utLqgQRJhTI=",
+    "timestampUtcMs": "2026-09-02T21:36:24.672Z",
+    "action": {
+      "type": "SET_SOURCE_STATUS",
+      "input": {
+        "status": "EXTRACTED"
+      },
+      "timestampUtcMs": "2026-09-02T21:36:24.672Z"
+    }
+  }
+]

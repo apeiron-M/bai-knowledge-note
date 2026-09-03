@@ -1,0 +1,107 @@
+{
+  "links": [
+    {
+      "id": "lnk-ccc35ccd-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "ccc35ccd-8646-4748-babf-ef0d0933f07f",
+      "targetTitle": "vetra-auto-generates-code-on-spec-change"
+    },
+    {
+      "id": "lnk-1adbf0db-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "1adbf0db-0ab1-4801-9ee9-cbbc9a875beb",
+      "targetTitle": "document-model-vs-document-editor-vs-app-serves-different-purposes"
+    },
+    {
+      "id": "lnk-158143d5-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "158143d5-1e39-44b5-9799-1a84e6de9e72",
+      "targetTitle": "DocumentToolbar exposes className enabledControls and callback props"
+    },
+    {
+      "id": "lnk-4aa16a10-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "4aa16a10-b7ac-4ef0-8d70-03ce08d3a8d4",
+      "targetTitle": "The DocumentToolbar className prop merges with defaults via twMerge"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "document models must be added to the vetra drive by default",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "695abfe7-2915-484d-808c-e22de639f073",
+      "name": "MCP workflows",
+      "topicDocumentId": null
+    },
+    {
+      "id": "e1064496-0d8c-4784-bde4-4971531791a6",
+      "name": "architecture decisions",
+      "topicDocumentId": null
+    },
+    {
+      "id": "64aea602-c4a8-40de-91b4-0db4d19ac220",
+      "name": "drive operations",
+      "topicDocumentId": null
+    },
+    {
+      "id": "206f560a-ee13-437e-b60d-45dee87ada5c",
+      "name": "document creation",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "# document models must be added to the vetra drive by default\n\nAfter creating a document model via `createDocument`, it must be added to the vetra drive using `addActions` with an `ADD_FILE` action:\n\n```typescript\naddActions({\n  documentId: \"vetra-{hash}\",  // the vetra drive ID\n  actions: [{\n    type: \"ADD_FILE\",\n    scope: \"global\",\n    input: { id: documentId, ... }\n  }]\n});\n```\n\nSince [[vetra drive holds source documents while preview drive holds instances]], document models (source/definition documents) always go to the vetra drive. Only actual document instances go to the preview drive.\n\n---\n\nTopics:\n- [[mcp workflows]]\n- [[architecture decisions]]",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": "v6.2.2-dev.74",
+  "computes": null,
+  "filePath": "RELEASE-NOTES.md",
+  "noteType": "PATTERN",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "knowledge-agent",
+    "createdAt": "2026-04-03T14:03:52.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-09-03T09:57:02.676Z",
+    "sourceOrigin": "IMPORT"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "New document model documents go to the vetra drive unless the user specifies otherwise; this is the development drive",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "d4fe86d5-f2ec-4349-91de-49c01652f9c5",
+      "actor": "claude",
+      "comment": "Knowledge registered against powerhouse v6.2.2-dev.47",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-14T12:00:00.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "fc5b0bbe-955b-47b9-a663-467580dcc234",
+      "actor": "liberuum",
+      "comment": "Canonical as of powerhouse v6.2.2-dev.47",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-14T12:00:00.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

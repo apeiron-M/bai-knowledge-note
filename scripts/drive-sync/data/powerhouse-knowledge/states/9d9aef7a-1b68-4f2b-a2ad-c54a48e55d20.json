@@ -1,0 +1,101 @@
+{
+  "links": [
+    {
+      "id": "lnk-1e814394-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "1e814394-b2a5-4416-baa5-67b29973a7fc",
+      "targetTitle": "error-classes-in-reducers-are-auto-imported-by-name-reference"
+    },
+    {
+      "id": "lnk-aa8af970-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "aa8af970-5fbc-42ad-9bcc-6692a50a3793",
+      "targetTitle": "document-ids-are-auto-generated-by-createdocument-never-set-manually"
+    },
+    {
+      "id": "lnk-0eafe53b-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "0eafe53b-efdf-4310-9a1c-7d3e8b5cc669",
+      "targetTitle": "ph-cli-is-primary-project-tool"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "never import error classes manually in reducer code",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "3957fefb-667d-4c9c-bd39-49c6c01491a8",
+      "name": "reducer patterns",
+      "topicDocumentId": null
+    },
+    {
+      "id": "6b0885a0-503d-44f2-b626-08a0ba722241",
+      "name": "gotchas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "124ad98a-eaef-434a-adb4-0bbd3421aab8",
+      "name": "error handling",
+      "topicDocumentId": null
+    },
+    {
+      "id": "b55ac8aa-9de8-4797-890e-37b2b583425b",
+      "name": "imports",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "# never import error classes manually in reducer code\n\n```typescript\n// \u274c Don't manually import error classes\nimport { MissingIdError } from \"../../gen/module-name/error.js\";\nthrow new MissingIdError(\"message\");\n\n// \u274c Don't use nested access patterns\nthrow new errors.ModuleName.MissingIdError(\"message\");\n\n// \u2705 Just reference the error by name \u2014 auto-imported\nthrow new MissingIdError(\"message\");\n```\n\nSince [[error classes in reducers are auto-imported by name reference]], the code generator scans for error class names and inserts the correct imports. Manual imports conflict with auto-generated ones, creating duplicate import errors or path mismatches.\n\n---\n\nTopics:\n- [[reducer patterns]]\n- [[gotchas]]",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": "v6.2.2-dev.74",
+  "computes": null,
+  "filePath": null,
+  "noteType": "PATTERN",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "knowledge-agent",
+    "createdAt": "2026-04-03T13:59:03.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-09-03T09:56:57.444Z",
+    "sourceOrigin": "IMPORT"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Importing from gen/module-name/error.js creates duplicate imports; the code generator handles imports when you reference errors by name",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "3f34caad-c85d-4b11-8921-7a4021626568",
+      "actor": "claude",
+      "comment": "Knowledge registered against powerhouse v6.2.2-dev.47",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-14T12:00:00.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "53121dd6-85b1-49cc-8e91-3991c345b0aa",
+      "actor": "liberuum",
+      "comment": "Canonical as of powerhouse v6.2.2-dev.47",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-14T12:00:00.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

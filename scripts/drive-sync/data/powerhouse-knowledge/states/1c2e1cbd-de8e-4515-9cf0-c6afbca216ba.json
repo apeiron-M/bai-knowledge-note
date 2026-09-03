@@ -1,0 +1,109 @@
+{
+  "links": [
+    {
+      "id": "lnk-6fa0a6ea-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "6fa0a6ea-a295-4da9-85da-1e8ba852c91a",
+      "targetTitle": "authorization-uses-layered-model"
+    },
+    {
+      "id": "lnk-51157ecc-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "51157ecc-b57e-49a9-ad60-9ba3d84ea08e",
+      "targetTitle": "document-permissions-support-groups-and-ops"
+    },
+    {
+      "id": "lnk-e475e1de-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "e475e1de-d479-41b0-8185-41ea96a20bc1",
+      "targetTitle": "moc-authorization-and-identity"
+    },
+    {
+      "id": "lnk-90ee64b6-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "90ee64b6-20d3-48b7-aa8b-a7d67aa60653",
+      "targetTitle": "Academy \u203a Build \u203a BuildingUserExperiences \u203a Authorization \u203a Enforcing Authorization in Subgraphs",
+      "reason": "The note names apps/academy/docs/academy/03-Build/03-BuildingUserExperiences/07-Authorization/05-EnforcingAuthorizationInSubgraphs.md as its source; page text identical at v6.2.2-dev.47 and v6.2.2-dev.74",
+      "confidence": "grounded"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Authorization resolves to one of three policies chosen once at boot: OPEN, ADMIN_ONLY, or DOCUMENT_PERMISSIONS",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "f85167c7-45f4-47a5-bbf2-317b6ad9a60a",
+      "name": "authorization",
+      "topicDocumentId": null
+    },
+    {
+      "id": "223ab001-3dc7-4ac4-8c44-08216d620168",
+      "name": "policy",
+      "topicDocumentId": null
+    },
+    {
+      "id": "d182cc67-0af7-4c66-8e1d-20930af60386",
+      "name": "reactor",
+      "topicDocumentId": null
+    },
+    {
+      "id": "6ff4f630-faa5-44d8-887e-44729bb628d4",
+      "name": "subgraphs",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "## One service, selected at boot\n\nAuthorization in a Reactor is decided by a **single service selected once at boot** \u2014 not per request, not per resolver, and not per document. Two environment flags pick which service you get:\n\n| Policy | When | What the enforcement helpers do |\n| --- | --- | --- |\n| `OPEN` | `AUTH_ENABLED=false` | Every check passes for everyone, including anonymous callers |\n| `ADMIN_ONLY` | `AUTH_ENABLED=true`, document permissions off | Only addresses in `ADMINS` pass any check |\n| `DOCUMENT_PERMISSIONS` | `DOCUMENT_PERMISSIONS_ENABLED=true` | Full per-document protection plus READ/WRITE/ADMIN grants, with inheritance |\n\n`AUTH_ENABLED=false` bypasses every authorization check, which is why the docs call it development-only.\n\n## The consequence for builders\n\nBecause the policy is resolved centrally, the correct approach in a custom subgraph is to **write one enforcement path** and let it behave correctly under all three policies. A helper call is always safe:\n\n```typescript\nconst handle = await subgraph.assertCanRead(args.identifier, ctx);\nreturn subgraph.reactorClient.get(handle.fetchIdentifier);\n```\n\nUnder `OPEN` that assert is effectively a no-op. Under `ADMIN_ONLY` and `DOCUMENT_PERMISSIONS` it fails closed. Either way the resolver reads the same.\n\nThe rule that falls out of this is stated as a best practice: **write the check unconditionally**. Do not special-case `OPEN` or `ADMIN_ONLY` in a resolver \u2014 the helpers already collapse to the correct behaviour per policy, and a resolver that tries to detect the policy itself is both redundant and a place for the two implementations to drift apart.\n\nThe policy type is exported as `AuthorizationPolicy` from `@powerhousedao/reactor-api` when you need to name it, but needing to name it in a resolver is usually a sign the enforcement path is being written twice.\n\n_Source: apps/academy/docs/academy/03-Build/03-BuildingUserExperiences/07-Authorization/05-EnforcingAuthorizationInSubgraphs.md and 04-Authorization.md (Powerhouse v6.2.2-dev.45)._",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": "v6.2.2-dev.74",
+  "computes": null,
+  "filePath": "apps/academy/docs/academy/03-Build/03-BuildingUserExperiences/07-Authorization/05-EnforcingAuthorizationInSubgraphs.md",
+  "noteType": "ARCHITECTURE",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "claude",
+    "createdAt": "2026-08-13T14:33:06.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-09-02T21:35:02.698Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "AUTH_ENABLED=false gives OPEN, auth on without document permissions gives ADMIN_ONLY, DOCUMENT_PERMISSIONS_ENABLED=true gives full grants. Resolvers never branch on policy.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "05d31b29-6ff6-41d6-afe2-ca86f62ca9f4",
+      "actor": "claude",
+      "comment": "Knowledge registered against powerhouse v6.2.2-dev.47",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-14T12:00:00.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "d427a017-3a4c-4bb0-9bd9-f6c73c067d68",
+      "actor": "liberuum",
+      "comment": "Canonical as of powerhouse v6.2.2-dev.47",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-14T12:00:00.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

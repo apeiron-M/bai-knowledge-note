@@ -1,0 +1,115 @@
+{
+  "links": [
+    {
+      "id": "lnk-851f3b4d-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "851f3b4d-92aa-4601-b6f8-06f27ba514a5",
+      "targetTitle": "reactor-client-auto-signs-all-actions"
+    },
+    {
+      "id": "lnk-6fa0a6ea-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "6fa0a6ea-a295-4da9-85da-1e8ba852c91a",
+      "targetTitle": "authorization-uses-layered-model"
+    },
+    {
+      "id": "lnk-98e36a08-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "98e36a08-78cd-4c60-942c-338d4a460334",
+      "targetTitle": "bee-reactor-adapter-overview"
+    },
+    {
+      "id": "lnk-d907616b-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "d907616b-cc88-4ea5-8d91-dc6d8e5bace6",
+      "targetTitle": "cli-identity-did-key-ethereum-delegation"
+    },
+    {
+      "id": "lnk-7f901536-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "7f901536-7510-41b6-ac5d-62932646871c",
+      "targetTitle": "Academy \u203a Build \u203a BuildingUserExperiences \u203a Authorization \u203a Signing",
+      "reason": "Backing page found by content match (score 0.27) in the v6.2.2-dev.74 source backfill; no distinctive identifier verified, attribution by topic overlap \u2014 not the original extraction record (text identical at v6.2.2-dev.47 and v6.2.2-dev.74)",
+      "confidence": "established"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Powerhouse uses header signing (document ID = cryptographic signature of creator) and action signing (every mutation signed with ECDSA P-256)",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "4f432524-bb1f-4b65-9b71-abf90ba8965a",
+      "name": "signing",
+      "topicDocumentId": null
+    },
+    {
+      "id": "9e15a19a-4505-4b27-bea6-c6e912c9c962",
+      "name": "cryptography",
+      "topicDocumentId": null
+    },
+    {
+      "id": "c150e804-dd48-40c8-a017-30c10ce8f39b",
+      "name": "ECDSA",
+      "topicDocumentId": null
+    },
+    {
+      "id": "a68c5451-66da-443a-87af-a6f5c984f0ed",
+      "name": "document-identity",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "Header signing: when a document is created, `documentType + createdAtUtcIso + nonce` is signed with the creator's private key and the resulting signature becomes the document's `id`. The header embeds the public key (JWK) for self-contained verification via `validateHeader()`. Action signing: each dispatched action produces a 5-element Signature tuple `[timestamp, signerKey, actionHash, hashField, signatureHex]`. The `actionHash` is SHA-1 of `documentId + scope + actionType + JSON(input)`. The signed message uses prefix `\\x19Signed Operation:\\n{length}` matching Ethereum-style signing. Both use ECDSA with P-256 curve and SHA-256 via Web Crypto API.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": "v6.2.2-dev.74",
+  "computes": null,
+  "filePath": "apps/academy/docs/academy/03-Build/03-BuildingUserExperiences/07-Authorization/03-Signing.md",
+  "noteType": "ARCHITECTURE",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "knowledge-agent",
+    "createdAt": "2026-04-02T12:00:00.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-09-02T21:34:46.897Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Document ID is the creator's signature over header fields; each action gets a 5-tuple Signature with did:key.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "e5916413-774c-4aad-a4bb-edca82d0b7d2",
+      "actor": "claude",
+      "comment": "Knowledge registered against powerhouse v6.2.2-dev.47",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-14T12:00:00.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "43aff62d-d26f-4669-896b-d38d0e56cef4",
+      "actor": "liberuum",
+      "comment": "Canonical as of powerhouse v6.2.2-dev.47",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-14T12:00:00.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

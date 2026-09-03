@@ -1,0 +1,102 @@
+{
+  "links": [
+    {
+      "id": "lnk-eb3ddfcc-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "eb3ddfcc-c606-4705-b9c9-42f5e26e2384",
+      "targetTitle": "act-sharing-ecdh-publisher-grantee"
+    },
+    {
+      "id": "lnk-6672c3a6-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "6672c3a6-386d-44c7-baf2-3278b1add051",
+      "targetTitle": "adapter-src-infrastructure-layout"
+    },
+    {
+      "id": "lnk-f9ff64ef-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "f9ff64ef-4672-4b6d-9f90-62845b9256f3",
+      "targetTitle": "powa-revenue-distribution-model-captures-epoch-based-token-revenue-sharing"
+    },
+    {
+      "id": "lnk-f30bc628-bui",
+      "linkType": "BUILDS_ON",
+      "targetDocumentId": "f30bc628-b9c9-4c74-a58c-37b3e36956ac",
+      "targetTitle": "swarm-act-access-control-trie"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Cross-user sharing uses Swarm ACT with an ECDH-derived session key so only the publisher's Bee node can produce new grants.",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "t1",
+      "name": "act",
+      "topicDocumentId": null
+    },
+    {
+      "id": "t2",
+      "name": "sharing",
+      "topicDocumentId": null
+    },
+    {
+      "id": "t3",
+      "name": "security-model",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "## Cross-user sharing via Swarm ACT (Access Control Trie)\n\n### Key derivation\n\n```\nsession_key = SHA-256(\n  ECDH(publisher_privkey x grantee_pubkey)\n  || salt\n)\n```\n\nOnly the publisher's Bee node holds `publisher_privkey`, so a third party who knows both public addresses still cannot derive the key (discrete-log problem). Grantees derive the same `session_key` independently using their own private key.\n\n### Upload / download API shape\n\n```\nUpload:   uploadFile({ act: true, actHistoryAddress, skipEncryption })\nDownload: downloadFile({ actPublisher, actHistoryAddress, skipDecryption })\n```\n\n`skipEncryption`/`skipDecryption` on the client side means **Bee** handles crypto (it knows the private key), not the browser. The client supplies `actHistoryAddress` to identify which grantee set applies.\n\n### Grantee management\n\n- `createGrantees([...pubkeys])` \u2014 initial grantee set plus history address.\n- `patchGrantees(...)` \u2014 add/remove grantees over time.\n\nUsed for three distinct features:\n\n1. **Document sharing** \u2014 a drive bundle shared to another user.\n2. **Chat history feeds** \u2014 per-conversation ACT feeds.\n3. **Raw chat attachments** \u2014 files attached to messages.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "ARCHITECTURE",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "knowledge-agent",
+    "createdAt": "2026-04-21T14:47:10.583Z",
+    "sessionId": null,
+    "updatedAt": "2026-09-03T09:57:30.260Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "session_key = SHA-256(ECDH(publisher_privkey times grantee_pubkey) plus salt). Grantees maintained via createGrantees/patchGrantees for docs, chat history, and attachments.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "75143ce0-801c-4344-837d-b6f38b42be95",
+      "actor": "claude",
+      "comment": "Knowledge registered against powerhouse v6.2.2-dev.47",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-14T12:00:00.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "1153148b-0e75-4c37-941f-e07fc628a081",
+      "actor": "liberuum",
+      "comment": "Canonical as of powerhouse v6.2.2-dev.47",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-14T12:00:00.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

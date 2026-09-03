@@ -1,0 +1,133 @@
+[
+  {
+    "index": 0,
+    "hash": "",
+    "timestampUtcMs": "2026-09-02T21:44:28.561Z",
+    "action": {
+      "type": "CREATE_DOCUMENT",
+      "input": {
+        "meta": {},
+        "name": "Package \u203a reactor-browser \u203a analytics \u2014 Analytics for Reactor Browser",
+        "slug": "",
+        "model": "bai/source",
+        "branch": "main",
+        "signing": {
+          "nonce": "",
+          "publicKey": {},
+          "signature": "7a7703dc-3080-49be-8957-835233957a8a",
+          "documentType": "bai/source",
+          "createdAtUtcIso": "2026-09-02T21:44:28.561Z"
+        },
+        "version": 0,
+        "documentId": "7a7703dc-3080-49be-8957-835233957a8a",
+        "protocolVersions": {
+          "base-reducer": 2
+        }
+      },
+      "timestampUtcMs": "2026-09-02T21:44:28.561Z"
+    }
+  },
+  {
+    "index": 0,
+    "hash": "HsEUmhKzJI/1HubLNfseKvmXE4s=",
+    "timestampUtcMs": "2026-09-02T21:44:28.850Z",
+    "action": {
+      "type": "INGEST_SOURCE",
+      "input": {
+        "url": "https://github.com/powerhouse-inc/powerhouse/blob/v6.2.2-dev.74/packages/reactor-browser/src/analytics/README.md",
+        "tool": "sync-repo-docs",
+        "title": "Package \u203a reactor-browser \u203a analytics \u2014 Analytics for Reactor Browser",
+        "author": "Powerhouse Inc.",
+        "method": "sha256:685187233621d2af596a817d236a32096ec9b55abb4e777c53a939e2ce83f019 git:v6.2.2-dev.74",
+        "content": "# Analytics for Reactor Browser\n\nThe analytics module provides React hooks and context providers for managing analytics data in browser applications. It leverages React Query for efficient data management and caching.\n\n## Setup\n\nTo use analytics in your application, wrap your components with the `AnalyticsProvider`:\n\n```tsx\nimport { AnalyticsProvider } from \"@powerhousedao/reactor-browser\";\n\nfunction App() {\n  return (\n    <AnalyticsProvider databaseName=\"my-app:analytics\">\n      {/* Your app components */}\n    </AnalyticsProvider>\n  );\n}\n```\n\nThe provider accepts the following props:\n\n- `databaseName`: Required. A unique name for the analytics database\n- `queryClient`: Optional. A custom React Query client instance\n\nFor integration with document processors, you'll need to register the analytics store:\n\n```tsx\nfunction CustomProcessor() {\n  const store = useAnalyticsStore();\n  const manager = useProcessorManager();\n\n  useEffect(() => {\n    if (!store || !manager) return;\n\n    registerProcessor(manager, store).catch(console.error);\n  }, [store, manager]);\n\n  return null;\n}\n```\n\n## Available Hooks\n\n### useAnalyticsQuery\n\nExecute analytics queries against the analytics engine:\n\n```tsx\nconst { data, isLoading } = useAnalyticsQuery({\n  start: DateTime.now().minus({ days: 7 }),\n  end: DateTime.now(),\n  granularity: AnalyticsGranularity.Total,\n  metrics: [\"PageViews\"],\n  select: {\n    page: [AnalyticsPath.fromString(\"pages/home\")],\n    user: [AnalyticsPath.fromString(`users/active`)],\n  },\n  lod: {\n    page: 1,\n  },\n});\n```\n\n### useAnalyticsSeries\n\nQuery time series data:\n\n```tsx\nconst { data } = useAnalyticsSeries({\n  start: null,\n  end: null,\n  metrics: [\"Revenue\"],\n  select: {\n    product: [AnalyticsPath.fromString(\"products/electronics\")],\n    region: [AnalyticsPath.fromString(\"regions/na\")],\n  },\n});\n```\n\n### useAddSeriesValue\n\nAdd a single value to a time series:\n\n```tsx\nconst mutation = useAddSeriesValue();\nawait mutation.mutateAsync({\n  start: DateTime.now(),\n  source: AnalyticsPath.fromString(\"events/sales\"),\n  value: 1000,\n  unit: \"USD\",\n  metric: \"Revenue\",\n  dimensions: {\n    product: AnalyticsPath.fromString(\"products/electronics\"),\n    region: AnalyticsPath.fromString(\"regions/na\"),\n  },\n});\n```\n\n### useAddSeriesValues\n\nAdd multiple values to time series:\n\n```tsx\nconst mutation = useAddSeriesValues();\nawait mutation.mutateAsync([\n  {\n    start: DateTime.now(),\n    source: AnalyticsPath.fromString(\"events/views\"),\n    value: 500,\n    metric: \"PageViews\",\n    dimensions: {\n      page: AnalyticsPath.fromString(\"pages/home\"),\n    },\n  },\n  {\n    start: DateTime.now(),\n    source: AnalyticsPath.fromString(\"events/sales\"),\n    value: 1000,\n    unit: \"USD\",\n    metric: \"Revenue\",\n    dimensions: {\n      product: AnalyticsPath.fromString(\"products/electronics\"),\n    },\n  },\n]);\n```\n\n### useClearSeriesBySource\n\nClear all series data for a specific source:\n\n```tsx\nconst mutation = useClearSeriesBySource();\nawait mutation.mutateAsync({\n  source: AnalyticsPath.fromString(\"events/sales\"),\n  cleanUpDimensions: true,\n});\n```\n\n### useGetDimensions\n\nRetrieve available analytics dimensions:\n\n```tsx\nconst { data: dimensions } = useGetDimensions();\n```\n\n### Context Hooks\n\n- `useAnalyticsStore`: Access the analytics store instance\n- `useAnalyticsEngine`: Access the analytics query engine instance\n\n## Types\n\nThe module re-exports all types from `@powerhousedao/analytics-engine-core` and `@powerhousedao/analytics-engine-browser`, including:\n\n- `AnalyticsQuery`\n- `AnalyticsSeriesQuery`\n- `AnalyticsSeriesInput`\n- `AnalyticsDimension`\n- `AnalyticsPath`\n- `GroupedPeriodResults`\n- `AnalyticsGranularity`\n\nIt also exports the `DateTime` class from `luxon` for handling dates and times.\n\n## Testing\n\nThe module includes comprehensive tests for all functionality. See `test/analytics.test.tsx` for examples of testing analytics hooks and the analytics store.\n\nTest setup example:\n\n```tsx\nconst wrapper = ({ children }: PropsWithChildren) => (\n  <AnalyticsProvider databaseName=\"test-analytics\">\n    {children}\n  </AnalyticsProvider>\n);\n\ndescribe(\"Analytics\", () => {\n  it(\"should query analytics data\", async () => {\n    const { result } = renderHook(\n      () =>\n        useAnalyticsQuery({\n          start: DateTime.now().minus({ days: 1 }),\n          end: DateTime.now(),\n          granularity: AnalyticsGranularity.Daily,\n          metrics: [\"PageViews\"],\n          select: {\n            page: [AnalyticsPath.fromString(\"pages/home\")],\n          },\n        }),\n      { wrapper },\n    );\n\n    await waitFor(() => expect(result.current.isSuccess).toBe(true));\n  });\n});\n```\n",
+        "createdAt": "2026-09-02T21:44:28.850Z",
+        "createdBy": "repo-docs-sync",
+        "sourceType": "DOCUMENTATION",
+        "description": "Powerhouse v6.2.2-dev.74 (unchanged since v6.2.2-dev.47) \u2014 The analytics module provides React hooks and context providers for managing analytics data in browser applications. It leverages React Quer\u2026",
+        "publishedAt": "2025-09-10T13:13:58.000Z"
+      },
+      "timestampUtcMs": "2026-09-02T21:44:28.850Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "",
+    "timestampUtcMs": "2026-09-02T21:44:28.561Z",
+    "action": {
+      "type": "UPGRADE_DOCUMENT",
+      "input": {
+        "model": "bai/source",
+        "toVersion": 1,
+        "documentId": "7a7703dc-3080-49be-8957-835233957a8a",
+        "fromVersion": 0,
+        "initialState": {
+          "auth": {
+            "grants": [],
+            "version": 0
+          },
+          "local": {},
+          "global": {
+            "title": null,
+            "status": "INBOX",
+            "content": null,
+            "createdAt": null,
+            "createdBy": null,
+            "provenance": null,
+            "sourceType": null,
+            "description": null,
+            "extractedClaims": [],
+            "extractionStats": null
+          },
+          "document": {
+            "hash": {
+              "encoding": "base64",
+              "algorithm": "sha1"
+            },
+            "version": 1
+          }
+        }
+      },
+      "timestampUtcMs": "2026-09-02T21:44:28.561Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "BsLRtp2KjT2rV7bwdDMgEqAS77A=",
+    "timestampUtcMs": "2026-09-03T07:39:38.009Z",
+    "action": {
+      "type": "ADD_EXTRACTED_CLAIM",
+      "input": {
+        "claimRef": "6cd88ded-d8e5-4645-8dc1-8dab23dd6dc4"
+      },
+      "timestampUtcMs": "2026-09-03T07:39:38.009Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "G+mq6wBPW/1vdOL0lZ12HOP4uSw=",
+    "timestampUtcMs": "2026-09-03T07:39:46.711Z",
+    "action": {
+      "type": "RECORD_EXTRACTION_STATS",
+      "input": {
+        "skipRate": 0.5,
+        "claimCount": 1,
+        "extractedAt": "2026-09-03T07:39:46.711Z",
+        "extractedBy": "knowledge-agent",
+        "skippedCount": 1
+      },
+      "timestampUtcMs": "2026-09-03T07:39:46.711Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "fok0Pl5iqRw+nwU3pJBxsqPq9Xo=",
+    "timestampUtcMs": "2026-09-03T07:39:47.293Z",
+    "action": {
+      "type": "SET_SOURCE_STATUS",
+      "input": {
+        "status": "EXTRACTED"
+      },
+      "timestampUtcMs": "2026-09-03T07:39:47.293Z"
+    }
+  }
+]

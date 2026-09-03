@@ -1,0 +1,106 @@
+{
+  "links": [
+    {
+      "id": "lnk-1a932db8-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "1a932db8-245d-40f6-bfd8-eea728d9615e",
+      "targetTitle": "reactor-browser-hooks-provide-document-state"
+    },
+    {
+      "id": "lnk-e5905516-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "e5905516-830e-4fac-9464-298c12e958fb",
+      "targetTitle": "vetra-package-module-types"
+    },
+    {
+      "id": "lnk-aeb9b5e6-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "aeb9b5e6-8fce-4339-95e8-375bd0a0cc01",
+      "targetTitle": "Academy \u203a Reference \u203a EditorsUI \u203a React Hooks",
+      "reason": "The note names apps/academy/docs/academy/04-Reference/05-EditorsUI/01-ReactHooks.md as its source; page text revised between v6.2.2-dev.47 and v6.2.2-dev.74 \u2014 re-verified in the v6.2.2-dev.74 pass",
+      "confidence": "grounded"
+    },
+    {
+      "id": "lnk-06e0d838-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "06e0d838-2d57-4fce-9127-918f68918794",
+      "targetTitle": "Package \u203a reactor-browser \u203a graphql-client \u2014 GraphQL reactor client",
+      "reason": "The note names packages/reactor-browser/src/graphql-client/README.md as its source; page text identical at v6.2.2-dev.47 and v6.2.2-dev.74",
+      "confidence": "grounded"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Only the document hooks run on the light GraphQL client; drive, node, job and package hooks require a full host",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "930e6a42-b9c0-4279-896c-d8a7152cc182",
+      "name": "react-hooks",
+      "topicDocumentId": null
+    },
+    {
+      "id": "f32b06ef-9bbf-4e49-969c-4a83a2e9f3a3",
+      "name": "reactor-browser",
+      "topicDocumentId": null
+    },
+    {
+      "id": "246f6651-5cf7-4458-9619-023e6f71e86a",
+      "name": "architecture",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "`@powerhousedao/reactor-browser` ships a second, much smaller client \u2014 `GraphQLReactorClient`, mounted with `GraphQLReactorProvider url={...}` \u2014 that satisfies the document hooks by talking plain GraphQL to a Switchboard. No reactor, no PGlite, no job queue in the bundle. It is how a plain webapp gets `useDocument`, `useDispatch` and `useReactorClient`.\n\nThe line between \"works\" and \"finds nothing\" is drawn by an interface. `IReactorBrowserClient` \u2014 what the hooks depend on, and what both this client and the full reactor client implement \u2014 is declared as a `Pick` of the reactor's own `IReactorClient` so the signatures cannot drift. It has exactly six members:\n\n| Member | Note |\n| --- | --- |\n| `get(identifier, view?, signal?)` | by id or slug; a `view.revision` throws \u2014 no point-in-time reads |\n| `getOperations(identifier, view?, filter?, \u2026)` | paged, `next()` follows the cursor |\n| `create(document, parentIdentifier?, signal?)` | emits `Created` |\n| `execute(identifier, branch, actions, signal?)` | fetches, stamps, signs, pushes |\n| `deleteDocument(identifier, propagate?, signal?)` | emits `Deleted` |\n| `subscribe(search, callback, view?)` | local emissions plus, lazily, the server's |\n\nEverything outside those six \u2014 `drives`, `find`, `resolveIdOrSlug`, relationships, jobs, `rename`, `executeBatch`, the document-model module getters \u2014 is not on the interface and not implemented, which is why the drive, node and job hooks do not work below this provider.\n\nThe package and module hooks fail for a different reason: `useVetraPackages`, `useDocumentModelModules`, `useEditorModules`, `useEditorModuleById` and the rest read `window.ph.vetraPackageManager`, a slot only a host application fills. Passing `documentModels` to the provider publishes a fixed `StaticPackageManager` into that slot, which makes the document-model module hooks work \u2014 but it never installs, updates or removes packages and its mutating members throw.\n\nEditors are explicitly not portable here: they read the selected document through Connect's drive/node selection, which a light app deliberately has no equivalent of.\n\n_Source: packages/reactor-browser/src/graphql-client/README.md, confirmed by apps/academy/docs/academy/04-Reference/05-EditorsUI/01-ReactHooks.md (Powerhouse v6.2.2-dev.45)._",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": "v6.2.2-dev.74",
+  "computes": null,
+  "filePath": "apps/academy/docs/academy/04-Reference/05-EditorsUI/01-ReactHooks.md",
+  "noteType": "ARCHITECTURE",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "claude",
+    "createdAt": "2026-08-13T14:37:49.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-09-02T22:26:35.069Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "IReactorBrowserClient is a Pick of IReactorClient with exactly six members. Package and module hooks read window.ph.vetraPackageManager, which only a host application fills.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "156c2db9-fe35-44dc-8ffe-3d999bca48fd",
+      "actor": "claude",
+      "comment": "Knowledge registered against powerhouse v6.2.2-dev.47",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-14T12:00:00.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "242b7b8d-aabe-4985-ac61-cc8d37c465b6",
+      "actor": "liberuum",
+      "comment": "Canonical as of powerhouse v6.2.2-dev.47",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-14T12:00:00.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

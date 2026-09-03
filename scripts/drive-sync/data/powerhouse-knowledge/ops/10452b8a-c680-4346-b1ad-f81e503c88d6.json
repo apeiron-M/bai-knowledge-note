@@ -1,0 +1,129 @@
+[
+  {
+    "index": 0,
+    "hash": "",
+    "timestampUtcMs": "2026-09-02T21:40:39.332Z",
+    "action": {
+      "type": "CREATE_DOCUMENT",
+      "input": {
+        "meta": {},
+        "name": "Academy \u203a Reference \u203a ReactorBrowserClient \u203a Subgraphs and attachments",
+        "slug": "",
+        "model": "bai/source",
+        "branch": "main",
+        "signing": {
+          "nonce": "",
+          "publicKey": {},
+          "signature": "10452b8a-c680-4346-b1ad-f81e503c88d6",
+          "documentType": "bai/source",
+          "createdAtUtcIso": "2026-09-02T21:40:39.332Z"
+        },
+        "version": 0,
+        "documentId": "10452b8a-c680-4346-b1ad-f81e503c88d6",
+        "protocolVersions": {
+          "base-reducer": 2
+        }
+      },
+      "timestampUtcMs": "2026-09-02T21:40:39.332Z"
+    }
+  },
+  {
+    "index": 0,
+    "hash": "stzOyym43UJLSDzVW4MLSHf/6o0=",
+    "timestampUtcMs": "2026-09-02T21:40:39.239Z",
+    "action": {
+      "type": "INGEST_SOURCE",
+      "input": {
+        "url": "https://github.com/powerhouse-inc/powerhouse/blob/v6.2.2-dev.74/apps/academy/docs/academy/04-Reference/08-ReactorBrowserClient/03-SubgraphsAndAttachments.md",
+        "tool": "sync-repo-docs",
+        "title": "Academy \u203a Reference \u203a ReactorBrowserClient \u203a Subgraphs and attachments",
+        "author": "Powerhouse Inc.",
+        "method": "sha256:b7d4f7894920f5cf5a96531c2916526b7ac16d1fe5a91f2b110bf0edb5f0e916 git:v6.2.2-dev.74",
+        "content": "---\ntoc_max_heading_level: 3\n---\n\n# Subgraphs and attachments\n\nA Switchboard serves more than the reactor's document API. Your project's own\nsubgraphs sit next to it, and attachments come from a service the app supplies.\nThe light client reaches both through the configuration it already has: one URL,\none token provider.\n\n## Typed subgraphs\n\nA subgraph is served at `<graphql base>/<name>`. For a Switchboard on\n`http://localhost:4001/graphql`, the `renown-read-model` subgraph is at\n`http://localhost:4001/graphql/renown-read-model`.\n\n`client.subgraph(name, getSdk)` derives that URL from the client's `url`, keeps\none transport per name, and hands the SDK the same auth middleware every reactor\ncall goes through.\n\n```tsx\n\"use client\";\n\nimport { useSwitchboardClient } from \"@powerhousedao/reactor-browser/graphql-client\";\nimport { getRenownReadModelSdk } from \"@/lib/renown-read-model-sdk\";\n\nconst UNKNOWN_ADDRESS = \"0x0000000000000000000000000000000000000000\";\n\nexport function Probe() {\n  const client = useSwitchboardClient();\n\n  async function probe() {\n    if (!client) return;\n    const sdk = client.subgraph(\"renown-read-model\", getRenownReadModelSdk);\n    const { renownUsers } = await sdk.RenownUsers([UNKNOWN_ADDRESS]);\n    return renownUsers;\n  }\n\n  return (\n    <button disabled={!client} onClick={() => void probe()}>\n      Probe subgraph\n    </button>\n  );\n}\n```\n\n`subgraph` gives you transport, auth and typing. Results are not cached, produce\nno change events and never reach `useDocument`. Cache them with whatever the app\nalready uses for server state.\n\nThe registry caches the transport per name, but reuses the SDK only when the same\nfactory function is passed again. Two callers with two different generated SDKs\neach get their own, rather than the first caller's methods under the second\ncaller's type.\n\n:::info\nThe root supergraph federates every subgraph, so a field a subgraph defines is\nusually reachable at the base URL too. If you need to prove a request went to the\nsubgraph's own endpoint, query `_service { sdl }`: the root has no `_service`\nfield.\n:::\n\n### Generate the SDK\n\nPoint `graphql-codegen` at the subgraph's endpoint and use the same three plugins\n`@powerhousedao/reactor-browser` generates its own SDK with:\n\n```ts\n// codegen.ts\nimport type { CodegenConfig } from \"@graphql-codegen/cli\";\n\nconst config: CodegenConfig = {\n  schema: \"http://localhost:4001/graphql/renown-read-model\",\n  documents: [\"src/**/*.graphql\"],\n  generates: {\n    \"./src/graphql/renown-read-model.ts\": {\n      plugins: [\n        \"typescript\",\n        \"typescript-operations\",\n        \"typescript-graphql-request\",\n      ],\n      config: {\n        scalars: {\n          JSONObject: \"NonNullable<unknown>\",\n          DateTime: \"string | Date\",\n        },\n        skipTypename: true,\n        maybeValue: \"T | null | undefined\",\n        gqlImport: \"graphql-tag#gql\",\n      },\n    },\n  },\n};\n\nexport default config;\n```\n\nThe `typescript-graphql-request` plugin emits\n`getSdk(client: GraphQLClient, withWrapper?: SdkFunctionWrapper)`, which is\nexactly the `SubgraphSdkFactory<TSdk>` signature `subgraph` expects. Pass the\ngenerated function straight in.\n\n```typescript\nexport type SubgraphSdkFactory<TSdk> = (\n  client: GraphQLClient,\n  withWrapper?: SdkFunctionWrapper,\n) => TSdk;\n```\n\n`SdkFunctionWrapper` is re-exported from `@powerhousedao/reactor-browser`, so a\nhand-written SDK can name the type without depending on `graphql-request`\ndirectly. An SDK the client builds is always called with the auth wrapper: apply\nit to every operation, exactly as the generated code does.\n\n### One-off documents\n\nFor an operation not worth generating an SDK for, use `client.request`. It runs\nagainst the Switchboard's own endpoint, through the same transport and auth.\n\n```ts\nconst DOCUMENT_MODEL_IDS = `\n  query DocumentModelIds {\n    documentModels {\n      items {\n        id\n      }\n    }\n  }\n`;\n\ntype DocumentModelIds = {\n  documentModels: { items: { id: string }[] };\n};\n\nconst { documentModels } =\n  await client.request<DocumentModelIds>(DOCUMENT_MODEL_IDS);\n```\n\nA document a code generator typed carries its own result type, so the type\nargument is only needed for hand-written documents and strings. The operation\nname and type are read off the document; override them through the third\nargument, which also takes an `AbortSignal`.\n\n## Attachments\n\nAttachments are configured at the same point as everything else, but the app\nconstructs the service. Which storage it talks to is the app's business, and\n`@powerhousedao/reactor-browser` does not depend on the attachment\nimplementation.\n\n```tsx\n<GraphQLReactorProvider\n  url={switchboardUrl}\n  attachmentService={attachmentService}\n>\n  <YourApp />\n</GraphQLReactorProvider>\n```\n\nThe provider publishes it into the `window.ph.attachmentService` slot Connect\npublishes it into, so `useAttachmentService` and the editors below find it. Leave\nthe prop out and the slot stays empty, exactly as it is without this provider.\n\nThis prop is a wiring seam, and that is all it has been proven to be: the service\nan app passes in reaches `useAttachmentService` below the provider. No attachment\nhas been read over the light client end to end.\n\nIt is published from its own effect, keyed on the prop, so an app that builds the\nservice asynchronously can pass it in later. Passing a new service does not\nrebuild the client or the document cache.\n\nBuild the service with `createRemoteAttachmentService` from\n`@powerhousedao/reactor-attachments/client`, pointed at the same Switchboard.\nImport the `/client` subpath, not the package root: the root entry also exports\nthe Kysely, S3 and filesystem backends, so a browser bundler has to resolve\n`kysely`, `@aws-sdk/client-s3` and `node:fs` and fails before any app code runs -\nthe same failure class the light client's own\n[Bundling](/academy/Reference/ReactorBrowserClient/OverviewAndQuickstart#bundling)\nsection describes, and it has the same shape of fix: import the browser subpath. See\n[Attachment service](/academy/Reference/Reactor/AttachmentService) for the\nservice and client APIs, the reserve-send-read flow, and the `attachment://v1:`\nref format.\n",
+        "createdAt": "2026-09-02T21:40:39.239Z",
+        "createdBy": "repo-docs-sync",
+        "sourceType": "DOCUMENTATION",
+        "description": "Powerhouse v6.2.2-dev.74 (unchanged since v6.2.2-dev.47) \u2014 A Switchboard serves more than the reactor's document API. Your project's own subgraphs sit next to it, and attachments come from a service\u2026",
+        "publishedAt": "2026-07-30T19:41:14.000Z"
+      },
+      "timestampUtcMs": "2026-09-02T21:40:39.239Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "",
+    "timestampUtcMs": "2026-09-02T21:40:39.332Z",
+    "action": {
+      "type": "UPGRADE_DOCUMENT",
+      "input": {
+        "model": "bai/source",
+        "toVersion": 1,
+        "documentId": "10452b8a-c680-4346-b1ad-f81e503c88d6",
+        "fromVersion": 0,
+        "initialState": {
+          "auth": {
+            "grants": [],
+            "version": 0
+          },
+          "local": {},
+          "global": {
+            "title": null,
+            "status": "INBOX",
+            "content": null,
+            "createdAt": null,
+            "createdBy": null,
+            "provenance": null,
+            "sourceType": null,
+            "description": null,
+            "extractedClaims": [],
+            "extractionStats": null
+          },
+          "document": {
+            "hash": {
+              "encoding": "base64",
+              "algorithm": "sha1"
+            },
+            "version": 1
+          }
+        }
+      },
+      "timestampUtcMs": "2026-09-02T21:40:39.332Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "J4Xe2YTcx8fZ1adevOOVCcGbpP0=",
+    "timestampUtcMs": "2026-09-02T21:40:44.473Z",
+    "action": {
+      "type": "ADD_EXTRACTED_CLAIM",
+      "input": {
+        "claimRef": "5ad11490-9e42-4b1e-ac3b-bb0c22d62006"
+      },
+      "timestampUtcMs": "2026-09-02T21:40:44.473Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "Nc9ELWoC4e5NptkS2WXG00/w080=",
+    "timestampUtcMs": "2026-09-02T21:40:45.920Z",
+    "action": {
+      "type": "ADD_EXTRACTED_CLAIM",
+      "input": {
+        "claimRef": "957e9425-2d47-4983-95b3-dcfbb898b4d5"
+      },
+      "timestampUtcMs": "2026-09-02T21:40:45.920Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "kjySW2FJ8apr0uWrv+ruVKMkirQ=",
+    "timestampUtcMs": "2026-09-02T21:40:59.943Z",
+    "action": {
+      "type": "SET_SOURCE_STATUS",
+      "input": {
+        "status": "EXTRACTED"
+      },
+      "timestampUtcMs": "2026-09-02T21:40:59.943Z"
+    }
+  }
+]

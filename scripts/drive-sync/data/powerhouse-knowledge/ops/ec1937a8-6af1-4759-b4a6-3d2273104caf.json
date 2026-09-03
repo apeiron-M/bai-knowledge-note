@@ -1,0 +1,121 @@
+[
+  {
+    "index": 0,
+    "hash": "",
+    "timestampUtcMs": "2026-09-02T21:33:44.841Z",
+    "action": {
+      "type": "CREATE_DOCUMENT",
+      "input": {
+        "meta": {},
+        "name": "Academy \u203a Build \u203a DocumentModelCreation \u203a Example: Todo-demo-package",
+        "slug": "",
+        "model": "bai/source",
+        "branch": "main",
+        "signing": {
+          "nonce": "",
+          "publicKey": {},
+          "signature": "ec1937a8-6af1-4759-b4a6-3d2273104caf",
+          "documentType": "bai/source",
+          "createdAtUtcIso": "2026-09-02T21:33:44.841Z"
+        },
+        "version": 0,
+        "documentId": "ec1937a8-6af1-4759-b4a6-3d2273104caf",
+        "protocolVersions": {
+          "base-reducer": 2
+        }
+      },
+      "timestampUtcMs": "2026-09-02T21:33:44.841Z"
+    }
+  },
+  {
+    "index": 0,
+    "hash": "H/qU9CrJi8QfpQLEw5X4r5SuvXA=",
+    "timestampUtcMs": "2026-09-02T21:33:45.344Z",
+    "action": {
+      "type": "INGEST_SOURCE",
+      "input": {
+        "url": "https://github.com/powerhouse-inc/powerhouse/blob/v6.2.2-dev.74/apps/academy/docs/academy/03-Build/02-DocumentModelCreation/07-ExampleToDoListRepository.md",
+        "tool": "sync-repo-docs",
+        "title": "Academy \u203a Build \u203a DocumentModelCreation \u203a Example: Todo-demo-package",
+        "author": "Powerhouse Inc.",
+        "method": "sha256:c123c8ccf882e64c88a43a908150dec941c0742f0c56d763ad73650b0a54867e git:v6.2.2-dev.74",
+        "content": "# Example: Todo-demo-package\n\n:::info\n\nThe Todo-demo is maintained by the Powerhouse Team and serves as a reference for testing and introducing new features. It will be continuously updated alongside the accompanying documentation.\n\nhttps://github.com/powerhouse-inc/todo-demo\n:::\n\nThere are several ways to explore this package:\n\n### Option 1: Rebuild the Todo-demo\n\nThe Todo-demo and repository are your main reference points during the Mastery Track.  \nFollow the steps in the \"Mastery Track \u2013 Document Model Creation\" chapters to build along with the examples.\n\nKey patterns used in the repository:\n\n- **Naming convention**: `TodoList`, `TodoItem`, `TodoListState` (one word, PascalCase)\n- **Document type**: `powerhouse/todo-list`\n- **Module name**: `todos`\n- **ID generation**: Uses `generateId()` from `document-model/core` in the reducer\n- **Hooks**: Uses `useSelectedTodoListDocument` for state management in the editor\n\n### Option 2: Clone and run the code locally\n\nThe package includes:\n\n- The Document Model\n- Reducer Code\n- Reducer Tests\n- Editor Code\n- Drive-app Code\n\nYou can clone the repository and run Vetra Studio to see all the code in action:\n\n```bash\ngit clone https://github.com/powerhouse-inc/todo-demo\ncd todo-demo\npnpm install\nph vetra --watch\n```\n\n<details>\n<summary>Alternatively: Run with Connect</summary>\n\n```bash\ngit clone https://github.com/powerhouse-inc/todo-demo\ncd todo-demo\npnpm install\nph connect\n```\n\n</details>\n\n### Option 3: Install the todo demo package in a (local) host app\n\nAlternatively, you can install this package in a Powerhouse project or in your deployed host apps:\n\n```bash\nph install @powerhousedao/todo-demo\n```\n\n## Comparing the Manual Todo tutorial vs Mastery Track\n\n| Aspect             | Manual Todo tutorial       | Mastery Track (Advanced)             |\n| ------------------ | -------------------------- | ------------------------------------ |\n| Schema             | Basic `items` array only   | Includes `stats` object for tracking |\n| Reducer complexity | Simple CRUD operations     | Includes statistics updates          |\n| Editor             | Component-based with hooks | Same approach + stats display        |\n| Tests              | Basic operation tests      | Includes stats verification tests    |\n\nBoth approaches use the same naming conventions and patterns \u2014 the Mastery Track simply extends the foundation with additional features to demonstrate more advanced concepts.\n",
+        "createdAt": "2026-09-02T21:33:45.344Z",
+        "createdBy": "repo-docs-sync",
+        "sourceType": "DOCUMENTATION",
+        "description": "Powerhouse v6.2.2-dev.74 (unchanged since v6.2.2-dev.47) \u2014 The Todo-demo is maintained by the Powerhouse Team and serves as a reference for testing and introducing new features. It will be continuous\u2026",
+        "publishedAt": "2026-06-24T00:07:15.000Z"
+      },
+      "timestampUtcMs": "2026-09-02T21:33:45.344Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "",
+    "timestampUtcMs": "2026-09-02T21:33:44.841Z",
+    "action": {
+      "type": "UPGRADE_DOCUMENT",
+      "input": {
+        "model": "bai/source",
+        "toVersion": 1,
+        "documentId": "ec1937a8-6af1-4759-b4a6-3d2273104caf",
+        "fromVersion": 0,
+        "initialState": {
+          "auth": {
+            "grants": [],
+            "version": 0
+          },
+          "local": {},
+          "global": {
+            "title": null,
+            "status": "INBOX",
+            "content": null,
+            "createdAt": null,
+            "createdBy": null,
+            "provenance": null,
+            "sourceType": null,
+            "description": null,
+            "extractedClaims": [],
+            "extractionStats": null
+          },
+          "document": {
+            "hash": {
+              "encoding": "base64",
+              "algorithm": "sha1"
+            },
+            "version": 1
+          }
+        }
+      },
+      "timestampUtcMs": "2026-09-02T21:33:44.841Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "fXr74hGFIpqs2sx/7sD4v2oU0ns=",
+    "timestampUtcMs": "2026-09-03T07:55:59.812Z",
+    "action": {
+      "type": "RECORD_EXTRACTION_STATS",
+      "input": {
+        "skipRate": 1,
+        "claimCount": 0,
+        "extractedAt": "2026-09-03T07:55:59.812Z",
+        "extractedBy": "knowledge-agent",
+        "skippedCount": 3
+      },
+      "timestampUtcMs": "2026-09-03T07:55:59.812Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "lAhsuXO0PnAqe2nBpWJBV+1T8E0=",
+    "timestampUtcMs": "2026-09-03T07:56:50.129Z",
+    "action": {
+      "type": "SET_SOURCE_STATUS",
+      "input": {
+        "status": "EXTRACTED"
+      },
+      "timestampUtcMs": "2026-09-03T07:56:50.129Z"
+    }
+  }
+]

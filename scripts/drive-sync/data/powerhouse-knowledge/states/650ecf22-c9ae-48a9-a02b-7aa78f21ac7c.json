@@ -1,0 +1,107 @@
+{
+  "links": [
+    {
+      "id": "lnk-c69c79cc-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "c69c79cc-ac06-44e4-b65b-1a84d22d9a32",
+      "targetTitle": "powerhouse-color-token-definitions"
+    },
+    {
+      "id": "lnk-4d4aea31-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "4d4aea31-afeb-45ee-af38-49bcb24a2313",
+      "targetTitle": "powerhouse-parent-brand-identity"
+    },
+    {
+      "id": "lnk-6149d3ce-bui",
+      "linkType": "BUILDS_ON",
+      "targetDocumentId": "6149d3ce-04a5-4968-9069-63930a1fe179",
+      "targetTitle": "swarm-single-owner-chunks"
+    },
+    {
+      "id": "lnk-bd78f2bf-con",
+      "linkType": "CONTRADICTS",
+      "targetDocumentId": "bd78f2bf-44c5-408c-8ac7-85174b6d743b",
+      "targetTitle": "swarm-feeds-mutable-pointers"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "GSOC inverts feeds into a many-to-one mailbox where anyone with the mined key can write to one node",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "3e0b9d2c-d8a7-4141-a7e1-9c388ecbcd48",
+      "name": "gsoc",
+      "topicDocumentId": null
+    },
+    {
+      "id": "8fef6576-6a5a-4e27-9c5b-cbddc2d296a8",
+      "name": "soc",
+      "topicDocumentId": null
+    },
+    {
+      "id": "5cac3290-2d63-4cd1-a58a-1f817b1af9b6",
+      "name": "swarm",
+      "topicDocumentId": null
+    },
+    {
+      "id": "d8672c8e-cda5-4aa9-a81b-643c8a78d3ad",
+      "name": "messaging",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "## Claim\n\n**GSOC (Graffiti SOC)** is a many-to-one notification system that inverts the feed model \u2014 a shared mined private key lets multiple writers publish SOC updates that a single target node receives in real time.\n\n## Evidence\n\nMechanics:\n- A private key is mined so that its derived SOC address falls in the target node's neighborhood\n- Anyone with access to that private key can sign SOC updates\n- The target node subscribes via `WS /gsoc/subscribe/{address}` and receives updates as they arrive\n- Conceptually a \"mailbox\" anyone with the key can drop messages into\n\nComparison to feeds:\n\n|           | Feeds                 | GSOC                              |\n|-----------|-----------------------|-----------------------------------|\n| Writers   | Single (owner)        | Multiple (anyone with the key)    |\n| Readers   | Anyone                | Single target node                |\n| Direction | One-to-many broadcast | Many-to-one collection            |\n\nbee-js: `bee.gsocMine(targetOverlay, identifier, proximity?)`, `bee.gsocSend(stamp, signer, identifier, data)`, `bee.gsocSubscribe(address, identifier, handler)`.\n\n## Why it matters\n\nGSOC is the correct primitive for collaboration coordination: collaborators push notifications to a coordinator node without the coordinator needing to poll each participant's feed.\n",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "CONCEPT",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "knowledge-agent",
+    "createdAt": "2026-04-21T14:24:54.753Z",
+    "sessionId": null,
+    "updatedAt": "2026-09-03T09:58:02.399Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "A private key is mined so its SOC address falls in the target node's neighborhood. Multiple writers share the key; target node subscribes via WebSocket.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "558ad0ad-f457-40a9-b472-84b6af8afb64",
+      "actor": "claude",
+      "comment": "Knowledge registered against powerhouse v6.2.2-dev.47",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-14T12:00:00.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "93314719-2ff2-484a-9e41-c5e4dc652fda",
+      "actor": "liberuum",
+      "comment": "Canonical as of powerhouse v6.2.2-dev.47",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-14T12:00:00.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

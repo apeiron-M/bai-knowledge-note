@@ -1,0 +1,550 @@
+[
+  {
+    "index": 0,
+    "hash": "",
+    "timestampUtcMs": "2026-09-02T22:14:30.084Z",
+    "action": {
+      "type": "CREATE_DOCUMENT",
+      "input": {
+        "meta": {},
+        "name": "outbox-adjacent-defects",
+        "slug": "",
+        "model": "bai/knowledge-note",
+        "branch": "main",
+        "signing": {
+          "nonce": "",
+          "publicKey": {},
+          "signature": "3968416f-1124-47ff-b195-1b782b5296ca",
+          "documentType": "bai/knowledge-note",
+          "createdAtUtcIso": "2026-09-02T22:14:30.084Z"
+        },
+        "version": 0,
+        "documentId": "3968416f-1124-47ff-b195-1b782b5296ca",
+        "protocolVersions": {
+          "base-reducer": 2
+        }
+      },
+      "timestampUtcMs": "2026-09-02T22:14:30.084Z"
+    }
+  },
+  {
+    "index": 0,
+    "hash": "QvmzeOgG+8nGYCkBn1hUogoWJ4Y=",
+    "timestampUtcMs": "2026-09-02T22:14:29.938Z",
+    "action": {
+      "type": "SET_TITLE",
+      "input": {
+        "title": "Five adjacent sync and read-model defects were recorded while investigating the outbox ordering bug, including re-evaluation writes that never reach read models",
+        "updatedAt": "2026-09-02T22:14:29.938Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:14:29.938Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "",
+    "timestampUtcMs": "2026-09-02T22:14:30.084Z",
+    "action": {
+      "type": "UPGRADE_DOCUMENT",
+      "input": {
+        "model": "bai/knowledge-note",
+        "toVersion": 1,
+        "documentId": "3968416f-1124-47ff-b195-1b782b5296ca",
+        "fromVersion": 0,
+        "initialState": {
+          "auth": {
+            "grants": [],
+            "version": 0
+          },
+          "local": {
+            "lastViewedAt": null,
+            "personalTags": []
+          },
+          "global": {
+            "links": [],
+            "model": null,
+            "scope": null,
+            "title": null,
+            "editor": null,
+            "inputs": [],
+            "models": [],
+            "status": "DRAFT",
+            "topics": [],
+            "content": null,
+            "context": null,
+            "modelId": null,
+            "modules": [],
+            "outputs": [],
+            "version": null,
+            "computes": null,
+            "filePath": null,
+            "noteType": null,
+            "severity": null,
+            "hooksUsed": [],
+            "rootCause": null,
+            "confidence": null,
+            "consumedBy": [],
+            "provenance": null,
+            "sourceType": null,
+            "targetType": null,
+            "cardinality": null,
+            "description": null,
+            "alternatives": [],
+            "consequences": [],
+            "errorMessage": null,
+            "relationType": null,
+            "correctPattern": null,
+            "decisionStatus": null,
+            "dispatchTargets": [],
+            "lifecycleEvents": []
+          },
+          "document": {
+            "hash": {
+              "encoding": "base64",
+              "algorithm": "sha1"
+            },
+            "version": 1
+          }
+        }
+      },
+      "timestampUtcMs": "2026-09-02T22:14:30.084Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "/+dZ6GbC3+Nhyz/2o+suE8mVI+M=",
+    "timestampUtcMs": "2026-09-02T22:14:29.938Z",
+    "action": {
+      "type": "SET_DESCRIPTION",
+      "input": {
+        "updatedAt": "2026-09-02T22:14:29.938Z",
+        "description": "reevaluateIfCriteriaMet drops operationsWithContext, so a revocation converges in the log and sync but not in projections until a restart. Also unvalidated externalDeps and projection races."
+      },
+      "timestampUtcMs": "2026-09-02T22:14:29.938Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "",
+    "timestampUtcMs": "2026-09-02T22:25:32.175Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "metadata": {
+          "reason": "Extracted from docs/updateoutbox-scope-ordering.md at v6.2.2-dev.74 \u2014 'Adjacent defects found while investigating' (1\u20135) and 'Not a defect'",
+          "confidence": "grounded"
+        },
+        "sourceId": "3968416f-1124-47ff-b195-1b782b5296ca",
+        "targetId": "4c1161cd-c718-4604-83dc-39b07e09d602",
+        "relationshipType": "DERIVED_FROM"
+      },
+      "timestampUtcMs": "2026-09-02T22:25:32.175Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "EJ+63XXXhQf5pwTIQx7411zQUYg=",
+    "timestampUtcMs": "2026-09-02T22:14:29.938Z",
+    "action": {
+      "type": "SET_NOTE_TYPE",
+      "input": {
+        "noteType": "OBSERVATION",
+        "updatedAt": "2026-09-02T22:14:29.938Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:14:29.938Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "",
+    "timestampUtcMs": "2026-09-02T22:25:33.320Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "metadata": {
+          "reason": "These were found while investigating that bug and share its subsystem, but none is needed to fix it",
+          "confidence": "grounded"
+        },
+        "sourceId": "3968416f-1124-47ff-b195-1b782b5296ca",
+        "targetId": "2021b696-e605-4b1b-b579-7f568949c1b2",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-09-02T22:25:33.320Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "JdhYWYu8/G6jTub5udatrvnkKTc=",
+    "timestampUtcMs": "2026-09-02T22:14:29.938Z",
+    "action": {
+      "type": "SET_CONTENT",
+      "input": {
+        "content": "Recorded as independent of the ordering bug and of each other, and none needed to fix it:\n\n1. **Re-evaluation writes are discarded.** `reevaluateIfCriteriaMet` returns only `outcome.error` and drops `outcome.operationsWithContext`, so re-appended operations never reach `JOB_WRITE_READY`. The log and sync converge \u2014 the outbox is index-driven \u2014 but **read models do not**, so projections keep serving pre-revocation state until a restart catch-up. Those re-appends are also absent from `touchedCacheEntries`, so a later rollback leaves post-reevaluation snapshots cached. Security-shaped: a revocation that does not reach reads.\n2. **`externalDeps` is unvalidated and can wedge a sub-queue permanently.** It is spread into `queueHint` while `validateBatchStructure` only checks `dependsOn` against in-batch keys, and `areDependenciesMet` requires every hint to be in `completedJobs`. A hint naming a job that never enqueues blocks the sub-queue head forever \u2014 nothing dispatched, no dead letter. The hard half is distinguishing \"never existed\" from \"already completed and forgotten\", since `completedJobs` is a `Set` that gets cleared.\n3. **One outbox cursor writer lacks a clamp.** Two of three clamp against unserved/emitted state with docstrings naming the skip hazard; `gql-req-channel.ts` does a bare `max(getLatestAppliedOrdinal)` \u2192 `upsert` with neither. Cross-document parallelism alone lets a higher-ordinal document ack first, so this is a restart-skips-operations risk independent of scope.\n4. **Projection races across scopes.** `ReadModelCoordinator` parallelizes across `(documentId, scope, branch)` keys and the executor's per-document mutex does not extend to the projection stage, so the shared `header` row and the `SlugMapping` upsert already race across a document's scopes. Separately, `BaseReadModel.saveState` sets `ViewState.lastOrdinal` with `set` rather than a max, so parallel chains can walk the watermark backwards.\n5. **`replayDocument` orders cross-scope replay by raw `Object.keys`**, fed by a `getRevisions()` query with no `ORDER BY`. Same missing rank concept, different subsystem; uninvestigated.\n\nExplicitly **not** a defect: `failJob` adding a failed job to `completedJobs` \"so dependent jobs are unblocked\". It looks wrong against the create-before-auth barrier, but #2918's deferral fix relies on it and releasing is correct in the backfill case \u2014 when the deferred auth job fails, the create should proceed rather than cascade-fail. Release-vs-cascade depends on the direction of the causal dependency, which is a design question.\n\n_Source: docs/updateoutbox-scope-ordering.md (Powerhouse v6.2.2-dev.74)._\n\n## Provenance\n- `docs/updateoutbox-scope-ordering.md` \u2014 'Adjacent defects found while investigating' (1\u20135) and 'Not a defect'\n\n_Recorded from the Powerhouse repository at **v6.2.2-dev.74** during the v6.2.2-dev.74 source sync._",
+        "updatedAt": "2026-09-02T22:14:29.938Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:14:29.938Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "",
+    "timestampUtcMs": "2026-09-02T22:25:33.778Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "metadata": {
+          "reason": "Positional re-evaluation is supposed to make a revocation catch operations already accepted, but defect 1 means the re-appended operations never reach read models, so projections keep serving pre-revocation state",
+          "confidence": "grounded"
+        },
+        "sourceId": "3968416f-1124-47ff-b195-1b782b5296ca",
+        "targetId": "0ade289f-d4fb-44d8-ab3b-316d65bb1c8d",
+        "relationshipType": "CONTRADICTS"
+      },
+      "timestampUtcMs": "2026-09-02T22:25:33.778Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "IkXi/8bvbRmrm1jCC7G1vgGoyck=",
+    "timestampUtcMs": "2026-09-02T22:14:29.938Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "a0ad9c29-f01f-4547-ac60-fc149ba15d81",
+        "name": "reactor-sync"
+      },
+      "timestampUtcMs": "2026-09-02T22:14:29.938Z"
+    }
+  },
+  {
+    "index": 5,
+    "hash": "",
+    "timestampUtcMs": "2026-09-02T22:25:34.260Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "metadata": {
+          "reason": "Read models run pre-ready per (document, scope, branch) key, which is what lets projections race across a document's scopes",
+          "confidence": "grounded"
+        },
+        "sourceId": "3968416f-1124-47ff-b195-1b782b5296ca",
+        "targetId": "43b82c81-4d28-4e69-9a0a-84c0dddb87ef",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-09-02T22:25:34.260Z"
+    }
+  },
+  {
+    "index": 5,
+    "hash": "6wv2OkSqhM51WSJNE6ce7mgB9oQ=",
+    "timestampUtcMs": "2026-09-02T22:14:29.938Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "8b781a9c-64ae-4403-b086-cbed8550aa43",
+        "name": "read-models"
+      },
+      "timestampUtcMs": "2026-09-02T22:14:29.938Z"
+    }
+  },
+  {
+    "index": 6,
+    "hash": "OVQsJtLyHs+aJ+zs0+M6ISdstHY=",
+    "timestampUtcMs": "2026-09-02T22:14:29.938Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "e187a9df-5f0b-414d-9409-62e1ccd734d1",
+        "name": "gotchas"
+      },
+      "timestampUtcMs": "2026-09-02T22:14:29.938Z"
+    }
+  },
+  {
+    "index": 7,
+    "hash": "2GhwrrXys1OK+99UmUc4YbgyuRA=",
+    "timestampUtcMs": "2026-09-02T22:14:29.938Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "34a2b0b8-4ab2-455a-985e-30852e6f5dc1",
+        "name": "auth-scope"
+      },
+      "timestampUtcMs": "2026-09-02T22:14:29.938Z"
+    }
+  },
+  {
+    "index": 8,
+    "hash": "7YW52uBmCaxKXLqUK/s+gI76wDI=",
+    "timestampUtcMs": "2026-09-02T22:14:29.938Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "version",
+        "value": "v6.2.2-dev.74",
+        "updatedAt": "2026-09-02T22:14:29.938Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:14:29.938Z"
+    }
+  },
+  {
+    "index": 9,
+    "hash": "QBYSghnCo5umlPbaM/AhdpYLICE=",
+    "timestampUtcMs": "2026-09-02T22:14:29.938Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "filePath",
+        "value": "docs/updateoutbox-scope-ordering.md",
+        "updatedAt": "2026-09-02T22:14:29.938Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:14:29.938Z"
+    }
+  },
+  {
+    "index": 10,
+    "hash": "3nh/PKJc57zjwV/SzBwbparUY1I=",
+    "timestampUtcMs": "2026-09-02T22:14:29.938Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "confidence",
+        "value": "grounded",
+        "updatedAt": "2026-09-02T22:14:29.938Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:14:29.938Z"
+    }
+  },
+  {
+    "index": 11,
+    "hash": "vMNHACHSZZ8Vo1z+UqS0Ero+D1s=",
+    "timestampUtcMs": "2026-09-02T22:14:32.598Z",
+    "action": {
+      "type": "SET_PROVENANCE",
+      "input": {
+        "author": "knowledge-agent",
+        "createdAt": "2026-09-02T22:14:32.598Z",
+        "sourceOrigin": "DERIVED"
+      },
+      "timestampUtcMs": "2026-09-02T22:14:32.598Z"
+    }
+  },
+  {
+    "index": 12,
+    "hash": "iJbAHttvb/7lhJ10Fd0jwVLnWyQ=",
+    "timestampUtcMs": "2026-09-02T22:14:33.234Z",
+    "action": {
+      "type": "SUBMIT_FOR_REVIEW",
+      "input": {
+        "id": "22f176e9-ac29-4e32-957a-6b0fa18b797b",
+        "actor": "knowledge-agent",
+        "comment": "extracted from the Powerhouse repository at v6.2.2-dev.74",
+        "timestamp": "2026-09-02T22:14:33.234Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:14:33.234Z"
+    }
+  },
+  {
+    "index": 13,
+    "hash": "WGxSQl1QJJi3nVu7hVpC/sZqZoA=",
+    "timestampUtcMs": "2026-09-02T22:14:33.700Z",
+    "action": {
+      "type": "APPROVE_NOTE",
+      "input": {
+        "id": "9de40415-9fdf-4005-b14f-6a075fde0265",
+        "actor": "liberuum",
+        "comment": "claim checked against the cited repository file at the pinned tag",
+        "timestamp": "2026-09-02T22:14:33.700Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:14:33.700Z"
+    }
+  },
+  {
+    "index": 14,
+    "hash": "dhbQY36ctkWll8aohKsHxmSfWM4=",
+    "timestampUtcMs": "2026-09-02T22:16:48.381Z",
+    "action": {
+      "type": "SET_TITLE",
+      "input": {
+        "title": "Five adjacent sync and read-model defects were recorded while investigating the outbox ordering bug, including re-evaluation writes that never reach read models",
+        "updatedAt": "2026-09-02T22:16:48.381Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:16:48.381Z"
+    }
+  },
+  {
+    "index": 15,
+    "hash": "dhbQY36ctkWll8aohKsHxmSfWM4=",
+    "timestampUtcMs": "2026-09-02T22:16:48.381Z",
+    "action": {
+      "type": "SET_DESCRIPTION",
+      "input": {
+        "updatedAt": "2026-09-02T22:16:48.381Z",
+        "description": "reevaluateIfCriteriaMet drops operationsWithContext, so a revocation converges in the log and sync but not in projections until a restart. Also unvalidated externalDeps and projection races."
+      },
+      "timestampUtcMs": "2026-09-02T22:16:48.381Z"
+    }
+  },
+  {
+    "index": 16,
+    "hash": "dhbQY36ctkWll8aohKsHxmSfWM4=",
+    "timestampUtcMs": "2026-09-02T22:16:48.381Z",
+    "action": {
+      "type": "SET_NOTE_TYPE",
+      "input": {
+        "noteType": "OBSERVATION",
+        "updatedAt": "2026-09-02T22:16:48.381Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:16:48.381Z"
+    }
+  },
+  {
+    "index": 17,
+    "hash": "dhbQY36ctkWll8aohKsHxmSfWM4=",
+    "timestampUtcMs": "2026-09-02T22:16:48.381Z",
+    "action": {
+      "type": "SET_CONTENT",
+      "input": {
+        "content": "Recorded as independent of the ordering bug and of each other, and none needed to fix it:\n\n1. **Re-evaluation writes are discarded.** `reevaluateIfCriteriaMet` returns only `outcome.error` and drops `outcome.operationsWithContext`, so re-appended operations never reach `JOB_WRITE_READY`. The log and sync converge \u2014 the outbox is index-driven \u2014 but **read models do not**, so projections keep serving pre-revocation state until a restart catch-up. Those re-appends are also absent from `touchedCacheEntries`, so a later rollback leaves post-reevaluation snapshots cached. Security-shaped: a revocation that does not reach reads.\n2. **`externalDeps` is unvalidated and can wedge a sub-queue permanently.** It is spread into `queueHint` while `validateBatchStructure` only checks `dependsOn` against in-batch keys, and `areDependenciesMet` requires every hint to be in `completedJobs`. A hint naming a job that never enqueues blocks the sub-queue head forever \u2014 nothing dispatched, no dead letter. The hard half is distinguishing \"never existed\" from \"already completed and forgotten\", since `completedJobs` is a `Set` that gets cleared.\n3. **One outbox cursor writer lacks a clamp.** Two of three clamp against unserved/emitted state with docstrings naming the skip hazard; `gql-req-channel.ts` does a bare `max(getLatestAppliedOrdinal)` \u2192 `upsert` with neither. Cross-document parallelism alone lets a higher-ordinal document ack first, so this is a restart-skips-operations risk independent of scope.\n4. **Projection races across scopes.** `ReadModelCoordinator` parallelizes across `(documentId, scope, branch)` keys and the executor's per-document mutex does not extend to the projection stage, so the shared `header` row and the `SlugMapping` upsert already race across a document's scopes. Separately, `BaseReadModel.saveState` sets `ViewState.lastOrdinal` with `set` rather than a max, so parallel chains can walk the watermark backwards.\n5. **`replayDocument` orders cross-scope replay by raw `Object.keys`**, fed by a `getRevisions()` query with no `ORDER BY`. Same missing rank concept, different subsystem; uninvestigated.\n\nExplicitly **not** a defect: `failJob` adding a failed job to `completedJobs` \"so dependent jobs are unblocked\". It looks wrong against the create-before-auth barrier, but #2918's deferral fix relies on it and releasing is correct in the backfill case \u2014 when the deferred auth job fails, the create should proceed rather than cascade-fail. Release-vs-cascade depends on the direction of the causal dependency, which is a design question.\n\n_Source: docs/updateoutbox-scope-ordering.md (Powerhouse v6.2.2-dev.74)._\n\n## Provenance\n- `docs/updateoutbox-scope-ordering.md` \u2014 'Adjacent defects found while investigating' (1\u20135) and 'Not a defect'\n\n_Recorded from the Powerhouse repository at **v6.2.2-dev.74** during the v6.2.2-dev.74 source sync._",
+        "updatedAt": "2026-09-02T22:16:48.381Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:16:48.381Z"
+    }
+  },
+  {
+    "index": 18,
+    "hash": "dhbQY36ctkWll8aohKsHxmSfWM4=",
+    "timestampUtcMs": "2026-09-02T22:16:48.381Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "version",
+        "value": "v6.2.2-dev.74",
+        "updatedAt": "2026-09-02T22:16:48.381Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:16:48.381Z"
+    }
+  },
+  {
+    "index": 19,
+    "hash": "dhbQY36ctkWll8aohKsHxmSfWM4=",
+    "timestampUtcMs": "2026-09-02T22:16:48.381Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "filePath",
+        "value": "docs/updateoutbox-scope-ordering.md",
+        "updatedAt": "2026-09-02T22:16:48.381Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:16:48.381Z"
+    }
+  },
+  {
+    "index": 20,
+    "hash": "dhbQY36ctkWll8aohKsHxmSfWM4=",
+    "timestampUtcMs": "2026-09-02T22:16:48.381Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "confidence",
+        "value": "grounded",
+        "updatedAt": "2026-09-02T22:16:48.381Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:16:48.381Z"
+    }
+  },
+  {
+    "index": 21,
+    "hash": "l9Q4j+U7+tL72ZXeU/hUB/Xtzjc=",
+    "timestampUtcMs": "2026-09-02T22:21:28.280Z",
+    "action": {
+      "type": "SET_TITLE",
+      "input": {
+        "title": "Five adjacent sync and read-model defects were recorded while investigating the outbox ordering bug, including re-evaluation writes that never reach read models",
+        "updatedAt": "2026-09-02T22:21:28.279Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:21:28.280Z"
+    }
+  },
+  {
+    "index": 22,
+    "hash": "l9Q4j+U7+tL72ZXeU/hUB/Xtzjc=",
+    "timestampUtcMs": "2026-09-02T22:21:28.280Z",
+    "action": {
+      "type": "SET_DESCRIPTION",
+      "input": {
+        "updatedAt": "2026-09-02T22:21:28.279Z",
+        "description": "reevaluateIfCriteriaMet drops operationsWithContext, so a revocation converges in the log and sync but not in projections until a restart. Also unvalidated externalDeps and projection races."
+      },
+      "timestampUtcMs": "2026-09-02T22:21:28.280Z"
+    }
+  },
+  {
+    "index": 23,
+    "hash": "l9Q4j+U7+tL72ZXeU/hUB/Xtzjc=",
+    "timestampUtcMs": "2026-09-02T22:21:28.280Z",
+    "action": {
+      "type": "SET_NOTE_TYPE",
+      "input": {
+        "noteType": "OBSERVATION",
+        "updatedAt": "2026-09-02T22:21:28.279Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:21:28.280Z"
+    }
+  },
+  {
+    "index": 24,
+    "hash": "l9Q4j+U7+tL72ZXeU/hUB/Xtzjc=",
+    "timestampUtcMs": "2026-09-02T22:21:28.280Z",
+    "action": {
+      "type": "SET_CONTENT",
+      "input": {
+        "content": "Recorded as independent of the ordering bug and of each other, and none needed to fix it:\n\n1. **Re-evaluation writes are discarded.** `reevaluateIfCriteriaMet` returns only `outcome.error` and drops `outcome.operationsWithContext`, so re-appended operations never reach `JOB_WRITE_READY`. The log and sync converge \u2014 the outbox is index-driven \u2014 but **read models do not**, so projections keep serving pre-revocation state until a restart catch-up. Those re-appends are also absent from `touchedCacheEntries`, so a later rollback leaves post-reevaluation snapshots cached. Security-shaped: a revocation that does not reach reads.\n2. **`externalDeps` is unvalidated and can wedge a sub-queue permanently.** It is spread into `queueHint` while `validateBatchStructure` only checks `dependsOn` against in-batch keys, and `areDependenciesMet` requires every hint to be in `completedJobs`. A hint naming a job that never enqueues blocks the sub-queue head forever \u2014 nothing dispatched, no dead letter. The hard half is distinguishing \"never existed\" from \"already completed and forgotten\", since `completedJobs` is a `Set` that gets cleared.\n3. **One outbox cursor writer lacks a clamp.** Two of three clamp against unserved/emitted state with docstrings naming the skip hazard; `gql-req-channel.ts` does a bare `max(getLatestAppliedOrdinal)` \u2192 `upsert` with neither. Cross-document parallelism alone lets a higher-ordinal document ack first, so this is a restart-skips-operations risk independent of scope.\n4. **Projection races across scopes.** `ReadModelCoordinator` parallelizes across `(documentId, scope, branch)` keys and the executor's per-document mutex does not extend to the projection stage, so the shared `header` row and the `SlugMapping` upsert already race across a document's scopes. Separately, `BaseReadModel.saveState` sets `ViewState.lastOrdinal` with `set` rather than a max, so parallel chains can walk the watermark backwards.\n5. **`replayDocument` orders cross-scope replay by raw `Object.keys`**, fed by a `getRevisions()` query with no `ORDER BY`. Same missing rank concept, different subsystem; uninvestigated.\n\nExplicitly **not** a defect: `failJob` adding a failed job to `completedJobs` \"so dependent jobs are unblocked\". It looks wrong against the create-before-auth barrier, but #2918's deferral fix relies on it and releasing is correct in the backfill case \u2014 when the deferred auth job fails, the create should proceed rather than cascade-fail. Release-vs-cascade depends on the direction of the causal dependency, which is a design question.\n\n_Source: docs/updateoutbox-scope-ordering.md (Powerhouse v6.2.2-dev.74)._\n\n## Provenance\n- `docs/updateoutbox-scope-ordering.md` \u2014 'Adjacent defects found while investigating' (1\u20135) and 'Not a defect'\n\n_Recorded from the Powerhouse repository at **v6.2.2-dev.74** during the v6.2.2-dev.74 source sync._",
+        "updatedAt": "2026-09-02T22:21:28.279Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:21:28.280Z"
+    }
+  },
+  {
+    "index": 25,
+    "hash": "l9Q4j+U7+tL72ZXeU/hUB/Xtzjc=",
+    "timestampUtcMs": "2026-09-02T22:21:28.280Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "version",
+        "value": "v6.2.2-dev.74",
+        "updatedAt": "2026-09-02T22:21:28.279Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:21:28.280Z"
+    }
+  },
+  {
+    "index": 26,
+    "hash": "l9Q4j+U7+tL72ZXeU/hUB/Xtzjc=",
+    "timestampUtcMs": "2026-09-02T22:21:28.280Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "filePath",
+        "value": "docs/updateoutbox-scope-ordering.md",
+        "updatedAt": "2026-09-02T22:21:28.279Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:21:28.280Z"
+    }
+  },
+  {
+    "index": 27,
+    "hash": "l9Q4j+U7+tL72ZXeU/hUB/Xtzjc=",
+    "timestampUtcMs": "2026-09-02T22:21:28.280Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "confidence",
+        "value": "grounded",
+        "updatedAt": "2026-09-02T22:21:28.279Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:21:28.280Z"
+    }
+  }
+]

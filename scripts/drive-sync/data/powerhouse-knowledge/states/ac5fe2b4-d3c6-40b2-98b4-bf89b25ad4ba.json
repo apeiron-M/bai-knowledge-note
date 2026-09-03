@@ -1,0 +1,103 @@
+{
+  "links": [
+    {
+      "id": "lnk-2ae31ea4-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "2ae31ea4-b8f4-4128-8531-93b932d6b6bb",
+      "targetTitle": "renown-sdk-decentralized-identity-auth"
+    },
+    {
+      "id": "lnk-d907616b-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "d907616b-cc88-4ea5-8d91-dc6d8e5bace6",
+      "targetTitle": "cli-identity-did-key-ethereum-delegation"
+    },
+    {
+      "id": "lnk-f5714e70-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "f5714e70-0651-47e0-9310-27372f5af492",
+      "targetTitle": "Academy \u203a Reference \u203a Authorization \u203a renown-sdk \u203a Authentication Guide",
+      "reason": "The note names apps/academy/docs/academy/04-Reference/06-Authorization/renown-sdk/01-Authentication.md as its source; page text identical at v6.2.2-dev.47 and v6.2.2-dev.74",
+      "confidence": "grounded"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Server-side Renown sessions use RENOWN_SESSION_COOKIE plus verifyRenownSession in a Data Access Layer",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "98904ee5-3220-4e78-8c4a-596d4f115fe9",
+      "name": "renown",
+      "topicDocumentId": null
+    },
+    {
+      "id": "401ed383-6ef4-4775-949e-e9b166152ff5",
+      "name": "SSR",
+      "topicDocumentId": null
+    },
+    {
+      "id": "b1d3d609-754e-4d15-86ef-e6bad7631a81",
+      "name": "security",
+      "topicDocumentId": null
+    },
+    {
+      "id": "8f77db4b-ef13-490f-bea5-341b8001cbbc",
+      "name": "authentication",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "## The flow\n\n**1. On login** the client mints a bearer token (`renown.getBearerToken()`) and stores it \u2014 with a `RenownSessionProfile` display hint (`name`/`avatar` plus `documentId`/`username`/`userImage`) \u2014 in an **HttpOnly cookie**. The name is exported as `RENOWN_SESSION_COOKIE` and the value is built with `serializeRenownSessionCookie`. `RenownProvider`'s session-cookie sync does this automatically when given a `session`. Type the route handler with the exported `RenownSessionCookie` rather than redeclaring the payload shape.\n\n**2. A Data Access Layer** reads the cookie and calls `verifyRenownSession`, memoized per request:\n\n```typescript\nimport { RENOWN_SESSION_COOKIE, verifyRenownSession } from \"@renown/sdk/node\";\n\nconst cookie = (await cookies()).get(RENOWN_SESSION_COOKIE)?.value;\nreturn (await verifyRenownSession(cookie, { switchboardUrl: SWITCHBOARD_URL })) ?? null;\n```\n\n## What verification actually checks\n\nBy default `verifyRenownSession` verifies the **JWT only** \u2014 signature and expiry \u2014 and merges the display hint into `user` as *unverified, display-only* data, rebuilding `user.ens` and, when `documentId` is present, `user.profile`.\n\nPass **`verifyCredential: true`** to also re-check the credential against the Switchboard, so a **revoked or expired credential is rejected**. It defaults to `false`, which is token-only and does no network call. That default is the gotcha: a revoked credential still presents a valid, unexpired JWT, so the default path keeps admitting a user whose credential has been pulled until the token itself expires.\n\n## The one thing never to use for access control\n\n`readSessionClaims(cookieValue)` gives a cheap, **signature-free** decode. It is for optimistic checks only \u2014 an edge redirect, for instance. Never trust it for access control: an attacker can author any claims they like in a cookie they control, and a signature-free decode will happily return them.\n\n_Source: apps/academy/docs/academy/04-Reference/06-Authorization/renown-sdk/01-Authentication.md (Powerhouse v6.2.2-dev.45)._",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": "v6.2.2-dev.74",
+  "computes": null,
+  "filePath": "apps/academy/docs/academy/04-Reference/06-Authorization/renown-sdk/01-Authentication.md",
+  "noteType": "PROCEDURE",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "claude",
+    "createdAt": "2026-08-13T14:33:39.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-09-02T21:40:12.350Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "verifyRenownSession checks JWT signature and expiry only by default; pass verifyCredential true to reject revoked credentials. readSessionClaims is never valid for access control.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "7a0591ba-ff30-4b57-bd65-88747f693c2b",
+      "actor": "claude",
+      "comment": "Knowledge registered against powerhouse v6.2.2-dev.47",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-14T12:00:00.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "ea6200b2-4ccd-4047-80ba-b11124b1ee11",
+      "actor": "liberuum",
+      "comment": "Canonical as of powerhouse v6.2.2-dev.47",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-14T12:00:00.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

@@ -1,0 +1,340 @@
+[
+  {
+    "index": 0,
+    "hash": "",
+    "timestampUtcMs": "2026-08-14T11:46:01.432Z",
+    "action": {
+      "type": "CREATE_DOCUMENT",
+      "input": {
+        "meta": {},
+        "name": "add-relationship-keeps-container-state-flat",
+        "slug": "",
+        "model": "bai/knowledge-note",
+        "branch": "main",
+        "signing": {
+          "nonce": "",
+          "publicKey": {},
+          "signature": "b7ea248d-d62f-4463-8036-8e19b7444edf",
+          "documentType": "bai/knowledge-note",
+          "createdAtUtcIso": "2026-08-14T11:46:01.432Z"
+        },
+        "version": 0,
+        "documentId": "b7ea248d-d62f-4463-8036-8e19b7444edf",
+        "protocolVersions": {
+          "base-reducer": 2
+        }
+      },
+      "timestampUtcMs": "2026-08-14T11:46:01.432Z"
+    }
+  },
+  {
+    "index": 0,
+    "hash": "VT+z78wSW2syWiw6Etp8D4U5vn0=",
+    "timestampUtcMs": "2026-08-14T12:34:47.000Z",
+    "action": {
+      "type": "SET_TITLE",
+      "input": {
+        "title": "ADD_RELATIONSHIP keeps container state O(1) where ADD_FILE grows the drive document with every child",
+        "updatedAt": "2026-08-14T12:34:47.000Z"
+      },
+      "timestampUtcMs": "2026-08-14T12:34:47.000Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "",
+    "timestampUtcMs": "2026-08-14T11:46:01.432Z",
+    "action": {
+      "type": "UPGRADE_DOCUMENT",
+      "input": {
+        "model": "bai/knowledge-note",
+        "toVersion": 1,
+        "documentId": "b7ea248d-d62f-4463-8036-8e19b7444edf",
+        "fromVersion": 0,
+        "initialState": {
+          "auth": {
+            "grants": [],
+            "version": 0
+          },
+          "local": {
+            "lastViewedAt": null,
+            "personalTags": []
+          },
+          "global": {
+            "links": [],
+            "model": null,
+            "scope": null,
+            "title": null,
+            "editor": null,
+            "inputs": [],
+            "models": [],
+            "status": "DRAFT",
+            "topics": [],
+            "content": null,
+            "context": null,
+            "modelId": null,
+            "modules": [],
+            "outputs": [],
+            "version": null,
+            "computes": null,
+            "filePath": null,
+            "noteType": null,
+            "severity": null,
+            "hooksUsed": [],
+            "rootCause": null,
+            "confidence": null,
+            "consumedBy": [],
+            "provenance": null,
+            "sourceType": null,
+            "targetType": null,
+            "cardinality": null,
+            "description": null,
+            "alternatives": [],
+            "consequences": [],
+            "errorMessage": null,
+            "relationType": null,
+            "correctPattern": null,
+            "decisionStatus": null,
+            "dispatchTargets": [],
+            "lifecycleEvents": []
+          },
+          "document": {
+            "hash": {
+              "encoding": "base64",
+              "algorithm": "sha1"
+            },
+            "version": 1
+          }
+        }
+      },
+      "timestampUtcMs": "2026-08-14T11:46:01.432Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "HOWupzefLZtcfXbCt9W014Nvz1c=",
+    "timestampUtcMs": "2026-08-14T12:34:47.000Z",
+    "action": {
+      "type": "SET_DESCRIPTION",
+      "input": {
+        "updatedAt": "2026-08-14T12:34:47.000Z",
+        "description": "document-drive mutates state.global.nodes[] per file; ADD_RELATIONSHIP is a system-scope action the job executor handles, writing one indexed row so container cost is flat in child count."
+      },
+      "timestampUtcMs": "2026-08-14T12:34:47.000Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "",
+    "timestampUtcMs": "2026-08-14T12:36:34.745Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "b7ea248d-d62f-4463-8036-8e19b7444edf",
+        "targetId": "87edb655-2431-4b23-8c7f-53ca7a468fba",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-08-14T12:36:34.745Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "qs2r/N+KZ0bv42GyHZyidHsG8Aw=",
+    "timestampUtcMs": "2026-08-14T12:34:47.000Z",
+    "action": {
+      "type": "SET_NOTE_TYPE",
+      "input": {
+        "noteType": "ARCHITECTURE",
+        "updatedAt": "2026-08-14T12:34:47.000Z"
+      },
+      "timestampUtcMs": "2026-08-14T12:34:47.000Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "",
+    "timestampUtcMs": "2026-08-14T12:36:34.842Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "b7ea248d-d62f-4463-8036-8e19b7444edf",
+        "targetId": "b52d608c-7251-418f-b97e-400e4b811a88",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-08-14T12:36:34.842Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "oFiw3pTJFXxolMFOhGebn3uuC7Y=",
+    "timestampUtcMs": "2026-08-14T12:34:47.000Z",
+    "action": {
+      "type": "SET_CONTENT",
+      "input": {
+        "content": "`document-drive` keeps its child catalogue **inside the drive document's own state**, at `state.global.nodes[]`. Every `ADD_FILE` mutates that array, which means three costs grow together with child count: every replay walks every previously-added child, every read materialises the full node list, and the drive's operation log grows one entry per file. Container performance decays as the drive fills.\n\n`ADD_RELATIONSHIP` sidesteps all three. It is a **system-scope action handled directly by the reactor's job executor** \u2014 the source document's state and operation log are untouched. The indexer writes one row to the `DocumentRelationship` table, and the graph is read back through `IDocumentIndexer`. Cost is flat in the number of children.\n\nThe `drive-override` recipe demonstrates this by building a container document whose entire schema is:\n\n```graphql\ntype CustomContainerState {\n  name: String!\n  description: String\n}\n```\n\nNo `nodes`, no children, no files. It then links 10,000 children via `reactor.execute(containerId, \"main\", [addRelationshipAction(containerId, childId, \"contains\")])` and confirms `state.global` keys are still exactly `[\"description\", \"name\"]`.\n\nEnumeration is paged and DB-native rather than a state read:\n\n- `documentIndexer.getOutgoing(containerId, [\"contains\"], { cursor, limit })` \u2014 children; advance `cursor` until `nextCursor` is empty.\n- `documentIndexer.getIncoming(childId)` \u2014 parents. The relationship table is indexed on both `sourceId` and `targetId`, so the graph is genuinely bidirectional.\n\nThe same data is exposed over GraphQL as `documentOutgoingRelationships(documentId, relationshipTypes, paging)` and `documentIncomingRelationships(...)`, both paged, for external clients.\n\nThe trade-off: the container's reducer never sees relationships at all, so any invariant you wanted to enforce over the child set (\"no more than N children\", \"child types must match\") is no longer enforceable in the reducer. You gain flat scaling and lose reducer-level control over membership.\n\nProvenance: academy `05-Lookup/00-Cookbook.md`, Drive Override recipe (\"Why this scales better than ADD_FILE\"), academy 6.2.2-dev.45.",
+        "updatedAt": "2026-08-14T12:34:47.000Z"
+      },
+      "timestampUtcMs": "2026-08-14T12:34:47.000Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "",
+    "timestampUtcMs": "2026-09-02T21:40:57.222Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "metadata": {
+          "reason": "Backing page found by content match in the v6.2.2-dev.74 source backfill \u2014 identifiers add_file, add_relationship, mutates from the claim appear in this page (text revised between v6.2.2-dev.47 and v6.2.2-dev.74 \u2014 re-verified in the v6.2.2-dev.74 pass); attribution, not the original extraction record",
+          "confidence": "grounded"
+        },
+        "sourceId": "b7ea248d-d62f-4463-8036-8e19b7444edf",
+        "targetId": "f2aaccd3-7c26-4327-881e-f5ad9e267b89",
+        "relationshipType": "DERIVED_FROM"
+      },
+      "timestampUtcMs": "2026-09-02T21:40:57.222Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "t32pRSB96Kcig0wOy5ItDjy3kYE=",
+    "timestampUtcMs": "2026-08-14T12:34:47.000Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "version",
+        "value": "v6.2.2-dev.44",
+        "updatedAt": "2026-08-14T12:34:47.000Z"
+      },
+      "timestampUtcMs": "2026-08-14T12:34:47.000Z"
+    }
+  },
+  {
+    "index": 5,
+    "hash": "04gBUJ5b/2xZmEa5NLE7bzPum7w=",
+    "timestampUtcMs": "2026-08-14T12:34:47.000Z",
+    "action": {
+      "type": "SET_PROVENANCE",
+      "input": {
+        "author": "claude",
+        "createdAt": "2026-08-13T14:39:12.000Z",
+        "sourceOrigin": "DERIVED"
+      },
+      "timestampUtcMs": "2026-08-14T12:34:47.000Z"
+    }
+  },
+  {
+    "index": 6,
+    "hash": "hxsLbuPjPUrzy5bxRrSB6WaHdmQ=",
+    "timestampUtcMs": "2026-08-14T12:34:47.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "034d6ec7-63fe-4cd2-8ebb-cfa923bce3df",
+        "name": "drives",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-08-14T12:34:47.000Z"
+    }
+  },
+  {
+    "index": 7,
+    "hash": "WdW1sCp1CYjo8OYXVlUjy3HRmJY=",
+    "timestampUtcMs": "2026-08-14T12:34:47.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "21283e52-149b-4846-bcc1-0225bed47549",
+        "name": "scalability",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-08-14T12:34:47.000Z"
+    }
+  },
+  {
+    "index": 8,
+    "hash": "Zlh+T8cf9z23wFw32Y/fnSlKgNo=",
+    "timestampUtcMs": "2026-08-14T12:34:47.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "6b78610e-cfbd-47ca-9fa1-caf5d0c449e0",
+        "name": "reactor",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-08-14T12:34:47.000Z"
+    }
+  },
+  {
+    "index": 9,
+    "hash": "jO3vGn3NSTgyzuqhVPiukY5V8e4=",
+    "timestampUtcMs": "2026-08-14T14:37:31.000Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "version",
+        "value": "v6.2.2-dev.47",
+        "updatedAt": "2026-08-14T12:00:00.000Z"
+      },
+      "timestampUtcMs": "2026-08-14T14:37:31.000Z"
+    }
+  },
+  {
+    "index": 10,
+    "hash": "15PW7w6gHEF35rmBsW5oBRJLb9U=",
+    "timestampUtcMs": "2026-08-14T14:37:31.000Z",
+    "action": {
+      "type": "SUBMIT_FOR_REVIEW",
+      "input": {
+        "id": "bbbb785b-63a7-4ccc-96cd-e824fb0aeb2d",
+        "actor": "claude",
+        "comment": "Knowledge registered against powerhouse v6.2.2-dev.47",
+        "timestamp": "2026-08-14T12:00:00.000Z"
+      },
+      "timestampUtcMs": "2026-08-14T14:37:31.000Z"
+    }
+  },
+  {
+    "index": 11,
+    "hash": "EkbaemK+T6DDS/wXwOTfSs4vXE4=",
+    "timestampUtcMs": "2026-08-14T14:37:31.000Z",
+    "action": {
+      "type": "APPROVE_NOTE",
+      "input": {
+        "id": "95eb0386-30fd-4c20-8768-b043ba7dc2a9",
+        "actor": "liberuum",
+        "comment": "Canonical as of powerhouse v6.2.2-dev.47",
+        "timestamp": "2026-08-14T12:00:00.000Z"
+      },
+      "timestampUtcMs": "2026-08-14T14:37:31.000Z"
+    }
+  },
+  {
+    "index": 12,
+    "hash": "oTijzCK21M2Ghvf/e6/SU2OdZM8=",
+    "timestampUtcMs": "2026-09-02T21:40:57.890Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "filePath",
+        "value": "apps/academy/docs/academy/05-Lookup/00-Cookbook.md",
+        "updatedAt": "2026-09-02T21:40:57.890Z"
+      },
+      "timestampUtcMs": "2026-09-02T21:40:57.890Z"
+    }
+  },
+  {
+    "index": 13,
+    "hash": "M0ed0f2XeCavC6JvSHK64GEMfuU=",
+    "timestampUtcMs": "2026-09-02T22:26:44.755Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "version",
+        "value": "v6.2.2-dev.74",
+        "updatedAt": "2026-09-02T22:26:44.755Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:26:44.755Z"
+    }
+  }
+]

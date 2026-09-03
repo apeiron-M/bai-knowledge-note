@@ -1,0 +1,121 @@
+[
+  {
+    "index": 0,
+    "hash": "",
+    "timestampUtcMs": "2026-09-02T21:40:48.540Z",
+    "action": {
+      "type": "CREATE_DOCUMENT",
+      "input": {
+        "meta": {},
+        "name": "Academy \u203a Lookup \u203a Glossary",
+        "slug": "",
+        "model": "bai/source",
+        "branch": "main",
+        "signing": {
+          "nonce": "",
+          "publicKey": {},
+          "signature": "e5f26689-8d1a-44bd-aecd-f1f1c88ae196",
+          "documentType": "bai/source",
+          "createdAtUtcIso": "2026-09-02T21:40:48.540Z"
+        },
+        "version": 0,
+        "documentId": "e5f26689-8d1a-44bd-aecd-f1f1c88ae196",
+        "protocolVersions": {
+          "base-reducer": 2
+        }
+      },
+      "timestampUtcMs": "2026-09-02T21:40:48.540Z"
+    }
+  },
+  {
+    "index": 0,
+    "hash": "xan9ItQT5RYjwzgMZZTS6FN6OBY=",
+    "timestampUtcMs": "2026-09-02T21:40:48.491Z",
+    "action": {
+      "type": "INGEST_SOURCE",
+      "input": {
+        "url": "https://github.com/powerhouse-inc/powerhouse/blob/v6.2.2-dev.74/apps/academy/docs/academy/05-Lookup/01-Glossary.md",
+        "tool": "sync-repo-docs",
+        "title": "Academy \u203a Lookup \u203a Glossary",
+        "author": "Powerhouse Inc.",
+        "method": "sha256:c5a1a84d4681bb736da1119d095b34ca7ddcc9b2d55845412178acbf73173a75 git:v6.2.2-dev.74",
+        "content": "# Glossary\n\n## General Terms\n\n- **Powerhouse** \u2013 A network organization that provides open-source software and services to support decentralized operations for other network organizations.\n- **Scalable Network Organization (SNO)** \u2013 A network organization structured according to the Powerhouse framework, designed for sustainable and scalable growth.\n- **Powerhouse Ecosystem** \u2013 The overall environment of Powerhouse tools, applications (like Connect), concepts (document models, packages), and services.\n\n## Technology & Framework\n\n- **CQRS (Command Query Responsibility Segregation)** \u2013 A pattern that separates read and write operations to improve scalability.\n- **Event Sourcing** \u2013 A method of storing system state as a sequence of immutable events rather than modifying a single record.\n\n## Software Components\n\n- **Model Context Protocol (MCP)** \u2013 A standardized protocol that enables AI agents and external tools to interact with systems through structured operations. Powerhouse uses MCP to provide AI access to document management capabilities.\n- **Reactor** \u2013 A storage node for Powerhouse documents and files with multiple storage adapters (local, cloud, decentralized). Reactors process mutations as jobs, emit events, and coordinate read models and processors.\n- **IReactorClient** \u2013 The primary programmatic interface for interacting with a reactor. Provides Promise-based methods for reading, creating, updating, deleting, and subscribing to documents. See the [IReactorClient API Reference](/academy/Reference/Reactor/ReactorClient).\n- **Job (Reactor Job)** \u2013 A unit of work in the reactor's queue. Each mutation (e.g., executing actions on a document) becomes a job that moves through statuses: PENDING, RUNNING, WRITE_READY, READ_READY, or FAILED.\n- **ProcessorManager** \u2013 The reactor component that routes operations to user-defined processors. After a job reaches READ_READY, the ProcessorManager matches operations against each processor's filter and calls `onOperations()` on matching processors.\n- **Reactor-MCP** \u2013 A Model Context Protocol server for the Powerhouse ecosystem that provides AI agents and tools with structured access to document model operations, serving as a bridge between AI systems and Powerhouse document management infrastructure.\n- **Powerhouse Switchboard** \u2013 A scalable API service that aggregates and processes document data.\n- **Powerhouse Fusion** \u2013 A platform front-end that hosts the public marketplace for SNO interactions.\n- **Powerhouse Renown** \u2013 A decentralized authentication system managing contributor reputation.\n- **Powerhouse Academy** \u2013 A training platform for onboarding and upskilling SNO contributors.\n- **Connect** \u2013 The contributor's public or private workspace, serving as the entry point for individual contributors to install apps and packages for specific business solutions.\n- **Powergrid** \u2013 A decentralized network of reactors that sync with each other.\n- **Preview Drive** \u2013 A local drive created in `--watch` mode during `ph vetra` development, used for testing local document models and editors without affecting the main synced drive.\n- **Remote Drive** \u2013 A Powerhouse drive hosted on a remote server (e.g., Vetra) that syncs across team members, enabling collaborative development on shared documents and document models.\n- **Powerhouse CLI (ph)** \u2013 The command-line tool for Powerhouse project initialization, code generation, package management, and running local development environments (Connect Studio). It also manages services, ensuring the terminology aligns with the updated setup guide.\n- **Connect App (Connect Studio)** \u2013 The primary Powerhouse application for defining document models, building/testing editors (in Studio mode), and collaborating on documents.\n- **Document Tools** \u2013 Built-in features within Powerhouse applications (e.g., Connect) that assist with document management, inspection, and interaction, such as Operations History.\n- **Operations History** \u2013 A Document Tool in Connect providing a chronological, immutable log of all operations on a document for traceability.\n- **Studio mode** \u2013 The local development mode of the Connect App (`ph connect`), for real-time document model definition, editor building, and testing.\n- **Renown (Login Flow)** \u2013 The Powerhouse decentralized login process using an Ethereum wallet signature to generate/retrieve a user's DID for secure, pseudonymous actions.\n- **Powerhouse Switchboard (Verifier Role)** \u2013 A function of Powerhouse Switchboard that validates DIDs and credentials for operations submitted via Connect, ensuring they are authorized.\n\n## Document Modeling\n\n- **Action Creators (for Document Operations)** \u2013 Auto-generated helper functions creating structured \"action\" objects for dispatching operations to a document model's reducer.\n- **Actions (Document Actions)** \u2013 Typed objects representing an intent to change a document's state, dispatched to reducers, containing an operation type and input data.\n- **API Integration (for Document Models)** \u2013 The capability of Document Models to connect with Switchboard API or external APIs, facilitating data exchange between Powerhouse applications and other systems.\n- **Data Analysis (with Document Models)** \u2013 Leveraging the structured data within Document Models, often via read models, to extract insights, generate reports, and perform analytics on operational and historical data.\n- **Dispatch (in Document Models)** \u2013 The act of sending an action (representing an operation) to a document model's reducer to trigger a state update.\n- **Document Model Specification** \u2013 The formal definition of a document model (state, operations), created in Connect Studio (using GraphQL SDL) and exported (e.g., `.phdm.zip`) for code generation.\n- **Document Models** \u2013 Structured data models that define how Powerhouse documents store and process information.\n- **Document State** \u2013 The current data held by a document instance, structured according to its Document Model.\n- **Document Type** \u2013 A unique string identifier (e.g., `powerhouse/todo-list`) for a Document Model, used by host apps to select the correct editor/logic.\n- **Event History (Append-Only Log)** \u2013 An immutable, append-only log where every operation applied to a Powerhouse document is stored as an event. It provides a transparent audit trail and enables features like time travel debugging and state reconstruction.\n- **GraphQL Scalars** \u2013 Data types used in Powerhouse document modeling (e.g., `String`, `Int`, `Currency`, `OID` for unique object IDs).\n- **GraphQL Schema Definition Language (SDL) (for Document Models)** \u2013 Language used in Connect Studio to define a Document Model's data structure (state) and operations.\n- **Immutable Updates** \u2013 A principle where data is never altered in place; operations create new data versions, vital for Powerhouse's event sourcing.\n- **Input Types (GraphQL for Document Operations)** \u2013 Custom data structures in SDL detailing parameters for document operations (e.g., `AddTodoItemInput`).\n- **Model-Driven Development (MDD)** \u2013 A software approach that uses high-level models to generate system logic and configurations.\n- **Operations (Document Operations)** \u2013 Named commands (e.g., `ADD_TODO_ITEM`) in a Document Model representing all ways to change its state, forming its event log.\n- **Powerhouse Document (`.phd` file)** \u2013 Standard file extension for an exported Powerhouse document instance, containing its data and history.\n- **Pure Functions (for Reducers)** \u2013 Principle that document model reducers must be pure (output depends only on input, no side effects) for predictable state transitions.\n- **Reducers (Document Model Reducers)** \u2013 Functions implementing a Document Model's logic; for each operation, a reducer takes current state and an action, returning new state.\n- **Replay Events** \u2013 The process of re-applying recorded events from a document's Event History to reconstruct or restore its state, a core capability of Event Sourcing.\n- **Scope** \u2013 A partition of a document's operation history. Operations are grouped by scope (e.g., `\"global\"`, `\"local\"`), allowing independent histories on the same document. Global scope contains shared state; local scope contains user-specific state.\n- **Branch** \u2013 A named fork of a document's operation history, enabling draft/published workflows. Operations are isolated per branch. The default branch is `\"main\"`.\n- **State (Global State in Document Model)** \u2013 The primary, persisted, shared data of a document instance, managed by its reducers.\n- **State Schema** \u2013 The component of a Document Model that defines the structure of the document, including its fields, data types, and validation rules, typically using a GraphQL-like syntax. It serves as a blueprint for how data is stored and validated.\n- **Strands** \u2013 A single synchronization channel that connects exactly one unit of synchronization to another, with all four parameters (drive_url, doc_id, scope, branch) set to fixed values. This allows synchronization between two distinct points of instances of a document or document drive.\n- **Time Travel Debugging** \u2013 A debugging technique, enabled by a document's Event History, that allows developers to reconstruct and inspect past states of the document by replaying events up to a specific point in time.\n- **Type Safety (in Document Modeling)** \u2013 Powerhouse's use of auto-generated TypeScript definitions from a model's schema (SDL) to prevent data type errors in development.\n- **Version Control (for Document Models)** \u2013 A planned feature for Document Models in Connect that will allow tracking of changes, comparison of different versions, and maintenance of data integrity over time, similar to version control systems for source code.\n\n## Development & Tooling\n\n- **Boilerplate (Powerhouse Project)** \u2013 The `ph init` command's initial project structure, providing a standard starting point for new Powerhouse packages.\n- **Connect Build** \u2013 The output of the `ph connect build` command, which packages a Connect project into a distributable format. This build includes all necessary local/external packages, assets, and styles, and can be previewed locally with `ph connect preview` or deployed.\n- **Development Environment (Powerhouse)** \u2013 A local setup for developing Powerhouse applications. Use `ph reactor` to start the backend services (Powerhouse Switchboard) for real-time document model processing, code generation, and live updates, and `ph connect` to start the front-end Connect Studio. These can be run independently or together in separate terminals.\n- **Document Model Editors** \u2013 An interface or UI to a document model that allows users to create and modify the data captured by the document models.\n- **Drive** \u2013 A logical container in Powerhouse for storing, organizing, and managing collections of documents.\n- **Drive-app** \u2013 A UI application, often custom, providing tailored views and interactions with documents in a drive.\n- **Environments (Powerhouse Environments)** \u2013 Pre-defined configurations for a project's Powerhouse dependencies, such as `dev` (development), `prod` (production/latest), and `local`. The Powerhouse CLI (`ph use` command) allows developers to easily switch between these environments to use different versions of packages (e.g., bleeding-edge, stable, or from a local monorepo).\n- **Host Applications** \u2013 Applications that use the Powerhouse framework to create and manage documents and data.\n- **Modules (in Document Model Editor)** \u2013 An organizational feature in Connect Studio's model editor for grouping related operations.\n- **Powerhouse Package** \u2013 A collection of document models, document model editors, and other resources that are published as a package and can be used in any of the host applications.\n- **Powerhouse Project** \u2013 A collection of document models, document model editors, and other resources being build in Connect Studio.\n- **Scalars (Design System Components)** \u2013 Reusable UI building blocks (e.g., `Checkbox`, `InputField`) from `@powerhousedao/document-engineering/scalars`, used in editors (distinct from GraphQL scalars).\n- **State (Local State in Editor)** \u2013 Temporary, UI-specific data within an editor (e.g., form inputs), not persisted in the global document state.\n- **Storybook (for Powerhouse Design System)** \u2013 Interactive environment for browsing and testing Powerhouse Design System UI components.\n- **Tailwind CSS (in Connect Studio)** \u2013 Utility CSS framework integrated into Connect Studio for styling document editors.\n- **Vetra** \u2013 A Powerhouse platform for hosting remote drives, enabling collaborative development and document synchronization across team members.\n- **Watch Mode (`--watch`)** \u2013 A development mode flag for `ph vetra` that enables dynamic loading of local document models and editors, creating a separate Preview Drive for testing changes in real-time.\n\n## AI & Automation\n\n- **AI Assistants** \u2013 AI-powered contributors paired with human contributors to automate tasks and improve productivity.\n- **Document Model Agent** \u2013 A specialized AI agent that guides users through creating document models, handling requirements gathering, design confirmation, and implementation using MCP tools for state schema definition, operation creation, and code generation.\n- **AI Contributor Modes** \u2013 Configurable states that determine the AI assistant's behavior, permissions, and task focus.\n- **Task Automation & Scaling** \u2013 The use of AI to streamline repetitive tasks, improve communications, and enhance decision-making.\n- **Decentralized Identifier (DID)** \u2013 A user-controlled, globally unique ID, used in Renown to link a user's blockchain key to actions pseudonymously.\n\n## Organizational Concepts\n\n- **Ceramic** \u2013 A decentralized network for storing verifiable data, used by Powerhouse Renown for secure credential management.\n- **Decentralized Identifier (DID)** \u2013 A user-controlled, globally unique ID, used in Renown to link a user's blockchain key to actions pseudonymously.\n- **Event-Driven Architecture (EDA)** \u2013 A software design approach where system flows are determined by events that trigger actions asynchronously.\n- **Network Organization** \u2013 A group of independent contributors and teams working together towards a common purpose, relying on decentralization and resource sharing.\n",
+        "createdAt": "2026-09-02T21:40:48.491Z",
+        "createdBy": "repo-docs-sync",
+        "sourceType": "DOCUMENTATION",
+        "description": "Powerhouse v6.2.2-dev.74 (unchanged since v6.2.2-dev.47) \u2014 - Powerhouse \u2013 A network organization that provides open-source software and services to support decentralized operations for other network\u2026",
+        "publishedAt": "2026-06-17T17:18:45.000Z"
+      },
+      "timestampUtcMs": "2026-09-02T21:40:48.491Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "",
+    "timestampUtcMs": "2026-09-02T21:40:48.540Z",
+    "action": {
+      "type": "UPGRADE_DOCUMENT",
+      "input": {
+        "model": "bai/source",
+        "toVersion": 1,
+        "documentId": "e5f26689-8d1a-44bd-aecd-f1f1c88ae196",
+        "fromVersion": 0,
+        "initialState": {
+          "auth": {
+            "grants": [],
+            "version": 0
+          },
+          "local": {},
+          "global": {
+            "title": null,
+            "status": "INBOX",
+            "content": null,
+            "createdAt": null,
+            "createdBy": null,
+            "provenance": null,
+            "sourceType": null,
+            "description": null,
+            "extractedClaims": [],
+            "extractionStats": null
+          },
+          "document": {
+            "hash": {
+              "encoding": "base64",
+              "algorithm": "sha1"
+            },
+            "version": 1
+          }
+        }
+      },
+      "timestampUtcMs": "2026-09-02T21:40:48.540Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "0UEwhHC78EicEpMS5YJ5Bf1+uJs=",
+    "timestampUtcMs": "2026-09-03T07:49:46.735Z",
+    "action": {
+      "type": "RECORD_EXTRACTION_STATS",
+      "input": {
+        "skipRate": 1,
+        "claimCount": 0,
+        "extractedAt": "2026-09-03T07:49:46.734Z",
+        "extractedBy": "knowledge-agent",
+        "skippedCount": 7
+      },
+      "timestampUtcMs": "2026-09-03T07:49:46.735Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "3NbNS/OfelE+wW/8vJtEelZGesE=",
+    "timestampUtcMs": "2026-09-03T07:56:55.590Z",
+    "action": {
+      "type": "SET_SOURCE_STATUS",
+      "input": {
+        "status": "EXTRACTED"
+      },
+      "timestampUtcMs": "2026-09-03T07:56:55.590Z"
+    }
+  }
+]

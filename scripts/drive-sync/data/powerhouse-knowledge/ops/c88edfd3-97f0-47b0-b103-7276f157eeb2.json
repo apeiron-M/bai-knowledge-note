@@ -1,0 +1,348 @@
+[
+  {
+    "index": 0,
+    "hash": "",
+    "timestampUtcMs": "2026-09-03T07:43:11.511Z",
+    "action": {
+      "type": "CREATE_DOCUMENT",
+      "input": {
+        "meta": {},
+        "name": "otel-reactor-metric-taxonomy",
+        "slug": "",
+        "model": "bai/knowledge-note",
+        "branch": "main",
+        "signing": {
+          "nonce": "",
+          "publicKey": {},
+          "signature": "c88edfd3-97f0-47b0-b103-7276f157eeb2",
+          "documentType": "bai/knowledge-note",
+          "createdAtUtcIso": "2026-09-03T07:43:11.511Z"
+        },
+        "version": 0,
+        "documentId": "c88edfd3-97f0-47b0-b103-7276f157eeb2",
+        "protocolVersions": {
+          "base-reducer": 2
+        }
+      },
+      "timestampUtcMs": "2026-09-03T07:43:11.511Z"
+    }
+  },
+  {
+    "index": 0,
+    "hash": "Pyya1NG6wKBumQdNCXVew97XiEo=",
+    "timestampUtcMs": "2026-09-03T07:43:12.836Z",
+    "action": {
+      "type": "SET_TITLE",
+      "input": {
+        "title": "Reactor metrics are derived from six event-bus events, so every counter and histogram is traceable to the event that produced it",
+        "updatedAt": "2026-09-03T07:43:12.836Z"
+      },
+      "timestampUtcMs": "2026-09-03T07:43:12.836Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "",
+    "timestampUtcMs": "2026-09-03T07:43:11.511Z",
+    "action": {
+      "type": "UPGRADE_DOCUMENT",
+      "input": {
+        "model": "bai/knowledge-note",
+        "toVersion": 1,
+        "documentId": "c88edfd3-97f0-47b0-b103-7276f157eeb2",
+        "fromVersion": 0,
+        "initialState": {
+          "auth": {
+            "grants": [],
+            "version": 0
+          },
+          "local": {
+            "lastViewedAt": null,
+            "personalTags": []
+          },
+          "global": {
+            "links": [],
+            "model": null,
+            "scope": null,
+            "title": null,
+            "editor": null,
+            "inputs": [],
+            "models": [],
+            "status": "DRAFT",
+            "topics": [],
+            "content": null,
+            "context": null,
+            "modelId": null,
+            "modules": [],
+            "outputs": [],
+            "version": null,
+            "computes": null,
+            "filePath": null,
+            "noteType": null,
+            "severity": null,
+            "hooksUsed": [],
+            "rootCause": null,
+            "confidence": null,
+            "consumedBy": [],
+            "provenance": null,
+            "sourceType": null,
+            "targetType": null,
+            "cardinality": null,
+            "description": null,
+            "alternatives": [],
+            "consequences": [],
+            "errorMessage": null,
+            "relationType": null,
+            "correctPattern": null,
+            "decisionStatus": null,
+            "dispatchTargets": [],
+            "lifecycleEvents": []
+          },
+          "document": {
+            "hash": {
+              "encoding": "base64",
+              "algorithm": "sha1"
+            },
+            "version": 1
+          }
+        }
+      },
+      "timestampUtcMs": "2026-09-03T07:43:11.511Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "B1+PCsQt0BKqmMLqguhQEDBNsZ4=",
+    "timestampUtcMs": "2026-09-03T07:43:12.836Z",
+    "action": {
+      "type": "SET_DESCRIPTION",
+      "input": {
+        "updatedAt": "2026-09-03T07:43:12.836Z",
+        "description": "Queue, executor, job-lifecycle, read-model, event-bus and sync families under the @powerhousedao/reactor meter. JOB_WRITE_READY records executor duration and operations generated; JOB_READ_READY."
+      },
+      "timestampUtcMs": "2026-09-03T07:43:12.836Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "",
+    "timestampUtcMs": "2026-09-03T07:44:31.053Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "metadata": {
+          "reason": "Extracted from packages/opentelemetry-instrumentation-reactor/docs/taxonomy.md at v6.2.2-dev.74 \u2014 Units; Queue; Executor; Job Lifecycle; Event Bus; Sync; Event Types Tracked",
+          "confidence": "grounded"
+        },
+        "sourceId": "c88edfd3-97f0-47b0-b103-7276f157eeb2",
+        "targetId": "9c3f588f-95bf-4c13-90df-9ca0cd9ec9e3",
+        "relationshipType": "DERIVED_FROM"
+      },
+      "timestampUtcMs": "2026-09-03T07:44:31.053Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "DZVpysQmovHRA96IgH6XBLF6EWY=",
+    "timestampUtcMs": "2026-09-03T07:43:12.836Z",
+    "action": {
+      "type": "SET_NOTE_TYPE",
+      "input": {
+        "noteType": "REFERENCE",
+        "updatedAt": "2026-09-03T07:43:12.836Z"
+      },
+      "timestampUtcMs": "2026-09-03T07:43:12.836Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "",
+    "timestampUtcMs": "2026-09-03T07:44:31.530Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "metadata": {
+          "reason": "Confirms the numeric event codes from the outside and shows what each event is measured for, which is why subscribing to the wrong enum also means measuring the wrong thing",
+          "confidence": "grounded"
+        },
+        "sourceId": "c88edfd3-97f0-47b0-b103-7276f157eeb2",
+        "targetId": "79eae22e-b7ff-484b-897b-afb93e4bc497",
+        "relationshipType": "BUILDS_ON"
+      },
+      "timestampUtcMs": "2026-09-03T07:44:31.530Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "U06Sa7eHdjvV779C7aVZgnFqp1U=",
+    "timestampUtcMs": "2026-09-03T07:43:12.836Z",
+    "action": {
+      "type": "SET_CONTENT",
+      "input": {
+        "content": "Every metric uses the meter name `@powerhousedao/reactor`, and units follow OpenTelemetry semantic conventions in UCUM \u2014 curly-brace annotations like `{job}`, `{operation}`, `{event}` and `{remote}` are dimensionless counts, `ms` is a duration.\n\nThe families:\n\n- **Queue** \u2014 `reactor.queue.jobs.enqueued` / `.dequeued` / `.completed` (READ_READY) / `.failed` (permanently) as counters, plus observable gauges `reactor.queue.depth` (pending jobs across all queues) and `reactor.queue.executing`.\n- **Executor** \u2014 `reactor.executor.job.duration` (histogram, ms, RUNNING \u2192 WRITE_READY, attribute `job.success`), `reactor.executor.active_jobs`, `reactor.executor.total_processed` (attribute `job.success`), `reactor.executor.operations_generated`.\n- **Read model** \u2014 `reactor.readmodel.index.duration` (histogram, WRITE_READY \u2192 READ_READY).\n- **Event bus** \u2014 `reactor.eventbus.events.emitted` with an `event.type` attribute.\n- **Sync** \u2014 `reactor.sync.remotes` (active remote count) and `reactor.sync.dead_letters.added` with a `remote.name` attribute.\n\nWhat makes the taxonomy genuinely useful is the event-mapping table: each metric is recorded from a named event, so a gap in a metric is a gap in an event.\n\n| Event | Code | Records |\n| --- | --- | --- |\n| `JOB_PENDING` | 10001 | `queue.jobs.enqueued` |\n| `JOB_RUNNING` | 10002 | `queue.jobs.dequeued` |\n| `JOB_WRITE_READY` | 10003 | `executor.job.duration`, `total_processed`, `operations_generated` |\n| `JOB_READ_READY` | 10004 | `readmodel.index.duration`, `job.total.duration`, `queue.jobs.completed` |\n| `JOB_FAILED` | 10005 | `queue.jobs.failed`, `total_processed`, `job.total.duration` |\n| `DEAD_LETTER_ADDED` | 20004 | `sync.dead_letters.added` |\n\nEvery one of them also increments `eventbus.events.emitted`.\n\n## Provenance\n- `packages/opentelemetry-instrumentation-reactor/docs/taxonomy.md` \u2014 Units; Queue; Executor; Job Lifecycle; Event Bus; Sync; Event Types Tracked\n\n_Extracted from the Powerhouse repository at **v6.2.2-dev.74**._",
+        "updatedAt": "2026-09-03T07:43:12.836Z"
+      },
+      "timestampUtcMs": "2026-09-03T07:43:12.836Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "",
+    "timestampUtcMs": "2026-09-03T07:44:31.982Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "metadata": {
+          "reason": "This is the catalogue of what that package registers on the global meter",
+          "confidence": "grounded"
+        },
+        "sourceId": "c88edfd3-97f0-47b0-b103-7276f157eeb2",
+        "targetId": "3734f5ab-ebc7-4ea7-96a3-8a10128a4265",
+        "relationshipType": "BUILDS_ON"
+      },
+      "timestampUtcMs": "2026-09-03T07:44:31.982Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "byPtlcp8AcRJlayUW1PbX+i4AaA=",
+    "timestampUtcMs": "2026-09-03T07:43:12.836Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "0d94a79e-a740-40db-84a6-8909248f1946",
+        "name": "opentelemetry"
+      },
+      "timestampUtcMs": "2026-09-03T07:43:12.836Z"
+    }
+  },
+  {
+    "index": 5,
+    "hash": "",
+    "timestampUtcMs": "2026-09-03T07:44:32.459Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "metadata": {
+          "reason": "The two job durations are measured between the same five statuses that note describes: RUNNING to WRITE_READY and WRITE_READY to READ_READY",
+          "confidence": "grounded"
+        },
+        "sourceId": "c88edfd3-97f0-47b0-b103-7276f157eeb2",
+        "targetId": "48b95d6d-2b69-4999-9e79-dddfc7e9ed3f",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-09-03T07:44:32.459Z"
+    }
+  },
+  {
+    "index": 5,
+    "hash": "2bf4DOS1PXVvKQKch8y4zMPA34c=",
+    "timestampUtcMs": "2026-09-03T07:43:12.836Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "53560dbf-346a-4f57-97be-6a0637731a01",
+        "name": "metrics"
+      },
+      "timestampUtcMs": "2026-09-03T07:43:12.836Z"
+    }
+  },
+  {
+    "index": 6,
+    "hash": "FVcyEqtXNXBFnFlc7itaGbr8Bmg=",
+    "timestampUtcMs": "2026-09-03T07:43:12.836Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "f09b166e-2e21-488a-a598-cdef9b355ed7",
+        "name": "reactor"
+      },
+      "timestampUtcMs": "2026-09-03T07:43:12.836Z"
+    }
+  },
+  {
+    "index": 7,
+    "hash": "cBNCgdRRXio+jfT3sZvZ3tX6mn4=",
+    "timestampUtcMs": "2026-09-03T07:43:12.836Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "bc7e1db8-db54-45da-a6e7-6c704f6e5ac5",
+        "name": "event-bus"
+      },
+      "timestampUtcMs": "2026-09-03T07:43:12.836Z"
+    }
+  },
+  {
+    "index": 8,
+    "hash": "bhtRu/aaXusYxUO2p3iSzq70YcU=",
+    "timestampUtcMs": "2026-09-03T07:43:12.836Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "version",
+        "value": "v6.2.2-dev.74",
+        "updatedAt": "2026-09-03T07:43:12.836Z"
+      },
+      "timestampUtcMs": "2026-09-03T07:43:12.836Z"
+    }
+  },
+  {
+    "index": 9,
+    "hash": "zdbu56nCVyCd/QVeL58cgHyk9yI=",
+    "timestampUtcMs": "2026-09-03T07:43:12.836Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "filePath",
+        "value": "packages/opentelemetry-instrumentation-reactor/docs/taxonomy.md",
+        "updatedAt": "2026-09-03T07:43:12.836Z"
+      },
+      "timestampUtcMs": "2026-09-03T07:43:12.836Z"
+    }
+  },
+  {
+    "index": 10,
+    "hash": "J7tuOQNqjaDi/tWp0za/4hkZSLc=",
+    "timestampUtcMs": "2026-09-03T07:43:15.403Z",
+    "action": {
+      "type": "SET_PROVENANCE",
+      "input": {
+        "author": "knowledge-agent",
+        "createdAt": "2026-09-03T07:43:15.402Z",
+        "sourceOrigin": "DERIVED"
+      },
+      "timestampUtcMs": "2026-09-03T07:43:15.403Z"
+    }
+  },
+  {
+    "index": 11,
+    "hash": "NbxzQh3smQti9Y4pKGDcTsbMSCQ=",
+    "timestampUtcMs": "2026-09-03T07:43:15.920Z",
+    "action": {
+      "type": "SUBMIT_FOR_REVIEW",
+      "input": {
+        "id": "3beb8cc3-10d6-4b90-998c-a83df6383fd8",
+        "actor": "knowledge-agent",
+        "comment": "extracted from packages/opentelemetry-instrumentation-reactor/docs/taxonomy.md at v6.2.2-dev.74",
+        "timestamp": "2026-09-03T07:43:15.920Z"
+      },
+      "timestampUtcMs": "2026-09-03T07:43:15.920Z"
+    }
+  },
+  {
+    "index": 12,
+    "hash": "XYShAfDdaYChM6P9NtD47mksYSA=",
+    "timestampUtcMs": "2026-09-03T07:43:16.386Z",
+    "action": {
+      "type": "APPROVE_NOTE",
+      "input": {
+        "id": "c61d1a8b-c6b2-4482-9180-167d54234f58",
+        "actor": "liberuum",
+        "comment": "claim checked against the cited file at the pinned tag",
+        "timestamp": "2026-09-03T07:43:16.386Z"
+      },
+      "timestampUtcMs": "2026-09-03T07:43:16.386Z"
+    }
+  }
+]

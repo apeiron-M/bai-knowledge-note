@@ -1,0 +1,563 @@
+[
+  {
+    "index": 0,
+    "hash": "",
+    "timestampUtcMs": "2026-09-02T22:12:39.570Z",
+    "action": {
+      "type": "CREATE_DOCUMENT",
+      "input": {
+        "meta": {},
+        "name": "sb-migrations-precedence",
+        "slug": "",
+        "model": "bai/knowledge-note",
+        "branch": "main",
+        "signing": {
+          "nonce": "",
+          "publicKey": {},
+          "signature": "b5235e82-8994-46b4-bb10-a6ceeb1c5be0",
+          "documentType": "bai/knowledge-note",
+          "createdAtUtcIso": "2026-09-02T22:12:39.570Z"
+        },
+        "version": 0,
+        "documentId": "b5235e82-8994-46b4-bb10-a6ceeb1c5be0",
+        "protocolVersions": {
+          "base-reducer": 2
+        }
+      },
+      "timestampUtcMs": "2026-09-02T22:12:39.570Z"
+    }
+  },
+  {
+    "index": 0,
+    "hash": "IWu8oDkIanPl36jzoSYEMZc1TSg=",
+    "timestampUtcMs": "2026-09-02T22:12:39.486Z",
+    "action": {
+      "type": "SET_TITLE",
+      "input": {
+        "title": "Switchboard migrations are Kysely-based: PGlite migrates itself on startup, Postgres is migrated explicitly, and the URL is resolved PH_REACTOR_DATABASE_URL \u2192 DATABASE_URL \u2192 config file",
+        "updatedAt": "2026-09-02T22:12:39.486Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:12:39.486Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "",
+    "timestampUtcMs": "2026-09-02T22:12:39.570Z",
+    "action": {
+      "type": "UPGRADE_DOCUMENT",
+      "input": {
+        "model": "bai/knowledge-note",
+        "toVersion": 1,
+        "documentId": "b5235e82-8994-46b4-bb10-a6ceeb1c5be0",
+        "fromVersion": 0,
+        "initialState": {
+          "auth": {
+            "grants": [],
+            "version": 0
+          },
+          "local": {
+            "lastViewedAt": null,
+            "personalTags": []
+          },
+          "global": {
+            "links": [],
+            "model": null,
+            "scope": null,
+            "title": null,
+            "editor": null,
+            "inputs": [],
+            "models": [],
+            "status": "DRAFT",
+            "topics": [],
+            "content": null,
+            "context": null,
+            "modelId": null,
+            "modules": [],
+            "outputs": [],
+            "version": null,
+            "computes": null,
+            "filePath": null,
+            "noteType": null,
+            "severity": null,
+            "hooksUsed": [],
+            "rootCause": null,
+            "confidence": null,
+            "consumedBy": [],
+            "provenance": null,
+            "sourceType": null,
+            "targetType": null,
+            "cardinality": null,
+            "description": null,
+            "alternatives": [],
+            "consequences": [],
+            "errorMessage": null,
+            "relationType": null,
+            "correctPattern": null,
+            "decisionStatus": null,
+            "dispatchTargets": [],
+            "lifecycleEvents": []
+          },
+          "document": {
+            "hash": {
+              "encoding": "base64",
+              "algorithm": "sha1"
+            },
+            "version": 1
+          }
+        }
+      },
+      "timestampUtcMs": "2026-09-02T22:12:39.570Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "C3E/XoQ8+GmuGTvMSrlzsBZoiXQ=",
+    "timestampUtcMs": "2026-09-02T22:12:39.486Z",
+    "action": {
+      "type": "SET_DESCRIPTION",
+      "input": {
+        "updatedAt": "2026-09-02T22:12:39.486Z",
+        "description": "Run pnpm migrate / migrate:status from apps/switchboard, or ph switchboard --db-path <url> --migrate / --migrate-status from anywhere; with no Postgres URL found, migrations are skipped with a message"
+      },
+      "timestampUtcMs": "2026-09-02T22:12:39.486Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "",
+    "timestampUtcMs": "2026-09-02T22:23:59.907Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "metadata": {
+          "reason": "Extracted from apps/switchboard/README.md at v6.2.2-dev.74 \u2014 Database Migrations: running, URL precedence, CI/CD integration; Local Development (PostgreSQL)",
+          "confidence": "grounded"
+        },
+        "sourceId": "b5235e82-8994-46b4-bb10-a6ceeb1c5be0",
+        "targetId": "63e10e2c-9be4-4bd2-a876-8708cd3ac1f9",
+        "relationshipType": "DERIVED_FROM"
+      },
+      "timestampUtcMs": "2026-09-02T22:23:59.907Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "nBeiXfW7k839GwPD6HJVf7ufnrE=",
+    "timestampUtcMs": "2026-09-02T22:12:39.486Z",
+    "action": {
+      "type": "SET_NOTE_TYPE",
+      "input": {
+        "noteType": "REFERENCE",
+        "updatedAt": "2026-09-02T22:12:39.486Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:12:39.486Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "",
+    "timestampUtcMs": "2026-09-02T22:24:01.053Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "metadata": {
+          "reason": "Extracted from apps/academy/docs/academy/03-Build/05-Launch/05-DockerDeployment.md at v6.2.2-dev.74 \u2014 Switchboard image startup: Kysely migrations if PH_REACTOR_DATABASE_URL is Postgres; SKIP_DB_MIGRATIONS",
+          "confidence": "grounded"
+        },
+        "sourceId": "b5235e82-8994-46b4-bb10-a6ceeb1c5be0",
+        "targetId": "56edb93f-5c3b-4c8b-a11f-5cfdcc252dee",
+        "relationshipType": "DERIVED_FROM"
+      },
+      "timestampUtcMs": "2026-09-02T22:24:01.053Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "ert0JnZbiuBhMeWOwY681qhl7u4=",
+    "timestampUtcMs": "2026-09-02T22:12:39.486Z",
+    "action": {
+      "type": "SET_CONTENT",
+      "input": {
+        "content": "Switchboard uses Kysely for database migrations when running on PostgreSQL, and the two backends behave differently: **PGlite** (the default) migrates automatically on startup, while **PostgreSQL** migrations are run manually or as a deployment step.\n\n```bash\n# from apps/switchboard\nDATABASE_URL=\"postgresql://user:pass@localhost:5432/db\" pnpm migrate\nDATABASE_URL=\"postgresql://user:pass@localhost:5432/db\" pnpm migrate:status\n# from anywhere\nph switchboard --db-path postgresql://user:pass@localhost:5432/db --migrate\nph switchboard --db-path postgresql://user:pass@localhost:5432/db --migrate-status\n```\n\nThe migration commands look for a PostgreSQL URL in this order: `PH_REACTOR_DATABASE_URL`, then `DATABASE_URL`, then the config file (`powerhouse.config.json` \u2192 `switchboard.database.url`). If none is found, migrations are **skipped with a message** \u2014 PGlite handles its own. For production the README's pattern is `ph switchboard --migrate && ph switchboard` (or `pnpm migrate && pnpm start`); the Docker entrypoint does the same automatically when `PH_REACTOR_DATABASE_URL` points at Postgres, and `SKIP_DB_MIGRATIONS=true` opts out.\n\nFor local Postgres development the reactor package ships a compose file (`docker compose -f packages/reactor/docker-compose.yml up -d`) that starts PostgreSQL on port `5433` plus Adminer on `8080`.\n\n_Source: apps/switchboard/README.md (Powerhouse v6.2.2-dev.74)._\n_Source: apps/academy/docs/academy/03-Build/05-Launch/05-DockerDeployment.md (Powerhouse v6.2.2-dev.74)._\n\n## Provenance\n- `apps/switchboard/README.md` \u2014 Database Migrations: running, URL precedence, CI/CD integration; Local Development (PostgreSQL)\n- `apps/academy/docs/academy/03-Build/05-Launch/05-DockerDeployment.md` \u2014 Switchboard image startup: Kysely migrations if PH_REACTOR_DATABASE_URL is Postgres; SKIP_DB_MIGRATIONS\n\n_Recorded from the Powerhouse repository at **v6.2.2-dev.74** during the v6.2.2-dev.74 source sync._",
+        "updatedAt": "2026-09-02T22:12:39.486Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:12:39.486Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "",
+    "timestampUtcMs": "2026-09-02T22:24:02.148Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "metadata": {
+          "reason": "Applies the storage variables' precedence to the migration step specifically, where the ordering differs slightly (reactor URL first)",
+          "confidence": "grounded"
+        },
+        "sourceId": "b5235e82-8994-46b4-bb10-a6ceeb1c5be0",
+        "targetId": "15121fe4-c0d6-44bf-b8fd-cc5d4e4dda61",
+        "relationshipType": "BUILDS_ON"
+      },
+      "timestampUtcMs": "2026-09-02T22:24:02.148Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "m4xl4uMNJ7KZ5YbuIuE2WQOnK4o=",
+    "timestampUtcMs": "2026-09-02T22:12:39.486Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "a2428cc1-d500-462b-92e7-1da91baa8f79",
+        "name": "switchboard"
+      },
+      "timestampUtcMs": "2026-09-02T22:12:39.486Z"
+    }
+  },
+  {
+    "index": 5,
+    "hash": "",
+    "timestampUtcMs": "2026-09-02T22:24:02.590Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "metadata": {
+          "reason": "The image entrypoint runs exactly this migration path before starting the server",
+          "confidence": "grounded"
+        },
+        "sourceId": "b5235e82-8994-46b4-bb10-a6ceeb1c5be0",
+        "targetId": "0168d518-b02c-42b9-9d6f-add7494a8f1d",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-09-02T22:24:02.590Z"
+    }
+  },
+  {
+    "index": 5,
+    "hash": "ADYkL/P7ZCMY4Rgb3jGzh1m+yMc=",
+    "timestampUtcMs": "2026-09-02T22:12:39.486Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "f284ad06-a475-44a1-9ad5-8c19400d6456",
+        "name": "migrations"
+      },
+      "timestampUtcMs": "2026-09-02T22:12:39.486Z"
+    }
+  },
+  {
+    "index": 6,
+    "hash": "uWp65cxEZ4m/hbfWXITpIxfBtLA=",
+    "timestampUtcMs": "2026-09-02T22:12:39.486Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "554c910a-ac3c-47a6-a6bf-468a904b285f",
+        "name": "postgres"
+      },
+      "timestampUtcMs": "2026-09-02T22:12:39.486Z"
+    }
+  },
+  {
+    "index": 7,
+    "hash": "Wt8aramlGusVkkiGAcfsh3kHkE4=",
+    "timestampUtcMs": "2026-09-02T22:12:39.486Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "2bd6542d-ed4d-49dd-9295-bed1e4ea2814",
+        "name": "pglite"
+      },
+      "timestampUtcMs": "2026-09-02T22:12:39.486Z"
+    }
+  },
+  {
+    "index": 8,
+    "hash": "6fRMlyho+bCMZr+JWhtjhHdT1oY=",
+    "timestampUtcMs": "2026-09-02T22:12:39.486Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "0514586f-d720-403e-b9d0-bcd62cc158c0",
+        "name": "deployment"
+      },
+      "timestampUtcMs": "2026-09-02T22:12:39.486Z"
+    }
+  },
+  {
+    "index": 9,
+    "hash": "Gf0svC1CdjSWQbkGIyi7/412w5U=",
+    "timestampUtcMs": "2026-09-02T22:12:39.486Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "version",
+        "value": "v6.2.2-dev.74",
+        "updatedAt": "2026-09-02T22:12:39.486Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:12:39.486Z"
+    }
+  },
+  {
+    "index": 10,
+    "hash": "UrdYntBDKzLcqsHjgEvOQHGJYAU=",
+    "timestampUtcMs": "2026-09-02T22:12:39.486Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "filePath",
+        "value": "apps/switchboard/README.md",
+        "updatedAt": "2026-09-02T22:12:39.486Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:12:39.486Z"
+    }
+  },
+  {
+    "index": 11,
+    "hash": "WwbFJnmTV0gJhUbqn29xbFcS9xw=",
+    "timestampUtcMs": "2026-09-02T22:12:39.486Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "confidence",
+        "value": "grounded",
+        "updatedAt": "2026-09-02T22:12:39.486Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:12:39.486Z"
+    }
+  },
+  {
+    "index": 12,
+    "hash": "P82xHEF1LTpF/YGX5d0ch1m9rtM=",
+    "timestampUtcMs": "2026-09-02T22:12:42.081Z",
+    "action": {
+      "type": "SET_PROVENANCE",
+      "input": {
+        "author": "knowledge-agent",
+        "createdAt": "2026-09-02T22:12:42.081Z",
+        "sourceOrigin": "DERIVED"
+      },
+      "timestampUtcMs": "2026-09-02T22:12:42.081Z"
+    }
+  },
+  {
+    "index": 13,
+    "hash": "BzrkOMR06QGDdYsPzkdGgBelstM=",
+    "timestampUtcMs": "2026-09-02T22:12:42.604Z",
+    "action": {
+      "type": "SUBMIT_FOR_REVIEW",
+      "input": {
+        "id": "2628ae5c-c72a-4fd4-9032-54c70df7489b",
+        "actor": "knowledge-agent",
+        "comment": "extracted from the Powerhouse repository at v6.2.2-dev.74",
+        "timestamp": "2026-09-02T22:12:42.604Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:12:42.604Z"
+    }
+  },
+  {
+    "index": 14,
+    "hash": "I72qWc/bVd7CFIXHGcVbeektaw0=",
+    "timestampUtcMs": "2026-09-02T22:12:43.091Z",
+    "action": {
+      "type": "APPROVE_NOTE",
+      "input": {
+        "id": "39d1d33b-97f9-4fdb-8d71-5b255bca672e",
+        "actor": "liberuum",
+        "comment": "claim checked against the cited repository file at the pinned tag",
+        "timestamp": "2026-09-02T22:12:43.091Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:12:43.091Z"
+    }
+  },
+  {
+    "index": 15,
+    "hash": "dizWHBmhQrWEE0IrqWQSc54mNhM=",
+    "timestampUtcMs": "2026-09-02T22:16:18.973Z",
+    "action": {
+      "type": "SET_TITLE",
+      "input": {
+        "title": "Switchboard migrations are Kysely-based: PGlite migrates itself on startup, Postgres is migrated explicitly, and the URL is resolved PH_REACTOR_DATABASE_URL \u2192 DATABASE_URL \u2192 config file",
+        "updatedAt": "2026-09-02T22:16:18.973Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:16:18.973Z"
+    }
+  },
+  {
+    "index": 16,
+    "hash": "dizWHBmhQrWEE0IrqWQSc54mNhM=",
+    "timestampUtcMs": "2026-09-02T22:16:18.973Z",
+    "action": {
+      "type": "SET_DESCRIPTION",
+      "input": {
+        "updatedAt": "2026-09-02T22:16:18.973Z",
+        "description": "Run pnpm migrate / migrate:status from apps/switchboard, or ph switchboard --db-path <url> --migrate / --migrate-status from anywhere; with no Postgres URL found, migrations are skipped with a message"
+      },
+      "timestampUtcMs": "2026-09-02T22:16:18.973Z"
+    }
+  },
+  {
+    "index": 17,
+    "hash": "dizWHBmhQrWEE0IrqWQSc54mNhM=",
+    "timestampUtcMs": "2026-09-02T22:16:18.973Z",
+    "action": {
+      "type": "SET_NOTE_TYPE",
+      "input": {
+        "noteType": "REFERENCE",
+        "updatedAt": "2026-09-02T22:16:18.973Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:16:18.973Z"
+    }
+  },
+  {
+    "index": 18,
+    "hash": "dizWHBmhQrWEE0IrqWQSc54mNhM=",
+    "timestampUtcMs": "2026-09-02T22:16:18.973Z",
+    "action": {
+      "type": "SET_CONTENT",
+      "input": {
+        "content": "Switchboard uses Kysely for database migrations when running on PostgreSQL, and the two backends behave differently: **PGlite** (the default) migrates automatically on startup, while **PostgreSQL** migrations are run manually or as a deployment step.\n\n```bash\n# from apps/switchboard\nDATABASE_URL=\"postgresql://user:pass@localhost:5432/db\" pnpm migrate\nDATABASE_URL=\"postgresql://user:pass@localhost:5432/db\" pnpm migrate:status\n# from anywhere\nph switchboard --db-path postgresql://user:pass@localhost:5432/db --migrate\nph switchboard --db-path postgresql://user:pass@localhost:5432/db --migrate-status\n```\n\nThe migration commands look for a PostgreSQL URL in this order: `PH_REACTOR_DATABASE_URL`, then `DATABASE_URL`, then the config file (`powerhouse.config.json` \u2192 `switchboard.database.url`). If none is found, migrations are **skipped with a message** \u2014 PGlite handles its own. For production the README's pattern is `ph switchboard --migrate && ph switchboard` (or `pnpm migrate && pnpm start`); the Docker entrypoint does the same automatically when `PH_REACTOR_DATABASE_URL` points at Postgres, and `SKIP_DB_MIGRATIONS=true` opts out.\n\nFor local Postgres development the reactor package ships a compose file (`docker compose -f packages/reactor/docker-compose.yml up -d`) that starts PostgreSQL on port `5433` plus Adminer on `8080`.\n\n_Source: apps/switchboard/README.md (Powerhouse v6.2.2-dev.74)._\n_Source: apps/academy/docs/academy/03-Build/05-Launch/05-DockerDeployment.md (Powerhouse v6.2.2-dev.74)._\n\n## Provenance\n- `apps/switchboard/README.md` \u2014 Database Migrations: running, URL precedence, CI/CD integration; Local Development (PostgreSQL)\n- `apps/academy/docs/academy/03-Build/05-Launch/05-DockerDeployment.md` \u2014 Switchboard image startup: Kysely migrations if PH_REACTOR_DATABASE_URL is Postgres; SKIP_DB_MIGRATIONS\n\n_Recorded from the Powerhouse repository at **v6.2.2-dev.74** during the v6.2.2-dev.74 source sync._",
+        "updatedAt": "2026-09-02T22:16:18.973Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:16:18.973Z"
+    }
+  },
+  {
+    "index": 19,
+    "hash": "dizWHBmhQrWEE0IrqWQSc54mNhM=",
+    "timestampUtcMs": "2026-09-02T22:16:18.973Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "version",
+        "value": "v6.2.2-dev.74",
+        "updatedAt": "2026-09-02T22:16:18.973Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:16:18.973Z"
+    }
+  },
+  {
+    "index": 20,
+    "hash": "dizWHBmhQrWEE0IrqWQSc54mNhM=",
+    "timestampUtcMs": "2026-09-02T22:16:18.973Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "filePath",
+        "value": "apps/switchboard/README.md",
+        "updatedAt": "2026-09-02T22:16:18.973Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:16:18.973Z"
+    }
+  },
+  {
+    "index": 21,
+    "hash": "dizWHBmhQrWEE0IrqWQSc54mNhM=",
+    "timestampUtcMs": "2026-09-02T22:16:18.973Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "confidence",
+        "value": "grounded",
+        "updatedAt": "2026-09-02T22:16:18.973Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:16:18.973Z"
+    }
+  },
+  {
+    "index": 22,
+    "hash": "ajOKY9ZAaonejv84qXwB9rQUrUo=",
+    "timestampUtcMs": "2026-09-02T22:20:59.977Z",
+    "action": {
+      "type": "SET_TITLE",
+      "input": {
+        "title": "Switchboard migrations are Kysely-based: PGlite migrates itself on startup, Postgres is migrated explicitly, and the URL is resolved PH_REACTOR_DATABASE_URL \u2192 DATABASE_URL \u2192 config file",
+        "updatedAt": "2026-09-02T22:20:59.977Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:20:59.977Z"
+    }
+  },
+  {
+    "index": 23,
+    "hash": "ajOKY9ZAaonejv84qXwB9rQUrUo=",
+    "timestampUtcMs": "2026-09-02T22:20:59.977Z",
+    "action": {
+      "type": "SET_DESCRIPTION",
+      "input": {
+        "updatedAt": "2026-09-02T22:20:59.977Z",
+        "description": "Run pnpm migrate / migrate:status from apps/switchboard, or ph switchboard --db-path <url> --migrate / --migrate-status from anywhere; with no Postgres URL found, migrations are skipped with a message"
+      },
+      "timestampUtcMs": "2026-09-02T22:20:59.977Z"
+    }
+  },
+  {
+    "index": 24,
+    "hash": "ajOKY9ZAaonejv84qXwB9rQUrUo=",
+    "timestampUtcMs": "2026-09-02T22:20:59.977Z",
+    "action": {
+      "type": "SET_NOTE_TYPE",
+      "input": {
+        "noteType": "REFERENCE",
+        "updatedAt": "2026-09-02T22:20:59.977Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:20:59.977Z"
+    }
+  },
+  {
+    "index": 25,
+    "hash": "ajOKY9ZAaonejv84qXwB9rQUrUo=",
+    "timestampUtcMs": "2026-09-02T22:20:59.977Z",
+    "action": {
+      "type": "SET_CONTENT",
+      "input": {
+        "content": "Switchboard uses Kysely for database migrations when running on PostgreSQL, and the two backends behave differently: **PGlite** (the default) migrates automatically on startup, while **PostgreSQL** migrations are run manually or as a deployment step.\n\n```bash\n# from apps/switchboard\nDATABASE_URL=\"postgresql://user:pass@localhost:5432/db\" pnpm migrate\nDATABASE_URL=\"postgresql://user:pass@localhost:5432/db\" pnpm migrate:status\n# from anywhere\nph switchboard --db-path postgresql://user:pass@localhost:5432/db --migrate\nph switchboard --db-path postgresql://user:pass@localhost:5432/db --migrate-status\n```\n\nThe migration commands look for a PostgreSQL URL in this order: `PH_REACTOR_DATABASE_URL`, then `DATABASE_URL`, then the config file (`powerhouse.config.json` \u2192 `switchboard.database.url`). If none is found, migrations are **skipped with a message** \u2014 PGlite handles its own. For production the README's pattern is `ph switchboard --migrate && ph switchboard` (or `pnpm migrate && pnpm start`); the Docker entrypoint does the same automatically when `PH_REACTOR_DATABASE_URL` points at Postgres, and `SKIP_DB_MIGRATIONS=true` opts out.\n\nFor local Postgres development the reactor package ships a compose file (`docker compose -f packages/reactor/docker-compose.yml up -d`) that starts PostgreSQL on port `5433` plus Adminer on `8080`.\n\n_Source: apps/switchboard/README.md (Powerhouse v6.2.2-dev.74)._\n_Source: apps/academy/docs/academy/03-Build/05-Launch/05-DockerDeployment.md (Powerhouse v6.2.2-dev.74)._\n\n## Provenance\n- `apps/switchboard/README.md` \u2014 Database Migrations: running, URL precedence, CI/CD integration; Local Development (PostgreSQL)\n- `apps/academy/docs/academy/03-Build/05-Launch/05-DockerDeployment.md` \u2014 Switchboard image startup: Kysely migrations if PH_REACTOR_DATABASE_URL is Postgres; SKIP_DB_MIGRATIONS\n\n_Recorded from the Powerhouse repository at **v6.2.2-dev.74** during the v6.2.2-dev.74 source sync._",
+        "updatedAt": "2026-09-02T22:20:59.977Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:20:59.977Z"
+    }
+  },
+  {
+    "index": 26,
+    "hash": "ajOKY9ZAaonejv84qXwB9rQUrUo=",
+    "timestampUtcMs": "2026-09-02T22:20:59.977Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "version",
+        "value": "v6.2.2-dev.74",
+        "updatedAt": "2026-09-02T22:20:59.977Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:20:59.977Z"
+    }
+  },
+  {
+    "index": 27,
+    "hash": "ajOKY9ZAaonejv84qXwB9rQUrUo=",
+    "timestampUtcMs": "2026-09-02T22:20:59.977Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "filePath",
+        "value": "apps/switchboard/README.md",
+        "updatedAt": "2026-09-02T22:20:59.977Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:20:59.977Z"
+    }
+  },
+  {
+    "index": 28,
+    "hash": "ajOKY9ZAaonejv84qXwB9rQUrUo=",
+    "timestampUtcMs": "2026-09-02T22:20:59.977Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "confidence",
+        "value": "grounded",
+        "updatedAt": "2026-09-02T22:20:59.977Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:20:59.977Z"
+    }
+  }
+]

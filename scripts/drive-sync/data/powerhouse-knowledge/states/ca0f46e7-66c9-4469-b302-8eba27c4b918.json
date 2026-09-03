@@ -1,0 +1,107 @@
+{
+  "links": [
+    {
+      "id": "lnk-d4d7135b-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "d4d7135b-1ed7-4642-b5bb-3f53fc91a3f5",
+      "targetTitle": "Package \u203a reactor-api \u203a graphql/reactor \u2014 README",
+      "reason": "Extracted from packages/reactor-api/src/graphql/reactor/README.md at v6.2.2-dev.74 \u2014 whole file (generation source and output directories)",
+      "confidence": "grounded"
+    },
+    {
+      "id": "lnk-12279c44-bui",
+      "linkType": "BUILDS_ON",
+      "targetDocumentId": "12279c44-5030-4886-b208-f4247e648a4c",
+      "targetTitle": "gql-codegen-untyped-sync-break",
+      "reason": "Generated schema types are one half of the safety the codegen spec asks for; the break came from the hand-written mapping the generator does not cover",
+      "confidence": "grounded"
+    },
+    {
+      "id": "lnk-49106443-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "49106443-8aa1-4246-971c-a934ef9313fb",
+      "targetTitle": "api-fetch-handler-boundary",
+      "reason": "These generated schemas are what the gateway adapter compiles into FetchHandlers",
+      "confidence": "grounded"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "The Reactor GraphQL API is generated from .graphql files with pnpm codegen, so the schema is edited as SDL rather than as resolver types",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "44d879ee-5fcd-4e09-bff5-8b708e2076a4",
+      "name": "reactor-api",
+      "topicDocumentId": null
+    },
+    {
+      "id": "99c16acc-080e-40ff-8d2a-3d6bd1629685",
+      "name": "graphql",
+      "topicDocumentId": null
+    },
+    {
+      "id": "01b32538-bf79-48ab-91e5-b6e0bfb999b7",
+      "name": "codegen",
+      "topicDocumentId": null
+    },
+    {
+      "id": "a6d81330-876c-4030-a77a-c5a24c18587b",
+      "name": "schema",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "The Reactor GraphQL API is \"primarily generated from `.graphql` files in the `src/graphql/reactor` directory\". Regenerating is one command:\n\n```bash\npnpm codegen\n```\n\nwhich writes into `src/graphql/reactor/generated`.\n\nTwo consequences worth stating even though the README leaves them implicit. The **SDL is the source of truth** for that API surface: a change to the reactor's GraphQL types is a change to a `.graphql` file followed by codegen, not a change to a TypeScript type. And the `generated` directory is a **derived artefact** \u2014 the same rule that governs a document model's `gen/` tree \u2014 so editing it appears to work until the next run.\n\nThis is also why a GraphQL-layer break is usually a *mapping* problem rather than a schema problem: the schema and its types are generated together, while the code translating a wire payload into a domain object is hand-written, which is precisely where the actionId sync break happened.\n\n## Provenance\n- `packages/reactor-api/src/graphql/reactor/README.md` \u2014 whole file (generation source and output directories)\n\n_Extracted from the Powerhouse repository at **v6.2.2-dev.74**._",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": "v6.2.2-dev.74",
+  "computes": null,
+  "filePath": "packages/reactor-api/src/graphql/reactor/README.md",
+  "noteType": "REFERENCE",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "knowledge-agent",
+    "createdAt": "2026-09-03T07:38:19.926Z",
+    "sessionId": null,
+    "updatedAt": "2026-09-03T07:38:20.982Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Source lives in src/graphql/reactor and output lands in src/graphql/reactor/generated. Hand-editing the generated tree is lost on the next run, which is the same rule the document-model gen folders.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "2fbf1969-b27f-4d0b-a66b-0274f57947e2",
+      "actor": "knowledge-agent",
+      "comment": "extracted from packages/reactor-api/src/graphql/reactor/README.md at v6.2.2-dev.74",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-09-03T07:38:20.415Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "bceb6a6f-5d4b-417e-bceb-ba008a580ce3",
+      "actor": "liberuum",
+      "comment": "claim checked against the cited file at the pinned tag",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-09-03T07:38:20.982Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

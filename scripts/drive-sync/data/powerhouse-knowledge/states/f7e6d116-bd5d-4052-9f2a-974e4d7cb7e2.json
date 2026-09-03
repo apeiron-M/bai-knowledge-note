@@ -1,0 +1,110 @@
+{
+  "links": [
+    {
+      "id": "lnk-495ad2bd-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "495ad2bd-8606-4b51-afc3-3a3a4c3f72e7",
+      "targetTitle": "relational-db-live-queries-pglite"
+    },
+    {
+      "id": "lnk-9250acee-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "9250acee-7e5a-454c-8515-977ded38a34d",
+      "targetTitle": "collab-adapter-surface-window-ph-swarm-collab"
+    },
+    {
+      "id": "lnk-de06fba3-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "de06fba3-5cdf-413c-b6e0-f1a094c62f34",
+      "targetTitle": "custom-subgraphs-v6-reactor-client-access"
+    },
+    {
+      "id": "lnk-04374aa9-bui",
+      "linkType": "BUILDS_ON",
+      "targetDocumentId": "04374aa9-c0dc-477b-86c2-35841f3c8857",
+      "targetTitle": "relational-db-processor-for-sql-projections"
+    },
+    {
+      "id": "lnk-3c684b04-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "3c684b04-0bf3-4736-9a8f-c08bd90bd384",
+      "targetTitle": "Academy \u203a Reference \u203a Processors \u203a Processor Migration Guide (v6)",
+      "reason": "Backing page found by content match in the v6.2.2-dev.74 source backfill \u2014 identifiers driveid, getnamespace, initandupgrade from the claim appear in this page (text identical at v6.2.2-dev.47 and v6.2.2-dev.74); attribution, not the original extraction record",
+      "confidence": "grounded"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "RelationalDbProcessor provides a type-safe base class with per-drive namespace isolation and lifecycle migration hooks",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "6ec7fc81-bf97-4791-98a4-116413f39f10",
+      "name": "relational-db",
+      "topicDocumentId": null
+    },
+    {
+      "id": "a154a49a-7a1d-4ea1-b0c9-fdfe9e9c08fd",
+      "name": "processors",
+      "topicDocumentId": null
+    },
+    {
+      "id": "0aee4021-f9d9-4c6d-abc2-7314ab9e7530",
+      "name": "pattern",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "The v6 Reactor provides `RelationalDbProcessor<DB>` as a base class for processors that need database access. Key features: `getNamespace(driveId)` static method creates per-drive database isolation preventing data collisions; `initAndUpgrade()` lifecycle hook runs migrations on startup; `this.relationalDb` provides a typed Kysely instance; `query(driveId, relationalDb)` static method enables querying from subgraphs. The factory creates namespaced stores via `module.relationalDb.createNamespace<T>(namespace)`. Scaffolding is generated with `ph generate processor --name <name> --type relationalDb --document-types <type>`.\n\n_Corrected 2026-08-13 against Powerhouse v6.2.2-dev.45._\n\n## Correction at v6.2.2-dev.74\n\"Lifecycle management\" overstates what the base class does about migrations. At v6.2.2-dev.74 the generated template makes migrations the processor's own responsibility:\n\n```ts\nexport class MyProcessor extends RelationalDbProcessor<DB> {\n  override async initAndUpgrade(): Promise<void> { await up(this.relationalDb); }\n}\n```\n\nSo there is no automatic discovery of a migrations folder \u2014 `initAndUpgrade` is the hook, and the processor calls its own `up`. Per-drive namespace isolation (`static getNamespace(driveId)`, defaulting to `${this.name}_${driveId.replaceAll(\"-\",\"_\")}`) and the type-safe Kysely surface are unchanged.\n",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": "v6.2.2-dev.74",
+  "computes": null,
+  "filePath": "apps/academy/docs/academy/04-Reference/04-Processors/08-ProcessorMigrationGuide.md",
+  "noteType": "PATTERN",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "knowledge-agent",
+    "createdAt": "2026-04-02T12:00:00.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-09-03T07:59:23.935Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Extend RelationalDbProcessor<DB> for built-in this.relationalDb access, getNamespace(driveId) isolation, and initAndUpgrade().",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "bfb2cffb-ccb9-4425-8388-08c8c27d16ab",
+      "actor": "claude",
+      "comment": "Knowledge registered against powerhouse v6.2.2-dev.47",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-14T12:00:00.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "2ceb9915-d19a-4da6-b8b1-1b24a0bcd247",
+      "actor": "liberuum",
+      "comment": "Canonical as of powerhouse v6.2.2-dev.47",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-14T12:00:00.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

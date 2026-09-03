@@ -1,0 +1,99 @@
+{
+  "links": [
+    {
+      "id": "lnk-f9f4bcbc-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "f9f4bcbc-efd1-49c8-a8c0-8a8f8991b772",
+      "targetTitle": "document-models-are-the-core-unit-of-powerhouse-architecture"
+    },
+    {
+      "id": "lnk-da8a8131-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "da8a8131-7b4e-4849-afd9-fcc21bf68ca4",
+      "targetTitle": "event-driven-architecture-decouples-components-for-parallel-processing"
+    },
+    {
+      "id": "lnk-6ddb3f1f-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "6ddb3f1f-b6dd-42d8-85f3-3d956294006e",
+      "targetTitle": "cqrs-separates-write-commands-from-read-queries-for-independent-scaling"
+    },
+    {
+      "id": "lnk-eef8bd3f-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "eef8bd3f-7b3b-4cd7-8f06-055e6134e454",
+      "targetTitle": "Academy \u203a Reference \u203a Architecture \u203a Powerhouse Architecture",
+      "reason": "The note names apps/academy/docs/academy/04-Reference/00-Architecture/00-PowerhouseArchitecture.md as its source; page text identical at v6.2.2-dev.47 and v6.2.2-dev.74",
+      "confidence": "grounded"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "The Reactive Document Architecture has five properties: reactive, document-centric, Git-like UX, stateful, and scalable",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "e90c3894-6cd3-47b6-8205-bceff030ade1",
+      "name": "architecture",
+      "topicDocumentId": null
+    },
+    {
+      "id": "a1faffdd-f8f9-46d8-b87e-bc2dca384381",
+      "name": "foundations",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "\"Reactive Document Architecture\" is Powerhouse's own name for the design its framework is built around: structured document models plus declarative design, on a deliberately minimal stack of GraphQL, TypeScript, and React. The reference architecture enumerates five properties.\n\n- **Reactive** \u2014 real-time, responsive, and message-driven, with an elastically scalable architecture.\n- **Document-Centric** \u2014 documents are local-first, self-contained data structures and nodes in a decentralized network.\n- **Git-like UX** \u2014 state-of-the-art editing with history branching, merging, and commenting.\n- **Stateful** \u2014 documents with well-defined operations as state transitions become mini-APIs.\n- **Scalable** \u2014 a CQRS- and EDA-inspired architecture with read models for data aggregation.\n\n## Reading the list as a system\n\nThe five are not independent virtues; they are consequences of one another. Making the document the unit (\"document-centric\") is what allows it to be self-contained enough to live on a device and act as a node in a network. Giving it well-defined operations rather than free-form writes is what turns it into an addressable mini-API \u2014 the \"stateful\" property \u2014 and it is those same typed operations that make Git-like history, branching, and commenting expressible over a document rather than over a repository of files. Message-driven reactivity and CQRS read models then handle the part documents are bad at on their own: aggregation across many of them.\n\n## Why it matters\n\nThe list is the design brief behind concrete choices elsewhere in the stack \u2014 why documents are the unit rather than tables, why operations are declared rather than ad hoc, and why aggregate reads are pushed into separate read models instead of queried from the source of truth. It is also the vocabulary the framework's own materials use, so it is worth recognising.\n\nAlongside it sits a second commitment, Specification Driven Design & Development: machine-readable, executable specification documents used as a shared language for AI collaboration \u2014 \"Git for Intent.\"\n\n_Source: apps/academy/docs/academy/04-Reference/00-Architecture/00-PowerhouseArchitecture.md \u2014 unchanged since the v6.0.0-dev.254 baseline, so this is older material that remains valid rather than freshly re-verified v6.2.2 content._",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": "v6.2.2-dev.74",
+  "computes": null,
+  "filePath": "apps/academy/docs/academy/04-Reference/00-Architecture/00-PowerhouseArchitecture.md",
+  "noteType": "CONCEPT",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "claude",
+    "createdAt": "2026-08-13T14:35:19.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-09-02T21:37:32.623Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Documents are local-first nodes in a decentralized network; well-defined operations turn each document into a mini-API; CQRS/EDA read models handle aggregation.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "0a1467b6-6503-4db2-bdd1-bb226ba7de6a",
+      "actor": "claude",
+      "comment": "Knowledge registered against powerhouse v6.2.2-dev.47",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-14T12:00:00.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "703e142c-fcb1-40bf-b151-157be9f7bd2d",
+      "actor": "liberuum",
+      "comment": "Canonical as of powerhouse v6.2.2-dev.47",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-14T12:00:00.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

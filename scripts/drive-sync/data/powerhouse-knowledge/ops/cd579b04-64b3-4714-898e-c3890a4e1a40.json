@@ -1,0 +1,276 @@
+[
+  {
+    "index": 0,
+    "hash": "",
+    "timestampUtcMs": "2026-08-20T08:44:59.882Z",
+    "action": {
+      "type": "CREATE_DOCUMENT",
+      "input": {
+        "meta": {},
+        "name": "One documented Alfresco call erases an audit application's entire history",
+        "slug": "",
+        "model": "bai/knowledge-note",
+        "branch": "main",
+        "signing": {
+          "nonce": "",
+          "publicKey": {},
+          "signature": "cd579b04-64b3-4714-898e-c3890a4e1a40",
+          "documentType": "bai/knowledge-note",
+          "createdAtUtcIso": "2026-08-20T08:44:59.882Z"
+        },
+        "version": 0,
+        "documentId": "cd579b04-64b3-4714-898e-c3890a4e1a40",
+        "protocolVersions": {
+          "base-reducer": 2
+        }
+      },
+      "timestampUtcMs": "2026-08-20T08:44:59.882Z"
+    }
+  },
+  {
+    "index": 0,
+    "hash": "yc/Si80hZYLfmJa2m/xqXd53PhI=",
+    "timestampUtcMs": "2026-08-20T08:45:00.801Z",
+    "action": {
+      "type": "SET_TITLE",
+      "input": {
+        "title": "One documented Alfresco call erases an audit application's entire history",
+        "updatedAt": "2026-08-20T08:45:00.801475Z"
+      },
+      "timestampUtcMs": "2026-08-20T08:45:00.801518Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "",
+    "timestampUtcMs": "2026-08-20T08:44:59.882Z",
+    "action": {
+      "type": "UPGRADE_DOCUMENT",
+      "input": {
+        "model": "bai/knowledge-note",
+        "toVersion": 1,
+        "documentId": "cd579b04-64b3-4714-898e-c3890a4e1a40",
+        "fromVersion": 0,
+        "initialState": {
+          "auth": {
+            "grants": [],
+            "version": 0
+          },
+          "local": {
+            "lastViewedAt": null,
+            "personalTags": []
+          },
+          "global": {
+            "links": [],
+            "model": null,
+            "scope": null,
+            "title": null,
+            "editor": null,
+            "inputs": [],
+            "models": [],
+            "status": "DRAFT",
+            "topics": [],
+            "content": null,
+            "context": null,
+            "modelId": null,
+            "modules": [],
+            "outputs": [],
+            "version": null,
+            "computes": null,
+            "filePath": null,
+            "noteType": null,
+            "severity": null,
+            "hooksUsed": [],
+            "rootCause": null,
+            "confidence": null,
+            "consumedBy": [],
+            "provenance": null,
+            "sourceType": null,
+            "targetType": null,
+            "cardinality": null,
+            "description": null,
+            "alternatives": [],
+            "consequences": [],
+            "errorMessage": null,
+            "relationType": null,
+            "correctPattern": null,
+            "decisionStatus": null,
+            "dispatchTargets": [],
+            "lifecycleEvents": []
+          },
+          "document": {
+            "hash": {
+              "encoding": "base64",
+              "algorithm": "sha1"
+            },
+            "version": 1
+          }
+        }
+      },
+      "timestampUtcMs": "2026-08-20T08:44:59.882Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "9YG7me5NCLhYO7kjBoccdsfD5iE=",
+    "timestampUtcMs": "2026-08-20T08:45:00.801Z",
+    "action": {
+      "type": "SET_DESCRIPTION",
+      "input": {
+        "updatedAt": "2026-08-20T08:45:00.801521Z",
+        "description": "The clear webscript makes both time bounds optional \u2014 omit them and the call deletes everything for that application, with no admin ceremony and no trace left behind."
+      },
+      "timestampUtcMs": "2026-08-20T08:45:00.801527Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "",
+    "timestampUtcMs": "2026-08-20T08:45:02.118Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "cd579b04-64b3-4714-898e-c3890a4e1a40",
+        "targetId": "4d8e59af-51f2-4ab7-b290-e1d5744abbd7",
+        "relationshipType": "DERIVED_FROM"
+      },
+      "timestampUtcMs": "2026-08-20T08:45:02.118Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "6qxNhGDJlRE60GOXcYcfQ6mNTJo=",
+    "timestampUtcMs": "2026-08-20T08:45:00.801Z",
+    "action": {
+      "type": "SET_NOTE_TYPE",
+      "input": {
+        "noteType": "OBSERVATION",
+        "updatedAt": "2026-08-20T08:45:00.801529Z"
+      },
+      "timestampUtcMs": "2026-08-20T08:45:00.801534Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "jZigaB879CSabJXdzL+pOJyLR5Q=",
+    "timestampUtcMs": "2026-08-20T08:45:00.801Z",
+    "action": {
+      "type": "SET_CONTENT",
+      "input": {
+        "content": "The webscript descriptor for `/api/audit/clear/{application}` documents `fromTime` as *\"omit to assume oldest\"* and `toTime` as *\"omit to assume current time\"*. Both being optional means `POST /api/audit/clear/alfresco-access` with no parameters is a complete, sanctioned erasure of that application's audit history in a single call.\n\nTwo things compound it. There is no retention or pruning mechanism anywhere in the audit subsystem, so the table grows unbounded and manual deletion is the only management path \u2014 no defensible expiry policy, and no protection from wholesale removal. And `alf_audit_entry` is a plain table with an integer primary key: no hash chain, no previous-row digest, no signature column, no append-only trigger.\n\nNothing in the schema can distinguish a tampered audit trail from an untampered one, because there is no integrity constraint to violate.",
+        "updatedAt": "2026-08-20T08:45:00.801536Z"
+      },
+      "timestampUtcMs": "2026-08-20T08:45:00.801541Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "dh87N5V1UXS/p8qBdl+PIO7EBn8=",
+    "timestampUtcMs": "2026-08-20T08:45:00.801Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "5284c245-5737-4e65-8c1f-251accecc6dc",
+        "name": "tool-screen"
+      },
+      "timestampUtcMs": "2026-08-20T08:45:00.801549Z"
+    }
+  },
+  {
+    "index": 5,
+    "hash": "jQM75rPX53ieu6w7Y7f2svzvEgo=",
+    "timestampUtcMs": "2026-08-20T08:45:00.801Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "79271b75-5270-4324-9dc8-f6dcfd02ed3e",
+        "name": "alfresco"
+      },
+      "timestampUtcMs": "2026-08-20T08:45:00.801556Z"
+    }
+  },
+  {
+    "index": 6,
+    "hash": "eGCFaw/jn5NLpbZOlgTc5FbnUrM=",
+    "timestampUtcMs": "2026-08-20T08:45:00.801Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "d3f48605-3031-4849-b15a-b864e418451b",
+        "name": "audit-trail"
+      },
+      "timestampUtcMs": "2026-08-20T08:45:00.801562Z"
+    }
+  },
+  {
+    "index": 7,
+    "hash": "7OXjOEwREmBm4EpdWAIxuFoIRrA=",
+    "timestampUtcMs": "2026-08-20T08:45:00.801Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "c9254ff4-9dde-4038-afba-eb98f6c59387",
+        "name": "deletion"
+      },
+      "timestampUtcMs": "2026-08-20T08:45:00.801568Z"
+    }
+  },
+  {
+    "index": 8,
+    "hash": "DDgGjiLxlwK1VJKob5POSstrydw=",
+    "timestampUtcMs": "2026-08-20T08:45:00.801Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "781f1650-be40-4d5b-98c5-6f9e983a7d51",
+        "name": "data-integrity"
+      },
+      "timestampUtcMs": "2026-08-20T08:45:00.801574Z"
+    }
+  },
+  {
+    "index": 9,
+    "hash": "qgyuDEnPwt9S6es5kSVRdVDpGK4=",
+    "timestampUtcMs": "2026-08-20T08:45:01.233Z",
+    "action": {
+      "type": "SET_PROVENANCE",
+      "input": {
+        "author": "knowledge-agent",
+        "createdAt": "2026-08-20T08:45:01.233045Z",
+        "sessionId": null,
+        "sourceOrigin": "DERIVED"
+      },
+      "timestampUtcMs": "2026-08-20T08:45:01.233086Z"
+    }
+  },
+  {
+    "index": 10,
+    "hash": "R0DkIJAPaTMo7Ygzz+egNwU/tXA=",
+    "timestampUtcMs": "2026-08-20T08:45:02.326Z",
+    "action": {
+      "type": "SUBMIT_FOR_REVIEW",
+      "input": {
+        "id": "88c919d9-a24d-4a59-8880-712fc0445836",
+        "actor": "knowledge-agent",
+        "comment": "Extracted from the primary-source tool screen; each claim quotable from a cited source.",
+        "timestamp": "2026-08-20T08:45:02.326940Z"
+      },
+      "timestampUtcMs": "2026-08-20T08:45:02.326960Z"
+    }
+  },
+  {
+    "index": 11,
+    "hash": "rQpNlhQd8U0g6f6Dve2ot8bMihg=",
+    "timestampUtcMs": "2026-08-20T08:45:02.482Z",
+    "action": {
+      "type": "APPROVE_NOTE",
+      "input": {
+        "id": "00fa3df8-9d4c-41b4-99e3-eb16669afded",
+        "actor": "liberuum",
+        "comment": "Approved: tool-screen extraction.",
+        "timestamp": "2026-08-20T08:45:02.482260Z"
+      },
+      "timestampUtcMs": "2026-08-20T08:45:02.482283Z"
+    }
+  }
+]

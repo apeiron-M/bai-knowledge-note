@@ -1,0 +1,98 @@
+{
+  "links": [
+    {
+      "id": "lnk-aa8af970-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "aa8af970-5fbc-42ad-9bcc-6692a50a3793",
+      "targetTitle": "document-ids-are-auto-generated-by-createdocument-never-set-manually"
+    },
+    {
+      "id": "lnk-787398c0-bui",
+      "linkType": "BUILDS_ON",
+      "targetDocumentId": "787398c0-fa8c-4e79-bd9f-71b60d57f482",
+      "targetTitle": "document-model-versioning-system"
+    },
+    {
+      "id": "lnk-695cc893-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "695cc893-3d94-481c-8fe2-49c684957bdf",
+      "targetTitle": "Academy \u203a Build \u203a DocumentModelCreation \u203a Document Model Versioning",
+      "reason": "The note names apps/academy/docs/academy/03-Build/02-DocumentModelCreation/08-DocumentModelVersioning.md as its source; page text identical at v6.2.2-dev.47 and v6.2.2-dev.74",
+      "confidence": "grounded"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "createEmpty resolves to the highest registered model version unless documentModelVersion pins one",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "86035363-605e-4c0c-bb6f-08d9e87af47d",
+      "name": "versioning",
+      "topicDocumentId": null
+    },
+    {
+      "id": "a0017ed1-69c9-4df6-95b7-cccffbfafa8e",
+      "name": "reactor-client",
+      "topicDocumentId": null
+    },
+    {
+      "id": "f67d953f-1cf3-4298-8eb8-dd333d7ee9a1",
+      "name": "document-model",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "New documents are created at the latest model version. The mechanism, in `packages/reactor/src/client/reactor-client.ts`, is worth knowing precisely because it is a *resolution* step, not a stored default:\n\n```ts\n// latest version \u2014 resolved by reduce over registered modules\nconst doc = await client.createEmpty(\"my-org/todo\");\n\n// pinned version\nconst v1Doc = await client.createEmpty(\"my-org/todo\", { documentModelVersion: 1 });\n```\n\nWith no option, `createEmpty` filters registered modules by document type and reduces to the one with the highest `normalizeDocumentModelVersion(m.version)`. \"Latest\" therefore means *highest currently registered in this Reactor* \u2014 not highest that exists. Deploy a host whose package set lags and new documents are created at the older version, silently and without error.\n\nWith `documentModelVersion` set, resolution is an exact match and a miss is loud: `Document model not found for type: <type> with version: <n>`. Passing `0` normalizes to `1`, consistent with how legacy unstamped documents are treated.\n\nReads are version-agnostic. `client.find({ type: \"my-org/todo\" })` returns documents of every version; the Reactor resolves each document to its own module by the version stamped in its header. That is what lets v1 and v2 documents coexist in one drive with no query-side branching \u2014 and why you should never assume a document you just fetched is at the latest version.\n\nWhen to pin: reproducing a bug against a specific reducer, seeding fixtures for an upgrade test, or writing a migration that must produce pre-upgrade documents on purpose.\n\n_Source: apps/academy/docs/academy/03-Build/02-DocumentModelCreation/08-DocumentModelVersioning.md, confirmed against packages/reactor/src/client/reactor-client.ts and packages/shared/document-model/upgrades.ts (Powerhouse v6.2.2-dev.45)._",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": "v6.2.2-dev.74",
+  "computes": null,
+  "filePath": "apps/academy/docs/academy/03-Build/02-DocumentModelCreation/08-DocumentModelVersioning.md",
+  "noteType": "REFERENCE",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "claude",
+    "createdAt": "2026-08-13T14:35:51.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-09-02T21:33:54.119Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "client.createEmpty(\"my-org/todo\") picks the highest registered version by reduce; pass documentModelVersion to pin, and it throws if that version is not registered.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "410dc98e-bb8a-4698-a092-38bd97a2706a",
+      "actor": "claude",
+      "comment": "Knowledge registered against powerhouse v6.2.2-dev.47",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-14T12:00:00.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "29738057-0e2c-4dc1-93d4-5df1c01b85b9",
+      "actor": "liberuum",
+      "comment": "Canonical as of powerhouse v6.2.2-dev.47",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-14T12:00:00.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

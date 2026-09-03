@@ -1,0 +1,91 @@
+{
+  "links": [
+    {
+      "id": "lnk-6aa89e46-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "6aa89e46-712f-4ce1-8b8b-be6ad3b08011",
+      "targetTitle": "dtbau-demo-three-sources"
+    },
+    {
+      "id": "lnk-bac74e0b-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "bac74e0b-85cc-411a-9217-58cf3bb97214",
+      "targetTitle": "bac74e0b-85cc-411a-9217-58cf3bb97214"
+    },
+    {
+      "id": "lnk-f7c92110-bui",
+      "linkType": "BUILDS_ON",
+      "targetDocumentId": "f7c92110-27a7-4921-8fd9-7fbdddfcf920",
+      "targetTitle": "bcf-model-tasks-vs-org-tasks"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "A BCF topic with no component reference is untraceable by construction",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "dad77c95-ed28-40ed-9998-7b383eaa435f",
+      "name": "bcf",
+      "topicDocumentId": null
+    },
+    {
+      "id": "8f32ede0-b08f-40ad-9207-93516f124e75",
+      "name": "bim",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "A BCF topic is normally described as a comment pinned to specific IFC objects plus a camera position, with `Component.IfcGuid` as the join to the model. Real files do not honour that reliably, and the deviation is itself the most actionable finding a checker can produce.\n\nAcross a genuine 9-topic clash-control file from a live project, component references per topic were: 0, 12, 0, 1, 8, 1105, 1, 1, 1105. Three populations emerge. Five topics reference between 1 and 12 objects and are checkable. **Two reference nothing at all** \u2014 a camera angle and a sentence, with no object to route to, verify against, or close. **Two reference 1,105 objects**, which is the whole model selected, and is functionally equivalent to referencing nothing.\n\nBoth pathologies are trivially detectable and both concern authoring discipline rather than model quality, which makes them the findings most likely to change behaviour: they translate directly into instructions about how topics must be created and what information each must carry.\n\nAn orphan check therefore needs two companions \u2014 \"references nothing\" and \"references implausibly much\" \u2014 and must report them separately, because an untraceable topic is a different defect from a topic pointing at a deleted object. Note also that real-world BCF is often version 1.0 with no `bcf.version` file at all, so a parser must tolerate 1.0, 2.x and 3.0 layouts.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "ARCHITECTURE",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "apeiron",
+    "createdAt": "2026-08-14T16:00:00.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-17T12:53:49.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "In a real 9-topic BCF file, 2 topics referenced no object at all and 2 more referenced 1,105 objects each. Neither can be routed to a discipline, checked against a model, or closed against an object.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "6e148c4f-27fe-4828-b901-f5862638f6b6",
+      "actor": "knowledge-agent",
+      "comment": "rescued incident notes \u2014 lifecycle normalization",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-17T12:53:49.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "d4f40e7f-bec9-45f6-bb31-79e0d999ae69",
+      "actor": "liberuum",
+      "comment": "approved for canonical",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-17T12:53:49.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

@@ -1,0 +1,115 @@
+{
+  "links": [
+    {
+      "id": "lnk-2ae31ea4-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "2ae31ea4-b8f4-4128-8531-93b932d6b6bb",
+      "targetTitle": "renown-sdk-decentralized-identity-auth",
+      "reason": "The Renown SDK is where the read-model contract and the local verifier used by source: self are defined",
+      "confidence": "grounded"
+    },
+    {
+      "id": "lnk-a4fda37c-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "a4fda37c-db07-46ee-a5ad-85417a5accab",
+      "targetTitle": "ph-access-token-mints-local-self-signed-jwt",
+      "reason": "The switchboard's outbound identity is the server-side sibling of the CLI's own DID-based access token",
+      "confidence": "established"
+    },
+    {
+      "id": "lnk-c281c173-bui",
+      "linkType": "BUILDS_ON",
+      "targetDocumentId": "c281c173-8126-4ade-9c50-240e30eaff23",
+      "targetTitle": "sb-credential-recheck",
+      "reason": "Configures which instance performs the credential existence check that the verification pipeline depends on",
+      "confidence": "grounded"
+    },
+    {
+      "id": "lnk-3729bcb2-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "3729bcb2-e103-4c58-9152-ba3d3782bf19",
+      "targetTitle": "App \u203a switchboard \u203a Auth \u2014 Powerhouse Authentication System Tutorial",
+      "reason": "Extracted from apps/switchboard/Auth.md at v6.2.2-dev.74 \u2014 'Which Renown Instance Is Used' and 'The Switchboard's Own Identity'",
+      "confidence": "grounded"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "auth.renown.source chooses whether credential checks query a remote Renown (remote, the default) or this switchboard's own renown-read-model subgraph in-process (self)",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "a3b29eea-c590-4c16-a919-a65f7eef07c4",
+      "name": "switchboard",
+      "topicDocumentId": null
+    },
+    {
+      "id": "873be30c-7741-4c48-981b-d0c6e92de2af",
+      "name": "renown",
+      "topicDocumentId": null
+    },
+    {
+      "id": "a5112c49-f528-424c-a313-baf0403480e7",
+      "name": "configuration",
+      "topicDocumentId": null
+    },
+    {
+      "id": "bb116b03-5247-402f-87e4-ede1f794f9b2",
+      "name": "authentication",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "```json\n{ \"auth\": { \"enabled\": true, \"admins\": [\"0x111\"],\n            \"renown\": { \"source\": \"remote\", \"url\": \"https://renown.acme.io\", \"switchboardUrl\": \"https://sb.acme.io/graphql\" } } }\n```\n\n| Field | Env override | Meaning |\n| --- | --- | --- |\n| `source` | `RENOWN_SOURCE` | `remote` (default) queries another instance; `self` reads this switchboard's own `renown-read-model` subgraph in-process |\n| `url` | `RENOWN_URL` | Renown base URL for discovery and the REST fallback; defaults to `https://www.renown.id` |\n| `switchboardUrl` | `SWITCHBOARD_URL` | A switchboard GraphQL endpoint to read credentials from directly, skipping discovery |\n\nEnv vars win over the config file **field by field**, and a blank value counts as unset. With `source: \"remote\"` the order is `switchboardUrl`, then discovery via `url`, then the Renown REST API at `url`. With `source: \"self\"` both URLs are ignored for verification, but `url` still applies to the switchboard's own identity.\n\n`self` requires a loaded package that provides the `renown-read-model` subgraph (`@powerhousedao/renown-package`); **startup fails if none does**, rather than booting a switchboard that rejects every authenticated request. The layering keeps core ignorant of Renown: `@renown/sdk` owns the read-model contract (`RENOWN_READ_MODEL_SUBGRAPH`, `createLocalCredentialVerifier`), the switchboard app wires it to the running reactor after the API is up, and `reactor-api` only supplies the generic `GraphQLManager.executeSubgraphQuery` plus an injectable `verifyCredential`. A host that sets `self` without injecting a verifier is refused at boot rather than silently verified against a remote Renown.\n\nSeparately, a switchboard has its **own identity** \u2014 the `ph login` keypair it uses to authenticate *outbound* to remote drives and services. It authenticates against `auth.renown.url` too, so one setting covers both directions; `identity.baseUrl` at startup points it elsewhere, and unset everywhere it falls back to `https://www.renown.id`.\n\n_Source: apps/switchboard/Auth.md (Powerhouse v6.2.2-dev.74)._\n\n## Provenance\n- `apps/switchboard/Auth.md` \u2014 'Which Renown Instance Is Used' and 'The Switchboard's Own Identity'\n\n_Recorded from the Powerhouse repository at **v6.2.2-dev.74** during the v6.2.2-dev.74 source sync._",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": "v6.2.2-dev.74",
+  "computes": null,
+  "filePath": "apps/switchboard/Auth.md",
+  "noteType": "REFERENCE",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": "grounded",
+  "consumedBy": [],
+  "provenance": {
+    "author": "knowledge-agent",
+    "createdAt": "2026-09-02T22:11:55.310Z",
+    "sessionId": null,
+    "updatedAt": "2026-09-02T22:20:46.757Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Env overrides win field by field (RENOWN_SOURCE, RENOWN_URL, SWITCHBOARD_URL). remote tries switchboardUrl, discovery via url, then the REST API; self needs the renown package loaded or startup fails.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "f2c86400-0f2e-4325-a7da-dc5b3cb39a5b",
+      "actor": "knowledge-agent",
+      "comment": "extracted from the Powerhouse repository at v6.2.2-dev.74",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-09-02T22:11:55.806Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "7ce05a80-2279-45ef-b48a-2bc5d7f4f412",
+      "actor": "liberuum",
+      "comment": "claim checked against the cited repository file at the pinned tag",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-09-02T22:11:56.300Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

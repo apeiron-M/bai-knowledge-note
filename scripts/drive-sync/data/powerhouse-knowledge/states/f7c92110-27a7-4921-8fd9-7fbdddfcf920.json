@@ -1,0 +1,96 @@
+{
+  "links": [
+    {
+      "id": "lnk-a80b000c-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "a80b000c-cc7a-46ce-990e-586f649f98c7",
+      "targetTitle": "ifc-fixed-shape-six-branches"
+    },
+    {
+      "id": "lnk-3908a38a-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "3908a38a-c1d9-421c-b360-3aeeb2a7afbd",
+      "targetTitle": "meeting-notes-2026-08-12-14"
+    },
+    {
+      "id": "lnk-c720df00-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "c720df00-e3a4-49d1-b583-e7ed14c256f8",
+      "targetTitle": "bim-demo-scenario-briefing"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "BCF ties a model location and camera angle to a topic, splitting model tasks from organizational tasks",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "9ee599b6-9cbe-45ca-9c55-60ac6f0e15d3",
+      "name": "bcf",
+      "topicDocumentId": null
+    },
+    {
+      "id": "ad675863-8de1-4764-a4ce-8f5432442e26",
+      "name": "bim",
+      "topicDocumentId": null
+    },
+    {
+      "id": "36f13860-18ea-487d-ba26-9a3b9744f37e",
+      "name": "task-management",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "The BIM Collaboration Format (BCF) ties a specific location and camera angle in the drawing to a \"topic\": an issue, task, or discussion point. BCF topics always live outside the IFC file itself and join back to model objects by **GlobalId**.\n\nIn practice this splits task management in two (DT BAU, 00:47:54):\n- **Organizational tasks** \u2014 tracked in generic tools (Microsoft Planner at DT BAU)\n- **Model-based tasks** \u2014 BCF topics anchored to model geometry\n\nDT BAU tracks BCF tasks and visualizes trends through dashboards but does not create or sign them off \u2014 that responsibility stays with architects and engineers (00:49:27). The CDE propagates updates live: when a wall or door is modified in response to a BCF task, the information flows through without manual updates to multiple documents (01:31:25).\n\nAny unified project platform has to bridge these two task worlds \u2014 that's exactly the fragmentation a structured task document model can address, and \"tasks\" was Agli Hysi's #1 priority for structured data (01:54:25).",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "CONCEPT",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "knowledge-agent",
+    "createdAt": "2026-08-14T18:13:37.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-14T18:17:20.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "BCF anchors issues/tasks to a specific model location + camera angle, joined to IFC objects by GlobalId. BIM practice runs two task systems: BCF for model tasks, planners for org tasks.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "b114ab3a-28d9-43b4-b233-b426256ac838",
+      "actor": "knowledge-agent",
+      "comment": "Extracted from Aug 12-14 meeting sources; links + methodology grounding applied",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-14T18:17:20.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "b5f25ea6-e730-4b0e-a8d3-59a3aba6d0ce",
+      "actor": "liberuum",
+      "comment": "Pipeline verify: quality gate passed",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-14T18:17:20.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

@@ -1,0 +1,115 @@
+{
+  "links": [
+    {
+      "id": "lnk-ada83b88-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "ada83b88-731f-4ce3-9671-0c610777b14a",
+      "targetTitle": "Academy \u203a Build \u203a Launch \u203a Setup your environment",
+      "reason": "Extracted from apps/academy/docs/academy/03-Build/05-Launch/03-SetupEnvironment.md at v6.2.2-dev.74 \u2014 1. Setting up a new cloud environment \u203a Installation and Service configuration; 2. Verifying the setup",
+      "confidence": "grounded"
+    },
+    {
+      "id": "lnk-e1f81c50-bui",
+      "linkType": "BUILDS_ON",
+      "targetDocumentId": "e1f81c50-7a5e-4df8-a746-e80c7f58df36",
+      "targetTitle": "ph-service-setup-configures-nginx-pm2-ssl",
+      "reason": "That note records ph service as undispatchable with its provisioning scripts still shipping; this one shows the deployment guide is written entirely around it and lists what becomes unreachable",
+      "confidence": "grounded"
+    },
+    {
+      "id": "lnk-9cb4d4a2-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "9cb4d4a2-9554-4937-af66-b2d5662b4124",
+      "targetTitle": "docker-compose-channels",
+      "reason": "The compose files are the deployment path whose commands still work, and the page itself points at Docker as the alternative",
+      "confidence": "grounded"
+    },
+    {
+      "id": "lnk-1ebdfe51-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "1ebdfe51-ea4e-4d52-81dc-56d98c2f3690",
+      "targetTitle": "ph-cli-two-clis",
+      "reason": "Both findings come from the same source of truth: the hardcoded command-name list rather than the prose documentation",
+      "confidence": "grounded"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "The environment-setup guide is built on ph service setup, a command the CLI no longer dispatches, so its VM deployment path cannot be followed as written",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "1bc74cb8-2dbf-4684-a2d9-7b1a67a4d270",
+      "name": "deployment",
+      "topicDocumentId": null
+    },
+    {
+      "id": "0fffcdcc-c460-4530-badb-8203ae81a60e",
+      "name": "cli",
+      "topicDocumentId": null
+    },
+    {
+      "id": "6557c8a7-d49b-40b8-8f4a-54575908aa7e",
+      "name": "documentation-drift",
+      "topicDocumentId": null
+    },
+    {
+      "id": "c6858273-ca16-4e45-a70d-6e6875463b3b",
+      "name": "gotchas",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "`03-Build/05-Launch/03-SetupEnvironment.md` is the VM/server deployment guide, and its central step is:\n\n```bash\nph service setup     # then: ph service status | start | stop | restart\n```\n\nAt v6.2.2-dev.74 that command is **not dispatchable**. `packages/shared/clis/command-names.ts` hardcodes the list ph-cmd forwards \u2014 `generate`, `vetra`, `connect`, `build`, `publish`, `list`/`l`, `access-token`, `registry-login`, `inspect`/`is`, `migrate`, `switchboard`, `reactor`, `login`, `logout`, `install`/`add`/`i`, `uninstall`/`remove` \u2014 and **`service` is absent**, even though `clis/ph-cli/src/commands/service.ts` still exists in the tree.\n\nSo everything the guide promises through that one command is currently unreachable as written: Nginx installed as a reverse proxy with WebSocket-aware configuration and security headers, SSL via Let's Encrypt or a self-signed certificate, PM2 for process management with restart-on-crash and start-on-boot, a local or remote PostgreSQL choice, and package installation prompts.\n\nWhat in the page **is** still usable: the machine prerequisites (Linux, sudo, at least 1 GB RAM and 10 GB disk, a registered domain with subdomains for Connect and Switchboard), the cloud-provider walkthroughs for a DigitalOcean droplet or an AWS elastic IP with DNS, and the installer `curl -fsSL https://apps.powerhouse.io/install | bash` followed by `ph --version`.\n\nThe page's own tip names the alternative: choose Docker for the fastest path to production, direct installation for maximum control \u2014 and the Docker path is the one whose commands still exist.\n\n## Provenance\n- `apps/academy/docs/academy/03-Build/05-Launch/03-SetupEnvironment.md` \u2014 1. Setting up a new cloud environment \u203a Installation and Service configuration; 2. Verifying the setup\n\n_Extracted from the Powerhouse repository at **v6.2.2-dev.74**._",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": "v6.2.2-dev.74",
+  "computes": null,
+  "filePath": "apps/academy/docs/academy/03-Build/05-Launch/03-SetupEnvironment.md",
+  "noteType": "OBSERVATION",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "knowledge-agent",
+    "createdAt": "2026-09-03T07:54:37.386Z",
+    "sessionId": null,
+    "updatedAt": "2026-09-03T07:54:39.901Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "phCliCommandNames at v6.2.2-dev.74 lists twenty-one commands and service is not among them, though clis/ph-cli/src/commands/service.ts still ships. The Docker path is the documented alternative.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "9628e32c-c72e-4581-b00e-5ef13f4b0b3d",
+      "actor": "knowledge-agent",
+      "comment": "extracted from apps/academy/docs/academy/03-Build/05-Launch/03-SetupEnvironment.md at v6.2.2-dev.74",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-09-03T07:54:37.983Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "a995312f-367e-49e0-a149-b160a69501f6",
+      "actor": "liberuum",
+      "comment": "claim checked against the cited file at the pinned tag",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-09-03T07:54:39.901Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

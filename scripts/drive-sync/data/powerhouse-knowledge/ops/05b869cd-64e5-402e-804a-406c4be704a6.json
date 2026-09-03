@@ -1,0 +1,394 @@
+[
+  {
+    "index": 0,
+    "hash": "",
+    "timestampUtcMs": "2026-08-14T12:33:17.886Z",
+    "action": {
+      "type": "CREATE_DOCUMENT",
+      "input": {
+        "meta": {},
+        "name": "Toolbar buttons must be styled via Tailwind arbitrary child selectors since they have no dedicated style props",
+        "slug": "",
+        "model": "bai/knowledge-note",
+        "branch": "main",
+        "signing": {
+          "nonce": "",
+          "publicKey": {},
+          "signature": "05b869cd-64e5-402e-804a-406c4be704a6",
+          "documentType": "bai/knowledge-note",
+          "createdAtUtcIso": "2026-08-14T12:33:17.886Z"
+        },
+        "version": 0,
+        "documentId": "05b869cd-64e5-402e-804a-406c4be704a6",
+        "protocolVersions": {
+          "base-reducer": 2
+        }
+      },
+      "timestampUtcMs": "2026-08-14T12:33:17.886Z"
+    }
+  },
+  {
+    "index": 0,
+    "hash": "uk2iFyCFBFrqqREhN9QOLUOVFGw=",
+    "timestampUtcMs": "2026-08-14T12:34:45.000Z",
+    "action": {
+      "type": "SET_TITLE",
+      "input": {
+        "title": "Toolbar buttons accept ToolbarButtonProps and can be replaced via componentOverrides",
+        "updatedAt": "2026-08-14T12:34:45.000Z"
+      },
+      "timestampUtcMs": "2026-08-14T12:34:45.000Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "",
+    "timestampUtcMs": "2026-08-14T12:33:17.886Z",
+    "action": {
+      "type": "UPGRADE_DOCUMENT",
+      "input": {
+        "model": "bai/knowledge-note",
+        "toVersion": 1,
+        "documentId": "05b869cd-64e5-402e-804a-406c4be704a6",
+        "fromVersion": 0,
+        "initialState": {
+          "auth": {
+            "grants": [],
+            "version": 0
+          },
+          "local": {
+            "lastViewedAt": null,
+            "personalTags": []
+          },
+          "global": {
+            "links": [],
+            "model": null,
+            "scope": null,
+            "title": null,
+            "editor": null,
+            "inputs": [],
+            "models": [],
+            "status": "DRAFT",
+            "topics": [],
+            "content": null,
+            "context": null,
+            "modelId": null,
+            "modules": [],
+            "outputs": [],
+            "version": null,
+            "computes": null,
+            "filePath": null,
+            "noteType": null,
+            "severity": null,
+            "hooksUsed": [],
+            "rootCause": null,
+            "confidence": null,
+            "consumedBy": [],
+            "provenance": null,
+            "sourceType": null,
+            "targetType": null,
+            "cardinality": null,
+            "description": null,
+            "alternatives": [],
+            "consequences": [],
+            "errorMessage": null,
+            "relationType": null,
+            "correctPattern": null,
+            "decisionStatus": null,
+            "dispatchTargets": [],
+            "lifecycleEvents": []
+          },
+          "document": {
+            "hash": {
+              "encoding": "base64",
+              "algorithm": "sha1"
+            },
+            "version": 1
+          }
+        }
+      },
+      "timestampUtcMs": "2026-08-14T12:33:17.886Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "uvsu78jcoFs/MXD677ENhWEHX6c=",
+    "timestampUtcMs": "2026-08-14T12:34:45.000Z",
+    "action": {
+      "type": "SET_DESCRIPTION",
+      "input": {
+        "updatedAt": "2026-08-14T12:34:45.000Z",
+        "description": "Built-in toolbar buttons accept ToolbarButtonProps (document, children, className, onClick) and are exported individually, so customizing one means wrapping it and passing it via componentOverrides."
+      },
+      "timestampUtcMs": "2026-08-14T12:34:45.000Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "",
+    "timestampUtcMs": "2026-08-14T12:36:30.125Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "05b869cd-64e5-402e-804a-406c4be704a6",
+        "targetId": "68acb174-1d24-4535-a05e-48cbbb6bba19",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-08-14T12:36:30.125Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "rBjRP5E/f+MUXtcQX7gserjwmbM=",
+    "timestampUtcMs": "2026-08-14T12:34:45.000Z",
+    "action": {
+      "type": "SET_NOTE_TYPE",
+      "input": {
+        "noteType": "pattern",
+        "updatedAt": "2026-08-14T12:34:45.000Z"
+      },
+      "timestampUtcMs": "2026-08-14T12:34:45.000Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "",
+    "timestampUtcMs": "2026-08-14T12:36:30.236Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "05b869cd-64e5-402e-804a-406c4be704a6",
+        "targetId": "64d17fca-c9b3-48ae-a012-a5276e64cc82",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-08-14T12:36:30.236Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "5Zfo7/59XNCGIl8k8o5DNWLF9iE=",
+    "timestampUtcMs": "2026-08-14T12:34:45.000Z",
+    "action": {
+      "type": "SET_CONTENT",
+      "input": {
+        "content": "The buttons inside `DocumentToolbar` accept `ToolbarButtonProps`:\n\n```ts\n{\n  document?: PHDocument;\n  children?: ReactNode;\n  className?: string;\n  onClick?: (document?: PHDocument) => void;\n}\n```\n\n`className` is merged into the button's defaults via `twMerge`, `children` replaces the default button contents, and `onClick` replaces the default behavior. Their default styling is:\n\n- **Undo/Redo/Download/Switchboard/History/Close**: the shared `ToolbarButton` base \u2014 `grid size-fit place-items-center rounded-lg border border-border bg-background p-1 text-foreground` plus hover/active/disabled effects\n- **Download button**: same base, with a `<span className=\"px-1 text-xs\">Download</span>` label instead of an icon\n- **Document name**: `<h1>` with `text-sm font-medium text-muted-foreground` (`ToolbarName` takes `titleClassName` / `inputClassName`)\n\nEvery button is exported individually (`ToolbarButton`, `ToolbarUndoButton`, `ToolbarRedoButton`, `ToolbarDownloadButton`, `ToolbarSwitchboardButton`, `ToolbarHistoryButton`, `ToolbarCloseButton`, `ToolbarName`), so the way to customize one is to wrap it and pass it back through `componentOverrides`:\n\n```tsx\n<DocumentToolbar\n  document={document}\n  componentOverrides={{\n    download: (props) => (\n      <ToolbarDownloadButton\n        {...props}\n        className=\"!bg-[#1e1e2e] !border-white/10\"\n      >\n        <span>Export</span>\n      </ToolbarDownloadButton>\n    ),\n  }}\n/>\n```\n\nOr render the buttons yourself inside `children` for complete control over the toolbar contents.\n\nTailwind arbitrary child selectors (`[&_button]`, `[&_button_svg]`, `[&_h1]`, ...) passed through `toolbarClassName` still work as a blanket theming shortcut, but they are no longer required \u2014 they were a workaround for buttons that did not expose style props, and the buttons now do.\n\n_Corrected 2026-08-13 against Powerhouse v6.2.2-dev.45._",
+        "updatedAt": "2026-08-14T12:34:45.000Z"
+      },
+      "timestampUtcMs": "2026-08-14T12:34:45.000Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "",
+    "timestampUtcMs": "2026-08-14T12:36:30.329Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "05b869cd-64e5-402e-804a-406c4be704a6",
+        "targetId": "bd78f2bf-44c5-408c-8ac7-85174b6d743b",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-08-14T12:36:30.329Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "1B3scBsirDzGJhCehOQQvSSICu8=",
+    "timestampUtcMs": "2026-08-14T12:34:45.000Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "version",
+        "value": "v6.2.2-dev.44",
+        "updatedAt": "2026-08-14T12:34:45.000Z"
+      },
+      "timestampUtcMs": "2026-08-14T12:34:45.000Z"
+    }
+  },
+  {
+    "index": 5,
+    "hash": "",
+    "timestampUtcMs": "2026-08-14T12:36:30.412Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "05b869cd-64e5-402e-804a-406c4be704a6",
+        "targetId": "158143d5-1e39-44b5-9799-1a84e6de9e72",
+        "relationshipType": "BUILDS_ON"
+      },
+      "timestampUtcMs": "2026-08-14T12:36:30.412Z"
+    }
+  },
+  {
+    "index": 5,
+    "hash": "MU5AeLXEnpuwFrdKFHVRFkzWVPk=",
+    "timestampUtcMs": "2026-08-14T12:34:45.000Z",
+    "action": {
+      "type": "SET_PROVENANCE",
+      "input": {
+        "author": "knowledge-agent",
+        "createdAt": "2026-03-30T14:00:00.000Z",
+        "sourceOrigin": "DERIVED"
+      },
+      "timestampUtcMs": "2026-08-14T12:34:45.000Z"
+    }
+  },
+  {
+    "index": 6,
+    "hash": "",
+    "timestampUtcMs": "2026-09-02T21:44:02.584Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "metadata": {
+          "reason": "Backing page found by content match in the v6.2.2-dev.74 source backfill \u2014 identifiers classname, componentoverrides, onclick from the claim appear in this page (text identical at v6.2.2-dev.47 and v6.2.2-dev.74); attribution, not the original extraction record",
+          "confidence": "grounded"
+        },
+        "sourceId": "05b869cd-64e5-402e-804a-406c4be704a6",
+        "targetId": "e5827507-dc3b-4466-9efb-166b32ced72f",
+        "relationshipType": "DERIVED_FROM"
+      },
+      "timestampUtcMs": "2026-09-02T21:44:02.584Z"
+    }
+  },
+  {
+    "index": 6,
+    "hash": "AkHpaMOzwxTohxZ2tiXt9+3JbuI=",
+    "timestampUtcMs": "2026-08-14T12:34:45.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "277b9b18-0bc0-4640-b503-51129bbfd378",
+        "name": "document-toolbar",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-08-14T12:34:45.000Z"
+    }
+  },
+  {
+    "index": 7,
+    "hash": "BBa4iZ0DReiCEGWpYy8nHVLTt4s=",
+    "timestampUtcMs": "2026-08-14T12:34:45.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "9117ef5c-5fcc-48f7-aea6-1b71087626c8",
+        "name": "tailwind-css",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-08-14T12:34:45.000Z"
+    }
+  },
+  {
+    "index": 8,
+    "hash": "AZYDObUDqOzBl2ImvXGr4n2Ae9M=",
+    "timestampUtcMs": "2026-08-14T12:34:45.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "83aab829-363d-4d22-89db-61e9c3ef1e23",
+        "name": "editor-styling",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-08-14T12:34:45.000Z"
+    }
+  },
+  {
+    "index": 9,
+    "hash": "L6yLCrUOCrrwZ9TlXfaGBlMcSvc=",
+    "timestampUtcMs": "2026-08-14T14:36:43.000Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "version",
+        "value": "v6.2.2-dev.47",
+        "updatedAt": "2026-08-14T12:00:00.000Z"
+      },
+      "timestampUtcMs": "2026-08-14T14:36:43.000Z"
+    }
+  },
+  {
+    "index": 10,
+    "hash": "NtMCY2VpK1f0S0AS2NjjAHBPT3g=",
+    "timestampUtcMs": "2026-08-14T14:36:43.000Z",
+    "action": {
+      "type": "SUBMIT_FOR_REVIEW",
+      "input": {
+        "id": "6a8281eb-6af0-486e-bcbd-d35b031cbe3d",
+        "actor": "claude",
+        "comment": "Knowledge registered against powerhouse v6.2.2-dev.47",
+        "timestamp": "2026-08-14T12:00:00.000Z"
+      },
+      "timestampUtcMs": "2026-08-14T14:36:43.000Z"
+    }
+  },
+  {
+    "index": 11,
+    "hash": "DlZvEfT7l6BWLKbRAP/sWWCKj0s=",
+    "timestampUtcMs": "2026-08-14T14:36:43.000Z",
+    "action": {
+      "type": "APPROVE_NOTE",
+      "input": {
+        "id": "5e686b47-99f8-4447-b09a-899da768ad37",
+        "actor": "liberuum",
+        "comment": "Canonical as of powerhouse v6.2.2-dev.47",
+        "timestamp": "2026-08-14T12:00:00.000Z"
+      },
+      "timestampUtcMs": "2026-08-14T14:36:43.000Z"
+    }
+  },
+  {
+    "index": 12,
+    "hash": "D1hZLL+Sfw1HhH8O6ndUjW89zLY=",
+    "timestampUtcMs": "2026-08-16T09:49:36.000Z",
+    "action": {
+      "type": "SET_NOTE_TYPE",
+      "input": {
+        "noteType": "PATTERN",
+        "updatedAt": "2026-08-16T09:49:36.000Z"
+      },
+      "timestampUtcMs": "2026-08-16T09:49:36.000Z"
+    }
+  },
+  {
+    "index": 13,
+    "hash": "0Y5oUYdN1+IcAd4maV2L3U8N/SM=",
+    "timestampUtcMs": "2026-08-16T22:19:33.631Z",
+    "action": {
+      "type": "SET_DESCRIPTION",
+      "input": {
+        "updatedAt": "2026-08-16T23:30:00.000Z",
+        "description": "className merges through twMerge, children swap contents, onClick replaces behaviour, and every control ships as its own export - so [&_button] selectors are a shortcut, not a workaround."
+      },
+      "timestampUtcMs": "2026-08-16T22:19:33.631Z"
+    }
+  },
+  {
+    "index": 14,
+    "hash": "JIKWcEA+M6MUR7yMQMY0yxdcZTE=",
+    "timestampUtcMs": "2026-09-02T21:44:03.252Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "filePath",
+        "value": "packages/design-system/src/connect/components/document-toolbar/README.md",
+        "updatedAt": "2026-09-02T21:44:03.252Z"
+      },
+      "timestampUtcMs": "2026-09-02T21:44:03.252Z"
+    }
+  },
+  {
+    "index": 15,
+    "hash": "5/XoyMNBSqpLRJdFwsZxbliPlgY=",
+    "timestampUtcMs": "2026-09-02T21:44:03.252Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "version",
+        "value": "v6.2.2-dev.74",
+        "updatedAt": "2026-09-02T21:44:03.252Z"
+      },
+      "timestampUtcMs": "2026-09-02T21:44:03.252Z"
+    }
+  }
+]

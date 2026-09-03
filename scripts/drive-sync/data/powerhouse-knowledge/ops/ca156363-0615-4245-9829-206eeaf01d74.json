@@ -1,0 +1,320 @@
+[
+  {
+    "index": 0,
+    "hash": "",
+    "timestampUtcMs": "2026-08-14T12:02:21.712Z",
+    "action": {
+      "type": "CREATE_DOCUMENT",
+      "input": {
+        "meta": {},
+        "name": "feed-topic-ph-v2-namespace",
+        "slug": "",
+        "model": "bai/knowledge-note",
+        "branch": "main",
+        "signing": {
+          "nonce": "",
+          "publicKey": {},
+          "signature": "ca156363-0615-4245-9829-206eeaf01d74",
+          "documentType": "bai/knowledge-note",
+          "createdAtUtcIso": "2026-08-14T12:02:21.712Z"
+        },
+        "version": 0,
+        "documentId": "ca156363-0615-4245-9829-206eeaf01d74",
+        "protocolVersions": {
+          "base-reducer": 2
+        }
+      },
+      "timestampUtcMs": "2026-08-14T12:02:21.712Z"
+    }
+  },
+  {
+    "index": 0,
+    "hash": "vrUd3r+bgipZ4xm4tvC3olWRTDI=",
+    "timestampUtcMs": "2026-08-14T12:35:16.000Z",
+    "action": {
+      "type": "SET_TITLE",
+      "input": {
+        "title": "Swarm feeds use a versioned ph:v2:<kind>:<id> topic namespace spanning doc, drive, user, profile, and share feeds",
+        "updatedAt": "2026-08-14T12:35:16.000Z"
+      },
+      "timestampUtcMs": "2026-08-14T12:35:16.000Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "",
+    "timestampUtcMs": "2026-08-14T12:02:21.712Z",
+    "action": {
+      "type": "UPGRADE_DOCUMENT",
+      "input": {
+        "model": "bai/knowledge-note",
+        "toVersion": 1,
+        "documentId": "ca156363-0615-4245-9829-206eeaf01d74",
+        "fromVersion": 0,
+        "initialState": {
+          "auth": {
+            "grants": [],
+            "version": 0
+          },
+          "local": {
+            "lastViewedAt": null,
+            "personalTags": []
+          },
+          "global": {
+            "links": [],
+            "model": null,
+            "scope": null,
+            "title": null,
+            "editor": null,
+            "inputs": [],
+            "models": [],
+            "status": "DRAFT",
+            "topics": [],
+            "content": null,
+            "context": null,
+            "modelId": null,
+            "modules": [],
+            "outputs": [],
+            "version": null,
+            "computes": null,
+            "filePath": null,
+            "noteType": null,
+            "severity": null,
+            "hooksUsed": [],
+            "rootCause": null,
+            "confidence": null,
+            "consumedBy": [],
+            "provenance": null,
+            "sourceType": null,
+            "targetType": null,
+            "cardinality": null,
+            "description": null,
+            "alternatives": [],
+            "consequences": [],
+            "errorMessage": null,
+            "relationType": null,
+            "correctPattern": null,
+            "decisionStatus": null,
+            "dispatchTargets": [],
+            "lifecycleEvents": []
+          },
+          "document": {
+            "hash": {
+              "encoding": "base64",
+              "algorithm": "sha1"
+            },
+            "version": 1
+          }
+        }
+      },
+      "timestampUtcMs": "2026-08-14T12:02:21.712Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "Z60O3N8YDB0luJpBv/HJRDlz5HQ=",
+    "timestampUtcMs": "2026-08-14T12:35:16.000Z",
+    "action": {
+      "type": "SET_DESCRIPTION",
+      "input": {
+        "updatedAt": "2026-08-14T12:35:16.000Z",
+        "description": "All adapter feeds follow ph:v2:<kind>:<id>: doc, drive, user manifests are encrypted; profile feeds publish an unencrypted public key; share feeds carry encrypted drive bundles between users."
+      },
+      "timestampUtcMs": "2026-08-14T12:35:16.000Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "",
+    "timestampUtcMs": "2026-08-14T12:37:32.327Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "ca156363-0615-4245-9829-206eeaf01d74",
+        "targetId": "2e1ec6fb-c54f-466f-b1af-6809c0321bf2",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-08-14T12:37:32.327Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "e7n6XtRACuYIAJBK2JqL4oWzpJk=",
+    "timestampUtcMs": "2026-08-14T12:35:16.000Z",
+    "action": {
+      "type": "SET_NOTE_TYPE",
+      "input": {
+        "noteType": "reference",
+        "updatedAt": "2026-08-14T12:35:16.000Z"
+      },
+      "timestampUtcMs": "2026-08-14T12:35:16.000Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "",
+    "timestampUtcMs": "2026-08-14T12:37:32.422Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "ca156363-0615-4245-9829-206eeaf01d74",
+        "targetId": "1664a416-73f2-4756-8a9d-3c55b0301882",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-08-14T12:37:32.422Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "m77jqaWTvyVtaKWRKSxs8OFt/CA=",
+    "timestampUtcMs": "2026-08-14T12:35:16.000Z",
+    "action": {
+      "type": "SET_CONTENT",
+      "input": {
+        "content": "# Feed Topic Naming Convention (ph:v2:*)\n\nThe adapter uses a versioned colon-delimited topic namespace for all Swarm feeds. The `ph:v2:` prefix anchors the schema version and enables forward-compatible migration.\n\n| Feed | Topic pattern | Content |\n|------|--------------|---------|\n| Document manifest | `ph:v2:doc:<documentId>` | Pointer to encrypted operation batches |\n| Drive manifest | `ph:v2:drive:<driveId>` | Documents + folder structure for one drive |\n| User manifest | `ph:v2:user:<eth_address>` | Index of all user's drives |\n| Public profile | `ph:v2:profile:<address>` | Bee node public key for sharing (unencrypted) |\n| Share manifest | `ph:v2:share:<sender>:<recipient>` | Shared drive bundles between users |\n\nTopology is hierarchical: **user manifest \u2192 drive manifests \u2192 document manifests \u2192 encrypted op batches**. On recovery, a client reads the user feed first, then descends to discover all drives and documents.\n\nProfile feeds are the only unencrypted feeds \u2014 they publish a Bee node's public key so senders can ACT-encrypt shares to that recipient. Share feeds carry full drive bundles (including folder metadata) from sender to recipient.",
+        "updatedAt": "2026-08-14T12:35:16.000Z"
+      },
+      "timestampUtcMs": "2026-08-14T12:35:16.000Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "dCBH0+hnhYC8w4QeuUXRhPXZqq0=",
+    "timestampUtcMs": "2026-08-14T12:35:16.000Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "version",
+        "value": "v6.2.2-dev.44",
+        "updatedAt": "2026-08-14T12:35:16.000Z"
+      },
+      "timestampUtcMs": "2026-08-14T12:35:16.000Z"
+    }
+  },
+  {
+    "index": 5,
+    "hash": "iuP4F9b5HcoFVgjxfpWW8dfxcQI=",
+    "timestampUtcMs": "2026-08-14T12:35:16.000Z",
+    "action": {
+      "type": "SET_PROVENANCE",
+      "input": {
+        "author": "knowledge-agent",
+        "createdAt": "2026-04-21T14:57:41.685Z",
+        "sourceOrigin": "DERIVED"
+      },
+      "timestampUtcMs": "2026-08-14T12:35:16.000Z"
+    }
+  },
+  {
+    "index": 6,
+    "hash": "qz589/V2UJxTV2+HfxiUClGnCVw=",
+    "timestampUtcMs": "2026-08-14T12:35:16.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "eb4a2d1d-5564-42a3-9f45-192cb7cecc14",
+        "name": "feed-topics",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-08-14T12:35:16.000Z"
+    }
+  },
+  {
+    "index": 7,
+    "hash": "baZEKrG1TXgeZp8GE0pztzdB0vY=",
+    "timestampUtcMs": "2026-08-14T12:35:16.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "1c8e0b6d-f003-422e-9550-bad37c0731aa",
+        "name": "manifest-hierarchy",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-08-14T12:35:16.000Z"
+    }
+  },
+  {
+    "index": 8,
+    "hash": "1jZiszy9EvY2jo5BATuZiZ/4rPw=",
+    "timestampUtcMs": "2026-08-14T12:35:16.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "90fd48bd-974a-425c-99fd-a387b300b6ec",
+        "name": "ph-v2-namespace",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-08-14T12:35:16.000Z"
+    }
+  },
+  {
+    "index": 9,
+    "hash": "9wrN2fRbVsFcOjdQXq6Na3zH6Gw=",
+    "timestampUtcMs": "2026-08-14T14:37:36.000Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "version",
+        "value": "v6.2.2-dev.47",
+        "updatedAt": "2026-08-14T12:00:00.000Z"
+      },
+      "timestampUtcMs": "2026-08-14T14:37:36.000Z"
+    }
+  },
+  {
+    "index": 10,
+    "hash": "Rqq8EDV/6Q4Iqg9nAx/cNaTD4c0=",
+    "timestampUtcMs": "2026-08-14T14:37:36.000Z",
+    "action": {
+      "type": "SUBMIT_FOR_REVIEW",
+      "input": {
+        "id": "e1c2c2ee-bce8-4d10-b6b1-e4d2af54e1d3",
+        "actor": "claude",
+        "comment": "Knowledge registered against powerhouse v6.2.2-dev.47",
+        "timestamp": "2026-08-14T12:00:00.000Z"
+      },
+      "timestampUtcMs": "2026-08-14T14:37:36.000Z"
+    }
+  },
+  {
+    "index": 11,
+    "hash": "hKkc2Tjp2Z7mQ85pAe5Ue8XJz+s=",
+    "timestampUtcMs": "2026-08-14T14:37:36.000Z",
+    "action": {
+      "type": "APPROVE_NOTE",
+      "input": {
+        "id": "55dcf490-f738-48a3-9e99-cc8e70913d1c",
+        "actor": "liberuum",
+        "comment": "Canonical as of powerhouse v6.2.2-dev.47",
+        "timestamp": "2026-08-14T12:00:00.000Z"
+      },
+      "timestampUtcMs": "2026-08-14T14:37:36.000Z"
+    }
+  },
+  {
+    "index": 12,
+    "hash": "tFfHOQ+CqVWpGv/IpXdyOY3qP9E=",
+    "timestampUtcMs": "2026-08-16T09:49:44.000Z",
+    "action": {
+      "type": "SET_NOTE_TYPE",
+      "input": {
+        "noteType": "REFERENCE",
+        "updatedAt": "2026-08-16T09:49:44.000Z"
+      },
+      "timestampUtcMs": "2026-08-16T09:49:44.000Z"
+    }
+  },
+  {
+    "index": 13,
+    "hash": "K/mjb1sDuuCbBqHCJz7+pE5gtmg=",
+    "timestampUtcMs": "2026-09-03T09:58:31.944Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "version",
+        "updatedAt": "2026-09-03T09:58:31.944Z"
+      },
+      "timestampUtcMs": "2026-09-03T09:58:31.944Z"
+    }
+  }
+]

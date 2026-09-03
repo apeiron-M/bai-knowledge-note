@@ -1,0 +1,115 @@
+{
+  "links": [
+    {
+      "id": "lnk-74233854-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "74233854-267a-40e3-b2a3-61106b16c4c6",
+      "targetTitle": "Academy \u203a Build \u203a ExampleUsecases \u203a VetraPackageLibrary \u203a Vetra Package Library",
+      "reason": "Extracted from apps/academy/docs/academy/03-Build/06-ExampleUsecases/VetraPackageLibrary/VetraPackageLibrary.md at v6.2.2-dev.74 \u2014 whole page: definition, example packages, the package library link",
+      "confidence": "grounded"
+    },
+    {
+      "id": "lnk-6e2774cc-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "6e2774cc-037d-4a44-aeb1-49fb4a186ed8",
+      "targetTitle": "registry-verdaccio-cdn",
+      "reason": "The registry is where these packages are published and served from, while the library is the human-facing catalogue",
+      "confidence": "grounded"
+    },
+    {
+      "id": "lnk-4c8af140-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "4c8af140-a351-402e-9a1b-d83ac3a81788",
+      "targetTitle": "v6-runtime-package-loading",
+      "reason": "A package being a domain bundle of specifications and modules is what makes runtime loading and auto-install on an unknown document type coherent",
+      "confidence": "grounded"
+    },
+    {
+      "id": "lnk-e5905516-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "e5905516-830e-4fac-9464-298c12e958fb",
+      "targetTitle": "vetra-package-module-types",
+      "reason": "DocumentModelLib is the runtime shape a published package takes, holding the models, editors and processors this grouping describes",
+      "confidence": "grounded"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "A Vetra package groups related document specifications and modules as the framework's unit of reuse, and the public library is where published packages are browsed",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "27ed4540-7e9a-4ca3-b897-ec4023553f52",
+      "name": "vetra",
+      "topicDocumentId": null
+    },
+    {
+      "id": "1f463b7a-1e21-4755-8dd0-c5e5b3b872da",
+      "name": "packages",
+      "topicDocumentId": null
+    },
+    {
+      "id": "94e35df3-ffba-44ff-bff4-8eccaf836753",
+      "name": "reuse",
+      "topicDocumentId": null
+    },
+    {
+      "id": "7b56494c-29e9-497c-a28a-7be5a8f4b77d",
+      "name": "ecosystem",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "\"Packages of documents are a core structuring mechanism in the Vetra framework, allowing developers to group and manage related documents efficiently. These packages serve as modular collections of **document specifications and modules**, ensuring consistency, scalability, and reusability across different applications.\"\n\nThe example groupings are all **domain-shaped rather than technical**, which is the point worth taking:\n\n- **Finance** \u2014 invoices, payments, budgets, financial reporting;\n- **Contributor Billing** \u2014 tracking work, invoicing, and paying contributors in fiat and crypto;\n- **Governance** \u2014 proposals, voting, contributor agreements, decision-making;\n- **People Ops** \u2014 contributor profiles, roles, task assignments, reputation;\n- **Project Management** \u2014 task tracking, milestones, resource allocation, deliverables.\n\nA package is therefore the unit at which a *domain* is shipped, not the unit at which code is organised \u2014 which is consistent with how a package is loaded at runtime and how Connect can install one on encountering an unknown document type.\n\nThe **package library at `vetra.io/packages`** is the discovery surface: it lists packages built by different builder teams, and each entry links to the **GitHub repository with the package's source code** \u2014 so a package is browsable as a worked example, not just installable.\n\n## Provenance\n- `apps/academy/docs/academy/03-Build/06-ExampleUsecases/VetraPackageLibrary/VetraPackageLibrary.md` \u2014 whole page: definition, example packages, the package library link\n\n_Extracted from the Powerhouse repository at **v6.2.2-dev.74**._",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": "v6.2.2-dev.74",
+  "computes": null,
+  "filePath": "apps/academy/docs/academy/03-Build/06-ExampleUsecases/VetraPackageLibrary/VetraPackageLibrary.md",
+  "noteType": "CONCEPT",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "knowledge-agent",
+    "createdAt": "2026-09-03T07:55:18.572Z",
+    "sessionId": null,
+    "updatedAt": "2026-09-03T07:55:19.659Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Example groupings are domain-shaped \u2014 finance, contributor billing, governance, people ops, project management \u2014 and each library entry links to the source repository of the package.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "0b154b25-0656-47e4-8657-20c0105f6ef4",
+      "actor": "knowledge-agent",
+      "comment": "extracted from apps/academy/docs/academy/03-Build/06-ExampleUsecases/VetraPackageLibrary/VetraPackageLibrary.md at v6.2.2-dev.74",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-09-03T07:55:19.119Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "8ea8a6c8-c3a7-4ab5-aedd-c7f033912f3a",
+      "actor": "liberuum",
+      "comment": "claim checked against the cited file at the pinned tag",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-09-03T07:55:19.659Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

@@ -1,0 +1,681 @@
+[
+  {
+    "index": 0,
+    "hash": "",
+    "timestampUtcMs": "2026-09-02T22:09:18.286Z",
+    "action": {
+      "type": "CREATE_DOCUMENT",
+      "input": {
+        "meta": {},
+        "name": "auth-uninitialized-open",
+        "slug": "",
+        "model": "bai/knowledge-note",
+        "branch": "main",
+        "signing": {
+          "nonce": "",
+          "publicKey": {},
+          "signature": "fb4d1663-adee-4c79-9b88-7aa427d7087e",
+          "documentType": "bai/knowledge-note",
+          "createdAtUtcIso": "2026-09-02T22:09:18.285Z"
+        },
+        "version": 0,
+        "documentId": "fb4d1663-adee-4c79-9b88-7aa427d7087e",
+        "protocolVersions": {
+          "base-reducer": 2
+        }
+      },
+      "timestampUtcMs": "2026-09-02T22:09:18.286Z"
+    }
+  },
+  {
+    "index": 0,
+    "hash": "s5E2VDgeuo2Jbbw6xeS1Netf9pc=",
+    "timestampUtcMs": "2026-09-02T22:09:18.184Z",
+    "action": {
+      "type": "SET_TITLE",
+      "input": {
+        "title": "An uninitialized auth policy leaves a document open; INITIALIZE_AUTH flips the default to deny",
+        "updatedAt": "2026-09-02T22:09:18.184Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:09:18.184Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "",
+    "timestampUtcMs": "2026-09-02T22:09:18.286Z",
+    "action": {
+      "type": "UPGRADE_DOCUMENT",
+      "input": {
+        "model": "bai/knowledge-note",
+        "toVersion": 1,
+        "documentId": "fb4d1663-adee-4c79-9b88-7aa427d7087e",
+        "fromVersion": 0,
+        "initialState": {
+          "auth": {
+            "grants": [],
+            "version": 0
+          },
+          "local": {
+            "lastViewedAt": null,
+            "personalTags": []
+          },
+          "global": {
+            "links": [],
+            "model": null,
+            "scope": null,
+            "title": null,
+            "editor": null,
+            "inputs": [],
+            "models": [],
+            "status": "DRAFT",
+            "topics": [],
+            "content": null,
+            "context": null,
+            "modelId": null,
+            "modules": [],
+            "outputs": [],
+            "version": null,
+            "computes": null,
+            "filePath": null,
+            "noteType": null,
+            "severity": null,
+            "hooksUsed": [],
+            "rootCause": null,
+            "confidence": null,
+            "consumedBy": [],
+            "provenance": null,
+            "sourceType": null,
+            "targetType": null,
+            "cardinality": null,
+            "description": null,
+            "alternatives": [],
+            "consequences": [],
+            "errorMessage": null,
+            "relationType": null,
+            "correctPattern": null,
+            "decisionStatus": null,
+            "dispatchTargets": [],
+            "lifecycleEvents": []
+          },
+          "document": {
+            "hash": {
+              "encoding": "base64",
+              "algorithm": "sha1"
+            },
+            "version": 1
+          }
+        }
+      },
+      "timestampUtcMs": "2026-09-02T22:09:18.286Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "yp6dt/PV55ltpv6AjWLnHqqPdXs=",
+    "timestampUtcMs": "2026-09-02T22:09:18.184Z",
+    "action": {
+      "type": "SET_DESCRIPTION",
+      "input": {
+        "updatedAt": "2026-09-02T22:09:18.184Z",
+        "description": "A document that never emitted INITIALIZE_AUTH (state.auth.version === 0) allows everything, which keeps existing documents unaffected by enforcement. After genesis only a grant can permit anything."
+      },
+      "timestampUtcMs": "2026-09-02T22:09:18.184Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "",
+    "timestampUtcMs": "2026-09-02T22:17:17.508Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "metadata": {
+          "reason": "Extracted from apps/academy/docs/academy/04-Reference/01-Reactor/11-Authorization.md at v6.2.2-dev.74 \u2014 'Behind feature flags' admonition and 'The policy' section",
+          "confidence": "grounded"
+        },
+        "sourceId": "fb4d1663-adee-4c79-9b88-7aa427d7087e",
+        "targetId": "17dc46b0-f733-467c-99d7-ae8fbe0fb0e4",
+        "relationshipType": "DERIVED_FROM"
+      },
+      "timestampUtcMs": "2026-09-02T22:17:17.508Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "NR1fxEv6qKJv7JEeGRifuw+t21A=",
+    "timestampUtcMs": "2026-09-02T22:09:18.184Z",
+    "action": {
+      "type": "SET_NOTE_TYPE",
+      "input": {
+        "noteType": "CONCEPT",
+        "updatedAt": "2026-09-02T22:09:18.184Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:09:18.184Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "",
+    "timestampUtcMs": "2026-09-02T22:17:18.570Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "metadata": {
+          "reason": "Extracted from docs/specs/auth-scope.md at v6.2.2-dev.74 \u2014 Administration and bootstrap; Reads (host default)",
+          "confidence": "grounded"
+        },
+        "sourceId": "fb4d1663-adee-4c79-9b88-7aa427d7087e",
+        "targetId": "223bb12a-be7f-4209-9ab2-f04f7bb2b6c8",
+        "relationshipType": "DERIVED_FROM"
+      },
+      "timestampUtcMs": "2026-09-02T22:17:18.570Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "ZJKD7FLbkcoEeEMYL68m6A9CfYU=",
+    "timestampUtcMs": "2026-09-02T22:09:18.184Z",
+    "action": {
+      "type": "SET_CONTENT",
+      "input": {
+        "content": "Every document carries a `PHAuthState` with `version: 0` until something initializes it. In that state the policy is **uninitialized** and the decision model allows everything \u2014 which is exactly what keeps the fleet's existing documents unaffected when enforcement turns on: nothing in production has ever emitted `INITIALIZE_AUTH`, so every existing document is open.\n\n`INITIALIZE_AUTH` installs the first grant list and is genesis-only. From then on the default is **deny**: if no grant applies to a request, it is refused with `deniedReason: \"no grant permits this operation\"`. The `document-acl` recipe's demo makes the flip visible \u2014 Bob writes freely before any policy exists, then Alice initializes a three-grant policy and Bob's `SET_TITLE` / `PIN_ENTRY` / `SET_GRANT` are refused while the `{anyone}` grant on `ADD_ENTRY` still lets his entries land.\n\nThe open default is also a trap for hosts that think the other way round. Hosts exist whose own access control closes a document until something opens it; for them \"no policy\" has always meant closed. The spec lets such a host configure its **read surface** to withhold every gated scope of an uninitialized document \u2014 a host-local second system that is safe only because it never widens: it withholds, and a read decision is never part of any document's history.\n\nOn acceptance of the genesis, the signer's key is stored as `creator` in the auth state and the header is consulted only at that one binding.\n\n_Source: apps/academy/docs/academy/04-Reference/01-Reactor/11-Authorization.md (Powerhouse v6.2.2-dev.74)._\n_Source: docs/specs/auth-scope.md (Powerhouse v6.2.2-dev.74)._\n_Source: apps/academy/docs/academy/05-Lookup/00-Cookbook.md (Powerhouse v6.2.2-dev.74)._\n\n## Provenance\n- `apps/academy/docs/academy/04-Reference/01-Reactor/11-Authorization.md` \u2014 'Behind feature flags' admonition and 'The policy' section\n- `docs/specs/auth-scope.md` \u2014 Administration and bootstrap; Reads (host default)\n- `apps/academy/docs/academy/05-Lookup/00-Cookbook.md` \u2014 Document ACL recipe: 'Open until initialized' and the demo walkthrough\n\n_Recorded from the Powerhouse repository at **v6.2.2-dev.74** during the v6.2.2-dev.74 source sync._",
+        "updatedAt": "2026-09-02T22:09:18.184Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:09:18.184Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "",
+    "timestampUtcMs": "2026-09-02T22:17:19.848Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "metadata": {
+          "reason": "Extracted from apps/academy/docs/academy/05-Lookup/00-Cookbook.md at v6.2.2-dev.74 \u2014 Document ACL recipe: 'Open until initialized' and the demo walkthrough",
+          "confidence": "grounded"
+        },
+        "sourceId": "fb4d1663-adee-4c79-9b88-7aa427d7087e",
+        "targetId": "f2aaccd3-7c26-4327-881e-f5ad9e267b89",
+        "relationshipType": "DERIVED_FROM"
+      },
+      "timestampUtcMs": "2026-09-02T22:17:19.848Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "xT1U0R/TwXGqW3oQR6oTySOMUxM=",
+    "timestampUtcMs": "2026-09-02T22:09:18.184Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "d0ebdb7f-6462-4aaa-90d5-137581a07248",
+        "name": "auth-scope"
+      },
+      "timestampUtcMs": "2026-09-02T22:09:18.184Z"
+    }
+  },
+  {
+    "index": 5,
+    "hash": "",
+    "timestampUtcMs": "2026-09-02T22:17:21.260Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "metadata": {
+          "reason": "Default deny after genesis is the base case of the walk in which the last applicable grant wins",
+          "confidence": "grounded"
+        },
+        "sourceId": "fb4d1663-adee-4c79-9b88-7aa427d7087e",
+        "targetId": "69327ea6-e0a1-4c07-a214-2c4619192862",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-09-02T22:17:21.260Z"
+    }
+  },
+  {
+    "index": 5,
+    "hash": "3q7BzixMtyQZsieABOTVT8yMuWI=",
+    "timestampUtcMs": "2026-09-02T22:09:18.184Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "1eb48235-948d-401f-ba10-a761f41c8c9b",
+        "name": "authorization"
+      },
+      "timestampUtcMs": "2026-09-02T22:09:18.184Z"
+    }
+  },
+  {
+    "index": 6,
+    "hash": "",
+    "timestampUtcMs": "2026-09-02T22:17:21.751Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "metadata": {
+          "reason": "INITIALIZE_AUTH is where the creator is bound; the creator carve-out and the self-lockout guardrail both hang off that genesis",
+          "confidence": "grounded"
+        },
+        "sourceId": "fb4d1663-adee-4c79-9b88-7aa427d7087e",
+        "targetId": "20f4f796-28d4-4b9c-aa3f-4b71a8b0df1a",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-09-02T22:17:21.751Z"
+    }
+  },
+  {
+    "index": 6,
+    "hash": "ToCdq2W0Luwj9WBbijvPbIAqfyU=",
+    "timestampUtcMs": "2026-09-02T22:09:18.184Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "50ba3c20-1a07-4065-8345-7da63e7f4620",
+        "name": "reactor"
+      },
+      "timestampUtcMs": "2026-09-02T22:09:18.184Z"
+    }
+  },
+  {
+    "index": 7,
+    "hash": "",
+    "timestampUtcMs": "2026-09-02T22:17:22.224Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "metadata": {
+          "reason": "The open default is why turning enforcement on protects nothing that already exists",
+          "confidence": "grounded"
+        },
+        "sourceId": "fb4d1663-adee-4c79-9b88-7aa427d7087e",
+        "targetId": "c5419cd5-deac-4f48-b58f-131e5808bd49",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-09-02T22:17:22.224Z"
+    }
+  },
+  {
+    "index": 7,
+    "hash": "mVmz4Yv9dXA/O1fyGmT9RIlYT40=",
+    "timestampUtcMs": "2026-09-02T22:09:18.184Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "version",
+        "value": "v6.2.2-dev.74",
+        "updatedAt": "2026-09-02T22:09:18.184Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:09:18.184Z"
+    }
+  },
+  {
+    "index": 8,
+    "hash": "",
+    "timestampUtcMs": "2026-09-02T22:21:49.001Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "metadata": {
+          "reason": "Extracted from apps/academy/docs/academy/04-Reference/01-Reactor/11-Authorization.md at v6.2.2-dev.74 \u2014 'Behind feature flags' admonition and 'The policy' section",
+          "confidence": "grounded"
+        },
+        "sourceId": "fb4d1663-adee-4c79-9b88-7aa427d7087e",
+        "targetId": "17dc46b0-f733-467c-99d7-ae8fbe0fb0e4",
+        "relationshipType": "DERIVED_FROM"
+      },
+      "timestampUtcMs": "2026-09-02T22:21:49.001Z"
+    }
+  },
+  {
+    "index": 8,
+    "hash": "rKeAxNslbjW5BrmLTTFeq4mZJbY=",
+    "timestampUtcMs": "2026-09-02T22:09:18.184Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "filePath",
+        "value": "apps/academy/docs/academy/04-Reference/01-Reactor/11-Authorization.md",
+        "updatedAt": "2026-09-02T22:09:18.184Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:09:18.184Z"
+    }
+  },
+  {
+    "index": 9,
+    "hash": "",
+    "timestampUtcMs": "2026-09-02T22:21:49.579Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "metadata": {
+          "reason": "Extracted from docs/specs/auth-scope.md at v6.2.2-dev.74 \u2014 Administration and bootstrap; Reads (host default)",
+          "confidence": "grounded"
+        },
+        "sourceId": "fb4d1663-adee-4c79-9b88-7aa427d7087e",
+        "targetId": "223bb12a-be7f-4209-9ab2-f04f7bb2b6c8",
+        "relationshipType": "DERIVED_FROM"
+      },
+      "timestampUtcMs": "2026-09-02T22:21:49.579Z"
+    }
+  },
+  {
+    "index": 9,
+    "hash": "7uGy2vnvWvlpjIKhzNP6hs5aeFc=",
+    "timestampUtcMs": "2026-09-02T22:09:18.184Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "confidence",
+        "value": "grounded",
+        "updatedAt": "2026-09-02T22:09:18.184Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:09:18.184Z"
+    }
+  },
+  {
+    "index": 10,
+    "hash": "",
+    "timestampUtcMs": "2026-09-02T22:21:50.391Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "metadata": {
+          "reason": "Extracted from apps/academy/docs/academy/05-Lookup/00-Cookbook.md at v6.2.2-dev.74 \u2014 Document ACL recipe: 'Open until initialized' and the demo walkthrough",
+          "confidence": "grounded"
+        },
+        "sourceId": "fb4d1663-adee-4c79-9b88-7aa427d7087e",
+        "targetId": "f2aaccd3-7c26-4327-881e-f5ad9e267b89",
+        "relationshipType": "DERIVED_FROM"
+      },
+      "timestampUtcMs": "2026-09-02T22:21:50.391Z"
+    }
+  },
+  {
+    "index": 10,
+    "hash": "dXTumTxi2YqVjbeLTWS5KR+gZvI=",
+    "timestampUtcMs": "2026-09-02T22:09:20.562Z",
+    "action": {
+      "type": "SET_PROVENANCE",
+      "input": {
+        "author": "knowledge-agent",
+        "createdAt": "2026-09-02T22:09:20.562Z",
+        "sourceOrigin": "DERIVED"
+      },
+      "timestampUtcMs": "2026-09-02T22:09:20.562Z"
+    }
+  },
+  {
+    "index": 11,
+    "hash": "",
+    "timestampUtcMs": "2026-09-02T22:21:51.192Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "metadata": {
+          "reason": "Default deny after genesis is the base case of the walk in which the last applicable grant wins",
+          "confidence": "grounded"
+        },
+        "sourceId": "fb4d1663-adee-4c79-9b88-7aa427d7087e",
+        "targetId": "69327ea6-e0a1-4c07-a214-2c4619192862",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-09-02T22:21:51.192Z"
+    }
+  },
+  {
+    "index": 11,
+    "hash": "U0KtKqbfmmwI4uoFcV4IssTcbMs=",
+    "timestampUtcMs": "2026-09-02T22:09:21.174Z",
+    "action": {
+      "type": "SUBMIT_FOR_REVIEW",
+      "input": {
+        "id": "efc0be7a-3917-4467-808a-387b7d317abe",
+        "actor": "knowledge-agent",
+        "comment": "extracted from the Powerhouse repository at v6.2.2-dev.74",
+        "timestamp": "2026-09-02T22:09:21.174Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:09:21.174Z"
+    }
+  },
+  {
+    "index": 12,
+    "hash": "",
+    "timestampUtcMs": "2026-09-02T22:21:51.677Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "metadata": {
+          "reason": "INITIALIZE_AUTH is where the creator is bound; the creator carve-out and the self-lockout guardrail both hang off that genesis",
+          "confidence": "grounded"
+        },
+        "sourceId": "fb4d1663-adee-4c79-9b88-7aa427d7087e",
+        "targetId": "20f4f796-28d4-4b9c-aa3f-4b71a8b0df1a",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-09-02T22:21:51.677Z"
+    }
+  },
+  {
+    "index": 12,
+    "hash": "FO6KghMlkoNR6lHdWP2MuCK95Jg=",
+    "timestampUtcMs": "2026-09-02T22:09:21.701Z",
+    "action": {
+      "type": "APPROVE_NOTE",
+      "input": {
+        "id": "3b786c91-299c-442d-a0a0-f6a52e0c356f",
+        "actor": "liberuum",
+        "comment": "claim checked against the cited repository file at the pinned tag",
+        "timestamp": "2026-09-02T22:09:21.701Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:09:21.701Z"
+    }
+  },
+  {
+    "index": 13,
+    "hash": "",
+    "timestampUtcMs": "2026-09-02T22:21:52.158Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "metadata": {
+          "reason": "The open default is why turning enforcement on protects nothing that already exists",
+          "confidence": "grounded"
+        },
+        "sourceId": "fb4d1663-adee-4c79-9b88-7aa427d7087e",
+        "targetId": "c5419cd5-deac-4f48-b58f-131e5808bd49",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-09-02T22:21:52.158Z"
+    }
+  },
+  {
+    "index": 13,
+    "hash": "NoJWTjgleKFC06zU+91f06cUPZo=",
+    "timestampUtcMs": "2026-09-02T22:15:23.818Z",
+    "action": {
+      "type": "SET_TITLE",
+      "input": {
+        "title": "An uninitialized auth policy leaves a document open; INITIALIZE_AUTH flips the default to deny",
+        "updatedAt": "2026-09-02T22:15:23.818Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:15:23.818Z"
+    }
+  },
+  {
+    "index": 14,
+    "hash": "NoJWTjgleKFC06zU+91f06cUPZo=",
+    "timestampUtcMs": "2026-09-02T22:15:23.818Z",
+    "action": {
+      "type": "SET_DESCRIPTION",
+      "input": {
+        "updatedAt": "2026-09-02T22:15:23.818Z",
+        "description": "A document that never emitted INITIALIZE_AUTH (state.auth.version === 0) allows everything, which keeps existing documents unaffected by enforcement. After genesis only a grant can permit anything."
+      },
+      "timestampUtcMs": "2026-09-02T22:15:23.818Z"
+    }
+  },
+  {
+    "index": 15,
+    "hash": "NoJWTjgleKFC06zU+91f06cUPZo=",
+    "timestampUtcMs": "2026-09-02T22:15:23.818Z",
+    "action": {
+      "type": "SET_NOTE_TYPE",
+      "input": {
+        "noteType": "CONCEPT",
+        "updatedAt": "2026-09-02T22:15:23.818Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:15:23.818Z"
+    }
+  },
+  {
+    "index": 16,
+    "hash": "NoJWTjgleKFC06zU+91f06cUPZo=",
+    "timestampUtcMs": "2026-09-02T22:15:23.818Z",
+    "action": {
+      "type": "SET_CONTENT",
+      "input": {
+        "content": "Every document carries a `PHAuthState` with `version: 0` until something initializes it. In that state the policy is **uninitialized** and the decision model allows everything \u2014 which is exactly what keeps the fleet's existing documents unaffected when enforcement turns on: nothing in production has ever emitted `INITIALIZE_AUTH`, so every existing document is open.\n\n`INITIALIZE_AUTH` installs the first grant list and is genesis-only. From then on the default is **deny**: if no grant applies to a request, it is refused with `deniedReason: \"no grant permits this operation\"`. The `document-acl` recipe's demo makes the flip visible \u2014 Bob writes freely before any policy exists, then Alice initializes a three-grant policy and Bob's `SET_TITLE` / `PIN_ENTRY` / `SET_GRANT` are refused while the `{anyone}` grant on `ADD_ENTRY` still lets his entries land.\n\nThe open default is also a trap for hosts that think the other way round. Hosts exist whose own access control closes a document until something opens it; for them \"no policy\" has always meant closed. The spec lets such a host configure its **read surface** to withhold every gated scope of an uninitialized document \u2014 a host-local second system that is safe only because it never widens: it withholds, and a read decision is never part of any document's history.\n\nOn acceptance of the genesis, the signer's key is stored as `creator` in the auth state and the header is consulted only at that one binding.\n\n_Source: apps/academy/docs/academy/04-Reference/01-Reactor/11-Authorization.md (Powerhouse v6.2.2-dev.74)._\n_Source: docs/specs/auth-scope.md (Powerhouse v6.2.2-dev.74)._\n_Source: apps/academy/docs/academy/05-Lookup/00-Cookbook.md (Powerhouse v6.2.2-dev.74)._\n\n## Provenance\n- `apps/academy/docs/academy/04-Reference/01-Reactor/11-Authorization.md` \u2014 'Behind feature flags' admonition and 'The policy' section\n- `docs/specs/auth-scope.md` \u2014 Administration and bootstrap; Reads (host default)\n- `apps/academy/docs/academy/05-Lookup/00-Cookbook.md` \u2014 Document ACL recipe: 'Open until initialized' and the demo walkthrough\n\n_Recorded from the Powerhouse repository at **v6.2.2-dev.74** during the v6.2.2-dev.74 source sync._",
+        "updatedAt": "2026-09-02T22:15:23.818Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:15:23.818Z"
+    }
+  },
+  {
+    "index": 17,
+    "hash": "NoJWTjgleKFC06zU+91f06cUPZo=",
+    "timestampUtcMs": "2026-09-02T22:15:23.818Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "version",
+        "value": "v6.2.2-dev.74",
+        "updatedAt": "2026-09-02T22:15:23.818Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:15:23.818Z"
+    }
+  },
+  {
+    "index": 18,
+    "hash": "NoJWTjgleKFC06zU+91f06cUPZo=",
+    "timestampUtcMs": "2026-09-02T22:15:23.818Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "filePath",
+        "value": "apps/academy/docs/academy/04-Reference/01-Reactor/11-Authorization.md",
+        "updatedAt": "2026-09-02T22:15:23.818Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:15:23.818Z"
+    }
+  },
+  {
+    "index": 19,
+    "hash": "NoJWTjgleKFC06zU+91f06cUPZo=",
+    "timestampUtcMs": "2026-09-02T22:15:23.818Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "confidence",
+        "value": "grounded",
+        "updatedAt": "2026-09-02T22:15:23.818Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:15:23.818Z"
+    }
+  },
+  {
+    "index": 20,
+    "hash": "NDXEtxtNzumfEkaC5M75WKUEh7A=",
+    "timestampUtcMs": "2026-09-02T22:20:09.106Z",
+    "action": {
+      "type": "SET_TITLE",
+      "input": {
+        "title": "An uninitialized auth policy leaves a document open; INITIALIZE_AUTH flips the default to deny",
+        "updatedAt": "2026-09-02T22:20:09.106Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:20:09.106Z"
+    }
+  },
+  {
+    "index": 21,
+    "hash": "NDXEtxtNzumfEkaC5M75WKUEh7A=",
+    "timestampUtcMs": "2026-09-02T22:20:09.106Z",
+    "action": {
+      "type": "SET_DESCRIPTION",
+      "input": {
+        "updatedAt": "2026-09-02T22:20:09.106Z",
+        "description": "A document that never emitted INITIALIZE_AUTH (state.auth.version === 0) allows everything, which keeps existing documents unaffected by enforcement. After genesis only a grant can permit anything."
+      },
+      "timestampUtcMs": "2026-09-02T22:20:09.106Z"
+    }
+  },
+  {
+    "index": 22,
+    "hash": "NDXEtxtNzumfEkaC5M75WKUEh7A=",
+    "timestampUtcMs": "2026-09-02T22:20:09.106Z",
+    "action": {
+      "type": "SET_NOTE_TYPE",
+      "input": {
+        "noteType": "CONCEPT",
+        "updatedAt": "2026-09-02T22:20:09.106Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:20:09.106Z"
+    }
+  },
+  {
+    "index": 23,
+    "hash": "NDXEtxtNzumfEkaC5M75WKUEh7A=",
+    "timestampUtcMs": "2026-09-02T22:20:09.106Z",
+    "action": {
+      "type": "SET_CONTENT",
+      "input": {
+        "content": "Every document carries a `PHAuthState` with `version: 0` until something initializes it. In that state the policy is **uninitialized** and the decision model allows everything \u2014 which is exactly what keeps the fleet's existing documents unaffected when enforcement turns on: nothing in production has ever emitted `INITIALIZE_AUTH`, so every existing document is open.\n\n`INITIALIZE_AUTH` installs the first grant list and is genesis-only. From then on the default is **deny**: if no grant applies to a request, it is refused with `deniedReason: \"no grant permits this operation\"`. The `document-acl` recipe's demo makes the flip visible \u2014 Bob writes freely before any policy exists, then Alice initializes a three-grant policy and Bob's `SET_TITLE` / `PIN_ENTRY` / `SET_GRANT` are refused while the `{anyone}` grant on `ADD_ENTRY` still lets his entries land.\n\nThe open default is also a trap for hosts that think the other way round. Hosts exist whose own access control closes a document until something opens it; for them \"no policy\" has always meant closed. The spec lets such a host configure its **read surface** to withhold every gated scope of an uninitialized document \u2014 a host-local second system that is safe only because it never widens: it withholds, and a read decision is never part of any document's history.\n\nOn acceptance of the genesis, the signer's key is stored as `creator` in the auth state and the header is consulted only at that one binding.\n\n_Source: apps/academy/docs/academy/04-Reference/01-Reactor/11-Authorization.md (Powerhouse v6.2.2-dev.74)._\n_Source: docs/specs/auth-scope.md (Powerhouse v6.2.2-dev.74)._\n_Source: apps/academy/docs/academy/05-Lookup/00-Cookbook.md (Powerhouse v6.2.2-dev.74)._\n\n## Provenance\n- `apps/academy/docs/academy/04-Reference/01-Reactor/11-Authorization.md` \u2014 'Behind feature flags' admonition and 'The policy' section\n- `docs/specs/auth-scope.md` \u2014 Administration and bootstrap; Reads (host default)\n- `apps/academy/docs/academy/05-Lookup/00-Cookbook.md` \u2014 Document ACL recipe: 'Open until initialized' and the demo walkthrough\n\n_Recorded from the Powerhouse repository at **v6.2.2-dev.74** during the v6.2.2-dev.74 source sync._",
+        "updatedAt": "2026-09-02T22:20:09.106Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:20:09.106Z"
+    }
+  },
+  {
+    "index": 24,
+    "hash": "NDXEtxtNzumfEkaC5M75WKUEh7A=",
+    "timestampUtcMs": "2026-09-02T22:20:09.106Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "version",
+        "value": "v6.2.2-dev.74",
+        "updatedAt": "2026-09-02T22:20:09.106Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:20:09.106Z"
+    }
+  },
+  {
+    "index": 25,
+    "hash": "NDXEtxtNzumfEkaC5M75WKUEh7A=",
+    "timestampUtcMs": "2026-09-02T22:20:09.106Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "filePath",
+        "value": "apps/academy/docs/academy/04-Reference/01-Reactor/11-Authorization.md",
+        "updatedAt": "2026-09-02T22:20:09.106Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:20:09.106Z"
+    }
+  },
+  {
+    "index": 26,
+    "hash": "NDXEtxtNzumfEkaC5M75WKUEh7A=",
+    "timestampUtcMs": "2026-09-02T22:20:09.106Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "confidence",
+        "value": "grounded",
+        "updatedAt": "2026-09-02T22:20:09.106Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:20:09.106Z"
+    }
+  }
+]

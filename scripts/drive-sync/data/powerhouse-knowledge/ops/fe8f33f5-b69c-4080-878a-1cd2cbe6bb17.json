@@ -1,0 +1,500 @@
+[
+  {
+    "index": 0,
+    "hash": "",
+    "timestampUtcMs": "2026-09-03T07:28:51.193Z",
+    "action": {
+      "type": "CREATE_DOCUMENT",
+      "input": {
+        "meta": {},
+        "name": "lazy-sync-document-channels",
+        "slug": "",
+        "model": "bai/knowledge-note",
+        "branch": "main",
+        "signing": {
+          "nonce": "",
+          "publicKey": {},
+          "signature": "fe8f33f5-b69c-4080-878a-1cd2cbe6bb17",
+          "documentType": "bai/knowledge-note",
+          "createdAtUtcIso": "2026-09-03T07:28:51.193Z"
+        },
+        "version": 0,
+        "documentId": "fe8f33f5-b69c-4080-878a-1cd2cbe6bb17",
+        "protocolVersions": {
+          "base-reducer": 2
+        }
+      },
+      "timestampUtcMs": "2026-09-03T07:28:51.193Z"
+    }
+  },
+  {
+    "index": 0,
+    "hash": "oky9LB5903vM+iONE+/IUkEljDE=",
+    "timestampUtcMs": "2026-09-03T07:28:52.643Z",
+    "action": {
+      "type": "SET_TITLE",
+      "input": {
+        "title": "Lazy sync would create one forced channel per opened document, because the forward-only cursor forbids widening a live channel's filter",
+        "updatedAt": "2026-09-03T07:28:52.642Z"
+      },
+      "timestampUtcMs": "2026-09-03T07:28:52.643Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "",
+    "timestampUtcMs": "2026-09-03T07:28:51.193Z",
+    "action": {
+      "type": "UPGRADE_DOCUMENT",
+      "input": {
+        "model": "bai/knowledge-note",
+        "toVersion": 1,
+        "documentId": "fe8f33f5-b69c-4080-878a-1cd2cbe6bb17",
+        "fromVersion": 0,
+        "initialState": {
+          "auth": {
+            "grants": [],
+            "version": 0
+          },
+          "local": {
+            "lastViewedAt": null,
+            "personalTags": []
+          },
+          "global": {
+            "links": [],
+            "model": null,
+            "scope": null,
+            "title": null,
+            "editor": null,
+            "inputs": [],
+            "models": [],
+            "status": "DRAFT",
+            "topics": [],
+            "content": null,
+            "context": null,
+            "modelId": null,
+            "modules": [],
+            "outputs": [],
+            "version": null,
+            "computes": null,
+            "filePath": null,
+            "noteType": null,
+            "severity": null,
+            "hooksUsed": [],
+            "rootCause": null,
+            "confidence": null,
+            "consumedBy": [],
+            "provenance": null,
+            "sourceType": null,
+            "targetType": null,
+            "cardinality": null,
+            "description": null,
+            "alternatives": [],
+            "consequences": [],
+            "errorMessage": null,
+            "relationType": null,
+            "correctPattern": null,
+            "decisionStatus": null,
+            "dispatchTargets": [],
+            "lifecycleEvents": []
+          },
+          "document": {
+            "hash": {
+              "encoding": "base64",
+              "algorithm": "sha1"
+            },
+            "version": 1
+          }
+        }
+      },
+      "timestampUtcMs": "2026-09-03T07:28:51.193Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "Z+h3okf1YKFRwddOgo3j+qdcTb0=",
+    "timestampUtcMs": "2026-09-03T07:28:52.643Z",
+    "action": {
+      "type": "SET_DESCRIPTION",
+      "input": {
+        "updatedAt": "2026-09-03T07:28:52.642Z",
+        "description": "Each lazily opened document gets a channel scoped by filter.documentId that backfills from ordinal 0; channels dedup by documentId and stay synced for the session. N open documents means N channels."
+      },
+      "timestampUtcMs": "2026-09-03T07:28:52.643Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "",
+    "timestampUtcMs": "2026-09-03T07:30:12.062Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "metadata": {
+          "reason": "Extracted from docs/adr/0001-lazy-drive-sync.md at v6.2.2-dev.74 \u2014 Decision (document channels, preloadDocuments, provisioning); Consequences \u203a Negative / risks",
+          "confidence": "grounded"
+        },
+        "sourceId": "fe8f33f5-b69c-4080-878a-1cd2cbe6bb17",
+        "targetId": "a90ccd64-6898-41f6-a845-242b8929612a",
+        "relationshipType": "DERIVED_FROM"
+      },
+      "timestampUtcMs": "2026-09-03T07:30:12.062Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "q3ASh3h8odxCgAvO8vOVn0AQVvc=",
+    "timestampUtcMs": "2026-09-03T07:28:52.643Z",
+    "action": {
+      "type": "SET_NOTE_TYPE",
+      "input": {
+        "noteType": "ARCHITECTURE",
+        "updatedAt": "2026-09-03T07:28:52.642Z"
+      },
+      "timestampUtcMs": "2026-09-03T07:28:52.643Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "",
+    "timestampUtcMs": "2026-09-03T07:30:12.524Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "metadata": {
+          "reason": "This is the mechanism the proposal rests on; the parent note is what its status and problem statement are",
+          "confidence": "grounded"
+        },
+        "sourceId": "fe8f33f5-b69c-4080-878a-1cd2cbe6bb17",
+        "targetId": "55fcb6f8-c6d7-48ed-b56b-fe4a0ff3303e",
+        "relationshipType": "BUILDS_ON"
+      },
+      "timestampUtcMs": "2026-09-03T07:30:12.524Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "ZqCnypCehHnjBU6noImk65ywsaA=",
+    "timestampUtcMs": "2026-09-03T07:28:52.643Z",
+    "action": {
+      "type": "SET_CONTENT",
+      "input": {
+        "content": "The unit of laziness in ADR 0001 is a **document channel**, created on demand \u2014 and the ADR is explicit that these channels are \"forced, not chosen\": the forward-only, collection-wide cursor forbids mutating the drive channel's filter to add a document (`touchChannel` discards changed filters), so the only way to backfill one document is a fresh channel scoped by `filter.documentId`, which auto-backfills that document's full history from ordinal 0. Channels dedup by `documentId` and stay synced for the session.\n\nThe API surface stays small: `addRemoteDrive(url, { preloadDocuments })` defaults to today's eager behaviour, and `false` registers only a drive-only channel; new `addRemoteDocument` / `removeRemoteDocument` verbs open and release document channels. Provisioning is deliberately an **internal strategy** rather than more booleans, so future policies do not each add a flag, and the eager default stays byte-identical to today.\n\nThe cost is stated as a risk, not hidden: **N open documents = N logical channels.** Coalesced batch polling with chunking collapses poll cost to `ceil(N / chunk)` requests per endpoint per tick, so it is not a scaling ceiling \u2014 but that transport work is a **prerequisite** for opening lazy drives at scale, and the ADR records only medium confidence in the batch-poll scaling claim, unverified at thousands of open documents.\n\nTwo more consequences: `preloadDocuments:false` **breaks whole-drive-assuming consumers** \u2014 code that iterates `state.global.nodes` and calls `useDocuments(childIds)` or `find({parentId})` hits misses or suspends, and `useDocuments` returns a *silent partial list*, so every such caller must be audited before flipping the flag. And the write path is unchanged: a lazily-synced document pushes on its own channel.\n\n## Provenance\n- `docs/adr/0001-lazy-drive-sync.md` \u2014 Decision (document channels, preloadDocuments, provisioning); Consequences \u203a Negative / risks\n\n_Extracted from the Powerhouse repository at **v6.2.2-dev.74**._",
+        "updatedAt": "2026-09-03T07:28:52.643Z"
+      },
+      "timestampUtcMs": "2026-09-03T07:28:52.643Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "",
+    "timestampUtcMs": "2026-09-03T07:30:12.990Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "metadata": {
+          "reason": "Per-document channels are what make a six-state per-document status necessary in the first place",
+          "confidence": "grounded"
+        },
+        "sourceId": "fe8f33f5-b69c-4080-878a-1cd2cbe6bb17",
+        "targetId": "150f7dd7-3669-41d0-8472-ee0f51f40634",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-09-03T07:30:12.990Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "O06rKEWjFukjd8lN7bOVjDxQ31o=",
+    "timestampUtcMs": "2026-09-03T07:28:52.643Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "9c23e444-e9f5-43d5-95ee-569f0747adde",
+        "name": "reactor-sync"
+      },
+      "timestampUtcMs": "2026-09-03T07:28:52.643Z"
+    }
+  },
+  {
+    "index": 5,
+    "hash": "",
+    "timestampUtcMs": "2026-09-03T07:30:13.438Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "metadata": {
+          "reason": "A drive app reading useDocumentsInSelectedDrive assumes the whole drive is present, which preloadDocuments:false breaks: the hook returns a silent partial list rather than suspending",
+          "confidence": "grounded"
+        },
+        "sourceId": "fe8f33f5-b69c-4080-878a-1cd2cbe6bb17",
+        "targetId": "af8252cd-271d-41ea-b99d-9fe2a7123cea",
+        "relationshipType": "CONTRADICTS"
+      },
+      "timestampUtcMs": "2026-09-03T07:30:13.438Z"
+    }
+  },
+  {
+    "index": 5,
+    "hash": "qdCPbgHAHqw+8pSevCF66T3iDB0=",
+    "timestampUtcMs": "2026-09-03T07:28:52.643Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "945a7bd4-4756-4c1a-8d56-10c36fe735d5",
+        "name": "lazy-sync"
+      },
+      "timestampUtcMs": "2026-09-03T07:28:52.643Z"
+    }
+  },
+  {
+    "index": 6,
+    "hash": "",
+    "timestampUtcMs": "2026-09-03T07:31:20.176Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "metadata": {
+          "reason": "Extracted from docs/adr/0001-lazy-drive-sync.md at v6.2.2-dev.74 \u2014 Decision (document channels, preloadDocuments, provisioning); Consequences \u203a Negative / risks",
+          "confidence": "grounded"
+        },
+        "sourceId": "fe8f33f5-b69c-4080-878a-1cd2cbe6bb17",
+        "targetId": "a90ccd64-6898-41f6-a845-242b8929612a",
+        "relationshipType": "DERIVED_FROM"
+      },
+      "timestampUtcMs": "2026-09-03T07:31:20.176Z"
+    }
+  },
+  {
+    "index": 6,
+    "hash": "UUdgp+5UXg+A+0Aptr/bnPKNkNw=",
+    "timestampUtcMs": "2026-09-03T07:28:52.643Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "8f92a4e5-1e83-4c41-97fc-3232e5248d33",
+        "name": "channels"
+      },
+      "timestampUtcMs": "2026-09-03T07:28:52.643Z"
+    }
+  },
+  {
+    "index": 7,
+    "hash": "",
+    "timestampUtcMs": "2026-09-03T07:31:20.646Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "metadata": {
+          "reason": "This is the mechanism the proposal rests on; the parent note is what its status and problem statement are",
+          "confidence": "grounded"
+        },
+        "sourceId": "fe8f33f5-b69c-4080-878a-1cd2cbe6bb17",
+        "targetId": "55fcb6f8-c6d7-48ed-b56b-fe4a0ff3303e",
+        "relationshipType": "BUILDS_ON"
+      },
+      "timestampUtcMs": "2026-09-03T07:31:20.646Z"
+    }
+  },
+  {
+    "index": 7,
+    "hash": "7oieZGnAJBjM5FENOhFWGuR2X1c=",
+    "timestampUtcMs": "2026-09-03T07:28:52.643Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "5d96c063-df4a-4675-ac19-c2edfb131699",
+        "name": "adr"
+      },
+      "timestampUtcMs": "2026-09-03T07:28:52.643Z"
+    }
+  },
+  {
+    "index": 8,
+    "hash": "",
+    "timestampUtcMs": "2026-09-03T07:31:21.092Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "metadata": {
+          "reason": "Per-document channels are what make a six-state per-document status necessary in the first place",
+          "confidence": "grounded"
+        },
+        "sourceId": "fe8f33f5-b69c-4080-878a-1cd2cbe6bb17",
+        "targetId": "150f7dd7-3669-41d0-8472-ee0f51f40634",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-09-03T07:31:21.092Z"
+    }
+  },
+  {
+    "index": 8,
+    "hash": "DGHjHWa4Hxdz4ZMWLvce64rxZJk=",
+    "timestampUtcMs": "2026-09-03T07:28:52.643Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "version",
+        "value": "v6.2.2-dev.74",
+        "updatedAt": "2026-09-03T07:28:52.643Z"
+      },
+      "timestampUtcMs": "2026-09-03T07:28:52.643Z"
+    }
+  },
+  {
+    "index": 9,
+    "hash": "",
+    "timestampUtcMs": "2026-09-03T07:31:21.566Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "metadata": {
+          "reason": "A drive app reading useDocumentsInSelectedDrive assumes the whole drive is present, which preloadDocuments:false breaks: the hook returns a silent partial list rather than suspending",
+          "confidence": "grounded"
+        },
+        "sourceId": "fe8f33f5-b69c-4080-878a-1cd2cbe6bb17",
+        "targetId": "af8252cd-271d-41ea-b99d-9fe2a7123cea",
+        "relationshipType": "CONTRADICTS"
+      },
+      "timestampUtcMs": "2026-09-03T07:31:21.566Z"
+    }
+  },
+  {
+    "index": 9,
+    "hash": "DQcEDIaiYy/lT0f2X9/KgF6B16U=",
+    "timestampUtcMs": "2026-09-03T07:28:52.643Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "filePath",
+        "value": "docs/adr/0001-lazy-drive-sync.md",
+        "updatedAt": "2026-09-03T07:28:52.643Z"
+      },
+      "timestampUtcMs": "2026-09-03T07:28:52.643Z"
+    }
+  },
+  {
+    "index": 10,
+    "hash": "cJZp+Ko2UvboRZy21hdFyR8H+3Q=",
+    "timestampUtcMs": "2026-09-03T07:28:55.251Z",
+    "action": {
+      "type": "SET_PROVENANCE",
+      "input": {
+        "author": "knowledge-agent",
+        "createdAt": "2026-09-03T07:28:55.251Z",
+        "sourceOrigin": "DERIVED"
+      },
+      "timestampUtcMs": "2026-09-03T07:28:55.251Z"
+    }
+  },
+  {
+    "index": 11,
+    "hash": "9lcP2kKrJg9cv90Jtdam54/x67Y=",
+    "timestampUtcMs": "2026-09-03T07:28:55.729Z",
+    "action": {
+      "type": "SUBMIT_FOR_REVIEW",
+      "input": {
+        "id": "5969de55-c4f5-4f15-8c8c-4a272453a24d",
+        "actor": "knowledge-agent",
+        "comment": "extracted from docs/adr/0001-lazy-drive-sync.md at v6.2.2-dev.74",
+        "timestamp": "2026-09-03T07:28:55.729Z"
+      },
+      "timestampUtcMs": "2026-09-03T07:28:55.729Z"
+    }
+  },
+  {
+    "index": 12,
+    "hash": "QAULZzjgK2WFoEuByx9ytxFUzgA=",
+    "timestampUtcMs": "2026-09-03T07:28:56.358Z",
+    "action": {
+      "type": "APPROVE_NOTE",
+      "input": {
+        "id": "5fcfa2c7-317c-4a9e-86dc-2264f46e7ea9",
+        "actor": "liberuum",
+        "comment": "claim checked against the cited file at the pinned tag",
+        "timestamp": "2026-09-03T07:28:56.358Z"
+      },
+      "timestampUtcMs": "2026-09-03T07:28:56.358Z"
+    }
+  },
+  {
+    "index": 13,
+    "hash": "rQFAmCGXH+ZEZrMwGtZgv/8Xjq4=",
+    "timestampUtcMs": "2026-09-03T07:31:09.414Z",
+    "action": {
+      "type": "SET_TITLE",
+      "input": {
+        "title": "Lazy sync would create one forced channel per opened document, because the forward-only cursor forbids widening a live channel's filter",
+        "updatedAt": "2026-09-03T07:31:09.414Z"
+      },
+      "timestampUtcMs": "2026-09-03T07:31:09.414Z"
+    }
+  },
+  {
+    "index": 14,
+    "hash": "rQFAmCGXH+ZEZrMwGtZgv/8Xjq4=",
+    "timestampUtcMs": "2026-09-03T07:31:09.414Z",
+    "action": {
+      "type": "SET_DESCRIPTION",
+      "input": {
+        "updatedAt": "2026-09-03T07:31:09.414Z",
+        "description": "Each lazily opened document gets a channel scoped by filter.documentId that backfills from ordinal 0; channels dedup by documentId and stay synced for the session. N open documents means N channels."
+      },
+      "timestampUtcMs": "2026-09-03T07:31:09.414Z"
+    }
+  },
+  {
+    "index": 15,
+    "hash": "rQFAmCGXH+ZEZrMwGtZgv/8Xjq4=",
+    "timestampUtcMs": "2026-09-03T07:31:09.414Z",
+    "action": {
+      "type": "SET_NOTE_TYPE",
+      "input": {
+        "noteType": "ARCHITECTURE",
+        "updatedAt": "2026-09-03T07:31:09.414Z"
+      },
+      "timestampUtcMs": "2026-09-03T07:31:09.414Z"
+    }
+  },
+  {
+    "index": 16,
+    "hash": "rQFAmCGXH+ZEZrMwGtZgv/8Xjq4=",
+    "timestampUtcMs": "2026-09-03T07:31:09.414Z",
+    "action": {
+      "type": "SET_CONTENT",
+      "input": {
+        "content": "The unit of laziness in ADR 0001 is a **document channel**, created on demand \u2014 and the ADR is explicit that these channels are \"forced, not chosen\": the forward-only, collection-wide cursor forbids mutating the drive channel's filter to add a document (`touchChannel` discards changed filters), so the only way to backfill one document is a fresh channel scoped by `filter.documentId`, which auto-backfills that document's full history from ordinal 0. Channels dedup by `documentId` and stay synced for the session.\n\nThe API surface stays small: `addRemoteDrive(url, { preloadDocuments })` defaults to today's eager behaviour, and `false` registers only a drive-only channel; new `addRemoteDocument` / `removeRemoteDocument` verbs open and release document channels. Provisioning is deliberately an **internal strategy** rather than more booleans, so future policies do not each add a flag, and the eager default stays byte-identical to today.\n\nThe cost is stated as a risk, not hidden: **N open documents = N logical channels.** Coalesced batch polling with chunking collapses poll cost to `ceil(N / chunk)` requests per endpoint per tick, so it is not a scaling ceiling \u2014 but that transport work is a **prerequisite** for opening lazy drives at scale, and the ADR records only medium confidence in the batch-poll scaling claim, unverified at thousands of open documents.\n\nTwo more consequences: `preloadDocuments:false` **breaks whole-drive-assuming consumers** \u2014 code that iterates `state.global.nodes` and calls `useDocuments(childIds)` or `find({parentId})` hits misses or suspends, and `useDocuments` returns a *silent partial list*, so every such caller must be audited before flipping the flag. And the write path is unchanged: a lazily-synced document pushes on its own channel.\n\n## Provenance\n- `docs/adr/0001-lazy-drive-sync.md` \u2014 Decision (document channels, preloadDocuments, provisioning); Consequences \u203a Negative / risks\n\n_Extracted from the Powerhouse repository at **v6.2.2-dev.74**._",
+        "updatedAt": "2026-09-03T07:31:09.414Z"
+      },
+      "timestampUtcMs": "2026-09-03T07:31:09.414Z"
+    }
+  },
+  {
+    "index": 17,
+    "hash": "rQFAmCGXH+ZEZrMwGtZgv/8Xjq4=",
+    "timestampUtcMs": "2026-09-03T07:31:09.414Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "version",
+        "value": "v6.2.2-dev.74",
+        "updatedAt": "2026-09-03T07:31:09.414Z"
+      },
+      "timestampUtcMs": "2026-09-03T07:31:09.414Z"
+    }
+  },
+  {
+    "index": 18,
+    "hash": "rQFAmCGXH+ZEZrMwGtZgv/8Xjq4=",
+    "timestampUtcMs": "2026-09-03T07:31:09.414Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "filePath",
+        "value": "docs/adr/0001-lazy-drive-sync.md",
+        "updatedAt": "2026-09-03T07:31:09.414Z"
+      },
+      "timestampUtcMs": "2026-09-03T07:31:09.414Z"
+    }
+  }
+]

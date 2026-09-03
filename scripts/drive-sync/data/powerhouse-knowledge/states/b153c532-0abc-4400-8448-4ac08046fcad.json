@@ -1,0 +1,129 @@
+{
+  "links": [
+    {
+      "id": "lnk-e1f81c50-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "e1f81c50-7a5e-4df8-a746-e80c7f58df36",
+      "targetTitle": "ph-service-setup-configures-nginx-pm2-ssl"
+    },
+    {
+      "id": "lnk-79987290-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "79987290-fb65-4d66-a549-fd41370db753",
+      "targetTitle": "connect-is-host-application"
+    },
+    {
+      "id": "lnk-83b60ca6-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "83b60ca6-793d-4d0c-9b8c-7dc6cb1d3eff",
+      "targetTitle": "reactor-is-backend-service-for-drives"
+    },
+    {
+      "id": "lnk-5725fd76-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "5725fd76-b0d4-4bab-9c10-3c0a890951ca",
+      "targetTitle": "bee-reactor-adapter-package-structure"
+    },
+    {
+      "id": "lnk-158143d5-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "158143d5-1e39-44b5-9799-1a84e6de9e72",
+      "targetTitle": "DocumentToolbar exposes className enabledControls and callback props"
+    },
+    {
+      "id": "lnk-56edb93f-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "56edb93f-5c3b-4c8b-a11f-5cfdcc252dee",
+      "targetTitle": "Academy \u203a Build \u203a Launch \u203a Docker deployment guide",
+      "reason": "Backing page found by content match in the v6.2.2-dev.74 source backfill \u2014 identifiers ghcr.io, prisma from the claim appear in this page (text revised between v6.2.2-dev.47 and v6.2.2-dev.74 \u2014 re-verified in the v6.2.2-dev.74 pass); attribution, not the original extraction record",
+      "confidence": "grounded"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Powerhouse publishes official Docker images for Connect (frontend + Nginx) and Switchboard (backend API) to ghcr.io",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "ARCHIVED",
+  "topics": [
+    {
+      "id": "a82cb3eb-e236-4bf5-a8d7-4178b9525ee7",
+      "name": "docker",
+      "topicDocumentId": null
+    },
+    {
+      "id": "1f4a4d51-1aa5-440e-923b-620dab2d3a21",
+      "name": "deployment",
+      "topicDocumentId": null
+    },
+    {
+      "id": "108be46c-9036-4630-8a3f-ed38e20ae7b4",
+      "name": "connect",
+      "topicDocumentId": null
+    },
+    {
+      "id": "8a114f86-0ab7-4ef4-bf0b-5b18facd7962",
+      "name": "switchboard",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "Three official images on `ghcr.io/powerhouse-inc/powerhouse/`: connect (Alpine + Node + Nginx with Brotli), switchboard (Node 24 + Prisma), academy (docs). Tags: latest, dev, staging, vX.Y.Z. Docker Compose stack: connect + switchboard + postgres:16.1. Connect startup: load packages from `PH_REGISTRY_PACKAGES`, `ph connect build`, configure/start Nginx. Switchboard startup: install packages from `PH_PACKAGES`, run Prisma migrations (only if `PH_REACTOR_DATABASE_URL` is set), start the server. Custom packages use a different env var per service: Connect reads `PH_REGISTRY_PACKAGES` (comma-separated, written to a registry config at startup), Switchboard reads `PH_PACKAGES` (comma-separated). Production: use specific version tags, persist postgres with volumes, bind to 127.0.0.1 behind a reverse proxy for SSL termination. `DATABASE_URL` is Switchboard-only -- Connect never uses it -- and it accepts a PostgreSQL *or* SQLite connection string (default `\"dev.db\"`).\n\n_Corrected 2026-08-13 against Powerhouse v6.2.2-dev.45._\n\n## Superseded at v6.2.2-dev.74\nThis note describes the pre-redesign Docker layout and is retired. What changed: images are published to the **Vetra Harbor registry** `cr.vetra.io/powerhouse-inc-powerhouse/*` (the `ghcr.io` copies are frozen at the old builds), the tag set gained `rc`, the Connect image is **nginx serving a SPA built at image-build time** with no Node or `ph` CLI (so `PH_REGISTRY_PACKAGES` is not how Connect loads packages any more \u2014 the browser loads them from `packageRegistryUrl`), the Switchboard image installs `@powerhousedao/switchboard` from npm and runs **Kysely** rather than Prisma migrations, and `DATABASE_URL` no longer means \"PostgreSQL or SQLite, default dev.db\" \u2014 storage is `PH_REACTOR_DATABASE_URL` / `PH_SWITCHBOARD_DATABASE_URL` with an embedded-PGlite fallback. See the four notes that supersede it.\n",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": "v6.2.2-dev.47",
+  "computes": null,
+  "filePath": "apps/academy/docs/academy/03-Build/05-Launch/05-DockerDeployment.md",
+  "noteType": "REFERENCE",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "knowledge-agent",
+    "createdAt": "2026-04-02T12:00:00.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-09-02T22:26:54.029Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Connect image builds the frontend and serves via Nginx; Switchboard optionally runs Prisma migrations, then starts the API server.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "c4629c5f-e97e-43e7-a458-8b797e6fd46f",
+      "actor": "claude",
+      "comment": "Knowledge registered against powerhouse v6.2.2-dev.47",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-14T12:00:00.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "7d73539d-1139-4462-9033-409d61cf2096",
+      "actor": "liberuum",
+      "comment": "Canonical as of powerhouse v6.2.2-dev.47",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-14T12:00:00.000Z",
+      "fromStatus": "IN_REVIEW"
+    },
+    {
+      "id": "517f1714-4599-4272-a025-ef36302e395a",
+      "actor": "liberuum",
+      "comment": "superseded at v6.2.2-dev.74 by docker-images-registry, docker-connect-image, docker-switchboard-image, docker-switchboard-storage",
+      "toStatus": "ARCHIVED",
+      "timestamp": "2026-09-02T22:26:54.029Z",
+      "fromStatus": "CANONICAL"
+    }
+  ]
+}

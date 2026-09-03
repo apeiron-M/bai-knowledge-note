@@ -1,0 +1,133 @@
+[
+  {
+    "index": 0,
+    "hash": "",
+    "timestampUtcMs": "2026-09-02T21:43:57.085Z",
+    "action": {
+      "type": "CREATE_DOCUMENT",
+      "input": {
+        "meta": {},
+        "name": "Package \u203a design-system \u203a README",
+        "slug": "",
+        "model": "bai/source",
+        "branch": "main",
+        "signing": {
+          "nonce": "",
+          "publicKey": {},
+          "signature": "51c18170-32fd-4641-90c6-be06df0c4659",
+          "documentType": "bai/source",
+          "createdAtUtcIso": "2026-09-02T21:43:57.085Z"
+        },
+        "version": 0,
+        "documentId": "51c18170-32fd-4641-90c6-be06df0c4659",
+        "protocolVersions": {
+          "base-reducer": 2
+        }
+      },
+      "timestampUtcMs": "2026-09-02T21:43:57.085Z"
+    }
+  },
+  {
+    "index": 0,
+    "hash": "GQJg4Ie3zbZzA0huv+Yj0jvAI0Q=",
+    "timestampUtcMs": "2026-09-02T21:43:57.047Z",
+    "action": {
+      "type": "INGEST_SOURCE",
+      "input": {
+        "url": "https://github.com/powerhouse-inc/powerhouse/blob/v6.2.2-dev.74/packages/design-system/README.md",
+        "tool": "sync-repo-docs",
+        "title": "Package \u203a design-system \u203a README",
+        "author": "Powerhouse Inc.",
+        "method": "sha256:409c29a53dc3cc4c2e7bcce9ded06d207239225d6fb95a59f902718b098d6acf git:v6.2.2-dev.74",
+        "content": "# design-system\n\nThis repository contains base and scoped (project) components, utilities, and hooks for the powerhouse org.\n\n## Installation & Setup\n\nAfter installing the package, you'll need to load the Inter font family for proper styling.\n\n### Font Loading (Required)\n\nThe design system uses the **Inter** font family. Choose one of the following approaches:\n\n#### Option 1: HTML Link Tags (Recommended)\n\nAdd these tags to your HTML `<head>` for optimal performance:\n\n```html\n<head>\n  <link rel=\"preconnect\" href=\"https://fonts.googleapis.com\" />\n  <link rel=\"preconnect\" href=\"https://fonts.gstatic.com\" crossorigin />\n  <link\n    href=\"https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap\"\n    rel=\"stylesheet\"\n  />\n</head>\n```\n\n#### Option 2: CSS Import (Fallback)\n\nAlternatively, import the font in your CSS file:\n\n```css\n@import url(\"https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap\");\n```\n\n**Note:** HTML link tags are preferred for better performance (preconnect support, earlier parsing, non-blocking).\n\n### How to run this project:\n\n- Clone this repo: `git clone https://github.com/powerhouse-inc/design-system.git`\n- Install dependencies: `yarn install`\n- Run Storybook: `yarn storybook`\n\n### Project structure:\n\n- `src`: Contains all the code related to the library.\n- `src/assets`: Contains various assets such as icons, images, etc.\n- `src/powerhouse`: Base components, hooks, and utilities.\n- `src/connect`: Components, hooks, and utilities specific to the `connect` app.\n- `.github/workflows`: CI/CD configuration (github actions).\n- `.storybook`: Storybook configuration.\n\n### Adding new code:\n\nThe first step is to determine where to place your new component. Consider whether you are building a base component or a scoped component:\n\n- For base components, place your new files inside `src/powerhouse/<components | hooks>`\n- For scoped components, place your new files in the corresponding scope, e.g., `src/connect`, `src/any-other-scope-or-app`, etc.\n\nOnce you are clear about where to place your component files, you can start coding. You should follow this basic structure for your components:\n\n- `your-component.tsx`: Component base code.\n- `your-component.stories.tsx`: Stories for your component.\n- `your-component.test.tsx`: Tests for your component.\n\nAfter creating your component, ensure that it looks good in Storybook and that all its tests pass.\n\n### How to commit changes:\n\nThis project is configured to used [Conventional Commits](https://www.conventionalcommits.org/en/v1.0.0/), which means you have to follow this specification in your commit messages.\n\nCI uses commit information to generate new releases and publish them on npm.\n\nThe commit message should be structured as follows:\n\n```\n<type>[optional scope]: <description>\n```\n\nwhere **type** can be any of the following options:\n\n- `feat`: (new feature for the user, not a new feature for build script). _Correlates with `PATCH` in Semantic Versioning_\n- `fix`: (bug fix for the user, not a fix to a build script). _Correlates with `MINOR` in Semantic Versioning_\n- `docs`: (changes to the documentation)\n- `style`: (formatting, missing semi colons, etc; no production code change)\n- `refactor`: (refactoring production code)\n- `test`: (adding missing tests, refactoring tests; no production code change)\n- `chore`: (updating project related code (scripts, build, etc.); no production code change)\n- `BREAKING CHANGE` or appends a `!` after the type/scope: Introduces a breaking API change. _Correlating with `MAJOR` in Semantic Versioning_\n\n**scope** is used to link your commit to a specific section of the codebase (FeatureA, FeatureB, etc.). Keep in mind that this is not required.\n\nHere is an example of valid commit messages:\n\n```\nchore(project-setup): added CI workflow\nfeat(user-navigation): added Navigation component\nfix: prevent racing of requests\nchore!: drop support for Node 6\n```\n\n> Keep in mind that every time you create a new commit, a pre-commit process is executed to validate that your commit message is valid.\n\nYou can find more info about this topic here: https://www.conventionalcommits.org/en/v1.0.0/\n",
+        "createdAt": "2026-09-02T21:43:57.047Z",
+        "createdBy": "repo-docs-sync",
+        "sourceType": "DOCUMENTATION",
+        "description": "Powerhouse v6.2.2-dev.74 (unchanged since v6.2.2-dev.47) \u2014 This repository contains base and scoped (project) components, utilities, and hooks for the powerhouse org.",
+        "publishedAt": "2026-03-24T16:19:22.000Z"
+      },
+      "timestampUtcMs": "2026-09-02T21:43:57.047Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "",
+    "timestampUtcMs": "2026-09-02T21:43:57.085Z",
+    "action": {
+      "type": "UPGRADE_DOCUMENT",
+      "input": {
+        "model": "bai/source",
+        "toVersion": 1,
+        "documentId": "51c18170-32fd-4641-90c6-be06df0c4659",
+        "fromVersion": 0,
+        "initialState": {
+          "auth": {
+            "grants": [],
+            "version": 0
+          },
+          "local": {},
+          "global": {
+            "title": null,
+            "status": "INBOX",
+            "content": null,
+            "createdAt": null,
+            "createdBy": null,
+            "provenance": null,
+            "sourceType": null,
+            "description": null,
+            "extractedClaims": [],
+            "extractionStats": null
+          },
+          "document": {
+            "hash": {
+              "encoding": "base64",
+              "algorithm": "sha1"
+            },
+            "version": 1
+          }
+        }
+      },
+      "timestampUtcMs": "2026-09-02T21:43:57.085Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "r0NCslooqxwV/yQT9MzYHrPi008=",
+    "timestampUtcMs": "2026-09-03T07:45:07.416Z",
+    "action": {
+      "type": "ADD_EXTRACTED_CLAIM",
+      "input": {
+        "claimRef": "5af82244-3baf-430f-b746-1cdcade43b5f"
+      },
+      "timestampUtcMs": "2026-09-03T07:45:07.416Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "v4JXSZyckbMmEzpzD0YmJLI7f5Y=",
+    "timestampUtcMs": "2026-09-03T07:45:17.750Z",
+    "action": {
+      "type": "RECORD_EXTRACTION_STATS",
+      "input": {
+        "skipRate": 0.667,
+        "claimCount": 1,
+        "extractedAt": "2026-09-03T07:45:17.750Z",
+        "extractedBy": "knowledge-agent",
+        "skippedCount": 2
+      },
+      "timestampUtcMs": "2026-09-03T07:45:17.750Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "23cen3fb778tlfv00IGgfK3tBDk=",
+    "timestampUtcMs": "2026-09-03T07:45:18.299Z",
+    "action": {
+      "type": "SET_SOURCE_STATUS",
+      "input": {
+        "status": "EXTRACTED"
+      },
+      "timestampUtcMs": "2026-09-03T07:45:18.299Z"
+    }
+  }
+]

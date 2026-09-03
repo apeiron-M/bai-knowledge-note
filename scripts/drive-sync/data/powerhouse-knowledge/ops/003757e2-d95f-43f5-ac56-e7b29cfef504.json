@@ -1,0 +1,340 @@
+[
+  {
+    "index": 0,
+    "hash": "",
+    "timestampUtcMs": "2026-08-14T12:34:22.298Z",
+    "action": {
+      "type": "CREATE_DOCUMENT",
+      "input": {
+        "meta": {},
+        "name": "webhook-hmac-verify-raw-bytes-before-parsing",
+        "slug": "",
+        "model": "bai/knowledge-note",
+        "branch": "main",
+        "signing": {
+          "nonce": "",
+          "publicKey": {},
+          "signature": "003757e2-d95f-43f5-ac56-e7b29cfef504",
+          "documentType": "bai/knowledge-note",
+          "createdAtUtcIso": "2026-08-14T12:34:22.298Z"
+        },
+        "version": 0,
+        "documentId": "003757e2-d95f-43f5-ac56-e7b29cfef504",
+        "protocolVersions": {
+          "base-reducer": 2
+        }
+      },
+      "timestampUtcMs": "2026-08-14T12:34:22.298Z"
+    }
+  },
+  {
+    "index": 0,
+    "hash": "Vg3dva2Dlcnej88LgiegxMRnRf0=",
+    "timestampUtcMs": "2026-08-14T12:36:10.000Z",
+    "action": {
+      "type": "SET_TITLE",
+      "input": {
+        "title": "Inbound webhook HMAC must be verified against the raw request bytes before parsing",
+        "updatedAt": "2026-08-14T12:36:10.000Z"
+      },
+      "timestampUtcMs": "2026-08-14T12:36:10.000Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "",
+    "timestampUtcMs": "2026-08-14T12:34:22.298Z",
+    "action": {
+      "type": "UPGRADE_DOCUMENT",
+      "input": {
+        "model": "bai/knowledge-note",
+        "toVersion": 1,
+        "documentId": "003757e2-d95f-43f5-ac56-e7b29cfef504",
+        "fromVersion": 0,
+        "initialState": {
+          "auth": {
+            "grants": [],
+            "version": 0
+          },
+          "local": {
+            "lastViewedAt": null,
+            "personalTags": []
+          },
+          "global": {
+            "links": [],
+            "model": null,
+            "scope": null,
+            "title": null,
+            "editor": null,
+            "inputs": [],
+            "models": [],
+            "status": "DRAFT",
+            "topics": [],
+            "content": null,
+            "context": null,
+            "modelId": null,
+            "modules": [],
+            "outputs": [],
+            "version": null,
+            "computes": null,
+            "filePath": null,
+            "noteType": null,
+            "severity": null,
+            "hooksUsed": [],
+            "rootCause": null,
+            "confidence": null,
+            "consumedBy": [],
+            "provenance": null,
+            "sourceType": null,
+            "targetType": null,
+            "cardinality": null,
+            "description": null,
+            "alternatives": [],
+            "consequences": [],
+            "errorMessage": null,
+            "relationType": null,
+            "correctPattern": null,
+            "decisionStatus": null,
+            "dispatchTargets": [],
+            "lifecycleEvents": []
+          },
+          "document": {
+            "hash": {
+              "encoding": "base64",
+              "algorithm": "sha1"
+            },
+            "version": 1
+          }
+        }
+      },
+      "timestampUtcMs": "2026-08-14T12:34:22.298Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "ePKWmSK9ECTLARo99PM5VWii61o=",
+    "timestampUtcMs": "2026-08-14T12:36:10.000Z",
+    "action": {
+      "type": "SET_DESCRIPTION",
+      "input": {
+        "updatedAt": "2026-08-14T12:36:10.000Z",
+        "description": "JSON.parse then JSON.stringify changes key order, whitespace and number formatting, breaking the MAC. Verify the raw body, then parse, and fold the timestamp into the signed payload."
+      },
+      "timestampUtcMs": "2026-08-14T12:36:10.000Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "",
+    "timestampUtcMs": "2026-08-14T12:39:10.614Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "003757e2-d95f-43f5-ac56-e7b29cfef504",
+        "targetId": "8cbea140-21d6-4b63-8780-5d44831018aa",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-08-14T12:39:10.614Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "zXi6Myab1TDuHazH1vTD3v/XuIU=",
+    "timestampUtcMs": "2026-08-14T12:36:10.000Z",
+    "action": {
+      "type": "SET_NOTE_TYPE",
+      "input": {
+        "noteType": "PATTERN",
+        "updatedAt": "2026-08-14T12:36:10.000Z"
+      },
+      "timestampUtcMs": "2026-08-14T12:36:10.000Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "",
+    "timestampUtcMs": "2026-08-14T12:39:10.715Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "003757e2-d95f-43f5-ac56-e7b29cfef504",
+        "targetId": "851f3b4d-92aa-4601-b6f8-06f27ba514a5",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-08-14T12:39:10.715Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "jwIrzzFIL0Su4z/nEzQ0m6Mpw9g=",
+    "timestampUtcMs": "2026-08-14T12:36:10.000Z",
+    "action": {
+      "type": "SET_CONTENT",
+      "input": {
+        "content": "The headline rule from the `inbound-webhook-bridge` recipe:\n\n> **`JSON.parse(body)` \u2192 `JSON.stringify(parsed)` breaks HMAC.** The signature is computed over the exact bytes the provider sent. Re-serializing changes key order, whitespace, and number formatting, so the MAC no longer matches.\n\nAlways verify the raw body string, *then* parse it. This has an architectural consequence: a GraphQL or JSON mutation resolver parses the body **before your code runs**, so raw bytes are already gone by the time you could check them. The recipe uses a dedicated `node:http` listener precisely so it controls the bytes, and recommends the same whenever raw-body access is awkward in your framework.\n\nThe signature scheme is modelled on Stripe. The `x-webhook-signature` header is `t=<unixSeconds>,v1=<hmacHex>`, and the signed payload is `` `${t}.${rawBody}` ``:\n\n```ts\nconst header  = signWebhook(secret, rawBody, Math.floor(Date.now() / 1000));\nconst verdict = verifyWebhook({ secret, rawBody, signatureHeader: header, nowSeconds });\n// { ok: true, timestampSeconds } | { ok: false, reason }\n```\n\nFolding the timestamp **into** the MAC is what makes the replay-window check trustworthy \u2014 it cannot be altered independently of the signature. Verification rejects missing or malformed headers, signature mismatch (wrong secret *or* tampered/re-serialized body), and timestamps outside the tolerance window, default 5 minutes. Comparison uses `crypto.timingSafeEqual`.\n\nThe verified-then-parsed pipeline is ordered: read raw bytes with no parse \u2192 `verifyWebhook()` \u2192 `JSON.parse` the verified bytes \u2192 resolve to a document \u2192 dedup against persisted `processedEventIds` \u2192 map event type to a typed action \u2192 `reactor.execute`.\n\nThe signing secret is server-only and must never be bundled for the browser. The recipe declares it through the package manifest `config` block as a `secret`-typed required entry (`WEBHOOK_SIGNING_SECRET`), the way production packages document required secrets, and loads it from the environment server-side.\n\nProvenance: academy `05-Lookup/00-Cookbook.md`, Inbound Webhook Bridge recipe (\"The headline rule: verify the raw bytes\"), academy 6.2.2-dev.45.",
+        "updatedAt": "2026-08-14T12:36:10.000Z"
+      },
+      "timestampUtcMs": "2026-08-14T12:36:10.000Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "",
+    "timestampUtcMs": "2026-09-02T21:40:49.509Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "metadata": {
+          "reason": "Backing page found by content match in the v6.2.2-dev.74 source backfill \u2014 identifiers json.parse, json.stringify, whitespace from the claim appear in this page (text revised between v6.2.2-dev.47 and v6.2.2-dev.74 \u2014 re-verified in the v6.2.2-dev.74 pass); attribution, not the original extraction record",
+          "confidence": "grounded"
+        },
+        "sourceId": "003757e2-d95f-43f5-ac56-e7b29cfef504",
+        "targetId": "f2aaccd3-7c26-4327-881e-f5ad9e267b89",
+        "relationshipType": "DERIVED_FROM"
+      },
+      "timestampUtcMs": "2026-09-02T21:40:49.509Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "fkjx2fFKvAsfzydusYSZ8/OMk0M=",
+    "timestampUtcMs": "2026-08-14T12:36:10.000Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "version",
+        "value": "v6.2.2-dev.44",
+        "updatedAt": "2026-08-14T12:36:10.000Z"
+      },
+      "timestampUtcMs": "2026-08-14T12:36:10.000Z"
+    }
+  },
+  {
+    "index": 5,
+    "hash": "d6S6f02YtFFRSfmsdzghEITknt4=",
+    "timestampUtcMs": "2026-08-14T12:36:10.000Z",
+    "action": {
+      "type": "SET_PROVENANCE",
+      "input": {
+        "author": "claude",
+        "createdAt": "2026-08-13T14:39:21.000Z",
+        "sourceOrigin": "DERIVED"
+      },
+      "timestampUtcMs": "2026-08-14T12:36:10.000Z"
+    }
+  },
+  {
+    "index": 6,
+    "hash": "P2VvimACMJYxP/aXvXxoaoqc56Q=",
+    "timestampUtcMs": "2026-08-14T12:36:10.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "88083b75-0a2f-4f2b-a5f5-91701fb61bf4",
+        "name": "integrations",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-08-14T12:36:10.000Z"
+    }
+  },
+  {
+    "index": 7,
+    "hash": "6eGU08LSIX/g+C+ZyP8eWVpkQus=",
+    "timestampUtcMs": "2026-08-14T12:36:10.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "640a54d9-3b68-4f4c-ad62-f9aab79e876f",
+        "name": "security",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-08-14T12:36:10.000Z"
+    }
+  },
+  {
+    "index": 8,
+    "hash": "dX/LtqKF3LryMM1ubm2Jn40eGgw=",
+    "timestampUtcMs": "2026-08-14T12:36:10.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "1dfedd48-a4c6-42bb-97e5-bdfab621af3d",
+        "name": "gotchas",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-08-14T12:36:10.000Z"
+    }
+  },
+  {
+    "index": 9,
+    "hash": "OEHnaJJeHAFMpjCGKG6c+uBN3HU=",
+    "timestampUtcMs": "2026-08-14T14:36:42.000Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "version",
+        "value": "v6.2.2-dev.47",
+        "updatedAt": "2026-08-14T12:00:00.000Z"
+      },
+      "timestampUtcMs": "2026-08-14T14:36:42.000Z"
+    }
+  },
+  {
+    "index": 10,
+    "hash": "Dzx3gZxRWKijZNYHmLJu08Hgcm0=",
+    "timestampUtcMs": "2026-08-14T14:36:42.000Z",
+    "action": {
+      "type": "SUBMIT_FOR_REVIEW",
+      "input": {
+        "id": "c33e14a2-6faf-4c58-89b8-b38008b07532",
+        "actor": "claude",
+        "comment": "Knowledge registered against powerhouse v6.2.2-dev.47",
+        "timestamp": "2026-08-14T12:00:00.000Z"
+      },
+      "timestampUtcMs": "2026-08-14T14:36:42.000Z"
+    }
+  },
+  {
+    "index": 11,
+    "hash": "38kUeEj0GYtnfmG8KxIt5mFABWU=",
+    "timestampUtcMs": "2026-08-14T14:36:42.000Z",
+    "action": {
+      "type": "APPROVE_NOTE",
+      "input": {
+        "id": "a8c1412a-6b9e-4658-964b-f0a70ac9f539",
+        "actor": "liberuum",
+        "comment": "Canonical as of powerhouse v6.2.2-dev.47",
+        "timestamp": "2026-08-14T12:00:00.000Z"
+      },
+      "timestampUtcMs": "2026-08-14T14:36:42.000Z"
+    }
+  },
+  {
+    "index": 12,
+    "hash": "HoYyUcihPdZccxDaCh4nsOLs59A=",
+    "timestampUtcMs": "2026-09-02T21:40:50.298Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "filePath",
+        "value": "apps/academy/docs/academy/05-Lookup/00-Cookbook.md",
+        "updatedAt": "2026-09-02T21:40:50.298Z"
+      },
+      "timestampUtcMs": "2026-09-02T21:40:50.298Z"
+    }
+  },
+  {
+    "index": 13,
+    "hash": "ZB1z7KWVHwJSRtdV7VfbmZGb7lE=",
+    "timestampUtcMs": "2026-09-02T22:26:42.618Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "version",
+        "value": "v6.2.2-dev.74",
+        "updatedAt": "2026-09-02T22:26:42.618Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:26:42.618Z"
+    }
+  }
+]

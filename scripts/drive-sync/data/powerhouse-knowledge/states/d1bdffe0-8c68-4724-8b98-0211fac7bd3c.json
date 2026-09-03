@@ -1,0 +1,94 @@
+{
+  "links": [
+    {
+      "id": "lnk-5d09d7dd-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "5d09d7dd-0503-4751-9d0c-d9f188a65841",
+      "targetTitle": "SYSTOPIA GmbH \u2014 CiviCRM-class membership tooling"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "A CiviCRM post-hook on membership state change yields a lifecycle record that survives an upgrade",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "c3fb375c-bc4c-4a93-8396-e3afab0d27ca",
+      "name": "leads",
+      "topicDocumentId": null
+    },
+    {
+      "id": "128b8a06-fb0b-4dec-930d-5c72344ed2df",
+      "name": "civicrm",
+      "topicDocumentId": null
+    },
+    {
+      "id": "c9a874fe-8c10-4961-b485-b55c27e753fe",
+      "name": "demo-design",
+      "topicDocumentId": null
+    },
+    {
+      "id": "9ee5eeea-5c1c-4002-8d7f-466e3eed39ed",
+      "name": "audit-trail",
+      "topicDocumentId": null
+    },
+    {
+      "id": "4a428738-e009-497a-ada0-663efc93bdaa",
+      "name": "membership",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "The integration is a CiviCRM post-hook dispatching typed operations on membership state change. Membership transitions are the right unit because they are the events an association is actually asked about: when someone joined, when their status changed, and who changed it.\n\nTwo acceptance criteria are recorded, and both are external to CiviCRM's own guarantees. The record must survive a CiviCRM upgrade, and it must satisfy an association's audit. The second is a stronger test than a technical one \u2014 the record has to be legible to an auditor, not merely present in a table.\n\nThe single lead is SYSTOPIA GmbH in Bonn, marked \"1 \u00b7 start here\". Its tool column reads \"CiviCRM-class membership tooling\" rather than CiviCRM outright, so the specific product is characterised by category rather than confirmed; the hook name in the demo text presumes CiviCRM itself, and that presumption is worth checking before the demo is scoped.\n\n---\n\n## Leads sharing this finding (1)\n\n**1 \u00b7 start here**\n- SYSTOPIA GmbH (DE Bonn) \u2014 Fabian Schuttenberg + Martin Peth, Gesch\u00e4ftsf\u00fchrer \u00b7 info@systopia.de \u00b7 https://systopia.de\n\nVerbatim research text this claim was extracted from:\n\n> CiviCRM post-hook dispatching typed operations on membership state change \u2014 a lifecycle record that survives a CiviCRM upgrade and satisfies an association's audit.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "INTEGRATION",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "knowledge-agent",
+    "createdAt": "2026-08-19T11:31:51.615403Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-19T11:31:53.097178Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Typed operations on membership transitions build the record an association's audit asks for, and the demo's acceptance test is that it outlives a CiviCRM upgrade.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "8fa8279e-e885-4c2b-af79-2302457bb284",
+      "actor": "knowledge-agent",
+      "comment": "Extracted from lead research; claim checked against the source record.",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-19T11:31:52.955921Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "bf87b1e7-27b0-4c54-8934-541bc0bbcd86",
+      "actor": "liberuum",
+      "comment": "Approved: lead corpus extraction.",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-19T11:31:53.097178Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

@@ -1,0 +1,466 @@
+[
+  {
+    "index": 0,
+    "hash": "",
+    "timestampUtcMs": "2026-08-14T12:16:51.543Z",
+    "action": {
+      "type": "CREATE_DOCUMENT",
+      "input": {
+        "meta": {},
+        "name": "reducers-are-pure-functions-with-immer",
+        "slug": "",
+        "model": "bai/knowledge-note",
+        "branch": "main",
+        "signing": {
+          "nonce": "",
+          "publicKey": {},
+          "signature": "db144dcd-42c6-467b-a108-ddebd1d421d6",
+          "documentType": "bai/knowledge-note",
+          "createdAtUtcIso": "2026-08-14T12:16:51.543Z"
+        },
+        "version": 0,
+        "documentId": "db144dcd-42c6-467b-a108-ddebd1d421d6",
+        "protocolVersions": {
+          "base-reducer": 2
+        }
+      },
+      "timestampUtcMs": "2026-08-14T12:16:51.543Z"
+    }
+  },
+  {
+    "index": 0,
+    "hash": "S4u8oqRUPfYfaMhvISOprB2EUHw=",
+    "timestampUtcMs": "2026-08-14T12:35:46.000Z",
+    "action": {
+      "type": "SET_TITLE",
+      "input": {
+        "title": "Reducers must be pure functions, but Powerhouse uses Mutative to allow mutation-style syntax",
+        "updatedAt": "2026-08-14T12:35:46.000Z"
+      },
+      "timestampUtcMs": "2026-08-14T12:35:46.000Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "",
+    "timestampUtcMs": "2026-08-14T12:16:51.543Z",
+    "action": {
+      "type": "UPGRADE_DOCUMENT",
+      "input": {
+        "model": "bai/knowledge-note",
+        "toVersion": 1,
+        "documentId": "db144dcd-42c6-467b-a108-ddebd1d421d6",
+        "fromVersion": 0,
+        "initialState": {
+          "auth": {
+            "grants": [],
+            "version": 0
+          },
+          "local": {
+            "lastViewedAt": null,
+            "personalTags": []
+          },
+          "global": {
+            "links": [],
+            "model": null,
+            "scope": null,
+            "title": null,
+            "editor": null,
+            "inputs": [],
+            "models": [],
+            "status": "DRAFT",
+            "topics": [],
+            "content": null,
+            "context": null,
+            "modelId": null,
+            "modules": [],
+            "outputs": [],
+            "version": null,
+            "computes": null,
+            "filePath": null,
+            "noteType": null,
+            "severity": null,
+            "hooksUsed": [],
+            "rootCause": null,
+            "confidence": null,
+            "consumedBy": [],
+            "provenance": null,
+            "sourceType": null,
+            "targetType": null,
+            "cardinality": null,
+            "description": null,
+            "alternatives": [],
+            "consequences": [],
+            "errorMessage": null,
+            "relationType": null,
+            "correctPattern": null,
+            "decisionStatus": null,
+            "dispatchTargets": [],
+            "lifecycleEvents": []
+          },
+          "document": {
+            "hash": {
+              "encoding": "base64",
+              "algorithm": "sha1"
+            },
+            "version": 1
+          }
+        }
+      },
+      "timestampUtcMs": "2026-08-14T12:16:51.543Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "c8Wz04/DJBOYF1J/BC/obPtqOlg=",
+    "timestampUtcMs": "2026-08-14T12:35:46.000Z",
+    "action": {
+      "type": "SET_DESCRIPTION",
+      "input": {
+        "updatedAt": "2026-08-14T12:35:46.000Z",
+        "description": "Reducers follow (state, action) => newState pattern. Mutative lets you write mutable-looking code that produces immutable updates."
+      },
+      "timestampUtcMs": "2026-08-14T12:35:46.000Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "",
+    "timestampUtcMs": "2026-08-14T12:38:28.554Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "db144dcd-42c6-467b-a108-ddebd1d421d6",
+        "targetId": "33ce2d34-4809-4d42-b3d5-5409b726a5df",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-08-14T12:38:28.554Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "Fl//f2YYgQJ+InJm+MQNDa2WXKw=",
+    "timestampUtcMs": "2026-08-14T12:35:46.000Z",
+    "action": {
+      "type": "SET_NOTE_TYPE",
+      "input": {
+        "noteType": "PATTERN",
+        "updatedAt": "2026-08-14T12:35:46.000Z"
+      },
+      "timestampUtcMs": "2026-08-14T12:35:46.000Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "",
+    "timestampUtcMs": "2026-08-14T12:38:28.643Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "db144dcd-42c6-467b-a108-ddebd1d421d6",
+        "targetId": "e2b3e87f-3df0-4940-9352-b648ed4e527d",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-08-14T12:38:28.643Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "UyofitoGr+uzM6RYj04uBFHjbzI=",
+    "timestampUtcMs": "2026-08-14T12:35:46.000Z",
+    "action": {
+      "type": "SET_CONTENT",
+      "input": {
+        "content": "Reducers are the core logic units implementing state transitions. They follow the pattern `(currentState, action) => newState` and must obey strict rules:\n\n- **Deterministic**: Same state + action always produces the same result\n- **No side effects**: No API calls, no `Math.random()`, no `Date.now()`, no DOM manipulation\n- **Immutable**: Never mutate the input state directly\n\nHowever, Powerhouse wraps reducers in **[Mutative](https://mutative.js.org/)** under the hood. This means you can write code that *looks* like direct mutation (e.g., `state.items.push(...)`) but Mutative ensures it produces an immutable update. This gives readable code while maintaining the immutability guarantees required for event sourcing.\n\nPurity ensures replaying the same sequence of events always yields the same final state. Immutability ensures each event defines a discrete state transition for the audit trail.\n\n_Corrected 2026-08-13 against Powerhouse v6.2.2-dev.45._",
+        "updatedAt": "2026-08-14T12:35:46.000Z"
+      },
+      "timestampUtcMs": "2026-08-14T12:35:46.000Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "",
+    "timestampUtcMs": "2026-08-14T12:38:28.739Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "db144dcd-42c6-467b-a108-ddebd1d421d6",
+        "targetId": "acdecc44-5773-48e3-a529-5ffb112a7bdf",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-08-14T12:38:28.739Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "P+Q21zRlO+8OrurLR2pMpLdedd0=",
+    "timestampUtcMs": "2026-08-14T12:35:46.000Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "version",
+        "value": "v6.2.2-dev.44",
+        "updatedAt": "2026-08-14T12:35:46.000Z"
+      },
+      "timestampUtcMs": "2026-08-14T12:35:46.000Z"
+    }
+  },
+  {
+    "index": 5,
+    "hash": "",
+    "timestampUtcMs": "2026-08-14T12:38:28.837Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "db144dcd-42c6-467b-a108-ddebd1d421d6",
+        "targetId": "fd591b43-6f5b-4f26-9c20-ac702d5d1f47",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-08-14T12:38:28.837Z"
+    }
+  },
+  {
+    "index": 5,
+    "hash": "MHm6InhZrOdWA5OY0YjnePKSK38=",
+    "timestampUtcMs": "2026-08-14T12:35:46.000Z",
+    "action": {
+      "type": "SET_PROVENANCE",
+      "input": {
+        "author": "knowledge-agent",
+        "createdAt": "2026-04-02T12:00:00.000Z",
+        "sourceOrigin": "DERIVED"
+      },
+      "timestampUtcMs": "2026-08-14T12:35:46.000Z"
+    }
+  },
+  {
+    "index": 6,
+    "hash": "",
+    "timestampUtcMs": "2026-08-14T12:38:28.924Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "db144dcd-42c6-467b-a108-ddebd1d421d6",
+        "targetId": "ffbb3996-d554-4eb8-ac08-e56dafa93cfc",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-08-14T12:38:28.924Z"
+    }
+  },
+  {
+    "index": 6,
+    "hash": "V1okVqpRTCyWCe3x6Kwyrdh0t9o=",
+    "timestampUtcMs": "2026-08-14T12:35:46.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "e25d25b7-96c4-4392-87be-386bf129734f",
+        "name": "reducers",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-08-14T12:35:46.000Z"
+    }
+  },
+  {
+    "index": 7,
+    "hash": "",
+    "timestampUtcMs": "2026-08-14T12:38:29.006Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "db144dcd-42c6-467b-a108-ddebd1d421d6",
+        "targetId": "95793e37-4eed-4322-a023-eef3c79b9a41",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-08-14T12:38:29.006Z"
+    }
+  },
+  {
+    "index": 7,
+    "hash": "dz+W6nF3fUyJSexSbS6TOYiE2o0=",
+    "timestampUtcMs": "2026-08-14T12:35:46.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "c6d300c7-69eb-448f-864c-a88a605c1dcb",
+        "name": "immutability",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-08-14T12:35:46.000Z"
+    }
+  },
+  {
+    "index": 8,
+    "hash": "",
+    "timestampUtcMs": "2026-08-14T12:38:29.100Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "db144dcd-42c6-467b-a108-ddebd1d421d6",
+        "targetId": "9d9aef7a-1b68-4f2b-a2ad-c54a48e55d20",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-08-14T12:38:29.100Z"
+    }
+  },
+  {
+    "index": 8,
+    "hash": "M4diIhtlqG5BDUQuy/qjFcd2emU=",
+    "timestampUtcMs": "2026-08-14T12:35:46.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "15fdf7bf-0a84-4b62-ac27-5c6f249eaec8",
+        "name": "pure-functions",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-08-14T12:35:46.000Z"
+    }
+  },
+  {
+    "index": 9,
+    "hash": "",
+    "timestampUtcMs": "2026-08-14T12:38:29.201Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "db144dcd-42c6-467b-a108-ddebd1d421d6",
+        "targetId": "11da9c61-a825-4c70-a57c-f80b10f569c7",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-08-14T12:38:29.201Z"
+    }
+  },
+  {
+    "index": 9,
+    "hash": "G2/LMaJm11RkbuC/mWBVlv0QFec=",
+    "timestampUtcMs": "2026-08-14T12:35:46.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "7c7b8056-0726-4b53-8a00-5cdfc9888d33",
+        "name": "mutative",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-08-14T12:35:46.000Z"
+    }
+  },
+  {
+    "index": 10,
+    "hash": "",
+    "timestampUtcMs": "2026-08-14T12:38:29.298Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "db144dcd-42c6-467b-a108-ddebd1d421d6",
+        "targetId": "c1308a81-1a3d-436b-aa44-49f7892d8d9d",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-08-14T12:38:29.298Z"
+    }
+  },
+  {
+    "index": 10,
+    "hash": "aWd5FA1Ke0zlc+5TEpP21+9q/rs=",
+    "timestampUtcMs": "2026-08-14T14:37:39.000Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "version",
+        "value": "v6.2.2-dev.47",
+        "updatedAt": "2026-08-14T12:00:00.000Z"
+      },
+      "timestampUtcMs": "2026-08-14T14:37:39.000Z"
+    }
+  },
+  {
+    "index": 11,
+    "hash": "",
+    "timestampUtcMs": "2026-08-14T12:38:29.398Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "db144dcd-42c6-467b-a108-ddebd1d421d6",
+        "targetId": "e09876c1-7be7-4958-a147-6032c84d9bb8",
+        "relationshipType": "BUILDS_ON"
+      },
+      "timestampUtcMs": "2026-08-14T12:38:29.398Z"
+    }
+  },
+  {
+    "index": 11,
+    "hash": "64Ip2sE6EwLOjlReQY38PlZi3bw=",
+    "timestampUtcMs": "2026-08-14T14:37:39.000Z",
+    "action": {
+      "type": "SUBMIT_FOR_REVIEW",
+      "input": {
+        "id": "d183a922-316e-4d6e-8942-08faeaee9d8f",
+        "actor": "claude",
+        "comment": "Knowledge registered against powerhouse v6.2.2-dev.47",
+        "timestamp": "2026-08-14T12:00:00.000Z"
+      },
+      "timestampUtcMs": "2026-08-14T14:37:39.000Z"
+    }
+  },
+  {
+    "index": 12,
+    "hash": "",
+    "timestampUtcMs": "2026-09-02T21:33:39.200Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "metadata": {
+          "reason": "Backing page found by content match in the v6.2.2-dev.74 source backfill \u2014 identifiers mutable, newstate from the claim appear in this page (text identical at v6.2.2-dev.47 and v6.2.2-dev.74); attribution, not the original extraction record",
+          "confidence": "grounded"
+        },
+        "sourceId": "db144dcd-42c6-467b-a108-ddebd1d421d6",
+        "targetId": "b13777ca-a7c0-46a9-a700-41e334e06719",
+        "relationshipType": "DERIVED_FROM"
+      },
+      "timestampUtcMs": "2026-09-02T21:33:39.200Z"
+    }
+  },
+  {
+    "index": 12,
+    "hash": "H5+oK2BdwLQiqucJNoF5BSUEdEo=",
+    "timestampUtcMs": "2026-08-14T14:37:39.000Z",
+    "action": {
+      "type": "APPROVE_NOTE",
+      "input": {
+        "id": "2711b231-267f-42d4-b9e8-1321e2f71c6e",
+        "actor": "liberuum",
+        "comment": "Canonical as of powerhouse v6.2.2-dev.47",
+        "timestamp": "2026-08-14T12:00:00.000Z"
+      },
+      "timestampUtcMs": "2026-08-14T14:37:39.000Z"
+    }
+  },
+  {
+    "index": 13,
+    "hash": "e/H62o0UIUvXd917D2ovAnPlZkU=",
+    "timestampUtcMs": "2026-09-02T21:33:39.866Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "filePath",
+        "value": "apps/academy/docs/academy/03-Build/02-DocumentModelCreation/05-ImplementDocumentReducers.md",
+        "updatedAt": "2026-09-02T21:33:39.866Z"
+      },
+      "timestampUtcMs": "2026-09-02T21:33:39.866Z"
+    }
+  },
+  {
+    "index": 14,
+    "hash": "Q3JsgyVXUCxUOb8vze9WRA3mc5E=",
+    "timestampUtcMs": "2026-09-02T21:33:39.866Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "version",
+        "value": "v6.2.2-dev.74",
+        "updatedAt": "2026-09-02T21:33:39.866Z"
+      },
+      "timestampUtcMs": "2026-09-02T21:33:39.866Z"
+    }
+  }
+]

@@ -1,0 +1,119 @@
+{
+  "links": [
+    {
+      "id": "lnk-ce88373e-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "ce88373e-5007-4dac-b8a6-7665528d2bb7",
+      "targetTitle": "style-editors-with-tailwind-classes-or-scoped-style-tags"
+    },
+    {
+      "id": "lnk-c7c4d4a6-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "c7c4d4a6-bec7-456d-9d58-fbf8557bd2b1",
+      "targetTitle": "usephtoast-replaces-direct-toast-library-imports-in-editors"
+    },
+    {
+      "id": "lnk-9f62d615-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "9f62d615-9bb6-4683-98d8-5a20316099df",
+      "targetTitle": "model-editor-wiring"
+    },
+    {
+      "id": "lnk-787398c0-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "787398c0-fa8c-4e79-bd9f-71b60d57f482",
+      "targetTitle": "document-model-versioning-system"
+    },
+    {
+      "id": "lnk-075115a4-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "075115a4-d269-4515-91df-5b40568ca4b4",
+      "targetTitle": "document-model-driven-architecture-rad"
+    },
+    {
+      "id": "lnk-00ddfd71-bui",
+      "linkType": "BUILDS_ON",
+      "targetDocumentId": "00ddfd71-c020-4f53-b64b-b8ff67ee7070",
+      "targetTitle": "editors-use-component-based-architecture"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "editor components should be modular with separate files",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "e7349d43-31ef-410e-8ea7-c9dcedbd7d69",
+      "name": "editor patterns",
+      "topicDocumentId": null
+    },
+    {
+      "id": "85590da7-7c1d-4b6e-99b8-2499e304f2eb",
+      "name": "component architecture",
+      "topicDocumentId": null
+    },
+    {
+      "id": "73732e8c-d94b-4749-97c9-782fbc72188c",
+      "name": "TypeScript",
+      "topicDocumentId": null
+    },
+    {
+      "id": "cb7df5d9-f7c8-4854-8e7b-64a22912c64d",
+      "name": "modularity",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "# editor components should be modular with separate files\n\nWhen building document editors:\n\n- Create modular components for UI elements in separate files for maintainability\n- Separate business logic (dispatch, data transformation) from presentation (rendering, layout)\n- Use TypeScript strictly \u2014 avoid `any` and type casting\n- Consider components from `@powerhousedao/design-system` and `@powerhousedao/document-engineering`\n\nThis modularity makes editors easier to test, maintain, and update when the underlying document model evolves.\n\n---\n\nTopics:\n- [[editor patterns]]",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "PATTERN",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "knowledge-agent",
+    "createdAt": "2026-04-03T14:02:24.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-09-03T09:59:20.157Z",
+    "sourceOrigin": "IMPORT"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Keep dispatch and data transformation out of rendering, hold TypeScript strict (no any, no casts), and prefer design-system or document-engineering primitives over hand-rolled UI.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "85d75bf3-2d66-40ec-be70-0fa0156ec068",
+      "actor": "claude",
+      "comment": "Knowledge registered against powerhouse v6.2.2-dev.47",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-14T12:00:00.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "8adbcd85-1703-47cc-a575-a8b112c25297",
+      "actor": "liberuum",
+      "comment": "Canonical as of powerhouse v6.2.2-dev.47",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-14T12:00:00.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

@@ -1,0 +1,147 @@
+{
+  "links": [
+    {
+      "id": "lnk-96758a5d-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "96758a5d-09e0-47a6-8c91-f4a1a7fd6b04",
+      "targetTitle": "auth-policy-in-scope",
+      "reason": "The in-reactor auth scope is the second system; this note is the map that keeps the two vocabularies apart",
+      "confidence": "grounded"
+    },
+    {
+      "id": "lnk-5ed570c9-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "5ed570c9-1ad0-4d0d-b6c6-d33a61bddb96",
+      "targetTitle": "auth-remaining-stages",
+      "reason": "Stages 8\u201310 are the plan for collapsing the two systems into one",
+      "confidence": "grounded"
+    },
+    {
+      "id": "lnk-6fa0a6ea-bui",
+      "linkType": "BUILDS_ON",
+      "targetDocumentId": "6fa0a6ea-a295-4da9-85da-1e8ba852c91a",
+      "targetTitle": "authorization-uses-layered-model",
+      "reason": "The layered host model (ADMINS bypass, protection toggle, READ/WRITE/ADMIN grants) is the first of the two systems; this note places it next to the second",
+      "confidence": "grounded"
+    },
+    {
+      "id": "lnk-f831cc20-bui",
+      "linkType": "BUILDS_ON",
+      "targetDocumentId": "f831cc20-a6aa-49ab-91bc-e8616da20fd9",
+      "targetTitle": "four-separate-gates-on-one-operation",
+      "reason": "Authorization was already one of four separate gates on an operation; it now itself splits into a host gate and a replicated policy gate",
+      "confidence": "grounded"
+    },
+    {
+      "id": "lnk-6f6081e9-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "6f6081e9-471b-4d75-90a3-1ff3eba8969c",
+      "targetTitle": "Academy \u203a Build \u203a BuildingUserExperiences \u203a Authorization \u203a Reactor API Authorization",
+      "reason": "Extracted from apps/academy/docs/academy/03-Build/03-BuildingUserExperiences/07-Authorization/04-Authorization.md at v6.2.2-dev.74 \u2014 info box 'Two authorization systems, and this is one of them'",
+      "confidence": "grounded"
+    },
+    {
+      "id": "lnk-500d9a33-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "500d9a33-45a5-45e4-8df1-e9eee8d3f11a",
+      "targetTitle": "Academy \u203a Build \u203a BuildingUserExperiences \u203a Authorization \u203a Document Permission System",
+      "reason": "Extracted from apps/academy/docs/academy/03-Build/03-BuildingUserExperiences/07-Authorization/02-DocumentPermissions.md at v6.2.2-dev.74 \u2014 same info box; 'Both call their unit a grant, and they are not the same thing'",
+      "confidence": "grounded"
+    },
+    {
+      "id": "lnk-17dc46b0-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "17dc46b0-f733-467c-99d7-ae8fbe0fb0e4",
+      "targetTitle": "Academy \u203a Reference \u203a Reactor \u203a Authorization",
+      "reason": "Extracted from apps/academy/docs/academy/04-Reference/01-Reactor/11-Authorization.md at v6.2.2-dev.74 \u2014 intro: separate from host-side permission tables",
+      "confidence": "grounded"
+    },
+    {
+      "id": "lnk-223bb12a-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "223bb12a-be7f-4209-9ab2-f04f7bb2b6c8",
+      "targetTitle": "Spec \u203a Spec \u2014 Attribute-based access control in the auth scope with DCB",
+      "reason": "Extracted from docs/specs/auth-scope.md at v6.2.2-dev.74 \u2014 Stages 8\u201310; node-local administrators not translated",
+      "confidence": "grounded"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Powerhouse runs two authorization systems that both call their unit a grant: the host's permission tables at the GraphQL boundary, and the document's own auth scope inside the reactor",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "baeb0ce3-8f58-4a0b-959b-8ccc10689ca9",
+      "name": "authorization",
+      "topicDocumentId": null
+    },
+    {
+      "id": "c1f4109a-6dab-407c-93af-4fa54326eeea",
+      "name": "auth-scope",
+      "topicDocumentId": null
+    },
+    {
+      "id": "bd1b0434-a89a-4099-a8d9-5dc4fe3f8fbc",
+      "name": "permissions",
+      "topicDocumentId": null
+    },
+    {
+      "id": "9971bc11-94a4-4350-81d2-747bfbd0bf57",
+      "name": "architecture",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "Two mechanisms decide authorization, they answer different questions, and neither replaces the other. The v6.2.2-dev.74 Academy adds the same callout to both permission pages to keep them apart:\n\n| | Host-side permission tables | Document auth scope |\n| --- | --- | --- |\n| Where | Database tables owned by the reactor host (Switchboard) | The document's `auth` scope, replicated with it |\n| Unit | A READ / WRITE / ADMIN level (plus operation rows) | A grant: principal \u00d7 capability \u00d7 effect |\n| Enforced | At the GraphQL boundary and when serving sync | Inside the reactor at admission, replay and read |\n| Status | What a deployment runs today | Staged behind feature flags |\n| Question | Which addresses does this host let near a drive or document? | Who may do what to this document, everywhere it replicates? |\n\nA GraphQL write passes the tables **first**, and then the document's own policy where enforcement is enabled. The tables cannot be replicated (they are private to one host), which is exactly why the reactor-level rule exists: a decision made from host-local data cannot be verified by a replica, so it can gate a request but never change how an operation is evaluated inside the reactor.\n\nThe spec's stages 8\u201310 are the planned convergence: sync serving moves onto the policy (8), the tables are expressed as grants (9), and the host stops consulting them on the read path (10). Until then `authEnforcement` cannot be turned on for a fleet that relies on the tables, because every existing document's policy is uninitialized and therefore open. One thing does not port: node-local administrators, which the reactor has no concept of \u2014 an administrator who could read past a document's policy at the host while the reactor denies the same read is an inconsistency, not a feature.\n\n_Source: apps/academy/docs/academy/03-Build/03-BuildingUserExperiences/07-Authorization/04-Authorization.md (Powerhouse v6.2.2-dev.74)._\n_Source: apps/academy/docs/academy/03-Build/03-BuildingUserExperiences/07-Authorization/02-DocumentPermissions.md (Powerhouse v6.2.2-dev.74)._\n_Source: apps/academy/docs/academy/04-Reference/01-Reactor/11-Authorization.md (Powerhouse v6.2.2-dev.74)._\n_Source: docs/specs/auth-scope.md (Powerhouse v6.2.2-dev.74)._\n\n## Provenance\n- `apps/academy/docs/academy/03-Build/03-BuildingUserExperiences/07-Authorization/04-Authorization.md` \u2014 info box 'Two authorization systems, and this is one of them'\n- `apps/academy/docs/academy/03-Build/03-BuildingUserExperiences/07-Authorization/02-DocumentPermissions.md` \u2014 same info box; 'Both call their unit a grant, and they are not the same thing'\n- `apps/academy/docs/academy/04-Reference/01-Reactor/11-Authorization.md` \u2014 intro: separate from host-side permission tables\n- `docs/specs/auth-scope.md` \u2014 Stages 8\u201310; node-local administrators not translated\n\n_Recorded from the Powerhouse repository at **v6.2.2-dev.74** during the v6.2.2-dev.74 source sync._",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": "v6.2.2-dev.74",
+  "computes": null,
+  "filePath": "apps/academy/docs/academy/03-Build/03-BuildingUserExperiences/07-Authorization/04-Authorization.md",
+  "noteType": "CONCEPT",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": "grounded",
+  "consumedBy": [],
+  "provenance": {
+    "author": "knowledge-agent",
+    "createdAt": "2026-09-02T22:11:25.966Z",
+    "sessionId": null,
+    "updatedAt": "2026-09-02T22:20:39.738Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "A permission is a READ/WRITE/ADMIN row in a host database, enforced when serving GraphQL and sync; a grant is an operation folded into the document. A write passes the tables first, then the policy.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "f3d9111b-0036-4725-87e8-6b6c1dff1151",
+      "actor": "knowledge-agent",
+      "comment": "extracted from the Powerhouse repository at v6.2.2-dev.74",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-09-02T22:11:26.469Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "3fe3e0c5-a2b5-4f0b-9688-f50d76a05023",
+      "actor": "liberuum",
+      "comment": "claim checked against the cited repository file at the pinned tag",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-09-02T22:11:26.963Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

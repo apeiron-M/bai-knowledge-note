@@ -1,0 +1,276 @@
+[
+  {
+    "index": 0,
+    "hash": "",
+    "timestampUtcMs": "2026-08-19T11:32:12.328Z",
+    "action": {
+      "type": "CREATE_DOCUMENT",
+      "input": {
+        "meta": {},
+        "name": "A phase4 AS4 receipt handler gives the acceptance decision a record independent of the AS4",
+        "slug": "",
+        "model": "bai/knowledge-note",
+        "branch": "main",
+        "signing": {
+          "nonce": "",
+          "publicKey": {},
+          "signature": "6ce77462-3c16-4e16-955f-f0709b2f23cb",
+          "documentType": "bai/knowledge-note",
+          "createdAtUtcIso": "2026-08-19T11:32:12.327Z"
+        },
+        "version": 0,
+        "documentId": "6ce77462-3c16-4e16-955f-f0709b2f23cb",
+        "protocolVersions": {
+          "base-reducer": 2
+        }
+      },
+      "timestampUtcMs": "2026-08-19T11:32:12.328Z"
+    }
+  },
+  {
+    "index": 0,
+    "hash": "FmYuXqzTCOQyCAcUwGplzN+na7k=",
+    "timestampUtcMs": "2026-08-19T11:32:12.123Z",
+    "action": {
+      "type": "SET_TITLE",
+      "input": {
+        "title": "A phase4 AS4 receipt handler gives the acceptance decision a record independent of the AS4 exchange",
+        "updatedAt": "2026-08-19T11:32:12.122991Z"
+      },
+      "timestampUtcMs": "2026-08-19T11:32:12.123028Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "",
+    "timestampUtcMs": "2026-08-19T11:32:12.328Z",
+    "action": {
+      "type": "UPGRADE_DOCUMENT",
+      "input": {
+        "model": "bai/knowledge-note",
+        "toVersion": 1,
+        "documentId": "6ce77462-3c16-4e16-955f-f0709b2f23cb",
+        "fromVersion": 0,
+        "initialState": {
+          "auth": {
+            "grants": [],
+            "version": 0
+          },
+          "local": {
+            "lastViewedAt": null,
+            "personalTags": []
+          },
+          "global": {
+            "links": [],
+            "model": null,
+            "scope": null,
+            "title": null,
+            "editor": null,
+            "inputs": [],
+            "models": [],
+            "status": "DRAFT",
+            "topics": [],
+            "content": null,
+            "context": null,
+            "modelId": null,
+            "modules": [],
+            "outputs": [],
+            "version": null,
+            "computes": null,
+            "filePath": null,
+            "noteType": null,
+            "severity": null,
+            "hooksUsed": [],
+            "rootCause": null,
+            "confidence": null,
+            "consumedBy": [],
+            "provenance": null,
+            "sourceType": null,
+            "targetType": null,
+            "cardinality": null,
+            "description": null,
+            "alternatives": [],
+            "consequences": [],
+            "errorMessage": null,
+            "relationType": null,
+            "correctPattern": null,
+            "decisionStatus": null,
+            "dispatchTargets": [],
+            "lifecycleEvents": []
+          },
+          "document": {
+            "hash": {
+              "encoding": "base64",
+              "algorithm": "sha1"
+            },
+            "version": 1
+          }
+        }
+      },
+      "timestampUtcMs": "2026-08-19T11:32:12.328Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "7/8yEXSLegx6yPiDD3TNJL5Uzk4=",
+    "timestampUtcMs": "2026-08-19T11:32:12.123Z",
+    "action": {
+      "type": "SET_DESCRIPTION",
+      "input": {
+        "updatedAt": "2026-08-19T11:32:12.123032Z",
+        "description": "The handler dispatches a typed RECEIVE plus ACCEPT operation, so acceptance is recorded append-only rather than living only inside the transport exchange."
+      },
+      "timestampUtcMs": "2026-08-19T11:32:12.123039Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "",
+    "timestampUtcMs": "2026-08-19T11:32:14.417Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "6ce77462-3c16-4e16-955f-f0709b2f23cb",
+        "targetId": "a1ec8ce3-fa6d-469f-8809-4d1123d3760a",
+        "relationshipType": "DERIVED_FROM"
+      },
+      "timestampUtcMs": "2026-08-19T11:32:14.417Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "TShB/VK39ARQzdpq4D8QKGNTbqM=",
+    "timestampUtcMs": "2026-08-19T11:32:12.123Z",
+    "action": {
+      "type": "SET_NOTE_TYPE",
+      "input": {
+        "noteType": "INTEGRATION",
+        "updatedAt": "2026-08-19T11:32:12.123041Z"
+      },
+      "timestampUtcMs": "2026-08-19T11:32:12.123045Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "aaxf3NOYWsm0AzFVR0xuDeIVqg8=",
+    "timestampUtcMs": "2026-08-19T11:32:12.123Z",
+    "action": {
+      "type": "SET_CONTENT",
+      "input": {
+        "content": "The integration hangs off a phase4 AS4 receipt handler, dispatching a typed RECEIVE plus ACCEPT operation. Two operations rather than one is the modelling decision worth noticing: receiving a document and accepting it are separate events, and collapsing them loses the case where something arrives and is not accepted.\n\nThe stated goal is that the acceptance decision has an append-only record independent of the AS4 exchange. Transport-level machinery establishes that a message was delivered; it does not establish that the receiving organisation took it on. Separating the two puts the business decision outside the protocol layer that carried it.\n\nThe single lead is Helger IT Consulting GmbH in Vienna, marked \"2 \u00b7 next\", with Peppol as its tool. The receive-versus-accept split is the same distinction the ZUGFeRD group draws between format and approval, arriving from the transport side rather than the document side \u2014 two independent leads in the e-invoicing space pointing at the same missing layer.\n\n---\n\n## Leads sharing this finding (1)\n\n**2 \u00b7 next**\n- Helger IT Consulting GmbH (AT Vienna) \u2014 Philip Helger \u00b7 office@helger.com \u00b7 https://helger.com\n\nVerbatim research text this claim was extracted from:\n\n> phase4 AS4 receipt handler dispatching a typed RECEIVE + ACCEPT operation, so the acceptance decision has an append-only record independent of the AS4 exchange.",
+        "updatedAt": "2026-08-19T11:32:12.123047Z"
+      },
+      "timestampUtcMs": "2026-08-19T11:32:12.123052Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "jbHOrJfkX/xMhy4O10GNdLdhKcU=",
+    "timestampUtcMs": "2026-08-19T11:32:12.123Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "1e2214f6-eb3f-4675-8940-767374bbc380",
+        "name": "leads"
+      },
+      "timestampUtcMs": "2026-08-19T11:32:12.123060Z"
+    }
+  },
+  {
+    "index": 5,
+    "hash": "uIjfKeWIygPmXwNfHAOTG04kNQQ=",
+    "timestampUtcMs": "2026-08-19T11:32:12.123Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "60492092-9cab-49a5-994a-2e836c7c414f",
+        "name": "peppol"
+      },
+      "timestampUtcMs": "2026-08-19T11:32:12.123068Z"
+    }
+  },
+  {
+    "index": 6,
+    "hash": "kpc2uebfoSnXbdEhM6t9HxgG584=",
+    "timestampUtcMs": "2026-08-19T11:32:12.123Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "ca1f8838-e0d6-4f9c-9fe3-58acca12f556",
+        "name": "e-invoicing"
+      },
+      "timestampUtcMs": "2026-08-19T11:32:12.123076Z"
+    }
+  },
+  {
+    "index": 7,
+    "hash": "lJp45GQYWeJ/lTG0UlSFN/J2rIA=",
+    "timestampUtcMs": "2026-08-19T11:32:12.123Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "0f5d3aaa-97f3-429f-b344-9c811dab65fc",
+        "name": "demo-design"
+      },
+      "timestampUtcMs": "2026-08-19T11:32:12.123083Z"
+    }
+  },
+  {
+    "index": 8,
+    "hash": "cZDH5XYMyZaXWpNatzMDcAidt3I=",
+    "timestampUtcMs": "2026-08-19T11:32:12.123Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "75f9c6f4-dd88-4c16-b48b-5700c46cc4f7",
+        "name": "append-only"
+      },
+      "timestampUtcMs": "2026-08-19T11:32:12.123091Z"
+    }
+  },
+  {
+    "index": 9,
+    "hash": "TTPtPgMmPCCnLRmxWmHH5p0CCzM=",
+    "timestampUtcMs": "2026-08-19T11:32:12.537Z",
+    "action": {
+      "type": "SET_PROVENANCE",
+      "input": {
+        "author": "knowledge-agent",
+        "createdAt": "2026-08-19T11:32:12.537825Z",
+        "sessionId": null,
+        "sourceOrigin": "DERIVED"
+      },
+      "timestampUtcMs": "2026-08-19T11:32:12.537863Z"
+    }
+  },
+  {
+    "index": 10,
+    "hash": "xRXkjjtGOg3bSw1/FY0D2m3eDZw=",
+    "timestampUtcMs": "2026-08-19T11:32:13.796Z",
+    "action": {
+      "type": "SUBMIT_FOR_REVIEW",
+      "input": {
+        "id": "4e351dc8-5d48-456b-9cb6-4611e822cb99",
+        "actor": "knowledge-agent",
+        "comment": "Extracted from lead research; claim checked against the source record.",
+        "timestamp": "2026-08-19T11:32:13.796918Z"
+      },
+      "timestampUtcMs": "2026-08-19T11:32:13.796939Z"
+    }
+  },
+  {
+    "index": 11,
+    "hash": "cAmpOUQe7Z5RJOLQCHZdkfLqhFE=",
+    "timestampUtcMs": "2026-08-19T11:32:13.944Z",
+    "action": {
+      "type": "APPROVE_NOTE",
+      "input": {
+        "id": "bf82b432-9dd7-4879-9cd6-f93b6eb67d85",
+        "actor": "liberuum",
+        "comment": "Approved: lead corpus extraction.",
+        "timestamp": "2026-08-19T11:32:13.944263Z"
+      },
+      "timestampUtcMs": "2026-08-19T11:32:13.944284Z"
+    }
+  }
+]

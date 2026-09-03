@@ -356,7 +356,23 @@ def phase_4_apply_crossrefs(deferred: dict[str, list[dict]]) -> None:
                         "defaulting to RELATES_TO"
                     )
                 try:
-                    gql.add_relationship(doc_id, inp["targetId"], rel_type)
+                    if inp.get("metadata"):
+                        # The native mutation cannot carry metadata; the
+                        # action form can, and the reactor stores it on the
+                        # DocumentRelationship row exactly as the CLI's
+                        # `docs link --reason` does.
+                        gql.mutate_document(doc_id, [{
+                            "type": "ADD_RELATIONSHIP",
+                            "scope": "document",
+                            "input": {
+                                "sourceId": doc_id,
+                                "targetId": inp["targetId"],
+                                "relationshipType": rel_type,
+                                "metadata": inp["metadata"],
+                            },
+                        }])
+                    else:
+                        gql.add_relationship(doc_id, inp["targetId"], rel_type)
                     doc_applied += 1
                 except Exception as e:
                     doc_failed += 1

@@ -1,0 +1,115 @@
+{
+  "links": [
+    {
+      "id": "lnk-3c31ddfa-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "3c31ddfa-8a8a-4cee-8be1-2812015464e8",
+      "targetTitle": "registry-client-sse",
+      "reason": "That client is the browser-side consumer of these endpoints, constructed with this CDN base path",
+      "confidence": "grounded"
+    },
+    {
+      "id": "lnk-0883aaf7-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "0883aaf7-f006-4db6-b677-2a6bf702c1b2",
+      "targetTitle": "registry-publish-notifications",
+      "reason": "Publish notifications are the same registry's second responsibility, delivered over SSE and webhooks",
+      "confidence": "grounded"
+    },
+    {
+      "id": "lnk-e80cffd2-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "e80cffd2-a26e-426d-b722-dc068817ea7c",
+      "targetTitle": "docker-connect-image",
+      "reason": "Connect loads packages in the browser from this registry, which is why the image re-syncs its CSP origin to packageRegistryUrl",
+      "confidence": "grounded"
+    },
+    {
+      "id": "lnk-3759870c-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "3759870c-5df6-4d3f-b21c-61430665b0af",
+      "targetTitle": "Package \u203a registry \u203a README",
+      "reason": "Extracted from packages/registry/README.md at v6.2.2-dev.74 \u2014 intro; API \u203a Packages; CDN (proxying, cache headers, upstream failure)",
+      "confidence": "grounded"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "The package registry is Verdaccio serving double duty as an npm registry and an ESM CDN, transparently proxying and caching upstream tarballs",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "1dbde0c4-96e3-4659-aa76-4509d904e5f8",
+      "name": "registry",
+      "topicDocumentId": null
+    },
+    {
+      "id": "00dadc90-d8b4-449d-bfcd-3d8c5ea45c4b",
+      "name": "packages",
+      "topicDocumentId": null
+    },
+    {
+      "id": "40b80cad-9d81-4b30-b172-2110eec035a8",
+      "name": "cdn",
+      "topicDocumentId": null
+    },
+    {
+      "id": "f0bc27d7-94c6-41f4-b90b-93a080cafb62",
+      "name": "verdaccio",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "`@powerhousedao/registry` is a Verdaccio-based registry that is also a **CDN for package bundles (ESM)**, so a browser or Node process can `import()` a package's built files directly.\n\nThe package API is three endpoints \u2014 `GET /packages` (all discovered packages, filterable with `?documentType=`), `GET /packages/by-document-type?type=\u2026` (package names providing a document type), and `GET /packages/<packageName>` (one package, scoped names supported).\n\nThe CDN endpoint is `GET /-/cdn/<packageName>/<filePath>`. On first request it **fetches and extracts the tarball** from Verdaccio, looking for files in the package root and then `cdn/`, `dist/cdn/` and `dist/`. If the package is not published locally, **Verdaccio transparently proxies** metadata and tarballs from the configured upstream (`--uplink`, default `https://registry.npmjs.org/`), and the CDN extracts that upstream tarball into `cdn-cache/<pkg>/<version>/` exactly as it does a local one \u2014 including for `@powerhousedao/*` packages, where the registry prefers its local copy and falls back upstream.\n\nCaching is keyed on the **shape of the request**, which is the part worth remembering: a version-pinned request (`<pkg>@1.2.3/\u2026`) gets `Cache-Control: public, max-age=31536000, immutable`, while a moving request (a dist-tag like `@dev` or `@latest`, or untagged) gets `public, max-age=60, must-revalidate`. A version-derived weak `ETag` is sent and a matching `If-None-Match` returns `304`. And when the **upstream metadata lookup fails** \u2014 as distinct from a genuine not-found \u2014 the endpoint serves the latest cached version if it has one and otherwise answers `503` rather than a cacheable `404`, so a transient upstream outage cannot poison a cache with a negative result.\n\n## Provenance\n- `packages/registry/README.md` \u2014 intro; API \u203a Packages; CDN (proxying, cache headers, upstream failure)\n\n_Extracted from the Powerhouse repository at **v6.2.2-dev.74**._",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": "v6.2.2-dev.74",
+  "computes": null,
+  "filePath": "packages/registry/README.md",
+  "noteType": "ARCHITECTURE",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "knowledge-agent",
+    "createdAt": "2026-09-03T07:43:33.061Z",
+    "sessionId": null,
+    "updatedAt": "2026-09-03T07:43:34.201Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "GET /-/cdn/<pkg>/<path> extracts a tarball on first request, looking in the package root then cdn/, dist/cdn/ and dist/. An unpublished package is proxied from the uplink and cached exactly like a.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "883567bc-fa87-41bf-9191-79be4821adca",
+      "actor": "knowledge-agent",
+      "comment": "extracted from packages/registry/README.md at v6.2.2-dev.74",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-09-03T07:43:33.570Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "19994772-b701-4299-8f57-251cc34de42b",
+      "actor": "liberuum",
+      "comment": "claim checked against the cited file at the pinned tag",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-09-03T07:43:34.201Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

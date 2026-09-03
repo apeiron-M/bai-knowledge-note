@@ -1,0 +1,111 @@
+{
+  "links": [
+    {
+      "id": "lnk-947c91a2-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "947c91a2-3619-4fb7-a4dc-3680cfedcb25",
+      "targetTitle": "ALYF GmbH \u2014 ERPNext / Frappe"
+    },
+    {
+      "id": "lnk-df60a9ff-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "df60a9ff-990b-4d92-bdce-cb78618d03a1",
+      "targetTitle": "K&K Software AG \u2014 ERPNext / Frappe"
+    },
+    {
+      "id": "lnk-1c986bdc-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "1c986bdc-0351-4144-8951-a361f7e11c1a",
+      "targetTitle": "phamos GmbH \u2014 ERPNext / Frappe"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Frappe versions documents, but the versions are mutable rows and are deletable",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "a0fa4083-23cf-4832-a149-246a1a191bce",
+      "name": "leads",
+      "topicDocumentId": null
+    },
+    {
+      "id": "02212eb1-b1e3-464b-8261-da929003293b",
+      "name": "erpnext",
+      "topicDocumentId": null
+    },
+    {
+      "id": "a3319384-5b69-46c1-9138-d64823942adb",
+      "name": "frappe",
+      "topicDocumentId": null
+    },
+    {
+      "id": "760acf63-a292-4f21-8563-89ece4c69376",
+      "name": "erp",
+      "topicDocumentId": null
+    },
+    {
+      "id": "d743bab3-9a89-4b6f-829f-736de002559c",
+      "name": "audit-trail",
+      "topicDocumentId": null
+    },
+    {
+      "id": "a4affc91-8e8e-424c-b764-76bf467bec50",
+      "name": "append-only",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "Frappe does version documents, which is why this cohort needs a precise argument rather than a general one about audit trails. The versions are mutable rows in the ERP's own tables and they are deletable, so the mechanism that looks like an audit trail is subject to the same write and delete paths as the data it describes.\n\nThe proposed position is correspondingly narrow: Powerhouse holds the append-only record of the submitted business event, outside the ERP's own tables. \"Outside\" is the operative word \u2014 the guarantee comes from the record not sharing a lifecycle with the ERP's schema, not from a claim that Frappe records nothing.\n\nFor the three German ERPNext partners carrying this finding, all at \"1 \u00b7 start here\", the argument has to be made to people who know Frappe's versioning well. Overstating the gap would be immediately falsifiable; stating it as mutability and deletability rather than absence is both accurate and sufficient.\n\n---\n\n## Leads sharing this finding (3)\n\n**1 \u00b7 start here**\n- ALYF GmbH (DE Leipzig) \u2014 Raffael Meyer, Gesch\u00e4ftsf\u00fchrer \u00b7 hallo@alyf.de \u00b7 https://alyf.de\n- K&K Software AG (DE Gerolzhofen) \u2014 Arnulf Koch, Vertretungsberechtigter \u00b7 info@kk-software.de \u00b7 https://kk-software.de\n- phamos GmbH (DE Ammerbuch) \u2014 Wolfram Schmidt, Gesch\u00e4ftsf\u00fchrer \u00b7 post@phamos.eu \u00b7 https://phamos.eu\n\nVerbatim research text this claim was extracted from:\n\n> Frappe versions documents, but they are mutable rows and are deletable. Powerhouse holds the append-only record of the submitted business event, outside the ERP's own tables.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "OBSERVATION",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "knowledge-agent",
+    "createdAt": "2026-08-19T11:27:16.149673Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-19T11:27:18.478519Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Versioning is not immutability: Powerhouse holds the append-only record of the submitted business event, outside the ERP's own tables.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "f1f8ad88-a7b9-4dd3-931a-c65fcce9706c",
+      "actor": "knowledge-agent",
+      "comment": "Extracted from lead research; claim checked against the source record.",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-19T11:27:18.328069Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "b74b7034-0a29-4375-9e0a-13ccb5f2c779",
+      "actor": "liberuum",
+      "comment": "Approved: lead corpus extraction.",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-19T11:27:18.478519Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

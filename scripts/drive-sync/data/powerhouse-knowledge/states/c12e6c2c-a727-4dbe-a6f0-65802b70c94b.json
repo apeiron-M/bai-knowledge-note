@@ -1,0 +1,108 @@
+{
+  "links": [
+    {
+      "id": "lnk-8cfc4e95-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "8cfc4e95-98d9-4744-bc62-364dfe09396e",
+      "targetTitle": "adapter-key-source-files"
+    },
+    {
+      "id": "lnk-3ad47c38-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "3ad47c38-5fd4-41f4-b873-2b6a9aa0517d",
+      "targetTitle": "event-sourcing-guarantees-audit-trails-but-complicates-querying"
+    },
+    {
+      "id": "lnk-21aecbfe-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "21aecbfe-4c1d-482f-9de3-166263070d01",
+      "targetTitle": "never-use-fallback-values-with-non-deterministic-functions-in-reducers"
+    },
+    {
+      "id": "lnk-b7c55ab3-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "b7c55ab3-6e17-484c-b252-3cb5c07709c9",
+      "targetTitle": "operation-batch-content-addressed-bytes"
+    },
+    {
+      "id": "lnk-251a0c70-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "251a0c70-2e17-44d6-9441-024a9e18c1c5",
+      "targetTitle": "new-device-recovery-via-wallet-and-manifest"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Skip field records how many ops were reshuffled past during deterministic conflict resolution",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "44d8d82e-738c-4e9d-b45c-22419a318765",
+      "name": "conflict-resolution",
+      "topicDocumentId": null
+    },
+    {
+      "id": "71e84b47-c52a-4030-bfd2-246ae02f4bdb",
+      "name": "skip-field",
+      "topicDocumentId": null
+    },
+    {
+      "id": "90a155dd-b5db-401c-a639-903c1ac1ea40",
+      "name": "operation-ordering",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "# Skip Field and Deterministic Conflict Resolution\n\nWhen Alice and Bob edit the same cell concurrently, both ops get written to their respective op feeds with `skip: 0`. When each reactor receives the other's op, the SyncManager runs deterministic conflict resolution.\n\n## Algorithm\n\n1. Detect conflict: same document, overlapping timestamps\n2. Reshuffle operations by sorting on `(timestamp, operationId)` for total order\n3. Assign new global indices and update `skip` values\n4. Replay through the document model reducer\n\n## Example outcome\n\n```\nIndex  Skip  Action             Origin\n  6     0    SET_CELL(A1,100)   Alice\n  7     1    SET_CELL(A1,200)   Bob\n```\n\n`skip=1` on Bob's op means: \"this op was reshuffled past 1 other op.\"\n\n## Convergence guarantee\n\nSame ops + same ordering rule = same final state on every device. No CRDTs required \u2014 the document model reducer plus deterministic replay is sufficient.\n",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "CONCEPT",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "knowledge-agent",
+    "createdAt": "2026-04-21T14:46:52.016Z",
+    "sessionId": null,
+    "updatedAt": "2026-09-03T09:59:24.874Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Reordering by (timestamp, operationId), reassigning indices and replaying through the reducer leaves every device at the same final state - convergence without CRDTs.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "afe54ba4-3cee-431a-8499-1d51ac728e8d",
+      "actor": "claude",
+      "comment": "Knowledge registered against powerhouse v6.2.2-dev.47",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-14T12:00:00.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "b6f50dbb-839c-45d2-8909-fd028953b7a7",
+      "actor": "liberuum",
+      "comment": "Canonical as of powerhouse v6.2.2-dev.47",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-14T12:00:00.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

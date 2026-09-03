@@ -1,0 +1,304 @@
+[
+  {
+    "index": 0,
+    "hash": "",
+    "timestampUtcMs": "2026-08-19T11:27:25.067Z",
+    "action": {
+      "type": "CREATE_DOCUMENT",
+      "input": {
+        "meta": {},
+        "name": "Tryton's workflow transitions write to mutable models, leaving no attributed record of the",
+        "slug": "",
+        "model": "bai/knowledge-note",
+        "branch": "main",
+        "signing": {
+          "nonce": "",
+          "publicKey": {},
+          "signature": "96978493-9659-45c5-87aa-63be22026ca9",
+          "documentType": "bai/knowledge-note",
+          "createdAtUtcIso": "2026-08-19T11:27:25.067Z"
+        },
+        "version": 0,
+        "documentId": "96978493-9659-45c5-87aa-63be22026ca9",
+        "protocolVersions": {
+          "base-reducer": 2
+        }
+      },
+      "timestampUtcMs": "2026-08-19T11:27:25.067Z"
+    }
+  },
+  {
+    "index": 0,
+    "hash": "PI8DTIM/+Cb2jCtlukx/3yegBaQ=",
+    "timestampUtcMs": "2026-08-19T11:27:24.787Z",
+    "action": {
+      "type": "SET_TITLE",
+      "input": {
+        "title": "Tryton's workflow transitions write to mutable models, leaving no attributed record of the transition itself",
+        "updatedAt": "2026-08-19T11:27:24.787380Z"
+      },
+      "timestampUtcMs": "2026-08-19T11:27:24.787417Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "",
+    "timestampUtcMs": "2026-08-19T11:27:25.067Z",
+    "action": {
+      "type": "UPGRADE_DOCUMENT",
+      "input": {
+        "model": "bai/knowledge-note",
+        "toVersion": 1,
+        "documentId": "96978493-9659-45c5-87aa-63be22026ca9",
+        "fromVersion": 0,
+        "initialState": {
+          "auth": {
+            "grants": [],
+            "version": 0
+          },
+          "local": {
+            "lastViewedAt": null,
+            "personalTags": []
+          },
+          "global": {
+            "links": [],
+            "model": null,
+            "scope": null,
+            "title": null,
+            "editor": null,
+            "inputs": [],
+            "models": [],
+            "status": "DRAFT",
+            "topics": [],
+            "content": null,
+            "context": null,
+            "modelId": null,
+            "modules": [],
+            "outputs": [],
+            "version": null,
+            "computes": null,
+            "filePath": null,
+            "noteType": null,
+            "severity": null,
+            "hooksUsed": [],
+            "rootCause": null,
+            "confidence": null,
+            "consumedBy": [],
+            "provenance": null,
+            "sourceType": null,
+            "targetType": null,
+            "cardinality": null,
+            "description": null,
+            "alternatives": [],
+            "consequences": [],
+            "errorMessage": null,
+            "relationType": null,
+            "correctPattern": null,
+            "decisionStatus": null,
+            "dispatchTargets": [],
+            "lifecycleEvents": []
+          },
+          "document": {
+            "hash": {
+              "encoding": "base64",
+              "algorithm": "sha1"
+            },
+            "version": 1
+          }
+        }
+      },
+      "timestampUtcMs": "2026-08-19T11:27:25.067Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "OVK0sG2nGvC6KEGJJUibp+uioLg=",
+    "timestampUtcMs": "2026-08-19T11:27:24.787Z",
+    "action": {
+      "type": "SET_DESCRIPTION",
+      "input": {
+        "updatedAt": "2026-08-19T11:27:24.787421Z",
+        "description": "Powerhouse holds the transition as an append-only, attributed business event rather than as a changed field on a model row."
+      },
+      "timestampUtcMs": "2026-08-19T11:27:24.787427Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "",
+    "timestampUtcMs": "2026-08-19T11:27:27.383Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "96978493-9659-45c5-87aa-63be22026ca9",
+        "targetId": "016e36eb-9f30-4fcf-b3b5-24896842ad33",
+        "relationshipType": "DERIVED_FROM"
+      },
+      "timestampUtcMs": "2026-08-19T11:27:27.383Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "8bW2hLyfvJxwGWjPyFbHe8Attsc=",
+    "timestampUtcMs": "2026-08-19T11:27:24.787Z",
+    "action": {
+      "type": "SET_NOTE_TYPE",
+      "input": {
+        "noteType": "OBSERVATION",
+        "updatedAt": "2026-08-19T11:27:24.787429Z"
+      },
+      "timestampUtcMs": "2026-08-19T11:27:24.787435Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "",
+    "timestampUtcMs": "2026-08-19T11:27:27.714Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "96978493-9659-45c5-87aa-63be22026ca9",
+        "targetId": "6ae3a605-7292-4afc-a41f-bfe80cec52f8",
+        "relationshipType": "DERIVED_FROM"
+      },
+      "timestampUtcMs": "2026-08-19T11:27:27.714Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "3n2dnJZEj1ZV1QnChSwS2E9S3KU=",
+    "timestampUtcMs": "2026-08-19T11:27:24.787Z",
+    "action": {
+      "type": "SET_CONTENT",
+      "input": {
+        "content": "Tryton has workflows, and its transitions write to mutable models. The state a record is in is therefore recoverable at any moment, but the transition \u2014 the event of moving from one state to another, by whom, from what \u2014 is not retained as a first-class fact.\n\nThe distinction between a current state and a history of transitions is the whole argument for this cohort. Powerhouse holds the transition as an attributed, append-only business event. The workflow definition, the state machine and the business logic all stay in Tryton; only the historical record of what the state machine did moves.\n\nThree small German Tryton partners carry this finding, one at \"2 \u00b7 next\" and two at \"3 \u00b7 later\". The paired demo scopes the work to a single Tryton module precisely so that partners of this size can deliver it themselves.\n\n---\n\n## Leads sharing this finding (3)\n\n**2 \u00b7 next**\n- Wuerfel Datentechnik (DE Sinsheim) \u2014 Lars W\u00fcrfel, Inhaber \u00b7 info@wuerfel-datentechnik.de \u00b7 https://wuerfel-datentechnik.de\n\n**3 \u00b7 later**\n- m-ds (DE Teltow) \u2014 https://m-ds.de\n- virtual things (DE Munich/Aachen) \u2014 https://virtual-things.biz\n\nVerbatim research text this claim was extracted from:\n\n> Tryton's workflow transitions write to mutable models. Powerhouse holds the transition as an attributed, append-only business event.",
+        "updatedAt": "2026-08-19T11:27:24.787436Z"
+      },
+      "timestampUtcMs": "2026-08-19T11:27:24.787441Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "",
+    "timestampUtcMs": "2026-08-19T11:27:28.784Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "96978493-9659-45c5-87aa-63be22026ca9",
+        "targetId": "6e0690ab-d949-41c3-88d5-085f2c385ae3",
+        "relationshipType": "DERIVED_FROM"
+      },
+      "timestampUtcMs": "2026-08-19T11:27:28.784Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "P3P0TWt7DtqLBMOKI6HBVCDRql8=",
+    "timestampUtcMs": "2026-08-19T11:27:24.787Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "008f1123-1651-4b94-910b-aee1a14c4ab4",
+        "name": "leads"
+      },
+      "timestampUtcMs": "2026-08-19T11:27:24.787450Z"
+    }
+  },
+  {
+    "index": 5,
+    "hash": "NOUfbcOECJf4q7R3FSqrqf6XLCY=",
+    "timestampUtcMs": "2026-08-19T11:27:24.787Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "957dbd6e-962a-4f0c-b99b-1b0359cbfb36",
+        "name": "tryton"
+      },
+      "timestampUtcMs": "2026-08-19T11:27:24.787458Z"
+    }
+  },
+  {
+    "index": 6,
+    "hash": "ux4kkr/cR9BnGd4wMHhWwaBU8Js=",
+    "timestampUtcMs": "2026-08-19T11:27:24.787Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "25415ea3-e843-4c1a-80cb-c73b3c1abc12",
+        "name": "erp"
+      },
+      "timestampUtcMs": "2026-08-19T11:27:24.787466Z"
+    }
+  },
+  {
+    "index": 7,
+    "hash": "PQ2FFpQ16KTUGHhnTe5r148DNRY=",
+    "timestampUtcMs": "2026-08-19T11:27:24.787Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "32cfa932-c153-4a89-9bc0-0ba2c47a8047",
+        "name": "audit-trail"
+      },
+      "timestampUtcMs": "2026-08-19T11:27:24.787473Z"
+    }
+  },
+  {
+    "index": 8,
+    "hash": "aajqYzbCbbjqVO9mI7QnTjWhcZQ=",
+    "timestampUtcMs": "2026-08-19T11:27:24.787Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "3eff3682-8459-4d85-abea-f7ef8b8465a7",
+        "name": "append-only"
+      },
+      "timestampUtcMs": "2026-08-19T11:27:24.787480Z"
+    }
+  },
+  {
+    "index": 9,
+    "hash": "u8BEHc1bSRw0aFueV0TPTwd62To=",
+    "timestampUtcMs": "2026-08-19T11:27:25.244Z",
+    "action": {
+      "type": "SET_PROVENANCE",
+      "input": {
+        "author": "knowledge-agent",
+        "createdAt": "2026-08-19T11:27:25.244767Z",
+        "sessionId": null,
+        "sourceOrigin": "DERIVED"
+      },
+      "timestampUtcMs": "2026-08-19T11:27:25.244803Z"
+    }
+  },
+  {
+    "index": 10,
+    "hash": "7Lzze06vrglKE0LoDkpDzEFGcqc=",
+    "timestampUtcMs": "2026-08-19T11:27:28.056Z",
+    "action": {
+      "type": "SUBMIT_FOR_REVIEW",
+      "input": {
+        "id": "ef621a94-1fa1-4c7f-912c-3564fb828642",
+        "actor": "knowledge-agent",
+        "comment": "Extracted from lead research; claim checked against the source record.",
+        "timestamp": "2026-08-19T11:27:28.056329Z"
+      },
+      "timestampUtcMs": "2026-08-19T11:27:28.056349Z"
+    }
+  },
+  {
+    "index": 11,
+    "hash": "nf9ux4orYunYAFbVucJvSGinH/I=",
+    "timestampUtcMs": "2026-08-19T11:27:28.210Z",
+    "action": {
+      "type": "APPROVE_NOTE",
+      "input": {
+        "id": "54950c5e-46ab-4229-bb01-68049f460a32",
+        "actor": "liberuum",
+        "comment": "Approved: lead corpus extraction.",
+        "timestamp": "2026-08-19T11:27:28.210560Z"
+      },
+      "timestampUtcMs": "2026-08-19T11:27:28.210581Z"
+    }
+  }
+]

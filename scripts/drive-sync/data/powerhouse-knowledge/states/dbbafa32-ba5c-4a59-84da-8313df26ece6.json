@@ -1,0 +1,94 @@
+{
+  "links": [
+    {
+      "id": "lnk-4d8e59af-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "4d8e59af-51f2-4ab7-b290-e1d5744abbd7",
+      "targetTitle": "Integration-gap tool screen: ERPNext / Frappe (primary-source research, 2026-08-19)"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Camunda 7 overwrites prior variable state in place at its default history level",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "4c31572b-a806-49dc-abe5-d53db39c3aba",
+      "name": "tool-screen",
+      "topicDocumentId": null
+    },
+    {
+      "id": "341e9498-5f36-4f04-98ce-b19d4abc9270",
+      "name": "camunda",
+      "topicDocumentId": null
+    },
+    {
+      "id": "a7cafcf0-2826-428a-b6ea-0922f3ce5784",
+      "name": "audit-trail",
+      "topicDocumentId": null
+    },
+    {
+      "id": "d3375232-5b44-456c-95ff-979050470774",
+      "name": "defaults",
+      "topicDocumentId": null
+    },
+    {
+      "id": "2db36973-231b-419a-aa4f-bf5d2116bdef",
+      "name": "data-integrity",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "The configuration documentation states it plainly: *\"Rows in this table are updated as variable instances are updated, meaning that only the last value of a process variable will be available.\"* Recovering intermediate values requires opting up to the `FULL` history level, which is also where the user-attributed User Operation Log lives \u2014 so attribution is off by default too.\n\nThis is destructive in-place update presented as history. The engine is doing what it says, but a record that keeps only the latest value cannot answer what a decision looked like when it was taken.\n\nIt is also the strongest available demonstration against a Camunda 7 estate, because no API call is needed: a default installation destroys prior state on its own, as a consequence of normal operation.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "OBSERVATION",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "knowledge-agent",
+    "createdAt": "2026-08-20T08:45:35.667037Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-20T08:45:36.728878Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "At the default AUDIT level the historic variable row is updated rather than appended, so only the last value survives and intermediate states are gone.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "1a37a0b5-f327-4be3-bfaa-60d6ea88e115",
+      "actor": "knowledge-agent",
+      "comment": "Extracted from the primary-source tool screen; each claim quotable from a cited source.",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-20T08:45:36.577935Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "53bc465c-6a26-4116-a99e-ccaca843c783",
+      "actor": "liberuum",
+      "comment": "Approved: tool-screen extraction.",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-20T08:45:36.728878Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

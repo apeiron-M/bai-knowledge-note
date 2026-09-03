@@ -1,0 +1,100 @@
+{
+  "links": [
+    {
+      "id": "lnk-f27b73b4-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "f27b73b4-2438-4696-966f-75b8a4822b00",
+      "targetTitle": "usegroup / Mustangproject \u2014 ZUGFeRD / Factur-X"
+    },
+    {
+      "id": "lnk-0e2e2819-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "0e2e2819-7717-4cdd-8363-9f728b5d2cc0",
+      "targetTitle": "agorum Software GmbH \u2014 ZUGFeRD / Factur-X"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Neither the invoice format library nor the KoSIT validator holds the approval of a low-confidence extraction",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "2318a497-4ed5-481e-8d95-de4ec8594f1d",
+      "name": "leads",
+      "topicDocumentId": null
+    },
+    {
+      "id": "170fc77b-0019-4705-8052-b1a4c021398c",
+      "name": "zugferd",
+      "topicDocumentId": null
+    },
+    {
+      "id": "eaed29c0-f7f8-49ad-b2c7-3367e7e6fe6c",
+      "name": "e-invoicing",
+      "topicDocumentId": null
+    },
+    {
+      "id": "76955636-903f-4910-86eb-7730fc49001f",
+      "name": "audit-trail",
+      "topicDocumentId": null
+    },
+    {
+      "id": "b9c8bea9-a99b-441a-9046-97d214cd2553",
+      "name": "system-of-record",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "The e-invoicing stack divides cleanly and stops short of the decision. Mustangproject solves the format half \u2014 reading, writing and validating the document. The KoSIT validator computes an acceptance status. Neither of them holds the approval: who accepted a low-confidence extraction, under which rule, at what time.\n\nThe qualifier \"low-confidence\" is what makes this a real gap rather than a theoretical one. For a clean invoice, format conformance and acceptance are the same event and no human is involved. For an ambiguous one, someone overrides or confirms a machine judgement, and that override is the only part of the chain with a person's name attached to it \u2014 and the part neither component retains.\n\nThe stakes come from the regime rather than the software: under clearance, an incorrect submission is a filed tax document, not a draft. There is no revision step in which the mistake is merely internal. Two German leads carry this finding, one of them the maintainer of the format library itself, which makes the division of labour a shared premise rather than a criticism.\n\n---\n\n## Leads sharing this finding (2)\n\n**2 \u00b7 next**\n- usegroup / Mustangproject (DE Frankfurt am Main) \u2014 Jochen St\u00e4rk, Inhaber \u00b7 info@usegroup.de \u00b7 https://mustangproject.org\n\n**3 \u00b7 later**\n- agorum Software GmbH (DE Ostfildern) \u2014 https://agorum.com\n\nVerbatim research text this claim was extracted from:\n\n> Mustangproject solves the FORMAT half \u2014 read, write, validate. The KoSIT validator computes an acceptance STATUS. Neither holds the approval: who accepted a low-confidence extraction, under which rule, at what time. Under clearance an incorrect submission is a filed tax document, not a draft.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "OBSERVATION",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "knowledge-agent",
+    "createdAt": "2026-08-19T11:31:38.180817Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-19T11:31:41.001171Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Mustangproject solves format; the validator computes an acceptance status. Who accepted, under which rule, at what time is unrecorded \u2014 and under clearance a wrong submission is a filed tax document.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "9d84df6f-b887-4f9c-b5bd-370b99f501a1",
+      "actor": "knowledge-agent",
+      "comment": "Extracted from lead research; claim checked against the source record.",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-19T11:31:40.857689Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "ff4c8622-1f2a-4d15-b881-112b6a137c70",
+      "actor": "liberuum",
+      "comment": "Approved: lead corpus extraction.",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-19T11:31:41.001171Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

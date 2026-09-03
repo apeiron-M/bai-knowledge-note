@@ -1,0 +1,116 @@
+{
+  "links": [
+    {
+      "id": "lnk-ed65375c-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "ed65375c-87bc-49fe-8463-9393235daff8",
+      "targetTitle": "graphql-sdl-defines-schemas-and-operations"
+    },
+    {
+      "id": "lnk-2e1ec6fb-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "2e1ec6fb-c54f-466f-b1af-6809c0321bf2",
+      "targetTitle": "document-model-structure-has-metadata-specifications-and-modules"
+    },
+    {
+      "id": "lnk-4e6413ee-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "4e6413ee-22bf-4d64-964f-ca8b28917cec",
+      "targetTitle": "present-document-model-proposals-to-user-before-implementing"
+    },
+    {
+      "id": "lnk-6672c3a6-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "6672c3a6-386d-44c7-baf2-3278b1add051",
+      "targetTitle": "adapter-src-infrastructure-layout"
+    },
+    {
+      "id": "lnk-f9f4bcbc-bui",
+      "linkType": "BUILDS_ON",
+      "targetDocumentId": "f9f4bcbc-efd1-49c8-a8c0-8a8f8991b772",
+      "targetTitle": "document-models-are-the-core-unit-of-powerhouse-architecture"
+    },
+    {
+      "id": "lnk-2be2f9f7-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "2be2f9f7-3a38-4acf-ab4d-ea932b89080f",
+      "targetTitle": "Academy \u203a Build \u203a DocumentModelCreation \u203a What is a document model?",
+      "reason": "Backing page found by content match (score 0.19) in the v6.2.2-dev.74 source backfill; no distinctive identifier verified, attribution by topic overlap \u2014 not the original extraction record (text identical at v6.2.2-dev.47 and v6.2.2-dev.74)",
+      "confidence": "established"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "A document model consists of a state schema, document operations, and event history",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "737fa639-f314-4e18-ac68-609e82613234",
+      "name": "document-model",
+      "topicDocumentId": null
+    },
+    {
+      "id": "6d1a71a1-9f1e-48db-afd7-cb8c0ada6e59",
+      "name": "architecture",
+      "topicDocumentId": null
+    },
+    {
+      "id": "073ed0a1-e882-4e1b-994b-0da7a1a5784e",
+      "name": "schema",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "Each document model has three key components:\n\n1. **State Schema** - Defines the structure of the document using GraphQL SDL (types, fields, scalars). This is the blueprint for data storage and validation.\n2. **Document Operations** - Defines how the document can be modified. Operations are specified as GraphQL `input` types and represent valid state transitions (e.g., `AddTodoItemInput`, `UpdateTodoItemInput`).\n3. **Event History** - An append-only log storing every operation applied to the document as a timestamped event.\n\nThe state schema acts as a template for document instances, operations act as commands, and the event history provides the complete audit trail.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": "v6.2.2-dev.74",
+  "computes": null,
+  "filePath": "apps/academy/docs/academy/03-Build/02-DocumentModelCreation/01-WhatIsADocumentModel.md",
+  "noteType": "CONCEPT",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "knowledge-agent",
+    "createdAt": "2026-04-02T12:00:00.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-09-02T21:33:17.039Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "The three structural components define what data exists, how it can change, and the record of all changes.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "3a1c5460-eb24-4794-852b-0afd9bf92af0",
+      "actor": "claude",
+      "comment": "Knowledge registered against powerhouse v6.2.2-dev.47",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-14T12:00:00.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "b0398bfe-f21d-447c-b5f0-a5167bb28881",
+      "actor": "liberuum",
+      "comment": "Canonical as of powerhouse v6.2.2-dev.47",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-14T12:00:00.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

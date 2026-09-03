@@ -1,0 +1,118 @@
+{
+  "links": [
+    {
+      "id": "lnk-306ee520-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "306ee520-f540-4510-863e-8c2f87969869",
+      "targetTitle": "Holisticon AG \u2014 Camunda"
+    },
+    {
+      "id": "lnk-80abf9cf-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "80abf9cf-8789-4fca-bee9-df9c0326792c",
+      "targetTitle": "WDW eLab GmbH \u2014 Camunda"
+    },
+    {
+      "id": "lnk-a4c7d044-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "a4c7d044-a62a-4398-a840-257e74c66781",
+      "targetTitle": "Phactum Softwareentwicklung GmbH \u2014 Camunda"
+    },
+    {
+      "id": "lnk-cef14ff6-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "cef14ff6-ca33-46a7-ac1e-84431f39a278",
+      "targetTitle": "envite consulting GmbH \u2014 Camunda"
+    },
+    {
+      "id": "lnk-57a392bc-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "57a392bc-7e19-4eeb-b131-96b6218ce0b9",
+      "targetTitle": "Apendo AB \u2014 Camunda"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Camunda's business record is a mutable workflow instance whose history has a TTL and can be deleted",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "bc05c103-ed7b-4043-bd83-01662614992c",
+      "name": "leads",
+      "topicDocumentId": null
+    },
+    {
+      "id": "7b325a2a-ce11-47ee-a473-14a9a15aae98",
+      "name": "camunda",
+      "topicDocumentId": null
+    },
+    {
+      "id": "a80aeb4d-10a6-45a9-8780-a9eb2ce1f094",
+      "name": "audit-trail",
+      "topicDocumentId": null
+    },
+    {
+      "id": "d81f8aff-ac8b-40f4-9db7-bea8fe44f914",
+      "name": "process-orchestration",
+      "topicDocumentId": null
+    },
+    {
+      "id": "264a3725-f5b6-4d3e-abed-86542d416c16",
+      "name": "system-of-record",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "Camunda's responsibility is sequencing \u2014 orchestrating when things happen. The durable business record it leaves is a mutable workflow instance: history is subject to a time-to-live, and instances can be deleted outright. Retention policy therefore determines how long the answer to \"who decided this\" survives, which is not the property an audit obligation needs.\n\nThe proposed seam keeps each system doing what it is built for. Powerhouse holds the append-only, user-attributed record of what was decided, and Camunda calls a Switchboard mutation at each decision point. The orchestrator loses nothing; the record simply stops depending on the orchestrator's retention configuration.\n\nFive Camunda partners carry this finding, in DE, AT and SE, and four of the five are at priority 1 or 2. The same gap and the same seam are recorded verbatim for the Flowable cohort, which is the evidence that this is a property of BPMN engines as a category rather than a defect of one product.\n\n---\n\n## Leads sharing this finding (5)\n\n**1 \u00b7 start here**\n- Holisticon AG (DE (city unverified)) \u2014 Roman Schl\u00f6mmer + Bj\u00f6rn Serving, Vorstand \u00b7 info@holisticon.de \u00b7 https://holisticon.de\n- WDW eLab GmbH (DE Aachen) \u2014 Peter Offermann + Andreas Welz \u00b7 info.aachen@wdw-consulting.com \u00b7 https://wdw-elab.de\n\n**2 \u00b7 next**\n- Phactum Softwareentwicklung GmbH (AT Vienna) \u2014 not published (no GF on imprint \u2014 \u00a75 ECG gap) \u00b7 office@phactum.at \u00b7 https://phactum.at\n- envite consulting GmbH (DE Stuttgart) \u2014 Konrad Pfeilsticker \u00b7 office@envite.de \u00b7 https://envite.de\n\n**3 \u00b7 later**\n- Apendo AB (SE Danderyd) \u2014 https://apendo.se\n\nVerbatim research text this claim was extracted from:\n\n> Camunda orchestrates WHEN things happen. The business record stays a mutable workflow instance \u2014 history has a TTL and instances can be deleted. Powerhouse holds the append-only, user-attributed record of what was decided; Camunda calls a Switchboard mutation at each decision point.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "OBSERVATION",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "knowledge-agent",
+    "createdAt": "2026-08-19T11:26:44.849201Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-19T11:26:47.722142Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Camunda orchestrates when things happen; Powerhouse holds the append-only attributed record of what was decided, with Camunda calling a Switchboard mutation at each decision point.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "59fa1779-313b-49f8-8974-2463d2bf37aa",
+      "actor": "knowledge-agent",
+      "comment": "Extracted from lead research; claim checked against the source record.",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-19T11:26:47.573111Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "1c001909-4955-4577-bf6b-36cb5f97aabf",
+      "actor": "liberuum",
+      "comment": "Approved: lead corpus extraction.",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-19T11:26:47.722142Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

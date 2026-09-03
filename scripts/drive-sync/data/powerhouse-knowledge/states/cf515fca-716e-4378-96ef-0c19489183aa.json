@@ -1,0 +1,107 @@
+{
+  "links": [
+    {
+      "id": "lnk-e80cffd2-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "e80cffd2-a26e-426d-b722-dc068817ea7c",
+      "targetTitle": "docker-connect-image",
+      "reason": "The container artefact is built quite differently from the desktop package: nginx serving a prebuilt SPA rather than an Electron bundle",
+      "confidence": "grounded"
+    },
+    {
+      "id": "lnk-1b243f88-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "1b243f88-d611-4223-b486-2894e0b57ce3",
+      "targetTitle": "App \u203a connect \u203a README",
+      "reason": "Extracted from apps/connect/README.md at v6.2.2-dev.74 \u2014 Introduction bullets; Prerequisites and Starting Connect; packaged desktop build; docker:build",
+      "confidence": "grounded"
+    },
+    {
+      "id": "lnk-a1016584-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "a1016584-5dba-460b-9dc8-2728d09c1058",
+      "targetTitle": "connect-runtime-config",
+      "reason": "Both artefacts read the same powerhouse.config.json at boot, which is what keeps one codebase configurable in two shapes",
+      "confidence": "grounded"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Connect ships as both a desktop application and a web app from one codebase, with the web dev server on port 5173",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "188cfcdf-648e-4920-b0ea-8c1463e86654",
+      "name": "connect",
+      "topicDocumentId": null
+    },
+    {
+      "id": "67b5632f-1692-4fd6-b808-970ee4ec5022",
+      "name": "desktop",
+      "topicDocumentId": null
+    },
+    {
+      "id": "0d57bccb-ce2b-4c76-b410-3c136adcbe42",
+      "name": "development",
+      "topicDocumentId": null
+    },
+    {
+      "id": "d4181e1c-03ce-40d3-b6a8-9c8177f88364",
+      "name": "packaging",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "Connect is described as an open-source **desktop and web** application for document model management \u2014 the same codebase produces both, and the README's script list is where that duality is visible:\n\n```bash\npnpm start          # desktop app\npnpm run dev        # web app, then http://localhost:5173\npnpm run make       # package the desktop app for the current platform\npnpm run make:mac | make:linux | make:windows\npnpm run docker:build   # build the image once, to test the production deployment locally\n```\n\nIts stated role is a **private editor and contributor tool** for contributors of open organisations, with full control over data ownership, available standalone or in the cloud. Two capabilities define the shell: a navigation menu for adding, synchronising and browsing document drives \u2014 shared within an organisation or private to the contributor \u2014 and the ability to edit any document model type the organisation selected or defined.\n\nWorth pairing with the deployment picture: the published Connect *image* is plain nginx serving a SPA built at image-build time, so the desktop packaging path above and the container path are genuinely different artefacts from the same source.\n\n## Provenance\n- `apps/connect/README.md` \u2014 Introduction bullets; Prerequisites and Starting Connect; packaged desktop build; docker:build\n\n_Extracted from the Powerhouse repository at **v6.2.2-dev.74**._",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": "v6.2.2-dev.74",
+  "computes": null,
+  "filePath": "apps/connect/README.md",
+  "noteType": "REFERENCE",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "knowledge-agent",
+    "createdAt": "2026-09-03T07:34:38.340Z",
+    "sessionId": null,
+    "updatedAt": "2026-09-03T07:34:39.383Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "pnpm start runs the desktop app and pnpm run dev the web app; pnpm run make packages the desktop build per platform (make:mac, make:linux, make:windows). A docker:build target tests the production.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "55a4f547-b9b1-494b-b054-555cb540f62f",
+      "actor": "knowledge-agent",
+      "comment": "extracted from apps/connect/README.md at v6.2.2-dev.74",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-09-03T07:34:38.893Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "f477e2a1-beec-4bf4-b12c-5e6e0e18fb0b",
+      "actor": "liberuum",
+      "comment": "claim checked against the cited file at the pinned tag",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-09-03T07:34:39.383Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

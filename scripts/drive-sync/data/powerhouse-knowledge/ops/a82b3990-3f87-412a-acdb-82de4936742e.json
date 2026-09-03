@@ -1,0 +1,568 @@
+[
+  {
+    "index": 0,
+    "hash": "",
+    "timestampUtcMs": "2026-09-02T22:13:38.945Z",
+    "action": {
+      "type": "CREATE_DOCUMENT",
+      "input": {
+        "meta": {},
+        "name": "execute-batch-not-atomic",
+        "slug": "",
+        "model": "bai/knowledge-note",
+        "branch": "main",
+        "signing": {
+          "nonce": "",
+          "publicKey": {},
+          "signature": "a82b3990-3f87-412a-acdb-82de4936742e",
+          "documentType": "bai/knowledge-note",
+          "createdAtUtcIso": "2026-09-02T22:13:38.945Z"
+        },
+        "version": 0,
+        "documentId": "a82b3990-3f87-412a-acdb-82de4936742e",
+        "protocolVersions": {
+          "base-reducer": 2
+        }
+      },
+      "timestampUtcMs": "2026-09-02T22:13:38.945Z"
+    }
+  },
+  {
+    "index": 0,
+    "hash": "LyVBWhUeKT1Jl3vHxxr5lW4RCwA=",
+    "timestampUtcMs": "2026-09-02T22:13:38.851Z",
+    "action": {
+      "type": "SET_TITLE",
+      "input": {
+        "title": "executeBatch guarantees ordering and nothing else: a dependsOn edge waits for the job before it to finish, not to succeed, and there is no batch-level rollback",
+        "updatedAt": "2026-09-02T22:13:38.851Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:13:38.851Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "",
+    "timestampUtcMs": "2026-09-02T22:13:38.945Z",
+    "action": {
+      "type": "UPGRADE_DOCUMENT",
+      "input": {
+        "model": "bai/knowledge-note",
+        "toVersion": 1,
+        "documentId": "a82b3990-3f87-412a-acdb-82de4936742e",
+        "fromVersion": 0,
+        "initialState": {
+          "auth": {
+            "grants": [],
+            "version": 0
+          },
+          "local": {
+            "lastViewedAt": null,
+            "personalTags": []
+          },
+          "global": {
+            "links": [],
+            "model": null,
+            "scope": null,
+            "title": null,
+            "editor": null,
+            "inputs": [],
+            "models": [],
+            "status": "DRAFT",
+            "topics": [],
+            "content": null,
+            "context": null,
+            "modelId": null,
+            "modules": [],
+            "outputs": [],
+            "version": null,
+            "computes": null,
+            "filePath": null,
+            "noteType": null,
+            "severity": null,
+            "hooksUsed": [],
+            "rootCause": null,
+            "confidence": null,
+            "consumedBy": [],
+            "provenance": null,
+            "sourceType": null,
+            "targetType": null,
+            "cardinality": null,
+            "description": null,
+            "alternatives": [],
+            "consequences": [],
+            "errorMessage": null,
+            "relationType": null,
+            "correctPattern": null,
+            "decisionStatus": null,
+            "dispatchTargets": [],
+            "lifecycleEvents": []
+          },
+          "document": {
+            "hash": {
+              "encoding": "base64",
+              "algorithm": "sha1"
+            },
+            "version": 1
+          }
+        }
+      },
+      "timestampUtcMs": "2026-09-02T22:13:38.945Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "3Cb8RMTVNVxvRCf4T/yIdVgezbU=",
+    "timestampUtcMs": "2026-09-02T22:13:38.851Z",
+    "action": {
+      "type": "SET_DESCRIPTION",
+      "input": {
+        "updatedAt": "2026-09-02T22:13:38.851Z",
+        "description": "Every JobInfo returns PENDING with a placeholder token, so the result is a submission receipt. Poll getJobStatus or correlate JOB_FAILED via job.meta.batchId; re-submitting re-applies successes."
+      },
+      "timestampUtcMs": "2026-09-02T22:13:38.851Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "",
+    "timestampUtcMs": "2026-09-02T22:25:07.910Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "metadata": {
+          "reason": "Extracted from apps/academy/docs/academy/04-Reference/01-Reactor/03-AdvancedReactorUsage.md at v6.2.2-dev.74 \u2014 Batch operations: the four new paragraphs on ordering, failure, receipt and idempotency",
+          "confidence": "grounded"
+        },
+        "sourceId": "a82b3990-3f87-412a-acdb-82de4936742e",
+        "targetId": "3e9f2bb1-f86c-478f-8ee1-5a915ba3ce12",
+        "relationshipType": "DERIVED_FROM"
+      },
+      "timestampUtcMs": "2026-09-02T22:25:07.910Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "IcPHTxlQVTdms7OjX23T8jpJ8yo=",
+    "timestampUtcMs": "2026-09-02T22:13:38.851Z",
+    "action": {
+      "type": "SET_NOTE_TYPE",
+      "input": {
+        "noteType": "PATTERN",
+        "updatedAt": "2026-09-02T22:13:38.851Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:13:38.851Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "",
+    "timestampUtcMs": "2026-09-02T22:25:09.188Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "metadata": {
+          "reason": "Extracted from apps/academy/docs/academy/04-Reference/01-Reactor/01-WorkingWithTheReactor.md at v6.2.2-dev.74 \u2014 method table: executeBatch 'Submit multiple jobs in dependency order and wait for all to settle'",
+          "confidence": "grounded"
+        },
+        "sourceId": "a82b3990-3f87-412a-acdb-82de4936742e",
+        "targetId": "43f0b3b4-51f3-4d18-8c6c-b033d94e8bbc",
+        "relationshipType": "DERIVED_FROM"
+      },
+      "timestampUtcMs": "2026-09-02T22:25:09.188Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "s8EwVtEaHnvlPdrug5wXyO4F3F4=",
+    "timestampUtcMs": "2026-09-02T22:13:38.851Z",
+    "action": {
+      "type": "SET_CONTENT",
+      "input": {
+        "content": "`executeBatch` submits multiple mutation jobs with declared dependencies and lets the reactor schedule them. What it guarantees is **ordering, and only ordering** \u2014 the v6.2.2-dev.74 Academy hardened the wording from \"multi-document atomic operations\" to \"multi-document operations with dependency ordering\", and spelled out four consequences:\n\n- **Not atomic, not transactional.** Each job commits on its own; there is no batch-level rollback, status, or consistency token.\n- **A `dependsOn` edge waits for the job before it to *finish*, not to *succeed*.** A failed job leaves the queue exactly as a successful one does, so its dependents still run \u2014 against whatever state the failure left behind. Jobs that committed stay committed.\n- **The return value is a submission receipt.** Every `JobInfo` comes back `PENDING`, with a placeholder consistency token. To learn what happened, poll `getJobStatus` per job id, or subscribe to `JOB_FAILED` and correlate through `job.meta.batchId` and `job.meta.batchJobIds`.\n- **No idempotency key on a job plan.** Re-submitting a batch after a partial failure re-applies the entries that already succeeded; any compensation is the caller's to write.\n\nThe mechanism is unchanged: jobs are `{ key, documentId, actions, dependsOn }`, independent jobs run in parallel and dependents wait, and the EventBus (`JOB_PENDING` \u2192 `JOB_RUNNING` \u2192 `JOB_WRITE_READY` \u2192 `JOB_READ_READY`, or `JOB_FAILED`) is where progress is observed. It lives on `IReactor`, not on the Promise-based `IReactorClient`, and it is not on the light `IReactorBrowserClient` either.\n\n_Source: apps/academy/docs/academy/04-Reference/01-Reactor/03-AdvancedReactorUsage.md (Powerhouse v6.2.2-dev.74)._\n_Source: apps/academy/docs/academy/04-Reference/01-Reactor/01-WorkingWithTheReactor.md (Powerhouse v6.2.2-dev.74)._\n\n## Provenance\n- `apps/academy/docs/academy/04-Reference/01-Reactor/03-AdvancedReactorUsage.md` \u2014 Batch operations: the four new paragraphs on ordering, failure, receipt and idempotency\n- `apps/academy/docs/academy/04-Reference/01-Reactor/01-WorkingWithTheReactor.md` \u2014 method table: executeBatch 'Submit multiple jobs in dependency order and wait for all to settle'\n\n_Recorded from the Powerhouse repository at **v6.2.2-dev.74** during the v6.2.2-dev.74 source sync._",
+        "updatedAt": "2026-09-02T22:13:38.851Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:13:38.851Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "",
+    "timestampUtcMs": "2026-09-02T22:25:11.141Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "metadata": {
+          "reason": "Corrects that note's framing: executeBatch orders and parallelises but is not atomic, its result is a PENDING receipt rather than an outcome, and a failed job does not stop its dependents",
+          "confidence": "grounded"
+        },
+        "sourceId": "a82b3990-3f87-412a-acdb-82de4936742e",
+        "targetId": "408db5b8-156d-485b-9f51-bf47d6a2bc76",
+        "relationshipType": "SUPERSEDES"
+      },
+      "timestampUtcMs": "2026-09-02T22:25:11.141Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "XOz/7e/baEnaSvk6AWQOpi0Pt8Y=",
+    "timestampUtcMs": "2026-09-02T22:13:38.851Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "f30cb2fa-dc37-4116-a917-b4de40f16479",
+        "name": "reactor"
+      },
+      "timestampUtcMs": "2026-09-02T22:13:38.851Z"
+    }
+  },
+  {
+    "index": 5,
+    "hash": "",
+    "timestampUtcMs": "2026-09-02T22:25:11.760Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "metadata": {
+          "reason": "Because every batch JobInfo comes back PENDING, the five-status job lifecycle is the only place a batch's real outcome can be read",
+          "confidence": "grounded"
+        },
+        "sourceId": "a82b3990-3f87-412a-acdb-82de4936742e",
+        "targetId": "48b95d6d-2b69-4999-9e79-dddfc7e9ed3f",
+        "relationshipType": "BUILDS_ON"
+      },
+      "timestampUtcMs": "2026-09-02T22:25:11.760Z"
+    }
+  },
+  {
+    "index": 5,
+    "hash": "g6fInpE7GBLpzOjPs47PzxEvd2U=",
+    "timestampUtcMs": "2026-09-02T22:13:38.851Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "34cc7e5a-33d1-498b-9b0b-c155eb8cf98e",
+        "name": "batching"
+      },
+      "timestampUtcMs": "2026-09-02T22:13:38.851Z"
+    }
+  },
+  {
+    "index": 6,
+    "hash": "",
+    "timestampUtcMs": "2026-09-02T22:25:12.298Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "metadata": {
+          "reason": "A batch returns a placeholder consistency token, so the usual read-after-write guarantee does not apply to it",
+          "confidence": "grounded"
+        },
+        "sourceId": "a82b3990-3f87-412a-acdb-82de4936742e",
+        "targetId": "955cc0e6-a2f8-41f9-963f-bde2b278ab9c",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-09-02T22:25:12.298Z"
+    }
+  },
+  {
+    "index": 6,
+    "hash": "mQ7fRsFI72ljIsRTfKAM17EhRts=",
+    "timestampUtcMs": "2026-09-02T22:13:38.851Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "aab1a52b-eab2-49f8-a398-5027c5c7a8b4",
+        "name": "jobs"
+      },
+      "timestampUtcMs": "2026-09-02T22:13:38.851Z"
+    }
+  },
+  {
+    "index": 7,
+    "hash": "FNkIgrGhCicoclya2p4PxLn3VnY=",
+    "timestampUtcMs": "2026-09-02T22:13:38.851Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "43fd38fc-d876-44df-a2a1-8bc89557f4bf",
+        "name": "gotchas"
+      },
+      "timestampUtcMs": "2026-09-02T22:13:38.851Z"
+    }
+  },
+  {
+    "index": 8,
+    "hash": "aD2bHiKJ6VWew9CYXNKxBLigkss=",
+    "timestampUtcMs": "2026-09-02T22:13:38.851Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "version",
+        "value": "v6.2.2-dev.74",
+        "updatedAt": "2026-09-02T22:13:38.851Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:13:38.851Z"
+    }
+  },
+  {
+    "index": 9,
+    "hash": "ZtKoHhVwIvcOpjDM0sMA7o+wiCg=",
+    "timestampUtcMs": "2026-09-02T22:13:38.851Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "filePath",
+        "value": "apps/academy/docs/academy/04-Reference/01-Reactor/03-AdvancedReactorUsage.md",
+        "updatedAt": "2026-09-02T22:13:38.851Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:13:38.851Z"
+    }
+  },
+  {
+    "index": 10,
+    "hash": "JqlLEVdtHqkORtRjcH3rAonsjA8=",
+    "timestampUtcMs": "2026-09-02T22:13:38.851Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "confidence",
+        "value": "grounded",
+        "updatedAt": "2026-09-02T22:13:38.851Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:13:38.851Z"
+    }
+  },
+  {
+    "index": 11,
+    "hash": "NMi2VCEUno0wRIcytcgPYNG6YC0=",
+    "timestampUtcMs": "2026-09-02T22:13:41.540Z",
+    "action": {
+      "type": "SET_PROVENANCE",
+      "input": {
+        "author": "knowledge-agent",
+        "createdAt": "2026-09-02T22:13:41.540Z",
+        "sourceOrigin": "DERIVED"
+      },
+      "timestampUtcMs": "2026-09-02T22:13:41.540Z"
+    }
+  },
+  {
+    "index": 12,
+    "hash": "/1fGncH7JPGfRyenE7FpFhkVf+0=",
+    "timestampUtcMs": "2026-09-02T22:13:42.057Z",
+    "action": {
+      "type": "SUBMIT_FOR_REVIEW",
+      "input": {
+        "id": "d78c3eb5-6f4e-4c78-9d13-3036dac33c61",
+        "actor": "knowledge-agent",
+        "comment": "extracted from the Powerhouse repository at v6.2.2-dev.74",
+        "timestamp": "2026-09-02T22:13:42.057Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:13:42.057Z"
+    }
+  },
+  {
+    "index": 13,
+    "hash": "LTimgJ1clhuAuchpZ1BsQbJK5+c=",
+    "timestampUtcMs": "2026-09-02T22:13:44.160Z",
+    "action": {
+      "type": "APPROVE_NOTE",
+      "input": {
+        "id": "5f0e5f96-bdf7-4592-ae3e-4d988fcbd6df",
+        "actor": "liberuum",
+        "comment": "claim checked against the cited repository file at the pinned tag",
+        "timestamp": "2026-09-02T22:13:44.160Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:13:44.160Z"
+    }
+  },
+  {
+    "index": 14,
+    "hash": "k870sC7NbYuDc+u43jincvG/1mk=",
+    "timestampUtcMs": "2026-09-02T22:16:38.313Z",
+    "action": {
+      "type": "SET_TITLE",
+      "input": {
+        "title": "executeBatch guarantees ordering and nothing else: a dependsOn edge waits for the job before it to finish, not to succeed, and there is no batch-level rollback",
+        "updatedAt": "2026-09-02T22:16:38.312Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:16:38.313Z"
+    }
+  },
+  {
+    "index": 15,
+    "hash": "k870sC7NbYuDc+u43jincvG/1mk=",
+    "timestampUtcMs": "2026-09-02T22:16:38.313Z",
+    "action": {
+      "type": "SET_DESCRIPTION",
+      "input": {
+        "updatedAt": "2026-09-02T22:16:38.312Z",
+        "description": "Every JobInfo returns PENDING with a placeholder token, so the result is a submission receipt. Poll getJobStatus or correlate JOB_FAILED via job.meta.batchId; re-submitting re-applies successes."
+      },
+      "timestampUtcMs": "2026-09-02T22:16:38.313Z"
+    }
+  },
+  {
+    "index": 16,
+    "hash": "k870sC7NbYuDc+u43jincvG/1mk=",
+    "timestampUtcMs": "2026-09-02T22:16:38.313Z",
+    "action": {
+      "type": "SET_NOTE_TYPE",
+      "input": {
+        "noteType": "PATTERN",
+        "updatedAt": "2026-09-02T22:16:38.312Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:16:38.313Z"
+    }
+  },
+  {
+    "index": 17,
+    "hash": "k870sC7NbYuDc+u43jincvG/1mk=",
+    "timestampUtcMs": "2026-09-02T22:16:38.313Z",
+    "action": {
+      "type": "SET_CONTENT",
+      "input": {
+        "content": "`executeBatch` submits multiple mutation jobs with declared dependencies and lets the reactor schedule them. What it guarantees is **ordering, and only ordering** \u2014 the v6.2.2-dev.74 Academy hardened the wording from \"multi-document atomic operations\" to \"multi-document operations with dependency ordering\", and spelled out four consequences:\n\n- **Not atomic, not transactional.** Each job commits on its own; there is no batch-level rollback, status, or consistency token.\n- **A `dependsOn` edge waits for the job before it to *finish*, not to *succeed*.** A failed job leaves the queue exactly as a successful one does, so its dependents still run \u2014 against whatever state the failure left behind. Jobs that committed stay committed.\n- **The return value is a submission receipt.** Every `JobInfo` comes back `PENDING`, with a placeholder consistency token. To learn what happened, poll `getJobStatus` per job id, or subscribe to `JOB_FAILED` and correlate through `job.meta.batchId` and `job.meta.batchJobIds`.\n- **No idempotency key on a job plan.** Re-submitting a batch after a partial failure re-applies the entries that already succeeded; any compensation is the caller's to write.\n\nThe mechanism is unchanged: jobs are `{ key, documentId, actions, dependsOn }`, independent jobs run in parallel and dependents wait, and the EventBus (`JOB_PENDING` \u2192 `JOB_RUNNING` \u2192 `JOB_WRITE_READY` \u2192 `JOB_READ_READY`, or `JOB_FAILED`) is where progress is observed. It lives on `IReactor`, not on the Promise-based `IReactorClient`, and it is not on the light `IReactorBrowserClient` either.\n\n_Source: apps/academy/docs/academy/04-Reference/01-Reactor/03-AdvancedReactorUsage.md (Powerhouse v6.2.2-dev.74)._\n_Source: apps/academy/docs/academy/04-Reference/01-Reactor/01-WorkingWithTheReactor.md (Powerhouse v6.2.2-dev.74)._\n\n## Provenance\n- `apps/academy/docs/academy/04-Reference/01-Reactor/03-AdvancedReactorUsage.md` \u2014 Batch operations: the four new paragraphs on ordering, failure, receipt and idempotency\n- `apps/academy/docs/academy/04-Reference/01-Reactor/01-WorkingWithTheReactor.md` \u2014 method table: executeBatch 'Submit multiple jobs in dependency order and wait for all to settle'\n\n_Recorded from the Powerhouse repository at **v6.2.2-dev.74** during the v6.2.2-dev.74 source sync._",
+        "updatedAt": "2026-09-02T22:16:38.312Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:16:38.313Z"
+    }
+  },
+  {
+    "index": 18,
+    "hash": "k870sC7NbYuDc+u43jincvG/1mk=",
+    "timestampUtcMs": "2026-09-02T22:16:38.313Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "version",
+        "value": "v6.2.2-dev.74",
+        "updatedAt": "2026-09-02T22:16:38.312Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:16:38.313Z"
+    }
+  },
+  {
+    "index": 19,
+    "hash": "k870sC7NbYuDc+u43jincvG/1mk=",
+    "timestampUtcMs": "2026-09-02T22:16:38.313Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "filePath",
+        "value": "apps/academy/docs/academy/04-Reference/01-Reactor/03-AdvancedReactorUsage.md",
+        "updatedAt": "2026-09-02T22:16:38.312Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:16:38.313Z"
+    }
+  },
+  {
+    "index": 20,
+    "hash": "k870sC7NbYuDc+u43jincvG/1mk=",
+    "timestampUtcMs": "2026-09-02T22:16:38.313Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "confidence",
+        "value": "grounded",
+        "updatedAt": "2026-09-02T22:16:38.312Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:16:38.313Z"
+    }
+  },
+  {
+    "index": 21,
+    "hash": "/Fej5cSqphrd+ScHjPWi2U9kKi8=",
+    "timestampUtcMs": "2026-09-02T22:21:15.746Z",
+    "action": {
+      "type": "SET_TITLE",
+      "input": {
+        "title": "executeBatch guarantees ordering and nothing else: a dependsOn edge waits for the job before it to finish, not to succeed, and there is no batch-level rollback",
+        "updatedAt": "2026-09-02T22:21:15.746Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:21:15.746Z"
+    }
+  },
+  {
+    "index": 22,
+    "hash": "/Fej5cSqphrd+ScHjPWi2U9kKi8=",
+    "timestampUtcMs": "2026-09-02T22:21:15.746Z",
+    "action": {
+      "type": "SET_DESCRIPTION",
+      "input": {
+        "updatedAt": "2026-09-02T22:21:15.746Z",
+        "description": "Every JobInfo returns PENDING with a placeholder token, so the result is a submission receipt. Poll getJobStatus or correlate JOB_FAILED via job.meta.batchId; re-submitting re-applies successes."
+      },
+      "timestampUtcMs": "2026-09-02T22:21:15.746Z"
+    }
+  },
+  {
+    "index": 23,
+    "hash": "/Fej5cSqphrd+ScHjPWi2U9kKi8=",
+    "timestampUtcMs": "2026-09-02T22:21:15.746Z",
+    "action": {
+      "type": "SET_NOTE_TYPE",
+      "input": {
+        "noteType": "PATTERN",
+        "updatedAt": "2026-09-02T22:21:15.746Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:21:15.746Z"
+    }
+  },
+  {
+    "index": 24,
+    "hash": "/Fej5cSqphrd+ScHjPWi2U9kKi8=",
+    "timestampUtcMs": "2026-09-02T22:21:15.746Z",
+    "action": {
+      "type": "SET_CONTENT",
+      "input": {
+        "content": "`executeBatch` submits multiple mutation jobs with declared dependencies and lets the reactor schedule them. What it guarantees is **ordering, and only ordering** \u2014 the v6.2.2-dev.74 Academy hardened the wording from \"multi-document atomic operations\" to \"multi-document operations with dependency ordering\", and spelled out four consequences:\n\n- **Not atomic, not transactional.** Each job commits on its own; there is no batch-level rollback, status, or consistency token.\n- **A `dependsOn` edge waits for the job before it to *finish*, not to *succeed*.** A failed job leaves the queue exactly as a successful one does, so its dependents still run \u2014 against whatever state the failure left behind. Jobs that committed stay committed.\n- **The return value is a submission receipt.** Every `JobInfo` comes back `PENDING`, with a placeholder consistency token. To learn what happened, poll `getJobStatus` per job id, or subscribe to `JOB_FAILED` and correlate through `job.meta.batchId` and `job.meta.batchJobIds`.\n- **No idempotency key on a job plan.** Re-submitting a batch after a partial failure re-applies the entries that already succeeded; any compensation is the caller's to write.\n\nThe mechanism is unchanged: jobs are `{ key, documentId, actions, dependsOn }`, independent jobs run in parallel and dependents wait, and the EventBus (`JOB_PENDING` \u2192 `JOB_RUNNING` \u2192 `JOB_WRITE_READY` \u2192 `JOB_READ_READY`, or `JOB_FAILED`) is where progress is observed. It lives on `IReactor`, not on the Promise-based `IReactorClient`, and it is not on the light `IReactorBrowserClient` either.\n\n_Source: apps/academy/docs/academy/04-Reference/01-Reactor/03-AdvancedReactorUsage.md (Powerhouse v6.2.2-dev.74)._\n_Source: apps/academy/docs/academy/04-Reference/01-Reactor/01-WorkingWithTheReactor.md (Powerhouse v6.2.2-dev.74)._\n\n## Provenance\n- `apps/academy/docs/academy/04-Reference/01-Reactor/03-AdvancedReactorUsage.md` \u2014 Batch operations: the four new paragraphs on ordering, failure, receipt and idempotency\n- `apps/academy/docs/academy/04-Reference/01-Reactor/01-WorkingWithTheReactor.md` \u2014 method table: executeBatch 'Submit multiple jobs in dependency order and wait for all to settle'\n\n_Recorded from the Powerhouse repository at **v6.2.2-dev.74** during the v6.2.2-dev.74 source sync._",
+        "updatedAt": "2026-09-02T22:21:15.746Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:21:15.746Z"
+    }
+  },
+  {
+    "index": 25,
+    "hash": "/Fej5cSqphrd+ScHjPWi2U9kKi8=",
+    "timestampUtcMs": "2026-09-02T22:21:15.746Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "version",
+        "value": "v6.2.2-dev.74",
+        "updatedAt": "2026-09-02T22:21:15.746Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:21:15.746Z"
+    }
+  },
+  {
+    "index": 26,
+    "hash": "/Fej5cSqphrd+ScHjPWi2U9kKi8=",
+    "timestampUtcMs": "2026-09-02T22:21:15.746Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "filePath",
+        "value": "apps/academy/docs/academy/04-Reference/01-Reactor/03-AdvancedReactorUsage.md",
+        "updatedAt": "2026-09-02T22:21:15.746Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:21:15.746Z"
+    }
+  },
+  {
+    "index": 27,
+    "hash": "/Fej5cSqphrd+ScHjPWi2U9kKi8=",
+    "timestampUtcMs": "2026-09-02T22:21:15.746Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "confidence",
+        "value": "grounded",
+        "updatedAt": "2026-09-02T22:21:15.746Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:21:15.746Z"
+    }
+  }
+]

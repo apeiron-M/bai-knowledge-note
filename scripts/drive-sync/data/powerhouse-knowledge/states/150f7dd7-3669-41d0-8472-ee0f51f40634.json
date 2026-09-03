@@ -1,0 +1,107 @@
+{
+  "links": [
+    {
+      "id": "lnk-fe8f33f5-bui",
+      "linkType": "BUILDS_ON",
+      "targetDocumentId": "fe8f33f5-b69c-4080-878a-1cd2cbe6bb17",
+      "targetTitle": "lazy-sync-document-channels",
+      "reason": "Six states and a channel-level completion signal exist because laziness is per-document channels rather than one drive-wide sync",
+      "confidence": "grounded"
+    },
+    {
+      "id": "lnk-a90ccd64-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "a90ccd64-6898-41f6-a845-242b8929612a",
+      "targetTitle": "ADR \u203a lazy-drive-sync",
+      "reason": "Extracted from docs/adr/0001-lazy-drive-sync.md at v6.2.2-dev.74 \u2014 Decision (status model, completion signal, Suspense); Abstractions: kept, modified, dropped",
+      "confidence": "grounded"
+    },
+    {
+      "id": "lnk-55fcb6f8-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "55fcb6f8-c6d7-48ed-b56b-fe4a0ff3303e",
+      "targetTitle": "lazy-sync-proposed-not-shipped",
+      "reason": "Both belong to the same Proposed ADR, so neither describes shipped behaviour",
+      "confidence": "grounded"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "A lazily synced document needs six states, not loading-versus-loaded, and the missing verdict is only assertable after confirming collection membership",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "d14669e0-5a96-4fb0-b811-5af035299a90",
+      "name": "reactor-sync",
+      "topicDocumentId": null
+    },
+    {
+      "id": "24887c8a-cada-4eb9-8198-953d2ad8b03d",
+      "name": "lazy-sync",
+      "topicDocumentId": null
+    },
+    {
+      "id": "e7133c7c-7ecf-42ef-8843-66bb19106e88",
+      "name": "status",
+      "topicDocumentId": null
+    },
+    {
+      "id": "90f1ebbc-24dc-4c9c-aa25-18cb885a3f3e",
+      "name": "adr",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "ADR 0001 rejects a binary loading flag for a shared, mutating document and defines six states:\n\n| State | Meaning |\n| --- | --- |\n| `available` | listed, not synced |\n| `loading` | backfilling |\n| `synced` | caught up, writable |\n| `missing` | caught up, a member, nothing materialized |\n| `unreachable` | a node exists but no live membership |\n| `not-referenced` | unknown |\n\nThe distinction that carries the design is **`missing` versus `unreachable`**. `missing` is *membership-authoritative*: it may be asserted only after confirming membership via `getCollectionsForDocuments`. A node that appears in the drive's tree but has no membership is `unreachable`, not missing \u2014 which matters because the legacy `powerhouse/document-drive` model's node list can diverge from `document_collections`, and treating a tree entry as authoritative is the divergence bug the ADR is guarding against. That is also why it refuses a combined `DriveMembershipProvider`: routing runs on the uniform `document_collections` index, and only the model-specific tree/existence signal sits behind a thin provider, because combining them would invite using the tree for routing.\n\nCompletion is deliberately **channel-level**: `waitForInitialSync(remoteName)` resolves when the initial backfill drains. It cannot come from `SyncStatus`, which is document-keyed and returns `undefined` for exactly the empty/missing case that must be detected \u2014 so \"initial sync complete\" was explicitly dropped as a `SyncStatus` field.\n\nSuspense rides a `LazyReactorClient` decorator over `IReactorClient.get`, injected only when `preloadDocuments:false`, with `document-cache.ts` unchanged \u2014 and a hard rule: **never cache a \"not-yet\" rejection**, or the promise cache is poisoned.\n\n## Provenance\n- `docs/adr/0001-lazy-drive-sync.md` \u2014 Decision (status model, completion signal, Suspense); Abstractions: kept, modified, dropped\n\n_Extracted from the Powerhouse repository at **v6.2.2-dev.74**._",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": "v6.2.2-dev.74",
+  "computes": null,
+  "filePath": "docs/adr/0001-lazy-drive-sync.md",
+  "noteType": "CONCEPT",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "knowledge-agent",
+    "createdAt": "2026-09-03T07:29:01.232Z",
+    "sessionId": null,
+    "updatedAt": "2026-09-03T07:31:09.895Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "available, loading, synced, missing, unreachable, not-referenced. A node with no live membership is unreachable rather than missing, and completion is a channel-level signal.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "41a6ee84-3a2c-4cc2-b53f-61193e5d9712",
+      "actor": "knowledge-agent",
+      "comment": "extracted from docs/adr/0001-lazy-drive-sync.md at v6.2.2-dev.74",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-09-03T07:29:01.741Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "c751d386-ca9d-4207-909c-37d60a78c5f3",
+      "actor": "liberuum",
+      "comment": "claim checked against the cited file at the pinned tag",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-09-03T07:29:02.312Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

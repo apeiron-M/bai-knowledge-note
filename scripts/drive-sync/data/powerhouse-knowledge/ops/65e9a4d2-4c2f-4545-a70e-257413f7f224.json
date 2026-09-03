@@ -1,0 +1,153 @@
+[
+  {
+    "index": 0,
+    "hash": "",
+    "timestampUtcMs": "2026-09-02T21:35:26.514Z",
+    "action": {
+      "type": "CREATE_DOCUMENT",
+      "input": {
+        "meta": {},
+        "name": "Academy \u203a Build \u203a WorkWithData \u203a Processor best practices",
+        "slug": "",
+        "model": "bai/source",
+        "branch": "main",
+        "signing": {
+          "nonce": "",
+          "publicKey": {},
+          "signature": "65e9a4d2-4c2f-4545-a70e-257413f7f224",
+          "documentType": "bai/source",
+          "createdAtUtcIso": "2026-09-02T21:35:26.514Z"
+        },
+        "version": 0,
+        "documentId": "65e9a4d2-4c2f-4545-a70e-257413f7f224",
+        "protocolVersions": {
+          "base-reducer": 2
+        }
+      },
+      "timestampUtcMs": "2026-09-02T21:35:26.514Z"
+    }
+  },
+  {
+    "index": 0,
+    "hash": "jmK13JQrbbjJJGoqBDdyuJ6/2/c=",
+    "timestampUtcMs": "2026-09-02T21:35:26.584Z",
+    "action": {
+      "type": "INGEST_SOURCE",
+      "input": {
+        "url": "https://github.com/powerhouse-inc/powerhouse/blob/v6.2.2-dev.74/apps/academy/docs/academy/03-Build/04-WorkWithData/05-ProcessorBestPractices.md",
+        "tool": "sync-repo-docs",
+        "title": "Academy \u203a Build \u203a WorkWithData \u203a Processor best practices",
+        "author": "Powerhouse Inc.",
+        "method": "sha256:105b2f576de32b064386e2f0bbe113e65acd0c2cd3b262ecd76d9d4b39196d27 git:v6.2.2-dev.74",
+        "content": "# Processor best practices\n\nThis guide covers advanced patterns for processors that need to mutate documents or query indexed data. It builds on the concepts from [Building a Processor](/academy/Build/WorkWithData/BuildingAProcessor) \u2014 read that first if you haven't already.\n\n:::tip[Prerequisites]\nBefore reading this guide, make sure you're familiar with the basics:\n\n- [Building a Processor](/academy/Build/WorkWithData/BuildingAProcessor) \u2014 processor interface, factories, and filters\n\n:::\n\n## One-way data flow\n\nProcessors should follow a one-way data flow: operations flow **in** via `onOperations`, and mutations flow **out** via `dispatch`.\n\n![Processor data flow: operations in via onOperations, mutations out via dispatch](./images/processor-data-flow.png)\n\nThe key principle: **never block on a reactor operation from inside a processor**. When a processor dispatches actions, the job is submitted asynchronously \u2014 the processor does not wait for it to complete. If the processor needs to react to the result, it will receive the resulting operations in a future `onOperations` call.\n\nThis design keeps processors predictable, avoids circular dependencies, and prevents scenarios where a processor waits on work that depends on that same processor finishing.\n\n## Dispatching actions with `dispatch`\n\nThe `dispatch` API lets a processor mutate documents by executing actions. It is available on the `IProcessorHostModule` object passed to your factory.\n\n```typescript\nimport type { Action } from \"document-model\";\n\ninterface IProcessorDispatch {\n  execute(\n    docId: string,\n    branch: string,\n    actions: Action[],\n    signal?: AbortSignal,\n    meta?: Record<string, unknown>,\n  ): Promise<ProcessorDispatchResult>;\n}\n\ntype ProcessorDispatchResult = {\n  id: string; // Job ID\n  status: string; // Job status at time of submission\n};\n```\n\nUnder the hood, `dispatch.execute()` calls `reactorClient.executeAsync()` \u2014 it submits the job to the reactor and returns immediately with the job info. The processor does not wait for the job to complete.\n\n### Accessing `dispatch` in a factory\n\nCapture `module.dispatch` in your factory and pass it to your processor:\n\n```typescript\nimport type {\n  IProcessor,\n  IProcessorDispatch,\n  IProcessorHostModule,\n  ProcessorRecord,\n  ProcessorFilter,\n} from \"@powerhousedao/reactor-browser\";\nimport type { PHDocumentHeader } from \"document-model\";\n\nexport const myProcessorFactory =\n  (module: IProcessorHostModule) =>\n  async (driveHeader: PHDocumentHeader): Promise<ProcessorRecord[]> => {\n    const processor = new MyProcessor(module.dispatch);\n\n    const filter: ProcessorFilter = {\n      branch: [\"main\"],\n      documentId: [\"*\"],\n      documentType: [\"powerhouse/invoice\"],\n      scope: [\"global\"],\n    };\n\n    return [{ processor, filter }];\n  };\n```\n\n### Example: cross-document automation\n\nA processor that watches for approved invoices and dispatches a payment action to a separate document:\n\n```typescript\nimport type {\n  IProcessor,\n  IProcessorDispatch,\n} from \"@powerhousedao/reactor-browser\";\nimport type { OperationWithContext } from \"document-model\";\n\nexport class InvoiceApprovalProcessor implements IProcessor {\n  constructor(\n    private dispatch: IProcessorDispatch,\n    private paymentDocId: string,\n  ) {}\n\n  async onOperations(operations: OperationWithContext[]): Promise<void> {\n    for (const { operation, context } of operations) {\n      if (\n        operation.action.type === \"SET_STATUS\" &&\n        operation.action.input?.status === \"approved\"\n      ) {\n        await this.dispatch.execute(this.paymentDocId, \"main\", [\n          {\n            type: \"CREATE_PAYMENT\",\n            input: {\n              invoiceId: context.documentId,\n              amount: operation.action.input.amount,\n            },\n            scope: \"global\",\n          },\n        ]);\n      }\n    }\n  }\n\n  async onDisconnect(): Promise<void> {}\n}\n```\n\nThe processor dispatches the `CREATE_PAYMENT` action and moves on. It does not wait for the payment document to be updated. If the processor needs to know the payment was created, it can subscribe to `powerhouse/payment` operations via its filter.\n\n### Parameter reference\n\n| Parameter | Type                      | Required | Description                                   |\n| --------- | ------------------------- | -------- | --------------------------------------------- |\n| `docId`   | `string`                  | Yes      | Target document ID                            |\n| `branch`  | `string`                  | Yes      | Branch to apply actions to (usually `\"main\"`) |\n| `actions` | `Action[]`                | Yes      | Actions to dispatch                           |\n| `signal`  | `AbortSignal`             | No       | Cancellation signal                           |\n| `meta`    | `Record<string, unknown>` | No       | Additional metadata for the job               |\n\n### Why not `reactorClient`?\n\n:::warning[Anti-pattern: using reactorClient directly]\nDo not use `reactorClient` methods directly from inside a processor. Use `dispatch` instead.\n\n**Why:**\n\n1. **Potential blocking.** Methods like `reactorClient.execute()` wait for the job to reach `READ_READY` status before returning. This means the call could potentially wait on processors to finish their current batch \u2014 including the very processor making the call.\n\n2. **Unnecessary round-trip.** The processor will receive the resulting operations through `onOperations` anyway. Waiting for the result synchronously adds latency without benefit.\n\n3. **One-way flow.** Processors should be written with a one-way data flow: react to operations, dispatch new work, and move on. If you need the result of a dispatch, handle it in a future `onOperations` call \u2014 don't block waiting for it.\n\n**Instead of:**\n\n```typescript\n// Bad: blocks until job completes\nconst doc = await reactorClient.execute(docId, \"main\", actions);\n```\n\n**Use:**\n\n```typescript\n// Good: submits and returns immediately\nawait this.dispatch.execute(docId, \"main\", actions);\n```\n\n:::\n\n## Querying data with `getReadModel`\n\nThe `getReadModel` API lets a processor look up a registered read model by name. Read models are materialized views maintained by the reactor \u2014 they are updated as operations are written and provide efficient query access to indexed data.\n\n```typescript\ngetReadModel<T>(name: string): T\n```\n\nPass the read model's `name` property and cast to the expected type. Throws an error if the read model is not found.\n\n### Default read models\n\nThe reactor registers several built-in read models that processors can access:\n\n| Name                          | Type                                | Description                                                                                  |\n| ----------------------------- | ----------------------------------- | -------------------------------------------------------------------------------------------- |\n| `\"document-view\"`             | `IDocumentView`                     | Maintains document snapshots for reads; provides `get()`, `find()`, and consistency tracking |\n| `\"document-indexer\"`          | `IDocumentIndexer`                  | Tracks document relationships (parent/child) and metadata                                    |\n| `\"processor-manager\"`         | `IProcessorManager`                 | Routes operations to registered processors                                                   |\n| `\"subscription-notification\"` | `SubscriptionNotificationReadModel` | Notifies subscription callbacks when documents change                                        |\n\nFor example, to look up a document snapshot from inside a processor:\n\n```typescript\nimport type { IDocumentView } from \"@powerhousedao/reactor\";\n\nconst documentView = module.getReadModel<IDocumentView>(\"document-view\");\n```\n\nCustom read models registered via `IReadModelCoordinator` are also available by their `name` property.\n\n### Example: querying indexed data\n\nA processor that checks a budget read model before dispatching a payment:\n\n```typescript\nimport type {\n  IProcessor,\n  IProcessorDispatch,\n} from \"@powerhousedao/reactor-browser\";\nimport type { OperationWithContext } from \"document-model\";\n\ninterface IBudgetReadModel {\n  getRemainingBudget(departmentId: string): Promise<number>;\n}\n\nexport class BudgetCheckProcessor implements IProcessor {\n  constructor(\n    private dispatch: IProcessorDispatch,\n    private budgetModel: IBudgetReadModel,\n  ) {}\n\n  async onOperations(operations: OperationWithContext[]): Promise<void> {\n    for (const { operation, context } of operations) {\n      if (operation.action.type !== \"REQUEST_PAYMENT\") continue;\n\n      const { departmentId, amount } = operation.action.input;\n      const remaining = await this.budgetModel.getRemainingBudget(departmentId);\n\n      if (remaining >= amount) {\n        await this.dispatch.execute(context.documentId, \"main\", [\n          {\n            type: \"APPROVE_PAYMENT\",\n            input: { departmentId, amount },\n            scope: \"global\",\n          },\n        ]);\n      }\n    }\n  }\n\n  async onDisconnect(): Promise<void> {}\n}\n```\n\nThe factory wires the read model:\n\n```typescript\nexport const budgetCheckProcessorFactory =\n  (module: IProcessorHostModule) =>\n  async (driveHeader: PHDocumentHeader): Promise<ProcessorRecord[]> => {\n    const budgetModel = module.getReadModel<IBudgetReadModel>(\"budget\");\n\n    const processor = new BudgetCheckProcessor(module.dispatch, budgetModel);\n\n    return [\n      {\n        processor,\n        filter: {\n          branch: [\"main\"],\n          documentId: [\"*\"],\n          documentType: [\"powerhouse/expense-report\"],\n          scope: [\"global\"],\n        },\n      },\n    ];\n  };\n```\n\n:::info[Read model availability]\n`getReadModel` throws if the read model is not registered. Ensure the read model is registered with the reactor before your processor factory runs. If the read model is optional, wrap the call in a try/catch in your factory and handle the missing case gracefully.\n:::\n\n## `IProcessorHostModule` reference\n\nThe `IProcessorHostModule` is passed to your factory's outer function and provides access to all processor APIs:\n\n```typescript\ninterface IProcessorHostModule {\n  analyticsStore: IAnalyticsStore;\n  relationalDb: IRelationalDb;\n  processorApp: ProcessorApp;\n  dispatch: IProcessorDispatch;\n  getReadModel<T>(name: string): T;\n  config?: Map<string, unknown>;\n}\n```\n\n| Field            | Type                     | Description                                           |\n| ---------------- | ------------------------ | ----------------------------------------------------- |\n| `analyticsStore` | `IAnalyticsStore`        | Time-series analytics store for writing metrics       |\n| `relationalDb`   | `IRelationalDb`          | Relational database for creating namespaced stores    |\n| `processorApp`   | `ProcessorApp`           | The host application (`\"connect\"` or `\"switchboard\"`) |\n| `dispatch`       | `IProcessorDispatch`     | Fire-and-forget action dispatch (see above)           |\n| `getReadModel`   | `<T>(name: string) => T` | Read model lookup by name (see above)                 |\n| `config`         | `Map<string, unknown>`   | Optional processor-specific configuration             |\n\n:::info[Import paths]\n`@powerhousedao/reactor-browser` re-exports these types for convenience in browser environments. If you are working outside the browser (Node.js, CLI tools, server-side code), import directly from `@powerhousedao/reactor` or `@powerhousedao/shared`.\n:::\n\n## Summary\n\n- **Use `dispatch.execute()`** to mutate documents from processors \u2014 never `reactorClient` directly\n- **Use `getReadModel()`** to query indexed data for lookups and validation\n- **Design for one-way data flow**: operations in via `onOperations`, mutations out via `dispatch`\n- **Never block** on reactor operations that might circle back to the processor pipeline\n- **React asynchronously**: if you need the result of a dispatch, handle it in a future `onOperations` call\n- **Access all APIs** through `IProcessorHostModule` in your factory function\n\n### Related pages\n\n- [Building a Processor](/academy/Build/WorkWithData/BuildingAProcessor) \u2014 processor basics\n- [Relational Database Processor](/academy/Build/WorkWithData/RelationalDbProcessor) \u2014 database-backed processors\n- [Processor Migration Guide](/academy/Reference/Processors/ProcessorMigrationGuide) \u2014 migrating from the legacy strand-based API\n",
+        "createdAt": "2026-09-02T21:35:26.584Z",
+        "createdBy": "repo-docs-sync",
+        "sourceType": "DOCUMENTATION",
+        "description": "Powerhouse v6.2.2-dev.74 (unchanged since v6.2.2-dev.47) \u2014 This guide covers advanced patterns for processors that need to mutate documents or query indexed data. It builds on the concepts from Build\u2026",
+        "publishedAt": "2026-06-17T17:18:45.000Z"
+      },
+      "timestampUtcMs": "2026-09-02T21:35:26.584Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "",
+    "timestampUtcMs": "2026-09-02T21:35:26.514Z",
+    "action": {
+      "type": "UPGRADE_DOCUMENT",
+      "input": {
+        "model": "bai/source",
+        "toVersion": 1,
+        "documentId": "65e9a4d2-4c2f-4545-a70e-257413f7f224",
+        "fromVersion": 0,
+        "initialState": {
+          "auth": {
+            "grants": [],
+            "version": 0
+          },
+          "local": {},
+          "global": {
+            "title": null,
+            "status": "INBOX",
+            "content": null,
+            "createdAt": null,
+            "createdBy": null,
+            "provenance": null,
+            "sourceType": null,
+            "description": null,
+            "extractedClaims": [],
+            "extractionStats": null
+          },
+          "document": {
+            "hash": {
+              "encoding": "base64",
+              "algorithm": "sha1"
+            },
+            "version": 1
+          }
+        }
+      },
+      "timestampUtcMs": "2026-09-02T21:35:26.514Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "rin8fPRRQX2CzEg8312LaKF5Ogg=",
+    "timestampUtcMs": "2026-09-02T21:35:30.234Z",
+    "action": {
+      "type": "ADD_EXTRACTED_CLAIM",
+      "input": {
+        "claimRef": "b527d68e-cd36-4d09-81a2-78750e1c7181"
+      },
+      "timestampUtcMs": "2026-09-02T21:35:30.234Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "dMFUMNEaBmuJqxRSxhZHFFIFnp0=",
+    "timestampUtcMs": "2026-09-02T21:35:31.778Z",
+    "action": {
+      "type": "ADD_EXTRACTED_CLAIM",
+      "input": {
+        "claimRef": "b69f8c2b-0f19-4373-8839-e10f697e9e26"
+      },
+      "timestampUtcMs": "2026-09-02T21:35:31.778Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "BQoW0Km2g+XUElbHFeb04XFdklg=",
+    "timestampUtcMs": "2026-09-02T21:35:33.257Z",
+    "action": {
+      "type": "ADD_EXTRACTED_CLAIM",
+      "input": {
+        "claimRef": "d0f0ef19-9525-45d1-9d48-ebc8f7922cfc"
+      },
+      "timestampUtcMs": "2026-09-02T21:35:33.257Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "F6xWMACcG+2jkBzaVRDukNVrblE=",
+    "timestampUtcMs": "2026-09-02T21:35:34.749Z",
+    "action": {
+      "type": "ADD_EXTRACTED_CLAIM",
+      "input": {
+        "claimRef": "d4d54034-3308-4ebc-9d0a-a9c871d519c0"
+      },
+      "timestampUtcMs": "2026-09-02T21:35:34.749Z"
+    }
+  },
+  {
+    "index": 5,
+    "hash": "qItaACh4EXQNZaZRCeYRIjDZiZc=",
+    "timestampUtcMs": "2026-09-02T21:35:40.910Z",
+    "action": {
+      "type": "SET_SOURCE_STATUS",
+      "input": {
+        "status": "EXTRACTED"
+      },
+      "timestampUtcMs": "2026-09-02T21:35:40.910Z"
+    }
+  }
+]

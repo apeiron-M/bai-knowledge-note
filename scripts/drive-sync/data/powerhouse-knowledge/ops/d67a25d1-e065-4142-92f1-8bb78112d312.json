@@ -1,0 +1,132 @@
+[
+  {
+    "index": 0,
+    "hash": "",
+    "timestampUtcMs": "2026-08-17T12:18:48.295Z",
+    "action": {
+      "type": "CREATE_DOCUMENT",
+      "input": {
+        "meta": {},
+        "name": "skill-reactor-project",
+        "slug": "",
+        "model": "bai/source",
+        "branch": "main",
+        "signing": {
+          "nonce": "",
+          "publicKey": {},
+          "signature": "d67a25d1-e065-4142-92f1-8bb78112d312",
+          "documentType": "bai/source",
+          "createdAtUtcIso": "2026-08-17T12:18:48.295Z"
+        },
+        "version": 0,
+        "documentId": "d67a25d1-e065-4142-92f1-8bb78112d312",
+        "protocolVersions": {
+          "base-reducer": 2
+        }
+      },
+      "timestampUtcMs": "2026-08-17T12:18:48.295Z"
+    }
+  },
+  {
+    "index": 0,
+    "hash": "VKHNkiulLn7fOoNaK8SUsM8qEa0=",
+    "timestampUtcMs": "2026-08-17T12:18:48.516Z",
+    "action": {
+      "type": "INGEST_SOURCE",
+      "input": {
+        "url": "https://github.com/powerhouse-inc/powerhouse-dev-skills/tree/main/skills/reactor-project",
+        "tool": "add-skill",
+        "title": "Agent skill: reactor-project",
+        "author": "skill-add",
+        "method": "sha256:a7894825117e9c7ec7fad6982ea5d7ebdbfe03dd34cb194596b8d94c221d6425",
+        "content": "---\nname: reactor-project\ndescription: Use when working in a Powerhouse reactor package project and the Vetra development environment is not running or needs restarting \u2014 starting Vetra Studio and Switchboard, capturing their endpoints, initializing a new reactor package, or shutting one down.\n---\n\n# Reactor Project\n\nA Powerhouse reactor package project is developed against Vetra: a local Connect Studio (Vetra Studio) and a local Switchboard (GraphQL + MCP), started with `ph vetra`. This skill covers initializing a new project, starting Vetra and capturing its endpoints, and stopping it cleanly \u2014 always as a backgrounded process, never one that blocks the session.\n\n## Quick reference\n\n| Intent | Command |\n|---|---|\n| initialize | `ph init <name> --pnpm` |\n| start | `ph vetra --watch --connect-port <port> --switchboard-port <port> --strictPort` (ports verified free first), run as a background shell |\n| check | read the background shell's output; verify by `curl`-ing the observed GraphQL URL directly \u2014 never a bare `switchboard` CLI call |\n| stop | kill the *entire* descendant process tree you started; confirm the ports used are free |\n\n## Readiness markers\n\nWait for all four before treating the environment as ready: `Local:`, `Drive URL:`, `Switchboard:`, `MCP server available at`.\n\n## References\n\n- [Initialize a new project](references/00-initialize-project.md) \u2014 RPPM.00\n- [Run and capture endpoints](references/01-run-and-capture-endpoint.md) \u2014 RPPM.01\n- [Stop the project](references/02-stop-project.md) \u2014 RPPM.02\n\n## Common mistakes\n\n- **Running `ph vetra` in the foreground.** It never exits, blocking the session. Always background it.\n- **Reporting a URL you didn't actually observe.** Never report ports from `powerhouse.config.json` or `.mcp.json` \u2014 they're defaults, not necessarily what got bound.\n- **Trusting the first port-shaped line instead of the last.** An early banner (e.g. \"Vetra Connect: ...\") can be superseded moments later by a port reassignment. `--strictPort` avoids the ambiguity by failing loudly on collision instead of drifting silently.\n- **Typing 3001/4001 as fixed values instead of verifying them free first.** Treat them only as the starting candidate (RPPM.00.1); if bound by a process you didn't start, use a different verified-free pair instead of colliding with it.\n- **Not `cd`-ing into the project directory first.** A fresh shell doesn't inherit an earlier `cd`; `ph` needs it to find the project. Always chain `cd <project-dir> && ph ...`.\n- **Trusting a bare `switchboard` CLI call to verify the local instance.** It acts on its configured profile, which may default to a remote/cloud reactor \u2014 it can return a plausible drive list while silently reading the wrong backend, with no error. Verify with `curl` against the GraphQL URL you actually observed instead (RPPM.01.2); only use the CLI itself with an explicit `--profile` bound to this local instance.\n- **Killing only the captured PID.** It's often a shell wrapper several layers above the real server; killing it alone leaves children running, reparented to PID 1. Enumerate and kill the whole descendant tree (RPPM.02.1/02.2) \u2014 never by process name, which risks an unrelated `ph vetra` elsewhere on the machine.\n\n\n---\n\n# Reference: 00-initialize-project.md\n\n# RPPM.00 Initialize a new Reactor Package Project\n\n## RPPM.00.1 Inspect existing projects\n\nThere is no project registry \u2014 the working directory itself is the only source of truth.\n\n- Confirm the current directory is a reactor package project: it must contain `powerhouse.config.json` or `powerhouse.config.ts`. If neither exists, this is not a reactor package project (or none has been created yet).\n- Pick a candidate pair of ports for Connect and Switchboard \u2014 3001/4001 are the conventional starting candidates \u2014 and confirm neither is already bound:\n  ```bash\n  lsof -iTCP:3001 -iTCP:4001 -sTCP:LISTEN\n  ```\n  (or `ss -ltn | grep -E ':(3001|4001)\\b'` if `lsof` is unavailable). Do this check *before* starting a new instance, not after seeing confusing port-fallback output. If either is bound by a process you did not start, do not treat 3001/4001 as required \u2014 re-run this same check against another candidate pair (e.g. 3002/4002) and use whichever pair comes back empty. Carry that exact pair through to [01-run-and-capture-endpoint.md](01-run-and-capture-endpoint.md) and [02-stop-project.md](02-stop-project.md).\n- If a project is already running here that you started earlier in this session, stop it first \u2014 see [02-stop-project.md](02-stop-project.md). Do not touch a process you did not start; it may belong to unrelated work.\n\n## RPPM.00.2 Generate unique project name\n\n- Create a suitable, descriptive project name in kebab case that reflects the package name, for example `acme-invoicing`\n- If the name already exists, use the current date and time as suffix, e.g. `acme-invoicing-20260120-1635`\n- The name must match pattern: `/^[a-zA-Z0-9-_]+$/`\n\n## RPPM.00.3 Initialize the project\n\n- Run `ph init <name> --pnpm` from the parent directory where the project should be created.\n- Wait for initialization to complete.\n- Confirm the new project directory now contains `powerhouse.config.json` or `powerhouse.config.ts`. If it does not, initialization failed \u2014 stop and report rather than proceeding to start Vetra.\n\n\n---\n\n# Reference: 01-run-and-capture-endpoint.md\n\n# RPPM.01 Run the Reactor Package project and capture Vetra MCP endpoint\n\n## RPPM.01.1 Start the Reactor Package project and wait until it's ready\n\n- From inside the project directory, start the environment as a **backgrounded** shell, using the port pair you verified free in RPPM.00.1 (start with the 3001/4001 candidates; substitute whatever free pair you actually confirmed, e.g. 3002/4002, if those were taken):\n  ```bash\n  ph vetra --watch --connect-port <connect-port> --switchboard-port <switchboard-port> --strictPort\n  ```\n  Do not present 3001/4001 as fixed values to type literally \u2014 they are only the first candidate to try. The command must always use ports you have just confirmed are free, not a hardcoded pair.\n- Never run this in the foreground \u2014 it is a persistent dev server that does not exit on its own. Foregrounding it blocks the session and leaves you unable to read its output or shut it down later.\n- `--strictPort` is deliberate: without it, a bound port is silently abandoned in favor of the next free one, and the CLI still prints an earlier, now-stale banner line for the abandoned port before the real one is chosen. With `--strictPort`, a collision on the ports you passed fails immediately and loudly instead. If it fails this way, pick a different explicit free pair (per RPPM.00.1) and retry \u2014 don't guess at a fallback port from the log.\n- Capture the actual server PID, not just the shell wrapper's `$!` \u2014 see RPPM.02.1 for why this matters at shutdown.\n- Read the background shell's accumulated output, polling every 2-3 seconds, until **all four** readiness markers below have appeared, up to 90 seconds. Do not treat the process merely running (e.g. via `ps`) as sufficient, and do not stop reading at the first URL-shaped line \u2014 an early, non-marker banner line (e.g. `Vetra Connect: ...`) is routinely printed once and then superseded moments later by the real `Local:` marker (see RPPM.01.2); none of the four markers below is itself superseded.\n- A line containing `ERROR WebSocket server error: Port 24678 is already in use` (Vite's HMR websocket port) can appear during an otherwise healthy startup. This third port is not covered by `--strictPort` and a collision on it does not block readiness. Don't abort on this line alone \u2014 only the absence of all four named markers within the timeout means the start failed.\n\n### The four readiness markers\n\n| Marker | Meaning |\n|---|---|\n| `Local:` | Vetra Studio (Connect) is serving, on the port in this line |\n| `Drive URL:` | The Vetra drive is mounted on Switchboard |\n| `Switchboard:` | Switchboard GraphQL endpoint is live |\n| `MCP server available at` | The MCP endpoint is live |\n\n## RPPM.01.2 Parse and verify the Vetra endpoints\n\nFrom the accumulated log, identify:\n- Vetra Studio URL \u2014 from the `Local:` line (the actual bound port; ignore any earlier \"Vetra Connect: ...\" banner if a later line supersedes it)\n- Vetra Switchboard URL \u2014 from the `Switchboard:` line\n- MCP endpoint URL \u2014 from the `MCP server available at` line\n\nOnly report a URL you actually read from this output. Never report a port from `powerhouse.config.json` or `.mcp.json` \u2014 those are configured defaults, not necessarily what got bound.\n\nVerify the connection against the endpoint you just read \u2014 never the `switchboard` CLI's default profile. **Do not run a bare `switchboard drives list` here.** The `switchboard` CLI always acts on its currently configured profile, and a bare invocation can succeed while silently reading (or writing to) a completely different reactor \u2014 including a remote or cloud instance \u2014 if that profile is default. Query the observed Switchboard GraphQL URL directly instead, which has no profile ambiguity:\n```bash\ncurl -s -X POST <switchboard-graphql-url> -H 'Content-Type: application/json' -d '{\"query\":\"{ __typename }\"}'\n```\nA response (even a schema error on a made-up field would prove liveness; `__typename` is valid on any GraphQL server and should succeed) confirms the local instance is actually up. Then confirm the Vetra Drive specifically by requesting its REST URL from the `Drive URL:` marker (e.g. `curl -s <drive-url>`); the Preview Drive commonly shares the same suffix with `preview-` in place of `vetra-` (e.g. `.../d/preview-<suffix>`) \u2014 confirm it the same way rather than assuming it.\n\nIf a later step needs the `switchboard` CLI itself (e.g. for document-model work), it must be invoked with an explicit `--profile <name>` bound to this local instance. Creating that profile is normally a one-time **setup step for the user**, not something the agent does itself: `switchboard init` requires an interactive TTY and takes no flags (`--url`, `--name`, etc. all fail with \"unexpected argument\"), so an agent cannot run it non-interactively, and \u2014 outside the unattended exception below \u2014 the agent must never edit `~/.switchboard/profiles.toml` on its own initiative, since that file is a global side effect on the user's machine, outside this project.\n\nBefore relying on `--profile`, check whether a suitable local profile already exists: `switchboard config list` and look for one whose `url` targets this reactor's Switchboard GraphQL endpoint (the one you just read from the `Switchboard:` marker).\n\n**Default (interactive) path \u2014 a human is available to respond:** if no suitable profile exists, **stop** and tell the user the exact stanza to add themselves to `~/.switchboard/profiles.toml`, for example:\n```toml\n[profiles.local]\nurl = \"http://localhost:<switchboard-port>/graphql\"\n```\nthen wait for confirmation before issuing any `switchboard` command with `--profile`. Do not silently rewrite the file yourself, and do not proceed as if the CLI could create this non-interactively.\n\n**Unattended path \u2014 no human is available to confirm:** if you are running without an interactive user who can respond to a stop-and-ask (an autonomous, scheduled, or otherwise hands-off run with no back-and-forth channel) and the task requires a working `--profile` to proceed, you may append the stanza above to `~/.switchboard/profiles.toml` yourself. Pick a profile name that doesn't collide with an existing one (check `switchboard config list` first). This is the *only* case where writing to that file yourself is acceptable \u2014 it remains forbidden whenever a human is actually reachable. Immediately after, report clearly (in your final output, not just mid-transcript) that you created the profile, and state the exact profile name and stanza you wrote, so the user can review or remove it later.\n\n\n---\n\n# Reference: 02-stop-project.md\n\n# RPPM.02 Stop the project\n\n## RPPM.02.1 Verify project is running\n\n- Check whether the background shell you started in [01-run-and-capture-endpoint.md](01-run-and-capture-endpoint.md) is still alive (e.g. check its background-shell output/status, or the specific PID you noted when you started it).\n- **The PID you captured at start time (e.g. a shell's `$!`) is often not the server** \u2014 `ph vetra` runs several layers deep (a `ph-cli` node process, under a `pnpm exec` shell, under pnpm itself, under the actual server process). Use `pstree -p <captured-pid>` or `ps --ppid <captured-pid>` (repeated down the chain) to enumerate the full descendant tree before shutting anything down. **Never group-kill the shell's PGID** (e.g. `kill -- -<pgid>`) \u2014 full stop, not merely \"don't assume it's safe.\" That PGID is routinely shared with the tool's own persistent shell, and killing it kills your own session; this holds even if you've individually verified the PGID's member PIDs first, since the kill still targets the whole group, your own shell included. Kill only the individually enumerated descendant PIDs, one at a time.\n- If it is not running, skip to confirming ports are free (RPPM.02.2 below).\n\n## RPPM.02.2 Shutdown the project\n\n- Kill **every process in the descendant tree** you enumerated above \u2014 one captured PID is not enough. Killing only the top-level PID commonly leaves its children (the `pnpm exec` shell, pnpm, and the real server process) running, reparented to PID 1. Kill each PID individually (top-down or bottom-up, then confirm each is gone), never a name-based or pattern-based kill.\n- Never use a blanket shutdown such as `pkill -f 'ph vetra'`, `pkill -f vetra`, or killing by process name \u2014 another `ph vetra` process may already be running on this machine for unrelated work, and a name-based kill would take it down too. Only kill PIDs you individually enumerated as descendants of the process you started.\n- After killing, confirm the ports you actually used (the same `--connect-port`/`--switchboard-port` pair passed at start \u2014 conventionally 3001/4001, but whatever pair you verified free in RPPM.00.1) are free:\n  ```bash\n  lsof -iTCP:<connect-port> -iTCP:<switchboard-port> -sTCP:LISTEN\n  ```\n  An empty result is necessary but not sufficient by itself \u2014 also re-query the endpoint (e.g. the same `curl` check from RPPM.01.2) and confirm it no longer responds. If a port is still bound or the endpoint still responds, either a descendant survived (go back and enumerate again) or it belongs to a process you did not start \u2014 in the latter case leave it alone and do not report the project as stopped.\n- Finally, confirm the unrelated pre-existing process (if any was noted in RPPM.00.1) is still present and untouched, with the same start time as before.\n",
+        "createdAt": "2026-08-17T12:18:48.516Z",
+        "createdBy": "skill-add",
+        "sourceType": "DOCUMENTATION",
+        "description": "Use when working in a Powerhouse reactor package project and the Vetra development environment is not running or needs restarting \u2014 starting Vetra Studio and Switchboard, capturing their endpoints, in"
+      },
+      "timestampUtcMs": "2026-08-17T12:18:48.516Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "",
+    "timestampUtcMs": "2026-08-17T12:18:48.295Z",
+    "action": {
+      "type": "UPGRADE_DOCUMENT",
+      "input": {
+        "model": "bai/source",
+        "toVersion": 1,
+        "documentId": "d67a25d1-e065-4142-92f1-8bb78112d312",
+        "fromVersion": 0,
+        "initialState": {
+          "auth": {
+            "grants": [],
+            "version": 0
+          },
+          "local": {},
+          "global": {
+            "title": null,
+            "status": "INBOX",
+            "content": null,
+            "createdAt": null,
+            "createdBy": null,
+            "provenance": null,
+            "sourceType": null,
+            "description": null,
+            "extractedClaims": [],
+            "extractionStats": null
+          },
+          "document": {
+            "hash": {
+              "encoding": "base64",
+              "algorithm": "sha1"
+            },
+            "version": 1
+          }
+        }
+      },
+      "timestampUtcMs": "2026-08-17T12:18:48.295Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "49qqaZ69AI1eNy16AwNSYNhqTVE=",
+    "timestampUtcMs": "2026-08-17T12:18:51.008Z",
+    "action": {
+      "type": "ADD_EXTRACTED_CLAIM",
+      "input": {
+        "claimRef": "45ba2096-1835-47ee-ba47-88cc0751c4a7"
+      },
+      "timestampUtcMs": "2026-08-17T12:18:51.008Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "9yEp1P0r/3asoMiZf5o8bY+cQv4=",
+    "timestampUtcMs": "2026-08-17T12:18:51.163Z",
+    "action": {
+      "type": "RECORD_EXTRACTION_STATS",
+      "input": {
+        "skipRate": 0,
+        "claimCount": 1,
+        "extractedAt": "2026-08-17T12:18:51.163Z",
+        "extractedBy": "skill-add",
+        "skippedCount": 0
+      },
+      "timestampUtcMs": "2026-08-17T12:18:51.163Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "DS55kgYMBCs+3kSH/BoxoPdsZ9U=",
+    "timestampUtcMs": "2026-08-17T12:18:51.312Z",
+    "action": {
+      "type": "SET_SOURCE_STATUS",
+      "input": {
+        "status": "EXTRACTED"
+      },
+      "timestampUtcMs": "2026-08-17T12:18:51.312Z"
+    }
+  }
+]

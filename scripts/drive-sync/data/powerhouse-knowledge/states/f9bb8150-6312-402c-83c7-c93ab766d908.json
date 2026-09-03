@@ -1,0 +1,31 @@
+{
+  "title": "x402: Open Payment Standard (Introduction)",
+  "status": "EXTRACTED",
+  "content": "# x402: Open Payment Standard\n\n*(Structured digest of https://docs.x402.org/introduction, captured 2026-08-30 via web fetch.)*\n\n## What Is x402?\n\nx402 is an open, Apache-2.0 licensed payment standard enabling web services to charge for API access and content directly via HTTP. It centers on the `402 Payment Required` status code and supports crypto-native payments for speed, privacy, and efficiency.\n\n## Core Technical Flow\n\nThe payment mechanism operates in five steps:\n\n1. Client requests a resource\n2. Server responds with `402 Payment Required` including payment instructions\n3. Client prepares and submits payment\n4. Server verifies payment (independently or via an x402 facilitator's /verify and /settle endpoints)\n5. Server delivers the requested resource upon valid payment\n\n## Key Components\n\n**Facilitator:** A trusted service provider that handles payment verification and settlement, reducing friction for sellers who don't want to manage these functions directly.\n\n**Batch Settlement:** An EVM-based scheme enabling high-volume, batched onchain redemption for micropayments, optimizing cost efficiency for usage-based services.\n\n## Problems Solved\n\n- Elimination of transaction fees inherent to the standard\n- Machine-to-machine payment capability for autonomous AI agents\n- Micropayment infrastructure for granular, usage-based monetization\n- Permissionless, accountless payment flows\n\n## Use Cases\n\nAPI monetization, autonomous agent payments, digital content paywalls, microservices monetization, and proxy services reselling API capabilities.\n\n## Philosophy\n\nx402 presents itself as credibly neutral documentation without branded content, positioning payment as a transparent protocol layer rather than a proprietary platform.",
+  "createdAt": "2026-08-30T12:00:00.000Z",
+  "createdBy": "liberuum@powerhouse.inc",
+  "provenance": {
+    "url": "https://docs.x402.org/introduction",
+    "tool": null,
+    "author": "x402.org",
+    "method": null,
+    "publishedAt": null
+  },
+  "sourceType": "DOCUMENTATION",
+  "description": "Official x402 docs intro: an open HTTP-native payment standard built on status code 402 for machine-to-machine micropayments.",
+  "extractedClaims": [
+    "15e588c3-0021-46d0-9742-e3b065d9b752",
+    "d8cef292-a4ba-4963-a31c-25327d8e407c",
+    "54041ac3-6ad1-45f5-93d6-8159a35daa6c",
+    "ecfd8edb-92b7-4b4d-82be-b1958e095ace",
+    "1eebe6cc-d6fe-4b01-a817-089ef1558f96"
+  ],
+  "extractionStats": {
+    "skipRate": 0,
+    "claimCount": 5,
+    "extractedAt": "2026-08-30T12:35:00.000Z",
+    "extractedBy": "knowledge-agent",
+    "skippedCount": 0
+  },
+  "links": []
+}

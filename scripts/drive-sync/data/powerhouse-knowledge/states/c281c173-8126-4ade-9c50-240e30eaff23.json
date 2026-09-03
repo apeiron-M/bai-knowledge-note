@@ -1,0 +1,115 @@
+{
+  "links": [
+    {
+      "id": "lnk-7219d48a-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "7219d48a-f02f-491d-8f12-403450e2909c",
+      "targetTitle": "signatures-list-is-not-proof-of-client-signing",
+      "reason": "Both notes make the same point from two sides: a signature or token is not proof of identity until the address\u2194key binding is verified",
+      "confidence": "grounded"
+    },
+    {
+      "id": "lnk-a8d60c71-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "a8d60c71-1ba9-4c16-b7c4-75bdbed309d2",
+      "targetTitle": "sb-renown-source",
+      "reason": "auth.renown.source decides which instance answers the existence check in step 4",
+      "confidence": "grounded"
+    },
+    {
+      "id": "lnk-5646522f-bui",
+      "linkType": "BUILDS_ON",
+      "targetDocumentId": "5646522f-bc2d-4257-bfa7-a455e5855197",
+      "targetTitle": "renown-creates-did-from-ethereum-wallet",
+      "reason": "The DID and credential minted at Renown login are what step 4 re-checks on every switchboard request",
+      "confidence": "grounded"
+    },
+    {
+      "id": "lnk-3729bcb2-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "3729bcb2-e103-4c58-9152-ba3d3782bf19",
+      "targetTitle": "App \u203a switchboard \u203a Auth \u2014 Powerhouse Authentication System Tutorial",
+      "reason": "Extracted from apps/switchboard/Auth.md at v6.2.2-dev.74 \u2014 Verifiable Credentials System \u203a Verification Process; Authorization \u203a AuthConfig.skipCredentialVerification; 'Which Renown Instance Is Used' (TTL cache)",
+      "confidence": "grounded"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "The Renown credential re-check is the only binding between a token's claimed address and its signing key, so skipCredentialVerification is refused at boot outside test",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "d7a96fe8-3fa2-4367-a920-0ee6575dffa6",
+      "name": "switchboard",
+      "topicDocumentId": null
+    },
+    {
+      "id": "fed59fee-fa8d-4d1f-bb1d-6e47ec9b80f3",
+      "name": "authentication",
+      "topicDocumentId": null
+    },
+    {
+      "id": "60e172bf-f90f-4fe9-8837-21eea1560209",
+      "name": "security",
+      "topicDocumentId": null
+    },
+    {
+      "id": "9537f9ef-717c-442e-b455-f087409d5244",
+      "name": "renown",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "Switchboard authentication is challenge\u2013response with a wallet signature that ends in a JWT bearer carrying a W3C Verifiable Credential (`credentialSubject: { chainId, networkId, address }`, an issuer DID and a proof). Every request's token is verified in five steps:\n\n1. **Token decoding** \u2014 extract the credential from the JWT\n2. **Credential validation** \u2014 verify against W3C standards\n3. **Issuer verification** \u2014 check the issuer's authenticity\n4. **Credential existence check** \u2014 validate the credential still exists and is valid, against a remote Renown/Switchboard or this switchboard's own read model\n5. **User extraction** \u2014 build the user object from the verified credential\n\nStep 4 is the load-bearing one. The `AuthConfig` type documents `skipCredentialVerification` with a warning in capitals: it \"skips the Renown credential re-check, **the only binding between a token's claimed address and its signing key** \u2014 allows identity spoofing.\" It is therefore **refused at boot** unless `VITEST` / `NODE_ENV=test` is set or the operator passes `ALLOW_INSECURE_SKIP_CREDENTIAL_VERIFICATION=true`.\n\nEither verification source re-verifies the credential's EIP-712 proof and re-checks expiry and delegation binding, so a locally stored credential is held to the same standard as a remote one. Successful checks are cached per identity for `CREDENTIAL_VERIFICATION_CACHE_TTL_MS` (60 s default), so revocation lags by up to that TTL.\n\nAuthentication produces a verified user; authorization is then a separate decision \u2014 the global `admins` list bypasses every check, document owners hold implicit ADMIN, and per-document READ / WRITE / ADMIN grants are inherited from protected ancestors.\n\n_Source: apps/switchboard/Auth.md (Powerhouse v6.2.2-dev.74)._\n\n## Provenance\n- `apps/switchboard/Auth.md` \u2014 Verifiable Credentials System \u203a Verification Process; Authorization \u203a AuthConfig.skipCredentialVerification; 'Which Renown Instance Is Used' (TTL cache)\n\n_Recorded from the Powerhouse repository at **v6.2.2-dev.74** during the v6.2.2-dev.74 source sync._",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": "v6.2.2-dev.74",
+  "computes": null,
+  "filePath": "apps/switchboard/Auth.md",
+  "noteType": "PATTERN",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": "grounded",
+  "consumedBy": [],
+  "provenance": {
+    "author": "knowledge-agent",
+    "createdAt": "2026-09-02T22:11:49.323Z",
+    "sessionId": null,
+    "updatedAt": "2026-09-02T22:20:44.812Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Decode the JWT, validate the W3C credential and issuer, re-check the credential still exists, extract the user. Skipping the re-check allows spoofing; boot refuses it unless in test or forced.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "f7cd4135-439d-42e9-8bd0-621b2ad5959f",
+      "actor": "knowledge-agent",
+      "comment": "extracted from the Powerhouse repository at v6.2.2-dev.74",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-09-02T22:11:49.797Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "b53cb72b-f17e-4714-ad49-9d0b327b13d5",
+      "actor": "liberuum",
+      "comment": "claim checked against the cited repository file at the pinned tag",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-09-02T22:11:50.351Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

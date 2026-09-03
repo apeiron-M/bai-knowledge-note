@@ -1,0 +1,94 @@
+{
+  "links": [
+    {
+      "id": "lnk-315ffb64-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "315ffb64-27fb-443a-a8c2-250d278c8c1e",
+      "targetTitle": "conapi GmbH \u2014 Kestra"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "A Kestra plugin lets pipeline decisions be replayed after Kestra's executions are purged",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "1cb98066-db7e-483a-b1a6-8968a4fd2d13",
+      "name": "leads",
+      "topicDocumentId": null
+    },
+    {
+      "id": "29b09d6f-4545-405e-8a2a-af43e069a424",
+      "name": "kestra",
+      "topicDocumentId": null
+    },
+    {
+      "id": "692c2ff7-97ed-4233-b3e1-9eb354b40cf9",
+      "name": "data-pipelines",
+      "topicDocumentId": null
+    },
+    {
+      "id": "cf42eb32-68ec-42cc-92a6-965cffa19c50",
+      "name": "demo-design",
+      "topicDocumentId": null
+    },
+    {
+      "id": "b541cbb2-4093-4a4b-b47d-9a430f286953",
+      "name": "replay",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "The integration is a Kestra plugin dispatching a typed operation at a pipeline decision point, followed by the now-familiar destructive demonstration: purge Kestra executions and replay the business decisions from Powerhouse.\n\nThe shape matches the n8n demo exactly, which is the useful observation. Orchestrators of every kind treat execution history as operational telemetry with a retention policy, not as a business record, so the same purge-and-replay demonstration lands against a workflow automator and a data orchestrator alike. What differs is the deliverable: n8n needs only its stock HTTP Request node, while Kestra needs a plugin written and maintained.\n\nThe single lead is conapi GmbH in Winzendorf, Austria, marked \"3 \u00b7 later\". A plugin-shaped deliverable against a priority-3 lead is a worse cost ratio than the equivalent n8n work, so this is a candidate for reuse of an existing pattern rather than for original build effort.\n\n---\n\n## Leads sharing this finding (1)\n\n**3 \u00b7 later**\n- conapi GmbH (AT Winzendorf) \u2014 https://conapi.at\n\nVerbatim research text this claim was extracted from:\n\n> Kestra plugin dispatching a typed operation at a pipeline decision point; purge Kestra executions and replay the business decisions from Powerhouse.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "INTEGRATION",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "knowledge-agent",
+    "createdAt": "2026-08-19T11:32:03.125042Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-19T11:32:04.465592Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "The plugin dispatches a typed operation at a pipeline decision point; purging Kestra executions then leaves the business decisions intact and replayable from Powerhouse.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "272f1069-6332-4721-9e06-13403ef0b92d",
+      "actor": "knowledge-agent",
+      "comment": "Extracted from lead research; claim checked against the source record.",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-19T11:32:04.313709Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "41f1e105-f7cf-4407-9020-5e623e8c4604",
+      "actor": "liberuum",
+      "comment": "Approved: lead corpus extraction.",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-19T11:32:04.465592Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

@@ -1,0 +1,94 @@
+{
+  "links": [
+    {
+      "id": "lnk-4d8e59af-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "4d8e59af-51f2-4ab7-b290-e1d5744abbd7",
+      "targetTitle": "Integration-gap tool screen: ERPNext / Frappe (primary-source research, 2026-08-19)"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Frappe deletes a document's version history along with the document",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "c6d15e17-79a5-468b-ab14-273a813d5ead",
+      "name": "tool-screen",
+      "topicDocumentId": null
+    },
+    {
+      "id": "238d8ba9-5b1f-4e6f-8ab4-240407d3ae2c",
+      "name": "erpnext",
+      "topicDocumentId": null
+    },
+    {
+      "id": "4d0b36e6-e694-4a13-97b9-45d40d64af4b",
+      "name": "frappe",
+      "topicDocumentId": null
+    },
+    {
+      "id": "a98d4500-73fd-4a46-8b7b-658e996706e8",
+      "name": "audit-trail",
+      "topicDocumentId": null
+    },
+    {
+      "id": "af99fe08-3909-4ace-b1a1-f01097d51e4f",
+      "name": "deletion",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "`frappe/model/delete_doc.py` calls `delete_references(\"Version\", doctype, name, \"ref_doctype\", \"docname\")`. Deleting a Purchase Order therefore removes both the order and every Version record describing how it changed.\n\nAn append-only record has to outlive its subject to be worth anything \u2014 the question an audit answers is usually asked after something has gone wrong, and often after someone has tidied up. Frappe's version history is scoped to the lifetime of the row, so the act that most warrants investigation is also the act that destroys the evidence.\n\nNothing here is careless: Version records are ordinary DocType rows, and cascading them keeps the database consistent. The design is coherent; it just isn't an audit log.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "OBSERVATION",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "knowledge-agent",
+    "createdAt": "2026-08-20T08:45:19.669272Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-20T08:45:20.766840Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "delete_doc cascades delete_references on the Version doctype, so an audit trail scoped to the lifetime of the row it audits disappears the moment the row does.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "8572e93b-43dd-4fcb-9653-3c36967ceea3",
+      "actor": "knowledge-agent",
+      "comment": "Extracted from the primary-source tool screen; each claim quotable from a cited source.",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-20T08:45:20.609501Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "f8936ec5-31e9-4ac5-aae3-c3ccf92464a5",
+      "actor": "liberuum",
+      "comment": "Approved: tool-screen extraction.",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-20T08:45:20.766840Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

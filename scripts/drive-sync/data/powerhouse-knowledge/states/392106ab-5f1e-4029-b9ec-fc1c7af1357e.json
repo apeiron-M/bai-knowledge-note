@@ -1,0 +1,107 @@
+{
+  "links": [
+    {
+      "id": "lnk-b5235e82-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "b5235e82-8994-46b4-bb10-a6ceeb1c5be0",
+      "targetTitle": "sb-migrations-precedence",
+      "reason": "The switchboard's migration commands fall back to this config file's switchboard.database.url after the two environment variables",
+      "confidence": "grounded"
+    },
+    {
+      "id": "lnk-5fc1c223-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "5fc1c223-f987-4a48-bfbb-afe0ef2c5329",
+      "targetTitle": "Package \u203a config \u203a README",
+      "reason": "Extracted from packages/config/README.md at v6.2.2-dev.74 \u2014 powerhouse.config.json example; Options",
+      "confidence": "grounded"
+    },
+    {
+      "id": "lnk-a1016584-bui",
+      "linkType": "BUILDS_ON",
+      "targetDocumentId": "a1016584-5dba-460b-9dc8-2728d09c1058",
+      "targetTitle": "connect-runtime-config",
+      "reason": "Names the same file from the tooling side: the top-level keys ph-cli and the switchboard read, alongside the connect.* block the SPA fetches",
+      "confidence": "grounded"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "powerhouse.config.json configures ph commands from the directory they run in, carrying documentModelsDir, editorsDir, logLevel and per-service ports",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "75e8e700-afe5-439b-b9a4-c2ac8c5356fb",
+      "name": "configuration",
+      "topicDocumentId": null
+    },
+    {
+      "id": "5ed134f6-b08d-4f42-9638-c6da073e61f6",
+      "name": "ph-cli",
+      "topicDocumentId": null
+    },
+    {
+      "id": "54f47e70-db49-48e7-9de3-45d655a3aa13",
+      "name": "monorepo",
+      "topicDocumentId": null
+    },
+    {
+      "id": "d20b5e4e-8808-4071-8c5b-c61948cdba72",
+      "name": "development",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "`@powerhousedao/config` holds the monorepo's configuration package, and its README documents the file every `ph` command reads:\n\n```json\n{\n  \"documentModelsDir\": \"./document-models\",\n  \"editorsDir\": \"./editors\",\n  \"logLevel\": \"verbose\",\n  \"studio\": { \"port\": 3000 },\n  \"reactor\": { \"port\": 4001 },\n  \"packages\": []\n}\n```\n\nThe mechanism is directory-scoped: \"running `ph` commands (like `ph reactor`) from a directory containing a `powerhouse.config.json` will use these values to configure services.\" So the same CLI behaves differently per project without any flags, and a flag is only needed to override the file.\n\nTwo things worth connecting. This is the **same file** Connect's runtime configuration lives in \u2014 its top-level keys (`packages`, `packageRegistryUrl`, `localPackage`) are project-wide and read by ph-cli and the Switchboard too, while the `connect.*` block is Connect-only and passes through the other tools untouched. And the ports here are the source of the numbers seen elsewhere: `reactor.port` 4001 is the switchboard's default listener.\n\n## Provenance\n- `packages/config/README.md` \u2014 powerhouse.config.json example; Options\n\n_Extracted from the Powerhouse repository at **v6.2.2-dev.74**._",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": "v6.2.2-dev.74",
+  "computes": null,
+  "filePath": "packages/config/README.md",
+  "noteType": "REFERENCE",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "knowledge-agent",
+    "createdAt": "2026-09-03T07:44:00.036Z",
+    "sessionId": null,
+    "updatedAt": "2026-09-03T07:44:01.006Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Running ph reactor from a directory containing the file uses its values. The studio and reactor blocks set ports (3000 and 4001 in the example) and packages lists installed packages.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "69bb748c-a73c-4cbc-bef9-ac0a38ee7999",
+      "actor": "knowledge-agent",
+      "comment": "extracted from packages/config/README.md at v6.2.2-dev.74",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-09-03T07:44:00.536Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "2011c88d-590f-40d1-9f2c-d91ddc572c64",
+      "actor": "liberuum",
+      "comment": "claim checked against the cited file at the pinned tag",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-09-03T07:44:01.006Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

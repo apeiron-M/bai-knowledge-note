@@ -1,0 +1,121 @@
+[
+  {
+    "index": 0,
+    "hash": "",
+    "timestampUtcMs": "2026-09-02T21:32:15.850Z",
+    "action": {
+      "type": "CREATE_DOCUMENT",
+      "input": {
+        "meta": {},
+        "name": "App \u203a academy \u203a README",
+        "slug": "",
+        "model": "bai/source",
+        "branch": "main",
+        "signing": {
+          "nonce": "",
+          "publicKey": {},
+          "signature": "240da8e3-42b7-45b1-92a5-1da24c8760e4",
+          "documentType": "bai/source",
+          "createdAtUtcIso": "2026-09-02T21:32:15.850Z"
+        },
+        "version": 0,
+        "documentId": "240da8e3-42b7-45b1-92a5-1da24c8760e4",
+        "protocolVersions": {
+          "base-reducer": 2
+        }
+      },
+      "timestampUtcMs": "2026-09-02T21:32:15.850Z"
+    }
+  },
+  {
+    "index": 0,
+    "hash": "w0NYcADX6pEpYfrjoJixNw3vxIE=",
+    "timestampUtcMs": "2026-09-02T21:32:15.874Z",
+    "action": {
+      "type": "INGEST_SOURCE",
+      "input": {
+        "url": "https://github.com/powerhouse-inc/powerhouse/blob/v6.2.2-dev.74/apps/academy/README.md",
+        "tool": "sync-repo-docs",
+        "title": "App \u203a academy \u203a README",
+        "author": "Powerhouse Inc.",
+        "method": "sha256:d18b33613fed74a4d5d69c09ad3ec6cf330afbca2ed08f00034995ff930c0fc7 git:v6.2.2-dev.74",
+        "content": "# Powerhouse Academy\n\nComprehensive documentation and learning resources for the Powerhouse ecosystem.\n\nThis documentation website is built using [Docusaurus](https://docusaurus.io/), a modern static website generator.\n\nTo contribute, edit the MDX under `docs/academy/` on a branch and open a PR against `main`. Build and serve locally before pushing \u2014 the build fails on broken links. Merging to `main` auto-deploys the **dev** site; see [Updating and deploying the docs](#updating-and-deploying-the-docs) for how changes reach staging and production.\n\n## \ud83e\udd16 LLM-Optimized Documentation\n\nThe academy includes automated generation of LLM-friendly documentation:\n\n```bash\n# Generate comprehensive markdown for AI systems\npnpm run generate:llm-docs\n```\n\nThis creates `ACADEMY_LLM_COMPLETE.md` - a single, structured file containing all documentation optimized for:\n\n- RAG systems and vector databases\n- LLM training and fine-tuning\n- AI-powered documentation analysis\n- Automated support systems\n\n**Features:**\n\n- \ud83d\udcca 95+ documents combined into one file (1.1MB)\n- \ud83d\udd17 Internal linking with semantic anchors\n- \ud83d\udcda Category-based organization following site structure\n- \ud83c\udfaf LLM-optimized formatting (enhanced headers, code blocks, cross-references)\n- \u26a1 Up to 35% better RAG retrieval accuracy vs unstructured docs\n\n**Auto-regeneration:** The LLM documentation is automatically regenerated via git pre-commit hooks when any `.md` file in `apps/academy/docs/` is modified and committed.\n\n### Installation\n\n```\n$ npm install\n```\n\n### Local Development\n\n```\n$ npm run dev\n```\n\nThis command starts a local development server and opens up a browser window. Most changes are reflected live without having to restart the server. The server will break upon broken links or big navigation/relinking.\n\n### Build\n\n```\n$ npm run build\n```\n\nThis command generates static content into the `build` directory and can be served using any static contents hosting service.\n\n### Updating and deploying the docs\n\nThe site is built as a Docker image (`cr.vetra.io/academy/academy`) and served on Kubernetes \u2014 it is **not** published to npm, GitHub Pages, or Heroku. Its build and deploy are fully decoupled from the monorepo's npm package releases.\n\n| Site | URL |\n| ---- | --- |\n| Production | https://academy.vetra.io |\n| Staging | https://academy.staging.vetra.io |\n| Dev | https://academy.dev.vetra.io |\n\nThere are two ways docs get deployed:\n\n1. **Automatic \u2192 dev.** Any change under `apps/academy` merged to `main` triggers the `Academy` workflow (`.github/workflows/academy.yml`): it builds a short-SHA-tagged image and deploys it to **academy.dev.vetra.io**.\n\n2. **Manual publish \u2192 any site.** The `Deploy Academy` workflow (`.github/workflows/deploy-academy.yml`) builds a chosen branch and publishes it to a chosen site. GitHub \u2192 **Actions** \u2192 **Deploy Academy** \u2192 **Run workflow**:\n   - **branch** (default `main`) \u2014 the branch to build.\n   - **environment** (default `academy`) \u2014 the target site (`academy` = production).\n\n   Ship the latest docs to **production** by running it with the defaults. Preview a feature branch by picking it and targeting `dev`. Roll back by running it against an earlier branch or commit.\n\nImages are tagged `cr.vetra.io/academy/academy:<short-sha>` (immutable, pinned by Kubernetes) plus a moving channel pointer (`dev`, `staging`, or `latest` for production).\n\n### Slides\n\nSlides are created using [Marp](https://marp.app/), a Markdown-based presentation tool. Slide files are stored in the `slides/` directory.\n\n#### Preview slides locally\n\n```\n$ pnpm slides:preview\n```\n\nThis starts a local server to preview your slides in the browser.\n\n#### Build slides\n\n```\n$ pnpm slides:build\n```\n\nThis generates HTML files from the markdown slides.\n\n#### Creating slides\n\n1. Create a new markdown file in the `slides/` directory\n2. Add the Marp frontmatter at the top:\n   ```markdown\n   ---\n   marp: true\n   paginate: true\n   theme: default\n   ---\n   ```\n3. Separate slides using `---`\n4. Use standard markdown syntax for content\n5. For images, use markdown syntax or Marp directives like `![bg right:40% contain](image.png)`\n",
+        "createdAt": "2026-09-02T21:32:15.874Z",
+        "createdBy": "repo-docs-sync",
+        "sourceType": "DOCUMENTATION",
+        "description": "Powerhouse v6.2.2-dev.74 (unchanged since v6.2.2-dev.47) \u2014 Comprehensive documentation and learning resources for the Powerhouse ecosystem.",
+        "publishedAt": "2026-07-09T15:24:27.000Z"
+      },
+      "timestampUtcMs": "2026-09-02T21:32:15.874Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "",
+    "timestampUtcMs": "2026-09-02T21:32:15.850Z",
+    "action": {
+      "type": "UPGRADE_DOCUMENT",
+      "input": {
+        "model": "bai/source",
+        "toVersion": 1,
+        "documentId": "240da8e3-42b7-45b1-92a5-1da24c8760e4",
+        "fromVersion": 0,
+        "initialState": {
+          "auth": {
+            "grants": [],
+            "version": 0
+          },
+          "local": {},
+          "global": {
+            "title": null,
+            "status": "INBOX",
+            "content": null,
+            "createdAt": null,
+            "createdBy": null,
+            "provenance": null,
+            "sourceType": null,
+            "description": null,
+            "extractedClaims": [],
+            "extractionStats": null
+          },
+          "document": {
+            "hash": {
+              "encoding": "base64",
+              "algorithm": "sha1"
+            },
+            "version": 1
+          }
+        }
+      },
+      "timestampUtcMs": "2026-09-02T21:32:15.850Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "fCEgbLZhMIIcRAnnw72rTF+6hNo=",
+    "timestampUtcMs": "2026-09-03T07:35:12.950Z",
+    "action": {
+      "type": "RECORD_EXTRACTION_STATS",
+      "input": {
+        "skipRate": 1,
+        "claimCount": 0,
+        "extractedAt": "2026-09-03T07:35:12.950Z",
+        "extractedBy": "knowledge-agent",
+        "skippedCount": 1
+      },
+      "timestampUtcMs": "2026-09-03T07:35:12.950Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "Z/h+TWUV93SaXqIV1Yj1fw9stzk=",
+    "timestampUtcMs": "2026-09-03T07:56:49.337Z",
+    "action": {
+      "type": "SET_SOURCE_STATUS",
+      "input": {
+        "status": "EXTRACTED"
+      },
+      "timestampUtcMs": "2026-09-03T07:56:49.337Z"
+    }
+  }
+]

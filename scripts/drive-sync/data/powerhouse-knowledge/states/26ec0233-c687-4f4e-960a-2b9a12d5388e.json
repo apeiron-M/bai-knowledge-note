@@ -1,0 +1,79 @@
+{
+  "links": [
+    {
+      "id": "lnk-9174d3dd-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "9174d3dd-782a-4192-b947-c72c1bcdcbe4",
+      "targetTitle": "skill-fusion-project"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Agent skill: /fusion-project \u2014 Use when creating a Powerhouse Fusion project, deciding or verifying which Switchboard instance it should use as its backend, or starting an",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "092c60f1-b250-4547-b3c9-c109517f69bc",
+      "name": "agent-skills",
+      "topicDocumentId": null
+    },
+    {
+      "id": "8f99135b-c65e-4f21-9772-8c173e252fc1",
+      "name": "fusion-project",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "## When to use\nUse when creating a Powerhouse Fusion project, deciding or verifying which Switchboard instance it should use as its backend, or starting and stopping its development server.\n\n## What it covers\n- Quick reference\n- References\n- Common mistakes\n- Reporting\n- FPM.00.1 Inspect existing projects\n- FPM.00.2 Generate unique project name\n- FPM.00.3 Initialize the project\n- FPM.01.1 Consider which backend should be used\n- FPM.01.2 Start a Reactor Package project if needed\n- FPM.01.3 Identify and verify the Switchboard URL\n- FPM.02.1 Start the project and wait until it's ready\n- FPM.02.2 Parse and verify the Fusion endpoint\n- FPM.03.1 Verify project is running\n- FPM.03.2 Shutdown the project\n\n## Where the full skill lives\n- Vault source: **Agent skill: fusion-project** (full text, DERIVED_FROM below) \u2014 the vault is this skill's home.\n- Upstream origin: https://github.com/powerhouse-inc/powerhouse-dev-skills/tree/main/skills/fusion-project\n\n## Invocation\nRead the vault source content and follow it. Not a plugin command.\n\n_Added via add-skill; content hash sha256:c738efd38d51\u2026_",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "PROCEDURE",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "skill-add",
+    "createdAt": "2026-08-17T12:12:45.566Z",
+    "sessionId": null,
+    "updatedAt": "2026-09-03T09:57:49.636Z",
+    "sourceOrigin": "IMPORT"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Numbered FPM.00-FPM.03 workflow: inspect and init the project, choose and verify a Switchboard backend (starting a reactor package if needed), start it, parse the Fusion endpoint, verify or shut down.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "d0d155c9-11b5-4359-94e9-e0d5b827d5f7",
+      "actor": "skill-add",
+      "comment": "skill added to vault",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-17T12:12:46.418Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "85a3017c-7fd6-433f-8d81-1956880dd23c",
+      "actor": "knowledge-agent",
+      "comment": "vault-native skill",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-17T12:12:46.560Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

@@ -1,0 +1,133 @@
+{
+  "links": [
+    {
+      "id": "lnk-6e78066a-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "6e78066a-d726-4d7f-b534-ac8dbd4056a9",
+      "targetTitle": "sb-worker-pool-env",
+      "reason": "Worker mode is the configuration that refuses the PGlite fallback instead of taking it silently",
+      "confidence": "grounded"
+    },
+    {
+      "id": "lnk-0168d518-bui",
+      "linkType": "BUILDS_ON",
+      "targetDocumentId": "0168d518-b02c-42b9-9d6f-add7494a8f1d",
+      "targetTitle": "docker-switchboard-image",
+      "reason": "Explains the storage variables the image entrypoint reads and which one gates its migration step",
+      "confidence": "grounded"
+    },
+    {
+      "id": "lnk-b153c532-sup",
+      "linkType": "SUPERSEDES",
+      "targetDocumentId": "b153c532-0abc-4400-8448-4ac08046fcad",
+      "targetTitle": "docker-images-for-connect-and-switchboard",
+      "reason": "Replaces the old note's DATABASE_URL claim (PostgreSQL-or-SQLite, default dev.db) with the two-store Postgres/PGlite model",
+      "confidence": "grounded"
+    },
+    {
+      "id": "lnk-56edb93f-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "56edb93f-5c3b-4c8b-a11f-5cfdcc252dee",
+      "targetTitle": "Academy \u203a Build \u203a Launch \u203a Docker deployment guide",
+      "reason": "Extracted from apps/academy/docs/academy/03-Build/05-Launch/05-DockerDeployment.md at v6.2.2-dev.74 \u2014 Switchboard Environment Variables \u203a Storage (Postgres or embedded PGlite) and the PGlite knobs",
+      "confidence": "grounded"
+    },
+    {
+      "id": "lnk-8ff57495-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "8ff57495-42b3-47d4-9c91-1811281bfb34",
+      "targetTitle": "Design \u203a Design: Docker Compose files per release channel",
+      "reason": "Extracted from docs/plans/2026-08-24-docker-compose-channels-design.md at v6.2.2-dev.74 \u2014 Context item 3: 'With only DATABASE_URL set, the reactor silently falls back to ephemeral PGlite while the read model uses postgres'",
+      "confidence": "grounded"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Switchboard stores the reactor and the read models in Postgres when PH_REACTOR_DATABASE_URL / PH_SWITCHBOARD_DATABASE_URL are set and otherwise falls back to embedded PGlite \u2014 setting only DATABASE_URL silently splits the two",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "cfa18e03-727d-495c-a4bf-850a90756e73",
+      "name": "switchboard",
+      "topicDocumentId": null
+    },
+    {
+      "id": "be3475ca-5e1a-4aae-a304-2b9616f5cdf3",
+      "name": "storage",
+      "topicDocumentId": null
+    },
+    {
+      "id": "92a63512-4606-4c1e-983e-64f68395deeb",
+      "name": "postgres",
+      "topicDocumentId": null
+    },
+    {
+      "id": "fa33815b-c77e-42e9-8a86-e55f6efed97f",
+      "name": "pglite",
+      "topicDocumentId": null
+    },
+    {
+      "id": "296833cc-78f5-4660-b5b8-d0aff6819249",
+      "name": "deployment",
+      "topicDocumentId": null
+    },
+    {
+      "id": "9b6d73a9-b31f-4e28-b9ab-c7a82f02d338",
+      "name": "gotchas",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "Switchboard has two stores \u2014 the reactor's and the read models' \u2014 and two backends. When a Postgres URL is set it uses Postgres; otherwise it falls back to embedded **PGlite** in `./.ph/reactor-storage` and `.ph/read-storage` relative to the working directory (`/app` in the image), which must be persisted with a volume, as `docker-compose.pglite.yml` does at `/app/.ph`.\n\n| Variable | Description | Default |\n| --- | --- | --- |\n| `PH_REACTOR_DATABASE_URL` | Postgres URL for reactor storage; **also triggers the entrypoint's migrations** | unset (PGlite) |\n| `PH_SWITCHBOARD_DATABASE_URL` | Postgres URL for the read model and, as fallback, the reactor | unset (PGlite) |\n| `DATABASE_URL` | Postgres URL for the read model (checked before `PH_SWITCHBOARD_DATABASE_URL`) | unset (PGlite) |\n\nThe trap the compose redesign document records: with **only `DATABASE_URL`** set, the read model uses Postgres while **the reactor silently falls back to ephemeral PGlite** \u2014 a stack that appears to work and loses its documents on restart. For a single-database deployment (the normal case, and what the repo's compose files do) set `PH_REACTOR_DATABASE_URL` and `PH_SWITCHBOARD_DATABASE_URL` to the same URL.\n\nPGlite knobs: `PH_PGLITE_IN_MEMORY=1` runs it without persistence; `PH_MIGRATE_PGLITE=true` migrates local PGlite data to the PG version the image ships; `PH_FORCE_PG_VERSION=16|17` wipes the local data dirs and re-initializes at that major; `SKIP_DB_MIGRATIONS=true` skips the entrypoint's Postgres migration run. The older `DATABASE_URL` semantics (\"PostgreSQL or SQLite, default `dev.db`\") no longer apply.\n\n_Source: apps/academy/docs/academy/03-Build/05-Launch/05-DockerDeployment.md (Powerhouse v6.2.2-dev.74)._\n_Source: docs/plans/2026-08-24-docker-compose-channels-design.md (Powerhouse v6.2.2-dev.74)._\n\n## Provenance\n- `apps/academy/docs/academy/03-Build/05-Launch/05-DockerDeployment.md` \u2014 Switchboard Environment Variables \u203a Storage (Postgres or embedded PGlite) and the PGlite knobs\n- `docs/plans/2026-08-24-docker-compose-channels-design.md` \u2014 Context item 3: 'With only DATABASE_URL set, the reactor silently falls back to ephemeral PGlite while the read model uses postgres'\n\n_Recorded from the Powerhouse repository at **v6.2.2-dev.74** during the v6.2.2-dev.74 source sync._",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": "v6.2.2-dev.74",
+  "computes": null,
+  "filePath": "apps/academy/docs/academy/03-Build/05-Launch/05-DockerDeployment.md",
+  "noteType": "PATTERN",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": "grounded",
+  "consumedBy": [],
+  "provenance": {
+    "author": "knowledge-agent",
+    "createdAt": "2026-09-02T22:13:05.871Z",
+    "sessionId": null,
+    "updatedAt": "2026-09-02T22:21:04.958Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "PH_REACTOR_DATABASE_URL = reactor storage and the migration gate; DATABASE_URL, then PH_SWITCHBOARD_DATABASE_URL = read model. PGlite lives in ./.ph/reactor-storage and .ph/read-storage; persist it.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "d2cfecb6-8022-4b94-b57e-a43005ae1e89",
+      "actor": "knowledge-agent",
+      "comment": "extracted from the Powerhouse repository at v6.2.2-dev.74",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-09-02T22:13:06.361Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "553d2494-7a0f-4182-8275-d00483c91f5d",
+      "actor": "liberuum",
+      "comment": "claim checked against the cited repository file at the pinned tag",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-09-02T22:13:06.841Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

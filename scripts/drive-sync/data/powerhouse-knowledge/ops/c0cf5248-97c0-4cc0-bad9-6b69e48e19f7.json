@@ -1,0 +1,103 @@
+[
+  {
+    "index": 0,
+    "hash": "",
+    "timestampUtcMs": "2026-09-02T22:25:35.152Z",
+    "action": {
+      "type": "CREATE_DOCUMENT",
+      "input": {
+        "meta": {},
+        "name": "Contradiction on auth-scope",
+        "slug": "",
+        "model": "bai/tension",
+        "branch": "main",
+        "signing": {
+          "nonce": "",
+          "publicKey": {},
+          "signature": "c0cf5248-97c0-4cc0-bad9-6b69e48e19f7",
+          "documentType": "bai/tension",
+          "createdAtUtcIso": "2026-09-02T22:25:35.152Z"
+        },
+        "version": 0,
+        "documentId": "c0cf5248-97c0-4cc0-bad9-6b69e48e19f7",
+        "protocolVersions": {
+          "base-reducer": 2
+        }
+      },
+      "timestampUtcMs": "2026-09-02T22:25:35.152Z"
+    }
+  },
+  {
+    "index": 0,
+    "hash": "L8Yh7U6BufqKhTE3Syw9kx2G6zM=",
+    "timestampUtcMs": "2026-09-02T22:25:47.213Z",
+    "action": {
+      "type": "CREATE_TENSION",
+      "input": {
+        "title": "Contradiction on auth-scope",
+        "content": "## Involved claims\n\n- Five adjacent sync and read-model defects were recorded while investigating the outbox ordering bug, including re-evaluation writes that never reach read models \u2014 `3968416f-1124-47ff-b195-1b782b5296ca`\n- Every reactor judges every operation at its position in the merged order, so a revocation that sorts earlier retracts an already-accepted operation on every replica \u2014 `0ade289f-d4fb-44d8-ab3b-316d65bb1c8d`\n\n## Why this exists\n\nA `CONTRADICTS` relationship was recorded between these two notes at 2026-09-02T22:25:35.146Z. The vault treats a recorded contradiction as an open question, not a fact to leave implicit: until someone resolves or dissolves this tension, both claims stand and readers should see that they disagree.\n\n## How to close it\n\n- **Resolve** when one claim is correct: say which, and consider `SUPERSEDES` on the winner.\n- **Dissolve** when both are right in different scopes: state the boundary in each note's content.",
+        "observedAt": "2026-09-02T22:25:35.146Z",
+        "observedBy": "graph-indexer",
+        "description": "\u201cFive adjacent sync and read-model defects were recorded while investigating the outbox ordering bug, including re-evaluation writes that ne\u2026\u201d contradicts \u201cEvery reactor judges every operation at its position in the merged order, so a revocation that sorts earlier retracts an already-accepted o\u2026\u201d. Opened automatically from a CONTRADICTS link \u2014 resolve if one side is right, dissolve if both hold in different contexts.",
+        "involvedRefs": [
+          "3968416f-1124-47ff-b195-1b782b5296ca",
+          "0ade289f-d4fb-44d8-ab3b-316d65bb1c8d"
+        ]
+      },
+      "timestampUtcMs": "2026-09-02T22:25:47.213Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "",
+    "timestampUtcMs": "2026-09-02T22:25:35.152Z",
+    "action": {
+      "type": "UPGRADE_DOCUMENT",
+      "input": {
+        "model": "bai/tension",
+        "toVersion": 1,
+        "documentId": "c0cf5248-97c0-4cc0-bad9-6b69e48e19f7",
+        "fromVersion": 0,
+        "initialState": {
+          "auth": {
+            "grants": [],
+            "version": 0
+          },
+          "local": {},
+          "global": {
+            "title": null,
+            "status": "OPEN",
+            "content": null,
+            "observedAt": null,
+            "observedBy": null,
+            "resolution": null,
+            "resolvedAt": null,
+            "description": null,
+            "involvedRefs": []
+          },
+          "document": {
+            "hash": {
+              "encoding": "base64",
+              "algorithm": "sha1"
+            },
+            "version": 1
+          }
+        }
+      },
+      "timestampUtcMs": "2026-09-02T22:25:35.152Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "VYfz3Fub4lbrmuUiL7jkvwfNoBA=",
+    "timestampUtcMs": "2026-09-03T10:15:00.495Z",
+    "action": {
+      "type": "DISSOLVE_TENSION",
+      "input": {
+        "resolution": "Dissolved: both claims hold, at different layers. Positional judgment does converge the operation log and sync on every replica, exactly as designed; reevaluateIfCriteriaMet dropping outcome.operationsWithContext stops those re-appended operations reaching the read models, so projections keep serving pre-revocation state until a restart catch-up. Log versus projection is the boundary, and it is recorded in both notes. The defect stays tracked as a note and as a health recommendation to file upstream rather than as an open tension.",
+        "resolvedAt": "2026-09-03T10:15:00.495Z"
+      },
+      "timestampUtcMs": "2026-09-03T10:15:00.495Z"
+    }
+  }
+]

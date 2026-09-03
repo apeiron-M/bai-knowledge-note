@@ -1,0 +1,141 @@
+[
+  {
+    "index": 0,
+    "hash": "",
+    "timestampUtcMs": "2026-09-02T21:32:18.384Z",
+    "action": {
+      "type": "CREATE_DOCUMENT",
+      "input": {
+        "meta": {},
+        "name": "Academy \u203a GetStarted \u203a Vetra Studio",
+        "slug": "",
+        "model": "bai/source",
+        "branch": "main",
+        "signing": {
+          "nonce": "",
+          "publicKey": {},
+          "signature": "66daa536-c7eb-4fde-98b0-7f815c1eff7e",
+          "documentType": "bai/source",
+          "createdAtUtcIso": "2026-09-02T21:32:18.384Z"
+        },
+        "version": 0,
+        "documentId": "66daa536-c7eb-4fde-98b0-7f815c1eff7e",
+        "protocolVersions": {
+          "base-reducer": 2
+        }
+      },
+      "timestampUtcMs": "2026-09-02T21:32:18.384Z"
+    }
+  },
+  {
+    "index": 0,
+    "hash": "CdLlSL1609Rz/myDyp76e6QtoQc=",
+    "timestampUtcMs": "2026-09-02T21:32:18.379Z",
+    "action": {
+      "type": "INGEST_SOURCE",
+      "input": {
+        "url": "https://github.com/powerhouse-inc/powerhouse/blob/v6.2.2-dev.74/apps/academy/docs/academy/01-GetStarted/00-VetraStudio.md",
+        "tool": "sync-repo-docs",
+        "title": "Academy \u203a GetStarted \u203a Vetra Studio",
+        "author": "Powerhouse Inc.",
+        "method": "sha256:645a3929b2da376f497d44b8f28a46508d55326c8ef029cebf4407ee14b783a6 git:v6.2.2-dev.74",
+        "content": "# Vetra Studio\n\nVetra Studio is the browser UI for the Vetra agent. You chat with the agent, watch it work across the four-phase product cycle (Ideate \u2192 Specify \u2192 Build \u2192 Deploy), and see a live preview of the product it builds.\n\nEach Studio runs as a **dedicated cloud agent** tied to your identity. Vetra provisions an isolated environment that hosts the agent, its workspace, and the preview services.\n\n## What you can build\n\nWith the Vetra agent you build **local-first, AI-ready, specification-driven** products and platforms:\n\n- Open-source, decentralized back-ends.\n- SaaS, ERP, CMS, or CRM applications.\n- Structured-data, document-centric systems with a built-in GraphQL API.\n\n---\n\n## Getting started\n\nVetra Studio is in **pre-alpha**. You reach it with an early-access code from Powerhouse.\n\n1. Open **[vetra.io](https://vetra.io)** and log in with your wallet (via Renown).\n2. Click **Vetra Studio** in the top-right header. This opens your **Products** dashboard at `/user`.\n\nIf your account is not yet enabled, `/user` shows the **early-access gate** (\"Vetra Studio \u2014 Early access \u2014 choose how you'd like to get started\") with three paths:\n\n- **I have an invite code** \u2014 paste the code and click **Get Access**.\n- **I don't have a code** \u2014 join the waitlist by email, or **Request a code on Discord**.\n- **Run it locally** \u2014 no code needed; run Vetra Studio yourself with the `vetra` CLI (see [Running Vetra Studio locally](#running-vetra-studio-locally) below).\n\nThe first time you enter, a notice reminds you the product is early:\n\n<figure className=\"image-container\">\n  <img\n    src={require(\"./images/vetra-studio/prealpha-warning.png\").default}\n    alt=\"Vetra Studio pre-alpha warning dialog\"\n  />\n  <figcaption>Vetra Studio is in pre-alpha. Download your documents or push them to GitHub as a back-up at the end of a cycle.</figcaption>\n</figure>\n\n### Create a studio\n\nOn the Products dashboard, click **Create new product**. With an invite code the studio provisions right away \u2014 the API key that powers the agent is supplied for you behind the code, so there is no key to enter.\n\nThe product card moves through **Provisioning\u2026** (not yet openable) to **Ready**. Click **Open \u2192** to launch the studio in a new tab.\n\n<figure className=\"image-container\">\n  <img\n    src={require(\"./images/vetra-studio/products-dashboard.png\").default}\n    alt=\"Vetra Studio Products dashboard with a Ready product\"\n  />\n  <figcaption>The Products dashboard lists your studios. Each is a dedicated cloud agent on its own subdomain, shown as Ready once provisioned.</figcaption>\n</figure>\n\nEach product is one Vetra Studio instance running on its own subdomain (`<slug>.vetra.io`). Opening it lands you in Powerhouse Connect at `<slug>.vetra.io/d/<drive-id>`.\n\n---\n\n## The layout\n\nA studio opens in Powerhouse Connect with two panes:\n\n- **Chat pane** (left): lists chat sessions, and renders the active session's message history when one is open.\n- **Resize handle** (vertical strip): drag to adjust pane width.\n- **Main pane** (right): shows the phase-cycle cards by default, and opens a phase section, a document, or the build preview when you navigate.\n- **Toolbar** (far left): **Home**, **Open Account** (Renown), and **Settings**.\n- **Main-pane top bar**: a **Version info** button, an **Authorize agent** button (see [Authorizing the agent](#authorizing-the-agent)), and the **Auto-follow agent** checkbox.\n- **Auto-follow agent** (on by default): when checked, the main pane follows the agent and opens documents as the agent creates them.\n\n<figure className=\"image-container\">\n  <img\n    src={require(\"./images/vetra-studio/studio-home.png\").default}\n    alt=\"Vetra Studio home with empty session list and phase cards\"\n  />\n  <figcaption>A fresh studio: empty session list on the left, the four phase cards on the right under \"Product development cycle.\"</figcaption>\n</figure>\n\nThe main pane opens on **Product development cycle**. Alongside the four phase cards it offers a **Take a tour** button and an **example-prompt carousel** \u2014 cycle through the sample prompts and **Copy example prompt** to seed your first session.\n\n---\n\n## Creating a session\n\n1. In the chat pane, click **New** (top-right) or **New session** (empty state).\n2. A new chat session document is created in the drive and opened immediately.\n3. Type your first message and press Enter (or click the send button).\n\nSessions persist across restarts. They are CRDT documents stored in the studio's reactor.\n\nSessions are scoped to your identity: signing in with a different identity shows a different session list.\n\n---\n\n## Talking to the agent\n\nThe chat session is how you direct the agent. Type a message; the agent responds and runs tools. Each tool call appears inline as an expandable card showing its name, status, and a result preview. While the agent works, the send button becomes **Stop**.\n\n<figure className=\"image-container\">\n  <img\n    src={require(\"./images/vetra-studio/active-session.png\").default}\n    alt=\"An active Vetra Studio session with agent tool cards and an auto-followed document\"\n  />\n  <figcaption>An active session. Tool cards stream inline while the main pane auto-follows the document the agent is writing.</figcaption>\n</figure>\n\nTools you will see include:\n\n- `Using skill: <name>` / `Reading skill: <name>` \u2014 the agent loads a named skill (such as `document-modeling`, `document-editor-creation`, `drive-app-creation`) and reads its reference docs.\n- `spec-create`, `spec-generate`, `spec-update`, `spec-list`, `spec-schema` \u2014 create, generate, and edit specification documents. Create and update cards name the document, for example `spec-create \u00b7 Hotel Breakfast Problem Sheet`.\n- `reactor-project-init`, `reactor-project-start`, `reactor-project-check`, `reactor-project-ls`, `reactor-project-ps` \u2014 scaffold, run, and inspect the project that hosts the preview.\n- Workspace actions in the agent's project appear as **Read**, **Write**, **Edit File**, **List**, and **Grep** cards with the file path.\n- `spec-preview-show` \u2014 surface a running app in the BUILD pane.\n\nA status bar at the bottom of the chat shows the session state: **Active**, start time, message count, token count, and tool-call count.\n\nThe agent can:\n\n- Create and iterate on **spec documents** (problem, audience, and brand sheets, a feature, and a work breakdown structure).\n- Design **document models** and generate their reducers, editors, and apps.\n- Scaffold a **reactor project** that hosts a live editor preview.\n- Surface a **preview** in the BUILD pane and, when you're ready, publish to the cloud.\n\n---\n\n## The phase cycle\n\nThe main pane shows four numbered phase cards when no section is open. Click a card to open its section, or navigate with the breadcrumb (`Home \u203a <Phase>`).\n\n| Phase                                    | What happens there                                                                     |\n| ---------------------------------------- | -------------------------------------------------------------------------------------- |\n| **1 \u00b7 Ideate** \u2014 Problem Definition      | Frame the problem and audience \u2014 problem, audience, and brand sheets, a feature, a WBS |\n| **2 \u00b7 Specify** \u2014 Solution Design        | Pin down the data model, workflow, and states \u2014 document models grouped by project     |\n| **3 \u00b7 Build** \u2014 Implementation & Testing | Watch the agent generate and test code, with a live preview of the running app         |\n| **4 \u00b7 Deploy** \u2014 Delivery                | Publish the package and run it in your cloud environments                              |\n\nA card's availability depends on progress: BUILD shows a preview only after the agent scaffolds a project, and DEPLOY needs you to sign in with Renown.\n\n---\n\n## Ideate and Specify\n\nThe Ideate and Specify sections hold the documents the agent writes. In Ideate the agent frames the product \u2014 a problem sheet, an audience sheet, a brand sheet, a feature, and a work breakdown structure. Specify then groups the **document models** into **projects**: each project is a folder of specs and models.\n\n<figure className=\"image-container\">\n  <img\n    src={require(\"./images/vetra-studio/specify-projects.png\").default}\n    alt=\"Specify section grouping documents into projects\"\n  />\n  <figcaption>Specify groups documents into projects. Each project is a folder of specs and document models.</figcaption>\n</figure>\n\nWith **Auto-follow agent** on, a document opens in the main pane as the agent creates it, so you watch each sheet and model take shape without interrupting the run.\n\nA document editor has a **Download** action and a revision-history view. For a **document model** you edit its Document Type, Description, Author, Website, and Model Extension, and its state schema under **Global** / **Local** tabs (with **Show standard library** for reference types).\n\n<figure className=\"image-container\">\n  <img\n    src={require(\"./images/vetra-studio/document-editor.png\").default}\n    alt=\"Document-model editor in Vetra Studio\"\n  />\n  <figcaption>A document-model editor: Global and Local state-schema tabs, initial value, and operations.</figcaption>\n</figure>\n\n---\n\n## The BUILD preview\n\nThe BUILD pane deep-links into the reactor project the agent spawned for the session. The sequence:\n\n1. The agent calls `reactor-project-init` and `reactor-project-start` \u2014 visible as tool cards in the chat.\n2. The dev server warms up (typically 10\u201330 seconds) and the project reports ready.\n3. The agent calls `spec-preview-show` with a project, drive, and app reference to surface the app in the BUILD pane.\n4. Any code the agent generates after that is picked up by Vite HMR \u2014 the preview updates without a full reload.\n\nUntil the agent surfaces a preview, the pane reads **\"No preview yet \u2014 The BUILD preview appears once the agent scaffolds a project for this session.\"** A running reactor project is not enough on its own; the agent has to surface a preview.\n\n<figure className=\"image-container\">\n  <img\n    src={require(\"./images/vetra-studio/build-preview.png\").default}\n    alt=\"BUILD pane rendering a generated app live\"\n  />\n  <figcaption>The BUILD pane renders the generated app live. Here the agent built a hotel breakfast-order form.</figcaption>\n</figure>\n\n:::warning[The preview is a dev render, not a full runtime]\nThe BUILD preview runs the editors and apps in a local dev reactor. **Processors do not run here** \u2014 they execute server-side in Switchboard once the studio is deployed. Preview drives are also ephemeral and reset between sessions. So an action wired through a processor (for example, syncing a guest order to a staff board) only takes effect after you deploy. Because it is pre-alpha, the preview does not always mount; if it stays on \"No preview yet,\" deploy the app to see it running end to end.\n:::\n\nUse the breadcrumb at the top of the pane to navigate back to the phase-cycle home.\n\n---\n\n## Deploy\n\nThe Deploy section publishes your project's package to **Vetra Cloud**. Sign in with **Renown** first (the top bar then shows your address with a **Disconnect** button).\n\nDeploy opens on a **Projects** list. Each project shows a status (**Not deployed**, **Needs release**) and a **Set up deploy** button. Click it to open the deploy detail:\n\n1. Under **Available environments**, the project version (for example `morning-order@1.0.0`) is listed. A new project isn't running anywhere yet.\n2. Click **New environment**, give it a name, and click **Create & deploy**. A `vetra.io` subdomain is assigned automatically.\n3. The environment rolls out: **Approved \u2192 Deploying \u2192 Ready**. When it reports **Up to date \u00b7 v1.0.0**, the deploy is live.\n\n<figure className=\"image-container\">\n  <img\n    src={require(\"./images/vetra-studio/deploy-ready.png\").default}\n    alt=\"A deployed Vetra Studio environment showing Ready status and service links\"\n  />\n  <figcaption>A live environment: Ready status, its subdomain, and Open / Connect / Switchboard actions.</figcaption>\n</figure>\n\nEach environment runs **Powerhouse Connect** at `<env-slug>-connect.vetra.io` and **Switchboard** (the GraphQL API) at `<env-slug>-switchboard.vetra.io/graphql`. Use **Open**, **Connect**, and **Switchboard** on the environment card to reach them.\n\nFor environment management, services, sizing, and versions, see [Vetra Cloud](./01-VetraCloud.md).\n\n---\n\n## Authorizing the agent\n\nTo let the agent sign actions with your identity, click **Authorize agent**. This runs the Renown flow that authorizes the studio's subdomain to sign actions on your behalf. Once confirmed, the top bar shows **Renown** with your address and a **Disconnect** button.\n\nAuthorization is independent of chat sessions, and it switches the studio's active identity from a generated `did:key` to your wallet identity (`did:pkh`). Because sessions are scoped per identity, switching identity changes which sessions the list shows.\n\n---\n\n## Session URLs\n\nThe studio keeps its state in the URL, under `<slug>.vetra.io/d/<drive-id>`:\n\n- The selected session id is the `?session=<id>` query parameter. Sharing the URL opens the same session in another tab or browser; browser back/forward navigates between sessions; reloading restores the selection.\n- When the agent opens a document, the URL also carries a `doc=<id>` parameter.\n\n---\n\n## Glossary\n\n**Chat session** \u2014 a CRDT document that stores message history, agent tool calls, and tool results for one conversation thread.\n\n**Phase cycle** \u2014 the four-card home view (Ideate / Specify / Build / Deploy). Each card is a stage of the product-development workflow.\n\n**Project** \u2014 a folder of related specs and document models, shown in the Specify section.\n\n**Reactor project** \u2014 a dev-mode process the agent spawns to host a live editor preview. One per active build in a chat session.\n\n**Preview drive** \u2014 a drive inside a reactor project, used for ephemeral preview document instances.\n\n**Renown** \u2014 the identity layer that lets the studio sign actions on behalf of your wallet without exposing your private key.\n\n---\n\n## Running Vetra Studio locally\n\nPrefer to run everything on your own machine? Vetra Studio ships as a CLI you run\nyourself \u2014 no invite code needed. You bring your own **Anthropic API key** (the\nagent runs on Claude).\n\n**Prerequisites:** Node \u2265 24 on macOS or Linux. pnpm is optional \u2014 the installer\nuses it if present, otherwise offers to install it and falls back to npm.\n\n### Quick install\n\n**Option A \u2014 installer script**\n\nDownloads and runs the official installer, which sets up the `ph` and `vetra` CLIs and offers to launch the agent:\n\n```bash\ncurl -fsSL https://get.vetra.io | sh\n```\n\nIf you want to review the script before running it, download it first:\n\n```bash\ncurl -fsSL https://get.vetra.io -o install-vetra.sh\ncat install-vetra.sh   # inspect\nsh install-vetra.sh\n```\n\n**Option B \u2014 npm / pnpm (no shell script)**\n\nInstall the CLIs directly from the Vetra registry \u2014 nothing to pipe or inspect:\n\n```bash\nnpm install -g ph-cmd vetra-cli --registry=https://registry.vetra.io\n```\n\n```bash\npnpm add -g ph-cmd vetra-cli --registry=https://registry.vetra.io\n```\n\n---\n\nThe first launch sets up Claude auth (bring your own Anthropic API key), then\nprints the Studio URL \u2014 open **[http://localhost:8090/](http://localhost:8090/)**\nin a browser. Start the agent again any time with `vetra`.\n\n### From source\n\nClone [vetra-cli](https://github.com/powerhouse-inc/vetra-cli), then install and\nstart the agent:\n\n```bash\npnpm install\npnpm dev            # interactive agent REPL + embedded Reactor and Switchboard\n```\n\nAuthenticate the agent once:\n\n```bash\nexport ANTHROPIC_API_KEY=sk-ant-...\n```\n\nWhen the agent starts a build, the logs print\n`Vetra Studio: http://localhost:8090/d/<driveId>` \u2014 open that URL to see your\nwork live, and iterate by continuing the conversation. To wipe the local dev\nworkspace and start clean, run `pnpm dev:reset`.\n\n### Service ports\n\nA single `vetra` process runs the REPL, an embedded Reactor, and an embedded\nSwitchboard. It reserves three ports with no fallback, so free them first if\nthey are already in use:\n\n| Service              | Port  | Purpose                                |\n| -------------------- | ----- | -------------------------------------- |\n| Vetra Studio (proxy) | 8090  | Browser entry point (the URL you open) |\n| Connect              | 27370 | Editor front-end                       |\n| Switchboard          | 59220 | GraphQL API                            |\n",
+        "createdAt": "2026-09-02T21:32:18.379Z",
+        "createdBy": "repo-docs-sync",
+        "sourceType": "DOCUMENTATION",
+        "description": "Powerhouse v6.2.2-dev.74 (unchanged since v6.2.2-dev.47) \u2014 Vetra Studio is the browser UI for the Vetra agent. You chat with the agent, watch it work across the four-phase product cycle (Ideate \u2192 Spe\u2026",
+        "publishedAt": "2026-07-16T19:05:49.000Z"
+      },
+      "timestampUtcMs": "2026-09-02T21:32:18.379Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "",
+    "timestampUtcMs": "2026-09-02T21:32:18.384Z",
+    "action": {
+      "type": "UPGRADE_DOCUMENT",
+      "input": {
+        "model": "bai/source",
+        "toVersion": 1,
+        "documentId": "66daa536-c7eb-4fde-98b0-7f815c1eff7e",
+        "fromVersion": 0,
+        "initialState": {
+          "auth": {
+            "grants": [],
+            "version": 0
+          },
+          "local": {},
+          "global": {
+            "title": null,
+            "status": "INBOX",
+            "content": null,
+            "createdAt": null,
+            "createdBy": null,
+            "provenance": null,
+            "sourceType": null,
+            "description": null,
+            "extractedClaims": [],
+            "extractionStats": null
+          },
+          "document": {
+            "hash": {
+              "encoding": "base64",
+              "algorithm": "sha1"
+            },
+            "version": 1
+          }
+        }
+      },
+      "timestampUtcMs": "2026-09-02T21:32:18.384Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "6OWLBRMTGJeo5xitEG8OthjqPCg=",
+    "timestampUtcMs": "2026-09-02T21:32:19.862Z",
+    "action": {
+      "type": "ADD_EXTRACTED_CLAIM",
+      "input": {
+        "claimRef": "4e1550c1-ef5a-45da-93ad-9d8a906038ab"
+      },
+      "timestampUtcMs": "2026-09-02T21:32:19.862Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "NVzsmiGP7Fp9UxhEY5lRWW2kJcg=",
+    "timestampUtcMs": "2026-09-02T21:32:21.590Z",
+    "action": {
+      "type": "ADD_EXTRACTED_CLAIM",
+      "input": {
+        "claimRef": "b28d8c2a-ad6a-4c36-aa21-ee80f5931b7d"
+      },
+      "timestampUtcMs": "2026-09-02T21:32:21.590Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "zDeTOdWKM0z8AECq6qqliG3ZHVc=",
+    "timestampUtcMs": "2026-09-02T21:32:23.292Z",
+    "action": {
+      "type": "ADD_EXTRACTED_CLAIM",
+      "input": {
+        "claimRef": "ffc4964a-16ec-4ea8-a03a-d1b1cad4067d"
+      },
+      "timestampUtcMs": "2026-09-02T21:32:23.292Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "vQflSNbX4vW8rBXmKHpa8t7ADyU=",
+    "timestampUtcMs": "2026-09-02T21:32:32.325Z",
+    "action": {
+      "type": "SET_SOURCE_STATUS",
+      "input": {
+        "status": "EXTRACTED"
+      },
+      "timestampUtcMs": "2026-09-02T21:32:32.325Z"
+    }
+  }
+]

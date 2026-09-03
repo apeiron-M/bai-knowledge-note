@@ -1,0 +1,340 @@
+[
+  {
+    "index": 0,
+    "hash": "",
+    "timestampUtcMs": "2026-08-14T12:06:08.243Z",
+    "action": {
+      "type": "CREATE_DOCUMENT",
+      "input": {
+        "meta": {},
+        "name": "light-client-signs-single-actions-only",
+        "slug": "",
+        "model": "bai/knowledge-note",
+        "branch": "main",
+        "signing": {
+          "nonce": "",
+          "publicKey": {},
+          "signature": "6785869b-e28b-4019-95ae-05d003efa1ab",
+          "documentType": "bai/knowledge-note",
+          "createdAtUtcIso": "2026-08-14T12:06:08.243Z"
+        },
+        "version": 0,
+        "documentId": "6785869b-e28b-4019-95ae-05d003efa1ab",
+        "protocolVersions": {
+          "base-reducer": 2
+        }
+      },
+      "timestampUtcMs": "2026-08-14T12:06:08.243Z"
+    }
+  },
+  {
+    "index": 0,
+    "hash": "/6LdQdHeTGszOPGEK3rr5Rhg19I=",
+    "timestampUtcMs": "2026-08-14T12:35:22.000Z",
+    "action": {
+      "type": "SET_TITLE",
+      "input": {
+        "title": "The light client signs single-action dispatches only; a multi-action batch is pushed unsigned with a warning",
+        "updatedAt": "2026-08-14T12:35:22.000Z"
+      },
+      "timestampUtcMs": "2026-08-14T12:35:22.000Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "",
+    "timestampUtcMs": "2026-08-14T12:06:08.243Z",
+    "action": {
+      "type": "UPGRADE_DOCUMENT",
+      "input": {
+        "model": "bai/knowledge-note",
+        "toVersion": 1,
+        "documentId": "6785869b-e28b-4019-95ae-05d003efa1ab",
+        "fromVersion": 0,
+        "initialState": {
+          "auth": {
+            "grants": [],
+            "version": 0
+          },
+          "local": {
+            "lastViewedAt": null,
+            "personalTags": []
+          },
+          "global": {
+            "links": [],
+            "model": null,
+            "scope": null,
+            "title": null,
+            "editor": null,
+            "inputs": [],
+            "models": [],
+            "status": "DRAFT",
+            "topics": [],
+            "content": null,
+            "context": null,
+            "modelId": null,
+            "modules": [],
+            "outputs": [],
+            "version": null,
+            "computes": null,
+            "filePath": null,
+            "noteType": null,
+            "severity": null,
+            "hooksUsed": [],
+            "rootCause": null,
+            "confidence": null,
+            "consumedBy": [],
+            "provenance": null,
+            "sourceType": null,
+            "targetType": null,
+            "cardinality": null,
+            "description": null,
+            "alternatives": [],
+            "consequences": [],
+            "errorMessage": null,
+            "relationType": null,
+            "correctPattern": null,
+            "decisionStatus": null,
+            "dispatchTargets": [],
+            "lifecycleEvents": []
+          },
+          "document": {
+            "hash": {
+              "encoding": "base64",
+              "algorithm": "sha1"
+            },
+            "version": 1
+          }
+        }
+      },
+      "timestampUtcMs": "2026-08-14T12:06:08.243Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "D1RSUHiNMWHUPp3Bx60pM3BEXHM=",
+    "timestampUtcMs": "2026-08-14T12:35:22.000Z",
+    "action": {
+      "type": "SET_DESCRIPTION",
+      "input": {
+        "updatedAt": "2026-08-14T12:35:22.000Z",
+        "description": "Batch signing needs the second action's baseline hash, which requires running the reducer \u2014 and the light client deliberately ships no reducer."
+      },
+      "timestampUtcMs": "2026-08-14T12:35:22.000Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "",
+    "timestampUtcMs": "2026-08-14T12:37:42.681Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "6785869b-e28b-4019-95ae-05d003efa1ab",
+        "targetId": "851f3b4d-92aa-4601-b6f8-06f27ba514a5",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-08-14T12:37:42.681Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "J/JoE7t8SY6lBWtwykdwmyY5zis=",
+    "timestampUtcMs": "2026-08-14T12:35:22.000Z",
+    "action": {
+      "type": "SET_NOTE_TYPE",
+      "input": {
+        "noteType": "REFERENCE",
+        "updatedAt": "2026-08-14T12:35:22.000Z"
+      },
+      "timestampUtcMs": "2026-08-14T12:35:22.000Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "",
+    "timestampUtcMs": "2026-08-14T12:37:42.771Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "6785869b-e28b-4019-95ae-05d003efa1ab",
+        "targetId": "8cbea140-21d6-4b63-8780-5d44831018aa",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-08-14T12:37:42.771Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "zxvHcAEcss52j+D5T6UZksnv1Zw=",
+    "timestampUtcMs": "2026-08-14T12:35:22.000Z",
+    "action": {
+      "type": "SET_CONTENT",
+      "input": {
+        "content": "## Three cases\n\nThe signer is resolved from `window.ph.renown` **at push time**, so a client built before login signs after login with no rebuild.\n\n| Situation | What happens |\n| --- | --- |\n| Logged-in Renown user, one action | The action is stamped, then signed, then pushed |\n| Logged-in Renown user, several actions | The batch is pushed **unsigned** and a warning is logged |\n| No user | Nothing is stamped or signed; the server computes the hashes itself |\n\n## Why batches cannot be signed\n\nSigning stamps each action with the hash of the state it applies to. For the first action in a batch that hash is computable from the document just read. For the **second** action it is the hash of the state *after* the first action has been applied \u2014 and computing that means running the reducer.\n\nThe light client deliberately ships no reducer. That is the whole point of the design: the app builds actions as plain data, the Switchboard owns the model and its reducer, and nothing generated has to reach the browser. Batch signing is the price of that trade, and it is listed as a known limitation rather than a bug.\n\n## What this means in practice\n\nIf every operation in a flow must carry the user's signature, dispatch the actions **one at a time** rather than as a batch. The cost is one `execute` round trip pair per action (`execute` already costs two round trips: one read for the signing and `sinceRevision` baseline, one mutation).\n\nA related limitation: a mixed-scope batch over-fetches, because the returned operations are windowed from the lowest head revision across the scopes the batch targets.\n\nIf you need real batch signing, you need the full reactor client, which has the reducer in the browser.\n\n_Source: apps/academy/docs/academy/04-Reference/08-ReactorBrowserClient/02-ApiReference.md (Powerhouse v6.2.2-dev.45)._",
+        "updatedAt": "2026-08-14T12:35:22.000Z"
+      },
+      "timestampUtcMs": "2026-08-14T12:35:22.000Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "",
+    "timestampUtcMs": "2026-09-02T21:40:33.512Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "metadata": {
+          "reason": "The note names apps/academy/docs/academy/04-Reference/08-ReactorBrowserClient/02-ApiReference.md as its source; page text revised between v6.2.2-dev.47 and v6.2.2-dev.74 \u2014 re-verified in the v6.2.2-dev.74 pass",
+          "confidence": "grounded"
+        },
+        "sourceId": "6785869b-e28b-4019-95ae-05d003efa1ab",
+        "targetId": "2ca5f8f5-c423-4a7c-ae88-846fd0d1e659",
+        "relationshipType": "DERIVED_FROM"
+      },
+      "timestampUtcMs": "2026-09-02T21:40:33.512Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "8J3zZpLUiW+xF8EZfiOAYnP9NS0=",
+    "timestampUtcMs": "2026-08-14T12:35:22.000Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "version",
+        "value": "v6.2.2-dev.44",
+        "updatedAt": "2026-08-14T12:35:22.000Z"
+      },
+      "timestampUtcMs": "2026-08-14T12:35:22.000Z"
+    }
+  },
+  {
+    "index": 5,
+    "hash": "fqskaAH+sl7Fe1jjz0ABoGkonA0=",
+    "timestampUtcMs": "2026-08-14T12:35:22.000Z",
+    "action": {
+      "type": "SET_PROVENANCE",
+      "input": {
+        "author": "claude",
+        "createdAt": "2026-08-13T14:33:24.000Z",
+        "sourceOrigin": "DERIVED"
+      },
+      "timestampUtcMs": "2026-08-14T12:35:22.000Z"
+    }
+  },
+  {
+    "index": 6,
+    "hash": "tYeM6ebrxYTkqrJLCFkkCG1FNLM=",
+    "timestampUtcMs": "2026-08-14T12:35:22.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "7aab7685-f499-452e-9888-53e2ffb786be",
+        "name": "signing",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-08-14T12:35:22.000Z"
+    }
+  },
+  {
+    "index": 7,
+    "hash": "LblNsyAQhvGitDCeANTkQUncgi8=",
+    "timestampUtcMs": "2026-08-14T12:35:22.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "c5997638-af45-4427-814c-23b8bf015c27",
+        "name": "reactor-browser",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-08-14T12:35:22.000Z"
+    }
+  },
+  {
+    "index": 8,
+    "hash": "epWjQ35fMlBrzCF9HgkrYqxnXqI=",
+    "timestampUtcMs": "2026-08-14T12:35:22.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "73170222-ea5d-4e45-bcb0-5f0e1552f47f",
+        "name": "limitations",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-08-14T12:35:22.000Z"
+    }
+  },
+  {
+    "index": 9,
+    "hash": "c+zWDvHhbCXLT3bGC4A2cFCdRkU=",
+    "timestampUtcMs": "2026-08-14T14:37:11.000Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "version",
+        "value": "v6.2.2-dev.47",
+        "updatedAt": "2026-08-14T12:00:00.000Z"
+      },
+      "timestampUtcMs": "2026-08-14T14:37:11.000Z"
+    }
+  },
+  {
+    "index": 10,
+    "hash": "7PhsWqxtivEyk6f6vY9KBjQ2R8I=",
+    "timestampUtcMs": "2026-08-14T14:37:11.000Z",
+    "action": {
+      "type": "SUBMIT_FOR_REVIEW",
+      "input": {
+        "id": "20f065fc-b799-40b5-a1c2-a354246d42de",
+        "actor": "claude",
+        "comment": "Knowledge registered against powerhouse v6.2.2-dev.47",
+        "timestamp": "2026-08-14T12:00:00.000Z"
+      },
+      "timestampUtcMs": "2026-08-14T14:37:11.000Z"
+    }
+  },
+  {
+    "index": 11,
+    "hash": "lx2OgYxMd58U+opLzUndkhePkpI=",
+    "timestampUtcMs": "2026-08-14T14:37:11.000Z",
+    "action": {
+      "type": "APPROVE_NOTE",
+      "input": {
+        "id": "ec81e637-4c75-44c6-8200-4650fe9a3944",
+        "actor": "liberuum",
+        "comment": "Canonical as of powerhouse v6.2.2-dev.47",
+        "timestamp": "2026-08-14T12:00:00.000Z"
+      },
+      "timestampUtcMs": "2026-08-14T14:37:11.000Z"
+    }
+  },
+  {
+    "index": 12,
+    "hash": "ukyx3ur98WlVJ2i5l4C6OmHgp6Y=",
+    "timestampUtcMs": "2026-09-02T21:40:34.164Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "filePath",
+        "value": "apps/academy/docs/academy/04-Reference/08-ReactorBrowserClient/02-ApiReference.md",
+        "updatedAt": "2026-09-02T21:40:34.164Z"
+      },
+      "timestampUtcMs": "2026-09-02T21:40:34.164Z"
+    }
+  },
+  {
+    "index": 13,
+    "hash": "jjFmAKvltt69OY9MqvSRf0z9NFs=",
+    "timestampUtcMs": "2026-09-02T22:26:40.885Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "version",
+        "value": "v6.2.2-dev.74",
+        "updatedAt": "2026-09-02T22:26:40.885Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:26:40.885Z"
+    }
+  }
+]

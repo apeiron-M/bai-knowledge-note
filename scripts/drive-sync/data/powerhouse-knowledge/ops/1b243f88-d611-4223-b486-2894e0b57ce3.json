@@ -1,0 +1,133 @@
+[
+  {
+    "index": 0,
+    "hash": "",
+    "timestampUtcMs": "2026-09-02T21:42:37.586Z",
+    "action": {
+      "type": "CREATE_DOCUMENT",
+      "input": {
+        "meta": {},
+        "name": "App \u203a connect \u203a README",
+        "slug": "",
+        "model": "bai/source",
+        "branch": "main",
+        "signing": {
+          "nonce": "",
+          "publicKey": {},
+          "signature": "1b243f88-d611-4223-b486-2894e0b57ce3",
+          "documentType": "bai/source",
+          "createdAtUtcIso": "2026-09-02T21:42:37.586Z"
+        },
+        "version": 0,
+        "documentId": "1b243f88-d611-4223-b486-2894e0b57ce3",
+        "protocolVersions": {
+          "base-reducer": 2
+        }
+      },
+      "timestampUtcMs": "2026-09-02T21:42:37.586Z"
+    }
+  },
+  {
+    "index": 0,
+    "hash": "aI9LgW2SZ+iQ9CnOPLhjHmT0gwY=",
+    "timestampUtcMs": "2026-09-02T21:42:37.611Z",
+    "action": {
+      "type": "INGEST_SOURCE",
+      "input": {
+        "url": "https://github.com/powerhouse-inc/powerhouse/blob/v6.2.2-dev.74/apps/connect/README.md",
+        "tool": "sync-repo-docs",
+        "title": "App \u203a connect \u203a README",
+        "author": "Powerhouse Inc.",
+        "method": "sha256:f5143f0a767247bb9676419d4658945c29ec918e8276229387ccfdb028752b69 git:v6.2.2-dev.74",
+        "content": "# Powerhouse Connect\n\nOpen-source desktop and web application for document model management.\nInteract, create, edit and manage documents with ease.\n\n- Connect functions as a private editor & contributor tool for contributors of open organisations. It allows teams to manage internal documents with full control over the data ownership. Connect is available as stand-alone desktop application or in the cloud.\n- Connect offers a navigation menu for adding, synchronising and browsing document drives that are shared within an organisation or are private to the contributor.\n- Connect allows contributors to edit and work on different 'document model types' selected or defined by the organisation.\n\n![app](./.github/app.png)\n\n## Prerequisites\n\nYou can follow these instructions to setup a dev environment:\n\n- Install [**Node (LTS)**](https://nodejs.org/en/download/)\n- Clone this repository\n- Run `npm install` to install dependencies\n\n**Starting Connect**\n\n```bash\npnpm start # start desktop app\n# OR\npnpm run dev # start web app\n```\n\nAfter initialized, you can access the web app at `http://localhost:5173`.\n\n**Create a packaged version of the desktop app**\n\n```bash\npnpm run make # Create package for the current platform\npnpm run make:mac # Create package for Mac OSX\npnpm run make:linux # Create package for Linux\npnpm run make:windows # Create package for Windows\n```\n\n**Test Connect production deployment**\n\nYou can test the production deployment of Connect by running it in a Docker container linked to your local packages.\n\n```bash\npnpm run docker:build # Build the Docker image, only needs to run once\n```\n\nBuild the Monorepo packages before starting a container\n\n```bash\npnpm build:all # Build the packages, needs to run before running the Docker container\n```\n\nRun the Docker container from `apps/connect/`:\n\n```bash\npnpm docker:run # Run the Docker container\n```\n\nConnect will be available at: `http://localhost:4000/develop/powerhouse/connect`\n\n## Runtime configuration\n\nConnect's runtime settings (renown URL, package registry, default drives, log level, etc.) live in `powerhouse.config.json` rather than environment variables. See [RUNTIME-CONFIG.md](./RUNTIME-CONFIG.md) for the full overview of how values are set, merged, and read by the SPA.\n\n## Troubleshooting\n\n- For a complete list of _Electron Forge_ options and requirements, visit the [official docs](https://github.com/electron-userland/electron-forge#usage).\n\n- If you're experiencing troubles with node-gyp on Windows 11, follow [this guide](https://devkimchi.com/2021/11/26/troubleshooting-node-gyp-package-on-windows11/).\n\n- If you're experiencing troubles with node-gyp on older versions, check out [this guide](https://spin.atomicobject.com/2019/03/27/node-gyp-windows/).\n\n- To use yarn via Windows PowerShell, check [this guide](https://bobbyhadz.com/blog/yarn-cannot-be-loaded-running-scripts-disabled)\n\n- For any other issues, reach out to our discord server [`#ask-powerhouse-team`](https://discord.com/channels/815917281728659516/883285185595047937) channel for help.\n",
+        "createdAt": "2026-09-02T21:42:37.611Z",
+        "createdBy": "repo-docs-sync",
+        "sourceType": "DOCUMENTATION",
+        "description": "Powerhouse v6.2.2-dev.74 (unchanged since v6.2.2-dev.47) \u2014 Open-source desktop and web application for document model management. Interact, create, edit and manage documents with ease.",
+        "publishedAt": "2026-06-02T23:51:11.000Z"
+      },
+      "timestampUtcMs": "2026-09-02T21:42:37.611Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "",
+    "timestampUtcMs": "2026-09-02T21:42:37.586Z",
+    "action": {
+      "type": "UPGRADE_DOCUMENT",
+      "input": {
+        "model": "bai/source",
+        "toVersion": 1,
+        "documentId": "1b243f88-d611-4223-b486-2894e0b57ce3",
+        "fromVersion": 0,
+        "initialState": {
+          "auth": {
+            "grants": [],
+            "version": 0
+          },
+          "local": {},
+          "global": {
+            "title": null,
+            "status": "INBOX",
+            "content": null,
+            "createdAt": null,
+            "createdBy": null,
+            "provenance": null,
+            "sourceType": null,
+            "description": null,
+            "extractedClaims": [],
+            "extractionStats": null
+          },
+          "document": {
+            "hash": {
+              "encoding": "base64",
+              "algorithm": "sha1"
+            },
+            "version": 1
+          }
+        }
+      },
+      "timestampUtcMs": "2026-09-02T21:42:37.586Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "EXW7cqC3fTeraEMhX2hvAFlMiwA=",
+    "timestampUtcMs": "2026-09-03T07:35:07.354Z",
+    "action": {
+      "type": "ADD_EXTRACTED_CLAIM",
+      "input": {
+        "claimRef": "cf515fca-716e-4378-96ef-0c19489183aa"
+      },
+      "timestampUtcMs": "2026-09-03T07:35:07.354Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "I07+FJPWC9vX69sB01gH0W5fhgo=",
+    "timestampUtcMs": "2026-09-03T07:35:10.236Z",
+    "action": {
+      "type": "RECORD_EXTRACTION_STATS",
+      "input": {
+        "skipRate": 0.667,
+        "claimCount": 1,
+        "extractedAt": "2026-09-03T07:35:10.236Z",
+        "extractedBy": "knowledge-agent",
+        "skippedCount": 2
+      },
+      "timestampUtcMs": "2026-09-03T07:35:10.236Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "czckMvXSEKPmWUmcsEZ7aIRvE0Y=",
+    "timestampUtcMs": "2026-09-03T07:35:10.791Z",
+    "action": {
+      "type": "SET_SOURCE_STATUS",
+      "input": {
+        "status": "EXTRACTED"
+      },
+      "timestampUtcMs": "2026-09-03T07:35:10.791Z"
+    }
+  }
+]

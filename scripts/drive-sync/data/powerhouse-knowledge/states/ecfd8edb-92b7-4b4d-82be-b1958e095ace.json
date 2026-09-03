@@ -1,0 +1,100 @@
+{
+  "links": [
+    {
+      "id": "lnk-54041ac3-bui",
+      "linkType": "BUILDS_ON",
+      "targetDocumentId": "54041ac3-6ad1-45f5-93d6-8159a35daa6c",
+      "targetTitle": "x402 facilitators abstract payment verification and settlement behind /verify and /settle endpoints"
+    },
+    {
+      "id": "lnk-f9bb8150-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "f9bb8150-6312-402c-83c7-c93ab766d908",
+      "targetTitle": "x402: Open Payment Standard (Introduction)"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "x402 batch settlement aggregates micropayments for cost-efficient onchain redemption",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "x4-topic-0",
+      "name": "x402",
+      "topicDocumentId": null
+    },
+    {
+      "id": "x4-topic-1",
+      "name": "micropayments",
+      "topicDocumentId": null
+    },
+    {
+      "id": "x4-topic-2",
+      "name": "evm",
+      "topicDocumentId": null
+    },
+    {
+      "id": "x4-topic-3",
+      "name": "settlement",
+      "topicDocumentId": null
+    },
+    {
+      "id": "x4-topic-4",
+      "name": "batching",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "x402 defines a **batch settlement** scheme (EVM-based) enabling high-volume, batched onchain redemption of micropayments.\n\n**Problem it solves:** individually settling sub-cent payments onchain would cost more in gas than the payment is worth. Batching amortizes settlement cost across many payments, which is what makes granular usage-based pricing (per API call, per query) economically viable.\n\n**Pattern:** accept many small offchain-verified payments, redeem them onchain in aggregate \u2014 the same accumulate-then-settle shape as payment channels and rollups.\n\nSource: x402 docs introduction (https://docs.x402.org/introduction).",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "PATTERN",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "knowledge-agent",
+    "createdAt": "2026-08-30T12:15:00.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-30T12:50:00.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "An EVM-based scheme lets sellers redeem high volumes of tiny payments in batched onchain transactions, keeping per-payment cost viable for usage-based services.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "rev-x4-20260830",
+      "actor": "knowledge-agent",
+      "comment": "Extracted from source; atomic claim with provenance and links.",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-30T12:30:00.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "apr-x4-20260830",
+      "actor": "liberuum@powerhouse.inc",
+      "comment": "Approved: atomic, sourced, connected.",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-30T12:30:00.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

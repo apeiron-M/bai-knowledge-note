@@ -1,0 +1,99 @@
+{
+  "links": [
+    {
+      "id": "lnk-4d8e59af-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "4d8e59af-51f2-4ab7-b290-e1d5744abbd7",
+      "targetTitle": "Integration-gap tool screen: ERPNext / Frappe (primary-source research, 2026-08-19)"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "The Frappe feature named Audit Trail is an amendment diff viewer",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "d72564b7-5e49-4246-a53c-1feaa285548f",
+      "name": "tool-screen",
+      "topicDocumentId": null
+    },
+    {
+      "id": "d9de63b8-6402-43e8-8cba-b65a8ecea7ba",
+      "name": "erpnext",
+      "topicDocumentId": null
+    },
+    {
+      "id": "43a9cb59-d647-4c01-a17c-7aa03caa8090",
+      "name": "frappe",
+      "topicDocumentId": null
+    },
+    {
+      "id": "37297e67-3d18-4195-b077-69609e6dd1bf",
+      "name": "audit-trail",
+      "topicDocumentId": null
+    },
+    {
+      "id": "01e21ccf-0482-40da-9260-2a9917081594",
+      "name": "naming",
+      "topicDocumentId": null
+    },
+    {
+      "id": "f2711623-d291-4bd2-892a-401403ebafe3",
+      "name": "evaluation-trap",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "The documentation describes it as *\"A tool for viewing the changes made to a submittable doctype across multiple amended versions\"*, tracking *\"Fields Changed\"*, *\"Rows Updated\"* and *\"Rows Added / Rows Removed\"*. The page makes no assertion about default enablement, immutability, hashing, chaining or protection from deletion.\n\nThis is a useful feature with a misleading name for anyone screening tools by keyword. The same trap appears in n8n, whose `/audit` endpoint is a vulnerability scanner. In both cases the word \"audit\" in a feature name says nothing about whether an append-only record exists.\n\nThe check that actually discriminates is not whether a tool has something called an audit trail, but whether its records survive the deletion of what they describe.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "REFERENCE",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "knowledge-agent",
+    "createdAt": "2026-08-20T08:45:24.851473Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-20T08:45:25.984152Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "It shows changes to a submittable doctype across amended versions, with no claim of immutability, hashing or default-on behaviour anywhere in its documentation.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "ef6751e4-2bde-4209-a6fe-277efaba1e45",
+      "actor": "knowledge-agent",
+      "comment": "Extracted from the primary-source tool screen; each claim quotable from a cited source.",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-20T08:45:25.834698Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "dd1f3633-b63d-4262-9161-ec868b4df6fd",
+      "actor": "liberuum",
+      "comment": "Approved: tool-screen extraction.",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-20T08:45:25.984152Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

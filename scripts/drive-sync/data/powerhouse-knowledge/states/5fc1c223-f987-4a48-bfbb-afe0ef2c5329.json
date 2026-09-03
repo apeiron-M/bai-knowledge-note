@@ -1,0 +1,27 @@
+{
+  "title": "Package \u203a config \u203a README",
+  "status": "EXTRACTED",
+  "content": "# Powerhouse Config\n\nThis package contains the configuration for the Powerhouse monorepo.\n\n### `powerhouse.config.json`\n\nBelow is an example configuration file:\n\n```\n{\n  \"documentModelsDir\": \"./document-models\",\n  \"editorsDir\": \"./editors\",\n  \"logLevel\": \"verbose\",\n  \"studio\": {\n    \"port\": 3000\n  },\n  \"reactor\": {\n    \"port\": 4001\n  },\n  \"packages\": []\n}\n```\n\nRunning `ph` commands (like `ph reactor`) from a directory containing a `powerhouse.config.json` will use these values to configure services.\n\n### Options\n\n##### `logLevel`\n\nSee the [logging documentation](../document-drive/docs/logging.md) for a comprehensive description.\n\n#### `reactor`\n\nThese options affect the `ph reactor` command.\n\n| Name                     | Description                                                                                                                                                   |\n| ------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------- |\n| `port`                   | The port at which to receive traffic.                                                                                                                         |\n| `storage.type`           | Configures the storage layer of reactor. Use `memory`, `filesystem`, `browser`, or `postgres`.                                                                |\n| `storage.postgresUrl`    | If `postgres` is configured as the storage layer, this defines the postgres connection string. Eg - `postgresql://postgres:postgres@localhost:5444/postgres`. |\n| `storage.filesystemPath` | If `filesystem` is configured as the storage layer, this defines the root folder.                                                                             |\n",
+  "createdAt": "2026-09-02T21:43:54.961Z",
+  "createdBy": "repo-docs-sync",
+  "provenance": {
+    "url": "https://github.com/powerhouse-inc/powerhouse/blob/v6.2.2-dev.74/packages/config/README.md",
+    "tool": "sync-repo-docs",
+    "author": "Powerhouse Inc.",
+    "method": "sha256:14b8092cbafcfc41dccccc3f7bfd3d1f3a64b60db769df739a60e3c6e8a4c532 git:v6.2.2-dev.74",
+    "publishedAt": "2025-09-10T13:13:58.000Z"
+  },
+  "sourceType": "DOCUMENTATION",
+  "description": "Powerhouse v6.2.2-dev.74 (unchanged since v6.2.2-dev.47) \u2014 This package contains the configuration for the Powerhouse monorepo.",
+  "extractedClaims": [
+    "392106ab-5f1e-4029-b9ec-fc1c7af1357e"
+  ],
+  "extractionStats": {
+    "skipRate": 0.5,
+    "claimCount": 1,
+    "extractedAt": "2026-09-03T07:45:16.715Z",
+    "extractedBy": "knowledge-agent",
+    "skippedCount": 1
+  },
+  "links": []
+}

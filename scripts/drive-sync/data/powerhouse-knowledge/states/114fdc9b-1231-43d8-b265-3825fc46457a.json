@@ -1,0 +1,108 @@
+{
+  "links": [
+    {
+      "id": "lnk-d1fb47c0-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "d1fb47c0-c4f4-40c0-9f3b-55669eef4f0d",
+      "targetTitle": "live-collab-per-user-feeds-manifest"
+    },
+    {
+      "id": "lnk-713006f2-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "713006f2-2448-40a6-a531-918f99915577",
+      "targetTitle": "chat-uses-pss-for-messages-and-gsoc-for-notifications-matchi"
+    },
+    {
+      "id": "lnk-152f3ecf-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "152f3ecf-965e-4486-afb2-ee257101aabf",
+      "targetTitle": "document-models-enable-asynchronous-collaboration"
+    },
+    {
+      "id": "lnk-2fe08037-bui",
+      "linkType": "BUILDS_ON",
+      "targetDocumentId": "2fe08037-fc17-4fec-97f0-ac7d33baafc8",
+      "targetTitle": "gsoc-provides-many-to-one-notifications-with-sub-second-late"
+    },
+    {
+      "id": "lnk-521e4779-bui",
+      "linkType": "BUILDS_ON",
+      "targetDocumentId": "521e4779-3e2e-430c-a933-82b6a774c21e",
+      "targetTitle": "operations-not-state-log"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Live collaboration uses per-user op feeds plus GSOC pings to trigger debounced pulls.",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "topic-9fdfe7adf8f9",
+      "name": "live-collaboration",
+      "topicDocumentId": null
+    },
+    {
+      "id": "topic-e59fc130b566",
+      "name": "swarm-feeds",
+      "topicDocumentId": null
+    },
+    {
+      "id": "topic-87ab3644041e",
+      "name": "gsoc-notifications",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "## Model\n\nLive collaboration on a drive or document is **multi-writer**: each collaborator writes their own ops to their own feed, and everyone reads everyone else's. ACT gates read access (drive-level first, narrowed to doc-level later).\n\n## Flow\n\n1. Each peer mines a GSOC signer for the other's overlay (one-time, ~10\u201330s).\n2. Signers are exchanged via PSS (trusted channel, one-to-one).\n3. On op-committed, SwarmChannel pushes the op batch to the author's feed and sends a GSOC `doc-updated` ping to each other collaborator.\n4. Receivers pull new batches from the author's feed via `reactor.load()`.\n5. A timer-based poll remains as fallback when GSOC pings are missed.\n\n## GSOC notification payload\n\n```typescript\n{\n  type: \"doc-updated\",\n  documentId: \"b9e4fe2e-...\",\n  driveId: \"96ffdf26-...\",\n  fromAddress: \"0xadbA7C2F...\",\n  latestIndex: { document: 5, global: 12 },\n  timestamp: \"2026-04-15T18:30:05Z\"\n}\n```\n\nThe payload is small (<4KB) and only tells the receiver's SwarmChannel to pull; the actual ops travel via the feed.\n\n## Debouncing\n\nGSOC-triggered pulls are debounced so a flurry of ops (e.g. rapid typing) coalesces into a single pull.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "ARCHITECTURE",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "knowledge-agent",
+    "createdAt": "2026-04-21T14:28:00.483Z",
+    "sessionId": null,
+    "updatedAt": "2026-09-03T09:58:19.551Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Each collaborator writes ops to their own feed; peers subscribe. GSOC sends doc-updated pings on op-committed, which trigger debounced reactor.load() pulls.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "3110c68a-3187-4afa-96f2-fa764bde7e9c",
+      "actor": "claude",
+      "comment": "Knowledge registered against powerhouse v6.2.2-dev.47",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-14T12:00:00.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "8704af4f-d842-47f0-88d8-5a9aaf37aebe",
+      "actor": "liberuum",
+      "comment": "Canonical as of powerhouse v6.2.2-dev.47",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-14T12:00:00.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

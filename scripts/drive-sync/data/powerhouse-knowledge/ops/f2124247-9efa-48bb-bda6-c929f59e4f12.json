@@ -1,0 +1,362 @@
+[
+  {
+    "index": 0,
+    "hash": "",
+    "timestampUtcMs": "2026-08-14T12:15:37.118Z",
+    "action": {
+      "type": "CREATE_DOCUMENT",
+      "input": {
+        "meta": {},
+        "name": "push-flow-encrypt-upload-manifest",
+        "slug": "",
+        "model": "bai/knowledge-note",
+        "branch": "main",
+        "signing": {
+          "nonce": "",
+          "publicKey": {},
+          "signature": "f2124247-9efa-48bb-bda6-c929f59e4f12",
+          "documentType": "bai/knowledge-note",
+          "createdAtUtcIso": "2026-08-14T12:15:37.118Z"
+        },
+        "version": 0,
+        "documentId": "f2124247-9efa-48bb-bda6-c929f59e4f12",
+        "protocolVersions": {
+          "base-reducer": 2
+        }
+      },
+      "timestampUtcMs": "2026-08-14T12:15:37.118Z"
+    }
+  },
+  {
+    "index": 0,
+    "hash": "o/norwa42s72CZSP69QTAf1sccY=",
+    "timestampUtcMs": "2026-08-14T12:35:41.000Z",
+    "action": {
+      "type": "SET_TITLE",
+      "input": {
+        "title": "The push flow encrypts operation batches, uploads them to Bee /bytes, and updates per-document feeds plus drive and user manifests.",
+        "updatedAt": "2026-08-14T12:35:41.000Z"
+      },
+      "timestampUtcMs": "2026-08-14T12:35:41.000Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "",
+    "timestampUtcMs": "2026-08-14T12:15:37.118Z",
+    "action": {
+      "type": "UPGRADE_DOCUMENT",
+      "input": {
+        "model": "bai/knowledge-note",
+        "toVersion": 1,
+        "documentId": "f2124247-9efa-48bb-bda6-c929f59e4f12",
+        "fromVersion": 0,
+        "initialState": {
+          "auth": {
+            "grants": [],
+            "version": 0
+          },
+          "local": {
+            "lastViewedAt": null,
+            "personalTags": []
+          },
+          "global": {
+            "links": [],
+            "model": null,
+            "scope": null,
+            "title": null,
+            "editor": null,
+            "inputs": [],
+            "models": [],
+            "status": "DRAFT",
+            "topics": [],
+            "content": null,
+            "context": null,
+            "modelId": null,
+            "modules": [],
+            "outputs": [],
+            "version": null,
+            "computes": null,
+            "filePath": null,
+            "noteType": null,
+            "severity": null,
+            "hooksUsed": [],
+            "rootCause": null,
+            "confidence": null,
+            "consumedBy": [],
+            "provenance": null,
+            "sourceType": null,
+            "targetType": null,
+            "cardinality": null,
+            "description": null,
+            "alternatives": [],
+            "consequences": [],
+            "errorMessage": null,
+            "relationType": null,
+            "correctPattern": null,
+            "decisionStatus": null,
+            "dispatchTargets": [],
+            "lifecycleEvents": []
+          },
+          "document": {
+            "hash": {
+              "encoding": "base64",
+              "algorithm": "sha1"
+            },
+            "version": 1
+          }
+        }
+      },
+      "timestampUtcMs": "2026-08-14T12:15:37.118Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "dkmJ/vs267BgJmC71GJ0VubymGg=",
+    "timestampUtcMs": "2026-08-14T12:35:41.000Z",
+    "action": {
+      "type": "SET_DESCRIPTION",
+      "input": {
+        "updatedAt": "2026-08-14T12:35:41.000Z",
+        "description": "SwarmChannel serializes ops, AES-256-GCM encrypts with wallet-derived key, uploads to /bytes, and appends batch references into document, drive, and user manifest feeds."
+      },
+      "timestampUtcMs": "2026-08-14T12:35:41.000Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "",
+    "timestampUtcMs": "2026-08-14T12:38:20.142Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "f2124247-9efa-48bb-bda6-c929f59e4f12",
+        "targetId": "c6ce116a-daaa-4be5-a9de-25b63600f6a0",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-08-14T12:38:20.142Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "GK+lV1D1HwOeHNvKzAdH9KyVZoc=",
+    "timestampUtcMs": "2026-08-14T12:35:41.000Z",
+    "action": {
+      "type": "SET_NOTE_TYPE",
+      "input": {
+        "noteType": "workflow",
+        "updatedAt": "2026-08-14T12:35:41.000Z"
+      },
+      "timestampUtcMs": "2026-08-14T12:35:41.000Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "",
+    "timestampUtcMs": "2026-08-14T12:38:20.224Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "f2124247-9efa-48bb-bda6-c929f59e4f12",
+        "targetId": "eb3ddfcc-c606-4705-b9c9-42f5e26e2384",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-08-14T12:38:20.224Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "Jh5yRi1CAMPIZMw0ajYZqwMDtf4=",
+    "timestampUtcMs": "2026-08-14T12:35:41.000Z",
+    "action": {
+      "type": "SET_CONTENT",
+      "input": {
+        "content": "## Push sequence (Create to Sync to Swarm)\n\nTriggered by `SyncManager.updateOutbox()` when new ordinals appear in `operation_index_operations`.\n\n`SwarmChannel.handleOutboxAdded()` then, per SyncOperation:\n\n1. Serialize `OperationWithContext[]` to JSON.\n2. Encrypt with AES-256-GCM using a wallet-derived key.\n3. Upload ciphertext to `/bytes` \u2014 receive content reference (hash).\n4. Read existing document manifest from feed (or create new).\n5. Append the batch reference (with scope and index range) to the manifest.\n6. Write updated manifest as a SOC (single-owner chunk) to the doc feed.\n7. Call `syncOp.executed()` so the sync cursor advances.\n\n### Special case: drive documents\n\nWhen `documentType === \"powerhouse/document-drive\"`:\n\n- `ManifestManager.updateDriveManifest()` reads drive state from the reactor and writes the docs plus folders index to the drive manifest feed.\n- `ManifestManager.ensureDriveInUserManifest()` updates the user manifest with a drive entry, building the discovery index used for recovery.\n\n### Example operation set\n\nCreating `PushPullDrive` with one doc, one folder, one nested doc generates: `CREATE_DOCUMENT`, `UPGRADE_DOCUMENT`, `ADD_FILE`, `ADD_FOLDER`, `ADD_FILE (parentFolder=folder)`, `MOVE_NODE`.",
+        "updatedAt": "2026-08-14T12:35:41.000Z"
+      },
+      "timestampUtcMs": "2026-08-14T12:35:41.000Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "",
+    "timestampUtcMs": "2026-08-14T12:38:20.323Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "f2124247-9efa-48bb-bda6-c929f59e4f12",
+        "targetId": "4e6413ee-22bf-4d64-964f-ca8b28917cec",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-08-14T12:38:20.323Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "jep51omktxa3N4VI9aiNrGJrgAs=",
+    "timestampUtcMs": "2026-08-14T12:35:41.000Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "version",
+        "value": "v6.2.2-dev.44",
+        "updatedAt": "2026-08-14T12:35:41.000Z"
+      },
+      "timestampUtcMs": "2026-08-14T12:35:41.000Z"
+    }
+  },
+  {
+    "index": 5,
+    "hash": "",
+    "timestampUtcMs": "2026-08-14T12:38:20.423Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "f2124247-9efa-48bb-bda6-c929f59e4f12",
+        "targetId": "50a6a870-f29e-4164-820a-5d074f7443d7",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-08-14T12:38:20.423Z"
+    }
+  },
+  {
+    "index": 5,
+    "hash": "2kpKUv+Ea45DH3K3gOKMzUwBoII=",
+    "timestampUtcMs": "2026-08-14T12:35:41.000Z",
+    "action": {
+      "type": "SET_PROVENANCE",
+      "input": {
+        "author": "knowledge-agent",
+        "createdAt": "2026-04-21T14:47:10.583Z",
+        "sourceOrigin": "DERIVED"
+      },
+      "timestampUtcMs": "2026-08-14T12:35:41.000Z"
+    }
+  },
+  {
+    "index": 6,
+    "hash": "",
+    "timestampUtcMs": "2026-08-14T12:38:20.522Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "f2124247-9efa-48bb-bda6-c929f59e4f12",
+        "targetId": "9c9ffb95-9100-4839-b00e-57ec8b6ccbe6",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-08-14T12:38:20.522Z"
+    }
+  },
+  {
+    "index": 6,
+    "hash": "I9mVM6gkBTEMAH4bNqpK9XpgV8M=",
+    "timestampUtcMs": "2026-08-14T12:35:41.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "t1",
+        "name": "push-flow",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-08-14T12:35:41.000Z"
+    }
+  },
+  {
+    "index": 7,
+    "hash": "VNSVHscVKFULmHkQkRIGEFKt4Tk=",
+    "timestampUtcMs": "2026-08-14T12:35:41.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "t2",
+        "name": "swarm-sync",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-08-14T12:35:41.000Z"
+    }
+  },
+  {
+    "index": 8,
+    "hash": "S3Qf0+rm2/wguw6mhb5oBYF59Dg=",
+    "timestampUtcMs": "2026-08-14T12:35:41.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "t3",
+        "name": "manifest",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-08-14T12:35:41.000Z"
+    }
+  },
+  {
+    "index": 9,
+    "hash": "B9y0GWvJiUU1Dnwnj84CUNzs3bE=",
+    "timestampUtcMs": "2026-08-14T14:37:45.000Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "version",
+        "value": "v6.2.2-dev.47",
+        "updatedAt": "2026-08-14T12:00:00.000Z"
+      },
+      "timestampUtcMs": "2026-08-14T14:37:45.000Z"
+    }
+  },
+  {
+    "index": 10,
+    "hash": "KUiXU2wk9Kg5jtKgYxNouW53iJI=",
+    "timestampUtcMs": "2026-08-14T14:37:45.000Z",
+    "action": {
+      "type": "SUBMIT_FOR_REVIEW",
+      "input": {
+        "id": "d44a2158-eab1-4808-8a0c-d0cf176b4a37",
+        "actor": "claude",
+        "comment": "Knowledge registered against powerhouse v6.2.2-dev.47",
+        "timestamp": "2026-08-14T12:00:00.000Z"
+      },
+      "timestampUtcMs": "2026-08-14T14:37:45.000Z"
+    }
+  },
+  {
+    "index": 11,
+    "hash": "TexYntcrqEhTtf/4oNdV0Aq6vGs=",
+    "timestampUtcMs": "2026-08-14T14:37:45.000Z",
+    "action": {
+      "type": "APPROVE_NOTE",
+      "input": {
+        "id": "0790f32c-5609-4e53-ab28-82d468922260",
+        "actor": "liberuum",
+        "comment": "Canonical as of powerhouse v6.2.2-dev.47",
+        "timestamp": "2026-08-14T12:00:00.000Z"
+      },
+      "timestampUtcMs": "2026-08-14T14:37:45.000Z"
+    }
+  },
+  {
+    "index": 12,
+    "hash": "GkO0Hm6NEDqF1NCW2ItXOilXB2g=",
+    "timestampUtcMs": "2026-08-16T09:49:48.000Z",
+    "action": {
+      "type": "SET_NOTE_TYPE",
+      "input": {
+        "noteType": "WORKFLOW",
+        "updatedAt": "2026-08-16T09:49:48.000Z"
+      },
+      "timestampUtcMs": "2026-08-16T09:49:48.000Z"
+    }
+  },
+  {
+    "index": 13,
+    "hash": "Q2+nkn/A5tsAv2BV5GsAVkxttI8=",
+    "timestampUtcMs": "2026-09-03T09:57:36.747Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "version",
+        "updatedAt": "2026-09-03T09:57:36.746Z"
+      },
+      "timestampUtcMs": "2026-09-03T09:57:36.747Z"
+    }
+  }
+]

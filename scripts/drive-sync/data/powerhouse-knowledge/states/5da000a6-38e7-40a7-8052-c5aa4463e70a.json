@@ -1,0 +1,104 @@
+{
+  "links": [
+    {
+      "id": "lnk-87edb655-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "87edb655-2431-4b23-8c7f-53ca7a468fba",
+      "targetTitle": "drive-apps-are-custom-drive-editors"
+    },
+    {
+      "id": "lnk-1adbf0db-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "1adbf0db-0ab1-4801-9ee9-cbbc9a875beb",
+      "targetTitle": "document-model-vs-document-editor-vs-app-serves-different-purposes"
+    },
+    {
+      "id": "lnk-0eafe53b-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "0eafe53b-efdf-4310-9a1c-7d3e8b5cc669",
+      "targetTitle": "ph-cli-is-primary-project-tool"
+    },
+    {
+      "id": "lnk-d08d7863-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "d08d7863-1ce4-4378-b3e4-e97c6c5e43e1",
+      "targetTitle": "Academy \u203a ReleaseNotes \u203a Powerhouse v6.0.0 \ud83d\ude80",
+      "reason": "Backing page found by content match in the v6.2.2-dev.74 source backfill \u2014 identifiers driveeditor, typescript, v6.0.0 from the claim appear in this page (text identical at v6.2.2-dev.47 and v6.2.2-dev.74); attribution, not the original extraction record",
+      "confidence": "grounded"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "v6.0.0 bulk-renamed DriveEditor across every package, and drive editors are now apps of type powerhouse/app",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "9712afc5-37bc-41d8-b800-11708bed8b72",
+      "name": "v6-migration",
+      "topicDocumentId": null
+    },
+    {
+      "id": "c6db9abc-96a3-45bc-917d-e2fb5c385de6",
+      "name": "drive-apps",
+      "topicDocumentId": null
+    },
+    {
+      "id": "4eb1b2bf-90f8-4b68-9efe-23655045f585",
+      "name": "terminology",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "v6.0.0 lists the rename under Breaking Changes with no migration table:\n\n> **`DriveEditor` renamed** \u2014 a bulk rename was applied across all packages. Search your codebase for old `DriveEditor` references and update as directed by TypeScript.\n\nThe intended workflow is therefore compile-error-driven rather than documented symbol-by-symbol, which is worth knowing before going looking for a mapping that does not exist.\n\nThe terminology landed on **Drive-app**, and the concept is now a first-class generated module type rather than a special kind of editor. The CLI reference confirms the surface:\n\n- `ph generate app` \u2014 \"Generate a drive app\", with `--name`, `--document-types`, `--dir`, `--all`, `--extract`, and a `--disable-drag-and-drop` flag.\n- Its spec files are `powerhouse/app` documents: `--document` takes \"Path to a `powerhouse/app` spec file (.phd or .json) to drive codegen\", and `--extract` writes \"a `powerhouse/app` spec for each existing drive app into `specs/apps/`\".\n- The CSS customization reference maps the `app-editor` slot to document type `powerhouse/app`.\n\nSo the rename is not only cosmetic: it aligns the drive-level UI with the same spec-document-as-source-of-truth model used for document models and editors, each with its own document type and its own `ph generate` subcommand.\n\nThe other subgraph-shaped breaking change in the same release reinforces the direction \u2014 generated subgraph code should be **deleted** (`rm -rf src/subgraphs/`) because subgraphs are now generated and loaded at runtime.\n\nProvenance: academy `ReleaseNotes/v6.0.0.md:192` (Breaking Changes) for the rename; `04-Reference/07-CLITooling/00-PowerhouseCLI.md` App section and `03-Build/03-BuildingUserExperiences/04-CSSCustomization.md:135` for the `powerhouse/app` type and `ph generate app`. Academy 6.2.2-dev.45.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": "v6.2.2-dev.74",
+  "computes": null,
+  "filePath": "apps/academy/docs/academy/ReleaseNotes/v6.0.0.md",
+  "noteType": "DECISION",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "claude",
+    "createdAt": "2026-08-13T14:39:26.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-09-02T21:41:14.775Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "The release notes list the rename as a breaking change to fix by following TypeScript errors. The CLI now exposes ph generate app, whose spec files are powerhouse/app documents.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "432065f7-2338-400c-8124-807e2ac88849",
+      "actor": "claude",
+      "comment": "Knowledge registered against powerhouse v6.2.2-dev.47",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-14T12:00:00.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "7629d2fc-7eaa-4b3d-8f00-fec2bb0120ac",
+      "actor": "liberuum",
+      "comment": "Canonical as of powerhouse v6.2.2-dev.47",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-14T12:00:00.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

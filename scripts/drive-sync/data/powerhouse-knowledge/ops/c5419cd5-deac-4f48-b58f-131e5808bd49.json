@@ -1,0 +1,707 @@
+[
+  {
+    "index": 0,
+    "hash": "",
+    "timestampUtcMs": "2026-09-02T22:09:12.501Z",
+    "action": {
+      "type": "CREATE_DOCUMENT",
+      "input": {
+        "meta": {},
+        "name": "auth-flags-per-fleet",
+        "slug": "",
+        "model": "bai/knowledge-note",
+        "branch": "main",
+        "signing": {
+          "nonce": "",
+          "publicKey": {},
+          "signature": "c5419cd5-deac-4f48-b58f-131e5808bd49",
+          "documentType": "bai/knowledge-note",
+          "createdAtUtcIso": "2026-09-02T22:09:12.501Z"
+        },
+        "version": 0,
+        "documentId": "c5419cd5-deac-4f48-b58f-131e5808bd49",
+        "protocolVersions": {
+          "base-reducer": 2
+        }
+      },
+      "timestampUtcMs": "2026-09-02T22:09:12.501Z"
+    }
+  },
+  {
+    "index": 0,
+    "hash": "JF/Fxvl3G3RPnxtE8PCcrC0dc7U=",
+    "timestampUtcMs": "2026-09-02T22:09:12.423Z",
+    "action": {
+      "type": "SET_TITLE",
+      "input": {
+        "title": "Enforcement flags flip for a whole document-sharing fleet, never per node, because a replay verdict is a consensus outcome",
+        "updatedAt": "2026-09-02T22:09:12.423Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:09:12.423Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "",
+    "timestampUtcMs": "2026-09-02T22:09:12.501Z",
+    "action": {
+      "type": "UPGRADE_DOCUMENT",
+      "input": {
+        "model": "bai/knowledge-note",
+        "toVersion": 1,
+        "documentId": "c5419cd5-deac-4f48-b58f-131e5808bd49",
+        "fromVersion": 0,
+        "initialState": {
+          "auth": {
+            "grants": [],
+            "version": 0
+          },
+          "local": {
+            "lastViewedAt": null,
+            "personalTags": []
+          },
+          "global": {
+            "links": [],
+            "model": null,
+            "scope": null,
+            "title": null,
+            "editor": null,
+            "inputs": [],
+            "models": [],
+            "status": "DRAFT",
+            "topics": [],
+            "content": null,
+            "context": null,
+            "modelId": null,
+            "modules": [],
+            "outputs": [],
+            "version": null,
+            "computes": null,
+            "filePath": null,
+            "noteType": null,
+            "severity": null,
+            "hooksUsed": [],
+            "rootCause": null,
+            "confidence": null,
+            "consumedBy": [],
+            "provenance": null,
+            "sourceType": null,
+            "targetType": null,
+            "cardinality": null,
+            "description": null,
+            "alternatives": [],
+            "consequences": [],
+            "errorMessage": null,
+            "relationType": null,
+            "correctPattern": null,
+            "decisionStatus": null,
+            "dispatchTargets": [],
+            "lifecycleEvents": []
+          },
+          "document": {
+            "hash": {
+              "encoding": "base64",
+              "algorithm": "sha1"
+            },
+            "version": 1
+          }
+        }
+      },
+      "timestampUtcMs": "2026-09-02T22:09:12.501Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "W9xGnHeUbZyYNJiuWbKoTs+sRNI=",
+    "timestampUtcMs": "2026-09-02T22:09:12.423Z",
+    "action": {
+      "type": "SET_DESCRIPTION",
+      "input": {
+        "updatedAt": "2026-09-02T22:09:12.423Z",
+        "description": "Two replicas of one document on different flags compute different verdicts for the same operation and diverge permanently. Sweep with preflight:auth first \u2014 the unsafe conditions are unrepairable."
+      },
+      "timestampUtcMs": "2026-09-02T22:09:12.423Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "",
+    "timestampUtcMs": "2026-09-02T22:17:10.572Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "metadata": {
+          "reason": "Extracted from apps/academy/docs/academy/04-Reference/01-Reactor/11-Authorization.md at v6.2.2-dev.74 \u2014 warning 'Flip flags per fleet, never per node'",
+          "confidence": "grounded"
+        },
+        "sourceId": "c5419cd5-deac-4f48-b58f-131e5808bd49",
+        "targetId": "17dc46b0-f733-467c-99d7-ae8fbe0fb0e4",
+        "relationshipType": "DERIVED_FROM"
+      },
+      "timestampUtcMs": "2026-09-02T22:17:10.572Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "2IzPOPT+nGguPjj6qNkT+9K5XR8=",
+    "timestampUtcMs": "2026-09-02T22:09:12.423Z",
+    "action": {
+      "type": "SET_NOTE_TYPE",
+      "input": {
+        "noteType": "DECISION",
+        "updatedAt": "2026-09-02T22:09:12.423Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:09:12.423Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "",
+    "timestampUtcMs": "2026-09-02T22:17:11.656Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "metadata": {
+          "reason": "Extracted from apps/switchboard/README.md at v6.2.2-dev.74 \u2014 Reactor Enforcement Flags: fleet rule, preflight:auth exit codes, 'protects nothing that already exists'",
+          "confidence": "grounded"
+        },
+        "sourceId": "c5419cd5-deac-4f48-b58f-131e5808bd49",
+        "targetId": "63e10e2c-9be4-4bd2-a876-8708cd3ac1f9",
+        "relationshipType": "DERIVED_FROM"
+      },
+      "timestampUtcMs": "2026-09-02T22:17:11.656Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "jb0H8RS15Y/nvvoleVkoDUx2QyM=",
+    "timestampUtcMs": "2026-09-02T22:09:12.423Z",
+    "action": {
+      "type": "SET_CONTENT",
+      "input": {
+        "content": "A decision made at replay \u2014 allow, deny, or \"document deleted\" \u2014 is a **consensus outcome**: it is persisted, travels by sync, and every replica must reach it independently. Two replicas of the same document running different enforcement flags therefore compute different verdicts for the same operation and **diverge permanently**. The Academy states it as a warning: move every node that shares a document together.\n\nThe same applies to Connect. A flags-off browser replica syncing an enforcing switchboard applies operations the switchboard denied, so Connect's `connect.reactor.featureFlags` must match the switchboard's `REACTOR_*` variables exactly, and Connect deliberately offers no per-tab override for them \u2014 a per-tab flag would be a per-node flag.\n\nBefore enabling either auth flag, sweep the store:\n\n```bash\ncd packages/reactor && pnpm preflight:auth --pg <connection-string>   # or --pglite <dir>\n```\n\nExit `0` is clean for both flags; `1` means streams unsafe for `authEnforcement`; `2` means documents unsafe for `authConditions`; `3` both; `68` means the run died having checked nothing. Gate a rollout on the whole code, not on a bit. The target argument is required on purpose \u2014 a run that quietly opened an empty database would report every fleet as safe. Neither unsafe condition is repairable after the fact, because the auth stream is never reshuffled.\n\nOne expectation worth stating: turning enforcement on protects nothing that already exists. Every document that predates the auth scope carries an uninitialized policy, which allows everything, and the host's permission tables still own sync serving and the GraphQL boundary. Enforcement bites only on documents that have emitted `INITIALIZE_AUTH`.\n\n_Source: apps/academy/docs/academy/04-Reference/01-Reactor/11-Authorization.md (Powerhouse v6.2.2-dev.74)._\n_Source: apps/switchboard/README.md (Powerhouse v6.2.2-dev.74)._\n_Source: apps/connect/RUNTIME-CONFIG.md (Powerhouse v6.2.2-dev.74)._\n\n## Provenance\n- `apps/academy/docs/academy/04-Reference/01-Reactor/11-Authorization.md` \u2014 warning 'Flip flags per fleet, never per node'\n- `apps/switchboard/README.md` \u2014 Reactor Enforcement Flags: fleet rule, preflight:auth exit codes, 'protects nothing that already exists'\n- `apps/connect/RUNTIME-CONFIG.md` \u2014 connect.reactor.featureFlags: 'a Connect must carry the same flags as the fleet it syncs with'\n\n_Recorded from the Powerhouse repository at **v6.2.2-dev.74** during the v6.2.2-dev.74 source sync._",
+        "updatedAt": "2026-09-02T22:09:12.423Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:09:12.423Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "",
+    "timestampUtcMs": "2026-09-02T22:17:12.787Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "metadata": {
+          "reason": "Extracted from apps/connect/RUNTIME-CONFIG.md at v6.2.2-dev.74 \u2014 connect.reactor.featureFlags: 'a Connect must carry the same flags as the fleet it syncs with'",
+          "confidence": "grounded"
+        },
+        "sourceId": "c5419cd5-deac-4f48-b58f-131e5808bd49",
+        "targetId": "067ef151-e1a1-4a1a-91de-faaef1614f94",
+        "relationshipType": "DERIVED_FROM"
+      },
+      "timestampUtcMs": "2026-09-02T22:17:12.787Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "ZVF9wYwX66brdHJFrDChecmchoc=",
+    "timestampUtcMs": "2026-09-02T22:09:12.423Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "86be4860-5adb-466d-a5b2-5a4319b19814",
+        "name": "auth-scope"
+      },
+      "timestampUtcMs": "2026-09-02T22:09:12.423Z"
+    }
+  },
+  {
+    "index": 5,
+    "hash": "",
+    "timestampUtcMs": "2026-09-02T22:17:14.893Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "metadata": {
+          "reason": "Takes the flag list as given and states the operational rule for turning any of them on",
+          "confidence": "grounded"
+        },
+        "sourceId": "c5419cd5-deac-4f48-b58f-131e5808bd49",
+        "targetId": "c8bd64d3-d92e-4f41-beba-983a7e995c26",
+        "relationshipType": "BUILDS_ON"
+      },
+      "timestampUtcMs": "2026-09-02T22:17:14.893Z"
+    }
+  },
+  {
+    "index": 5,
+    "hash": "csjPvNteDjPlQSF7DckyxTySAmY=",
+    "timestampUtcMs": "2026-09-02T22:09:12.423Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "7d520819-bca7-4dbd-89b3-4d1900b5576c",
+        "name": "feature-flags"
+      },
+      "timestampUtcMs": "2026-09-02T22:09:12.423Z"
+    }
+  },
+  {
+    "index": 6,
+    "hash": "",
+    "timestampUtcMs": "2026-09-02T22:17:15.348Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "metadata": {
+          "reason": "preflight:auth exit code 2 is the versioned-documents limitation that gates authConditions specifically",
+          "confidence": "grounded"
+        },
+        "sourceId": "c5419cd5-deac-4f48-b58f-131e5808bd49",
+        "targetId": "d726eab9-c3d0-4387-b900-256cee1b1b9f",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-09-02T22:17:15.348Z"
+    }
+  },
+  {
+    "index": 6,
+    "hash": "t/dKZd3WJH8Bc/yDMlN62IwMFM8=",
+    "timestampUtcMs": "2026-09-02T22:09:12.423Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "2f1a5386-14be-42f9-8f04-6bd9e23d6656",
+        "name": "sync"
+      },
+      "timestampUtcMs": "2026-09-02T22:09:12.423Z"
+    }
+  },
+  {
+    "index": 7,
+    "hash": "",
+    "timestampUtcMs": "2026-09-02T22:17:15.805Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "metadata": {
+          "reason": "Convergence of interlaced operation logs assumes every replica folds the same history to the same state; a per-node enforcement flag breaks that assumption at the verdict level",
+          "confidence": "established"
+        },
+        "sourceId": "c5419cd5-deac-4f48-b58f-131e5808bd49",
+        "targetId": "3540d969-3661-4438-821e-a000e39852b1",
+        "relationshipType": "BUILDS_ON"
+      },
+      "timestampUtcMs": "2026-09-02T22:17:15.805Z"
+    }
+  },
+  {
+    "index": 7,
+    "hash": "vtfa4JdksApnvpSBclRjVlhhw7o=",
+    "timestampUtcMs": "2026-09-02T22:09:12.423Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "ac89c4e2-5e45-4b2c-b6bb-336d34e14824",
+        "name": "gotchas"
+      },
+      "timestampUtcMs": "2026-09-02T22:09:12.423Z"
+    }
+  },
+  {
+    "index": 8,
+    "hash": "",
+    "timestampUtcMs": "2026-09-02T22:21:44.525Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "metadata": {
+          "reason": "Extracted from apps/academy/docs/academy/04-Reference/01-Reactor/11-Authorization.md at v6.2.2-dev.74 \u2014 warning 'Flip flags per fleet, never per node'",
+          "confidence": "grounded"
+        },
+        "sourceId": "c5419cd5-deac-4f48-b58f-131e5808bd49",
+        "targetId": "17dc46b0-f733-467c-99d7-ae8fbe0fb0e4",
+        "relationshipType": "DERIVED_FROM"
+      },
+      "timestampUtcMs": "2026-09-02T22:21:44.525Z"
+    }
+  },
+  {
+    "index": 8,
+    "hash": "GgdfbMQ3UHlB1pFwr79xKRQq1Uc=",
+    "timestampUtcMs": "2026-09-02T22:09:12.423Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "ab13dada-b990-49ab-b35d-4bc26ee33872",
+        "name": "deployment"
+      },
+      "timestampUtcMs": "2026-09-02T22:09:12.423Z"
+    }
+  },
+  {
+    "index": 9,
+    "hash": "",
+    "timestampUtcMs": "2026-09-02T22:21:45.101Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "metadata": {
+          "reason": "Extracted from apps/switchboard/README.md at v6.2.2-dev.74 \u2014 Reactor Enforcement Flags: fleet rule, preflight:auth exit codes, 'protects nothing that already exists'",
+          "confidence": "grounded"
+        },
+        "sourceId": "c5419cd5-deac-4f48-b58f-131e5808bd49",
+        "targetId": "63e10e2c-9be4-4bd2-a876-8708cd3ac1f9",
+        "relationshipType": "DERIVED_FROM"
+      },
+      "timestampUtcMs": "2026-09-02T22:21:45.101Z"
+    }
+  },
+  {
+    "index": 9,
+    "hash": "bkYiHWTrhDZtSa/fWYgTKBvlfs4=",
+    "timestampUtcMs": "2026-09-02T22:09:12.423Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "version",
+        "value": "v6.2.2-dev.74",
+        "updatedAt": "2026-09-02T22:09:12.423Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:09:12.423Z"
+    }
+  },
+  {
+    "index": 10,
+    "hash": "",
+    "timestampUtcMs": "2026-09-02T22:21:45.730Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "metadata": {
+          "reason": "Extracted from apps/connect/RUNTIME-CONFIG.md at v6.2.2-dev.74 \u2014 connect.reactor.featureFlags: 'a Connect must carry the same flags as the fleet it syncs with'",
+          "confidence": "grounded"
+        },
+        "sourceId": "c5419cd5-deac-4f48-b58f-131e5808bd49",
+        "targetId": "067ef151-e1a1-4a1a-91de-faaef1614f94",
+        "relationshipType": "DERIVED_FROM"
+      },
+      "timestampUtcMs": "2026-09-02T22:21:45.730Z"
+    }
+  },
+  {
+    "index": 10,
+    "hash": "lLiSF/9iujTaI9Cb57Yvr1Ox4YU=",
+    "timestampUtcMs": "2026-09-02T22:09:12.423Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "filePath",
+        "value": "apps/academy/docs/academy/04-Reference/01-Reactor/11-Authorization.md",
+        "updatedAt": "2026-09-02T22:09:12.423Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:09:12.423Z"
+    }
+  },
+  {
+    "index": 11,
+    "hash": "",
+    "timestampUtcMs": "2026-09-02T22:21:46.354Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "metadata": {
+          "reason": "Takes the flag list as given and states the operational rule for turning any of them on",
+          "confidence": "grounded"
+        },
+        "sourceId": "c5419cd5-deac-4f48-b58f-131e5808bd49",
+        "targetId": "c8bd64d3-d92e-4f41-beba-983a7e995c26",
+        "relationshipType": "BUILDS_ON"
+      },
+      "timestampUtcMs": "2026-09-02T22:21:46.354Z"
+    }
+  },
+  {
+    "index": 11,
+    "hash": "njQiQXw+lu2ieYI6UxAHknZLWS0=",
+    "timestampUtcMs": "2026-09-02T22:09:12.423Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "confidence",
+        "value": "grounded",
+        "updatedAt": "2026-09-02T22:09:12.423Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:09:12.423Z"
+    }
+  },
+  {
+    "index": 12,
+    "hash": "",
+    "timestampUtcMs": "2026-09-02T22:21:47.053Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "metadata": {
+          "reason": "preflight:auth exit code 2 is the versioned-documents limitation that gates authConditions specifically",
+          "confidence": "grounded"
+        },
+        "sourceId": "c5419cd5-deac-4f48-b58f-131e5808bd49",
+        "targetId": "d726eab9-c3d0-4387-b900-256cee1b1b9f",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-09-02T22:21:47.053Z"
+    }
+  },
+  {
+    "index": 12,
+    "hash": "qK1NLQAjSaKyeSI8NG79XVV6gJ0=",
+    "timestampUtcMs": "2026-09-02T22:09:15.103Z",
+    "action": {
+      "type": "SET_PROVENANCE",
+      "input": {
+        "author": "knowledge-agent",
+        "createdAt": "2026-09-02T22:09:15.103Z",
+        "sourceOrigin": "DERIVED"
+      },
+      "timestampUtcMs": "2026-09-02T22:09:15.103Z"
+    }
+  },
+  {
+    "index": 13,
+    "hash": "",
+    "timestampUtcMs": "2026-09-02T22:21:47.515Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "metadata": {
+          "reason": "Convergence of interlaced operation logs assumes every replica folds the same history to the same state; a per-node enforcement flag breaks that assumption at the verdict level",
+          "confidence": "established"
+        },
+        "sourceId": "c5419cd5-deac-4f48-b58f-131e5808bd49",
+        "targetId": "3540d969-3661-4438-821e-a000e39852b1",
+        "relationshipType": "BUILDS_ON"
+      },
+      "timestampUtcMs": "2026-09-02T22:21:47.515Z"
+    }
+  },
+  {
+    "index": 13,
+    "hash": "evB4j7L9r4cmOsXydM26rCoEJP0=",
+    "timestampUtcMs": "2026-09-02T22:09:15.650Z",
+    "action": {
+      "type": "SUBMIT_FOR_REVIEW",
+      "input": {
+        "id": "2c985e46-d7bb-4def-aa7f-219ec7b41f23",
+        "actor": "knowledge-agent",
+        "comment": "extracted from the Powerhouse repository at v6.2.2-dev.74",
+        "timestamp": "2026-09-02T22:09:15.650Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:09:15.650Z"
+    }
+  },
+  {
+    "index": 14,
+    "hash": "/DoSlmtvJjS2+3KfylJfJa5Gxu0=",
+    "timestampUtcMs": "2026-09-02T22:09:16.105Z",
+    "action": {
+      "type": "APPROVE_NOTE",
+      "input": {
+        "id": "1da08769-34c4-4315-86df-d8da2b61f761",
+        "actor": "liberuum",
+        "comment": "claim checked against the cited repository file at the pinned tag",
+        "timestamp": "2026-09-02T22:09:16.105Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:09:16.105Z"
+    }
+  },
+  {
+    "index": 15,
+    "hash": "ug8FGe2+2PuQsUi8F+3x8st5Rjs=",
+    "timestampUtcMs": "2026-09-02T22:15:21.853Z",
+    "action": {
+      "type": "SET_TITLE",
+      "input": {
+        "title": "Enforcement flags flip for a whole document-sharing fleet, never per node, because a replay verdict is a consensus outcome",
+        "updatedAt": "2026-09-02T22:15:21.853Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:15:21.853Z"
+    }
+  },
+  {
+    "index": 16,
+    "hash": "ug8FGe2+2PuQsUi8F+3x8st5Rjs=",
+    "timestampUtcMs": "2026-09-02T22:15:21.853Z",
+    "action": {
+      "type": "SET_DESCRIPTION",
+      "input": {
+        "updatedAt": "2026-09-02T22:15:21.853Z",
+        "description": "Two replicas of one document on different flags compute different verdicts for the same operation and diverge permanently. Sweep with preflight:auth first \u2014 the unsafe conditions are unrepairable."
+      },
+      "timestampUtcMs": "2026-09-02T22:15:21.853Z"
+    }
+  },
+  {
+    "index": 17,
+    "hash": "ug8FGe2+2PuQsUi8F+3x8st5Rjs=",
+    "timestampUtcMs": "2026-09-02T22:15:21.853Z",
+    "action": {
+      "type": "SET_NOTE_TYPE",
+      "input": {
+        "noteType": "DECISION",
+        "updatedAt": "2026-09-02T22:15:21.853Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:15:21.853Z"
+    }
+  },
+  {
+    "index": 18,
+    "hash": "ug8FGe2+2PuQsUi8F+3x8st5Rjs=",
+    "timestampUtcMs": "2026-09-02T22:15:21.853Z",
+    "action": {
+      "type": "SET_CONTENT",
+      "input": {
+        "content": "A decision made at replay \u2014 allow, deny, or \"document deleted\" \u2014 is a **consensus outcome**: it is persisted, travels by sync, and every replica must reach it independently. Two replicas of the same document running different enforcement flags therefore compute different verdicts for the same operation and **diverge permanently**. The Academy states it as a warning: move every node that shares a document together.\n\nThe same applies to Connect. A flags-off browser replica syncing an enforcing switchboard applies operations the switchboard denied, so Connect's `connect.reactor.featureFlags` must match the switchboard's `REACTOR_*` variables exactly, and Connect deliberately offers no per-tab override for them \u2014 a per-tab flag would be a per-node flag.\n\nBefore enabling either auth flag, sweep the store:\n\n```bash\ncd packages/reactor && pnpm preflight:auth --pg <connection-string>   # or --pglite <dir>\n```\n\nExit `0` is clean for both flags; `1` means streams unsafe for `authEnforcement`; `2` means documents unsafe for `authConditions`; `3` both; `68` means the run died having checked nothing. Gate a rollout on the whole code, not on a bit. The target argument is required on purpose \u2014 a run that quietly opened an empty database would report every fleet as safe. Neither unsafe condition is repairable after the fact, because the auth stream is never reshuffled.\n\nOne expectation worth stating: turning enforcement on protects nothing that already exists. Every document that predates the auth scope carries an uninitialized policy, which allows everything, and the host's permission tables still own sync serving and the GraphQL boundary. Enforcement bites only on documents that have emitted `INITIALIZE_AUTH`.\n\n_Source: apps/academy/docs/academy/04-Reference/01-Reactor/11-Authorization.md (Powerhouse v6.2.2-dev.74)._\n_Source: apps/switchboard/README.md (Powerhouse v6.2.2-dev.74)._\n_Source: apps/connect/RUNTIME-CONFIG.md (Powerhouse v6.2.2-dev.74)._\n\n## Provenance\n- `apps/academy/docs/academy/04-Reference/01-Reactor/11-Authorization.md` \u2014 warning 'Flip flags per fleet, never per node'\n- `apps/switchboard/README.md` \u2014 Reactor Enforcement Flags: fleet rule, preflight:auth exit codes, 'protects nothing that already exists'\n- `apps/connect/RUNTIME-CONFIG.md` \u2014 connect.reactor.featureFlags: 'a Connect must carry the same flags as the fleet it syncs with'\n\n_Recorded from the Powerhouse repository at **v6.2.2-dev.74** during the v6.2.2-dev.74 source sync._",
+        "updatedAt": "2026-09-02T22:15:21.853Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:15:21.853Z"
+    }
+  },
+  {
+    "index": 19,
+    "hash": "ug8FGe2+2PuQsUi8F+3x8st5Rjs=",
+    "timestampUtcMs": "2026-09-02T22:15:21.853Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "version",
+        "value": "v6.2.2-dev.74",
+        "updatedAt": "2026-09-02T22:15:21.853Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:15:21.853Z"
+    }
+  },
+  {
+    "index": 20,
+    "hash": "ug8FGe2+2PuQsUi8F+3x8st5Rjs=",
+    "timestampUtcMs": "2026-09-02T22:15:21.853Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "filePath",
+        "value": "apps/academy/docs/academy/04-Reference/01-Reactor/11-Authorization.md",
+        "updatedAt": "2026-09-02T22:15:21.853Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:15:21.853Z"
+    }
+  },
+  {
+    "index": 21,
+    "hash": "ug8FGe2+2PuQsUi8F+3x8st5Rjs=",
+    "timestampUtcMs": "2026-09-02T22:15:21.853Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "confidence",
+        "value": "grounded",
+        "updatedAt": "2026-09-02T22:15:21.853Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:15:21.853Z"
+    }
+  },
+  {
+    "index": 22,
+    "hash": "faBStLFdlc/HhMUTnP+yAQCVR2Q=",
+    "timestampUtcMs": "2026-09-02T22:20:07.141Z",
+    "action": {
+      "type": "SET_TITLE",
+      "input": {
+        "title": "Enforcement flags flip for a whole document-sharing fleet, never per node, because a replay verdict is a consensus outcome",
+        "updatedAt": "2026-09-02T22:20:07.141Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:20:07.141Z"
+    }
+  },
+  {
+    "index": 23,
+    "hash": "faBStLFdlc/HhMUTnP+yAQCVR2Q=",
+    "timestampUtcMs": "2026-09-02T22:20:07.141Z",
+    "action": {
+      "type": "SET_DESCRIPTION",
+      "input": {
+        "updatedAt": "2026-09-02T22:20:07.141Z",
+        "description": "Two replicas of one document on different flags compute different verdicts for the same operation and diverge permanently. Sweep with preflight:auth first \u2014 the unsafe conditions are unrepairable."
+      },
+      "timestampUtcMs": "2026-09-02T22:20:07.141Z"
+    }
+  },
+  {
+    "index": 24,
+    "hash": "faBStLFdlc/HhMUTnP+yAQCVR2Q=",
+    "timestampUtcMs": "2026-09-02T22:20:07.141Z",
+    "action": {
+      "type": "SET_NOTE_TYPE",
+      "input": {
+        "noteType": "DECISION",
+        "updatedAt": "2026-09-02T22:20:07.141Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:20:07.141Z"
+    }
+  },
+  {
+    "index": 25,
+    "hash": "faBStLFdlc/HhMUTnP+yAQCVR2Q=",
+    "timestampUtcMs": "2026-09-02T22:20:07.141Z",
+    "action": {
+      "type": "SET_CONTENT",
+      "input": {
+        "content": "A decision made at replay \u2014 allow, deny, or \"document deleted\" \u2014 is a **consensus outcome**: it is persisted, travels by sync, and every replica must reach it independently. Two replicas of the same document running different enforcement flags therefore compute different verdicts for the same operation and **diverge permanently**. The Academy states it as a warning: move every node that shares a document together.\n\nThe same applies to Connect. A flags-off browser replica syncing an enforcing switchboard applies operations the switchboard denied, so Connect's `connect.reactor.featureFlags` must match the switchboard's `REACTOR_*` variables exactly, and Connect deliberately offers no per-tab override for them \u2014 a per-tab flag would be a per-node flag.\n\nBefore enabling either auth flag, sweep the store:\n\n```bash\ncd packages/reactor && pnpm preflight:auth --pg <connection-string>   # or --pglite <dir>\n```\n\nExit `0` is clean for both flags; `1` means streams unsafe for `authEnforcement`; `2` means documents unsafe for `authConditions`; `3` both; `68` means the run died having checked nothing. Gate a rollout on the whole code, not on a bit. The target argument is required on purpose \u2014 a run that quietly opened an empty database would report every fleet as safe. Neither unsafe condition is repairable after the fact, because the auth stream is never reshuffled.\n\nOne expectation worth stating: turning enforcement on protects nothing that already exists. Every document that predates the auth scope carries an uninitialized policy, which allows everything, and the host's permission tables still own sync serving and the GraphQL boundary. Enforcement bites only on documents that have emitted `INITIALIZE_AUTH`.\n\n_Source: apps/academy/docs/academy/04-Reference/01-Reactor/11-Authorization.md (Powerhouse v6.2.2-dev.74)._\n_Source: apps/switchboard/README.md (Powerhouse v6.2.2-dev.74)._\n_Source: apps/connect/RUNTIME-CONFIG.md (Powerhouse v6.2.2-dev.74)._\n\n## Provenance\n- `apps/academy/docs/academy/04-Reference/01-Reactor/11-Authorization.md` \u2014 warning 'Flip flags per fleet, never per node'\n- `apps/switchboard/README.md` \u2014 Reactor Enforcement Flags: fleet rule, preflight:auth exit codes, 'protects nothing that already exists'\n- `apps/connect/RUNTIME-CONFIG.md` \u2014 connect.reactor.featureFlags: 'a Connect must carry the same flags as the fleet it syncs with'\n\n_Recorded from the Powerhouse repository at **v6.2.2-dev.74** during the v6.2.2-dev.74 source sync._",
+        "updatedAt": "2026-09-02T22:20:07.141Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:20:07.141Z"
+    }
+  },
+  {
+    "index": 26,
+    "hash": "faBStLFdlc/HhMUTnP+yAQCVR2Q=",
+    "timestampUtcMs": "2026-09-02T22:20:07.141Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "version",
+        "value": "v6.2.2-dev.74",
+        "updatedAt": "2026-09-02T22:20:07.141Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:20:07.141Z"
+    }
+  },
+  {
+    "index": 27,
+    "hash": "faBStLFdlc/HhMUTnP+yAQCVR2Q=",
+    "timestampUtcMs": "2026-09-02T22:20:07.141Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "filePath",
+        "value": "apps/academy/docs/academy/04-Reference/01-Reactor/11-Authorization.md",
+        "updatedAt": "2026-09-02T22:20:07.141Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:20:07.141Z"
+    }
+  },
+  {
+    "index": 28,
+    "hash": "faBStLFdlc/HhMUTnP+yAQCVR2Q=",
+    "timestampUtcMs": "2026-09-02T22:20:07.141Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "confidence",
+        "value": "grounded",
+        "updatedAt": "2026-09-02T22:20:07.141Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:20:07.141Z"
+    }
+  }
+]

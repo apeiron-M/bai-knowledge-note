@@ -1,0 +1,115 @@
+{
+  "links": [
+    {
+      "id": "lnk-98e36a08-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "98e36a08-78cd-4c60-942c-338d4a460334",
+      "targetTitle": "bee-reactor-adapter-overview"
+    },
+    {
+      "id": "lnk-6ddb3f1f-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "6ddb3f1f-b6dd-42d8-85f3-3d956294006e",
+      "targetTitle": "cqrs-separates-write-commands-from-read-queries-for-independent-scaling"
+    },
+    {
+      "id": "lnk-83b60ca6-bui",
+      "linkType": "BUILDS_ON",
+      "targetDocumentId": "83b60ca6-793d-4d0c-9b8c-7dc6cb1d3eff",
+      "targetTitle": "reactor-is-backend-service-for-drives"
+    },
+    {
+      "id": "lnk-870af605-bui",
+      "linkType": "BUILDS_ON",
+      "targetDocumentId": "870af605-ae8c-49c0-8c3f-0b443985850e",
+      "targetTitle": "reactor-is-a-storage-node-supporting-multiple-adapters"
+    },
+    {
+      "id": "lnk-c22060e9-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "c22060e9-4caf-4561-bbcc-c244edf8d8d2",
+      "targetTitle": "Academy \u203a Build \u203a WorkWithData \u203a Configure a drive",
+      "reason": "Backing page found by content match (score 0.22) in the v6.2.2-dev.74 source backfill; no distinctive identifier verified, attribution by topic overlap \u2014 not the original extraction record (text identical at v6.2.2-dev.47 and v6.2.2-dev.74)",
+      "confidence": "established"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "A drive is itself a document of type powerhouse/document-drive containing a list of child documents, hosted by a reactor node",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "25ef7297-0924-4bf8-8182-3e92c65648b5",
+      "name": "drives",
+      "topicDocumentId": null
+    },
+    {
+      "id": "9980a209-8ca3-4928-a2ae-abfd0f65ea5f",
+      "name": "reactors",
+      "topicDocumentId": null
+    },
+    {
+      "id": "e603e904-4309-408e-992c-bdcce66a1074",
+      "name": "architecture",
+      "topicDocumentId": null
+    },
+    {
+      "id": "a0b8ae9e-2a4f-442f-92ac-ca654d4fa7ad",
+      "name": "storage",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "Drives are containers for documents that are technically documents themselves. Reactors are the network nodes that store and synchronize documents/drives, resolve conflicts, and rerun operations to verify event histories. Reactors can use local storage, cloud storage, or decentralized storage (Ceramic, IPFS). A reactor hosts multiple drives with different organizational purposes, users, and access rights. Drives can be created via Connect UI (with options for Local, Cloud, or Public location) or programmatically via GraphQL mutation `DocumentDrive { createDocument(name, slug) }`. Drive URLs follow the format `domain/d/<driveId>` or `domain/d/<driveSlug>`.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": "v6.2.2-dev.74",
+  "computes": null,
+  "filePath": "apps/academy/docs/academy/03-Build/04-WorkWithData/01-ConfiguringDrives.md",
+  "noteType": "CONCEPT",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "knowledge-agent",
+    "createdAt": "2026-04-02T12:00:00.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-09-02T21:35:12.798Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Drives are documents; reactors store drives, resolve conflicts, verify event histories, and sync across nodes.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "4899cca8-12b0-4df1-a659-7ab8ba5c1bf2",
+      "actor": "claude",
+      "comment": "Knowledge registered against powerhouse v6.2.2-dev.47",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-14T12:00:00.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "3e8ae3b0-945f-4167-8dc1-ee3ccb9e70aa",
+      "actor": "liberuum",
+      "comment": "Canonical as of powerhouse v6.2.2-dev.47",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-14T12:00:00.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

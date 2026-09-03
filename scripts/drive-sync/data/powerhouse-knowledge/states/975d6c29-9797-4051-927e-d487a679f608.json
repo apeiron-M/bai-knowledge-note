@@ -1,0 +1,131 @@
+{
+  "links": [
+    {
+      "id": "lnk-cf2a1fcd-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "cf2a1fcd-b902-4976-b941-e229a6e9696c",
+      "targetTitle": "auth-read-gate-client",
+      "reason": "This is the exemption the client-side read gate applies before filtering the domain scopes",
+      "confidence": "grounded"
+    },
+    {
+      "id": "lnk-37c39fe6-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "37c39fe6-55b9-4c90-ad49-c96ae42467c4",
+      "targetTitle": "auth-group-served-to-audience",
+      "reason": "The same 'a replica must be able to fold what it evaluates' argument is what serves a named group's roster to the referencing policy's audience",
+      "confidence": "grounded"
+    },
+    {
+      "id": "lnk-3485a9d2-bui",
+      "linkType": "BUILDS_ON",
+      "targetDocumentId": "3485a9d2-df0b-4265-8e7d-5b277a937bf0",
+      "targetTitle": "global-and-local-scopes-are-fully-independent-streams",
+      "reason": "Because global and local are independent streams with their own logs, a read can withhold one scope's stream without touching the other",
+      "confidence": "grounded"
+    },
+    {
+      "id": "lnk-223bb12a-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "223bb12a-be7f-4209-9ab2-f04f7bb2b6c8",
+      "targetTitle": "Spec \u203a Spec \u2014 Attribute-based access control in the auth scope with DCB",
+      "reason": "Extracted from docs/specs/auth-scope.md at v6.2.2-dev.74 \u2014 Reads: 'One exemption is required\u2026'; filtering per scope incl. initialState",
+      "confidence": "grounded"
+    },
+    {
+      "id": "lnk-17dc46b0-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "17dc46b0-f733-467c-99d7-ae8fbe0fb0e4",
+      "targetTitle": "Academy \u203a Reference \u203a Reactor \u203a Authorization",
+      "reason": "Extracted from apps/academy/docs/academy/04-Reference/01-Reactor/11-Authorization.md at v6.2.2-dev.74 \u2014 'Scopes every holder reads'",
+      "confidence": "grounded"
+    },
+    {
+      "id": "lnk-f2aaccd3-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "f2aaccd3-7c26-4327-881e-f5ad9e267b89",
+      "targetTitle": "Academy \u203a Lookup \u203a Cookbook",
+      "reason": "Extracted from apps/academy/docs/academy/05-Lookup/00-Cookbook.md at v6.2.2-dev.74 \u2014 Scoped Reads: 'The two domain scopes', 'Per scope, not per document'",
+      "confidence": "grounded"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "The auth and document scopes are readable by every holder of a document, whatever the grants say, because a replica that could not read the policy would allow everything",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "7042d579-2692-4566-9c34-c3e38f67c102",
+      "name": "auth-scope",
+      "topicDocumentId": null
+    },
+    {
+      "id": "7935dfbe-ce5c-46a9-b262-67d5d98f712b",
+      "name": "reads",
+      "topicDocumentId": null
+    },
+    {
+      "id": "8c7453ab-6ba8-45a3-8b13-2878fecb4f05",
+      "name": "sync",
+      "topicDocumentId": null
+    },
+    {
+      "id": "5800dc0d-eba5-4a5f-9dad-d2e540da54e2",
+      "name": "architecture",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "Suppose a policy could deny reading the `auth` scope itself. A peer could then sync a document *without* its policy, see an uninitialized auth scope, and allow every operation it holds; replicas would diverge permanently. The `auth` and `document` scopes therefore **bypass the grants**: the policy and the document's metadata are visible to any holder of the document, and grants gate domain-scope reads only.\n\nThe same reasoning carries the rule into every read path. A read that narrows scopes has the `auth` scope added back before the fetch, because a model built without the policy reads as uninitialized; `initialState` is filtered alongside `state` since it holds the same scope names; and a replica denied a domain scope simply never receives that stream, so partial replication stays consistent \u2014 it never holds or evaluates what it may not read.\n\nFor consumers this means a `PHDocument` has four state scopes \u2014 `auth`, `document`, `global`, `local` \u2014 of which only `global` and `local` are gateable. The `scoped-reads` recipe uses exactly that pair: expenses in `global`, reviewers' confidential notes in `local` (conventionally node-local data, used here as the second gateable scope because there is no third). A scope the subject may not read comes back **absent from `document.state`**, not present and empty.\n\nThe exemption extends to group rosters: a replica must fold a group's membership to evaluate a policy that names it, so a named group's member list is served to that policy's audience regardless of the group's own read grants \u2014 bounded by the rules in the group-serving note.\n\n_Source: docs/specs/auth-scope.md (Powerhouse v6.2.2-dev.74)._\n_Source: apps/academy/docs/academy/04-Reference/01-Reactor/11-Authorization.md (Powerhouse v6.2.2-dev.74)._\n_Source: apps/academy/docs/academy/05-Lookup/00-Cookbook.md (Powerhouse v6.2.2-dev.74)._\n\n## Provenance\n- `docs/specs/auth-scope.md` \u2014 Reads: 'One exemption is required\u2026'; filtering per scope incl. initialState\n- `apps/academy/docs/academy/04-Reference/01-Reactor/11-Authorization.md` \u2014 'Scopes every holder reads'\n- `apps/academy/docs/academy/05-Lookup/00-Cookbook.md` \u2014 Scoped Reads: 'The two domain scopes', 'Per scope, not per document'\n\n_Recorded from the Powerhouse repository at **v6.2.2-dev.74** during the v6.2.2-dev.74 source sync._",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": "v6.2.2-dev.74",
+  "computes": null,
+  "filePath": "docs/specs/auth-scope.md",
+  "noteType": "ARCHITECTURE",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": "grounded",
+  "consumedBy": [],
+  "provenance": {
+    "author": "knowledge-agent",
+    "createdAt": "2026-09-02T22:09:57.234Z",
+    "sessionId": null,
+    "updatedAt": "2026-09-02T22:20:14.107Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Grants gate domain scopes only. A peer denied the policy would sync a document, see it uninitialized and admit every operation, so replicas would diverge. A withheld domain scope is absent, not empty.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "5105208f-56c4-4d9c-af16-758236a6e729",
+      "actor": "knowledge-agent",
+      "comment": "extracted from the Powerhouse repository at v6.2.2-dev.74",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-09-02T22:09:57.691Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "49f5225b-e630-4ccc-af41-b7b31bca8fa4",
+      "actor": "liberuum",
+      "comment": "claim checked against the cited repository file at the pinned tag",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-09-02T22:09:58.385Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

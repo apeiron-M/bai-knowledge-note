@@ -1,0 +1,348 @@
+[
+  {
+    "index": 0,
+    "hash": "",
+    "timestampUtcMs": "2026-09-03T07:48:19.797Z",
+    "action": {
+      "type": "CREATE_DOCUMENT",
+      "input": {
+        "meta": {},
+        "name": "registry-keyed-by-type-and-version",
+        "slug": "",
+        "model": "bai/knowledge-note",
+        "branch": "main",
+        "signing": {
+          "nonce": "",
+          "publicKey": {},
+          "signature": "c69178f9-07b7-4407-94e6-90ed96d3003e",
+          "documentType": "bai/knowledge-note",
+          "createdAtUtcIso": "2026-09-03T07:48:19.797Z"
+        },
+        "version": 0,
+        "documentId": "c69178f9-07b7-4407-94e6-90ed96d3003e",
+        "protocolVersions": {
+          "base-reducer": 2
+        }
+      },
+      "timestampUtcMs": "2026-09-03T07:48:19.797Z"
+    }
+  },
+  {
+    "index": 0,
+    "hash": "LVKwa3uAkJDKsCUa4vLb+Amxs3U=",
+    "timestampUtcMs": "2026-09-03T07:48:21.126Z",
+    "action": {
+      "type": "SET_TITLE",
+      "input": {
+        "title": "The document model registry is keyed by document type and version, with an absent version treated as 1, so two versions of one type coexist",
+        "updatedAt": "2026-09-03T07:48:21.121Z"
+      },
+      "timestampUtcMs": "2026-09-03T07:48:21.126Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "",
+    "timestampUtcMs": "2026-09-03T07:48:19.797Z",
+    "action": {
+      "type": "UPGRADE_DOCUMENT",
+      "input": {
+        "model": "bai/knowledge-note",
+        "toVersion": 1,
+        "documentId": "c69178f9-07b7-4407-94e6-90ed96d3003e",
+        "fromVersion": 0,
+        "initialState": {
+          "auth": {
+            "grants": [],
+            "version": 0
+          },
+          "local": {
+            "lastViewedAt": null,
+            "personalTags": []
+          },
+          "global": {
+            "links": [],
+            "model": null,
+            "scope": null,
+            "title": null,
+            "editor": null,
+            "inputs": [],
+            "models": [],
+            "status": "DRAFT",
+            "topics": [],
+            "content": null,
+            "context": null,
+            "modelId": null,
+            "modules": [],
+            "outputs": [],
+            "version": null,
+            "computes": null,
+            "filePath": null,
+            "noteType": null,
+            "severity": null,
+            "hooksUsed": [],
+            "rootCause": null,
+            "confidence": null,
+            "consumedBy": [],
+            "provenance": null,
+            "sourceType": null,
+            "targetType": null,
+            "cardinality": null,
+            "description": null,
+            "alternatives": [],
+            "consequences": [],
+            "errorMessage": null,
+            "relationType": null,
+            "correctPattern": null,
+            "decisionStatus": null,
+            "dispatchTargets": [],
+            "lifecycleEvents": []
+          },
+          "document": {
+            "hash": {
+              "encoding": "base64",
+              "algorithm": "sha1"
+            },
+            "version": 1
+          }
+        }
+      },
+      "timestampUtcMs": "2026-09-03T07:48:19.797Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "jqbKWSFQEeigoLUzDd/ZCiKP0To=",
+    "timestampUtcMs": "2026-09-03T07:48:21.126Z",
+    "action": {
+      "type": "SET_DESCRIPTION",
+      "input": {
+        "updatedAt": "2026-09-03T07:48:21.125Z",
+        "description": "The lookup key is module.documentModel.global.id. registerModules returns one RegistrationResult per input and never throws; a duplicate (type, version) pair yields a DuplicateModuleError result."
+      },
+      "timestampUtcMs": "2026-09-03T07:48:21.126Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "",
+    "timestampUtcMs": "2026-09-03T07:49:14.075Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "metadata": {
+          "reason": "Extracted from apps/academy/docs/academy/04-Reference/01-Reactor/06-DocumentModelRegistry.md at v6.2.2-dev.74 \u2014 intro; IDocumentModelRegistry reference \u203a Module management \u203a registerModules",
+          "confidence": "grounded"
+        },
+        "sourceId": "c69178f9-07b7-4407-94e6-90ed96d3003e",
+        "targetId": "14416670-d2d3-4de5-9dfd-7c6e175280c2",
+        "relationshipType": "DERIVED_FROM"
+      },
+      "timestampUtcMs": "2026-09-03T07:49:14.075Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "POYWq+5Aciel9klBdq87yQEAp74=",
+    "timestampUtcMs": "2026-09-03T07:48:21.126Z",
+    "action": {
+      "type": "SET_NOTE_TYPE",
+      "input": {
+        "noteType": "REFERENCE",
+        "updatedAt": "2026-09-03T07:48:21.125Z"
+      },
+      "timestampUtcMs": "2026-09-03T07:48:21.126Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "",
+    "timestampUtcMs": "2026-09-03T07:49:14.572Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "metadata": {
+          "reason": "Never-throwing registration is what makes a silent failure possible, which is that note's warning",
+          "confidence": "grounded"
+        },
+        "sourceId": "c69178f9-07b7-4407-94e6-90ed96d3003e",
+        "targetId": "d2734cd9-d7b1-4ede-b4d7-ee69e5d178c4",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-09-03T07:49:14.572Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "03rYZ1m8XohEXJuSEXzsan+a4PI=",
+    "timestampUtcMs": "2026-09-03T07:48:21.126Z",
+    "action": {
+      "type": "SET_CONTENT",
+      "input": {
+        "content": "The registry holds document model modules keyed by **document type and version**, and the reactor reads it to resolve the reducer, utils and specification for a document when it executes a job. It also holds the **upgrade manifests** describing how to migrate a document up one version step.\n\nTwo details decide how lookups behave. The document type used as the key is `module.documentModel.global.id` \u2014 not a name or a package \u2014 and a module's version comes from its optional `version` field, which the registry **treats as `1` when absent**. So two different versions of the same type coexist happily, and an unversioned legacy module simply occupies slot 1.\n\n`registerModules(...modules)` returns `RegistrationResult<DocumentModelModule>[]` \u2014 one per input, **in input order** \u2014 and **never throws**. A module whose `(documentType, version)` pair is already registered produces a `DuplicateModuleError` *in its result*, and invalid or duplicate modules are skipped without affecting the rest. The default in-memory implementation is `DocumentModelRegistry`; both it and the interface are exported from `@powerhousedao/reactor`.\n\nThe practical consequence for error handling is the next note's subject: because nothing throws, a registration failure is only visible if you read the results or the logs.\n\n## Provenance\n- `apps/academy/docs/academy/04-Reference/01-Reactor/06-DocumentModelRegistry.md` \u2014 intro; IDocumentModelRegistry reference \u203a Module management \u203a registerModules\n\n_Extracted from the Powerhouse repository at **v6.2.2-dev.74**._",
+        "updatedAt": "2026-09-03T07:48:21.125Z"
+      },
+      "timestampUtcMs": "2026-09-03T07:48:21.126Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "",
+    "timestampUtcMs": "2026-09-03T07:49:15.047Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "metadata": {
+          "reason": "Version is the second half of the key, and the upgrade API is what moves a document between two of them",
+          "confidence": "grounded"
+        },
+        "sourceId": "c69178f9-07b7-4407-94e6-90ed96d3003e",
+        "targetId": "63cdce40-628c-49e9-b13c-9efc59073c6a",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-09-03T07:49:15.047Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "SOCzv+czZVuM/tNergiwS5nb06s=",
+    "timestampUtcMs": "2026-09-03T07:48:21.126Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "036b7f16-59eb-4cf0-bf6b-e54e8baeb9f7",
+        "name": "document-model"
+      },
+      "timestampUtcMs": "2026-09-03T07:48:21.126Z"
+    }
+  },
+  {
+    "index": 5,
+    "hash": "",
+    "timestampUtcMs": "2026-09-03T07:49:16.530Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "metadata": {
+          "reason": "withDocumentModelSources on the builder is how modules reach this registry, so the builder's fluent API and the registry's keying are two halves of one mechanism",
+          "confidence": "grounded"
+        },
+        "sourceId": "c69178f9-07b7-4407-94e6-90ed96d3003e",
+        "targetId": "501f87dd-ff84-4a59-8894-033f209dfdf0",
+        "relationshipType": "BUILDS_ON"
+      },
+      "timestampUtcMs": "2026-09-03T07:49:16.530Z"
+    }
+  },
+  {
+    "index": 5,
+    "hash": "ld8rphD0lLYMATtmRFm9B/XdIZE=",
+    "timestampUtcMs": "2026-09-03T07:48:21.126Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "8e1d8e4b-46cf-44c0-8949-e0a45825417b",
+        "name": "registry"
+      },
+      "timestampUtcMs": "2026-09-03T07:48:21.126Z"
+    }
+  },
+  {
+    "index": 6,
+    "hash": "3SDgI2ciFUgpd+/fKRfuIoyFmoo=",
+    "timestampUtcMs": "2026-09-03T07:48:21.126Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "2c411c0a-8910-4b69-9ff5-a91212307c56",
+        "name": "versioning"
+      },
+      "timestampUtcMs": "2026-09-03T07:48:21.126Z"
+    }
+  },
+  {
+    "index": 7,
+    "hash": "4bB3JCPkWWokl8tIUfjZskEPZ1s=",
+    "timestampUtcMs": "2026-09-03T07:48:21.126Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "e15dd166-10a0-459a-9bb5-23ee791c9b63",
+        "name": "reactor"
+      },
+      "timestampUtcMs": "2026-09-03T07:48:21.126Z"
+    }
+  },
+  {
+    "index": 8,
+    "hash": "JxjGoE/coojO2yAORO902s8QwjM=",
+    "timestampUtcMs": "2026-09-03T07:48:21.126Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "version",
+        "value": "v6.2.2-dev.74",
+        "updatedAt": "2026-09-03T07:48:21.126Z"
+      },
+      "timestampUtcMs": "2026-09-03T07:48:21.126Z"
+    }
+  },
+  {
+    "index": 9,
+    "hash": "G7FFzI25sHwYyLIQney7cDE2tN4=",
+    "timestampUtcMs": "2026-09-03T07:48:21.126Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "filePath",
+        "value": "apps/academy/docs/academy/04-Reference/01-Reactor/06-DocumentModelRegistry.md",
+        "updatedAt": "2026-09-03T07:48:21.126Z"
+      },
+      "timestampUtcMs": "2026-09-03T07:48:21.126Z"
+    }
+  },
+  {
+    "index": 10,
+    "hash": "qd/grCZQ+4GQR1mcZev+bkwhw4o=",
+    "timestampUtcMs": "2026-09-03T07:48:23.796Z",
+    "action": {
+      "type": "SET_PROVENANCE",
+      "input": {
+        "author": "knowledge-agent",
+        "createdAt": "2026-09-03T07:48:23.795Z",
+        "sourceOrigin": "DERIVED"
+      },
+      "timestampUtcMs": "2026-09-03T07:48:23.796Z"
+    }
+  },
+  {
+    "index": 11,
+    "hash": "ajeahPmS7tEwvdO/axteCOQwcjI=",
+    "timestampUtcMs": "2026-09-03T07:48:24.668Z",
+    "action": {
+      "type": "SUBMIT_FOR_REVIEW",
+      "input": {
+        "id": "61b236a1-3aa1-4321-b4f2-d21ef59803ad",
+        "actor": "knowledge-agent",
+        "comment": "extracted from apps/academy/docs/academy/04-Reference/01-Reactor/06-DocumentModelRegistry.md at v6.2.2-dev.74",
+        "timestamp": "2026-09-03T07:48:24.668Z"
+      },
+      "timestampUtcMs": "2026-09-03T07:48:24.668Z"
+    }
+  },
+  {
+    "index": 12,
+    "hash": "jNJEqicKVDFiRrpXZSszfrsK7bc=",
+    "timestampUtcMs": "2026-09-03T07:48:25.220Z",
+    "action": {
+      "type": "APPROVE_NOTE",
+      "input": {
+        "id": "d7061c3e-331d-4e00-b87a-e50f67f49f00",
+        "actor": "liberuum",
+        "comment": "claim checked against the cited file at the pinned tag",
+        "timestamp": "2026-09-03T07:48:25.220Z"
+      },
+      "timestampUtcMs": "2026-09-03T07:48:25.220Z"
+    }
+  }
+]

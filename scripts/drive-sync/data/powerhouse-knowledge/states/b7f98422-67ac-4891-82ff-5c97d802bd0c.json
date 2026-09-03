@@ -1,0 +1,94 @@
+{
+  "links": [
+    {
+      "id": "lnk-a1ec8ce3-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "a1ec8ce3-fa6d-469f-8809-4d1123d3760a",
+      "targetTitle": "Helger IT Consulting GmbH \u2014 Peppol"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "In Peppol the acceptance decision survives only as transport metadata, not as a business record",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "852a2011-1d41-496a-b627-1aba7d980423",
+      "name": "leads",
+      "topicDocumentId": null
+    },
+    {
+      "id": "0f2d4cde-c899-4f78-92a5-77e137097118",
+      "name": "peppol",
+      "topicDocumentId": null
+    },
+    {
+      "id": "790310a6-f878-46f8-a9ec-1a60af3bcbd8",
+      "name": "e-invoicing",
+      "topicDocumentId": null
+    },
+    {
+      "id": "5a1e129f-834a-4b7d-8fe2-a405742d5815",
+      "name": "audit-trail",
+      "topicDocumentId": null
+    },
+    {
+      "id": "1f5f41cb-b7cc-41af-9228-2b526ab1031c",
+      "name": "system-of-record",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "A Peppol Access Point moves the document: it takes a business document from one participant and delivers it to another. When a document is accepted, that acceptance is captured in the same terms as the transfer \u2014 as transport metadata attached to a message.\n\nThe research's point is that acceptance is a business decision wearing a transport costume. Whether a document was cleared, by whom, and against which rule is a statement about obligations between two parties, not about whether bytes arrived. Recording it as delivery metadata makes it awkward to reason about later, because the record is shaped for a message pipeline rather than for the obligation it creates.\n\nSeparating the two is the fit. The clearance decision becomes its own attributed record while the Access Point continues to do transport, which leaves Helger's existing role untouched and adds a layer the transport does not provide. The seam is the moment of acceptance, which is already an explicit step in the flow rather than something that has to be invented.\n\n---\n\n## Leads sharing this finding (1)\n\n**2 \u00b7 next**\n- Helger IT Consulting GmbH (AT Vienna) \u2014 Philip Helger \u00b7 office@helger.com \u00b7 https://helger.com\n\nVerbatim research text this claim was extracted from:\n\n> A Peppol Access Point moves the document. The acceptance decision is transport metadata, not a business record. Powerhouse separates the clearance decision from the transport layer.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "OBSERVATION",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "knowledge-agent",
+    "createdAt": "2026-08-19T11:28:15.263915Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-19T11:28:16.797220Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "An Access Point's job is delivery, so clearance is recorded in delivery terms; separating the decision from the transport layer gives it an actor and a rule of its own.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "656f4aea-8fc7-41a6-9393-fe5d93a03876",
+      "actor": "knowledge-agent",
+      "comment": "Extracted from lead research; claim checked against the source record.",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-19T11:28:16.579766Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "09bf868b-d3cd-4371-9aa7-781f2945bc04",
+      "actor": "liberuum",
+      "comment": "Approved: lead corpus extraction.",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-19T11:28:16.797220Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

@@ -1,0 +1,348 @@
+[
+  {
+    "index": 0,
+    "hash": "",
+    "timestampUtcMs": "2026-09-03T07:43:23.264Z",
+    "action": {
+      "type": "CREATE_DOCUMENT",
+      "input": {
+        "meta": {},
+        "name": "drive-analytics-stale-strands",
+        "slug": "",
+        "model": "bai/knowledge-note",
+        "branch": "main",
+        "signing": {
+          "nonce": "",
+          "publicKey": {},
+          "signature": "11abd903-ee8e-4a00-a1c9-ffc9e22e4f5b",
+          "documentType": "bai/knowledge-note",
+          "createdAtUtcIso": "2026-09-03T07:43:23.263Z"
+        },
+        "version": 0,
+        "documentId": "11abd903-ee8e-4a00-a1c9-ffc9e22e4f5b",
+        "protocolVersions": {
+          "base-reducer": 2
+        }
+      },
+      "timestampUtcMs": "2026-09-03T07:43:23.264Z"
+    }
+  },
+  {
+    "index": 0,
+    "hash": "gPikZq5UcAR8V9Mltn6o9YPC/zM=",
+    "timestampUtcMs": "2026-09-03T07:43:24.602Z",
+    "action": {
+      "type": "SET_TITLE",
+      "input": {
+        "title": "The drive-analytics README still describes InternalTransmitterUpdate strands, an interface the reactor replaced with onOperations before v6.2.2-dev.74",
+        "updatedAt": "2026-09-03T07:43:24.602Z"
+      },
+      "timestampUtcMs": "2026-09-03T07:43:24.602Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "",
+    "timestampUtcMs": "2026-09-03T07:43:23.264Z",
+    "action": {
+      "type": "UPGRADE_DOCUMENT",
+      "input": {
+        "model": "bai/knowledge-note",
+        "toVersion": 1,
+        "documentId": "11abd903-ee8e-4a00-a1c9-ffc9e22e4f5b",
+        "fromVersion": 0,
+        "initialState": {
+          "auth": {
+            "grants": [],
+            "version": 0
+          },
+          "local": {
+            "lastViewedAt": null,
+            "personalTags": []
+          },
+          "global": {
+            "links": [],
+            "model": null,
+            "scope": null,
+            "title": null,
+            "editor": null,
+            "inputs": [],
+            "models": [],
+            "status": "DRAFT",
+            "topics": [],
+            "content": null,
+            "context": null,
+            "modelId": null,
+            "modules": [],
+            "outputs": [],
+            "version": null,
+            "computes": null,
+            "filePath": null,
+            "noteType": null,
+            "severity": null,
+            "hooksUsed": [],
+            "rootCause": null,
+            "confidence": null,
+            "consumedBy": [],
+            "provenance": null,
+            "sourceType": null,
+            "targetType": null,
+            "cardinality": null,
+            "description": null,
+            "alternatives": [],
+            "consequences": [],
+            "errorMessage": null,
+            "relationType": null,
+            "correctPattern": null,
+            "decisionStatus": null,
+            "dispatchTargets": [],
+            "lifecycleEvents": []
+          },
+          "document": {
+            "hash": {
+              "encoding": "base64",
+              "algorithm": "sha1"
+            },
+            "version": 1
+          }
+        }
+      },
+      "timestampUtcMs": "2026-09-03T07:43:23.264Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "MMxA8V0dfPWVPDGZGhBvUTKuh1s=",
+    "timestampUtcMs": "2026-09-03T07:43:24.602Z",
+    "action": {
+      "type": "SET_DESCRIPTION",
+      "input": {
+        "updatedAt": "2026-09-03T07:43:24.602Z",
+        "description": "Its architecture section says the processor implements IProcessor and processes strands; the current IProcessor takes onOperations(OperationWithContext[]). The dimension and chunking behaviour it."
+      },
+      "timestampUtcMs": "2026-09-03T07:43:24.602Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "",
+    "timestampUtcMs": "2026-09-03T07:44:35.720Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "metadata": {
+          "reason": "Extracted from packages/common/drive-analytics/README.md at v6.2.2-dev.74 \u2014 Architecture (IProcessor and InternalTransmitterUpdate strands)",
+          "confidence": "grounded"
+        },
+        "sourceId": "11abd903-ee8e-4a00-a1c9-ffc9e22e4f5b",
+        "targetId": "8664cea1-f1f6-43b0-975e-f26095a8d880",
+        "relationshipType": "DERIVED_FROM"
+      },
+      "timestampUtcMs": "2026-09-03T07:44:35.720Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "uZ7tWhRwUwx43qqrWelQABfE9pM=",
+    "timestampUtcMs": "2026-09-03T07:43:24.602Z",
+    "action": {
+      "type": "SET_NOTE_TYPE",
+      "input": {
+        "noteType": "OBSERVATION",
+        "updatedAt": "2026-09-03T07:43:24.602Z"
+      },
+      "timestampUtcMs": "2026-09-03T07:43:24.602Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "",
+    "timestampUtcMs": "2026-09-03T07:44:36.170Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "metadata": {
+          "reason": "The v6 move to a flat OperationWithContext list is what this README predates, and the note records the migration this one dates",
+          "confidence": "grounded"
+        },
+        "sourceId": "11abd903-ee8e-4a00-a1c9-ffc9e22e4f5b",
+        "targetId": "bb0b6db7-14f1-491c-8975-4475ff68481d",
+        "relationshipType": "BUILDS_ON"
+      },
+      "timestampUtcMs": "2026-09-03T07:44:36.170Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "V71s+xTzToSrf/kkVlAqcTIV2+U=",
+    "timestampUtcMs": "2026-09-03T07:43:24.602Z",
+    "action": {
+      "type": "SET_CONTENT",
+      "input": {
+        "content": "`packages/common/drive-analytics/README.md` states that the processor \"implements the `IProcessor` interface and processes `InternalTransmitterUpdate` strands, which contain sequences of operations performed on document drives.\"\n\nAt v6.2.2-dev.74 that interface no longer exists. `packages/shared/processors/types.ts:54` declares `onOperations(operations: OperationWithContext[]): Promise<void>`, and a search of the tree finds **no `onStrands` and no `InternalTransmitterUpdate`** in package sources. This is the same drift the relational-DB processor spec shows, from the same v6 processor migration.\n\nWhat the README gets right and is worth trusting: the two processors, the `DriveOperations` counter, all four dimension path formats, the five action-type verbs, chunked processing with a default of 50, and the clear-and-rebuild-from-index-0 behaviour. None of those depend on the delivery interface.\n\nSo the reading rule for this file: **the dimensional model is current, the delivery API is not.** A developer copying its architecture section into a new processor will write a method the reactor never calls \u2014 a failure that is silent, because a processor with no matching method simply receives nothing.\n\n## Provenance\n- `packages/common/drive-analytics/README.md` \u2014 Architecture (IProcessor and InternalTransmitterUpdate strands)\n\n_Extracted from the Powerhouse repository at **v6.2.2-dev.74**._",
+        "updatedAt": "2026-09-03T07:43:24.602Z"
+      },
+      "timestampUtcMs": "2026-09-03T07:43:24.602Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "",
+    "timestampUtcMs": "2026-09-03T07:44:36.620Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "metadata": {
+          "reason": "The same pre-v6 vocabulary survives in two documents, so a reader who checks only one will not notice the drift",
+          "confidence": "grounded"
+        },
+        "sourceId": "11abd903-ee8e-4a00-a1c9-ffc9e22e4f5b",
+        "targetId": "97c3a924-0ba9-4b89-86f7-b7a5747d41a7",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-09-03T07:44:36.620Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "Y5Do8qq/no5i7mTEs5/RKNU5Jco=",
+    "timestampUtcMs": "2026-09-03T07:43:24.602Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "4ceb6c40-ef4f-404f-8c49-5b9ded211bc3",
+        "name": "processors"
+      },
+      "timestampUtcMs": "2026-09-03T07:43:24.602Z"
+    }
+  },
+  {
+    "index": 5,
+    "hash": "",
+    "timestampUtcMs": "2026-09-03T07:44:37.075Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "metadata": {
+          "reason": "Separates what is still true in the same file from what is not",
+          "confidence": "grounded"
+        },
+        "sourceId": "11abd903-ee8e-4a00-a1c9-ffc9e22e4f5b",
+        "targetId": "ef30c62a-0043-4bbb-86d1-e1c16a925ee3",
+        "relationshipType": "BUILDS_ON"
+      },
+      "timestampUtcMs": "2026-09-03T07:44:37.075Z"
+    }
+  },
+  {
+    "index": 5,
+    "hash": "qZQPKlbGT4NfkSRbvkfaWLbt7GM=",
+    "timestampUtcMs": "2026-09-03T07:43:24.602Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "516905dc-fd99-444a-8522-461636d9d73d",
+        "name": "documentation-drift"
+      },
+      "timestampUtcMs": "2026-09-03T07:43:24.602Z"
+    }
+  },
+  {
+    "index": 6,
+    "hash": "4XOrEsvGdhPnmRjuB5V+mSMpglY=",
+    "timestampUtcMs": "2026-09-03T07:43:24.602Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "9291854b-4df5-4088-895c-49c66085d944",
+        "name": "analytics"
+      },
+      "timestampUtcMs": "2026-09-03T07:43:24.602Z"
+    }
+  },
+  {
+    "index": 7,
+    "hash": "iX+nBCHvVtLmTzrUa9c6DLuP6Rg=",
+    "timestampUtcMs": "2026-09-03T07:43:24.602Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "09b51de6-a8c8-4afd-8e71-f39c007fb6d7",
+        "name": "gotchas"
+      },
+      "timestampUtcMs": "2026-09-03T07:43:24.602Z"
+    }
+  },
+  {
+    "index": 8,
+    "hash": "MFVtuCWjxQw3/3RbjTdsPp59Nqc=",
+    "timestampUtcMs": "2026-09-03T07:43:24.602Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "version",
+        "value": "v6.2.2-dev.74",
+        "updatedAt": "2026-09-03T07:43:24.602Z"
+      },
+      "timestampUtcMs": "2026-09-03T07:43:24.602Z"
+    }
+  },
+  {
+    "index": 9,
+    "hash": "Tg1LoSfvQITvQnlRBBq0LIHZyTc=",
+    "timestampUtcMs": "2026-09-03T07:43:24.602Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "filePath",
+        "value": "packages/common/drive-analytics/README.md",
+        "updatedAt": "2026-09-03T07:43:24.602Z"
+      },
+      "timestampUtcMs": "2026-09-03T07:43:24.602Z"
+    }
+  },
+  {
+    "index": 10,
+    "hash": "8uOnxLm8fFEON/tc1uW0R0iq+DA=",
+    "timestampUtcMs": "2026-09-03T07:43:27.167Z",
+    "action": {
+      "type": "SET_PROVENANCE",
+      "input": {
+        "author": "knowledge-agent",
+        "createdAt": "2026-09-03T07:43:27.166Z",
+        "sourceOrigin": "DERIVED"
+      },
+      "timestampUtcMs": "2026-09-03T07:43:27.167Z"
+    }
+  },
+  {
+    "index": 11,
+    "hash": "iYUrAj3U1L9hCqKqiAueYLThn+s=",
+    "timestampUtcMs": "2026-09-03T07:43:27.657Z",
+    "action": {
+      "type": "SUBMIT_FOR_REVIEW",
+      "input": {
+        "id": "835fbd38-4f19-4ed3-9e50-4c2d94e64d4b",
+        "actor": "knowledge-agent",
+        "comment": "extracted from packages/common/drive-analytics/README.md at v6.2.2-dev.74",
+        "timestamp": "2026-09-03T07:43:27.657Z"
+      },
+      "timestampUtcMs": "2026-09-03T07:43:27.657Z"
+    }
+  },
+  {
+    "index": 12,
+    "hash": "YR+aqh6BsPXaLsvbyarERwyrSJ0=",
+    "timestampUtcMs": "2026-09-03T07:43:28.242Z",
+    "action": {
+      "type": "APPROVE_NOTE",
+      "input": {
+        "id": "99dfcc37-5ae1-4411-9652-cef3454f6466",
+        "actor": "liberuum",
+        "comment": "claim checked against the cited file at the pinned tag",
+        "timestamp": "2026-09-03T07:43:28.242Z"
+      },
+      "timestampUtcMs": "2026-09-03T07:43:28.242Z"
+    }
+  }
+]

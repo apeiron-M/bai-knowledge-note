@@ -1,0 +1,118 @@
+{
+  "links": [
+    {
+      "id": "lnk-e4a8d4d1-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "e4a8d4d1-7317-47d1-a126-6273c1f43c49",
+      "targetTitle": "inspector-modal-for-debugging-sync"
+    },
+    {
+      "id": "lnk-98e36a08-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "98e36a08-78cd-4c60-942c-338d4a460334",
+      "targetTitle": "bee-reactor-adapter-overview"
+    },
+    {
+      "id": "lnk-6ddb3f1f-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "6ddb3f1f-b6dd-42d8-85f3-3d956294006e",
+      "targetTitle": "cqrs-separates-write-commands-from-read-queries-for-independent-scaling"
+    },
+    {
+      "id": "lnk-f7e6d116-bui",
+      "linkType": "BUILDS_ON",
+      "targetDocumentId": "f7e6d116-bd5d-4052-9f2a-974e4d7cb7e2",
+      "targetTitle": "relational-db-processor-base-class"
+    },
+    {
+      "id": "lnk-193a89ec-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "193a89ec-0a92-4ba3-b701-70bfa78d05b5",
+      "targetTitle": "Academy \u203a Reference \u203a GraphQLData \u203a Relational Database",
+      "reason": "Backing page found by content match in the v6.2.2-dev.74 source backfill \u2014 identifiers createprocessorquery, memoization from the claim appear in this page (text identical at v6.2.2-dev.47 and v6.2.2-dev.74); attribution, not the original extraction record",
+      "confidence": "grounded"
+    },
+    {
+      "id": "lnk-1a01ee55-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "1a01ee55-bace-4345-ad27-1994f2136b5a",
+      "targetTitle": "Package \u203a reactor-browser \u203a relational \u2014 Relational Database Layer",
+      "reason": "Backing page found by content match in the v6.2.2-dev.74 source backfill \u2014 identifiers createprocessorquery, memoization from the claim appear in this page (text identical at v6.2.2-dev.47 and v6.2.2-dev.74); attribution, not the original extraction record",
+      "confidence": "grounded"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Powerhouse relational database hooks provide type-safe live queries backed by PGlite with automatic re-rendering on data changes",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "d4f16e9b-a69d-457c-8202-3ed2545c71d1",
+      "name": "relational-db",
+      "topicDocumentId": null
+    },
+    {
+      "id": "98071082-f4e4-48ff-a315-0005a3c782fa",
+      "name": "react-hooks",
+      "topicDocumentId": null
+    },
+    {
+      "id": "1d9578a1-1452-4324-b3d0-c2299fd882c0",
+      "name": "pglite",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "The `@powerhousedao/reactor-browser/relational` package provides three main hooks: `createProcessorQuery(ProcessorClass)` creates a typed query hook factory returning `{ isLoading, error, result: LiveQueryResults<T> }` with automatic retry logic and deep-comparison parameter memoization; `useRelationalDb<Schema>()` provides direct access to the enhanced Kysely database instance; `useRelationalQuery<Schema, T, TParams>()` is a lower-level hook for manual query control. Queries can use either Kysely query builder (with `.compile()`) or raw SQL with `{ sql, parameters }` objects. All queries are live and update automatically when underlying data changes, backed by PGlite integration.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": "v6.2.2-dev.74",
+  "computes": null,
+  "filePath": "apps/academy/docs/academy/04-Reference/03-GraphQLData/04-RelationalDatabase.md",
+  "noteType": "REFERENCE",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "knowledge-agent",
+    "createdAt": "2026-04-02T12:00:00.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-09-02T21:44:49.361Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "createProcessorQuery() creates typed hooks that return live-updating results with automatic parameter memoization via deep comparison.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "1288667a-0de1-4411-87dc-7cfb8e0cb07a",
+      "actor": "claude",
+      "comment": "Knowledge registered against powerhouse v6.2.2-dev.47",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-14T12:00:00.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "3e490454-4677-497d-bc00-88950c3e25e1",
+      "actor": "liberuum",
+      "comment": "Canonical as of powerhouse v6.2.2-dev.47",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-14T12:00:00.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

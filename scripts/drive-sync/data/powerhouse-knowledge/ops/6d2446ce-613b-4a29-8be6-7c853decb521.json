@@ -1,0 +1,362 @@
+[
+  {
+    "index": 0,
+    "hash": "",
+    "timestampUtcMs": "2026-08-14T11:49:16.497Z",
+    "action": {
+      "type": "CREATE_DOCUMENT",
+      "input": {
+        "meta": {},
+        "name": "bridge-pattern-gql-swarm-dual-sync",
+        "slug": "",
+        "model": "bai/knowledge-note",
+        "branch": "main",
+        "signing": {
+          "nonce": "",
+          "publicKey": {},
+          "signature": "6d2446ce-613b-4a29-8be6-7c853decb521",
+          "documentType": "bai/knowledge-note",
+          "createdAtUtcIso": "2026-08-14T11:49:16.496Z"
+        },
+        "version": 0,
+        "documentId": "6d2446ce-613b-4a29-8be6-7c853decb521",
+        "protocolVersions": {
+          "base-reducer": 2
+        }
+      },
+      "timestampUtcMs": "2026-08-14T11:49:16.497Z"
+    }
+  },
+  {
+    "index": 0,
+    "hash": "AKabWy8ufBXBZ/6gzTOJVvv9Zy4=",
+    "timestampUtcMs": "2026-08-14T12:34:53.000Z",
+    "action": {
+      "type": "SET_TITLE",
+      "input": {
+        "title": "The bridge pattern lets a single PGlite serve both Switchboard GQL remotes and Swarm feeds transparently via independent cursors.",
+        "updatedAt": "2026-08-14T12:34:53.000Z"
+      },
+      "timestampUtcMs": "2026-08-14T12:34:53.000Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "",
+    "timestampUtcMs": "2026-08-14T11:49:16.497Z",
+    "action": {
+      "type": "UPGRADE_DOCUMENT",
+      "input": {
+        "model": "bai/knowledge-note",
+        "toVersion": 1,
+        "documentId": "6d2446ce-613b-4a29-8be6-7c853decb521",
+        "fromVersion": 0,
+        "initialState": {
+          "auth": {
+            "grants": [],
+            "version": 0
+          },
+          "local": {
+            "lastViewedAt": null,
+            "personalTags": []
+          },
+          "global": {
+            "links": [],
+            "model": null,
+            "scope": null,
+            "title": null,
+            "editor": null,
+            "inputs": [],
+            "models": [],
+            "status": "DRAFT",
+            "topics": [],
+            "content": null,
+            "context": null,
+            "modelId": null,
+            "modules": [],
+            "outputs": [],
+            "version": null,
+            "computes": null,
+            "filePath": null,
+            "noteType": null,
+            "severity": null,
+            "hooksUsed": [],
+            "rootCause": null,
+            "confidence": null,
+            "consumedBy": [],
+            "provenance": null,
+            "sourceType": null,
+            "targetType": null,
+            "cardinality": null,
+            "description": null,
+            "alternatives": [],
+            "consequences": [],
+            "errorMessage": null,
+            "relationType": null,
+            "correctPattern": null,
+            "decisionStatus": null,
+            "dispatchTargets": [],
+            "lifecycleEvents": []
+          },
+          "document": {
+            "hash": {
+              "encoding": "base64",
+              "algorithm": "sha1"
+            },
+            "version": 1
+          }
+        }
+      },
+      "timestampUtcMs": "2026-08-14T11:49:16.497Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "XtjdoDIOwRM9/VzNPYBTYqTS8l8=",
+    "timestampUtcMs": "2026-08-14T12:34:53.000Z",
+    "action": {
+      "type": "SET_DESCRIPTION",
+      "input": {
+        "updatedAt": "2026-08-14T12:34:53.000Z",
+        "description": "Operation_index_operations is shared by both channels; each remote tracks its own cursor in sync_cursors so GQL pull and Swarm push run in parallel without interference."
+      },
+      "timestampUtcMs": "2026-08-14T12:34:53.000Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "",
+    "timestampUtcMs": "2026-08-14T12:36:43.644Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "6d2446ce-613b-4a29-8be6-7c853decb521",
+        "targetId": "787398c0-fa8c-4e79-bd9f-71b60d57f482",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-08-14T12:36:43.644Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "WeK31u5p/Qe68tRiuN4GHbHzDxA=",
+    "timestampUtcMs": "2026-08-14T12:34:53.000Z",
+    "action": {
+      "type": "SET_NOTE_TYPE",
+      "input": {
+        "noteType": "pattern",
+        "updatedAt": "2026-08-14T12:34:53.000Z"
+      },
+      "timestampUtcMs": "2026-08-14T12:34:53.000Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "",
+    "timestampUtcMs": "2026-08-14T12:36:43.752Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "6d2446ce-613b-4a29-8be6-7c853decb521",
+        "targetId": "eb3ddfcc-c606-4705-b9c9-42f5e26e2384",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-08-14T12:36:43.752Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "3vyxkgZUjRXlB8orlQZPhaojvPM=",
+    "timestampUtcMs": "2026-08-14T12:34:53.000Z",
+    "action": {
+      "type": "SET_CONTENT",
+      "input": {
+        "content": "## GQL + Swarm Dual Sync\n\nIn one browser, PGlite acts as the hub between two worlds:\n\n- **Switchboard world**: remote drives pulled in via GQL channels.\n- **Swarm world**: drives and documents mirrored out to encrypted feeds.\n\nEach drive is independent:\n\n- Drive A: pulled from Switchboard (GQL) **and** pushed to Swarm Feed A.\n- Drive B: same dual path.\n- Drive C: locally created by the user, only pushed to Swarm Feed C (no Switchboard counterpart).\n\n### Why it works\n\nBoth channels read from the same `operation_index_operations` table, where every op gets a global ordinal. Each remote has an independent cursor in `sync_cursors`, so progress on one channel never interferes with the other.\n\n`SyncManager` orchestrates both transparently \u2014 it does not know whether a given remote is GQL or Swarm, it just pumps operations through `channel.outbox` / `channel.inbox` / `channel.deadLetter`.\n\nThis is the foundation that lets Connect work decentralized-first while retaining compatibility with Switchboard-hosted drives.",
+        "updatedAt": "2026-08-14T12:34:53.000Z"
+      },
+      "timestampUtcMs": "2026-08-14T12:34:53.000Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "",
+    "timestampUtcMs": "2026-08-14T12:36:43.840Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "6d2446ce-613b-4a29-8be6-7c853decb521",
+        "targetId": "c6ce116a-daaa-4be5-a9de-25b63600f6a0",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-08-14T12:36:43.840Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "1Z0cYFz6EYt2bUY6O/hj9jsa4IA=",
+    "timestampUtcMs": "2026-08-14T12:34:53.000Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "version",
+        "value": "v6.2.2-dev.44",
+        "updatedAt": "2026-08-14T12:34:53.000Z"
+      },
+      "timestampUtcMs": "2026-08-14T12:34:53.000Z"
+    }
+  },
+  {
+    "index": 5,
+    "hash": "",
+    "timestampUtcMs": "2026-08-14T12:36:43.937Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "6d2446ce-613b-4a29-8be6-7c853decb521",
+        "targetId": "a36dbe68-f077-4fad-bd4d-b6f62b851264",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-08-14T12:36:43.937Z"
+    }
+  },
+  {
+    "index": 5,
+    "hash": "i4BxrsrCgTxfPgD6Du98Wuk4dcE=",
+    "timestampUtcMs": "2026-08-14T12:34:53.000Z",
+    "action": {
+      "type": "SET_PROVENANCE",
+      "input": {
+        "author": "knowledge-agent",
+        "createdAt": "2026-04-21T14:47:10.583Z",
+        "sourceOrigin": "DERIVED"
+      },
+      "timestampUtcMs": "2026-08-14T12:34:53.000Z"
+    }
+  },
+  {
+    "index": 6,
+    "hash": "",
+    "timestampUtcMs": "2026-08-14T12:36:44.016Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "6d2446ce-613b-4a29-8be6-7c853decb521",
+        "targetId": "1e3e3772-e865-4797-aebe-8b64a3f34fdd",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-08-14T12:36:44.016Z"
+    }
+  },
+  {
+    "index": 6,
+    "hash": "4iexDa87RZikKitGNoxl0SXLjnI=",
+    "timestampUtcMs": "2026-08-14T12:34:53.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "t1",
+        "name": "bridge-pattern",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-08-14T12:34:53.000Z"
+    }
+  },
+  {
+    "index": 7,
+    "hash": "PwUSzeoUhNGqT3NuYxAbP2HFxSA=",
+    "timestampUtcMs": "2026-08-14T12:34:53.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "t2",
+        "name": "dual-sync",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-08-14T12:34:53.000Z"
+    }
+  },
+  {
+    "index": 8,
+    "hash": "67OlvGIepH4ohWbG0Mqmb4Pkfc8=",
+    "timestampUtcMs": "2026-08-14T12:34:53.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "t3",
+        "name": "architecture-diagram",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-08-14T12:34:53.000Z"
+    }
+  },
+  {
+    "index": 9,
+    "hash": "ZTjAvKlciBfNtqYnW/Xk9+SfigM=",
+    "timestampUtcMs": "2026-08-14T14:37:13.000Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "version",
+        "value": "v6.2.2-dev.47",
+        "updatedAt": "2026-08-14T12:00:00.000Z"
+      },
+      "timestampUtcMs": "2026-08-14T14:37:13.000Z"
+    }
+  },
+  {
+    "index": 10,
+    "hash": "taf73peontJY/g98FBejVEG99qk=",
+    "timestampUtcMs": "2026-08-14T14:37:13.000Z",
+    "action": {
+      "type": "SUBMIT_FOR_REVIEW",
+      "input": {
+        "id": "b0f9af0f-6b89-4cfc-9879-9074d79b3df9",
+        "actor": "claude",
+        "comment": "Knowledge registered against powerhouse v6.2.2-dev.47",
+        "timestamp": "2026-08-14T12:00:00.000Z"
+      },
+      "timestampUtcMs": "2026-08-14T14:37:13.000Z"
+    }
+  },
+  {
+    "index": 11,
+    "hash": "HC1r0r3omMe+ZmkRgpw3W4QHvS8=",
+    "timestampUtcMs": "2026-08-14T14:37:13.000Z",
+    "action": {
+      "type": "APPROVE_NOTE",
+      "input": {
+        "id": "eee56fca-0df4-4e80-bfde-d312ecf916ae",
+        "actor": "liberuum",
+        "comment": "Canonical as of powerhouse v6.2.2-dev.47",
+        "timestamp": "2026-08-14T12:00:00.000Z"
+      },
+      "timestampUtcMs": "2026-08-14T14:37:13.000Z"
+    }
+  },
+  {
+    "index": 12,
+    "hash": "F8Cve+Xtt/Rq2eae7BO2l7+RskA=",
+    "timestampUtcMs": "2026-08-16T09:49:47.000Z",
+    "action": {
+      "type": "SET_NOTE_TYPE",
+      "input": {
+        "noteType": "PATTERN",
+        "updatedAt": "2026-08-16T09:49:47.000Z"
+      },
+      "timestampUtcMs": "2026-08-16T09:49:47.000Z"
+    }
+  },
+  {
+    "index": 13,
+    "hash": "pjHvkEZwIPBAipAferz0AocdhhA=",
+    "timestampUtcMs": "2026-09-03T09:57:57.646Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "version",
+        "updatedAt": "2026-09-03T09:57:57.646Z"
+      },
+      "timestampUtcMs": "2026-09-03T09:57:57.646Z"
+    }
+  }
+]

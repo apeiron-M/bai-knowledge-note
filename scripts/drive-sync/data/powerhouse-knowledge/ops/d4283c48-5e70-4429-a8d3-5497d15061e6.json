@@ -1,0 +1,276 @@
+[
+  {
+    "index": 0,
+    "hash": "",
+    "timestampUtcMs": "2026-08-19T11:24:20.197Z",
+    "action": {
+      "type": "CREATE_DOCUMENT",
+      "input": {
+        "meta": {},
+        "name": "A Drupal hook dispatching typed operations turns moderation and membership decisions into ",
+        "slug": "",
+        "model": "bai/knowledge-note",
+        "branch": "main",
+        "signing": {
+          "nonce": "",
+          "publicKey": {},
+          "signature": "d4283c48-5e70-4429-a8d3-5497d15061e6",
+          "documentType": "bai/knowledge-note",
+          "createdAtUtcIso": "2026-08-19T11:24:20.197Z"
+        },
+        "version": 0,
+        "documentId": "d4283c48-5e70-4429-a8d3-5497d15061e6",
+        "protocolVersions": {
+          "base-reducer": 2
+        }
+      },
+      "timestampUtcMs": "2026-08-19T11:24:20.197Z"
+    }
+  },
+  {
+    "index": 0,
+    "hash": "KcKLDR6vMn0azA6fz/hvJwvm1F8=",
+    "timestampUtcMs": "2026-08-19T11:24:19.911Z",
+    "action": {
+      "type": "SET_TITLE",
+      "input": {
+        "title": "A Drupal hook dispatching typed operations turns moderation and membership decisions into an audit trail",
+        "updatedAt": "2026-08-19T11:24:19.911811Z"
+      },
+      "timestampUtcMs": "2026-08-19T11:24:19.911884Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "",
+    "timestampUtcMs": "2026-08-19T11:24:20.197Z",
+    "action": {
+      "type": "UPGRADE_DOCUMENT",
+      "input": {
+        "model": "bai/knowledge-note",
+        "toVersion": 1,
+        "documentId": "d4283c48-5e70-4429-a8d3-5497d15061e6",
+        "fromVersion": 0,
+        "initialState": {
+          "auth": {
+            "grants": [],
+            "version": 0
+          },
+          "local": {
+            "lastViewedAt": null,
+            "personalTags": []
+          },
+          "global": {
+            "links": [],
+            "model": null,
+            "scope": null,
+            "title": null,
+            "editor": null,
+            "inputs": [],
+            "models": [],
+            "status": "DRAFT",
+            "topics": [],
+            "content": null,
+            "context": null,
+            "modelId": null,
+            "modules": [],
+            "outputs": [],
+            "version": null,
+            "computes": null,
+            "filePath": null,
+            "noteType": null,
+            "severity": null,
+            "hooksUsed": [],
+            "rootCause": null,
+            "confidence": null,
+            "consumedBy": [],
+            "provenance": null,
+            "sourceType": null,
+            "targetType": null,
+            "cardinality": null,
+            "description": null,
+            "alternatives": [],
+            "consequences": [],
+            "errorMessage": null,
+            "relationType": null,
+            "correctPattern": null,
+            "decisionStatus": null,
+            "dispatchTargets": [],
+            "lifecycleEvents": []
+          },
+          "document": {
+            "hash": {
+              "encoding": "base64",
+              "algorithm": "sha1"
+            },
+            "version": 1
+          }
+        }
+      },
+      "timestampUtcMs": "2026-08-19T11:24:20.197Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "+Jrvsc1/vDP4cjVSJoHDTyGTKko=",
+    "timestampUtcMs": "2026-08-19T11:24:19.911Z",
+    "action": {
+      "type": "SET_DESCRIPTION",
+      "input": {
+        "updatedAt": "2026-08-19T11:24:19.911889Z",
+        "description": "The hook fires on governance decisions rather than on content edits, so the record that results is about who decided what \u2014 the object institutional governance is judged on."
+      },
+      "timestampUtcMs": "2026-08-19T11:24:19.911897Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "",
+    "timestampUtcMs": "2026-08-19T11:24:22.335Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "d4283c48-5e70-4429-a8d3-5497d15061e6",
+        "targetId": "d8334f75-cf50-4de7-9966-bf59531f981b",
+        "relationshipType": "DERIVED_FROM"
+      },
+      "timestampUtcMs": "2026-08-19T11:24:22.335Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "eG4SXtC/svj+YJ7OH3U1mIRQ3II=",
+    "timestampUtcMs": "2026-08-19T11:24:19.911Z",
+    "action": {
+      "type": "SET_NOTE_TYPE",
+      "input": {
+        "noteType": "PATTERN",
+        "updatedAt": "2026-08-19T11:24:19.911899Z"
+      },
+      "timestampUtcMs": "2026-08-19T11:24:19.911905Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "uLVREhDsMWtsVsQmgr4BqM1hmbI=",
+    "timestampUtcMs": "2026-08-19T11:24:19.911Z",
+    "action": {
+      "type": "SET_CONTENT",
+      "input": {
+        "content": "Open Social's platform is built on Drupal, and Drupal exposes hooks at the points where moderation and membership decisions are applied. The demo attaches to those hooks and dispatches a typed operation for each decision, so an approval, a rejection or a membership change becomes an event in its own right instead of only a changed field on a node.\n\nThe distinction matters because community governance is a sequence of decisions taken by people with different standing. A node revision shows the content after a moderator acted; it does not assert that the moderator acted, on what basis, or in what order relative to other decisions. Dispatching the decision as an operation records the act itself, which is what an audit trail of governance consists of.\n\nFor institutional communities, whose membership rules are written down and whose decisions can be contested afterwards, that trail is the deliverable rather than a by-product. It is also narrow enough to build against a single hook, which keeps the demo small enough to finish.\n\n---\n\n## Leads sharing this finding (1)\n\n**2 \u00b7 next**\n- Open Social (NL Amsterdam) \u2014 Taco Potze, CEO; Bram ten Hove, CTO \u00b7 sales@getopensocial.com \u00b7 https://getopensocial.com\n\nVerbatim research text this claim was extracted from:\n\n> Drupal hook dispatching typed operations on moderation and membership decisions \u2014 an audit trail for institutional community governance.",
+        "updatedAt": "2026-08-19T11:24:19.911907Z"
+      },
+      "timestampUtcMs": "2026-08-19T11:24:19.911912Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "05uKjVC7P2uzImljNeQrzuN1Snw=",
+    "timestampUtcMs": "2026-08-19T11:24:19.911Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "16f11d20-eab8-4732-a43a-6afd5e6ebb3a",
+        "name": "leads"
+      },
+      "timestampUtcMs": "2026-08-19T11:24:19.911921Z"
+    }
+  },
+  {
+    "index": 5,
+    "hash": "36eQdkSRYRXQmgwyodYBVespBeQ=",
+    "timestampUtcMs": "2026-08-19T11:24:19.911Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "06ef89f8-1a14-408b-b5fd-67b2ccbb47df",
+        "name": "demo-design"
+      },
+      "timestampUtcMs": "2026-08-19T11:24:19.911929Z"
+    }
+  },
+  {
+    "index": 6,
+    "hash": "DQE116ZlXcGPWZjOE9MwzApzMuA=",
+    "timestampUtcMs": "2026-08-19T11:24:19.911Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "115a6dc8-6e1b-431f-aa9b-af2e56898939",
+        "name": "drupal"
+      },
+      "timestampUtcMs": "2026-08-19T11:24:19.911937Z"
+    }
+  },
+  {
+    "index": 7,
+    "hash": "SCw3B7gjfj1/Nxk76Jy43eou3gg=",
+    "timestampUtcMs": "2026-08-19T11:24:19.911Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "76450db3-5846-4f02-8692-7f5b13d3677a",
+        "name": "community-governance"
+      },
+      "timestampUtcMs": "2026-08-19T11:24:19.911944Z"
+    }
+  },
+  {
+    "index": 8,
+    "hash": "sIWfAo4HlBnmBNFrP+IUQ1/UU6M=",
+    "timestampUtcMs": "2026-08-19T11:24:19.911Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "b1b19cb4-832e-4607-bc0f-9f7d6107f9e1",
+        "name": "audit-trail"
+      },
+      "timestampUtcMs": "2026-08-19T11:24:19.911953Z"
+    }
+  },
+  {
+    "index": 9,
+    "hash": "yImwMA9u/57u+aNJib8cUbo9hr8=",
+    "timestampUtcMs": "2026-08-19T11:24:20.332Z",
+    "action": {
+      "type": "SET_PROVENANCE",
+      "input": {
+        "author": "knowledge-agent",
+        "createdAt": "2026-08-19T11:24:20.332818Z",
+        "sessionId": null,
+        "sourceOrigin": "DERIVED"
+      },
+      "timestampUtcMs": "2026-08-19T11:24:20.332856Z"
+    }
+  },
+  {
+    "index": 10,
+    "hash": "/uCncBIe4pzv+Eo+U9sm9KGgPlc=",
+    "timestampUtcMs": "2026-08-19T11:24:21.657Z",
+    "action": {
+      "type": "SUBMIT_FOR_REVIEW",
+      "input": {
+        "id": "d4e65702-fe5b-4487-a608-6b6844232795",
+        "actor": "knowledge-agent",
+        "comment": "Extracted from lead research; claim checked against the source record.",
+        "timestamp": "2026-08-19T11:24:21.657875Z"
+      },
+      "timestampUtcMs": "2026-08-19T11:24:21.657903Z"
+    }
+  },
+  {
+    "index": 11,
+    "hash": "oeqh9HApxAgoj2Qe7E2MbbN/lRI=",
+    "timestampUtcMs": "2026-08-19T11:24:21.815Z",
+    "action": {
+      "type": "APPROVE_NOTE",
+      "input": {
+        "id": "fa96e122-5731-4f04-ac52-fb0bf488a6f3",
+        "actor": "liberuum",
+        "comment": "Approved: lead corpus extraction.",
+        "timestamp": "2026-08-19T11:24:21.815482Z"
+      },
+      "timestampUtcMs": "2026-08-19T11:24:21.815502Z"
+    }
+  }
+]

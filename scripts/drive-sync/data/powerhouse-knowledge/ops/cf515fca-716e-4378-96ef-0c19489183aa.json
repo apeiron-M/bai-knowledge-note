@@ -1,0 +1,330 @@
+[
+  {
+    "index": 0,
+    "hash": "",
+    "timestampUtcMs": "2026-09-03T07:34:34.638Z",
+    "action": {
+      "type": "CREATE_DOCUMENT",
+      "input": {
+        "meta": {},
+        "name": "connect-desktop-and-web",
+        "slug": "",
+        "model": "bai/knowledge-note",
+        "branch": "main",
+        "signing": {
+          "nonce": "",
+          "publicKey": {},
+          "signature": "cf515fca-716e-4378-96ef-0c19489183aa",
+          "documentType": "bai/knowledge-note",
+          "createdAtUtcIso": "2026-09-03T07:34:34.638Z"
+        },
+        "version": 0,
+        "documentId": "cf515fca-716e-4378-96ef-0c19489183aa",
+        "protocolVersions": {
+          "base-reducer": 2
+        }
+      },
+      "timestampUtcMs": "2026-09-03T07:34:34.638Z"
+    }
+  },
+  {
+    "index": 0,
+    "hash": "nAxs2MyNfTkUDf4BXEI7OOpUARU=",
+    "timestampUtcMs": "2026-09-03T07:34:35.939Z",
+    "action": {
+      "type": "SET_TITLE",
+      "input": {
+        "title": "Connect ships as both a desktop application and a web app from one codebase, with the web dev server on port 5173",
+        "updatedAt": "2026-09-03T07:34:35.939Z"
+      },
+      "timestampUtcMs": "2026-09-03T07:34:35.939Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "",
+    "timestampUtcMs": "2026-09-03T07:34:34.638Z",
+    "action": {
+      "type": "UPGRADE_DOCUMENT",
+      "input": {
+        "model": "bai/knowledge-note",
+        "toVersion": 1,
+        "documentId": "cf515fca-716e-4378-96ef-0c19489183aa",
+        "fromVersion": 0,
+        "initialState": {
+          "auth": {
+            "grants": [],
+            "version": 0
+          },
+          "local": {
+            "lastViewedAt": null,
+            "personalTags": []
+          },
+          "global": {
+            "links": [],
+            "model": null,
+            "scope": null,
+            "title": null,
+            "editor": null,
+            "inputs": [],
+            "models": [],
+            "status": "DRAFT",
+            "topics": [],
+            "content": null,
+            "context": null,
+            "modelId": null,
+            "modules": [],
+            "outputs": [],
+            "version": null,
+            "computes": null,
+            "filePath": null,
+            "noteType": null,
+            "severity": null,
+            "hooksUsed": [],
+            "rootCause": null,
+            "confidence": null,
+            "consumedBy": [],
+            "provenance": null,
+            "sourceType": null,
+            "targetType": null,
+            "cardinality": null,
+            "description": null,
+            "alternatives": [],
+            "consequences": [],
+            "errorMessage": null,
+            "relationType": null,
+            "correctPattern": null,
+            "decisionStatus": null,
+            "dispatchTargets": [],
+            "lifecycleEvents": []
+          },
+          "document": {
+            "hash": {
+              "encoding": "base64",
+              "algorithm": "sha1"
+            },
+            "version": 1
+          }
+        }
+      },
+      "timestampUtcMs": "2026-09-03T07:34:34.638Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "h78+tX2RtG8uvgGecSQiFbycYn0=",
+    "timestampUtcMs": "2026-09-03T07:34:35.939Z",
+    "action": {
+      "type": "SET_DESCRIPTION",
+      "input": {
+        "updatedAt": "2026-09-03T07:34:35.939Z",
+        "description": "pnpm start runs the desktop app and pnpm run dev the web app; pnpm run make packages the desktop build per platform (make:mac, make:linux, make:windows). A docker:build target tests the production."
+      },
+      "timestampUtcMs": "2026-09-03T07:34:35.939Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "",
+    "timestampUtcMs": "2026-09-03T07:34:59.695Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "metadata": {
+          "reason": "Extracted from apps/connect/README.md at v6.2.2-dev.74 \u2014 Introduction bullets; Prerequisites and Starting Connect; packaged desktop build; docker:build",
+          "confidence": "grounded"
+        },
+        "sourceId": "cf515fca-716e-4378-96ef-0c19489183aa",
+        "targetId": "1b243f88-d611-4223-b486-2894e0b57ce3",
+        "relationshipType": "DERIVED_FROM"
+      },
+      "timestampUtcMs": "2026-09-03T07:34:59.695Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "NajD3uldLC54rupXRkiFby6stPo=",
+    "timestampUtcMs": "2026-09-03T07:34:35.939Z",
+    "action": {
+      "type": "SET_NOTE_TYPE",
+      "input": {
+        "noteType": "REFERENCE",
+        "updatedAt": "2026-09-03T07:34:35.939Z"
+      },
+      "timestampUtcMs": "2026-09-03T07:34:35.939Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "",
+    "timestampUtcMs": "2026-09-03T07:35:00.161Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "metadata": {
+          "reason": "The container artefact is built quite differently from the desktop package: nginx serving a prebuilt SPA rather than an Electron bundle",
+          "confidence": "grounded"
+        },
+        "sourceId": "cf515fca-716e-4378-96ef-0c19489183aa",
+        "targetId": "e80cffd2-a26e-426d-b722-dc068817ea7c",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-09-03T07:35:00.161Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "aVArnN4DqA8NguQ0xFHVOW2+MFA=",
+    "timestampUtcMs": "2026-09-03T07:34:35.939Z",
+    "action": {
+      "type": "SET_CONTENT",
+      "input": {
+        "content": "Connect is described as an open-source **desktop and web** application for document model management \u2014 the same codebase produces both, and the README's script list is where that duality is visible:\n\n```bash\npnpm start          # desktop app\npnpm run dev        # web app, then http://localhost:5173\npnpm run make       # package the desktop app for the current platform\npnpm run make:mac | make:linux | make:windows\npnpm run docker:build   # build the image once, to test the production deployment locally\n```\n\nIts stated role is a **private editor and contributor tool** for contributors of open organisations, with full control over data ownership, available standalone or in the cloud. Two capabilities define the shell: a navigation menu for adding, synchronising and browsing document drives \u2014 shared within an organisation or private to the contributor \u2014 and the ability to edit any document model type the organisation selected or defined.\n\nWorth pairing with the deployment picture: the published Connect *image* is plain nginx serving a SPA built at image-build time, so the desktop packaging path above and the container path are genuinely different artefacts from the same source.\n\n## Provenance\n- `apps/connect/README.md` \u2014 Introduction bullets; Prerequisites and Starting Connect; packaged desktop build; docker:build\n\n_Extracted from the Powerhouse repository at **v6.2.2-dev.74**._",
+        "updatedAt": "2026-09-03T07:34:35.939Z"
+      },
+      "timestampUtcMs": "2026-09-03T07:34:35.939Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "",
+    "timestampUtcMs": "2026-09-03T07:35:00.662Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "metadata": {
+          "reason": "Both artefacts read the same powerhouse.config.json at boot, which is what keeps one codebase configurable in two shapes",
+          "confidence": "grounded"
+        },
+        "sourceId": "cf515fca-716e-4378-96ef-0c19489183aa",
+        "targetId": "a1016584-5dba-460b-9dc8-2728d09c1058",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-09-03T07:35:00.662Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "TmlQcsgXnDHv5RjcOlhYyQsYXgY=",
+    "timestampUtcMs": "2026-09-03T07:34:35.939Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "188cfcdf-648e-4920-b0ea-8c1463e86654",
+        "name": "connect"
+      },
+      "timestampUtcMs": "2026-09-03T07:34:35.939Z"
+    }
+  },
+  {
+    "index": 5,
+    "hash": "CnfGH63zCqTq7OJP9peV5WXMg30=",
+    "timestampUtcMs": "2026-09-03T07:34:35.939Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "67b5632f-1692-4fd6-b808-970ee4ec5022",
+        "name": "desktop"
+      },
+      "timestampUtcMs": "2026-09-03T07:34:35.939Z"
+    }
+  },
+  {
+    "index": 6,
+    "hash": "VCRBmrBvPQX16EptdqxxPCnyQ18=",
+    "timestampUtcMs": "2026-09-03T07:34:35.939Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "0d57bccb-ce2b-4c76-b410-3c136adcbe42",
+        "name": "development"
+      },
+      "timestampUtcMs": "2026-09-03T07:34:35.939Z"
+    }
+  },
+  {
+    "index": 7,
+    "hash": "YhPJ13masLS4AqsYphb4ljmnSeA=",
+    "timestampUtcMs": "2026-09-03T07:34:35.939Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "d4181e1c-03ce-40d3-b6a8-9c8177f88364",
+        "name": "packaging"
+      },
+      "timestampUtcMs": "2026-09-03T07:34:35.939Z"
+    }
+  },
+  {
+    "index": 8,
+    "hash": "+ZPkOgWrEiJ9UXr8OC88aQxYqzY=",
+    "timestampUtcMs": "2026-09-03T07:34:35.939Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "version",
+        "value": "v6.2.2-dev.74",
+        "updatedAt": "2026-09-03T07:34:35.939Z"
+      },
+      "timestampUtcMs": "2026-09-03T07:34:35.939Z"
+    }
+  },
+  {
+    "index": 9,
+    "hash": "ZqmpsuKay0QqE1hHyclCccnzTjM=",
+    "timestampUtcMs": "2026-09-03T07:34:35.939Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "filePath",
+        "value": "apps/connect/README.md",
+        "updatedAt": "2026-09-03T07:34:35.939Z"
+      },
+      "timestampUtcMs": "2026-09-03T07:34:35.939Z"
+    }
+  },
+  {
+    "index": 10,
+    "hash": "LKZS43VlFrBN7RbKuoEOZyXypwM=",
+    "timestampUtcMs": "2026-09-03T07:34:38.340Z",
+    "action": {
+      "type": "SET_PROVENANCE",
+      "input": {
+        "author": "knowledge-agent",
+        "createdAt": "2026-09-03T07:34:38.340Z",
+        "sourceOrigin": "DERIVED"
+      },
+      "timestampUtcMs": "2026-09-03T07:34:38.340Z"
+    }
+  },
+  {
+    "index": 11,
+    "hash": "heRPB0Q9w70VqB6maMTgFUqlj9M=",
+    "timestampUtcMs": "2026-09-03T07:34:38.893Z",
+    "action": {
+      "type": "SUBMIT_FOR_REVIEW",
+      "input": {
+        "id": "55a4f547-b9b1-494b-b054-555cb540f62f",
+        "actor": "knowledge-agent",
+        "comment": "extracted from apps/connect/README.md at v6.2.2-dev.74",
+        "timestamp": "2026-09-03T07:34:38.893Z"
+      },
+      "timestampUtcMs": "2026-09-03T07:34:38.893Z"
+    }
+  },
+  {
+    "index": 12,
+    "hash": "50DL6YGxk8p9wEl4sTBJMUn0iZ0=",
+    "timestampUtcMs": "2026-09-03T07:34:39.383Z",
+    "action": {
+      "type": "APPROVE_NOTE",
+      "input": {
+        "id": "f477e2a1-beec-4bf4-b12c-5e6e0e18fb0b",
+        "actor": "liberuum",
+        "comment": "claim checked against the cited file at the pinned tag",
+        "timestamp": "2026-09-03T07:34:39.383Z"
+      },
+      "timestampUtcMs": "2026-09-03T07:34:39.383Z"
+    }
+  }
+]

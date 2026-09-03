@@ -1,0 +1,109 @@
+{
+  "links": [
+    {
+      "id": "lnk-067b2d2b-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "067b2d2b-e395-4307-8ae2-07d090f11be9",
+      "targetTitle": "document-manifest-feed-structure"
+    },
+    {
+      "id": "lnk-b7cb8afe-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "b7cb8afe-41fa-4676-be94-1e73435e1a04",
+      "targetTitle": "mcp-workflows"
+    },
+    {
+      "id": "lnk-39525b86-bui",
+      "linkType": "BUILDS_ON",
+      "targetDocumentId": "39525b86-3afe-4f2c-a391-84803557a07a",
+      "targetTitle": "powerhouse-applies-blockchain-immutability-through-event-sourcing"
+    },
+    {
+      "id": "lnk-d768f7af-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "d768f7af-895d-4532-a720-d43b9c5c2790",
+      "targetTitle": "Academy \u203a Build \u203a BuildingUserExperiences \u203a DocumentTools \u203a Operations history",
+      "reason": "Backing page found by content match (score 0.26) in the v6.2.2-dev.74 source backfill; no distinctive identifier verified, attribution by topic overlap \u2014 not the original extraction record (text identical at v6.2.2-dev.47 and v6.2.2-dev.74)",
+      "confidence": "established"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Every document modification is an immutable, append-only operation that can be replayed to reconstruct state at any point in time",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "5d778c78-a788-4319-984d-cbdade21106c",
+      "name": "event-sourcing",
+      "topicDocumentId": null
+    },
+    {
+      "id": "b4e1db7e-98f6-4864-803c-5ff219474749",
+      "name": "operations",
+      "topicDocumentId": null
+    },
+    {
+      "id": "0d948b83-e1e7-47ae-bc19-1d5a9b8ee5e8",
+      "name": "CQRS",
+      "topicDocumentId": null
+    },
+    {
+      "id": "8af4fd9a-4d7e-4828-90df-2ba1586c7449",
+      "name": "architecture",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "Each edit to a document submits an operation (a CQRS 'command') like `ADD_LINE_ITEM` or `UPDATE_RECIPIENT`. Operations are appended to an immutable history and never overwritten. The current document state is the result of applying all past operations in sequence. Each revision has a unique event ID, state hash, and optional commit message. Operations can be signed, stored on-chain, or synchronized across systems. This enables auditability (inspect every change), transparency (see what others did), versioning (revert to prior state), and interoperability (operations are just data). Branch and merge capabilities are under development.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": "v6.2.2-dev.74",
+  "computes": null,
+  "filePath": "apps/academy/docs/academy/03-Build/03-BuildingUserExperiences/06-DocumentTools/01-OperationHistory.md",
+  "noteType": "ARCHITECTURE",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "knowledge-agent",
+    "createdAt": "2026-04-02T12:00:00.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-09-02T21:34:17.755Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Documents use event sourcing: state = replay of all operations in sequence. Operations are never overwritten.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "d1106122-6cce-4491-8e21-9927c6dd5a5b",
+      "actor": "claude",
+      "comment": "Knowledge registered against powerhouse v6.2.2-dev.47",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-14T12:00:00.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "0bf18775-30f0-4bff-a65b-b2da8860f991",
+      "actor": "liberuum",
+      "comment": "Canonical as of powerhouse v6.2.2-dev.47",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-14T12:00:00.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

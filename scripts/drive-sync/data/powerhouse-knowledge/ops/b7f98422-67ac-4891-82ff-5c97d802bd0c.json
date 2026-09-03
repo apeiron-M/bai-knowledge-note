@@ -1,0 +1,276 @@
+[
+  {
+    "index": 0,
+    "hash": "",
+    "timestampUtcMs": "2026-08-19T11:28:13.443Z",
+    "action": {
+      "type": "CREATE_DOCUMENT",
+      "input": {
+        "meta": {},
+        "name": "In Peppol the acceptance decision survives only as transport metadata, not as a business r",
+        "slug": "",
+        "model": "bai/knowledge-note",
+        "branch": "main",
+        "signing": {
+          "nonce": "",
+          "publicKey": {},
+          "signature": "b7f98422-67ac-4891-82ff-5c97d802bd0c",
+          "documentType": "bai/knowledge-note",
+          "createdAtUtcIso": "2026-08-19T11:28:13.442Z"
+        },
+        "version": 0,
+        "documentId": "b7f98422-67ac-4891-82ff-5c97d802bd0c",
+        "protocolVersions": {
+          "base-reducer": 2
+        }
+      },
+      "timestampUtcMs": "2026-08-19T11:28:13.443Z"
+    }
+  },
+  {
+    "index": 0,
+    "hash": "TFhrLIacU3I91Soj72yUzhKLjx4=",
+    "timestampUtcMs": "2026-08-19T11:28:14.081Z",
+    "action": {
+      "type": "SET_TITLE",
+      "input": {
+        "title": "In Peppol the acceptance decision survives only as transport metadata, not as a business record",
+        "updatedAt": "2026-08-19T11:28:14.081005Z"
+      },
+      "timestampUtcMs": "2026-08-19T11:28:14.081042Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "",
+    "timestampUtcMs": "2026-08-19T11:28:13.443Z",
+    "action": {
+      "type": "UPGRADE_DOCUMENT",
+      "input": {
+        "model": "bai/knowledge-note",
+        "toVersion": 1,
+        "documentId": "b7f98422-67ac-4891-82ff-5c97d802bd0c",
+        "fromVersion": 0,
+        "initialState": {
+          "auth": {
+            "grants": [],
+            "version": 0
+          },
+          "local": {
+            "lastViewedAt": null,
+            "personalTags": []
+          },
+          "global": {
+            "links": [],
+            "model": null,
+            "scope": null,
+            "title": null,
+            "editor": null,
+            "inputs": [],
+            "models": [],
+            "status": "DRAFT",
+            "topics": [],
+            "content": null,
+            "context": null,
+            "modelId": null,
+            "modules": [],
+            "outputs": [],
+            "version": null,
+            "computes": null,
+            "filePath": null,
+            "noteType": null,
+            "severity": null,
+            "hooksUsed": [],
+            "rootCause": null,
+            "confidence": null,
+            "consumedBy": [],
+            "provenance": null,
+            "sourceType": null,
+            "targetType": null,
+            "cardinality": null,
+            "description": null,
+            "alternatives": [],
+            "consequences": [],
+            "errorMessage": null,
+            "relationType": null,
+            "correctPattern": null,
+            "decisionStatus": null,
+            "dispatchTargets": [],
+            "lifecycleEvents": []
+          },
+          "document": {
+            "hash": {
+              "encoding": "base64",
+              "algorithm": "sha1"
+            },
+            "version": 1
+          }
+        }
+      },
+      "timestampUtcMs": "2026-08-19T11:28:13.443Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "KaMav863X4pWrtwEvOTJCruCzb8=",
+    "timestampUtcMs": "2026-08-19T11:28:14.081Z",
+    "action": {
+      "type": "SET_DESCRIPTION",
+      "input": {
+        "updatedAt": "2026-08-19T11:28:14.081046Z",
+        "description": "An Access Point's job is delivery, so clearance is recorded in delivery terms; separating the decision from the transport layer gives it an actor and a rule of its own."
+      },
+      "timestampUtcMs": "2026-08-19T11:28:14.081052Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "",
+    "timestampUtcMs": "2026-08-19T11:28:16.774Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "b7f98422-67ac-4891-82ff-5c97d802bd0c",
+        "targetId": "a1ec8ce3-fa6d-469f-8809-4d1123d3760a",
+        "relationshipType": "DERIVED_FROM"
+      },
+      "timestampUtcMs": "2026-08-19T11:28:16.774Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "ZTBMcU6DBA4suFl3Ax/aS4mgjvc=",
+    "timestampUtcMs": "2026-08-19T11:28:14.081Z",
+    "action": {
+      "type": "SET_NOTE_TYPE",
+      "input": {
+        "noteType": "OBSERVATION",
+        "updatedAt": "2026-08-19T11:28:14.081054Z"
+      },
+      "timestampUtcMs": "2026-08-19T11:28:14.081059Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "YAGByBV4sfyFAmpdqqKCdcnjjIs=",
+    "timestampUtcMs": "2026-08-19T11:28:14.081Z",
+    "action": {
+      "type": "SET_CONTENT",
+      "input": {
+        "content": "A Peppol Access Point moves the document: it takes a business document from one participant and delivers it to another. When a document is accepted, that acceptance is captured in the same terms as the transfer \u2014 as transport metadata attached to a message.\n\nThe research's point is that acceptance is a business decision wearing a transport costume. Whether a document was cleared, by whom, and against which rule is a statement about obligations between two parties, not about whether bytes arrived. Recording it as delivery metadata makes it awkward to reason about later, because the record is shaped for a message pipeline rather than for the obligation it creates.\n\nSeparating the two is the fit. The clearance decision becomes its own attributed record while the Access Point continues to do transport, which leaves Helger's existing role untouched and adds a layer the transport does not provide. The seam is the moment of acceptance, which is already an explicit step in the flow rather than something that has to be invented.\n\n---\n\n## Leads sharing this finding (1)\n\n**2 \u00b7 next**\n- Helger IT Consulting GmbH (AT Vienna) \u2014 Philip Helger \u00b7 office@helger.com \u00b7 https://helger.com\n\nVerbatim research text this claim was extracted from:\n\n> A Peppol Access Point moves the document. The acceptance decision is transport metadata, not a business record. Powerhouse separates the clearance decision from the transport layer.",
+        "updatedAt": "2026-08-19T11:28:14.081061Z"
+      },
+      "timestampUtcMs": "2026-08-19T11:28:14.081066Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "4uP5xK2UY5n3iPkxDYhnKeOov+0=",
+    "timestampUtcMs": "2026-08-19T11:28:14.081Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "852a2011-1d41-496a-b627-1aba7d980423",
+        "name": "leads"
+      },
+      "timestampUtcMs": "2026-08-19T11:28:14.081074Z"
+    }
+  },
+  {
+    "index": 5,
+    "hash": "JJNIIwKOfZhPxw5BpJfxmNL8hT4=",
+    "timestampUtcMs": "2026-08-19T11:28:14.081Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "0f2d4cde-c899-4f78-92a5-77e137097118",
+        "name": "peppol"
+      },
+      "timestampUtcMs": "2026-08-19T11:28:14.081082Z"
+    }
+  },
+  {
+    "index": 6,
+    "hash": "OkmzBAMph7XK6LVOY8gWikRmbGk=",
+    "timestampUtcMs": "2026-08-19T11:28:14.081Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "790310a6-f878-46f8-a9ec-1a60af3bcbd8",
+        "name": "e-invoicing"
+      },
+      "timestampUtcMs": "2026-08-19T11:28:14.081090Z"
+    }
+  },
+  {
+    "index": 7,
+    "hash": "kGe/tub50ZO4ZaJeuG/fmlkvRLA=",
+    "timestampUtcMs": "2026-08-19T11:28:14.081Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "5a1e129f-834a-4b7d-8fe2-a405742d5815",
+        "name": "audit-trail"
+      },
+      "timestampUtcMs": "2026-08-19T11:28:14.081097Z"
+    }
+  },
+  {
+    "index": 8,
+    "hash": "mbXdiI0PNb4+RSP5Y6gaePxc25Y=",
+    "timestampUtcMs": "2026-08-19T11:28:14.081Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "1f5f41cb-b7cc-41af-9228-2b526ab1031c",
+        "name": "system-of-record"
+      },
+      "timestampUtcMs": "2026-08-19T11:28:14.081105Z"
+    }
+  },
+  {
+    "index": 9,
+    "hash": "ycr1a+3gftloSbjpnC2GG/u7jQM=",
+    "timestampUtcMs": "2026-08-19T11:28:15.263Z",
+    "action": {
+      "type": "SET_PROVENANCE",
+      "input": {
+        "author": "knowledge-agent",
+        "createdAt": "2026-08-19T11:28:15.263915Z",
+        "sessionId": null,
+        "sourceOrigin": "DERIVED"
+      },
+      "timestampUtcMs": "2026-08-19T11:28:15.263953Z"
+    }
+  },
+  {
+    "index": 10,
+    "hash": "iBEc/zGuKIGOi0K3DdMq6so8qL0=",
+    "timestampUtcMs": "2026-08-19T11:28:16.579Z",
+    "action": {
+      "type": "SUBMIT_FOR_REVIEW",
+      "input": {
+        "id": "656f4aea-8fc7-41a6-9393-fe5d93a03876",
+        "actor": "knowledge-agent",
+        "comment": "Extracted from lead research; claim checked against the source record.",
+        "timestamp": "2026-08-19T11:28:16.579766Z"
+      },
+      "timestampUtcMs": "2026-08-19T11:28:16.579795Z"
+    }
+  },
+  {
+    "index": 11,
+    "hash": "mXJXf5WemHmYqVORZDjxTKlxW8s=",
+    "timestampUtcMs": "2026-08-19T11:28:16.797Z",
+    "action": {
+      "type": "APPROVE_NOTE",
+      "input": {
+        "id": "09bf868b-d3cd-4371-9aa7-781f2945bc04",
+        "actor": "liberuum",
+        "comment": "Approved: lead corpus extraction.",
+        "timestamp": "2026-08-19T11:28:16.797220Z"
+      },
+      "timestampUtcMs": "2026-08-19T11:28:16.797242Z"
+    }
+  }
+]

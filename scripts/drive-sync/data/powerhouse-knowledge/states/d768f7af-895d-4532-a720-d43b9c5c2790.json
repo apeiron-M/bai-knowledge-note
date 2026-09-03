@@ -1,0 +1,21 @@
+{
+  "title": "Academy \u203a Build \u203a BuildingUserExperiences \u203a DocumentTools \u203a Operations history",
+  "status": "EXTRACTED",
+  "content": "# Operations history\n\n## What is a document model?\n\nA **document model** in Powerhouse is the core unit for managing business data. Each document (such as an invoice, contributor agreement, or scope of work) is created from a specific document model, which defines:\n\n- **State schema:** What data the document contains\n- **Operations:** What actions can modify that document\n\n## What is an operations history?\n\nEvery time a user edits a document, they do so by submitting a document operation or a 'command' in CQRS (e.g., `ADD_LINE_ITEM`, `UPDATE_RECIPIENT`). These operations are:\n\n- **Appended** to the document's history\n- **Immutable** (you never overwrite; you always append)\n- **Replayable** \u2014 the current document state is the result of applying all past operations in sequence\n\nThis design is based on **event sourcing** principles.\n\n## Why use an operations history?\n\n- **Auditability:** Inspect every change ever made to a document.\n- **Transparency:** Contributors see what others have done.\n- **Versioning:** Revert to any prior state or resolve conflicts using branching and merging.\n- **Interoperability:** Operations are just data\u2014they can be signed, stored on-chain, or synchronized across systems.\n\n## Example: Invoice document\n\nSuppose you're editing a `powerhouse/invoice` document. Its operations history might look like this:\n\n```plaintext\nSET_RECIPIENT(name: \"Acme Corp\")\nADD_LINE_ITEM(description: \"Design Work\", unitCost: $500)\nUPDATE_DUE_DATE(date: \"2025-06-01\")\n```\n\nThe document's state at any time is the result of running those operations in order.\n\n## Visualizing the operations history\n\n### Revision list and details\n\nIn Connect the Powerhouse UI displays a chronologic list of all applied modifications to the document, each with a unique event ID, state hash, and commit message. You can inspect each revision for signatures and errors.\n\n![Revision History List](./images/revision-history-list.png)\n\n### Viewing revision hashes and event IDs\n\nHovering over a revision reveals its event ID and state hash, providing traceability for every change.\n\n![Revision Hash Popup](./images/revision-hash-popup.png)\n\n### Signature verification\n\nClicking the signature badge shows signature details, including signer address, hash, and verification status. This ensures every operation is cryptographically auditable.\nRead more about how we are using [Renown](/academy/Build/BuildingUserExperiences/Authorization/RenownAuthenticationFlow) for authentication & verification of signer data.\n\n![Signature Details Popup](./images/signature-details-popup.png)\n\n### Viewing committer addresses\n\nYou can also view the committer's address for each revision, supporting full transparency and accountability.\n\n![Committer Address Popup](./images/committer-address-popup.png)\n\n:::warning[Work in Progress]\nThis remainder of this documentation is still being written and may be incomplete.\n:::\n\n## Replay, branch, and merge (under development)\n\n- **Replay:** When you load a document, the system replays all operations to build its state.\n- **Branch:** Create a parallel version of the document to test changes or handle conflicts.\n- **Merge:** Combine branches intelligently based on operations, not just raw field values.\n",
+  "createdAt": "2026-09-02T21:34:12.584Z",
+  "createdBy": "repo-docs-sync",
+  "provenance": {
+    "url": "https://github.com/powerhouse-inc/powerhouse/blob/v6.2.2-dev.74/apps/academy/docs/academy/03-Build/03-BuildingUserExperiences/06-DocumentTools/01-OperationHistory.md",
+    "tool": "sync-repo-docs",
+    "author": "Powerhouse Inc.",
+    "method": "sha256:381378d069c57895f5b09e807a2d4b159a2185b1046d8bcc05aabc730bd53c50 git:v6.2.2-dev.74",
+    "publishedAt": "2026-06-17T17:18:45.000Z"
+  },
+  "sourceType": "DOCUMENTATION",
+  "description": "Powerhouse v6.2.2-dev.74 (unchanged since v6.2.2-dev.47) \u2014 A document model in Powerhouse is the core unit for managing business data. Each document (such as an invoice, contributor agreement, or sco\u2026",
+  "extractedClaims": [
+    "3635589b-57a3-4a38-9a41-81c4e41e62f7"
+  ],
+  "extractionStats": null,
+  "links": []
+}

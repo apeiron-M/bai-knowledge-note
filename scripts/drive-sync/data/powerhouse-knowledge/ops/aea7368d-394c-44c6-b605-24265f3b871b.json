@@ -1,0 +1,330 @@
+[
+  {
+    "index": 0,
+    "hash": "",
+    "timestampUtcMs": "2026-08-16T20:32:32.801Z",
+    "action": {
+      "type": "CREATE_DOCUMENT",
+      "input": {
+        "meta": {},
+        "name": "skills-as-attributable-transformations",
+        "slug": "",
+        "model": "bai/knowledge-note",
+        "branch": "main",
+        "signing": {
+          "nonce": "",
+          "publicKey": {},
+          "signature": "aea7368d-394c-44c6-b605-24265f3b871b",
+          "documentType": "bai/knowledge-note",
+          "createdAtUtcIso": "2026-08-16T20:32:32.801Z"
+        },
+        "version": 0,
+        "documentId": "aea7368d-394c-44c6-b605-24265f3b871b",
+        "protocolVersions": {
+          "base-reducer": 2
+        }
+      },
+      "timestampUtcMs": "2026-08-16T20:32:32.801Z"
+    }
+  },
+  {
+    "index": 0,
+    "hash": "Y6Wg46maYVBz9Ef8bHYtEY/KEbM=",
+    "timestampUtcMs": "2026-08-16T20:32:33.185Z",
+    "action": {
+      "type": "SET_TITLE",
+      "input": {
+        "title": "Skill invocations should be attributable transformations on document-model state",
+        "updatedAt": "2026-08-16T20:32:33.185Z"
+      },
+      "timestampUtcMs": "2026-08-16T20:32:33.185Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "",
+    "timestampUtcMs": "2026-08-16T20:32:32.801Z",
+    "action": {
+      "type": "UPGRADE_DOCUMENT",
+      "input": {
+        "model": "bai/knowledge-note",
+        "toVersion": 1,
+        "documentId": "aea7368d-394c-44c6-b605-24265f3b871b",
+        "fromVersion": 0,
+        "initialState": {
+          "auth": {
+            "grants": [],
+            "version": 0
+          },
+          "local": {
+            "lastViewedAt": null,
+            "personalTags": []
+          },
+          "global": {
+            "links": [],
+            "model": null,
+            "scope": null,
+            "title": null,
+            "editor": null,
+            "inputs": [],
+            "models": [],
+            "status": "DRAFT",
+            "topics": [],
+            "content": null,
+            "context": null,
+            "modelId": null,
+            "modules": [],
+            "outputs": [],
+            "version": null,
+            "computes": null,
+            "filePath": null,
+            "noteType": null,
+            "severity": null,
+            "hooksUsed": [],
+            "rootCause": null,
+            "confidence": null,
+            "consumedBy": [],
+            "provenance": null,
+            "sourceType": null,
+            "targetType": null,
+            "cardinality": null,
+            "description": null,
+            "alternatives": [],
+            "consequences": [],
+            "errorMessage": null,
+            "relationType": null,
+            "correctPattern": null,
+            "decisionStatus": null,
+            "dispatchTargets": [],
+            "lifecycleEvents": []
+          },
+          "document": {
+            "hash": {
+              "encoding": "base64",
+              "algorithm": "sha1"
+            },
+            "version": 1
+          }
+        }
+      },
+      "timestampUtcMs": "2026-08-16T20:32:32.801Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "eCRGw0Ti0mdKILBGm8Kkem5koPk=",
+    "timestampUtcMs": "2026-08-16T20:32:33.185Z",
+    "action": {
+      "type": "SET_DESCRIPTION",
+      "input": {
+        "updatedAt": "2026-08-16T20:32:33.185Z",
+        "description": "Each skill call should be a typed, signed, replayable operation on known state, not an ephemeral tool invocation beside the artifact."
+      },
+      "timestampUtcMs": "2026-08-16T20:32:33.185Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "",
+    "timestampUtcMs": "2026-08-16T20:32:49.007Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "aea7368d-394c-44c6-b605-24265f3b871b",
+        "targetId": "2b423487-123f-414c-bd20-edce7de891f4",
+        "relationshipType": "DERIVED_FROM"
+      },
+      "timestampUtcMs": "2026-08-16T20:32:49.007Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "Yx25mbmc+JuEwAf+qQXkOBXiWyA=",
+    "timestampUtcMs": "2026-08-16T20:32:33.185Z",
+    "action": {
+      "type": "SET_NOTE_TYPE",
+      "input": {
+        "noteType": "PATTERN",
+        "updatedAt": "2026-08-16T20:32:33.185Z"
+      },
+      "timestampUtcMs": "2026-08-16T20:32:33.185Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "",
+    "timestampUtcMs": "2026-08-16T20:32:50.729Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "aea7368d-394c-44c6-b605-24265f3b871b",
+        "targetId": "ee0b4542-988d-4c21-9dc5-72c1eafbbe45",
+        "relationshipType": "BUILDS_ON"
+      },
+      "timestampUtcMs": "2026-08-16T20:32:50.729Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "K+uqmIpwXdqSDxNOnQavFp5iUh4=",
+    "timestampUtcMs": "2026-08-16T20:32:33.185Z",
+    "action": {
+      "type": "SET_CONTENT",
+      "input": {
+        "content": "## Claim\n\nModel each skill invocation as an attributable transformation: an action against a document, dispatched by an attributed actor, executed by a deterministic reducer, and recorded in an append-only operation log.\n\n## Implications\n\n- State derives only from replaying the log\n- Every byte in the final state traces to an operation \u2192 skill \u2192 actor\n- The artifact and the provenance record are the same structure\n\n## Contrast\n\nTool-call traces that live *beside* the artifact force post-hoc reconciliation. Unifying them (\"the artifact is the log\") removes that gap.",
+        "updatedAt": "2026-08-16T20:32:33.185Z"
+      },
+      "timestampUtcMs": "2026-08-16T20:32:33.185Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "",
+    "timestampUtcMs": "2026-08-16T20:32:50.876Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "aea7368d-394c-44c6-b605-24265f3b871b",
+        "targetId": "fdc3d342-bb38-468d-82d1-440b2af01587",
+        "relationshipType": "BUILDS_ON"
+      },
+      "timestampUtcMs": "2026-08-16T20:32:50.876Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "mwZvM49U+ycXxr3DWmVtR684J7o=",
+    "timestampUtcMs": "2026-08-16T20:32:33.185Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "3a0cfcdd-3ccc-4640-91b0-9f36aaf51c3d",
+        "name": "provenance"
+      },
+      "timestampUtcMs": "2026-08-16T20:32:33.185Z"
+    }
+  },
+  {
+    "index": 5,
+    "hash": "",
+    "timestampUtcMs": "2026-08-16T20:32:55.335Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "aea7368d-394c-44c6-b605-24265f3b871b",
+        "targetId": "e2186433-6a5b-4e9a-90e8-37c698b35e89",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-08-16T20:32:55.335Z"
+    }
+  },
+  {
+    "index": 5,
+    "hash": "ykCWonvcJRhWPep/vbooSDo3lwM=",
+    "timestampUtcMs": "2026-08-16T20:32:33.185Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "97a19935-d89f-414b-94d5-ab853a2e8725",
+        "name": "document-models"
+      },
+      "timestampUtcMs": "2026-08-16T20:32:33.185Z"
+    }
+  },
+  {
+    "index": 6,
+    "hash": "QcjVLj0rJ6HDuNcoYyMGQ6alTRc=",
+    "timestampUtcMs": "2026-08-16T20:32:33.185Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "ea82ff6f-1962-4447-b757-00569a5d532f",
+        "name": "agent-skills"
+      },
+      "timestampUtcMs": "2026-08-16T20:32:33.185Z"
+    }
+  },
+  {
+    "index": 7,
+    "hash": "9bAWQv5YsFqyCwKPaTCBvqFEbls=",
+    "timestampUtcMs": "2026-08-16T20:32:33.185Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "28b34ee6-a50e-45a5-853c-e221daceb607",
+        "name": "event-sourcing"
+      },
+      "timestampUtcMs": "2026-08-16T20:32:33.185Z"
+    }
+  },
+  {
+    "index": 8,
+    "hash": "Q7u0ousH1CzWVK7MUhaVfwwFoTA=",
+    "timestampUtcMs": "2026-08-16T20:32:33.564Z",
+    "action": {
+      "type": "SET_PROVENANCE",
+      "input": {
+        "author": "knowledge-agent",
+        "createdAt": "2026-08-16T20:32:33.185Z",
+        "sourceOrigin": "DERIVED"
+      },
+      "timestampUtcMs": "2026-08-16T20:32:33.564Z"
+    }
+  },
+  {
+    "index": 9,
+    "hash": "P8nWdX19diPG8rna82SOUjiwbos=",
+    "timestampUtcMs": "2026-08-16T20:32:34.048Z",
+    "action": {
+      "type": "SUBMIT_FOR_REVIEW",
+      "input": {
+        "id": "15b1e88b-ba34-4e9a-93b7-b8027014fe53",
+        "actor": "knowledge-agent",
+        "comment": "pipeline extract",
+        "timestamp": "2026-08-16T20:32:34.048Z"
+      },
+      "timestampUtcMs": "2026-08-16T20:32:34.048Z"
+    }
+  },
+  {
+    "index": 10,
+    "hash": "zSiIDFIplURaM5esOVcCiEcwMcg=",
+    "timestampUtcMs": "2026-08-16T20:32:34.189Z",
+    "action": {
+      "type": "APPROVE_NOTE",
+      "input": {
+        "id": "bf0f3bd7-5bed-4896-b648-b44832aa841a",
+        "actor": "pipeline-reviewer",
+        "comment": "pipeline verify",
+        "timestamp": "2026-08-16T20:32:34.189Z"
+      },
+      "timestampUtcMs": "2026-08-16T20:32:34.189Z"
+    }
+  },
+  {
+    "index": 11,
+    "hash": "abc1sxOeKBeMhwUqhlfwTGferTk=",
+    "timestampUtcMs": "2026-08-16T20:32:58.720Z",
+    "action": {
+      "type": "SET_CONTENT",
+      "input": {
+        "content": "## Claim\n\nModel each skill invocation as an attributable transformation: an action against a document, dispatched by an attributed actor, executed by a deterministic reducer, and recorded in an append-only operation log.\n\n## Implications\n\n- State derives only from replaying the log\n- Every byte in the final state traces to an operation \u2192 skill \u2192 actor\n- The artifact and the provenance record are the same structure\n\n## Contrast\n\nTool-call traces that live *beside* the artifact force post-hoc reconciliation. Unifying them (\"the artifact is the log\") removes that gap.\n\n## See also (reweave)\n\n- Related evaluation stance: process-level evaluation beyond output scoring\n- Related memory risk: untyped knowledge-layer contamination modes\n- Implementation conventions: three conventions for attributable skills\n",
+        "updatedAt": "2026-08-16T20:32:58.720Z"
+      },
+      "timestampUtcMs": "2026-08-16T20:32:58.720Z"
+    }
+  },
+  {
+    "index": 12,
+    "hash": "9Pl/RCA3xg0U9HQxXWlq1GqjzQQ=",
+    "timestampUtcMs": "2026-09-03T10:03:28.032Z",
+    "action": {
+      "type": "SET_CONTENT",
+      "input": {
+        "content": "## Claim\n\nModel each skill invocation as an attributable transformation: an action against a document, dispatched by an attributed actor, executed by a deterministic reducer, and recorded in an append-only operation log.\n\n## Implications\n\n- State derives only from replaying the log\n- Every byte in the final state traces to an operation \u2192 skill \u2192 actor\n- The artifact and the provenance record are the same structure\n\n## Contrast\n\nTool-call traces that live *beside* the artifact force post-hoc reconciliation. Unifying them (\"the artifact is the log\") removes that gap.\n\n## See also (reweave)\n\n- Related evaluation stance: process-level evaluation beyond output scoring\n- Related memory risk: untyped knowledge-layer contamination modes\n- Implementation conventions: three conventions for attributable skills\n\n\n## Methodology grounding\nThe claims below live in the plugin's `data/methodology/` corpus; the relationship is stated per claim.\n\n- **[[hook enforcement guarantees quality while instruction enforcement merely suggests it]]** \u2014 BUILDS_ON. A skill described in an instruction file is a suggestion; a skill invocation recorded as an operation on document state is enforcement, because the record exists whether or not the agent cooperated.\n- **[[agents are simultaneously methodology executors and subjects creating a unique trust asymmetry]]** \u2014 RELATES_TO. Attribution is the asymmetry's remedy: if every transformation names its actor and its inputs, the agent's dual role stops being invisible to whoever audits the result.\n",
+        "updatedAt": "2026-09-03T10:03:28.032Z"
+      },
+      "timestampUtcMs": "2026-09-03T10:03:28.032Z"
+    }
+  }
+]

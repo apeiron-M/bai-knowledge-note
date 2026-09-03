@@ -1,0 +1,129 @@
+[
+  {
+    "index": 0,
+    "hash": "",
+    "timestampUtcMs": "2026-09-02T21:32:40.347Z",
+    "action": {
+      "type": "CREATE_DOCUMENT",
+      "input": {
+        "meta": {},
+        "name": "Academy \u203a Build \u203a GettingStartedBuilding \u203a Vetra builder tooling",
+        "slug": "",
+        "model": "bai/source",
+        "branch": "main",
+        "signing": {
+          "nonce": "",
+          "publicKey": {},
+          "signature": "04aab390-a057-4c2a-8b54-093a2a859a95",
+          "documentType": "bai/source",
+          "createdAtUtcIso": "2026-09-02T21:32:40.347Z"
+        },
+        "version": 0,
+        "documentId": "04aab390-a057-4c2a-8b54-093a2a859a95",
+        "protocolVersions": {
+          "base-reducer": 2
+        }
+      },
+      "timestampUtcMs": "2026-09-02T21:32:40.347Z"
+    }
+  },
+  {
+    "index": 0,
+    "hash": "Ij/1i5f0g5KhZEbafA0n0QFz2SQ=",
+    "timestampUtcMs": "2026-09-02T21:32:40.201Z",
+    "action": {
+      "type": "INGEST_SOURCE",
+      "input": {
+        "url": "https://github.com/powerhouse-inc/powerhouse/blob/v6.2.2-dev.74/apps/academy/docs/academy/03-Build/00-GettingStartedBuilding/04-BuilderTools.md",
+        "tool": "sync-repo-docs",
+        "title": "Academy \u203a Build \u203a GettingStartedBuilding \u203a Vetra builder tooling",
+        "author": "Powerhouse Inc.",
+        "method": "sha256:fcfaf0cf441c15fd957fa8f5116f702fb73b663acca60c5b50a64edd18914a89 git:v6.2.2-dev.74",
+        "content": "# Vetra builder tooling\n\nAn overview of the builder tooling in the Powerhouse/Vetra ecosystem, for the manual (CLI) builder workflow. This list grows as the toolkit does.\n\n## Powerhouse CLI\n\nThe Powerhouse CLI (`ph-cmd`) is the command-line entry point for building by hand: scaffolding projects, generating code, and running Connect and the Reactor locally.\n\n- Install it and verify your setup in [Prerequisites](/academy/Build/GettingStartedBuilding/Prerequisites).\n- For the full command list \u2014 `ph init`, `ph use`, `ph update`, `ph generate`, and the rest \u2014 see the [Powerhouse CLI reference](/academy/Reference/CLITooling/PowerhouseCLI).\n- For task-oriented walkthroughs (switching versions, managing dependencies, publishing), see the [Cookbook](/academy/Lookup/Cookbook).\n\n## Boilerplate\n\nThe Document Model boilerplate is the foundational template used for code generation when scaffolding your editors and models. It ensures compatibility with host applications like Connect and Switchboard for document model and editor integration.\n\nAfter installing `ph-cmd`, run `ph init` to initialize a project directory and structure; this command uses the boilerplate. The boilerplate includes scripts for generating code, linting, formatting, building, and testing.\n\n## Design system\n\nThe Powerhouse Design System is a collection of reusable front-end components based on GraphQL scalars, including custom scalars specific to the web3 ecosystem. It provides:\n\n- Consistent UI components across Powerhouse applications\n- Automatic inclusion as a dependency in new document model projects\n- Customization options using CSS variables\n\nRead more in the [Component Library documentation](/academy/Reference/EditorsUI/DocumentEngineering).\n\n## Reactor libraries\n\nReactors are the nodes in the Powerhouse network that handle document storage, conflict resolution, and operation verification. The Reactor libraries include:\n\n- **API** \u2014 **Subgraphs** (modular GraphQL services that connect to the Reactor for structured data access) and **Processors** (event-driven components that react to document changes and process data).\n- **Browser** \u2014 handles client-side interactions.\n- **Local** \u2014 manages local storage and offline functionality.\n- **drive-app** \u2014 handles document organization and storage management, and can be customized to offer specific functionality, categorization, or tailored interfaces for your documents.\n\n## Code generators\n\nPowerhouse provides several code generation tools:\n\n### Document model scaffolding\n\nGenerates the basic structure for new document models with `ph init`, based on the boilerplate.\n\n### Editor generator\n\nCreates template code for document model editors: `ph generate editor --name <name> --document-type <documenttype>`.\n\n### Subgraph generator\n\nCreates GraphQL subgraph templates for data access automatically on `ph reactor`.\n\n### Processor generator\n\nGenerates processor templates for event handling automatically on `ph reactor`.\n\n### Analytics processor generator\n\nCreates specialized processors for analytics tracking.\n\n## Analytics engine\n\nThe Analytics Engine tracks and analyzes operations and state changes on document models. Features include:\n\n- Custom dashboard and report generation\n- Document-model-specific analytics\n- Metric and dimension tracking\n- Data combination from multiple document models\n\nGenerate an analytics processor with:\n\n```bash\nph generate processor --type analytics\n```\n",
+        "createdAt": "2026-09-02T21:32:40.201Z",
+        "createdBy": "repo-docs-sync",
+        "sourceType": "DOCUMENTATION",
+        "description": "Powerhouse v6.2.2-dev.74 (unchanged since v6.2.2-dev.47) \u2014 An overview of the builder tooling in the Powerhouse/Vetra ecosystem, for the manual (CLI) builder workflow. This list grows as the toolkit\u2026",
+        "publishedAt": "2026-06-24T16:01:33.000Z"
+      },
+      "timestampUtcMs": "2026-09-02T21:32:40.201Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "",
+    "timestampUtcMs": "2026-09-02T21:32:40.347Z",
+    "action": {
+      "type": "UPGRADE_DOCUMENT",
+      "input": {
+        "model": "bai/source",
+        "toVersion": 1,
+        "documentId": "04aab390-a057-4c2a-8b54-093a2a859a95",
+        "fromVersion": 0,
+        "initialState": {
+          "auth": {
+            "grants": [],
+            "version": 0
+          },
+          "local": {},
+          "global": {
+            "title": null,
+            "status": "INBOX",
+            "content": null,
+            "createdAt": null,
+            "createdBy": null,
+            "provenance": null,
+            "sourceType": null,
+            "description": null,
+            "extractedClaims": [],
+            "extractionStats": null
+          },
+          "document": {
+            "hash": {
+              "encoding": "base64",
+              "algorithm": "sha1"
+            },
+            "version": 1
+          }
+        }
+      },
+      "timestampUtcMs": "2026-09-02T21:32:40.347Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "0ZEBpNXsPH/Ijj043yCVDtONFkI=",
+    "timestampUtcMs": "2026-09-02T21:32:47.355Z",
+    "action": {
+      "type": "ADD_EXTRACTED_CLAIM",
+      "input": {
+        "claimRef": "54d22335-80b5-43e1-9145-5aa556218b4c"
+      },
+      "timestampUtcMs": "2026-09-02T21:32:47.355Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "oV0JQerhUIQ5w/zM9cLL2zDkagg=",
+    "timestampUtcMs": "2026-09-02T21:32:48.754Z",
+    "action": {
+      "type": "ADD_EXTRACTED_CLAIM",
+      "input": {
+        "claimRef": "83b60ca6-793d-4d0c-9b8c-7dc6cb1d3eff"
+      },
+      "timestampUtcMs": "2026-09-02T21:32:48.754Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "2n0RB3tFQHxg3KX++nhcSRBS4d0=",
+    "timestampUtcMs": "2026-09-02T21:33:00.257Z",
+    "action": {
+      "type": "SET_SOURCE_STATUS",
+      "input": {
+        "status": "EXTRACTED"
+      },
+      "timestampUtcMs": "2026-09-02T21:33:00.257Z"
+    }
+  }
+]

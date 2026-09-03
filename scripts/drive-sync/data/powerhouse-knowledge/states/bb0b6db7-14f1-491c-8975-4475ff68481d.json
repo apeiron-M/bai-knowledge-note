@@ -1,0 +1,110 @@
+{
+  "links": [
+    {
+      "id": "lnk-43b82c81-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "43b82c81-4d28-4e69-9a0a-84c0dddb87ef",
+      "targetTitle": "reactor-read-models-pre-ready-phase"
+    },
+    {
+      "id": "lnk-04374aa9-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "04374aa9-c0dc-477b-86c2-35841f3c8857",
+      "targetTitle": "relational-db-processor-for-sql-projections"
+    },
+    {
+      "id": "lnk-f2124247-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "f2124247-9efa-48bb-bda6-c929f59e4f12",
+      "targetTitle": "push-flow-encrypt-upload-manifest"
+    },
+    {
+      "id": "lnk-7ef703d9-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "7ef703d9-44ff-4168-b0b5-90d9f1e602a0",
+      "targetTitle": "swarm-manifest-three-tier-hierarchy"
+    },
+    {
+      "id": "lnk-3c684b04-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "3c684b04-0bf3-4736-9a8f-c08bd90bd384",
+      "targetTitle": "Academy \u203a Reference \u203a Processors \u203a Processor Migration Guide (v6)",
+      "reason": "Backing page found by content match in the v6.2.2-dev.74 source backfill \u2014 identifiers onoperations, onstrands, operationwithcontext from the claim appear in this page (text identical at v6.2.2-dev.47 and v6.2.2-dev.74); attribution, not the original extraction record",
+      "confidence": "grounded"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "V6 processors receive a flat OperationWithContext list via onOperations instead of grouped strands via onStrands",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "d350c950-3171-4994-ac26-ece8f3b73e64",
+      "name": "processors",
+      "topicDocumentId": null
+    },
+    {
+      "id": "6d41d369-b468-4747-af62-41d7ab614c35",
+      "name": "migration",
+      "topicDocumentId": null
+    },
+    {
+      "id": "8537e9e9-b931-4787-b390-e0fc0ed72168",
+      "name": "v6-reactor",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "The v6 Reactor replaced `onStrands(strands: InternalTransmitterUpdate[])` with `onOperations(operations: OperationWithContext[])`. Each OperationWithContext destructures as `{ operation, context }` where context has `documentId`, `documentType`, `scope`, `branch`, `ordinal` (global monotonic counter for cross-document ordering), and optional `resultingState` (JSON string). Operation access changed: `operation.type` -> `operation.action.type`, `operation.input` -> `operation.action.input`, `operation.timestamp` -> `operation.action.timestampUtcMs`. Steady-state live routing delivers each matching operation once, in global-ordinal order, but delivery is not exactly-once overall: backfill and replay are an explicit part of the processor contract, so idempotence guards (`clearSource` / `index === 0` rebuilds) are still recommended. The manager pages through history via `operationIndex.getSinceOrdinal(lastOrdinal)` when a factory registers against a drive that already has history, after a restart to replay the gap missed while the reactor was down, and when `tracked.retry()` re-activates an errored processor and re-runs backfill. Cursors persist in the `ProcessorCursor` table keyed by `processorId`, and on startup the manager rehydrates them and catch-up replays the gap. Factory signature changed from `(driveId: string)` to `(driveHeader: PHDocumentHeader, processorApp?: ProcessorApp)` with outer parameter changing from direct dependencies to `IProcessorHostModule`.\n\n_Corrected 2026-08-13 against Powerhouse v6.2.2-dev.45._",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": "v6.2.2-dev.74",
+  "computes": null,
+  "filePath": "apps/academy/docs/academy/04-Reference/04-Processors/08-ProcessorMigrationGuide.md",
+  "noteType": "ARCHITECTURE",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "knowledge-agent",
+    "createdAt": "2026-04-02T12:00:00.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-09-02T21:39:12.343Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "The IProcessor interface simplified from strand-based to flat operation-based with per-operation context including global ordinal.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "f4a224fe-a259-4fff-94b8-c4f853417902",
+      "actor": "claude",
+      "comment": "Knowledge registered against powerhouse v6.2.2-dev.47",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-14T12:00:00.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "91122859-0a19-4998-8f75-ce188362f639",
+      "actor": "liberuum",
+      "comment": "Canonical as of powerhouse v6.2.2-dev.47",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-14T12:00:00.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

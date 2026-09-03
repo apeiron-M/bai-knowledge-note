@@ -1,0 +1,81 @@
+{
+  "links": [
+    {
+      "id": "lnk-e91355bb-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "e91355bb-23ac-44d2-b142-a99fb797814b",
+      "targetTitle": "skill-cli-reference",
+      "reason": "Discovery note distilled by sync-skills from the skill's SKILL.md frontmatter description and its section headings (source hash sha256:f5a66fb4ab29); the full procedure is the source text",
+      "confidence": "grounded"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Agent skill: /cli-reference \u2014 Switchboard CLI commands for Knowledge Vault operations.",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "de6bbbc8-272d-4908-826f-541906c808ea",
+      "name": "agent-skills",
+      "topicDocumentId": null
+    },
+    {
+      "id": "6809ade2-0f08-4ce0-b965-ed51118ab4f3",
+      "name": "cli-reference",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "## When to use\nSwitchboard CLI commands for Knowledge Vault operations. Use as an alternative to MCP when the CLI is available. Install from GitHub releases.\n\n## What it covers\n- Installation\n- Configuration\n- Drive Operations\n- Document Creation\n- Mutations via Interactive Editor\n- Dispatching Raw Actions\n- CRITICAL: Required Fields\n- Batching with `docs apply`: ordered, per-action isolated, silently partial\n- Two-Batch Pattern\n- Full Pipeline via CLI\n- Querying\n- Monitoring\n- Document Relationships\n- Methodology Reference (Local)\n\n## Where the full skill lives\n- Vault source: **Agent skill: cli-reference** (full SKILL.md text, DERIVED_FROM below)\n- Canonical copy: plugin repo `skills/cli-reference/SKILL.md` \u2014 always execute from the repo copy; this note is the discovery layer.\n\n## Invocation\n`/powerhouse-knowledge:cli-reference` in Claude Code (plugin installed), or read the source content and follow it manually.\n\n_Synced by sync-skills; source hash sha256:f5a66fb4ab29\u2026_",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": "skills/cli-reference/SKILL.md",
+  "noteType": "PROCEDURE",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "skill-sync",
+    "createdAt": "2026-08-16T12:01:44.822Z",
+    "sessionId": null,
+    "updatedAt": "2026-09-02T19:21:22.684Z",
+    "sourceOrigin": "IMPORT"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Switchboard CLI commands for Knowledge Vault operations. Use as an alternative to MCP when the CLI is available. Install from GitHub releases.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "114e3490-7eaa-4b7f-94f1-d498fd6d25dd",
+      "actor": "skill-sync",
+      "comment": "skill sync",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-16T12:01:45.598Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "dfb5906a-cd43-4ff9-843d-072bc7d69c85",
+      "actor": "knowledge-agent",
+      "comment": "mechanical sync from canonical repo copy",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-16T12:01:45.739Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

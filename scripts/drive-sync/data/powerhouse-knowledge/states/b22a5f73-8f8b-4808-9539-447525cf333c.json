@@ -1,0 +1,107 @@
+{
+  "links": [
+    {
+      "id": "lnk-9b1bec19-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "9b1bec19-6bcc-4f87-80b9-5f25360e4b7e",
+      "targetTitle": "choose-analytics-vs-read-model-vs-relational-by-query-shape",
+      "reason": "Compensating entries and business-time dating are the other modelling constraints that follow from choosing the analytics engine",
+      "confidence": "grounded"
+    },
+    {
+      "id": "lnk-d153c199-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "d153c199-c714-4fb5-8ecc-6e388abae029",
+      "targetTitle": "Academy \u203a Build \u203a WorkWithData \u203a Analytics Engine \u203a use-cases \u203a Sky dashboard",
+      "reason": "Extracted from apps/academy/docs/academy/03-Build/04-WorkWithData/_06-Analytics Engine/use-cases/maker.md at v6.2.2-dev.74 \u2014 Currency (setting, query example, consistency, impact of choice)",
+      "confidence": "grounded"
+    },
+    {
+      "id": "lnk-d1df6fc5-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "d1df6fc5-ad16-455b-9462-257008df48f8",
+      "targetTitle": "analytics-dimension-lod-exploration",
+      "reason": "Both are shape decisions in the same filter object: what varies per row belongs in dimensions, what must hold for the whole series belongs beside them",
+      "confidence": "grounded"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Currency is a filter field on an analytics query rather than a dimension, so comparing two currencies means two queries whose results are labelled separately",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "c8f99d4d-00c4-4f87-8d06-a4dc232f39c9",
+      "name": "analytics",
+      "topicDocumentId": null
+    },
+    {
+      "id": "79f56253-f535-4186-b80f-0fdd7865e186",
+      "name": "currency",
+      "topicDocumentId": null
+    },
+    {
+      "id": "84850f9f-a314-4ad5-b512-991268b0571d",
+      "name": "querying",
+      "topicDocumentId": null
+    },
+    {
+      "id": "1f17274f-7527-4153-8be2-654701d03c8f",
+      "name": "modelling",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "In the Sky dashboard's analytics model, **currency is a top-level filter field**, not a dimension:\n\n```json\n{ \"filter\": { \"start\": \"2023-01-01\", \"end\": \"2024-01-01\", \"granularity\": \"total\",\n              \"metrics\": [\"Budget\"], \"dimensions\": [{ \"name\": \"budget\", \"select\": \"atlas\", \"lod\": 3 }],\n              \"currency\": \"MKR\" } }\n```\n\nThree consequences the page draws out:\n\n- **Be consistent per query.** A currency is set once for the whole query, so every row in a series is in that currency.\n- **Comparing currencies means separate queries.** \"If your analysis involves comparing data across both DAI and MKR, ensure that separate queries are made for each currency and the results are appropriately labeled and distinguished.\" There is no cross-currency series.\n- **The choice changes the question.** DAI \"provides a stable measure for financial planning and tracking\" while MKR \"offers insights into governance and decision-making aspects of the ecosystem\" \u2014 so the same metric in two currencies answers two different questions rather than the same one in two units.\n\nThe modelling lesson generalises beyond Sky: a unit of account belongs in the filter when a series must be internally consistent, and in a dimension only when mixed-unit rows are meaningful. The engine returns `unit` on every row, which is what makes the distinction checkable rather than assumed.\n\n## Provenance\n- `apps/academy/docs/academy/03-Build/04-WorkWithData/_06-Analytics Engine/use-cases/maker.md` \u2014 Currency (setting, query example, consistency, impact of choice)\n\n_Extracted from the Powerhouse repository at **v6.2.2-dev.74**._",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": "v6.2.2-dev.74",
+  "computes": null,
+  "filePath": "apps/academy/docs/academy/03-Build/04-WorkWithData/_06-Analytics Engine/use-cases/maker.md",
+  "noteType": "PATTERN",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "knowledge-agent",
+    "createdAt": "2026-09-03T07:55:05.629Z",
+    "sessionId": null,
+    "updatedAt": "2026-09-03T07:55:08.120Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "The Sky dashboard's model sets currency to DAI or MKR in the filter object; the guidance is to be consistent per query and to run separate queries when comparing, since the choice changes what the.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "cc66c6b0-238a-4402-855d-962a5a978a0b",
+      "actor": "knowledge-agent",
+      "comment": "extracted from apps/academy/docs/academy/03-Build/04-WorkWithData/_06-Analytics Engine/use-cases/maker.md at v6.2.2-dev.74",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-09-03T07:55:06.198Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "a820fc1e-2426-4f83-98b4-fe101605254b",
+      "actor": "liberuum",
+      "comment": "claim checked against the cited file at the pinned tag",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-09-03T07:55:08.120Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

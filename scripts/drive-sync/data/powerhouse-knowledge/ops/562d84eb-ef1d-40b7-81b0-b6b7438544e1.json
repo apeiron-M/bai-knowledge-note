@@ -1,0 +1,500 @@
+[
+  {
+    "index": 0,
+    "hash": "",
+    "timestampUtcMs": "2026-09-03T07:18:36.160Z",
+    "action": {
+      "type": "CREATE_DOCUMENT",
+      "input": {
+        "meta": {},
+        "name": "collection-based-sync",
+        "slug": "",
+        "model": "bai/knowledge-note",
+        "branch": "main",
+        "signing": {
+          "nonce": "",
+          "publicKey": {},
+          "signature": "562d84eb-ef1d-40b7-81b0-b6b7438544e1",
+          "documentType": "bai/knowledge-note",
+          "createdAtUtcIso": "2026-09-03T07:18:36.160Z"
+        },
+        "version": 0,
+        "documentId": "562d84eb-ef1d-40b7-81b0-b6b7438544e1",
+        "protocolVersions": {
+          "base-reducer": 2
+        }
+      },
+      "timestampUtcMs": "2026-09-03T07:18:36.160Z"
+    }
+  },
+  {
+    "index": 0,
+    "hash": "cJOWWl8CNhcsjzKL3MzDHMaQbU8=",
+    "timestampUtcMs": "2026-09-03T07:18:37.560Z",
+    "action": {
+      "type": "SET_TITLE",
+      "input": {
+        "title": "Sync tracks position with one cursor per collection over a flattened operation stream, and a drive's collection id is drive.<branch>.<driveId>",
+        "updatedAt": "2026-09-03T07:18:37.560Z"
+      },
+      "timestampUtcMs": "2026-09-03T07:18:37.560Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "",
+    "timestampUtcMs": "2026-09-03T07:18:36.160Z",
+    "action": {
+      "type": "UPGRADE_DOCUMENT",
+      "input": {
+        "model": "bai/knowledge-note",
+        "toVersion": 1,
+        "documentId": "562d84eb-ef1d-40b7-81b0-b6b7438544e1",
+        "fromVersion": 0,
+        "initialState": {
+          "auth": {
+            "grants": [],
+            "version": 0
+          },
+          "local": {
+            "lastViewedAt": null,
+            "personalTags": []
+          },
+          "global": {
+            "links": [],
+            "model": null,
+            "scope": null,
+            "title": null,
+            "editor": null,
+            "inputs": [],
+            "models": [],
+            "status": "DRAFT",
+            "topics": [],
+            "content": null,
+            "context": null,
+            "modelId": null,
+            "modules": [],
+            "outputs": [],
+            "version": null,
+            "computes": null,
+            "filePath": null,
+            "noteType": null,
+            "severity": null,
+            "hooksUsed": [],
+            "rootCause": null,
+            "confidence": null,
+            "consumedBy": [],
+            "provenance": null,
+            "sourceType": null,
+            "targetType": null,
+            "cardinality": null,
+            "description": null,
+            "alternatives": [],
+            "consequences": [],
+            "errorMessage": null,
+            "relationType": null,
+            "correctPattern": null,
+            "decisionStatus": null,
+            "dispatchTargets": [],
+            "lifecycleEvents": []
+          },
+          "document": {
+            "hash": {
+              "encoding": "base64",
+              "algorithm": "sha1"
+            },
+            "version": 1
+          }
+        }
+      },
+      "timestampUtcMs": "2026-09-03T07:18:36.160Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "/wV+gZq0FwMf+C5Sbaa3f3uT91I=",
+    "timestampUtcMs": "2026-09-03T07:18:37.560Z",
+    "action": {
+      "type": "SET_DESCRIPTION",
+      "input": {
+        "updatedAt": "2026-09-03T07:18:37.560Z",
+        "description": "Adding a document to a drive joins the drive's collection, so a single cursor covers every document in it \u2014 tracked by operation-index ordinals rather than per-document revisions."
+      },
+      "timestampUtcMs": "2026-09-03T07:18:37.560Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "",
+    "timestampUtcMs": "2026-09-03T07:20:55.542Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "metadata": {
+          "reason": "Extracted from packages/reactor/docs/ARCHITECTURE.md at v6.2.2-dev.74 \u2014 Synchronization \u203a Collection-Based Sync",
+          "confidence": "grounded"
+        },
+        "sourceId": "562d84eb-ef1d-40b7-81b0-b6b7438544e1",
+        "targetId": "e4ef060b-4d61-41b4-95bd-2f562eea3cfa",
+        "relationshipType": "DERIVED_FROM"
+      },
+      "timestampUtcMs": "2026-09-03T07:20:55.542Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "NzpnEHnX+zDEriurN+XLPmUQG7s=",
+    "timestampUtcMs": "2026-09-03T07:18:37.560Z",
+    "action": {
+      "type": "SET_NOTE_TYPE",
+      "input": {
+        "noteType": "ARCHITECTURE",
+        "updatedAt": "2026-09-03T07:18:37.560Z"
+      },
+      "timestampUtcMs": "2026-09-03T07:18:37.560Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "",
+    "timestampUtcMs": "2026-09-03T07:20:56.015Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "metadata": {
+          "reason": "The ordinal that context carries is the value this cursor advances through; without a global ordinal a flattened collection stream could not be tracked",
+          "confidence": "grounded"
+        },
+        "sourceId": "562d84eb-ef1d-40b7-81b0-b6b7438544e1",
+        "targetId": "14d47019-4ebc-4d7d-acfd-352b344a291f",
+        "relationshipType": "BUILDS_ON"
+      },
+      "timestampUtcMs": "2026-09-03T07:20:56.015Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "n5r82P4cyguSRYC9JJOs6cqd4zM=",
+    "timestampUtcMs": "2026-09-03T07:18:37.560Z",
+    "action": {
+      "type": "SET_CONTENT",
+      "input": {
+        "content": "Sync does not keep a cursor per document. Operations are grouped into **collections**, and a collection has one cursor over the flattened stream of every operation belonging to it:\n\n```ts\nconst collectionId = `drive.${branch}.${driveId}`;\n```\n\nWhen a document is added to a drive it **joins the drive's collection**, and from then on its operations appear in that collection's stream. The cursor advances through `ordinal` values from the operation index, which is exactly why the index assigns a global ordinal in the first place \u2014 per-scope `index` values could not order a multi-document stream.\n\nThe practical consequence: sync progress for a drive with 900 documents is one number, and a new document does not add a cursor to maintain. Membership is stored in `document_collections`.\n\n## Provenance\n- `packages/reactor/docs/ARCHITECTURE.md` \u2014 Synchronization \u203a Collection-Based Sync\n\n_Extracted from the Powerhouse repository at **v6.2.2-dev.74**._",
+        "updatedAt": "2026-09-03T07:18:37.560Z"
+      },
+      "timestampUtcMs": "2026-09-03T07:18:37.560Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "",
+    "timestampUtcMs": "2026-09-03T07:20:56.503Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "metadata": {
+          "reason": "Cursors are tracked in ordinals, and ordinals are local to a reactor \u2014 which is what makes the poll exchange's two frames of reference necessary",
+          "confidence": "grounded"
+        },
+        "sourceId": "562d84eb-ef1d-40b7-81b0-b6b7438544e1",
+        "targetId": "936ddc46-3b5a-40d1-b69f-6a3f6c3c6b8f",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-09-03T07:20:56.503Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "w4FkYqmTXqTPJoPZzMTnOL5tjQE=",
+    "timestampUtcMs": "2026-09-03T07:18:37.560Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "1c374d71-61ae-4dfd-91aa-bc8b9182b7b6",
+        "name": "reactor-sync"
+      },
+      "timestampUtcMs": "2026-09-03T07:18:37.560Z"
+    }
+  },
+  {
+    "index": 5,
+    "hash": "",
+    "timestampUtcMs": "2026-09-03T07:20:56.966Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "metadata": {
+          "reason": "Collection membership and cursor state are the document_collections and sync_cursors tables listed there",
+          "confidence": "grounded"
+        },
+        "sourceId": "562d84eb-ef1d-40b7-81b0-b6b7438544e1",
+        "targetId": "3c9df40d-1f3d-4bb5-b01a-f2d16e6ec0e4",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-09-03T07:20:56.966Z"
+    }
+  },
+  {
+    "index": 5,
+    "hash": "AZEvn0kwtIxq0ovkEzNK8mb6Hmc=",
+    "timestampUtcMs": "2026-09-03T07:18:37.560Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "0e802b6a-c24d-48fe-a919-7c1dcc490132",
+        "name": "collections"
+      },
+      "timestampUtcMs": "2026-09-03T07:18:37.560Z"
+    }
+  },
+  {
+    "index": 6,
+    "hash": "",
+    "timestampUtcMs": "2026-09-03T07:22:49.313Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "metadata": {
+          "reason": "Extracted from packages/reactor/docs/ARCHITECTURE.md at v6.2.2-dev.74 \u2014 Synchronization \u203a Collection-Based Sync",
+          "confidence": "grounded"
+        },
+        "sourceId": "562d84eb-ef1d-40b7-81b0-b6b7438544e1",
+        "targetId": "e4ef060b-4d61-41b4-95bd-2f562eea3cfa",
+        "relationshipType": "DERIVED_FROM"
+      },
+      "timestampUtcMs": "2026-09-03T07:22:49.313Z"
+    }
+  },
+  {
+    "index": 6,
+    "hash": "3Y3j0wjYxsOQelvFLT0kfoNaK/4=",
+    "timestampUtcMs": "2026-09-03T07:18:37.560Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "db2c8997-ea18-430b-a63f-0944b06185dd",
+        "name": "cursors"
+      },
+      "timestampUtcMs": "2026-09-03T07:18:37.560Z"
+    }
+  },
+  {
+    "index": 7,
+    "hash": "",
+    "timestampUtcMs": "2026-09-03T07:22:49.779Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "metadata": {
+          "reason": "The ordinal that context carries is the value this cursor advances through; without a global ordinal a flattened collection stream could not be tracked",
+          "confidence": "grounded"
+        },
+        "sourceId": "562d84eb-ef1d-40b7-81b0-b6b7438544e1",
+        "targetId": "14d47019-4ebc-4d7d-acfd-352b344a291f",
+        "relationshipType": "BUILDS_ON"
+      },
+      "timestampUtcMs": "2026-09-03T07:22:49.779Z"
+    }
+  },
+  {
+    "index": 7,
+    "hash": "AaTPmWg+vtpxEpD5LTp6QRHvjBU=",
+    "timestampUtcMs": "2026-09-03T07:18:37.560Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "1685d010-877f-476d-a201-b3e004399599",
+        "name": "drives"
+      },
+      "timestampUtcMs": "2026-09-03T07:18:37.560Z"
+    }
+  },
+  {
+    "index": 8,
+    "hash": "",
+    "timestampUtcMs": "2026-09-03T07:22:50.253Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "metadata": {
+          "reason": "Cursors are tracked in ordinals, and ordinals are local to a reactor \u2014 which is what makes the poll exchange's two frames of reference necessary",
+          "confidence": "grounded"
+        },
+        "sourceId": "562d84eb-ef1d-40b7-81b0-b6b7438544e1",
+        "targetId": "936ddc46-3b5a-40d1-b69f-6a3f6c3c6b8f",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-09-03T07:22:50.253Z"
+    }
+  },
+  {
+    "index": 8,
+    "hash": "N8Fe6hmk849uX5O7/0gC/qKohBw=",
+    "timestampUtcMs": "2026-09-03T07:18:37.560Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "version",
+        "value": "v6.2.2-dev.74",
+        "updatedAt": "2026-09-03T07:18:37.560Z"
+      },
+      "timestampUtcMs": "2026-09-03T07:18:37.560Z"
+    }
+  },
+  {
+    "index": 9,
+    "hash": "",
+    "timestampUtcMs": "2026-09-03T07:22:50.723Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "metadata": {
+          "reason": "Collection membership and cursor state are the document_collections and sync_cursors tables listed there",
+          "confidence": "grounded"
+        },
+        "sourceId": "562d84eb-ef1d-40b7-81b0-b6b7438544e1",
+        "targetId": "3c9df40d-1f3d-4bb5-b01a-f2d16e6ec0e4",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-09-03T07:22:50.723Z"
+    }
+  },
+  {
+    "index": 9,
+    "hash": "3shU0tdqgXBuRayc1tY67WrVOxo=",
+    "timestampUtcMs": "2026-09-03T07:18:37.560Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "filePath",
+        "value": "packages/reactor/docs/ARCHITECTURE.md",
+        "updatedAt": "2026-09-03T07:18:37.560Z"
+      },
+      "timestampUtcMs": "2026-09-03T07:18:37.560Z"
+    }
+  },
+  {
+    "index": 10,
+    "hash": "eJhDA90KuWLdol6ghHMFpF3vidM=",
+    "timestampUtcMs": "2026-09-03T07:18:39.974Z",
+    "action": {
+      "type": "SET_PROVENANCE",
+      "input": {
+        "author": "knowledge-agent",
+        "createdAt": "2026-09-03T07:18:39.974Z",
+        "sourceOrigin": "DERIVED"
+      },
+      "timestampUtcMs": "2026-09-03T07:18:39.974Z"
+    }
+  },
+  {
+    "index": 11,
+    "hash": "wfqT7rwGpRpMoOwQGgtqggd567Q=",
+    "timestampUtcMs": "2026-09-03T07:18:40.518Z",
+    "action": {
+      "type": "SUBMIT_FOR_REVIEW",
+      "input": {
+        "id": "020428c1-a291-4ac6-b55a-511c579531b3",
+        "actor": "knowledge-agent",
+        "comment": "extracted from packages/reactor/docs/ARCHITECTURE.md at v6.2.2-dev.74",
+        "timestamp": "2026-09-03T07:18:40.518Z"
+      },
+      "timestampUtcMs": "2026-09-03T07:18:40.518Z"
+    }
+  },
+  {
+    "index": 12,
+    "hash": "dZSbbBTWQ+LmqVvpuW9Hk5FUT9M=",
+    "timestampUtcMs": "2026-09-03T07:18:40.999Z",
+    "action": {
+      "type": "APPROVE_NOTE",
+      "input": {
+        "id": "d5cbef66-923e-4bb1-a28d-20b972a1e95f",
+        "actor": "liberuum",
+        "comment": "claim checked against the cited file at the pinned tag",
+        "timestamp": "2026-09-03T07:18:40.999Z"
+      },
+      "timestampUtcMs": "2026-09-03T07:18:40.999Z"
+    }
+  },
+  {
+    "index": 13,
+    "hash": "lVnpaENWFyqSAb2KIkGxFqeROiI=",
+    "timestampUtcMs": "2026-09-03T07:22:20.975Z",
+    "action": {
+      "type": "SET_TITLE",
+      "input": {
+        "title": "Sync tracks position with one cursor per collection over a flattened operation stream, and a drive's collection id is drive.<branch>.<driveId>",
+        "updatedAt": "2026-09-03T07:22:20.975Z"
+      },
+      "timestampUtcMs": "2026-09-03T07:22:20.975Z"
+    }
+  },
+  {
+    "index": 14,
+    "hash": "lVnpaENWFyqSAb2KIkGxFqeROiI=",
+    "timestampUtcMs": "2026-09-03T07:22:20.975Z",
+    "action": {
+      "type": "SET_DESCRIPTION",
+      "input": {
+        "updatedAt": "2026-09-03T07:22:20.975Z",
+        "description": "Adding a document to a drive joins the drive's collection, so a single cursor covers every document in it \u2014 tracked by operation-index ordinals rather than per-document revisions."
+      },
+      "timestampUtcMs": "2026-09-03T07:22:20.975Z"
+    }
+  },
+  {
+    "index": 15,
+    "hash": "lVnpaENWFyqSAb2KIkGxFqeROiI=",
+    "timestampUtcMs": "2026-09-03T07:22:20.975Z",
+    "action": {
+      "type": "SET_NOTE_TYPE",
+      "input": {
+        "noteType": "ARCHITECTURE",
+        "updatedAt": "2026-09-03T07:22:20.975Z"
+      },
+      "timestampUtcMs": "2026-09-03T07:22:20.975Z"
+    }
+  },
+  {
+    "index": 16,
+    "hash": "lVnpaENWFyqSAb2KIkGxFqeROiI=",
+    "timestampUtcMs": "2026-09-03T07:22:20.975Z",
+    "action": {
+      "type": "SET_CONTENT",
+      "input": {
+        "content": "Sync does not keep a cursor per document. Operations are grouped into **collections**, and a collection has one cursor over the flattened stream of every operation belonging to it:\n\n```ts\nconst collectionId = `drive.${branch}.${driveId}`;\n```\n\nWhen a document is added to a drive it **joins the drive's collection**, and from then on its operations appear in that collection's stream. The cursor advances through `ordinal` values from the operation index, which is exactly why the index assigns a global ordinal in the first place \u2014 per-scope `index` values could not order a multi-document stream.\n\nThe practical consequence: sync progress for a drive with 900 documents is one number, and a new document does not add a cursor to maintain. Membership is stored in `document_collections`.\n\n## Provenance\n- `packages/reactor/docs/ARCHITECTURE.md` \u2014 Synchronization \u203a Collection-Based Sync\n\n_Extracted from the Powerhouse repository at **v6.2.2-dev.74**._",
+        "updatedAt": "2026-09-03T07:22:20.975Z"
+      },
+      "timestampUtcMs": "2026-09-03T07:22:20.975Z"
+    }
+  },
+  {
+    "index": 17,
+    "hash": "lVnpaENWFyqSAb2KIkGxFqeROiI=",
+    "timestampUtcMs": "2026-09-03T07:22:20.975Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "version",
+        "value": "v6.2.2-dev.74",
+        "updatedAt": "2026-09-03T07:22:20.975Z"
+      },
+      "timestampUtcMs": "2026-09-03T07:22:20.975Z"
+    }
+  },
+  {
+    "index": 18,
+    "hash": "lVnpaENWFyqSAb2KIkGxFqeROiI=",
+    "timestampUtcMs": "2026-09-03T07:22:20.975Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "filePath",
+        "value": "packages/reactor/docs/ARCHITECTURE.md",
+        "updatedAt": "2026-09-03T07:22:20.975Z"
+      },
+      "timestampUtcMs": "2026-09-03T07:22:20.975Z"
+    }
+  }
+]

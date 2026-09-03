@@ -1,0 +1,108 @@
+{
+  "links": [
+    {
+      "id": "lnk-9e26b0dd-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "9e26b0dd-ae39-4a33-ab4b-f47f1fc6edaf",
+      "targetTitle": "live-collaboration-s-only-ui-surface-is-the-document-toolbar"
+    },
+    {
+      "id": "lnk-d1737634-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "d1737634-2378-431a-8cf8-4dcfba38ea5c",
+      "targetTitle": "collaboration-index-feed-structure"
+    },
+    {
+      "id": "lnk-650ecf22-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "650ecf22-c9ae-48a9-a02b-7aa78f21ac7c",
+      "targetTitle": "swarm-gsoc-many-to-one"
+    },
+    {
+      "id": "lnk-1c7a3c1c-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "1c7a3c1c-95e7-4bc8-a921-277863c4f346",
+      "targetTitle": "collab-three-milestone-build-order"
+    },
+    {
+      "id": "lnk-35c30c48-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "35c30c48-94a2-4b6c-8685-9bad536aef34",
+      "targetTitle": "collaborate-tab-in-chat-panel"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Initial-state transfer for a new participant reuses the existing document-share bundle path",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "t-da589971-1",
+      "name": "live-collaboration",
+      "topicDocumentId": null
+    },
+    {
+      "id": "t-da589971-2",
+      "name": "initial-state-transfer",
+      "topicDocumentId": null
+    },
+    {
+      "id": "t-da589971-3",
+      "name": "share-bundle",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "## Initial-state transfer pattern\n\nA participant who accepts an invitation needs the current state, not just future ops. Rather than inventing a new snapshot protocol, the design **reuses the existing document-share bundle**:\n\n- The invitation message carries a `shareReference` plus `actHistoryAddress` pointing to a one-shot drive bundle built via `buildDriveShareBundle`.\n- On accept, the recipient imports the bundle. Drive, folders, and docs materialize locally with the original signatures preserved.\n- After import, the recipient's SwarmChannel registers the peer feeds and starts pulling incremental ops.\n\nThis keeps the **snapshot path and the incremental-ops path decoupled**. The snapshot path is the same battle-tested import flow used by one-off document sharing; collab adds only the peer-feed subscription on top.\n\nBecause `action.context.signer.signatures` is preserved through imports (per the 2026-04-17 fix), the imported history already shows correct per-author attribution. New ops arriving through peer feeds continue the same signed chain.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "PATTERN",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "knowledge-agent",
+    "createdAt": "2026-04-21T14:16:54.676Z",
+    "sessionId": null,
+    "updatedAt": "2026-09-03T09:57:43.481Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "The invitation carries shareReference plus actHistoryAddress; importing materialises drive, folders and docs with signatures intact, then peer feeds take over - snapshot and delta stay decoupled.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "a91bf759-b651-4049-86e8-2f060f91366b",
+      "actor": "claude",
+      "comment": "Knowledge registered against powerhouse v6.2.2-dev.47",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-14T12:00:00.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "7aea2c5b-0dc2-458f-a6ac-5333bfd1b3fa",
+      "actor": "liberuum",
+      "comment": "Canonical as of powerhouse v6.2.2-dev.47",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-14T12:00:00.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

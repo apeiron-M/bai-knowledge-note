@@ -1,0 +1,27 @@
+{
+  "title": "Package \u203a reactor-browser \u203a registry \u2014 Registry Client",
+  "status": "EXTRACTED",
+  "content": "# Registry Client\n\nClient for interacting with a Powerhouse package registry. Provides methods to query packages and subscribe to real-time publish notifications via SSE.\n\n```ts\nimport { RegistryClient } from \"@powerhousedao/reactor-browser\";\n\nconst client = new RegistryClient(\"http://localhost:8080/-/cdn/\");\n```\n\n## `getPackages`\n\nReturns all packages from the registry.\n\n```ts\nconst packages = await client.getPackages();\n// [{ name, description, version, category, publisher, publisherUrl }, ...]\n```\n\n## `getPackagesByDocumentType`\n\nReturns package names that contain the specified document type.\n\n```ts\nconst names = await client.getPackagesByDocumentType(\n  \"powerhouse/document-model\",\n);\n```\n\n## `searchPackages`\n\nClient-side search through all packages by name or description.\n\n```ts\nconst results = await client.searchPackages(\"vetra\");\n```\n\n## `onPublish`\n\nSubscribes to real-time publish notifications via Server-Sent Events. Calls the callback whenever a package is published. Returns an unsubscribe function.\n\n```ts\nconst unsubscribe = client.onPublish((event) => {\n  console.log(`${event.packageName}@${event.version} published`);\n});\n\n// later...\nunsubscribe();\n```\n",
+  "createdAt": "2026-09-02T21:44:39.094Z",
+  "createdBy": "repo-docs-sync",
+  "provenance": {
+    "url": "https://github.com/powerhouse-inc/powerhouse/blob/v6.2.2-dev.74/packages/reactor-browser/src/registry/README.md",
+    "tool": "sync-repo-docs",
+    "author": "Powerhouse Inc.",
+    "method": "sha256:a57acb8ce26d26938b9b9cd669fc5dc73ac5e97a104db24ae1a2f1b69de32b2d git:v6.2.2-dev.74",
+    "publishedAt": "2026-03-24T14:42:01.000Z"
+  },
+  "sourceType": "DOCUMENTATION",
+  "description": "Powerhouse v6.2.2-dev.74 (unchanged since v6.2.2-dev.47) \u2014 Client for interacting with a Powerhouse package registry. Provides methods to query packages and subscribe to real-time publish notificatio\u2026",
+  "extractedClaims": [
+    "3c31ddfa-8a8a-4cee-8be1-2812015464e8"
+  ],
+  "extractionStats": {
+    "skipRate": 0,
+    "claimCount": 1,
+    "extractedAt": "2026-09-03T07:39:47.782Z",
+    "extractedBy": "knowledge-agent",
+    "skippedCount": 0
+  },
+  "links": []
+}

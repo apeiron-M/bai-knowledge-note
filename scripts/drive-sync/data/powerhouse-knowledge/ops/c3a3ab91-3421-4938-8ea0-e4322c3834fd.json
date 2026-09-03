@@ -1,0 +1,151 @@
+[
+  {
+    "index": 0,
+    "hash": "",
+    "timestampUtcMs": "2026-09-02T21:33:42.048Z",
+    "action": {
+      "type": "CREATE_DOCUMENT",
+      "input": {
+        "meta": {},
+        "name": "Academy \u203a Build \u203a DocumentModelCreation \u203a Implement document model tests",
+        "slug": "",
+        "model": "bai/source",
+        "branch": "main",
+        "signing": {
+          "nonce": "",
+          "publicKey": {},
+          "signature": "c3a3ab91-3421-4938-8ea0-e4322c3834fd",
+          "documentType": "bai/source",
+          "createdAtUtcIso": "2026-09-02T21:33:42.048Z"
+        },
+        "version": 0,
+        "documentId": "c3a3ab91-3421-4938-8ea0-e4322c3834fd",
+        "protocolVersions": {
+          "base-reducer": 2
+        }
+      },
+      "timestampUtcMs": "2026-09-02T21:33:42.048Z"
+    }
+  },
+  {
+    "index": 0,
+    "hash": "aSNEbqSXdCpwptLyb8gmDkGf3RE=",
+    "timestampUtcMs": "2026-09-02T21:33:41.997Z",
+    "action": {
+      "type": "INGEST_SOURCE",
+      "input": {
+        "url": "https://github.com/powerhouse-inc/powerhouse/blob/v6.2.2-dev.47/apps/academy/docs/academy/03-Build/02-DocumentModelCreation/06-ImplementDocumentModelTests.md",
+        "tool": "sync-repo-docs",
+        "title": "Academy \u203a Build \u203a DocumentModelCreation \u203a Implement document model tests",
+        "author": "Powerhouse Inc.",
+        "method": "sha256:69ee6e62da0bce944f0707fd3b473dfc1727a96024b4c45e2f907fe8b9315818 git:v6.2.2-dev.47 (baseline recorded 2026-09-02)",
+        "content": "# Implement document model tests\n\n:::note[Builds on the Manual Todo tutorial]\nThis is the same step from the [Manual Todo tutorial](/academy/Build/ManualTodoTutorial/WriteDocumentModelTests), covered here in depth. The Mastery Track's only addition is tests for the computed `stats` field \u2014 if you've done the basic build, skim to the stats parts.\n:::\n\n## Ensuring robustness and reliability\n\nIn the previous chapter, we implemented the core reducer logic for our document model. Now, we reach a critical stage that underpins the reliability and correctness of our entire model: **Implementing Document Model Tests**.\n\nTesting is not an afterthought; it's an integral part of the development lifecycle, especially in systems like Powerhouse where data integrity and predictable state transitions are paramount. Well-crafted tests serve as a safety net, allowing you to refactor and extend your document model with confidence.\n\nThis document provides a practical, hands-on tutorial for testing the `TodoList` document model reducers you have just built.\n\n## Practical implementation: Writing and running the TodoList tests\n\nThis tutorial assumes you have implemented the `TodoList` reducers as described in the previous chapter and that the code generator has created a test file skeleton at `document-models/todo-list/src/tests/todos.test.ts`.\n\n<details>\n<summary>Tutorial: Implementing and running the TodoList reducer tests</summary>\n\n### 1. Implement the reducer tests\n\nWith the reducer logic in place, it's critical to test it. Navigate to the generated test file at `document-models/todo-list/src/tests/todos.test.ts` and replace its contents with comprehensive tests.\n\nThis suite tests each operation, verifying not only that the `items` array is correct, but also that the operation itself is recorded properly in the document's history.\n\n**Basic tests (matching the Manual Todo tutorial):**\n\n```typescript\nimport { describe, it, expect } from \"vitest\";\nimport { generateMock } from \"document-model\";\nimport type {\n  AddTodoItemInput,\n  DeleteTodoItemInput,\n  UpdateTodoItemInput,\n} from \"todo-tutorial/document-models/todo-list\";\nimport {\n  reducer,\n  utils,\n  isTodoListDocument,\n  addTodoItem,\n  AddTodoItemInputSchema,\n  updateTodoItem,\n  UpdateTodoItemInputSchema,\n  deleteTodoItem,\n  DeleteTodoItemInputSchema,\n  TodoItemSchema,\n} from \"todo-tutorial/document-models/todo-list\";\n\ndescribe(\"Todos Operations\", () => {\n  it(\"should handle addTodoItem operation\", () => {\n    const document = utils.createDocument();\n    const input: AddTodoItemInput = generateMock(AddTodoItemInputSchema());\n\n    const updatedDocument = reducer(document, addTodoItem(input));\n    expect(isTodoListDocument(updatedDocument)).toBe(true);\n\n    // Verify the operation was recorded\n    expect(updatedDocument.operations.global).toHaveLength(1);\n    expect(updatedDocument.operations.global[0].action.type).toBe(\n      \"ADD_TODO_ITEM\",\n    );\n    expect(updatedDocument.operations.global[0].action.input).toStrictEqual(\n      input,\n    );\n    expect(updatedDocument.operations.global[0].index).toEqual(0);\n  });\n\n  it(\"should handle updateTodoItem operation to update text\", () => {\n    const mockItem = generateMock(TodoItemSchema());\n    const input: UpdateTodoItemInput = generateMock(\n      UpdateTodoItemInputSchema(),\n    );\n    input.id = mockItem.id;\n    const newText = \"new text\";\n    input.text = newText;\n    input.checked = undefined;\n\n    const document = utils.createDocument({\n      global: {\n        items: [mockItem],\n      },\n    });\n\n    const updatedDocument = reducer(document, updateTodoItem(input));\n    expect(isTodoListDocument(updatedDocument)).toBe(true);\n\n    // Verify the operation was recorded\n    expect(updatedDocument.operations.global).toHaveLength(1);\n    expect(updatedDocument.operations.global[0].action.type).toBe(\n      \"UPDATE_TODO_ITEM\",\n    );\n\n    // Verify the state was updated correctly\n    const updatedItem = updatedDocument.state.global.items.find(\n      (item) => item.id === input.id,\n    );\n    expect(updatedItem?.text).toBe(newText);\n    expect(updatedItem?.checked).toBe(mockItem.checked);\n  });\n\n  it(\"should handle updateTodoItem operation to update checked\", () => {\n    const mockItem = generateMock(TodoItemSchema());\n    const input: UpdateTodoItemInput = generateMock(\n      UpdateTodoItemInputSchema(),\n    );\n    input.id = mockItem.id;\n    const newChecked = !mockItem.checked;\n    input.checked = newChecked;\n    input.text = undefined;\n\n    const document = utils.createDocument({\n      global: {\n        items: [mockItem],\n      },\n    });\n\n    const updatedDocument = reducer(document, updateTodoItem(input));\n    expect(isTodoListDocument(updatedDocument)).toBe(true);\n\n    const updatedItem = updatedDocument.state.global.items.find(\n      (item) => item.id === input.id,\n    );\n    expect(updatedItem?.text).toBe(mockItem.text);\n    expect(updatedItem?.checked).toBe(newChecked);\n  });\n\n  it(\"should handle deleteTodoItem operation\", () => {\n    const mockItem = generateMock(TodoItemSchema());\n    const document = utils.createDocument({\n      global: {\n        items: [mockItem],\n      },\n    });\n\n    const input: DeleteTodoItemInput = generateMock(\n      DeleteTodoItemInputSchema(),\n    );\n    input.id = mockItem.id;\n\n    const updatedDocument = reducer(document, deleteTodoItem(input));\n    expect(isTodoListDocument(updatedDocument)).toBe(true);\n\n    // Verify the operation was recorded\n    expect(updatedDocument.operations.global).toHaveLength(1);\n    expect(updatedDocument.operations.global[0].action.type).toBe(\n      \"DELETE_TODO_ITEM\",\n    );\n\n    // Verify the item was removed from state\n    const updatedItems = updatedDocument.state.global.items;\n    expect(updatedItems).toHaveLength(0);\n  });\n});\n```\n\n**Advanced tests (with stats verification):**\n\n:::info[Advanced Feature]\nIf you implemented the advanced version with statistics tracking, add these additional tests to verify the stats are updated correctly.\n:::\n\n```typescript\ndescribe(\"Todos Operations with Stats\", () => {\n  it(\"should update stats when adding a todo item\", () => {\n    const document = utils.createDocument();\n    const input = { text: \"Buy milk\" };\n\n    const updatedDocument = reducer(document, addTodoItem(input));\n\n    expect(updatedDocument.state.global.items).toHaveLength(1);\n    expect(updatedDocument.state.global.stats.total).toBe(1);\n    expect(updatedDocument.state.global.stats.unchecked).toBe(1);\n    expect(updatedDocument.state.global.stats.checked).toBe(0);\n  });\n\n  it(\"should update stats when checking a todo item\", () => {\n    const document = utils.createDocument();\n\n    // Add an item first\n    const addedDocument = reducer(document, addTodoItem({ text: \"Buy milk\" }));\n    const itemId = addedDocument.state.global.items[0].id;\n\n    // Now check it\n    const updatedDocument = reducer(\n      addedDocument,\n      updateTodoItem({ id: itemId, checked: true }),\n    );\n\n    expect(updatedDocument.state.global.stats.total).toBe(1);\n    expect(updatedDocument.state.global.stats.unchecked).toBe(0);\n    expect(updatedDocument.state.global.stats.checked).toBe(1);\n  });\n\n  it(\"should update stats when deleting an unchecked todo item\", () => {\n    const document = utils.createDocument();\n\n    // Add an item\n    const addedDocument = reducer(document, addTodoItem({ text: \"Buy milk\" }));\n    const itemId = addedDocument.state.global.items[0].id;\n\n    // Delete it\n    const updatedDocument = reducer(\n      addedDocument,\n      deleteTodoItem({ id: itemId }),\n    );\n\n    expect(updatedDocument.state.global.items).toHaveLength(0);\n    expect(updatedDocument.state.global.stats.total).toBe(0);\n    expect(updatedDocument.state.global.stats.unchecked).toBe(0);\n    expect(updatedDocument.state.global.stats.checked).toBe(0);\n  });\n\n  it(\"should update stats when deleting a checked todo item\", () => {\n    const document = utils.createDocument();\n\n    // Add and check an item\n    const addedDocument = reducer(document, addTodoItem({ text: \"Buy milk\" }));\n    const itemId = addedDocument.state.global.items[0].id;\n    const checkedDocument = reducer(\n      addedDocument,\n      updateTodoItem({ id: itemId, checked: true }),\n    );\n\n    // Delete it\n    const updatedDocument = reducer(\n      checkedDocument,\n      deleteTodoItem({ id: itemId }),\n    );\n\n    expect(updatedDocument.state.global.items).toHaveLength(0);\n    expect(updatedDocument.state.global.stats.total).toBe(0);\n    expect(updatedDocument.state.global.stats.checked).toBe(0);\n  });\n});\n```\n\n### 2. Run the tests\n\nNow, run the tests from your project's root directory to verify your implementation.\n\n```bash\npnpm run test\n```\n\nOr with npm:\n\n```bash\nnpm test\n```\n\nIf all tests pass, you have successfully verified the core logic of your `TodoList` document model. This ensures that the reducers you wrote behave exactly as expected.\n\n</details>\n\n## Best practices for document model tests\n\nWhile the tutorial provides a concrete example, keep these general best practices in mind when writing your tests:\n\n- **Isolate Tests**: Each `it` block should ideally test one specific aspect or scenario. `beforeEach` is crucial for resetting state between tests.\n- **Descriptive Names**: Name your `describe` and `it` blocks clearly so they explain what's being tested.\n- **AAA Pattern (Arrange, Act, Assert)**:\n  - **Arrange**: Set up the initial state and any required test data (e.g., using `utils.createDocument()` and defining `input` objects).\n  - **Act**: Execute the operation by calling the `reducer` with an action from a `creator`.\n  - **Assert**: Check if the outcome is as expected using `expect()`.\n- **Test Immutability**: A key assertion is to ensure the state is not mutated directly. You can check that a new array or object was created: `expect(newState.items).not.toBe(oldState.items);`.\n- **Cover Edge Cases**: Test what happens when an operation receives invalid input (e.g., trying to update an item that doesn't exist). Your test should confirm the reducer either throws an error or returns the state unchanged, depending on your implementation.\n- **Run Tests Frequently**: Integrate testing into your development workflow. Run tests after making changes to ensure you haven't broken anything. The `pnpm run test` (or `npm test`) command is your friend.\n\n## Conclusion: The payoff of diligent testing\n\nImplementing comprehensive tests for your document model reducers is an investment that pays dividends in the long run. It leads to:\n\n- **Higher Quality Models**: More reliable and robust document models with fewer bugs.\n- **Increased Confidence**: Ability to make changes and refactor code without fear of breaking existing functionality.\n- **Easier Debugging**: When tests fail, they pinpoint the exact operation and scenario that's problematic.\n- **Better Collaboration**: Tests clarify the intended behavior of the document model for all team members.\n\nBy following the tutorial and applying these best practices, you can build a strong suite of tests that safeguard the integrity and functionality of your document models. This diligence is a hallmark of a \"Mastery Track\" developer, ensuring that the solutions you build are not just functional but also stable, maintainable, and trustworthy.\n\n## Up next\n\nIn the next chapter of the Mastery Track - Building User Experiences you will learn how to implement an [editor](/academy/Build/BuildingUserExperiences/BuildingDocumentEditors) for your document model so you can see a simple user interface for the **TodoList** document model in action.\n\nFor a complete, working example, you can always have a look at the [Example TodoList Repository](/academy/Build/DocumentModelCreation/ExampleToDoListRepository) which contains the full implementation of the concepts discussed in this Mastery Track.\n",
+        "createdAt": "2026-09-02T21:33:41.997Z",
+        "createdBy": "repo-docs-sync",
+        "sourceType": "DOCUMENTATION",
+        "description": "Powerhouse v6.2.2-dev.47 \u2014 In the previous chapter, we implemented the core reducer logic for our document model. Now, we reach a critical stage that underpins the reliability\u2026",
+        "publishedAt": "2026-06-24T00:07:16.000Z"
+      },
+      "timestampUtcMs": "2026-09-02T21:33:41.997Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "",
+    "timestampUtcMs": "2026-09-02T21:33:42.048Z",
+    "action": {
+      "type": "UPGRADE_DOCUMENT",
+      "input": {
+        "model": "bai/source",
+        "toVersion": 1,
+        "documentId": "c3a3ab91-3421-4938-8ea0-e4322c3834fd",
+        "fromVersion": 0,
+        "initialState": {
+          "auth": {
+            "grants": [],
+            "version": 0
+          },
+          "local": {},
+          "global": {
+            "title": null,
+            "status": "INBOX",
+            "content": null,
+            "createdAt": null,
+            "createdBy": null,
+            "provenance": null,
+            "sourceType": null,
+            "description": null,
+            "extractedClaims": [],
+            "extractionStats": null
+          },
+          "document": {
+            "hash": {
+              "encoding": "base64",
+              "algorithm": "sha1"
+            },
+            "version": 1
+          }
+        }
+      },
+      "timestampUtcMs": "2026-09-02T21:33:42.048Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "Ah7o49VueTHddE6bLzkrsooeLOQ=",
+    "timestampUtcMs": "2026-09-02T21:33:42.651Z",
+    "action": {
+      "type": "INGEST_SOURCE",
+      "input": {
+        "url": "https://github.com/powerhouse-inc/powerhouse/blob/v6.2.2-dev.74/apps/academy/docs/academy/03-Build/02-DocumentModelCreation/06-ImplementDocumentModelTests.md",
+        "tool": "sync-repo-docs",
+        "title": "Academy \u203a Build \u203a DocumentModelCreation \u203a Implement document model tests",
+        "author": "Powerhouse Inc.",
+        "method": "sha256:2f8a1793fd89e48a047b7af96a08a3f914e18fdf8d0c44b724ce65a3865764fb git:v6.2.2-dev.74",
+        "content": "# Implement document model tests\n\n:::note[Builds on the Manual Todo tutorial]\nThis is the same step from the [Manual Todo tutorial](/academy/Build/ManualTodoTutorial/WriteDocumentModelTests), covered here in depth. The Mastery Track's only addition is tests for the computed `stats` field \u2014 if you've done the basic build, skim to the stats parts.\n:::\n\n## Ensuring robustness and reliability\n\nIn the previous chapter, we implemented the core reducer logic for our document model. Now, we reach a critical stage that underpins the reliability and correctness of our entire model: **Implementing Document Model Tests**.\n\nTesting is not an afterthought; it's an integral part of the development lifecycle, especially in systems like Powerhouse where data integrity and predictable state transitions are paramount. Well-crafted tests serve as a safety net, allowing you to refactor and extend your document model with confidence.\n\nThis document provides a practical, hands-on tutorial for testing the `TodoList` document model reducers you have just built.\n\n## Practical implementation: Writing and running the TodoList tests\n\nThis tutorial assumes you have implemented the `TodoList` reducers as described in the previous chapter and that the code generator has created a test file skeleton at `document-models/todo-list/src/tests/todos.test.ts`.\n\n<details>\n<summary>Tutorial: Implementing and running the TodoList reducer tests</summary>\n\n### 1. Implement the reducer tests\n\nWith the reducer logic in place, it's critical to test it. Navigate to the generated test file at `document-models/todo-list/src/tests/todos.test.ts` and replace its contents with comprehensive tests.\n\nThis suite tests each operation, verifying not only that the `items` array is correct, but also that the operation itself is recorded properly in the document's history.\n\n**Basic tests (matching the Manual Todo tutorial):**\n\n```typescript\nimport { describe, it, expect } from \"vitest\";\nimport { generateMock } from \"document-model/mock\";\nimport type {\n  AddTodoItemInput,\n  DeleteTodoItemInput,\n  UpdateTodoItemInput,\n} from \"todo-tutorial/document-models/todo-list\";\nimport {\n  reducer,\n  utils,\n  isTodoListDocument,\n  addTodoItem,\n  AddTodoItemInputSchema,\n  updateTodoItem,\n  UpdateTodoItemInputSchema,\n  deleteTodoItem,\n  DeleteTodoItemInputSchema,\n  TodoItemSchema,\n} from \"todo-tutorial/document-models/todo-list\";\n\ndescribe(\"Todos Operations\", () => {\n  it(\"should handle addTodoItem operation\", () => {\n    const document = utils.createDocument();\n    const input: AddTodoItemInput = generateMock(AddTodoItemInputSchema());\n\n    const updatedDocument = reducer(document, addTodoItem(input));\n    expect(isTodoListDocument(updatedDocument)).toBe(true);\n\n    // Verify the operation was recorded\n    expect(updatedDocument.operations.global).toHaveLength(1);\n    expect(updatedDocument.operations.global[0].action.type).toBe(\n      \"ADD_TODO_ITEM\",\n    );\n    expect(updatedDocument.operations.global[0].action.input).toStrictEqual(\n      input,\n    );\n    expect(updatedDocument.operations.global[0].index).toEqual(0);\n  });\n\n  it(\"should handle updateTodoItem operation to update text\", () => {\n    const mockItem = generateMock(TodoItemSchema());\n    const input: UpdateTodoItemInput = generateMock(\n      UpdateTodoItemInputSchema(),\n    );\n    input.id = mockItem.id;\n    const newText = \"new text\";\n    input.text = newText;\n    input.checked = undefined;\n\n    const document = utils.createDocument({\n      global: {\n        items: [mockItem],\n      },\n    });\n\n    const updatedDocument = reducer(document, updateTodoItem(input));\n    expect(isTodoListDocument(updatedDocument)).toBe(true);\n\n    // Verify the operation was recorded\n    expect(updatedDocument.operations.global).toHaveLength(1);\n    expect(updatedDocument.operations.global[0].action.type).toBe(\n      \"UPDATE_TODO_ITEM\",\n    );\n\n    // Verify the state was updated correctly\n    const updatedItem = updatedDocument.state.global.items.find(\n      (item) => item.id === input.id,\n    );\n    expect(updatedItem?.text).toBe(newText);\n    expect(updatedItem?.checked).toBe(mockItem.checked);\n  });\n\n  it(\"should handle updateTodoItem operation to update checked\", () => {\n    const mockItem = generateMock(TodoItemSchema());\n    const input: UpdateTodoItemInput = generateMock(\n      UpdateTodoItemInputSchema(),\n    );\n    input.id = mockItem.id;\n    const newChecked = !mockItem.checked;\n    input.checked = newChecked;\n    input.text = undefined;\n\n    const document = utils.createDocument({\n      global: {\n        items: [mockItem],\n      },\n    });\n\n    const updatedDocument = reducer(document, updateTodoItem(input));\n    expect(isTodoListDocument(updatedDocument)).toBe(true);\n\n    const updatedItem = updatedDocument.state.global.items.find(\n      (item) => item.id === input.id,\n    );\n    expect(updatedItem?.text).toBe(mockItem.text);\n    expect(updatedItem?.checked).toBe(newChecked);\n  });\n\n  it(\"should handle deleteTodoItem operation\", () => {\n    const mockItem = generateMock(TodoItemSchema());\n    const document = utils.createDocument({\n      global: {\n        items: [mockItem],\n      },\n    });\n\n    const input: DeleteTodoItemInput = generateMock(\n      DeleteTodoItemInputSchema(),\n    );\n    input.id = mockItem.id;\n\n    const updatedDocument = reducer(document, deleteTodoItem(input));\n    expect(isTodoListDocument(updatedDocument)).toBe(true);\n\n    // Verify the operation was recorded\n    expect(updatedDocument.operations.global).toHaveLength(1);\n    expect(updatedDocument.operations.global[0].action.type).toBe(\n      \"DELETE_TODO_ITEM\",\n    );\n\n    // Verify the item was removed from state\n    const updatedItems = updatedDocument.state.global.items;\n    expect(updatedItems).toHaveLength(0);\n  });\n});\n```\n\n**Advanced tests (with stats verification):**\n\n:::info[Advanced Feature]\nIf you implemented the advanced version with statistics tracking, add these additional tests to verify the stats are updated correctly.\n:::\n\n```typescript\ndescribe(\"Todos Operations with Stats\", () => {\n  it(\"should update stats when adding a todo item\", () => {\n    const document = utils.createDocument();\n    const input = { text: \"Buy milk\" };\n\n    const updatedDocument = reducer(document, addTodoItem(input));\n\n    expect(updatedDocument.state.global.items).toHaveLength(1);\n    expect(updatedDocument.state.global.stats.total).toBe(1);\n    expect(updatedDocument.state.global.stats.unchecked).toBe(1);\n    expect(updatedDocument.state.global.stats.checked).toBe(0);\n  });\n\n  it(\"should update stats when checking a todo item\", () => {\n    const document = utils.createDocument();\n\n    // Add an item first\n    const addedDocument = reducer(document, addTodoItem({ text: \"Buy milk\" }));\n    const itemId = addedDocument.state.global.items[0].id;\n\n    // Now check it\n    const updatedDocument = reducer(\n      addedDocument,\n      updateTodoItem({ id: itemId, checked: true }),\n    );\n\n    expect(updatedDocument.state.global.stats.total).toBe(1);\n    expect(updatedDocument.state.global.stats.unchecked).toBe(0);\n    expect(updatedDocument.state.global.stats.checked).toBe(1);\n  });\n\n  it(\"should update stats when deleting an unchecked todo item\", () => {\n    const document = utils.createDocument();\n\n    // Add an item\n    const addedDocument = reducer(document, addTodoItem({ text: \"Buy milk\" }));\n    const itemId = addedDocument.state.global.items[0].id;\n\n    // Delete it\n    const updatedDocument = reducer(\n      addedDocument,\n      deleteTodoItem({ id: itemId }),\n    );\n\n    expect(updatedDocument.state.global.items).toHaveLength(0);\n    expect(updatedDocument.state.global.stats.total).toBe(0);\n    expect(updatedDocument.state.global.stats.unchecked).toBe(0);\n    expect(updatedDocument.state.global.stats.checked).toBe(0);\n  });\n\n  it(\"should update stats when deleting a checked todo item\", () => {\n    const document = utils.createDocument();\n\n    // Add and check an item\n    const addedDocument = reducer(document, addTodoItem({ text: \"Buy milk\" }));\n    const itemId = addedDocument.state.global.items[0].id;\n    const checkedDocument = reducer(\n      addedDocument,\n      updateTodoItem({ id: itemId, checked: true }),\n    );\n\n    // Delete it\n    const updatedDocument = reducer(\n      checkedDocument,\n      deleteTodoItem({ id: itemId }),\n    );\n\n    expect(updatedDocument.state.global.items).toHaveLength(0);\n    expect(updatedDocument.state.global.stats.total).toBe(0);\n    expect(updatedDocument.state.global.stats.checked).toBe(0);\n  });\n});\n```\n\n### 2. Run the tests\n\nNow, run the tests from your project's root directory to verify your implementation.\n\n```bash\npnpm run test\n```\n\nOr with npm:\n\n```bash\nnpm test\n```\n\nIf all tests pass, you have successfully verified the core logic of your `TodoList` document model. This ensures that the reducers you wrote behave exactly as expected.\n\n</details>\n\n## Best practices for document model tests\n\nWhile the tutorial provides a concrete example, keep these general best practices in mind when writing your tests:\n\n- **Isolate Tests**: Each `it` block should ideally test one specific aspect or scenario. `beforeEach` is crucial for resetting state between tests.\n- **Descriptive Names**: Name your `describe` and `it` blocks clearly so they explain what's being tested.\n- **AAA Pattern (Arrange, Act, Assert)**:\n  - **Arrange**: Set up the initial state and any required test data (e.g., using `utils.createDocument()` and defining `input` objects).\n  - **Act**: Execute the operation by calling the `reducer` with an action from a `creator`.\n  - **Assert**: Check if the outcome is as expected using `expect()`.\n- **Test Immutability**: A key assertion is to ensure the state is not mutated directly. You can check that a new array or object was created: `expect(newState.items).not.toBe(oldState.items);`.\n- **Cover Edge Cases**: Test what happens when an operation receives invalid input (e.g., trying to update an item that doesn't exist). Your test should confirm the reducer either throws an error or returns the state unchanged, depending on your implementation.\n- **Run Tests Frequently**: Integrate testing into your development workflow. Run tests after making changes to ensure you haven't broken anything. The `pnpm run test` (or `npm test`) command is your friend.\n\n## Conclusion: The payoff of diligent testing\n\nImplementing comprehensive tests for your document model reducers is an investment that pays dividends in the long run. It leads to:\n\n- **Higher Quality Models**: More reliable and robust document models with fewer bugs.\n- **Increased Confidence**: Ability to make changes and refactor code without fear of breaking existing functionality.\n- **Easier Debugging**: When tests fail, they pinpoint the exact operation and scenario that's problematic.\n- **Better Collaboration**: Tests clarify the intended behavior of the document model for all team members.\n\nBy following the tutorial and applying these best practices, you can build a strong suite of tests that safeguard the integrity and functionality of your document models. This diligence is a hallmark of a \"Mastery Track\" developer, ensuring that the solutions you build are not just functional but also stable, maintainable, and trustworthy.\n\n## Up next\n\nIn the next chapter of the Mastery Track - Building User Experiences you will learn how to implement an [editor](/academy/Build/BuildingUserExperiences/BuildingDocumentEditors) for your document model so you can see a simple user interface for the **TodoList** document model in action.\n\nFor a complete, working example, you can always have a look at the [Example TodoList Repository](/academy/Build/DocumentModelCreation/ExampleToDoListRepository) which contains the full implementation of the concepts discussed in this Mastery Track.\n",
+        "createdAt": "2026-09-02T21:33:42.651Z",
+        "createdBy": "repo-docs-sync",
+        "sourceType": "DOCUMENTATION",
+        "description": "Powerhouse v6.2.2-dev.74 (revised between v6.2.2-dev.47 and v6.2.2-dev.74) \u2014 In the previous chapter, we implemented the core reducer logic for our document model. Now, we reach a critical stage that\u2026",
+        "publishedAt": "2026-08-27T06:31:54.000Z"
+      },
+      "timestampUtcMs": "2026-09-02T21:33:42.651Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "PtrPPKGN3AJ8Mk9WmyAq6insFnk=",
+    "timestampUtcMs": "2026-09-02T21:33:49.528Z",
+    "action": {
+      "type": "ADD_EXTRACTED_CLAIM",
+      "input": {
+        "claimRef": "e2b3e87f-3df0-4940-9352-b648ed4e527d"
+      },
+      "timestampUtcMs": "2026-09-02T21:33:49.528Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "tJzZPA7q+7h9tZ4RxhASF5YM+Bs=",
+    "timestampUtcMs": "2026-09-02T21:33:54.626Z",
+    "action": {
+      "type": "SET_SOURCE_STATUS",
+      "input": {
+        "status": "EXTRACTED"
+      },
+      "timestampUtcMs": "2026-09-02T21:33:54.626Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "rtDtu1xSRtgBd4ZI5TGoCj07nJA=",
+    "timestampUtcMs": "2026-09-02T22:25:48.974Z",
+    "action": {
+      "type": "ADD_EXTRACTED_CLAIM",
+      "input": {
+        "claimRef": "5de28cc0-64fd-4daf-a8ac-3f8640749648"
+      },
+      "timestampUtcMs": "2026-09-02T22:25:48.974Z"
+    }
+  }
+]

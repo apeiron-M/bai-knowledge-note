@@ -1,0 +1,128 @@
+{
+  "links": [
+    {
+      "id": "lnk-c93f6c0f-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "c93f6c0f-5040-4734-a616-a824634feebb",
+      "targetTitle": "outbox-index-order-measured",
+      "reason": "Serving the page in the index's own order was the alternative fix, measured and rejected",
+      "confidence": "grounded"
+    },
+    {
+      "id": "lnk-975d6c29-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "975d6c29-9797-4051-927e-d487a679f608",
+      "targetTitle": "auth-metadata-scopes-readable",
+      "reason": "The auth scope travelling with every document is what makes this ordering bug reachable on any policied document's first backfill",
+      "confidence": "grounded"
+    },
+    {
+      "id": "lnk-e57e23ae-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "e57e23ae-2f05-414a-bb77-c74ab23f64e8",
+      "targetTitle": "dead-letter-quarantines-document-not-drive",
+      "reason": "After #2918 the failure surfaces as a dead-lettered auth run per document rather than a silent stall",
+      "confidence": "grounded"
+    },
+    {
+      "id": "lnk-3485a9d2-bui",
+      "linkType": "BUILDS_ON",
+      "targetDocumentId": "3485a9d2-df0b-4265-8e7d-5b277a937bf0",
+      "targetTitle": "global-and-local-scopes-are-fully-independent-streams",
+      "reason": "Scopes being fully independent streams is exactly why nothing but dependsOn orders a document's scopes against each other on the inbox path",
+      "confidence": "grounded"
+    },
+    {
+      "id": "lnk-4c1161cd-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "4c1161cd-c718-4604-83dc-39b07e09d602",
+      "targetTitle": "Docs \u203a updateOutbox orders a document's scopes alphabetically, so auth is served before document",
+      "reason": "Extracted from docs/updateoutbox-scope-ordering.md at v6.2.2-dev.74 \u2014 Summary, Mechanics, The deadlock, The barrier this violates, What the fix is",
+      "confidence": "grounded"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "updateOutbox re-sorts each page by (documentId, scope, ordinal), so a backfill served a document's auth run before the document run that creates it \u2014 fixed by hoisting the creating run",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "f62b6fbd-378c-4dd3-a016-1b09d123c36a",
+      "name": "reactor-sync",
+      "topicDocumentId": null
+    },
+    {
+      "id": "d768f870-2c63-49b0-96fe-631f6e09236d",
+      "name": "outbox",
+      "topicDocumentId": null
+    },
+    {
+      "id": "65e1e6dd-cba9-42e2-ac64-e089d922f16c",
+      "name": "ordering",
+      "topicDocumentId": null
+    },
+    {
+      "id": "257c55c6-4249-4b99-8f08-6c44975903d4",
+      "name": "gotchas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "97dead70-57ec-43f5-a483-71c4827a087c",
+      "name": "auth-scope",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "The operation index returns rows in global insertion order (`ORDER BY ordinal ASC`), which is causally safe by construction. `updateOutbox` then **re-sorts each page** by `(documentId, scope, ordinal)` and discards that order. `scope` is compared as a raw string, so the ordering is lexicographic \u2014 `auth < document < global < local` \u2014 and for any one document the `auth` run sorts *ahead of the `document` run that creates it*. `emitBatches` chains `dependsOn` per document, so emission order becomes a hard dependency: the `document` batch depends on the `auth` batch.\n\nThe result was a mutual wait rather than an error. The receiver applied the `auth` run first, its document did not exist, so the load job was **deferred** \u2014 silently, emitting no event and moving no status, sitting at `RUNNING`. A deferred job was released only by a job carrying `CREATE_DOCUMENT` for that id, and that create was blocked behind the deferred auth job. Neither side timed out and neither reported: \"no runs dispatched, no dead letter, indefinitely\". PR #2918 bounded the silence \u2014 a hold outliving `deferredJobTtlMs` (30 s) fails the job through the queue, releasing its dependents \u2014 which removed the hang but left every fresh backfill of a policied document costing a 30 s stall and a dead-lettered auth run.\n\nWhy the barrier matters at all: the queue's sub-queue key is `(documentId, scope, branch)`, so per-scope FIFO is all it guarantees, and `queueHint` (fed from `dependsOn`) is the only cross-scope mechanism on the inbox path. Document-scope operations write **other** scopes' rows \u2014 `CREATE_DOCUMENT` seeds header/document/auth snapshots, `UPGRADE_DOCUMENT` reindexes every scope in `resultingState`, and `DELETE_DOCUMENT` updates `DocumentSnapshot` with no scope predicate.\n\n**The fix hoists one run**: a page carrying a document's `CREATE_DOCUMENT` serves that run before the document's other scopes; everything else about the sort is unchanged, so scopes stay contiguous and a page still batches into one entry per (document, scope).\n\n_Source: docs/updateoutbox-scope-ordering.md (Powerhouse v6.2.2-dev.74)._\n\n## Provenance\n- `docs/updateoutbox-scope-ordering.md` \u2014 Summary, Mechanics, The deadlock, The barrier this violates, What the fix is\n\n_Recorded from the Powerhouse repository at **v6.2.2-dev.74** during the v6.2.2-dev.74 source sync._",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": "v6.2.2-dev.74",
+  "computes": null,
+  "filePath": "docs/updateoutbox-scope-ordering.md",
+  "noteType": "BUG-PATTERN",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": "grounded",
+  "consumedBy": [],
+  "provenance": {
+    "author": "knowledge-agent",
+    "createdAt": "2026-09-02T22:14:16.494Z",
+    "sessionId": null,
+    "updatedAt": "2026-09-02T22:21:23.998Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Scope is compared as a raw string, so auth sorts before document, and emitBatches turns emission order into a hard dependsOn. The receiver deferred the auth load behind the blocked create.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "de094a33-ca19-4a25-82d0-d9164b1d12cc",
+      "actor": "knowledge-agent",
+      "comment": "extracted from the Powerhouse repository at v6.2.2-dev.74",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-09-02T22:14:18.452Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "39738efc-ec88-441b-83f7-8ce474baf9e7",
+      "actor": "liberuum",
+      "comment": "claim checked against the cited repository file at the pinned tag",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-09-02T22:14:20.814Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

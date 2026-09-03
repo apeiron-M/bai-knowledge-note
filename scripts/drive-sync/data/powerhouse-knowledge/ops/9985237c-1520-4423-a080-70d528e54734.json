@@ -1,0 +1,336 @@
+[
+  {
+    "index": 0,
+    "hash": "",
+    "timestampUtcMs": "2026-08-14T11:47:07.665Z",
+    "action": {
+      "type": "CREATE_DOCUMENT",
+      "input": {
+        "meta": {},
+        "name": "assert-snapshot-isolation-the-input-document-is-unchanged",
+        "slug": "",
+        "model": "bai/knowledge-note",
+        "branch": "main",
+        "signing": {
+          "nonce": "",
+          "publicKey": {},
+          "signature": "9985237c-1520-4423-a080-70d528e54734",
+          "documentType": "bai/knowledge-note",
+          "createdAtUtcIso": "2026-08-14T11:47:07.664Z"
+        },
+        "version": 0,
+        "documentId": "9985237c-1520-4423-a080-70d528e54734",
+        "protocolVersions": {
+          "base-reducer": 2
+        }
+      },
+      "timestampUtcMs": "2026-08-14T11:47:07.665Z"
+    }
+  },
+  {
+    "index": 0,
+    "hash": "McAyiNAXVJuOJRr+EHuNMoJ+3cM=",
+    "timestampUtcMs": "2026-08-14T12:34:50.000Z",
+    "action": {
+      "type": "SET_TITLE",
+      "input": {
+        "title": "The document passed into reducer is unchanged after the call \u2014 assert snapshot isolation",
+        "updatedAt": "2026-08-14T12:34:50.000Z"
+      },
+      "timestampUtcMs": "2026-08-14T12:34:50.000Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "",
+    "timestampUtcMs": "2026-08-14T11:47:07.665Z",
+    "action": {
+      "type": "UPGRADE_DOCUMENT",
+      "input": {
+        "model": "bai/knowledge-note",
+        "toVersion": 1,
+        "documentId": "9985237c-1520-4423-a080-70d528e54734",
+        "fromVersion": 0,
+        "initialState": {
+          "auth": {
+            "grants": [],
+            "version": 0
+          },
+          "local": {
+            "lastViewedAt": null,
+            "personalTags": []
+          },
+          "global": {
+            "links": [],
+            "model": null,
+            "scope": null,
+            "title": null,
+            "editor": null,
+            "inputs": [],
+            "models": [],
+            "status": "DRAFT",
+            "topics": [],
+            "content": null,
+            "context": null,
+            "modelId": null,
+            "modules": [],
+            "outputs": [],
+            "version": null,
+            "computes": null,
+            "filePath": null,
+            "noteType": null,
+            "severity": null,
+            "hooksUsed": [],
+            "rootCause": null,
+            "confidence": null,
+            "consumedBy": [],
+            "provenance": null,
+            "sourceType": null,
+            "targetType": null,
+            "cardinality": null,
+            "description": null,
+            "alternatives": [],
+            "consequences": [],
+            "errorMessage": null,
+            "relationType": null,
+            "correctPattern": null,
+            "decisionStatus": null,
+            "dispatchTargets": [],
+            "lifecycleEvents": []
+          },
+          "document": {
+            "hash": {
+              "encoding": "base64",
+              "algorithm": "sha1"
+            },
+            "version": 1
+          }
+        }
+      },
+      "timestampUtcMs": "2026-08-14T11:47:07.665Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "o5cGFaQAYQ2MKN0hXpUdV++gR/4=",
+    "timestampUtcMs": "2026-08-14T12:34:50.000Z",
+    "action": {
+      "type": "SET_DESCRIPTION",
+      "input": {
+        "updatedAt": "2026-08-14T12:34:50.000Z",
+        "description": "Mutative returns a new document, so the input snapshot still holds pre-operation state. Failing this assertion means the reducer mutated something outside the draft."
+      },
+      "timestampUtcMs": "2026-08-14T12:34:50.000Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "",
+    "timestampUtcMs": "2026-08-14T12:36:38.195Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "9985237c-1520-4423-a080-70d528e54734",
+        "targetId": "ffbb3996-d554-4eb8-ac08-e56dafa93cfc",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-08-14T12:36:38.195Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "fUt6PkE+16lmlXLg1kEAA2hRdU4=",
+    "timestampUtcMs": "2026-08-14T12:34:50.000Z",
+    "action": {
+      "type": "SET_NOTE_TYPE",
+      "input": {
+        "noteType": "PATTERN",
+        "updatedAt": "2026-08-14T12:34:50.000Z"
+      },
+      "timestampUtcMs": "2026-08-14T12:34:50.000Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "",
+    "timestampUtcMs": "2026-08-14T12:36:38.287Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "9985237c-1520-4423-a080-70d528e54734",
+        "targetId": "db144dcd-42c6-467b-a108-ddebd1d421d6",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-08-14T12:36:38.287Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "r7ZmWKOq23b78sPP8Q1l17wz+p4=",
+    "timestampUtcMs": "2026-08-14T12:34:50.000Z",
+    "action": {
+      "type": "SET_CONTENT",
+      "input": {
+        "content": "Every reducer test should assert two things beyond the expected state change: **determinism** (same inputs, same output across runs) and **snapshot isolation** (the document you passed in is unchanged afterwards).\n\n```ts\ntest(\"completing a todo marks it done\", () => {\n  let doc = utils.createDocument();\n  doc = reducer(doc, addTodo({ id: \"t-1\", title: \"Test\" }));\n  const afterComplete = reducer(doc, completeTodo({ id: \"t-1\" }));\n\n  expect(afterComplete.state.global.items[0].done).toBe(true);\n  expect(doc.state.global.items[0].done).toBe(false); // original snapshot untouched\n});\n```\n\nThe second assertion is the one people skip, and it is the one that catches real bugs. It works because the reducer core runs your operation inside Mutative's `create()`, which hands you a draft and returns a fresh document \u2014 the input object is never written through.\n\nSo the assertion is not testing Mutative. It is testing **your** reducer, by detecting the one class of impurity Mutative cannot protect you from: reaching outside the draft. Capturing a reference to a nested object across calls, mutating an array that came from module scope or from `action.input`, or holding state in a closure all produce a reducer that writes to memory the draft does not cover. Those writes leak into the input snapshot, and this assertion is what surfaces them.\n\nWhy it matters more than a typical purity test: an impure reducer does not fail locally. It fails when a peer replays the log and lands on different state, or when the recomputed hash stops matching. Sync will eventually betray you \u2014 the snapshot assertion is how you find out in CI instead.\n\nNote this is distinct from asserting on a *failed* operation: when a reducer throws, the operation is still appended with `.error` set and state is left unchanged.\n\n_Source: apps/academy/docs/academy/02-Learn/08-deep-dives/01-reducers-in-depth.mdx, confirmed against packages/shared/document-model/reducer.ts (Powerhouse v6.2.2-dev.45)._",
+        "updatedAt": "2026-08-14T12:34:50.000Z"
+      },
+      "timestampUtcMs": "2026-08-14T12:34:50.000Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "",
+    "timestampUtcMs": "2026-08-14T12:36:38.382Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "9985237c-1520-4423-a080-70d528e54734",
+        "targetId": "e2b3e87f-3df0-4940-9352-b648ed4e527d",
+        "relationshipType": "BUILDS_ON"
+      },
+      "timestampUtcMs": "2026-08-14T12:36:38.382Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "M+8m/F/Ce3uCuGeICPcWUAKoMOk=",
+    "timestampUtcMs": "2026-08-14T12:34:50.000Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "version",
+        "value": "v6.2.2-dev.44",
+        "updatedAt": "2026-08-14T12:34:50.000Z"
+      },
+      "timestampUtcMs": "2026-08-14T12:34:50.000Z"
+    }
+  },
+  {
+    "index": 5,
+    "hash": "3SGu0Dh/iT+DrIICKgxxct69Ntk=",
+    "timestampUtcMs": "2026-08-14T12:34:50.000Z",
+    "action": {
+      "type": "SET_PROVENANCE",
+      "input": {
+        "author": "claude",
+        "createdAt": "2026-08-13T14:35:54.000Z",
+        "sourceOrigin": "DERIVED"
+      },
+      "timestampUtcMs": "2026-08-14T12:34:50.000Z"
+    }
+  },
+  {
+    "index": 6,
+    "hash": "2EX9HAbG8qcs+KI66lOiDRCNBOk=",
+    "timestampUtcMs": "2026-08-14T12:34:50.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "2e2678e2-c591-4b9e-bf8e-1ce7a3f75bab",
+        "name": "testing",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-08-14T12:34:50.000Z"
+    }
+  },
+  {
+    "index": 7,
+    "hash": "YKgDLnqqgm8Tr2nGwAhq1vOEk2M=",
+    "timestampUtcMs": "2026-08-14T12:34:50.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "7deb6295-3658-4272-b54c-721af7c51c20",
+        "name": "reducer-patterns",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-08-14T12:34:50.000Z"
+    }
+  },
+  {
+    "index": 8,
+    "hash": "SBtUtt7luEqHYyyUB5I1HYYQ5nk=",
+    "timestampUtcMs": "2026-08-14T12:34:50.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "b0d7bc00-b4f4-45d4-870d-5d3a6332c8ee",
+        "name": "immutability",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-08-14T12:34:50.000Z"
+    }
+  },
+  {
+    "index": 9,
+    "hash": "lBNJtrgbfWEFxBHTKTjJ4TXfOHs=",
+    "timestampUtcMs": "2026-08-14T14:37:23.000Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "version",
+        "value": "v6.2.2-dev.47",
+        "updatedAt": "2026-08-14T12:00:00.000Z"
+      },
+      "timestampUtcMs": "2026-08-14T14:37:23.000Z"
+    }
+  },
+  {
+    "index": 10,
+    "hash": "CJaihWFZHQZakYLoplKv4jVeKk4=",
+    "timestampUtcMs": "2026-08-14T14:37:23.000Z",
+    "action": {
+      "type": "SUBMIT_FOR_REVIEW",
+      "input": {
+        "id": "13dceae1-418d-4a30-9d12-8ea51fb839ad",
+        "actor": "claude",
+        "comment": "Knowledge registered against powerhouse v6.2.2-dev.47",
+        "timestamp": "2026-08-14T12:00:00.000Z"
+      },
+      "timestampUtcMs": "2026-08-14T14:37:23.000Z"
+    }
+  },
+  {
+    "index": 11,
+    "hash": "lb+nLskr/YX1cHPTHa4CBMze/Rg=",
+    "timestampUtcMs": "2026-08-14T14:37:23.000Z",
+    "action": {
+      "type": "APPROVE_NOTE",
+      "input": {
+        "id": "524a2bf1-284b-4a1a-81f3-f70f50008067",
+        "actor": "liberuum",
+        "comment": "Canonical as of powerhouse v6.2.2-dev.47",
+        "timestamp": "2026-08-14T12:00:00.000Z"
+      },
+      "timestampUtcMs": "2026-08-14T14:37:23.000Z"
+    }
+  },
+  {
+    "index": 12,
+    "hash": "PY1m/PKo6WwYG59jA+Waflqh2aU=",
+    "timestampUtcMs": "2026-09-03T09:56:50.492Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "version",
+        "value": "v6.2.2-dev.74",
+        "updatedAt": "2026-09-03T09:56:50.492Z"
+      },
+      "timestampUtcMs": "2026-09-03T09:56:50.492Z"
+    }
+  },
+  {
+    "index": 13,
+    "hash": "OaB0VmKoMOciVhpFO7FIDuJ0A+s=",
+    "timestampUtcMs": "2026-09-03T09:56:50.492Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "filePath",
+        "value": "apps/academy/docs/academy/02-Learn/08-deep-dives/01-reducers-in-depth.mdx",
+        "updatedAt": "2026-09-03T09:56:50.492Z"
+      },
+      "timestampUtcMs": "2026-09-03T09:56:50.492Z"
+    }
+  }
+]

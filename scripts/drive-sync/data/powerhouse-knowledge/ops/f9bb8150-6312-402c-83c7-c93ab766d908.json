@@ -1,0 +1,190 @@
+[
+  {
+    "index": 0,
+    "hash": "",
+    "timestampUtcMs": "2026-08-30T18:24:39.421Z",
+    "action": {
+      "type": "CREATE_DOCUMENT",
+      "input": {
+        "meta": {},
+        "name": "x402: Open Payment Standard (Introduction)",
+        "slug": "",
+        "model": "bai/source",
+        "branch": "main",
+        "signing": {
+          "nonce": "",
+          "publicKey": {},
+          "signature": "f9bb8150-6312-402c-83c7-c93ab766d908",
+          "documentType": "bai/source",
+          "createdAtUtcIso": "2026-08-30T18:24:39.419Z"
+        },
+        "version": 0,
+        "documentId": "f9bb8150-6312-402c-83c7-c93ab766d908",
+        "protocolVersions": {
+          "base-reducer": 2
+        }
+      },
+      "timestampUtcMs": "2026-08-30T18:24:39.421Z"
+    }
+  },
+  {
+    "index": 0,
+    "hash": "pGcZSzCrwiClP5NtOM8OkVmD/3Y=",
+    "timestampUtcMs": "2026-08-30T18:25:06.244Z",
+    "action": {
+      "type": "INGEST_SOURCE",
+      "input": {
+        "url": "https://docs.x402.org/introduction",
+        "title": "x402: Open Payment Standard (Introduction)",
+        "author": "x402.org",
+        "content": "# x402: Open Payment Standard\n\n*(Structured digest of https://docs.x402.org/introduction, captured 2026-08-30 via web fetch.)*\n\n## What Is x402?\n\nx402 is an open, Apache-2.0 licensed payment standard enabling web services to charge for API access and content directly via HTTP. It centers on the `402 Payment Required` status code and supports crypto-native payments for speed, privacy, and efficiency.\n\n## Core Technical Flow\n\nThe payment mechanism operates in five steps:\n\n1. Client requests a resource\n2. Server responds with `402 Payment Required` including payment instructions\n3. Client prepares and submits payment\n4. Server verifies payment (independently or via an x402 facilitator's /verify and /settle endpoints)\n5. Server delivers the requested resource upon valid payment\n\n## Key Components\n\n**Facilitator:** A trusted service provider that handles payment verification and settlement, reducing friction for sellers who don't want to manage these functions directly.\n\n**Batch Settlement:** An EVM-based scheme enabling high-volume, batched onchain redemption for micropayments, optimizing cost efficiency for usage-based services.\n\n## Problems Solved\n\n- Elimination of transaction fees inherent to the standard\n- Machine-to-machine payment capability for autonomous AI agents\n- Micropayment infrastructure for granular, usage-based monetization\n- Permissionless, accountless payment flows\n\n## Use Cases\n\nAPI monetization, autonomous agent payments, digital content paywalls, microservices monetization, and proxy services reselling API capabilities.\n\n## Philosophy\n\nx402 presents itself as credibly neutral documentation without branded content, positioning payment as a transparent protocol layer rather than a proprietary platform.",
+        "createdAt": "2026-08-30T12:00:00.000Z",
+        "createdBy": "liberuum@powerhouse.inc",
+        "sourceType": "DOCUMENTATION",
+        "description": "Official x402 docs intro: an open HTTP-native payment standard built on status code 402 for machine-to-machine micropayments."
+      },
+      "timestampUtcMs": "2026-08-30T18:25:06.244Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "",
+    "timestampUtcMs": "2026-08-30T18:24:39.421Z",
+    "action": {
+      "type": "UPGRADE_DOCUMENT",
+      "input": {
+        "model": "bai/source",
+        "toVersion": 1,
+        "documentId": "f9bb8150-6312-402c-83c7-c93ab766d908",
+        "fromVersion": 0,
+        "initialState": {
+          "auth": {
+            "grants": [],
+            "version": 0
+          },
+          "local": {},
+          "global": {
+            "title": null,
+            "status": "INBOX",
+            "content": null,
+            "createdAt": null,
+            "createdBy": null,
+            "provenance": null,
+            "sourceType": null,
+            "description": null,
+            "extractedClaims": [],
+            "extractionStats": null
+          },
+          "document": {
+            "hash": {
+              "encoding": "base64",
+              "algorithm": "sha1"
+            },
+            "version": 1
+          }
+        }
+      },
+      "timestampUtcMs": "2026-08-30T18:24:39.421Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "2ntk+UBSG4aJjJJ6OdJ4luPF8W8=",
+    "timestampUtcMs": "2026-08-30T18:27:53.135Z",
+    "action": {
+      "type": "SET_SOURCE_STATUS",
+      "input": {
+        "status": "EXTRACTING"
+      },
+      "timestampUtcMs": "2026-08-30T18:27:53.135Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "mu77fLERWw+BEDdtTn6mNebn4Hc=",
+    "timestampUtcMs": "2026-08-30T18:33:02.255Z",
+    "action": {
+      "type": "ADD_EXTRACTED_CLAIM",
+      "input": {
+        "claimRef": "15e588c3-0021-46d0-9742-e3b065d9b752"
+      },
+      "timestampUtcMs": "2026-08-30T18:33:02.255Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "GlHxz36ohSeCTmva2ErnBSDsCqA=",
+    "timestampUtcMs": "2026-08-30T18:33:02.255Z",
+    "action": {
+      "type": "ADD_EXTRACTED_CLAIM",
+      "input": {
+        "claimRef": "d8cef292-a4ba-4963-a31c-25327d8e407c"
+      },
+      "timestampUtcMs": "2026-08-30T18:33:02.255Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "45OAmU4UQ1wnAtuV4VCZPLlMDFU=",
+    "timestampUtcMs": "2026-08-30T18:33:02.255Z",
+    "action": {
+      "type": "ADD_EXTRACTED_CLAIM",
+      "input": {
+        "claimRef": "54041ac3-6ad1-45f5-93d6-8159a35daa6c"
+      },
+      "timestampUtcMs": "2026-08-30T18:33:02.255Z"
+    }
+  },
+  {
+    "index": 5,
+    "hash": "F9ezkkFO/CwnwG2+pIW6zT5RfLU=",
+    "timestampUtcMs": "2026-08-30T18:33:02.255Z",
+    "action": {
+      "type": "ADD_EXTRACTED_CLAIM",
+      "input": {
+        "claimRef": "ecfd8edb-92b7-4b4d-82be-b1958e095ace"
+      },
+      "timestampUtcMs": "2026-08-30T18:33:02.255Z"
+    }
+  },
+  {
+    "index": 6,
+    "hash": "a/Qg8dbhJsFwullXZtD/E/7TuFI=",
+    "timestampUtcMs": "2026-08-30T18:33:02.255Z",
+    "action": {
+      "type": "ADD_EXTRACTED_CLAIM",
+      "input": {
+        "claimRef": "1eebe6cc-d6fe-4b01-a817-089ef1558f96"
+      },
+      "timestampUtcMs": "2026-08-30T18:33:02.255Z"
+    }
+  },
+  {
+    "index": 7,
+    "hash": "5OCb8hDn9exj0tZYlTkYWzB3eSs=",
+    "timestampUtcMs": "2026-08-30T18:33:02.255Z",
+    "action": {
+      "type": "RECORD_EXTRACTION_STATS",
+      "input": {
+        "skipRate": 0,
+        "claimCount": 5,
+        "extractedAt": "2026-08-30T12:35:00.000Z",
+        "extractedBy": "knowledge-agent",
+        "skippedCount": 0
+      },
+      "timestampUtcMs": "2026-08-30T18:33:02.255Z"
+    }
+  },
+  {
+    "index": 8,
+    "hash": "ejLMdS0TzCJomLUcTMD+uuOfw4I=",
+    "timestampUtcMs": "2026-08-30T18:33:02.255Z",
+    "action": {
+      "type": "SET_SOURCE_STATUS",
+      "input": {
+        "status": "EXTRACTED"
+      },
+      "timestampUtcMs": "2026-08-30T18:33:02.255Z"
+    }
+  }
+]

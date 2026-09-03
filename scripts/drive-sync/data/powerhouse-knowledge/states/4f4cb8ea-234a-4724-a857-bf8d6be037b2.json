@@ -1,0 +1,107 @@
+{
+  "links": [
+    {
+      "id": "lnk-7f914066-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "7f914066-a131-4968-a42c-a7d58158cc8b",
+      "targetTitle": "Package \u203a reactor-browser \u203a remote-controller \u2014 Remote Document Controller",
+      "reason": "Extracted from packages/reactor-browser/src/remote-controller/README.md at v6.2.2-dev.74 \u2014 Overview; Quick Start; Modes \u203a Batch mode and Streaming mode",
+      "confidence": "grounded"
+    },
+    {
+      "id": "lnk-9d055359-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "9d055359-868c-442c-99ad-052a2101e9da",
+      "targetTitle": "browser-client-adr-accepted",
+      "reason": "This is the controller whose five structural problems the ADR set out to fix by collapsing its responsibilities into the light client's execute",
+      "confidence": "grounded"
+    },
+    {
+      "id": "lnk-981a7608-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "981a7608-312e-4df7-bae3-942491b9e023",
+      "targetTitle": "remote-controller-conflict-strategies",
+      "reason": "Which mode is in use decides when a conflict check can run, since a batch push is a single explicit moment",
+      "confidence": "grounded"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "RemoteDocumentController has a batch mode that accumulates actions until push() and a streaming mode that pushes after each synchronous chain via queueMicrotask",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "66ada22d-cc24-4341-80ae-a2effce2f100",
+      "name": "reactor-browser",
+      "topicDocumentId": null
+    },
+    {
+      "id": "7af47985-05fc-407b-a4e4-2637ae5489b0",
+      "name": "remote-controller",
+      "topicDocumentId": null
+    },
+    {
+      "id": "cc602d0f-bfbe-4c50-bd7a-8fa0387f50bb",
+      "name": "graphql",
+      "topicDocumentId": null
+    },
+    {
+      "id": "cf0e34b4-55c1-4ca4-907d-00edb74c3848",
+      "name": "sync",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "`RemoteDocumentController` composes a `PHDocumentController` and adds remote push/pull over GraphQL \u2014 for callers who want to create or edit documents and sync them to a reactor server **without** setting up a full `ReactorClient` (PGlite, job queue and the rest). It works with any controller from `PHDocumentController.forDocumentModel()`, and its action methods are type-safe and chainable.\n\nTwo modes:\n\n**Batch.** Actions accumulate locally; `status.pendingActionCount` reports how many are waiting, and `push()` sends them in a **single `MutateDocument` call**.\n\n```ts\ncontroller.setName({ name: \"A\" });\ncontroller.setName({ name: \"B\" });   // pendingActionCount === 2\nawait controller.push();             // one mutation\n```\n\n**Streaming.** Actions are pushed automatically after each synchronous chain via `queueMicrotask`, so everything in one chain \u2014 one microtask \u2014 is **coalesced into a single push**. If a push fails, the actions stay in the tracker and are retried on the next action; `onPushError` is the reporting hook.\n\nCreating a document is the same call with `documentId: \"\"` plus a `parentIdentifier` naming the drive; pulling an existing one passes its id.\n\nNote the standing on this class: ADR 0002 catalogued its structural limits \u2014 no persistence, no offline model, no shared cache, imperative and non-reactive, and a reimplementation of sync on weaker primitives \u2014 and folded its responsibilities into `GraphQLReactorClient.execute`. It remains the documented low-level path.\n\n## Provenance\n- `packages/reactor-browser/src/remote-controller/README.md` \u2014 Overview; Quick Start; Modes \u203a Batch mode and Streaming mode\n\n_Extracted from the Powerhouse repository at **v6.2.2-dev.74**._",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": "v6.2.2-dev.74",
+  "computes": null,
+  "filePath": "packages/reactor-browser/src/remote-controller/README.md",
+  "noteType": "REFERENCE",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "knowledge-agent",
+    "createdAt": "2026-09-03T07:38:33.640Z",
+    "sessionId": null,
+    "updatedAt": "2026-09-03T07:38:34.729Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Streaming coalesces one chain into a single push; a failed push leaves the actions in the tracker for retry on the next action, with onPushError for reporting. status.pendingActionCount exposes the.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "bcefd2c5-58fa-4993-b5bc-fb528ee6bdb3",
+      "actor": "knowledge-agent",
+      "comment": "extracted from packages/reactor-browser/src/remote-controller/README.md at v6.2.2-dev.74",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-09-03T07:38:34.219Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "35c0201d-6ec8-46ae-b419-d49791b745e7",
+      "actor": "liberuum",
+      "comment": "claim checked against the cited file at the pinned tag",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-09-03T07:38:34.729Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

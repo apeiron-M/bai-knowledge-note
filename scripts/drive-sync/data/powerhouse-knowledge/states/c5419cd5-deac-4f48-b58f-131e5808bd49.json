@@ -1,0 +1,136 @@
+{
+  "links": [
+    {
+      "id": "lnk-d726eab9-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "d726eab9-c3d0-4387-b900-256cee1b1b9f",
+      "targetTitle": "auth-conditions-versioned-limit",
+      "reason": "preflight:auth exit code 2 is the versioned-documents limitation that gates authConditions specifically",
+      "confidence": "grounded"
+    },
+    {
+      "id": "lnk-c8bd64d3-bui",
+      "linkType": "BUILDS_ON",
+      "targetDocumentId": "c8bd64d3-d92e-4f41-beba-983a7e995c26",
+      "targetTitle": "auth-flags-staged",
+      "reason": "Takes the flag list as given and states the operational rule for turning any of them on",
+      "confidence": "grounded"
+    },
+    {
+      "id": "lnk-3540d969-bui",
+      "linkType": "BUILDS_ON",
+      "targetDocumentId": "3540d969-3661-4438-821e-a000e39852b1",
+      "targetTitle": "concurrent-offline-drive-edits-interlace-drive-logs",
+      "reason": "Convergence of interlaced operation logs assumes every replica folds the same history to the same state; a per-node enforcement flag breaks that assumption at the verdict level",
+      "confidence": "established"
+    },
+    {
+      "id": "lnk-17dc46b0-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "17dc46b0-f733-467c-99d7-ae8fbe0fb0e4",
+      "targetTitle": "Academy \u203a Reference \u203a Reactor \u203a Authorization",
+      "reason": "Extracted from apps/academy/docs/academy/04-Reference/01-Reactor/11-Authorization.md at v6.2.2-dev.74 \u2014 warning 'Flip flags per fleet, never per node'",
+      "confidence": "grounded"
+    },
+    {
+      "id": "lnk-63e10e2c-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "63e10e2c-9be4-4bd2-a876-8708cd3ac1f9",
+      "targetTitle": "App \u203a switchboard \u203a README",
+      "reason": "Extracted from apps/switchboard/README.md at v6.2.2-dev.74 \u2014 Reactor Enforcement Flags: fleet rule, preflight:auth exit codes, 'protects nothing that already exists'",
+      "confidence": "grounded"
+    },
+    {
+      "id": "lnk-067ef151-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "067ef151-e1a1-4a1a-91de-faaef1614f94",
+      "targetTitle": "App \u203a connect \u203a RUNTIME-CONFIG \u2014 Connect Runtime Configuration",
+      "reason": "Extracted from apps/connect/RUNTIME-CONFIG.md at v6.2.2-dev.74 \u2014 connect.reactor.featureFlags: 'a Connect must carry the same flags as the fleet it syncs with'",
+      "confidence": "grounded"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Enforcement flags flip for a whole document-sharing fleet, never per node, because a replay verdict is a consensus outcome",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "86be4860-5adb-466d-a5b2-5a4319b19814",
+      "name": "auth-scope",
+      "topicDocumentId": null
+    },
+    {
+      "id": "7d520819-bca7-4dbd-89b3-4d1900b5576c",
+      "name": "feature-flags",
+      "topicDocumentId": null
+    },
+    {
+      "id": "2f1a5386-14be-42f9-8f04-6bd9e23d6656",
+      "name": "sync",
+      "topicDocumentId": null
+    },
+    {
+      "id": "ac89c4e2-5e45-4b2c-b6bb-336d34e14824",
+      "name": "gotchas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "ab13dada-b990-49ab-b35d-4bc26ee33872",
+      "name": "deployment",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "A decision made at replay \u2014 allow, deny, or \"document deleted\" \u2014 is a **consensus outcome**: it is persisted, travels by sync, and every replica must reach it independently. Two replicas of the same document running different enforcement flags therefore compute different verdicts for the same operation and **diverge permanently**. The Academy states it as a warning: move every node that shares a document together.\n\nThe same applies to Connect. A flags-off browser replica syncing an enforcing switchboard applies operations the switchboard denied, so Connect's `connect.reactor.featureFlags` must match the switchboard's `REACTOR_*` variables exactly, and Connect deliberately offers no per-tab override for them \u2014 a per-tab flag would be a per-node flag.\n\nBefore enabling either auth flag, sweep the store:\n\n```bash\ncd packages/reactor && pnpm preflight:auth --pg <connection-string>   # or --pglite <dir>\n```\n\nExit `0` is clean for both flags; `1` means streams unsafe for `authEnforcement`; `2` means documents unsafe for `authConditions`; `3` both; `68` means the run died having checked nothing. Gate a rollout on the whole code, not on a bit. The target argument is required on purpose \u2014 a run that quietly opened an empty database would report every fleet as safe. Neither unsafe condition is repairable after the fact, because the auth stream is never reshuffled.\n\nOne expectation worth stating: turning enforcement on protects nothing that already exists. Every document that predates the auth scope carries an uninitialized policy, which allows everything, and the host's permission tables still own sync serving and the GraphQL boundary. Enforcement bites only on documents that have emitted `INITIALIZE_AUTH`.\n\n_Source: apps/academy/docs/academy/04-Reference/01-Reactor/11-Authorization.md (Powerhouse v6.2.2-dev.74)._\n_Source: apps/switchboard/README.md (Powerhouse v6.2.2-dev.74)._\n_Source: apps/connect/RUNTIME-CONFIG.md (Powerhouse v6.2.2-dev.74)._\n\n## Provenance\n- `apps/academy/docs/academy/04-Reference/01-Reactor/11-Authorization.md` \u2014 warning 'Flip flags per fleet, never per node'\n- `apps/switchboard/README.md` \u2014 Reactor Enforcement Flags: fleet rule, preflight:auth exit codes, 'protects nothing that already exists'\n- `apps/connect/RUNTIME-CONFIG.md` \u2014 connect.reactor.featureFlags: 'a Connect must carry the same flags as the fleet it syncs with'\n\n_Recorded from the Powerhouse repository at **v6.2.2-dev.74** during the v6.2.2-dev.74 source sync._",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": "v6.2.2-dev.74",
+  "computes": null,
+  "filePath": "apps/academy/docs/academy/04-Reference/01-Reactor/11-Authorization.md",
+  "noteType": "DECISION",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": "grounded",
+  "consumedBy": [],
+  "provenance": {
+    "author": "knowledge-agent",
+    "createdAt": "2026-09-02T22:09:15.103Z",
+    "sessionId": null,
+    "updatedAt": "2026-09-02T22:20:07.141Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Two replicas of one document on different flags compute different verdicts for the same operation and diverge permanently. Sweep with preflight:auth first \u2014 the unsafe conditions are unrepairable.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "2c985e46-d7bb-4def-aa7f-219ec7b41f23",
+      "actor": "knowledge-agent",
+      "comment": "extracted from the Powerhouse repository at v6.2.2-dev.74",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-09-02T22:09:15.650Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "1da08769-34c4-4315-86df-d8da2b61f761",
+      "actor": "liberuum",
+      "comment": "claim checked against the cited repository file at the pinned tag",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-09-02T22:09:16.105Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

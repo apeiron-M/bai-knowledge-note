@@ -1,0 +1,107 @@
+{
+  "links": [
+    {
+      "id": "lnk-e80cffd2-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "e80cffd2-a26e-426d-b722-dc068817ea7c",
+      "targetTitle": "docker-connect-image",
+      "reason": "The Connect image bakes packageRegistryUrl and re-syncs its CSP origin to it, which is the registry this client talks to in the browser",
+      "confidence": "grounded"
+    },
+    {
+      "id": "lnk-ab5f9b74-bui",
+      "linkType": "BUILDS_ON",
+      "targetDocumentId": "ab5f9b74-1462-49c2-a845-e34b02c9a0be",
+      "targetTitle": "connect-runtime-pwa-packages",
+      "reason": "Runtime-installed packages are fetched from the registry this client queries, and their PWA fragments are what the service worker then serves",
+      "confidence": "grounded"
+    },
+    {
+      "id": "lnk-13843259-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "13843259-e082-442c-a619-0654b68c8228",
+      "targetTitle": "Package \u203a reactor-browser \u203a registry \u2014 Registry Client",
+      "reason": "Extracted from packages/reactor-browser/src/registry/README.md at v6.2.2-dev.74 \u2014 whole file: constructor, getPackages, getPackagesByDocumentType, searchPackages, onPublish",
+      "confidence": "grounded"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "The registry client queries packages over a CDN path and subscribes to publish notifications over Server-Sent Events",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "9f7b1c9b-65cd-4666-a984-9ea9277bac71",
+      "name": "registry",
+      "topicDocumentId": null
+    },
+    {
+      "id": "5bbd3040-5060-4f4a-bbc2-5b25660ee6fd",
+      "name": "packages",
+      "topicDocumentId": null
+    },
+    {
+      "id": "d56aafe8-9c48-46e8-915f-28585bc1ed5f",
+      "name": "sse",
+      "topicDocumentId": null
+    },
+    {
+      "id": "dc5b2075-06e0-4b6f-9c02-5f4fde5d7b5f",
+      "name": "reactor-browser",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "`RegistryClient` from `@powerhousedao/reactor-browser` is the client for a Powerhouse package registry, constructed with the registry's CDN base:\n\n```ts\nconst client = new RegistryClient(\"http://localhost:8080/-/cdn/\");\n```\n\nFour methods, and the interesting ones are the second and the fourth:\n\n- **`getPackages()`** \u2014 every package as `{ name, description, version, category, publisher, publisherUrl }`.\n- **`getPackagesByDocumentType(type)`** \u2014 the package names containing a given document type, e.g. `\"powerhouse/document-model\"`. This is the lookup behind \"you opened a document whose type nothing installed provides\": the registry can answer which package to install.\n- **`searchPackages(query)`** \u2014 **client-side** search across name and description, so it needs the package list first and no server-side search endpoint exists.\n- **`onPublish(cb)`** \u2014 subscribes to real-time publish notifications over **Server-Sent Events**, calling back with `{ packageName, version }` and returning an unsubscribe function.\n\nSSE rather than polling is the notable choice: a running Connect can learn that a package it depends on was republished without asking, which is what makes a runtime-installed package list feel live.\n\n## Provenance\n- `packages/reactor-browser/src/registry/README.md` \u2014 whole file: constructor, getPackages, getPackagesByDocumentType, searchPackages, onPublish\n\n_Extracted from the Powerhouse repository at **v6.2.2-dev.74**._",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": "v6.2.2-dev.74",
+  "computes": null,
+  "filePath": "packages/reactor-browser/src/registry/README.md",
+  "noteType": "REFERENCE",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "knowledge-agent",
+    "createdAt": "2026-09-03T07:39:05.375Z",
+    "sessionId": null,
+    "updatedAt": "2026-09-03T07:39:06.374Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "new RegistryClient(url) exposes getPackages, getPackagesByDocumentType for finding which package provides a document type, a client-side searchPackages, and onPublish returning an unsubscribe.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "5d0632ef-6156-4c9a-926f-1fbb0a3aac17",
+      "actor": "knowledge-agent",
+      "comment": "extracted from packages/reactor-browser/src/registry/README.md at v6.2.2-dev.74",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-09-03T07:39:05.911Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "70205c92-3519-4baa-9e6a-4c7f2438e1bb",
+      "actor": "liberuum",
+      "comment": "claim checked against the cited file at the pinned tag",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-09-03T07:39:06.374Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

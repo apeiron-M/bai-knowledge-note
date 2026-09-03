@@ -1,0 +1,321 @@
+[
+  {
+    "index": 0,
+    "hash": "",
+    "timestampUtcMs": "2026-08-14T12:10:09.579Z",
+    "action": {
+      "type": "CREATE_DOCUMENT",
+      "input": {
+        "meta": {},
+        "name": "package-owned-subgraphs-composed-into-one-endpoint",
+        "slug": "",
+        "model": "bai/knowledge-note",
+        "branch": "main",
+        "signing": {
+          "nonce": "",
+          "publicKey": {},
+          "signature": "27438cd8-5fb0-4ed7-bcbe-665beef8a259",
+          "documentType": "bai/knowledge-note",
+          "createdAtUtcIso": "2026-08-14T12:10:09.579Z"
+        },
+        "version": 0,
+        "documentId": "27438cd8-5fb0-4ed7-bcbe-665beef8a259",
+        "protocolVersions": {
+          "base-reducer": 2
+        }
+      },
+      "timestampUtcMs": "2026-08-14T12:10:09.579Z"
+    }
+  },
+  {
+    "index": 0,
+    "hash": "mwUbDSPHyfrNTabEP38Qu1alPWE=",
+    "timestampUtcMs": "2026-08-14T12:35:32.000Z",
+    "action": {
+      "type": "SET_TITLE",
+      "input": {
+        "title": "Every Reactor Package ships its own subgraph and Switchboard composes them into one endpoint",
+        "updatedAt": "2026-08-14T12:35:32.000Z"
+      },
+      "timestampUtcMs": "2026-08-14T12:35:32.000Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "",
+    "timestampUtcMs": "2026-08-14T12:10:09.579Z",
+    "action": {
+      "type": "UPGRADE_DOCUMENT",
+      "input": {
+        "model": "bai/knowledge-note",
+        "toVersion": 1,
+        "documentId": "27438cd8-5fb0-4ed7-bcbe-665beef8a259",
+        "fromVersion": 0,
+        "initialState": {
+          "auth": {
+            "grants": [],
+            "version": 0
+          },
+          "local": {
+            "lastViewedAt": null,
+            "personalTags": []
+          },
+          "global": {
+            "links": [],
+            "model": null,
+            "scope": null,
+            "title": null,
+            "editor": null,
+            "inputs": [],
+            "models": [],
+            "status": "DRAFT",
+            "topics": [],
+            "content": null,
+            "context": null,
+            "modelId": null,
+            "modules": [],
+            "outputs": [],
+            "version": null,
+            "computes": null,
+            "filePath": null,
+            "noteType": null,
+            "severity": null,
+            "hooksUsed": [],
+            "rootCause": null,
+            "confidence": null,
+            "consumedBy": [],
+            "provenance": null,
+            "sourceType": null,
+            "targetType": null,
+            "cardinality": null,
+            "description": null,
+            "alternatives": [],
+            "consequences": [],
+            "errorMessage": null,
+            "relationType": null,
+            "correctPattern": null,
+            "decisionStatus": null,
+            "dispatchTargets": [],
+            "lifecycleEvents": []
+          },
+          "document": {
+            "hash": {
+              "encoding": "base64",
+              "algorithm": "sha1"
+            },
+            "version": 1
+          }
+        }
+      },
+      "timestampUtcMs": "2026-08-14T12:10:09.579Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "NE8zvoB0h/CPBXZKD6rAQZqHOps=",
+    "timestampUtcMs": "2026-08-14T12:35:32.000Z",
+    "action": {
+      "type": "SET_DESCRIPTION",
+      "input": {
+        "updatedAt": "2026-08-14T12:35:32.000Z",
+        "description": "Package-owned schema fragments are stitched into a supergraph, so one query can span independent packages. Shipping a package ships its API \u2014 there is no central schema registry."
+      },
+      "timestampUtcMs": "2026-08-14T12:35:32.000Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "",
+    "timestampUtcMs": "2026-08-14T12:38:03.750Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "27438cd8-5fb0-4ed7-bcbe-665beef8a259",
+        "targetId": "e5905516-830e-4fac-9464-298c12e958fb",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-08-14T12:38:03.750Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "9Kek3gyY1nk8V6/qrlSxZWlBiUI=",
+    "timestampUtcMs": "2026-08-14T12:35:32.000Z",
+    "action": {
+      "type": "SET_NOTE_TYPE",
+      "input": {
+        "noteType": "ARCHITECTURE",
+        "updatedAt": "2026-08-14T12:35:32.000Z"
+      },
+      "timestampUtcMs": "2026-08-14T12:35:32.000Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "",
+    "timestampUtcMs": "2026-08-14T12:38:03.839Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "27438cd8-5fb0-4ed7-bcbe-665beef8a259",
+        "targetId": "b52d608c-7251-418f-b97e-400e4b811a88",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-08-14T12:38:03.839Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "slzunehgF8ZOK8UWjjMdePKXCJI=",
+    "timestampUtcMs": "2026-08-14T12:35:32.000Z",
+    "action": {
+      "type": "SET_CONTENT",
+      "input": {
+        "content": "## No monolithic schema\n\nSwitchboard does not expose one hand-maintained schema. Every Reactor Package ships its **own** GraphQL schema fragment \u2014 its subgraph \u2014 and Switchboard composes all of them into a single unified endpoint at `/graphql`.\n\nThe practical payoff is cross-package querying. A client can pull data owned by two completely independent packages in one request, and neither package needs to know the other exists:\n\n```graphql\nquery {\n  todoList(id: \"doc-123\") {\n    id\n    todos {\n      id\n      title\n      done\n    }\n  }\n}\n```\n\nThat query hits one endpoint. Behind it, whichever package owns the `todoList` type resolves it.\n\n## Each subgraph exposes three things\n\n- **Queries** \u2014 for reading documents and processor read models.\n- **Mutations** \u2014 for dispatching actions to documents.\n- **Custom types** \u2014 the domain-specific GraphQL types your resolvers return.\n\n## Why this makes the package the unit of delivery\n\nBecause a package owns its subgraph, shipping the package ships its API. There is no central schema registry to update, no coordination step, no separate gateway config to edit. Installing a package into a Switchboard extends the supergraph.\n\nComposition is also not a one-shot boot step. `GraphQLManager` keeps subgraphs in a map keyed by supergraph name, registers each one, and rebuilds the router; document-model subgraphs are *regenerated* when models are loaded dynamically, so packages installed after startup still land in the composed schema. Duplicate subgraph names are skipped rather than merged \u2014 a name collision silently loses the second registration.\n\nOne endpoint is not quite everything: the per-drive subgraph is served separately at `/d/:driveId` and is deliberately excluded from the `/graphql` supergraph.\n\n_Source: apps/academy/docs/academy/02-Learn/06-switchboard/02-subgraphs.mdx, packages/reactor-api/src/graphql/graphql-manager.ts (Powerhouse v6.2.2-dev.45)._",
+        "updatedAt": "2026-08-14T12:35:32.000Z"
+      },
+      "timestampUtcMs": "2026-08-14T12:35:32.000Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "",
+    "timestampUtcMs": "2026-08-14T12:38:03.927Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "27438cd8-5fb0-4ed7-bcbe-665beef8a259",
+        "targetId": "a442a64c-1ed5-41ef-ba49-96dc33c81fa5",
+        "relationshipType": "BUILDS_ON"
+      },
+      "timestampUtcMs": "2026-08-14T12:38:03.927Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "XA/MD2nL5SmDY4rOm2xET8wf6kQ=",
+    "timestampUtcMs": "2026-08-14T12:35:32.000Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "version",
+        "value": "v6.2.2-dev.44",
+        "updatedAt": "2026-08-14T12:35:32.000Z"
+      },
+      "timestampUtcMs": "2026-08-14T12:35:32.000Z"
+    }
+  },
+  {
+    "index": 5,
+    "hash": "trNz65J8QmD+QIauK32BQQLOvbA=",
+    "timestampUtcMs": "2026-08-14T12:35:32.000Z",
+    "action": {
+      "type": "SET_PROVENANCE",
+      "input": {
+        "author": "claude",
+        "createdAt": "2026-08-13T14:36:11.000Z",
+        "sourceOrigin": "DERIVED"
+      },
+      "timestampUtcMs": "2026-08-14T12:35:32.000Z"
+    }
+  },
+  {
+    "index": 6,
+    "hash": "SXe+RfN6TpJSFFGXEEctnDTed7k=",
+    "timestampUtcMs": "2026-08-14T12:35:32.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "fb32de23-ba7f-4905-a7b4-ec2f45c62bb6",
+        "name": "subgraphs",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-08-14T12:35:32.000Z"
+    }
+  },
+  {
+    "index": 7,
+    "hash": "K+jj+qRnCRCRvDkiZFmSA3p2RLU=",
+    "timestampUtcMs": "2026-08-14T12:35:32.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "aa262004-eec6-49d3-904f-70549c153d62",
+        "name": "switchboard",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-08-14T12:35:32.000Z"
+    }
+  },
+  {
+    "index": 8,
+    "hash": "p6u6q20lXp32ux4LqLaFj6eS+Gw=",
+    "timestampUtcMs": "2026-08-14T12:35:32.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "bfa3d7ba-5b13-4690-bada-98b4113a5986",
+        "name": "graphql",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-08-14T12:35:32.000Z"
+    }
+  },
+  {
+    "index": 9,
+    "hash": "SQRTfCfAiTwpTsLPP9spqWI4FPM=",
+    "timestampUtcMs": "2026-08-14T14:36:53.000Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "version",
+        "value": "v6.2.2-dev.47",
+        "updatedAt": "2026-08-14T12:00:00.000Z"
+      },
+      "timestampUtcMs": "2026-08-14T14:36:53.000Z"
+    }
+  },
+  {
+    "index": 10,
+    "hash": "hpreP/CWSAq0wqN0VqqXwI1My2Y=",
+    "timestampUtcMs": "2026-08-14T14:36:53.000Z",
+    "action": {
+      "type": "SUBMIT_FOR_REVIEW",
+      "input": {
+        "id": "966e79c7-44d4-4a2c-b06c-b626675c0983",
+        "actor": "claude",
+        "comment": "Knowledge registered against powerhouse v6.2.2-dev.47",
+        "timestamp": "2026-08-14T12:00:00.000Z"
+      },
+      "timestampUtcMs": "2026-08-14T14:36:53.000Z"
+    }
+  },
+  {
+    "index": 11,
+    "hash": "vkgMDnLRro6i/GfbVRyGcHG3XiI=",
+    "timestampUtcMs": "2026-08-14T14:36:53.000Z",
+    "action": {
+      "type": "APPROVE_NOTE",
+      "input": {
+        "id": "d4e56c21-58d6-4c0a-9ee2-b232f5727990",
+        "actor": "liberuum",
+        "comment": "Canonical as of powerhouse v6.2.2-dev.47",
+        "timestamp": "2026-08-14T12:00:00.000Z"
+      },
+      "timestampUtcMs": "2026-08-14T14:36:53.000Z"
+    }
+  },
+  {
+    "index": 12,
+    "hash": "OpvmcmTiMK68YAX/8AkYtmPIkaE=",
+    "timestampUtcMs": "2026-09-03T09:59:30.093Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "version",
+        "updatedAt": "2026-09-03T09:59:30.093Z"
+      },
+      "timestampUtcMs": "2026-09-03T09:59:30.093Z"
+    }
+  }
+]

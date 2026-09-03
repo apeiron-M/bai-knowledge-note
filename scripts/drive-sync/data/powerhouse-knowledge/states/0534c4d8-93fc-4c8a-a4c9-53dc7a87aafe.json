@@ -1,0 +1,109 @@
+{
+  "links": [
+    {
+      "id": "lnk-d15a9a31-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "d15a9a31-8c3b-4bdf-80c9-2511196ce029",
+      "targetTitle": "Academy \u203a Build \u203a Launch \u203a Configure your environment",
+      "reason": "Backing page found by content match in the v6.2.2-dev.74 source backfill \u2014 identifiers powerhouse.config.json, process.env from the claim appear in this page (text identical at v6.2.2-dev.47 and v6.2.2-dev.74); attribution, not the original extraction record",
+      "confidence": "grounded"
+    },
+    {
+      "id": "lnk-b153c532-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "b153c532-0abc-4400-8448-4ac08046fcad",
+      "targetTitle": "docker-images-for-connect-and-switchboard"
+    },
+    {
+      "id": "lnk-7bff5825-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "7bff5825-c49b-4b5c-948f-131a66e37544",
+      "targetTitle": "builder-profile-model-describes-individual-contributor-identities"
+    },
+    {
+      "id": "lnk-2e1ec6fb-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "2e1ec6fb-c54f-466f-b1af-6809c0321bf2",
+      "targetTitle": "document-model-structure-has-metadata-specifications-and-modules"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "powerhouse.config.json outranks environment variables; env vars are only set-if-absent build-time seeds",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "d0a1dfd8-85f0-4700-9d18-2144ce04b985",
+      "name": "configuration",
+      "topicDocumentId": null
+    },
+    {
+      "id": "0dc68885-4558-4478-bdd7-a334b287477e",
+      "name": "environment",
+      "topicDocumentId": null
+    },
+    {
+      "id": "53229b75-9848-435f-bb6e-15185990aa8a",
+      "name": "deployment",
+      "topicDocumentId": null
+    },
+    {
+      "id": "cb2c8bde-01d8-4eb5-bf66-1354cd39be59",
+      "name": "feature-flags",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "Powerhouse services accept configuration via two methods: `.env` file (key-value pairs, loaded by `ph service start`) and `powerhouse.config.json` (structured JSON). For Connect the JSON file -- not the environment -- wins: `powerhouse.config.json` OUTRANKS env vars. When the dist config is built, values resolve lowest-to-highest as: schema defaults (`DEFAULT_CONNECT_CONFIG`) -> env-var seeds (set-if-absent; they only fill fields the source file does not specify) -> `powerhouse.config.json` at the project root, the operator's source of truth -> `ph connect build --json` -> `ph connect build --<flag>`. At runtime Connect always reads the resulting dist file as-is; it does not consult `process.env` for any field in the runtime schema. Environment variables are not a source for Connect's runtime config.\n\nThe old per-field Connect env vars are no longer wired -- PH_CONNECT_DISABLE_ADD_DRIVE, PH_CONNECT_PUBLIC_DRIVES_ENABLED, PH_CONNECT_RENOWN_URL, PH_CONNECT_RENOWN_CHAIN_ID, PH_CONNECT_LOG_LEVEL, PH_CONNECT_DEFAULT_DRIVES_URL, and the PH_CONNECT_SENTRY_* family all became `connect.*` fields in `powerhouse.config.json`. Set them by editing the file, via `ph connect config` / `ph connect build` flags, or -- for Docker -- through a single `PH_CONNECT_CONFIG_JSON` payload that the container entrypoint deep-merges into the dist file (operator-wins).\n\nSwitchboard remains genuinely env-driven: DATABASE_URL, AUTH_ENABLED, ADMINS, DEFAULT_PROTECTION. Changes require `ph service restart`.\n\n_Corrected 2026-08-13 against Powerhouse v6.2.2-dev.45._",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": "v6.2.2-dev.74",
+  "computes": null,
+  "filePath": "apps/academy/docs/academy/03-Build/05-Launch/04-ConfigureEnvironment.md",
+  "noteType": "DECISION",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "knowledge-agent",
+    "createdAt": "2026-04-02T12:00:00.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-09-02T21:36:55.284Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Connect's runtime source of truth is powerhouse.config.json. Env vars only seed fields the file omits, at build time; Connect never reads process.env at runtime.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "d8593d78-a316-4088-9cbe-b62c093329d0",
+      "actor": "claude",
+      "comment": "Knowledge registered against powerhouse v6.2.2-dev.47",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-14T12:00:00.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "7fee4bc1-fcab-4678-8425-ae3346cc4a19",
+      "actor": "liberuum",
+      "comment": "Canonical as of powerhouse v6.2.2-dev.47",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-14T12:00:00.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

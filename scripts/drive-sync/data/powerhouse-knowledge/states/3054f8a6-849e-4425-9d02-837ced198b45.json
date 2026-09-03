@@ -1,0 +1,130 @@
+{
+  "links": [
+    {
+      "id": "lnk-3d66d24b-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "3d66d24b-b293-458b-af07-c9e3600e29d9",
+      "targetTitle": "cimt ag \u2014 n8n"
+    },
+    {
+      "id": "lnk-25e012c0-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "25e012c0-34f8-44f7-b6e6-4873ebb8d48f",
+      "targetTitle": "relyon AG (wemakefuture) \u2014 n8n"
+    },
+    {
+      "id": "lnk-c88e25b8-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "c88e25b8-b720-4a48-b3af-72835821ebdc",
+      "targetTitle": "ETES GmbH \u2014 n8n"
+    },
+    {
+      "id": "lnk-58449c8b-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "58449c8b-27f1-4ddb-a789-aca7aa2cd88d",
+      "targetTitle": "Exxeta AG \u2014 n8n"
+    },
+    {
+      "id": "lnk-c9df551a-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "c9df551a-5972-46fa-9611-48e18b9c0347",
+      "targetTitle": "Lighthouse Consultings \u2014 n8n"
+    },
+    {
+      "id": "lnk-a4a32a93-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "a4a32a93-4227-4c29-b536-dbe12adf11d1",
+      "targetTitle": "SVA System Vertrieb Alexander GmbH \u2014 n8n"
+    },
+    {
+      "id": "lnk-a84718b3-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "a84718b3-5350-4ebc-93c2-ff380b764104",
+      "targetTitle": "bitbetter GmbH \u2014 n8n"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "n8n keeps no ordered business record because execution data is prunable and pruning is on by default",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "53bfe9e4-1672-4765-95c9-d6c4f87c2ba9",
+      "name": "leads",
+      "topicDocumentId": null
+    },
+    {
+      "id": "561bb71d-9a20-4a97-a896-f28ceddd32cc",
+      "name": "n8n",
+      "topicDocumentId": null
+    },
+    {
+      "id": "bca434f2-d343-4877-a5bb-ed823a4d9603",
+      "name": "workflow-automation",
+      "topicDocumentId": null
+    },
+    {
+      "id": "c3f9cae6-2865-403d-9b8b-ced1b408aa44",
+      "name": "audit-trail",
+      "topicDocumentId": null
+    },
+    {
+      "id": "c960cb0c-ac37-49fb-8484-91754be6bc41",
+      "name": "append-only",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "n8n keeps no ordered business record. Its execution data is prunable, and pruning is on by default \u2014 so the history of what the automation did is a retention-managed cache, not a log. Nothing has to be misconfigured for the record to vanish; the default configuration is the failure mode.\n\nThe resulting position is straightforward: Powerhouse is the durable log the automation writes to as it runs. The workflow keeps doing what it does well \u2014 triggering, branching, calling APIs \u2014 and each business-relevant branch also emits an attributed, append-only entry that outlives the execution row. There is no contest over ownership of the automation layer.\n\nThis is the cleanest instance in the corpus of the general finding that open-source business tools do not keep an immutable attributed log by default. Most tools in the survey leave a mutable record; n8n's default actively deletes one. For the seven German integrators carrying this finding, that makes the gap demonstrable in the client's own installation rather than argued from documentation.\n\n---\n\n## Leads sharing this finding (7)\n\n**1 \u00b7 start here**\n- ETES GmbH (DE Stuttgart) \u2014 Markus Espenhain, Gesch\u00e4ftsf\u00fchrer \u00b7 info@etes.de \u00b7 https://etes.de\n\n**3 \u00b7 later**\n- Exxeta AG (DE Karlsruhe) \u2014 https://exxeta.com\n- Lighthouse Consultings (DE Stuttgart) \u2014 https://lighthouseconsultings.de\n- SVA System Vertrieb Alexander GmbH (DE Wiesbaden +29) \u2014 https://sva.de\n- bitbetter GmbH (DE Hamburg) \u2014 https://bitbetter.de\n- cimt ag (DE Hamburg + Berlin) \u2014 https://cimt-ag.de\n- relyon AG (wemakefuture) (DE (HQ unverified)) \u2014 https://wemakefuture.com\n\nVerbatim research text this claim was extracted from:\n\n> n8n keeps no ordered business record \u2014 execution data is prunable and pruning is on by default. Powerhouse is the durable log the automation writes to as it runs.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "OBSERVATION",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "knowledge-agent",
+    "createdAt": "2026-08-19T11:23:49.794977Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-19T11:23:53.207640Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "The automation's own history is a retention-managed cache rather than a log, so Powerhouse becomes the durable record the workflow writes to as it runs.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "073fb77c-08b8-4349-8a96-423655dba694",
+      "actor": "knowledge-agent",
+      "comment": "Extracted from lead research; claim checked against the source record.",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-19T11:23:53.062919Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "81cb842e-2755-41cc-b3bf-a2cde87bb96d",
+      "actor": "liberuum",
+      "comment": "Approved: lead corpus extraction.",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-19T11:23:53.207640Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

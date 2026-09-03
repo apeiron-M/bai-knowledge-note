@@ -1,0 +1,121 @@
+[
+  {
+    "index": 0,
+    "hash": "",
+    "timestampUtcMs": "2026-09-02T21:37:12.015Z",
+    "action": {
+      "type": "CREATE_DOCUMENT",
+      "input": {
+        "meta": {},
+        "name": "Academy \u203a Build \u203a ExampleUsecases \u203a Chatroom \u203a Write the document specification",
+        "slug": "",
+        "model": "bai/source",
+        "branch": "main",
+        "signing": {
+          "nonce": "",
+          "publicKey": {},
+          "signature": "8c569c6d-18ab-4b3a-8768-dbd875e0f644",
+          "documentType": "bai/source",
+          "createdAtUtcIso": "2026-09-02T21:37:12.015Z"
+        },
+        "version": 0,
+        "documentId": "8c569c6d-18ab-4b3a-8768-dbd875e0f644",
+        "protocolVersions": {
+          "base-reducer": 2
+        }
+      },
+      "timestampUtcMs": "2026-09-02T21:37:12.015Z"
+    }
+  },
+  {
+    "index": 0,
+    "hash": "8o7LrD5ybxE7yO388z4PVZymGHM=",
+    "timestampUtcMs": "2026-09-02T21:37:11.990Z",
+    "action": {
+      "type": "INGEST_SOURCE",
+      "input": {
+        "url": "https://github.com/powerhouse-inc/powerhouse/blob/v6.2.2-dev.74/apps/academy/docs/academy/03-Build/06-ExampleUsecases/Chatroom/03-DefineChatroomDocumentModel.md",
+        "tool": "sync-repo-docs",
+        "title": "Academy \u203a Build \u203a ExampleUsecases \u203a Chatroom \u203a Write the document specification",
+        "author": "Powerhouse Inc.",
+        "method": "sha256:08e565bdeb885500deb1ae251ad059eed78a2eceef31658900957e814d41cde0 git:v6.2.2-dev.74",
+        "content": "# Write the document specification\n\n:::tip[Tutorial Repository]\n\ud83d\udce6 **Reference Code**: [chatroom-demo](https://github.com/powerhouse-inc/chatroom-demo)\n\nThis tutorial step has a corresponding implementation in the repository. After completing this step, your project will have a document model specification with:\n\n- Document model specification files (`chat-room.json`, `schema.graphql`)\n- Auto-generated TypeScript types and action creators\n- Reducer scaffolding ready for implementation\n  :::\n\n<details>\n<summary>\ud83d\udcd6 How to use this tutorial</summary>\n\n**Prerequisites**: Complete step 1 and set up the tutorial remote (see previous step).\n\n### Compare your generated code\n\nAs Vetra generates code automatically, compare with the reference:\n\n```bash\n# Compare all generated files with the reference\ngit diff tutorial/main -- document-models/chat-room/\n\n# View a specific file from the reference\ngit show tutorial/main:document-models/chat-room/schema.graphql\n```\n\n### Visual comparison with GitHub Desktop\n\nAfter making a commit, use GitHub Desktop for visual diff:\n\n1. **Branch** menu \u2192 **\"Compare to Branch...\"**\n2. Select `tutorial/main`\n3. Review all file differences in the visual interface\n\nSee step 1 for detailed GitHub Desktop instructions.\n\n</details>\n\nIn this tutorial, you will learn how to define the specifications for a **ChatRoom** document model within Vetra Studio using its GraphQL schema, and then export the resulting document model specification document for your Powerhouse project.\n\nIf you don't have a document specification file created yet, have a look at the previous step of this tutorial to create a new document specification.\n\nBefore you start, make sure you have Vetra Studio running locally with the command:\n\n```bash\nph vetra --watch\n```\n\n## ChatRoom document specification\n\nMake sure you have named your document model `ChatRoom` (PascalCase, no spaces or hyphens).  \n**Pay close attention to capitalization, as it influences code generation.**\n\nWe use the **GraphQL Schema Definition Language** (SDL) to define the schema for the document model. Below, you can see the SDL for the `ChatRoom` document model.\n\n:::info\nThis schema defines the **data structure** of the document model and the types involved in its operations. Documents in Powerhouse leverage **event sourcing principles**, where every state transition is represented by an operation. GraphQL input types describe operations, ensuring that user intents are captured effectively.\n:::\n\n<details>\n<summary>State schema of our ChatRoom</summary>\n\n```graphql\ntype ChatRoomState {\n  id: OID!\n  name: String!\n  description: String\n  createdAt: DateTime\n  createdBy: ID\n  messages: [Message!]!\n}\n\ntype Message {\n  id: OID!\n  sender: Sender!\n  content: String\n  sentAt: DateTime!\n  reactions: [Reaction!]\n}\n\ntype Sender {\n  id: ID!\n  name: String\n  avatarUrl: URL\n}\n\ntype Reaction {\n  type: ReactionType!\n  reactedBy: [ID!]!\n}\n\nenum ReactionType {\n  THUMBS_UP\n  THUMBS_DOWN\n  LAUGH\n  HEART\n  CRY\n}\n```\n\n</details>\n\n<details>\n<summary>Messages Module: Operations for ChatRoom Messages</summary>\n\n```graphql\n# Add a new message to the chat-room\ninput AddMessageInput {\n  messageId: OID!\n  sender: SenderInput!\n  content: String!\n  sentAt: DateTime!\n}\n\n# Sender information for a message\ninput SenderInput {\n  id: ID!\n  name: String\n  avatarUrl: URL\n}\n\n# Add an emoji reaction to a message\ninput AddEmojiReactionInput {\n  messageId: OID!\n  reactedBy: ID!\n  type: ReactionType!\n}\n\n# Remove an emoji reaction from a message\ninput RemoveEmojiReactionInput {\n  messageId: OID!\n  senderId: ID!\n  type: ReactionType!\n}\n```\n\n</details>\n\n<details>\n<summary>Settings Module: Operations for ChatRoom Settings</summary>\n\n```graphql\n# Edit the chat-room name\ninput EditChatNameInput {\n  name: String\n}\n\n# Edit the chat-room description\ninput EditChatDescriptionInput {\n  description: String\n}\n```\n\n</details>\n\n## Define the document model specification\n\nTo define the document model, you need to open the document model editor in Vetra Studio.\n\n### Steps to define your document model:\n\n1. In Vetra Studio, click on **'ChatRoom' Document** to open the document model specification editor.\n\n2. You'll be presented with a form to fill in metadata about the document model. Fill in the details in the respective fields.\n\n   In the **Document Type** field, type `powerhouse/chat-room` (lowercase with hyphen). This defines the new type of document that will be created with this document model specification.\n\n   ![Chatroom Document Model Form Metadata](image-2.png)\n\n3. In the code editor, you can see the SDL for the document model. Replace the existing SDL template with the SDL defined in the **State Schema** section above. Only copy and paste the types, leaving the inputs for the next step. You can press the 'Sync with schema' button to set the initial state of your document model based on your Schema Definition Language.\n\n4. Verify that your **Global State Initial Value** looks like this:\n\n   ```json\n   {\n     \"ID\": \"\",\n     \"name\": \"\",\n     \"description\": null,\n     \"createdAt\": null,\n     \"createdBy\": null,\n     \"messages\": []\n   }\n   ```\n\n5. Below the editor, find the input field `Add module`. Create the first module for message-related operations. Name the module `messages`. Press enter.\n\n6. Now there is a new field, called `Add operation`. Here you will add each input operation to the module, one by one.\n\n7. Inside the `Add operation` field, type `ADD_MESSAGE` and press enter. A small editor will appear underneath with an empty input type that you need to fill. Copy the `AddMessageInput` and `SenderInput` from the **Messages Module** section and paste them in the editor:\n\n   ```graphql\n   input AddMessageInput {\n     messageId: OID!\n     sender: SenderInput!\n     content: String!\n     sentAt: DateTime!\n   }\n\n   input SenderInput {\n     id: ID!\n     name: String\n     avatarUrl: URL\n   }\n   ```\n\n8. Add the remaining message operations to the `messages` module: `ADD_EMOJI_REACTION` and `REMOVE_EMOJI_REACTION`. Note that you only need to add the operation name (e.g., `ADD_EMOJI_REACTION`) without the `Input` suffix\u2014it will be generated automatically.\n\n9. Add **reducer exceptions** to the `ADD_MESSAGE` operation for validation: `MessageContentCannotBeEmptyError` and `MessageNotFoundError`. These will be used later to validate messages.\n\n10. Create a second module called `settings` for the chat room configuration operations.\n\n11. Add the settings operations to the `settings` module: `EDIT_CHAT_NAME` and `EDIT_CHAT_DESCRIPTION`.\n\n12. In the meantime, Vetra has been keeping an eye on your inputs and started code generation in your directory. In your terminal you will also find any validation errors that help you to identify missing specifications.\n\n## Verify your document model generation\n\nIf you have been watching the terminal in your IDE you will see that Vetra has been tracking your changes and scaffolding your directory. Your project should have the following structure in `document-models/chat-room/`:\n\n```\ndocument-models/chat-room/\n\u251c\u2500\u2500 gen/                              # Auto-generated code (don't edit)\n\u2502   \u251c\u2500\u2500 actions.ts\n\u2502   \u251c\u2500\u2500 creators.ts                   # Action creator functions\n\u2502   \u251c\u2500\u2500 types.ts                      # TypeScript type definitions\n\u2502   \u251c\u2500\u2500 reducer.ts\n\u2502   \u251c\u2500\u2500 messages/                     # Messages module\n\u2502   \u2502   \u251c\u2500\u2500 actions.ts\n\u2502   \u2502   \u251c\u2500\u2500 creators.ts\n\u2502   \u2502   \u251c\u2500\u2500 error.ts                  # Error classes for validation\n\u2502   \u2502   \u2514\u2500\u2500 operations.ts\n\u2502   \u2514\u2500\u2500 settings/                     # Settings module\n\u2502       \u251c\u2500\u2500 actions.ts\n\u2502       \u251c\u2500\u2500 creators.ts\n\u2502       \u251c\u2500\u2500 error.ts\n\u2502       \u2514\u2500\u2500 operations.ts\n\u251c\u2500\u2500 src/                              # Your custom implementation\n\u2502   \u251c\u2500\u2500 reducers/\n\u2502   \u2502   \u251c\u2500\u2500 messages.ts               # Message operation reducers\n\u2502   \u2502   \u2514\u2500\u2500 settings.ts               # Settings operation reducers\n\u2502   \u2514\u2500\u2500 tests/\n\u2502       \u251c\u2500\u2500 document-model.test.ts    # Document model tests\n\u2502       \u251c\u2500\u2500 messages.test.ts          # Messages operation tests\n\u2502       \u2514\u2500\u2500 settings.test.ts          # Settings operation tests\n\u251c\u2500\u2500 chat-room.json                    # Document model specification\n\u2514\u2500\u2500 schema.graphql                    # GraphQL schema\n```\n\n### Compare with reference\n\nVerify your generated files match the expected structure:\n\n```bash\n# Compare your generated files with the reference\ngit diff tutorial/main -- document-models/chat-room/\n\n# List what was generated in the reference\ngit ls-tree -r --name-only tutorial/main document-models/chat-room/\n```\n\n## Up next: Reducers\n\nIn the next step, you'll learn how to implement the runtime logic that will use the `ChatRoom` document model specification you've just created.\n",
+        "createdAt": "2026-09-02T21:37:11.990Z",
+        "createdBy": "repo-docs-sync",
+        "sourceType": "DOCUMENTATION",
+        "description": "Powerhouse v6.2.2-dev.74 (unchanged since v6.2.2-dev.47) \u2014 This tutorial step has a corresponding implementation in the repository. After completing this step, your project will have a document model\u2026",
+        "publishedAt": "2026-06-17T17:43:07.000Z"
+      },
+      "timestampUtcMs": "2026-09-02T21:37:11.990Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "",
+    "timestampUtcMs": "2026-09-02T21:37:12.015Z",
+    "action": {
+      "type": "UPGRADE_DOCUMENT",
+      "input": {
+        "model": "bai/source",
+        "toVersion": 1,
+        "documentId": "8c569c6d-18ab-4b3a-8768-dbd875e0f644",
+        "fromVersion": 0,
+        "initialState": {
+          "auth": {
+            "grants": [],
+            "version": 0
+          },
+          "local": {},
+          "global": {
+            "title": null,
+            "status": "INBOX",
+            "content": null,
+            "createdAt": null,
+            "createdBy": null,
+            "provenance": null,
+            "sourceType": null,
+            "description": null,
+            "extractedClaims": [],
+            "extractionStats": null
+          },
+          "document": {
+            "hash": {
+              "encoding": "base64",
+              "algorithm": "sha1"
+            },
+            "version": 1
+          }
+        }
+      },
+      "timestampUtcMs": "2026-09-02T21:37:12.015Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "i1yan3VgtuRUhSmDXVTONkx0AtE=",
+    "timestampUtcMs": "2026-09-03T07:56:11.386Z",
+    "action": {
+      "type": "RECORD_EXTRACTION_STATS",
+      "input": {
+        "skipRate": 1,
+        "claimCount": 0,
+        "extractedAt": "2026-09-03T07:56:11.386Z",
+        "extractedBy": "knowledge-agent",
+        "skippedCount": 3
+      },
+      "timestampUtcMs": "2026-09-03T07:56:11.386Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "0rwAhLLAQKPXR+Tz/a0vPahNqy4=",
+    "timestampUtcMs": "2026-09-03T07:56:52.847Z",
+    "action": {
+      "type": "SET_SOURCE_STATUS",
+      "input": {
+        "status": "EXTRACTED"
+      },
+      "timestampUtcMs": "2026-09-03T07:56:52.847Z"
+    }
+  }
+]

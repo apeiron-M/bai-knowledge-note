@@ -1,0 +1,117 @@
+[
+  {
+    "index": 0,
+    "hash": "",
+    "timestampUtcMs": "2026-09-02T21:35:55.484Z",
+    "action": {
+      "type": "CREATE_DOCUMENT",
+      "input": {
+        "meta": {},
+        "name": "Academy \u203a Build \u203a WorkWithData \u203a Analytics Engine \u203a graphql \u203a Integration",
+        "slug": "",
+        "model": "bai/source",
+        "branch": "main",
+        "signing": {
+          "nonce": "",
+          "publicKey": {},
+          "signature": "ac75dc2f-f9ba-4e77-bdb4-4eb6a0eed82f",
+          "documentType": "bai/source",
+          "createdAtUtcIso": "2026-09-02T21:35:55.484Z"
+        },
+        "version": 0,
+        "documentId": "ac75dc2f-f9ba-4e77-bdb4-4eb6a0eed82f",
+        "protocolVersions": {
+          "base-reducer": 2
+        }
+      },
+      "timestampUtcMs": "2026-09-02T21:35:55.484Z"
+    }
+  },
+  {
+    "index": 0,
+    "hash": "LhJJKaAZu1N2/kTcDMH+qLykKnc=",
+    "timestampUtcMs": "2026-09-02T21:35:55.653Z",
+    "action": {
+      "type": "INGEST_SOURCE",
+      "input": {
+        "url": "https://github.com/powerhouse-inc/powerhouse/blob/v6.2.2-dev.74/apps/academy/docs/academy/03-Build/04-WorkWithData/_06-Analytics Engine/graphql/integration.md",
+        "tool": "sync-repo-docs",
+        "title": "Academy \u203a Build \u203a WorkWithData \u203a Analytics Engine \u203a graphql \u203a Integration",
+        "author": "Powerhouse Inc.",
+        "method": "sha256:f173920f449c3c0b9d3e1c55ad9526a6a16ade8cf99dc4e8f72859aa5f2f8918 git:v6.2.2-dev.74",
+        "content": "---\nsidebar_position: 1\n---\n\n# Integration\n\nThe `analytics-engine-graphql` module provides types and resolvers needed for a fully-functional GraphQL Server API. This library has no dependencies on any particular server but has been tested using [Apollo Server 3 and 4](https://www.apollographql.com/docs/apollo-server).\n\n## Resolvers and types\n\nThe graphql package contains typical resolvers and typedefs. The resolvers, however, are dependent on another object: `AnalyticsModel`. This object is responsible for connecting GQL types with an `IAnalyticsStore` implementation.\n\n```typescript\nimport {\n  AnalyticsModel,\n  AnalyticsResolvers,\n  typedefs,\n} from \"@powerhousedao/analytics-engine-graphql\";\nimport { AnalyticsQueryEngine } from \"@powerhousedao/analytics-engine-core\";\nimport { MemoryAnalyticsStore } from \"@powerhousedao/analytics-engine-browser\";\n\nconst model = new AnalyticsModel(\n  new AnalyticsQueryEngine(new MemoryAnalyticsStore()),\n);\n```\n\n> Note that the analytics resolvers require the passed in context to have an `AnalyticsModel` implementation on it. See below for details.\n\n### Apollo 4\n\nA minimal Apollo 4 example is noted below for completeness, but a full working example can be found in the [MakerDAO-SES Ecosystem API repo](https://github.com/makerdao-ses/ecosystem-api/). Note, in particular, that we pass along a specific context in the Apollo express middleware.\n\n```typescript\nimport express from \"express\";\nimport http from \"http\";\n\nimport { makeExecutableSchema } from \"@graphql-tools/schema\";\nimport { ApolloServer } from \"@apollo/server\";\nimport { expressMiddleware } from \"@apollo/server/express4\";\nimport { ApolloServerPluginDrainHttpServer } from \"@apollo/server/plugin/drainHttpServer\";\n\nimport {\n  AnalyticsModel,\n  AnalyticsResolvers,\n  typedefs,\n} from \"@powerhousedao/analytics-engine-graphql\";\nimport { AnalyticsQueryEngine } from \"@powerhousedao/analytics-engine-core\";\nimport { MemoryAnalyticsStore } from \"@powerhousedao/analytics-engine-browser\";\n\n// create a typical http service\nconst app = express();\nconst httpServer = http.createServer(app);\n\n// create analytics gql schema from typedefs + resolvers\nconst schema = makeExecutableSchema({\n  typeDefs: typedefs,\n  resolvers: AnalyticsResolvers,\n});\n\n// create an apollo instance\nconst plugins = [\n  ApolloServerPluginDrainHttpServer({ httpServer }),\n  responseCachePlugin(),\n];\nconst server = new ApolloServer({\n  schema,\n  plugins,\n});\n\nawait server.start();\n\n// needed by the analytics resolvers\nconst model = new AnalyticsModel(\n  new AnalyticsQueryEngine(new MemoryAnalyticsStore()),\n);\n\napp.use(\n  \"/graphql\",\n  express.json(),\n  expressMiddleware(server, {\n    context: ({ req }) => {\n      // the analytics resolvers expect this on the context\n      return {\n        dataSources: { db: { Analytics: model } },\n      };\n    },\n  }),\n);\n\nawait new Promise<void>((resolve) => httpServer.listen(options, resolve));\n```\n",
+        "createdAt": "2026-09-02T21:35:55.653Z",
+        "createdBy": "repo-docs-sync",
+        "sourceType": "DOCUMENTATION",
+        "description": "Powerhouse v6.2.2-dev.74 (unchanged since v6.2.2-dev.47) \u2014 The analytics-engine-graphql module provides types and resolvers needed for a fully-functional GraphQL Server API. This library has no depen\u2026",
+        "publishedAt": "2026-06-17T17:18:45.000Z"
+      },
+      "timestampUtcMs": "2026-09-02T21:35:55.653Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "",
+    "timestampUtcMs": "2026-09-02T21:35:55.484Z",
+    "action": {
+      "type": "UPGRADE_DOCUMENT",
+      "input": {
+        "model": "bai/source",
+        "toVersion": 1,
+        "documentId": "ac75dc2f-f9ba-4e77-bdb4-4eb6a0eed82f",
+        "fromVersion": 0,
+        "initialState": {
+          "auth": {
+            "grants": [],
+            "version": 0
+          },
+          "local": {},
+          "global": {
+            "title": null,
+            "status": "INBOX",
+            "content": null,
+            "createdAt": null,
+            "createdBy": null,
+            "provenance": null,
+            "sourceType": null,
+            "description": null,
+            "extractedClaims": [],
+            "extractionStats": null
+          },
+          "document": {
+            "hash": {
+              "encoding": "base64",
+              "algorithm": "sha1"
+            },
+            "version": 1
+          }
+        }
+      },
+      "timestampUtcMs": "2026-09-02T21:35:55.484Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "8CiPM7mkh3NZ4oigYWmpGKaGBc8=",
+    "timestampUtcMs": "2026-09-02T21:36:01.251Z",
+    "action": {
+      "type": "ADD_EXTRACTED_CLAIM",
+      "input": {
+        "claimRef": "28b161ff-8015-4a14-931a-67e5dacae7db"
+      },
+      "timestampUtcMs": "2026-09-02T21:36:01.251Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "hhGAf/xGX2O2FHuj3kELcgbng44=",
+    "timestampUtcMs": "2026-09-02T21:36:07.892Z",
+    "action": {
+      "type": "SET_SOURCE_STATUS",
+      "input": {
+        "status": "EXTRACTED"
+      },
+      "timestampUtcMs": "2026-09-02T21:36:07.892Z"
+    }
+  }
+]

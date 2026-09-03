@@ -1,0 +1,96 @@
+{
+  "links": [
+    {
+      "id": "lnk-ffbb3996-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "ffbb3996-d554-4eb8-ac08-e56dafa93cfc",
+      "targetTitle": "never-use-tothrow-when-testing-reducer-errors"
+    },
+    {
+      "id": "lnk-db144dcd-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "db144dcd-42c6-467b-a108-ddebd1d421d6",
+      "targetTitle": "reducers-are-pure-functions-with-immer"
+    },
+    {
+      "id": "lnk-e2b3e87f-bui",
+      "linkType": "BUILDS_ON",
+      "targetDocumentId": "e2b3e87f-3df0-4940-9352-b648ed4e527d",
+      "targetTitle": "testing-uses-vitest-and-generatemock"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "The document passed into reducer is unchanged after the call \u2014 assert snapshot isolation",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "2e2678e2-c591-4b9e-bf8e-1ce7a3f75bab",
+      "name": "testing",
+      "topicDocumentId": null
+    },
+    {
+      "id": "7deb6295-3658-4272-b54c-721af7c51c20",
+      "name": "reducer-patterns",
+      "topicDocumentId": null
+    },
+    {
+      "id": "b0d7bc00-b4f4-45d4-870d-5d3a6332c8ee",
+      "name": "immutability",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "Every reducer test should assert two things beyond the expected state change: **determinism** (same inputs, same output across runs) and **snapshot isolation** (the document you passed in is unchanged afterwards).\n\n```ts\ntest(\"completing a todo marks it done\", () => {\n  let doc = utils.createDocument();\n  doc = reducer(doc, addTodo({ id: \"t-1\", title: \"Test\" }));\n  const afterComplete = reducer(doc, completeTodo({ id: \"t-1\" }));\n\n  expect(afterComplete.state.global.items[0].done).toBe(true);\n  expect(doc.state.global.items[0].done).toBe(false); // original snapshot untouched\n});\n```\n\nThe second assertion is the one people skip, and it is the one that catches real bugs. It works because the reducer core runs your operation inside Mutative's `create()`, which hands you a draft and returns a fresh document \u2014 the input object is never written through.\n\nSo the assertion is not testing Mutative. It is testing **your** reducer, by detecting the one class of impurity Mutative cannot protect you from: reaching outside the draft. Capturing a reference to a nested object across calls, mutating an array that came from module scope or from `action.input`, or holding state in a closure all produce a reducer that writes to memory the draft does not cover. Those writes leak into the input snapshot, and this assertion is what surfaces them.\n\nWhy it matters more than a typical purity test: an impure reducer does not fail locally. It fails when a peer replays the log and lands on different state, or when the recomputed hash stops matching. Sync will eventually betray you \u2014 the snapshot assertion is how you find out in CI instead.\n\nNote this is distinct from asserting on a *failed* operation: when a reducer throws, the operation is still appended with `.error` set and state is left unchanged.\n\n_Source: apps/academy/docs/academy/02-Learn/08-deep-dives/01-reducers-in-depth.mdx, confirmed against packages/shared/document-model/reducer.ts (Powerhouse v6.2.2-dev.45)._",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": "v6.2.2-dev.74",
+  "computes": null,
+  "filePath": "apps/academy/docs/academy/02-Learn/08-deep-dives/01-reducers-in-depth.mdx",
+  "noteType": "PATTERN",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "claude",
+    "createdAt": "2026-08-13T14:35:54.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-09-03T09:56:50.492Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Mutative returns a new document, so the input snapshot still holds pre-operation state. Failing this assertion means the reducer mutated something outside the draft.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "13dceae1-418d-4a30-9d12-8ea51fb839ad",
+      "actor": "claude",
+      "comment": "Knowledge registered against powerhouse v6.2.2-dev.47",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-14T12:00:00.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "524a2bf1-284b-4a1a-81f3-f70f50008067",
+      "actor": "liberuum",
+      "comment": "Canonical as of powerhouse v6.2.2-dev.47",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-14T12:00:00.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

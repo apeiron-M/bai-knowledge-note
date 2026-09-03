@@ -1,0 +1,694 @@
+[
+  {
+    "index": 0,
+    "hash": "",
+    "timestampUtcMs": "2026-09-02T22:09:43.254Z",
+    "action": {
+      "type": "CREATE_DOCUMENT",
+      "input": {
+        "meta": {},
+        "name": "auth-execute-confers-read",
+        "slug": "",
+        "model": "bai/knowledge-note",
+        "branch": "main",
+        "signing": {
+          "nonce": "",
+          "publicKey": {},
+          "signature": "8693600d-a81d-49c8-a2aa-b5f76e7ad5f5",
+          "documentType": "bai/knowledge-note",
+          "createdAtUtcIso": "2026-09-02T22:09:43.254Z"
+        },
+        "version": 0,
+        "documentId": "8693600d-a81d-49c8-a2aa-b5f76e7ad5f5",
+        "protocolVersions": {
+          "base-reducer": 2
+        }
+      },
+      "timestampUtcMs": "2026-09-02T22:09:43.254Z"
+    }
+  },
+  {
+    "index": 0,
+    "hash": "y2N/Y1OWyBedhOuisv7r3Snuxpw=",
+    "timestampUtcMs": "2026-09-02T22:09:43.151Z",
+    "action": {
+      "type": "SET_TITLE",
+      "input": {
+        "title": "An allow on execute confers read of that scope, so an administration grant should name scope 'auth' rather than '*'",
+        "updatedAt": "2026-09-02T22:09:43.151Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:09:43.151Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "",
+    "timestampUtcMs": "2026-09-02T22:09:43.254Z",
+    "action": {
+      "type": "UPGRADE_DOCUMENT",
+      "input": {
+        "model": "bai/knowledge-note",
+        "toVersion": 1,
+        "documentId": "8693600d-a81d-49c8-a2aa-b5f76e7ad5f5",
+        "fromVersion": 0,
+        "initialState": {
+          "auth": {
+            "grants": [],
+            "version": 0
+          },
+          "local": {
+            "lastViewedAt": null,
+            "personalTags": []
+          },
+          "global": {
+            "links": [],
+            "model": null,
+            "scope": null,
+            "title": null,
+            "editor": null,
+            "inputs": [],
+            "models": [],
+            "status": "DRAFT",
+            "topics": [],
+            "content": null,
+            "context": null,
+            "modelId": null,
+            "modules": [],
+            "outputs": [],
+            "version": null,
+            "computes": null,
+            "filePath": null,
+            "noteType": null,
+            "severity": null,
+            "hooksUsed": [],
+            "rootCause": null,
+            "confidence": null,
+            "consumedBy": [],
+            "provenance": null,
+            "sourceType": null,
+            "targetType": null,
+            "cardinality": null,
+            "description": null,
+            "alternatives": [],
+            "consequences": [],
+            "errorMessage": null,
+            "relationType": null,
+            "correctPattern": null,
+            "decisionStatus": null,
+            "dispatchTargets": [],
+            "lifecycleEvents": []
+          },
+          "document": {
+            "hash": {
+              "encoding": "base64",
+              "algorithm": "sha1"
+            },
+            "version": 1
+          }
+        }
+      },
+      "timestampUtcMs": "2026-09-02T22:09:43.254Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "jn56Hitz3N2ZHTuxagrnKTVvrcc=",
+    "timestampUtcMs": "2026-09-02T22:09:43.151Z",
+    "action": {
+      "type": "SET_DESCRIPTION",
+      "input": {
+        "updatedAt": "2026-09-02T22:09:43.151Z",
+        "description": "Executing means reading the state it applies to. The converse does not hold, a deny on execute says nothing about read, and reads ignore the operation list; execute on '*' publishes all scopes."
+      },
+      "timestampUtcMs": "2026-09-02T22:09:43.151Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "",
+    "timestampUtcMs": "2026-09-02T22:17:40.213Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "metadata": {
+          "reason": "Extracted from docs/specs/auth-scope.md at v6.2.2-dev.74 \u2014 Decision algorithm: revised covers(); 'This makes the shape of an administration grant matter'; toll example g-admin comment",
+          "confidence": "grounded"
+        },
+        "sourceId": "8693600d-a81d-49c8-a2aa-b5f76e7ad5f5",
+        "targetId": "223bb12a-be7f-4209-9ab2-f04f7bb2b6c8",
+        "relationshipType": "DERIVED_FROM"
+      },
+      "timestampUtcMs": "2026-09-02T22:17:40.213Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "XFXZ0pbboQr0xNp7mQUANR+i0mw=",
+    "timestampUtcMs": "2026-09-02T22:09:43.151Z",
+    "action": {
+      "type": "SET_NOTE_TYPE",
+      "input": {
+        "noteType": "PATTERN",
+        "updatedAt": "2026-09-02T22:09:43.151Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:09:43.151Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "",
+    "timestampUtcMs": "2026-09-02T22:17:41.467Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "metadata": {
+          "reason": "Extracted from apps/academy/docs/academy/04-Reference/01-Reactor/11-Authorization.md at v6.2.2-dev.74 \u2014 'How a decision is made' first bullet",
+          "confidence": "grounded"
+        },
+        "sourceId": "8693600d-a81d-49c8-a2aa-b5f76e7ad5f5",
+        "targetId": "17dc46b0-f733-467c-99d7-ae8fbe0fb0e4",
+        "relationshipType": "DERIVED_FROM"
+      },
+      "timestampUtcMs": "2026-09-02T22:17:41.467Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "g/NUTcUjxssVTWSSBQc5A0IMFAs=",
+    "timestampUtcMs": "2026-09-02T22:09:43.151Z",
+    "action": {
+      "type": "SET_CONTENT",
+      "input": {
+        "content": "Executing an operation means reading the state it applies to, so `covers` was extended: a read request is covered by a grant that **allows execute** on the same scope, as well as by an explicit read grant.\n\n```\ncovers(grant, request):\n   scopeReaches(grant.capability.scope, request.scope)\n   and ( <the verb the grant names>\n      or (request.verb == \"read\" and grant.effect == \"allow\" and grant.capability.can == \"execute\") )\n```\n\nTwo exclusions keep the implication from reaching further:\n\n- A **deny on execute withholds the write and says nothing about the read** \u2014 otherwise a policy locking writes down would silently revoke a read grant standing before it.\n- The **`operation` list is not consulted for a read**. It restricts which operations may be executed, not whether the scope is visible; consulting it would mean a narrowed execute grant conferred *less* read than a broad one. The `scoped-reads` recipe shows Alice, whose only grant names a single operation, reading the whole `global` scope \u2014 and Carol, who holds a read grant, reading the expenses and still unable to submit one.\n\nThis makes the **shape of an administration grant matter**. `{ can: \"execute\", scope: \"*\" }` now also serves every domain scope of the document to whoever it names. A policy that means \"administration stays reachable\" should name the `auth` scope, which is all the retention rule requires; the spec's worked toll example dropped its separate `g-admin-read` grant for exactly this reason, and the `scoped-reads` recipe scopes every administration grant to `auth` while noting that `document-acl`, `revocation-race` and `group-principals` still use `*`.\n\n_Source: docs/specs/auth-scope.md (Powerhouse v6.2.2-dev.74)._\n_Source: apps/academy/docs/academy/04-Reference/01-Reactor/11-Authorization.md (Powerhouse v6.2.2-dev.74)._\n_Source: apps/academy/docs/academy/05-Lookup/00-Cookbook.md (Powerhouse v6.2.2-dev.74)._\n\n## Provenance\n- `docs/specs/auth-scope.md` \u2014 Decision algorithm: revised covers(); 'This makes the shape of an administration grant matter'; toll example g-admin comment\n- `apps/academy/docs/academy/04-Reference/01-Reactor/11-Authorization.md` \u2014 'How a decision is made' first bullet\n- `apps/academy/docs/academy/05-Lookup/00-Cookbook.md` \u2014 Scoped Reads: 'An allow on execute confers read', 'The administration grant'\n\n_Recorded from the Powerhouse repository at **v6.2.2-dev.74** during the v6.2.2-dev.74 source sync._",
+        "updatedAt": "2026-09-02T22:09:43.151Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:09:43.151Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "",
+    "timestampUtcMs": "2026-09-02T22:17:42.538Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "metadata": {
+          "reason": "Extracted from apps/academy/docs/academy/05-Lookup/00-Cookbook.md at v6.2.2-dev.74 \u2014 Scoped Reads: 'An allow on execute confers read', 'The administration grant'",
+          "confidence": "grounded"
+        },
+        "sourceId": "8693600d-a81d-49c8-a2aa-b5f76e7ad5f5",
+        "targetId": "f2aaccd3-7c26-4327-881e-f5ad9e267b89",
+        "relationshipType": "DERIVED_FROM"
+      },
+      "timestampUtcMs": "2026-09-02T22:17:42.538Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "qjCacbRErvKhqNGi9kI5qWySMxk=",
+    "timestampUtcMs": "2026-09-02T22:09:43.151Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "8f75b856-7893-40b0-a506-80806fcfe3a3",
+        "name": "auth-scope"
+      },
+      "timestampUtcMs": "2026-09-02T22:09:43.151Z"
+    }
+  },
+  {
+    "index": 5,
+    "hash": "",
+    "timestampUtcMs": "2026-09-02T22:17:43.866Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "metadata": {
+          "reason": "Refines the covers() predicate of the decision fold for read requests",
+          "confidence": "grounded"
+        },
+        "sourceId": "8693600d-a81d-49c8-a2aa-b5f76e7ad5f5",
+        "targetId": "69327ea6-e0a1-4c07-a214-2c4619192862",
+        "relationshipType": "BUILDS_ON"
+      },
+      "timestampUtcMs": "2026-09-02T22:17:43.866Z"
+    }
+  },
+  {
+    "index": 5,
+    "hash": "MDiecFnXPJOJxx3ryNssuvX5cd4=",
+    "timestampUtcMs": "2026-09-02T22:09:43.151Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "d9302d13-7eb4-44ae-aaf3-fa9005c138e7",
+        "name": "authorization"
+      },
+      "timestampUtcMs": "2026-09-02T22:09:43.151Z"
+    }
+  },
+  {
+    "index": 6,
+    "hash": "",
+    "timestampUtcMs": "2026-09-02T22:17:44.334Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "metadata": {
+          "reason": "The read this rule confers is enforced by the client-side read gate, per scope",
+          "confidence": "grounded"
+        },
+        "sourceId": "8693600d-a81d-49c8-a2aa-b5f76e7ad5f5",
+        "targetId": "cf2a1fcd-b902-4976-b941-e229a6e9696c",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-09-02T22:17:44.334Z"
+    }
+  },
+  {
+    "index": 6,
+    "hash": "7te4nN6pV9VNTTR8DNt0EIbItnU=",
+    "timestampUtcMs": "2026-09-02T22:09:43.151Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "4c1b91ec-83af-4468-b26c-9102c9a955e7",
+        "name": "gotchas"
+      },
+      "timestampUtcMs": "2026-09-02T22:09:43.151Z"
+    }
+  },
+  {
+    "index": 7,
+    "hash": "",
+    "timestampUtcMs": "2026-09-02T22:17:44.789Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "metadata": {
+          "reason": "Explains why the canonical administration grant's scope should be 'auth', not '*'",
+          "confidence": "grounded"
+        },
+        "sourceId": "8693600d-a81d-49c8-a2aa-b5f76e7ad5f5",
+        "targetId": "4f23f5d4-b93e-430c-8dc3-b9835a6b83dc",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-09-02T22:17:44.789Z"
+    }
+  },
+  {
+    "index": 7,
+    "hash": "uJ+0WcEJ/zbdeK12BtEhnj+wAps=",
+    "timestampUtcMs": "2026-09-02T22:09:43.151Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "f1dc6179-be70-4517-b84c-6eadb8d66d58",
+        "name": "reads"
+      },
+      "timestampUtcMs": "2026-09-02T22:09:43.151Z"
+    }
+  },
+  {
+    "index": 8,
+    "hash": "",
+    "timestampUtcMs": "2026-09-02T22:22:06.459Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "metadata": {
+          "reason": "Extracted from docs/specs/auth-scope.md at v6.2.2-dev.74 \u2014 Decision algorithm: revised covers(); 'This makes the shape of an administration grant matter'; toll example g-admin comment",
+          "confidence": "grounded"
+        },
+        "sourceId": "8693600d-a81d-49c8-a2aa-b5f76e7ad5f5",
+        "targetId": "223bb12a-be7f-4209-9ab2-f04f7bb2b6c8",
+        "relationshipType": "DERIVED_FROM"
+      },
+      "timestampUtcMs": "2026-09-02T22:22:06.459Z"
+    }
+  },
+  {
+    "index": 8,
+    "hash": "St/zEm5u467CoLpdYMU/B+DdfGA=",
+    "timestampUtcMs": "2026-09-02T22:09:43.151Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "version",
+        "value": "v6.2.2-dev.74",
+        "updatedAt": "2026-09-02T22:09:43.151Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:09:43.151Z"
+    }
+  },
+  {
+    "index": 9,
+    "hash": "",
+    "timestampUtcMs": "2026-09-02T22:22:07.199Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "metadata": {
+          "reason": "Extracted from apps/academy/docs/academy/04-Reference/01-Reactor/11-Authorization.md at v6.2.2-dev.74 \u2014 'How a decision is made' first bullet",
+          "confidence": "grounded"
+        },
+        "sourceId": "8693600d-a81d-49c8-a2aa-b5f76e7ad5f5",
+        "targetId": "17dc46b0-f733-467c-99d7-ae8fbe0fb0e4",
+        "relationshipType": "DERIVED_FROM"
+      },
+      "timestampUtcMs": "2026-09-02T22:22:07.199Z"
+    }
+  },
+  {
+    "index": 9,
+    "hash": "mQ9srWlukDZ7AY2NTts6hcOYdiU=",
+    "timestampUtcMs": "2026-09-02T22:09:43.151Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "filePath",
+        "value": "docs/specs/auth-scope.md",
+        "updatedAt": "2026-09-02T22:09:43.151Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:09:43.151Z"
+    }
+  },
+  {
+    "index": 10,
+    "hash": "",
+    "timestampUtcMs": "2026-09-02T22:22:07.799Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "metadata": {
+          "reason": "Extracted from apps/academy/docs/academy/05-Lookup/00-Cookbook.md at v6.2.2-dev.74 \u2014 Scoped Reads: 'An allow on execute confers read', 'The administration grant'",
+          "confidence": "grounded"
+        },
+        "sourceId": "8693600d-a81d-49c8-a2aa-b5f76e7ad5f5",
+        "targetId": "f2aaccd3-7c26-4327-881e-f5ad9e267b89",
+        "relationshipType": "DERIVED_FROM"
+      },
+      "timestampUtcMs": "2026-09-02T22:22:07.799Z"
+    }
+  },
+  {
+    "index": 10,
+    "hash": "3n/gqQ7bfirSprs3dcUQmNZ5RIg=",
+    "timestampUtcMs": "2026-09-02T22:09:43.151Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "confidence",
+        "value": "grounded",
+        "updatedAt": "2026-09-02T22:09:43.151Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:09:43.151Z"
+    }
+  },
+  {
+    "index": 11,
+    "hash": "",
+    "timestampUtcMs": "2026-09-02T22:22:08.567Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "metadata": {
+          "reason": "Refines the covers() predicate of the decision fold for read requests",
+          "confidence": "grounded"
+        },
+        "sourceId": "8693600d-a81d-49c8-a2aa-b5f76e7ad5f5",
+        "targetId": "69327ea6-e0a1-4c07-a214-2c4619192862",
+        "relationshipType": "BUILDS_ON"
+      },
+      "timestampUtcMs": "2026-09-02T22:22:08.567Z"
+    }
+  },
+  {
+    "index": 11,
+    "hash": "SfdLp4Mgcd8ihC21EKjjifvP9ik=",
+    "timestampUtcMs": "2026-09-02T22:09:45.739Z",
+    "action": {
+      "type": "SET_PROVENANCE",
+      "input": {
+        "author": "knowledge-agent",
+        "createdAt": "2026-09-02T22:09:45.739Z",
+        "sourceOrigin": "DERIVED"
+      },
+      "timestampUtcMs": "2026-09-02T22:09:45.739Z"
+    }
+  },
+  {
+    "index": 12,
+    "hash": "",
+    "timestampUtcMs": "2026-09-02T22:22:09.027Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "metadata": {
+          "reason": "The read this rule confers is enforced by the client-side read gate, per scope",
+          "confidence": "grounded"
+        },
+        "sourceId": "8693600d-a81d-49c8-a2aa-b5f76e7ad5f5",
+        "targetId": "cf2a1fcd-b902-4976-b941-e229a6e9696c",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-09-02T22:22:09.027Z"
+    }
+  },
+  {
+    "index": 12,
+    "hash": "/U3vBX5e7yQA6/C9SrjWEiZizxw=",
+    "timestampUtcMs": "2026-09-02T22:09:46.322Z",
+    "action": {
+      "type": "SUBMIT_FOR_REVIEW",
+      "input": {
+        "id": "643b07d2-c974-42dc-aa43-3bb64516c867",
+        "actor": "knowledge-agent",
+        "comment": "extracted from the Powerhouse repository at v6.2.2-dev.74",
+        "timestamp": "2026-09-02T22:09:46.322Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:09:46.322Z"
+    }
+  },
+  {
+    "index": 13,
+    "hash": "",
+    "timestampUtcMs": "2026-09-02T22:22:09.521Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "metadata": {
+          "reason": "Explains why the canonical administration grant's scope should be 'auth', not '*'",
+          "confidence": "grounded"
+        },
+        "sourceId": "8693600d-a81d-49c8-a2aa-b5f76e7ad5f5",
+        "targetId": "4f23f5d4-b93e-430c-8dc3-b9835a6b83dc",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-09-02T22:22:09.521Z"
+    }
+  },
+  {
+    "index": 13,
+    "hash": "NLRrpp6v4AZMNun0iaB50Iz5I6E=",
+    "timestampUtcMs": "2026-09-02T22:09:46.820Z",
+    "action": {
+      "type": "APPROVE_NOTE",
+      "input": {
+        "id": "79ca368b-2ff8-47a3-aca0-12f66cf72143",
+        "actor": "liberuum",
+        "comment": "claim checked against the cited repository file at the pinned tag",
+        "timestamp": "2026-09-02T22:09:46.820Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:09:46.820Z"
+    }
+  },
+  {
+    "index": 14,
+    "hash": "BxiML+0k2kpUe1mG2SgxQL9vtlg=",
+    "timestampUtcMs": "2026-09-02T22:15:31.815Z",
+    "action": {
+      "type": "SET_TITLE",
+      "input": {
+        "title": "An allow on execute confers read of that scope, so an administration grant should name scope 'auth' rather than '*'",
+        "updatedAt": "2026-09-02T22:15:31.815Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:15:31.815Z"
+    }
+  },
+  {
+    "index": 15,
+    "hash": "BxiML+0k2kpUe1mG2SgxQL9vtlg=",
+    "timestampUtcMs": "2026-09-02T22:15:31.815Z",
+    "action": {
+      "type": "SET_DESCRIPTION",
+      "input": {
+        "updatedAt": "2026-09-02T22:15:31.815Z",
+        "description": "Executing means reading the state it applies to. The converse does not hold, a deny on execute says nothing about read, and reads ignore the operation list; execute on '*' publishes all scopes."
+      },
+      "timestampUtcMs": "2026-09-02T22:15:31.815Z"
+    }
+  },
+  {
+    "index": 16,
+    "hash": "BxiML+0k2kpUe1mG2SgxQL9vtlg=",
+    "timestampUtcMs": "2026-09-02T22:15:31.815Z",
+    "action": {
+      "type": "SET_NOTE_TYPE",
+      "input": {
+        "noteType": "PATTERN",
+        "updatedAt": "2026-09-02T22:15:31.815Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:15:31.815Z"
+    }
+  },
+  {
+    "index": 17,
+    "hash": "BxiML+0k2kpUe1mG2SgxQL9vtlg=",
+    "timestampUtcMs": "2026-09-02T22:15:31.815Z",
+    "action": {
+      "type": "SET_CONTENT",
+      "input": {
+        "content": "Executing an operation means reading the state it applies to, so `covers` was extended: a read request is covered by a grant that **allows execute** on the same scope, as well as by an explicit read grant.\n\n```\ncovers(grant, request):\n   scopeReaches(grant.capability.scope, request.scope)\n   and ( <the verb the grant names>\n      or (request.verb == \"read\" and grant.effect == \"allow\" and grant.capability.can == \"execute\") )\n```\n\nTwo exclusions keep the implication from reaching further:\n\n- A **deny on execute withholds the write and says nothing about the read** \u2014 otherwise a policy locking writes down would silently revoke a read grant standing before it.\n- The **`operation` list is not consulted for a read**. It restricts which operations may be executed, not whether the scope is visible; consulting it would mean a narrowed execute grant conferred *less* read than a broad one. The `scoped-reads` recipe shows Alice, whose only grant names a single operation, reading the whole `global` scope \u2014 and Carol, who holds a read grant, reading the expenses and still unable to submit one.\n\nThis makes the **shape of an administration grant matter**. `{ can: \"execute\", scope: \"*\" }` now also serves every domain scope of the document to whoever it names. A policy that means \"administration stays reachable\" should name the `auth` scope, which is all the retention rule requires; the spec's worked toll example dropped its separate `g-admin-read` grant for exactly this reason, and the `scoped-reads` recipe scopes every administration grant to `auth` while noting that `document-acl`, `revocation-race` and `group-principals` still use `*`.\n\n_Source: docs/specs/auth-scope.md (Powerhouse v6.2.2-dev.74)._\n_Source: apps/academy/docs/academy/04-Reference/01-Reactor/11-Authorization.md (Powerhouse v6.2.2-dev.74)._\n_Source: apps/academy/docs/academy/05-Lookup/00-Cookbook.md (Powerhouse v6.2.2-dev.74)._\n\n## Provenance\n- `docs/specs/auth-scope.md` \u2014 Decision algorithm: revised covers(); 'This makes the shape of an administration grant matter'; toll example g-admin comment\n- `apps/academy/docs/academy/04-Reference/01-Reactor/11-Authorization.md` \u2014 'How a decision is made' first bullet\n- `apps/academy/docs/academy/05-Lookup/00-Cookbook.md` \u2014 Scoped Reads: 'An allow on execute confers read', 'The administration grant'\n\n_Recorded from the Powerhouse repository at **v6.2.2-dev.74** during the v6.2.2-dev.74 source sync._",
+        "updatedAt": "2026-09-02T22:15:31.815Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:15:31.815Z"
+    }
+  },
+  {
+    "index": 18,
+    "hash": "BxiML+0k2kpUe1mG2SgxQL9vtlg=",
+    "timestampUtcMs": "2026-09-02T22:15:31.815Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "version",
+        "value": "v6.2.2-dev.74",
+        "updatedAt": "2026-09-02T22:15:31.815Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:15:31.815Z"
+    }
+  },
+  {
+    "index": 19,
+    "hash": "BxiML+0k2kpUe1mG2SgxQL9vtlg=",
+    "timestampUtcMs": "2026-09-02T22:15:31.815Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "filePath",
+        "value": "docs/specs/auth-scope.md",
+        "updatedAt": "2026-09-02T22:15:31.815Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:15:31.815Z"
+    }
+  },
+  {
+    "index": 20,
+    "hash": "BxiML+0k2kpUe1mG2SgxQL9vtlg=",
+    "timestampUtcMs": "2026-09-02T22:15:31.815Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "confidence",
+        "value": "grounded",
+        "updatedAt": "2026-09-02T22:15:31.815Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:15:31.815Z"
+    }
+  },
+  {
+    "index": 21,
+    "hash": "APi8K7+ORssN/JL2IvvO3pOoRYo=",
+    "timestampUtcMs": "2026-09-02T22:20:11.599Z",
+    "action": {
+      "type": "SET_TITLE",
+      "input": {
+        "title": "An allow on execute confers read of that scope, so an administration grant should name scope 'auth' rather than '*'",
+        "updatedAt": "2026-09-02T22:20:11.599Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:20:11.599Z"
+    }
+  },
+  {
+    "index": 22,
+    "hash": "APi8K7+ORssN/JL2IvvO3pOoRYo=",
+    "timestampUtcMs": "2026-09-02T22:20:11.599Z",
+    "action": {
+      "type": "SET_DESCRIPTION",
+      "input": {
+        "updatedAt": "2026-09-02T22:20:11.599Z",
+        "description": "Executing means reading the state it applies to. The converse does not hold, a deny on execute says nothing about read, and reads ignore the operation list; execute on '*' publishes all scopes."
+      },
+      "timestampUtcMs": "2026-09-02T22:20:11.599Z"
+    }
+  },
+  {
+    "index": 23,
+    "hash": "APi8K7+ORssN/JL2IvvO3pOoRYo=",
+    "timestampUtcMs": "2026-09-02T22:20:11.599Z",
+    "action": {
+      "type": "SET_NOTE_TYPE",
+      "input": {
+        "noteType": "PATTERN",
+        "updatedAt": "2026-09-02T22:20:11.599Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:20:11.599Z"
+    }
+  },
+  {
+    "index": 24,
+    "hash": "APi8K7+ORssN/JL2IvvO3pOoRYo=",
+    "timestampUtcMs": "2026-09-02T22:20:11.599Z",
+    "action": {
+      "type": "SET_CONTENT",
+      "input": {
+        "content": "Executing an operation means reading the state it applies to, so `covers` was extended: a read request is covered by a grant that **allows execute** on the same scope, as well as by an explicit read grant.\n\n```\ncovers(grant, request):\n   scopeReaches(grant.capability.scope, request.scope)\n   and ( <the verb the grant names>\n      or (request.verb == \"read\" and grant.effect == \"allow\" and grant.capability.can == \"execute\") )\n```\n\nTwo exclusions keep the implication from reaching further:\n\n- A **deny on execute withholds the write and says nothing about the read** \u2014 otherwise a policy locking writes down would silently revoke a read grant standing before it.\n- The **`operation` list is not consulted for a read**. It restricts which operations may be executed, not whether the scope is visible; consulting it would mean a narrowed execute grant conferred *less* read than a broad one. The `scoped-reads` recipe shows Alice, whose only grant names a single operation, reading the whole `global` scope \u2014 and Carol, who holds a read grant, reading the expenses and still unable to submit one.\n\nThis makes the **shape of an administration grant matter**. `{ can: \"execute\", scope: \"*\" }` now also serves every domain scope of the document to whoever it names. A policy that means \"administration stays reachable\" should name the `auth` scope, which is all the retention rule requires; the spec's worked toll example dropped its separate `g-admin-read` grant for exactly this reason, and the `scoped-reads` recipe scopes every administration grant to `auth` while noting that `document-acl`, `revocation-race` and `group-principals` still use `*`.\n\n_Source: docs/specs/auth-scope.md (Powerhouse v6.2.2-dev.74)._\n_Source: apps/academy/docs/academy/04-Reference/01-Reactor/11-Authorization.md (Powerhouse v6.2.2-dev.74)._\n_Source: apps/academy/docs/academy/05-Lookup/00-Cookbook.md (Powerhouse v6.2.2-dev.74)._\n\n## Provenance\n- `docs/specs/auth-scope.md` \u2014 Decision algorithm: revised covers(); 'This makes the shape of an administration grant matter'; toll example g-admin comment\n- `apps/academy/docs/academy/04-Reference/01-Reactor/11-Authorization.md` \u2014 'How a decision is made' first bullet\n- `apps/academy/docs/academy/05-Lookup/00-Cookbook.md` \u2014 Scoped Reads: 'An allow on execute confers read', 'The administration grant'\n\n_Recorded from the Powerhouse repository at **v6.2.2-dev.74** during the v6.2.2-dev.74 source sync._",
+        "updatedAt": "2026-09-02T22:20:11.599Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:20:11.599Z"
+    }
+  },
+  {
+    "index": 25,
+    "hash": "APi8K7+ORssN/JL2IvvO3pOoRYo=",
+    "timestampUtcMs": "2026-09-02T22:20:11.599Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "version",
+        "value": "v6.2.2-dev.74",
+        "updatedAt": "2026-09-02T22:20:11.599Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:20:11.599Z"
+    }
+  },
+  {
+    "index": 26,
+    "hash": "APi8K7+ORssN/JL2IvvO3pOoRYo=",
+    "timestampUtcMs": "2026-09-02T22:20:11.599Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "filePath",
+        "value": "docs/specs/auth-scope.md",
+        "updatedAt": "2026-09-02T22:20:11.599Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:20:11.599Z"
+    }
+  },
+  {
+    "index": 27,
+    "hash": "APi8K7+ORssN/JL2IvvO3pOoRYo=",
+    "timestampUtcMs": "2026-09-02T22:20:11.599Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "confidence",
+        "value": "grounded",
+        "updatedAt": "2026-09-02T22:20:11.599Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:20:11.599Z"
+    }
+  }
+]

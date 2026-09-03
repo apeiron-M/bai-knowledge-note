@@ -1,0 +1,27 @@
+{
+  "title": "Package \u203a opentelemetry-instrumentation-reactor \u203a README",
+  "status": "EXTRACTED",
+  "content": "# @powerhousedao/opentelemetry-instrumentation-reactor\n\nOpenTelemetry metrics instrumentation for `@powerhousedao/reactor`. This package inspects `ReactorModule` dependencies, and subscribes to reactor event bus events to register observable gauges for counters, histograms, and other metrics covering the job queue, executor, read model indexing, and sync subsystems.\n\nThis package only creates OTel instruments on the global meter. It does not configure exporters or collector endpoints -- that is the responsibility of the host application (see [Usage](#usage)).\n\nFor a full list of emitted metrics, attributes, and tracked event types, see [docs/taxonomy.md](docs/taxonomy.md).\n\n## Install\n\n```sh\npnpm add @powerhousedao/opentelemetry-instrumentation-reactor\n```\n\nPeer dependency: `@powerhousedao/reactor`\n\n## Usage\n\n```ts\nimport { ReactorInstrumentation } from \"@powerhousedao/opentelemetry-instrumentation-reactor\";\n\n// `module` is the ReactorModule returned by ReactorBuilder\nconst instrumentation = new ReactorInstrumentation(module);\ninstrumentation.start();\n\n// On shutdown:\ninstrumentation.stop();\n```\n\n`start()` subscribes to event bus events and registers observable gauge callbacks. `stop()` removes all subscriptions and clears internal state.\n\nMetrics are recorded on the `@powerhousedao/reactor` meter via the global `@opentelemetry/api` `metrics.getMeter()`. To actually export them, configure a `MeterProvider` with an exporter in your application entry point. For example, using OTLP over HTTP:\n\n```ts\nimport { OTLPMetricExporter } from \"@opentelemetry/exporter-metrics-otlp-http\";\nimport { PeriodicExportingMetricReader } from \"@opentelemetry/sdk-metrics\";\nimport { NodeSDK } from \"@opentelemetry/sdk-node\";\n\nconst sdk = new NodeSDK({\n  metricReader: new PeriodicExportingMetricReader({\n    exporter: new OTLPMetricExporter({\n      url: process.env.OTEL_EXPORTER_OTLP_ENDPOINT,\n    }),\n    exportIntervalMillis: Number(\n      process.env.OTEL_METRIC_EXPORT_INTERVAL ?? 60_000,\n    ),\n  }),\n});\n\nsdk.start();\n```\n",
+  "createdAt": "2026-09-02T21:44:10.315Z",
+  "createdBy": "repo-docs-sync",
+  "provenance": {
+    "url": "https://github.com/powerhouse-inc/powerhouse/blob/v6.2.2-dev.74/packages/opentelemetry-instrumentation-reactor/README.md",
+    "tool": "sync-repo-docs",
+    "author": "Powerhouse Inc.",
+    "method": "sha256:2d25233afafa041c78bb604f25ca05ba488e44ceef3ab475a33fc36abd092986 git:v6.2.2-dev.74",
+    "publishedAt": "2026-05-11T09:03:15.000Z"
+  },
+  "sourceType": "DOCUMENTATION",
+  "description": "Powerhouse v6.2.2-dev.74 (unchanged since v6.2.2-dev.47) \u2014 OpenTelemetry metrics instrumentation for @powerhousedao/reactor. This package inspects ReactorModule dependencies, and subscribes to reacto\u2026",
+  "extractedClaims": [
+    "3734f5ab-ebc7-4ea7-96a3-8a10128a4265"
+  ],
+  "extractionStats": {
+    "skipRate": 0.5,
+    "claimCount": 1,
+    "extractedAt": "2026-09-03T07:45:09.651Z",
+    "extractedBy": "knowledge-agent",
+    "skippedCount": 1
+  },
+  "links": []
+}

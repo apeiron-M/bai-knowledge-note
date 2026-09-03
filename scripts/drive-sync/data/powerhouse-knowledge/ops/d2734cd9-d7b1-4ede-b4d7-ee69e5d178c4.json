@@ -1,0 +1,330 @@
+[
+  {
+    "index": 0,
+    "hash": "",
+    "timestampUtcMs": "2026-09-03T07:48:26.141Z",
+    "action": {
+      "type": "CREATE_DOCUMENT",
+      "input": {
+        "meta": {},
+        "name": "registry-registration-non-fatal",
+        "slug": "",
+        "model": "bai/knowledge-note",
+        "branch": "main",
+        "signing": {
+          "nonce": "",
+          "publicKey": {},
+          "signature": "d2734cd9-d7b1-4ede-b4d7-ee69e5d178c4",
+          "documentType": "bai/knowledge-note",
+          "createdAtUtcIso": "2026-09-03T07:48:26.141Z"
+        },
+        "version": 0,
+        "documentId": "d2734cd9-d7b1-4ede-b4d7-ee69e5d178c4",
+        "protocolVersions": {
+          "base-reducer": 2
+        }
+      },
+      "timestampUtcMs": "2026-09-03T07:48:26.141Z"
+    }
+  },
+  {
+    "index": 0,
+    "hash": "12IzTlc9dxZ9Mp8sofL9yVRZeig=",
+    "timestampUtcMs": "2026-09-03T07:48:27.379Z",
+    "action": {
+      "type": "SET_TITLE",
+      "input": {
+        "title": "Registration at build time is non-fatal: a duplicate or invalid module is logged and skipped while build() still succeeds, so do not wrap it in try/catch",
+        "updatedAt": "2026-09-03T07:48:27.379Z"
+      },
+      "timestampUtcMs": "2026-09-03T07:48:27.379Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "",
+    "timestampUtcMs": "2026-09-03T07:48:26.141Z",
+    "action": {
+      "type": "UPGRADE_DOCUMENT",
+      "input": {
+        "model": "bai/knowledge-note",
+        "toVersion": 1,
+        "documentId": "d2734cd9-d7b1-4ede-b4d7-ee69e5d178c4",
+        "fromVersion": 0,
+        "initialState": {
+          "auth": {
+            "grants": [],
+            "version": 0
+          },
+          "local": {
+            "lastViewedAt": null,
+            "personalTags": []
+          },
+          "global": {
+            "links": [],
+            "model": null,
+            "scope": null,
+            "title": null,
+            "editor": null,
+            "inputs": [],
+            "models": [],
+            "status": "DRAFT",
+            "topics": [],
+            "content": null,
+            "context": null,
+            "modelId": null,
+            "modules": [],
+            "outputs": [],
+            "version": null,
+            "computes": null,
+            "filePath": null,
+            "noteType": null,
+            "severity": null,
+            "hooksUsed": [],
+            "rootCause": null,
+            "confidence": null,
+            "consumedBy": [],
+            "provenance": null,
+            "sourceType": null,
+            "targetType": null,
+            "cardinality": null,
+            "description": null,
+            "alternatives": [],
+            "consequences": [],
+            "errorMessage": null,
+            "relationType": null,
+            "correctPattern": null,
+            "decisionStatus": null,
+            "dispatchTargets": [],
+            "lifecycleEvents": []
+          },
+          "document": {
+            "hash": {
+              "encoding": "base64",
+              "algorithm": "sha1"
+            },
+            "version": 1
+          }
+        }
+      },
+      "timestampUtcMs": "2026-09-03T07:48:26.141Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "pOOhv9v1yFZB8aeOkhgy4C3/1uc=",
+    "timestampUtcMs": "2026-09-03T07:48:27.379Z",
+    "action": {
+      "type": "SET_DESCRIPTION",
+      "input": {
+        "updatedAt": "2026-09-03T07:48:27.379Z",
+        "description": "withDocumentModelSources appends across repeat calls while withUpgradeManifests replaces, and manifests are always registered before modules regardless of call order."
+      },
+      "timestampUtcMs": "2026-09-03T07:48:27.379Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "",
+    "timestampUtcMs": "2026-09-03T07:49:18.012Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "metadata": {
+          "reason": "Extracted from apps/academy/docs/academy/04-Reference/01-Reactor/06-DocumentModelRegistry.md at v6.2.2-dev.74 \u2014 intro paragraphs on append-vs-replace and non-fatal registration",
+          "confidence": "grounded"
+        },
+        "sourceId": "d2734cd9-d7b1-4ede-b4d7-ee69e5d178c4",
+        "targetId": "14416670-d2d3-4de5-9dfd-7c6e175280c2",
+        "relationshipType": "DERIVED_FROM"
+      },
+      "timestampUtcMs": "2026-09-03T07:49:18.012Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "RqY+KxZLMx+Cob7CgtY8B+e5uXk=",
+    "timestampUtcMs": "2026-09-03T07:48:27.379Z",
+    "action": {
+      "type": "SET_NOTE_TYPE",
+      "input": {
+        "noteType": "PATTERN",
+        "updatedAt": "2026-09-03T07:48:27.379Z"
+      },
+      "timestampUtcMs": "2026-09-03T07:48:27.379Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "",
+    "timestampUtcMs": "2026-09-03T07:49:18.478Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "metadata": {
+          "reason": "The registry's never-throwing registerModules is what the builder's non-fatal behaviour is built on",
+          "confidence": "grounded"
+        },
+        "sourceId": "d2734cd9-d7b1-4ede-b4d7-ee69e5d178c4",
+        "targetId": "c69178f9-07b7-4407-94e6-90ed96d3003e",
+        "relationshipType": "BUILDS_ON"
+      },
+      "timestampUtcMs": "2026-09-03T07:49:18.478Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "wPcBfxxExBb+zP5qyXMDcy+4HTs=",
+    "timestampUtcMs": "2026-09-03T07:48:27.379Z",
+    "action": {
+      "type": "SET_CONTENT",
+      "input": {
+        "content": "Two builder behaviours and one warning, all easy to get wrong.\n\n**Repeat calls combine differently.** `withDocumentModelSources` **appends** \u2014 calling it twice registers both arrays. `withUpgradeManifests` **replaces** \u2014 calling it twice keeps only the last array. Order between the two calls does not matter: the builder always registers **manifests before modules**.\n\n```ts\nconst reactor = await new ReactorBuilder()\n  .withDocumentModelSources([todoModuleV1, todoModuleV2])\n  .withUpgradeManifests([todoUpgradeManifest])\n  .build();\n```\n\n**Registration is non-fatal.** A duplicate or invalid module or manifest is logged through the builder's logger and **skipped; the build still completes.** The Academy states the consequence directly: *do not wrap `.build()` in a try/catch expecting a registration failure to throw* \u2014 check the logs instead.\n\nThat combination is what makes a mistake quiet. Calling `withUpgradeManifests` twice loses the first array with no error; registering a model twice loses the duplicate with no error; and a reactor built from a half-registered set fails later, when a job cannot resolve a reducer, far from the cause.\n\n## Provenance\n- `apps/academy/docs/academy/04-Reference/01-Reactor/06-DocumentModelRegistry.md` \u2014 intro paragraphs on append-vs-replace and non-fatal registration\n\n_Extracted from the Powerhouse repository at **v6.2.2-dev.74**._",
+        "updatedAt": "2026-09-03T07:48:27.379Z"
+      },
+      "timestampUtcMs": "2026-09-03T07:48:27.379Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "",
+    "timestampUtcMs": "2026-09-03T07:49:18.947Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "metadata": {
+          "reason": "Adds the two combination rules to the builder's fluent API: sources append, manifests replace",
+          "confidence": "grounded"
+        },
+        "sourceId": "d2734cd9-d7b1-4ede-b4d7-ee69e5d178c4",
+        "targetId": "501f87dd-ff84-4a59-8894-033f209dfdf0",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-09-03T07:49:18.947Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "UGIsJdwSyp/YtuBug9DFT5vWSCI=",
+    "timestampUtcMs": "2026-09-03T07:48:27.379Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "ac857266-a54a-4af7-9928-b8634a3502a4",
+        "name": "document-model"
+      },
+      "timestampUtcMs": "2026-09-03T07:48:27.379Z"
+    }
+  },
+  {
+    "index": 5,
+    "hash": "e9BJzVENFyQMFXbkQKjlXEZKdns=",
+    "timestampUtcMs": "2026-09-03T07:48:27.379Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "f37fb685-f96d-4e17-80f6-8d512fca5df9",
+        "name": "registry"
+      },
+      "timestampUtcMs": "2026-09-03T07:48:27.379Z"
+    }
+  },
+  {
+    "index": 6,
+    "hash": "l3a6t7TxmCZA3jIgKQPJiEIQDAg=",
+    "timestampUtcMs": "2026-09-03T07:48:27.379Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "10c94de2-c646-42ad-a083-f6640bc726e0",
+        "name": "gotchas"
+      },
+      "timestampUtcMs": "2026-09-03T07:48:27.379Z"
+    }
+  },
+  {
+    "index": 7,
+    "hash": "DfgVBrmFGv5iSK39510DuEmHptk=",
+    "timestampUtcMs": "2026-09-03T07:48:27.379Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "e65d69b6-12e8-4451-9d4f-74ad2d8d738d",
+        "name": "reactor-builder"
+      },
+      "timestampUtcMs": "2026-09-03T07:48:27.379Z"
+    }
+  },
+  {
+    "index": 8,
+    "hash": "aTPA+beyMgGVdu86XkAGK2QjZrQ=",
+    "timestampUtcMs": "2026-09-03T07:48:27.379Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "version",
+        "value": "v6.2.2-dev.74",
+        "updatedAt": "2026-09-03T07:48:27.379Z"
+      },
+      "timestampUtcMs": "2026-09-03T07:48:27.379Z"
+    }
+  },
+  {
+    "index": 9,
+    "hash": "vBKDYi9Liz4G+7jAKMDh5CZMiEE=",
+    "timestampUtcMs": "2026-09-03T07:48:27.379Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "filePath",
+        "value": "apps/academy/docs/academy/04-Reference/01-Reactor/06-DocumentModelRegistry.md",
+        "updatedAt": "2026-09-03T07:48:27.379Z"
+      },
+      "timestampUtcMs": "2026-09-03T07:48:27.379Z"
+    }
+  },
+  {
+    "index": 10,
+    "hash": "QGCg9VzGYTnMRnYit4+gUAuizwo=",
+    "timestampUtcMs": "2026-09-03T07:48:29.979Z",
+    "action": {
+      "type": "SET_PROVENANCE",
+      "input": {
+        "author": "knowledge-agent",
+        "createdAt": "2026-09-03T07:48:29.979Z",
+        "sourceOrigin": "DERIVED"
+      },
+      "timestampUtcMs": "2026-09-03T07:48:29.979Z"
+    }
+  },
+  {
+    "index": 11,
+    "hash": "IJeLZRDCeGviAL7QQ/wlePwdfX0=",
+    "timestampUtcMs": "2026-09-03T07:48:30.463Z",
+    "action": {
+      "type": "SUBMIT_FOR_REVIEW",
+      "input": {
+        "id": "a6b911c7-f8b5-4fac-954c-aa7716abe987",
+        "actor": "knowledge-agent",
+        "comment": "extracted from apps/academy/docs/academy/04-Reference/01-Reactor/06-DocumentModelRegistry.md at v6.2.2-dev.74",
+        "timestamp": "2026-09-03T07:48:30.463Z"
+      },
+      "timestampUtcMs": "2026-09-03T07:48:30.463Z"
+    }
+  },
+  {
+    "index": 12,
+    "hash": "GgNN/a0dyM9WPHKwdCdWPcPYEGs=",
+    "timestampUtcMs": "2026-09-03T07:48:31.167Z",
+    "action": {
+      "type": "APPROVE_NOTE",
+      "input": {
+        "id": "5d05939b-ed15-4256-923e-2f9859a5c760",
+        "actor": "liberuum",
+        "comment": "claim checked against the cited file at the pinned tag",
+        "timestamp": "2026-09-03T07:48:31.166Z"
+      },
+      "timestampUtcMs": "2026-09-03T07:48:31.167Z"
+    }
+  }
+]

@@ -1,0 +1,97 @@
+{
+  "links": [
+    {
+      "id": "lnk-e82a1bf5-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "e82a1bf5-b17f-47fe-94e5-d1b24dcd3d82",
+      "targetTitle": "subscription-instance-model-tracks-active-customer-subscriptions-with-lifecycle-"
+    },
+    {
+      "id": "lnk-649207b4-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "649207b4-bb53-45aa-aa4a-6570116b7f8e",
+      "targetTitle": "ecosystem-map"
+    },
+    {
+      "id": "lnk-44d3b83f-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "44d3b83f-d9de-4f7a-b5a5-81d07fbc2bcb",
+      "targetTitle": "object-relations"
+    },
+    {
+      "id": "lnk-32921fdd-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "32921fdd-c4ba-4ade-b4e7-9a257346440f",
+      "targetTitle": "adr-002-extract-stamp-share-managers"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "resource-instance model tracks provisioned resource lifecycle",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "be7dd484-6a27-4b5e-aacc-e69b410a75d8",
+      "name": "resource-instance",
+      "topicDocumentId": null
+    },
+    {
+      "id": "068f5821-698e-4b4c-9fb9-62359c54b013",
+      "name": "service-pricing",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "# resource-instance model tracks provisioned resource lifecycle\n\n`powerhouse/resource-instance` represents a provisioned resource for a customer. It has a detailed lifecycle with provisioning, suspension, and termination states.\n\n## State Shape\n\n```graphql\ntype ResourceInstanceState {\n    resourceTemplateId: PHID       # \u2192 ResourceTemplate\n    customerId: PHID               # \u2192 customer identity (external)\n    name: String\n    profile: ResourceProfile       # { id: PHID!, documentType: String! }\n    status: InstanceStatus!        # DRAFT | PROVISIONING | ACTIVE | SUSPENDED | TERMINATED\n    configuration: [InstanceFacet!]!\n    # ... lifecycle timestamps, suspension details\n}\n```\n\n## Modules (2)\n\n| Module | Operations | Purpose |\n|--------|-----------|---------|\n| instance-management | 14 | Initialize, update info, status transitions, provisioning, suspension (non-payment/maintenance), termination |\n| configuration-management | 4 | Set/remove/update instance facets, apply configuration changes |\n\n## Key References\n\n- `resourceTemplateId: PHID` \u2192 ResourceTemplate\n- `customerId: PHID` \u2192 customer identity (external)\n- `profile.id: PHID` \u2192 external profile document\n- SubscriptionInstance.`resource.id` \u2192 references this model\n\n---\n\nTopics:\n- [[schema design]]\n- [[object relations]]",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "ARCHITECTURE",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "knowledge-agent",
+    "createdAt": "2026-04-03T13:42:28.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-09-03T09:58:45.841Z",
+    "sourceOrigin": "IMPORT"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "19 operations across 2 modules \u2014 manages instance lifecycle (DRAFT \u2192 PROVISIONING \u2192 ACTIVE \u2192 SUSPENDED \u2192 TERMINATED) with facet configuration",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "f3ac9601-db9e-4ccf-9509-07754c039a5c",
+      "actor": "claude",
+      "comment": "Knowledge registered against powerhouse v6.2.2-dev.47",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-14T12:00:00.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "16081897-27f3-4271-a783-308bfbff5f28",
+      "actor": "liberuum",
+      "comment": "Canonical as of powerhouse v6.2.2-dev.47",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-14T12:00:00.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

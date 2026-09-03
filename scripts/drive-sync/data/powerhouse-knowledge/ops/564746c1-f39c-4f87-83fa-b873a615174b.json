@@ -1,0 +1,334 @@
+[
+  {
+    "index": 0,
+    "hash": "",
+    "timestampUtcMs": "2026-08-14T12:33:25.722Z",
+    "action": {
+      "type": "CREATE_DOCUMENT",
+      "input": {
+        "meta": {},
+        "name": "composite-channel-factory-routing",
+        "slug": "",
+        "model": "bai/knowledge-note",
+        "branch": "main",
+        "signing": {
+          "nonce": "",
+          "publicKey": {},
+          "signature": "564746c1-f39c-4f87-83fa-b873a615174b",
+          "documentType": "bai/knowledge-note",
+          "createdAtUtcIso": "2026-08-14T12:33:25.722Z"
+        },
+        "version": 0,
+        "documentId": "564746c1-f39c-4f87-83fa-b873a615174b",
+        "protocolVersions": {
+          "base-reducer": 2
+        }
+      },
+      "timestampUtcMs": "2026-08-14T12:33:25.722Z"
+    }
+  },
+  {
+    "index": 0,
+    "hash": "mQdNJd53a/eZw/G4OGwaeLrw+ps=",
+    "timestampUtcMs": "2026-08-14T12:35:00.000Z",
+    "action": {
+      "type": "SET_TITLE",
+      "input": {
+        "title": "CompositeChannelFactory routes IChannel instantiation by config.type, letting Swarm and GQL factories coexist behind one SyncManager interface.",
+        "updatedAt": "2026-08-14T12:35:00.000Z"
+      },
+      "timestampUtcMs": "2026-08-14T12:35:00.000Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "",
+    "timestampUtcMs": "2026-08-14T12:33:25.722Z",
+    "action": {
+      "type": "UPGRADE_DOCUMENT",
+      "input": {
+        "model": "bai/knowledge-note",
+        "toVersion": 1,
+        "documentId": "564746c1-f39c-4f87-83fa-b873a615174b",
+        "fromVersion": 0,
+        "initialState": {
+          "auth": {
+            "grants": [],
+            "version": 0
+          },
+          "local": {
+            "lastViewedAt": null,
+            "personalTags": []
+          },
+          "global": {
+            "links": [],
+            "model": null,
+            "scope": null,
+            "title": null,
+            "editor": null,
+            "inputs": [],
+            "models": [],
+            "status": "DRAFT",
+            "topics": [],
+            "content": null,
+            "context": null,
+            "modelId": null,
+            "modules": [],
+            "outputs": [],
+            "version": null,
+            "computes": null,
+            "filePath": null,
+            "noteType": null,
+            "severity": null,
+            "hooksUsed": [],
+            "rootCause": null,
+            "confidence": null,
+            "consumedBy": [],
+            "provenance": null,
+            "sourceType": null,
+            "targetType": null,
+            "cardinality": null,
+            "description": null,
+            "alternatives": [],
+            "consequences": [],
+            "errorMessage": null,
+            "relationType": null,
+            "correctPattern": null,
+            "decisionStatus": null,
+            "dispatchTargets": [],
+            "lifecycleEvents": []
+          },
+          "document": {
+            "hash": {
+              "encoding": "base64",
+              "algorithm": "sha1"
+            },
+            "version": 1
+          }
+        }
+      },
+      "timestampUtcMs": "2026-08-14T12:33:25.722Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "Su6bBrBO7CKGaGLwpet/uqsi6BA=",
+    "timestampUtcMs": "2026-08-14T12:35:00.000Z",
+    "action": {
+      "type": "SET_DESCRIPTION",
+      "input": {
+        "updatedAt": "2026-08-14T12:35:00.000Z",
+        "description": "createSwarmSyncBuilder wires a CompositeChannelFactory into ReactorBuilder.withSync(); after buildModule(), registerGqlFactory adds GQL support without disturbing Swarm."
+      },
+      "timestampUtcMs": "2026-08-14T12:35:00.000Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "",
+    "timestampUtcMs": "2026-08-14T12:36:56.958Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "564746c1-f39c-4f87-83fa-b873a615174b",
+        "targetId": "0023bc50-7fff-4fa1-844e-d869f976f3b5",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-08-14T12:36:56.958Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "sSS/fhEL1qt6KrplQmZilVhntv4=",
+    "timestampUtcMs": "2026-08-14T12:35:00.000Z",
+    "action": {
+      "type": "SET_NOTE_TYPE",
+      "input": {
+        "noteType": "pattern",
+        "updatedAt": "2026-08-14T12:35:00.000Z"
+      },
+      "timestampUtcMs": "2026-08-14T12:35:00.000Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "",
+    "timestampUtcMs": "2026-08-14T12:36:57.064Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "564746c1-f39c-4f87-83fa-b873a615174b",
+        "targetId": "1f8f4551-682c-4245-94ef-5e5846862ee4",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-08-14T12:36:57.064Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "0tgZw49Vf8xuiGJ8Ds46tMWIVuY=",
+    "timestampUtcMs": "2026-08-14T12:35:00.000Z",
+    "action": {
+      "type": "SET_CONTENT",
+      "input": {
+        "content": "## Setup sequence\n\n`createSwarmSyncBuilder(logger, jwtHandler)` returns `{ syncBuilder, compositeFactory, registerGqlFactory }`:\n\n1. `CompositeChannelFactory` created with `\"swarm\"` registered.\n2. `SyncBuilder.withChannelFactory(compositeFactory)`.\n\nThen wired into the reactor:\n\n```\nReactorBuilder\n  .withSync(syncBuilder)       // proper builder API\n  .withJwtHandler(jwtHandler)\n```\n\n`buildModule()` runs:\n- Creates queue with the document-model resolver.\n- `SyncManager.startup()` recreates persisted remotes.\n- Swarm remotes work immediately because the factory is already registered.\n\nAfter `buildModule()`: `registerGqlFactory(reactorModule.queue)` registers `\"gql\"` on the same `CompositeChannelFactory`, so GQL remotes can now be added via `addRemoteDrive()`.\n\n## Dispatch\n\n```\ncompositeFactory.instance(config)\n  config.type === \"gql\"   -> GqlRequestChannelFactory -> GqlRequestChannel\n  config.type === \"swarm\" -> SwarmChannelFactory    -> SwarmChannel\n```\n\nSyncManager remains channel-type-agnostic; it only touches `outbox`, `inbox`, and `deadLetter` on whatever channel object it receives.",
+        "updatedAt": "2026-08-14T12:35:00.000Z"
+      },
+      "timestampUtcMs": "2026-08-14T12:35:00.000Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "",
+    "timestampUtcMs": "2026-08-14T12:36:57.150Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "564746c1-f39c-4f87-83fa-b873a615174b",
+        "targetId": "17a0ed86-0b8d-4374-9114-bea5b95737ed",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-08-14T12:36:57.150Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "YksD5DqbUDSZ5eFgscoSpl8hrh4=",
+    "timestampUtcMs": "2026-08-14T12:35:00.000Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "version",
+        "value": "v6.2.2-dev.44",
+        "updatedAt": "2026-08-14T12:35:00.000Z"
+      },
+      "timestampUtcMs": "2026-08-14T12:35:00.000Z"
+    }
+  },
+  {
+    "index": 5,
+    "hash": "5RaNDMnUs0tXgYk6ehHr8joZbdA=",
+    "timestampUtcMs": "2026-08-14T12:35:00.000Z",
+    "action": {
+      "type": "SET_PROVENANCE",
+      "input": {
+        "author": "knowledge-agent",
+        "createdAt": "2026-04-21T14:47:10.583Z",
+        "sourceOrigin": "DERIVED"
+      },
+      "timestampUtcMs": "2026-08-14T12:35:00.000Z"
+    }
+  },
+  {
+    "index": 6,
+    "hash": "x2sCL5wdg5EEqTRGFzBz28Lhffk=",
+    "timestampUtcMs": "2026-08-14T12:35:00.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "t1",
+        "name": "composite-factory",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-08-14T12:35:00.000Z"
+    }
+  },
+  {
+    "index": 7,
+    "hash": "Dw5xyHn5YtySLNbCt/wuLxTjAsY=",
+    "timestampUtcMs": "2026-08-14T12:35:00.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "t2",
+        "name": "channel-routing",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-08-14T12:35:00.000Z"
+    }
+  },
+  {
+    "index": 8,
+    "hash": "r1TJzzMDrFSvU8hUf50g7zSVfkI=",
+    "timestampUtcMs": "2026-08-14T12:35:00.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "t3",
+        "name": "reactor-builder",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-08-14T12:35:00.000Z"
+    }
+  },
+  {
+    "index": 9,
+    "hash": "KY9c8h4n676uYMLL02CCg4Ca6YI=",
+    "timestampUtcMs": "2026-08-14T14:37:06.000Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "version",
+        "value": "v6.2.2-dev.47",
+        "updatedAt": "2026-08-14T12:00:00.000Z"
+      },
+      "timestampUtcMs": "2026-08-14T14:37:06.000Z"
+    }
+  },
+  {
+    "index": 10,
+    "hash": "KfiSVLD/UI+T13GrAv74eHu7TF0=",
+    "timestampUtcMs": "2026-08-14T14:37:06.000Z",
+    "action": {
+      "type": "SUBMIT_FOR_REVIEW",
+      "input": {
+        "id": "33e6746a-1a78-4bc9-9ba3-a59508e7fdc8",
+        "actor": "claude",
+        "comment": "Knowledge registered against powerhouse v6.2.2-dev.47",
+        "timestamp": "2026-08-14T12:00:00.000Z"
+      },
+      "timestampUtcMs": "2026-08-14T14:37:06.000Z"
+    }
+  },
+  {
+    "index": 11,
+    "hash": "MHlf/VRIqt05cjRkBqG0Pz2OJWM=",
+    "timestampUtcMs": "2026-08-14T14:37:06.000Z",
+    "action": {
+      "type": "APPROVE_NOTE",
+      "input": {
+        "id": "83a3ea0c-302f-470c-a56b-bc9be103e269",
+        "actor": "liberuum",
+        "comment": "Canonical as of powerhouse v6.2.2-dev.47",
+        "timestamp": "2026-08-14T12:00:00.000Z"
+      },
+      "timestampUtcMs": "2026-08-14T14:37:06.000Z"
+    }
+  },
+  {
+    "index": 12,
+    "hash": "/q0J0fZ5RN17SgYxh21VdSWFgr8=",
+    "timestampUtcMs": "2026-08-16T09:49:41.000Z",
+    "action": {
+      "type": "SET_NOTE_TYPE",
+      "input": {
+        "noteType": "PATTERN",
+        "updatedAt": "2026-08-16T09:49:41.000Z"
+      },
+      "timestampUtcMs": "2026-08-16T09:49:41.000Z"
+    }
+  },
+  {
+    "index": 13,
+    "hash": "jXy4lxlGTISm96ULETfthqIig3w=",
+    "timestampUtcMs": "2026-09-03T09:58:31.422Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "version",
+        "updatedAt": "2026-09-03T09:58:31.421Z"
+      },
+      "timestampUtcMs": "2026-09-03T09:58:31.422Z"
+    }
+  }
+]

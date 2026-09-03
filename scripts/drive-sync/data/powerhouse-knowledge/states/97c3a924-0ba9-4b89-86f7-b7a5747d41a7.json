@@ -1,0 +1,115 @@
+{
+  "links": [
+    {
+      "id": "lnk-bb0b6db7-bui",
+      "linkType": "BUILDS_ON",
+      "targetDocumentId": "bb0b6db7-14f1-491c-8975-4475ff68481d",
+      "targetTitle": "v6-processor-flat-operations-replace-strands",
+      "reason": "That note records the v6 move from grouped strands to a flat OperationWithContext list; this one shows the relational spec was never updated for it and lists every name that changed",
+      "confidence": "grounded"
+    },
+    {
+      "id": "lnk-f7e6d116-con",
+      "linkType": "CONTRADICTS",
+      "targetDocumentId": "f7e6d116-bd5d-4052-9f2a-974e4d7cb7e2",
+      "targetTitle": "relational-db-processor-base-class",
+      "reason": "That note says the base class provides lifecycle management including automatic migrations, which the spec claims; the generated template at this tag makes the processor override initAndUpgrade and call up() itself",
+      "confidence": "grounded"
+    },
+    {
+      "id": "lnk-d1e93347-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "d1e93347-954b-46be-b494-2176482e67a8",
+      "targetTitle": "Spec \u203a Relational Db Processor Technical Specification",
+      "reason": "Extracted from docs/specs/relational-db-processor.md at v6.2.2-dev.74 \u2014 Interfaces and Abstractions (IProcessor, RelationalDbProcessor, ProcessorFactory, PowerhouseDB); Usage Overview",
+      "confidence": "grounded"
+    },
+    {
+      "id": "lnk-2ddae2ce-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "2ddae2ce-5409-4173-b76b-54a55b475c07",
+      "targetTitle": "processor-host-module-shape",
+      "reason": "The factory signature the spec gives predates the host module a factory builder now receives",
+      "confidence": "grounded"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "The relational-DB processor spec describes an API the code no longer has: onStrands, InternalTransmitterUpdate, PowerhouseDB and packages/document-drive are all gone at v6.2.2-dev.74",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "5e35346d-6889-4c45-aefd-8768860d0795",
+      "name": "processors",
+      "topicDocumentId": null
+    },
+    {
+      "id": "033d303a-ffb4-4568-80e3-79a812612950",
+      "name": "relational-db",
+      "topicDocumentId": null
+    },
+    {
+      "id": "0ebcb991-404d-421c-aa2f-20e592fc3e54",
+      "name": "documentation-drift",
+      "topicDocumentId": null
+    },
+    {
+      "id": "edfc6d75-c029-48a1-8b28-be03b5024b4f",
+      "name": "gotchas",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "`docs/specs/relational-db-processor.md` is a pre-v6 document, and reading it as current is a trap. Checked against the tree at v6.2.2-dev.74:\n\n| The spec says | The code at this tag |\n| --- | --- |\n| `onStrands(strands: InternalTransmitterUpdate<TDocument>[])` | **no `onStrands` anywhere**; `IProcessor.onOperations(operations: OperationWithContext[])` in `packages/shared/processors/types.ts:54` |\n| `PowerhouseDB<TDatabase> = Kysely<TDatabase>` in `packages/document-drive` | **no `PowerhouseDB`, no `packages/document-drive`**; the base class holds `relationalDb: IRelationalDb<TDatabaseSchema>` |\n| `ProcessorFactory = (driveId: string) => ProcessorRecord[]` with a `ListenerFilter` | a `ProcessorFactoryBuilder` receiving the host module, and `ProcessorFilter` |\n| migrations discovered automatically by the base class | the generated processor overrides **`initAndUpgrade()`** and calls `up(this.relationalDb)` itself |\n\nThe current generated template is the authority:\n\n```ts\nexport class MyProcessor extends RelationalDbProcessor<DB> {\n  onOperations(operations: OperationWithContext[]): Promise<void> { \u2026 }\n  onDisconnect(): Promise<void> { \u2026 }\n  static override getNamespace(driveId: string): string { return super.getNamespace(driveId); }\n  override async initAndUpgrade(): Promise<void> { await up(this.relationalDb); }\n}\n```\n\nWhat survives from the spec is its **intent**, and that intent did ship: a base class that hides database setup and migration wiring so a processor author writes business logic, a factory pattern with filtering, project-level migrations, and type-safe queries. `ph generate processor <name> --processor-type relationalDb` still exists (`oneOf([\"analytics\", \"relationalDb\"])`). Treat the spec as design rationale and the template plus `packages/shared/processors/relational/types.ts` as the API.\n\n## Provenance\n- `docs/specs/relational-db-processor.md` \u2014 Interfaces and Abstractions (IProcessor, RelationalDbProcessor, ProcessorFactory, PowerhouseDB); Usage Overview\n\n_Extracted from the Powerhouse repository at **v6.2.2-dev.74**._",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": "v6.2.2-dev.74",
+  "computes": null,
+  "filePath": "docs/specs/relational-db-processor.md",
+  "noteType": "OBSERVATION",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "knowledge-agent",
+    "createdAt": "2026-09-03T07:29:36.521Z",
+    "sessionId": null,
+    "updatedAt": "2026-09-03T07:31:12.876Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "The current base class takes onOperations(OperationWithContext[]), lives in reactor-browser, holds an IRelationalDb<TDatabaseSchema>, and defines initAndUpgrade plus a static getNamespace.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "de6a9400-a67c-4905-990e-3d3ec18d579e",
+      "actor": "knowledge-agent",
+      "comment": "extracted from docs/specs/relational-db-processor.md at v6.2.2-dev.74",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-09-03T07:29:37.120Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "2763ffbf-71e6-4274-8911-311563e3a2ed",
+      "actor": "liberuum",
+      "comment": "claim checked against the cited file at the pinned tag",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-09-03T07:29:37.731Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

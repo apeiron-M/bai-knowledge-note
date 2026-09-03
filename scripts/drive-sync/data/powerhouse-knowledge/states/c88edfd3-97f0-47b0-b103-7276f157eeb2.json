@@ -1,0 +1,115 @@
+{
+  "links": [
+    {
+      "id": "lnk-48b95d6d-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "48b95d6d-2b69-4999-9e79-dddfc7e9ed3f",
+      "targetTitle": "reactor-job-five-statuses-two-terminal",
+      "reason": "The two job durations are measured between the same five statuses that note describes: RUNNING to WRITE_READY and WRITE_READY to READ_READY",
+      "confidence": "grounded"
+    },
+    {
+      "id": "lnk-9c3f588f-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "9c3f588f-95bf-4c13-90df-9ca0cd9ec9e3",
+      "targetTitle": "Package \u203a opentelemetry-instrumentation-reactor \u203a taxonomy \u2014 Reactor Metrics Taxonomy",
+      "reason": "Extracted from packages/opentelemetry-instrumentation-reactor/docs/taxonomy.md at v6.2.2-dev.74 \u2014 Units; Queue; Executor; Job Lifecycle; Event Bus; Sync; Event Types Tracked",
+      "confidence": "grounded"
+    },
+    {
+      "id": "lnk-79eae22e-bui",
+      "linkType": "BUILDS_ON",
+      "targetDocumentId": "79eae22e-b7ff-484b-897b-afb93e4bc497",
+      "targetTitle": "reactor-event-namespaces-and-two-job-failed-shapes",
+      "reason": "Confirms the numeric event codes from the outside and shows what each event is measured for, which is why subscribing to the wrong enum also means measuring the wrong thing",
+      "confidence": "grounded"
+    },
+    {
+      "id": "lnk-3734f5ab-bui",
+      "linkType": "BUILDS_ON",
+      "targetDocumentId": "3734f5ab-ebc7-4ea7-96a3-8a10128a4265",
+      "targetTitle": "otel-instrumentation-no-exporter",
+      "reason": "This is the catalogue of what that package registers on the global meter",
+      "confidence": "grounded"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Reactor metrics are derived from six event-bus events, so every counter and histogram is traceable to the event that produced it",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "0d94a79e-a740-40db-84a6-8909248f1946",
+      "name": "opentelemetry",
+      "topicDocumentId": null
+    },
+    {
+      "id": "53560dbf-346a-4f57-97be-6a0637731a01",
+      "name": "metrics",
+      "topicDocumentId": null
+    },
+    {
+      "id": "f09b166e-2e21-488a-a598-cdef9b355ed7",
+      "name": "reactor",
+      "topicDocumentId": null
+    },
+    {
+      "id": "bc7e1db8-db54-45da-a6e7-6c704f6e5ac5",
+      "name": "event-bus",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "Every metric uses the meter name `@powerhousedao/reactor`, and units follow OpenTelemetry semantic conventions in UCUM \u2014 curly-brace annotations like `{job}`, `{operation}`, `{event}` and `{remote}` are dimensionless counts, `ms` is a duration.\n\nThe families:\n\n- **Queue** \u2014 `reactor.queue.jobs.enqueued` / `.dequeued` / `.completed` (READ_READY) / `.failed` (permanently) as counters, plus observable gauges `reactor.queue.depth` (pending jobs across all queues) and `reactor.queue.executing`.\n- **Executor** \u2014 `reactor.executor.job.duration` (histogram, ms, RUNNING \u2192 WRITE_READY, attribute `job.success`), `reactor.executor.active_jobs`, `reactor.executor.total_processed` (attribute `job.success`), `reactor.executor.operations_generated`.\n- **Read model** \u2014 `reactor.readmodel.index.duration` (histogram, WRITE_READY \u2192 READ_READY).\n- **Event bus** \u2014 `reactor.eventbus.events.emitted` with an `event.type` attribute.\n- **Sync** \u2014 `reactor.sync.remotes` (active remote count) and `reactor.sync.dead_letters.added` with a `remote.name` attribute.\n\nWhat makes the taxonomy genuinely useful is the event-mapping table: each metric is recorded from a named event, so a gap in a metric is a gap in an event.\n\n| Event | Code | Records |\n| --- | --- | --- |\n| `JOB_PENDING` | 10001 | `queue.jobs.enqueued` |\n| `JOB_RUNNING` | 10002 | `queue.jobs.dequeued` |\n| `JOB_WRITE_READY` | 10003 | `executor.job.duration`, `total_processed`, `operations_generated` |\n| `JOB_READ_READY` | 10004 | `readmodel.index.duration`, `job.total.duration`, `queue.jobs.completed` |\n| `JOB_FAILED` | 10005 | `queue.jobs.failed`, `total_processed`, `job.total.duration` |\n| `DEAD_LETTER_ADDED` | 20004 | `sync.dead_letters.added` |\n\nEvery one of them also increments `eventbus.events.emitted`.\n\n## Provenance\n- `packages/opentelemetry-instrumentation-reactor/docs/taxonomy.md` \u2014 Units; Queue; Executor; Job Lifecycle; Event Bus; Sync; Event Types Tracked\n\n_Extracted from the Powerhouse repository at **v6.2.2-dev.74**._",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": "v6.2.2-dev.74",
+  "computes": null,
+  "filePath": "packages/opentelemetry-instrumentation-reactor/docs/taxonomy.md",
+  "noteType": "REFERENCE",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "knowledge-agent",
+    "createdAt": "2026-09-03T07:43:15.402Z",
+    "sessionId": null,
+    "updatedAt": "2026-09-03T07:43:16.386Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Queue, executor, job-lifecycle, read-model, event-bus and sync families under the @powerhousedao/reactor meter. JOB_WRITE_READY records executor duration and operations generated; JOB_READ_READY.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "3beb8cc3-10d6-4b90-998c-a83df6383fd8",
+      "actor": "knowledge-agent",
+      "comment": "extracted from packages/opentelemetry-instrumentation-reactor/docs/taxonomy.md at v6.2.2-dev.74",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-09-03T07:43:15.920Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "c61d1a8b-c6b2-4482-9180-167d54234f58",
+      "actor": "liberuum",
+      "comment": "claim checked against the cited file at the pinned tag",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-09-03T07:43:16.386Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

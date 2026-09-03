@@ -1,0 +1,119 @@
+{
+  "links": [
+    {
+      "id": "lnk-a4fdb6ec-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "a4fdb6ec-9c95-4930-a45e-e21ca6571528",
+      "targetTitle": "document-state-has-global-and-local-scopes"
+    },
+    {
+      "id": "lnk-27cf7cb6-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "27cf7cb6-160b-439b-ac23-001d3e43abde",
+      "targetTitle": "channel-directory-file-layout"
+    },
+    {
+      "id": "lnk-251a0c70-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "251a0c70-2e17-44d6-9441-024a9e18c1c5",
+      "targetTitle": "new-device-recovery-via-wallet-and-manifest"
+    },
+    {
+      "id": "lnk-17a0ed86-bui",
+      "linkType": "BUILDS_ON",
+      "targetDocumentId": "17a0ed86-0b8d-4374-9114-bea5b95737ed",
+      "targetTitle": "three-layer-swarm-stack"
+    },
+    {
+      "id": "lnk-2ab414f6-bui",
+      "linkType": "BUILDS_ON",
+      "targetDocumentId": "2ab414f6-938d-40f6-89b9-054bbcbaf4f2",
+      "targetTitle": "reactor-sync-ichannel-three-mailbox-model"
+    },
+    {
+      "id": "lnk-873daffa-bui",
+      "linkType": "BUILDS_ON",
+      "targetDocumentId": "873daffa-52d3-49f3-adac-b538bb82ba99",
+      "targetTitle": "swarmchannel-is-transport-only"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "SwarmChannel implements IChannel so the reactor SyncManager is transport-agnostic",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "fd4e2a64-0f44-4183-8164-6879219fac5b",
+      "name": "swarm-channel",
+      "topicDocumentId": null
+    },
+    {
+      "id": "aef7ca96-eb3f-4056-93ee-3038fa674dfd",
+      "name": "ichannel",
+      "topicDocumentId": null
+    },
+    {
+      "id": "c749aa04-8809-48f8-866c-3efe83fd1574",
+      "name": "sync-manager",
+      "topicDocumentId": null
+    },
+    {
+      "id": "c5027391-a5f1-4528-82b0-2d4e79930b93",
+      "name": "transport-abstraction",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "The fully-decentralized architecture (D) works by treating Swarm as a native channel rather than a special-case plugin:\n\n**Architecture**: `SwarmChannel` implements the `IChannel` interface (inbox / outbox / deadLetter) and plugs into the reactor's existing `SyncManager`. It replaces the `GqlRequestChannel` that normally talks to a Switchboard server.\n\n**Why this works**: the SyncManager is already designed against an abstract channel. It moves `SyncEnvelope` payloads through whatever channel it's given. It does not know or care whether those envelopes end up going over GraphQL HTTP or over Swarm feeds.\n\n**Result**: \"Swarm IS the Switchboard\" \u2014 from the SyncManager's perspective, the remote is still a remote; only the transport changed.\n\n**Practical implications**:\n- No special-case reactor code paths for Swarm\n- Collaboration uses the same sync primitives, just delivered over feeds/PSS\n- The existing operation semantics (ordering, idempotence, keyframes) carry over\n- Migration between architectures is largely a channel-factory swap\n\nThis is the foundation for `CompositeChannelFactory` as well \u2014 both GQL and Swarm channels can be active for dual-sync (Architecture C).",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "PATTERN",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "knowledge-agent",
+    "createdAt": "2026-04-21T14:42:40.589Z",
+    "sessionId": null,
+    "updatedAt": "2026-09-03T09:57:30.788Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Replacing GqlRequestChannel needs no bespoke code path: ordering, idempotence and keyframes carry over unchanged, and dual-sync becomes a factory swap via CompositeChannelFactory.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "3b5e5405-9c42-4e4c-8b87-7328b1039fa6",
+      "actor": "claude",
+      "comment": "Knowledge registered against powerhouse v6.2.2-dev.47",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-14T12:00:00.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "c6c5cf5d-2470-4275-8e24-d9c894f0c7c8",
+      "actor": "liberuum",
+      "comment": "Canonical as of powerhouse v6.2.2-dev.47",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-14T12:00:00.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

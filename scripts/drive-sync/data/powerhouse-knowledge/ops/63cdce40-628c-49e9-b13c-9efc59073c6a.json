@@ -1,0 +1,330 @@
+[
+  {
+    "index": 0,
+    "hash": "",
+    "timestampUtcMs": "2026-09-03T07:48:44.282Z",
+    "action": {
+      "type": "CREATE_DOCUMENT",
+      "input": {
+        "meta": {},
+        "name": "registry-upgrade-path-errors",
+        "slug": "",
+        "model": "bai/knowledge-note",
+        "branch": "main",
+        "signing": {
+          "nonce": "",
+          "publicKey": {},
+          "signature": "63cdce40-628c-49e9-b13c-9efc59073c6a",
+          "documentType": "bai/knowledge-note",
+          "createdAtUtcIso": "2026-09-03T07:48:44.282Z"
+        },
+        "version": 0,
+        "documentId": "63cdce40-628c-49e9-b13c-9efc59073c6a",
+        "protocolVersions": {
+          "base-reducer": 2
+        }
+      },
+      "timestampUtcMs": "2026-09-03T07:48:44.282Z"
+    }
+  },
+  {
+    "index": 0,
+    "hash": "xEeSMoJevcf2wxB94rM+9rrTNu4=",
+    "timestampUtcMs": "2026-09-03T07:48:45.459Z",
+    "action": {
+      "type": "SET_TITLE",
+      "input": {
+        "title": "The upgrade API's error checks run in a deliberate order, so a same-version path and a downgrade both answer without a manifest lookup",
+        "updatedAt": "2026-09-03T07:48:45.459Z"
+      },
+      "timestampUtcMs": "2026-09-03T07:48:45.459Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "",
+    "timestampUtcMs": "2026-09-03T07:48:44.282Z",
+    "action": {
+      "type": "UPGRADE_DOCUMENT",
+      "input": {
+        "model": "bai/knowledge-note",
+        "toVersion": 1,
+        "documentId": "63cdce40-628c-49e9-b13c-9efc59073c6a",
+        "fromVersion": 0,
+        "initialState": {
+          "auth": {
+            "grants": [],
+            "version": 0
+          },
+          "local": {
+            "lastViewedAt": null,
+            "personalTags": []
+          },
+          "global": {
+            "links": [],
+            "model": null,
+            "scope": null,
+            "title": null,
+            "editor": null,
+            "inputs": [],
+            "models": [],
+            "status": "DRAFT",
+            "topics": [],
+            "content": null,
+            "context": null,
+            "modelId": null,
+            "modules": [],
+            "outputs": [],
+            "version": null,
+            "computes": null,
+            "filePath": null,
+            "noteType": null,
+            "severity": null,
+            "hooksUsed": [],
+            "rootCause": null,
+            "confidence": null,
+            "consumedBy": [],
+            "provenance": null,
+            "sourceType": null,
+            "targetType": null,
+            "cardinality": null,
+            "description": null,
+            "alternatives": [],
+            "consequences": [],
+            "errorMessage": null,
+            "relationType": null,
+            "correctPattern": null,
+            "decisionStatus": null,
+            "dispatchTargets": [],
+            "lifecycleEvents": []
+          },
+          "document": {
+            "hash": {
+              "encoding": "base64",
+              "algorithm": "sha1"
+            },
+            "version": 1
+          }
+        }
+      },
+      "timestampUtcMs": "2026-09-03T07:48:44.282Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "p2rM9Yaq3Ai12f+g1VNjZPpsDBI=",
+    "timestampUtcMs": "2026-09-03T07:48:45.459Z",
+    "action": {
+      "type": "SET_DESCRIPTION",
+      "input": {
+        "updatedAt": "2026-09-03T07:48:45.459Z",
+        "description": "computeUpgradePath: from === to returns [] and skips the lookup, to < from throws DowngradeNotSupportedError first, a missing step throws MissingUpgradeTransitionError. getUpgradeReducer checks."
+      },
+      "timestampUtcMs": "2026-09-03T07:48:45.459Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "",
+    "timestampUtcMs": "2026-09-03T07:49:25.936Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "metadata": {
+          "reason": "Extracted from apps/academy/docs/academy/04-Reference/01-Reactor/06-DocumentModelRegistry.md at v6.2.2-dev.74 \u2014 Upgrade API (registerUpgradeManifests, unregisterUpgradeManifests, getUpgradeManifest, computeUpgradePath, getUpgradeReducer); Upgrade path example",
+          "confidence": "grounded"
+        },
+        "sourceId": "63cdce40-628c-49e9-b13c-9efc59073c6a",
+        "targetId": "14416670-d2d3-4de5-9dfd-7c6e175280c2",
+        "relationshipType": "DERIVED_FROM"
+      },
+      "timestampUtcMs": "2026-09-03T07:49:25.936Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "MfWVBDzhQI6NQWq+t9f5IEg7tIU=",
+    "timestampUtcMs": "2026-09-03T07:48:45.459Z",
+    "action": {
+      "type": "SET_NOTE_TYPE",
+      "input": {
+        "noteType": "REFERENCE",
+        "updatedAt": "2026-09-03T07:48:45.459Z"
+      },
+      "timestampUtcMs": "2026-09-03T07:48:45.459Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "",
+    "timestampUtcMs": "2026-09-03T07:49:26.376Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "metadata": {
+          "reason": "These methods walk exactly the v2..vN keys the manifest type forces, so a manifest gap and a MissingUpgradeTransitionError are the same fact",
+          "confidence": "grounded"
+        },
+        "sourceId": "63cdce40-628c-49e9-b13c-9efc59073c6a",
+        "targetId": "30a67455-2be8-4c97-b0d6-1a11397c5af7",
+        "relationshipType": "BUILDS_ON"
+      },
+      "timestampUtcMs": "2026-09-03T07:49:26.376Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "+b42m6HZZ6uB0AeFSuQuF6BkvgA=",
+    "timestampUtcMs": "2026-09-03T07:48:45.459Z",
+    "action": {
+      "type": "SET_CONTENT",
+      "input": {
+        "content": "Two methods move a document between versions, and their **ordering of checks** is the part worth memorising because it decides which error you get.\n\n`computeUpgradePath(documentType, fromVersion, toVersion): UpgradeTransition[]` walks the keys `v(from+1)..v(to)`:\n\n- `from === to` \u2192 returns `[]` **and skips the manifest lookup**, so it does not throw even when no manifest is registered;\n- `to < from` \u2192 throws `DowngradeNotSupportedError` **before** the manifest lookup;\n- no manifest for the type \u2192 `ManifestNotFoundError`;\n- a missing step inside the range \u2192 `MissingUpgradeTransitionError`.\n\n`getUpgradeReducer(documentType, fromVersion, toVersion)` returns the reducer for a **single** step, so `toVersion` must equal `fromVersion + 1`. The single-step check **runs before the manifest lookup**, which is why `getUpgradeReducer(\"test/todo\", 1, 3)` throws `InvalidUpgradeStepError` even with no v3 manifest registered.\n\nWorked, with `supportedVersions = [1, 2]`:\n\n```ts\nregistry.computeUpgradePath(\"test/todo\", 1, 2); // [v2 transition]\nregistry.computeUpgradePath(\"test/todo\", 2, 2); // [] \u2014 no manifest needed\nregistry.getUpgradeReducer(\"test/todo\", 1, 2);  // the v1 -> v2 reducer\nregistry.computeUpgradePath(\"test/todo\", 2, 1); // DowngradeNotSupportedError\nregistry.getUpgradeReducer(\"test/todo\", 1, 3);  // InvalidUpgradeStepError\n```\n\nAlso on the API: `registerUpgradeManifests` never throws and returns one result per input (a falsy `documentType` or an already-registered type yields `DuplicateManifestError`); `unregisterUpgradeManifests(...types)` returns `true` **only if every** type had a manifest, while still removing those that exist; `getUpgradeManifest` throws `ManifestNotFoundError`.\n\n## Provenance\n- `apps/academy/docs/academy/04-Reference/01-Reactor/06-DocumentModelRegistry.md` \u2014 Upgrade API (registerUpgradeManifests, unregisterUpgradeManifests, getUpgradeManifest, computeUpgradePath, getUpgradeReducer); Upgrade path example\n\n_Extracted from the Powerhouse repository at **v6.2.2-dev.74**._",
+        "updatedAt": "2026-09-03T07:48:45.459Z"
+      },
+      "timestampUtcMs": "2026-09-03T07:48:45.459Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "",
+    "timestampUtcMs": "2026-09-03T07:49:26.831Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "metadata": {
+          "reason": "Composing multiple hops is what makes a single missing intermediate transition fatal at upgrade time",
+          "confidence": "grounded"
+        },
+        "sourceId": "63cdce40-628c-49e9-b13c-9efc59073c6a",
+        "targetId": "2f4b5df2-d6ca-4224-a049-e96b4811ed37",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-09-03T07:49:26.831Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "QUxINzCp0Fh6VGaGFNyiC9YXWn0=",
+    "timestampUtcMs": "2026-09-03T07:48:45.459Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "182a3664-78ff-4aa3-b3cf-391843e4ed70",
+        "name": "document-model"
+      },
+      "timestampUtcMs": "2026-09-03T07:48:45.459Z"
+    }
+  },
+  {
+    "index": 5,
+    "hash": "l9p8scg2Ev3NVv0FTbljuRilKFE=",
+    "timestampUtcMs": "2026-09-03T07:48:45.459Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "18e54ab1-5afc-452b-b228-25a4ebd702d1",
+        "name": "versioning"
+      },
+      "timestampUtcMs": "2026-09-03T07:48:45.459Z"
+    }
+  },
+  {
+    "index": 6,
+    "hash": "LV91UFL0DMIBt1DEFdVNTiN2jrA=",
+    "timestampUtcMs": "2026-09-03T07:48:45.459Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "c6bfd082-5346-4610-bfb5-0739da238668",
+        "name": "upgrades"
+      },
+      "timestampUtcMs": "2026-09-03T07:48:45.459Z"
+    }
+  },
+  {
+    "index": 7,
+    "hash": "Zwao4ENQxbzG8c/k8SvABpcEEmE=",
+    "timestampUtcMs": "2026-09-03T07:48:45.459Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "e04aa1c0-1051-4fb1-8fd7-305ff5ea3e86",
+        "name": "error-handling"
+      },
+      "timestampUtcMs": "2026-09-03T07:48:45.459Z"
+    }
+  },
+  {
+    "index": 8,
+    "hash": "U86oqWqrP7wn5ECn4Jqdo/0CuK8=",
+    "timestampUtcMs": "2026-09-03T07:48:45.459Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "version",
+        "value": "v6.2.2-dev.74",
+        "updatedAt": "2026-09-03T07:48:45.459Z"
+      },
+      "timestampUtcMs": "2026-09-03T07:48:45.459Z"
+    }
+  },
+  {
+    "index": 9,
+    "hash": "Jc+Zmcnl+SFkWkAiBEWydNh80Yo=",
+    "timestampUtcMs": "2026-09-03T07:48:45.459Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "filePath",
+        "value": "apps/academy/docs/academy/04-Reference/01-Reactor/06-DocumentModelRegistry.md",
+        "updatedAt": "2026-09-03T07:48:45.459Z"
+      },
+      "timestampUtcMs": "2026-09-03T07:48:45.459Z"
+    }
+  },
+  {
+    "index": 10,
+    "hash": "gP8TxpX3HfMes6OE0tZNRXb+wVI=",
+    "timestampUtcMs": "2026-09-03T07:48:48.080Z",
+    "action": {
+      "type": "SET_PROVENANCE",
+      "input": {
+        "author": "knowledge-agent",
+        "createdAt": "2026-09-03T07:48:48.080Z",
+        "sourceOrigin": "DERIVED"
+      },
+      "timestampUtcMs": "2026-09-03T07:48:48.080Z"
+    }
+  },
+  {
+    "index": 11,
+    "hash": "KJmPB0RB63G6mxVAwP1SWBFd+Wo=",
+    "timestampUtcMs": "2026-09-03T07:48:48.541Z",
+    "action": {
+      "type": "SUBMIT_FOR_REVIEW",
+      "input": {
+        "id": "9e53060b-a1ff-4bbc-a35b-6d78ddcff262",
+        "actor": "knowledge-agent",
+        "comment": "extracted from apps/academy/docs/academy/04-Reference/01-Reactor/06-DocumentModelRegistry.md at v6.2.2-dev.74",
+        "timestamp": "2026-09-03T07:48:48.540Z"
+      },
+      "timestampUtcMs": "2026-09-03T07:48:48.541Z"
+    }
+  },
+  {
+    "index": 12,
+    "hash": "Sn7Y2p1kpJNprQ+kPxYfy6jdhOA=",
+    "timestampUtcMs": "2026-09-03T07:48:49.185Z",
+    "action": {
+      "type": "APPROVE_NOTE",
+      "input": {
+        "id": "cb9eddbc-39f4-456c-b141-d82fa16ed65f",
+        "actor": "liberuum",
+        "comment": "claim checked against the cited file at the pinned tag",
+        "timestamp": "2026-09-03T07:48:49.185Z"
+      },
+      "timestampUtcMs": "2026-09-03T07:48:49.185Z"
+    }
+  }
+]

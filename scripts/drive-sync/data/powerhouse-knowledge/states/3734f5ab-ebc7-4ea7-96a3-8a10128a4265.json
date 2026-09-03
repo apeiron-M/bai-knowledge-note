@@ -1,0 +1,115 @@
+{
+  "links": [
+    {
+      "id": "lnk-751a6e99-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "751a6e99-6e7b-4447-8d57-0fa3ae4b35ac",
+      "targetTitle": "Package \u203a opentelemetry-instrumentation-reactor \u203a README",
+      "reason": "Extracted from packages/opentelemetry-instrumentation-reactor/README.md at v6.2.2-dev.74 \u2014 intro, scope note, Install and Usage",
+      "confidence": "grounded"
+    },
+    {
+      "id": "lnk-9c3f588f-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "9c3f588f-95bf-4c13-90df-9ca0cd9ec9e3",
+      "targetTitle": "Package \u203a opentelemetry-instrumentation-reactor \u203a taxonomy \u2014 Reactor Metrics Taxonomy",
+      "reason": "Extracted from packages/opentelemetry-instrumentation-reactor/docs/taxonomy.md at v6.2.2-dev.74 \u2014 Environment Variables",
+      "confidence": "grounded"
+    },
+    {
+      "id": "lnk-d6732865-bui",
+      "linkType": "BUILDS_ON",
+      "targetDocumentId": "d6732865-1509-4c80-9515-95839f1bdd5e",
+      "targetTitle": "sb-observability-bootstrap",
+      "reason": "The switchboard is the host that supplies the MeterProvider this package writes into, which is why its metrics appear only when OTEL_EXPORTER_OTLP_ENDPOINT is set",
+      "confidence": "grounded"
+    },
+    {
+      "id": "lnk-c88edfd3-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "c88edfd3-97f0-47b0-b103-7276f157eeb2",
+      "targetTitle": "otel-reactor-metric-taxonomy",
+      "reason": "This is the package that registers the instruments; that note is the catalogue of what it emits and from which events",
+      "confidence": "grounded"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "The reactor OpenTelemetry package only creates instruments on the global meter and reads no environment variables, so a host that configures no exporter gets no metrics",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "f5784a91-7e02-416f-877f-2133f69fe6bb",
+      "name": "opentelemetry",
+      "topicDocumentId": null
+    },
+    {
+      "id": "32db78f3-4960-4506-b7e0-ff6425753e9a",
+      "name": "metrics",
+      "topicDocumentId": null
+    },
+    {
+      "id": "c75769f6-ff0f-4bdb-bbed-acca2d81635a",
+      "name": "reactor",
+      "topicDocumentId": null
+    },
+    {
+      "id": "6366caa6-f787-4782-88dd-0a8916879c73",
+      "name": "observability",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "`@powerhousedao/opentelemetry-instrumentation-reactor` inspects `ReactorModule` dependencies and subscribes to reactor event-bus events to register instruments covering the job queue, executor, read-model indexing and sync subsystems.\n\nIts scope is deliberately narrow: it **only creates OTel instruments on the global meter** and does **not** configure exporters or collector endpoints. The taxonomy states the same rule from the other side \u2014 the package itself reads **no environment variables**; all configuration belongs to the host's OTel bootstrap.\n\n```ts\nconst instrumentation = new ReactorInstrumentation(module); // module from ReactorBuilder\ninstrumentation.start();  // subscribe + register observable gauge callbacks\ninstrumentation.stop();   // remove all subscriptions, clear internal state\n```\n\nMetrics are recorded on the `@powerhousedao/reactor` meter via the global `@opentelemetry/api` `metrics.getMeter()`, so to see anything the application must configure a `MeterProvider` with an exporter in its entry point. The peer dependency is `@powerhousedao/reactor`.\n\nThe consequence for debugging: \"no reactor metrics\" has two very different causes \u2014 the instrumentation was never `start()`ed, or the host never wired a `MeterProvider`. The standard SDK variables a host typically sets are `OTEL_EXPORTER_OTLP_ENDPOINT` (metrics export is disabled when unset) and `OTEL_METRIC_EXPORT_INTERVAL` (default 60000 ms).\n\n## Provenance\n- `packages/opentelemetry-instrumentation-reactor/README.md` \u2014 intro, scope note, Install and Usage\n- `packages/opentelemetry-instrumentation-reactor/docs/taxonomy.md` \u2014 Environment Variables\n\n_Extracted from the Powerhouse repository at **v6.2.2-dev.74**._",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": "v6.2.2-dev.74",
+  "computes": null,
+  "filePath": "packages/opentelemetry-instrumentation-reactor/README.md",
+  "noteType": "INTEGRATION",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "knowledge-agent",
+    "createdAt": "2026-09-03T07:43:09.537Z",
+    "sessionId": null,
+    "updatedAt": "2026-09-03T07:43:10.484Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "ReactorInstrumentation(module).start() subscribes to event bus events and registers observable gauges; stop() removes them. Exporters and endpoints are the host application's responsibility.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "d01e584d-da5c-4588-b49c-d6a94a7f9bf4",
+      "actor": "knowledge-agent",
+      "comment": "extracted from packages/opentelemetry-instrumentation-reactor/README.md at v6.2.2-dev.74",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-09-03T07:43:10.014Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "95126b51-bfef-40ee-b3c6-184d8d3b7d43",
+      "actor": "liberuum",
+      "comment": "claim checked against the cited file at the pinned tag",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-09-03T07:43:10.484Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

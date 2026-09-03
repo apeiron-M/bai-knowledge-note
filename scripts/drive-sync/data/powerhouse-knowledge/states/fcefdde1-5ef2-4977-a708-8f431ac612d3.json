@@ -1,0 +1,115 @@
+{
+  "links": [
+    {
+      "id": "lnk-6785869b-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "6785869b-e28b-4019-95ae-05d003efa1ab",
+      "targetTitle": "light-client-signs-single-actions-only",
+      "reason": "Ambient per-action signing in execute is why a single-action dispatch is signed while a multi-action batch is pushed unsigned with a warning",
+      "confidence": "grounded"
+    },
+    {
+      "id": "lnk-d4009255-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "d4009255-3f1f-4e06-872a-9f8142896eea",
+      "targetTitle": "ADR \u203a reactor-browser-client-interface",
+      "reason": "Extracted from docs/adr/0002-reactor-browser-client-interface.md at v6.2.2-dev.74 \u2014 Decision 4 (read path), 5 (write path), 6 (signer support)",
+      "confidence": "grounded"
+    },
+    {
+      "id": "lnk-9d055359-bui",
+      "linkType": "BUILDS_ON",
+      "targetDocumentId": "9d055359-868c-442c-99ad-052a2101e9da",
+      "targetTitle": "browser-client-adr-accepted",
+      "reason": "These are the numbered decisions of the ADR whose context and status the parent note records",
+      "confidence": "grounded"
+    },
+    {
+      "id": "lnk-568f0344-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "568f0344-dc8a-40ee-9226-7f8b54065cb2",
+      "targetTitle": "realtime-degrades-to-local-only",
+      "reason": "A read path that never replays is what makes realtime an enhancement rather than a requirement for correctness",
+      "confidence": "established"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "The light client reads the remote's current state with no replay and writes local-first, so point-in-time reads are out of scope by decision rather than by omission",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "58ad1c90-8357-4757-ae87-28a0a967b4c3",
+      "name": "reactor-browser",
+      "topicDocumentId": null
+    },
+    {
+      "id": "a3dc4d28-2022-44b7-9f1f-cafaebe2d8af",
+      "name": "graphql-client",
+      "topicDocumentId": null
+    },
+    {
+      "id": "7dc7dac4-1489-428d-be2d-e117303572b0",
+      "name": "local-first",
+      "topicDocumentId": null
+    },
+    {
+      "id": "ba469246-41fa-49dc-8aa9-30541619c4a4",
+      "name": "adr",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "Two of ADR 0002's numbered decisions are the ones a consumer feels.\n\n**Read path \u2014 preview the current remote state, no point-in-time replay.** `get` returns the **current `state` on the remote server**; the read path never fetches or replays operations. The operation list stays available (`getOperations` is on the interface and `useDocumentOperations` already reads it, which is enough for an audit log or revision list), but reconstructing state as of revision N is **explicitly out of scope**: it would need client-side replay or a server-side `revision` view filter, neither part of the decision. The payoff is that the default read is a single cheap query \u2014 and the cost is that `ViewFilter.revision` throwing on this client is a design consequence, not a bug.\n\n**Write path \u2014 local-first `execute`.** It needs the current state, the reducer, the document type and the current revision for the scope; it reduces each action onto the current state, **persists to IndexedDB, returns the optimistic document immediately, and enqueues the operations for push**. The local-first machinery (IndexedDB cache, outbox, reducer) lives *inside* the class, invisible to the hooks \u2014 which is how `RemoteDocumentController`'s four responsibilities (wrap a reducer, track actions, sign, push) collapse into one method.\n\n**Signing carries over but becomes ambient.** The client resolves the current session's `ISigner` at push time and signs in the `execute` path using the same `signer.signAction` + `context.signer` shape. With a signer set every write is signed automatically; without one, writes push unsigned. Signing needs only current state \u2014 the `previousStateHash` is the synthetic tail's hash \u2014 so no operation history fetch is required to sign a new action.\n\n## Provenance\n- `docs/adr/0002-reactor-browser-client-interface.md` \u2014 Decision 4 (read path), 5 (write path), 6 (signer support)\n\n_Extracted from the Powerhouse repository at **v6.2.2-dev.74**._",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": "v6.2.2-dev.74",
+  "computes": null,
+  "filePath": "docs/adr/0002-reactor-browser-client-interface.md",
+  "noteType": "DECISION",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "knowledge-agent",
+    "createdAt": "2026-09-03T07:29:12.945Z",
+    "sessionId": null,
+    "updatedAt": "2026-09-03T07:31:10.865Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "get returns the server's materialized state in one cheap query; getOperations stays on the interface for audit logs. execute reduces locally, persists to IndexedDB and returns optimistically.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "b3a3110b-a8d2-4568-bd74-edf24478cf1d",
+      "actor": "knowledge-agent",
+      "comment": "extracted from docs/adr/0002-reactor-browser-client-interface.md at v6.2.2-dev.74",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-09-03T07:29:13.440Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "199d5753-2887-414c-b5c4-97bbd140476c",
+      "actor": "liberuum",
+      "comment": "claim checked against the cited file at the pinned tag",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-09-03T07:29:13.957Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

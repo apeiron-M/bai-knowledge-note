@@ -1,0 +1,107 @@
+{
+  "links": [
+    {
+      "id": "lnk-5ba85b55-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "5ba85b55-4ac1-4cd5-a9d2-e1855c5b9633",
+      "targetTitle": "operational-reshuffle-vs-crdt-ot",
+      "reason": "Cross-stream timestamp ordering exists in the reactor only for the auth walk; state derivation still folds scope by scope, so reshuffle semantics do not extend across scopes",
+      "confidence": "grounded"
+    },
+    {
+      "id": "lnk-2021b696-bui",
+      "linkType": "BUILDS_ON",
+      "targetDocumentId": "2021b696-e605-4b1b-b579-7f568949c1b2",
+      "targetTitle": "outbox-scope-ordering",
+      "reason": "Records why the tempting fix for that bug was rejected and what was shipped instead",
+      "confidence": "grounded"
+    },
+    {
+      "id": "lnk-4c1161cd-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "4c1161cd-c718-4604-83dc-39b07e09d602",
+      "targetTitle": "Docs \u203a updateOutbox orders a document's scopes alphabetically, so auth is served before document",
+      "reason": "Extracted from docs/updateoutbox-scope-ordering.md at v6.2.2-dev.74 \u2014 'What the fix is, and what it is not': the two counts, the measurement table, and 'The cycle that surfaced while trying the index order'",
+      "confidence": "grounded"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Serving a backfill page in the operation index's own order costs 2.5\u00d7 the load jobs and does not buy cross-scope ordering, because replay regroups by scope anyway",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "92c26e87-865e-4d54-9082-98041738c4bb",
+      "name": "reactor-sync",
+      "topicDocumentId": null
+    },
+    {
+      "id": "d4056fa1-81a6-434b-b5f9-109f4139b699",
+      "name": "outbox",
+      "topicDocumentId": null
+    },
+    {
+      "id": "c7f8de3d-405b-4069-9f2f-516b9ab9e1bf",
+      "name": "performance",
+      "topicDocumentId": null
+    },
+    {
+      "id": "3e56050e-66ce-43de-8d13-afd9e0c4ea56",
+      "name": "replay",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "The obvious fix for the scope-ordering inversion was to drop the sort and serve each page in the index's ordinal order. It was tried and rejected on two counts.\n\n**It costs a factor of 2.5 in load jobs.** Measured against the hub-spoke fixture (410 documents, 7,056 operations, 407 documents carrying exactly two scopes):\n\n| batching | load jobs | operations per job |\n| --- | --- | --- |\n| by (document, scope) | 817 | 8.6 |\n| by (document, ordinal) | 2,016 | 3.5 |\n\nConvergence time tracked that ratio almost exactly \u2014 2.47\u00d7 the jobs for 2.64\u00d7 the wall clock \u2014 so the cost is per-job overhead, not per-operation work. On CI it took the 3-spoke leg past its 300 s cap and then took Postgres down with it.\n\n**It does not buy the ordering it appears to buy.** Delivery order is not what decides the order a document's scopes are applied in: `replayDocument` replays `Object.values(operations).flatMap(...)` \u2014 scope by scope, with no cross-scope sort \u2014 so given `global@1000, local@2000, global@3000, local@4000` it applies `global@1000, global@3000, local@2000, local@4000`. The one place operations from different streams are ordered by timestamp, `mergeByPosition`/`comparePositions`, is reached only from the auth walk and does not feed state derivation. So an `UPGRADE_DOCUMENT` is **not** applied at the position its timestamp implies relative to other scopes today, whatever order it is delivered in. If that semantics is wanted it belongs in replay, and batching per document rather than per (document, scope) is the enabler \u2014 410 jobs on the fixture against 817.\n\nA related defect surfaced while trying the index order and is reachable on `main`: `consolidateSyncOperations` merged **every** SyncOperation sharing a `(documentId, scope, branch)` wherever it sat in the chain, so an alternating chain `j1 document \u2192 j2 auth \u2192 j3 document \u2192 j4 auth` collapsed into `j1 \u2192 [j2]` and `j2 \u2192 [j1]`, which `validateBatchStructure` rejects for the whole batch. Merging only contiguous runs keeps the chain linear.\n\n_Source: docs/updateoutbox-scope-ordering.md (Powerhouse v6.2.2-dev.74)._\n\n## Provenance\n- `docs/updateoutbox-scope-ordering.md` \u2014 'What the fix is, and what it is not': the two counts, the measurement table, and 'The cycle that surfaced while trying the index order'\n\n_Recorded from the Powerhouse repository at **v6.2.2-dev.74** during the v6.2.2-dev.74 source sync._",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": "v6.2.2-dev.74",
+  "computes": null,
+  "filePath": "docs/updateoutbox-scope-ordering.md",
+  "noteType": "DECISION",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": "grounded",
+  "consumedBy": [],
+  "provenance": {
+    "author": "knowledge-agent",
+    "createdAt": "2026-09-02T22:14:25.517Z",
+    "sessionId": null,
+    "updatedAt": "2026-09-02T22:21:25.959Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Measured on a 410-document, 7,056-operation fixture: 817 jobs at 8.6 ops each by document and scope versus 2,016 at 3.5 by ordinal, and 2.64x the wall clock. Replay reduces scope by scope.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "2d39a320-011c-48b9-b4e5-24b71b2b44a9",
+      "actor": "knowledge-agent",
+      "comment": "extracted from the Powerhouse repository at v6.2.2-dev.74",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-09-02T22:14:27.457Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "1ef30f48-3e77-449b-bde1-297086503e62",
+      "actor": "liberuum",
+      "comment": "claim checked against the cited repository file at the pinned tag",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-09-02T22:14:27.954Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

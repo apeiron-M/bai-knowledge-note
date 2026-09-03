@@ -1,0 +1,107 @@
+{
+  "links": [
+    {
+      "id": "lnk-abeab98e-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "abeab98e-d34f-457b-ac6b-6f0d48d0232e",
+      "targetTitle": "Package \u203a builder-tools \u203a README",
+      "reason": "Extracted from packages/builder-tools/README.md at v6.2.2-dev.74 \u2014 Features; Usage (subpath imports and style import)",
+      "confidence": "grounded"
+    },
+    {
+      "id": "lnk-8b9f2900-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "8b9f2900-211b-4dd7-80ad-406e13082cb1",
+      "targetTitle": "vetra-studio-auto-generates-from-specs",
+      "reason": "Vetra Studio's document-model editing surface is assembled from this package's editor entry points",
+      "confidence": "established"
+    },
+    {
+      "id": "lnk-5af82244-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "5af82244-3baf-430f-b746-1cdcade43b5f",
+      "targetTitle": "design-system-inter-font",
+      "reason": "Both packages ship a stylesheet a host must import, and neither injects styling automatically",
+      "confidence": "established"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "builder-tools exposes four independent subpath entry points plus a stylesheet, so a consumer imports Connect Studio, build utilities, the document-model editor or editor utils separately",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "31c011c0-0e8b-49a8-976b-50bdb15ddf15",
+      "name": "builder-tools",
+      "topicDocumentId": null
+    },
+    {
+      "id": "bbf2ca73-e337-49db-82fd-e7400af417b6",
+      "name": "packaging",
+      "topicDocumentId": null
+    },
+    {
+      "id": "1b9868ac-6c09-4a1a-b71b-37e3e1a28553",
+      "name": "vetra",
+      "topicDocumentId": null
+    },
+    {
+      "id": "00ffb6c5-ca86-4fb4-a03f-a087c01dad7a",
+      "name": "development",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "`@powerhousedao/builder-tools` is the toolkit behind the Powerhouse builder experience, and it is deliberately consumed through **subpath imports** rather than one barrel:\n\n```ts\nimport { \u2026 } from \"@powerhousedao/builder-tools/connect-studio\";\nimport { \u2026 } from \"@powerhousedao/builder-tools/connect-build\";\nimport { \u2026 } from \"@powerhousedao/builder-tools/document-model-editor\";\nimport { \u2026 } from \"@powerhousedao/builder-tools/editor-utils\";\nimport \"@powerhousedao/builder-tools/style.css\";\n```\n\nThe five modules map to five jobs: **Connect Studio** (managing and configuring connections), **Connect Build** (build utilities), the **Document Model Editor**, **Editor Utils** (common editor functionality), and **Connect Utils** (shared connection utilities).\n\nWhy the split is worth noticing rather than skimming: `connect-build` is build-time tooling and `document-model-editor` is a UI. A single entry point would drag one into a bundle that only wanted the other \u2014 so the subpaths are what let a runtime consumer take the editor pieces without the build machinery. The stylesheet is a separate import for the same reason.\n\nThis is also the package Vetra Studio's editing surface is assembled from, which is why the document-model editor lives here rather than in the design system.\n\n## Provenance\n- `packages/builder-tools/README.md` \u2014 Features; Usage (subpath imports and style import)\n\n_Extracted from the Powerhouse repository at **v6.2.2-dev.74**._",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": "v6.2.2-dev.74",
+  "computes": null,
+  "filePath": "packages/builder-tools/README.md",
+  "noteType": "REFERENCE",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "knowledge-agent",
+    "createdAt": "2026-09-03T07:44:12.169Z",
+    "sessionId": null,
+    "updatedAt": "2026-09-03T07:44:13.222Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Subpaths: /connect-studio, /connect-build, /document-model-editor, /editor-utils, plus /style.css. Splitting them keeps a build tool out of a bundle that only needs editor helpers.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "da4fabe9-707c-434a-94be-fc8f23748d8a",
+      "actor": "knowledge-agent",
+      "comment": "extracted from packages/builder-tools/README.md at v6.2.2-dev.74",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-09-03T07:44:12.659Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "05b68d40-358e-4da2-9d64-20af09497645",
+      "actor": "liberuum",
+      "comment": "claim checked against the cited file at the pinned tag",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-09-03T07:44:13.222Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

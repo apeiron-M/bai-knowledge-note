@@ -1,0 +1,303 @@
+[
+  {
+    "index": 0,
+    "hash": "",
+    "timestampUtcMs": "2026-08-16T20:32:46.508Z",
+    "action": {
+      "type": "CREATE_DOCUMENT",
+      "input": {
+        "meta": {},
+        "name": "three-conventions-for-attributable-skills",
+        "slug": "",
+        "model": "bai/knowledge-note",
+        "branch": "main",
+        "signing": {
+          "nonce": "",
+          "publicKey": {},
+          "signature": "c52ebbd3-df73-465e-b2dd-59b83fea91d2",
+          "documentType": "bai/knowledge-note",
+          "createdAtUtcIso": "2026-08-16T20:32:46.508Z"
+        },
+        "version": 0,
+        "documentId": "c52ebbd3-df73-465e-b2dd-59b83fea91d2",
+        "protocolVersions": {
+          "base-reducer": 2
+        }
+      },
+      "timestampUtcMs": "2026-08-16T20:32:46.508Z"
+    }
+  },
+  {
+    "index": 0,
+    "hash": "U4r8MamckbRQPxcRp0bVs164YCw=",
+    "timestampUtcMs": "2026-08-16T20:32:46.876Z",
+    "action": {
+      "type": "SET_TITLE",
+      "input": {
+        "title": "Three conventions make skills attributable without new agent capabilities",
+        "updatedAt": "2026-08-16T20:32:46.876Z"
+      },
+      "timestampUtcMs": "2026-08-16T20:32:46.876Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "",
+    "timestampUtcMs": "2026-08-16T20:32:46.508Z",
+    "action": {
+      "type": "UPGRADE_DOCUMENT",
+      "input": {
+        "model": "bai/knowledge-note",
+        "toVersion": 1,
+        "documentId": "c52ebbd3-df73-465e-b2dd-59b83fea91d2",
+        "fromVersion": 0,
+        "initialState": {
+          "auth": {
+            "grants": [],
+            "version": 0
+          },
+          "local": {
+            "lastViewedAt": null,
+            "personalTags": []
+          },
+          "global": {
+            "links": [],
+            "model": null,
+            "scope": null,
+            "title": null,
+            "editor": null,
+            "inputs": [],
+            "models": [],
+            "status": "DRAFT",
+            "topics": [],
+            "content": null,
+            "context": null,
+            "modelId": null,
+            "modules": [],
+            "outputs": [],
+            "version": null,
+            "computes": null,
+            "filePath": null,
+            "noteType": null,
+            "severity": null,
+            "hooksUsed": [],
+            "rootCause": null,
+            "confidence": null,
+            "consumedBy": [],
+            "provenance": null,
+            "sourceType": null,
+            "targetType": null,
+            "cardinality": null,
+            "description": null,
+            "alternatives": [],
+            "consequences": [],
+            "errorMessage": null,
+            "relationType": null,
+            "correctPattern": null,
+            "decisionStatus": null,
+            "dispatchTargets": [],
+            "lifecycleEvents": []
+          },
+          "document": {
+            "hash": {
+              "encoding": "base64",
+              "algorithm": "sha1"
+            },
+            "version": 1
+          }
+        }
+      },
+      "timestampUtcMs": "2026-08-16T20:32:46.508Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "nUUsLn22fXFhxxZp+JsYj3hQpzY=",
+    "timestampUtcMs": "2026-08-16T20:32:46.876Z",
+    "action": {
+      "type": "SET_DESCRIPTION",
+      "input": {
+        "updatedAt": "2026-08-16T20:32:46.876Z",
+        "description": "Skills declare models and actions; runtimes dispatch actions not raw text; artifacts are document-model documents with schemas and logs."
+      },
+      "timestampUtcMs": "2026-08-16T20:32:46.876Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "",
+    "timestampUtcMs": "2026-08-16T20:32:50.122Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "c52ebbd3-df73-465e-b2dd-59b83fea91d2",
+        "targetId": "2b423487-123f-414c-bd20-edce7de891f4",
+        "relationshipType": "DERIVED_FROM"
+      },
+      "timestampUtcMs": "2026-08-16T20:32:50.122Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "htlGoK70vnE+6GSNHsmat5M5hnY=",
+    "timestampUtcMs": "2026-08-16T20:32:46.876Z",
+    "action": {
+      "type": "SET_NOTE_TYPE",
+      "input": {
+        "noteType": "DECISION",
+        "updatedAt": "2026-08-16T20:32:46.876Z"
+      },
+      "timestampUtcMs": "2026-08-16T20:32:46.876Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "",
+    "timestampUtcMs": "2026-08-16T20:32:51.766Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "c52ebbd3-df73-465e-b2dd-59b83fea91d2",
+        "targetId": "aea7368d-394c-44c6-b605-24265f3b871b",
+        "relationshipType": "BUILDS_ON"
+      },
+      "timestampUtcMs": "2026-08-16T20:32:51.766Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "O5SP6yKG6qliERSJ1dmRmfyVF08=",
+    "timestampUtcMs": "2026-08-16T20:32:46.876Z",
+    "action": {
+      "type": "SET_CONTENT",
+      "input": {
+        "content": "## Claim\n\nAttributable skill execution does not require new agent capabilities. It requires three conventions:\n\n1. Skills declare the document models they operate on and the actions they may emit\n2. The agent runtime dispatches skill outputs as actions, not raw text or unstructured tool calls\n3. Artifacts are document-model documents (schema + operation log)\n\n## Cost vs payoff\n\nModest discipline at the skill/runtime boundary; structural payoff for evaluation (process auditing), safety (attribution), and knowledge claims (falsifiability via \"how was this made?\").",
+        "updatedAt": "2026-08-16T20:32:46.876Z"
+      },
+      "timestampUtcMs": "2026-08-16T20:32:46.876Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "",
+    "timestampUtcMs": "2026-08-16T20:32:58.306Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "c52ebbd3-df73-465e-b2dd-59b83fea91d2",
+        "targetId": "e2186433-6a5b-4e9a-90e8-37c698b35e89",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-08-16T20:32:58.306Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "ykkkN9S1yoTwA2v9jOLhFTrtAJw=",
+    "timestampUtcMs": "2026-08-16T20:32:46.876Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "09fa3beb-1e4b-494e-a5d5-9c7c9f8ed5af",
+        "name": "agent-skills"
+      },
+      "timestampUtcMs": "2026-08-16T20:32:46.876Z"
+    }
+  },
+  {
+    "index": 5,
+    "hash": "qPIyj8SaVZ/T3FNz76pDJFTv+cA=",
+    "timestampUtcMs": "2026-08-16T20:32:46.876Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "40d398c3-8843-411b-926c-7a2adfb190f6",
+        "name": "document-models"
+      },
+      "timestampUtcMs": "2026-08-16T20:32:46.876Z"
+    }
+  },
+  {
+    "index": 6,
+    "hash": "3m1EEEZvu0iv2YNL1AauAaRcgyQ=",
+    "timestampUtcMs": "2026-08-16T20:32:46.876Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "3b480d21-62da-4cec-841a-6d3accfb1b20",
+        "name": "powerhouse"
+      },
+      "timestampUtcMs": "2026-08-16T20:32:46.876Z"
+    }
+  },
+  {
+    "index": 7,
+    "hash": "+JYCzAKvssmJlhREODvqIqKu1cQ=",
+    "timestampUtcMs": "2026-08-16T20:32:46.876Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "86d87d72-9327-49cf-9895-998824fcccc6",
+        "name": "provenance"
+      },
+      "timestampUtcMs": "2026-08-16T20:32:46.876Z"
+    }
+  },
+  {
+    "index": 8,
+    "hash": "1FQa64tfOvTqt6k5ayPn591lPWU=",
+    "timestampUtcMs": "2026-08-16T20:32:47.306Z",
+    "action": {
+      "type": "SET_PROVENANCE",
+      "input": {
+        "author": "knowledge-agent",
+        "createdAt": "2026-08-16T20:32:46.876Z",
+        "sourceOrigin": "DERIVED"
+      },
+      "timestampUtcMs": "2026-08-16T20:32:47.306Z"
+    }
+  },
+  {
+    "index": 9,
+    "hash": "kw6uGrIn6t5R9Ln9AgI0Iv0gq0I=",
+    "timestampUtcMs": "2026-08-16T20:32:47.793Z",
+    "action": {
+      "type": "SUBMIT_FOR_REVIEW",
+      "input": {
+        "id": "0505e358-41b3-469a-9bfd-f615c71aba90",
+        "actor": "knowledge-agent",
+        "comment": "pipeline extract",
+        "timestamp": "2026-08-16T20:32:47.793Z"
+      },
+      "timestampUtcMs": "2026-08-16T20:32:47.793Z"
+    }
+  },
+  {
+    "index": 10,
+    "hash": "xE1xyYBGHgFQmcDLBI0IrjEY5Kk=",
+    "timestampUtcMs": "2026-08-16T20:32:47.945Z",
+    "action": {
+      "type": "APPROVE_NOTE",
+      "input": {
+        "id": "5f764a58-e127-40fd-bc0c-fcf9f6881cb2",
+        "actor": "pipeline-reviewer",
+        "comment": "pipeline verify",
+        "timestamp": "2026-08-16T20:32:47.945Z"
+      },
+      "timestampUtcMs": "2026-08-16T20:32:47.945Z"
+    }
+  },
+  {
+    "index": 11,
+    "hash": "VsNsPZsrCVAxRtsDCZtTN3876Ig=",
+    "timestampUtcMs": "2026-09-03T10:03:29.124Z",
+    "action": {
+      "type": "SET_CONTENT",
+      "input": {
+        "content": "## Claim\n\nAttributable skill execution does not require new agent capabilities. It requires three conventions:\n\n1. Skills declare the document models they operate on and the actions they may emit\n2. The agent runtime dispatches skill outputs as actions, not raw text or unstructured tool calls\n3. Artifacts are document-model documents (schema + operation log)\n\n## Cost vs payoff\n\nModest discipline at the skill/runtime boundary; structural payoff for evaluation (process auditing), safety (attribution), and knowledge claims (falsifiability via \"how was this made?\").\n\n## Methodology grounding\nThe claims below live in the plugin's `data/methodology/` corpus; the relationship is stated per claim.\n\n- **[[hook enforcement guarantees quality while instruction enforcement merely suggests it]]** \u2014 BUILDS_ON. The three conventions are enforcement dressed as convention: they hold without asking the model for a new capability, which is the same reason the methodology prefers a hook to an instruction.\n- **[[agent session boundaries create natural automation checkpoints that human-operated systems lack]]** \u2014 RELATES_TO. Conventions that fire at an invocation boundary need no memory to be reliable, which is the property that claim identifies as the agent architecture's accidental advantage.\n",
+        "updatedAt": "2026-09-03T10:03:29.124Z"
+      },
+      "timestampUtcMs": "2026-09-03T10:03:29.124Z"
+    }
+  }
+]

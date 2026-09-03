@@ -1,0 +1,117 @@
+[
+  {
+    "index": 0,
+    "hash": "",
+    "timestampUtcMs": "2026-09-02T21:32:26.001Z",
+    "action": {
+      "type": "CREATE_DOCUMENT",
+      "input": {
+        "meta": {},
+        "name": "Academy \u203a GetStarted \u203a Vetra Cloud",
+        "slug": "",
+        "model": "bai/source",
+        "branch": "main",
+        "signing": {
+          "nonce": "",
+          "publicKey": {},
+          "signature": "c94a8813-6fc8-43b7-a37d-01ec85228e42",
+          "documentType": "bai/source",
+          "createdAtUtcIso": "2026-09-02T21:32:26.000Z"
+        },
+        "version": 0,
+        "documentId": "c94a8813-6fc8-43b7-a37d-01ec85228e42",
+        "protocolVersions": {
+          "base-reducer": 2
+        }
+      },
+      "timestampUtcMs": "2026-09-02T21:32:26.001Z"
+    }
+  },
+  {
+    "index": 0,
+    "hash": "oWfpk1NDqTnPNAObhJTYsoN1Syw=",
+    "timestampUtcMs": "2026-09-02T21:32:25.976Z",
+    "action": {
+      "type": "INGEST_SOURCE",
+      "input": {
+        "url": "https://github.com/powerhouse-inc/powerhouse/blob/v6.2.2-dev.74/apps/academy/docs/academy/01-GetStarted/01-VetraCloud.md",
+        "tool": "sync-repo-docs",
+        "title": "Academy \u203a GetStarted \u203a Vetra Cloud",
+        "author": "Powerhouse Inc.",
+        "method": "sha256:cf46dc8d03d9f39bbac6160cc9bbfca5c527c7d68d4c39a4e465452795386c96 git:v6.2.2-dev.74",
+        "content": "# Vetra Cloud\n\nVetra Cloud is the hosted infrastructure layer for Powerhouse applications. It lets you spin up a personal cloud environment that runs **Powerhouse Connect** (the user-facing document editor) and **Powerhouse Switchboard** (the backend GraphQL server) \u2014 and extend them with packages from the Vetra registry.\n\n---\n\n## Getting Started\n\n### 1. Connect Your Wallet\n\nNavigate to the **Cloud** section in Vetra and authenticate with your Ethereum wallet via **Renown**. Renown lets Connect sign operations on behalf of your on-chain identity without exposing your private key.\n\n<figure className=\"image-container\">\n  <img\n    src={require(\"./images/vetra-cloud-connect-wallet.png\").default}\n    alt=\"Connect Wallet via Renown\"\n  />\n  <figcaption>Connect your Ethereum wallet via Renown to authenticate with Vetra.</figcaption>\n</figure>\n\n---\n\n### 2. Create an Environment\n\nAfter authenticating, create a new environment by giving it a name. Each environment gets its own subdomain (e.g. `my-env.vetra.io`) and runs its own isolated set of services.\n\n<figure className=\"image-container\">\n  <img\n    src={require(\"./images/vetra-cloud-create-environment.png\").default}\n    alt=\"Create Environment\"\n  />\n  <figcaption>Give your environment a name to get a dedicated subdomain and isolated set of services.</figcaption>\n</figure>\n\n---\n\n### 3. Configure Services\n\nInside your environment you can enable and configure three services:\n\n| Service                    | Description                                                    |\n| -------------------------- | -------------------------------------------------------------- |\n| **Powerhouse Connect**     | The document-editor UI served at `connect.<env>.vetra.io`      |\n| **Powerhouse Switchboard** | The GraphQL API server at `switchboard.<env>.vetra.io/graphql` |\n| **Powerhouse Fusion**      | Optional data-fusion layer (disabled by default)               |\n\nUse the **Size** dropdown to pick the compute tier for each service and toggle it on or off with the switch on the right.\n\n<figure className=\"image-container\">\n  <img\n    src={require(\"./images/vetra-cloud-services.png\").default}\n    alt=\"Services overview\"\n  />\n  <figcaption>Enable and configure Connect, Switchboard, and Fusion services for your environment.</figcaption>\n</figure>\n\n---\n\n### 4. Select a Version\n\nEach service shows its currently pinned version. Click **Change version** (or **Update All** when updates are available) to pin Connect and Switchboard to a specific release.\n\n<figure className=\"image-container\">\n  <img\n    src={require(\"./images/vetra-cloud-available-updates.png\").default}\n    alt=\"Available updates\"\n  />\n  <figcaption>Pin each service to a specific version or apply all available updates at once.</figcaption>\n</figure>\n\n---\n\n### 5. Install Packages\n\nPackages extend Connect and Switchboard with additional document models, editors, and reactor modules. Click **+ Add package** in the **Installed Packages** section, then search for a package by name.\n\nAvailable packages include community and official Powerhouse packages such as:\n\n- `@powerhousedao/builder-profile`\n- `@powerhousedao/contributor-billing`\n- `@powerhousedao/knowledge-note`\n- `@arbitrum/arbgrants`\n\n<figure className=\"image-container\">\n  <img\n    src={require(\"./images/vetra-cloud-add-package.png\").default}\n    alt=\"Add Package\"\n  />\n  <figcaption>Search and select a package from the Vetra registry to install into your environment.</figcaption>\n</figure>\n\nOnce you select a package, a **Pending change** banner appears at the bottom. Click **Approve** to apply the change and redeploy your environment.\n\n---\n\n## Next Steps\n\nOnce your environment is running you can point your local `ph` CLI at it, or share the Connect URL with collaborators so they can start working with your document models right away.\n\nTo publish your own packages to the registry, see the [Publishing Packages](/academy/Build/Launch/PublishYourProject) guide.\n",
+        "createdAt": "2026-09-02T21:32:25.976Z",
+        "createdBy": "repo-docs-sync",
+        "sourceType": "DOCUMENTATION",
+        "description": "Powerhouse v6.2.2-dev.74 (unchanged since v6.2.2-dev.47) \u2014 Vetra Cloud is the hosted infrastructure layer for Powerhouse applications. It lets you spin up a personal cloud environment that runs Power\u2026",
+        "publishedAt": "2026-06-18T17:19:53.000Z"
+      },
+      "timestampUtcMs": "2026-09-02T21:32:25.976Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "",
+    "timestampUtcMs": "2026-09-02T21:32:26.001Z",
+    "action": {
+      "type": "UPGRADE_DOCUMENT",
+      "input": {
+        "model": "bai/source",
+        "toVersion": 1,
+        "documentId": "c94a8813-6fc8-43b7-a37d-01ec85228e42",
+        "fromVersion": 0,
+        "initialState": {
+          "auth": {
+            "grants": [],
+            "version": 0
+          },
+          "local": {},
+          "global": {
+            "title": null,
+            "status": "INBOX",
+            "content": null,
+            "createdAt": null,
+            "createdBy": null,
+            "provenance": null,
+            "sourceType": null,
+            "description": null,
+            "extractedClaims": [],
+            "extractionStats": null
+          },
+          "document": {
+            "hash": {
+              "encoding": "base64",
+              "algorithm": "sha1"
+            },
+            "version": 1
+          }
+        }
+      },
+      "timestampUtcMs": "2026-09-02T21:32:26.001Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "fB8iB8wRPtCo+g5sqXgYbQEQIsg=",
+    "timestampUtcMs": "2026-09-02T21:32:33.334Z",
+    "action": {
+      "type": "ADD_EXTRACTED_CLAIM",
+      "input": {
+        "claimRef": "9f2a0572-91d5-41ad-8d4f-606b115e37f1"
+      },
+      "timestampUtcMs": "2026-09-02T21:32:33.334Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "21TVie8kRqs1c084POZ082w6+9Q=",
+    "timestampUtcMs": "2026-09-02T21:32:36.489Z",
+    "action": {
+      "type": "SET_SOURCE_STATUS",
+      "input": {
+        "status": "EXTRACTED"
+      },
+      "timestampUtcMs": "2026-09-02T21:32:36.489Z"
+    }
+  }
+]

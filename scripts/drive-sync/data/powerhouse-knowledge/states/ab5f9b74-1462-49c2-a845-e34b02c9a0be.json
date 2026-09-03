@@ -1,0 +1,107 @@
+{
+  "links": [
+    {
+      "id": "lnk-129f2487-bui",
+      "linkType": "BUILDS_ON",
+      "targetDocumentId": "129f2487-c738-4957-9e1f-33195925524f",
+      "targetTitle": "packages-contribute-pwa-fragments-additively",
+      "reason": "Extends the additive manifest merge from build-time packages to runtime-installed ones and names the two protected fields",
+      "confidence": "grounded"
+    },
+    {
+      "id": "lnk-65c75a60-bui",
+      "linkType": "BUILDS_ON",
+      "targetDocumentId": "65c75a60-42b7-45db-b968-10a1dde1879d",
+      "targetTitle": "connect-ships-as-pwa-precaching-service-worker",
+      "reason": "The precaching service worker described there is what serves the dynamic manifest and reads the IndexedDB fragments",
+      "confidence": "grounded"
+    },
+    {
+      "id": "lnk-067ef151-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "067ef151-e1a1-4a1a-91de-faaef1614f94",
+      "targetTitle": "App \u203a connect \u203a RUNTIME-CONFIG \u2014 Connect Runtime Configuration",
+      "reason": "Extracted from apps/connect/RUNTIME-CONFIG.md at v6.2.2-dev.74 \u2014 'Packages installed AT RUNTIME extend the PWA config the same way build-time packages do'",
+      "confidence": "grounded"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Packages installed at runtime extend Connect's PWA config exactly like build-time packages, with start_url and scope protected and .phd/.phdm first-registered",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "5f079fcb-e0f9-4a48-a8b1-73e1112a30d2",
+      "name": "connect",
+      "topicDocumentId": null
+    },
+    {
+      "id": "cf549615-db88-465d-be71-bb4e8af18bc8",
+      "name": "pwa",
+      "topicDocumentId": null
+    },
+    {
+      "id": "c02d7133-26b9-4300-a8fc-9ea95b2d1cb5",
+      "name": "packages",
+      "topicDocumentId": null
+    },
+    {
+      "id": "63888f17-ed8a-428d-98d4-8bf5572bd45e",
+      "name": "service-worker",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "The service worker serves `manifest.webmanifest` dynamically and reads its runtime-caching / navigate-fallback contributions from IndexedDB `ph-pwa` (mirrored by `BrowserPackageManager.#syncPwaFragments`). So a package installed **at runtime** contributes its manifest members, overridden scalars, `runtimeCaching` rules and `navigateFallbackDenylist` patterns without a rebuild \u2014 the same way build-time packages do.\n\nTwo guardrails distinguish runtime from build-time contributions: the manifest merge is fragment-wins **except `start_url` and `scope`**, which are protected so an end-user-installed package cannot re-scope the app; and the built-in `.phd` / `.phdm` OS file associations stay first-registered. Timing caveats apply to both kinds: `file_handlers` / `launch_handler` are captured by the OS at PWA install time (Chrome re-reads on its own periodic check, never mid-session; content-based routing opens `.phd`/`.phdm` regardless), and `runtimeCaching` / `navigateFallbackDenylist` are read at worker startup, taking full effect on the worker's next activation.\n\nOnly `globPatterns`, `globIgnores` and `maximumFileSizeToCacheInBytes` remain build-time only \u2014 they drive the workbox precache list baked at build. The manifest's `categories` is not authored anywhere in Connect's config; it is derived by unioning the top-level `category` of every contributing `powerhouse.manifest.json`.\n\n_Source: apps/connect/RUNTIME-CONFIG.md (Powerhouse v6.2.2-dev.74)._\n\n## Provenance\n- `apps/connect/RUNTIME-CONFIG.md` \u2014 'Packages installed AT RUNTIME extend the PWA config the same way build-time packages do'\n\n_Recorded from the Powerhouse repository at **v6.2.2-dev.74** during the v6.2.2-dev.74 source sync._",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": "v6.2.2-dev.74",
+  "computes": null,
+  "filePath": "apps/connect/RUNTIME-CONFIG.md",
+  "noteType": "ARCHITECTURE",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": "grounded",
+  "consumedBy": [],
+  "provenance": {
+    "author": "knowledge-agent",
+    "createdAt": "2026-09-02T22:12:23.725Z",
+    "sessionId": null,
+    "updatedAt": "2026-09-02T22:20:55.135Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "The service worker serves manifest.webmanifest dynamically and reads runtime-caching and navigate-fallback fragments from IndexedDB ph-pwa. Only the workbox precache globs and size cap are build-time.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "b8921c21-2c6f-441b-b8db-f6f361bc1e24",
+      "actor": "knowledge-agent",
+      "comment": "extracted from the Powerhouse repository at v6.2.2-dev.74",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-09-02T22:12:24.334Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "8636ba2f-7c01-40b9-8daa-7d34c1bd8b6b",
+      "actor": "liberuum",
+      "comment": "claim checked against the cited repository file at the pinned tag",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-09-02T22:12:24.894Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

@@ -1,0 +1,307 @@
+{
+  "tier": "DOMAIN",
+  "title": "Reactor Sync Infrastructure",
+  "version": "v6.2.2-dev.47",
+  "tensions": [
+    {
+      "id": "c0cf5248-97c0-4cc0-bad9-6b69e48e19f7",
+      "addedAt": "2026-09-02T22:25:35.146Z",
+      "description": "\u201cFive adjacent sync and read-model defects were recorded while investigating the outbox ordering bug, including re-evaluation writes that ne\u2026\u201d contradicts \u201cEvery reactor judges every operation at its position in the merged order, so a revocation that sorts earlier retracts an already-accepted o\u2026\u201d. Opened automatically from a CONTRADICTS link \u2014 resolve if one side is right, dissolve if both hold in different contexts.",
+      "involvedRefs": [
+        "3968416f-1124-47ff-b195-1b782b5296ca",
+        "0ade289f-d4fb-44d8-ab3b-316d65bb1c8d"
+      ]
+    },
+    {
+      "id": "96c0eec8-b22c-4300-82b5-0371eed1dfd2",
+      "addedAt": "2026-09-03T07:21:10.676Z",
+      "description": "\u201cA failed job silently drops its operations from the sync batch: handleJobFailed deletes the pending batch and emits whatever arrived, with \u2026\u201d contradicts \u201cGraphQL sync is four flows across two channel roles: the requesting channel pushes and polls, the responding channel serves from its outbox\u2026\u201d. Opened automatically from a CONTRADICTS link \u2014 resolve if one side is right, dissolve if both hold in different contexts.",
+      "involvedRefs": [
+        "bb823a22-5304-40dd-b087-5ae6a35e9755",
+        "9c453091-8c7b-4210-af2f-600fead66af7"
+      ]
+    },
+    {
+      "id": "0498b011-747b-47bd-9f61-b9bccbb7645b",
+      "addedAt": "2026-09-03T07:30:13.380Z",
+      "description": "\u201cLazy sync would create one forced channel per opened document, because the forward-only cursor forbids widening a live channel's filter\u201d contradicts \u201cDrive apps read drive-wide data with useDocumentsInSelectedDrive() and start creation with showCreateDocumentModal()\u201d. Opened automatically from a CONTRADICTS link \u2014 resolve if one side is right, dissolve if both hold in different contexts.",
+      "involvedRefs": [
+        "fe8f33f5-b69c-4080-878a-1cd2cbe6bb17",
+        "af8252cd-271d-41ea-b99d-9fe2a7123cea"
+      ]
+    }
+  ],
+  "childRefs": [],
+  "coreIdeas": [
+    {
+      "id": "ci-521e4779",
+      "noteRef": "521e4779-3e2e-430c-a933-82b6a774c21e",
+      "contextPhrase": "",
+      "sortOrder": 0,
+      "addedAt": "2026-09-03T20:23:33.000Z",
+      "addedBy": "knowledge-agent"
+    },
+    {
+      "id": "ci-2ab414f6",
+      "noteRef": "2ab414f6-938d-40f6-89b9-054bbcbaf4f2",
+      "contextPhrase": "",
+      "sortOrder": 1,
+      "addedAt": "2026-09-03T20:23:33.000Z",
+      "addedBy": "knowledge-agent"
+    },
+    {
+      "id": "ci-cb8003b1",
+      "noteRef": "cb8003b1-c936-4b36-9849-4925723df163",
+      "contextPhrase": "",
+      "sortOrder": 2,
+      "addedAt": "2026-09-03T20:23:33.000Z",
+      "addedBy": "knowledge-agent"
+    },
+    {
+      "id": "ci-752bee27",
+      "noteRef": "752bee27-d361-4981-b353-d8082ef05b25",
+      "contextPhrase": "",
+      "sortOrder": 3,
+      "addedAt": "2026-09-03T20:23:33.000Z",
+      "addedBy": "knowledge-agent"
+    },
+    {
+      "id": "ci-71f5f04d",
+      "noteRef": "71f5f04d-cc4c-4a4a-b98f-e12ec613c5da",
+      "contextPhrase": "",
+      "sortOrder": 4,
+      "addedAt": "2026-09-03T20:23:33.000Z",
+      "addedBy": "knowledge-agent"
+    },
+    {
+      "id": "ci-50a6a870",
+      "noteRef": "50a6a870-f29e-4164-820a-5d074f7443d7",
+      "contextPhrase": "",
+      "sortOrder": 5,
+      "addedAt": "2026-09-03T20:23:33.000Z",
+      "addedBy": "knowledge-agent"
+    },
+    {
+      "id": "ci-291bfd93",
+      "noteRef": "291bfd93-8d9f-4836-b791-d5d656545eb4",
+      "contextPhrase": "",
+      "sortOrder": 6,
+      "addedAt": "2026-09-03T20:23:33.000Z",
+      "addedBy": "knowledge-agent"
+    },
+    {
+      "id": "ci-0ade289f",
+      "noteRef": "0ade289f-d4fb-44d8-ab3b-316d65bb1c8d",
+      "contextPhrase": "",
+      "sortOrder": 7,
+      "addedAt": "2026-09-03T20:23:33.000Z",
+      "addedBy": "knowledge-agent"
+    },
+    {
+      "id": "ci-5ca28e07",
+      "noteRef": "5ca28e07-65de-4faf-9b18-43a21567a734",
+      "contextPhrase": "",
+      "sortOrder": 8,
+      "addedAt": "2026-09-03T20:23:33.000Z",
+      "addedBy": "knowledge-agent"
+    },
+    {
+      "id": "ci-5ed570c9",
+      "noteRef": "5ed570c9-1ad0-4d0d-b6c6-d33a61bddb96",
+      "contextPhrase": "",
+      "sortOrder": 9,
+      "addedAt": "2026-09-03T20:23:33.000Z",
+      "addedBy": "knowledge-agent"
+    },
+    {
+      "id": "ci-2021b696",
+      "noteRef": "2021b696-e605-4b1b-b579-7f568949c1b2",
+      "contextPhrase": "",
+      "sortOrder": 10,
+      "addedAt": "2026-09-03T20:23:33.000Z",
+      "addedBy": "knowledge-agent"
+    },
+    {
+      "id": "ci-c93f6c0f",
+      "noteRef": "c93f6c0f-5040-4734-a616-a824634feebb",
+      "contextPhrase": "",
+      "sortOrder": 11,
+      "addedAt": "2026-09-03T20:23:33.000Z",
+      "addedBy": "knowledge-agent"
+    },
+    {
+      "id": "ci-3968416f",
+      "noteRef": "3968416f-1124-47ff-b195-1b782b5296ca",
+      "contextPhrase": "",
+      "sortOrder": 12,
+      "addedAt": "2026-09-03T20:23:33.000Z",
+      "addedBy": "knowledge-agent"
+    },
+    {
+      "id": "ci-562d84eb",
+      "noteRef": "562d84eb-ef1d-40b7-81b0-b6b7438544e1",
+      "contextPhrase": "",
+      "sortOrder": 13,
+      "addedAt": "2026-09-03T20:23:33.000Z",
+      "addedBy": "knowledge-agent"
+    },
+    {
+      "id": "ci-936ddc46",
+      "noteRef": "936ddc46-3b5a-40d1-b69f-6a3f6c3c6b8f",
+      "contextPhrase": "",
+      "sortOrder": 14,
+      "addedAt": "2026-09-03T20:23:33.000Z",
+      "addedBy": "knowledge-agent"
+    },
+    {
+      "id": "ci-f3c2f9bb",
+      "noteRef": "f3c2f9bb-e554-44c6-9551-05273aaf5720",
+      "contextPhrase": "",
+      "sortOrder": 15,
+      "addedAt": "2026-09-03T20:23:33.000Z",
+      "addedBy": "knowledge-agent"
+    },
+    {
+      "id": "ci-e0c114b2",
+      "noteRef": "e0c114b2-9d22-4040-b24c-50fc4da594a6",
+      "contextPhrase": "",
+      "sortOrder": 16,
+      "addedAt": "2026-09-03T20:23:33.000Z",
+      "addedBy": "knowledge-agent"
+    },
+    {
+      "id": "ci-7252c41c",
+      "noteRef": "7252c41c-7185-4177-aaeb-4fe9dc0505c1",
+      "contextPhrase": "",
+      "sortOrder": 17,
+      "addedAt": "2026-09-03T20:23:33.000Z",
+      "addedBy": "knowledge-agent"
+    },
+    {
+      "id": "ci-bb823a22",
+      "noteRef": "bb823a22-5304-40dd-b087-5ae6a35e9755",
+      "contextPhrase": "",
+      "sortOrder": 18,
+      "addedAt": "2026-09-03T20:23:33.000Z",
+      "addedBy": "knowledge-agent"
+    },
+    {
+      "id": "ci-7a3b6263",
+      "noteRef": "7a3b6263-a16c-4fd4-83f3-7df6bdfc44a5",
+      "contextPhrase": "",
+      "sortOrder": 19,
+      "addedAt": "2026-09-03T20:23:33.000Z",
+      "addedBy": "knowledge-agent"
+    },
+    {
+      "id": "ci-55fcb6f8",
+      "noteRef": "55fcb6f8-c6d7-48ed-b56b-fe4a0ff3303e",
+      "contextPhrase": "",
+      "sortOrder": 20,
+      "addedAt": "2026-09-03T20:23:33.000Z",
+      "addedBy": "knowledge-agent"
+    },
+    {
+      "id": "ci-9c453091",
+      "noteRef": "9c453091-8c7b-4210-af2f-600fead66af7",
+      "contextPhrase": "",
+      "sortOrder": 21,
+      "addedAt": "2026-09-03T20:23:33.000Z",
+      "addedBy": "knowledge-agent"
+    },
+    {
+      "id": "ci-fe8f33f5",
+      "noteRef": "fe8f33f5-b69c-4080-878a-1cd2cbe6bb17",
+      "contextPhrase": "",
+      "sortOrder": 22,
+      "addedAt": "2026-09-03T20:23:33.000Z",
+      "addedBy": "knowledge-agent"
+    },
+    {
+      "id": "ci-150f7dd7",
+      "noteRef": "150f7dd7-3669-41d0-8472-ee0f51f40634",
+      "contextPhrase": "",
+      "sortOrder": 23,
+      "addedAt": "2026-09-03T20:23:33.000Z",
+      "addedBy": "knowledge-agent"
+    },
+    {
+      "id": "ci-d4da3bf0",
+      "noteRef": "d4da3bf0-f01f-4493-b6e3-3bd69da51cee",
+      "contextPhrase": "",
+      "sortOrder": 24,
+      "addedAt": "2026-09-03T20:23:33.000Z",
+      "addedBy": "knowledge-agent"
+    }
+  ],
+  "createdAt": "2026-04-21T19:31:46.196Z",
+  "noteCount": 0,
+  "parentRef": null,
+  "updatedAt": "2026-08-14T12:00:00.000Z",
+  "agentNotes": [],
+  "description": "The reactor-side plumbing that makes decentralized channels possible: operation log, IChannel mailboxes, sync tables, and multi-remote support.",
+  "orientation": "This MOC captures the reactor sync primitives that every transport \u2014 GraphQL or Swarm \u2014 composes with. Operations-as-append-only-log is the substrate; IChannel mailboxes (inbox/outbox/deadLetter) are the per-remote seam; SyncManager persists state in PGlite tables (remotes, cursors, dead letters, and the mailbox buffer); and multi-remote-per-collection is the switch that enables the dual-sync strategy. These notes form the backbone needed to reason about the SwarmChannel, debouncing, and recovery.",
+  "openQuestions": [],
+  "links": [
+    {
+      "id": "lnk-3540d969-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "3540d969-3661-4438-821e-a000e39852b1",
+      "targetTitle": "concurrent-offline-drive-edits-interlace-drive-logs"
+    },
+    {
+      "id": "lnk-408d201b-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "408d201b-a192-4b53-908c-ae59324f7666",
+      "targetTitle": "channelscheme-connect-polls-switchboard-pushes"
+    },
+    {
+      "id": "lnk-a86e8188-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "a86e8188-7051-4ab6-b3aa-e0cd3a4da6a1",
+      "targetTitle": "pollbehavior-manual-registers-remote-without-timer"
+    },
+    {
+      "id": "lnk-0834493d-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "0834493d-6a6f-4ac9-bf9c-51913b616629",
+      "targetTitle": "syncstatus-derived-from-mailbox-depth"
+    },
+    {
+      "id": "lnk-e57e23ae-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "e57e23ae-2f05-414a-bb77-c74ab23f64e8",
+      "targetTitle": "dead-letter-quarantines-document-not-drive"
+    },
+    {
+      "id": "lnk-bde784dc-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "bde784dc-1bec-493f-9012-db9c167efc38",
+      "targetTitle": "isyncmanager-add-registers-remote-by-unique-name"
+    },
+    {
+      "id": "lnk-3485a9d2-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "3485a9d2-df0b-4265-8e7d-5b277a937bf0",
+      "targetTitle": "global-and-local-scopes-are-fully-independent-streams"
+    },
+    {
+      "id": "lnk-5c33d63f-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "5c33d63f-6cd8-49a2-802a-6357a6e155aa",
+      "targetTitle": "the-reactor-syncs-operations-not-state"
+    },
+    {
+      "id": "lnk-c8d8d9db-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "c8d8d9db-8357-4560-a323-a3bc43a71161",
+      "targetTitle": "reactor-default-database-is-ephemeral-in-memory-pglite"
+    },
+    {
+      "id": "lnk-a716ecba-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "a716ecba-82ff-45d5-9124-b59198b874a4",
+      "targetTitle": "usegetswitchboardlink-remote-drives-only"
+    }
+  ]
+}

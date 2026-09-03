@@ -1,0 +1,271 @@
+[
+  {
+    "index": 0,
+    "hash": "",
+    "timestampUtcMs": "2026-08-16T20:24:12.603Z",
+    "action": {
+      "type": "CREATE_DOCUMENT",
+      "input": {
+        "meta": {},
+        "name": "skills-as-attributable-transformations",
+        "slug": "",
+        "model": "bai/source",
+        "branch": "main",
+        "signing": {
+          "nonce": "",
+          "publicKey": {},
+          "signature": "2b423487-123f-414c-bd20-edce7de891f4",
+          "documentType": "bai/source",
+          "createdAtUtcIso": "2026-08-16T20:24:12.603Z"
+        },
+        "version": 0,
+        "documentId": "2b423487-123f-414c-bd20-edce7de891f4",
+        "protocolVersions": {
+          "base-reducer": 2
+        }
+      },
+      "timestampUtcMs": "2026-08-16T20:24:12.603Z"
+    }
+  },
+  {
+    "index": 0,
+    "hash": "23xNNkEp0P55ufKFS2ZHSGKODFA=",
+    "timestampUtcMs": "2026-08-16T20:24:12.999Z",
+    "action": {
+      "type": "INGEST_SOURCE",
+      "input": {
+        "url": "file://Skills_as_Attributable_Transformations__A_Provenance_Layer_for_Agent_Execution.pdf",
+        "title": "Skills as Attributable Transformations: A Provenance Layer for Agent Execution",
+        "author": "Anonymous Author(s)",
+        "content": "Skills as Attributable Transformations:\nA Provenance Layer for Agent Execution\n\nAnonymous Author(s)\n\nAbstract\n\nclaims become unfalsifiable: the system produced something\ntrue, but we cannot say why, so we cannot say whether it\nwill do so again.\nThe remedy is neither a better skill, a better agent, nor a\nbetter benchmark. It is a layer below all three: a structured\nexecution substrate where every skill invocation becomes a\ntyped, signed, replayable operation on a known state.\n\nAgent systems are provenance-blind. They treat skill invocations as tool calls and log lines, not as structured operations\non a typed state. The artifact a multi-skill workflow produces\ncarries no record of which skill wrote which part, under\nwhose authority, by what mechanism. This blocks evaluation, blocks safety auditing, and undermines any claim that\nthe output is knowledge rather than fortunate noise.\nWe argue for modeling each skill invocation as an attributable transformation on document-model state, recorded by\nan event- sourced execution layer. Each operation captures\nits action, its author (human or agent), the skill invoked,\nthe inputs read, and the result produced. State derives from\nthe operation log; nothing is privileged, nothing is hidden.\nWe sketch how an existing local-first runtime, Powerhouse\n[Powerhouse 2026], supplies the primitives, why processlevel attribution beats output-level scoring, and what evaluation looks like when the question shifts from was the answer\nright to was the process reliable.\nThe contribution is not a new agent or a new skill format.\nIt is a missing layer beneath both.\n\nThe Problem With Tool Calls\n\nCurrent agent runtimes treat skills as ephemeral tool invocations. The runtime captures the call, the arguments, the\nreturn value, and sometimes a trace of intermediate reasoning. None of this is the artifact. The artifact is whatever\nends up in the document, the codebase, the database, the\nemail draft. The link between skill-invocation and artifactfragment survives only as guesswork over logs.\nThree things go missing.\n\nAuthorship. A document edited across a dozen skill invocations records the agent as the author of every change.\nThe skill that supplied the reasoning, the skill that fetched\nthe source, the skill that formatted the output\u2014all collapse\ninto one opaque actor.\n\nKeywords: agent skills, provenance, event sourcing, document models, attribution, evaluation, reliabilism, local-first\nsoftware\n\nMechanism. Reliabilist epistemology [Goldman 1979]\nholds that a belief counts as knowledge when a reliable\nprocess produces it. Gettier [1963] showed that truth and\njustification can coincide while the underlying process is broken; reliabilism\u2019s response is to evaluate the process. Agent\noutputs today expose no process. We see the belief and the\nprompt; the mechanism between them stays implicit. Gettierstyle cases hide whenever the path to the answer goes unrecorded.\n\nIntroduction\n\nThe Agent Skills literature concentrates on three questions:\nhow to design skills, how to evaluate them, and how to keep\nthem safe. We propose a fourth: how to record what a skill\ndid.\nA skill, today, is a bundle of instructions and scripts loaded\ninto an agent\u2019s context. When the agent invokes it, the result\nenters the working buffer or a tool-call log. The artifact\ndownstream\u2014a document, a code change, a decision\u2014carries\nno structured trace of which skill produced which fragment.\nA workflow with twenty skills can produce a wrong output\nthat no one can localize, or a right output that no one can\nattribute.\nProvenance blindness has three consequences. First, evaluation collapses to output scoring, which fails to distinguish\nreliable inference from coincidence\u2014a distinction that matters because, as Goldman [1979] argued in response to the\nGettier problem [Gettier 1963], justification depends on the\nreliability of the process producing a belief, not on whether\nthe belief is true. Second, safety auditing has no surface to audit beyond the prompt and the final string. Third, knowledge\n\nCompositionality. If skill \ud835\udc34 writes a section and skill \ud835\udc35\nrevises it, the revised text is a function of both. Without an\noperation log, the composition is irreversible. We cannot ask\nwhat would this artifact look like without skill B, or which skill\nis responsible for the contradiction in paragraph 4. Provenance\nis the only property that scales here. You cannot inspect\nwhat no one wrote down.\nTrajectory mining and tool-call logging exist in the agent\nliterature, but they record reasoning steps in parallel to the\nartifact. The artifact stays a string; the trace stays a separate\nlog; reconciling the two after the fact is precisely what we\navoid. We propose unifying them: the artifact is the log.\n\nAgent Skills \u201926, May 26, 2026, San Jose, CA, USA\n\n3.1\n\nComposability. Because operations are typed and ordered, two divergent agents working on the same document\nreconcile by replaying their operations against a shared reducer. Powerhouse calls this operational reshuffle [Powerhouse 2026]: actions remain immutable expressions of intent;\nonly ordering and result hashes change when streams merge.\n\nA local-first [Kleppmann et al. 2019] event-sourced runtime\ngives this layer four properties without further engineering.\nPowerhouse [Powerhouse 2026] provides each one as a sideeffect of how it stores and replays operations.\n\nEvaluation: From Outputs to Processes\n\nOutput-level evaluation fails to distinguish a reliable agent\nfrom a lucky one. This is the Gettier problem [Gettier 1963]\napplied to benchmarks: an agent can produce a correct answer through a broken process, and output scoring rewards\nit identically to one that reasoned soundly. The reliabilist\nresponse [Goldman 1979] is to evaluate the process, not the\noutput. Provenance makes that response operational.\nOnce each fragment of an artifact traces to a skill and a\nmechanism, evaluation can ask process-level questions:\n\n3.2\n\nWhy not CRDTs or operational transformation?\n\nTwo prior approaches to reconciling concurrent edits fall\nshort for arbitrary reducers. Conflict-free replicated data\ntypes [Shapiro et al. 2011] guarantee convergence under\ncommutative operations but cannot express state-dependent\nvalidation\u2014the canonical example is a balance check that\nmust reject a withdrawal exceeding the current balance. Operational transformation [Ellis and Gibbs 1989; Sun and Ellis\n1998], the technique underlying collaborative editors such as\nGoogle Docs, transforms operations against one another to\npreserve intent under concurrency, but doing so rewrites the\noperations themselves and violates the append-only guarantee that makes provenance auditable. Operational reshuffle\navoids both: operations remain immutable, and only their\nordering and replayed result hashes change.\n\nThe first five fields are mandatory and machine-verifiable.\nThe sixth is the epistemic context: sometimes available, sometimes reliable, recorded when present.\n\n3.3\n\nWhat the operation records\n\nAttribution. Every operation carries its actor\u2019s signature.\nAuthorship is structural, not annotated. An agent that invokes a skill cannot retroactively deny it.\n\n\u2022 the action (typed, schema-validated);\n\u2022 the actor (signed; human or agent identity);\n\u2022 the skill invoked (name, version, content hash);\n\u2022 the reducer applied (deterministic, versioned);\n\u2022 the prior state hash and the resulting state hash;\n\u2022 optionally, the model and prompt that produced the\naction, the tools the skill used, the wall-clock duration.\n\nAuditability. The log is append-only. State at any past\npoint is reconstructible. What did the document say after\noperation 47? is a defined question with a single answer.\n\nEach operation captures, at minimum:\n\nSkills as Operations on a Document\nModel\n\nWe model each skill invocation as an operation on a typed\ndocument state.\nA document model defines the shape of a document and\nthe logic permitted to mutate it. It has three parts: a state\nschema (what the document contains), an action schema\n(what changes the model allows), and a reducer (a pure function from state and action to new state). Actions are signed\nexpressions of intent. The runtime applies them through\nthe reducer and emits operations: the action, its ordinal, its\ntimestamp, its result hash. State exists only as a replay of\nthe operation log. This is the event-sourcing pattern [Fowler\n2005], with one refinement: the system stores the commands\n(the actions, the user intent) rather than the resulting domain\nevents. Replay re-executes the reducer rather than replaying\npre-computed effects. Powerhouse implements this pattern\n[Powerhouse 2026]; we adopt it as the substrate for attribution.\nA skill invocation is therefore not a tool call. It is an action against a document, dispatched by an attributed actor\n(human or agent), executed by a deterministic reducer, and\nrecorded as an operation in an append-only log. The document carries its own history. Every byte in the final state\ntraces to a specific operation, which traces to a specific skill,\nwhich traces to a specific actor.\n\nAnon.\n\nWhat the runtime guarantees\n\n\u2022 Skill contribution. Which skills, when present in the\nworkflow, correlate with correct outputs? Which contribute only contextslop\u2014tokens that displace useful\ncontext without improving the result?\n\u2022 Mechanism reliability. Across many runs, does this\nskill produce correct results through inference, through\nretrieval-and-paraphrase, or through guessing? Provenance distinguishes these even when outputs look\nidentical.\n\u2022 Failure localization. When a workflow produces a\nwrong answer, which operation introduced the error?\nWhich skill was active at that step?\n\nDeterminism. The same operation log replayed against\nthe same reducer produces the same state. Bit-for-bit. This\nmakes provenance verifiable: a third party replays the log\nand confirms the artifact. The decoupling of read paths from\nwrite paths is the standard CQRS pattern [Young 2010]:\nwrites append operations, reads materialize state from the\nlog.\n\nSkills as Attributable Transformations:\nA Provenance Layer for Agent Execution\n\n\u2022 Counterfactual replay. Re-run the log with one skill\nremoved. Did the artifact still converge? If yes, the\nskill was redundant.\n\nAgent Skills \u201926, May 26, 2026, San Jose, CA, USA\n\nWe propose a small, mandatory document model for any\nskill that writes into a long-lived knowledge layer\u2014a KnowledgeUnit. Its state schema captures the unit of assertion together with the epistemic context that produced it:\n\nThese are not new evaluation metrics. They are queries\nagainst a provenance graph that does not yet exist.\n\ntype KnowledgeUnit {\nid: ID!\nclaim: String!\nauthor: Actor!\n# human or agent\nproducer: SkillRef\n# null if author = human\nepistemicMode: EpistemicMode!\nconfidence: Float\n# producer self-report\nsources: [Source!]!\nderivedFrom: [ID!]!\n# parent unit IDs\nreviewStatus: ReviewStatus!\nscope: Scope!\ncreatedAt: DateTime!\n}\n\nSafety: From Sandboxes to Audits\n\nAgent safety today is largely preventative: sandboxes, permission prompts, output filters. These intervene at the moment of action. They cannot answer post-hoc questions:\nwhich skill exfiltrated this data, when did the agent first read\nthe credential, is this output\u2019s provenance compatible with our\naccess policy.\nA signed operation log makes those questions decidable.\nEach operation carries the actor, the skill, the inputs read, the\nstate written. Adversarial or compromised skills leave traces.\nSupply-chain attacks on a skill registry become detectable:\nwhen skill \ud835\udc4b @\ud835\udc633 produces operations that diverge from the\nexpected reducer output, the log shows it.\nFor high-stakes workflows, actions can be co-signed with\nthe input state hash or the previous operation ID, so an\noperation fails to apply when the state or execution order\nchanges between dispatch and execution [Powerhouse 2026].\nThis closes the window in which an attacker swaps context\nunderneath an authorized action.\nWe do not claim provenance prevents attacks. We claim\nthat without provenance, attacks remain unattributable, and\nwithout attribution, defense is guesswork.\n\nenum EpistemicMode {\nOBSERVATION\nINFERENCE\nRETRIEVAL\nSYNTHESIS\nSPECULATION\n}\n\nenum ReviewStatus {\nDRAFT\nREVIEWED_BY_HUMAN\nENDORSED\nRETRACTED\n}\n\nMemory: Provenance for the Knowledge\nLayer\n\nenum Scope { PRIVATE, SHARED }\n\nenum SourceKind {\nURL\nDOCUMENT\nKNOWLEDGE_UNIT\nCONVERSATION_TURN\n}\n\nProvenance over agent actions is necessary but not sufficient.\nMany skills do not just produce ephemeral artifacts; they\nwrite into a persistent memory or knowledge layer that the\nhuman treats as their own thinking\u2014a vault, a notebook, a\nlong-lived context store. Without typed provenance at the\npoint of write, three contaminations follow.\n\ntype Actor {\nkind: ActorKind!\nid: ID!\n}\n\nAuthorship erosion. Months later, the human cannot\ndistinguish notes they wrote from notes a skill drafted. The\nvault drifts from what I know to what some skill once asserted,\nand the epistemic self-model degrades.\n\n# HUMAN or AGENT\n\ntype SkillRef {\nname: String!\nversion: String!\ncontentHash: String!\n}\n\nConfidence laundering. An agent extracts a claim with\nlow confidence; the claim lands in memory as a flat statement;\nthe human later cites it back as if it were grounded prior\nthinking.\n\ntype Source {\nkind: SourceKind!\nref: String!\nexcerpt: String\n}\n\nReflexive contamination. Skills that read the vault to\ninform their next output now read agent-authored material\nas if it were the human\u2019s prior thinking. The loop closes and\nthe signal degrades.\n\n# URL or ID\n# what was read\n\nAgent Skills \u201926, May 26, 2026, San Jose, CA, USA\n\nAnon.\n\nTwenty skills in a workflow, and no record of which produced what. That is the current state. It does not need to\nbe.\n\nOperations on this state\u2014assert, endorse, retract, supersede, link-derivation, change-review-status\u2014follow the same\nevent-sourced pattern as the rest of the system: each is a\ntyped, signed action recorded in the document\u2019s append-only\nlog.\nThe schema is deliberately boring; what matters is that\nwriting to long-lived memory now passes through a typed\nsurface that forces every contribution to declare its epistemic\nstanding.\nThe payoff is that the vault becomes queryable along epistemic axes the human cares about. Show me everything I\nasserted myself. Exclude agent-derived units below confidence\nthreshold \ud835\udf0f. Show all units derived from skill \ud835\udc4b , and the units\nderived from those. What was previously a flat pile of notes\nbecomes a graph with attribution, and the boundary between\nmine and the agent\u2019s stays legible long after the session that\nproduced it has ended.\n\nThe primitives exist. Powerhouse [Powerhouse 2026] is a\nlocal-first runtime that treats every change as a signed action\nagainst a document model, emits operations, and reconciles\ndivergent streams across nodes. Skills, here, become a thin\nwrapper: a skill is a named, versioned bundle that produces\nactions targeting one or more document models. The runtime\nrecords which skill produced which action; the document\nmodel records which action produced which state.\nThe missing piece is convention. Today, skills produce\ntext and tool calls. Three things must hold to make them\nattributable transformations:\n\nC. A. Ellis and S. J. Gibbs. Concurrency control in groupware systems.\nIn Proceedings of the 1989 ACM SIGMOD International Conference on\nManagement of Data, pages 399\u2013407. ACM, 1989.\nMartin Fowler. Event sourcing. Online article, martinfowler.com, 2005.\nEdmund L. Gettier. Is justified true belief knowledge? Analysis, 23(6):121\u2013\n123, 1963.\nAlvin I. Goldman. What is justified belief? In George S. Pappas, editor,\nJustification and Knowledge, pages 1\u201323. D. Reidel, Dordrecht, 1979.\nMartin Kleppmann, Adam Wiggins, Peter van Hardenberg, and Mark McGranaghan. Local-first software: You own your data, in spite of the cloud.\nIn Proceedings of the 2019 ACM SIGPLAN International Symposium on\nNew Ideas, New Paradigms, and Reflections on Programming and Software\n(Onward!), pages 154\u2013178. ACM, 2019.\nPowerhouse. Powerhouse: a local-first runtime for document-model applications. Open-source project documentation, 2026.\nMarc Shapiro, Nuno Pregui\u00e7a, Carlos Baquero, and Marek Zawirski. Conflictfree replicated data types. In Stabilization, Safety, and Security of Distributed Systems (SSS 2011), volume 6976 of Lecture Notes in Computer\nScience, pages 386\u2013400. Springer, 2011.\nChengzheng Sun and Clarence Ellis. Operational transformation in realtime group editors: Issues, algorithms, and achievements. In Proceedings\nof the 1998 ACM Conference on Computer Supported Cooperative Work\n(CSCW), pages 59\u201368. ACM, 1998.\nGreg Young. CQRS documents. Self-published technical report, 2010.\n\nImplementation Sketch\n\nNone of these require new agent capabilities. They require\ntreating the artifact as the unit of record and the skill as a\nbounded contributor to it.\n\n1. Skills declare the document models they operate on\nand the actions they may emit.\n2. The agent runtime dispatches skill outputs as actions\nrather than as raw text or unstructured tool calls.\n3. Artifacts are document-model documents, so their\nstate has a schema and their history has a log.\n\nReferences\n\nConclusion\n\nWe do not need a better agent. We need a substrate where\nwhat an agent does gets written down in a form that supports\nreplay, attribution, and audit. Skills are the natural unit: each\none is already a bounded contributor. The missing piece is the\ndiscipline of recording its contributions as typed operations\non a known state.\nThe cost is modest: skills declare their document models,\nagent runtimes dispatch through reducers, artifacts carry\ntheir history. The payoff is structural. Evaluation moves from\noutput scoring to process auditing. Safety moves from prevention to attribution. Knowledge claims become falsifiable:\nwe can ask, of any artifact, how it was made.\n",
+        "createdAt": "2026-08-16T20:24:12.999Z",
+        "createdBy": "knowledge-agent",
+        "sourceType": "PAPER",
+        "description": "Argues that agent skills should be recorded as typed, signed, replayable operations on document-model state for provenance, evaluation, and audit."
+      },
+      "timestampUtcMs": "2026-08-16T20:24:12.999Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "",
+    "timestampUtcMs": "2026-08-16T20:24:12.603Z",
+    "action": {
+      "type": "UPGRADE_DOCUMENT",
+      "input": {
+        "model": "bai/source",
+        "toVersion": 1,
+        "documentId": "2b423487-123f-414c-bd20-edce7de891f4",
+        "fromVersion": 0,
+        "initialState": {
+          "auth": {
+            "grants": [],
+            "version": 0
+          },
+          "local": {},
+          "global": {
+            "title": null,
+            "status": "INBOX",
+            "content": null,
+            "createdAt": null,
+            "createdBy": null,
+            "provenance": null,
+            "sourceType": null,
+            "description": null,
+            "extractedClaims": [],
+            "extractionStats": null
+          },
+          "document": {
+            "hash": {
+              "encoding": "base64",
+              "algorithm": "sha1"
+            },
+            "version": 1
+          }
+        }
+      },
+      "timestampUtcMs": "2026-08-16T20:24:12.603Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "QGat/HubdpbrqlGkzwJhwC2w2xA=",
+    "timestampUtcMs": "2026-08-16T20:27:45.920Z",
+    "action": {
+      "type": "INGEST_SOURCE",
+      "input": {
+        "url": "file://Skills_as_Attributable_Transformations__A_Provenance_Layer_for_Agent_Execution.pdf",
+        "tool": "pdftotext+manual-structure",
+        "title": "Skills as Attributable Transformations: A Provenance Layer for Agent Execution",
+        "author": "Anonymous Author(s)",
+        "method": "markdown-reformat",
+        "content": "# Skills as Attributable Transformations: A Provenance Layer for Agent Execution\n\n**Anonymous Author(s)**  \n*Agent Skills '26, May 26, 2026, San Jose, CA, USA*\n\n**Keywords:** agent skills, provenance, event sourcing, document models, attribution, evaluation, reliabilism, local-first software\n\n---\n\n## Abstract\n\nAgent systems are provenance-blind. They treat skill invocations as tool calls and log lines, not as structured operations on a typed state. The artifact a multi-skill workflow produces carries no record of which skill wrote which part, under whose authority, by what mechanism. This blocks evaluation, blocks safety auditing, and undermines any claim that the output is knowledge rather than fortunate noise.\n\nWe argue for modeling each skill invocation as an attributable transformation on document-model state, recorded by an event-sourced execution layer. Each operation captures its action, its author (human or agent), the skill invoked, the inputs read, and the result produced. State derives from the operation log; nothing is privileged, nothing is hidden. We sketch how an existing local-first runtime, Powerhouse [Powerhouse 2026], supplies the primitives, why process-level attribution beats output-level scoring, and what evaluation looks like when the question shifts from *was the answer right* to *was the process reliable*.\n\nThe contribution is not a new agent or a new skill format. It is a missing layer beneath both.\n\n---\n\n## 1. Introduction\n\nThe Agent Skills literature concentrates on three questions: how to design skills, how to evaluate them, and how to keep them safe. We propose a fourth: **how to record what a skill did**.\n\nA skill, today, is a bundle of instructions and scripts loaded into an agent's context. When the agent invokes it, the result enters the working buffer or a tool-call log. The artifact downstream\u2014a document, a code change, a decision\u2014carries no structured trace of which skill produced which fragment. A workflow with twenty skills can produce a wrong output that no one can localize, or a right output that no one can attribute.\n\nProvenance blindness has three consequences:\n\n1. **Evaluation** collapses to output scoring, which fails to distinguish reliable inference from coincidence\u2014a distinction that matters because, as Goldman [1979] argued in response to the Gettier problem [Gettier 1963], justification depends on the reliability of the process producing a belief, not on whether the belief is true.\n2. **Safety auditing** has no surface to audit beyond the prompt and the final string.\n3. **Knowledge claims** become unfalsifiable: the system produced something true, but we cannot say why, so we cannot say whether it will do so again.\n\nThe remedy is neither a better skill, a better agent, nor a better benchmark. It is a layer below all three: a structured execution substrate where every skill invocation becomes a typed, signed, replayable operation on a known state.\n\n---\n\n## 2. The Problem With Tool Calls\n\nCurrent agent runtimes treat skills as ephemeral tool invocations. The runtime captures the call, the arguments, the return value, and sometimes a trace of intermediate reasoning. None of this is the artifact. The artifact is whatever ends up in the document, the codebase, the database, the email draft. The link between skill-invocation and artifact-fragment survives only as guesswork over logs.\n\nThree things go missing.\n\n### Authorship\n\nA document edited across a dozen skill invocations records the agent as the author of every change. The skill that supplied the reasoning, the skill that fetched the source, the skill that formatted the output\u2014all collapse into one opaque actor.\n\n### Mechanism\n\nReliabilist epistemology [Goldman 1979] holds that a belief counts as knowledge when a reliable process produces it. Gettier [1963] showed that truth and justification can coincide while the underlying process is broken; reliabilism's response is to evaluate the process. Agent outputs today expose no process. We see the belief and the prompt; the mechanism between them stays implicit. Gettier-style cases hide whenever the path to the answer goes unrecorded.\n\n### Compositionality\n\nIf skill *A* writes a section and skill *B* revises it, the revised text is a function of both. Without an operation log, the composition is irreversible. We cannot ask *what would this artifact look like without skill B*, or *which skill is responsible for the contradiction in paragraph 4*. Provenance is the only property that scales here. You cannot inspect what no one wrote down.\n\nTrajectory mining and tool-call logging exist in the agent literature, but they record reasoning steps in parallel to the artifact. The artifact stays a string; the trace stays a separate log; reconciling the two after the fact is precisely what we avoid. We propose unifying them: **the artifact is the log**.\n\n---\n\n## 3. Skills as Operations on a Document Model\n\nWe model each skill invocation as an operation on a typed document state.\n\nA document model defines the shape of a document and the logic permitted to mutate it. It has three parts:\n\n1. a **state schema** (what the document contains)\n2. an **action schema** (what changes the model allows)\n3. a **reducer** (a pure function from state and action to new state)\n\nActions are signed expressions of intent. The runtime applies them through the reducer and emits operations: the action, its ordinal, its timestamp, its result hash. State exists only as a replay of the operation log. This is the event-sourcing pattern [Fowler 2005], with one refinement: the system stores the commands (the actions, the user intent) rather than the resulting domain events. Replay re-executes the reducer rather than replaying pre-computed effects. Powerhouse implements this pattern [Powerhouse 2026]; we adopt it as the substrate for attribution.\n\nA skill invocation is therefore not a tool call. It is an action against a document, dispatched by an attributed actor (human or agent), executed by a deterministic reducer, and recorded as an operation in an append-only log. The document carries its own history. Every byte in the final state traces to a specific operation, which traces to a specific skill, which traces to a specific actor.\n\n### 3.1 What the operation records\n\nEach operation captures, at minimum:\n\n- the **action** (typed, schema-validated)\n- the **actor** (signed; human or agent identity)\n- the **skill invoked** (name, version, content hash)\n- the **reducer applied** (deterministic, versioned)\n- the **prior state hash** and the **resulting state hash**\n- optionally, the model and prompt that produced the action, the tools the skill used, the wall-clock duration\n\nThe first five fields are mandatory and machine-verifiable. The sixth is the epistemic context: sometimes available, sometimes reliable, recorded when present.\n\n### 3.2 What the runtime guarantees\n\nA local-first [Kleppmann et al. 2019] event-sourced runtime gives this layer four properties without further engineering. Powerhouse [Powerhouse 2026] provides each one as a side-effect of how it stores and replays operations.\n\n**Determinism.** The same operation log replayed against the same reducer produces the same state. Bit-for-bit. This makes provenance verifiable: a third party replays the log and confirms the artifact. The decoupling of read paths from write paths is the standard CQRS pattern [Young 2010]: writes append operations, reads materialize state from the log.\n\n**Auditability.** The log is append-only. State at any past point is reconstructible. *What did the document say after operation 47?* is a defined question with a single answer.\n\n**Attribution.** Every operation carries its actor's signature. Authorship is structural, not annotated. An agent that invokes a skill cannot retroactively deny it.\n\n**Composability.** Because operations are typed and ordered, two divergent agents working on the same document reconcile by replaying their operations against a shared reducer. Powerhouse calls this *operational reshuffle* [Powerhouse 2026]: actions remain immutable expressions of intent; only ordering and result hashes change when streams merge.\n\n### 3.3 Why not CRDTs or operational transformation?\n\nTwo prior approaches to reconciling concurrent edits fall short for arbitrary reducers.\n\n- **Conflict-free replicated data types** [Shapiro et al. 2011] guarantee convergence under commutative operations but cannot express state-dependent validation\u2014the canonical example is a balance check that must reject a withdrawal exceeding the current balance.\n- **Operational transformation** [Ellis and Gibbs 1989; Sun and Ellis 1998], the technique underlying collaborative editors such as Google Docs, transforms operations against one another to preserve intent under concurrency, but doing so rewrites the operations themselves and violates the append-only guarantee that makes provenance auditable.\n\nOperational reshuffle avoids both: operations remain immutable, and only their ordering and replayed result hashes change.\n\n---\n\n## 4. Evaluation: From Outputs to Processes\n\nOutput-level evaluation fails to distinguish a reliable agent from a lucky one. This is the Gettier problem [Gettier 1963] applied to benchmarks: an agent can produce a correct answer through a broken process, and output scoring rewards it identically to one that reasoned soundly. The reliabilist response [Goldman 1979] is to evaluate the process, not the output. Provenance makes that response operational.\n\nOnce each fragment of an artifact traces to a skill and a mechanism, evaluation can ask process-level questions:\n\n- **Skill contribution.** Which skills, when present in the workflow, correlate with correct outputs? Which contribute only *contextslop*\u2014tokens that displace useful context without improving the result?\n- **Mechanism reliability.** Across many runs, does this skill produce correct results through inference, through retrieval-and-paraphrase, or through guessing? Provenance distinguishes these even when outputs look identical.\n- **Failure localization.** When a workflow produces a wrong answer, which operation introduced the error? Which skill was active at that step?\n- **Counterfactual replay.** Re-run the log with one skill removed. Did the artifact still converge? If yes, the skill was redundant.\n\nThese are not new evaluation metrics. They are queries against a provenance graph that does not yet exist.\n\n---\n\n## 5. Safety: From Sandboxes to Audits\n\nAgent safety today is largely preventative: sandboxes, permission prompts, output filters. These intervene at the moment of action. They cannot answer post-hoc questions: *which skill exfiltrated this data*, *when did the agent first read the credential*, *is this output's provenance compatible with our access policy*.\n\nA signed operation log makes those questions decidable. Each operation carries the actor, the skill, the inputs read, the state written. Adversarial or compromised skills leave traces. Supply-chain attacks on a skill registry become detectable: when skill *X@v3* produces operations that diverge from the expected reducer output, the log shows it.\n\nFor high-stakes workflows, actions can be co-signed with the input state hash or the previous operation ID, so an operation fails to apply when the state or execution order changes between dispatch and execution [Powerhouse 2026]. This closes the window in which an attacker swaps context underneath an authorized action.\n\nWe do not claim provenance prevents attacks. We claim that without provenance, attacks remain unattributable, and without attribution, defense is guesswork.\n\n---\n\n## 6. Memory: Provenance for the Knowledge Layer\n\nProvenance over agent actions is necessary but not sufficient. Many skills do not just produce ephemeral artifacts; they write into a persistent memory or knowledge layer that the human treats as their own thinking\u2014a vault, a notebook, a long-lived context store. Without typed provenance at the point of write, three contaminations follow.\n\n**Authorship erosion.** Months later, the human cannot distinguish notes they wrote from notes a skill drafted. The vault drifts from *what I know* to *what some skill once asserted*, and the epistemic self-model degrades.\n\n**Confidence laundering.** An agent extracts a claim with low confidence; the claim lands in memory as a flat statement; the human later cites it back as if it were grounded prior thinking.\n\n**Reflexive contamination.** Skills that read the vault to inform their next output now read agent-authored material as if it were the human's prior thinking. The loop closes and the signal degrades.\n\nWe propose a small, mandatory document model for any skill that writes into a long-lived knowledge layer\u2014a `KnowledgeUnit`. Its state schema captures the unit of assertion together with the epistemic context that produced it:\n\n```graphql\ntype KnowledgeUnit {\n  id: ID!\n  claim: String!\n  author: Actor!              # human or agent\n  producer: SkillRef          # null if author = human\n  epistemicMode: EpistemicMode!\n  confidence: Float           # producer self-report\n  sources: [Source!]!\n  derivedFrom: [ID!]!         # parent unit IDs\n  reviewStatus: ReviewStatus!\n  scope: Scope!\n  createdAt: DateTime!\n}\n\nenum EpistemicMode {\n  OBSERVATION\n  INFERENCE\n  RETRIEVAL\n  SYNTHESIS\n  SPECULATION\n}\n\nenum ReviewStatus {\n  DRAFT\n  REVIEWED_BY_HUMAN\n  ENDORSED\n  RETRACTED\n}\n\nenum Scope {\n  PRIVATE\n  SHARED\n}\n\nenum SourceKind {\n  URL\n  DOCUMENT\n  KNOWLEDGE_UNIT\n  CONVERSATION_TURN\n}\n\ntype Actor {\n  kind: ActorKind!            # HUMAN or AGENT\n  id: ID!\n}\n\ntype SkillRef {\n  name: String!\n  version: String!\n  contentHash: String!\n}\n\ntype Source {\n  kind: SourceKind!\n  ref: String!                # URL or ID\n  excerpt: String             # what was read\n}\n```\n\nOperations on this state\u2014assert, endorse, retract, supersede, link-derivation, change-review-status\u2014follow the same event-sourced pattern as the rest of the system: each is a typed, signed action recorded in the document's append-only log.\n\nThe schema is deliberately boring; what matters is that writing to long-lived memory now passes through a typed surface that forces every contribution to declare its epistemic standing.\n\nThe payoff is that the vault becomes queryable along epistemic axes the human cares about:\n\n- *Show me everything I asserted myself.*\n- *Exclude agent-derived units below confidence threshold \u03c4.*\n- *Show all units derived from skill X, and the units derived from those.*\n\nWhat was previously a flat pile of notes becomes a graph with attribution, and the boundary between mine and the agent's stays legible long after the session that produced it has ended.\n\n---\n\n## 7. Implementation Sketch\n\nThe primitives exist. Powerhouse [Powerhouse 2026] is a local-first runtime that treats every change as a signed action against a document model, emits operations, and reconciles divergent streams across nodes. Skills, here, become a thin wrapper: a skill is a named, versioned bundle that produces actions targeting one or more document models. The runtime records which skill produced which action; the document model records which action produced which state.\n\nThe missing piece is convention. Today, skills produce text and tool calls. Three things must hold to make them attributable transformations:\n\n1. Skills declare the document models they operate on and the actions they may emit.\n2. The agent runtime dispatches skill outputs as actions rather than as raw text or unstructured tool calls.\n3. Artifacts are document-model documents, so their state has a schema and their history has a log.\n\nNone of these require new agent capabilities. They require treating the artifact as the unit of record and the skill as a bounded contributor to it.\n\n---\n\n## 8. Conclusion\n\nWe do not need a better agent. We need a substrate where what an agent does gets written down in a form that supports replay, attribution, and audit. Skills are the natural unit: each one is already a bounded contributor. The missing piece is the discipline of recording its contributions as typed operations on a known state.\n\nThe cost is modest: skills declare their document models, agent runtimes dispatch through reducers, artifacts carry their history. The payoff is structural. Evaluation moves from output scoring to process auditing. Safety moves from prevention to attribution. Knowledge claims become falsifiable: we can ask, of any artifact, how it was made.\n\nTwenty skills in a workflow, and no record of which produced what. That is the current state. It does not need to be.\n\n---\n\n## References\n\n- C. A. Ellis and S. J. Gibbs. Concurrency control in groupware systems. In *Proceedings of the 1989 ACM SIGMOD International Conference on Management of Data*, pages 399\u2013407. ACM, 1989.\n- Martin Fowler. Event sourcing. Online article, martinfowler.com, 2005.\n- Edmund L. Gettier. Is justified true belief knowledge? *Analysis*, 23(6):121\u2013123, 1963.\n- Alvin I. Goldman. What is justified belief? In George S. Pappas, editor, *Justification and Knowledge*, pages 1\u201323. D. Reidel, Dordrecht, 1979.\n- Martin Kleppmann, Adam Wiggins, Peter van Hardenberg, and Mark McGranaghan. Local-first software: You own your data, in spite of the cloud. In *Proceedings of the 2019 ACM SIGPLAN International Symposium on New Ideas, New Paradigms, and Reflections on Programming and Software (Onward!)*, pages 154\u2013178. ACM, 2019.\n- Powerhouse. Powerhouse: a local-first runtime for document-model applications. Open-source project documentation, 2026.\n- Marc Shapiro, Nuno Pregui\u00e7a, Carlos Baquero, and Marek Zawirski. Conflict-free replicated data types. In *Stabilization, Safety, and Security of Distributed Systems (SSS 2011)*, volume 6976 of Lecture Notes in Computer Science, pages 386\u2013400. Springer, 2011.\n- Chengzheng Sun and Clarence Ellis. Operational transformation in real-time group editors: Issues, algorithms, and achievements. In *Proceedings of the 1998 ACM Conference on Computer Supported Cooperative Work (CSCW)*, pages 59\u201368. ACM, 1998.\n- Greg Young. CQRS documents. Self-published technical report, 2010.\n",
+        "createdAt": "2026-08-16T20:27:45.920Z",
+        "createdBy": "knowledge-agent",
+        "sourceType": "PAPER",
+        "description": "Argues that agent skills should be recorded as typed, signed, replayable operations on document-model state for provenance, evaluation, and audit."
+      },
+      "timestampUtcMs": "2026-08-16T20:27:45.920Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "rmluuFVOJ+9JA3Gx579FKHRpIuU=",
+    "timestampUtcMs": "2026-08-16T20:29:35.488Z",
+    "action": {
+      "type": "SET_SOURCE_STATUS",
+      "input": {
+        "status": "EXTRACTING"
+      },
+      "timestampUtcMs": "2026-08-16T20:29:35.488Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "rmluuFVOJ+9JA3Gx579FKHRpIuU=",
+    "timestampUtcMs": "2026-08-16T20:32:30.307Z",
+    "action": {
+      "type": "SET_SOURCE_STATUS",
+      "input": {
+        "status": "EXTRACTING"
+      },
+      "timestampUtcMs": "2026-08-16T20:32:30.307Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "yF/x3BaD2iaLNFgLVhA+d8OkNyY=",
+    "timestampUtcMs": "2026-08-16T20:32:48.101Z",
+    "action": {
+      "type": "ADD_EXTRACTED_CLAIM",
+      "input": {
+        "claimRef": "ee0b4542-988d-4c21-9dc5-72c1eafbbe45"
+      },
+      "timestampUtcMs": "2026-08-16T20:32:48.101Z"
+    }
+  },
+  {
+    "index": 5,
+    "hash": "KDvDa4KN95ekwKIl9C5LHHo2x0o=",
+    "timestampUtcMs": "2026-08-16T20:32:48.101Z",
+    "action": {
+      "type": "ADD_EXTRACTED_CLAIM",
+      "input": {
+        "claimRef": "aea7368d-394c-44c6-b605-24265f3b871b"
+      },
+      "timestampUtcMs": "2026-08-16T20:32:48.101Z"
+    }
+  },
+  {
+    "index": 6,
+    "hash": "hLdAdYUayMK/KYXjODOSNKwE3zI=",
+    "timestampUtcMs": "2026-08-16T20:32:48.101Z",
+    "action": {
+      "type": "ADD_EXTRACTED_CLAIM",
+      "input": {
+        "claimRef": "fdc3d342-bb38-468d-82d1-440b2af01587"
+      },
+      "timestampUtcMs": "2026-08-16T20:32:48.101Z"
+    }
+  },
+  {
+    "index": 7,
+    "hash": "uLtvHRAZ/yawAS3oVvWIVe+mhNg=",
+    "timestampUtcMs": "2026-08-16T20:32:48.101Z",
+    "action": {
+      "type": "ADD_EXTRACTED_CLAIM",
+      "input": {
+        "claimRef": "5ba85b55-4ac1-4cd5-a9d2-e1855c5b9633"
+      },
+      "timestampUtcMs": "2026-08-16T20:32:48.101Z"
+    }
+  },
+  {
+    "index": 8,
+    "hash": "+5AOHkj8AUvd2J9JexETlIhfKaU=",
+    "timestampUtcMs": "2026-08-16T20:32:48.101Z",
+    "action": {
+      "type": "ADD_EXTRACTED_CLAIM",
+      "input": {
+        "claimRef": "7b0dbf17-479c-469c-8a93-1200be434870"
+      },
+      "timestampUtcMs": "2026-08-16T20:32:48.101Z"
+    }
+  },
+  {
+    "index": 9,
+    "hash": "I9HZBe069wmvAnpIclmMoSYHD+w=",
+    "timestampUtcMs": "2026-08-16T20:32:48.101Z",
+    "action": {
+      "type": "ADD_EXTRACTED_CLAIM",
+      "input": {
+        "claimRef": "419dbaad-d845-454d-b025-63314bff4bfb"
+      },
+      "timestampUtcMs": "2026-08-16T20:32:48.101Z"
+    }
+  },
+  {
+    "index": 10,
+    "hash": "BAdKPr9FwGN/41d5pHrnO3DhSuc=",
+    "timestampUtcMs": "2026-08-16T20:32:48.101Z",
+    "action": {
+      "type": "ADD_EXTRACTED_CLAIM",
+      "input": {
+        "claimRef": "28ad70dd-0252-43ba-bc60-83c32a506581"
+      },
+      "timestampUtcMs": "2026-08-16T20:32:48.101Z"
+    }
+  },
+  {
+    "index": 11,
+    "hash": "Vl9RycNGk5Gfejbr+H8x31s2dpA=",
+    "timestampUtcMs": "2026-08-16T20:32:48.101Z",
+    "action": {
+      "type": "ADD_EXTRACTED_CLAIM",
+      "input": {
+        "claimRef": "19b9e32b-9936-489b-b794-2c1680f929f6"
+      },
+      "timestampUtcMs": "2026-08-16T20:32:48.101Z"
+    }
+  },
+  {
+    "index": 12,
+    "hash": "0dwoMX3bml8bC6S3sClJrMLpy78=",
+    "timestampUtcMs": "2026-08-16T20:32:48.101Z",
+    "action": {
+      "type": "ADD_EXTRACTED_CLAIM",
+      "input": {
+        "claimRef": "c52ebbd3-df73-465e-b2dd-59b83fea91d2"
+      },
+      "timestampUtcMs": "2026-08-16T20:32:48.101Z"
+    }
+  },
+  {
+    "index": 13,
+    "hash": "iuGGzIWhty2fH1p0rINSwsQG3SI=",
+    "timestampUtcMs": "2026-08-16T20:32:48.101Z",
+    "action": {
+      "type": "RECORD_EXTRACTION_STATS",
+      "input": {
+        "skipRate": 0,
+        "claimCount": 9,
+        "extractedAt": "2026-08-16T20:32:48.101Z",
+        "extractedBy": "knowledge-agent",
+        "skippedCount": 0
+      },
+      "timestampUtcMs": "2026-08-16T20:32:48.101Z"
+    }
+  },
+  {
+    "index": 14,
+    "hash": "ntQy5nOxPWNix3VgJ3yClHXZTec=",
+    "timestampUtcMs": "2026-08-16T20:32:48.101Z",
+    "action": {
+      "type": "SET_SOURCE_STATUS",
+      "input": {
+        "status": "EXTRACTED"
+      },
+      "timestampUtcMs": "2026-08-16T20:32:48.101Z"
+    }
+  }
+]

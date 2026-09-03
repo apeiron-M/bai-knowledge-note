@@ -1,0 +1,90 @@
+{
+  "links": [
+    {
+      "id": "lnk-f7c92110-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "f7c92110-27a7-4921-8fd9-7fbdddfcf920",
+      "targetTitle": "bcf-model-tasks-vs-org-tasks"
+    },
+    {
+      "id": "lnk-3908a38a-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "3908a38a-c1d9-421c-b360-3aeeb2a7afbd",
+      "targetTitle": "meeting-notes-2026-08-12-14"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Construction's efficiency barrier is unstructured data even more than siloed data",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "ea958a51-c81e-42a9-aa44-9360267ea8c1",
+      "name": "construction",
+      "topicDocumentId": null
+    },
+    {
+      "id": "3bdf33d1-61cf-4861-bcd2-c44745b5903d",
+      "name": "data-management",
+      "topicDocumentId": null
+    },
+    {
+      "id": "ad018903-02bf-474b-8a2f-8f5b6de0cbc5",
+      "name": "business-intelligence",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "Agli Hysi's diagnosis of construction-project inefficiency has two layers, and the deeper one is not the one usually cited (DT BAU, 01:44:33):\n\n1. **Data silos** \u2014 information fragmented across the CDE, Microsoft Planner, Mural, SharePoint and more, with no unified project overview (01:34:18).\n2. **Unstructured data** \u2014 the data itself is not machine-readable. Risk management is the canonical example: risks are measurable (site plans, delivery schedules) but managed via disconnected Excel tables, so they never reach higher project-management levels in structured form (01:47:05\u201301:48:44).\n\nAsked to prioritize three types of structured data for a future system (01:54:25):\n1. **Tasks**\n2. **Documents and model metadata** \u2014 with strict access control\n3. **\"BIM-to-field\" data** \u2014 connecting construction-site progress to the digital environment\n\nCost management shows the same pattern: non-semantic Excel tables from stakeholders get manually transformed into dashboards (00:34:07). Structure-first document models attack the root cause where dashboard tooling only treats the symptom. A dependency graph over structured project data would enable proactive bottleneck monitoring (01:51:40).\n\n## Methodology grounding\n- **[[schema evolution follows observe-then-formalize not design-then-enforce]]** \u2014 RELATES_TO: DT BAU's path (observe what lives in disconnected Excel, then structure it) mirrors observe-then-formalize; imposing structure before observing real usage is the failure mode both warn against.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "PATTERN",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "knowledge-agent",
+    "createdAt": "2026-08-14T18:13:40.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-14T18:17:21.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Beyond fragmentation across CDE/Planner/Mural, the data itself is unstructured \u2014 risk management lives in disconnected Excel. Priorities: tasks, docs/metadata with access control, BIM-to-field.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "7a42dd8d-cf83-44ad-bd52-fa0cefb817b6",
+      "actor": "knowledge-agent",
+      "comment": "Extracted from Aug 12-14 meeting sources; links + methodology grounding applied",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-14T18:17:21.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "27fd31df-c1fa-4493-a351-4bade6a70459",
+      "actor": "liberuum",
+      "comment": "Pipeline verify: quality gate passed",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-14T18:17:21.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

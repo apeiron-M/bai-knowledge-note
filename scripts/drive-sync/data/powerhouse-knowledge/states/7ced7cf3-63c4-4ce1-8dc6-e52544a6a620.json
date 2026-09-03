@@ -1,0 +1,96 @@
+{
+  "links": [
+    {
+      "id": "lnk-62477739-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "62477739-6479-4856-8796-5204cb7e51a1",
+      "targetTitle": "vetra-remote-drive-collaborative-dev"
+    },
+    {
+      "id": "lnk-434297eb-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "434297eb-533d-4e8c-9a50-c987e268f85e",
+      "targetTitle": "document-models-must-be-added-to-the-vetra-drive-by-default"
+    },
+    {
+      "id": "lnk-98e36a08-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "98e36a08-78cd-4c60-942c-338d4a460334",
+      "targetTitle": "bee-reactor-adapter-overview"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "vetra drive holds source documents while preview drive holds instances",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "dac5cc5a-c0c2-4f69-a5e1-1af5f345cb87",
+      "name": "architecture decisions",
+      "topicDocumentId": null
+    },
+    {
+      "id": "711a59d7-9575-472c-9e1d-bcc0ff3540d7",
+      "name": "MCP workflows",
+      "topicDocumentId": null
+    },
+    {
+      "id": "332343f1-300c-401c-b665-c0e0eaadb16a",
+      "name": "drive architecture",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "# vetra drive holds source documents while preview drive holds instances\n\nThe system has two drives with distinct purposes:\n\n1. **Vetra Drive** (`vetra-{hash}`) \u2014 Contains source documents: document models, document editors, and apps. This is the development drive where you define and build things.\n\n2. **Preview Drive** (`preview-{hash}`, named \"Vetra Preview\") \u2014 Contains demo and preview documents (actual document instances). Used for showcasing and testing document models in action.\n\nThe separation ensures development artifacts (models, editors) stay separate from test data (document instances). Since [[document models must be added to the vetra drive by default]], new models always go to vetra, not preview.\n\n---\n\nTopics:\n- [[architecture decisions]]\n- [[mcp workflows]]",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "DECISION",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "knowledge-agent",
+    "createdAt": "2026-04-03T14:04:26.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-09-03T09:59:18.540Z",
+    "sourceOrigin": "IMPORT"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "The vetra drive contains document models and editors for development; the preview drive contains demo document instances",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "d5e3c949-7ac5-47d8-b5ac-859895f07d90",
+      "actor": "claude",
+      "comment": "Knowledge registered against powerhouse v6.2.2-dev.47",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-14T12:00:00.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "1a44c83c-2be2-40cd-914f-3c1631de63fc",
+      "actor": "liberuum",
+      "comment": "Canonical as of powerhouse v6.2.2-dev.47",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-14T12:00:00.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

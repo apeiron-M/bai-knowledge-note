@@ -1,0 +1,181 @@
+[
+  {
+    "index": 0,
+    "hash": "",
+    "timestampUtcMs": "2026-09-02T21:38:05.605Z",
+    "action": {
+      "type": "CREATE_DOCUMENT",
+      "input": {
+        "meta": {},
+        "name": "Academy \u203a Reference \u203a Reactor \u203a Document model registry and version upgrades",
+        "slug": "",
+        "model": "bai/source",
+        "branch": "main",
+        "signing": {
+          "nonce": "",
+          "publicKey": {},
+          "signature": "14416670-d2d3-4de5-9dfd-7c6e175280c2",
+          "documentType": "bai/source",
+          "createdAtUtcIso": "2026-09-02T21:38:05.605Z"
+        },
+        "version": 0,
+        "documentId": "14416670-d2d3-4de5-9dfd-7c6e175280c2",
+        "protocolVersions": {
+          "base-reducer": 2
+        }
+      },
+      "timestampUtcMs": "2026-09-02T21:38:05.605Z"
+    }
+  },
+  {
+    "index": 0,
+    "hash": "ZLr60MRXVGvesoXIrcWRKWqI+ZU=",
+    "timestampUtcMs": "2026-09-02T21:38:05.509Z",
+    "action": {
+      "type": "INGEST_SOURCE",
+      "input": {
+        "url": "https://github.com/powerhouse-inc/powerhouse/blob/v6.2.2-dev.74/apps/academy/docs/academy/04-Reference/01-Reactor/06-DocumentModelRegistry.md",
+        "tool": "sync-repo-docs",
+        "title": "Academy \u203a Reference \u203a Reactor \u203a Document model registry and version upgrades",
+        "author": "Powerhouse Inc.",
+        "method": "sha256:bc8fdbd0ab182d39d049678313db4cab0056a84477602d82e56c2d673aee5895 git:v6.2.2-dev.74",
+        "content": "---\ntoc_max_heading_level: 3\n---\n\n# Document model registry and version upgrades\n\nThe **document model registry** holds document model modules keyed by document type and version. The reactor uses it to resolve the reducer, utils, and specification for a given document when it executes a job. It also holds **upgrade manifests** that describe how to migrate a document from one model version to the next.\n\nYou register modules and manifests on the [`ReactorBuilder`](/academy/Reference/Reactor/AdvancedReactorUsage). At runtime you read the registry through the reactor module field `documentModelRegistry`, or through the [`useModelRegistry`](#accessing-the-registry) hook in the browser.\n\n```typescript\nimport { ReactorBuilder } from \"@powerhousedao/reactor\";\n\nconst reactor = await new ReactorBuilder()\n  .withDocumentModelSources([todoModuleV1, todoModuleV2])\n  .withUpgradeManifests([todoUpgradeManifest])\n  .build();\n```\n\nThe two methods differ in how repeat calls combine. `withDocumentModelSources` **appends** \u2014 calling it twice registers both arrays. `withUpgradeManifests` **replaces** \u2014 calling it twice keeps only the last array. Order between the two calls does not matter: the builder always registers manifests before modules.\n\nRegistration at build time is non-fatal. A duplicate or invalid module or manifest is logged through the builder's logger and skipped; the build still completes. Do not wrap `.build()` in a try/catch expecting a registration failure to throw \u2014 check the logs instead.\n\n## Accessing the registry\n\nThe registry instance lives on the reactor module as `documentModelRegistry: IDocumentModelRegistry`. This field is present on both in-process and worker-backed reactors.\n\nIn the browser, read it with `useModelRegistry`:\n\n```typescript\nimport { useModelRegistry } from \"@powerhousedao/reactor-browser\";\n\nconst registry = useModelRegistry(); // IDocumentModelRegistry | undefined\n```\n\n`useModelRegistry` returns `undefined` until the reactor client module is set on the PH global. Guard the result before calling registry methods.\n\nThe core `IReactor` interface does not expose the registry directly. To list model data through the reactor, use `reactor.getDocumentModels(namespace?, paging?, signal?)`, which reads `getAllModules()` internally and filters by document-type prefix.\n\n## `IDocumentModelRegistry` reference\n\n`IDocumentModelRegistry` is the contract for both module management and the upgrade API. The default in-memory implementation is `DocumentModelRegistry`. Both are exported from `@powerhousedao/reactor`.\n\nThe document type used as the lookup key is `module.documentModel.global.id`. A module's version comes from its optional `version` field, which the registry treats as `1` when absent.\n\n### Module management\n\n#### `registerModules`\n\n```typescript\nregisterModules(\n  ...modules: DocumentModelModule<any>[]\n): RegistrationResult<DocumentModelModule<any>>[];\n```\n\nRegisters one or more modules. Modules without a `version` default to version 1. Two different versions of the same document type coexist. A module whose `(documentType, version)` pair is already registered produces a `DuplicateModuleError` in its result. This method **never throws** \u2014 it returns one [`RegistrationResult`](#registrationresult) per input module, in input order. Invalid or duplicate modules are skipped without affecting the rest.\n\n#### `unregisterModules`\n\n```typescript\nunregisterModules(...documentTypes: string[]): boolean;\n```\n\nRemoves all versions of each given document type. Returns `true` only if every requested type was found. Returns `false` if any was missing, while still removing the types that exist.\n\n#### `getModule`\n\n```typescript\ngetModule(documentType: string, version?: number): DocumentModelModule<any>;\n```\n\nReturns the module for a document type. With `version` omitted, returns the highest registered version. With `version` given, returns that exact version. Throws `ModuleNotFoundError` if the type is unknown, or if the specific version is not registered even when other versions exist.\n\n#### `getAllModules`\n\n```typescript\ngetAllModules(): DocumentModelModule<any>[];\n```\n\nReturns a copy of every registered module across all types and versions.\n\n#### `getSupportedVersions`\n\n```typescript\ngetSupportedVersions(documentType: string): number[];\n```\n\nReturns the registered version numbers for a type, sorted ascending. Throws `ModuleNotFoundError` if none are registered for the type.\n\n#### `getLatestVersion`\n\n```typescript\ngetLatestVersion(documentType: string): number;\n```\n\nReturns the highest registered version number for a type. Throws `ModuleNotFoundError` if none are registered.\n\n#### `clear`\n\n```typescript\nclear(): void;\n```\n\nRemoves all modules and all upgrade manifests.\n\n### `RegistrationResult`\n\n`registerModules` and `registerUpgradeManifests` report per-item outcomes instead of throwing:\n\n```typescript\nexport type RegistrationResult<T> =\n  | { status: \"success\"; item: T }\n  | { status: \"error\"; item: T; error: Error };\n```\n\n`item` is present on both branches \u2014 the registered or offending object is echoed back even on error. Check `result.status === \"error\"` for each element.\n\n```typescript\nconst results = registry.registerModules(todoModuleV1, todoModuleV2);\nfor (const result of results) {\n  if (result.status === \"error\") {\n    console.error(\"skipped\", result.item.documentModel.global.id, result.error.message);\n  }\n}\n```\n\n`RegistrationResult` is not exported from `@powerhousedao/reactor`, and the package has no `registry` subpath. Reference it structurally, or read `result.status` (`\"success\"` or `\"error\"`) directly as shown above.\n\n### `DocumentModelModule`\n\nThe shape registered with the registry:\n\n```typescript\nexport type DocumentModelModule<TState extends PHBaseState = PHBaseState> = {\n  version?: number;\n  reducer: Reducer<TState>;\n  actions: Actions;\n  utils: DocumentModelUtils<TState>;\n  documentModel: DocumentModelPHState; // .global.id is the document type key\n};\n```\n\n`version` is optional. The source marks it \"should be made required\"; module versioning is not finalized, and the registry defaults a missing `version` to `1` everywhere.\n\n## Version upgrades\n\nAn **upgrade manifest** declares the supported versions of a document type and the transition that moves a document up each single version step. The registry stores one manifest per document type and exposes methods to look it up and to compute the steps between two versions.\n\n### Upgrade types\n\nThese types come from `@powerhousedao/shared/document-model` (aliased as `document-model` in generated files).\n\n```typescript\nexport type UpgradeReducer<\n  TFrom extends PHBaseState,\n  TTo extends PHBaseState,\n> = (document: PHDocument<TFrom>, action: Action) => PHDocument<TTo>;\n\nexport type UpgradeTransition = {\n  toVersion: number;\n  upgradeReducer: UpgradeReducer<any, any>;\n  description?: string;\n};\n\nexport type UpgradeManifest<TVersions extends readonly number[]> = {\n  documentType: string;\n  latestVersion: TupleMember<TVersions>;  // union of versions, e.g. 1 | 2 | 3\n  supportedVersions: TVersions;           // the tuple, e.g. [1, 2, 3]\n  upgrades: {\n    // keys: \"v2\" | \"v3\" | ... \u2014 no \"v1\" key (v1 is the base)\n    [V in Exclude<TupleMember<TVersions>, 1> as `v${V}`]: UpgradeTransition;\n  };\n};\n```\n\nPass `TVersions` as a `readonly number[]` tuple (use `as const`). The type forces an `upgrades` key for every supported version except `1`: a manifest for `[1, 2, 3]` requires `v2` and `v3`. There is no `v1` key, because v1 is the base version. Registry methods type the manifest loosely as `UpgradeManifest<readonly number[]>`.\n\nThe registry does not cross-check a manifest's versions against registered modules. Registering a manifest whose `supportedVersions` do not match the registered module versions succeeds.\n\n### Authoring a manifest\n\nManifest files are codegen output and carry a `WARNING: DO NOT EDIT` header. You author them by adding versions and upgrade reducers through codegen, not by editing the manifest by hand. The generated shape splits across three files.\n\n`versions.ts` declares the tuple:\n\n```typescript\nexport const supportedVersions = [1, 2] as const;\nexport const latestVersion = supportedVersions[1];\n```\n\nA transition file (`v2.ts`) holds the reducer for one step:\n\n```typescript\nimport type { UpgradeTransition } from \"document-model\";\n\nexport const v2: UpgradeTransition = {\n  toVersion: 2,\n  upgradeReducer, // (document: PHDocument<StateV1>, action) => PHDocument<StateV2>\n  description: \"\",\n};\n```\n\n`upgrade-manifest.ts` assembles them:\n\n```typescript\nimport type { UpgradeManifest } from \"document-model\";\nimport { v2 } from \"./v2.js\";\nimport { latestVersion, supportedVersions } from \"./versions.js\";\n\nexport const todoUpgradeManifest: UpgradeManifest<typeof supportedVersions> = {\n  documentType: \"test/todo\",\n  latestVersion,\n  supportedVersions,\n  upgrades: { v2 }, // key \"v2\", no \"v1\"\n};\n```\n\nA manifest with only v1 has an empty `upgrades: {}`.\n\n### Upgrade API\n\n#### `registerUpgradeManifests`\n\n```typescript\nregisterUpgradeManifests(\n  ...manifests: UpgradeManifest<readonly number[]>[]\n): RegistrationResult<UpgradeManifest<readonly number[]>>[];\n```\n\nRegisters one or more manifests. A manifest with a falsy `documentType`, or one whose type already has a manifest (`DuplicateManifestError`), produces an error result. Like `registerModules`, this method never throws and returns one [`RegistrationResult`](#registrationresult) per input. Use `withUpgradeManifests` on the builder to register at build time.\n\n#### `unregisterUpgradeManifests`\n\n```typescript\nunregisterUpgradeManifests(...documentTypes: string[]): boolean;\n```\n\nRemoves the manifest for each given type. Returns `true` only if every type had a manifest; removes those that exist regardless.\n\n#### `getUpgradeManifest`\n\n```typescript\ngetUpgradeManifest(documentType: string): UpgradeManifest<readonly number[]>;\n```\n\nReturns the registered manifest. Throws `ManifestNotFoundError` if none exists for the type.\n\n#### `computeUpgradePath`\n\n```typescript\ncomputeUpgradePath(\n  documentType: string,\n  fromVersion: number,\n  toVersion: number,\n): UpgradeTransition[];\n```\n\nReturns the ordered transitions to move from `fromVersion` to `toVersion`. It walks the keys `v(from+1)..v(to)`. Behavior:\n\n- `from === to` returns `[]` and skips the manifest lookup, so it does not throw when no manifest is registered.\n- `to < from` throws `DowngradeNotSupportedError` before the manifest lookup.\n- No manifest for the type throws `ManifestNotFoundError`.\n- A missing step in the range throws `MissingUpgradeTransitionError`.\n\n#### `getUpgradeReducer`\n\n```typescript\ngetUpgradeReducer(\n  documentType: string,\n  fromVersion: number,\n  toVersion: number,\n): UpgradeReducer<any, any>;\n```\n\nReturns the reducer for a **single** step, where `toVersion` must equal `fromVersion + 1`. The single-step check runs before the manifest lookup, so `InvalidUpgradeStepError` fires even with no manifest registered. Throws `ManifestNotFoundError` if no manifest exists, or `MissingUpgradeTransitionError` if that one transition is absent.\n\n### Upgrade path example\n\nGiven `todoUpgradeManifest` for `test/todo` with `supportedVersions = [1, 2]`:\n\n```typescript\nconst registry = useModelRegistry();\nif (!registry) return;\n\n// Steps from v1 to v2: [v2 transition]\nconst path = registry.computeUpgradePath(\"test/todo\", 1, 2);\n\n// Same version: [] \u2014 no manifest needed\nconst none = registry.computeUpgradePath(\"test/todo\", 2, 2);\n\n// Single-step reducer for v1 -> v2\nconst reducer = registry.getUpgradeReducer(\"test/todo\", 1, 2);\n\n// Downgrade throws DowngradeNotSupportedError\nregistry.computeUpgradePath(\"test/todo\", 2, 1);\n\n// Non-single-step throws InvalidUpgradeStepError (no v3 manifest needed to fail)\nregistry.getUpgradeReducer(\"test/todo\", 1, 3);\n```\n\n## Errors\n\nAll registry errors extend `Error` and set `name`. Each class with a static `isError(error): error is X` guard checks `Error.isError(error) && error.name === \"...\"`.\n\n| Error | `name` | Thrown when |\n| --- | --- | --- |\n| `ModuleNotFoundError` | `\"ModuleNotFoundError\"` | `getModule` for an unknown type or version; `getSupportedVersions` / `getLatestVersion` with no modules for the type. Carries `documentType`, `requestedVersion`. |\n| `DuplicateModuleError` | `\"DuplicateModuleError\"` | `registerModules` when the `(documentType, version)` pair is already registered (returned in the result, not thrown). |\n| `InvalidModuleError` | `\"InvalidModuleError\"` | Reserved for malformed modules. The in-memory `DocumentModelRegistry` does **not** throw it \u2014 duplicate is its only validation. |\n| `DuplicateManifestError` | `\"DuplicateManifestError\"` | `registerUpgradeManifests` when the type already has a manifest (returned in the result). |\n| `ManifestNotFoundError` | `\"ManifestNotFoundError\"` | `getUpgradeManifest`, and `computeUpgradePath` / `getUpgradeReducer`, when no manifest is registered for the type. |\n| `DowngradeNotSupportedError` | `\"DowngradeNotSupportedError\"` | `computeUpgradePath` when `toVersion < fromVersion`. Carries `documentType`, `fromVersion`, `toVersion`. |\n| `MissingUpgradeTransitionError` | `\"MissingUpgradeTransitionError\"` | `computeUpgradePath` (a `v{n}` step in range is absent) and `getUpgradeReducer` (the single `v{to}` step is absent). |\n| `InvalidUpgradeStepError` | `\"InvalidUpgradeStepError\"` | `getUpgradeReducer` when `toVersion !== fromVersion + 1`. |\n\nOf these, `ModuleNotFoundError`, `DuplicateModuleError`, and `DuplicateManifestError` have an `isError` guard. `InvalidModuleError`, `ManifestNotFoundError`, `MissingUpgradeTransitionError`, and `InvalidUpgradeStepError` do not \u2014 match on `error.name` instead.\n\nExport-surface gap: only `ModuleNotFoundError`, `DuplicateModuleError`, `InvalidModuleError`, and `DuplicateManifestError` are exported from `@powerhousedao/reactor`. `ManifestNotFoundError`, `MissingUpgradeTransitionError`, and `InvalidUpgradeStepError` are not exported, and the package has no `registry` subpath, so match those three on `error.name` even though `getUpgradeManifest`, `computeUpgradePath`, and `getUpgradeReducer` throw them. `DowngradeNotSupportedError` is available from `@powerhousedao/shared/document-model`.\n\nFor the full reactor error taxonomy across job execution, sync, and storage, see [Error handling](/academy/Reference/Reactor/ErrorHandling).\n\n## Related\n\n- [Working with the Reactor](/academy/Reference/Reactor/WorkingWithTheReactor)\n- [Advanced Reactor Usage](/academy/Reference/Reactor/AdvancedReactorUsage) \u2014 `ReactorBuilder` wiring\n- [IReactorClient](/academy/Reference/Reactor/ReactorClient)\n- [Processors](/academy/Reference/Reactor/Processors) and [Building a processor](/academy/Build/WorkWithData/BuildingAProcessor)\n",
+        "createdAt": "2026-09-02T21:38:05.509Z",
+        "createdBy": "repo-docs-sync",
+        "sourceType": "DOCUMENTATION",
+        "description": "Powerhouse v6.2.2-dev.74 (unchanged since v6.2.2-dev.47) \u2014 The document model registry holds document model modules keyed by document type and version. The reactor uses it to resolve the reducer, uti\u2026",
+        "publishedAt": "2026-08-05T18:51:06.000Z"
+      },
+      "timestampUtcMs": "2026-09-02T21:38:05.509Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "",
+    "timestampUtcMs": "2026-09-02T21:38:05.605Z",
+    "action": {
+      "type": "UPGRADE_DOCUMENT",
+      "input": {
+        "model": "bai/source",
+        "toVersion": 1,
+        "documentId": "14416670-d2d3-4de5-9dfd-7c6e175280c2",
+        "fromVersion": 0,
+        "initialState": {
+          "auth": {
+            "grants": [],
+            "version": 0
+          },
+          "local": {},
+          "global": {
+            "title": null,
+            "status": "INBOX",
+            "content": null,
+            "createdAt": null,
+            "createdBy": null,
+            "provenance": null,
+            "sourceType": null,
+            "description": null,
+            "extractedClaims": [],
+            "extractionStats": null
+          },
+          "document": {
+            "hash": {
+              "encoding": "base64",
+              "algorithm": "sha1"
+            },
+            "version": 1
+          }
+        }
+      },
+      "timestampUtcMs": "2026-09-02T21:38:05.605Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "BKU/JszUiXEKCU+QxiqpLshDDDE=",
+    "timestampUtcMs": "2026-09-03T07:49:38.830Z",
+    "action": {
+      "type": "ADD_EXTRACTED_CLAIM",
+      "input": {
+        "claimRef": "c69178f9-07b7-4407-94e6-90ed96d3003e"
+      },
+      "timestampUtcMs": "2026-09-03T07:49:38.830Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "ADvhMqurEZdrMZmnHyokokqcg5w=",
+    "timestampUtcMs": "2026-09-03T07:49:39.343Z",
+    "action": {
+      "type": "ADD_EXTRACTED_CLAIM",
+      "input": {
+        "claimRef": "d2734cd9-d7b1-4ede-b4d7-ee69e5d178c4"
+      },
+      "timestampUtcMs": "2026-09-03T07:49:39.343Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "KkeLYw8z7aSaQjo+bOoCKzcDTmw=",
+    "timestampUtcMs": "2026-09-03T07:49:39.818Z",
+    "action": {
+      "type": "ADD_EXTRACTED_CLAIM",
+      "input": {
+        "claimRef": "be2821a2-5ab3-4119-b670-d34a809cc5cc"
+      },
+      "timestampUtcMs": "2026-09-03T07:49:39.818Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "voheROI3OT63S78NJOdihkKjF4A=",
+    "timestampUtcMs": "2026-09-03T07:49:40.281Z",
+    "action": {
+      "type": "ADD_EXTRACTED_CLAIM",
+      "input": {
+        "claimRef": "30a67455-2be8-4c97-b0d6-1a11397c5af7"
+      },
+      "timestampUtcMs": "2026-09-03T07:49:40.281Z"
+    }
+  },
+  {
+    "index": 5,
+    "hash": "x24833/aNGk/bKngJCv1ecWmDMI=",
+    "timestampUtcMs": "2026-09-03T07:49:40.738Z",
+    "action": {
+      "type": "ADD_EXTRACTED_CLAIM",
+      "input": {
+        "claimRef": "63cdce40-628c-49e9-b13c-9efc59073c6a"
+      },
+      "timestampUtcMs": "2026-09-03T07:49:40.738Z"
+    }
+  },
+  {
+    "index": 6,
+    "hash": "/86e9BXXLo2BQmSjWgUFcVuBtyA=",
+    "timestampUtcMs": "2026-09-03T07:49:43.460Z",
+    "action": {
+      "type": "RECORD_EXTRACTION_STATS",
+      "input": {
+        "skipRate": 0.375,
+        "claimCount": 5,
+        "extractedAt": "2026-09-03T07:49:43.460Z",
+        "extractedBy": "knowledge-agent",
+        "skippedCount": 3
+      },
+      "timestampUtcMs": "2026-09-03T07:49:43.460Z"
+    }
+  },
+  {
+    "index": 7,
+    "hash": "R9GsNBGTNmdvxZleW0+j8eX/S7Y=",
+    "timestampUtcMs": "2026-09-03T07:49:44.078Z",
+    "action": {
+      "type": "SET_SOURCE_STATUS",
+      "input": {
+        "status": "EXTRACTED"
+      },
+      "timestampUtcMs": "2026-09-03T07:49:44.078Z"
+    }
+  }
+]

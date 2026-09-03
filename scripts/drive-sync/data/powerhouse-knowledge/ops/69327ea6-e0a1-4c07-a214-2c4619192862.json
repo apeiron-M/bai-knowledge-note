@@ -1,0 +1,681 @@
+[
+  {
+    "index": 0,
+    "hash": "",
+    "timestampUtcMs": "2026-09-02T22:09:36.620Z",
+    "action": {
+      "type": "CREATE_DOCUMENT",
+      "input": {
+        "meta": {},
+        "name": "auth-last-grant-wins",
+        "slug": "",
+        "model": "bai/knowledge-note",
+        "branch": "main",
+        "signing": {
+          "nonce": "",
+          "publicKey": {},
+          "signature": "69327ea6-e0a1-4c07-a214-2c4619192862",
+          "documentType": "bai/knowledge-note",
+          "createdAtUtcIso": "2026-09-02T22:09:36.620Z"
+        },
+        "version": 0,
+        "documentId": "69327ea6-e0a1-4c07-a214-2c4619192862",
+        "protocolVersions": {
+          "base-reducer": 2
+        }
+      },
+      "timestampUtcMs": "2026-09-02T22:09:36.620Z"
+    }
+  },
+  {
+    "index": 0,
+    "hash": "ArpDRD67C9llgAl3Z40KIBzAlGc=",
+    "timestampUtcMs": "2026-09-02T22:09:36.527Z",
+    "action": {
+      "type": "SET_TITLE",
+      "input": {
+        "title": "Grants are walked in list order and the last applicable one wins, so MOVE_GRANT can change a verdict without changing any grant",
+        "updatedAt": "2026-09-02T22:09:36.527Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:09:36.527Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "",
+    "timestampUtcMs": "2026-09-02T22:09:36.620Z",
+    "action": {
+      "type": "UPGRADE_DOCUMENT",
+      "input": {
+        "model": "bai/knowledge-note",
+        "toVersion": 1,
+        "documentId": "69327ea6-e0a1-4c07-a214-2c4619192862",
+        "fromVersion": 0,
+        "initialState": {
+          "auth": {
+            "grants": [],
+            "version": 0
+          },
+          "local": {
+            "lastViewedAt": null,
+            "personalTags": []
+          },
+          "global": {
+            "links": [],
+            "model": null,
+            "scope": null,
+            "title": null,
+            "editor": null,
+            "inputs": [],
+            "models": [],
+            "status": "DRAFT",
+            "topics": [],
+            "content": null,
+            "context": null,
+            "modelId": null,
+            "modules": [],
+            "outputs": [],
+            "version": null,
+            "computes": null,
+            "filePath": null,
+            "noteType": null,
+            "severity": null,
+            "hooksUsed": [],
+            "rootCause": null,
+            "confidence": null,
+            "consumedBy": [],
+            "provenance": null,
+            "sourceType": null,
+            "targetType": null,
+            "cardinality": null,
+            "description": null,
+            "alternatives": [],
+            "consequences": [],
+            "errorMessage": null,
+            "relationType": null,
+            "correctPattern": null,
+            "decisionStatus": null,
+            "dispatchTargets": [],
+            "lifecycleEvents": []
+          },
+          "document": {
+            "hash": {
+              "encoding": "base64",
+              "algorithm": "sha1"
+            },
+            "version": 1
+          }
+        }
+      },
+      "timestampUtcMs": "2026-09-02T22:09:36.620Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "ZYoAubor5SDx9J2VcIs7LMrid2g=",
+    "timestampUtcMs": "2026-09-02T22:09:36.527Z",
+    "action": {
+      "type": "SET_DESCRIPTION",
+      "input": {
+        "updatedAt": "2026-09-02T22:09:36.527Z",
+        "description": "A grant applies when its capability covers the request and its principal matches the subject; none applying means deny. The document-acl demo shows order, not existence, deciding the verdict."
+      },
+      "timestampUtcMs": "2026-09-02T22:09:36.527Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "",
+    "timestampUtcMs": "2026-09-02T22:17:34.768Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "metadata": {
+          "reason": "Extracted from docs/specs/auth-scope.md at v6.2.2-dev.74 \u2014 Decision algorithm: decide(), covers(), scopeReaches(), matches()",
+          "confidence": "grounded"
+        },
+        "sourceId": "69327ea6-e0a1-4c07-a214-2c4619192862",
+        "targetId": "223bb12a-be7f-4209-9ab2-f04f7bb2b6c8",
+        "relationshipType": "DERIVED_FROM"
+      },
+      "timestampUtcMs": "2026-09-02T22:17:34.768Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "JLpVtS+QNDVsFp0G4a7mXa23KJY=",
+    "timestampUtcMs": "2026-09-02T22:09:36.527Z",
+    "action": {
+      "type": "SET_NOTE_TYPE",
+      "input": {
+        "noteType": "CONCEPT",
+        "updatedAt": "2026-09-02T22:09:36.527Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:09:36.527Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "",
+    "timestampUtcMs": "2026-09-02T22:17:36.027Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "metadata": {
+          "reason": "Extracted from apps/academy/docs/academy/04-Reference/01-Reactor/11-Authorization.md at v6.2.2-dev.74 \u2014 'How a decision is made'",
+          "confidence": "grounded"
+        },
+        "sourceId": "69327ea6-e0a1-4c07-a214-2c4619192862",
+        "targetId": "17dc46b0-f733-467c-99d7-ae8fbe0fb0e4",
+        "relationshipType": "DERIVED_FROM"
+      },
+      "timestampUtcMs": "2026-09-02T22:17:36.027Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "LpxTxBGS0N5w0DQsefXZ3B9iJhc=",
+    "timestampUtcMs": "2026-09-02T22:09:36.527Z",
+    "action": {
+      "type": "SET_CONTENT",
+      "input": {
+        "content": "The decision algorithm is a fold over the grant list:\n\n```\ndecision = deny\nfor grant in grants (in order):\n  if covers(grant, request) and matches(grant.principal, subject, ctx)\n     and (grant.where is absent or eval(grant.where, ctx)):\n        decision = grant.effect          # the last applicable grant wins\nreturn decision\n```\n\nSo grants are a **stack**, and evaluation is **default deny, last applicable grant wins**. The `document-acl` demo appends `g-deny-bob` after the `{anyone}` allow on `ADD_ENTRY` \u2014 Bob is refused; then moves that deny to index 0 with `MOVE_GRANT` \u2014 the later `g-anyone-add` wins again and Bob is back. \"Order decides, not existence.\"\n\n`covers` is where the two subtleties live. A capability whose scope is absent or `\"*\"` reaches every scope. For `execute`, an absent `operation` list means every operation in the scope. And a read is also covered by an *allow* on execute for that scope (see the note on execute conferring read). `matches` is exact for `{anyone}`, case-insensitive for `{address}`, folded at the operation's position for `{group}`, and a condition evaluation for `{match}`.\n\nBecause the rule is positional and a grant can be shadowed by a later deny, \"administration is reachable\" is a question about the whole list, not about a grant being present \u2014 which is what the self-lockout guardrail checks.\n\n_Source: docs/specs/auth-scope.md (Powerhouse v6.2.2-dev.74)._\n_Source: apps/academy/docs/academy/04-Reference/01-Reactor/11-Authorization.md (Powerhouse v6.2.2-dev.74)._\n_Source: apps/academy/docs/academy/05-Lookup/00-Cookbook.md (Powerhouse v6.2.2-dev.74)._\n\n## Provenance\n- `docs/specs/auth-scope.md` \u2014 Decision algorithm: decide(), covers(), scopeReaches(), matches()\n- `apps/academy/docs/academy/04-Reference/01-Reactor/11-Authorization.md` \u2014 'How a decision is made'\n- `apps/academy/docs/academy/05-Lookup/00-Cookbook.md` \u2014 Document ACL: 'Last applicable grant wins' and the moveGrant demo\n\n_Recorded from the Powerhouse repository at **v6.2.2-dev.74** during the v6.2.2-dev.74 source sync._",
+        "updatedAt": "2026-09-02T22:09:36.527Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:09:36.527Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "",
+    "timestampUtcMs": "2026-09-02T22:17:37.065Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "metadata": {
+          "reason": "Extracted from apps/academy/docs/academy/05-Lookup/00-Cookbook.md at v6.2.2-dev.74 \u2014 Document ACL: 'Last applicable grant wins' and the moveGrant demo",
+          "confidence": "grounded"
+        },
+        "sourceId": "69327ea6-e0a1-4c07-a214-2c4619192862",
+        "targetId": "f2aaccd3-7c26-4327-881e-f5ad9e267b89",
+        "relationshipType": "DERIVED_FROM"
+      },
+      "timestampUtcMs": "2026-09-02T22:17:37.065Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "LM5zKBO0v12Ah89OdqHcJp1H1CE=",
+    "timestampUtcMs": "2026-09-02T22:09:36.527Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "153b30fd-359b-4b25-8ab6-7e9ecf939126",
+        "name": "auth-scope"
+      },
+      "timestampUtcMs": "2026-09-02T22:09:36.527Z"
+    }
+  },
+  {
+    "index": 5,
+    "hash": "",
+    "timestampUtcMs": "2026-09-02T22:17:38.349Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "metadata": {
+          "reason": "Reads the grant shape defined there as an ordered list and gives the fold that decides",
+          "confidence": "grounded"
+        },
+        "sourceId": "69327ea6-e0a1-4c07-a214-2c4619192862",
+        "targetId": "4f23f5d4-b93e-430c-8dc3-b9835a6b83dc",
+        "relationshipType": "BUILDS_ON"
+      },
+      "timestampUtcMs": "2026-09-02T22:17:38.349Z"
+    }
+  },
+  {
+    "index": 5,
+    "hash": "udikYiJyNlqymhw+A/ZZd9Yk8lQ=",
+    "timestampUtcMs": "2026-09-02T22:09:36.527Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "27d4bc9a-48d5-4585-bbba-999a8241d43a",
+        "name": "authorization"
+      },
+      "timestampUtcMs": "2026-09-02T22:09:36.527Z"
+    }
+  },
+  {
+    "index": 6,
+    "hash": "",
+    "timestampUtcMs": "2026-09-02T22:17:38.819Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "metadata": {
+          "reason": "Because a later deny shadows an earlier allow, reachability of administration has to be validated over the whole list",
+          "confidence": "grounded"
+        },
+        "sourceId": "69327ea6-e0a1-4c07-a214-2c4619192862",
+        "targetId": "20f4f796-28d4-4b9c-aa3f-4b71a8b0df1a",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-09-02T22:17:38.819Z"
+    }
+  },
+  {
+    "index": 6,
+    "hash": "HEQsewUuIXTsspkT6kuge2znUF0=",
+    "timestampUtcMs": "2026-09-02T22:09:36.527Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "6ce9dacf-226e-4002-b991-d0301584c6a0",
+        "name": "decision-model"
+      },
+      "timestampUtcMs": "2026-09-02T22:09:36.527Z"
+    }
+  },
+  {
+    "index": 7,
+    "hash": "",
+    "timestampUtcMs": "2026-09-02T22:17:39.294Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "metadata": {
+          "reason": "The fold's deny outcome is what gets stored on the refused operation as deniedReason",
+          "confidence": "grounded"
+        },
+        "sourceId": "69327ea6-e0a1-4c07-a214-2c4619192862",
+        "targetId": "82d40b14-6aae-45a5-8335-e07c0ee29ae9",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-09-02T22:17:39.294Z"
+    }
+  },
+  {
+    "index": 7,
+    "hash": "eTnijBUwAVhaV7TCyGYuB4+XKyw=",
+    "timestampUtcMs": "2026-09-02T22:09:36.527Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "version",
+        "value": "v6.2.2-dev.74",
+        "updatedAt": "2026-09-02T22:09:36.527Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:09:36.527Z"
+    }
+  },
+  {
+    "index": 8,
+    "hash": "",
+    "timestampUtcMs": "2026-09-02T22:22:02.324Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "metadata": {
+          "reason": "Extracted from docs/specs/auth-scope.md at v6.2.2-dev.74 \u2014 Decision algorithm: decide(), covers(), scopeReaches(), matches()",
+          "confidence": "grounded"
+        },
+        "sourceId": "69327ea6-e0a1-4c07-a214-2c4619192862",
+        "targetId": "223bb12a-be7f-4209-9ab2-f04f7bb2b6c8",
+        "relationshipType": "DERIVED_FROM"
+      },
+      "timestampUtcMs": "2026-09-02T22:22:02.324Z"
+    }
+  },
+  {
+    "index": 8,
+    "hash": "EVMUrkU7cOWAjlAvkCTxnRGUvAM=",
+    "timestampUtcMs": "2026-09-02T22:09:36.527Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "filePath",
+        "value": "docs/specs/auth-scope.md",
+        "updatedAt": "2026-09-02T22:09:36.527Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:09:36.527Z"
+    }
+  },
+  {
+    "index": 9,
+    "hash": "",
+    "timestampUtcMs": "2026-09-02T22:22:03.105Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "metadata": {
+          "reason": "Extracted from apps/academy/docs/academy/04-Reference/01-Reactor/11-Authorization.md at v6.2.2-dev.74 \u2014 'How a decision is made'",
+          "confidence": "grounded"
+        },
+        "sourceId": "69327ea6-e0a1-4c07-a214-2c4619192862",
+        "targetId": "17dc46b0-f733-467c-99d7-ae8fbe0fb0e4",
+        "relationshipType": "DERIVED_FROM"
+      },
+      "timestampUtcMs": "2026-09-02T22:22:03.105Z"
+    }
+  },
+  {
+    "index": 9,
+    "hash": "IV4Nb6Gfm5vrHKZXleyt04uQBfU=",
+    "timestampUtcMs": "2026-09-02T22:09:36.527Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "confidence",
+        "value": "grounded",
+        "updatedAt": "2026-09-02T22:09:36.527Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:09:36.527Z"
+    }
+  },
+  {
+    "index": 10,
+    "hash": "",
+    "timestampUtcMs": "2026-09-02T22:22:03.639Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "metadata": {
+          "reason": "Extracted from apps/academy/docs/academy/05-Lookup/00-Cookbook.md at v6.2.2-dev.74 \u2014 Document ACL: 'Last applicable grant wins' and the moveGrant demo",
+          "confidence": "grounded"
+        },
+        "sourceId": "69327ea6-e0a1-4c07-a214-2c4619192862",
+        "targetId": "f2aaccd3-7c26-4327-881e-f5ad9e267b89",
+        "relationshipType": "DERIVED_FROM"
+      },
+      "timestampUtcMs": "2026-09-02T22:22:03.639Z"
+    }
+  },
+  {
+    "index": 10,
+    "hash": "Xk3CDAucXgkqD99Br5XH0NgON7I=",
+    "timestampUtcMs": "2026-09-02T22:09:39.088Z",
+    "action": {
+      "type": "SET_PROVENANCE",
+      "input": {
+        "author": "knowledge-agent",
+        "createdAt": "2026-09-02T22:09:39.088Z",
+        "sourceOrigin": "DERIVED"
+      },
+      "timestampUtcMs": "2026-09-02T22:09:39.088Z"
+    }
+  },
+  {
+    "index": 11,
+    "hash": "",
+    "timestampUtcMs": "2026-09-02T22:22:04.494Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "metadata": {
+          "reason": "Reads the grant shape defined there as an ordered list and gives the fold that decides",
+          "confidence": "grounded"
+        },
+        "sourceId": "69327ea6-e0a1-4c07-a214-2c4619192862",
+        "targetId": "4f23f5d4-b93e-430c-8dc3-b9835a6b83dc",
+        "relationshipType": "BUILDS_ON"
+      },
+      "timestampUtcMs": "2026-09-02T22:22:04.494Z"
+    }
+  },
+  {
+    "index": 11,
+    "hash": "ki4S2d5HwvWqCOFu4JriIupIhCY=",
+    "timestampUtcMs": "2026-09-02T22:09:39.574Z",
+    "action": {
+      "type": "SUBMIT_FOR_REVIEW",
+      "input": {
+        "id": "5c490c9a-8d9b-4655-9b33-33f078d69a8f",
+        "actor": "knowledge-agent",
+        "comment": "extracted from the Powerhouse repository at v6.2.2-dev.74",
+        "timestamp": "2026-09-02T22:09:39.574Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:09:39.574Z"
+    }
+  },
+  {
+    "index": 12,
+    "hash": "",
+    "timestampUtcMs": "2026-09-02T22:22:05.021Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "metadata": {
+          "reason": "Because a later deny shadows an earlier allow, reachability of administration has to be validated over the whole list",
+          "confidence": "grounded"
+        },
+        "sourceId": "69327ea6-e0a1-4c07-a214-2c4619192862",
+        "targetId": "20f4f796-28d4-4b9c-aa3f-4b71a8b0df1a",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-09-02T22:22:05.021Z"
+    }
+  },
+  {
+    "index": 12,
+    "hash": "SCv5v0PfEqDZ/a5c4PP6KyS6YpU=",
+    "timestampUtcMs": "2026-09-02T22:09:40.075Z",
+    "action": {
+      "type": "APPROVE_NOTE",
+      "input": {
+        "id": "101c53b4-2a8c-4662-aaff-a343978f6972",
+        "actor": "liberuum",
+        "comment": "claim checked against the cited repository file at the pinned tag",
+        "timestamp": "2026-09-02T22:09:40.075Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:09:40.075Z"
+    }
+  },
+  {
+    "index": 13,
+    "hash": "",
+    "timestampUtcMs": "2026-09-02T22:22:05.501Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "metadata": {
+          "reason": "The fold's deny outcome is what gets stored on the refused operation as deniedReason",
+          "confidence": "grounded"
+        },
+        "sourceId": "69327ea6-e0a1-4c07-a214-2c4619192862",
+        "targetId": "82d40b14-6aae-45a5-8335-e07c0ee29ae9",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-09-02T22:22:05.501Z"
+    }
+  },
+  {
+    "index": 13,
+    "hash": "MTJ+xF1qVYzJ4eqI6nBOmxWoq8U=",
+    "timestampUtcMs": "2026-09-02T22:15:29.844Z",
+    "action": {
+      "type": "SET_TITLE",
+      "input": {
+        "title": "Grants are walked in list order and the last applicable one wins, so MOVE_GRANT can change a verdict without changing any grant",
+        "updatedAt": "2026-09-02T22:15:29.844Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:15:29.844Z"
+    }
+  },
+  {
+    "index": 14,
+    "hash": "MTJ+xF1qVYzJ4eqI6nBOmxWoq8U=",
+    "timestampUtcMs": "2026-09-02T22:15:29.844Z",
+    "action": {
+      "type": "SET_DESCRIPTION",
+      "input": {
+        "updatedAt": "2026-09-02T22:15:29.844Z",
+        "description": "A grant applies when its capability covers the request and its principal matches the subject; none applying means deny. The document-acl demo shows order, not existence, deciding the verdict."
+      },
+      "timestampUtcMs": "2026-09-02T22:15:29.844Z"
+    }
+  },
+  {
+    "index": 15,
+    "hash": "MTJ+xF1qVYzJ4eqI6nBOmxWoq8U=",
+    "timestampUtcMs": "2026-09-02T22:15:29.844Z",
+    "action": {
+      "type": "SET_NOTE_TYPE",
+      "input": {
+        "noteType": "CONCEPT",
+        "updatedAt": "2026-09-02T22:15:29.844Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:15:29.844Z"
+    }
+  },
+  {
+    "index": 16,
+    "hash": "MTJ+xF1qVYzJ4eqI6nBOmxWoq8U=",
+    "timestampUtcMs": "2026-09-02T22:15:29.844Z",
+    "action": {
+      "type": "SET_CONTENT",
+      "input": {
+        "content": "The decision algorithm is a fold over the grant list:\n\n```\ndecision = deny\nfor grant in grants (in order):\n  if covers(grant, request) and matches(grant.principal, subject, ctx)\n     and (grant.where is absent or eval(grant.where, ctx)):\n        decision = grant.effect          # the last applicable grant wins\nreturn decision\n```\n\nSo grants are a **stack**, and evaluation is **default deny, last applicable grant wins**. The `document-acl` demo appends `g-deny-bob` after the `{anyone}` allow on `ADD_ENTRY` \u2014 Bob is refused; then moves that deny to index 0 with `MOVE_GRANT` \u2014 the later `g-anyone-add` wins again and Bob is back. \"Order decides, not existence.\"\n\n`covers` is where the two subtleties live. A capability whose scope is absent or `\"*\"` reaches every scope. For `execute`, an absent `operation` list means every operation in the scope. And a read is also covered by an *allow* on execute for that scope (see the note on execute conferring read). `matches` is exact for `{anyone}`, case-insensitive for `{address}`, folded at the operation's position for `{group}`, and a condition evaluation for `{match}`.\n\nBecause the rule is positional and a grant can be shadowed by a later deny, \"administration is reachable\" is a question about the whole list, not about a grant being present \u2014 which is what the self-lockout guardrail checks.\n\n_Source: docs/specs/auth-scope.md (Powerhouse v6.2.2-dev.74)._\n_Source: apps/academy/docs/academy/04-Reference/01-Reactor/11-Authorization.md (Powerhouse v6.2.2-dev.74)._\n_Source: apps/academy/docs/academy/05-Lookup/00-Cookbook.md (Powerhouse v6.2.2-dev.74)._\n\n## Provenance\n- `docs/specs/auth-scope.md` \u2014 Decision algorithm: decide(), covers(), scopeReaches(), matches()\n- `apps/academy/docs/academy/04-Reference/01-Reactor/11-Authorization.md` \u2014 'How a decision is made'\n- `apps/academy/docs/academy/05-Lookup/00-Cookbook.md` \u2014 Document ACL: 'Last applicable grant wins' and the moveGrant demo\n\n_Recorded from the Powerhouse repository at **v6.2.2-dev.74** during the v6.2.2-dev.74 source sync._",
+        "updatedAt": "2026-09-02T22:15:29.844Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:15:29.844Z"
+    }
+  },
+  {
+    "index": 17,
+    "hash": "MTJ+xF1qVYzJ4eqI6nBOmxWoq8U=",
+    "timestampUtcMs": "2026-09-02T22:15:29.844Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "version",
+        "value": "v6.2.2-dev.74",
+        "updatedAt": "2026-09-02T22:15:29.844Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:15:29.844Z"
+    }
+  },
+  {
+    "index": 18,
+    "hash": "MTJ+xF1qVYzJ4eqI6nBOmxWoq8U=",
+    "timestampUtcMs": "2026-09-02T22:15:29.844Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "filePath",
+        "value": "docs/specs/auth-scope.md",
+        "updatedAt": "2026-09-02T22:15:29.844Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:15:29.844Z"
+    }
+  },
+  {
+    "index": 19,
+    "hash": "MTJ+xF1qVYzJ4eqI6nBOmxWoq8U=",
+    "timestampUtcMs": "2026-09-02T22:15:29.844Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "confidence",
+        "value": "grounded",
+        "updatedAt": "2026-09-02T22:15:29.844Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:15:29.844Z"
+    }
+  },
+  {
+    "index": 20,
+    "hash": "+Z9f0PYr6zmJQsjEweLXxO+hfXs=",
+    "timestampUtcMs": "2026-09-02T22:20:11.032Z",
+    "action": {
+      "type": "SET_TITLE",
+      "input": {
+        "title": "Grants are walked in list order and the last applicable one wins, so MOVE_GRANT can change a verdict without changing any grant",
+        "updatedAt": "2026-09-02T22:20:11.032Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:20:11.032Z"
+    }
+  },
+  {
+    "index": 21,
+    "hash": "+Z9f0PYr6zmJQsjEweLXxO+hfXs=",
+    "timestampUtcMs": "2026-09-02T22:20:11.032Z",
+    "action": {
+      "type": "SET_DESCRIPTION",
+      "input": {
+        "updatedAt": "2026-09-02T22:20:11.032Z",
+        "description": "A grant applies when its capability covers the request and its principal matches the subject; none applying means deny. The document-acl demo shows order, not existence, deciding the verdict."
+      },
+      "timestampUtcMs": "2026-09-02T22:20:11.032Z"
+    }
+  },
+  {
+    "index": 22,
+    "hash": "+Z9f0PYr6zmJQsjEweLXxO+hfXs=",
+    "timestampUtcMs": "2026-09-02T22:20:11.032Z",
+    "action": {
+      "type": "SET_NOTE_TYPE",
+      "input": {
+        "noteType": "CONCEPT",
+        "updatedAt": "2026-09-02T22:20:11.032Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:20:11.032Z"
+    }
+  },
+  {
+    "index": 23,
+    "hash": "+Z9f0PYr6zmJQsjEweLXxO+hfXs=",
+    "timestampUtcMs": "2026-09-02T22:20:11.032Z",
+    "action": {
+      "type": "SET_CONTENT",
+      "input": {
+        "content": "The decision algorithm is a fold over the grant list:\n\n```\ndecision = deny\nfor grant in grants (in order):\n  if covers(grant, request) and matches(grant.principal, subject, ctx)\n     and (grant.where is absent or eval(grant.where, ctx)):\n        decision = grant.effect          # the last applicable grant wins\nreturn decision\n```\n\nSo grants are a **stack**, and evaluation is **default deny, last applicable grant wins**. The `document-acl` demo appends `g-deny-bob` after the `{anyone}` allow on `ADD_ENTRY` \u2014 Bob is refused; then moves that deny to index 0 with `MOVE_GRANT` \u2014 the later `g-anyone-add` wins again and Bob is back. \"Order decides, not existence.\"\n\n`covers` is where the two subtleties live. A capability whose scope is absent or `\"*\"` reaches every scope. For `execute`, an absent `operation` list means every operation in the scope. And a read is also covered by an *allow* on execute for that scope (see the note on execute conferring read). `matches` is exact for `{anyone}`, case-insensitive for `{address}`, folded at the operation's position for `{group}`, and a condition evaluation for `{match}`.\n\nBecause the rule is positional and a grant can be shadowed by a later deny, \"administration is reachable\" is a question about the whole list, not about a grant being present \u2014 which is what the self-lockout guardrail checks.\n\n_Source: docs/specs/auth-scope.md (Powerhouse v6.2.2-dev.74)._\n_Source: apps/academy/docs/academy/04-Reference/01-Reactor/11-Authorization.md (Powerhouse v6.2.2-dev.74)._\n_Source: apps/academy/docs/academy/05-Lookup/00-Cookbook.md (Powerhouse v6.2.2-dev.74)._\n\n## Provenance\n- `docs/specs/auth-scope.md` \u2014 Decision algorithm: decide(), covers(), scopeReaches(), matches()\n- `apps/academy/docs/academy/04-Reference/01-Reactor/11-Authorization.md` \u2014 'How a decision is made'\n- `apps/academy/docs/academy/05-Lookup/00-Cookbook.md` \u2014 Document ACL: 'Last applicable grant wins' and the moveGrant demo\n\n_Recorded from the Powerhouse repository at **v6.2.2-dev.74** during the v6.2.2-dev.74 source sync._",
+        "updatedAt": "2026-09-02T22:20:11.032Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:20:11.032Z"
+    }
+  },
+  {
+    "index": 24,
+    "hash": "+Z9f0PYr6zmJQsjEweLXxO+hfXs=",
+    "timestampUtcMs": "2026-09-02T22:20:11.032Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "version",
+        "value": "v6.2.2-dev.74",
+        "updatedAt": "2026-09-02T22:20:11.032Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:20:11.032Z"
+    }
+  },
+  {
+    "index": 25,
+    "hash": "+Z9f0PYr6zmJQsjEweLXxO+hfXs=",
+    "timestampUtcMs": "2026-09-02T22:20:11.032Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "filePath",
+        "value": "docs/specs/auth-scope.md",
+        "updatedAt": "2026-09-02T22:20:11.032Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:20:11.032Z"
+    }
+  },
+  {
+    "index": 26,
+    "hash": "+Z9f0PYr6zmJQsjEweLXxO+hfXs=",
+    "timestampUtcMs": "2026-09-02T22:20:11.032Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "confidence",
+        "value": "grounded",
+        "updatedAt": "2026-09-02T22:20:11.032Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:20:11.032Z"
+    }
+  }
+]

@@ -1,0 +1,15 @@
+{
+  "title": "Contradiction: Lazy sync would create one\u2026 / Drive apps read drive-wide data\u2026",
+  "status": "DISSOLVED",
+  "content": "## Involved claims\n\n- Lazy sync would create one forced channel per opened document, because the forward-only cursor forbids widening a live channel's filter \u2014 `fe8f33f5-b69c-4080-878a-1cd2cbe6bb17`\n- Drive apps read drive-wide data with useDocumentsInSelectedDrive() and start creation with showCreateDocumentModal() \u2014 `af8252cd-271d-41ea-b99d-9fe2a7123cea`\n\n## Why this exists\n\nA `CONTRADICTS` relationship was recorded between these two notes at 2026-09-03T07:30:13.380Z. The vault treats a recorded contradiction as an open question, not a fact to leave implicit: until someone resolves or dissolves this tension, both claims stand and readers should see that they disagree.\n\n## How to close it\n\n- **Resolve** when one claim is correct: say which, and consider `SUPERSEDES` on the winner.\n- **Dissolve** when both are right in different scopes: state the boundary in each note's content.",
+  "observedAt": "2026-09-03T07:30:13.380Z",
+  "observedBy": "graph-indexer",
+  "resolution": "Dissolved: the conflict is real but conditional on an unshipped opt-in. ADR 0001 is Proposed, and preloadDocuments defaults to today's eager mode, so a drive app reading useDocumentsInSelectedDrive is correct as written. Under preloadDocuments:false it would receive a silent partial list \u2014 which the ADR itself records as a prerequisite risk: \"audit every such caller before flipping the flag.\" Both claims stand; the boundary is the flag.",
+  "resolvedAt": "2026-09-03T07:59:22.717Z",
+  "description": "\u201cLazy sync would create one forced channel per opened document, because the forward-only cursor forbids widening a live channel's filter\u201d contradicts \u201cDrive apps read drive-wide data with useDocumentsInSelectedDrive() and start creation with showCreateDocumentModal()\u201d. Opened automatically from a CONTRADICTS link \u2014 resolve if one side is right, dissolve if both hold in different contexts.",
+  "involvedRefs": [
+    "fe8f33f5-b69c-4080-878a-1cd2cbe6bb17",
+    "af8252cd-271d-41ea-b99d-9fe2a7123cea"
+  ],
+  "links": []
+}

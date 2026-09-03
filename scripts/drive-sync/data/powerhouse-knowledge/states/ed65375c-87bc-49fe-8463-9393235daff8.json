@@ -1,0 +1,110 @@
+{
+  "links": [
+    {
+      "id": "lnk-d1796b9e-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "d1796b9e-28e2-4afa-880d-7bf201976d62",
+      "targetTitle": "graphql-schema-lingua-franca-cqrs"
+    },
+    {
+      "id": "lnk-a442a64c-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "a442a64c-1ed5-41ef-ba49-96dc33c81fa5",
+      "targetTitle": "subgraphs-extend-document-models-via-graphql"
+    },
+    {
+      "id": "lnk-9c9ffb95-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "9c9ffb95-9100-4839-b00e-57ec8b6ccbe6",
+      "targetTitle": "account-transactions-model-tracks-financial-transaction-records"
+    },
+    {
+      "id": "lnk-1be77199-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "1be77199-1c9b-4871-9bab-047315fb6638",
+      "targetTitle": "accounts-model-defines-the-chart-of-accounts-structure"
+    },
+    {
+      "id": "lnk-e723705c-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "e723705c-3ad6-444f-86c2-a07c947bac6e",
+      "targetTitle": "Academy \u203a Build \u203a ManualTodoTutorial \u203a Write the document specification",
+      "reason": "Backing page found by content match in the v6.2.2-dev.74 source backfill \u2014 identifiers graphql from the claim appear in this page (text identical at v6.2.2-dev.47 and v6.2.2-dev.74); attribution, not the original extraction record",
+      "confidence": "grounded"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Powerhouse uses GraphQL Schema Definition Language to define both state schemas and operation inputs",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "fb9b6168-add1-49c3-ad6b-65494754c368",
+      "name": "graphql",
+      "topicDocumentId": null
+    },
+    {
+      "id": "23f5f81a-cb91-45fc-b040-283c6b73daa3",
+      "name": "schema",
+      "topicDocumentId": null
+    },
+    {
+      "id": "a18420cb-38ed-4d70-89ca-5475c89cc61f",
+      "name": "specification-driven-design",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "Powerhouse uses GraphQL SDL as the specification language for document models. This serves two purposes:\n\n- **State schema**: `type` definitions describe the document's data structure (e.g., `type TodoListState { items: [TodoItem!]! }`).\n- **Operations schema**: `input` definitions describe the payload for each operation (e.g., `input AddTodoItemInput { text: String! }`).\n\nGraphQL SDL was chosen because it provides a clear, structured schema that supports custom scalar types (like `OID`, `Currency`, `DateTime`), enforces non-null constraints, and serves as a machine-readable specification that both humans and AI agents can understand. This is the foundation of Powerhouse's \"Specification Driven Design & Development\" approach.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": "v6.2.2-dev.74",
+  "computes": null,
+  "filePath": "apps/academy/docs/academy/03-Build/01-ManualTodoTutorial/02-DefineToDoListDocumentModel.md",
+  "noteType": "DECISION",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "knowledge-agent",
+    "createdAt": "2026-04-02T12:00:00.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-09-02T21:32:57.579Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "GraphQL SDL is the shared specification language for document structure (types) and operation payloads (input types).",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "5da5a1d3-84b8-4ed1-8fe3-77827083d327",
+      "actor": "claude",
+      "comment": "Knowledge registered against powerhouse v6.2.2-dev.47",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-14T12:00:00.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "d97ba71b-dae8-47e7-9594-32c2c25924b0",
+      "actor": "liberuum",
+      "comment": "Canonical as of powerhouse v6.2.2-dev.47",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-14T12:00:00.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

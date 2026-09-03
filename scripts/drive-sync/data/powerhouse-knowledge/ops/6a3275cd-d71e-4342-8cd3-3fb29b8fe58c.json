@@ -1,0 +1,464 @@
+[
+  {
+    "index": 0,
+    "hash": "",
+    "timestampUtcMs": "2026-08-14T12:15:03.219Z",
+    "action": {
+      "type": "CREATE_DOCUMENT",
+      "input": {
+        "meta": {},
+        "name": "processors-receive-operations-with-context",
+        "slug": "",
+        "model": "bai/knowledge-note",
+        "branch": "main",
+        "signing": {
+          "nonce": "",
+          "publicKey": {},
+          "signature": "6a3275cd-d71e-4342-8cd3-3fb29b8fe58c",
+          "documentType": "bai/knowledge-note",
+          "createdAtUtcIso": "2026-08-14T12:15:03.219Z"
+        },
+        "version": 0,
+        "documentId": "6a3275cd-d71e-4342-8cd3-3fb29b8fe58c",
+        "protocolVersions": {
+          "base-reducer": 2
+        }
+      },
+      "timestampUtcMs": "2026-08-14T12:15:03.219Z"
+    }
+  },
+  {
+    "index": 0,
+    "hash": "TxCnFSni792eFAgiDhvPf6uNPOg=",
+    "timestampUtcMs": "2026-08-14T12:35:40.000Z",
+    "action": {
+      "type": "SET_TITLE",
+      "input": {
+        "title": "Processors implement IProcessor with onOperations receiving OperationWithContext items filtered by document type, scope, branch, and document ID",
+        "updatedAt": "2026-08-14T12:35:40.000Z"
+      },
+      "timestampUtcMs": "2026-08-14T12:35:40.000Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "",
+    "timestampUtcMs": "2026-08-14T12:15:03.219Z",
+    "action": {
+      "type": "UPGRADE_DOCUMENT",
+      "input": {
+        "model": "bai/knowledge-note",
+        "toVersion": 1,
+        "documentId": "6a3275cd-d71e-4342-8cd3-3fb29b8fe58c",
+        "fromVersion": 0,
+        "initialState": {
+          "auth": {
+            "grants": [],
+            "version": 0
+          },
+          "local": {
+            "lastViewedAt": null,
+            "personalTags": []
+          },
+          "global": {
+            "links": [],
+            "model": null,
+            "scope": null,
+            "title": null,
+            "editor": null,
+            "inputs": [],
+            "models": [],
+            "status": "DRAFT",
+            "topics": [],
+            "content": null,
+            "context": null,
+            "modelId": null,
+            "modules": [],
+            "outputs": [],
+            "version": null,
+            "computes": null,
+            "filePath": null,
+            "noteType": null,
+            "severity": null,
+            "hooksUsed": [],
+            "rootCause": null,
+            "confidence": null,
+            "consumedBy": [],
+            "provenance": null,
+            "sourceType": null,
+            "targetType": null,
+            "cardinality": null,
+            "description": null,
+            "alternatives": [],
+            "consequences": [],
+            "errorMessage": null,
+            "relationType": null,
+            "correctPattern": null,
+            "decisionStatus": null,
+            "dispatchTargets": [],
+            "lifecycleEvents": []
+          },
+          "document": {
+            "hash": {
+              "encoding": "base64",
+              "algorithm": "sha1"
+            },
+            "version": 1
+          }
+        }
+      },
+      "timestampUtcMs": "2026-08-14T12:15:03.219Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "hhGn8uOWX5EkNQJlhuLl2ilLjmg=",
+    "timestampUtcMs": "2026-08-14T12:35:40.000Z",
+    "action": {
+      "type": "SET_DESCRIPTION",
+      "input": {
+        "updatedAt": "2026-08-14T12:35:40.000Z",
+        "description": "ProcessorFilter determines which ops a processor receives; factory creates instances per drive with configurable filters."
+      },
+      "timestampUtcMs": "2026-08-14T12:35:40.000Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "",
+    "timestampUtcMs": "2026-08-14T12:38:17.971Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "6a3275cd-d71e-4342-8cd3-3fb29b8fe58c",
+        "targetId": "bb0b6db7-14f1-491c-8975-4475ff68481d",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-08-14T12:38:17.971Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "u7hlN8f91GrmB+zGqzLvBjfHZbI=",
+    "timestampUtcMs": "2026-08-14T12:35:40.000Z",
+    "action": {
+      "type": "SET_NOTE_TYPE",
+      "input": {
+        "noteType": "ARCHITECTURE",
+        "updatedAt": "2026-08-14T12:35:40.000Z"
+      },
+      "timestampUtcMs": "2026-08-14T12:35:40.000Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "",
+    "timestampUtcMs": "2026-08-14T12:38:18.054Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "6a3275cd-d71e-4342-8cd3-3fb29b8fe58c",
+        "targetId": "43b82c81-4d28-4e69-9a0a-84c0dddb87ef",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-08-14T12:38:18.054Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "MsJIKwyWJvXln977kmnRsLaUZ2k=",
+    "timestampUtcMs": "2026-08-14T12:35:40.000Z",
+    "action": {
+      "type": "SET_CONTENT",
+      "input": {
+        "content": "A processor implements `IProcessor` with `onOperations(operations: OperationWithContext[])` and `onDisconnect()`. Each `OperationWithContext` pairs an `Operation` (action type, input, index, hash, timestamp) with `OperationContext` (documentId, documentType, scope, branch, ordinal for cross-document ordering, resultingState as JSON). `ProcessorFilter` has optional arrays: `documentType`, `scope`, `branch`, `documentId`. A field that is `undefined` or `[]` matches everything; a field with values matches when the operation's context value is in the array; all present fields must match. The `\"*\"` wildcard is honored **only in `documentId`** \u2014 in `documentType`, `scope`, and `branch` a literal `\"*\"` matches only an operation whose value is the string `\"*\"`, i.e. nothing real. To match all scopes, omit `scope` or set it to `[]`; never write `scope: [\"*\"]` (the codegen analytics template emits exactly that, and it silently matches no operations). The factory pattern: outer function receives `IProcessorHostModule` (shared resources), inner function receives `driveHeader` per drive, returns `ProcessorRecord[]`. By default processors replay all history; set `startFrom: \"current\"` to skip historical operations.\n\n_Corrected 2026-08-13 against Powerhouse v6.2.2-dev.45._",
+        "updatedAt": "2026-08-14T12:35:40.000Z"
+      },
+      "timestampUtcMs": "2026-08-14T12:35:40.000Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "",
+    "timestampUtcMs": "2026-08-14T12:38:18.138Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "6a3275cd-d71e-4342-8cd3-3fb29b8fe58c",
+        "targetId": "f2124247-9efa-48bb-bda6-c929f59e4f12",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-08-14T12:38:18.138Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "aLFHOJ3hDiwejHad7BJtL2WxnSw=",
+    "timestampUtcMs": "2026-08-14T12:35:40.000Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "version",
+        "value": "v6.2.2-dev.44",
+        "updatedAt": "2026-08-14T12:35:40.000Z"
+      },
+      "timestampUtcMs": "2026-08-14T12:35:40.000Z"
+    }
+  },
+  {
+    "index": 5,
+    "hash": "",
+    "timestampUtcMs": "2026-08-14T12:38:18.228Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "6a3275cd-d71e-4342-8cd3-3fb29b8fe58c",
+        "targetId": "da8a8131-7b4e-4849-afd9-fcc21bf68ca4",
+        "relationshipType": "BUILDS_ON"
+      },
+      "timestampUtcMs": "2026-08-14T12:38:18.228Z"
+    }
+  },
+  {
+    "index": 5,
+    "hash": "L3Xceb0VdK7DovKnhkf+QHEyZ9Q=",
+    "timestampUtcMs": "2026-08-14T12:35:40.000Z",
+    "action": {
+      "type": "SET_PROVENANCE",
+      "input": {
+        "author": "knowledge-agent",
+        "createdAt": "2026-04-02T12:00:00.000Z",
+        "sourceOrigin": "DERIVED"
+      },
+      "timestampUtcMs": "2026-08-14T12:35:40.000Z"
+    }
+  },
+  {
+    "index": 6,
+    "hash": "",
+    "timestampUtcMs": "2026-09-02T21:29:22.173Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "metadata": {
+          "reason": "Backing page found by content match in the v6.2.2-dev.74 source backfill \u2014 identifiers onoperations, operationwithcontext, processorfilter from the claim appear in this page (text revised between v6.2.2-dev.47 and v6.2.2-dev.74 \u2014 re-verified in the v6.2.2-dev.74 pass); attribution, not the original extraction record",
+          "confidence": "grounded"
+        },
+        "sourceId": "6a3275cd-d71e-4342-8cd3-3fb29b8fe58c",
+        "targetId": "c12de121-f575-4c71-95f7-bd298533dd51",
+        "relationshipType": "DERIVED_FROM"
+      },
+      "timestampUtcMs": "2026-09-02T21:29:22.173Z"
+    }
+  },
+  {
+    "index": 6,
+    "hash": "3EZQ4VxKLLM+fsdCA92tU01rtcg=",
+    "timestampUtcMs": "2026-08-14T12:35:40.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "411e65dd-7231-44e7-898c-941743f5171e",
+        "name": "processors",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-08-14T12:35:40.000Z"
+    }
+  },
+  {
+    "index": 7,
+    "hash": "",
+    "timestampUtcMs": "2026-09-02T21:31:24.090Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "metadata": {
+          "reason": "Backing page found by content match in the v6.2.2-dev.74 source backfill \u2014 identifiers onoperations, operationwithcontext, processorfilter from the claim appear in this page (text revised between v6.2.2-dev.47 and v6.2.2-dev.74 \u2014 re-verified in the v6.2.2-dev.74 pass); attribution, not the original extraction record",
+          "confidence": "grounded"
+        },
+        "sourceId": "6a3275cd-d71e-4342-8cd3-3fb29b8fe58c",
+        "targetId": "c12de121-f575-4c71-95f7-bd298533dd51",
+        "relationshipType": "DERIVED_FROM"
+      },
+      "timestampUtcMs": "2026-09-02T21:31:24.090Z"
+    }
+  },
+  {
+    "index": 7,
+    "hash": "dk6BtkWON/gTl0V8cDUg+LmNpw4=",
+    "timestampUtcMs": "2026-08-14T12:35:40.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "d1033059-2c24-4372-9448-79e7c6c23653",
+        "name": "operations",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-08-14T12:35:40.000Z"
+    }
+  },
+  {
+    "index": 8,
+    "hash": "",
+    "timestampUtcMs": "2026-09-02T21:35:27.585Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "metadata": {
+          "reason": "Backing page found by content match in the v6.2.2-dev.74 source backfill \u2014 identifiers onoperations, operationwithcontext, processorfilter from the claim appear in this page (text identical at v6.2.2-dev.47 and v6.2.2-dev.74); attribution, not the original extraction record",
+          "confidence": "grounded"
+        },
+        "sourceId": "6a3275cd-d71e-4342-8cd3-3fb29b8fe58c",
+        "targetId": "f79ca4d1-3d30-4fdb-9d01-60f55655faeb",
+        "relationshipType": "DERIVED_FROM"
+      },
+      "timestampUtcMs": "2026-09-02T21:35:27.585Z"
+    }
+  },
+  {
+    "index": 8,
+    "hash": "agh64vdhmeoiWZV8D3/p7ehR6Ro=",
+    "timestampUtcMs": "2026-08-14T12:35:40.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "4468e921-6a96-4687-a2d2-fa6e1aa56125",
+        "name": "factory-pattern",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-08-14T12:35:40.000Z"
+    }
+  },
+  {
+    "index": 9,
+    "hash": "",
+    "timestampUtcMs": "2026-09-02T21:38:09.606Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "metadata": {
+          "reason": "Backing page found by content match in the v6.2.2-dev.74 source backfill \u2014 identifiers onoperations, operationwithcontext, processorfilter from the claim appear in this page (text revised between v6.2.2-dev.47 and v6.2.2-dev.74 \u2014 re-verified in the v6.2.2-dev.74 pass); attribution, not the original extraction record",
+          "confidence": "grounded"
+        },
+        "sourceId": "6a3275cd-d71e-4342-8cd3-3fb29b8fe58c",
+        "targetId": "c12de121-f575-4c71-95f7-bd298533dd51",
+        "relationshipType": "DERIVED_FROM"
+      },
+      "timestampUtcMs": "2026-09-02T21:38:09.606Z"
+    }
+  },
+  {
+    "index": 9,
+    "hash": "7U5HiUI4rmMwhZKg41GNL3Ac4ZQ=",
+    "timestampUtcMs": "2026-08-14T12:35:40.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "aa65c3be-396b-48d8-b3d1-51c9409cb940",
+        "name": "CQRS",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-08-14T12:35:40.000Z"
+    }
+  },
+  {
+    "index": 10,
+    "hash": "Dczhd3xPRPNhp3o0LMQ77ScJ65Y=",
+    "timestampUtcMs": "2026-08-14T14:37:13.000Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "version",
+        "value": "v6.2.2-dev.47",
+        "updatedAt": "2026-08-14T12:00:00.000Z"
+      },
+      "timestampUtcMs": "2026-08-14T14:37:13.000Z"
+    }
+  },
+  {
+    "index": 11,
+    "hash": "XlBR0aRZNorN7MNGx7bopKoZFcw=",
+    "timestampUtcMs": "2026-08-14T14:37:13.000Z",
+    "action": {
+      "type": "SUBMIT_FOR_REVIEW",
+      "input": {
+        "id": "8a17c6d4-3b69-4d53-98fc-a2c768184561",
+        "actor": "claude",
+        "comment": "Knowledge registered against powerhouse v6.2.2-dev.47",
+        "timestamp": "2026-08-14T12:00:00.000Z"
+      },
+      "timestampUtcMs": "2026-08-14T14:37:13.000Z"
+    }
+  },
+  {
+    "index": 12,
+    "hash": "E4cfD1pQh/3yvKgm/7udRCM4D54=",
+    "timestampUtcMs": "2026-08-14T14:37:13.000Z",
+    "action": {
+      "type": "APPROVE_NOTE",
+      "input": {
+        "id": "51151cb4-d44e-45de-9161-e5f6fbff2322",
+        "actor": "liberuum",
+        "comment": "Canonical as of powerhouse v6.2.2-dev.47",
+        "timestamp": "2026-08-14T12:00:00.000Z"
+      },
+      "timestampUtcMs": "2026-08-14T14:37:13.000Z"
+    }
+  },
+  {
+    "index": 13,
+    "hash": "i9i/xtVVsZcRVAAZxRFAjHj3tOI=",
+    "timestampUtcMs": "2026-09-02T21:29:22.917Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "filePath",
+        "value": "apps/academy/docs/academy/04-Reference/01-Reactor/05-Processors.md",
+        "updatedAt": "2026-09-02T21:29:22.917Z"
+      },
+      "timestampUtcMs": "2026-09-02T21:29:22.917Z"
+    }
+  },
+  {
+    "index": 14,
+    "hash": "E9QHJ1TKsiuW453fETsAhCfAJAo=",
+    "timestampUtcMs": "2026-09-02T21:31:24.233Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "filePath",
+        "value": "apps/academy/docs/academy/04-Reference/01-Reactor/05-Processors.md",
+        "updatedAt": "2026-09-02T21:31:24.233Z"
+      },
+      "timestampUtcMs": "2026-09-02T21:31:24.233Z"
+    }
+  },
+  {
+    "index": 15,
+    "hash": "aur5qDLpuInE68SNv8YT1tRNojI=",
+    "timestampUtcMs": "2026-09-02T21:35:28.691Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "filePath",
+        "value": "apps/academy/docs/academy/03-Build/04-WorkWithData/04-BuildingAProcessor.md",
+        "updatedAt": "2026-09-02T21:35:28.691Z"
+      },
+      "timestampUtcMs": "2026-09-02T21:35:28.691Z"
+    }
+  },
+  {
+    "index": 16,
+    "hash": "13ecyUIoj84xbDy27f8TsyqGVG8=",
+    "timestampUtcMs": "2026-09-02T22:26:29.463Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "version",
+        "value": "v6.2.2-dev.74",
+        "updatedAt": "2026-09-02T22:26:29.463Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:26:29.463Z"
+    }
+  }
+]

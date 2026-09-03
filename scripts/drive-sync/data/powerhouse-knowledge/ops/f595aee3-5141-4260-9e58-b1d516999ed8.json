@@ -1,0 +1,500 @@
+[
+  {
+    "index": 0,
+    "hash": "",
+    "timestampUtcMs": "2026-09-03T07:20:10.921Z",
+    "action": {
+      "type": "CREATE_DOCUMENT",
+      "input": {
+        "meta": {},
+        "name": "hashfirst-reserve-rejects",
+        "slug": "",
+        "model": "bai/knowledge-note",
+        "branch": "main",
+        "signing": {
+          "nonce": "",
+          "publicKey": {},
+          "signature": "f595aee3-5141-4260-9e58-b1d516999ed8",
+          "documentType": "bai/knowledge-note",
+          "createdAtUtcIso": "2026-09-03T07:20:10.921Z"
+        },
+        "version": 0,
+        "documentId": "f595aee3-5141-4260-9e58-b1d516999ed8",
+        "protocolVersions": {
+          "base-reducer": 2
+        }
+      },
+      "timestampUtcMs": "2026-09-03T07:20:10.921Z"
+    }
+  },
+  {
+    "index": 0,
+    "hash": "zTG3P8SudArrAgI00T9/33EuKQU=",
+    "timestampUtcMs": "2026-09-03T07:20:12.399Z",
+    "action": {
+      "type": "SET_TITLE",
+      "input": {
+        "title": "reserve() rejects a hash the reactor can already serve, but succeeds when the hash is merely known and evicted",
+        "updatedAt": "2026-09-03T07:20:12.399Z"
+      },
+      "timestampUtcMs": "2026-09-03T07:20:12.399Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "",
+    "timestampUtcMs": "2026-09-03T07:20:10.921Z",
+    "action": {
+      "type": "UPGRADE_DOCUMENT",
+      "input": {
+        "model": "bai/knowledge-note",
+        "toVersion": 1,
+        "documentId": "f595aee3-5141-4260-9e58-b1d516999ed8",
+        "fromVersion": 0,
+        "initialState": {
+          "auth": {
+            "grants": [],
+            "version": 0
+          },
+          "local": {
+            "lastViewedAt": null,
+            "personalTags": []
+          },
+          "global": {
+            "links": [],
+            "model": null,
+            "scope": null,
+            "title": null,
+            "editor": null,
+            "inputs": [],
+            "models": [],
+            "status": "DRAFT",
+            "topics": [],
+            "content": null,
+            "context": null,
+            "modelId": null,
+            "modules": [],
+            "outputs": [],
+            "version": null,
+            "computes": null,
+            "filePath": null,
+            "noteType": null,
+            "severity": null,
+            "hooksUsed": [],
+            "rootCause": null,
+            "confidence": null,
+            "consumedBy": [],
+            "provenance": null,
+            "sourceType": null,
+            "targetType": null,
+            "cardinality": null,
+            "description": null,
+            "alternatives": [],
+            "consequences": [],
+            "errorMessage": null,
+            "relationType": null,
+            "correctPattern": null,
+            "decisionStatus": null,
+            "dispatchTargets": [],
+            "lifecycleEvents": []
+          },
+          "document": {
+            "hash": {
+              "encoding": "base64",
+              "algorithm": "sha1"
+            },
+            "version": 1
+          }
+        }
+      },
+      "timestampUtcMs": "2026-09-03T07:20:10.921Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "bJXI5o5oGqF7muP/drG/cO5/U0k=",
+    "timestampUtcMs": "2026-09-03T07:20:12.399Z",
+    "action": {
+      "type": "SET_DESCRIPTION",
+      "input": {
+        "updatedAt": "2026-09-03T07:20:12.399Z",
+        "description": "The criterion is whether the reactor can serve the bytes now, not whether it has seen the hash. An available hash returns AttachmentAlreadyExists and sends nothing; an evicted one gets restored."
+      },
+      "timestampUtcMs": "2026-09-03T07:20:12.399Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "",
+    "timestampUtcMs": "2026-09-03T07:21:32.156Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "metadata": {
+          "reason": "Extracted from packages/reactor/docs/attachments-hash-first.md at v6.2.2-dev.74 \u2014 Reservation semantics \u203a reserve() with a known hash",
+          "confidence": "grounded"
+        },
+        "sourceId": "f595aee3-5141-4260-9e58-b1d516999ed8",
+        "targetId": "e25bc920-d3bc-4b36-9c7f-cb35b64c27b9",
+        "relationshipType": "DERIVED_FROM"
+      },
+      "timestampUtcMs": "2026-09-03T07:21:32.156Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "kei9FAfcQESJtC1DOC4Rv4Lf52g=",
+    "timestampUtcMs": "2026-09-03T07:20:12.399Z",
+    "action": {
+      "type": "SET_NOTE_TYPE",
+      "input": {
+        "noteType": "PATTERN",
+        "updatedAt": "2026-09-03T07:20:12.399Z"
+      },
+      "timestampUtcMs": "2026-09-03T07:20:12.399Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "",
+    "timestampUtcMs": "2026-09-03T07:21:32.677Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "metadata": {
+          "reason": "Dedup can only move before the upload because the client supplies the hash at reservation time",
+          "confidence": "grounded"
+        },
+        "sourceId": "f595aee3-5141-4260-9e58-b1d516999ed8",
+        "targetId": "04232cfe-983e-46ba-ba27-64b2107a9f12",
+        "relationshipType": "BUILDS_ON"
+      },
+      "timestampUtcMs": "2026-09-03T07:21:32.677Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "axgJ1aVA6+XhSPHLJ/Bc8a2TMv0=",
+    "timestampUtcMs": "2026-09-03T07:20:12.399Z",
+    "action": {
+      "type": "SET_CONTENT",
+      "input": {
+        "content": "`reserve({ clientHash })` consults the store before creating a reservation, and the four outcomes are the whole dedup story:\n\n| Store state for the hash | `reserve()` outcome |\n| --- | --- |\n| row exists, `status='available'` | **Rejects** with `AttachmentAlreadyExists` carrying the canonical ref. The client uses the ref directly; **zero bytes are transmitted** |\n| row exists, `status='evicted'` | **Succeeds.** Metadata is known but the bytes are gone; the client holds them and the upload restores them through the existing evicted-restore path |\n| no row, live reservation with the same `client_hash` | **Succeeds** \u2014 concurrent reservations are deliberately permitted |\n| no row, no live reservation | **Succeeds** \u2014 the normal case |\n\nThe first row is the improvement over the old flow, which uploaded *everything* before dedup was even detectable. The second is the subtle one: the rejection criterion is deliberately \"**can this reactor currently serve the bytes**\", not \"has it ever seen this hash\". An evicted hash is known but not servable, and the reserving client is, at that moment, the most reliable source of those bytes \u2014 rejecting it would discard the only guaranteed copy and leave restoration dependent on some peer still having it.\n\n## Provenance\n- `packages/reactor/docs/attachments-hash-first.md` \u2014 Reservation semantics \u203a reserve() with a known hash\n\n_Extracted from the Powerhouse repository at **v6.2.2-dev.74**._",
+        "updatedAt": "2026-09-03T07:20:12.399Z"
+      },
+      "timestampUtcMs": "2026-09-03T07:20:12.399Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "",
+    "timestampUtcMs": "2026-09-03T07:21:33.161Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "metadata": {
+          "reason": "The evicted-but-known state this rule treats specially is exactly what LRU eviction leaves behind",
+          "confidence": "grounded"
+        },
+        "sourceId": "f595aee3-5141-4260-9e58-b1d516999ed8",
+        "targetId": "c2fedf9c-464c-422f-bf81-7f505b87e335",
+        "relationshipType": "BUILDS_ON"
+      },
+      "timestampUtcMs": "2026-09-03T07:21:33.161Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "+7kIENXquX7Jw4qcpSYOED5EEXw=",
+    "timestampUtcMs": "2026-09-03T07:20:12.399Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "7fb17d7b-0b51-4f2e-8924-e74e71913b77",
+        "name": "attachments"
+      },
+      "timestampUtcMs": "2026-09-03T07:20:12.399Z"
+    }
+  },
+  {
+    "index": 5,
+    "hash": "",
+    "timestampUtcMs": "2026-09-03T07:21:33.612Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "metadata": {
+          "reason": "The same rejection is a dedup oracle, which is why the endpoint requires upload-equivalent authorization",
+          "confidence": "grounded"
+        },
+        "sourceId": "f595aee3-5141-4260-9e58-b1d516999ed8",
+        "targetId": "9d492c64-ed5b-4f00-8efe-98354c9fd6b4",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-09-03T07:21:33.612Z"
+    }
+  },
+  {
+    "index": 5,
+    "hash": "pJyMPIzZHPSo0ro8dti7AGrJzDI=",
+    "timestampUtcMs": "2026-09-03T07:20:12.399Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "9f006f1c-a4f3-4357-9c09-aae825e777fc",
+        "name": "hash-first"
+      },
+      "timestampUtcMs": "2026-09-03T07:20:12.399Z"
+    }
+  },
+  {
+    "index": 6,
+    "hash": "",
+    "timestampUtcMs": "2026-09-03T07:23:24.388Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "metadata": {
+          "reason": "Extracted from packages/reactor/docs/attachments-hash-first.md at v6.2.2-dev.74 \u2014 Reservation semantics \u203a reserve() with a known hash",
+          "confidence": "grounded"
+        },
+        "sourceId": "f595aee3-5141-4260-9e58-b1d516999ed8",
+        "targetId": "e25bc920-d3bc-4b36-9c7f-cb35b64c27b9",
+        "relationshipType": "DERIVED_FROM"
+      },
+      "timestampUtcMs": "2026-09-03T07:23:24.388Z"
+    }
+  },
+  {
+    "index": 6,
+    "hash": "x7hXqJaiDvfO7SU+fGxZsxOsFTk=",
+    "timestampUtcMs": "2026-09-03T07:20:12.399Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "c8fe94b4-09cb-435e-9b91-a39b5184c489",
+        "name": "deduplication"
+      },
+      "timestampUtcMs": "2026-09-03T07:20:12.399Z"
+    }
+  },
+  {
+    "index": 7,
+    "hash": "",
+    "timestampUtcMs": "2026-09-03T07:23:24.869Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "metadata": {
+          "reason": "Dedup can only move before the upload because the client supplies the hash at reservation time",
+          "confidence": "grounded"
+        },
+        "sourceId": "f595aee3-5141-4260-9e58-b1d516999ed8",
+        "targetId": "04232cfe-983e-46ba-ba27-64b2107a9f12",
+        "relationshipType": "BUILDS_ON"
+      },
+      "timestampUtcMs": "2026-09-03T07:23:24.869Z"
+    }
+  },
+  {
+    "index": 7,
+    "hash": "ItQrWOErcm2rxXXFQln6DxB0Wck=",
+    "timestampUtcMs": "2026-09-03T07:20:12.399Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "bb2b21e8-a1ce-4013-97e1-a9ef75b1b813",
+        "name": "reservations"
+      },
+      "timestampUtcMs": "2026-09-03T07:20:12.399Z"
+    }
+  },
+  {
+    "index": 8,
+    "hash": "",
+    "timestampUtcMs": "2026-09-03T07:23:25.315Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "metadata": {
+          "reason": "The evicted-but-known state this rule treats specially is exactly what LRU eviction leaves behind",
+          "confidence": "grounded"
+        },
+        "sourceId": "f595aee3-5141-4260-9e58-b1d516999ed8",
+        "targetId": "c2fedf9c-464c-422f-bf81-7f505b87e335",
+        "relationshipType": "BUILDS_ON"
+      },
+      "timestampUtcMs": "2026-09-03T07:23:25.315Z"
+    }
+  },
+  {
+    "index": 8,
+    "hash": "CiSyOPTX0/9Qp2Ca5xqsfDAprR0=",
+    "timestampUtcMs": "2026-09-03T07:20:12.399Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "version",
+        "value": "v6.2.2-dev.74",
+        "updatedAt": "2026-09-03T07:20:12.399Z"
+      },
+      "timestampUtcMs": "2026-09-03T07:20:12.399Z"
+    }
+  },
+  {
+    "index": 9,
+    "hash": "",
+    "timestampUtcMs": "2026-09-03T07:23:25.982Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "metadata": {
+          "reason": "The same rejection is a dedup oracle, which is why the endpoint requires upload-equivalent authorization",
+          "confidence": "grounded"
+        },
+        "sourceId": "f595aee3-5141-4260-9e58-b1d516999ed8",
+        "targetId": "9d492c64-ed5b-4f00-8efe-98354c9fd6b4",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-09-03T07:23:25.982Z"
+    }
+  },
+  {
+    "index": 9,
+    "hash": "mnYf5hN8SAGRl7HCtx1zVC2ksSM=",
+    "timestampUtcMs": "2026-09-03T07:20:12.399Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "filePath",
+        "value": "packages/reactor/docs/attachments-hash-first.md",
+        "updatedAt": "2026-09-03T07:20:12.399Z"
+      },
+      "timestampUtcMs": "2026-09-03T07:20:12.399Z"
+    }
+  },
+  {
+    "index": 10,
+    "hash": "9X0uj00IHkBC8nsLleJ+rPjfjkA=",
+    "timestampUtcMs": "2026-09-03T07:20:15.000Z",
+    "action": {
+      "type": "SET_PROVENANCE",
+      "input": {
+        "author": "knowledge-agent",
+        "createdAt": "2026-09-03T07:20:15.000Z",
+        "sourceOrigin": "DERIVED"
+      },
+      "timestampUtcMs": "2026-09-03T07:20:15.000Z"
+    }
+  },
+  {
+    "index": 11,
+    "hash": "dwcL01IbPWcmAgy9tk3tcwPT4oQ=",
+    "timestampUtcMs": "2026-09-03T07:20:15.480Z",
+    "action": {
+      "type": "SUBMIT_FOR_REVIEW",
+      "input": {
+        "id": "f167e761-fbc6-4111-970c-7ff237d81a01",
+        "actor": "knowledge-agent",
+        "comment": "extracted from packages/reactor/docs/attachments-hash-first.md at v6.2.2-dev.74",
+        "timestamp": "2026-09-03T07:20:15.480Z"
+      },
+      "timestampUtcMs": "2026-09-03T07:20:15.480Z"
+    }
+  },
+  {
+    "index": 12,
+    "hash": "AasyV50Ugtejy6nxYqzY0mrC79s=",
+    "timestampUtcMs": "2026-09-03T07:20:18.687Z",
+    "action": {
+      "type": "APPROVE_NOTE",
+      "input": {
+        "id": "d2b86cf8-99ca-4fe7-88a0-3640a8c87568",
+        "actor": "liberuum",
+        "comment": "claim checked against the cited file at the pinned tag",
+        "timestamp": "2026-09-03T07:20:18.687Z"
+      },
+      "timestampUtcMs": "2026-09-03T07:20:18.687Z"
+    }
+  },
+  {
+    "index": 13,
+    "hash": "xPNDqVjARoW+GLms8UqPS+mkfdc=",
+    "timestampUtcMs": "2026-09-03T07:22:34.205Z",
+    "action": {
+      "type": "SET_TITLE",
+      "input": {
+        "title": "reserve() rejects a hash the reactor can already serve, but succeeds when the hash is merely known and evicted",
+        "updatedAt": "2026-09-03T07:22:34.205Z"
+      },
+      "timestampUtcMs": "2026-09-03T07:22:34.205Z"
+    }
+  },
+  {
+    "index": 14,
+    "hash": "xPNDqVjARoW+GLms8UqPS+mkfdc=",
+    "timestampUtcMs": "2026-09-03T07:22:34.205Z",
+    "action": {
+      "type": "SET_DESCRIPTION",
+      "input": {
+        "updatedAt": "2026-09-03T07:22:34.205Z",
+        "description": "The criterion is whether the reactor can serve the bytes now, not whether it has seen the hash. An available hash returns AttachmentAlreadyExists and sends nothing; an evicted one gets restored."
+      },
+      "timestampUtcMs": "2026-09-03T07:22:34.205Z"
+    }
+  },
+  {
+    "index": 15,
+    "hash": "xPNDqVjARoW+GLms8UqPS+mkfdc=",
+    "timestampUtcMs": "2026-09-03T07:22:34.205Z",
+    "action": {
+      "type": "SET_NOTE_TYPE",
+      "input": {
+        "noteType": "PATTERN",
+        "updatedAt": "2026-09-03T07:22:34.205Z"
+      },
+      "timestampUtcMs": "2026-09-03T07:22:34.205Z"
+    }
+  },
+  {
+    "index": 16,
+    "hash": "xPNDqVjARoW+GLms8UqPS+mkfdc=",
+    "timestampUtcMs": "2026-09-03T07:22:34.205Z",
+    "action": {
+      "type": "SET_CONTENT",
+      "input": {
+        "content": "`reserve({ clientHash })` consults the store before creating a reservation, and the four outcomes are the whole dedup story:\n\n| Store state for the hash | `reserve()` outcome |\n| --- | --- |\n| row exists, `status='available'` | **Rejects** with `AttachmentAlreadyExists` carrying the canonical ref. The client uses the ref directly; **zero bytes are transmitted** |\n| row exists, `status='evicted'` | **Succeeds.** Metadata is known but the bytes are gone; the client holds them and the upload restores them through the existing evicted-restore path |\n| no row, live reservation with the same `client_hash` | **Succeeds** \u2014 concurrent reservations are deliberately permitted |\n| no row, no live reservation | **Succeeds** \u2014 the normal case |\n\nThe first row is the improvement over the old flow, which uploaded *everything* before dedup was even detectable. The second is the subtle one: the rejection criterion is deliberately \"**can this reactor currently serve the bytes**\", not \"has it ever seen this hash\". An evicted hash is known but not servable, and the reserving client is, at that moment, the most reliable source of those bytes \u2014 rejecting it would discard the only guaranteed copy and leave restoration dependent on some peer still having it.\n\n## Provenance\n- `packages/reactor/docs/attachments-hash-first.md` \u2014 Reservation semantics \u203a reserve() with a known hash\n\n_Extracted from the Powerhouse repository at **v6.2.2-dev.74**._",
+        "updatedAt": "2026-09-03T07:22:34.205Z"
+      },
+      "timestampUtcMs": "2026-09-03T07:22:34.205Z"
+    }
+  },
+  {
+    "index": 17,
+    "hash": "xPNDqVjARoW+GLms8UqPS+mkfdc=",
+    "timestampUtcMs": "2026-09-03T07:22:34.205Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "version",
+        "value": "v6.2.2-dev.74",
+        "updatedAt": "2026-09-03T07:22:34.205Z"
+      },
+      "timestampUtcMs": "2026-09-03T07:22:34.205Z"
+    }
+  },
+  {
+    "index": 18,
+    "hash": "xPNDqVjARoW+GLms8UqPS+mkfdc=",
+    "timestampUtcMs": "2026-09-03T07:22:34.205Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "filePath",
+        "value": "packages/reactor/docs/attachments-hash-first.md",
+        "updatedAt": "2026-09-03T07:22:34.205Z"
+      },
+      "timestampUtcMs": "2026-09-03T07:22:34.205Z"
+    }
+  }
+]

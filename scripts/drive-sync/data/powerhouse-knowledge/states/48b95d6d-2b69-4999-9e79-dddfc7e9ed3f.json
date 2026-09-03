@@ -1,0 +1,104 @@
+{
+  "links": [
+    {
+      "id": "lnk-395c3ea0-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "395c3ea0-ce11-4b25-8bbb-7f68a7b169e1",
+      "targetTitle": "reactor-client-vs-reactor-interface"
+    },
+    {
+      "id": "lnk-955cc0e6-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "955cc0e6-a2f8-41f9-963f-bde2b278ab9c",
+      "targetTitle": "consistency-tokens-read-after-write"
+    },
+    {
+      "id": "lnk-095fcd1a-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "095fcd1a-1b4c-4f4c-bf24-6646cbe023f5",
+      "targetTitle": "moc-reactor-and-drives"
+    },
+    {
+      "id": "lnk-43f0b3b4-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "43f0b3b4-51f3-4d18-8c6c-b033d94e8bbc",
+      "targetTitle": "Academy \u203a Reference \u203a Reactor \u203a Working with the Reactor",
+      "reason": "The note names apps/academy/docs/academy/04-Reference/01-Reactor/01-WorkingWithTheReactor.md as its source; page text revised between v6.2.2-dev.47 and v6.2.2-dev.74 \u2014 re-verified in the v6.2.2-dev.74 pass",
+      "confidence": "grounded"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Every reactor mutation is a job moving through five statuses, of which only READ_READY and FAILED are terminal",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "f32d5b0b-5fbb-4f2b-b6d9-f4c6cbbf34ae",
+      "name": "reactor",
+      "topicDocumentId": null
+    },
+    {
+      "id": "d3da7d2b-4b24-47d8-963b-c92a4488d94a",
+      "name": "jobs",
+      "topicDocumentId": null
+    },
+    {
+      "id": "d8cc83c5-e588-4d1e-9323-810a9c2b19df",
+      "name": "lifecycle",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "Every mutation in the reactor is processed as a **job**, and the job \u2014 not the action \u2014 is the unit whose progress you can observe. Jobs move through:\n\n```\nPENDING -> RUNNING -> WRITE_READY -> READ_READY\n                   \\-> FAILED\n```\n\n- `PENDING` \u2014 queued, not yet started.\n- `RUNNING` \u2014 the reducer is executing.\n- `WRITE_READY` \u2014 operations have been written to the operation store.\n- `READ_READY` \u2014 all read models have finished processing; the document is fully readable.\n- `FAILED` \u2014 an unrecoverable error.\n\nOnly `READ_READY` and `FAILED` are terminal. `WRITE_READY` is the subtle one: the operation is durably persisted at that point, but the read models have not caught up, so a read issued immediately may not see the change. That gap is exactly what the extra hop to `READ_READY` closes.\n\nThis is why the two client entry points behave so differently. `IReactorClient.execute()` waits until the job reaches `READ_READY` before resolving \u2014 you get read-after-write consistency, at the cost of blocking through the read-model phase. `executeAsync()` returns immediately with a `JobInfo` still at `PENDING`; you then either poll `getJobStatus(jobId)` or await `waitForJob(job.id)`.\n\n```typescript\nconst job = await reactorClient.executeAsync(docId, \"main\", actions);\nconst completed = await reactorClient.waitForJob(job.id);\n```\n\nThe distinction matters for anything that writes on a hot path. Processors, for instance, must use their `dispatch` handle (which wraps `executeAsync`) rather than a blocking `execute()`, because a processor that waits for `READ_READY` can block on the very pipeline it is part of.\n\nThe status enum is mirrored by the event bus: `JOB_PENDING` (10001), `JOB_RUNNING` (10002), `JOB_WRITE_READY` (10003), `JOB_READ_READY` (10004), `JOB_FAILED` (10005).\n\n_Source: apps/academy/docs/academy/04-Reference/01-Reactor/01-WorkingWithTheReactor.md (Powerhouse v6.2.2-dev.45)._",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": "v6.2.2-dev.74",
+  "computes": null,
+  "filePath": "apps/academy/docs/academy/04-Reference/01-Reactor/01-WorkingWithTheReactor.md",
+  "noteType": "CONCEPT",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "claude",
+    "createdAt": "2026-08-13T14:34:02.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-09-02T22:26:23.583Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "PENDING to RUNNING to WRITE_READY to READ_READY, or FAILED. execute() waits for READ_READY; executeAsync() returns at PENDING.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "817ddee7-1d9c-4117-956f-8e0e28793284",
+      "actor": "claude",
+      "comment": "Knowledge registered against powerhouse v6.2.2-dev.47",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-14T12:00:00.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "85222543-5288-4abd-a11f-9d70e07df6f6",
+      "actor": "liberuum",
+      "comment": "Canonical as of powerhouse v6.2.2-dev.47",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-14T12:00:00.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

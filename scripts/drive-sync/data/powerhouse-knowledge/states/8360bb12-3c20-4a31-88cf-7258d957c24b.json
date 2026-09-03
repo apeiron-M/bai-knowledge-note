@@ -1,0 +1,70 @@
+{
+  "name": "Auth Scope Enforcement",
+  "team": [
+    {
+      "id": "a4e92930-ad26-41ae-b434-df482ad832bf",
+      "kind": "HUMAN",
+      "name": "thegoldenmule",
+      "role": "owner"
+    }
+  ],
+  "owner": "thegoldenmule",
+  "status": "ACTIVE",
+  "wbsRef": "e5b269a3-0a86-44ad-845b-3f7a62736192",
+  "createdAt": "2026-08-17T21:37:04.000Z",
+  "references": [
+    "https://github.com/powerhouse-inc/powerhouse/blob/main/docs/specs/auth-scope.md",
+    "https://github.com/powerhouse-inc/powerhouse/pull/2909"
+  ],
+  "targetDate": null,
+  "description": "Move authorization onto the replicated auth scope: finish stages 8-10 (serving path, migrate the host permission tables into grants, retire them) and roll the four enforcement flags out.",
+  "deliverables": [
+    {
+      "id": "d-s8",
+      "url": null,
+      "title": "Sync serving gated by the policy",
+      "status": "PLANNED",
+      "goalRef": "s8",
+      "deliveredAt": null,
+      "description": "pollSyncEnvelopes withholds scopes the polling subject may not read, intersected with the host's check."
+    },
+    {
+      "id": "d-s9",
+      "url": null,
+      "title": "Permission-table migration",
+      "status": "PLANNED",
+      "goalRef": "s9",
+      "deliveredAt": null,
+      "description": "A tool that emits one INITIALIZE_AUTH genesis per document and refuses what it cannot faithfully translate."
+    },
+    {
+      "id": "d-s10",
+      "url": null,
+      "title": "The auth scope is the only read authorization",
+      "status": "PLANNED",
+      "goalRef": "s10",
+      "deliveredAt": null,
+      "description": "The host's permission tables are gone from the read path; only the host default survives."
+    },
+    {
+      "id": "d-roll",
+      "url": null,
+      "title": "authEnforcement on in a production fleet",
+      "status": "PLANNED",
+      "goalRef": "ro-flags",
+      "deliveredAt": null,
+      "description": "The flags flipped per fleet in prerequisite order, against a store preflight:auth reports clean."
+    }
+  ],
+  "knowledgeRefs": [
+    "e475e1de-d479-41b0-8185-41ea96a20bc1",
+    "f831cc20-a6aa-49ab-91bc-e8616da20fd9",
+    "1c2e1cbd-de8e-4515-9cf0-c6afbca216ba",
+    "51157ecc-b57e-49a9-ad60-9ba3d84ea08e",
+    "6fa0a6ea-a295-4da9-85da-1e8ba852c91a",
+    "9069ed77-e7ac-4911-8c5f-443a7188e452",
+    "3341d029-9e5f-4157-b720-b74a207e8611",
+    "f0470b8d-ed31-447e-9382-4328003eb705"
+  ],
+  "links": []
+}

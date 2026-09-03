@@ -1,0 +1,102 @@
+{
+  "links": [
+    {
+      "id": "lnk-873daffa-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "873daffa-52d3-49f3-adac-b538bb82ba99",
+      "targetTitle": "swarmchannel-is-transport-only"
+    },
+    {
+      "id": "lnk-c12e6c2c-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "c12e6c2c-a727-4dbe-a6f0-65802b70c94b",
+      "targetTitle": "skip-field-records-reshuffle-distance"
+    },
+    {
+      "id": "lnk-e2186433-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "e2186433-6a5b-4e9a-90e8-37c698b35e89",
+      "targetTitle": "moc-attributable-skills-provenance"
+    },
+    {
+      "id": "lnk-2b423487-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "2b423487-123f-414c-bd20-edce7de891f4",
+      "targetTitle": "skills-as-attributable-transformations"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "A document model is a state schema, an action schema, and a pure reducer",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "0adab7d8-b400-4de8-a6e5-743727970336",
+      "name": "document-models",
+      "topicDocumentId": null
+    },
+    {
+      "id": "e12bf0e8-856b-43ed-98d7-097beb6da155",
+      "name": "event-sourcing",
+      "topicDocumentId": null
+    },
+    {
+      "id": "b39081bf-dddc-4b4c-9d7c-907f5b4bcd8a",
+      "name": "powerhouse",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "## Claim\n\nA document model has three parts:\n\n1. **State schema** \u2014 what the document contains\n2. **Action schema** \u2014 what changes are allowed\n3. **Reducer** \u2014 a pure function `(state, action) \u2192 state`\n\n## Runtime behavior\n\nActions are signed expressions of intent. The runtime applies them through the reducer and emits operations (action + ordinal + timestamp + result hash). Replay re-executes the reducer rather than replaying pre-computed domain events.\n\n## Why it fits skills\n\nSkills become thin wrappers that emit allowed actions against declared document models, which makes their contributions attributable and replayable.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "ARCHITECTURE",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "knowledge-agent",
+    "createdAt": "2026-08-16T20:32:35.007Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-16T20:32:36.051Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Document models define what a document contains, which mutations are allowed, and how state updates deterministically from signed actions.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "ad248eba-a58d-49ca-95ab-a03ff1926815",
+      "actor": "knowledge-agent",
+      "comment": "pipeline extract",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-16T20:32:35.904Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "44f5aec8-eb6c-4774-9869-26e20526b8d4",
+      "actor": "pipeline-reviewer",
+      "comment": "pipeline verify",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-16T20:32:36.051Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

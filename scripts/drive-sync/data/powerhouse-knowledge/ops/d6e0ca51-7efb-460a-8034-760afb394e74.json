@@ -1,0 +1,133 @@
+[
+  {
+    "index": 0,
+    "hash": "",
+    "timestampUtcMs": "2026-09-02T21:45:12.058Z",
+    "action": {
+      "type": "CREATE_DOCUMENT",
+      "input": {
+        "meta": {},
+        "name": "Package \u203a shared \u203a README",
+        "slug": "",
+        "model": "bai/source",
+        "branch": "main",
+        "signing": {
+          "nonce": "",
+          "publicKey": {},
+          "signature": "d6e0ca51-7efb-460a-8034-760afb394e74",
+          "documentType": "bai/source",
+          "createdAtUtcIso": "2026-09-02T21:45:12.058Z"
+        },
+        "version": 0,
+        "documentId": "d6e0ca51-7efb-460a-8034-760afb394e74",
+        "protocolVersions": {
+          "base-reducer": 2
+        }
+      },
+      "timestampUtcMs": "2026-09-02T21:45:12.058Z"
+    }
+  },
+  {
+    "index": 0,
+    "hash": "eM6l1yy9pTi8Ieqj1HR2cRAcbr8=",
+    "timestampUtcMs": "2026-09-02T21:45:12.155Z",
+    "action": {
+      "type": "INGEST_SOURCE",
+      "input": {
+        "url": "https://github.com/powerhouse-inc/powerhouse/blob/v6.2.2-dev.74/packages/shared/README.md",
+        "tool": "sync-repo-docs",
+        "title": "Package \u203a shared \u203a README",
+        "author": "Powerhouse Inc.",
+        "method": "sha256:962b09944410f2c18bbbef23d97d183631d1cd60e8a43f10141e98d89ba1fabc git:v6.2.2-dev.74",
+        "content": "# Shared code for the Powerhouse monorepo\n\nThis directory is an npm package which is intended for sharing code across packages in the monorepo.\n\nThis package should **never depend on any other package in this monorepo**. We want to be able to use the code kept here in any of the other monorepo packages without circular imports.\n\nThis is a great place to put your:\n\n- simple constants you want to be able to use anywhere\n- base types you want to share easily (**not** derived types that require imports from elsewhere)\n- simple utility functions that **do not depend on code from elsewhere in the monorepo**\n",
+        "createdAt": "2026-09-02T21:45:12.155Z",
+        "createdBy": "repo-docs-sync",
+        "sourceType": "DOCUMENTATION",
+        "description": "Powerhouse v6.2.2-dev.74 (unchanged since v6.2.2-dev.47) \u2014 This directory is an npm package which is intended for sharing code across packages in the monorepo.",
+        "publishedAt": "2026-03-24T16:19:22.000Z"
+      },
+      "timestampUtcMs": "2026-09-02T21:45:12.155Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "",
+    "timestampUtcMs": "2026-09-02T21:45:12.058Z",
+    "action": {
+      "type": "UPGRADE_DOCUMENT",
+      "input": {
+        "model": "bai/source",
+        "toVersion": 1,
+        "documentId": "d6e0ca51-7efb-460a-8034-760afb394e74",
+        "fromVersion": 0,
+        "initialState": {
+          "auth": {
+            "grants": [],
+            "version": 0
+          },
+          "local": {},
+          "global": {
+            "title": null,
+            "status": "INBOX",
+            "content": null,
+            "createdAt": null,
+            "createdBy": null,
+            "provenance": null,
+            "sourceType": null,
+            "description": null,
+            "extractedClaims": [],
+            "extractionStats": null
+          },
+          "document": {
+            "hash": {
+              "encoding": "base64",
+              "algorithm": "sha1"
+            },
+            "version": 1
+          }
+        }
+      },
+      "timestampUtcMs": "2026-09-02T21:45:12.058Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "ryCozKESRPJpJuVVz9LKOlEkwDg=",
+    "timestampUtcMs": "2026-09-03T07:45:06.232Z",
+    "action": {
+      "type": "ADD_EXTRACTED_CLAIM",
+      "input": {
+        "claimRef": "2772850b-514f-473a-9795-8e8221e11276"
+      },
+      "timestampUtcMs": "2026-09-03T07:45:06.232Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "bk/yLniQ5hqh+RGs9rFnehtANkk=",
+    "timestampUtcMs": "2026-09-03T07:45:15.674Z",
+    "action": {
+      "type": "RECORD_EXTRACTION_STATS",
+      "input": {
+        "skipRate": 0,
+        "claimCount": 1,
+        "extractedAt": "2026-09-03T07:45:15.674Z",
+        "extractedBy": "knowledge-agent",
+        "skippedCount": 0
+      },
+      "timestampUtcMs": "2026-09-03T07:45:15.674Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "ad68hQNyr8SP0Ac/QcjTDGe4TyI=",
+    "timestampUtcMs": "2026-09-03T07:45:16.246Z",
+    "action": {
+      "type": "SET_SOURCE_STATUS",
+      "input": {
+        "status": "EXTRACTED"
+      },
+      "timestampUtcMs": "2026-09-03T07:45:16.246Z"
+    }
+  }
+]

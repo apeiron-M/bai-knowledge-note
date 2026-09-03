@@ -1,0 +1,464 @@
+[
+  {
+    "index": 0,
+    "hash": "",
+    "timestampUtcMs": "2026-09-03T07:29:56.259Z",
+    "action": {
+      "type": "CREATE_DOCUMENT",
+      "input": {
+        "meta": {},
+        "name": "migrate-codegen-detection-and-tsconfig",
+        "slug": "",
+        "model": "bai/knowledge-note",
+        "branch": "main",
+        "signing": {
+          "nonce": "",
+          "publicKey": {},
+          "signature": "31c39f95-a821-435d-b411-683f7221d471",
+          "documentType": "bai/knowledge-note",
+          "createdAtUtcIso": "2026-09-03T07:29:56.259Z"
+        },
+        "version": 0,
+        "documentId": "31c39f95-a821-435d-b411-683f7221d471",
+        "protocolVersions": {
+          "base-reducer": 2
+        }
+      },
+      "timestampUtcMs": "2026-09-03T07:29:56.259Z"
+    }
+  },
+  {
+    "index": 0,
+    "hash": "sdhTpTrojD43V0hxlXULY1mjEEU=",
+    "timestampUtcMs": "2026-09-03T07:29:57.687Z",
+    "action": {
+      "type": "SET_TITLE",
+      "input": {
+        "title": "Processor type is detected by sniffing imports, so a relational processor is misclassified as analytics after a migration writes an analytics stub",
+        "updatedAt": "2026-09-03T07:29:57.687Z"
+      },
+      "timestampUtcMs": "2026-09-03T07:29:57.687Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "",
+    "timestampUtcMs": "2026-09-03T07:29:56.259Z",
+    "action": {
+      "type": "UPGRADE_DOCUMENT",
+      "input": {
+        "model": "bai/knowledge-note",
+        "toVersion": 1,
+        "documentId": "31c39f95-a821-435d-b411-683f7221d471",
+        "fromVersion": 0,
+        "initialState": {
+          "auth": {
+            "grants": [],
+            "version": 0
+          },
+          "local": {
+            "lastViewedAt": null,
+            "personalTags": []
+          },
+          "global": {
+            "links": [],
+            "model": null,
+            "scope": null,
+            "title": null,
+            "editor": null,
+            "inputs": [],
+            "models": [],
+            "status": "DRAFT",
+            "topics": [],
+            "content": null,
+            "context": null,
+            "modelId": null,
+            "modules": [],
+            "outputs": [],
+            "version": null,
+            "computes": null,
+            "filePath": null,
+            "noteType": null,
+            "severity": null,
+            "hooksUsed": [],
+            "rootCause": null,
+            "confidence": null,
+            "consumedBy": [],
+            "provenance": null,
+            "sourceType": null,
+            "targetType": null,
+            "cardinality": null,
+            "description": null,
+            "alternatives": [],
+            "consequences": [],
+            "errorMessage": null,
+            "relationType": null,
+            "correctPattern": null,
+            "decisionStatus": null,
+            "dispatchTargets": [],
+            "lifecycleEvents": []
+          },
+          "document": {
+            "hash": {
+              "encoding": "base64",
+              "algorithm": "sha1"
+            },
+            "version": 1
+          }
+        }
+      },
+      "timestampUtcMs": "2026-09-03T07:29:56.259Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "wJsCaWO6GGMuEyrebdF6Vgh2+3M=",
+    "timestampUtcMs": "2026-09-03T07:29:57.687Z",
+    "action": {
+      "type": "SET_DESCRIPTION",
+      "input": {
+        "updatedAt": "2026-09-03T07:29:57.687Z",
+        "description": "The detector reads processor.ts ?? index.ts for RelationalDbProcessor or IAnalyticsStore imports; a legacy class in index.ts leaves two classes and a stub that always imports IAnalyticsStore."
+      },
+      "timestampUtcMs": "2026-09-03T07:29:57.687Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "",
+    "timestampUtcMs": "2026-09-03T07:30:40.687Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "metadata": {
+          "reason": "Extracted from docs/specs/migrate-codegen-fixes.md at v6.2.2-dev.74 \u2014 Issues 3, 4 and 5",
+          "confidence": "grounded"
+        },
+        "sourceId": "31c39f95-a821-435d-b411-683f7221d471",
+        "targetId": "ab3c9a9f-4303-4c01-8058-105da109426b",
+        "relationshipType": "DERIVED_FROM"
+      },
+      "timestampUtcMs": "2026-09-03T07:30:40.687Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "5aHljYrjTyHitP1tWIL2s1sQ8v4=",
+    "timestampUtcMs": "2026-09-03T07:29:57.687Z",
+    "action": {
+      "type": "SET_NOTE_TYPE",
+      "input": {
+        "noteType": "BUG-PATTERN",
+        "updatedAt": "2026-09-03T07:29:57.687Z"
+      },
+      "timestampUtcMs": "2026-09-03T07:29:57.687Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "",
+    "timestampUtcMs": "2026-09-03T07:30:41.152Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "metadata": {
+          "reason": "Continues the same punch list with the defects that survive a successful scaffold: wrong type detection and a tsconfig that will not compile",
+          "confidence": "grounded"
+        },
+        "sourceId": "31c39f95-a821-435d-b411-683f7221d471",
+        "targetId": "dbd4ae8f-9308-457f-9051-00798ef2844d",
+        "relationshipType": "BUILDS_ON"
+      },
+      "timestampUtcMs": "2026-09-03T07:30:41.152Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "KHhFehG2pY05oMmeM4VVv3Zn7gg=",
+    "timestampUtcMs": "2026-09-03T07:29:57.687Z",
+    "action": {
+      "type": "SET_CONTENT",
+      "input": {
+        "content": "Issue 3 of the migration punch list is the subtlest: **processor type is inferred from imports**, and a migration can poison the inference.\n\nLegacy projects put the processor class in `processors/<name>/index.ts`; the new template expects `processor.ts`. Migrating finds no `processor.ts` and writes an **empty analytics stub**, leaving two processor classes in one module (`class Codegen` in `processor.ts`, `class CodegenProcessor` in `index.ts`). The metadata detector then reads `processor.ts ?? index.ts` looking for a `RelationalDbProcessor` or `IAnalyticsStore` import, which fails two ways:\n\n- the newly created `processor.ts` **always imports `IAnalyticsStore`**, so a relational-DB processor is misclassified as analytics on subsequent `--all` runs;\n- a genuinely relational legacy processor that imports `Kysely` directly (rather than `RelationalDbProcessor`) **silently falls back to analytics**.\n\nThe proposed fixes are instructive about where the fragility lies: move the legacy class into `processor.ts` *before* calling codegen, broaden the detector to treat `Kysely` imports as a relational signal, or \u2014 the robust option \u2014 **declare the processor type explicitly in `powerhouse.manifest.json`** and prefer that over import-sniffing.\n\nTwo more items round out the list. The migrated `tsconfig.json` listed `apps/connect` and `clis/ph-cli` under `references` because they are runtime dependencies, and both reference the migrated package back, creating **cycles that surface as TS6305** whenever `dist/` is missing \u2014 references should only be added for packages whose *source* is imported at compile time. And the migration **drops the monorepo `extends`**, re-asserting the shared options inline so future changes to `tsconfig.options.json` no longer propagate.\n\n## Provenance\n- `docs/specs/migrate-codegen-fixes.md` \u2014 Issues 3, 4 and 5\n\n_Extracted from the Powerhouse repository at **v6.2.2-dev.74**._",
+        "updatedAt": "2026-09-03T07:29:57.687Z"
+      },
+      "timestampUtcMs": "2026-09-03T07:29:57.687Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "",
+    "timestampUtcMs": "2026-09-03T07:30:41.599Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "metadata": {
+          "reason": "Import-sniffing for RelationalDbProcessor is brittle partly because the class moved packages between the spec and the current tree",
+          "confidence": "grounded"
+        },
+        "sourceId": "31c39f95-a821-435d-b411-683f7221d471",
+        "targetId": "97c3a924-0ba9-4b89-86f7-b7a5747d41a7",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-09-03T07:30:41.599Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "P6qzkzGZpgX4Xhz9HXQjwUsdlek=",
+    "timestampUtcMs": "2026-09-03T07:29:57.687Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "9376ba35-b6a9-40d4-baf1-0fc4fed6fa60",
+        "name": "codegen"
+      },
+      "timestampUtcMs": "2026-09-03T07:29:57.687Z"
+    }
+  },
+  {
+    "index": 5,
+    "hash": "",
+    "timestampUtcMs": "2026-09-03T07:31:45.658Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "metadata": {
+          "reason": "Extracted from docs/specs/migrate-codegen-fixes.md at v6.2.2-dev.74 \u2014 Issues 3, 4 and 5",
+          "confidence": "grounded"
+        },
+        "sourceId": "31c39f95-a821-435d-b411-683f7221d471",
+        "targetId": "ab3c9a9f-4303-4c01-8058-105da109426b",
+        "relationshipType": "DERIVED_FROM"
+      },
+      "timestampUtcMs": "2026-09-03T07:31:45.658Z"
+    }
+  },
+  {
+    "index": 5,
+    "hash": "p+DCs/ONsJAy7kVzRM0ZGf2OZck=",
+    "timestampUtcMs": "2026-09-03T07:29:57.687Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "07d2cf7e-6e5e-4589-978d-629a4281097f",
+        "name": "migration"
+      },
+      "timestampUtcMs": "2026-09-03T07:29:57.687Z"
+    }
+  },
+  {
+    "index": 6,
+    "hash": "",
+    "timestampUtcMs": "2026-09-03T07:31:46.110Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "metadata": {
+          "reason": "Continues the same punch list with the defects that survive a successful scaffold: wrong type detection and a tsconfig that will not compile",
+          "confidence": "grounded"
+        },
+        "sourceId": "31c39f95-a821-435d-b411-683f7221d471",
+        "targetId": "dbd4ae8f-9308-457f-9051-00798ef2844d",
+        "relationshipType": "BUILDS_ON"
+      },
+      "timestampUtcMs": "2026-09-03T07:31:46.110Z"
+    }
+  },
+  {
+    "index": 6,
+    "hash": "xOD7H9qTrGnPjcMbQW/hRtAvjpY=",
+    "timestampUtcMs": "2026-09-03T07:29:57.687Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "bc83c8b1-6c0b-4f7d-bfc2-36e196b48178",
+        "name": "processors"
+      },
+      "timestampUtcMs": "2026-09-03T07:29:57.687Z"
+    }
+  },
+  {
+    "index": 7,
+    "hash": "",
+    "timestampUtcMs": "2026-09-03T07:31:46.560Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "metadata": {
+          "reason": "Import-sniffing for RelationalDbProcessor is brittle partly because the class moved packages between the spec and the current tree",
+          "confidence": "grounded"
+        },
+        "sourceId": "31c39f95-a821-435d-b411-683f7221d471",
+        "targetId": "97c3a924-0ba9-4b89-86f7-b7a5747d41a7",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-09-03T07:31:46.560Z"
+    }
+  },
+  {
+    "index": 7,
+    "hash": "nXtqhF3hOhtEi1+Y6qTnF6qScaw=",
+    "timestampUtcMs": "2026-09-03T07:29:57.687Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "6d504c37-500f-4836-b191-dd20e06bd7e8",
+        "name": "gotchas"
+      },
+      "timestampUtcMs": "2026-09-03T07:29:57.687Z"
+    }
+  },
+  {
+    "index": 8,
+    "hash": "MY5avSCQuj03XKB04DKAeFj+H+s=",
+    "timestampUtcMs": "2026-09-03T07:29:57.687Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "version",
+        "value": "v6.2.2-dev.74",
+        "updatedAt": "2026-09-03T07:29:57.687Z"
+      },
+      "timestampUtcMs": "2026-09-03T07:29:57.687Z"
+    }
+  },
+  {
+    "index": 9,
+    "hash": "AClIavALhRSC6Jz6/7OAuoWiFA4=",
+    "timestampUtcMs": "2026-09-03T07:29:57.687Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "filePath",
+        "value": "docs/specs/migrate-codegen-fixes.md",
+        "updatedAt": "2026-09-03T07:29:57.687Z"
+      },
+      "timestampUtcMs": "2026-09-03T07:29:57.687Z"
+    }
+  },
+  {
+    "index": 10,
+    "hash": "+yqyivubXa259vyUWE8QyuXleYg=",
+    "timestampUtcMs": "2026-09-03T07:30:00.251Z",
+    "action": {
+      "type": "SET_PROVENANCE",
+      "input": {
+        "author": "knowledge-agent",
+        "createdAt": "2026-09-03T07:30:00.251Z",
+        "sourceOrigin": "DERIVED"
+      },
+      "timestampUtcMs": "2026-09-03T07:30:00.251Z"
+    }
+  },
+  {
+    "index": 11,
+    "hash": "A0+I9k6H2hjyvBZiqaG1H7MoT2s=",
+    "timestampUtcMs": "2026-09-03T07:30:00.747Z",
+    "action": {
+      "type": "SUBMIT_FOR_REVIEW",
+      "input": {
+        "id": "b10bb984-66ba-48c5-b127-9caad76ea02d",
+        "actor": "knowledge-agent",
+        "comment": "extracted from docs/specs/migrate-codegen-fixes.md at v6.2.2-dev.74",
+        "timestamp": "2026-09-03T07:30:00.747Z"
+      },
+      "timestampUtcMs": "2026-09-03T07:30:00.747Z"
+    }
+  },
+  {
+    "index": 12,
+    "hash": "DR4k/0tyyNNQHZFQMSSrjjtuFN0=",
+    "timestampUtcMs": "2026-09-03T07:30:01.329Z",
+    "action": {
+      "type": "APPROVE_NOTE",
+      "input": {
+        "id": "ddcbc95e-f91d-41ee-8d6f-3aaf2a5d45ed",
+        "actor": "liberuum",
+        "comment": "claim checked against the cited file at the pinned tag",
+        "timestamp": "2026-09-03T07:30:01.329Z"
+      },
+      "timestampUtcMs": "2026-09-03T07:30:01.329Z"
+    }
+  },
+  {
+    "index": 13,
+    "hash": "hENCI3PKUegJ4YZ40iKyyz02dtQ=",
+    "timestampUtcMs": "2026-09-03T07:31:15.448Z",
+    "action": {
+      "type": "SET_TITLE",
+      "input": {
+        "title": "Processor type is detected by sniffing imports, so a relational processor is misclassified as analytics after a migration writes an analytics stub",
+        "updatedAt": "2026-09-03T07:31:15.448Z"
+      },
+      "timestampUtcMs": "2026-09-03T07:31:15.448Z"
+    }
+  },
+  {
+    "index": 14,
+    "hash": "hENCI3PKUegJ4YZ40iKyyz02dtQ=",
+    "timestampUtcMs": "2026-09-03T07:31:15.448Z",
+    "action": {
+      "type": "SET_DESCRIPTION",
+      "input": {
+        "updatedAt": "2026-09-03T07:31:15.448Z",
+        "description": "The detector reads processor.ts ?? index.ts for RelationalDbProcessor or IAnalyticsStore imports; a legacy class in index.ts leaves two classes and a stub that always imports IAnalyticsStore."
+      },
+      "timestampUtcMs": "2026-09-03T07:31:15.448Z"
+    }
+  },
+  {
+    "index": 15,
+    "hash": "hENCI3PKUegJ4YZ40iKyyz02dtQ=",
+    "timestampUtcMs": "2026-09-03T07:31:15.448Z",
+    "action": {
+      "type": "SET_NOTE_TYPE",
+      "input": {
+        "noteType": "BUG-PATTERN",
+        "updatedAt": "2026-09-03T07:31:15.448Z"
+      },
+      "timestampUtcMs": "2026-09-03T07:31:15.448Z"
+    }
+  },
+  {
+    "index": 16,
+    "hash": "hENCI3PKUegJ4YZ40iKyyz02dtQ=",
+    "timestampUtcMs": "2026-09-03T07:31:15.448Z",
+    "action": {
+      "type": "SET_CONTENT",
+      "input": {
+        "content": "Issue 3 of the migration punch list is the subtlest: **processor type is inferred from imports**, and a migration can poison the inference.\n\nLegacy projects put the processor class in `processors/<name>/index.ts`; the new template expects `processor.ts`. Migrating finds no `processor.ts` and writes an **empty analytics stub**, leaving two processor classes in one module (`class Codegen` in `processor.ts`, `class CodegenProcessor` in `index.ts`). The metadata detector then reads `processor.ts ?? index.ts` looking for a `RelationalDbProcessor` or `IAnalyticsStore` import, which fails two ways:\n\n- the newly created `processor.ts` **always imports `IAnalyticsStore`**, so a relational-DB processor is misclassified as analytics on subsequent `--all` runs;\n- a genuinely relational legacy processor that imports `Kysely` directly (rather than `RelationalDbProcessor`) **silently falls back to analytics**.\n\nThe proposed fixes are instructive about where the fragility lies: move the legacy class into `processor.ts` *before* calling codegen, broaden the detector to treat `Kysely` imports as a relational signal, or \u2014 the robust option \u2014 **declare the processor type explicitly in `powerhouse.manifest.json`** and prefer that over import-sniffing.\n\nTwo more items round out the list. The migrated `tsconfig.json` listed `apps/connect` and `clis/ph-cli` under `references` because they are runtime dependencies, and both reference the migrated package back, creating **cycles that surface as TS6305** whenever `dist/` is missing \u2014 references should only be added for packages whose *source* is imported at compile time. And the migration **drops the monorepo `extends`**, re-asserting the shared options inline so future changes to `tsconfig.options.json` no longer propagate.\n\n## Provenance\n- `docs/specs/migrate-codegen-fixes.md` \u2014 Issues 3, 4 and 5\n\n_Extracted from the Powerhouse repository at **v6.2.2-dev.74**._",
+        "updatedAt": "2026-09-03T07:31:15.448Z"
+      },
+      "timestampUtcMs": "2026-09-03T07:31:15.448Z"
+    }
+  },
+  {
+    "index": 17,
+    "hash": "hENCI3PKUegJ4YZ40iKyyz02dtQ=",
+    "timestampUtcMs": "2026-09-03T07:31:15.448Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "version",
+        "value": "v6.2.2-dev.74",
+        "updatedAt": "2026-09-03T07:31:15.448Z"
+      },
+      "timestampUtcMs": "2026-09-03T07:31:15.448Z"
+    }
+  },
+  {
+    "index": 18,
+    "hash": "hENCI3PKUegJ4YZ40iKyyz02dtQ=",
+    "timestampUtcMs": "2026-09-03T07:31:15.448Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "filePath",
+        "value": "docs/specs/migrate-codegen-fixes.md",
+        "updatedAt": "2026-09-03T07:31:15.448Z"
+      },
+      "timestampUtcMs": "2026-09-03T07:31:15.448Z"
+    }
+  }
+]

@@ -1,0 +1,500 @@
+[
+  {
+    "index": 0,
+    "hash": "",
+    "timestampUtcMs": "2026-09-03T07:20:25.819Z",
+    "action": {
+      "type": "CREATE_DOCUMENT",
+      "input": {
+        "meta": {},
+        "name": "hashfirst-streaming-ingest",
+        "slug": "",
+        "model": "bai/knowledge-note",
+        "branch": "main",
+        "signing": {
+          "nonce": "",
+          "publicKey": {},
+          "signature": "227cf82d-5739-47a5-9261-e918660ecdf6",
+          "documentType": "bai/knowledge-note",
+          "createdAtUtcIso": "2026-09-03T07:20:25.819Z"
+        },
+        "version": 0,
+        "documentId": "227cf82d-5739-47a5-9261-e918660ecdf6",
+        "protocolVersions": {
+          "base-reducer": 2
+        }
+      },
+      "timestampUtcMs": "2026-09-03T07:20:25.819Z"
+    }
+  },
+  {
+    "index": 0,
+    "hash": "u/bpvkN6g/O2h6j6YdWn8LLObAk=",
+    "timestampUtcMs": "2026-09-03T07:20:27.199Z",
+    "action": {
+      "type": "SET_TITLE",
+      "input": {
+        "title": "Ingest hashing must be streaming and never buffered, and the declared size is a contract checked mid-stream rather than a hint",
+        "updatedAt": "2026-09-03T07:20:27.199Z"
+      },
+      "timestampUtcMs": "2026-09-03T07:20:27.199Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "",
+    "timestampUtcMs": "2026-09-03T07:20:25.819Z",
+    "action": {
+      "type": "UPGRADE_DOCUMENT",
+      "input": {
+        "model": "bai/knowledge-note",
+        "toVersion": 1,
+        "documentId": "227cf82d-5739-47a5-9261-e918660ecdf6",
+        "fromVersion": 0,
+        "initialState": {
+          "auth": {
+            "grants": [],
+            "version": 0
+          },
+          "local": {
+            "lastViewedAt": null,
+            "personalTags": []
+          },
+          "global": {
+            "links": [],
+            "model": null,
+            "scope": null,
+            "title": null,
+            "editor": null,
+            "inputs": [],
+            "models": [],
+            "status": "DRAFT",
+            "topics": [],
+            "content": null,
+            "context": null,
+            "modelId": null,
+            "modules": [],
+            "outputs": [],
+            "version": null,
+            "computes": null,
+            "filePath": null,
+            "noteType": null,
+            "severity": null,
+            "hooksUsed": [],
+            "rootCause": null,
+            "confidence": null,
+            "consumedBy": [],
+            "provenance": null,
+            "sourceType": null,
+            "targetType": null,
+            "cardinality": null,
+            "description": null,
+            "alternatives": [],
+            "consequences": [],
+            "errorMessage": null,
+            "relationType": null,
+            "correctPattern": null,
+            "decisionStatus": null,
+            "dispatchTargets": [],
+            "lifecycleEvents": []
+          },
+          "document": {
+            "hash": {
+              "encoding": "base64",
+              "algorithm": "sha1"
+            },
+            "version": 1
+          }
+        }
+      },
+      "timestampUtcMs": "2026-09-03T07:20:25.819Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "t7k2jQW0s/wOdq6O1v2+VS7Wg9A=",
+    "timestampUtcMs": "2026-09-03T07:20:27.199Z",
+    "action": {
+      "type": "SET_DESCRIPTION",
+      "input": {
+        "updatedAt": "2026-09-03T07:20:27.199Z",
+        "description": "Server memory per upload is O(chunk) whatever the file size, so no Buffer.concat and no Blob. Size failure aborts mid-stream with SizeMismatch; the hash is compared at stream end."
+      },
+      "timestampUtcMs": "2026-09-03T07:20:27.199Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "",
+    "timestampUtcMs": "2026-09-03T07:21:36.548Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "metadata": {
+          "reason": "Extracted from packages/reactor/docs/attachments-hash-first.md at v6.2.2-dev.74 \u2014 Reservation semantics \u203a Hash verification on ingest",
+          "confidence": "grounded"
+        },
+        "sourceId": "227cf82d-5739-47a5-9261-e918660ecdf6",
+        "targetId": "e25bc920-d3bc-4b36-9c7f-cb35b64c27b9",
+        "relationshipType": "DERIVED_FROM"
+      },
+      "timestampUtcMs": "2026-09-03T07:21:36.548Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "P8/3hkdcy9X34+hoLQVbvp/+8rI=",
+    "timestampUtcMs": "2026-09-03T07:20:27.199Z",
+    "action": {
+      "type": "SET_NOTE_TYPE",
+      "input": {
+        "noteType": "PATTERN",
+        "updatedAt": "2026-09-03T07:20:27.199Z"
+      },
+      "timestampUtcMs": "2026-09-03T07:20:27.199Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "",
+    "timestampUtcMs": "2026-09-03T07:21:37.040Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "metadata": {
+          "reason": "Client-computed hashes are only safe because the server re-derives the digest from the streamed bytes and refuses a mismatch",
+          "confidence": "grounded"
+        },
+        "sourceId": "227cf82d-5739-47a5-9261-e918660ecdf6",
+        "targetId": "04232cfe-983e-46ba-ba27-64b2107a9f12",
+        "relationshipType": "BUILDS_ON"
+      },
+      "timestampUtcMs": "2026-09-03T07:21:37.040Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "1SJJbdpp0Z0D1+ErcZj8DofVl+M=",
+    "timestampUtcMs": "2026-09-03T07:20:27.199Z",
+    "action": {
+      "type": "SET_CONTENT",
+      "input": {
+        "content": "The switchboard's upload endpoint pipes the request body through the hasher and to the temp file in the **same pass**:\n\n```ts\nconst hasher = crypto.createHash(\"sha256\");\nfor await (const chunk of body) {\n  hasher.update(chunk);   // ...written to the temp file in the same pass\n}\nconst actual = hasher.digest(\"hex\");\n```\n\nThis is called out as a **normative requirement of the design, not an implementation detail**: server memory per upload is O(chunk), independent of file size, which preserves the stream-large-files property that motivated the attachment system in the first place. At no point may the upload body be collected into memory on the server \u2014 no `Buffer.concat`, no Blob. (Client-side buffering is a separate, browser-only limitation.)\n\nIn hash-first mode the handle verifies two claims against the streamed bytes before committing:\n\n1. **Size, during the stream.** The handle counts bytes; the moment the count exceeds the declared `sizeBytes` it aborts **without consuming the rest of the stream**, deletes the temp file, retains the reservation and throws `SizeMismatch`. A stream that ends short gets the same outcome at stream end.\n2. **Hash, at stream end.** The streamed digest is compared to the reservation's `client_hash`; on mismatch the temp file is deleted, the reservation retained, and `HashMismatch` thrown.\n3. **Both match** \u2014 commit as before: insert or dedup/restore, soft-delete the reservation, return the result.\n\nSize is checked first because it can fail early, but the hash is the integrity guarantee; the size check exists so the declared `sizeBytes` is a contract rather than a hint. Verification therefore costs a byte counter and a string comparison on the existing pass \u2014 no second read.\n\nBecause verification happens on ingest, **the content-addressed store can never serve wrong bytes for a hash**, whatever a client claims.\n\n## Provenance\n- `packages/reactor/docs/attachments-hash-first.md` \u2014 Reservation semantics \u203a Hash verification on ingest\n\n_Extracted from the Powerhouse repository at **v6.2.2-dev.74**._",
+        "updatedAt": "2026-09-03T07:20:27.199Z"
+      },
+      "timestampUtcMs": "2026-09-03T07:20:27.199Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "",
+    "timestampUtcMs": "2026-09-03T07:21:37.499Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "metadata": {
+          "reason": "Ingest verification is precisely what keeps the store as trustworthy as before while the ref becomes a client claim",
+          "confidence": "grounded"
+        },
+        "sourceId": "227cf82d-5739-47a5-9261-e918660ecdf6",
+        "targetId": "9d492c64-ed5b-4f00-8efe-98354c9fd6b4",
+        "relationshipType": "BUILDS_ON"
+      },
+      "timestampUtcMs": "2026-09-03T07:21:37.499Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "8qiWZPQidj4BVB+qU8WfbMtK8ug=",
+    "timestampUtcMs": "2026-09-03T07:20:27.199Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "063c854e-37b4-4767-ba9a-0c0363a25575",
+        "name": "attachments"
+      },
+      "timestampUtcMs": "2026-09-03T07:20:27.199Z"
+    }
+  },
+  {
+    "index": 5,
+    "hash": "",
+    "timestampUtcMs": "2026-09-03T07:21:38.014Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "metadata": {
+          "reason": "This is the switchboard handle's verification strategy, next to S3's HeadObject checksum path",
+          "confidence": "grounded"
+        },
+        "sourceId": "227cf82d-5739-47a5-9261-e918660ecdf6",
+        "targetId": "5680dcb7-27ba-42be-9cd4-045217cc5323",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-09-03T07:21:38.014Z"
+    }
+  },
+  {
+    "index": 5,
+    "hash": "Hui4wYg7ONz8Ruc3OH6xGnRtbnk=",
+    "timestampUtcMs": "2026-09-03T07:20:27.199Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "3b033eef-66b3-4488-8dde-e55c7719b2fc",
+        "name": "hash-first"
+      },
+      "timestampUtcMs": "2026-09-03T07:20:27.199Z"
+    }
+  },
+  {
+    "index": 6,
+    "hash": "",
+    "timestampUtcMs": "2026-09-03T07:23:28.792Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "metadata": {
+          "reason": "Extracted from packages/reactor/docs/attachments-hash-first.md at v6.2.2-dev.74 \u2014 Reservation semantics \u203a Hash verification on ingest",
+          "confidence": "grounded"
+        },
+        "sourceId": "227cf82d-5739-47a5-9261-e918660ecdf6",
+        "targetId": "e25bc920-d3bc-4b36-9c7f-cb35b64c27b9",
+        "relationshipType": "DERIVED_FROM"
+      },
+      "timestampUtcMs": "2026-09-03T07:23:28.792Z"
+    }
+  },
+  {
+    "index": 6,
+    "hash": "XSMvTgrXZIZ0xOLM5H503Hb/NvM=",
+    "timestampUtcMs": "2026-09-03T07:20:27.199Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "f6ebfcfe-5ff4-47c4-85e6-b9d4df3c1c83",
+        "name": "streaming"
+      },
+      "timestampUtcMs": "2026-09-03T07:20:27.199Z"
+    }
+  },
+  {
+    "index": 7,
+    "hash": "",
+    "timestampUtcMs": "2026-09-03T07:23:29.274Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "metadata": {
+          "reason": "Client-computed hashes are only safe because the server re-derives the digest from the streamed bytes and refuses a mismatch",
+          "confidence": "grounded"
+        },
+        "sourceId": "227cf82d-5739-47a5-9261-e918660ecdf6",
+        "targetId": "04232cfe-983e-46ba-ba27-64b2107a9f12",
+        "relationshipType": "BUILDS_ON"
+      },
+      "timestampUtcMs": "2026-09-03T07:23:29.274Z"
+    }
+  },
+  {
+    "index": 7,
+    "hash": "FWhnJ/pkoYty5cRbJqpAU8KaE6s=",
+    "timestampUtcMs": "2026-09-03T07:20:27.199Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "d79e786b-1c50-4794-b5d6-725066bd14a0",
+        "name": "verification"
+      },
+      "timestampUtcMs": "2026-09-03T07:20:27.199Z"
+    }
+  },
+  {
+    "index": 8,
+    "hash": "",
+    "timestampUtcMs": "2026-09-03T07:23:29.756Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "metadata": {
+          "reason": "Ingest verification is precisely what keeps the store as trustworthy as before while the ref becomes a client claim",
+          "confidence": "grounded"
+        },
+        "sourceId": "227cf82d-5739-47a5-9261-e918660ecdf6",
+        "targetId": "9d492c64-ed5b-4f00-8efe-98354c9fd6b4",
+        "relationshipType": "BUILDS_ON"
+      },
+      "timestampUtcMs": "2026-09-03T07:23:29.756Z"
+    }
+  },
+  {
+    "index": 8,
+    "hash": "R/g60jgqWoX2Y5p8+kUoxVbfSGg=",
+    "timestampUtcMs": "2026-09-03T07:20:27.199Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "version",
+        "value": "v6.2.2-dev.74",
+        "updatedAt": "2026-09-03T07:20:27.199Z"
+      },
+      "timestampUtcMs": "2026-09-03T07:20:27.199Z"
+    }
+  },
+  {
+    "index": 9,
+    "hash": "",
+    "timestampUtcMs": "2026-09-03T07:23:30.228Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "metadata": {
+          "reason": "This is the switchboard handle's verification strategy, next to S3's HeadObject checksum path",
+          "confidence": "grounded"
+        },
+        "sourceId": "227cf82d-5739-47a5-9261-e918660ecdf6",
+        "targetId": "5680dcb7-27ba-42be-9cd4-045217cc5323",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-09-03T07:23:30.228Z"
+    }
+  },
+  {
+    "index": 9,
+    "hash": "FmXQDGoYfaYwQSZy+5erGrXhQtY=",
+    "timestampUtcMs": "2026-09-03T07:20:27.199Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "filePath",
+        "value": "packages/reactor/docs/attachments-hash-first.md",
+        "updatedAt": "2026-09-03T07:20:27.199Z"
+      },
+      "timestampUtcMs": "2026-09-03T07:20:27.199Z"
+    }
+  },
+  {
+    "index": 10,
+    "hash": "hgaMC/nj/uQiKu4EPqwGdSFkpno=",
+    "timestampUtcMs": "2026-09-03T07:20:29.824Z",
+    "action": {
+      "type": "SET_PROVENANCE",
+      "input": {
+        "author": "knowledge-agent",
+        "createdAt": "2026-09-03T07:20:29.824Z",
+        "sourceOrigin": "DERIVED"
+      },
+      "timestampUtcMs": "2026-09-03T07:20:29.824Z"
+    }
+  },
+  {
+    "index": 11,
+    "hash": "8dHpxq9ukTSamjOv4PrK+1zWxp4=",
+    "timestampUtcMs": "2026-09-03T07:20:30.325Z",
+    "action": {
+      "type": "SUBMIT_FOR_REVIEW",
+      "input": {
+        "id": "db398145-0786-49c1-a8d4-65b1a255bbda",
+        "actor": "knowledge-agent",
+        "comment": "extracted from packages/reactor/docs/attachments-hash-first.md at v6.2.2-dev.74",
+        "timestamp": "2026-09-03T07:20:30.325Z"
+      },
+      "timestampUtcMs": "2026-09-03T07:20:30.325Z"
+    }
+  },
+  {
+    "index": 12,
+    "hash": "02YnTc9YPq4eI4smm9cA0FGXKTM=",
+    "timestampUtcMs": "2026-09-03T07:20:30.868Z",
+    "action": {
+      "type": "APPROVE_NOTE",
+      "input": {
+        "id": "030b7072-2687-4aa3-ae44-7cd975f08d85",
+        "actor": "liberuum",
+        "comment": "claim checked against the cited file at the pinned tag",
+        "timestamp": "2026-09-03T07:20:30.868Z"
+      },
+      "timestampUtcMs": "2026-09-03T07:20:30.868Z"
+    }
+  },
+  {
+    "index": 13,
+    "hash": "RDB5VlGnkL6Tz/gWXsHO89ZSH7k=",
+    "timestampUtcMs": "2026-09-03T07:22:36.197Z",
+    "action": {
+      "type": "SET_TITLE",
+      "input": {
+        "title": "Ingest hashing must be streaming and never buffered, and the declared size is a contract checked mid-stream rather than a hint",
+        "updatedAt": "2026-09-03T07:22:36.197Z"
+      },
+      "timestampUtcMs": "2026-09-03T07:22:36.197Z"
+    }
+  },
+  {
+    "index": 14,
+    "hash": "RDB5VlGnkL6Tz/gWXsHO89ZSH7k=",
+    "timestampUtcMs": "2026-09-03T07:22:36.197Z",
+    "action": {
+      "type": "SET_DESCRIPTION",
+      "input": {
+        "updatedAt": "2026-09-03T07:22:36.197Z",
+        "description": "Server memory per upload is O(chunk) whatever the file size, so no Buffer.concat and no Blob. Size failure aborts mid-stream with SizeMismatch; the hash is compared at stream end."
+      },
+      "timestampUtcMs": "2026-09-03T07:22:36.197Z"
+    }
+  },
+  {
+    "index": 15,
+    "hash": "RDB5VlGnkL6Tz/gWXsHO89ZSH7k=",
+    "timestampUtcMs": "2026-09-03T07:22:36.197Z",
+    "action": {
+      "type": "SET_NOTE_TYPE",
+      "input": {
+        "noteType": "PATTERN",
+        "updatedAt": "2026-09-03T07:22:36.197Z"
+      },
+      "timestampUtcMs": "2026-09-03T07:22:36.197Z"
+    }
+  },
+  {
+    "index": 16,
+    "hash": "RDB5VlGnkL6Tz/gWXsHO89ZSH7k=",
+    "timestampUtcMs": "2026-09-03T07:22:36.197Z",
+    "action": {
+      "type": "SET_CONTENT",
+      "input": {
+        "content": "The switchboard's upload endpoint pipes the request body through the hasher and to the temp file in the **same pass**:\n\n```ts\nconst hasher = crypto.createHash(\"sha256\");\nfor await (const chunk of body) {\n  hasher.update(chunk);   // ...written to the temp file in the same pass\n}\nconst actual = hasher.digest(\"hex\");\n```\n\nThis is called out as a **normative requirement of the design, not an implementation detail**: server memory per upload is O(chunk), independent of file size, which preserves the stream-large-files property that motivated the attachment system in the first place. At no point may the upload body be collected into memory on the server \u2014 no `Buffer.concat`, no Blob. (Client-side buffering is a separate, browser-only limitation.)\n\nIn hash-first mode the handle verifies two claims against the streamed bytes before committing:\n\n1. **Size, during the stream.** The handle counts bytes; the moment the count exceeds the declared `sizeBytes` it aborts **without consuming the rest of the stream**, deletes the temp file, retains the reservation and throws `SizeMismatch`. A stream that ends short gets the same outcome at stream end.\n2. **Hash, at stream end.** The streamed digest is compared to the reservation's `client_hash`; on mismatch the temp file is deleted, the reservation retained, and `HashMismatch` thrown.\n3. **Both match** \u2014 commit as before: insert or dedup/restore, soft-delete the reservation, return the result.\n\nSize is checked first because it can fail early, but the hash is the integrity guarantee; the size check exists so the declared `sizeBytes` is a contract rather than a hint. Verification therefore costs a byte counter and a string comparison on the existing pass \u2014 no second read.\n\nBecause verification happens on ingest, **the content-addressed store can never serve wrong bytes for a hash**, whatever a client claims.\n\n## Provenance\n- `packages/reactor/docs/attachments-hash-first.md` \u2014 Reservation semantics \u203a Hash verification on ingest\n\n_Extracted from the Powerhouse repository at **v6.2.2-dev.74**._",
+        "updatedAt": "2026-09-03T07:22:36.197Z"
+      },
+      "timestampUtcMs": "2026-09-03T07:22:36.197Z"
+    }
+  },
+  {
+    "index": 17,
+    "hash": "RDB5VlGnkL6Tz/gWXsHO89ZSH7k=",
+    "timestampUtcMs": "2026-09-03T07:22:36.197Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "version",
+        "value": "v6.2.2-dev.74",
+        "updatedAt": "2026-09-03T07:22:36.197Z"
+      },
+      "timestampUtcMs": "2026-09-03T07:22:36.197Z"
+    }
+  },
+  {
+    "index": 18,
+    "hash": "RDB5VlGnkL6Tz/gWXsHO89ZSH7k=",
+    "timestampUtcMs": "2026-09-03T07:22:36.197Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "filePath",
+        "value": "packages/reactor/docs/attachments-hash-first.md",
+        "updatedAt": "2026-09-03T07:22:36.197Z"
+      },
+      "timestampUtcMs": "2026-09-03T07:22:36.197Z"
+    }
+  }
+]

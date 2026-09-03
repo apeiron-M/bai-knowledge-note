@@ -1,0 +1,115 @@
+{
+  "links": [
+    {
+      "id": "lnk-955cc0e6-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "955cc0e6-a2f8-41f9-963f-bde2b278ab9c",
+      "targetTitle": "consistency-tokens-read-after-write"
+    },
+    {
+      "id": "lnk-564746c1-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "564746c1-f39c-4f87-83fa-b873a615174b",
+      "targetTitle": "composite-channel-factory-routing"
+    },
+    {
+      "id": "lnk-1e3e3772-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "1e3e3772-e865-4797-aebe-8b64a3f34fdd",
+      "targetTitle": "chat-history-persists-in-an-act-protected-feed-because-pss-m"
+    },
+    {
+      "id": "lnk-501f87dd-bui",
+      "linkType": "BUILDS_ON",
+      "targetDocumentId": "501f87dd-ff84-4a59-8894-033f209dfdf0",
+      "targetTitle": "reactor-builder-fluent-api-construction"
+    },
+    {
+      "id": "lnk-3e9f2bb1-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "3e9f2bb1-f86c-478f-8ee1-5a915ba3ce12",
+      "targetTitle": "Academy \u203a Reference \u203a Reactor \u203a Advanced reactor usage",
+      "reason": "Backing page found by content match in the v6.2.2-dev.74 source backfill \u2014 identifiers job_read_ready, processormanager, withreadmodel from the claim appear in this page (text revised between v6.2.2-dev.47 and v6.2.2-dev.74 \u2014 re-verified in the v6.2.2-dev.74 pass); attribution, not the original extraction record",
+      "confidence": "grounded"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Custom read models registered via withReadModel run in pre-ready phase before JOB_READ_READY fires while processors run post-ready",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "4db03786-3451-42c4-a20b-6ef6656bb475",
+      "name": "read-models",
+      "topicDocumentId": null
+    },
+    {
+      "id": "58d59370-6799-4e12-8b17-6ec7e6ca5975",
+      "name": "processors",
+      "topicDocumentId": null
+    },
+    {
+      "id": "b5f2e377-1e1e-4500-9882-04fafaba2507",
+      "name": "reactor",
+      "topicDocumentId": null
+    },
+    {
+      "id": "cd2d01a0-f229-493f-b386-408293c1bf0e",
+      "name": "architecture",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "The reactor distinguishes between read models and processors by execution phase. Read models registered via `ReactorBuilder.withReadModel()` implement `IReadModel` with `indexOperations(operations: OperationWithContext[])` and run in the pre-ready phase -- they complete before `JOB_READ_READY` fires. This ensures derived views are consistent before reads. Processors registered via `ProcessorManager` run in the post-ready phase, after the job is marked complete. The reactor's internal components include `readModelCoordinator` (dispatches operations to all read models), `processorManager` (routes operations to user-defined processors), `documentView` (maintains document snapshots for reads), and `documentIndexer` (tracks parent/child relationships).",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": "v6.2.2-dev.74",
+  "computes": null,
+  "filePath": "apps/academy/docs/academy/04-Reference/01-Reactor/03-AdvancedReactorUsage.md",
+  "noteType": "ARCHITECTURE",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "knowledge-agent",
+    "createdAt": "2026-04-02T12:00:00.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-09-02T22:26:26.293Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Read models implement IReadModel.indexOperations() and complete before job is marked ready; processors run after via ProcessorManager.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "4f4c58c8-d950-4bb8-a3c1-abf2769d1c6e",
+      "actor": "claude",
+      "comment": "Knowledge registered against powerhouse v6.2.2-dev.47",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-14T12:00:00.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "12232395-d809-4c97-8cd9-933f143d1463",
+      "actor": "liberuum",
+      "comment": "Canonical as of powerhouse v6.2.2-dev.47",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-14T12:00:00.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

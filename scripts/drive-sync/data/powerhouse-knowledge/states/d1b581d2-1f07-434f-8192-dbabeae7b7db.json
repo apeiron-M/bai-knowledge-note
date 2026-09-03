@@ -1,0 +1,103 @@
+{
+  "links": [
+    {
+      "id": "lnk-5646522f-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "5646522f-bc2d-4257-bfa7-a455e5855197",
+      "targetTitle": "renown-creates-did-from-ethereum-wallet"
+    },
+    {
+      "id": "lnk-2ae31ea4-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "2ae31ea4-b8f4-4128-8531-93b932d6b6bb",
+      "targetTitle": "renown-sdk-decentralized-identity-auth"
+    },
+    {
+      "id": "lnk-a7186ab5-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "a7186ab5-9e32-4c1a-bf03-8d485203504b",
+      "targetTitle": "Academy \u203a Build \u203a BuildingUserExperiences \u203a Authorization \u203a Renown authentication flow",
+      "reason": "The note names apps/academy/docs/academy/03-Build/03-BuildingUserExperiences/07-Authorization/01-RenownAuthenticationFlow.md as its source; page text revised between v6.2.2-dev.47 and v6.2.2-dev.74 \u2014 re-verified in the v6.2.2-dev.74 pass",
+      "confidence": "grounded"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Sign-in binds to one chain because the chain is part of the DID (did:pkh:eip155:chainId:address)",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "7acb6eae-f6f6-4b4a-93a0-09596e70542c",
+      "name": "renown",
+      "topicDocumentId": null
+    },
+    {
+      "id": "e23d3eca-e4ec-46dc-9b15-f43f9cf647c0",
+      "name": "DID",
+      "topicDocumentId": null
+    },
+    {
+      "id": "6ef462c1-9f8d-41a1-8ddb-de10341bd990",
+      "name": "identity",
+      "topicDocumentId": null
+    },
+    {
+      "id": "3a7d5ccc-06f8-4fe7-b2d7-c777503d0e0b",
+      "name": "authentication",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "## The chain is inside the identifier\n\nRenown sign-in happens on **one chain**, Ethereum mainnet by default. This is not a configuration limitation that could be relaxed \u2014 the chain id is a component of the user's DID:\n\n```\ndid:pkh:eip155:<chainId>:<address>\n```\n\nSo the same wallet on a different chain produces a **different DID**, which is a different user, with different credentials. There is no notion of one identity spanning chains.\n\n## The behavioural consequence\n\nA wallet session arriving from another chain is **rejected**, not accepted as a second identity for the same person. Wallets are offered for the issuing chain only, so a user connected to another network is prompted to switch rather than being allowed to sign in and then failing later.\n\nThat rejection is the correct behaviour precisely because the alternative \u2014 accepting it \u2014 would silently create a second, unrelated account holding none of the first account's permissions or reputation. From the authorization system's point of view the two addresses are unrelated principals: document permission grants key on the verified address, so a grant made to the mainnet identity means nothing to the same wallet's identity on another chain.\n\n## Why the DID carries the chain at all\n\n`did:pkh` is a DID method that derives an identifier from an on-chain account, and an on-chain account is only meaningful relative to a chain. Encoding `eip155:<chainId>` makes the identifier globally unambiguous \u2014 two chains can host the same 20-byte address with entirely different histories behind it, and a reputation system that conflated them would be trivially spoofable.\n\nThe practical rule for operators: pick the issuing chain deliberately and do not change it, because changing it invalidates every existing user identity rather than migrating it.\n\n_Source: apps/academy/docs/academy/03-Build/03-BuildingUserExperiences/07-Authorization/01-RenownAuthenticationFlow.md (Powerhouse v6.2.2-dev.45)._",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": "v6.2.2-dev.74",
+  "computes": null,
+  "filePath": "apps/academy/docs/academy/03-Build/03-BuildingUserExperiences/07-Authorization/01-RenownAuthenticationFlow.md",
+  "noteType": "CONCEPT",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "claude",
+    "createdAt": "2026-08-13T14:33:34.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-09-02T22:26:21.419Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "The same wallet on another chain is a different user with different credentials; a wallet session from another chain is rejected rather than accepted as a second identity.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "f18d6973-5041-40cb-83a3-627d99422260",
+      "actor": "claude",
+      "comment": "Knowledge registered against powerhouse v6.2.2-dev.47",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-14T12:00:00.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "5a194ea2-e28e-465c-bc51-fbbc19817059",
+      "actor": "liberuum",
+      "comment": "Canonical as of powerhouse v6.2.2-dev.47",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-14T12:00:00.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

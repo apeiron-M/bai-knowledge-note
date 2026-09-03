@@ -1,0 +1,96 @@
+{
+  "links": [
+    {
+      "id": "lnk-1adbf0db-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "1adbf0db-0ab1-4801-9ee9-cbbc9a875beb",
+      "targetTitle": "document-model-vs-document-editor-vs-app-serves-different-purposes"
+    },
+    {
+      "id": "lnk-79987290-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "79987290-fb65-4d66-a549-fd41370db753",
+      "targetTitle": "connect-is-host-application"
+    },
+    {
+      "id": "lnk-87edb655-bui",
+      "linkType": "BUILDS_ON",
+      "targetDocumentId": "87edb655-2431-4b23-8c7f-53ca7a468fba",
+      "targetTitle": "drive-apps-are-custom-drive-editors"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Connect runs the drive app when no document is selected and hands over to the registered editor when one is opened",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "1ded25c8-d119-445f-8612-333652e83890",
+      "name": "drive-apps",
+      "topicDocumentId": null
+    },
+    {
+      "id": "ade656e4-25eb-4ed0-aa4c-2fca58e0b21c",
+      "name": "editors",
+      "topicDocumentId": null
+    },
+    {
+      "id": "25c3c528-ef1e-408d-be11-8bd4d73284fa",
+      "name": "connect",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "## Selection is the switch\n\nAn **editor** renders the inside of one document \u2014 one task, one contract, one budget row. A **drive app** renders the outside: the whole drive, a list of every task, a dashboard composing many documents into one view.\n\nThe rule that decides which one runs is not configuration, it is selection state. When a user has a drive open with **no document selected**, Connect runs the drive app. When they **open a specific document**, the registered editor for that document's type takes over \u2014 and the drive app can still wrap it as a shell rather than being replaced outright.\n\n## Picking the right one\n\nThe sharp line follows from the rule:\n\n| Goal | Right tool |\n| --- | --- |\n| Kanban board over every task document in a drive | drive app |\n| Rich form for filling out one contract | editor |\n| Custom file-tree sidebar for a drive | drive app |\n| Render and edit one specific task | editor |\n\nAnything cross-document \u2014 navigation, aggregation, a workflow screen spanning several documents \u2014 is drive-app work. Anything scoped to a single document's fields is editor work. Getting this backwards is the usual reason a \"dashboard editor\" ends up needing hooks it cannot legitimately call: an editor is handed one document, so reaching sideways into the whole drive from inside one is fighting the architecture.\n\n## Why it matters for shipping products\n\nConnect's default drive view is a generic folder tree, which is fine for storage and wrong for a product. Replacing that view is exactly what a drive app is for. The combination \u2014 drive app owning navigation and cross-document views, editors owning each detail view \u2014 covers the full surface area of a real frontend without leaving Connect and without building a separate SPA.\n\n_Source: apps/academy/docs/academy/02-Learn/05-connect/02-drive-apps.mdx (Powerhouse v6.2.2-dev.45)._",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "CONCEPT",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "claude",
+    "createdAt": "2026-08-13T14:36:08.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-09-03T09:59:28.516Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Selection is the switch: drive open with nothing selected renders the drive app; opening a document mounts its editor, which the drive app can still wrap as a shell.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "31f0cace-656f-4506-b153-9be2e7f4fd26",
+      "actor": "claude",
+      "comment": "Knowledge registered against powerhouse v6.2.2-dev.47",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-14T12:00:00.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "d554698b-359f-41eb-a453-a0bd323e4872",
+      "actor": "liberuum",
+      "comment": "Canonical as of powerhouse v6.2.2-dev.47",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-14T12:00:00.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

@@ -1,0 +1,107 @@
+{
+  "links": [
+    {
+      "id": "lnk-97c3a924-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "97c3a924-0ba9-4b89-86f7-b7a5747d41a7",
+      "targetTitle": "relational-spec-stale-v6",
+      "reason": "Import-sniffing for RelationalDbProcessor is brittle partly because the class moved packages between the spec and the current tree",
+      "confidence": "grounded"
+    },
+    {
+      "id": "lnk-dbd4ae8f-bui",
+      "linkType": "BUILDS_ON",
+      "targetDocumentId": "dbd4ae8f-9308-457f-9051-00798ef2844d",
+      "targetTitle": "migrate-codegen-punch-list",
+      "reason": "Continues the same punch list with the defects that survive a successful scaffold: wrong type detection and a tsconfig that will not compile",
+      "confidence": "grounded"
+    },
+    {
+      "id": "lnk-ab3c9a9f-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "ab3c9a9f-4303-4c01-8058-105da109426b",
+      "targetTitle": "Spec \u203a Migrate / Codegen Fixes",
+      "reason": "Extracted from docs/specs/migrate-codegen-fixes.md at v6.2.2-dev.74 \u2014 Issues 3, 4 and 5",
+      "confidence": "grounded"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Processor type is detected by sniffing imports, so a relational processor is misclassified as analytics after a migration writes an analytics stub",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "9376ba35-b6a9-40d4-baf1-0fc4fed6fa60",
+      "name": "codegen",
+      "topicDocumentId": null
+    },
+    {
+      "id": "07d2cf7e-6e5e-4589-978d-629a4281097f",
+      "name": "migration",
+      "topicDocumentId": null
+    },
+    {
+      "id": "bc83c8b1-6c0b-4f7d-bfc2-36e196b48178",
+      "name": "processors",
+      "topicDocumentId": null
+    },
+    {
+      "id": "6d504c37-500f-4836-b191-dd20e06bd7e8",
+      "name": "gotchas",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "Issue 3 of the migration punch list is the subtlest: **processor type is inferred from imports**, and a migration can poison the inference.\n\nLegacy projects put the processor class in `processors/<name>/index.ts`; the new template expects `processor.ts`. Migrating finds no `processor.ts` and writes an **empty analytics stub**, leaving two processor classes in one module (`class Codegen` in `processor.ts`, `class CodegenProcessor` in `index.ts`). The metadata detector then reads `processor.ts ?? index.ts` looking for a `RelationalDbProcessor` or `IAnalyticsStore` import, which fails two ways:\n\n- the newly created `processor.ts` **always imports `IAnalyticsStore`**, so a relational-DB processor is misclassified as analytics on subsequent `--all` runs;\n- a genuinely relational legacy processor that imports `Kysely` directly (rather than `RelationalDbProcessor`) **silently falls back to analytics**.\n\nThe proposed fixes are instructive about where the fragility lies: move the legacy class into `processor.ts` *before* calling codegen, broaden the detector to treat `Kysely` imports as a relational signal, or \u2014 the robust option \u2014 **declare the processor type explicitly in `powerhouse.manifest.json`** and prefer that over import-sniffing.\n\nTwo more items round out the list. The migrated `tsconfig.json` listed `apps/connect` and `clis/ph-cli` under `references` because they are runtime dependencies, and both reference the migrated package back, creating **cycles that surface as TS6305** whenever `dist/` is missing \u2014 references should only be added for packages whose *source* is imported at compile time. And the migration **drops the monorepo `extends`**, re-asserting the shared options inline so future changes to `tsconfig.options.json` no longer propagate.\n\n## Provenance\n- `docs/specs/migrate-codegen-fixes.md` \u2014 Issues 3, 4 and 5\n\n_Extracted from the Powerhouse repository at **v6.2.2-dev.74**._",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": "v6.2.2-dev.74",
+  "computes": null,
+  "filePath": "docs/specs/migrate-codegen-fixes.md",
+  "noteType": "BUG-PATTERN",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "knowledge-agent",
+    "createdAt": "2026-09-03T07:30:00.251Z",
+    "sessionId": null,
+    "updatedAt": "2026-09-03T07:31:15.448Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "The detector reads processor.ts ?? index.ts for RelationalDbProcessor or IAnalyticsStore imports; a legacy class in index.ts leaves two classes and a stub that always imports IAnalyticsStore.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "b10bb984-66ba-48c5-b127-9caad76ea02d",
+      "actor": "knowledge-agent",
+      "comment": "extracted from docs/specs/migrate-codegen-fixes.md at v6.2.2-dev.74",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-09-03T07:30:00.747Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "ddcbc95e-f91d-41ee-8d6f-3aaf2a5d45ed",
+      "actor": "liberuum",
+      "comment": "claim checked against the cited file at the pinned tag",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-09-03T07:30:01.329Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

@@ -1,0 +1,348 @@
+[
+  {
+    "index": 0,
+    "hash": "",
+    "timestampUtcMs": "2026-09-03T07:34:10.491Z",
+    "action": {
+      "type": "CREATE_DOCUMENT",
+      "input": {
+        "meta": {},
+        "name": "lb-pinning-invariant",
+        "slug": "",
+        "model": "bai/knowledge-note",
+        "branch": "main",
+        "signing": {
+          "nonce": "",
+          "publicKey": {},
+          "signature": "7252c41c-7185-4177-aaeb-4fe9dc0505c1",
+          "documentType": "bai/knowledge-note",
+          "createdAtUtcIso": "2026-09-03T07:34:10.491Z"
+        },
+        "version": 0,
+        "documentId": "7252c41c-7185-4177-aaeb-4fe9dc0505c1",
+        "protocolVersions": {
+          "base-reducer": 2
+        }
+      },
+      "timestampUtcMs": "2026-09-03T07:34:10.491Z"
+    }
+  },
+  {
+    "index": 0,
+    "hash": "aA38IgxfxkABEuhK+KONbE4dwx4=",
+    "timestampUtcMs": "2026-09-03T07:34:11.901Z",
+    "action": {
+      "type": "SET_TITLE",
+      "input": {
+        "title": "The load balancer deliberately keeps sending a pinned drive to a dead backend, because silently re-routing it would split-brain that document's write log",
+        "updatedAt": "2026-09-03T07:34:11.901Z"
+      },
+      "timestampUtcMs": "2026-09-03T07:34:11.901Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "",
+    "timestampUtcMs": "2026-09-03T07:34:10.491Z",
+    "action": {
+      "type": "UPGRADE_DOCUMENT",
+      "input": {
+        "model": "bai/knowledge-note",
+        "toVersion": 1,
+        "documentId": "7252c41c-7185-4177-aaeb-4fe9dc0505c1",
+        "fromVersion": 0,
+        "initialState": {
+          "auth": {
+            "grants": [],
+            "version": 0
+          },
+          "local": {
+            "lastViewedAt": null,
+            "personalTags": []
+          },
+          "global": {
+            "links": [],
+            "model": null,
+            "scope": null,
+            "title": null,
+            "editor": null,
+            "inputs": [],
+            "models": [],
+            "status": "DRAFT",
+            "topics": [],
+            "content": null,
+            "context": null,
+            "modelId": null,
+            "modules": [],
+            "outputs": [],
+            "version": null,
+            "computes": null,
+            "filePath": null,
+            "noteType": null,
+            "severity": null,
+            "hooksUsed": [],
+            "rootCause": null,
+            "confidence": null,
+            "consumedBy": [],
+            "provenance": null,
+            "sourceType": null,
+            "targetType": null,
+            "cardinality": null,
+            "description": null,
+            "alternatives": [],
+            "consequences": [],
+            "errorMessage": null,
+            "relationType": null,
+            "correctPattern": null,
+            "decisionStatus": null,
+            "dispatchTargets": [],
+            "lifecycleEvents": []
+          },
+          "document": {
+            "hash": {
+              "encoding": "base64",
+              "algorithm": "sha1"
+            },
+            "version": 1
+          }
+        }
+      },
+      "timestampUtcMs": "2026-09-03T07:34:10.491Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "tFQ+GgXYLB9bQGSnMUMpTUw072g=",
+    "timestampUtcMs": "2026-09-03T07:34:11.901Z",
+    "action": {
+      "type": "SET_DESCRIPTION",
+      "input": {
+        "updatedAt": "2026-09-03T07:34:11.901Z",
+        "description": "max_fails=0 disables passive mark-down and the active healthcheck never calls set_peer_down, so the hash always picks the originally-hashed peer. A dead pin fails at TCP and is translated to 503."
+      },
+      "timestampUtcMs": "2026-09-03T07:34:11.901Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "",
+    "timestampUtcMs": "2026-09-03T07:34:49.182Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "metadata": {
+          "reason": "Extracted from apps/switchboard-lb/ARCHITECTURE.md at v6.2.2-dev.74 \u2014 \u00a75.1 Invariant; \u00a75.2 Mechanism (pinning under failure); \u00a74.5 Failure modes; \u00a78 M3",
+          "confidence": "grounded"
+        },
+        "sourceId": "7252c41c-7185-4177-aaeb-4fe9dc0505c1",
+        "targetId": "704020e6-eefd-4e1f-9fc6-f9ec801d8255",
+        "relationshipType": "DERIVED_FROM"
+      },
+      "timestampUtcMs": "2026-09-03T07:34:49.182Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "ggtbT1SCN0PnC+Rz3KbUSYqQRzA=",
+    "timestampUtcMs": "2026-09-03T07:34:11.901Z",
+    "action": {
+      "type": "SET_NOTE_TYPE",
+      "input": {
+        "noteType": "DECISION",
+        "updatedAt": "2026-09-03T07:34:11.901Z"
+      },
+      "timestampUtcMs": "2026-09-03T07:34:11.901Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "",
+    "timestampUtcMs": "2026-09-03T07:34:49.638Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "metadata": {
+          "reason": "Consistent hashing on the header only preserves the invariant because peer mark-down is disabled on both the passive and active paths",
+          "confidence": "grounded"
+        },
+        "sourceId": "7252c41c-7185-4177-aaeb-4fe9dc0505c1",
+        "targetId": "60b0a1d3-b299-4a56-817a-de602de7ea6a",
+        "relationshipType": "BUILDS_ON"
+      },
+      "timestampUtcMs": "2026-09-03T07:34:49.638Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "n910TmmYuSZC1p1vhfHbemlPOTo=",
+    "timestampUtcMs": "2026-09-03T07:34:11.901Z",
+    "action": {
+      "type": "SET_CONTENT",
+      "input": {
+        "content": "The invariant is stated as the heart of the system: *for a given document id `D`, all successful mutations land on the same backend `B(D)` for as long as `D` exists.* Reads may go anywhere, but the MVP routes them with the same function for simplicity and cache affinity.\n\nStandard nginx behaviour is the enemy of that invariant. nginx skips peers marked `down` \u2014 whether by passive `max_fails` tracking or by an active healthcheck calling `set_peer_down` \u2014 and picks the next slot in the ring. Under the pinning invariant that is **catastrophic**: a document pinned to a dead backend would silently re-route to a different instance and split-brain its write log.\n\nSo both paths are disabled, and the disabling is the load-bearing design:\n\n- `upstreams.conf` sets **`max_fails=0`** per `server`, so passive checks never mark a peer down;\n- `lua/healthcheck.lua` runs its own probe loop (every 2 s, 1 s timeout, fall 3 / rise 2, against `GET /health`), tracks state in `lua_shared_dict healthcheck` for `/__hc/status` to render, and **never calls `set_peer_down`**;\n- `proxy_next_upstream off` means no retry across backends;\n- the resulting TCP refusal or timeout is translated to a uniform **503** via `proxy_intercept_errors on; error_page 502 504 = @no_backend;`, with nginx's finer distinction preserved in `$upstream_status` for operators.\n\nNet effect: every peer always looks \"up\" to the upstream module, the hash module always picks the originally-hashed peer, and **the healthcheck's job is observability, not routing**. A dead pin fails closed. The integration test asserts the strict property directly: 5/5 requests pinned to a stopped backend get 503, never a 200 from a different one.\n\n## Provenance\n- `apps/switchboard-lb/ARCHITECTURE.md` \u2014 \u00a75.1 Invariant; \u00a75.2 Mechanism (pinning under failure); \u00a74.5 Failure modes; \u00a78 M3\n\n_Extracted from the Powerhouse repository at **v6.2.2-dev.74**._",
+        "updatedAt": "2026-09-03T07:34:11.901Z"
+      },
+      "timestampUtcMs": "2026-09-03T07:34:11.901Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "",
+    "timestampUtcMs": "2026-09-03T07:34:50.079Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "metadata": {
+          "reason": "The same invariant is what makes adding or removing a backend a coordinated maintenance event",
+          "confidence": "grounded"
+        },
+        "sourceId": "7252c41c-7185-4177-aaeb-4fe9dc0505c1",
+        "targetId": "9a4b1323-40df-4f2c-9c6c-47db12d501d7",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-09-03T07:34:50.079Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "L5/cyGb7/nbv1vqwbL37b3plyEU=",
+    "timestampUtcMs": "2026-09-03T07:34:11.901Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "8da50859-fa17-4880-a770-7ca8c5a84310",
+        "name": "switchboard-lb"
+      },
+      "timestampUtcMs": "2026-09-03T07:34:11.901Z"
+    }
+  },
+  {
+    "index": 5,
+    "hash": "",
+    "timestampUtcMs": "2026-09-03T07:34:50.560Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "metadata": {
+          "reason": "Both are about not letting two instances hold divergent histories of one document: the model proves the merge, the LB avoids creating the split in the first place",
+          "confidence": "speculative"
+        },
+        "sourceId": "7252c41c-7185-4177-aaeb-4fe9dc0505c1",
+        "targetId": "7a3b6263-a16c-4fd4-83f3-7df6bdfc44a5",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-09-03T07:34:50.560Z"
+    }
+  },
+  {
+    "index": 5,
+    "hash": "t0Z6WkIbm5kkAJQ9By9AYY/VkmQ=",
+    "timestampUtcMs": "2026-09-03T07:34:11.901Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "4ef8f6af-8d14-4348-9895-487c676c3d3b",
+        "name": "sharding"
+      },
+      "timestampUtcMs": "2026-09-03T07:34:11.901Z"
+    }
+  },
+  {
+    "index": 6,
+    "hash": "U1FLwAK+J5X26wgdFTxjy7CEPBc=",
+    "timestampUtcMs": "2026-09-03T07:34:11.901Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "a23574e3-8f37-41a9-a0b0-945f003f32ff",
+        "name": "failure-modes"
+      },
+      "timestampUtcMs": "2026-09-03T07:34:11.901Z"
+    }
+  },
+  {
+    "index": 7,
+    "hash": "Va9H7/uTM5X1RFTIgVJiCPY5j/M=",
+    "timestampUtcMs": "2026-09-03T07:34:11.901Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "7e8e6311-8055-4184-8235-2da2f1828eb3",
+        "name": "correctness"
+      },
+      "timestampUtcMs": "2026-09-03T07:34:11.901Z"
+    }
+  },
+  {
+    "index": 8,
+    "hash": "t+rycZyt4A+JItaKT3xG/nOx3l8=",
+    "timestampUtcMs": "2026-09-03T07:34:11.901Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "version",
+        "value": "v6.2.2-dev.74",
+        "updatedAt": "2026-09-03T07:34:11.901Z"
+      },
+      "timestampUtcMs": "2026-09-03T07:34:11.901Z"
+    }
+  },
+  {
+    "index": 9,
+    "hash": "8ia8Cw9+DFLj+fEkGYX6Kkmsuuo=",
+    "timestampUtcMs": "2026-09-03T07:34:11.901Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "filePath",
+        "value": "apps/switchboard-lb/ARCHITECTURE.md",
+        "updatedAt": "2026-09-03T07:34:11.901Z"
+      },
+      "timestampUtcMs": "2026-09-03T07:34:11.901Z"
+    }
+  },
+  {
+    "index": 10,
+    "hash": "trLassGxKllRCKTTH901gpAVHXc=",
+    "timestampUtcMs": "2026-09-03T07:34:14.543Z",
+    "action": {
+      "type": "SET_PROVENANCE",
+      "input": {
+        "author": "knowledge-agent",
+        "createdAt": "2026-09-03T07:34:14.543Z",
+        "sourceOrigin": "DERIVED"
+      },
+      "timestampUtcMs": "2026-09-03T07:34:14.543Z"
+    }
+  },
+  {
+    "index": 11,
+    "hash": "UbWEcsRX3tavpbBG0oKQvjIgCzI=",
+    "timestampUtcMs": "2026-09-03T07:34:15.180Z",
+    "action": {
+      "type": "SUBMIT_FOR_REVIEW",
+      "input": {
+        "id": "c103f8dc-1a9a-4a73-8e33-705ffb7dcbda",
+        "actor": "knowledge-agent",
+        "comment": "extracted from apps/switchboard-lb/ARCHITECTURE.md at v6.2.2-dev.74",
+        "timestamp": "2026-09-03T07:34:15.180Z"
+      },
+      "timestampUtcMs": "2026-09-03T07:34:15.180Z"
+    }
+  },
+  {
+    "index": 12,
+    "hash": "1uGyWa6i+22JNdV2OcsnpxseI8E=",
+    "timestampUtcMs": "2026-09-03T07:34:15.773Z",
+    "action": {
+      "type": "APPROVE_NOTE",
+      "input": {
+        "id": "56e07051-bbae-4669-a6a7-a64dd7c0b154",
+        "actor": "liberuum",
+        "comment": "claim checked against the cited file at the pinned tag",
+        "timestamp": "2026-09-03T07:34:15.773Z"
+      },
+      "timestampUtcMs": "2026-09-03T07:34:15.773Z"
+    }
+  }
+]

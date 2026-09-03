@@ -1,0 +1,276 @@
+[
+  {
+    "index": 0,
+    "hash": "",
+    "timestampUtcMs": "2026-08-20T08:45:44.679Z",
+    "action": {
+      "type": "CREATE_DOCUMENT",
+      "input": {
+        "meta": {},
+        "name": "Flowable's engine issues UPDATE against its own history table",
+        "slug": "",
+        "model": "bai/knowledge-note",
+        "branch": "main",
+        "signing": {
+          "nonce": "",
+          "publicKey": {},
+          "signature": "3a659f05-115e-405c-8953-e7e8c1b39665",
+          "documentType": "bai/knowledge-note",
+          "createdAtUtcIso": "2026-08-20T08:45:44.679Z"
+        },
+        "version": 0,
+        "documentId": "3a659f05-115e-405c-8953-e7e8c1b39665",
+        "protocolVersions": {
+          "base-reducer": 2
+        }
+      },
+      "timestampUtcMs": "2026-08-20T08:45:44.679Z"
+    }
+  },
+  {
+    "index": 0,
+    "hash": "AI428NqxGGXmy7sCJ+OB+/FlrZM=",
+    "timestampUtcMs": "2026-08-20T08:45:45.303Z",
+    "action": {
+      "type": "SET_TITLE",
+      "input": {
+        "title": "Flowable's engine issues UPDATE against its own history table",
+        "updatedAt": "2026-08-20T08:45:45.303779Z"
+      },
+      "timestampUtcMs": "2026-08-20T08:45:45.303813Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "",
+    "timestampUtcMs": "2026-08-20T08:45:44.679Z",
+    "action": {
+      "type": "UPGRADE_DOCUMENT",
+      "input": {
+        "model": "bai/knowledge-note",
+        "toVersion": 1,
+        "documentId": "3a659f05-115e-405c-8953-e7e8c1b39665",
+        "fromVersion": 0,
+        "initialState": {
+          "auth": {
+            "grants": [],
+            "version": 0
+          },
+          "local": {
+            "lastViewedAt": null,
+            "personalTags": []
+          },
+          "global": {
+            "links": [],
+            "model": null,
+            "scope": null,
+            "title": null,
+            "editor": null,
+            "inputs": [],
+            "models": [],
+            "status": "DRAFT",
+            "topics": [],
+            "content": null,
+            "context": null,
+            "modelId": null,
+            "modules": [],
+            "outputs": [],
+            "version": null,
+            "computes": null,
+            "filePath": null,
+            "noteType": null,
+            "severity": null,
+            "hooksUsed": [],
+            "rootCause": null,
+            "confidence": null,
+            "consumedBy": [],
+            "provenance": null,
+            "sourceType": null,
+            "targetType": null,
+            "cardinality": null,
+            "description": null,
+            "alternatives": [],
+            "consequences": [],
+            "errorMessage": null,
+            "relationType": null,
+            "correctPattern": null,
+            "decisionStatus": null,
+            "dispatchTargets": [],
+            "lifecycleEvents": []
+          },
+          "document": {
+            "hash": {
+              "encoding": "base64",
+              "algorithm": "sha1"
+            },
+            "version": 1
+          }
+        }
+      },
+      "timestampUtcMs": "2026-08-20T08:45:44.679Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "1iIh8Mr9GcGbmljyInhXHNCPhyk=",
+    "timestampUtcMs": "2026-08-20T08:45:45.303Z",
+    "action": {
+      "type": "SET_DESCRIPTION",
+      "input": {
+        "updatedAt": "2026-08-20T08:45:45.303817Z",
+        "description": "The MyBatis mapper for HistoricProcessInstance rewrites START_TIME_ and BUSINESS_KEY_ in place, with a REV_ optimistic-locking column indicating the row is designed for mutation."
+      },
+      "timestampUtcMs": "2026-08-20T08:45:45.303823Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "",
+    "timestampUtcMs": "2026-08-20T08:45:46.592Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "3a659f05-115e-405c-8953-e7e8c1b39665",
+        "targetId": "4d8e59af-51f2-4ab7-b290-e1d5744abbd7",
+        "relationshipType": "DERIVED_FROM"
+      },
+      "timestampUtcMs": "2026-08-20T08:45:46.592Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "abtyDlqSZDiOoPYnQ4PLZ4dbMvE=",
+    "timestampUtcMs": "2026-08-20T08:45:45.303Z",
+    "action": {
+      "type": "SET_NOTE_TYPE",
+      "input": {
+        "noteType": "OBSERVATION",
+        "updatedAt": "2026-08-20T08:45:45.303825Z"
+      },
+      "timestampUtcMs": "2026-08-20T08:45:45.303831Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "jiQr4DEmbdLNnEe/5OCvKetGvqU=",
+    "timestampUtcMs": "2026-08-20T08:45:45.303Z",
+    "action": {
+      "type": "SET_CONTENT",
+      "input": {
+        "content": "`HistoricProcessInstance.xml` defines `updateHistoricProcessInstance`, issuing `update ${prefix}ACT_HI_PROCINST` with `REV_`, `PROC_DEF_ID_`, `BUSINESS_KEY_` and `START_TIME_` among the assignable columns. Equivalent update mappers exist for historic task and activity instances.\n\nThe presence of a `REV_` optimistic-locking column is the strongest signal: rows carrying a revision counter are rows expected to change. This is mutability established from the engine's own source rather than inferred from the absence of a guarantee.\n\nIt also makes the sharpest possible demonstration. A hand-written `UPDATE` against that table is indistinguishable from the engine's own behaviour \u2014 same statement shape, same revision increment, no gap and no tamper indicator \u2014 because legitimate rewrites are how the component works.",
+        "updatedAt": "2026-08-20T08:45:45.303833Z"
+      },
+      "timestampUtcMs": "2026-08-20T08:45:45.303838Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "alOMp4gP786mT1YJLM3ZZQvvZkw=",
+    "timestampUtcMs": "2026-08-20T08:45:45.303Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "52c83faf-8b8f-43bd-a89a-b03467057444",
+        "name": "tool-screen"
+      },
+      "timestampUtcMs": "2026-08-20T08:45:45.303846Z"
+    }
+  },
+  {
+    "index": 5,
+    "hash": "Ju9d7z7doJidir2PJxwxsa5YOGA=",
+    "timestampUtcMs": "2026-08-20T08:45:45.303Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "5ff8ac14-4076-4fe5-8105-8a20af128d6e",
+        "name": "flowable"
+      },
+      "timestampUtcMs": "2026-08-20T08:45:45.303855Z"
+    }
+  },
+  {
+    "index": 6,
+    "hash": "xxqZJdajdJR10OHXWZpMVojhG5Y=",
+    "timestampUtcMs": "2026-08-20T08:45:45.303Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "7c40bb2f-0532-48bf-a33b-e29e87fad16a",
+        "name": "data-integrity"
+      },
+      "timestampUtcMs": "2026-08-20T08:45:45.303864Z"
+    }
+  },
+  {
+    "index": 7,
+    "hash": "Yqwt/wwSjycuNhY99GfAfkVLc50=",
+    "timestampUtcMs": "2026-08-20T08:45:45.303Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "70c5408a-1830-4648-be87-a0106150c4af",
+        "name": "audit-trail"
+      },
+      "timestampUtcMs": "2026-08-20T08:45:45.303871Z"
+    }
+  },
+  {
+    "index": 8,
+    "hash": "NPezfJfE7BbpnqM64o6O6vQF0yQ=",
+    "timestampUtcMs": "2026-08-20T08:45:45.303Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "863147ca-7814-4a5c-ae4d-93c29eb13d30",
+        "name": "mutability"
+      },
+      "timestampUtcMs": "2026-08-20T08:45:45.303878Z"
+    }
+  },
+  {
+    "index": 9,
+    "hash": "lXWKhE0yru4YzK+OlcnVRFl5re8=",
+    "timestampUtcMs": "2026-08-20T08:45:45.713Z",
+    "action": {
+      "type": "SET_PROVENANCE",
+      "input": {
+        "author": "knowledge-agent",
+        "createdAt": "2026-08-20T08:45:45.713507Z",
+        "sessionId": null,
+        "sourceOrigin": "DERIVED"
+      },
+      "timestampUtcMs": "2026-08-20T08:45:45.713542Z"
+    }
+  },
+  {
+    "index": 10,
+    "hash": "cwW2p78juaoTg80gS6mpT+Lmg9M=",
+    "timestampUtcMs": "2026-08-20T08:45:46.778Z",
+    "action": {
+      "type": "SUBMIT_FOR_REVIEW",
+      "input": {
+        "id": "c957dfb2-8009-44ad-966f-764f68bcef41",
+        "actor": "knowledge-agent",
+        "comment": "Extracted from the primary-source tool screen; each claim quotable from a cited source.",
+        "timestamp": "2026-08-20T08:45:46.778702Z"
+      },
+      "timestampUtcMs": "2026-08-20T08:45:46.778723Z"
+    }
+  },
+  {
+    "index": 11,
+    "hash": "xAqaLW3Nbrdq5iElDiL/LfqCr/k=",
+    "timestampUtcMs": "2026-08-20T08:45:46.935Z",
+    "action": {
+      "type": "APPROVE_NOTE",
+      "input": {
+        "id": "2341d5e0-3e00-4b92-9cb4-6c9473687df6",
+        "actor": "liberuum",
+        "comment": "Approved: tool-screen extraction.",
+        "timestamp": "2026-08-20T08:45:46.935804Z"
+      },
+      "timestampUtcMs": "2026-08-20T08:45:46.935826Z"
+    }
+  }
+]

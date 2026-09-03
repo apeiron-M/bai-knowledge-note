@@ -1,0 +1,276 @@
+[
+  {
+    "index": 0,
+    "hash": "",
+    "timestampUtcMs": "2026-08-19T11:31:57.854Z",
+    "action": {
+      "type": "CREATE_DOCUMENT",
+      "input": {
+        "meta": {},
+        "name": "A Drupal workflow-state hook produces an approval trail distinct from node revisions",
+        "slug": "",
+        "model": "bai/knowledge-note",
+        "branch": "main",
+        "signing": {
+          "nonce": "",
+          "publicKey": {},
+          "signature": "7e0243e6-10ec-429e-ba8c-16127abb261c",
+          "documentType": "bai/knowledge-note",
+          "createdAtUtcIso": "2026-08-19T11:31:57.854Z"
+        },
+        "version": 0,
+        "documentId": "7e0243e6-10ec-429e-ba8c-16127abb261c",
+        "protocolVersions": {
+          "base-reducer": 2
+        }
+      },
+      "timestampUtcMs": "2026-08-19T11:31:57.854Z"
+    }
+  },
+  {
+    "index": 0,
+    "hash": "13Q0VNqiQmwQvJsGw7G+CHE/Jf0=",
+    "timestampUtcMs": "2026-08-19T11:31:57.762Z",
+    "action": {
+      "type": "SET_TITLE",
+      "input": {
+        "title": "A Drupal workflow-state hook produces an approval trail distinct from node revisions",
+        "updatedAt": "2026-08-19T11:31:57.762593Z"
+      },
+      "timestampUtcMs": "2026-08-19T11:31:57.762662Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "",
+    "timestampUtcMs": "2026-08-19T11:31:57.854Z",
+    "action": {
+      "type": "UPGRADE_DOCUMENT",
+      "input": {
+        "model": "bai/knowledge-note",
+        "toVersion": 1,
+        "documentId": "7e0243e6-10ec-429e-ba8c-16127abb261c",
+        "fromVersion": 0,
+        "initialState": {
+          "auth": {
+            "grants": [],
+            "version": 0
+          },
+          "local": {
+            "lastViewedAt": null,
+            "personalTags": []
+          },
+          "global": {
+            "links": [],
+            "model": null,
+            "scope": null,
+            "title": null,
+            "editor": null,
+            "inputs": [],
+            "models": [],
+            "status": "DRAFT",
+            "topics": [],
+            "content": null,
+            "context": null,
+            "modelId": null,
+            "modules": [],
+            "outputs": [],
+            "version": null,
+            "computes": null,
+            "filePath": null,
+            "noteType": null,
+            "severity": null,
+            "hooksUsed": [],
+            "rootCause": null,
+            "confidence": null,
+            "consumedBy": [],
+            "provenance": null,
+            "sourceType": null,
+            "targetType": null,
+            "cardinality": null,
+            "description": null,
+            "alternatives": [],
+            "consequences": [],
+            "errorMessage": null,
+            "relationType": null,
+            "correctPattern": null,
+            "decisionStatus": null,
+            "dispatchTargets": [],
+            "lifecycleEvents": []
+          },
+          "document": {
+            "hash": {
+              "encoding": "base64",
+              "algorithm": "sha1"
+            },
+            "version": 1
+          }
+        }
+      },
+      "timestampUtcMs": "2026-08-19T11:31:57.854Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "AC0UwH7P+id81Chsw5AV4TYNHTE=",
+    "timestampUtcMs": "2026-08-19T11:31:57.762Z",
+    "action": {
+      "type": "SET_DESCRIPTION",
+      "input": {
+        "updatedAt": "2026-08-19T11:31:57.762667Z",
+        "description": "The typed operation fires on workflow state change for a public-sector approval, separating the record of the decision from the content revision that carried it."
+      },
+      "timestampUtcMs": "2026-08-19T11:31:57.762673Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "",
+    "timestampUtcMs": "2026-08-19T11:32:01.294Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "7e0243e6-10ec-429e-ba8c-16127abb261c",
+        "targetId": "8a776f82-6a04-465e-aa49-09e516d88025",
+        "relationshipType": "DERIVED_FROM"
+      },
+      "timestampUtcMs": "2026-08-19T11:32:01.294Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "+uBmbaxtJMmg0TVs5P6rwprtY+U=",
+    "timestampUtcMs": "2026-08-19T11:31:57.762Z",
+    "action": {
+      "type": "SET_NOTE_TYPE",
+      "input": {
+        "noteType": "INTEGRATION",
+        "updatedAt": "2026-08-19T11:31:57.762675Z"
+      },
+      "timestampUtcMs": "2026-08-19T11:31:57.762681Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "fVKY6HbthAMucZ2oj692NyJc8Ms=",
+    "timestampUtcMs": "2026-08-19T11:31:57.762Z",
+    "action": {
+      "type": "SET_CONTENT",
+      "input": {
+        "content": "The integration is a Drupal hook on workflow state change, dispatching a typed operation for a public-sector approval. The claim is a separation: the approval trail is distinct from node revisions.\n\nThis is the third appearance of the same distinction in this part of the corpus. Alfresco records versions rather than decisions, Nextcloud cannot tell a sign-off from a move, and Drupal's revision history records content edits rather than approvals. In each case the tool has a detailed change log and still cannot answer what a change meant, which is what makes the record-layer argument portable across content systems rather than specific to one of them.\n\nThe single lead is publicplan GmbH in Duesseldorf, marked \"2 \u00b7 next\". The public-sector framing matters for the demo: an approval on a government content workflow is the case where the difference between \"this page changed\" and \"this was approved for publication\" has consequences outside the organisation.\n\n---\n\n## Leads sharing this finding (1)\n\n**2 \u00b7 next**\n- publicplan GmbH (DE Duesseldorf) \u2014 Stefan Seltmann, Gesch\u00e4ftsf\u00fchrer \u00b7 info@publicplan.de \u00b7 https://publicplan.de\n\nVerbatim research text this claim was extracted from:\n\n> Drupal hook dispatching a typed operation on workflow state change for a public-sector approval \u2014 an approval trail distinct from node revisions.",
+        "updatedAt": "2026-08-19T11:31:57.762683Z"
+      },
+      "timestampUtcMs": "2026-08-19T11:31:57.762687Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "9ms+7zf/157jozPxZYXR++jXaBs=",
+    "timestampUtcMs": "2026-08-19T11:31:57.762Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "8a40dc35-9e53-4437-affd-5a53b0dda8b1",
+        "name": "leads"
+      },
+      "timestampUtcMs": "2026-08-19T11:31:57.762696Z"
+    }
+  },
+  {
+    "index": 5,
+    "hash": "aax6q68hJ8nb1+50G/mznRuo4qc=",
+    "timestampUtcMs": "2026-08-19T11:31:57.762Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "190e6afb-9167-4b78-a7c1-0f6d6c46f1b2",
+        "name": "drupal"
+      },
+      "timestampUtcMs": "2026-08-19T11:31:57.762703Z"
+    }
+  },
+  {
+    "index": 6,
+    "hash": "RKeE1VwbclsTMOG9HfJLwUc2YWk=",
+    "timestampUtcMs": "2026-08-19T11:31:57.762Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "8da26031-9ec9-4b1f-bb79-4a9f5c7fec39",
+        "name": "public-sector"
+      },
+      "timestampUtcMs": "2026-08-19T11:31:57.762711Z"
+    }
+  },
+  {
+    "index": 7,
+    "hash": "tWmGumLEnPnhyFTusrZP3//Ao0w=",
+    "timestampUtcMs": "2026-08-19T11:31:57.762Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "30aa82aa-4788-4134-a61d-59194547a80a",
+        "name": "demo-design"
+      },
+      "timestampUtcMs": "2026-08-19T11:31:57.762719Z"
+    }
+  },
+  {
+    "index": 8,
+    "hash": "P1pulIstBp2ta/9u4iVE3c5b+C0=",
+    "timestampUtcMs": "2026-08-19T11:31:57.762Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "f3e48951-91d3-4a18-96eb-b1eb0c41b765",
+        "name": "audit-trail"
+      },
+      "timestampUtcMs": "2026-08-19T11:31:57.762726Z"
+    }
+  },
+  {
+    "index": 9,
+    "hash": "admKAJKrlYGkMIk/G8t46Q+QmIg=",
+    "timestampUtcMs": "2026-08-19T11:31:59.293Z",
+    "action": {
+      "type": "SET_PROVENANCE",
+      "input": {
+        "author": "knowledge-agent",
+        "createdAt": "2026-08-19T11:31:59.293928Z",
+        "sessionId": null,
+        "sourceOrigin": "DERIVED"
+      },
+      "timestampUtcMs": "2026-08-19T11:31:59.293965Z"
+    }
+  },
+  {
+    "index": 10,
+    "hash": "Am4QDXmfYwcuMdidnMd/5fK6r6g=",
+    "timestampUtcMs": "2026-08-19T11:32:00.689Z",
+    "action": {
+      "type": "SUBMIT_FOR_REVIEW",
+      "input": {
+        "id": "f07a50ef-41cd-46b9-9781-d8392eec26a9",
+        "actor": "knowledge-agent",
+        "comment": "Extracted from lead research; claim checked against the source record.",
+        "timestamp": "2026-08-19T11:32:00.689537Z"
+      },
+      "timestampUtcMs": "2026-08-19T11:32:00.689558Z"
+    }
+  },
+  {
+    "index": 11,
+    "hash": "E8O+wTlDToO2s1dC3es8B76azhg=",
+    "timestampUtcMs": "2026-08-19T11:32:00.836Z",
+    "action": {
+      "type": "APPROVE_NOTE",
+      "input": {
+        "id": "946064fc-4353-48d9-9d10-d6404c3eb30a",
+        "actor": "liberuum",
+        "comment": "Approved: lead corpus extraction.",
+        "timestamp": "2026-08-19T11:32:00.836406Z"
+      },
+      "timestampUtcMs": "2026-08-19T11:32:00.836429Z"
+    }
+  }
+]

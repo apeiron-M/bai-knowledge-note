@@ -1,0 +1,108 @@
+{
+  "links": [
+    {
+      "id": "lnk-6aa89e46-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "6aa89e46-712f-4ce1-8b8b-be6ad3b08011",
+      "targetTitle": "dtbau-demo-three-sources"
+    },
+    {
+      "id": "lnk-45854b49-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "45854b49-dc6f-4937-88fa-cf4b1c2b0db0",
+      "targetTitle": "45854b49-dc6f-4937-88fa-cf4b1c2b0db0"
+    },
+    {
+      "id": "lnk-d4203c64-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "d4203c64-d626-48a8-9e9a-cf72cfa937f8",
+      "targetTitle": "cde-platforms-vary-in-openness"
+    },
+    {
+      "id": "lnk-f7c92110-bui",
+      "linkType": "BUILDS_ON",
+      "targetDocumentId": "f7c92110-27a7-4921-8fd9-7fbdddfcf920",
+      "targetTitle": "bcf-model-tasks-vs-org-tasks"
+    },
+    {
+      "id": "lnk-f9d5e4f0-bui",
+      "linkType": "BUILDS_ON",
+      "targetDocumentId": "f9d5e4f0-badd-42e2-8ea8-9df149f2412f",
+      "targetTitle": "f9d5e4f0-badd-42e2-8ea8-9df149f2412f"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Resolving BCF component references requires every federated model from the same coordination cycle",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "a460b7e4-c4d3-4dbf-b2c8-f7fa54eabf5c",
+      "name": "bcf",
+      "topicDocumentId": null
+    },
+    {
+      "id": "5a4d187a-0675-45f2-82ef-33928b46a204",
+      "name": "bim",
+      "topicDocumentId": null
+    },
+    {
+      "id": "40990b5c-17e0-4e26-8c4e-f065cef3fc47",
+      "name": "ifc",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "A BCF file's `<Header>` lists every model the topic was raised against, each with its `IfcProject` GUID, filename and date. In one real file that manifest named seven discipline models from separate subcontractors \u2014 precast, blockwork, steel, structural engineering, balconies and two coordination models.\n\nHolding two of those seven, **2 of 2,233 component references resolved: 0.1%**. The project GUID matched exactly, so the file and the model belonged to the same project. The references simply pointed at objects living in models not in hand.\n\nThe reading matters more than the number. A 99.9% apparent orphan rate here is a **missing-input artifact, not a data-quality problem**, and a checker that reports it as orphaned topics produces pure noise. Resolution requires the complete federated set, from the same coordination cycle, from exporters known not to churn identifiers. Three conditions, none of them guaranteed.\n\nThis also imposes a requirement nobody usually writes down: any workflow that shows a discipline lead \"the comments raised against your objects\" silently depends on ingesting every discipline model for that cycle, not just theirs. Partial ingestion does not degrade gracefully; it degrades into apparent data corruption.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "ARCHITECTURE",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "apeiron",
+    "createdAt": "2026-08-14T16:00:00.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-17T12:55:01.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Against one of the seven models a real BCF file names, 2 of 2,233 component references resolved. The 99.9% miss is a missing-input artifact, not a data-quality finding.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "b2a0bd1a-1ffa-4fe8-a9ce-5e461a3ca0e8",
+      "actor": "knowledge-agent",
+      "comment": "rescued incident notes \u2014 lifecycle normalization",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-17T12:49:12.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "d4fb7244-bba0-4701-9b02-fa12cacf6e62",
+      "actor": "liberuum",
+      "comment": "approved for canonical",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-17T12:55:01.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

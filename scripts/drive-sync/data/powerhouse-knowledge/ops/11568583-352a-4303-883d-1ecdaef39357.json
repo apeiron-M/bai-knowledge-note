@@ -1,0 +1,375 @@
+[
+  {
+    "index": 0,
+    "hash": "",
+    "timestampUtcMs": "2026-08-14T12:33:24.432Z",
+    "action": {
+      "type": "CREATE_DOCUMENT",
+      "input": {
+        "meta": {},
+        "name": "collab-manifest-initiator-owned-feed",
+        "slug": "",
+        "model": "bai/knowledge-note",
+        "branch": "main",
+        "signing": {
+          "nonce": "",
+          "publicKey": {},
+          "signature": "11568583-352a-4303-883d-1ecdaef39357",
+          "documentType": "bai/knowledge-note",
+          "createdAtUtcIso": "2026-08-14T12:33:24.432Z"
+        },
+        "version": 0,
+        "documentId": "11568583-352a-4303-883d-1ecdaef39357",
+        "protocolVersions": {
+          "base-reducer": 2
+        }
+      },
+      "timestampUtcMs": "2026-08-14T12:33:24.432Z"
+    }
+  },
+  {
+    "index": 0,
+    "hash": "SjLpP62m6xHUGMtFNuysfDwW+8Y=",
+    "timestampUtcMs": "2026-08-14T12:34:57.000Z",
+    "action": {
+      "type": "SET_TITLE",
+      "input": {
+        "title": "The collaboration manifest is an initiator-owned ACT-protected Swarm feed listing all participants",
+        "updatedAt": "2026-08-14T12:34:57.000Z"
+      },
+      "timestampUtcMs": "2026-08-14T12:34:57.000Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "",
+    "timestampUtcMs": "2026-08-14T12:33:24.432Z",
+    "action": {
+      "type": "UPGRADE_DOCUMENT",
+      "input": {
+        "model": "bai/knowledge-note",
+        "toVersion": 1,
+        "documentId": "11568583-352a-4303-883d-1ecdaef39357",
+        "fromVersion": 0,
+        "initialState": {
+          "auth": {
+            "grants": [],
+            "version": 0
+          },
+          "local": {
+            "lastViewedAt": null,
+            "personalTags": []
+          },
+          "global": {
+            "links": [],
+            "model": null,
+            "scope": null,
+            "title": null,
+            "editor": null,
+            "inputs": [],
+            "models": [],
+            "status": "DRAFT",
+            "topics": [],
+            "content": null,
+            "context": null,
+            "modelId": null,
+            "modules": [],
+            "outputs": [],
+            "version": null,
+            "computes": null,
+            "filePath": null,
+            "noteType": null,
+            "severity": null,
+            "hooksUsed": [],
+            "rootCause": null,
+            "confidence": null,
+            "consumedBy": [],
+            "provenance": null,
+            "sourceType": null,
+            "targetType": null,
+            "cardinality": null,
+            "description": null,
+            "alternatives": [],
+            "consequences": [],
+            "errorMessage": null,
+            "relationType": null,
+            "correctPattern": null,
+            "decisionStatus": null,
+            "dispatchTargets": [],
+            "lifecycleEvents": []
+          },
+          "document": {
+            "hash": {
+              "encoding": "base64",
+              "algorithm": "sha1"
+            },
+            "version": 1
+          }
+        }
+      },
+      "timestampUtcMs": "2026-08-14T12:33:24.432Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "HrE2ICNprbz1fZngPUQ+0Z9yPDo=",
+    "timestampUtcMs": "2026-08-14T12:34:57.000Z",
+    "action": {
+      "type": "SET_DESCRIPTION",
+      "input": {
+        "updatedAt": "2026-08-14T12:34:57.000Z",
+        "description": "The collab manifest is an initiator-owned ACT-protected Swarm feed listing participants, their Bee node pubkeys, join times, kind, and drive/doc ids."
+      },
+      "timestampUtcMs": "2026-08-14T12:34:57.000Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "",
+    "timestampUtcMs": "2026-08-14T12:36:52.027Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "11568583-352a-4303-883d-1ecdaef39357",
+        "targetId": "d1737634-2378-431a-8cf8-4dcfba38ea5c",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-08-14T12:36:52.027Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "sB5ae16Q3Bynqf+9wVIbMLPg8qA=",
+    "timestampUtcMs": "2026-08-14T12:34:57.000Z",
+    "action": {
+      "type": "SET_NOTE_TYPE",
+      "input": {
+        "noteType": "reference",
+        "updatedAt": "2026-08-14T12:34:57.000Z"
+      },
+      "timestampUtcMs": "2026-08-14T12:34:57.000Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "",
+    "timestampUtcMs": "2026-08-14T12:36:52.128Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "11568583-352a-4303-883d-1ecdaef39357",
+        "targetId": "ae9c98a6-00eb-4aa9-92e8-40ad3bc9513d",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-08-14T12:36:52.128Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "1FPttaWIGDZhOrxR3iaGEmCkxp0=",
+    "timestampUtcMs": "2026-08-14T12:34:57.000Z",
+    "action": {
+      "type": "SET_CONTENT",
+      "input": {
+        "content": "## Collaboration manifest structure\n\nA new Swarm feed is created per collaboration target, owned by the initiator:\n\n```\nTopic:  ph:v2:collab:<driveId>         (drive-level)\n        ph:v2:collab:<driveId>:<docId> (doc-level)\nOwner:  the collaboration initiator\n```\n\nThe payload is written ACT-protected, with grantees set to all participants' Bee node public keys:\n\n```json\n{\n  \"kind\": \"drive\" | \"document\",\n  \"driveId\": \"\u2026\",\n  \"documentId\": \"\u2026\",\n  \"participants\": [\n    { \"address\": \"0xA\u2026\", \"beeNodePublicKey\": \"02\u2026\", \"joinedAt\": \"\u2026\" },\n    { \"address\": \"0xB\u2026\", \"beeNodePublicKey\": \"02\u2026\", \"joinedAt\": \"\u2026\" }\n  ],\n  \"createdAt\": \"\u2026\",\n  \"version\": 1\n}\n```\n\nA participant joining or leaving is expressed as a new manifest revision by the initiator. Today only the initiator can rewrite their manifest feed \u2014 future work may allow any participant to amend via a Merkle-log or signed-append convention.",
+        "updatedAt": "2026-08-14T12:34:57.000Z"
+      },
+      "timestampUtcMs": "2026-08-14T12:34:57.000Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "",
+    "timestampUtcMs": "2026-08-14T12:36:52.220Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "11568583-352a-4303-883d-1ecdaef39357",
+        "targetId": "713006f2-2448-40a6-a531-918f99915577",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-08-14T12:36:52.220Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "uazjilVwCnuVXZQllVyb6KbHDVo=",
+    "timestampUtcMs": "2026-08-14T12:34:57.000Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "version",
+        "value": "v6.2.2-dev.44",
+        "updatedAt": "2026-08-14T12:34:57.000Z"
+      },
+      "timestampUtcMs": "2026-08-14T12:34:57.000Z"
+    }
+  },
+  {
+    "index": 5,
+    "hash": "",
+    "timestampUtcMs": "2026-08-14T12:36:52.306Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "11568583-352a-4303-883d-1ecdaef39357",
+        "targetId": "9250acee-7e5a-454c-8515-977ded38a34d",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-08-14T12:36:52.306Z"
+    }
+  },
+  {
+    "index": 5,
+    "hash": "uZ0f78HdiFGtYV/kP92BMLTJ+Ak=",
+    "timestampUtcMs": "2026-08-14T12:34:57.000Z",
+    "action": {
+      "type": "SET_PROVENANCE",
+      "input": {
+        "author": "knowledge-agent",
+        "createdAt": "2026-04-21T14:16:54.676Z",
+        "sourceOrigin": "DERIVED"
+      },
+      "timestampUtcMs": "2026-08-14T12:34:57.000Z"
+    }
+  },
+  {
+    "index": 6,
+    "hash": "",
+    "timestampUtcMs": "2026-08-14T12:36:52.392Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "11568583-352a-4303-883d-1ecdaef39357",
+        "targetId": "35c30c48-94a2-4b6c-8685-9bad536aef34",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-08-14T12:36:52.392Z"
+    }
+  },
+  {
+    "index": 6,
+    "hash": "VNYubWzknK95adx1+fM2zHzBW68=",
+    "timestampUtcMs": "2026-08-14T12:34:57.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "t-1feb1f6c-1",
+        "name": "live-collaboration",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-08-14T12:34:57.000Z"
+    }
+  },
+  {
+    "index": 7,
+    "hash": "8vXw2q374qw++9QN8E7RuRookL0=",
+    "timestampUtcMs": "2026-08-14T12:34:57.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "t-1feb1f6c-2",
+        "name": "collab-manifest",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-08-14T12:34:57.000Z"
+    }
+  },
+  {
+    "index": 8,
+    "hash": "2KYpDQWCNExCN0/5gNeh1GvRd70=",
+    "timestampUtcMs": "2026-08-14T12:34:57.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "t-1feb1f6c-3",
+        "name": "act-encryption",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-08-14T12:34:57.000Z"
+    }
+  },
+  {
+    "index": 9,
+    "hash": "0XpOIWtQUorW4JNkByjoxdofyjM=",
+    "timestampUtcMs": "2026-08-14T14:36:46.000Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "version",
+        "value": "v6.2.2-dev.47",
+        "updatedAt": "2026-08-14T12:00:00.000Z"
+      },
+      "timestampUtcMs": "2026-08-14T14:36:46.000Z"
+    }
+  },
+  {
+    "index": 10,
+    "hash": "hIBWDd7KABONEMKPXS6WunBJ3do=",
+    "timestampUtcMs": "2026-08-14T14:36:46.000Z",
+    "action": {
+      "type": "SUBMIT_FOR_REVIEW",
+      "input": {
+        "id": "7a08f560-75ea-4c58-8779-5607411993ef",
+        "actor": "claude",
+        "comment": "Knowledge registered against powerhouse v6.2.2-dev.47",
+        "timestamp": "2026-08-14T12:00:00.000Z"
+      },
+      "timestampUtcMs": "2026-08-14T14:36:46.000Z"
+    }
+  },
+  {
+    "index": 11,
+    "hash": "R0a5Db1zvFNRtnnIwV14yzvHbxg=",
+    "timestampUtcMs": "2026-08-14T14:36:46.000Z",
+    "action": {
+      "type": "APPROVE_NOTE",
+      "input": {
+        "id": "a78166ab-963d-46c1-85b2-f9e6b19eb191",
+        "actor": "liberuum",
+        "comment": "Canonical as of powerhouse v6.2.2-dev.47",
+        "timestamp": "2026-08-14T12:00:00.000Z"
+      },
+      "timestampUtcMs": "2026-08-14T14:36:46.000Z"
+    }
+  },
+  {
+    "index": 12,
+    "hash": "FB5QJbz7YO9zLpAkHnrK+Rd50t8=",
+    "timestampUtcMs": "2026-08-16T09:49:56.000Z",
+    "action": {
+      "type": "SET_NOTE_TYPE",
+      "input": {
+        "noteType": "REFERENCE",
+        "updatedAt": "2026-08-16T09:49:56.000Z"
+      },
+      "timestampUtcMs": "2026-08-16T09:49:56.000Z"
+    }
+  },
+  {
+    "index": 13,
+    "hash": "CR6xiLP0Y6CFQ4Y/l04VcHw8izY=",
+    "timestampUtcMs": "2026-08-16T22:19:39.404Z",
+    "action": {
+      "type": "SET_DESCRIPTION",
+      "input": {
+        "updatedAt": "2026-08-16T23:30:00.000Z",
+        "description": "Topic ph:v2:collab:<driveId>[:<docId>], grantees are each member's Bee node pubkey, and a join or leave is a new revision only the creator can write - amendment is future work."
+      },
+      "timestampUtcMs": "2026-08-16T22:19:39.404Z"
+    }
+  },
+  {
+    "index": 14,
+    "hash": "p8Gl29a0NUAVFAuHfElMqT76r7Q=",
+    "timestampUtcMs": "2026-09-03T09:57:24.322Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "version",
+        "updatedAt": "2026-09-03T09:57:24.322Z"
+      },
+      "timestampUtcMs": "2026-09-03T09:57:24.322Z"
+    }
+  }
+]

@@ -1,0 +1,233 @@
+[
+  {
+    "index": 0,
+    "hash": "",
+    "timestampUtcMs": "2026-09-02T21:44:47.197Z",
+    "action": {
+      "type": "CREATE_DOCUMENT",
+      "input": {
+        "meta": {},
+        "name": "Package \u203a reactor \u203a ARCHITECTURE \u2014 Reactor Architecture",
+        "slug": "",
+        "model": "bai/source",
+        "branch": "main",
+        "signing": {
+          "nonce": "",
+          "publicKey": {},
+          "signature": "e4ef060b-4d61-41b4-95bd-2f562eea3cfa",
+          "documentType": "bai/source",
+          "createdAtUtcIso": "2026-09-02T21:44:47.197Z"
+        },
+        "version": 0,
+        "documentId": "e4ef060b-4d61-41b4-95bd-2f562eea3cfa",
+        "protocolVersions": {
+          "base-reducer": 2
+        }
+      },
+      "timestampUtcMs": "2026-09-02T21:44:47.197Z"
+    }
+  },
+  {
+    "index": 0,
+    "hash": "iQUKAhrMNYKOwlJtKgO9s6jCw7Y=",
+    "timestampUtcMs": "2026-09-02T21:44:47.205Z",
+    "action": {
+      "type": "INGEST_SOURCE",
+      "input": {
+        "url": "https://github.com/powerhouse-inc/powerhouse/blob/v6.2.2-dev.74/packages/reactor/docs/ARCHITECTURE.md",
+        "tool": "sync-repo-docs",
+        "title": "Package \u203a reactor \u203a ARCHITECTURE \u2014 Reactor Architecture",
+        "author": "Powerhouse Inc.",
+        "method": "sha256:6d4c61f0496280c71b1b3318aa5cfce59745f13f9a11e268985ca509d470a3ef git:v6.2.2-dev.74",
+        "content": "# Reactor Architecture\n\nThis document provides a comprehensive overview of the Reactor system for developers who need to understand, modify, or extend it.\n\n## Table of Contents\n\n- [Overview](#overview)\n- [System Architecture](#system-architecture)\n- [Core Concepts](#core-concepts)\n- [Data Flow](#data-flow)\n- [Components](#components)\n- [Storage Layer](#storage-layer)\n- [Synchronization](#synchronization)\n- [Design Decisions](#design-decisions)\n- [Extension Points](#extension-points)\n\n---\n\n## Overview\n\nThe Reactor is an event-sourced document management system that:\n\n1. Stores documents as sequences of immutable operations\n2. Provides async job-based mutation processing\n3. Maintains read models for efficient querying\n4. Synchronizes operations between distributed instances\n\n### Key Principles\n\n- **Event Sourcing**: State is derived from a sequence of operations, never mutated directly\n- **Async Processing**: All mutations go through a job queue for ordering and retry\n- **Read-After-Write Consistency**: ConsistencyTokens coordinate reads with prior writes\n- **Pluggable Storage**: Interfaces allow different storage backends\n\n### ReactorBuilder (Default Wiring)\n\nMost applications construct Reactor via `ReactorBuilder`, which wires:\n\n- PGlite + Kysely (schema migrations and storage)\n- In-memory queue and event bus\n- Write cache and operation index\n- Read models (DocumentView, DocumentIndexer, subscription notifications)\n- Job executor manager\n\nSee: `src/core/reactor-builder.ts`\n\n---\n\n## System Architecture\n\n```mermaid\ngraph TB\n    subgraph ClientLayer[\"Client Layer\"]\n        Client[\"ReactorClient\"]\n        Signer[\"ISigner\"]\n    end\n\n    subgraph WriteLayer[\"Write Layer\"]\n        Queue[\"IQueue\"]\n        ExecMgr[\"IJobExecutorManager\"]\n        Executor[\"IJobExecutor\"]\n        WriteCache[\"IWriteCache\"]\n    end\n\n    subgraph StorageLayer[\"Storage Layer\"]\n        OpStore[\"IOperationStore\"]\n        OpIndex[\"IOperationIndex\"]\n        KeyframeStore[\"IKeyframeStore\"]\n    end\n\n    subgraph ReadLayer[\"Read Layer\"]\n        Coordinator[\"IReadModelCoordinator\"]\n        DocView[\"IDocumentView\"]\n        DocIndexer[\"IDocumentIndexer\"]\n    end\n\n    subgraph EventLayer[\"Event Layer\"]\n        EventBus[\"IEventBus\"]\n    end\n\n    subgraph SyncLayer[\"Synchronization Layer\"]\n        SyncMgr[\"ISyncManager\"]\n        Channel[\"IChannel\"]\n        Inbox[\"Inbox\"]\n        Outbox[\"Outbox\"]\n    end\n\n    Client -->|\"execute/create\"| Queue\n    Client -->|\"get/find\"| DocView\n    Client -->|\"relationships\"| DocIndexer\n    Signer -->|\"sign actions\"| Client\n\n    Queue -->|\"dequeue\"| ExecMgr\n    ExecMgr -->|\"dispatch\"| Executor\n    Executor -->|\"getState\"| WriteCache\n    Executor -->|\"apply\"| OpStore\n    Executor -->|\"index\"| OpIndex\n    WriteCache -->|\"getSince\"| OpStore\n\n    Executor -->|\"JOB_WRITE_READY\"| EventBus\n    EventBus -->|\"subscribe\"| Coordinator\n    EventBus -->|\"subscribe\"| SyncMgr\n\n    Coordinator -->|\"indexOperations\"| DocView\n    Coordinator -->|\"indexOperations\"| DocIndexer\n\n    SyncMgr -->|\"find\"| OpIndex\n    SyncMgr -->|\"add\"| Outbox\n    Inbox -->|\"load\"| Queue\n    Channel --> Inbox\n    Channel --> Outbox\n```\n\n---\n\n## Core Concepts\n\n### PHDocument\n\nA document with event-sourced state. Key properties:\n\n- **header**: Metadata including id, documentType, slug, branch, timestamps\n- **state**: Current computed state, containing document scope and global scope\n- **operations**: The operation history (not stored on the document itself)\n\nDocuments are immutable at the application layer. Changes are expressed as Actions that produce Operations.\n\nSee: `document-model` package for type definitions\n\n### Operation\n\nAn immutable record representing a single state change:\n\n```typescript\n// From document-model\ntype Operation = {\n  id: string; // Stable derived operation id\n  index: number; // Sequential index within scope\n  skip: number; // Skip count for reshuffle/undo\n  timestampUtcMs: string; // ISO timestamp\n  hash: string; // Content hash for verification\n  error?: string; // Error message for failed action\n  resultingState?: string; // Serialized state after applying operation\n  action: Action; // The action that produced this operation\n};\n```\n\nOperations are stored per `(documentId, scope, branch)` triple, maintaining a separate sequence for each combination.\nScope and branch are carried in `OperationContext`, not on the operation itself.\n\n### OperationWithContext\n\nOperations are processed alongside their context:\n\n```typescript\ntype OperationWithContext = {\n  operation: Operation;\n  context: {\n    documentId: string;\n    documentType: string;\n    scope: string;\n    branch: string;\n    resultingState?: string;\n    ordinal: number; // Global ordering across all operations\n  };\n};\n```\n\nRead models and sync depend on the context fields, especially `resultingState` and `ordinal`.\n\n### Scope\n\nOperations are partitioned by scope:\n\n- **global**: Shared state visible to all users\n- **local**: User-specific state (preferences, UI state)\n- **document**: System operations (CREATE_DOCUMENT, DELETE_DOCUMENT, UPGRADE_DOCUMENT, relationships)\n- **Custom scopes**: Application-defined partitions\n\nDifferent scopes maintain independent operation sequences on the same document, enabling patterns like:\n\n- Private drafts (local) vs published content (global)\n- Per-user annotations that don't affect shared state\n\n### Branch\n\nDocuments support multiple branches for draft/published workflows:\n\n- **main**: Default branch, typically the \"published\" version\n- **Custom branches**: Drafts, experiments, or parallel versions\n\nOperations are isolated per branch. Branching/merging operations are planned but not yet implemented.\n\n### Job\n\nA unit of work submitted to the reactor:\n\n```typescript\ntype Job = {\n  id: string;\n  kind: \"mutation\" | \"load\";\n  documentId: string;\n  scope: string;\n  branch: string;\n  actions: Action[]; // For mutations\n  operations: Operation[]; // For loads (sync)\n  queueHint: string[]; // Job dependencies\n  maxRetries: number;\n  errorHistory: ErrorInfo[];\n};\n```\n\nJobs ensure:\n\n- Sequential processing per document (queue keys still include scope and branch)\n- Retry logic with error tracking\n- Dependency ordering via `queueHint`\n\n### ConsistencyToken\n\nA token capturing the \"write frontier\" for read-after-write consistency:\n\n```typescript\ntype ConsistencyToken = {\n  version: 1;\n  createdAtUtcIso: string;\n  coordinates: ConsistencyCoordinate[];\n};\n\ntype ConsistencyCoordinate = {\n  documentId: string;\n  scope: string;\n  branch: string;\n  operationIndex: number;\n};\n```\n\nUsage:\n\n1. Mutation returns JobInfo with ConsistencyToken\n2. Pass token to read operations (get, find)\n3. Read model blocks until it has indexed past those coordinates\n\nConsistency tokens are updated on `JOB_WRITE_READY` and become visible to reads after `JOB_READ_READY`.\n\n---\n\n## Data Flow\n\n### Write Path\n\n```mermaid\nsequenceDiagram\n    participant Client\n    participant Reactor\n    participant Queue\n    participant Executor\n    participant WriteCache\n    participant OpStore\n    participant EventBus\n    participant Coordinator\n\n    Client->>Reactor: execute(docId, branch, actions)\n    Reactor->>Queue: enqueue(Job)\n    Reactor-->>Client: JobInfo (PENDING)\n\n    Queue->>Executor: dequeue Job\n    Executor->>WriteCache: getState(docId, scope, branch, revision)\n    WriteCache->>OpStore: getSince(docId, scope, branch, revision)\n    OpStore-->>WriteCache: operations\n    WriteCache-->>Executor: document state\n\n    Note over Executor: Reduce actions to operations\n\n    Executor->>OpStore: apply(operations)\n    Executor->>WriteCache: putState(newState)\n    Executor->>EventBus: emit(JOB_WRITE_READY)\n\n    EventBus->>Coordinator: operations\n    Coordinator->>Coordinator: indexOperations()\n    Coordinator->>EventBus: emit(JOB_READ_READY)\n```\n\n**Key points:**\n\n1. `execute()` immediately returns with PENDING status\n2. Job is processed async by executor pool\n3. WriteCache provides efficient state reconstruction\n4. Events notify downstream systems (read models, sync)\n5. `JOB_READ_READY` is emitted after all pre-ready read models complete, then post-ready models run\n\n### Read Path\n\n```mermaid\nsequenceDiagram\n    participant Client\n    participant Reactor\n    participant DocView\n    participant ConsistencyTracker\n\n    Client->>Reactor: get(id, view, consistencyToken)\n    Reactor->>DocView: get(id, view, token)\n\n    alt Token provided\n        DocView->>ConsistencyTracker: waitForConsistency(token)\n        ConsistencyTracker-->>DocView: ready\n    end\n\n    DocView-->>Reactor: document snapshot\n    Reactor-->>Client: PHDocument\n```\n\n**Key points:**\n\n1. ConsistencyToken is optional but recommended after writes\n2. waitForConsistency blocks until read model catches up\n3. Document snapshots are maintained by IDocumentView\n\n### Sync Path\n\n```mermaid\nsequenceDiagram\n    participant LocalBus as EventBus (Local)\n    participant SyncMgr as SyncManager\n    participant Channel\n    participant RemoteChannel as Remote Channel\n    participant RemoteReactor as Remote Reactor\n\n    LocalBus->>SyncMgr: JOB_WRITE_READY\n    SyncMgr->>Channel: outbox.add(SyncOperation)\n    Channel->>RemoteChannel: transport operations\n    RemoteChannel->>RemoteReactor: load(operations)\n    RemoteReactor-->>RemoteChannel: success\n    RemoteChannel->>Channel: ACK\n    Channel->>SyncMgr: outbox.remove()\n```\n\n**Key points:**\n\n1. SyncManager listens for local `JOB_WRITE_READY` events\n2. Operations matching remote filters are queued\n3. Channels handle transport and acknowledgment\n4. Remote loads operations via reactor.load()\n\n---\n\n## Components\n\n### Reactor (`src/core/reactor.ts`)\n\nThe main entry point implementing `IReactor`. Coordinates all subsystems.\n\n**Key methods:**\n\n- `create(document)`: Create new document\n- `execute(docId, branch, actions)`: Apply mutations\n- `executeBatch(request)`: Submit dependent mutation jobs\n- `load(docId, branch, operations)`: Load operations from sync\n- `get(id, view, token)`: Retrieve document\n- `find(search, view, paging, token)`: Search documents\n- `kill()`: Graceful shutdown\n\n**Interfaces:** `src/core/types.ts`\n\n### Queue (`src/queue/`)\n\nJob queue with per-document ordering.\n\n**Implementation:** In-memory queue with Map-based organization by `(documentId, scope, branch)`\n\n**Key behaviors:**\n\n- Jobs for same document/scope/branch execute sequentially\n- Jobs for different documents can execute in parallel\n- Execution is serialized per document even across scopes and branches\n- Supports blocking for graceful shutdown\n\n**Interfaces:** `src/queue/interfaces.ts`\n\n### JobExecutor (`src/executor/`)\n\nExecutes individual jobs against the document model.\n\n**Flow:**\n\n1. Verify action signatures (if signed)\n2. Load document state from WriteCache\n3. Reduce actions to produce operations\n4. Write operations atomically to OperationStore\n5. Update WriteCache with new state\n6. Emit events\n\n**Interfaces:** `src/executor/interfaces.ts`\n\n### OperationStore (`src/storage/`)\n\nPersistent storage for operations with revision tracking.\n\n**Key methods:**\n\n- `apply(docId, documentType, scope, branch, revision, fn)`: Atomic write with optimistic locking\n- `getSince(docId, scope, branch, revision)`: Paginated read\n- `getRevisions(docId, branch)`: Get latest revision per scope\n\n**Implementation:** Kysely-based SQL storage (`src/storage/kysely/store.ts`)\n\n**Interfaces:** `src/storage/interfaces.ts`\n\n### WriteCache (`src/cache/`)\n\nLRU cache for document states to avoid full replay.\n\n**Strategy:**\n\n1. Check ring buffer for cached state at or before target revision\n2. On miss: replay from nearest keyframe or operation 0\n3. Cache result for future requests\n\n**Interfaces:** `src/cache/write/interfaces.ts`\n\n### DocumentView (`src/read-models/document-view.ts`)\n\nMaintains document snapshots for efficient reads.\n\n**Key behaviors:**\n\n- Subscribes to JOB_WRITE_READY events\n- Updates snapshots incrementally as operations arrive\n- Supports ConsistencyToken-based waiting\n- Handles slug resolution\n- Requires `resultingState` in OperationContext (does not rebuild from operations)\n\n**Interfaces:** `src/storage/interfaces.ts` (IDocumentView)\n\n### DocumentIndexer (`src/storage/kysely/document-indexer.ts`)\n\nTracks document relationships (parent/child, custom types).\n\n**Operations indexed:**\n\n- ADD_RELATIONSHIP: Creates edge in graph\n- REMOVE_RELATIONSHIP: Removes edge\n\n**Query methods:**\n\n- `getOutgoing()`: Children and other targets\n- `getIncoming()`: Parents and other sources\n- `findPath()`: BFS path finding\n- `findAncestors()`: Full ancestor graph\n\n**Interfaces:** `src/storage/interfaces.ts` (IDocumentIndexer)\n\n### EventBus (`src/events/`)\n\nSynchronous pub/sub for internal events.\n\n**Event types:** (from `src/events/types.ts`)\n\n- `JOB_PENDING`: Job enqueued\n- `JOB_RUNNING`: Job execution started\n- `JOB_WRITE_READY`: Write phase complete\n- `JOB_READ_READY`: Read models updated\n- `JOB_FAILED`: Job failed\n\n**Interfaces:** `src/events/interfaces.ts`\n\nQueue events are separate: `JOB_AVAILABLE` (from `src/queue/types.ts`).\n\n**Semantics:** `emit()` is sequential, awaited, and aggregates subscriber errors.\n\n### SyncManager (`src/sync/`)\n\nOrchestrates multi-remote synchronization.\n\n**Key concepts:**\n\n- **Remote**: Configuration for a sync target (URL, auth, filters)\n- **Channel**: Bidirectional connection with inbox/outbox mailboxes\n- **Collection**: Flattened stream of operations for efficient cursor tracking\n\n**Interfaces:** `src/sync/interfaces.ts`\n\n### Registry (`src/registry/`)\n\nStores document model modules for reducer lookup.\n\n**Usage:**\n\n```typescript\nconst module = registry.getModule(documentType);\nconst reducer = module.documentModel.reducer;\n```\n\n**Interfaces:** `src/registry/interfaces.ts`\n\n### ReactorBuilder (`src/core/reactor-builder.ts`)\n\nBuilds a complete Reactor module with default storage, caches, read models, and executors.\nThis is the preferred entry point for most applications.\n\n---\n\n## Storage Layer\n\n### Database Schema\n\nThe Kysely-based storage uses these tables:\n\n**Operation**: Operation storage with per-scope sequencing and action payloads\n\n**Keyframe**: Optional snapshots for fast replay\n\n**Document**: Document metadata cache (creation and update timestamps)\n\n**DocumentSnapshot**: Read model snapshots per document/scope/branch\n\n**DocumentRelationship**: Graph edges for relationships\n\n**SlugMapping**: Slug-to-id mapping for `getBySlug`\n\n**ViewState** and **IndexerState**: Read model progress tracking\n\n**document_collections**: Collection membership for sync\n\n**operation_index_operations**: Global operation index with `ordinal`\n\n**sync_remotes** and **sync_cursors**: Sync configuration and progress\n\nSee: `src/storage/migrations/` for complete schema\n\n### Keyframes\n\nOptional snapshots for faster state reconstruction:\n\n```typescript\ninterface IKeyframeStore {\n  putKeyframe(docId, scope, branch, revision, document): Promise<void>;\n  findNearestKeyframe(\n    docId,\n    scope,\n    branch,\n    targetRevision,\n  ): Promise<{ revision; document }>;\n}\n```\n\nKeyframes trade storage space for reduced replay time on documents with many operations.\n\n---\n\n## Synchronization\n\n### Collection-Based Sync\n\nOperations are grouped into collections for efficient cursor tracking:\n\n```typescript\n// Collection ID format for drives\nconst collectionId = `drive.${branch}.${driveId}`;\n```\n\nWhen a document is added to a drive, it joins the drive's collection. The sync cursor tracks position in the flattened operation stream across all documents in the collection using `ordinal` values from the operation index.\n\n### Channel Types\n\n**GqlChannel** (`src/sync/channels/gql-channel.ts`):\n\n- GraphQL-based transport over HTTP\n- Polling with configurable interval\n- Cursor-based incremental sync\n\n**PollingChannel** (`src/sync/channels/polling-channel.ts`):\n\n- Generic polling infrastructure\n- Backoff on failures\n\n### Sync Protocol\n\n```\nLocal Write:\n1. Operations written locally\n2. JOB_WRITE_READY event\n3. SyncManager filters by remote config\n4. Operations added to outbox\n5. Channel transports to remote\n6. Remote loads via reactor.load()\n7. ACK received, outbox cleared\n\nRemote Sync:\n1. Channel polls remote\n2. Operations received in inbox\n3. SyncManager calls reactor.load()\n4. Operations processed as \"load\" job\n5. ACK sent to remote\n6. Cursor updated\n```\n\n---\n\n## Design Decisions\n\n### Why Event Sourcing?\n\n1. **Auditability**: Complete history of all changes\n2. **Sync**: Operations can be replayed on remote instances\n3. **Undo/Redo**: Skip parameter enables efficient undo\n4. **Conflict Resolution**: Operations can be reordered during sync\n\n### Why Async Job Processing?\n\n1. **Ordering**: Guarantees sequential processing per document (even across scopes and branches)\n2. **Retry**: Failed jobs can be retried with backoff\n3. **Backpressure**: Queue provides natural flow control\n4. **Batching**: Jobs can batch multiple operations efficiently\n\n### Why Separate Read Models?\n\n1. **Query Optimization**: Snapshots avoid replaying operations\n2. **Relationship Queries**: Graph index enables efficient traversal\n3. **Consistency**: Read models can lag behind writes\n4. **Extensibility**: New read models can be added without changing write path\n\n### Why ConsistencyTokens?\n\n1. **User Experience**: Immediate read-after-write for the writer\n2. **Performance**: Other readers can use eventually-consistent reads\n3. **Flexibility**: Caller decides consistency requirements\n\n---\n\n## Extension Points\n\n### Adding a Document Model\n\n1. Create model using document-model tools\n2. Export as DocumentModelModule\n3. Register via ReactorBuilder:\n\n```typescript\nconst reactor = await new ReactorBuilder()\n  .withDocumentModelSources([myModule])\n  .build();\n```\n\n### Adding a Storage Backend\n\n1. Implement `IOperationStore` interface\n2. Optionally implement `IKeyframeStore`\n3. Provide via ReactorBuilder\n\n### Adding a Read Model\n\n1. Implement `IReadModel` interface:\n\n```typescript\ninterface IReadModel {\n  indexOperations(operations: OperationWithContext[]): Promise<void>;\n}\n```\n\n2. Register with IReadModelCoordinator (pre-ready or post-ready depending on consistency needs)\n\n### Adding a Sync Channel\n\n1. Implement `IChannel` interface:\n\n```typescript\ninterface IChannel {\n  inbox: Mailbox<SyncOperation>;\n  outbox: Mailbox<SyncOperation>;\n  deadLetter: Mailbox<SyncOperation>;\n  init(): Promise<void>;\n  shutdown(): void;\n  updateCursor(ordinal: number): Promise<void>;\n}\n```\n\n2. Create `IChannelFactory` for the channel type\n3. Register factory with SyncManager\n\n### Adding Processors\n\nProcessors react to operations after write:\n\n1. Implement processor function\n2. Register via ProcessorManager\n\nSee: `src/processors/`\n\n---\n\n## Further Reading\n\n- **Code**: TypeScript interfaces are the authoritative API reference\n  - `src/core/types.ts` - Reactor interface\n  - `src/storage/interfaces.ts` - Storage interfaces\n  - `src/sync/interfaces.ts` - Sync interfaces\n- **Archive**: Historical planning docs in `docs/archive/planning-v1/`\n",
+        "createdAt": "2026-09-02T21:44:47.205Z",
+        "createdBy": "repo-docs-sync",
+        "sourceType": "DOCUMENTATION",
+        "description": "Powerhouse v6.2.2-dev.74 (unchanged since v6.2.2-dev.47) \u2014 This document provides a comprehensive overview of the Reactor system for developers who need to understand, modify, or extend it.",
+        "publishedAt": "2026-08-05T18:51:06.000Z"
+      },
+      "timestampUtcMs": "2026-09-02T21:44:47.205Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "",
+    "timestampUtcMs": "2026-09-02T21:44:47.197Z",
+    "action": {
+      "type": "UPGRADE_DOCUMENT",
+      "input": {
+        "model": "bai/source",
+        "toVersion": 1,
+        "documentId": "e4ef060b-4d61-41b4-95bd-2f562eea3cfa",
+        "fromVersion": 0,
+        "initialState": {
+          "auth": {
+            "grants": [],
+            "version": 0
+          },
+          "local": {},
+          "global": {
+            "title": null,
+            "status": "INBOX",
+            "content": null,
+            "createdAt": null,
+            "createdBy": null,
+            "provenance": null,
+            "sourceType": null,
+            "description": null,
+            "extractedClaims": [],
+            "extractionStats": null
+          },
+          "document": {
+            "hash": {
+              "encoding": "base64",
+              "algorithm": "sha1"
+            },
+            "version": 1
+          }
+        }
+      },
+      "timestampUtcMs": "2026-09-02T21:44:47.197Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "I1AqR4K0+tAybycgRTsCpQogh6E=",
+    "timestampUtcMs": "2026-09-03T07:21:44.440Z",
+    "action": {
+      "type": "ADD_EXTRACTED_CLAIM",
+      "input": {
+        "claimRef": "0ef319a9-520b-4759-b30b-a08146b567a9"
+      },
+      "timestampUtcMs": "2026-09-03T07:21:44.440Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "4ZCk77oE+9+KEOQfZ1ANQAxe0fs=",
+    "timestampUtcMs": "2026-09-03T07:21:44.975Z",
+    "action": {
+      "type": "ADD_EXTRACTED_CLAIM",
+      "input": {
+        "claimRef": "14d47019-4ebc-4d7d-acfd-352b344a291f"
+      },
+      "timestampUtcMs": "2026-09-03T07:21:44.975Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "jgmNEdD7UJW1VgCboZV0C++Qm9s=",
+    "timestampUtcMs": "2026-09-03T07:21:45.450Z",
+    "action": {
+      "type": "ADD_EXTRACTED_CLAIM",
+      "input": {
+        "claimRef": "4a5a9901-a0e2-4e7e-8ff2-9c155cccb2f7"
+      },
+      "timestampUtcMs": "2026-09-03T07:21:45.450Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "vw7dc0vvy3gD6l6Xjz58Jl7h8Eo=",
+    "timestampUtcMs": "2026-09-03T07:21:45.936Z",
+    "action": {
+      "type": "ADD_EXTRACTED_CLAIM",
+      "input": {
+        "claimRef": "e9149b87-dc40-4388-895a-010c1bb3058a"
+      },
+      "timestampUtcMs": "2026-09-03T07:21:45.936Z"
+    }
+  },
+  {
+    "index": 5,
+    "hash": "fz4nOqXoJ1tNwvRn3RGcPvHJ7u4=",
+    "timestampUtcMs": "2026-09-03T07:21:46.450Z",
+    "action": {
+      "type": "ADD_EXTRACTED_CLAIM",
+      "input": {
+        "claimRef": "3c9df40d-1f3d-4bb5-b01a-f2d16e6ec0e4"
+      },
+      "timestampUtcMs": "2026-09-03T07:21:46.450Z"
+    }
+  },
+  {
+    "index": 6,
+    "hash": "0ooFziXQizJn6XIzu2e/zDJCtBA=",
+    "timestampUtcMs": "2026-09-03T07:21:46.905Z",
+    "action": {
+      "type": "ADD_EXTRACTED_CLAIM",
+      "input": {
+        "claimRef": "562d84eb-ef1d-40b7-81b0-b6b7438544e1"
+      },
+      "timestampUtcMs": "2026-09-03T07:21:46.905Z"
+    }
+  },
+  {
+    "index": 7,
+    "hash": "ZjSbblBr+loSnKWJ9o+eYcbj7to=",
+    "timestampUtcMs": "2026-09-03T07:21:47.362Z",
+    "action": {
+      "type": "ADD_EXTRACTED_CLAIM",
+      "input": {
+        "claimRef": "23ee31cf-0acc-497c-9953-c36a782a8c2e"
+      },
+      "timestampUtcMs": "2026-09-03T07:21:47.362Z"
+    }
+  },
+  {
+    "index": 8,
+    "hash": "BroeP6FKzh2mHkvqHJP6v3WJ/UU=",
+    "timestampUtcMs": "2026-09-03T07:21:47.808Z",
+    "action": {
+      "type": "ADD_EXTRACTED_CLAIM",
+      "input": {
+        "claimRef": "b5474b61-a140-4704-b812-4021fe7c8f9b"
+      },
+      "timestampUtcMs": "2026-09-03T07:21:47.808Z"
+    }
+  },
+  {
+    "index": 9,
+    "hash": "W44BCaggk1zXZ74QiqSY/09gdTY=",
+    "timestampUtcMs": "2026-09-03T07:21:59.092Z",
+    "action": {
+      "type": "RECORD_EXTRACTION_STATS",
+      "input": {
+        "skipRate": 0.333,
+        "claimCount": 8,
+        "extractedAt": "2026-09-03T07:21:59.092Z",
+        "extractedBy": "knowledge-agent",
+        "skippedCount": 4
+      },
+      "timestampUtcMs": "2026-09-03T07:21:59.092Z"
+    }
+  },
+  {
+    "index": 10,
+    "hash": "2Nw+Sdv/r3pEZqfam7HG11o+vko=",
+    "timestampUtcMs": "2026-09-03T07:21:59.703Z",
+    "action": {
+      "type": "SET_SOURCE_STATUS",
+      "input": {
+        "status": "EXTRACTED"
+      },
+      "timestampUtcMs": "2026-09-03T07:21:59.703Z"
+    }
+  },
+  {
+    "index": 11,
+    "hash": "1uzL47PQxg88D9pJJEN3n/Ytn3g=",
+    "timestampUtcMs": "2026-09-03T07:23:36.606Z",
+    "action": {
+      "type": "RECORD_EXTRACTION_STATS",
+      "input": {
+        "skipRate": 0.333,
+        "claimCount": 8,
+        "extractedAt": "2026-09-03T07:23:36.606Z",
+        "extractedBy": "knowledge-agent",
+        "skippedCount": 4
+      },
+      "timestampUtcMs": "2026-09-03T07:23:36.606Z"
+    }
+  }
+]

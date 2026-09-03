@@ -1,0 +1,195 @@
+{
+  "tier": "DOMAIN",
+  "title": "Swarm Channel Architecture",
+  "version": "v6.2.2-dev.47",
+  "tensions": [],
+  "childRefs": [],
+  "coreIdeas": [
+    {
+      "id": "ci-17a0ed86",
+      "noteRef": "17a0ed86-0b8d-4374-9114-bea5b95737ed",
+      "contextPhrase": "",
+      "sortOrder": 0,
+      "addedAt": "2026-09-03T20:22:32.000Z",
+      "addedBy": "knowledge-agent"
+    },
+    {
+      "id": "ci-1f8f4551",
+      "noteRef": "1f8f4551-682c-4245-94ef-5e5846862ee4",
+      "contextPhrase": "",
+      "sortOrder": 1,
+      "addedAt": "2026-09-03T20:22:32.000Z",
+      "addedBy": "knowledge-agent"
+    },
+    {
+      "id": "ci-873daffa",
+      "noteRef": "873daffa-52d3-49f3-adac-b538bb82ba99",
+      "contextPhrase": "",
+      "sortOrder": 2,
+      "addedAt": "2026-09-03T20:22:32.000Z",
+      "addedBy": "knowledge-agent"
+    },
+    {
+      "id": "ci-2ab414f6",
+      "noteRef": "2ab414f6-938d-40f6-89b9-054bbcbaf4f2",
+      "contextPhrase": "",
+      "sortOrder": 3,
+      "addedAt": "2026-09-03T20:22:32.000Z",
+      "addedBy": "knowledge-agent"
+    },
+    {
+      "id": "ci-71f5f04d",
+      "noteRef": "71f5f04d-cc4c-4a4a-b98f-e12ec613c5da",
+      "contextPhrase": "",
+      "sortOrder": 4,
+      "addedAt": "2026-09-03T20:22:32.000Z",
+      "addedBy": "knowledge-agent"
+    },
+    {
+      "id": "ci-50a6a870",
+      "noteRef": "50a6a870-f29e-4164-820a-5d074f7443d7",
+      "contextPhrase": "",
+      "sortOrder": 5,
+      "addedAt": "2026-09-03T20:22:32.000Z",
+      "addedBy": "knowledge-agent"
+    },
+    {
+      "id": "ci-8ebc083d",
+      "noteRef": "8ebc083d-b75b-46c0-839d-ebe8fc95d3b9",
+      "contextPhrase": "",
+      "sortOrder": 6,
+      "addedAt": "2026-09-03T20:22:32.000Z",
+      "addedBy": "knowledge-agent"
+    },
+    {
+      "id": "ci-86a23fb2",
+      "noteRef": "86a23fb2-4ba6-43be-b051-49aeb065158d",
+      "contextPhrase": "",
+      "sortOrder": 7,
+      "addedAt": "2026-09-03T20:22:32.000Z",
+      "addedBy": "knowledge-agent"
+    },
+    {
+      "id": "ci-2f989fe9",
+      "noteRef": "2f989fe9-1f41-47a1-b5ce-c6cb28450f62",
+      "contextPhrase": "",
+      "sortOrder": 8,
+      "addedAt": "2026-09-03T20:22:32.000Z",
+      "addedBy": "knowledge-agent"
+    },
+    {
+      "id": "ci-6f58b1cf",
+      "noteRef": "6f58b1cf-49f5-4f0c-ba82-987635ebd83d",
+      "contextPhrase": "",
+      "sortOrder": 9,
+      "addedAt": "2026-09-03T20:22:32.000Z",
+      "addedBy": "knowledge-agent"
+    },
+    {
+      "id": "ci-c0be1308",
+      "noteRef": "c0be1308-8115-4dcf-8353-98b69636178f",
+      "contextPhrase": "",
+      "sortOrder": 10,
+      "addedAt": "2026-09-03T20:22:32.000Z",
+      "addedBy": "knowledge-agent"
+    },
+    {
+      "id": "ci-87c0fd87",
+      "noteRef": "87c0fd87-df8a-474d-8689-7ace5709b14e",
+      "contextPhrase": "",
+      "sortOrder": 11,
+      "addedAt": "2026-09-03T20:22:32.000Z",
+      "addedBy": "knowledge-agent"
+    },
+    {
+      "id": "ci-90ce5eef",
+      "noteRef": "90ce5eef-d899-430a-abcd-d4a679738cc1",
+      "contextPhrase": "",
+      "sortOrder": 12,
+      "addedAt": "2026-09-03T20:22:32.000Z",
+      "addedBy": "knowledge-agent"
+    }
+  ],
+  "createdAt": "2026-04-21T19:31:35.620Z",
+  "noteCount": 0,
+  "parentRef": null,
+  "updatedAt": "2026-08-14T12:00:00.000Z",
+  "agentNotes": [],
+  "description": "How Connect speaks to Swarm as a reactor IChannel: the three-layer split, pure-transport role, and the push/pull cycles that keep PGlite and feeds aligned.",
+  "orientation": "The Swarm Channel is Connect's decentralized sync transport: a reactor IChannel implementation that routes operations through Bee feeds and /bytes instead of Switchboard GraphQL. Notes in this MOC document the three-layer split (bee-reactor-adapter, SwarmChannel, plugin), the IChannel mailbox contract that keeps the channel pure-transport, and the paired push/pull cycles that encrypt, upload, publish, and later decrypt operation batches. The cluster also covers multi-remote reactor support, the bridge role between Switchboard and Swarm, and the debounced health/status surface. Together these notes describe the full architecture that Path A depends on \u2014 the plugin-resident transport the user-confirmed end state requires.",
+  "openQuestions": [],
+  "links": [
+    {
+      "id": "lnk-c703aed8-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "c703aed8-8e7c-48b2-8f4e-bd3aa38e379a",
+      "targetTitle": "dual-push-personal-and-collab-feeds"
+    },
+    {
+      "id": "lnk-4e231be6-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "4e231be6-c71d-49af-a5ea-efd593af7b45",
+      "targetTitle": "swarmchannel-peer-feed-registration"
+    },
+    {
+      "id": "lnk-32921fdd-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "32921fdd-c4ba-4ade-b4e7-9a257346440f",
+      "targetTitle": "adr-002-extract-stamp-share-managers"
+    },
+    {
+      "id": "lnk-564746c1-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "564746c1-f39c-4f87-83fa-b873a615174b",
+      "targetTitle": "composite-channel-factory-routing"
+    },
+    {
+      "id": "lnk-0023bc50-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "0023bc50-7fff-4fa1-844e-d869f976f3b5",
+      "targetTitle": "composite-channel-factory-routes-by-type"
+    },
+    {
+      "id": "lnk-462dbcbf-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "462dbcbf-6956-4d2f-be67-07b9a49be2fc",
+      "targetTitle": "gql-factory-deferred-registration-post-build"
+    },
+    {
+      "id": "lnk-251a0c70-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "251a0c70-2e17-44d6-9441-024a9e18c1c5",
+      "targetTitle": "new-device-recovery-via-wallet-and-manifest"
+    },
+    {
+      "id": "lnk-4e02ffeb-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "4e02ffeb-087c-4d62-833f-96635c2b4b1d",
+      "targetTitle": "offline-edits-replay-on-reconnect-via-cursor"
+    },
+    {
+      "id": "lnk-6d2446ce-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "6d2446ce-613b-4a29-8be6-7c853decb521",
+      "targetTitle": "bridge-pattern-gql-swarm-dual-sync"
+    },
+    {
+      "id": "lnk-f2124247-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "f2124247-9efa-48bb-bda6-c929f59e4f12",
+      "targetTitle": "push-flow-encrypt-upload-manifest"
+    },
+    {
+      "id": "lnk-a36dbe68-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "a36dbe68-f077-4fad-bd4d-b6f62b851264",
+      "targetTitle": "core-flow-connect-reactor-swarm"
+    },
+    {
+      "id": "lnk-3720f689-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "3720f689-4aea-41fc-a7ca-4eda275683a2",
+      "targetTitle": "pull-flow-recovery-preserves-ids"
+    }
+  ]
+}

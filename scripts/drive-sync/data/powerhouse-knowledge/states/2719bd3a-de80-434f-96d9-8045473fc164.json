@@ -1,0 +1,81 @@
+{
+  "links": [
+    {
+      "id": "lnk-d6fc0eeb-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "d6fc0eeb-51fd-4369-a3ec-79ba3626ae92",
+      "targetTitle": "skill-health",
+      "reason": "Discovery note distilled by sync-skills from the skill's SKILL.md frontmatter description and its section headings (source hash sha256:15b8689ebadf); the full procedure is the source text",
+      "confidence": "grounded"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Agent skill: /health \u2014 Check remote vault health \u2014 orphan notes, dangling links, graph density, methodology grounding, MOC coverage, processing stats.",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "db589630-6d35-4a23-8b78-b1824f6610d4",
+      "name": "agent-skills",
+      "topicDocumentId": null
+    },
+    {
+      "id": "c3c87ae0-6048-456c-9e2b-b4cfc5450008",
+      "name": "health",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "## When to use\nCheck remote vault health \u2014 orphan notes, dangling links, graph density, methodology grounding, MOC coverage, processing stats. Saves results to the bai/health-report document. All checks run against the live reactor via Switchboard CLI.\n\n## What it covers\n- Pre-flight\n- Step 1: Gather metrics from the subgraph\n- Step 2: Gather everything from the graph in one request\n- Step 3: Check methodology grounding via note content\n- Step 4: Check MOC coverage and the hierarchy\n- Step 5: Compute diagnostic checks\n- Step 6: Save to bai/health-report document\n- Step 7: Auto-repair (if `--fix` or user requests)\n- Step 8: Report to user\n- Stranded sources\n- What belongs in `recommendations`\n- Scope methodology grounding honestly\n- Re-run after every fix\n- Reading health history\n\n## Where the full skill lives\n- Vault source: **Agent skill: health** (full SKILL.md text, DERIVED_FROM below)\n- Canonical copy: plugin repo `skills/health/SKILL.md` \u2014 always execute from the repo copy; this note is the discovery layer.\n\n## Invocation\n`/powerhouse-knowledge:health` in Claude Code (plugin installed), or read the source content and follow it manually.\n\n_Synced by sync-skills; source hash sha256:15b8689ebadf\u2026_",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": "skills/health/SKILL.md",
+  "noteType": "PROCEDURE",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "skill-sync",
+    "createdAt": "2026-08-16T12:02:04.577Z",
+    "sessionId": null,
+    "updatedAt": "2026-09-02T19:21:41.305Z",
+    "sourceOrigin": "IMPORT"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Check remote vault health \u2014 orphan notes, dangling links, graph density, methodology grounding, MOC coverage, processing stats. Saves results to the bai/health-report document. All checks run against ",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "95ee73b2-d91b-4134-864c-be7dd150d209",
+      "actor": "skill-sync",
+      "comment": "skill sync",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-16T12:02:05.543Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "39dccd60-17fb-4157-b5fa-d3b7e94f4054",
+      "actor": "knowledge-agent",
+      "comment": "mechanical sync from canonical repo copy",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-16T12:02:05.696Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

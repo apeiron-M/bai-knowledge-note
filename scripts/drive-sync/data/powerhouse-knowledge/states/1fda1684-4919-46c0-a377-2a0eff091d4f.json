@@ -1,0 +1,101 @@
+{
+  "links": [
+    {
+      "id": "lnk-11da9c61-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "11da9c61-a825-4c70-a57c-f80b10f569c7",
+      "targetTitle": "analytics-engine-interval-time-series"
+    },
+    {
+      "id": "lnk-79987290-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "79987290-fb65-4d66-a549-fd41370db753",
+      "targetTitle": "connect-is-host-application"
+    },
+    {
+      "id": "lnk-6443a5a6-bui",
+      "linkType": "BUILDS_ON",
+      "targetDocumentId": "6443a5a6-47e6-4336-b701-017757a9ff9e",
+      "targetTitle": "ddup-four-storage-layers"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "A typical user (1 drive, 5 docs, 100 ops) totals ~120 KB across all storage layers",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "8d627ae4-f68d-4c56-ae25-4b746f800f81",
+      "name": "sizing-analysis",
+      "topicDocumentId": null
+    },
+    {
+      "id": "439f40da-cc04-4c97-a905-b62251648c74",
+      "name": "storage-costs",
+      "topicDocumentId": null
+    },
+    {
+      "id": "5272a15a-1f35-4e67-8d56-6ab2ab6ac39c",
+      "name": "data-duplication",
+      "topicDocumentId": null
+    },
+    {
+      "id": "07b93e85-346c-4e3f-9284-6c3ab2293af2",
+      "name": "reference",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "Size breakdown for Alice \u2014 1 drive, 5 documents, ~100 operations total:\n\n**PGlite (~60 KB)**\n- Operations: ~100 rows x ~500 bytes = 50 KB\n- Documents: ~5 rows x ~2 KB = 10 KB\n- Relationships: ~5 rows x ~100 bytes = 0.5 KB\n\n**Swarm /bytes (encrypted) (~58 KB)**\n- Operation batches: ~100 ops in ~5 batches x ~10 KB = 50 KB\n- Doc manifests: 5 x ~1 KB = 5 KB\n- Drive manifest: 1 x ~2 KB = 2 KB\n- User manifest: 1 x ~1 KB = 1 KB\n\n**Swarm feeds (~768 bytes)**\n- User feed: 1 x 64 bytes\n- Drive feed: 1 x 64 bytes\n- Doc feeds: 5 x ~2 indices x 64 bytes = 640 bytes\n\n**IndexedDB (~700 bytes)**\n- Manifest index: ~500 bytes\n- Pending ops: 0 (flushed)\n- Signer key: ~200 bytes\n\n**Grand total: ~120 KB**\n- True duplication (ops in both PGlite and Swarm): ~50 KB\n- Metadata overhead (manifests, feeds, caches): ~10 KB \u2014 this is not duplication, it's what enables recovery and lookup\n\n**Takeaway**: at typical scale, duplication is small in absolute terms (~50 KB per user) and the metadata overhead pays for self-sovereignty and recoverability.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "REFERENCE",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "knowledge-agent",
+    "createdAt": "2026-04-21T14:42:40.589Z",
+    "sessionId": null,
+    "updatedAt": "2026-09-03T09:57:22.167Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Sizing: ~60 KB PGlite, ~59 KB Swarm (/bytes+feeds), ~1 KB IndexedDB. ~50 KB is true duplication (ops); ~10 KB is metadata overhead, not duplication.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "4229ad86-621c-47b0-9760-0ba87f396da7",
+      "actor": "claude",
+      "comment": "Knowledge registered against powerhouse v6.2.2-dev.47",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-14T12:00:00.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "22c13939-8bc3-4da4-8295-a53c32b68d4c",
+      "actor": "liberuum",
+      "comment": "Canonical as of powerhouse v6.2.2-dev.47",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-14T12:00:00.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

@@ -1,0 +1,104 @@
+{
+  "links": [
+    {
+      "id": "lnk-68acb174-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "68acb174-1d24-4535-a05e-48cbbb6bba19",
+      "targetTitle": "Revision History panel styling requires scoped CSS on document-editor-context since no props are exposed"
+    },
+    {
+      "id": "lnk-2b87126c-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "2b87126c-b2b1-4746-b781-27701787b4be",
+      "targetTitle": "revision-history-panel-internal-dom-structure"
+    },
+    {
+      "id": "lnk-7bf0150e-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "7bf0150e-34d9-4cd2-b038-e55a6acb1ea4",
+      "targetTitle": "revision-history-timeline-in-editors"
+    },
+    {
+      "id": "lnk-aeb9b5e6-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "aeb9b5e6-8fce-4339-95e8-375bd0a0cc01",
+      "targetTitle": "Academy \u203a Reference \u203a EditorsUI \u203a React Hooks",
+      "reason": "The note names apps/academy/docs/academy/04-Reference/05-EditorsUI/01-ReactHooks.md as its source; page text revised between v6.2.2-dev.47 and v6.2.2-dev.74 \u2014 re-verified in the v6.2.2-dev.74 pass",
+      "confidence": "grounded"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Revision-history panel visibility is controlled by useRevisionHistoryVisible, showRevisionHistory and hideRevisionHistory",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "652183f3-b01d-400d-93b4-557557543371",
+      "name": "revision-history",
+      "topicDocumentId": null
+    },
+    {
+      "id": "e9193d80-d1a0-48f5-99e2-10c7d5aa1c63",
+      "name": "react-hooks",
+      "topicDocumentId": null
+    },
+    {
+      "id": "365b3826-206e-4c8a-a111-3590266c597a",
+      "name": "editors",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "The revision-history panel is rendered by Connect, outside the editor's component tree \u2014 which is why it can only be *styled* through scoped CSS. Its *visibility*, though, is ordinary global state with a three-function API:\n\n```ts\nfunction useRevisionHistoryVisible(): boolean | undefined;\nfunction showRevisionHistory(): void;\nfunction hideRevisionHistory(): void;\n```\n\n`showRevisionHistory` and `hideRevisionHistory` are plain functions rather than hooks, so they are safe to call from a click handler, an effect, or a keyboard shortcut. Neither takes arguments: the panel always targets the currently selected document, so there is no way to open history for some other document from here.\n\n`useRevisionHistoryVisible` returns `boolean | undefined`, and the third state is meaningful \u2014 `undefined` is \"not yet initialised\" rather than \"hidden\". Treat it as falsy for rendering, but do not write `visible === false` as your hidden check.\n\nThis matters because the toolbar `history` button is not the only sensible affordance. An editor that wants a \"see what changed\" link inside its own layout, a drive app that opens history on a keyboard shortcut, or an editor that wants to close the panel when the user starts editing again, can all drive the panel directly. The reverse read is equally useful: an editor can consult `useRevisionHistoryVisible()` to collapse a sidebar or suppress its own controls while history is on screen, since the panel takes over the view.\n\nCombined with `disabledControls={[\"history\"]}` on `DocumentToolbar`, these hooks let you remove the built-in button entirely and replace it with your own trigger without losing the feature.\n\n_Source: apps/academy/docs/academy/04-Reference/05-EditorsUI/01-ReactHooks.md (Powerhouse v6.2.2-dev.45)._",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": "v6.2.2-dev.74",
+  "computes": null,
+  "filePath": "apps/academy/docs/academy/04-Reference/05-EditorsUI/01-ReactHooks.md",
+  "noteType": "REFERENCE",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "claude",
+    "createdAt": "2026-08-13T14:38:05.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-09-02T22:26:33.004Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Editors can open and close Connect's revision-history panel programmatically instead of relying on the toolbar history button.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "aa9226bc-3d32-44c2-8841-c8e298b317ef",
+      "actor": "claude",
+      "comment": "Knowledge registered against powerhouse v6.2.2-dev.47",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-14T12:00:00.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "61c54757-529f-4283-822e-05005888f958",
+      "actor": "liberuum",
+      "comment": "Canonical as of powerhouse v6.2.2-dev.47",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-14T12:00:00.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

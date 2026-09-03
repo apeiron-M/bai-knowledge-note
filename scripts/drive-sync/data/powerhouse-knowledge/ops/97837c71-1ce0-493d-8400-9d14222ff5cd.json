@@ -1,0 +1,330 @@
+[
+  {
+    "index": 0,
+    "hash": "",
+    "timestampUtcMs": "2026-09-03T07:44:14.250Z",
+    "action": {
+      "type": "CREATE_DOCUMENT",
+      "input": {
+        "meta": {},
+        "name": "analytics-engine-module-split",
+        "slug": "",
+        "model": "bai/knowledge-note",
+        "branch": "main",
+        "signing": {
+          "nonce": "",
+          "publicKey": {},
+          "signature": "97837c71-1ce0-493d-8400-9d14222ff5cd",
+          "documentType": "bai/knowledge-note",
+          "createdAtUtcIso": "2026-09-03T07:44:14.250Z"
+        },
+        "version": 0,
+        "documentId": "97837c71-1ce0-493d-8400-9d14222ff5cd",
+        "protocolVersions": {
+          "base-reducer": 2
+        }
+      },
+      "timestampUtcMs": "2026-09-03T07:44:14.250Z"
+    }
+  },
+  {
+    "index": 0,
+    "hash": "Ax4SC/QQScYmUeFPB2z6LHZQOb8=",
+    "timestampUtcMs": "2026-09-03T07:44:15.506Z",
+    "action": {
+      "type": "SET_TITLE",
+      "input": {
+        "title": "The analytics engine is a distributed time-series system split into a core interface module and per-backend storage modules for knex, pg and browser",
+        "updatedAt": "2026-09-03T07:44:15.506Z"
+      },
+      "timestampUtcMs": "2026-09-03T07:44:15.506Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "",
+    "timestampUtcMs": "2026-09-03T07:44:14.250Z",
+    "action": {
+      "type": "UPGRADE_DOCUMENT",
+      "input": {
+        "model": "bai/knowledge-note",
+        "toVersion": 1,
+        "documentId": "97837c71-1ce0-493d-8400-9d14222ff5cd",
+        "fromVersion": 0,
+        "initialState": {
+          "auth": {
+            "grants": [],
+            "version": 0
+          },
+          "local": {
+            "lastViewedAt": null,
+            "personalTags": []
+          },
+          "global": {
+            "links": [],
+            "model": null,
+            "scope": null,
+            "title": null,
+            "editor": null,
+            "inputs": [],
+            "models": [],
+            "status": "DRAFT",
+            "topics": [],
+            "content": null,
+            "context": null,
+            "modelId": null,
+            "modules": [],
+            "outputs": [],
+            "version": null,
+            "computes": null,
+            "filePath": null,
+            "noteType": null,
+            "severity": null,
+            "hooksUsed": [],
+            "rootCause": null,
+            "confidence": null,
+            "consumedBy": [],
+            "provenance": null,
+            "sourceType": null,
+            "targetType": null,
+            "cardinality": null,
+            "description": null,
+            "alternatives": [],
+            "consequences": [],
+            "errorMessage": null,
+            "relationType": null,
+            "correctPattern": null,
+            "decisionStatus": null,
+            "dispatchTargets": [],
+            "lifecycleEvents": []
+          },
+          "document": {
+            "hash": {
+              "encoding": "base64",
+              "algorithm": "sha1"
+            },
+            "version": 1
+          }
+        }
+      },
+      "timestampUtcMs": "2026-09-03T07:44:14.250Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "4L0TfkZINvFjPHpEx5qQjUcjIig=",
+    "timestampUtcMs": "2026-09-03T07:44:15.506Z",
+    "action": {
+      "type": "SET_DESCRIPTION",
+      "input": {
+        "updatedAt": "2026-09-03T07:44:15.506Z",
+        "description": "core/ holds the primary interface plus query and aggregation components; knex/, pg/ and browser/ are the backing storage engines. Every module extends the root tsconfig in a pnpm workspace."
+      },
+      "timestampUtcMs": "2026-09-03T07:44:15.506Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "",
+    "timestampUtcMs": "2026-09-03T07:44:54.308Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "metadata": {
+          "reason": "Extracted from packages/analytics-engine/README.md at v6.2.2-dev.74 \u2014 Overview; Development Quickstart (module layout, tooling, workspace)",
+          "confidence": "grounded"
+        },
+        "sourceId": "97837c71-1ce0-493d-8400-9d14222ff5cd",
+        "targetId": "6b800511-b337-4e52-8bd3-03eab8254ec9",
+        "relationshipType": "DERIVED_FROM"
+      },
+      "timestampUtcMs": "2026-09-03T07:44:54.308Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "g7f3V8IiBBMK7FV/EeMJduqTjtw=",
+    "timestampUtcMs": "2026-09-03T07:44:15.506Z",
+    "action": {
+      "type": "SET_NOTE_TYPE",
+      "input": {
+        "noteType": "ARCHITECTURE",
+        "updatedAt": "2026-09-03T07:44:15.506Z"
+      },
+      "timestampUtcMs": "2026-09-03T07:44:15.506Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "",
+    "timestampUtcMs": "2026-09-03T07:44:54.788Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "metadata": {
+          "reason": "The browser storage module is what the analytics provider and hooks in reactor-browser sit on top of",
+          "confidence": "grounded"
+        },
+        "sourceId": "97837c71-1ce0-493d-8400-9d14222ff5cd",
+        "targetId": "6cd88ded-d8e5-4645-8dc1-8dab23dd6dc4",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-09-03T07:44:54.788Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "6cy9yvi3PVudt4UCoZftr7XP4m0=",
+    "timestampUtcMs": "2026-09-03T07:44:15.506Z",
+    "action": {
+      "type": "SET_CONTENT",
+      "input": {
+        "content": "The `analytics-engine` is described as \"a powerful, distributed, time-series analytics system, written in Typescript\", and its shape is a module split that mirrors the reactor's storage-agnostic design:\n\n- **`core/`** \u2014 the primary interface for interacting with the engine, and the home of the **query and aggregation** components;\n- **`knex/`, `pg/`, `browser/`** \u2014 the backing **storage engines**.\n\nSo the query surface is written once and the persistence is chosen per host: `pg` for a server, `browser` for an in-page store, `knex` for anything else it can reach. That is the same separation the reactor makes between `IOperationStore` and its Kysely implementation, and it is why the analytics hooks in reactor-browser can present the same query API a switchboard uses.\n\nToolchain notes for anyone working in it: `pnpm` as the package manager, `tsc-watch` as the filewatcher, `vitest` for tests, every module extending the root `tsconfig.json`, and the repository configured as a **pnpm workspace** so `pnpm install` at the root installs for every module and `pnpm test` runs every suite.\n\n## Provenance\n- `packages/analytics-engine/README.md` \u2014 Overview; Development Quickstart (module layout, tooling, workspace)\n\n_Extracted from the Powerhouse repository at **v6.2.2-dev.74**._",
+        "updatedAt": "2026-09-03T07:44:15.506Z"
+      },
+      "timestampUtcMs": "2026-09-03T07:44:15.506Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "",
+    "timestampUtcMs": "2026-09-03T07:44:55.272Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "metadata": {
+          "reason": "The core module's query and aggregation components are the surface that decision note's selection criterion is about",
+          "confidence": "grounded"
+        },
+        "sourceId": "97837c71-1ce0-493d-8400-9d14222ff5cd",
+        "targetId": "9b1bec19-6bcc-4f87-80b9-5f25360e4b7e",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-09-03T07:44:55.272Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "4mtRpl1m/U2xEUM0pTGa4/G80X8=",
+    "timestampUtcMs": "2026-09-03T07:44:15.506Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "567c8cbe-3ccb-4391-8a60-fb538f557c8f",
+        "name": "analytics"
+      },
+      "timestampUtcMs": "2026-09-03T07:44:15.506Z"
+    }
+  },
+  {
+    "index": 5,
+    "hash": "IV9a0hRug66OPoIthCYKCXK8wpM=",
+    "timestampUtcMs": "2026-09-03T07:44:15.506Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "e6340adc-1218-46d5-8f37-91a5b6f51124",
+        "name": "architecture"
+      },
+      "timestampUtcMs": "2026-09-03T07:44:15.506Z"
+    }
+  },
+  {
+    "index": 6,
+    "hash": "92yGYjjsSkXt2XBFJJTljExvmpA=",
+    "timestampUtcMs": "2026-09-03T07:44:15.506Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "2bde41f6-8080-4d56-af5e-bc0a795b73c7",
+        "name": "packaging"
+      },
+      "timestampUtcMs": "2026-09-03T07:44:15.506Z"
+    }
+  },
+  {
+    "index": 7,
+    "hash": "TQrdKw60VyLsXnxq9k0sHvN0nT0=",
+    "timestampUtcMs": "2026-09-03T07:44:15.506Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "397f3aff-b1bc-4a63-ab34-3737dbab97a9",
+        "name": "storage"
+      },
+      "timestampUtcMs": "2026-09-03T07:44:15.506Z"
+    }
+  },
+  {
+    "index": 8,
+    "hash": "3YgrLnVfP0V9Dk/aIRjNPjL39fQ=",
+    "timestampUtcMs": "2026-09-03T07:44:15.506Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "version",
+        "value": "v6.2.2-dev.74",
+        "updatedAt": "2026-09-03T07:44:15.506Z"
+      },
+      "timestampUtcMs": "2026-09-03T07:44:15.506Z"
+    }
+  },
+  {
+    "index": 9,
+    "hash": "GDd9yPVzhuFm4Xwp6yLhGWxfC2U=",
+    "timestampUtcMs": "2026-09-03T07:44:15.506Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "filePath",
+        "value": "packages/analytics-engine/README.md",
+        "updatedAt": "2026-09-03T07:44:15.506Z"
+      },
+      "timestampUtcMs": "2026-09-03T07:44:15.506Z"
+    }
+  },
+  {
+    "index": 10,
+    "hash": "OGQ+MXtNkmntKgEKRCh+pTvTkJc=",
+    "timestampUtcMs": "2026-09-03T07:44:17.914Z",
+    "action": {
+      "type": "SET_PROVENANCE",
+      "input": {
+        "author": "knowledge-agent",
+        "createdAt": "2026-09-03T07:44:17.914Z",
+        "sourceOrigin": "DERIVED"
+      },
+      "timestampUtcMs": "2026-09-03T07:44:17.914Z"
+    }
+  },
+  {
+    "index": 11,
+    "hash": "c1XX4dfH8blRqqTeO5RFQk06nuo=",
+    "timestampUtcMs": "2026-09-03T07:44:18.395Z",
+    "action": {
+      "type": "SUBMIT_FOR_REVIEW",
+      "input": {
+        "id": "5fc30ed5-6983-4620-956d-1a005a537c30",
+        "actor": "knowledge-agent",
+        "comment": "extracted from packages/analytics-engine/README.md at v6.2.2-dev.74",
+        "timestamp": "2026-09-03T07:44:18.395Z"
+      },
+      "timestampUtcMs": "2026-09-03T07:44:18.395Z"
+    }
+  },
+  {
+    "index": 12,
+    "hash": "BUK8+d7xWfjRsoSMjqSijDqYhlY=",
+    "timestampUtcMs": "2026-09-03T07:44:18.893Z",
+    "action": {
+      "type": "APPROVE_NOTE",
+      "input": {
+        "id": "936f3c74-493b-4575-96e5-d243e302c597",
+        "actor": "liberuum",
+        "comment": "claim checked against the cited file at the pinned tag",
+        "timestamp": "2026-09-03T07:44:18.892Z"
+      },
+      "timestampUtcMs": "2026-09-03T07:44:18.893Z"
+    }
+  }
+]

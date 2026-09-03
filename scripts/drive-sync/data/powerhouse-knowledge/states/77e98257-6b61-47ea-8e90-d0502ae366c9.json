@@ -1,0 +1,91 @@
+{
+  "links": [
+    {
+      "id": "lnk-9c9ffb95-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "9c9ffb95-9100-4839-b00e-57ec8b6ccbe6",
+      "targetTitle": "account-transactions-model-tracks-financial-transaction-records"
+    },
+    {
+      "id": "lnk-fad6ffc4-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "fad6ffc4-444f-4c25-b911-fce08202d0cf",
+      "targetTitle": "oh-subscription-includes-formation-and-ongoing-ops"
+    },
+    {
+      "id": "lnk-83cda106-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "83cda106-6208-4862-b279-c8061e2084d4",
+      "targetTitle": "oh-has-four-tiers-essentials-starter-standard-custom"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "expense-report model tracks expense claims and approvals",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "4f7437d3-9a6e-4649-92b0-20a746005c55",
+      "name": "expense-report",
+      "topicDocumentId": null
+    },
+    {
+      "id": "42c13c88-b977-42cc-8a0c-78d2fcf77823",
+      "name": "reporting",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "# expense-report model tracks expense claims and approvals\n\n`powerhouse/expense-report` (18 ops) handles expense claim workflows. Part of the Reporting zone alongside [[invoice model generates formal payment requests]] and [[snapshot-report model provides point-in-time data captures]].\n\n## Position in Ecosystem\n\nReporting zone. May reference [[accounts model defines the chart of accounts structure]] for expense categorization and feed into [[account-transactions model tracks financial transaction records]] for financial recording.\n\n---\n\nTopics:\n- [[ecosystem map]]\n- [[object relations]]",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "ARCHITECTURE",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "knowledge-agent",
+    "createdAt": "2026-04-03T13:41:18.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-09-03T09:58:47.983Z",
+    "sourceOrigin": "IMPORT"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "18 operations \u2014 manages expense submissions with line items, approval workflows, and reimbursement tracking",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "9274c09e-fcb2-40ad-b050-1c832e3fc683",
+      "actor": "claude",
+      "comment": "Knowledge registered against powerhouse v6.2.2-dev.47",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-14T12:00:00.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "cc254bcd-0971-4668-a8a5-abee9228d6d5",
+      "actor": "liberuum",
+      "comment": "Canonical as of powerhouse v6.2.2-dev.47",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-14T12:00:00.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

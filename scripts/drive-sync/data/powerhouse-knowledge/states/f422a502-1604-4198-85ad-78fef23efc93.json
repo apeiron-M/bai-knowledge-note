@@ -1,0 +1,104 @@
+{
+  "links": [
+    {
+      "id": "lnk-90ce5eef-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "90ce5eef-d899-430a-abcd-d4a679738cc1",
+      "targetTitle": "with-sync-wiring-avoids-monkey-patching"
+    },
+    {
+      "id": "lnk-bae7ff6f-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "bae7ff6f-70a8-4dad-aa99-555dd0b0535c",
+      "targetTitle": "moc-reactor-sync-infrastructure"
+    },
+    {
+      "id": "lnk-501f87dd-bui",
+      "linkType": "BUILDS_ON",
+      "targetDocumentId": "501f87dd-ff84-4a59-8894-033f209dfdf0",
+      "targetTitle": "reactor-builder-fluent-api-construction"
+    },
+    {
+      "id": "lnk-d713d0e0-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "d713d0e0-b6a9-4302-9463-fa8a34bf69b1",
+      "targetTitle": "Academy \u203a Reference \u203a Reactor \u203a Synchronization and remote drives",
+      "reason": "The note names apps/academy/docs/academy/04-Reference/01-Reactor/04-Synchronization.md as its source; page text identical at v6.2.2-dev.47 and v6.2.2-dev.74",
+      "confidence": "grounded"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Sync is off by default: a reactor has no sync manager unless withChannelScheme or withSync is called",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "cc29e9dd-4382-4982-bce9-1bd91c72b67c",
+      "name": "reactor-sync",
+      "topicDocumentId": null
+    },
+    {
+      "id": "763679ef-b198-436c-968a-731ada3808c7",
+      "name": "reactor-builder",
+      "topicDocumentId": null
+    },
+    {
+      "id": "ca1ebcd6-6b96-4266-ac0a-3dae6acb4079",
+      "name": "gotchas",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "A freshly built reactor does not sync. The sync subsystem in `@powerhousedao/reactor` is opt-in, and there are exactly two ways to opt in on the `ReactorBuilder`: `withChannelScheme(scheme)` or `withSync(syncBuilder)`. Call neither and `module.syncModule` is `undefined` \u2014 the reactor stores and reduces operations locally and never contacts a remote.\n\n`withChannelScheme` is the shortcut. It constructs the channel factory and a `SyncBuilder` for you and starts the sync manager during `build()`:\n\n```typescript\nconst module = await new ReactorBuilder()\n  .withDocumentModelSources([/* ... */])\n  .withChannelScheme(ChannelScheme.CONNECT)\n  .buildModule();\n\nconst sync = module.syncModule?.syncManager; // ISyncManager | undefined\n```\n\n`withSync` is the full-control path: you hand over a pre-configured `SyncBuilder` when you need a custom channel factory, custom storages, or different limits. On this path the reactor builder still calls `syncManager.startup()` for you.\n\nThe gotcha is what happens when you call both. There is no error and no warning: **only the scheme path runs, and your custom `SyncBuilder` is discarded.** The scheme path always constructs a fresh `SyncBuilder` around the scheme's own factory, so any `withChannelFactory`, `withMaxInboxBatchSize`, or storage override you configured is silently thrown away. Use one or the other, never both.\n\nA second, related trap: `SyncBuilder.build()` and `buildModule()` do *not* call `startup()`. That call is only made for you when the builder is routed through `ReactorBuilder`. If you construct a `SyncBuilder` directly, you must call `syncManager.startup()` yourself before adding remotes, or `add` will operate on a manager that was never started.\n\nNote also that `withJwtHandler` only flows through the `CONNECT` factory; on the `SWITCHBOARD` path it is accepted and ignored.\n\n_Source: apps/academy/docs/academy/04-Reference/01-Reactor/04-Synchronization.md (Powerhouse v6.2.2-dev.45)._",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": "v6.2.2-dev.74",
+  "computes": null,
+  "filePath": "apps/academy/docs/academy/04-Reference/01-Reactor/04-Synchronization.md",
+  "noteType": "ARCHITECTURE",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "claude",
+    "createdAt": "2026-08-13T14:33:59.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-09-02T21:38:03.475Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "module.syncModule is undefined unless one of the two is called on ReactorBuilder. Setting both silently discards the custom SyncBuilder.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "ebdb476e-9155-4be4-818c-d1ca5bd4c578",
+      "actor": "claude",
+      "comment": "Knowledge registered against powerhouse v6.2.2-dev.47",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-14T12:00:00.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "cac752c4-3ce9-4644-9392-f3a7af8d05f9",
+      "actor": "liberuum",
+      "comment": "Canonical as of powerhouse v6.2.2-dev.47",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-14T12:00:00.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

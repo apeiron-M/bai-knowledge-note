@@ -1,0 +1,101 @@
+{
+  "links": [
+    {
+      "id": "lnk-152f3ecf-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "152f3ecf-965e-4486-afb2-ee257101aabf",
+      "targetTitle": "document-models-enable-asynchronous-collaboration"
+    },
+    {
+      "id": "lnk-075115a4-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "075115a4-d269-4515-91df-5b40568ca4b4",
+      "targetTitle": "document-model-driven-architecture-rad"
+    },
+    {
+      "id": "lnk-d25f956a-bui",
+      "linkType": "BUILDS_ON",
+      "targetDocumentId": "d25f956a-e8fb-44b3-a2ab-aa0ef080e217",
+      "targetTitle": "swarm-kademlia-neighborhoods"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "PSS delivers anonymous asynchronous messages via Trojan chunks mined into the recipient's neighborhood",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "adf89cb5-61fc-40db-8178-1e69541f82d2",
+      "name": "pss",
+      "topicDocumentId": null
+    },
+    {
+      "id": "690900c4-2902-4c59-b308-7b283a2f4139",
+      "name": "swarm",
+      "topicDocumentId": null
+    },
+    {
+      "id": "7990ff80-72ae-460d-a639-a3dfc83d05cc",
+      "name": "messaging",
+      "topicDocumentId": null
+    },
+    {
+      "id": "989d5332-8baf-4cf0-8a94-2a52237658de",
+      "name": "privacy",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "## Claim\n\n**PSS (Postal Service on Swarm)** delivers anonymous, asynchronous messages by mining a content-addressed chunk (\"Trojan chunk\") whose address lands in the recipient's neighborhood, then push-syncing it through normal chunk traffic.\n\n## Evidence\n\nProtocol:\n1. Sender mines a nonce so the resulting CAC address has a prefix matching the recipient's neighborhood\n2. Message is asymmetrically encrypted with the recipient's public key\n3. The chunk is push-synced via the standard protocol \u2014 indistinguishable from normal encrypted traffic\n4. Recipient's node attempts to decrypt every arriving chunk, checking for a topic match\n\nTrojan chunk layout:\n```\n[8-byte span] [32-byte mined nonce] [4064-byte encrypted payload]\n  Payload: [2-byte msg length] [32-byte obfuscated topic] [message] [random padding]\n```\n\nLatency: seconds (nonce mining scales with network size) + normal forwarding time. If the recipient is offline, the chunk persists until its stamp TTL expires \u2014 delivery is asynchronous.\n\nAPI: `POST /pss/send/{topic}/{targets}?recipient={publicKey}`, `WS /pss/subscribe/{topic}`.\n\n## Why it matters\n\nPSS is the transport for real-time notifications and direct messaging in a fully decentralized Connect. Third parties cannot distinguish PSS traffic from any other encrypted chunk, giving plausible deniability.\n",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "CONCEPT",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "knowledge-agent",
+    "createdAt": "2026-04-21T14:24:54.753Z",
+    "sessionId": null,
+    "updatedAt": "2026-09-03T09:58:24.521Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Sender mines a CAC whose address falls in the recipient's neighborhood, encrypts payload with recipient's public key, and push-syncs. Indistinguishable from normal traffic.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "734b1c44-3d0b-4bc3-b267-929e79365e69",
+      "actor": "claude",
+      "comment": "Knowledge registered against powerhouse v6.2.2-dev.47",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-14T12:00:00.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "ff7ce7c5-5c94-4ecb-a440-2d1ddc0558c9",
+      "actor": "liberuum",
+      "comment": "Canonical as of powerhouse v6.2.2-dev.47",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-14T12:00:00.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

@@ -1,0 +1,94 @@
+{
+  "links": [
+    {
+      "id": "lnk-315ffb64-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "315ffb64-27fb-443a-a8c2-250d278c8c1e",
+      "targetTitle": "conapi GmbH \u2014 Kestra"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Kestra keeps execution history in its own mutable backend, so an approval inside a pipeline has nowhere to live",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "12baeac9-cf8b-4daa-a5fa-899b82a184b8",
+      "name": "leads",
+      "topicDocumentId": null
+    },
+    {
+      "id": "f36ffafd-385c-4a88-8560-ee8faf820334",
+      "name": "kestra",
+      "topicDocumentId": null
+    },
+    {
+      "id": "51728ed0-f64c-4e07-b194-f487a366fcc8",
+      "name": "process-orchestration",
+      "topicDocumentId": null
+    },
+    {
+      "id": "87d13403-ea9b-4279-8c68-7c26a4c69c7f",
+      "name": "audit-trail",
+      "topicDocumentId": null
+    },
+    {
+      "id": "f978ccfe-3e40-4f69-8265-0e64c395e3bf",
+      "name": "system-of-record",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "Kestra orchestrates data workflows and keeps its execution history in its own backend, which is mutable. That history is about runs: which task executed, when, with what status. It is the operational record of the pipeline, not a record of the business events that occur inside it.\n\nThe research names the missing object exactly \u2014 'this figure was approved, by this person' has nowhere to live. An orchestrator can encode the approval as a step and can show that the step completed, but the completion is a row it owns and can rewrite, and preserving the meaning of the approval is not what an orchestrator is built to do.\n\nFor conapi, which delivers Kestra-based pipelines, this is the seam. The pipeline is already the place where the approval happens, so dispatching that moment as a typed operation moves the business event out of the mutable execution log and into a record that outlives the run it came from.\n\n---\n\n## Leads sharing this finding (1)\n\n**3 \u00b7 later**\n- conapi GmbH (AT Winzendorf) \u2014 https://conapi.at\n\nVerbatim research text this claim was extracted from:\n\n> Kestra orchestrates data workflows and stores execution history in its own mutable backend. The business event inside the pipeline \u2014 this figure was approved, by this person \u2014 has nowhere to live.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "OBSERVATION",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "knowledge-agent",
+    "createdAt": "2026-08-19T11:24:54.410843Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-19T11:24:55.858369Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Orchestration records that a task ran, not that a figure was approved by a named person \u2014 the business event inside the data workflow is the object that goes unrecorded.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "59caea01-403c-47ad-bc3c-55ccc6445015",
+      "actor": "knowledge-agent",
+      "comment": "Extracted from lead research; claim checked against the source record.",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-19T11:24:55.708444Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "69df598a-e3ee-44c0-8bbd-ebad7c0db2ef",
+      "actor": "liberuum",
+      "comment": "Approved: lead corpus extraction.",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-19T11:24:55.858369Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

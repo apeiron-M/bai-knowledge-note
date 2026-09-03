@@ -1,0 +1,336 @@
+[
+  {
+    "index": 0,
+    "hash": "",
+    "timestampUtcMs": "2026-08-14T12:02:54.879Z",
+    "action": {
+      "type": "CREATE_DOCUMENT",
+      "input": {
+        "meta": {},
+        "name": "generated-action-creators-bind-the-operations-scope",
+        "slug": "",
+        "model": "bai/knowledge-note",
+        "branch": "main",
+        "signing": {
+          "nonce": "",
+          "publicKey": {},
+          "signature": "a6d60688-8c12-4882-a858-4c8ddce31f44",
+          "documentType": "bai/knowledge-note",
+          "createdAtUtcIso": "2026-08-14T12:02:54.879Z"
+        },
+        "version": 0,
+        "documentId": "a6d60688-8c12-4882-a858-4c8ddce31f44",
+        "protocolVersions": {
+          "base-reducer": 2
+        }
+      },
+      "timestampUtcMs": "2026-08-14T12:02:54.879Z"
+    }
+  },
+  {
+    "index": 0,
+    "hash": "7IzywHFzIBc0mJtQ/i9L9oHU8kk=",
+    "timestampUtcMs": "2026-08-14T12:35:17.000Z",
+    "action": {
+      "type": "SET_TITLE",
+      "input": {
+        "title": "Generated action creators bind the operation's scope; never call createAction directly",
+        "updatedAt": "2026-08-14T12:35:17.000Z"
+      },
+      "timestampUtcMs": "2026-08-14T12:35:17.000Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "",
+    "timestampUtcMs": "2026-08-14T12:02:54.879Z",
+    "action": {
+      "type": "UPGRADE_DOCUMENT",
+      "input": {
+        "model": "bai/knowledge-note",
+        "toVersion": 1,
+        "documentId": "a6d60688-8c12-4882-a858-4c8ddce31f44",
+        "fromVersion": 0,
+        "initialState": {
+          "auth": {
+            "grants": [],
+            "version": 0
+          },
+          "local": {
+            "lastViewedAt": null,
+            "personalTags": []
+          },
+          "global": {
+            "links": [],
+            "model": null,
+            "scope": null,
+            "title": null,
+            "editor": null,
+            "inputs": [],
+            "models": [],
+            "status": "DRAFT",
+            "topics": [],
+            "content": null,
+            "context": null,
+            "modelId": null,
+            "modules": [],
+            "outputs": [],
+            "version": null,
+            "computes": null,
+            "filePath": null,
+            "noteType": null,
+            "severity": null,
+            "hooksUsed": [],
+            "rootCause": null,
+            "confidence": null,
+            "consumedBy": [],
+            "provenance": null,
+            "sourceType": null,
+            "targetType": null,
+            "cardinality": null,
+            "description": null,
+            "alternatives": [],
+            "consequences": [],
+            "errorMessage": null,
+            "relationType": null,
+            "correctPattern": null,
+            "decisionStatus": null,
+            "dispatchTargets": [],
+            "lifecycleEvents": []
+          },
+          "document": {
+            "hash": {
+              "encoding": "base64",
+              "algorithm": "sha1"
+            },
+            "version": 1
+          }
+        }
+      },
+      "timestampUtcMs": "2026-08-14T12:02:54.879Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "cEYkWZ6tV3p7CPV8VsE79x0O+SA=",
+    "timestampUtcMs": "2026-08-14T12:35:17.000Z",
+    "action": {
+      "type": "SET_DESCRIPTION",
+      "input": {
+        "updatedAt": "2026-08-14T12:35:17.000Z",
+        "description": "Codegen emits creators that pass \"local\" or \"global\" through to createAction as its fifth argument. Hand-rolling createAction silently defaults the scope to global."
+      },
+      "timestampUtcMs": "2026-08-14T12:35:17.000Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "",
+    "timestampUtcMs": "2026-08-14T12:37:34.342Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "a6d60688-8c12-4882-a858-4c8ddce31f44",
+        "targetId": "afcf4e21-7384-4a74-a16d-edfb22964051",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-08-14T12:37:34.342Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "L8GdECHaGdqgUJWmPSWMcAMv584=",
+    "timestampUtcMs": "2026-08-14T12:35:17.000Z",
+    "action": {
+      "type": "SET_NOTE_TYPE",
+      "input": {
+        "noteType": "PATTERN",
+        "updatedAt": "2026-08-14T12:35:17.000Z"
+      },
+      "timestampUtcMs": "2026-08-14T12:35:17.000Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "",
+    "timestampUtcMs": "2026-08-14T12:37:34.444Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "a6d60688-8c12-4882-a858-4c8ddce31f44",
+        "targetId": "a4fdb6ec-9c95-4930-a45e-e21ca6571528",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-08-14T12:37:34.444Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "audxvBP0JHVFgqFJcHVbXuxjNyY=",
+    "timestampUtcMs": "2026-08-14T12:35:17.000Z",
+    "action": {
+      "type": "SET_CONTENT",
+      "input": {
+        "content": "When you define an operation, you mark which scope it writes to. Codegen turns that into a typed action creator that passes the scope through to `createAction` automatically:\n\n```ts\n// generated creators.ts\nexport const setCursor = (input: SetCursorInput) =>\n  createAction<SetCursorAction>(\n    \"SET_CURSOR\",\n    { ...input },\n    undefined,       // deprecated attachments slot, retained for arity\n    SetCursorInputSchema,\n    \"local\",         // \u2190 scope, bound at generation time\n  );\n```\n\nThe scope is the **fifth positional argument** of `createAction`, and in source it is declared `scope: Action[\"scope\"] = \"global\"` (`packages/shared/document-model/actions.ts`). That default is the whole reason not to hand-roll the call: a forgotten fifth argument does not fail to compile and does not throw \u2014 it quietly routes a local-scope action into the global log, where it syncs to every peer. A per-user cursor position becomes shared state, and you find out from a collaborator, not from a test.\n\nThe generated creator also wires in the Zod input validator (fourth argument), so bypassing it loses input validation as well as scope binding. `createAction` additionally stamps `id: generateId()` and `timestampUtcMs` \u2014 which is exactly why those values are minted here, at dispatch time, and not inside the reducer.\n\nAlways import the creator. In a versioned project the generated creators live per-module under `v<n>/gen/<module>/creators.ts`, but the supported surface is the model's top-level barrel, which re-exports them as `actions.<actionName>`.\n\n_Source: apps/academy/docs/academy/02-Learn/08-deep-dives/01-reducers-in-depth.mdx, confirmed against packages/shared/document-model/actions.ts (Powerhouse v6.2.2-dev.45)._",
+        "updatedAt": "2026-08-14T12:35:17.000Z"
+      },
+      "timestampUtcMs": "2026-08-14T12:35:17.000Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "",
+    "timestampUtcMs": "2026-08-14T12:37:34.543Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "a6d60688-8c12-4882-a858-4c8ddce31f44",
+        "targetId": "33ce2d34-4809-4d42-b3d5-5409b726a5df",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-08-14T12:37:34.543Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "4Qt0mPQJuAIYdwONi6HC9l7e6Go=",
+    "timestampUtcMs": "2026-08-14T12:35:17.000Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "version",
+        "value": "v6.2.2-dev.44",
+        "updatedAt": "2026-08-14T12:35:17.000Z"
+      },
+      "timestampUtcMs": "2026-08-14T12:35:17.000Z"
+    }
+  },
+  {
+    "index": 5,
+    "hash": "QDvQEous683pR+kJyUqwq4sBrMI=",
+    "timestampUtcMs": "2026-08-14T12:35:17.000Z",
+    "action": {
+      "type": "SET_PROVENANCE",
+      "input": {
+        "author": "claude",
+        "createdAt": "2026-08-13T14:35:33.000Z",
+        "sourceOrigin": "DERIVED"
+      },
+      "timestampUtcMs": "2026-08-14T12:35:17.000Z"
+    }
+  },
+  {
+    "index": 6,
+    "hash": "jt/luXKDrNkS7wHjvtQZpkpSHJg=",
+    "timestampUtcMs": "2026-08-14T12:35:17.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "ada026ea-b501-4485-bd25-6ef624af76e6",
+        "name": "code-generation",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-08-14T12:35:17.000Z"
+    }
+  },
+  {
+    "index": 7,
+    "hash": "b6gpZ9jR84mNwhmAB7VjdjbhIKE=",
+    "timestampUtcMs": "2026-08-14T12:35:17.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "3deae479-5a45-4701-a8dc-c3936c0d8c9a",
+        "name": "reducer-patterns",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-08-14T12:35:17.000Z"
+    }
+  },
+  {
+    "index": 8,
+    "hash": "OinblldxwbsaV+ad23DF2d0V+QM=",
+    "timestampUtcMs": "2026-08-14T12:35:17.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "0ae42612-b69d-46e8-a5e7-3e6ecd864586",
+        "name": "state-management",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-08-14T12:35:17.000Z"
+    }
+  },
+  {
+    "index": 9,
+    "hash": "bhhQqa4GQVE4oZmV6xbPrlSRLaI=",
+    "timestampUtcMs": "2026-08-14T14:37:26.000Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "version",
+        "value": "v6.2.2-dev.47",
+        "updatedAt": "2026-08-14T12:00:00.000Z"
+      },
+      "timestampUtcMs": "2026-08-14T14:37:26.000Z"
+    }
+  },
+  {
+    "index": 10,
+    "hash": "ZRSJazhp6R0r2DRcB7aCS4SCgGs=",
+    "timestampUtcMs": "2026-08-14T14:37:26.000Z",
+    "action": {
+      "type": "SUBMIT_FOR_REVIEW",
+      "input": {
+        "id": "ae8368f7-e4c7-4443-84a9-f1ac4527fa16",
+        "actor": "claude",
+        "comment": "Knowledge registered against powerhouse v6.2.2-dev.47",
+        "timestamp": "2026-08-14T12:00:00.000Z"
+      },
+      "timestampUtcMs": "2026-08-14T14:37:26.000Z"
+    }
+  },
+  {
+    "index": 11,
+    "hash": "w3iSt6NK9b8/VJqdRj5xdtphCFQ=",
+    "timestampUtcMs": "2026-08-14T14:37:26.000Z",
+    "action": {
+      "type": "APPROVE_NOTE",
+      "input": {
+        "id": "884573e0-e394-4dd8-9712-d31cd7d7b57c",
+        "actor": "liberuum",
+        "comment": "Canonical as of powerhouse v6.2.2-dev.47",
+        "timestamp": "2026-08-14T12:00:00.000Z"
+      },
+      "timestampUtcMs": "2026-08-14T14:37:26.000Z"
+    }
+  },
+  {
+    "index": 12,
+    "hash": "LbbLf6NmJH7JwZf9mClWdGi7udk=",
+    "timestampUtcMs": "2026-09-03T09:56:50.996Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "version",
+        "value": "v6.2.2-dev.74",
+        "updatedAt": "2026-09-03T09:56:50.996Z"
+      },
+      "timestampUtcMs": "2026-09-03T09:56:50.996Z"
+    }
+  },
+  {
+    "index": 13,
+    "hash": "wmxXnfJKsvySlY68Np/JONrJhJ0=",
+    "timestampUtcMs": "2026-09-03T09:56:50.996Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "filePath",
+        "value": "apps/academy/docs/academy/02-Learn/08-deep-dives/01-reducers-in-depth.mdx",
+        "updatedAt": "2026-09-03T09:56:50.996Z"
+      },
+      "timestampUtcMs": "2026-09-03T09:56:50.996Z"
+    }
+  }
+]

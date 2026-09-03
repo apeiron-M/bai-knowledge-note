@@ -1,0 +1,145 @@
+[
+  {
+    "index": 0,
+    "hash": "",
+    "timestampUtcMs": "2026-09-02T21:43:52.756Z",
+    "action": {
+      "type": "CREATE_DOCUMENT",
+      "input": {
+        "meta": {},
+        "name": "Package \u203a common \u203a drive-analytics \u2014 Drive Analytics Processors",
+        "slug": "",
+        "model": "bai/source",
+        "branch": "main",
+        "signing": {
+          "nonce": "",
+          "publicKey": {},
+          "signature": "8664cea1-f1f6-43b0-975e-f26095a8d880",
+          "documentType": "bai/source",
+          "createdAtUtcIso": "2026-09-02T21:43:52.756Z"
+        },
+        "version": 0,
+        "documentId": "8664cea1-f1f6-43b0-975e-f26095a8d880",
+        "protocolVersions": {
+          "base-reducer": 2
+        }
+      },
+      "timestampUtcMs": "2026-09-02T21:43:52.756Z"
+    }
+  },
+  {
+    "index": 0,
+    "hash": "kODmukF1WHl2Umm26ohz/tkaCEs=",
+    "timestampUtcMs": "2026-09-02T21:43:52.836Z",
+    "action": {
+      "type": "INGEST_SOURCE",
+      "input": {
+        "url": "https://github.com/powerhouse-inc/powerhouse/blob/v6.2.2-dev.74/packages/common/drive-analytics/README.md",
+        "tool": "sync-repo-docs",
+        "title": "Package \u203a common \u203a drive-analytics \u2014 Drive Analytics Processors",
+        "author": "Powerhouse Inc.",
+        "method": "sha256:208bc0509eeac969e1f63c7587ee69ffb2f1957ff0bc6d91aa8e93e65992f5d3 git:v6.2.2-dev.74",
+        "content": "# Drive Analytics Processors\n\n## Overview\n\nThe Drive Analytics package provides two specialized processors that analyze and track operations within the Powerhouse ecosystem:\n\n1. **`DriveAnalyticsProcessor`**: Analyzes Document Drive operations (file creation, updates, moves, deletions, etc.)\n2. **`DocumentAnalyticsProcessor`**: Analyzes individual document operations and modifications\n\nBoth processors convert operations into structured analytics data stored as time-series with rich dimensional information for analysis and monitoring.\n\n## Purpose\n\nThis processor enables developers to:\n\n- Monitor document drive activity and usage patterns\n- Track operational metrics across different drives, branches, and scopes\n- Analyze user behavior and system performance\n- Generate insights about document lifecycle management\n\n## Architecture\n\nThe processor implements the `IProcessor` interface and processes `InternalTransmitterUpdate` strands, which contain sequences of operations performed on document drives.\n\n### Key Components\n\n- **Analytics Store**: Stores time-series data with dimensions\n- **Chunked Processing**: Processes operations in configurable chunks (default: 50 operations)\n- **Source Management**: Automatically clears and rebuilds analytics data when processing from index 0\n\n## Metrics Collected\n\n### Primary Metric: `DriveOperations`\n\n- **Type**: Counter metric (value = 1 for each operation)\n- **Purpose**: Tracks the total number of operations performed\n- **Granularity**: Per operation, with timestamp precision\n\n## Dimensions\n\nEach analytics data point includes the following dimensions:\n\n### 1. Drive Dimension\n\n- **Path Format**: `ph/drive/{driveId}/{branch}/{scope}/{revision}`\n- **Purpose**: Identifies the specific drive, branch, scope, and revision\n- **Example**: `ph/drive/abc123/main/global/42`\n\n### 2. Operation Dimension\n\n- **Path Format**: `ph/drive/operation/{operationType}/{operationIndex}`\n- **Purpose**: Identifies the specific operation type and its sequence number\n- **Example**: `ph/drive/operation/ADD_FILE/5`\n\n### 3. Target Dimension\n\n- **Path Format**: `ph/drive/target/{targetType}/{targetId}`\n- **Purpose**: Identifies what was targeted by the operation\n- **Target Types**:\n  - `DRIVE`: Operation targets the drive itself\n  - `NODE`: Operation targets a specific node (file/folder)\n- **Example**: `ph/drive/target/NODE/file123`\n\n### 4. Action Type Dimension\n\n- **Path Format**: `ph/drive/actionType/{actionType}/{targetId}`\n- **Purpose**: Categorizes the type of action performed\n- **Action Types**:\n  - `CREATED`: New nodes created (`ADD_FILE`, `ADD_FOLDER`)\n  - `DUPLICATED`: Nodes copied (`COPY_NODE`)\n  - `UPDATED`: Existing nodes modified (`UPDATE_FILE`, `UPDATE_NODE`)\n  - `MOVED`: Nodes relocated (`MOVE_NODE`)\n  - `REMOVED`: Nodes deleted (`DELETE_NODE`)\n- **Example**: `ph/drive/actionType/CREATED/file123`\n\n## Supported Operations\n\nThe processor handles the following operation types:\n\n### Creation Operations\n\n- `ADD_FILE`: Creates a new file\n- `ADD_FOLDER`: Creates a new folder\n\n### Modification Operations\n\n- `UPDATE_FILE`: Updates file content\n- `UPDATE_NODE`: Updates node metadata\n\n### Organization Operations\n\n- `MOVE_NODE`: Moves nodes between locations\n- `COPY_NODE`: Duplicates existing nodes\n\n### Deletion Operations\n\n- `DELETE_NODE`: Removes nodes from the drive\n\n## Data Source Structure\n\nAnalytics data is organized using a hierarchical source path:\n\n```\nph/drive/{documentId}/{branch}/{scope}\n```\n\n- **documentId**: Unique identifier for the document drive\n- **branch**: Branch name (e.g., \"main\")\n- **scope**: Operational scope (e.g., \"global\", \"local\")\n\n## Usage Examples\n\n### Querying Drive Activity\n\n```javascript\n// Get all operations for a specific drive\nconst driveOperations = await analyticsStore.getSeriesValues({\n  source: AnalyticsPath.fromString(\"ph/drive/abc123/main/global\"),\n  metric: \"DriveOperations\",\n});\n\n// Get operations by action type\nconst createdNodes = await analyticsStore.getSeriesValues({\n  source: AnalyticsPath.fromString(\"ph/drive/abc123/main/global\"),\n  metric: \"DriveOperations\",\n  dimensions: {\n    actionType: AnalyticsPath.fromString(\"ph/drive/actionType/CREATED\"),\n  },\n});\n```\n\n### Filtering by Operation Type\n\n```javascript\n// Get all file additions\nconst fileAdditions = await analyticsStore.getSeriesValues({\n  source: AnalyticsPath.fromString(\"ph/drive/abc123/main/global\"),\n  metric: \"DriveOperations\",\n  dimensions: {\n    operation: AnalyticsPath.fromString(\"ph/drive/operation/ADD_FILE\"),\n  },\n});\n```\n\n### Time-Based Analysis\n\n```javascript\n// Get operations within a time range\nconst recentOperations = await analyticsStore.getSeriesValues({\n  source: AnalyticsPath.fromString(\"ph/drive/abc123/main/global\"),\n  metric: \"DriveOperations\",\n  timeRange: {\n    start: DateTime.now().minus({ hours: 24 }),\n    end: DateTime.now(),\n  },\n});\n```\n\n## Configuration\n\n### Performance Considerations\n\n- **Chunk Size**: Operations are processed in chunks of 50 (configurable in code)\n- **Batch Processing**: Analytics data is written in batches to optimize performance\n\n## Error Handling\n\n- **Source Clearing Errors**: Logged but don't interrupt processing\n- **Batch Processing**: Continues processing even if individual batches fail\n- **Graceful Degradation**: Skips empty strands and continues processing\n\n## Monitoring and Debugging\n\n### Logging\n\nThe processor uses structured logging with the following context:\n\n- **Logger Path**: `[\"processor\", \"drive-analytics\"]`\n- **Error Logging**: Failed source clearing operations\n\n## Dependencies\n\n```javascript\nimport {\n  AnalyticsPath,\n  DateTime,\n  type AnalyticsSeriesInput,\n  type IAnalyticsStore,\n} from \"@powerhousedao/reactor-browser\";\n```\n\n---\n\n# Document Analytics Processor\n\n## Overview\n\nThe `DocumentAnalyticsProcessor` is a complementary processor that focuses specifically on tracking individual document operations within drives. Unlike the DriveAnalyticsProcessor which tracks drive-level operations, this processor monitors document-specific activities and modifications.\n\n## Purpose\n\nThe DocumentAnalyticsProcessor enables developers to:\n\n- Monitor individual document activity and modification patterns\n- Track document-specific operations across different drives and branches\n- Analyze document lifecycle and usage patterns\n- Distinguish between drive-level documents and regular document nodes\n- Generate insights about document-specific behavior\n\n## Metrics Collected\n\n### Primary Metric: `DocumentOperations`\n\n- **Type**: Counter metric (value = 1 for each operation)\n- **Purpose**: Tracks the total number of document operations performed\n- **Granularity**: Per document operation, with timestamp precision\n\n## Dimensions\n\nEach analytics data point includes the following dimensions:\n\n### 1. Drive Dimension\n\n- **Path Format**: `ph/doc/drive/{driveId}/{branch}/{scope}/{revision}`\n- **Purpose**: Identifies the drive context where the document operation occurred\n- **Example**: `ph/doc/drive/abc123/main/global/42`\n\n### 2. Operation Dimension\n\n- **Path Format**: `ph/doc/operation/{operationType}/{operationIndex}`\n- **Purpose**: Identifies the specific operation type and its sequence number\n- **Example**: `ph/doc/operation/SET_STATE/15`\n\n### 3. Target Dimension\n\n- **Path Format**: `ph/doc/target/{driveId}/{targetType}/{documentId}`\n- **Purpose**: Identifies the document target and its relationship to the drive\n- **Target Types**:\n  - `DRIVE`: Document operation targets the drive document itself (when driveId === documentId)\n  - `NODE`: Document operation targets a regular document node within the drive\n- **Example**: `ph/doc/target/abc123/NODE/doc456`\n\n## Data Source Structure\n\nDocument analytics data is organized using a hierarchical source path:\n\n```\nph/doc/{driveId}/{documentId}/{branch}/{scope}\n```\n\n- **driveId**: Unique identifier for the containing drive\n- **documentId**: Unique identifier for the specific document\n- **branch**: Branch name (e.g., \"main\", \"feature/xyz\")\n- **scope**: Operational scope (e.g., \"global\", \"local\")\n\n## Target Type Determination\n\nThe processor automatically determines the target type based on the relationship between drive and document:\n\n```javascript\nconst target = driveId === documentId ? \"DRIVE\" : \"NODE\";\n```\n\n- **DRIVE**: When the document IS the drive document (drive-level operations)\n- **NODE**: When the document is a regular document within the drive\n\n## Usage Examples\n\n### Querying Document Activity\n\n```javascript\n// Get all operations for a specific document\nconst documentOperations = await analyticsStore.getSeriesValues({\n  source: AnalyticsPath.fromString(\"ph/doc/abc123/doc456/main/global\"),\n  metric: \"DocumentOperations\",\n});\n\n// Get operations by target type\nconst driveDocumentOps = await analyticsStore.getSeriesValues({\n  source: AnalyticsPath.fromString(\"ph/doc/abc123/abc123/main/global\"),\n  metric: \"DocumentOperations\",\n  dimensions: {\n    target: AnalyticsPath.fromString(\"ph/doc/target/abc123/DRIVE\"),\n  },\n});\n```\n\n### Filtering by Operation Type\n\n```javascript\n// Get all state changes for documents\nconst stateChanges = await analyticsStore.getSeriesValues({\n  source: AnalyticsPath.fromString(\"ph/doc/abc123/*/main/global\"),\n  metric: \"DocumentOperations\",\n  dimensions: {\n    operation: AnalyticsPath.fromString(\"ph/doc/operation/SET_STATE\"),\n  },\n});\n```\n\n## Configuration\n\n### Performance Considerations\n\n- **Chunk Size**: Operations are processed in chunks of 50 (same as DriveAnalyticsProcessor)\n- **Batch Processing**: Analytics data is written in batches to optimize performance\n- **Source Clearing**: Automatically clears existing data when processing from index 0\n\n## Integration with DriveAnalyticsProcessor\n\nBoth processors can be used together to provide comprehensive analytics:\n\n- **DriveAnalyticsProcessor**: Tracks file/folder operations (ADD_FILE, MOVE_NODE, etc.)\n- **DocumentAnalyticsProcessor**: Tracks document content and state operations\n\n### Combined Usage\n\n```javascript\n// Use both processors for complete coverage\nconst driveProcessor = new DriveAnalyticsProcessor(analyticsStore);\nconst documentProcessor = new DocumentAnalyticsProcessor(analyticsStore);\n\n// Register both processors\nawait processorManager.register(driveProcessor);\nawait processorManager.register(documentProcessor);\n```\n\n## Monitoring and Debugging\n\n### Logging\n\nThe processor uses structured logging with the following context:\n\n- **Logger Path**: `[\"processor\", \"document-analytics\"]`\n- **Error Logging**: Failed source clearing operations\n\n### Distinguishing Data Sources\n\nWhen querying analytics data, you can distinguish between the two processors:\n\n```javascript\n// Drive-level analytics (from DriveAnalyticsProcessor)\nconst driveData = await analyticsStore.getSeriesValues({\n  source: AnalyticsPath.fromString(\"ph/drive/*\"),\n  metric: \"DriveOperations\",\n});\n\n// Document-level analytics (from DocumentAnalyticsProcessor)\nconst documentData = await analyticsStore.getSeriesValues({\n  source: AnalyticsPath.fromString(\"ph/doc/*\"),\n  metric: \"DocumentOperations\",\n});\n```\n",
+        "createdAt": "2026-09-02T21:43:52.836Z",
+        "createdBy": "repo-docs-sync",
+        "sourceType": "DOCUMENTATION",
+        "description": "Powerhouse v6.2.2-dev.74 (unchanged since v6.2.2-dev.47) \u2014 The Drive Analytics package provides two specialized processors that analyze and track operations within the Powerhouse ecosystem:",
+        "publishedAt": "2026-03-23T11:51:49.000Z"
+      },
+      "timestampUtcMs": "2026-09-02T21:43:52.836Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "",
+    "timestampUtcMs": "2026-09-02T21:43:52.756Z",
+    "action": {
+      "type": "UPGRADE_DOCUMENT",
+      "input": {
+        "model": "bai/source",
+        "toVersion": 1,
+        "documentId": "8664cea1-f1f6-43b0-975e-f26095a8d880",
+        "fromVersion": 0,
+        "initialState": {
+          "auth": {
+            "grants": [],
+            "version": 0
+          },
+          "local": {},
+          "global": {
+            "title": null,
+            "status": "INBOX",
+            "content": null,
+            "createdAt": null,
+            "createdBy": null,
+            "provenance": null,
+            "sourceType": null,
+            "description": null,
+            "extractedClaims": [],
+            "extractionStats": null
+          },
+          "document": {
+            "hash": {
+              "encoding": "base64",
+              "algorithm": "sha1"
+            },
+            "version": 1
+          }
+        }
+      },
+      "timestampUtcMs": "2026-09-02T21:43:52.756Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "WyE/E0cADHOBkU5eCoV3Jtxgm/A=",
+    "timestampUtcMs": "2026-09-03T07:45:02.795Z",
+    "action": {
+      "type": "ADD_EXTRACTED_CLAIM",
+      "input": {
+        "claimRef": "ef30c62a-0043-4bbb-86d1-e1c16a925ee3"
+      },
+      "timestampUtcMs": "2026-09-03T07:45:02.795Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "/BncoOcnGBs9hks1MBbnPpSGsns=",
+    "timestampUtcMs": "2026-09-03T07:45:03.289Z",
+    "action": {
+      "type": "ADD_EXTRACTED_CLAIM",
+      "input": {
+        "claimRef": "11abd903-ee8e-4a00-a1c9-ffc9e22e4f5b"
+      },
+      "timestampUtcMs": "2026-09-03T07:45:03.289Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "8w7TxKahzoJjesJJ8BqLgYSDGTY=",
+    "timestampUtcMs": "2026-09-03T07:45:11.758Z",
+    "action": {
+      "type": "RECORD_EXTRACTION_STATS",
+      "input": {
+        "skipRate": 0.5,
+        "claimCount": 2,
+        "extractedAt": "2026-09-03T07:45:11.758Z",
+        "extractedBy": "knowledge-agent",
+        "skippedCount": 2
+      },
+      "timestampUtcMs": "2026-09-03T07:45:11.758Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "4oSiuTya88LssZmXFM5bDZS6NJs=",
+    "timestampUtcMs": "2026-09-03T07:45:12.365Z",
+    "action": {
+      "type": "SET_SOURCE_STATUS",
+      "input": {
+        "status": "EXTRACTED"
+      },
+      "timestampUtcMs": "2026-09-03T07:45:12.365Z"
+    }
+  }
+]

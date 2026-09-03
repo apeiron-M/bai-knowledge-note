@@ -1,0 +1,139 @@
+{
+  "links": [
+    {
+      "id": "lnk-83a57be5-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "83a57be5-7993-4855-ac23-efe6778331f4",
+      "targetTitle": "auth-use-can-execute",
+      "reason": "useCanExecute is the React wrapper over this call and maps the flags-off rejection to status 'unsupported'",
+      "confidence": "grounded"
+    },
+    {
+      "id": "lnk-498a0de3-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "498a0de3-6fda-4380-8957-378359a94a0b",
+      "targetTitle": "reactor-abort-signal-cancellation",
+      "reason": "Like the other IReactorClient methods it takes a trailing AbortSignal to cancel the client-side wait",
+      "confidence": "grounded"
+    },
+    {
+      "id": "lnk-ae215942-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "ae215942-cc33-442a-9e76-a00caafe9644",
+      "targetTitle": "reactorclient-mutations-throw-bare-error-losing-type",
+      "reason": "AuthEnforcementDisabledError must be detected by name because, as with other client errors, only the name survives the worker RPC boundary",
+      "confidence": "established"
+    },
+    {
+      "id": "lnk-82d40b14-bui",
+      "linkType": "BUILDS_ON",
+      "targetDocumentId": "82d40b14-6aae-45a5-8335-e07c0ee29ae9",
+      "targetTitle": "auth-denied-operations",
+      "reason": "The reason string a prediction returns is drawn from the same closed set a stored denial carries",
+      "confidence": "grounded"
+    },
+    {
+      "id": "lnk-17ce5f4e-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "17ce5f4e-f152-48e3-a160-9415abf572e1",
+      "targetTitle": "Academy \u203a Reference \u203a Reactor \u203a IReactorClient",
+      "reason": "Extracted from apps/academy/docs/academy/04-Reference/01-Reactor/02-ReactorClient.md at v6.2.2-dev.74 \u2014 new 'evaluateActions' section: signature, types, warning, three contract details, flag requirement",
+      "confidence": "grounded"
+    },
+    {
+      "id": "lnk-17dc46b0-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "17dc46b0-f733-467c-99d7-ae8fbe0fb0e4",
+      "targetTitle": "Academy \u203a Reference \u203a Reactor \u203a Authorization",
+      "reason": "Extracted from apps/academy/docs/academy/04-Reference/01-Reactor/11-Authorization.md at v6.2.2-dev.74 \u2014 'Asking before you write'",
+      "confidence": "grounded"
+    },
+    {
+      "id": "lnk-2ca5f8f5-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "2ca5f8f5-c423-4a7c-ae88-846fd0d1e659",
+      "targetTitle": "Academy \u203a Reference \u203a ReactorBrowserClient \u203a API reference",
+      "reason": "Extracted from apps/academy/docs/academy/04-Reference/08-ReactorBrowserClient/02-ApiReference.md at v6.2.2-dev.74 \u2014 evaluateActions listed among members excluded from the light client",
+      "confidence": "grounded"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "IReactorClient.evaluateActions predicts what the policy would decide about candidate operations without submitting them, and the answer is a prediction, not a promise",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "61805212-e8fc-4490-ae0d-d57311381c7c",
+      "name": "auth-scope",
+      "topicDocumentId": null
+    },
+    {
+      "id": "6e81e011-2848-45db-b405-f6a2d4e1877e",
+      "name": "reactor-client",
+      "topicDocumentId": null
+    },
+    {
+      "id": "0546c306-62ac-4d82-82d5-5bf0b4ec4b8d",
+      "name": "api",
+      "topicDocumentId": null
+    },
+    {
+      "id": "a41582a5-8283-474c-a9c5-590f65f91483",
+      "name": "authorization",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "```ts\nevaluateActions(documentIdentifier: string, branch: string, candidates: ActionCandidate[],\n                subject?: AuthSubject, signal?: AbortSignal): Promise<ActionEvaluations>\n\ninterface ActionCandidate { scope: string; type: string; input?: unknown }\ninterface ActionEvaluations {\n  evaluations: Evaluation[];   // one per candidate, in the order given\n  allAllowed: boolean; anyAllowed: boolean; allDenied: boolean; anyDenied: boolean;\n}\ntype Evaluation = { decision: \"allow\" } | { decision: \"deny\"; reason: string };\n```\n\nUse it to **disable a control rather than offer an action that fails on submit**. The subject defaults to the client's own signer. A denial's `reason` is the same string the reactor would record on the refused operation, so a control can explain itself instead of going grey. Over an empty candidate list every aggregate is `false`.\n\nThe contract has four edges worth knowing:\n\n- **A prediction, not a promise.** It decides through the same model that admits a real write but reads no future; a policy change landing between the answer and the submit changes the verdict. The submit path stays the only authority \u2014 keep handling the refusal from `execute`/`dispatch`, and treat an allow as \"worth offering\".\n- **Supply the input when a grant depends on it.** With `authConditions` on, a conditional grant reads `action.input`, so a candidate standing for a half-filled form predicts the verdict a half-filled form earns.\n- **Document-scope candidates are judged by the document they name.** `DELETE_DOCUMENT` / `UPGRADE_DOCUMENT` name their target in `input.documentId`, relationship actions in `input.sourceId`, and *that* document's policy is consulted. `CREATE_DOCUMENT` always predicts allow, matching the executor: it runs before its document exists.\n- **Evaluated at the stream heads.** Correct for a candidate about to be submitted; a backdated submission is out of contract, since the reactor decides that one by position.\n\n**Requires `authEnforcement`.** Without the flag the reactor holds no decision model and the call rejects with `AuthEnforcementDisabledError`. Treat that as \"cannot know\" and leave controls as they were \u2014 reading it as a denial would disable every control on a deployment that never enabled enforcement. Detect it by name (`AuthEnforcementDisabledError.isError(error)`), which is all that survives the SharedWorker RPC boundary. Over GraphQL the same question is the `evaluateActions` query on the reactor subgraph, deciding for the authenticated caller and answering the flags-off case with an `AUTH_EVALUATION_UNSUPPORTED` error code. It is not on the light `IReactorBrowserClient`.\n\n_Source: apps/academy/docs/academy/04-Reference/01-Reactor/02-ReactorClient.md (Powerhouse v6.2.2-dev.74)._\n_Source: apps/academy/docs/academy/04-Reference/01-Reactor/11-Authorization.md (Powerhouse v6.2.2-dev.74)._\n\n## Provenance\n- `apps/academy/docs/academy/04-Reference/01-Reactor/02-ReactorClient.md` \u2014 new 'evaluateActions' section: signature, types, warning, three contract details, flag requirement\n- `apps/academy/docs/academy/04-Reference/01-Reactor/11-Authorization.md` \u2014 'Asking before you write'\n- `apps/academy/docs/academy/04-Reference/08-ReactorBrowserClient/02-ApiReference.md` \u2014 evaluateActions listed among members excluded from the light client\n\n_Recorded from the Powerhouse repository at **v6.2.2-dev.74** during the v6.2.2-dev.74 source sync._",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": "v6.2.2-dev.74",
+  "computes": null,
+  "filePath": "apps/academy/docs/academy/04-Reference/01-Reactor/02-ReactorClient.md",
+  "noteType": "REFERENCE",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": "grounded",
+  "consumedBy": [],
+  "provenance": {
+    "author": "knowledge-agent",
+    "createdAt": "2026-09-02T22:11:13.905Z",
+    "sessionId": null,
+    "updatedAt": "2026-09-02T22:20:35.826Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "One Evaluation per candidate plus allAllowed/anyAllowed/allDenied/anyDenied; a denial's reason is the same string the reactor would store. Requires authEnforcement, else AuthEnforcementDisabledError.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "8de8f9a1-1d3c-4c62-92d5-d9c458d1291f",
+      "actor": "knowledge-agent",
+      "comment": "extracted from the Powerhouse repository at v6.2.2-dev.74",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-09-02T22:11:14.408Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "44c8bb00-6d2e-435f-b3ad-63256af15f70",
+      "actor": "liberuum",
+      "comment": "claim checked against the cited repository file at the pinned tag",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-09-02T22:11:14.904Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

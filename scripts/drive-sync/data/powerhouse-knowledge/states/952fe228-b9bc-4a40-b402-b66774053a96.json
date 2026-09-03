@@ -1,0 +1,107 @@
+{
+  "links": [
+    {
+      "id": "lnk-5345341b-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "5345341b-bdf5-4837-a74d-7c50b14a61bd",
+      "targetTitle": "Academy \u203a Build \u203a DocumentModelCreation \u203a Specify the state schema",
+      "reason": "Extracted from apps/academy/docs/academy/03-Build/02-DocumentModelCreation/02-SpecifyTheStateSchema.md at v6.2.2-dev.74 \u2014 Best practices for designing your state schema; Practical implementation: defining the state schema in Vetra Studio",
+      "confidence": "grounded"
+    },
+    {
+      "id": "lnk-6120bd49-bui",
+      "linkType": "BUILDS_ON",
+      "targetDocumentId": "6120bd49-6b1f-44f5-adff-449a0a31427c",
+      "targetTitle": "state-schema-collection-nullability",
+      "reason": "Turns the nullability mechanics into design rules, including why a root field needs a default before it can be non-null",
+      "confidence": "grounded"
+    },
+    {
+      "id": "lnk-8b9f2900-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "8b9f2900-211b-4dd7-80ad-406e13082cb1",
+      "targetTitle": "vetra-studio-auto-generates-from-specs",
+      "reason": "Sync with schema in Vetra Studio is the codegen step that turns this SDL into an initial state and generated types",
+      "confidence": "grounded"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "The Academy's schema guidance is to start simple and iterate, use non-null only where a value is genuinely required, and choose normalization by query pattern",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "a861f04a-4a26-468b-b76c-acea068f97cd",
+      "name": "document-model",
+      "topicDocumentId": null
+    },
+    {
+      "id": "437ba175-8c4f-4814-907e-aff2532d2731",
+      "name": "schema-design",
+      "topicDocumentId": null
+    },
+    {
+      "id": "abb0dffc-6dcd-4f02-81dd-150a295b8a81",
+      "name": "modelling",
+      "topicDocumentId": null
+    },
+    {
+      "id": "8f4d40d6-2ab5-4e0f-86f7-21fa47fc59d4",
+      "name": "best-practices",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "Six practices for designing a state schema, from the Mastery Track:\n\n1. **Start simple, iterate** \u2014 begin with the core entities and properties; the schema can expand as the requirements become clear.\n2. **Clarity and explicitness** \u2014 name types and fields descriptively.\n3. **Use non-null wisely** \u2014 enforce integrity with `!` where a value must always exist, but do not over-constrain a field that is genuinely optional.\n4. **Normalize vs denormalize** \u2014 normalizing means distinct types linked by ids (a `TodoItem.assigneeId` pointing at a `User.id`), which reduces redundancy; denormalizing embeds the data where it is used. \"The choice depends on your specific use case, query patterns, and how data is updated.\"\n5. **Consider future needs** without over-engineering \u2014 a `createdAt` or `dueDate` may be worth adding early.\n6. **Root state type** \u2014 a single root type for the document state (`TodoListState`) as a clear entry point.\n\nPractice 3 is the one with a Powerhouse-specific edge: because a document must be creatable **empty**, a root field can only be non-null if it has a sensible default \u2014 an empty list, or an enum with an initial value \u2014 which is why collections are `[Type!]!` and most scalar fields are optional. Practice 4 has one too: an operation is the only way state changes, so a normalized reference means writing an operation that resolves the link, while a denormalized copy means writing an operation that keeps two places in step.\n\nThe page closes on the through-line: \"the schema dictates how data is stored, and how it can be queried and mutated through operations.\"\n\nPractically, the schema is authored in **Vetra Studio** (`ph vetra --watch`) or Connect: name the model (capitalisation matters \u2014 \"it influences our code generation\"), give it a namespaced document type such as `powerhouse/todo-list`, paste the SDL and press **Sync with schema**, which generates the initial JSON state so the shape can be verified before any operation exists.\n\n## Provenance\n- `apps/academy/docs/academy/03-Build/02-DocumentModelCreation/02-SpecifyTheStateSchema.md` \u2014 Best practices for designing your state schema; Practical implementation: defining the state schema in Vetra Studio\n\n_Extracted from the Powerhouse repository at **v6.2.2-dev.74**._",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": "v6.2.2-dev.74",
+  "computes": null,
+  "filePath": "apps/academy/docs/academy/03-Build/02-DocumentModelCreation/02-SpecifyTheStateSchema.md",
+  "noteType": "PROCEDURE",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "knowledge-agent",
+    "createdAt": "2026-09-03T07:54:25.459Z",
+    "sessionId": null,
+    "updatedAt": "2026-09-03T07:54:26.658Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Six practices: start simple, name explicitly, use non-null wisely, decide normalize versus denormalize per use case, consider future needs without over-engineering, and keep a single root state type.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "5b7156cb-4f2b-4d95-b0e1-22e622f49b89",
+      "actor": "knowledge-agent",
+      "comment": "extracted from apps/academy/docs/academy/03-Build/02-DocumentModelCreation/02-SpecifyTheStateSchema.md at v6.2.2-dev.74",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-09-03T07:54:26.151Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "bc6a8875-aa30-4b28-a77a-5914373405b2",
+      "actor": "liberuum",
+      "comment": "claim checked against the cited file at the pinned tag",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-09-03T07:54:26.658Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

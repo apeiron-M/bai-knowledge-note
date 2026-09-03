@@ -1,0 +1,115 @@
+{
+  "links": [
+    {
+      "id": "lnk-6fa0a6ea-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "6fa0a6ea-a295-4da9-85da-1e8ba852c91a",
+      "targetTitle": "authorization-uses-layered-model"
+    },
+    {
+      "id": "lnk-8cbea140-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "8cbea140-21d6-4b63-8780-5d44831018aa",
+      "targetTitle": "two-signing-mechanisms-header-and-action"
+    },
+    {
+      "id": "lnk-4e6413ee-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "4e6413ee-22bf-4d64-964f-ca8b28917cec",
+      "targetTitle": "present-document-model-proposals-to-user-before-implementing"
+    },
+    {
+      "id": "lnk-eb3ddfcc-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "eb3ddfcc-c606-4705-b9c9-42f5e26e2384",
+      "targetTitle": "act-sharing-ecdh-publisher-grantee"
+    },
+    {
+      "id": "lnk-500d9a33-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "500d9a33-45a5-45e4-8df1-e9eee8d3f11a",
+      "targetTitle": "Academy \u203a Build \u203a BuildingUserExperiences \u203a Authorization \u203a Document Permission System",
+      "reason": "Backing page found by content match (score 0.15) in the v6.2.2-dev.74 source backfill; no distinctive identifier verified, attribution by topic overlap \u2014 not the original extraction record (text revised between v6.2.2-dev.47 and v6.2.2-dev.74 \u2014 re-verified in the v6.2.2-dev.74 pass)",
+      "confidence": "established"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Document permissions support group-based access control and operation-level restrictions, stored across six database tables",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "27b13447-1d33-4c1a-8397-74b404ab99cb",
+      "name": "permissions",
+      "topicDocumentId": null
+    },
+    {
+      "id": "4d1eb49c-e79a-4c85-9830-9cd7f854e121",
+      "name": "groups",
+      "topicDocumentId": null
+    },
+    {
+      "id": "586a4885-a27c-4d9f-9be1-e3c358df1654",
+      "name": "access-control",
+      "topicDocumentId": null
+    },
+    {
+      "id": "47b4bb55-3611-4f28-9a9c-e3c05d6b086e",
+      "name": "database",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "Permission resolution order: (1) Auth/admin check; (2) Direct user permission on document; (3) Group permission; (4) Parent inheritance recursively. Six tables: `DocumentPermission` (user-document), `Group`, `UserGroup` (memberships), `DocumentGroupPermission` (group-document), `OperationUserPermission` (user-operation), `OperationGroupPermission` (group-operation). Operation-level permissions restrict specific actions (e.g., only certain users can execute DELETE_NODE). Tables are auto-created by migrations when `DOCUMENT_PERMISSIONS_ENABLED=true`. GraphQL queries like `documentAccess`, `userDocumentPermissions`, `canExecuteOperation` expose the permission state.\n\n## Stale as of v6.2.2-dev.74\nThe six-table shape and the group-based access control described here came from the Academy's Document Permissions page, which still documents groups \u2014 but the code does not have them. `packages/reactor-api/src/migrations/003_remove_group_tables.ts` drops `Group`, `UserGroup`, `DocumentGroupPermission` and `OperationGroupPermission`, and grepping `group` across `packages/reactor-api/src/graphql/auth/` returns zero hits. **Three** tables survive: `DocumentPermission`, `OperationUserPermission` and `DocumentProtection`. The permission-resolution order (auth/admin check, direct user permission, parent inheritance) still holds with the group step removed. Treat the page as stale and the migration as authoritative.\n",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": "v6.2.2-dev.74",
+  "computes": null,
+  "filePath": "apps/academy/docs/academy/03-Build/03-BuildingUserExperiences/07-Authorization/02-DocumentPermissions.md",
+  "noteType": "ARCHITECTURE",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "knowledge-agent",
+    "createdAt": "2026-04-02T12:00:00.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-09-03T09:57:14.002Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Groups organize users; permissions cascade from drive to folder to document; specific operations can be restricted.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "e029c3d6-decd-4343-bec0-8ff52a6e37b7",
+      "actor": "claude",
+      "comment": "Knowledge registered against powerhouse v6.2.2-dev.47",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-14T12:00:00.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "5115d237-b08e-4e73-907a-f950f4406251",
+      "actor": "liberuum",
+      "comment": "Canonical as of powerhouse v6.2.2-dev.47",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-14T12:00:00.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

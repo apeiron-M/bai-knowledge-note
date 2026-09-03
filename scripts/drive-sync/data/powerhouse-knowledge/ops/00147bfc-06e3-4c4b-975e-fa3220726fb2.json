@@ -1,0 +1,451 @@
+[
+  {
+    "index": 0,
+    "hash": "",
+    "timestampUtcMs": "2026-08-14T12:01:12.688Z",
+    "action": {
+      "type": "CREATE_DOCUMENT",
+      "input": {
+        "meta": {},
+        "name": "editors-use-react-hooks-for-document-state",
+        "slug": "",
+        "model": "bai/knowledge-note",
+        "branch": "main",
+        "signing": {
+          "nonce": "",
+          "publicKey": {},
+          "signature": "00147bfc-06e3-4c4b-975e-fa3220726fb2",
+          "documentType": "bai/knowledge-note",
+          "createdAtUtcIso": "2026-08-14T12:01:12.688Z"
+        },
+        "version": 0,
+        "documentId": "00147bfc-06e3-4c4b-975e-fa3220726fb2",
+        "protocolVersions": {
+          "base-reducer": 2
+        }
+      },
+      "timestampUtcMs": "2026-08-14T12:01:12.688Z"
+    }
+  },
+  {
+    "index": 0,
+    "hash": "pROj3aD76Oe62VERMgyjbO5mMS8=",
+    "timestampUtcMs": "2026-08-14T12:35:14.000Z",
+    "action": {
+      "type": "SET_TITLE",
+      "input": {
+        "title": "Powerhouse editors use generated React hooks as the recommended pattern for accessing document state and dispatching actions",
+        "updatedAt": "2026-08-14T12:35:14.000Z"
+      },
+      "timestampUtcMs": "2026-08-14T12:35:14.000Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "",
+    "timestampUtcMs": "2026-08-14T12:01:12.688Z",
+    "action": {
+      "type": "UPGRADE_DOCUMENT",
+      "input": {
+        "model": "bai/knowledge-note",
+        "toVersion": 1,
+        "documentId": "00147bfc-06e3-4c4b-975e-fa3220726fb2",
+        "fromVersion": 0,
+        "initialState": {
+          "auth": {
+            "grants": [],
+            "version": 0
+          },
+          "local": {
+            "lastViewedAt": null,
+            "personalTags": []
+          },
+          "global": {
+            "links": [],
+            "model": null,
+            "scope": null,
+            "title": null,
+            "editor": null,
+            "inputs": [],
+            "models": [],
+            "status": "DRAFT",
+            "topics": [],
+            "content": null,
+            "context": null,
+            "modelId": null,
+            "modules": [],
+            "outputs": [],
+            "version": null,
+            "computes": null,
+            "filePath": null,
+            "noteType": null,
+            "severity": null,
+            "hooksUsed": [],
+            "rootCause": null,
+            "confidence": null,
+            "consumedBy": [],
+            "provenance": null,
+            "sourceType": null,
+            "targetType": null,
+            "cardinality": null,
+            "description": null,
+            "alternatives": [],
+            "consequences": [],
+            "errorMessage": null,
+            "relationType": null,
+            "correctPattern": null,
+            "decisionStatus": null,
+            "dispatchTargets": [],
+            "lifecycleEvents": []
+          },
+          "document": {
+            "hash": {
+              "encoding": "base64",
+              "algorithm": "sha1"
+            },
+            "version": 1
+          }
+        }
+      },
+      "timestampUtcMs": "2026-08-14T12:01:12.688Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "K7erv95gNM3kG2MoGw2srNNsmLU=",
+    "timestampUtcMs": "2026-08-14T12:35:14.000Z",
+    "action": {
+      "type": "SET_DESCRIPTION",
+      "input": {
+        "updatedAt": "2026-08-14T12:35:14.000Z",
+        "description": "useSelectedXDocument hook returns [document, dispatch] and is preferred over prop-drilling for editor components."
+      },
+      "timestampUtcMs": "2026-08-14T12:35:14.000Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "",
+    "timestampUtcMs": "2026-08-14T12:37:26.930Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "00147bfc-06e3-4c4b-975e-fa3220726fb2",
+        "targetId": "00ddfd71-c020-4f53-b64b-b8ff67ee7070",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-08-14T12:37:26.930Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "lBE2nNVg/F2uWHXOlfyQ4G8PhLE=",
+    "timestampUtcMs": "2026-08-14T12:35:14.000Z",
+    "action": {
+      "type": "SET_NOTE_TYPE",
+      "input": {
+        "noteType": "PATTERN",
+        "updatedAt": "2026-08-14T12:35:14.000Z"
+      },
+      "timestampUtcMs": "2026-08-14T12:35:14.000Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "",
+    "timestampUtcMs": "2026-08-14T12:37:27.025Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "00147bfc-06e3-4c4b-975e-fa3220726fb2",
+        "targetId": "307601bd-2919-4e27-9a76-97281d276518",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-08-14T12:37:27.025Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "IhfsjS0BCv0pQ7VuAW0tEP271uk=",
+    "timestampUtcMs": "2026-08-14T12:35:14.000Z",
+    "action": {
+      "type": "SET_CONTENT",
+      "input": {
+        "content": "Each document model gets a generated hook like `useSelectedTodoListDocument()` that returns `[document, dispatch]`. This is the recommended approach over the props-based `EditorProps<T>` pattern because it makes components self-contained, eliminates prop drilling, and follows modern React conventions. The props approach (`document` and `dispatch` passed from parent) is reserved for reusable UI components that should work outside the Powerhouse context or for testing with mock state. Action creators are imported from the generated document model package and passed to `dispatch()`.",
+        "updatedAt": "2026-08-14T12:35:14.000Z"
+      },
+      "timestampUtcMs": "2026-08-14T12:35:14.000Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "",
+    "timestampUtcMs": "2026-08-14T12:37:27.109Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "00147bfc-06e3-4c4b-975e-fa3220726fb2",
+        "targetId": "68fe4e47-7ca5-45f2-8d9e-5f862682eadc",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-08-14T12:37:27.109Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "86FX4We8Ta6YqtZW4yPZgMQ+BGo=",
+    "timestampUtcMs": "2026-08-14T12:35:14.000Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "version",
+        "value": "v6.2.2-dev.44",
+        "updatedAt": "2026-08-14T12:35:14.000Z"
+      },
+      "timestampUtcMs": "2026-08-14T12:35:14.000Z"
+    }
+  },
+  {
+    "index": 5,
+    "hash": "",
+    "timestampUtcMs": "2026-08-14T12:37:27.201Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "00147bfc-06e3-4c4b-975e-fa3220726fb2",
+        "targetId": "582a19d0-456f-427c-a04a-ffb5992145de",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-08-14T12:37:27.201Z"
+    }
+  },
+  {
+    "index": 5,
+    "hash": "mtjtw7l5LRG/i0G6isAjQ+nex20=",
+    "timestampUtcMs": "2026-08-14T12:35:14.000Z",
+    "action": {
+      "type": "SET_PROVENANCE",
+      "input": {
+        "author": "knowledge-agent",
+        "createdAt": "2026-04-02T12:00:00.000Z",
+        "sourceOrigin": "DERIVED"
+      },
+      "timestampUtcMs": "2026-08-14T12:35:14.000Z"
+    }
+  },
+  {
+    "index": 6,
+    "hash": "",
+    "timestampUtcMs": "2026-09-02T21:34:00.170Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "metadata": {
+          "reason": "Backing page found by content match in the v6.2.2-dev.74 source backfill \u2014 identifiers drilling from the claim appear in this page (text identical at v6.2.2-dev.47 and v6.2.2-dev.74); attribution, not the original extraction record",
+          "confidence": "grounded"
+        },
+        "sourceId": "00147bfc-06e3-4c4b-975e-fa3220726fb2",
+        "targetId": "0d96b03f-d5db-4c76-b0bb-549f48d232d6",
+        "relationshipType": "DERIVED_FROM"
+      },
+      "timestampUtcMs": "2026-09-02T21:34:00.170Z"
+    }
+  },
+  {
+    "index": 6,
+    "hash": "gZyXmaACuRhB+yObczWs3vByBUs=",
+    "timestampUtcMs": "2026-08-14T12:35:14.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "18189490-2e1c-4968-949d-f23174f65b12",
+        "name": "editors",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-08-14T12:35:14.000Z"
+    }
+  },
+  {
+    "index": 7,
+    "hash": "+0VphMOPLT5TzNLB9ZT5KTAZsUs=",
+    "timestampUtcMs": "2026-08-14T12:35:14.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "e93a21b4-6dda-4d39-a0ba-53b38dac3518",
+        "name": "react",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-08-14T12:35:14.000Z"
+    }
+  },
+  {
+    "index": 8,
+    "hash": "QnJGZFO54zI+nVDm5TDrEw8Q2do=",
+    "timestampUtcMs": "2026-08-14T12:35:14.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "e335af16-0778-49cd-a49d-b73429e661a1",
+        "name": "state-management",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-08-14T12:35:14.000Z"
+    }
+  },
+  {
+    "index": 9,
+    "hash": "+BjYCevzuw3QSXuQncnaQV72R9M=",
+    "timestampUtcMs": "2026-08-14T12:35:14.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "68ec7f35-dd22-41a9-9ced-1038a06e207f",
+        "name": "hooks",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-08-14T12:35:14.000Z"
+    }
+  },
+  {
+    "index": 10,
+    "hash": "CLfcCk1G4urtj3hSg/bOfodjpWE=",
+    "timestampUtcMs": "2026-08-14T14:36:09.000Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "version",
+        "value": "v6.2.2-dev.47",
+        "updatedAt": "2026-08-14T12:00:00.000Z"
+      },
+      "timestampUtcMs": "2026-08-14T14:36:09.000Z"
+    }
+  },
+  {
+    "index": 11,
+    "hash": "PTUHh6WHqU5VxizyfbJd7ffCGzw=",
+    "timestampUtcMs": "2026-08-14T14:36:09.000Z",
+    "action": {
+      "type": "SUBMIT_FOR_REVIEW",
+      "input": {
+        "id": "72cbea29-46a7-42a4-bed0-535c6a311ace",
+        "actor": "claude",
+        "comment": "Knowledge registered against powerhouse v6.2.2-dev.47",
+        "timestamp": "2026-08-14T12:00:00.000Z"
+      },
+      "timestampUtcMs": "2026-08-14T14:36:09.000Z"
+    }
+  },
+  {
+    "index": 12,
+    "hash": "S7ZAcfSfwQanqsh0Nv0SkisYfdM=",
+    "timestampUtcMs": "2026-08-14T14:36:09.000Z",
+    "action": {
+      "type": "APPROVE_NOTE",
+      "input": {
+        "id": "a4bdbcae-5fd7-4626-b54c-fbf7cd08ef9f",
+        "actor": "liberuum",
+        "comment": "Canonical as of powerhouse v6.2.2-dev.47",
+        "timestamp": "2026-08-14T12:00:00.000Z"
+      },
+      "timestampUtcMs": "2026-08-14T14:36:09.000Z"
+    }
+  },
+  {
+    "index": 13,
+    "hash": "S7ZAcfSfwQanqsh0Nv0SkisYfdM=",
+    "timestampUtcMs": "2026-08-14T14:36:42.000Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "version",
+        "value": "v6.2.2-dev.47",
+        "updatedAt": "2026-08-14T12:00:00.000Z"
+      },
+      "timestampUtcMs": "2026-08-14T14:36:42.000Z"
+    }
+  },
+  {
+    "index": 14,
+    "hash": "ztlFH5hAV/wRZFPxeNt5DNbse7I=",
+    "timestampUtcMs": "2026-09-02T21:34:00.872Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "filePath",
+        "value": "apps/academy/docs/academy/03-Build/03-BuildingUserExperiences/01-BuildingDocumentEditors.md",
+        "updatedAt": "2026-09-02T21:34:00.872Z"
+      },
+      "timestampUtcMs": "2026-09-02T21:34:00.872Z"
+    }
+  },
+  {
+    "index": 15,
+    "hash": "AzNtSztajipWJ0Ylr2bAK6i9CXU=",
+    "timestampUtcMs": "2026-09-02T21:34:00.872Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "version",
+        "value": "v6.2.2-dev.74",
+        "updatedAt": "2026-09-02T21:34:00.872Z"
+      },
+      "timestampUtcMs": "2026-09-02T21:34:00.872Z"
+    }
+  },
+  {
+    "index": 16,
+    "hash": "it0EOifJfqYAi/tAWcDpn0XzJMA=",
+    "timestampUtcMs": "2026-09-03T08:41:18.806Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "filePath",
+        "value": "apps/academy/docs/academy/03-Build/03-BuildingUserExperiences/01-BuildingDocumentEditors.md",
+        "updatedAt": "2026-09-03T08:41:18.806Z"
+      },
+      "timestampUtcMs": "2026-09-03T08:41:18.806Z"
+    }
+  },
+  {
+    "index": 17,
+    "hash": "lFDviQILeMkjoq8wxj67vsmxzwE=",
+    "timestampUtcMs": "2026-09-03T08:41:25.541Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "version",
+        "value": "v6.2.2-dev.74",
+        "updatedAt": "2026-09-03T08:41:25.541Z"
+      },
+      "timestampUtcMs": "2026-09-03T08:41:25.541Z"
+    }
+  },
+  {
+    "index": 18,
+    "hash": "RuRR4uDR52MPxZNW8ZajAdU6sv4=",
+    "timestampUtcMs": "2026-09-03T08:41:43.668Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "model",
+        "updatedAt": "2026-09-03T08:41:43.668Z"
+      },
+      "timestampUtcMs": "2026-09-03T08:41:43.668Z"
+    }
+  },
+  {
+    "index": 19,
+    "hash": "THC/itaUqE9CWHxWLRvOh7KT2/0=",
+    "timestampUtcMs": "2026-09-03T11:40:30.734Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "version",
+        "value": "v6.2.2-dev.74",
+        "updatedAt": "2026-09-03T11:40:30.734Z"
+      },
+      "timestampUtcMs": "2026-09-03T11:40:30.734Z"
+    }
+  }
+]

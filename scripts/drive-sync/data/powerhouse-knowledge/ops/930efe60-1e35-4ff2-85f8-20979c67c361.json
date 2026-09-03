@@ -1,0 +1,261 @@
+[
+  {
+    "index": 0,
+    "hash": "",
+    "timestampUtcMs": "2026-08-21T10:28:11.215Z",
+    "action": {
+      "type": "CREATE_DOCUMENT",
+      "input": {
+        "meta": {},
+        "name": "generic-attachment-slot-discovery-needs-ranking-not-first-match",
+        "slug": "",
+        "model": "bai/knowledge-note",
+        "branch": "main",
+        "signing": {
+          "nonce": "",
+          "publicKey": {},
+          "signature": "930efe60-1e35-4ff2-85f8-20979c67c361",
+          "documentType": "bai/knowledge-note",
+          "createdAtUtcIso": "2026-08-21T10:28:11.215Z"
+        },
+        "version": 0,
+        "documentId": "930efe60-1e35-4ff2-85f8-20979c67c361",
+        "protocolVersions": {
+          "base-reducer": 2
+        }
+      },
+      "timestampUtcMs": "2026-08-21T10:28:11.215Z"
+    }
+  },
+  {
+    "index": 0,
+    "hash": "MCcJxOLDgRmwUlvaHDfqBVtlfZU=",
+    "timestampUtcMs": "2026-08-21T10:29:25.782Z",
+    "action": {
+      "type": "SET_TITLE",
+      "input": {
+        "title": "Generic attachment-slot discovery needs ranking, not first-match",
+        "updatedAt": "2026-08-21T15:40:00.000Z"
+      },
+      "timestampUtcMs": "2026-08-21T10:29:25.782Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "",
+    "timestampUtcMs": "2026-08-21T10:28:11.215Z",
+    "action": {
+      "type": "UPGRADE_DOCUMENT",
+      "input": {
+        "model": "bai/knowledge-note",
+        "toVersion": 1,
+        "documentId": "930efe60-1e35-4ff2-85f8-20979c67c361",
+        "fromVersion": 0,
+        "initialState": {
+          "auth": {
+            "grants": [],
+            "version": 0
+          },
+          "local": {
+            "lastViewedAt": null,
+            "personalTags": []
+          },
+          "global": {
+            "links": [],
+            "model": null,
+            "scope": null,
+            "title": null,
+            "editor": null,
+            "inputs": [],
+            "models": [],
+            "status": "DRAFT",
+            "topics": [],
+            "content": null,
+            "context": null,
+            "modelId": null,
+            "modules": [],
+            "outputs": [],
+            "version": null,
+            "computes": null,
+            "filePath": null,
+            "noteType": null,
+            "severity": null,
+            "hooksUsed": [],
+            "rootCause": null,
+            "confidence": null,
+            "consumedBy": [],
+            "provenance": null,
+            "sourceType": null,
+            "targetType": null,
+            "cardinality": null,
+            "description": null,
+            "alternatives": [],
+            "consequences": [],
+            "errorMessage": null,
+            "relationType": null,
+            "correctPattern": null,
+            "decisionStatus": null,
+            "dispatchTargets": [],
+            "lifecycleEvents": []
+          },
+          "document": {
+            "hash": {
+              "encoding": "base64",
+              "algorithm": "sha1"
+            },
+            "version": 1
+          }
+        }
+      },
+      "timestampUtcMs": "2026-08-21T10:28:11.215Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "gTDdcIUYXWcrZrcRKlAdaVCEu4U=",
+    "timestampUtcMs": "2026-08-21T10:29:26.116Z",
+    "action": {
+      "type": "SET_DESCRIPTION",
+      "input": {
+        "updatedAt": "2026-08-21T15:40:00.000Z",
+        "description": "When a target model exposes several AttachmentRef fields such as baseInvoice, timeTrackingReport and line-item receipts, first-match files the source scan in the wrong slot with no error raised."
+      },
+      "timestampUtcMs": "2026-08-21T10:29:26.116Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "",
+    "timestampUtcMs": "2026-08-21T10:30:25.723Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "930efe60-1e35-4ff2-85f8-20979c67c361",
+        "targetId": "6f938c9e-85f4-4a4f-b55e-3213b0ae4ef5",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-08-21T10:30:25.723Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "xknTuczQO0+0gzNMMXDaZTRWrJg=",
+    "timestampUtcMs": "2026-08-21T10:29:26.428Z",
+    "action": {
+      "type": "SET_NOTE_TYPE",
+      "input": {
+        "noteType": "PATTERN",
+        "updatedAt": "2026-08-21T15:40:00.000Z"
+      },
+      "timestampUtcMs": "2026-08-21T10:29:26.428Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "gFNP5ksBnaMr8It0T4gtaarQZUY=",
+    "timestampUtcMs": "2026-08-21T10:29:26.768Z",
+    "action": {
+      "type": "SET_CONTENT",
+      "input": {
+        "content": "An integration that attaches a source file to a target document without hard-coding the target's shape has to find the field to put it in. The obvious implementation walks the target model's schema for a field of attachment type and uses the first one it finds.\n\nThat is wrong whenever the model has more than one such field, and business document models usually do. A `powerhouse/invoice` document exposes several `AttachmentRef` fields for different purposes: `baseInvoice` for the invoice document itself, `timeTrackingReport` for a supporting report, and further slots for per-line-item receipts. Schema field order is not semantic ranking, so first-match picks whichever the schema happens to declare first.\n\n**The failure is silent, which is what makes it worth a note.** Attaching to the wrong slot is a type-correct write: the field accepts the reference, the reducer succeeds, no validation fires, and the document is left internally consistent. The scanned invoice simply sits in the receipts slot, where nothing looks for it. Nobody sees an error; someone eventually sees a missing invoice.\n\nSo slot selection needs two things instead of one. **Rank the candidates** \u2014 score field names against what is actually being attached, so `baseInvoice` wins for a scanned invoice rather than merely being tied with everything else. And **exclude by role** \u2014 receipt and report slots hold supporting evidence, not the primary document, so they should be disqualified as targets for the source scan rather than left in the ranking to be won by accident. Where ranking produces no confident winner, that is a case to surface, not to resolve by position.\n\nFound while building generic attachment handling for the Paperless x Powerhouse sync, 21 Aug 2026.\n\n## Methodology grounding\n\nPicking by schema position is a mechanical answer to a question that needs judgment, which is the gap [[confidence thresholds gate automated action between the mechanical and judgment zones]] describes: the operation is not deterministic enough for position to decide it, but is tractable above a confidence threshold \u2014 hence rank, and defer when nothing ranks clearly. And because a mis-slotted attachment passes every validation the model has, it is the invisible-write case from [[automated detection is always safe because it only reads state while automated remediation risks content corruption]] \u2014 the wrong state becomes the trusted state.",
+        "updatedAt": "2026-08-21T15:40:00.000Z"
+      },
+      "timestampUtcMs": "2026-08-21T10:29:26.768Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "E28VipkTU1kKHOBM5w0T0mlM0w0=",
+    "timestampUtcMs": "2026-08-21T10:29:27.749Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "e0956afc-ace9-47de-93b8-832b79b93542",
+        "name": "attachments"
+      },
+      "timestampUtcMs": "2026-08-21T10:29:27.749Z"
+    }
+  },
+  {
+    "index": 5,
+    "hash": "d+hAI9Qui5Td6MMEA8jyS3Cr7QE=",
+    "timestampUtcMs": "2026-08-21T10:29:28.045Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "1179bb90-4273-4969-9a3b-1655468ecc55",
+        "name": "processors"
+      },
+      "timestampUtcMs": "2026-08-21T10:29:28.045Z"
+    }
+  },
+  {
+    "index": 6,
+    "hash": "cUpa8Gt41Wprh1k4H3BZFCLRSjE=",
+    "timestampUtcMs": "2026-08-21T10:29:28.365Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "ac355000-f749-4449-aacd-fe6d0a4944ea",
+        "name": "invoice"
+      },
+      "timestampUtcMs": "2026-08-21T10:29:28.365Z"
+    }
+  },
+  {
+    "index": 7,
+    "hash": "r1Q/aoMaFu/rxytWFKipFVvI7HY=",
+    "timestampUtcMs": "2026-08-21T10:29:28.691Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "861272b2-5b09-4242-af01-fe49a0775d5e",
+        "name": "paperless"
+      },
+      "timestampUtcMs": "2026-08-21T10:29:28.691Z"
+    }
+  },
+  {
+    "index": 8,
+    "hash": "4knN7BKh6dGUHolmdzjOB/Mqb2E=",
+    "timestampUtcMs": "2026-08-21T10:29:34.830Z",
+    "action": {
+      "type": "SET_PROVENANCE",
+      "input": {
+        "author": "knowledge-agent",
+        "createdAt": "2026-08-21T15:40:00.000Z",
+        "sessionId": "paperless-eng-2026-08-21",
+        "sourceOrigin": "SESSION_MINE"
+      },
+      "timestampUtcMs": "2026-08-21T10:29:34.830Z"
+    }
+  },
+  {
+    "index": 9,
+    "hash": "pQBI6N/kMd8vuk7TjDPz0hibFEg=",
+    "timestampUtcMs": "2026-08-21T10:30:50.846Z",
+    "action": {
+      "type": "SET_CONTENT",
+      "input": {
+        "content": "An integration that attaches a source file to a target document without hard-coding the target's shape has to find the field to put it in. The obvious implementation walks the target model's schema for a field of attachment type and uses the first one it finds.\n\nThat is wrong whenever the model has more than one such field, and business document models usually do. A `powerhouse/invoice` document exposes several `AttachmentRef` fields for different purposes: `baseInvoice` for the invoice document itself, `timeTrackingReport` for a supporting report, and further slots for per-line-item receipts. Schema field order is not semantic ranking, so first-match picks whichever the schema happens to declare first.\n\n**The failure is silent, which is what makes it worth a note.** Attaching to the wrong slot is a type-correct write: the field accepts the reference, the reducer succeeds, no validation fires, and the document is left internally consistent. The scanned invoice simply sits in the receipts slot, where nothing looks for it. Nobody sees an error; someone eventually sees a missing invoice.\n\nSo slot selection needs two things instead of one. **Rank the candidates** \u2014 score field names against what is actually being attached, so `baseInvoice` wins for a scanned invoice rather than merely being tied with everything else. And **exclude by role** \u2014 receipt and report slots hold supporting evidence, not the primary document, so they should be disqualified as targets for the source scan rather than left in the ranking to be won by accident. Where ranking produces no confident winner, that is a case to surface, not to resolve by position.\n\nFound while building generic attachment handling for the Paperless x Powerhouse sync, 21 Aug 2026.\n\n## Connections\n\n- **RELATES_TO [[Attachments keep binaries out of the operation log: state holds an opaque attachment://v1:<sha256> ref]]** \u2014 the value written into whichever slot is chosen is that opaque content-addressed ref, which is why a wrong slot is indistinguishable from a right one by inspecting state: every slot holds the same shape of value.\n- **RELATES_TO [[Safe-merge beats overwrite when re-syncing externally sourced documents]]** \u2014 both describe an automated write that the target model accepts as valid and that is nonetheless wrong, so neither can be caught by validation and both have to be prevented at the decision point.\n\n## Methodology grounding\n\nPicking by schema position is a mechanical answer to a question that needs judgment, which is the gap [[confidence thresholds gate automated action between the mechanical and judgment zones]] describes: the operation is not deterministic enough for position to decide it, but is tractable above a confidence threshold \u2014 hence rank, and defer when nothing ranks clearly. And because a mis-slotted attachment passes every validation the model has, it is the invisible-write case from [[automated detection is always safe because it only reads state while automated remediation risks content corruption]] \u2014 the wrong state becomes the trusted state.",
+        "updatedAt": "2026-08-21T15:50:00.000Z"
+      },
+      "timestampUtcMs": "2026-08-21T10:30:50.846Z"
+    }
+  },
+  {
+    "index": 10,
+    "hash": "rWqcWlPCGBTBlp6tjo8QnbE2E+A=",
+    "timestampUtcMs": "2026-08-21T10:31:01.714Z",
+    "action": {
+      "type": "SUBMIT_FOR_REVIEW",
+      "input": {
+        "id": "ffd55424-3e3d-44c0-b574-3d643387d2f5",
+        "actor": "knowledge-agent",
+        "comment": "Extracted from the 21 Aug 2026 Paperless x Powerhouse working session; each claim was observed in working code or against the live Paperless-ngx 3.0.5 instance. Needs a second actor to approve - the authoring agent cannot legitimately be its own reviewer.",
+        "timestamp": "2026-08-21T15:55:00.000Z"
+      },
+      "timestampUtcMs": "2026-08-21T10:31:01.714Z"
+    }
+  }
+]

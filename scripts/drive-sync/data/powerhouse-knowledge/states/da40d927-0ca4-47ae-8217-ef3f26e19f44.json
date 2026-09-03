@@ -1,0 +1,15 @@
+{
+  "title": "The lead corpus assumes a Flowable gap that Flowable closed in December 2025",
+  "status": "RESOLVED",
+  "content": "The lead corpus asserts, across 38 notes and one MoC, that \"Flowable orchestrates WHEN things happen - the process/case instance is a mutable row and history is purgeable\", and treats that as an open slot.\n\nPrimary-source research confirms the OSS half more strongly than the workbook did: the engine's own MyBatis mapper issues `update ${prefix}ACT_HI_PROCINST` with `START_TIME_` assignable, so mutability is quotable from source.\n\nBut two findings contradict the corpus. Flowable Enterprise shipped a business audit trail on 2025-12-16 whose records are documented as immutable, and it is procurable on-premise from a Swiss vendor with a Berlin office under ISO 27001 - so no sovereignty exclusion remains. Separately, \"purgeable\" overstates the default: automatic cleanup is disabled by default and retention is effectively infinite.\n\nBoth claims came from a lead workbook, not from primary sources. The resolution is scoping rather than deletion: the OSS finding stands when explicitly bounded to the Apache-2.0 edition, and the commercial pitch has to change from \"Flowable cannot do this\" to a price-and-features argument against an incumbent with 600+ enterprise customers. Unresolved: whether anyone wants to make that argument.",
+  "observedAt": "2026-08-20T08:47:15.356423Z",
+  "observedBy": "knowledge-agent",
+  "resolution": "Resolved in favour of the primary sources. The workbook premise is true only of the Apache-2.0 edition, and the note that carried it now says so: the engine's own mapper proves mutability in OSS, Flowable Enterprise shipped an immutable business audit trail on 2025-12-16 that is procurable on-premise in the EU, and \"purgeable\" overstates a default in which cleanup is disabled. The 38 lead notes' seam is unchanged for an OSS deployment; what changed is the commercial argument, which is now an open question on the Leads running Flowable map rather than an unresolved contradiction.",
+  "resolvedAt": "2026-09-03T10:14:49.591Z",
+  "description": "38 lead notes and a MoC are premised on Flowable lacking an immutable business audit trail. Primary sources show Enterprise shipped one on 2025-12-16, deployable on-premise in the EU.",
+  "involvedRefs": [
+    "98292b40-d27c-4bde-adf9-4014efc6f84b",
+    "4d8e59af-51f2-4ab7-b290-e1d5744abbd7"
+  ],
+  "links": []
+}

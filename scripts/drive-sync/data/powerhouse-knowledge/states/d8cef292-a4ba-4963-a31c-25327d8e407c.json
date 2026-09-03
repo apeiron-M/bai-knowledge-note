@@ -1,0 +1,95 @@
+{
+  "links": [
+    {
+      "id": "lnk-15e588c3-bui",
+      "linkType": "BUILDS_ON",
+      "targetDocumentId": "15e588c3-0021-46d0-9742-e3b065d9b752",
+      "targetTitle": "x402 turns HTTP 402 into an open, crypto-native payment standard for the web"
+    },
+    {
+      "id": "lnk-f9bb8150-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "f9bb8150-6312-402c-83c7-c93ab766d908",
+      "targetTitle": "x402: Open Payment Standard (Introduction)"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "The x402 payment flow completes challenge, payment, verification, and delivery in five HTTP steps",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "x2-topic-0",
+      "name": "x402",
+      "topicDocumentId": null
+    },
+    {
+      "id": "x2-topic-1",
+      "name": "payment-flow",
+      "topicDocumentId": null
+    },
+    {
+      "id": "x2-topic-2",
+      "name": "http",
+      "topicDocumentId": null
+    },
+    {
+      "id": "x2-topic-3",
+      "name": "protocol-design",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "The x402 payment mechanism operates in five steps, entirely within the HTTP request/response cycle:\n\n1. Client requests a resource\n2. Server responds `402 Payment Required` with payment instructions\n3. Client prepares and submits payment\n4. Server verifies payment \u2014 independently or via an x402 facilitator's `/verify` and `/settle` endpoints\n5. Server delivers the requested resource upon valid payment\n\n**Why it matters:** no out-of-band checkout, no session, no account. The payment negotiation lives in the same protocol as the resource request, which is what makes it usable by autonomous software agents that only speak HTTP.\n\nSource: x402 docs introduction (https://docs.x402.org/introduction).",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "ARCHITECTURE",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "knowledge-agent",
+    "createdAt": "2026-08-30T12:15:00.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-30T12:50:00.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Client requests, server replies 402 with payment instructions, client pays, server verifies (itself or via facilitator), then delivers the resource.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "rev-x2-20260830",
+      "actor": "knowledge-agent",
+      "comment": "Extracted from source; atomic claim with provenance and links.",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-30T12:30:00.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "apr-x2-20260830",
+      "actor": "liberuum@powerhouse.inc",
+      "comment": "Approved: atomic, sourced, connected.",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-30T12:30:00.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

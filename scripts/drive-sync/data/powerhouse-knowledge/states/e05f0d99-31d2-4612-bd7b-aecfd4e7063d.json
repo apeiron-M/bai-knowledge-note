@@ -1,0 +1,107 @@
+{
+  "links": [
+    {
+      "id": "lnk-55775f8c-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "55775f8c-67a2-4559-a18c-4892ae0d13d6",
+      "targetTitle": "swarm-mutable-stamps-for-feeds"
+    },
+    {
+      "id": "lnk-1e3e3772-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "1e3e3772-e865-4797-aebe-8b64a3f34fdd",
+      "targetTitle": "chat-history-persists-in-an-act-protected-feed-because-pss-m"
+    },
+    {
+      "id": "lnk-1e814394-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "1e814394-b2a5-4416-baa5-67b29973a7fc",
+      "targetTitle": "error-classes-in-reducers-are-auto-imported-by-name-reference"
+    },
+    {
+      "id": "lnk-f117ea02-bui",
+      "linkType": "BUILDS_ON",
+      "targetDocumentId": "f117ea02-9036-4519-8ac5-d62272dc8647",
+      "targetTitle": "swarm-manifest-as-reference-pattern"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Per-topic write locks are required because SOC feed indices are monotonic and write-once",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "ec3a8b53-984a-4510-b418-075ebd6a65ed",
+      "name": "swarm-feeds",
+      "topicDocumentId": null
+    },
+    {
+      "id": "e85f7ae6-f754-439b-aa7a-f4c5f49cba79",
+      "name": "concurrency",
+      "topicDocumentId": null
+    },
+    {
+      "id": "6f37fe4c-c5eb-4ec1-a10f-53ca0269d759",
+      "name": "adapter",
+      "topicDocumentId": null
+    },
+    {
+      "id": "b647396c-8c23-4267-9420-0c9bdd6ee0b0",
+      "name": "soc",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "## Claim\n\nFeed writes must be **serialized per topic** because SOC feed indices are monotonic and write-once \u2014 concurrent writes to the same topic race on the next index, and Bee rejects duplicates.\n\n## Evidence\n\n- Bee processes feed writes sequentially per topic (SOC index is monotonic)\n- Each index slot can only be written once; two parallel writers both targeting index N produces a conflict\n- The adapter's **per-topic `feedWriteLocks`** map guarantees that writes to the same topic are serialized\n- Cross-topic parallelism is still fine: the throttled flush allows up to 5 concurrent writes across different topics\n\n## Why it matters\n\nDropping the per-topic lock would not just slow things down \u2014 it would produce silent index collisions where only one of the concurrent updates survives. This lock is correctness-critical, not a performance optimization. The 3-second debounce already batches rapid edits on the same topic into a single write, minimizing contention on the lock.\n",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "PATTERN",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "knowledge-agent",
+    "createdAt": "2026-04-21T14:24:54.753Z",
+    "sessionId": null,
+    "updatedAt": "2026-09-03T09:58:04.523Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Each feed index can only be written once; concurrent writes to the same feed race on the index. The adapter's feedWriteLocks map enforces serialization per topic.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "caee784d-82fc-4719-bdb3-0f92e60f66a7",
+      "actor": "claude",
+      "comment": "Knowledge registered against powerhouse v6.2.2-dev.47",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-14T12:00:00.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "adf8dc5a-a698-4726-b118-b53019482873",
+      "actor": "liberuum",
+      "comment": "Canonical as of powerhouse v6.2.2-dev.47",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-14T12:00:00.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

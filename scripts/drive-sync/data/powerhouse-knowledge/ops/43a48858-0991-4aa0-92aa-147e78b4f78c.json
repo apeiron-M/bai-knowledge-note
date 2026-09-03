@@ -1,0 +1,141 @@
+[
+  {
+    "index": 0,
+    "hash": "",
+    "timestampUtcMs": "2026-09-02T21:36:43.680Z",
+    "action": {
+      "type": "CREATE_DOCUMENT",
+      "input": {
+        "meta": {},
+        "name": "Academy \u203a Build \u203a Launch \u203a Publish your package",
+        "slug": "",
+        "model": "bai/source",
+        "branch": "main",
+        "signing": {
+          "nonce": "",
+          "publicKey": {},
+          "signature": "43a48858-0991-4aa0-92aa-147e78b4f78c",
+          "documentType": "bai/source",
+          "createdAtUtcIso": "2026-09-02T21:36:43.680Z"
+        },
+        "version": 0,
+        "documentId": "43a48858-0991-4aa0-92aa-147e78b4f78c",
+        "protocolVersions": {
+          "base-reducer": 2
+        }
+      },
+      "timestampUtcMs": "2026-09-02T21:36:43.680Z"
+    }
+  },
+  {
+    "index": 0,
+    "hash": "HhmGh9HJhl6wKc/GiSdV0F9LyAE=",
+    "timestampUtcMs": "2026-09-02T21:36:43.857Z",
+    "action": {
+      "type": "INGEST_SOURCE",
+      "input": {
+        "url": "https://github.com/powerhouse-inc/powerhouse/blob/v6.2.2-dev.74/apps/academy/docs/academy/03-Build/05-Launch/02-PublishYourProject.md",
+        "tool": "sync-repo-docs",
+        "title": "Academy \u203a Build \u203a Launch \u203a Publish your package",
+        "author": "Powerhouse Inc.",
+        "method": "sha256:3611c6d72fbd11af7d94e1eb0cb53b6e8dcb48834c8cd3214057ed7ff9562d08 git:v6.2.2-dev.74",
+        "content": "# Publish your package\n\n:::warning\n**This guide assumes familiarity with building document models in Vetra Studio.**  \nPlease start with the [**Manual Todo tutorial**](/academy/Build/ManualTodoTutorial/CreateNewPowerhouseProject) or the [**Document Model Creation**](/academy/Build/DocumentModelCreation/SpecifyTheStateSchema) section if you are new to building document models.\n:::\n\nThis guide covers the process of **building** and **publishing** a Powerhouse package to NPM.\n\n:::info[Key Concepts]\n\n- **Powerhouse Package**: A collection of modules published to NPM that can be installed on a server instance or locally. Organizations build packages for specific purposes or workflows.\n- **Powerhouse Modules**: The building blocks of your package\u2014document models, editors, processors, or scripts.\n- **Vetra Studio**: The development hub where you assemble specifications for your package. Each module is defined through specification documents that drive code generation.\n- **Powerhouse Drive-apps**: Customized drive interfaces that enhance document functionality and workflows within a drive.\n\n![Key Concepts](images/keyconcepts.png)\n:::\n\n## 1. Building your project\n\n### 1.1. Initialize your project\n\nStart by initializing a new Powerhouse project:\n\n```bash\nph init\n```\n\nYou'll be prompted to name your project, which will become the package name when published to NPM.\n\n<details>\n<summary>Command not working? Did you install `ph-cmd`?</summary>\n\nThe Powerhouse CLI (`ph-cmd`) is a command-line interface tool that provides essential commands for managing Powerhouse projects. Install it globally using:\n\n```bash\npnpm install -g ph-cmd\n```\n\nKey commands include:\n\n- `ph vetra --watch` for launching Vetra Studio\n- `ph connect` for running Connect locally (alternative)\n- `ph switchboard` or `ph reactor` for starting the API service\n- `ph init` to start a new project\n- `ph help` to get an overview of all available commands\n\n</details>\n\n<details>\n<summary>How to use different branches?</summary>\n\nWhen using the Powerhouse CLI, you can access dev & staging branches for experimental features or bugfixes under development.\n\n| Command                            | Description                                       |\n| ---------------------------------- | ------------------------------------------------- |\n| **pnpm install -g ph-cmd**         | Install latest stable version                     |\n| **pnpm install -g ph-cmd@dev**     | Install development version                       |\n| **pnpm install -g ph-cmd@staging** | Install staging version                           |\n| **ph init**                        | Use latest stable version of the boilerplate      |\n| **ph init --dev**                  | Use development version of the boilerplate        |\n| **ph init --staging**              | Use staging version of the boilerplate            |\n| **ph use latest**                  | Switch all dependencies to latest stable versions |\n| **ph use dev**                     | Switch all dependencies to development versions   |\n| **ph use staging**                 | Switch all dependencies to staging versions       |\n\nPlease be aware that these versions can contain bugs and experimental features that aren't fully tested.\n\n</details>\n\n### 1.2. Launch Vetra Studio\n\nLaunch Vetra Studio in interactive watch mode for development:\n\n```bash\nph vetra --interactive --watch\n```\n\nThis mode provides:\n\n- **Interactive confirmations** before code generation\n- **Dynamic reloading** for document-models and editors\n- **Live preview** of your changes in Vetra Studio\n\n<details>\n<summary>Alternatively: Use Connect</summary>\n\nYou can also use Connect for local development:\n\n```bash\nph connect\n```\n\nThis opens Connect in your browser at `http://localhost:3000/`, providing a local Reactor for testing.\n\n</details>\n\n### 1.3. Configure package details\n\nIn Vetra Studio, navigate to the **Package Details** section of your Vetra Studio drive to configure:\n\n- **Package name**: Use the format `@your-org-ph/package-name` (the `-ph` suffix identifies Powerhouse ecosystem packages)\n- **Description**: A meaningful description of your package\n- **Keywords**: Search terms for discoverability\n- **Version**: Following semantic versioning (e.g., `1.0.0`)\n- **Author** and **License** information\n\nThese details are stored in your `package.json` and a `manifest.json` file is automatically generated from this configuration.\n\n```json\n{\n  \"name\": \"@your-org-ph/package-name\",\n  \"version\": \"1.0.0\",\n  \"author\": \"Your Name\",\n  \"license\": \"AGPL-3.0-only\",\n  \"publishConfig\": {\n    \"access\": \"public\"\n  }\n}\n```\n\n### 1.4. Build your modules\n\nWith Vetra Studio running, build your package modules:\n\n1. **Document Models**: Define your document model specifications in Vetra Studio. The state schema and operations are automatically generated into code.\n2. **Editors**: Create editor specifications linked to your document models. Vetra generates the scaffolding code.\n3. **Reducers**: Implement the state transition logic in the generated reducer files.\n4. **Unit Tests**: Write tests for your reducer logic in the `tests/` directory.\n\nRun tests to verify your implementation:\n\n```bash\npnpm run test\n```\n\n### 1.5. Verify your build\n\nBuild your project to verify everything compiles correctly:\n\n```bash\npnpm build\n```\n\nThis creates an optimized build output ready for distribution. Test the build locally:\n\n```bash\nph vetra --interactive --watch\n```\n\nCreate documents of your defined types and verify all functionality works as expected.\n\n### 1.6. Store in version control\n\nInitialize a git repository to track changes:\n\n```bash\ngit init\ngit add .\ngit commit -m \"Initial commit\"\n```\n\n## 2. Publishing your project\n\n### 2.1. Set up NPM organization\n\nCreate an organization on [NPM](https://www.npmjs.com/) using the naming convention `@yourorganization-ph`:\n\n- The `-ph` suffix identifies Powerhouse ecosystem packages\n- Example: `@acme-ph`\n\nWe recommend using a **dedicated NPM account** for your organization rather than a personal account.\n\n### 2.2. Log in to NPM\n\n```bash\nnpm login\n```\n\nFollow the prompts in your terminal or browser to authenticate.\n\n### 2.3. Version your package\n\nUse semantic versioning to update your package version. The `pnpm version` command will:\n\n- Update the `version` in `package.json`\n- Create a Git commit for the version change\n- Create a Git tag (e.g., `v1.0.1`)\n\n```bash\n# Patch release (1.0.0 \u2192 1.0.1) - bugfixes\npnpm version patch\n\n# Minor release (1.0.1 \u2192 1.1.0) - new features\npnpm version minor\n\n# Major release (1.1.0 \u2192 2.0.0) - breaking changes\npnpm version major\n```\n\n### 2.4. Push to Git\n\nPush your commits and version tag to your remote repository:\n\n```bash\ngit push origin main\ngit push origin vX.Y.Z  # Replace with your actual tag\n```\n\n### 2.5. Publish to NPM\n\n```bash\npnpm publish\n```\n\nFor scoped packages intended to be public, ensure your `package.json` includes the `publishConfig` shown earlier, or use:\n\n```bash\npnpm publish --access public\n```\n\nTo publish a pre-release version:\n\n```bash\n# Ensure your version reflects the pre-release (e.g., 1.1.0-beta.0)\npnpm publish --tag beta\n```\n\n:::info[Git Tags vs NPM Tags]\n\n- **Git Tags**: Markers in your repository history (e.g., `v1.0.0`) created by `pnpm version`\n- **NPM Dist-Tags**: Labels pointing to published versions (`latest`, `beta`, `next`). When publishing without a tag, the version gets the `latest` tag by default.\n  :::\n\n## 3. Installing your package\n\nOnce published, install your package in any Powerhouse environment:\n\n```bash\nph install @your-org-ph/package-name\n```\n\nThis makes your document models and editors available within that Powerhouse instance.\n\n### Package Manager UI\n\nA visual package manager can be found in Connect's settings (bottom left settings wheel), allowing installation at the click of a button.\n\n![package manager](images/package-installer.png)\n\n---\n\n## 4. Publishing to the Vetra Registry (v6.0.0-dev.153+)\n\n:::info[New publishing flow]\nStarting with `ph-cmd` version **6.0.0-dev.153**, packages can be published to the Vetra package registry using `ph publish`. This enables **dynamic package loading** \u2014 Connect can detect the required package from a document file and prompt the user to install it directly from the registry.\n\nThis flow applies to **newly created projects** initialized with v6.0.0-dev.153 or later. Existing projects will need to be migrated.\n:::\n\n### 4.1. Set up your environment\n\nInstall or update the Powerhouse CLI:\n\n```bash\npnpm install -g ph-cmd@6.0.0-dev.153\n```\n\nCreate a new project pinned to this version:\n\n```bash\nph init --pnpm --version=6.0.0-dev.153 your-test-project\n```\n\nStart Vetra in watch mode:\n\n```bash\ncd your-test-project && ph vetra --watch\n```\n\n### 4.2. Build your package\n\n1. Create a document model and editor in Vetra Studio. Using Claude is recommended for faster scaffolding.\n2. Create an example document in Connect and export it \u2014 you will use this to test dynamic loading later.\n\n### 4.3. Configure package metadata (first publish only)\n\nBefore publishing for the first time, update two files:\n\n- **`powerhouse.manifest.json`** \u2014 set `name`, `description`, and `publisher`\n- **`package.json`** \u2014 update the `name` field to match\n\nThen create an account on the Vetra registry:\n\n```bash\nnpm adduser --registry=https://registry.vetra.io\n```\n\n### 4.4. Publish\n\n```bash\nph publish --registry=https://registry.vetra.io\n```\n\nYour package will be available at:\n\n- Registry index: `https://registry.vetra.io/`\n- Package page: `https://registry.vetra.io/your-package-name`\n\n:::tip[Publishing new versions]\nBump the `version` field in `package.json` before every subsequent publish.\n:::\n\n### 4.5. Test dynamic loading in Connect\n\n1. Open your Connect instance on [staging.vetra.io](https://staging.vetra.io) (or use `https://connect.sharp-dove-96.vetra.io/`)\n2. Create a local drive\n3. Drag and drop the exported document into the drive\n4. Connect will detect the required package and prompt you to install it from the registry\n5. Once installed, open the document with your editor\n\n---\n\n**Congratulations on publishing your package!** Your document models and editors are now available for installation across the Powerhouse ecosystem.\n",
+        "createdAt": "2026-09-02T21:36:43.857Z",
+        "createdBy": "repo-docs-sync",
+        "sourceType": "DOCUMENTATION",
+        "description": "Powerhouse v6.2.2-dev.74 (unchanged since v6.2.2-dev.47) \u2014 This guide covers the process of building and publishing a Powerhouse package to NPM.",
+        "publishedAt": "2026-07-20T09:40:49.000Z"
+      },
+      "timestampUtcMs": "2026-09-02T21:36:43.857Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "",
+    "timestampUtcMs": "2026-09-02T21:36:43.680Z",
+    "action": {
+      "type": "UPGRADE_DOCUMENT",
+      "input": {
+        "model": "bai/source",
+        "toVersion": 1,
+        "documentId": "43a48858-0991-4aa0-92aa-147e78b4f78c",
+        "fromVersion": 0,
+        "initialState": {
+          "auth": {
+            "grants": [],
+            "version": 0
+          },
+          "local": {},
+          "global": {
+            "title": null,
+            "status": "INBOX",
+            "content": null,
+            "createdAt": null,
+            "createdBy": null,
+            "provenance": null,
+            "sourceType": null,
+            "description": null,
+            "extractedClaims": [],
+            "extractionStats": null
+          },
+          "document": {
+            "hash": {
+              "encoding": "base64",
+              "algorithm": "sha1"
+            },
+            "version": 1
+          }
+        }
+      },
+      "timestampUtcMs": "2026-09-02T21:36:43.680Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "/IAHH/zZ+RhfYzVTl0zSrsX2INs=",
+    "timestampUtcMs": "2026-09-02T21:37:04.330Z",
+    "action": {
+      "type": "ADD_EXTRACTED_CLAIM",
+      "input": {
+        "claimRef": "0fb2c09e-d46c-49d4-8727-72831d9ff35e"
+      },
+      "timestampUtcMs": "2026-09-02T21:37:04.330Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "E+/DneV19F6JAOLlF+jNFw+Y8Ls=",
+    "timestampUtcMs": "2026-09-02T21:37:05.773Z",
+    "action": {
+      "type": "ADD_EXTRACTED_CLAIM",
+      "input": {
+        "claimRef": "15a216b2-f6e8-40ba-bfcb-604c1059297a"
+      },
+      "timestampUtcMs": "2026-09-02T21:37:05.773Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "4bAkrnIXbzOyCcUbBzLGtOyZYq8=",
+    "timestampUtcMs": "2026-09-02T21:37:07.286Z",
+    "action": {
+      "type": "ADD_EXTRACTED_CLAIM",
+      "input": {
+        "claimRef": "2c856393-31e4-4c1f-96aa-46c0a23cd072"
+      },
+      "timestampUtcMs": "2026-09-02T21:37:07.286Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "YYuv4p5OICvASqno25k4361JCW8=",
+    "timestampUtcMs": "2026-09-02T21:37:12.620Z",
+    "action": {
+      "type": "SET_SOURCE_STATUS",
+      "input": {
+        "status": "EXTRACTED"
+      },
+      "timestampUtcMs": "2026-09-02T21:37:12.620Z"
+    }
+  }
+]

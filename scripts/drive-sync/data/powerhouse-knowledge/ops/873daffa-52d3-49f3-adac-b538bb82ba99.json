@@ -1,0 +1,361 @@
+[
+  {
+    "index": 0,
+    "hash": "",
+    "timestampUtcMs": "2026-08-14T12:33:57.023Z",
+    "action": {
+      "type": "CREATE_DOCUMENT",
+      "input": {
+        "meta": {},
+        "name": "swarmchannel-is-transport-only",
+        "slug": "",
+        "model": "bai/knowledge-note",
+        "branch": "main",
+        "signing": {
+          "nonce": "",
+          "publicKey": {},
+          "signature": "873daffa-52d3-49f3-adac-b538bb82ba99",
+          "documentType": "bai/knowledge-note",
+          "createdAtUtcIso": "2026-08-14T12:33:57.023Z"
+        },
+        "version": 0,
+        "documentId": "873daffa-52d3-49f3-adac-b538bb82ba99",
+        "protocolVersions": {
+          "base-reducer": 2
+        }
+      },
+      "timestampUtcMs": "2026-08-14T12:33:57.023Z"
+    }
+  },
+  {
+    "index": 0,
+    "hash": "dNGGLk+4oilzs32hsiw9cDzcksc=",
+    "timestampUtcMs": "2026-08-14T12:36:00.000Z",
+    "action": {
+      "type": "SET_TITLE",
+      "input": {
+        "title": "SwarmChannel is pure transport; ordering, conflict resolution, and state computation stay in the reactor",
+        "updatedAt": "2026-08-14T12:36:00.000Z"
+      },
+      "timestampUtcMs": "2026-08-14T12:36:00.000Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "",
+    "timestampUtcMs": "2026-08-14T12:33:57.023Z",
+    "action": {
+      "type": "UPGRADE_DOCUMENT",
+      "input": {
+        "model": "bai/knowledge-note",
+        "toVersion": 1,
+        "documentId": "873daffa-52d3-49f3-adac-b538bb82ba99",
+        "fromVersion": 0,
+        "initialState": {
+          "auth": {
+            "grants": [],
+            "version": 0
+          },
+          "local": {
+            "lastViewedAt": null,
+            "personalTags": []
+          },
+          "global": {
+            "links": [],
+            "model": null,
+            "scope": null,
+            "title": null,
+            "editor": null,
+            "inputs": [],
+            "models": [],
+            "status": "DRAFT",
+            "topics": [],
+            "content": null,
+            "context": null,
+            "modelId": null,
+            "modules": [],
+            "outputs": [],
+            "version": null,
+            "computes": null,
+            "filePath": null,
+            "noteType": null,
+            "severity": null,
+            "hooksUsed": [],
+            "rootCause": null,
+            "confidence": null,
+            "consumedBy": [],
+            "provenance": null,
+            "sourceType": null,
+            "targetType": null,
+            "cardinality": null,
+            "description": null,
+            "alternatives": [],
+            "consequences": [],
+            "errorMessage": null,
+            "relationType": null,
+            "correctPattern": null,
+            "decisionStatus": null,
+            "dispatchTargets": [],
+            "lifecycleEvents": []
+          },
+          "document": {
+            "hash": {
+              "encoding": "base64",
+              "algorithm": "sha1"
+            },
+            "version": 1
+          }
+        }
+      },
+      "timestampUtcMs": "2026-08-14T12:33:57.023Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "VkUAkncADe6OG2nXSPMZCjPTXN4=",
+    "timestampUtcMs": "2026-08-14T12:36:00.000Z",
+    "action": {
+      "type": "SET_DESCRIPTION",
+      "input": {
+        "updatedAt": "2026-08-14T12:36:00.000Z",
+        "description": "SwarmChannel does not perform conflict resolution or ordering; it is pure transport moving SyncEnvelope data between feeds and reactor mailboxes (inbox/outbox/deadLetter)."
+      },
+      "timestampUtcMs": "2026-08-14T12:36:00.000Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "",
+    "timestampUtcMs": "2026-08-14T12:38:53.085Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "873daffa-52d3-49f3-adac-b538bb82ba99",
+        "targetId": "17a0ed86-0b8d-4374-9114-bea5b95737ed",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-08-14T12:38:53.085Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "8O5vBXkT/maEHv6CaxjrLKm1GhI=",
+    "timestampUtcMs": "2026-08-14T12:36:00.000Z",
+    "action": {
+      "type": "SET_NOTE_TYPE",
+      "input": {
+        "noteType": "architecture",
+        "updatedAt": "2026-08-14T12:36:00.000Z"
+      },
+      "timestampUtcMs": "2026-08-14T12:36:00.000Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "",
+    "timestampUtcMs": "2026-08-14T12:38:53.182Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "873daffa-52d3-49f3-adac-b538bb82ba99",
+        "targetId": "5725fd76-b0d4-4bab-9c10-3c0a890951ca",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-08-14T12:38:53.182Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "l7882qw3kqbQGOp0RxdMi0gPVe0=",
+    "timestampUtcMs": "2026-08-14T12:36:00.000Z",
+    "action": {
+      "type": "SET_CONTENT",
+      "input": {
+        "content": "# SwarmChannel Is Transport Only\n\nThe SwarmChannel abstraction is deliberately thin. It does not interpret operation semantics or resolve conflicts.\n\n## What SwarmChannel does\n\n- Uploads `SyncEnvelope` payloads to `/bytes`\n- Appends feed index pointers to the outbox feed\n- Polls peer feeds for new entries\n- Downloads referenced `/bytes` payloads into the inbox\n- Routes undeliverable or malformed messages to a deadLetter queue\n\n## What SwarmChannel does NOT do\n\n- Determine final operation order\n- Merge conflicting edits\n- Deduplicate operations\n- Compute document state\n\nAll of those responsibilities stay with the reactor's existing `SyncManager` and document model reducer \u2014 the same components that already handle sync in other transports (GraphQL, local storage, etc.).\n\n## Why this matters\n\nBecause ordering/conflict/dedup logic lives in the reactor, adding Swarm as a transport does not require bespoke merge code. Any channel that can move `SyncEnvelope` data satisfies the contract.\n",
+        "updatedAt": "2026-08-14T12:36:00.000Z"
+      },
+      "timestampUtcMs": "2026-08-14T12:36:00.000Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "",
+    "timestampUtcMs": "2026-08-14T12:38:53.262Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "873daffa-52d3-49f3-adac-b538bb82ba99",
+        "targetId": "27cf7cb6-160b-439b-ac23-001d3e43abde",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-08-14T12:38:53.262Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "bKLK4NpXfANjBmXcVgnGleS5wGY=",
+    "timestampUtcMs": "2026-08-14T12:36:00.000Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "version",
+        "value": "v6.2.2-dev.44",
+        "updatedAt": "2026-08-14T12:36:00.000Z"
+      },
+      "timestampUtcMs": "2026-08-14T12:36:00.000Z"
+    }
+  },
+  {
+    "index": 5,
+    "hash": "",
+    "timestampUtcMs": "2026-08-14T12:38:53.360Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "873daffa-52d3-49f3-adac-b538bb82ba99",
+        "targetId": "1f8f4551-682c-4245-94ef-5e5846862ee4",
+        "relationshipType": "BUILDS_ON"
+      },
+      "timestampUtcMs": "2026-08-14T12:38:53.360Z"
+    }
+  },
+  {
+    "index": 5,
+    "hash": "9FexdfG2UrOa10AejmwLreEn/Pw=",
+    "timestampUtcMs": "2026-08-14T12:36:00.000Z",
+    "action": {
+      "type": "SET_PROVENANCE",
+      "input": {
+        "author": "knowledge-agent",
+        "createdAt": "2026-04-21T14:45:54.611Z",
+        "sourceOrigin": "DERIVED"
+      },
+      "timestampUtcMs": "2026-08-14T12:36:00.000Z"
+    }
+  },
+  {
+    "index": 6,
+    "hash": "RLv2Rssmf2ZPlEnKhG5S0EMttQ0=",
+    "timestampUtcMs": "2026-08-14T12:36:00.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "b691481c-d569-455c-859c-8eb8afc34bb1",
+        "name": "swarm-channel",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-08-14T12:36:00.000Z"
+    }
+  },
+  {
+    "index": 7,
+    "hash": "IIr//Dnwjh2DDiEKWjqlCHlWeT0=",
+    "timestampUtcMs": "2026-08-14T12:36:00.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "ad94c96a-4a02-4a76-903a-3dbced1f0bf4",
+        "name": "transport",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-08-14T12:36:00.000Z"
+    }
+  },
+  {
+    "index": 8,
+    "hash": "mWbX0DzHoDxa6rh+TIKJRUcCg2o=",
+    "timestampUtcMs": "2026-08-14T12:36:00.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "24fbc777-3a5a-4b99-975e-81e3ba0a0759",
+        "name": "architecture",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-08-14T12:36:00.000Z"
+    }
+  },
+  {
+    "index": 9,
+    "hash": "cN+T9Y6Wc/9DSO+p2YVJcwfm5c8=",
+    "timestampUtcMs": "2026-08-14T14:37:18.000Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "version",
+        "value": "v6.2.2-dev.47",
+        "updatedAt": "2026-08-14T12:00:00.000Z"
+      },
+      "timestampUtcMs": "2026-08-14T14:37:18.000Z"
+    }
+  },
+  {
+    "index": 10,
+    "hash": "YLB3xILTAjLM1rZRh0uV63vTemY=",
+    "timestampUtcMs": "2026-08-14T14:37:18.000Z",
+    "action": {
+      "type": "SUBMIT_FOR_REVIEW",
+      "input": {
+        "id": "73854aa2-94f7-462b-8a8f-0168f26d03d3",
+        "actor": "claude",
+        "comment": "Knowledge registered against powerhouse v6.2.2-dev.47",
+        "timestamp": "2026-08-14T12:00:00.000Z"
+      },
+      "timestampUtcMs": "2026-08-14T14:37:18.000Z"
+    }
+  },
+  {
+    "index": 11,
+    "hash": "J2tk9AcJkRj7C2kledPvpb8lKC8=",
+    "timestampUtcMs": "2026-08-14T14:37:18.000Z",
+    "action": {
+      "type": "APPROVE_NOTE",
+      "input": {
+        "id": "1d2c3259-e979-46a0-804a-54a3eca79107",
+        "actor": "liberuum",
+        "comment": "Canonical as of powerhouse v6.2.2-dev.47",
+        "timestamp": "2026-08-14T12:00:00.000Z"
+      },
+      "timestampUtcMs": "2026-08-14T14:37:18.000Z"
+    }
+  },
+  {
+    "index": 12,
+    "hash": "irsK9CkDcUFKAeOHtGxCJd64fYg=",
+    "timestampUtcMs": "2026-08-16T09:49:52.000Z",
+    "action": {
+      "type": "SET_NOTE_TYPE",
+      "input": {
+        "noteType": "ARCHITECTURE",
+        "updatedAt": "2026-08-16T09:49:52.000Z"
+      },
+      "timestampUtcMs": "2026-08-16T09:49:52.000Z"
+    }
+  },
+  {
+    "index": 13,
+    "hash": "gjw+hyr7NYwvo36TjgRWUDjkmfg=",
+    "timestampUtcMs": "2026-08-16T22:22:10.784Z",
+    "action": {
+      "type": "SET_DESCRIPTION",
+      "input": {
+        "updatedAt": "2026-08-16T23:30:00.000Z",
+        "description": "It uploads envelopes to /bytes, appends feed pointers, polls peers and dead-letters junk; it never merges, dedupes or computes, which is why Swarm needed no bespoke merge code."
+      },
+      "timestampUtcMs": "2026-08-16T22:22:10.784Z"
+    }
+  },
+  {
+    "index": 14,
+    "hash": "ESSICJCTQwsS92gr7pwAbQf3ZLo=",
+    "timestampUtcMs": "2026-09-03T09:58:05.057Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "version",
+        "updatedAt": "2026-09-03T09:58:05.057Z"
+      },
+      "timestampUtcMs": "2026-09-03T09:58:05.057Z"
+    }
+  }
+]

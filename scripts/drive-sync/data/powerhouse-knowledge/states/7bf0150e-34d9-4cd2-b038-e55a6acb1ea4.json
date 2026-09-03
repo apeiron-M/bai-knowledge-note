@@ -1,0 +1,115 @@
+{
+  "links": [
+    {
+      "id": "lnk-158143d5-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "158143d5-1e39-44b5-9799-1a84e6de9e72",
+      "targetTitle": "DocumentToolbar exposes className enabledControls and callback props"
+    },
+    {
+      "id": "lnk-68acb174-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "68acb174-1d24-4535-a05e-48cbbb6bba19",
+      "targetTitle": "Revision History panel styling requires scoped CSS on document-editor-context since no props are exposed"
+    },
+    {
+      "id": "lnk-3635589b-bui",
+      "linkType": "BUILDS_ON",
+      "targetDocumentId": "3635589b-57a3-4a38-9a41-81c4e41e62f7",
+      "targetTitle": "operations-history-is-event-sourced"
+    },
+    {
+      "id": "lnk-e09876c1-bui",
+      "linkType": "BUILDS_ON",
+      "targetDocumentId": "e09876c1-7be7-4958-a147-6032c84d9bb8",
+      "targetTitle": "document-models-use-event-sourcing"
+    },
+    {
+      "id": "lnk-88d2ddee-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "88d2ddee-948a-4e97-bb9d-1783b67a3836",
+      "targetTitle": "Academy \u203a Build \u203a BuildingUserExperiences \u203a DocumentTools \u203a Revision history timeline",
+      "reason": "Backing page found by content match in the v6.2.2-dev.74 source backfill \u2014 identifiers candle, getrevisionfromdate, usetimelineitems from the claim appear in this page (text identical at v6.2.2-dev.47 and v6.2.2-dev.74); attribution, not the original extraction record",
+      "confidence": "grounded"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "The revision history timeline lets users navigate document history visually, putting the editor into read-only mode at a selected revision",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "32acfa84-c059-4f5c-a9ed-3111d5e9df00",
+      "name": "timeline",
+      "topicDocumentId": null
+    },
+    {
+      "id": "a6561021-9d14-4639-89e5-c52706f75721",
+      "name": "revision-history",
+      "topicDocumentId": null
+    },
+    {
+      "id": "fd2e93a0-a04e-4a4a-b0df-cc19c8876796",
+      "name": "editors",
+      "topicDocumentId": null
+    },
+    {
+      "id": "11634a14-f41e-4ebc-8b77-e68d0b5d5010",
+      "name": "read-mode",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "To enable timeline in an editor, the editor module exports the configuration and the Drive-app or default app fetches timeline items via `useTimelineItems(documentId)` from `@powerhousedao/reactor-browser/analytics`. When a user clicks a timeline candle, `getRevisionFromDate(startDate, endDate, operations.global)` resolves the revision number. The editor receives `context.readMode = true` and `context.selectedTimelineRevision`. The editor then calls `getDocumentRevision({ revisions: { global: selectedTimelineRevision } })` to fetch the document at that point in time and disables edit controls. The timeline only activates once a document has some operation history.\n\n_Corrected 2026-08-13 against Powerhouse v6.2.2-dev.45._",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": "v6.2.2-dev.74",
+  "computes": null,
+  "filePath": "apps/academy/docs/academy/03-Build/03-BuildingUserExperiences/06-DocumentTools/02-RevisionHistoryTimeline.md",
+  "noteType": "PATTERN",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "knowledge-agent",
+    "createdAt": "2026-04-02T12:00:00.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-09-02T21:34:21.652Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Timeline uses useTimelineItems hook and getRevisionFromDate; selecting a candle activates read-only mode.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "86f78d79-cdcc-484e-8a79-c95f0209f834",
+      "actor": "claude",
+      "comment": "Knowledge registered against powerhouse v6.2.2-dev.47",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-14T12:00:00.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "7e2514db-d5c1-42e5-9e76-8f7e0b6f28a5",
+      "actor": "liberuum",
+      "comment": "Canonical as of powerhouse v6.2.2-dev.47",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-14T12:00:00.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

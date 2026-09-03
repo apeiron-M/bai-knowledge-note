@@ -1,0 +1,115 @@
+{
+  "links": [
+    {
+      "id": "lnk-49c7215e-con",
+      "linkType": "CONTRADICTS",
+      "targetDocumentId": "49c7215e-c5f3-40ca-b98d-22a18128e6cb",
+      "targetTitle": "renown-builder-surface",
+      "reason": "The SDK is constructed through a RenownBuilder and deliberately ships no React provider, which is the opposite of what this page's quick start instructs",
+      "confidence": "grounded"
+    },
+    {
+      "id": "lnk-2ae31ea4-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "2ae31ea4-b8f4-4128-8531-93b932d6b6bb",
+      "targetTitle": "renown-sdk-decentralized-identity-auth",
+      "reason": "The hook-based init and cookie session that note records are the current shape, which this page predates",
+      "confidence": "grounded"
+    },
+    {
+      "id": "lnk-24809feb-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "24809feb-4f6c-4b37-87ec-f6c032ac910e",
+      "targetTitle": "Academy \u203a Reference \u203a Authorization \u203a renown-sdk \u203a Renown SDK",
+      "reason": "Extracted from apps/academy/docs/academy/04-Reference/06-Authorization/renown-sdk/00-Overview.md at v6.2.2-dev.74 \u2014 Quick Start \u203a 1. Wrap Your App with RenownUserProvider; Key Concepts (RenownUserProvider, useUser)",
+      "confidence": "grounded"
+    },
+    {
+      "id": "lnk-4fe5345d-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "4fe5345d-698e-4432-9957-0babd6d29fed",
+      "targetTitle": "renownprovider-is-ssr-safe",
+      "reason": "RenownProvider from reactor-browser is the provider that actually exists, with its own SSR rules",
+      "confidence": "grounded"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "The Academy's Renown SDK page documents a RenownUserProvider and useUser that @renown/sdk does not export",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "1ff8d0d7-18f4-49a6-a0e2-7054bb2af9c3",
+      "name": "renown",
+      "topicDocumentId": null
+    },
+    {
+      "id": "df4b86f2-c63e-4d44-8471-91925d5dba06",
+      "name": "documentation-drift",
+      "topicDocumentId": null
+    },
+    {
+      "id": "c2023733-e7dd-4b1c-b78d-fc52d22e23d4",
+      "name": "authentication",
+      "topicDocumentId": null
+    },
+    {
+      "id": "bc1481ba-c10e-4a26-b5f4-f45903a77a69",
+      "name": "gotchas",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "The Academy page `04-Reference/06-Authorization/renown-sdk/00-Overview.md` opens its quick start with:\n\n```tsx\nimport { RenownUserProvider } from \"@renown/sdk\";\n```\n\nand describes `useUser`, session persistence and a `RenownAuthButton` as the SDK's React surface. Checked against the tree at v6.2.2-dev.74:\n\n- **`RenownUserProvider` appears nowhere** in `packages/**` or `apps/**`;\n- `@renown/sdk`'s root export list is `common`, `credential`, `crypto`, `discovery`, `init.browser`, `local-credential-verifier`, `profile`, **`renown-builder`**, `session` types, `switchboard`, `types`, `utils` \u2014 no React provider, and its subpaths are `./node`, `./crypto` and the three wallet adapters;\n- the React pieces live in **`@powerhousedao/reactor-browser`** (`useRenownAuth`, `RenownAuthButton`, `RenownProvider`), which is exactly what the SDK's own `COMPONENTS.md` says: \"React components and hooks for Renown authentication are provided by `@powerhousedao/reactor-browser`, not by `@renown/sdk` directly.\"\n\nSo the page describes an earlier, React-shaped SDK. A developer following it installs `@renown/sdk` and imports a symbol that does not exist. The authoritative pair is the SDK's `RenownBuilder` for construction and reactor-browser's `RenownProvider` / `useRenownAuth` for React \u2014 with `useUser` surviving only as a hook in `packages/reactor-browser/src/hooks/renown.ts`, not as an SDK export.\n\n## Provenance\n- `apps/academy/docs/academy/04-Reference/06-Authorization/renown-sdk/00-Overview.md` \u2014 Quick Start \u203a 1. Wrap Your App with RenownUserProvider; Key Concepts (RenownUserProvider, useUser)\n\n_Extracted from the Powerhouse repository at **v6.2.2-dev.74**._",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": "v6.2.2-dev.74",
+  "computes": null,
+  "filePath": "apps/academy/docs/academy/04-Reference/06-Authorization/renown-sdk/00-Overview.md",
+  "noteType": "OBSERVATION",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "knowledge-agent",
+    "createdAt": "2026-09-03T07:48:54.113Z",
+    "sessionId": null,
+    "updatedAt": "2026-09-03T07:48:55.213Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Its quick start imports RenownUserProvider from @renown/sdk, but that name appears nowhere in the tree at v6.2.2-dev.74; the package exports a RenownBuilder and the React surface lives in.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "e0fe18d4-ad1a-4949-9e5f-3f91e003b422",
+      "actor": "knowledge-agent",
+      "comment": "extracted from apps/academy/docs/academy/04-Reference/06-Authorization/renown-sdk/00-Overview.md at v6.2.2-dev.74",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-09-03T07:48:54.573Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "e5e78a78-9ffd-4713-9257-1bf0f7629ebc",
+      "actor": "liberuum",
+      "comment": "claim checked against the cited file at the pinned tag",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-09-03T07:48:55.213Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

@@ -1,0 +1,108 @@
+{
+  "links": [
+    {
+      "id": "lnk-2143ff72-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "2143ff72-c036-4d0d-a9eb-3fc93821c025",
+      "targetTitle": "light-theme-base-palette"
+    },
+    {
+      "id": "lnk-1f33403c-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "1f33403c-84bb-4564-bd79-f58fb80e98b5",
+      "targetTitle": "dark-theme-base-palette"
+    },
+    {
+      "id": "lnk-e865a670-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "e865a670-15e0-4595-9442-d431a27344de",
+      "targetTitle": "moc-design-tokens-and-theming"
+    },
+    {
+      "id": "lnk-f9f4bcbc-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "f9f4bcbc-efd1-49c8-a8c0-8a8f8991b772",
+      "targetTitle": "document-models-are-the-core-unit-of-powerhouse-architecture"
+    },
+    {
+      "id": "lnk-18b3eacd-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "18b3eacd-e10b-4e71-b886-bdfcaf10bdf8",
+      "targetTitle": "achra-brand-identity"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Theme System Light and Dark Approach",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "a6309f2f-c3bf-4d38-8a6b-d460a09ef3c3",
+      "name": "design-system",
+      "topicDocumentId": null
+    },
+    {
+      "id": "e7c4be51-e181-4cb5-a72b-1b030829e6ca",
+      "name": "theming",
+      "topicDocumentId": null
+    },
+    {
+      "id": "47c181d2-273e-4c94-b214-ebed91490d95",
+      "name": "design-tokens",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "The Powerhouse design system implements theming through CSS custom properties with two modes. The :root selector defines light theme values as the default. The .dark class or [data-theme=\"dark\"] attribute selector overrides those values for dark mode. For Achra and Vetra, the primary brand colors persist unchanged across themes: Achra stays #7A3AFF and Vetra stays #04C161 in both light and dark. The Powerhouse parent brand behaves differently -- its primary inverts from #32373B (dark neutral) in light mode to #F3F5F7 (light neutral) in dark mode, with --primary-foreground similarly inverting from #FFFFFF to #0E0E0D. All three brands share the same dark theme values for secondary (#4F596F), muted-foreground (#6C7275), and other non-primary surface tokens, though Powerhouse uses darker background values (#0E0E0D vs #1B1E24). Source: colors.css files at https://github.com/powerhouse-inc/design-systems.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "CONCEPT",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "Wouter Kampmann",
+    "createdAt": "2026-04-05T00:03:26.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-09-03T09:59:05.039Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Light theme uses :root selector, dark theme uses .dark class or [data-theme=\"dark\"] attribute. Primary colors persist or invert by brand.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "08959aa4-e9f0-4ab0-8f66-bce212683f6c",
+      "actor": "claude",
+      "comment": "Knowledge registered against powerhouse v6.2.2-dev.47",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-14T12:00:00.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "f5d60e73-c371-48e3-9b05-a2735b668ef3",
+      "actor": "liberuum",
+      "comment": "Canonical as of powerhouse v6.2.2-dev.47",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-14T12:00:00.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

@@ -1,0 +1,131 @@
+{
+  "links": [
+    {
+      "id": "lnk-72db84fb-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "72db84fb-3247-40af-b29a-6b17f78aea33",
+      "targetTitle": "auth-unavailable-feature-skipped",
+      "reason": "Below authGroups a group principal is a grant that cannot apply, and the skip-not-honour rule decides what that means",
+      "confidence": "grounded"
+    },
+    {
+      "id": "lnk-37c39fe6-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "37c39fe6-55b9-4c90-ad49-c96ae42467c4",
+      "targetTitle": "auth-group-served-to-audience",
+      "reason": "Folding a roster requires reading it, which is why a named group is served to the referencing policy's audience",
+      "confidence": "grounded"
+    },
+    {
+      "id": "lnk-0ade289f-bui",
+      "linkType": "BUILDS_ON",
+      "targetDocumentId": "0ade289f-d4fb-44d8-ab3b-316d65bb1c8d",
+      "targetTitle": "auth-positional-judgment",
+      "reason": "Extends positional judgment across documents: the position at which membership is folded is the judged operation's, not the roster's head",
+      "confidence": "grounded"
+    },
+    {
+      "id": "lnk-f2aaccd3-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "f2aaccd3-7c26-4327-881e-f5ad9e267b89",
+      "targetTitle": "Academy \u203a Lookup \u203a Cookbook",
+      "reason": "Extracted from apps/academy/docs/academy/05-Lookup/00-Cookbook.md at v6.2.2-dev.74 \u2014 Group Principals recipe: what it demonstrates, version requirement, 'The shape of the policy'",
+      "confidence": "grounded"
+    },
+    {
+      "id": "lnk-17dc46b0-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "17dc46b0-f733-467c-99d7-ae8fbe0fb0e4",
+      "targetTitle": "Academy \u203a Reference \u203a Reactor \u203a Authorization",
+      "reason": "Extracted from apps/academy/docs/academy/04-Reference/01-Reactor/11-Authorization.md at v6.2.2-dev.74 \u2014 Grants paragraph on { group } resolving live",
+      "confidence": "grounded"
+    },
+    {
+      "id": "lnk-223bb12a-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "223bb12a-be7f-4209-9ab2-f04f7bb2b6c8",
+      "targetTitle": "Spec \u203a Spec \u2014 Attribute-based access control in the auth scope with DCB",
+      "reason": "Extracted from docs/specs/auth-scope.md at v6.2.2-dev.74 \u2014 Groups; Stage 5 (authGroups) exit criteria; read-set as a sync obligation",
+      "confidence": "grounded"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "A group principal names a powerhouse/reactor-group roster document whose membership is folded at each operation's position, so hiring and offboarding are single membership operations",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "e61449f7-8be5-4b2e-8373-39587af77d2a",
+      "name": "auth-scope",
+      "topicDocumentId": null
+    },
+    {
+      "id": "3b826d5f-0956-4bce-9f16-edda59093ed1",
+      "name": "groups",
+      "topicDocumentId": null
+    },
+    {
+      "id": "e6500cf5-3f9c-4e49-b253-96403b28a8c9",
+      "name": "reactor-group",
+      "topicDocumentId": null
+    },
+    {
+      "id": "5229a790-c707-4e36-af66-6888c992036e",
+      "name": "authorization",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "Who may approve an expense is a question a **roster document** answers. The expense report's policy names a `powerhouse/reactor-group` document with a `{ group: <documentId> }` principal, and the reactor folds that roster's membership \u2014 at each operation's position \u2014 whenever it decides an approval.\n\nThe roster is an ordinary document: `{ name, description, members }` state, replicated and event-sourced like everything else, and governed by its **own** auth scope (the recipe's roster is Alice-only, so Bob cannot enrol himself). Hiring and offboarding are `addMember` / `removeMember` on the roster; the referencing document's auth stream never grows \u2014 the test asserts it stays at its genesis operation \u2014 and every document that trusts the group picks the change up at its next decision.\n\nMembership is **positional**: a `removeMember` timestamped before an already-accepted approval re-judges it. The reactor re-evaluates every document whose policy references the group, each in its own job, using the reverse direction of the group-reference relation, and the approval flips to a stored denied operation. A replica that receives the expense report but not the roster cannot fold membership, so the principal matches **nobody** and the synced approval is denied there \u2014 access is never widened by absence \u2014 and when the roster's history arrives the replica re-judges and converges verdict for verdict. The read-set is therefore a sync obligation: a grant that names a group makes that document part of what an enforcing replica must hold.\n\nBounds: no group can reference another group (the platform rejects `{ group }` principals on a group document's own policy), so membership never chains and the read-set stays flat; and until conditions ship, a group's own policy is limited to `address` and `anyone` principals. Group principals match only with the `authGroups` flag (third in the cascade) \u2014 below it they are skipped, which is what the disclaimers in the other auth recipes describe.\n\n_Source: apps/academy/docs/academy/05-Lookup/00-Cookbook.md (Powerhouse v6.2.2-dev.74)._\n_Source: apps/academy/docs/academy/04-Reference/01-Reactor/11-Authorization.md (Powerhouse v6.2.2-dev.74)._\n_Source: docs/specs/auth-scope.md (Powerhouse v6.2.2-dev.74)._\n\n## Provenance\n- `apps/academy/docs/academy/05-Lookup/00-Cookbook.md` \u2014 Group Principals recipe: what it demonstrates, version requirement, 'The shape of the policy'\n- `apps/academy/docs/academy/04-Reference/01-Reactor/11-Authorization.md` \u2014 Grants paragraph on { group } resolving live\n- `docs/specs/auth-scope.md` \u2014 Groups; Stage 5 (authGroups) exit criteria; read-set as a sync obligation\n\n_Recorded from the Powerhouse repository at **v6.2.2-dev.74** during the v6.2.2-dev.74 source sync._",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": "v6.2.2-dev.74",
+  "computes": null,
+  "filePath": "apps/academy/docs/academy/05-Lookup/00-Cookbook.md",
+  "noteType": "ARCHITECTURE",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": "grounded",
+  "consumedBy": [],
+  "provenance": {
+    "author": "knowledge-agent",
+    "createdAt": "2026-09-02T22:10:32.386Z",
+    "sessionId": null,
+    "updatedAt": "2026-09-02T22:20:24.649Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "The referencing document's auth stream never grows; a removeMember timestamped before an accepted approval re-judges it. A replica without the roster fails closed. No group may reference a group.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "4bdacd41-b1da-40c0-83c1-53cb0a360265",
+      "actor": "knowledge-agent",
+      "comment": "extracted from the Powerhouse repository at v6.2.2-dev.74",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-09-02T22:10:32.962Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "ab3fb983-a65f-47f0-8fb9-2355be65c499",
+      "actor": "liberuum",
+      "comment": "claim checked against the cited repository file at the pinned tag",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-09-02T22:10:33.424Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

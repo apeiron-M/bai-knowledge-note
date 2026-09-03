@@ -1,0 +1,496 @@
+{
+  "goals": [
+    {
+      "id": "1b46d19c-ef2b-4da6-8e1d-60fe27197c05",
+      "notes": [
+        {
+          "id": "e3d5a812-6f47-4b90-a1c3-8e2f0b5d7146",
+          "note": "Verification scope, 21 Aug 2026: confirmed externally that a Paperless-ngx instance is deployed and serving at https://light-colt-c49-paperless.vetra.io/ (title Paperless-ngx, granian ASGI, auth redirect working). NOT verified because the admin UI requires login: POP/IMAP email integration, OCR and LLM settings, and the document-type/tag/storage-location taxonomy. Those three children were marked COMPLETED on Frank report, not on inspection - reopen if any remains outstanding.",
+          "author": "knowledge-agent",
+          "timestamp": "2026-08-21T09:35:00.000Z"
+        }
+      ],
+      "status": "COMPLETED",
+      "outcome": "Reported complete by Frank 21 Aug 2026. Instance verified live at https://light-colt-c49-paperless.vetra.io/ - Paperless-ngx (server: granian), root 302s to /accounts/login/, login page HTTP 200. Internal configuration is behind authentication and was NOT independently verified; the three child goals rest on Frank report.",
+      "assignee": "Frank",
+      "parentId": null,
+      "blockReason": null,
+      "description": "Step 1 \u2014 Set up and configure Paperless",
+      "dependencies": []
+    },
+    {
+      "id": "f1c961e4-4cc4-4973-b1b4-5cd62124a252",
+      "notes": [],
+      "status": "COMPLETED",
+      "outcome": "Marked complete on Frank report of 21 Aug 2026 that the Paperless instance is configured. Not independently verified - the Paperless-ngx admin UI at light-colt-c49-paperless.vetra.io is login-gated.",
+      "assignee": "Frank",
+      "parentId": "1b46d19c-ef2b-4da6-8e1d-60fe27197c05",
+      "blockReason": null,
+      "description": "Configure email integration (POP/IMAP)",
+      "dependencies": []
+    },
+    {
+      "id": "6c065526-c441-4466-9f43-2b00bddc1817",
+      "notes": [],
+      "status": "COMPLETED",
+      "outcome": "Marked complete on Frank report of 21 Aug 2026 that the Paperless instance is configured. Not independently verified - the Paperless-ngx admin UI at light-colt-c49-paperless.vetra.io is login-gated.",
+      "assignee": "Frank",
+      "parentId": "1b46d19c-ef2b-4da6-8e1d-60fe27197c05",
+      "blockReason": null,
+      "description": "Configure OCR and LLM",
+      "dependencies": []
+    },
+    {
+      "id": "4b80877c-5b8d-4932-999a-6383869b2cab",
+      "notes": [],
+      "status": "COMPLETED",
+      "outcome": "Marked complete on Frank report of 21 Aug 2026 that the Paperless instance is configured. Not independently verified - the Paperless-ngx admin UI at light-colt-c49-paperless.vetra.io is login-gated.",
+      "assignee": "Frank",
+      "parentId": "1b46d19c-ef2b-4da6-8e1d-60fe27197c05",
+      "blockReason": null,
+      "description": "Define document types, tags and storage locations",
+      "dependencies": []
+    },
+    {
+      "id": "990ef577-29bf-4759-a27d-5e60bb585a4b",
+      "notes": [
+        {
+          "id": "7c2b91e5-4d3a-4f18-9e60-2b8a1c4d7f03",
+          "note": "Deployment verified live 21 Aug 2026: https://noble-moth-7a63b1b7-connect.vetra.io/?driveUrl=https://noble-moth-7a63b1b7-switchboard.vetra.io/d/paperless \u2014 Connect HTTP 200, Switchboard GraphQL responding, Invoice type present in schema, drive paperless preferredEditor=billing, invoice-addon subgraph 200 on POST. Drive contains 0 documents, so nothing has been ingested yet. 2.a COMPLETE, 2.b open on the analytics processor, 2.c (powerhouse/paperless integration document, Frank) still TODO.",
+          "author": "knowledge-agent",
+          "timestamp": "2026-08-21T09:30:00.000Z"
+        }
+      ],
+      "status": "COMPLETED",
+      "outcome": "Work underway: 2.b (liberuum) largely delivered via the billing package (@powerhousedao/billing, repo https://github.com/powerhouse-inc/billing; published as @powerhousedao/paperless-invoice up to v0.0.3, renamed 21 Aug 2026). Still TODO: 2.a Switchboard + Connect + Postgres install and 2.c powerhouse/paperless integration document, both assigned to Frank.",
+      "assignee": "Frank",
+      "parentId": null,
+      "blockReason": null,
+      "description": "Step 2 \u2014 Set up the Powerhouse instance",
+      "dependencies": []
+    },
+    {
+      "id": "88024a6c-9f5f-41a3-99db-3c137cdc9fb5",
+      "notes": [],
+      "status": "COMPLETED",
+      "outcome": "Verified live 21 Aug 2026: Connect at noble-moth-7a63b1b7-connect.vetra.io returns HTTP 200 and Switchboard at noble-moth-7a63b1b7-switchboard.vetra.io/graphql answers queries. Drive paperless (4b0fb668-19ed-4c8d-88d6-aaa7e513d2ad) persists with preferredEditor=billing. Postgres not independently verified - inferred from drive persistence on the hosted vetra.io deployment.",
+      "assignee": "Frank",
+      "parentId": "990ef577-29bf-4759-a27d-5e60bb585a4b",
+      "blockReason": null,
+      "description": "2.a Install Switchboard + Connect + Postgres",
+      "dependencies": []
+    },
+    {
+      "id": "7b68c3a3-6fea-48b7-94e2-c2fa944437bf",
+      "notes": [],
+      "status": "COMPLETED",
+      "outcome": "All three children delivered: drive app (v0.0.3, apps[billing]), invoice document editor (incl. issuer/payer modal, PDF compare view added 21 Aug), and the analytics processor (invoice-analytics + invoice-placement in the manifest, verified 28 Aug). The processor was the last open item; parent closed explicitly per the no-cascades rule.",
+      "assignee": "liberuum",
+      "parentId": "990ef577-29bf-4759-a27d-5e60bb585a4b",
+      "blockReason": null,
+      "description": "2.b Install powerhouse/invoice: drive app, document editors, analytics processor",
+      "dependencies": []
+    },
+    {
+      "id": "2c14ebfc-4b5e-4a64-a2dd-d6f6d29a5496",
+      "notes": [],
+      "status": "COMPLETED",
+      "outcome": "Delivered in @powerhousedao/paperless-invoice v0.0.3 (commit 4ed82ec, feat(editor): add Billing drive app). Billing drive app registered in powerhouse.manifest.json as apps[billing] for powerhouse/document-drive, with editors/billing/components/InvoiceTable/ providing the invoice list (table, rows, header stats, sections).",
+      "assignee": "liberuum",
+      "parentId": "7b68c3a3-6fea-48b7-94e2-c2fa944437bf",
+      "blockReason": null,
+      "description": "Drive app with invoice list",
+      "dependencies": []
+    },
+    {
+      "id": "8112b504-58d4-42e6-bd57-e0eab9a3e5d7",
+      "notes": [],
+      "status": "COMPLETED",
+      "outcome": "Delivered in @powerhousedao/paperless-invoice v0.0.3. invoice-editor registered in powerhouse.manifest.json for documentType powerhouse/invoice (commits 6eff6b9 port, 80eec13 publish). Includes PDF ingest, UBL import/export, line items, legal entity forms and validation. 172 tests passing across 8 files.",
+      "assignee": "liberuum",
+      "parentId": "7b68c3a3-6fea-48b7-94e2-c2fa944437bf",
+      "blockReason": null,
+      "description": "Invoice document editor",
+      "dependencies": []
+    },
+    {
+      "id": "ab822543-bdfe-40b7-b2d2-a295e992e853",
+      "notes": [],
+      "status": "COMPLETED",
+      "outcome": "Delivered via PartyFormModal (editors/invoice-editor/components/partyFormModal.tsx), mounted twice in editor.tsx: line 798 title=Issuer details bound to state.issuer, line 833 title=Payer details. Summary shown by partySummaryCard.tsx outside the modal.",
+      "assignee": "liberuum",
+      "parentId": "8112b504-58d4-42e6-bd57-e0eab9a3e5d7",
+      "blockReason": null,
+      "description": "Issuer/payer in modal",
+      "dependencies": []
+    },
+    {
+      "id": "1d83d81e-baa5-40bd-832f-f5adf8786d32",
+      "notes": [
+        {
+          "id": "a1f7c2d4-9b3e-4c81-8f26-5d0e7a913b44",
+          "note": "Verified NOT delivered as of 21 Aug 2026 against /home/p/Powerhouse/demos/paperless-invoice at commit 667c88d (v0.0.3). powerhouse.manifest.json declares \"processors\": [] (empty); processors/ contains only codegen boilerplate (index.ts, factory.ts, connect.ts, switchboard.ts) with no analytics processor; grep for \"analytics\" across editors/, processors/, document-models/, subgraphs/ and the manifests returns zero matches. This is the sole outstanding item under goal 2.b.",
+          "author": "knowledge-agent",
+          "timestamp": "2026-08-21T09:25:00.000Z"
+        }
+      ],
+      "status": "COMPLETED",
+      "outcome": "Verified delivered 28 Aug 2026 against github.com/powerhouse-inc/billing (pushed 27 Aug): powerhouse.manifest.json now declares processors invoice-analytics (documentTypes: powerhouse/invoice) and invoice-placement (powerhouse/invoice + powerhouse/document-drive). This is the same manifest that read processors: [] when this goal was verified NOT delivered on 21 Aug, so the delta is real, not a re-read.",
+      "assignee": "liberuum",
+      "parentId": "7b68c3a3-6fea-48b7-94e2-c2fa944437bf",
+      "blockReason": null,
+      "description": "Analytics processor",
+      "dependencies": []
+    },
+    {
+      "id": "c4fb39f7-8a78-4a97-bc35-f4c1e7c382ec",
+      "notes": [
+        {
+          "id": "3e6d1a74-5c82-4b19-9f30-7a4c8e2b0d51",
+          "note": "Moved TODO -> IN_PROGRESS on the 21 Aug 2026 working session. The integration is real code that runs: a powerhouse/paperless-sync document model, a reactor-side processor, a Connect editor and a paperless-webhook subgraph, all shipped together as one package in Frank's paperless-package repo. What keeps this goal open is distribution, not implementation - the package has only ever run on Frank's local Vetra reactor, so it is not installed on the deployed instance noble-moth-7a63b1b7 and no paperless integration document exists there yet. Closing this goal requires publishing the package and installing it on that instance.",
+          "author": "knowledge-agent",
+          "timestamp": "2026-08-21T15:30:00.000Z"
+        }
+      ],
+      "status": "COMPLETED",
+      "outcome": "Package built and proven on Frank's local Vetra reactor, not yet on the team's deployed instance. Exists: powerhouse/paperless-sync document model, reactor-side processor, Connect editor and paperless-webhook subgraph, all in Frank's paperless-package repo. Remaining: publish the package and install it on noble-moth-7a63b1b7 so the paperless integration document can be created there.",
+      "assignee": "Frank",
+      "parentId": "990ef577-29bf-4759-a27d-5e60bb585a4b",
+      "blockReason": null,
+      "description": "2.c Install powerhouse/paperless with the paperless integration document",
+      "dependencies": []
+    },
+    {
+      "id": "ffb86398-1f70-460a-8a26-81221b9cb6ac",
+      "notes": [
+        {
+          "id": "c9eff62a-907c-4edd-9fef-df604fa3d366",
+          "note": "Steps 3-5 are jointly owned by Frank and liberuum (20 Aug update). Recorded as the single string 'Frank & liberuum' because WBS assignee is one free-text field, not a list - so a filter on assignee == 'Frank' will NOT match these three goals.",
+          "author": "knowledge-agent",
+          "timestamp": "2026-08-20T10:50:28.807493Z"
+        },
+        {
+          "id": "b81f4c07-2d93-4e58-8a16-c5f0a9b3e7d2",
+          "note": "Moved TODO -> IN_PROGRESS on the 21 Aug 2026 working session. Both halves of this goal - set endpoint, configure webhook - are built and were exercised against the live Paperless instance. The endpoint is a subgraph shipped inside the integration package at /graphql/paperless-webhook, authenticated with a shared secret held per sync document rather than a single global token. The webhook side needs no manual Paperless admin work: the processor POSTs to /api/workflows/ to create a workflow with triggers Document Added and Document Updated and action type 4 (Webhook), and the call is idempotent on the workflow name, so re-running it does not accumulate duplicates. What remains is purely deployment-shaped: the workflow that was tested pointed at a localhost URL and was deleted afterwards, so it has to be recreated against the public URL of the deployed Switchboard. That depends on goal 2.c (c4fb39f7) being installed there first.",
+          "author": "knowledge-agent",
+          "timestamp": "2026-08-21T15:32:00.000Z"
+        }
+      ],
+      "status": "COMPLETED",
+      "outcome": "Demo delivered 28 Aug 2026, on the target date. Final form is https://github.com/powerhouse-inc/paperless-billing \u2014 a one-command Docker stack (docker-compose.yml + start.sh/start.ps1, ~2.6GB first pull): drop a PDF into Paperless (localhost:8000) and it comes out as a powerhouse/invoice document in a Billing drive in Connect (localhost:3000), fields extracted by an LLM via a user-supplied OpenRouter key. Note the delivered shape differs from what this goal earlier tracked: the outstanding item had been registering the Paperless workflow against the DEPLOYED noble-moth Switchboard, but the demo shipped as a self-contained installable stack instead \u2014 endpoint and webhook wire up inside the compose network, so no public-URL registration was needed. The installable-stack form matches the vault claim that the demo stack is itself the proof (note bb532634). paperless-billing is a NEW repo (created 27 Aug), separate from powerhouse-inc/billing, which still holds the invoice package source.",
+      "assignee": "Frank & liberuum",
+      "parentId": null,
+      "blockReason": null,
+      "description": "Step 3 \u2014 Enable the paperless integration: set endpoint, configure webhook",
+      "dependencies": []
+    },
+    {
+      "id": "1b27816c-3c3a-4684-869f-33977d7aa961",
+      "notes": [],
+      "status": "COMPLETED",
+      "outcome": null,
+      "assignee": "Frank & liberuum",
+      "parentId": null,
+      "blockReason": null,
+      "description": "Step 4 \u2014 Expense invoicing: select invoices/receipts and turn them into invoice line items",
+      "dependencies": []
+    },
+    {
+      "id": "f321f177-e63e-4b5f-b0af-976934e2f69f",
+      "notes": [],
+      "status": "COMPLETED",
+      "outcome": null,
+      "assignee": "Frank & liberuum",
+      "parentId": null,
+      "blockReason": null,
+      "description": "Step 5 \u2014 Automated payments",
+      "dependencies": []
+    },
+    {
+      "id": "2846a3b0-6737-4ecb-99e6-dab72b58dc6b",
+      "notes": [
+        {
+          "id": "a88a64dc-d1d8-4571-8a3e-d9970cef8f6b",
+          "note": "Timing split from the 20 Aug revision: demo building AND marketing materials finish by 28 Aug; outreach runs the week of 31 Aug. The project targetDate (28 Aug) covers demo + marketing only.",
+          "author": "knowledge-agent",
+          "timestamp": "2026-08-20T10:48:45.468075Z"
+        }
+      ],
+      "status": "TODO",
+      "outcome": null,
+      "assignee": null,
+      "parentId": null,
+      "blockReason": null,
+      "description": "Marketing materials \u2014 finished by 28 Aug alongside the demo",
+      "dependencies": []
+    },
+    {
+      "id": "5c9f56c0-9388-49e4-b96b-60b475626e33",
+      "notes": [],
+      "status": "TODO",
+      "outcome": null,
+      "assignee": null,
+      "parentId": "2846a3b0-6737-4ecb-99e6-dab72b58dc6b",
+      "blockReason": null,
+      "description": "YouTube recording of the demo",
+      "dependencies": []
+    },
+    {
+      "id": "f21925a2-3e06-4873-ab98-1e3b77d546f7",
+      "notes": [],
+      "status": "TODO",
+      "outcome": null,
+      "assignee": null,
+      "parentId": "2846a3b0-6737-4ecb-99e6-dab72b58dc6b",
+      "blockReason": null,
+      "description": "Blog post, LinkedIn post, tweet threads",
+      "dependencies": []
+    },
+    {
+      "id": "a7a8932e-71ec-4dc1-86bd-81e9edaeca88",
+      "notes": [
+        {
+          "id": "0402613c-e634-4ab9-a419-49af4d04336e",
+          "note": "Reference example: https://wz-it.com/en/expertises/paperless-ngx/ \u2014 a consultancy publishing its own Paperless-ngx expertise page. Doubles as an outreach target and as evidence the target profile exists.",
+          "author": "knowledge-agent",
+          "timestamp": "2026-08-20T10:54:31.097464Z"
+        }
+      ],
+      "status": "TODO",
+      "outcome": null,
+      "assignee": "Teep",
+      "parentId": "2846a3b0-6737-4ecb-99e6-dab72b58dc6b",
+      "blockReason": null,
+      "description": "Enterprise landing pages",
+      "dependencies": []
+    },
+    {
+      "id": "69d33dfe-3624-4792-8f49-741a0eea289e",
+      "notes": [],
+      "status": "TODO",
+      "outcome": null,
+      "assignee": "Teep",
+      "parentId": "a7a8932e-71ec-4dc1-86bd-81e9edaeca88",
+      "blockReason": null,
+      "description": "for SEO / agent traffic",
+      "dependencies": []
+    },
+    {
+      "id": "38b32fb0-3b5e-4135-a6a5-e0d8274b8790",
+      "notes": [],
+      "status": "TODO",
+      "outcome": null,
+      "assignee": "Teep",
+      "parentId": "a7a8932e-71ec-4dc1-86bd-81e9edaeca88",
+      "blockReason": null,
+      "description": "for sharing with consultancy targets",
+      "dependencies": []
+    },
+    {
+      "id": "8f1514c3-1a89-4ad4-8a28-77132e76fff5",
+      "notes": [
+        {
+          "id": "5f3f8abf-7416-458d-afbe-c8dbdd3ba322",
+          "note": "Owner UNCONFIRMED. The shared document has @apeiron@powerhouse.inc commented against the outreach block, but the update stated only that Frank and liberuum are unchanged. Left unassigned pending confirmation.",
+          "author": "knowledge-agent",
+          "timestamp": "2026-08-20T10:48:45.321922Z"
+        },
+        {
+          "id": "0861e8ec-c918-463f-a594-af54326ffd6d",
+          "note": "Owner CONFIRMED as Apeiron (20 Aug). Supersedes the earlier note recording it as unconfirmed.",
+          "author": "knowledge-agent",
+          "timestamp": "2026-08-20T10:54:32.001247Z"
+        },
+        {
+          "id": "b4e81c37-2a56-4d09-9f13-6c7e0a582d91",
+          "note": "Closed 21 Aug 2026 on liberuum report; project deliverable d63dfd47 set to DELIVERED the same day. TIMING DISCREPANCY UNRESOLVED: the goal and deliverable are both titled \"week of 31 Aug\" but were closed 21 Aug, ten days before that window opens. Either the scheduled window is stale, or prep was completed and the outreach itself still runs 31 Aug. Revisit before reporting outreach results.",
+          "author": "knowledge-agent",
+          "timestamp": "2026-08-21T09:45:00.000Z"
+        }
+      ],
+      "status": "COMPLETED",
+      "outcome": "Reported complete by liberuum 21 Aug 2026, alongside project deliverable d63dfd47 being set to DELIVERED. Owner Apeiron. No partner list, contact records or per-partner hooks are stored in the vault - completion rests on the report, not on recorded artifacts.",
+      "assignee": "Apeiron",
+      "parentId": null,
+      "blockReason": null,
+      "description": "Outreach to consultancy partners \u2014 week of 31 Aug",
+      "dependencies": []
+    },
+    {
+      "id": "3669f304-588c-4652-b9c6-819195148d3c",
+      "notes": [],
+      "status": "COMPLETED",
+      "outcome": "Reported complete by liberuum 21 Aug 2026 as part of the consultancy partner outreach block. No artifact recorded in the vault.",
+      "assignee": "Apeiron",
+      "parentId": "8f1514c3-1a89-4ad4-8a28-77132e76fff5",
+      "blockReason": null,
+      "description": "Select partners for this specific use case",
+      "dependencies": []
+    },
+    {
+      "id": "b33a1168-48cf-49d9-a129-8f875aa9024d",
+      "notes": [],
+      "status": "COMPLETED",
+      "outcome": "Reported complete by liberuum 21 Aug 2026 as part of the consultancy partner outreach block. No artifact recorded in the vault.",
+      "assignee": "Apeiron",
+      "parentId": "8f1514c3-1a89-4ad4-8a28-77132e76fff5",
+      "blockReason": null,
+      "description": "Link to their work / writings / talk about paperless",
+      "dependencies": []
+    },
+    {
+      "id": "e6b32add-8844-46a6-805a-503696350553",
+      "notes": [],
+      "status": "COMPLETED",
+      "outcome": "Reported complete by liberuum 21 Aug 2026 as part of the consultancy partner outreach block. No artifact recorded in the vault.",
+      "assignee": "Apeiron",
+      "parentId": "8f1514c3-1a89-4ad4-8a28-77132e76fff5",
+      "blockReason": null,
+      "description": "Identify best way of contacting + contact person",
+      "dependencies": []
+    },
+    {
+      "id": "703d0d64-e7a2-4084-9cac-56daccbbd0fa",
+      "notes": [],
+      "status": "COMPLETED",
+      "outcome": "Reported complete by liberuum 21 Aug 2026 as part of the consultancy partner outreach block. No artifact recorded in the vault.",
+      "assignee": "Apeiron",
+      "parentId": "8f1514c3-1a89-4ad4-8a28-77132e76fff5",
+      "blockReason": null,
+      "description": "Document the specific hook per partner (LinkedIn)",
+      "dependencies": []
+    },
+    {
+      "id": "c1a7f403-8d92-4b5e-9a61-3f7d20e84c15",
+      "notes": [
+        {
+          "id": "b7a34e19-5c82-4d61-9f07-3a1e6b05c724",
+          "note": "Scope raised by liberuum on 21 Aug 2026 as follow-on work to the delivered paperless-invoice package. Filed as a top-level block rather than under goal 2.b, because 2.b covers installing the package (drive app, editors, analytics processor) and is already recorded as 3-of-4 delivered; these are new feature requests, not part of that install scope. Re-parent under 2.b if they should gate its completion. NOTE: these 5 goals raise the WBS denominator from 26 to 31, so displayed progress drops from 50% to 42% without any work being undone.",
+          "author": "knowledge-agent",
+          "timestamp": "2026-08-21T09:50:00.000Z"
+        }
+      ],
+      "status": "COMPLETED",
+      "outcome": "Pkg is published ready to be deployed by Frank.",
+      "assignee": "liberuum",
+      "parentId": null,
+      "blockReason": null,
+      "description": "Paperless-invoice package refinements \u2014 liberuum backlog raised 21 Aug 2026",
+      "dependencies": []
+    },
+    {
+      "id": "d2b8e514-9ea3-4c6f-8b72-4a8e31f95d26",
+      "notes": [
+        {
+          "id": "0c063fbe-56e1-42a0-b885-4927652fd735",
+          "note": "Canonical repo is now https://github.com/powerhouse-inc/billing and the npm package is @powerhousedao/billing. The old powerhouse-inc/paperlesss-invoice URL (3-s typo) redirects. Earlier outcomes on 'Drive app with invoice list' and 'Invoice document editor' still name @powerhousedao/paperless-invoice v0.0.3 and were deliberately NOT rewritten: that version really was published under the old name, so editing them would falsify the delivery record. Also stale by the same logic: the analytics-processor verification note cites local path /home/p/Powerhouse/demos/paperless-invoice, which moved to /home/p/Powerhouse/demos/billing.",
+          "author": "knowledge-agent",
+          "timestamp": "2026-08-21T11:45:00.000Z"
+        }
+      ],
+      "status": "COMPLETED",
+      "outcome": "Completed 21 Aug 2026. package.json + powerhouse.manifest.json renamed to @powerhousedao/billing; bun.lock workspace name patched and validated with bun install --frozen-lockfile (zero paperless refs remain); GitHub repo renamed powerhouse-inc/paperlesss-invoice -> powerhouse-inc/billing (old 3-s typo name now redirects) and git remote auto-updated by gh; local directory moved /home/p/Powerhouse/demos/paperless-invoice -> /demos/billing. Verified after move: npm run tsc exit 0, 172 tests passing across 8 files, git history intact at 667c88d. NOT part of this goal: README.md is still the boilerplate scaffold, and package.json still lacks description/repository fields.",
+      "assignee": "liberuum",
+      "parentId": "c1a7f403-8d92-4b5e-9a61-3f7d20e84c15",
+      "blockReason": null,
+      "description": "Rename repo and npm package from paperless-invoice to billing (package.json + powerhouse.manifest.json both read @powerhousedao/paperless-invoice at v0.0.3)",
+      "dependencies": []
+    },
+    {
+      "id": "e3c9f625-af14-4d70-9c83-5b9f42a06e37",
+      "notes": [
+        {
+          "id": "5d75f811-7cf4-4346-a30e-9b7c83ebd3bd",
+          "note": "Prototype built 21 Aug 2026, awaiting liberuum visual review - NOT accepted yet. Approach agreed beforehand: react-pdf (pdfjs-dist 5.4.296) + hybrid pane. Three new components in demos/billing: components/pdfPane.tsx (canvas render, one page at a time, zoom-only via +/-/wheel), components/splitPane.tsx (draggable divider, 30-70pct clamp, localStorage-persisted, keyboard accessible), components/paymentDetailsCard.tsx (surfaces bank/intermediary/wallet routing, which the PDF prints but the editor previously only showed inside the party modal). Key decision: NOT an iframe - the browser's built-in PDF viewer owns an iframe and its toolbar cannot be reliably suppressed (#toolbar=0 is a non-standard Chromium hint Firefox ignores), so canvas rendering is what makes zoom-only possible. PDFReviewModal left untouched because ingestPDF.tsx and timeTrackingReportButton.tsx also use it; only the View-Uploaded-Invoice path switched to the split view, and it still falls back to that modal below 1000px. Body JSX extracted to an invoiceBody value and reused in both layouts, so the pane is fully editable with one source of truth - the existing section grids are already auto-fit and collapse to one column unaided. Gates: tsc clean, 172/172 tests, zero lint findings on the new files, editor.tsx lint unchanged at 5 pre-existing warnings, ph-cli build emits the worker locally at dist/browser/assets/pdf.worker.min-*.mjs (no CDN). Known gaps: line-items table h-scrolls in the narrow pane rather than becoming cards (LineItemCard + LineItemMobileModal exist as dead code and are the intended upgrade); plain-wheel zoom preempts scroll-to-pan when zoomed in; pane height uses a 60vh floor rather than computed header offsets.",
+          "author": "knowledge-agent",
+          "timestamp": "2026-08-21T14:10:00.000Z"
+        },
+        {
+          "id": "d6669b6f-86dd-4aec-80b6-c37e9a2175b6",
+          "note": "Correction to the previous note after liberuum review, 21 Aug 2026: the PDF pane no longer shows one page at a time and no longer zooms on the scroll wheel. Both were wrong for the actual use case - in a multi-page invoice the wheel gesture is wanted for reaching the next page, and wheel-zoom stole it. pdfPane.tsx now renders every page in one continuous vertical scroll (per-page 'n / N' badge in the corner when multi-page), the wheel is left entirely to native scrolling, and zoom is explicit via the -/+ buttons with the percentage button resetting to fit-width. This also retires the 'plain-wheel zoom preempts scroll-to-pan' gap listed in the previous note. Note one consequence: react-pdf does not virtualise, so every page is canvas-rendered up front - fine for invoices (1-3 pages), worth revisiting if long attachments ever land here. Gates re-run after the change: tsc clean, 172/172 tests, zero lint findings on pdfPane.tsx, ph-cli build still emits the worker locally.",
+          "author": "knowledge-agent",
+          "timestamp": "2026-08-21T14:30:00.000Z"
+        }
+      ],
+      "status": "COMPLETED",
+      "outcome": "Shipped 21 Aug 2026 in commit 2baec9c (branch feat/invoice-pdf-compare-view, powerhouse-inc/billing), reviewed and accepted by liberuum. Four new components: pdfPane (bounded iframe box - native zoom/download/print, scrolls internally so a multi-page PDF never stretches the editor), splitPane (draggable divider clamped 30-70pct, localStorage-persisted, keyboard accessible, fillViewport measures its own offset instead of guessing 100vh minus header), lineItemsCompact (dense description+total rows replacing the 8-column table, detail behind Edit), paymentDetails (bank/intermediary/wallet routing folded into each party card behind a caret). Body JSX extracted to an invoiceBody value reused by both layouts, so the pane is fully editable with one source of truth. Gates: tsc clean, 172/172 tests, zero lint findings on new files, ph-cli build clean. Untouched: full-width table, full-screen sheet, PDFReviewModal (still used by ingestPDF + time-tracking report).",
+      "assignee": "liberuum",
+      "parentId": "c1a7f403-8d92-4b5e-9a61-3f7d20e84c15",
+      "blockReason": null,
+      "description": "Comparison view: show the uploaded PDF side by side with the invoice document data for verification",
+      "dependencies": []
+    },
+    {
+      "id": "f4d0a736-b025-4e81-ad94-6c0a53b17f48",
+      "notes": [],
+      "status": "COMPLETED",
+      "outcome": "Shipped 21 Aug 2026 in commit 2baec9c on branch feat/invoice-pdf-compare-view (powerhouse-inc/billing). View Uploaded Invoice is now a toggle with aria-pressed, label flipping to Hide Uploaded Invoice, opening the split compare view rather than the modal. Falls back to the original PDFReviewModal below 1000px viewport width, including when the window is shrunk while the split is open. Closing releases the object URL via viewer.close().",
+      "assignee": "liberuum",
+      "parentId": "e3c9f625-af14-4d70-9c83-5b9f42a06e37",
+      "blockReason": null,
+      "description": "\"View upload\" becomes a toggle that opens the comparison view (currently a one-way \"View Uploaded Invoice\" button opening PDFReviewModal)",
+      "dependencies": []
+    },
+    {
+      "id": "a5e1b847-c136-4f92-be05-7d1b64c28059",
+      "notes": [
+        {
+          "id": "c6f29a58-d247-4a03-bf16-8e2c75d3910a",
+          "note": "Requested order recorded verbatim from liberuum 21 Aug 2026: \"Invoice, nr, status, currency, doc, export, view upload\". Current header order in editors/billing/components/InvoiceTable/InvoiceTable.tsx is: checkbox, Invoice, Invoice No., Issue Date, Due Date, Currency, Amount, Exported. AMBIGUITIES TO CONFIRM: (1) does \"status\" mean the existing Exported column or the invoice lifecycle status; (2) what is the \"doc\" column - link to the source document?; (3) Issue Date, Due Date and Amount are absent from the requested order - drop them or keep them unlisted? A reference screenshot was mentioned (image.png) but did not reach the agent, so layout details are unconfirmed.",
+          "author": "knowledge-agent",
+          "timestamp": "2026-08-21T09:50:00.000Z"
+        }
+      ],
+      "status": "COMPLETED",
+      "outcome": "Shipped 21 Aug 2026 in commit 2baec9c, confirmed visually by liberuum. Navbar is now two non-wrapping clusters: left = Invoice title, invoice-number input, status, currency; right = Export File then View/Upload. SCOPE CORRECTION: this goal was originally worded as reordering the invoice TABLE columns (InvoiceTable.tsx) and its earlier note cited that header order; liberuum clarified the intent was the editor navbar in editor.tsx, which is what was delivered. The InvoiceTable column order was NOT changed and remains as before. The requested doc column/button was not added - no such control exists in the navbar and none was invented. A separate defect fixed en route: the currency selector carried an inner w-full that made it span the row and wrap onto a second line once moved; bounded to w-36.",
+      "assignee": "liberuum",
+      "parentId": "c1a7f403-8d92-4b5e-9a61-3f7d20e84c15",
+      "blockReason": null,
+      "description": "Reorder the invoice-editor NAVBAR controls: Invoice, nr, status, currency on the left; file actions pushed right with export second from right and view upload far right",
+      "dependencies": []
+    },
+    {
+      "id": "caae70a4-c191-4086-b27a-bf3642459e9f",
+      "notes": [
+        {
+          "id": "bf5afbee-96b9-4c59-b0f3-4b2eb3198c47",
+          "note": "Found 21 Aug 2026 while testing the compare view with a 10-page, 195-line-item sample invoice. Root cause proven, not inferred: document-models/invoice/v1/src/reducers/items.ts:133 validatePrices uses EPSILON=0.00001, which is ~1e-5 on values that real invoices state to 2 decimals. Worked example: 19.99 at 21% tax -> inclusive 24.19 -> 24.19/1.21 = 19.9917, which is 8.3e-4 away from 19.99, i.e. 83x the tolerance, so the item is rejected. Items only survive when the inclusive price divides back cleanly. This is exactly what liberuum observed: the extraction modal listed 10 line items, only 2 landed in state, and BOTH survivors were the only ones with taxPercent=0 (where inclusive==exclusive so all four checks hold trivially). Second half of the defect: editors/invoice-editor/ingestPDF.tsx:95 dispatches addLineItem in a forEach and never inspects the result, so the reducer throw is recorded on the operation as .error, state is left unchanged, and the UI reports success. Eight items vanished with no error surfaced anywhere. Suggested fix: widen EPSILON to a half-cent (0.005) or compare against rounded values, AND surface per-item failures from the ingest loop. Deliberately NOT attempted here: this is a document-model reducer, so per the repo CLAUDE.md it needs the two-step MCP process plus reducer coverage at or above 95pct, and it was liberuum's call to make. Note this matters in production, not just for synthetic fixtures - real invoices carry rounded taxed prices.",
+          "author": "knowledge-agent",
+          "timestamp": "2026-08-21T16:05:00.000Z"
+        }
+      ],
+      "status": "COMPLETED",
+      "outcome": "Fixed 21 Aug 2026 in commit e6541f9 (branch feat/invoice-pdf-compare-view). validatePrices now compares money in cents with tolerance scaling by quantity, because a unit price rounded by up to a cent becomes a line total off by up to a cent per unit. applyInvariants runs on add as well as edit and is now unconditional - any change-detection threshold lets drift smaller than itself persist into state, which is how a 9e-6 per-unit discrepancy survived and resurfaced as a multi-unit gap; re-deriving every time keeps stored values exactly consistent with unitPriceTaxExcl and taxPercent, which is what makes liberal validation safe. The fourth check was deleted as provably dead: comparing the two totals differs by qty*|excl-incl/(1+rate)| against a CENT*qty tolerance, so it fired on exactly the same condition as the unit-price check. Second half also fixed: applyExtractedInvoice now returns a report and console.warns anything skipped, so silent loss is visible, and its line-item fields are narrowed off any (which removed 33 pre-existing lint findings, 152 -> 119). Gates: tsc clean, 175/175 tests (the amplification test rewritten to assert normalisation instead of rejection, plus 3 regression tests including the 19.99-at-21pct case), reducer coverage 100pct on statements/branches/functions/lines - reached by deleting the unreachable branch, not by testing around it. NOTE: no MCP/model-JSON step was needed - invoice.json carries an empty reducer body for ADD_LINE_ITEM, so src/reducers/items.ts is the sole source of truth for this logic.",
+      "assignee": "liberuum",
+      "parentId": "c1a7f403-8d92-4b5e-9a61-3f7d20e84c15",
+      "blockReason": null,
+      "description": "validatePrices EPSILON=0.00001 silently drops line items with realistically-rounded taxed prices, and ingestPDF swallows the reducer errors (10 extracted -> 2 stored)",
+      "dependencies": []
+    },
+    {
+      "id": "b192edd8-ddfd-4846-8702-a1e86dd03c03",
+      "notes": [
+        {
+          "id": "d375b1f0-de52-4ef8-aaf4-7d5f5dcc48d7",
+          "note": "Surfaced 21 Aug 2026 when generating the sample invoice PDF: the run dumped a bank object to stdout. Source is editors/invoice-editor/InvoicePDF.tsx:738, console.log('paymentRouting', paymentRouting.bank) - a leftover debug statement on the PDF export path, so it fires for every export in production and prints account number, BIC/SWIFT and beneficiary to the console. One-line deletion. Left untouched deliberately: unrelated to the compare-view work, and folding a stray edit into that diff would have muddied review.",
+          "author": "knowledge-agent",
+          "timestamp": "2026-08-21T16:07:00.000Z"
+        }
+      ],
+      "status": "COMPLETED",
+      "outcome": "Fixed 21 Aug 2026 in commit e6541f9. Deleted console.log('paymentRouting', paymentRouting.bank) from editors/invoice-editor/InvoicePDF.tsx:738, which fired on every PDF export and printed the issuer's account number, BIC/SWIFT and beneficiary to the browser console. Verified zero console.log statements remain in that file.",
+      "assignee": "liberuum",
+      "parentId": "c1a7f403-8d92-4b5e-9a61-3f7d20e84c15",
+      "blockReason": null,
+      "description": "Remove debug console.log at InvoicePDF.tsx:738 - it logs issuer bank details to the console on every PDF export",
+      "dependencies": []
+    }
+  ],
+  "owner": null,
+  "projectRef": "9ce6d087-4116-437d-a724-e18967437af5",
+  "references": [
+    "https://github.com/powerhouse-inc/paperless-billing",
+    "https://github.com/powerhouse-inc/billing"
+  ],
+  "links": []
+}

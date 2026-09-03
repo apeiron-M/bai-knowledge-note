@@ -1,0 +1,134 @@
+{
+  "links": [
+    {
+      "id": "lnk-00147bfc-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "00147bfc-06e3-4c4b-975e-fa3220726fb2",
+      "targetTitle": "editors-use-react-hooks-for-document-state"
+    },
+    {
+      "id": "lnk-37987f5c-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "37987f5c-8193-493a-96f6-7d0ab6d25287",
+      "targetTitle": "dispatch-accepts-onerrors-callback"
+    },
+    {
+      "id": "lnk-8ecff716-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "8ecff716-905e-4cac-a435-80e6aa8f0849",
+      "targetTitle": "node-actions-hook-drive-operations"
+    },
+    {
+      "id": "lnk-90d6a737-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "90d6a737-9bc9-43e9-9eb8-6a6a33d20786",
+      "targetTitle": "useselecteddocument-hook-is-auto-generated-per-document-model"
+    },
+    {
+      "id": "lnk-43733227-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "43733227-b9d3-424b-8fa0-83dda8a2001b",
+      "targetTitle": "builder-platform-enables-creation-of-reusable-modules-with-value-sharing"
+    },
+    {
+      "id": "lnk-9f62d615-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "9f62d615-9bb6-4683-98d8-5a20316099df",
+      "targetTitle": "model-editor-wiring"
+    },
+    {
+      "id": "lnk-1a932db8-bui",
+      "linkType": "BUILDS_ON",
+      "targetDocumentId": "1a932db8-245d-40f6-bfd8-eea728d9615e",
+      "targetTitle": "reactor-browser-hooks-provide-document-state"
+    },
+    {
+      "id": "lnk-efb965b9-bui",
+      "linkType": "BUILDS_ON",
+      "targetDocumentId": "efb965b9-c4df-473a-bf8b-c087c2ceae7f",
+      "targetTitle": "document-model-three-components"
+    },
+    {
+      "id": "lnk-5209455a-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "5209455a-7f8f-4dc6-8bdd-8a32b0d181e6",
+      "targetTitle": "Academy \u203a Build \u203a ManualTodoTutorial \u203a Build a to-do list editor",
+      "reason": "Backing page found by content match in the v6.2.2-dev.74 source backfill \u2014 identifiers state.global from the claim appear in this page (text identical at v6.2.2-dev.47 and v6.2.2-dev.74); attribution, not the original extraction record",
+      "confidence": "grounded"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Generated hooks like useSelectedDocument connect React editors to document state and dispatch",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "13e13970-c68d-4d4f-b970-cb5620f96542",
+      "name": "editors",
+      "topicDocumentId": null
+    },
+    {
+      "id": "d3086823-9ed8-4fe2-9fe9-373edeeca4ce",
+      "name": "react-hooks",
+      "topicDocumentId": null
+    },
+    {
+      "id": "fbac14b6-c4e1-4803-b303-f2494310f05c",
+      "name": "state-management",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "When Powerhouse generates code for a document model, it creates React hooks for editor integration. For a `TodoList` model, the generated hook is `useSelectedTodoListDocument`.\n\nUsage pattern:\n```tsx\nconst [selectedTodoList, dispatch] = useSelectedTodoListDocument();\n```\n\nThis provides:\n1. **Document state** (`selectedTodoList`) - The current document including `state.global`, `name`, `operations`, etc.\n2. **Dispatch function** - Send actions to the reducer to modify the document\n\nThe dispatch function works with generated action creators:\n```tsx\nimport { addTodoItem, updateTodoItem, deleteTodoItem } from \"...\";\n\ndispatch(addTodoItem({ text: \"Buy groceries\" }));\ndispatch(updateTodoItem({ id: itemId, checked: true }));\ndispatch(deleteTodoItem({ id: itemId }));\n```\n\nThis follows React's `useReducer` pattern. Any component can use the same hook - you don't need to be in the parent component to dispatch updates. The hook automatically connects to the currently selected document.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": "v6.2.2-dev.74",
+  "computes": null,
+  "filePath": "apps/academy/docs/academy/03-Build/01-ManualTodoTutorial/05-BuildToDoListEditor.md",
+  "noteType": "PATTERN",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "knowledge-agent",
+    "createdAt": "2026-04-02T12:00:00.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-09-02T21:33:14.069Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "The hook returns [document, dispatch] \u2014 the first element is the whole document (state.global, header, operations), not just the state slice.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "e17caee6-b3d4-48c3-9942-d328c68656f3",
+      "actor": "claude",
+      "comment": "Knowledge registered against powerhouse v6.2.2-dev.47",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-14T12:00:00.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "f1fb3dbd-692b-4eef-b29f-fa55a3601649",
+      "actor": "liberuum",
+      "comment": "Canonical as of powerhouse v6.2.2-dev.47",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-14T12:00:00.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

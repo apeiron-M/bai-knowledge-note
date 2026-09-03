@@ -1,0 +1,354 @@
+[
+  {
+    "index": 0,
+    "hash": "",
+    "timestampUtcMs": "2026-08-14T12:07:18.236Z",
+    "action": {
+      "type": "CREATE_DOCUMENT",
+      "input": {
+        "meta": {},
+        "name": "multiple-editors-per-document-model",
+        "slug": "",
+        "model": "bai/knowledge-note",
+        "branch": "main",
+        "signing": {
+          "nonce": "",
+          "publicKey": {},
+          "signature": "191e8c75-ad62-45ce-a50a-8b0e71ffcc24",
+          "documentType": "bai/knowledge-note",
+          "createdAtUtcIso": "2026-08-14T12:07:18.236Z"
+        },
+        "version": 0,
+        "documentId": "191e8c75-ad62-45ce-a50a-8b0e71ffcc24",
+        "protocolVersions": {
+          "base-reducer": 2
+        }
+      },
+      "timestampUtcMs": "2026-08-14T12:07:18.236Z"
+    }
+  },
+  {
+    "index": 0,
+    "hash": "XWmZkIzdx39q/wmgXxoYcrLRJI8=",
+    "timestampUtcMs": "2026-08-14T12:35:25.000Z",
+    "action": {
+      "type": "SET_TITLE",
+      "input": {
+        "title": "One document model can have several registered editors, such as a viewer and a full editor",
+        "updatedAt": "2026-08-14T12:35:25.000Z"
+      },
+      "timestampUtcMs": "2026-08-14T12:35:25.000Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "",
+    "timestampUtcMs": "2026-08-14T12:07:18.236Z",
+    "action": {
+      "type": "UPGRADE_DOCUMENT",
+      "input": {
+        "model": "bai/knowledge-note",
+        "toVersion": 1,
+        "documentId": "191e8c75-ad62-45ce-a50a-8b0e71ffcc24",
+        "fromVersion": 0,
+        "initialState": {
+          "auth": {
+            "grants": [],
+            "version": 0
+          },
+          "local": {
+            "lastViewedAt": null,
+            "personalTags": []
+          },
+          "global": {
+            "links": [],
+            "model": null,
+            "scope": null,
+            "title": null,
+            "editor": null,
+            "inputs": [],
+            "models": [],
+            "status": "DRAFT",
+            "topics": [],
+            "content": null,
+            "context": null,
+            "modelId": null,
+            "modules": [],
+            "outputs": [],
+            "version": null,
+            "computes": null,
+            "filePath": null,
+            "noteType": null,
+            "severity": null,
+            "hooksUsed": [],
+            "rootCause": null,
+            "confidence": null,
+            "consumedBy": [],
+            "provenance": null,
+            "sourceType": null,
+            "targetType": null,
+            "cardinality": null,
+            "description": null,
+            "alternatives": [],
+            "consequences": [],
+            "errorMessage": null,
+            "relationType": null,
+            "correctPattern": null,
+            "decisionStatus": null,
+            "dispatchTargets": [],
+            "lifecycleEvents": []
+          },
+          "document": {
+            "hash": {
+              "encoding": "base64",
+              "algorithm": "sha1"
+            },
+            "version": 1
+          }
+        }
+      },
+      "timestampUtcMs": "2026-08-14T12:07:18.236Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "NKV7D1HvAIyStPYuo6iiPGeEIro=",
+    "timestampUtcMs": "2026-08-14T12:35:25.000Z",
+    "action": {
+      "type": "SET_DESCRIPTION",
+      "input": {
+        "updatedAt": "2026-08-14T12:35:25.000Z",
+        "description": "Editors are separate React components registered against the same document type; a viewer renders the same document-engineering components in their disabled, read-only state."
+      },
+      "timestampUtcMs": "2026-08-14T12:35:25.000Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "",
+    "timestampUtcMs": "2026-08-14T12:37:48.800Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "191e8c75-ad62-45ce-a50a-8b0e71ffcc24",
+        "targetId": "1adbf0db-0ab1-4801-9ee9-cbbc9a875beb",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-08-14T12:37:48.800Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "vyvA2FqdJzal/P0Zt9vOwTLX0Ic=",
+    "timestampUtcMs": "2026-08-14T12:35:25.000Z",
+    "action": {
+      "type": "SET_NOTE_TYPE",
+      "input": {
+        "noteType": "CONCEPT",
+        "updatedAt": "2026-08-14T12:35:25.000Z"
+      },
+      "timestampUtcMs": "2026-08-14T12:35:25.000Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "",
+    "timestampUtcMs": "2026-08-14T12:37:48.883Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "191e8c75-ad62-45ce-a50a-8b0e71ffcc24",
+        "targetId": "9cad3b48-9640-4de2-a559-002468eda15d",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-08-14T12:37:48.883Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "YHzGifpWPsLSupJCOxiT3l9JLFQ=",
+    "timestampUtcMs": "2026-08-14T12:35:25.000Z",
+    "action": {
+      "type": "SET_CONTENT",
+      "input": {
+        "content": "Nothing about registration is one-to-one. An `EditorModule` declares `documentTypes: string[]`, and several modules may name the same type \u2014 so a budget document can have both a simple viewer and a full spreadsheet-style editor, as two independent React components against one model.\n\nThe split follows a difference in audience, not in data:\n\n- **Document editor** \u2014 used by one or more authorised users to make data entries and update state. Its value is structured input for collaboration inside a group.\n- **Document viewer** \u2014 permits no modification. Its value is transparency: informing a broader group or the public about the state of a document.\n\nA viewer does not have to mirror the editor one-to-one. The data presented can be a deliberate selection, or filtered to surface a particular insight \u2014 a viewer is a curated read, not a disabled clone.\n\nThat said, the disabled clone is cheap, because the component library was designed for it. The same `document-engineering` component used in an editor has a **disabled state** for viewer contexts, so the read-only variant reuses the identical components rather than needing a parallel set of display-only ones. The recommended order is editor first, viewer second: build the editor, then decide which viewer format is actually useful.\n\nThis also explains why `config.name` exists on `EditorModule` alongside `config.id`. When one document type resolves to several editors, the host needs a human-readable label to distinguish them \u2014 an id alone is enough to register a component but not enough to let anyone choose between two.\n\nMultiple editors are also the practical migration path for a redesign: register the new editor alongside the old one against the same document type instead of rewriting in place, since neither the document model nor its stored operation log is touched by editor changes.\n\n_Source: apps/academy/docs/academy/02-Learn/04-editors/01-what-is-an-editor.mdx and 04-Reference/05-EditorsUI/00-DocumentEngineering.md, with packages/shared/document-model/types.ts for the EditorModule shape (Powerhouse v6.2.2-dev.45)._",
+        "updatedAt": "2026-08-14T12:35:25.000Z"
+      },
+      "timestampUtcMs": "2026-08-14T12:35:25.000Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "",
+    "timestampUtcMs": "2026-08-14T12:37:48.976Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "191e8c75-ad62-45ce-a50a-8b0e71ffcc24",
+        "targetId": "54d22335-80b5-43e1-9145-5aa556218b4c",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-08-14T12:37:48.976Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "ru3DVgOVMp+5r2kIDVe8phNL2NI=",
+    "timestampUtcMs": "2026-08-14T12:35:25.000Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "version",
+        "value": "v6.2.2-dev.44",
+        "updatedAt": "2026-08-14T12:35:25.000Z"
+      },
+      "timestampUtcMs": "2026-08-14T12:35:25.000Z"
+    }
+  },
+  {
+    "index": 5,
+    "hash": "",
+    "timestampUtcMs": "2026-09-02T21:39:17.365Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "metadata": {
+          "reason": "Backing page found by content match in the v6.2.2-dev.74 source backfill \u2014 identifiers viewer from the claim appear in this page (text identical at v6.2.2-dev.47 and v6.2.2-dev.74); attribution, not the original extraction record",
+          "confidence": "grounded"
+        },
+        "sourceId": "191e8c75-ad62-45ce-a50a-8b0e71ffcc24",
+        "targetId": "b90b1f03-7ba7-413d-a7e1-eea8ab494646",
+        "relationshipType": "DERIVED_FROM"
+      },
+      "timestampUtcMs": "2026-09-02T21:39:17.365Z"
+    }
+  },
+  {
+    "index": 5,
+    "hash": "LrSvNeW3BuVM533eZnGn9hX66s4=",
+    "timestampUtcMs": "2026-08-14T12:35:25.000Z",
+    "action": {
+      "type": "SET_PROVENANCE",
+      "input": {
+        "author": "claude",
+        "createdAt": "2026-08-13T14:38:16.000Z",
+        "sourceOrigin": "DERIVED"
+      },
+      "timestampUtcMs": "2026-08-14T12:35:25.000Z"
+    }
+  },
+  {
+    "index": 6,
+    "hash": "CxCd7rM27aE/nItG3YKkLapn7Sk=",
+    "timestampUtcMs": "2026-08-14T12:35:25.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "b5e927ed-aedb-4a4d-a443-f417600c748b",
+        "name": "editors",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-08-14T12:35:25.000Z"
+    }
+  },
+  {
+    "index": 7,
+    "hash": "MwA/gfHCwuJXAiP+os5xvc5Wg7I=",
+    "timestampUtcMs": "2026-08-14T12:35:25.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "6b8e3724-41df-42ec-9887-43f61867dcd0",
+        "name": "document-viewer",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-08-14T12:35:25.000Z"
+    }
+  },
+  {
+    "index": 8,
+    "hash": "1elPzDv1wOF2lffbBWxcmThbfD0=",
+    "timestampUtcMs": "2026-08-14T12:35:25.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "f24d42c2-848b-4ee5-b55d-1dbec5dada75",
+        "name": "architecture",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-08-14T12:35:25.000Z"
+    }
+  },
+  {
+    "index": 9,
+    "hash": "7V0tW0HD1NVUfVbQspO0OVbNSyc=",
+    "timestampUtcMs": "2026-08-14T14:36:48.000Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "version",
+        "value": "v6.2.2-dev.47",
+        "updatedAt": "2026-08-14T12:00:00.000Z"
+      },
+      "timestampUtcMs": "2026-08-14T14:36:48.000Z"
+    }
+  },
+  {
+    "index": 10,
+    "hash": "E9JIH4E57zuReve2MbmsFDaHjtk=",
+    "timestampUtcMs": "2026-08-14T14:36:48.000Z",
+    "action": {
+      "type": "SUBMIT_FOR_REVIEW",
+      "input": {
+        "id": "2f0fa833-6aec-4f06-afbe-0f7aa28b3945",
+        "actor": "claude",
+        "comment": "Knowledge registered against powerhouse v6.2.2-dev.47",
+        "timestamp": "2026-08-14T12:00:00.000Z"
+      },
+      "timestampUtcMs": "2026-08-14T14:36:48.000Z"
+    }
+  },
+  {
+    "index": 11,
+    "hash": "ys0VVk/FAgShmh/aDG1I7YQBc7w=",
+    "timestampUtcMs": "2026-08-14T14:36:48.000Z",
+    "action": {
+      "type": "APPROVE_NOTE",
+      "input": {
+        "id": "660c2cb4-85d9-4af5-b80b-c7d649f75fb2",
+        "actor": "liberuum",
+        "comment": "Canonical as of powerhouse v6.2.2-dev.47",
+        "timestamp": "2026-08-14T12:00:00.000Z"
+      },
+      "timestampUtcMs": "2026-08-14T14:36:48.000Z"
+    }
+  },
+  {
+    "index": 12,
+    "hash": "vTqEW4xRc3epMc4BESQi3+fZhdM=",
+    "timestampUtcMs": "2026-09-02T21:39:18.157Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "filePath",
+        "value": "apps/academy/docs/academy/04-Reference/05-EditorsUI/00-DocumentEngineering.md",
+        "updatedAt": "2026-09-02T21:39:18.157Z"
+      },
+      "timestampUtcMs": "2026-09-02T21:39:18.157Z"
+    }
+  },
+  {
+    "index": 13,
+    "hash": "f+Xgacde93r+TGB+a7LIwJSlBb8=",
+    "timestampUtcMs": "2026-09-02T21:39:18.157Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "version",
+        "value": "v6.2.2-dev.74",
+        "updatedAt": "2026-09-02T21:39:18.157Z"
+      },
+      "timestampUtcMs": "2026-09-02T21:39:18.157Z"
+    }
+  }
+]

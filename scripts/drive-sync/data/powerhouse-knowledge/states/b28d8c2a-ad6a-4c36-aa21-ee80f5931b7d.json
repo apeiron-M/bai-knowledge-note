@@ -1,0 +1,104 @@
+{
+  "links": [
+    {
+      "id": "lnk-9b3ba4de-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "9b3ba4de-4e1a-46a3-8865-200c4d1280e9",
+      "targetTitle": "vetra-studio-is-builder-environment"
+    },
+    {
+      "id": "lnk-817cadfb-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "817cadfb-12c7-4eea-baca-e78b831606fd",
+      "targetTitle": "specification-documents-are-blueprints"
+    },
+    {
+      "id": "lnk-df5f6fa2-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "df5f6fa2-74f8-483d-8f9e-d32155bdb866",
+      "targetTitle": "powerhouse-stack-feature-surface"
+    },
+    {
+      "id": "lnk-66daa536-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "66daa536-c7eb-4fde-98b0-7f815c1eff7e",
+      "targetTitle": "Academy \u203a GetStarted \u203a Vetra Studio",
+      "reason": "The note names apps/academy/docs/academy/01-GetStarted/00-VetraStudio.md as its source; page text identical at v6.2.2-dev.47 and v6.2.2-dev.74",
+      "confidence": "grounded"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Vetra Studio is a dedicated cloud AI agent driving a four-phase Ideate to Specify to Build to Deploy product cycle",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "d890f7a3-4c47-454e-8b13-ade1aea03c06",
+      "name": "vetra-studio",
+      "topicDocumentId": null
+    },
+    {
+      "id": "de8f3487-7bcb-4992-ab58-4bb9bdb7ad10",
+      "name": "ai-agent",
+      "topicDocumentId": null
+    },
+    {
+      "id": "220b5614-af50-4e12-9b17-8a460b8d27e0",
+      "name": "builder-tools",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "## One provisioned agent per product\n\nVetra Studio is the browser UI for the **Vetra agent**. Each studio you create is a *dedicated cloud agent* tied to your identity, running in an isolated environment that hosts the agent, its workspace and the preview services, on its own `<slug>.vetra.io` subdomain. Opening it lands you inside Powerhouse Connect at `<slug>.vetra.io/d/<drive-id>` \u2014 the Studio is not a separate app but a chat pane bolted onto Connect, with the phase-cycle cards, documents and build preview in the main pane.\n\nAccess is gated: log in at vetra.io with a wallet via Renown, open the Products dashboard at `/user`, and either paste an invite code, join the waitlist, or run it locally. With a code, the Anthropic API key powering the agent is supplied behind the code, so there is nothing to enter. Products move `Provisioning\u2026 \u2192 Ready` before they can be opened. The product is **pre-alpha** \u2014 back documents up by download or GitHub at the end of a cycle.\n\n## The four phases\n\n| Phase | What happens |\n| --- | --- |\n| 1 Ideate | Frame problem and audience \u2014 problem, audience and brand sheets, a feature, a work breakdown structure |\n| 2 Specify | Pin down data model, workflow and states \u2014 document models grouped into projects |\n| 3 Build | The agent generates and tests code, with a live preview of the running app |\n| 4 Deploy | Publish the package and run it in Vetra Cloud environments |\n\nAvailability is progress-gated: BUILD shows a preview only after the agent scaffolds a reactor project, and DEPLOY requires a Renown sign-in.\n\nChat sessions are **CRDT documents stored in the studio's reactor**, so they survive restarts, are shareable by URL (`?session=<id>`), and are scoped per identity \u2014 clicking **Authorize agent** switches the studio from a generated `did:key` to your wallet `did:pkh` and therefore changes which sessions the list shows. Agent tool calls stream inline as expandable cards (`spec-create`, `spec-generate`, `reactor-project-init`, `spec-preview-show`, plus workspace Read/Write/Edit).\n\nNote a naming tension in the docs: the Build section describes \"Vetra Studio\" as the local `ph vetra` builder environment, while GetStarted describes this hosted agent product. Both names are in use.\n\n_Source: `apps/academy/docs/academy/01-GetStarted/00-VetraStudio.md`, Powerhouse v6.2.2-dev.45._",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": "v6.2.2-dev.74",
+  "computes": null,
+  "filePath": "apps/academy/docs/academy/01-GetStarted/00-VetraStudio.md",
+  "noteType": "CONCEPT",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "claude",
+    "createdAt": "2026-08-13T14:37:19.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-09-02T21:32:22.059Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Each studio is its own cloud agent on a <slug>.vetra.io subdomain, reached from vetra.io with an early-access code, opening into Connect with a chat pane.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "befde89e-589f-4278-a66d-9fedcc8db7f3",
+      "actor": "claude",
+      "comment": "Knowledge registered against powerhouse v6.2.2-dev.47",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-14T12:00:00.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "b43c7e5d-34d4-44b1-9e43-c5299941fd91",
+      "actor": "liberuum",
+      "comment": "Canonical as of powerhouse v6.2.2-dev.47",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-14T12:00:00.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

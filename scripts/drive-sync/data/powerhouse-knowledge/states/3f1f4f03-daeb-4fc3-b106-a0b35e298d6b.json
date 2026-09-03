@@ -1,0 +1,93 @@
+{
+  "links": [
+    {
+      "id": "lnk-0b3e1672-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "0b3e1672-24bb-45a0-bd5e-078c3e482dc7",
+      "targetTitle": "idempotent-ingestion-checkpoint-lives-in-document-state"
+    },
+    {
+      "id": "lnk-9eb2d8d8-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "9eb2d8d8-51b3-47d0-bd44-9b97769fef55",
+      "targetTitle": "reactor-operation-based-model-handles-concurrent-edits-nativ"
+    },
+    {
+      "id": "lnk-930efe60-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "930efe60-1e35-4ff2-85f8-20979c67c361",
+      "targetTitle": "generic-attachment-slot-discovery-needs-ranking-not-first-match"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Safe-merge beats overwrite when re-syncing externally sourced documents",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "IN_REVIEW",
+  "topics": [
+    {
+      "id": "4df2c867-1675-4eb7-9bee-28669daf7c3b",
+      "name": "sync",
+      "topicDocumentId": null
+    },
+    {
+      "id": "c255945e-e452-4299-af51-2dea313cf43a",
+      "name": "provenance",
+      "topicDocumentId": null
+    },
+    {
+      "id": "c6810c9b-3d08-4543-b23f-5128ecd8a070",
+      "name": "processors",
+      "topicDocumentId": null
+    },
+    {
+      "id": "7db87aad-a1bc-4cea-a134-e3dc01700c22",
+      "name": "paperless",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "A sync that repeatedly writes a document from an external source faces one question on every event after the first: has a human touched the target since we last wrote it? Blanket overwrite answers \"assume not\" and is wrong in the only case that matters \u2014 the case where someone corrected the machine's output.\n\nThe pattern is to gate every update on two conditions, and to write only when both hold:\n\n1. **The target is still editable according to its own model's status.** A document that has moved into a reviewed, approved or issued state has left the machine's jurisdiction; its own lifecycle says so, and the sync should respect that boundary rather than reason about it.\n2. **The target's current revision equals the revision recorded after our last write.** If the numbers match, nothing has happened to the document that we did not do. If they diverge, something else wrote \u2014 and we do not know what.\n\nWhen either gate fails, the update is not applied and not dropped: it is flagged for human review, so the divergence surfaces as a decision rather than as silence.\n\n**The revision check is a weaker instrument than per-field provenance, and worth being explicit about why.** Per-field provenance would record, for each field, who last set it, letting a sync update the fields a human never touched while leaving the edited ones alone. The revision heuristic cannot do that. It is coarse: one human edit anywhere in the document freezes the whole document against automated update, which means it will refuse writes that would have been perfectly safe. That is the trade being made deliberately \u2014 the failure mode of the coarse check is a refused write that a human then resolves, and the failure mode of overwrite is destroyed human work. Only one of those is recoverable.\n\nApplied in the Paperless x Powerhouse sync (21 Aug 2026), where the recorded revision lives in the sync document alongside the rest of the audit trail.\n\n## Connections\n\n- **RELATES_TO [[Idempotent external ingestion stores the dedup set and the watermark in document state, not in worker memory]]** \u2014 the revision recorded after our last write *is* a watermark, and that note says where it has to live: in document state, so a restarted worker still knows what it wrote.\n- **RELATES_TO [[Reactor operation-based model handles concurrent edits natively; no CRDT is needed]]** \u2014 the reactor merges concurrent op streams without losing operations, but op-level merge cannot tell an external writer that a particular field carries a human's correction. Structural merge safety does not imply semantic merge safety, which is why the sync needs its own gate.\n- **RELATES_TO [[Generic attachment-slot discovery needs ranking, not first-match]]** \u2014 both are the same failure class: a write that passes every validation and is therefore wrong invisibly.\n\n## Methodology grounding\n\nThis is the read/write asymmetry of [[automated detection is always safe because it only reads state while automated remediation risks content corruption]] applied to an integration rather than to vault maintenance: a refused sync costs attention, an unwanted overwrite costs content, and the corruption is invisible afterwards because the overwritten state becomes what everything downstream trusts. The decision to flag rather than write when a gate fails is [[the fix-versus-report decision depends on determinism reversibility and accumulated trust]] resolving toward report, because the condition that failed is precisely the one that told us the outcome was still deterministic. That the coarse check is knowingly accepted in place of per-field attribution is the gap named by [[provenance tracks where beliefs come from]] \u2014 without per-field origin, the system cannot distinguish what it wrote from what it was told.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "PATTERN",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "knowledge-agent",
+    "createdAt": "2026-08-21T15:40:00.000Z",
+    "sessionId": "paperless-eng-2026-08-21",
+    "updatedAt": "2026-08-21T15:55:00.000Z",
+    "sourceOrigin": "SESSION_MINE"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Gate each update on the target still being editable per its own model status and on its revision matching the one recorded after our last write; otherwise flag for human review rather than writing.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "8c77c524-35bf-40a5-a098-b6a5234eb59b",
+      "actor": "knowledge-agent",
+      "comment": "Extracted from the 21 Aug 2026 Paperless x Powerhouse working session; each claim was observed in working code or against the live Paperless-ngx 3.0.5 instance. Needs a second actor to approve - the authoring agent cannot legitimately be its own reviewer.",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-21T15:55:00.000Z",
+      "fromStatus": "DRAFT"
+    }
+  ]
+}

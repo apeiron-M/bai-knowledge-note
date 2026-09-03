@@ -1,0 +1,500 @@
+[
+  {
+    "index": 0,
+    "hash": "",
+    "timestampUtcMs": "2026-09-03T07:30:02.142Z",
+    "action": {
+      "type": "CREATE_DOCUMENT",
+      "input": {
+        "meta": {},
+        "name": "breaking-changes-four-types",
+        "slug": "",
+        "model": "bai/knowledge-note",
+        "branch": "main",
+        "signing": {
+          "nonce": "",
+          "publicKey": {},
+          "signature": "b384b065-6a1d-4498-b6ac-0acccdde2e48",
+          "documentType": "bai/knowledge-note",
+          "createdAtUtcIso": "2026-09-03T07:30:02.142Z"
+        },
+        "version": 0,
+        "documentId": "b384b065-6a1d-4498-b6ac-0acccdde2e48",
+        "protocolVersions": {
+          "base-reducer": 2
+        }
+      },
+      "timestampUtcMs": "2026-09-03T07:30:02.142Z"
+    }
+  },
+  {
+    "index": 0,
+    "hash": "jRrJrgNLcuMGf8aRynQW+/nhUf8=",
+    "timestampUtcMs": "2026-09-03T07:30:03.552Z",
+    "action": {
+      "type": "SET_TITLE",
+      "input": {
+        "title": "Breaking changes are classified into four types with their own checklists, and the hard rule is that they ship only in a major version after a 3-6 month deprecation",
+        "updatedAt": "2026-09-03T07:30:03.552Z"
+      },
+      "timestampUtcMs": "2026-09-03T07:30:03.552Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "",
+    "timestampUtcMs": "2026-09-03T07:30:02.142Z",
+    "action": {
+      "type": "UPGRADE_DOCUMENT",
+      "input": {
+        "model": "bai/knowledge-note",
+        "toVersion": 1,
+        "documentId": "b384b065-6a1d-4498-b6ac-0acccdde2e48",
+        "fromVersion": 0,
+        "initialState": {
+          "auth": {
+            "grants": [],
+            "version": 0
+          },
+          "local": {
+            "lastViewedAt": null,
+            "personalTags": []
+          },
+          "global": {
+            "links": [],
+            "model": null,
+            "scope": null,
+            "title": null,
+            "editor": null,
+            "inputs": [],
+            "models": [],
+            "status": "DRAFT",
+            "topics": [],
+            "content": null,
+            "context": null,
+            "modelId": null,
+            "modules": [],
+            "outputs": [],
+            "version": null,
+            "computes": null,
+            "filePath": null,
+            "noteType": null,
+            "severity": null,
+            "hooksUsed": [],
+            "rootCause": null,
+            "confidence": null,
+            "consumedBy": [],
+            "provenance": null,
+            "sourceType": null,
+            "targetType": null,
+            "cardinality": null,
+            "description": null,
+            "alternatives": [],
+            "consequences": [],
+            "errorMessage": null,
+            "relationType": null,
+            "correctPattern": null,
+            "decisionStatus": null,
+            "dispatchTargets": [],
+            "lifecycleEvents": []
+          },
+          "document": {
+            "hash": {
+              "encoding": "base64",
+              "algorithm": "sha1"
+            },
+            "version": 1
+          }
+        }
+      },
+      "timestampUtcMs": "2026-09-03T07:30:02.142Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "PdT5wePkDckJpjeNmylkajoiG4s=",
+    "timestampUtcMs": "2026-09-03T07:30:03.552Z",
+    "action": {
+      "type": "SET_DESCRIPTION",
+      "input": {
+        "updatedAt": "2026-09-03T07:30:03.552Z",
+        "description": "Type 1 API (signatures, removals, renames), Type 2 data (schema and field changes), Type 3 behavioural (same signature, new behaviour), Type 4 dependency (major upgrades, runtime needs)."
+      },
+      "timestampUtcMs": "2026-09-03T07:30:03.552Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "",
+    "timestampUtcMs": "2026-09-03T07:30:42.998Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "metadata": {
+          "reason": "Extracted from docs/BREAKING-CHANGES-GUIDE.md at v6.2.2-dev.74 \u2014 Overview \u203a Types of Breaking Changes; General Principles; Semantic Versioning \u203a TLDR",
+          "confidence": "grounded"
+        },
+        "sourceId": "b384b065-6a1d-4498-b6ac-0acccdde2e48",
+        "targetId": "e1173fcb-3648-4578-88e5-1b5de043cf30",
+        "relationshipType": "DERIVED_FROM"
+      },
+      "timestampUtcMs": "2026-09-03T07:30:42.998Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "sAsPaI7CoPjwdBsIVHd9zjugQ7Y=",
+    "timestampUtcMs": "2026-09-03T07:30:03.552Z",
+    "action": {
+      "type": "SET_NOTE_TYPE",
+      "input": {
+        "noteType": "PROCEDURE",
+        "updatedAt": "2026-09-03T07:30:03.552Z"
+      },
+      "timestampUtcMs": "2026-09-03T07:30:03.552Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "",
+    "timestampUtcMs": "2026-09-03T07:30:43.456Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "metadata": {
+          "reason": "The pre-release carve-out is what makes the dev channel's nightly X.Y.Z-dev.N builds a legitimate home for a breaking change while patch and minor releases are not",
+          "confidence": "grounded"
+        },
+        "sourceId": "b384b065-6a1d-4498-b6ac-0acccdde2e48",
+        "targetId": "6914ee1a-5136-4979-b372-2b1f822b0219",
+        "relationshipType": "BUILDS_ON"
+      },
+      "timestampUtcMs": "2026-09-03T07:30:43.456Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "q0OGU21VVa5IVOnc9SW0ViIE33Q=",
+    "timestampUtcMs": "2026-09-03T07:30:03.552Z",
+    "action": {
+      "type": "SET_CONTENT",
+      "input": {
+        "content": "The guide splits breaking changes into four types, each with its own checklist:\n\n- **Type 1 \u2014 API**: signature changes, removals, renames;\n- **Type 2 \u2014 Data**: schema changes, field modifications;\n- **Type 3 \u2014 Behavioural**: how an API works changes *without* its signature changing;\n- **Type 4 \u2014 Dependency**: major dependency upgrades, runtime requirements.\n\nEvery checklist runs the same five phases: **planning** (evaluate necessity and impact), **implementation** (build it with backward compatibility), **documentation** (migration guide, docs), **release** (roll out with communication), and **removal or enforcement** in the next major version.\n\nThe general principles are stated as rules, not preferences: breaking changes **only in `x.0.0`**; **deprecate first**; provide migration paths; give a minimum **3\u20136 month deprecation period**; keep old APIs working during deprecation; document with before/after examples in `RELEASE-NOTES.md`; and use **feature flags** to control rollout.\n\nSemantic versioning is followed strictly, with one carve-out that matters in a monorepo publishing `-dev.N` builds nightly: **pre-release versions may include breaking changes** (`1.0.0-alpha.1`, `-beta.2`, `-rc.1`), clearly labelled with the matching npm tag. So a breaking change in a `dev` build is within the rules; the same change in a published minor or patch is not \u2014 \"a hard rule with no exceptions\". Version bumps ride `@jscutlery/semver` and conventional commits, with `!` or `BREAKING CHANGE:` triggering a major.\n\n## Provenance\n- `docs/BREAKING-CHANGES-GUIDE.md` \u2014 Overview \u203a Types of Breaking Changes; General Principles; Semantic Versioning \u203a TLDR\n\n_Extracted from the Powerhouse repository at **v6.2.2-dev.74**._",
+        "updatedAt": "2026-09-03T07:30:03.552Z"
+      },
+      "timestampUtcMs": "2026-09-03T07:30:03.552Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "",
+    "timestampUtcMs": "2026-09-03T07:30:43.924Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "metadata": {
+          "reason": "Staging enforcement behind feature flags is exactly the gradual-rollout strategy this guide prescribes for a behavioural break",
+          "confidence": "grounded"
+        },
+        "sourceId": "b384b065-6a1d-4498-b6ac-0acccdde2e48",
+        "targetId": "c8bd64d3-d92e-4f41-beba-983a7e995c26",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-09-03T07:30:43.924Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "nggPfz2SO9K7VMd2s1XqUk+jo34=",
+    "timestampUtcMs": "2026-09-03T07:30:03.552Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "8c370d9d-93b2-42ec-9a9a-f5181d2a9a73",
+        "name": "release"
+      },
+      "timestampUtcMs": "2026-09-03T07:30:03.552Z"
+    }
+  },
+  {
+    "index": 5,
+    "hash": "",
+    "timestampUtcMs": "2026-09-03T07:30:44.371Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "metadata": {
+          "reason": "A document-model schema change is the Type 2 data break this process governs, and the upgrade reducer is its migration path",
+          "confidence": "established"
+        },
+        "sourceId": "b384b065-6a1d-4498-b6ac-0acccdde2e48",
+        "targetId": "2f4b5df2-d6ca-4224-a049-e96b4811ed37",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-09-03T07:30:44.371Z"
+    }
+  },
+  {
+    "index": 5,
+    "hash": "efsVxYREvO03qxVg7opLRdMD1Ng=",
+    "timestampUtcMs": "2026-09-03T07:30:03.552Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "49754c99-e790-4c40-bbe9-3898682aeb47",
+        "name": "versioning"
+      },
+      "timestampUtcMs": "2026-09-03T07:30:03.552Z"
+    }
+  },
+  {
+    "index": 6,
+    "hash": "",
+    "timestampUtcMs": "2026-09-03T07:31:47.888Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "metadata": {
+          "reason": "Extracted from docs/BREAKING-CHANGES-GUIDE.md at v6.2.2-dev.74 \u2014 Overview \u203a Types of Breaking Changes; General Principles; Semantic Versioning \u203a TLDR",
+          "confidence": "grounded"
+        },
+        "sourceId": "b384b065-6a1d-4498-b6ac-0acccdde2e48",
+        "targetId": "e1173fcb-3648-4578-88e5-1b5de043cf30",
+        "relationshipType": "DERIVED_FROM"
+      },
+      "timestampUtcMs": "2026-09-03T07:31:47.888Z"
+    }
+  },
+  {
+    "index": 6,
+    "hash": "MidEqCFfnBjiZ/3Z1kl9PqEZdFw=",
+    "timestampUtcMs": "2026-09-03T07:30:03.552Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "9b002722-2aac-4fa3-ade7-e45939ae8e3d",
+        "name": "breaking-changes"
+      },
+      "timestampUtcMs": "2026-09-03T07:30:03.552Z"
+    }
+  },
+  {
+    "index": 7,
+    "hash": "",
+    "timestampUtcMs": "2026-09-03T07:31:48.361Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "metadata": {
+          "reason": "The pre-release carve-out is what makes the dev channel's nightly X.Y.Z-dev.N builds a legitimate home for a breaking change while patch and minor releases are not",
+          "confidence": "grounded"
+        },
+        "sourceId": "b384b065-6a1d-4498-b6ac-0acccdde2e48",
+        "targetId": "6914ee1a-5136-4979-b372-2b1f822b0219",
+        "relationshipType": "BUILDS_ON"
+      },
+      "timestampUtcMs": "2026-09-03T07:31:48.361Z"
+    }
+  },
+  {
+    "index": 7,
+    "hash": "xKdsgk15XJUmMQxJCe/6PEfTl/0=",
+    "timestampUtcMs": "2026-09-03T07:30:03.552Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "1c0cdd3b-6626-4c41-b411-e136956e9692",
+        "name": "process"
+      },
+      "timestampUtcMs": "2026-09-03T07:30:03.552Z"
+    }
+  },
+  {
+    "index": 8,
+    "hash": "",
+    "timestampUtcMs": "2026-09-03T07:31:48.830Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "metadata": {
+          "reason": "Staging enforcement behind feature flags is exactly the gradual-rollout strategy this guide prescribes for a behavioural break",
+          "confidence": "grounded"
+        },
+        "sourceId": "b384b065-6a1d-4498-b6ac-0acccdde2e48",
+        "targetId": "c8bd64d3-d92e-4f41-beba-983a7e995c26",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-09-03T07:31:48.830Z"
+    }
+  },
+  {
+    "index": 8,
+    "hash": "aGtNxzIh+FBPMZHeOp/7Nst7JGk=",
+    "timestampUtcMs": "2026-09-03T07:30:03.552Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "version",
+        "value": "v6.2.2-dev.74",
+        "updatedAt": "2026-09-03T07:30:03.552Z"
+      },
+      "timestampUtcMs": "2026-09-03T07:30:03.552Z"
+    }
+  },
+  {
+    "index": 9,
+    "hash": "",
+    "timestampUtcMs": "2026-09-03T07:31:49.280Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "metadata": {
+          "reason": "A document-model schema change is the Type 2 data break this process governs, and the upgrade reducer is its migration path",
+          "confidence": "established"
+        },
+        "sourceId": "b384b065-6a1d-4498-b6ac-0acccdde2e48",
+        "targetId": "2f4b5df2-d6ca-4224-a049-e96b4811ed37",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-09-03T07:31:49.280Z"
+    }
+  },
+  {
+    "index": 9,
+    "hash": "GXXxyP0AhOzcdVL11mCH909rxvI=",
+    "timestampUtcMs": "2026-09-03T07:30:03.552Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "filePath",
+        "value": "docs/BREAKING-CHANGES-GUIDE.md",
+        "updatedAt": "2026-09-03T07:30:03.552Z"
+      },
+      "timestampUtcMs": "2026-09-03T07:30:03.552Z"
+    }
+  },
+  {
+    "index": 10,
+    "hash": "MRWt0jDg1KwbIhvpL0WrzbZttP8=",
+    "timestampUtcMs": "2026-09-03T07:30:06.150Z",
+    "action": {
+      "type": "SET_PROVENANCE",
+      "input": {
+        "author": "knowledge-agent",
+        "createdAt": "2026-09-03T07:30:06.150Z",
+        "sourceOrigin": "DERIVED"
+      },
+      "timestampUtcMs": "2026-09-03T07:30:06.150Z"
+    }
+  },
+  {
+    "index": 11,
+    "hash": "EHz2BiK7YWcW1hZ/2j8rGH7U57E=",
+    "timestampUtcMs": "2026-09-03T07:30:06.649Z",
+    "action": {
+      "type": "SUBMIT_FOR_REVIEW",
+      "input": {
+        "id": "39200cea-df47-4be4-adbe-00740889d3c6",
+        "actor": "knowledge-agent",
+        "comment": "extracted from docs/BREAKING-CHANGES-GUIDE.md at v6.2.2-dev.74",
+        "timestamp": "2026-09-03T07:30:06.649Z"
+      },
+      "timestampUtcMs": "2026-09-03T07:30:06.649Z"
+    }
+  },
+  {
+    "index": 12,
+    "hash": "tPPuOkNlV/4w92un/HCcQeH/RR8=",
+    "timestampUtcMs": "2026-09-03T07:30:07.273Z",
+    "action": {
+      "type": "APPROVE_NOTE",
+      "input": {
+        "id": "6a03ca50-22d6-478b-9479-ea8e4b4c3525",
+        "actor": "liberuum",
+        "comment": "claim checked against the cited file at the pinned tag",
+        "timestamp": "2026-09-03T07:30:07.273Z"
+      },
+      "timestampUtcMs": "2026-09-03T07:30:07.273Z"
+    }
+  },
+  {
+    "index": 13,
+    "hash": "s58uldPl0+jj3Y9ziRaH+PLVzN8=",
+    "timestampUtcMs": "2026-09-03T07:31:16.497Z",
+    "action": {
+      "type": "SET_TITLE",
+      "input": {
+        "title": "Breaking changes are classified into four types with their own checklists, and the hard rule is that they ship only in a major version after a 3-6 month deprecation",
+        "updatedAt": "2026-09-03T07:31:16.497Z"
+      },
+      "timestampUtcMs": "2026-09-03T07:31:16.497Z"
+    }
+  },
+  {
+    "index": 14,
+    "hash": "s58uldPl0+jj3Y9ziRaH+PLVzN8=",
+    "timestampUtcMs": "2026-09-03T07:31:16.497Z",
+    "action": {
+      "type": "SET_DESCRIPTION",
+      "input": {
+        "updatedAt": "2026-09-03T07:31:16.497Z",
+        "description": "Type 1 API (signatures, removals, renames), Type 2 data (schema and field changes), Type 3 behavioural (same signature, new behaviour), Type 4 dependency (major upgrades, runtime needs)."
+      },
+      "timestampUtcMs": "2026-09-03T07:31:16.497Z"
+    }
+  },
+  {
+    "index": 15,
+    "hash": "s58uldPl0+jj3Y9ziRaH+PLVzN8=",
+    "timestampUtcMs": "2026-09-03T07:31:16.497Z",
+    "action": {
+      "type": "SET_NOTE_TYPE",
+      "input": {
+        "noteType": "PROCEDURE",
+        "updatedAt": "2026-09-03T07:31:16.497Z"
+      },
+      "timestampUtcMs": "2026-09-03T07:31:16.497Z"
+    }
+  },
+  {
+    "index": 16,
+    "hash": "s58uldPl0+jj3Y9ziRaH+PLVzN8=",
+    "timestampUtcMs": "2026-09-03T07:31:16.497Z",
+    "action": {
+      "type": "SET_CONTENT",
+      "input": {
+        "content": "The guide splits breaking changes into four types, each with its own checklist:\n\n- **Type 1 \u2014 API**: signature changes, removals, renames;\n- **Type 2 \u2014 Data**: schema changes, field modifications;\n- **Type 3 \u2014 Behavioural**: how an API works changes *without* its signature changing;\n- **Type 4 \u2014 Dependency**: major dependency upgrades, runtime requirements.\n\nEvery checklist runs the same five phases: **planning** (evaluate necessity and impact), **implementation** (build it with backward compatibility), **documentation** (migration guide, docs), **release** (roll out with communication), and **removal or enforcement** in the next major version.\n\nThe general principles are stated as rules, not preferences: breaking changes **only in `x.0.0`**; **deprecate first**; provide migration paths; give a minimum **3\u20136 month deprecation period**; keep old APIs working during deprecation; document with before/after examples in `RELEASE-NOTES.md`; and use **feature flags** to control rollout.\n\nSemantic versioning is followed strictly, with one carve-out that matters in a monorepo publishing `-dev.N` builds nightly: **pre-release versions may include breaking changes** (`1.0.0-alpha.1`, `-beta.2`, `-rc.1`), clearly labelled with the matching npm tag. So a breaking change in a `dev` build is within the rules; the same change in a published minor or patch is not \u2014 \"a hard rule with no exceptions\". Version bumps ride `@jscutlery/semver` and conventional commits, with `!` or `BREAKING CHANGE:` triggering a major.\n\n## Provenance\n- `docs/BREAKING-CHANGES-GUIDE.md` \u2014 Overview \u203a Types of Breaking Changes; General Principles; Semantic Versioning \u203a TLDR\n\n_Extracted from the Powerhouse repository at **v6.2.2-dev.74**._",
+        "updatedAt": "2026-09-03T07:31:16.497Z"
+      },
+      "timestampUtcMs": "2026-09-03T07:31:16.497Z"
+    }
+  },
+  {
+    "index": 17,
+    "hash": "s58uldPl0+jj3Y9ziRaH+PLVzN8=",
+    "timestampUtcMs": "2026-09-03T07:31:16.497Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "version",
+        "value": "v6.2.2-dev.74",
+        "updatedAt": "2026-09-03T07:31:16.497Z"
+      },
+      "timestampUtcMs": "2026-09-03T07:31:16.497Z"
+    }
+  },
+  {
+    "index": 18,
+    "hash": "s58uldPl0+jj3Y9ziRaH+PLVzN8=",
+    "timestampUtcMs": "2026-09-03T07:31:16.497Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "filePath",
+        "value": "docs/BREAKING-CHANGES-GUIDE.md",
+        "updatedAt": "2026-09-03T07:31:16.497Z"
+      },
+      "timestampUtcMs": "2026-09-03T07:31:16.497Z"
+    }
+  }
+]

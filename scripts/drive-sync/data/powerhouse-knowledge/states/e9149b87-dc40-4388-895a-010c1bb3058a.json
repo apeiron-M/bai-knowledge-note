@@ -1,0 +1,107 @@
+{
+  "links": [
+    {
+      "id": "lnk-4a5a9901-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "4a5a9901-a0e2-4e7e-8ff2-9c155cccb2f7",
+      "targetTitle": "queue-serializes-per-document",
+      "reason": "The executor loads state from this cache inside the per-document serialized slot the queue grants it",
+      "confidence": "grounded"
+    },
+    {
+      "id": "lnk-e4ef060b-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "e4ef060b-4d61-41b4-95bd-2f562eea3cfa",
+      "targetTitle": "Package \u203a reactor \u203a ARCHITECTURE \u2014 Reactor Architecture",
+      "reason": "Extracted from packages/reactor/docs/ARCHITECTURE.md at v6.2.2-dev.74 \u2014 Components \u203a WriteCache; Storage Layer \u203a Keyframes",
+      "confidence": "grounded"
+    },
+    {
+      "id": "lnk-c7c935e2-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "c7c935e2-6f6c-48c6-8ef1-0dd6d99811e0",
+      "targetTitle": "auth-dcb-append-condition",
+      "reason": "The decision model folds through this cache, which is why its immutability and head-read guarantees are load-bearing for authorization",
+      "confidence": "grounded"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "The write cache reconstructs state from a ring buffer, then the nearest keyframe, then operation zero, and keyframes buy replay time with storage",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "94cb01ca-6060-4e99-ad52-c9757cab57a8",
+      "name": "reactor",
+      "topicDocumentId": null
+    },
+    {
+      "id": "df5cc103-1940-42a5-bfc9-870c9d7a0c25",
+      "name": "write-cache",
+      "topicDocumentId": null
+    },
+    {
+      "id": "958db021-816c-42fe-900e-4bcf2751d864",
+      "name": "keyframes",
+      "topicDocumentId": null
+    },
+    {
+      "id": "712f66bf-d624-48dd-90fd-e1c1ad15b8ee",
+      "name": "performance",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "`IWriteCache` exists so the executor does not replay a document's whole history on every mutation. Its lookup is three-tiered:\n\n1. check the **ring buffer** for a cached state at or before the target revision;\n2. on a miss, replay from the **nearest keyframe**;\n3. failing that, replay from **operation 0**.\n\nKeyframes are optional snapshots, stored per scope and branch:\n\n```ts\ninterface IKeyframeStore {\n  putKeyframe(docId, scope, branch, revision, document): Promise<void>;\n  findNearestKeyframe(docId, scope, branch, targetRevision):\n    Promise<{ revision; document }>;\n}\n```\n\nThe trade is stated plainly: keyframes **trade storage space for reduced replay time** on documents with many operations. A deployment with short-lived documents can skip them; one with long-lived, heavily-edited documents pays for a full replay on every cache miss without them.\n\nThe cache is also where two guarantees the auth decision model depends on live: a stored snapshot never changes after it is stored, and a read for the head is answered only by a snapshot recorded as the head.\n\n## Provenance\n- `packages/reactor/docs/ARCHITECTURE.md` \u2014 Components \u203a WriteCache; Storage Layer \u203a Keyframes\n\n_Extracted from the Powerhouse repository at **v6.2.2-dev.74**._",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": "v6.2.2-dev.74",
+  "computes": null,
+  "filePath": "packages/reactor/docs/ARCHITECTURE.md",
+  "noteType": "ARCHITECTURE",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "knowledge-agent",
+    "createdAt": "2026-09-03T07:18:27.522Z",
+    "sessionId": null,
+    "updatedAt": "2026-09-03T07:22:19.775Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "IKeyframeStore exposes putKeyframe and findNearestKeyframe(targetRevision). Keyframes are optional: without them a cache miss on a long-lived document replays from the beginning of the scope.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "c94bda2e-30c2-43f1-87f4-a422f45b419c",
+      "actor": "knowledge-agent",
+      "comment": "extracted from packages/reactor/docs/ARCHITECTURE.md at v6.2.2-dev.74",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-09-03T07:18:28.229Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "7ab23ead-c291-4eee-8654-47412381800d",
+      "actor": "liberuum",
+      "comment": "claim checked against the cited file at the pinned tag",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-09-03T07:18:28.782Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

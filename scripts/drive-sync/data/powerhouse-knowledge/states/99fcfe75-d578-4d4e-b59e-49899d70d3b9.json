@@ -1,0 +1,130 @@
+{
+  "links": [
+    {
+      "id": "lnk-ee4a5cf2-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "ee4a5cf2-de0c-4e25-9976-208b71321c1e",
+      "targetTitle": "XeniT (AmeXio Group) \u2014 Alfresco"
+    },
+    {
+      "id": "lnk-18249d4b-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "18249d4b-2208-42cd-8c26-9378827fe466",
+      "targetTitle": "Zylk \u2014 Alfresco"
+    },
+    {
+      "id": "lnk-3ad66f81-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "3ad66f81-1daa-4ce7-98a4-139a2c4bf33b",
+      "targetTitle": "Ancud IT-Beratung GmbH \u2014 Alfresco"
+    },
+    {
+      "id": "lnk-df5285a3-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "df5285a3-ab03-4356-9bd6-a96d02905ea7",
+      "targetTitle": "CONTENTREICH \u2014 Alfresco"
+    },
+    {
+      "id": "lnk-1be7fc9c-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "1be7fc9c-5464-4fbf-9906-8c74938c9c6f",
+      "targetTitle": "IT IS AG \u2014 Alfresco"
+    },
+    {
+      "id": "lnk-30f4d9d6-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "30f4d9d6-14eb-4c9b-9a06-a48d649089e2",
+      "targetTitle": "Redpill Linpro \u2014 Alfresco"
+    },
+    {
+      "id": "lnk-1dbc0954-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "1dbc0954-b629-4728-95cf-9473d0f7fb12",
+      "targetTitle": "fme AG \u2014 Alfresco"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Alfresco records document events but not the business decision behind them",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "483dd21b-07dd-427b-ba04-31e710084478",
+      "name": "leads",
+      "topicDocumentId": null
+    },
+    {
+      "id": "f54e684d-7449-4072-a782-2b9a8ba426cb",
+      "name": "alfresco",
+      "topicDocumentId": null
+    },
+    {
+      "id": "c1d2a531-d627-421c-a527-954ac5a8071c",
+      "name": "dms",
+      "topicDocumentId": null
+    },
+    {
+      "id": "79d8faa2-5d7a-44a4-89cc-385daa3bbf63",
+      "name": "audit-trail",
+      "topicDocumentId": null
+    },
+    {
+      "id": "f297ec91-1fc7-4a54-bfd5-d94a1bd5eab4",
+      "name": "system-of-record",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "Alfresco's audit surface is document-shaped. It records versions, uploads and moves \u2014 the events that happen to a file. What it does not record is the business decision: who accepted this, under which rule, and what the state was before the acceptance.\n\nThe distinction is not pedantic, because the two are routinely conflated in practice. A document management system that shows a new version at 14:03 by a named user looks like an audit trail until someone asks what that version *meant*. Version n+1 may be an approval, a typo fix, or a rollback, and the repository cannot tell them apart. The prior state that the decision was taken against is likewise absent \u2014 versions record the after, not the before-and-because.\n\nFor the seven Alfresco partners carrying this finding, the value is that the gap sits in the part of the client's estate they already own and operate. They are not being asked to replace the repository or to argue against it; they are being asked to record something the repository was never designed to hold, which is a smaller and more defensible claim to take to their own customers.\n\n---\n\n## Leads sharing this finding (7)\n\n**2 \u00b7 next**\n- XeniT (AmeXio Group) (BE Leuven) \u2014 Ronny Timmermans, Managing Director \u00b7 info@xenit.eu \u00b7 https://xenit.eu\n- Zylk (ES Bilbao + Madrid) \u2014 not published \u00b7 sales@zylk.net \u00b7 https://zylk.net\n\n**3 \u00b7 later**\n- Ancud IT-Beratung GmbH (DE Nuremberg + Berlin) \u2014 https://ancud.de\n- CONTENTREICH (DE) \u2014 https://contentreich.de\n- IT IS AG (DE Altheim (Bavaria)) \u2014 https://itis-fresco.de\n- Redpill Linpro (NO/SE/DK) \u2014 https://redpill-linpro.com\n- fme AG (DE Braunschweig + RO/IN) \u2014 https://fme.de\n\nVerbatim research text this claim was extracted from:\n\n> Alfresco records document events \u2014 versions, uploads, moves. It does not record the business decision: who accepted this, under which rule, and what the state was before.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "OBSERVATION",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "knowledge-agent",
+    "createdAt": "2026-08-19T11:23:44.822567Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-19T11:23:48.221298Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Versions, uploads and moves are captured; who accepted the content, under which rule, and what the state was beforehand are not recorded anywhere in the repository.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "e0900b89-9d67-4059-a449-c093da4bcacf",
+      "actor": "knowledge-agent",
+      "comment": "Extracted from lead research; claim checked against the source record.",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-19T11:23:48.065122Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "87be2d14-1513-4da3-b8f4-9231321510e6",
+      "actor": "liberuum",
+      "comment": "Approved: lead corpus extraction.",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-19T11:23:48.221298Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

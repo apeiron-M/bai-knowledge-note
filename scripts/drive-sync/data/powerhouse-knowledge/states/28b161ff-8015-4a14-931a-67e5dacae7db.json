@@ -1,0 +1,98 @@
+{
+  "links": [
+    {
+      "id": "lnk-11da9c61-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "11da9c61-a825-4c70-a57c-f80b10f569c7",
+      "targetTitle": "analytics-engine-interval-time-series"
+    },
+    {
+      "id": "lnk-a442a64c-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "a442a64c-1ed5-41ef-ba49-96dc33c81fa5",
+      "targetTitle": "subgraphs-extend-document-models-via-graphql"
+    },
+    {
+      "id": "lnk-ac75dc2f-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "ac75dc2f-f9ba-4e77-bdb4-4eb6a0eed82f",
+      "targetTitle": "Academy \u203a Build \u203a WorkWithData \u203a Analytics Engine \u203a graphql \u203a Integration",
+      "reason": "Backing page found by content match in the v6.2.2-dev.74 source backfill \u2014 identifiers analyticsmodel, analyticsqueryengine, analyticsresolvers from the claim appear in this page (text identical at v6.2.2-dev.47 and v6.2.2-dev.74); attribution, not the original extraction record",
+      "confidence": "grounded"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Serving analytics over GraphQL requires an AnalyticsModel on the resolver context at dataSources.db.Analytics",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "0db7b2e1-84b1-4550-ad02-5b04cee984ca",
+      "name": "analytics-engine",
+      "topicDocumentId": null
+    },
+    {
+      "id": "7fe2ffa7-80d1-4a49-ba5f-de7139957f55",
+      "name": "graphql",
+      "topicDocumentId": null
+    },
+    {
+      "id": "92bab4a4-d487-41d6-b704-4c8f0cf63ef6",
+      "name": "integration",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "`@powerhousedao/analytics-engine-graphql` is server-agnostic \u2014 it ships `typedefs`, `AnalyticsResolvers`, `AnalyticsModel` and the `queryFilter` type, and nothing else. The piece that is easy to miss is that the resolvers are not self-sufficient: they read an `AnalyticsModel` off the request context at the exact path `dataSources.db.Analytics`. Wire the schema without it and the resolvers fail at request time, not at boot.\n\n`AnalyticsModel` is the adapter that connects GraphQL types to a store, and it wraps an `AnalyticsQueryEngine`, which in turn wraps an `IAnalyticsStore`:\n\n```typescript\nconst model = new AnalyticsModel(\n  new AnalyticsQueryEngine(store),   // store: any IAnalyticsStore\n);\n```\n\nWith Apollo 4 the context factory is where it goes \u2014 note this is the express middleware's context, not the `ApolloServer` constructor:\n\n```typescript\nconst schema = makeExecutableSchema({ typeDefs: typedefs, resolvers: AnalyticsResolvers });\nconst server = new ApolloServer({ schema, plugins });\nawait server.start();\n\napp.use(\"/graphql\", express.json(), expressMiddleware(server, {\n  context: ({ req }) => ({\n    dataSources: { db: { Analytics: model } },   // required by the resolvers\n  }),\n}));\n```\n\nThe in-repo reference implementation is `packages/reactor-api/src/graphql/analytics-subgraph.ts`, and it is worth reading before hand-rolling the express version: `AnalyticsSubgraph` takes the `IAnalyticsStore` off its `SubgraphArgs`, constructs `new AnalyticsModel(new AnalyticsQueryEngine(store))`, and then injects the context through `graphqlManager.setAdditionalContextFields({ dataSources: { db: { Analytics: model } } })` rather than through a per-request context callback. Same required path, supplied once at subgraph construction.\n\nThe library is documented as tested against Apollo Server 3 and 4; a fuller worked example lives in the MakerDAO-SES ecosystem-api repository.\n\nChoosing the store: the academy snippet constructs the engine over `MemoryAnalyticsStore` imported from `@powerhousedao/analytics-engine-browser`. That class does not exist anywhere in the monorepo \u2014 `git grep MemoryAnalyticsStore` returns zero hits outside the academy docs \u2014 so the snippet cannot compile as written. Substitute `PostgresAnalyticsStore` from `@powerhousedao/analytics-engine-pg` for a Node/server process (this is what `reactor-api` itself does, even locally, where its `knex` handle is backed by PGlite), or `BrowserAnalyticsStore` from `@powerhousedao/analytics-engine-browser` when the engine runs in a browser. Any `IAnalyticsStore` satisfies `AnalyticsQueryEngine`, so the resolver wiring above is unchanged either way.\n\nProvenance: draft `03-Build/04-WorkWithData/_06-Analytics Engine/graphql/integration.md`, whose store import is stale. `AnalyticsModel`, `AnalyticsResolvers` and `schema.ts` confirmed present in `packages/analytics-engine/graphql/src/`; the `dataSources.db.Analytics` path confirmed at `AnalyticsResolvers.ts` lines 11, 54 and 77; the subgraph wiring confirmed in `packages/reactor-api/src/graphql/analytics-subgraph.ts` at 6.2.2-dev.45.\n\n_Source-verified 2026-08-13 against Powerhouse source at v6.2.2-dev.45._",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": "v6.2.2-dev.74",
+  "computes": null,
+  "filePath": "apps/academy/docs/academy/03-Build/04-WorkWithData/_06-Analytics Engine/graphql/integration.md",
+  "noteType": "PROCEDURE",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "claude",
+    "createdAt": "2026-08-13T14:39:00.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-09-02T21:36:01.752Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "analytics-engine-graphql exports typedefs and AnalyticsResolvers, but the resolvers only work when an AnalyticsModel wrapping an AnalyticsQueryEngine sits on the request context.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "68825bae-5e92-44d9-b7a2-cd4d9f375a2d",
+      "actor": "claude",
+      "comment": "Knowledge registered against powerhouse v6.2.2-dev.47",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-14T12:00:00.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "2d0176ad-b688-445c-813f-0de86abedc99",
+      "actor": "liberuum",
+      "comment": "Canonical as of powerhouse v6.2.2-dev.47",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-14T12:00:00.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

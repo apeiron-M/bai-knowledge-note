@@ -1,0 +1,115 @@
+{
+  "links": [
+    {
+      "id": "lnk-e57e23ae-bui",
+      "linkType": "BUILDS_ON",
+      "targetDocumentId": "e57e23ae-2f05-414a-bb77-c74ab23f64e8",
+      "targetTitle": "dead-letter-quarantines-document-not-drive",
+      "reason": "Dates and sources the per-document quarantine behaviour that note describes, and adds the persistent dead-letter store it lands in",
+      "confidence": "grounded"
+    },
+    {
+      "id": "lnk-e9149b87-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "e9149b87-dc40-4388-895a-010c1bb3058a",
+      "targetTitle": "write-cache-keyframes",
+      "reason": "DocumentIntegrityService validates and rebuilds the keyframes and snapshots that cache and read path depend on",
+      "confidence": "grounded"
+    },
+    {
+      "id": "lnk-64076557-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "64076557-0fce-4f5f-8912-3acf0ac82e15",
+      "targetTitle": "Academy \u203a ReleaseNotes \u203a Release Notes",
+      "reason": "Extracted from apps/academy/docs/academy/ReleaseNotes/index.md at v6.2.2-dev.74 \u2014 v6.0.0 \u203a New Features \u203a Reactor \u2014 Rewritten Write Model & Sync Engine; Bug Fixes",
+      "confidence": "grounded"
+    },
+    {
+      "id": "lnk-f3c2f9bb-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "f3c2f9bb-e554-44c6-9551-05273aaf5720",
+      "targetTitle": "sync-gap-dead-letter-api",
+      "reason": "The store shipped in v6 but the management API to retry or resolve its entries is still missing",
+      "confidence": "grounded"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "The v6 sync rewrite quarantines a poisoned document instead of blocking the whole remote, and adds a persistent dead-letter store with cursor-based paging",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "c2dae486-086c-42d6-934a-f75f47ad3f6c",
+      "name": "reactor-sync",
+      "topicDocumentId": null
+    },
+    {
+      "id": "c90eeede-75d0-4547-9ad2-01dfe649bfd5",
+      "name": "release-notes",
+      "topicDocumentId": null
+    },
+    {
+      "id": "1af8ff75-9cd6-4c20-8425-6ca8e3fe8ae2",
+      "name": "reliability",
+      "topicDocumentId": null
+    },
+    {
+      "id": "e06d1d56-3a67-4f5c-b482-c41a8645503b",
+      "name": "v6",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "The v6.0.0 notes describe the reactor's write model and sync pipeline as a **complete rewrite**, and the reliability changes are the substance:\n\n- **per-document quarantine** \u2014 a failing document is isolated *instead of blocking the entire remote*;\n- a **persistent dead-letter store**;\n- **buffered batched mailboxes** and abort signals on GQL channels;\n- **cursor-based paging** for large sync batches, with `getOperations` now paging **across scopes**;\n- **`DocumentIntegrityService`** \u2014 validates and rebuilds document keyframes and snapshots;\n- **job timeout** via abort signals propagated through the whole job pipeline;\n- **yield utilities** for cooperative scheduling in the job executor;\n- **exponential backoff with jitter** on retries;\n- a **`test-sync-queue` CLI app** for detecting sync drift on large drives, plus `profiling/reactor-direct.ts --docs 1000 --otel` for direct reactor performance testing.\n\nBug fixes from the same release that describe current behaviour: orphan reshuffle and cross-batch FIFO bugs fixed, documents with out-of-order `ADD_RELATIONSHIP` now correctly backfilled, deleted documents no longer returned by queries and jobs targeting them not retried, and the GQL channel handling abort signals, backpressure and dead-letter placement correctly.\n\nTwo of these are load-bearing for anything built on sync today: quarantine is why one bad document does not stall a drive, and the integrity service is why a corrupted keyframe is repairable rather than terminal.\n\n## Provenance\n- `apps/academy/docs/academy/ReleaseNotes/index.md` \u2014 v6.0.0 \u203a New Features \u203a Reactor \u2014 Rewritten Write Model & Sync Engine; Bug Fixes\n\n_Extracted from the Powerhouse repository at **v6.2.2-dev.74**._",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": "v6.2.2-dev.74",
+  "computes": null,
+  "filePath": "apps/academy/docs/academy/ReleaseNotes/index.md",
+  "noteType": "OBSERVATION",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "knowledge-agent",
+    "createdAt": "2026-09-03T07:49:00.029Z",
+    "sessionId": null,
+    "updatedAt": "2026-09-03T07:49:01.711Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Also in the rewrite: DocumentIntegrityService validating and rebuilding keyframes and snapshots, getOperations paging across scopes, job timeouts via abort signals, and exponential backoff with.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "f20e6714-6ff9-4e64-bc9f-41e9c9805e31",
+      "actor": "knowledge-agent",
+      "comment": "extracted from apps/academy/docs/academy/ReleaseNotes/index.md at v6.2.2-dev.74",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-09-03T07:49:00.516Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "7cb8e2de-fd07-455f-948e-81576485f4aa",
+      "actor": "liberuum",
+      "comment": "claim checked against the cited file at the pinned tag",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-09-03T07:49:01.711Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

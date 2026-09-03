@@ -1,0 +1,96 @@
+{
+  "links": [
+    {
+      "id": "lnk-1adbf0db-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "1adbf0db-0ab1-4801-9ee9-cbbc9a875beb",
+      "targetTitle": "document-model-vs-document-editor-vs-app-serves-different-purposes"
+    },
+    {
+      "id": "lnk-ce425722-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "ce425722-c1a6-4e76-b755-7066ee474482",
+      "targetTitle": "powerhouse-design-system-architecture"
+    },
+    {
+      "id": "lnk-db144dcd-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "db144dcd-42c6-467b-a108-ddebd1d421d6",
+      "targetTitle": "reducers-are-pure-functions-with-immer"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "present document model proposals to user before implementing",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "ba80e132-889a-43f5-92f4-70b2dee6bd04",
+      "name": "MCP workflows",
+      "topicDocumentId": null
+    },
+    {
+      "id": "3b0d5b98-b8b4-4eb5-adab-fa36baf6d0ab",
+      "name": "planning",
+      "topicDocumentId": null
+    },
+    {
+      "id": "885b9c89-821d-4a43-9090-445f0ab5d88e",
+      "name": "document model design",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "# present document model proposals to user before implementing\n\nBefore creating any document model, present the full proposal:\n- State schema (global and local if applicable)\n- Modules and their operations\n- Error types for each operation\n- Any architectural decisions (scope choices, object relationships)\n\nWait for explicit user approval before implementing. This prevents wasted work on wrong assumptions and gives the user a chance to refine the design.\n\nSince [[one operation per user intent keeps concerns separated]], the proposal should show how each user action maps to a specific operation.\n\n---\n\nTopics:\n- [[mcp workflows]]",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "PATTERN",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "knowledge-agent",
+    "createdAt": "2026-04-03T14:01:17.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-09-03T09:59:13.760Z",
+    "sourceOrigin": "IMPORT"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Never proceed with document model implementation without explicit user approval of the proposed structure, operations, and modules",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "8875cc70-72fe-451e-b345-734d55faa803",
+      "actor": "claude",
+      "comment": "Knowledge registered against powerhouse v6.2.2-dev.47",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-14T12:00:00.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "2f2c41de-64e2-48ef-9505-c6a70fbea75f",
+      "actor": "liberuum",
+      "comment": "Canonical as of powerhouse v6.2.2-dev.47",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-14T12:00:00.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

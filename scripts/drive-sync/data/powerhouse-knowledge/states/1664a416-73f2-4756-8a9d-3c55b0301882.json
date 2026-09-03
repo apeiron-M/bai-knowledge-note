@@ -1,0 +1,97 @@
+{
+  "links": [
+    {
+      "id": "lnk-f9ff64ef-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "f9ff64ef-4672-4b6d-9f90-62845b9256f3",
+      "targetTitle": "powa-revenue-distribution-model-captures-epoch-based-token-revenue-sharing"
+    },
+    {
+      "id": "lnk-b4582ec1-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "b4582ec1-d727-49a4-aaef-3c7f88c4be19",
+      "targetTitle": "open-source-capitalism-makes-oss-self-sustaining-investable-and-scalable"
+    },
+    {
+      "id": "lnk-154ec79a-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "154ec79a-268a-4426-a340-a422ac3f125b",
+      "targetTitle": "masterchef-accumulator-pattern-enables-per-token-revenue-tracking"
+    },
+    {
+      "id": "lnk-649207b4-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "649207b4-bb53-45aa-aa4a-6570116b7f8e",
+      "targetTitle": "ecosystem-map"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "powa document model bridges on-chain contracts with off-chain governance",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "64f3f583-6924-41d1-a2b7-407ca346fef6",
+      "name": "powa",
+      "topicDocumentId": null
+    },
+    {
+      "id": "c8247103-053f-4bd6-8d02-e65dc8246a31",
+      "name": "governance-token",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "# powa document model bridges on-chain contracts with off-chain governance\n\n## Context\n\nThe POWA revenue distribution system (NicWickman/powa) exists entirely as Solidity smart contracts. Epoch creation and revenue deposits go straight to chain with no review step. An HTML simulator exists for scenario modeling but state is ephemeral. There's no versioned document, no approval workflow, no audit trail.\n\n## Decision\n\nCreate a Powerhouse document model that captures the *business view* of POWA distribution:\n- Epoch configuration (supplies, weights, status)\n- Revenue allocation (amounts, denomination)\n- Distribution records (actuals, dust, tx hashes)\n- User holding simulations (what-if scenarios)\n\nThe model explicitly does NOT replicate on-chain internals (accRevenuePerShare, rewardDebt, pending). It stores inputs to the contracts and outputs from them.\n\n## Alternatives Considered\n- **Mirror contract storage directly** \u2014 rejected because accumulators and debt tracking are implementation details that change with contract upgrades. The business view (epochs, allocations, claims) is stable.\n- **Keep using the HTML simulator** \u2014 rejected because it provides no versioning, no multi-user collaboration, no governance gates, and no integration with the broader Powerhouse ecosystem.\n\n## Consequences\n- Establishes a **new pattern** for on-chain/off-chain document models in Powerhouse \u2014 any smart contract system that needs governance review before deployment can follow this pattern\n- Adds a 6th functional zone to the ecosystem: **Token Economics / Revenue Distribution**\n- The DRAFT\u2192APPROVED\u2192DEPLOYED lifecycle creates a natural governance checkpoint\n- May require a processor to sync distribution records from blockchain events (vs manual entry)\n\n---\n\nRelevant Notes:\n- [[powa-revenue-distribution model captures epoch-based token revenue sharing]]\n- [[masterchef accumulator pattern enables per-token revenue tracking]]\n- [[epochs distribute revenue proportionally by weighted token supply]]\n\nTopics:\n- [[architecture decisions]]",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "DECISION",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "knowledge-agent",
+    "createdAt": "2026-04-03T13:42:05.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-09-03T09:58:40.403Z",
+    "sourceOrigin": "IMPORT"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Captures the business view - epoch config, allocations, distribution records, simulations - while omitting accumulator internals; the DRAFT-APPROVED-DEPLOYED lifecycle adds a review gate.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "1efc2580-eb23-4c74-926e-9635f679c37f",
+      "actor": "claude",
+      "comment": "Knowledge registered against powerhouse v6.2.2-dev.47",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-14T12:00:00.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "32d5ea4b-642e-43cc-9443-662f7ee3a92e",
+      "actor": "liberuum",
+      "comment": "Canonical as of powerhouse v6.2.2-dev.47",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-14T12:00:00.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

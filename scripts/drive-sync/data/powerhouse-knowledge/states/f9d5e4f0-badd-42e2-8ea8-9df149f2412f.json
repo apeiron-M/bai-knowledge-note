@@ -1,0 +1,90 @@
+{
+  "links": [
+    {
+      "id": "lnk-45854b49-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "45854b49-dc6f-4937-88fa-cf4b1c2b0db0",
+      "targetTitle": "45854b49-dc6f-4937-88fa-cf4b1c2b0db0"
+    },
+    {
+      "id": "lnk-a80b000c-bui",
+      "linkType": "BUILDS_ON",
+      "targetDocumentId": "a80b000c-cc7a-46ce-990e-586f649f98c7",
+      "targetTitle": "ifc-fixed-shape-six-branches"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "IFC GlobalIds are reissued on re-export, so object identity must be reconstructed by fingerprint",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "c9b8a923-e2b6-4f94-b7c2-fa6e533cb71e",
+      "name": "ifc",
+      "topicDocumentId": null
+    },
+    {
+      "id": "fcd8db19-6e5c-4f0e-9067-5e6688f92baf",
+      "name": "model-identity",
+      "topicDocumentId": null
+    },
+    {
+      "id": "39d7486e-58f0-4521-a09f-0e94b9d278cf",
+      "name": "bim",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "The IFC schema gives every entity a `GlobalId`, a 22-character identifier the standard calls globally unique and persistent. Everything downstream treats it as the join key: BCF topics reference it, property findings report against it, coordination assumes it addresses the same object next week as this week.\n\nMeasured against two consecutive weekly exports of one real project, it does not hold. Of 1,690 physical elements in week 29, **zero** retained their `GlobalId` in week 30. The objects were provably identical: 100% of `(class, Name)` pairs matched across both files, and individual members such as `IfcBeam HEA180_(#696032)` appear in both under two different GlobalIds. The three spatial containers were reissued too. Synchro's IFC 4D exporter regenerates every identifier on every export.\n\nThe consequence is that GUID equality answers \"did this come from the same export\", not \"is this the same object\". Two derived rules follow. First, churn must be measured per exporter before any check that keys on GlobalId is trusted, because an unguarded orphan-detection pass against a churning exporter reports every topic as orphaned. Second, any durable record of a finding needs its own stable identity with the raw GlobalId retained only as provenance, and incoming identifiers resolved onto it by fingerprint at ingest.\n\nThe 32 genuinely new elements in week 30 are real progress, and they are invisible under GlobalId comparison because everything looks new.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "ARCHITECTURE",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "apeiron",
+    "createdAt": "2026-08-14T16:00:00.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-17T12:48:18.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Measured across two weekly Synchro exports: 0 of 1,690 elements kept their GlobalId while 100% of (class, Name) pairs matched. Identifiers are per-export, not per-object.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "6a4c7d7b-e351-4b35-966f-cd50de420d0b",
+      "actor": "knowledge-agent",
+      "comment": "rescued incident notes \u2014 lifecycle normalization",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-17T12:48:18.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "501f2d61-7b01-48b9-9333-927eec81bd99",
+      "actor": "liberuum",
+      "comment": "approved for canonical",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-17T12:48:18.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

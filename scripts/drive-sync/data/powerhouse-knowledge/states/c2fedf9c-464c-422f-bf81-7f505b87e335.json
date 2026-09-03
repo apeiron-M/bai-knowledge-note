@@ -1,0 +1,115 @@
+{
+  "links": [
+    {
+      "id": "lnk-0d8024a6-bui",
+      "linkType": "BUILDS_ON",
+      "targetDocumentId": "0d8024a6-332f-457f-86eb-414251cd65a3",
+      "targetTitle": "attachment-store-transport-pair",
+      "reason": "Eviction is only safe because the store can restore bytes through the transport on the next get(), which is that note's mechanism",
+      "confidence": "grounded"
+    },
+    {
+      "id": "lnk-5b4a52c0-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "5b4a52c0-6345-4bfc-a279-76ea1f37db5d",
+      "targetTitle": "Package \u203a reactor \u203a attachments",
+      "reason": "Extracted from packages/reactor/docs/attachments.md at v6.2.2-dev.74 \u2014 Design \u203a Principles (LRU eviction); Garbage Collection",
+      "confidence": "grounded"
+    },
+    {
+      "id": "lnk-e25bc920-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "e25bc920-d3bc-4b36-9c7f-cb35b64c27b9",
+      "targetTitle": "Package \u203a reactor \u203a attachments-hash-first \u2014 Hash-First Attachment Refs",
+      "reason": "Extracted from packages/reactor/docs/attachments-hash-first.md at v6.2.2-dev.74 \u2014 Failure modes (no-transport deployments must not enable eviction)",
+      "confidence": "grounded"
+    },
+    {
+      "id": "lnk-0a6393ba-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "0a6393ba-6798-445d-8b24-d325b50e262e",
+      "targetTitle": "attachment-two-tables",
+      "reason": "The two sweeps act on the two different tables: LRU on attachment, deleteExpired on attachment_reservation",
+      "confidence": "grounded"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Attachment garbage collection is LRU under storage pressure with no reference counting, so an evicted attachment keeps its metadata and can be re-fetched from any peer",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "616ccda4-29e0-4c7e-987c-98bdfbea5847",
+      "name": "attachments",
+      "topicDocumentId": null
+    },
+    {
+      "id": "1d0b98f0-669b-44a1-8677-33205f91cac5",
+      "name": "garbage-collection",
+      "topicDocumentId": null
+    },
+    {
+      "id": "de5a4a0b-40b4-44df-9994-07955ac90585",
+      "name": "storage",
+      "topicDocumentId": null
+    },
+    {
+      "id": "b446da6a-27e5-4111-96a0-b3cd667770e2",
+      "name": "lru",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "The attachment system does **not** reference-count. GC is storage-pressure-driven:\n\n1. query attachments ordered by `last_accessed_at_utc` ascending;\n2. evict until storage drops below the target threshold;\n3. evicted rows **retain metadata** (`hash`, `mime_type`, \u2026) so the hash stays known;\n4. if the data is needed again, `get()` re-fetches it from a peer through the transport.\n\nThat choice is what makes \"lazy data availability\" (design principle 4) coherent: a ref in document state never depends on this reactor holding the bytes, so dropping bytes is a cache decision rather than a data loss. For mutable backends (disk, S3) eviction removes the files; on immutable backends it stops serving them.\n\nThere is one hard constraint that predates the design: a deployment **without a functioning transport** (for example `NullAttachmentTransport`) must not enable eviction at all \u2014 there would be nothing to restore from.\n\nReservations are cleaned up on a different schedule and by a different mechanism: `IReservationStore.deleteExpired(now?)` deletes every row whose `expires_at_utc` has passed and returns the count, and should run on an interval (hourly is suggested) so aborted or failed uploads do not accumulate in `attachment_reservation`. The default TTL is `DEFAULT_RESERVATION_TTL_MS`, **24 hours**, configurable per store instance.\n\n## Provenance\n- `packages/reactor/docs/attachments.md` \u2014 Design \u203a Principles (LRU eviction); Garbage Collection\n- `packages/reactor/docs/attachments-hash-first.md` \u2014 Failure modes (no-transport deployments must not enable eviction)\n\n_Extracted from the Powerhouse repository at **v6.2.2-dev.74**._",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": "v6.2.2-dev.74",
+  "computes": null,
+  "filePath": "packages/reactor/docs/attachments.md",
+  "noteType": "DECISION",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "knowledge-agent",
+    "createdAt": "2026-09-03T07:19:42.845Z",
+    "sessionId": null,
+    "updatedAt": "2026-09-03T07:22:31.682Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "A periodic task evicts by last_accessed_at_utc ascending until storage drops below target. Reservations are swept by deleteExpired(), default TTL 24h, so abandoned uploads do not pile up.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "868dce97-5cc7-4aa6-95e6-eaf046108a8f",
+      "actor": "knowledge-agent",
+      "comment": "extracted from packages/reactor/docs/attachments.md at v6.2.2-dev.74",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-09-03T07:19:43.865Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "9066dd16-c858-4ed4-873c-6b72a788408d",
+      "actor": "liberuum",
+      "comment": "claim checked against the cited file at the pinned tag",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-09-03T07:19:44.376Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

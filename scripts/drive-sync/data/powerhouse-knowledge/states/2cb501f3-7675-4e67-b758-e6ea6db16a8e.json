@@ -1,0 +1,128 @@
+{
+  "links": [
+    {
+      "id": "lnk-9cb4d4a2-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "9cb4d4a2-9554-4937-af66-b2d5662b4124",
+      "targetTitle": "docker-compose-channels",
+      "reason": "Each compose file in the repo root pins one of these floating tags",
+      "confidence": "grounded"
+    },
+    {
+      "id": "lnk-b153c532-sup",
+      "linkType": "SUPERSEDES",
+      "targetDocumentId": "b153c532-0abc-4400-8448-4ac08046fcad",
+      "targetTitle": "docker-images-for-connect-and-switchboard",
+      "reason": "Replaces the registry, tag list and image-architecture claims of the older note: images moved from ghcr.io to cr.vetra.io, rc joined the tag set, and the images are built from one multi-stage Dockerfile",
+      "confidence": "grounded"
+    },
+    {
+      "id": "lnk-56edb93f-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "56edb93f-5c3b-4c8b-a11f-5cfdcc252dee",
+      "targetTitle": "Academy \u203a Build \u203a Launch \u203a Docker deployment guide",
+      "reason": "Extracted from apps/academy/docs/academy/03-Build/05-Launch/05-DockerDeployment.md at v6.2.2-dev.74 \u2014 Available Docker Images (cr.vetra.io, tags incl. rc); Image Architecture (single multi-stage Dockerfile); Using Specific Version Tags",
+      "confidence": "grounded"
+    },
+    {
+      "id": "lnk-8ff57495-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "8ff57495-42b3-47d4-9c91-1811281bfb34",
+      "targetTitle": "Design \u203a Design: Docker Compose files per release channel",
+      "reason": "Extracted from docs/plans/2026-08-24-docker-compose-channels-design.md at v6.2.2-dev.74 \u2014 Context (wrong registry) and 'Release channels \u2192 image tags' table with promotion flow",
+      "confidence": "grounded"
+    },
+    {
+      "id": "lnk-6914ee1a-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "6914ee1a-5136-4979-b372-2b1f822b0219",
+      "targetTitle": "release-channels",
+      "reason": "The floating image tags are the Docker face of the same three release channels the npm dist-tags follow",
+      "confidence": "grounded"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Official Connect, Switchboard and Academy images are published to the Vetra Harbor registry cr.vetra.io with one floating tag per release channel, promoted dev \u2192 staging \u2192 rc \u2192 latest",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "da28776e-6113-4b35-bc3a-e9155c1a3662",
+      "name": "docker",
+      "topicDocumentId": null
+    },
+    {
+      "id": "42573774-6215-4945-aa69-b489b83c525b",
+      "name": "deployment",
+      "topicDocumentId": null
+    },
+    {
+      "id": "68de9bfb-be0c-4a1b-9a64-cd4d69f1641e",
+      "name": "release-channels",
+      "topicDocumentId": null
+    },
+    {
+      "id": "e24ea211-46fb-404d-bd6b-7dc514f80277",
+      "name": "connect",
+      "topicDocumentId": null
+    },
+    {
+      "id": "6e4b9029-9fdf-4308-8a2a-fc50294c3ddd",
+      "name": "switchboard",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "Since the Docker redesign of 2026-03-29, connect and switchboard images are published **only** to Harbor:\n\n```\ncr.vetra.io/powerhouse-inc-powerhouse/connect\ncr.vetra.io/powerhouse-inc-powerhouse/switchboard\ncr.vetra.io/powerhouse-inc-powerhouse/academy\n```\n\nThe `ghcr.io/powerhouse-inc/powerhouse/*` copies still exist but are frozen at the pre-redesign builds \u2014 pulling them gets the old layout (Connect building at container start, Prisma migrations). The images are publicly pullable.\n\nFloating tags follow the release channels, taken from the publish workflow's \"Determine additional tag\" step and verified against Harbor:\n\n| Channel | Branch | Floating tag |\n| --- | --- | --- |\n| dev | `main` | `dev` |\n| staging | `release/staging/*` | `staging` |\n| test (release candidate) | `release/rc/*` | `rc` |\n| production | `release/production/*` | `latest` |\n\nPromotion runs **dev \u2192 staging \u2192 rc \u2192 latest**. For production deployments the Academy's rule is unchanged in spirit: pin a specific version tag (`v6.2.1`) rather than any floating tag. All three images are built from a single multi-stage `docker/Dockerfile` (build args `TAG` \u2014 the release tag \u2014 and `GIT_SHA`); a shared base stage installs `ph-cmd` for the matching release channel and initializes a project, then each target builds what it needs.\n\n_Source: apps/academy/docs/academy/03-Build/05-Launch/05-DockerDeployment.md (Powerhouse v6.2.2-dev.74)._\n_Source: docs/plans/2026-08-24-docker-compose-channels-design.md (Powerhouse v6.2.2-dev.74)._\n\n## Provenance\n- `apps/academy/docs/academy/03-Build/05-Launch/05-DockerDeployment.md` \u2014 Available Docker Images (cr.vetra.io, tags incl. rc); Image Architecture (single multi-stage Dockerfile); Using Specific Version Tags\n- `docs/plans/2026-08-24-docker-compose-channels-design.md` \u2014 Context (wrong registry) and 'Release channels \u2192 image tags' table with promotion flow\n\n_Recorded from the Powerhouse repository at **v6.2.2-dev.74** during the v6.2.2-dev.74 source sync._",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": "v6.2.2-dev.74",
+  "computes": null,
+  "filePath": "apps/academy/docs/academy/03-Build/05-Launch/05-DockerDeployment.md",
+  "noteType": "REFERENCE",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": "grounded",
+  "consumedBy": [],
+  "provenance": {
+    "author": "knowledge-agent",
+    "createdAt": "2026-09-02T22:12:47.932Z",
+    "sessionId": null,
+    "updatedAt": "2026-09-02T22:21:01.881Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "cr.vetra.io/powerhouse-inc-powerhouse/{connect,switchboard,academy}. Tags: dev (main), staging, rc (release candidates), latest (production), vX.Y.Z pins. GHCR copies are frozen pre-redesign.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "b2133c8d-88a5-484c-b592-d47a66d195b7",
+      "actor": "knowledge-agent",
+      "comment": "extracted from the Powerhouse repository at v6.2.2-dev.74",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-09-02T22:12:48.455Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "08626d7b-69f1-4ad3-a82c-668bc6859f1f",
+      "actor": "liberuum",
+      "comment": "claim checked against the cited repository file at the pinned tag",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-09-02T22:12:49.061Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

@@ -1,0 +1,107 @@
+{
+  "links": [
+    {
+      "id": "lnk-a868ced4-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "a868ced4-62b7-4fb4-bd2a-b07921b05ef9",
+      "targetTitle": "editors-use-the-modern-react-hooks-pattern-from-reactor-browser"
+    },
+    {
+      "id": "lnk-75aae845-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "75aae845-adc5-4048-8a96-245bf8ac9da0",
+      "targetTitle": "editor-components-should-be-modular-with-separate-files"
+    },
+    {
+      "id": "lnk-43733227-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "43733227-b9d3-424b-8fa0-83dda8a2001b",
+      "targetTitle": "builder-platform-enables-creation-of-reusable-modules-with-value-sharing"
+    },
+    {
+      "id": "lnk-1a932db8-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "1a932db8-245d-40f6-bfd8-eea728d9615e",
+      "targetTitle": "reactor-browser-hooks-provide-document-state"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "useSelectedDocument hook is auto-generated per document model",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "25f30f48-66b6-4d48-aaa5-2d3c090a2da7",
+      "name": "editor patterns",
+      "topicDocumentId": null
+    },
+    {
+      "id": "3bdd838f-5114-4151-82dc-f6cee5028cc1",
+      "name": "model-editor wiring",
+      "topicDocumentId": null
+    },
+    {
+      "id": "48b65ff6-85ab-42cb-a197-0a6780b82392",
+      "name": "React hooks",
+      "topicDocumentId": null
+    },
+    {
+      "id": "bde7ffd0-4e4e-401a-8cde-320088c5a246",
+      "name": "code generation",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "# useSelectedDocument hook is auto-generated per document model\n\nFor each document model, the system generates a corresponding hook:\n\n- `Todo` model \u2192 `useSelectedTodoDocument`\n- `Invoice` model \u2192 `useSelectedInvoiceDocument`\n- `ServiceOffering` model \u2192 `useSelectedServiceOfferingDocument`\n\nThese hooks are generated inside the document-model package and are imported from its barrel (e.g. `import { useSelectedTodoDocument } from \"todo-app/document-models/todo\";`) \u2014 there is no `editors/hooks/` folder. They return `[document, dispatch]`. Never implement them manually \u2014 they follow a specific pattern that matches the document model's type system.\n\nSince [[editors use the modern React hooks pattern from reactor-browser]], these hooks are the standard entry point for all editor components.\n\n---\n\nTopics:\n- [[editor patterns]]\n- [[model-editor wiring]]\n\n_Corrected 2026-08-13 against Powerhouse v6.2.2-dev.45._",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "OBSERVATION",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "knowledge-agent",
+    "createdAt": "2026-04-03T14:02:45.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-09-03T09:58:57.462Z",
+    "sourceOrigin": "IMPORT"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "like useSelectedTodoDocument are generated automatically when a document model is created; never implement them manually",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "9b137504-8dd6-4674-8503-e7a0a35d7699",
+      "actor": "claude",
+      "comment": "Knowledge registered against powerhouse v6.2.2-dev.47",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-14T12:00:00.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "7dd4adec-bca8-4ca9-b12e-8f59869e13be",
+      "actor": "liberuum",
+      "comment": "Canonical as of powerhouse v6.2.2-dev.47",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-14T12:00:00.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

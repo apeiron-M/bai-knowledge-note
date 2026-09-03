@@ -1,0 +1,340 @@
+[
+  {
+    "index": 0,
+    "hash": "",
+    "timestampUtcMs": "2026-08-14T12:33:30.934Z",
+    "action": {
+      "type": "CREATE_DOCUMENT",
+      "input": {
+        "meta": {},
+        "name": "document-toolbar-custom-controls-slots",
+        "slug": "",
+        "model": "bai/knowledge-note",
+        "branch": "main",
+        "signing": {
+          "nonce": "",
+          "publicKey": {},
+          "signature": "f1cb8435-5798-45a2-82f4-ac65290ae72a",
+          "documentType": "bai/knowledge-note",
+          "createdAtUtcIso": "2026-08-14T12:33:30.934Z"
+        },
+        "version": 0,
+        "documentId": "f1cb8435-5798-45a2-82f4-ac65290ae72a",
+        "protocolVersions": {
+          "base-reducer": 2
+        }
+      },
+      "timestampUtcMs": "2026-08-14T12:33:30.934Z"
+    }
+  },
+  {
+    "index": 0,
+    "hash": "gJ5jzY0opD2TCXKujJybMzsHV24=",
+    "timestampUtcMs": "2026-08-14T12:35:10.000Z",
+    "action": {
+      "type": "SET_TITLE",
+      "input": {
+        "title": "customControls adds controls to a DocumentToolbar slot, rendering at the slot start unless position is end",
+        "updatedAt": "2026-08-14T12:35:10.000Z"
+      },
+      "timestampUtcMs": "2026-08-14T12:35:10.000Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "",
+    "timestampUtcMs": "2026-08-14T12:33:30.934Z",
+    "action": {
+      "type": "UPGRADE_DOCUMENT",
+      "input": {
+        "model": "bai/knowledge-note",
+        "toVersion": 1,
+        "documentId": "f1cb8435-5798-45a2-82f4-ac65290ae72a",
+        "fromVersion": 0,
+        "initialState": {
+          "auth": {
+            "grants": [],
+            "version": 0
+          },
+          "local": {
+            "lastViewedAt": null,
+            "personalTags": []
+          },
+          "global": {
+            "links": [],
+            "model": null,
+            "scope": null,
+            "title": null,
+            "editor": null,
+            "inputs": [],
+            "models": [],
+            "status": "DRAFT",
+            "topics": [],
+            "content": null,
+            "context": null,
+            "modelId": null,
+            "modules": [],
+            "outputs": [],
+            "version": null,
+            "computes": null,
+            "filePath": null,
+            "noteType": null,
+            "severity": null,
+            "hooksUsed": [],
+            "rootCause": null,
+            "confidence": null,
+            "consumedBy": [],
+            "provenance": null,
+            "sourceType": null,
+            "targetType": null,
+            "cardinality": null,
+            "description": null,
+            "alternatives": [],
+            "consequences": [],
+            "errorMessage": null,
+            "relationType": null,
+            "correctPattern": null,
+            "decisionStatus": null,
+            "dispatchTargets": [],
+            "lifecycleEvents": []
+          },
+          "document": {
+            "hash": {
+              "encoding": "base64",
+              "algorithm": "sha1"
+            },
+            "version": 1
+          }
+        }
+      },
+      "timestampUtcMs": "2026-08-14T12:33:30.934Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "J6v3bo/a0GJ8aL0FUOAtQ6+sKRo=",
+    "timestampUtcMs": "2026-08-14T12:35:10.000Z",
+    "action": {
+      "type": "SET_DESCRIPTION",
+      "input": {
+        "updatedAt": "2026-08-14T12:35:10.000Z",
+        "description": "Each slot takes one CustomToolbarControl or a keyed list. position defaults to \"start\". Passing children switches to a mutually exclusive mode where customControls is ignored."
+      },
+      "timestampUtcMs": "2026-08-14T12:35:10.000Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "",
+    "timestampUtcMs": "2026-08-14T12:37:18.814Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "f1cb8435-5798-45a2-82f4-ac65290ae72a",
+        "targetId": "158143d5-1e39-44b5-9799-1a84e6de9e72",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-08-14T12:37:18.814Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "k5yYOQsTuQZv6pPgVvm17ftF+BA=",
+    "timestampUtcMs": "2026-08-14T12:35:10.000Z",
+    "action": {
+      "type": "SET_NOTE_TYPE",
+      "input": {
+        "noteType": "PATTERN",
+        "updatedAt": "2026-08-14T12:35:10.000Z"
+      },
+      "timestampUtcMs": "2026-08-14T12:35:10.000Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "",
+    "timestampUtcMs": "2026-08-14T12:37:18.895Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "f1cb8435-5798-45a2-82f4-ac65290ae72a",
+        "targetId": "05b869cd-64e5-402e-804a-406c4be704a6",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-08-14T12:37:18.895Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "669Klqw5FA20dccNbozhw2P7G7Y=",
+    "timestampUtcMs": "2026-08-14T12:35:10.000Z",
+    "action": {
+      "type": "SET_CONTENT",
+      "input": {
+        "content": "Adding to the toolbar is slot-addressed, not index-addressed. `customControls` is a `Partial<Record<ControlSlot, CustomToolbarControl | CustomToolbarControlList>>`, so each of `first`, `second` and `third` takes either a single control object or an array of them.\n\nA `CustomToolbarControl` is `{ component, position? }`, where `component` matches `ToolbarControlComponent` \u2014 a function taking `{ document?: PHDocument }` and returning `JSX.Element | null`. The toolbar passes the document it is operating on, which is the `document` prop when given and the currently selected document otherwise, so a custom control must treat `document` as optional.\n\n```tsx\n<DocumentToolbar\n  document={document}\n  customControls={{\n    second: {\n      position: \"end\",\n      component: ({ document }) => (\n        <button onClick={() => alert(document?.header.name)}>custom two</button>\n      ),\n    },\n  }}\n/>\n```\n\nTwo behaviours worth internalising:\n\n- **`position` defaults to `\"start\"`.** A custom control renders *before* the slot's built-in controls unless you set `position: \"end\"`. This surprises people who expect appended controls.\n- **Lists need a `key`.** When a slot receives a `CustomToolbarControlList`, each item is a `CustomToolbarControl & { key: React.Key }`. The key is passed straight to React; there is no implicit index fallback.\n\nThe mutual exclusivity with `children` is enforced by the type system, not by a runtime warning. `DocumentToolbarProps` is a union of `DocumentToolbarWithChildrenProps` (document, toolbarContainer, toolbarClassName, children) and `DocumentToolbarWithCustomControlsProps` (those three plus enabled/disabled controls, componentOverrides, customControls, controlsContainer, controlsContainerClassName). In `children` mode the toolbar renders only the children inside the toolbar container, so `customControls` and every other customization prop is unused \u2014 the slots themselves stop existing.\n\n_Source: apps/academy/docs/academy/03-Build/03-BuildingUserExperiences/06-DocumentTools/00-DocumentToolbar.mdx, confirmed against packages/design-system/src/connect/components/document-toolbar/types.ts (Powerhouse v6.2.2-dev.45)._",
+        "updatedAt": "2026-08-14T12:35:10.000Z"
+      },
+      "timestampUtcMs": "2026-08-14T12:35:10.000Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "",
+    "timestampUtcMs": "2026-09-02T21:44:07.184Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "metadata": {
+          "reason": "Backing page found by content match in the v6.2.2-dev.74 source backfill \u2014 identifiers customcontrols, customtoolbarcontrol, documenttoolbar from the claim appear in this page (text identical at v6.2.2-dev.47 and v6.2.2-dev.74); attribution, not the original extraction record",
+          "confidence": "grounded"
+        },
+        "sourceId": "f1cb8435-5798-45a2-82f4-ac65290ae72a",
+        "targetId": "e5827507-dc3b-4466-9efb-166b32ced72f",
+        "relationshipType": "DERIVED_FROM"
+      },
+      "timestampUtcMs": "2026-09-02T21:44:07.184Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "WwkZDBWfGvWh9rPdETiDSQfKpnA=",
+    "timestampUtcMs": "2026-08-14T12:35:10.000Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "version",
+        "value": "v6.2.2-dev.44",
+        "updatedAt": "2026-08-14T12:35:10.000Z"
+      },
+      "timestampUtcMs": "2026-08-14T12:35:10.000Z"
+    }
+  },
+  {
+    "index": 5,
+    "hash": "h2dRZ8L/BZuJRisyLdgptgnjjjs=",
+    "timestampUtcMs": "2026-08-14T12:35:10.000Z",
+    "action": {
+      "type": "SET_PROVENANCE",
+      "input": {
+        "author": "claude",
+        "createdAt": "2026-08-13T14:37:43.000Z",
+        "sourceOrigin": "DERIVED"
+      },
+      "timestampUtcMs": "2026-08-14T12:35:10.000Z"
+    }
+  },
+  {
+    "index": 6,
+    "hash": "yrI1fzun+J727/ZfgNkxv9o8jIg=",
+    "timestampUtcMs": "2026-08-14T12:35:10.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "a1b082f5-511a-4169-ad86-9e1dd3520ee4",
+        "name": "document-toolbar",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-08-14T12:35:10.000Z"
+    }
+  },
+  {
+    "index": 7,
+    "hash": "LL7T4FvPkSM9GvIapHwiQae8tRs=",
+    "timestampUtcMs": "2026-08-14T12:35:10.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "99608df7-3fc9-4f3e-9d0b-817b8319b1b2",
+        "name": "editor-styling",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-08-14T12:35:10.000Z"
+    }
+  },
+  {
+    "index": 8,
+    "hash": "xYR56OxWG7qwrHLYosD4B0s4Mmg=",
+    "timestampUtcMs": "2026-08-14T12:35:10.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "21c75ed8-e833-48f2-af40-d3aa56638192",
+        "name": "editors",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-08-14T12:35:10.000Z"
+    }
+  },
+  {
+    "index": 9,
+    "hash": "RrQKPBIekagl6kNVN9eGy5Ko7o8=",
+    "timestampUtcMs": "2026-08-14T14:37:45.000Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "version",
+        "value": "v6.2.2-dev.47",
+        "updatedAt": "2026-08-14T12:00:00.000Z"
+      },
+      "timestampUtcMs": "2026-08-14T14:37:45.000Z"
+    }
+  },
+  {
+    "index": 10,
+    "hash": "Ix6ph+b01OLA0jkT6/8w5yS5Hw8=",
+    "timestampUtcMs": "2026-08-14T14:37:45.000Z",
+    "action": {
+      "type": "SUBMIT_FOR_REVIEW",
+      "input": {
+        "id": "52a5165d-296c-45ad-876e-d7dde8e5a341",
+        "actor": "claude",
+        "comment": "Knowledge registered against powerhouse v6.2.2-dev.47",
+        "timestamp": "2026-08-14T12:00:00.000Z"
+      },
+      "timestampUtcMs": "2026-08-14T14:37:45.000Z"
+    }
+  },
+  {
+    "index": 11,
+    "hash": "cv+01A+lerX6TDW7MLmBT93xbts=",
+    "timestampUtcMs": "2026-08-14T14:37:45.000Z",
+    "action": {
+      "type": "APPROVE_NOTE",
+      "input": {
+        "id": "b539a529-6320-41ed-94c5-8bf8b4c241ce",
+        "actor": "liberuum",
+        "comment": "Canonical as of powerhouse v6.2.2-dev.47",
+        "timestamp": "2026-08-14T12:00:00.000Z"
+      },
+      "timestampUtcMs": "2026-08-14T14:37:45.000Z"
+    }
+  },
+  {
+    "index": 12,
+    "hash": "saWQCzfv3rbzCzFWrDjRaqKS+v4=",
+    "timestampUtcMs": "2026-09-02T21:44:07.836Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "filePath",
+        "value": "packages/design-system/src/connect/components/document-toolbar/README.md",
+        "updatedAt": "2026-09-02T21:44:07.836Z"
+      },
+      "timestampUtcMs": "2026-09-02T21:44:07.836Z"
+    }
+  },
+  {
+    "index": 13,
+    "hash": "2M95HFWETbVnBCIRqwqP0zd9gu0=",
+    "timestampUtcMs": "2026-09-02T21:44:07.836Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "version",
+        "value": "v6.2.2-dev.74",
+        "updatedAt": "2026-09-02T21:44:07.836Z"
+      },
+      "timestampUtcMs": "2026-09-02T21:44:07.836Z"
+    }
+  }
+]

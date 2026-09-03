@@ -1,0 +1,361 @@
+[
+  {
+    "index": 0,
+    "hash": "",
+    "timestampUtcMs": "2026-09-03T07:38:35.614Z",
+    "action": {
+      "type": "CREATE_DOCUMENT",
+      "input": {
+        "meta": {},
+        "name": "remote-controller-conflict-strategies",
+        "slug": "",
+        "model": "bai/knowledge-note",
+        "branch": "main",
+        "signing": {
+          "nonce": "",
+          "publicKey": {},
+          "signature": "981a7608-312e-4df7-bae3-942491b9e023",
+          "documentType": "bai/knowledge-note",
+          "createdAtUtcIso": "2026-09-03T07:38:35.614Z"
+        },
+        "version": 0,
+        "documentId": "981a7608-312e-4df7-bae3-942491b9e023",
+        "protocolVersions": {
+          "base-reducer": 2
+        }
+      },
+      "timestampUtcMs": "2026-09-03T07:38:35.614Z"
+    }
+  },
+  {
+    "index": 0,
+    "hash": "vy8MGG/LRhuAOCtul9c93X01e3g=",
+    "timestampUtcMs": "2026-09-03T07:38:36.925Z",
+    "action": {
+      "type": "SET_TITLE",
+      "input": {
+        "title": "RemoteDocumentController does no conflict check by default, so concurrent editors are last-write-wins until onConflict is set to reject, rebase or a custom merge",
+        "updatedAt": "2026-09-03T07:38:36.925Z"
+      },
+      "timestampUtcMs": "2026-09-03T07:38:36.925Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "",
+    "timestampUtcMs": "2026-09-03T07:38:35.614Z",
+    "action": {
+      "type": "UPGRADE_DOCUMENT",
+      "input": {
+        "model": "bai/knowledge-note",
+        "toVersion": 1,
+        "documentId": "981a7608-312e-4df7-bae3-942491b9e023",
+        "fromVersion": 0,
+        "initialState": {
+          "auth": {
+            "grants": [],
+            "version": 0
+          },
+          "local": {
+            "lastViewedAt": null,
+            "personalTags": []
+          },
+          "global": {
+            "links": [],
+            "model": null,
+            "scope": null,
+            "title": null,
+            "editor": null,
+            "inputs": [],
+            "models": [],
+            "status": "DRAFT",
+            "topics": [],
+            "content": null,
+            "context": null,
+            "modelId": null,
+            "modules": [],
+            "outputs": [],
+            "version": null,
+            "computes": null,
+            "filePath": null,
+            "noteType": null,
+            "severity": null,
+            "hooksUsed": [],
+            "rootCause": null,
+            "confidence": null,
+            "consumedBy": [],
+            "provenance": null,
+            "sourceType": null,
+            "targetType": null,
+            "cardinality": null,
+            "description": null,
+            "alternatives": [],
+            "consequences": [],
+            "errorMessage": null,
+            "relationType": null,
+            "correctPattern": null,
+            "decisionStatus": null,
+            "dispatchTargets": [],
+            "lifecycleEvents": []
+          },
+          "document": {
+            "hash": {
+              "encoding": "base64",
+              "algorithm": "sha1"
+            },
+            "version": 1
+          }
+        }
+      },
+      "timestampUtcMs": "2026-09-03T07:38:35.614Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "rlGanzugm+SjfNo40tNbxnodawE=",
+    "timestampUtcMs": "2026-09-03T07:38:36.925Z",
+    "action": {
+      "type": "SET_DESCRIPTION",
+      "input": {
+        "updatedAt": "2026-09-03T07:38:36.925Z",
+        "description": "reject throws ConflictError carrying remoteOperations and localActions; rebase pulls, re-applies the local actions with fresh prevOpHash values, then pushes. Each action is signed against its."
+      },
+      "timestampUtcMs": "2026-09-03T07:38:36.925Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "",
+    "timestampUtcMs": "2026-09-03T07:39:19.908Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "metadata": {
+          "reason": "Extracted from packages/reactor-browser/src/remote-controller/README.md at v6.2.2-dev.74 \u2014 Conflict handling (reject, rebase, custom merge handler); Signing",
+          "confidence": "grounded"
+        },
+        "sourceId": "981a7608-312e-4df7-bae3-942491b9e023",
+        "targetId": "7f914066-a131-4968-a42c-a7d58158cc8b",
+        "relationshipType": "DERIVED_FROM"
+      },
+      "timestampUtcMs": "2026-09-03T07:39:19.908Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "Ih8fL55L4I9bP82spiaLaQO5ZSs=",
+    "timestampUtcMs": "2026-09-03T07:38:36.925Z",
+    "action": {
+      "type": "SET_NOTE_TYPE",
+      "input": {
+        "noteType": "PATTERN",
+        "updatedAt": "2026-09-03T07:38:36.925Z"
+      },
+      "timestampUtcMs": "2026-09-03T07:38:36.925Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "",
+    "timestampUtcMs": "2026-09-03T07:39:20.385Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "metadata": {
+          "reason": "The conflict check runs at push time, so which mode is in use decides how often it happens and how much work a rebase re-applies",
+          "confidence": "grounded"
+        },
+        "sourceId": "981a7608-312e-4df7-bae3-942491b9e023",
+        "targetId": "4f4cb8ea-234a-4724-a857-bf8d6be037b2",
+        "relationshipType": "BUILDS_ON"
+      },
+      "timestampUtcMs": "2026-09-03T07:39:20.385Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "v6Lf+J1pwPvHaeo/1P/P6CG2RGU=",
+    "timestampUtcMs": "2026-09-03T07:38:36.925Z",
+    "action": {
+      "type": "SET_CONTENT",
+      "input": {
+        "content": "**The default is the dangerous one, and it is stated plainly:** \"By default no conflict check is performed (last-write-wins).\" Pull-before-push detection is opt-in through `onConflict`, with three strategies:\n\n- **`\"reject\"`** \u2014 throws a `ConflictError` if the remote gained operations since the last pull. The error carries `err.conflict.remoteOperations` (the new remote ops) and `err.conflict.localActions` (the pending local actions), so the caller can decide.\n- **`\"rebase\"`** \u2014 pulls the latest remote state, then **re-applies the local actions on top**, and the re-applied actions get fresh `prevOpHash` values computed against the updated state.\n- **a custom merge handler** \u2014 a function receiving the conflict details and returning the actions to push; throwing from it aborts.\n\nSigning interacts with this directly. Pass an `ISigner` (a Renown instance's `renown.signer` works) and **each action is signed with the operation's `prevOpHash` before push**, with signatures preserved through the push/pull round trip and readable at `result.operations[0].context?.signer?.signatures[0]`. That is why rebase must recompute `prevOpHash`: a re-applied action signed against the old hash would be signed for a position it no longer occupies.\n\nFor anyone choosing: reject is right when a human should decide, rebase when the actions are order-insensitive, and the custom handler when the merge is domain-specific. Leaving the default in place is only safe for a single-writer document.\n\n## Provenance\n- `packages/reactor-browser/src/remote-controller/README.md` \u2014 Conflict handling (reject, rebase, custom merge handler); Signing\n\n_Extracted from the Powerhouse repository at **v6.2.2-dev.74**._",
+        "updatedAt": "2026-09-03T07:38:36.925Z"
+      },
+      "timestampUtcMs": "2026-09-03T07:38:36.925Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "",
+    "timestampUtcMs": "2026-09-03T07:39:20.863Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "metadata": {
+          "reason": "Stamping prevOpHash before signing is the same mechanism, which is why a rebase has to recompute it rather than reuse the signature",
+          "confidence": "grounded"
+        },
+        "sourceId": "981a7608-312e-4df7-bae3-942491b9e023",
+        "targetId": "8b3fe0f8-73ee-4bfc-8904-e9b16708620f",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-09-03T07:39:20.863Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "iQBQBV9Xnw4ja1SdsXC7sELsIdg=",
+    "timestampUtcMs": "2026-09-03T07:38:36.925Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "02cd63a3-6476-421a-afc5-10aa3dd9f8f5",
+        "name": "reactor-browser"
+      },
+      "timestampUtcMs": "2026-09-03T07:38:36.925Z"
+    }
+  },
+  {
+    "index": 5,
+    "hash": "",
+    "timestampUtcMs": "2026-09-03T07:39:21.335Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "metadata": {
+          "reason": "The reactor resolves concurrent edits by reshuffling immutable operations, while this controller defaults to last-write-wins and only detects a conflict if the caller opts in",
+          "confidence": "grounded"
+        },
+        "sourceId": "981a7608-312e-4df7-bae3-942491b9e023",
+        "targetId": "5ba85b55-4ac1-4cd5-a9d2-e1855c5b9633",
+        "relationshipType": "CONTRADICTS"
+      },
+      "timestampUtcMs": "2026-09-03T07:39:21.335Z"
+    }
+  },
+  {
+    "index": 5,
+    "hash": "AOhPxXcpt78BJciC91qtcp3vils=",
+    "timestampUtcMs": "2026-09-03T07:38:36.925Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "3d7a9216-2ebc-4af4-835f-dd2961e66ea0",
+        "name": "conflicts"
+      },
+      "timestampUtcMs": "2026-09-03T07:38:36.925Z"
+    }
+  },
+  {
+    "index": 6,
+    "hash": "7o8ZKIlIL6Bibi4LsvHIjV94OMU=",
+    "timestampUtcMs": "2026-09-03T07:38:36.925Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "6f8ffa99-8fd8-46ab-a4db-dc9b114ee5e2",
+        "name": "signing"
+      },
+      "timestampUtcMs": "2026-09-03T07:38:36.925Z"
+    }
+  },
+  {
+    "index": 7,
+    "hash": "Ao1GxKjrb2ff3ANDflakgCIPKsU=",
+    "timestampUtcMs": "2026-09-03T07:38:36.925Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "5e6d34e8-d91c-4724-9d7b-e17182702cce",
+        "name": "gotchas"
+      },
+      "timestampUtcMs": "2026-09-03T07:38:36.925Z"
+    }
+  },
+  {
+    "index": 8,
+    "hash": "Bo5VnyRMReAMm8F7LLpnx0EF1pw=",
+    "timestampUtcMs": "2026-09-03T07:38:36.925Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "version",
+        "value": "v6.2.2-dev.74",
+        "updatedAt": "2026-09-03T07:38:36.925Z"
+      },
+      "timestampUtcMs": "2026-09-03T07:38:36.925Z"
+    }
+  },
+  {
+    "index": 9,
+    "hash": "AUJaTWWhjQxTQ7S5qiGAgFo52ZI=",
+    "timestampUtcMs": "2026-09-03T07:38:36.925Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "filePath",
+        "value": "packages/reactor-browser/src/remote-controller/README.md",
+        "updatedAt": "2026-09-03T07:38:36.925Z"
+      },
+      "timestampUtcMs": "2026-09-03T07:38:36.925Z"
+    }
+  },
+  {
+    "index": 10,
+    "hash": "DTkmY1HREbeBpxa7SH/ErvabFng=",
+    "timestampUtcMs": "2026-09-03T07:38:39.529Z",
+    "action": {
+      "type": "SET_PROVENANCE",
+      "input": {
+        "author": "knowledge-agent",
+        "createdAt": "2026-09-03T07:38:39.529Z",
+        "sourceOrigin": "DERIVED"
+      },
+      "timestampUtcMs": "2026-09-03T07:38:39.529Z"
+    }
+  },
+  {
+    "index": 11,
+    "hash": "NKXRqiLKAJ30nmhLEFSgkDXfNGk=",
+    "timestampUtcMs": "2026-09-03T07:38:40.214Z",
+    "action": {
+      "type": "SUBMIT_FOR_REVIEW",
+      "input": {
+        "id": "dfe1ec9e-dd9b-4615-8e28-2899f0c9af27",
+        "actor": "knowledge-agent",
+        "comment": "extracted from packages/reactor-browser/src/remote-controller/README.md at v6.2.2-dev.74",
+        "timestamp": "2026-09-03T07:38:40.214Z"
+      },
+      "timestampUtcMs": "2026-09-03T07:38:40.214Z"
+    }
+  },
+  {
+    "index": 12,
+    "hash": "WlTmzcdnhvqyAFTuXRudsQVR1Dc=",
+    "timestampUtcMs": "2026-09-03T07:38:40.719Z",
+    "action": {
+      "type": "APPROVE_NOTE",
+      "input": {
+        "id": "00e195a6-1b29-41c3-b873-8dfccce0eecc",
+        "actor": "liberuum",
+        "comment": "claim checked against the cited file at the pinned tag",
+        "timestamp": "2026-09-03T07:38:40.719Z"
+      },
+      "timestampUtcMs": "2026-09-03T07:38:40.719Z"
+    }
+  },
+  {
+    "index": 13,
+    "hash": "02+whOMcmWxRIUkHt0yT9IW0CWs=",
+    "timestampUtcMs": "2026-09-03T07:59:26.056Z",
+    "action": {
+      "type": "SET_CONTENT",
+      "input": {
+        "content": "**The default is the dangerous one, and it is stated plainly:** \"By default no conflict check is performed (last-write-wins).\" Pull-before-push detection is opt-in through `onConflict`, with three strategies:\n\n- **`\"reject\"`** \u2014 throws a `ConflictError` if the remote gained operations since the last pull. The error carries `err.conflict.remoteOperations` (the new remote ops) and `err.conflict.localActions` (the pending local actions), so the caller can decide.\n- **`\"rebase\"`** \u2014 pulls the latest remote state, then **re-applies the local actions on top**, and the re-applied actions get fresh `prevOpHash` values computed against the updated state.\n- **a custom merge handler** \u2014 a function receiving the conflict details and returning the actions to push; throwing from it aborts.\n\nSigning interacts with this directly. Pass an `ISigner` (a Renown instance's `renown.signer` works) and **each action is signed with the operation's `prevOpHash` before push**, with signatures preserved through the push/pull round trip and readable at `result.operations[0].context?.signer?.signatures[0]`. That is why rebase must recompute `prevOpHash`: a re-applied action signed against the old hash would be signed for a position it no longer occupies.\n\nFor anyone choosing: reject is right when a human should decide, rebase when the actions are order-insensitive, and the custom handler when the merge is domain-specific. Leaving the default in place is only safe for a single-writer document.\n\n## Provenance\n- `packages/reactor-browser/src/remote-controller/README.md` \u2014 Conflict handling (reject, rebase, custom merge handler); Signing\n\n_Extracted from the Powerhouse repository at **v6.2.2-dev.74**._\n\n## Boundary: this is not the reactor's conflict resolution\nDo not read \"last-write-wins\" as a statement about the reactor. Two different layers are in play. Inside the reactor, concurrent edits are merged by **operational reshuffle**: operations are immutable, ordered by timestamp in a merged order, and every replica converges on the same effective stream. Here, in a client that pushes actions over GraphQL, the question is different \u2014 *should I even submit these actions given what the remote gained since I last pulled?* \u2014 and the answer is nothing unless `onConflict` is set.\n\nSo the controller's default risks losing a **local intention** (your actions computed against stale state), not corrupting stored history. A reject or rebase strategy is what makes the intention safe; reshuffle is what makes the log safe.\n",
+        "updatedAt": "2026-09-03T07:59:26.056Z"
+      },
+      "timestampUtcMs": "2026-09-03T07:59:26.056Z"
+    }
+  }
+]

@@ -1,0 +1,121 @@
+{
+  "links": [
+    {
+      "id": "lnk-c7c4d4a6-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "c7c4d4a6-bec7-456d-9d58-fbf8557bd2b1",
+      "targetTitle": "usephtoast-replaces-direct-toast-library-imports-in-editors"
+    },
+    {
+      "id": "lnk-ce88373e-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "ce88373e-5007-4dac-b8a6-7665528d2bb7",
+      "targetTitle": "style-editors-with-tailwind-classes-or-scoped-style-tags"
+    },
+    {
+      "id": "lnk-68fe4e47-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "68fe4e47-7ca5-45f2-8d9e-5f862682eadc",
+      "targetTitle": "always-check-document-model-schema-before-calling-addactions"
+    },
+    {
+      "id": "lnk-37987f5c-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "37987f5c-8193-493a-96f6-7d0ab6d25287",
+      "targetTitle": "dispatch-accepts-onerrors-callback"
+    },
+    {
+      "id": "lnk-00147bfc-bui",
+      "linkType": "BUILDS_ON",
+      "targetDocumentId": "00147bfc-06e3-4c4b-975e-fa3220726fb2",
+      "targetTitle": "editors-use-react-hooks-for-document-state"
+    },
+    {
+      "id": "lnk-0d96b03f-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "0d96b03f-d5db-4c76-b0bb-549f48d232d6",
+      "targetTitle": "Academy \u203a Build \u203a BuildingUserExperiences \u203a Build document editors",
+      "reason": "Backing page found by content match in the v6.2.2-dev.74 source backfill \u2014 identifiers modern from the claim appear in this page (text identical at v6.2.2-dev.47 and v6.2.2-dev.74); attribution, not the original extraction record",
+      "confidence": "grounded"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "editors use the modern React hooks pattern from reactor-browser",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "6f3402a2-d7db-4dfe-90fb-5577a737d182",
+      "name": "editor patterns",
+      "topicDocumentId": null
+    },
+    {
+      "id": "e01eebb8-6a13-42a7-94dd-584ce1affd34",
+      "name": "model-editor wiring",
+      "topicDocumentId": null
+    },
+    {
+      "id": "64e9c8f2-2469-40fc-b40a-03a54e60b103",
+      "name": "React hooks",
+      "topicDocumentId": null
+    },
+    {
+      "id": "5a9071bd-f4a9-485b-8b2b-19fd761cb5f1",
+      "name": "code generation",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "# editors use the modern React hooks pattern from reactor-browser\n\nDocument editors follow a consistent pattern using auto-generated hooks from `@powerhousedao/reactor-browser`:\n\n```typescript\nimport { generateId } from \"document-model/core\";\nimport { useSelectedTodoDocument } from \"todo-app/document-models/todo\";\nimport { addTodo } from \"todo-app/document-models/todo\";\n\nexport default function Editor() {\n  const [document, dispatch] = useSelectedTodoDocument();\n\n  function handleAddTodo(values: { title: string }) {\n    if (values.title) {\n      dispatch(addTodo({ id: generateId(), title: values.title }));\n    }\n  }\n}\n```\n\nKey points:\n- `useSelectedXDocument` is auto-generated per document model \u2014 since [[useSelectedDocument hook is auto-generated per document model]], never implement it manually\n- The hook **and** the action creators both come from the same document-model barrel (`todo-app/document-models/todo`) \u2014 not from a deep `gen/creators.js` path, and not from an `editors/hooks/` folder\n- Since `generateId()` from `document-model` is non-deterministic (it returns `globalThis.crypto.randomUUID()`), IDs must be generated in the editor **before** dispatch and passed through the action input -- never inside the reducer, which must stay replay-deterministic\n\n---\n\nTopics:\n- [[editor patterns]]\n- [[model-editor wiring]]\n\n_Corrected 2026-08-13 against Powerhouse v6.2.2-dev.45._",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": "v6.2.2-dev.74",
+  "computes": null,
+  "filePath": "apps/academy/docs/academy/03-Build/03-BuildingUserExperiences/01-BuildingDocumentEditors.md",
+  "noteType": "PATTERN",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "knowledge-agent",
+    "createdAt": "2026-04-03T14:02:07.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-09-02T21:34:03.904Z",
+    "sourceOrigin": "IMPORT"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "The useSelectedXDocument hook is auto-generated and returns [document, dispatch]; the hook and action creators both come from the document-model barrel",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "a1577822-e0c2-4bf7-9533-935121e43795",
+      "actor": "claude",
+      "comment": "Knowledge registered against powerhouse v6.2.2-dev.47",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-14T12:00:00.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "e8edb631-e57d-427f-a514-0d2ec79e0c16",
+      "actor": "liberuum",
+      "comment": "Canonical as of powerhouse v6.2.2-dev.47",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-14T12:00:00.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

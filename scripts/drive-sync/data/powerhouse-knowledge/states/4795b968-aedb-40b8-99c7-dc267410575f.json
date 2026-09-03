@@ -1,0 +1,15 @@
+{
+  "title": "Contradiction on renown, authentication",
+  "status": "RESOLVED",
+  "content": "## Involved claims\n\n- The Academy's Renown SDK page documents a RenownUserProvider and useUser that @renown/sdk does not export \u2014 `190cf9aa-4667-40b9-b6b1-4a8bf17e79e3`\n- The Renown SDK is built through a RenownBuilder whose every dependency is injectable, and its React components live in reactor-browser rather than in the SDK \u2014 `49c7215e-c5f3-40ca-b98d-22a18128e6cb`\n\n## Why this exists\n\nA `CONTRADICTS` relationship was recorded between these two notes at 2026-09-03T07:49:28.335Z. The vault treats a recorded contradiction as an open question, not a fact to leave implicit: until someone resolves or dissolves this tension, both claims stand and readers should see that they disagree.\n\n## How to close it\n\n- **Resolve** when one claim is correct: say which, and consider `SUPERSEDES` on the winner.\n- **Dissolve** when both are right in different scopes: state the boundary in each note's content.",
+  "observedAt": "2026-09-03T07:49:28.335Z",
+  "observedBy": "graph-indexer",
+  "resolution": "Resolved in favour of the package. @renown/sdk's root export list at v6.2.2-dev.74 contains renown-builder and no React provider, and RenownUserProvider appears nowhere in the tree; the SDK's own COMPONENTS.md says the React surface lives in @powerhousedao/reactor-browser. The Academy page describes an earlier, React-shaped SDK and should be read as historical until it is rewritten.",
+  "resolvedAt": "2026-09-03T07:59:27.618Z",
+  "description": "\u201cThe Academy's Renown SDK page documents a RenownUserProvider and useUser that @renown/sdk does not export\u201d contradicts \u201cThe Renown SDK is built through a RenownBuilder whose every dependency is injectable, and its React components live in reactor-browser rath\u2026\u201d. Opened automatically from a CONTRADICTS link \u2014 resolve if one side is right, dissolve if both hold in different contexts.",
+  "involvedRefs": [
+    "190cf9aa-4667-40b9-b6b1-4a8bf17e79e3",
+    "49c7215e-c5f3-40ca-b98d-22a18128e6cb"
+  ],
+  "links": []
+}

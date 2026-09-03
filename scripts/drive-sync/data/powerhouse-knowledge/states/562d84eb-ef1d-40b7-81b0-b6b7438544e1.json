@@ -1,0 +1,115 @@
+{
+  "links": [
+    {
+      "id": "lnk-14d47019-bui",
+      "linkType": "BUILDS_ON",
+      "targetDocumentId": "14d47019-4ebc-4d7d-acfd-352b344a291f",
+      "targetTitle": "op-with-context-resulting-state",
+      "reason": "The ordinal that context carries is the value this cursor advances through; without a global ordinal a flattened collection stream could not be tracked",
+      "confidence": "grounded"
+    },
+    {
+      "id": "lnk-936ddc46-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "936ddc46-3b5a-40d1-b69f-6a3f6c3c6b8f",
+      "targetTitle": "ordinal-frames-of-reference",
+      "reason": "Cursors are tracked in ordinals, and ordinals are local to a reactor \u2014 which is what makes the poll exchange's two frames of reference necessary",
+      "confidence": "grounded"
+    },
+    {
+      "id": "lnk-e4ef060b-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "e4ef060b-4d61-41b4-95bd-2f562eea3cfa",
+      "targetTitle": "Package \u203a reactor \u203a ARCHITECTURE \u2014 Reactor Architecture",
+      "reason": "Extracted from packages/reactor/docs/ARCHITECTURE.md at v6.2.2-dev.74 \u2014 Synchronization \u203a Collection-Based Sync",
+      "confidence": "grounded"
+    },
+    {
+      "id": "lnk-3c9df40d-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "3c9df40d-1f3d-4bb5-b01a-f2d16e6ec0e4",
+      "targetTitle": "reactor-kysely-tables",
+      "reason": "Collection membership and cursor state are the document_collections and sync_cursors tables listed there",
+      "confidence": "grounded"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Sync tracks position with one cursor per collection over a flattened operation stream, and a drive's collection id is drive.<branch>.<driveId>",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "1c374d71-61ae-4dfd-91aa-bc8b9182b7b6",
+      "name": "reactor-sync",
+      "topicDocumentId": null
+    },
+    {
+      "id": "0e802b6a-c24d-48fe-a919-7c1dcc490132",
+      "name": "collections",
+      "topicDocumentId": null
+    },
+    {
+      "id": "db2c8997-ea18-430b-a63f-0944b06185dd",
+      "name": "cursors",
+      "topicDocumentId": null
+    },
+    {
+      "id": "1685d010-877f-476d-a201-b3e004399599",
+      "name": "drives",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "Sync does not keep a cursor per document. Operations are grouped into **collections**, and a collection has one cursor over the flattened stream of every operation belonging to it:\n\n```ts\nconst collectionId = `drive.${branch}.${driveId}`;\n```\n\nWhen a document is added to a drive it **joins the drive's collection**, and from then on its operations appear in that collection's stream. The cursor advances through `ordinal` values from the operation index, which is exactly why the index assigns a global ordinal in the first place \u2014 per-scope `index` values could not order a multi-document stream.\n\nThe practical consequence: sync progress for a drive with 900 documents is one number, and a new document does not add a cursor to maintain. Membership is stored in `document_collections`.\n\n## Provenance\n- `packages/reactor/docs/ARCHITECTURE.md` \u2014 Synchronization \u203a Collection-Based Sync\n\n_Extracted from the Powerhouse repository at **v6.2.2-dev.74**._",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": "v6.2.2-dev.74",
+  "computes": null,
+  "filePath": "packages/reactor/docs/ARCHITECTURE.md",
+  "noteType": "ARCHITECTURE",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "knowledge-agent",
+    "createdAt": "2026-09-03T07:18:39.974Z",
+    "sessionId": null,
+    "updatedAt": "2026-09-03T07:22:20.975Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Adding a document to a drive joins the drive's collection, so a single cursor covers every document in it \u2014 tracked by operation-index ordinals rather than per-document revisions.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "020428c1-a291-4ac6-b55a-511c579531b3",
+      "actor": "knowledge-agent",
+      "comment": "extracted from packages/reactor/docs/ARCHITECTURE.md at v6.2.2-dev.74",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-09-03T07:18:40.518Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "d5cbef66-923e-4bb1-a28d-20b972a1e95f",
+      "actor": "liberuum",
+      "comment": "claim checked against the cited file at the pinned tag",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-09-03T07:18:40.999Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

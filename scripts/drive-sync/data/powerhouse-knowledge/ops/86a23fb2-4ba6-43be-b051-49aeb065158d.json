@@ -1,0 +1,390 @@
+[
+  {
+    "index": 0,
+    "hash": "",
+    "timestampUtcMs": "2026-08-14T12:33:55.681Z",
+    "action": {
+      "type": "CREATE_DOCUMENT",
+      "input": {
+        "meta": {},
+        "name": "swarm-pull-cycle-manifest-to-inbox",
+        "slug": "",
+        "model": "bai/knowledge-note",
+        "branch": "main",
+        "signing": {
+          "nonce": "",
+          "publicKey": {},
+          "signature": "86a23fb2-4ba6-43be-b051-49aeb065158d",
+          "documentType": "bai/knowledge-note",
+          "createdAtUtcIso": "2026-08-14T12:33:55.681Z"
+        },
+        "version": 0,
+        "documentId": "86a23fb2-4ba6-43be-b051-49aeb065158d",
+        "protocolVersions": {
+          "base-reducer": 2
+        }
+      },
+      "timestampUtcMs": "2026-08-14T12:33:55.681Z"
+    }
+  },
+  {
+    "index": 0,
+    "hash": "IIq4gyh2VcDyEGpPgPIgW7zHW4I=",
+    "timestampUtcMs": "2026-08-14T12:35:59.000Z",
+    "action": {
+      "type": "SET_TITLE",
+      "input": {
+        "title": "The Swarm pull cycle polls user and document manifests then decrypts batches into the inbox.",
+        "updatedAt": "2026-08-14T12:35:59.000Z"
+      },
+      "timestampUtcMs": "2026-08-14T12:35:59.000Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "",
+    "timestampUtcMs": "2026-08-14T12:33:55.681Z",
+    "action": {
+      "type": "UPGRADE_DOCUMENT",
+      "input": {
+        "model": "bai/knowledge-note",
+        "toVersion": 1,
+        "documentId": "86a23fb2-4ba6-43be-b051-49aeb065158d",
+        "fromVersion": 0,
+        "initialState": {
+          "auth": {
+            "grants": [],
+            "version": 0
+          },
+          "local": {
+            "lastViewedAt": null,
+            "personalTags": []
+          },
+          "global": {
+            "links": [],
+            "model": null,
+            "scope": null,
+            "title": null,
+            "editor": null,
+            "inputs": [],
+            "models": [],
+            "status": "DRAFT",
+            "topics": [],
+            "content": null,
+            "context": null,
+            "modelId": null,
+            "modules": [],
+            "outputs": [],
+            "version": null,
+            "computes": null,
+            "filePath": null,
+            "noteType": null,
+            "severity": null,
+            "hooksUsed": [],
+            "rootCause": null,
+            "confidence": null,
+            "consumedBy": [],
+            "provenance": null,
+            "sourceType": null,
+            "targetType": null,
+            "cardinality": null,
+            "description": null,
+            "alternatives": [],
+            "consequences": [],
+            "errorMessage": null,
+            "relationType": null,
+            "correctPattern": null,
+            "decisionStatus": null,
+            "dispatchTargets": [],
+            "lifecycleEvents": []
+          },
+          "document": {
+            "hash": {
+              "encoding": "base64",
+              "algorithm": "sha1"
+            },
+            "version": 1
+          }
+        }
+      },
+      "timestampUtcMs": "2026-08-14T12:33:55.681Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "LVeK4z5A5BC4JyynBqtJejSqtps=",
+    "timestampUtcMs": "2026-08-14T12:35:59.000Z",
+    "action": {
+      "type": "SET_DESCRIPTION",
+      "input": {
+        "updatedAt": "2026-08-14T12:35:59.000Z",
+        "description": "SwarmChannel polls the user feed, walks manifests to discover documents and batches, downloads + decrypts via /bytes, and hands SyncOperations to SyncManager."
+      },
+      "timestampUtcMs": "2026-08-14T12:35:59.000Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "",
+    "timestampUtcMs": "2026-08-14T12:38:51.480Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "86a23fb2-4ba6-43be-b051-49aeb065158d",
+        "targetId": "752bee27-d361-4981-b353-d8082ef05b25",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-08-14T12:38:51.480Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "x89t1JAcu2tVcfqxGVkFicq1Lqk=",
+    "timestampUtcMs": "2026-08-14T12:35:59.000Z",
+    "action": {
+      "type": "SET_NOTE_TYPE",
+      "input": {
+        "noteType": "procedure",
+        "updatedAt": "2026-08-14T12:35:59.000Z"
+      },
+      "timestampUtcMs": "2026-08-14T12:35:59.000Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "",
+    "timestampUtcMs": "2026-08-14T12:38:51.584Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "86a23fb2-4ba6-43be-b051-49aeb065158d",
+        "targetId": "c6ce116a-daaa-4be5-a9de-25b63600f6a0",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-08-14T12:38:51.584Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "NJnqmL6IDT9SU2jwLGpmyslRiwc=",
+    "timestampUtcMs": "2026-08-14T12:35:59.000Z",
+    "action": {
+      "type": "SET_CONTENT",
+      "input": {
+        "content": "## Claim\nPull is manifest-driven: poll user feed \u2192 read user manifest \u2192 per-document manifests \u2192 batch references \u2192 /bytes downloads \u2192 decrypt \u2192 inbox.\n\n## Step-by-step\n1. SwarmChannel polls the user's feed at the configured interval (`pollIntervalMs`).\n2. Reads the user manifest \u2192 discovers drives and documents.\n3. For each document, reads its manifest \u2192 discovers operation batches.\n4. Downloads each batch from `/bytes`, decrypts with AES-256-GCM, deserializes.\n5. Converts to `SyncOperation` objects and adds to `SwarmChannel.inbox`.\n6. SyncManager applies them to the local reactor via `reactor.load()`.\n7. Cursor advances in `sync_cursors`; subsequent polls only fetch new operations.\n\n## Implications\n- First load on a new device walks the full manifest tree but only applies each batch once.\n- Steady-state pulls are cheap \u2014 only new manifest entries trigger downloads.\n- The manifest tree is the discovery index; without it, the pull cannot proceed.\n\n## Source\nSwarm Channel Architecture, \"Pull Cycle (Swarm \u2192 local)\".",
+        "updatedAt": "2026-08-14T12:35:59.000Z"
+      },
+      "timestampUtcMs": "2026-08-14T12:35:59.000Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "",
+    "timestampUtcMs": "2026-08-14T12:38:51.685Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "86a23fb2-4ba6-43be-b051-49aeb065158d",
+        "targetId": "eb3ddfcc-c606-4705-b9c9-42f5e26e2384",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-08-14T12:38:51.685Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "9wCDdGtW+4rrqDNNsgjShuHvFaM=",
+    "timestampUtcMs": "2026-08-14T12:35:59.000Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "version",
+        "value": "v6.2.2-dev.44",
+        "updatedAt": "2026-08-14T12:35:59.000Z"
+      },
+      "timestampUtcMs": "2026-08-14T12:35:59.000Z"
+    }
+  },
+  {
+    "index": 5,
+    "hash": "",
+    "timestampUtcMs": "2026-08-14T12:38:51.780Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "86a23fb2-4ba6-43be-b051-49aeb065158d",
+        "targetId": "1f8f4551-682c-4245-94ef-5e5846862ee4",
+        "relationshipType": "BUILDS_ON"
+      },
+      "timestampUtcMs": "2026-08-14T12:38:51.780Z"
+    }
+  },
+  {
+    "index": 5,
+    "hash": "OssejldfQwDN10sWJ2tKFUdNbpo=",
+    "timestampUtcMs": "2026-08-14T12:35:59.000Z",
+    "action": {
+      "type": "SET_PROVENANCE",
+      "input": {
+        "author": "knowledge-agent",
+        "createdAt": "2026-04-21T14:19:49.348Z",
+        "sourceOrigin": "DERIVED"
+      },
+      "timestampUtcMs": "2026-08-14T12:35:59.000Z"
+    }
+  },
+  {
+    "index": 6,
+    "hash": "",
+    "timestampUtcMs": "2026-08-14T12:38:51.863Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "86a23fb2-4ba6-43be-b051-49aeb065158d",
+        "targetId": "914767af-8aaa-4713-860d-0801224734c4",
+        "relationshipType": "BUILDS_ON"
+      },
+      "timestampUtcMs": "2026-08-14T12:38:51.863Z"
+    }
+  },
+  {
+    "index": 6,
+    "hash": "6CbSinlmwg8qYu8i35/clwWSa5Y=",
+    "timestampUtcMs": "2026-08-14T12:35:59.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "t-c634a118-1",
+        "name": "pull-cycle",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-08-14T12:35:59.000Z"
+    }
+  },
+  {
+    "index": 7,
+    "hash": "",
+    "timestampUtcMs": "2026-08-14T12:38:51.957Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "86a23fb2-4ba6-43be-b051-49aeb065158d",
+        "targetId": "50a6a870-f29e-4164-820a-5d074f7443d7",
+        "relationshipType": "BUILDS_ON"
+      },
+      "timestampUtcMs": "2026-08-14T12:38:51.957Z"
+    }
+  },
+  {
+    "index": 7,
+    "hash": "y549tyI6GFzeaxb/sI+NW1yhIqY=",
+    "timestampUtcMs": "2026-08-14T12:35:59.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "t-c634a118-2",
+        "name": "swarm-channel",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-08-14T12:35:59.000Z"
+    }
+  },
+  {
+    "index": 8,
+    "hash": "FKshXTOcT5fT+kxStMahnFPi+Xs=",
+    "timestampUtcMs": "2026-08-14T12:35:59.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "t-c634a118-3",
+        "name": "manifest",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-08-14T12:35:59.000Z"
+    }
+  },
+  {
+    "index": 9,
+    "hash": "I4Dt3y9mlpy55OJ7zUYyMZ6P5ok=",
+    "timestampUtcMs": "2026-08-14T12:35:59.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "t-c634a118-4",
+        "name": "feeds",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-08-14T12:35:59.000Z"
+    }
+  },
+  {
+    "index": 10,
+    "hash": "nfwoOHNVKZjYheEVGkppcSmphzc=",
+    "timestampUtcMs": "2026-08-14T14:37:18.000Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "version",
+        "value": "v6.2.2-dev.47",
+        "updatedAt": "2026-08-14T12:00:00.000Z"
+      },
+      "timestampUtcMs": "2026-08-14T14:37:18.000Z"
+    }
+  },
+  {
+    "index": 11,
+    "hash": "BSG2XsSHfqnn7sW1MYLwYZiosi0=",
+    "timestampUtcMs": "2026-08-14T14:37:18.000Z",
+    "action": {
+      "type": "SUBMIT_FOR_REVIEW",
+      "input": {
+        "id": "241dfc44-f999-4722-ba72-eb93386f1462",
+        "actor": "claude",
+        "comment": "Knowledge registered against powerhouse v6.2.2-dev.47",
+        "timestamp": "2026-08-14T12:00:00.000Z"
+      },
+      "timestampUtcMs": "2026-08-14T14:37:18.000Z"
+    }
+  },
+  {
+    "index": 12,
+    "hash": "J+b9doht+cPvZbqXpue12CEY9sk=",
+    "timestampUtcMs": "2026-08-14T14:37:18.000Z",
+    "action": {
+      "type": "APPROVE_NOTE",
+      "input": {
+        "id": "ca56f1d0-d5ac-4bb8-8c07-fa3e2167c5c9",
+        "actor": "liberuum",
+        "comment": "Canonical as of powerhouse v6.2.2-dev.47",
+        "timestamp": "2026-08-14T12:00:00.000Z"
+      },
+      "timestampUtcMs": "2026-08-14T14:37:18.000Z"
+    }
+  },
+  {
+    "index": 13,
+    "hash": "egaoV7zJsWfNVVTlmrlYVNQFp7g=",
+    "timestampUtcMs": "2026-08-16T09:49:52.000Z",
+    "action": {
+      "type": "SET_NOTE_TYPE",
+      "input": {
+        "noteType": "PROCEDURE",
+        "updatedAt": "2026-08-16T09:49:52.000Z"
+      },
+      "timestampUtcMs": "2026-08-16T09:49:52.000Z"
+    }
+  },
+  {
+    "index": 14,
+    "hash": "r4kCPKjlusyuIn/bSV1OOG+hVYQ=",
+    "timestampUtcMs": "2026-09-03T09:57:59.736Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "version",
+        "updatedAt": "2026-09-03T09:57:59.736Z"
+      },
+      "timestampUtcMs": "2026-09-03T09:57:59.736Z"
+    }
+  }
+]

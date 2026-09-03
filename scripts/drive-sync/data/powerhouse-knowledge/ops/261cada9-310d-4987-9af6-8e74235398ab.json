@@ -1,0 +1,354 @@
+[
+  {
+    "index": 0,
+    "hash": "",
+    "timestampUtcMs": "2026-08-14T12:19:00.830Z",
+    "action": {
+      "type": "CREATE_DOCUMENT",
+      "input": {
+        "meta": {},
+        "name": "revision-history-panel-visibility-hooks",
+        "slug": "",
+        "model": "bai/knowledge-note",
+        "branch": "main",
+        "signing": {
+          "nonce": "",
+          "publicKey": {},
+          "signature": "261cada9-310d-4987-9af6-8e74235398ab",
+          "documentType": "bai/knowledge-note",
+          "createdAtUtcIso": "2026-08-14T12:19:00.829Z"
+        },
+        "version": 0,
+        "documentId": "261cada9-310d-4987-9af6-8e74235398ab",
+        "protocolVersions": {
+          "base-reducer": 2
+        }
+      },
+      "timestampUtcMs": "2026-08-14T12:19:00.830Z"
+    }
+  },
+  {
+    "index": 0,
+    "hash": "PydhuU/HQ5QbEBsdpE5K30Yde3g=",
+    "timestampUtcMs": "2026-08-14T12:35:49.000Z",
+    "action": {
+      "type": "SET_TITLE",
+      "input": {
+        "title": "Revision-history panel visibility is controlled by useRevisionHistoryVisible, showRevisionHistory and hideRevisionHistory",
+        "updatedAt": "2026-08-14T12:35:49.000Z"
+      },
+      "timestampUtcMs": "2026-08-14T12:35:49.000Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "",
+    "timestampUtcMs": "2026-08-14T12:19:00.830Z",
+    "action": {
+      "type": "UPGRADE_DOCUMENT",
+      "input": {
+        "model": "bai/knowledge-note",
+        "toVersion": 1,
+        "documentId": "261cada9-310d-4987-9af6-8e74235398ab",
+        "fromVersion": 0,
+        "initialState": {
+          "auth": {
+            "grants": [],
+            "version": 0
+          },
+          "local": {
+            "lastViewedAt": null,
+            "personalTags": []
+          },
+          "global": {
+            "links": [],
+            "model": null,
+            "scope": null,
+            "title": null,
+            "editor": null,
+            "inputs": [],
+            "models": [],
+            "status": "DRAFT",
+            "topics": [],
+            "content": null,
+            "context": null,
+            "modelId": null,
+            "modules": [],
+            "outputs": [],
+            "version": null,
+            "computes": null,
+            "filePath": null,
+            "noteType": null,
+            "severity": null,
+            "hooksUsed": [],
+            "rootCause": null,
+            "confidence": null,
+            "consumedBy": [],
+            "provenance": null,
+            "sourceType": null,
+            "targetType": null,
+            "cardinality": null,
+            "description": null,
+            "alternatives": [],
+            "consequences": [],
+            "errorMessage": null,
+            "relationType": null,
+            "correctPattern": null,
+            "decisionStatus": null,
+            "dispatchTargets": [],
+            "lifecycleEvents": []
+          },
+          "document": {
+            "hash": {
+              "encoding": "base64",
+              "algorithm": "sha1"
+            },
+            "version": 1
+          }
+        }
+      },
+      "timestampUtcMs": "2026-08-14T12:19:00.830Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "7K3lLNNLZaCXAER39SG9G93vNzo=",
+    "timestampUtcMs": "2026-08-14T12:35:49.000Z",
+    "action": {
+      "type": "SET_DESCRIPTION",
+      "input": {
+        "updatedAt": "2026-08-14T12:35:49.000Z",
+        "description": "Editors can open and close Connect's revision-history panel programmatically instead of relying on the toolbar history button."
+      },
+      "timestampUtcMs": "2026-08-14T12:35:49.000Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "",
+    "timestampUtcMs": "2026-08-14T12:38:34.241Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "261cada9-310d-4987-9af6-8e74235398ab",
+        "targetId": "68acb174-1d24-4535-a05e-48cbbb6bba19",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-08-14T12:38:34.241Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "68VEY8H1iBa1M3bmqSfqBWGX5y0=",
+    "timestampUtcMs": "2026-08-14T12:35:49.000Z",
+    "action": {
+      "type": "SET_NOTE_TYPE",
+      "input": {
+        "noteType": "REFERENCE",
+        "updatedAt": "2026-08-14T12:35:49.000Z"
+      },
+      "timestampUtcMs": "2026-08-14T12:35:49.000Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "",
+    "timestampUtcMs": "2026-08-14T12:38:34.346Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "261cada9-310d-4987-9af6-8e74235398ab",
+        "targetId": "2b87126c-b2b1-4746-b781-27701787b4be",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-08-14T12:38:34.346Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "pvaHx5xlNTFGJgjZNxeYiI2q4RI=",
+    "timestampUtcMs": "2026-08-14T12:35:49.000Z",
+    "action": {
+      "type": "SET_CONTENT",
+      "input": {
+        "content": "The revision-history panel is rendered by Connect, outside the editor's component tree \u2014 which is why it can only be *styled* through scoped CSS. Its *visibility*, though, is ordinary global state with a three-function API:\n\n```ts\nfunction useRevisionHistoryVisible(): boolean | undefined;\nfunction showRevisionHistory(): void;\nfunction hideRevisionHistory(): void;\n```\n\n`showRevisionHistory` and `hideRevisionHistory` are plain functions rather than hooks, so they are safe to call from a click handler, an effect, or a keyboard shortcut. Neither takes arguments: the panel always targets the currently selected document, so there is no way to open history for some other document from here.\n\n`useRevisionHistoryVisible` returns `boolean | undefined`, and the third state is meaningful \u2014 `undefined` is \"not yet initialised\" rather than \"hidden\". Treat it as falsy for rendering, but do not write `visible === false` as your hidden check.\n\nThis matters because the toolbar `history` button is not the only sensible affordance. An editor that wants a \"see what changed\" link inside its own layout, a drive app that opens history on a keyboard shortcut, or an editor that wants to close the panel when the user starts editing again, can all drive the panel directly. The reverse read is equally useful: an editor can consult `useRevisionHistoryVisible()` to collapse a sidebar or suppress its own controls while history is on screen, since the panel takes over the view.\n\nCombined with `disabledControls={[\"history\"]}` on `DocumentToolbar`, these hooks let you remove the built-in button entirely and replace it with your own trigger without losing the feature.\n\n_Source: apps/academy/docs/academy/04-Reference/05-EditorsUI/01-ReactHooks.md (Powerhouse v6.2.2-dev.45)._",
+        "updatedAt": "2026-08-14T12:35:49.000Z"
+      },
+      "timestampUtcMs": "2026-08-14T12:35:49.000Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "",
+    "timestampUtcMs": "2026-08-14T12:38:34.436Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "261cada9-310d-4987-9af6-8e74235398ab",
+        "targetId": "7bf0150e-34d9-4cd2-b038-e55a6acb1ea4",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-08-14T12:38:34.436Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "fQ3ARu37KkcvHRWd9dNT46iSr1g=",
+    "timestampUtcMs": "2026-08-14T12:35:49.000Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "version",
+        "value": "v6.2.2-dev.44",
+        "updatedAt": "2026-08-14T12:35:49.000Z"
+      },
+      "timestampUtcMs": "2026-08-14T12:35:49.000Z"
+    }
+  },
+  {
+    "index": 5,
+    "hash": "",
+    "timestampUtcMs": "2026-09-02T21:39:26.766Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "metadata": {
+          "reason": "The note names apps/academy/docs/academy/04-Reference/05-EditorsUI/01-ReactHooks.md as its source; page text revised between v6.2.2-dev.47 and v6.2.2-dev.74 \u2014 re-verified in the v6.2.2-dev.74 pass",
+          "confidence": "grounded"
+        },
+        "sourceId": "261cada9-310d-4987-9af6-8e74235398ab",
+        "targetId": "aeb9b5e6-8fce-4339-95e8-375bd0a0cc01",
+        "relationshipType": "DERIVED_FROM"
+      },
+      "timestampUtcMs": "2026-09-02T21:39:26.766Z"
+    }
+  },
+  {
+    "index": 5,
+    "hash": "Chpya8SqtsjadkPT/A3Zjkd2L7E=",
+    "timestampUtcMs": "2026-08-14T12:35:49.000Z",
+    "action": {
+      "type": "SET_PROVENANCE",
+      "input": {
+        "author": "claude",
+        "createdAt": "2026-08-13T14:38:05.000Z",
+        "sourceOrigin": "DERIVED"
+      },
+      "timestampUtcMs": "2026-08-14T12:35:49.000Z"
+    }
+  },
+  {
+    "index": 6,
+    "hash": "sBq1S97NNqChaz02ceBrF/Qo3sk=",
+    "timestampUtcMs": "2026-08-14T12:35:49.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "652183f3-b01d-400d-93b4-557557543371",
+        "name": "revision-history",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-08-14T12:35:49.000Z"
+    }
+  },
+  {
+    "index": 7,
+    "hash": "beMJu22CJdsZF1paKLSj3WfRwSY=",
+    "timestampUtcMs": "2026-08-14T12:35:49.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "e9193d80-d1a0-48f5-99e2-10c7d5aa1c63",
+        "name": "react-hooks",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-08-14T12:35:49.000Z"
+    }
+  },
+  {
+    "index": 8,
+    "hash": "0/Fl35ZbYZQPhdLWG6O8nLrTNc0=",
+    "timestampUtcMs": "2026-08-14T12:35:49.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "365b3826-206e-4c8a-a111-3590266c597a",
+        "name": "editors",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-08-14T12:35:49.000Z"
+    }
+  },
+  {
+    "index": 9,
+    "hash": "XDw+jbry6KspXbLl5uEKntGHtHs=",
+    "timestampUtcMs": "2026-08-14T14:36:52.000Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "version",
+        "value": "v6.2.2-dev.47",
+        "updatedAt": "2026-08-14T12:00:00.000Z"
+      },
+      "timestampUtcMs": "2026-08-14T14:36:52.000Z"
+    }
+  },
+  {
+    "index": 10,
+    "hash": "Zw4IYjl0Fo9TRui8diFsOam6ASU=",
+    "timestampUtcMs": "2026-08-14T14:36:52.000Z",
+    "action": {
+      "type": "SUBMIT_FOR_REVIEW",
+      "input": {
+        "id": "aa9226bc-3d32-44c2-8841-c8e298b317ef",
+        "actor": "claude",
+        "comment": "Knowledge registered against powerhouse v6.2.2-dev.47",
+        "timestamp": "2026-08-14T12:00:00.000Z"
+      },
+      "timestampUtcMs": "2026-08-14T14:36:52.000Z"
+    }
+  },
+  {
+    "index": 11,
+    "hash": "Ykd2OOQWKpRkI/e40mnzrje1k4Y=",
+    "timestampUtcMs": "2026-08-14T14:36:52.000Z",
+    "action": {
+      "type": "APPROVE_NOTE",
+      "input": {
+        "id": "61c54757-529f-4283-822e-05005888f958",
+        "actor": "liberuum",
+        "comment": "Canonical as of powerhouse v6.2.2-dev.47",
+        "timestamp": "2026-08-14T12:00:00.000Z"
+      },
+      "timestampUtcMs": "2026-08-14T14:36:52.000Z"
+    }
+  },
+  {
+    "index": 12,
+    "hash": "RozQGMdebnK44yCSv7ehdSV0XQE=",
+    "timestampUtcMs": "2026-09-02T21:39:27.460Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "filePath",
+        "value": "apps/academy/docs/academy/04-Reference/05-EditorsUI/01-ReactHooks.md",
+        "updatedAt": "2026-09-02T21:39:27.460Z"
+      },
+      "timestampUtcMs": "2026-09-02T21:39:27.460Z"
+    }
+  },
+  {
+    "index": 13,
+    "hash": "IyuYA5pCOC96yjyRMd2M0FpSueg=",
+    "timestampUtcMs": "2026-09-02T22:26:33.004Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "version",
+        "value": "v6.2.2-dev.74",
+        "updatedAt": "2026-09-02T22:26:33.004Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:26:33.004Z"
+    }
+  }
+]

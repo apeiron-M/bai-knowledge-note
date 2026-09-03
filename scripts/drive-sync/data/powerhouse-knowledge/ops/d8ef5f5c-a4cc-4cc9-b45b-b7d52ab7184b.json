@@ -1,0 +1,348 @@
+[
+  {
+    "index": 0,
+    "hash": "",
+    "timestampUtcMs": "2026-08-14T12:24:20.615Z",
+    "action": {
+      "type": "CREATE_DOCUMENT",
+      "input": {
+        "meta": {},
+        "name": "swarm-app-layer-aes-gcm-encryption",
+        "slug": "",
+        "model": "bai/knowledge-note",
+        "branch": "main",
+        "signing": {
+          "nonce": "",
+          "publicKey": {},
+          "signature": "d8ef5f5c-a4cc-4cc9-b45b-b7d52ab7184b",
+          "documentType": "bai/knowledge-note",
+          "createdAtUtcIso": "2026-08-14T12:24:20.615Z"
+        },
+        "version": 0,
+        "documentId": "d8ef5f5c-a4cc-4cc9-b45b-b7d52ab7184b",
+        "protocolVersions": {
+          "base-reducer": 2
+        }
+      },
+      "timestampUtcMs": "2026-08-14T12:24:20.615Z"
+    }
+  },
+  {
+    "index": 0,
+    "hash": "i6KSoImNCoRyqeBf1jL48c+bhUA=",
+    "timestampUtcMs": "2026-08-14T12:35:56.000Z",
+    "action": {
+      "type": "SET_TITLE",
+      "input": {
+        "title": "The adapter encrypts at the app layer with AES-256-GCM derived from the user's wallet signature",
+        "updatedAt": "2026-08-14T12:35:56.000Z"
+      },
+      "timestampUtcMs": "2026-08-14T12:35:56.000Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "",
+    "timestampUtcMs": "2026-08-14T12:24:20.615Z",
+    "action": {
+      "type": "UPGRADE_DOCUMENT",
+      "input": {
+        "model": "bai/knowledge-note",
+        "toVersion": 1,
+        "documentId": "d8ef5f5c-a4cc-4cc9-b45b-b7d52ab7184b",
+        "fromVersion": 0,
+        "initialState": {
+          "auth": {
+            "grants": [],
+            "version": 0
+          },
+          "local": {
+            "lastViewedAt": null,
+            "personalTags": []
+          },
+          "global": {
+            "links": [],
+            "model": null,
+            "scope": null,
+            "title": null,
+            "editor": null,
+            "inputs": [],
+            "models": [],
+            "status": "DRAFT",
+            "topics": [],
+            "content": null,
+            "context": null,
+            "modelId": null,
+            "modules": [],
+            "outputs": [],
+            "version": null,
+            "computes": null,
+            "filePath": null,
+            "noteType": null,
+            "severity": null,
+            "hooksUsed": [],
+            "rootCause": null,
+            "confidence": null,
+            "consumedBy": [],
+            "provenance": null,
+            "sourceType": null,
+            "targetType": null,
+            "cardinality": null,
+            "description": null,
+            "alternatives": [],
+            "consequences": [],
+            "errorMessage": null,
+            "relationType": null,
+            "correctPattern": null,
+            "decisionStatus": null,
+            "dispatchTargets": [],
+            "lifecycleEvents": []
+          },
+          "document": {
+            "hash": {
+              "encoding": "base64",
+              "algorithm": "sha1"
+            },
+            "version": 1
+          }
+        }
+      },
+      "timestampUtcMs": "2026-08-14T12:24:20.615Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "UT8++4FeXoTFyAAupE59cPsLsd8=",
+    "timestampUtcMs": "2026-08-14T12:35:56.000Z",
+    "action": {
+      "type": "SET_DESCRIPTION",
+      "input": {
+        "updatedAt": "2026-08-14T12:35:56.000Z",
+        "description": "Wallet personal_sign -> keccak256 -> secp256k1 private key -> SHA-256 -> AES-256 key. Format: [SWE prefix][IV][ciphertext+GCM tag]. Keeps references 32 bytes."
+      },
+      "timestampUtcMs": "2026-08-14T12:35:56.000Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "",
+    "timestampUtcMs": "2026-08-14T12:38:45.870Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "d8ef5f5c-a4cc-4cc9-b45b-b7d52ab7184b",
+        "targetId": "55775f8c-67a2-4559-a18c-4892ae0d13d6",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-08-14T12:38:45.870Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "o+TGhGROQMSvGEaZpxLjle2fVcY=",
+    "timestampUtcMs": "2026-08-14T12:35:56.000Z",
+    "action": {
+      "type": "SET_NOTE_TYPE",
+      "input": {
+        "noteType": "architecture",
+        "updatedAt": "2026-08-14T12:35:56.000Z"
+      },
+      "timestampUtcMs": "2026-08-14T12:35:56.000Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "",
+    "timestampUtcMs": "2026-08-14T12:38:45.970Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "d8ef5f5c-a4cc-4cc9-b45b-b7d52ab7184b",
+        "targetId": "98e36a08-78cd-4c60-942c-338d4a460334",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-08-14T12:38:45.970Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "buSKsrznGOCad2OuaZfMv4AzcjI=",
+    "timestampUtcMs": "2026-08-14T12:35:56.000Z",
+    "action": {
+      "type": "SET_CONTENT",
+      "input": {
+        "content": "## Claim\n\nThe Bee Reactor Adapter performs **app-layer AES-256-GCM encryption before upload** rather than relying on Swarm-native encryption, to control keys and keep references 32 bytes.\n\n## Evidence\n\nKey derivation chain:\n```\nwallet.personal_sign(msg) -> keccak256 -> secp256k1 private key\n  -> SHA-256 -> AES-256 symmetric key\n```\n\nCiphertext format:\n```\n[SWE prefix (3 bytes)] [IV (12 bytes)] [ciphertext + GCM auth tag]\n```\n\nAdvantages over Swarm-native (`Swarm-Encrypt: true`):\n- Full control over key management\n- Reference stays 32 bytes (no embedded 32-byte decryption key)\n- Compatible with any storage backend, not just Swarm\n- Deterministic: same wallet = same key on any device\n\nSharing today uses `SHA-256(sender_address:recipient_address)` \u2014 both parties derive the same key independently (but this is non-revocable; ACT is the planned replacement).\n\n## Why it matters\n\nApp-layer encryption decouples the document-level security story from the Swarm transport. The deterministic wallet-derived key enables cross-device recovery without any server-side key escrow.\n",
+        "updatedAt": "2026-08-14T12:35:56.000Z"
+      },
+      "timestampUtcMs": "2026-08-14T12:35:56.000Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "",
+    "timestampUtcMs": "2026-08-14T12:38:46.057Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "d8ef5f5c-a4cc-4cc9-b45b-b7d52ab7184b",
+        "targetId": "8cfc4e95-98d9-4744-bc62-364dfe09396e",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-08-14T12:38:46.057Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "LxqVk8k8k2WskkLFlTzEIwM//1c=",
+    "timestampUtcMs": "2026-08-14T12:35:56.000Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "version",
+        "value": "v6.2.2-dev.44",
+        "updatedAt": "2026-08-14T12:35:56.000Z"
+      },
+      "timestampUtcMs": "2026-08-14T12:35:56.000Z"
+    }
+  },
+  {
+    "index": 5,
+    "hash": "TVmwtplDF76PLr33aN9cA+8yTBg=",
+    "timestampUtcMs": "2026-08-14T12:35:56.000Z",
+    "action": {
+      "type": "SET_PROVENANCE",
+      "input": {
+        "author": "knowledge-agent",
+        "createdAt": "2026-04-21T14:24:54.753Z",
+        "sourceOrigin": "DERIVED"
+      },
+      "timestampUtcMs": "2026-08-14T12:35:56.000Z"
+    }
+  },
+  {
+    "index": 6,
+    "hash": "BJTC2rdwwsBAgPBHP+7v/4h2NB4=",
+    "timestampUtcMs": "2026-08-14T12:35:56.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "29f26367-0439-4027-ac1d-d900e2c3f0fb",
+        "name": "encryption",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-08-14T12:35:56.000Z"
+    }
+  },
+  {
+    "index": 7,
+    "hash": "88g+AhNDh8qZuOXKwyfJPcu2zuk=",
+    "timestampUtcMs": "2026-08-14T12:35:56.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "be4ed560-3782-4d97-b35c-1a30d720acd2",
+        "name": "adapter",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-08-14T12:35:56.000Z"
+    }
+  },
+  {
+    "index": 8,
+    "hash": "HKhzNbfqnFS7uzutEwpj18TTUcU=",
+    "timestampUtcMs": "2026-08-14T12:35:56.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "7ef8411b-e467-4c8c-84d7-276c63500ac2",
+        "name": "swarm",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-08-14T12:35:56.000Z"
+    }
+  },
+  {
+    "index": 9,
+    "hash": "QvwTE3BchNm1eAqBCdxmOC8gNGQ=",
+    "timestampUtcMs": "2026-08-14T12:35:56.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "4832fec4-e4e3-45b5-aebc-138356ace55c",
+        "name": "key-management",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-08-14T12:35:56.000Z"
+    }
+  },
+  {
+    "index": 10,
+    "hash": "UrbUb2CrmbHXIvdyTwnrTwjtJPQ=",
+    "timestampUtcMs": "2026-08-14T14:37:39.000Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "version",
+        "value": "v6.2.2-dev.47",
+        "updatedAt": "2026-08-14T12:00:00.000Z"
+      },
+      "timestampUtcMs": "2026-08-14T14:37:39.000Z"
+    }
+  },
+  {
+    "index": 11,
+    "hash": "RPTQK7bIom6fKT7OOWZJfbgyb/E=",
+    "timestampUtcMs": "2026-08-14T14:37:39.000Z",
+    "action": {
+      "type": "SUBMIT_FOR_REVIEW",
+      "input": {
+        "id": "93e8150b-bdc6-4244-bb18-ac84b2ebdf19",
+        "actor": "claude",
+        "comment": "Knowledge registered against powerhouse v6.2.2-dev.47",
+        "timestamp": "2026-08-14T12:00:00.000Z"
+      },
+      "timestampUtcMs": "2026-08-14T14:37:39.000Z"
+    }
+  },
+  {
+    "index": 12,
+    "hash": "RmP6zp/7dTmG3Fm2wd92o6hoLXg=",
+    "timestampUtcMs": "2026-08-14T14:37:39.000Z",
+    "action": {
+      "type": "APPROVE_NOTE",
+      "input": {
+        "id": "53ba57ad-7e10-4d64-ad8a-b2eb54ab4809",
+        "actor": "liberuum",
+        "comment": "Canonical as of powerhouse v6.2.2-dev.47",
+        "timestamp": "2026-08-14T12:00:00.000Z"
+      },
+      "timestampUtcMs": "2026-08-14T14:37:39.000Z"
+    }
+  },
+  {
+    "index": 13,
+    "hash": "Am9Py2Q+Nsy7POx7AB6H9uiGu7Q=",
+    "timestampUtcMs": "2026-08-16T09:49:50.000Z",
+    "action": {
+      "type": "SET_NOTE_TYPE",
+      "input": {
+        "noteType": "ARCHITECTURE",
+        "updatedAt": "2026-08-16T09:49:50.000Z"
+      },
+      "timestampUtcMs": "2026-08-16T09:49:50.000Z"
+    }
+  },
+  {
+    "index": 14,
+    "hash": "dEXrf0ldE6ddK3iwONH/CMtc+3w=",
+    "timestampUtcMs": "2026-09-03T09:58:30.841Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "version",
+        "updatedAt": "2026-09-03T09:58:30.841Z"
+      },
+      "timestampUtcMs": "2026-09-03T09:58:30.841Z"
+    }
+  }
+]

@@ -1,0 +1,103 @@
+[
+  {
+    "index": 0,
+    "hash": "",
+    "timestampUtcMs": "2026-08-20T08:47:15.765Z",
+    "action": {
+      "type": "CREATE_DOCUMENT",
+      "input": {
+        "meta": {},
+        "name": "The lead corpus pitches field-level attribution to Odoo, which already ships it free",
+        "slug": "",
+        "model": "bai/tension",
+        "branch": "main",
+        "signing": {
+          "nonce": "",
+          "publicKey": {},
+          "signature": "fbe89ab7-2fe9-45ad-bc6b-ff4219574266",
+          "documentType": "bai/tension",
+          "createdAtUtcIso": "2026-08-20T08:47:15.765Z"
+        },
+        "version": 0,
+        "documentId": "fbe89ab7-2fe9-45ad-bc6b-ff4219574266",
+        "protocolVersions": {
+          "base-reducer": 2
+        }
+      },
+      "timestampUtcMs": "2026-08-20T08:47:15.765Z"
+    }
+  },
+  {
+    "index": 0,
+    "hash": "K62dvh6o8PBtMjUgTUJmPnhe6vM=",
+    "timestampUtcMs": "2026-08-20T08:47:16.373Z",
+    "action": {
+      "type": "CREATE_TENSION",
+      "input": {
+        "title": "The lead corpus pitches field-level attribution to Odoo, which already ships it free",
+        "content": "The lead corpus states that \"Odoo IS the system of record for what it covers - so the fit is NOT 'a second database'. It is field-level attribution.\" The first half is confirmed: Odoo is GoBD-certified and German authorities treat its database as the statutory books.\n\nThe second half is refuted as an opportunity. Field-level attribution is exactly what Odoo already ships: `mail.tracking.value` stores old value, new value, field, user and timestamp; Odoo 19 made the non-restrictive audit trail available by default for everyone; and `l10n_de` forces restrictive mode on for German companies with a constraint that blocks disabling it. All of it is LGPL-3 Community, so the anticipated open-core wedge does not exist either.\n\nWhat actually remains is narrower: protection covers only five accounting models, tracking is opt-in per field, and every internal employee holds unlink on `mail.message`. That is a hardening gap inside someone else's product rather than an empty slot.\n\nResolution requires a decision, not more research: drop the field-level-attribution pitch and keep Odoo as an integration target via the webhook seam, or drop Odoo from the deck.",
+        "observedAt": "2026-08-20T08:47:16.373257Z",
+        "observedBy": "knowledge-agent",
+        "description": "9 Odoo lead notes rest on field-level attribution being the opening. Odoo's Audit Trail is LGPL-3, default-on since v19, and forced on for German companies.",
+        "involvedRefs": [
+          "0e6c7837-4676-4e49-9816-62806f97fad6",
+          "4d8e59af-51f2-4ab7-b290-e1d5744abbd7"
+        ]
+      },
+      "timestampUtcMs": "2026-08-20T08:47:16.373294Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "",
+    "timestampUtcMs": "2026-08-20T08:47:15.765Z",
+    "action": {
+      "type": "UPGRADE_DOCUMENT",
+      "input": {
+        "model": "bai/tension",
+        "toVersion": 1,
+        "documentId": "fbe89ab7-2fe9-45ad-bc6b-ff4219574266",
+        "fromVersion": 0,
+        "initialState": {
+          "auth": {
+            "grants": [],
+            "version": 0
+          },
+          "local": {},
+          "global": {
+            "title": null,
+            "status": "OPEN",
+            "content": null,
+            "observedAt": null,
+            "observedBy": null,
+            "resolution": null,
+            "resolvedAt": null,
+            "description": null,
+            "involvedRefs": []
+          },
+          "document": {
+            "hash": {
+              "encoding": "base64",
+              "algorithm": "sha1"
+            },
+            "version": 1
+          }
+        }
+      },
+      "timestampUtcMs": "2026-08-20T08:47:15.765Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "8WllDhfK3Ua+W/GBHkBVW1yA0VQ=",
+    "timestampUtcMs": "2026-09-03T10:14:54.986Z",
+    "action": {
+      "type": "RESOLVE_TENSION",
+      "input": {
+        "resolution": "Resolved in favour of the primary sources. Field-level attribution is not an opening: mail.tracking.value already records old value, new value, field, user and timestamp, Odoo 19 makes the audit trail default-on for everyone, l10n_de forces restrictive mode for German companies, and all of it is LGPL-3 Community. The premise note now carries that refutation together with the narrower gap that does remain \u2014 five protected accounting models, per-field opt-in tracking, and unlink on mail.message for every internal user. The note's other half, events outside Odoo's models and attribution surviving an upgrade, was never refuted and stands. The deck decision is an open question on the Integration-gap tool screen map.",
+        "resolvedAt": "2026-09-03T10:14:54.986Z"
+      },
+      "timestampUtcMs": "2026-09-03T10:14:54.986Z"
+    }
+  }
+]

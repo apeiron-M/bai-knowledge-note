@@ -1,0 +1,694 @@
+[
+  {
+    "index": 0,
+    "hash": "",
+    "timestampUtcMs": "2026-09-02T22:10:00.581Z",
+    "action": {
+      "type": "CREATE_DOCUMENT",
+      "input": {
+        "meta": {},
+        "name": "auth-read-gate-client",
+        "slug": "",
+        "model": "bai/knowledge-note",
+        "branch": "main",
+        "signing": {
+          "nonce": "",
+          "publicKey": {},
+          "signature": "cf2a1fcd-b902-4976-b941-e229a6e9696c",
+          "documentType": "bai/knowledge-note",
+          "createdAtUtcIso": "2026-09-02T22:10:00.581Z"
+        },
+        "version": 0,
+        "documentId": "cf2a1fcd-b902-4976-b941-e229a6e9696c",
+        "protocolVersions": {
+          "base-reducer": 2
+        }
+      },
+      "timestampUtcMs": "2026-09-02T22:10:00.581Z"
+    }
+  },
+  {
+    "index": 0,
+    "hash": "TJ1CBPvUWSm8lmEMD5Ax6XrhFl8=",
+    "timestampUtcMs": "2026-09-02T22:10:00.520Z",
+    "action": {
+      "type": "SET_TITLE",
+      "input": {
+        "title": "Read filtering happens on IReactorClient, not inside IReactor, so reactor.get() and client.get() return different documents in the same process",
+        "updatedAt": "2026-09-02T22:10:00.520Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:10:00.520Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "",
+    "timestampUtcMs": "2026-09-02T22:10:00.581Z",
+    "action": {
+      "type": "UPGRADE_DOCUMENT",
+      "input": {
+        "model": "bai/knowledge-note",
+        "toVersion": 1,
+        "documentId": "cf2a1fcd-b902-4976-b941-e229a6e9696c",
+        "fromVersion": 0,
+        "initialState": {
+          "auth": {
+            "grants": [],
+            "version": 0
+          },
+          "local": {
+            "lastViewedAt": null,
+            "personalTags": []
+          },
+          "global": {
+            "links": [],
+            "model": null,
+            "scope": null,
+            "title": null,
+            "editor": null,
+            "inputs": [],
+            "models": [],
+            "status": "DRAFT",
+            "topics": [],
+            "content": null,
+            "context": null,
+            "modelId": null,
+            "modules": [],
+            "outputs": [],
+            "version": null,
+            "computes": null,
+            "filePath": null,
+            "noteType": null,
+            "severity": null,
+            "hooksUsed": [],
+            "rootCause": null,
+            "confidence": null,
+            "consumedBy": [],
+            "provenance": null,
+            "sourceType": null,
+            "targetType": null,
+            "cardinality": null,
+            "description": null,
+            "alternatives": [],
+            "consequences": [],
+            "errorMessage": null,
+            "relationType": null,
+            "correctPattern": null,
+            "decisionStatus": null,
+            "dispatchTargets": [],
+            "lifecycleEvents": []
+          },
+          "document": {
+            "hash": {
+              "encoding": "base64",
+              "algorithm": "sha1"
+            },
+            "version": 1
+          }
+        }
+      },
+      "timestampUtcMs": "2026-09-02T22:10:00.581Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "tUUWQoIQzJDPub1one2eBvuB3Ic=",
+    "timestampUtcMs": "2026-09-02T22:10:00.520Z",
+    "action": {
+      "type": "SET_DESCRIPTION",
+      "input": {
+        "updatedAt": "2026-09-02T22:10:00.520Z",
+        "description": "IReactor is inside the trust boundary and serves every scope to every caller; the client evaluates a read request per scope for its subject. No flag gates it: reads are filtered with all flags off."
+      },
+      "timestampUtcMs": "2026-09-02T22:10:00.520Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "",
+    "timestampUtcMs": "2026-09-02T22:17:57.441Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "metadata": {
+          "reason": "Extracted from docs/specs/auth-scope.md at v6.2.2-dev.74 \u2014 Reads section; Stage 7 step 1 (read gate, read side not write cache)",
+          "confidence": "grounded"
+        },
+        "sourceId": "cf2a1fcd-b902-4976-b941-e229a6e9696c",
+        "targetId": "223bb12a-be7f-4209-9ab2-f04f7bb2b6c8",
+        "relationshipType": "DERIVED_FROM"
+      },
+      "timestampUtcMs": "2026-09-02T22:17:57.441Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "he/nO4sA4C/rcnc90H8Iqu+3DMY=",
+    "timestampUtcMs": "2026-09-02T22:10:00.520Z",
+    "action": {
+      "type": "SET_NOTE_TYPE",
+      "input": {
+        "noteType": "ARCHITECTURE",
+        "updatedAt": "2026-09-02T22:10:00.520Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:10:00.520Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "",
+    "timestampUtcMs": "2026-09-02T22:17:58.701Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "metadata": {
+          "reason": "Extracted from apps/academy/docs/academy/04-Reference/01-Reactor/11-Authorization.md at v6.2.2-dev.74 \u2014 'Scopes every holder reads' second paragraph",
+          "confidence": "grounded"
+        },
+        "sourceId": "cf2a1fcd-b902-4976-b941-e229a6e9696c",
+        "targetId": "17dc46b0-f733-467c-99d7-ae8fbe0fb0e4",
+        "relationshipType": "DERIVED_FROM"
+      },
+      "timestampUtcMs": "2026-09-02T22:17:58.701Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "6KsMTsGs8VGoIzHWww9dkYaJOm8=",
+    "timestampUtcMs": "2026-09-02T22:10:00.520Z",
+    "action": {
+      "type": "SET_CONTENT",
+      "input": {
+        "content": "A read produces no operation. It has no position in any stream, so admission cannot gate it, replay cannot re-evaluate it and no append condition can guard it \u2014 the positional machinery cannot see reads at all. Read enforcement therefore lives on the reactor's **own read surface**: the `IReactorClient`.\n\nTwo placement facts follow, both demonstrated by the `scoped-reads` recipe on one document in one process:\n\n- **`IReactor` serves everything.** It is inside the trust boundary; internal consumers \u2014 the event bus, read models, processors \u2014 need unfiltered data to build their projections, and whatever they re-expose is their own read surface to gate. So `reactor.getByIdOrSlug()` hands all four scopes to anyone while `client.get()` hands Mallory only `auth` and `document`.\n- **The gate carries no feature flag of its own.** A client over a reactor with `featureFlags: {}` still filters reads, so a policy is enforced against readers before it is enforced against writers. What `authEnforcement` changes is *which model* answers: with it on, the read gate builds the registered decision model at the stream heads and evaluates a `read` request per scope, so `{ group }` and conditional read grants apply; below it, a read evaluates the bare policy alone.\n\nEvery read carries a subject \u2014 the client defaults it to its own signer, a server passes the authenticated caller \u2014 and a write hands back a read: the document `client.execute()` returns is gated exactly like `get()`, as the client's own identity. A custom subgraph or server that reads through the client inherits all of this and cannot forget to enforce.\n\nTwo engineering rules the spec records: the model is built through the **read side, never the write cache** (a reactor whose executors live in worker processes holds parent state no commit invalidates, so a read there would decide against a stale policy); and a read of a document's *operations* fetches the whole document, because evaluating a condition on the gated scope's state needs more than the policy.\n\nTiming differs from writes: an operation is evaluated at its position, so a revocation catches operations accepted before it arrived, but a read is evaluated when it is served \u2014 revoking read only stops future serving and cannot recall bytes a replica already holds.\n\n_Source: docs/specs/auth-scope.md (Powerhouse v6.2.2-dev.74)._\n_Source: apps/academy/docs/academy/04-Reference/01-Reactor/11-Authorization.md (Powerhouse v6.2.2-dev.74)._\n_Source: apps/academy/docs/academy/05-Lookup/00-Cookbook.md (Powerhouse v6.2.2-dev.74)._\n\n## Provenance\n- `docs/specs/auth-scope.md` \u2014 Reads section; Stage 7 step 1 (read gate, read side not write cache)\n- `apps/academy/docs/academy/04-Reference/01-Reactor/11-Authorization.md` \u2014 'Scopes every holder reads' second paragraph\n- `apps/academy/docs/academy/05-Lookup/00-Cookbook.md` \u2014 Scoped Reads: 'The gate is on the client', 'It carries no feature flag', 'A write hands back a read'\n\n_Recorded from the Powerhouse repository at **v6.2.2-dev.74** during the v6.2.2-dev.74 source sync._",
+        "updatedAt": "2026-09-02T22:10:00.520Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:10:00.520Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "",
+    "timestampUtcMs": "2026-09-02T22:17:59.928Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "metadata": {
+          "reason": "Extracted from apps/academy/docs/academy/05-Lookup/00-Cookbook.md at v6.2.2-dev.74 \u2014 Scoped Reads: 'The gate is on the client', 'It carries no feature flag', 'A write hands back a read'",
+          "confidence": "grounded"
+        },
+        "sourceId": "cf2a1fcd-b902-4976-b941-e229a6e9696c",
+        "targetId": "f2aaccd3-7c26-4327-881e-f5ad9e267b89",
+        "relationshipType": "DERIVED_FROM"
+      },
+      "timestampUtcMs": "2026-09-02T22:17:59.928Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "b6pXy+ucfxKtS80TBfg4qTmHxXs=",
+    "timestampUtcMs": "2026-09-02T22:10:00.520Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "e3583df4-6a29-4187-8985-2d23afe0a10c",
+        "name": "auth-scope"
+      },
+      "timestampUtcMs": "2026-09-02T22:10:00.520Z"
+    }
+  },
+  {
+    "index": 5,
+    "hash": "",
+    "timestampUtcMs": "2026-09-02T22:18:01.202Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "metadata": {
+          "reason": "Adds a third difference to the client-vs-IReactor split: the client is also where per-subject read filtering happens",
+          "confidence": "grounded"
+        },
+        "sourceId": "cf2a1fcd-b902-4976-b941-e229a6e9696c",
+        "targetId": "395c3ea0-ce11-4b25-8bbb-7f68a7b169e1",
+        "relationshipType": "BUILDS_ON"
+      },
+      "timestampUtcMs": "2026-09-02T22:18:01.202Z"
+    }
+  },
+  {
+    "index": 5,
+    "hash": "tq5KtF0SxQim5ge5VHEODphXH4M=",
+    "timestampUtcMs": "2026-09-02T22:10:00.520Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "8c404313-e159-47f9-b784-237f2e2c869e",
+        "name": "reactor-client"
+      },
+      "timestampUtcMs": "2026-09-02T22:10:00.520Z"
+    }
+  },
+  {
+    "index": 6,
+    "hash": "",
+    "timestampUtcMs": "2026-09-02T22:18:01.692Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "metadata": {
+          "reason": "The gate filters domain scopes only; the always-readable auth and document scopes are the exemption it applies first",
+          "confidence": "grounded"
+        },
+        "sourceId": "cf2a1fcd-b902-4976-b941-e229a6e9696c",
+        "targetId": "975d6c29-9797-4051-927e-d487a679f608",
+        "relationshipType": "BUILDS_ON"
+      },
+      "timestampUtcMs": "2026-09-02T22:18:01.692Z"
+    }
+  },
+  {
+    "index": 6,
+    "hash": "aEjhWN9Dv1BaZPDz3WwyQ11g37A=",
+    "timestampUtcMs": "2026-09-02T22:10:00.520Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "b29fbbb9-406d-40b8-b02b-8dee69c7c8fd",
+        "name": "reads"
+      },
+      "timestampUtcMs": "2026-09-02T22:10:00.520Z"
+    }
+  },
+  {
+    "index": 7,
+    "hash": "",
+    "timestampUtcMs": "2026-09-02T22:18:02.164Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "metadata": {
+          "reason": "Writes are judged at their position and reads at serve time \u2014 the two timing guarantees differ and the difference is stated here",
+          "confidence": "grounded"
+        },
+        "sourceId": "cf2a1fcd-b902-4976-b941-e229a6e9696c",
+        "targetId": "0ade289f-d4fb-44d8-ab3b-316d65bb1c8d",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-09-02T22:18:02.164Z"
+    }
+  },
+  {
+    "index": 7,
+    "hash": "ie7etEP8NSMdLvbk0FprbIspKxk=",
+    "timestampUtcMs": "2026-09-02T22:10:00.520Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "500cddbd-77d6-4fc2-b83c-25f2741d89f7",
+        "name": "architecture"
+      },
+      "timestampUtcMs": "2026-09-02T22:10:00.520Z"
+    }
+  },
+  {
+    "index": 8,
+    "hash": "",
+    "timestampUtcMs": "2026-09-02T22:22:19.617Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "metadata": {
+          "reason": "Extracted from docs/specs/auth-scope.md at v6.2.2-dev.74 \u2014 Reads section; Stage 7 step 1 (read gate, read side not write cache)",
+          "confidence": "grounded"
+        },
+        "sourceId": "cf2a1fcd-b902-4976-b941-e229a6e9696c",
+        "targetId": "223bb12a-be7f-4209-9ab2-f04f7bb2b6c8",
+        "relationshipType": "DERIVED_FROM"
+      },
+      "timestampUtcMs": "2026-09-02T22:22:19.617Z"
+    }
+  },
+  {
+    "index": 8,
+    "hash": "Lfb+MSn5JOHxOxnj8215n3f7H5k=",
+    "timestampUtcMs": "2026-09-02T22:10:00.520Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "version",
+        "value": "v6.2.2-dev.74",
+        "updatedAt": "2026-09-02T22:10:00.520Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:10:00.520Z"
+    }
+  },
+  {
+    "index": 9,
+    "hash": "",
+    "timestampUtcMs": "2026-09-02T22:22:20.389Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "metadata": {
+          "reason": "Extracted from apps/academy/docs/academy/04-Reference/01-Reactor/11-Authorization.md at v6.2.2-dev.74 \u2014 'Scopes every holder reads' second paragraph",
+          "confidence": "grounded"
+        },
+        "sourceId": "cf2a1fcd-b902-4976-b941-e229a6e9696c",
+        "targetId": "17dc46b0-f733-467c-99d7-ae8fbe0fb0e4",
+        "relationshipType": "DERIVED_FROM"
+      },
+      "timestampUtcMs": "2026-09-02T22:22:20.389Z"
+    }
+  },
+  {
+    "index": 9,
+    "hash": "kPeIi4O94zZq2dNFwN58a3wsPxM=",
+    "timestampUtcMs": "2026-09-02T22:10:00.520Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "filePath",
+        "value": "docs/specs/auth-scope.md",
+        "updatedAt": "2026-09-02T22:10:00.520Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:10:00.520Z"
+    }
+  },
+  {
+    "index": 10,
+    "hash": "",
+    "timestampUtcMs": "2026-09-02T22:22:20.947Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "metadata": {
+          "reason": "Extracted from apps/academy/docs/academy/05-Lookup/00-Cookbook.md at v6.2.2-dev.74 \u2014 Scoped Reads: 'The gate is on the client', 'It carries no feature flag', 'A write hands back a read'",
+          "confidence": "grounded"
+        },
+        "sourceId": "cf2a1fcd-b902-4976-b941-e229a6e9696c",
+        "targetId": "f2aaccd3-7c26-4327-881e-f5ad9e267b89",
+        "relationshipType": "DERIVED_FROM"
+      },
+      "timestampUtcMs": "2026-09-02T22:22:20.947Z"
+    }
+  },
+  {
+    "index": 10,
+    "hash": "fxKKZlQfhiOiWpDn1A2M8iUcvLk=",
+    "timestampUtcMs": "2026-09-02T22:10:00.520Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "confidence",
+        "value": "grounded",
+        "updatedAt": "2026-09-02T22:10:00.520Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:10:00.520Z"
+    }
+  },
+  {
+    "index": 11,
+    "hash": "",
+    "timestampUtcMs": "2026-09-02T22:22:21.735Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "metadata": {
+          "reason": "Adds a third difference to the client-vs-IReactor split: the client is also where per-subject read filtering happens",
+          "confidence": "grounded"
+        },
+        "sourceId": "cf2a1fcd-b902-4976-b941-e229a6e9696c",
+        "targetId": "395c3ea0-ce11-4b25-8bbb-7f68a7b169e1",
+        "relationshipType": "BUILDS_ON"
+      },
+      "timestampUtcMs": "2026-09-02T22:22:21.735Z"
+    }
+  },
+  {
+    "index": 11,
+    "hash": "LbNKEhp8Joct7WsJI473ckSKfNc=",
+    "timestampUtcMs": "2026-09-02T22:10:03.159Z",
+    "action": {
+      "type": "SET_PROVENANCE",
+      "input": {
+        "author": "knowledge-agent",
+        "createdAt": "2026-09-02T22:10:03.159Z",
+        "sourceOrigin": "DERIVED"
+      },
+      "timestampUtcMs": "2026-09-02T22:10:03.159Z"
+    }
+  },
+  {
+    "index": 12,
+    "hash": "",
+    "timestampUtcMs": "2026-09-02T22:22:22.196Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "metadata": {
+          "reason": "The gate filters domain scopes only; the always-readable auth and document scopes are the exemption it applies first",
+          "confidence": "grounded"
+        },
+        "sourceId": "cf2a1fcd-b902-4976-b941-e229a6e9696c",
+        "targetId": "975d6c29-9797-4051-927e-d487a679f608",
+        "relationshipType": "BUILDS_ON"
+      },
+      "timestampUtcMs": "2026-09-02T22:22:22.196Z"
+    }
+  },
+  {
+    "index": 12,
+    "hash": "UlleGibNFQtsK9r6RqEHT46kJcw=",
+    "timestampUtcMs": "2026-09-02T22:10:03.691Z",
+    "action": {
+      "type": "SUBMIT_FOR_REVIEW",
+      "input": {
+        "id": "d649c3aa-3384-453c-8b90-f0e31e1628cd",
+        "actor": "knowledge-agent",
+        "comment": "extracted from the Powerhouse repository at v6.2.2-dev.74",
+        "timestamp": "2026-09-02T22:10:03.691Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:10:03.691Z"
+    }
+  },
+  {
+    "index": 13,
+    "hash": "",
+    "timestampUtcMs": "2026-09-02T22:22:22.676Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "metadata": {
+          "reason": "Writes are judged at their position and reads at serve time \u2014 the two timing guarantees differ and the difference is stated here",
+          "confidence": "grounded"
+        },
+        "sourceId": "cf2a1fcd-b902-4976-b941-e229a6e9696c",
+        "targetId": "0ade289f-d4fb-44d8-ab3b-316d65bb1c8d",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-09-02T22:22:22.676Z"
+    }
+  },
+  {
+    "index": 13,
+    "hash": "zqHadTxGQSRb037HheiwzsefdAY=",
+    "timestampUtcMs": "2026-09-02T22:10:04.169Z",
+    "action": {
+      "type": "APPROVE_NOTE",
+      "input": {
+        "id": "e593ebfe-4d49-4249-90d5-97c346fe054d",
+        "actor": "liberuum",
+        "comment": "claim checked against the cited repository file at the pinned tag",
+        "timestamp": "2026-09-02T22:10:04.169Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:10:04.169Z"
+    }
+  },
+  {
+    "index": 14,
+    "hash": "IMKZDl2eEBsAud47zUz5f1gLpCo=",
+    "timestampUtcMs": "2026-09-02T22:15:37.766Z",
+    "action": {
+      "type": "SET_TITLE",
+      "input": {
+        "title": "Read filtering happens on IReactorClient, not inside IReactor, so reactor.get() and client.get() return different documents in the same process",
+        "updatedAt": "2026-09-02T22:15:37.766Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:15:37.766Z"
+    }
+  },
+  {
+    "index": 15,
+    "hash": "IMKZDl2eEBsAud47zUz5f1gLpCo=",
+    "timestampUtcMs": "2026-09-02T22:15:37.766Z",
+    "action": {
+      "type": "SET_DESCRIPTION",
+      "input": {
+        "updatedAt": "2026-09-02T22:15:37.766Z",
+        "description": "IReactor is inside the trust boundary and serves every scope to every caller; the client evaluates a read request per scope for its subject. No flag gates it: reads are filtered with all flags off."
+      },
+      "timestampUtcMs": "2026-09-02T22:15:37.766Z"
+    }
+  },
+  {
+    "index": 16,
+    "hash": "IMKZDl2eEBsAud47zUz5f1gLpCo=",
+    "timestampUtcMs": "2026-09-02T22:15:37.766Z",
+    "action": {
+      "type": "SET_NOTE_TYPE",
+      "input": {
+        "noteType": "ARCHITECTURE",
+        "updatedAt": "2026-09-02T22:15:37.766Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:15:37.766Z"
+    }
+  },
+  {
+    "index": 17,
+    "hash": "IMKZDl2eEBsAud47zUz5f1gLpCo=",
+    "timestampUtcMs": "2026-09-02T22:15:37.766Z",
+    "action": {
+      "type": "SET_CONTENT",
+      "input": {
+        "content": "A read produces no operation. It has no position in any stream, so admission cannot gate it, replay cannot re-evaluate it and no append condition can guard it \u2014 the positional machinery cannot see reads at all. Read enforcement therefore lives on the reactor's **own read surface**: the `IReactorClient`.\n\nTwo placement facts follow, both demonstrated by the `scoped-reads` recipe on one document in one process:\n\n- **`IReactor` serves everything.** It is inside the trust boundary; internal consumers \u2014 the event bus, read models, processors \u2014 need unfiltered data to build their projections, and whatever they re-expose is their own read surface to gate. So `reactor.getByIdOrSlug()` hands all four scopes to anyone while `client.get()` hands Mallory only `auth` and `document`.\n- **The gate carries no feature flag of its own.** A client over a reactor with `featureFlags: {}` still filters reads, so a policy is enforced against readers before it is enforced against writers. What `authEnforcement` changes is *which model* answers: with it on, the read gate builds the registered decision model at the stream heads and evaluates a `read` request per scope, so `{ group }` and conditional read grants apply; below it, a read evaluates the bare policy alone.\n\nEvery read carries a subject \u2014 the client defaults it to its own signer, a server passes the authenticated caller \u2014 and a write hands back a read: the document `client.execute()` returns is gated exactly like `get()`, as the client's own identity. A custom subgraph or server that reads through the client inherits all of this and cannot forget to enforce.\n\nTwo engineering rules the spec records: the model is built through the **read side, never the write cache** (a reactor whose executors live in worker processes holds parent state no commit invalidates, so a read there would decide against a stale policy); and a read of a document's *operations* fetches the whole document, because evaluating a condition on the gated scope's state needs more than the policy.\n\nTiming differs from writes: an operation is evaluated at its position, so a revocation catches operations accepted before it arrived, but a read is evaluated when it is served \u2014 revoking read only stops future serving and cannot recall bytes a replica already holds.\n\n_Source: docs/specs/auth-scope.md (Powerhouse v6.2.2-dev.74)._\n_Source: apps/academy/docs/academy/04-Reference/01-Reactor/11-Authorization.md (Powerhouse v6.2.2-dev.74)._\n_Source: apps/academy/docs/academy/05-Lookup/00-Cookbook.md (Powerhouse v6.2.2-dev.74)._\n\n## Provenance\n- `docs/specs/auth-scope.md` \u2014 Reads section; Stage 7 step 1 (read gate, read side not write cache)\n- `apps/academy/docs/academy/04-Reference/01-Reactor/11-Authorization.md` \u2014 'Scopes every holder reads' second paragraph\n- `apps/academy/docs/academy/05-Lookup/00-Cookbook.md` \u2014 Scoped Reads: 'The gate is on the client', 'It carries no feature flag', 'A write hands back a read'\n\n_Recorded from the Powerhouse repository at **v6.2.2-dev.74** during the v6.2.2-dev.74 source sync._",
+        "updatedAt": "2026-09-02T22:15:37.766Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:15:37.766Z"
+    }
+  },
+  {
+    "index": 18,
+    "hash": "IMKZDl2eEBsAud47zUz5f1gLpCo=",
+    "timestampUtcMs": "2026-09-02T22:15:37.766Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "version",
+        "value": "v6.2.2-dev.74",
+        "updatedAt": "2026-09-02T22:15:37.766Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:15:37.766Z"
+    }
+  },
+  {
+    "index": 19,
+    "hash": "IMKZDl2eEBsAud47zUz5f1gLpCo=",
+    "timestampUtcMs": "2026-09-02T22:15:37.766Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "filePath",
+        "value": "docs/specs/auth-scope.md",
+        "updatedAt": "2026-09-02T22:15:37.766Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:15:37.766Z"
+    }
+  },
+  {
+    "index": 20,
+    "hash": "IMKZDl2eEBsAud47zUz5f1gLpCo=",
+    "timestampUtcMs": "2026-09-02T22:15:37.766Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "confidence",
+        "value": "grounded",
+        "updatedAt": "2026-09-02T22:15:37.766Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:15:37.766Z"
+    }
+  },
+  {
+    "index": 21,
+    "hash": "qVqSAXUhUgu12PpHqAPQQS2wg18=",
+    "timestampUtcMs": "2026-09-02T22:20:16.030Z",
+    "action": {
+      "type": "SET_TITLE",
+      "input": {
+        "title": "Read filtering happens on IReactorClient, not inside IReactor, so reactor.get() and client.get() return different documents in the same process",
+        "updatedAt": "2026-09-02T22:20:16.030Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:20:16.030Z"
+    }
+  },
+  {
+    "index": 22,
+    "hash": "qVqSAXUhUgu12PpHqAPQQS2wg18=",
+    "timestampUtcMs": "2026-09-02T22:20:16.030Z",
+    "action": {
+      "type": "SET_DESCRIPTION",
+      "input": {
+        "updatedAt": "2026-09-02T22:20:16.030Z",
+        "description": "IReactor is inside the trust boundary and serves every scope to every caller; the client evaluates a read request per scope for its subject. No flag gates it: reads are filtered with all flags off."
+      },
+      "timestampUtcMs": "2026-09-02T22:20:16.030Z"
+    }
+  },
+  {
+    "index": 23,
+    "hash": "qVqSAXUhUgu12PpHqAPQQS2wg18=",
+    "timestampUtcMs": "2026-09-02T22:20:16.030Z",
+    "action": {
+      "type": "SET_NOTE_TYPE",
+      "input": {
+        "noteType": "ARCHITECTURE",
+        "updatedAt": "2026-09-02T22:20:16.030Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:20:16.030Z"
+    }
+  },
+  {
+    "index": 24,
+    "hash": "qVqSAXUhUgu12PpHqAPQQS2wg18=",
+    "timestampUtcMs": "2026-09-02T22:20:16.030Z",
+    "action": {
+      "type": "SET_CONTENT",
+      "input": {
+        "content": "A read produces no operation. It has no position in any stream, so admission cannot gate it, replay cannot re-evaluate it and no append condition can guard it \u2014 the positional machinery cannot see reads at all. Read enforcement therefore lives on the reactor's **own read surface**: the `IReactorClient`.\n\nTwo placement facts follow, both demonstrated by the `scoped-reads` recipe on one document in one process:\n\n- **`IReactor` serves everything.** It is inside the trust boundary; internal consumers \u2014 the event bus, read models, processors \u2014 need unfiltered data to build their projections, and whatever they re-expose is their own read surface to gate. So `reactor.getByIdOrSlug()` hands all four scopes to anyone while `client.get()` hands Mallory only `auth` and `document`.\n- **The gate carries no feature flag of its own.** A client over a reactor with `featureFlags: {}` still filters reads, so a policy is enforced against readers before it is enforced against writers. What `authEnforcement` changes is *which model* answers: with it on, the read gate builds the registered decision model at the stream heads and evaluates a `read` request per scope, so `{ group }` and conditional read grants apply; below it, a read evaluates the bare policy alone.\n\nEvery read carries a subject \u2014 the client defaults it to its own signer, a server passes the authenticated caller \u2014 and a write hands back a read: the document `client.execute()` returns is gated exactly like `get()`, as the client's own identity. A custom subgraph or server that reads through the client inherits all of this and cannot forget to enforce.\n\nTwo engineering rules the spec records: the model is built through the **read side, never the write cache** (a reactor whose executors live in worker processes holds parent state no commit invalidates, so a read there would decide against a stale policy); and a read of a document's *operations* fetches the whole document, because evaluating a condition on the gated scope's state needs more than the policy.\n\nTiming differs from writes: an operation is evaluated at its position, so a revocation catches operations accepted before it arrived, but a read is evaluated when it is served \u2014 revoking read only stops future serving and cannot recall bytes a replica already holds.\n\n_Source: docs/specs/auth-scope.md (Powerhouse v6.2.2-dev.74)._\n_Source: apps/academy/docs/academy/04-Reference/01-Reactor/11-Authorization.md (Powerhouse v6.2.2-dev.74)._\n_Source: apps/academy/docs/academy/05-Lookup/00-Cookbook.md (Powerhouse v6.2.2-dev.74)._\n\n## Provenance\n- `docs/specs/auth-scope.md` \u2014 Reads section; Stage 7 step 1 (read gate, read side not write cache)\n- `apps/academy/docs/academy/04-Reference/01-Reactor/11-Authorization.md` \u2014 'Scopes every holder reads' second paragraph\n- `apps/academy/docs/academy/05-Lookup/00-Cookbook.md` \u2014 Scoped Reads: 'The gate is on the client', 'It carries no feature flag', 'A write hands back a read'\n\n_Recorded from the Powerhouse repository at **v6.2.2-dev.74** during the v6.2.2-dev.74 source sync._",
+        "updatedAt": "2026-09-02T22:20:16.030Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:20:16.030Z"
+    }
+  },
+  {
+    "index": 25,
+    "hash": "qVqSAXUhUgu12PpHqAPQQS2wg18=",
+    "timestampUtcMs": "2026-09-02T22:20:16.030Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "version",
+        "value": "v6.2.2-dev.74",
+        "updatedAt": "2026-09-02T22:20:16.030Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:20:16.030Z"
+    }
+  },
+  {
+    "index": 26,
+    "hash": "qVqSAXUhUgu12PpHqAPQQS2wg18=",
+    "timestampUtcMs": "2026-09-02T22:20:16.030Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "filePath",
+        "value": "docs/specs/auth-scope.md",
+        "updatedAt": "2026-09-02T22:20:16.030Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:20:16.030Z"
+    }
+  },
+  {
+    "index": 27,
+    "hash": "qVqSAXUhUgu12PpHqAPQQS2wg18=",
+    "timestampUtcMs": "2026-09-02T22:20:16.030Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "confidence",
+        "value": "grounded",
+        "updatedAt": "2026-09-02T22:20:16.030Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:20:16.030Z"
+    }
+  }
+]

@@ -1,0 +1,120 @@
+{
+  "links": [
+    {
+      "id": "lnk-0168d518-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "0168d518-b02c-42b9-9d6f-add7494a8f1d",
+      "targetTitle": "docker-switchboard-image",
+      "reason": "The image entrypoint runs exactly this migration path before starting the server",
+      "confidence": "grounded"
+    },
+    {
+      "id": "lnk-15121fe4-bui",
+      "linkType": "BUILDS_ON",
+      "targetDocumentId": "15121fe4-c0d6-44bf-b8fd-cc5d4e4dda61",
+      "targetTitle": "docker-switchboard-storage",
+      "reason": "Applies the storage variables' precedence to the migration step specifically, where the ordering differs slightly (reactor URL first)",
+      "confidence": "grounded"
+    },
+    {
+      "id": "lnk-63e10e2c-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "63e10e2c-9be4-4bd2-a876-8708cd3ac1f9",
+      "targetTitle": "App \u203a switchboard \u203a README",
+      "reason": "Extracted from apps/switchboard/README.md at v6.2.2-dev.74 \u2014 Database Migrations: running, URL precedence, CI/CD integration; Local Development (PostgreSQL)",
+      "confidence": "grounded"
+    },
+    {
+      "id": "lnk-56edb93f-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "56edb93f-5c3b-4c8b-a11f-5cfdcc252dee",
+      "targetTitle": "Academy \u203a Build \u203a Launch \u203a Docker deployment guide",
+      "reason": "Extracted from apps/academy/docs/academy/03-Build/05-Launch/05-DockerDeployment.md at v6.2.2-dev.74 \u2014 Switchboard image startup: Kysely migrations if PH_REACTOR_DATABASE_URL is Postgres; SKIP_DB_MIGRATIONS",
+      "confidence": "grounded"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Switchboard migrations are Kysely-based: PGlite migrates itself on startup, Postgres is migrated explicitly, and the URL is resolved PH_REACTOR_DATABASE_URL \u2192 DATABASE_URL \u2192 config file",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "a2428cc1-d500-462b-92e7-1da91baa8f79",
+      "name": "switchboard",
+      "topicDocumentId": null
+    },
+    {
+      "id": "f284ad06-a475-44a1-9ad5-8c19400d6456",
+      "name": "migrations",
+      "topicDocumentId": null
+    },
+    {
+      "id": "554c910a-ac3c-47a6-a6bf-468a904b285f",
+      "name": "postgres",
+      "topicDocumentId": null
+    },
+    {
+      "id": "2bd6542d-ed4d-49dd-9295-bed1e4ea2814",
+      "name": "pglite",
+      "topicDocumentId": null
+    },
+    {
+      "id": "0514586f-d720-403e-b9d0-bcd62cc158c0",
+      "name": "deployment",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "Switchboard uses Kysely for database migrations when running on PostgreSQL, and the two backends behave differently: **PGlite** (the default) migrates automatically on startup, while **PostgreSQL** migrations are run manually or as a deployment step.\n\n```bash\n# from apps/switchboard\nDATABASE_URL=\"postgresql://user:pass@localhost:5432/db\" pnpm migrate\nDATABASE_URL=\"postgresql://user:pass@localhost:5432/db\" pnpm migrate:status\n# from anywhere\nph switchboard --db-path postgresql://user:pass@localhost:5432/db --migrate\nph switchboard --db-path postgresql://user:pass@localhost:5432/db --migrate-status\n```\n\nThe migration commands look for a PostgreSQL URL in this order: `PH_REACTOR_DATABASE_URL`, then `DATABASE_URL`, then the config file (`powerhouse.config.json` \u2192 `switchboard.database.url`). If none is found, migrations are **skipped with a message** \u2014 PGlite handles its own. For production the README's pattern is `ph switchboard --migrate && ph switchboard` (or `pnpm migrate && pnpm start`); the Docker entrypoint does the same automatically when `PH_REACTOR_DATABASE_URL` points at Postgres, and `SKIP_DB_MIGRATIONS=true` opts out.\n\nFor local Postgres development the reactor package ships a compose file (`docker compose -f packages/reactor/docker-compose.yml up -d`) that starts PostgreSQL on port `5433` plus Adminer on `8080`.\n\n_Source: apps/switchboard/README.md (Powerhouse v6.2.2-dev.74)._\n_Source: apps/academy/docs/academy/03-Build/05-Launch/05-DockerDeployment.md (Powerhouse v6.2.2-dev.74)._\n\n## Provenance\n- `apps/switchboard/README.md` \u2014 Database Migrations: running, URL precedence, CI/CD integration; Local Development (PostgreSQL)\n- `apps/academy/docs/academy/03-Build/05-Launch/05-DockerDeployment.md` \u2014 Switchboard image startup: Kysely migrations if PH_REACTOR_DATABASE_URL is Postgres; SKIP_DB_MIGRATIONS\n\n_Recorded from the Powerhouse repository at **v6.2.2-dev.74** during the v6.2.2-dev.74 source sync._",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": "v6.2.2-dev.74",
+  "computes": null,
+  "filePath": "apps/switchboard/README.md",
+  "noteType": "REFERENCE",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": "grounded",
+  "consumedBy": [],
+  "provenance": {
+    "author": "knowledge-agent",
+    "createdAt": "2026-09-02T22:12:42.081Z",
+    "sessionId": null,
+    "updatedAt": "2026-09-02T22:20:59.977Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Run pnpm migrate / migrate:status from apps/switchboard, or ph switchboard --db-path <url> --migrate / --migrate-status from anywhere; with no Postgres URL found, migrations are skipped with a message",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "2628ae5c-c72a-4fd4-9032-54c70df7489b",
+      "actor": "knowledge-agent",
+      "comment": "extracted from the Powerhouse repository at v6.2.2-dev.74",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-09-02T22:12:42.604Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "39d1d33b-97f9-4fdb-8d71-5b255bca672e",
+      "actor": "liberuum",
+      "comment": "claim checked against the cited repository file at the pinned tag",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-09-02T22:12:43.091Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

@@ -1,0 +1,109 @@
+{
+  "links": [
+    {
+      "id": "lnk-a36dbe68-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "a36dbe68-f077-4fad-bd4d-b6f62b851264",
+      "targetTitle": "core-flow-connect-reactor-swarm"
+    },
+    {
+      "id": "lnk-79ab27b6-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "79ab27b6-f387-4761-b7f4-39aca36f0d68",
+      "targetTitle": "reactor-subscriptions-document-changes"
+    },
+    {
+      "id": "lnk-a442a64c-bui",
+      "linkType": "BUILDS_ON",
+      "targetDocumentId": "a442a64c-1ed5-41ef-ba49-96dc33c81fa5",
+      "targetTitle": "subgraphs-extend-document-models-via-graphql"
+    },
+    {
+      "id": "lnk-7f35d994-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "7f35d994-2dcd-43bd-b90f-d71147dff5b9",
+      "targetTitle": "Academy \u203a Reference \u203a GraphQLData \u203a Subgraph Migration Guide (v6)",
+      "reason": "Backing page found by content match in the v6.2.2-dev.74 source backfill \u2014 identifiers basesubgraph, ctx.driveserver, getresolvers from the claim appear in this page (text identical at v6.2.2-dev.47 and v6.2.2-dev.74); attribution, not the original extraction record",
+      "confidence": "grounded"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "V6 custom subgraphs use getResolvers(subgraph: BaseSubgraph) pattern with access to reactorClient and relationalDb",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "36d999bd-ddcd-4c13-856b-d47150ae03e3",
+      "name": "subgraph",
+      "topicDocumentId": null
+    },
+    {
+      "id": "4b06e29d-ba37-424e-a588-6e617a5c638d",
+      "name": "graphql",
+      "topicDocumentId": null
+    },
+    {
+      "id": "23c87ab7-90fb-48fd-8b82-502da53ed158",
+      "name": "migration",
+      "topicDocumentId": null
+    },
+    {
+      "id": "3036d238-2f07-4383-999c-685ec1fd80b3",
+      "name": "v6-reactor",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "In v6, custom subgraphs changed from exporting `resolvers` with `ctx.driveServer` to exporting `getResolvers(subgraph: BaseSubgraph)` with `subgraph.reactorClient` and `subgraph.relationalDb`. Schema format changed from template literal strings to `gql` tagged templates (`DocumentNode`). File structure changed from `resolvers.ts` + `type-defs.ts` to `resolvers.ts` + `schema.ts` + `index.ts`. Registration changed from manual to automatic via `ph generate subgraph --name <name>`. The reactor subgraph at `/graphql/r` is the generic entry point; document-model subgraphs provide type-specific namespaced access.\n\n_Corrected 2026-08-13 against Powerhouse v6.2.2-dev.45._",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": "v6.2.2-dev.74",
+  "computes": null,
+  "filePath": "apps/academy/docs/academy/04-Reference/03-GraphQLData/07-SubgraphMigrationGuide.md",
+  "noteType": "PATTERN",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "knowledge-agent",
+    "createdAt": "2026-04-02T12:00:00.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-09-02T21:39:02.208Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Schemas moved from template literals to gql DocumentNodes, files split into resolvers/schema/index, and registration became automatic through ph generate - ctx.driveServer is gone.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "0d9b7eee-f711-418f-9afd-9ac6991c025a",
+      "actor": "claude",
+      "comment": "Knowledge registered against powerhouse v6.2.2-dev.47",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-14T12:00:00.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "3b00334d-7448-4617-a2e3-57693eb98bb7",
+      "actor": "liberuum",
+      "comment": "Canonical as of powerhouse v6.2.2-dev.47",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-14T12:00:00.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

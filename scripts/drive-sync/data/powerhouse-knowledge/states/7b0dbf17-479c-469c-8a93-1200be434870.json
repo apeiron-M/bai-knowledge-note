@@ -1,0 +1,107 @@
+{
+  "links": [
+    {
+      "id": "lnk-aea7368d-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "aea7368d-394c-44c6-b605-24265f3b871b",
+      "targetTitle": "skills-as-attributable-transformations"
+    },
+    {
+      "id": "lnk-e2186433-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "e2186433-6a5b-4e9a-90e8-37c698b35e89",
+      "targetTitle": "moc-attributable-skills-provenance"
+    },
+    {
+      "id": "lnk-ee0b4542-bui",
+      "linkType": "BUILDS_ON",
+      "targetDocumentId": "ee0b4542-988d-4c21-9dc5-72c1eafbbe45",
+      "targetTitle": "skills-provenance-blind"
+    },
+    {
+      "id": "lnk-2b423487-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "2b423487-123f-414c-bd20-edce7de891f4",
+      "targetTitle": "skills-as-attributable-transformations"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Provenance enables process-level evaluation beyond output scoring",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "c71f1def-55e0-48f5-9dbb-05092f46fb4e",
+      "name": "evaluation",
+      "topicDocumentId": null
+    },
+    {
+      "id": "cbbf92e3-3adf-4555-a160-d218f25ab929",
+      "name": "provenance",
+      "topicDocumentId": null
+    },
+    {
+      "id": "6ca07f7f-6ae5-4ea7-9f99-d9ab772ed084",
+      "name": "reliabilism",
+      "topicDocumentId": null
+    },
+    {
+      "id": "80376565-524b-4d21-82c2-652cb8c21144",
+      "name": "agent-skills",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "## Claim\n\nOutput-level benchmarks reward correct answers from broken processes the same as sound ones (Gettier applied to agents). Provenance makes reliabilist evaluation operational.\n\n## Process questions unlocked\n\n- **Skill contribution** \u2014 which skills correlate with correct outcomes vs contextslop\n- **Mechanism reliability** \u2014 inference vs retrieval-and-paraphrase vs guessing\n- **Failure localization** \u2014 which operation/skill introduced the error\n- **Counterfactual replay** \u2014 re-run the log with one skill removed\n\nThese are queries against a provenance graph, not new metric inventions.\n\n## Methodology grounding\nThe claims below live in the plugin's `data/methodology/` corpus; the relationship is stated per claim.\n\n- **[[agents are simultaneously methodology executors and subjects creating a unique trust asymmetry]]** \u2014 BUILDS_ON. Output scoring evaluates the executor role only. Process-level evaluation is what the subject role requires, and the methodology claim explains why the agent cannot supply it itself: it does not perceive the mechanisms constraining it.\n- **[[agent session boundaries create natural automation checkpoints that human-operated systems lack]]** \u2014 RELATES_TO. Both argue that the interesting evaluation happens at boundaries rather than in the middle of the work, where the actor is least able to observe itself.\n",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "CONCEPT",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "knowledge-agent",
+    "createdAt": "2026-08-16T20:32:38.861Z",
+    "sessionId": null,
+    "updatedAt": "2026-09-03T10:03:26.907Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Output scoring cannot distinguish reliable inference from lucky correct answers; an operation log makes skill contribution and failure localization queryable.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "6d63af27-353d-4e8e-8269-7ac89831114a",
+      "actor": "knowledge-agent",
+      "comment": "pipeline extract",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-16T20:32:39.831Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "a5a8fa4a-279b-4b0d-a90a-1ca981c27952",
+      "actor": "pipeline-reviewer",
+      "comment": "pipeline verify",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-16T20:32:39.976Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

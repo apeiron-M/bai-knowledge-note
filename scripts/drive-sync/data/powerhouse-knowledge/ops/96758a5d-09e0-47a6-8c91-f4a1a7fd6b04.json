@@ -1,0 +1,878 @@
+[
+  {
+    "index": 0,
+    "hash": "",
+    "timestampUtcMs": "2026-09-02T22:08:18.397Z",
+    "action": {
+      "type": "CREATE_DOCUMENT",
+      "input": {
+        "meta": {},
+        "name": "auth-policy-in-scope",
+        "slug": "",
+        "model": "bai/knowledge-note",
+        "branch": "main",
+        "signing": {
+          "nonce": "",
+          "publicKey": {},
+          "signature": "96758a5d-09e0-47a6-8c91-f4a1a7fd6b04",
+          "documentType": "bai/knowledge-note",
+          "createdAtUtcIso": "2026-09-02T22:08:18.397Z"
+        },
+        "version": 0,
+        "documentId": "96758a5d-09e0-47a6-8c91-f4a1a7fd6b04",
+        "protocolVersions": {
+          "base-reducer": 2
+        }
+      },
+      "timestampUtcMs": "2026-09-02T22:08:18.397Z"
+    }
+  },
+  {
+    "index": 0,
+    "hash": "cOJhAUtpAjQAE5twgTSMw5f9Wv8=",
+    "timestampUtcMs": "2026-09-02T22:08:18.569Z",
+    "action": {
+      "type": "SET_TITLE",
+      "input": {
+        "title": "Authorization policy lives in the document's own auth scope as replicated grants, so reducers carry no access-control code",
+        "updatedAt": "2026-09-02T22:08:18.568Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:08:18.569Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "",
+    "timestampUtcMs": "2026-09-02T22:08:18.397Z",
+    "action": {
+      "type": "UPGRADE_DOCUMENT",
+      "input": {
+        "model": "bai/knowledge-note",
+        "toVersion": 1,
+        "documentId": "96758a5d-09e0-47a6-8c91-f4a1a7fd6b04",
+        "fromVersion": 0,
+        "initialState": {
+          "auth": {
+            "grants": [],
+            "version": 0
+          },
+          "local": {
+            "lastViewedAt": null,
+            "personalTags": []
+          },
+          "global": {
+            "links": [],
+            "model": null,
+            "scope": null,
+            "title": null,
+            "editor": null,
+            "inputs": [],
+            "models": [],
+            "status": "DRAFT",
+            "topics": [],
+            "content": null,
+            "context": null,
+            "modelId": null,
+            "modules": [],
+            "outputs": [],
+            "version": null,
+            "computes": null,
+            "filePath": null,
+            "noteType": null,
+            "severity": null,
+            "hooksUsed": [],
+            "rootCause": null,
+            "confidence": null,
+            "consumedBy": [],
+            "provenance": null,
+            "sourceType": null,
+            "targetType": null,
+            "cardinality": null,
+            "description": null,
+            "alternatives": [],
+            "consequences": [],
+            "errorMessage": null,
+            "relationType": null,
+            "correctPattern": null,
+            "decisionStatus": null,
+            "dispatchTargets": [],
+            "lifecycleEvents": []
+          },
+          "document": {
+            "hash": {
+              "encoding": "base64",
+              "algorithm": "sha1"
+            },
+            "version": 1
+          }
+        }
+      },
+      "timestampUtcMs": "2026-09-02T22:08:18.397Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "Acya5effEUuc+V0UBG7qRi0iJmc=",
+    "timestampUtcMs": "2026-09-02T22:08:18.569Z",
+    "action": {
+      "type": "SET_DESCRIPTION",
+      "input": {
+        "updatedAt": "2026-09-02T22:08:18.569Z",
+        "description": "The auth scope holds a stacked grant list that syncs, replays and converges like document content; the reactor enforces it at admission, replay and read. Reducers validate domain invariants only."
+      },
+      "timestampUtcMs": "2026-09-02T22:08:18.569Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "",
+    "timestampUtcMs": "2026-09-02T22:08:23.192Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "metadata": {
+          "reason": "Extracted from apps/academy/docs/academy/04-Reference/01-Reactor/11-Authorization.md at v6.2.2-dev.74 \u2014 intro: 'The reactor decides who may do what from a policy stored on the document itself\u2026 Reducers contain no authorization code'",
+          "confidence": "grounded"
+        },
+        "sourceId": "96758a5d-09e0-47a6-8c91-f4a1a7fd6b04",
+        "targetId": "17dc46b0-f733-467c-99d7-ae8fbe0fb0e4",
+        "relationshipType": "DERIVED_FROM"
+      },
+      "timestampUtcMs": "2026-09-02T22:08:23.192Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "PnTIzWCfbXGl7N8esyLXYb3xR6U=",
+    "timestampUtcMs": "2026-09-02T22:08:18.569Z",
+    "action": {
+      "type": "SET_NOTE_TYPE",
+      "input": {
+        "noteType": "ARCHITECTURE",
+        "updatedAt": "2026-09-02T22:08:18.569Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:08:18.569Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "",
+    "timestampUtcMs": "2026-09-02T22:08:24.252Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "metadata": {
+          "reason": "Extracted from apps/academy/docs/academy/05-Lookup/00-Cookbook.md at v6.2.2-dev.74 \u2014 Document ACL recipe: counterpart to role-based-auth, reducers validate domain invariants only, admission-level refusal",
+          "confidence": "grounded"
+        },
+        "sourceId": "96758a5d-09e0-47a6-8c91-f4a1a7fd6b04",
+        "targetId": "f2aaccd3-7c26-4327-881e-f5ad9e267b89",
+        "relationshipType": "DERIVED_FROM"
+      },
+      "timestampUtcMs": "2026-09-02T22:08:24.252Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "ebXAI1DvARfqF/QXfe3GzOKbZSs=",
+    "timestampUtcMs": "2026-09-02T22:08:18.569Z",
+    "action": {
+      "type": "SET_CONTENT",
+      "input": {
+        "content": "Since v6.2.2-dev.74 the reactor can decide who may do what from a policy stored **on the document itself**, in its `auth` scope. The policy is a list of **grants** folded by a platform reducer exactly like any other state, so it syncs, replays and converges the way document content does.\n\nThe consequence for model authors is the headline: **reducers contain no authorization code**. The Cookbook's `document-acl` recipe is built as the deliberate counterpart to `role-based-auth` \u2014 same outcome (callers gated per operation), opposite mechanism. In `role-based-auth` every reducer starts with signer checks and the rules are baked into the model; in `document-acl` the reducers throw only domain errors (`DuplicateEntry`, `EntryNotFound`), read the signer solely to record an entry's `author`, and the rules are **data** \u2014 inspectable, replicated, and changeable at runtime without touching the model.\n\nThe spec's motivation names the problem this solves: authorization used to live either outside the reactor (middleware, the GraphQL layer) or inside reducers, so the same logic was written in several places and whole classes of policy were impossible. Pulling it into the core lets it ride on the guarantees the reactor already provides \u2014 the event log, synchronization, signatures \u2014 and gives consistency guarantees an external gate cannot: a refused write is refused **at admission**, fails the job with `AuthorizationDeniedError`, and stores nothing; the reducer never runs.\n\nTwo boundaries to keep straight. Enforcement is staged behind feature flags and bites only on documents whose policy was initialized (an uninitialized policy allows everything). And this is a *second* authorization system next to the host's permission tables, answering a different question \u2014 see the note on the two systems.\n\n_Source: apps/academy/docs/academy/04-Reference/01-Reactor/11-Authorization.md (Powerhouse v6.2.2-dev.74)._\n_Source: apps/academy/docs/academy/05-Lookup/00-Cookbook.md (Powerhouse v6.2.2-dev.74)._\n_Source: docs/specs/auth-scope.md (Powerhouse v6.2.2-dev.74)._\n\n## Provenance\n- `apps/academy/docs/academy/04-Reference/01-Reactor/11-Authorization.md` \u2014 intro: 'The reactor decides who may do what from a policy stored on the document itself\u2026 Reducers contain no authorization code'\n- `apps/academy/docs/academy/05-Lookup/00-Cookbook.md` \u2014 Document ACL recipe: counterpart to role-based-auth, reducers validate domain invariants only, admission-level refusal\n- `docs/specs/auth-scope.md` \u2014 Motivation and Overview: pulling authorization into the core Reactor\n\n_Recorded from the Powerhouse repository at **v6.2.2-dev.74** during the v6.2.2-dev.74 source sync._",
+        "updatedAt": "2026-09-02T22:08:18.569Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:08:18.569Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "",
+    "timestampUtcMs": "2026-09-02T22:08:25.677Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "metadata": {
+          "reason": "Extracted from docs/specs/auth-scope.md at v6.2.2-dev.74 \u2014 Motivation and Overview: pulling authorization into the core Reactor",
+          "confidence": "grounded"
+        },
+        "sourceId": "96758a5d-09e0-47a6-8c91-f4a1a7fd6b04",
+        "targetId": "223bb12a-be7f-4209-9ab2-f04f7bb2b6c8",
+        "relationshipType": "DERIVED_FROM"
+      },
+      "timestampUtcMs": "2026-09-02T22:08:25.677Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "F1cu9dipDN0sb9dXUpqcOx4kEJE=",
+    "timestampUtcMs": "2026-09-02T22:08:18.569Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "1edcdc79-0576-48c9-8221-e2155853cd2d",
+        "name": "auth-scope"
+      },
+      "timestampUtcMs": "2026-09-02T22:08:18.569Z"
+    }
+  },
+  {
+    "index": 5,
+    "hash": "",
+    "timestampUtcMs": "2026-09-02T22:08:26.878Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "metadata": {
+          "reason": "Reducer-level RBAC keeps the access rule inside each reducer keyed on signer.user.address; the auth scope moves the same decision into replicated policy data so no reducer carries an access check \u2014 the two are opposite mechanisms for the same outcome",
+          "confidence": "grounded"
+        },
+        "sourceId": "96758a5d-09e0-47a6-8c91-f4a1a7fd6b04",
+        "targetId": "b2987190-d95c-4d89-9075-0716c4eb99fd",
+        "relationshipType": "CONTRADICTS"
+      },
+      "timestampUtcMs": "2026-09-02T22:08:26.878Z"
+    }
+  },
+  {
+    "index": 5,
+    "hash": "Kmq6t+ApyoFaqjVW8QA8X8C8gCY=",
+    "timestampUtcMs": "2026-09-02T22:08:18.569Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "2a1701c9-d964-410b-9211-8d93989ec87a",
+        "name": "authorization"
+      },
+      "timestampUtcMs": "2026-09-02T22:08:18.569Z"
+    }
+  },
+  {
+    "index": 6,
+    "hash": "",
+    "timestampUtcMs": "2026-09-02T22:14:46.620Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "metadata": {
+          "reason": "Extracted from apps/academy/docs/academy/04-Reference/01-Reactor/11-Authorization.md at v6.2.2-dev.74 \u2014 intro: 'The reactor decides who may do what from a policy stored on the document itself\u2026 Reducers contain no authorization code'",
+          "confidence": "grounded"
+        },
+        "sourceId": "96758a5d-09e0-47a6-8c91-f4a1a7fd6b04",
+        "targetId": "17dc46b0-f733-467c-99d7-ae8fbe0fb0e4",
+        "relationshipType": "DERIVED_FROM"
+      },
+      "timestampUtcMs": "2026-09-02T22:14:46.620Z"
+    }
+  },
+  {
+    "index": 6,
+    "hash": "tFKs7k07G35TLhcdGd80ZgMUHgY=",
+    "timestampUtcMs": "2026-09-02T22:08:18.569Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "134300eb-5d9c-410f-a114-affb4fc0f387",
+        "name": "reactor"
+      },
+      "timestampUtcMs": "2026-09-02T22:08:18.569Z"
+    }
+  },
+  {
+    "index": 7,
+    "hash": "",
+    "timestampUtcMs": "2026-09-02T22:17:01.140Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "metadata": {
+          "reason": "Extracted from apps/academy/docs/academy/04-Reference/01-Reactor/11-Authorization.md at v6.2.2-dev.74 \u2014 intro: 'The reactor decides who may do what from a policy stored on the document itself\u2026 Reducers contain no authorization code'",
+          "confidence": "grounded"
+        },
+        "sourceId": "96758a5d-09e0-47a6-8c91-f4a1a7fd6b04",
+        "targetId": "17dc46b0-f733-467c-99d7-ae8fbe0fb0e4",
+        "relationshipType": "DERIVED_FROM"
+      },
+      "timestampUtcMs": "2026-09-02T22:17:01.140Z"
+    }
+  },
+  {
+    "index": 7,
+    "hash": "LltjUHe8objG6+Yrc/Rhe65vJOI=",
+    "timestampUtcMs": "2026-09-02T22:08:18.569Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "89645822-0894-4794-ac6f-4d10b3045fad",
+        "name": "architecture"
+      },
+      "timestampUtcMs": "2026-09-02T22:08:18.569Z"
+    }
+  },
+  {
+    "index": 8,
+    "hash": "",
+    "timestampUtcMs": "2026-09-02T22:17:01.754Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "metadata": {
+          "reason": "Extracted from apps/academy/docs/academy/05-Lookup/00-Cookbook.md at v6.2.2-dev.74 \u2014 Document ACL recipe: counterpart to role-based-auth, reducers validate domain invariants only, admission-level refusal",
+          "confidence": "grounded"
+        },
+        "sourceId": "96758a5d-09e0-47a6-8c91-f4a1a7fd6b04",
+        "targetId": "f2aaccd3-7c26-4327-881e-f5ad9e267b89",
+        "relationshipType": "DERIVED_FROM"
+      },
+      "timestampUtcMs": "2026-09-02T22:17:01.754Z"
+    }
+  },
+  {
+    "index": 8,
+    "hash": "GV69E5VZ2yFiv/b4k/RyVjN5M0w=",
+    "timestampUtcMs": "2026-09-02T22:08:18.569Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "version",
+        "value": "v6.2.2-dev.74",
+        "updatedAt": "2026-09-02T22:08:18.569Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:08:18.569Z"
+    }
+  },
+  {
+    "index": 9,
+    "hash": "",
+    "timestampUtcMs": "2026-09-02T22:17:02.509Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "metadata": {
+          "reason": "Extracted from docs/specs/auth-scope.md at v6.2.2-dev.74 \u2014 Motivation and Overview: pulling authorization into the core Reactor",
+          "confidence": "grounded"
+        },
+        "sourceId": "96758a5d-09e0-47a6-8c91-f4a1a7fd6b04",
+        "targetId": "223bb12a-be7f-4209-9ab2-f04f7bb2b6c8",
+        "relationshipType": "DERIVED_FROM"
+      },
+      "timestampUtcMs": "2026-09-02T22:17:02.509Z"
+    }
+  },
+  {
+    "index": 9,
+    "hash": "D3C27g/dsQCMYBkkL2GrgS+sLbI=",
+    "timestampUtcMs": "2026-09-02T22:08:18.569Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "filePath",
+        "value": "apps/academy/docs/academy/04-Reference/01-Reactor/11-Authorization.md",
+        "updatedAt": "2026-09-02T22:08:18.569Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:08:18.569Z"
+    }
+  },
+  {
+    "index": 10,
+    "hash": "",
+    "timestampUtcMs": "2026-09-02T22:17:03.227Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "metadata": {
+          "reason": "Reducer-level RBAC keeps the access rule inside each reducer keyed on signer.user.address; the auth scope moves the same decision into replicated policy data so no reducer carries an access check \u2014 the two are opposite mechanisms for the same outcome",
+          "confidence": "grounded"
+        },
+        "sourceId": "96758a5d-09e0-47a6-8c91-f4a1a7fd6b04",
+        "targetId": "b2987190-d95c-4d89-9075-0716c4eb99fd",
+        "relationshipType": "CONTRADICTS"
+      },
+      "timestampUtcMs": "2026-09-02T22:17:03.227Z"
+    }
+  },
+  {
+    "index": 10,
+    "hash": "R9QSitVC+0NgOEA3gxQgeKsWnLA=",
+    "timestampUtcMs": "2026-09-02T22:08:18.569Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "confidence",
+        "value": "grounded",
+        "updatedAt": "2026-09-02T22:08:18.569Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:08:18.569Z"
+    }
+  },
+  {
+    "index": 11,
+    "hash": "",
+    "timestampUtcMs": "2026-09-02T22:17:03.750Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "metadata": {
+          "reason": "The in-reactor auth scope is one of two authorization systems; the other is the host's permission tables, and the two answer different questions",
+          "confidence": "grounded"
+        },
+        "sourceId": "96758a5d-09e0-47a6-8c91-f4a1a7fd6b04",
+        "targetId": "01daefb6-d6ad-4d19-8642-3e2aa97831d0",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-09-02T22:17:03.750Z"
+    }
+  },
+  {
+    "index": 11,
+    "hash": "s9rs8Hks0ZqvcxFrnWiDMwCo6fU=",
+    "timestampUtcMs": "2026-09-02T22:08:21.371Z",
+    "action": {
+      "type": "SET_PROVENANCE",
+      "input": {
+        "author": "knowledge-agent",
+        "createdAt": "2026-09-02T22:08:21.371Z",
+        "sourceOrigin": "DERIVED"
+      },
+      "timestampUtcMs": "2026-09-02T22:08:21.371Z"
+    }
+  },
+  {
+    "index": 12,
+    "hash": "",
+    "timestampUtcMs": "2026-09-02T22:17:04.201Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "metadata": {
+          "reason": "The policy is always stored, but it is only enforced when the staged feature flags are on",
+          "confidence": "grounded"
+        },
+        "sourceId": "96758a5d-09e0-47a6-8c91-f4a1a7fd6b04",
+        "targetId": "c8bd64d3-d92e-4f41-beba-983a7e995c26",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-09-02T22:17:04.201Z"
+    }
+  },
+  {
+    "index": 12,
+    "hash": "CPi8vwBtfGoFC2b8a/AHxQMhr0c=",
+    "timestampUtcMs": "2026-09-02T22:08:21.924Z",
+    "action": {
+      "type": "SUBMIT_FOR_REVIEW",
+      "input": {
+        "id": "af217c5a-8032-4f42-8f4e-b58112a86d20",
+        "actor": "knowledge-agent",
+        "comment": "extracted from the Powerhouse repository at v6.2.2-dev.74",
+        "timestamp": "2026-09-02T22:08:21.924Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:08:21.924Z"
+    }
+  },
+  {
+    "index": 13,
+    "hash": "",
+    "timestampUtcMs": "2026-09-02T22:21:36.388Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "metadata": {
+          "reason": "Extracted from apps/academy/docs/academy/04-Reference/01-Reactor/11-Authorization.md at v6.2.2-dev.74 \u2014 intro: 'The reactor decides who may do what from a policy stored on the document itself\u2026 Reducers contain no authorization code'",
+          "confidence": "grounded"
+        },
+        "sourceId": "96758a5d-09e0-47a6-8c91-f4a1a7fd6b04",
+        "targetId": "17dc46b0-f733-467c-99d7-ae8fbe0fb0e4",
+        "relationshipType": "DERIVED_FROM"
+      },
+      "timestampUtcMs": "2026-09-02T22:21:36.388Z"
+    }
+  },
+  {
+    "index": 13,
+    "hash": "GYNr93siovd4AttIf/8OGyWBgdk=",
+    "timestampUtcMs": "2026-09-02T22:08:22.401Z",
+    "action": {
+      "type": "APPROVE_NOTE",
+      "input": {
+        "id": "3a23f356-d44f-436b-b41e-3fccb5245cc4",
+        "actor": "liberuum",
+        "comment": "claim checked against the cited repository file at the pinned tag",
+        "timestamp": "2026-09-02T22:08:22.401Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:08:22.401Z"
+    }
+  },
+  {
+    "index": 14,
+    "hash": "",
+    "timestampUtcMs": "2026-09-02T22:21:37.191Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "metadata": {
+          "reason": "Extracted from apps/academy/docs/academy/05-Lookup/00-Cookbook.md at v6.2.2-dev.74 \u2014 Document ACL recipe: counterpart to role-based-auth, reducers validate domain invariants only, admission-level refusal",
+          "confidence": "grounded"
+        },
+        "sourceId": "96758a5d-09e0-47a6-8c91-f4a1a7fd6b04",
+        "targetId": "f2aaccd3-7c26-4327-881e-f5ad9e267b89",
+        "relationshipType": "DERIVED_FROM"
+      },
+      "timestampUtcMs": "2026-09-02T22:21:37.191Z"
+    }
+  },
+  {
+    "index": 14,
+    "hash": "VZJIVEZY9++H5ltdSwIlSOK5ubc=",
+    "timestampUtcMs": "2026-09-02T22:09:02.395Z",
+    "action": {
+      "type": "SET_TITLE",
+      "input": {
+        "title": "Authorization policy lives in the document's own auth scope as replicated grants, so reducers carry no access-control code",
+        "updatedAt": "2026-09-02T22:09:02.395Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:09:02.395Z"
+    }
+  },
+  {
+    "index": 15,
+    "hash": "",
+    "timestampUtcMs": "2026-09-02T22:21:38.001Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "metadata": {
+          "reason": "Extracted from docs/specs/auth-scope.md at v6.2.2-dev.74 \u2014 Motivation and Overview: pulling authorization into the core Reactor",
+          "confidence": "grounded"
+        },
+        "sourceId": "96758a5d-09e0-47a6-8c91-f4a1a7fd6b04",
+        "targetId": "223bb12a-be7f-4209-9ab2-f04f7bb2b6c8",
+        "relationshipType": "DERIVED_FROM"
+      },
+      "timestampUtcMs": "2026-09-02T22:21:38.001Z"
+    }
+  },
+  {
+    "index": 15,
+    "hash": "VZJIVEZY9++H5ltdSwIlSOK5ubc=",
+    "timestampUtcMs": "2026-09-02T22:09:02.395Z",
+    "action": {
+      "type": "SET_DESCRIPTION",
+      "input": {
+        "updatedAt": "2026-09-02T22:09:02.395Z",
+        "description": "The auth scope holds a stacked grant list that syncs, replays and converges like document content; the reactor enforces it at admission, replay and read. Reducers validate domain invariants only."
+      },
+      "timestampUtcMs": "2026-09-02T22:09:02.395Z"
+    }
+  },
+  {
+    "index": 16,
+    "hash": "",
+    "timestampUtcMs": "2026-09-02T22:21:38.741Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "metadata": {
+          "reason": "Reducer-level RBAC keeps the access rule inside each reducer keyed on signer.user.address; the auth scope moves the same decision into replicated policy data so no reducer carries an access check \u2014 the two are opposite mechanisms for the same outcome",
+          "confidence": "grounded"
+        },
+        "sourceId": "96758a5d-09e0-47a6-8c91-f4a1a7fd6b04",
+        "targetId": "b2987190-d95c-4d89-9075-0716c4eb99fd",
+        "relationshipType": "CONTRADICTS"
+      },
+      "timestampUtcMs": "2026-09-02T22:21:38.741Z"
+    }
+  },
+  {
+    "index": 16,
+    "hash": "VZJIVEZY9++H5ltdSwIlSOK5ubc=",
+    "timestampUtcMs": "2026-09-02T22:09:02.395Z",
+    "action": {
+      "type": "SET_NOTE_TYPE",
+      "input": {
+        "noteType": "ARCHITECTURE",
+        "updatedAt": "2026-09-02T22:09:02.395Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:09:02.395Z"
+    }
+  },
+  {
+    "index": 17,
+    "hash": "",
+    "timestampUtcMs": "2026-09-02T22:21:39.235Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "metadata": {
+          "reason": "The in-reactor auth scope is one of two authorization systems; the other is the host's permission tables, and the two answer different questions",
+          "confidence": "grounded"
+        },
+        "sourceId": "96758a5d-09e0-47a6-8c91-f4a1a7fd6b04",
+        "targetId": "01daefb6-d6ad-4d19-8642-3e2aa97831d0",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-09-02T22:21:39.235Z"
+    }
+  },
+  {
+    "index": 17,
+    "hash": "VZJIVEZY9++H5ltdSwIlSOK5ubc=",
+    "timestampUtcMs": "2026-09-02T22:09:02.395Z",
+    "action": {
+      "type": "SET_CONTENT",
+      "input": {
+        "content": "Since v6.2.2-dev.74 the reactor can decide who may do what from a policy stored **on the document itself**, in its `auth` scope. The policy is a list of **grants** folded by a platform reducer exactly like any other state, so it syncs, replays and converges the way document content does.\n\nThe consequence for model authors is the headline: **reducers contain no authorization code**. The Cookbook's `document-acl` recipe is built as the deliberate counterpart to `role-based-auth` \u2014 same outcome (callers gated per operation), opposite mechanism. In `role-based-auth` every reducer starts with signer checks and the rules are baked into the model; in `document-acl` the reducers throw only domain errors (`DuplicateEntry`, `EntryNotFound`), read the signer solely to record an entry's `author`, and the rules are **data** \u2014 inspectable, replicated, and changeable at runtime without touching the model.\n\nThe spec's motivation names the problem this solves: authorization used to live either outside the reactor (middleware, the GraphQL layer) or inside reducers, so the same logic was written in several places and whole classes of policy were impossible. Pulling it into the core lets it ride on the guarantees the reactor already provides \u2014 the event log, synchronization, signatures \u2014 and gives consistency guarantees an external gate cannot: a refused write is refused **at admission**, fails the job with `AuthorizationDeniedError`, and stores nothing; the reducer never runs.\n\nTwo boundaries to keep straight. Enforcement is staged behind feature flags and bites only on documents whose policy was initialized (an uninitialized policy allows everything). And this is a *second* authorization system next to the host's permission tables, answering a different question \u2014 see the note on the two systems.\n\n_Source: apps/academy/docs/academy/04-Reference/01-Reactor/11-Authorization.md (Powerhouse v6.2.2-dev.74)._\n_Source: apps/academy/docs/academy/05-Lookup/00-Cookbook.md (Powerhouse v6.2.2-dev.74)._\n_Source: docs/specs/auth-scope.md (Powerhouse v6.2.2-dev.74)._\n\n## Provenance\n- `apps/academy/docs/academy/04-Reference/01-Reactor/11-Authorization.md` \u2014 intro: 'The reactor decides who may do what from a policy stored on the document itself\u2026 Reducers contain no authorization code'\n- `apps/academy/docs/academy/05-Lookup/00-Cookbook.md` \u2014 Document ACL recipe: counterpart to role-based-auth, reducers validate domain invariants only, admission-level refusal\n- `docs/specs/auth-scope.md` \u2014 Motivation and Overview: pulling authorization into the core Reactor\n\n_Recorded from the Powerhouse repository at **v6.2.2-dev.74** during the v6.2.2-dev.74 source sync._",
+        "updatedAt": "2026-09-02T22:09:02.395Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:09:02.395Z"
+    }
+  },
+  {
+    "index": 18,
+    "hash": "",
+    "timestampUtcMs": "2026-09-02T22:21:39.744Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "metadata": {
+          "reason": "The policy is always stored, but it is only enforced when the staged feature flags are on",
+          "confidence": "grounded"
+        },
+        "sourceId": "96758a5d-09e0-47a6-8c91-f4a1a7fd6b04",
+        "targetId": "c8bd64d3-d92e-4f41-beba-983a7e995c26",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-09-02T22:21:39.744Z"
+    }
+  },
+  {
+    "index": 18,
+    "hash": "VZJIVEZY9++H5ltdSwIlSOK5ubc=",
+    "timestampUtcMs": "2026-09-02T22:09:02.395Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "version",
+        "value": "v6.2.2-dev.74",
+        "updatedAt": "2026-09-02T22:09:02.395Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:09:02.395Z"
+    }
+  },
+  {
+    "index": 19,
+    "hash": "VZJIVEZY9++H5ltdSwIlSOK5ubc=",
+    "timestampUtcMs": "2026-09-02T22:09:02.395Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "filePath",
+        "value": "apps/academy/docs/academy/04-Reference/01-Reactor/11-Authorization.md",
+        "updatedAt": "2026-09-02T22:09:02.395Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:09:02.395Z"
+    }
+  },
+  {
+    "index": 20,
+    "hash": "VZJIVEZY9++H5ltdSwIlSOK5ubc=",
+    "timestampUtcMs": "2026-09-02T22:09:02.395Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "confidence",
+        "value": "grounded",
+        "updatedAt": "2026-09-02T22:09:02.395Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:09:02.395Z"
+    }
+  },
+  {
+    "index": 21,
+    "hash": "8NhhK1y8KvecKfKPbkGi+fcxKiY=",
+    "timestampUtcMs": "2026-09-02T22:15:17.339Z",
+    "action": {
+      "type": "SET_TITLE",
+      "input": {
+        "title": "Authorization policy lives in the document's own auth scope as replicated grants, so reducers carry no access-control code",
+        "updatedAt": "2026-09-02T22:15:17.338Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:15:17.339Z"
+    }
+  },
+  {
+    "index": 22,
+    "hash": "8NhhK1y8KvecKfKPbkGi+fcxKiY=",
+    "timestampUtcMs": "2026-09-02T22:15:17.339Z",
+    "action": {
+      "type": "SET_DESCRIPTION",
+      "input": {
+        "updatedAt": "2026-09-02T22:15:17.338Z",
+        "description": "The auth scope holds a stacked grant list that syncs, replays and converges like document content; the reactor enforces it at admission, replay and read. Reducers validate domain invariants only."
+      },
+      "timestampUtcMs": "2026-09-02T22:15:17.339Z"
+    }
+  },
+  {
+    "index": 23,
+    "hash": "8NhhK1y8KvecKfKPbkGi+fcxKiY=",
+    "timestampUtcMs": "2026-09-02T22:15:17.339Z",
+    "action": {
+      "type": "SET_NOTE_TYPE",
+      "input": {
+        "noteType": "ARCHITECTURE",
+        "updatedAt": "2026-09-02T22:15:17.338Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:15:17.339Z"
+    }
+  },
+  {
+    "index": 24,
+    "hash": "8NhhK1y8KvecKfKPbkGi+fcxKiY=",
+    "timestampUtcMs": "2026-09-02T22:15:17.339Z",
+    "action": {
+      "type": "SET_CONTENT",
+      "input": {
+        "content": "Since v6.2.2-dev.74 the reactor can decide who may do what from a policy stored **on the document itself**, in its `auth` scope. The policy is a list of **grants** folded by a platform reducer exactly like any other state, so it syncs, replays and converges the way document content does.\n\nThe consequence for model authors is the headline: **reducers contain no authorization code**. The Cookbook's `document-acl` recipe is built as the deliberate counterpart to `role-based-auth` \u2014 same outcome (callers gated per operation), opposite mechanism. In `role-based-auth` every reducer starts with signer checks and the rules are baked into the model; in `document-acl` the reducers throw only domain errors (`DuplicateEntry`, `EntryNotFound`), read the signer solely to record an entry's `author`, and the rules are **data** \u2014 inspectable, replicated, and changeable at runtime without touching the model.\n\nThe spec's motivation names the problem this solves: authorization used to live either outside the reactor (middleware, the GraphQL layer) or inside reducers, so the same logic was written in several places and whole classes of policy were impossible. Pulling it into the core lets it ride on the guarantees the reactor already provides \u2014 the event log, synchronization, signatures \u2014 and gives consistency guarantees an external gate cannot: a refused write is refused **at admission**, fails the job with `AuthorizationDeniedError`, and stores nothing; the reducer never runs.\n\nTwo boundaries to keep straight. Enforcement is staged behind feature flags and bites only on documents whose policy was initialized (an uninitialized policy allows everything). And this is a *second* authorization system next to the host's permission tables, answering a different question \u2014 see the note on the two systems.\n\n_Source: apps/academy/docs/academy/04-Reference/01-Reactor/11-Authorization.md (Powerhouse v6.2.2-dev.74)._\n_Source: apps/academy/docs/academy/05-Lookup/00-Cookbook.md (Powerhouse v6.2.2-dev.74)._\n_Source: docs/specs/auth-scope.md (Powerhouse v6.2.2-dev.74)._\n\n## Provenance\n- `apps/academy/docs/academy/04-Reference/01-Reactor/11-Authorization.md` \u2014 intro: 'The reactor decides who may do what from a policy stored on the document itself\u2026 Reducers contain no authorization code'\n- `apps/academy/docs/academy/05-Lookup/00-Cookbook.md` \u2014 Document ACL recipe: counterpart to role-based-auth, reducers validate domain invariants only, admission-level refusal\n- `docs/specs/auth-scope.md` \u2014 Motivation and Overview: pulling authorization into the core Reactor\n\n_Recorded from the Powerhouse repository at **v6.2.2-dev.74** during the v6.2.2-dev.74 source sync._",
+        "updatedAt": "2026-09-02T22:15:17.338Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:15:17.339Z"
+    }
+  },
+  {
+    "index": 25,
+    "hash": "8NhhK1y8KvecKfKPbkGi+fcxKiY=",
+    "timestampUtcMs": "2026-09-02T22:15:17.339Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "version",
+        "value": "v6.2.2-dev.74",
+        "updatedAt": "2026-09-02T22:15:17.338Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:15:17.339Z"
+    }
+  },
+  {
+    "index": 26,
+    "hash": "8NhhK1y8KvecKfKPbkGi+fcxKiY=",
+    "timestampUtcMs": "2026-09-02T22:15:17.339Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "filePath",
+        "value": "apps/academy/docs/academy/04-Reference/01-Reactor/11-Authorization.md",
+        "updatedAt": "2026-09-02T22:15:17.338Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:15:17.339Z"
+    }
+  },
+  {
+    "index": 27,
+    "hash": "8NhhK1y8KvecKfKPbkGi+fcxKiY=",
+    "timestampUtcMs": "2026-09-02T22:15:17.339Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "confidence",
+        "value": "grounded",
+        "updatedAt": "2026-09-02T22:15:17.338Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:15:17.339Z"
+    }
+  },
+  {
+    "index": 28,
+    "hash": "fGdZhc1ZL5KaZCjNHpiBoQ7S+zU=",
+    "timestampUtcMs": "2026-09-02T22:20:04.639Z",
+    "action": {
+      "type": "SET_TITLE",
+      "input": {
+        "title": "Authorization policy lives in the document's own auth scope as replicated grants, so reducers carry no access-control code",
+        "updatedAt": "2026-09-02T22:20:04.638Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:20:04.639Z"
+    }
+  },
+  {
+    "index": 29,
+    "hash": "tH1hy0VSG54SSDWSexhreH12wpQ=",
+    "timestampUtcMs": "2026-09-02T22:20:04.639Z",
+    "action": {
+      "type": "SET_DESCRIPTION",
+      "input": {
+        "updatedAt": "2026-09-02T22:20:04.639Z",
+        "description": "The auth scope holds a stacked grant list that syncs, replays and converges like document content; the reactor enforces it at admission, replay and read. Reducers validate domain invariants only."
+      },
+      "timestampUtcMs": "2026-09-02T22:20:04.639Z"
+    }
+  },
+  {
+    "index": 30,
+    "hash": "tH1hy0VSG54SSDWSexhreH12wpQ=",
+    "timestampUtcMs": "2026-09-02T22:20:04.639Z",
+    "action": {
+      "type": "SET_NOTE_TYPE",
+      "input": {
+        "noteType": "ARCHITECTURE",
+        "updatedAt": "2026-09-02T22:20:04.639Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:20:04.639Z"
+    }
+  },
+  {
+    "index": 31,
+    "hash": "tH1hy0VSG54SSDWSexhreH12wpQ=",
+    "timestampUtcMs": "2026-09-02T22:20:04.639Z",
+    "action": {
+      "type": "SET_CONTENT",
+      "input": {
+        "content": "Since v6.2.2-dev.74 the reactor can decide who may do what from a policy stored **on the document itself**, in its `auth` scope. The policy is a list of **grants** folded by a platform reducer exactly like any other state, so it syncs, replays and converges the way document content does.\n\nThe consequence for model authors is the headline: **reducers contain no authorization code**. The Cookbook's `document-acl` recipe is built as the deliberate counterpart to `role-based-auth` \u2014 same outcome (callers gated per operation), opposite mechanism. In `role-based-auth` every reducer starts with signer checks and the rules are baked into the model; in `document-acl` the reducers throw only domain errors (`DuplicateEntry`, `EntryNotFound`), read the signer solely to record an entry's `author`, and the rules are **data** \u2014 inspectable, replicated, and changeable at runtime without touching the model.\n\nThe spec's motivation names the problem this solves: authorization used to live either outside the reactor (middleware, the GraphQL layer) or inside reducers, so the same logic was written in several places and whole classes of policy were impossible. Pulling it into the core lets it ride on the guarantees the reactor already provides \u2014 the event log, synchronization, signatures \u2014 and gives consistency guarantees an external gate cannot: a refused write is refused **at admission**, fails the job with `AuthorizationDeniedError`, and stores nothing; the reducer never runs.\n\nTwo boundaries to keep straight. Enforcement is staged behind feature flags and bites only on documents whose policy was initialized (an uninitialized policy allows everything). And this is a *second* authorization system next to the host's permission tables, answering a different question \u2014 see the note on the two systems.\n\n_Source: apps/academy/docs/academy/04-Reference/01-Reactor/11-Authorization.md (Powerhouse v6.2.2-dev.74)._\n_Source: apps/academy/docs/academy/05-Lookup/00-Cookbook.md (Powerhouse v6.2.2-dev.74)._\n_Source: docs/specs/auth-scope.md (Powerhouse v6.2.2-dev.74)._\n\n## Provenance\n- `apps/academy/docs/academy/04-Reference/01-Reactor/11-Authorization.md` \u2014 intro: 'The reactor decides who may do what from a policy stored on the document itself\u2026 Reducers contain no authorization code'\n- `apps/academy/docs/academy/05-Lookup/00-Cookbook.md` \u2014 Document ACL recipe: counterpart to role-based-auth, reducers validate domain invariants only, admission-level refusal\n- `docs/specs/auth-scope.md` \u2014 Motivation and Overview: pulling authorization into the core Reactor\n\n_Recorded from the Powerhouse repository at **v6.2.2-dev.74** during the v6.2.2-dev.74 source sync._",
+        "updatedAt": "2026-09-02T22:20:04.639Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:20:04.639Z"
+    }
+  },
+  {
+    "index": 32,
+    "hash": "tH1hy0VSG54SSDWSexhreH12wpQ=",
+    "timestampUtcMs": "2026-09-02T22:20:04.639Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "version",
+        "value": "v6.2.2-dev.74",
+        "updatedAt": "2026-09-02T22:20:04.639Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:20:04.639Z"
+    }
+  },
+  {
+    "index": 33,
+    "hash": "tH1hy0VSG54SSDWSexhreH12wpQ=",
+    "timestampUtcMs": "2026-09-02T22:20:04.639Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "filePath",
+        "value": "apps/academy/docs/academy/04-Reference/01-Reactor/11-Authorization.md",
+        "updatedAt": "2026-09-02T22:20:04.639Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:20:04.639Z"
+    }
+  },
+  {
+    "index": 34,
+    "hash": "tH1hy0VSG54SSDWSexhreH12wpQ=",
+    "timestampUtcMs": "2026-09-02T22:20:04.639Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "confidence",
+        "value": "grounded",
+        "updatedAt": "2026-09-02T22:20:04.639Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:20:04.639Z"
+    }
+  }
+]

@@ -1,0 +1,94 @@
+{
+  "links": [
+    {
+      "id": "lnk-4d8e59af-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "4d8e59af-51f2-4ab7-b290-e1d5744abbd7",
+      "targetTitle": "Integration-gap tool screen: ERPNext / Frappe (primary-source research, 2026-08-19)"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Alfresco records no content audit trail until an administrator switches one on",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "6ae9619d-f1f9-4228-a6d1-43747871bc79",
+      "name": "tool-screen",
+      "topicDocumentId": null
+    },
+    {
+      "id": "64973073-1322-4fe1-82ed-0a275abaab56",
+      "name": "alfresco",
+      "topicDocumentId": null
+    },
+    {
+      "id": "f12d6541-401c-4bcc-b3ef-62eadc290f43",
+      "name": "audit-trail",
+      "topicDocumentId": null
+    },
+    {
+      "id": "96e37c4c-46cb-42a9-b5ab-fd6bc329c42d",
+      "name": "defaults",
+      "topicDocumentId": null
+    },
+    {
+      "id": "5d449c70-48ef-4cb1-85b2-f2b0c4a293c6",
+      "name": "system-of-record",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "`repository.properties` ships `audit.enabled=true` alongside `audit.alfresco-access.enabled=false`. The first property is a decoy: it arms the auditing framework without producing any records. Alfresco's own documentation says so directly \u2014 *\"enabling this property does not necessarily result in the generation of audit data\"* \u2014 and elsewhere, *\"The auditing system is disabled by default, as it has the potential to impact performance.\"*\n\nThe consequence is that a default Alfresco Community install has no content audit trail whatsoever. DoD 5015 auditing (`audit.dod5015.enabled=false`) and download auditing are off for the same reason.\n\nThis matters more than a missing feature would. An organisation that believes it has an audit trail because the config says `audit.enabled=true` has a governance gap it cannot see, and will discover it at the moment it needs the record.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "OBSERVATION",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "knowledge-agent",
+    "createdAt": "2026-08-20T08:44:58.310795Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-20T08:44:59.502057Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "audit.enabled=true only arms the framework; audit.alfresco-access.enabled is false by default, so a stock install generates no audit data at all.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "6fa2f34b-c7ad-40ff-81de-5878c20e132d",
+      "actor": "knowledge-agent",
+      "comment": "Extracted from the primary-source tool screen; each claim quotable from a cited source.",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-20T08:44:59.341188Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "8905fff1-ebc0-42bb-86a3-1eb2664c12f7",
+      "actor": "liberuum",
+      "comment": "Approved: tool-screen extraction.",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-20T08:44:59.502057Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

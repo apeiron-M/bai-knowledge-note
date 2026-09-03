@@ -1,0 +1,115 @@
+{
+  "links": [
+    {
+      "id": "lnk-752bee27-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "752bee27-d361-4981-b353-d8082ef05b25",
+      "targetTitle": "pglite-sync-tables-persist-remote-state",
+      "reason": "The reactor's SQL schema holds the same sync concerns (remotes, cursors) that the browser deployment keeps in PGlite tables",
+      "confidence": "established"
+    },
+    {
+      "id": "lnk-e9149b87-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "e9149b87-dc40-4388-895a-010c1bb3058a",
+      "targetTitle": "write-cache-keyframes",
+      "reason": "The Keyframe table is where the cache's second-tier lookup reads from",
+      "confidence": "grounded"
+    },
+    {
+      "id": "lnk-e4ef060b-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "e4ef060b-4d61-41b4-95bd-2f562eea3cfa",
+      "targetTitle": "Package \u203a reactor \u203a ARCHITECTURE \u2014 Reactor Architecture",
+      "reason": "Extracted from packages/reactor/docs/ARCHITECTURE.md at v6.2.2-dev.74 \u2014 Storage Layer \u203a Database Schema",
+      "confidence": "grounded"
+    },
+    {
+      "id": "lnk-b7ea248d-bui",
+      "linkType": "BUILDS_ON",
+      "targetDocumentId": "b7ea248d-d62f-4463-8036-8e19b7444edf",
+      "targetTitle": "add-relationship-keeps-container-state-flat",
+      "reason": "Names the actual table, DocumentRelationship, that makes container membership O(1) instead of a growing nodes array",
+      "confidence": "grounded"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "The reactor's Kysely storage is twelve tables, and read-model progress is tracked separately from the operations themselves",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "ed4c665b-b04f-49bc-a9e3-16fd0638ed16",
+      "name": "reactor",
+      "topicDocumentId": null
+    },
+    {
+      "id": "7355690c-13b9-4fa9-878d-383b764fb366",
+      "name": "storage",
+      "topicDocumentId": null
+    },
+    {
+      "id": "888736a9-073b-4151-abd2-6fc2097c2e25",
+      "name": "kysely",
+      "topicDocumentId": null
+    },
+    {
+      "id": "22e9f5f2-7e68-4628-9e96-27b30dde1a31",
+      "name": "schema",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "The Kysely-backed storage layer is worth knowing table by table, because each answers a different question:\n\n| Table | Holds |\n| --- | --- |\n| `Operation` | operation storage with per-scope sequencing and action payloads |\n| `Keyframe` | optional snapshots for fast replay |\n| `Document` | document metadata cache (creation and update timestamps) |\n| `DocumentSnapshot` | read-model snapshots per document, scope and branch |\n| `DocumentRelationship` | graph edges for typed relationships |\n| `SlugMapping` | slug-to-id mapping behind `getBySlug` |\n| `ViewState`, `IndexerState` | read-model progress tracking |\n| `document_collections` | collection membership for sync |\n| `operation_index_operations` | the global operation index carrying `ordinal` |\n| `sync_remotes`, `sync_cursors` | sync configuration and progress |\n\nTwo things follow from the shape. **Progress is stored, not inferred**: `ViewState` and `IndexerState` mean a read model resumes where it stopped rather than rescanning, and a corrupted watermark is a data problem rather than a code problem. And **the graph is a table, not document state**: `DocumentRelationship` is why a container can track children without growing its own document.\n\nThe naming split (PascalCase versus snake_case) tracks age rather than meaning \u2014 the newer sync and index tables use snake_case. The authoritative schema is `src/storage/migrations/`.\n\n## Provenance\n- `packages/reactor/docs/ARCHITECTURE.md` \u2014 Storage Layer \u203a Database Schema\n\n_Extracted from the Powerhouse repository at **v6.2.2-dev.74**._",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": "v6.2.2-dev.74",
+  "computes": null,
+  "filePath": "packages/reactor/docs/ARCHITECTURE.md",
+  "noteType": "REFERENCE",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "knowledge-agent",
+    "createdAt": "2026-09-03T07:18:34.207Z",
+    "sessionId": null,
+    "updatedAt": "2026-09-03T07:22:20.424Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Operation, Keyframe, Document, DocumentSnapshot, DocumentRelationship, SlugMapping, ViewState, IndexerState, document_collections, operation_index_operations, sync_remotes, sync_cursors.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "d732719b-7bb1-4c88-b81a-31fe1ac015a9",
+      "actor": "knowledge-agent",
+      "comment": "extracted from packages/reactor/docs/ARCHITECTURE.md at v6.2.2-dev.74",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-09-03T07:18:34.704Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "5038c697-eaf7-476b-a03e-5ca6999a8810",
+      "actor": "liberuum",
+      "comment": "claim checked against the cited file at the pinned tag",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-09-03T07:18:35.304Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

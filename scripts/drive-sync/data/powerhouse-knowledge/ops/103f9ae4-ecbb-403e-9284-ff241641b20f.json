@@ -1,0 +1,340 @@
+[
+  {
+    "index": 0,
+    "hash": "",
+    "timestampUtcMs": "2026-08-14T12:34:04.563Z",
+    "action": {
+      "type": "CREATE_DOCUMENT",
+      "input": {
+        "meta": {},
+        "name": "timeline-selection-global-state-hooks",
+        "slug": "",
+        "model": "bai/knowledge-note",
+        "branch": "main",
+        "signing": {
+          "nonce": "",
+          "publicKey": {},
+          "signature": "103f9ae4-ecbb-403e-9284-ff241641b20f",
+          "documentType": "bai/knowledge-note",
+          "createdAtUtcIso": "2026-08-14T12:34:04.563Z"
+        },
+        "version": 0,
+        "documentId": "103f9ae4-ecbb-403e-9284-ff241641b20f",
+        "protocolVersions": {
+          "base-reducer": 2
+        }
+      },
+      "timestampUtcMs": "2026-08-14T12:34:04.563Z"
+    }
+  },
+  {
+    "index": 0,
+    "hash": "ULqtBmq7Zvx0EzARbakn8Pr9Zk8=",
+    "timestampUtcMs": "2026-08-14T12:36:03.000Z",
+    "action": {
+      "type": "SET_TITLE",
+      "input": {
+        "title": "Timeline selection is global state exposed through useSelectedTimelineItem and useSelectedTimelineRevision",
+        "updatedAt": "2026-08-14T12:36:03.000Z"
+      },
+      "timestampUtcMs": "2026-08-14T12:36:03.000Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "",
+    "timestampUtcMs": "2026-08-14T12:34:04.563Z",
+    "action": {
+      "type": "UPGRADE_DOCUMENT",
+      "input": {
+        "model": "bai/knowledge-note",
+        "toVersion": 1,
+        "documentId": "103f9ae4-ecbb-403e-9284-ff241641b20f",
+        "fromVersion": 0,
+        "initialState": {
+          "auth": {
+            "grants": [],
+            "version": 0
+          },
+          "local": {
+            "lastViewedAt": null,
+            "personalTags": []
+          },
+          "global": {
+            "links": [],
+            "model": null,
+            "scope": null,
+            "title": null,
+            "editor": null,
+            "inputs": [],
+            "models": [],
+            "status": "DRAFT",
+            "topics": [],
+            "content": null,
+            "context": null,
+            "modelId": null,
+            "modules": [],
+            "outputs": [],
+            "version": null,
+            "computes": null,
+            "filePath": null,
+            "noteType": null,
+            "severity": null,
+            "hooksUsed": [],
+            "rootCause": null,
+            "confidence": null,
+            "consumedBy": [],
+            "provenance": null,
+            "sourceType": null,
+            "targetType": null,
+            "cardinality": null,
+            "description": null,
+            "alternatives": [],
+            "consequences": [],
+            "errorMessage": null,
+            "relationType": null,
+            "correctPattern": null,
+            "decisionStatus": null,
+            "dispatchTargets": [],
+            "lifecycleEvents": []
+          },
+          "document": {
+            "hash": {
+              "encoding": "base64",
+              "algorithm": "sha1"
+            },
+            "version": 1
+          }
+        }
+      },
+      "timestampUtcMs": "2026-08-14T12:34:04.563Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "XZiI0a4J+dfVNvDrf071UC7m4Lo=",
+    "timestampUtcMs": "2026-08-14T12:36:03.000Z",
+    "action": {
+      "type": "SET_DESCRIPTION",
+      "input": {
+        "updatedAt": "2026-08-14T12:36:03.000Z",
+        "description": "Each getter has a paired setter. Items are TimelineBarItem or TimelineDividerItem, both carrying revision, timestamps and dates; bars add addSize/delSize and additions/deletions."
+      },
+      "timestampUtcMs": "2026-08-14T12:36:03.000Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "",
+    "timestampUtcMs": "2026-08-14T12:38:59.267Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "103f9ae4-ecbb-403e-9284-ff241641b20f",
+        "targetId": "7bf0150e-34d9-4cd2-b038-e55a6acb1ea4",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-08-14T12:38:59.267Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "ZV18vub5/sw5bZBWiGN8WVXz9cQ=",
+    "timestampUtcMs": "2026-08-14T12:36:03.000Z",
+    "action": {
+      "type": "SET_NOTE_TYPE",
+      "input": {
+        "noteType": "REFERENCE",
+        "updatedAt": "2026-08-14T12:36:03.000Z"
+      },
+      "timestampUtcMs": "2026-08-14T12:36:03.000Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "",
+    "timestampUtcMs": "2026-08-14T12:38:59.364Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "103f9ae4-ecbb-403e-9284-ff241641b20f",
+        "targetId": "1a932db8-245d-40f6-bfd8-eea728d9615e",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-08-14T12:38:59.364Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "YsfH0CtqNiGLHfnAcoeOn5s/e60=",
+    "timestampUtcMs": "2026-08-14T12:36:03.000Z",
+    "action": {
+      "type": "SET_CONTENT",
+      "input": {
+        "content": "Which revision the timeline is parked on is not editor-local state. It lives in the same global store the rest of `reactor-browser`'s selection state uses, so an editor, a drive app and Connect's own chrome all observe the same value.\n\nTwo getter/setter pairs:\n\n```ts\nfunction useSelectedTimelineItem(): TimelineItem | null | undefined;\nfunction setSelectedTimelineItem(item: TimelineItem | null | undefined): void;\n\nfunction useSelectedTimelineRevision(): string | number | null | undefined;\nfunction setSelectedTimelineRevision(rev: string | number | null | undefined): void;\n```\n\nThe setters are plain functions, not hooks \u2014 call them from an event handler without violating the rules of hooks.\n\n`TimelineItem` is a union of two shapes. `TimelineBarItem` (`type: \"bar\"`) is a change candle: `revision`, `timestampUtcMs`, `startDate`/`endDate`, raw `additions`/`deletions` counts, and the bucketed `addSize`/`delSize` fields typed as `0 | 1 | 2 | 3 | 4`. That bucketing is worth noticing \u2014 the render height is a five-step scale, not a raw count, so the bar is comparable across documents of wildly different churn. `TimelineDividerItem` (`type: \"divider\"`) is a labelled separator instead: `title`, `subtitle`, plus the same `revision`, `timestampUtcMs` and date fields.\n\nEvery field except `id` and `type` is optional on both variants, so a consumer reading `item.revision` must handle `undefined`.\n\nNote the two values are tracked separately: the *item* and the *revision* are distinct pieces of state, and `useSelectedTimelineRevision` accepts a `string | number`, so it can hold a revision identifier the timeline never produced a bar for. Reading revision directly is the cheaper path when all you need is \"which point in history am I rendering\".\n\n_Source: apps/academy/docs/academy/04-Reference/05-EditorsUI/01-ReactHooks.md (Powerhouse v6.2.2-dev.45)._",
+        "updatedAt": "2026-08-14T12:36:03.000Z"
+      },
+      "timestampUtcMs": "2026-08-14T12:36:03.000Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "",
+    "timestampUtcMs": "2026-09-02T21:39:22.445Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "metadata": {
+          "reason": "The note names apps/academy/docs/academy/04-Reference/05-EditorsUI/01-ReactHooks.md as its source; page text revised between v6.2.2-dev.47 and v6.2.2-dev.74 \u2014 re-verified in the v6.2.2-dev.74 pass",
+          "confidence": "grounded"
+        },
+        "sourceId": "103f9ae4-ecbb-403e-9284-ff241641b20f",
+        "targetId": "aeb9b5e6-8fce-4339-95e8-375bd0a0cc01",
+        "relationshipType": "DERIVED_FROM"
+      },
+      "timestampUtcMs": "2026-09-02T21:39:22.445Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "aM+fnA5zkDHpycZO7oORPfDk9RE=",
+    "timestampUtcMs": "2026-08-14T12:36:03.000Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "version",
+        "value": "v6.2.2-dev.44",
+        "updatedAt": "2026-08-14T12:36:03.000Z"
+      },
+      "timestampUtcMs": "2026-08-14T12:36:03.000Z"
+    }
+  },
+  {
+    "index": 5,
+    "hash": "6e3wpGgZ0XI9o5sUm478x8/0syA=",
+    "timestampUtcMs": "2026-08-14T12:36:03.000Z",
+    "action": {
+      "type": "SET_PROVENANCE",
+      "input": {
+        "author": "claude",
+        "createdAt": "2026-08-13T14:38:03.000Z",
+        "sourceOrigin": "DERIVED"
+      },
+      "timestampUtcMs": "2026-08-14T12:36:03.000Z"
+    }
+  },
+  {
+    "index": 6,
+    "hash": "fhzyD4lvlkg1WNuiBF8eMjdL7hc=",
+    "timestampUtcMs": "2026-08-14T12:36:03.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "5ccd76e5-2697-4cd3-a21c-603e824ef1e0",
+        "name": "timeline",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-08-14T12:36:03.000Z"
+    }
+  },
+  {
+    "index": 7,
+    "hash": "jBfhueoUdx9aWyQ4hXXURBiDpGY=",
+    "timestampUtcMs": "2026-08-14T12:36:03.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "4d3ef65a-2549-4d7f-a4f3-3988426e34ba",
+        "name": "react-hooks",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-08-14T12:36:03.000Z"
+    }
+  },
+  {
+    "index": 8,
+    "hash": "mTNauOXe8bXbf4/R2Ga22fyIGgM=",
+    "timestampUtcMs": "2026-08-14T12:36:03.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "f5d88ff2-59fe-437c-9637-bfa2bc697152",
+        "name": "reactor-browser",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-08-14T12:36:03.000Z"
+    }
+  },
+  {
+    "index": 9,
+    "hash": "GfVDK6fT6obSuI5/zWfe8sOIYbE=",
+    "timestampUtcMs": "2026-08-14T14:36:45.000Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "version",
+        "value": "v6.2.2-dev.47",
+        "updatedAt": "2026-08-14T12:00:00.000Z"
+      },
+      "timestampUtcMs": "2026-08-14T14:36:45.000Z"
+    }
+  },
+  {
+    "index": 10,
+    "hash": "4lYXqIXR6rl1jVCmOvnds/krQyY=",
+    "timestampUtcMs": "2026-08-14T14:36:45.000Z",
+    "action": {
+      "type": "SUBMIT_FOR_REVIEW",
+      "input": {
+        "id": "0db0ba11-658a-48b3-8658-0db9a5eb2079",
+        "actor": "claude",
+        "comment": "Knowledge registered against powerhouse v6.2.2-dev.47",
+        "timestamp": "2026-08-14T12:00:00.000Z"
+      },
+      "timestampUtcMs": "2026-08-14T14:36:45.000Z"
+    }
+  },
+  {
+    "index": 11,
+    "hash": "GSd9A74SHXaq5vb2hKasdU3pd9A=",
+    "timestampUtcMs": "2026-08-14T14:36:45.000Z",
+    "action": {
+      "type": "APPROVE_NOTE",
+      "input": {
+        "id": "7a44fdf9-66e5-40be-a7b4-f2fd965dece6",
+        "actor": "liberuum",
+        "comment": "Canonical as of powerhouse v6.2.2-dev.47",
+        "timestamp": "2026-08-14T12:00:00.000Z"
+      },
+      "timestampUtcMs": "2026-08-14T14:36:45.000Z"
+    }
+  },
+  {
+    "index": 12,
+    "hash": "WMVUXPbMQ+vQG6m+cKNFBlLTS0Q=",
+    "timestampUtcMs": "2026-09-02T21:39:23.086Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "filePath",
+        "value": "apps/academy/docs/academy/04-Reference/05-EditorsUI/01-ReactHooks.md",
+        "updatedAt": "2026-09-02T21:39:23.086Z"
+      },
+      "timestampUtcMs": "2026-09-02T21:39:23.086Z"
+    }
+  },
+  {
+    "index": 13,
+    "hash": "995/Tzlq+zf9G/xnd90aEQ1HeYY=",
+    "timestampUtcMs": "2026-09-02T22:26:30.983Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "version",
+        "value": "v6.2.2-dev.74",
+        "updatedAt": "2026-09-02T22:26:30.983Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:26:30.983Z"
+    }
+  }
+]

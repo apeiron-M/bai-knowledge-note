@@ -1,0 +1,115 @@
+{
+  "links": [
+    {
+      "id": "lnk-43b82c81-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "43b82c81-4d28-4e69-9a0a-84c0dddb87ef",
+      "targetTitle": "reactor-read-models-pre-ready-phase",
+      "reason": "Read models run pre-ready per (document, scope, branch) key, which is what lets projections race across a document's scopes",
+      "confidence": "grounded"
+    },
+    {
+      "id": "lnk-2021b696-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "2021b696-e605-4b1b-b579-7f568949c1b2",
+      "targetTitle": "outbox-scope-ordering",
+      "reason": "These were found while investigating that bug and share its subsystem, but none is needed to fix it",
+      "confidence": "grounded"
+    },
+    {
+      "id": "lnk-0ade289f-con",
+      "linkType": "CONTRADICTS",
+      "targetDocumentId": "0ade289f-d4fb-44d8-ab3b-316d65bb1c8d",
+      "targetTitle": "auth-positional-judgment",
+      "reason": "Positional re-evaluation is supposed to make a revocation catch operations already accepted, but defect 1 means the re-appended operations never reach read models, so projections keep serving pre-revocation state",
+      "confidence": "grounded"
+    },
+    {
+      "id": "lnk-4c1161cd-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "4c1161cd-c718-4604-83dc-39b07e09d602",
+      "targetTitle": "Docs \u203a updateOutbox orders a document's scopes alphabetically, so auth is served before document",
+      "reason": "Extracted from docs/updateoutbox-scope-ordering.md at v6.2.2-dev.74 \u2014 'Adjacent defects found while investigating' (1\u20135) and 'Not a defect'",
+      "confidence": "grounded"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Five adjacent sync and read-model defects were recorded while investigating the outbox ordering bug, including re-evaluation writes that never reach read models",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "a0ad9c29-f01f-4547-ac60-fc149ba15d81",
+      "name": "reactor-sync",
+      "topicDocumentId": null
+    },
+    {
+      "id": "8b781a9c-64ae-4403-b086-cbed8550aa43",
+      "name": "read-models",
+      "topicDocumentId": null
+    },
+    {
+      "id": "e187a9df-5f0b-414d-9409-62e1ccd734d1",
+      "name": "gotchas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "34a2b0b8-4ab2-455a-985e-30852e6f5dc1",
+      "name": "auth-scope",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "Recorded as independent of the ordering bug and of each other, and none needed to fix it:\n\n1. **Re-evaluation writes are discarded.** `reevaluateIfCriteriaMet` returns only `outcome.error` and drops `outcome.operationsWithContext`, so re-appended operations never reach `JOB_WRITE_READY`. The log and sync converge \u2014 the outbox is index-driven \u2014 but **read models do not**, so projections keep serving pre-revocation state until a restart catch-up. Those re-appends are also absent from `touchedCacheEntries`, so a later rollback leaves post-reevaluation snapshots cached. Security-shaped: a revocation that does not reach reads.\n2. **`externalDeps` is unvalidated and can wedge a sub-queue permanently.** It is spread into `queueHint` while `validateBatchStructure` only checks `dependsOn` against in-batch keys, and `areDependenciesMet` requires every hint to be in `completedJobs`. A hint naming a job that never enqueues blocks the sub-queue head forever \u2014 nothing dispatched, no dead letter. The hard half is distinguishing \"never existed\" from \"already completed and forgotten\", since `completedJobs` is a `Set` that gets cleared.\n3. **One outbox cursor writer lacks a clamp.** Two of three clamp against unserved/emitted state with docstrings naming the skip hazard; `gql-req-channel.ts` does a bare `max(getLatestAppliedOrdinal)` \u2192 `upsert` with neither. Cross-document parallelism alone lets a higher-ordinal document ack first, so this is a restart-skips-operations risk independent of scope.\n4. **Projection races across scopes.** `ReadModelCoordinator` parallelizes across `(documentId, scope, branch)` keys and the executor's per-document mutex does not extend to the projection stage, so the shared `header` row and the `SlugMapping` upsert already race across a document's scopes. Separately, `BaseReadModel.saveState` sets `ViewState.lastOrdinal` with `set` rather than a max, so parallel chains can walk the watermark backwards.\n5. **`replayDocument` orders cross-scope replay by raw `Object.keys`**, fed by a `getRevisions()` query with no `ORDER BY`. Same missing rank concept, different subsystem; uninvestigated.\n\nExplicitly **not** a defect: `failJob` adding a failed job to `completedJobs` \"so dependent jobs are unblocked\". It looks wrong against the create-before-auth barrier, but #2918's deferral fix relies on it and releasing is correct in the backfill case \u2014 when the deferred auth job fails, the create should proceed rather than cascade-fail. Release-vs-cascade depends on the direction of the causal dependency, which is a design question.\n\n_Source: docs/updateoutbox-scope-ordering.md (Powerhouse v6.2.2-dev.74)._\n\n## Provenance\n- `docs/updateoutbox-scope-ordering.md` \u2014 'Adjacent defects found while investigating' (1\u20135) and 'Not a defect'\n\n_Recorded from the Powerhouse repository at **v6.2.2-dev.74** during the v6.2.2-dev.74 source sync._",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": "v6.2.2-dev.74",
+  "computes": null,
+  "filePath": "docs/updateoutbox-scope-ordering.md",
+  "noteType": "OBSERVATION",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": "grounded",
+  "consumedBy": [],
+  "provenance": {
+    "author": "knowledge-agent",
+    "createdAt": "2026-09-02T22:14:32.598Z",
+    "sessionId": null,
+    "updatedAt": "2026-09-02T22:21:28.279Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "reevaluateIfCriteriaMet drops operationsWithContext, so a revocation converges in the log and sync but not in projections until a restart. Also unvalidated externalDeps and projection races.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "22f176e9-ac29-4e32-957a-6b0fa18b797b",
+      "actor": "knowledge-agent",
+      "comment": "extracted from the Powerhouse repository at v6.2.2-dev.74",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-09-02T22:14:33.234Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "9de40415-9fdf-4005-b14f-6a075fde0265",
+      "actor": "liberuum",
+      "comment": "claim checked against the cited repository file at the pinned tag",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-09-02T22:14:33.700Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

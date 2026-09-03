@@ -1,0 +1,81 @@
+{
+  "links": [
+    {
+      "id": "lnk-c8edcb98-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "c8edcb98-f05a-42ab-b95f-59b19d4766f9",
+      "targetTitle": "skill-setup",
+      "reason": "Discovery note distilled by sync-skills from the skill's SKILL.md frontmatter description and its section headings (source hash sha256:d0a401636fbc); the full procedure is the source text",
+      "confidence": "grounded"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Agent skill: /setup \u2014 Initialize a Knowledge Vault \u2014 verify drive structure, folder layout, and singleton documents are in place.",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "6eb0d651-31ce-4d43-9b60-e759ccfea26a",
+      "name": "agent-skills",
+      "topicDocumentId": null
+    },
+    {
+      "id": "edb8fd61-e6f5-4e1a-b86b-70090fd0786a",
+      "name": "setup",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "## When to use\nInitialize a Knowledge Vault \u2014 verify drive structure, folder layout, and singleton documents are in place. The Ars Contexta methodology (249 research claims) is bundled locally with the plugin and does NOT need to be imported into the vault.\n\n## What it covers\n- When to use\n- Prerequisites\n- Setup Process\n- What the methodology provides (locally)\n- Idempotency\n\n## Where the full skill lives\n- Vault source: **Agent skill: setup** (full SKILL.md text, DERIVED_FROM below)\n- Canonical copy: plugin repo `skills/setup/SKILL.md` \u2014 always execute from the repo copy; this note is the discovery layer.\n\n## Invocation\n`/powerhouse-knowledge:setup` in Claude Code (plugin installed), or read the source content and follow it manually.\n\n_Synced by sync-skills; source hash sha256:d0a401636fbc\u2026_",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": "skills/setup/SKILL.md",
+  "noteType": "PROCEDURE",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "skill-sync",
+    "createdAt": "2026-08-16T12:02:24.945Z",
+    "sessionId": null,
+    "updatedAt": "2026-09-02T19:22:06.139Z",
+    "sourceOrigin": "IMPORT"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Initialize a Knowledge Vault \u2014 verify drive structure, folder layout, and singleton documents are in place. The Ars Contexta methodology (249 research claims) is bundled locally with the plugin and do",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "ae377929-e07e-4ae1-95b3-1a8c86f11178",
+      "actor": "skill-sync",
+      "comment": "skill sync",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-16T12:02:25.670Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "b5734108-15ae-4eae-affb-cca8c8a912f7",
+      "actor": "knowledge-agent",
+      "comment": "mechanical sync from canonical repo copy",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-16T12:02:25.813Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

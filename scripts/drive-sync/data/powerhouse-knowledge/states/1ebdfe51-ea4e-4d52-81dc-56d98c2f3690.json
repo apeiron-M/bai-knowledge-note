@@ -1,0 +1,123 @@
+{
+  "links": [
+    {
+      "id": "lnk-6d2eb287-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "6d2eb287-4016-4b57-a3db-afcc6d3c874e",
+      "targetTitle": "CLI \u203a ph-cli \u203a README",
+      "reason": "Extracted from clis/ph-cli/README.md at v6.2.2-dev.74 \u2014 opening description; Table of Contents (ph service); Installation",
+      "confidence": "grounded"
+    },
+    {
+      "id": "lnk-f6e9597d-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "f6e9597d-a6fa-4c96-beba-68651cbb2924",
+      "targetTitle": "CLI \u203a ph-cmd \u203a README",
+      "reason": "Extracted from clis/ph-cmd/README.md at v6.2.2-dev.74 \u2014 opening description and installation",
+      "confidence": "grounded"
+    },
+    {
+      "id": "lnk-c1d0a3c5-bui",
+      "linkType": "BUILDS_ON",
+      "targetDocumentId": "c1d0a3c5-93dc-400e-b68a-ef27521f89ed",
+      "targetTitle": "vetra-connect-port-default",
+      "reason": "Both notes turn on the same fact: the COMMANDS files are generated and version-stamped, so their header dates any claim about the CLI surface",
+      "confidence": "grounded"
+    },
+    {
+      "id": "lnk-0eafe53b-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "0eafe53b-efdf-4310-9a1c-7d3e8b5cc669",
+      "targetTitle": "ph-cli-is-primary-project-tool",
+      "reason": "The command inventory that note summarises comes from the generated reference rather than from these READMEs",
+      "confidence": "grounded"
+    },
+    {
+      "id": "lnk-e1f81c50-bui",
+      "linkType": "BUILDS_ON",
+      "targetDocumentId": "e1f81c50-7a5e-4df8-a746-e80c7f58df36",
+      "targetTitle": "ph-service-setup-configures-nginx-pm2-ssl",
+      "reason": "That note establishes ph service as undispatchable; this one shows the ph-cli README still advertises it, which is why the generated reference is the authority",
+      "confidence": "grounded"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "ph-cli and ph-cmd are two published CLIs with the same description, and the generated COMMANDS references rather than the READMEs are the authority on what each does",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "be6dbad8-b62e-4b01-9e64-a97dc669952a",
+      "name": "cli",
+      "topicDocumentId": null
+    },
+    {
+      "id": "0e46e45c-12ce-4913-8bbc-a14508df2dfc",
+      "name": "documentation-drift",
+      "topicDocumentId": null
+    },
+    {
+      "id": "0dc8d4bb-6cd2-42af-af69-46c7a892d59d",
+      "name": "ph-cli",
+      "topicDocumentId": null
+    },
+    {
+      "id": "35b07986-1a45-4669-9039-04bf1546ed74",
+      "name": "ph-cmd",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "The repository publishes two CLIs, `ph-cli` and `ph-cmd`, and their READMEs are close to interchangeable: both open with the same sentence \u2014 \"A powerful command-line interface tool for Powerhouse DAO that streamlines the development and management of Powerhouse packages and services\" \u2014 and both present a feature list and a command table.\n\nThat makes the READMEs a poor authority, for two reasons visible in the tree:\n\n- `ph-cli`'s README table of contents still lists **`ph service`** among its commands, and the vault already records that `ph service` is **no longer dispatchable** through the CLI even though its Nginx/PM2/SSL provisioning scripts still ship;\n- the **generated** references \u2014 `clis/ph-cli/COMMANDS.md` and `clis/ph-cmd/COMMANDS.md` \u2014 carry the release they were generated from in their H1 (`6.2.2-dev.73` at this tag), so they date themselves and are regenerated with the flags.\n\nInstall is the one thing the READMEs state unambiguously and usefully: `npm install -g ph-cli` for a global install, or `npm install --save-dev ph-cli` as a dev dependency \u2014 with the same pattern for `ph-cmd`.\n\nThe practical rule: read `COMMANDS.md` for what a command takes, use the README only for installation and framing, and check the version stamp before trusting either.\n\n## Provenance\n- `clis/ph-cli/README.md` \u2014 opening description; Table of Contents (ph service); Installation\n- `clis/ph-cmd/README.md` \u2014 opening description and installation\n\n_Extracted from the Powerhouse repository at **v6.2.2-dev.74**._",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": "v6.2.2-dev.74",
+  "computes": null,
+  "filePath": "clis/ph-cli/README.md",
+  "noteType": "OBSERVATION",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "knowledge-agent",
+    "createdAt": "2026-09-03T07:34:44.231Z",
+    "sessionId": null,
+    "updatedAt": "2026-09-03T07:34:45.280Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Both READMEs open with the identical 'powerful command-line interface tool for Powerhouse DAO' line and list overlapping command tables; ph-cli's still documents ph service, which is no longer.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "c918a33f-a18a-4996-8460-5552a37b1689",
+      "actor": "knowledge-agent",
+      "comment": "extracted from clis/ph-cli/README.md at v6.2.2-dev.74",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-09-03T07:34:44.736Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "6cb1276b-7c93-4afd-9101-eb1f2c45c559",
+      "actor": "liberuum",
+      "comment": "claim checked against the cited file at the pinned tag",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-09-03T07:34:45.280Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

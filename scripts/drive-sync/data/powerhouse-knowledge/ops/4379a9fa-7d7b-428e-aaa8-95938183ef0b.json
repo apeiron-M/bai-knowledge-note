@@ -1,0 +1,307 @@
+[
+  {
+    "index": 0,
+    "hash": "",
+    "timestampUtcMs": "2026-08-14T11:47:07.106Z",
+    "action": {
+      "type": "CREATE_DOCUMENT",
+      "input": {
+        "meta": {},
+        "name": "arrays-in-state-schemas-must-use-mandatory-notation",
+        "slug": "",
+        "model": "bai/knowledge-note",
+        "branch": "main",
+        "signing": {
+          "nonce": "",
+          "publicKey": {},
+          "signature": "4379a9fa-7d7b-428e-aaa8-95938183ef0b",
+          "documentType": "bai/knowledge-note",
+          "createdAtUtcIso": "2026-08-14T11:47:07.105Z"
+        },
+        "version": 0,
+        "documentId": "4379a9fa-7d7b-428e-aaa8-95938183ef0b",
+        "protocolVersions": {
+          "base-reducer": 2
+        }
+      },
+      "timestampUtcMs": "2026-08-14T11:47:07.106Z"
+    }
+  },
+  {
+    "index": 0,
+    "hash": "Tpm0heMeyj55kgCZ3jdj+ywGAdk=",
+    "timestampUtcMs": "2026-08-14T12:34:49.000Z",
+    "action": {
+      "type": "SET_TITLE",
+      "input": {
+        "title": "arrays in state schemas must use mandatory notation",
+        "updatedAt": "2026-08-14T12:34:49.000Z"
+      },
+      "timestampUtcMs": "2026-08-14T12:34:49.000Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "",
+    "timestampUtcMs": "2026-08-14T11:47:07.106Z",
+    "action": {
+      "type": "UPGRADE_DOCUMENT",
+      "input": {
+        "model": "bai/knowledge-note",
+        "toVersion": 1,
+        "documentId": "4379a9fa-7d7b-428e-aaa8-95938183ef0b",
+        "fromVersion": 0,
+        "initialState": {
+          "auth": {
+            "grants": [],
+            "version": 0
+          },
+          "local": {
+            "lastViewedAt": null,
+            "personalTags": []
+          },
+          "global": {
+            "links": [],
+            "model": null,
+            "scope": null,
+            "title": null,
+            "editor": null,
+            "inputs": [],
+            "models": [],
+            "status": "DRAFT",
+            "topics": [],
+            "content": null,
+            "context": null,
+            "modelId": null,
+            "modules": [],
+            "outputs": [],
+            "version": null,
+            "computes": null,
+            "filePath": null,
+            "noteType": null,
+            "severity": null,
+            "hooksUsed": [],
+            "rootCause": null,
+            "confidence": null,
+            "consumedBy": [],
+            "provenance": null,
+            "sourceType": null,
+            "targetType": null,
+            "cardinality": null,
+            "description": null,
+            "alternatives": [],
+            "consequences": [],
+            "errorMessage": null,
+            "relationType": null,
+            "correctPattern": null,
+            "decisionStatus": null,
+            "dispatchTargets": [],
+            "lifecycleEvents": []
+          },
+          "document": {
+            "hash": {
+              "encoding": "base64",
+              "algorithm": "sha1"
+            },
+            "version": 1
+          }
+        }
+      },
+      "timestampUtcMs": "2026-08-14T11:47:07.106Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "OtsGAW5vB7ldKqMHSmcyKMtNHJ0=",
+    "timestampUtcMs": "2026-08-14T12:34:49.000Z",
+    "action": {
+      "type": "SET_DESCRIPTION",
+      "input": {
+        "updatedAt": "2026-08-14T12:34:49.000Z",
+        "description": "Arrays must be declared as [ObjectType!]! and objects within arrays must include an OID! field for unique identification"
+      },
+      "timestampUtcMs": "2026-08-14T12:34:49.000Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "",
+    "timestampUtcMs": "2026-08-14T12:36:37.904Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "4379a9fa-7d7b-428e-aaa8-95938183ef0b",
+        "targetId": "ee772782-5d3e-42c4-a848-f1d3f42cc149",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-08-14T12:36:37.904Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "7LSSkGJDTQHUdRCrhZg5Et4x2Q4=",
+    "timestampUtcMs": "2026-08-14T12:34:49.000Z",
+    "action": {
+      "type": "SET_NOTE_TYPE",
+      "input": {
+        "noteType": "PATTERN",
+        "updatedAt": "2026-08-14T12:34:49.000Z"
+      },
+      "timestampUtcMs": "2026-08-14T12:34:49.000Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "",
+    "timestampUtcMs": "2026-08-14T12:36:38.001Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "4379a9fa-7d7b-428e-aaa8-95938183ef0b",
+        "targetId": "3c5885d2-6c0d-47ed-b947-fb8a1434011d",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-08-14T12:36:38.001Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "/DpUmsKs5aKpVtdE2/FvYF310tE=",
+    "timestampUtcMs": "2026-08-14T12:34:49.000Z",
+    "action": {
+      "type": "SET_CONTENT",
+      "input": {
+        "content": "# arrays in state schemas must use mandatory notation\n\nIn GraphQL state schemas, arrays follow a strict convention:\n\n```graphql\ntype ServiceOfferingState {\n    tiers: [Tier!]!        # \u2705 Correct \u2014 both inner and outer are required\n    items: [Item]           # \u274c Wrong \u2014 must use [Item!]!\n}\n```\n\nObjects inside arrays must include an `OID!` field for unique identification:\n\n```graphql\ntype Tier {\n    id: OID!               # Required for array items\n    name: String\n    label: OLabel          # Optional but useful for metadata\n}\n```\n\nThe `OID!` field enables operations to target specific items within arrays (e.g., \"update the tier with this ID\"). Without it, there is no stable way to reference individual array elements across operations.\n\n---\n\nTopics:\n- [[schema design]]",
+        "updatedAt": "2026-08-14T12:34:49.000Z"
+      },
+      "timestampUtcMs": "2026-08-14T12:34:49.000Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "",
+    "timestampUtcMs": "2026-08-14T12:36:38.100Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "4379a9fa-7d7b-428e-aaa8-95938183ef0b",
+        "targetId": "b7cb8afe-41fa-4676-be94-1e73435e1a04",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-08-14T12:36:38.100Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "+xwdk41lhsta2m5KMcX4qQ4lEZI=",
+    "timestampUtcMs": "2026-08-14T12:34:49.000Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "version",
+        "value": "v6.2.2-dev.44",
+        "updatedAt": "2026-08-14T12:34:49.000Z"
+      },
+      "timestampUtcMs": "2026-08-14T12:34:49.000Z"
+    }
+  },
+  {
+    "index": 5,
+    "hash": "EvBohHZ0MC8UPtO3rKW1q4ITT40=",
+    "timestampUtcMs": "2026-08-14T12:34:49.000Z",
+    "action": {
+      "type": "SET_PROVENANCE",
+      "input": {
+        "author": "knowledge-agent",
+        "createdAt": "2026-04-03T13:56:12.000Z",
+        "sourceOrigin": "IMPORT"
+      },
+      "timestampUtcMs": "2026-08-14T12:34:49.000Z"
+    }
+  },
+  {
+    "index": 6,
+    "hash": "X7ZxzJkGg2gyTMXS+v8+vb0iU8g=",
+    "timestampUtcMs": "2026-08-14T12:34:49.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "67771ace-9e80-47ee-a021-cbaf7c4ce7ce",
+        "name": "service-offering",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-08-14T12:34:49.000Z"
+    }
+  },
+  {
+    "index": 7,
+    "hash": "aYIgSVcCYa8g5RXwZWlthXi6EVo=",
+    "timestampUtcMs": "2026-08-14T12:34:49.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "2abb461f-9574-4b62-af11-5f08755e7056",
+        "name": "schema-design",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-08-14T12:34:49.000Z"
+    }
+  },
+  {
+    "index": 8,
+    "hash": "puEG1ftZ4Rqp3Aumoy/cOpg1ExE=",
+    "timestampUtcMs": "2026-08-14T14:37:01.000Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "version",
+        "value": "v6.2.2-dev.47",
+        "updatedAt": "2026-08-14T12:00:00.000Z"
+      },
+      "timestampUtcMs": "2026-08-14T14:37:01.000Z"
+    }
+  },
+  {
+    "index": 9,
+    "hash": "Pqz33o5Ag+2opciqnXlXuf1dup4=",
+    "timestampUtcMs": "2026-08-14T14:37:01.000Z",
+    "action": {
+      "type": "SUBMIT_FOR_REVIEW",
+      "input": {
+        "id": "ebf7117d-9ed1-4ad6-b8f4-f29bfb93dc84",
+        "actor": "claude",
+        "comment": "Knowledge registered against powerhouse v6.2.2-dev.47",
+        "timestamp": "2026-08-14T12:00:00.000Z"
+      },
+      "timestampUtcMs": "2026-08-14T14:37:01.000Z"
+    }
+  },
+  {
+    "index": 10,
+    "hash": "7Tfqtk/omMxLvSbiYtbcJj6LOsg=",
+    "timestampUtcMs": "2026-08-14T14:37:01.000Z",
+    "action": {
+      "type": "APPROVE_NOTE",
+      "input": {
+        "id": "4bd8fb83-ea32-41dd-8501-03a1dbb4161b",
+        "actor": "liberuum",
+        "comment": "Canonical as of powerhouse v6.2.2-dev.47",
+        "timestamp": "2026-08-14T12:00:00.000Z"
+      },
+      "timestampUtcMs": "2026-08-14T14:37:01.000Z"
+    }
+  },
+  {
+    "index": 11,
+    "hash": "MZ450wcwRglnf0S6+Rwpg3fLz7Y=",
+    "timestampUtcMs": "2026-09-03T09:58:48.569Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "version",
+        "updatedAt": "2026-09-03T09:58:48.568Z"
+      },
+      "timestampUtcMs": "2026-09-03T09:58:48.569Z"
+    }
+  }
+]

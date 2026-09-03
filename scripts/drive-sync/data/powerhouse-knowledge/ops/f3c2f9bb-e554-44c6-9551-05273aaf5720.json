@@ -1,0 +1,446 @@
+[
+  {
+    "index": 0,
+    "hash": "",
+    "timestampUtcMs": "2026-09-03T07:19:07.712Z",
+    "action": {
+      "type": "CREATE_DOCUMENT",
+      "input": {
+        "meta": {},
+        "name": "sync-gap-dead-letter-api",
+        "slug": "",
+        "model": "bai/knowledge-note",
+        "branch": "main",
+        "signing": {
+          "nonce": "",
+          "publicKey": {},
+          "signature": "f3c2f9bb-e554-44c6-9551-05273aaf5720",
+          "documentType": "bai/knowledge-note",
+          "createdAtUtcIso": "2026-09-03T07:19:07.712Z"
+        },
+        "version": 0,
+        "documentId": "f3c2f9bb-e554-44c6-9551-05273aaf5720",
+        "protocolVersions": {
+          "base-reducer": 2
+        }
+      },
+      "timestampUtcMs": "2026-09-03T07:19:07.712Z"
+    }
+  },
+  {
+    "index": 0,
+    "hash": "pEoGfNFHHXuqeXvxi59Oru6xyws=",
+    "timestampUtcMs": "2026-09-03T07:19:09.271Z",
+    "action": {
+      "type": "SET_TITLE",
+      "input": {
+        "title": "Dead letters can be stored but not managed: ISyncManager exposes no retry or resolution API even though the storage layer has remove and removeByRemote",
+        "updatedAt": "2026-09-03T07:19:09.271Z"
+      },
+      "timestampUtcMs": "2026-09-03T07:19:09.271Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "",
+    "timestampUtcMs": "2026-09-03T07:19:07.712Z",
+    "action": {
+      "type": "UPGRADE_DOCUMENT",
+      "input": {
+        "model": "bai/knowledge-note",
+        "toVersion": 1,
+        "documentId": "f3c2f9bb-e554-44c6-9551-05273aaf5720",
+        "fromVersion": 0,
+        "initialState": {
+          "auth": {
+            "grants": [],
+            "version": 0
+          },
+          "local": {
+            "lastViewedAt": null,
+            "personalTags": []
+          },
+          "global": {
+            "links": [],
+            "model": null,
+            "scope": null,
+            "title": null,
+            "editor": null,
+            "inputs": [],
+            "models": [],
+            "status": "DRAFT",
+            "topics": [],
+            "content": null,
+            "context": null,
+            "modelId": null,
+            "modules": [],
+            "outputs": [],
+            "version": null,
+            "computes": null,
+            "filePath": null,
+            "noteType": null,
+            "severity": null,
+            "hooksUsed": [],
+            "rootCause": null,
+            "confidence": null,
+            "consumedBy": [],
+            "provenance": null,
+            "sourceType": null,
+            "targetType": null,
+            "cardinality": null,
+            "description": null,
+            "alternatives": [],
+            "consequences": [],
+            "errorMessage": null,
+            "relationType": null,
+            "correctPattern": null,
+            "decisionStatus": null,
+            "dispatchTargets": [],
+            "lifecycleEvents": []
+          },
+          "document": {
+            "hash": {
+              "encoding": "base64",
+              "algorithm": "sha1"
+            },
+            "version": 1
+          }
+        }
+      },
+      "timestampUtcMs": "2026-09-03T07:19:07.712Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "f9J8/smki2xR8Xyh8j0rGRX2Pvk=",
+    "timestampUtcMs": "2026-09-03T07:19:09.271Z",
+    "action": {
+      "type": "SET_DESCRIPTION",
+      "input": {
+        "updatedAt": "2026-09-03T07:19:09.271Z",
+        "description": "KyselySyncDeadLetterStorage implements remove(id) and removeByRemote(), neither of which is reachable through ISyncManager \u2014 so a quarantined document needs direct storage access to clear."
+      },
+      "timestampUtcMs": "2026-09-03T07:19:09.271Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "",
+    "timestampUtcMs": "2026-09-03T07:21:07.963Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "metadata": {
+          "reason": "Extracted from packages/reactor/sync-gaps.md at v6.2.2-dev.74 \u2014 4. Dead Letter Handling \u203a 4a",
+          "confidence": "grounded"
+        },
+        "sourceId": "f3c2f9bb-e554-44c6-9551-05273aaf5720",
+        "targetId": "6b999de1-e726-4029-b56f-6ccf6b887d83",
+        "relationshipType": "DERIVED_FROM"
+      },
+      "timestampUtcMs": "2026-09-03T07:21:07.963Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "K+JyBaHZjTH2ZzFiFnBMdO7MER0=",
+    "timestampUtcMs": "2026-09-03T07:19:09.271Z",
+    "action": {
+      "type": "SET_NOTE_TYPE",
+      "input": {
+        "noteType": "BUG-PATTERN",
+        "updatedAt": "2026-09-03T07:19:09.271Z"
+      },
+      "timestampUtcMs": "2026-09-03T07:19:09.271Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "",
+    "timestampUtcMs": "2026-09-03T07:21:08.930Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "metadata": {
+          "reason": "Quarantining one document instead of stalling the drive is the right containment, but that note stops before the operational question this one answers: nothing in the public interface can clear the quarantine",
+          "confidence": "grounded"
+        },
+        "sourceId": "f3c2f9bb-e554-44c6-9551-05273aaf5720",
+        "targetId": "e57e23ae-2f05-414a-bb77-c74ab23f64e8",
+        "relationshipType": "BUILDS_ON"
+      },
+      "timestampUtcMs": "2026-09-03T07:21:08.930Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "CbBDMcGeDuehZ17erYrZRVihzaI=",
+    "timestampUtcMs": "2026-09-03T07:19:09.271Z",
+    "action": {
+      "type": "SET_CONTENT",
+      "input": {
+        "content": "The reactor's own open-issue list records this as gap 4a. `KyselySyncDeadLetterStorage` implements `remove(id)` and `removeByRemote()`, but **`ISyncManager` has no methods for dead-letter management**, so nothing above the storage layer can retry or resolve one.\n\nThe consequence for an operator: a document that dead-letters is quarantined until someone reaches past the sync manager into storage. There is no supported \"retry this dead letter\" call, no way to drain a remote's dead letters as a batch through the public interface, and therefore no UI that can offer it without depending on storage internals.\n\nThis pairs badly with the one failure mode that is guaranteed *not* to converge on its own \u2014 two reactors writing conflicting auth-scope operations, where the replica whose stream ran ahead dead-letters the arrival and holds a different policy until an application reconciles it. The reconciliation the design assumes has no interface to perform it through.\n\n## Provenance\n- `packages/reactor/sync-gaps.md` \u2014 4. Dead Letter Handling \u203a 4a\n\n_Extracted from the Powerhouse repository at **v6.2.2-dev.74**._",
+        "updatedAt": "2026-09-03T07:19:09.271Z"
+      },
+      "timestampUtcMs": "2026-09-03T07:19:09.271Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "",
+    "timestampUtcMs": "2026-09-03T07:23:00.835Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "metadata": {
+          "reason": "Extracted from packages/reactor/sync-gaps.md at v6.2.2-dev.74 \u2014 4. Dead Letter Handling \u203a 4a",
+          "confidence": "grounded"
+        },
+        "sourceId": "f3c2f9bb-e554-44c6-9551-05273aaf5720",
+        "targetId": "6b999de1-e726-4029-b56f-6ccf6b887d83",
+        "relationshipType": "DERIVED_FROM"
+      },
+      "timestampUtcMs": "2026-09-03T07:23:00.835Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "uI3I46KvQ7H2BbD2APnV4dTIYMI=",
+    "timestampUtcMs": "2026-09-03T07:19:09.271Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "447f6bc4-8768-4c8a-8148-c2b78e4c2edd",
+        "name": "reactor-sync"
+      },
+      "timestampUtcMs": "2026-09-03T07:19:09.271Z"
+    }
+  },
+  {
+    "index": 5,
+    "hash": "",
+    "timestampUtcMs": "2026-09-03T07:23:01.289Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "metadata": {
+          "reason": "Quarantining one document instead of stalling the drive is the right containment, but that note stops before the operational question this one answers: nothing in the public interface can clear the quarantine",
+          "confidence": "grounded"
+        },
+        "sourceId": "f3c2f9bb-e554-44c6-9551-05273aaf5720",
+        "targetId": "e57e23ae-2f05-414a-bb77-c74ab23f64e8",
+        "relationshipType": "BUILDS_ON"
+      },
+      "timestampUtcMs": "2026-09-03T07:23:01.289Z"
+    }
+  },
+  {
+    "index": 5,
+    "hash": "mVnJGWZ5jBAHQbPyjPldtDbl9jA=",
+    "timestampUtcMs": "2026-09-03T07:19:09.271Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "a57bec38-ab8d-4f70-b3ad-04afafac047f",
+        "name": "dead-letters"
+      },
+      "timestampUtcMs": "2026-09-03T07:19:09.271Z"
+    }
+  },
+  {
+    "index": 6,
+    "hash": "",
+    "timestampUtcMs": "2026-09-03T07:23:01.757Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "metadata": {
+          "reason": "Conflicting auth operations are the case the design expects an application to reconcile from dead letters, which this gap makes unsupportable through ISyncManager",
+          "confidence": "grounded"
+        },
+        "sourceId": "f3c2f9bb-e554-44c6-9551-05273aaf5720",
+        "targetId": "5ca28e07-65de-4faf-9b18-43a21567a734",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-09-03T07:23:01.757Z"
+    }
+  },
+  {
+    "index": 6,
+    "hash": "8AF3SHquGt1HszEvZIvurCdLtLw=",
+    "timestampUtcMs": "2026-09-03T07:19:09.271Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "439b2a1b-57b2-4a37-b065-48de964ba26c",
+        "name": "gaps"
+      },
+      "timestampUtcMs": "2026-09-03T07:19:09.271Z"
+    }
+  },
+  {
+    "index": 7,
+    "hash": "v72FqBVLB2Z288WdJVUSkW15sqs=",
+    "timestampUtcMs": "2026-09-03T07:19:09.271Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "6f22b414-0955-4765-9481-bab999c16df4",
+        "name": "operations"
+      },
+      "timestampUtcMs": "2026-09-03T07:19:09.271Z"
+    }
+  },
+  {
+    "index": 8,
+    "hash": "ItnnxfO3JtuhmjW5DJhJFz31+r4=",
+    "timestampUtcMs": "2026-09-03T07:19:09.271Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "version",
+        "value": "v6.2.2-dev.74",
+        "updatedAt": "2026-09-03T07:19:09.271Z"
+      },
+      "timestampUtcMs": "2026-09-03T07:19:09.271Z"
+    }
+  },
+  {
+    "index": 9,
+    "hash": "U5ufGoHWg6yENAAV1hnX3kLRX/c=",
+    "timestampUtcMs": "2026-09-03T07:19:09.271Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "filePath",
+        "value": "packages/reactor/sync-gaps.md",
+        "updatedAt": "2026-09-03T07:19:09.271Z"
+      },
+      "timestampUtcMs": "2026-09-03T07:19:09.271Z"
+    }
+  },
+  {
+    "index": 10,
+    "hash": "nixeROJd62RhbZKkwPLHXbpDh/4=",
+    "timestampUtcMs": "2026-09-03T07:19:11.669Z",
+    "action": {
+      "type": "SET_PROVENANCE",
+      "input": {
+        "author": "knowledge-agent",
+        "createdAt": "2026-09-03T07:19:11.669Z",
+        "sourceOrigin": "DERIVED"
+      },
+      "timestampUtcMs": "2026-09-03T07:19:11.669Z"
+    }
+  },
+  {
+    "index": 11,
+    "hash": "RJamVgaWsO2u/CbQv5S+5mQk0/I=",
+    "timestampUtcMs": "2026-09-03T07:19:12.329Z",
+    "action": {
+      "type": "SUBMIT_FOR_REVIEW",
+      "input": {
+        "id": "417c338c-2fdd-48f3-8d65-3b76a70b2a2d",
+        "actor": "knowledge-agent",
+        "comment": "extracted from packages/reactor/sync-gaps.md at v6.2.2-dev.74",
+        "timestamp": "2026-09-03T07:19:12.329Z"
+      },
+      "timestampUtcMs": "2026-09-03T07:19:12.329Z"
+    }
+  },
+  {
+    "index": 12,
+    "hash": "rG08AgG6Xu52JRBV0HM/1KcAHuY=",
+    "timestampUtcMs": "2026-09-03T07:19:12.959Z",
+    "action": {
+      "type": "APPROVE_NOTE",
+      "input": {
+        "id": "1fcd4bcf-ffa0-42b9-b348-224a5db9bacd",
+        "actor": "liberuum",
+        "comment": "claim checked against the cited file at the pinned tag",
+        "timestamp": "2026-09-03T07:19:12.959Z"
+      },
+      "timestampUtcMs": "2026-09-03T07:19:12.959Z"
+    }
+  },
+  {
+    "index": 13,
+    "hash": "TRl4Vm7Ops5uM5SntsacGz6RmSg=",
+    "timestampUtcMs": "2026-09-03T07:22:26.344Z",
+    "action": {
+      "type": "SET_TITLE",
+      "input": {
+        "title": "Dead letters can be stored but not managed: ISyncManager exposes no retry or resolution API even though the storage layer has remove and removeByRemote",
+        "updatedAt": "2026-09-03T07:22:26.344Z"
+      },
+      "timestampUtcMs": "2026-09-03T07:22:26.344Z"
+    }
+  },
+  {
+    "index": 14,
+    "hash": "TRl4Vm7Ops5uM5SntsacGz6RmSg=",
+    "timestampUtcMs": "2026-09-03T07:22:26.344Z",
+    "action": {
+      "type": "SET_DESCRIPTION",
+      "input": {
+        "updatedAt": "2026-09-03T07:22:26.344Z",
+        "description": "KyselySyncDeadLetterStorage implements remove(id) and removeByRemote(), neither of which is reachable through ISyncManager \u2014 so a quarantined document needs direct storage access to clear."
+      },
+      "timestampUtcMs": "2026-09-03T07:22:26.344Z"
+    }
+  },
+  {
+    "index": 15,
+    "hash": "TRl4Vm7Ops5uM5SntsacGz6RmSg=",
+    "timestampUtcMs": "2026-09-03T07:22:26.344Z",
+    "action": {
+      "type": "SET_NOTE_TYPE",
+      "input": {
+        "noteType": "BUG-PATTERN",
+        "updatedAt": "2026-09-03T07:22:26.344Z"
+      },
+      "timestampUtcMs": "2026-09-03T07:22:26.344Z"
+    }
+  },
+  {
+    "index": 16,
+    "hash": "TRl4Vm7Ops5uM5SntsacGz6RmSg=",
+    "timestampUtcMs": "2026-09-03T07:22:26.344Z",
+    "action": {
+      "type": "SET_CONTENT",
+      "input": {
+        "content": "The reactor's own open-issue list records this as gap 4a. `KyselySyncDeadLetterStorage` implements `remove(id)` and `removeByRemote()`, but **`ISyncManager` has no methods for dead-letter management**, so nothing above the storage layer can retry or resolve one.\n\nThe consequence for an operator: a document that dead-letters is quarantined until someone reaches past the sync manager into storage. There is no supported \"retry this dead letter\" call, no way to drain a remote's dead letters as a batch through the public interface, and therefore no UI that can offer it without depending on storage internals.\n\nThis pairs badly with the one failure mode that is guaranteed *not* to converge on its own \u2014 two reactors writing conflicting auth-scope operations, where the replica whose stream ran ahead dead-letters the arrival and holds a different policy until an application reconciles it. The reconciliation the design assumes has no interface to perform it through.\n\n## Provenance\n- `packages/reactor/sync-gaps.md` \u2014 4. Dead Letter Handling \u203a 4a\n\n_Extracted from the Powerhouse repository at **v6.2.2-dev.74**._",
+        "updatedAt": "2026-09-03T07:22:26.344Z"
+      },
+      "timestampUtcMs": "2026-09-03T07:22:26.344Z"
+    }
+  },
+  {
+    "index": 17,
+    "hash": "TRl4Vm7Ops5uM5SntsacGz6RmSg=",
+    "timestampUtcMs": "2026-09-03T07:22:26.344Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "version",
+        "value": "v6.2.2-dev.74",
+        "updatedAt": "2026-09-03T07:22:26.344Z"
+      },
+      "timestampUtcMs": "2026-09-03T07:22:26.344Z"
+    }
+  },
+  {
+    "index": 18,
+    "hash": "TRl4Vm7Ops5uM5SntsacGz6RmSg=",
+    "timestampUtcMs": "2026-09-03T07:22:26.344Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "filePath",
+        "value": "packages/reactor/sync-gaps.md",
+        "updatedAt": "2026-09-03T07:22:26.344Z"
+      },
+      "timestampUtcMs": "2026-09-03T07:22:26.344Z"
+    }
+  }
+]

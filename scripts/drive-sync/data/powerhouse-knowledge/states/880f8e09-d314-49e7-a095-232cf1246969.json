@@ -1,0 +1,108 @@
+{
+  "links": [
+    {
+      "id": "lnk-bda80293-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "bda80293-c43b-4441-a2be-bf6ca6489ed8",
+      "targetTitle": "chat-requires-both-users-to-run-full-bee-nodes-because-light"
+    },
+    {
+      "id": "lnk-bd78f2bf-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "bd78f2bf-44c5-408c-8ac7-85174b6d743b",
+      "targetTitle": "swarm-feeds-mutable-pointers"
+    },
+    {
+      "id": "lnk-9250acee-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "9250acee-7e5a-454c-8515-977ded38a34d",
+      "targetTitle": "collab-adapter-surface-window-ph-swarm-collab"
+    },
+    {
+      "id": "lnk-650ecf22-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "650ecf22-c9ae-48a9-a02b-7aa78f21ac7c",
+      "targetTitle": "swarm-gsoc-many-to-one"
+    },
+    {
+      "id": "lnk-d1c32d1e-bui",
+      "linkType": "BUILDS_ON",
+      "targetDocumentId": "d1c32d1e-c285-46b0-b0f7-402fbec15641",
+      "targetTitle": "pss-provides-1-to-1-asymmetrically-encrypted-messaging-with-"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Chat topics are derived from sorted participant addresses so both peers compute the same topic.",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "topic-5c5ce24c7858",
+      "name": "pss-chat",
+      "topicDocumentId": null
+    },
+    {
+      "id": "topic-d2d68e6884e3",
+      "name": "topic-convention",
+      "topicDocumentId": null
+    },
+    {
+      "id": "topic-b1dbf6c65e84",
+      "name": "swarm-feeds",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "## Pattern\n\nChat, collab, and chat-history topics are all derived by concatenating the two participants' Swarm signer addresses in **sorted** order. Sorting guarantees both parties compute the same topic string regardless of who initiates the conversation.\n\n## Topic conventions\n\n```\nChat topic:    ph:v2:chat:<sorted(alice, bob)>\nGSOC notify:   ph:v2:notify:<targetAddress>\nCollab topic:  ph:v2:collab:<documentId>:<sorted(alice, bob)>\nChat history:  ph:v2:chatlog:<sorted(alice, bob)>    // feed, append-only\n```\n\n## Why sorting\n\nWithout sorting, Alice would compute `chat:alice:bob` while Bob would compute `chat:bob:alice`, and PSS subscriptions would never meet. Sorting collapses the asymmetry.\n\n## Namespace versioning\n\nThe `ph:v2:` prefix (vs v1) signals the current Swarm protocol revision. Bumping the prefix is how the app will roll out breaking changes to topic shape or payload schema in the future without colliding with old clients.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "PATTERN",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "knowledge-agent",
+    "createdAt": "2026-04-21T14:27:13.426Z",
+    "sessionId": null,
+    "updatedAt": "2026-09-03T09:57:53.513Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Topics like ph:v2:chat:<sorted(alice,bob)> sort the two addresses alphabetically, ensuring symmetric derivation regardless of who initiates.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "90e696bd-e9b4-4454-8f73-61982924c80a",
+      "actor": "claude",
+      "comment": "Knowledge registered against powerhouse v6.2.2-dev.47",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-14T12:00:00.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "00434635-a6a0-4c73-b0f5-87c19ce1ab3e",
+      "actor": "liberuum",
+      "comment": "Canonical as of powerhouse v6.2.2-dev.47",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-14T12:00:00.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

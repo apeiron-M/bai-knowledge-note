@@ -1,0 +1,100 @@
+{
+  "links": [
+    {
+      "id": "lnk-075581ec-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "075581ec-5c70-4f95-a967-30684c7e82f2",
+      "targetTitle": "Dimpact \u2014 PodiumD, KISS, Open Zaak"
+    },
+    {
+      "id": "lnk-2a005f5b-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "2a005f5b-ed3f-4e5c-aab4-21fa93794dad",
+      "targetTitle": "Foundation for Public Code \u2014 stewards Open Zaak among others"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Mirroring Open Zaak status changes gives a municipality a case history independent of its own case system",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "c5bda8fe-9805-47ae-a1e0-6504838178a3",
+      "name": "leads",
+      "topicDocumentId": null
+    },
+    {
+      "id": "0866f27a-ee7a-42d7-8638-4e7115321ece",
+      "name": "open-zaak",
+      "topicDocumentId": null
+    },
+    {
+      "id": "020430a2-8c79-4d67-a1bb-e76d0d69ff3d",
+      "name": "public-sector",
+      "topicDocumentId": null
+    },
+    {
+      "id": "04b07179-321e-4f1d-8d15-62721d568e47",
+      "name": "demo-design",
+      "topicDocumentId": null
+    },
+    {
+      "id": "660e511c-6858-43a0-aaf7-5ad0f5a7ec87",
+      "name": "audit-trail",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "The integration uses an Open Zaak notification subscription, mirroring each zaak status change as a typed operation. Nothing is modified inside Open Zaak \u2014 the subscription is a supported extension point, which matters when the target is public-sector software that a municipality did not write and cannot fork lightly.\n\nThe value stated is independence: an independent case history for municipal audit. A case system that holds both the case and the only record of how the case was handled cannot be audited against itself. Mirroring the status transitions produces a record whose survival does not depend on the retention, migration or replacement of the case system.\n\nTwo Dutch leads carry this demo \u2014 Dimpact at \"1 \u00b7 parallel track\", with PodiumD, KISS and Open Zaak in its source row, and the Foundation for Public Code at \"3 \u00b7 later\", recorded as a steward of Open Zaak among others. The near-identical demo text also appears attached to a third lead as a separate group, so this finding is split across two notes purely because the two texts differ by a word.\n\n---\n\n## Leads sharing this finding (2)\n\n**1 \u00b7 parallel track**\n- Dimpact (NL)\n\n**3 \u00b7 later**\n- Foundation for Public Code (NL (Amsterdam))\n\nVerbatim research text this claim was extracted from:\n\n> Open Zaak notification subscription mirroring each zaak status change as a typed operation \u2014 independent case history for municipal audit.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "INTEGRATION",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "knowledge-agent",
+    "createdAt": "2026-08-19T11:31:29.475098Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-19T11:31:31.252005Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "A notification subscription turns every zaak status change into a typed operation, so the audit record does not share a lifecycle with the Open Zaak instance that produced it.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "06899802-905e-4a71-b24e-2ea97f2d34b0",
+      "actor": "knowledge-agent",
+      "comment": "Extracted from lead research; claim checked against the source record.",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-19T11:31:31.107615Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "40615297-557d-4258-b091-fbe2920c4769",
+      "actor": "liberuum",
+      "comment": "Approved: lead corpus extraction.",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-19T11:31:31.252005Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

@@ -1,0 +1,115 @@
+{
+  "links": [
+    {
+      "id": "lnk-e25bc920-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "e25bc920-d3bc-4b36-9c7f-cb35b64c27b9",
+      "targetTitle": "Package \u203a reactor \u203a attachments-hash-first \u2014 Hash-First Attachment Refs",
+      "reason": "Extracted from packages/reactor/docs/attachments-hash-first.md at v6.2.2-dev.74 \u2014 Reservation semantics \u203a reserve() with a known hash",
+      "confidence": "grounded"
+    },
+    {
+      "id": "lnk-9d492c64-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "9d492c64-ed5b-4f00-8efe-98354c9fd6b4",
+      "targetTitle": "hashfirst-trust-model",
+      "reason": "The same rejection is a dedup oracle, which is why the endpoint requires upload-equivalent authorization",
+      "confidence": "grounded"
+    },
+    {
+      "id": "lnk-c2fedf9c-bui",
+      "linkType": "BUILDS_ON",
+      "targetDocumentId": "c2fedf9c-464c-422f-bf81-7f505b87e335",
+      "targetTitle": "attachment-lru-gc",
+      "reason": "The evicted-but-known state this rule treats specially is exactly what LRU eviction leaves behind",
+      "confidence": "grounded"
+    },
+    {
+      "id": "lnk-04232cfe-bui",
+      "linkType": "BUILDS_ON",
+      "targetDocumentId": "04232cfe-983e-46ba-ba27-64b2107a9f12",
+      "targetTitle": "hashfirst-why-client-hashing",
+      "reason": "Dedup can only move before the upload because the client supplies the hash at reservation time",
+      "confidence": "grounded"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "reserve() rejects a hash the reactor can already serve, but succeeds when the hash is merely known and evicted",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "7fb17d7b-0b51-4f2e-8924-e74e71913b77",
+      "name": "attachments",
+      "topicDocumentId": null
+    },
+    {
+      "id": "9f006f1c-a4f3-4357-9c09-aae825e777fc",
+      "name": "hash-first",
+      "topicDocumentId": null
+    },
+    {
+      "id": "c8fe94b4-09cb-435e-9b91-a39b5184c489",
+      "name": "deduplication",
+      "topicDocumentId": null
+    },
+    {
+      "id": "bb2b21e8-a1ce-4013-97e1-a9ef75b1b813",
+      "name": "reservations",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "`reserve({ clientHash })` consults the store before creating a reservation, and the four outcomes are the whole dedup story:\n\n| Store state for the hash | `reserve()` outcome |\n| --- | --- |\n| row exists, `status='available'` | **Rejects** with `AttachmentAlreadyExists` carrying the canonical ref. The client uses the ref directly; **zero bytes are transmitted** |\n| row exists, `status='evicted'` | **Succeeds.** Metadata is known but the bytes are gone; the client holds them and the upload restores them through the existing evicted-restore path |\n| no row, live reservation with the same `client_hash` | **Succeeds** \u2014 concurrent reservations are deliberately permitted |\n| no row, no live reservation | **Succeeds** \u2014 the normal case |\n\nThe first row is the improvement over the old flow, which uploaded *everything* before dedup was even detectable. The second is the subtle one: the rejection criterion is deliberately \"**can this reactor currently serve the bytes**\", not \"has it ever seen this hash\". An evicted hash is known but not servable, and the reserving client is, at that moment, the most reliable source of those bytes \u2014 rejecting it would discard the only guaranteed copy and leave restoration dependent on some peer still having it.\n\n## Provenance\n- `packages/reactor/docs/attachments-hash-first.md` \u2014 Reservation semantics \u203a reserve() with a known hash\n\n_Extracted from the Powerhouse repository at **v6.2.2-dev.74**._",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": "v6.2.2-dev.74",
+  "computes": null,
+  "filePath": "packages/reactor/docs/attachments-hash-first.md",
+  "noteType": "PATTERN",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "knowledge-agent",
+    "createdAt": "2026-09-03T07:20:15.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-09-03T07:22:34.205Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "The criterion is whether the reactor can serve the bytes now, not whether it has seen the hash. An available hash returns AttachmentAlreadyExists and sends nothing; an evicted one gets restored.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "f167e761-fbc6-4111-970c-7ff237d81a01",
+      "actor": "knowledge-agent",
+      "comment": "extracted from packages/reactor/docs/attachments-hash-first.md at v6.2.2-dev.74",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-09-03T07:20:15.480Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "d2b86cf8-99ca-4fe7-88a0-3640a8c87568",
+      "actor": "liberuum",
+      "comment": "claim checked against the cited file at the pinned tag",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-09-03T07:20:18.687Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

@@ -1,0 +1,94 @@
+{
+  "links": [
+    {
+      "id": "lnk-4d8e59af-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "4d8e59af-51f2-4ab7-b290-e1d5744abbd7",
+      "targetTitle": "Integration-gap tool screen: ERPNext / Frappe (primary-source research, 2026-08-19)"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Camunda 7 refuses to deploy a process model that does not declare when its history will be deleted",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "4bfc8a18-8194-4fe6-b98f-b03e7cc7c0b6",
+      "name": "tool-screen",
+      "topicDocumentId": null
+    },
+    {
+      "id": "9f968af0-68aa-4fe4-8125-fd5d2f46abd0",
+      "name": "camunda",
+      "topicDocumentId": null
+    },
+    {
+      "id": "1e41e56e-a43b-479e-ae08-a6e594341800",
+      "name": "retention",
+      "topicDocumentId": null
+    },
+    {
+      "id": "344ed7d9-e12e-4671-ab00-6638a6fd1e3a",
+      "name": "defaults",
+      "topicDocumentId": null
+    },
+    {
+      "id": "77e79023-d306-4ad7-91d8-999838f0a74b",
+      "name": "audit-trail",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "From the history-cleanup documentation: *\"The history time to live is mandatory, any deployment or re-deployment of any model resource (BPMN, DMN, CMMN) that contains a historyTimeToLive of null will be prevented.\"*\n\nCleanup itself is opt-in \u2014 no cleanup window is configured by default, so nothing is actually removed until an administrator schedules it. But the declaration is compulsory: you cannot deploy a process without stating a date on which its history becomes disposable.\n\nIt is a revealing design choice. The engine treats process history as operational data with a lifespan, to the point of refusing work that declines to specify one. That is a coherent position for an orchestrator and an incompatible one for a system of record.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "OBSERVATION",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "knowledge-agent",
+    "createdAt": "2026-08-20T08:45:38.099120Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-20T08:45:39.185207Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "historyTimeToLive is mandatory, and any deployment containing a null value is prevented \u2014 the engine will not accept a model intended to keep a permanent record.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "92386b1d-0192-4053-83f4-8cb7b8247143",
+      "actor": "knowledge-agent",
+      "comment": "Extracted from the primary-source tool screen; each claim quotable from a cited source.",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-20T08:45:39.021537Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "78679ed4-9381-4188-8f05-40ccb61e672d",
+      "actor": "liberuum",
+      "comment": "Approved: tool-screen extraction.",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-20T08:45:39.185207Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

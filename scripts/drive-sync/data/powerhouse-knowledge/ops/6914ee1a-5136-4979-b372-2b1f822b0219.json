@@ -1,0 +1,568 @@
+[
+  {
+    "index": 0,
+    "hash": "",
+    "timestampUtcMs": "2026-09-02T22:13:14.922Z",
+    "action": {
+      "type": "CREATE_DOCUMENT",
+      "input": {
+        "meta": {},
+        "name": "release-channels",
+        "slug": "",
+        "model": "bai/knowledge-note",
+        "branch": "main",
+        "signing": {
+          "nonce": "",
+          "publicKey": {},
+          "signature": "6914ee1a-5136-4979-b372-2b1f822b0219",
+          "documentType": "bai/knowledge-note",
+          "createdAtUtcIso": "2026-09-02T22:13:14.922Z"
+        },
+        "version": 0,
+        "documentId": "6914ee1a-5136-4979-b372-2b1f822b0219",
+        "protocolVersions": {
+          "base-reducer": 2
+        }
+      },
+      "timestampUtcMs": "2026-09-02T22:13:14.922Z"
+    }
+  },
+  {
+    "index": 0,
+    "hash": "i2q1gHSJm530WmRTNDxrPikpRu4=",
+    "timestampUtcMs": "2026-09-02T22:13:14.927Z",
+    "action": {
+      "type": "SET_TITLE",
+      "input": {
+        "title": "The release pipeline is one GitHub Action whose branch picks the channel and whose release_mode picks the semver bump; nobody edits package.json versions or changelogs by hand",
+        "updatedAt": "2026-09-02T22:13:14.927Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:13:14.927Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "",
+    "timestampUtcMs": "2026-09-02T22:13:14.922Z",
+    "action": {
+      "type": "UPGRADE_DOCUMENT",
+      "input": {
+        "model": "bai/knowledge-note",
+        "toVersion": 1,
+        "documentId": "6914ee1a-5136-4979-b372-2b1f822b0219",
+        "fromVersion": 0,
+        "initialState": {
+          "auth": {
+            "grants": [],
+            "version": 0
+          },
+          "local": {
+            "lastViewedAt": null,
+            "personalTags": []
+          },
+          "global": {
+            "links": [],
+            "model": null,
+            "scope": null,
+            "title": null,
+            "editor": null,
+            "inputs": [],
+            "models": [],
+            "status": "DRAFT",
+            "topics": [],
+            "content": null,
+            "context": null,
+            "modelId": null,
+            "modules": [],
+            "outputs": [],
+            "version": null,
+            "computes": null,
+            "filePath": null,
+            "noteType": null,
+            "severity": null,
+            "hooksUsed": [],
+            "rootCause": null,
+            "confidence": null,
+            "consumedBy": [],
+            "provenance": null,
+            "sourceType": null,
+            "targetType": null,
+            "cardinality": null,
+            "description": null,
+            "alternatives": [],
+            "consequences": [],
+            "errorMessage": null,
+            "relationType": null,
+            "correctPattern": null,
+            "decisionStatus": null,
+            "dispatchTargets": [],
+            "lifecycleEvents": []
+          },
+          "document": {
+            "hash": {
+              "encoding": "base64",
+              "algorithm": "sha1"
+            },
+            "version": 1
+          }
+        }
+      },
+      "timestampUtcMs": "2026-09-02T22:13:14.922Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "hrmpHkBwVBflE+65QQZppKU3Cjo=",
+    "timestampUtcMs": "2026-09-02T22:13:14.927Z",
+    "action": {
+      "type": "SET_DESCRIPTION",
+      "input": {
+        "updatedAt": "2026-09-02T22:13:14.927Z",
+        "description": "main \u2192 dev (X.Y.Z-dev.N), release/staging/<label> \u2192 staging, release/production/<label> \u2192 latest. prerelease is rejected for production; patch/minor/major become pre* on the prerelease channels."
+      },
+      "timestampUtcMs": "2026-09-02T22:13:14.927Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "",
+    "timestampUtcMs": "2026-09-02T22:24:53.372Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "metadata": {
+          "reason": "Extracted from RELEASE.md at v6.2.2-dev.74 \u2014 Intro, Channels, 'How release_mode maps to a semver bump', Triggering a release",
+          "confidence": "grounded"
+        },
+        "sourceId": "6914ee1a-5136-4979-b372-2b1f822b0219",
+        "targetId": "416abae8-b153-48f4-afa9-7e66c9d03cd9",
+        "relationshipType": "DERIVED_FROM"
+      },
+      "timestampUtcMs": "2026-09-02T22:24:53.372Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "Gnt24mGC2/V2ZZOB06Dwn2HFz8M=",
+    "timestampUtcMs": "2026-09-02T22:13:14.927Z",
+    "action": {
+      "type": "SET_NOTE_TYPE",
+      "input": {
+        "noteType": "PROCEDURE",
+        "updatedAt": "2026-09-02T22:13:14.927Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:13:14.927Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "",
+    "timestampUtcMs": "2026-09-02T22:24:54.511Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "metadata": {
+          "reason": "Extracted from README.md at v6.2.2-dev.74 \u2014 branching strategy paragraph (main=dev, Release/staging, Release/production)",
+          "confidence": "grounded"
+        },
+        "sourceId": "6914ee1a-5136-4979-b372-2b1f822b0219",
+        "targetId": "549a01f4-6e79-48ac-b8b1-5a1f657ad1cd",
+        "relationshipType": "DERIVED_FROM"
+      },
+      "timestampUtcMs": "2026-09-02T22:24:54.511Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "TBjnmtEOm8GrnhLK4Sg2nC3ek6w=",
+    "timestampUtcMs": "2026-09-02T22:13:14.927Z",
+    "action": {
+      "type": "SET_CONTENT",
+      "input": {
+        "content": "`.github/workflows/release-branch.yml` calls `releases/release.ts`, which drives Nx's release tooling. A developer controls exactly two things: **the branch the workflow runs on**, which decides the channel, and **the `release_mode` input**, which decides the semver bump. Nx writes the versions into every workspace `package.json`, generates changelogs, publishes to npm under the channel's dist-tag, pushes a `chore(release): publish <version>` commit and tags `v<version>` \u2014 on every run.\n\n| Branch | Channel | npm dist-tag | Version shape |\n| --- | --- | --- | --- |\n| `main` | dev | `dev` | `X.Y.Z-dev.N` |\n| `release/staging/<label>` | staging | `staging` | `X.Y.Z-staging.N` |\n| `release/production/<label>` | production | `latest` | `X.Y.Z` |\n\nThe `<label>` is a human hint Nx never parses; the published version comes from the workspace `package.json` plus the mode. Any other branch name makes the script throw. The mode is rewritten per channel:\n\n| Channel | Mode picked | Effective Nx specifier |\n| --- | --- | --- |\n| dev / staging | `prerelease` | `prerelease` (preid `dev` / `staging`) |\n| dev / staging | `patch` / `minor` / `major` | `prepatch` / `preminor` / `premajor` |\n| production | `prerelease` | **rejected \u2014 throws** |\n| production | `patch` / `minor` / `major` | `patch` / `minor` / `major` |\n\nPrerelease counters start at `.1`, not `.0`. The other workflow inputs (`skip_publish`, `skip_changelog`, `skip_push`, `skip_git_tag`, `skip_stage`, `skip_commit`, `verbose`) are recovery flags for reruns after partial failures; `dry_run` simulates with no side effects. Concurrency is per branch and **queues** rather than cancels. The older `manual-release.yml` (\"Full Managed Release\") is deprecated. Production is the only channel that also requires updating `RELEASE-NOTES.md` and announcing in `#coredev-releases`.\n\n_Source: RELEASE.md (Powerhouse v6.2.2-dev.74)._\n_Source: README.md (Powerhouse v6.2.2-dev.74)._\n\n## Provenance\n- `RELEASE.md` \u2014 Intro, Channels, 'How release_mode maps to a semver bump', Triggering a release\n- `README.md` \u2014 branching strategy paragraph (main=dev, Release/staging, Release/production)\n\n_Recorded from the Powerhouse repository at **v6.2.2-dev.74** during the v6.2.2-dev.74 source sync._",
+        "updatedAt": "2026-09-02T22:13:14.927Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:13:14.927Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "",
+    "timestampUtcMs": "2026-09-02T22:24:55.627Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "metadata": {
+          "reason": "The same three channels drive the Docker floating tags; npm dist-tags and image tags move together per branch",
+          "confidence": "grounded"
+        },
+        "sourceId": "6914ee1a-5136-4979-b372-2b1f822b0219",
+        "targetId": "2cb501f3-7675-4e67-b758-e6ea6db16a8e",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-09-02T22:24:55.627Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "UQOCcAb0NCTMHR5o1nDQqpf6jLM=",
+    "timestampUtcMs": "2026-09-02T22:13:14.927Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "fc940c32-9472-4922-9d66-137480500159",
+        "name": "release"
+      },
+      "timestampUtcMs": "2026-09-02T22:13:14.927Z"
+    }
+  },
+  {
+    "index": 5,
+    "hash": "",
+    "timestampUtcMs": "2026-09-02T22:24:56.092Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "metadata": {
+          "reason": "The staging cases are the practical procedure layered on this channel/mode mapping",
+          "confidence": "grounded"
+        },
+        "sourceId": "6914ee1a-5136-4979-b372-2b1f822b0219",
+        "targetId": "e116c6bc-49e3-454c-80c7-a85617401f8c",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-09-02T22:24:56.092Z"
+    }
+  },
+  {
+    "index": 5,
+    "hash": "GvwrrrOO4fT51J9z7ZyhidzoXao=",
+    "timestampUtcMs": "2026-09-02T22:13:14.927Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "3702feb5-231c-410a-8749-5b735df0079e",
+        "name": "monorepo"
+      },
+      "timestampUtcMs": "2026-09-02T22:13:14.927Z"
+    }
+  },
+  {
+    "index": 6,
+    "hash": "",
+    "timestampUtcMs": "2026-09-02T22:24:56.584Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "metadata": {
+          "reason": "The publish step of this pipeline authenticates to npm via trusted publishing rather than a token",
+          "confidence": "grounded"
+        },
+        "sourceId": "6914ee1a-5136-4979-b372-2b1f822b0219",
+        "targetId": "46cea225-4d6d-4717-97ce-b3fd1f9c79d4",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-09-02T22:24:56.584Z"
+    }
+  },
+  {
+    "index": 6,
+    "hash": "1czht3hqlVgb9ZfrkiNwTaUJg08=",
+    "timestampUtcMs": "2026-09-02T22:13:14.927Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "131007d7-a8c9-4920-858d-f41093b42bf7",
+        "name": "ci"
+      },
+      "timestampUtcMs": "2026-09-02T22:13:14.927Z"
+    }
+  },
+  {
+    "index": 7,
+    "hash": "dncWn029G53juG9qx8S9tX8bYVg=",
+    "timestampUtcMs": "2026-09-02T22:13:14.927Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "9d978810-1499-4f6b-af6c-b75ee9dd6844",
+        "name": "versioning"
+      },
+      "timestampUtcMs": "2026-09-02T22:13:14.927Z"
+    }
+  },
+  {
+    "index": 8,
+    "hash": "AyOWOvtAVO10yLqoItlkdBue2v0=",
+    "timestampUtcMs": "2026-09-02T22:13:14.927Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "version",
+        "value": "v6.2.2-dev.74",
+        "updatedAt": "2026-09-02T22:13:14.927Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:13:14.927Z"
+    }
+  },
+  {
+    "index": 9,
+    "hash": "T+UE0M6x08bTtKm38sK6BS3hSlk=",
+    "timestampUtcMs": "2026-09-02T22:13:14.927Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "filePath",
+        "value": "RELEASE.md",
+        "updatedAt": "2026-09-02T22:13:14.927Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:13:14.927Z"
+    }
+  },
+  {
+    "index": 10,
+    "hash": "lZYZv1gc0sGp7u5xY9gEHr+yQlU=",
+    "timestampUtcMs": "2026-09-02T22:13:14.927Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "confidence",
+        "value": "grounded",
+        "updatedAt": "2026-09-02T22:13:14.927Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:13:14.927Z"
+    }
+  },
+  {
+    "index": 11,
+    "hash": "9Y60qLzt8YrHPg7QnTYVmPJngrw=",
+    "timestampUtcMs": "2026-09-02T22:13:17.760Z",
+    "action": {
+      "type": "SET_PROVENANCE",
+      "input": {
+        "author": "knowledge-agent",
+        "createdAt": "2026-09-02T22:13:17.760Z",
+        "sourceOrigin": "DERIVED"
+      },
+      "timestampUtcMs": "2026-09-02T22:13:17.760Z"
+    }
+  },
+  {
+    "index": 12,
+    "hash": "tvMiQu4qkzL2YY2rYG4jeA48994=",
+    "timestampUtcMs": "2026-09-02T22:13:18.846Z",
+    "action": {
+      "type": "SUBMIT_FOR_REVIEW",
+      "input": {
+        "id": "a08ed7c4-5fa9-4f63-ab8b-7c839aa423b2",
+        "actor": "knowledge-agent",
+        "comment": "extracted from the Powerhouse repository at v6.2.2-dev.74",
+        "timestamp": "2026-09-02T22:13:18.846Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:13:18.846Z"
+    }
+  },
+  {
+    "index": 13,
+    "hash": "U7Lm6b6p72wvuVNXs27q/KQUqiY=",
+    "timestampUtcMs": "2026-09-02T22:13:19.391Z",
+    "action": {
+      "type": "APPROVE_NOTE",
+      "input": {
+        "id": "0e0945ab-a561-433a-ac2e-db28ca8dd0f4",
+        "actor": "liberuum",
+        "comment": "claim checked against the cited repository file at the pinned tag",
+        "timestamp": "2026-09-02T22:13:19.391Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:13:19.391Z"
+    }
+  },
+  {
+    "index": 14,
+    "hash": "Y72W9BlcizDqGWWPvmA5HKmCNNg=",
+    "timestampUtcMs": "2026-09-02T22:16:30.508Z",
+    "action": {
+      "type": "SET_TITLE",
+      "input": {
+        "title": "The release pipeline is one GitHub Action whose branch picks the channel and whose release_mode picks the semver bump; nobody edits package.json versions or changelogs by hand",
+        "updatedAt": "2026-09-02T22:16:30.508Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:16:30.508Z"
+    }
+  },
+  {
+    "index": 15,
+    "hash": "Y72W9BlcizDqGWWPvmA5HKmCNNg=",
+    "timestampUtcMs": "2026-09-02T22:16:30.508Z",
+    "action": {
+      "type": "SET_DESCRIPTION",
+      "input": {
+        "updatedAt": "2026-09-02T22:16:30.508Z",
+        "description": "main \u2192 dev (X.Y.Z-dev.N), release/staging/<label> \u2192 staging, release/production/<label> \u2192 latest. prerelease is rejected for production; patch/minor/major become pre* on the prerelease channels."
+      },
+      "timestampUtcMs": "2026-09-02T22:16:30.508Z"
+    }
+  },
+  {
+    "index": 16,
+    "hash": "Y72W9BlcizDqGWWPvmA5HKmCNNg=",
+    "timestampUtcMs": "2026-09-02T22:16:30.508Z",
+    "action": {
+      "type": "SET_NOTE_TYPE",
+      "input": {
+        "noteType": "PROCEDURE",
+        "updatedAt": "2026-09-02T22:16:30.508Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:16:30.508Z"
+    }
+  },
+  {
+    "index": 17,
+    "hash": "Y72W9BlcizDqGWWPvmA5HKmCNNg=",
+    "timestampUtcMs": "2026-09-02T22:16:30.508Z",
+    "action": {
+      "type": "SET_CONTENT",
+      "input": {
+        "content": "`.github/workflows/release-branch.yml` calls `releases/release.ts`, which drives Nx's release tooling. A developer controls exactly two things: **the branch the workflow runs on**, which decides the channel, and **the `release_mode` input**, which decides the semver bump. Nx writes the versions into every workspace `package.json`, generates changelogs, publishes to npm under the channel's dist-tag, pushes a `chore(release): publish <version>` commit and tags `v<version>` \u2014 on every run.\n\n| Branch | Channel | npm dist-tag | Version shape |\n| --- | --- | --- | --- |\n| `main` | dev | `dev` | `X.Y.Z-dev.N` |\n| `release/staging/<label>` | staging | `staging` | `X.Y.Z-staging.N` |\n| `release/production/<label>` | production | `latest` | `X.Y.Z` |\n\nThe `<label>` is a human hint Nx never parses; the published version comes from the workspace `package.json` plus the mode. Any other branch name makes the script throw. The mode is rewritten per channel:\n\n| Channel | Mode picked | Effective Nx specifier |\n| --- | --- | --- |\n| dev / staging | `prerelease` | `prerelease` (preid `dev` / `staging`) |\n| dev / staging | `patch` / `minor` / `major` | `prepatch` / `preminor` / `premajor` |\n| production | `prerelease` | **rejected \u2014 throws** |\n| production | `patch` / `minor` / `major` | `patch` / `minor` / `major` |\n\nPrerelease counters start at `.1`, not `.0`. The other workflow inputs (`skip_publish`, `skip_changelog`, `skip_push`, `skip_git_tag`, `skip_stage`, `skip_commit`, `verbose`) are recovery flags for reruns after partial failures; `dry_run` simulates with no side effects. Concurrency is per branch and **queues** rather than cancels. The older `manual-release.yml` (\"Full Managed Release\") is deprecated. Production is the only channel that also requires updating `RELEASE-NOTES.md` and announcing in `#coredev-releases`.\n\n_Source: RELEASE.md (Powerhouse v6.2.2-dev.74)._\n_Source: README.md (Powerhouse v6.2.2-dev.74)._\n\n## Provenance\n- `RELEASE.md` \u2014 Intro, Channels, 'How release_mode maps to a semver bump', Triggering a release\n- `README.md` \u2014 branching strategy paragraph (main=dev, Release/staging, Release/production)\n\n_Recorded from the Powerhouse repository at **v6.2.2-dev.74** during the v6.2.2-dev.74 source sync._",
+        "updatedAt": "2026-09-02T22:16:30.508Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:16:30.508Z"
+    }
+  },
+  {
+    "index": 18,
+    "hash": "Y72W9BlcizDqGWWPvmA5HKmCNNg=",
+    "timestampUtcMs": "2026-09-02T22:16:30.508Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "version",
+        "value": "v6.2.2-dev.74",
+        "updatedAt": "2026-09-02T22:16:30.508Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:16:30.508Z"
+    }
+  },
+  {
+    "index": 19,
+    "hash": "Y72W9BlcizDqGWWPvmA5HKmCNNg=",
+    "timestampUtcMs": "2026-09-02T22:16:30.508Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "filePath",
+        "value": "RELEASE.md",
+        "updatedAt": "2026-09-02T22:16:30.508Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:16:30.508Z"
+    }
+  },
+  {
+    "index": 20,
+    "hash": "Y72W9BlcizDqGWWPvmA5HKmCNNg=",
+    "timestampUtcMs": "2026-09-02T22:16:30.508Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "confidence",
+        "value": "grounded",
+        "updatedAt": "2026-09-02T22:16:30.508Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:16:30.508Z"
+    }
+  },
+  {
+    "index": 21,
+    "hash": "FlPINDe8uOjeW+3wKysVixdZwJo=",
+    "timestampUtcMs": "2026-09-02T22:21:08.975Z",
+    "action": {
+      "type": "SET_TITLE",
+      "input": {
+        "title": "The release pipeline is one GitHub Action whose branch picks the channel and whose release_mode picks the semver bump; nobody edits package.json versions or changelogs by hand",
+        "updatedAt": "2026-09-02T22:21:08.975Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:21:08.975Z"
+    }
+  },
+  {
+    "index": 22,
+    "hash": "FlPINDe8uOjeW+3wKysVixdZwJo=",
+    "timestampUtcMs": "2026-09-02T22:21:08.975Z",
+    "action": {
+      "type": "SET_DESCRIPTION",
+      "input": {
+        "updatedAt": "2026-09-02T22:21:08.975Z",
+        "description": "main \u2192 dev (X.Y.Z-dev.N), release/staging/<label> \u2192 staging, release/production/<label> \u2192 latest. prerelease is rejected for production; patch/minor/major become pre* on the prerelease channels."
+      },
+      "timestampUtcMs": "2026-09-02T22:21:08.975Z"
+    }
+  },
+  {
+    "index": 23,
+    "hash": "FlPINDe8uOjeW+3wKysVixdZwJo=",
+    "timestampUtcMs": "2026-09-02T22:21:08.975Z",
+    "action": {
+      "type": "SET_NOTE_TYPE",
+      "input": {
+        "noteType": "PROCEDURE",
+        "updatedAt": "2026-09-02T22:21:08.975Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:21:08.975Z"
+    }
+  },
+  {
+    "index": 24,
+    "hash": "FlPINDe8uOjeW+3wKysVixdZwJo=",
+    "timestampUtcMs": "2026-09-02T22:21:08.975Z",
+    "action": {
+      "type": "SET_CONTENT",
+      "input": {
+        "content": "`.github/workflows/release-branch.yml` calls `releases/release.ts`, which drives Nx's release tooling. A developer controls exactly two things: **the branch the workflow runs on**, which decides the channel, and **the `release_mode` input**, which decides the semver bump. Nx writes the versions into every workspace `package.json`, generates changelogs, publishes to npm under the channel's dist-tag, pushes a `chore(release): publish <version>` commit and tags `v<version>` \u2014 on every run.\n\n| Branch | Channel | npm dist-tag | Version shape |\n| --- | --- | --- | --- |\n| `main` | dev | `dev` | `X.Y.Z-dev.N` |\n| `release/staging/<label>` | staging | `staging` | `X.Y.Z-staging.N` |\n| `release/production/<label>` | production | `latest` | `X.Y.Z` |\n\nThe `<label>` is a human hint Nx never parses; the published version comes from the workspace `package.json` plus the mode. Any other branch name makes the script throw. The mode is rewritten per channel:\n\n| Channel | Mode picked | Effective Nx specifier |\n| --- | --- | --- |\n| dev / staging | `prerelease` | `prerelease` (preid `dev` / `staging`) |\n| dev / staging | `patch` / `minor` / `major` | `prepatch` / `preminor` / `premajor` |\n| production | `prerelease` | **rejected \u2014 throws** |\n| production | `patch` / `minor` / `major` | `patch` / `minor` / `major` |\n\nPrerelease counters start at `.1`, not `.0`. The other workflow inputs (`skip_publish`, `skip_changelog`, `skip_push`, `skip_git_tag`, `skip_stage`, `skip_commit`, `verbose`) are recovery flags for reruns after partial failures; `dry_run` simulates with no side effects. Concurrency is per branch and **queues** rather than cancels. The older `manual-release.yml` (\"Full Managed Release\") is deprecated. Production is the only channel that also requires updating `RELEASE-NOTES.md` and announcing in `#coredev-releases`.\n\n_Source: RELEASE.md (Powerhouse v6.2.2-dev.74)._\n_Source: README.md (Powerhouse v6.2.2-dev.74)._\n\n## Provenance\n- `RELEASE.md` \u2014 Intro, Channels, 'How release_mode maps to a semver bump', Triggering a release\n- `README.md` \u2014 branching strategy paragraph (main=dev, Release/staging, Release/production)\n\n_Recorded from the Powerhouse repository at **v6.2.2-dev.74** during the v6.2.2-dev.74 source sync._",
+        "updatedAt": "2026-09-02T22:21:08.975Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:21:08.975Z"
+    }
+  },
+  {
+    "index": 25,
+    "hash": "FlPINDe8uOjeW+3wKysVixdZwJo=",
+    "timestampUtcMs": "2026-09-02T22:21:08.975Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "version",
+        "value": "v6.2.2-dev.74",
+        "updatedAt": "2026-09-02T22:21:08.975Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:21:08.975Z"
+    }
+  },
+  {
+    "index": 26,
+    "hash": "FlPINDe8uOjeW+3wKysVixdZwJo=",
+    "timestampUtcMs": "2026-09-02T22:21:08.975Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "filePath",
+        "value": "RELEASE.md",
+        "updatedAt": "2026-09-02T22:21:08.975Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:21:08.975Z"
+    }
+  },
+  {
+    "index": 27,
+    "hash": "FlPINDe8uOjeW+3wKysVixdZwJo=",
+    "timestampUtcMs": "2026-09-02T22:21:08.975Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "confidence",
+        "value": "grounded",
+        "updatedAt": "2026-09-02T22:21:08.975Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:21:08.975Z"
+    }
+  }
+]

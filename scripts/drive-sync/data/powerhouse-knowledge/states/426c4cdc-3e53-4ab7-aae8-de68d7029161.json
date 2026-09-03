@@ -1,0 +1,89 @@
+{
+  "links": [
+    {
+      "id": "lnk-c720df00-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "c720df00-e3a4-49d1-b583-e7ed14c256f8",
+      "targetTitle": "bim-demo-scenario-briefing"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "IFC carries the semantics in BIM; DWG is a non-semantic derivative generated from 3D models",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "c5b2a1a7-31aa-4cee-b1b7-aa923c7cd713",
+      "name": "bim",
+      "topicDocumentId": null
+    },
+    {
+      "id": "2671f1f4-9ee0-4272-902c-fc5d6ba7cefa",
+      "name": "ifc",
+      "topicDocumentId": null
+    },
+    {
+      "id": "ba9d73ca-c7cb-43de-9eb6-53d770935cee",
+      "name": "file-formats",
+      "topicDocumentId": null
+    },
+    {
+      "id": "a8a371fd-075e-465a-8823-056f3e4f0f34",
+      "name": "construction",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "DWG files are building/construction CAD files **without semantic meaning** \u2014 these days typically generated from RVT or IFC files as 2D drawings, cuts, and projections. IFC is the BIM standard for 3D construction files **with semantic meaning**; Autodesk Revit's RVT is the most common proprietary 3D format.\n\nThe industry is mid-transition: from 2D-DWG-first workflows to building 3D BIM models first and deriving 2D plans from them, so that elements \u2014 a door, a duct \u2014 carry semantic tags rather than being anonymous line work (DT BAU walkthrough, 00:11:26\u201300:14:11).\n\nTwo practical consequences:\n- DWG survives as an interchange and precise-measurement format, not as the source of truth.\n- The construction toolchain is 90\u201395% Windows because Revit and most industry tools lack Mac support; Mac-based architecture studios fall back to DWG interchange to participate (00:35:39).\n\nSemantic 3D-first modeling is what makes model data machine-readable at all \u2014 every automation ambition downstream (collision checks, AI review, structured BCF workflows) depends on it.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "CONCEPT",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "knowledge-agent",
+    "createdAt": "2026-08-14T18:13:36.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-14T18:17:20.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "DWG files are 2D CAD without semantic meaning, today generated from RVT/IFC. IFC is the semantic BIM standard; the industry builds 3D-first and derives plans from models.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "737ebcbc-c67a-4601-a556-26e8a3c1e6f7",
+      "actor": "knowledge-agent",
+      "comment": "Extracted from Aug 12-14 meeting sources; links + methodology grounding applied",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-14T18:17:19.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "33552f66-12d9-4efe-99da-cfd6184196ef",
+      "actor": "liberuum",
+      "comment": "Pipeline verify: quality gate passed",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-14T18:17:20.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

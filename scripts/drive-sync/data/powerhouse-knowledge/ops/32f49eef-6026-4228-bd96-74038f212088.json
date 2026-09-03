@@ -1,0 +1,375 @@
+[
+  {
+    "index": 0,
+    "hash": "",
+    "timestampUtcMs": "2026-08-14T12:00:35.577Z",
+    "action": {
+      "type": "CREATE_DOCUMENT",
+      "input": {
+        "meta": {},
+        "name": "drive-level-before-document-level-phasing",
+        "slug": "",
+        "model": "bai/knowledge-note",
+        "branch": "main",
+        "signing": {
+          "nonce": "",
+          "publicKey": {},
+          "signature": "32f49eef-6026-4228-bd96-74038f212088",
+          "documentType": "bai/knowledge-note",
+          "createdAtUtcIso": "2026-08-14T12:00:35.577Z"
+        },
+        "version": 0,
+        "documentId": "32f49eef-6026-4228-bd96-74038f212088",
+        "protocolVersions": {
+          "base-reducer": 2
+        }
+      },
+      "timestampUtcMs": "2026-08-14T12:00:35.577Z"
+    }
+  },
+  {
+    "index": 0,
+    "hash": "hbCC/wfpaVIiSEOpoXQlkB+8w9g=",
+    "timestampUtcMs": "2026-08-14T12:35:12.000Z",
+    "action": {
+      "type": "SET_TITLE",
+      "input": {
+        "title": "Ship drive-level collaboration first, document-level scoping comes in a later milestone",
+        "updatedAt": "2026-08-14T12:35:12.000Z"
+      },
+      "timestampUtcMs": "2026-08-14T12:35:12.000Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "",
+    "timestampUtcMs": "2026-08-14T12:00:35.577Z",
+    "action": {
+      "type": "UPGRADE_DOCUMENT",
+      "input": {
+        "model": "bai/knowledge-note",
+        "toVersion": 1,
+        "documentId": "32f49eef-6026-4228-bd96-74038f212088",
+        "fromVersion": 0,
+        "initialState": {
+          "auth": {
+            "grants": [],
+            "version": 0
+          },
+          "local": {
+            "lastViewedAt": null,
+            "personalTags": []
+          },
+          "global": {
+            "links": [],
+            "model": null,
+            "scope": null,
+            "title": null,
+            "editor": null,
+            "inputs": [],
+            "models": [],
+            "status": "DRAFT",
+            "topics": [],
+            "content": null,
+            "context": null,
+            "modelId": null,
+            "modules": [],
+            "outputs": [],
+            "version": null,
+            "computes": null,
+            "filePath": null,
+            "noteType": null,
+            "severity": null,
+            "hooksUsed": [],
+            "rootCause": null,
+            "confidence": null,
+            "consumedBy": [],
+            "provenance": null,
+            "sourceType": null,
+            "targetType": null,
+            "cardinality": null,
+            "description": null,
+            "alternatives": [],
+            "consequences": [],
+            "errorMessage": null,
+            "relationType": null,
+            "correctPattern": null,
+            "decisionStatus": null,
+            "dispatchTargets": [],
+            "lifecycleEvents": []
+          },
+          "document": {
+            "hash": {
+              "encoding": "base64",
+              "algorithm": "sha1"
+            },
+            "version": 1
+          }
+        }
+      },
+      "timestampUtcMs": "2026-08-14T12:00:35.577Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "pZX98sSpMxXaub1LglOhZAO5Ag8=",
+    "timestampUtcMs": "2026-08-14T12:35:12.000Z",
+    "action": {
+      "type": "SET_DESCRIPTION",
+      "input": {
+        "updatedAt": "2026-08-14T12:35:12.000Z",
+        "description": "Drive-level collab ships first (simpler mental model, single ACT grant covers all children); document-level scoping comes in a later milestone."
+      },
+      "timestampUtcMs": "2026-08-14T12:35:12.000Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "",
+    "timestampUtcMs": "2026-08-14T12:37:20.955Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "32f49eef-6026-4228-bd96-74038f212088",
+        "targetId": "d1737634-2378-431a-8cf8-4dcfba38ea5c",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-08-14T12:37:20.955Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "32dx3MUtis2CXZHj8OJq4Q4uPN0=",
+    "timestampUtcMs": "2026-08-14T12:35:12.000Z",
+    "action": {
+      "type": "SET_NOTE_TYPE",
+      "input": {
+        "noteType": "decision",
+        "updatedAt": "2026-08-14T12:35:12.000Z"
+      },
+      "timestampUtcMs": "2026-08-14T12:35:12.000Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "",
+    "timestampUtcMs": "2026-08-14T12:37:21.052Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "32f49eef-6026-4228-bd96-74038f212088",
+        "targetId": "ae9c98a6-00eb-4aa9-92e8-40ad3bc9513d",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-08-14T12:37:21.052Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "uGRPFVJhNk84AeG8VsTvxmPv2zA=",
+    "timestampUtcMs": "2026-08-14T12:35:12.000Z",
+    "action": {
+      "type": "SET_CONTENT",
+      "input": {
+        "content": "## Decision: drive-level first, document-level later\n\n### Phase 1 \u2014 drive-level collaboration (first ship)\n\n- Simpler mental model: \"I'm collaborating on this whole drive with Alice and Bob.\"\n- Covers the drive ops (`ADD_FOLDER`, `MOVE_NODE`, `ADD_FILE`) and every doc inside the drive.\n- A **single ACT grant per participant** covers the drive manifest, all child doc manifests, and all op batches \u2014 minimizing ACT chain management.\n\n### Phase 2 \u2014 document-level collaboration\n\n- Narrower: \"I'm collaborating on this one doc, but keep the rest of the drive private.\"\n- ACT grantee list is scoped to one doc's manifest and op batches only.\n- The drive manifest itself is **not** shared \u2014 participants see a free-standing doc, not its parent drive.\n- Useful when the containing drive has confidential material and only one doc is meant for outside eyes.\n\nDrive-level first is the right build order because the mental model is simpler for users, a single ACT scope is easier to reason about, and it still exercises every layer of the mesh (manifest, peer feeds, GSOC, signatures). Document-level scoping then narrows the ACT chain without changing the plumbing.",
+        "updatedAt": "2026-08-14T12:35:12.000Z"
+      },
+      "timestampUtcMs": "2026-08-14T12:35:12.000Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "",
+    "timestampUtcMs": "2026-08-14T12:37:21.154Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "32f49eef-6026-4228-bd96-74038f212088",
+        "targetId": "713006f2-2448-40a6-a531-918f99915577",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-08-14T12:37:21.154Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "Dlsr05mY9uBK4Wi1DLac7WZlqVM=",
+    "timestampUtcMs": "2026-08-14T12:35:12.000Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "version",
+        "value": "v6.2.2-dev.44",
+        "updatedAt": "2026-08-14T12:35:12.000Z"
+      },
+      "timestampUtcMs": "2026-08-14T12:35:12.000Z"
+    }
+  },
+  {
+    "index": 5,
+    "hash": "",
+    "timestampUtcMs": "2026-08-14T12:37:21.256Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "32f49eef-6026-4228-bd96-74038f212088",
+        "targetId": "1c7a3c1c-95e7-4bc8-a921-277863c4f346",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-08-14T12:37:21.256Z"
+    }
+  },
+  {
+    "index": 5,
+    "hash": "t0v2WNFnygIR8GFgk/QNp5XjxEg=",
+    "timestampUtcMs": "2026-08-14T12:35:12.000Z",
+    "action": {
+      "type": "SET_PROVENANCE",
+      "input": {
+        "author": "knowledge-agent",
+        "createdAt": "2026-04-21T14:16:54.676Z",
+        "sourceOrigin": "DERIVED"
+      },
+      "timestampUtcMs": "2026-08-14T12:35:12.000Z"
+    }
+  },
+  {
+    "index": 6,
+    "hash": "",
+    "timestampUtcMs": "2026-08-14T12:37:21.358Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "32f49eef-6026-4228-bd96-74038f212088",
+        "targetId": "1c781f1a-a3f9-483e-a15a-ccbc2c431135",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-08-14T12:37:21.358Z"
+    }
+  },
+  {
+    "index": 6,
+    "hash": "oOwIo/3axa63PTF0nFuyj9mftXw=",
+    "timestampUtcMs": "2026-08-14T12:35:12.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "t-b29be411-1",
+        "name": "live-collaboration",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-08-14T12:35:12.000Z"
+    }
+  },
+  {
+    "index": 7,
+    "hash": "tYE3yreyX0dXi5RdLA0c1TrfIKw=",
+    "timestampUtcMs": "2026-08-14T12:35:12.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "t-b29be411-2",
+        "name": "phasing",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-08-14T12:35:12.000Z"
+    }
+  },
+  {
+    "index": 8,
+    "hash": "cUGDMDgCuvj6OtPX6I/z//8TgG8=",
+    "timestampUtcMs": "2026-08-14T12:35:12.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "t-b29be411-3",
+        "name": "act-encryption",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-08-14T12:35:12.000Z"
+    }
+  },
+  {
+    "index": 9,
+    "hash": "wsHRfXH2Oyf1Kyg0qCfCNtU81+U=",
+    "timestampUtcMs": "2026-08-14T14:36:57.000Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "version",
+        "value": "v6.2.2-dev.47",
+        "updatedAt": "2026-08-14T12:00:00.000Z"
+      },
+      "timestampUtcMs": "2026-08-14T14:36:57.000Z"
+    }
+  },
+  {
+    "index": 10,
+    "hash": "zCABDaTVMpkXwKx7LACToVNqFKc=",
+    "timestampUtcMs": "2026-08-14T14:36:57.000Z",
+    "action": {
+      "type": "SUBMIT_FOR_REVIEW",
+      "input": {
+        "id": "59b64298-e05c-40d8-ab3c-60d708050f1a",
+        "actor": "claude",
+        "comment": "Knowledge registered against powerhouse v6.2.2-dev.47",
+        "timestamp": "2026-08-14T12:00:00.000Z"
+      },
+      "timestampUtcMs": "2026-08-14T14:36:57.000Z"
+    }
+  },
+  {
+    "index": 11,
+    "hash": "Jfs8iUEDJoeLKQ3FUOp+KkvLA7Q=",
+    "timestampUtcMs": "2026-08-14T14:36:57.000Z",
+    "action": {
+      "type": "APPROVE_NOTE",
+      "input": {
+        "id": "18276e93-ab35-4782-b895-a87dce5109b3",
+        "actor": "liberuum",
+        "comment": "Canonical as of powerhouse v6.2.2-dev.47",
+        "timestamp": "2026-08-14T12:00:00.000Z"
+      },
+      "timestampUtcMs": "2026-08-14T14:36:57.000Z"
+    }
+  },
+  {
+    "index": 12,
+    "hash": "0hoecqMLnlEev6w9sBeyVuGbN9Q=",
+    "timestampUtcMs": "2026-08-16T09:49:59.000Z",
+    "action": {
+      "type": "SET_NOTE_TYPE",
+      "input": {
+        "noteType": "DECISION",
+        "updatedAt": "2026-08-16T09:49:59.000Z"
+      },
+      "timestampUtcMs": "2026-08-16T09:49:59.000Z"
+    }
+  },
+  {
+    "index": 13,
+    "hash": "QBlElC+HdBE+tYm8Z1U/Dq9QVrE=",
+    "timestampUtcMs": "2026-08-16T22:19:42.082Z",
+    "action": {
+      "type": "SET_DESCRIPTION",
+      "input": {
+        "updatedAt": "2026-08-16T23:30:00.000Z",
+        "description": "One grant per person then covers the manifest, every child doc and all op batches; narrowing afterwards only shrinks the grantee chain, leaving mesh, feeds and GSOC plumbing untouched."
+      },
+      "timestampUtcMs": "2026-08-16T22:19:42.082Z"
+    }
+  },
+  {
+    "index": 14,
+    "hash": "lrfI0h6uSImHFOeqM2zhkErpC0k=",
+    "timestampUtcMs": "2026-09-03T09:59:33.362Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "version",
+        "updatedAt": "2026-09-03T09:59:33.362Z"
+      },
+      "timestampUtcMs": "2026-09-03T09:59:33.362Z"
+    }
+  }
+]

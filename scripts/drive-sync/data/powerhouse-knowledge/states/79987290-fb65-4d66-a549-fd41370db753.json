@@ -1,0 +1,108 @@
+{
+  "links": [
+    {
+      "id": "lnk-5e499747-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "5e499747-2545-41a6-ad87-523016618856",
+      "targetTitle": "powerhouse-three-layer-architecture"
+    },
+    {
+      "id": "lnk-e4a8d4d1-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "e4a8d4d1-7317-47d1-a126-6273c1f43c49",
+      "targetTitle": "inspector-modal-for-debugging-sync"
+    },
+    {
+      "id": "lnk-024b7402-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "024b7402-1650-49a1-a594-4ffb8cb621e8",
+      "targetTitle": "customization-layer-enables-organization-specific-deployments"
+    },
+    {
+      "id": "lnk-075115a4-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "075115a4-d269-4515-91df-5b40568ca4b4",
+      "targetTitle": "document-model-driven-architecture-rad"
+    },
+    {
+      "id": "lnk-1faafab7-bui",
+      "linkType": "BUILDS_ON",
+      "targetDocumentId": "1faafab7-6eb6-45af-b81d-711926ffa7b8",
+      "targetTitle": "host-applications-are-empty-shells-gaining-functionality-through-plugins"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Connect is the Powerhouse host application that serves as container for all apps and drives",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "3cd5fd96-1e11-48ed-bc62-87cb8ea6db86",
+      "name": "connect",
+      "topicDocumentId": null
+    },
+    {
+      "id": "57caf36a-f3a3-4fc7-879e-dc2ea129350f",
+      "name": "host-application",
+      "topicDocumentId": null
+    },
+    {
+      "id": "545b2fe3-a179-4206-a5d6-c72c32c773bd",
+      "name": "infrastructure",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "**Connect** is the Powerhouse host application that serves as a container for all Powerhouse apps and drives. It provides:\n\n- A runtime environment for document editors and drive apps\n- Document drive management (local and remote drives)\n- Integration with Vetra Studio (the builder platform)\n- Built-in Tailwind CSS for styling\n- Document toolbar with standard actions (save, share, navigation)\n\nConnect is launched via `ph connect` -- which defaults to the `studio` subcommand, so `ph connect` and `ph connect studio` are equivalent -- or as part of the full local stack started by `ph vetra --watch`. It typically runs at `http://localhost:3000/`.\n\nIn the context of development, Connect/Vetra provides a live preview environment where editors update dynamically as you make changes to the code.\n\n_Corrected 2026-08-13 against Powerhouse v6.2.2-dev.45._",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "CONCEPT",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "knowledge-agent",
+    "createdAt": "2026-04-02T12:00:00.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-09-03T09:59:20.677Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Connect runs locally via `ph connect` and hosts Vetra Studio, document editors, drive apps, and manages document drives.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "2c504ffe-3fc7-49dc-8b39-3fd6780a03c9",
+      "actor": "claude",
+      "comment": "Knowledge registered against powerhouse v6.2.2-dev.47",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-14T12:00:00.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "aab6544b-7591-4dfc-8d61-a5dd2c355df8",
+      "actor": "liberuum",
+      "comment": "Canonical as of powerhouse v6.2.2-dev.47",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-14T12:00:00.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

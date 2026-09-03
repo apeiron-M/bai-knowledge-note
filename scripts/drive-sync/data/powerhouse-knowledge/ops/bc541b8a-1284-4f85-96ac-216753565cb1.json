@@ -1,0 +1,500 @@
+[
+  {
+    "index": 0,
+    "hash": "",
+    "timestampUtcMs": "2026-09-03T07:29:14.744Z",
+    "action": {
+      "type": "CREATE_DOCUMENT",
+      "input": {
+        "meta": {},
+        "name": "browser-client-provider-seam",
+        "slug": "",
+        "model": "bai/knowledge-note",
+        "branch": "main",
+        "signing": {
+          "nonce": "",
+          "publicKey": {},
+          "signature": "bc541b8a-1284-4f85-96ac-216753565cb1",
+          "documentType": "bai/knowledge-note",
+          "createdAtUtcIso": "2026-09-03T07:29:14.744Z"
+        },
+        "version": 0,
+        "documentId": "bc541b8a-1284-4f85-96ac-216753565cb1",
+        "protocolVersions": {
+          "base-reducer": 2
+        }
+      },
+      "timestampUtcMs": "2026-09-03T07:29:14.744Z"
+    }
+  },
+  {
+    "index": 0,
+    "hash": "TKjbZWuMIN8Xnk6zDIhqoG0eMA0=",
+    "timestampUtcMs": "2026-09-03T07:29:16.070Z",
+    "action": {
+      "type": "SET_TITLE",
+      "input": {
+        "title": "ADR 0002 splits window.ph's two roles: a client-only ReactorProvider publishes a resolved client through context while the window slot stays the ambient locator",
+        "updatedAt": "2026-09-03T07:29:16.070Z"
+      },
+      "timestampUtcMs": "2026-09-03T07:29:16.070Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "",
+    "timestampUtcMs": "2026-09-03T07:29:14.744Z",
+    "action": {
+      "type": "UPGRADE_DOCUMENT",
+      "input": {
+        "model": "bai/knowledge-note",
+        "toVersion": 1,
+        "documentId": "bc541b8a-1284-4f85-96ac-216753565cb1",
+        "fromVersion": 0,
+        "initialState": {
+          "auth": {
+            "grants": [],
+            "version": 0
+          },
+          "local": {
+            "lastViewedAt": null,
+            "personalTags": []
+          },
+          "global": {
+            "links": [],
+            "model": null,
+            "scope": null,
+            "title": null,
+            "editor": null,
+            "inputs": [],
+            "models": [],
+            "status": "DRAFT",
+            "topics": [],
+            "content": null,
+            "context": null,
+            "modelId": null,
+            "modules": [],
+            "outputs": [],
+            "version": null,
+            "computes": null,
+            "filePath": null,
+            "noteType": null,
+            "severity": null,
+            "hooksUsed": [],
+            "rootCause": null,
+            "confidence": null,
+            "consumedBy": [],
+            "provenance": null,
+            "sourceType": null,
+            "targetType": null,
+            "cardinality": null,
+            "description": null,
+            "alternatives": [],
+            "consequences": [],
+            "errorMessage": null,
+            "relationType": null,
+            "correctPattern": null,
+            "decisionStatus": null,
+            "dispatchTargets": [],
+            "lifecycleEvents": []
+          },
+          "document": {
+            "hash": {
+              "encoding": "base64",
+              "algorithm": "sha1"
+            },
+            "version": 1
+          }
+        }
+      },
+      "timestampUtcMs": "2026-09-03T07:29:14.744Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "y2Z6b1ZRmQYWtAqU407nR/GLxz0=",
+    "timestampUtcMs": "2026-09-03T07:29:16.070Z",
+    "action": {
+      "type": "SET_DESCRIPTION",
+      "input": {
+        "updatedAt": "2026-09-03T07:29:16.070Z",
+        "description": "IReactorBrowserClient is a type-only Pick of IReactorClient, so the full reactor is a drop-in and any implementation is checked against the reactor's own signatures. Injection is unchanged."
+      },
+      "timestampUtcMs": "2026-09-03T07:29:16.070Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "",
+    "timestampUtcMs": "2026-09-03T07:30:22.199Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "metadata": {
+          "reason": "Extracted from docs/adr/0002-reactor-browser-client-interface.md at v6.2.2-dev.74 \u2014 Decision 1 (Pick subset), 2 (hooks depend on the subset), 3 (GraphQLReactorClient), 7 (ReactorProvider); Implementation details",
+          "confidence": "grounded"
+        },
+        "sourceId": "bc541b8a-1284-4f85-96ac-216753565cb1",
+        "targetId": "d4009255-3f1f-4e06-872a-9f8142896eea",
+        "relationshipType": "DERIVED_FROM"
+      },
+      "timestampUtcMs": "2026-09-03T07:30:22.199Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "0CRfNElLyAVjMVifxwaz2lrKSyM=",
+    "timestampUtcMs": "2026-09-03T07:29:16.070Z",
+    "action": {
+      "type": "SET_NOTE_TYPE",
+      "input": {
+        "noteType": "ARCHITECTURE",
+        "updatedAt": "2026-09-03T07:29:16.070Z"
+      },
+      "timestampUtcMs": "2026-09-03T07:29:16.070Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "",
+    "timestampUtcMs": "2026-09-03T07:30:22.646Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "metadata": {
+          "reason": "The provider and interface decisions are how the ADR achieves the one-integration-two-implementations objective it sets out",
+          "confidence": "grounded"
+        },
+        "sourceId": "bc541b8a-1284-4f85-96ac-216753565cb1",
+        "targetId": "9d055359-868c-442c-99ad-052a2101e9da",
+        "relationshipType": "BUILDS_ON"
+      },
+      "timestampUtcMs": "2026-09-03T07:30:22.646Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "VzFoKGKfVUYD0V0G2G7Td/1x5gU=",
+    "timestampUtcMs": "2026-09-03T07:29:16.070Z",
+    "action": {
+      "type": "SET_CONTENT",
+      "input": {
+        "content": "Three of the ADR's decisions are about the seam rather than the transport.\n\n**The interface is a type-only `Pick`.** `IReactorBrowserClient` is defined as a subset of `IReactorClient`, which buys two things at once: the full reactor is a **drop-in with zero changes**, and any other implementation is type-checked against the reactor's *own* signatures rather than a hand-copied shape that can drift. The subset holds the read primitives (`get`, `subscribe`), the write method (`execute`), and the document-lifecycle methods a standalone webapp needs (`create`, `deleteDocument`); drive-scoped and node/relationship variants stay off it deliberately.\n\n**The hooks depend on the subset, and the injection mechanism is unchanged.** The existing `window.ph` client slot (`setReactorClient` / `useReactorClient`) is retyped to `IReactorBrowserClient`, as are the `DocumentCache` constructor (read subset) and `queueActions` (`execute`). Nothing about how the client is published changes.\n\n**`window.ph` had two roles, and they are separated.** For the component role, a client-only base `ReactorProvider` publishes a resolved client through React **Context**, and a `GraphQLReactorProvider` wrapper builds the light client \u2014 while the window slot remains available as the ambient service locator it always was. The ADR notes the constraint that made this necessary: `createClient` is server-safe but the hooks are not, and Renown is client-only.\n\nThe codebase facts the design leans on are catalogued rather than assumed: the hooks touch only about **nine** `IReactorClient` methods, the server materializes head state, operation hashes are state-based via `hashDocumentStateForScope`, the server **reshuffles rather than hard-rejecting** stale writes, and `ViewFilter.revision` is not honoured over GraphQL.\n\n## Provenance\n- `docs/adr/0002-reactor-browser-client-interface.md` \u2014 Decision 1 (Pick subset), 2 (hooks depend on the subset), 3 (GraphQLReactorClient), 7 (ReactorProvider); Implementation details\n\n_Extracted from the Powerhouse repository at **v6.2.2-dev.74**._",
+        "updatedAt": "2026-09-03T07:29:16.070Z"
+      },
+      "timestampUtcMs": "2026-09-03T07:29:16.070Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "",
+    "timestampUtcMs": "2026-09-03T07:30:23.128Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "metadata": {
+          "reason": "The provider building the client once and never rebuilding is the shipped behaviour of the GraphQLReactorProvider this decision introduced",
+          "confidence": "grounded"
+        },
+        "sourceId": "bc541b8a-1284-4f85-96ac-216753565cb1",
+        "targetId": "44abd2b0-e3b0-4484-8b27-f5b5080ecbf5",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-09-03T07:30:23.128Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "Phb9X+a/pMFe9asAD1jJFb//nPA=",
+    "timestampUtcMs": "2026-09-03T07:29:16.070Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "b53cee65-ff3f-4e80-9405-ee38b6634a2a",
+        "name": "reactor-browser"
+      },
+      "timestampUtcMs": "2026-09-03T07:29:16.070Z"
+    }
+  },
+  {
+    "index": 5,
+    "hash": "",
+    "timestampUtcMs": "2026-09-03T07:30:23.596Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "metadata": {
+          "reason": "Explains why the interface is a type-only Pick: so the reactor satisfies it for free and no implementation can drift from its signatures",
+          "confidence": "grounded"
+        },
+        "sourceId": "bc541b8a-1284-4f85-96ac-216753565cb1",
+        "targetId": "0f228193-a299-4bab-8f34-bb5e9d0b28b7",
+        "relationshipType": "BUILDS_ON"
+      },
+      "timestampUtcMs": "2026-09-03T07:30:23.596Z"
+    }
+  },
+  {
+    "index": 5,
+    "hash": "Qg1mhyTtVw9TZtH0Pw9wRP1xAZM=",
+    "timestampUtcMs": "2026-09-03T07:29:16.070Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "38afa74d-7d00-43a6-bb4a-1052eefaa0e1",
+        "name": "providers"
+      },
+      "timestampUtcMs": "2026-09-03T07:29:16.070Z"
+    }
+  },
+  {
+    "index": 6,
+    "hash": "",
+    "timestampUtcMs": "2026-09-03T07:31:29.371Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "metadata": {
+          "reason": "Extracted from docs/adr/0002-reactor-browser-client-interface.md at v6.2.2-dev.74 \u2014 Decision 1 (Pick subset), 2 (hooks depend on the subset), 3 (GraphQLReactorClient), 7 (ReactorProvider); Implementation details",
+          "confidence": "grounded"
+        },
+        "sourceId": "bc541b8a-1284-4f85-96ac-216753565cb1",
+        "targetId": "d4009255-3f1f-4e06-872a-9f8142896eea",
+        "relationshipType": "DERIVED_FROM"
+      },
+      "timestampUtcMs": "2026-09-03T07:31:29.371Z"
+    }
+  },
+  {
+    "index": 6,
+    "hash": "unJmR0OrAgbolADQ1Ox+ntvK6ZQ=",
+    "timestampUtcMs": "2026-09-03T07:29:16.070Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "ba2787d3-2656-4f9b-80c1-03a56e2ff2e1",
+        "name": "react"
+      },
+      "timestampUtcMs": "2026-09-03T07:29:16.070Z"
+    }
+  },
+  {
+    "index": 7,
+    "hash": "",
+    "timestampUtcMs": "2026-09-03T07:31:29.868Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "metadata": {
+          "reason": "The provider and interface decisions are how the ADR achieves the one-integration-two-implementations objective it sets out",
+          "confidence": "grounded"
+        },
+        "sourceId": "bc541b8a-1284-4f85-96ac-216753565cb1",
+        "targetId": "9d055359-868c-442c-99ad-052a2101e9da",
+        "relationshipType": "BUILDS_ON"
+      },
+      "timestampUtcMs": "2026-09-03T07:31:29.868Z"
+    }
+  },
+  {
+    "index": 7,
+    "hash": "PXDYPQkDQBi79Oj/NOfpGj9Vnt0=",
+    "timestampUtcMs": "2026-09-03T07:29:16.070Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "cee14b47-fb35-4e16-9155-ba6612da1c2e",
+        "name": "adr"
+      },
+      "timestampUtcMs": "2026-09-03T07:29:16.070Z"
+    }
+  },
+  {
+    "index": 8,
+    "hash": "",
+    "timestampUtcMs": "2026-09-03T07:31:30.329Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "metadata": {
+          "reason": "The provider building the client once and never rebuilding is the shipped behaviour of the GraphQLReactorProvider this decision introduced",
+          "confidence": "grounded"
+        },
+        "sourceId": "bc541b8a-1284-4f85-96ac-216753565cb1",
+        "targetId": "44abd2b0-e3b0-4484-8b27-f5b5080ecbf5",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-09-03T07:31:30.329Z"
+    }
+  },
+  {
+    "index": 8,
+    "hash": "kj4YgaiOdqD5v9JHt1xX0YnquGM=",
+    "timestampUtcMs": "2026-09-03T07:29:16.070Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "version",
+        "value": "v6.2.2-dev.74",
+        "updatedAt": "2026-09-03T07:29:16.070Z"
+      },
+      "timestampUtcMs": "2026-09-03T07:29:16.070Z"
+    }
+  },
+  {
+    "index": 9,
+    "hash": "",
+    "timestampUtcMs": "2026-09-03T07:31:30.769Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "metadata": {
+          "reason": "Explains why the interface is a type-only Pick: so the reactor satisfies it for free and no implementation can drift from its signatures",
+          "confidence": "grounded"
+        },
+        "sourceId": "bc541b8a-1284-4f85-96ac-216753565cb1",
+        "targetId": "0f228193-a299-4bab-8f34-bb5e9d0b28b7",
+        "relationshipType": "BUILDS_ON"
+      },
+      "timestampUtcMs": "2026-09-03T07:31:30.769Z"
+    }
+  },
+  {
+    "index": 9,
+    "hash": "DtSPoAKvNydZ7cPcqZQf/0DUQ3A=",
+    "timestampUtcMs": "2026-09-03T07:29:16.070Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "filePath",
+        "value": "docs/adr/0002-reactor-browser-client-interface.md",
+        "updatedAt": "2026-09-03T07:29:16.070Z"
+      },
+      "timestampUtcMs": "2026-09-03T07:29:16.070Z"
+    }
+  },
+  {
+    "index": 10,
+    "hash": "jq4DokQ3kO71nw3foNgadcAj4Wg=",
+    "timestampUtcMs": "2026-09-03T07:29:18.709Z",
+    "action": {
+      "type": "SET_PROVENANCE",
+      "input": {
+        "author": "knowledge-agent",
+        "createdAt": "2026-09-03T07:29:18.709Z",
+        "sourceOrigin": "DERIVED"
+      },
+      "timestampUtcMs": "2026-09-03T07:29:18.709Z"
+    }
+  },
+  {
+    "index": 11,
+    "hash": "KQbBCFdVaz5A+UfC0gfe6AHI61w=",
+    "timestampUtcMs": "2026-09-03T07:29:19.288Z",
+    "action": {
+      "type": "SUBMIT_FOR_REVIEW",
+      "input": {
+        "id": "6d5569d2-1892-445a-939d-1555dd681009",
+        "actor": "knowledge-agent",
+        "comment": "extracted from docs/adr/0002-reactor-browser-client-interface.md at v6.2.2-dev.74",
+        "timestamp": "2026-09-03T07:29:19.288Z"
+      },
+      "timestampUtcMs": "2026-09-03T07:29:19.288Z"
+    }
+  },
+  {
+    "index": 12,
+    "hash": "RdIYwm9eqlNkqOHesPnPMWq2kf0=",
+    "timestampUtcMs": "2026-09-03T07:29:19.821Z",
+    "action": {
+      "type": "APPROVE_NOTE",
+      "input": {
+        "id": "ed5d62ae-5e80-4398-aeeb-c8352800020c",
+        "actor": "liberuum",
+        "comment": "claim checked against the cited file at the pinned tag",
+        "timestamp": "2026-09-03T07:29:19.821Z"
+      },
+      "timestampUtcMs": "2026-09-03T07:29:19.821Z"
+    }
+  },
+  {
+    "index": 13,
+    "hash": "EWW9GzZwtFOVOAr/GYNef6jQhzU=",
+    "timestampUtcMs": "2026-09-03T07:31:11.380Z",
+    "action": {
+      "type": "SET_TITLE",
+      "input": {
+        "title": "ADR 0002 splits window.ph's two roles: a client-only ReactorProvider publishes a resolved client through context while the window slot stays the ambient locator",
+        "updatedAt": "2026-09-03T07:31:11.380Z"
+      },
+      "timestampUtcMs": "2026-09-03T07:31:11.380Z"
+    }
+  },
+  {
+    "index": 14,
+    "hash": "EWW9GzZwtFOVOAr/GYNef6jQhzU=",
+    "timestampUtcMs": "2026-09-03T07:31:11.380Z",
+    "action": {
+      "type": "SET_DESCRIPTION",
+      "input": {
+        "updatedAt": "2026-09-03T07:31:11.380Z",
+        "description": "IReactorBrowserClient is a type-only Pick of IReactorClient, so the full reactor is a drop-in and any implementation is checked against the reactor's own signatures. Injection is unchanged."
+      },
+      "timestampUtcMs": "2026-09-03T07:31:11.380Z"
+    }
+  },
+  {
+    "index": 15,
+    "hash": "EWW9GzZwtFOVOAr/GYNef6jQhzU=",
+    "timestampUtcMs": "2026-09-03T07:31:11.380Z",
+    "action": {
+      "type": "SET_NOTE_TYPE",
+      "input": {
+        "noteType": "ARCHITECTURE",
+        "updatedAt": "2026-09-03T07:31:11.380Z"
+      },
+      "timestampUtcMs": "2026-09-03T07:31:11.380Z"
+    }
+  },
+  {
+    "index": 16,
+    "hash": "EWW9GzZwtFOVOAr/GYNef6jQhzU=",
+    "timestampUtcMs": "2026-09-03T07:31:11.380Z",
+    "action": {
+      "type": "SET_CONTENT",
+      "input": {
+        "content": "Three of the ADR's decisions are about the seam rather than the transport.\n\n**The interface is a type-only `Pick`.** `IReactorBrowserClient` is defined as a subset of `IReactorClient`, which buys two things at once: the full reactor is a **drop-in with zero changes**, and any other implementation is type-checked against the reactor's *own* signatures rather than a hand-copied shape that can drift. The subset holds the read primitives (`get`, `subscribe`), the write method (`execute`), and the document-lifecycle methods a standalone webapp needs (`create`, `deleteDocument`); drive-scoped and node/relationship variants stay off it deliberately.\n\n**The hooks depend on the subset, and the injection mechanism is unchanged.** The existing `window.ph` client slot (`setReactorClient` / `useReactorClient`) is retyped to `IReactorBrowserClient`, as are the `DocumentCache` constructor (read subset) and `queueActions` (`execute`). Nothing about how the client is published changes.\n\n**`window.ph` had two roles, and they are separated.** For the component role, a client-only base `ReactorProvider` publishes a resolved client through React **Context**, and a `GraphQLReactorProvider` wrapper builds the light client \u2014 while the window slot remains available as the ambient service locator it always was. The ADR notes the constraint that made this necessary: `createClient` is server-safe but the hooks are not, and Renown is client-only.\n\nThe codebase facts the design leans on are catalogued rather than assumed: the hooks touch only about **nine** `IReactorClient` methods, the server materializes head state, operation hashes are state-based via `hashDocumentStateForScope`, the server **reshuffles rather than hard-rejecting** stale writes, and `ViewFilter.revision` is not honoured over GraphQL.\n\n## Provenance\n- `docs/adr/0002-reactor-browser-client-interface.md` \u2014 Decision 1 (Pick subset), 2 (hooks depend on the subset), 3 (GraphQLReactorClient), 7 (ReactorProvider); Implementation details\n\n_Extracted from the Powerhouse repository at **v6.2.2-dev.74**._",
+        "updatedAt": "2026-09-03T07:31:11.380Z"
+      },
+      "timestampUtcMs": "2026-09-03T07:31:11.380Z"
+    }
+  },
+  {
+    "index": 17,
+    "hash": "EWW9GzZwtFOVOAr/GYNef6jQhzU=",
+    "timestampUtcMs": "2026-09-03T07:31:11.380Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "version",
+        "value": "v6.2.2-dev.74",
+        "updatedAt": "2026-09-03T07:31:11.380Z"
+      },
+      "timestampUtcMs": "2026-09-03T07:31:11.380Z"
+    }
+  },
+  {
+    "index": 18,
+    "hash": "EWW9GzZwtFOVOAr/GYNef6jQhzU=",
+    "timestampUtcMs": "2026-09-03T07:31:11.380Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "filePath",
+        "value": "docs/adr/0002-reactor-browser-client-interface.md",
+        "updatedAt": "2026-09-03T07:31:11.380Z"
+      },
+      "timestampUtcMs": "2026-09-03T07:31:11.380Z"
+    }
+  }
+]

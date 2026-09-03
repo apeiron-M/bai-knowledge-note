@@ -1,0 +1,99 @@
+{
+  "links": [
+    {
+      "id": "lnk-2ab414f6-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "2ab414f6-938d-40f6-89b9-054bbcbaf4f2",
+      "targetTitle": "reactor-sync-ichannel-three-mailbox-model"
+    },
+    {
+      "id": "lnk-3289f3d4-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "3289f3d4-7ee0-453a-8811-a7e2027fb5de",
+      "targetTitle": "Error Handling"
+    },
+    {
+      "id": "lnk-cb8003b1-bui",
+      "linkType": "BUILDS_ON",
+      "targetDocumentId": "cb8003b1-c936-4b36-9849-4925723df163",
+      "targetTitle": "sync-state-pglite-tables"
+    },
+    {
+      "id": "lnk-d713d0e0-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "d713d0e0-b6a9-4302-9463-fa8a34bf69b1",
+      "targetTitle": "Academy \u203a Reference \u203a Reactor \u203a Synchronization and remote drives",
+      "reason": "The note names apps/academy/docs/academy/04-Reference/01-Reactor/04-Synchronization.md as its source; page text identical at v6.2.2-dev.47 and v6.2.2-dev.74",
+      "confidence": "grounded"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "A dead letter quarantines the single document, not the drive, so one poisoned document cannot stall sync",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "5d5ac6ae-7a8f-458c-a2d5-1f1bbfd35484",
+      "name": "reactor-sync",
+      "topicDocumentId": null
+    },
+    {
+      "id": "470d9f6d-2a17-4892-9ca4-0743564a18ca",
+      "name": "resilience",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "A dead letter is a sync operation that failed and **cannot be retried** \u2014 a bad signature, a hash mismatch, an unrecoverable transport error. It is the terminal category, distinct from the transient failures that the channel retries with exponential backoff.\n\nWhen a channel routes an operation to its dead-letter mailbox the sync manager does four things: logs it, quarantines the document, persists a record to dead-letter storage, and emits `DEAD_LETTER_ADDED` (20004).\n\n```typescript\ntype DeadLetterAddedEvent = {\n  id: string;\n  jobId: string;\n  remoteName: string;\n  documentId: string;\n  errorSource: ChannelErrorSource; // none | channel | inbox | outbox\n};\n```\n\nThe design decision worth internalizing is the **granularity of the quarantine: per document, not per drive.** Once a document is quarantined, its inbound operations are dropped and its outbound operations are filtered out of the outbox \u2014 but every other document on the same remote keeps syncing normally. A single corrupt or unverifiable document therefore degrades to a hole in the replica rather than a stalled drive. Without this, one bad operation would head-of-line block an entire collection.\n\nThe flip side is that quarantine is silent unless you watch for it. Nothing retries automatically and nothing surfaces in the drive's own status, so `DEAD_LETTER_ADDED` is the event to subscribe to for anything that needs manual intervention. The `errorSource` tag tells you which stage produced it (`inbox`, `outbox`, or the `channel` itself), which is usually enough to separate \"the remote sent us something bad\" from \"we produced something the remote rejected\".\n\nRetention is bounded: each remote keeps at most `maxDeadLettersPerRemote` dead letters, default `100`, configurable via `SyncBuilder.withMaxDeadLettersPerRemote(limit)`. Past that the oldest are evicted \u2014 so dead-letter storage is a recent-failures buffer for diagnostics, not a durable audit log. If you need the full record, capture the events as they fire.\n\n_Source: apps/academy/docs/academy/04-Reference/01-Reactor/04-Synchronization.md (Powerhouse v6.2.2-dev.45)._",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": "v6.2.2-dev.74",
+  "computes": null,
+  "filePath": "apps/academy/docs/academy/04-Reference/01-Reactor/04-Synchronization.md",
+  "noteType": "CONCEPT",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "claude",
+    "createdAt": "2026-08-13T14:34:18.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-09-02T21:38:02.038Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Inbound ops for a quarantined document are dropped and outbound ops filtered out. Each remote retains at most maxDeadLettersPerRemote (default 100).",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "4af8f66d-de20-4112-b5ec-49bc599df279",
+      "actor": "claude",
+      "comment": "Knowledge registered against powerhouse v6.2.2-dev.47",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-14T12:00:00.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "b069e6a5-89f3-4555-82ac-1e25e0745f20",
+      "actor": "liberuum",
+      "comment": "Canonical as of powerhouse v6.2.2-dev.47",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-14T12:00:00.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

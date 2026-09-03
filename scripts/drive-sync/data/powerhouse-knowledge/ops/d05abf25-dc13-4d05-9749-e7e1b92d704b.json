@@ -1,0 +1,464 @@
+[
+  {
+    "index": 0,
+    "hash": "",
+    "timestampUtcMs": "2026-09-03T07:19:58.482Z",
+    "action": {
+      "type": "CREATE_DOCUMENT",
+      "input": {
+        "meta": {},
+        "name": "attachment-inline-removed",
+        "slug": "",
+        "model": "bai/knowledge-note",
+        "branch": "main",
+        "signing": {
+          "nonce": "",
+          "publicKey": {},
+          "signature": "d05abf25-dc13-4d05-9749-e7e1b92d704b",
+          "documentType": "bai/knowledge-note",
+          "createdAtUtcIso": "2026-09-03T07:19:58.482Z"
+        },
+        "version": 0,
+        "documentId": "d05abf25-dc13-4d05-9749-e7e1b92d704b",
+        "protocolVersions": {
+          "base-reducer": 2
+        }
+      },
+      "timestampUtcMs": "2026-09-03T07:19:58.482Z"
+    }
+  },
+  {
+    "index": 0,
+    "hash": "iXQZqufX9/AKI0gXAQ2sTv4eEsY=",
+    "timestampUtcMs": "2026-09-03T07:20:00.078Z",
+    "action": {
+      "type": "SET_TITLE",
+      "input": {
+        "title": "Inline base64 attachments are gone: the attachments field on Action and the Attachment / AttachmentInput types have been removed",
+        "updatedAt": "2026-09-03T07:20:00.078Z"
+      },
+      "timestampUtcMs": "2026-09-03T07:20:00.078Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "",
+    "timestampUtcMs": "2026-09-03T07:19:58.482Z",
+    "action": {
+      "type": "UPGRADE_DOCUMENT",
+      "input": {
+        "model": "bai/knowledge-note",
+        "toVersion": 1,
+        "documentId": "d05abf25-dc13-4d05-9749-e7e1b92d704b",
+        "fromVersion": 0,
+        "initialState": {
+          "auth": {
+            "grants": [],
+            "version": 0
+          },
+          "local": {
+            "lastViewedAt": null,
+            "personalTags": []
+          },
+          "global": {
+            "links": [],
+            "model": null,
+            "scope": null,
+            "title": null,
+            "editor": null,
+            "inputs": [],
+            "models": [],
+            "status": "DRAFT",
+            "topics": [],
+            "content": null,
+            "context": null,
+            "modelId": null,
+            "modules": [],
+            "outputs": [],
+            "version": null,
+            "computes": null,
+            "filePath": null,
+            "noteType": null,
+            "severity": null,
+            "hooksUsed": [],
+            "rootCause": null,
+            "confidence": null,
+            "consumedBy": [],
+            "provenance": null,
+            "sourceType": null,
+            "targetType": null,
+            "cardinality": null,
+            "description": null,
+            "alternatives": [],
+            "consequences": [],
+            "errorMessage": null,
+            "relationType": null,
+            "correctPattern": null,
+            "decisionStatus": null,
+            "dispatchTargets": [],
+            "lifecycleEvents": []
+          },
+          "document": {
+            "hash": {
+              "encoding": "base64",
+              "algorithm": "sha1"
+            },
+            "version": 1
+          }
+        }
+      },
+      "timestampUtcMs": "2026-09-03T07:19:58.482Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "uk+SPwX/v6BavXR0zQSS0v+nCAo=",
+    "timestampUtcMs": "2026-09-03T07:20:00.078Z",
+    "action": {
+      "type": "SET_DESCRIPTION",
+      "input": {
+        "updatedAt": "2026-09-03T07:20:00.078Z",
+        "description": "Phase 3 of the migration is done, so attachment data flows only through IAttachmentService, IAttachmentStore and IAttachmentTransport. Sync channels no longer carry inline attachment bytes."
+      },
+      "timestampUtcMs": "2026-09-03T07:20:00.078Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "",
+    "timestampUtcMs": "2026-09-03T07:21:27.638Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "metadata": {
+          "reason": "Extracted from packages/reactor/docs/attachments.md at v6.2.2-dev.74 \u2014 Current State; Migration from Inline Attachments (Phases 1-3)",
+          "confidence": "grounded"
+        },
+        "sourceId": "d05abf25-dc13-4d05-9749-e7e1b92d704b",
+        "targetId": "5b4a52c0-6345-4bfc-a279-76ea1f37db5d",
+        "relationshipType": "DERIVED_FROM"
+      },
+      "timestampUtcMs": "2026-09-03T07:21:27.638Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "1ENAtpfkFltPiYrInAQd2ujEvQw=",
+    "timestampUtcMs": "2026-09-03T07:20:00.078Z",
+    "action": {
+      "type": "SET_NOTE_TYPE",
+      "input": {
+        "noteType": "OBSERVATION",
+        "updatedAt": "2026-09-03T07:20:00.078Z"
+      },
+      "timestampUtcMs": "2026-09-03T07:20:00.078Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "",
+    "timestampUtcMs": "2026-09-03T07:21:28.113Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "metadata": {
+          "reason": "Explains what the ref replaced and confirms the old inline path is removed rather than merely discouraged, so a base64 data field is now a compile error rather than a bad habit",
+          "confidence": "grounded"
+        },
+        "sourceId": "d05abf25-dc13-4d05-9749-e7e1b92d704b",
+        "targetId": "6f938c9e-85f4-4a4f-b55e-3213b0ae4ef5",
+        "relationshipType": "BUILDS_ON"
+      },
+      "timestampUtcMs": "2026-09-03T07:21:28.113Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "A+rw8mue5MpmmvyJp33nPPhd5Hk=",
+    "timestampUtcMs": "2026-09-03T07:20:00.078Z",
+    "action": {
+      "type": "SET_CONTENT",
+      "input": {
+        "content": "The legacy inline format is not deprecated, it is **removed**. The document records Phase 3 as done: the `attachments` field on `Action` and the inline `AttachmentInput` / `Attachment` types (`{ data: string /* base64 */, mimeType, extension?, fileName? }`) no longer exist, and all attachment data flows through `IAttachmentService`, `IAttachmentStore` and `IAttachmentTransport`.\n\nThe problems that motivated the removal are worth keeping, because they are the argument for refs in any similar design: operations carried the full binary payload through the job queue, the sync channels and GraphQL transport; large files bloated the operation store and sync bandwidth permanently, since operations are immutable; an attachment could not be uploaded independently of submitting an action; and there was no lifecycle at all \u2014 an attachment either existed inline or did not.\n\nPhase 2 completed the sync half: channels no longer transfer inline attachment data, bytes move via the transport (lazy fetch or eager push), and transport configuration became part of the remote/channel configuration.\n\nFor a model author migrating an old schema, the mechanical change is to replace `data: String` (or a composite `{ image, imageMediaType, imageUrl }`) with a single `attachment: AttachmentRef` on both the input and the state type.\n\n## Provenance\n- `packages/reactor/docs/attachments.md` \u2014 Current State; Migration from Inline Attachments (Phases 1-3)\n\n_Extracted from the Powerhouse repository at **v6.2.2-dev.74**._",
+        "updatedAt": "2026-09-03T07:20:00.078Z"
+      },
+      "timestampUtcMs": "2026-09-03T07:20:00.078Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "",
+    "timestampUtcMs": "2026-09-03T07:21:28.596Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "metadata": {
+          "reason": "Phase 2 moved the bytes onto the transport described there, which is why sync no longer carries them",
+          "confidence": "grounded"
+        },
+        "sourceId": "d05abf25-dc13-4d05-9749-e7e1b92d704b",
+        "targetId": "0d8024a6-332f-457f-86eb-414251cd65a3",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-09-03T07:21:28.596Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "NmnFdYj5jSqSkpJZAThKFnBNGqo=",
+    "timestampUtcMs": "2026-09-03T07:20:00.078Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "f06a3dde-bc10-471e-8c5c-555f6403d2fa",
+        "name": "attachments"
+      },
+      "timestampUtcMs": "2026-09-03T07:20:00.078Z"
+    }
+  },
+  {
+    "index": 5,
+    "hash": "",
+    "timestampUtcMs": "2026-09-03T07:23:19.217Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "metadata": {
+          "reason": "Extracted from packages/reactor/docs/attachments.md at v6.2.2-dev.74 \u2014 Current State; Migration from Inline Attachments (Phases 1-3)",
+          "confidence": "grounded"
+        },
+        "sourceId": "d05abf25-dc13-4d05-9749-e7e1b92d704b",
+        "targetId": "5b4a52c0-6345-4bfc-a279-76ea1f37db5d",
+        "relationshipType": "DERIVED_FROM"
+      },
+      "timestampUtcMs": "2026-09-03T07:23:19.217Z"
+    }
+  },
+  {
+    "index": 5,
+    "hash": "Aczu9DxW/nW1smbBsnlMJn9uSLA=",
+    "timestampUtcMs": "2026-09-03T07:20:00.078Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "9d1ad8c1-0635-4ce6-ba42-e4a34b187cd7",
+        "name": "migration"
+      },
+      "timestampUtcMs": "2026-09-03T07:20:00.078Z"
+    }
+  },
+  {
+    "index": 6,
+    "hash": "",
+    "timestampUtcMs": "2026-09-03T07:23:19.686Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "metadata": {
+          "reason": "Explains what the ref replaced and confirms the old inline path is removed rather than merely discouraged, so a base64 data field is now a compile error rather than a bad habit",
+          "confidence": "grounded"
+        },
+        "sourceId": "d05abf25-dc13-4d05-9749-e7e1b92d704b",
+        "targetId": "6f938c9e-85f4-4a4f-b55e-3213b0ae4ef5",
+        "relationshipType": "BUILDS_ON"
+      },
+      "timestampUtcMs": "2026-09-03T07:23:19.686Z"
+    }
+  },
+  {
+    "index": 6,
+    "hash": "o2i03tyfqG4E7b5VO9rCH9QCofo=",
+    "timestampUtcMs": "2026-09-03T07:20:00.078Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "85e269b6-286f-4ce2-a10b-683e0fe67bd2",
+        "name": "document-model"
+      },
+      "timestampUtcMs": "2026-09-03T07:20:00.078Z"
+    }
+  },
+  {
+    "index": 7,
+    "hash": "",
+    "timestampUtcMs": "2026-09-03T07:23:21.174Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "metadata": {
+          "reason": "Phase 2 moved the bytes onto the transport described there, which is why sync no longer carries them",
+          "confidence": "grounded"
+        },
+        "sourceId": "d05abf25-dc13-4d05-9749-e7e1b92d704b",
+        "targetId": "0d8024a6-332f-457f-86eb-414251cd65a3",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-09-03T07:23:21.174Z"
+    }
+  },
+  {
+    "index": 7,
+    "hash": "I2o23najkd7yBxqd5v+y3vNtjJg=",
+    "timestampUtcMs": "2026-09-03T07:20:00.078Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "068c38c0-c714-4616-88bf-9302da169163",
+        "name": "breaking-change"
+      },
+      "timestampUtcMs": "2026-09-03T07:20:00.078Z"
+    }
+  },
+  {
+    "index": 8,
+    "hash": "6PKtSRzgEJaYVCraCNABTUkvGS8=",
+    "timestampUtcMs": "2026-09-03T07:20:00.078Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "version",
+        "value": "v6.2.2-dev.74",
+        "updatedAt": "2026-09-03T07:20:00.078Z"
+      },
+      "timestampUtcMs": "2026-09-03T07:20:00.078Z"
+    }
+  },
+  {
+    "index": 9,
+    "hash": "vJ/Z0lCP9j6sDM1NcypBi5/L9K8=",
+    "timestampUtcMs": "2026-09-03T07:20:00.078Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "filePath",
+        "value": "packages/reactor/docs/attachments.md",
+        "updatedAt": "2026-09-03T07:20:00.078Z"
+      },
+      "timestampUtcMs": "2026-09-03T07:20:00.078Z"
+    }
+  },
+  {
+    "index": 10,
+    "hash": "Gp2IwcUKSqzEucRZ+6+kV/lp8Rk=",
+    "timestampUtcMs": "2026-09-03T07:20:02.658Z",
+    "action": {
+      "type": "SET_PROVENANCE",
+      "input": {
+        "author": "knowledge-agent",
+        "createdAt": "2026-09-03T07:20:02.658Z",
+        "sourceOrigin": "DERIVED"
+      },
+      "timestampUtcMs": "2026-09-03T07:20:02.658Z"
+    }
+  },
+  {
+    "index": 11,
+    "hash": "vXHDGSMYpsCheKLXIA9HhT3wBPg=",
+    "timestampUtcMs": "2026-09-03T07:20:03.357Z",
+    "action": {
+      "type": "SUBMIT_FOR_REVIEW",
+      "input": {
+        "id": "89b7ec5d-2d21-41d0-b0e5-e5977b9ed54f",
+        "actor": "knowledge-agent",
+        "comment": "extracted from packages/reactor/docs/attachments.md at v6.2.2-dev.74",
+        "timestamp": "2026-09-03T07:20:03.357Z"
+      },
+      "timestampUtcMs": "2026-09-03T07:20:03.357Z"
+    }
+  },
+  {
+    "index": 12,
+    "hash": "kvbyRyFCetQ69ld6DSjv7k3tdOU=",
+    "timestampUtcMs": "2026-09-03T07:20:03.941Z",
+    "action": {
+      "type": "APPROVE_NOTE",
+      "input": {
+        "id": "6a4f0163-c510-468c-bd73-4a85186bd5d8",
+        "actor": "liberuum",
+        "comment": "claim checked against the cited file at the pinned tag",
+        "timestamp": "2026-09-03T07:20:03.941Z"
+      },
+      "timestampUtcMs": "2026-09-03T07:20:03.941Z"
+    }
+  },
+  {
+    "index": 13,
+    "hash": "XCgAumSwaDk75OuR8xQ+cZv7cd0=",
+    "timestampUtcMs": "2026-09-03T07:22:33.212Z",
+    "action": {
+      "type": "SET_TITLE",
+      "input": {
+        "title": "Inline base64 attachments are gone: the attachments field on Action and the Attachment / AttachmentInput types have been removed",
+        "updatedAt": "2026-09-03T07:22:33.212Z"
+      },
+      "timestampUtcMs": "2026-09-03T07:22:33.212Z"
+    }
+  },
+  {
+    "index": 14,
+    "hash": "XCgAumSwaDk75OuR8xQ+cZv7cd0=",
+    "timestampUtcMs": "2026-09-03T07:22:33.212Z",
+    "action": {
+      "type": "SET_DESCRIPTION",
+      "input": {
+        "updatedAt": "2026-09-03T07:22:33.212Z",
+        "description": "Phase 3 of the migration is done, so attachment data flows only through IAttachmentService, IAttachmentStore and IAttachmentTransport. Sync channels no longer carry inline attachment bytes."
+      },
+      "timestampUtcMs": "2026-09-03T07:22:33.212Z"
+    }
+  },
+  {
+    "index": 15,
+    "hash": "XCgAumSwaDk75OuR8xQ+cZv7cd0=",
+    "timestampUtcMs": "2026-09-03T07:22:33.212Z",
+    "action": {
+      "type": "SET_NOTE_TYPE",
+      "input": {
+        "noteType": "OBSERVATION",
+        "updatedAt": "2026-09-03T07:22:33.212Z"
+      },
+      "timestampUtcMs": "2026-09-03T07:22:33.212Z"
+    }
+  },
+  {
+    "index": 16,
+    "hash": "XCgAumSwaDk75OuR8xQ+cZv7cd0=",
+    "timestampUtcMs": "2026-09-03T07:22:33.212Z",
+    "action": {
+      "type": "SET_CONTENT",
+      "input": {
+        "content": "The legacy inline format is not deprecated, it is **removed**. The document records Phase 3 as done: the `attachments` field on `Action` and the inline `AttachmentInput` / `Attachment` types (`{ data: string /* base64 */, mimeType, extension?, fileName? }`) no longer exist, and all attachment data flows through `IAttachmentService`, `IAttachmentStore` and `IAttachmentTransport`.\n\nThe problems that motivated the removal are worth keeping, because they are the argument for refs in any similar design: operations carried the full binary payload through the job queue, the sync channels and GraphQL transport; large files bloated the operation store and sync bandwidth permanently, since operations are immutable; an attachment could not be uploaded independently of submitting an action; and there was no lifecycle at all \u2014 an attachment either existed inline or did not.\n\nPhase 2 completed the sync half: channels no longer transfer inline attachment data, bytes move via the transport (lazy fetch or eager push), and transport configuration became part of the remote/channel configuration.\n\nFor a model author migrating an old schema, the mechanical change is to replace `data: String` (or a composite `{ image, imageMediaType, imageUrl }`) with a single `attachment: AttachmentRef` on both the input and the state type.\n\n## Provenance\n- `packages/reactor/docs/attachments.md` \u2014 Current State; Migration from Inline Attachments (Phases 1-3)\n\n_Extracted from the Powerhouse repository at **v6.2.2-dev.74**._",
+        "updatedAt": "2026-09-03T07:22:33.212Z"
+      },
+      "timestampUtcMs": "2026-09-03T07:22:33.212Z"
+    }
+  },
+  {
+    "index": 17,
+    "hash": "XCgAumSwaDk75OuR8xQ+cZv7cd0=",
+    "timestampUtcMs": "2026-09-03T07:22:33.212Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "version",
+        "value": "v6.2.2-dev.74",
+        "updatedAt": "2026-09-03T07:22:33.212Z"
+      },
+      "timestampUtcMs": "2026-09-03T07:22:33.212Z"
+    }
+  },
+  {
+    "index": 18,
+    "hash": "XCgAumSwaDk75OuR8xQ+cZv7cd0=",
+    "timestampUtcMs": "2026-09-03T07:22:33.212Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "filePath",
+        "value": "packages/reactor/docs/attachments.md",
+        "updatedAt": "2026-09-03T07:22:33.212Z"
+      },
+      "timestampUtcMs": "2026-09-03T07:22:33.212Z"
+    }
+  }
+]

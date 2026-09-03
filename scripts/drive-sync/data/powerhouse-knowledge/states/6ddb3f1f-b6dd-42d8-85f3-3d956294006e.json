@@ -1,0 +1,120 @@
+{
+  "links": [
+    {
+      "id": "lnk-da8a8131-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "da8a8131-7b4e-4849-afd9-fcc21bf68ca4",
+      "targetTitle": "event-driven-architecture-decouples-components-for-parallel-processing"
+    },
+    {
+      "id": "lnk-39525b86-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "39525b86-3afe-4f2c-a391-84803557a07a",
+      "targetTitle": "powerhouse-applies-blockchain-immutability-through-event-sourcing"
+    },
+    {
+      "id": "lnk-7b0dedff-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "7b0dedff-326d-4d34-a752-46db7f2327ac",
+      "targetTitle": "act-cross-user-sharing-ecdh"
+    },
+    {
+      "id": "lnk-32921fdd-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "32921fdd-c4ba-4ade-b4e7-9a257346440f",
+      "targetTitle": "adr-002-extract-stamp-share-managers"
+    },
+    {
+      "id": "lnk-355c8453-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "355c8453-f12d-43dd-acc3-93702a4ae263",
+      "targetTitle": "book-of-powerhouse-part-3-development-approaches",
+      "reason": "Backing page found by content match in the v6.2.2-dev.74 source backfill \u2014 identifiers separates from the claim appear in this page (text identical at v6.2.2-dev.47 and v6.2.2-dev.74); attribution, not the original extraction record",
+      "confidence": "grounded"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "CQRS separates write commands from read queries so each can scale independently.",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "4614dfd4-16b0-452e-afff-74da95828eb0",
+      "name": "cqrs",
+      "topicDocumentId": null
+    },
+    {
+      "id": "580d81bf-00de-4c52-8430-c0954a75d941",
+      "name": "commands",
+      "topicDocumentId": null
+    },
+    {
+      "id": "1d008c62-db7f-4e6f-89d8-8146376debc9",
+      "name": "queries",
+      "topicDocumentId": null
+    },
+    {
+      "id": "ea95b382-2239-48e5-af56-85919d47f5f1",
+      "name": "scalability",
+      "topicDocumentId": null
+    },
+    {
+      "id": "0a6fd569-de8f-442a-a9ad-c62e8654825c",
+      "name": "event-sourcing",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "CQRS (Command Query Responsibility Segregation) is a key design principle in Powerhouse. Commands handle operations that modify state -- creating or updating documents -- validated and stored as events forming the immutable history. Queries are optimized for retrieval using read models designed for performance, scalability, and flexibility. This separation enables write and read models to scale independently, isolates business logic from query logic for maintainability, and supports multiple read model types (relational databases, full-text search, analytics).",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": "v6.2.2-dev.74",
+  "computes": null,
+  "filePath": "apps/academy/docs/bookofpowerhouse/04-DevelopmentApproaches.md",
+  "noteType": "PATTERN",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "knowledge-agent",
+    "createdAt": "2026-03-30T18:30:00.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-09-02T21:42:00.059Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Commands modify state as validated events; queries use optimized read models for analytics and search.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "f4cda80f-189a-4931-99b0-f9bf27710406",
+      "actor": "claude",
+      "comment": "Knowledge registered against powerhouse v6.2.2-dev.47",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-14T12:00:00.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "3918d79d-9d7d-485b-bc3f-347598d60692",
+      "actor": "liberuum",
+      "comment": "Canonical as of powerhouse v6.2.2-dev.47",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-14T12:00:00.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

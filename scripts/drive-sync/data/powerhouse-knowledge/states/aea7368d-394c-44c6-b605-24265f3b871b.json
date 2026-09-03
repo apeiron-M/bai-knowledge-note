@@ -1,0 +1,107 @@
+{
+  "links": [
+    {
+      "id": "lnk-e2186433-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "e2186433-6a5b-4e9a-90e8-37c698b35e89",
+      "targetTitle": "moc-attributable-skills-provenance"
+    },
+    {
+      "id": "lnk-ee0b4542-bui",
+      "linkType": "BUILDS_ON",
+      "targetDocumentId": "ee0b4542-988d-4c21-9dc5-72c1eafbbe45",
+      "targetTitle": "skills-provenance-blind"
+    },
+    {
+      "id": "lnk-fdc3d342-bui",
+      "linkType": "BUILDS_ON",
+      "targetDocumentId": "fdc3d342-bb38-468d-82d1-440b2af01587",
+      "targetTitle": "document-model-three-parts"
+    },
+    {
+      "id": "lnk-2b423487-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "2b423487-123f-414c-bd20-edce7de891f4",
+      "targetTitle": "skills-as-attributable-transformations"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Skill invocations should be attributable transformations on document-model state",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "3a0cfcdd-3ccc-4640-91b0-9f36aaf51c3d",
+      "name": "provenance",
+      "topicDocumentId": null
+    },
+    {
+      "id": "97a19935-d89f-414b-94d5-ab853a2e8725",
+      "name": "document-models",
+      "topicDocumentId": null
+    },
+    {
+      "id": "ea82ff6f-1962-4447-b757-00569a5d532f",
+      "name": "agent-skills",
+      "topicDocumentId": null
+    },
+    {
+      "id": "28b34ee6-a50e-45a5-853c-e221daceb607",
+      "name": "event-sourcing",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "## Claim\n\nModel each skill invocation as an attributable transformation: an action against a document, dispatched by an attributed actor, executed by a deterministic reducer, and recorded in an append-only operation log.\n\n## Implications\n\n- State derives only from replaying the log\n- Every byte in the final state traces to an operation \u2192 skill \u2192 actor\n- The artifact and the provenance record are the same structure\n\n## Contrast\n\nTool-call traces that live *beside* the artifact force post-hoc reconciliation. Unifying them (\"the artifact is the log\") removes that gap.\n\n## See also (reweave)\n\n- Related evaluation stance: process-level evaluation beyond output scoring\n- Related memory risk: untyped knowledge-layer contamination modes\n- Implementation conventions: three conventions for attributable skills\n\n\n## Methodology grounding\nThe claims below live in the plugin's `data/methodology/` corpus; the relationship is stated per claim.\n\n- **[[hook enforcement guarantees quality while instruction enforcement merely suggests it]]** \u2014 BUILDS_ON. A skill described in an instruction file is a suggestion; a skill invocation recorded as an operation on document state is enforcement, because the record exists whether or not the agent cooperated.\n- **[[agents are simultaneously methodology executors and subjects creating a unique trust asymmetry]]** \u2014 RELATES_TO. Attribution is the asymmetry's remedy: if every transformation names its actor and its inputs, the agent's dual role stops being invisible to whoever audits the result.\n",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "PATTERN",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "knowledge-agent",
+    "createdAt": "2026-08-16T20:32:33.185Z",
+    "sessionId": null,
+    "updatedAt": "2026-09-03T10:03:28.032Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Each skill call should be a typed, signed, replayable operation on known state, not an ephemeral tool invocation beside the artifact.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "15b1e88b-ba34-4e9a-93b7-b8027014fe53",
+      "actor": "knowledge-agent",
+      "comment": "pipeline extract",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-16T20:32:34.048Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "bf0f3bd7-5bed-4896-b648-b44832aa841a",
+      "actor": "pipeline-reviewer",
+      "comment": "pipeline verify",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-16T20:32:34.189Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

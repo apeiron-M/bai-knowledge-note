@@ -1,0 +1,121 @@
+{
+  "links": [
+    {
+      "id": "lnk-37086f6f-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "37086f6f-fb55-4c18-a2fc-cbb9200c6d96",
+      "targetTitle": "design-system-package-structure"
+    },
+    {
+      "id": "lnk-fcb5911a-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "fcb5911a-10ad-41b2-9529-a88a2e789a09",
+      "targetTitle": "color-token-naming-convention"
+    },
+    {
+      "id": "lnk-af764617-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "af764617-47fa-490c-9be6-50162d3b83f9",
+      "targetTitle": "typography-system"
+    },
+    {
+      "id": "lnk-67b62530-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "67b62530-f9d1-462c-b042-80c889cb66ba",
+      "targetTitle": "theme-system-light-and-dark-approach"
+    },
+    {
+      "id": "lnk-54d22335-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "54d22335-80b5-43e1-9145-5aa556218b4c",
+      "targetTitle": "powerhouse-design-system-graphql-scalars"
+    },
+    {
+      "id": "lnk-02693141-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "02693141-453f-493b-8657-d5d001dc0fbd",
+      "targetTitle": "moc-design-systems-and-brand-identity"
+    },
+    {
+      "id": "lnk-43733227-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "43733227-b9d3-424b-8fa0-83dda8a2001b",
+      "targetTitle": "builder-platform-enables-creation-of-reusable-modules-with-value-sharing"
+    },
+    {
+      "id": "lnk-1f8f4551-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "1f8f4551-682c-4245-94ef-5e5846862ee4",
+      "targetTitle": "ddup-swarm-channel-replaces-gql"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Powerhouse Design System Architecture",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "e929fa65-9575-4b90-b8d9-787e1bdec171",
+      "name": "design-system",
+      "topicDocumentId": null
+    },
+    {
+      "id": "e553cc67-bdcc-45d7-9787-a84e86910722",
+      "name": "branding",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "The Powerhouse design systems repository (https://github.com/powerhouse-inc/design-systems) contains self-contained design system packages for three Powerhouse brands: Achra, Vetra, and the Powerhouse parent brand. There is no build step required -- all HTML files are standalone and can be opened directly in a browser or served via `npx serve`. The primary purpose of these packages is to serve as reference material for coding agents implementing designs. When building UI for a Powerhouse product, an agent references the appropriate brand's HTML/CSS files to extract colors, typography, component patterns, and layout structures. Each brand lives in its own directory (`achra/`, `vetra/`, `powerhouse/`) and follows a consistent package structure with shared conventions for color tokens, typography, and theming.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "CONCEPT",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "Wouter Kampmann",
+    "createdAt": "2026-04-05T00:04:41.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-09-03T09:59:09.840Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Self-contained HTML/CSS brand packages for Achra, Vetra, and Powerhouse with no build step, designed for coding agent extraction.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "2d59c76c-e306-45f1-94bb-012edca3522c",
+      "actor": "claude",
+      "comment": "Knowledge registered against powerhouse v6.2.2-dev.47",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-14T12:00:00.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "cb7020b4-9ba5-4183-b770-0c67469f4ffb",
+      "actor": "liberuum",
+      "comment": "Canonical as of powerhouse v6.2.2-dev.47",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-14T12:00:00.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

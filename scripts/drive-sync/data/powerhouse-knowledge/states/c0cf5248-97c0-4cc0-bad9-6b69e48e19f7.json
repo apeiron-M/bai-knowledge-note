@@ -1,0 +1,15 @@
+{
+  "title": "Contradiction on auth-scope",
+  "status": "DISSOLVED",
+  "content": "## Involved claims\n\n- Five adjacent sync and read-model defects were recorded while investigating the outbox ordering bug, including re-evaluation writes that never reach read models \u2014 `3968416f-1124-47ff-b195-1b782b5296ca`\n- Every reactor judges every operation at its position in the merged order, so a revocation that sorts earlier retracts an already-accepted operation on every replica \u2014 `0ade289f-d4fb-44d8-ab3b-316d65bb1c8d`\n\n## Why this exists\n\nA `CONTRADICTS` relationship was recorded between these two notes at 2026-09-02T22:25:35.146Z. The vault treats a recorded contradiction as an open question, not a fact to leave implicit: until someone resolves or dissolves this tension, both claims stand and readers should see that they disagree.\n\n## How to close it\n\n- **Resolve** when one claim is correct: say which, and consider `SUPERSEDES` on the winner.\n- **Dissolve** when both are right in different scopes: state the boundary in each note's content.",
+  "observedAt": "2026-09-02T22:25:35.146Z",
+  "observedBy": "graph-indexer",
+  "resolution": "Dissolved: both claims hold, at different layers. Positional judgment does converge the operation log and sync on every replica, exactly as designed; reevaluateIfCriteriaMet dropping outcome.operationsWithContext stops those re-appended operations reaching the read models, so projections keep serving pre-revocation state until a restart catch-up. Log versus projection is the boundary, and it is recorded in both notes. The defect stays tracked as a note and as a health recommendation to file upstream rather than as an open tension.",
+  "resolvedAt": "2026-09-03T10:15:00.495Z",
+  "description": "\u201cFive adjacent sync and read-model defects were recorded while investigating the outbox ordering bug, including re-evaluation writes that ne\u2026\u201d contradicts \u201cEvery reactor judges every operation at its position in the merged order, so a revocation that sorts earlier retracts an already-accepted o\u2026\u201d. Opened automatically from a CONTRADICTS link \u2014 resolve if one side is right, dissolve if both hold in different contexts.",
+  "involvedRefs": [
+    "3968416f-1124-47ff-b195-1b782b5296ca",
+    "0ade289f-d4fb-44d8-ab3b-316d65bb1c8d"
+  ],
+  "links": []
+}

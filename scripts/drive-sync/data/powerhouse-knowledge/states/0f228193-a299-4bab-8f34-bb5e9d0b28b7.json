@@ -1,0 +1,92 @@
+{
+  "links": [
+    {
+      "id": "lnk-395c3ea0-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "395c3ea0-ce11-4b25-8bbb-7f68a7b169e1",
+      "targetTitle": "reactor-client-vs-reactor-interface"
+    },
+    {
+      "id": "lnk-2ca5f8f5-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "2ca5f8f5-c423-4a7c-ae88-846fd0d1e659",
+      "targetTitle": "Academy \u203a Reference \u203a ReactorBrowserClient \u203a API reference",
+      "reason": "The note names apps/academy/docs/academy/04-Reference/08-ReactorBrowserClient/02-ApiReference.md as its source; page text revised between v6.2.2-dev.47 and v6.2.2-dev.74 \u2014 re-verified in the v6.2.2-dev.74 pass",
+      "confidence": "grounded"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "IReactorBrowserClient is a Pick of exactly six IReactorClient members",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "6f1ca0a7-b8e4-424f-bd64-a61ae7e68af1",
+      "name": "reactor-browser",
+      "topicDocumentId": null
+    },
+    {
+      "id": "39ffc72a-32ef-4820-9a1b-65335c591056",
+      "name": "reactor-client",
+      "topicDocumentId": null
+    },
+    {
+      "id": "babd2626-a657-45ad-8b46-577bad71f2c0",
+      "name": "api",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "## The contract\n\n`IReactorBrowserClient` is the contract the reactor-browser hooks depend on. It is declared as a `Pick` of the reactor's own `IReactorClient`, so the six member signatures **cannot drift** from the reactor's:\n\n```typescript\nexport interface IReactorBrowserClient extends Pick<\n  IReactorClient,\n  | \"get\"\n  | \"subscribe\"\n  | \"execute\"\n  | \"getOperations\"\n  | \"create\"\n  | \"deleteDocument\"\n> {}\n```\n\nTwo implementations satisfy it: the full in-browser reactor client, which gets it for free by implementing `IReactorClient`, and `GraphQLReactorClient`.\n\n## What is excluded, and why that is the point\n\nEverything outside those six is deliberately absent: `drives`, `find`, `resolveIdOrSlug`, relationships, `executeAsync`, `executeBatch`, jobs, `createEmpty`, `rename`, and the document-model module getters. `create(document, parentIdentifier?)` is the only parenting there is \u2014 there is no drive concept on this interface at all.\n\n## Light-client behaviour of the six\n\n| Method | On the light client |\n| --- | --- |\n| `get(identifier, view?, signal?)` | Reads by id or slug. A `view.revision` **throws** \u2014 no point-in-time reads |\n| `getOperations(...)` | Paged; `next()` follows the cursor, default page `{ cursor: \"0\", limit: 100 }` |\n| `create(document, parentIdentifier?, signal?)` | Creates and emits `Created` |\n| `execute(identifier, branch, actions, signal?)` | Reads, stamps and signs a single action, pushes, emits `Updated` \u2014 **two round trips** |\n| `deleteDocument(identifier, propagate?, signal?)` | Deletes and emits `Deleted` carrying the identifier it was called with |\n| `subscribe(search, callback, view?)` | Registers a subscriber, returns unsubscribe. `view` is accepted and ignored |\n\n`execute` returns the updated document with this call's operations appended, which is how `useDispatch` reports per-action errors: it scans the returned operations for the action it sent and reads its `error` field.\n\n_Source: apps/academy/docs/academy/04-Reference/08-ReactorBrowserClient/02-ApiReference.md (Powerhouse v6.2.2-dev.45)._",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": "v6.2.2-dev.74",
+  "computes": null,
+  "filePath": "apps/academy/docs/academy/04-Reference/08-ReactorBrowserClient/02-ApiReference.md",
+  "noteType": "REFERENCE",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "claude",
+    "createdAt": "2026-08-13T14:33:19.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-09-02T22:26:38.734Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "get, subscribe, execute, getOperations, create and deleteDocument. Drives, find, relationships, jobs, executeAsync and the module getters are deliberately excluded.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "d355c0e1-6486-4585-bf88-07c07560b5ce",
+      "actor": "claude",
+      "comment": "Knowledge registered against powerhouse v6.2.2-dev.47",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-14T12:00:00.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "fd4efa12-9127-40cd-94f8-c2ed8d559c03",
+      "actor": "liberuum",
+      "comment": "Canonical as of powerhouse v6.2.2-dev.47",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-14T12:00:00.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

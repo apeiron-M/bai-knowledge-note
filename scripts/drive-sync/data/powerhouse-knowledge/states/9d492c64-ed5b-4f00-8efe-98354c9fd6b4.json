@@ -1,0 +1,115 @@
+{
+  "links": [
+    {
+      "id": "lnk-e25bc920-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "e25bc920-d3bc-4b36-9c7f-cb35b64c27b9",
+      "targetTitle": "Package \u203a reactor \u203a attachments-hash-first \u2014 Hash-First Attachment Refs",
+      "reason": "Extracted from packages/reactor/docs/attachments-hash-first.md at v6.2.2-dev.74 \u2014 Trust model",
+      "confidence": "grounded"
+    },
+    {
+      "id": "lnk-6f938c9e-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "6f938c9e-85f4-4a4f-b55e-3213b0ae4ef5",
+      "targetTitle": "attachments-keep-binaries-out-of-the-operation-log",
+      "reason": "An opaque content-addressed ref is what allows a claim to be wrong without corrupting anything: the hash either matches the bytes or the upload is refused",
+      "confidence": "grounded"
+    },
+    {
+      "id": "lnk-227cf82d-bui",
+      "linkType": "BUILDS_ON",
+      "targetDocumentId": "227cf82d-5739-47a5-9261-e918660ecdf6",
+      "targetTitle": "hashfirst-streaming-ingest",
+      "reason": "The store's unchanged trustworthiness rests entirely on the streaming ingest verification that note describes",
+      "confidence": "grounded"
+    },
+    {
+      "id": "lnk-f595aee3-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "f595aee3-5141-4260-9e58-b1d516999ed8",
+      "targetTitle": "hashfirst-reserve-rejects",
+      "reason": "The rejection that makes dedup cheap is the same response that reveals hash existence, which is why the endpoint is gated",
+      "confidence": "grounded"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Under hash-first a ref becomes client-claimed and server-verified, so the worst a lying client achieves is a dangling ref",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "3ff8be28-8a7a-456b-9ed5-3f8235486329",
+      "name": "attachments",
+      "topicDocumentId": null
+    },
+    {
+      "id": "3cacaefc-557d-4382-b5ff-f8c53ce4e5d6",
+      "name": "hash-first",
+      "topicDocumentId": null
+    },
+    {
+      "id": "d83ba520-a39e-4c3b-b4e3-003ebf40b13f",
+      "name": "security",
+      "topicDocumentId": null
+    },
+    {
+      "id": "78dadf53-db5c-4c38-904f-f0602fab2c4a",
+      "name": "trust",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "Before hash-first, every ref in document state was **server-attested** \u2014 the server computed the hash. Under hash-first refs are **client-claimed, server-verified**, and the design is explicit about what that does and does not change:\n\n- **The store is exactly as trustworthy as before.** Ingest verification means no sequence of client actions can cause wrong bytes to be served for a hash.\n- **The ref in document state is a claim until the upload commits.** A client that lies or has a bug produces a ref whose upload is rejected with `HashMismatch`, leaving a **dangling ref** \u2014 precisely the state an abandoned upload already produces, and one the architecture already tolerates.\n- **The dedup oracle is closed by default.** `reserve()` rejection (and `stat()` on an arbitrary hash) reveals whether given content exists on the server. That oracle already existed, and hash-first makes probing cheaper \u2014 so every endpoint revealing hash existence (`POST /attachments/reservations`, `GET`/`HEAD /attachments/:hash`) **requires upload-equivalent authorization by default**: probing for content is treated as privileged as adding content. The switchboard mounts all attachment routes behind the upload endpoint's authorization gate, and transports carry those credentials on fetch. The 409 body stays minimal \u2014 ref only, no file name, no size.\n- **A 409 must never include an existing `reservationId`.** Reservation ids are upload capabilities; leaking one across principals would let an attacker complete or poison someone else's in-flight upload.\n\n## Provenance\n- `packages/reactor/docs/attachments-hash-first.md` \u2014 Trust model\n\n_Extracted from the Powerhouse repository at **v6.2.2-dev.74**._",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": "v6.2.2-dev.74",
+  "computes": null,
+  "filePath": "packages/reactor/docs/attachments-hash-first.md",
+  "noteType": "CONCEPT",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "knowledge-agent",
+    "createdAt": "2026-09-03T07:20:36.080Z",
+    "sessionId": null,
+    "updatedAt": "2026-09-03T07:22:36.671Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "The store stays trustworthy because ingest verifies. The dedup oracle is closed by default: endpoints revealing hash existence need upload-equivalent authorization, and a 409 leaks nothing.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "7531bc65-648f-44b9-bfd4-f8da916bc9a4",
+      "actor": "knowledge-agent",
+      "comment": "extracted from packages/reactor/docs/attachments-hash-first.md at v6.2.2-dev.74",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-09-03T07:20:36.561Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "cc93d985-7b38-4f30-a8fc-162c3f6fd266",
+      "actor": "liberuum",
+      "comment": "claim checked against the cited file at the pinned tag",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-09-03T07:20:37.228Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

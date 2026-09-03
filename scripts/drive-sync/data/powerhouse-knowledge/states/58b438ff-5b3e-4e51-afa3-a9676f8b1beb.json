@@ -1,0 +1,115 @@
+{
+  "links": [
+    {
+      "id": "lnk-8e99c223-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "8e99c223-d492-465a-a3b8-b15c298bca4d",
+      "targetTitle": "Package \u203a reactor-browser \u203a pglite \u2014 PGlite Integration",
+      "reason": "Extracted from packages/reactor-browser/src/pglite/README.md at v6.2.2-dev.74 \u2014 Overview; Key Features; Quick Start (initialize PGlite database); Re-exported Electric SQL Types",
+      "confidence": "grounded"
+    },
+    {
+      "id": "lnk-eeefd83b-bui",
+      "linkType": "BUILDS_ON",
+      "targetDocumentId": "eeefd83b-466d-4f35-a5b3-3bdb74b8fcef",
+      "targetTitle": "semantic-search-pglite-vector-content-hash-skip",
+      "reason": "The vector-extension semantic search runs on a PGlite instance created through this layer, which is why extension choice happens at initialisation",
+      "confidence": "grounded"
+    },
+    {
+      "id": "lnk-6cd88ded-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "6cd88ded-d8e5-4645-8dc1-8dab23dd6dc4",
+      "targetTitle": "pglite-relational-hooks-context",
+      "reason": "Both notes describe the same stack: connection management underneath, typed reactive queries on top",
+      "confidence": "grounded"
+    },
+    {
+      "id": "lnk-a8824d76-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "a8824d76-26b8-48fb-99c2-93072ed70dc2",
+      "targetTitle": "relational-live-queries",
+      "reason": "The relational layer is built on top of this connection management and adds typed live queries",
+      "confidence": "grounded"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "The PGlite integration keeps the database handle in global window state so every component shares one connection, with events driving reactive updates",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "4da43278-2b25-4f11-953f-a86df2bde3a7",
+      "name": "reactor-browser",
+      "topicDocumentId": null
+    },
+    {
+      "id": "a8aaacf0-ca8b-4f0f-a3bc-7a5aa9e411fb",
+      "name": "pglite",
+      "topicDocumentId": null
+    },
+    {
+      "id": "2d8e29cd-0e18-4cbf-a54e-9a46f3a0b6bb",
+      "name": "state-management",
+      "topicDocumentId": null
+    },
+    {
+      "id": "a8cc5042-623a-4e39-90a4-afeb79ca1110",
+      "name": "hooks",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "`@powerhousedao/reactor-browser/pglite` is the low-level layer beneath the relational and analytics work: database connection management plus global state synchronisation, deliberately not a query API.\n\nThree hooks make up the surface \u2014 `usePGliteDB()` to read the current database, `useSetPGliteDB()` to install one, and `usePGlite()` for low-level control \u2014 and the documented design choices are what matter:\n\n- **global state management** with cross-component synchronisation, so two components never open two databases;\n- **automatic state persistence through the `window` object**, which is the same ambient-locator pattern `window.ph` uses for the reactor client;\n- **event-driven updates** for reactive state changes rather than a React context;\n- type-safe access with the Electric SQL types re-exported so consumers do not import `@electric-sql/pglite` directly.\n\nInitialisation is explicit \u2014 the application constructs a `PGlite` and hands it to `useSetPGliteDB` \u2014 which is what allows a host to decide the storage location, extensions and in-memory-versus-persisted mode before anything queries it.\n\nWorth pairing with two facts the vault already holds: the deployed knowledge-note package **lazily `import()`s PGlite** so its processor and subgraph still register where transitive deps are absent, and semantic search runs on PGlite's `vector` extension \u2014 both of which depend on this layer being the single place a database is created.\n\n## Provenance\n- `packages/reactor-browser/src/pglite/README.md` \u2014 Overview; Key Features; Quick Start (initialize PGlite database); Re-exported Electric SQL Types\n\n_Extracted from the Powerhouse repository at **v6.2.2-dev.74**._",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": "v6.2.2-dev.74",
+  "computes": null,
+  "filePath": "packages/reactor-browser/src/pglite/README.md",
+  "noteType": "ARCHITECTURE",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "knowledge-agent",
+    "createdAt": "2026-09-03T07:38:45.393Z",
+    "sessionId": null,
+    "updatedAt": "2026-09-03T07:38:48.424Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "usePGliteDB reads it, useSetPGliteDB installs it, usePGlite gives low-level access. State persists through the window object and cross-component synchronisation is event-driven rather than.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "0045fc26-a05e-42fb-99a7-8cc014fbb823",
+      "actor": "knowledge-agent",
+      "comment": "extracted from packages/reactor-browser/src/pglite/README.md at v6.2.2-dev.74",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-09-03T07:38:45.954Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "4612404f-a221-41ef-9602-3ce55562d4b0",
+      "actor": "liberuum",
+      "comment": "claim checked against the cited file at the pinned tag",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-09-03T07:38:48.424Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

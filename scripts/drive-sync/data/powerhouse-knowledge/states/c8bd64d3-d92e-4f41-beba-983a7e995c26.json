@@ -1,0 +1,131 @@
+{
+  "links": [
+    {
+      "id": "lnk-c5419cd5-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "c5419cd5-deac-4f48-b58f-131e5808bd49",
+      "targetTitle": "auth-flags-per-fleet",
+      "reason": "Which flags are on is a per-fleet decision because they change replay verdicts; this note is the flag list, that one is the deployment rule",
+      "confidence": "grounded"
+    },
+    {
+      "id": "lnk-b6db3b1d-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "b6db3b1d-45b4-448b-a43b-23c032b3b9c9",
+      "targetTitle": "auth-positional-deletion",
+      "reason": "documentDecisions is the first flag precisely because positional deletion is the stage-3 change it gates",
+      "confidence": "grounded"
+    },
+    {
+      "id": "lnk-2a908219-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "2a908219-6cde-489e-b910-c0d5740409ab",
+      "targetTitle": "connect-reactor-flags",
+      "reason": "Connect must carry the identical set under connect.reactor.featureFlags; a browser replica on different flags diverges from the switchboard",
+      "confidence": "grounded"
+    },
+    {
+      "id": "lnk-17dc46b0-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "17dc46b0-f733-467c-99d7-ae8fbe0fb0e4",
+      "targetTitle": "Academy \u203a Reference \u203a Reactor \u203a Authorization",
+      "reason": "Extracted from apps/academy/docs/academy/04-Reference/01-Reactor/11-Authorization.md at v6.2.2-dev.74 \u2014 Feature flags table and the 'flags govern enforcement only' paragraph",
+      "confidence": "grounded"
+    },
+    {
+      "id": "lnk-63e10e2c-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "63e10e2c-9be4-4bd2-a876-8708cd3ac1f9",
+      "targetTitle": "App \u203a switchboard \u203a README",
+      "reason": "Extracted from apps/switchboard/README.md at v6.2.2-dev.74 \u2014 Reactor Enforcement Flags: REACTOR_* env vars, 'refuses to start on a set that skips one'",
+      "confidence": "grounded"
+    },
+    {
+      "id": "lnk-223bb12a-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "223bb12a-be7f-4209-9ab2-f04f7bb2b6c8",
+      "targetTitle": "Spec \u203a Spec \u2014 Attribute-based access control in the auth scope with DCB",
+      "reason": "Extracted from docs/specs/auth-scope.md at v6.2.2-dev.74 \u2014 Implementation plan \u203a Feature flags",
+      "confidence": "grounded"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Auth enforcement is staged behind four cascading feature flags, and the reactor refuses a flag set that skips a predecessor",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "e0e63e1b-fb5c-42d4-8cf5-dc12c81ded44",
+      "name": "auth-scope",
+      "topicDocumentId": null
+    },
+    {
+      "id": "2a9bab43-a570-4dd0-bcb9-ed47581d930f",
+      "name": "feature-flags",
+      "topicDocumentId": null
+    },
+    {
+      "id": "eda3b28b-4c74-4d92-ad12-692643c5fa36",
+      "name": "reactor",
+      "topicDocumentId": null
+    },
+    {
+      "id": "747fed41-b20d-48a5-941e-3bd72741b27a",
+      "name": "configuration",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "Enforcement of the auth scope rolls out in stages, one flag each:\n\n| Flag | Env var (Switchboard) | What it turns on |\n| --- | --- | --- |\n| `documentDecisions` | `REACTOR_DOCUMENT_DECISIONS` | Decide writes from the document stream rather than the meta cache (positional deletion) |\n| `authEnforcement` | `REACTOR_AUTH_ENFORCEMENT` | Enforce the policy at admission, replay and read |\n| `authGroups` | `REACTOR_AUTH_GROUPS` | Let `{ group }` principals match against a roster document |\n| `authConditions` | `REACTOR_AUTH_CONDITIONS` | Evaluate `where` clauses and `{ match }` principals |\n\nEach flag requires the one above it. `ReactorBuilder` validates the set eagerly and **throws** on a combination that skips a predecessor, and on any flag name the running version does not recognise \u2014 a partially enforcing reactor would apply less than the operator asked for. All four default to off.\n\n```ts\nnew ReactorBuilder().withExecutorConfig({\n  featureFlags: { documentDecisions: true, authEnforcement: true },\n});\n```\n\nSwitchboard reads them as the literal string `true` in the `REACTOR_*` variables; Connect carries the same four under `connect.reactor.featureFlags` in its runtime config.\n\nThe flags govern **enforcement only**. The auth data model \u2014 the four actions, the reducer, validation, replication \u2014 is always live, so a grant written on a flags-off reactor is stored and syncs; it is simply not enforced there. That is what makes a policy authored under any flag configuration intact once enforcement turns on.\n\n_Source: apps/academy/docs/academy/04-Reference/01-Reactor/11-Authorization.md (Powerhouse v6.2.2-dev.74)._\n_Source: apps/switchboard/README.md (Powerhouse v6.2.2-dev.74)._\n_Source: docs/specs/auth-scope.md (Powerhouse v6.2.2-dev.74)._\n\n## Provenance\n- `apps/academy/docs/academy/04-Reference/01-Reactor/11-Authorization.md` \u2014 Feature flags table and the 'flags govern enforcement only' paragraph\n- `apps/switchboard/README.md` \u2014 Reactor Enforcement Flags: REACTOR_* env vars, 'refuses to start on a set that skips one'\n- `docs/specs/auth-scope.md` \u2014 Implementation plan \u203a Feature flags\n\n_Recorded from the Powerhouse repository at **v6.2.2-dev.74** during the v6.2.2-dev.74 source sync._",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": "v6.2.2-dev.74",
+  "computes": null,
+  "filePath": "apps/academy/docs/academy/04-Reference/01-Reactor/11-Authorization.md",
+  "noteType": "REFERENCE",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": "grounded",
+  "consumedBy": [],
+  "provenance": {
+    "author": "knowledge-agent",
+    "createdAt": "2026-09-02T22:09:08.786Z",
+    "sessionId": null,
+    "updatedAt": "2026-09-02T22:20:06.578Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "documentDecisions \u2192 authEnforcement \u2192 authGroups \u2192 authConditions, each requiring the one before; ReactorBuilder throws on a gap or an unknown name. Switchboard reads them as REACTOR_* env vars.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "78db54f5-af24-48fa-b984-c64340391b84",
+      "actor": "knowledge-agent",
+      "comment": "extracted from the Powerhouse repository at v6.2.2-dev.74",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-09-02T22:09:09.868Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "47100074-02dd-43b9-99e7-7078e019d6f7",
+      "actor": "liberuum",
+      "comment": "claim checked against the cited repository file at the pinned tag",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-09-02T22:09:10.368Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

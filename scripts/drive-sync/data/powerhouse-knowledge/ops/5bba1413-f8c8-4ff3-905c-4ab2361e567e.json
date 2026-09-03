@@ -1,0 +1,276 @@
+[
+  {
+    "index": 0,
+    "hash": "",
+    "timestampUtcMs": "2026-08-20T08:45:47.344Z",
+    "action": {
+      "type": "CREATE_DOCUMENT",
+      "input": {
+        "meta": {},
+        "name": "Flowable's automatic history cleanup is disabled by default",
+        "slug": "",
+        "model": "bai/knowledge-note",
+        "branch": "main",
+        "signing": {
+          "nonce": "",
+          "publicKey": {},
+          "signature": "5bba1413-f8c8-4ff3-905c-4ab2361e567e",
+          "documentType": "bai/knowledge-note",
+          "createdAtUtcIso": "2026-08-20T08:45:47.344Z"
+        },
+        "version": 0,
+        "documentId": "5bba1413-f8c8-4ff3-905c-4ab2361e567e",
+        "protocolVersions": {
+          "base-reducer": 2
+        }
+      },
+      "timestampUtcMs": "2026-08-20T08:45:47.344Z"
+    }
+  },
+  {
+    "index": 0,
+    "hash": "DN3D9Q4hyKnoWRICRl4L3qSYvJw=",
+    "timestampUtcMs": "2026-08-20T08:45:48.037Z",
+    "action": {
+      "type": "SET_TITLE",
+      "input": {
+        "title": "Flowable's automatic history cleanup is disabled by default",
+        "updatedAt": "2026-08-20T08:45:48.037073Z"
+      },
+      "timestampUtcMs": "2026-08-20T08:45:48.037110Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "",
+    "timestampUtcMs": "2026-08-20T08:45:47.344Z",
+    "action": {
+      "type": "UPGRADE_DOCUMENT",
+      "input": {
+        "model": "bai/knowledge-note",
+        "toVersion": 1,
+        "documentId": "5bba1413-f8c8-4ff3-905c-4ab2361e567e",
+        "fromVersion": 0,
+        "initialState": {
+          "auth": {
+            "grants": [],
+            "version": 0
+          },
+          "local": {
+            "lastViewedAt": null,
+            "personalTags": []
+          },
+          "global": {
+            "links": [],
+            "model": null,
+            "scope": null,
+            "title": null,
+            "editor": null,
+            "inputs": [],
+            "models": [],
+            "status": "DRAFT",
+            "topics": [],
+            "content": null,
+            "context": null,
+            "modelId": null,
+            "modules": [],
+            "outputs": [],
+            "version": null,
+            "computes": null,
+            "filePath": null,
+            "noteType": null,
+            "severity": null,
+            "hooksUsed": [],
+            "rootCause": null,
+            "confidence": null,
+            "consumedBy": [],
+            "provenance": null,
+            "sourceType": null,
+            "targetType": null,
+            "cardinality": null,
+            "description": null,
+            "alternatives": [],
+            "consequences": [],
+            "errorMessage": null,
+            "relationType": null,
+            "correctPattern": null,
+            "decisionStatus": null,
+            "dispatchTargets": [],
+            "lifecycleEvents": []
+          },
+          "document": {
+            "hash": {
+              "encoding": "base64",
+              "algorithm": "sha1"
+            },
+            "version": 1
+          }
+        }
+      },
+      "timestampUtcMs": "2026-08-20T08:45:47.344Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "iZa0+Ficuc3CoTb1Mwydh3l2NOk=",
+    "timestampUtcMs": "2026-08-20T08:45:48.037Z",
+    "action": {
+      "type": "SET_DESCRIPTION",
+      "input": {
+        "updatedAt": "2026-08-20T08:45:48.037114Z",
+        "description": "Default retention is effectively infinite; the 365-day cleanup job runs only once an administrator enables it, so calling the history purgeable overstates the shipped posture."
+      },
+      "timestampUtcMs": "2026-08-20T08:45:48.037121Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "",
+    "timestampUtcMs": "2026-08-20T08:45:49.155Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "5bba1413-f8c8-4ff3-905c-4ab2361e567e",
+        "targetId": "4d8e59af-51f2-4ab7-b290-e1d5744abbd7",
+        "relationshipType": "DERIVED_FROM"
+      },
+      "timestampUtcMs": "2026-08-20T08:45:49.155Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "qypviUerol5YUlM7bJElB7Cu6ok=",
+    "timestampUtcMs": "2026-08-20T08:45:48.037Z",
+    "action": {
+      "type": "SET_NOTE_TYPE",
+      "input": {
+        "noteType": "OBSERVATION",
+        "updatedAt": "2026-08-20T08:45:48.037123Z"
+      },
+      "timestampUtcMs": "2026-08-20T08:45:48.037127Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "wv4uKezpz1Ms79PbnGlxBH4Owus=",
+    "timestampUtcMs": "2026-08-20T08:45:48.037Z",
+    "action": {
+      "type": "SET_CONTENT",
+      "input": {
+        "content": "The documentation states that *\"Automatic cleanup of HistoricProcessInstances is disabled by default\"*, and that when enabled *\"the default is to run a cleanup job at 1 AM to delete all HistoricProcessInstances and associated data that have ended 365 days prior or older\"*.\n\nThis corrects a claim held earlier in this vault. Flowable's history is deletable \u2014 six documented `HistoryService` methods plus raw SQL deletes \u2014 but it is not deleted on its own. Purging is a deliberate administrative act, not drift.\n\nThe distinction matters when the argument is put to someone who runs the product. \"Your history will quietly disappear\" is refutable in one sentence; \"your history is mutable and erasable, and nothing detects either\" is not.",
+        "updatedAt": "2026-08-20T08:45:48.037129Z"
+      },
+      "timestampUtcMs": "2026-08-20T08:45:48.037134Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "nHugV10hRLR4iApXS9d5QdKvXEI=",
+    "timestampUtcMs": "2026-08-20T08:45:48.037Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "c8a29990-8f14-4519-be48-5a20714d0878",
+        "name": "tool-screen"
+      },
+      "timestampUtcMs": "2026-08-20T08:45:48.037143Z"
+    }
+  },
+  {
+    "index": 5,
+    "hash": "R/pshMe69AhhoiPsK0psSA/Spqc=",
+    "timestampUtcMs": "2026-08-20T08:45:48.037Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "85a378c1-54ff-470f-849f-512d9311379b",
+        "name": "flowable"
+      },
+      "timestampUtcMs": "2026-08-20T08:45:48.037151Z"
+    }
+  },
+  {
+    "index": 6,
+    "hash": "WjryNbsr34jEw3BjGrd8Xkcrj8Q=",
+    "timestampUtcMs": "2026-08-20T08:45:48.037Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "557fe53b-7b66-4ff5-b802-2080851aba27",
+        "name": "retention"
+      },
+      "timestampUtcMs": "2026-08-20T08:45:48.037159Z"
+    }
+  },
+  {
+    "index": 7,
+    "hash": "aPkQd0uptu1yTuvUm2DzMJTiTlI=",
+    "timestampUtcMs": "2026-08-20T08:45:48.037Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "46d44ff2-c7aa-44f1-9663-79f299e52b27",
+        "name": "defaults"
+      },
+      "timestampUtcMs": "2026-08-20T08:45:48.037167Z"
+    }
+  },
+  {
+    "index": 8,
+    "hash": "z1+RRubWONvAMFhcTKtTAQ7Nn+g=",
+    "timestampUtcMs": "2026-08-20T08:45:48.037Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "33f27bd9-2921-420c-a468-80b5c8d9a1b7",
+        "name": "data-integrity"
+      },
+      "timestampUtcMs": "2026-08-20T08:45:48.037174Z"
+    }
+  },
+  {
+    "index": 9,
+    "hash": "vgK1A5B3t0Nxp7185CvL2svJWfs=",
+    "timestampUtcMs": "2026-08-20T08:45:48.427Z",
+    "action": {
+      "type": "SET_PROVENANCE",
+      "input": {
+        "author": "knowledge-agent",
+        "createdAt": "2026-08-20T08:45:48.427854Z",
+        "sessionId": null,
+        "sourceOrigin": "DERIVED"
+      },
+      "timestampUtcMs": "2026-08-20T08:45:48.427891Z"
+    }
+  },
+  {
+    "index": 10,
+    "hash": "/ewpUs8kmrkhieoIM6at1wQIOOE=",
+    "timestampUtcMs": "2026-08-20T08:45:49.342Z",
+    "action": {
+      "type": "SUBMIT_FOR_REVIEW",
+      "input": {
+        "id": "8fd73e88-2e8f-404f-bf8f-f8f3ae7b4c62",
+        "actor": "knowledge-agent",
+        "comment": "Extracted from the primary-source tool screen; each claim quotable from a cited source.",
+        "timestamp": "2026-08-20T08:45:49.342646Z"
+      },
+      "timestampUtcMs": "2026-08-20T08:45:49.342669Z"
+    }
+  },
+  {
+    "index": 11,
+    "hash": "cyxXQ5iiPZ6u9yzfEFK0hFKFRpE=",
+    "timestampUtcMs": "2026-08-20T08:45:49.492Z",
+    "action": {
+      "type": "APPROVE_NOTE",
+      "input": {
+        "id": "9e3f1de8-f97a-44d9-9612-f15bd78ac067",
+        "actor": "liberuum",
+        "comment": "Approved: tool-screen extraction.",
+        "timestamp": "2026-08-20T08:45:49.492423Z"
+      },
+      "timestampUtcMs": "2026-08-20T08:45:49.492443Z"
+    }
+  }
+]

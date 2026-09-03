@@ -1,0 +1,348 @@
+[
+  {
+    "index": 0,
+    "hash": "",
+    "timestampUtcMs": "2026-08-14T12:05:03.705Z",
+    "action": {
+      "type": "CREATE_DOCUMENT",
+      "input": {
+        "meta": {},
+        "name": "incremental-experiment-redundancy-rollout",
+        "slug": "",
+        "model": "bai/knowledge-note",
+        "branch": "main",
+        "signing": {
+          "nonce": "",
+          "publicKey": {},
+          "signature": "55325ce3-8d29-44b3-a8db-00a5e0af94b2",
+          "documentType": "bai/knowledge-note",
+          "createdAtUtcIso": "2026-08-14T12:05:03.705Z"
+        },
+        "version": 0,
+        "documentId": "55325ce3-8d29-44b3-a8db-00a5e0af94b2",
+        "protocolVersions": {
+          "base-reducer": 2
+        }
+      },
+      "timestampUtcMs": "2026-08-14T12:05:03.705Z"
+    }
+  },
+  {
+    "index": 0,
+    "hash": "/8GG8bZuMa5aSPol5ds4DN85sq0=",
+    "timestampUtcMs": "2026-08-14T12:35:20.000Z",
+    "action": {
+      "type": "SET_TITLE",
+      "input": {
+        "title": "Roll out RedundancyLevel incrementally, starting with collab-ops-feed only",
+        "updatedAt": "2026-08-14T12:35:20.000Z"
+      },
+      "timestampUtcMs": "2026-08-14T12:35:20.000Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "",
+    "timestampUtcMs": "2026-08-14T12:05:03.705Z",
+    "action": {
+      "type": "UPGRADE_DOCUMENT",
+      "input": {
+        "model": "bai/knowledge-note",
+        "toVersion": 1,
+        "documentId": "55325ce3-8d29-44b3-a8db-00a5e0af94b2",
+        "fromVersion": 0,
+        "initialState": {
+          "auth": {
+            "grants": [],
+            "version": 0
+          },
+          "local": {
+            "lastViewedAt": null,
+            "personalTags": []
+          },
+          "global": {
+            "links": [],
+            "model": null,
+            "scope": null,
+            "title": null,
+            "editor": null,
+            "inputs": [],
+            "models": [],
+            "status": "DRAFT",
+            "topics": [],
+            "content": null,
+            "context": null,
+            "modelId": null,
+            "modules": [],
+            "outputs": [],
+            "version": null,
+            "computes": null,
+            "filePath": null,
+            "noteType": null,
+            "severity": null,
+            "hooksUsed": [],
+            "rootCause": null,
+            "confidence": null,
+            "consumedBy": [],
+            "provenance": null,
+            "sourceType": null,
+            "targetType": null,
+            "cardinality": null,
+            "description": null,
+            "alternatives": [],
+            "consequences": [],
+            "errorMessage": null,
+            "relationType": null,
+            "correctPattern": null,
+            "decisionStatus": null,
+            "dispatchTargets": [],
+            "lifecycleEvents": []
+          },
+          "document": {
+            "hash": {
+              "encoding": "base64",
+              "algorithm": "sha1"
+            },
+            "version": 1
+          }
+        }
+      },
+      "timestampUtcMs": "2026-08-14T12:05:03.705Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "8mHznBjBnYORjdzYO/5NOxdiTwg=",
+    "timestampUtcMs": "2026-08-14T12:35:20.000Z",
+    "action": {
+      "type": "SET_DESCRIPTION",
+      "input": {
+        "updatedAt": "2026-08-14T12:35:20.000Z",
+        "description": "Add MEDIUM to collab-ops-feed.ts:138 first, compare op apply-latency to ~10s baseline, then expand to lifecycle and manifest feeds only if neutral or improved."
+      },
+      "timestampUtcMs": "2026-08-14T12:35:20.000Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "",
+    "timestampUtcMs": "2026-08-14T12:37:40.189Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "55325ce3-8d29-44b3-a8db-00a5e0af94b2",
+        "targetId": "e071271c-5589-4590-a5ac-e95da03b9c0f",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-08-14T12:37:40.189Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "jutISFbWStSu5j6IITAoxWcacYU=",
+    "timestampUtcMs": "2026-08-14T12:35:20.000Z",
+    "action": {
+      "type": "SET_NOTE_TYPE",
+      "input": {
+        "noteType": "procedure",
+        "updatedAt": "2026-08-14T12:35:20.000Z"
+      },
+      "timestampUtcMs": "2026-08-14T12:35:20.000Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "",
+    "timestampUtcMs": "2026-08-14T12:37:40.282Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "55325ce3-8d29-44b3-a8db-00a5e0af94b2",
+        "targetId": "7c8d97ac-5d8b-446c-8c7a-747e2d301708",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-08-14T12:37:40.282Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "wwk52AE/572G+ZlIkBgiICJYSbw=",
+    "timestampUtcMs": "2026-08-14T12:35:20.000Z",
+    "action": {
+      "type": "SET_CONTENT",
+      "input": {
+        "content": "## Incremental rollout plan for `RedundancyLevel`\n\nBaseline to preserve: commit `1e95c27` on `main`.\n\n1. Thread `redundancyLevel` option through `SwarmClient.uploadFile` and `uploadData`.\n2. Expose a single shared constant `COLLAB_OPS_REDUNDANCY = RedundancyLevel.MEDIUM`.\n3. Apply at `collab-ops-feed.ts:138` **only**. Rebuild. Run existing two-Bee setup end-to-end.\n4. Compare observed op apply-latency to the ~10s baseline.\n5. Verify `calculateRemainingSize(true, MEDIUM)` in stamp-utilization logs still shows headroom.\n6. **Decision gate:** if Awaiting\u2192joined fires within ~5s of accept AND op latency \u2264 baseline, commit.\n7. **Expand** to `lifecycle.ts:169` (drive-bundle) and the manifest feeds only after the first step is green.\n8. **Back off** to `OFF` for ops (keeping MEDIUM only for long-lived bundles) if stamp exhaustion warnings appear.\n9. **Rollback path:** revert the 2\u20133 line flag additions \u2014 no data-shape changes, no migration.\n\nThe experiment is explicitly reversible at every step; measure before expanding.",
+        "updatedAt": "2026-08-14T12:35:20.000Z"
+      },
+      "timestampUtcMs": "2026-08-14T12:35:20.000Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "",
+    "timestampUtcMs": "2026-08-14T12:37:40.379Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "55325ce3-8d29-44b3-a8db-00a5e0af94b2",
+        "targetId": "42844961-6fc0-49ca-8ae4-1748a87713af",
+        "relationshipType": "BUILDS_ON"
+      },
+      "timestampUtcMs": "2026-08-14T12:37:40.379Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "fyur4cFmQHGUU/1aNT7tbXDXQSI=",
+    "timestampUtcMs": "2026-08-14T12:35:20.000Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "version",
+        "value": "v6.2.2-dev.44",
+        "updatedAt": "2026-08-14T12:35:20.000Z"
+      },
+      "timestampUtcMs": "2026-08-14T12:35:20.000Z"
+    }
+  },
+  {
+    "index": 5,
+    "hash": "",
+    "timestampUtcMs": "2026-08-14T12:37:40.466Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "55325ce3-8d29-44b3-a8db-00a5e0af94b2",
+        "targetId": "d5641215-b73a-4540-b371-cbf39b6ad4ba",
+        "relationshipType": "BUILDS_ON"
+      },
+      "timestampUtcMs": "2026-08-14T12:37:40.466Z"
+    }
+  },
+  {
+    "index": 5,
+    "hash": "14ozXup0GyPLWPo6qY9QbhFEZYk=",
+    "timestampUtcMs": "2026-08-14T12:35:20.000Z",
+    "action": {
+      "type": "SET_PROVENANCE",
+      "input": {
+        "author": "knowledge-agent",
+        "createdAt": "2026-04-21T14:42:09.748Z",
+        "sourceOrigin": "DERIVED"
+      },
+      "timestampUtcMs": "2026-08-14T12:35:20.000Z"
+    }
+  },
+  {
+    "index": 6,
+    "hash": "oyByjSSNgbJV3s8WPOBAxB+V7Qw=",
+    "timestampUtcMs": "2026-08-14T12:35:20.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "b44537de-afd0-4e89-b7e5-38017db95295",
+        "name": "rollout-plan",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-08-14T12:35:20.000Z"
+    }
+  },
+  {
+    "index": 7,
+    "hash": "ZtZbjCBzsSg3S8376mPtlmDfIZg=",
+    "timestampUtcMs": "2026-08-14T12:35:20.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "9f5ba35b-317b-4560-833f-98809463f287",
+        "name": "redundancy-level",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-08-14T12:35:20.000Z"
+    }
+  },
+  {
+    "index": 8,
+    "hash": "V/9UTMRbi/vfWmpbv0qo65ADupU=",
+    "timestampUtcMs": "2026-08-14T12:35:20.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "4df850bb-210c-4bbb-9708-51aa3b656a8a",
+        "name": "experiment-design",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-08-14T12:35:20.000Z"
+    }
+  },
+  {
+    "index": 9,
+    "hash": "fkzMjJtdIlj9/vxwVUa1/sgtNw8=",
+    "timestampUtcMs": "2026-08-14T14:37:06.000Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "version",
+        "value": "v6.2.2-dev.47",
+        "updatedAt": "2026-08-14T12:00:00.000Z"
+      },
+      "timestampUtcMs": "2026-08-14T14:37:06.000Z"
+    }
+  },
+  {
+    "index": 10,
+    "hash": "ebxXYWU1ZdBFRwkmMF2i50+zqW8=",
+    "timestampUtcMs": "2026-08-14T14:37:06.000Z",
+    "action": {
+      "type": "SUBMIT_FOR_REVIEW",
+      "input": {
+        "id": "7cd91d14-dc3e-4dcd-ae4e-36d26165a3d8",
+        "actor": "claude",
+        "comment": "Knowledge registered against powerhouse v6.2.2-dev.47",
+        "timestamp": "2026-08-14T12:00:00.000Z"
+      },
+      "timestampUtcMs": "2026-08-14T14:37:06.000Z"
+    }
+  },
+  {
+    "index": 11,
+    "hash": "fzNW+FOrv4cL4QXwk62+mDy6v0g=",
+    "timestampUtcMs": "2026-08-14T14:37:06.000Z",
+    "action": {
+      "type": "APPROVE_NOTE",
+      "input": {
+        "id": "62e79445-8666-44bb-8770-fb4458828899",
+        "actor": "liberuum",
+        "comment": "Canonical as of powerhouse v6.2.2-dev.47",
+        "timestamp": "2026-08-14T12:00:00.000Z"
+      },
+      "timestampUtcMs": "2026-08-14T14:37:06.000Z"
+    }
+  },
+  {
+    "index": 12,
+    "hash": "861ajwlNx8+6/4oflL1Pv26cJEI=",
+    "timestampUtcMs": "2026-08-16T09:49:45.000Z",
+    "action": {
+      "type": "SET_NOTE_TYPE",
+      "input": {
+        "noteType": "PROCEDURE",
+        "updatedAt": "2026-08-16T09:49:45.000Z"
+      },
+      "timestampUtcMs": "2026-08-16T09:49:45.000Z"
+    }
+  },
+  {
+    "index": 13,
+    "hash": "UZtLDd1J0TA4dyY4jZe3YH8IjtM=",
+    "timestampUtcMs": "2026-09-03T09:58:29.296Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "version",
+        "updatedAt": "2026-09-03T09:58:29.296Z"
+      },
+      "timestampUtcMs": "2026-09-03T09:58:29.296Z"
+    }
+  }
+]

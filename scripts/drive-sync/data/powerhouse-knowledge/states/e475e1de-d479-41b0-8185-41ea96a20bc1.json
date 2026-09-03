@@ -1,0 +1,439 @@
+{
+  "tier": "DOMAIN",
+  "title": "Authorization and Identity",
+  "version": "v6.2.2-dev.47",
+  "tensions": [
+    {
+      "id": "d95092d9-29a2-43ba-9abc-6e0a7bcc164e",
+      "addedAt": "2026-09-02T22:08:28.187Z",
+      "description": "\u201cAuthorization policy lives in the document's own auth scope as replicated grants, so reducers carry no access-control code\u201d contradicts \u201cReducer-level RBAC gates operations on action.context.signer.user.address so access control replicates with the document\u201d. Opened automatically from a CONTRADICTS link \u2014 resolve if one side is right, dissolve if both hold in different contexts.",
+      "involvedRefs": [
+        "96758a5d-09e0-47a6-8c91-f4a1a7fd6b04",
+        "b2987190-d95c-4d89-9075-0716c4eb99fd"
+      ]
+    },
+    {
+      "id": "c0cf5248-97c0-4cc0-bad9-6b69e48e19f7",
+      "addedAt": "2026-09-02T22:25:35.146Z",
+      "description": "\u201cFive adjacent sync and read-model defects were recorded while investigating the outbox ordering bug, including re-evaluation writes that ne\u2026\u201d contradicts \u201cEvery reactor judges every operation at its position in the merged order, so a revocation that sorts earlier retracts an already-accepted o\u2026\u201d. Opened automatically from a CONTRADICTS link \u2014 resolve if one side is right, dissolve if both hold in different contexts.",
+      "involvedRefs": [
+        "3968416f-1124-47ff-b195-1b782b5296ca",
+        "0ade289f-d4fb-44d8-ab3b-316d65bb1c8d"
+      ]
+    },
+    {
+      "id": "4795b968-aedb-40b8-99c7-dc267410575f",
+      "addedAt": "2026-09-03T07:49:28.335Z",
+      "description": "\u201cThe Academy's Renown SDK page documents a RenownUserProvider and useUser that @renown/sdk does not export\u201d contradicts \u201cThe Renown SDK is built through a RenownBuilder whose every dependency is injectable, and its React components live in reactor-browser rath\u2026\u201d. Opened automatically from a CONTRADICTS link \u2014 resolve if one side is right, dissolve if both hold in different contexts.",
+      "involvedRefs": [
+        "190cf9aa-4667-40b9-b6b1-4a8bf17e79e3",
+        "49c7215e-c5f3-40ca-b98d-22a18128e6cb"
+      ]
+    }
+  ],
+  "childRefs": [],
+  "coreIdeas": [
+    {
+      "id": "ci-5646522f",
+      "noteRef": "5646522f-bc2d-4257-bfa7-a455e5855197",
+      "contextPhrase": "",
+      "sortOrder": 0,
+      "addedAt": "2026-09-03T20:24:04.000Z",
+      "addedBy": "knowledge-agent"
+    },
+    {
+      "id": "ci-2ae31ea4",
+      "noteRef": "2ae31ea4-b8f4-4128-8531-93b932d6b6bb",
+      "contextPhrase": "",
+      "sortOrder": 1,
+      "addedAt": "2026-09-03T20:24:04.000Z",
+      "addedBy": "knowledge-agent"
+    },
+    {
+      "id": "ci-d907616b",
+      "noteRef": "d907616b-cc88-4ea5-8d91-dc6d8e5bace6",
+      "contextPhrase": "",
+      "sortOrder": 2,
+      "addedAt": "2026-09-03T20:24:04.000Z",
+      "addedBy": "knowledge-agent"
+    },
+    {
+      "id": "ci-8cbea140",
+      "noteRef": "8cbea140-21d6-4b63-8780-5d44831018aa",
+      "contextPhrase": "",
+      "sortOrder": 3,
+      "addedAt": "2026-09-03T20:24:04.000Z",
+      "addedBy": "knowledge-agent"
+    },
+    {
+      "id": "ci-851f3b4d",
+      "noteRef": "851f3b4d-92aa-4601-b6f8-06f27ba514a5",
+      "contextPhrase": "",
+      "sortOrder": 4,
+      "addedAt": "2026-09-03T20:24:04.000Z",
+      "addedBy": "knowledge-agent"
+    },
+    {
+      "id": "ci-6fa0a6ea",
+      "noteRef": "6fa0a6ea-a295-4da9-85da-1e8ba852c91a",
+      "contextPhrase": "",
+      "sortOrder": 5,
+      "addedAt": "2026-09-03T20:24:04.000Z",
+      "addedBy": "knowledge-agent"
+    },
+    {
+      "id": "ci-51157ecc",
+      "noteRef": "51157ecc-b57e-49a9-ad60-9ba3d84ea08e",
+      "contextPhrase": "",
+      "sortOrder": 6,
+      "addedAt": "2026-09-03T20:24:04.000Z",
+      "addedBy": "knowledge-agent"
+    },
+    {
+      "id": "ci-7bff5825",
+      "noteRef": "7bff5825-c49b-4b5c-948f-131a66e37544",
+      "contextPhrase": "",
+      "sortOrder": 7,
+      "addedAt": "2026-09-03T20:24:04.000Z",
+      "addedBy": "knowledge-agent"
+    },
+    {
+      "id": "ci-ef7cc5a4",
+      "noteRef": "ef7cc5a4-b600-4e8b-b235-0c9d1033823b",
+      "contextPhrase": "",
+      "sortOrder": 8,
+      "addedAt": "2026-09-03T20:24:04.000Z",
+      "addedBy": "knowledge-agent"
+    },
+    {
+      "id": "ci-68884483",
+      "noteRef": "68884483-31c9-4bb6-b417-3cc3638e3f47",
+      "contextPhrase": "",
+      "sortOrder": 9,
+      "addedAt": "2026-09-03T20:24:04.000Z",
+      "addedBy": "knowledge-agent"
+    },
+    {
+      "id": "ci-96758a5d",
+      "noteRef": "96758a5d-09e0-47a6-8c91-f4a1a7fd6b04",
+      "contextPhrase": "",
+      "sortOrder": 10,
+      "addedAt": "2026-09-03T20:24:04.000Z",
+      "addedBy": "knowledge-agent"
+    },
+    {
+      "id": "ci-c8bd64d3",
+      "noteRef": "c8bd64d3-d92e-4f41-beba-983a7e995c26",
+      "contextPhrase": "",
+      "sortOrder": 11,
+      "addedAt": "2026-09-03T20:24:04.000Z",
+      "addedBy": "knowledge-agent"
+    },
+    {
+      "id": "ci-c5419cd5",
+      "noteRef": "c5419cd5-deac-4f48-b58f-131e5808bd49",
+      "contextPhrase": "",
+      "sortOrder": 12,
+      "addedAt": "2026-09-03T20:24:04.000Z",
+      "addedBy": "knowledge-agent"
+    },
+    {
+      "id": "ci-fb4d1663",
+      "noteRef": "fb4d1663-adee-4c79-9b88-7aa427d7087e",
+      "contextPhrase": "",
+      "sortOrder": 13,
+      "addedAt": "2026-09-03T20:24:04.000Z",
+      "addedBy": "knowledge-agent"
+    },
+    {
+      "id": "ci-adb20e84",
+      "noteRef": "adb20e84-cdcd-4ed1-9542-07b80baf6c33",
+      "contextPhrase": "",
+      "sortOrder": 14,
+      "addedAt": "2026-09-03T20:24:04.000Z",
+      "addedBy": "knowledge-agent"
+    },
+    {
+      "id": "ci-4f23f5d4",
+      "noteRef": "4f23f5d4-b93e-430c-8dc3-b9835a6b83dc",
+      "contextPhrase": "",
+      "sortOrder": 15,
+      "addedAt": "2026-09-03T20:24:04.000Z",
+      "addedBy": "knowledge-agent"
+    },
+    {
+      "id": "ci-69327ea6",
+      "noteRef": "69327ea6-e0a1-4c07-a214-2c4619192862",
+      "contextPhrase": "",
+      "sortOrder": 16,
+      "addedAt": "2026-09-03T20:24:04.000Z",
+      "addedBy": "knowledge-agent"
+    },
+    {
+      "id": "ci-8693600d",
+      "noteRef": "8693600d-a81d-49c8-a2aa-b5f76e7ad5f5",
+      "contextPhrase": "",
+      "sortOrder": 17,
+      "addedAt": "2026-09-03T20:24:04.000Z",
+      "addedBy": "knowledge-agent"
+    },
+    {
+      "id": "ci-20f4f796",
+      "noteRef": "20f4f796-28d4-4b9c-aa3f-4b71a8b0df1a",
+      "contextPhrase": "",
+      "sortOrder": 18,
+      "addedAt": "2026-09-03T20:24:04.000Z",
+      "addedBy": "knowledge-agent"
+    },
+    {
+      "id": "ci-975d6c29",
+      "noteRef": "975d6c29-9797-4051-927e-d487a679f608",
+      "contextPhrase": "",
+      "sortOrder": 19,
+      "addedAt": "2026-09-03T20:24:04.000Z",
+      "addedBy": "knowledge-agent"
+    },
+    {
+      "id": "ci-cf2a1fcd",
+      "noteRef": "cf2a1fcd-b902-4976-b941-e229a6e9696c",
+      "contextPhrase": "",
+      "sortOrder": 20,
+      "addedAt": "2026-09-03T20:24:04.000Z",
+      "addedBy": "knowledge-agent"
+    },
+    {
+      "id": "ci-82d40b14",
+      "noteRef": "82d40b14-6aae-45a5-8335-e07c0ee29ae9",
+      "contextPhrase": "",
+      "sortOrder": 21,
+      "addedAt": "2026-09-03T20:24:04.000Z",
+      "addedBy": "knowledge-agent"
+    },
+    {
+      "id": "ci-0ade289f",
+      "noteRef": "0ade289f-d4fb-44d8-ab3b-316d65bb1c8d",
+      "contextPhrase": "",
+      "sortOrder": 22,
+      "addedAt": "2026-09-03T20:24:04.000Z",
+      "addedBy": "knowledge-agent"
+    },
+    {
+      "id": "ci-b6db3b1d",
+      "noteRef": "b6db3b1d-45b4-448b-a43b-23c032b3b9c9",
+      "contextPhrase": "",
+      "sortOrder": 23,
+      "addedAt": "2026-09-03T20:24:04.000Z",
+      "addedBy": "knowledge-agent"
+    },
+    {
+      "id": "ci-5ca28e07",
+      "noteRef": "5ca28e07-65de-4faf-9b18-43a21567a734",
+      "contextPhrase": "",
+      "sortOrder": 24,
+      "addedAt": "2026-09-03T20:24:04.000Z",
+      "addedBy": "knowledge-agent"
+    },
+    {
+      "id": "ci-12b1e678",
+      "noteRef": "12b1e678-bb7c-4a27-b67a-63ab31b726c4",
+      "contextPhrase": "",
+      "sortOrder": 25,
+      "addedAt": "2026-09-03T20:24:04.000Z",
+      "addedBy": "knowledge-agent"
+    },
+    {
+      "id": "ci-37c39fe6",
+      "noteRef": "37c39fe6-55b9-4c90-ad49-c96ae42467c4",
+      "contextPhrase": "",
+      "sortOrder": 26,
+      "addedAt": "2026-09-03T20:24:04.000Z",
+      "addedBy": "knowledge-agent"
+    },
+    {
+      "id": "ci-72db84fb",
+      "noteRef": "72db84fb-3247-40af-b29a-6b17f78aea33",
+      "contextPhrase": "",
+      "sortOrder": 27,
+      "addedAt": "2026-09-03T20:24:04.000Z",
+      "addedBy": "knowledge-agent"
+    },
+    {
+      "id": "ci-46257dbf",
+      "noteRef": "46257dbf-5319-4042-8ac2-30c2a08c43d8",
+      "contextPhrase": "",
+      "sortOrder": 28,
+      "addedAt": "2026-09-03T20:24:04.000Z",
+      "addedBy": "knowledge-agent"
+    },
+    {
+      "id": "ci-88c25d0b",
+      "noteRef": "88c25d0b-fe28-46df-975d-f57efdf71aad",
+      "contextPhrase": "",
+      "sortOrder": 29,
+      "addedAt": "2026-09-03T20:24:04.000Z",
+      "addedBy": "knowledge-agent"
+    },
+    {
+      "id": "ci-c7c935e2",
+      "noteRef": "c7c935e2-6f6c-48c6-8ef1-0dd6d99811e0",
+      "contextPhrase": "",
+      "sortOrder": 30,
+      "addedAt": "2026-09-03T20:24:04.000Z",
+      "addedBy": "knowledge-agent"
+    },
+    {
+      "id": "ci-d726eab9",
+      "noteRef": "d726eab9-c3d0-4387-b900-256cee1b1b9f",
+      "contextPhrase": "",
+      "sortOrder": 31,
+      "addedAt": "2026-09-03T20:24:04.000Z",
+      "addedBy": "knowledge-agent"
+    },
+    {
+      "id": "ci-d6f1f6ec",
+      "noteRef": "d6f1f6ec-4348-4079-9c4f-ba2b4b214272",
+      "contextPhrase": "",
+      "sortOrder": 32,
+      "addedAt": "2026-09-03T20:24:04.000Z",
+      "addedBy": "knowledge-agent"
+    },
+    {
+      "id": "ci-83a57be5",
+      "noteRef": "83a57be5-7993-4855-ac23-efe6778331f4",
+      "contextPhrase": "",
+      "sortOrder": 33,
+      "addedAt": "2026-09-03T20:24:04.000Z",
+      "addedBy": "knowledge-agent"
+    },
+    {
+      "id": "ci-01daefb6",
+      "noteRef": "01daefb6-d6ad-4d19-8642-3e2aa97831d0",
+      "contextPhrase": "",
+      "sortOrder": 34,
+      "addedAt": "2026-09-03T20:24:04.000Z",
+      "addedBy": "knowledge-agent"
+    },
+    {
+      "id": "ci-839214d6",
+      "noteRef": "839214d6-813a-4de6-bf55-f23d0730c69a",
+      "contextPhrase": "",
+      "sortOrder": 35,
+      "addedAt": "2026-09-03T20:24:04.000Z",
+      "addedBy": "knowledge-agent"
+    },
+    {
+      "id": "ci-5ed570c9",
+      "noteRef": "5ed570c9-1ad0-4d0d-b6c6-d33a61bddb96",
+      "contextPhrase": "",
+      "sortOrder": 36,
+      "addedAt": "2026-09-03T20:24:04.000Z",
+      "addedBy": "knowledge-agent"
+    },
+    {
+      "id": "ci-3f0780d0",
+      "noteRef": "3f0780d0-755e-4153-8e5f-c72a43abdcfe",
+      "contextPhrase": "",
+      "sortOrder": 37,
+      "addedAt": "2026-09-03T20:24:04.000Z",
+      "addedBy": "knowledge-agent"
+    },
+    {
+      "id": "ci-c281c173",
+      "noteRef": "c281c173-8126-4ade-9c50-240e30eaff23",
+      "contextPhrase": "",
+      "sortOrder": 38,
+      "addedAt": "2026-09-03T20:24:04.000Z",
+      "addedBy": "knowledge-agent"
+    },
+    {
+      "id": "ci-a8d60c71",
+      "noteRef": "a8d60c71-1ba9-4c16-b7c4-75bdbed309d2",
+      "contextPhrase": "",
+      "sortOrder": 39,
+      "addedAt": "2026-09-03T20:24:04.000Z",
+      "addedBy": "knowledge-agent"
+    },
+    {
+      "id": "ci-2a908219",
+      "noteRef": "2a908219-6cde-489e-b910-c0d5740409ab",
+      "contextPhrase": "",
+      "sortOrder": 40,
+      "addedAt": "2026-09-03T20:24:04.000Z",
+      "addedBy": "knowledge-agent"
+    },
+    {
+      "id": "ci-99ab6881",
+      "noteRef": "99ab6881-e864-4f0f-8a33-b8f206e7f4c6",
+      "contextPhrase": "",
+      "sortOrder": 41,
+      "addedAt": "2026-09-03T20:24:04.000Z",
+      "addedBy": "knowledge-agent"
+    },
+    {
+      "id": "ci-1030ede8",
+      "noteRef": "1030ede8-10d7-4df2-b672-bd7cb87bd16c",
+      "contextPhrase": "",
+      "sortOrder": 42,
+      "addedAt": "2026-09-03T20:24:04.000Z",
+      "addedBy": "knowledge-agent"
+    },
+    {
+      "id": "ci-de733125",
+      "noteRef": "de733125-3640-4f95-a987-3da99453cd9a",
+      "contextPhrase": "",
+      "sortOrder": 43,
+      "addedAt": "2026-09-03T20:24:04.000Z",
+      "addedBy": "knowledge-agent"
+    },
+    {
+      "id": "ci-49c7215e",
+      "noteRef": "49c7215e-c5f3-40ca-b98d-22a18128e6cb",
+      "contextPhrase": "",
+      "sortOrder": 44,
+      "addedAt": "2026-09-03T20:24:04.000Z",
+      "addedBy": "knowledge-agent"
+    },
+    {
+      "id": "ci-190cf9aa",
+      "noteRef": "190cf9aa-4667-40b9-b6b1-4a8bf17e79e3",
+      "contextPhrase": "",
+      "sortOrder": 45,
+      "addedAt": "2026-09-03T20:24:04.000Z",
+      "addedBy": "knowledge-agent"
+    }
+  ],
+  "createdAt": "2026-04-02T13:00:00.000Z",
+  "noteCount": 0,
+  "parentRef": null,
+  "updatedAt": "2026-09-03T11:40:56.742Z",
+  "agentNotes": [],
+  "description": "Decentralized identity via Renown, DID-based authentication, cryptographic action signing, and the layered permission model that secures Powerhouse documents.",
+  "orientation": "Security in Powerhouse is built on decentralized identity rather than centralized user databases. The Renown system creates DIDs from Ethereum wallets, giving users self-sovereign identities that work across any reactor without a central authority. Every operation can be cryptographically signed \u2014 either at the header level for transport integrity or at the individual action level for non-repudiation \u2014 and the ReactorClient handles this signing transparently. On top of identity, a layered authorization model controls who can do what: from broad drive-level permissions down to fine-grained operation-level access, with group support for organizational structures. This MOC maps the complete security story from wallet connection through identity creation to permission enforcement.",
+  "openQuestions": [],
+  "links": [
+    {
+      "id": "lnk-a4fda37c-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "a4fda37c-db07-46ee-a5ad-85417a5accab",
+      "targetTitle": "ph-access-token-mints-local-self-signed-jwt"
+    },
+    {
+      "id": "lnk-ac5fe2b4-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "ac5fe2b4-d3c6-40b2-98b4-bf89b25ad4ba",
+      "targetTitle": "server-side-renown-session-cookie-verification"
+    },
+    {
+      "id": "lnk-d1b581d2-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "d1b581d2-1f07-434f-8192-dbabeae7b7db",
+      "targetTitle": "sign-in-binds-to-one-chain-via-the-did"
+    },
+    {
+      "id": "lnk-f831cc20-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "f831cc20-a6aa-49ab-91bc-e8616da20fd9",
+      "targetTitle": "four-separate-gates-on-one-operation"
+    }
+  ]
+}

@@ -1,0 +1,120 @@
+{
+  "links": [
+    {
+      "id": "lnk-0ade289f-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "0ade289f-d4fb-44d8-ab3b-316d65bb1c8d",
+      "targetTitle": "auth-positional-judgment",
+      "reason": "The condition guards admission; positional replay and re-evaluation are how the same model is applied to synced history",
+      "confidence": "grounded"
+    },
+    {
+      "id": "lnk-43b82c81-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "43b82c81-4d28-4e69-9a0a-84c0dddb87ef",
+      "targetTitle": "reactor-read-models-pre-ready-phase",
+      "reason": "The decision is taken in the executor before the reducer, upstream of both read models and processors",
+      "confidence": "established"
+    },
+    {
+      "id": "lnk-955cc0e6-bui",
+      "linkType": "BUILDS_ON",
+      "targetDocumentId": "955cc0e6-a2f8-41f9-963f-bde2b278ab9c",
+      "targetTitle": "consistency-tokens-read-after-write",
+      "reason": "Consistency tokens capture stream coordinates for reads; the append condition captures the same coordinates for the streams a write's decision depended on",
+      "confidence": "grounded"
+    },
+    {
+      "id": "lnk-223bb12a-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "223bb12a-be7f-4209-9ab2-f04f7bb2b6c8",
+      "targetTitle": "Spec \u203a Spec \u2014 Attribute-based access control in the auth scope with DCB",
+      "reason": "Extracted from docs/specs/auth-scope.md at v6.2.2-dev.74 \u2014 Overview (DCB, projections, decision model, append condition); Implementation \u203a Admission; guard query and advisory locks",
+      "confidence": "grounded"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "The decision model is a Dynamic Consistency Boundary: it folds the read-set streams and yields an append condition the operation store checks inside the insert",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "9b14cfb4-cd76-40a1-8159-4bde7e4b1a72",
+      "name": "auth-scope",
+      "topicDocumentId": null
+    },
+    {
+      "id": "d10e4f84-9179-4672-bd63-ed978e22625f",
+      "name": "dcb",
+      "topicDocumentId": null
+    },
+    {
+      "id": "58810cb4-50ae-4aef-8661-8e297178a30f",
+      "name": "consistency",
+      "topicDocumentId": null
+    },
+    {
+      "id": "89a52ba0-36c4-4846-acb3-59c531900765",
+      "name": "reactor",
+      "topicDocumentId": null
+    },
+    {
+      "id": "9c0c6aab-876f-4733-a58f-e9447b4110f1",
+      "name": "architecture",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "The reactor already had consistency between two of a document's streams \u2014 `document` and the domain scopes. The auth work generalizes it with the **Dynamic Consistency Boundary** (DCB) pattern. In DCB terms each scope's reducer is a *projection* (`f(state, event) => state`), and a **decision model** is a composition of projections over a set of streams \u2014 here the document's `auth` and `document` streams plus any group documents the grants name. Evaluating the model yields an **append condition**: the set of stream positions the decision depended on, compiled into the SQL insert.\n\nAdmission runs in `SimpleJobExecutor.executeRegularAction` between the write-cache load and the reducer. `buildDecisionModel` folds the model from the local streams' heads and returns the condition; a deny rejects the job with `AuthorizationDeniedError` before anything is written. On allow, the reducer runs and the operation goes to `IOperationStore.apply` with the condition. Inside the append transaction the store verifies every stream in the condition is still at its recorded revision; if any has grown it throws `AppendConditionFailedError` and writes nothing, and the job **retries** \u2014 rebuild, re-decide, re-append. A condition failure is a concurrency conflict, not a fault, which is why retry is safe.\n\nThis is optimistic locking: the expected-revision check the store already performed for the written stream, extended to the streams the decision *read*. The queue already serializes jobs per document, so a document's own streams cannot grow between fold and append; the condition exists for **group documents**, which run on other queue keys and workers, and for **multi-instance deployments** \u2014 two reactors sharing one database have no shared queue, so advisory locks and the guarded insert are what make that safe, and are required rather than optional hardening. A decision reads through the write cache and depends on two of its guarantees (a stored snapshot never changes; a head read is answered only by a snapshot recorded as the head), both fixed before the stage began. Auth is the first decision model; the machinery is model-agnostic, and registering further models is registration, not new semantics.\n\n_Source: docs/specs/auth-scope.md (Powerhouse v6.2.2-dev.74)._\n\n## Provenance\n- `docs/specs/auth-scope.md` \u2014 Overview (DCB, projections, decision model, append condition); Implementation \u203a Admission; guard query and advisory locks\n\n_Recorded from the Powerhouse repository at **v6.2.2-dev.74** during the v6.2.2-dev.74 source sync._",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": "v6.2.2-dev.74",
+  "computes": null,
+  "filePath": "docs/specs/auth-scope.md",
+  "noteType": "ARCHITECTURE",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": "grounded",
+  "consumedBy": [],
+  "provenance": {
+    "author": "knowledge-agent",
+    "createdAt": "2026-09-02T22:11:01.619Z",
+    "sessionId": null,
+    "updatedAt": "2026-09-02T22:20:31.886Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "If any stream the decision read has grown, the store throws AppendConditionFailedError and writes nothing; the job retries. Optimistic locking, extended from the written stream to every stream read.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "4bb7931a-400c-413b-8802-309146736680",
+      "actor": "knowledge-agent",
+      "comment": "extracted from the Powerhouse repository at v6.2.2-dev.74",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-09-02T22:11:03.113Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "2ca1b9ee-ce4e-40eb-882a-e0d4579e59a1",
+      "actor": "liberuum",
+      "comment": "claim checked against the cited repository file at the pinned tag",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-09-02T22:11:03.595Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

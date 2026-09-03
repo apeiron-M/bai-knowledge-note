@@ -1,0 +1,100 @@
+{
+  "links": [
+    {
+      "id": "lnk-5db53392-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "5db53392-427e-4444-8f41-b83d3df809cb",
+      "targetTitle": "PPI AG \u2014 not researched (owns payments products)"
+    },
+    {
+      "id": "lnk-c4280320-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "c4280320-d9ae-4fbb-891f-95f284a58d9d",
+      "targetTitle": "Endava \u2014 not researched"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "PPI AG and Endava rank on a mechanical v2 rescore with no OSS-portfolio screen behind it",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "b6822cda-d418-4019-bb61-7787d9ab693d",
+      "name": "leads",
+      "topicDocumentId": null
+    },
+    {
+      "id": "15e96070-8933-4ea6-87fc-f0b617804d46",
+      "name": "lead-qualification",
+      "topicDocumentId": null
+    },
+    {
+      "id": "ae80d679-a68f-4013-a68b-91faa04815e8",
+      "name": "open-source-screening",
+      "topicDocumentId": null
+    },
+    {
+      "id": "233cf61b-b466-44db-916d-e4058ca98ab6",
+      "name": "provenance",
+      "topicDocumentId": null
+    },
+    {
+      "id": "ccfe9eb0-e1c9-4a07-8b42-c4656b59fe42",
+      "name": "banking",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "These two leads were derived rather than scored: their v2 rows were rescored mechanically on size and slot occupancy only, they were never assessed on the v3 rubric, and the instruction attached to them is to run the OSS-portfolio screen before acting. The recorded v2 verticals are banking, insurance and payments.\n\nWhat the rank does not encode is the thing the corpus is organised around. There is no tool-level evidence for either lead \u2014 PPI AG's tool column reads \"not researched (owns payments products)\" and Endava's simply \"not researched\" \u2014 so nothing is known about whether either runs the open-source tooling that the whole record-layer argument attaches to. PPI AG sits at \"4 \u00b7 needs OSS screen\" and Endava at \"9 \u00b7 do not pitch\", and only the first of those reflects the missing screen; the second is a slot or size judgement.\n\nThe same flag text, differing only in the recorded verticals, is attached to a separate group of Danish banking leads. Read together they describe a property of the provisional v2 ranking tail rather than of any particular company, and the actionable content is identical: the rank is a placeholder until the screen is run.\n\n---\n\n## Leads sharing this finding (2)\n\n**4 \u00b7 needs OSS screen**\n- PPI AG (DE)\n\n**9 \u00b7 do not pitch**\n- Endava (UK)\n\nVerbatim research text this claim was extracted from:\n\n> DERIVED, NOT SCORED ON v3 \u2014 v2 row rescored mechanically (size + slot-occupancy only). Run the OSS-portfolio screen before acting. v2 verticals: Banking, insurance, payments",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "REFERENCE",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "knowledge-agent",
+    "createdAt": "2026-08-19T11:31:43.559767Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-19T11:31:45.662406Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Both rows were rescored on size and slot occupancy only; recorded v2 verticals are banking, insurance and payments, and neither tool column has been researched.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "c0fbdcea-7be9-45d2-a529-077eeedd9eeb",
+      "actor": "knowledge-agent",
+      "comment": "Extracted from lead research; claim checked against the source record.",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-19T11:31:45.514353Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "374fb357-c0f9-4222-ab61-f587cae29694",
+      "actor": "liberuum",
+      "comment": "Approved: lead corpus extraction.",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-19T11:31:45.662406Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

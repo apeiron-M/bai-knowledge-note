@@ -1,0 +1,396 @@
+[
+  {
+    "index": 0,
+    "hash": "",
+    "timestampUtcMs": "2026-08-14T12:33:21.192Z",
+    "action": {
+      "type": "CREATE_DOCUMENT",
+      "input": {
+        "meta": {},
+        "name": "apps-use-useselecteddrive-to-access-drive-state-and-filter-nodes",
+        "slug": "",
+        "model": "bai/knowledge-note",
+        "branch": "main",
+        "signing": {
+          "nonce": "",
+          "publicKey": {},
+          "signature": "307601bd-2919-4e27-9a76-97281d276518",
+          "documentType": "bai/knowledge-note",
+          "createdAtUtcIso": "2026-08-14T12:33:21.192Z"
+        },
+        "version": 0,
+        "documentId": "307601bd-2919-4e27-9a76-97281d276518",
+        "protocolVersions": {
+          "base-reducer": 2
+        }
+      },
+      "timestampUtcMs": "2026-08-14T12:33:21.192Z"
+    }
+  },
+  {
+    "index": 0,
+    "hash": "+gTFIfNg5KIDk3U+066m9L/KUN8=",
+    "timestampUtcMs": "2026-08-14T12:34:49.000Z",
+    "action": {
+      "type": "SET_TITLE",
+      "input": {
+        "title": "apps use useSelectedDrive to access drive state and filter nodes",
+        "updatedAt": "2026-08-14T12:34:49.000Z"
+      },
+      "timestampUtcMs": "2026-08-14T12:34:49.000Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "",
+    "timestampUtcMs": "2026-08-14T12:33:21.192Z",
+    "action": {
+      "type": "UPGRADE_DOCUMENT",
+      "input": {
+        "model": "bai/knowledge-note",
+        "toVersion": 1,
+        "documentId": "307601bd-2919-4e27-9a76-97281d276518",
+        "fromVersion": 0,
+        "initialState": {
+          "auth": {
+            "grants": [],
+            "version": 0
+          },
+          "local": {
+            "lastViewedAt": null,
+            "personalTags": []
+          },
+          "global": {
+            "links": [],
+            "model": null,
+            "scope": null,
+            "title": null,
+            "editor": null,
+            "inputs": [],
+            "models": [],
+            "status": "DRAFT",
+            "topics": [],
+            "content": null,
+            "context": null,
+            "modelId": null,
+            "modules": [],
+            "outputs": [],
+            "version": null,
+            "computes": null,
+            "filePath": null,
+            "noteType": null,
+            "severity": null,
+            "hooksUsed": [],
+            "rootCause": null,
+            "confidence": null,
+            "consumedBy": [],
+            "provenance": null,
+            "sourceType": null,
+            "targetType": null,
+            "cardinality": null,
+            "description": null,
+            "alternatives": [],
+            "consequences": [],
+            "errorMessage": null,
+            "relationType": null,
+            "correctPattern": null,
+            "decisionStatus": null,
+            "dispatchTargets": [],
+            "lifecycleEvents": []
+          },
+          "document": {
+            "hash": {
+              "encoding": "base64",
+              "algorithm": "sha1"
+            },
+            "version": 1
+          }
+        }
+      },
+      "timestampUtcMs": "2026-08-14T12:33:21.192Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "k1/nx/WJ3std35hExyNVp24NnYg=",
+    "timestampUtcMs": "2026-08-14T12:34:49.000Z",
+    "action": {
+      "type": "SET_DESCRIPTION",
+      "input": {
+        "updatedAt": "2026-08-14T12:34:49.000Z",
+        "description": "Drive editors filter document.state.global.nodes by kind and documentType to display documents within a drive"
+      },
+      "timestampUtcMs": "2026-08-14T12:34:49.000Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "",
+    "timestampUtcMs": "2026-08-14T12:36:37.459Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "307601bd-2919-4e27-9a76-97281d276518",
+        "targetId": "a868ced4-62b7-4fb4-bd2a-b07921b05ef9",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-08-14T12:36:37.459Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "3FfkfVPFrDeaqI2/GCGCtYBvpaM=",
+    "timestampUtcMs": "2026-08-14T12:34:49.000Z",
+    "action": {
+      "type": "SET_NOTE_TYPE",
+      "input": {
+        "noteType": "PATTERN",
+        "updatedAt": "2026-08-14T12:34:49.000Z"
+      },
+      "timestampUtcMs": "2026-08-14T12:34:49.000Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "",
+    "timestampUtcMs": "2026-08-14T12:36:37.557Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "307601bd-2919-4e27-9a76-97281d276518",
+        "targetId": "64f7c52f-dc21-4446-bad6-e88ef492a25c",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-08-14T12:36:37.557Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "7n3yDGbmqrt/qDP5u4bwX8Q7MsY=",
+    "timestampUtcMs": "2026-08-14T12:34:49.000Z",
+    "action": {
+      "type": "SET_CONTENT",
+      "input": {
+        "content": "# apps use useSelectedDrive to access drive state and filter nodes\n\nApps (drive editors) use the `useSelectedDrive()` hook to access the drive document, then filter nodes to display specific document types:\n\n```typescript\nconst [document] = useSelectedDrive();\n\n// Get file nodes from the drive\nconst fileNodes = document?.state.global.nodes.filter(\n  (node) => node.kind === \"file\"\n) || [];\n\n// Filter by document type\nconst documentModels = fileNodes.filter(\n  (node) => node.documentType === \"powerhouse/document-model\"\n);\n```\n\nReference implementation: `packages/vetra/editors/vetra-drive-app/`.\n\nSince [[document model vs document editor vs app serves different purposes]], apps manage collections while editors handle individual documents.\n\n---\n\nTopics:\n- [[editor patterns]]\n- [[model-editor wiring]]",
+        "updatedAt": "2026-08-14T12:34:49.000Z"
+      },
+      "timestampUtcMs": "2026-08-14T12:34:49.000Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "",
+    "timestampUtcMs": "2026-08-14T12:36:37.641Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "307601bd-2919-4e27-9a76-97281d276518",
+        "targetId": "ff6348c1-970e-44eb-94e4-71ddd42e1a08",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-08-14T12:36:37.641Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "d8ln3u35+j8a9fJQ6PDlkPDnNOc=",
+    "timestampUtcMs": "2026-08-14T12:34:49.000Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "version",
+        "value": "v6.2.2-dev.44",
+        "updatedAt": "2026-08-14T12:34:49.000Z"
+      },
+      "timestampUtcMs": "2026-08-14T12:34:49.000Z"
+    }
+  },
+  {
+    "index": 5,
+    "hash": "",
+    "timestampUtcMs": "2026-08-14T12:36:37.727Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "307601bd-2919-4e27-9a76-97281d276518",
+        "targetId": "1adbf0db-0ab1-4801-9ee9-cbbc9a875beb",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-08-14T12:36:37.727Z"
+    }
+  },
+  {
+    "index": 5,
+    "hash": "kLEADJrXTfb7niETrkZCaDes0Wg=",
+    "timestampUtcMs": "2026-08-14T12:34:49.000Z",
+    "action": {
+      "type": "SET_PROVENANCE",
+      "input": {
+        "author": "knowledge-agent",
+        "createdAt": "2026-04-03T14:01:56.000Z",
+        "sourceOrigin": "IMPORT"
+      },
+      "timestampUtcMs": "2026-08-14T12:34:49.000Z"
+    }
+  },
+  {
+    "index": 6,
+    "hash": "",
+    "timestampUtcMs": "2026-08-14T12:36:37.816Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "307601bd-2919-4e27-9a76-97281d276518",
+        "targetId": "9f62d615-9bb6-4683-98d8-5a20316099df",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-08-14T12:36:37.816Z"
+    }
+  },
+  {
+    "index": 6,
+    "hash": "8l9najriU308NUdumrgvba7JQG4=",
+    "timestampUtcMs": "2026-08-14T12:34:49.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "995ddd2a-75b4-462d-aa76-564615486997",
+        "name": "editor patterns",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-08-14T12:34:49.000Z"
+    }
+  },
+  {
+    "index": 7,
+    "hash": "",
+    "timestampUtcMs": "2026-09-02T21:34:07.730Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "metadata": {
+          "reason": "Backing page found by content match in the v6.2.2-dev.74 source backfill \u2014 identifiers documenttype from the claim appear in this page (text identical at v6.2.2-dev.47 and v6.2.2-dev.74); attribution, not the original extraction record",
+          "confidence": "grounded"
+        },
+        "sourceId": "307601bd-2919-4e27-9a76-97281d276518",
+        "targetId": "d3e5fb27-1622-448b-b2d5-1b7378f8aebb",
+        "relationshipType": "DERIVED_FROM"
+      },
+      "timestampUtcMs": "2026-09-02T21:34:07.730Z"
+    }
+  },
+  {
+    "index": 7,
+    "hash": "czKGOng8ZNuffVypwpbf7+fCXb0=",
+    "timestampUtcMs": "2026-08-14T12:34:49.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "d3d6d064-e04f-4582-988c-e93a2c554eb8",
+        "name": "model-editor wiring",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-08-14T12:34:49.000Z"
+    }
+  },
+  {
+    "index": 8,
+    "hash": "igrErgtqN33Jfz50uoL9VgmOkYc=",
+    "timestampUtcMs": "2026-08-14T12:34:49.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "631ba27b-5c26-4c56-a752-16e0f8c170f8",
+        "name": "React hooks",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-08-14T12:34:49.000Z"
+    }
+  },
+  {
+    "index": 9,
+    "hash": "LMkRE9R5MLZeOpwVpGuVKv2OKfc=",
+    "timestampUtcMs": "2026-08-14T12:34:49.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "bb997cb5-e05e-423f-811b-f019432f1897",
+        "name": "drive operations",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-08-14T12:34:49.000Z"
+    }
+  },
+  {
+    "index": 10,
+    "hash": "d7+MIHGfQxX5M5Id6dnqZMA4v50=",
+    "timestampUtcMs": "2026-08-14T14:36:56.000Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "version",
+        "value": "v6.2.2-dev.47",
+        "updatedAt": "2026-08-14T12:00:00.000Z"
+      },
+      "timestampUtcMs": "2026-08-14T14:36:56.000Z"
+    }
+  },
+  {
+    "index": 11,
+    "hash": "/6jmmVuabmJ6juVO84fzlKNHdJk=",
+    "timestampUtcMs": "2026-08-14T14:36:56.000Z",
+    "action": {
+      "type": "SUBMIT_FOR_REVIEW",
+      "input": {
+        "id": "621c8b9d-081b-4b15-a125-28a3cd710c0b",
+        "actor": "claude",
+        "comment": "Knowledge registered against powerhouse v6.2.2-dev.47",
+        "timestamp": "2026-08-14T12:00:00.000Z"
+      },
+      "timestampUtcMs": "2026-08-14T14:36:56.000Z"
+    }
+  },
+  {
+    "index": 12,
+    "hash": "J9SkpnPT5Gy9Xm51Ilj+QP75O8E=",
+    "timestampUtcMs": "2026-08-14T14:36:56.000Z",
+    "action": {
+      "type": "APPROVE_NOTE",
+      "input": {
+        "id": "f68fe40e-c728-48d5-83ab-d663c4f852e7",
+        "actor": "liberuum",
+        "comment": "Canonical as of powerhouse v6.2.2-dev.47",
+        "timestamp": "2026-08-14T12:00:00.000Z"
+      },
+      "timestampUtcMs": "2026-08-14T14:36:56.000Z"
+    }
+  },
+  {
+    "index": 13,
+    "hash": "jynTpUSwlY7cDmBQMMGEr/y8yyY=",
+    "timestampUtcMs": "2026-09-02T21:34:10.036Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "filePath",
+        "value": "apps/academy/docs/academy/03-Build/03-BuildingUserExperiences/03-BuildingADriveExplorer.md",
+        "updatedAt": "2026-09-02T21:34:10.036Z"
+      },
+      "timestampUtcMs": "2026-09-02T21:34:10.036Z"
+    }
+  },
+  {
+    "index": 14,
+    "hash": "Ew4bKlQikFJwtUehAfTqz7ToOqY=",
+    "timestampUtcMs": "2026-09-02T21:34:10.036Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "version",
+        "value": "v6.2.2-dev.74",
+        "updatedAt": "2026-09-02T21:34:10.036Z"
+      },
+      "timestampUtcMs": "2026-09-02T21:34:10.036Z"
+    }
+  }
+]

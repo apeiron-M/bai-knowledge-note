@@ -1,0 +1,96 @@
+{
+  "links": [
+    {
+      "id": "lnk-207b4bdd-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "207b4bdd-b1b2-4d12-8473-8d2e54c407cf",
+      "targetTitle": "speckle-low-level-bridge"
+    },
+    {
+      "id": "lnk-426c4cdc-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "426c4cdc-3e53-4ab7-aae8-de68d7029161",
+      "targetTitle": "ifc-semantics-dwg-derivative"
+    },
+    {
+      "id": "lnk-c720df00-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "c720df00-e3a4-49d1-b583-e7ed14c256f8",
+      "targetTitle": "bim-demo-scenario-briefing"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "The open-source IFC toolchain centers on ifcopenshell",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "bd093730-ada2-4442-b8cc-54b5e6aee50d",
+      "name": "ifc",
+      "topicDocumentId": null
+    },
+    {
+      "id": "3f67be86-2207-45db-b263-8274da520905",
+      "name": "tooling",
+      "topicDocumentId": null
+    },
+    {
+      "id": "5238e7cb-37a0-4a10-b12f-ad2539373639",
+      "name": "open-source",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "The open-source toolchain for working with IFC files (BIM briefing):\n\n- **ifcopenshell** \u2014 \"what everyone uses\"; the core IFC library. Notably ships an MCP server (docs.ifcopenshell.org/ifcmcp.html), making IFC directly accessible to agents. Speckle partially uses it under the hood.\n- **bimserver** (opensourcebim/bimserver) \u2014 open-source BIM server\n- **Bonsai** \u2014 Blender plugin for BIM authoring/viewing (extensions.blender.org); with sample IFC files from buildingSMART's test suite\n- **ifc-bench** (huggingface.co/datasets/sylvainHellin/ifc-bench) \u2014 benchmark dataset for evaluating BIM comprehension in AI systems: curated IFC models with QA pairs across 4 complexity categories\n- **cobbie** (github.com/sylvainHellin/cobbie) \u2014 Code-Based BIM Information Extraction, same author\n\nPipeline-relevant contact: Peter Kombolschek (via Jakob) is releasing an open-source **IFC viewer and editor supporting 4D (time) and 5D (costs)**. A well-known Austrian architect who works on BIM norms \u2014 potentially both a tool source and a distribution channel.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "REFERENCE",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "knowledge-agent",
+    "createdAt": "2026-08-14T18:13:46.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-14T18:17:23.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "ifcopenshell is 'what everyone uses' (incl. an MCP server); around it: bimserver, Bonsai for Blender, ifc-bench + cobbie for AI evaluation, and an upcoming open-source 4D/5D IFC editor.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "5e6e279d-5a4e-4e61-9bf5-79020af946cf",
+      "actor": "knowledge-agent",
+      "comment": "Extracted from Aug 12-14 meeting sources; links + methodology grounding applied",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-14T18:17:23.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "078a4d7e-8a19-4dff-8e77-54626bd98ef2",
+      "actor": "liberuum",
+      "comment": "Pipeline verify: quality gate passed",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-14T18:17:23.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

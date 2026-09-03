@@ -1,0 +1,107 @@
+{
+  "links": [
+    {
+      "id": "lnk-fff29bdc-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "fff29bdc-424a-4a8e-902c-fb6d07b040b4",
+      "targetTitle": "Package \u203a reactor \u203a specs/tla \u2014 TLA+ Specifications for Reactor Synchronization",
+      "reason": "Extracted from packages/reactor/specs/tla/README.md at v6.2.2-dev.74 \u2014 Limitations; Future Phases; Mapping to Implementation",
+      "confidence": "grounded"
+    },
+    {
+      "id": "lnk-7a3b6263-bui",
+      "linkType": "BUILDS_ON",
+      "targetDocumentId": "7a3b6263-a16c-4fd4-83f3-7df6bdfc44a5",
+      "targetTitle": "tla-phase1-safety",
+      "reason": "States the scope of the same verification run, which is what keeps its four verified invariants from being read as a general guarantee",
+      "confidence": "grounded"
+    },
+    {
+      "id": "lnk-bb823a22-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "bb823a22-5304-40dd-b087-5ae6a35e9755",
+      "targetTitle": "sync-gap-partial-batch",
+      "reason": "A partial batch emitted on job failure is exactly the kind of implementation-level anomaly the high-level model does not represent",
+      "confidence": "grounded"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "The TLA+ proof is a bounded model that excludes network partitions, crash recovery, signatures and multi-document scenarios, so it is high confidence rather than a general proof",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "5e68fcb6-5281-49a9-af26-b8099f5a422c",
+      "name": "reactor-sync",
+      "topicDocumentId": null
+    },
+    {
+      "id": "72204ee9-3dec-46cb-8dde-b3f1ffd9dc70",
+      "name": "formal-verification",
+      "topicDocumentId": null
+    },
+    {
+      "id": "6ca377cc-2b2d-4b43-b3a6-20c6747a6668",
+      "name": "limitations",
+      "topicDocumentId": null
+    },
+    {
+      "id": "450001f7-7a8c-4156-a01b-03613fd5b306",
+      "name": "tla-plus",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "The specification's own README is careful about what its green run means. The Phase-1 model is bounded, and the limits are enumerated: only **2 reactors** (not N), only **1 document** (multi-document scenarios untested), at most **3 operations per reactor**, and a high level of abstraction that omits implementation detail. It explicitly does **not** model:\n\n- network failures or partitions,\n- crash recovery,\n- authentication and authorization,\n- cryptographic signatures,\n- performance characteristics.\n\nThe authors' interpretation is worth quoting in spirit: the spec proves correctness for the bounded case, which gives high confidence but **is not a proof for unbounded systems** \u2014 real-world edge cases with many reactors, documents and operations may still exist.\n\nTwo further phases are named and not implemented: Phase 2 (2 reactors, 2 documents, 5 operations, expected 10\u201330 minutes) and Phase 3 (3 reactors if tractable, network partitions, 1\u20132 hours). Anyone citing \"the sync protocol is formally verified\" should say which phase they mean.\n\nThe mapping table is the useful bridge for readers of the code: `streams` is `IOperationStore` per document/scope/branch, `channels.inbox` is a `SyncOperation` in `ExecutionPending`, `channels.outbox` one in `TransportPending`, `cursors` is `ISyncCursorStorage`, and `PerformReshuffle` is `reshuffleByTimestamp()`.\n\n## Provenance\n- `packages/reactor/specs/tla/README.md` \u2014 Limitations; Future Phases; Mapping to Implementation\n\n_Extracted from the Powerhouse repository at **v6.2.2-dev.74**._",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": "v6.2.2-dev.74",
+  "computes": null,
+  "filePath": "packages/reactor/specs/tla/README.md",
+  "noteType": "OBSERVATION",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "knowledge-agent",
+    "createdAt": "2026-09-03T07:19:29.482Z",
+    "sessionId": null,
+    "updatedAt": "2026-09-03T07:22:30.731Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Two reactors, one document, three operations each, high-level abstraction. Phases 2 and 3 (multi-document, three reactors, partitions) are named but not implemented.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "ba8e2e00-0227-4f21-869b-c074b0ec9ebc",
+      "actor": "knowledge-agent",
+      "comment": "extracted from packages/reactor/specs/tla/README.md at v6.2.2-dev.74",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-09-03T07:19:31.387Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "135190d8-e597-4af2-b232-c98f614c9e06",
+      "actor": "liberuum",
+      "comment": "claim checked against the cited file at the pinned tag",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-09-03T07:19:31.907Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

@@ -1,0 +1,107 @@
+{
+  "links": [
+    {
+      "id": "lnk-2ddae2ce-bui",
+      "linkType": "BUILDS_ON",
+      "targetDocumentId": "2ddae2ce-5409-4173-b76b-54a55b475c07",
+      "targetTitle": "processor-host-module-shape",
+      "reason": "The three-package host-module layering is this rule in practice: the base in shared, client added by reactor, attachments added by the host packages",
+      "confidence": "grounded"
+    },
+    {
+      "id": "lnk-f58a582c-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "f58a582c-749b-4327-973e-a70457c28c6b",
+      "targetTitle": "monorepo-build-prereqs",
+      "reason": "Both are constraints on how the monorepo is wired: one on dependency direction, one on the toolchain a build needs",
+      "confidence": "grounded"
+    },
+    {
+      "id": "lnk-d6e0ca51-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "d6e0ca51-7efb-460a-8034-760afb394e74",
+      "targetTitle": "Package \u203a shared \u203a README",
+      "reason": "Extracted from packages/shared/README.md at v6.2.2-dev.74 \u2014 whole file (the never-depend rule and what belongs there)",
+      "confidence": "grounded"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "The shared package must never depend on another package in the monorepo, which is what makes it safe to import from anywhere",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "f38ea649-9559-421e-8fde-e2e3f9e73e98",
+      "name": "monorepo",
+      "topicDocumentId": null
+    },
+    {
+      "id": "2e4a9faa-2717-40a1-80f2-6b9f0b13c911",
+      "name": "shared",
+      "topicDocumentId": null
+    },
+    {
+      "id": "b0973c52-b546-43d7-ac77-3eb75c54d901",
+      "name": "architecture",
+      "topicDocumentId": null
+    },
+    {
+      "id": "3ed07a27-0202-469f-9970-ca7dbef11a92",
+      "name": "dependencies",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "`packages/shared` is an npm package for code shared across the monorepo, and it carries one rule in bold: it **\"should never depend on any other package in this monorepo.\"** The reason is stated directly \u2014 so the code kept there can be used in *any* other package without circular imports.\n\nWhat belongs there follows from the rule:\n\n- simple constants usable anywhere;\n- **base** types worth sharing easily \u2014 explicitly **not** derived types that require imports from elsewhere;\n- simple utility functions that do not depend on code from elsewhere in the monorepo.\n\nThis constraint is visible in the reactor's own layering. `IProcessorHostModuleBase` lives in shared and carries only host-agnostic fields; `client` is added by `@powerhousedao/reactor` and `attachments` by reactor-browser and reactor-api, \"since neither shared nor reactor can depend on reactor-attachments\". The layering is not stylistic \u2014 it is this rule applied.\n\nSo when a type feels like it belongs in shared but needs an import, the answer is a base type in shared plus an extension in the package that owns the dependency.\n\n## Provenance\n- `packages/shared/README.md` \u2014 whole file (the never-depend rule and what belongs there)\n\n_Extracted from the Powerhouse repository at **v6.2.2-dev.74**._",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": "v6.2.2-dev.74",
+  "computes": null,
+  "filePath": "packages/shared/README.md",
+  "noteType": "DECISION",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "knowledge-agent",
+    "createdAt": "2026-09-03T07:43:51.935Z",
+    "sessionId": null,
+    "updatedAt": "2026-09-03T07:43:52.990Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "It exists for simple constants, base types that need no imports from elsewhere, and utility functions with no monorepo dependencies \u2014 the rule that keeps circular imports impossible.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "5ff343f4-3454-4657-9742-c6943e3d55eb",
+      "actor": "knowledge-agent",
+      "comment": "extracted from packages/shared/README.md at v6.2.2-dev.74",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-09-03T07:43:52.431Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "2c1a14c7-c25c-478e-83b9-ab9e39670a35",
+      "actor": "liberuum",
+      "comment": "claim checked against the cited file at the pinned tag",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-09-03T07:43:52.990Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

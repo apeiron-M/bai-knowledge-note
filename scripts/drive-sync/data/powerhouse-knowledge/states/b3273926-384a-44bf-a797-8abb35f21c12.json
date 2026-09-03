@@ -1,0 +1,106 @@
+{
+  "links": [
+    {
+      "id": "lnk-025344d1-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "025344d1-b760-4d68-8bf5-b481d95867a6",
+      "targetTitle": "BEC Financial Technologies \u2014 not researched"
+    },
+    {
+      "id": "lnk-832d14f5-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "832d14f5-ae4f-47e7-b39f-ecfcb8065277",
+      "targetTitle": "Bankdata \u2014 not researched"
+    },
+    {
+      "id": "lnk-f78c67cb-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "f78c67cb-feea-41e1-a1da-4fb9d0028c3e",
+      "targetTitle": "JN Data \u2014 not researched"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Three Danish banking leads were rescored mechanically on size and slot occupancy, never on the v3 rubric",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "1f0378ac-fc84-4f4b-80de-069357251538",
+      "name": "leads",
+      "topicDocumentId": null
+    },
+    {
+      "id": "6fc7d59d-af2a-4b4d-94b5-1f0e0b054a47",
+      "name": "lead-qualification",
+      "topicDocumentId": null
+    },
+    {
+      "id": "e721bb0b-c6ef-4829-b560-3126532ff131",
+      "name": "open-source-screening",
+      "topicDocumentId": null
+    },
+    {
+      "id": "e1c4267b-e021-4ac4-8a1c-425b647304d7",
+      "name": "provenance",
+      "topicDocumentId": null
+    },
+    {
+      "id": "1e25d09b-ba8a-4863-af6b-228b0a4dfe2d",
+      "name": "banking",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "The flag on these leads is explicit about the provenance of their rank: they were derived, not scored on v3. Their v2 rows were rescored mechanically using size and slot occupancy only, and the instruction is to run the OSS-portfolio screen before acting. The recorded v2 vertical is \"Banking only\".\n\nThe consequence is that the priority these leads carry \u2014 \"4 \u00b7 needs OSS screen\" for all three \u2014 is an artefact of a procedure rather than a research finding. It says something about how the row was processed and nothing about whether the company runs open-source tooling, which is the question the whole corpus is organised around. The tool column reads \"not researched\" for all three, which is consistent: there is no tool-level evidence behind these entries at all.\n\nAll three are Danish and all three arrived from the provisional v2 ranking tail. The same flag text, differing only in the recorded v2 verticals, appears against a second group of leads, so the mechanical-rescore caveat covers more of the corpus than these three rows and should be read as a property of the v2 tail rather than of Danish banking suppliers.\n\n---\n\n## Leads sharing this finding (3)\n\n**4 \u00b7 needs OSS screen**\n- BEC Financial Technologies (DK)\n- Bankdata (DK)\n- JN Data (DK)\n\nVerbatim research text this claim was extracted from:\n\n> DERIVED, NOT SCORED ON v3 \u2014 v2 row rescored mechanically (size + slot-occupancy only). Run the OSS-portfolio screen before acting. v2 verticals: Banking only",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "REFERENCE",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "knowledge-agent",
+    "createdAt": "2026-08-19T11:27:30.833519Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-19T11:27:33.339663Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "BEC, Bankdata and JN Data carry provisional v2 rows with 'Banking only' as the vertical, 'not researched' as the tool, and no OSS-portfolio screen behind their rank.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "81ec5854-1d2b-4228-8385-e0e6a393f823",
+      "actor": "knowledge-agent",
+      "comment": "Extracted from lead research; claim checked against the source record.",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-19T11:27:33.182507Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "d896f990-cf4e-41cf-aa7f-77e0a53ccab8",
+      "actor": "liberuum",
+      "comment": "Approved: lead corpus extraction.",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-19T11:27:33.339663Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

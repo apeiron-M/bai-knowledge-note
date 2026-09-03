@@ -1,0 +1,106 @@
+{
+  "links": [
+    {
+      "id": "lnk-38452ce8-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "38452ce8-8dd3-474a-8caa-2fe877fb937b",
+      "targetTitle": "Arawa \u2014 Nextcloud"
+    },
+    {
+      "id": "lnk-43f416a2-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "43f416a2-61ec-4b84-9fc6-07a8b9fa9fd6",
+      "targetTitle": "Compaso GmbH \u2014 Nextcloud"
+    },
+    {
+      "id": "lnk-b2941a86-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "b2941a86-6870-47b0-ab07-0e9336fe6930",
+      "targetTitle": "Linuxfabrik GmbH \u2014 Nextcloud"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "To Nextcloud a signed-off document and a moved document look the same",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "72586504-8f93-40c3-b9de-6ae357628989",
+      "name": "leads",
+      "topicDocumentId": null
+    },
+    {
+      "id": "d8acbc64-9e86-442a-ac11-98cf0af6d83c",
+      "name": "nextcloud",
+      "topicDocumentId": null
+    },
+    {
+      "id": "01042cfc-7294-4ac2-b569-38b942578d57",
+      "name": "dms",
+      "topicDocumentId": null
+    },
+    {
+      "id": "d28798c8-fa7f-4a83-b27f-673438a130a6",
+      "name": "audit-trail",
+      "topicDocumentId": null
+    },
+    {
+      "id": "5a5cee6e-6eaf-40a6-a370-e5b853b9d5ea",
+      "name": "system-of-record",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "Nextcloud syncs and shares files, and its activity feed reflects exactly that: a stream of file events. A document being signed off and a document being moved produce entries of the same kind, so the feed cannot distinguish a decision from a filing action.\n\nThis is a sharper version of the general document-management gap. The system is not missing a log; it has a detailed one. What it is missing is a type distinction between events that change where a file is and events that change what the organisation has committed to. Powerhouse records the decision the file represents, which is a different object from the file.\n\nThree leads carry this finding \u2014 in FR, DE and CH, all at \"3 \u00b7 later\". For partners who deploy Nextcloud as a sovereign alternative to hosted file services, the gap is worth naming precisely, because the usual objection is that the activity feed already covers it.\n\n---\n\n## Leads sharing this finding (3)\n\n**3 \u00b7 later**\n- Arawa (FR) \u2014 https://arawa.fr\n- Compaso GmbH (DE) \u2014 https://compaso.de\n- Linuxfabrik GmbH (CH Zurich) \u2014 https://linuxfabrik.ch\n\nVerbatim research text this claim was extracted from:\n\n> Nextcloud syncs and shares files; its activity feed is a file-event stream, not a business record. A signed-off document and a moved document look the same to it. Powerhouse records the decision the file represents.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "OBSERVATION",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "knowledge-agent",
+    "createdAt": "2026-08-19T11:27:20.814620Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-19T11:27:22.985223Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Its activity feed is a file-event stream rather than a business record, so the decision the file represents has to be recorded somewhere the file's lifecycle cannot reach.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "8cbd0f85-0aa4-42cd-a68e-7d81255feb06",
+      "actor": "knowledge-agent",
+      "comment": "Extracted from lead research; claim checked against the source record.",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-19T11:27:22.833490Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "3166bd5e-54ca-4484-946b-08e54adf5ea0",
+      "actor": "liberuum",
+      "comment": "Approved: lead corpus extraction.",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-19T11:27:22.985223Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

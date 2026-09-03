@@ -1,0 +1,133 @@
+[
+  {
+    "index": 0,
+    "hash": "",
+    "timestampUtcMs": "2026-09-02T21:37:23.035Z",
+    "action": {
+      "type": "CREATE_DOCUMENT",
+      "input": {
+        "meta": {},
+        "name": "Academy \u203a Build \u203a ExampleUsecases \u203a TodoList \u203a Todo List (reference implementation)",
+        "slug": "",
+        "model": "bai/source",
+        "branch": "main",
+        "signing": {
+          "nonce": "",
+          "publicKey": {},
+          "signature": "c6071a9e-85de-41e9-9517-7c893f3d57ef",
+          "documentType": "bai/source",
+          "createdAtUtcIso": "2026-09-02T21:37:23.035Z"
+        },
+        "version": 0,
+        "documentId": "c6071a9e-85de-41e9-9517-7c893f3d57ef",
+        "protocolVersions": {
+          "base-reducer": 2
+        }
+      },
+      "timestampUtcMs": "2026-09-02T21:37:23.035Z"
+    }
+  },
+  {
+    "index": 0,
+    "hash": "rRawNiDh7Rga09OPo+QDbFiC+/U=",
+    "timestampUtcMs": "2026-09-02T21:37:22.986Z",
+    "action": {
+      "type": "INGEST_SOURCE",
+      "input": {
+        "url": "https://github.com/powerhouse-inc/powerhouse/blob/v6.2.2-dev.74/apps/academy/docs/academy/03-Build/06-ExampleUsecases/TodoList/TodoList.md",
+        "tool": "sync-repo-docs",
+        "title": "Academy \u203a Build \u203a ExampleUsecases \u203a TodoList \u203a Todo List (reference implementation)",
+        "author": "Powerhouse Inc.",
+        "method": "sha256:2a6d40473350fc307b1d61ef15511ec062df36b26eff9334ed49ce88e8a3e8b1 git:v6.2.2-dev.74",
+        "content": "---\ntitle: Todo List\n---\n\n# Todo List (reference implementation)\n\nThe Todo List is the worked example used throughout the Build track. Rather than repeat it here, this page points you to the finished code so you can clone, run, and compare against your own work.\n\nYou build the Todo List step by step in two places:\n\n- [**Manual Todo tutorial**](/academy/Build/ManualTodoTutorial/ExploreDemoPackage) \u2014 build a basic Todo package by hand: document model, reducers, tests, and editor.\n- [**Document Model Creation (Mastery Track)**](/academy/Build/DocumentModelCreation/WhatIsADocumentModel) \u2014 the theory behind those steps, plus the advanced extensions: computed `stats`, the [Drive Explorer](/academy/Build/BuildingUserExperiences/BuildingADriveExplorer), and a shared stats component.\n\n## The reference repository\n\nThe full implementation lives at [powerhouse-inc/todo-tutorial](https://github.com/powerhouse-inc/todo-tutorial). It uses one branch per step so you can start anywhere or compare your work:\n\n- Each step has a starting branch (`step-1-\u2026`) and a completed branch (`step-1-complete-\u2026`).\n- The `step-1-` branch matches what `ph init todo-tutorial` produces.\n- To compare your work against a checkpoint: `git diff your-branch step-1-complete-\u2026`, or use \"compare with branch\" in the GitHub UI.\n\nFork the repository (uncheck \"copy the main branch only\" so you keep every step branch), `git clone` your fork, then `pnpm install`.\n\n## What the finished package demonstrates\n\n- A `TodoList` document model with state schema and operations\n- Reducer operation handlers and their unit tests\n- A document editor wired to the model's operations\n- A custom Drive Explorer for managing many Todo Lists in a drive\n- A shared component that displays Todo List stats in both the editor and the Drive Explorer\n",
+        "createdAt": "2026-09-02T21:37:22.986Z",
+        "createdBy": "repo-docs-sync",
+        "sourceType": "DOCUMENTATION",
+        "description": "Powerhouse v6.2.2-dev.74 (unchanged since v6.2.2-dev.47) \u2014 The Todo List is the worked example used throughout the Build track. Rather than repeat it here, this page points you to the finished code s\u2026",
+        "publishedAt": "2026-06-24T00:07:15.000Z"
+      },
+      "timestampUtcMs": "2026-09-02T21:37:22.986Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "",
+    "timestampUtcMs": "2026-09-02T21:37:23.035Z",
+    "action": {
+      "type": "UPGRADE_DOCUMENT",
+      "input": {
+        "model": "bai/source",
+        "toVersion": 1,
+        "documentId": "c6071a9e-85de-41e9-9517-7c893f3d57ef",
+        "fromVersion": 0,
+        "initialState": {
+          "auth": {
+            "grants": [],
+            "version": 0
+          },
+          "local": {},
+          "global": {
+            "title": null,
+            "status": "INBOX",
+            "content": null,
+            "createdAt": null,
+            "createdBy": null,
+            "provenance": null,
+            "sourceType": null,
+            "description": null,
+            "extractedClaims": [],
+            "extractionStats": null
+          },
+          "document": {
+            "hash": {
+              "encoding": "base64",
+              "algorithm": "sha1"
+            },
+            "version": 1
+          }
+        }
+      },
+      "timestampUtcMs": "2026-09-02T21:37:23.035Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "2zt8GzTlrb88mFZgHCJJ0oj7WCo=",
+    "timestampUtcMs": "2026-09-03T07:55:48.988Z",
+    "action": {
+      "type": "ADD_EXTRACTED_CLAIM",
+      "input": {
+        "claimRef": "c4700307-8c0d-4139-a829-2f0bc8b0cc46"
+      },
+      "timestampUtcMs": "2026-09-03T07:55:48.988Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "S3ZeG7z6LI+icdaqrMp2zzt8wkI=",
+    "timestampUtcMs": "2026-09-03T07:56:00.392Z",
+    "action": {
+      "type": "RECORD_EXTRACTION_STATS",
+      "input": {
+        "skipRate": 0.5,
+        "claimCount": 1,
+        "extractedAt": "2026-09-03T07:56:00.392Z",
+        "extractedBy": "knowledge-agent",
+        "skippedCount": 1
+      },
+      "timestampUtcMs": "2026-09-03T07:56:00.392Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "YUpRoQ2Ogd6LKGk/6MFlnFGiQkA=",
+    "timestampUtcMs": "2026-09-03T07:56:00.978Z",
+    "action": {
+      "type": "SET_SOURCE_STATUS",
+      "input": {
+        "status": "EXTRACTED"
+      },
+      "timestampUtcMs": "2026-09-03T07:56:00.978Z"
+    }
+  }
+]

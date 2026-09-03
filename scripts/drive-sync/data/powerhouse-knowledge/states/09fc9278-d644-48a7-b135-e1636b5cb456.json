@@ -1,0 +1,107 @@
+{
+  "tier": "TOPIC",
+  "title": "Data Duplication Analysis",
+  "version": "v6.2.2-dev.47",
+  "tensions": [],
+  "childRefs": [],
+  "coreIdeas": [
+    {
+      "id": "ci-6443a5a6",
+      "noteRef": "6443a5a6-47e6-4336-b701-017757a9ff9e",
+      "contextPhrase": "",
+      "sortOrder": 0,
+      "addedAt": "2026-09-03T20:21:23.000Z",
+      "addedBy": "knowledge-agent"
+    },
+    {
+      "id": "ci-291bfd93",
+      "noteRef": "291bfd93-8d9f-4836-b791-d5d656545eb4",
+      "contextPhrase": "",
+      "sortOrder": 1,
+      "addedAt": "2026-09-03T20:21:23.000Z",
+      "addedBy": "knowledge-agent"
+    },
+    {
+      "id": "ci-30c759d9",
+      "noteRef": "30c759d9-9abf-427e-b0e8-c9c382064883",
+      "contextPhrase": "",
+      "sortOrder": 2,
+      "addedAt": "2026-09-03T20:21:23.000Z",
+      "addedBy": "knowledge-agent"
+    },
+    {
+      "id": "ci-5ec9461e",
+      "noteRef": "5ec9461e-a203-464b-b461-c74dd524fdc5",
+      "contextPhrase": "",
+      "sortOrder": 3,
+      "addedAt": "2026-09-03T20:21:23.000Z",
+      "addedBy": "knowledge-agent"
+    },
+    {
+      "id": "ci-d8b657d7",
+      "noteRef": "d8b657d7-fd4f-4890-bf11-f743462f8d60",
+      "contextPhrase": "",
+      "sortOrder": 4,
+      "addedAt": "2026-09-03T20:21:23.000Z",
+      "addedBy": "knowledge-agent"
+    },
+    {
+      "id": "ci-ab44d9c0",
+      "noteRef": "ab44d9c0-a981-4c37-8afe-a6858911dc82",
+      "contextPhrase": "",
+      "sortOrder": 5,
+      "addedAt": "2026-09-03T20:21:23.000Z",
+      "addedBy": "knowledge-agent"
+    },
+    {
+      "id": "ci-325f2eb3",
+      "noteRef": "325f2eb3-04f5-4f04-b985-ac81b4582b8f",
+      "contextPhrase": "",
+      "sortOrder": 6,
+      "addedAt": "2026-09-03T20:21:23.000Z",
+      "addedBy": "knowledge-agent"
+    },
+    {
+      "id": "ci-1fda1684",
+      "noteRef": "1fda1684-4919-46c0-a377-2a0eff091d4f",
+      "contextPhrase": "",
+      "sortOrder": 7,
+      "addedAt": "2026-09-03T20:21:23.000Z",
+      "addedBy": "knowledge-agent"
+    }
+  ],
+  "createdAt": "2026-04-21T19:32:39.228Z",
+  "noteCount": 0,
+  "parentRef": null,
+  "updatedAt": "2026-08-14T12:00:00.000Z",
+  "agentNotes": [],
+  "description": "Where Connect's bytes live: the four storage layers, native 2x duplication (PGlite+Postgres), 3x when Switchboard+Swarm run together.",
+  "orientation": "Running Connect over multiple transports has a real storage cost. This MOC consolidates the duplication analysis: operations live in up to four layers (PGlite, Postgres via Switchboard, Swarm /bytes, per-user op feeds), each with distinct durability and read characteristics. The native dual-store already puts every op in PGlite and Postgres; adding Swarm mirrors the same pattern at the remote layer, raising total cost to 3x. Collaboration adds SyncEnvelope wrappers and per-user feeds but does not re-duplicate raw ops. A typical small user totals ~120 KB \u2014 the order-of-magnitude baseline for capacity discussions.",
+  "openQuestions": [],
+  "links": [
+    {
+      "id": "lnk-05681665-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "05681665-2d87-4f9c-a5b5-a4aacef82d34",
+      "targetTitle": "ddup-content-addressed-dedup"
+    },
+    {
+      "id": "lnk-b9ba8893-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "b9ba8893-c118-4f14-b9b4-5da5f9847fcb",
+      "targetTitle": "ddup-four-architecture-options"
+    },
+    {
+      "id": "lnk-7c8d97ac-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "7c8d97ac-5d8b-446c-8c7a-747e2d301708",
+      "targetTitle": "redundancy-stamp-cost-medium-25pct"
+    },
+    {
+      "id": "lnk-bc0da529-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "bc0da529-6bf7-422e-952b-518c16751c2c",
+      "targetTitle": "ddup-layer-mutability-lifespan"
+    }
+  ]
+}

@@ -1,0 +1,115 @@
+{
+  "links": [
+    {
+      "id": "lnk-bf2d1ef5-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "bf2d1ef5-01a8-4688-86a6-0db24fa9120a",
+      "targetTitle": "attachment-uploads-have-two-equal-reservation-modes",
+      "reason": "The hook wraps the hash-first flow, which is why the ref exists before the bytes and submission has to be async",
+      "confidence": "grounded"
+    },
+    {
+      "id": "lnk-1a932db8-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "1a932db8-245d-40f6-bfd8-eea728d9615e",
+      "targetTitle": "reactor-browser-hooks-provide-document-state",
+      "reason": "Another reactor-browser hook whose data derives from the reactor rather than local state; here the state machine is a transfer lifecycle",
+      "confidence": "established"
+    },
+    {
+      "id": "lnk-4c738d9a-bui",
+      "linkType": "BUILDS_ON",
+      "targetDocumentId": "4c738d9a-44ec-4aaf-8af6-c39182ada242",
+      "targetTitle": "attachment-byte-progress",
+      "reason": "Presents the same stage and progress model through the React hooks, including the percent field the design-system bar expects",
+      "confidence": "grounded"
+    },
+    {
+      "id": "lnk-f6901953-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "f6901953-d719-45d2-8b5c-8aaca612562d",
+      "targetTitle": "Academy \u203a Reference \u203a Reactor \u203a Attachment service",
+      "reason": "Extracted from apps/academy/docs/academy/04-Reference/01-Reactor/09-AttachmentService.md at v6.2.2-dev.74 \u2014 React subsection: the new destructuring, stage/progress/result/error/cancel/reset, useAttachmentPreview",
+      "confidence": "grounded"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "useAttachmentUpload now exposes stage, byte progress, result, cancel and reset, and useAttachmentPreview reports the download side with retry visibility",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "96edb95f-1981-4497-bdd1-33876fd64922",
+      "name": "attachments",
+      "topicDocumentId": null
+    },
+    {
+      "id": "66e10e08-15fd-42d6-8d28-d3766d3dfd61",
+      "name": "react-hooks",
+      "topicDocumentId": null
+    },
+    {
+      "id": "a547cb8a-072c-4743-a26c-1cf426753cfb",
+      "name": "reactor-browser",
+      "topicDocumentId": null
+    },
+    {
+      "id": "31618c77-85ab-49f7-8ddc-575ef6956bae",
+      "name": "upload",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "```tsx\nconst { preprocess, upload, cancel, reset, stage, progress, result, error } = useAttachmentUpload();\n```\n\n- `stage` \u2014 `\"idle\" | \"hashing\" | \"reserving\" | \"uploading\" | \"done\" | \"error\"` (it replaced the older `status`/`UploadStatus` enum).\n- `progress` \u2014 `{ percent, loaded, total, indeterminate }`. `percent` is 0\u2013100, matching the design-system progress bar; `loaded`/`total` are raw bytes for a \"3.2 / 10 MB\" label; `indeterminate` is true while a stage runs whose bytes cannot be observed, and `percent` stays 0 for the whole of it.\n- `result` \u2014 the `AttachmentUploadResult` once done.\n- `error` \u2014 the failure, if any. **Progress is left where it stopped** rather than reset to zero.\n- `cancel()` \u2014 aborts the transfer in flight; the `upload` promise rejects with an `AbortError`.\n- `reset()` \u2014 returns the hook to idle, discarding result and error. A transfer still in flight is aborted, so it cannot keep streaming behind an idle UI.\n\n`upload(results)` now calls `client.upload({ preprocessed: results })`, so progress, dedup reporting and cancellation are identical to the non-React path. The two-call split (`preprocess` then `upload`) is deliberate: **the ref must reach the document before the bytes are committed**, and since the ref only exists after `preprocess` resolves, submission is async \u2014 a ref cannot be produced inside a synchronous action input. `useAttachments()` returns one client per service, shared across every consumer.\n\n`useAttachmentPreview()` reports the same shape for the download side plus retry visibility: `stage`, `progress`, `attempt`, `maxAttempts`, and `lastError` \u2014 the failure of an attempt that is about to be retried, exposed while the hook is still loading. It aborts the download on unmount.\n\n_Source: apps/academy/docs/academy/04-Reference/01-Reactor/09-AttachmentService.md (Powerhouse v6.2.2-dev.74)._\n\n## Provenance\n- `apps/academy/docs/academy/04-Reference/01-Reactor/09-AttachmentService.md` \u2014 React subsection: the new destructuring, stage/progress/result/error/cancel/reset, useAttachmentPreview\n\n_Recorded from the Powerhouse repository at **v6.2.2-dev.74** during the v6.2.2-dev.74 source sync._",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": "v6.2.2-dev.74",
+  "computes": null,
+  "filePath": "apps/academy/docs/academy/04-Reference/01-Reactor/09-AttachmentService.md",
+  "noteType": "REFERENCE",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": "grounded",
+  "consumedBy": [],
+  "provenance": {
+    "author": "knowledge-agent",
+    "createdAt": "2026-09-02T22:14:10.601Z",
+    "sessionId": null,
+    "updatedAt": "2026-09-02T22:21:21.993Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "stage is idle, hashing, reserving, uploading, done or error; progress carries percent, loaded, total and indeterminate. On error progress stays put; reset aborts an in-flight transfer.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "04187709-802b-4a15-a377-bfefdce97bef",
+      "actor": "knowledge-agent",
+      "comment": "extracted from the Powerhouse repository at v6.2.2-dev.74",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-09-02T22:14:11.299Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "ca74ff9b-8cef-4b64-b33f-1c1ac6587821",
+      "actor": "liberuum",
+      "comment": "claim checked against the cited repository file at the pinned tag",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-09-02T22:14:11.821Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

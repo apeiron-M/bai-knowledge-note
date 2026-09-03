@@ -1,0 +1,113 @@
+{
+  "links": [
+    {
+      "id": "lnk-64d17fca-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "64d17fca-c9b3-48ae-a012-a5276e64cc82",
+      "targetTitle": "swarm-mantaray-manifests"
+    },
+    {
+      "id": "lnk-7ef703d9-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "7ef703d9-44ff-4168-b0b5-90d9f1e602a0",
+      "targetTitle": "swarm-manifest-three-tier-hierarchy"
+    },
+    {
+      "id": "lnk-ae9c98a6-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "ae9c98a6-00eb-4aa9-92e8-40ad3bc9513d",
+      "targetTitle": "chat-polish-backlog-items"
+    },
+    {
+      "id": "lnk-6443a5a6-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "6443a5a6-47e6-4336-b701-017757a9ff9e",
+      "targetTitle": "ddup-four-storage-layers"
+    },
+    {
+      "id": "lnk-e05f0d99-bui",
+      "linkType": "BUILDS_ON",
+      "targetDocumentId": "e05f0d99-31d2-4612-bd7b-aecfd4e7063d",
+      "targetTitle": "swarm-feed-write-per-topic-lock"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "The adapter writes manifests as 32-byte references inside SOC feeds, not inline payloads",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "c38107eb-6e59-4878-bf96-26229b4ed704",
+      "name": "swarm-feeds",
+      "topicDocumentId": null
+    },
+    {
+      "id": "65d0a050-51c8-4fcf-ab82-4b073de6c020",
+      "name": "manifests",
+      "topicDocumentId": null
+    },
+    {
+      "id": "23848b44-bba9-4b05-955f-b7b641122d37",
+      "name": "adapter",
+      "topicDocumentId": null
+    },
+    {
+      "id": "3abf8032-75c5-4571-ae91-ee76123cc801",
+      "name": "encryption",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "## Claim\n\nThe Bee Reactor Adapter uses a **manifest-as-reference pattern**: the feed SOC contains only a 32-byte pointer to encrypted manifest bytes uploaded via `/bytes`, not the manifest itself.\n\n## Evidence\n\nWrite path:\n1. Serialize manifest JSON\n2. Encrypt with app-layer AES-256-GCM\n3. Upload to `/bytes` \u2192 receive 64-char content hash\n4. Write ONLY the 32-byte hash into the feed via `makeFeedWriter().uploadReference(stamp, reference)` (72-byte SOC)\n\nRead path reverses: read feed \u2192 get hash \u2192 download from `/bytes` \u2192 decrypt \u2192 parse.\n\nbee-js offers two feed writer modes:\n- `uploadPayload(stamp, data)` \u2014 writes data <= 4096 bytes directly into the SOC\n- `uploadReference(stamp, reference)` \u2014 writes just a 32-byte reference\n\n## Why it matters\n\nThis pattern keeps feed SOCs tiny and fixed-size regardless of manifest size, and decouples encryption/versioning of manifest bytes from feed indexing. It's how every drive, doc, and user manifest is persisted.\n",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "PATTERN",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "knowledge-agent",
+    "createdAt": "2026-04-21T14:24:54.753Z",
+    "sessionId": null,
+    "updatedAt": "2026-09-03T09:58:03.999Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Instead of writing manifest JSON inline, we upload it to /bytes, encrypt with AES-256-GCM, and write only the 32-byte content hash to the feed via uploadReference.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "6c161119-1c4f-4ce1-bd9d-f1e6339200a4",
+      "actor": "claude",
+      "comment": "Knowledge registered against powerhouse v6.2.2-dev.47",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-14T12:00:00.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "d5d092cb-fe5e-4e90-a704-0aaae173896f",
+      "actor": "liberuum",
+      "comment": "Canonical as of powerhouse v6.2.2-dev.47",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-14T12:00:00.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

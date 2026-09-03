@@ -1,0 +1,174 @@
+{
+  "links": [
+    {
+      "id": "lnk-8a84ec99-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "8a84ec99-02c6-4211-8bb2-0270e5ffeeb3",
+      "targetTitle": "Camptocamp SA \u2014 Odoo"
+    },
+    {
+      "id": "lnk-5c7fffe7-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "5c7fffe7-4b66-46bc-9a07-e9174db01042",
+      "targetTitle": "Coop IT Easy \u2014 Odoo"
+    },
+    {
+      "id": "lnk-c467d199-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "c467d199-f5cb-449c-b8b3-c2d62ae54ad9",
+      "targetTitle": "breida software GmbH \u2014 Odoo"
+    },
+    {
+      "id": "lnk-57f4d0d8-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "57f4d0d8-578a-44d5-bb49-468a24e4a8cd",
+      "targetTitle": "Acsone \u2014 Odoo"
+    },
+    {
+      "id": "lnk-9e92d766-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "9e92d766-85bb-4bb7-bd5a-277b391b0ee2",
+      "targetTitle": "Dynapps \u2014 Odoo"
+    },
+    {
+      "id": "lnk-9f119da0-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "9f119da0-540b-4c20-b7f4-af9308e1ae85",
+      "targetTitle": "Odoo forces its restrictive audit trail on for German companies and blocks disabling it",
+      "reason": "The correction on this note closes the German-market version of the same gap: l10n_de forces restrictive mode on and blocks disabling it",
+      "confidence": "grounded"
+    },
+    {
+      "id": "lnk-c2d9adc0-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "c2d9adc0-d771-4765-8eaa-d54eeb5f3a89",
+      "targetTitle": "Every internal Odoo user can delete the chatter record of a decision",
+      "reason": "The correction on this note names the residual hardening gap this note now points at: every internal user can delete the chatter record of a decision",
+      "confidence": "grounded"
+    },
+    {
+      "id": "lnk-0e6c7837-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "0e6c7837-4676-4e49-9816-62806f97fad6",
+      "targetTitle": "Odoo's audit trail is in the free edition and on by default since version 19",
+      "reason": "The correction on this note refutes this note's opening as an opportunity: the audit trail is in the free edition and default-on from version 19, so the wedge is not open-core",
+      "confidence": "grounded"
+    },
+    {
+      "id": "lnk-3a655b89-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "3a655b89-195d-4173-9771-bf1601da006d",
+      "targetTitle": "Odoo's deletion protection covers five accounting models and nothing else",
+      "reason": "The correction on this note bounds what remains after the refutation: protection reaches five accounting models and nothing else",
+      "confidence": "grounded"
+    },
+    {
+      "id": "lnk-bfcb5f25-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "bfcb5f25-d30f-4e5f-93e6-264f4a96b8a9",
+      "targetTitle": "Intero Technologies GmbH \u2014 Odoo"
+    },
+    {
+      "id": "lnk-f747c179-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "f747c179-f7e9-49a6-924e-21c5e9faf61c",
+      "targetTitle": "OBS Solutions GmbH \u2014 Odoo"
+    },
+    {
+      "id": "lnk-832cdfc6-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "832cdfc6-7519-43cc-be50-0f771910904a",
+      "targetTitle": "braintec \u2014 Odoo"
+    },
+    {
+      "id": "lnk-a88315a8-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "a88315a8-a425-496b-a92c-0e57154148bb",
+      "targetTitle": "manaTec GmbH \u2014 Odoo"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Odoo is already the system of record, so the fit is field-level attribution, not a second database",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "4e949d4a-6297-45ca-8850-624c15139d72",
+      "name": "leads",
+      "topicDocumentId": null
+    },
+    {
+      "id": "f35cc2c8-dab4-4ac3-919a-5f0d05c1b44a",
+      "name": "odoo",
+      "topicDocumentId": null
+    },
+    {
+      "id": "aedb703b-9ed7-4d9f-b1b1-33ccd17502da",
+      "name": "system-of-record",
+      "topicDocumentId": null
+    },
+    {
+      "id": "5175b755-ed1d-4777-a3a0-b91cde815d03",
+      "name": "audit-trail",
+      "topicDocumentId": null
+    },
+    {
+      "id": "5da16d7e-58bd-469a-a547-c9e2094dff8a",
+      "name": "integration-seam",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "For everything inside its scope, Odoo *is* the system of record. The research text is explicit that this rules out the framing used for orchestration tools \u2014 the fit is not \"a second database alongside Odoo\", because the partner has no gap there and no reason to accept one.\n\nWhat is missing is narrower and more specific. First, field-level attribution that survives a module upgrade or migration: the record of who changed a value and what it was before, in a form that is not itself reshaped by the routine maintenance of the ERP. Second, the events that happen outside Odoo's models \u2014 the decisions taken in systems Odoo does not own, which have no natural home in its tables at all.\n\nThis is why the paired demo insists on exactly those two properties, an upgrade and a second system, rather than simply showing a change log. Against an Odoo partner, a change log inside the Odoo world is a feature comparison the partner will win; a record that persists across the upgrade boundary and across system boundaries is a different claim, and the only one worth making to this cohort.\n\n---\n\n## Leads sharing this finding (9)\n\n**1 \u00b7 start here**\n- Camptocamp SA (CH Lausanne/Olten/Zurich + FR + DE) \u2014 not on imprint; Claude Philipona + Luc Maurer per management-board page \u00b7 info@camptocamp.com \u00b7 https://camptocamp.com\n\n**2 \u00b7 next**\n- Coop IT Easy (BE) \u2014 not published \u00b7 info@coopiteasy.be \u00b7 https://coopiteasy.be\n- breida software GmbH (AT Voesendorf (Vienna)) \u2014 Johannes W\u00f6lfl, Gesch\u00e4ftsf\u00fchrer \u00b7 office@breida.at \u00b7 https://breida.at\n\n**3 \u00b7 later**\n- Acsone (BE Waterloo/Liege + LU) \u2014 https://acsone.eu\n- Dynapps (BE Geel +8) \u2014 https://dynapps.be\n- Intero Technologies GmbH (DE, 9 sites) \u2014 https://intero-technologies.de\n- OBS Solutions GmbH (DE + CH) \u2014 https://odoo-bs.com\n- braintec (CH + DE + AT, 16 sites) \u2014 https://braintec-group.com\n- manaTec GmbH (DE Dresden) \u2014 https://manatec.de\n\nVerbatim research text this claim was extracted from:\n\n> Odoo IS the system of record for what it covers \u2014 so the fit is NOT 'a second database'. It is field-level attribution that survives a module upgrade or migration, and the events that happen OUTSIDE Odoo's models.\n\n## Correction: field-level attribution is not the opening\nThe first half of this note is confirmed \u2014 Odoo is GoBD-certified and German authorities treat its database as the statutory books. The second half is refuted as an *opportunity*.\n\nOdoo already ships field-level attribution: `mail.tracking.value` stores old value, new value, field, user and timestamp; **Odoo 19 made the non-restrictive audit trail available by default for everyone** ([[Odoo's audit trail is in the free edition and on by default since version 19]]); and `l10n_de` **forces restrictive mode on for German companies** with a constraint that blocks disabling it ([[Odoo forces its restrictive audit trail on for German companies and blocks disabling it]]). All of it is LGPL-3 Community, so the anticipated open-core wedge does not exist either.\n\n**What actually remains is narrower:** protection covers only five accounting models ([[Odoo's deletion protection covers five accounting models and nothing else]]), tracking is opt-in per field, and every internal employee holds `unlink` on `mail.message` ([[Every internal Odoo user can delete the chatter record of a decision]]). That is a hardening gap inside someone else's product rather than an empty slot.\n\nThe **second** half of this note's original claim survives untouched: business events that happen outside Odoo's models have no home in its tables, and attribution that survives a module upgrade or migration is still not something the ERP offers. Those, not field-level attribution, are the seam.\n",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "ARCHITECTURE",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "knowledge-agent",
+    "createdAt": "2026-08-19T11:23:29.194738Z",
+    "sessionId": null,
+    "updatedAt": "2026-09-03T10:14:50.874Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "The genuinely missing pieces are attribution that survives a module upgrade or migration, and the business events that happen outside Odoo's own models.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "b346124b-3047-4ab8-b4c8-463c0db3224e",
+      "actor": "knowledge-agent",
+      "comment": "Extracted from lead research; claim checked against the source record.",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-19T11:23:33.025882Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "4bce5cb8-64c3-408e-b073-e8589e985064",
+      "actor": "liberuum",
+      "comment": "Approved: lead corpus extraction.",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-19T11:23:33.173112Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

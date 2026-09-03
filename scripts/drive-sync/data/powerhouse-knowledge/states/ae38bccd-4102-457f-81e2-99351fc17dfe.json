@@ -1,0 +1,79 @@
+{
+  "links": [
+    {
+      "id": "lnk-f9d5e4f0-bui",
+      "linkType": "BUILDS_ON",
+      "targetDocumentId": "f9d5e4f0-badd-42e2-8ea8-9df149f2412f",
+      "targetTitle": "f9d5e4f0-badd-42e2-8ea8-9df149f2412f"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Fingerprint identity resolution works within one tool's lineage and fails across tools",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "0a816746-d5a2-4fb0-ae01-dc04c3cb13a6",
+      "name": "model-identity",
+      "topicDocumentId": null
+    },
+    {
+      "id": "6ea1c76f-b322-4040-a401-e40a8c80c975",
+      "name": "ifc",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "Once identifiers are known to churn, the obvious repair is to fingerprint objects on stable attributes and resolve incoming identifiers onto a persistent internal id. Measured, this works extremely well in one direction and not at all in the other.\n\nAcross two consecutive weekly exports from the same tool, `(class, Name)` matched **1,690 of 1,690** objects \u2014 a complete recovery of identity that `GlobalId` comparison lost entirely. Across tools, the same fingerprint matched **0 of 1,690**: the design model and the 4D export of the same building shared no `(class, Name)` pair, because the 4D tool renames objects into its own scheme and flattens three real storeys into a single generated one under a synthetic site.\n\nSo identity resolution is per-lineage. Within a lineage, cheap attributes suffice. Across lineages, fingerprinting on names and classes cannot work at all, and any cross-tool join needs geometry, classification, or an explicit mapping maintained by someone.\n\nTwo design consequences. The spatial component of a fingerprint must be lineage-relative rather than absolute, since the hierarchy itself is not preserved. And a system holding identity across a whole project must model lineages explicitly, rather than assuming one global object namespace that the source tools demonstrably do not provide.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "CONCEPT",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "apeiron",
+    "createdAt": "2026-08-14T16:00:00.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-17T12:55:06.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "(class, Name) matched 100% across consecutive exports of one tool and 0% between two tools modelling the same building, because each renames objects and reshapes the spatial hierarchy.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "e11b3504-2496-4bac-b9f1-74dacc0bd959",
+      "actor": "knowledge-agent",
+      "comment": "lifecycle normalization",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-17T12:55:06.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "937f8a77-00c7-4223-9856-9d2d49e3e419",
+      "actor": "liberuum",
+      "comment": "approved for canonical",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-17T12:55:06.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

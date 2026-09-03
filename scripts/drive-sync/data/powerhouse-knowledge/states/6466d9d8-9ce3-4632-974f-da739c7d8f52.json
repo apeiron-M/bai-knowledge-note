@@ -1,0 +1,102 @@
+{
+  "links": [
+    {
+      "id": "lnk-cfff81b5-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "cfff81b5-b9a8-40ed-8787-bd6114a677a2",
+      "targetTitle": "project-structure-four-directories"
+    },
+    {
+      "id": "lnk-b153c532-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "b153c532-0abc-4400-8448-4ac08046fcad",
+      "targetTitle": "docker-images-for-connect-and-switchboard"
+    },
+    {
+      "id": "lnk-e1f81c50-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "e1f81c50-7a5e-4df8-a746-e80c7f58df36",
+      "targetTitle": "ph-service-setup-configures-nginx-pm2-ssl"
+    },
+    {
+      "id": "lnk-5725fd76-bui",
+      "linkType": "BUILDS_ON",
+      "targetDocumentId": "5725fd76-b0d4-4bab-9c10-3c0a890951ca",
+      "targetTitle": "bee-reactor-adapter-package-structure"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "bee-reactor-adaptor is a pnpm monorepo of two packages: @liberuum-org/bee-reactor-adapter and @liberuum-org/connect",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "b65d8802-4d3a-4523-bdf1-7152c604f7c3",
+      "name": "adapter-package",
+      "topicDocumentId": null
+    },
+    {
+      "id": "1101efda-5f8f-4a02-81ce-85dd119cfeb6",
+      "name": "monorepo",
+      "topicDocumentId": null
+    },
+    {
+      "id": "5c2f025c-4b1b-4dae-bf86-b1454038a26f",
+      "name": "package-exports",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "# Two-Package Monorepo Structure\n\nThe `bee-reactor-adaptor` repository is a pnpm monorepo with two publishable npm packages that split responsibilities between the core adapter library and the forked Connect host app.\n\n| Package | npm name | Role |\n|---------|----------|------|\n| `packages/adapter/` | `@liberuum-org/bee-reactor-adapter` | Core adapter: SwarmClient, SwarmChannel, encryption, feeds, stamps |\n| `packages/connect/` | `@liberuum-org/connect` | Fork of Connect with Swarm landing page + settings UI |\n\nThe adapter package is framework-agnostic and can in principle integrate into any Reactor-based host. The connect package is a Connect fork that consumes it and adds the Swarm-specific landing page plus settings UI (stamp management, storage stats, sync badges, folder tree, USD pricing).\n\nDevelopment uses `pnpm install` at the repo root, `pnpm build` to compile both, and `pnpm test` to run the 12-test E2E suite against a live `bee dev` node.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "REFERENCE",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "knowledge-agent",
+    "createdAt": "2026-04-21T14:57:41.685Z",
+    "sessionId": null,
+    "updatedAt": "2026-09-03T09:57:19.551Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Monorepo splits into the framework-agnostic adapter (SwarmClient, SwarmChannel, encryption, feeds, stamps) and a Connect fork consuming it with a Swarm landing page and settings UI.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "03320036-f35e-43de-9594-3a7ce850accf",
+      "actor": "claude",
+      "comment": "Knowledge registered against powerhouse v6.2.2-dev.47",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-14T12:00:00.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "e3620a84-bb0e-4ab2-967b-fabb1419b9e7",
+      "actor": "liberuum",
+      "comment": "Canonical as of powerhouse v6.2.2-dev.47",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-14T12:00:00.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

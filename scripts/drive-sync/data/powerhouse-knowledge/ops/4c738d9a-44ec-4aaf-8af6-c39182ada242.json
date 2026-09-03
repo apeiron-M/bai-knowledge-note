@@ -1,0 +1,550 @@
+[
+  {
+    "index": 0,
+    "hash": "",
+    "timestampUtcMs": "2026-09-02T22:14:01.219Z",
+    "action": {
+      "type": "CREATE_DOCUMENT",
+      "input": {
+        "meta": {},
+        "name": "attachment-byte-progress",
+        "slug": "",
+        "model": "bai/knowledge-note",
+        "branch": "main",
+        "signing": {
+          "nonce": "",
+          "publicKey": {},
+          "signature": "4c738d9a-44ec-4aaf-8af6-c39182ada242",
+          "documentType": "bai/knowledge-note",
+          "createdAtUtcIso": "2026-09-02T22:14:01.219Z"
+        },
+        "version": 0,
+        "documentId": "4c738d9a-44ec-4aaf-8af6-c39182ada242",
+        "protocolVersions": {
+          "base-reducer": 2
+        }
+      },
+      "timestampUtcMs": "2026-09-02T22:14:01.219Z"
+    }
+  },
+  {
+    "index": 0,
+    "hash": "Lj5240qkyNejPuGe3/1EXnocAJs=",
+    "timestampUtcMs": "2026-09-02T22:14:01.981Z",
+    "action": {
+      "type": "SET_TITLE",
+      "input": {
+        "title": "Attachment transfers report byte-level progress per stage, and upload bytes are observable only through an upload transport that can see them \u2014 fetch cannot",
+        "updatedAt": "2026-09-02T22:14:01.981Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:14:01.981Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "",
+    "timestampUtcMs": "2026-09-02T22:14:01.219Z",
+    "action": {
+      "type": "UPGRADE_DOCUMENT",
+      "input": {
+        "model": "bai/knowledge-note",
+        "toVersion": 1,
+        "documentId": "4c738d9a-44ec-4aaf-8af6-c39182ada242",
+        "fromVersion": 0,
+        "initialState": {
+          "auth": {
+            "grants": [],
+            "version": 0
+          },
+          "local": {
+            "lastViewedAt": null,
+            "personalTags": []
+          },
+          "global": {
+            "links": [],
+            "model": null,
+            "scope": null,
+            "title": null,
+            "editor": null,
+            "inputs": [],
+            "models": [],
+            "status": "DRAFT",
+            "topics": [],
+            "content": null,
+            "context": null,
+            "modelId": null,
+            "modules": [],
+            "outputs": [],
+            "version": null,
+            "computes": null,
+            "filePath": null,
+            "noteType": null,
+            "severity": null,
+            "hooksUsed": [],
+            "rootCause": null,
+            "confidence": null,
+            "consumedBy": [],
+            "provenance": null,
+            "sourceType": null,
+            "targetType": null,
+            "cardinality": null,
+            "description": null,
+            "alternatives": [],
+            "consequences": [],
+            "errorMessage": null,
+            "relationType": null,
+            "correctPattern": null,
+            "decisionStatus": null,
+            "dispatchTargets": [],
+            "lifecycleEvents": []
+          },
+          "document": {
+            "hash": {
+              "encoding": "base64",
+              "algorithm": "sha1"
+            },
+            "version": 1
+          }
+        }
+      },
+      "timestampUtcMs": "2026-09-02T22:14:01.219Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "D8JOfU1WBbJDdAXqzqGKcJgNm08=",
+    "timestampUtcMs": "2026-09-02T22:14:01.981Z",
+    "action": {
+      "type": "SET_DESCRIPTION",
+      "input": {
+        "updatedAt": "2026-09-02T22:14:01.981Z",
+        "description": "Single-item methods take onProgress and throttleMs and emit stage, loaded, total and indeterminate, throttled to 100 ms. createXhrUploadTransport() is the browser opt-in; Connect sets it."
+      },
+      "timestampUtcMs": "2026-09-02T22:14:01.981Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "",
+    "timestampUtcMs": "2026-09-02T22:25:18.404Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "metadata": {
+          "reason": "Extracted from apps/academy/docs/academy/04-Reference/01-Reactor/09-AttachmentService.md at v6.2.2-dev.74 \u2014 Client and hook additions: AttachmentProgress, per-stage denominators, uploadTransport, download asymmetry, batch progress",
+          "confidence": "grounded"
+        },
+        "sourceId": "4c738d9a-44ec-4aaf-8af6-c39182ada242",
+        "targetId": "f6901953-d719-45d2-8b5c-8aaca612562d",
+        "relationshipType": "DERIVED_FROM"
+      },
+      "timestampUtcMs": "2026-09-02T22:25:18.404Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "875l9Hs6dPv/bFNR50bNql5t9WA=",
+    "timestampUtcMs": "2026-09-02T22:14:01.981Z",
+    "action": {
+      "type": "SET_NOTE_TYPE",
+      "input": {
+        "noteType": "REFERENCE",
+        "updatedAt": "2026-09-02T22:14:01.981Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:14:01.981Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "",
+    "timestampUtcMs": "2026-09-02T22:25:19.545Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "metadata": {
+          "reason": "Adds the observability half to the reserve/send/read flow: what each stage reports and which stages cannot report bytes at all",
+          "confidence": "grounded"
+        },
+        "sourceId": "4c738d9a-44ec-4aaf-8af6-c39182ada242",
+        "targetId": "bf2d1ef5-01a8-4688-86a6-0db24fa9120a",
+        "relationshipType": "BUILDS_ON"
+      },
+      "timestampUtcMs": "2026-09-02T22:25:19.545Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "tkGNURfepDDnPBAQIuoxMKcj8Sw=",
+    "timestampUtcMs": "2026-09-02T22:14:01.981Z",
+    "action": {
+      "type": "SET_CONTENT",
+      "input": {
+        "content": "Every single-item attachment method takes an options bag as its second argument carrying `onProgress` and `throttleMs`, and reports `AttachmentProgress` \u2014 `{ stage, loaded, total, indeterminate }` \u2014 where `stage` is one of `hashing`, `reserving`, `uploading`, `requesting-download-target`, `downloading`, `done`, `error`. `loaded`/`total` are **per stage, not per operation**: a per-operation denominator would have to weight hashing against transfer, and a dedup would shrink it mid-flight. Exactly one terminal event is emitted per operation, `done` always carries `loaded === total`, and byte events are throttled to one per 100 ms by default.\n\nWhere bytes are actually observable:\n\n- **Downloads** always report bytes, against `header.sizeBytes`.\n- **Uploads** report bytes only through an upload transport that can observe them. `fetch` cannot \u2014 it has no upload-side progress event \u2014 so the default transport reports `uploading` as **indeterminate** and stays silent until the request resolves. `createXhrUploadTransport()` is the browser opt-in, set on `SwitchboardClientConfig.uploadTransport`; Connect does this already. It registers `xhr.upload.onprogress` only when a caller passes `onProgress`, because that registration alone forces a CORS preflight on a presigned PUT. An explicit `fetchFn` always wins over it.\n- **Hashing** has no byte progress and cannot: `preprocess` runs one `crypto.subtle.digest` over the whole file and WebCrypto has no streaming digest \u2014 a visibly long indeterminate phase for a large file.\n- **Deduplication** finishes having sent nothing: the terminal event carries `deduped: true` with `loaded: 0, total: 0`, and the hook reports 100 %.\n- **`upload.progress` measures bytes handed to the socket, not server acknowledgement.** A small file emits one event at 100 % and then waits for the response, so the stage stays `uploading` until `send()` resolves.\n\n`download()` is the asymmetric case: it resolves as soon as the stream is available, with `downloading` as the last event and `loaded: 0`; byte events and the terminal `done` arrive as the caller reads the stream \u2014 so `downloadMany`'s `concurrency` bounds target negotiation rather than simultaneous transfer. **Abandoning the stream is a failure, not a completion**: cancelling emits the terminal `error` carrying the bytes that did arrive and the cancel reason. Batch progress is per item, stamped with `index`, alongside `onItemSettled` carrying `{ settled, completed, failed, total }`.\n\n_Source: apps/academy/docs/academy/04-Reference/01-Reactor/09-AttachmentService.md (Powerhouse v6.2.2-dev.74)._\n\n## Provenance\n- `apps/academy/docs/academy/04-Reference/01-Reactor/09-AttachmentService.md` \u2014 Client and hook additions: AttachmentProgress, per-stage denominators, uploadTransport, download asymmetry, batch progress\n\n_Recorded from the Powerhouse repository at **v6.2.2-dev.74** during the v6.2.2-dev.74 source sync._",
+        "updatedAt": "2026-09-02T22:14:01.981Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:14:01.981Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "",
+    "timestampUtcMs": "2026-09-02T22:25:20.012Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "metadata": {
+          "reason": "The React hooks are the surface where these stages and progress values are consumed",
+          "confidence": "grounded"
+        },
+        "sourceId": "4c738d9a-44ec-4aaf-8af6-c39182ada242",
+        "targetId": "aeb97065-4d48-41e2-9305-8c90c4d39fcf",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-09-02T22:25:20.012Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "Fi1OnhTsEZrDnBNllOb3XIKzBHE=",
+    "timestampUtcMs": "2026-09-02T22:14:01.981Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "004d8e0f-e2fa-413b-9fb0-a6e0850e516b",
+        "name": "attachments"
+      },
+      "timestampUtcMs": "2026-09-02T22:14:01.981Z"
+    }
+  },
+  {
+    "index": 5,
+    "hash": "",
+    "timestampUtcMs": "2026-09-02T22:25:20.496Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "metadata": {
+          "reason": "Dedup finishing an upload without sending bytes is a consequence of content-addressed storage keyed on the sha256 ref",
+          "confidence": "grounded"
+        },
+        "sourceId": "4c738d9a-44ec-4aaf-8af6-c39182ada242",
+        "targetId": "6f938c9e-85f4-4a4f-b55e-3213b0ae4ef5",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-09-02T22:25:20.496Z"
+    }
+  },
+  {
+    "index": 5,
+    "hash": "nv6SZSYzHboEl01qh07YBaf7F0w=",
+    "timestampUtcMs": "2026-09-02T22:14:01.981Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "6aa2c41c-3ad6-4618-84e7-095096c19fe1",
+        "name": "upload"
+      },
+      "timestampUtcMs": "2026-09-02T22:14:01.981Z"
+    }
+  },
+  {
+    "index": 6,
+    "hash": "r9wuttToGjVxUAiWBYMuK/7UmWU=",
+    "timestampUtcMs": "2026-09-02T22:14:01.981Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "990d9330-0586-4989-89e3-ecc4bf556b1e",
+        "name": "progress"
+      },
+      "timestampUtcMs": "2026-09-02T22:14:01.981Z"
+    }
+  },
+  {
+    "index": 7,
+    "hash": "MrmX/P2ftpTTonObSfHsjCU6XbU=",
+    "timestampUtcMs": "2026-09-02T22:14:01.981Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "dd75d22f-115c-48b2-bdd0-07123912412d",
+        "name": "reactor-browser"
+      },
+      "timestampUtcMs": "2026-09-02T22:14:01.981Z"
+    }
+  },
+  {
+    "index": 8,
+    "hash": "9XVubR1WiwcxU3Aho4W1qFR48uQ=",
+    "timestampUtcMs": "2026-09-02T22:14:01.981Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "version",
+        "value": "v6.2.2-dev.74",
+        "updatedAt": "2026-09-02T22:14:01.981Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:14:01.981Z"
+    }
+  },
+  {
+    "index": 9,
+    "hash": "KldD45Gkc8jyN8ZW4J8u+Yfe6Z8=",
+    "timestampUtcMs": "2026-09-02T22:14:01.981Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "filePath",
+        "value": "apps/academy/docs/academy/04-Reference/01-Reactor/09-AttachmentService.md",
+        "updatedAt": "2026-09-02T22:14:01.981Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:14:01.981Z"
+    }
+  },
+  {
+    "index": 10,
+    "hash": "JOHrl/lvDXCl25mQu2eQzxWGi8Q=",
+    "timestampUtcMs": "2026-09-02T22:14:01.981Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "confidence",
+        "value": "grounded",
+        "updatedAt": "2026-09-02T22:14:01.981Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:14:01.981Z"
+    }
+  },
+  {
+    "index": 11,
+    "hash": "Jh+eAfWhFySINw/SJP2vlbHkXWs=",
+    "timestampUtcMs": "2026-09-02T22:14:04.832Z",
+    "action": {
+      "type": "SET_PROVENANCE",
+      "input": {
+        "author": "knowledge-agent",
+        "createdAt": "2026-09-02T22:14:04.832Z",
+        "sourceOrigin": "DERIVED"
+      },
+      "timestampUtcMs": "2026-09-02T22:14:04.832Z"
+    }
+  },
+  {
+    "index": 12,
+    "hash": "M+dXtqN2v7094rScBvF8obyznjU=",
+    "timestampUtcMs": "2026-09-02T22:14:05.455Z",
+    "action": {
+      "type": "SUBMIT_FOR_REVIEW",
+      "input": {
+        "id": "b534cdb3-5627-47ca-a188-fc125bb95a51",
+        "actor": "knowledge-agent",
+        "comment": "extracted from the Powerhouse repository at v6.2.2-dev.74",
+        "timestamp": "2026-09-02T22:14:05.455Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:14:05.455Z"
+    }
+  },
+  {
+    "index": 13,
+    "hash": "hHcLNewwg/YWXINtPubOJUwrwAc=",
+    "timestampUtcMs": "2026-09-02T22:14:05.977Z",
+    "action": {
+      "type": "APPROVE_NOTE",
+      "input": {
+        "id": "ef3ea808-3316-4cab-8136-e4c7f4f74b7c",
+        "actor": "liberuum",
+        "comment": "claim checked against the cited repository file at the pinned tag",
+        "timestamp": "2026-09-02T22:14:05.977Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:14:05.977Z"
+    }
+  },
+  {
+    "index": 14,
+    "hash": "AHvQgjb8wkr05QFBGL25CHvopYU=",
+    "timestampUtcMs": "2026-09-02T22:16:40.733Z",
+    "action": {
+      "type": "SET_TITLE",
+      "input": {
+        "title": "Attachment transfers report byte-level progress per stage, and upload bytes are observable only through an upload transport that can see them \u2014 fetch cannot",
+        "updatedAt": "2026-09-02T22:16:40.733Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:16:40.733Z"
+    }
+  },
+  {
+    "index": 15,
+    "hash": "AHvQgjb8wkr05QFBGL25CHvopYU=",
+    "timestampUtcMs": "2026-09-02T22:16:40.733Z",
+    "action": {
+      "type": "SET_DESCRIPTION",
+      "input": {
+        "updatedAt": "2026-09-02T22:16:40.733Z",
+        "description": "Single-item methods take onProgress and throttleMs and emit stage, loaded, total and indeterminate, throttled to 100 ms. createXhrUploadTransport() is the browser opt-in; Connect sets it."
+      },
+      "timestampUtcMs": "2026-09-02T22:16:40.733Z"
+    }
+  },
+  {
+    "index": 16,
+    "hash": "AHvQgjb8wkr05QFBGL25CHvopYU=",
+    "timestampUtcMs": "2026-09-02T22:16:40.733Z",
+    "action": {
+      "type": "SET_NOTE_TYPE",
+      "input": {
+        "noteType": "REFERENCE",
+        "updatedAt": "2026-09-02T22:16:40.733Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:16:40.733Z"
+    }
+  },
+  {
+    "index": 17,
+    "hash": "AHvQgjb8wkr05QFBGL25CHvopYU=",
+    "timestampUtcMs": "2026-09-02T22:16:40.733Z",
+    "action": {
+      "type": "SET_CONTENT",
+      "input": {
+        "content": "Every single-item attachment method takes an options bag as its second argument carrying `onProgress` and `throttleMs`, and reports `AttachmentProgress` \u2014 `{ stage, loaded, total, indeterminate }` \u2014 where `stage` is one of `hashing`, `reserving`, `uploading`, `requesting-download-target`, `downloading`, `done`, `error`. `loaded`/`total` are **per stage, not per operation**: a per-operation denominator would have to weight hashing against transfer, and a dedup would shrink it mid-flight. Exactly one terminal event is emitted per operation, `done` always carries `loaded === total`, and byte events are throttled to one per 100 ms by default.\n\nWhere bytes are actually observable:\n\n- **Downloads** always report bytes, against `header.sizeBytes`.\n- **Uploads** report bytes only through an upload transport that can observe them. `fetch` cannot \u2014 it has no upload-side progress event \u2014 so the default transport reports `uploading` as **indeterminate** and stays silent until the request resolves. `createXhrUploadTransport()` is the browser opt-in, set on `SwitchboardClientConfig.uploadTransport`; Connect does this already. It registers `xhr.upload.onprogress` only when a caller passes `onProgress`, because that registration alone forces a CORS preflight on a presigned PUT. An explicit `fetchFn` always wins over it.\n- **Hashing** has no byte progress and cannot: `preprocess` runs one `crypto.subtle.digest` over the whole file and WebCrypto has no streaming digest \u2014 a visibly long indeterminate phase for a large file.\n- **Deduplication** finishes having sent nothing: the terminal event carries `deduped: true` with `loaded: 0, total: 0`, and the hook reports 100 %.\n- **`upload.progress` measures bytes handed to the socket, not server acknowledgement.** A small file emits one event at 100 % and then waits for the response, so the stage stays `uploading` until `send()` resolves.\n\n`download()` is the asymmetric case: it resolves as soon as the stream is available, with `downloading` as the last event and `loaded: 0`; byte events and the terminal `done` arrive as the caller reads the stream \u2014 so `downloadMany`'s `concurrency` bounds target negotiation rather than simultaneous transfer. **Abandoning the stream is a failure, not a completion**: cancelling emits the terminal `error` carrying the bytes that did arrive and the cancel reason. Batch progress is per item, stamped with `index`, alongside `onItemSettled` carrying `{ settled, completed, failed, total }`.\n\n_Source: apps/academy/docs/academy/04-Reference/01-Reactor/09-AttachmentService.md (Powerhouse v6.2.2-dev.74)._\n\n## Provenance\n- `apps/academy/docs/academy/04-Reference/01-Reactor/09-AttachmentService.md` \u2014 Client and hook additions: AttachmentProgress, per-stage denominators, uploadTransport, download asymmetry, batch progress\n\n_Recorded from the Powerhouse repository at **v6.2.2-dev.74** during the v6.2.2-dev.74 source sync._",
+        "updatedAt": "2026-09-02T22:16:40.733Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:16:40.733Z"
+    }
+  },
+  {
+    "index": 18,
+    "hash": "AHvQgjb8wkr05QFBGL25CHvopYU=",
+    "timestampUtcMs": "2026-09-02T22:16:40.733Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "version",
+        "value": "v6.2.2-dev.74",
+        "updatedAt": "2026-09-02T22:16:40.733Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:16:40.733Z"
+    }
+  },
+  {
+    "index": 19,
+    "hash": "AHvQgjb8wkr05QFBGL25CHvopYU=",
+    "timestampUtcMs": "2026-09-02T22:16:40.733Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "filePath",
+        "value": "apps/academy/docs/academy/04-Reference/01-Reactor/09-AttachmentService.md",
+        "updatedAt": "2026-09-02T22:16:40.733Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:16:40.733Z"
+    }
+  },
+  {
+    "index": 20,
+    "hash": "AHvQgjb8wkr05QFBGL25CHvopYU=",
+    "timestampUtcMs": "2026-09-02T22:16:40.733Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "confidence",
+        "value": "grounded",
+        "updatedAt": "2026-09-02T22:16:40.733Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:16:40.733Z"
+    }
+  },
+  {
+    "index": 21,
+    "hash": "cv439X+KjGZHOir9s3HWxBevVZs=",
+    "timestampUtcMs": "2026-09-02T22:21:20.001Z",
+    "action": {
+      "type": "SET_TITLE",
+      "input": {
+        "title": "Attachment transfers report byte-level progress per stage, and upload bytes are observable only through an upload transport that can see them \u2014 fetch cannot",
+        "updatedAt": "2026-09-02T22:21:20.001Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:21:20.001Z"
+    }
+  },
+  {
+    "index": 22,
+    "hash": "cv439X+KjGZHOir9s3HWxBevVZs=",
+    "timestampUtcMs": "2026-09-02T22:21:20.001Z",
+    "action": {
+      "type": "SET_DESCRIPTION",
+      "input": {
+        "updatedAt": "2026-09-02T22:21:20.001Z",
+        "description": "Single-item methods take onProgress and throttleMs and emit stage, loaded, total and indeterminate, throttled to 100 ms. createXhrUploadTransport() is the browser opt-in; Connect sets it."
+      },
+      "timestampUtcMs": "2026-09-02T22:21:20.001Z"
+    }
+  },
+  {
+    "index": 23,
+    "hash": "cv439X+KjGZHOir9s3HWxBevVZs=",
+    "timestampUtcMs": "2026-09-02T22:21:20.001Z",
+    "action": {
+      "type": "SET_NOTE_TYPE",
+      "input": {
+        "noteType": "REFERENCE",
+        "updatedAt": "2026-09-02T22:21:20.001Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:21:20.001Z"
+    }
+  },
+  {
+    "index": 24,
+    "hash": "cv439X+KjGZHOir9s3HWxBevVZs=",
+    "timestampUtcMs": "2026-09-02T22:21:20.001Z",
+    "action": {
+      "type": "SET_CONTENT",
+      "input": {
+        "content": "Every single-item attachment method takes an options bag as its second argument carrying `onProgress` and `throttleMs`, and reports `AttachmentProgress` \u2014 `{ stage, loaded, total, indeterminate }` \u2014 where `stage` is one of `hashing`, `reserving`, `uploading`, `requesting-download-target`, `downloading`, `done`, `error`. `loaded`/`total` are **per stage, not per operation**: a per-operation denominator would have to weight hashing against transfer, and a dedup would shrink it mid-flight. Exactly one terminal event is emitted per operation, `done` always carries `loaded === total`, and byte events are throttled to one per 100 ms by default.\n\nWhere bytes are actually observable:\n\n- **Downloads** always report bytes, against `header.sizeBytes`.\n- **Uploads** report bytes only through an upload transport that can observe them. `fetch` cannot \u2014 it has no upload-side progress event \u2014 so the default transport reports `uploading` as **indeterminate** and stays silent until the request resolves. `createXhrUploadTransport()` is the browser opt-in, set on `SwitchboardClientConfig.uploadTransport`; Connect does this already. It registers `xhr.upload.onprogress` only when a caller passes `onProgress`, because that registration alone forces a CORS preflight on a presigned PUT. An explicit `fetchFn` always wins over it.\n- **Hashing** has no byte progress and cannot: `preprocess` runs one `crypto.subtle.digest` over the whole file and WebCrypto has no streaming digest \u2014 a visibly long indeterminate phase for a large file.\n- **Deduplication** finishes having sent nothing: the terminal event carries `deduped: true` with `loaded: 0, total: 0`, and the hook reports 100 %.\n- **`upload.progress` measures bytes handed to the socket, not server acknowledgement.** A small file emits one event at 100 % and then waits for the response, so the stage stays `uploading` until `send()` resolves.\n\n`download()` is the asymmetric case: it resolves as soon as the stream is available, with `downloading` as the last event and `loaded: 0`; byte events and the terminal `done` arrive as the caller reads the stream \u2014 so `downloadMany`'s `concurrency` bounds target negotiation rather than simultaneous transfer. **Abandoning the stream is a failure, not a completion**: cancelling emits the terminal `error` carrying the bytes that did arrive and the cancel reason. Batch progress is per item, stamped with `index`, alongside `onItemSettled` carrying `{ settled, completed, failed, total }`.\n\n_Source: apps/academy/docs/academy/04-Reference/01-Reactor/09-AttachmentService.md (Powerhouse v6.2.2-dev.74)._\n\n## Provenance\n- `apps/academy/docs/academy/04-Reference/01-Reactor/09-AttachmentService.md` \u2014 Client and hook additions: AttachmentProgress, per-stage denominators, uploadTransport, download asymmetry, batch progress\n\n_Recorded from the Powerhouse repository at **v6.2.2-dev.74** during the v6.2.2-dev.74 source sync._",
+        "updatedAt": "2026-09-02T22:21:20.001Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:21:20.001Z"
+    }
+  },
+  {
+    "index": 25,
+    "hash": "cv439X+KjGZHOir9s3HWxBevVZs=",
+    "timestampUtcMs": "2026-09-02T22:21:20.001Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "version",
+        "value": "v6.2.2-dev.74",
+        "updatedAt": "2026-09-02T22:21:20.001Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:21:20.001Z"
+    }
+  },
+  {
+    "index": 26,
+    "hash": "cv439X+KjGZHOir9s3HWxBevVZs=",
+    "timestampUtcMs": "2026-09-02T22:21:20.001Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "filePath",
+        "value": "apps/academy/docs/academy/04-Reference/01-Reactor/09-AttachmentService.md",
+        "updatedAt": "2026-09-02T22:21:20.001Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:21:20.001Z"
+    }
+  },
+  {
+    "index": 27,
+    "hash": "cv439X+KjGZHOir9s3HWxBevVZs=",
+    "timestampUtcMs": "2026-09-02T22:21:20.001Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "confidence",
+        "value": "grounded",
+        "updatedAt": "2026-09-02T22:21:20.001Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:21:20.001Z"
+    }
+  }
+]

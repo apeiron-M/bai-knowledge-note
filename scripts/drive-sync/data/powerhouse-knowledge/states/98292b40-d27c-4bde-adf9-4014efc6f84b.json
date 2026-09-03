@@ -1,0 +1,94 @@
+{
+  "links": [
+    {
+      "id": "lnk-4d8e59af-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "4d8e59af-51f2-4ab7-b290-e1d5744abbd7",
+      "targetTitle": "Integration-gap tool screen: ERPNext / Frappe (primary-source research, 2026-08-19)"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Flowable shipped an immutable business audit trail in December 2025",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "9513d89f-5432-4a25-8832-17fc3eb33482",
+      "name": "tool-screen",
+      "topicDocumentId": null
+    },
+    {
+      "id": "5b6e310c-c9be-4b68-bdf5-b76024bf9a7e",
+      "name": "flowable",
+      "topicDocumentId": null
+    },
+    {
+      "id": "74173945-d96a-4886-97a1-8c597ad2146c",
+      "name": "slot-occupied",
+      "topicDocumentId": null
+    },
+    {
+      "id": "ba259f56-dda6-4cd6-b348-3f2b3e8df058",
+      "name": "audit-trail",
+      "topicDocumentId": null
+    },
+    {
+      "id": "d713e9ad-de3f-4228-95cc-113ba636f0be",
+      "name": "competitive-landscape",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "The release notes for 2025.2.01, dated 16 December 2025, state: *\"Added support to see the business audit trail of a case or process instance.\"* The Enterprise `AuditService` documentation asserts *\"Created AuditInstances are immutable\"*, with a builder carrying `creatorId()` for user attribution, `type()`, `subType()` and `payload()`, stored in `flw_audit_instance` and publishable as an audit stream.\n\nControlled code search confirms which side of the line it falls on: `AuditService`, `AuditInstance` and `flw_audit_instance` each return zero hits in `flowable-engine`, against 628 for `HistoryService` as a control. The capability is Enterprise-only, and it exists.\n\nAny pitch asserting that Flowable has no immutable business audit log is factually wrong against the commercial product. The claim survives only when scoped explicitly to the Apache-2.0 edition.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "OBSERVATION",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "knowledge-agent",
+    "createdAt": "2026-08-20T08:45:40.600465Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-20T08:45:41.840462Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Release 2025.2.01 added a business audit trail view and the Enterprise AuditService documents its records as immutable, closing the gap in the vendor's own product.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "665fe671-c1c5-49a1-8412-aa6576e11a36",
+      "actor": "knowledge-agent",
+      "comment": "Extracted from the primary-source tool screen; each claim quotable from a cited source.",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-20T08:45:41.694639Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "26487fe0-0697-4c5a-a063-6df53de3d71e",
+      "actor": "liberuum",
+      "comment": "Approved: tool-screen extraction.",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-20T08:45:41.840462Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

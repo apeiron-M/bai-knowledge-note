@@ -1,0 +1,348 @@
+[
+  {
+    "index": 0,
+    "hash": "",
+    "timestampUtcMs": "2026-09-03T07:34:22.807Z",
+    "action": {
+      "type": "CREATE_DOCUMENT",
+      "input": {
+        "meta": {},
+        "name": "lb-non-goals",
+        "slug": "",
+        "model": "bai/knowledge-note",
+        "branch": "main",
+        "signing": {
+          "nonce": "",
+          "publicKey": {},
+          "signature": "52290f19-9dff-44ff-8ae0-7c3fb12b0893",
+          "documentType": "bai/knowledge-note",
+          "createdAtUtcIso": "2026-09-03T07:34:22.806Z"
+        },
+        "version": 0,
+        "documentId": "52290f19-9dff-44ff-8ae0-7c3fb12b0893",
+        "protocolVersions": {
+          "base-reducer": 2
+        }
+      },
+      "timestampUtcMs": "2026-09-03T07:34:22.807Z"
+    }
+  },
+  {
+    "index": 0,
+    "hash": "Q252c9nuB+lY/gel4P2UmD9DNt4=",
+    "timestampUtcMs": "2026-09-03T07:34:24.119Z",
+    "action": {
+      "type": "SET_TITLE",
+      "input": {
+        "title": "The load balancer forwards headers untouched and terminates no TLS, so the switchboard remains the only policy decision point",
+        "updatedAt": "2026-09-03T07:34:24.119Z"
+      },
+      "timestampUtcMs": "2026-09-03T07:34:24.119Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "",
+    "timestampUtcMs": "2026-09-03T07:34:22.807Z",
+    "action": {
+      "type": "UPGRADE_DOCUMENT",
+      "input": {
+        "model": "bai/knowledge-note",
+        "toVersion": 1,
+        "documentId": "52290f19-9dff-44ff-8ae0-7c3fb12b0893",
+        "fromVersion": 0,
+        "initialState": {
+          "auth": {
+            "grants": [],
+            "version": 0
+          },
+          "local": {
+            "lastViewedAt": null,
+            "personalTags": []
+          },
+          "global": {
+            "links": [],
+            "model": null,
+            "scope": null,
+            "title": null,
+            "editor": null,
+            "inputs": [],
+            "models": [],
+            "status": "DRAFT",
+            "topics": [],
+            "content": null,
+            "context": null,
+            "modelId": null,
+            "modules": [],
+            "outputs": [],
+            "version": null,
+            "computes": null,
+            "filePath": null,
+            "noteType": null,
+            "severity": null,
+            "hooksUsed": [],
+            "rootCause": null,
+            "confidence": null,
+            "consumedBy": [],
+            "provenance": null,
+            "sourceType": null,
+            "targetType": null,
+            "cardinality": null,
+            "description": null,
+            "alternatives": [],
+            "consequences": [],
+            "errorMessage": null,
+            "relationType": null,
+            "correctPattern": null,
+            "decisionStatus": null,
+            "dispatchTargets": [],
+            "lifecycleEvents": []
+          },
+          "document": {
+            "hash": {
+              "encoding": "base64",
+              "algorithm": "sha1"
+            },
+            "version": 1
+          }
+        }
+      },
+      "timestampUtcMs": "2026-09-03T07:34:22.807Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "BdAAi6xN9jKPvqACWkV/TYGsL2s=",
+    "timestampUtcMs": "2026-09-03T07:34:24.119Z",
+    "action": {
+      "type": "SET_DESCRIPTION",
+      "input": {
+        "updatedAt": "2026-09-03T07:34:24.119Z",
+        "description": "Explicit non-goals: TLS termination, HTTP/2 or /3 to clients, authn/authz, rate limiting, WAF, caching, dynamic service discovery, and rebalancing existing documents. Backends come from a config."
+      },
+      "timestampUtcMs": "2026-09-03T07:34:24.119Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "",
+    "timestampUtcMs": "2026-09-03T07:34:53.879Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "metadata": {
+          "reason": "Extracted from apps/switchboard-lb/ARCHITECTURE.md at v6.2.2-dev.74 \u2014 \u00a71 Non-goals; \u00a79 Q6 (decided 2026-04-21); \u00a76.4 Observability",
+          "confidence": "grounded"
+        },
+        "sourceId": "52290f19-9dff-44ff-8ae0-7c3fb12b0893",
+        "targetId": "704020e6-eefd-4e1f-9fc6-f9ec801d8255",
+        "relationshipType": "DERIVED_FROM"
+      },
+      "timestampUtcMs": "2026-09-03T07:34:53.879Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "rRiqWvpNAVN2B5XHMnnYwUOvFss=",
+    "timestampUtcMs": "2026-09-03T07:34:24.119Z",
+    "action": {
+      "type": "SET_NOTE_TYPE",
+      "input": {
+        "noteType": "DECISION",
+        "updatedAt": "2026-09-03T07:34:24.119Z"
+      },
+      "timestampUtcMs": "2026-09-03T07:34:24.119Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "",
+    "timestampUtcMs": "2026-09-03T07:34:55.390Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "metadata": {
+          "reason": "Small surface area is the stated goal, and these are the refusals that keep it small",
+          "confidence": "grounded"
+        },
+        "sourceId": "52290f19-9dff-44ff-8ae0-7c3fb12b0893",
+        "targetId": "5cac8a4f-0c18-4d48-8403-065c072dd00b",
+        "relationshipType": "BUILDS_ON"
+      },
+      "timestampUtcMs": "2026-09-03T07:34:55.390Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "BMMNuAbmUDhbfpCcWBRBe91nVPs=",
+    "timestampUtcMs": "2026-09-03T07:34:24.119Z",
+    "action": {
+      "type": "SET_CONTENT",
+      "input": {
+        "content": "The non-goals are as load-bearing as the goals, because each one is a thing the LB *could* do and deliberately does not:\n\n- **TLS termination** \u2014 assume a TLS-terminating edge (ALB, cloud LB, another nginx) in front. Decided per deploy: dev and CI run plain HTTP on `:8080`; prod keeps the LB on plain HTTP **behind** a separate edge. In-LB `listen 443 ssl;` is not built and is added only when a specific deploy demands it. The operational requirements this creates: the LB listener **must not** be exposed to the public internet directly, and the TLS edge owns `X-Forwarded-For` / `X-Forwarded-Proto`, which the LB honours via `set_real_ip_from <edge CIDR>` once configured.\n- **HTTP/2 or HTTP/3 to the client** \u2014 HTTP/1.1 only in the MVP, even though nginx supports h2 trivially.\n- **Authn / authz** \u2014 \"we forward headers untouched; `switchboard` remains the policy decision point.\" That single sentence is why the LB never needs to understand a credential.\n- **Rate limiting, WAF, caching** \u2014 out of scope even though nginx could do them.\n- **Dynamic service discovery** \u2014 no Consul, no Kubernetes API. Backends are `server` entries in `upstreams.conf`, reloaded on `SIGHUP` / `nginx -s reload`.\n- **Rebalancing existing documents** \u2014 pinning is sticky once established.\n\nObservability is in scope and specific: Prometheus metrics (`lb_requests_total{class,backend,status}`, `lb_request_duration_seconds{class,backend}`) on a separate internal `:9090` listener never published to the host, key=value logs carrying `request_id`, `doc_id`, `upstream_addr`, `status` and timings, and an `X-LB-Upstream` response header as a dev-only debug aid. Traces are a reserved slot for OpenTelemetry, not built.\n\n## Provenance\n- `apps/switchboard-lb/ARCHITECTURE.md` \u2014 \u00a71 Non-goals; \u00a79 Q6 (decided 2026-04-21); \u00a76.4 Observability\n\n_Extracted from the Powerhouse repository at **v6.2.2-dev.74**._",
+        "updatedAt": "2026-09-03T07:34:24.119Z"
+      },
+      "timestampUtcMs": "2026-09-03T07:34:24.119Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "",
+    "timestampUtcMs": "2026-09-03T07:34:55.897Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "metadata": {
+          "reason": "Forwarding headers untouched is what keeps both authorization systems inside the switchboard rather than splitting policy across the LB",
+          "confidence": "grounded"
+        },
+        "sourceId": "52290f19-9dff-44ff-8ae0-7c3fb12b0893",
+        "targetId": "01daefb6-d6ad-4d19-8642-3e2aa97831d0",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-09-03T07:34:55.897Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "ZU+MAHwoSmmlpMB5T6GJK3xyR0Q=",
+    "timestampUtcMs": "2026-09-03T07:34:24.119Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "1499bbf3-bfd0-44f5-8a2c-4c8682926922",
+        "name": "switchboard-lb"
+      },
+      "timestampUtcMs": "2026-09-03T07:34:24.119Z"
+    }
+  },
+  {
+    "index": 5,
+    "hash": "",
+    "timestampUtcMs": "2026-09-03T07:34:56.372Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "metadata": {
+          "reason": "The LB exports its own Prometheus metrics on a private listener while the switchboard bootstraps Sentry and OTel separately",
+          "confidence": "grounded"
+        },
+        "sourceId": "52290f19-9dff-44ff-8ae0-7c3fb12b0893",
+        "targetId": "d6732865-1509-4c80-9515-95839f1bdd5e",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-09-03T07:34:56.372Z"
+    }
+  },
+  {
+    "index": 5,
+    "hash": "Mt4/RpphJmVNtqqtb4cRZf5b2oY=",
+    "timestampUtcMs": "2026-09-03T07:34:24.119Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "c6a7c7a9-5b37-4f76-b382-5b94f86d1ac8",
+        "name": "security"
+      },
+      "timestampUtcMs": "2026-09-03T07:34:24.119Z"
+    }
+  },
+  {
+    "index": 6,
+    "hash": "fhFBGpQDfDj4GMXTtrlUt4N4EiY=",
+    "timestampUtcMs": "2026-09-03T07:34:24.119Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "27f4dd45-aaab-4a46-8d74-f15967acc482",
+        "name": "scope"
+      },
+      "timestampUtcMs": "2026-09-03T07:34:24.119Z"
+    }
+  },
+  {
+    "index": 7,
+    "hash": "4Y4HBfBOag+ccOCIRD/KnNRPPIA=",
+    "timestampUtcMs": "2026-09-03T07:34:24.119Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "7f7aaf43-d921-44af-bc4a-783bb54c9b84",
+        "name": "deployment"
+      },
+      "timestampUtcMs": "2026-09-03T07:34:24.119Z"
+    }
+  },
+  {
+    "index": 8,
+    "hash": "ajKzqxTQkh2OyLgJ8KzqCXjZKAk=",
+    "timestampUtcMs": "2026-09-03T07:34:24.119Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "version",
+        "value": "v6.2.2-dev.74",
+        "updatedAt": "2026-09-03T07:34:24.119Z"
+      },
+      "timestampUtcMs": "2026-09-03T07:34:24.119Z"
+    }
+  },
+  {
+    "index": 9,
+    "hash": "HNH2ECKESUJFOPPJePXGthADet0=",
+    "timestampUtcMs": "2026-09-03T07:34:24.119Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "filePath",
+        "value": "apps/switchboard-lb/ARCHITECTURE.md",
+        "updatedAt": "2026-09-03T07:34:24.119Z"
+      },
+      "timestampUtcMs": "2026-09-03T07:34:24.119Z"
+    }
+  },
+  {
+    "index": 10,
+    "hash": "zik+zKPPYgAItVe3GfGHm77WXaQ=",
+    "timestampUtcMs": "2026-09-03T07:34:26.736Z",
+    "action": {
+      "type": "SET_PROVENANCE",
+      "input": {
+        "author": "knowledge-agent",
+        "createdAt": "2026-09-03T07:34:26.736Z",
+        "sourceOrigin": "DERIVED"
+      },
+      "timestampUtcMs": "2026-09-03T07:34:26.736Z"
+    }
+  },
+  {
+    "index": 11,
+    "hash": "SXzY1BJ1UTVekbgC0lIQz5AqaBs=",
+    "timestampUtcMs": "2026-09-03T07:34:27.313Z",
+    "action": {
+      "type": "SUBMIT_FOR_REVIEW",
+      "input": {
+        "id": "720f53c2-cc98-4d08-b0c9-60e85245902c",
+        "actor": "knowledge-agent",
+        "comment": "extracted from apps/switchboard-lb/ARCHITECTURE.md at v6.2.2-dev.74",
+        "timestamp": "2026-09-03T07:34:27.313Z"
+      },
+      "timestampUtcMs": "2026-09-03T07:34:27.313Z"
+    }
+  },
+  {
+    "index": 12,
+    "hash": "ElCuUiscbeqa6iCoqkw34pXOqRU=",
+    "timestampUtcMs": "2026-09-03T07:34:27.865Z",
+    "action": {
+      "type": "APPROVE_NOTE",
+      "input": {
+        "id": "225c958a-00e1-4489-84a1-7591a0e4e568",
+        "actor": "liberuum",
+        "comment": "claim checked against the cited file at the pinned tag",
+        "timestamp": "2026-09-03T07:34:27.865Z"
+      },
+      "timestampUtcMs": "2026-09-03T07:34:27.865Z"
+    }
+  }
+]

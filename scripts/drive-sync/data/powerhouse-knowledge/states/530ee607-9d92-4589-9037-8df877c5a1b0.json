@@ -1,0 +1,102 @@
+{
+  "links": [
+    {
+      "id": "lnk-d1c32d1e-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "d1c32d1e-c285-46b0-b0f7-402fbec15641",
+      "targetTitle": "pss-provides-1-to-1-asymmetrically-encrypted-messaging-with-"
+    },
+    {
+      "id": "lnk-713006f2-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "713006f2-2448-40a6-a531-918f99915577",
+      "targetTitle": "chat-uses-pss-for-messages-and-gsoc-for-notifications-matchi"
+    },
+    {
+      "id": "lnk-bae27a7b-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "bae27a7b-5aaf-4cbb-bc36-088b816ffae9",
+      "targetTitle": "collab-non-goals-explicit-exclusions"
+    },
+    {
+      "id": "lnk-d1c32d1e-bui",
+      "linkType": "BUILDS_ON",
+      "targetDocumentId": "d1c32d1e-c285-46b0-b0f7-402fbec15641",
+      "targetTitle": "pss-provides-1-to-1-asymmetrically-encrypted-messaging-with-"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Typing indicators were cut because PSS message latency makes the hint pointless.",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "topic-d42789cd0fa0",
+      "name": "pss-chat",
+      "topicDocumentId": null
+    },
+    {
+      "id": "topic-320ddc21121e",
+      "name": "gsoc-notifications",
+      "topicDocumentId": null
+    },
+    {
+      "id": "topic-4a29c82f7e1a",
+      "name": "ux",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "## Decision (2026-04-18)\n\nThe typing indicator, presence dots, and delivery/read receipts \u2014 all designed to ride on the GSOC notification rail \u2014 were **scratched** before shipping.\n\n## Rationale\n\n- PSS message latency is **2\u201310 seconds**, dominated by Trojan chunk mining.\n- A 'User is typing\u2026' hint is only useful when it arrives faster than the message itself, previewing imminent delivery.\n- With PSS, by the time the hint fires and the user reads it, the message is usually already delivered \u2014 or still 5s away, at which point the hint provides no information.\n- The UX payoff does not justify the complexity of the typing/debounce/stopped-typing state machine.\n\n## What happened to the GSOC plumbing\n\nThe adapter code for GSOC notifications is **shipped and working** \u2014 see `src/chat/gsoc-notifier.ts`. It's being repurposed for live collaboration (Phase 4): doc-update pings, collab-join/leave events, and cursor broadcasts, all of which are what sub-second notifications were really for. The chat-UI-only consumers are parked.\n\n## Lesson\n\nLatency floors dictate which UI hints make sense. Before designing a 'fast signal' feature on top of a slow transport, check whether the signal's utility survives the transport's latency.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "DECISION",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "knowledge-agent",
+    "createdAt": "2026-04-21T14:29:18.286Z",
+    "sessionId": null,
+    "updatedAt": "2026-09-03T09:58:12.850Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "A 'User is typing\u2026' hint only pays off when it arrives faster than the message; PSS delivers on 2\u201310s, slower than any useful typing hint, so the indicator was scratched.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "30390266-6952-49d3-b1c2-a3faff283db9",
+      "actor": "claude",
+      "comment": "Knowledge registered against powerhouse v6.2.2-dev.47",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-14T12:00:00.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "3f3c4d7a-a95b-459e-a06a-05fc9668b070",
+      "actor": "liberuum",
+      "comment": "Canonical as of powerhouse v6.2.2-dev.47",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-14T12:00:00.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

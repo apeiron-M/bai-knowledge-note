@@ -1,0 +1,92 @@
+{
+  "links": [
+    {
+      "id": "lnk-1a932db8-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "1a932db8-245d-40f6-bfd8-eea728d9615e",
+      "targetTitle": "reactor-browser-hooks-provide-document-state"
+    },
+    {
+      "id": "lnk-2ca5f8f5-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "2ca5f8f5-c423-4a7c-ae88-846fd0d1e659",
+      "targetTitle": "Academy \u203a Reference \u203a ReactorBrowserClient \u203a API reference",
+      "reason": "The note names apps/academy/docs/academy/04-Reference/08-ReactorBrowserClient/02-ApiReference.md as its source; page text revised between v6.2.2-dev.47 and v6.2.2-dev.74 \u2014 re-verified in the v6.2.2-dev.74 pass",
+      "confidence": "grounded"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Realtime is an enhancement that degrades to local-only; the websocket URL is derived from the GraphQL url",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "8f71abb9-cde2-4673-a20b-60e7d5a5c4e3",
+      "name": "reactor-browser",
+      "topicDocumentId": null
+    },
+    {
+      "id": "6083c91d-2b3d-48f0-8236-45605aa718c8",
+      "name": "realtime",
+      "topicDocumentId": null
+    },
+    {
+      "id": "1079a901-ae43-4b33-9aae-306f3e5b5877",
+      "name": "websocket",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "## URL derivation\n\nThe websocket endpoint is derived from the client's `url`: `http` becomes `ws`, `https` becomes `wss`, and `/subscriptions` is appended. For a Switchboard on `http://localhost:4001/graphql` that is `ws://localhost:4001/graphql/subscriptions`. There is **one socket server for the whole Switchboard**, not one per subgraph. Override it with the `subscriptionsUrl` prop, or set `realtime={false}` where there is no websocket to talk to.\n\nThe first `subscribe` opens **one** websocket for all subscribers and subscribes to `documentChanges` with no `search` argument. The server sends every change the connection may read, and the client applies each subscriber's filter on the way out. Because the `DocumentCache` the provider builds subscribes in its constructor, the socket opens as soon as the provider mounts.\n\n## Degradation, not dependency\n\nRealtime is an enhancement, never a dependency. A socket that cannot be opened or is refused is **logged once and then ignored**, and the app keeps working on the changes it makes itself \u2014 every successful `create`, `execute` and `deleteDocument` emits a local change event, which is what makes the cache invalidate after a dispatch with no websocket involved.\n\nThe failed socket is **closed rather than kept**, so the next component to subscribe tries again. But \u2014 and this is the trap \u2014 **nothing subscribes on sign-in of its own accord**. An app on a Switchboard that refuses anonymous subscribers and that authenticates *after* mount will have had its one subscribe attempt refused, and will then sit with no realtime indefinitely. The fix is to **remount the provider** once the user is in.\n\n## Socket auth\n\nAuth on the socket reuses the same `tokenProvider`, sent as the **lowercase `authorization` connection param**, and re-resolved on every reconnect. A Switchboard with auth enabled refuses a connection that arrives without it, so an anonymous subscriber gets no realtime there.\n\nOne cosmetic consequence of the dual event sources: own writes are announced twice \u2014 once locally, once by the server push \u2014 so the cache refetches twice. Harmless.\n\n_Source: apps/academy/docs/academy/04-Reference/08-ReactorBrowserClient/02-ApiReference.md and 01-OverviewAndQuickstart.md (Powerhouse v6.2.2-dev.45)._",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": "v6.2.2-dev.74",
+  "computes": null,
+  "filePath": "apps/academy/docs/academy/04-Reference/08-ReactorBrowserClient/02-ApiReference.md",
+  "noteType": "ARCHITECTURE",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "claude",
+    "createdAt": "2026-08-13T14:33:47.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-09-02T22:26:39.835Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "http becomes ws, https becomes wss, /subscriptions appended. A refused socket is logged once, closed and ignored; nothing resubscribes on sign-in of its own accord.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "bbcc29f9-c218-4b63-993e-0c06f1c5ddef",
+      "actor": "claude",
+      "comment": "Knowledge registered against powerhouse v6.2.2-dev.47",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-14T12:00:00.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "c6fcd9fe-7ce9-4f05-bd6d-fca8557c250c",
+      "actor": "liberuum",
+      "comment": "Canonical as of powerhouse v6.2.2-dev.47",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-14T12:00:00.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

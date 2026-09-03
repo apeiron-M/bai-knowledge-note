@@ -1,0 +1,107 @@
+{
+  "links": [
+    {
+      "id": "lnk-5b4a52c0-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "5b4a52c0-6345-4bfc-a279-76ea1f37db5d",
+      "targetTitle": "Package \u203a reactor \u203a attachments",
+      "reason": "Extracted from packages/reactor/docs/attachments.md at v6.2.2-dev.74 \u2014 Current State; Migration from Inline Attachments (Phases 1-3)",
+      "confidence": "grounded"
+    },
+    {
+      "id": "lnk-0d8024a6-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "0d8024a6-332f-457f-86eb-414251cd65a3",
+      "targetTitle": "attachment-store-transport-pair",
+      "reason": "Phase 2 moved the bytes onto the transport described there, which is why sync no longer carries them",
+      "confidence": "grounded"
+    },
+    {
+      "id": "lnk-6f938c9e-bui",
+      "linkType": "BUILDS_ON",
+      "targetDocumentId": "6f938c9e-85f4-4a4f-b55e-3213b0ae4ef5",
+      "targetTitle": "attachments-keep-binaries-out-of-the-operation-log",
+      "reason": "Explains what the ref replaced and confirms the old inline path is removed rather than merely discouraged, so a base64 data field is now a compile error rather than a bad habit",
+      "confidence": "grounded"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Inline base64 attachments are gone: the attachments field on Action and the Attachment / AttachmentInput types have been removed",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "f06a3dde-bc10-471e-8c5c-555f6403d2fa",
+      "name": "attachments",
+      "topicDocumentId": null
+    },
+    {
+      "id": "9d1ad8c1-0635-4ce6-ba42-e4a34b187cd7",
+      "name": "migration",
+      "topicDocumentId": null
+    },
+    {
+      "id": "85e269b6-286f-4ce2-a10b-683e0fe67bd2",
+      "name": "document-model",
+      "topicDocumentId": null
+    },
+    {
+      "id": "068c38c0-c714-4616-88bf-9302da169163",
+      "name": "breaking-change",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "The legacy inline format is not deprecated, it is **removed**. The document records Phase 3 as done: the `attachments` field on `Action` and the inline `AttachmentInput` / `Attachment` types (`{ data: string /* base64 */, mimeType, extension?, fileName? }`) no longer exist, and all attachment data flows through `IAttachmentService`, `IAttachmentStore` and `IAttachmentTransport`.\n\nThe problems that motivated the removal are worth keeping, because they are the argument for refs in any similar design: operations carried the full binary payload through the job queue, the sync channels and GraphQL transport; large files bloated the operation store and sync bandwidth permanently, since operations are immutable; an attachment could not be uploaded independently of submitting an action; and there was no lifecycle at all \u2014 an attachment either existed inline or did not.\n\nPhase 2 completed the sync half: channels no longer transfer inline attachment data, bytes move via the transport (lazy fetch or eager push), and transport configuration became part of the remote/channel configuration.\n\nFor a model author migrating an old schema, the mechanical change is to replace `data: String` (or a composite `{ image, imageMediaType, imageUrl }`) with a single `attachment: AttachmentRef` on both the input and the state type.\n\n## Provenance\n- `packages/reactor/docs/attachments.md` \u2014 Current State; Migration from Inline Attachments (Phases 1-3)\n\n_Extracted from the Powerhouse repository at **v6.2.2-dev.74**._",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": "v6.2.2-dev.74",
+  "computes": null,
+  "filePath": "packages/reactor/docs/attachments.md",
+  "noteType": "OBSERVATION",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "knowledge-agent",
+    "createdAt": "2026-09-03T07:20:02.658Z",
+    "sessionId": null,
+    "updatedAt": "2026-09-03T07:22:33.212Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Phase 3 of the migration is done, so attachment data flows only through IAttachmentService, IAttachmentStore and IAttachmentTransport. Sync channels no longer carry inline attachment bytes.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "89b7ec5d-2d21-41d0-b0e5-e5977b9ed54f",
+      "actor": "knowledge-agent",
+      "comment": "extracted from packages/reactor/docs/attachments.md at v6.2.2-dev.74",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-09-03T07:20:03.357Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "6a4f0163-c510-468c-bd73-4a85186bd5d8",
+      "actor": "liberuum",
+      "comment": "claim checked against the cited file at the pinned tag",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-09-03T07:20:03.941Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

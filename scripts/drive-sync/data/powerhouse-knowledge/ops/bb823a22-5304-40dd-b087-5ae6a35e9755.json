@@ -1,0 +1,464 @@
+[
+  {
+    "index": 0,
+    "hash": "",
+    "timestampUtcMs": "2026-09-03T07:19:13.748Z",
+    "action": {
+      "type": "CREATE_DOCUMENT",
+      "input": {
+        "meta": {},
+        "name": "sync-gap-partial-batch",
+        "slug": "",
+        "model": "bai/knowledge-note",
+        "branch": "main",
+        "signing": {
+          "nonce": "",
+          "publicKey": {},
+          "signature": "bb823a22-5304-40dd-b087-5ae6a35e9755",
+          "documentType": "bai/knowledge-note",
+          "createdAtUtcIso": "2026-09-03T07:19:13.748Z"
+        },
+        "version": 0,
+        "documentId": "bb823a22-5304-40dd-b087-5ae6a35e9755",
+        "protocolVersions": {
+          "base-reducer": 2
+        }
+      },
+      "timestampUtcMs": "2026-09-03T07:19:13.748Z"
+    }
+  },
+  {
+    "index": 0,
+    "hash": "HR2l2vDt72FrMl7j220Q9ORwS2I=",
+    "timestampUtcMs": "2026-09-03T07:19:15.173Z",
+    "action": {
+      "type": "SET_TITLE",
+      "input": {
+        "title": "A failed job silently drops its operations from the sync batch: handleJobFailed deletes the pending batch and emits whatever arrived, with no notification of incompleteness",
+        "updatedAt": "2026-09-03T07:19:15.173Z"
+      },
+      "timestampUtcMs": "2026-09-03T07:19:15.173Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "",
+    "timestampUtcMs": "2026-09-03T07:19:13.748Z",
+    "action": {
+      "type": "UPGRADE_DOCUMENT",
+      "input": {
+        "model": "bai/knowledge-note",
+        "toVersion": 1,
+        "documentId": "bb823a22-5304-40dd-b087-5ae6a35e9755",
+        "fromVersion": 0,
+        "initialState": {
+          "auth": {
+            "grants": [],
+            "version": 0
+          },
+          "local": {
+            "lastViewedAt": null,
+            "personalTags": []
+          },
+          "global": {
+            "links": [],
+            "model": null,
+            "scope": null,
+            "title": null,
+            "editor": null,
+            "inputs": [],
+            "models": [],
+            "status": "DRAFT",
+            "topics": [],
+            "content": null,
+            "context": null,
+            "modelId": null,
+            "modules": [],
+            "outputs": [],
+            "version": null,
+            "computes": null,
+            "filePath": null,
+            "noteType": null,
+            "severity": null,
+            "hooksUsed": [],
+            "rootCause": null,
+            "confidence": null,
+            "consumedBy": [],
+            "provenance": null,
+            "sourceType": null,
+            "targetType": null,
+            "cardinality": null,
+            "description": null,
+            "alternatives": [],
+            "consequences": [],
+            "errorMessage": null,
+            "relationType": null,
+            "correctPattern": null,
+            "decisionStatus": null,
+            "dispatchTargets": [],
+            "lifecycleEvents": []
+          },
+          "document": {
+            "hash": {
+              "encoding": "base64",
+              "algorithm": "sha1"
+            },
+            "version": 1
+          }
+        }
+      },
+      "timestampUtcMs": "2026-09-03T07:19:13.748Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "AcB8RbH1ESJfVYs6NzQOT2yhd8k=",
+    "timestampUtcMs": "2026-09-03T07:19:15.173Z",
+    "action": {
+      "type": "SET_DESCRIPTION",
+      "input": {
+        "updatedAt": "2026-09-03T07:19:15.173Z",
+        "description": "batch-aggregator.ts:40-55. The batch is emitted as though complete, so a remote receives a partial run with nothing marking the gap \u2014 recorded as open issue 7b in the reactor's own gap analysis."
+      },
+      "timestampUtcMs": "2026-09-03T07:19:15.173Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "",
+    "timestampUtcMs": "2026-09-03T07:21:10.335Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "metadata": {
+          "reason": "Extracted from packages/reactor/sync-gaps.md at v6.2.2-dev.74 \u2014 7. Batch Aggregator \u203a 7b (batch-aggregator.ts:40-55)",
+          "confidence": "grounded"
+        },
+        "sourceId": "bb823a22-5304-40dd-b087-5ae6a35e9755",
+        "targetId": "6b999de1-e726-4029-b56f-6ccf6b887d83",
+        "relationshipType": "DERIVED_FROM"
+      },
+      "timestampUtcMs": "2026-09-03T07:21:10.335Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "mY4uvQzKmKwZm+vGp9YBIclN01w=",
+    "timestampUtcMs": "2026-09-03T07:19:15.173Z",
+    "action": {
+      "type": "SET_NOTE_TYPE",
+      "input": {
+        "noteType": "BUG-PATTERN",
+        "updatedAt": "2026-09-03T07:19:15.173Z"
+      },
+      "timestampUtcMs": "2026-09-03T07:19:15.173Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "",
+    "timestampUtcMs": "2026-09-03T07:21:10.783Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "metadata": {
+          "reason": "The outbox-add flow presents batch aggregation as complete-batch-then-route, but a job failure inside the aggregation window emits a partial batch that is indistinguishable from a complete one",
+          "confidence": "grounded"
+        },
+        "sourceId": "bb823a22-5304-40dd-b087-5ae6a35e9755",
+        "targetId": "9c453091-8c7b-4210-af2f-600fead66af7",
+        "relationshipType": "CONTRADICTS"
+      },
+      "timestampUtcMs": "2026-09-03T07:21:10.783Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "xqBkhDiVqnDQz5mM9kR/4sObIOI=",
+    "timestampUtcMs": "2026-09-03T07:19:15.173Z",
+    "action": {
+      "type": "SET_CONTENT",
+      "input": {
+        "content": "Recorded as gap 7b in `sync-gaps.md`. The batch aggregator collects operations from `JOB_WRITE_READY` events into a batch before handing it to the sync manager. When a job in that window fails, `handleJobFailed` (`batch-aggregator.ts:40-55`) **deletes the pending batch and processes whatever events had already arrived** \u2014 and the failed job's operations are *silently dropped*, with no notification that the batch is incomplete.\n\nWhat makes this a defect rather than a design choice is the silence. A batch that is emitted looks identical whether or not it lost operations to a failure, so a remote applies a partial run believing it complete, and nothing downstream can tell the difference. The receiving executor renumbers arriving operations against its own head and validates no hashes, so a gap does not announce itself there either.\n\nThe operations are not lost from the origin's own log \u2014 the outbox is index-driven and a later refill can derive them again \u2014 but the batch that was emitted stands as evidence of a run that never fully happened.\n\n## Provenance\n- `packages/reactor/sync-gaps.md` \u2014 7. Batch Aggregator \u203a 7b (batch-aggregator.ts:40-55)\n\n_Extracted from the Powerhouse repository at **v6.2.2-dev.74**._",
+        "updatedAt": "2026-09-03T07:19:15.173Z"
+      },
+      "timestampUtcMs": "2026-09-03T07:19:15.173Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "",
+    "timestampUtcMs": "2026-09-03T07:21:11.246Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "metadata": {
+          "reason": "Both are entries in the same open gap analysis and both leave a sync anomaly with no operator-visible surface",
+          "confidence": "grounded"
+        },
+        "sourceId": "bb823a22-5304-40dd-b087-5ae6a35e9755",
+        "targetId": "f3c2f9bb-e554-44c6-9551-05273aaf5720",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-09-03T07:21:11.246Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "FmCXBWt6+7/oYahZJodO5Iu4mks=",
+    "timestampUtcMs": "2026-09-03T07:19:15.173Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "7a54ee9c-071b-492e-bae9-d70102c1af1b",
+        "name": "reactor-sync"
+      },
+      "timestampUtcMs": "2026-09-03T07:19:15.173Z"
+    }
+  },
+  {
+    "index": 5,
+    "hash": "",
+    "timestampUtcMs": "2026-09-03T07:23:03.120Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "metadata": {
+          "reason": "Extracted from packages/reactor/sync-gaps.md at v6.2.2-dev.74 \u2014 7. Batch Aggregator \u203a 7b (batch-aggregator.ts:40-55)",
+          "confidence": "grounded"
+        },
+        "sourceId": "bb823a22-5304-40dd-b087-5ae6a35e9755",
+        "targetId": "6b999de1-e726-4029-b56f-6ccf6b887d83",
+        "relationshipType": "DERIVED_FROM"
+      },
+      "timestampUtcMs": "2026-09-03T07:23:03.120Z"
+    }
+  },
+  {
+    "index": 5,
+    "hash": "9GsiTm+7tlV2WlVSV1RIh7d+9b8=",
+    "timestampUtcMs": "2026-09-03T07:19:15.173Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "0821f031-5180-4c6b-a713-705ed53a7944",
+        "name": "batching"
+      },
+      "timestampUtcMs": "2026-09-03T07:19:15.173Z"
+    }
+  },
+  {
+    "index": 6,
+    "hash": "",
+    "timestampUtcMs": "2026-09-03T07:23:03.573Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "metadata": {
+          "reason": "The outbox-add flow presents batch aggregation as complete-batch-then-route, but a job failure inside the aggregation window emits a partial batch that is indistinguishable from a complete one",
+          "confidence": "grounded"
+        },
+        "sourceId": "bb823a22-5304-40dd-b087-5ae6a35e9755",
+        "targetId": "9c453091-8c7b-4210-af2f-600fead66af7",
+        "relationshipType": "CONTRADICTS"
+      },
+      "timestampUtcMs": "2026-09-03T07:23:03.573Z"
+    }
+  },
+  {
+    "index": 6,
+    "hash": "c42j53LSuGLpp8iO2LNcdnF9mC4=",
+    "timestampUtcMs": "2026-09-03T07:19:15.173Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "a08ca2e9-cb58-447d-a9ac-7ca4858b2f71",
+        "name": "gaps"
+      },
+      "timestampUtcMs": "2026-09-03T07:19:15.173Z"
+    }
+  },
+  {
+    "index": 7,
+    "hash": "",
+    "timestampUtcMs": "2026-09-03T07:23:04.041Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "metadata": {
+          "reason": "Both are entries in the same open gap analysis and both leave a sync anomaly with no operator-visible surface",
+          "confidence": "grounded"
+        },
+        "sourceId": "bb823a22-5304-40dd-b087-5ae6a35e9755",
+        "targetId": "f3c2f9bb-e554-44c6-9551-05273aaf5720",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-09-03T07:23:04.041Z"
+    }
+  },
+  {
+    "index": 7,
+    "hash": "LytnYCOKzTa4tv3miXFc4uZlVoI=",
+    "timestampUtcMs": "2026-09-03T07:19:15.173Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "031dffbe-4174-48e8-b279-45c8ba5ce3e1",
+        "name": "gotchas"
+      },
+      "timestampUtcMs": "2026-09-03T07:19:15.173Z"
+    }
+  },
+  {
+    "index": 8,
+    "hash": "/tYkZMHIMDRphIGaB7y6NNb4HPI=",
+    "timestampUtcMs": "2026-09-03T07:19:15.173Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "version",
+        "value": "v6.2.2-dev.74",
+        "updatedAt": "2026-09-03T07:19:15.173Z"
+      },
+      "timestampUtcMs": "2026-09-03T07:19:15.173Z"
+    }
+  },
+  {
+    "index": 9,
+    "hash": "U7gfQTMz017D/pT7UMs7KnA6LXw=",
+    "timestampUtcMs": "2026-09-03T07:19:15.173Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "filePath",
+        "value": "packages/reactor/sync-gaps.md",
+        "updatedAt": "2026-09-03T07:19:15.173Z"
+      },
+      "timestampUtcMs": "2026-09-03T07:19:15.173Z"
+    }
+  },
+  {
+    "index": 10,
+    "hash": "hDM8CdBg/5tcrsceScSFVdKRIRc=",
+    "timestampUtcMs": "2026-09-03T07:19:17.562Z",
+    "action": {
+      "type": "SET_PROVENANCE",
+      "input": {
+        "author": "knowledge-agent",
+        "createdAt": "2026-09-03T07:19:17.562Z",
+        "sourceOrigin": "DERIVED"
+      },
+      "timestampUtcMs": "2026-09-03T07:19:17.562Z"
+    }
+  },
+  {
+    "index": 11,
+    "hash": "83OLxeKiPdub3zMSk7sVDnkemvY=",
+    "timestampUtcMs": "2026-09-03T07:19:18.181Z",
+    "action": {
+      "type": "SUBMIT_FOR_REVIEW",
+      "input": {
+        "id": "4e3f7483-45fa-4fa7-87d0-04f597ce3ded",
+        "actor": "knowledge-agent",
+        "comment": "extracted from packages/reactor/sync-gaps.md at v6.2.2-dev.74",
+        "timestamp": "2026-09-03T07:19:18.181Z"
+      },
+      "timestampUtcMs": "2026-09-03T07:19:18.181Z"
+    }
+  },
+  {
+    "index": 12,
+    "hash": "SSfyHMeroiFZzPYaXoB0Y9p9j2s=",
+    "timestampUtcMs": "2026-09-03T07:19:18.735Z",
+    "action": {
+      "type": "APPROVE_NOTE",
+      "input": {
+        "id": "e3fd465f-d04b-471e-9830-f672bd1c4f21",
+        "actor": "liberuum",
+        "comment": "claim checked against the cited file at the pinned tag",
+        "timestamp": "2026-09-03T07:19:18.735Z"
+      },
+      "timestampUtcMs": "2026-09-03T07:19:18.735Z"
+    }
+  },
+  {
+    "index": 13,
+    "hash": "PH9WqjRzqL0wjg93KhNsoY5ZwXc=",
+    "timestampUtcMs": "2026-09-03T07:22:26.846Z",
+    "action": {
+      "type": "SET_TITLE",
+      "input": {
+        "title": "A failed job silently drops its operations from the sync batch: handleJobFailed deletes the pending batch and emits whatever arrived, with no notification of incompleteness",
+        "updatedAt": "2026-09-03T07:22:26.846Z"
+      },
+      "timestampUtcMs": "2026-09-03T07:22:26.846Z"
+    }
+  },
+  {
+    "index": 14,
+    "hash": "PH9WqjRzqL0wjg93KhNsoY5ZwXc=",
+    "timestampUtcMs": "2026-09-03T07:22:26.846Z",
+    "action": {
+      "type": "SET_DESCRIPTION",
+      "input": {
+        "updatedAt": "2026-09-03T07:22:26.846Z",
+        "description": "batch-aggregator.ts:40-55. The batch is emitted as though complete, so a remote receives a partial run with nothing marking the gap \u2014 recorded as open issue 7b in the reactor's own gap analysis."
+      },
+      "timestampUtcMs": "2026-09-03T07:22:26.846Z"
+    }
+  },
+  {
+    "index": 15,
+    "hash": "PH9WqjRzqL0wjg93KhNsoY5ZwXc=",
+    "timestampUtcMs": "2026-09-03T07:22:26.846Z",
+    "action": {
+      "type": "SET_NOTE_TYPE",
+      "input": {
+        "noteType": "BUG-PATTERN",
+        "updatedAt": "2026-09-03T07:22:26.846Z"
+      },
+      "timestampUtcMs": "2026-09-03T07:22:26.846Z"
+    }
+  },
+  {
+    "index": 16,
+    "hash": "PH9WqjRzqL0wjg93KhNsoY5ZwXc=",
+    "timestampUtcMs": "2026-09-03T07:22:26.846Z",
+    "action": {
+      "type": "SET_CONTENT",
+      "input": {
+        "content": "Recorded as gap 7b in `sync-gaps.md`. The batch aggregator collects operations from `JOB_WRITE_READY` events into a batch before handing it to the sync manager. When a job in that window fails, `handleJobFailed` (`batch-aggregator.ts:40-55`) **deletes the pending batch and processes whatever events had already arrived** \u2014 and the failed job's operations are *silently dropped*, with no notification that the batch is incomplete.\n\nWhat makes this a defect rather than a design choice is the silence. A batch that is emitted looks identical whether or not it lost operations to a failure, so a remote applies a partial run believing it complete, and nothing downstream can tell the difference. The receiving executor renumbers arriving operations against its own head and validates no hashes, so a gap does not announce itself there either.\n\nThe operations are not lost from the origin's own log \u2014 the outbox is index-driven and a later refill can derive them again \u2014 but the batch that was emitted stands as evidence of a run that never fully happened.\n\n## Provenance\n- `packages/reactor/sync-gaps.md` \u2014 7. Batch Aggregator \u203a 7b (batch-aggregator.ts:40-55)\n\n_Extracted from the Powerhouse repository at **v6.2.2-dev.74**._",
+        "updatedAt": "2026-09-03T07:22:26.846Z"
+      },
+      "timestampUtcMs": "2026-09-03T07:22:26.846Z"
+    }
+  },
+  {
+    "index": 17,
+    "hash": "PH9WqjRzqL0wjg93KhNsoY5ZwXc=",
+    "timestampUtcMs": "2026-09-03T07:22:26.846Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "version",
+        "value": "v6.2.2-dev.74",
+        "updatedAt": "2026-09-03T07:22:26.846Z"
+      },
+      "timestampUtcMs": "2026-09-03T07:22:26.846Z"
+    }
+  },
+  {
+    "index": 18,
+    "hash": "PH9WqjRzqL0wjg93KhNsoY5ZwXc=",
+    "timestampUtcMs": "2026-09-03T07:22:26.846Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "filePath",
+        "value": "packages/reactor/sync-gaps.md",
+        "updatedAt": "2026-09-03T07:22:26.846Z"
+      },
+      "timestampUtcMs": "2026-09-03T07:22:26.846Z"
+    }
+  }
+]

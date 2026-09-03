@@ -1,0 +1,94 @@
+{
+  "links": [
+    {
+      "id": "lnk-7eeaaa19-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "7eeaaa19-4e9e-472e-8203-0ebf920e73f6",
+      "targetTitle": "Libriciel SCOP \u2014 (generalist \u2014 see fit)"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Replaying a d\u00e9lib\u00e9ration's approval chain after the workflow has been edited is the iparapheur demo",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "7d20c089-11b7-4477-8360-2340f09a878e",
+      "name": "leads",
+      "topicDocumentId": null
+    },
+    {
+      "id": "d20de1a7-eaaf-4203-91ce-378d6e50746e",
+      "name": "iparapheur",
+      "topicDocumentId": null
+    },
+    {
+      "id": "fb21d96a-dae3-4578-a45e-1ae39984a513",
+      "name": "public-sector",
+      "topicDocumentId": null
+    },
+    {
+      "id": "403816f6-c58c-4d93-91d3-10f95328e39b",
+      "name": "demo-design",
+      "topicDocumentId": null
+    },
+    {
+      "id": "40a4f49a-7f7f-426a-900c-a84a0c9f4cf6",
+      "name": "replay",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "The integration is an iparapheur approval hook dispatching a typed operation per signature step. Per-step rather than per-document matters for a signature workflow: the sequence of who signed in what order is the artefact, not just the final signed state.\n\nThe destructive step is different from the one used elsewhere. Other demos in this corpus delete an instance, purge executions or prune history; this one edits the workflow definition and then replays a d\u00e9lib\u00e9ration's full approval chain. That is a subtler failure mode and a more common one \u2014 workflows are revised as rules change, and once the definition has moved on, a system that stores only the current process cannot reconstruct what the old one required.\n\nThe single lead is Libriciel SCOP in France, recorded as a 90-person SCOP publishing twelve open-source products, marked \"2 \u00b7 next\". A cooperative publishing at that scale is the kind of partner for whom a co-maintained integration is plausible, and the French local-government context supplies the d\u00e9lib\u00e9ration use case directly.\n\n---\n\n## Leads sharing this finding (1)\n\n**2 \u00b7 next**\n- Libriciel SCOP (FR) \u2014 Matthieu Piaumier, Pr\u00e9sident Directeur G\u00e9n\u00e9ral \u00b7 contact@libriciel.coop \u00b7 https://libriciel.fr\n\nVerbatim research text this claim was extracted from:\n\n> iparapheur approval hook dispatching a typed operation per signature step. Replay a d\u00e9lib\u00e9ration's full approval chain after the workflow has been edited. 90-person SCOP, publishes 12 OSS products.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "INTEGRATION",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "knowledge-agent",
+    "createdAt": "2026-08-19T11:32:34.578924Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-19T11:32:37.011967Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "A hook dispatches a typed operation per signature step, so the approval chain remains replayable even after the workflow definition that produced it is changed.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "181502df-9180-485e-b18f-1cbbc9bc6e8b",
+      "actor": "knowledge-agent",
+      "comment": "Extracted from lead research; claim checked against the source record.",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-19T11:32:36.859929Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "f981c947-2184-48b7-9048-b9ae12c2bec1",
+      "actor": "liberuum",
+      "comment": "Approved: lead corpus extraction.",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-19T11:32:37.011967Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

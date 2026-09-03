@@ -1,0 +1,115 @@
+{
+  "links": [
+    {
+      "id": "lnk-e2b3e87f-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "e2b3e87f-3df0-4940-9352-b648ed4e527d",
+      "targetTitle": "testing-uses-vitest-and-generatemock",
+      "reason": "Only the import path in that note changed; its testing pattern stands, so it was corrected in place rather than replaced",
+      "confidence": "grounded"
+    },
+    {
+      "id": "lnk-434c057f-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "434c057f-8ec3-4eec-8880-240ea379f679",
+      "targetTitle": "Academy \u203a Build \u203a ManualTodoTutorial \u203a Write document model tests",
+      "reason": "Extracted from apps/academy/docs/academy/03-Build/01-ManualTodoTutorial/04-WriteDocumentModelTests.md at v6.2.2-dev.74 \u2014 import corrected from @powerhousedao/codegen to document-model/mock",
+      "confidence": "grounded"
+    },
+    {
+      "id": "lnk-c3a3ab91-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "c3a3ab91-3421-4938-8ea0-e4322c3834fd",
+      "targetTitle": "Academy \u203a Build \u203a DocumentModelCreation \u203a Implement document model tests",
+      "reason": "Extracted from apps/academy/docs/academy/03-Build/02-DocumentModelCreation/06-ImplementDocumentModelTests.md at v6.2.2-dev.74 \u2014 import corrected from document-model to document-model/mock",
+      "confidence": "grounded"
+    },
+    {
+      "id": "lnk-616c225d-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "616c225d-cce1-4318-a2b6-82f019aa35e5",
+      "targetTitle": "Academy \u203a Build \u203a ExampleUsecases \u203a Chatroom \u203a Implement the document model reducers",
+      "reason": "Extracted from apps/academy/docs/academy/03-Build/06-ExampleUsecases/Chatroom/04-ImplementOperationReducers.md at v6.2.2-dev.74 \u2014 same correction in the Chatroom reducer tutorial",
+      "confidence": "grounded"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "generateMock is imported from document-model/mock, not from @powerhousedao/codegen or the document-model root",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "c077585c-c14d-4e61-9bb1-5252af3ce6a3",
+      "name": "testing",
+      "topicDocumentId": null
+    },
+    {
+      "id": "1e5c491e-3396-4f0d-8905-d57d678dde4b",
+      "name": "document-model",
+      "topicDocumentId": null
+    },
+    {
+      "id": "08087436-1cbb-4939-a8d8-8fa92d3e34bb",
+      "name": "codegen",
+      "topicDocumentId": null
+    },
+    {
+      "id": "4073b244-5102-4296-8875-8a00c9f69615",
+      "name": "gotchas",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "Document-model tests generate schema-aware inputs with `generateMock`, and where it comes from changed. All three Academy pages that teach reducer tests were corrected in v6.2.2-dev.74 to the same import:\n\n```ts\nimport { generateMock } from \"document-model/mock\";\n```\n\nPreviously the tutorials showed `from \"@powerhousedao/codegen\"` (Manual Todo step 4, Chatroom reducers) or `from \"document-model\"` (Document Model Creation step 6). `packages/document-model/package.json` declares `./mock` as its own export (`source: ./mock.ts`, `import: ./dist/mock.js`, `types: ./dist/mock.d.ts`), so the mock generator is a subpath of the document-model package rather than something the codegen package re-exports.\n\nThe surrounding pattern is unchanged: create a document with `utils.createDocument()`, build inputs with `generateMock(AddTodoItemInputSchema())`, apply the reducer, assert on state \u2014 and read reducer errors off `document.operations.global[i].error` rather than expecting a throw.\n\n_Source: apps/academy/docs/academy/03-Build/01-ManualTodoTutorial/04-WriteDocumentModelTests.md (Powerhouse v6.2.2-dev.74)._\n_Source: apps/academy/docs/academy/03-Build/02-DocumentModelCreation/06-ImplementDocumentModelTests.md (Powerhouse v6.2.2-dev.74)._\n_Source: apps/academy/docs/academy/03-Build/06-ExampleUsecases/Chatroom/04-ImplementOperationReducers.md (Powerhouse v6.2.2-dev.74)._\n\n## Provenance\n- `apps/academy/docs/academy/03-Build/01-ManualTodoTutorial/04-WriteDocumentModelTests.md` \u2014 import corrected from @powerhousedao/codegen to document-model/mock\n- `apps/academy/docs/academy/03-Build/02-DocumentModelCreation/06-ImplementDocumentModelTests.md` \u2014 import corrected from document-model to document-model/mock\n- `apps/academy/docs/academy/03-Build/06-ExampleUsecases/Chatroom/04-ImplementOperationReducers.md` \u2014 same correction in the Chatroom reducer tutorial\n\n_Recorded from the Powerhouse repository at **v6.2.2-dev.74** during the v6.2.2-dev.74 source sync._",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": "v6.2.2-dev.74",
+  "computes": null,
+  "filePath": "apps/academy/docs/academy/03-Build/01-ManualTodoTutorial/04-WriteDocumentModelTests.md",
+  "noteType": "REFERENCE",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": "grounded",
+  "consumedBy": [],
+  "provenance": {
+    "author": "knowledge-agent",
+    "createdAt": "2026-09-02T22:14:38.602Z",
+    "sessionId": null,
+    "updatedAt": "2026-09-02T22:21:30.205Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "The Academy's three test tutorials were corrected to the subpath at dev.74. document-model's package.json exports ./mock as its own entry, so the generator no longer ships through codegen.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "ac49aaa0-536d-4f60-9666-7c29b7dbe4a6",
+      "actor": "knowledge-agent",
+      "comment": "extracted from the Powerhouse repository at v6.2.2-dev.74",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-09-02T22:14:39.303Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "1b287750-3029-4245-adf0-0c53d5f85714",
+      "actor": "liberuum",
+      "comment": "claim checked against the cited repository file at the pinned tag",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-09-02T22:14:39.859Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

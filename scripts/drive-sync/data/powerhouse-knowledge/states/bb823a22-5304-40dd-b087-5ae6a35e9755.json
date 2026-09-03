@@ -1,0 +1,107 @@
+{
+  "links": [
+    {
+      "id": "lnk-6b999de1-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "6b999de1-e726-4029-b56f-6ccf6b887d83",
+      "targetTitle": "Package \u203a reactor \u203a sync-gaps",
+      "reason": "Extracted from packages/reactor/sync-gaps.md at v6.2.2-dev.74 \u2014 7. Batch Aggregator \u203a 7b (batch-aggregator.ts:40-55)",
+      "confidence": "grounded"
+    },
+    {
+      "id": "lnk-f3c2f9bb-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "f3c2f9bb-e554-44c6-9551-05273aaf5720",
+      "targetTitle": "sync-gap-dead-letter-api",
+      "reason": "Both are entries in the same open gap analysis and both leave a sync anomaly with no operator-visible surface",
+      "confidence": "grounded"
+    },
+    {
+      "id": "lnk-9c453091-con",
+      "linkType": "CONTRADICTS",
+      "targetDocumentId": "9c453091-8c7b-4210-af2f-600fead66af7",
+      "targetTitle": "gql-channel-four-flows",
+      "reason": "The outbox-add flow presents batch aggregation as complete-batch-then-route, but a job failure inside the aggregation window emits a partial batch that is indistinguishable from a complete one",
+      "confidence": "grounded"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "A failed job silently drops its operations from the sync batch: handleJobFailed deletes the pending batch and emits whatever arrived, with no notification of incompleteness",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "7a54ee9c-071b-492e-bae9-d70102c1af1b",
+      "name": "reactor-sync",
+      "topicDocumentId": null
+    },
+    {
+      "id": "0821f031-5180-4c6b-a713-705ed53a7944",
+      "name": "batching",
+      "topicDocumentId": null
+    },
+    {
+      "id": "a08ca2e9-cb58-447d-a9ac-7ca4858b2f71",
+      "name": "gaps",
+      "topicDocumentId": null
+    },
+    {
+      "id": "031dffbe-4174-48e8-b279-45c8ba5ce3e1",
+      "name": "gotchas",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "Recorded as gap 7b in `sync-gaps.md`. The batch aggregator collects operations from `JOB_WRITE_READY` events into a batch before handing it to the sync manager. When a job in that window fails, `handleJobFailed` (`batch-aggregator.ts:40-55`) **deletes the pending batch and processes whatever events had already arrived** \u2014 and the failed job's operations are *silently dropped*, with no notification that the batch is incomplete.\n\nWhat makes this a defect rather than a design choice is the silence. A batch that is emitted looks identical whether or not it lost operations to a failure, so a remote applies a partial run believing it complete, and nothing downstream can tell the difference. The receiving executor renumbers arriving operations against its own head and validates no hashes, so a gap does not announce itself there either.\n\nThe operations are not lost from the origin's own log \u2014 the outbox is index-driven and a later refill can derive them again \u2014 but the batch that was emitted stands as evidence of a run that never fully happened.\n\n## Provenance\n- `packages/reactor/sync-gaps.md` \u2014 7. Batch Aggregator \u203a 7b (batch-aggregator.ts:40-55)\n\n_Extracted from the Powerhouse repository at **v6.2.2-dev.74**._",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": "v6.2.2-dev.74",
+  "computes": null,
+  "filePath": "packages/reactor/sync-gaps.md",
+  "noteType": "BUG-PATTERN",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "knowledge-agent",
+    "createdAt": "2026-09-03T07:19:17.562Z",
+    "sessionId": null,
+    "updatedAt": "2026-09-03T07:22:26.846Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "batch-aggregator.ts:40-55. The batch is emitted as though complete, so a remote receives a partial run with nothing marking the gap \u2014 recorded as open issue 7b in the reactor's own gap analysis.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "4e3f7483-45fa-4fa7-87d0-04f597ce3ded",
+      "actor": "knowledge-agent",
+      "comment": "extracted from packages/reactor/sync-gaps.md at v6.2.2-dev.74",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-09-03T07:19:18.181Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "e3fd465f-d04b-471e-9830-f672bd1c4f21",
+      "actor": "liberuum",
+      "comment": "claim checked against the cited file at the pinned tag",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-09-03T07:19:18.735Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

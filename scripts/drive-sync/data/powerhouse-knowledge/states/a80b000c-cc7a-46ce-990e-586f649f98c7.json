@@ -1,0 +1,90 @@
+{
+  "links": [
+    {
+      "id": "lnk-426c4cdc-bui",
+      "linkType": "BUILDS_ON",
+      "targetDocumentId": "426c4cdc-3e53-4ab7-aae8-de68d7029161",
+      "targetTitle": "ifc-semantics-dwg-derivative"
+    },
+    {
+      "id": "lnk-c720df00-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "c720df00-e3a4-49d1-b583-e7ed14c256f8",
+      "targetTitle": "bim-demo-scenario-briefing"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Every IFC file has one fixed shape: an IfcProject root with six branches",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "248e5828-d2d1-4397-a562-f5c9ddd61eb4",
+      "name": "ifc",
+      "topicDocumentId": null
+    },
+    {
+      "id": "dd559ddd-0cd6-423b-bbc4-12fdf92f2b0f",
+      "name": "document-models",
+      "topicDocumentId": null
+    },
+    {
+      "id": "29da533d-d84a-4a92-9250-4e1327047dd5",
+      "name": "bim",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "Analysis of three different IFC files yields one universal working model. One root object (**IfcProject**), then six branches:\n\n- **spatial** \u2014 Site \u203a Building \u203a Storey \u203a Space\n- **elements** \u2014 physical objects, grouped by class\n- **properties** \u2014 property sets, and how much of each is genuinely filled\n- **process** \u2014 tasks, dependencies, schedule windows\n- **issues** \u2014 BCF topics; these always live *outside* the IFC and join back by GlobalId\n- **relations** \u2014 the typed edges holding the graph together\n\nWhat changes between files is which branches carry data: a design export fills spatial and elements and leaves process empty; a 4D planning export fills process. The shape stays put while the contents change.\n\nThis is the conceptual snapshot that makes IFC files accessible to LLMs \u2014 e.g. \"this file has one building with one floor and two rooms with IDs \u2026\" \u2014 and it is the foundation of the dtbau demo's Source 1 (IFC object hierarchy extraction).",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "CONCEPT",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "knowledge-agent",
+    "createdAt": "2026-08-14T18:13:36.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-14T18:17:20.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "IFC files share one structure \u2014 IfcProject root, then spatial, elements, properties, process, issues, relations. Files differ only in which branches carry data.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "1a324a28-b2d2-4627-919d-7f1652636ea3",
+      "actor": "knowledge-agent",
+      "comment": "Extracted from Aug 12-14 meeting sources; links + methodology grounding applied",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-14T18:17:20.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "81d3d8f1-599b-474c-8859-510d0b09c707",
+      "actor": "liberuum",
+      "comment": "Pipeline verify: quality gate passed",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-14T18:17:20.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

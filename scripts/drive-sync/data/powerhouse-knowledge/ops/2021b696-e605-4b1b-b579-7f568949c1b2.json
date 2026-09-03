@@ -1,0 +1,581 @@
+[
+  {
+    "index": 0,
+    "hash": "",
+    "timestampUtcMs": "2026-09-02T22:14:13.975Z",
+    "action": {
+      "type": "CREATE_DOCUMENT",
+      "input": {
+        "meta": {},
+        "name": "outbox-scope-ordering",
+        "slug": "",
+        "model": "bai/knowledge-note",
+        "branch": "main",
+        "signing": {
+          "nonce": "",
+          "publicKey": {},
+          "signature": "2021b696-e605-4b1b-b579-7f568949c1b2",
+          "documentType": "bai/knowledge-note",
+          "createdAtUtcIso": "2026-09-02T22:14:13.975Z"
+        },
+        "version": 0,
+        "documentId": "2021b696-e605-4b1b-b579-7f568949c1b2",
+        "protocolVersions": {
+          "base-reducer": 2
+        }
+      },
+      "timestampUtcMs": "2026-09-02T22:14:13.975Z"
+    }
+  },
+  {
+    "index": 0,
+    "hash": "uopSkru2vPtGqvahKj5/KnSj8KU=",
+    "timestampUtcMs": "2026-09-02T22:14:13.895Z",
+    "action": {
+      "type": "SET_TITLE",
+      "input": {
+        "title": "updateOutbox re-sorts each page by (documentId, scope, ordinal), so a backfill served a document's auth run before the document run that creates it \u2014 fixed by hoisting the creating run",
+        "updatedAt": "2026-09-02T22:14:13.895Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:14:13.895Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "",
+    "timestampUtcMs": "2026-09-02T22:14:13.975Z",
+    "action": {
+      "type": "UPGRADE_DOCUMENT",
+      "input": {
+        "model": "bai/knowledge-note",
+        "toVersion": 1,
+        "documentId": "2021b696-e605-4b1b-b579-7f568949c1b2",
+        "fromVersion": 0,
+        "initialState": {
+          "auth": {
+            "grants": [],
+            "version": 0
+          },
+          "local": {
+            "lastViewedAt": null,
+            "personalTags": []
+          },
+          "global": {
+            "links": [],
+            "model": null,
+            "scope": null,
+            "title": null,
+            "editor": null,
+            "inputs": [],
+            "models": [],
+            "status": "DRAFT",
+            "topics": [],
+            "content": null,
+            "context": null,
+            "modelId": null,
+            "modules": [],
+            "outputs": [],
+            "version": null,
+            "computes": null,
+            "filePath": null,
+            "noteType": null,
+            "severity": null,
+            "hooksUsed": [],
+            "rootCause": null,
+            "confidence": null,
+            "consumedBy": [],
+            "provenance": null,
+            "sourceType": null,
+            "targetType": null,
+            "cardinality": null,
+            "description": null,
+            "alternatives": [],
+            "consequences": [],
+            "errorMessage": null,
+            "relationType": null,
+            "correctPattern": null,
+            "decisionStatus": null,
+            "dispatchTargets": [],
+            "lifecycleEvents": []
+          },
+          "document": {
+            "hash": {
+              "encoding": "base64",
+              "algorithm": "sha1"
+            },
+            "version": 1
+          }
+        }
+      },
+      "timestampUtcMs": "2026-09-02T22:14:13.975Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "V3/BbTWlN2o+zSb5zVwpV2Yq+88=",
+    "timestampUtcMs": "2026-09-02T22:14:13.895Z",
+    "action": {
+      "type": "SET_DESCRIPTION",
+      "input": {
+        "updatedAt": "2026-09-02T22:14:13.895Z",
+        "description": "Scope is compared as a raw string, so auth sorts before document, and emitBatches turns emission order into a hard dependsOn. The receiver deferred the auth load behind the blocked create."
+      },
+      "timestampUtcMs": "2026-09-02T22:14:13.895Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "",
+    "timestampUtcMs": "2026-09-02T22:25:25.061Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "metadata": {
+          "reason": "Extracted from docs/updateoutbox-scope-ordering.md at v6.2.2-dev.74 \u2014 Summary, Mechanics, The deadlock, The barrier this violates, What the fix is",
+          "confidence": "grounded"
+        },
+        "sourceId": "2021b696-e605-4b1b-b579-7f568949c1b2",
+        "targetId": "4c1161cd-c718-4604-83dc-39b07e09d602",
+        "relationshipType": "DERIVED_FROM"
+      },
+      "timestampUtcMs": "2026-09-02T22:25:25.061Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "XSdlQz5/s5mL8mWg8e824z5bNhw=",
+    "timestampUtcMs": "2026-09-02T22:14:13.895Z",
+    "action": {
+      "type": "SET_NOTE_TYPE",
+      "input": {
+        "noteType": "BUG-PATTERN",
+        "updatedAt": "2026-09-02T22:14:13.895Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:14:13.895Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "",
+    "timestampUtcMs": "2026-09-02T22:25:26.206Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "metadata": {
+          "reason": "Serving the page in the index's own order was the alternative fix, measured and rejected",
+          "confidence": "grounded"
+        },
+        "sourceId": "2021b696-e605-4b1b-b579-7f568949c1b2",
+        "targetId": "c93f6c0f-5040-4734-a616-a824634feebb",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-09-02T22:25:26.206Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "Uu47FH9fL50qb4hp5GlRUtlpmVk=",
+    "timestampUtcMs": "2026-09-02T22:14:13.895Z",
+    "action": {
+      "type": "SET_CONTENT",
+      "input": {
+        "content": "The operation index returns rows in global insertion order (`ORDER BY ordinal ASC`), which is causally safe by construction. `updateOutbox` then **re-sorts each page** by `(documentId, scope, ordinal)` and discards that order. `scope` is compared as a raw string, so the ordering is lexicographic \u2014 `auth < document < global < local` \u2014 and for any one document the `auth` run sorts *ahead of the `document` run that creates it*. `emitBatches` chains `dependsOn` per document, so emission order becomes a hard dependency: the `document` batch depends on the `auth` batch.\n\nThe result was a mutual wait rather than an error. The receiver applied the `auth` run first, its document did not exist, so the load job was **deferred** \u2014 silently, emitting no event and moving no status, sitting at `RUNNING`. A deferred job was released only by a job carrying `CREATE_DOCUMENT` for that id, and that create was blocked behind the deferred auth job. Neither side timed out and neither reported: \"no runs dispatched, no dead letter, indefinitely\". PR #2918 bounded the silence \u2014 a hold outliving `deferredJobTtlMs` (30 s) fails the job through the queue, releasing its dependents \u2014 which removed the hang but left every fresh backfill of a policied document costing a 30 s stall and a dead-lettered auth run.\n\nWhy the barrier matters at all: the queue's sub-queue key is `(documentId, scope, branch)`, so per-scope FIFO is all it guarantees, and `queueHint` (fed from `dependsOn`) is the only cross-scope mechanism on the inbox path. Document-scope operations write **other** scopes' rows \u2014 `CREATE_DOCUMENT` seeds header/document/auth snapshots, `UPGRADE_DOCUMENT` reindexes every scope in `resultingState`, and `DELETE_DOCUMENT` updates `DocumentSnapshot` with no scope predicate.\n\n**The fix hoists one run**: a page carrying a document's `CREATE_DOCUMENT` serves that run before the document's other scopes; everything else about the sort is unchanged, so scopes stay contiguous and a page still batches into one entry per (document, scope).\n\n_Source: docs/updateoutbox-scope-ordering.md (Powerhouse v6.2.2-dev.74)._\n\n## Provenance\n- `docs/updateoutbox-scope-ordering.md` \u2014 Summary, Mechanics, The deadlock, The barrier this violates, What the fix is\n\n_Recorded from the Powerhouse repository at **v6.2.2-dev.74** during the v6.2.2-dev.74 source sync._",
+        "updatedAt": "2026-09-02T22:14:13.895Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:14:13.895Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "",
+    "timestampUtcMs": "2026-09-02T22:25:26.681Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "metadata": {
+          "reason": "The auth scope travelling with every document is what makes this ordering bug reachable on any policied document's first backfill",
+          "confidence": "grounded"
+        },
+        "sourceId": "2021b696-e605-4b1b-b579-7f568949c1b2",
+        "targetId": "975d6c29-9797-4051-927e-d487a679f608",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-09-02T22:25:26.681Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "N6NvLfKXP9FS1coKJwBX+Z97tQQ=",
+    "timestampUtcMs": "2026-09-02T22:14:13.895Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "f62b6fbd-378c-4dd3-a016-1b09d123c36a",
+        "name": "reactor-sync"
+      },
+      "timestampUtcMs": "2026-09-02T22:14:13.895Z"
+    }
+  },
+  {
+    "index": 5,
+    "hash": "",
+    "timestampUtcMs": "2026-09-02T22:25:27.130Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "metadata": {
+          "reason": "Scopes being fully independent streams is exactly why nothing but dependsOn orders a document's scopes against each other on the inbox path",
+          "confidence": "grounded"
+        },
+        "sourceId": "2021b696-e605-4b1b-b579-7f568949c1b2",
+        "targetId": "3485a9d2-df0b-4265-8e7d-5b277a937bf0",
+        "relationshipType": "BUILDS_ON"
+      },
+      "timestampUtcMs": "2026-09-02T22:25:27.130Z"
+    }
+  },
+  {
+    "index": 5,
+    "hash": "NVmYSdhLf4crmc3gGg0dKJcJn6o=",
+    "timestampUtcMs": "2026-09-02T22:14:13.895Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "d768f870-2c63-49b0-96fe-631f6e09236d",
+        "name": "outbox"
+      },
+      "timestampUtcMs": "2026-09-02T22:14:13.895Z"
+    }
+  },
+  {
+    "index": 6,
+    "hash": "",
+    "timestampUtcMs": "2026-09-02T22:25:27.656Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "metadata": {
+          "reason": "After #2918 the failure surfaces as a dead-lettered auth run per document rather than a silent stall",
+          "confidence": "grounded"
+        },
+        "sourceId": "2021b696-e605-4b1b-b579-7f568949c1b2",
+        "targetId": "e57e23ae-2f05-414a-bb77-c74ab23f64e8",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-09-02T22:25:27.656Z"
+    }
+  },
+  {
+    "index": 6,
+    "hash": "szDcU8r2ZmrZP3+u9PdT41MEp6k=",
+    "timestampUtcMs": "2026-09-02T22:14:13.895Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "65e1e6dd-cba9-42e2-ac64-e089d922f16c",
+        "name": "ordering"
+      },
+      "timestampUtcMs": "2026-09-02T22:14:13.895Z"
+    }
+  },
+  {
+    "index": 7,
+    "hash": "UrEvBKR3mlgb1FUOQdko8MLgte4=",
+    "timestampUtcMs": "2026-09-02T22:14:13.895Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "257c55c6-4249-4b99-8f08-6c44975903d4",
+        "name": "gotchas"
+      },
+      "timestampUtcMs": "2026-09-02T22:14:13.895Z"
+    }
+  },
+  {
+    "index": 8,
+    "hash": "fu9N0yoJ3zbi0o2p4lRRVdzHKwU=",
+    "timestampUtcMs": "2026-09-02T22:14:13.895Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "97dead70-57ec-43f5-a483-71c4827a087c",
+        "name": "auth-scope"
+      },
+      "timestampUtcMs": "2026-09-02T22:14:13.895Z"
+    }
+  },
+  {
+    "index": 9,
+    "hash": "KNJ+tGndep01QwD/qw0imB9Br9U=",
+    "timestampUtcMs": "2026-09-02T22:14:13.895Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "version",
+        "value": "v6.2.2-dev.74",
+        "updatedAt": "2026-09-02T22:14:13.895Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:14:13.895Z"
+    }
+  },
+  {
+    "index": 10,
+    "hash": "O3ey2j78uRHyMDbPRcxQcZ0RAR0=",
+    "timestampUtcMs": "2026-09-02T22:14:13.895Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "filePath",
+        "value": "docs/updateoutbox-scope-ordering.md",
+        "updatedAt": "2026-09-02T22:14:13.895Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:14:13.895Z"
+    }
+  },
+  {
+    "index": 11,
+    "hash": "3bUeEZVJJg5R9VsHMp8aFSS8XHA=",
+    "timestampUtcMs": "2026-09-02T22:14:13.895Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "confidence",
+        "value": "grounded",
+        "updatedAt": "2026-09-02T22:14:13.895Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:14:13.895Z"
+    }
+  },
+  {
+    "index": 12,
+    "hash": "Ptl7QRoizh9wEgRcc8x+dHUHQz4=",
+    "timestampUtcMs": "2026-09-02T22:14:16.494Z",
+    "action": {
+      "type": "SET_PROVENANCE",
+      "input": {
+        "author": "knowledge-agent",
+        "createdAt": "2026-09-02T22:14:16.494Z",
+        "sourceOrigin": "DERIVED"
+      },
+      "timestampUtcMs": "2026-09-02T22:14:16.494Z"
+    }
+  },
+  {
+    "index": 13,
+    "hash": "mIGM4cqG0TwJ+XzeegQfnoP1R3Y=",
+    "timestampUtcMs": "2026-09-02T22:14:18.452Z",
+    "action": {
+      "type": "SUBMIT_FOR_REVIEW",
+      "input": {
+        "id": "de094a33-ca19-4a25-82d0-d9164b1d12cc",
+        "actor": "knowledge-agent",
+        "comment": "extracted from the Powerhouse repository at v6.2.2-dev.74",
+        "timestamp": "2026-09-02T22:14:18.452Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:14:18.452Z"
+    }
+  },
+  {
+    "index": 14,
+    "hash": "HocHzODmXmM74lr85eFBX+LPzwk=",
+    "timestampUtcMs": "2026-09-02T22:14:20.814Z",
+    "action": {
+      "type": "APPROVE_NOTE",
+      "input": {
+        "id": "39738efc-ec88-441b-83f7-8ce474baf9e7",
+        "actor": "liberuum",
+        "comment": "claim checked against the cited repository file at the pinned tag",
+        "timestamp": "2026-09-02T22:14:20.814Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:14:20.814Z"
+    }
+  },
+  {
+    "index": 15,
+    "hash": "oj9dIqJMDIG3inRLIeJM6EUnbgQ=",
+    "timestampUtcMs": "2026-09-02T22:16:44.565Z",
+    "action": {
+      "type": "SET_TITLE",
+      "input": {
+        "title": "updateOutbox re-sorts each page by (documentId, scope, ordinal), so a backfill served a document's auth run before the document run that creates it \u2014 fixed by hoisting the creating run",
+        "updatedAt": "2026-09-02T22:16:44.564Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:16:44.565Z"
+    }
+  },
+  {
+    "index": 16,
+    "hash": "oj9dIqJMDIG3inRLIeJM6EUnbgQ=",
+    "timestampUtcMs": "2026-09-02T22:16:44.565Z",
+    "action": {
+      "type": "SET_DESCRIPTION",
+      "input": {
+        "updatedAt": "2026-09-02T22:16:44.564Z",
+        "description": "Scope is compared as a raw string, so auth sorts before document, and emitBatches turns emission order into a hard dependsOn. The receiver deferred the auth load behind the blocked create."
+      },
+      "timestampUtcMs": "2026-09-02T22:16:44.565Z"
+    }
+  },
+  {
+    "index": 17,
+    "hash": "oj9dIqJMDIG3inRLIeJM6EUnbgQ=",
+    "timestampUtcMs": "2026-09-02T22:16:44.565Z",
+    "action": {
+      "type": "SET_NOTE_TYPE",
+      "input": {
+        "noteType": "BUG-PATTERN",
+        "updatedAt": "2026-09-02T22:16:44.564Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:16:44.565Z"
+    }
+  },
+  {
+    "index": 18,
+    "hash": "oj9dIqJMDIG3inRLIeJM6EUnbgQ=",
+    "timestampUtcMs": "2026-09-02T22:16:44.565Z",
+    "action": {
+      "type": "SET_CONTENT",
+      "input": {
+        "content": "The operation index returns rows in global insertion order (`ORDER BY ordinal ASC`), which is causally safe by construction. `updateOutbox` then **re-sorts each page** by `(documentId, scope, ordinal)` and discards that order. `scope` is compared as a raw string, so the ordering is lexicographic \u2014 `auth < document < global < local` \u2014 and for any one document the `auth` run sorts *ahead of the `document` run that creates it*. `emitBatches` chains `dependsOn` per document, so emission order becomes a hard dependency: the `document` batch depends on the `auth` batch.\n\nThe result was a mutual wait rather than an error. The receiver applied the `auth` run first, its document did not exist, so the load job was **deferred** \u2014 silently, emitting no event and moving no status, sitting at `RUNNING`. A deferred job was released only by a job carrying `CREATE_DOCUMENT` for that id, and that create was blocked behind the deferred auth job. Neither side timed out and neither reported: \"no runs dispatched, no dead letter, indefinitely\". PR #2918 bounded the silence \u2014 a hold outliving `deferredJobTtlMs` (30 s) fails the job through the queue, releasing its dependents \u2014 which removed the hang but left every fresh backfill of a policied document costing a 30 s stall and a dead-lettered auth run.\n\nWhy the barrier matters at all: the queue's sub-queue key is `(documentId, scope, branch)`, so per-scope FIFO is all it guarantees, and `queueHint` (fed from `dependsOn`) is the only cross-scope mechanism on the inbox path. Document-scope operations write **other** scopes' rows \u2014 `CREATE_DOCUMENT` seeds header/document/auth snapshots, `UPGRADE_DOCUMENT` reindexes every scope in `resultingState`, and `DELETE_DOCUMENT` updates `DocumentSnapshot` with no scope predicate.\n\n**The fix hoists one run**: a page carrying a document's `CREATE_DOCUMENT` serves that run before the document's other scopes; everything else about the sort is unchanged, so scopes stay contiguous and a page still batches into one entry per (document, scope).\n\n_Source: docs/updateoutbox-scope-ordering.md (Powerhouse v6.2.2-dev.74)._\n\n## Provenance\n- `docs/updateoutbox-scope-ordering.md` \u2014 Summary, Mechanics, The deadlock, The barrier this violates, What the fix is\n\n_Recorded from the Powerhouse repository at **v6.2.2-dev.74** during the v6.2.2-dev.74 source sync._",
+        "updatedAt": "2026-09-02T22:16:44.564Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:16:44.565Z"
+    }
+  },
+  {
+    "index": 19,
+    "hash": "oj9dIqJMDIG3inRLIeJM6EUnbgQ=",
+    "timestampUtcMs": "2026-09-02T22:16:44.565Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "version",
+        "value": "v6.2.2-dev.74",
+        "updatedAt": "2026-09-02T22:16:44.564Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:16:44.565Z"
+    }
+  },
+  {
+    "index": 20,
+    "hash": "oj9dIqJMDIG3inRLIeJM6EUnbgQ=",
+    "timestampUtcMs": "2026-09-02T22:16:44.565Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "filePath",
+        "value": "docs/updateoutbox-scope-ordering.md",
+        "updatedAt": "2026-09-02T22:16:44.564Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:16:44.565Z"
+    }
+  },
+  {
+    "index": 21,
+    "hash": "Sz3BjUCEVLdWQoXCpanTV1oPves=",
+    "timestampUtcMs": "2026-09-02T22:16:44.565Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "confidence",
+        "value": "grounded",
+        "updatedAt": "2026-09-02T22:16:44.565Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:16:44.565Z"
+    }
+  },
+  {
+    "index": 22,
+    "hash": "OBr1zbEt+JhDNfoOtYGk9Qq8Se4=",
+    "timestampUtcMs": "2026-09-02T22:21:23.998Z",
+    "action": {
+      "type": "SET_TITLE",
+      "input": {
+        "title": "updateOutbox re-sorts each page by (documentId, scope, ordinal), so a backfill served a document's auth run before the document run that creates it \u2014 fixed by hoisting the creating run",
+        "updatedAt": "2026-09-02T22:21:23.998Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:21:23.998Z"
+    }
+  },
+  {
+    "index": 23,
+    "hash": "OBr1zbEt+JhDNfoOtYGk9Qq8Se4=",
+    "timestampUtcMs": "2026-09-02T22:21:23.998Z",
+    "action": {
+      "type": "SET_DESCRIPTION",
+      "input": {
+        "updatedAt": "2026-09-02T22:21:23.998Z",
+        "description": "Scope is compared as a raw string, so auth sorts before document, and emitBatches turns emission order into a hard dependsOn. The receiver deferred the auth load behind the blocked create."
+      },
+      "timestampUtcMs": "2026-09-02T22:21:23.998Z"
+    }
+  },
+  {
+    "index": 24,
+    "hash": "OBr1zbEt+JhDNfoOtYGk9Qq8Se4=",
+    "timestampUtcMs": "2026-09-02T22:21:23.998Z",
+    "action": {
+      "type": "SET_NOTE_TYPE",
+      "input": {
+        "noteType": "BUG-PATTERN",
+        "updatedAt": "2026-09-02T22:21:23.998Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:21:23.998Z"
+    }
+  },
+  {
+    "index": 25,
+    "hash": "OBr1zbEt+JhDNfoOtYGk9Qq8Se4=",
+    "timestampUtcMs": "2026-09-02T22:21:23.998Z",
+    "action": {
+      "type": "SET_CONTENT",
+      "input": {
+        "content": "The operation index returns rows in global insertion order (`ORDER BY ordinal ASC`), which is causally safe by construction. `updateOutbox` then **re-sorts each page** by `(documentId, scope, ordinal)` and discards that order. `scope` is compared as a raw string, so the ordering is lexicographic \u2014 `auth < document < global < local` \u2014 and for any one document the `auth` run sorts *ahead of the `document` run that creates it*. `emitBatches` chains `dependsOn` per document, so emission order becomes a hard dependency: the `document` batch depends on the `auth` batch.\n\nThe result was a mutual wait rather than an error. The receiver applied the `auth` run first, its document did not exist, so the load job was **deferred** \u2014 silently, emitting no event and moving no status, sitting at `RUNNING`. A deferred job was released only by a job carrying `CREATE_DOCUMENT` for that id, and that create was blocked behind the deferred auth job. Neither side timed out and neither reported: \"no runs dispatched, no dead letter, indefinitely\". PR #2918 bounded the silence \u2014 a hold outliving `deferredJobTtlMs` (30 s) fails the job through the queue, releasing its dependents \u2014 which removed the hang but left every fresh backfill of a policied document costing a 30 s stall and a dead-lettered auth run.\n\nWhy the barrier matters at all: the queue's sub-queue key is `(documentId, scope, branch)`, so per-scope FIFO is all it guarantees, and `queueHint` (fed from `dependsOn`) is the only cross-scope mechanism on the inbox path. Document-scope operations write **other** scopes' rows \u2014 `CREATE_DOCUMENT` seeds header/document/auth snapshots, `UPGRADE_DOCUMENT` reindexes every scope in `resultingState`, and `DELETE_DOCUMENT` updates `DocumentSnapshot` with no scope predicate.\n\n**The fix hoists one run**: a page carrying a document's `CREATE_DOCUMENT` serves that run before the document's other scopes; everything else about the sort is unchanged, so scopes stay contiguous and a page still batches into one entry per (document, scope).\n\n_Source: docs/updateoutbox-scope-ordering.md (Powerhouse v6.2.2-dev.74)._\n\n## Provenance\n- `docs/updateoutbox-scope-ordering.md` \u2014 Summary, Mechanics, The deadlock, The barrier this violates, What the fix is\n\n_Recorded from the Powerhouse repository at **v6.2.2-dev.74** during the v6.2.2-dev.74 source sync._",
+        "updatedAt": "2026-09-02T22:21:23.998Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:21:23.998Z"
+    }
+  },
+  {
+    "index": 26,
+    "hash": "OBr1zbEt+JhDNfoOtYGk9Qq8Se4=",
+    "timestampUtcMs": "2026-09-02T22:21:23.998Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "version",
+        "value": "v6.2.2-dev.74",
+        "updatedAt": "2026-09-02T22:21:23.998Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:21:23.998Z"
+    }
+  },
+  {
+    "index": 27,
+    "hash": "OBr1zbEt+JhDNfoOtYGk9Qq8Se4=",
+    "timestampUtcMs": "2026-09-02T22:21:23.998Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "filePath",
+        "value": "docs/updateoutbox-scope-ordering.md",
+        "updatedAt": "2026-09-02T22:21:23.998Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:21:23.998Z"
+    }
+  },
+  {
+    "index": 28,
+    "hash": "OBr1zbEt+JhDNfoOtYGk9Qq8Se4=",
+    "timestampUtcMs": "2026-09-02T22:21:23.998Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "confidence",
+        "value": "grounded",
+        "updatedAt": "2026-09-02T22:21:23.998Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:21:23.998Z"
+    }
+  }
+]

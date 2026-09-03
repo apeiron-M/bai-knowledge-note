@@ -1,0 +1,94 @@
+{
+  "links": [
+    {
+      "id": "lnk-4d8e59af-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "4d8e59af-51f2-4ab7-b290-e1d5744abbd7",
+      "targetTitle": "Integration-gap tool screen: ERPNext / Frappe (primary-source research, 2026-08-19)"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "One documented Alfresco call erases an audit application's entire history",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "5284c245-5737-4e65-8c1f-251accecc6dc",
+      "name": "tool-screen",
+      "topicDocumentId": null
+    },
+    {
+      "id": "79271b75-5270-4324-9dc8-f6dcfd02ed3e",
+      "name": "alfresco",
+      "topicDocumentId": null
+    },
+    {
+      "id": "d3f48605-3031-4849-b15a-b864e418451b",
+      "name": "audit-trail",
+      "topicDocumentId": null
+    },
+    {
+      "id": "c9254ff4-9dde-4038-afba-eb98f6c59387",
+      "name": "deletion",
+      "topicDocumentId": null
+    },
+    {
+      "id": "781f1650-be40-4d5b-98c5-6f9e983a7d51",
+      "name": "data-integrity",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "The webscript descriptor for `/api/audit/clear/{application}` documents `fromTime` as *\"omit to assume oldest\"* and `toTime` as *\"omit to assume current time\"*. Both being optional means `POST /api/audit/clear/alfresco-access` with no parameters is a complete, sanctioned erasure of that application's audit history in a single call.\n\nTwo things compound it. There is no retention or pruning mechanism anywhere in the audit subsystem, so the table grows unbounded and manual deletion is the only management path \u2014 no defensible expiry policy, and no protection from wholesale removal. And `alf_audit_entry` is a plain table with an integer primary key: no hash chain, no previous-row digest, no signature column, no append-only trigger.\n\nNothing in the schema can distinguish a tampered audit trail from an untampered one, because there is no integrity constraint to violate.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "OBSERVATION",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "knowledge-agent",
+    "createdAt": "2026-08-20T08:45:01.233045Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-20T08:45:02.482260Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "The clear webscript makes both time bounds optional \u2014 omit them and the call deletes everything for that application, with no admin ceremony and no trace left behind.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "88c919d9-a24d-4a59-8880-712fc0445836",
+      "actor": "knowledge-agent",
+      "comment": "Extracted from the primary-source tool screen; each claim quotable from a cited source.",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-20T08:45:02.326940Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "00fa3df8-9d4c-41b4-99e3-eb16669afded",
+      "actor": "liberuum",
+      "comment": "Approved: tool-screen extraction.",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-20T08:45:02.482260Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

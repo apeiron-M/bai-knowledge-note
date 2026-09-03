@@ -1,0 +1,348 @@
+[
+  {
+    "index": 0,
+    "hash": "",
+    "timestampUtcMs": "2026-09-03T07:34:03.933Z",
+    "action": {
+      "type": "CREATE_DOCUMENT",
+      "input": {
+        "meta": {},
+        "name": "lb-drive-id-header-routing",
+        "slug": "",
+        "model": "bai/knowledge-note",
+        "branch": "main",
+        "signing": {
+          "nonce": "",
+          "publicKey": {},
+          "signature": "60b0a1d3-b299-4a56-817a-de602de7ea6a",
+          "documentType": "bai/knowledge-note",
+          "createdAtUtcIso": "2026-09-03T07:34:03.933Z"
+        },
+        "version": 0,
+        "documentId": "60b0a1d3-b299-4a56-817a-de602de7ea6a",
+        "protocolVersions": {
+          "base-reducer": 2
+        }
+      },
+      "timestampUtcMs": "2026-09-03T07:34:03.933Z"
+    }
+  },
+  {
+    "index": 0,
+    "hash": "nUJrz9EfbXO8Y8DFoBIF6KVOnvQ=",
+    "timestampUtcMs": "2026-09-03T07:34:05.366Z",
+    "action": {
+      "type": "SET_TITLE",
+      "input": {
+        "title": "switchboard-lb routes by hashing a Drive-Id request header and never reads the request body, which is what keeps it GraphQL-agnostic",
+        "updatedAt": "2026-09-03T07:34:05.365Z"
+      },
+      "timestampUtcMs": "2026-09-03T07:34:05.366Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "",
+    "timestampUtcMs": "2026-09-03T07:34:03.933Z",
+    "action": {
+      "type": "UPGRADE_DOCUMENT",
+      "input": {
+        "model": "bai/knowledge-note",
+        "toVersion": 1,
+        "documentId": "60b0a1d3-b299-4a56-817a-de602de7ea6a",
+        "fromVersion": 0,
+        "initialState": {
+          "auth": {
+            "grants": [],
+            "version": 0
+          },
+          "local": {
+            "lastViewedAt": null,
+            "personalTags": []
+          },
+          "global": {
+            "links": [],
+            "model": null,
+            "scope": null,
+            "title": null,
+            "editor": null,
+            "inputs": [],
+            "models": [],
+            "status": "DRAFT",
+            "topics": [],
+            "content": null,
+            "context": null,
+            "modelId": null,
+            "modules": [],
+            "outputs": [],
+            "version": null,
+            "computes": null,
+            "filePath": null,
+            "noteType": null,
+            "severity": null,
+            "hooksUsed": [],
+            "rootCause": null,
+            "confidence": null,
+            "consumedBy": [],
+            "provenance": null,
+            "sourceType": null,
+            "targetType": null,
+            "cardinality": null,
+            "description": null,
+            "alternatives": [],
+            "consequences": [],
+            "errorMessage": null,
+            "relationType": null,
+            "correctPattern": null,
+            "decisionStatus": null,
+            "dispatchTargets": [],
+            "lifecycleEvents": []
+          },
+          "document": {
+            "hash": {
+              "encoding": "base64",
+              "algorithm": "sha1"
+            },
+            "version": 1
+          }
+        }
+      },
+      "timestampUtcMs": "2026-09-03T07:34:03.933Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "bnOxJ8JAfr/T7mEGLr+7FUIgUpA=",
+    "timestampUtcMs": "2026-09-03T07:34:05.366Z",
+    "action": {
+      "type": "SET_DESCRIPTION",
+      "input": {
+        "updatedAt": "2026-09-03T07:34:05.366Z",
+        "description": "Lua copies $http_drive_id into $doc_id in the rewrite phase and hash $doc_id consistent picks the peer. A missing or empty header falls back to round-robin; the header name is part of the client."
+      },
+      "timestampUtcMs": "2026-09-03T07:34:05.366Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "",
+    "timestampUtcMs": "2026-09-03T07:34:46.085Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "metadata": {
+          "reason": "Extracted from apps/switchboard-lb/ARCHITECTURE.md at v6.2.2-dev.74 \u2014 \u00a74.1 Route classes; \u00a74.3 Header rules; \u00a79 Q5 (decided 2026-05-05)",
+          "confidence": "grounded"
+        },
+        "sourceId": "60b0a1d3-b299-4a56-817a-de602de7ea6a",
+        "targetId": "704020e6-eefd-4e1f-9fc6-f9ec801d8255",
+        "relationshipType": "DERIVED_FROM"
+      },
+      "timestampUtcMs": "2026-09-03T07:34:46.085Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "yHI2j1hgesB1NK5b5vCwxJ3b9j8=",
+    "timestampUtcMs": "2026-09-03T07:34:05.366Z",
+    "action": {
+      "type": "SET_NOTE_TYPE",
+      "input": {
+        "noteType": "ARCHITECTURE",
+        "updatedAt": "2026-09-03T07:34:05.366Z"
+      },
+      "timestampUtcMs": "2026-09-03T07:34:05.366Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "",
+    "timestampUtcMs": "2026-09-03T07:34:46.540Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "metadata": {
+          "reason": "Hashing the header is the mechanism; the invariant it exists to serve is that one drive always reaches the same instance",
+          "confidence": "grounded"
+        },
+        "sourceId": "60b0a1d3-b299-4a56-817a-de602de7ea6a",
+        "targetId": "7252c41c-7185-4177-aaeb-4fe9dc0505c1",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-09-03T07:34:46.540Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "DxKnfXHOMI/TLKZdYqMYY0x5yfM=",
+    "timestampUtcMs": "2026-09-03T07:34:05.366Z",
+    "action": {
+      "type": "SET_CONTENT",
+      "input": {
+        "content": "`switchboard-lb` is an OpenResty (nginx + Lua) load balancer whose whole routing decision is one header. In the nginx **rewrite phase** \u2014 after headers are parsed, before the upstream is chosen \u2014 a two-line Lua module copies the `Drive-Id` request header (exposed by nginx as `$http_drive_id`) into `$doc_id`, and the upstream block's `hash $doc_id consistent` reads it when picking a backend.\n\nFive header rules make up the contract:\n\n1. `Drive-Id` becomes `$doc_id`.\n2. **Empty or missing header \u2192 round-robin.** An empty hash key falls back to round-robin across the peers (documented nginx behaviour), which serves legacy clients and any operation with no single owning drive \u2014 `node` queries by id, introspection, the supergraph's `_service` call.\n3. **The header is advisory.** The LB does not validate it; a misrouted request gets a *structured wrong-shard error* from the switchboard's drive-validation middleware (`packages/reactor-api/src/graphql/gateway/drive-middleware.ts`). Routing is optimistic, correctness lives downstream.\n4. **No body inspection.** The LB never calls `ngx.req.read_body()` on `/graphql`; bodies stream straight through. This is what lets it stay agnostic to POST, GET-with-query, request batches, persisted queries and future schema changes.\n5. **The header name is part of the contract** \u2014 renaming it is a coordinated client-and-server change.\n\nAn earlier implementation *did* parse the body to find a document id and rejected header-less requests with `409 Conflict`. That model, and the `lua/errors.lua` that powered it, were deleted: under the header model the LB never needs a routing key for correctness, so round-robin is both safe and strictly more useful than rejecting.\n\n## Provenance\n- `apps/switchboard-lb/ARCHITECTURE.md` \u2014 \u00a74.1 Route classes; \u00a74.3 Header rules; \u00a79 Q5 (decided 2026-05-05)\n\n_Extracted from the Powerhouse repository at **v6.2.2-dev.74**._",
+        "updatedAt": "2026-09-03T07:34:05.366Z"
+      },
+      "timestampUtcMs": "2026-09-03T07:34:05.366Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "",
+    "timestampUtcMs": "2026-09-03T07:34:46.993Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "metadata": {
+          "reason": "OpenResty was chosen partly for body access, and the header model then made that capability unnecessary on the hot path",
+          "confidence": "grounded"
+        },
+        "sourceId": "60b0a1d3-b299-4a56-817a-de602de7ea6a",
+        "targetId": "5cac8a4f-0c18-4d48-8403-065c072dd00b",
+        "relationshipType": "BUILDS_ON"
+      },
+      "timestampUtcMs": "2026-09-03T07:34:46.993Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "2uVnpjoeVeCsgc3fmRaJ8vSeYeQ=",
+    "timestampUtcMs": "2026-09-03T07:34:05.366Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "3f5b8696-427b-4a8e-b5e2-ae50675e82fd",
+        "name": "switchboard-lb"
+      },
+      "timestampUtcMs": "2026-09-03T07:34:05.366Z"
+    }
+  },
+  {
+    "index": 5,
+    "hash": "",
+    "timestampUtcMs": "2026-09-03T07:34:47.447Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "metadata": {
+          "reason": "The LB fronts the same switchboard image the registry publishes, one reactor per instance",
+          "confidence": "established"
+        },
+        "sourceId": "60b0a1d3-b299-4a56-817a-de602de7ea6a",
+        "targetId": "2cb501f3-7675-4e67-b758-e6ea6db16a8e",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-09-03T07:34:47.447Z"
+    }
+  },
+  {
+    "index": 5,
+    "hash": "5ZRblnS9Y1FeqrkfO2KRYLJXAgo=",
+    "timestampUtcMs": "2026-09-03T07:34:05.366Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "abacb4bc-9291-43db-bf1f-127da2fb980a",
+        "name": "routing"
+      },
+      "timestampUtcMs": "2026-09-03T07:34:05.366Z"
+    }
+  },
+  {
+    "index": 6,
+    "hash": "4y/9jyUY1YTpDZheZqVE5wBzITg=",
+    "timestampUtcMs": "2026-09-03T07:34:05.366Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "20abf93e-4700-44ed-b79d-a37870755875",
+        "name": "openresty"
+      },
+      "timestampUtcMs": "2026-09-03T07:34:05.366Z"
+    }
+  },
+  {
+    "index": 7,
+    "hash": "arqOP6nPUfLQY1ugt79cSLJcGSE=",
+    "timestampUtcMs": "2026-09-03T07:34:05.366Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "7be84507-d5d6-4b2f-b383-f989e7d357c3",
+        "name": "sharding"
+      },
+      "timestampUtcMs": "2026-09-03T07:34:05.366Z"
+    }
+  },
+  {
+    "index": 8,
+    "hash": "P2silJCyIGF9MDQyVN5k05JOjGE=",
+    "timestampUtcMs": "2026-09-03T07:34:05.366Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "version",
+        "value": "v6.2.2-dev.74",
+        "updatedAt": "2026-09-03T07:34:05.366Z"
+      },
+      "timestampUtcMs": "2026-09-03T07:34:05.366Z"
+    }
+  },
+  {
+    "index": 9,
+    "hash": "1ASPU94/k9b8LmHDbQWNd+Pei0g=",
+    "timestampUtcMs": "2026-09-03T07:34:05.366Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "filePath",
+        "value": "apps/switchboard-lb/ARCHITECTURE.md",
+        "updatedAt": "2026-09-03T07:34:05.366Z"
+      },
+      "timestampUtcMs": "2026-09-03T07:34:05.366Z"
+    }
+  },
+  {
+    "index": 10,
+    "hash": "13j8V1/COW+Ea9FwokjkkHnbego=",
+    "timestampUtcMs": "2026-09-03T07:34:08.241Z",
+    "action": {
+      "type": "SET_PROVENANCE",
+      "input": {
+        "author": "knowledge-agent",
+        "createdAt": "2026-09-03T07:34:08.241Z",
+        "sourceOrigin": "DERIVED"
+      },
+      "timestampUtcMs": "2026-09-03T07:34:08.241Z"
+    }
+  },
+  {
+    "index": 11,
+    "hash": "qAH3NmQMXx170W8srzeJp5haaWI=",
+    "timestampUtcMs": "2026-09-03T07:34:09.224Z",
+    "action": {
+      "type": "SUBMIT_FOR_REVIEW",
+      "input": {
+        "id": "a79a9f06-2a04-4b42-b41f-bd74904f29d3",
+        "actor": "knowledge-agent",
+        "comment": "extracted from apps/switchboard-lb/ARCHITECTURE.md at v6.2.2-dev.74",
+        "timestamp": "2026-09-03T07:34:09.224Z"
+      },
+      "timestampUtcMs": "2026-09-03T07:34:09.224Z"
+    }
+  },
+  {
+    "index": 12,
+    "hash": "obKi1gn8DB5p681/Nff8Mv6j5y8=",
+    "timestampUtcMs": "2026-09-03T07:34:09.692Z",
+    "action": {
+      "type": "APPROVE_NOTE",
+      "input": {
+        "id": "eddb5b95-6272-4149-96af-76ec35a96c7d",
+        "actor": "liberuum",
+        "comment": "claim checked against the cited file at the pinned tag",
+        "timestamp": "2026-09-03T07:34:09.692Z"
+      },
+      "timestampUtcMs": "2026-09-03T07:34:09.692Z"
+    }
+  }
+]

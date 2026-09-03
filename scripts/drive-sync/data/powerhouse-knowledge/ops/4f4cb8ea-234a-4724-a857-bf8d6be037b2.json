@@ -1,0 +1,330 @@
+[
+  {
+    "index": 0,
+    "hash": "",
+    "timestampUtcMs": "2026-09-03T07:38:29.594Z",
+    "action": {
+      "type": "CREATE_DOCUMENT",
+      "input": {
+        "meta": {},
+        "name": "remote-controller-batch-vs-streaming",
+        "slug": "",
+        "model": "bai/knowledge-note",
+        "branch": "main",
+        "signing": {
+          "nonce": "",
+          "publicKey": {},
+          "signature": "4f4cb8ea-234a-4724-a857-bf8d6be037b2",
+          "documentType": "bai/knowledge-note",
+          "createdAtUtcIso": "2026-09-03T07:38:29.594Z"
+        },
+        "version": 0,
+        "documentId": "4f4cb8ea-234a-4724-a857-bf8d6be037b2",
+        "protocolVersions": {
+          "base-reducer": 2
+        }
+      },
+      "timestampUtcMs": "2026-09-03T07:38:29.594Z"
+    }
+  },
+  {
+    "index": 0,
+    "hash": "kajh6p6dzgkfwtWllzO5Gl2+c+E=",
+    "timestampUtcMs": "2026-09-03T07:38:31.016Z",
+    "action": {
+      "type": "SET_TITLE",
+      "input": {
+        "title": "RemoteDocumentController has a batch mode that accumulates actions until push() and a streaming mode that pushes after each synchronous chain via queueMicrotask",
+        "updatedAt": "2026-09-03T07:38:31.016Z"
+      },
+      "timestampUtcMs": "2026-09-03T07:38:31.016Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "",
+    "timestampUtcMs": "2026-09-03T07:38:29.594Z",
+    "action": {
+      "type": "UPGRADE_DOCUMENT",
+      "input": {
+        "model": "bai/knowledge-note",
+        "toVersion": 1,
+        "documentId": "4f4cb8ea-234a-4724-a857-bf8d6be037b2",
+        "fromVersion": 0,
+        "initialState": {
+          "auth": {
+            "grants": [],
+            "version": 0
+          },
+          "local": {
+            "lastViewedAt": null,
+            "personalTags": []
+          },
+          "global": {
+            "links": [],
+            "model": null,
+            "scope": null,
+            "title": null,
+            "editor": null,
+            "inputs": [],
+            "models": [],
+            "status": "DRAFT",
+            "topics": [],
+            "content": null,
+            "context": null,
+            "modelId": null,
+            "modules": [],
+            "outputs": [],
+            "version": null,
+            "computes": null,
+            "filePath": null,
+            "noteType": null,
+            "severity": null,
+            "hooksUsed": [],
+            "rootCause": null,
+            "confidence": null,
+            "consumedBy": [],
+            "provenance": null,
+            "sourceType": null,
+            "targetType": null,
+            "cardinality": null,
+            "description": null,
+            "alternatives": [],
+            "consequences": [],
+            "errorMessage": null,
+            "relationType": null,
+            "correctPattern": null,
+            "decisionStatus": null,
+            "dispatchTargets": [],
+            "lifecycleEvents": []
+          },
+          "document": {
+            "hash": {
+              "encoding": "base64",
+              "algorithm": "sha1"
+            },
+            "version": 1
+          }
+        }
+      },
+      "timestampUtcMs": "2026-09-03T07:38:29.594Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "RShpNWVN03UmuLehMS7iaJDq+e4=",
+    "timestampUtcMs": "2026-09-03T07:38:31.016Z",
+    "action": {
+      "type": "SET_DESCRIPTION",
+      "input": {
+        "updatedAt": "2026-09-03T07:38:31.016Z",
+        "description": "Streaming coalesces one chain into a single push; a failed push leaves the actions in the tracker for retry on the next action, with onPushError for reporting. status.pendingActionCount exposes the."
+      },
+      "timestampUtcMs": "2026-09-03T07:38:31.016Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "",
+    "timestampUtcMs": "2026-09-03T07:39:18.030Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "metadata": {
+          "reason": "Extracted from packages/reactor-browser/src/remote-controller/README.md at v6.2.2-dev.74 \u2014 Overview; Quick Start; Modes \u203a Batch mode and Streaming mode",
+          "confidence": "grounded"
+        },
+        "sourceId": "4f4cb8ea-234a-4724-a857-bf8d6be037b2",
+        "targetId": "7f914066-a131-4968-a42c-a7d58158cc8b",
+        "relationshipType": "DERIVED_FROM"
+      },
+      "timestampUtcMs": "2026-09-03T07:39:18.030Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "b0801TzrnIBC7tXrDRP3AAx0oN4=",
+    "timestampUtcMs": "2026-09-03T07:38:31.016Z",
+    "action": {
+      "type": "SET_NOTE_TYPE",
+      "input": {
+        "noteType": "REFERENCE",
+        "updatedAt": "2026-09-03T07:38:31.016Z"
+      },
+      "timestampUtcMs": "2026-09-03T07:38:31.016Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "",
+    "timestampUtcMs": "2026-09-03T07:39:18.495Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "metadata": {
+          "reason": "This is the controller whose five structural problems the ADR set out to fix by collapsing its responsibilities into the light client's execute",
+          "confidence": "grounded"
+        },
+        "sourceId": "4f4cb8ea-234a-4724-a857-bf8d6be037b2",
+        "targetId": "9d055359-868c-442c-99ad-052a2101e9da",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-09-03T07:39:18.495Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "0nkgmoncfv0iGuzY4k+VvgUAVQk=",
+    "timestampUtcMs": "2026-09-03T07:38:31.016Z",
+    "action": {
+      "type": "SET_CONTENT",
+      "input": {
+        "content": "`RemoteDocumentController` composes a `PHDocumentController` and adds remote push/pull over GraphQL \u2014 for callers who want to create or edit documents and sync them to a reactor server **without** setting up a full `ReactorClient` (PGlite, job queue and the rest). It works with any controller from `PHDocumentController.forDocumentModel()`, and its action methods are type-safe and chainable.\n\nTwo modes:\n\n**Batch.** Actions accumulate locally; `status.pendingActionCount` reports how many are waiting, and `push()` sends them in a **single `MutateDocument` call**.\n\n```ts\ncontroller.setName({ name: \"A\" });\ncontroller.setName({ name: \"B\" });   // pendingActionCount === 2\nawait controller.push();             // one mutation\n```\n\n**Streaming.** Actions are pushed automatically after each synchronous chain via `queueMicrotask`, so everything in one chain \u2014 one microtask \u2014 is **coalesced into a single push**. If a push fails, the actions stay in the tracker and are retried on the next action; `onPushError` is the reporting hook.\n\nCreating a document is the same call with `documentId: \"\"` plus a `parentIdentifier` naming the drive; pulling an existing one passes its id.\n\nNote the standing on this class: ADR 0002 catalogued its structural limits \u2014 no persistence, no offline model, no shared cache, imperative and non-reactive, and a reimplementation of sync on weaker primitives \u2014 and folded its responsibilities into `GraphQLReactorClient.execute`. It remains the documented low-level path.\n\n## Provenance\n- `packages/reactor-browser/src/remote-controller/README.md` \u2014 Overview; Quick Start; Modes \u203a Batch mode and Streaming mode\n\n_Extracted from the Powerhouse repository at **v6.2.2-dev.74**._",
+        "updatedAt": "2026-09-03T07:38:31.016Z"
+      },
+      "timestampUtcMs": "2026-09-03T07:38:31.016Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "",
+    "timestampUtcMs": "2026-09-03T07:39:18.971Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "metadata": {
+          "reason": "Which mode is in use decides when a conflict check can run, since a batch push is a single explicit moment",
+          "confidence": "grounded"
+        },
+        "sourceId": "4f4cb8ea-234a-4724-a857-bf8d6be037b2",
+        "targetId": "981a7608-312e-4df7-bae3-942491b9e023",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-09-03T07:39:18.971Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "97CqiUWrjZ9gd2bNBVHcLrc1nio=",
+    "timestampUtcMs": "2026-09-03T07:38:31.016Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "66ada22d-cc24-4341-80ae-a2effce2f100",
+        "name": "reactor-browser"
+      },
+      "timestampUtcMs": "2026-09-03T07:38:31.016Z"
+    }
+  },
+  {
+    "index": 5,
+    "hash": "j4gsEtAkBkXpVDH9jbpqyKU5tmU=",
+    "timestampUtcMs": "2026-09-03T07:38:31.017Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "7af47985-05fc-407b-a4e4-2637ae5489b0",
+        "name": "remote-controller"
+      },
+      "timestampUtcMs": "2026-09-03T07:38:31.017Z"
+    }
+  },
+  {
+    "index": 6,
+    "hash": "7KKm1gn0mkj1Js2j2rAJ3GudyhM=",
+    "timestampUtcMs": "2026-09-03T07:38:31.017Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "cc602d0f-bfbe-4c50-bd7a-8fa0387f50bb",
+        "name": "graphql"
+      },
+      "timestampUtcMs": "2026-09-03T07:38:31.017Z"
+    }
+  },
+  {
+    "index": 7,
+    "hash": "KskW5PW5UlLBDoP+FmcPtq030Lo=",
+    "timestampUtcMs": "2026-09-03T07:38:31.017Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "cf0e34b4-55c1-4ca4-907d-00edb74c3848",
+        "name": "sync"
+      },
+      "timestampUtcMs": "2026-09-03T07:38:31.017Z"
+    }
+  },
+  {
+    "index": 8,
+    "hash": "ffjTp3IG/BVyfw91isDV+9vv/zY=",
+    "timestampUtcMs": "2026-09-03T07:38:31.017Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "version",
+        "value": "v6.2.2-dev.74",
+        "updatedAt": "2026-09-03T07:38:31.016Z"
+      },
+      "timestampUtcMs": "2026-09-03T07:38:31.017Z"
+    }
+  },
+  {
+    "index": 9,
+    "hash": "V69iZPBQ5gSEWJuaxh88lq/+hNI=",
+    "timestampUtcMs": "2026-09-03T07:38:31.017Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "filePath",
+        "value": "packages/reactor-browser/src/remote-controller/README.md",
+        "updatedAt": "2026-09-03T07:38:31.016Z"
+      },
+      "timestampUtcMs": "2026-09-03T07:38:31.017Z"
+    }
+  },
+  {
+    "index": 10,
+    "hash": "Ceg3lPa7Kpkt8jqSBdXtg/wBkUU=",
+    "timestampUtcMs": "2026-09-03T07:38:33.640Z",
+    "action": {
+      "type": "SET_PROVENANCE",
+      "input": {
+        "author": "knowledge-agent",
+        "createdAt": "2026-09-03T07:38:33.640Z",
+        "sourceOrigin": "DERIVED"
+      },
+      "timestampUtcMs": "2026-09-03T07:38:33.640Z"
+    }
+  },
+  {
+    "index": 11,
+    "hash": "dBE2Uf0VjRCy4y/J+ZMyC6OBZ64=",
+    "timestampUtcMs": "2026-09-03T07:38:34.219Z",
+    "action": {
+      "type": "SUBMIT_FOR_REVIEW",
+      "input": {
+        "id": "bcefd2c5-58fa-4993-b5bc-fb528ee6bdb3",
+        "actor": "knowledge-agent",
+        "comment": "extracted from packages/reactor-browser/src/remote-controller/README.md at v6.2.2-dev.74",
+        "timestamp": "2026-09-03T07:38:34.219Z"
+      },
+      "timestampUtcMs": "2026-09-03T07:38:34.219Z"
+    }
+  },
+  {
+    "index": 12,
+    "hash": "ekGuUEo50BjcmZFafW/F12w2xEs=",
+    "timestampUtcMs": "2026-09-03T07:38:34.729Z",
+    "action": {
+      "type": "APPROVE_NOTE",
+      "input": {
+        "id": "35c0201d-6ec8-46ae-b419-d49791b745e7",
+        "actor": "liberuum",
+        "comment": "claim checked against the cited file at the pinned tag",
+        "timestamp": "2026-09-03T07:38:34.729Z"
+      },
+      "timestampUtcMs": "2026-09-03T07:38:34.729Z"
+    }
+  }
+]

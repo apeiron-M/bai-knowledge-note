@@ -1,0 +1,131 @@
+{
+  "links": [
+    {
+      "id": "lnk-82d40b14-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "82d40b14-6aae-45a5-8335-e07c0ee29ae9",
+      "targetTitle": "auth-denied-operations",
+      "reason": "A verdict reached at a position is stored on the operation so other replicas can reach and compare it",
+      "confidence": "grounded"
+    },
+    {
+      "id": "lnk-c7c935e2-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "c7c935e2-6f6c-48c6-8ef1-0dd6d99811e0",
+      "targetTitle": "auth-dcb-append-condition",
+      "reason": "The append condition is what keeps a concurrent admission from committing against a model a re-append has just invalidated",
+      "confidence": "grounded"
+    },
+    {
+      "id": "lnk-5ba85b55-bui",
+      "linkType": "BUILDS_ON",
+      "targetDocumentId": "5ba85b55-4ac1-4cd5-a9d2-e1855c5b9633",
+      "targetTitle": "operational-reshuffle-vs-crdt-ot",
+      "reason": "Operational reshuffle already re-orders immutable actions by timestamp; positional judgment extends the same merged order to authorization verdicts and reuses the re-append mechanism",
+      "confidence": "grounded"
+    },
+    {
+      "id": "lnk-3540d969-bui",
+      "linkType": "BUILDS_ON",
+      "targetDocumentId": "3540d969-3661-4438-821e-a000e39852b1",
+      "targetTitle": "concurrent-offline-drive-edits-interlace-drive-logs",
+      "reason": "Interlacing operation logs by timestamp is the merged order that positional authorization judges against",
+      "confidence": "grounded"
+    },
+    {
+      "id": "lnk-f2aaccd3-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "f2aaccd3-7c26-4327-881e-f5ad9e267b89",
+      "targetTitle": "Academy \u203a Lookup \u203a Cookbook",
+      "reason": "Extracted from apps/academy/docs/academy/05-Lookup/00-Cookbook.md at v6.2.2-dev.74 \u2014 Revocation Race recipe: 'One rule, two times', 'The rejected alternative'",
+      "confidence": "grounded"
+    },
+    {
+      "id": "lnk-223bb12a-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "223bb12a-be7f-4209-9ab2-f04f7bb2b6c8",
+      "targetTitle": "Spec \u203a Spec \u2014 Attribute-based access control in the auth scope with DCB",
+      "reason": "Extracted from docs/specs/auth-scope.md at v6.2.2-dev.74 \u2014 Replay: 'A position is a timestamp, not a revision'; Re-evaluation; 'What triggers a pass'",
+      "confidence": "grounded"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Every reactor judges every operation at its position in the merged order, so a revocation that sorts earlier retracts an already-accepted operation on every replica",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "cc1bb7b7-c5e2-4b2c-8b33-0d1276e39f6c",
+      "name": "auth-scope",
+      "topicDocumentId": null
+    },
+    {
+      "id": "ee1a1117-b81d-4dfb-9400-72cb933bed71",
+      "name": "consensus",
+      "topicDocumentId": null
+    },
+    {
+      "id": "a19c6906-05de-43e3-9cf8-5bda9311d5de",
+      "name": "sync",
+      "topicDocumentId": null
+    },
+    {
+      "id": "971c0228-51d6-4cb9-b387-3397f7d5292f",
+      "name": "reactor",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "Alice revokes Bob's approval grant on one reactor while Bob approves an expense on another. **Both succeed locally** \u2014 no transaction spans two reactors. What keeps the fleet honest is that every reactor judges every operation **at its position in the merged order**: after syncing both directions the two reactors independently reach the same verdict, with no origin verdict shipped or trusted.\n\nThe `revocation-race` recipe runs the race twice on one document with honest wall-clock ordering:\n\n- **Revocation sorts first** \u2192 both reactors deny the approval; the expense stays `PENDING` and the refused approval is stored with `deniedReason: \"no grant permits this operation\"`.\n- **Approval sorts first** \u2192 both reactors keep it; the expense is `APPROVED`.\n\nSame operation type, opposite verdicts, decided purely by position. Enforcement is therefore *preventive* locally (once the revocation is known, a fresh approval fails at origin and stores nothing) and *convergent* across reactors (remote history is re-judged on arrival). The rejected alternative \u2014 judge once at origin and ship the verdict \u2014 would be wrong the moment a concurrent policy change sorted before the operation, and every replica would have to trust it (divergence) or re-derive it anyway. Position-based judgment makes the verdict a pure function of the merged history, so agreement on history *is* agreement on authorization.\n\nTwo spec details make the position well defined. **A position is a timestamp, not a revision**: stored rows are ordered by index, but a reshuffle appends a merged range under a skip rather than rewriting rows, so only the *effective* stream (after skips) agrees with the timestamp order \u2014 a replay walks forward once through the read-set streams, carrying the model. And **re-evaluation is a reshuffle-style re-append**: when a verdict flips, the tail from the first change is re-emitted with the same action ids and fresh indexes under a skip, which advances the heads so a concurrent admission retries. A pass is owed whenever a committed operation on a read-set stream does not sort after everything that reads it \u2014 a locally executed, backdated `DELETE_DOCUMENT` triggers it just as a synced arrival does \u2014 and convergence between replicas, not a fixed point, is the guarantee.\n\n_Source: apps/academy/docs/academy/05-Lookup/00-Cookbook.md (Powerhouse v6.2.2-dev.74)._\n_Source: docs/specs/auth-scope.md (Powerhouse v6.2.2-dev.74)._\n\n## Provenance\n- `apps/academy/docs/academy/05-Lookup/00-Cookbook.md` \u2014 Revocation Race recipe: 'One rule, two times', 'The rejected alternative'\n- `docs/specs/auth-scope.md` \u2014 Replay: 'A position is a timestamp, not a revision'; Re-evaluation; 'What triggers a pass'\n\n_Recorded from the Powerhouse repository at **v6.2.2-dev.74** during the v6.2.2-dev.74 source sync._\n\n## Contradicts: re-evaluation writes are discarded (v6.2.2-dev.74)\nThis is the guarantee **as designed**, and one live defect stops it short of the read surface. `reevaluateIfCriteriaMet` returns only `outcome.error` and drops `outcome.operationsWithContext`, so the operations a re-evaluation pass re-appends never reach `JOB_WRITE_READY`. The operation log and sync converge \u2014 the outbox is index-driven \u2014 but **read models do not**, so a projection keeps serving pre-revocation state until a restart catch-up. Anything a reader learns through a read model (a subgraph, a relational projection, an analytics rollup) can therefore still show what the merged history has already refused. The tension stays open until that write path is fixed.\n",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": "v6.2.2-dev.74",
+  "computes": null,
+  "filePath": "apps/academy/docs/academy/05-Lookup/00-Cookbook.md",
+  "noteType": "ARCHITECTURE",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": "grounded",
+  "consumedBy": [],
+  "provenance": {
+    "author": "knowledge-agent",
+    "createdAt": "2026-09-02T22:10:14.547Z",
+    "sessionId": null,
+    "updatedAt": "2026-09-02T22:27:35.259Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "No origin verdict is shipped or trusted. The revocation-race recipe runs the same race twice: revocation sorting first denies the approval everywhere, approval sorting first keeps it everywhere.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "2a1703ed-5302-4a97-ab8e-ce5abd55a8e8",
+      "actor": "knowledge-agent",
+      "comment": "extracted from the Powerhouse repository at v6.2.2-dev.74",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-09-02T22:10:15.105Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "85e4949f-d2aa-4e38-a8c4-d8e959427fc5",
+      "actor": "liberuum",
+      "comment": "claim checked against the cited repository file at the pinned tag",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-09-02T22:10:15.574Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

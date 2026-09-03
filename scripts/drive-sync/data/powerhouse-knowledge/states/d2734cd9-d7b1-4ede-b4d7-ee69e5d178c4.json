@@ -1,0 +1,107 @@
+{
+  "links": [
+    {
+      "id": "lnk-501f87dd-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "501f87dd-ff84-4a59-8894-033f209dfdf0",
+      "targetTitle": "reactor-builder-fluent-api-construction",
+      "reason": "Adds the two combination rules to the builder's fluent API: sources append, manifests replace",
+      "confidence": "grounded"
+    },
+    {
+      "id": "lnk-14416670-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "14416670-d2d3-4de5-9dfd-7c6e175280c2",
+      "targetTitle": "Academy \u203a Reference \u203a Reactor \u203a Document model registry and version upgrades",
+      "reason": "Extracted from apps/academy/docs/academy/04-Reference/01-Reactor/06-DocumentModelRegistry.md at v6.2.2-dev.74 \u2014 intro paragraphs on append-vs-replace and non-fatal registration",
+      "confidence": "grounded"
+    },
+    {
+      "id": "lnk-c69178f9-bui",
+      "linkType": "BUILDS_ON",
+      "targetDocumentId": "c69178f9-07b7-4407-94e6-90ed96d3003e",
+      "targetTitle": "registry-keyed-by-type-and-version",
+      "reason": "The registry's never-throwing registerModules is what the builder's non-fatal behaviour is built on",
+      "confidence": "grounded"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Registration at build time is non-fatal: a duplicate or invalid module is logged and skipped while build() still succeeds, so do not wrap it in try/catch",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "ac857266-a54a-4af7-9928-b8634a3502a4",
+      "name": "document-model",
+      "topicDocumentId": null
+    },
+    {
+      "id": "f37fb685-f96d-4e17-80f6-8d512fca5df9",
+      "name": "registry",
+      "topicDocumentId": null
+    },
+    {
+      "id": "10c94de2-c646-42ad-a083-f6640bc726e0",
+      "name": "gotchas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "e65d69b6-12e8-4451-9d4f-74ad2d8d738d",
+      "name": "reactor-builder",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "Two builder behaviours and one warning, all easy to get wrong.\n\n**Repeat calls combine differently.** `withDocumentModelSources` **appends** \u2014 calling it twice registers both arrays. `withUpgradeManifests` **replaces** \u2014 calling it twice keeps only the last array. Order between the two calls does not matter: the builder always registers **manifests before modules**.\n\n```ts\nconst reactor = await new ReactorBuilder()\n  .withDocumentModelSources([todoModuleV1, todoModuleV2])\n  .withUpgradeManifests([todoUpgradeManifest])\n  .build();\n```\n\n**Registration is non-fatal.** A duplicate or invalid module or manifest is logged through the builder's logger and **skipped; the build still completes.** The Academy states the consequence directly: *do not wrap `.build()` in a try/catch expecting a registration failure to throw* \u2014 check the logs instead.\n\nThat combination is what makes a mistake quiet. Calling `withUpgradeManifests` twice loses the first array with no error; registering a model twice loses the duplicate with no error; and a reactor built from a half-registered set fails later, when a job cannot resolve a reducer, far from the cause.\n\n## Provenance\n- `apps/academy/docs/academy/04-Reference/01-Reactor/06-DocumentModelRegistry.md` \u2014 intro paragraphs on append-vs-replace and non-fatal registration\n\n_Extracted from the Powerhouse repository at **v6.2.2-dev.74**._",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": "v6.2.2-dev.74",
+  "computes": null,
+  "filePath": "apps/academy/docs/academy/04-Reference/01-Reactor/06-DocumentModelRegistry.md",
+  "noteType": "PATTERN",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "knowledge-agent",
+    "createdAt": "2026-09-03T07:48:29.979Z",
+    "sessionId": null,
+    "updatedAt": "2026-09-03T07:48:31.166Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "withDocumentModelSources appends across repeat calls while withUpgradeManifests replaces, and manifests are always registered before modules regardless of call order.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "a6b911c7-f8b5-4fac-954c-aa7716abe987",
+      "actor": "knowledge-agent",
+      "comment": "extracted from apps/academy/docs/academy/04-Reference/01-Reactor/06-DocumentModelRegistry.md at v6.2.2-dev.74",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-09-03T07:48:30.463Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "5d05939b-ed15-4256-923e-2f9859a5c760",
+      "actor": "liberuum",
+      "comment": "claim checked against the cited file at the pinned tag",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-09-03T07:48:31.166Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

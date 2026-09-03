@@ -1,0 +1,276 @@
+[
+  {
+    "index": 0,
+    "hash": "",
+    "timestampUtcMs": "2026-08-20T08:45:34.622Z",
+    "action": {
+      "type": "CREATE_DOCUMENT",
+      "input": {
+        "meta": {},
+        "name": "Camunda 7 overwrites prior variable state in place at its default history level",
+        "slug": "",
+        "model": "bai/knowledge-note",
+        "branch": "main",
+        "signing": {
+          "nonce": "",
+          "publicKey": {},
+          "signature": "dbbafa32-ba5c-4a59-84da-8313df26ece6",
+          "documentType": "bai/knowledge-note",
+          "createdAtUtcIso": "2026-08-20T08:45:34.622Z"
+        },
+        "version": 0,
+        "documentId": "dbbafa32-ba5c-4a59-84da-8313df26ece6",
+        "protocolVersions": {
+          "base-reducer": 2
+        }
+      },
+      "timestampUtcMs": "2026-08-20T08:45:34.622Z"
+    }
+  },
+  {
+    "index": 0,
+    "hash": "lMd5wflJzorDKC+vjzYVBbq0WIM=",
+    "timestampUtcMs": "2026-08-20T08:45:35.232Z",
+    "action": {
+      "type": "SET_TITLE",
+      "input": {
+        "title": "Camunda 7 overwrites prior variable state in place at its default history level",
+        "updatedAt": "2026-08-20T08:45:35.232937Z"
+      },
+      "timestampUtcMs": "2026-08-20T08:45:35.232978Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "",
+    "timestampUtcMs": "2026-08-20T08:45:34.622Z",
+    "action": {
+      "type": "UPGRADE_DOCUMENT",
+      "input": {
+        "model": "bai/knowledge-note",
+        "toVersion": 1,
+        "documentId": "dbbafa32-ba5c-4a59-84da-8313df26ece6",
+        "fromVersion": 0,
+        "initialState": {
+          "auth": {
+            "grants": [],
+            "version": 0
+          },
+          "local": {
+            "lastViewedAt": null,
+            "personalTags": []
+          },
+          "global": {
+            "links": [],
+            "model": null,
+            "scope": null,
+            "title": null,
+            "editor": null,
+            "inputs": [],
+            "models": [],
+            "status": "DRAFT",
+            "topics": [],
+            "content": null,
+            "context": null,
+            "modelId": null,
+            "modules": [],
+            "outputs": [],
+            "version": null,
+            "computes": null,
+            "filePath": null,
+            "noteType": null,
+            "severity": null,
+            "hooksUsed": [],
+            "rootCause": null,
+            "confidence": null,
+            "consumedBy": [],
+            "provenance": null,
+            "sourceType": null,
+            "targetType": null,
+            "cardinality": null,
+            "description": null,
+            "alternatives": [],
+            "consequences": [],
+            "errorMessage": null,
+            "relationType": null,
+            "correctPattern": null,
+            "decisionStatus": null,
+            "dispatchTargets": [],
+            "lifecycleEvents": []
+          },
+          "document": {
+            "hash": {
+              "encoding": "base64",
+              "algorithm": "sha1"
+            },
+            "version": 1
+          }
+        }
+      },
+      "timestampUtcMs": "2026-08-20T08:45:34.622Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "5OB1KA/aWNV0YaAq7UrPIVMcheg=",
+    "timestampUtcMs": "2026-08-20T08:45:35.232Z",
+    "action": {
+      "type": "SET_DESCRIPTION",
+      "input": {
+        "updatedAt": "2026-08-20T08:45:35.232981Z",
+        "description": "At the default AUDIT level the historic variable row is updated rather than appended, so only the last value survives and intermediate states are gone."
+      },
+      "timestampUtcMs": "2026-08-20T08:45:35.232986Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "",
+    "timestampUtcMs": "2026-08-20T08:45:36.372Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "dbbafa32-ba5c-4a59-84da-8313df26ece6",
+        "targetId": "4d8e59af-51f2-4ab7-b290-e1d5744abbd7",
+        "relationshipType": "DERIVED_FROM"
+      },
+      "timestampUtcMs": "2026-08-20T08:45:36.372Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "iKLvdS7hzthdZ0gJ6pJyddAO9W8=",
+    "timestampUtcMs": "2026-08-20T08:45:35.232Z",
+    "action": {
+      "type": "SET_NOTE_TYPE",
+      "input": {
+        "noteType": "OBSERVATION",
+        "updatedAt": "2026-08-20T08:45:35.232988Z"
+      },
+      "timestampUtcMs": "2026-08-20T08:45:35.232992Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "OE3XUjeq/6xSb+1Oi/SBTf1xVic=",
+    "timestampUtcMs": "2026-08-20T08:45:35.232Z",
+    "action": {
+      "type": "SET_CONTENT",
+      "input": {
+        "content": "The configuration documentation states it plainly: *\"Rows in this table are updated as variable instances are updated, meaning that only the last value of a process variable will be available.\"* Recovering intermediate values requires opting up to the `FULL` history level, which is also where the user-attributed User Operation Log lives \u2014 so attribution is off by default too.\n\nThis is destructive in-place update presented as history. The engine is doing what it says, but a record that keeps only the latest value cannot answer what a decision looked like when it was taken.\n\nIt is also the strongest available demonstration against a Camunda 7 estate, because no API call is needed: a default installation destroys prior state on its own, as a consequence of normal operation.",
+        "updatedAt": "2026-08-20T08:45:35.232994Z"
+      },
+      "timestampUtcMs": "2026-08-20T08:45:35.232998Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "i+B5gqxAf3shSHr4+En6OMw06Vk=",
+    "timestampUtcMs": "2026-08-20T08:45:35.233Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "4c31572b-a806-49dc-abe5-d53db39c3aba",
+        "name": "tool-screen"
+      },
+      "timestampUtcMs": "2026-08-20T08:45:35.233005Z"
+    }
+  },
+  {
+    "index": 5,
+    "hash": "LcjRcU1ShEkDF0ZFgVbxu8DFdTM=",
+    "timestampUtcMs": "2026-08-20T08:45:35.233Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "341e9498-5f36-4f04-98ce-b19d4abc9270",
+        "name": "camunda"
+      },
+      "timestampUtcMs": "2026-08-20T08:45:35.233011Z"
+    }
+  },
+  {
+    "index": 6,
+    "hash": "16bxP6oRV+LFjVAcAudOmD/j76E=",
+    "timestampUtcMs": "2026-08-20T08:45:35.233Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "a7cafcf0-2826-428a-b6ea-0922f3ce5784",
+        "name": "audit-trail"
+      },
+      "timestampUtcMs": "2026-08-20T08:45:35.233018Z"
+    }
+  },
+  {
+    "index": 7,
+    "hash": "Elzb9qY8x3/1mGQ3Q0qIKnFbht4=",
+    "timestampUtcMs": "2026-08-20T08:45:35.233Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "d3375232-5b44-456c-95ff-979050470774",
+        "name": "defaults"
+      },
+      "timestampUtcMs": "2026-08-20T08:45:35.233026Z"
+    }
+  },
+  {
+    "index": 8,
+    "hash": "I9v9hXWEtqQ6kJdYj0BwW8brCJY=",
+    "timestampUtcMs": "2026-08-20T08:45:35.233Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "2db36973-231b-419a-aa4f-bf5d2116bdef",
+        "name": "data-integrity"
+      },
+      "timestampUtcMs": "2026-08-20T08:45:35.233032Z"
+    }
+  },
+  {
+    "index": 9,
+    "hash": "tN/tdQQGORJ0PxkJwVFf1otTOcY=",
+    "timestampUtcMs": "2026-08-20T08:45:35.667Z",
+    "action": {
+      "type": "SET_PROVENANCE",
+      "input": {
+        "author": "knowledge-agent",
+        "createdAt": "2026-08-20T08:45:35.667037Z",
+        "sessionId": null,
+        "sourceOrigin": "DERIVED"
+      },
+      "timestampUtcMs": "2026-08-20T08:45:35.667073Z"
+    }
+  },
+  {
+    "index": 10,
+    "hash": "VLlbdFzS3lro/mI8yMwWdp9n9pE=",
+    "timestampUtcMs": "2026-08-20T08:45:36.577Z",
+    "action": {
+      "type": "SUBMIT_FOR_REVIEW",
+      "input": {
+        "id": "1a37a0b5-f327-4be3-bfaa-60d6ea88e115",
+        "actor": "knowledge-agent",
+        "comment": "Extracted from the primary-source tool screen; each claim quotable from a cited source.",
+        "timestamp": "2026-08-20T08:45:36.577935Z"
+      },
+      "timestampUtcMs": "2026-08-20T08:45:36.577956Z"
+    }
+  },
+  {
+    "index": 11,
+    "hash": "QyBy7dbQHulVDtUwwCxk/BLBzl0=",
+    "timestampUtcMs": "2026-08-20T08:45:36.728Z",
+    "action": {
+      "type": "APPROVE_NOTE",
+      "input": {
+        "id": "53bc465c-6a26-4116-a99e-ccaca843c783",
+        "actor": "liberuum",
+        "comment": "Approved: tool-screen extraction.",
+        "timestamp": "2026-08-20T08:45:36.728878Z"
+      },
+      "timestampUtcMs": "2026-08-20T08:45:36.728897Z"
+    }
+  }
+]

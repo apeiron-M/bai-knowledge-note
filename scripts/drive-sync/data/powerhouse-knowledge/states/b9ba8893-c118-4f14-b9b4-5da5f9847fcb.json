@@ -1,0 +1,113 @@
+{
+  "links": [
+    {
+      "id": "lnk-1f8f4551-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "1f8f4551-682c-4245-94ef-5e5846862ee4",
+      "targetTitle": "ddup-swarm-channel-replaces-gql"
+    },
+    {
+      "id": "lnk-ab44d9c0-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "ab44d9c0-a981-4c37-8afe-a6858911dc82",
+      "targetTitle": "ddup-copy-distinct-recovery-role"
+    },
+    {
+      "id": "lnk-325f2eb3-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "325f2eb3-04f5-4f04-b985-ac81b4582b8f",
+      "targetTitle": "ddup-collab-envelope-overhead"
+    },
+    {
+      "id": "lnk-1fda1684-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "1fda1684-4919-46c0-a377-2a0eff091d4f",
+      "targetTitle": "ddup-typical-user-sizing-120kb"
+    },
+    {
+      "id": "lnk-291bfd93-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "291bfd93-8d9f-4836-b791-d5d656545eb4",
+      "targetTitle": "ddup-reactor-native-sync-2x"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Four sync architectures (A-D) trade server dependence against storage duplication",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "83f9607c-d5b5-42b9-aea8-2c1d2aa6ea0d",
+      "name": "architecture-options",
+      "topicDocumentId": null
+    },
+    {
+      "id": "42e624e7-3065-4fdf-ba99-5b9de52457bd",
+      "name": "decision",
+      "topicDocumentId": null
+    },
+    {
+      "id": "27254abf-7899-4302-a6c8-ffd0f46826b9",
+      "name": "decentralization",
+      "topicDocumentId": null
+    },
+    {
+      "id": "706e4872-7a72-4f09-a9e2-ff968c8e78c9",
+      "name": "trade-offs",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "Four architecture options lay out the full trade-space:\n\n**A \u2014 Connect + Switchboard (current default)**\n- PGlite <-> Switchboard (PostgreSQL) via GraphQL SyncManager\n- Duplication: 2x\n- Recovery: from Switchboard\n- Requires: running a server\n\n**B \u2014 Connect + Swarm plugin (no Switchboard)**\n- PGlite -> Swarm via plugin\n- Duplication: 2x\n- Recovery: from Swarm (wallet signature)\n- Requires: running a Bee node (local or remote)\n\n**C \u2014 Connect + Switchboard + Swarm (both)**\n- Both sync paths active\n- Duplication: 3x\n- Recovery: from either Switchboard OR Swarm\n- Requires: server + Bee node\n\n**D \u2014 Connect on Swarm (fully decentralized, end goal)**\n- Connect SPA deployed to Swarm via ENS\n- PGlite <-> Swarm via plugin (no Switchboard)\n- Collaboration: SwarmChannel (peer-to-peer via feeds)\n- Duplication: 2x (same as B and A)\n- Recovery: from Swarm (wallet signature)\n- Requires: wallet + local Bee node\n- Servers: ZERO\n\n**Key insight**: the end-goal architecture (D) has **identical 2x duplication** to the current default (A). Going fully decentralized does not cost extra storage \u2014 it just swaps where the remote copy lives (server PostgreSQL -> Swarm network).",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "DECISION",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "knowledge-agent",
+    "createdAt": "2026-04-21T14:41:55.863Z",
+    "sessionId": null,
+    "updatedAt": "2026-09-03T09:58:11.782Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Architectures A (Switchboard), B (Swarm plugin), C (both), D (fully decentralized Connect-on-Swarm) differ in duplication cost and server requirements.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "1d6b5c6b-f146-4253-9496-deb10e5f0859",
+      "actor": "claude",
+      "comment": "Knowledge registered against powerhouse v6.2.2-dev.47",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-14T12:00:00.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "b926f943-a669-47b1-ad88-6a785b42a2f3",
+      "actor": "liberuum",
+      "comment": "Canonical as of powerhouse v6.2.2-dev.47",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-14T12:00:00.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

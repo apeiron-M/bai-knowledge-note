@@ -1,0 +1,107 @@
+{
+  "links": [
+    {
+      "id": "lnk-0a6393ba-bui",
+      "linkType": "BUILDS_ON",
+      "targetDocumentId": "0a6393ba-6798-445d-8b24-d325b50e262e",
+      "targetTitle": "attachment-two-tables",
+      "reason": "Convergence relies on the ON CONFLICT (hash) DO NOTHING upsert in the attachment table and on reservations being separate, soft-deleted rows",
+      "confidence": "grounded"
+    },
+    {
+      "id": "lnk-f595aee3-bui",
+      "linkType": "BUILDS_ON",
+      "targetDocumentId": "f595aee3-5141-4260-9e58-b1d516999ed8",
+      "targetTitle": "hashfirst-reserve-rejects",
+      "reason": "Fills in the third row of that decision table: a live reservation for the same hash is not a reason to refuse a second one",
+      "confidence": "grounded"
+    },
+    {
+      "id": "lnk-e25bc920-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "e25bc920-d3bc-4b36-9c7f-cb35b64c27b9",
+      "targetTitle": "Package \u203a reactor \u203a attachments-hash-first \u2014 Hash-First Attachment Refs",
+      "reason": "Extracted from packages/reactor/docs/attachments-hash-first.md at v6.2.2-dev.74 \u2014 Reservation semantics \u203a Concurrent reservations for the same hash",
+      "confidence": "grounded"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Multiple live reservations may claim the same hash on purpose, because rejecting the second would let a client squat on content for the reservation TTL",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "5981fa43-7330-4c5f-a3d8-5cf6c49445c5",
+      "name": "attachments",
+      "topicDocumentId": null
+    },
+    {
+      "id": "5383531c-bffa-4d50-a4cf-80a92c9ffe4d",
+      "name": "hash-first",
+      "topicDocumentId": null
+    },
+    {
+      "id": "94c383cc-06a9-44ce-aede-c9ed43b3d363",
+      "name": "concurrency",
+      "topicDocumentId": null
+    },
+    {
+      "id": "cf9abce3-337f-48fe-b6ea-79de1564a0ef",
+      "name": "reservations",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "Concurrent reservations for the same `client_hash` are allowed deliberately, for three reasons:\n\n- **No uniqueness race.** Enforcing one live reservation per hash needs either a partial unique index \u2014 known broken under the `withSchema(\"attachments\")` migration setup, per the comment in migration 001 \u2014 or application-level locking, and it creates a rejected-reserver problem: what is the second client supposed to do while the first uploads?\n- **No reservation squatting.** If the second reserve were rejected in favour of an existing reservation, a client could reserve a hash it never intends to upload and **block that content for the 24-hour TTL**. Independent reservations make squatting harmless: anyone with the bytes can upload them.\n- **Commit-time convergence already exists.** Whichever upload finishes first inserts the row (`INSERT \u2026 ON CONFLICT (hash) DO NOTHING`); a later `send()` for the same hash lands in the dedup path and returns the existing record. Each `send()` soft-deletes only its own reservation, and stragglers age out via the TTL.\n\nThe cost is a bounded amount of duplicate upload bandwidth in the rare concurrent case \u2014 **strictly no worse than today**, where every duplicate upload transmits all bytes before dedup is detectable.\n\n## Provenance\n- `packages/reactor/docs/attachments-hash-first.md` \u2014 Reservation semantics \u203a Concurrent reservations for the same hash\n\n_Extracted from the Powerhouse repository at **v6.2.2-dev.74**._",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": "v6.2.2-dev.74",
+  "computes": null,
+  "filePath": "packages/reactor/docs/attachments-hash-first.md",
+  "noteType": "DECISION",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "knowledge-agent",
+    "createdAt": "2026-09-03T07:20:23.793Z",
+    "sessionId": null,
+    "updatedAt": "2026-09-03T07:22:35.708Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "One-live-reservation-per-hash needs a partial unique index (broken under the schema-scoped migrations) or app locking, and strands the second client. Commit-time convergence handles it instead.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "993ce05a-99ca-4555-b9af-38522ec0fb63",
+      "actor": "knowledge-agent",
+      "comment": "extracted from packages/reactor/docs/attachments-hash-first.md at v6.2.2-dev.74",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-09-03T07:20:24.374Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "63c7392f-b441-4bd8-9ac2-044d48baed3b",
+      "actor": "liberuum",
+      "comment": "claim checked against the cited file at the pinned tag",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-09-03T07:20:24.952Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

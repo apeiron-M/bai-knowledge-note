@@ -1,0 +1,532 @@
+[
+  {
+    "index": 0,
+    "hash": "",
+    "timestampUtcMs": "2026-09-02T22:13:21.536Z",
+    "action": {
+      "type": "CREATE_DOCUMENT",
+      "input": {
+        "meta": {},
+        "name": "release-staging-cases",
+        "slug": "",
+        "model": "bai/knowledge-note",
+        "branch": "main",
+        "signing": {
+          "nonce": "",
+          "publicKey": {},
+          "signature": "e116c6bc-49e3-454c-80c7-a85617401f8c",
+          "documentType": "bai/knowledge-note",
+          "createdAtUtcIso": "2026-09-02T22:13:21.535Z"
+        },
+        "version": 0,
+        "documentId": "e116c6bc-49e3-454c-80c7-a85617401f8c",
+        "protocolVersions": {
+          "base-reducer": 2
+        }
+      },
+      "timestampUtcMs": "2026-09-02T22:13:21.536Z"
+    }
+  },
+  {
+    "index": 0,
+    "hash": "14faAFLOAuBerbqrJsVcAwXjhXI=",
+    "timestampUtcMs": "2026-09-02T22:13:21.674Z",
+    "action": {
+      "type": "SET_TITLE",
+      "input": {
+        "title": "Dev releases run nightly at 02:00 UTC; a staging line that is not one semver step from main needs a hand-set baseline one prerelease below the intended first publish",
+        "updatedAt": "2026-09-02T22:13:21.674Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:13:21.674Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "",
+    "timestampUtcMs": "2026-09-02T22:13:21.536Z",
+    "action": {
+      "type": "UPGRADE_DOCUMENT",
+      "input": {
+        "model": "bai/knowledge-note",
+        "toVersion": 1,
+        "documentId": "e116c6bc-49e3-454c-80c7-a85617401f8c",
+        "fromVersion": 0,
+        "initialState": {
+          "auth": {
+            "grants": [],
+            "version": 0
+          },
+          "local": {
+            "lastViewedAt": null,
+            "personalTags": []
+          },
+          "global": {
+            "links": [],
+            "model": null,
+            "scope": null,
+            "title": null,
+            "editor": null,
+            "inputs": [],
+            "models": [],
+            "status": "DRAFT",
+            "topics": [],
+            "content": null,
+            "context": null,
+            "modelId": null,
+            "modules": [],
+            "outputs": [],
+            "version": null,
+            "computes": null,
+            "filePath": null,
+            "noteType": null,
+            "severity": null,
+            "hooksUsed": [],
+            "rootCause": null,
+            "confidence": null,
+            "consumedBy": [],
+            "provenance": null,
+            "sourceType": null,
+            "targetType": null,
+            "cardinality": null,
+            "description": null,
+            "alternatives": [],
+            "consequences": [],
+            "errorMessage": null,
+            "relationType": null,
+            "correctPattern": null,
+            "decisionStatus": null,
+            "dispatchTargets": [],
+            "lifecycleEvents": []
+          },
+          "document": {
+            "hash": {
+              "encoding": "base64",
+              "algorithm": "sha1"
+            },
+            "version": 1
+          }
+        }
+      },
+      "timestampUtcMs": "2026-09-02T22:13:21.536Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "hYw9xkEXSDtCIWXBWlXldlK1tNc=",
+    "timestampUtcMs": "2026-09-02T22:13:21.674Z",
+    "action": {
+      "type": "SET_DESCRIPTION",
+      "input": {
+        "updatedAt": "2026-09-02T22:13:21.674Z",
+        "description": "Case 1: branch off main and pick a mode. Case 2: merge main in, keeping the staging side of every package.json and CHANGELOG. Case 3: set a baseline with nx release version X.Y.Z-staging.0."
+      },
+      "timestampUtcMs": "2026-09-02T22:13:21.674Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "",
+    "timestampUtcMs": "2026-09-02T22:24:58.043Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "metadata": {
+          "reason": "Extracted from RELEASE.md at v6.2.2-dev.74 \u2014 Dev releases (main); Staging releases Cases 1\u20133 with the worked 6.0.3 example",
+          "confidence": "grounded"
+        },
+        "sourceId": "e116c6bc-49e3-454c-80c7-a85617401f8c",
+        "targetId": "416abae8-b153-48f4-afa9-7e66c9d03cd9",
+        "relationshipType": "DERIVED_FROM"
+      },
+      "timestampUtcMs": "2026-09-02T22:24:58.043Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "3rXof+3d+k0+VylgKOucLxAsiCc=",
+    "timestampUtcMs": "2026-09-02T22:13:21.674Z",
+    "action": {
+      "type": "SET_NOTE_TYPE",
+      "input": {
+        "noteType": "PROCEDURE",
+        "updatedAt": "2026-09-02T22:13:21.674Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:13:21.674Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "",
+    "timestampUtcMs": "2026-09-02T22:24:59.151Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "metadata": {
+          "reason": "Applies the channel/mode rules to the concrete branching and merging steps a release manager runs",
+          "confidence": "grounded"
+        },
+        "sourceId": "e116c6bc-49e3-454c-80c7-a85617401f8c",
+        "targetId": "6914ee1a-5136-4979-b372-2b1f822b0219",
+        "relationshipType": "BUILDS_ON"
+      },
+      "timestampUtcMs": "2026-09-02T22:24:59.151Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "JWlu9J++8MchTPwCIx1mmRPmwJI=",
+    "timestampUtcMs": "2026-09-02T22:13:21.674Z",
+    "action": {
+      "type": "SET_CONTENT",
+      "input": {
+        "content": "**Dev.** `main` auto-releases every night at 02:00 UTC via the workflow's cron. An immediate dev release is Release Branch on `main` with `release_mode=prerelease`, publishing `X.Y.Z-dev.N+1`.\n\n**Staging** has three cases:\n\n- **Case 1 \u2014 fresh line, target one semver step from main.** Branch `release/staging/<X.Y.Z>` off `main`, push, run the workflow: `prerelease` \u2192 `X.Y.Z-staging.1`, `patch` \u2192 `X.Y.(Z+1)-staging.1`, `minor` / `major` likewise.\n- **Case 2 \u2014 next prerelease on an existing staging branch.** Merge `origin/main` into it. `package.json` (root and every workspace) and `CHANGELOG.md` almost always conflict; **always keep the staging side** of the `\"version\"` fields and changelog content, or the next release bumps from `-dev.N` and ships the wrong tag. Fast path: `git checkout --ours -- package.json '**/package.json' CHANGELOG.md '**/CHANGELOG.md'`, then `prerelease`.\n- **Case 3 \u2014 fresh line at a non-adjacent version** (e.g. main at `6.0.0-dev.239`, target `6.0.3-staging.1` because 6.0.1 and 6.0.2 were already cut). Semver `inc()` only steps by one, and the workflow has no \"publish exactly this version\" mode, so set the baseline by hand **one prerelease number below** the desired first publish: `npx nx release version 6.0.3-staging.0`, sanity-check with `git grep -h '\"version\":' -- '**/package.json' | sort -u`, commit `chore(release): set baseline \u2026`, push, then run `prerelease` \u2014 Nx bumps `.0 \u2192 .1`. This is the one case where a human edits versions. If the run fails after the baseline commit, just retrigger: the baseline is still on the branch.\n\nStaging releases require no release notes or Discord post; those belong to the production flow, whose branch is `release/production/<label>` and which always uses `patch`, `minor` or `major`.\n\n_Source: RELEASE.md (Powerhouse v6.2.2-dev.74)._\n\n## Provenance\n- `RELEASE.md` \u2014 Dev releases (main); Staging releases Cases 1\u20133 with the worked 6.0.3 example\n\n_Recorded from the Powerhouse repository at **v6.2.2-dev.74** during the v6.2.2-dev.74 source sync._",
+        "updatedAt": "2026-09-02T22:13:21.674Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:13:21.674Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "",
+    "timestampUtcMs": "2026-09-02T22:24:59.624Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "metadata": {
+          "reason": "Every case ends in the same publish step, whose npm authentication and propagation failure modes are described there",
+          "confidence": "established"
+        },
+        "sourceId": "e116c6bc-49e3-454c-80c7-a85617401f8c",
+        "targetId": "46cea225-4d6d-4717-97ce-b3fd1f9c79d4",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-09-02T22:24:59.624Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "E7fDiGW4r4kXk9ge+yZddIqS76I=",
+    "timestampUtcMs": "2026-09-02T22:13:21.674Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "40aea1da-33c0-442c-910a-6088c382f468",
+        "name": "release"
+      },
+      "timestampUtcMs": "2026-09-02T22:13:21.674Z"
+    }
+  },
+  {
+    "index": 5,
+    "hash": "H7TfrSvmOGdtHzDAwwHd4wGA7LI=",
+    "timestampUtcMs": "2026-09-02T22:13:21.674Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "44726425-7966-4546-a40f-d61faeae2d65",
+        "name": "monorepo"
+      },
+      "timestampUtcMs": "2026-09-02T22:13:21.674Z"
+    }
+  },
+  {
+    "index": 6,
+    "hash": "8HT+riXC9SD/+Fi8Ptjt1DExVgs=",
+    "timestampUtcMs": "2026-09-02T22:13:21.674Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "a0a21512-cbf9-4f78-9a2f-49e10cd3f112",
+        "name": "ci"
+      },
+      "timestampUtcMs": "2026-09-02T22:13:21.674Z"
+    }
+  },
+  {
+    "index": 7,
+    "hash": "YDlSC8IqSxfi9QNxOIqJ5h3k0+4=",
+    "timestampUtcMs": "2026-09-02T22:13:21.674Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "36e757f7-aa82-4621-82af-7472221171bc",
+        "name": "versioning"
+      },
+      "timestampUtcMs": "2026-09-02T22:13:21.674Z"
+    }
+  },
+  {
+    "index": 8,
+    "hash": "B1xl7bxt0VFyX7B8d02DjGZM9tQ=",
+    "timestampUtcMs": "2026-09-02T22:13:21.674Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "version",
+        "value": "v6.2.2-dev.74",
+        "updatedAt": "2026-09-02T22:13:21.674Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:13:21.674Z"
+    }
+  },
+  {
+    "index": 9,
+    "hash": "BEG3jGkGWiFO2fa4vd5xnDUC16w=",
+    "timestampUtcMs": "2026-09-02T22:13:21.674Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "filePath",
+        "value": "RELEASE.md",
+        "updatedAt": "2026-09-02T22:13:21.674Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:13:21.674Z"
+    }
+  },
+  {
+    "index": 10,
+    "hash": "UCKRLvGtUdBZ+lj/mlf6EJaKVVA=",
+    "timestampUtcMs": "2026-09-02T22:13:21.674Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "confidence",
+        "value": "grounded",
+        "updatedAt": "2026-09-02T22:13:21.674Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:13:21.674Z"
+    }
+  },
+  {
+    "index": 11,
+    "hash": "qvT4U6URgTEgcuTVTW7/k/ywDYg=",
+    "timestampUtcMs": "2026-09-02T22:13:24.311Z",
+    "action": {
+      "type": "SET_PROVENANCE",
+      "input": {
+        "author": "knowledge-agent",
+        "createdAt": "2026-09-02T22:13:24.311Z",
+        "sourceOrigin": "DERIVED"
+      },
+      "timestampUtcMs": "2026-09-02T22:13:24.311Z"
+    }
+  },
+  {
+    "index": 12,
+    "hash": "90iPNh9ct31TxPkBOO2bUkZ5wG4=",
+    "timestampUtcMs": "2026-09-02T22:13:24.805Z",
+    "action": {
+      "type": "SUBMIT_FOR_REVIEW",
+      "input": {
+        "id": "b372128b-eb30-4864-9b7f-d96eacb11656",
+        "actor": "knowledge-agent",
+        "comment": "extracted from the Powerhouse repository at v6.2.2-dev.74",
+        "timestamp": "2026-09-02T22:13:24.805Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:13:24.805Z"
+    }
+  },
+  {
+    "index": 13,
+    "hash": "LVJxPTaoxLNRUZmWuI4Rcj0WWlk=",
+    "timestampUtcMs": "2026-09-02T22:13:25.321Z",
+    "action": {
+      "type": "APPROVE_NOTE",
+      "input": {
+        "id": "28e8e25a-d8a9-40c9-8127-249ef65a9b36",
+        "actor": "liberuum",
+        "comment": "claim checked against the cited repository file at the pinned tag",
+        "timestamp": "2026-09-02T22:13:25.321Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:13:25.321Z"
+    }
+  },
+  {
+    "index": 14,
+    "hash": "Alu1fQAOB8iiGgecmjKsB+uxqOE=",
+    "timestampUtcMs": "2026-09-02T22:16:32.417Z",
+    "action": {
+      "type": "SET_TITLE",
+      "input": {
+        "title": "Dev releases run nightly at 02:00 UTC; a staging line that is not one semver step from main needs a hand-set baseline one prerelease below the intended first publish",
+        "updatedAt": "2026-09-02T22:16:32.417Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:16:32.417Z"
+    }
+  },
+  {
+    "index": 15,
+    "hash": "Alu1fQAOB8iiGgecmjKsB+uxqOE=",
+    "timestampUtcMs": "2026-09-02T22:16:32.417Z",
+    "action": {
+      "type": "SET_DESCRIPTION",
+      "input": {
+        "updatedAt": "2026-09-02T22:16:32.417Z",
+        "description": "Case 1: branch off main and pick a mode. Case 2: merge main in, keeping the staging side of every package.json and CHANGELOG. Case 3: set a baseline with nx release version X.Y.Z-staging.0."
+      },
+      "timestampUtcMs": "2026-09-02T22:16:32.417Z"
+    }
+  },
+  {
+    "index": 16,
+    "hash": "Alu1fQAOB8iiGgecmjKsB+uxqOE=",
+    "timestampUtcMs": "2026-09-02T22:16:32.417Z",
+    "action": {
+      "type": "SET_NOTE_TYPE",
+      "input": {
+        "noteType": "PROCEDURE",
+        "updatedAt": "2026-09-02T22:16:32.417Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:16:32.417Z"
+    }
+  },
+  {
+    "index": 17,
+    "hash": "Alu1fQAOB8iiGgecmjKsB+uxqOE=",
+    "timestampUtcMs": "2026-09-02T22:16:32.417Z",
+    "action": {
+      "type": "SET_CONTENT",
+      "input": {
+        "content": "**Dev.** `main` auto-releases every night at 02:00 UTC via the workflow's cron. An immediate dev release is Release Branch on `main` with `release_mode=prerelease`, publishing `X.Y.Z-dev.N+1`.\n\n**Staging** has three cases:\n\n- **Case 1 \u2014 fresh line, target one semver step from main.** Branch `release/staging/<X.Y.Z>` off `main`, push, run the workflow: `prerelease` \u2192 `X.Y.Z-staging.1`, `patch` \u2192 `X.Y.(Z+1)-staging.1`, `minor` / `major` likewise.\n- **Case 2 \u2014 next prerelease on an existing staging branch.** Merge `origin/main` into it. `package.json` (root and every workspace) and `CHANGELOG.md` almost always conflict; **always keep the staging side** of the `\"version\"` fields and changelog content, or the next release bumps from `-dev.N` and ships the wrong tag. Fast path: `git checkout --ours -- package.json '**/package.json' CHANGELOG.md '**/CHANGELOG.md'`, then `prerelease`.\n- **Case 3 \u2014 fresh line at a non-adjacent version** (e.g. main at `6.0.0-dev.239`, target `6.0.3-staging.1` because 6.0.1 and 6.0.2 were already cut). Semver `inc()` only steps by one, and the workflow has no \"publish exactly this version\" mode, so set the baseline by hand **one prerelease number below** the desired first publish: `npx nx release version 6.0.3-staging.0`, sanity-check with `git grep -h '\"version\":' -- '**/package.json' | sort -u`, commit `chore(release): set baseline \u2026`, push, then run `prerelease` \u2014 Nx bumps `.0 \u2192 .1`. This is the one case where a human edits versions. If the run fails after the baseline commit, just retrigger: the baseline is still on the branch.\n\nStaging releases require no release notes or Discord post; those belong to the production flow, whose branch is `release/production/<label>` and which always uses `patch`, `minor` or `major`.\n\n_Source: RELEASE.md (Powerhouse v6.2.2-dev.74)._\n\n## Provenance\n- `RELEASE.md` \u2014 Dev releases (main); Staging releases Cases 1\u20133 with the worked 6.0.3 example\n\n_Recorded from the Powerhouse repository at **v6.2.2-dev.74** during the v6.2.2-dev.74 source sync._",
+        "updatedAt": "2026-09-02T22:16:32.417Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:16:32.417Z"
+    }
+  },
+  {
+    "index": 18,
+    "hash": "Alu1fQAOB8iiGgecmjKsB+uxqOE=",
+    "timestampUtcMs": "2026-09-02T22:16:32.417Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "version",
+        "value": "v6.2.2-dev.74",
+        "updatedAt": "2026-09-02T22:16:32.417Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:16:32.417Z"
+    }
+  },
+  {
+    "index": 19,
+    "hash": "Alu1fQAOB8iiGgecmjKsB+uxqOE=",
+    "timestampUtcMs": "2026-09-02T22:16:32.417Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "filePath",
+        "value": "RELEASE.md",
+        "updatedAt": "2026-09-02T22:16:32.417Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:16:32.417Z"
+    }
+  },
+  {
+    "index": 20,
+    "hash": "Alu1fQAOB8iiGgecmjKsB+uxqOE=",
+    "timestampUtcMs": "2026-09-02T22:16:32.417Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "confidence",
+        "value": "grounded",
+        "updatedAt": "2026-09-02T22:16:32.417Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:16:32.417Z"
+    }
+  },
+  {
+    "index": 21,
+    "hash": "axxlt78AXMsSAmzkDUt3RN897zA=",
+    "timestampUtcMs": "2026-09-02T22:21:09.565Z",
+    "action": {
+      "type": "SET_TITLE",
+      "input": {
+        "title": "Dev releases run nightly at 02:00 UTC; a staging line that is not one semver step from main needs a hand-set baseline one prerelease below the intended first publish",
+        "updatedAt": "2026-09-02T22:21:09.565Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:21:09.565Z"
+    }
+  },
+  {
+    "index": 22,
+    "hash": "axxlt78AXMsSAmzkDUt3RN897zA=",
+    "timestampUtcMs": "2026-09-02T22:21:09.565Z",
+    "action": {
+      "type": "SET_DESCRIPTION",
+      "input": {
+        "updatedAt": "2026-09-02T22:21:09.565Z",
+        "description": "Case 1: branch off main and pick a mode. Case 2: merge main in, keeping the staging side of every package.json and CHANGELOG. Case 3: set a baseline with nx release version X.Y.Z-staging.0."
+      },
+      "timestampUtcMs": "2026-09-02T22:21:09.565Z"
+    }
+  },
+  {
+    "index": 23,
+    "hash": "axxlt78AXMsSAmzkDUt3RN897zA=",
+    "timestampUtcMs": "2026-09-02T22:21:09.565Z",
+    "action": {
+      "type": "SET_NOTE_TYPE",
+      "input": {
+        "noteType": "PROCEDURE",
+        "updatedAt": "2026-09-02T22:21:09.565Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:21:09.565Z"
+    }
+  },
+  {
+    "index": 24,
+    "hash": "axxlt78AXMsSAmzkDUt3RN897zA=",
+    "timestampUtcMs": "2026-09-02T22:21:09.565Z",
+    "action": {
+      "type": "SET_CONTENT",
+      "input": {
+        "content": "**Dev.** `main` auto-releases every night at 02:00 UTC via the workflow's cron. An immediate dev release is Release Branch on `main` with `release_mode=prerelease`, publishing `X.Y.Z-dev.N+1`.\n\n**Staging** has three cases:\n\n- **Case 1 \u2014 fresh line, target one semver step from main.** Branch `release/staging/<X.Y.Z>` off `main`, push, run the workflow: `prerelease` \u2192 `X.Y.Z-staging.1`, `patch` \u2192 `X.Y.(Z+1)-staging.1`, `minor` / `major` likewise.\n- **Case 2 \u2014 next prerelease on an existing staging branch.** Merge `origin/main` into it. `package.json` (root and every workspace) and `CHANGELOG.md` almost always conflict; **always keep the staging side** of the `\"version\"` fields and changelog content, or the next release bumps from `-dev.N` and ships the wrong tag. Fast path: `git checkout --ours -- package.json '**/package.json' CHANGELOG.md '**/CHANGELOG.md'`, then `prerelease`.\n- **Case 3 \u2014 fresh line at a non-adjacent version** (e.g. main at `6.0.0-dev.239`, target `6.0.3-staging.1` because 6.0.1 and 6.0.2 were already cut). Semver `inc()` only steps by one, and the workflow has no \"publish exactly this version\" mode, so set the baseline by hand **one prerelease number below** the desired first publish: `npx nx release version 6.0.3-staging.0`, sanity-check with `git grep -h '\"version\":' -- '**/package.json' | sort -u`, commit `chore(release): set baseline \u2026`, push, then run `prerelease` \u2014 Nx bumps `.0 \u2192 .1`. This is the one case where a human edits versions. If the run fails after the baseline commit, just retrigger: the baseline is still on the branch.\n\nStaging releases require no release notes or Discord post; those belong to the production flow, whose branch is `release/production/<label>` and which always uses `patch`, `minor` or `major`.\n\n_Source: RELEASE.md (Powerhouse v6.2.2-dev.74)._\n\n## Provenance\n- `RELEASE.md` \u2014 Dev releases (main); Staging releases Cases 1\u20133 with the worked 6.0.3 example\n\n_Recorded from the Powerhouse repository at **v6.2.2-dev.74** during the v6.2.2-dev.74 source sync._",
+        "updatedAt": "2026-09-02T22:21:09.565Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:21:09.565Z"
+    }
+  },
+  {
+    "index": 25,
+    "hash": "axxlt78AXMsSAmzkDUt3RN897zA=",
+    "timestampUtcMs": "2026-09-02T22:21:09.565Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "version",
+        "value": "v6.2.2-dev.74",
+        "updatedAt": "2026-09-02T22:21:09.565Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:21:09.565Z"
+    }
+  },
+  {
+    "index": 26,
+    "hash": "axxlt78AXMsSAmzkDUt3RN897zA=",
+    "timestampUtcMs": "2026-09-02T22:21:09.565Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "filePath",
+        "value": "RELEASE.md",
+        "updatedAt": "2026-09-02T22:21:09.565Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:21:09.565Z"
+    }
+  },
+  {
+    "index": 27,
+    "hash": "axxlt78AXMsSAmzkDUt3RN897zA=",
+    "timestampUtcMs": "2026-09-02T22:21:09.565Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "confidence",
+        "value": "grounded",
+        "updatedAt": "2026-09-02T22:21:09.565Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:21:09.565Z"
+    }
+  }
+]

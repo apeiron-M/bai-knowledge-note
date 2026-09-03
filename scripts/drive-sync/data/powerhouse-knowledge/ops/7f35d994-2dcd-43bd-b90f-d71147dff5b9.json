@@ -1,0 +1,129 @@
+[
+  {
+    "index": 0,
+    "hash": "",
+    "timestampUtcMs": "2026-09-02T21:38:56.061Z",
+    "action": {
+      "type": "CREATE_DOCUMENT",
+      "input": {
+        "meta": {},
+        "name": "Academy \u203a Reference \u203a GraphQLData \u203a Subgraph Migration Guide (v6)",
+        "slug": "",
+        "model": "bai/source",
+        "branch": "main",
+        "signing": {
+          "nonce": "",
+          "publicKey": {},
+          "signature": "7f35d994-2dcd-43bd-b90f-d71147dff5b9",
+          "documentType": "bai/source",
+          "createdAtUtcIso": "2026-09-02T21:38:56.061Z"
+        },
+        "version": 0,
+        "documentId": "7f35d994-2dcd-43bd-b90f-d71147dff5b9",
+        "protocolVersions": {
+          "base-reducer": 2
+        }
+      },
+      "timestampUtcMs": "2026-09-02T21:38:56.061Z"
+    }
+  },
+  {
+    "index": 0,
+    "hash": "oMBiU8+NOkrhhrC2bUjWjsZTz88=",
+    "timestampUtcMs": "2026-09-02T21:38:55.982Z",
+    "action": {
+      "type": "INGEST_SOURCE",
+      "input": {
+        "url": "https://github.com/powerhouse-inc/powerhouse/blob/v6.2.2-dev.74/apps/academy/docs/academy/04-Reference/03-GraphQLData/07-SubgraphMigrationGuide.md",
+        "tool": "sync-repo-docs",
+        "title": "Academy \u203a Reference \u203a GraphQLData \u203a Subgraph Migration Guide (v6)",
+        "author": "Powerhouse Inc.",
+        "method": "sha256:e0ed8c1ed0fee63498241b830c4fea19e4d4c29662762f43f96f15891946d818 git:v6.2.2-dev.74",
+        "content": "# Subgraph Migration Guide (v6)\n\n:::tip\nThis guide covers the **breaking changes** to the GraphQL subgraph API introduced in the v6 Reactor. If you were querying the old `/graphql/document-drive` or `/graphql/system` endpoints, or building custom subgraphs, **this migration is required**.\n:::\n\n## Overview\n\nThe v6 Reactor replaced the legacy hardcoded subgraphs (`document-drive`, `system`) with a new architecture:\n\n- **Reactor subgraph** (`/graphql/r`) \u2014 manages drives, documents, sync, and subscriptions\n- **Document-model subgraphs** (`/graphql/<model-name>`) \u2014 auto-generated per document model, with namespaced queries and mutations\n- **Custom subgraphs** \u2014 user-defined subgraphs now extend `BaseSubgraph` with `reactorClient`\n\n## Endpoint changes\n\n| Legacy endpoint           | v6 endpoint             | Notes                                   |\n| ------------------------- | ----------------------- | --------------------------------------- |\n| `/graphql/document-drive` | `/graphql/r`            | Drive and document management           |\n| `/graphql/system`         | `/graphql/r`            | Sync operations moved to reactor        |\n| `/graphql/<custom>`       | `/graphql/<custom>`     | Custom subgraphs still user-defined     |\n| N/A                       | `/graphql/<model-name>` | New: auto-generated per document model  |\n| `/graphql`                | `/graphql`              | Supergraph still combines all subgraphs |\n\n## Querying and mutating documents\n\nIn v6, every operation can be done through the **reactor subgraph** (`/graphql/r`) \u2014 which is generic and works with any document type \u2014 or through a **document-model subgraph** (`/graphql/<model-name>`) \u2014 which is namespaced and type-specific. Both are shown below for each operation.\n\nDocument-model subgraphs are auto-generated for each registered document model and provide:\n\n- `document(identifier)` \u2014 get a single document\n- `documents(paging)` \u2014 list all documents of this type\n- `findDocuments(search, view, paging)` \u2014 search within this type\n- `documentOutgoingRelationships(sourceIdentifier, relationshipType)` \u2014 filtered to this type\n- `documentIncomingRelationships(targetIdentifier, relationshipType)`\n- `createDocument(name, parentIdentifier)` mutation\n- Per-operation mutations (e.g. `addTodoItem(docId, input)`)\n- Async variants of each mutation (e.g. `addTodoItemAsync(docId, input)`)\n\n### Getting a drive and its contents\n\n**Legacy:**\n\n```graphql\n# Legacy \u2014 /graphql/document-drive\nquery {\n  drive {\n    id\n    name\n    nodes {\n      ... on FileNode {\n        id\n        name\n        documentType\n      }\n      ... on FolderNode {\n        id\n        name\n      }\n    }\n  }\n}\n```\n\n**v6 (reactor subgraph):**\n\n```graphql\n# v6 \u2014 /graphql/r\nquery {\n  document(identifier: \"my-drive-slug\") {\n    document {\n      id\n      name\n      documentType\n      state\n    }\n    childIds\n  }\n}\n```\n\n**v6 (document-model subgraph):**\n\n```graphql\n# v6 \u2014 /graphql/document-drive (or via supergraph)\nquery {\n  DocumentDrive {\n    document(identifier: \"my-drive-slug\") {\n      document {\n        id\n        name\n        state {\n          global {\n            nodes { ... }\n          }\n        }\n      }\n    }\n  }\n}\n```\n\n### Listing children of a drive\n\n**Legacy:** Children were returned inline via the `drive.nodes` field (see above).\n\n**v6 (reactor subgraph):**\n\n```graphql\n# v6 \u2014 /graphql/r\nquery {\n  documentOutgoingRelationships(\n    sourceIdentifier: \"my-drive-slug\"\n    relationshipType: \"child\"\n  ) {\n    items {\n      id\n      name\n      documentType\n      state\n    }\n    totalCount\n    hasNextPage\n  }\n}\n```\n\n**v6 (document-model subgraph):** To get only children of a specific type (e.g. todo lists):\n\n```graphql\n# v6 \u2014 /graphql/to-do-list (or via supergraph)\nquery {\n  ToDoList {\n    documentOutgoingRelationships(\n      sourceIdentifier: \"my-drive-slug\"\n      relationshipType: \"child\"\n    ) {\n      items {\n        id\n        name\n        state {\n          global {\n            items {\n              id\n              text\n              checked\n            }\n          }\n        }\n      }\n      totalCount\n    }\n  }\n}\n```\n\n### Finding documents by type\n\n**Legacy:** Not directly available \u2014 required iterating `drive.nodes` and filtering by `documentType`.\n\n**v6 (reactor subgraph):**\n\n```graphql\n# v6 \u2014 /graphql/r\nquery {\n  findDocuments(search: { type: \"powerhouse/todo-list\" }) {\n    items {\n      id\n      name\n      state\n    }\n    totalCount\n  }\n}\n```\n\n**v6 (document-model subgraph):** The type filter is built in:\n\n```graphql\n# v6 \u2014 /graphql/to-do-list (or via supergraph)\nquery {\n  ToDoList {\n    documents {\n      items {\n        id\n        name\n        state {\n          global {\n            items {\n              id\n              text\n              checked\n            }\n          }\n        }\n      }\n      totalCount\n    }\n  }\n}\n```\n\n### Getting a single document\n\n**Legacy:**\n\n```graphql\n# Legacy \u2014 /graphql/document-drive\nquery {\n  document(id: \"abc123\") {\n    id\n    name\n    # ... limited to drive-level fields\n  }\n}\n```\n\n**v6 (reactor subgraph):**\n\n```graphql\n# v6 \u2014 /graphql/r\nquery {\n  document(identifier: \"abc123\") {\n    document {\n      id\n      name\n      documentType\n      state\n    }\n    childIds\n  }\n}\n```\n\n**v6 (document-model subgraph):**\n\n```graphql\n# v6 \u2014 /graphql/to-do-list (or via supergraph)\nquery {\n  ToDoList {\n    document(identifier: \"abc123\") {\n      document {\n        id\n        name\n        state {\n          global {\n            items {\n              id\n              text\n              checked\n            }\n          }\n        }\n      }\n    }\n  }\n}\n```\n\n### Creating a drive\n\n**Legacy:**\n\n```graphql\n# Legacy \u2014 /graphql/document-drive\nmutation {\n  addDrive(name: \"tutorial\") {\n    id\n    name\n  }\n}\n```\n\n**v6 (reactor subgraph):**\n\n```graphql\n# v6 \u2014 /graphql/r\nmutation {\n  createDocument(\n    document: { documentType: \"powerhouse/document-drive\", name: \"tutorial\" }\n  ) {\n    id\n    name\n  }\n}\n```\n\n**v6 (document-model subgraph):**\n\n```graphql\n# v6 \u2014 /graphql/document-drive (or via supergraph)\nmutation {\n  DocumentDrive {\n    createDocument(name: \"tutorial\") {\n      id\n      name\n    }\n  }\n}\n```\n\n### Creating a document\n\nIn the legacy system, documents were created indirectly through drive operations or via Connect's internal APIs. In v6, documents are created directly.\n\n**v6 (reactor subgraph):**\n\n```graphql\n# v6 \u2014 /graphql/r\nmutation {\n  createDocument(\n    document: { documentType: \"powerhouse/todo-list\", name: \"My List\" }\n    parentIdentifier: \"my-drive-slug\"\n  ) {\n    id\n    name\n  }\n}\n```\n\n**v6 (document-model subgraph):**\n\n```graphql\n# v6 \u2014 /graphql/to-do-list (or via supergraph)\nmutation {\n  ToDoList {\n    createDocument(name: \"My List\", parentIdentifier: \"my-drive-slug\") {\n      id\n      name\n    }\n  }\n}\n```\n\n### Applying operations to a document\n\nIn the legacy system, document operations were applied through strand-based push/pull via the `system` subgraph. In v6, operations are applied directly.\n\n**v6 (reactor subgraph):**\n\n```graphql\n# v6 \u2014 /graphql/r\nmutation {\n  mutateDocument(\n    documentIdentifier: \"abc123\"\n    actions: [\n      {\n        type: \"ADD_TODO_ITEM\"\n        input: { text: \"Buy milk\" }\n        scope: \"global\"\n        id: \"op-1\"\n        timestampUtcMs: \"1711900000000\"\n      }\n    ]\n  ) {\n    id\n    name\n    state\n  }\n}\n```\n\n**v6 (document-model subgraph):**\n\n```graphql\n# v6 \u2014 /graphql/to-do-list (or via supergraph)\nmutation {\n  ToDoList {\n    addTodoItem(docId: \"abc123\", input: { text: \"Buy milk\" }) {\n      id\n      state {\n        global {\n          items {\n            id\n            text\n            checked\n          }\n        }\n      }\n    }\n  }\n}\n```\n\n## Sync API changes\n\n### Legacy: system subgraph (strand-based sync)\n\nThe old `system` subgraph provided strand-based synchronization via pull-responder listeners:\n\n```graphql\n# Legacy \u2014 /graphql/system\nmutation {\n  registerPullResponderListener(filter: {\n    documentType: [\"powerhouse/todo-list\"]\n    branch: [\"main\"]\n  }) {\n    # returned a Listener object\n  }\n}\n\nquery {\n  system {\n    sync {\n      strands(listenerId: \"listener-123\") {\n        driveId\n        documentId\n        scope\n        branch\n        operations {\n          type\n          input\n          index\n          hash\n          timestamp\n        }\n      }\n    }\n  }\n}\n```\n\n### v6: Channel-based sync\n\nThe v6 reactor replaces the strand/listener model with channel-based sync and real-time subscriptions:\n\n```graphql\n# v6 \u2014 /graphql/r\nmutation {\n  touchChannel(\n    input: {\n      id: \"channel-1\"\n      name: \"my-sync\"\n      collectionId: \"drive-id\"\n      filter: { documentId: [\"*\"], scope: [\"global\"], branch: \"main\" }\n      sinceTimestampUtcMs: \"0\"\n    }\n  ) {\n    success\n    ackOrdinal\n  }\n}\n\nquery {\n  pollSyncEnvelopes(channelId: \"channel-1\", outboxAck: 0, outboxLatest: 100) {\n    envelopes {\n      type\n      operations {\n        operation {\n          index\n          hash\n          action {\n            type\n            input\n            scope\n          }\n        }\n        context {\n          documentId\n          documentType\n          scope\n          branch\n          ordinal\n        }\n      }\n    }\n    ackOrdinal\n  }\n}\n```\n\nReal-time updates are available via GraphQL subscriptions:\n\n```graphql\nsubscription {\n  documentChanges(search: { type: \"powerhouse/todo-list\" }) {\n    type # CREATED, UPDATED, DELETED, etc.\n    documents {\n      id\n      name\n      state\n    }\n  }\n}\n```\n\n## Query mapping reference\n\n| Legacy query/mutation           | v6 equivalent                                                                  | Subgraph               |\n| ------------------------------- | ------------------------------------------------------------------------------ | ---------------------- |\n| `drive`                         | `document(identifier: driveSlug)`                                              | reactor (`/graphql/r`) |\n| `drives`                        | `findDocuments(search: { type: \"powerhouse/document-drive\" })`                 | reactor                |\n| `document(id)`                  | `document(identifier)`                                                         | reactor                |\n| `documents`                     | `findDocuments()`                                                              | reactor                |\n| `addDrive(name)`                | `createDocument(document: { documentType: \"powerhouse/document-drive\", ... })` | reactor                |\n| `system { sync { strands } }`   | `pollSyncEnvelopes(channelId, ...)`                                            | reactor                |\n| `registerPullResponderListener` | `touchChannel(input: {...})`                                                   | reactor                |\n| `pushUpdates`                   | `pushSyncEnvelopes(envelopes: [...])`                                          | reactor                |\n| N/A (new)                       | `<ModelName> { document(...) }`                                                | document-model         |\n| N/A (new)                       | `<ModelName> { createDocument(...) }`                                          | document-model         |\n| N/A (new)                       | `<ModelName> { <operationName>(docId, input) }`                                | document-model         |\n\n## Migrating custom subgraphs\n\n### Legacy pattern\n\nCustom subgraphs exported a `resolvers` object and a `typeDefs` string, using `ctx.driveServer` for data access:\n\n```typescript\n// Legacy custom subgraph\nimport { GraphQLResolverMap } from \"@apollo/subgraph/dist/schema-helper\";\nimport { Context } from \"../types\";\n\nexport const typeDefs = `\n  type Query {\n    myCustomQuery(driveId: String!): [String!]!\n  }\n`;\n\nexport const resolvers: GraphQLResolverMap<Context> = {\n  Query: {\n    myCustomQuery: async (_parent, args, ctx: Context) => {\n      const drive = await ctx.driveServer.getDrive(args.driveId);\n      // ... process drive data\n      return results;\n    },\n  },\n};\n```\n\n### v6 pattern\n\nCustom subgraphs now use `getResolvers(subgraph: BaseSubgraph)` and access data through `subgraph.reactorClient`:\n\n```typescript\n// v6 custom subgraph \u2014 subgraphs/my-custom/resolvers.ts\nimport type { BaseSubgraph } from \"@powerhousedao/reactor-api\";\n\nexport const getResolvers = (subgraph: BaseSubgraph) => {\n  const reactorClient = subgraph.reactorClient;\n\n  return {\n    Query: {\n      myCustomQuery: async (_parent: unknown, args: { driveId: string }) => {\n        const children = await reactorClient.getOutgoingRelationships(\n          args.driveId,\n          \"child\",\n        );\n        // ... process documents\n        return results;\n      },\n    },\n  };\n};\n```\n\n```typescript\n// v6 custom subgraph \u2014 subgraphs/my-custom/schema.ts\nimport { gql } from \"graphql-tag\";\nimport type { DocumentNode } from \"graphql\";\n\nexport const schema: DocumentNode = gql`\n  type Query {\n    myCustomQuery(driveId: String!): [String!]!\n  }\n`;\n```\n\nGenerate the scaffolding with:\n\n```bash\nph generate --subgraph my-custom\n```\n\n### Key differences\n\n| Aspect               | Legacy                          | v6                                              |\n| -------------------- | ------------------------------- | ----------------------------------------------- |\n| Data access          | `ctx.driveServer`               | `subgraph.reactorClient`                        |\n| Schema format        | Template literal string         | `gql` tagged template (`DocumentNode`)          |\n| Resolver export      | `export const resolvers`        | `export const getResolvers = (subgraph) => ...` |\n| Relational DB access | Not available                   | `subgraph.relationalDb`                         |\n| File structure       | `resolvers.ts` + `type-defs.ts` | `resolvers.ts` + `schema.ts` + `index.ts`       |\n| Registration         | Manual                          | Automatic via `ph generate`                     |\n\n## Migration checklist\n\n- [ ] Update all GraphQL client queries that target `/graphql/document-drive` to use `/graphql/r` or the appropriate document-model subgraph\n- [ ] Replace `drive` queries with `document(identifier)` or `findDocuments`\n- [ ] Replace strand-based sync (`registerPullResponderListener`, `system.sync.strands`) with `touchChannel` + `pollSyncEnvelopes`\n- [ ] For real-time updates, use `documentChanges` subscription instead of polling strands\n- [ ] Migrate custom subgraphs to `getResolvers(subgraph: BaseSubgraph)` pattern\n- [ ] Replace `ctx.driveServer` calls with `subgraph.reactorClient` methods\n- [ ] Update schema files from plain strings to `gql` tagged templates\n- [ ] Regenerate custom subgraph scaffolding with `ph generate --subgraph <name>`\n",
+        "createdAt": "2026-09-02T21:38:55.982Z",
+        "createdBy": "repo-docs-sync",
+        "sourceType": "DOCUMENTATION",
+        "description": "Powerhouse v6.2.2-dev.74 (unchanged since v6.2.2-dev.47) \u2014 The v6 Reactor replaced the legacy hardcoded subgraphs (document-drive, system) with a new architecture:",
+        "publishedAt": "2026-06-17T17:18:45.000Z"
+      },
+      "timestampUtcMs": "2026-09-02T21:38:55.982Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "",
+    "timestampUtcMs": "2026-09-02T21:38:56.061Z",
+    "action": {
+      "type": "UPGRADE_DOCUMENT",
+      "input": {
+        "model": "bai/source",
+        "toVersion": 1,
+        "documentId": "7f35d994-2dcd-43bd-b90f-d71147dff5b9",
+        "fromVersion": 0,
+        "initialState": {
+          "auth": {
+            "grants": [],
+            "version": 0
+          },
+          "local": {},
+          "global": {
+            "title": null,
+            "status": "INBOX",
+            "content": null,
+            "createdAt": null,
+            "createdBy": null,
+            "provenance": null,
+            "sourceType": null,
+            "description": null,
+            "extractedClaims": [],
+            "extractionStats": null
+          },
+          "document": {
+            "hash": {
+              "encoding": "base64",
+              "algorithm": "sha1"
+            },
+            "version": 1
+          }
+        }
+      },
+      "timestampUtcMs": "2026-09-02T21:38:56.061Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "y9RhKmHyWu47pwfi/ku+7qHpQTI=",
+    "timestampUtcMs": "2026-09-02T21:39:00.231Z",
+    "action": {
+      "type": "ADD_EXTRACTED_CLAIM",
+      "input": {
+        "claimRef": "b52d608c-7251-418f-b97e-400e4b811a88"
+      },
+      "timestampUtcMs": "2026-09-02T21:39:00.231Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "ojAaNaWsNAnUdtpzBbapAdlK63E=",
+    "timestampUtcMs": "2026-09-02T21:39:01.714Z",
+    "action": {
+      "type": "ADD_EXTRACTED_CLAIM",
+      "input": {
+        "claimRef": "de06fba3-5cdf-413c-b6e0-f1a094c62f34"
+      },
+      "timestampUtcMs": "2026-09-02T21:39:01.714Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "PxSGxWsKPpDfAU730lryGR71Klg=",
+    "timestampUtcMs": "2026-09-02T21:39:05.895Z",
+    "action": {
+      "type": "SET_SOURCE_STATUS",
+      "input": {
+        "status": "EXTRACTED"
+      },
+      "timestampUtcMs": "2026-09-02T21:39:05.895Z"
+    }
+  }
+]

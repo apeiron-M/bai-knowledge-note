@@ -1,0 +1,622 @@
+[
+  {
+    "index": 0,
+    "hash": "",
+    "timestampUtcMs": "2026-09-02T22:11:52.618Z",
+    "action": {
+      "type": "CREATE_DOCUMENT",
+      "input": {
+        "meta": {},
+        "name": "sb-renown-source",
+        "slug": "",
+        "model": "bai/knowledge-note",
+        "branch": "main",
+        "signing": {
+          "nonce": "",
+          "publicKey": {},
+          "signature": "a8d60c71-1ba9-4c16-b7c4-75bdbed309d2",
+          "documentType": "bai/knowledge-note",
+          "createdAtUtcIso": "2026-09-02T22:11:52.618Z"
+        },
+        "version": 0,
+        "documentId": "a8d60c71-1ba9-4c16-b7c4-75bdbed309d2",
+        "protocolVersions": {
+          "base-reducer": 2
+        }
+      },
+      "timestampUtcMs": "2026-09-02T22:11:52.618Z"
+    }
+  },
+  {
+    "index": 0,
+    "hash": "9yK8P3Yr6PzpJikbVSN9phztKxo=",
+    "timestampUtcMs": "2026-09-02T22:11:52.614Z",
+    "action": {
+      "type": "SET_TITLE",
+      "input": {
+        "title": "auth.renown.source chooses whether credential checks query a remote Renown (remote, the default) or this switchboard's own renown-read-model subgraph in-process (self)",
+        "updatedAt": "2026-09-02T22:11:52.614Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:11:52.614Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "",
+    "timestampUtcMs": "2026-09-02T22:11:52.618Z",
+    "action": {
+      "type": "UPGRADE_DOCUMENT",
+      "input": {
+        "model": "bai/knowledge-note",
+        "toVersion": 1,
+        "documentId": "a8d60c71-1ba9-4c16-b7c4-75bdbed309d2",
+        "fromVersion": 0,
+        "initialState": {
+          "auth": {
+            "grants": [],
+            "version": 0
+          },
+          "local": {
+            "lastViewedAt": null,
+            "personalTags": []
+          },
+          "global": {
+            "links": [],
+            "model": null,
+            "scope": null,
+            "title": null,
+            "editor": null,
+            "inputs": [],
+            "models": [],
+            "status": "DRAFT",
+            "topics": [],
+            "content": null,
+            "context": null,
+            "modelId": null,
+            "modules": [],
+            "outputs": [],
+            "version": null,
+            "computes": null,
+            "filePath": null,
+            "noteType": null,
+            "severity": null,
+            "hooksUsed": [],
+            "rootCause": null,
+            "confidence": null,
+            "consumedBy": [],
+            "provenance": null,
+            "sourceType": null,
+            "targetType": null,
+            "cardinality": null,
+            "description": null,
+            "alternatives": [],
+            "consequences": [],
+            "errorMessage": null,
+            "relationType": null,
+            "correctPattern": null,
+            "decisionStatus": null,
+            "dispatchTargets": [],
+            "lifecycleEvents": []
+          },
+          "document": {
+            "hash": {
+              "encoding": "base64",
+              "algorithm": "sha1"
+            },
+            "version": 1
+          }
+        }
+      },
+      "timestampUtcMs": "2026-09-02T22:11:52.618Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "nvn7/y8WJ8xf4G/67vGfFNwgs1U=",
+    "timestampUtcMs": "2026-09-02T22:11:52.614Z",
+    "action": {
+      "type": "SET_DESCRIPTION",
+      "input": {
+        "updatedAt": "2026-09-02T22:11:52.614Z",
+        "description": "Env overrides win field by field (RENOWN_SOURCE, RENOWN_URL, SWITCHBOARD_URL). remote tries switchboardUrl, discovery via url, then the REST API; self needs the renown package loaded or startup fails."
+      },
+      "timestampUtcMs": "2026-09-02T22:11:52.614Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "",
+    "timestampUtcMs": "2026-09-02T22:19:32.083Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "metadata": {
+          "reason": "Extracted from apps/switchboard/Auth.md at v6.2.2-dev.74 \u2014 'Which Renown Instance Is Used' and 'The Switchboard's Own Identity'",
+          "confidence": "grounded"
+        },
+        "sourceId": "a8d60c71-1ba9-4c16-b7c4-75bdbed309d2",
+        "targetId": "3729bcb2-e103-4c58-9152-ba3d3782bf19",
+        "relationshipType": "DERIVED_FROM"
+      },
+      "timestampUtcMs": "2026-09-02T22:19:32.083Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "9cNgCDByCjrPwma18Do3m+JscAc=",
+    "timestampUtcMs": "2026-09-02T22:11:52.614Z",
+    "action": {
+      "type": "SET_NOTE_TYPE",
+      "input": {
+        "noteType": "REFERENCE",
+        "updatedAt": "2026-09-02T22:11:52.614Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:11:52.614Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "",
+    "timestampUtcMs": "2026-09-02T22:19:33.202Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "metadata": {
+          "reason": "Configures which instance performs the credential existence check that the verification pipeline depends on",
+          "confidence": "grounded"
+        },
+        "sourceId": "a8d60c71-1ba9-4c16-b7c4-75bdbed309d2",
+        "targetId": "c281c173-8126-4ade-9c50-240e30eaff23",
+        "relationshipType": "BUILDS_ON"
+      },
+      "timestampUtcMs": "2026-09-02T22:19:33.202Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "zu9dGBrJnlLcmjLJRUm11JYr5Ps=",
+    "timestampUtcMs": "2026-09-02T22:11:52.614Z",
+    "action": {
+      "type": "SET_CONTENT",
+      "input": {
+        "content": "```json\n{ \"auth\": { \"enabled\": true, \"admins\": [\"0x111\"],\n            \"renown\": { \"source\": \"remote\", \"url\": \"https://renown.acme.io\", \"switchboardUrl\": \"https://sb.acme.io/graphql\" } } }\n```\n\n| Field | Env override | Meaning |\n| --- | --- | --- |\n| `source` | `RENOWN_SOURCE` | `remote` (default) queries another instance; `self` reads this switchboard's own `renown-read-model` subgraph in-process |\n| `url` | `RENOWN_URL` | Renown base URL for discovery and the REST fallback; defaults to `https://www.renown.id` |\n| `switchboardUrl` | `SWITCHBOARD_URL` | A switchboard GraphQL endpoint to read credentials from directly, skipping discovery |\n\nEnv vars win over the config file **field by field**, and a blank value counts as unset. With `source: \"remote\"` the order is `switchboardUrl`, then discovery via `url`, then the Renown REST API at `url`. With `source: \"self\"` both URLs are ignored for verification, but `url` still applies to the switchboard's own identity.\n\n`self` requires a loaded package that provides the `renown-read-model` subgraph (`@powerhousedao/renown-package`); **startup fails if none does**, rather than booting a switchboard that rejects every authenticated request. The layering keeps core ignorant of Renown: `@renown/sdk` owns the read-model contract (`RENOWN_READ_MODEL_SUBGRAPH`, `createLocalCredentialVerifier`), the switchboard app wires it to the running reactor after the API is up, and `reactor-api` only supplies the generic `GraphQLManager.executeSubgraphQuery` plus an injectable `verifyCredential`. A host that sets `self` without injecting a verifier is refused at boot rather than silently verified against a remote Renown.\n\nSeparately, a switchboard has its **own identity** \u2014 the `ph login` keypair it uses to authenticate *outbound* to remote drives and services. It authenticates against `auth.renown.url` too, so one setting covers both directions; `identity.baseUrl` at startup points it elsewhere, and unset everywhere it falls back to `https://www.renown.id`.\n\n_Source: apps/switchboard/Auth.md (Powerhouse v6.2.2-dev.74)._\n\n## Provenance\n- `apps/switchboard/Auth.md` \u2014 'Which Renown Instance Is Used' and 'The Switchboard's Own Identity'\n\n_Recorded from the Powerhouse repository at **v6.2.2-dev.74** during the v6.2.2-dev.74 source sync._",
+        "updatedAt": "2026-09-02T22:11:52.614Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:11:52.614Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "",
+    "timestampUtcMs": "2026-09-02T22:19:33.651Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "metadata": {
+          "reason": "The Renown SDK is where the read-model contract and the local verifier used by source: self are defined",
+          "confidence": "grounded"
+        },
+        "sourceId": "a8d60c71-1ba9-4c16-b7c4-75bdbed309d2",
+        "targetId": "2ae31ea4-b8f4-4128-8531-93b932d6b6bb",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-09-02T22:19:33.651Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "wQmVg5VHDAo/Sxsxoii/HHZWAzI=",
+    "timestampUtcMs": "2026-09-02T22:11:52.614Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "a3b29eea-c590-4c16-a919-a65f7eef07c4",
+        "name": "switchboard"
+      },
+      "timestampUtcMs": "2026-09-02T22:11:52.614Z"
+    }
+  },
+  {
+    "index": 5,
+    "hash": "",
+    "timestampUtcMs": "2026-09-02T22:19:34.143Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "metadata": {
+          "reason": "The switchboard's outbound identity is the server-side sibling of the CLI's own DID-based access token",
+          "confidence": "established"
+        },
+        "sourceId": "a8d60c71-1ba9-4c16-b7c4-75bdbed309d2",
+        "targetId": "a4fda37c-db07-46ee-a5ad-85417a5accab",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-09-02T22:19:34.143Z"
+    }
+  },
+  {
+    "index": 5,
+    "hash": "MgZNj3FMej/1V4PocO/g8LWlNrg=",
+    "timestampUtcMs": "2026-09-02T22:11:52.614Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "873be30c-7741-4c48-981b-d0c6e92de2af",
+        "name": "renown"
+      },
+      "timestampUtcMs": "2026-09-02T22:11:52.614Z"
+    }
+  },
+  {
+    "index": 6,
+    "hash": "",
+    "timestampUtcMs": "2026-09-02T22:23:32.865Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "metadata": {
+          "reason": "Extracted from apps/switchboard/Auth.md at v6.2.2-dev.74 \u2014 'Which Renown Instance Is Used' and 'The Switchboard's Own Identity'",
+          "confidence": "grounded"
+        },
+        "sourceId": "a8d60c71-1ba9-4c16-b7c4-75bdbed309d2",
+        "targetId": "3729bcb2-e103-4c58-9152-ba3d3782bf19",
+        "relationshipType": "DERIVED_FROM"
+      },
+      "timestampUtcMs": "2026-09-02T22:23:32.865Z"
+    }
+  },
+  {
+    "index": 6,
+    "hash": "2LEcCj55T8FikMSITC6ST4LBtrA=",
+    "timestampUtcMs": "2026-09-02T22:11:52.614Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "a5112c49-f528-424c-a313-baf0403480e7",
+        "name": "configuration"
+      },
+      "timestampUtcMs": "2026-09-02T22:11:52.614Z"
+    }
+  },
+  {
+    "index": 7,
+    "hash": "",
+    "timestampUtcMs": "2026-09-02T22:23:33.476Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "metadata": {
+          "reason": "Configures which instance performs the credential existence check that the verification pipeline depends on",
+          "confidence": "grounded"
+        },
+        "sourceId": "a8d60c71-1ba9-4c16-b7c4-75bdbed309d2",
+        "targetId": "c281c173-8126-4ade-9c50-240e30eaff23",
+        "relationshipType": "BUILDS_ON"
+      },
+      "timestampUtcMs": "2026-09-02T22:23:33.476Z"
+    }
+  },
+  {
+    "index": 7,
+    "hash": "ri72SffSP5fKKY4kI2WA8gl83pU=",
+    "timestampUtcMs": "2026-09-02T22:11:52.614Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "bb116b03-5247-402f-87e4-ede1f794f9b2",
+        "name": "authentication"
+      },
+      "timestampUtcMs": "2026-09-02T22:11:52.614Z"
+    }
+  },
+  {
+    "index": 8,
+    "hash": "",
+    "timestampUtcMs": "2026-09-02T22:23:33.968Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "metadata": {
+          "reason": "The Renown SDK is where the read-model contract and the local verifier used by source: self are defined",
+          "confidence": "grounded"
+        },
+        "sourceId": "a8d60c71-1ba9-4c16-b7c4-75bdbed309d2",
+        "targetId": "2ae31ea4-b8f4-4128-8531-93b932d6b6bb",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-09-02T22:23:33.968Z"
+    }
+  },
+  {
+    "index": 8,
+    "hash": "n66K6WeOACAwZpDA6CJKi1hPJqw=",
+    "timestampUtcMs": "2026-09-02T22:11:52.614Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "version",
+        "value": "v6.2.2-dev.74",
+        "updatedAt": "2026-09-02T22:11:52.614Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:11:52.614Z"
+    }
+  },
+  {
+    "index": 9,
+    "hash": "",
+    "timestampUtcMs": "2026-09-02T22:23:34.634Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "metadata": {
+          "reason": "The switchboard's outbound identity is the server-side sibling of the CLI's own DID-based access token",
+          "confidence": "established"
+        },
+        "sourceId": "a8d60c71-1ba9-4c16-b7c4-75bdbed309d2",
+        "targetId": "a4fda37c-db07-46ee-a5ad-85417a5accab",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-09-02T22:23:34.634Z"
+    }
+  },
+  {
+    "index": 9,
+    "hash": "JP4bjZGaAKhSqRsupWdh1u5gkyk=",
+    "timestampUtcMs": "2026-09-02T22:11:52.614Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "filePath",
+        "value": "apps/switchboard/Auth.md",
+        "updatedAt": "2026-09-02T22:11:52.614Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:11:52.614Z"
+    }
+  },
+  {
+    "index": 10,
+    "hash": "TihXwyVcgZF4otwAH39tF93KIw4=",
+    "timestampUtcMs": "2026-09-02T22:11:52.614Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "confidence",
+        "value": "grounded",
+        "updatedAt": "2026-09-02T22:11:52.614Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:11:52.614Z"
+    }
+  },
+  {
+    "index": 11,
+    "hash": "76Gj83M2cVIBXDGds5yIbGsuPGc=",
+    "timestampUtcMs": "2026-09-02T22:11:55.310Z",
+    "action": {
+      "type": "SET_PROVENANCE",
+      "input": {
+        "author": "knowledge-agent",
+        "createdAt": "2026-09-02T22:11:55.310Z",
+        "sourceOrigin": "DERIVED"
+      },
+      "timestampUtcMs": "2026-09-02T22:11:55.310Z"
+    }
+  },
+  {
+    "index": 12,
+    "hash": "suE+3PTYwAC2UtTl8wfnb4jP2k0=",
+    "timestampUtcMs": "2026-09-02T22:11:55.807Z",
+    "action": {
+      "type": "SUBMIT_FOR_REVIEW",
+      "input": {
+        "id": "f2c86400-0f2e-4325-a7da-dc5b3cb39a5b",
+        "actor": "knowledge-agent",
+        "comment": "extracted from the Powerhouse repository at v6.2.2-dev.74",
+        "timestamp": "2026-09-02T22:11:55.806Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:11:55.807Z"
+    }
+  },
+  {
+    "index": 13,
+    "hash": "gtocIkxjW0NtpE9AP4rK/z5Czq8=",
+    "timestampUtcMs": "2026-09-02T22:11:56.300Z",
+    "action": {
+      "type": "APPROVE_NOTE",
+      "input": {
+        "id": "7ce05a80-2279-45ef-b48a-2bc5d7f4f412",
+        "actor": "liberuum",
+        "comment": "claim checked against the cited repository file at the pinned tag",
+        "timestamp": "2026-09-02T22:11:56.300Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:11:56.300Z"
+    }
+  },
+  {
+    "index": 14,
+    "hash": "ESa+zNZkhZqToKwiiglyEFAYYWM=",
+    "timestampUtcMs": "2026-09-02T22:16:09.036Z",
+    "action": {
+      "type": "SET_TITLE",
+      "input": {
+        "title": "auth.renown.source chooses whether credential checks query a remote Renown (remote, the default) or this switchboard's own renown-read-model subgraph in-process (self)",
+        "updatedAt": "2026-09-02T22:16:09.036Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:16:09.036Z"
+    }
+  },
+  {
+    "index": 15,
+    "hash": "ESa+zNZkhZqToKwiiglyEFAYYWM=",
+    "timestampUtcMs": "2026-09-02T22:16:09.036Z",
+    "action": {
+      "type": "SET_DESCRIPTION",
+      "input": {
+        "updatedAt": "2026-09-02T22:16:09.036Z",
+        "description": "Env overrides win field by field (RENOWN_SOURCE, RENOWN_URL, SWITCHBOARD_URL). remote tries switchboardUrl, discovery via url, then the REST API; self needs the renown package loaded or startup fails."
+      },
+      "timestampUtcMs": "2026-09-02T22:16:09.036Z"
+    }
+  },
+  {
+    "index": 16,
+    "hash": "ESa+zNZkhZqToKwiiglyEFAYYWM=",
+    "timestampUtcMs": "2026-09-02T22:16:09.036Z",
+    "action": {
+      "type": "SET_NOTE_TYPE",
+      "input": {
+        "noteType": "REFERENCE",
+        "updatedAt": "2026-09-02T22:16:09.036Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:16:09.036Z"
+    }
+  },
+  {
+    "index": 17,
+    "hash": "ESa+zNZkhZqToKwiiglyEFAYYWM=",
+    "timestampUtcMs": "2026-09-02T22:16:09.036Z",
+    "action": {
+      "type": "SET_CONTENT",
+      "input": {
+        "content": "```json\n{ \"auth\": { \"enabled\": true, \"admins\": [\"0x111\"],\n            \"renown\": { \"source\": \"remote\", \"url\": \"https://renown.acme.io\", \"switchboardUrl\": \"https://sb.acme.io/graphql\" } } }\n```\n\n| Field | Env override | Meaning |\n| --- | --- | --- |\n| `source` | `RENOWN_SOURCE` | `remote` (default) queries another instance; `self` reads this switchboard's own `renown-read-model` subgraph in-process |\n| `url` | `RENOWN_URL` | Renown base URL for discovery and the REST fallback; defaults to `https://www.renown.id` |\n| `switchboardUrl` | `SWITCHBOARD_URL` | A switchboard GraphQL endpoint to read credentials from directly, skipping discovery |\n\nEnv vars win over the config file **field by field**, and a blank value counts as unset. With `source: \"remote\"` the order is `switchboardUrl`, then discovery via `url`, then the Renown REST API at `url`. With `source: \"self\"` both URLs are ignored for verification, but `url` still applies to the switchboard's own identity.\n\n`self` requires a loaded package that provides the `renown-read-model` subgraph (`@powerhousedao/renown-package`); **startup fails if none does**, rather than booting a switchboard that rejects every authenticated request. The layering keeps core ignorant of Renown: `@renown/sdk` owns the read-model contract (`RENOWN_READ_MODEL_SUBGRAPH`, `createLocalCredentialVerifier`), the switchboard app wires it to the running reactor after the API is up, and `reactor-api` only supplies the generic `GraphQLManager.executeSubgraphQuery` plus an injectable `verifyCredential`. A host that sets `self` without injecting a verifier is refused at boot rather than silently verified against a remote Renown.\n\nSeparately, a switchboard has its **own identity** \u2014 the `ph login` keypair it uses to authenticate *outbound* to remote drives and services. It authenticates against `auth.renown.url` too, so one setting covers both directions; `identity.baseUrl` at startup points it elsewhere, and unset everywhere it falls back to `https://www.renown.id`.\n\n_Source: apps/switchboard/Auth.md (Powerhouse v6.2.2-dev.74)._\n\n## Provenance\n- `apps/switchboard/Auth.md` \u2014 'Which Renown Instance Is Used' and 'The Switchboard's Own Identity'\n\n_Recorded from the Powerhouse repository at **v6.2.2-dev.74** during the v6.2.2-dev.74 source sync._",
+        "updatedAt": "2026-09-02T22:16:09.036Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:16:09.036Z"
+    }
+  },
+  {
+    "index": 18,
+    "hash": "ESa+zNZkhZqToKwiiglyEFAYYWM=",
+    "timestampUtcMs": "2026-09-02T22:16:09.036Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "version",
+        "value": "v6.2.2-dev.74",
+        "updatedAt": "2026-09-02T22:16:09.036Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:16:09.036Z"
+    }
+  },
+  {
+    "index": 19,
+    "hash": "ESa+zNZkhZqToKwiiglyEFAYYWM=",
+    "timestampUtcMs": "2026-09-02T22:16:09.036Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "filePath",
+        "value": "apps/switchboard/Auth.md",
+        "updatedAt": "2026-09-02T22:16:09.036Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:16:09.036Z"
+    }
+  },
+  {
+    "index": 20,
+    "hash": "ESa+zNZkhZqToKwiiglyEFAYYWM=",
+    "timestampUtcMs": "2026-09-02T22:16:09.036Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "confidence",
+        "value": "grounded",
+        "updatedAt": "2026-09-02T22:16:09.036Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:16:09.036Z"
+    }
+  },
+  {
+    "index": 21,
+    "hash": "ydCbGzJp4PVq1UsSxNmKnLGmGDU=",
+    "timestampUtcMs": "2026-09-02T22:20:46.757Z",
+    "action": {
+      "type": "SET_TITLE",
+      "input": {
+        "title": "auth.renown.source chooses whether credential checks query a remote Renown (remote, the default) or this switchboard's own renown-read-model subgraph in-process (self)",
+        "updatedAt": "2026-09-02T22:20:46.757Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:20:46.757Z"
+    }
+  },
+  {
+    "index": 22,
+    "hash": "ydCbGzJp4PVq1UsSxNmKnLGmGDU=",
+    "timestampUtcMs": "2026-09-02T22:20:46.757Z",
+    "action": {
+      "type": "SET_DESCRIPTION",
+      "input": {
+        "updatedAt": "2026-09-02T22:20:46.757Z",
+        "description": "Env overrides win field by field (RENOWN_SOURCE, RENOWN_URL, SWITCHBOARD_URL). remote tries switchboardUrl, discovery via url, then the REST API; self needs the renown package loaded or startup fails."
+      },
+      "timestampUtcMs": "2026-09-02T22:20:46.757Z"
+    }
+  },
+  {
+    "index": 23,
+    "hash": "ydCbGzJp4PVq1UsSxNmKnLGmGDU=",
+    "timestampUtcMs": "2026-09-02T22:20:46.757Z",
+    "action": {
+      "type": "SET_NOTE_TYPE",
+      "input": {
+        "noteType": "REFERENCE",
+        "updatedAt": "2026-09-02T22:20:46.757Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:20:46.757Z"
+    }
+  },
+  {
+    "index": 24,
+    "hash": "ydCbGzJp4PVq1UsSxNmKnLGmGDU=",
+    "timestampUtcMs": "2026-09-02T22:20:46.757Z",
+    "action": {
+      "type": "SET_CONTENT",
+      "input": {
+        "content": "```json\n{ \"auth\": { \"enabled\": true, \"admins\": [\"0x111\"],\n            \"renown\": { \"source\": \"remote\", \"url\": \"https://renown.acme.io\", \"switchboardUrl\": \"https://sb.acme.io/graphql\" } } }\n```\n\n| Field | Env override | Meaning |\n| --- | --- | --- |\n| `source` | `RENOWN_SOURCE` | `remote` (default) queries another instance; `self` reads this switchboard's own `renown-read-model` subgraph in-process |\n| `url` | `RENOWN_URL` | Renown base URL for discovery and the REST fallback; defaults to `https://www.renown.id` |\n| `switchboardUrl` | `SWITCHBOARD_URL` | A switchboard GraphQL endpoint to read credentials from directly, skipping discovery |\n\nEnv vars win over the config file **field by field**, and a blank value counts as unset. With `source: \"remote\"` the order is `switchboardUrl`, then discovery via `url`, then the Renown REST API at `url`. With `source: \"self\"` both URLs are ignored for verification, but `url` still applies to the switchboard's own identity.\n\n`self` requires a loaded package that provides the `renown-read-model` subgraph (`@powerhousedao/renown-package`); **startup fails if none does**, rather than booting a switchboard that rejects every authenticated request. The layering keeps core ignorant of Renown: `@renown/sdk` owns the read-model contract (`RENOWN_READ_MODEL_SUBGRAPH`, `createLocalCredentialVerifier`), the switchboard app wires it to the running reactor after the API is up, and `reactor-api` only supplies the generic `GraphQLManager.executeSubgraphQuery` plus an injectable `verifyCredential`. A host that sets `self` without injecting a verifier is refused at boot rather than silently verified against a remote Renown.\n\nSeparately, a switchboard has its **own identity** \u2014 the `ph login` keypair it uses to authenticate *outbound* to remote drives and services. It authenticates against `auth.renown.url` too, so one setting covers both directions; `identity.baseUrl` at startup points it elsewhere, and unset everywhere it falls back to `https://www.renown.id`.\n\n_Source: apps/switchboard/Auth.md (Powerhouse v6.2.2-dev.74)._\n\n## Provenance\n- `apps/switchboard/Auth.md` \u2014 'Which Renown Instance Is Used' and 'The Switchboard's Own Identity'\n\n_Recorded from the Powerhouse repository at **v6.2.2-dev.74** during the v6.2.2-dev.74 source sync._",
+        "updatedAt": "2026-09-02T22:20:46.757Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:20:46.757Z"
+    }
+  },
+  {
+    "index": 25,
+    "hash": "ydCbGzJp4PVq1UsSxNmKnLGmGDU=",
+    "timestampUtcMs": "2026-09-02T22:20:46.757Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "version",
+        "value": "v6.2.2-dev.74",
+        "updatedAt": "2026-09-02T22:20:46.757Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:20:46.757Z"
+    }
+  },
+  {
+    "index": 26,
+    "hash": "ydCbGzJp4PVq1UsSxNmKnLGmGDU=",
+    "timestampUtcMs": "2026-09-02T22:20:46.757Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "filePath",
+        "value": "apps/switchboard/Auth.md",
+        "updatedAt": "2026-09-02T22:20:46.757Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:20:46.757Z"
+    }
+  },
+  {
+    "index": 27,
+    "hash": "ydCbGzJp4PVq1UsSxNmKnLGmGDU=",
+    "timestampUtcMs": "2026-09-02T22:20:46.757Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "confidence",
+        "value": "grounded",
+        "updatedAt": "2026-09-02T22:20:46.757Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:20:46.757Z"
+    }
+  }
+]

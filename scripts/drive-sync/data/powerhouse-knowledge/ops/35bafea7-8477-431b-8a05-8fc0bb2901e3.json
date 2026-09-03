@@ -1,0 +1,276 @@
+[
+  {
+    "index": 0,
+    "hash": "",
+    "timestampUtcMs": "2026-08-20T08:45:21.151Z",
+    "action": {
+      "type": "CREATE_DOCUMENT",
+      "input": {
+        "meta": {},
+        "name": "Frappe tracks changes only on DocTypes a developer has opted in",
+        "slug": "",
+        "model": "bai/knowledge-note",
+        "branch": "main",
+        "signing": {
+          "nonce": "",
+          "publicKey": {},
+          "signature": "35bafea7-8477-431b-8a05-8fc0bb2901e3",
+          "documentType": "bai/knowledge-note",
+          "createdAtUtcIso": "2026-08-20T08:45:21.151Z"
+        },
+        "version": 0,
+        "documentId": "35bafea7-8477-431b-8a05-8fc0bb2901e3",
+        "protocolVersions": {
+          "base-reducer": 2
+        }
+      },
+      "timestampUtcMs": "2026-08-20T08:45:21.151Z"
+    }
+  },
+  {
+    "index": 0,
+    "hash": "965LM9kjL1wLczdxFBPrBrwVxLo=",
+    "timestampUtcMs": "2026-08-20T08:45:21.839Z",
+    "action": {
+      "type": "SET_TITLE",
+      "input": {
+        "title": "Frappe tracks changes only on DocTypes a developer has opted in",
+        "updatedAt": "2026-08-20T08:45:21.839051Z"
+      },
+      "timestampUtcMs": "2026-08-20T08:45:21.839092Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "",
+    "timestampUtcMs": "2026-08-20T08:45:21.151Z",
+    "action": {
+      "type": "UPGRADE_DOCUMENT",
+      "input": {
+        "model": "bai/knowledge-note",
+        "toVersion": 1,
+        "documentId": "35bafea7-8477-431b-8a05-8fc0bb2901e3",
+        "fromVersion": 0,
+        "initialState": {
+          "auth": {
+            "grants": [],
+            "version": 0
+          },
+          "local": {
+            "lastViewedAt": null,
+            "personalTags": []
+          },
+          "global": {
+            "links": [],
+            "model": null,
+            "scope": null,
+            "title": null,
+            "editor": null,
+            "inputs": [],
+            "models": [],
+            "status": "DRAFT",
+            "topics": [],
+            "content": null,
+            "context": null,
+            "modelId": null,
+            "modules": [],
+            "outputs": [],
+            "version": null,
+            "computes": null,
+            "filePath": null,
+            "noteType": null,
+            "severity": null,
+            "hooksUsed": [],
+            "rootCause": null,
+            "confidence": null,
+            "consumedBy": [],
+            "provenance": null,
+            "sourceType": null,
+            "targetType": null,
+            "cardinality": null,
+            "description": null,
+            "alternatives": [],
+            "consequences": [],
+            "errorMessage": null,
+            "relationType": null,
+            "correctPattern": null,
+            "decisionStatus": null,
+            "dispatchTargets": [],
+            "lifecycleEvents": []
+          },
+          "document": {
+            "hash": {
+              "encoding": "base64",
+              "algorithm": "sha1"
+            },
+            "version": 1
+          }
+        }
+      },
+      "timestampUtcMs": "2026-08-20T08:45:21.151Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "zM0fKf5RmjzmlNC6nObTxxPHqWg=",
+    "timestampUtcMs": "2026-08-20T08:45:21.839Z",
+    "action": {
+      "type": "SET_DESCRIPTION",
+      "input": {
+        "updatedAt": "2026-08-20T08:45:21.839096Z",
+        "description": "Versioning is enabled per DocType by ticking Track Changes in Customize Form, so business events on untracked doctypes leave no version record at all."
+      },
+      "timestampUtcMs": "2026-08-20T08:45:21.839102Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "",
+    "timestampUtcMs": "2026-08-20T08:45:22.996Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "35bafea7-8477-431b-8a05-8fc0bb2901e3",
+        "targetId": "4d8e59af-51f2-4ab7-b290-e1d5744abbd7",
+        "relationshipType": "DERIVED_FROM"
+      },
+      "timestampUtcMs": "2026-08-20T08:45:22.996Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "DPeRz3/ShCTDu6MsUsPSv9oA8cs=",
+    "timestampUtcMs": "2026-08-20T08:45:21.839Z",
+    "action": {
+      "type": "SET_NOTE_TYPE",
+      "input": {
+        "noteType": "OBSERVATION",
+        "updatedAt": "2026-08-20T08:45:21.839105Z"
+      },
+      "timestampUtcMs": "2026-08-20T08:45:21.839110Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "3RcjI1zw57llQJ1xqNlRpFCokW0=",
+    "timestampUtcMs": "2026-08-20T08:45:21.839Z",
+    "action": {
+      "type": "SET_CONTENT",
+      "input": {
+        "content": "The ERPNext manual describes enabling it: *\"Go to Purchase Order List. Click on Customize from the drop-down menu... Check the field 'Track changes' in the Properties.\"* The framework's `save_version()` checks `track_changes` on the document meta before writing anything.\n\nSo coverage is a per-DocType configuration decision rather than a platform guarantee. Whether a given business event is recorded depends on whether somebody thought to tick a box on that doctype, and there is no signal at the point of the event that it went unrecorded.\n\nCombined with version history being deleted alongside its document, the practical answer to \"is this decision recorded?\" in a Frappe deployment is: only if configured, and only until the record is removed.",
+        "updatedAt": "2026-08-20T08:45:21.839125Z"
+      },
+      "timestampUtcMs": "2026-08-20T08:45:21.839134Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "eKm6Fjy9byCwyfwGPT2iGE3E0WA=",
+    "timestampUtcMs": "2026-08-20T08:45:21.839Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "ead75a8d-2298-4f31-bf4a-1d89786a7ad4",
+        "name": "tool-screen"
+      },
+      "timestampUtcMs": "2026-08-20T08:45:21.839145Z"
+    }
+  },
+  {
+    "index": 5,
+    "hash": "vn/mqF1UUaZCvwXK0ZLdCwFXEcs=",
+    "timestampUtcMs": "2026-08-20T08:45:21.839Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "a58ca39c-fc5d-4822-a9e0-d547b9f96aab",
+        "name": "erpnext"
+      },
+      "timestampUtcMs": "2026-08-20T08:45:21.839153Z"
+    }
+  },
+  {
+    "index": 6,
+    "hash": "P1Ylgd2GrU5U0jANKkG1IUtdXhY=",
+    "timestampUtcMs": "2026-08-20T08:45:21.839Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "e07b06a6-91f9-41a8-aacb-ad59376be398",
+        "name": "frappe"
+      },
+      "timestampUtcMs": "2026-08-20T08:45:21.839161Z"
+    }
+  },
+  {
+    "index": 7,
+    "hash": "Oqp7KruNUmQkPwdlsi/I5BDSDnY=",
+    "timestampUtcMs": "2026-08-20T08:45:21.839Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "b01c6765-0c78-458a-98d7-65155f82566e",
+        "name": "defaults"
+      },
+      "timestampUtcMs": "2026-08-20T08:45:21.839168Z"
+    }
+  },
+  {
+    "index": 8,
+    "hash": "07dDjPkUccaUY3jfTxCohvH2d/Q=",
+    "timestampUtcMs": "2026-08-20T08:45:21.839Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "fc8e4893-a025-42a9-9d38-bd4fca178af6",
+        "name": "audit-trail"
+      },
+      "timestampUtcMs": "2026-08-20T08:45:21.839176Z"
+    }
+  },
+  {
+    "index": 9,
+    "hash": "Qr95DiXVLAfz69XUUnMCz1XVDJ4=",
+    "timestampUtcMs": "2026-08-20T08:45:22.278Z",
+    "action": {
+      "type": "SET_PROVENANCE",
+      "input": {
+        "author": "knowledge-agent",
+        "createdAt": "2026-08-20T08:45:22.278849Z",
+        "sessionId": null,
+        "sourceOrigin": "DERIVED"
+      },
+      "timestampUtcMs": "2026-08-20T08:45:22.278890Z"
+    }
+  },
+  {
+    "index": 10,
+    "hash": "6ARkIkg1AUbt1WOuAqMpOCNWT54=",
+    "timestampUtcMs": "2026-08-20T08:45:23.198Z",
+    "action": {
+      "type": "SUBMIT_FOR_REVIEW",
+      "input": {
+        "id": "d6a62cab-6b6c-4d9f-81fc-ee7eca767fa4",
+        "actor": "knowledge-agent",
+        "comment": "Extracted from the primary-source tool screen; each claim quotable from a cited source.",
+        "timestamp": "2026-08-20T08:45:23.198869Z"
+      },
+      "timestampUtcMs": "2026-08-20T08:45:23.198889Z"
+    }
+  },
+  {
+    "index": 11,
+    "hash": "xYUlFM2GJwKQ/rRinl+N/AMDD6Q=",
+    "timestampUtcMs": "2026-08-20T08:45:23.352Z",
+    "action": {
+      "type": "APPROVE_NOTE",
+      "input": {
+        "id": "82e2fc06-8df2-40b3-9f3f-9f4bbfef7d5c",
+        "actor": "liberuum",
+        "comment": "Approved: tool-screen extraction.",
+        "timestamp": "2026-08-20T08:45:23.351989Z"
+      },
+      "timestampUtcMs": "2026-08-20T08:45:23.352009Z"
+    }
+  }
+]

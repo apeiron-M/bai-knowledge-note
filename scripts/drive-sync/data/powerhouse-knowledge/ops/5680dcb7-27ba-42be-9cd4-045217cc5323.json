@@ -1,0 +1,464 @@
+[
+  {
+    "index": 0,
+    "hash": "",
+    "timestampUtcMs": "2026-09-03T07:19:51.288Z",
+    "action": {
+      "type": "CREATE_DOCUMENT",
+      "input": {
+        "meta": {},
+        "name": "attachment-upload-handles",
+        "slug": "",
+        "model": "bai/knowledge-note",
+        "branch": "main",
+        "signing": {
+          "nonce": "",
+          "publicKey": {},
+          "signature": "5680dcb7-27ba-42be-9cd4-045217cc5323",
+          "documentType": "bai/knowledge-note",
+          "createdAtUtcIso": "2026-09-03T07:19:51.288Z"
+        },
+        "version": 0,
+        "documentId": "5680dcb7-27ba-42be-9cd4-045217cc5323",
+        "protocolVersions": {
+          "base-reducer": 2
+        }
+      },
+      "timestampUtcMs": "2026-09-03T07:19:51.288Z"
+    }
+  },
+  {
+    "index": 0,
+    "hash": "j/iulJYbxr7vRltAVHWSOssLyp0=",
+    "timestampUtcMs": "2026-09-03T07:19:52.719Z",
+    "action": {
+      "type": "SET_TITLE",
+      "input": {
+        "title": "Three upload handles verify the content hash three different ways, and hash verification is internal to the handle rather than visible to the caller",
+        "updatedAt": "2026-09-03T07:19:52.719Z"
+      },
+      "timestampUtcMs": "2026-09-03T07:19:52.719Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "",
+    "timestampUtcMs": "2026-09-03T07:19:51.288Z",
+    "action": {
+      "type": "UPGRADE_DOCUMENT",
+      "input": {
+        "model": "bai/knowledge-note",
+        "toVersion": 1,
+        "documentId": "5680dcb7-27ba-42be-9cd4-045217cc5323",
+        "fromVersion": 0,
+        "initialState": {
+          "auth": {
+            "grants": [],
+            "version": 0
+          },
+          "local": {
+            "lastViewedAt": null,
+            "personalTags": []
+          },
+          "global": {
+            "links": [],
+            "model": null,
+            "scope": null,
+            "title": null,
+            "editor": null,
+            "inputs": [],
+            "models": [],
+            "status": "DRAFT",
+            "topics": [],
+            "content": null,
+            "context": null,
+            "modelId": null,
+            "modules": [],
+            "outputs": [],
+            "version": null,
+            "computes": null,
+            "filePath": null,
+            "noteType": null,
+            "severity": null,
+            "hooksUsed": [],
+            "rootCause": null,
+            "confidence": null,
+            "consumedBy": [],
+            "provenance": null,
+            "sourceType": null,
+            "targetType": null,
+            "cardinality": null,
+            "description": null,
+            "alternatives": [],
+            "consequences": [],
+            "errorMessage": null,
+            "relationType": null,
+            "correctPattern": null,
+            "decisionStatus": null,
+            "dispatchTargets": [],
+            "lifecycleEvents": []
+          },
+          "document": {
+            "hash": {
+              "encoding": "base64",
+              "algorithm": "sha1"
+            },
+            "version": 1
+          }
+        }
+      },
+      "timestampUtcMs": "2026-09-03T07:19:51.288Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "HOn9nnT/esdyTcPHxNdRkq97oeE=",
+    "timestampUtcMs": "2026-09-03T07:19:52.719Z",
+    "action": {
+      "type": "SET_DESCRIPTION",
+      "input": {
+        "updatedAt": "2026-09-03T07:19:52.719Z",
+        "description": "SwitchboardAttachmentUpload hashes server-side inline, S3AttachmentUpload verifies via HeadObject's x-amz-checksum-sha256, DirectAttachmentUpload hashes inline into the local store."
+      },
+      "timestampUtcMs": "2026-09-03T07:19:52.719Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "",
+    "timestampUtcMs": "2026-09-03T07:21:25.779Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "metadata": {
+          "reason": "Extracted from packages/reactor/docs/attachments.md at v6.2.2-dev.74 \u2014 Design \u203a IAttachmentUpload table; Implementation: S3-Backed \u203a Hash Verification and Key Promotion",
+          "confidence": "grounded"
+        },
+        "sourceId": "5680dcb7-27ba-42be-9cd4-045217cc5323",
+        "targetId": "5b4a52c0-6345-4bfc-a279-76ea1f37db5d",
+        "relationshipType": "DERIVED_FROM"
+      },
+      "timestampUtcMs": "2026-09-03T07:21:25.779Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "U1ZH2csiojcIQa1n0qTZPu+kQ54=",
+    "timestampUtcMs": "2026-09-03T07:19:52.719Z",
+    "action": {
+      "type": "SET_NOTE_TYPE",
+      "input": {
+        "noteType": "ARCHITECTURE",
+        "updatedAt": "2026-09-03T07:19:52.719Z"
+      },
+      "timestampUtcMs": "2026-09-03T07:19:52.719Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "",
+    "timestampUtcMs": "2026-09-03T07:21:26.214Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "metadata": {
+          "reason": "That note covers the two reservation modes a caller chooses between; this one is what the three handles do underneath, and why the caller never sees a URL or a checksum header",
+          "confidence": "grounded"
+        },
+        "sourceId": "5680dcb7-27ba-42be-9cd4-045217cc5323",
+        "targetId": "bf2d1ef5-01a8-4688-86a6-0db24fa9120a",
+        "relationshipType": "BUILDS_ON"
+      },
+      "timestampUtcMs": "2026-09-03T07:21:26.214Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "QG8q+QW2c0C8Sg+nZ24e5Yvl33Q=",
+    "timestampUtcMs": "2026-09-03T07:19:52.719Z",
+    "action": {
+      "type": "SET_CONTENT",
+      "input": {
+        "content": "`IAttachmentService` implementations each supply their own upload handle, and the handle is where transport-specific verification hides:\n\n| Implementation | Handle behaviour |\n| --- | --- |\n| `SwitchboardAttachmentUpload` | streams to the switchboard's upload endpoint; hash computed **server-side inline** |\n| `S3AttachmentUpload` | PUTs to a presigned S3 URL; hash verified via **`HeadObject`** after upload |\n| `DirectAttachmentUpload` | streams to the local store; hash computed inline |\n\nThe design constraint this serves is stated at the top of the document: **the core interface never exposes URLs, headers, or any transport-specific detail.** The caller never sees signatures, verifiers, or presigned URLs \u2014 it calls `reserve()` and `send()` and receives a ref. That is what makes the same document model work whether Switchboard proxies bytes from a filesystem or S3 transfers them directly.\n\nThe S3 path is the one with a visible consequence, because verification requires a temporary key: the object is uploaded under `{keyPrefix}{reservationId}` (the hash is not yet known), `HeadObject` reads `x-amz-checksum-sha256` (uploads set `x-amz-checksum-algorithm: SHA256` internally so the checksum exists), and the handle then **promotes** the object \u2014 `CopyObject` to `{keyPrefix}{hash}`, `DeleteObject` the reservation key, upsert the row, delete the reservation. On dedup it skips the copy and deletes the reservation-keyed object. The payoff: every attachment ends at a deterministic hash-based key that a transport or CDN can resolve **from the hash alone, with no metadata lookup**.\n\n## Provenance\n- `packages/reactor/docs/attachments.md` \u2014 Design \u203a IAttachmentUpload table; Implementation: S3-Backed \u203a Hash Verification and Key Promotion\n\n_Extracted from the Powerhouse repository at **v6.2.2-dev.74**._",
+        "updatedAt": "2026-09-03T07:19:52.719Z"
+      },
+      "timestampUtcMs": "2026-09-03T07:19:52.719Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "",
+    "timestampUtcMs": "2026-09-03T07:21:26.669Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "metadata": {
+          "reason": "Every handle's send() ends in the same upsert-and-delete-reservation commit described in the schema",
+          "confidence": "grounded"
+        },
+        "sourceId": "5680dcb7-27ba-42be-9cd4-045217cc5323",
+        "targetId": "0a6393ba-6798-445d-8b24-d325b50e262e",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-09-03T07:21:26.669Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "+FK1CZuQGagfoMvcTc96ZGVv2tQ=",
+    "timestampUtcMs": "2026-09-03T07:19:52.719Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "34924e25-32d9-4c8c-a836-f19fe936caff",
+        "name": "attachments"
+      },
+      "timestampUtcMs": "2026-09-03T07:19:52.719Z"
+    }
+  },
+  {
+    "index": 5,
+    "hash": "",
+    "timestampUtcMs": "2026-09-03T07:23:17.320Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "metadata": {
+          "reason": "Extracted from packages/reactor/docs/attachments.md at v6.2.2-dev.74 \u2014 Design \u203a IAttachmentUpload table; Implementation: S3-Backed \u203a Hash Verification and Key Promotion",
+          "confidence": "grounded"
+        },
+        "sourceId": "5680dcb7-27ba-42be-9cd4-045217cc5323",
+        "targetId": "5b4a52c0-6345-4bfc-a279-76ea1f37db5d",
+        "relationshipType": "DERIVED_FROM"
+      },
+      "timestampUtcMs": "2026-09-03T07:23:17.320Z"
+    }
+  },
+  {
+    "index": 5,
+    "hash": "naPRUTm4GehieyJcizy6l+IinjM=",
+    "timestampUtcMs": "2026-09-03T07:19:52.719Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "135e92c7-2098-4288-bc48-6e77edc24625",
+        "name": "upload"
+      },
+      "timestampUtcMs": "2026-09-03T07:19:52.719Z"
+    }
+  },
+  {
+    "index": 6,
+    "hash": "",
+    "timestampUtcMs": "2026-09-03T07:23:17.801Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "metadata": {
+          "reason": "That note covers the two reservation modes a caller chooses between; this one is what the three handles do underneath, and why the caller never sees a URL or a checksum header",
+          "confidence": "grounded"
+        },
+        "sourceId": "5680dcb7-27ba-42be-9cd4-045217cc5323",
+        "targetId": "bf2d1ef5-01a8-4688-86a6-0db24fa9120a",
+        "relationshipType": "BUILDS_ON"
+      },
+      "timestampUtcMs": "2026-09-03T07:23:17.801Z"
+    }
+  },
+  {
+    "index": 6,
+    "hash": "4hKrYPZFZnPnx9hgAz+/w1L/DaM=",
+    "timestampUtcMs": "2026-09-03T07:19:52.719Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "7da97d53-60c6-49d6-9ac5-7d9c0eb9bc41",
+        "name": "s3"
+      },
+      "timestampUtcMs": "2026-09-03T07:19:52.719Z"
+    }
+  },
+  {
+    "index": 7,
+    "hash": "",
+    "timestampUtcMs": "2026-09-03T07:23:18.266Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "metadata": {
+          "reason": "Every handle's send() ends in the same upsert-and-delete-reservation commit described in the schema",
+          "confidence": "grounded"
+        },
+        "sourceId": "5680dcb7-27ba-42be-9cd4-045217cc5323",
+        "targetId": "0a6393ba-6798-445d-8b24-d325b50e262e",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-09-03T07:23:18.266Z"
+    }
+  },
+  {
+    "index": 7,
+    "hash": "L7WnX7yXQ6tQEQTAYdrXhJkUDhA=",
+    "timestampUtcMs": "2026-09-03T07:19:52.719Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "be145bf1-9663-4683-bf7f-6e965db00cbd",
+        "name": "switchboard"
+      },
+      "timestampUtcMs": "2026-09-03T07:19:52.719Z"
+    }
+  },
+  {
+    "index": 8,
+    "hash": "kgJeO1A/Gy461MH6W1+gWEK1m5Y=",
+    "timestampUtcMs": "2026-09-03T07:19:52.719Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "version",
+        "value": "v6.2.2-dev.74",
+        "updatedAt": "2026-09-03T07:19:52.719Z"
+      },
+      "timestampUtcMs": "2026-09-03T07:19:52.719Z"
+    }
+  },
+  {
+    "index": 9,
+    "hash": "1X2rUzBJAP7qQaxYWbxG/x3rtYg=",
+    "timestampUtcMs": "2026-09-03T07:19:52.719Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "filePath",
+        "value": "packages/reactor/docs/attachments.md",
+        "updatedAt": "2026-09-03T07:19:52.719Z"
+      },
+      "timestampUtcMs": "2026-09-03T07:19:52.719Z"
+    }
+  },
+  {
+    "index": 10,
+    "hash": "J1KfIGmozzlZcJSaodFKy6tO4cs=",
+    "timestampUtcMs": "2026-09-03T07:19:55.301Z",
+    "action": {
+      "type": "SET_PROVENANCE",
+      "input": {
+        "author": "knowledge-agent",
+        "createdAt": "2026-09-03T07:19:55.300Z",
+        "sourceOrigin": "DERIVED"
+      },
+      "timestampUtcMs": "2026-09-03T07:19:55.301Z"
+    }
+  },
+  {
+    "index": 11,
+    "hash": "Tk54ao0Jo7xGD5cj4wXzQ34HXX8=",
+    "timestampUtcMs": "2026-09-03T07:19:55.984Z",
+    "action": {
+      "type": "SUBMIT_FOR_REVIEW",
+      "input": {
+        "id": "ce6925ad-b5a1-428d-b307-5381c934ad22",
+        "actor": "knowledge-agent",
+        "comment": "extracted from packages/reactor/docs/attachments.md at v6.2.2-dev.74",
+        "timestamp": "2026-09-03T07:19:55.984Z"
+      },
+      "timestampUtcMs": "2026-09-03T07:19:55.984Z"
+    }
+  },
+  {
+    "index": 12,
+    "hash": "SSVl0J+KsO3+dMdSCMycyefwM3k=",
+    "timestampUtcMs": "2026-09-03T07:19:56.555Z",
+    "action": {
+      "type": "APPROVE_NOTE",
+      "input": {
+        "id": "4d5a8fc8-2494-4cdd-a734-d2002ea07424",
+        "actor": "liberuum",
+        "comment": "claim checked against the cited file at the pinned tag",
+        "timestamp": "2026-09-03T07:19:56.555Z"
+      },
+      "timestampUtcMs": "2026-09-03T07:19:56.555Z"
+    }
+  },
+  {
+    "index": 13,
+    "hash": "MbCZDrlLScuAykX/vQKal38FJ3g=",
+    "timestampUtcMs": "2026-09-03T07:22:32.714Z",
+    "action": {
+      "type": "SET_TITLE",
+      "input": {
+        "title": "Three upload handles verify the content hash three different ways, and hash verification is internal to the handle rather than visible to the caller",
+        "updatedAt": "2026-09-03T07:22:32.714Z"
+      },
+      "timestampUtcMs": "2026-09-03T07:22:32.714Z"
+    }
+  },
+  {
+    "index": 14,
+    "hash": "MbCZDrlLScuAykX/vQKal38FJ3g=",
+    "timestampUtcMs": "2026-09-03T07:22:32.714Z",
+    "action": {
+      "type": "SET_DESCRIPTION",
+      "input": {
+        "updatedAt": "2026-09-03T07:22:32.714Z",
+        "description": "SwitchboardAttachmentUpload hashes server-side inline, S3AttachmentUpload verifies via HeadObject's x-amz-checksum-sha256, DirectAttachmentUpload hashes inline into the local store."
+      },
+      "timestampUtcMs": "2026-09-03T07:22:32.714Z"
+    }
+  },
+  {
+    "index": 15,
+    "hash": "MbCZDrlLScuAykX/vQKal38FJ3g=",
+    "timestampUtcMs": "2026-09-03T07:22:32.714Z",
+    "action": {
+      "type": "SET_NOTE_TYPE",
+      "input": {
+        "noteType": "ARCHITECTURE",
+        "updatedAt": "2026-09-03T07:22:32.714Z"
+      },
+      "timestampUtcMs": "2026-09-03T07:22:32.714Z"
+    }
+  },
+  {
+    "index": 16,
+    "hash": "MbCZDrlLScuAykX/vQKal38FJ3g=",
+    "timestampUtcMs": "2026-09-03T07:22:32.714Z",
+    "action": {
+      "type": "SET_CONTENT",
+      "input": {
+        "content": "`IAttachmentService` implementations each supply their own upload handle, and the handle is where transport-specific verification hides:\n\n| Implementation | Handle behaviour |\n| --- | --- |\n| `SwitchboardAttachmentUpload` | streams to the switchboard's upload endpoint; hash computed **server-side inline** |\n| `S3AttachmentUpload` | PUTs to a presigned S3 URL; hash verified via **`HeadObject`** after upload |\n| `DirectAttachmentUpload` | streams to the local store; hash computed inline |\n\nThe design constraint this serves is stated at the top of the document: **the core interface never exposes URLs, headers, or any transport-specific detail.** The caller never sees signatures, verifiers, or presigned URLs \u2014 it calls `reserve()` and `send()` and receives a ref. That is what makes the same document model work whether Switchboard proxies bytes from a filesystem or S3 transfers them directly.\n\nThe S3 path is the one with a visible consequence, because verification requires a temporary key: the object is uploaded under `{keyPrefix}{reservationId}` (the hash is not yet known), `HeadObject` reads `x-amz-checksum-sha256` (uploads set `x-amz-checksum-algorithm: SHA256` internally so the checksum exists), and the handle then **promotes** the object \u2014 `CopyObject` to `{keyPrefix}{hash}`, `DeleteObject` the reservation key, upsert the row, delete the reservation. On dedup it skips the copy and deletes the reservation-keyed object. The payoff: every attachment ends at a deterministic hash-based key that a transport or CDN can resolve **from the hash alone, with no metadata lookup**.\n\n## Provenance\n- `packages/reactor/docs/attachments.md` \u2014 Design \u203a IAttachmentUpload table; Implementation: S3-Backed \u203a Hash Verification and Key Promotion\n\n_Extracted from the Powerhouse repository at **v6.2.2-dev.74**._",
+        "updatedAt": "2026-09-03T07:22:32.714Z"
+      },
+      "timestampUtcMs": "2026-09-03T07:22:32.714Z"
+    }
+  },
+  {
+    "index": 17,
+    "hash": "MbCZDrlLScuAykX/vQKal38FJ3g=",
+    "timestampUtcMs": "2026-09-03T07:22:32.714Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "version",
+        "value": "v6.2.2-dev.74",
+        "updatedAt": "2026-09-03T07:22:32.714Z"
+      },
+      "timestampUtcMs": "2026-09-03T07:22:32.714Z"
+    }
+  },
+  {
+    "index": 18,
+    "hash": "MbCZDrlLScuAykX/vQKal38FJ3g=",
+    "timestampUtcMs": "2026-09-03T07:22:32.714Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "filePath",
+        "value": "packages/reactor/docs/attachments.md",
+        "updatedAt": "2026-09-03T07:22:32.714Z"
+      },
+      "timestampUtcMs": "2026-09-03T07:22:32.714Z"
+    }
+  }
+]

@@ -1,0 +1,235 @@
+[
+  {
+    "index": 0,
+    "hash": "",
+    "timestampUtcMs": "2026-09-02T21:36:52.867Z",
+    "action": {
+      "type": "CREATE_DOCUMENT",
+      "input": {
+        "meta": {},
+        "name": "Academy \u203a Build \u203a Launch \u203a Docker deployment guide",
+        "slug": "",
+        "model": "bai/source",
+        "branch": "main",
+        "signing": {
+          "nonce": "",
+          "publicKey": {},
+          "signature": "56edb93f-5c3b-4c8b-a11f-5cfdcc252dee",
+          "documentType": "bai/source",
+          "createdAtUtcIso": "2026-09-02T21:36:52.867Z"
+        },
+        "version": 0,
+        "documentId": "56edb93f-5c3b-4c8b-a11f-5cfdcc252dee",
+        "protocolVersions": {
+          "base-reducer": 2
+        }
+      },
+      "timestampUtcMs": "2026-09-02T21:36:52.867Z"
+    }
+  },
+  {
+    "index": 0,
+    "hash": "PNG0n7I/bP2tdn7KCEdC06OKOtA=",
+    "timestampUtcMs": "2026-09-02T21:36:52.970Z",
+    "action": {
+      "type": "INGEST_SOURCE",
+      "input": {
+        "url": "https://github.com/powerhouse-inc/powerhouse/blob/v6.2.2-dev.47/apps/academy/docs/academy/03-Build/05-Launch/05-DockerDeployment.md",
+        "tool": "sync-repo-docs",
+        "title": "Academy \u203a Build \u203a Launch \u203a Docker deployment guide",
+        "author": "Powerhouse Inc.",
+        "method": "sha256:5378935bfdf3ab7335f126417082b5ec65f7460466fa0579069f98cd06a6236e git:v6.2.2-dev.47 (baseline recorded 2026-09-02)",
+        "content": "# Docker deployment guide\n\n## Introduction\n\nPowerhouse provides official Docker images for deploying your applications in containerized environments. This guide covers the available Docker images, how to use them with Docker Compose, and the environment variables you can configure.\n\nDocker deployment is ideal for:\n\n- **Production environments** that require consistent, reproducible deployments\n- **Development teams** that want to share a common environment\n- **CI/CD pipelines** that need automated testing and deployment\n- **Cloud platforms** like AWS ECS, Google Cloud Run, or Kubernetes\n\n:::tip[Deployment Options]\nThis guide covers **Docker-based deployment**. If you prefer **traditional VM/server deployment** with direct installation, see the [Setup Environment Guide](./03-SetupEnvironment.md).\n\n**Choose Docker if:** You want the fastest path to production, prefer containerized workflows, or are deploying to cloud platforms.\n**Choose Direct Installation if:** You need maximum performance, want full control, or are setting up a dedicated server.\n:::\n\n## Available Docker Images\n\nPowerhouse publishes three official Docker images to the GitHub Container Registry (ghcr.io):\n\n### 1. Connect\n\nThe Connect image provides the Powerhouse web application frontend with an embedded Nginx server.\n\n```\nghcr.io/powerhouse-inc/powerhouse/connect\n```\n\n**Available tags:**\n\n- `latest` - Latest stable release\n- `dev` - Development builds\n- `staging` - Staging builds\n- `vX.Y.Z` - Specific version tags (e.g., `v1.0.0`)\n\n### 2. Switchboard\n\nThe Switchboard image provides the backend API server that handles document synchronization and GraphQL endpoints.\n\n```\nghcr.io/powerhouse-inc/powerhouse/switchboard\n```\n\n**Available tags:**\n\n- `latest` - Latest stable release\n- `dev` - Development builds\n- `staging` - Staging builds\n- `vX.Y.Z` - Specific version tags (e.g., `v1.0.0`)\n\n### 3. Academy\n\nThe Academy image provides the documentation website.\n\n```\nghcr.io/powerhouse-inc/powerhouse/academy\n```\n\n**Available tags:**\n\n- `latest` - Latest stable release\n- `dev` - Development builds\n- `staging` - Staging builds\n- `vX.Y.Z` - Specific version tags (e.g., `v1.0.0`)\n\n## Quick Start with Docker Compose\n\nThe easiest way to run Powerhouse locally is using Docker Compose. Create a `docker-compose.yml` file or use the one provided in the repository:\n\n```yaml\nname: powerhouse\n\nservices:\n  connect:\n    image: ghcr.io/powerhouse-inc/powerhouse/connect:dev\n    environment:\n      - DATABASE_URL=postgres://postgres:postgres@postgres:5432/postgres\n      - BASE_PATH=/\n    ports:\n      - \"127.0.0.1:3000:4000\"\n    networks:\n      - powerhouse_network\n    depends_on:\n      postgres:\n        condition: service_healthy\n\n  switchboard:\n    image: ghcr.io/powerhouse-inc/powerhouse/switchboard:dev\n    environment:\n      - DATABASE_URL=postgres://postgres:postgres@postgres:5432/postgres\n    ports:\n      - \"127.0.0.1:4000:4001\"\n    networks:\n      - powerhouse_network\n    depends_on:\n      postgres:\n        condition: service_healthy\n\n  postgres:\n    image: postgres:16.1\n    ports:\n      - \"127.0.0.1:5444:5432\"\n    environment:\n      - POSTGRES_PASSWORD=postgres\n      - POSTGRES_DB=postgres\n      - POSTGRES_USER=postgres\n    networks:\n      - powerhouse_network\n    healthcheck:\n      test: [\"CMD-SHELL\", \"pg_isready -U postgres\"]\n      interval: 5s\n      timeout: 3s\n      retries: 3\n\nnetworks:\n  powerhouse_network:\n    name: powerhouse_network\n```\n\n### Running the Stack\n\nStart all services:\n\n```bash\ndocker compose up -d\n```\n\nView logs:\n\n```bash\ndocker compose logs -f\n```\n\nStop all services:\n\n```bash\ndocker compose down\n```\n\nAfter starting, you can access:\n\n- **Connect**: http://localhost:3000\n- **Switchboard**: http://localhost:4000\n\n## Configuring Connect at runtime\n\nConnect's runtime behavior is driven by `powerhouse.config.json` (the same file the build uses). For a Docker deployment you have three options:\n\n1. **Mount your own `powerhouse.config.json`** as a Kubernetes ConfigMap / Secret (or a bind-mounted file) at `/var/www/html/project/powerhouse.config.json`. The SPA fetches it from `/powerhouse.config.json` on every page load, so post-deploy edits are visible after a refresh.\n2. **Pass a JSON payload via the `PH_CONNECT_CONFIG_JSON` env var**. The entrypoint deep-merges it into the dist `powerhouse.config.json` at container start (operator-wins \u2014 concrete values in the payload override the baked file).\n3. **Edit the file at build time** via `ph connect build --json '{...}'` or individual `--flag`s, baking the values into the image.\n\nFor the full configuration model, precedence ladder, and the complete list of `connect.*` fields, see the [Configure Environment](./04-ConfigureEnvironment.md) guide.\n\n### Connect container env vars\n\nConnect's SPA reads runtime configuration from `/powerhouse.config.json`, never from env vars at runtime. The container entrypoint, however, can apply operator-supplied JSON to that file at startup (operator-wins) \u2014 equivalent to pre-running `ph connect config --json '{...}'` on the dist file. The SPA then reads the file as usual.\n\n#### Container shape and secrets\n\n| Variable                 | Description                                                 | Default  |\n| ------------------------ | ----------------------------------------------------------- | -------- |\n| `PORT`                   | Port the nginx server listens on                            | `3001`   |\n| `PH_CONNECT_BASE_PATH`   | nginx base URL path                                         | `/`      |\n| `PH_CONNECT_CONFIG_JSON` | Runtime config JSON to merge into the dist file (see below) | _unset_  |\n| `DATABASE_URL`           | PostgreSQL connection string (for Switchboard, not Connect) | Required |\n\nSentry (DSN, environment label, tracing flag) is no longer set via per-field env vars \u2014 those live in `connect.sentry.*` of `powerhouse.config.json` and ride through `PH_CONNECT_CONFIG_JSON` like every other runtime field. See the example below.\n\n#### `PH_CONNECT_CONFIG_JSON` (operator-wins)\n\nSet this env var to a JSON object that mirrors the `connect.*` block of `powerhouse.config.json`. At container start the entrypoint deep-merges it into the dist file with **operator-wins semantics**: a concrete value in the env JSON overwrites the baked/mounted file; a `null` leaf (or an omitted key) keeps the file's value. Exception: `connect.app.basePath` is ignored \u2014 the base path is baked into the bundled asset URLs at build time (rebuild with `--base`, or use `--dynamic-base`).\n\n```bash\ndocker run \\\n  -e PH_CONNECT_CONFIG_JSON='{\n    \"connect\": {\n      \"app\": { \"logLevel\": \"debug\" },\n      \"renown\": { \"url\": \"https://renown.staging.example\", \"chainId\": 137 },\n      \"drives\": {\n        \"defaultDrives\": [\n          { \"url\": \"https://drive-a.example\", \"name\": null, \"icon\": null }\n        ],\n        \"sections\": {\n          \"remote\": { \"enabled\": true, \"allowAdd\": false }\n        }\n      },\n      \"sentry\": {\n        \"dsn\": \"https://prod-key@sentry.io/1\",\n        \"env\": \"prod\",\n        \"tracing\": true\n      }\n    }\n  }' \\\n  connect:latest\n```\n\nThe schema for the JSON object lives at `packages/builder-tools/connect-utils/runtime-config.schema.json` (also served as the `$schema` URL of any generated file). The same shape that `ph connect config --json` accepts is what `PH_CONNECT_CONFIG_JSON` accepts here.\n\n**Invalid input behaviour:** malformed JSON or a non-object payload aborts container startup with a clear stderr message rather than silently dropping the operator's intent.\n\n**Migration from per-field env vars:** the previous `PH_CONNECT_LOG_LEVEL`, `PH_CONNECT_DISABLE_ADD_DRIVE`, `PH_CONNECT_RENOWN_URL`, `PH_CONNECT_DEFAULT_DRIVES_URL`, `PH_CONNECT_SENTRY_DSN`, `PH_CONNECT_SENTRY_ENV`, `PH_CONNECT_SENTRY_TRACING_ENABLED`, and similar per-field variables are no longer wired. Wrap their values into a single `PH_CONNECT_CONFIG_JSON` payload using the JSON paths shown above. The Sentry **release** tag is build-time only \u2014 it stamps into the bundle via Vite's `define` from `WORKSPACE_VERSION` so it always matches the sourcemap upload tag CI used.\n\n### Switchboard Environment Variables\n\n#### Core Configuration\n\n| Variable                      | Description                                            | Default    |\n| ----------------------------- | ------------------------------------------------------ | ---------- |\n| `PORT`                        | Port the server listens on                             | `3000`     |\n| `PH_SWITCHBOARD_PORT`         | Alias for PORT                                         | `$PORT`    |\n| `DATABASE_URL`                | PostgreSQL or SQLite connection string                 | `\"dev.db\"` |\n| `PH_SWITCHBOARD_DATABASE_URL` | Alias for DATABASE_URL                                 | `\"dev.db\"` |\n| `BASE_PATH`                   | Base URL path for the API                              | `\"/\"`      |\n| `PH_PACKAGES`                 | Comma-separated list of packages to install at startup | `\"\"`       |\n\n#### Authentication\n\n| Variable                       | Description                                                  | Default   |\n| ------------------------------ | ------------------------------------------------------------ | --------- |\n| `AUTH_ENABLED`                 | Enable authentication                                        | `\"false\"` |\n| `ADMINS`                       | Comma-separated list of admin wallet addresses (full access) | `\"\"`      |\n| `DEFAULT_PROTECTION`           | Make all new documents protected by default                  | `\"false\"` |\n| `DOCUMENT_PERMISSIONS_ENABLED` | Enable per-document permission management                    | `\"false\"` |\n\n#### Error Tracking & Monitoring\n\n| Variable                   | Description                                             | Default |\n| -------------------------- | ------------------------------------------------------- | ------- |\n| `SENTRY_DSN`               | Sentry DSN for error tracking                           | `\"\"`    |\n| `SENTRY_ENV`               | Sentry environment name (e.g., \"production\", \"staging\") | `\"\"`    |\n| `PYROSCOPE_SERVER_ADDRESS` | Pyroscope server address for performance profiling      | `\"\"`    |\n\n## Installing Custom Packages\n\nConnect loads custom packages via the `PH_REGISTRY_PACKAGES` environment variable (written to a registry config at startup). Switchboard installs packages via `PH_PACKAGES`.\n\n```yaml\nservices:\n  connect:\n    image: ghcr.io/powerhouse-inc/powerhouse/connect:dev\n    environment:\n      - PH_REGISTRY_PACKAGES=@powerhousedao/todo-demo-package,@powerhousedao/another-package\n```\n\nPackages are installed using the `ph install` command before the service starts.\n\n## Image Architecture\n\n### Connect Image\n\nThe Connect image is based on Alpine Linux and includes:\n\n- Node.js and pnpm\n- Nginx with Brotli compression\n- The `ph-cmd` CLI tool\n- A pre-initialized Powerhouse project\n\nAt startup, the entrypoint script:\n\n1. Loads any packages specified in `PH_REGISTRY_PACKAGES`\n2. Builds the Connect frontend with `ph connect build`\n3. Configures and starts Nginx to serve the built files\n\n### Switchboard Image\n\nThe Switchboard image is based on Node.js 24 and includes:\n\n- pnpm package manager\n- The `ph-cmd` CLI tool\n- Prisma CLI for database migrations\n- A pre-initialized Powerhouse project\n\nAt startup, the entrypoint script:\n\n1. Installs any packages specified in `PH_PACKAGES`\n2. Runs Prisma database migrations (if `PH_REACTOR_DATABASE_URL` is set)\n3. Starts the Switchboard server via Node.js\n\n## Production Considerations\n\n### Using Specific Version Tags\n\nFor production deployments, always use specific version tags instead of `latest` or `dev`:\n\n```yaml\nservices:\n  connect:\n    image: ghcr.io/powerhouse-inc/powerhouse/connect:v1.0.0\n  switchboard:\n    image: ghcr.io/powerhouse-inc/powerhouse/switchboard:v1.0.0\n```\n\n### Database Persistence\n\nFor production, ensure your PostgreSQL data is persisted using volumes:\n\n```yaml\nservices:\n  postgres:\n    image: postgres:16.1\n    volumes:\n      - postgres_data:/var/lib/postgresql/data\n    environment:\n      - POSTGRES_PASSWORD=your-secure-password\n      - POSTGRES_DB=powerhouse\n      - POSTGRES_USER=powerhouse\n\nvolumes:\n  postgres_data:\n```\n\n### Health Checks\n\nThe provided docker-compose.yml includes health checks for PostgreSQL. Services wait for the database to be healthy before starting, preventing connection errors during startup.\n\n### Network Security\n\nThe example configuration binds ports to `127.0.0.1` only:\n\n```yaml\nports:\n  - \"127.0.0.1:3000:4000\"\n```\n\nThis prevents direct external access. In production, use a reverse proxy (like Nginx or Traefik) to:\n\n- Terminate SSL/TLS\n- Handle load balancing\n- Provide additional security headers\n\n### Environment File\n\nFor better security, use a `.env` file instead of hardcoding credentials:\n\n```bash\n# .env\nPOSTGRES_PASSWORD=your-secure-password\nDATABASE_URL=postgres://powerhouse:your-secure-password@postgres:5432/powerhouse\n```\n\n```yaml\nservices:\n  switchboard:\n    image: ghcr.io/powerhouse-inc/powerhouse/switchboard:latest\n    env_file:\n      - .env\n```\n\n## Troubleshooting\n\n### Container Won't Start\n\nCheck the logs for errors:\n\n```bash\ndocker compose logs connect\ndocker compose logs switchboard\n```\n\n### Database Connection Issues\n\nEnsure the database is ready before services start:\n\n```bash\ndocker compose logs postgres\n```\n\nVerify the `DATABASE_URL` format:\n\n```\npostgres://user:password@host:port/database\n```\n\n### Package Installation Fails\n\nIf custom packages fail to install, check:\n\n1. Package name is correct\n2. Network connectivity from container\n3. Container has access to npm registry\n\n### Permission Issues\n\nIf you encounter permission issues with volumes:\n\n```bash\n# Fix ownership\nsudo chown -R 1000:1000 ./data\n```\n\n## Building Custom Images\n\nYou can extend the official images for custom deployments:\n\n```dockerfile\nFROM ghcr.io/powerhouse-inc/powerhouse/connect:latest\n\n# Install additional packages at build time\nRUN ph install @powerhousedao/my-custom-package\n\n# Add custom configuration\nCOPY my-nginx.conf /etc/nginx/nginx.conf.template\n```\n\nBuild and push your custom image:\n\n```bash\ndocker build -t my-registry/my-connect:latest .\ndocker push my-registry/my-connect:latest\n```\n\n## Next Steps\n\n- Learn about [Environment Configuration](./04-ConfigureEnvironment.md) for more detailed setup options\n- Explore [Publishing Your Project](./02-PublishYourProject.md) to create your own packages\n- Check the [Setup Environment Guide](./03-SetupEnvironment.md) for VM-based deployments\n",
+        "createdAt": "2026-09-02T21:36:52.970Z",
+        "createdBy": "repo-docs-sync",
+        "sourceType": "DOCUMENTATION",
+        "description": "Powerhouse v6.2.2-dev.47 \u2014 Powerhouse provides official Docker images for deploying your applications in containerized environments. This guide covers the available Docker\u2026",
+        "publishedAt": "2026-06-17T17:18:45.000Z"
+      },
+      "timestampUtcMs": "2026-09-02T21:36:52.970Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "",
+    "timestampUtcMs": "2026-09-02T21:36:52.867Z",
+    "action": {
+      "type": "UPGRADE_DOCUMENT",
+      "input": {
+        "model": "bai/source",
+        "toVersion": 1,
+        "documentId": "56edb93f-5c3b-4c8b-a11f-5cfdcc252dee",
+        "fromVersion": 0,
+        "initialState": {
+          "auth": {
+            "grants": [],
+            "version": 0
+          },
+          "local": {},
+          "global": {
+            "title": null,
+            "status": "INBOX",
+            "content": null,
+            "createdAt": null,
+            "createdBy": null,
+            "provenance": null,
+            "sourceType": null,
+            "description": null,
+            "extractedClaims": [],
+            "extractionStats": null
+          },
+          "document": {
+            "hash": {
+              "encoding": "base64",
+              "algorithm": "sha1"
+            },
+            "version": 1
+          }
+        }
+      },
+      "timestampUtcMs": "2026-09-02T21:36:52.867Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "yPODp4bwPK2yKHcOwjQZDCkVMsM=",
+    "timestampUtcMs": "2026-09-02T21:36:53.576Z",
+    "action": {
+      "type": "INGEST_SOURCE",
+      "input": {
+        "url": "https://github.com/powerhouse-inc/powerhouse/blob/v6.2.2-dev.74/apps/academy/docs/academy/03-Build/05-Launch/05-DockerDeployment.md",
+        "tool": "sync-repo-docs",
+        "title": "Academy \u203a Build \u203a Launch \u203a Docker deployment guide",
+        "author": "Powerhouse Inc.",
+        "method": "sha256:737ac7fb4b486c7db8be6c397735b32cf3c9b0bb35de5f85d248bd0ee9042d61 git:v6.2.2-dev.74",
+        "content": "# Docker deployment guide\n\n## Introduction\n\nPowerhouse provides official Docker images for deploying your applications in containerized environments. This guide covers the available Docker images, how to use them with Docker Compose, and the environment variables you can configure.\n\nDocker deployment is ideal for:\n\n- **Production environments** that require consistent, reproducible deployments\n- **Development teams** that want to share a common environment\n- **CI/CD pipelines** that need automated testing and deployment\n- **Cloud platforms** like AWS ECS, Google Cloud Run, or Kubernetes\n\n:::tip[Deployment Options]\nThis guide covers **Docker-based deployment**. If you prefer **traditional VM/server deployment** with direct installation, see the [Setup Environment Guide](./03-SetupEnvironment.md).\n\n**Choose Docker if:** You want the fastest path to production, prefer containerized workflows, or are deploying to cloud platforms.\n**Choose Direct Installation if:** You need maximum performance, want full control, or are setting up a dedicated server.\n:::\n\n## Available Docker Images\n\nPowerhouse publishes three official Docker images to the Vetra Harbor registry (`cr.vetra.io`):\n\n### 1. Connect\n\nThe Connect image provides the Powerhouse web application frontend with an embedded Nginx server.\n\n```\ncr.vetra.io/powerhouse-inc-powerhouse/connect\n```\n\n**Available tags:**\n\n- `latest` - Latest stable release\n- `dev` - Development builds (from `main`)\n- `staging` - Staging builds\n- `rc` - Release candidates\n- `vX.Y.Z` - Specific version tags (e.g., `v6.2.1`)\n\n### 2. Switchboard\n\nThe Switchboard image provides the backend API server that handles document synchronization and GraphQL endpoints.\n\n```\ncr.vetra.io/powerhouse-inc-powerhouse/switchboard\n```\n\n**Available tags:**\n\n- `latest` - Latest stable release\n- `dev` - Development builds (from `main`)\n- `staging` - Staging builds\n- `rc` - Release candidates\n- `vX.Y.Z` - Specific version tags (e.g., `v6.2.1`)\n\n### 3. Academy\n\nThe Academy image provides the documentation website.\n\n```\ncr.vetra.io/powerhouse-inc-powerhouse/academy\n```\n\n**Available tags:**\n\n- `latest` - Latest stable release\n- `dev` - Development builds\n- `staging` - Staging builds\n- `vX.Y.Z` - Specific version tags (e.g., `v1.0.0`)\n\n## Quick Start with Docker Compose\n\nThe easiest way to run Powerhouse locally is using Docker Compose. The repository ships ready-made compose files \u2014 `docker-compose.yml` (production, `latest`), plus per-channel variants `docker-compose.dev.yml` / `docker-compose.test.yml` (`rc`) / `docker-compose.staging.yml`, and a postgres-free `docker-compose.pglite.yml`. The default file:\n\n```yaml\nname: powerhouse\n\nservices:\n  connect:\n    image: cr.vetra.io/powerhouse-inc-powerhouse/connect:latest\n    # Auto-connect the SPA to the local switchboard.\n    environment:\n      - 'PH_CONNECT_CONFIG_JSON={\"connect\":{\"drives\":{\"defaultDrives\":[{\"url\":\"http://localhost:4000\",\"name\":null,\"icon\":null}]}}}'\n    ports:\n      - \"127.0.0.1:3000:3001\"\n    networks:\n      - powerhouse_network\n    hostname: connect.powerhouse\n    healthcheck:\n      test: [\"CMD\", \"wget\", \"-q\", \"--spider\", \"http://127.0.0.1:3001/health\"]\n      interval: 30s\n      timeout: 3s\n      start_period: 10s\n      retries: 3\n\n  switchboard:\n    image: cr.vetra.io/powerhouse-inc-powerhouse/switchboard:latest\n    environment:\n      # Reactor storage + entrypoint migration gate.\n      - PH_REACTOR_DATABASE_URL=postgres://postgres:postgres@postgres:5432/postgres\n      # Read-model storage. Both point at the same database.\n      - PH_SWITCHBOARD_DATABASE_URL=postgres://postgres:postgres@postgres:5432/postgres\n    ports:\n      - \"127.0.0.1:4000:3000\"\n    networks:\n      - powerhouse_network\n    hostname: switchboard.powerhouse\n    depends_on:\n      postgres:\n        condition: service_healthy\n    healthcheck:\n      test: [\"CMD\", \"curl\", \"-f\", \"http://127.0.0.1:3000/health\"]\n      interval: 30s\n      timeout: 3s\n      start_period: 30s\n      retries: 3\n\n  postgres:\n    image: postgres:16.1\n    ports:\n      - \"127.0.0.1:5444:5432\"\n    environment:\n      - POSTGRES_PASSWORD=postgres\n      - POSTGRES_DB=postgres\n      - POSTGRES_USER=postgres\n    volumes:\n      - postgres_data:/var/lib/postgresql/data\n    networks:\n      - powerhouse_network\n    healthcheck:\n      test: [\"CMD-SHELL\", \"pg_isready -U postgres\"]\n      interval: 5s\n      timeout: 3s\n      retries: 3\n\nnetworks:\n  powerhouse_network:\n\nvolumes:\n  postgres_data:\n```\n\n### Running the Stack\n\nStart all services:\n\n```bash\ndocker compose up -d\n```\n\nView logs:\n\n```bash\ndocker compose logs -f\n```\n\nStop all services:\n\n```bash\ndocker compose down\n```\n\nAfter starting, you can access:\n\n- **Connect**: http://localhost:3000\n- **Switchboard**: http://localhost:4000\n\n## Configuring Connect at runtime\n\nConnect's runtime behavior is driven by `powerhouse.config.json` (the same file the build uses). For a Docker deployment you have three options:\n\n1. **Mount your own `powerhouse.config.json`** as a Kubernetes ConfigMap / Secret (or a bind-mounted file) at `/var/www/html/project/powerhouse.config.json`. The SPA fetches it from `/powerhouse.config.json` on every page load, so post-deploy edits are visible after a refresh.\n2. **Pass a JSON payload via the `PH_CONNECT_CONFIG_JSON` env var**. The entrypoint deep-merges it into the dist `powerhouse.config.json` at container start (operator-wins \u2014 concrete values in the payload override the baked file).\n3. **Edit the file at build time** via `ph connect build --json '{...}'` or individual `--flag`s, baking the values into the image.\n\nFor the full configuration model, precedence ladder, and the complete list of `connect.*` fields, see the [Configure Environment](./04-ConfigureEnvironment.md) guide.\n\n### Connect container env vars\n\nConnect's SPA reads runtime configuration from `/powerhouse.config.json`, never from env vars at runtime. The container entrypoint, however, can apply operator-supplied JSON to that file at startup (operator-wins) \u2014 equivalent to pre-running `ph connect config --json '{...}'` on the dist file. The SPA then reads the file as usual.\n\n#### Container shape and secrets\n\n| Variable                 | Description                                                 | Default  |\n| ------------------------ | ----------------------------------------------------------- | -------- |\n| `PORT`                   | Port the nginx server listens on                            | `3001`   |\n| `PH_CONNECT_BASE_PATH`   | nginx base URL path                                         | `/`      |\n| `PH_CONNECT_CONFIG_JSON` | Runtime config JSON to merge into the dist file (see below) | _unset_  |\n\nConnect does **not** read any database variables \u2014 it is a static frontend. Database connection strings belong on the Switchboard service (see below).\n\nSentry (DSN, environment label, tracing flag) is no longer set via per-field env vars \u2014 those live in `connect.sentry.*` of `powerhouse.config.json` and ride through `PH_CONNECT_CONFIG_JSON` like every other runtime field. See the example below.\n\n#### `PH_CONNECT_CONFIG_JSON` (operator-wins)\n\nSet this env var to a JSON object that mirrors the `connect.*` block of `powerhouse.config.json`. At container start the entrypoint deep-merges it into the dist file with **operator-wins semantics**: a concrete value in the env JSON overwrites the baked/mounted file; a `null` leaf (or an omitted key) keeps the file's value. Exception: `connect.app.basePath` is ignored \u2014 the base path is baked into the bundled asset URLs at build time (rebuild with `--base`, or use `--dynamic-base`).\n\n```bash\ndocker run \\\n  -e PH_CONNECT_CONFIG_JSON='{\n    \"connect\": {\n      \"app\": { \"logLevel\": \"debug\" },\n      \"renown\": { \"url\": \"https://renown.staging.example\", \"chainId\": 137 },\n      \"drives\": {\n        \"defaultDrives\": [\n          { \"url\": \"https://drive-a.example\", \"name\": null, \"icon\": null }\n        ],\n        \"sections\": {\n          \"remote\": { \"enabled\": true, \"allowAdd\": false }\n        }\n      },\n      \"sentry\": {\n        \"dsn\": \"https://prod-key@sentry.io/1\",\n        \"env\": \"prod\",\n        \"tracing\": true\n      }\n    }\n  }' \\\n  connect:latest\n```\n\nThe schema for the JSON object lives at `packages/builder-tools/connect-utils/runtime-config.schema.json` (also served as the `$schema` URL of any generated file). The same shape that `ph connect config --json` accepts is what `PH_CONNECT_CONFIG_JSON` accepts here.\n\n**Invalid input behaviour:** malformed JSON or a non-object payload aborts container startup with a clear stderr message rather than silently dropping the operator's intent.\n\n**Migration from per-field env vars:** the previous `PH_CONNECT_LOG_LEVEL`, `PH_CONNECT_DISABLE_ADD_DRIVE`, `PH_CONNECT_RENOWN_URL`, `PH_CONNECT_DEFAULT_DRIVES_URL`, `PH_CONNECT_SENTRY_DSN`, `PH_CONNECT_SENTRY_ENV`, `PH_CONNECT_SENTRY_TRACING_ENABLED`, and similar per-field variables are no longer wired. Wrap their values into a single `PH_CONNECT_CONFIG_JSON` payload using the JSON paths shown above. The Sentry **release** tag is build-time only \u2014 it stamps into the bundle via Vite's `define` from `WORKSPACE_VERSION` so it always matches the sourcemap upload tag CI used.\n\n### Switchboard Environment Variables\n\n#### Storage (Postgres or embedded PGlite)\n\nSwitchboard stores the reactor and the read models in one of two backends. When a Postgres URL is set it uses Postgres; otherwise it falls back to its embedded **PGlite** storage (local directories `./.ph/reactor-storage` and `.ph/read-storage` relative to the working directory \u2014 persist that directory with a volume, as the repo's `docker-compose.pglite.yml` does).\n\n| Variable                      | Description                                                                    | Default           |\n| ----------------------------- | ------------------------------------------------------------------------------ | ----------------- |\n| `PH_REACTOR_DATABASE_URL`     | Postgres URL for reactor storage; also triggers the entrypoint's migrations    | _unset_ (PGlite)  |\n| `PH_SWITCHBOARD_DATABASE_URL` | Postgres URL for the read model and (as fallback) the reactor                  | _unset_ (PGlite)  |\n| `DATABASE_URL`                | Postgres URL for the read model (checked before `PH_SWITCHBOARD_DATABASE_URL`) | _unset_ (PGlite)  |\n\nFor a single-database deployment (the normal case, and what the repo's compose files do), set `PH_REACTOR_DATABASE_URL` and `PH_SWITCHBOARD_DATABASE_URL` to the same URL.\n\n| Variable              | Description                                                                    | Default  |\n| --------------------- | ------------------------------------------------------------------------------ | -------- |\n| `PH_PGLITE_IN_MEMORY` | `1` = run PGlite in memory (no persistence)                                    | _unset_  |\n| `PH_MIGRATE_PGLITE`   | `true` = migrate local PGlite data to the PG version this image ships          | _unset_  |\n| `PH_FORCE_PG_VERSION` | `16` or `17` = wipe the local PGlite data dirs and re-initialize at that major | _unset_  |\n| `SKIP_DB_MIGRATIONS`  | `true` = skip the entrypoint's Postgres migration run                          | _unset_  |\n\n#### Core Configuration\n\n| Variable                    | Description                                                          | Default                     |\n| --------------------------- | ------------------------------------------------------------------   | -------------------------   |\n| `PORT`                      | Port the server listens on (exported as `PH_SWITCHBOARD_PORT`)       | `3000`                      |\n| `PH_SWITCHBOARD_PORT`       | Explicit port override                                               | `$PORT`                     |\n| `PH_DEFAULT_DRIVE_TYPE`     | `powerhouse/document-drive` or `powerhouse/reactor-drive`            | _unset_                     |\n| `PH_PACKAGES`               | Comma-separated packages installed via pnpm at startup               | `\"\"`                        |\n| `PH_REGISTRY_PACKAGES`      | Comma-separated packages loaded over HTTP from the registry at start | `\"\"`                        |\n| `PH_REGISTRY_URL`           | Package registry base URL for HTTP package loading                   | `https://registry.vetra.io` |\n| `PH_SWITCHBOARD_PUBLIC_URL` | Public origin used for the remote attachment service                 | `http://localhost:$PORT`    |\n| `LOG_LEVEL`                 | Log level                                                            | `info`                      |\n\n#### Error Tracking & Monitoring\n\n| Variable                   | Description                                            | Default |\n| -------------------------- | ------------------------------------------------------ | ------- |\n| `SENTRY_DSN`               | Sentry DSN for error tracking                          | `\"\"`    |\n| `SENTRY_ENV`               | Sentry environment name (e.g. \"production\", \"staging\") | `\"\"`    |\n| `SENTRY_TRACING_ENABLED`   | `false` = errors-only Sentry mode (no tracing)         | _unset_ |\n| `TEMPO_ENDPOINT`           | OTLP HTTP endpoint for trace export (Grafana Tempo)    | `\"\"`    |\n| `PYROSCOPE_SERVER_ADDRESS` | Pyroscope server address for performance profiling     | `\"\"`    |\n\n## Installing Custom Packages\n\nThe two images load custom packages differently, matching where they run:\n\n- **Connect** loads packages **in the browser at runtime** from the package registry. The registry base URL is the top-level `packageRegistryUrl` field of `powerhouse.config.json` (baked in at image build time). To use different packages or a different registry in a deployment, override those top-level fields with `PH_CONNECT_CONFIG_JSON`, e.g.:\n\n  ```bash\n  PH_CONNECT_CONFIG_JSON='{\"packageRegistryUrl\":\"https://registry.example\",\"packages\":[{\"name\":\"@powerhousedao/todo-demo-package\",\"version\":\"1.0.0\"}]}'\n  ```\n\n- **Switchboard** loads packages **server-side at startup**, in one of two ways:\n  - `PH_PACKAGES` \u2014 comma-separated packages installed from the npm registry via pnpm before start.\n  - `PH_REGISTRY_PACKAGES` \u2014 comma-separated packages loaded over HTTP from `PH_REGISTRY_URL` at start.\n\n  ```yaml\n  services:\n    switchboard:\n      image: cr.vetra.io/powerhouse-inc-powerhouse/switchboard:dev\n      environment:\n        - PH_PACKAGES=@powerhousedao/todo-demo-package,@powerhousedao/another-package\n  ```\n\n## Image Architecture\n\nThe images are built from a single multi-stage `docker/Dockerfile` (build args: `TAG` \u2014 the release tag, and `GIT_SHA`). A shared base stage installs `ph-cmd` for the matching release channel and initializes a project; each target then builds what it needs.\n\n### Connect Image\n\nThe Connect target is **nginx:alpine** serving the static SPA \u2014 the frontend is built at **image build time** (`ph connect build`), not at container start. It runs as the non-root `nginx` user (UID 101), so pods can set `runAsNonRoot: true`.\n\nAt startup, the entrypoint script:\n\n1. Renders the nginx config from `nginx.conf.template` via envsubst (`PORT`, `PH_CONNECT_BASE_PATH`)\n2. Deep-merges `PH_CONNECT_CONFIG_JSON` into the dist `powerhouse.config.json` (operator-wins)\n3. Re-syncs the Content-Security-Policy registry origin in `index.html` to the effective `packageRegistryUrl`\n4. Validates the config (`nginx -t`) and starts nginx\n\n### Switchboard Image\n\nThe Switchboard target is **Node.js 24 (Alpine)** with pnpm and the `@powerhousedao/switchboard` package installed at image build time from the npm registry at the requested release tag.\n\nAt startup, the entrypoint script:\n\n1. Installs any packages listed in `PH_PACKAGES` (pnpm)\n2. Runs the reactor Postgres migrations (Kysely) if `PH_REACTOR_DATABASE_URL` points at a Postgres URL \u2014 PGlite migrations run automatically inside the server\n3. Starts the Switchboard server via Node.js\n\n## Production Considerations\n\n### Using Specific Version Tags\n\nFor production deployments, always use specific version tags instead of the floating `latest` / `dev` / `rc` / `staging` tags:\n\n```yaml\nservices:\n  connect:\n    image: cr.vetra.io/powerhouse-inc-powerhouse/connect:v6.2.1\n  switchboard:\n    image: cr.vetra.io/powerhouse-inc-powerhouse/switchboard:v6.2.1\n```\n\n### Database Persistence\n\nFor production, ensure your PostgreSQL data is persisted using volumes:\n\n```yaml\nservices:\n  postgres:\n    image: postgres:16.1\n    volumes:\n      - postgres_data:/var/lib/postgresql/data\n    environment:\n      - POSTGRES_PASSWORD=your-secure-password\n      - POSTGRES_DB=powerhouse\n      - POSTGRES_USER=powerhouse\n\nvolumes:\n  postgres_data:\n```\n\n### Health Checks\n\nThe provided compose files include health checks for all services: PostgreSQL (`pg_isready`), Connect (`/health` on nginx), and Switchboard (`/health` on the API). Switchboard only starts after the database is healthy, preventing connection errors during startup.\n\n### Network Security\n\nThe example configuration binds ports to `127.0.0.1` only:\n\n```yaml\nports:\n  - \"127.0.0.1:3000:3001\"\n```\n\nThis prevents direct external access. In production, use a reverse proxy (like Nginx or Traefik) to:\n\n- Terminate SSL/TLS\n- Handle load balancing\n- Provide additional security headers\n\n### Environment File\n\nFor better security, use a `.env` file instead of hardcoding credentials:\n\n```bash\n# .env\nPOSTGRES_PASSWORD=your-secure-password\nPH_REACTOR_DATABASE_URL=postgres://powerhouse:your-secure-password@postgres:5432/powerhouse\nPH_SWITCHBOARD_DATABASE_URL=postgres://powerhouse:your-secure-password@postgres:5432/powerhouse\n```\n\n```yaml\nservices:\n  switchboard:\n    image: cr.vetra.io/powerhouse-inc-powerhouse/switchboard:latest\n    env_file:\n      - .env\n```\n\n## Troubleshooting\n\n### Container Won't Start\n\nCheck the logs for errors:\n\n```bash\ndocker compose logs connect\ndocker compose logs switchboard\n```\n\n### Database Connection Issues\n\nEnsure the database is ready before services start:\n\n```bash\ndocker compose logs postgres\n```\n\nVerify the `PH_REACTOR_DATABASE_URL` / `PH_SWITCHBOARD_DATABASE_URL` format:\n\n```\npostgres://user:password@host:port/database\n```\n\n### Package Installation Fails\n\nIf custom packages fail to install, check:\n\n1. Package name is correct\n2. Network connectivity from container\n3. Container has access to npm registry\n\n### Permission Issues\n\nThe Connect container runs as the non-root `nginx` user (UID 101). If you bind-mount files or volumes into it, make sure they are readable by UID 101:\n\n```bash\n# Fix ownership for a bind-mounted Connect config\nsudo chown -R 101:101 ./my-config\n```\n\nSwitchboard runs as root, so host-side volume permissions are less restrictive there.\n\n## Building Custom Images\n\nYou can extend the official images for custom deployments:\n\n```dockerfile\n# Switchboard: add server-side packages at build time\nFROM cr.vetra.io/powerhouse-inc-powerhouse/switchboard:latest\nRUN pnpm add --shamefully-hoist @powerhousedao/my-custom-package\n```\n\n```dockerfile\n# Connect: the image is plain nginx serving the pre-built SPA (no Node.js,\n# no ph CLI). Customization means overriding the runtime config via\n# PH_CONNECT_CONFIG_JSON at deploy time, or swapping the served files/config:\nFROM cr.vetra.io/powerhouse-inc-powerhouse/connect:latest\nCOPY my-nginx.conf.template /etc/nginx/nginx.conf.template\n```\n\nBuild and push your custom image:\n\n```bash\ndocker build -t my-registry/my-switchboard:latest .\ndocker push my-registry/my-switchboard:latest\n```\n\n## Next Steps\n\n- Learn about [Environment Configuration](./04-ConfigureEnvironment.md) for more detailed setup options\n- Explore [Publishing Your Project](./02-PublishYourProject.md) to create your own packages\n- Check the [Setup Environment Guide](./03-SetupEnvironment.md) for VM-based deployments\n",
+        "createdAt": "2026-09-02T21:36:53.576Z",
+        "createdBy": "repo-docs-sync",
+        "sourceType": "DOCUMENTATION",
+        "description": "Powerhouse v6.2.2-dev.74 (revised between v6.2.2-dev.47 and v6.2.2-dev.74) \u2014 Powerhouse provides official Docker images for deploying your applications in containerized environments. This guide cover\u2026",
+        "publishedAt": "2026-08-24T13:07:10.000Z"
+      },
+      "timestampUtcMs": "2026-09-02T21:36:53.576Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "UhdiNIFPT1YgyMjTL4tx45J4Ef0=",
+    "timestampUtcMs": "2026-09-02T21:36:57.800Z",
+    "action": {
+      "type": "ADD_EXTRACTED_CLAIM",
+      "input": {
+        "claimRef": "96efe6c1-9193-4319-8ac2-c30f3933b832"
+      },
+      "timestampUtcMs": "2026-09-02T21:36:57.800Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "qVElOCCUgJfNrminUEfuXxZJhdw=",
+    "timestampUtcMs": "2026-09-02T21:36:59.261Z",
+    "action": {
+      "type": "ADD_EXTRACTED_CLAIM",
+      "input": {
+        "claimRef": "b153c532-0abc-4400-8448-4ac08046fcad"
+      },
+      "timestampUtcMs": "2026-09-02T21:36:59.261Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "9qMboHc8rluaZZWPpf252++UEeM=",
+    "timestampUtcMs": "2026-09-02T21:37:03.277Z",
+    "action": {
+      "type": "SET_SOURCE_STATUS",
+      "input": {
+        "status": "EXTRACTED"
+      },
+      "timestampUtcMs": "2026-09-02T21:37:03.277Z"
+    }
+  },
+  {
+    "index": 5,
+    "hash": "HkoQwpnhz1wuQL0+dWW92/YxSfU=",
+    "timestampUtcMs": "2026-09-02T22:23:44.576Z",
+    "action": {
+      "type": "ADD_EXTRACTED_CLAIM",
+      "input": {
+        "claimRef": "858a41b2-38e1-4c5a-9783-96fe985b3c43"
+      },
+      "timestampUtcMs": "2026-09-02T22:23:44.576Z"
+    }
+  },
+  {
+    "index": 6,
+    "hash": "k/AZ+iH2edsGphFGtg9uWoFesy8=",
+    "timestampUtcMs": "2026-09-02T22:24:01.347Z",
+    "action": {
+      "type": "ADD_EXTRACTED_CLAIM",
+      "input": {
+        "claimRef": "b5235e82-8994-46b4-bb10-a6ceeb1c5be0"
+      },
+      "timestampUtcMs": "2026-09-02T22:24:01.347Z"
+    }
+  },
+  {
+    "index": 7,
+    "hash": "yedwvnUgw1F4E5cB7BGx2Oxf3bE=",
+    "timestampUtcMs": "2026-09-02T22:24:03.951Z",
+    "action": {
+      "type": "ADD_EXTRACTED_CLAIM",
+      "input": {
+        "claimRef": "2cb501f3-7675-4e67-b758-e6ea6db16a8e"
+      },
+      "timestampUtcMs": "2026-09-02T22:24:03.951Z"
+    }
+  },
+  {
+    "index": 8,
+    "hash": "C5Xkjzh1ToYj5rRdoJiuz9/Kszw=",
+    "timestampUtcMs": "2026-09-02T22:24:34.993Z",
+    "action": {
+      "type": "ADD_EXTRACTED_CLAIM",
+      "input": {
+        "claimRef": "e80cffd2-a26e-426d-b722-dc068817ea7c"
+      },
+      "timestampUtcMs": "2026-09-02T22:24:34.993Z"
+    }
+  },
+  {
+    "index": 9,
+    "hash": "RdQfBVghUpHyuochctH0Mkhqidg=",
+    "timestampUtcMs": "2026-09-02T22:24:39.815Z",
+    "action": {
+      "type": "ADD_EXTRACTED_CLAIM",
+      "input": {
+        "claimRef": "0168d518-b02c-42b9-9d6f-add7494a8f1d"
+      },
+      "timestampUtcMs": "2026-09-02T22:24:39.815Z"
+    }
+  },
+  {
+    "index": 10,
+    "hash": "mXil86c9XKdBSj48RaW/E/RCFVs=",
+    "timestampUtcMs": "2026-09-02T22:24:43.856Z",
+    "action": {
+      "type": "ADD_EXTRACTED_CLAIM",
+      "input": {
+        "claimRef": "15121fe4-c0d6-44bf-b8fd-cc5d4e4dda61"
+      },
+      "timestampUtcMs": "2026-09-02T22:24:43.856Z"
+    }
+  },
+  {
+    "index": 11,
+    "hash": "SyqdwM+eB1dNuzfKgz/X/tu+9fo=",
+    "timestampUtcMs": "2026-09-02T22:24:50.589Z",
+    "action": {
+      "type": "ADD_EXTRACTED_CLAIM",
+      "input": {
+        "claimRef": "9cb4d4a2-9554-4937-af66-b2d5662b4124"
+      },
+      "timestampUtcMs": "2026-09-02T22:24:50.589Z"
+    }
+  }
+]

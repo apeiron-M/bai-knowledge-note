@@ -1,0 +1,101 @@
+{
+  "links": [
+    {
+      "id": "lnk-e2186433-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "e2186433-6a5b-4e9a-90e8-37c698b35e89",
+      "targetTitle": "moc-attributable-skills-provenance"
+    },
+    {
+      "id": "lnk-ee0b4542-bui",
+      "linkType": "BUILDS_ON",
+      "targetDocumentId": "ee0b4542-988d-4c21-9dc5-72c1eafbbe45",
+      "targetTitle": "skills-provenance-blind"
+    },
+    {
+      "id": "lnk-2b423487-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "2b423487-123f-414c-bd20-edce7de891f4",
+      "targetTitle": "skills-as-attributable-transformations"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Untyped knowledge-layer writes cause authorship erosion, confidence laundering, and reflexive contamination",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "59a974ca-b95e-4a7f-a489-9e106179ca35",
+      "name": "knowledge-vault",
+      "topicDocumentId": null
+    },
+    {
+      "id": "06dee680-dfb7-4db2-bf59-f02588b16549",
+      "name": "provenance",
+      "topicDocumentId": null
+    },
+    {
+      "id": "1a60042d-2511-4ec5-882c-715022589817",
+      "name": "epistemology",
+      "topicDocumentId": null
+    },
+    {
+      "id": "820d5e05-ebd5-495d-a67c-754f61bccdf6",
+      "name": "agent-skills",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "## Claim\n\nProvenance over ephemeral artifacts is not enough when skills write into persistent memory the human treats as their own thinking.\n\nThree contaminations follow:\n\n1. **Authorship erosion** \u2014 cannot tell human notes from skill drafts months later\n2. **Confidence laundering** \u2014 low-confidence agent claims land as flat facts and get cited as prior\n3. **Reflexive contamination** \u2014 later skills read agent-authored vault text as if it were human prior thinking\n\n## Remedy direction\n\nForce typed epistemic standing at write time (author, producer skill, epistemic mode, confidence, sources, review status) so the vault stays queryable along *mine vs agent* axes.\n\n## Methodology grounding\nThe claims below live in the plugin's `data/methodology/` corpus; the relationship is stated per claim.\n\n- **[[agents are simultaneously methodology executors and subjects creating a unique trust asymmetry]]** \u2014 BUILDS_ON. The asymmetry is why these three failures are structural rather than careless: the agent writing the record is also the subject the record will later be judged by, so nothing inside the agent's own reasoning distinguishes its inference from its evidence. Typing the write moves that distinction outside the agent.\n- **[[agent self-memory should be architecturally separate from user knowledge systems]]** \u2014 RELATES_TO. Reflexive contamination is precisely what an unseparated self-space produces: the agent's working beliefs leak into the corpus it is supposed to be reporting on.\n",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "CONCEPT",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "knowledge-agent",
+    "createdAt": "2026-08-16T20:32:42.805Z",
+    "sessionId": null,
+    "updatedAt": "2026-09-03T10:03:24.619Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "When skills write flat statements into long-lived memory, humans lose authorship boundaries and agents later treat agent text as human prior.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "f914287a-1c40-4ec0-b96a-e10f6b536edb",
+      "actor": "knowledge-agent",
+      "comment": "pipeline extract",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-16T20:32:43.740Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "c7ca2b19-c083-49fa-8aa1-a263c9f8b0ba",
+      "actor": "pipeline-reviewer",
+      "comment": "pipeline verify",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-16T20:32:43.885Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

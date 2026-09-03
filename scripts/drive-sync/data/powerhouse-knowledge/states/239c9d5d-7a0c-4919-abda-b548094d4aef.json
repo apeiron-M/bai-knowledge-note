@@ -1,0 +1,94 @@
+{
+  "links": [
+    {
+      "id": "lnk-7c838a1f-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "7c838a1f-9df8-493c-a03d-40a9b3490db4",
+      "targetTitle": "Creetion \u2014 Camunda (unverified)"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Creetion holds Flowable rather than Camunda but belongs in the same cohort",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "375ec330-0942-4d5f-9222-5ced5479a469",
+      "name": "leads",
+      "topicDocumentId": null
+    },
+    {
+      "id": "6ab4126b-f7c4-4723-ac07-423c9b5f6fe3",
+      "name": "creetion",
+      "topicDocumentId": null
+    },
+    {
+      "id": "9c74502d-4082-4422-a149-c266c37c7e3a",
+      "name": "flowable",
+      "topicDocumentId": null
+    },
+    {
+      "id": "6b5c05fe-ef28-4d1a-bb06-344af8bcc874",
+      "name": "camunda",
+      "topicDocumentId": null
+    },
+    {
+      "id": "b33444dc-e145-4f39-a13b-3223ad26ac70",
+      "name": "process-orchestration",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "Creetion holds Flowable rather than Camunda. The research treats it as part of the Camunda cohort anyway, on the ground that Flowable carries the same open-source orchestration logic: a process engine that decides when things happen, without keeping an append-only record of what was decided. The gap the cohort is built around is a property of that architecture rather than of the vendor's name.\n\nThat makes Creetion a useful test of how far the cohort argument travels. If the pitch works for a Flowable shop with no change beyond substituting the product name, the thesis is about orchestration engines generally. If it needs rework, then some of what looked general was in fact Camunda-specific.\n\nOne data caveat belongs on the record: the lead's own tool field still reads \"Camunda (unverified)\" while the research text says Flowable. The text is the more specific statement and should be treated as the correction, but anyone filtering this corpus by tool string will file this lead in the wrong place. Priority 3.\n\n---\n\n## Leads sharing this finding (1)\n\n**3 \u00b7 later**\n- Creetion (NL)\n\nVerbatim research text this claim was extracted from:\n\n> Holds FLOWABLE rather than Camunda - the same open-source orchestration logic. Worth treating as part of this cohort.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "OBSERVATION",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "knowledge-agent",
+    "createdAt": "2026-08-19T11:28:30.411553Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-19T11:28:31.901450Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Flowable carries the same open-source orchestration logic, so the cohort argument transfers; the lead's own tool field still records Camunda, which mis-files it.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "be076382-4df1-436a-a7ef-0be0b85c44c0",
+      "actor": "knowledge-agent",
+      "comment": "Extracted from lead research; claim checked against the source record.",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-19T11:28:31.659405Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "b63c4c60-f907-4905-bb55-1526e559848e",
+      "actor": "liberuum",
+      "comment": "Approved: lead corpus extraction.",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-19T11:28:31.901450Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

@@ -1,0 +1,91 @@
+{
+  "links": [
+    {
+      "id": "lnk-e82a1bf5-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "e82a1bf5-b17f-47fe-94e5-d1b24dcd3d82",
+      "targetTitle": "subscription-instance-model-tracks-active-customer-subscriptions-with-lifecycle-"
+    },
+    {
+      "id": "lnk-9c9ffb95-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "9c9ffb95-9100-4839-b00e-57ec8b6ccbe6",
+      "targetTitle": "account-transactions-model-tracks-financial-transaction-records"
+    },
+    {
+      "id": "lnk-649207b4-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "649207b4-bb53-45aa-aa4a-6570116b7f8e",
+      "targetTitle": "ecosystem-map"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "billing-statement model captures periodic billing summaries",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "732868c4-1566-467f-a47b-7867fc0cce17",
+      "name": "billing-statement",
+      "topicDocumentId": null
+    },
+    {
+      "id": "2f885dc5-377b-4c41-a1da-d0661733f224",
+      "name": "finance-billing",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "# billing-statement model captures periodic billing summaries\n\n`powerhouse/billing-statement` (7 ops) produces periodic billing summaries. Since [[subscription-instance model tracks active customer subscriptions with lifecycle state]], billing statements likely aggregate subscription charges per billing cycle.\n\n## Cross-Model References\n\n- SubscriptionInstance \u2192 BillingStatement (billing cycle outputs)\n- May reference [[accounts model defines the chart of accounts structure]] for account assignment\n- May feed into [[invoice model generates formal payment requests]]\n\n---\n\nTopics:\n- [[ecosystem map]]\n- [[object relations]]",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "ARCHITECTURE",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "knowledge-agent",
+    "createdAt": "2026-04-03T13:40:58.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-09-03T09:58:45.318Z",
+    "sourceOrigin": "IMPORT"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "7 operations \u2014 aggregates billing data into periodic statements; referenced from subscription-instance for billing cycle outputs",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "7a45c31f-db46-4285-bb5e-505a4b0d7b86",
+      "actor": "claude",
+      "comment": "Knowledge registered against powerhouse v6.2.2-dev.47",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-14T12:00:00.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "44a89550-608d-47d8-83dc-9a343e25a9d1",
+      "actor": "liberuum",
+      "comment": "Canonical as of powerhouse v6.2.2-dev.47",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-14T12:00:00.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

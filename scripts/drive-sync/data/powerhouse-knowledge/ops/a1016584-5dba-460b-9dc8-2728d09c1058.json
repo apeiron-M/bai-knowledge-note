@@ -1,0 +1,604 @@
+[
+  {
+    "index": 0,
+    "hash": "",
+    "timestampUtcMs": "2026-09-02T22:12:03.670Z",
+    "action": {
+      "type": "CREATE_DOCUMENT",
+      "input": {
+        "meta": {},
+        "name": "connect-runtime-config",
+        "slug": "",
+        "model": "bai/knowledge-note",
+        "branch": "main",
+        "signing": {
+          "nonce": "",
+          "publicKey": {},
+          "signature": "a1016584-5dba-460b-9dc8-2728d09c1058",
+          "documentType": "bai/knowledge-note",
+          "createdAtUtcIso": "2026-09-02T22:12:03.670Z"
+        },
+        "version": 0,
+        "documentId": "a1016584-5dba-460b-9dc8-2728d09c1058",
+        "protocolVersions": {
+          "base-reducer": 2
+        }
+      },
+      "timestampUtcMs": "2026-09-02T22:12:03.670Z"
+    }
+  },
+  {
+    "index": 0,
+    "hash": "isF3QMMxZF5wh4bj8nogVHLwqEc=",
+    "timestampUtcMs": "2026-09-02T22:12:03.562Z",
+    "action": {
+      "type": "SET_TITLE",
+      "input": {
+        "title": "Connect's runtime configuration is one powerhouse.config.json fetched once at boot \u2014 a hand-edited source and a built dist \u2014 and the SPA never reads environment variables",
+        "updatedAt": "2026-09-02T22:12:03.562Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:12:03.562Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "",
+    "timestampUtcMs": "2026-09-02T22:12:03.670Z",
+    "action": {
+      "type": "UPGRADE_DOCUMENT",
+      "input": {
+        "model": "bai/knowledge-note",
+        "toVersion": 1,
+        "documentId": "a1016584-5dba-460b-9dc8-2728d09c1058",
+        "fromVersion": 0,
+        "initialState": {
+          "auth": {
+            "grants": [],
+            "version": 0
+          },
+          "local": {
+            "lastViewedAt": null,
+            "personalTags": []
+          },
+          "global": {
+            "links": [],
+            "model": null,
+            "scope": null,
+            "title": null,
+            "editor": null,
+            "inputs": [],
+            "models": [],
+            "status": "DRAFT",
+            "topics": [],
+            "content": null,
+            "context": null,
+            "modelId": null,
+            "modules": [],
+            "outputs": [],
+            "version": null,
+            "computes": null,
+            "filePath": null,
+            "noteType": null,
+            "severity": null,
+            "hooksUsed": [],
+            "rootCause": null,
+            "confidence": null,
+            "consumedBy": [],
+            "provenance": null,
+            "sourceType": null,
+            "targetType": null,
+            "cardinality": null,
+            "description": null,
+            "alternatives": [],
+            "consequences": [],
+            "errorMessage": null,
+            "relationType": null,
+            "correctPattern": null,
+            "decisionStatus": null,
+            "dispatchTargets": [],
+            "lifecycleEvents": []
+          },
+          "document": {
+            "hash": {
+              "encoding": "base64",
+              "algorithm": "sha1"
+            },
+            "version": 1
+          }
+        }
+      },
+      "timestampUtcMs": "2026-09-02T22:12:03.670Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "pc5CvNBqFELg1jBS0PMbecdAoYk=",
+    "timestampUtcMs": "2026-09-02T22:12:03.562Z",
+    "action": {
+      "type": "SET_DESCRIPTION",
+      "input": {
+        "updatedAt": "2026-09-02T22:12:03.562Z",
+        "description": "Precedence: DEFAULT_CONNECT_CONFIG < source.connect < ph connect build overrides, then PH_CONNECT_CONFIG_JSON at container start. Layers merge leaf by leaf and arrays replace; config dual-writes."
+      },
+      "timestampUtcMs": "2026-09-02T22:12:03.562Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "",
+    "timestampUtcMs": "2026-09-02T22:19:40.273Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "metadata": {
+          "reason": "Extracted from apps/connect/RUNTIME-CONFIG.md at v6.2.2-dev.74 \u2014 TL;DR, 'The file', 'Setting values \u2014 the precedence ladder', 'The five ways to feed a value into a layer', 'How Connect reads the file at boot'",
+          "confidence": "grounded"
+        },
+        "sourceId": "a1016584-5dba-460b-9dc8-2728d09c1058",
+        "targetId": "067ef151-e1a1-4a1a-91de-faaef1614f94",
+        "relationshipType": "DERIVED_FROM"
+      },
+      "timestampUtcMs": "2026-09-02T22:19:40.273Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "V8lr/PLpKyoZCOgW4V9DOXEjrio=",
+    "timestampUtcMs": "2026-09-02T22:12:03.562Z",
+    "action": {
+      "type": "SET_NOTE_TYPE",
+      "input": {
+        "noteType": "ARCHITECTURE",
+        "updatedAt": "2026-09-02T22:12:03.562Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:12:03.562Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "",
+    "timestampUtcMs": "2026-09-02T22:19:41.464Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "metadata": {
+          "reason": "PH_CONNECT_CONFIG_JSON is the deploy-time top of the precedence ladder described here",
+          "confidence": "grounded"
+        },
+        "sourceId": "a1016584-5dba-460b-9dc8-2728d09c1058",
+        "targetId": "96efe6c1-9193-4319-8ac2-c30f3933b832",
+        "relationshipType": "BUILDS_ON"
+      },
+      "timestampUtcMs": "2026-09-02T22:19:41.464Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "Hx3RFBnmgUkVdqyO+uFhiNp9IAM=",
+    "timestampUtcMs": "2026-09-02T22:12:03.562Z",
+    "action": {
+      "type": "SET_CONTENT",
+      "input": {
+        "content": "The file exists twice: a hand-edited **source** in the project root (next to `package.json`, also carrying keys other tooling reads \u2014 `studio.port`, `reactor.*`, `auth.*`, `documentModelsDir`) and a built **dist** that Connect serves. `apps/connect/main.tsx` fetches `/powerhouse.config.json` once, `ConfigLoader` caches it, and the SPA reads typed accessors (`getRuntimeConfig()` / `getConnectConfig()`). Top-level fields (`packages`, `packageRegistryUrl`, `localPackage`) are project-wide; the `connect.*` block (branding, app, renown, drives, packages, sentry, reactor, pwa) is Connect-only, with defaults defined once as `DEFAULT_CONNECT_CONFIG` in `packages/shared/connect/runtime-config.ts`.\n\n`ph connect build` produces the dist file by deep-merging lowest \u2192 highest:\n\n```\nDEFAULT_CONNECT_CONFIG  <  source.connect  <  CLI flag overrides\n```\n\nEach layer may supply a partial value; missing leaves fall back to the layer below; **arrays replace** (never append); `undefined` in a patch means \"leave alone\". Five ways feed a value in: the `ph init` template, a manual edit, `ph connect config` (**dual-writes** source and dist so the change lands on the next refresh without a rebuild \u2014 four mutually exclusive modes: list, `--get`, set with Ajv validation and JSON-aware coercion, `--json` bulk), `ph connect build --<field>` (dist only; the four `commonArgs` flags are gated through `wasFlagExplicitlyPassed` so an untyped flag lets the source value win), and the Docker entrypoint's `PH_CONNECT_CONFIG_JSON` at container start (operator-wins). `ph install --registry <url>` and `ph vetra`'s programmatic `callerOverride` are the two special-case writers.\n\nA hard refresh tears down the module graph and re-runs `loadRuntimeConfig()`, so an operator's path is: write the value (`ph connect config --renown-url X`), refresh the tab. `ph connect config` with no args prints the effective `connect.*` block without booting Connect.\n\n_Source: apps/connect/RUNTIME-CONFIG.md (Powerhouse v6.2.2-dev.74)._\n\n## Provenance\n- `apps/connect/RUNTIME-CONFIG.md` \u2014 TL;DR, 'The file', 'Setting values \u2014 the precedence ladder', 'The five ways to feed a value into a layer', 'How Connect reads the file at boot'\n\n_Recorded from the Powerhouse repository at **v6.2.2-dev.74** during the v6.2.2-dev.74 source sync._",
+        "updatedAt": "2026-09-02T22:12:03.562Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:12:03.562Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "",
+    "timestampUtcMs": "2026-09-02T22:19:41.920Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "metadata": {
+          "reason": "connect.renown.switchboardUrl and adapters are connect.* fields that travel through exactly this file and ladder",
+          "confidence": "grounded"
+        },
+        "sourceId": "a1016584-5dba-460b-9dc8-2728d09c1058",
+        "targetId": "158af865-c94d-4b6b-b86f-fe23db3f8828",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-09-02T22:19:41.920Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "/f194Oxzbdi8o2nl294OlX2FfNY=",
+    "timestampUtcMs": "2026-09-02T22:12:03.562Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "4bfeeb17-ce8f-4d6d-8363-d2fa88201272",
+        "name": "connect"
+      },
+      "timestampUtcMs": "2026-09-02T22:12:03.562Z"
+    }
+  },
+  {
+    "index": 5,
+    "hash": "",
+    "timestampUtcMs": "2026-09-02T22:23:40.026Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "metadata": {
+          "reason": "Extracted from apps/connect/RUNTIME-CONFIG.md at v6.2.2-dev.74 \u2014 TL;DR, 'The file', 'Setting values \u2014 the precedence ladder', 'The five ways to feed a value into a layer', 'How Connect reads the file at boot'",
+          "confidence": "grounded"
+        },
+        "sourceId": "a1016584-5dba-460b-9dc8-2728d09c1058",
+        "targetId": "067ef151-e1a1-4a1a-91de-faaef1614f94",
+        "relationshipType": "DERIVED_FROM"
+      },
+      "timestampUtcMs": "2026-09-02T22:23:40.026Z"
+    }
+  },
+  {
+    "index": 5,
+    "hash": "yBYFRXa9wap3iqkZyw/6aI4+SAQ=",
+    "timestampUtcMs": "2026-09-02T22:12:03.562Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "c2ea1596-9f8d-4138-9280-091ea41ff688",
+        "name": "configuration"
+      },
+      "timestampUtcMs": "2026-09-02T22:12:03.562Z"
+    }
+  },
+  {
+    "index": 6,
+    "hash": "",
+    "timestampUtcMs": "2026-09-02T22:23:40.652Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "metadata": {
+          "reason": "PH_CONNECT_CONFIG_JSON is the deploy-time top of the precedence ladder described here",
+          "confidence": "grounded"
+        },
+        "sourceId": "a1016584-5dba-460b-9dc8-2728d09c1058",
+        "targetId": "96efe6c1-9193-4319-8ac2-c30f3933b832",
+        "relationshipType": "BUILDS_ON"
+      },
+      "timestampUtcMs": "2026-09-02T22:23:40.652Z"
+    }
+  },
+  {
+    "index": 6,
+    "hash": "tBP0WVkrMUXtmRghMkKjrO0gizs=",
+    "timestampUtcMs": "2026-09-02T22:12:03.562Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "1d279ae4-0fd7-4987-a3db-62d7d363441f",
+        "name": "deployment"
+      },
+      "timestampUtcMs": "2026-09-02T22:12:03.562Z"
+    }
+  },
+  {
+    "index": 7,
+    "hash": "",
+    "timestampUtcMs": "2026-09-02T22:23:41.174Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "metadata": {
+          "reason": "connect.renown.switchboardUrl and adapters are connect.* fields that travel through exactly this file and ladder",
+          "confidence": "grounded"
+        },
+        "sourceId": "a1016584-5dba-460b-9dc8-2728d09c1058",
+        "targetId": "158af865-c94d-4b6b-b86f-fe23db3f8828",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-09-02T22:23:41.174Z"
+    }
+  },
+  {
+    "index": 7,
+    "hash": "YvwyZIFv2LtKWSipV2+UdjMPGnU=",
+    "timestampUtcMs": "2026-09-02T22:12:03.562Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "38d455d4-a220-4fd4-9167-bae05c5f99a2",
+        "name": "runtime-config"
+      },
+      "timestampUtcMs": "2026-09-02T22:12:03.562Z"
+    }
+  },
+  {
+    "index": 8,
+    "hash": "",
+    "timestampUtcMs": "2026-09-02T22:23:41.682Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "metadata": {
+          "reason": "The base path is the one field that cannot travel the config route, because ph connect build bakes it into the bundle's asset URLs",
+          "confidence": "grounded"
+        },
+        "sourceId": "a1016584-5dba-460b-9dc8-2728d09c1058",
+        "targetId": "858a41b2-38e1-4c5a-9783-96fe985b3c43",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-09-02T22:23:41.682Z"
+    }
+  },
+  {
+    "index": 8,
+    "hash": "ciGtr6up8JCaceMEqgvT7VMowSs=",
+    "timestampUtcMs": "2026-09-02T22:12:03.562Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "version",
+        "value": "v6.2.2-dev.74",
+        "updatedAt": "2026-09-02T22:12:03.562Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:12:03.562Z"
+    }
+  },
+  {
+    "index": 9,
+    "hash": "Y3eSRg0ME5aQbKvIuAuCh8D7y8E=",
+    "timestampUtcMs": "2026-09-02T22:12:03.562Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "filePath",
+        "value": "apps/connect/RUNTIME-CONFIG.md",
+        "updatedAt": "2026-09-02T22:12:03.562Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:12:03.562Z"
+    }
+  },
+  {
+    "index": 10,
+    "hash": "y5lHobkMQQ47Z4wkROHv92/olPE=",
+    "timestampUtcMs": "2026-09-02T22:12:03.562Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "confidence",
+        "value": "grounded",
+        "updatedAt": "2026-09-02T22:12:03.562Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:12:03.562Z"
+    }
+  },
+  {
+    "index": 11,
+    "hash": "eetF2HP3T3d4jVFrtjlozgp9SXk=",
+    "timestampUtcMs": "2026-09-02T22:12:06.153Z",
+    "action": {
+      "type": "SET_PROVENANCE",
+      "input": {
+        "author": "knowledge-agent",
+        "createdAt": "2026-09-02T22:12:06.153Z",
+        "sourceOrigin": "DERIVED"
+      },
+      "timestampUtcMs": "2026-09-02T22:12:06.153Z"
+    }
+  },
+  {
+    "index": 12,
+    "hash": "O/4ns3XI4p61Si0u0yL66zIMn8Q=",
+    "timestampUtcMs": "2026-09-02T22:12:06.864Z",
+    "action": {
+      "type": "SUBMIT_FOR_REVIEW",
+      "input": {
+        "id": "1ea7ac14-c657-4878-8690-7c5335b7866c",
+        "actor": "knowledge-agent",
+        "comment": "extracted from the Powerhouse repository at v6.2.2-dev.74",
+        "timestamp": "2026-09-02T22:12:06.864Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:12:06.864Z"
+    }
+  },
+  {
+    "index": 13,
+    "hash": "V4SeRzc6IvqIWumEg4jaadWmF5M=",
+    "timestampUtcMs": "2026-09-02T22:12:07.344Z",
+    "action": {
+      "type": "APPROVE_NOTE",
+      "input": {
+        "id": "7645a053-9020-4e68-9b76-17ae0dfb77da",
+        "actor": "liberuum",
+        "comment": "claim checked against the cited repository file at the pinned tag",
+        "timestamp": "2026-09-02T22:12:07.344Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:12:07.344Z"
+    }
+  },
+  {
+    "index": 14,
+    "hash": "gelCxZfZO82q+Q2ur4ajdWEYnJA=",
+    "timestampUtcMs": "2026-09-02T22:16:10.178Z",
+    "action": {
+      "type": "SET_TITLE",
+      "input": {
+        "title": "Connect's runtime configuration is one powerhouse.config.json fetched once at boot \u2014 a hand-edited source and a built dist \u2014 and the SPA never reads environment variables",
+        "updatedAt": "2026-09-02T22:16:10.178Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:16:10.178Z"
+    }
+  },
+  {
+    "index": 15,
+    "hash": "gelCxZfZO82q+Q2ur4ajdWEYnJA=",
+    "timestampUtcMs": "2026-09-02T22:16:10.178Z",
+    "action": {
+      "type": "SET_DESCRIPTION",
+      "input": {
+        "updatedAt": "2026-09-02T22:16:10.178Z",
+        "description": "Precedence: DEFAULT_CONNECT_CONFIG < source.connect < ph connect build overrides, then PH_CONNECT_CONFIG_JSON at container start. Layers merge leaf by leaf and arrays replace; config dual-writes."
+      },
+      "timestampUtcMs": "2026-09-02T22:16:10.178Z"
+    }
+  },
+  {
+    "index": 16,
+    "hash": "gelCxZfZO82q+Q2ur4ajdWEYnJA=",
+    "timestampUtcMs": "2026-09-02T22:16:10.178Z",
+    "action": {
+      "type": "SET_NOTE_TYPE",
+      "input": {
+        "noteType": "ARCHITECTURE",
+        "updatedAt": "2026-09-02T22:16:10.178Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:16:10.178Z"
+    }
+  },
+  {
+    "index": 17,
+    "hash": "gelCxZfZO82q+Q2ur4ajdWEYnJA=",
+    "timestampUtcMs": "2026-09-02T22:16:10.178Z",
+    "action": {
+      "type": "SET_CONTENT",
+      "input": {
+        "content": "The file exists twice: a hand-edited **source** in the project root (next to `package.json`, also carrying keys other tooling reads \u2014 `studio.port`, `reactor.*`, `auth.*`, `documentModelsDir`) and a built **dist** that Connect serves. `apps/connect/main.tsx` fetches `/powerhouse.config.json` once, `ConfigLoader` caches it, and the SPA reads typed accessors (`getRuntimeConfig()` / `getConnectConfig()`). Top-level fields (`packages`, `packageRegistryUrl`, `localPackage`) are project-wide; the `connect.*` block (branding, app, renown, drives, packages, sentry, reactor, pwa) is Connect-only, with defaults defined once as `DEFAULT_CONNECT_CONFIG` in `packages/shared/connect/runtime-config.ts`.\n\n`ph connect build` produces the dist file by deep-merging lowest \u2192 highest:\n\n```\nDEFAULT_CONNECT_CONFIG  <  source.connect  <  CLI flag overrides\n```\n\nEach layer may supply a partial value; missing leaves fall back to the layer below; **arrays replace** (never append); `undefined` in a patch means \"leave alone\". Five ways feed a value in: the `ph init` template, a manual edit, `ph connect config` (**dual-writes** source and dist so the change lands on the next refresh without a rebuild \u2014 four mutually exclusive modes: list, `--get`, set with Ajv validation and JSON-aware coercion, `--json` bulk), `ph connect build --<field>` (dist only; the four `commonArgs` flags are gated through `wasFlagExplicitlyPassed` so an untyped flag lets the source value win), and the Docker entrypoint's `PH_CONNECT_CONFIG_JSON` at container start (operator-wins). `ph install --registry <url>` and `ph vetra`'s programmatic `callerOverride` are the two special-case writers.\n\nA hard refresh tears down the module graph and re-runs `loadRuntimeConfig()`, so an operator's path is: write the value (`ph connect config --renown-url X`), refresh the tab. `ph connect config` with no args prints the effective `connect.*` block without booting Connect.\n\n_Source: apps/connect/RUNTIME-CONFIG.md (Powerhouse v6.2.2-dev.74)._\n\n## Provenance\n- `apps/connect/RUNTIME-CONFIG.md` \u2014 TL;DR, 'The file', 'Setting values \u2014 the precedence ladder', 'The five ways to feed a value into a layer', 'How Connect reads the file at boot'\n\n_Recorded from the Powerhouse repository at **v6.2.2-dev.74** during the v6.2.2-dev.74 source sync._",
+        "updatedAt": "2026-09-02T22:16:10.178Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:16:10.178Z"
+    }
+  },
+  {
+    "index": 18,
+    "hash": "gelCxZfZO82q+Q2ur4ajdWEYnJA=",
+    "timestampUtcMs": "2026-09-02T22:16:10.178Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "version",
+        "value": "v6.2.2-dev.74",
+        "updatedAt": "2026-09-02T22:16:10.178Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:16:10.178Z"
+    }
+  },
+  {
+    "index": 19,
+    "hash": "gelCxZfZO82q+Q2ur4ajdWEYnJA=",
+    "timestampUtcMs": "2026-09-02T22:16:10.178Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "filePath",
+        "value": "apps/connect/RUNTIME-CONFIG.md",
+        "updatedAt": "2026-09-02T22:16:10.178Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:16:10.178Z"
+    }
+  },
+  {
+    "index": 20,
+    "hash": "gelCxZfZO82q+Q2ur4ajdWEYnJA=",
+    "timestampUtcMs": "2026-09-02T22:16:10.178Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "confidence",
+        "value": "grounded",
+        "updatedAt": "2026-09-02T22:16:10.178Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:16:10.178Z"
+    }
+  },
+  {
+    "index": 21,
+    "hash": "TPyi10yEJDWg5vNEHepLRhLBpLg=",
+    "timestampUtcMs": "2026-09-02T22:20:50.627Z",
+    "action": {
+      "type": "SET_TITLE",
+      "input": {
+        "title": "Connect's runtime configuration is one powerhouse.config.json fetched once at boot \u2014 a hand-edited source and a built dist \u2014 and the SPA never reads environment variables",
+        "updatedAt": "2026-09-02T22:20:50.627Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:20:50.627Z"
+    }
+  },
+  {
+    "index": 22,
+    "hash": "TPyi10yEJDWg5vNEHepLRhLBpLg=",
+    "timestampUtcMs": "2026-09-02T22:20:50.627Z",
+    "action": {
+      "type": "SET_DESCRIPTION",
+      "input": {
+        "updatedAt": "2026-09-02T22:20:50.627Z",
+        "description": "Precedence: DEFAULT_CONNECT_CONFIG < source.connect < ph connect build overrides, then PH_CONNECT_CONFIG_JSON at container start. Layers merge leaf by leaf and arrays replace; config dual-writes."
+      },
+      "timestampUtcMs": "2026-09-02T22:20:50.627Z"
+    }
+  },
+  {
+    "index": 23,
+    "hash": "TPyi10yEJDWg5vNEHepLRhLBpLg=",
+    "timestampUtcMs": "2026-09-02T22:20:50.627Z",
+    "action": {
+      "type": "SET_NOTE_TYPE",
+      "input": {
+        "noteType": "ARCHITECTURE",
+        "updatedAt": "2026-09-02T22:20:50.627Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:20:50.627Z"
+    }
+  },
+  {
+    "index": 24,
+    "hash": "TPyi10yEJDWg5vNEHepLRhLBpLg=",
+    "timestampUtcMs": "2026-09-02T22:20:50.627Z",
+    "action": {
+      "type": "SET_CONTENT",
+      "input": {
+        "content": "The file exists twice: a hand-edited **source** in the project root (next to `package.json`, also carrying keys other tooling reads \u2014 `studio.port`, `reactor.*`, `auth.*`, `documentModelsDir`) and a built **dist** that Connect serves. `apps/connect/main.tsx` fetches `/powerhouse.config.json` once, `ConfigLoader` caches it, and the SPA reads typed accessors (`getRuntimeConfig()` / `getConnectConfig()`). Top-level fields (`packages`, `packageRegistryUrl`, `localPackage`) are project-wide; the `connect.*` block (branding, app, renown, drives, packages, sentry, reactor, pwa) is Connect-only, with defaults defined once as `DEFAULT_CONNECT_CONFIG` in `packages/shared/connect/runtime-config.ts`.\n\n`ph connect build` produces the dist file by deep-merging lowest \u2192 highest:\n\n```\nDEFAULT_CONNECT_CONFIG  <  source.connect  <  CLI flag overrides\n```\n\nEach layer may supply a partial value; missing leaves fall back to the layer below; **arrays replace** (never append); `undefined` in a patch means \"leave alone\". Five ways feed a value in: the `ph init` template, a manual edit, `ph connect config` (**dual-writes** source and dist so the change lands on the next refresh without a rebuild \u2014 four mutually exclusive modes: list, `--get`, set with Ajv validation and JSON-aware coercion, `--json` bulk), `ph connect build --<field>` (dist only; the four `commonArgs` flags are gated through `wasFlagExplicitlyPassed` so an untyped flag lets the source value win), and the Docker entrypoint's `PH_CONNECT_CONFIG_JSON` at container start (operator-wins). `ph install --registry <url>` and `ph vetra`'s programmatic `callerOverride` are the two special-case writers.\n\nA hard refresh tears down the module graph and re-runs `loadRuntimeConfig()`, so an operator's path is: write the value (`ph connect config --renown-url X`), refresh the tab. `ph connect config` with no args prints the effective `connect.*` block without booting Connect.\n\n_Source: apps/connect/RUNTIME-CONFIG.md (Powerhouse v6.2.2-dev.74)._\n\n## Provenance\n- `apps/connect/RUNTIME-CONFIG.md` \u2014 TL;DR, 'The file', 'Setting values \u2014 the precedence ladder', 'The five ways to feed a value into a layer', 'How Connect reads the file at boot'\n\n_Recorded from the Powerhouse repository at **v6.2.2-dev.74** during the v6.2.2-dev.74 source sync._",
+        "updatedAt": "2026-09-02T22:20:50.627Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:20:50.627Z"
+    }
+  },
+  {
+    "index": 25,
+    "hash": "TPyi10yEJDWg5vNEHepLRhLBpLg=",
+    "timestampUtcMs": "2026-09-02T22:20:50.627Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "version",
+        "value": "v6.2.2-dev.74",
+        "updatedAt": "2026-09-02T22:20:50.627Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:20:50.627Z"
+    }
+  },
+  {
+    "index": 26,
+    "hash": "TPyi10yEJDWg5vNEHepLRhLBpLg=",
+    "timestampUtcMs": "2026-09-02T22:20:50.627Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "filePath",
+        "value": "apps/connect/RUNTIME-CONFIG.md",
+        "updatedAt": "2026-09-02T22:20:50.627Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:20:50.627Z"
+    }
+  },
+  {
+    "index": 27,
+    "hash": "TPyi10yEJDWg5vNEHepLRhLBpLg=",
+    "timestampUtcMs": "2026-09-02T22:20:50.627Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "confidence",
+        "value": "grounded",
+        "updatedAt": "2026-09-02T22:20:50.627Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:20:50.627Z"
+    }
+  }
+]

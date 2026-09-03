@@ -1,0 +1,276 @@
+[
+  {
+    "index": 0,
+    "hash": "",
+    "timestampUtcMs": "2026-08-20T08:46:00.105Z",
+    "action": {
+      "type": "CREATE_DOCUMENT",
+      "input": {
+        "meta": {},
+        "name": "Every internal Odoo user can delete the chatter record of a decision",
+        "slug": "",
+        "model": "bai/knowledge-note",
+        "branch": "main",
+        "signing": {
+          "nonce": "",
+          "publicKey": {},
+          "signature": "c2d9adc0-d771-4765-8eaa-d54eeb5f3a89",
+          "documentType": "bai/knowledge-note",
+          "createdAtUtcIso": "2026-08-20T08:46:00.105Z"
+        },
+        "version": 0,
+        "documentId": "c2d9adc0-d771-4765-8eaa-d54eeb5f3a89",
+        "protocolVersions": {
+          "base-reducer": 2
+        }
+      },
+      "timestampUtcMs": "2026-08-20T08:46:00.105Z"
+    }
+  },
+  {
+    "index": 0,
+    "hash": "s+cpm5047Or/fuvaFtXVtxWtCcA=",
+    "timestampUtcMs": "2026-08-20T08:46:00.730Z",
+    "action": {
+      "type": "SET_TITLE",
+      "input": {
+        "title": "Every internal Odoo user can delete the chatter record of a decision",
+        "updatedAt": "2026-08-20T08:46:00.730388Z"
+      },
+      "timestampUtcMs": "2026-08-20T08:46:00.730424Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "",
+    "timestampUtcMs": "2026-08-20T08:46:00.105Z",
+    "action": {
+      "type": "UPGRADE_DOCUMENT",
+      "input": {
+        "model": "bai/knowledge-note",
+        "toVersion": 1,
+        "documentId": "c2d9adc0-d771-4765-8eaa-d54eeb5f3a89",
+        "fromVersion": 0,
+        "initialState": {
+          "auth": {
+            "grants": [],
+            "version": 0
+          },
+          "local": {
+            "lastViewedAt": null,
+            "personalTags": []
+          },
+          "global": {
+            "links": [],
+            "model": null,
+            "scope": null,
+            "title": null,
+            "editor": null,
+            "inputs": [],
+            "models": [],
+            "status": "DRAFT",
+            "topics": [],
+            "content": null,
+            "context": null,
+            "modelId": null,
+            "modules": [],
+            "outputs": [],
+            "version": null,
+            "computes": null,
+            "filePath": null,
+            "noteType": null,
+            "severity": null,
+            "hooksUsed": [],
+            "rootCause": null,
+            "confidence": null,
+            "consumedBy": [],
+            "provenance": null,
+            "sourceType": null,
+            "targetType": null,
+            "cardinality": null,
+            "description": null,
+            "alternatives": [],
+            "consequences": [],
+            "errorMessage": null,
+            "relationType": null,
+            "correctPattern": null,
+            "decisionStatus": null,
+            "dispatchTargets": [],
+            "lifecycleEvents": []
+          },
+          "document": {
+            "hash": {
+              "encoding": "base64",
+              "algorithm": "sha1"
+            },
+            "version": 1
+          }
+        }
+      },
+      "timestampUtcMs": "2026-08-20T08:46:00.105Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "b7Z4HVGFKOgdNhykDnNx5Vzts4E=",
+    "timestampUtcMs": "2026-08-20T08:46:00.730Z",
+    "action": {
+      "type": "SET_DESCRIPTION",
+      "input": {
+        "updatedAt": "2026-08-20T08:46:00.730428Z",
+        "description": "The ACL grants base.group_user full CRUD including unlink on mail.message, and tracking values cascade with it, so no administrative privilege is needed."
+      },
+      "timestampUtcMs": "2026-08-20T08:46:00.730434Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "",
+    "timestampUtcMs": "2026-08-20T08:46:02.278Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "c2d9adc0-d771-4765-8eaa-d54eeb5f3a89",
+        "targetId": "4d8e59af-51f2-4ab7-b290-e1d5744abbd7",
+        "relationshipType": "DERIVED_FROM"
+      },
+      "timestampUtcMs": "2026-08-20T08:46:02.278Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "o8zjkh+qpDUVnb3YH9FmNCCdcgA=",
+    "timestampUtcMs": "2026-08-20T08:46:00.730Z",
+    "action": {
+      "type": "SET_NOTE_TYPE",
+      "input": {
+        "noteType": "OBSERVATION",
+        "updatedAt": "2026-08-20T08:46:00.730436Z"
+      },
+      "timestampUtcMs": "2026-08-20T08:46:00.730441Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "n0ruwjpKRVRL3YF3p2WN9J675/Y=",
+    "timestampUtcMs": "2026-08-20T08:46:00.730Z",
+    "action": {
+      "type": "SET_CONTENT",
+      "input": {
+        "content": "`addons/mail/security/ir.model.access.csv` grants `base.group_user` the permission tuple `1,1,1,1` on `model_mail_message` \u2014 read, write, create and unlink. `base.group_user` is every internal employee, not an administrative group. `mail.tracking.value.mail_message_id` is declared `ondelete='cascade'`, so removing the message silently takes the field-level diffs with it.\n\n`mail.message.unlink()` is an ordinary model method gated only by `check_access('unlink')`, which that ACL satisfies. Three documented context switches \u2014 `tracking_disable`, `mail_notrack` and a blessed `bypass_audit` token \u2014 provide further ways past tracking, and `account.lock_exception` is a first-class bypass model whose `reason` is nullable, which applies to everyone when `user_id` is null and never expires when `end_datetime` is null.\n\nWorth stating in Odoo's favour: editing is blocked \u2014 *\"Messages with tracking values cannot be modified\"* \u2014 and there is no automatic pruning of `mail.message`. The weakness is deletion by ordinary users, not mutation or drift.",
+        "updatedAt": "2026-08-20T08:46:00.730443Z"
+      },
+      "timestampUtcMs": "2026-08-20T08:46:00.730448Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "iIMi0IsZisUsUyrNzaONCi4TEkY=",
+    "timestampUtcMs": "2026-08-20T08:46:00.730Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "d9cd5bf7-e93c-45d8-aa4e-5b5a068b8277",
+        "name": "tool-screen"
+      },
+      "timestampUtcMs": "2026-08-20T08:46:00.730457Z"
+    }
+  },
+  {
+    "index": 5,
+    "hash": "Ty92pxNPdR2r2E0Q60faxk3mmrw=",
+    "timestampUtcMs": "2026-08-20T08:46:00.730Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "500601d0-184e-4c3e-994b-184b904586c7",
+        "name": "odoo"
+      },
+      "timestampUtcMs": "2026-08-20T08:46:00.730465Z"
+    }
+  },
+  {
+    "index": 6,
+    "hash": "NeszAxNMNM1glP/zGkUOgPoKQzk=",
+    "timestampUtcMs": "2026-08-20T08:46:00.730Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "fd24a99f-0c33-4696-8614-86f00f440d8e",
+        "name": "access-control"
+      },
+      "timestampUtcMs": "2026-08-20T08:46:00.730473Z"
+    }
+  },
+  {
+    "index": 7,
+    "hash": "YOt41Z9ysDyip7ysZ6lyh9R2tOk=",
+    "timestampUtcMs": "2026-08-20T08:46:00.730Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "bc79d5d5-cb3e-49b3-a87a-56e24df5dbd3",
+        "name": "deletion"
+      },
+      "timestampUtcMs": "2026-08-20T08:46:00.730481Z"
+    }
+  },
+  {
+    "index": 8,
+    "hash": "YS9HlNW6bOutqtiC6a/4QMRRTo0=",
+    "timestampUtcMs": "2026-08-20T08:46:00.730Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "370cf235-f5f0-4c0f-b01d-d697a4ce270c",
+        "name": "audit-trail"
+      },
+      "timestampUtcMs": "2026-08-20T08:46:00.730488Z"
+    }
+  },
+  {
+    "index": 9,
+    "hash": "99AW+oh4RtLNVKF3uT8SCi3v4ak=",
+    "timestampUtcMs": "2026-08-20T08:46:01.152Z",
+    "action": {
+      "type": "SET_PROVENANCE",
+      "input": {
+        "author": "knowledge-agent",
+        "createdAt": "2026-08-20T08:46:01.152418Z",
+        "sessionId": null,
+        "sourceOrigin": "DERIVED"
+      },
+      "timestampUtcMs": "2026-08-20T08:46:01.152454Z"
+    }
+  },
+  {
+    "index": 10,
+    "hash": "KoMCi+BfB5o1FJC/AwcUi9G9/6M=",
+    "timestampUtcMs": "2026-08-20T08:46:02.493Z",
+    "action": {
+      "type": "SUBMIT_FOR_REVIEW",
+      "input": {
+        "id": "64a31ad6-efa0-42fd-8f50-d4178ef3311c",
+        "actor": "knowledge-agent",
+        "comment": "Extracted from the primary-source tool screen; each claim quotable from a cited source.",
+        "timestamp": "2026-08-20T08:46:02.493925Z"
+      },
+      "timestampUtcMs": "2026-08-20T08:46:02.493945Z"
+    }
+  },
+  {
+    "index": 11,
+    "hash": "zkep864+6PLQLqJlWEFRtLqqVx4=",
+    "timestampUtcMs": "2026-08-20T08:46:02.639Z",
+    "action": {
+      "type": "APPROVE_NOTE",
+      "input": {
+        "id": "32a2efc8-b7ea-4daf-94da-f29c145fe096",
+        "actor": "liberuum",
+        "comment": "Approved: tool-screen extraction.",
+        "timestamp": "2026-08-20T08:46:02.639884Z"
+      },
+      "timestampUtcMs": "2026-08-20T08:46:02.639905Z"
+    }
+  }
+]

@@ -1,0 +1,138 @@
+{
+  "mode": "full",
+  "checks": [
+    {
+      "id": "2edb5084-1fea-48ca-ab13-00f03c409a2f",
+      "status": "PASS",
+      "message": "All 978 live notes carry a title, a lowercase-enum note type, at least one topic and a provenance record: 0 missing descriptions, 0 missing types, 0 missing topics, 0 missing provenance. Verified by reading state back, not from dispatch results.",
+      "category": "SCHEMA_COMPLIANCE",
+      "affectedItems": []
+    },
+    {
+      "id": "ba1e5357-cc90-4691-8950-e48a75289980",
+      "status": "PASS",
+      "message": "0 live notes have zero incoming edges. 1 archived note also has none, which is the intended end state of retiring one and is excluded from this grade \u2014 the corpus baseline marker was archived this run and its four dating edges removed, since per-note version metadata replaced it. Every MoC except the single Powerhouse Ecosystem hub has a parent.",
+      "category": "ORPHAN_DETECTION",
+      "affectedItems": []
+    },
+    {
+      "id": "c3b2668b-4708-460d-8f71-8e9287b711d2",
+      "status": "PASS",
+      "message": "Avg 3.57 links/note across 978 live notes, density 0.00487 \u2014 but only 843 of 3487 knowledge edges (24%) carry a reason, and 269 notes have fewer than 2 outgoing links. The unarticulated share is a pre-1.0.36 backlog: every edge written in the v6.2.2-dev.74 passes carries a reason and a confidence. A vault with links and no reasons is an address book, so this PASS is on degree only.",
+      "category": "LINK_HEALTH",
+      "affectedItems": [
+        "01cbecc9-9f2c-4200-9d94-f52a432dd09f",
+        "01e9bbd1-2eeb-49c4-85b7-550605eee012",
+        "02aeae52-4a8b-46c3-8539-375749c9ea3c",
+        "02ba87bb-5cd0-4724-9dc6-964d0b87ddb4",
+        "04e99098-4e17-4086-8233-78b2f94d3b72",
+        "07aa7d04-f5e0-41cf-b404-f728fee40c3b",
+        "086bba9b-fb81-4fbf-941c-056bba03b188",
+        "0be796ae-88b0-4099-9df8-9b10f47a4871",
+        "0d5dd022-f7b5-4150-876c-98286b4f775b",
+        "0db17d45-119e-40f0-ab2a-6b29dd158d55",
+        "0e6c7837-4676-4e49-9816-62806f97fad6",
+        "0f92645a-bfc0-47fa-ad9a-ca26ddc64e2e",
+        "109e58fe-db16-4e28-a21e-0756bf96ad64",
+        "11765567-a3d5-406b-95fe-62dd4ff4fc40",
+        "1303391b-2d13-40da-8c6f-ec390142e160",
+        "140ccc82-0d0b-48df-aee7-548896143890",
+        "15e588c3-0021-46d0-9742-e3b065d9b752",
+        "1603e2bf-8c25-4365-b988-a61836cf38ae",
+        "161ac78b-1f02-41d5-ad8c-dee494afa4c2",
+        "169c7ea6-d204-4078-9968-09066724ced1",
+        "18b8fab6-853b-4e10-a1d6-59ba01cc308f",
+        "18e632e9-3261-4f38-98d9-5b22676274c5",
+        "19915cb5-25e3-43f4-8cb2-9f6382438430",
+        "1a8c9244-2147-47ac-988f-75946f7c85ec",
+        "1b16696c-91ef-43b3-82a0-e22931382016"
+      ]
+    },
+    {
+      "id": "73830b9a-d3b4-4f29-9299-a10f441b6b1f",
+      "status": "PASS",
+      "message": "All 978 descriptions are present, within the 200-character limit and informative: 0 missing, 0 under 80 characters, 0 restating their title. Six agent-skill notes were restatements earlier this run and were rewritten; sync-skills.mjs was fixed so it derives title and description from different parts of the frontmatter.",
+      "category": "DESCRIPTION_QUALITY",
+      "affectedItems": []
+    },
+    {
+      "id": "9d7a8e0a-d2c2-4727-9af3-f56306db9455",
+      "status": "PASS",
+      "message": "0 live notes are without topics, which is what this check grades. Separately, NaN notes are not held as a CORE_IDEA by any MoC (coverage 79.9%) \u2014 a synthesis backlog, tracked in the recommendations rather than graded here.",
+      "category": "MOC_COHERENCE",
+      "affectedItems": [
+        "0023bc50-7fff-4fa1-844e-d869f976f3b5",
+        "003757e2-d95f-43f5-ac56-e7b29cfef504",
+        "05681665-2d87-4f9c-a5b5-a4aacef82d34",
+        "0834493d-6a6f-4ac9-bf9c-51913b616629",
+        "095bbf51-bd7c-4e5f-9c53-01978eb9ab8a",
+        "0b3e1672-24bb-45a0-bd5e-078c3e482dc7",
+        "0c93f25f-e382-441d-a17b-71f6c459debd",
+        "0e4efc8b-43d3-447b-a779-a20fbf19c715",
+        "0eb05b0f-200f-484f-96b4-ce481c19a7cb",
+        "0f228193-a299-4bab-8f34-bb5e9d0b28b7",
+        "0fb2c09e-d46c-49d4-8727-72831d9ff35e",
+        "103f9ae4-ecbb-403e-9284-ff241641b20f",
+        "11568583-352a-4303-883d-1ecdaef39357",
+        "11bf3fc1-983a-4e18-bf45-8d2b2e327956",
+        "129f2487-c738-4957-9e1f-33195925524f",
+        "12b47835-104d-46c1-b4e4-f468f713c21e",
+        "158af865-c94d-4b6b-b86f-fe23db3f8828",
+        "161a92b3-f23f-4483-86c3-68faacb42e96",
+        "191e8c75-ad62-45ce-a50a-8b0e71ffcc24",
+        "1a85ff0a-5e9a-45eb-8c0c-6336a76d1017",
+        "1c2e1cbd-de8e-4515-9cf0-c6afbca216ba",
+        "1c781f1a-a3f9-483e-a15a-ccbc2c431135",
+        "1c7a3c1c-95e7-4bc8-a921-277863c4f346",
+        "1fc90712-091c-4d1b-b39a-923a4b6a1968",
+        "217c80a4-d6fb-459a-9849-d4a8dc22578a"
+      ]
+    },
+    {
+      "id": "5df11878-fb62-4461-8532-8b9bab17fb1f",
+      "status": "PASS",
+      "message": "13 tensions, 0 open. The six open earlier this run were each closed with a verdict and the work behind it: the Flowable premise scoped to the Apache-2.0 edition against three primary-source notes, the Odoo attribution pitch refuted in place and narrowed to the gap that remains, the McKinsey and Gartner forecasts dissolved as measuring different quantities over different horizons, both reactor pairs dissolved as design intent versus a live defect with the boundary written into each note, and the invoice tension resolved with a workaround verified against the published bundle. The three defects behind them stay tracked as notes and as recommendations to file, because a tension is for an unresolved knowledge conflict rather than an open bug.",
+      "category": "THREE_SPACE_BOUNDARIES",
+      "affectedItems": []
+    },
+    {
+      "id": "92ff4ed0-f7de-4298-83d5-dca078ad5992",
+      "status": "PASS",
+      "message": "No PENDING or FAILED pipeline task, 0 pending observations, and 0 stranded sources \u2014 all 403 sources are EXTRACTED, including the 12 whose honest yield was zero, which carry an extraction record with their reasoning rather than sitting in INBOX. 0 sources hold a duplicate entry in extractedClaims: the eight agent-skill sources that had accumulated 2-4 copies of their single note were repaired once knowledge-note 1.0.54-dev.6 made REMOVE_EXTRACTED_CLAIM available on the deployment. Three pre-existing notes remain IN_REVIEW and predate these runs.",
+      "category": "PROCESSING_THROUGHPUT",
+      "affectedItems": []
+    },
+    {
+      "id": "328997b4-73b6-4187-9d18-20a9a5c680b7",
+      "status": "PASS",
+      "message": "0 DRAFT notes older than 30 days, which is what this check grades. Version stamps were audited separately: no note claims v6.2.2-dev.47 any more \u2014 42 were verified against a repository file at v6.2.2-dev.74 and bumped, 234 unverifiable stamps were cleared, and 393 live notes read v6.2.2-dev.74. The corpus baseline marker that asserted a single vault-wide cutoff was archived this run: per-note version and filePath metadata, plus per-source git-tag provenance, date every claim individually.",
+      "category": "STALE_NOTES",
+      "affectedItems": []
+    }
+  ],
+  "generatedAt": "2026-09-03T13:59:54.347Z",
+  "generatedBy": "knowledge-agent",
+  "graphMetrics": {
+    "density": 0.00487,
+    "mocCount": 58,
+    "noteCount": 978,
+    "mocCoverage": 0.799,
+    "orphanCount": 0,
+    "connectionCount": 3487,
+    "danglingLinkCount": 0,
+    "averageLinksPerNote": 3.57
+  },
+  "overallStatus": "PASS",
+  "recommendations": [
+    "File two upstream reactor defects against powerhouse, both verified in source this week: reevaluateIfCriteriaMet returns only outcome.error and drops outcome.operationsWithContext, so a revocation converges in the log and sync but never reaches read models until a restart; and handleJobFailed (batch-aggregator.ts:40-55) deletes the pending batch and emits whatever arrived, so a partial sync batch is indistinguishable on the wire from a complete one.",
+    "Report the paperless-invoice tolerance to the package owner: validatePrices uses EPSILON = 1e-5 against unitPriceTaxIncl / (1 + taxRate), which rejects any two-decimal net (100.00 at 19% is off by 3.6e-3). It should be a half-cent tolerance (0.005), or both prices compared after rounding to currency precision. Byte-identical in 0.0.2 and 0.0.3; the six-decimal workaround is recorded on the invoice note.",
+    "Two commercial decisions are open questions on the maps that hold their clusters, waiting on you: whether to make a price-and-features argument against Flowable Enterprise (Leads running Flowable), and whether to keep Odoo as a webhook-seam integration target or drop it from the deck (Integration-gap tool screen).",
+    "2644 of 3487 knowledge edges carry no reason (76%), a pre-1.0.36 backlog. Work through them with /connect (docs annotate), starting with the notes holding the most: the webhook-and-replay demo note (49), the Camunda and Flowable integration notes (35 each) and the Implementation Gotchas map (29). Unlink any nobody can explain.",
+    "269 live notes have fewer than 2 outgoing links \u2014 run /connect on them.",
+    "NaN live notes (20%) are not held as a CORE_IDEA by any MoC. Run /synthesize; the gap is concentrated in the imported lead corpus and the older stack notes.",
+    "73 sources hold claims attributed by content match with no extraction record of their own. Re-mining one replaces the attribution with a measured reading, as the 71 repository sources with real per-file claim and skip counts now have.",
+    "585 live notes carry no version stamp, which is the honest result of the audit: nothing in the powerhouse repository at v6.2.2-dev.74 could verify them. Re-stamp one only by verifying it against a file at a tag \u2014 and read a note's own content for what it claims about a release, now that the vault-wide baseline marker is retired.",
+    "Extend the repository sync's glob to .mdx and re-run it: the v6.2.2-dev.74 pass recorded *.md only, so the Academy's 02-Learn deep dives (reducers-in-depth, what-is-connect, actions-and-reducers) are unrecorded even though 42 notes now cite them as their verifying file."
+  ],
+  "links": []
+}

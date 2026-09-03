@@ -1,0 +1,94 @@
+{
+  "links": [
+    {
+      "id": "lnk-4d8e59af-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "4d8e59af-51f2-4ab7-b290-e1d5744abbd7",
+      "targetTitle": "Integration-gap tool screen: ERPNext / Frappe (primary-source research, 2026-08-19)"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Odoo's audit trail is in the free edition and on by default since version 19",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "d79ea082-1e3a-47ad-a2d5-28a2d90522bb",
+      "name": "tool-screen",
+      "topicDocumentId": null
+    },
+    {
+      "id": "f1807110-5a91-47e2-b8f6-bc86da2fa697",
+      "name": "odoo",
+      "topicDocumentId": null
+    },
+    {
+      "id": "914a4954-cd48-431d-9b60-f7df7c034137",
+      "name": "audit-trail",
+      "topicDocumentId": null
+    },
+    {
+      "id": "b6436385-9de8-4786-81ce-feb6b373dbb1",
+      "name": "licensing",
+      "topicDocumentId": null
+    },
+    {
+      "id": "433119ae-b0dd-4afa-a38e-613f7fb9e0ce",
+      "name": "slot-occupied",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "The Odoo 19 release notes state: *\"The non-restrictive audit trail has been made available by default for everyone.\"* The code sits in `addons/account` inside `odoo/odoo`, whose manifest declares `'license': 'LGPL-3'`, and a repository-scoped code search for `audit_trail` returns files only in the LGPL repository. There is no separate audit module among the Community addons.\n\nThe report tracks, per the documentation, *\"the date and time of the changes, the user who made the changes, the type of change, the previous value, and the updated value\"* \u2014 field-level attribution, shipped free.\n\nThis refutes the natural hypothesis about Odoo, which is that its open-core split puts audit behind the Enterprise paywall and thereby creates a sovereignty wedge. Audit falls entirely on the LGPL side, so that wedge does not exist.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "OBSERVATION",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "knowledge-agent",
+    "createdAt": "2026-08-20T08:45:53.393992Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-20T08:45:54.597463Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "The Audit Trail lives in addons/account under LGPL-3 and the non-restrictive mode was made available by default for everyone, so no open-core paywall exists on audit.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "a6f1eff6-5d1e-4a43-ba09-c66e8c777796",
+      "actor": "knowledge-agent",
+      "comment": "Extracted from the primary-source tool screen; each claim quotable from a cited source.",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-20T08:45:54.450534Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "cabbed5f-2e91-437f-9827-cdabf9508e8f",
+      "actor": "liberuum",
+      "comment": "Approved: tool-screen extraction.",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-20T08:45:54.597463Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

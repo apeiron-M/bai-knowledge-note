@@ -1,0 +1,91 @@
+{
+  "links": [
+    {
+      "id": "lnk-12b253ca-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "12b253ca-0d09-404d-8f5e-0f4ffdead14e",
+      "targetTitle": "resource-template-model-defines-reusable-service-catalog-blueprints"
+    },
+    {
+      "id": "lnk-649207b4-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "649207b4-bb53-45aa-aa4a-6570116b7f8e",
+      "targetTitle": "ecosystem-map"
+    },
+    {
+      "id": "lnk-44d3b83f-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "44d3b83f-d9de-4f7a-b5a5-81d07fbc2bcb",
+      "targetTitle": "object-relations"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "facet model provides configurable classification dimensions",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "95bef1c5-f4c0-46b8-8388-8c2ed807fa5a",
+      "name": "facet",
+      "topicDocumentId": null
+    },
+    {
+      "id": "ce094864-dfef-45b7-ac91-30aa06c364b9",
+      "name": "service-pricing",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "# facet model provides configurable classification dimensions\n\n`powerhouse/facet` is the simplest model \u2014 it defines classification dimensions (like \"Region\", \"Industry\", \"Size\") with selectable options. Other models reference facets for targeting and configuration.\n\n## State Shape\n\n```graphql\ntype FacetState {\n    id: PHID!\n    name: String!\n    description: String\n    lastModified: DateTime!\n    options: [FacetOption!]!\n}\n\ntype FacetOption {\n    id: OID!\n    label: String!\n    description: String\n    displayOrder: Int\n    isDefault: Boolean!\n}\n```\n\n## Modules (2)\n\n| Module | Operations | Purpose |\n|--------|-----------|---------|\n| facet-management | 2 | Set facet name, description |\n| option-management | 4 | Add/update/remove/reorder options |\n\n## Referenced By\n\n- ResourceTemplate.`facetBindings.facetType: PHID` \u2192 this model\n- ServiceOffering.`facetBindings.facetType: PHID` \u2192 this model\n- ResourceInstance.`configuration` uses facet categories\n- SubscriptionInstance services have `facetSelections`\n\n---\n\nTopics:\n- [[schema design]]\n- [[object relations]]",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "ARCHITECTURE",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "knowledge-agent",
+    "createdAt": "2026-04-03T13:41:23.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-09-03T09:59:00.814Z",
+    "sourceOrigin": "IMPORT"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "6 operations across 2 modules \u2014 defines named facets with ordered options used for targeting and configuration across templates, offerings, and instances",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "d3dd7948-6f29-4403-866c-2f422d5d0886",
+      "actor": "claude",
+      "comment": "Knowledge registered against powerhouse v6.2.2-dev.47",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-14T12:00:00.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "9d6c021d-0f89-4e23-8a30-62947170b404",
+      "actor": "liberuum",
+      "comment": "Canonical as of powerhouse v6.2.2-dev.47",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-14T12:00:00.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

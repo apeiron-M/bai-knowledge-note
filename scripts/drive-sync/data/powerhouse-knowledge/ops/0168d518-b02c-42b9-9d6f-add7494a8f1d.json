@@ -1,0 +1,568 @@
+[
+  {
+    "index": 0,
+    "hash": "",
+    "timestampUtcMs": "2026-09-02T22:12:57.156Z",
+    "action": {
+      "type": "CREATE_DOCUMENT",
+      "input": {
+        "meta": {},
+        "name": "docker-switchboard-image",
+        "slug": "",
+        "model": "bai/knowledge-note",
+        "branch": "main",
+        "signing": {
+          "nonce": "",
+          "publicKey": {},
+          "signature": "0168d518-b02c-42b9-9d6f-add7494a8f1d",
+          "documentType": "bai/knowledge-note",
+          "createdAtUtcIso": "2026-09-02T22:12:57.156Z"
+        },
+        "version": 0,
+        "documentId": "0168d518-b02c-42b9-9d6f-add7494a8f1d",
+        "protocolVersions": {
+          "base-reducer": 2
+        }
+      },
+      "timestampUtcMs": "2026-09-02T22:12:57.156Z"
+    }
+  },
+  {
+    "index": 0,
+    "hash": "JcbwIpd6sc/fyE9v1jB889x6T9w=",
+    "timestampUtcMs": "2026-09-02T22:12:57.058Z",
+    "action": {
+      "type": "SET_TITLE",
+      "input": {
+        "title": "The Switchboard image is Node 24 Alpine with @powerhousedao/switchboard installed from npm at the release tag; its entrypoint installs PH_PACKAGES, runs Kysely migrations when PH_REACTOR_DATABASE_URL is Postgres, then starts the server",
+        "updatedAt": "2026-09-02T22:12:57.058Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:12:57.058Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "",
+    "timestampUtcMs": "2026-09-02T22:12:57.156Z",
+    "action": {
+      "type": "UPGRADE_DOCUMENT",
+      "input": {
+        "model": "bai/knowledge-note",
+        "toVersion": 1,
+        "documentId": "0168d518-b02c-42b9-9d6f-add7494a8f1d",
+        "fromVersion": 0,
+        "initialState": {
+          "auth": {
+            "grants": [],
+            "version": 0
+          },
+          "local": {
+            "lastViewedAt": null,
+            "personalTags": []
+          },
+          "global": {
+            "links": [],
+            "model": null,
+            "scope": null,
+            "title": null,
+            "editor": null,
+            "inputs": [],
+            "models": [],
+            "status": "DRAFT",
+            "topics": [],
+            "content": null,
+            "context": null,
+            "modelId": null,
+            "modules": [],
+            "outputs": [],
+            "version": null,
+            "computes": null,
+            "filePath": null,
+            "noteType": null,
+            "severity": null,
+            "hooksUsed": [],
+            "rootCause": null,
+            "confidence": null,
+            "consumedBy": [],
+            "provenance": null,
+            "sourceType": null,
+            "targetType": null,
+            "cardinality": null,
+            "description": null,
+            "alternatives": [],
+            "consequences": [],
+            "errorMessage": null,
+            "relationType": null,
+            "correctPattern": null,
+            "decisionStatus": null,
+            "dispatchTargets": [],
+            "lifecycleEvents": []
+          },
+          "document": {
+            "hash": {
+              "encoding": "base64",
+              "algorithm": "sha1"
+            },
+            "version": 1
+          }
+        }
+      },
+      "timestampUtcMs": "2026-09-02T22:12:57.156Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "pSarursmgrZYqEvSaRK4DLMxJ3I=",
+    "timestampUtcMs": "2026-09-02T22:12:57.058Z",
+    "action": {
+      "type": "SET_DESCRIPTION",
+      "input": {
+        "updatedAt": "2026-09-02T22:12:57.058Z",
+        "description": "Container port 3000 (PORT, exported as PH_SWITCHBOARD_PORT). Packages: PH_PACKAGES via pnpm or PH_REGISTRY_PACKAGES over HTTP from PH_REGISTRY_URL. PH_SWITCHBOARD_PUBLIC_URL feeds attachments."
+      },
+      "timestampUtcMs": "2026-09-02T22:12:57.058Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "",
+    "timestampUtcMs": "2026-09-02T22:24:39.464Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "metadata": {
+          "reason": "Extracted from apps/academy/docs/academy/03-Build/05-Launch/05-DockerDeployment.md at v6.2.2-dev.74 \u2014 Switchboard Environment Variables (Core, Monitoring); Installing Custom Packages (Switchboard); Image Architecture \u203a Switchboard Image; Building Custom Images",
+          "confidence": "grounded"
+        },
+        "sourceId": "0168d518-b02c-42b9-9d6f-add7494a8f1d",
+        "targetId": "56edb93f-5c3b-4c8b-a11f-5cfdcc252dee",
+        "relationshipType": "DERIVED_FROM"
+      },
+      "timestampUtcMs": "2026-09-02T22:24:39.464Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "KrXBBQ+qab52kK4RalNfRSyunPw=",
+    "timestampUtcMs": "2026-09-02T22:12:57.058Z",
+    "action": {
+      "type": "SET_NOTE_TYPE",
+      "input": {
+        "noteType": "ARCHITECTURE",
+        "updatedAt": "2026-09-02T22:12:57.058Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:12:57.058Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "",
+    "timestampUtcMs": "2026-09-02T22:24:40.643Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "metadata": {
+          "reason": "Extracted from docs/plans/2026-08-24-docker-compose-channels-design.md at v6.2.2-dev.74 \u2014 Common service shape: switchboard port 3000, curl healthcheck, depends_on postgres",
+          "confidence": "grounded"
+        },
+        "sourceId": "0168d518-b02c-42b9-9d6f-add7494a8f1d",
+        "targetId": "8ff57495-42b3-47d4-9c91-1811281bfb34",
+        "relationshipType": "DERIVED_FROM"
+      },
+      "timestampUtcMs": "2026-09-02T22:24:40.643Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "0XE75MCKXPv6lgGxpSnRLIeboy0=",
+    "timestampUtcMs": "2026-09-02T22:12:57.058Z",
+    "action": {
+      "type": "SET_CONTENT",
+      "input": {
+        "content": "The Switchboard target is **Node.js 24 (Alpine)** with pnpm and the `@powerhousedao/switchboard` package installed at image build time from the npm registry at the requested release tag \u2014 not a pre-initialized project with Prisma, as the earlier image was. At startup the entrypoint:\n\n1. Installs any packages listed in `PH_PACKAGES` (pnpm)\n2. Runs the reactor Postgres migrations (**Kysely**) if `PH_REACTOR_DATABASE_URL` points at a Postgres URL \u2014 PGlite migrations run automatically inside the server\n3. Starts the Switchboard server\n\nTwo ways to load custom packages server-side, matching where they run: `PH_PACKAGES` \u2014 comma-separated packages installed from the npm registry via pnpm before start \u2014 or `PH_REGISTRY_PACKAGES` \u2014 comma-separated packages loaded over HTTP from `PH_REGISTRY_URL` (default `https://registry.vetra.io`) at start. A custom image adds server-side packages at build time with `RUN pnpm add --shamefully-hoist @powerhousedao/my-custom-package`.\n\nCore variables: `PORT` (`3000`, exported as `PH_SWITCHBOARD_PORT`), `PH_SWITCHBOARD_PORT` (explicit override), `PH_DEFAULT_DRIVE_TYPE` (`powerhouse/document-drive` or `powerhouse/reactor-drive`), `PH_SWITCHBOARD_PUBLIC_URL` (public origin used for the remote attachment service, default `http://localhost:$PORT`), `LOG_LEVEL` (`info`). Monitoring: `SENTRY_DSN`, `SENTRY_ENV`, `SENTRY_TRACING_ENABLED` (`false` = errors-only), `TEMPO_ENDPOINT` (OTLP HTTP traces), `PYROSCOPE_SERVER_ADDRESS`. Health check: `curl -f http://127.0.0.1:3000/health`; the service starts only after Postgres reports healthy.\n\n_Source: apps/academy/docs/academy/03-Build/05-Launch/05-DockerDeployment.md (Powerhouse v6.2.2-dev.74)._\n_Source: docs/plans/2026-08-24-docker-compose-channels-design.md (Powerhouse v6.2.2-dev.74)._\n\n## Provenance\n- `apps/academy/docs/academy/03-Build/05-Launch/05-DockerDeployment.md` \u2014 Switchboard Environment Variables (Core, Monitoring); Installing Custom Packages (Switchboard); Image Architecture \u203a Switchboard Image; Building Custom Images\n- `docs/plans/2026-08-24-docker-compose-channels-design.md` \u2014 Common service shape: switchboard port 3000, curl healthcheck, depends_on postgres\n\n_Recorded from the Powerhouse repository at **v6.2.2-dev.74** during the v6.2.2-dev.74 source sync._",
+        "updatedAt": "2026-09-02T22:12:57.058Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:12:57.058Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "",
+    "timestampUtcMs": "2026-09-02T22:24:41.648Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "metadata": {
+          "reason": "Replaces the old Switchboard-image claims: Kysely migrations instead of Prisma, the package installed from npm at the tag instead of a pre-initialized project, container port 3000, and the storage variables that replaced DATABASE_URL='dev.db'",
+          "confidence": "grounded"
+        },
+        "sourceId": "0168d518-b02c-42b9-9d6f-add7494a8f1d",
+        "targetId": "b153c532-0abc-4400-8448-4ac08046fcad",
+        "relationshipType": "SUPERSEDES"
+      },
+      "timestampUtcMs": "2026-09-02T22:24:41.648Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "dU3u8NxgCfQjjNVxSAtGshFMMo0=",
+    "timestampUtcMs": "2026-09-02T22:12:57.058Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "1e9a5d18-2827-420b-bf89-330b5b1b123a",
+        "name": "docker"
+      },
+      "timestampUtcMs": "2026-09-02T22:12:57.058Z"
+    }
+  },
+  {
+    "index": 5,
+    "hash": "",
+    "timestampUtcMs": "2026-09-02T22:24:42.141Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "metadata": {
+          "reason": "Step 2 of the entrypoint is gated by the reactor storage variable that note explains",
+          "confidence": "grounded"
+        },
+        "sourceId": "0168d518-b02c-42b9-9d6f-add7494a8f1d",
+        "targetId": "15121fe4-c0d6-44bf-b8fd-cc5d4e4dda61",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-09-02T22:24:42.141Z"
+    }
+  },
+  {
+    "index": 5,
+    "hash": "yi/vZcZBszMGQPBgekmzL4aA2co=",
+    "timestampUtcMs": "2026-09-02T22:12:57.058Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "aafa2c19-d9c9-4c22-ac70-512dae228f36",
+        "name": "switchboard"
+      },
+      "timestampUtcMs": "2026-09-02T22:12:57.058Z"
+    }
+  },
+  {
+    "index": 6,
+    "hash": "",
+    "timestampUtcMs": "2026-09-02T22:24:42.574Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "metadata": {
+          "reason": "The monitoring variables listed here are read by the observability bootstrap module",
+          "confidence": "grounded"
+        },
+        "sourceId": "0168d518-b02c-42b9-9d6f-add7494a8f1d",
+        "targetId": "d6732865-1509-4c80-9515-95839f1bdd5e",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-09-02T22:24:42.574Z"
+    }
+  },
+  {
+    "index": 6,
+    "hash": "tFC8HafLdC29i9Ja0cXqrxyMP0w=",
+    "timestampUtcMs": "2026-09-02T22:12:57.058Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "0748da92-45a4-43c5-84ce-9782cfada8cb",
+        "name": "deployment"
+      },
+      "timestampUtcMs": "2026-09-02T22:12:57.058Z"
+    }
+  },
+  {
+    "index": 7,
+    "hash": "46FgaMo9atUkefZWiKx64vA1X20=",
+    "timestampUtcMs": "2026-09-02T22:12:57.058Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "ab94a846-e9bd-449f-b2ab-44c8c0593466",
+        "name": "packages"
+      },
+      "timestampUtcMs": "2026-09-02T22:12:57.058Z"
+    }
+  },
+  {
+    "index": 8,
+    "hash": "9xjzqzApv066rRUEjH/fT4ivPzE=",
+    "timestampUtcMs": "2026-09-02T22:12:57.058Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "version",
+        "value": "v6.2.2-dev.74",
+        "updatedAt": "2026-09-02T22:12:57.058Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:12:57.058Z"
+    }
+  },
+  {
+    "index": 9,
+    "hash": "Xyssv1lS+oAihIxBylCe5EtJDBo=",
+    "timestampUtcMs": "2026-09-02T22:12:57.058Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "filePath",
+        "value": "apps/academy/docs/academy/03-Build/05-Launch/05-DockerDeployment.md",
+        "updatedAt": "2026-09-02T22:12:57.058Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:12:57.058Z"
+    }
+  },
+  {
+    "index": 10,
+    "hash": "/Do68QEtDoteK8xyvqvi19mVxSM=",
+    "timestampUtcMs": "2026-09-02T22:12:57.058Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "confidence",
+        "value": "grounded",
+        "updatedAt": "2026-09-02T22:12:57.058Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:12:57.058Z"
+    }
+  },
+  {
+    "index": 11,
+    "hash": "hUUjjvbbPOSHZTxIIq7VXNyuPCg=",
+    "timestampUtcMs": "2026-09-02T22:12:59.631Z",
+    "action": {
+      "type": "SET_PROVENANCE",
+      "input": {
+        "author": "knowledge-agent",
+        "createdAt": "2026-09-02T22:12:59.631Z",
+        "sourceOrigin": "DERIVED"
+      },
+      "timestampUtcMs": "2026-09-02T22:12:59.631Z"
+    }
+  },
+  {
+    "index": 12,
+    "hash": "e0XVuSFJeDSibM+vKiT4fXdTJIg=",
+    "timestampUtcMs": "2026-09-02T22:13:00.297Z",
+    "action": {
+      "type": "SUBMIT_FOR_REVIEW",
+      "input": {
+        "id": "29c78f01-e18b-4230-831e-12bf2620905b",
+        "actor": "knowledge-agent",
+        "comment": "extracted from the Powerhouse repository at v6.2.2-dev.74",
+        "timestamp": "2026-09-02T22:13:00.297Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:13:00.297Z"
+    }
+  },
+  {
+    "index": 13,
+    "hash": "hCvU6arRQi1GBDCYSFnRJDkR224=",
+    "timestampUtcMs": "2026-09-02T22:13:00.851Z",
+    "action": {
+      "type": "APPROVE_NOTE",
+      "input": {
+        "id": "3ec3d025-b908-486f-851a-a3a7473af1c7",
+        "actor": "liberuum",
+        "comment": "claim checked against the cited repository file at the pinned tag",
+        "timestamp": "2026-09-02T22:13:00.851Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:13:00.851Z"
+    }
+  },
+  {
+    "index": 14,
+    "hash": "q9lSlV7zUh8AEJgg4ztZj4W9mgU=",
+    "timestampUtcMs": "2026-09-02T22:16:24.786Z",
+    "action": {
+      "type": "SET_TITLE",
+      "input": {
+        "title": "The Switchboard image is Node 24 Alpine with @powerhousedao/switchboard installed from npm at the release tag; its entrypoint installs PH_PACKAGES, runs Kysely migrations when PH_REACTOR_DATABASE_URL is Postgres, then starts the server",
+        "updatedAt": "2026-09-02T22:16:24.786Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:16:24.786Z"
+    }
+  },
+  {
+    "index": 15,
+    "hash": "q9lSlV7zUh8AEJgg4ztZj4W9mgU=",
+    "timestampUtcMs": "2026-09-02T22:16:24.786Z",
+    "action": {
+      "type": "SET_DESCRIPTION",
+      "input": {
+        "updatedAt": "2026-09-02T22:16:24.786Z",
+        "description": "Container port 3000 (PORT, exported as PH_SWITCHBOARD_PORT). Packages: PH_PACKAGES via pnpm or PH_REGISTRY_PACKAGES over HTTP from PH_REGISTRY_URL. PH_SWITCHBOARD_PUBLIC_URL feeds attachments."
+      },
+      "timestampUtcMs": "2026-09-02T22:16:24.786Z"
+    }
+  },
+  {
+    "index": 16,
+    "hash": "q9lSlV7zUh8AEJgg4ztZj4W9mgU=",
+    "timestampUtcMs": "2026-09-02T22:16:24.786Z",
+    "action": {
+      "type": "SET_NOTE_TYPE",
+      "input": {
+        "noteType": "ARCHITECTURE",
+        "updatedAt": "2026-09-02T22:16:24.786Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:16:24.786Z"
+    }
+  },
+  {
+    "index": 17,
+    "hash": "q9lSlV7zUh8AEJgg4ztZj4W9mgU=",
+    "timestampUtcMs": "2026-09-02T22:16:24.786Z",
+    "action": {
+      "type": "SET_CONTENT",
+      "input": {
+        "content": "The Switchboard target is **Node.js 24 (Alpine)** with pnpm and the `@powerhousedao/switchboard` package installed at image build time from the npm registry at the requested release tag \u2014 not a pre-initialized project with Prisma, as the earlier image was. At startup the entrypoint:\n\n1. Installs any packages listed in `PH_PACKAGES` (pnpm)\n2. Runs the reactor Postgres migrations (**Kysely**) if `PH_REACTOR_DATABASE_URL` points at a Postgres URL \u2014 PGlite migrations run automatically inside the server\n3. Starts the Switchboard server\n\nTwo ways to load custom packages server-side, matching where they run: `PH_PACKAGES` \u2014 comma-separated packages installed from the npm registry via pnpm before start \u2014 or `PH_REGISTRY_PACKAGES` \u2014 comma-separated packages loaded over HTTP from `PH_REGISTRY_URL` (default `https://registry.vetra.io`) at start. A custom image adds server-side packages at build time with `RUN pnpm add --shamefully-hoist @powerhousedao/my-custom-package`.\n\nCore variables: `PORT` (`3000`, exported as `PH_SWITCHBOARD_PORT`), `PH_SWITCHBOARD_PORT` (explicit override), `PH_DEFAULT_DRIVE_TYPE` (`powerhouse/document-drive` or `powerhouse/reactor-drive`), `PH_SWITCHBOARD_PUBLIC_URL` (public origin used for the remote attachment service, default `http://localhost:$PORT`), `LOG_LEVEL` (`info`). Monitoring: `SENTRY_DSN`, `SENTRY_ENV`, `SENTRY_TRACING_ENABLED` (`false` = errors-only), `TEMPO_ENDPOINT` (OTLP HTTP traces), `PYROSCOPE_SERVER_ADDRESS`. Health check: `curl -f http://127.0.0.1:3000/health`; the service starts only after Postgres reports healthy.\n\n_Source: apps/academy/docs/academy/03-Build/05-Launch/05-DockerDeployment.md (Powerhouse v6.2.2-dev.74)._\n_Source: docs/plans/2026-08-24-docker-compose-channels-design.md (Powerhouse v6.2.2-dev.74)._\n\n## Provenance\n- `apps/academy/docs/academy/03-Build/05-Launch/05-DockerDeployment.md` \u2014 Switchboard Environment Variables (Core, Monitoring); Installing Custom Packages (Switchboard); Image Architecture \u203a Switchboard Image; Building Custom Images\n- `docs/plans/2026-08-24-docker-compose-channels-design.md` \u2014 Common service shape: switchboard port 3000, curl healthcheck, depends_on postgres\n\n_Recorded from the Powerhouse repository at **v6.2.2-dev.74** during the v6.2.2-dev.74 source sync._",
+        "updatedAt": "2026-09-02T22:16:24.786Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:16:24.786Z"
+    }
+  },
+  {
+    "index": 18,
+    "hash": "q9lSlV7zUh8AEJgg4ztZj4W9mgU=",
+    "timestampUtcMs": "2026-09-02T22:16:24.786Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "version",
+        "value": "v6.2.2-dev.74",
+        "updatedAt": "2026-09-02T22:16:24.786Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:16:24.786Z"
+    }
+  },
+  {
+    "index": 19,
+    "hash": "q9lSlV7zUh8AEJgg4ztZj4W9mgU=",
+    "timestampUtcMs": "2026-09-02T22:16:24.787Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "filePath",
+        "value": "apps/academy/docs/academy/03-Build/05-Launch/05-DockerDeployment.md",
+        "updatedAt": "2026-09-02T22:16:24.786Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:16:24.787Z"
+    }
+  },
+  {
+    "index": 20,
+    "hash": "q9lSlV7zUh8AEJgg4ztZj4W9mgU=",
+    "timestampUtcMs": "2026-09-02T22:16:24.787Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "confidence",
+        "value": "grounded",
+        "updatedAt": "2026-09-02T22:16:24.786Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:16:24.787Z"
+    }
+  },
+  {
+    "index": 21,
+    "hash": "vqnTI4eS1FiQkNjbxBJqXRXUL7Y=",
+    "timestampUtcMs": "2026-09-02T22:21:04.434Z",
+    "action": {
+      "type": "SET_TITLE",
+      "input": {
+        "title": "The Switchboard image is Node 24 Alpine with @powerhousedao/switchboard installed from npm at the release tag; its entrypoint installs PH_PACKAGES, runs Kysely migrations when PH_REACTOR_DATABASE_URL is Postgres, then starts the server",
+        "updatedAt": "2026-09-02T22:21:04.434Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:21:04.434Z"
+    }
+  },
+  {
+    "index": 22,
+    "hash": "vqnTI4eS1FiQkNjbxBJqXRXUL7Y=",
+    "timestampUtcMs": "2026-09-02T22:21:04.434Z",
+    "action": {
+      "type": "SET_DESCRIPTION",
+      "input": {
+        "updatedAt": "2026-09-02T22:21:04.434Z",
+        "description": "Container port 3000 (PORT, exported as PH_SWITCHBOARD_PORT). Packages: PH_PACKAGES via pnpm or PH_REGISTRY_PACKAGES over HTTP from PH_REGISTRY_URL. PH_SWITCHBOARD_PUBLIC_URL feeds attachments."
+      },
+      "timestampUtcMs": "2026-09-02T22:21:04.434Z"
+    }
+  },
+  {
+    "index": 23,
+    "hash": "vqnTI4eS1FiQkNjbxBJqXRXUL7Y=",
+    "timestampUtcMs": "2026-09-02T22:21:04.434Z",
+    "action": {
+      "type": "SET_NOTE_TYPE",
+      "input": {
+        "noteType": "ARCHITECTURE",
+        "updatedAt": "2026-09-02T22:21:04.434Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:21:04.434Z"
+    }
+  },
+  {
+    "index": 24,
+    "hash": "vqnTI4eS1FiQkNjbxBJqXRXUL7Y=",
+    "timestampUtcMs": "2026-09-02T22:21:04.434Z",
+    "action": {
+      "type": "SET_CONTENT",
+      "input": {
+        "content": "The Switchboard target is **Node.js 24 (Alpine)** with pnpm and the `@powerhousedao/switchboard` package installed at image build time from the npm registry at the requested release tag \u2014 not a pre-initialized project with Prisma, as the earlier image was. At startup the entrypoint:\n\n1. Installs any packages listed in `PH_PACKAGES` (pnpm)\n2. Runs the reactor Postgres migrations (**Kysely**) if `PH_REACTOR_DATABASE_URL` points at a Postgres URL \u2014 PGlite migrations run automatically inside the server\n3. Starts the Switchboard server\n\nTwo ways to load custom packages server-side, matching where they run: `PH_PACKAGES` \u2014 comma-separated packages installed from the npm registry via pnpm before start \u2014 or `PH_REGISTRY_PACKAGES` \u2014 comma-separated packages loaded over HTTP from `PH_REGISTRY_URL` (default `https://registry.vetra.io`) at start. A custom image adds server-side packages at build time with `RUN pnpm add --shamefully-hoist @powerhousedao/my-custom-package`.\n\nCore variables: `PORT` (`3000`, exported as `PH_SWITCHBOARD_PORT`), `PH_SWITCHBOARD_PORT` (explicit override), `PH_DEFAULT_DRIVE_TYPE` (`powerhouse/document-drive` or `powerhouse/reactor-drive`), `PH_SWITCHBOARD_PUBLIC_URL` (public origin used for the remote attachment service, default `http://localhost:$PORT`), `LOG_LEVEL` (`info`). Monitoring: `SENTRY_DSN`, `SENTRY_ENV`, `SENTRY_TRACING_ENABLED` (`false` = errors-only), `TEMPO_ENDPOINT` (OTLP HTTP traces), `PYROSCOPE_SERVER_ADDRESS`. Health check: `curl -f http://127.0.0.1:3000/health`; the service starts only after Postgres reports healthy.\n\n_Source: apps/academy/docs/academy/03-Build/05-Launch/05-DockerDeployment.md (Powerhouse v6.2.2-dev.74)._\n_Source: docs/plans/2026-08-24-docker-compose-channels-design.md (Powerhouse v6.2.2-dev.74)._\n\n## Provenance\n- `apps/academy/docs/academy/03-Build/05-Launch/05-DockerDeployment.md` \u2014 Switchboard Environment Variables (Core, Monitoring); Installing Custom Packages (Switchboard); Image Architecture \u203a Switchboard Image; Building Custom Images\n- `docs/plans/2026-08-24-docker-compose-channels-design.md` \u2014 Common service shape: switchboard port 3000, curl healthcheck, depends_on postgres\n\n_Recorded from the Powerhouse repository at **v6.2.2-dev.74** during the v6.2.2-dev.74 source sync._",
+        "updatedAt": "2026-09-02T22:21:04.434Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:21:04.434Z"
+    }
+  },
+  {
+    "index": 25,
+    "hash": "vqnTI4eS1FiQkNjbxBJqXRXUL7Y=",
+    "timestampUtcMs": "2026-09-02T22:21:04.434Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "version",
+        "value": "v6.2.2-dev.74",
+        "updatedAt": "2026-09-02T22:21:04.434Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:21:04.434Z"
+    }
+  },
+  {
+    "index": 26,
+    "hash": "vqnTI4eS1FiQkNjbxBJqXRXUL7Y=",
+    "timestampUtcMs": "2026-09-02T22:21:04.434Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "filePath",
+        "value": "apps/academy/docs/academy/03-Build/05-Launch/05-DockerDeployment.md",
+        "updatedAt": "2026-09-02T22:21:04.434Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:21:04.434Z"
+    }
+  },
+  {
+    "index": 27,
+    "hash": "vqnTI4eS1FiQkNjbxBJqXRXUL7Y=",
+    "timestampUtcMs": "2026-09-02T22:21:04.434Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "confidence",
+        "value": "grounded",
+        "updatedAt": "2026-09-02T22:21:04.434Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:21:04.434Z"
+    }
+  }
+]

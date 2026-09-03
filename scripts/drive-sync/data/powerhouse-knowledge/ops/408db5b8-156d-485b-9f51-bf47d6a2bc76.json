@@ -1,0 +1,354 @@
+[
+  {
+    "index": 0,
+    "hash": "",
+    "timestampUtcMs": "2026-08-14T12:16:13.604Z",
+    "action": {
+      "type": "CREATE_DOCUMENT",
+      "input": {
+        "meta": {},
+        "name": "reactor-executebatch-dependency-ordered-jobs",
+        "slug": "",
+        "model": "bai/knowledge-note",
+        "branch": "main",
+        "signing": {
+          "nonce": "",
+          "publicKey": {},
+          "signature": "408db5b8-156d-485b-9f51-bf47d6a2bc76",
+          "documentType": "bai/knowledge-note",
+          "createdAtUtcIso": "2026-08-14T12:16:13.603Z"
+        },
+        "version": 0,
+        "documentId": "408db5b8-156d-485b-9f51-bf47d6a2bc76",
+        "protocolVersions": {
+          "base-reducer": 2
+        }
+      },
+      "timestampUtcMs": "2026-08-14T12:16:13.604Z"
+    }
+  },
+  {
+    "index": 0,
+    "hash": "8JQWR5OFa6Osoy6sb+266jTbMHg=",
+    "timestampUtcMs": "2026-08-14T12:35:44.000Z",
+    "action": {
+      "type": "SET_TITLE",
+      "input": {
+        "title": "IReactor.executeBatch runs dependency-ordered multi-document jobs in one call",
+        "updatedAt": "2026-08-14T12:35:44.000Z"
+      },
+      "timestampUtcMs": "2026-08-14T12:35:44.000Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "",
+    "timestampUtcMs": "2026-08-14T12:16:13.604Z",
+    "action": {
+      "type": "UPGRADE_DOCUMENT",
+      "input": {
+        "model": "bai/knowledge-note",
+        "toVersion": 1,
+        "documentId": "408db5b8-156d-485b-9f51-bf47d6a2bc76",
+        "fromVersion": 0,
+        "initialState": {
+          "auth": {
+            "grants": [],
+            "version": 0
+          },
+          "local": {
+            "lastViewedAt": null,
+            "personalTags": []
+          },
+          "global": {
+            "links": [],
+            "model": null,
+            "scope": null,
+            "title": null,
+            "editor": null,
+            "inputs": [],
+            "models": [],
+            "status": "DRAFT",
+            "topics": [],
+            "content": null,
+            "context": null,
+            "modelId": null,
+            "modules": [],
+            "outputs": [],
+            "version": null,
+            "computes": null,
+            "filePath": null,
+            "noteType": null,
+            "severity": null,
+            "hooksUsed": [],
+            "rootCause": null,
+            "confidence": null,
+            "consumedBy": [],
+            "provenance": null,
+            "sourceType": null,
+            "targetType": null,
+            "cardinality": null,
+            "description": null,
+            "alternatives": [],
+            "consequences": [],
+            "errorMessage": null,
+            "relationType": null,
+            "correctPattern": null,
+            "decisionStatus": null,
+            "dispatchTargets": [],
+            "lifecycleEvents": []
+          },
+          "document": {
+            "hash": {
+              "encoding": "base64",
+              "algorithm": "sha1"
+            },
+            "version": 1
+          }
+        }
+      },
+      "timestampUtcMs": "2026-08-14T12:16:13.604Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "nLbnD8Gy/spZW3XmHhz0CmFlAdE=",
+    "timestampUtcMs": "2026-08-14T12:35:44.000Z",
+    "action": {
+      "type": "SET_DESCRIPTION",
+      "input": {
+        "updatedAt": "2026-08-14T12:35:44.000Z",
+        "description": "Each job carries a key, documentId, actions and dependsOn; the reactor resolves ordering, parallelism and failure propagation across documents so callers stop hand-sequencing writes."
+      },
+      "timestampUtcMs": "2026-08-14T12:35:44.000Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "",
+    "timestampUtcMs": "2026-08-14T12:38:24.070Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "408db5b8-156d-485b-9f51-bf47d6a2bc76",
+        "targetId": "395c3ea0-ce11-4b25-8bbb-7f68a7b169e1",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-08-14T12:38:24.070Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "AkFQmTMRnO68HH+QB/25RnIV0rI=",
+    "timestampUtcMs": "2026-08-14T12:35:44.000Z",
+    "action": {
+      "type": "SET_NOTE_TYPE",
+      "input": {
+        "noteType": "ARCHITECTURE",
+        "updatedAt": "2026-08-14T12:35:44.000Z"
+      },
+      "timestampUtcMs": "2026-08-14T12:35:44.000Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "",
+    "timestampUtcMs": "2026-08-14T12:38:24.170Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "408db5b8-156d-485b-9f51-bf47d6a2bc76",
+        "targetId": "43b82c81-4d28-4e69-9a0a-84c0dddb87ef",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-08-14T12:38:24.170Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "CiyyfEOmU1WfZK1dxDFdr2c0Ki8=",
+    "timestampUtcMs": "2026-08-14T12:35:44.000Z",
+    "action": {
+      "type": "SET_CONTENT",
+      "input": {
+        "content": "`executeBatch` takes a set of jobs with declared dependencies and lets the reactor work out the schedule. Each job is `{ key, documentId, actions, dependsOn }`, where `dependsOn` names other jobs by `key`:\n\n```ts\nawait reactor.executeBatch({\n  jobs: [\n    { key: \"budget\",  documentId: budgetId,  actions: [initBudget],  dependsOn: [] },\n    { key: \"scope\",   documentId: scopeId,   actions: [initScope],   dependsOn: [] },\n    { key: \"project\", documentId: projectId, actions: [initProject], dependsOn: [\"budget\", \"scope\"] },\n    { key: \"drive\",   documentId: driveId,   actions: [addFiles],    dependsOn: [\"project\"] },\n  ],\n});\n```\n\n`budget` and `scope` run in parallel; `project` waits for both; `drive` waits for `project`. One call, one result. The reactor handles ordering, parallelism, and failure propagation.\n\nThe `batch-progress` recipe frames it against the alternative \u2014 four sequential `await`s with manual error handling, no atomicity, and, in the recipe's own comment, \"hope nothing interleaves\". The value is not saving keystrokes; it is that the dependency graph is *declared* rather than encoded in statement order, so the reactor can parallelise independent work and propagate a failure to exactly the dependents that needed it.\n\nObservability comes from the EventBus rather than the return value. The recipe subscribes to `JOB_PENDING`, `JOB_RUNNING`, `JOB_WRITE_READY`, `JOB_READ_READY` and `JOB_FAILED` to drive a live multi-bar progress display \u2014 which is the right shape for a batch, since the per-job statuses arrive at different times and a single awaited promise flattens that away.\n\nNote this is on `IReactor`, the low-level fire-and-forget interface, not on the Promise-based `IReactorClient` wrapper. The recipe's demo runs it against an embedded in-memory reactor (PGlite, no external DB).\n\nProvenance: academy `05-Lookup/00-Cookbook.md`, Batch Progress recipe, academy 6.2.2-dev.45.",
+        "updatedAt": "2026-08-14T12:35:44.000Z"
+      },
+      "timestampUtcMs": "2026-08-14T12:35:44.000Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "",
+    "timestampUtcMs": "2026-09-02T21:40:54.237Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "metadata": {
+          "reason": "Backing page found by content match in the v6.2.2-dev.74 source backfill \u2014 identifiers dependson, documentid, ireactor.executebatch from the claim appear in this page (text revised between v6.2.2-dev.47 and v6.2.2-dev.74 \u2014 re-verified in the v6.2.2-dev.74 pass); attribution, not the original extraction record",
+          "confidence": "grounded"
+        },
+        "sourceId": "408db5b8-156d-485b-9f51-bf47d6a2bc76",
+        "targetId": "f2aaccd3-7c26-4327-881e-f5ad9e267b89",
+        "relationshipType": "DERIVED_FROM"
+      },
+      "timestampUtcMs": "2026-09-02T21:40:54.237Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "cJMiigUsVx+r2ffV6OaSV0v9q8A=",
+    "timestampUtcMs": "2026-08-14T12:35:44.000Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "version",
+        "value": "v6.2.2-dev.44",
+        "updatedAt": "2026-08-14T12:35:44.000Z"
+      },
+      "timestampUtcMs": "2026-08-14T12:35:44.000Z"
+    }
+  },
+  {
+    "index": 5,
+    "hash": "hCMHC9Z42Ct+Rv3fBSi3ECffakA=",
+    "timestampUtcMs": "2026-08-14T12:35:44.000Z",
+    "action": {
+      "type": "SET_PROVENANCE",
+      "input": {
+        "author": "claude",
+        "createdAt": "2026-08-13T14:39:35.000Z",
+        "sourceOrigin": "DERIVED"
+      },
+      "timestampUtcMs": "2026-08-14T12:35:44.000Z"
+    }
+  },
+  {
+    "index": 6,
+    "hash": "zlDzXx406+1WOEQu3m4vMDwkujU=",
+    "timestampUtcMs": "2026-08-14T12:35:44.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "6edf36b3-7fb5-4c1a-8c47-0713f4ea1e71",
+        "name": "reactor",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-08-14T12:35:44.000Z"
+    }
+  },
+  {
+    "index": 7,
+    "hash": "ZD+1Sk5prRv8RvqBVtu0XIV6uzg=",
+    "timestampUtcMs": "2026-08-14T12:35:44.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "feda8ad0-b113-4be4-bfd2-780bfe6bd860",
+        "name": "jobs",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-08-14T12:35:44.000Z"
+    }
+  },
+  {
+    "index": 8,
+    "hash": "2GLwJhRko4dxjSAbi0Ch80bKOIo=",
+    "timestampUtcMs": "2026-08-14T12:35:44.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "d41f8c26-ddf2-4b9e-a5ef-2b58b759848f",
+        "name": "batching",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-08-14T12:35:44.000Z"
+    }
+  },
+  {
+    "index": 9,
+    "hash": "IkamsetTkj2uxpHGHeu8+px4sBY=",
+    "timestampUtcMs": "2026-08-14T14:37:00.000Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "version",
+        "value": "v6.2.2-dev.47",
+        "updatedAt": "2026-08-14T12:00:00.000Z"
+      },
+      "timestampUtcMs": "2026-08-14T14:37:00.000Z"
+    }
+  },
+  {
+    "index": 10,
+    "hash": "XoOrmivNDcs1TmFh6WE9qaiAf64=",
+    "timestampUtcMs": "2026-08-14T14:37:00.000Z",
+    "action": {
+      "type": "SUBMIT_FOR_REVIEW",
+      "input": {
+        "id": "f81c8792-0846-4c57-a6ee-ec50da4cc336",
+        "actor": "claude",
+        "comment": "Knowledge registered against powerhouse v6.2.2-dev.47",
+        "timestamp": "2026-08-14T12:00:00.000Z"
+      },
+      "timestampUtcMs": "2026-08-14T14:37:00.000Z"
+    }
+  },
+  {
+    "index": 11,
+    "hash": "+FcmaBjzflONfB5+e5XCCCS2Adw=",
+    "timestampUtcMs": "2026-08-14T14:37:00.000Z",
+    "action": {
+      "type": "APPROVE_NOTE",
+      "input": {
+        "id": "56f075ad-fb3e-4994-b041-75bdb95b6ddc",
+        "actor": "liberuum",
+        "comment": "Canonical as of powerhouse v6.2.2-dev.47",
+        "timestamp": "2026-08-14T12:00:00.000Z"
+      },
+      "timestampUtcMs": "2026-08-14T14:37:00.000Z"
+    }
+  },
+  {
+    "index": 12,
+    "hash": "pRIst0DRl+96cKfGUmaf4HNyldg=",
+    "timestampUtcMs": "2026-09-02T21:40:54.918Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "filePath",
+        "value": "apps/academy/docs/academy/05-Lookup/00-Cookbook.md",
+        "updatedAt": "2026-09-02T21:40:54.918Z"
+      },
+      "timestampUtcMs": "2026-09-02T21:40:54.918Z"
+    }
+  },
+  {
+    "index": 13,
+    "hash": "TS4uNh+OB6QYA4QFCduDqkz5/Pg=",
+    "timestampUtcMs": "2026-09-02T22:26:55.713Z",
+    "action": {
+      "type": "SET_CONTENT",
+      "input": {
+        "content": "`executeBatch` takes a set of jobs with declared dependencies and lets the reactor work out the schedule. Each job is `{ key, documentId, actions, dependsOn }`, where `dependsOn` names other jobs by `key`:\n\n```ts\nawait reactor.executeBatch({\n  jobs: [\n    { key: \"budget\",  documentId: budgetId,  actions: [initBudget],  dependsOn: [] },\n    { key: \"scope\",   documentId: scopeId,   actions: [initScope],   dependsOn: [] },\n    { key: \"project\", documentId: projectId, actions: [initProject], dependsOn: [\"budget\", \"scope\"] },\n    { key: \"drive\",   documentId: driveId,   actions: [addFiles],    dependsOn: [\"project\"] },\n  ],\n});\n```\n\n`budget` and `scope` run in parallel; `project` waits for both; `drive` waits for `project`. One call, one result. The reactor handles ordering, parallelism, and failure propagation.\n\nThe `batch-progress` recipe frames it against the alternative \u2014 four sequential `await`s with manual error handling, no atomicity, and, in the recipe's own comment, \"hope nothing interleaves\". The value is not saving keystrokes; it is that the dependency graph is *declared* rather than encoded in statement order, so the reactor can parallelise independent work and propagate a failure to exactly the dependents that needed it.\n\nObservability comes from the EventBus rather than the return value. The recipe subscribes to `JOB_PENDING`, `JOB_RUNNING`, `JOB_WRITE_READY`, `JOB_READ_READY` and `JOB_FAILED` to drive a live multi-bar progress display \u2014 which is the right shape for a batch, since the per-job statuses arrive at different times and a single awaited promise flattens that away.\n\nNote this is on `IReactor`, the low-level fire-and-forget interface, not on the Promise-based `IReactorClient` wrapper. The recipe's demo runs it against an embedded in-memory reactor (PGlite, no external DB).\n\nProvenance: academy `05-Lookup/00-Cookbook.md`, Batch Progress recipe, academy 6.2.2-dev.45.\n\n## Superseded at v6.2.2-dev.74\nThe mechanism is right, the guarantees are not. \"One call, one result\" and \"propagate a failure to exactly the dependents that needed it\" do not hold: a batch is **not atomic and not transactional**, a `dependsOn` edge waits for the previous job to *finish* rather than to *succeed* (so dependents of a failed job still run, against whatever state the failure left), every returned `JobInfo` is `PENDING` with a placeholder consistency token, and there is no idempotency key \u2014 re-submitting after a partial failure re-applies what already succeeded. See the note that supersedes it.\n",
+        "updatedAt": "2026-09-02T22:26:55.713Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:26:55.713Z"
+    }
+  },
+  {
+    "index": 14,
+    "hash": "0RifOZFw+J76GGpLPDvsFEpjQbo=",
+    "timestampUtcMs": "2026-09-02T22:26:56.241Z",
+    "action": {
+      "type": "ARCHIVE_NOTE",
+      "input": {
+        "id": "6fb2c552-60d6-41b7-bce0-671600f928be",
+        "actor": "liberuum",
+        "comment": "superseded at v6.2.2-dev.74 by execute-batch-not-atomic",
+        "timestamp": "2026-09-02T22:26:56.241Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:26:56.241Z"
+    }
+  }
+]

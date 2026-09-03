@@ -1,0 +1,658 @@
+[
+  {
+    "index": 0,
+    "hash": "",
+    "timestampUtcMs": "2026-09-02T22:11:29.087Z",
+    "action": {
+      "type": "CREATE_DOCUMENT",
+      "input": {
+        "meta": {},
+        "name": "auth-stages-shipped",
+        "slug": "",
+        "model": "bai/knowledge-note",
+        "branch": "main",
+        "signing": {
+          "nonce": "",
+          "publicKey": {},
+          "signature": "839214d6-813a-4de6-bf55-f23d0730c69a",
+          "documentType": "bai/knowledge-note",
+          "createdAtUtcIso": "2026-09-02T22:11:29.087Z"
+        },
+        "version": 0,
+        "documentId": "839214d6-813a-4de6-bf55-f23d0730c69a",
+        "protocolVersions": {
+          "base-reducer": 2
+        }
+      },
+      "timestampUtcMs": "2026-09-02T22:11:29.087Z"
+    }
+  },
+  {
+    "index": 0,
+    "hash": "dV+s5EbOgsDuCBfn92D/Tvw3NWY=",
+    "timestampUtcMs": "2026-09-02T22:11:29.030Z",
+    "action": {
+      "type": "SET_TITLE",
+      "input": {
+        "title": "At v6.2.2-dev.74 stages 1\u20137 of the auth scope have shipped: data model, decision model, positional deletion, enforcement, groups, conditions and the read path",
+        "updatedAt": "2026-09-02T22:11:29.030Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:11:29.030Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "",
+    "timestampUtcMs": "2026-09-02T22:11:29.087Z",
+    "action": {
+      "type": "UPGRADE_DOCUMENT",
+      "input": {
+        "model": "bai/knowledge-note",
+        "toVersion": 1,
+        "documentId": "839214d6-813a-4de6-bf55-f23d0730c69a",
+        "fromVersion": 0,
+        "initialState": {
+          "auth": {
+            "grants": [],
+            "version": 0
+          },
+          "local": {
+            "lastViewedAt": null,
+            "personalTags": []
+          },
+          "global": {
+            "links": [],
+            "model": null,
+            "scope": null,
+            "title": null,
+            "editor": null,
+            "inputs": [],
+            "models": [],
+            "status": "DRAFT",
+            "topics": [],
+            "content": null,
+            "context": null,
+            "modelId": null,
+            "modules": [],
+            "outputs": [],
+            "version": null,
+            "computes": null,
+            "filePath": null,
+            "noteType": null,
+            "severity": null,
+            "hooksUsed": [],
+            "rootCause": null,
+            "confidence": null,
+            "consumedBy": [],
+            "provenance": null,
+            "sourceType": null,
+            "targetType": null,
+            "cardinality": null,
+            "description": null,
+            "alternatives": [],
+            "consequences": [],
+            "errorMessage": null,
+            "relationType": null,
+            "correctPattern": null,
+            "decisionStatus": null,
+            "dispatchTargets": [],
+            "lifecycleEvents": []
+          },
+          "document": {
+            "hash": {
+              "encoding": "base64",
+              "algorithm": "sha1"
+            },
+            "version": 1
+          }
+        }
+      },
+      "timestampUtcMs": "2026-09-02T22:11:29.087Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "y1NNHT1hFr4HBXKJVK1d+brpTfw=",
+    "timestampUtcMs": "2026-09-02T22:11:29.030Z",
+    "action": {
+      "type": "SET_DESCRIPTION",
+      "input": {
+        "updatedAt": "2026-09-02T22:11:29.030Z",
+        "description": "All four flags default off. Sync serving, migrating the host's permission tables and retiring them (stages 8\u201310) remain, so authEnforcement cannot yet be enabled on a fleet that uses those tables."
+      },
+      "timestampUtcMs": "2026-09-02T22:11:29.030Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "",
+    "timestampUtcMs": "2026-09-02T22:19:15.899Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "metadata": {
+          "reason": "Extracted from docs/specs/auth-scope.md at v6.2.2-dev.74 \u2014 Implementation plan: 'Stages 1 through 6 have shipped\u2026 Stage 7, the read path, has shipped too\u2026 What remains is stages 8 through 10'",
+          "confidence": "grounded"
+        },
+        "sourceId": "839214d6-813a-4de6-bf55-f23d0730c69a",
+        "targetId": "223bb12a-be7f-4209-9ab2-f04f7bb2b6c8",
+        "relationshipType": "DERIVED_FROM"
+      },
+      "timestampUtcMs": "2026-09-02T22:19:15.899Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "3y75Ct3K53ifMLbWmJgx2JEMzaw=",
+    "timestampUtcMs": "2026-09-02T22:11:29.030Z",
+    "action": {
+      "type": "SET_NOTE_TYPE",
+      "input": {
+        "noteType": "OBSERVATION",
+        "updatedAt": "2026-09-02T22:11:29.030Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:11:29.030Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "",
+    "timestampUtcMs": "2026-09-02T22:19:17.117Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "metadata": {
+          "reason": "Extracted from apps/academy/docs/academy/05-Lookup/00-Cookbook.md at v6.2.2-dev.74 \u2014 Group Principals \u203a Version requirement; Scoped Reads \u203a Version requirement",
+          "confidence": "grounded"
+        },
+        "sourceId": "839214d6-813a-4de6-bf55-f23d0730c69a",
+        "targetId": "f2aaccd3-7c26-4327-881e-f5ad9e267b89",
+        "relationshipType": "DERIVED_FROM"
+      },
+      "timestampUtcMs": "2026-09-02T22:19:17.117Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "CpA0hUUQWSMMWZSJ5Il+GJZYEy4=",
+    "timestampUtcMs": "2026-09-02T22:11:29.030Z",
+    "action": {
+      "type": "SET_CONTENT",
+      "input": {
+        "content": "Status recorded from the spec's implementation plan at v6.2.2-dev.74 (the spec at v6.2.2-dev.47 still said only stage 1 had shipped):\n\n| Stage | What | Flag |\n| --- | --- | --- |\n| 1 | Auth data model with backfill for legacy documents, the four actions and reducer, version-1 validation, persistence through save/load and versioned replay | \u2014 |\n| 2 | Decision-model surface and the store's append condition | \u2014 |\n| 3 | Document decision model replaces the document meta cache (positional deletion) | `documentDecisions` |\n| 4 | Auth projection: admission, replay, re-evaluation | `authEnforcement` |\n| 5 | Group principals: `powerhouse/reactor-group`, derived groups projection, group-reference relation, cross-document re-evaluation | `authGroups` |\n| 6 | Condition evaluators with position-correct scope state | `authConditions` |\n| 7 | The read path: reads routed through the registered decision model, policy-named groups served to the policy's audience | (each piece rides the flag it completes) |\n\nTwo stage-3 limits once listed as deliberate \u2014 `replayDocument` applying denied operations, and the read surface hiding a deleted document instead of serving the boundary state \u2014 turned out to have shipped with stage 4, and stage 7 verified them by exit test after clearing two remaining defects (revision one short after a trailing denied operation; a *denied* delete still marking snapshot rows deleted).\n\nWhat remains is **stages 8\u201310**: the reactor client's reads are gated by the policy, but the host still has an authorization system of its own \u2014 private permission tables deciding sync serving and every read at the GraphQL boundary. Until those three stages land, `authEnforcement` cannot be turned on for a fleet that uses the tables, because every document's policy is uninitialized and an uninitialized policy allows everything. The Cookbook records the practical side: `group-principals` and `scoped-reads` need releases carrying the `authGroups` stage and the stage-7 read path, which at the time of writing meant running them through the monorepo's `test/recipes-e2e` link harness against a local checkout rather than the `dev` dist-tag.\n\n_Source: docs/specs/auth-scope.md (Powerhouse v6.2.2-dev.74)._\n_Source: apps/academy/docs/academy/05-Lookup/00-Cookbook.md (Powerhouse v6.2.2-dev.74)._\n\n## Provenance\n- `docs/specs/auth-scope.md` \u2014 Implementation plan: 'Stages 1 through 6 have shipped\u2026 Stage 7, the read path, has shipped too\u2026 What remains is stages 8 through 10'\n- `apps/academy/docs/academy/05-Lookup/00-Cookbook.md` \u2014 Group Principals \u203a Version requirement; Scoped Reads \u203a Version requirement\n\n_Recorded from the Powerhouse repository at **v6.2.2-dev.74** during the v6.2.2-dev.74 source sync._",
+        "updatedAt": "2026-09-02T22:11:29.030Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:11:29.030Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "",
+    "timestampUtcMs": "2026-09-02T22:19:18.408Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "metadata": {
+          "reason": "Maps each shipped stage to the flag that gates it",
+          "confidence": "grounded"
+        },
+        "sourceId": "839214d6-813a-4de6-bf55-f23d0730c69a",
+        "targetId": "c8bd64d3-d92e-4f41-beba-983a7e995c26",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-09-02T22:19:18.408Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "a2K4DNzXMU3zZpUrrXR5y6M3bTo=",
+    "timestampUtcMs": "2026-09-02T22:11:29.030Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "e8579754-9108-449e-bd7a-63eed07695aa",
+        "name": "auth-scope"
+      },
+      "timestampUtcMs": "2026-09-02T22:11:29.030Z"
+    }
+  },
+  {
+    "index": 5,
+    "hash": "",
+    "timestampUtcMs": "2026-09-02T22:19:18.851Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "metadata": {
+          "reason": "This note is the shipped half of the plan; that one is the designed-but-unshipped half",
+          "confidence": "grounded"
+        },
+        "sourceId": "839214d6-813a-4de6-bf55-f23d0730c69a",
+        "targetId": "5ed570c9-1ad0-4d0d-b6c6-d33a61bddb96",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-09-02T22:19:18.851Z"
+    }
+  },
+  {
+    "index": 5,
+    "hash": "QA3RZyEBg+bhGygFRCfjgadn1JQ=",
+    "timestampUtcMs": "2026-09-02T22:11:29.030Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "93f00549-f4e8-4dbb-add6-b1831b5dcb3c",
+        "name": "release-status"
+      },
+      "timestampUtcMs": "2026-09-02T22:11:29.030Z"
+    }
+  },
+  {
+    "index": 6,
+    "hash": "",
+    "timestampUtcMs": "2026-09-02T22:19:19.330Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "metadata": {
+          "reason": "Explains why the two systems still coexist: the stages that would retire the tables have not shipped",
+          "confidence": "grounded"
+        },
+        "sourceId": "839214d6-813a-4de6-bf55-f23d0730c69a",
+        "targetId": "01daefb6-d6ad-4d19-8642-3e2aa97831d0",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-09-02T22:19:19.330Z"
+    }
+  },
+  {
+    "index": 6,
+    "hash": "h9DR2elX9shGYQY0Ekm+s/NcuUM=",
+    "timestampUtcMs": "2026-09-02T22:11:29.030Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "ef70b7c0-ee72-4564-bd12-ad7895167976",
+        "name": "reactor"
+      },
+      "timestampUtcMs": "2026-09-02T22:11:29.030Z"
+    }
+  },
+  {
+    "index": 7,
+    "hash": "",
+    "timestampUtcMs": "2026-09-02T22:23:19.100Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "metadata": {
+          "reason": "Extracted from docs/specs/auth-scope.md at v6.2.2-dev.74 \u2014 Implementation plan: 'Stages 1 through 6 have shipped\u2026 Stage 7, the read path, has shipped too\u2026 What remains is stages 8 through 10'",
+          "confidence": "grounded"
+        },
+        "sourceId": "839214d6-813a-4de6-bf55-f23d0730c69a",
+        "targetId": "223bb12a-be7f-4209-9ab2-f04f7bb2b6c8",
+        "relationshipType": "DERIVED_FROM"
+      },
+      "timestampUtcMs": "2026-09-02T22:23:19.100Z"
+    }
+  },
+  {
+    "index": 7,
+    "hash": "4YNz8+8JFRJAP6OR2z8rQE6KKdM=",
+    "timestampUtcMs": "2026-09-02T22:11:29.030Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "2425dd5a-3428-4f39-9da5-a63e4113ca22",
+        "name": "versioning"
+      },
+      "timestampUtcMs": "2026-09-02T22:11:29.030Z"
+    }
+  },
+  {
+    "index": 8,
+    "hash": "",
+    "timestampUtcMs": "2026-09-02T22:23:19.875Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "metadata": {
+          "reason": "Extracted from apps/academy/docs/academy/05-Lookup/00-Cookbook.md at v6.2.2-dev.74 \u2014 Group Principals \u203a Version requirement; Scoped Reads \u203a Version requirement",
+          "confidence": "grounded"
+        },
+        "sourceId": "839214d6-813a-4de6-bf55-f23d0730c69a",
+        "targetId": "f2aaccd3-7c26-4327-881e-f5ad9e267b89",
+        "relationshipType": "DERIVED_FROM"
+      },
+      "timestampUtcMs": "2026-09-02T22:23:19.875Z"
+    }
+  },
+  {
+    "index": 8,
+    "hash": "vcCxcoA3Mhkf80+CGw4CHgl676g=",
+    "timestampUtcMs": "2026-09-02T22:11:29.030Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "version",
+        "value": "v6.2.2-dev.74",
+        "updatedAt": "2026-09-02T22:11:29.030Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:11:29.030Z"
+    }
+  },
+  {
+    "index": 9,
+    "hash": "",
+    "timestampUtcMs": "2026-09-02T22:23:20.676Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "metadata": {
+          "reason": "Maps each shipped stage to the flag that gates it",
+          "confidence": "grounded"
+        },
+        "sourceId": "839214d6-813a-4de6-bf55-f23d0730c69a",
+        "targetId": "c8bd64d3-d92e-4f41-beba-983a7e995c26",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-09-02T22:23:20.676Z"
+    }
+  },
+  {
+    "index": 9,
+    "hash": "k7tqzIvw1ofpY35cvazXJX0rLi0=",
+    "timestampUtcMs": "2026-09-02T22:11:29.030Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "filePath",
+        "value": "docs/specs/auth-scope.md",
+        "updatedAt": "2026-09-02T22:11:29.030Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:11:29.030Z"
+    }
+  },
+  {
+    "index": 10,
+    "hash": "",
+    "timestampUtcMs": "2026-09-02T22:23:21.135Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "metadata": {
+          "reason": "This note is the shipped half of the plan; that one is the designed-but-unshipped half",
+          "confidence": "grounded"
+        },
+        "sourceId": "839214d6-813a-4de6-bf55-f23d0730c69a",
+        "targetId": "5ed570c9-1ad0-4d0d-b6c6-d33a61bddb96",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-09-02T22:23:21.135Z"
+    }
+  },
+  {
+    "index": 10,
+    "hash": "7oHCN5U/qsOK8WJUPTPlfYAymEg=",
+    "timestampUtcMs": "2026-09-02T22:11:29.030Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "confidence",
+        "value": "grounded",
+        "updatedAt": "2026-09-02T22:11:29.030Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:11:29.030Z"
+    }
+  },
+  {
+    "index": 11,
+    "hash": "",
+    "timestampUtcMs": "2026-09-02T22:23:21.638Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "metadata": {
+          "reason": "Explains why the two systems still coexist: the stages that would retire the tables have not shipped",
+          "confidence": "grounded"
+        },
+        "sourceId": "839214d6-813a-4de6-bf55-f23d0730c69a",
+        "targetId": "01daefb6-d6ad-4d19-8642-3e2aa97831d0",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-09-02T22:23:21.638Z"
+    }
+  },
+  {
+    "index": 11,
+    "hash": "6QG4OvC6JMyg3eT00Gt594C194c=",
+    "timestampUtcMs": "2026-09-02T22:11:31.710Z",
+    "action": {
+      "type": "SET_PROVENANCE",
+      "input": {
+        "author": "knowledge-agent",
+        "createdAt": "2026-09-02T22:11:31.710Z",
+        "sourceOrigin": "DERIVED"
+      },
+      "timestampUtcMs": "2026-09-02T22:11:31.710Z"
+    }
+  },
+  {
+    "index": 12,
+    "hash": "iwEOvHJR25EvkZhZGdLekx+6CTU=",
+    "timestampUtcMs": "2026-09-02T22:11:32.334Z",
+    "action": {
+      "type": "SUBMIT_FOR_REVIEW",
+      "input": {
+        "id": "3be4ebfc-4a8c-4319-84b6-a69b655a0bdf",
+        "actor": "knowledge-agent",
+        "comment": "extracted from the Powerhouse repository at v6.2.2-dev.74",
+        "timestamp": "2026-09-02T22:11:32.334Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:11:32.334Z"
+    }
+  },
+  {
+    "index": 13,
+    "hash": "H0rralEzyz10mYyMuwZ3hTLf6uw=",
+    "timestampUtcMs": "2026-09-02T22:11:32.865Z",
+    "action": {
+      "type": "APPROVE_NOTE",
+      "input": {
+        "id": "b820baa9-7110-4e32-bc74-ded1bccf02b6",
+        "actor": "liberuum",
+        "comment": "claim checked against the cited repository file at the pinned tag",
+        "timestamp": "2026-09-02T22:11:32.865Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:11:32.865Z"
+    }
+  },
+  {
+    "index": 14,
+    "hash": "imphJdt0A0hnSsvI4myxHhXcupA=",
+    "timestampUtcMs": "2026-09-02T22:16:02.698Z",
+    "action": {
+      "type": "SET_TITLE",
+      "input": {
+        "title": "At v6.2.2-dev.74 stages 1\u20137 of the auth scope have shipped: data model, decision model, positional deletion, enforcement, groups, conditions and the read path",
+        "updatedAt": "2026-09-02T22:16:02.698Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:16:02.698Z"
+    }
+  },
+  {
+    "index": 15,
+    "hash": "imphJdt0A0hnSsvI4myxHhXcupA=",
+    "timestampUtcMs": "2026-09-02T22:16:02.698Z",
+    "action": {
+      "type": "SET_DESCRIPTION",
+      "input": {
+        "updatedAt": "2026-09-02T22:16:02.698Z",
+        "description": "All four flags default off. Sync serving, migrating the host's permission tables and retiring them (stages 8\u201310) remain, so authEnforcement cannot yet be enabled on a fleet that uses those tables."
+      },
+      "timestampUtcMs": "2026-09-02T22:16:02.698Z"
+    }
+  },
+  {
+    "index": 16,
+    "hash": "imphJdt0A0hnSsvI4myxHhXcupA=",
+    "timestampUtcMs": "2026-09-02T22:16:02.698Z",
+    "action": {
+      "type": "SET_NOTE_TYPE",
+      "input": {
+        "noteType": "OBSERVATION",
+        "updatedAt": "2026-09-02T22:16:02.698Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:16:02.698Z"
+    }
+  },
+  {
+    "index": 17,
+    "hash": "imphJdt0A0hnSsvI4myxHhXcupA=",
+    "timestampUtcMs": "2026-09-02T22:16:02.698Z",
+    "action": {
+      "type": "SET_CONTENT",
+      "input": {
+        "content": "Status recorded from the spec's implementation plan at v6.2.2-dev.74 (the spec at v6.2.2-dev.47 still said only stage 1 had shipped):\n\n| Stage | What | Flag |\n| --- | --- | --- |\n| 1 | Auth data model with backfill for legacy documents, the four actions and reducer, version-1 validation, persistence through save/load and versioned replay | \u2014 |\n| 2 | Decision-model surface and the store's append condition | \u2014 |\n| 3 | Document decision model replaces the document meta cache (positional deletion) | `documentDecisions` |\n| 4 | Auth projection: admission, replay, re-evaluation | `authEnforcement` |\n| 5 | Group principals: `powerhouse/reactor-group`, derived groups projection, group-reference relation, cross-document re-evaluation | `authGroups` |\n| 6 | Condition evaluators with position-correct scope state | `authConditions` |\n| 7 | The read path: reads routed through the registered decision model, policy-named groups served to the policy's audience | (each piece rides the flag it completes) |\n\nTwo stage-3 limits once listed as deliberate \u2014 `replayDocument` applying denied operations, and the read surface hiding a deleted document instead of serving the boundary state \u2014 turned out to have shipped with stage 4, and stage 7 verified them by exit test after clearing two remaining defects (revision one short after a trailing denied operation; a *denied* delete still marking snapshot rows deleted).\n\nWhat remains is **stages 8\u201310**: the reactor client's reads are gated by the policy, but the host still has an authorization system of its own \u2014 private permission tables deciding sync serving and every read at the GraphQL boundary. Until those three stages land, `authEnforcement` cannot be turned on for a fleet that uses the tables, because every document's policy is uninitialized and an uninitialized policy allows everything. The Cookbook records the practical side: `group-principals` and `scoped-reads` need releases carrying the `authGroups` stage and the stage-7 read path, which at the time of writing meant running them through the monorepo's `test/recipes-e2e` link harness against a local checkout rather than the `dev` dist-tag.\n\n_Source: docs/specs/auth-scope.md (Powerhouse v6.2.2-dev.74)._\n_Source: apps/academy/docs/academy/05-Lookup/00-Cookbook.md (Powerhouse v6.2.2-dev.74)._\n\n## Provenance\n- `docs/specs/auth-scope.md` \u2014 Implementation plan: 'Stages 1 through 6 have shipped\u2026 Stage 7, the read path, has shipped too\u2026 What remains is stages 8 through 10'\n- `apps/academy/docs/academy/05-Lookup/00-Cookbook.md` \u2014 Group Principals \u203a Version requirement; Scoped Reads \u203a Version requirement\n\n_Recorded from the Powerhouse repository at **v6.2.2-dev.74** during the v6.2.2-dev.74 source sync._",
+        "updatedAt": "2026-09-02T22:16:02.698Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:16:02.698Z"
+    }
+  },
+  {
+    "index": 18,
+    "hash": "imphJdt0A0hnSsvI4myxHhXcupA=",
+    "timestampUtcMs": "2026-09-02T22:16:02.698Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "version",
+        "value": "v6.2.2-dev.74",
+        "updatedAt": "2026-09-02T22:16:02.698Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:16:02.698Z"
+    }
+  },
+  {
+    "index": 19,
+    "hash": "imphJdt0A0hnSsvI4myxHhXcupA=",
+    "timestampUtcMs": "2026-09-02T22:16:02.698Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "filePath",
+        "value": "docs/specs/auth-scope.md",
+        "updatedAt": "2026-09-02T22:16:02.698Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:16:02.698Z"
+    }
+  },
+  {
+    "index": 20,
+    "hash": "imphJdt0A0hnSsvI4myxHhXcupA=",
+    "timestampUtcMs": "2026-09-02T22:16:02.698Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "confidence",
+        "value": "grounded",
+        "updatedAt": "2026-09-02T22:16:02.698Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:16:02.698Z"
+    }
+  },
+  {
+    "index": 21,
+    "hash": "iv2sYAoqLpAybD1xQPBLpbGrc2s=",
+    "timestampUtcMs": "2026-09-02T22:20:40.292Z",
+    "action": {
+      "type": "SET_TITLE",
+      "input": {
+        "title": "At v6.2.2-dev.74 stages 1\u20137 of the auth scope have shipped: data model, decision model, positional deletion, enforcement, groups, conditions and the read path",
+        "updatedAt": "2026-09-02T22:20:40.292Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:20:40.292Z"
+    }
+  },
+  {
+    "index": 22,
+    "hash": "iv2sYAoqLpAybD1xQPBLpbGrc2s=",
+    "timestampUtcMs": "2026-09-02T22:20:40.292Z",
+    "action": {
+      "type": "SET_DESCRIPTION",
+      "input": {
+        "updatedAt": "2026-09-02T22:20:40.292Z",
+        "description": "All four flags default off. Sync serving, migrating the host's permission tables and retiring them (stages 8\u201310) remain, so authEnforcement cannot yet be enabled on a fleet that uses those tables."
+      },
+      "timestampUtcMs": "2026-09-02T22:20:40.292Z"
+    }
+  },
+  {
+    "index": 23,
+    "hash": "iv2sYAoqLpAybD1xQPBLpbGrc2s=",
+    "timestampUtcMs": "2026-09-02T22:20:40.292Z",
+    "action": {
+      "type": "SET_NOTE_TYPE",
+      "input": {
+        "noteType": "OBSERVATION",
+        "updatedAt": "2026-09-02T22:20:40.292Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:20:40.292Z"
+    }
+  },
+  {
+    "index": 24,
+    "hash": "iv2sYAoqLpAybD1xQPBLpbGrc2s=",
+    "timestampUtcMs": "2026-09-02T22:20:40.292Z",
+    "action": {
+      "type": "SET_CONTENT",
+      "input": {
+        "content": "Status recorded from the spec's implementation plan at v6.2.2-dev.74 (the spec at v6.2.2-dev.47 still said only stage 1 had shipped):\n\n| Stage | What | Flag |\n| --- | --- | --- |\n| 1 | Auth data model with backfill for legacy documents, the four actions and reducer, version-1 validation, persistence through save/load and versioned replay | \u2014 |\n| 2 | Decision-model surface and the store's append condition | \u2014 |\n| 3 | Document decision model replaces the document meta cache (positional deletion) | `documentDecisions` |\n| 4 | Auth projection: admission, replay, re-evaluation | `authEnforcement` |\n| 5 | Group principals: `powerhouse/reactor-group`, derived groups projection, group-reference relation, cross-document re-evaluation | `authGroups` |\n| 6 | Condition evaluators with position-correct scope state | `authConditions` |\n| 7 | The read path: reads routed through the registered decision model, policy-named groups served to the policy's audience | (each piece rides the flag it completes) |\n\nTwo stage-3 limits once listed as deliberate \u2014 `replayDocument` applying denied operations, and the read surface hiding a deleted document instead of serving the boundary state \u2014 turned out to have shipped with stage 4, and stage 7 verified them by exit test after clearing two remaining defects (revision one short after a trailing denied operation; a *denied* delete still marking snapshot rows deleted).\n\nWhat remains is **stages 8\u201310**: the reactor client's reads are gated by the policy, but the host still has an authorization system of its own \u2014 private permission tables deciding sync serving and every read at the GraphQL boundary. Until those three stages land, `authEnforcement` cannot be turned on for a fleet that uses the tables, because every document's policy is uninitialized and an uninitialized policy allows everything. The Cookbook records the practical side: `group-principals` and `scoped-reads` need releases carrying the `authGroups` stage and the stage-7 read path, which at the time of writing meant running them through the monorepo's `test/recipes-e2e` link harness against a local checkout rather than the `dev` dist-tag.\n\n_Source: docs/specs/auth-scope.md (Powerhouse v6.2.2-dev.74)._\n_Source: apps/academy/docs/academy/05-Lookup/00-Cookbook.md (Powerhouse v6.2.2-dev.74)._\n\n## Provenance\n- `docs/specs/auth-scope.md` \u2014 Implementation plan: 'Stages 1 through 6 have shipped\u2026 Stage 7, the read path, has shipped too\u2026 What remains is stages 8 through 10'\n- `apps/academy/docs/academy/05-Lookup/00-Cookbook.md` \u2014 Group Principals \u203a Version requirement; Scoped Reads \u203a Version requirement\n\n_Recorded from the Powerhouse repository at **v6.2.2-dev.74** during the v6.2.2-dev.74 source sync._",
+        "updatedAt": "2026-09-02T22:20:40.292Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:20:40.292Z"
+    }
+  },
+  {
+    "index": 25,
+    "hash": "iv2sYAoqLpAybD1xQPBLpbGrc2s=",
+    "timestampUtcMs": "2026-09-02T22:20:40.292Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "version",
+        "value": "v6.2.2-dev.74",
+        "updatedAt": "2026-09-02T22:20:40.292Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:20:40.292Z"
+    }
+  },
+  {
+    "index": 26,
+    "hash": "iv2sYAoqLpAybD1xQPBLpbGrc2s=",
+    "timestampUtcMs": "2026-09-02T22:20:40.292Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "filePath",
+        "value": "docs/specs/auth-scope.md",
+        "updatedAt": "2026-09-02T22:20:40.292Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:20:40.292Z"
+    }
+  },
+  {
+    "index": 27,
+    "hash": "iv2sYAoqLpAybD1xQPBLpbGrc2s=",
+    "timestampUtcMs": "2026-09-02T22:20:40.292Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "confidence",
+        "value": "grounded",
+        "updatedAt": "2026-09-02T22:20:40.292Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:20:40.292Z"
+    }
+  }
+]

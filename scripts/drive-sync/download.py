@@ -5,10 +5,24 @@ Output layout:
     <output-dir>/
         manifest.json
         drive-info.json
-        states/<doc-id>.json     — state.global per document
+        tree.json                — the drive's node tree
+        edges.json               — every knowledge edge in the drive, with
+                                   reason/confidence, from ONE knowledgeGraphEdges
+                                   call (source of the per-doc link arrays below)
+        auth.json                — {doc-id: state.auth} for every document, so a
+                                   restored vault can be compared policy-for-policy
+        states/<doc-id>.json     — state.global per document, with links[] /
+                                   coreIdeas[] / childRefs[] reconstructed from edges
         ops/<doc-id>.json        — operation history (informational; not replayed)
 
 Idempotent: skips per-doc fetch if state file already exists.
+
+Relationships come from the graph subgraph's whole-drive edge dump by default
+(`--relationships graph`): one request instead of seven per document, and it is
+the only read path that carries each edge's `reason` and `confidence` —
+`documentOutgoingRelationships` returns documents, not edge rows, so the older
+per-type fan-out (`--relationships table`) cannot see them. The fan-out is kept
+as a fallback for a Switchboard without the knowledgeGraph subgraph.
 
 Usage:
     python3 scripts/drive-sync/download.py \
@@ -96,6 +110,12 @@ def parse_args():
     p.add_argument("--out", required=True, help="output directory")
     p.add_argument("--concurrency", type=int, default=5)
     p.add_argument("--limit", type=int, default=None, help="for testing; cap doc fetches")
+    p.add_argument("--relationships", choices=("graph", "table"), default="graph",
+                   help="graph: one knowledgeGraphEdges call with reason/confidence (default); "
+                        "table: per-doc per-type documentOutgoingRelationships fan-out")
+    p.add_argument("--graph-endpoint", default=None,
+                   help="endpoint serving knowledgeGraphEdges; default derives "
+                        "<endpoint without /r>/knowledgeGraph")
     return p.parse_args()
 
 
@@ -157,6 +177,43 @@ def fetch_doc(client: GraphQLClient, doc_id: str) -> tuple[dict, list]:
             break
 
     return g, all_ops
+
+
+def _parse_state_auth(doc: dict) -> dict:
+    state = doc.get("state", {})
+    if isinstance(state, str):
+        state = json.loads(state)
+    a = state.get("auth") or {}
+    if isinstance(a, str):
+        a = json.loads(a)
+    return a or {}
+
+
+def fetch_doc_full(client: GraphQLClient, doc_id: str) -> tuple[dict, list, dict]:
+    """fetch_doc plus the document's auth scope (its access policy)."""
+    all_ops: list[dict] = []
+    cursor: str | None = None
+    g: dict = {}
+    auth: dict = {}
+    while True:
+        variables: dict = {"id": doc_id}
+        if cursor is not None:
+            variables["cursor"] = cursor
+        data = client.query(DOC_STATE_QUERY, variables)
+        wrapper = data.get("document")
+        if not wrapper:
+            raise RuntimeError(f"document {doc_id} not found")
+        doc = wrapper.get("document") or wrapper
+        if not g:
+            g = _parse_state_global(doc)
+            auth = _parse_state_auth(doc)
+        ops_page = doc.get("operations") or {}
+        all_ops.extend(ops_page.get("items") or [])
+        if ops_page.get("hasNextPage"):
+            cursor = ops_page.get("cursor")
+        else:
+            break
+    return g, all_ops, auth
 
 
 def fetch_outgoing_relationships(
@@ -236,6 +293,101 @@ def _now_iso() -> str:
     )
 
 
+EDGES_QUERY = """
+query Edges($driveId: ID!) {
+  knowledgeGraphEdges(driveId: $driveId) {
+    sourceDocumentId
+    targetDocumentId
+    linkType
+    reason
+    confidence
+  }
+}
+"""
+
+
+def derive_graph_endpoint(endpoint: str) -> str:
+    """`.../graphql/r` -> `.../graphql/knowledgeGraph`; `.../graphql` likewise."""
+    base = endpoint[:-2] if endpoint.endswith("/r") else endpoint
+    return base.rstrip("/") + "/knowledgeGraph"
+
+
+def fetch_all_edges(client: GraphQLClient, drive_id: str) -> list[dict]:
+    """Every knowledge edge in the drive in one call, reason/confidence included."""
+    data = client.query(EDGES_QUERY, {"driveId": drive_id})
+    return data.get("knowledgeGraphEdges") or []
+
+
+def attach_relationships_from_edges(
+    doc_id: str,
+    doc_type: str,
+    state: dict,
+    edges_by_source: dict[str, list[dict]],
+    title_by_id: dict[str, str],
+) -> None:
+    """Same state fields as attach_relationships_to_state, built from the
+    edge dump instead of seven queries. Link entries additionally carry the
+    edge's `reason` and `confidence`; the upload handlers ignore fields they
+    do not know, so this stays compatible while losing nothing."""
+    links: list[dict] = []
+    core_ideas: list[dict] = []
+    child_refs: list[str] = []
+    is_moc = doc_type == "bai/moc"
+    for e in edges_by_source.get(doc_id, []):
+        rel_type = e.get("linkType") or ""
+        tid = e.get("targetDocumentId")
+        if not tid:
+            continue
+        if rel_type in KNOWLEDGE_NOTE_LINK_TYPES:
+            entry = {
+                "id": f"lnk-{tid[:8]}-{rel_type[:3].lower()}",
+                "linkType": rel_type,
+                "targetDocumentId": tid,
+                "targetTitle": title_by_id.get(tid, ""),
+            }
+            if e.get("reason"):
+                entry["reason"] = e["reason"]
+            if e.get("confidence"):
+                entry["confidence"] = e["confidence"]
+            links.append(entry)
+        elif rel_type == "CORE_IDEA" and is_moc:
+            core_ideas.append({
+                "id": f"ci-{tid[:8]}",
+                "noteRef": tid,
+                "contextPhrase": e.get("reason") or "",
+                "sortOrder": len(core_ideas),
+                "addedAt": _now_iso(),
+                "addedBy": "knowledge-agent",
+            })
+        elif rel_type == "CHILD_MOC" and is_moc:
+            child_refs.append(tid)
+        # Other types (INVOLVES from tensions, ...) stay in edges.json only;
+        # no upload handler consumes them yet.
+    state["links"] = links
+    if is_moc:
+        state["coreIdeas"] = core_ideas
+        state["childRefs"] = child_refs
+
+
+def _retry_read(fn, attempts: int = 3):
+    """Reads are idempotent, so a 5xx from the ingress is safe to retry.
+    lib.gql deliberately does not retry GraphQL/HTTP-level errors because it
+    also carries mutations; this wrapper is for read-only fetches only."""
+    last: Exception | None = None
+    for i in range(attempts):
+        try:
+            return fn()
+        except Exception as e:  # GraphQLError("HTTP 502: ...") and friends
+            msg = str(e)
+            if "HTTP 5" not in msg and "network:" not in msg:
+                raise
+            last = e
+            if i < attempts - 1:
+                time.sleep(1.0 * (2 ** i))
+    assert last is not None
+    raise last
+
+
 def main() -> int:
     args = parse_args()
     out = Path(args.out)
@@ -271,6 +423,34 @@ def main() -> int:
     states_dir = out / "states"
     ops_dir = out / "ops"
 
+    edges_by_source: dict[str, list[dict]] = {}
+    use_graph = args.relationships == "graph"
+    if use_graph:
+        graph_ep = args.graph_endpoint or derive_graph_endpoint(args.endpoint)
+        graph_client = GraphQLClient(graph_ep)
+        drive_ident = drive_info["id"] or args.drive
+        try:
+            edges = _retry_read(lambda: fetch_all_edges(graph_client, drive_ident))
+        except Exception as e:
+            print(f"[download] edge dump failed at {graph_ep} ({str(e)[:120]}); "
+                  f"falling back to per-type fan-out", file=sys.stderr)
+            use_graph = False
+            edges = []
+        if use_graph:
+            (out / "edges.json").write_text(json.dumps(edges, indent=1))
+            for e in edges:
+                edges_by_source.setdefault(e.get("sourceDocumentId") or "", []).append(e)
+            by_type: dict[str, int] = {}
+            for e in edges:
+                by_type[e.get("linkType") or "?"] = by_type.get(e.get("linkType") or "?", 0) + 1
+            with_reason = sum(1 for e in edges if e.get("reason"))
+            print(f"[download] edges: {len(edges)} from {graph_ep} "
+                  f"({with_reason} with reason) "
+                  + ", ".join(f"{k}={v}" for k, v in sorted(by_type.items(), key=lambda kv: -kv[1])))
+
+    auth_by_id: dict[str, dict] = {}
+    auth_lock = __import__("threading").Lock()
+
     # Build a {id → title} map from the drive's file nodes so we can
     # fill in `targetTitle` on synthesized link entries without an extra
     # round-trip per relationship.
@@ -286,13 +466,19 @@ def main() -> int:
         if state_path.exists() and ops_path.exists():
             return (doc_id, True, "cached")
         try:
-            g, ops = fetch_doc(client, doc_id)
-            # Reconstruct relationship-driven state fields from the
-            # reactor's DocumentRelationship table so the next upload
-            # can replay them via ADD_RELATIONSHIP.
-            attach_relationships_to_state(
-                client, doc_id, type_by_id.get(doc_id, "unknown"), g, title_by_id
-            )
+            g, ops, auth = _retry_read(lambda: fetch_doc_full(client, doc_id))
+            with auth_lock:
+                auth_by_id[doc_id] = auth
+            # Reconstruct relationship-driven state fields so the next
+            # upload can replay them via ADD_RELATIONSHIP.
+            if use_graph:
+                attach_relationships_from_edges(
+                    doc_id, type_by_id.get(doc_id, "unknown"), g, edges_by_source, title_by_id
+                )
+            else:
+                attach_relationships_to_state(
+                    client, doc_id, type_by_id.get(doc_id, "unknown"), g, title_by_id
+                )
             state_path.write_text(json.dumps(g, indent=2))
             ops_path.write_text(json.dumps(ops, indent=2))
             n_links = len(g.get("links") or [])
@@ -325,12 +511,27 @@ def main() -> int:
                 failed += 1
                 print(f"  {tag} ✗ {n.get('name','?')[:60]} — {info}", file=sys.stderr)
 
+    # Merge with any auth.json from a previous (cached) run so a resumed
+    # download still ends with one entry per document.
+    auth_path = out / "auth.json"
+    if auth_path.exists():
+        try:
+            prev = json.loads(auth_path.read_text())
+            prev.update(auth_by_id)
+            auth_by_id = prev
+        except Exception:
+            pass
+    auth_path.write_text(json.dumps(auth_by_id, indent=1, sort_keys=True))
+    initialized = sum(1 for a in auth_by_id.values() if (a or {}).get("version", 0))
+    print(f"[download] auth: {len(auth_by_id)} policies saved, {initialized} initialized")
+
     manifest = {
         "source": {
             "endpoint": args.endpoint,
             "drive": args.drive,
             "driveId": drive_info["id"],
             "driveName": drive_info["name"],
+            "relationships": "graph" if use_graph else "table",
             "downloadedAt": datetime.datetime.now(datetime.timezone.utc).strftime(
                 "%Y-%m-%dT%H:%M:%S.000Z"
             ),

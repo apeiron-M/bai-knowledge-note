@@ -1,0 +1,115 @@
+{
+  "links": [
+    {
+      "id": "lnk-04232cfe-bui",
+      "linkType": "BUILDS_ON",
+      "targetDocumentId": "04232cfe-983e-46ba-ba27-64b2107a9f12",
+      "targetTitle": "hashfirst-why-client-hashing",
+      "reason": "Submitting the action before the bytes exist is what creates a window that needs a distinct pending state at all",
+      "confidence": "grounded"
+    },
+    {
+      "id": "lnk-e25bc920-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "e25bc920-d3bc-4b36-9c7f-cb35b64c27b9",
+      "targetTitle": "Package \u203a reactor \u203a attachments-hash-first \u2014 Hash-First Attachment Refs",
+      "reason": "Extracted from packages/reactor/docs/attachments-hash-first.md at v6.2.2-dev.74 \u2014 Summary (commitment 3); Pending status; Syncing pending state through the transport; Failure modes",
+      "confidence": "grounded"
+    },
+    {
+      "id": "lnk-0d8024a6-bui",
+      "linkType": "BUILDS_ON",
+      "targetDocumentId": "0d8024a6-332f-457f-86eb-414251cd65a3",
+      "targetTitle": "attachment-store-transport-pair",
+      "reason": "Pending has to be visible through the transport, so it extends the store-transport pair with a third answer besides available and absent",
+      "confidence": "grounded"
+    },
+    {
+      "id": "lnk-9d492c64-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "9d492c64-ed5b-4f00-8efe-98354c9fd6b4",
+      "targetTitle": "hashfirst-trust-model",
+      "reason": "A dangling ref after an abandoned or rejected upload is the same state pending decays into once the reservation expires",
+      "confidence": "grounded"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Pending is a transport-visible attachment state, so a peer holding an action that references an in-flight upload can tell 'coming, retry later' from 'unknown, possibly never'",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "b7565543-52da-49c8-8601-98ac28bf7302",
+      "name": "attachments",
+      "topicDocumentId": null
+    },
+    {
+      "id": "0d79fa02-14c7-4f0f-b593-2d5eb19d814b",
+      "name": "hash-first",
+      "topicDocumentId": null
+    },
+    {
+      "id": "26b7d7ff-9fa9-4906-8d8f-b017b8168189",
+      "name": "sync",
+      "topicDocumentId": null
+    },
+    {
+      "id": "a84e4295-346b-446e-b075-cc37439850f4",
+      "name": "status",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "The third design commitment of hash-first is that a hash which is reserved but not yet uploaded is **queryable as `pending`** \u2014 locally through `stat()` and across reactors through `IAttachmentTransport`. Without it, a peer receiving an action that references an in-flight upload could not distinguish a byte stream that is coming from one that will never exist.\n\nThe two local surfaces behave differently on purpose: `stat()` **succeeds**, returning `status: \"pending\"` with the declared `sizeBytes` and `expiresAtUtc`, while `get()` **throws `AttachmentPending`** \u2014 a class deliberately *not* derived from `AttachmentNotFound`, because pending means \"retry later\", not \"unknown\". A UI can therefore render a placeholder with a known size and a known deadline.\n\nAcross reactors the transport returns `pending` with the expiry, and the peer backs off and retries **until that expiry** \u2014 bounded, so there is no infinite polling; after expiry the peer treats the hash as not found.\n\nThe failure table follows from this. An upload abandoned after the action was submitted reads `pending` until the reservation expires and then `AttachmentNotFound`, leaving the already-tolerated dangling ref; the client can retry by re-reserving the same hash, since no attachment row exists. A client that crashes mid-upload loses only the upload \u2014 the action is already durable server-side \u2014 and a pending-upload queue in `reactor-browser` re-drives it on the next visit.\n\n## Provenance\n- `packages/reactor/docs/attachments-hash-first.md` \u2014 Summary (commitment 3); Pending status; Syncing pending state through the transport; Failure modes\n\n_Extracted from the Powerhouse repository at **v6.2.2-dev.74**._",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": "v6.2.2-dev.74",
+  "computes": null,
+  "filePath": "packages/reactor/docs/attachments-hash-first.md",
+  "noteType": "ARCHITECTURE",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "knowledge-agent",
+    "createdAt": "2026-09-03T07:20:42.182Z",
+    "sessionId": null,
+    "updatedAt": "2026-09-03T07:22:37.182Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "stat() reports pending with the declared sizeBytes and expiresAtUtc while get() throws AttachmentPending, deliberately not a subclass of AttachmentNotFound. Backoff is bounded by the expiry.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "b3b02e00-4080-4faa-8344-1e3ec450755c",
+      "actor": "knowledge-agent",
+      "comment": "extracted from packages/reactor/docs/attachments-hash-first.md at v6.2.2-dev.74",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-09-03T07:20:42.721Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "eb24b151-15ff-49a5-b2ad-112289f77f60",
+      "actor": "liberuum",
+      "comment": "claim checked against the cited file at the pinned tag",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-09-03T07:20:43.346Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

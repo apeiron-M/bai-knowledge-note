@@ -1,0 +1,94 @@
+{
+  "links": [
+    {
+      "id": "lnk-2a79c841-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "2a79c841-09f1-47b1-a590-094184b81b88",
+      "targetTitle": "BD planning \u2014 industry and companion-software selection (20 Aug 2026)"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "The Paperless demo requires a specific installable stack, which is itself the proof",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "6dc60aa9-52cf-4da9-b8c4-9e254f2809e4",
+      "name": "bd-strategy",
+      "topicDocumentId": null
+    },
+    {
+      "id": "11d7b530-4188-4a19-9518-8f1931dae833",
+      "name": "demo-design",
+      "topicDocumentId": null
+    },
+    {
+      "id": "a71f6e5e-c30f-4ec8-a324-166bc7e9a590",
+      "name": "paperless",
+      "topicDocumentId": null
+    },
+    {
+      "id": "20dde542-f876-42df-9150-7c3b57a7bd79",
+      "name": "packaging",
+      "topicDocumentId": null
+    },
+    {
+      "id": "8a704909-60d4-406a-9651-c16437217577",
+      "name": "integration-seam",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "The scenario specifies three setup stages. Paperless first: email integration over POP/IMAP, OCR and LLM configuration, and definition of document types, tags and storage locations. Then a Powerhouse instance: Switchboard plus Connect plus a Postgres database; the `powerhouse/invoice` package providing a drive app, document editors and an analytics processor; and `powerhouse/paperless` providing a paperless integration document. Then the integration itself: set the endpoint, configure the webhook.\n\nNaming the packages matters more than it appears. A demo assembled from installable packages is reproducible by the audience, which is what separates a proof from a performance \u2014 and the packaging is the same artefact a consultancy would deploy for a client.\n\nThe scenario continues into expense invoicing (selecting invoices and receipts and turning them into invoice line items) and then automated payments.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "PROCEDURE",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "knowledge-agent",
+    "createdAt": "2026-08-20T10:34:32.713318Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-20T10:34:33.793416Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Switchboard, Connect and Postgres, plus a powerhouse/invoice package carrying a drive app, document editors and an analytics processor, plus a powerhouse/paperless integration document.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "8afb46a0-61c8-4b39-9d2e-45f023b6d92d",
+      "actor": "knowledge-agent",
+      "comment": "Extracted from the primary-source tool screen; each claim quotable from a cited source.",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-20T10:34:33.652520Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "27fa4942-bcf2-42a8-9b54-10e70fe23c29",
+      "actor": "liberuum",
+      "comment": "Approved: tool-screen extraction.",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-20T10:34:33.793416Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

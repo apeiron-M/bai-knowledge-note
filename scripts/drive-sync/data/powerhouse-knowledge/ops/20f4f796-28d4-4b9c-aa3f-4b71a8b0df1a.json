@@ -1,0 +1,694 @@
+[
+  {
+    "index": 0,
+    "hash": "",
+    "timestampUtcMs": "2026-09-02T22:09:48.970Z",
+    "action": {
+      "type": "CREATE_DOCUMENT",
+      "input": {
+        "meta": {},
+        "name": "auth-creator-keeps-auth",
+        "slug": "",
+        "model": "bai/knowledge-note",
+        "branch": "main",
+        "signing": {
+          "nonce": "",
+          "publicKey": {},
+          "signature": "20f4f796-28d4-4b9c-aa3f-4b71a8b0df1a",
+          "documentType": "bai/knowledge-note",
+          "createdAtUtcIso": "2026-09-02T22:09:48.970Z"
+        },
+        "version": 0,
+        "documentId": "20f4f796-28d4-4b9c-aa3f-4b71a8b0df1a",
+        "protocolVersions": {
+          "base-reducer": 2
+        }
+      },
+      "timestampUtcMs": "2026-09-02T22:09:48.970Z"
+    }
+  },
+  {
+    "index": 0,
+    "hash": "kNNw6q6mqVALUhGIbIer4bw7lmg=",
+    "timestampUtcMs": "2026-09-02T22:09:48.889Z",
+    "action": {
+      "type": "SET_TITLE",
+      "input": {
+        "title": "The key that signed the document header always keeps execute on the auth scope, and a creator-less policy is refused if it would leave nobody able to administer it",
+        "updatedAt": "2026-09-02T22:09:48.889Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:09:48.889Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "",
+    "timestampUtcMs": "2026-09-02T22:09:48.970Z",
+    "action": {
+      "type": "UPGRADE_DOCUMENT",
+      "input": {
+        "model": "bai/knowledge-note",
+        "toVersion": 1,
+        "documentId": "20f4f796-28d4-4b9c-aa3f-4b71a8b0df1a",
+        "fromVersion": 0,
+        "initialState": {
+          "auth": {
+            "grants": [],
+            "version": 0
+          },
+          "local": {
+            "lastViewedAt": null,
+            "personalTags": []
+          },
+          "global": {
+            "links": [],
+            "model": null,
+            "scope": null,
+            "title": null,
+            "editor": null,
+            "inputs": [],
+            "models": [],
+            "status": "DRAFT",
+            "topics": [],
+            "content": null,
+            "context": null,
+            "modelId": null,
+            "modules": [],
+            "outputs": [],
+            "version": null,
+            "computes": null,
+            "filePath": null,
+            "noteType": null,
+            "severity": null,
+            "hooksUsed": [],
+            "rootCause": null,
+            "confidence": null,
+            "consumedBy": [],
+            "provenance": null,
+            "sourceType": null,
+            "targetType": null,
+            "cardinality": null,
+            "description": null,
+            "alternatives": [],
+            "consequences": [],
+            "errorMessage": null,
+            "relationType": null,
+            "correctPattern": null,
+            "decisionStatus": null,
+            "dispatchTargets": [],
+            "lifecycleEvents": []
+          },
+          "document": {
+            "hash": {
+              "encoding": "base64",
+              "algorithm": "sha1"
+            },
+            "version": 1
+          }
+        }
+      },
+      "timestampUtcMs": "2026-09-02T22:09:48.970Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "pMCpbhFtinH5FfgXhdPGvaPuSJQ=",
+    "timestampUtcMs": "2026-09-02T22:09:48.889Z",
+    "action": {
+      "type": "SET_DESCRIPTION",
+      "input": {
+        "updatedAt": "2026-09-02T22:09:48.889Z",
+        "description": "The carve-out covers auth-scope execution only, no domain access. Unsigned documents have no creator, so every auth action that would leave administration unreachable is rejected instead."
+      },
+      "timestampUtcMs": "2026-09-02T22:09:48.889Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "",
+    "timestampUtcMs": "2026-09-02T22:17:46.381Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "metadata": {
+          "reason": "Extracted from apps/academy/docs/academy/04-Reference/01-Reactor/11-Authorization.md at v6.2.2-dev.74 \u2014 'The creator keeps the auth scope' bullet",
+          "confidence": "grounded"
+        },
+        "sourceId": "20f4f796-28d4-4b9c-aa3f-4b71a8b0df1a",
+        "targetId": "17dc46b0-f733-467c-99d7-ae8fbe0fb0e4",
+        "relationshipType": "DERIVED_FROM"
+      },
+      "timestampUtcMs": "2026-09-02T22:17:46.381Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "ZTnFsByBt/PmVxN/ZRS0RmXc9RU=",
+    "timestampUtcMs": "2026-09-02T22:09:48.889Z",
+    "action": {
+      "type": "SET_NOTE_TYPE",
+      "input": {
+        "noteType": "CONCEPT",
+        "updatedAt": "2026-09-02T22:09:48.889Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:09:48.889Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "",
+    "timestampUtcMs": "2026-09-02T22:17:47.466Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "metadata": {
+          "reason": "Extracted from docs/specs/auth-scope.md at v6.2.2-dev.74 \u2014 Decision algorithm (creator check) and 'Administration and bootstrap' reachability rule",
+          "confidence": "grounded"
+        },
+        "sourceId": "20f4f796-28d4-4b9c-aa3f-4b71a8b0df1a",
+        "targetId": "223bb12a-be7f-4209-9ab2-f04f7bb2b6c8",
+        "relationshipType": "DERIVED_FROM"
+      },
+      "timestampUtcMs": "2026-09-02T22:17:47.466Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "i7KH48+Sadxfg50e0LSJSg/j4zA=",
+    "timestampUtcMs": "2026-09-02T22:09:48.889Z",
+    "action": {
+      "type": "SET_CONTENT",
+      "input": {
+        "content": "A policy cannot brick its own owner: the key that signed the document's header may **always execute in `scope: \"auth\"`**, even against a grant list that tries to deny it. The carve-out is deliberately narrow \u2014 the creator gets no special access to domain operations or reads \u2014 and it is safe because every replica can verify it from the header. An administrator list held outside the reactor (say on the Switchboard) could not serve the purpose: replicas could hold different lists and reach different decisions.\n\nThe creator is bound once, when `INITIALIZE_AUTH` is accepted and the signer's key is stored in the auth state as `creator`; after that `decide` reads the stored key.\n\n**An unsigned document has no creator.** There validation takes over with a *reachability* rule rather than a presence rule: because evaluation is last-applicable-grant-wins, an administration grant shadowed by a later deny keeps nothing reachable. All four ways of taking administration away without removing a grant \u2014 `REMOVE_GRANT`, a `SET_GRANT` that replaces the grant in place, a `SET_GRANT` that appends a deny covering `auth`, and a `MOVE_GRANT` that reorders the administration grant into shadow \u2014 are rejected on a creator-less policy, and `INITIALIZE_AUTH` rejects a genesis born unreachable. A consequence: a creator-less policy cannot carry a blanket `deny` on `execute` for `*`, because that denies its own administration.\n\nThe `document-acl` recipe surfaces this as the \"self-lockout guardrail\" (reported as `operation.error`, not a failed job) and warns that a document created without a signing key must include a reachable auth-administration grant in its initial policy or `initializeAuth` is refused. A duplicated document inherits its source's policy, and duplication fails rather than produce a policy that cannot be administered.\n\n_Source: apps/academy/docs/academy/04-Reference/01-Reactor/11-Authorization.md (Powerhouse v6.2.2-dev.74)._\n_Source: docs/specs/auth-scope.md (Powerhouse v6.2.2-dev.74)._\n_Source: apps/academy/docs/academy/05-Lookup/00-Cookbook.md (Powerhouse v6.2.2-dev.74)._\n\n## Provenance\n- `apps/academy/docs/academy/04-Reference/01-Reactor/11-Authorization.md` \u2014 'The creator keeps the auth scope' bullet\n- `docs/specs/auth-scope.md` \u2014 Decision algorithm (creator check) and 'Administration and bootstrap' reachability rule\n- `apps/academy/docs/academy/05-Lookup/00-Cookbook.md` \u2014 Document ACL: self-lockout guardrail, 'Unsigned documents have no creator carve-out'\n\n_Recorded from the Powerhouse repository at **v6.2.2-dev.74** during the v6.2.2-dev.74 source sync._",
+        "updatedAt": "2026-09-02T22:09:48.889Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:09:48.889Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "",
+    "timestampUtcMs": "2026-09-02T22:17:48.740Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "metadata": {
+          "reason": "Extracted from apps/academy/docs/academy/05-Lookup/00-Cookbook.md at v6.2.2-dev.74 \u2014 Document ACL: self-lockout guardrail, 'Unsigned documents have no creator carve-out'",
+          "confidence": "grounded"
+        },
+        "sourceId": "20f4f796-28d4-4b9c-aa3f-4b71a8b0df1a",
+        "targetId": "f2aaccd3-7c26-4327-881e-f5ad9e267b89",
+        "relationshipType": "DERIVED_FROM"
+      },
+      "timestampUtcMs": "2026-09-02T22:17:48.740Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "LwoL1CxagsV9stXx7tQfB2jaqCs=",
+    "timestampUtcMs": "2026-09-02T22:09:48.889Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "4cc75ff9-7e58-43ca-8718-4cc4a43c2a85",
+        "name": "auth-scope"
+      },
+      "timestampUtcMs": "2026-09-02T22:09:48.889Z"
+    }
+  },
+  {
+    "index": 5,
+    "hash": "",
+    "timestampUtcMs": "2026-09-02T22:17:49.992Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "metadata": {
+          "reason": "Reachability has to be judged over the ordered list because a later deny shadows an earlier administration grant",
+          "confidence": "grounded"
+        },
+        "sourceId": "20f4f796-28d4-4b9c-aa3f-4b71a8b0df1a",
+        "targetId": "69327ea6-e0a1-4c07-a214-2c4619192862",
+        "relationshipType": "BUILDS_ON"
+      },
+      "timestampUtcMs": "2026-09-02T22:17:49.992Z"
+    }
+  },
+  {
+    "index": 5,
+    "hash": "RdI8YzuretkyLfxXGgG79vah8hI=",
+    "timestampUtcMs": "2026-09-02T22:09:48.889Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "461f049f-01f1-4948-a236-5da9b11e4f55",
+        "name": "authorization"
+      },
+      "timestampUtcMs": "2026-09-02T22:09:48.889Z"
+    }
+  },
+  {
+    "index": 6,
+    "hash": "",
+    "timestampUtcMs": "2026-09-02T22:17:50.467Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "metadata": {
+          "reason": "No creator on an unsigned document is also why such a document cannot resist an adversary at genesis",
+          "confidence": "grounded"
+        },
+        "sourceId": "20f4f796-28d4-4b9c-aa3f-4b71a8b0df1a",
+        "targetId": "46257dbf-5319-4042-8ac2-30c2a08c43d8",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-09-02T22:17:50.467Z"
+    }
+  },
+  {
+    "index": 6,
+    "hash": "yDB17/7o3Eo5zKm4w6TN3dpYyYo=",
+    "timestampUtcMs": "2026-09-02T22:09:48.889Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "fa54102f-b192-4188-bd18-2165bf38cc8f",
+        "name": "signing"
+      },
+      "timestampUtcMs": "2026-09-02T22:09:48.889Z"
+    }
+  },
+  {
+    "index": 7,
+    "hash": "",
+    "timestampUtcMs": "2026-09-02T22:17:50.951Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "metadata": {
+          "reason": "Header signing makes the creator a fact every replica can verify, which is what lets the carve-out live inside decide()",
+          "confidence": "grounded"
+        },
+        "sourceId": "20f4f796-28d4-4b9c-aa3f-4b71a8b0df1a",
+        "targetId": "8cbea140-21d6-4b63-8780-5d44831018aa",
+        "relationshipType": "BUILDS_ON"
+      },
+      "timestampUtcMs": "2026-09-02T22:17:50.951Z"
+    }
+  },
+  {
+    "index": 7,
+    "hash": "juIspTBtZd/nqGv0B6UeahNiQd4=",
+    "timestampUtcMs": "2026-09-02T22:09:48.889Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "65a4fa7d-8a5d-4909-bc9c-b05ceb00675a",
+        "name": "gotchas"
+      },
+      "timestampUtcMs": "2026-09-02T22:09:48.889Z"
+    }
+  },
+  {
+    "index": 8,
+    "hash": "",
+    "timestampUtcMs": "2026-09-02T22:22:10.985Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "metadata": {
+          "reason": "Extracted from apps/academy/docs/academy/04-Reference/01-Reactor/11-Authorization.md at v6.2.2-dev.74 \u2014 'The creator keeps the auth scope' bullet",
+          "confidence": "grounded"
+        },
+        "sourceId": "20f4f796-28d4-4b9c-aa3f-4b71a8b0df1a",
+        "targetId": "17dc46b0-f733-467c-99d7-ae8fbe0fb0e4",
+        "relationshipType": "DERIVED_FROM"
+      },
+      "timestampUtcMs": "2026-09-02T22:22:10.985Z"
+    }
+  },
+  {
+    "index": 8,
+    "hash": "WQxFhNi4PC8skRpZRlb09vB4O3g=",
+    "timestampUtcMs": "2026-09-02T22:09:48.889Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "version",
+        "value": "v6.2.2-dev.74",
+        "updatedAt": "2026-09-02T22:09:48.889Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:09:48.889Z"
+    }
+  },
+  {
+    "index": 9,
+    "hash": "",
+    "timestampUtcMs": "2026-09-02T22:22:11.562Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "metadata": {
+          "reason": "Extracted from docs/specs/auth-scope.md at v6.2.2-dev.74 \u2014 Decision algorithm (creator check) and 'Administration and bootstrap' reachability rule",
+          "confidence": "grounded"
+        },
+        "sourceId": "20f4f796-28d4-4b9c-aa3f-4b71a8b0df1a",
+        "targetId": "223bb12a-be7f-4209-9ab2-f04f7bb2b6c8",
+        "relationshipType": "DERIVED_FROM"
+      },
+      "timestampUtcMs": "2026-09-02T22:22:11.562Z"
+    }
+  },
+  {
+    "index": 9,
+    "hash": "gsAufZ81uwGAgvwI8aVQJBk51C4=",
+    "timestampUtcMs": "2026-09-02T22:09:48.889Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "filePath",
+        "value": "apps/academy/docs/academy/04-Reference/01-Reactor/11-Authorization.md",
+        "updatedAt": "2026-09-02T22:09:48.889Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:09:48.889Z"
+    }
+  },
+  {
+    "index": 10,
+    "hash": "",
+    "timestampUtcMs": "2026-09-02T22:22:12.317Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "metadata": {
+          "reason": "Extracted from apps/academy/docs/academy/05-Lookup/00-Cookbook.md at v6.2.2-dev.74 \u2014 Document ACL: self-lockout guardrail, 'Unsigned documents have no creator carve-out'",
+          "confidence": "grounded"
+        },
+        "sourceId": "20f4f796-28d4-4b9c-aa3f-4b71a8b0df1a",
+        "targetId": "f2aaccd3-7c26-4327-881e-f5ad9e267b89",
+        "relationshipType": "DERIVED_FROM"
+      },
+      "timestampUtcMs": "2026-09-02T22:22:12.317Z"
+    }
+  },
+  {
+    "index": 10,
+    "hash": "VwBk72zkfWJm2dcD9u66hUJF67E=",
+    "timestampUtcMs": "2026-09-02T22:09:48.889Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "confidence",
+        "value": "grounded",
+        "updatedAt": "2026-09-02T22:09:48.889Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:09:48.889Z"
+    }
+  },
+  {
+    "index": 11,
+    "hash": "",
+    "timestampUtcMs": "2026-09-02T22:22:13.108Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "metadata": {
+          "reason": "Reachability has to be judged over the ordered list because a later deny shadows an earlier administration grant",
+          "confidence": "grounded"
+        },
+        "sourceId": "20f4f796-28d4-4b9c-aa3f-4b71a8b0df1a",
+        "targetId": "69327ea6-e0a1-4c07-a214-2c4619192862",
+        "relationshipType": "BUILDS_ON"
+      },
+      "timestampUtcMs": "2026-09-02T22:22:13.108Z"
+    }
+  },
+  {
+    "index": 11,
+    "hash": "JeNYobEWedovrEgqvVhB7OzRJa8=",
+    "timestampUtcMs": "2026-09-02T22:09:51.330Z",
+    "action": {
+      "type": "SET_PROVENANCE",
+      "input": {
+        "author": "knowledge-agent",
+        "createdAt": "2026-09-02T22:09:51.330Z",
+        "sourceOrigin": "DERIVED"
+      },
+      "timestampUtcMs": "2026-09-02T22:09:51.330Z"
+    }
+  },
+  {
+    "index": 12,
+    "hash": "",
+    "timestampUtcMs": "2026-09-02T22:22:13.558Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "metadata": {
+          "reason": "No creator on an unsigned document is also why such a document cannot resist an adversary at genesis",
+          "confidence": "grounded"
+        },
+        "sourceId": "20f4f796-28d4-4b9c-aa3f-4b71a8b0df1a",
+        "targetId": "46257dbf-5319-4042-8ac2-30c2a08c43d8",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-09-02T22:22:13.558Z"
+    }
+  },
+  {
+    "index": 12,
+    "hash": "nBZ2sxAPNSgn3TgNU5VLJHykfWo=",
+    "timestampUtcMs": "2026-09-02T22:09:51.847Z",
+    "action": {
+      "type": "SUBMIT_FOR_REVIEW",
+      "input": {
+        "id": "fe084f97-8fa9-469f-8be6-2e039c36c0e8",
+        "actor": "knowledge-agent",
+        "comment": "extracted from the Powerhouse repository at v6.2.2-dev.74",
+        "timestamp": "2026-09-02T22:09:51.847Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:09:51.847Z"
+    }
+  },
+  {
+    "index": 13,
+    "hash": "",
+    "timestampUtcMs": "2026-09-02T22:22:14.038Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "metadata": {
+          "reason": "Header signing makes the creator a fact every replica can verify, which is what lets the carve-out live inside decide()",
+          "confidence": "grounded"
+        },
+        "sourceId": "20f4f796-28d4-4b9c-aa3f-4b71a8b0df1a",
+        "targetId": "8cbea140-21d6-4b63-8780-5d44831018aa",
+        "relationshipType": "BUILDS_ON"
+      },
+      "timestampUtcMs": "2026-09-02T22:22:14.038Z"
+    }
+  },
+  {
+    "index": 13,
+    "hash": "86V6ChPIhlV5Khem723SANakpZw=",
+    "timestampUtcMs": "2026-09-02T22:09:52.309Z",
+    "action": {
+      "type": "APPROVE_NOTE",
+      "input": {
+        "id": "e6196050-2ae6-4a83-aece-7e4717721f02",
+        "actor": "liberuum",
+        "comment": "claim checked against the cited repository file at the pinned tag",
+        "timestamp": "2026-09-02T22:09:52.309Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:09:52.309Z"
+    }
+  },
+  {
+    "index": 14,
+    "hash": "b9XDiBtDfErPhTezXLBVyyGZEwY=",
+    "timestampUtcMs": "2026-09-02T22:15:33.814Z",
+    "action": {
+      "type": "SET_TITLE",
+      "input": {
+        "title": "The key that signed the document header always keeps execute on the auth scope, and a creator-less policy is refused if it would leave nobody able to administer it",
+        "updatedAt": "2026-09-02T22:15:33.814Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:15:33.814Z"
+    }
+  },
+  {
+    "index": 15,
+    "hash": "b9XDiBtDfErPhTezXLBVyyGZEwY=",
+    "timestampUtcMs": "2026-09-02T22:15:33.814Z",
+    "action": {
+      "type": "SET_DESCRIPTION",
+      "input": {
+        "updatedAt": "2026-09-02T22:15:33.814Z",
+        "description": "The carve-out covers auth-scope execution only, no domain access. Unsigned documents have no creator, so every auth action that would leave administration unreachable is rejected instead."
+      },
+      "timestampUtcMs": "2026-09-02T22:15:33.814Z"
+    }
+  },
+  {
+    "index": 16,
+    "hash": "b9XDiBtDfErPhTezXLBVyyGZEwY=",
+    "timestampUtcMs": "2026-09-02T22:15:33.814Z",
+    "action": {
+      "type": "SET_NOTE_TYPE",
+      "input": {
+        "noteType": "CONCEPT",
+        "updatedAt": "2026-09-02T22:15:33.814Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:15:33.814Z"
+    }
+  },
+  {
+    "index": 17,
+    "hash": "b9XDiBtDfErPhTezXLBVyyGZEwY=",
+    "timestampUtcMs": "2026-09-02T22:15:33.814Z",
+    "action": {
+      "type": "SET_CONTENT",
+      "input": {
+        "content": "A policy cannot brick its own owner: the key that signed the document's header may **always execute in `scope: \"auth\"`**, even against a grant list that tries to deny it. The carve-out is deliberately narrow \u2014 the creator gets no special access to domain operations or reads \u2014 and it is safe because every replica can verify it from the header. An administrator list held outside the reactor (say on the Switchboard) could not serve the purpose: replicas could hold different lists and reach different decisions.\n\nThe creator is bound once, when `INITIALIZE_AUTH` is accepted and the signer's key is stored in the auth state as `creator`; after that `decide` reads the stored key.\n\n**An unsigned document has no creator.** There validation takes over with a *reachability* rule rather than a presence rule: because evaluation is last-applicable-grant-wins, an administration grant shadowed by a later deny keeps nothing reachable. All four ways of taking administration away without removing a grant \u2014 `REMOVE_GRANT`, a `SET_GRANT` that replaces the grant in place, a `SET_GRANT` that appends a deny covering `auth`, and a `MOVE_GRANT` that reorders the administration grant into shadow \u2014 are rejected on a creator-less policy, and `INITIALIZE_AUTH` rejects a genesis born unreachable. A consequence: a creator-less policy cannot carry a blanket `deny` on `execute` for `*`, because that denies its own administration.\n\nThe `document-acl` recipe surfaces this as the \"self-lockout guardrail\" (reported as `operation.error`, not a failed job) and warns that a document created without a signing key must include a reachable auth-administration grant in its initial policy or `initializeAuth` is refused. A duplicated document inherits its source's policy, and duplication fails rather than produce a policy that cannot be administered.\n\n_Source: apps/academy/docs/academy/04-Reference/01-Reactor/11-Authorization.md (Powerhouse v6.2.2-dev.74)._\n_Source: docs/specs/auth-scope.md (Powerhouse v6.2.2-dev.74)._\n_Source: apps/academy/docs/academy/05-Lookup/00-Cookbook.md (Powerhouse v6.2.2-dev.74)._\n\n## Provenance\n- `apps/academy/docs/academy/04-Reference/01-Reactor/11-Authorization.md` \u2014 'The creator keeps the auth scope' bullet\n- `docs/specs/auth-scope.md` \u2014 Decision algorithm (creator check) and 'Administration and bootstrap' reachability rule\n- `apps/academy/docs/academy/05-Lookup/00-Cookbook.md` \u2014 Document ACL: self-lockout guardrail, 'Unsigned documents have no creator carve-out'\n\n_Recorded from the Powerhouse repository at **v6.2.2-dev.74** during the v6.2.2-dev.74 source sync._",
+        "updatedAt": "2026-09-02T22:15:33.814Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:15:33.814Z"
+    }
+  },
+  {
+    "index": 18,
+    "hash": "b9XDiBtDfErPhTezXLBVyyGZEwY=",
+    "timestampUtcMs": "2026-09-02T22:15:33.814Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "version",
+        "value": "v6.2.2-dev.74",
+        "updatedAt": "2026-09-02T22:15:33.814Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:15:33.814Z"
+    }
+  },
+  {
+    "index": 19,
+    "hash": "b9XDiBtDfErPhTezXLBVyyGZEwY=",
+    "timestampUtcMs": "2026-09-02T22:15:33.814Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "filePath",
+        "value": "apps/academy/docs/academy/04-Reference/01-Reactor/11-Authorization.md",
+        "updatedAt": "2026-09-02T22:15:33.814Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:15:33.814Z"
+    }
+  },
+  {
+    "index": 20,
+    "hash": "b9XDiBtDfErPhTezXLBVyyGZEwY=",
+    "timestampUtcMs": "2026-09-02T22:15:33.814Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "confidence",
+        "value": "grounded",
+        "updatedAt": "2026-09-02T22:15:33.814Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:15:33.814Z"
+    }
+  },
+  {
+    "index": 21,
+    "hash": "RIxp5DjEEr5p52LxuLk/Kvfb2+I=",
+    "timestampUtcMs": "2026-09-02T22:20:12.121Z",
+    "action": {
+      "type": "SET_TITLE",
+      "input": {
+        "title": "The key that signed the document header always keeps execute on the auth scope, and a creator-less policy is refused if it would leave nobody able to administer it",
+        "updatedAt": "2026-09-02T22:20:12.120Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:20:12.121Z"
+    }
+  },
+  {
+    "index": 22,
+    "hash": "wDuqgbiF1nOns8lgO7BaVi04IhQ=",
+    "timestampUtcMs": "2026-09-02T22:20:12.121Z",
+    "action": {
+      "type": "SET_DESCRIPTION",
+      "input": {
+        "updatedAt": "2026-09-02T22:20:12.121Z",
+        "description": "The carve-out covers auth-scope execution only, no domain access. Unsigned documents have no creator, so every auth action that would leave administration unreachable is rejected instead."
+      },
+      "timestampUtcMs": "2026-09-02T22:20:12.121Z"
+    }
+  },
+  {
+    "index": 23,
+    "hash": "wDuqgbiF1nOns8lgO7BaVi04IhQ=",
+    "timestampUtcMs": "2026-09-02T22:20:12.121Z",
+    "action": {
+      "type": "SET_NOTE_TYPE",
+      "input": {
+        "noteType": "CONCEPT",
+        "updatedAt": "2026-09-02T22:20:12.121Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:20:12.121Z"
+    }
+  },
+  {
+    "index": 24,
+    "hash": "wDuqgbiF1nOns8lgO7BaVi04IhQ=",
+    "timestampUtcMs": "2026-09-02T22:20:12.121Z",
+    "action": {
+      "type": "SET_CONTENT",
+      "input": {
+        "content": "A policy cannot brick its own owner: the key that signed the document's header may **always execute in `scope: \"auth\"`**, even against a grant list that tries to deny it. The carve-out is deliberately narrow \u2014 the creator gets no special access to domain operations or reads \u2014 and it is safe because every replica can verify it from the header. An administrator list held outside the reactor (say on the Switchboard) could not serve the purpose: replicas could hold different lists and reach different decisions.\n\nThe creator is bound once, when `INITIALIZE_AUTH` is accepted and the signer's key is stored in the auth state as `creator`; after that `decide` reads the stored key.\n\n**An unsigned document has no creator.** There validation takes over with a *reachability* rule rather than a presence rule: because evaluation is last-applicable-grant-wins, an administration grant shadowed by a later deny keeps nothing reachable. All four ways of taking administration away without removing a grant \u2014 `REMOVE_GRANT`, a `SET_GRANT` that replaces the grant in place, a `SET_GRANT` that appends a deny covering `auth`, and a `MOVE_GRANT` that reorders the administration grant into shadow \u2014 are rejected on a creator-less policy, and `INITIALIZE_AUTH` rejects a genesis born unreachable. A consequence: a creator-less policy cannot carry a blanket `deny` on `execute` for `*`, because that denies its own administration.\n\nThe `document-acl` recipe surfaces this as the \"self-lockout guardrail\" (reported as `operation.error`, not a failed job) and warns that a document created without a signing key must include a reachable auth-administration grant in its initial policy or `initializeAuth` is refused. A duplicated document inherits its source's policy, and duplication fails rather than produce a policy that cannot be administered.\n\n_Source: apps/academy/docs/academy/04-Reference/01-Reactor/11-Authorization.md (Powerhouse v6.2.2-dev.74)._\n_Source: docs/specs/auth-scope.md (Powerhouse v6.2.2-dev.74)._\n_Source: apps/academy/docs/academy/05-Lookup/00-Cookbook.md (Powerhouse v6.2.2-dev.74)._\n\n## Provenance\n- `apps/academy/docs/academy/04-Reference/01-Reactor/11-Authorization.md` \u2014 'The creator keeps the auth scope' bullet\n- `docs/specs/auth-scope.md` \u2014 Decision algorithm (creator check) and 'Administration and bootstrap' reachability rule\n- `apps/academy/docs/academy/05-Lookup/00-Cookbook.md` \u2014 Document ACL: self-lockout guardrail, 'Unsigned documents have no creator carve-out'\n\n_Recorded from the Powerhouse repository at **v6.2.2-dev.74** during the v6.2.2-dev.74 source sync._",
+        "updatedAt": "2026-09-02T22:20:12.121Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:20:12.121Z"
+    }
+  },
+  {
+    "index": 25,
+    "hash": "wDuqgbiF1nOns8lgO7BaVi04IhQ=",
+    "timestampUtcMs": "2026-09-02T22:20:12.121Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "version",
+        "value": "v6.2.2-dev.74",
+        "updatedAt": "2026-09-02T22:20:12.121Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:20:12.121Z"
+    }
+  },
+  {
+    "index": 26,
+    "hash": "wDuqgbiF1nOns8lgO7BaVi04IhQ=",
+    "timestampUtcMs": "2026-09-02T22:20:12.121Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "filePath",
+        "value": "apps/academy/docs/academy/04-Reference/01-Reactor/11-Authorization.md",
+        "updatedAt": "2026-09-02T22:20:12.121Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:20:12.121Z"
+    }
+  },
+  {
+    "index": 27,
+    "hash": "wDuqgbiF1nOns8lgO7BaVi04IhQ=",
+    "timestampUtcMs": "2026-09-02T22:20:12.121Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "confidence",
+        "value": "grounded",
+        "updatedAt": "2026-09-02T22:20:12.121Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:20:12.121Z"
+    }
+  }
+]

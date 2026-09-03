@@ -1,0 +1,96 @@
+{
+  "links": [
+    {
+      "id": "lnk-ae38bccd-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "ae38bccd-4102-457f-81e2-99351fc17dfe",
+      "targetTitle": "ae38bccd-4102-457f-81e2-99351fc17dfe"
+    },
+    {
+      "id": "lnk-207b4bdd-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "207b4bdd-b1b2-4d12-8473-8d2e54c407cf",
+      "targetTitle": "speckle-low-level-bridge"
+    },
+    {
+      "id": "lnk-f9d5e4f0-bui",
+      "linkType": "BUILDS_ON",
+      "targetDocumentId": "f9d5e4f0-badd-42e2-8ea8-9df149f2412f",
+      "targetTitle": "f9d5e4f0-badd-42e2-8ea8-9df149f2412f"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Speckle content-addresses model objects, so identity survives re-export but not modification",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "38ca30d1-c7ed-46bf-ac01-11acab898a50",
+      "name": "model-identity",
+      "topicDocumentId": null
+    },
+    {
+      "id": "1fe5b30b-ae15-4164-a8bf-ef568eedff87",
+      "name": "speckle",
+      "topicDocumentId": null
+    },
+    {
+      "id": "da9ba9ce-c6d3-4ad5-9c98-973fa19134ec",
+      "name": "bim",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "Speckle's serializer sets `traversed.id = hash` \u2014 an md5 over the serialized object \u2014 so identity is **content-addressed** rather than derived from the source application's identifier.\n\nTwo consequences pull in opposite directions. A re-export that reissues source GUIDs but leaves an object unchanged produces the same Speckle id, so Speckle matches the object where GUID comparison fails outright. But any modification changes the content and therefore the id, so tracking a *changed* object across versions falls back to `applicationId` \u2014 for IFC, the `GlobalId` that Synchro's 4D exporter was measured reissuing wholesale between two consecutive weekly exports.\n\nSo content-addressing improves identity for the objects that did not change, and inherits the identity problem for the objects that did. That is inverted relative to what coordination work needs: the changed objects are precisely the ones a reviewer must follow across versions.\n\nThe practical reading is that content-addressing answers \"is this byte-identical\" and not \"is this the same thing over time\". A system that needs the second guarantee has to assign and hold its own stable identity, mapping churned incoming identifiers onto it by fingerprint on ingest.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "ARCHITECTURE",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "apeiron",
+    "createdAt": "2026-08-14T15:20:00.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-17T13:14:00.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Speckle derives object ids by hashing serialized content, so unchanged objects survive re-export with churned GUIDs, but any modification yields a new id and breaks tracking.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "1de3fa06-33a1-423f-8c3e-41c71f392d63",
+      "actor": "knowledge-agent",
+      "comment": "rescued incident notes \u2014 lifecycle normalization",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-17T12:49:09.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "341a5099-497c-4abc-99dd-4e94c9deb8f0",
+      "actor": "liberuum",
+      "comment": "approved for canonical",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-17T12:49:09.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

@@ -1,0 +1,94 @@
+{
+  "links": [
+    {
+      "id": "lnk-d8590b31-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "d8590b31-43d0-4b0e-865e-c686c5caf4b6",
+      "targetTitle": "Better (ex-Marand) \u2014 openEHR / FHIR - open clinical-data standards, vendor-neutral by desi"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "An openEHR composition event dispatching a typed operation gives clinical data an attributed decision record",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "1279a570-0afb-4205-993d-b4caedf8da1e",
+      "name": "leads",
+      "topicDocumentId": null
+    },
+    {
+      "id": "0c1e9915-a4f3-4b89-b575-f56b5ae8a207",
+      "name": "demo-design",
+      "topicDocumentId": null
+    },
+    {
+      "id": "cb605a1a-d9e7-48a7-8c87-0aed95374a3e",
+      "name": "openehr",
+      "topicDocumentId": null
+    },
+    {
+      "id": "5be08468-ee2b-4e2a-91b7-cd4350f697f3",
+      "name": "healthcare",
+      "topicDocumentId": null
+    },
+    {
+      "id": "17f3a416-8c78-4adf-ad3b-d9c12ff49e30",
+      "name": "audit-trail",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "openEHR models clinical information as compositions, and the demo takes a composition event as its trigger: when a clinical decision is captured, a typed operation is dispatched with it. The result pairs data that is already vendor-neutral by standard with an attributed record of the decision that produced it.\n\nThe two halves answer different questions. openEHR answers where the data can live and who can read it without a vendor's permission; the typed operation answers who decided, and in what sequence. Because Better's product is built on the standard, the demo argues from inside their own thesis rather than against it, which is a materially easier conversation than proposing a replacement.\n\nThe pairing is also the commercial argument. A vendor-neutral clinical record that cannot say who accepted a finding is incomplete for audit purposes, and an attributed decision log bound to a proprietary data model would reintroduce exactly the lock-in openEHR exists to prevent. The demo is small because it changes neither side \u2014 it only connects them.\n\n---\n\n## Leads sharing this finding (1)\n\n**1 \u00b7 start here**\n- Better (ex-Marand) (SI \u00b7 150)\n\nVerbatim research text this claim was extracted from:\n\n> openEHR composition event dispatching a typed operation on clinical decision \u2014 vendor-neutral clinical data with an attributed decision record.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "PATTERN",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "knowledge-agent",
+    "createdAt": "2026-08-19T11:24:31.862624Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-19T11:24:33.216126Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Demo design for Better: openEHR already keeps the clinical data vendor-neutral, and the typed operation adds an attributed record of the decision captured alongside it.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "4bf85ae3-3914-40a5-b34a-ac2b3c98f186",
+      "actor": "knowledge-agent",
+      "comment": "Extracted from lead research; claim checked against the source record.",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-19T11:24:33.067716Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "0cdebbe8-9156-4e81-857e-90bcb938db72",
+      "actor": "liberuum",
+      "comment": "Approved: lead corpus extraction.",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-19T11:24:33.216126Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

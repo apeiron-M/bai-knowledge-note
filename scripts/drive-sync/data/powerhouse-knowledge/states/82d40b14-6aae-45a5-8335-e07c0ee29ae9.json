@@ -1,0 +1,131 @@
+{
+  "links": [
+    {
+      "id": "lnk-0ade289f-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "0ade289f-d4fb-44d8-ab3b-316d65bb1c8d",
+      "targetTitle": "auth-positional-judgment",
+      "reason": "Storing rather than dropping the refusal is what lets every replica reach the same verdict when history is judged at its position",
+      "confidence": "grounded"
+    },
+    {
+      "id": "lnk-48b95d6d-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "48b95d6d-2b69-4999-9e79-dddfc7e9ed3f",
+      "targetTitle": "reactor-job-five-statuses-two-terminal",
+      "reason": "An admission-time denial surfaces as a FAILED job, one of the two terminal job statuses; a replay-time denial is a stored operation instead",
+      "confidence": "grounded"
+    },
+    {
+      "id": "lnk-c12e6c2c-bui",
+      "linkType": "BUILDS_ON",
+      "targetDocumentId": "c12e6c2c-a727-4dbe-a6f0-65802b70c94b",
+      "targetTitle": "skip-field-records-reshuffle-distance",
+      "reason": "The skip field's NOOP-with-skip marker is exactly the collision that rules out substituting NOOP for a denied action",
+      "confidence": "grounded"
+    },
+    {
+      "id": "lnk-223bb12a-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "223bb12a-be7f-4209-9ab2-f04f7bb2b6c8",
+      "targetTitle": "Spec \u203a Spec \u2014 Attribute-based access control in the auth scope with DCB",
+      "reason": "Extracted from docs/specs/auth-scope.md at v6.2.2-dev.74 \u2014 'The outcome belongs on the operation'; Stage 4 step 9 (degrade against older remotes)",
+      "confidence": "grounded"
+    },
+    {
+      "id": "lnk-17dc46b0-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "17dc46b0-f733-467c-99d7-ae8fbe0fb0e4",
+      "targetTitle": "Academy \u203a Reference \u203a Reactor \u203a Authorization",
+      "reason": "Extracted from apps/academy/docs/academy/04-Reference/01-Reactor/11-Authorization.md at v6.2.2-dev.74 \u2014 'Refusal reasons' table",
+      "confidence": "grounded"
+    },
+    {
+      "id": "lnk-f2aaccd3-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "f2aaccd3-7c26-4327-881e-f5ad9e267b89",
+      "targetTitle": "Academy \u203a Lookup \u203a Cookbook",
+      "reason": "Extracted from apps/academy/docs/academy/05-Lookup/00-Cookbook.md at v6.2.2-dev.74 \u2014 Positional Delete: 'Denied, not dropped'; Revocation Race: 'Denials are consensus artifacts'",
+      "confidence": "grounded"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "A refused operation is stored as a denied operation with a deniedReason from a closed set, never dropped and never rewritten",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "38b67873-da32-404c-a139-97b254b0811f",
+      "name": "auth-scope",
+      "topicDocumentId": null
+    },
+    {
+      "id": "9fca573d-d456-4bb2-b382-2550651cfb0e",
+      "name": "operations",
+      "topicDocumentId": null
+    },
+    {
+      "id": "19fdf34a-47ac-4425-9e6e-c46b7cafcd6b",
+      "name": "consensus",
+      "topicDocumentId": null
+    },
+    {
+      "id": "11ecab60-4049-49b2-b854-4eeae9cb4e6c",
+      "name": "reactor",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "At **admission** a denied write fails the job outright and stores nothing. On **replay** it cannot: a later-arriving but earlier-sorting operation may flip the verdict, so a refused operation from synced history is appended anyway, keeps its index, and carries an outcome:\n\n```ts\ntype OperationOutcome =\n  | { kind: \"applied\" }\n  | { kind: \"reducer-error\"; message: string }\n  | { kind: \"denied\"; reason: string };\n```\n\n`applied` is the default and needs no storage. The other two are the ways an operation occupies an index without contributing state, and they are kept distinguishable: telling a policy denial from a reducer failure by prefix-matching a human-readable message would make a consensus decision depend on a string.\n\nWhy not rewrite the action? Substituting `NOOP` collides with the base reducer, where a `NOOP` carrying a skip is the marker that supersedes earlier operations (`garbageCollectV2` counts those markers and ignores skip magnitude, so a denied operation that also carried a reshuffle skip would retract one operation where it meant several). A new `DENIED` action type discards what was attempted, and three consumers need the original: the client matches its own action id to learn which action was refused, sync deduplicates by action id, and re-evaluation must re-append the original if the verdict changes back.\n\nThe reasons are a **closed set**, compared as strings during re-evaluation and therefore consensus data carrying no grant id, subject or timestamp:\n\n| Reason | Meaning |\n| --- | --- |\n| `no grant permits this operation` | Default deny; nothing applied |\n| `denied by grant` | The last applicable grant had `effect: \"deny\"` |\n| `document deleted` | The document was deleted at this position |\n| `auth policy version unsupported` | The policy declares a version this build cannot evaluate |\n\nInspect with `isDenied(operation)` and resolve the effective stream with `garbageCollect(sortOperations(...))` from `@powerhousedao/shared/document-model`. The outcome is persisted and travels by sync, so it rolls out per fleet like the flags that produce it. Sync degrades against older remotes: `GqlRequestChannel` selects the new `deniedReason`/`errorType` fields only while the remote is known to serve them.\n\n_Source: docs/specs/auth-scope.md (Powerhouse v6.2.2-dev.74)._\n_Source: apps/academy/docs/academy/04-Reference/01-Reactor/11-Authorization.md (Powerhouse v6.2.2-dev.74)._\n_Source: apps/academy/docs/academy/05-Lookup/00-Cookbook.md (Powerhouse v6.2.2-dev.74)._\n\n## Provenance\n- `docs/specs/auth-scope.md` \u2014 'The outcome belongs on the operation'; Stage 4 step 9 (degrade against older remotes)\n- `apps/academy/docs/academy/04-Reference/01-Reactor/11-Authorization.md` \u2014 'Refusal reasons' table\n- `apps/academy/docs/academy/05-Lookup/00-Cookbook.md` \u2014 Positional Delete: 'Denied, not dropped'; Revocation Race: 'Denials are consensus artifacts'\n\n_Recorded from the Powerhouse repository at **v6.2.2-dev.74** during the v6.2.2-dev.74 source sync._",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": "v6.2.2-dev.74",
+  "computes": null,
+  "filePath": "docs/specs/auth-scope.md",
+  "noteType": "ARCHITECTURE",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": "grounded",
+  "consumedBy": [],
+  "provenance": {
+    "author": "knowledge-agent",
+    "createdAt": "2026-09-02T22:10:08.886Z",
+    "sessionId": null,
+    "updatedAt": "2026-09-02T22:20:18.010Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "The outcome lives on the operation (applied | reducer-error | denied), not in a NOOP substitute or new action type. Reasons: no grant permits, denied by grant, document deleted, version unsupported.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "2d1de07f-d303-45e0-8d20-cd71ad962ff5",
+      "actor": "knowledge-agent",
+      "comment": "extracted from the Powerhouse repository at v6.2.2-dev.74",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-09-02T22:10:09.375Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "1ea47723-3659-47d0-8398-5e7f0ce1690c",
+      "actor": "liberuum",
+      "comment": "claim checked against the cited repository file at the pinned tag",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-09-02T22:10:09.854Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

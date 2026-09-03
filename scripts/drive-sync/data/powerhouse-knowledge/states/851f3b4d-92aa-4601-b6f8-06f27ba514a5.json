@@ -1,0 +1,121 @@
+{
+  "links": [
+    {
+      "id": "lnk-6fa0a6ea-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "6fa0a6ea-a295-4da9-85da-1e8ba852c91a",
+      "targetTitle": "authorization-uses-layered-model"
+    },
+    {
+      "id": "lnk-de06fba3-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "de06fba3-5cdf-413c-b6e0-f1a094c62f34",
+      "targetTitle": "custom-subgraphs-v6-reactor-client-access"
+    },
+    {
+      "id": "lnk-79ab27b6-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "79ab27b6-f387-4761-b7f4-39aca36f0d68",
+      "targetTitle": "reactor-subscriptions-document-changes"
+    },
+    {
+      "id": "lnk-8cbea140-bui",
+      "linkType": "BUILDS_ON",
+      "targetDocumentId": "8cbea140-21d6-4b63-8780-5d44831018aa",
+      "targetTitle": "two-signing-mechanisms-header-and-action"
+    },
+    {
+      "id": "lnk-395c3ea0-bui",
+      "linkType": "BUILDS_ON",
+      "targetDocumentId": "395c3ea0-ce11-4b25-8bbb-7f68a7b169e1",
+      "targetTitle": "reactor-client-vs-reactor-interface"
+    },
+    {
+      "id": "lnk-7f901536-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "7f901536-7510-41b6-ac5d-62932646871c",
+      "targetTitle": "Academy \u203a Build \u203a BuildingUserExperiences \u203a Authorization \u203a Signing",
+      "reason": "Backing page found by content match in the v6.2.2-dev.74 source backfill \u2014 identifiers reactorclient, signactions from the claim appear in this page (text identical at v6.2.2-dev.47 and v6.2.2-dev.74); attribution, not the original extraction record",
+      "confidence": "grounded"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "ReactorClient automatically signs all actions before submitting them to the reactor, skipping already-signed actions",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "146f836c-2b76-40f7-9eb1-c15f005d167a",
+      "name": "reactor-client",
+      "topicDocumentId": null
+    },
+    {
+      "id": "c241c9ea-911d-4e9e-99f9-67be065fac7a",
+      "name": "signing",
+      "topicDocumentId": null
+    },
+    {
+      "id": "961317c3-23b3-4320-974e-46428d1936e4",
+      "name": "auto-signing",
+      "topicDocumentId": null
+    },
+    {
+      "id": "0d7d31cd-a584-45ef-8844-c243b14e58d3",
+      "name": "signer",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "The `ReactorClient` holds an `ISigner` instance and every mutation method (`execute()`, `create()`, `createEmpty()`, `rename()`, `addRelationship()`, `removeRelationship()`, `moveRelationship()`) calls `signActions()` internally before submission. If `action.context.signer.signatures` already has entries, the action passes through unchanged. `ReactorClientBuilder.withSigner()` accepts an `ISigner` or `SignerConfig` (signer + optional verifier). Without a signer, `PassthroughSigner` is used (no-op, empty signatures). The production implementation is `RenownCryptoSigner` from the `renown` package, using ECDSA P-256 with `did:key` identity. Signature verification is optional and runs in the reactor's executor pipeline via `SignatureVerifier`.\n\n_Corrected 2026-08-13 against Powerhouse v6.2.2-dev.45._",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": "v6.2.2-dev.74",
+  "computes": null,
+  "filePath": "apps/academy/docs/academy/03-Build/03-BuildingUserExperiences/07-Authorization/03-Signing.md",
+  "noteType": "ARCHITECTURE",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "knowledge-agent",
+    "createdAt": "2026-04-02T12:00:00.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-09-02T21:34:45.375Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Every mutation method calls signActions() internally; pre-signed actions pass through unchanged.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "39a645db-f3c5-4784-abba-48192b839a2e",
+      "actor": "claude",
+      "comment": "Knowledge registered against powerhouse v6.2.2-dev.47",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-14T12:00:00.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "e0f2be5f-06f5-4e08-a826-d33fdb3df9c0",
+      "actor": "liberuum",
+      "comment": "Canonical as of powerhouse v6.2.2-dev.47",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-14T12:00:00.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

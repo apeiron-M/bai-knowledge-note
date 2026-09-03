@@ -1,0 +1,340 @@
+[
+  {
+    "index": 0,
+    "hash": "",
+    "timestampUtcMs": "2026-08-14T11:56:19.072Z",
+    "action": {
+      "type": "CREATE_DOCUMENT",
+      "input": {
+        "meta": {},
+        "name": "dead-letter-quarantines-document-not-drive",
+        "slug": "",
+        "model": "bai/knowledge-note",
+        "branch": "main",
+        "signing": {
+          "nonce": "",
+          "publicKey": {},
+          "signature": "e57e23ae-2f05-414a-bb77-c74ab23f64e8",
+          "documentType": "bai/knowledge-note",
+          "createdAtUtcIso": "2026-08-14T11:56:19.072Z"
+        },
+        "version": 0,
+        "documentId": "e57e23ae-2f05-414a-bb77-c74ab23f64e8",
+        "protocolVersions": {
+          "base-reducer": 2
+        }
+      },
+      "timestampUtcMs": "2026-08-14T11:56:19.072Z"
+    }
+  },
+  {
+    "index": 0,
+    "hash": "I1BdIdfZ1e2K1JzggXQKZZ3UU4M=",
+    "timestampUtcMs": "2026-08-14T12:35:06.000Z",
+    "action": {
+      "type": "SET_TITLE",
+      "input": {
+        "title": "A dead letter quarantines the single document, not the drive, so one poisoned document cannot stall sync",
+        "updatedAt": "2026-08-14T12:35:06.000Z"
+      },
+      "timestampUtcMs": "2026-08-14T12:35:06.000Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "",
+    "timestampUtcMs": "2026-08-14T11:56:19.072Z",
+    "action": {
+      "type": "UPGRADE_DOCUMENT",
+      "input": {
+        "model": "bai/knowledge-note",
+        "toVersion": 1,
+        "documentId": "e57e23ae-2f05-414a-bb77-c74ab23f64e8",
+        "fromVersion": 0,
+        "initialState": {
+          "auth": {
+            "grants": [],
+            "version": 0
+          },
+          "local": {
+            "lastViewedAt": null,
+            "personalTags": []
+          },
+          "global": {
+            "links": [],
+            "model": null,
+            "scope": null,
+            "title": null,
+            "editor": null,
+            "inputs": [],
+            "models": [],
+            "status": "DRAFT",
+            "topics": [],
+            "content": null,
+            "context": null,
+            "modelId": null,
+            "modules": [],
+            "outputs": [],
+            "version": null,
+            "computes": null,
+            "filePath": null,
+            "noteType": null,
+            "severity": null,
+            "hooksUsed": [],
+            "rootCause": null,
+            "confidence": null,
+            "consumedBy": [],
+            "provenance": null,
+            "sourceType": null,
+            "targetType": null,
+            "cardinality": null,
+            "description": null,
+            "alternatives": [],
+            "consequences": [],
+            "errorMessage": null,
+            "relationType": null,
+            "correctPattern": null,
+            "decisionStatus": null,
+            "dispatchTargets": [],
+            "lifecycleEvents": []
+          },
+          "document": {
+            "hash": {
+              "encoding": "base64",
+              "algorithm": "sha1"
+            },
+            "version": 1
+          }
+        }
+      },
+      "timestampUtcMs": "2026-08-14T11:56:19.072Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "7NlQf7rwBERcZtUlnCzRS3N7kmI=",
+    "timestampUtcMs": "2026-08-14T12:35:06.000Z",
+    "action": {
+      "type": "SET_DESCRIPTION",
+      "input": {
+        "updatedAt": "2026-08-14T12:35:06.000Z",
+        "description": "Inbound ops for a quarantined document are dropped and outbound ops filtered out. Each remote retains at most maxDeadLettersPerRemote (default 100)."
+      },
+      "timestampUtcMs": "2026-08-14T12:35:06.000Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "",
+    "timestampUtcMs": "2026-08-14T12:37:08.344Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "e57e23ae-2f05-414a-bb77-c74ab23f64e8",
+        "targetId": "2ab414f6-938d-40f6-89b9-054bbcbaf4f2",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-08-14T12:37:08.344Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "7UoWg33CVWuavdJFMf9rtxs/aMg=",
+    "timestampUtcMs": "2026-08-14T12:35:06.000Z",
+    "action": {
+      "type": "SET_NOTE_TYPE",
+      "input": {
+        "noteType": "CONCEPT",
+        "updatedAt": "2026-08-14T12:35:06.000Z"
+      },
+      "timestampUtcMs": "2026-08-14T12:35:06.000Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "",
+    "timestampUtcMs": "2026-08-14T12:37:08.452Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "e57e23ae-2f05-414a-bb77-c74ab23f64e8",
+        "targetId": "3289f3d4-7ee0-453a-8811-a7e2027fb5de",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-08-14T12:37:08.452Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "a9QalU0///U4XzSjRQHR620gf+0=",
+    "timestampUtcMs": "2026-08-14T12:35:06.000Z",
+    "action": {
+      "type": "SET_CONTENT",
+      "input": {
+        "content": "A dead letter is a sync operation that failed and **cannot be retried** \u2014 a bad signature, a hash mismatch, an unrecoverable transport error. It is the terminal category, distinct from the transient failures that the channel retries with exponential backoff.\n\nWhen a channel routes an operation to its dead-letter mailbox the sync manager does four things: logs it, quarantines the document, persists a record to dead-letter storage, and emits `DEAD_LETTER_ADDED` (20004).\n\n```typescript\ntype DeadLetterAddedEvent = {\n  id: string;\n  jobId: string;\n  remoteName: string;\n  documentId: string;\n  errorSource: ChannelErrorSource; // none | channel | inbox | outbox\n};\n```\n\nThe design decision worth internalizing is the **granularity of the quarantine: per document, not per drive.** Once a document is quarantined, its inbound operations are dropped and its outbound operations are filtered out of the outbox \u2014 but every other document on the same remote keeps syncing normally. A single corrupt or unverifiable document therefore degrades to a hole in the replica rather than a stalled drive. Without this, one bad operation would head-of-line block an entire collection.\n\nThe flip side is that quarantine is silent unless you watch for it. Nothing retries automatically and nothing surfaces in the drive's own status, so `DEAD_LETTER_ADDED` is the event to subscribe to for anything that needs manual intervention. The `errorSource` tag tells you which stage produced it (`inbox`, `outbox`, or the `channel` itself), which is usually enough to separate \"the remote sent us something bad\" from \"we produced something the remote rejected\".\n\nRetention is bounded: each remote keeps at most `maxDeadLettersPerRemote` dead letters, default `100`, configurable via `SyncBuilder.withMaxDeadLettersPerRemote(limit)`. Past that the oldest are evicted \u2014 so dead-letter storage is a recent-failures buffer for diagnostics, not a durable audit log. If you need the full record, capture the events as they fire.\n\n_Source: apps/academy/docs/academy/04-Reference/01-Reactor/04-Synchronization.md (Powerhouse v6.2.2-dev.45)._",
+        "updatedAt": "2026-08-14T12:35:06.000Z"
+      },
+      "timestampUtcMs": "2026-08-14T12:35:06.000Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "",
+    "timestampUtcMs": "2026-08-14T12:37:08.543Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "e57e23ae-2f05-414a-bb77-c74ab23f64e8",
+        "targetId": "cb8003b1-c936-4b36-9849-4925723df163",
+        "relationshipType": "BUILDS_ON"
+      },
+      "timestampUtcMs": "2026-08-14T12:37:08.543Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "jiAtMtjKqFizz/Gw82NdpuRiTmQ=",
+    "timestampUtcMs": "2026-08-14T12:35:06.000Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "version",
+        "value": "v6.2.2-dev.44",
+        "updatedAt": "2026-08-14T12:35:06.000Z"
+      },
+      "timestampUtcMs": "2026-08-14T12:35:06.000Z"
+    }
+  },
+  {
+    "index": 5,
+    "hash": "",
+    "timestampUtcMs": "2026-09-02T21:38:01.346Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "metadata": {
+          "reason": "The note names apps/academy/docs/academy/04-Reference/01-Reactor/04-Synchronization.md as its source; page text identical at v6.2.2-dev.47 and v6.2.2-dev.74",
+          "confidence": "grounded"
+        },
+        "sourceId": "e57e23ae-2f05-414a-bb77-c74ab23f64e8",
+        "targetId": "d713d0e0-b6a9-4302-9463-fa8a34bf69b1",
+        "relationshipType": "DERIVED_FROM"
+      },
+      "timestampUtcMs": "2026-09-02T21:38:01.346Z"
+    }
+  },
+  {
+    "index": 5,
+    "hash": "akxAcHReQou+UEXohD83p5ishB0=",
+    "timestampUtcMs": "2026-08-14T12:35:06.000Z",
+    "action": {
+      "type": "SET_PROVENANCE",
+      "input": {
+        "author": "claude",
+        "createdAt": "2026-08-13T14:34:18.000Z",
+        "sourceOrigin": "DERIVED"
+      },
+      "timestampUtcMs": "2026-08-14T12:35:06.000Z"
+    }
+  },
+  {
+    "index": 6,
+    "hash": "0WBp9L7/k74pwnY2VSgzIixVUQs=",
+    "timestampUtcMs": "2026-08-14T12:35:06.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "5d5ac6ae-7a8f-458c-a2d5-1f1bbfd35484",
+        "name": "reactor-sync",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-08-14T12:35:06.000Z"
+    }
+  },
+  {
+    "index": 7,
+    "hash": "HhwnQ2+skukFPIG/gij+sX6wBQw=",
+    "timestampUtcMs": "2026-08-14T12:35:06.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "470d9f6d-2a17-4892-9ca4-0743564a18ca",
+        "name": "resilience",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-08-14T12:35:06.000Z"
+    }
+  },
+  {
+    "index": 8,
+    "hash": "lC8ci9Lq+y92unVVYKkdiLucnck=",
+    "timestampUtcMs": "2026-08-14T14:37:42.000Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "version",
+        "value": "v6.2.2-dev.47",
+        "updatedAt": "2026-08-14T12:00:00.000Z"
+      },
+      "timestampUtcMs": "2026-08-14T14:37:42.000Z"
+    }
+  },
+  {
+    "index": 9,
+    "hash": "v+FrnCC1QTZ3cQOIT/NP3DOarjk=",
+    "timestampUtcMs": "2026-08-14T14:37:42.000Z",
+    "action": {
+      "type": "SUBMIT_FOR_REVIEW",
+      "input": {
+        "id": "4af8f66d-de20-4112-b5ec-49bc599df279",
+        "actor": "claude",
+        "comment": "Knowledge registered against powerhouse v6.2.2-dev.47",
+        "timestamp": "2026-08-14T12:00:00.000Z"
+      },
+      "timestampUtcMs": "2026-08-14T14:37:42.000Z"
+    }
+  },
+  {
+    "index": 10,
+    "hash": "Q4B6Oz+OhtvDpXt4t8HTY4iIhiY=",
+    "timestampUtcMs": "2026-08-14T14:37:42.000Z",
+    "action": {
+      "type": "APPROVE_NOTE",
+      "input": {
+        "id": "b069e6a5-89f3-4555-82ac-1e25e0745f20",
+        "actor": "liberuum",
+        "comment": "Canonical as of powerhouse v6.2.2-dev.47",
+        "timestamp": "2026-08-14T12:00:00.000Z"
+      },
+      "timestampUtcMs": "2026-08-14T14:37:42.000Z"
+    }
+  },
+  {
+    "index": 11,
+    "hash": "lt1hD7iwuLiZo0hknRxJ3tUIdJM=",
+    "timestampUtcMs": "2026-09-02T21:38:02.038Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "filePath",
+        "value": "apps/academy/docs/academy/04-Reference/01-Reactor/04-Synchronization.md",
+        "updatedAt": "2026-09-02T21:38:02.038Z"
+      },
+      "timestampUtcMs": "2026-09-02T21:38:02.038Z"
+    }
+  },
+  {
+    "index": 12,
+    "hash": "eFa+N5mxmrferO/vPDvlUSfUyw8=",
+    "timestampUtcMs": "2026-09-02T21:38:02.038Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "version",
+        "value": "v6.2.2-dev.74",
+        "updatedAt": "2026-09-02T21:38:02.038Z"
+      },
+      "timestampUtcMs": "2026-09-02T21:38:02.038Z"
+    }
+  }
+]

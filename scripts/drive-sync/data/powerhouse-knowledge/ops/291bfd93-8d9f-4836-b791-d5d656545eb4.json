@@ -1,0 +1,409 @@
+[
+  {
+    "index": 0,
+    "hash": "",
+    "timestampUtcMs": "2026-08-14T12:33:28.366Z",
+    "action": {
+      "type": "CREATE_DOCUMENT",
+      "input": {
+        "meta": {},
+        "name": "ddup-reactor-native-sync-2x",
+        "slug": "",
+        "model": "bai/knowledge-note",
+        "branch": "main",
+        "signing": {
+          "nonce": "",
+          "publicKey": {},
+          "signature": "291bfd93-8d9f-4836-b791-d5d656545eb4",
+          "documentType": "bai/knowledge-note",
+          "createdAtUtcIso": "2026-08-14T12:33:28.366Z"
+        },
+        "version": 0,
+        "documentId": "291bfd93-8d9f-4836-b791-d5d656545eb4",
+        "protocolVersions": {
+          "base-reducer": 2
+        }
+      },
+      "timestampUtcMs": "2026-08-14T12:33:28.366Z"
+    }
+  },
+  {
+    "index": 0,
+    "hash": "8gXdNTQb5Del1BpMfMjUKQw1W4E=",
+    "timestampUtcMs": "2026-08-14T12:35:05.000Z",
+    "action": {
+      "type": "SET_TITLE",
+      "input": {
+        "title": "Reactor native sync stores every operation twice: once in PGlite, once in PostgreSQL",
+        "updatedAt": "2026-08-14T12:35:05.000Z"
+      },
+      "timestampUtcMs": "2026-08-14T12:35:05.000Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "",
+    "timestampUtcMs": "2026-08-14T12:33:28.367Z",
+    "action": {
+      "type": "UPGRADE_DOCUMENT",
+      "input": {
+        "model": "bai/knowledge-note",
+        "toVersion": 1,
+        "documentId": "291bfd93-8d9f-4836-b791-d5d656545eb4",
+        "fromVersion": 0,
+        "initialState": {
+          "auth": {
+            "grants": [],
+            "version": 0
+          },
+          "local": {
+            "lastViewedAt": null,
+            "personalTags": []
+          },
+          "global": {
+            "links": [],
+            "model": null,
+            "scope": null,
+            "title": null,
+            "editor": null,
+            "inputs": [],
+            "models": [],
+            "status": "DRAFT",
+            "topics": [],
+            "content": null,
+            "context": null,
+            "modelId": null,
+            "modules": [],
+            "outputs": [],
+            "version": null,
+            "computes": null,
+            "filePath": null,
+            "noteType": null,
+            "severity": null,
+            "hooksUsed": [],
+            "rootCause": null,
+            "confidence": null,
+            "consumedBy": [],
+            "provenance": null,
+            "sourceType": null,
+            "targetType": null,
+            "cardinality": null,
+            "description": null,
+            "alternatives": [],
+            "consequences": [],
+            "errorMessage": null,
+            "relationType": null,
+            "correctPattern": null,
+            "decisionStatus": null,
+            "dispatchTargets": [],
+            "lifecycleEvents": []
+          },
+          "document": {
+            "hash": {
+              "encoding": "base64",
+              "algorithm": "sha1"
+            },
+            "version": 1
+          }
+        }
+      },
+      "timestampUtcMs": "2026-08-14T12:33:28.367Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "bcnJtXwIkt8Qsp3Vdca9iztf4og=",
+    "timestampUtcMs": "2026-08-14T12:35:05.000Z",
+    "action": {
+      "type": "SET_DESCRIPTION",
+      "input": {
+        "updatedAt": "2026-08-14T12:35:05.000Z",
+        "description": "The default Connect-Switchboard path duplicates every op in both databases. GraphQL moves SyncEnvelopes; Switchboard is the authoritative remote."
+      },
+      "timestampUtcMs": "2026-08-14T12:35:05.000Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "",
+    "timestampUtcMs": "2026-08-14T12:37:06.660Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "291bfd93-8d9f-4836-b791-d5d656545eb4",
+        "targetId": "521e4779-3e2e-430c-a933-82b6a774c21e",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-08-14T12:37:06.660Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "9dmsgah666pGleQdRMBMOtwGYiQ=",
+    "timestampUtcMs": "2026-08-14T12:35:05.000Z",
+    "action": {
+      "type": "SET_NOTE_TYPE",
+      "input": {
+        "noteType": "architecture",
+        "updatedAt": "2026-08-14T12:35:05.000Z"
+      },
+      "timestampUtcMs": "2026-08-14T12:35:05.000Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "",
+    "timestampUtcMs": "2026-08-14T12:37:06.757Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "291bfd93-8d9f-4836-b791-d5d656545eb4",
+        "targetId": "ab44d9c0-a981-4c37-8afe-a6858911dc82",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-08-14T12:37:06.757Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "9a1vB2X06srB7gjSrfNM/AUfK1c=",
+    "timestampUtcMs": "2026-08-14T12:35:05.000Z",
+    "action": {
+      "type": "SET_CONTENT",
+      "input": {
+        "content": "The current Powerhouse default sync path creates 2x duplication by design:\n\n```\nCONNECT (browser)                    SWITCHBOARD (server)\nPGlite (local)                       PostgreSQL (remote)\n  - operations                         - operations (SAME data)\n  - documents                          - documents\n  - relationships                      - relationships\n\nSyncManager                          SyncManager\n  outbox -> GqlRequestChannel -----> inbox -> reactor.load()\n  inbox  <- GqlRequestChannel <----- outbox\n```\n\n**Every operation exists in BOTH databases.** The SyncManager on each side moves `SyncEnvelope` payloads across the `GqlRequestChannel`, ensuring eventual consistency.\n\nThe Switchboard is the authoritative remote \u2014 a server someone runs. This is the baseline duplication everything else is compared against. It's not a bug or inefficiency; it's the cost of having a multi-device-sync-capable remote copy.\n\nThis 2x pattern is the yardstick: any alternative sync path (Swarm, Swarm+Switchboard, fully decentralized) inherits or exceeds it.",
+        "updatedAt": "2026-08-14T12:35:05.000Z"
+      },
+      "timestampUtcMs": "2026-08-14T12:35:05.000Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "",
+    "timestampUtcMs": "2026-08-14T12:37:06.854Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "291bfd93-8d9f-4836-b791-d5d656545eb4",
+        "targetId": "b153c532-0abc-4400-8448-4ac08046fcad",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-08-14T12:37:06.854Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "Vl1COj7gP73ZqXqJqRDrXo4WTHE=",
+    "timestampUtcMs": "2026-08-14T12:35:05.000Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "version",
+        "value": "v6.2.2-dev.44",
+        "updatedAt": "2026-08-14T12:35:05.000Z"
+      },
+      "timestampUtcMs": "2026-08-14T12:35:05.000Z"
+    }
+  },
+  {
+    "index": 5,
+    "hash": "",
+    "timestampUtcMs": "2026-08-14T12:37:06.938Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "291bfd93-8d9f-4836-b791-d5d656545eb4",
+        "targetId": "521e4779-3e2e-430c-a933-82b6a774c21e",
+        "relationshipType": "BUILDS_ON"
+      },
+      "timestampUtcMs": "2026-08-14T12:37:06.938Z"
+    }
+  },
+  {
+    "index": 5,
+    "hash": "ygIQg/Dkgf8qpe/Bgja4+fZRFAI=",
+    "timestampUtcMs": "2026-08-14T12:35:05.000Z",
+    "action": {
+      "type": "SET_PROVENANCE",
+      "input": {
+        "author": "knowledge-agent",
+        "createdAt": "2026-04-21T14:41:55.863Z",
+        "sourceOrigin": "DERIVED"
+      },
+      "timestampUtcMs": "2026-08-14T12:35:05.000Z"
+    }
+  },
+  {
+    "index": 6,
+    "hash": "",
+    "timestampUtcMs": "2026-08-14T12:37:07.029Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "291bfd93-8d9f-4836-b791-d5d656545eb4",
+        "targetId": "6443a5a6-47e6-4336-b701-017757a9ff9e",
+        "relationshipType": "BUILDS_ON"
+      },
+      "timestampUtcMs": "2026-08-14T12:37:07.029Z"
+    }
+  },
+  {
+    "index": 6,
+    "hash": "dPkWfDpqA6fgVsNsIEza4PljnIg=",
+    "timestampUtcMs": "2026-08-14T12:35:05.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "9f5e354f-e611-454d-b098-418426496c55",
+        "name": "data-duplication",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-08-14T12:35:05.000Z"
+    }
+  },
+  {
+    "index": 7,
+    "hash": "",
+    "timestampUtcMs": "2026-09-03T09:56:59.408Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "metadata": {
+          "reason": "Verified against packages/reactor/src/sync/design.md at v6.2.2-dev.74: the claim's identifiers (SyncEnvelope, GqlRequestChannel, SyncManager) appear there, 3 of them in that one file \u2014 attribution by code and doc search, not the original extraction record",
+          "confidence": "grounded"
+        },
+        "sourceId": "291bfd93-8d9f-4836-b791-d5d656545eb4",
+        "targetId": "badfd6db-33c2-4612-bcff-d37d2159f0a7",
+        "relationshipType": "DERIVED_FROM"
+      },
+      "timestampUtcMs": "2026-09-03T09:56:59.408Z"
+    }
+  },
+  {
+    "index": 7,
+    "hash": "VWD0HsTdo8PyH24nqFa99ocVUMw=",
+    "timestampUtcMs": "2026-08-14T12:35:05.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "5de0d98d-c9c9-4e6f-bbf8-c2b88fba9018",
+        "name": "reactor-sync",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-08-14T12:35:05.000Z"
+    }
+  },
+  {
+    "index": 8,
+    "hash": "7G5hYvWJfeqw48y7Ls7qvpZPKoY=",
+    "timestampUtcMs": "2026-08-14T12:35:05.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "2021328e-e75d-44eb-a5a5-2ead42849f32",
+        "name": "switchboard",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-08-14T12:35:05.000Z"
+    }
+  },
+  {
+    "index": 9,
+    "hash": "su7ZZZfICvqbpjS8X1mzxJ2bFOY=",
+    "timestampUtcMs": "2026-08-14T12:35:05.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "3c03f11d-5723-472d-8cd6-e9dd3cc48cea",
+        "name": "sync-envelope",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-08-14T12:35:05.000Z"
+    }
+  },
+  {
+    "index": 10,
+    "hash": "I/CEP37IIvNRCyuLUtNmoAPcG1A=",
+    "timestampUtcMs": "2026-08-14T14:36:53.000Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "version",
+        "value": "v6.2.2-dev.47",
+        "updatedAt": "2026-08-14T12:00:00.000Z"
+      },
+      "timestampUtcMs": "2026-08-14T14:36:53.000Z"
+    }
+  },
+  {
+    "index": 11,
+    "hash": "RL9RlhIwI9D5iu21F8kUwuIyvvw=",
+    "timestampUtcMs": "2026-08-14T14:36:53.000Z",
+    "action": {
+      "type": "SUBMIT_FOR_REVIEW",
+      "input": {
+        "id": "4259c0ed-2ffe-4170-987b-43e8ce3d03c6",
+        "actor": "claude",
+        "comment": "Knowledge registered against powerhouse v6.2.2-dev.47",
+        "timestamp": "2026-08-14T12:00:00.000Z"
+      },
+      "timestampUtcMs": "2026-08-14T14:36:53.000Z"
+    }
+  },
+  {
+    "index": 12,
+    "hash": "3NpxULWP8ef0hNzQry0FUex2mCw=",
+    "timestampUtcMs": "2026-08-14T14:36:53.000Z",
+    "action": {
+      "type": "APPROVE_NOTE",
+      "input": {
+        "id": "410df26a-e3ec-4b9d-8349-20fd137b4793",
+        "actor": "liberuum",
+        "comment": "Canonical as of powerhouse v6.2.2-dev.47",
+        "timestamp": "2026-08-14T12:00:00.000Z"
+      },
+      "timestampUtcMs": "2026-08-14T14:36:53.000Z"
+    }
+  },
+  {
+    "index": 13,
+    "hash": "quwQZaiKRT0hoJOE8x+QHclZMM0=",
+    "timestampUtcMs": "2026-08-16T09:49:42.000Z",
+    "action": {
+      "type": "SET_NOTE_TYPE",
+      "input": {
+        "noteType": "ARCHITECTURE",
+        "updatedAt": "2026-08-16T09:49:42.000Z"
+      },
+      "timestampUtcMs": "2026-08-16T09:49:42.000Z"
+    }
+  },
+  {
+    "index": 14,
+    "hash": "plORa9oiDTndE5lKkweD2nzeXeA=",
+    "timestampUtcMs": "2026-09-03T09:56:58.576Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "version",
+        "value": "v6.2.2-dev.74",
+        "updatedAt": "2026-09-03T09:56:58.576Z"
+      },
+      "timestampUtcMs": "2026-09-03T09:56:58.576Z"
+    }
+  },
+  {
+    "index": 15,
+    "hash": "nzKzY10lvVytAlDQvP4gM/Nzxso=",
+    "timestampUtcMs": "2026-09-03T09:56:58.576Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "filePath",
+        "value": "packages/reactor/src/sync/design.md",
+        "updatedAt": "2026-09-03T09:56:58.576Z"
+      },
+      "timestampUtcMs": "2026-09-03T09:56:58.576Z"
+    }
+  }
+]

@@ -1,0 +1,107 @@
+{
+  "links": [
+    {
+      "id": "lnk-bf2d1ef5-bui",
+      "linkType": "BUILDS_ON",
+      "targetDocumentId": "bf2d1ef5-01a8-4688-86a6-0db24fa9120a",
+      "targetTitle": "attachment-uploads-have-two-equal-reservation-modes",
+      "reason": "That note covers the two reservation modes a caller chooses between; this one is what the three handles do underneath, and why the caller never sees a URL or a checksum header",
+      "confidence": "grounded"
+    },
+    {
+      "id": "lnk-5b4a52c0-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "5b4a52c0-6345-4bfc-a279-76ea1f37db5d",
+      "targetTitle": "Package \u203a reactor \u203a attachments",
+      "reason": "Extracted from packages/reactor/docs/attachments.md at v6.2.2-dev.74 \u2014 Design \u203a IAttachmentUpload table; Implementation: S3-Backed \u203a Hash Verification and Key Promotion",
+      "confidence": "grounded"
+    },
+    {
+      "id": "lnk-0a6393ba-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "0a6393ba-6798-445d-8b24-d325b50e262e",
+      "targetTitle": "attachment-two-tables",
+      "reason": "Every handle's send() ends in the same upsert-and-delete-reservation commit described in the schema",
+      "confidence": "grounded"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Three upload handles verify the content hash three different ways, and hash verification is internal to the handle rather than visible to the caller",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "34924e25-32d9-4c8c-a836-f19fe936caff",
+      "name": "attachments",
+      "topicDocumentId": null
+    },
+    {
+      "id": "135e92c7-2098-4288-bc48-6e77edc24625",
+      "name": "upload",
+      "topicDocumentId": null
+    },
+    {
+      "id": "7da97d53-60c6-49d6-9ac5-7d9c0eb9bc41",
+      "name": "s3",
+      "topicDocumentId": null
+    },
+    {
+      "id": "be145bf1-9663-4683-bf7f-6e965db00cbd",
+      "name": "switchboard",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "`IAttachmentService` implementations each supply their own upload handle, and the handle is where transport-specific verification hides:\n\n| Implementation | Handle behaviour |\n| --- | --- |\n| `SwitchboardAttachmentUpload` | streams to the switchboard's upload endpoint; hash computed **server-side inline** |\n| `S3AttachmentUpload` | PUTs to a presigned S3 URL; hash verified via **`HeadObject`** after upload |\n| `DirectAttachmentUpload` | streams to the local store; hash computed inline |\n\nThe design constraint this serves is stated at the top of the document: **the core interface never exposes URLs, headers, or any transport-specific detail.** The caller never sees signatures, verifiers, or presigned URLs \u2014 it calls `reserve()` and `send()` and receives a ref. That is what makes the same document model work whether Switchboard proxies bytes from a filesystem or S3 transfers them directly.\n\nThe S3 path is the one with a visible consequence, because verification requires a temporary key: the object is uploaded under `{keyPrefix}{reservationId}` (the hash is not yet known), `HeadObject` reads `x-amz-checksum-sha256` (uploads set `x-amz-checksum-algorithm: SHA256` internally so the checksum exists), and the handle then **promotes** the object \u2014 `CopyObject` to `{keyPrefix}{hash}`, `DeleteObject` the reservation key, upsert the row, delete the reservation. On dedup it skips the copy and deletes the reservation-keyed object. The payoff: every attachment ends at a deterministic hash-based key that a transport or CDN can resolve **from the hash alone, with no metadata lookup**.\n\n## Provenance\n- `packages/reactor/docs/attachments.md` \u2014 Design \u203a IAttachmentUpload table; Implementation: S3-Backed \u203a Hash Verification and Key Promotion\n\n_Extracted from the Powerhouse repository at **v6.2.2-dev.74**._",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": "v6.2.2-dev.74",
+  "computes": null,
+  "filePath": "packages/reactor/docs/attachments.md",
+  "noteType": "ARCHITECTURE",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "knowledge-agent",
+    "createdAt": "2026-09-03T07:19:55.300Z",
+    "sessionId": null,
+    "updatedAt": "2026-09-03T07:22:32.714Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "SwitchboardAttachmentUpload hashes server-side inline, S3AttachmentUpload verifies via HeadObject's x-amz-checksum-sha256, DirectAttachmentUpload hashes inline into the local store.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "ce6925ad-b5a1-428d-b307-5381c934ad22",
+      "actor": "knowledge-agent",
+      "comment": "extracted from packages/reactor/docs/attachments.md at v6.2.2-dev.74",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-09-03T07:19:55.984Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "4d5a8fc8-2494-4cdd-a734-d2002ea07424",
+      "actor": "liberuum",
+      "comment": "claim checked against the cited file at the pinned tag",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-09-03T07:19:56.555Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

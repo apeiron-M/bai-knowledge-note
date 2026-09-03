@@ -1,0 +1,348 @@
+[
+  {
+    "index": 0,
+    "hash": "",
+    "timestampUtcMs": "2026-08-14T12:09:03.739Z",
+    "action": {
+      "type": "CREATE_DOCUMENT",
+      "input": {
+        "meta": {},
+        "name": "operation-error-index-must-match-the-number-of-prior-dispatches",
+        "slug": "",
+        "model": "bai/knowledge-note",
+        "branch": "main",
+        "signing": {
+          "nonce": "",
+          "publicKey": {},
+          "signature": "b595843f-e2f9-4172-a43a-eb471fc727a1",
+          "documentType": "bai/knowledge-note",
+          "createdAtUtcIso": "2026-08-14T12:09:03.738Z"
+        },
+        "version": 0,
+        "documentId": "b595843f-e2f9-4172-a43a-eb471fc727a1",
+        "protocolVersions": {
+          "base-reducer": 2
+        }
+      },
+      "timestampUtcMs": "2026-08-14T12:09:03.739Z"
+    }
+  },
+  {
+    "index": 0,
+    "hash": "Izyavje9MkzXpBtRXwNZ484/PEs=",
+    "timestampUtcMs": "2026-08-14T12:35:30.000Z",
+    "action": {
+      "type": "SET_TITLE",
+      "input": {
+        "title": "operation error index must match the number of prior dispatches",
+        "updatedAt": "2026-08-14T12:35:30.000Z"
+      },
+      "timestampUtcMs": "2026-08-14T12:35:30.000Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "",
+    "timestampUtcMs": "2026-08-14T12:09:03.739Z",
+    "action": {
+      "type": "UPGRADE_DOCUMENT",
+      "input": {
+        "model": "bai/knowledge-note",
+        "toVersion": 1,
+        "documentId": "b595843f-e2f9-4172-a43a-eb471fc727a1",
+        "fromVersion": 0,
+        "initialState": {
+          "auth": {
+            "grants": [],
+            "version": 0
+          },
+          "local": {
+            "lastViewedAt": null,
+            "personalTags": []
+          },
+          "global": {
+            "links": [],
+            "model": null,
+            "scope": null,
+            "title": null,
+            "editor": null,
+            "inputs": [],
+            "models": [],
+            "status": "DRAFT",
+            "topics": [],
+            "content": null,
+            "context": null,
+            "modelId": null,
+            "modules": [],
+            "outputs": [],
+            "version": null,
+            "computes": null,
+            "filePath": null,
+            "noteType": null,
+            "severity": null,
+            "hooksUsed": [],
+            "rootCause": null,
+            "confidence": null,
+            "consumedBy": [],
+            "provenance": null,
+            "sourceType": null,
+            "targetType": null,
+            "cardinality": null,
+            "description": null,
+            "alternatives": [],
+            "consequences": [],
+            "errorMessage": null,
+            "relationType": null,
+            "correctPattern": null,
+            "decisionStatus": null,
+            "dispatchTargets": [],
+            "lifecycleEvents": []
+          },
+          "document": {
+            "hash": {
+              "encoding": "base64",
+              "algorithm": "sha1"
+            },
+            "version": 1
+          }
+        }
+      },
+      "timestampUtcMs": "2026-08-14T12:09:03.739Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "oOjtF4xuQLUICan1oMQIgxq4zoc=",
+    "timestampUtcMs": "2026-08-14T12:35:30.000Z",
+    "action": {
+      "type": "SET_DESCRIPTION",
+      "input": {
+        "updatedAt": "2026-08-14T12:35:30.000Z",
+        "description": "The error lives at document.operations.global[N] where N equals prior dispatches; wrong index checks the wrong operation"
+      },
+      "timestampUtcMs": "2026-08-14T12:35:30.000Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "",
+    "timestampUtcMs": "2026-08-14T12:37:59.832Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "b595843f-e2f9-4172-a43a-eb471fc727a1",
+        "targetId": "4287517c-647b-4115-bf7e-d9442631d3b9",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-08-14T12:37:59.832Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "u3/1Z/lGfmvKlFc+g/cyABZgIhU=",
+    "timestampUtcMs": "2026-08-14T12:35:30.000Z",
+    "action": {
+      "type": "SET_NOTE_TYPE",
+      "input": {
+        "noteType": "PATTERN",
+        "updatedAt": "2026-08-14T12:35:30.000Z"
+      },
+      "timestampUtcMs": "2026-08-14T12:35:30.000Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "",
+    "timestampUtcMs": "2026-08-14T12:37:59.911Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "b595843f-e2f9-4172-a43a-eb471fc727a1",
+        "targetId": "a36dbe68-f077-4fad-bd4d-b6f62b851264",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-08-14T12:37:59.911Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "iATffMMXdsGLOov1VPg7bA7BqH0=",
+    "timestampUtcMs": "2026-08-14T12:35:30.000Z",
+    "action": {
+      "type": "SET_CONTENT",
+      "input": {
+        "content": "# operation error index must match the number of prior dispatches\n\nWhen testing reducer errors, the operation index matters:\n\n```typescript\n// First operation dispatched \u2192 index [0]\nconst doc1 = reducer(document, addItem({ id: \"1\", name: \"test\" }));\n\n// Second operation dispatched \u2192 index [1]\nconst doc2 = reducer(doc1, addItem({ id: \"1\", name: \"duplicate\" }));\nexpect(doc2.operations.global[1].error).toBe(\"Duplicate ID\");\n\n// \u274c Wrong \u2014 index [0] is the first (successful) operation\nexpect(doc2.operations.global[0].error).toBe(\"Duplicate ID\");\n```\n\nThe index corresponds to the total number of operations dispatched, not the number of errors. Since [[operation errors are recorded on operations not thrown to callers]], every dispatch (successful or failed) produces an operation at the next index.\n\n---\n\nTopics:\n- [[reducer patterns]]",
+        "updatedAt": "2026-08-14T12:35:30.000Z"
+      },
+      "timestampUtcMs": "2026-08-14T12:35:30.000Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "",
+    "timestampUtcMs": "2026-08-14T12:37:59.995Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "b595843f-e2f9-4172-a43a-eb471fc727a1",
+        "targetId": "43b82c81-4d28-4e69-9a0a-84c0dddb87ef",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-08-14T12:37:59.995Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "p4dyhkx47/3nPbKUj/fhWmZuHpE=",
+    "timestampUtcMs": "2026-08-14T12:35:30.000Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "version",
+        "value": "v6.2.2-dev.44",
+        "updatedAt": "2026-08-14T12:35:30.000Z"
+      },
+      "timestampUtcMs": "2026-08-14T12:35:30.000Z"
+    }
+  },
+  {
+    "index": 5,
+    "hash": "oZxDAwUQqxKWnfihbXUndXzxNlQ=",
+    "timestampUtcMs": "2026-08-14T12:35:30.000Z",
+    "action": {
+      "type": "SET_PROVENANCE",
+      "input": {
+        "author": "knowledge-agent",
+        "createdAt": "2026-04-03T14:00:40.000Z",
+        "sourceOrigin": "IMPORT"
+      },
+      "timestampUtcMs": "2026-08-14T12:35:30.000Z"
+    }
+  },
+  {
+    "index": 6,
+    "hash": "N1XrlVY4NLeitJDi9OQPfZMM0VY=",
+    "timestampUtcMs": "2026-08-14T12:35:30.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "b53dbc92-9c7a-40cb-a641-4f68c4c41824",
+        "name": "reducer patterns",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-08-14T12:35:30.000Z"
+    }
+  },
+  {
+    "index": 7,
+    "hash": "yWTNWmWFd/+ga8OuEuDZ7tNE11k=",
+    "timestampUtcMs": "2026-08-14T12:35:30.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "4864ee81-fe7e-4c11-824d-18d08228ebed",
+        "name": "testing",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-08-14T12:35:30.000Z"
+    }
+  },
+  {
+    "index": 8,
+    "hash": "IvoMGHQvuCAJHKKcFWiMgn2SFcc=",
+    "timestampUtcMs": "2026-08-14T12:35:30.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "473bec9f-a9fb-468c-855e-1fe5228e4a56",
+        "name": "debugging",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-08-14T12:35:30.000Z"
+    }
+  },
+  {
+    "index": 9,
+    "hash": "mOHfH8/beMGQlFgYTpfl3SbPJYU=",
+    "timestampUtcMs": "2026-08-14T12:35:30.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "6ac5c486-bf50-402b-a97d-a4c7be6fb555",
+        "name": "error handling",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-08-14T12:35:30.000Z"
+    }
+  },
+  {
+    "index": 10,
+    "hash": "1YjZxWFC0bGJeNM+BihKVtANhHE=",
+    "timestampUtcMs": "2026-08-14T14:37:30.000Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "version",
+        "value": "v6.2.2-dev.47",
+        "updatedAt": "2026-08-14T12:00:00.000Z"
+      },
+      "timestampUtcMs": "2026-08-14T14:37:30.000Z"
+    }
+  },
+  {
+    "index": 11,
+    "hash": "EKhpzUsu0AK9QJFhS0cboTtaFoc=",
+    "timestampUtcMs": "2026-08-14T14:37:30.000Z",
+    "action": {
+      "type": "SUBMIT_FOR_REVIEW",
+      "input": {
+        "id": "86a4cdf0-41db-46fa-9d88-4c2f99d068c3",
+        "actor": "claude",
+        "comment": "Knowledge registered against powerhouse v6.2.2-dev.47",
+        "timestamp": "2026-08-14T12:00:00.000Z"
+      },
+      "timestampUtcMs": "2026-08-14T14:37:30.000Z"
+    }
+  },
+  {
+    "index": 12,
+    "hash": "rRwNdTmsh0X6D+jeRALZD/3TO1U=",
+    "timestampUtcMs": "2026-08-14T14:37:30.000Z",
+    "action": {
+      "type": "APPROVE_NOTE",
+      "input": {
+        "id": "f09d2d2a-b57b-4727-a16a-5ae6419277d4",
+        "actor": "liberuum",
+        "comment": "Canonical as of powerhouse v6.2.2-dev.47",
+        "timestamp": "2026-08-14T12:00:00.000Z"
+      },
+      "timestampUtcMs": "2026-08-14T14:37:30.000Z"
+    }
+  },
+  {
+    "index": 13,
+    "hash": "rKD6fGqn6mTuiC+GfZN1FwB7L6o=",
+    "timestampUtcMs": "2026-08-16T22:22:06.499Z",
+    "action": {
+      "type": "SET_DESCRIPTION",
+      "input": {
+        "updatedAt": "2026-08-16T23:30:00.000Z",
+        "description": "A failed reducer still appends an entry and leaves state untouched, so counting only failures reads the wrong slot; use operations.global[N] with N = every dispatch made before it."
+      },
+      "timestampUtcMs": "2026-08-16T22:22:06.499Z"
+    }
+  },
+  {
+    "index": 14,
+    "hash": "lgnCygqa5MV809MZwE5Q08OMj6o=",
+    "timestampUtcMs": "2026-09-03T09:59:22.230Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "version",
+        "updatedAt": "2026-09-03T09:59:22.230Z"
+      },
+      "timestampUtcMs": "2026-09-03T09:59:22.230Z"
+    }
+  }
+]

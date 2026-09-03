@@ -1,0 +1,102 @@
+{
+  "links": [
+    {
+      "id": "lnk-6466d9d8-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "6466d9d8-9ce3-4632-974f-da739c7d8f52",
+      "targetTitle": "adapter-monorepo-two-packages"
+    },
+    {
+      "id": "lnk-8cfc4e95-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "8cfc4e95-98d9-4744-bc62-364dfe09396e",
+      "targetTitle": "adapter-key-source-files"
+    },
+    {
+      "id": "lnk-68fe4e47-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "68fe4e47-7ca5-45f2-8d9e-5f862682eadc",
+      "targetTitle": "always-check-document-model-schema-before-calling-addactions"
+    },
+    {
+      "id": "lnk-5725fd76-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "5725fd76-b0d4-4bab-9c10-3c0a890951ca",
+      "targetTitle": "bee-reactor-adapter-package-structure"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Bee Reactor Adapter enables serverless Powerhouse Connect on Swarm",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "adapter-overview",
+      "name": "adapter-overview",
+      "topicDocumentId": null
+    },
+    {
+      "id": "decentralized-storage",
+      "name": "decentralized-storage",
+      "topicDocumentId": null
+    },
+    {
+      "id": "swarm-integration",
+      "name": "swarm-integration",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "The Bee Reactor Adapter delivers decentralized storage and encrypted chat for [Powerhouse Connect](https://powerhouse.io) on the [Swarm](https://ethswarm.org) network, eliminating the need for centralized servers.\n\nCore capabilities:\n- Encrypt documents with the user's Ethereum wallet\n- Store encrypted data on Swarm\n- Recover on any device using just a wallet signature\n- Share drives with other users\n- Chat directly peer-to-peer via PSS + GSOC\n\nThe adapter integrates as a native reactor `IChannel` via `createSwarmSyncBuilder()`. The Connect fork wires it into `ReactorBuilder.withSync()` at build time, so Swarm remotes persist in `sync_remotes` and survive page reloads natively alongside GQL channels. The landing page forces wallet login, the plugin syncs all drives and docs to Swarm automatically, and exposes a chat panel from the sidebar.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "ARCHITECTURE",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "knowledge-agent",
+    "createdAt": "2026-04-21T14:52:46.944Z",
+    "sessionId": null,
+    "updatedAt": "2026-09-03T09:58:18.898Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Wallet-signature encryption, any-device recovery, drive sharing and PSS+GSOC chat, wired natively through createSwarmSyncBuilder so remotes persist in sync_remotes across reloads.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "2ffc3ccf-5ee3-4ce0-9999-a5e10e658554",
+      "actor": "claude",
+      "comment": "Knowledge registered against powerhouse v6.2.2-dev.47",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-14T12:00:00.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "5455e3ae-50d1-4d25-94de-1a5bab3245d3",
+      "actor": "liberuum",
+      "comment": "Canonical as of powerhouse v6.2.2-dev.47",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-14T12:00:00.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

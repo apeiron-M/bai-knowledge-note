@@ -1,0 +1,348 @@
+[
+  {
+    "index": 0,
+    "hash": "",
+    "timestampUtcMs": "2026-09-03T07:54:14.555Z",
+    "action": {
+      "type": "CREATE_DOCUMENT",
+      "input": {
+        "meta": {},
+        "name": "state-schema-collection-nullability",
+        "slug": "",
+        "model": "bai/knowledge-note",
+        "branch": "main",
+        "signing": {
+          "nonce": "",
+          "publicKey": {},
+          "signature": "6120bd49-6b1f-44f5-adff-449a0a31427c",
+          "documentType": "bai/knowledge-note",
+          "createdAtUtcIso": "2026-09-03T07:54:14.555Z"
+        },
+        "version": 0,
+        "documentId": "6120bd49-6b1f-44f5-adff-449a0a31427c",
+        "protocolVersions": {
+          "base-reducer": 2
+        }
+      },
+      "timestampUtcMs": "2026-09-03T07:54:14.555Z"
+    }
+  },
+  {
+    "index": 0,
+    "hash": "tl54CyVxqnsXIpLxS5L9PoEdXsI=",
+    "timestampUtcMs": "2026-09-03T07:54:15.722Z",
+    "action": {
+      "type": "SET_TITLE",
+      "input": {
+        "title": "A state schema's collection field carries two exclamation marks for two different reasons, and the outer one is what guarantees an empty list rather than null",
+        "updatedAt": "2026-09-03T07:54:15.722Z"
+      },
+      "timestampUtcMs": "2026-09-03T07:54:15.722Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "",
+    "timestampUtcMs": "2026-09-03T07:54:14.555Z",
+    "action": {
+      "type": "UPGRADE_DOCUMENT",
+      "input": {
+        "model": "bai/knowledge-note",
+        "toVersion": 1,
+        "documentId": "6120bd49-6b1f-44f5-adff-449a0a31427c",
+        "fromVersion": 0,
+        "initialState": {
+          "auth": {
+            "grants": [],
+            "version": 0
+          },
+          "local": {
+            "lastViewedAt": null,
+            "personalTags": []
+          },
+          "global": {
+            "links": [],
+            "model": null,
+            "scope": null,
+            "title": null,
+            "editor": null,
+            "inputs": [],
+            "models": [],
+            "status": "DRAFT",
+            "topics": [],
+            "content": null,
+            "context": null,
+            "modelId": null,
+            "modules": [],
+            "outputs": [],
+            "version": null,
+            "computes": null,
+            "filePath": null,
+            "noteType": null,
+            "severity": null,
+            "hooksUsed": [],
+            "rootCause": null,
+            "confidence": null,
+            "consumedBy": [],
+            "provenance": null,
+            "sourceType": null,
+            "targetType": null,
+            "cardinality": null,
+            "description": null,
+            "alternatives": [],
+            "consequences": [],
+            "errorMessage": null,
+            "relationType": null,
+            "correctPattern": null,
+            "decisionStatus": null,
+            "dispatchTargets": [],
+            "lifecycleEvents": []
+          },
+          "document": {
+            "hash": {
+              "encoding": "base64",
+              "algorithm": "sha1"
+            },
+            "version": 1
+          }
+        }
+      },
+      "timestampUtcMs": "2026-09-03T07:54:14.555Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "j2CYwc6PNe79lg6NTmYyJnFkY+0=",
+    "timestampUtcMs": "2026-09-03T07:54:15.722Z",
+    "action": {
+      "type": "SET_DESCRIPTION",
+      "input": {
+        "updatedAt": "2026-09-03T07:54:15.722Z",
+        "description": "[TodoItem!]! means no null items and no null list, so the field is always at least []. OID! is the custom scalar for in-document identity, with generateId() supplying values."
+      },
+      "timestampUtcMs": "2026-09-03T07:54:15.722Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "",
+    "timestampUtcMs": "2026-09-03T07:55:23.433Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "metadata": {
+          "reason": "Extracted from apps/academy/docs/academy/03-Build/02-DocumentModelCreation/02-SpecifyTheStateSchema.md at v6.2.2-dev.74 \u2014 Core concepts \u203a Scalars, Lists and non-null; Example: TodoList state schema \u203a Breakdown",
+          "confidence": "grounded"
+        },
+        "sourceId": "6120bd49-6b1f-44f5-adff-449a0a31427c",
+        "targetId": "5345341b-bdf5-4837-a74d-7c50b14a61bd",
+        "relationshipType": "DERIVED_FROM"
+      },
+      "timestampUtcMs": "2026-09-03T07:55:23.433Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "Tj0yjiin7btPiv/msujQtnehn5c=",
+    "timestampUtcMs": "2026-09-03T07:54:15.722Z",
+    "action": {
+      "type": "SET_NOTE_TYPE",
+      "input": {
+        "noteType": "REFERENCE",
+        "updatedAt": "2026-09-03T07:54:15.722Z"
+      },
+      "timestampUtcMs": "2026-09-03T07:54:15.722Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "",
+    "timestampUtcMs": "2026-09-03T07:55:23.912Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "metadata": {
+          "reason": "The schema defines the state a versioned module holds, and the registry is what resolves which version's reducer folds it",
+          "confidence": "established"
+        },
+        "sourceId": "6120bd49-6b1f-44f5-adff-449a0a31427c",
+        "targetId": "c69178f9-07b7-4407-94e6-90ed96d3003e",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-09-03T07:55:23.912Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "QWeTNDJLtt0EnVqqTc2XMYeTxOU=",
+    "timestampUtcMs": "2026-09-03T07:54:15.722Z",
+    "action": {
+      "type": "SET_CONTENT",
+      "input": {
+        "content": "The state schema is GraphQL SDL, and the one piece of syntax that carries real semantics for a document model is the double `!` on a collection:\n\n```graphql\ntype TodoListState {\n  items: [TodoItem!]!\n}\n\ntype TodoItem {\n  id: OID!\n  text: String!\n  checked: Boolean!\n}\n```\n\n- the **inner** `!` on `TodoItem!` means no entry inside the list may be null;\n- the **outer** `!` on `[TodoItem!]!` means the list itself may not be null \u2014 \"it can be an empty list `[]`, but it cannot be absent\".\n\nThat is why the vault's own document-modelling rule holds that collections should always be `[Type!]!`: the outer `!` is what lets a document be created empty without the field being `null`, and the inner `!` is what stops a hole appearing inside it.\n\nThe other Powerhouse-specific piece is the **`OID`** scalar \u2014 a custom scalar for unique identifiers in document models, with automatic ID generation when used with `generateId()` from the document-model core library. Its purpose in the example is stated plainly: `id: OID!` is \"crucial for referencing specific items, for example when updating or deleting them\" \u2014 an operation input has to name the row it changes.\n\nBeyond the built-in scalars (`String`, `Int`, `Float`, `Boolean`, `ID`), the Document-Engineering system adds custom scalars **linked to reusable front-end components**, which is what makes a scalar choice a UI decision as well as a data one.\n\n## Provenance\n- `apps/academy/docs/academy/03-Build/02-DocumentModelCreation/02-SpecifyTheStateSchema.md` \u2014 Core concepts \u203a Scalars, Lists and non-null; Example: TodoList state schema \u203a Breakdown\n\n_Extracted from the Powerhouse repository at **v6.2.2-dev.74**._",
+        "updatedAt": "2026-09-03T07:54:15.722Z"
+      },
+      "timestampUtcMs": "2026-09-03T07:54:15.722Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "",
+    "timestampUtcMs": "2026-09-03T07:55:24.402Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "metadata": {
+          "reason": "Nullability is the mechanical half; that note is the design guidance about when to use it",
+          "confidence": "grounded"
+        },
+        "sourceId": "6120bd49-6b1f-44f5-adff-449a0a31427c",
+        "targetId": "952fe228-b9bc-4a40-b402-b66774053a96",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-09-03T07:55:24.402Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "HVIXGX32zODzISmQQUODkk/0SXM=",
+    "timestampUtcMs": "2026-09-03T07:54:15.722Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "acf03b69-cdfc-4613-b9d9-b571d3758e05",
+        "name": "document-model"
+      },
+      "timestampUtcMs": "2026-09-03T07:54:15.722Z"
+    }
+  },
+  {
+    "index": 5,
+    "hash": "",
+    "timestampUtcMs": "2026-09-03T07:55:24.953Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "metadata": {
+          "reason": "Generated input schemas are what generateMock builds test data from, so the nullability written here shapes every generated test fixture",
+          "confidence": "established"
+        },
+        "sourceId": "6120bd49-6b1f-44f5-adff-449a0a31427c",
+        "targetId": "e2b3e87f-3df0-4940-9352-b648ed4e527d",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-09-03T07:55:24.953Z"
+    }
+  },
+  {
+    "index": 5,
+    "hash": "52zHOObx5TmDMbnKESm1j6B+CJQ=",
+    "timestampUtcMs": "2026-09-03T07:54:15.722Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "3a2e55c1-f5b2-4825-96ea-a56dbb1847db",
+        "name": "graphql"
+      },
+      "timestampUtcMs": "2026-09-03T07:54:15.722Z"
+    }
+  },
+  {
+    "index": 6,
+    "hash": "rpm4e/hpg0I8GtRw/wUCAVF5Zz4=",
+    "timestampUtcMs": "2026-09-03T07:54:15.722Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "952371d8-151f-4d0b-bd3a-583f1bd8a635",
+        "name": "schema-design"
+      },
+      "timestampUtcMs": "2026-09-03T07:54:15.722Z"
+    }
+  },
+  {
+    "index": 7,
+    "hash": "/dI9rIK4ITL/ZlgaGLEARj63upw=",
+    "timestampUtcMs": "2026-09-03T07:54:15.722Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "6c19711d-f94c-463b-9f53-fb1623c90dd2",
+        "name": "scalars"
+      },
+      "timestampUtcMs": "2026-09-03T07:54:15.722Z"
+    }
+  },
+  {
+    "index": 8,
+    "hash": "t6SA8s9tgRbyT4UAPZ0UPmkcZTU=",
+    "timestampUtcMs": "2026-09-03T07:54:15.722Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "version",
+        "value": "v6.2.2-dev.74",
+        "updatedAt": "2026-09-03T07:54:15.722Z"
+      },
+      "timestampUtcMs": "2026-09-03T07:54:15.722Z"
+    }
+  },
+  {
+    "index": 9,
+    "hash": "CnDtiBv11bqKs3ay28FjCgXSd2w=",
+    "timestampUtcMs": "2026-09-03T07:54:15.722Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "filePath",
+        "value": "apps/academy/docs/academy/03-Build/02-DocumentModelCreation/02-SpecifyTheStateSchema.md",
+        "updatedAt": "2026-09-03T07:54:15.722Z"
+      },
+      "timestampUtcMs": "2026-09-03T07:54:15.722Z"
+    }
+  },
+  {
+    "index": 10,
+    "hash": "ZGxV8VQKvlvi8ertep/NPTXL/1c=",
+    "timestampUtcMs": "2026-09-03T07:54:18.343Z",
+    "action": {
+      "type": "SET_PROVENANCE",
+      "input": {
+        "author": "knowledge-agent",
+        "createdAt": "2026-09-03T07:54:18.343Z",
+        "sourceOrigin": "DERIVED"
+      },
+      "timestampUtcMs": "2026-09-03T07:54:18.343Z"
+    }
+  },
+  {
+    "index": 11,
+    "hash": "6WO9JEoBDhzf0lqePF70GkxMreI=",
+    "timestampUtcMs": "2026-09-03T07:54:20.266Z",
+    "action": {
+      "type": "SUBMIT_FOR_REVIEW",
+      "input": {
+        "id": "e0be431f-045b-4ad5-ba4b-cdc4e128beff",
+        "actor": "knowledge-agent",
+        "comment": "extracted from apps/academy/docs/academy/03-Build/02-DocumentModelCreation/02-SpecifyTheStateSchema.md at v6.2.2-dev.74",
+        "timestamp": "2026-09-03T07:54:20.266Z"
+      },
+      "timestampUtcMs": "2026-09-03T07:54:20.266Z"
+    }
+  },
+  {
+    "index": 12,
+    "hash": "Dr+7Sjs5biZ/esHCNBuSM10U2ME=",
+    "timestampUtcMs": "2026-09-03T07:54:20.744Z",
+    "action": {
+      "type": "APPROVE_NOTE",
+      "input": {
+        "id": "8f7bdd77-f439-4af1-afcb-de8c98e0d535",
+        "actor": "liberuum",
+        "comment": "claim checked against the cited file at the pinned tag",
+        "timestamp": "2026-09-03T07:54:20.744Z"
+      },
+      "timestampUtcMs": "2026-09-03T07:54:20.744Z"
+    }
+  }
+]

@@ -1,0 +1,102 @@
+{
+  "links": [
+    {
+      "id": "lnk-4a5a9901-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "4a5a9901-a0e2-4e7e-8ff2-9c155cccb2f7",
+      "targetTitle": "queue-serializes-per-document",
+      "reason": "Execution is serialized per document across branches too, so parallel branches of one document do not buy write concurrency",
+      "confidence": "grounded"
+    },
+    {
+      "id": "lnk-e4ef060b-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "e4ef060b-4d61-41b4-95bd-2f562eea3cfa",
+      "targetTitle": "Package \u203a reactor \u203a ARCHITECTURE \u2014 Reactor Architecture",
+      "reason": "Extracted from packages/reactor/docs/ARCHITECTURE.md at v6.2.2-dev.74 \u2014 Core Concepts \u203a Branch",
+      "confidence": "grounded"
+    },
+    {
+      "id": "lnk-0ef319a9-bui",
+      "linkType": "BUILDS_ON",
+      "targetDocumentId": "0ef319a9-520b-4759-b30b-a08146b567a9",
+      "targetTitle": "op-stored-per-triple",
+      "reason": "Branch is the third component of the storage triple, so the data model is ready for branches even though no operation creates or merges one",
+      "confidence": "grounded"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Documents carry a branch on every operation, but branching and merging operations are planned rather than implemented",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "99612fae-8978-4eef-b615-3b54491cbd6c",
+      "name": "reactor",
+      "topicDocumentId": null
+    },
+    {
+      "id": "c6790f7b-3e53-45a6-bacc-3e308a1c893e",
+      "name": "branches",
+      "topicDocumentId": null
+    },
+    {
+      "id": "282fe839-6ff3-43a0-a72e-6030101caf07",
+      "name": "roadmap",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "Every operation is keyed by branch as well as document and scope, and `main` is the default \u2014 typically the published version. Custom branches are described as drafts, experiments or parallel versions, and operations are **isolated per branch**.\n\nWhat does not exist yet is the machinery to use them: the architecture states plainly that **branching and merging operations are planned but not yet implemented.** So the storage layer will hold operations on any branch name a caller supplies, and nothing will create a branch from another, diff two branches, or merge one into another.\n\nFor anyone designing on top of this: a draft/published workflow can be *stored* today by writing to a second branch name, but the promotion step has to be implemented in application code (re-submitting the actions against `main`), and there is no reactor-level guarantee about how the two histories relate.\n\n## Provenance\n- `packages/reactor/docs/ARCHITECTURE.md` \u2014 Core Concepts \u203a Branch\n\n_Extracted from the Powerhouse repository at **v6.2.2-dev.74**._",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": "v6.2.2-dev.74",
+  "computes": null,
+  "filePath": "packages/reactor/docs/ARCHITECTURE.md",
+  "noteType": "OBSERVATION",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "knowledge-agent",
+    "createdAt": "2026-09-03T07:18:45.446Z",
+    "sessionId": null,
+    "updatedAt": "2026-09-03T07:22:21.496Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Operations are isolated per branch and main is the default, so the data model supports draft/published workflows \u2014 but nothing in the reactor creates or merges a branch yet.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "29a98849-ad16-41a2-9441-3590dcabab1a",
+      "actor": "knowledge-agent",
+      "comment": "extracted from packages/reactor/docs/ARCHITECTURE.md at v6.2.2-dev.74",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-09-03T07:18:47.430Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "bf63805e-4e22-4060-bc46-0d909c665172",
+      "actor": "liberuum",
+      "comment": "claim checked against the cited file at the pinned tag",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-09-03T07:18:47.941Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

@@ -1,0 +1,181 @@
+[
+  {
+    "index": 0,
+    "hash": "",
+    "timestampUtcMs": "2026-08-16T12:02:32.153Z",
+    "action": {
+      "type": "CREATE_DOCUMENT",
+      "input": {
+        "meta": {},
+        "name": "skill-synthesize",
+        "slug": "",
+        "model": "bai/source",
+        "branch": "main",
+        "signing": {
+          "nonce": "",
+          "publicKey": {},
+          "signature": "21decc1b-5f30-45f5-8ad2-13476749b2fa",
+          "documentType": "bai/source",
+          "createdAtUtcIso": "2026-08-16T12:02:32.153Z"
+        },
+        "version": 0,
+        "documentId": "21decc1b-5f30-45f5-8ad2-13476749b2fa",
+        "protocolVersions": {
+          "base-reducer": 2
+        }
+      },
+      "timestampUtcMs": "2026-08-16T12:02:32.153Z"
+    }
+  },
+  {
+    "index": 0,
+    "hash": "fxA8QuPAZ33jhC7B7EEsogkpNAE=",
+    "timestampUtcMs": "2026-08-16T12:02:32.467Z",
+    "action": {
+      "type": "INGEST_SOURCE",
+      "input": {
+        "url": "https://github.com/liberuum/powerhouse-knowledge/blob/main/skills/synthesize/SKILL.md",
+        "tool": "sync-skills",
+        "title": "Agent skill: synthesize",
+        "author": "powerhouse-knowledge plugin",
+        "method": "sha256:0383816c07c5dac7c4b8d87f1172d2f45b1b8f3ef2e64228e6de7eeaf2fec8ff",
+        "content": "---\nname: synthesize\ndescription: Create Maps of Content (MOCs) from topic clusters in the knowledge graph. Groups notes by shared topics, creates bai/moc documents with core ideas, orientation, and tensions. Use after extraction to organize growing knowledge.\n---\n\n# Synthesize \u2014 Create Maps of Content\n\nAnalyze the knowledge graph for topic clusters and create `bai/moc` documents that organize notes into navigable topic maps.\n\n## When to use\n\n- After extraction when multiple notes share topics\n- When health check shows \"0 MOCs for N notes\"\n- When the user asks to organize or structure their knowledge\n- As part of the reflect/reweave pipeline phases\n\n## Process\n\n### Step 1: Identify topic clusters\n\nRead all knowledge notes and group by topics:\n\n```bash\nswitchboard docs list --drive <drive-slug> --format json\n# For each bai/knowledge-note, read state.global.topics[]\nswitchboard docs get <note-id> --state --format json\n# Group: topic-name -> [{ docId, title, noteType }]\n# Filter: only topics with 3+ notes are MOC candidates\n```\n\nOr use the subgraph:\n```bash\nswitchboard query '{ knowledgeGraphNodes(driveId: \"<UUID>\") { documentId title noteType } }'\n```\n\n### Step 2: Check for existing MOCs\n\n```bash\nswitchboard docs list --drive <drive-slug> --format json\n# Find all bai/moc documents\n# Compare: if a MOC already exists for topic X, update it instead of creating a new one\n```\n\n### Step 3: Find the /knowledge/ folder\n\nMOCs go in `/knowledge/` (not `/knowledge/notes/` \u2014 MOCs are navigation, not atomic claims):\n\n```bash\nswitchboard docs tree <drive-slug> --format json\n# Find: kind=\"folder\", name=\"knowledge\", parentFolder=null\n```\n\n### Step 4: Create MOC documents\n\nFor each topic cluster with 3+ notes:\n\n```bash\nswitchboard docs create --type bai/moc --name \"<topic-name>\" --drive <drive-slug> --parent-folder <knowledge-folder-uuid> --format json\n```\n\nThen initialize the MOC:\n```bash\nswitchboard docs apply <moc-id> --actions '[{\n  \"type\": \"CREATE_MOC\",\n  \"input\": {\n    \"title\": \"<topic-name>\",\n    \"description\": \"Map of Content for <topic> \u2014 N notes covering <brief scope>\",\n    \"orientation\": \"<1-2 paragraph synthesis of what this topic covers, key themes, and how notes relate>\",\n    \"tier\": \"TOPIC\",\n    \"createdAt\": \"<ISO>\"\n  },\n  \"scope\": \"global\"\n}]'\n```\n\n**MOC Tiers:**\n- `HUB` \u2014 top-level entry point (e.g., \"Knowledge Management\")\n- `DOMAIN` \u2014 broad area with 10+ notes (e.g., \"Cognitive Science\")\n- `TOPIC` \u2014 focused cluster with 3-9 notes (e.g., \"extended-mind\")\n\n### Step 5: Attach core ideas\n\nFor each note in the topic, attach it to the MoC via an `addRelationship` mutation with type `CORE_IDEA`. Since the drive-override migration, core ideas live in the reactor's `DocumentRelationship` table \u2014 not in the MoC's `coreIdeas[]` state array. This is the same mutation used for note\u2194note links; only the `relationshipType` differs.\n\n```bash\nswitchboard query 'mutation {\n  addRelationship(\n    sourceIdentifier: \"<moc-id>\",\n    targetIdentifier: \"<note-document-id>\",\n    relationshipType: \"CORE_IDEA\",\n    branch: \"main\"\n  ) { documentType }\n}'\n```\n\nFor a hub/domain hierarchy, use `CHILD_MOC` from the parent MoC to each child MoC:\n\n```bash\nswitchboard query 'mutation {\n  addRelationship(\n    sourceIdentifier: \"<parent-moc-id>\",\n    targetIdentifier: \"<child-moc-id>\",\n    relationshipType: \"CHILD_MOC\",\n    branch: \"main\"\n  ) { documentType }\n}'\n```\n\n**Articulation lives in the note body, not on the edge.** The pre-migration `addCoreIdea` op accepted a `contextPhrase` that explained WHY each note was a core idea. The new `DocumentRelationship` row is just `(source, target, type)` \u2014 no metadata. To preserve the articulation, edit the source note's content (`--op setContent`) and add a section explaining how it fits the topic. The reader sees this when they navigate from the MoC into the note.\n\n### Step 6: Add tensions and open questions (optional)\n\nIf notes within the topic contradict each other:\n```bash\nswitchboard docs mutate <moc-id> --op addTension --input '{\n  \"id\": \"<unique-id>\",\n  \"description\": \"<what the contradiction is>\",\n  \"involvedRefs\": [\"<note-id-1>\", \"<note-id-2>\"],\n  \"addedAt\": \"<ISO>\"\n}'\n```\n\nIf there are unexplored directions:\n```bash\nswitchboard docs mutate <moc-id> --op addOpenQuestion --input '{\"question\": \"<what has not been explored yet in this topic?>\"}'\n```\n\n### Step 7: Verify MOCs actually exist\n\n**CRITICAL:** Don't assume creation succeeded. After creating all MOCs, **read the drive tree and confirm each MOC appears**:\n```bash\nswitchboard docs tree <drive-slug> --format json\n# Check each MOC ID exists as a file node with documentType === \"bai/moc\"\n# If missing: the creation silently failed \u2014 recreate\n```\nOnly report MOC_COHERENCE as PASS after verification, not after dispatching the create.\n\n## Output\n\n```\n=== MOC SYNTHESIS COMPLETE ===\nTopic clusters found: N\nMOCs created: N\nMOCs updated: N (existing)\nTotal core ideas added: N\n\nNew MOCs:\n  extended-mind (TOPIC) \u2014 4 notes\n  powerhouse-architecture (TOPIC) \u2014 5 notes\n  editor-styling (TOPIC) \u2014 3 notes\n```\n\n## Integration with pipeline\n\nMOC creation should happen during the **reflect** or **reweave** phase:\n- After connecting notes, check if any topic has 3+ notes without a MOC\n- Create MOCs for uncovered topics\n- Update existing MOCs with new core ideas from the latest extraction\n\nThe `/health` check for MOC_COHERENCE will pass once MOCs exist for all active topics.\n\nIf \"$ARGUMENTS\" is provided, focus on that specific topic.\n",
+        "createdAt": "2026-08-16T12:02:32.467Z",
+        "createdBy": "skill-sync",
+        "sourceType": "DOCUMENTATION",
+        "description": "Create Maps of Content (MOCs) from topic clusters in the knowledge graph. Groups notes by shared topics, creates bai/moc documents with core ideas, orientation, and tensions. Use after extraction to o"
+      },
+      "timestampUtcMs": "2026-08-16T12:02:32.467Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "",
+    "timestampUtcMs": "2026-08-16T12:02:32.153Z",
+    "action": {
+      "type": "UPGRADE_DOCUMENT",
+      "input": {
+        "model": "bai/source",
+        "toVersion": 1,
+        "documentId": "21decc1b-5f30-45f5-8ad2-13476749b2fa",
+        "fromVersion": 0,
+        "initialState": {
+          "auth": {
+            "grants": [],
+            "version": 0
+          },
+          "local": {},
+          "global": {
+            "title": null,
+            "status": "INBOX",
+            "content": null,
+            "createdAt": null,
+            "createdBy": null,
+            "provenance": null,
+            "sourceType": null,
+            "description": null,
+            "extractedClaims": [],
+            "extractionStats": null
+          },
+          "document": {
+            "hash": {
+              "encoding": "base64",
+              "algorithm": "sha1"
+            },
+            "version": 1
+          }
+        }
+      },
+      "timestampUtcMs": "2026-08-16T12:02:32.153Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "m0gk26p5jdKet6TTM5edgqxOe+c=",
+    "timestampUtcMs": "2026-08-16T12:02:34.960Z",
+    "action": {
+      "type": "ADD_EXTRACTED_CLAIM",
+      "input": {
+        "claimRef": "d3b7e64c-6f88-4d59-bd26-a52c52e3eadd"
+      },
+      "timestampUtcMs": "2026-08-16T12:02:34.960Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "yXJv5t2+b7eGra0Yj/iIPg2Wy50=",
+    "timestampUtcMs": "2026-08-16T12:02:35.102Z",
+    "action": {
+      "type": "RECORD_EXTRACTION_STATS",
+      "input": {
+        "skipRate": 0,
+        "claimCount": 1,
+        "extractedAt": "2026-08-16T12:02:35.102Z",
+        "extractedBy": "skill-sync",
+        "skippedCount": 0
+      },
+      "timestampUtcMs": "2026-08-16T12:02:35.102Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "z4ixixV0wvsCbpxwgTzXQPXFudQ=",
+    "timestampUtcMs": "2026-08-16T12:02:35.253Z",
+    "action": {
+      "type": "SET_SOURCE_STATUS",
+      "input": {
+        "status": "EXTRACTED"
+      },
+      "timestampUtcMs": "2026-08-16T12:02:35.253Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "jGViISFGby44kQVV+cPfS/v9R1k=",
+    "timestampUtcMs": "2026-09-02T19:22:12.658Z",
+    "action": {
+      "type": "INGEST_SOURCE",
+      "input": {
+        "url": "https://github.com/liberuum/powerhouse-knowledge/blob/main/skills/synthesize/SKILL.md",
+        "tool": "sync-skills",
+        "title": "Agent skill: synthesize",
+        "author": "powerhouse-knowledge plugin",
+        "method": "sha256:7b14b8b8377b6902d77f9a3c7dbc82972e74e9808d49f0f8cc65219438301bd2",
+        "content": "---\nname: synthesize\ndescription: Create Maps of Content (MOCs) from topic clusters in the knowledge graph. Groups notes by shared topics, creates bai/moc documents with core ideas, orientation, and tensions. Use after extraction to organize growing knowledge.\n---\n\n# Synthesize \u2014 Create Maps of Content\n\n> **Target first.** Every command below runs against the Switchboard the\n> active CLI profile points at, and `<UUID>` / `<drive-slug>` mean *that*\n> server's vault drive. If the pre-flight hook printed `Profile: \u2026 -> \u2026` and\n> `VAULT_DRIVE_ID` / `VAULT_DRIVE_SLUG`, use those. Otherwise run\n> `switchboard config show` and the drive detection in AGENT.md \u00a7 *Find the\n> vault drive*. If it is still ambiguous which vault the user means, **ask for\n> the Switchboard URL and the drive** \u2014 never assume an endpoint.\n\nAnalyze the knowledge graph for topic clusters and create `bai/moc` documents that organize notes into navigable topic maps.\n\n## When to use\n\n- After extraction when multiple notes share topics\n- When health check shows \"0 MOCs for N notes\"\n- When the user asks to organize or structure their knowledge\n- As part of the reflect/reweave pipeline phases\n\n## Process\n\n### Step 1: Identify topic clusters\n\nTwo graph calls give you every cluster \u2014 do not read notes one by one:\n\n```bash\n# 1. The topic vocabulary with counts; only topics with 3+ notes are MoC candidates\nswitchboard query '{ knowledgeGraphTopics(driveId: \"<UUID>\") { name noteCount } }'\n# 2. The members of each candidate topic (no `content` \u2014 you only need ids and titles here)\nswitchboard query '{ knowledgeGraphByTopic(driveId: \"<UUID>\", topic: \"<topic>\") { documentId title noteType status } }'\n```\n\nThen read the existing hierarchy in one call, so you know which topics already have a MoC and where the HUB is:\n\n```bash\nswitchboard query '{ mocs: knowledgeGraphNodesByStatus(driveId: \"<UUID>\", status: \"MOC\") { documentId title noteType } edges: knowledgeGraphEdges(driveId: \"<UUID>\") { sourceDocumentId targetDocumentId linkType } }'\n# noteType is \"MOC (HUB)\" / \"MOC (DOMAIN)\" / \"MOC (TOPIC)\"\n# CHILD_MOC edges are the tree; CORE_IDEA edges are membership\n# the HUB is the MoC with no incoming CHILD_MOC edge \u2014 there should be exactly one\n```\n\n### Step 2: Check for existing MOCs\n\n```bash\nswitchboard docs list --drive <drive-slug> --format json\n# Find all bai/moc documents\n# Compare: if a MOC already exists for topic X, update it instead of creating a new one \u2014\n# UPDATE_DESCRIPTION { description, updatedAt } / UPDATE_ORIENTATION { orientation, updatedAt }\n# on the existing MoC, plus `switchboard docs link <moc> <note> -t CORE_IDEA` for each new member\n```\n\n### Step 3: Find the /knowledge/ folder\n\nMOCs go in `/knowledge/` (not `/knowledge/notes/` \u2014 MOCs are navigation, not atomic claims):\n\n```bash\nswitchboard docs tree <drive-slug> --format json\n# Find: kind=\"folder\", name=\"knowledge\", parentFolder=null\n```\n\n### Step 4: Create MOC documents\n\nFor each topic cluster with 3+ notes:\n\n```bash\nswitchboard docs create --type bai/moc --name \"<topic-name>\" --drive <drive-slug> --parent-folder <knowledge-folder-uuid> --format json\n```\n\nThen initialize the MOC:\n```bash\nswitchboard docs apply <moc-id> --actions '[{\n  \"type\": \"CREATE_MOC\",\n  \"input\": {\n    \"title\": \"<topic-name>\",\n    \"description\": \"Map of Content for <topic> \u2014 N notes covering <brief scope>\",\n    \"orientation\": \"<1-2 paragraph synthesis of what this topic covers, key themes, and how notes relate>\",\n    \"tier\": \"TOPIC\",\n    \"createdAt\": \"<ISO>\"\n  },\n  \"scope\": \"global\"\n}]'\n```\n\n**MOC tiers and the hierarchy.** MoCs form a tree with one root; agents and humans explore the vault by walking it, so every MoC must be reachable from the top.\n\n| Tier | Holds | Size | Parent |\n|------|-------|------|--------|\n| `TOPIC` | a focused cluster of notes (`CORE_IDEA`) | 3\u20139 notes | a `DOMAIN`, or the HUB if no domain fits |\n| `DOMAIN` | a broad area: its own notes plus `CHILD_MOC` TOPIC MoCs | 10+ notes, or 2+ topic MoCs | the HUB |\n| `HUB` | the vault's single entry point: `CHILD_MOC` to every DOMAIN and to any TOPIC without a domain | one per vault | \u2014 |\n\nApply, in this order, every time you run:\n\n1. **Topic with 3+ notes and no MoC \u2192 create a TOPIC MoC**, `CORE_IDEA` every member.\n2. **2+ TOPIC MoCs that share a broader theme, or a topic past ~10 notes \u2192 a DOMAIN MoC** (create it, or promote the TOPIC by `SET_METADATA_FIELD`/recreate with tier `DOMAIN`), then `CHILD_MOC` the topics under it. Name the domain for the theme the children share, not for one of them.\n3. **3+ DOMAIN/TOPIC MoCs and no HUB \u2192 create the HUB** (tier `HUB`, a title naming the whole vault's subject, an orientation that says how the domains divide the territory). Then `CHILD_MOC` every MoC that has no parent under it. A vault has exactly one HUB.\n4. **Attach every MoC you created to a parent in the same run.** Leaving a MoC unreachable from the HUB is the failure mode this step exists to prevent.\n\nExample \u2014 a vault of 37 MoCs: one HUB \"Powerhouse Ecosystem\" \u2192 17 DOMAIN MoCs (\"Reactor and Drives\", \"Editors and UX\", \u2026) and the TOPIC MoCs that fit no domain; \"Editors and UX\" \u2192 `CHILD_MOC` \u2192 TOPIC \"Document Toolbar Styling\" (5 notes).\n\n**Length limits:** none on a MoC's title, description or orientation \u2014 the only hard length limit in any model is a knowledge note's description (\u2264 200). Keep MoC descriptions to one or two sentences for the picker; put the substance in `orientation`.\n\n### Step 5: Attach core ideas\n\nFor each note in the topic, attach it to the MoC with `docs link \u2026 -t CORE_IDEA`. Since the drive-override migration, core ideas live in the reactor's `DocumentRelationship` table \u2014 not in the MoC's `coreIdeas[]` state array. This is the same command used for note\u2194note links; only the type differs, and it is signed as you when the profile has an identity.\n\n```bash\nswitchboard docs link <moc-id> <note-document-id> -t CORE_IDEA\n```\n\nFor a hub/domain hierarchy, use `CHILD_MOC` from the parent MoC to each child MoC:\n\n```bash\nswitchboard docs link <parent-moc-id> <child-moc-id> -t CHILD_MOC\n```\n\n**The old `contextPhrase` has a home again \u2014 on the edge, optionally.** The pre-migration `addCoreIdea` op accepted a `contextPhrase` explaining WHY each note was a core idea. Since CLI 1.0.36 the relationship row carries metadata, so that phrase can go on the edge: `docs link <moc> <note> -t CORE_IDEA --reason \"<why this note anchors the topic>\"`. The hook does not require it for `CORE_IDEA` / `CHILD_MOC` (membership is the meaning), but when you know why a note is central to the map, say it there \u2014 the MoC editor and the sidebar read `reason` off the edge, and a reader navigating from the MoC sees it before opening the note.\n\n### Step 5b: Place every new MoC in the tree\n\nFor each MoC created in Step 4, add one `CHILD_MOC` edge from its parent (the DOMAIN it belongs to, else the HUB). If the vault now has 3+ MoCs and no HUB, create the HUB first (Step 4, tier `HUB`) and attach every parentless MoC to it. Verify afterwards:\n\n```bash\n# Every MoC except the HUB must have exactly one incoming CHILD_MOC edge\nswitchboard query '{ knowledgeGraphEdges(driveId: \"<UUID>\") { sourceDocumentId targetDocumentId linkType } }' --format json \\\n  | python3 -c \"import json,sys; e=[x for x in json.load(sys.stdin)['data']['knowledgeGraphEdges'] if x['linkType']=='CHILD_MOC']; print(len(e),'CHILD_MOC edges;', len({x['sourceDocumentId'] for x in e}),'parents')\"\n```\n\n### Step 6: Add tensions and open questions (optional)\n\nIf notes within the topic contradict each other:\n```bash\nswitchboard docs mutate <moc-id> --op addTension --input '{\n  \"id\": \"<unique-id>\",\n  \"description\": \"<what the contradiction is>\",\n  \"involvedRefs\": [\"<note-id-1>\", \"<note-id-2>\"],\n  \"addedAt\": \"<ISO>\"\n}'\n```\n\nIf there are unexplored directions:\n```bash\nswitchboard docs mutate <moc-id> --op addOpenQuestion --input '{\"question\": \"<what has not been explored yet in this topic?>\"}'\n```\n\n### Step 7: Verify MOCs actually exist\n\n**CRITICAL:** Don't assume creation succeeded. After creating all MOCs, **read the drive tree and confirm each MOC appears**:\n```bash\nswitchboard docs tree <drive-slug> --format json\n# Check each MOC ID exists as a file node with documentType === \"bai/moc\"\n# If missing: the creation silently failed \u2014 recreate\n```\nOnly report MOC_COHERENCE as PASS after verification, not after dispatching the create.\n\n## Output\n\n```\n=== MOC SYNTHESIS COMPLETE ===\nTopic clusters found: N\nMOCs created: N\nMOCs updated: N (existing)\nTotal core ideas added: N\n\nHierarchy:\n  HUB  Powerhouse Ecosystem \u2014 18 child MoCs (1 new)\n    DOMAIN  Editors and UX \u2014 19 notes, 2 child MoCs\n      TOPIC  Document Toolbar Styling \u2014 5 notes\n      TOPIC  editor-styling \u2014 3 notes (new, attached)\nUnreachable MoCs: 0\n```\n\n## Integration with pipeline\n\nMOC creation should happen during the **reflect** or **reweave** phase:\n- After connecting notes, check if any topic has 3+ notes without a MOC\n- Create MOCs for uncovered topics and attach each to its DOMAIN or the HUB in the same run\n- Promote to a DOMAIN, or create the HUB, when the thresholds above are crossed\n- Update existing MOCs with new core ideas from the latest extraction\n\nNote that the `/health` check MOC_COHERENCE grades **notes without topics**, not topic clusters without a MoC \u2014 creating MoCs does not move it; tagging notes does.\n\nIf \"$ARGUMENTS\" is provided, focus on that specific topic.\n",
+        "createdAt": "2026-09-02T19:22:12.658Z",
+        "createdBy": "skill-sync",
+        "sourceType": "DOCUMENTATION",
+        "description": "Create Maps of Content (MOCs) from topic clusters in the knowledge graph. Groups notes by shared topics, creates bai/moc documents with core ideas, orientation, and tensions. Use after extraction to o"
+      },
+      "timestampUtcMs": "2026-09-02T19:22:12.658Z"
+    }
+  },
+  {
+    "index": 5,
+    "hash": "Q6aIsX9af7AmP0/VnR7DQnJ+yTU=",
+    "timestampUtcMs": "2026-09-02T19:22:14.941Z",
+    "action": {
+      "type": "RECORD_EXTRACTION_STATS",
+      "input": {
+        "skipRate": 0,
+        "claimCount": 1,
+        "extractedAt": "2026-09-02T19:22:14.941Z",
+        "extractedBy": "skill-sync",
+        "skippedCount": 0
+      },
+      "timestampUtcMs": "2026-09-02T19:22:14.941Z"
+    }
+  },
+  {
+    "index": 6,
+    "hash": "ZV7mLfN51blMom78qDmc5xyn+Bw=",
+    "timestampUtcMs": "2026-09-02T19:22:15.420Z",
+    "action": {
+      "type": "SET_SOURCE_STATUS",
+      "input": {
+        "status": "EXTRACTED"
+      },
+      "timestampUtcMs": "2026-09-02T19:22:15.420Z"
+    }
+  }
+]

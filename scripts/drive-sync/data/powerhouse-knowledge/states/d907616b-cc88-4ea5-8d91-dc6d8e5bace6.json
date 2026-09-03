@@ -1,0 +1,121 @@
+{
+  "links": [
+    {
+      "id": "lnk-0eafe53b-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "0eafe53b-efdf-4310-9a1c-7d3e8b5cc669",
+      "targetTitle": "ph-cli-is-primary-project-tool"
+    },
+    {
+      "id": "lnk-2ae31ea4-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "2ae31ea4-b8f4-4128-8531-93b932d6b6bb",
+      "targetTitle": "renown-sdk-decentralized-identity-auth"
+    },
+    {
+      "id": "lnk-63fd1ffa-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "63fd1ffa-4125-4d0c-8e29-c3a14683290b",
+      "targetTitle": "billing-statement-model-captures-periodic-billing-summaries"
+    },
+    {
+      "id": "lnk-aa8af970-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "aa8af970-5fbc-42ad-9bcc-6692a50a3793",
+      "targetTitle": "document-ids-are-auto-generated-by-createdocument-never-set-manually"
+    },
+    {
+      "id": "lnk-5646522f-bui",
+      "linkType": "BUILDS_ON",
+      "targetDocumentId": "5646522f-bc2d-4257-bfa7-a455e5855197",
+      "targetTitle": "renown-creates-did-from-ethereum-wallet"
+    },
+    {
+      "id": "lnk-e5a4da23-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "e5a4da23-cb7a-4f90-bcd0-0439bf2f1443",
+      "targetTitle": "Academy \u203a Reference \u203a Authorization \u203a renown-sdk \u203a CLI Identity & Authentication",
+      "reason": "Backing page found by content match in the v6.2.2-dev.74 source backfill \u2014 identifiers keypair.json from the claim appear in this page (text identical at v6.2.2-dev.47 and v6.2.2-dev.74); attribution, not the original extraction record",
+      "confidence": "grounded"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "The ph login command generates a did:key keypair and delegates it to act on behalf of an Ethereum address via Renown",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "e2a7da1c-9eaa-4d26-85a1-4451eefaf26b",
+      "name": "cli",
+      "topicDocumentId": null
+    },
+    {
+      "id": "50de899f-4ec6-495d-b09f-6c6c9eb3f02a",
+      "name": "identity",
+      "topicDocumentId": null
+    },
+    {
+      "id": "047089bd-cf6d-4de5-9d7a-ec1cdadda1d7",
+      "name": "renown",
+      "topicDocumentId": null
+    },
+    {
+      "id": "7e41bbaa-097a-413e-becc-843e89709565",
+      "name": "authentication",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "Running `ph login` generates a cryptographic keypair (ECDSA P-256) stored in `.ph/.keypair.json`, creates a DID in `did:key:...` format, opens the browser to Renown portal for the user to authorize the CLI DID to act on behalf of their Ethereum address, and stores the credentials in `.ph/.renown.json`. Identity files live under a `.ph` directory, but they are not strictly per-project: `ph switchboard --use-identity` reads the keypair from `~/.ph/keypair.json` (a global location), and `--keypair-path` can point at a custom keypair file. The Switchboard uses identity via `ph switchboard --use-identity` to authenticate with remote drives (generate bearer tokens), sign operations, and present its DID to remote services. CI/CD environments can provide the keypair via `PH_RENOWN_PRIVATE_KEY` environment variable (a JSON-encoded JWK keypair). The CLI DID cannot sign Ethereum transactions or access the wallet -- it can only authenticate with Renown-trusting services.\n\n_Corrected 2026-08-13 against Powerhouse v6.2.2-dev.45._",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": "v6.2.2-dev.74",
+  "computes": null,
+  "filePath": "apps/academy/docs/academy/04-Reference/06-Authorization/renown-sdk/03-CLIIdentity.md",
+  "noteType": "PROCEDURE",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "knowledge-agent",
+    "createdAt": "2026-04-02T12:00:00.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-09-02T21:40:05.274Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "CLI creates an ECDSA P-256 keypair in .ph/.keypair.json, opens browser for wallet authorization, stores Renown credentials in .ph/.renown.json.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "5f9aa185-cfcb-4972-924e-b9344a0760bd",
+      "actor": "claude",
+      "comment": "Knowledge registered against powerhouse v6.2.2-dev.47",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-14T12:00:00.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "a9664bf8-174d-4e8e-bd72-02426b3668ab",
+      "actor": "liberuum",
+      "comment": "Canonical as of powerhouse v6.2.2-dev.47",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-14T12:00:00.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

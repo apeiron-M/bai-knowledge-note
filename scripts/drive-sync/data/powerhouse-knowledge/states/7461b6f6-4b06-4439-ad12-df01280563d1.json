@@ -1,0 +1,81 @@
+{
+  "links": [
+    {
+      "id": "lnk-e87aba35-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "e87aba35-c3d4-4f19-ad3d-ba4600386037",
+      "targetTitle": "skill-search",
+      "reason": "Discovery note distilled by sync-skills from the skill's SKILL.md frontmatter description and its section headings (source hash sha256:3ecbde81204a); the full procedure is the source text",
+      "confidence": "grounded"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Agent skill: /search \u2014 Search knowledge notes by title, type, topic, content, or meaning.",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "0bdcaabd-bcfd-4153-89c8-2e55ed10bdce",
+      "name": "agent-skills",
+      "topicDocumentId": null
+    },
+    {
+      "id": "5a320a50-fdf6-415e-ad78-7da4d82ac4eb",
+      "name": "search",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "## When to use\nSearch knowledge notes by title, type, topic, content, or meaning. Use when the user wants to find notes, look up knowledge, or explore what exists in the vault.\n\n## What it covers\n- Rich context in two calls (answering a question)\n- Search tiers (try in order)\n- When to use which search\n- Output format\n\n## Where the full skill lives\n- Vault source: **Agent skill: search** (full SKILL.md text, DERIVED_FROM below)\n- Canonical copy: plugin repo `skills/search/SKILL.md` \u2014 always execute from the repo copy; this note is the discovery layer.\n\n## Invocation\n`/powerhouse-knowledge:search` in Claude Code (plugin installed), or read the source content and follow it manually.\n\n_Synced by sync-skills; source hash sha256:3ecbde81204a\u2026_",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": "skills/search/SKILL.md",
+  "noteType": "PROCEDURE",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "skill-sync",
+    "createdAt": "2026-08-16T12:02:17.145Z",
+    "sessionId": null,
+    "updatedAt": "2026-09-02T19:21:58.461Z",
+    "sourceOrigin": "IMPORT"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Search knowledge notes by title, type, topic, content, or meaning. Use when the user wants to find notes, look up knowledge, or explore what exists in the vault.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "07ded839-70af-4fa3-a6be-f600214e3922",
+      "actor": "skill-sync",
+      "comment": "skill sync",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-16T12:02:17.811Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "24de92a5-07a4-414f-a681-591b39c8c592",
+      "actor": "knowledge-agent",
+      "comment": "mechanical sync from canonical repo copy",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-16T12:02:17.954Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

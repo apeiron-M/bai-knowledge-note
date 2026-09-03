@@ -1,0 +1,353 @@
+[
+  {
+    "index": 0,
+    "hash": "",
+    "timestampUtcMs": "2026-08-14T12:16:50.955Z",
+    "action": {
+      "type": "CREATE_DOCUMENT",
+      "input": {
+        "meta": {},
+        "name": "reducer-level-rbac-on-signer-address",
+        "slug": "",
+        "model": "bai/knowledge-note",
+        "branch": "main",
+        "signing": {
+          "nonce": "",
+          "publicKey": {},
+          "signature": "b2987190-d95c-4d89-9075-0716c4eb99fd",
+          "documentType": "bai/knowledge-note",
+          "createdAtUtcIso": "2026-08-14T12:16:50.955Z"
+        },
+        "version": 0,
+        "documentId": "b2987190-d95c-4d89-9075-0716c4eb99fd",
+        "protocolVersions": {
+          "base-reducer": 2
+        }
+      },
+      "timestampUtcMs": "2026-08-14T12:16:50.955Z"
+    }
+  },
+  {
+    "index": 0,
+    "hash": "n4HWVljhTXqeIdTQzttZMEHvSJI=",
+    "timestampUtcMs": "2026-08-14T12:35:46.000Z",
+    "action": {
+      "type": "SET_TITLE",
+      "input": {
+        "title": "Reducer-level RBAC gates operations on action.context.signer.user.address so access control replicates with the document",
+        "updatedAt": "2026-08-14T12:35:46.000Z"
+      },
+      "timestampUtcMs": "2026-08-14T12:35:46.000Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "",
+    "timestampUtcMs": "2026-08-14T12:16:50.955Z",
+    "action": {
+      "type": "UPGRADE_DOCUMENT",
+      "input": {
+        "model": "bai/knowledge-note",
+        "toVersion": 1,
+        "documentId": "b2987190-d95c-4d89-9075-0716c4eb99fd",
+        "fromVersion": 0,
+        "initialState": {
+          "auth": {
+            "grants": [],
+            "version": 0
+          },
+          "local": {
+            "lastViewedAt": null,
+            "personalTags": []
+          },
+          "global": {
+            "links": [],
+            "model": null,
+            "scope": null,
+            "title": null,
+            "editor": null,
+            "inputs": [],
+            "models": [],
+            "status": "DRAFT",
+            "topics": [],
+            "content": null,
+            "context": null,
+            "modelId": null,
+            "modules": [],
+            "outputs": [],
+            "version": null,
+            "computes": null,
+            "filePath": null,
+            "noteType": null,
+            "severity": null,
+            "hooksUsed": [],
+            "rootCause": null,
+            "confidence": null,
+            "consumedBy": [],
+            "provenance": null,
+            "sourceType": null,
+            "targetType": null,
+            "cardinality": null,
+            "description": null,
+            "alternatives": [],
+            "consequences": [],
+            "errorMessage": null,
+            "relationType": null,
+            "correctPattern": null,
+            "decisionStatus": null,
+            "dispatchTargets": [],
+            "lifecycleEvents": []
+          },
+          "document": {
+            "hash": {
+              "encoding": "base64",
+              "algorithm": "sha1"
+            },
+            "version": 1
+          }
+        }
+      },
+      "timestampUtcMs": "2026-08-14T12:16:50.955Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "LP2IaKXInB2jM3mtF/OUiusUV6k=",
+    "timestampUtcMs": "2026-08-14T12:35:46.000Z",
+    "action": {
+      "type": "SET_DESCRIPTION",
+      "input": {
+        "updatedAt": "2026-08-14T12:35:46.000Z",
+        "description": "Roles live in document state and every operation reads the signer address, throwing a typed error when unauthorized. Rejections surface as operation.error, not as thrown exceptions to callers."
+      },
+      "timestampUtcMs": "2026-08-14T12:35:46.000Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "",
+    "timestampUtcMs": "2026-08-14T12:38:28.375Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "b2987190-d95c-4d89-9075-0716c4eb99fd",
+        "targetId": "851f3b4d-92aa-4601-b6f8-06f27ba514a5",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-08-14T12:38:28.375Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "3ax/4YKIHaET/QhECvaG8hp4KJU=",
+    "timestampUtcMs": "2026-08-14T12:35:46.000Z",
+    "action": {
+      "type": "SET_NOTE_TYPE",
+      "input": {
+        "noteType": "PATTERN",
+        "updatedAt": "2026-08-14T12:35:46.000Z"
+      },
+      "timestampUtcMs": "2026-08-14T12:35:46.000Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "",
+    "timestampUtcMs": "2026-08-14T12:38:28.465Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "b2987190-d95c-4d89-9075-0716c4eb99fd",
+        "targetId": "8cbea140-21d6-4b63-8780-5d44831018aa",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-08-14T12:38:28.465Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "hqcWXmuRHInGyH2pq8qd7XFjYTw=",
+    "timestampUtcMs": "2026-08-14T12:35:46.000Z",
+    "action": {
+      "type": "SET_CONTENT",
+      "input": {
+        "content": "The `role-based-auth` recipe puts authorization **inside the reducer**, reading the signer off the action context. Because roles are ordinary document state, they replicate with the document \u2014 every peer enforces the same rules without a central policy service, and the rules hold no matter which editor, subgraph, or script fired the action.\n\nThe state is just address lists:\n\n```graphql\ntype RoleBasedAuthState {\n  creator: String\n  admins: [String!]!\n  members: [String!]!\n  notes: [Note!]!\n}\n```\n\nEvery operation opens with the same guard, and role-mutating operations add `requireAdmin(state, address)`:\n\n```ts\nconst address = action.context?.signer?.user?.address;\nif (!address) throw new NotAuthorized(\"User is not authenticated\");\n```\n\nThe permission model is small and worth copying: `bootstrap` may be called by anyone but only once, and it makes the caller the permanent `creator` and first admin \u2014 creator auto-promotion, with no demotion path (`revokeAdmin` throws `CannotRevokeCreator`). It also throws `LastAdmin` rather than allowing the admin set to be emptied, so the document cannot be locked out. The domain action `writeNote` is gated on member-or-higher and throws `NotAuthorized` for a caller with no role.\n\n**How rejection surfaces is the part that trips people up.** A thrown reducer error does not propagate to the caller as an exception. The framework captures it and records it as `operation.error` on the resulting document \u2014 the operation is still appended, and the state is unchanged. Callers detect rejection by inspecting the operation log, and tests must read `operations.global[n].error` rather than using `.toThrow()`.\n\nErrors are a typed taxonomy generated into `gen/access/error.ts` (`AlreadyBootstrapped`, `CannotRevokeCreator`, `LastAdmin`, `AddressAlreadyAdmin`, `NotAuthorized`), so each failure is distinguishable rather than one generic denial.\n\nNote the scope of the guarantee: this gates *writes* deterministically on every replica, but it does not hide state \u2014 anyone who can read the document reads the whole document, roles included.\n\nProvenance: academy `05-Lookup/00-Cookbook.md`, Role-Based Auth recipe, academy 6.2.2-dev.45.",
+        "updatedAt": "2026-08-14T12:35:46.000Z"
+      },
+      "timestampUtcMs": "2026-08-14T12:35:46.000Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "",
+    "timestampUtcMs": "2026-09-02T21:38:47.259Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "metadata": {
+          "reason": "Backing page found by content match in the v6.2.2-dev.74 source backfill \u2014 identifiers action.context.signer.user.address, operation.error, rejections from the claim appear in this page (text identical at v6.2.2-dev.47 and v6.2.2-dev.74); attribution, not the original extraction record",
+          "confidence": "grounded"
+        },
+        "sourceId": "b2987190-d95c-4d89-9075-0716c4eb99fd",
+        "targetId": "f3fb0f62-f805-48cc-a853-86df6077d977",
+        "relationshipType": "DERIVED_FROM"
+      },
+      "timestampUtcMs": "2026-09-02T21:38:47.259Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "Jk+PxH5DbyRyD79lA50cJpFFIoA=",
+    "timestampUtcMs": "2026-08-14T12:35:46.000Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "version",
+        "value": "v6.2.2-dev.44",
+        "updatedAt": "2026-08-14T12:35:46.000Z"
+      },
+      "timestampUtcMs": "2026-08-14T12:35:46.000Z"
+    }
+  },
+  {
+    "index": 5,
+    "hash": "BrxoT4y9QE5NYnKxHuEWy6x0pxY=",
+    "timestampUtcMs": "2026-08-14T12:35:46.000Z",
+    "action": {
+      "type": "SET_PROVENANCE",
+      "input": {
+        "author": "claude",
+        "createdAt": "2026-08-13T14:39:24.000Z",
+        "sourceOrigin": "DERIVED"
+      },
+      "timestampUtcMs": "2026-08-14T12:35:46.000Z"
+    }
+  },
+  {
+    "index": 6,
+    "hash": "Hj4Ixl771/DdVfjM8cPww7Z+BJU=",
+    "timestampUtcMs": "2026-08-14T12:35:46.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "c2c24106-7933-44a4-bd9b-a8e3a300c8ca",
+        "name": "authorization",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-08-14T12:35:46.000Z"
+    }
+  },
+  {
+    "index": 7,
+    "hash": "BeMmJCSqTezL2XRyMxMdRXR84UU=",
+    "timestampUtcMs": "2026-08-14T12:35:46.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "5a019441-7b09-4061-b9af-d0e4f446c7c8",
+        "name": "reducer-patterns",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-08-14T12:35:46.000Z"
+    }
+  },
+  {
+    "index": 8,
+    "hash": "9KooiRdVW9RUmyfBpip3nSqeLao=",
+    "timestampUtcMs": "2026-08-14T12:35:46.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "c5b6102e-6cac-454d-b29b-ca3ed835fe47",
+        "name": "security",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-08-14T12:35:46.000Z"
+    }
+  },
+  {
+    "index": 9,
+    "hash": "0NpTRczA2bVFZt/bi3EHdnA4sxI=",
+    "timestampUtcMs": "2026-08-14T14:37:29.000Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "version",
+        "value": "v6.2.2-dev.47",
+        "updatedAt": "2026-08-14T12:00:00.000Z"
+      },
+      "timestampUtcMs": "2026-08-14T14:37:29.000Z"
+    }
+  },
+  {
+    "index": 10,
+    "hash": "ZmkUmrg/0Ux3lYZIX3h3UBIUMJA=",
+    "timestampUtcMs": "2026-08-14T14:37:29.000Z",
+    "action": {
+      "type": "SUBMIT_FOR_REVIEW",
+      "input": {
+        "id": "368565cb-1f14-4842-8da8-e9d221437211",
+        "actor": "claude",
+        "comment": "Knowledge registered against powerhouse v6.2.2-dev.47",
+        "timestamp": "2026-08-14T12:00:00.000Z"
+      },
+      "timestampUtcMs": "2026-08-14T14:37:29.000Z"
+    }
+  },
+  {
+    "index": 11,
+    "hash": "HXApall/SVRciVUJARZZuAHRi+8=",
+    "timestampUtcMs": "2026-08-14T14:37:29.000Z",
+    "action": {
+      "type": "APPROVE_NOTE",
+      "input": {
+        "id": "382f8887-4a20-4241-a438-91746831717a",
+        "actor": "liberuum",
+        "comment": "Canonical as of powerhouse v6.2.2-dev.47",
+        "timestamp": "2026-08-14T12:00:00.000Z"
+      },
+      "timestampUtcMs": "2026-08-14T14:37:29.000Z"
+    }
+  },
+  {
+    "index": 12,
+    "hash": "I6q/iiCXTBPkiMsFcQmLMTO3MJg=",
+    "timestampUtcMs": "2026-09-02T21:38:47.944Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "filePath",
+        "value": "apps/academy/docs/academy/04-Reference/01-Reactor/10-Recipes.md",
+        "updatedAt": "2026-09-02T21:38:47.944Z"
+      },
+      "timestampUtcMs": "2026-09-02T21:38:47.944Z"
+    }
+  },
+  {
+    "index": 13,
+    "hash": "ku2cEaHGT19keCQwTzh28VKnwOM=",
+    "timestampUtcMs": "2026-09-02T21:38:47.944Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "version",
+        "value": "v6.2.2-dev.74",
+        "updatedAt": "2026-09-02T21:38:47.944Z"
+      },
+      "timestampUtcMs": "2026-09-02T21:38:47.944Z"
+    }
+  },
+  {
+    "index": 14,
+    "hash": "12Nif3r9pKpK54E3ZbLPjJnPaRs=",
+    "timestampUtcMs": "2026-09-02T22:27:33.687Z",
+    "action": {
+      "type": "SET_CONTENT",
+      "input": {
+        "content": "The `role-based-auth` recipe puts authorization **inside the reducer**, reading the signer off the action context. Because roles are ordinary document state, they replicate with the document \u2014 every peer enforces the same rules without a central policy service, and the rules hold no matter which editor, subgraph, or script fired the action.\n\nThe state is just address lists:\n\n```graphql\ntype RoleBasedAuthState {\n  creator: String\n  admins: [String!]!\n  members: [String!]!\n  notes: [Note!]!\n}\n```\n\nEvery operation opens with the same guard, and role-mutating operations add `requireAdmin(state, address)`:\n\n```ts\nconst address = action.context?.signer?.user?.address;\nif (!address) throw new NotAuthorized(\"User is not authenticated\");\n```\n\nThe permission model is small and worth copying: `bootstrap` may be called by anyone but only once, and it makes the caller the permanent `creator` and first admin \u2014 creator auto-promotion, with no demotion path (`revokeAdmin` throws `CannotRevokeCreator`). It also throws `LastAdmin` rather than allowing the admin set to be emptied, so the document cannot be locked out. The domain action `writeNote` is gated on member-or-higher and throws `NotAuthorized` for a caller with no role.\n\n**How rejection surfaces is the part that trips people up.** A thrown reducer error does not propagate to the caller as an exception. The framework captures it and records it as `operation.error` on the resulting document \u2014 the operation is still appended, and the state is unchanged. Callers detect rejection by inspecting the operation log, and tests must read `operations.global[n].error` rather than using `.toThrow()`.\n\nErrors are a typed taxonomy generated into `gen/access/error.ts` (`AlreadyBootstrapped`, `CannotRevokeCreator`, `LastAdmin`, `AddressAlreadyAdmin`, `NotAuthorized`), so each failure is distinguishable rather than one generic denial.\n\nNote the scope of the guarantee: this gates *writes* deterministically on every replica, but it does not hide state \u2014 anyone who can read the document reads the whole document, roles included.\n\nProvenance: academy `05-Lookup/00-Cookbook.md`, Role-Based Auth recipe, academy 6.2.2-dev.45.\n\n## Contradicts: policy in the auth scope (v6.2.2-dev.74)\nThe vault also holds the opposite mechanism: since v6.2.2-dev.74 the reactor can decide the same question from a **policy stored in the document's `auth` scope**, enforced at admission, replay and read, with no access check in any reducer. Both designs replicate with the document and both are supported \u2014 the Cookbook ships them as deliberate counterparts (`role-based-auth` here, `document-acl` there), \"same outcome, opposite mechanism\".\n\nThe boundary is where the rule lives, and it decides three things. **Reducer RBAC** bakes the rule into the model: it needs no feature flags, works on every reactor today, and can express anything code can \u2014 but changing the rule means shipping a new model version, and the check runs *inside* the reducer, so a refused write is still a stored operation carrying an error. **The auth scope** makes the rule data: inspectable, replicated, changeable at runtime, and refused *at admission* so nothing is stored \u2014 but it is staged behind feature flags, bounded by the version-1 grant and condition caps, and enforces nothing on a document whose policy was never initialized. Choose reducer RBAC for invariants that are part of what the model *is*; choose the auth scope for access that operators need to change without a release.\n",
+        "updatedAt": "2026-09-02T22:27:33.687Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:27:33.687Z"
+    }
+  }
+]

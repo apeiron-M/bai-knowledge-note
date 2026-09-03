@@ -1,0 +1,98 @@
+{
+  "links": [
+    {
+      "id": "lnk-787398c0-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "787398c0-fa8c-4e79-bd9f-71b60d57f482",
+      "targetTitle": "document-model-versioning-system"
+    },
+    {
+      "id": "lnk-e09876c1-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "e09876c1-7be7-4958-a147-6032c84d9bb8",
+      "targetTitle": "document-models-use-event-sourcing"
+    },
+    {
+      "id": "lnk-f2aaccd3-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "f2aaccd3-7c26-4327-881e-f5ad9e267b89",
+      "targetTitle": "Academy \u203a Lookup \u203a Cookbook",
+      "reason": "Backing page found by content match in the v6.2.2-dev.74 source backfill \u2014 identifiers initialstate, shaped from the claim appear in this page (text revised between v6.2.2-dev.47 and v6.2.2-dev.74 \u2014 re-verified in the v6.2.2-dev.74 pass); attribution, not the original extraction record",
+      "confidence": "grounded"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "An upgrade reducer must patch state and initialState together or replay fails with a hash mismatch",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "5a1168e8-7d24-4ad7-b1d0-271bf40baae3",
+      "name": "versioning",
+      "topicDocumentId": null
+    },
+    {
+      "id": "054f24f6-d66a-4377-a6ac-4b1068ae4b44",
+      "name": "gotchas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "603af217-eac0-44db-84e8-12f45e3ab3b6",
+      "name": "event-sourcing",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "The upgrade runs exactly **once**, when `UPGRADE_DOCUMENT` is dispatched. Replay never re-runs it: loading a document (`baseLoadFromInput` \u2192 `replayDocument`) starts from the stored `initialState` and folds the domain operations through the latest reducer. The `document`-scope log where the upgrade was recorded is not part of that fold.\n\nThat asymmetry is the whole trap. A migration that patches `state` but forgets `initialState` produces a document that looks perfectly healthy in the running system \u2014 and is unrecoverable:\n\n- anything seeded into `initialState`, i.e. data that was never created by an operation, is still v1-shaped there;\n- so a rebuild can no longer reproduce the stored state;\n- so the replayed final state fails the recorded hash check.\n\nThe document then errors on load with a `HashMismatchError` whose message embeds `Hash mismatch on document \u2026, scope global`. The recipe's tests match it with `/Hash mismatch/`.\n\nThe failure mode is worth dwelling on: nothing goes wrong at upgrade time, nothing goes wrong while the process stays up, and the break surfaces later on a cold load or on a peer that never held the live document. The `document-versioning` recipe ships a deliberately broken state-only transition specifically so the failure is visible in a test rather than in production.\n\nTwo supporting constraints from the same recipe. Upgrade reducers **must be pure** \u2014 they run on every peer that loads the document, so no `Date.now()`, no randomness, no I/O \u2014 and they must **return** a new document spread-style, because there is no immer/Mutative draft in an upgrade reducer and in-place mutation is simply lost. And `supportedVersions` is ordered and every hop must be covered: upgrading a v1 document on a package already at v3 composes v1\u2192v2 then v2\u2192v3, with a missing intermediate entry throwing at upgrade time.\n\nProvenance: academy `05-Lookup/00-Cookbook.md`, Document Versioning recipe (\"Critical pitfall: patch state and initialState together\"), academy 6.2.2-dev.45.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": "v6.2.2-dev.74",
+  "computes": null,
+  "filePath": "apps/academy/docs/academy/05-Lookup/00-Cookbook.md",
+  "noteType": "PATTERN",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "claude",
+    "createdAt": "2026-08-13T14:39:07.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-09-02T22:26:43.674Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Replay folds domain ops from the stored initialState and never re-runs the upgrade, so a state-only migration leaves v1-shaped seed data and the document errors on load.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "57b63164-af63-4c72-98bb-7f9de69a20a0",
+      "actor": "claude",
+      "comment": "Knowledge registered against powerhouse v6.2.2-dev.47",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-14T12:00:00.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "430be7f7-b8f0-464d-902b-ba52244c31ca",
+      "actor": "liberuum",
+      "comment": "Canonical as of powerhouse v6.2.2-dev.47",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-14T12:00:00.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

@@ -1,0 +1,98 @@
+{
+  "links": [
+    {
+      "id": "lnk-645e18ed-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "645e18ed-6da5-4daf-8ed3-7a96cb085b48",
+      "targetTitle": "analytics-paths-lod-dimension-querying"
+    },
+    {
+      "id": "lnk-11da9c61-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "11da9c61-a825-4c70-a57c-f80b10f569c7",
+      "targetTitle": "analytics-engine-interval-time-series"
+    },
+    {
+      "id": "lnk-d71f1ec6-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "d71f1ec6-73f2-461b-b4e2-129158c22efa",
+      "targetTitle": "Academy \u203a Reference \u203a Processors \u203a Drive analytics",
+      "reason": "Backing page found by content match in the v6.2.2-dev.74 source backfill \u2014 identifiers actiontype, documentid, driveid from the claim appear in this page (text identical at v6.2.2-dev.47 and v6.2.2-dev.74); attribution, not the original extraction record",
+      "confidence": "grounded"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Drive analytics writes to ph/drive/... and ph/doc/... source paths, with four dimensions on drive metrics and three on document metrics",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "84556fb3-0d0a-4adb-ba5f-49ea97fafc8d",
+      "name": "drive-analytics",
+      "topicDocumentId": null
+    },
+    {
+      "id": "518a2c57-6e80-48a0-8041-81590cb00b1c",
+      "name": "dimensions",
+      "topicDocumentId": null
+    },
+    {
+      "id": "14b0eefd-c9f2-4684-9258-6f029a9d543f",
+      "name": "analytics",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "The two shipped analytics processors partition the metric namespace by prefix, which is what makes `subscribeToSource` and `select` filters composable later.\n\n**Sources** (the `source` field on each series value):\n\n- `DriveAnalyticsProcessor` \u2192 `ph/drive/{documentId}/{branch}/{scope}`\n- `DocumentAnalyticsProcessor` \u2192 `ph/doc/{documentId}/{branch}/{scope}`\n\n**Dimensions on `DriveOperations`** \u2014 four of them:\n\n| Dimension | Path shape |\n| --- | --- |\n| `drive` | `ph/drive/{documentId}/{branch}/{scope}/{revision}` |\n| `operation` | `ph/drive/operation/{actionType}/{operationIndex}` |\n| `target` | `ph/drive/target/{DRIVE\\|NODE}/{targetId}` |\n| `actionType` | `ph/drive/actionType/{CREATED\\|DUPLICATED\\|UPDATED\\|MOVED\\|REMOVED}/{targetId}` |\n\n**Dimensions on `DocumentOperations`** \u2014 only three: `drive` (`ph/doc/drive/...`), `operation` (`ph/doc/operation/...`) and `target` (`ph/doc/target/...`). There is no `actionType`, because a generic document's action names are model-specific and cannot be bucketed into a fixed vocabulary.\n\nTwo things follow from the path design. First, `revision` (the operation index) is baked into the last segment of the `drive` dimension, so an un-truncated query yields one group per operation; you almost always want `lod: { drive: 1 }` to collapse back to per-drive. Second, `targetId` is the last segment of both `target` and `actionType`, so `lod: 1` on those gives you the type only, and full depth gives you per-node breakdowns \u2014 the same dimension serves both questions.\n\n`targetId` resolution for node actions is a fallback chain in the shipped code \u2014 `input.id || input.targetId || input.srcFolder || documentId` \u2014 which is worth knowing when a `MOVE_NODE` row shows the source folder rather than the moved node.\n\nProvenance: draft `04-Reference/04-Processors/_07-DriveAnalyticsHooks.md`; every path template and the dimension counts verified against `packages/shared/processors/drive-analytics/{drive,document}-processor.ts` at 6.2.2-dev.45. The draft's \"Complete Dimensions Reference\" lists four dimensions without noting that only drive metrics carry all four.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": "v6.2.2-dev.74",
+  "computes": null,
+  "filePath": "apps/academy/docs/academy/04-Reference/04-Processors/_07-DriveAnalyticsHooks.md",
+  "noteType": "REFERENCE",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "claude",
+    "createdAt": "2026-08-13T14:38:42.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-09-02T21:39:45.346Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Sources are ph/drive/{driveId}/{branch}/{scope} and ph/doc/{documentId}/{branch}/{scope}; drive rows add an actionType dimension that document rows do not have.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "48d5f789-8681-434b-9a87-7f79908940fd",
+      "actor": "claude",
+      "comment": "Knowledge registered against powerhouse v6.2.2-dev.47",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-14T12:00:00.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "f33ad1da-8682-471f-9ece-8c28f4acc321",
+      "actor": "liberuum",
+      "comment": "Canonical as of powerhouse v6.2.2-dev.47",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-14T12:00:00.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

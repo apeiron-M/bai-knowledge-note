@@ -1,0 +1,366 @@
+[
+  {
+    "index": 0,
+    "hash": "",
+    "timestampUtcMs": "2026-09-03T07:38:04.364Z",
+    "action": {
+      "type": "CREATE_DOCUMENT",
+      "input": {
+        "meta": {},
+        "name": "api-fetch-handler-boundary",
+        "slug": "",
+        "model": "bai/knowledge-note",
+        "branch": "main",
+        "signing": {
+          "nonce": "",
+          "publicKey": {},
+          "signature": "49106443-8aa1-4246-971c-a934ef9313fb",
+          "documentType": "bai/knowledge-note",
+          "createdAtUtcIso": "2026-09-03T07:38:04.364Z"
+        },
+        "version": 0,
+        "documentId": "49106443-8aa1-4246-971c-a934ef9313fb",
+        "protocolVersions": {
+          "base-reducer": 2
+        }
+      },
+      "timestampUtcMs": "2026-09-03T07:38:04.364Z"
+    }
+  },
+  {
+    "index": 0,
+    "hash": "HR5lJQfzeGtib5j0KT7jsou9NZw=",
+    "timestampUtcMs": "2026-09-03T07:38:05.778Z",
+    "action": {
+      "type": "SET_TITLE",
+      "input": {
+        "title": "reactor-api splits HTTP transport from GraphQL execution behind IHttpAdapter and IGatewayAdapter, with a Fetch-API FetchHandler as the only contract between them",
+        "updatedAt": "2026-09-03T07:38:05.778Z"
+      },
+      "timestampUtcMs": "2026-09-03T07:38:05.778Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "",
+    "timestampUtcMs": "2026-09-03T07:38:04.364Z",
+    "action": {
+      "type": "UPGRADE_DOCUMENT",
+      "input": {
+        "model": "bai/knowledge-note",
+        "toVersion": 1,
+        "documentId": "49106443-8aa1-4246-971c-a934ef9313fb",
+        "fromVersion": 0,
+        "initialState": {
+          "auth": {
+            "grants": [],
+            "version": 0
+          },
+          "local": {
+            "lastViewedAt": null,
+            "personalTags": []
+          },
+          "global": {
+            "links": [],
+            "model": null,
+            "scope": null,
+            "title": null,
+            "editor": null,
+            "inputs": [],
+            "models": [],
+            "status": "DRAFT",
+            "topics": [],
+            "content": null,
+            "context": null,
+            "modelId": null,
+            "modules": [],
+            "outputs": [],
+            "version": null,
+            "computes": null,
+            "filePath": null,
+            "noteType": null,
+            "severity": null,
+            "hooksUsed": [],
+            "rootCause": null,
+            "confidence": null,
+            "consumedBy": [],
+            "provenance": null,
+            "sourceType": null,
+            "targetType": null,
+            "cardinality": null,
+            "description": null,
+            "alternatives": [],
+            "consequences": [],
+            "errorMessage": null,
+            "relationType": null,
+            "correctPattern": null,
+            "decisionStatus": null,
+            "dispatchTargets": [],
+            "lifecycleEvents": []
+          },
+          "document": {
+            "hash": {
+              "encoding": "base64",
+              "algorithm": "sha1"
+            },
+            "version": 1
+          }
+        }
+      },
+      "timestampUtcMs": "2026-09-03T07:38:04.364Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "4VqERGON+iafKTmOO8WC830sWWI=",
+    "timestampUtcMs": "2026-09-03T07:38:05.779Z",
+    "action": {
+      "type": "SET_DESCRIPTION",
+      "input": {
+        "updatedAt": "2026-09-03T07:38:05.778Z",
+        "description": "FetchHandler is (request: Request) => Promise<Response>. The gateway produces them, the HTTP adapter mounts them, and no Express type crosses the boundary \u2014 so either side can be swapped."
+      },
+      "timestampUtcMs": "2026-09-03T07:38:05.779Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "",
+    "timestampUtcMs": "2026-09-03T07:39:07.176Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "metadata": {
+          "reason": "Extracted from packages/reactor-api/ARCHITECTURE.md at v6.2.2-dev.74 \u2014 Interfaces (IHttpAdapter, IGatewayAdapter); FetchHandler: the boundary",
+          "confidence": "grounded"
+        },
+        "sourceId": "49106443-8aa1-4246-971c-a934ef9313fb",
+        "targetId": "2e37783f-f7f2-4276-8860-38855654a0d2",
+        "relationshipType": "DERIVED_FROM"
+      },
+      "timestampUtcMs": "2026-09-03T07:39:07.176Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "1IMhMNKDBOanGV89zqTSx2qpEEE=",
+    "timestampUtcMs": "2026-09-03T07:38:05.779Z",
+    "action": {
+      "type": "SET_NOTE_TYPE",
+      "input": {
+        "noteType": "ARCHITECTURE",
+        "updatedAt": "2026-09-03T07:38:05.778Z"
+      },
+      "timestampUtcMs": "2026-09-03T07:38:05.779Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "",
+    "timestampUtcMs": "2026-09-03T07:39:07.625Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "metadata": {
+          "reason": "Extracted from packages/reactor-api/README.md at v6.2.2-dev.74 \u2014 Core Components \u203a GraphQL Manager (decoupling note)",
+          "confidence": "grounded"
+        },
+        "sourceId": "49106443-8aa1-4246-971c-a934ef9313fb",
+        "targetId": "4efef627-3665-4780-803d-2c326f8bb9d2",
+        "relationshipType": "DERIVED_FROM"
+      },
+      "timestampUtcMs": "2026-09-03T07:39:07.625Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "TMk7VziuPF5urjcCvFAV+JcnkYA=",
+    "timestampUtcMs": "2026-09-03T07:38:05.779Z",
+    "action": {
+      "type": "SET_CONTENT",
+      "input": {
+        "content": "`reactor-api` separates GraphQL and HTTP concerns into two independent interfaces so the HTTP framework (currently Express) or the GraphQL engine (currently Apollo) can be replaced without touching application logic.\n\n**`IHttpAdapter`** owns the transport: binding ports, registering routes, and bridging framework-native request/response objects into Fetch API types. `setupMiddleware(config)` installs CORS and body parsing once; `mount(path, handler, opts?)` registers a handler with `exact: false` (default, exact-path match in an internal dispatch map) or `exact: true` (prefix match, router `.use()` semantics); `getRoute` registers read-only GET routes such as `/health` and `/explorer`; `mountRawMiddleware` takes a Connect/Express-compatible function (the Vite dev server) with the cast to the native type **contained inside the adapter**, so call sites need no framework imports; `listen(port, tls?)` returns the `http.Server` so callers can attach WebSocket servers and supports three TLS modes \u2014 `true` (devcert), `{ keyPath, certPath }`, or in-memory `{ cert, key }`. `handle` is a read-only escape hatch to the raw framework object, documented for integrations with no framework-agnostic equivalent yet.\n\n**`IGatewayAdapter<TContext>`** owns GraphQL: `createHandler(schema, contextFactory)` for one subgraph, `createSupergraphHandler(...)` composing all subgraphs via federation, `updateSupergraph()` re-composing the SDL and hot-reloading the running gateway (a no-op before the supergraph handler exists), `attachWebSocket(...)` returning a `WsDisposer`, and `start` / `stop`.\n\nThe contract between them is one type:\n\n```ts\ntype FetchHandler = (request: Request) => Promise<Response>;\n```\n\n\"No Express types cross this boundary.\" That is the whole point \u2014 the gateway produces `FetchHandler`s and the HTTP adapter consumes them.\n\n## Provenance\n- `packages/reactor-api/ARCHITECTURE.md` \u2014 Interfaces (IHttpAdapter, IGatewayAdapter); FetchHandler: the boundary\n- `packages/reactor-api/README.md` \u2014 Core Components \u203a GraphQL Manager (decoupling note)\n\n_Extracted from the Powerhouse repository at **v6.2.2-dev.74**._",
+        "updatedAt": "2026-09-03T07:38:05.778Z"
+      },
+      "timestampUtcMs": "2026-09-03T07:38:05.779Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "",
+    "timestampUtcMs": "2026-09-03T07:39:08.076Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "metadata": {
+          "reason": "The single shared Request instance that crosses this boundary is exactly what makes the WeakMap auth handoff sound",
+          "confidence": "grounded"
+        },
+        "sourceId": "49106443-8aa1-4246-971c-a934ef9313fb",
+        "targetId": "de733125-3640-4f95-a987-3da99453cd9a",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-09-03T07:39:08.076Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "8LUw35diRvlg5dtC4gB9qmbsJ7o=",
+    "timestampUtcMs": "2026-09-03T07:38:05.779Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "445bde74-c9b1-4bb1-9004-252ca35c1797",
+        "name": "reactor-api"
+      },
+      "timestampUtcMs": "2026-09-03T07:38:05.779Z"
+    }
+  },
+  {
+    "index": 5,
+    "hash": "",
+    "timestampUtcMs": "2026-09-03T07:39:08.561Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "metadata": {
+          "reason": "Federation composition of every package's subgraph into one endpoint is a gateway-adapter responsibility, and updateSupergraph is how a newly loaded package joins it",
+          "confidence": "grounded"
+        },
+        "sourceId": "49106443-8aa1-4246-971c-a934ef9313fb",
+        "targetId": "27438cd8-5fb0-4ed7-bcbe-665beef8a259",
+        "relationshipType": "BUILDS_ON"
+      },
+      "timestampUtcMs": "2026-09-03T07:39:08.561Z"
+    }
+  },
+  {
+    "index": 5,
+    "hash": "yq0sz9xz8Y/pVlaWWt6JZTDcmAk=",
+    "timestampUtcMs": "2026-09-03T07:38:05.779Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "a2311dd5-1b99-4844-bd8d-66720c23dc02",
+        "name": "graphql"
+      },
+      "timestampUtcMs": "2026-09-03T07:38:05.779Z"
+    }
+  },
+  {
+    "index": 6,
+    "hash": "",
+    "timestampUtcMs": "2026-09-03T07:39:09.149Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "metadata": {
+          "reason": "The schemas the gateway compiles into handlers are themselves generated from .graphql files rather than hand-written",
+          "confidence": "grounded"
+        },
+        "sourceId": "49106443-8aa1-4246-971c-a934ef9313fb",
+        "targetId": "ca0f46e7-66c9-4469-b302-8eba27c4b918",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-09-03T07:39:09.149Z"
+    }
+  },
+  {
+    "index": 6,
+    "hash": "6rpV6nHzrYy0yg+Ih+Ao1OVaWHM=",
+    "timestampUtcMs": "2026-09-03T07:38:05.779Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "9077bee9-6825-4808-a0d8-f2f936d40c30",
+        "name": "architecture"
+      },
+      "timestampUtcMs": "2026-09-03T07:38:05.779Z"
+    }
+  },
+  {
+    "index": 7,
+    "hash": "nW1oJi4QmpP2dUtxt8cRhEZkJ88=",
+    "timestampUtcMs": "2026-09-03T07:38:05.779Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "46e371b5-b952-4d85-b4ef-c1d324735570",
+        "name": "http"
+      },
+      "timestampUtcMs": "2026-09-03T07:38:05.779Z"
+    }
+  },
+  {
+    "index": 8,
+    "hash": "kxDVNuolRV7p/dP3u6etbzU6k78=",
+    "timestampUtcMs": "2026-09-03T07:38:05.779Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "version",
+        "value": "v6.2.2-dev.74",
+        "updatedAt": "2026-09-03T07:38:05.778Z"
+      },
+      "timestampUtcMs": "2026-09-03T07:38:05.779Z"
+    }
+  },
+  {
+    "index": 9,
+    "hash": "gNZbUQGNlCTuclFYa6oAxRGGGV8=",
+    "timestampUtcMs": "2026-09-03T07:38:05.779Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "filePath",
+        "value": "packages/reactor-api/ARCHITECTURE.md",
+        "updatedAt": "2026-09-03T07:38:05.778Z"
+      },
+      "timestampUtcMs": "2026-09-03T07:38:05.779Z"
+    }
+  },
+  {
+    "index": 10,
+    "hash": "LxXtqu8NRiD9yUy98v3gNJ9BO8g=",
+    "timestampUtcMs": "2026-09-03T07:38:08.343Z",
+    "action": {
+      "type": "SET_PROVENANCE",
+      "input": {
+        "author": "knowledge-agent",
+        "createdAt": "2026-09-03T07:38:08.342Z",
+        "sourceOrigin": "DERIVED"
+      },
+      "timestampUtcMs": "2026-09-03T07:38:08.343Z"
+    }
+  },
+  {
+    "index": 11,
+    "hash": "d0TgmqeU3ACiuIcSKCDOSHVm0JI=",
+    "timestampUtcMs": "2026-09-03T07:38:08.937Z",
+    "action": {
+      "type": "SUBMIT_FOR_REVIEW",
+      "input": {
+        "id": "13627004-1981-4341-a7db-b806520ca0e3",
+        "actor": "knowledge-agent",
+        "comment": "extracted from packages/reactor-api/ARCHITECTURE.md at v6.2.2-dev.74",
+        "timestamp": "2026-09-03T07:38:08.936Z"
+      },
+      "timestampUtcMs": "2026-09-03T07:38:08.937Z"
+    }
+  },
+  {
+    "index": 12,
+    "hash": "xUt3z6KuaOmZf7fl3yyK4AoKiZ8=",
+    "timestampUtcMs": "2026-09-03T07:38:09.440Z",
+    "action": {
+      "type": "APPROVE_NOTE",
+      "input": {
+        "id": "deb428cf-e251-4410-8189-59392a0b3a66",
+        "actor": "liberuum",
+        "comment": "claim checked against the cited file at the pinned tag",
+        "timestamp": "2026-09-03T07:38:09.440Z"
+      },
+      "timestampUtcMs": "2026-09-03T07:38:09.440Z"
+    }
+  }
+]

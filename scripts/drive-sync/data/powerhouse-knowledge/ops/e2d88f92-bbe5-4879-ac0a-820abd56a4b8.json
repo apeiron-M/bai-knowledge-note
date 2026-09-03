@@ -1,0 +1,340 @@
+[
+  {
+    "index": 0,
+    "hash": "",
+    "timestampUtcMs": "2026-08-14T12:34:24.073Z",
+    "action": {
+      "type": "CREATE_DOCUMENT",
+      "input": {
+        "meta": {},
+        "name": "withprojectionshards-moves-read-model-indexing-to-workers",
+        "slug": "",
+        "model": "bai/knowledge-note",
+        "branch": "main",
+        "signing": {
+          "nonce": "",
+          "publicKey": {},
+          "signature": "e2d88f92-bbe5-4879-ac0a-820abd56a4b8",
+          "documentType": "bai/knowledge-note",
+          "createdAtUtcIso": "2026-08-14T12:34:24.073Z"
+        },
+        "version": 0,
+        "documentId": "e2d88f92-bbe5-4879-ac0a-820abd56a4b8",
+        "protocolVersions": {
+          "base-reducer": 2
+        }
+      },
+      "timestampUtcMs": "2026-08-14T12:34:24.073Z"
+    }
+  },
+  {
+    "index": 0,
+    "hash": "4mrltDrIZRVBNkpb6rFDqgBL9Tw=",
+    "timestampUtcMs": "2026-08-14T12:36:10.000Z",
+    "action": {
+      "type": "SET_TITLE",
+      "input": {
+        "title": "withProjectionShards moves read-model indexing into N sharded workers that re-emit JOB_READ_READY to the host bus",
+        "updatedAt": "2026-08-14T12:36:10.000Z"
+      },
+      "timestampUtcMs": "2026-08-14T12:36:10.000Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "",
+    "timestampUtcMs": "2026-08-14T12:34:24.073Z",
+    "action": {
+      "type": "UPGRADE_DOCUMENT",
+      "input": {
+        "model": "bai/knowledge-note",
+        "toVersion": 1,
+        "documentId": "e2d88f92-bbe5-4879-ac0a-820abd56a4b8",
+        "fromVersion": 0,
+        "initialState": {
+          "auth": {
+            "grants": [],
+            "version": 0
+          },
+          "local": {
+            "lastViewedAt": null,
+            "personalTags": []
+          },
+          "global": {
+            "links": [],
+            "model": null,
+            "scope": null,
+            "title": null,
+            "editor": null,
+            "inputs": [],
+            "models": [],
+            "status": "DRAFT",
+            "topics": [],
+            "content": null,
+            "context": null,
+            "modelId": null,
+            "modules": [],
+            "outputs": [],
+            "version": null,
+            "computes": null,
+            "filePath": null,
+            "noteType": null,
+            "severity": null,
+            "hooksUsed": [],
+            "rootCause": null,
+            "confidence": null,
+            "consumedBy": [],
+            "provenance": null,
+            "sourceType": null,
+            "targetType": null,
+            "cardinality": null,
+            "description": null,
+            "alternatives": [],
+            "consequences": [],
+            "errorMessage": null,
+            "relationType": null,
+            "correctPattern": null,
+            "decisionStatus": null,
+            "dispatchTargets": [],
+            "lifecycleEvents": []
+          },
+          "document": {
+            "hash": {
+              "encoding": "base64",
+              "algorithm": "sha1"
+            },
+            "version": 1
+          }
+        }
+      },
+      "timestampUtcMs": "2026-08-14T12:34:24.073Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "VzgiASMERsD/zySf2YNxCP2oMfA=",
+    "timestampUtcMs": "2026-08-14T12:36:10.000Z",
+    "action": {
+      "type": "SET_DESCRIPTION",
+      "input": {
+        "updatedAt": "2026-08-14T12:36:10.000Z",
+        "description": "Shards fan JOB_WRITE_READY by document id, split work into preReadyKinds/postReadyKinds, and replace the in-process read-model coordinator. Requires Postgres."
+      },
+      "timestampUtcMs": "2026-08-14T12:36:10.000Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "",
+    "timestampUtcMs": "2026-08-14T12:39:11.732Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "e2d88f92-bbe5-4879-ac0a-820abd56a4b8",
+        "targetId": "43b82c81-4d28-4e69-9a0a-84c0dddb87ef",
+        "relationshipType": "BUILDS_ON"
+      },
+      "timestampUtcMs": "2026-08-14T12:39:11.732Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "pe7NcmRN13wrJa/i7vQfY46JbZA=",
+    "timestampUtcMs": "2026-08-14T12:36:10.000Z",
+    "action": {
+      "type": "SET_NOTE_TYPE",
+      "input": {
+        "noteType": "ARCHITECTURE",
+        "updatedAt": "2026-08-14T12:36:10.000Z"
+      },
+      "timestampUtcMs": "2026-08-14T12:36:10.000Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "",
+    "timestampUtcMs": "2026-08-14T12:39:11.833Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "e2d88f92-bbe5-4879-ac0a-820abd56a4b8",
+        "targetId": "501f87dd-ff84-4a59-8894-033f209dfdf0",
+        "relationshipType": "BUILDS_ON"
+      },
+      "timestampUtcMs": "2026-08-14T12:39:11.833Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "9g9vfVB6PxICXAoVpRicb0ddVAE=",
+    "timestampUtcMs": "2026-08-14T12:36:10.000Z",
+    "action": {
+      "type": "SET_CONTENT",
+      "input": {
+        "content": "Projection shards scale the *read* path, where the worker pool scales the write path. Instead of the in-process read-model coordinator, the builder installs a shard manager that fans `JOB_WRITE_READY` events to N projection workers, sharded by document id. Each worker materializes the built-in read models against its own Postgres pool.\n\nThe part that makes it transparent to the rest of the reactor: each shard **re-emits `JOB_READ_READY` and the read-model events back to the host bus**, so synchronization, awaiters, and observers see them exactly once per job. Code that waits on `READ_READY` \u2014 including every `client.execute()` call \u2014 is unchanged by the topology.\n\n```typescript\n.withProjectionShards({\n  db: { host: \"localhost\", port: 5432, database: \"reactor\", /* ... */ },\n  shardCount: 4,\n  preReadyKinds: [\"document-view\"],\n  postReadyKinds: [\"document-indexer\"],\n})\n```\n\n`preReadyKinds` run **before** a job reaches `READ_READY`; `postReadyKinds` run **after**. That split is the consistency dial: anything in `preReadyKinds` gates read-after-write and adds latency to every write, anything in `postReadyKinds` is eventually consistent but off the critical path. `BuiltInReadModelKind` is `\"document-view\" | \"document-indexer\"`.\n\nOptional fields and their defaults: `poolSize` (overrides the reused worker DB pool size for shard pools only; `application_name` is forced to `\"reactor-projection-shard\"`), `initTimeoutMs` 30000, `shutdownGraceMs` 5000, `drainTimeoutMs` 30000, `chainDepthReportIntervalMs` 250.\n\nTwo build-time throws: `withProjectionShards` without a `db` anywhere gives `\"withProjectionShards requires a db (or an executor worker pool configured with one); projection workers need connection info to open their own pools.\"`, and `shardCount < 1` gives `` `ProjectionShardManager: shardCount must be >= 1 (got ${shardCount})` ``. When the executor worker pool is also configured with a `db`, it may be omitted here and is reused.\n\nShards run standalone or alongside the worker pool \u2014 they replace the read-model coordinator, and the executor side is independent. Like the worker pool they require real Postgres, since the workers open their own pools and PGlite cannot cross threads.\n\nMarked \"not yet stable\": the shard-manager class is internal, configured only through `withProjectionShards` and the public config types.\n\n_Source: apps/academy/docs/academy/04-Reference/01-Reactor/07-StorageAndScaling.md (Powerhouse v6.2.2-dev.45)._",
+        "updatedAt": "2026-08-14T12:36:10.000Z"
+      },
+      "timestampUtcMs": "2026-08-14T12:36:10.000Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "",
+    "timestampUtcMs": "2026-09-02T21:38:44.166Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "metadata": {
+          "reason": "The note names apps/academy/docs/academy/04-Reference/01-Reactor/07-StorageAndScaling.md as its source; page text identical at v6.2.2-dev.47 and v6.2.2-dev.74",
+          "confidence": "grounded"
+        },
+        "sourceId": "e2d88f92-bbe5-4879-ac0a-820abd56a4b8",
+        "targetId": "c1116781-e617-4620-bb42-f622cbf113cd",
+        "relationshipType": "DERIVED_FROM"
+      },
+      "timestampUtcMs": "2026-09-02T21:38:44.166Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "SjTwhLSEXEpupeMNSorszf3zf+E=",
+    "timestampUtcMs": "2026-08-14T12:36:10.000Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "version",
+        "value": "v6.2.2-dev.44",
+        "updatedAt": "2026-08-14T12:36:10.000Z"
+      },
+      "timestampUtcMs": "2026-08-14T12:36:10.000Z"
+    }
+  },
+  {
+    "index": 5,
+    "hash": "pnlwVRfRJ9FbfjsEKojEttFOlYc=",
+    "timestampUtcMs": "2026-08-14T12:36:10.000Z",
+    "action": {
+      "type": "SET_PROVENANCE",
+      "input": {
+        "author": "claude",
+        "createdAt": "2026-08-13T14:34:43.000Z",
+        "sourceOrigin": "DERIVED"
+      },
+      "timestampUtcMs": "2026-08-14T12:36:10.000Z"
+    }
+  },
+  {
+    "index": 6,
+    "hash": "pPNjhYn+AVteEQ0Ydc+Ing6kZx0=",
+    "timestampUtcMs": "2026-08-14T12:36:10.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "91ced084-0222-4358-b74e-6c1870077280",
+        "name": "reactor",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-08-14T12:36:10.000Z"
+    }
+  },
+  {
+    "index": 7,
+    "hash": "NPT5OLUsNFHqRW2ewOGH3FM+ZSU=",
+    "timestampUtcMs": "2026-08-14T12:36:10.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "9a2bb6a1-cf96-4a59-bfef-635008cf8095",
+        "name": "scaling",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-08-14T12:36:10.000Z"
+    }
+  },
+  {
+    "index": 8,
+    "hash": "67roSrnGegI0e40zJ43AR2kcQgg=",
+    "timestampUtcMs": "2026-08-14T12:36:10.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "3f5bdf13-5a30-4a59-b44a-d108580a423e",
+        "name": "read-models",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-08-14T12:36:10.000Z"
+    }
+  },
+  {
+    "index": 9,
+    "hash": "wiOpNeTwGjcAvqLZoDWVYQr0Ces=",
+    "timestampUtcMs": "2026-08-14T14:37:41.000Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "version",
+        "value": "v6.2.2-dev.47",
+        "updatedAt": "2026-08-14T12:00:00.000Z"
+      },
+      "timestampUtcMs": "2026-08-14T14:37:41.000Z"
+    }
+  },
+  {
+    "index": 10,
+    "hash": "FK4sz4VrKfYm/F+v/4NldbjKhYA=",
+    "timestampUtcMs": "2026-08-14T14:37:41.000Z",
+    "action": {
+      "type": "SUBMIT_FOR_REVIEW",
+      "input": {
+        "id": "dcfb664b-de23-432a-bd4b-4aaf1a89abc3",
+        "actor": "claude",
+        "comment": "Knowledge registered against powerhouse v6.2.2-dev.47",
+        "timestamp": "2026-08-14T12:00:00.000Z"
+      },
+      "timestampUtcMs": "2026-08-14T14:37:41.000Z"
+    }
+  },
+  {
+    "index": 11,
+    "hash": "ee9QX4XIPhs4jI1+OpCfHkOOGIc=",
+    "timestampUtcMs": "2026-08-14T14:37:41.000Z",
+    "action": {
+      "type": "APPROVE_NOTE",
+      "input": {
+        "id": "33fba0f7-d55e-42b2-a5a6-c488d4ac2984",
+        "actor": "liberuum",
+        "comment": "Canonical as of powerhouse v6.2.2-dev.47",
+        "timestamp": "2026-08-14T12:00:00.000Z"
+      },
+      "timestampUtcMs": "2026-08-14T14:37:41.000Z"
+    }
+  },
+  {
+    "index": 12,
+    "hash": "7GAXY8df3mEziCdTxztOspitTsY=",
+    "timestampUtcMs": "2026-09-02T21:38:44.875Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "filePath",
+        "value": "apps/academy/docs/academy/04-Reference/01-Reactor/07-StorageAndScaling.md",
+        "updatedAt": "2026-09-02T21:38:44.875Z"
+      },
+      "timestampUtcMs": "2026-09-02T21:38:44.875Z"
+    }
+  },
+  {
+    "index": 13,
+    "hash": "x4etW6cQ/RukvQkEIgiL03o39Jg=",
+    "timestampUtcMs": "2026-09-02T21:38:44.875Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "version",
+        "value": "v6.2.2-dev.74",
+        "updatedAt": "2026-09-02T21:38:44.875Z"
+      },
+      "timestampUtcMs": "2026-09-02T21:38:44.875Z"
+    }
+  }
+]

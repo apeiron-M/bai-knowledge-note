@@ -1,0 +1,320 @@
+[
+  {
+    "index": 0,
+    "hash": "",
+    "timestampUtcMs": "2026-08-14T11:52:33.439Z",
+    "action": {
+      "type": "CREATE_DOCUMENT",
+      "input": {
+        "meta": {},
+        "name": "composite-channel-factory-routes-by-type",
+        "slug": "",
+        "model": "bai/knowledge-note",
+        "branch": "main",
+        "signing": {
+          "nonce": "",
+          "publicKey": {},
+          "signature": "0023bc50-7fff-4fa1-844e-d869f976f3b5",
+          "documentType": "bai/knowledge-note",
+          "createdAtUtcIso": "2026-08-14T11:52:33.439Z"
+        },
+        "version": 0,
+        "documentId": "0023bc50-7fff-4fa1-844e-d869f976f3b5",
+        "protocolVersions": {
+          "base-reducer": 2
+        }
+      },
+      "timestampUtcMs": "2026-08-14T11:52:33.439Z"
+    }
+  },
+  {
+    "index": 0,
+    "hash": "dXZMLAZ5pCvNR6qbBOm6h2GYt8Y=",
+    "timestampUtcMs": "2026-08-14T12:34:59.000Z",
+    "action": {
+      "type": "SET_TITLE",
+      "input": {
+        "title": "CompositeChannelFactory routes IChannel creation by config.type to registered sub-factories.",
+        "updatedAt": "2026-08-14T12:34:59.000Z"
+      },
+      "timestampUtcMs": "2026-08-14T12:34:59.000Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "",
+    "timestampUtcMs": "2026-08-14T11:52:33.439Z",
+    "action": {
+      "type": "UPGRADE_DOCUMENT",
+      "input": {
+        "model": "bai/knowledge-note",
+        "toVersion": 1,
+        "documentId": "0023bc50-7fff-4fa1-844e-d869f976f3b5",
+        "fromVersion": 0,
+        "initialState": {
+          "auth": {
+            "grants": [],
+            "version": 0
+          },
+          "local": {
+            "lastViewedAt": null,
+            "personalTags": []
+          },
+          "global": {
+            "links": [],
+            "model": null,
+            "scope": null,
+            "title": null,
+            "editor": null,
+            "inputs": [],
+            "models": [],
+            "status": "DRAFT",
+            "topics": [],
+            "content": null,
+            "context": null,
+            "modelId": null,
+            "modules": [],
+            "outputs": [],
+            "version": null,
+            "computes": null,
+            "filePath": null,
+            "noteType": null,
+            "severity": null,
+            "hooksUsed": [],
+            "rootCause": null,
+            "confidence": null,
+            "consumedBy": [],
+            "provenance": null,
+            "sourceType": null,
+            "targetType": null,
+            "cardinality": null,
+            "description": null,
+            "alternatives": [],
+            "consequences": [],
+            "errorMessage": null,
+            "relationType": null,
+            "correctPattern": null,
+            "decisionStatus": null,
+            "dispatchTargets": [],
+            "lifecycleEvents": []
+          },
+          "document": {
+            "hash": {
+              "encoding": "base64",
+              "algorithm": "sha1"
+            },
+            "version": 1
+          }
+        }
+      },
+      "timestampUtcMs": "2026-08-14T11:52:33.439Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "59Zs/fUazia73fglwvB3JxJz1Fc=",
+    "timestampUtcMs": "2026-08-14T12:34:59.000Z",
+    "action": {
+      "type": "SET_DESCRIPTION",
+      "input": {
+        "updatedAt": "2026-08-14T12:34:59.000Z",
+        "description": "The reactor accepts one IChannelFactory. A composite implementation dispatches to named sub-factories so GQL and Swarm channels can coexist."
+      },
+      "timestampUtcMs": "2026-08-14T12:34:59.000Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "",
+    "timestampUtcMs": "2026-08-14T12:36:56.762Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "0023bc50-7fff-4fa1-844e-d869f976f3b5",
+        "targetId": "87c0fd87-df8a-474d-8689-7ace5709b14e",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-08-14T12:36:56.762Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "uT4YVACbct1aS5B/F604D2SJGpk=",
+    "timestampUtcMs": "2026-08-14T12:34:59.000Z",
+    "action": {
+      "type": "SET_NOTE_TYPE",
+      "input": {
+        "noteType": "pattern",
+        "updatedAt": "2026-08-14T12:34:59.000Z"
+      },
+      "timestampUtcMs": "2026-08-14T12:34:59.000Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "",
+    "timestampUtcMs": "2026-08-14T12:36:56.861Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "0023bc50-7fff-4fa1-844e-d869f976f3b5",
+        "targetId": "1f8f4551-682c-4245-94ef-5e5846862ee4",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-08-14T12:36:56.861Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "fpmLthYUYCDdcJywfllBVxE48rA=",
+    "timestampUtcMs": "2026-08-14T12:34:59.000Z",
+    "action": {
+      "type": "SET_CONTENT",
+      "input": {
+        "content": "## Claim\n`CompositeChannelFactory` implements `IChannelFactory` but dispatches `instance()` calls to registered sub-factories keyed by `config.type` (e.g., `\"gql\"`, `\"swarm\"`).\n\n## Evidence\nThe source defines a `factories: Map<string, IChannelFactory>` with `register(type, factory)`. On `instance()`, it looks up `config.type` and delegates, throwing if the type is unregistered.\n\n```typescript\nconst factory = this.factories.get(config.type);\nif (!factory) throw new Error(`Unknown channel type \"${config.type}\"...`);\nreturn factory.instance(remoteId, remoteName, config, cursorStorage, collectionId, filter, operationIndex);\n```\n\n## Why this pattern\nThe reactor exposes only one `IChannelFactory` slot per instance. Without the composite, adding Swarm would require monkey-patching or forking the reactor. The composite is a clean strategy/registry pattern that leaves the reactor interface untouched.\n\n## Source\n`adapter/src/channel/composite-factory.ts`; Swarm Channel Architecture, \"CompositeChannelFactory\" section.",
+        "updatedAt": "2026-08-14T12:34:59.000Z"
+      },
+      "timestampUtcMs": "2026-08-14T12:34:59.000Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "4AnllMD2N4P98rVcd1rSQ3JWokA=",
+    "timestampUtcMs": "2026-08-14T12:34:59.000Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "version",
+        "value": "v6.2.2-dev.44",
+        "updatedAt": "2026-08-14T12:34:59.000Z"
+      },
+      "timestampUtcMs": "2026-08-14T12:34:59.000Z"
+    }
+  },
+  {
+    "index": 5,
+    "hash": "TeHxHiWW9ZvXMPf045L4WPdFQh0=",
+    "timestampUtcMs": "2026-08-14T12:34:59.000Z",
+    "action": {
+      "type": "SET_PROVENANCE",
+      "input": {
+        "author": "knowledge-agent",
+        "createdAt": "2026-04-21T14:19:49.348Z",
+        "sourceOrigin": "DERIVED"
+      },
+      "timestampUtcMs": "2026-08-14T12:34:59.000Z"
+    }
+  },
+  {
+    "index": 6,
+    "hash": "58gMV8iYQ1JgO8vPC70VFxrozXc=",
+    "timestampUtcMs": "2026-08-14T12:34:59.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "t-ffc93b31-1",
+        "name": "composite-factory",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-08-14T12:34:59.000Z"
+    }
+  },
+  {
+    "index": 7,
+    "hash": "vL2HiZ4BqJhA8XkFB5gMiLzyXg4=",
+    "timestampUtcMs": "2026-08-14T12:34:59.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "t-ffc93b31-2",
+        "name": "channel-factory",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-08-14T12:34:59.000Z"
+    }
+  },
+  {
+    "index": 8,
+    "hash": "zBOV/T/ayJm60T5stXuKFtDZo0I=",
+    "timestampUtcMs": "2026-08-14T12:34:59.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "t-ffc93b31-3",
+        "name": "design-pattern",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-08-14T12:34:59.000Z"
+    }
+  },
+  {
+    "index": 9,
+    "hash": "CaRo+GRYIo8kuM6Ihign+qKWobM=",
+    "timestampUtcMs": "2026-08-14T14:36:42.000Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "version",
+        "value": "v6.2.2-dev.47",
+        "updatedAt": "2026-08-14T12:00:00.000Z"
+      },
+      "timestampUtcMs": "2026-08-14T14:36:42.000Z"
+    }
+  },
+  {
+    "index": 10,
+    "hash": "eFmQ0xwCQUvYuzMH2Ehm7aNMIBI=",
+    "timestampUtcMs": "2026-08-14T14:36:42.000Z",
+    "action": {
+      "type": "SUBMIT_FOR_REVIEW",
+      "input": {
+        "id": "7ca6f86a-c244-43aa-9784-4be0b867e55b",
+        "actor": "claude",
+        "comment": "Knowledge registered against powerhouse v6.2.2-dev.47",
+        "timestamp": "2026-08-14T12:00:00.000Z"
+      },
+      "timestampUtcMs": "2026-08-14T14:36:42.000Z"
+    }
+  },
+  {
+    "index": 11,
+    "hash": "A3wQwfcu7bk5/HIG79XZCtf3YPY=",
+    "timestampUtcMs": "2026-08-14T14:36:42.000Z",
+    "action": {
+      "type": "APPROVE_NOTE",
+      "input": {
+        "id": "dbded0d7-019d-4f53-adba-e138dd31a7bb",
+        "actor": "liberuum",
+        "comment": "Canonical as of powerhouse v6.2.2-dev.47",
+        "timestamp": "2026-08-14T12:00:00.000Z"
+      },
+      "timestampUtcMs": "2026-08-14T14:36:42.000Z"
+    }
+  },
+  {
+    "index": 12,
+    "hash": "X8jxNzzzk3lcnv64wMPm/S5b3sQ=",
+    "timestampUtcMs": "2026-08-16T09:49:35.000Z",
+    "action": {
+      "type": "SET_NOTE_TYPE",
+      "input": {
+        "noteType": "PATTERN",
+        "updatedAt": "2026-08-16T09:49:35.000Z"
+      },
+      "timestampUtcMs": "2026-08-16T09:49:35.000Z"
+    }
+  },
+  {
+    "index": 13,
+    "hash": "pYo3Us/7SddlQXC+XNxnRTtMy9Q=",
+    "timestampUtcMs": "2026-09-03T09:57:50.882Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "version",
+        "updatedAt": "2026-09-03T09:57:50.882Z"
+      },
+      "timestampUtcMs": "2026-09-03T09:57:50.882Z"
+    }
+  }
+]

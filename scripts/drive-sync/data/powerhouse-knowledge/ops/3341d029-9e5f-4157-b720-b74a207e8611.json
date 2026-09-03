@@ -1,0 +1,340 @@
+[
+  {
+    "index": 0,
+    "hash": "",
+    "timestampUtcMs": "2026-08-14T12:06:10.621Z",
+    "action": {
+      "type": "CREATE_DOCUMENT",
+      "input": {
+        "meta": {},
+        "name": "list-resolvers-filter-with-canreaddocument",
+        "slug": "",
+        "model": "bai/knowledge-note",
+        "branch": "main",
+        "signing": {
+          "nonce": "",
+          "publicKey": {},
+          "signature": "3341d029-9e5f-4157-b720-b74a207e8611",
+          "documentType": "bai/knowledge-note",
+          "createdAtUtcIso": "2026-08-14T12:06:10.621Z"
+        },
+        "version": 0,
+        "documentId": "3341d029-9e5f-4157-b720-b74a207e8611",
+        "protocolVersions": {
+          "base-reducer": 2
+        }
+      },
+      "timestampUtcMs": "2026-08-14T12:06:10.621Z"
+    }
+  },
+  {
+    "index": 0,
+    "hash": "B1GvH/m5SPkRcuKxyFJ0jDrlu10=",
+    "timestampUtcMs": "2026-08-14T12:35:23.000Z",
+    "action": {
+      "type": "SET_TITLE",
+      "input": {
+        "title": "List resolvers must filter with canReadDocument, not throw on the first forbidden document",
+        "updatedAt": "2026-08-14T12:35:23.000Z"
+      },
+      "timestampUtcMs": "2026-08-14T12:35:23.000Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "",
+    "timestampUtcMs": "2026-08-14T12:06:10.621Z",
+    "action": {
+      "type": "UPGRADE_DOCUMENT",
+      "input": {
+        "model": "bai/knowledge-note",
+        "toVersion": 1,
+        "documentId": "3341d029-9e5f-4157-b720-b74a207e8611",
+        "fromVersion": 0,
+        "initialState": {
+          "auth": {
+            "grants": [],
+            "version": 0
+          },
+          "local": {
+            "lastViewedAt": null,
+            "personalTags": []
+          },
+          "global": {
+            "links": [],
+            "model": null,
+            "scope": null,
+            "title": null,
+            "editor": null,
+            "inputs": [],
+            "models": [],
+            "status": "DRAFT",
+            "topics": [],
+            "content": null,
+            "context": null,
+            "modelId": null,
+            "modules": [],
+            "outputs": [],
+            "version": null,
+            "computes": null,
+            "filePath": null,
+            "noteType": null,
+            "severity": null,
+            "hooksUsed": [],
+            "rootCause": null,
+            "confidence": null,
+            "consumedBy": [],
+            "provenance": null,
+            "sourceType": null,
+            "targetType": null,
+            "cardinality": null,
+            "description": null,
+            "alternatives": [],
+            "consequences": [],
+            "errorMessage": null,
+            "relationType": null,
+            "correctPattern": null,
+            "decisionStatus": null,
+            "dispatchTargets": [],
+            "lifecycleEvents": []
+          },
+          "document": {
+            "hash": {
+              "encoding": "base64",
+              "algorithm": "sha1"
+            },
+            "version": 1
+          }
+        }
+      },
+      "timestampUtcMs": "2026-08-14T12:06:10.621Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "yuW1d3RtXs+4fpmGNzYZ/+TG+uE=",
+    "timestampUtcMs": "2026-08-14T12:35:23.000Z",
+    "action": {
+      "type": "SET_DESCRIPTION",
+      "input": {
+        "updatedAt": "2026-08-14T12:35:23.000Z",
+        "description": "Short-circuit with authorizationService.isSupremeAdmin(ctx.user?.address), then drop unreadable ids. Filtering also avoids leaking the existence of protected documents."
+      },
+      "timestampUtcMs": "2026-08-14T12:35:23.000Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "",
+    "timestampUtcMs": "2026-08-14T12:37:43.596Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "3341d029-9e5f-4157-b720-b74a207e8611",
+        "targetId": "de06fba3-5cdf-413c-b6e0-f1a094c62f34",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-08-14T12:37:43.596Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "wdJDkiZDs4va+HkU4mz3CZXXqEY=",
+    "timestampUtcMs": "2026-08-14T12:35:23.000Z",
+    "action": {
+      "type": "SET_NOTE_TYPE",
+      "input": {
+        "noteType": "PATTERN",
+        "updatedAt": "2026-08-14T12:35:23.000Z"
+      },
+      "timestampUtcMs": "2026-08-14T12:35:23.000Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "",
+    "timestampUtcMs": "2026-08-14T12:37:43.695Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "3341d029-9e5f-4157-b720-b74a207e8611",
+        "targetId": "3d4c832b-632f-4a4a-9925-982a9954f50b",
+        "relationshipType": "BUILDS_ON"
+      },
+      "timestampUtcMs": "2026-08-14T12:37:43.695Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "ozV79u/5kQCbipPFF3wqu/kLr4I=",
+    "timestampUtcMs": "2026-08-14T12:35:23.000Z",
+    "action": {
+      "type": "SET_CONTENT",
+      "input": {
+        "content": "## Throwing is wrong for collections\n\nA resolver that returns *one* document should fail closed and throw. A resolver that returns *many* must not: throwing on the first forbidden document turns one protected item into a total failure for a caller who was entitled to the rest of the list. Collection resolvers **drop** what the caller cannot read and return the remainder.\n\nThe shape has two parts \u2014 a policy-wide short circuit, then a per-item non-throwing check:\n\n```typescript\nimport type { CanonicalDocumentId } from \"@powerhousedao/reactor-api\";\n\nsearchTodos: async (\n  _parent,\n  args: { driveId: string; searchTerm: string },\n  ctx: Context,\n) => {\n  const matches = await runSearch(args.driveId, args.searchTerm); // document ids\n\n  // Policy-wide callers see everything; skip the per-item check.\n  if (subgraph.authorizationService.isSupremeAdmin(ctx.user?.address)) {\n    return matches;\n  }\n\n  const visible: string[] = [];\n  for (const id of matches) {\n    // non-throwing; ids returned by the Reactor are already canonical\n    if (await subgraph.canReadDocument(id as CanonicalDocumentId, ctx)) {\n      visible.push(id);\n    }\n  }\n  return visible;\n};\n```\n\n## Why filtering, not post-hoc shaping\n\nFiltering **on read** means the resolver never leaks the *existence* of a protected document through a list endpoint. That is a stronger property than redacting fields after the fetch: an id in a search result is itself information, and a caller who can enumerate ids can probe them individually.\n\nThe `isSupremeAdmin` short circuit is a performance concession, not a correctness one \u2014 supreme admins and the `OPEN` policy would pass every per-item check anyway, so the loop is pure overhead for them.\n\nThis is the same shape the built-in `findDocuments` and relationship resolvers use. The corresponding best practice is stated plainly: filter lists, don't throw on them; reserve the throwing asserts for single-target resolvers.\n\n_Source: apps/academy/docs/academy/03-Build/03-BuildingUserExperiences/07-Authorization/05-EnforcingAuthorizationInSubgraphs.md (Powerhouse v6.2.2-dev.45)._",
+        "updatedAt": "2026-08-14T12:35:23.000Z"
+      },
+      "timestampUtcMs": "2026-08-14T12:35:23.000Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "",
+    "timestampUtcMs": "2026-09-02T21:35:03.572Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "metadata": {
+          "reason": "The note names apps/academy/docs/academy/03-Build/03-BuildingUserExperiences/07-Authorization/05-EnforcingAuthorizationInSubgraphs.md as its source; page text identical at v6.2.2-dev.47 and v6.2.2-dev.74",
+          "confidence": "grounded"
+        },
+        "sourceId": "3341d029-9e5f-4157-b720-b74a207e8611",
+        "targetId": "90ee64b6-20d3-48b7-aa8b-a7d67aa60653",
+        "relationshipType": "DERIVED_FROM"
+      },
+      "timestampUtcMs": "2026-09-02T21:35:03.572Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "+hNT18V6DD2XNZkfj0oCg4z1J2U=",
+    "timestampUtcMs": "2026-08-14T12:35:23.000Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "version",
+        "value": "v6.2.2-dev.44",
+        "updatedAt": "2026-08-14T12:35:23.000Z"
+      },
+      "timestampUtcMs": "2026-08-14T12:35:23.000Z"
+    }
+  },
+  {
+    "index": 5,
+    "hash": "5GYNONE6u6bHJgYYGiLhtNUzCfs=",
+    "timestampUtcMs": "2026-08-14T12:35:23.000Z",
+    "action": {
+      "type": "SET_PROVENANCE",
+      "input": {
+        "author": "claude",
+        "createdAt": "2026-08-13T14:33:12.000Z",
+        "sourceOrigin": "DERIVED"
+      },
+      "timestampUtcMs": "2026-08-14T12:35:23.000Z"
+    }
+  },
+  {
+    "index": 6,
+    "hash": "dSjinJbdTkVgf5YCACWIz3jwtz8=",
+    "timestampUtcMs": "2026-08-14T12:35:23.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "49e0f557-8b80-42e1-9d11-8270057985f0",
+        "name": "authorization",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-08-14T12:35:23.000Z"
+    }
+  },
+  {
+    "index": 7,
+    "hash": "MuUmZ5Cw1nNkNZ6tLcPTPfZdZjc=",
+    "timestampUtcMs": "2026-08-14T12:35:23.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "d9be244e-c0b6-4820-9840-44dc30c494fc",
+        "name": "subgraphs",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-08-14T12:35:23.000Z"
+    }
+  },
+  {
+    "index": 8,
+    "hash": "hhhFk9Z89pspDgwwitkJVFegE1Y=",
+    "timestampUtcMs": "2026-08-14T12:35:23.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "b2d1c4b4-7fdc-4adb-ad97-42ab0d32c64d",
+        "name": "graphql",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-08-14T12:35:23.000Z"
+    }
+  },
+  {
+    "index": 9,
+    "hash": "QOaM/RkIj9V2uJBy7PbBfdCeLxY=",
+    "timestampUtcMs": "2026-08-14T14:36:57.000Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "version",
+        "value": "v6.2.2-dev.47",
+        "updatedAt": "2026-08-14T12:00:00.000Z"
+      },
+      "timestampUtcMs": "2026-08-14T14:36:57.000Z"
+    }
+  },
+  {
+    "index": 10,
+    "hash": "YHv6vioMrw7Yq84joMih1ojVQVk=",
+    "timestampUtcMs": "2026-08-14T14:36:57.000Z",
+    "action": {
+      "type": "SUBMIT_FOR_REVIEW",
+      "input": {
+        "id": "c3d7a45c-9282-4bf6-b4e6-aa6d4b87675c",
+        "actor": "claude",
+        "comment": "Knowledge registered against powerhouse v6.2.2-dev.47",
+        "timestamp": "2026-08-14T12:00:00.000Z"
+      },
+      "timestampUtcMs": "2026-08-14T14:36:57.000Z"
+    }
+  },
+  {
+    "index": 11,
+    "hash": "iRZUyAsfYXGQ1108xxEooPnTPNk=",
+    "timestampUtcMs": "2026-08-14T14:36:57.000Z",
+    "action": {
+      "type": "APPROVE_NOTE",
+      "input": {
+        "id": "91b19497-9ab9-4a68-8411-24d8e6a9648e",
+        "actor": "liberuum",
+        "comment": "Canonical as of powerhouse v6.2.2-dev.47",
+        "timestamp": "2026-08-14T12:00:00.000Z"
+      },
+      "timestampUtcMs": "2026-08-14T14:36:57.000Z"
+    }
+  },
+  {
+    "index": 12,
+    "hash": "6vgkfbkQ8dMFN01Wnf/Klh0AkcE=",
+    "timestampUtcMs": "2026-09-02T21:35:04.218Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "filePath",
+        "value": "apps/academy/docs/academy/03-Build/03-BuildingUserExperiences/07-Authorization/05-EnforcingAuthorizationInSubgraphs.md",
+        "updatedAt": "2026-09-02T21:35:04.218Z"
+      },
+      "timestampUtcMs": "2026-09-02T21:35:04.218Z"
+    }
+  },
+  {
+    "index": 13,
+    "hash": "IAPEKjXioKPclyeReXdeZxu6VFc=",
+    "timestampUtcMs": "2026-09-02T21:35:04.218Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "version",
+        "value": "v6.2.2-dev.74",
+        "updatedAt": "2026-09-02T21:35:04.218Z"
+      },
+      "timestampUtcMs": "2026-09-02T21:35:04.218Z"
+    }
+  }
+]

@@ -1,0 +1,330 @@
+[
+  {
+    "index": 0,
+    "hash": "",
+    "timestampUtcMs": "2026-09-03T07:39:01.230Z",
+    "action": {
+      "type": "CREATE_DOCUMENT",
+      "input": {
+        "meta": {},
+        "name": "registry-client-sse",
+        "slug": "",
+        "model": "bai/knowledge-note",
+        "branch": "main",
+        "signing": {
+          "nonce": "",
+          "publicKey": {},
+          "signature": "3c31ddfa-8a8a-4cee-8be1-2812015464e8",
+          "documentType": "bai/knowledge-note",
+          "createdAtUtcIso": "2026-09-03T07:39:01.229Z"
+        },
+        "version": 0,
+        "documentId": "3c31ddfa-8a8a-4cee-8be1-2812015464e8",
+        "protocolVersions": {
+          "base-reducer": 2
+        }
+      },
+      "timestampUtcMs": "2026-09-03T07:39:01.230Z"
+    }
+  },
+  {
+    "index": 0,
+    "hash": "db4kDxmFnqzZBNphTR4GbCoMY8Y=",
+    "timestampUtcMs": "2026-09-03T07:39:02.769Z",
+    "action": {
+      "type": "SET_TITLE",
+      "input": {
+        "title": "The registry client queries packages over a CDN path and subscribes to publish notifications over Server-Sent Events",
+        "updatedAt": "2026-09-03T07:39:02.769Z"
+      },
+      "timestampUtcMs": "2026-09-03T07:39:02.769Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "",
+    "timestampUtcMs": "2026-09-03T07:39:01.230Z",
+    "action": {
+      "type": "UPGRADE_DOCUMENT",
+      "input": {
+        "model": "bai/knowledge-note",
+        "toVersion": 1,
+        "documentId": "3c31ddfa-8a8a-4cee-8be1-2812015464e8",
+        "fromVersion": 0,
+        "initialState": {
+          "auth": {
+            "grants": [],
+            "version": 0
+          },
+          "local": {
+            "lastViewedAt": null,
+            "personalTags": []
+          },
+          "global": {
+            "links": [],
+            "model": null,
+            "scope": null,
+            "title": null,
+            "editor": null,
+            "inputs": [],
+            "models": [],
+            "status": "DRAFT",
+            "topics": [],
+            "content": null,
+            "context": null,
+            "modelId": null,
+            "modules": [],
+            "outputs": [],
+            "version": null,
+            "computes": null,
+            "filePath": null,
+            "noteType": null,
+            "severity": null,
+            "hooksUsed": [],
+            "rootCause": null,
+            "confidence": null,
+            "consumedBy": [],
+            "provenance": null,
+            "sourceType": null,
+            "targetType": null,
+            "cardinality": null,
+            "description": null,
+            "alternatives": [],
+            "consequences": [],
+            "errorMessage": null,
+            "relationType": null,
+            "correctPattern": null,
+            "decisionStatus": null,
+            "dispatchTargets": [],
+            "lifecycleEvents": []
+          },
+          "document": {
+            "hash": {
+              "encoding": "base64",
+              "algorithm": "sha1"
+            },
+            "version": 1
+          }
+        }
+      },
+      "timestampUtcMs": "2026-09-03T07:39:01.230Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "xXNAyrCDyAkEFcIfbtJFAW5vZyE=",
+    "timestampUtcMs": "2026-09-03T07:39:02.769Z",
+    "action": {
+      "type": "SET_DESCRIPTION",
+      "input": {
+        "updatedAt": "2026-09-03T07:39:02.769Z",
+        "description": "new RegistryClient(url) exposes getPackages, getPackagesByDocumentType for finding which package provides a document type, a client-side searchPackages, and onPublish returning an unsubscribe."
+      },
+      "timestampUtcMs": "2026-09-03T07:39:02.769Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "",
+    "timestampUtcMs": "2026-09-03T07:39:31.022Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "metadata": {
+          "reason": "Extracted from packages/reactor-browser/src/registry/README.md at v6.2.2-dev.74 \u2014 whole file: constructor, getPackages, getPackagesByDocumentType, searchPackages, onPublish",
+          "confidence": "grounded"
+        },
+        "sourceId": "3c31ddfa-8a8a-4cee-8be1-2812015464e8",
+        "targetId": "13843259-e082-442c-a619-0654b68c8228",
+        "relationshipType": "DERIVED_FROM"
+      },
+      "timestampUtcMs": "2026-09-03T07:39:31.022Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "pPn9OUYDCGpUNh6ZLzM7rI0Zggw=",
+    "timestampUtcMs": "2026-09-03T07:39:02.769Z",
+    "action": {
+      "type": "SET_NOTE_TYPE",
+      "input": {
+        "noteType": "REFERENCE",
+        "updatedAt": "2026-09-03T07:39:02.769Z"
+      },
+      "timestampUtcMs": "2026-09-03T07:39:02.769Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "",
+    "timestampUtcMs": "2026-09-03T07:39:31.472Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "metadata": {
+          "reason": "The Connect image bakes packageRegistryUrl and re-syncs its CSP origin to it, which is the registry this client talks to in the browser",
+          "confidence": "grounded"
+        },
+        "sourceId": "3c31ddfa-8a8a-4cee-8be1-2812015464e8",
+        "targetId": "e80cffd2-a26e-426d-b722-dc068817ea7c",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-09-03T07:39:31.472Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "vjHdiFkTFGS2Ww5QpJFGHwok6dQ=",
+    "timestampUtcMs": "2026-09-03T07:39:02.769Z",
+    "action": {
+      "type": "SET_CONTENT",
+      "input": {
+        "content": "`RegistryClient` from `@powerhousedao/reactor-browser` is the client for a Powerhouse package registry, constructed with the registry's CDN base:\n\n```ts\nconst client = new RegistryClient(\"http://localhost:8080/-/cdn/\");\n```\n\nFour methods, and the interesting ones are the second and the fourth:\n\n- **`getPackages()`** \u2014 every package as `{ name, description, version, category, publisher, publisherUrl }`.\n- **`getPackagesByDocumentType(type)`** \u2014 the package names containing a given document type, e.g. `\"powerhouse/document-model\"`. This is the lookup behind \"you opened a document whose type nothing installed provides\": the registry can answer which package to install.\n- **`searchPackages(query)`** \u2014 **client-side** search across name and description, so it needs the package list first and no server-side search endpoint exists.\n- **`onPublish(cb)`** \u2014 subscribes to real-time publish notifications over **Server-Sent Events**, calling back with `{ packageName, version }` and returning an unsubscribe function.\n\nSSE rather than polling is the notable choice: a running Connect can learn that a package it depends on was republished without asking, which is what makes a runtime-installed package list feel live.\n\n## Provenance\n- `packages/reactor-browser/src/registry/README.md` \u2014 whole file: constructor, getPackages, getPackagesByDocumentType, searchPackages, onPublish\n\n_Extracted from the Powerhouse repository at **v6.2.2-dev.74**._",
+        "updatedAt": "2026-09-03T07:39:02.769Z"
+      },
+      "timestampUtcMs": "2026-09-03T07:39:02.769Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "",
+    "timestampUtcMs": "2026-09-03T07:39:31.950Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "metadata": {
+          "reason": "Runtime-installed packages are fetched from the registry this client queries, and their PWA fragments are what the service worker then serves",
+          "confidence": "grounded"
+        },
+        "sourceId": "3c31ddfa-8a8a-4cee-8be1-2812015464e8",
+        "targetId": "ab5f9b74-1462-49c2-a845-e34b02c9a0be",
+        "relationshipType": "BUILDS_ON"
+      },
+      "timestampUtcMs": "2026-09-03T07:39:31.950Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "793fMF9aJ4ebWabzb23FMFw22Hk=",
+    "timestampUtcMs": "2026-09-03T07:39:02.769Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "9f7b1c9b-65cd-4666-a984-9ea9277bac71",
+        "name": "registry"
+      },
+      "timestampUtcMs": "2026-09-03T07:39:02.769Z"
+    }
+  },
+  {
+    "index": 5,
+    "hash": "M4qgXGbL/iXl5KTWwdmiupggt+Y=",
+    "timestampUtcMs": "2026-09-03T07:39:02.769Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "5bbd3040-5060-4f4a-bbc2-5b25660ee6fd",
+        "name": "packages"
+      },
+      "timestampUtcMs": "2026-09-03T07:39:02.769Z"
+    }
+  },
+  {
+    "index": 6,
+    "hash": "tOQ4+BqcWHihSm1UBJDYvZW9Cdo=",
+    "timestampUtcMs": "2026-09-03T07:39:02.769Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "d56aafe8-9c48-46e8-915f-28585bc1ed5f",
+        "name": "sse"
+      },
+      "timestampUtcMs": "2026-09-03T07:39:02.769Z"
+    }
+  },
+  {
+    "index": 7,
+    "hash": "L8Q/nmdaHny6XLyiWc1eGduqv7g=",
+    "timestampUtcMs": "2026-09-03T07:39:02.769Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "dc5b2075-06e0-4b6f-9c02-5f4fde5d7b5f",
+        "name": "reactor-browser"
+      },
+      "timestampUtcMs": "2026-09-03T07:39:02.769Z"
+    }
+  },
+  {
+    "index": 8,
+    "hash": "7ex9rTFVjPNwftdqCV2OnoUmQhI=",
+    "timestampUtcMs": "2026-09-03T07:39:02.769Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "version",
+        "value": "v6.2.2-dev.74",
+        "updatedAt": "2026-09-03T07:39:02.769Z"
+      },
+      "timestampUtcMs": "2026-09-03T07:39:02.769Z"
+    }
+  },
+  {
+    "index": 9,
+    "hash": "0HAZTeJ+n8VeaYeiQtkX6amql4c=",
+    "timestampUtcMs": "2026-09-03T07:39:02.769Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "filePath",
+        "value": "packages/reactor-browser/src/registry/README.md",
+        "updatedAt": "2026-09-03T07:39:02.769Z"
+      },
+      "timestampUtcMs": "2026-09-03T07:39:02.769Z"
+    }
+  },
+  {
+    "index": 10,
+    "hash": "3FOP9RYvuNcUP5LdVUCzCDmE8yI=",
+    "timestampUtcMs": "2026-09-03T07:39:05.375Z",
+    "action": {
+      "type": "SET_PROVENANCE",
+      "input": {
+        "author": "knowledge-agent",
+        "createdAt": "2026-09-03T07:39:05.375Z",
+        "sourceOrigin": "DERIVED"
+      },
+      "timestampUtcMs": "2026-09-03T07:39:05.375Z"
+    }
+  },
+  {
+    "index": 11,
+    "hash": "Jesfjx90IKgY1bzCaijbuMR4bAU=",
+    "timestampUtcMs": "2026-09-03T07:39:05.911Z",
+    "action": {
+      "type": "SUBMIT_FOR_REVIEW",
+      "input": {
+        "id": "5d0632ef-6156-4c9a-926f-1fbb0a3aac17",
+        "actor": "knowledge-agent",
+        "comment": "extracted from packages/reactor-browser/src/registry/README.md at v6.2.2-dev.74",
+        "timestamp": "2026-09-03T07:39:05.911Z"
+      },
+      "timestampUtcMs": "2026-09-03T07:39:05.911Z"
+    }
+  },
+  {
+    "index": 12,
+    "hash": "Ovrbh90Bx+3E4HSs7pV9eBUgmwM=",
+    "timestampUtcMs": "2026-09-03T07:39:06.375Z",
+    "action": {
+      "type": "APPROVE_NOTE",
+      "input": {
+        "id": "70205c92-3519-4baa-9e6a-4c7f2438e1bb",
+        "actor": "liberuum",
+        "comment": "claim checked against the cited file at the pinned tag",
+        "timestamp": "2026-09-03T07:39:06.374Z"
+      },
+      "timestampUtcMs": "2026-09-03T07:39:06.375Z"
+    }
+  }
+]

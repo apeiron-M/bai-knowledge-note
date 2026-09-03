@@ -1,0 +1,500 @@
+[
+  {
+    "index": 0,
+    "hash": "",
+    "timestampUtcMs": "2026-09-03T07:18:55.041Z",
+    "action": {
+      "type": "CREATE_DOCUMENT",
+      "input": {
+        "meta": {},
+        "name": "ordinal-frames-of-reference",
+        "slug": "",
+        "model": "bai/knowledge-note",
+        "branch": "main",
+        "signing": {
+          "nonce": "",
+          "publicKey": {},
+          "signature": "936ddc46-3b5a-40d1-b69f-6a3f6c3c6b8f",
+          "documentType": "bai/knowledge-note",
+          "createdAtUtcIso": "2026-09-03T07:18:55.041Z"
+        },
+        "version": 0,
+        "documentId": "936ddc46-3b5a-40d1-b69f-6a3f6c3c6b8f",
+        "protocolVersions": {
+          "base-reducer": 2
+        }
+      },
+      "timestampUtcMs": "2026-09-03T07:18:55.041Z"
+    }
+  },
+  {
+    "index": 0,
+    "hash": "D7+8jTJ762ttfKP210dpIEjeCKk=",
+    "timestampUtcMs": "2026-09-03T07:18:56.520Z",
+    "action": {
+      "type": "SET_TITLE",
+      "input": {
+        "title": "Ordinals are local to each reactor, so the poll exchange carries two frames of reference and ackOrdinal must be expressed in the client's ordinals",
+        "updatedAt": "2026-09-03T07:18:56.520Z"
+      },
+      "timestampUtcMs": "2026-09-03T07:18:56.520Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "",
+    "timestampUtcMs": "2026-09-03T07:18:55.041Z",
+    "action": {
+      "type": "UPGRADE_DOCUMENT",
+      "input": {
+        "model": "bai/knowledge-note",
+        "toVersion": 1,
+        "documentId": "936ddc46-3b5a-40d1-b69f-6a3f6c3c6b8f",
+        "fromVersion": 0,
+        "initialState": {
+          "auth": {
+            "grants": [],
+            "version": 0
+          },
+          "local": {
+            "lastViewedAt": null,
+            "personalTags": []
+          },
+          "global": {
+            "links": [],
+            "model": null,
+            "scope": null,
+            "title": null,
+            "editor": null,
+            "inputs": [],
+            "models": [],
+            "status": "DRAFT",
+            "topics": [],
+            "content": null,
+            "context": null,
+            "modelId": null,
+            "modules": [],
+            "outputs": [],
+            "version": null,
+            "computes": null,
+            "filePath": null,
+            "noteType": null,
+            "severity": null,
+            "hooksUsed": [],
+            "rootCause": null,
+            "confidence": null,
+            "consumedBy": [],
+            "provenance": null,
+            "sourceType": null,
+            "targetType": null,
+            "cardinality": null,
+            "description": null,
+            "alternatives": [],
+            "consequences": [],
+            "errorMessage": null,
+            "relationType": null,
+            "correctPattern": null,
+            "decisionStatus": null,
+            "dispatchTargets": [],
+            "lifecycleEvents": []
+          },
+          "document": {
+            "hash": {
+              "encoding": "base64",
+              "algorithm": "sha1"
+            },
+            "version": 1
+          }
+        }
+      },
+      "timestampUtcMs": "2026-09-03T07:18:55.041Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "ySqdtjbDoEk7ok+Xt3ZFeMf4lxw=",
+    "timestampUtcMs": "2026-09-03T07:18:56.520Z",
+    "action": {
+      "type": "SET_DESCRIPTION",
+      "input": {
+        "updatedAt": "2026-09-03T07:18:56.520Z",
+        "description": "outboxAck and outboxLatest are the switchboard's ordinals; the response's ackOrdinal is the client's and envelope ordinals the switchboard's. Client ordinals must survive the push path."
+      },
+      "timestampUtcMs": "2026-09-03T07:18:56.520Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "",
+    "timestampUtcMs": "2026-09-03T07:21:03.129Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "metadata": {
+          "reason": "Extracted from packages/reactor/src/sync/design.md at v6.2.2-dev.74 \u2014 Ordinal Semantics",
+          "confidence": "grounded"
+        },
+        "sourceId": "936ddc46-3b5a-40d1-b69f-6a3f6c3c6b8f",
+        "targetId": "badfd6db-33c2-4612-bcff-d37d2159f0a7",
+        "relationshipType": "DERIVED_FROM"
+      },
+      "timestampUtcMs": "2026-09-03T07:21:03.129Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "aczapJwCI2gQhGRKsY9/ZFOX8J0=",
+    "timestampUtcMs": "2026-09-03T07:18:56.520Z",
+    "action": {
+      "type": "SET_NOTE_TYPE",
+      "input": {
+        "noteType": "ARCHITECTURE",
+        "updatedAt": "2026-09-03T07:18:56.520Z"
+      },
+      "timestampUtcMs": "2026-09-03T07:18:56.520Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "",
+    "timestampUtcMs": "2026-09-03T07:21:03.583Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "metadata": {
+          "reason": "Collection cursors are ordinals, and this note says whose ordinals they are on each side of the exchange",
+          "confidence": "grounded"
+        },
+        "sourceId": "936ddc46-3b5a-40d1-b69f-6a3f6c3c6b8f",
+        "targetId": "562d84eb-ef1d-40b7-81b0-b6b7438544e1",
+        "relationshipType": "BUILDS_ON"
+      },
+      "timestampUtcMs": "2026-09-03T07:21:03.583Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "pjdysd5fRXEXEJdPKbWjcNtrl/A=",
+    "timestampUtcMs": "2026-09-03T07:18:56.520Z",
+    "action": {
+      "type": "SET_CONTENT",
+      "input": {
+        "content": "Each reactor has its own operation index and assigns monotonically increasing ordinals as operations commit, so **the same logical operation has different ordinals on different reactors.** `pollSyncEnvelopes` therefore mixes two frames of reference in one exchange:\n\n| Field | Direction | Whose ordinals | Purpose |\n| --- | --- | --- | --- |\n| `outboxAck` (request) | client \u2192 switchboard | **switchboard's** | client acknowledges switchboard outbox operations it applied |\n| `outboxLatest` (request) | client \u2192 switchboard | **switchboard's** | highest switchboard ordinal the client has seen |\n| `ackOrdinal` (response) | switchboard \u2192 client | **client's** | switchboard acknowledges client-pushed operations it applied |\n| envelope ordinals (response) | switchboard \u2192 client | **switchboard's** | ordinals on outbox operations for the client to track |\n\nThe asymmetry is forced, not accidental. `ackOrdinal` must be in the client's ordinals because the client uses it to trim its own outbox (`trimMailboxFromAckOrdinal`), and those outbox items carry ordinals from the client's index. `outboxAck` must be in the switchboard's ordinals because the switchboard uses it to trim *its* outbox.\n\nThe requirement that falls out: **the client's ordinals must be preserved through the push path** (`pushSyncEnvelopes`), so the switchboard's inbox mailbox can track them and return a meaningful `ackOrdinal`. An implementation that renumbered arriving operations to local ordinals on ingest would break the acknowledgement in a way that looks like a stuck outbox.\n\n## Provenance\n- `packages/reactor/src/sync/design.md` \u2014 Ordinal Semantics\n\n_Extracted from the Powerhouse repository at **v6.2.2-dev.74**._",
+        "updatedAt": "2026-09-03T07:18:56.520Z"
+      },
+      "timestampUtcMs": "2026-09-03T07:18:56.520Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "",
+    "timestampUtcMs": "2026-09-03T07:21:04.023Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "metadata": {
+          "reason": "These are the fields the two channel implementations exchange in the four flows",
+          "confidence": "grounded"
+        },
+        "sourceId": "936ddc46-3b5a-40d1-b69f-6a3f6c3c6b8f",
+        "targetId": "9c453091-8c7b-4210-af2f-600fead66af7",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-09-03T07:21:04.023Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "7Z+2F71mIPAgJ33FuEo/6kc9buo=",
+    "timestampUtcMs": "2026-09-03T07:18:56.520Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "8e78966f-145c-43cc-92aa-e7280ca6b140",
+        "name": "reactor-sync"
+      },
+      "timestampUtcMs": "2026-09-03T07:18:56.520Z"
+    }
+  },
+  {
+    "index": 5,
+    "hash": "",
+    "timestampUtcMs": "2026-09-03T07:21:04.507Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "metadata": {
+          "reason": "The Swarm channel batches ordinals into SyncOperations the same way, so the local-ordinal caveat applies to any transport that acknowledges by ordinal",
+          "confidence": "established"
+        },
+        "sourceId": "936ddc46-3b5a-40d1-b69f-6a3f6c3c6b8f",
+        "targetId": "50a6a870-f29e-4164-820a-5d074f7443d7",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-09-03T07:21:04.507Z"
+    }
+  },
+  {
+    "index": 5,
+    "hash": "OgrMX8yDXaxtBerqF5BdzmZLOfk=",
+    "timestampUtcMs": "2026-09-03T07:18:56.520Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "29fe0ff7-5576-4e32-ad4e-1cad1ccadbfc",
+        "name": "ordinals"
+      },
+      "timestampUtcMs": "2026-09-03T07:18:56.520Z"
+    }
+  },
+  {
+    "index": 6,
+    "hash": "",
+    "timestampUtcMs": "2026-09-03T07:22:55.814Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "metadata": {
+          "reason": "Extracted from packages/reactor/src/sync/design.md at v6.2.2-dev.74 \u2014 Ordinal Semantics",
+          "confidence": "grounded"
+        },
+        "sourceId": "936ddc46-3b5a-40d1-b69f-6a3f6c3c6b8f",
+        "targetId": "badfd6db-33c2-4612-bcff-d37d2159f0a7",
+        "relationshipType": "DERIVED_FROM"
+      },
+      "timestampUtcMs": "2026-09-03T07:22:55.814Z"
+    }
+  },
+  {
+    "index": 6,
+    "hash": "XD069QB9SwXOfom1vUWzkzanzek=",
+    "timestampUtcMs": "2026-09-03T07:18:56.520Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "b8cc259c-f1b2-46a6-8a21-f47c3248f944",
+        "name": "gql-channel"
+      },
+      "timestampUtcMs": "2026-09-03T07:18:56.520Z"
+    }
+  },
+  {
+    "index": 7,
+    "hash": "",
+    "timestampUtcMs": "2026-09-03T07:22:56.266Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "metadata": {
+          "reason": "Collection cursors are ordinals, and this note says whose ordinals they are on each side of the exchange",
+          "confidence": "grounded"
+        },
+        "sourceId": "936ddc46-3b5a-40d1-b69f-6a3f6c3c6b8f",
+        "targetId": "562d84eb-ef1d-40b7-81b0-b6b7438544e1",
+        "relationshipType": "BUILDS_ON"
+      },
+      "timestampUtcMs": "2026-09-03T07:22:56.266Z"
+    }
+  },
+  {
+    "index": 7,
+    "hash": "hsDKquxziXpuGMDuQmSpQ/++QH8=",
+    "timestampUtcMs": "2026-09-03T07:18:56.520Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "134898d1-2ec9-4eb5-a8ec-652ae955cbb9",
+        "name": "gotchas"
+      },
+      "timestampUtcMs": "2026-09-03T07:18:56.520Z"
+    }
+  },
+  {
+    "index": 8,
+    "hash": "",
+    "timestampUtcMs": "2026-09-03T07:22:56.744Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "metadata": {
+          "reason": "These are the fields the two channel implementations exchange in the four flows",
+          "confidence": "grounded"
+        },
+        "sourceId": "936ddc46-3b5a-40d1-b69f-6a3f6c3c6b8f",
+        "targetId": "9c453091-8c7b-4210-af2f-600fead66af7",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-09-03T07:22:56.744Z"
+    }
+  },
+  {
+    "index": 8,
+    "hash": "HCSIzgeXBajesdYzS18pesiEQK8=",
+    "timestampUtcMs": "2026-09-03T07:18:56.520Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "version",
+        "value": "v6.2.2-dev.74",
+        "updatedAt": "2026-09-03T07:18:56.520Z"
+      },
+      "timestampUtcMs": "2026-09-03T07:18:56.520Z"
+    }
+  },
+  {
+    "index": 9,
+    "hash": "",
+    "timestampUtcMs": "2026-09-03T07:22:57.188Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "metadata": {
+          "reason": "The Swarm channel batches ordinals into SyncOperations the same way, so the local-ordinal caveat applies to any transport that acknowledges by ordinal",
+          "confidence": "established"
+        },
+        "sourceId": "936ddc46-3b5a-40d1-b69f-6a3f6c3c6b8f",
+        "targetId": "50a6a870-f29e-4164-820a-5d074f7443d7",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-09-03T07:22:57.188Z"
+    }
+  },
+  {
+    "index": 9,
+    "hash": "W14U56vBP+OEfHKCIpX7643GAFE=",
+    "timestampUtcMs": "2026-09-03T07:18:56.520Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "filePath",
+        "value": "packages/reactor/src/sync/design.md",
+        "updatedAt": "2026-09-03T07:18:56.520Z"
+      },
+      "timestampUtcMs": "2026-09-03T07:18:56.520Z"
+    }
+  },
+  {
+    "index": 10,
+    "hash": "XCCiwVNezrUa0zFCvrK3d12/TXk=",
+    "timestampUtcMs": "2026-09-03T07:18:59.660Z",
+    "action": {
+      "type": "SET_PROVENANCE",
+      "input": {
+        "author": "knowledge-agent",
+        "createdAt": "2026-09-03T07:18:59.660Z",
+        "sourceOrigin": "DERIVED"
+      },
+      "timestampUtcMs": "2026-09-03T07:18:59.660Z"
+    }
+  },
+  {
+    "index": 11,
+    "hash": "Rf2D2V/lkdz5ae4mGJCX6lTp+Q0=",
+    "timestampUtcMs": "2026-09-03T07:19:00.176Z",
+    "action": {
+      "type": "SUBMIT_FOR_REVIEW",
+      "input": {
+        "id": "5b68feef-6b71-4dad-92b3-3c35c4e8f59e",
+        "actor": "knowledge-agent",
+        "comment": "extracted from packages/reactor/src/sync/design.md at v6.2.2-dev.74",
+        "timestamp": "2026-09-03T07:19:00.175Z"
+      },
+      "timestampUtcMs": "2026-09-03T07:19:00.176Z"
+    }
+  },
+  {
+    "index": 12,
+    "hash": "7GbwoDhoiODSjnNfBcDp/lrkgMg=",
+    "timestampUtcMs": "2026-09-03T07:19:00.682Z",
+    "action": {
+      "type": "APPROVE_NOTE",
+      "input": {
+        "id": "7eb94594-a105-4f8e-a482-631783762415",
+        "actor": "liberuum",
+        "comment": "claim checked against the cited file at the pinned tag",
+        "timestamp": "2026-09-03T07:19:00.682Z"
+      },
+      "timestampUtcMs": "2026-09-03T07:19:00.682Z"
+    }
+  },
+  {
+    "index": 13,
+    "hash": "X5+e9VyyHw9bYJT/ezlAdN1cOhY=",
+    "timestampUtcMs": "2026-09-03T07:22:23.923Z",
+    "action": {
+      "type": "SET_TITLE",
+      "input": {
+        "title": "Ordinals are local to each reactor, so the poll exchange carries two frames of reference and ackOrdinal must be expressed in the client's ordinals",
+        "updatedAt": "2026-09-03T07:22:23.923Z"
+      },
+      "timestampUtcMs": "2026-09-03T07:22:23.923Z"
+    }
+  },
+  {
+    "index": 14,
+    "hash": "X5+e9VyyHw9bYJT/ezlAdN1cOhY=",
+    "timestampUtcMs": "2026-09-03T07:22:23.923Z",
+    "action": {
+      "type": "SET_DESCRIPTION",
+      "input": {
+        "updatedAt": "2026-09-03T07:22:23.923Z",
+        "description": "outboxAck and outboxLatest are the switchboard's ordinals; the response's ackOrdinal is the client's and envelope ordinals the switchboard's. Client ordinals must survive the push path."
+      },
+      "timestampUtcMs": "2026-09-03T07:22:23.923Z"
+    }
+  },
+  {
+    "index": 15,
+    "hash": "X5+e9VyyHw9bYJT/ezlAdN1cOhY=",
+    "timestampUtcMs": "2026-09-03T07:22:23.923Z",
+    "action": {
+      "type": "SET_NOTE_TYPE",
+      "input": {
+        "noteType": "ARCHITECTURE",
+        "updatedAt": "2026-09-03T07:22:23.923Z"
+      },
+      "timestampUtcMs": "2026-09-03T07:22:23.923Z"
+    }
+  },
+  {
+    "index": 16,
+    "hash": "X5+e9VyyHw9bYJT/ezlAdN1cOhY=",
+    "timestampUtcMs": "2026-09-03T07:22:23.923Z",
+    "action": {
+      "type": "SET_CONTENT",
+      "input": {
+        "content": "Each reactor has its own operation index and assigns monotonically increasing ordinals as operations commit, so **the same logical operation has different ordinals on different reactors.** `pollSyncEnvelopes` therefore mixes two frames of reference in one exchange:\n\n| Field | Direction | Whose ordinals | Purpose |\n| --- | --- | --- | --- |\n| `outboxAck` (request) | client \u2192 switchboard | **switchboard's** | client acknowledges switchboard outbox operations it applied |\n| `outboxLatest` (request) | client \u2192 switchboard | **switchboard's** | highest switchboard ordinal the client has seen |\n| `ackOrdinal` (response) | switchboard \u2192 client | **client's** | switchboard acknowledges client-pushed operations it applied |\n| envelope ordinals (response) | switchboard \u2192 client | **switchboard's** | ordinals on outbox operations for the client to track |\n\nThe asymmetry is forced, not accidental. `ackOrdinal` must be in the client's ordinals because the client uses it to trim its own outbox (`trimMailboxFromAckOrdinal`), and those outbox items carry ordinals from the client's index. `outboxAck` must be in the switchboard's ordinals because the switchboard uses it to trim *its* outbox.\n\nThe requirement that falls out: **the client's ordinals must be preserved through the push path** (`pushSyncEnvelopes`), so the switchboard's inbox mailbox can track them and return a meaningful `ackOrdinal`. An implementation that renumbered arriving operations to local ordinals on ingest would break the acknowledgement in a way that looks like a stuck outbox.\n\n## Provenance\n- `packages/reactor/src/sync/design.md` \u2014 Ordinal Semantics\n\n_Extracted from the Powerhouse repository at **v6.2.2-dev.74**._",
+        "updatedAt": "2026-09-03T07:22:23.923Z"
+      },
+      "timestampUtcMs": "2026-09-03T07:22:23.923Z"
+    }
+  },
+  {
+    "index": 17,
+    "hash": "X5+e9VyyHw9bYJT/ezlAdN1cOhY=",
+    "timestampUtcMs": "2026-09-03T07:22:23.923Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "version",
+        "value": "v6.2.2-dev.74",
+        "updatedAt": "2026-09-03T07:22:23.923Z"
+      },
+      "timestampUtcMs": "2026-09-03T07:22:23.923Z"
+    }
+  },
+  {
+    "index": 18,
+    "hash": "X5+e9VyyHw9bYJT/ezlAdN1cOhY=",
+    "timestampUtcMs": "2026-09-03T07:22:23.923Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "filePath",
+        "value": "packages/reactor/src/sync/design.md",
+        "updatedAt": "2026-09-03T07:22:23.923Z"
+      },
+      "timestampUtcMs": "2026-09-03T07:22:23.923Z"
+    }
+  }
+]

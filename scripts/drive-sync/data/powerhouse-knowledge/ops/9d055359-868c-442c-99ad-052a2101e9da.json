@@ -1,0 +1,500 @@
+[
+  {
+    "index": 0,
+    "hash": "",
+    "timestampUtcMs": "2026-09-03T07:29:03.117Z",
+    "action": {
+      "type": "CREATE_DOCUMENT",
+      "input": {
+        "meta": {},
+        "name": "browser-client-adr-accepted",
+        "slug": "",
+        "model": "bai/knowledge-note",
+        "branch": "main",
+        "signing": {
+          "nonce": "",
+          "publicKey": {},
+          "signature": "9d055359-868c-442c-99ad-052a2101e9da",
+          "documentType": "bai/knowledge-note",
+          "createdAtUtcIso": "2026-09-03T07:29:03.117Z"
+        },
+        "version": 0,
+        "documentId": "9d055359-868c-442c-99ad-052a2101e9da",
+        "protocolVersions": {
+          "base-reducer": 2
+        }
+      },
+      "timestampUtcMs": "2026-09-03T07:29:03.117Z"
+    }
+  },
+  {
+    "index": 0,
+    "hash": "ICTPcXmWWV9lgc4jPAJvxz/RkFI=",
+    "timestampUtcMs": "2026-09-03T07:29:04.491Z",
+    "action": {
+      "type": "SET_TITLE",
+      "input": {
+        "title": "ADR 0002 is Accepted and its MVP shipped: the reactor-browser hooks were retyped to a swappable IReactorBrowserClient so a webapp can skip the full reactor",
+        "updatedAt": "2026-09-03T07:29:04.491Z"
+      },
+      "timestampUtcMs": "2026-09-03T07:29:04.491Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "",
+    "timestampUtcMs": "2026-09-03T07:29:03.117Z",
+    "action": {
+      "type": "UPGRADE_DOCUMENT",
+      "input": {
+        "model": "bai/knowledge-note",
+        "toVersion": 1,
+        "documentId": "9d055359-868c-442c-99ad-052a2101e9da",
+        "fromVersion": 0,
+        "initialState": {
+          "auth": {
+            "grants": [],
+            "version": 0
+          },
+          "local": {
+            "lastViewedAt": null,
+            "personalTags": []
+          },
+          "global": {
+            "links": [],
+            "model": null,
+            "scope": null,
+            "title": null,
+            "editor": null,
+            "inputs": [],
+            "models": [],
+            "status": "DRAFT",
+            "topics": [],
+            "content": null,
+            "context": null,
+            "modelId": null,
+            "modules": [],
+            "outputs": [],
+            "version": null,
+            "computes": null,
+            "filePath": null,
+            "noteType": null,
+            "severity": null,
+            "hooksUsed": [],
+            "rootCause": null,
+            "confidence": null,
+            "consumedBy": [],
+            "provenance": null,
+            "sourceType": null,
+            "targetType": null,
+            "cardinality": null,
+            "description": null,
+            "alternatives": [],
+            "consequences": [],
+            "errorMessage": null,
+            "relationType": null,
+            "correctPattern": null,
+            "decisionStatus": null,
+            "dispatchTargets": [],
+            "lifecycleEvents": []
+          },
+          "document": {
+            "hash": {
+              "encoding": "base64",
+              "algorithm": "sha1"
+            },
+            "version": 1
+          }
+        }
+      },
+      "timestampUtcMs": "2026-09-03T07:29:03.117Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "QzJaEZoPwELT70/IYbiaexZGkLw=",
+    "timestampUtcMs": "2026-09-03T07:29:04.491Z",
+    "action": {
+      "type": "SET_DESCRIPTION",
+      "input": {
+        "updatedAt": "2026-09-03T07:29:04.491Z",
+        "description": "Before it, a light RemoteDocumentController path had no persistence, no offline model and no shared cache; adopting the ergonomic hooks meant adopting PGlite, a job queue and the sync manager."
+      },
+      "timestampUtcMs": "2026-09-03T07:29:04.491Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "",
+    "timestampUtcMs": "2026-09-03T07:30:16.861Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "metadata": {
+          "reason": "Extracted from docs/adr/0002-reactor-browser-client-interface.md at v6.2.2-dev.74 \u2014 Status and implementation notes; Context",
+          "confidence": "grounded"
+        },
+        "sourceId": "9d055359-868c-442c-99ad-052a2101e9da",
+        "targetId": "d4009255-3f1f-4e06-872a-9f8142896eea",
+        "relationshipType": "DERIVED_FROM"
+      },
+      "timestampUtcMs": "2026-09-03T07:30:16.861Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "aFJeEkvSjepDFifCWJFFgTH3Vsg=",
+    "timestampUtcMs": "2026-09-03T07:29:04.491Z",
+    "action": {
+      "type": "SET_NOTE_TYPE",
+      "input": {
+        "noteType": "DECISION",
+        "updatedAt": "2026-09-03T07:29:04.491Z"
+      },
+      "timestampUtcMs": "2026-09-03T07:29:04.491Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "",
+    "timestampUtcMs": "2026-09-03T07:30:17.475Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "metadata": {
+          "reason": "That note records the six-member Pick as a fact; this one is the decision that created it and the two-path duplication it was meant to end",
+          "confidence": "grounded"
+        },
+        "sourceId": "9d055359-868c-442c-99ad-052a2101e9da",
+        "targetId": "0f228193-a299-4bab-8f34-bb5e9d0b28b7",
+        "relationshipType": "BUILDS_ON"
+      },
+      "timestampUtcMs": "2026-09-03T07:30:17.475Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "pwZDFQBP2ThidZX/JFijogD0LXI=",
+    "timestampUtcMs": "2026-09-03T07:29:04.491Z",
+    "action": {
+      "type": "SET_CONTENT",
+      "input": {
+        "content": "ADR 0002 (**Status: Accepted**, 2026-07-16, decider acaldas) is the decision behind `packages/reactor-browser/src/graphql-client/`. Its own implementation note records that **the MVP shipped**, with batch signing, local-first writes and point-in-time reads deferred.\n\nThe context is the problem it removed. `@powerhousedao/reactor-browser` shipped **two unrelated ways** for a React app to work with document models:\n\n1. the **full-reactor path** \u2014 hooks reading and writing through `window.ph.reactorClient`, an `IReactorClient`, with PGlite, a job queue, the sync manager and its GraphQL channels and a document indexer behind it. Local-first, but heavy; used by Connect and Studio.\n2. the **`RemoteDocumentController` path** \u2014 a lightweight wrapper around a `PHDocumentController` syncing over plain GraphQL (`MutateDocument` / `GetDocument` / `GetDocumentOperations`), used by a plain webapp (and by `vetra.to`).\n\nThe second path had five structural problems that blocked the local-first flow a webapp wants: **no persistence** (state and the pending-action queue lived only in memory, so a refresh lost un-pushed edits), **no offline model** (no reconnect flush, no durable retry), **no shared cache** (two controllers for the same document diverged), **not React friendly** (imperative methods, non-reactive objects), and it **reimplemented sync** on weaker primitives while getting no realtime.\n\nBecause both paths duplicated the same concepts \u2014 a reducer wrapper, an action tracker, a document cache \u2014 in incompatible shapes, a webapp could not adopt `useDocument` / `useDispatch` without adopting the whole reactor. The objective: **one React integration, two interchangeable implementations**, with migration between them a matter of configuration.\n\n## Provenance\n- `docs/adr/0002-reactor-browser-client-interface.md` \u2014 Status and implementation notes; Context\n\n_Extracted from the Powerhouse repository at **v6.2.2-dev.74**._",
+        "updatedAt": "2026-09-03T07:29:04.491Z"
+      },
+      "timestampUtcMs": "2026-09-03T07:29:04.491Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "",
+    "timestampUtcMs": "2026-09-03T07:30:17.964Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "metadata": {
+          "reason": "The deliberate exclusions from the interface are why the drive, node, job and package hooks do not work under the light client",
+          "confidence": "grounded"
+        },
+        "sourceId": "9d055359-868c-442c-99ad-052a2101e9da",
+        "targetId": "df244809-9adf-4f2f-8fb8-1d19fb743520",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-09-03T07:30:17.964Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "BBIULeqzrCZMeWYt9mn/0YPSaSI=",
+    "timestampUtcMs": "2026-09-03T07:29:04.491Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "a7fa4441-40ad-4a8a-a71d-a2e767d8e630",
+        "name": "reactor-browser"
+      },
+      "timestampUtcMs": "2026-09-03T07:29:04.491Z"
+    }
+  },
+  {
+    "index": 5,
+    "hash": "",
+    "timestampUtcMs": "2026-09-03T07:30:18.437Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "metadata": {
+          "reason": "The read and write path decisions are the substance of the same ADR",
+          "confidence": "grounded"
+        },
+        "sourceId": "9d055359-868c-442c-99ad-052a2101e9da",
+        "targetId": "fcefdde1-5ef2-4977-a708-8f431ac612d3",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-09-03T07:30:18.437Z"
+    }
+  },
+  {
+    "index": 5,
+    "hash": "QaKY+RDBXJk0gDorJKUXCAGlJ8U=",
+    "timestampUtcMs": "2026-09-03T07:29:04.491Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "a3bc6822-ab19-4f3a-a667-7d02d41dec95",
+        "name": "adr"
+      },
+      "timestampUtcMs": "2026-09-03T07:29:04.491Z"
+    }
+  },
+  {
+    "index": 6,
+    "hash": "",
+    "timestampUtcMs": "2026-09-03T07:31:24.247Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "metadata": {
+          "reason": "Extracted from docs/adr/0002-reactor-browser-client-interface.md at v6.2.2-dev.74 \u2014 Status and implementation notes; Context",
+          "confidence": "grounded"
+        },
+        "sourceId": "9d055359-868c-442c-99ad-052a2101e9da",
+        "targetId": "d4009255-3f1f-4e06-872a-9f8142896eea",
+        "relationshipType": "DERIVED_FROM"
+      },
+      "timestampUtcMs": "2026-09-03T07:31:24.247Z"
+    }
+  },
+  {
+    "index": 6,
+    "hash": "j/SY6URizSBGXiE0Wyn/vlkyUMk=",
+    "timestampUtcMs": "2026-09-03T07:29:04.491Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "4cda7d1d-2998-4a40-af48-83157695829d",
+        "name": "architecture"
+      },
+      "timestampUtcMs": "2026-09-03T07:29:04.491Z"
+    }
+  },
+  {
+    "index": 7,
+    "hash": "",
+    "timestampUtcMs": "2026-09-03T07:31:24.713Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "metadata": {
+          "reason": "That note records the six-member Pick as a fact; this one is the decision that created it and the two-path duplication it was meant to end",
+          "confidence": "grounded"
+        },
+        "sourceId": "9d055359-868c-442c-99ad-052a2101e9da",
+        "targetId": "0f228193-a299-4bab-8f34-bb5e9d0b28b7",
+        "relationshipType": "BUILDS_ON"
+      },
+      "timestampUtcMs": "2026-09-03T07:31:24.713Z"
+    }
+  },
+  {
+    "index": 7,
+    "hash": "tKhX5/eGYZN4qKVWpwNC0SJwpMk=",
+    "timestampUtcMs": "2026-09-03T07:29:04.491Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "8b88fdbf-748e-4c01-a9f5-472e8b808d47",
+        "name": "graphql-client"
+      },
+      "timestampUtcMs": "2026-09-03T07:29:04.491Z"
+    }
+  },
+  {
+    "index": 8,
+    "hash": "",
+    "timestampUtcMs": "2026-09-03T07:31:25.195Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "metadata": {
+          "reason": "The deliberate exclusions from the interface are why the drive, node, job and package hooks do not work under the light client",
+          "confidence": "grounded"
+        },
+        "sourceId": "9d055359-868c-442c-99ad-052a2101e9da",
+        "targetId": "df244809-9adf-4f2f-8fb8-1d19fb743520",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-09-03T07:31:25.195Z"
+    }
+  },
+  {
+    "index": 8,
+    "hash": "vxokcI3v3xDgpscl9ry5OqPAApo=",
+    "timestampUtcMs": "2026-09-03T07:29:04.491Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "version",
+        "value": "v6.2.2-dev.74",
+        "updatedAt": "2026-09-03T07:29:04.491Z"
+      },
+      "timestampUtcMs": "2026-09-03T07:29:04.491Z"
+    }
+  },
+  {
+    "index": 9,
+    "hash": "",
+    "timestampUtcMs": "2026-09-03T07:31:25.644Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "metadata": {
+          "reason": "The read and write path decisions are the substance of the same ADR",
+          "confidence": "grounded"
+        },
+        "sourceId": "9d055359-868c-442c-99ad-052a2101e9da",
+        "targetId": "fcefdde1-5ef2-4977-a708-8f431ac612d3",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-09-03T07:31:25.644Z"
+    }
+  },
+  {
+    "index": 9,
+    "hash": "towv3SZ5V5d0Tf4vhG3IXbjQWuQ=",
+    "timestampUtcMs": "2026-09-03T07:29:04.491Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "filePath",
+        "value": "docs/adr/0002-reactor-browser-client-interface.md",
+        "updatedAt": "2026-09-03T07:29:04.491Z"
+      },
+      "timestampUtcMs": "2026-09-03T07:29:04.491Z"
+    }
+  },
+  {
+    "index": 10,
+    "hash": "Q2kP5A1SUeunn64GiSTbK7aPndo=",
+    "timestampUtcMs": "2026-09-03T07:29:07.122Z",
+    "action": {
+      "type": "SET_PROVENANCE",
+      "input": {
+        "author": "knowledge-agent",
+        "createdAt": "2026-09-03T07:29:07.122Z",
+        "sourceOrigin": "DERIVED"
+      },
+      "timestampUtcMs": "2026-09-03T07:29:07.122Z"
+    }
+  },
+  {
+    "index": 11,
+    "hash": "cBoH4pndQ62O/n1P4WzIXM7j6is=",
+    "timestampUtcMs": "2026-09-03T07:29:07.663Z",
+    "action": {
+      "type": "SUBMIT_FOR_REVIEW",
+      "input": {
+        "id": "cbfa3453-303c-4f5b-85ea-5ca20f6ca41d",
+        "actor": "knowledge-agent",
+        "comment": "extracted from docs/adr/0002-reactor-browser-client-interface.md at v6.2.2-dev.74",
+        "timestamp": "2026-09-03T07:29:07.663Z"
+      },
+      "timestampUtcMs": "2026-09-03T07:29:07.663Z"
+    }
+  },
+  {
+    "index": 12,
+    "hash": "q+oBleByNbes0gy+fyrIQY4gd68=",
+    "timestampUtcMs": "2026-09-03T07:29:08.160Z",
+    "action": {
+      "type": "APPROVE_NOTE",
+      "input": {
+        "id": "64adca3b-54a3-4bd5-80a1-3004b9b41287",
+        "actor": "liberuum",
+        "comment": "claim checked against the cited file at the pinned tag",
+        "timestamp": "2026-09-03T07:29:08.160Z"
+      },
+      "timestampUtcMs": "2026-09-03T07:29:08.160Z"
+    }
+  },
+  {
+    "index": 13,
+    "hash": "zihRNIHmTAOA8OJEH1IRpO8nfDQ=",
+    "timestampUtcMs": "2026-09-03T07:31:10.392Z",
+    "action": {
+      "type": "SET_TITLE",
+      "input": {
+        "title": "ADR 0002 is Accepted and its MVP shipped: the reactor-browser hooks were retyped to a swappable IReactorBrowserClient so a webapp can skip the full reactor",
+        "updatedAt": "2026-09-03T07:31:10.392Z"
+      },
+      "timestampUtcMs": "2026-09-03T07:31:10.392Z"
+    }
+  },
+  {
+    "index": 14,
+    "hash": "zihRNIHmTAOA8OJEH1IRpO8nfDQ=",
+    "timestampUtcMs": "2026-09-03T07:31:10.392Z",
+    "action": {
+      "type": "SET_DESCRIPTION",
+      "input": {
+        "updatedAt": "2026-09-03T07:31:10.392Z",
+        "description": "Before it, a light RemoteDocumentController path had no persistence, no offline model and no shared cache; adopting the ergonomic hooks meant adopting PGlite, a job queue and the sync manager."
+      },
+      "timestampUtcMs": "2026-09-03T07:31:10.392Z"
+    }
+  },
+  {
+    "index": 15,
+    "hash": "zihRNIHmTAOA8OJEH1IRpO8nfDQ=",
+    "timestampUtcMs": "2026-09-03T07:31:10.392Z",
+    "action": {
+      "type": "SET_NOTE_TYPE",
+      "input": {
+        "noteType": "DECISION",
+        "updatedAt": "2026-09-03T07:31:10.392Z"
+      },
+      "timestampUtcMs": "2026-09-03T07:31:10.392Z"
+    }
+  },
+  {
+    "index": 16,
+    "hash": "zihRNIHmTAOA8OJEH1IRpO8nfDQ=",
+    "timestampUtcMs": "2026-09-03T07:31:10.392Z",
+    "action": {
+      "type": "SET_CONTENT",
+      "input": {
+        "content": "ADR 0002 (**Status: Accepted**, 2026-07-16, decider acaldas) is the decision behind `packages/reactor-browser/src/graphql-client/`. Its own implementation note records that **the MVP shipped**, with batch signing, local-first writes and point-in-time reads deferred.\n\nThe context is the problem it removed. `@powerhousedao/reactor-browser` shipped **two unrelated ways** for a React app to work with document models:\n\n1. the **full-reactor path** \u2014 hooks reading and writing through `window.ph.reactorClient`, an `IReactorClient`, with PGlite, a job queue, the sync manager and its GraphQL channels and a document indexer behind it. Local-first, but heavy; used by Connect and Studio.\n2. the **`RemoteDocumentController` path** \u2014 a lightweight wrapper around a `PHDocumentController` syncing over plain GraphQL (`MutateDocument` / `GetDocument` / `GetDocumentOperations`), used by a plain webapp (and by `vetra.to`).\n\nThe second path had five structural problems that blocked the local-first flow a webapp wants: **no persistence** (state and the pending-action queue lived only in memory, so a refresh lost un-pushed edits), **no offline model** (no reconnect flush, no durable retry), **no shared cache** (two controllers for the same document diverged), **not React friendly** (imperative methods, non-reactive objects), and it **reimplemented sync** on weaker primitives while getting no realtime.\n\nBecause both paths duplicated the same concepts \u2014 a reducer wrapper, an action tracker, a document cache \u2014 in incompatible shapes, a webapp could not adopt `useDocument` / `useDispatch` without adopting the whole reactor. The objective: **one React integration, two interchangeable implementations**, with migration between them a matter of configuration.\n\n## Provenance\n- `docs/adr/0002-reactor-browser-client-interface.md` \u2014 Status and implementation notes; Context\n\n_Extracted from the Powerhouse repository at **v6.2.2-dev.74**._",
+        "updatedAt": "2026-09-03T07:31:10.392Z"
+      },
+      "timestampUtcMs": "2026-09-03T07:31:10.392Z"
+    }
+  },
+  {
+    "index": 17,
+    "hash": "zihRNIHmTAOA8OJEH1IRpO8nfDQ=",
+    "timestampUtcMs": "2026-09-03T07:31:10.392Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "version",
+        "value": "v6.2.2-dev.74",
+        "updatedAt": "2026-09-03T07:31:10.392Z"
+      },
+      "timestampUtcMs": "2026-09-03T07:31:10.392Z"
+    }
+  },
+  {
+    "index": 18,
+    "hash": "zihRNIHmTAOA8OJEH1IRpO8nfDQ=",
+    "timestampUtcMs": "2026-09-03T07:31:10.392Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "filePath",
+        "value": "docs/adr/0002-reactor-browser-client-interface.md",
+        "updatedAt": "2026-09-03T07:31:10.392Z"
+      },
+      "timestampUtcMs": "2026-09-03T07:31:10.392Z"
+    }
+  }
+]

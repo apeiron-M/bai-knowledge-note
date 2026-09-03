@@ -1,0 +1,115 @@
+{
+  "links": [
+    {
+      "id": "lnk-4f4cb8ea-bui",
+      "linkType": "BUILDS_ON",
+      "targetDocumentId": "4f4cb8ea-234a-4724-a857-bf8d6be037b2",
+      "targetTitle": "remote-controller-batch-vs-streaming",
+      "reason": "The conflict check runs at push time, so which mode is in use decides how often it happens and how much work a rebase re-applies",
+      "confidence": "grounded"
+    },
+    {
+      "id": "lnk-7f914066-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "7f914066-a131-4968-a42c-a7d58158cc8b",
+      "targetTitle": "Package \u203a reactor-browser \u203a remote-controller \u2014 Remote Document Controller",
+      "reason": "Extracted from packages/reactor-browser/src/remote-controller/README.md at v6.2.2-dev.74 \u2014 Conflict handling (reject, rebase, custom merge handler); Signing",
+      "confidence": "grounded"
+    },
+    {
+      "id": "lnk-5ba85b55-con",
+      "linkType": "CONTRADICTS",
+      "targetDocumentId": "5ba85b55-4ac1-4cd5-a9d2-e1855c5b9633",
+      "targetTitle": "operational-reshuffle-vs-crdt-ot",
+      "reason": "The reactor resolves concurrent edits by reshuffling immutable operations, while this controller defaults to last-write-wins and only detects a conflict if the caller opts in",
+      "confidence": "grounded"
+    },
+    {
+      "id": "lnk-8b3fe0f8-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "8b3fe0f8-73ee-4bfc-8904-e9b16708620f",
+      "targetTitle": "stamp-prevophash-prevopindex-before-signing",
+      "reason": "Stamping prevOpHash before signing is the same mechanism, which is why a rebase has to recompute it rather than reuse the signature",
+      "confidence": "grounded"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "RemoteDocumentController does no conflict check by default, so concurrent editors are last-write-wins until onConflict is set to reject, rebase or a custom merge",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "02cd63a3-6476-421a-afc5-10aa3dd9f8f5",
+      "name": "reactor-browser",
+      "topicDocumentId": null
+    },
+    {
+      "id": "3d7a9216-2ebc-4af4-835f-dd2961e66ea0",
+      "name": "conflicts",
+      "topicDocumentId": null
+    },
+    {
+      "id": "6f8ffa99-8fd8-46ab-a4db-dc9b114ee5e2",
+      "name": "signing",
+      "topicDocumentId": null
+    },
+    {
+      "id": "5e6d34e8-d91c-4724-9d7b-e17182702cce",
+      "name": "gotchas",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "**The default is the dangerous one, and it is stated plainly:** \"By default no conflict check is performed (last-write-wins).\" Pull-before-push detection is opt-in through `onConflict`, with three strategies:\n\n- **`\"reject\"`** \u2014 throws a `ConflictError` if the remote gained operations since the last pull. The error carries `err.conflict.remoteOperations` (the new remote ops) and `err.conflict.localActions` (the pending local actions), so the caller can decide.\n- **`\"rebase\"`** \u2014 pulls the latest remote state, then **re-applies the local actions on top**, and the re-applied actions get fresh `prevOpHash` values computed against the updated state.\n- **a custom merge handler** \u2014 a function receiving the conflict details and returning the actions to push; throwing from it aborts.\n\nSigning interacts with this directly. Pass an `ISigner` (a Renown instance's `renown.signer` works) and **each action is signed with the operation's `prevOpHash` before push**, with signatures preserved through the push/pull round trip and readable at `result.operations[0].context?.signer?.signatures[0]`. That is why rebase must recompute `prevOpHash`: a re-applied action signed against the old hash would be signed for a position it no longer occupies.\n\nFor anyone choosing: reject is right when a human should decide, rebase when the actions are order-insensitive, and the custom handler when the merge is domain-specific. Leaving the default in place is only safe for a single-writer document.\n\n## Provenance\n- `packages/reactor-browser/src/remote-controller/README.md` \u2014 Conflict handling (reject, rebase, custom merge handler); Signing\n\n_Extracted from the Powerhouse repository at **v6.2.2-dev.74**._\n\n## Boundary: this is not the reactor's conflict resolution\nDo not read \"last-write-wins\" as a statement about the reactor. Two different layers are in play. Inside the reactor, concurrent edits are merged by **operational reshuffle**: operations are immutable, ordered by timestamp in a merged order, and every replica converges on the same effective stream. Here, in a client that pushes actions over GraphQL, the question is different \u2014 *should I even submit these actions given what the remote gained since I last pulled?* \u2014 and the answer is nothing unless `onConflict` is set.\n\nSo the controller's default risks losing a **local intention** (your actions computed against stale state), not corrupting stored history. A reject or rebase strategy is what makes the intention safe; reshuffle is what makes the log safe.\n",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": "v6.2.2-dev.74",
+  "computes": null,
+  "filePath": "packages/reactor-browser/src/remote-controller/README.md",
+  "noteType": "PATTERN",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "knowledge-agent",
+    "createdAt": "2026-09-03T07:38:39.529Z",
+    "sessionId": null,
+    "updatedAt": "2026-09-03T07:59:26.056Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "reject throws ConflictError carrying remoteOperations and localActions; rebase pulls, re-applies the local actions with fresh prevOpHash values, then pushes. Each action is signed against its.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "dfe1ec9e-dd9b-4615-8e28-2899f0c9af27",
+      "actor": "knowledge-agent",
+      "comment": "extracted from packages/reactor-browser/src/remote-controller/README.md at v6.2.2-dev.74",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-09-03T07:38:40.214Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "00e195a6-1b29-41c3-b873-8dfccce0eecc",
+      "actor": "liberuum",
+      "comment": "claim checked against the cited file at the pinned tag",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-09-03T07:38:40.719Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

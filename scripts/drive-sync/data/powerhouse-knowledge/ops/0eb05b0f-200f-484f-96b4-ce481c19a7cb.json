@@ -1,0 +1,308 @@
+[
+  {
+    "index": 0,
+    "hash": "",
+    "timestampUtcMs": "2026-08-14T12:12:17.063Z",
+    "action": {
+      "type": "CREATE_DOCUMENT",
+      "input": {
+        "meta": {},
+        "name": "ph-generate-extract-migrates-project-to-specs",
+        "slug": "",
+        "model": "bai/knowledge-note",
+        "branch": "main",
+        "signing": {
+          "nonce": "",
+          "publicKey": {},
+          "signature": "0eb05b0f-200f-484f-96b4-ce481c19a7cb",
+          "documentType": "bai/knowledge-note",
+          "createdAtUtcIso": "2026-08-14T12:12:17.063Z"
+        },
+        "version": 0,
+        "documentId": "0eb05b0f-200f-484f-96b4-ce481c19a7cb",
+        "protocolVersions": {
+          "base-reducer": 2
+        }
+      },
+      "timestampUtcMs": "2026-08-14T12:12:17.063Z"
+    }
+  },
+  {
+    "index": 0,
+    "hash": "ZPXsNGBKy7Lsk/palXyHRZrRZmk=",
+    "timestampUtcMs": "2026-08-14T12:35:35.000Z",
+    "action": {
+      "type": "SET_TITLE",
+      "input": {
+        "title": "ph generate all --extract writes a spec document for every existing module instead of generating code",
+        "updatedAt": "2026-08-14T12:35:35.000Z"
+      },
+      "timestampUtcMs": "2026-08-14T12:35:35.000Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "",
+    "timestampUtcMs": "2026-08-14T12:12:17.063Z",
+    "action": {
+      "type": "UPGRADE_DOCUMENT",
+      "input": {
+        "model": "bai/knowledge-note",
+        "toVersion": 1,
+        "documentId": "0eb05b0f-200f-484f-96b4-ce481c19a7cb",
+        "fromVersion": 0,
+        "initialState": {
+          "auth": {
+            "grants": [],
+            "version": 0
+          },
+          "local": {
+            "lastViewedAt": null,
+            "personalTags": []
+          },
+          "global": {
+            "links": [],
+            "model": null,
+            "scope": null,
+            "title": null,
+            "editor": null,
+            "inputs": [],
+            "models": [],
+            "status": "DRAFT",
+            "topics": [],
+            "content": null,
+            "context": null,
+            "modelId": null,
+            "modules": [],
+            "outputs": [],
+            "version": null,
+            "computes": null,
+            "filePath": null,
+            "noteType": null,
+            "severity": null,
+            "hooksUsed": [],
+            "rootCause": null,
+            "confidence": null,
+            "consumedBy": [],
+            "provenance": null,
+            "sourceType": null,
+            "targetType": null,
+            "cardinality": null,
+            "description": null,
+            "alternatives": [],
+            "consequences": [],
+            "errorMessage": null,
+            "relationType": null,
+            "correctPattern": null,
+            "decisionStatus": null,
+            "dispatchTargets": [],
+            "lifecycleEvents": []
+          },
+          "document": {
+            "hash": {
+              "encoding": "base64",
+              "algorithm": "sha1"
+            },
+            "version": 1
+          }
+        }
+      },
+      "timestampUtcMs": "2026-08-14T12:12:17.063Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "eNWw24nPCtBEQJSSFFfP3Ss5ScQ=",
+    "timestampUtcMs": "2026-08-14T12:35:35.000Z",
+    "action": {
+      "type": "SET_DESCRIPTION",
+      "input": {
+        "updatedAt": "2026-08-14T12:35:35.000Z",
+        "description": "A one-shot migration to documents-as-source-of-truth: it emits a spec per document model, editor, app, processor and subgraph into specs/<kind>/ and generates nothing."
+      },
+      "timestampUtcMs": "2026-08-14T12:35:35.000Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "",
+    "timestampUtcMs": "2026-08-14T12:38:07.898Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "0eb05b0f-200f-484f-96b4-ce481c19a7cb",
+        "targetId": "817cadfb-12c7-4eea-baca-e78b831606fd",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-08-14T12:38:07.898Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "GVU38IFrMTnemLAeXiHOev9VpHQ=",
+    "timestampUtcMs": "2026-08-14T12:35:35.000Z",
+    "action": {
+      "type": "SET_NOTE_TYPE",
+      "input": {
+        "noteType": "WORKFLOW",
+        "updatedAt": "2026-08-14T12:35:35.000Z"
+      },
+      "timestampUtcMs": "2026-08-14T12:35:35.000Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "",
+    "timestampUtcMs": "2026-08-14T12:38:07.995Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "0eb05b0f-200f-484f-96b4-ce481c19a7cb",
+        "targetId": "ccc35ccd-8646-4748-babf-ef0d0933f07f",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-08-14T12:38:07.995Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "vLEGUd2CmA13b/tga+pODXPMWrk=",
+    "timestampUtcMs": "2026-08-14T12:35:35.000Z",
+    "action": {
+      "type": "SET_CONTENT",
+      "input": {
+        "content": "## The generator run backwards\n\nNormally codegen flows spec \u2192 code. `--extract` / `-x` inverts it: instead of generating code the command reads the existing project and writes a **spec document** for each module it finds. The CLI describes it as a \"one-shot migration to documents-as-source-of-truth\" \u2014 the way a hand-written pre-Vetra project becomes a project Vetra Studio can drive.\n\n```bash\nph generate all --extract        # every module in the project\nph generate editor --extract     # just the editors\nph generate processor -x         # short form\n```\n\n`startGenerateAll` builds a ts-morph project over the source tree, calls `extractAllDocuments(project)`, and saves each of `documentModels`, `editors`, `processors`, `subgraphs` and `apps` \u2014 then **returns before `generateAll` runs**. Extract and generate are mutually exclusive within one invocation; nothing is overwritten in `document-models/` or `editors/`.\n\n## Where the specs land\n\n`saveSpec` writes to a deterministic path: `<projectDir>/specs/<subdir>/<kebab-name>.<ext>.phd`, with one subdirectory per kind \u2014 `specs/document-models/`, `specs/editors/`, `specs/processors/`, `specs/subgraphs/`, `specs/apps/`. Directories are created as needed, the name is kebab-cased from the document header (falling back to `untitled`), and the extension comes from each document type's own utils. Every written path is echoed as `Wrote <path>`.\n\nThe per-module `--extract` flags name their target explicitly, so the mapping is documented on each subcommand: `powerhouse/document-model` specs to `specs/document-models/`, `powerhouse/document-editor` to `specs/editors/`, `powerhouse/app` to `specs/apps/`, `powerhouse/processor` to `specs/processors/`, `powerhouse/subgraph` to `specs/subgraphs/`.\n\nThe point of the round trip: once the specs exist, they are ordinary Powerhouse documents. Drop them into the Vetra drive and `ph vetra --watch` picks up changes to them and regenerates the code \u2014 the project stops being source-first and becomes specification-driven, without a rewrite.\n\n_Source: `clis/ph-cli/src/commands/generate-all.ts`, `clis/ph-cli/src/services/generate-all.ts`, `packages/vetra/codegen/specs.ts`, Powerhouse v6.2.2-dev.45._",
+        "updatedAt": "2026-08-14T12:35:35.000Z"
+      },
+      "timestampUtcMs": "2026-08-14T12:35:35.000Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "9YUY+9NAvMW+KyV+7hT6pDwzqY4=",
+    "timestampUtcMs": "2026-08-14T12:35:35.000Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "version",
+        "value": "v6.2.2-dev.44",
+        "updatedAt": "2026-08-14T12:35:35.000Z"
+      },
+      "timestampUtcMs": "2026-08-14T12:35:35.000Z"
+    }
+  },
+  {
+    "index": 5,
+    "hash": "MB/xqwew4nc0zDxmZ2BxaRLboFw=",
+    "timestampUtcMs": "2026-08-14T12:35:35.000Z",
+    "action": {
+      "type": "SET_PROVENANCE",
+      "input": {
+        "author": "claude",
+        "createdAt": "2026-08-13T14:37:33.000Z",
+        "sourceOrigin": "DERIVED"
+      },
+      "timestampUtcMs": "2026-08-14T12:35:35.000Z"
+    }
+  },
+  {
+    "index": 6,
+    "hash": "2n+iyya/1Xq6/uJlK5O9mSTBq/E=",
+    "timestampUtcMs": "2026-08-14T12:35:35.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "1913c218-055e-490d-b022-4ab51712ea31",
+        "name": "cli",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-08-14T12:35:35.000Z"
+    }
+  },
+  {
+    "index": 7,
+    "hash": "R0tB8p7eihwXb2QhAH8txZHwIF0=",
+    "timestampUtcMs": "2026-08-14T12:35:35.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "efe6c16d-3f27-45f2-82e5-3e0e63ca4b2a",
+        "name": "code-generation",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-08-14T12:35:35.000Z"
+    }
+  },
+  {
+    "index": 8,
+    "hash": "Cf5Pigib4CESm3LKCQ1KfPSkcJE=",
+    "timestampUtcMs": "2026-08-14T12:35:35.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "34c915d7-d087-4405-8bac-ce9cd9bce94f",
+        "name": "migration",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-08-14T12:35:35.000Z"
+    }
+  },
+  {
+    "index": 9,
+    "hash": "1ZsUFqR2TJIsurFev65rzjYs6do=",
+    "timestampUtcMs": "2026-08-14T14:36:45.000Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "version",
+        "value": "v6.2.2-dev.47",
+        "updatedAt": "2026-08-14T12:00:00.000Z"
+      },
+      "timestampUtcMs": "2026-08-14T14:36:45.000Z"
+    }
+  },
+  {
+    "index": 10,
+    "hash": "Ru/Q65j6AeAw+yX+xhgQouhHmZw=",
+    "timestampUtcMs": "2026-08-14T14:36:45.000Z",
+    "action": {
+      "type": "SUBMIT_FOR_REVIEW",
+      "input": {
+        "id": "03b5717e-3d63-433e-a08c-af2c6d3396de",
+        "actor": "claude",
+        "comment": "Knowledge registered against powerhouse v6.2.2-dev.47",
+        "timestamp": "2026-08-14T12:00:00.000Z"
+      },
+      "timestampUtcMs": "2026-08-14T14:36:45.000Z"
+    }
+  },
+  {
+    "index": 11,
+    "hash": "3fpCMp6zMsdkc/4vUrRUD1ZpBCM=",
+    "timestampUtcMs": "2026-08-14T14:36:45.000Z",
+    "action": {
+      "type": "APPROVE_NOTE",
+      "input": {
+        "id": "7895aa43-fd76-4a1f-98aa-d63d0f7faff0",
+        "actor": "liberuum",
+        "comment": "Canonical as of powerhouse v6.2.2-dev.47",
+        "timestamp": "2026-08-14T12:00:00.000Z"
+      },
+      "timestampUtcMs": "2026-08-14T14:36:45.000Z"
+    }
+  },
+  {
+    "index": 12,
+    "hash": "F/8XVHDYi4wmiYlJAMzRsd0MnbI=",
+    "timestampUtcMs": "2026-09-03T09:57:09.273Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "version",
+        "value": "v6.2.2-dev.74",
+        "updatedAt": "2026-09-03T09:57:09.273Z"
+      },
+      "timestampUtcMs": "2026-09-03T09:57:09.273Z"
+    }
+  }
+]

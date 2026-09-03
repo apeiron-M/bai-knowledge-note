@@ -1,0 +1,335 @@
+[
+  {
+    "index": 0,
+    "hash": "",
+    "timestampUtcMs": "2026-08-14T12:33:37.645Z",
+    "action": {
+      "type": "CREATE_DOCUMENT",
+      "input": {
+        "meta": {},
+        "name": "one-operation-per-user-intent-keeps-concerns-separated",
+        "slug": "",
+        "model": "bai/knowledge-note",
+        "branch": "main",
+        "signing": {
+          "nonce": "",
+          "publicKey": {},
+          "signature": "0d2d90e4-65f8-4475-a19f-4aeb36199100",
+          "documentType": "bai/knowledge-note",
+          "createdAtUtcIso": "2026-08-14T12:33:37.645Z"
+        },
+        "version": 0,
+        "documentId": "0d2d90e4-65f8-4475-a19f-4aeb36199100",
+        "protocolVersions": {
+          "base-reducer": 2
+        }
+      },
+      "timestampUtcMs": "2026-08-14T12:33:37.645Z"
+    }
+  },
+  {
+    "index": 0,
+    "hash": "xeCsvhcgiQ+OHAoI1aXPWVLqLME=",
+    "timestampUtcMs": "2026-08-14T12:35:29.000Z",
+    "action": {
+      "type": "SET_TITLE",
+      "input": {
+        "title": "one operation per user intent keeps concerns separated",
+        "updatedAt": "2026-08-14T12:35:29.000Z"
+      },
+      "timestampUtcMs": "2026-08-14T12:35:29.000Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "",
+    "timestampUtcMs": "2026-08-14T12:33:37.645Z",
+    "action": {
+      "type": "UPGRADE_DOCUMENT",
+      "input": {
+        "model": "bai/knowledge-note",
+        "toVersion": 1,
+        "documentId": "0d2d90e4-65f8-4475-a19f-4aeb36199100",
+        "fromVersion": 0,
+        "initialState": {
+          "auth": {
+            "grants": [],
+            "version": 0
+          },
+          "local": {
+            "lastViewedAt": null,
+            "personalTags": []
+          },
+          "global": {
+            "links": [],
+            "model": null,
+            "scope": null,
+            "title": null,
+            "editor": null,
+            "inputs": [],
+            "models": [],
+            "status": "DRAFT",
+            "topics": [],
+            "content": null,
+            "context": null,
+            "modelId": null,
+            "modules": [],
+            "outputs": [],
+            "version": null,
+            "computes": null,
+            "filePath": null,
+            "noteType": null,
+            "severity": null,
+            "hooksUsed": [],
+            "rootCause": null,
+            "confidence": null,
+            "consumedBy": [],
+            "provenance": null,
+            "sourceType": null,
+            "targetType": null,
+            "cardinality": null,
+            "description": null,
+            "alternatives": [],
+            "consequences": [],
+            "errorMessage": null,
+            "relationType": null,
+            "correctPattern": null,
+            "decisionStatus": null,
+            "dispatchTargets": [],
+            "lifecycleEvents": []
+          },
+          "document": {
+            "hash": {
+              "encoding": "base64",
+              "algorithm": "sha1"
+            },
+            "version": 1
+          }
+        }
+      },
+      "timestampUtcMs": "2026-08-14T12:33:37.645Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "9sa6Vsyd16OsjFyAeTROuIUpiqQ=",
+    "timestampUtcMs": "2026-08-14T12:35:29.000Z",
+    "action": {
+      "type": "SET_DESCRIPTION",
+      "input": {
+        "updatedAt": "2026-08-14T12:35:29.000Z",
+        "description": "Operations should map to distinct user actions like ADD_LINE_ITEM rather than batching multiple intents into one operation"
+      },
+      "timestampUtcMs": "2026-08-14T12:35:29.000Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "",
+    "timestampUtcMs": "2026-08-14T12:37:57.144Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "0d2d90e4-65f8-4475-a19f-4aeb36199100",
+        "targetId": "a482a12f-0a31-4018-8be2-bed2e27d7e1f",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-08-14T12:37:57.144Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "M5US7MM8K5kzacGpXLuW3otjoVM=",
+    "timestampUtcMs": "2026-08-14T12:35:29.000Z",
+    "action": {
+      "type": "SET_NOTE_TYPE",
+      "input": {
+        "noteType": "PATTERN",
+        "updatedAt": "2026-08-14T12:35:29.000Z"
+      },
+      "timestampUtcMs": "2026-08-14T12:35:29.000Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "",
+    "timestampUtcMs": "2026-08-14T12:37:57.244Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "0d2d90e4-65f8-4475-a19f-4aeb36199100",
+        "targetId": "4e6413ee-22bf-4d64-964f-ca8b28917cec",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-08-14T12:37:57.244Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "1GagZ7/bk8nAjiIuh7PUrEtMKF0=",
+    "timestampUtcMs": "2026-08-14T12:35:29.000Z",
+    "action": {
+      "type": "SET_CONTENT",
+      "input": {
+        "content": "# one operation per user intent keeps concerns separated\n\nEach operation should correspond to a single user action. This keeps operations atomic, testable, and replayable:\n\n```\n\u2705 ADD_LINE_ITEM \u2014 adds one line item\n\u2705 UPDATE_RECIPIENT \u2014 changes the recipient\n\u2705 SET_DUE_DATE \u2014 sets the due date\n\n\u274c UPDATE_INVOICE \u2014 changes recipient, adds items, and sets date in one operation\n```\n\nDescriptive operation names (e.g., `ADD_LINE_ITEM`, `UPDATE_RECIPIENT`) communicate intent better than generic names (e.g., `UPDATE_DATA`).\n\nSince [[operation design uses descriptive names and includes examples and errors]], each operation should also define error types and include examples in the document model.\n\n---\n\nTopics:\n- [[reducer patterns]]\n- [[schema design]]",
+        "updatedAt": "2026-08-14T12:35:29.000Z"
+      },
+      "timestampUtcMs": "2026-08-14T12:35:29.000Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "",
+    "timestampUtcMs": "2026-08-14T12:37:57.340Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "0d2d90e4-65f8-4475-a19f-4aeb36199100",
+        "targetId": "eb3ddfcc-c606-4705-b9c9-42f5e26e2384",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-08-14T12:37:57.340Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "JQWjE1r6MerfCDiCM2tlYKR7UEc=",
+    "timestampUtcMs": "2026-08-14T12:35:29.000Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "version",
+        "value": "v6.2.2-dev.44",
+        "updatedAt": "2026-08-14T12:35:29.000Z"
+      },
+      "timestampUtcMs": "2026-08-14T12:35:29.000Z"
+    }
+  },
+  {
+    "index": 5,
+    "hash": "m+PDloNiLZfA4936LUOXmo99ZrQ=",
+    "timestampUtcMs": "2026-08-14T12:35:29.000Z",
+    "action": {
+      "type": "SET_PROVENANCE",
+      "input": {
+        "author": "knowledge-agent",
+        "createdAt": "2026-04-03T14:00:02.000Z",
+        "sourceOrigin": "IMPORT"
+      },
+      "timestampUtcMs": "2026-08-14T12:35:29.000Z"
+    }
+  },
+  {
+    "index": 6,
+    "hash": "59dG16WnmBfYOW5S2f2TOtXzn/8=",
+    "timestampUtcMs": "2026-08-14T12:35:29.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "7dc60f18-a4b5-48c1-891b-2e06177d973b",
+        "name": "reducer patterns",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-08-14T12:35:29.000Z"
+    }
+  },
+  {
+    "index": 7,
+    "hash": "uYdBn8xbYnkLbQZKZ+ViBgDRovo=",
+    "timestampUtcMs": "2026-08-14T12:35:29.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "84a8b562-90ab-4783-ae24-3f02ddc68fb8",
+        "name": "schema design",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-08-14T12:35:29.000Z"
+    }
+  },
+  {
+    "index": 8,
+    "hash": "+RI6JkRb1Sn0bkibfEBS3RJxx94=",
+    "timestampUtcMs": "2026-08-14T12:35:29.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "a0244260-26d6-40cb-9f6f-58649d03ae3b",
+        "name": "operation design",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-08-14T12:35:29.000Z"
+    }
+  },
+  {
+    "index": 9,
+    "hash": "LwG70HfCvMEWoFDC/tlHnps8FfM=",
+    "timestampUtcMs": "2026-08-14T12:35:29.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "8151ad1a-a41a-4c4d-8597-904a6c1780bc",
+        "name": "separation of concerns",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-08-14T12:35:29.000Z"
+    }
+  },
+  {
+    "index": 10,
+    "hash": "h/xQb3e5NvWmeGm7aWiuNjyTLE4=",
+    "timestampUtcMs": "2026-08-14T14:36:44.000Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "version",
+        "value": "v6.2.2-dev.47",
+        "updatedAt": "2026-08-14T12:00:00.000Z"
+      },
+      "timestampUtcMs": "2026-08-14T14:36:44.000Z"
+    }
+  },
+  {
+    "index": 11,
+    "hash": "j2kFRdIIh09R+pBQU7iRUxo2heg=",
+    "timestampUtcMs": "2026-08-14T14:36:44.000Z",
+    "action": {
+      "type": "SUBMIT_FOR_REVIEW",
+      "input": {
+        "id": "e01188a3-686b-4f36-85df-11d6793bede1",
+        "actor": "claude",
+        "comment": "Knowledge registered against powerhouse v6.2.2-dev.47",
+        "timestamp": "2026-08-14T12:00:00.000Z"
+      },
+      "timestampUtcMs": "2026-08-14T14:36:44.000Z"
+    }
+  },
+  {
+    "index": 12,
+    "hash": "M+qGiz/pDWepb7oKWRGeEvBmLqE=",
+    "timestampUtcMs": "2026-08-14T14:36:44.000Z",
+    "action": {
+      "type": "APPROVE_NOTE",
+      "input": {
+        "id": "780e4a26-636d-462f-ac6e-a79fb48b0758",
+        "actor": "liberuum",
+        "comment": "Canonical as of powerhouse v6.2.2-dev.47",
+        "timestamp": "2026-08-14T12:00:00.000Z"
+      },
+      "timestampUtcMs": "2026-08-14T14:36:44.000Z"
+    }
+  },
+  {
+    "index": 13,
+    "hash": "oJ/Zoc9RLFIKDH7EuJwfLXBHzQ4=",
+    "timestampUtcMs": "2026-09-03T09:58:46.364Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "version",
+        "updatedAt": "2026-09-03T09:58:46.364Z"
+      },
+      "timestampUtcMs": "2026-09-03T09:58:46.364Z"
+    }
+  }
+]

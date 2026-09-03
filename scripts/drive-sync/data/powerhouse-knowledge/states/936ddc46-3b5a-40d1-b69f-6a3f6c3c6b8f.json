@@ -1,0 +1,115 @@
+{
+  "links": [
+    {
+      "id": "lnk-badfd6db-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "badfd6db-33c2-4612-bcff-d37d2159f0a7",
+      "targetTitle": "Package \u203a reactor \u203a sync/design",
+      "reason": "Extracted from packages/reactor/src/sync/design.md at v6.2.2-dev.74 \u2014 Ordinal Semantics",
+      "confidence": "grounded"
+    },
+    {
+      "id": "lnk-9c453091-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "9c453091-8c7b-4210-af2f-600fead66af7",
+      "targetTitle": "gql-channel-four-flows",
+      "reason": "These are the fields the two channel implementations exchange in the four flows",
+      "confidence": "grounded"
+    },
+    {
+      "id": "lnk-50a6a870-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "50a6a870-f29e-4164-820a-5d074f7443d7",
+      "targetTitle": "swarmchannel-push-pull-flow",
+      "reason": "The Swarm channel batches ordinals into SyncOperations the same way, so the local-ordinal caveat applies to any transport that acknowledges by ordinal",
+      "confidence": "established"
+    },
+    {
+      "id": "lnk-562d84eb-bui",
+      "linkType": "BUILDS_ON",
+      "targetDocumentId": "562d84eb-ef1d-40b7-81b0-b6b7438544e1",
+      "targetTitle": "collection-based-sync",
+      "reason": "Collection cursors are ordinals, and this note says whose ordinals they are on each side of the exchange",
+      "confidence": "grounded"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Ordinals are local to each reactor, so the poll exchange carries two frames of reference and ackOrdinal must be expressed in the client's ordinals",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "8e78966f-145c-43cc-92aa-e7280ca6b140",
+      "name": "reactor-sync",
+      "topicDocumentId": null
+    },
+    {
+      "id": "29fe0ff7-5576-4e32-ad4e-1cad1ccadbfc",
+      "name": "ordinals",
+      "topicDocumentId": null
+    },
+    {
+      "id": "b8cc259c-f1b2-46a6-8a21-f47c3248f944",
+      "name": "gql-channel",
+      "topicDocumentId": null
+    },
+    {
+      "id": "134898d1-2ec9-4eb5-a8ec-652ae955cbb9",
+      "name": "gotchas",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "Each reactor has its own operation index and assigns monotonically increasing ordinals as operations commit, so **the same logical operation has different ordinals on different reactors.** `pollSyncEnvelopes` therefore mixes two frames of reference in one exchange:\n\n| Field | Direction | Whose ordinals | Purpose |\n| --- | --- | --- | --- |\n| `outboxAck` (request) | client \u2192 switchboard | **switchboard's** | client acknowledges switchboard outbox operations it applied |\n| `outboxLatest` (request) | client \u2192 switchboard | **switchboard's** | highest switchboard ordinal the client has seen |\n| `ackOrdinal` (response) | switchboard \u2192 client | **client's** | switchboard acknowledges client-pushed operations it applied |\n| envelope ordinals (response) | switchboard \u2192 client | **switchboard's** | ordinals on outbox operations for the client to track |\n\nThe asymmetry is forced, not accidental. `ackOrdinal` must be in the client's ordinals because the client uses it to trim its own outbox (`trimMailboxFromAckOrdinal`), and those outbox items carry ordinals from the client's index. `outboxAck` must be in the switchboard's ordinals because the switchboard uses it to trim *its* outbox.\n\nThe requirement that falls out: **the client's ordinals must be preserved through the push path** (`pushSyncEnvelopes`), so the switchboard's inbox mailbox can track them and return a meaningful `ackOrdinal`. An implementation that renumbered arriving operations to local ordinals on ingest would break the acknowledgement in a way that looks like a stuck outbox.\n\n## Provenance\n- `packages/reactor/src/sync/design.md` \u2014 Ordinal Semantics\n\n_Extracted from the Powerhouse repository at **v6.2.2-dev.74**._",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": "v6.2.2-dev.74",
+  "computes": null,
+  "filePath": "packages/reactor/src/sync/design.md",
+  "noteType": "ARCHITECTURE",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "knowledge-agent",
+    "createdAt": "2026-09-03T07:18:59.660Z",
+    "sessionId": null,
+    "updatedAt": "2026-09-03T07:22:23.923Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "outboxAck and outboxLatest are the switchboard's ordinals; the response's ackOrdinal is the client's and envelope ordinals the switchboard's. Client ordinals must survive the push path.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "5b68feef-6b71-4dad-92b3-3c35c4e8f59e",
+      "actor": "knowledge-agent",
+      "comment": "extracted from packages/reactor/src/sync/design.md at v6.2.2-dev.74",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-09-03T07:19:00.175Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "7eb94594-a105-4f8e-a482-631783762415",
+      "actor": "liberuum",
+      "comment": "claim checked against the cited file at the pinned tag",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-09-03T07:19:00.682Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

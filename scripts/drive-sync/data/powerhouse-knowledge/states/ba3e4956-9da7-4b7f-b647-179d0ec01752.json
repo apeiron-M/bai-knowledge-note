@@ -1,0 +1,129 @@
+{
+  "tier": "TOPIC",
+  "title": "Live Collaboration Track",
+  "version": "v6.2.2-dev.47",
+  "tensions": [],
+  "childRefs": [],
+  "coreIdeas": [
+    {
+      "id": "ci-405c1bd7",
+      "noteRef": "405c1bd7-26bf-4bc2-9f6d-261123e97072",
+      "contextPhrase": "",
+      "sortOrder": 0,
+      "addedAt": "2026-09-03T20:23:32.000Z",
+      "addedBy": "knowledge-agent"
+    },
+    {
+      "id": "ci-114fdc9b",
+      "noteRef": "114fdc9b-1231-43d8-b265-3825fc46457a",
+      "contextPhrase": "",
+      "sortOrder": 1,
+      "addedAt": "2026-09-03T20:23:32.000Z",
+      "addedBy": "knowledge-agent"
+    },
+    {
+      "id": "ci-d1fb47c0",
+      "noteRef": "d1fb47c0-c4f4-40c0-9f3b-55669eef4f0d",
+      "contextPhrase": "",
+      "sortOrder": 2,
+      "addedAt": "2026-09-03T20:23:32.000Z",
+      "addedBy": "knowledge-agent"
+    },
+    {
+      "id": "ci-9eb2d8d8",
+      "noteRef": "9eb2d8d8-51b3-47d0-bd44-9b97769fef55",
+      "contextPhrase": "",
+      "sortOrder": 3,
+      "addedAt": "2026-09-03T20:23:32.000Z",
+      "addedBy": "knowledge-agent"
+    },
+    {
+      "id": "ci-9e26b0dd",
+      "noteRef": "9e26b0dd-ae39-4a33-ab4b-f47f1fc6edaf",
+      "contextPhrase": "",
+      "sortOrder": 4,
+      "addedAt": "2026-09-03T20:23:32.000Z",
+      "addedBy": "knowledge-agent"
+    },
+    {
+      "id": "ci-b108a878",
+      "noteRef": "b108a878-0a30-491e-aff0-2d8915a00d99",
+      "contextPhrase": "",
+      "sortOrder": 5,
+      "addedAt": "2026-09-03T20:23:32.000Z",
+      "addedBy": "knowledge-agent"
+    },
+    {
+      "id": "ci-d1737634",
+      "noteRef": "d1737634-2378-431a-8cf8-4dcfba38ea5c",
+      "contextPhrase": "",
+      "sortOrder": 6,
+      "addedAt": "2026-09-03T20:23:32.000Z",
+      "addedBy": "knowledge-agent"
+    }
+  ],
+  "createdAt": "2026-04-21T19:32:25.350Z",
+  "noteCount": 0,
+  "parentRef": null,
+  "updatedAt": "2026-08-14T12:00:00.000Z",
+  "agentNotes": [],
+  "description": "Next-track design for live collaboration on Swarm: per-user op feeds, ACT-gated collab manifest, GSOC-triggered debounced pulls, no CRDT.",
+  "orientation": "Live collaboration is the next major feature track after chat. This MOC consolidates the design notes: per-user operation feeds (not a shared feed, to avoid SOC write contention), ACT-gated collab manifests for participant discovery, and GSOC pings as the sub-second wake-up signal that triggers debounced pulls. The reactor's operation-based model handles concurrent edits natively, so no CRDT is needed. UX-wise the only surface is the document toolbar's History view \u2014 not per-editor presence \u2014 scoping the track tightly to what the primitives support.",
+  "openQuestions": [],
+  "links": [
+    {
+      "id": "lnk-0e4efc8b-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "0e4efc8b-43d3-447b-a779-a20fbf19c715",
+      "targetTitle": "gsoc-triggered-pull-debounced-with-polling-fallback"
+    },
+    {
+      "id": "lnk-956599e8-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "956599e8-619e-45f6-8ec5-71f5bceed06f",
+      "targetTitle": "chat-document-share-parity-shipped"
+    },
+    {
+      "id": "lnk-35c30c48-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "35c30c48-94a2-4b6c-8685-9bad536aef34",
+      "targetTitle": "collaborate-tab-in-chat-panel"
+    },
+    {
+      "id": "lnk-42844961-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "42844961-6fc0-49ca-8ae4-1748a87713af",
+      "targetTitle": "redundancy-hot-path-collab-ops-feed"
+    },
+    {
+      "id": "lnk-55325ce3-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "55325ce3-8d29-44b3-a8db-00a5e0af94b2",
+      "targetTitle": "incremental-experiment-redundancy-rollout"
+    },
+    {
+      "id": "lnk-9250acee-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "9250acee-7e5a-454c-8515-977ded38a34d",
+      "targetTitle": "collab-adapter-surface-window-ph-swarm-collab"
+    },
+    {
+      "id": "lnk-bae27a7b-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "bae27a7b-5aaf-4cbb-bc36-088b816ffae9",
+      "targetTitle": "collab-non-goals-explicit-exclusions"
+    },
+    {
+      "id": "lnk-1c7a3c1c-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "1c7a3c1c-95e7-4bc8-a921-277863c4f346",
+      "targetTitle": "collab-three-milestone-build-order"
+    },
+    {
+      "id": "lnk-1fc90712-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "1fc90712-091c-4d1b-b39a-923a4b6a1968",
+      "targetTitle": "live-collab-history-timeline-not-cursors"
+    }
+  ]
+}

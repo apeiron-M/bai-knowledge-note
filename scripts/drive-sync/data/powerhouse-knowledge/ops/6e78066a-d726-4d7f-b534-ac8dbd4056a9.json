@@ -1,0 +1,545 @@
+[
+  {
+    "index": 0,
+    "hash": "",
+    "timestampUtcMs": "2026-09-02T22:12:33.488Z",
+    "action": {
+      "type": "CREATE_DOCUMENT",
+      "input": {
+        "meta": {},
+        "name": "sb-worker-pool-env",
+        "slug": "",
+        "model": "bai/knowledge-note",
+        "branch": "main",
+        "signing": {
+          "nonce": "",
+          "publicKey": {},
+          "signature": "6e78066a-d726-4d7f-b534-ac8dbd4056a9",
+          "documentType": "bai/knowledge-note",
+          "createdAtUtcIso": "2026-09-02T22:12:33.488Z"
+        },
+        "version": 0,
+        "documentId": "6e78066a-d726-4d7f-b534-ac8dbd4056a9",
+        "protocolVersions": {
+          "base-reducer": 2
+        }
+      },
+      "timestampUtcMs": "2026-09-02T22:12:33.488Z"
+    }
+  },
+  {
+    "index": 0,
+    "hash": "Ad0XxPdYsJMmB5Q2Rrq3+OrFgQw=",
+    "timestampUtcMs": "2026-09-02T22:12:33.757Z",
+    "action": {
+      "type": "SET_TITLE",
+      "input": {
+        "title": "REACTOR_WORKERS moves job execution into worker threads routed stickily by document id, and 'auto' sizes the pool as max(1, min(8, cores \u2212 2))",
+        "updatedAt": "2026-09-02T22:12:33.757Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:12:33.757Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "",
+    "timestampUtcMs": "2026-09-02T22:12:33.488Z",
+    "action": {
+      "type": "UPGRADE_DOCUMENT",
+      "input": {
+        "model": "bai/knowledge-note",
+        "toVersion": 1,
+        "documentId": "6e78066a-d726-4d7f-b534-ac8dbd4056a9",
+        "fromVersion": 0,
+        "initialState": {
+          "auth": {
+            "grants": [],
+            "version": 0
+          },
+          "local": {
+            "lastViewedAt": null,
+            "personalTags": []
+          },
+          "global": {
+            "links": [],
+            "model": null,
+            "scope": null,
+            "title": null,
+            "editor": null,
+            "inputs": [],
+            "models": [],
+            "status": "DRAFT",
+            "topics": [],
+            "content": null,
+            "context": null,
+            "modelId": null,
+            "modules": [],
+            "outputs": [],
+            "version": null,
+            "computes": null,
+            "filePath": null,
+            "noteType": null,
+            "severity": null,
+            "hooksUsed": [],
+            "rootCause": null,
+            "confidence": null,
+            "consumedBy": [],
+            "provenance": null,
+            "sourceType": null,
+            "targetType": null,
+            "cardinality": null,
+            "description": null,
+            "alternatives": [],
+            "consequences": [],
+            "errorMessage": null,
+            "relationType": null,
+            "correctPattern": null,
+            "decisionStatus": null,
+            "dispatchTargets": [],
+            "lifecycleEvents": []
+          },
+          "document": {
+            "hash": {
+              "encoding": "base64",
+              "algorithm": "sha1"
+            },
+            "version": 1
+          }
+        }
+      },
+      "timestampUtcMs": "2026-09-02T22:12:33.488Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "8fRT1cs9/kCXEYtK+lYIPCclxsI=",
+    "timestampUtcMs": "2026-09-02T22:12:33.757Z",
+    "action": {
+      "type": "SET_DESCRIPTION",
+      "input": {
+        "updatedAt": "2026-09-02T22:12:33.757Z",
+        "description": "Default 0 = one in-process executor. Workers need a postgres:// URL with credentials (PGlite cannot be shared across threads) and built packages; connections \u2248 host pool + workers \u00d7 per-worker pool."
+      },
+      "timestampUtcMs": "2026-09-02T22:12:33.757Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "",
+    "timestampUtcMs": "2026-09-02T22:23:56.803Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "metadata": {
+          "reason": "Extracted from apps/switchboard/README.md at v6.2.2-dev.74 \u2014 Executor Worker Pool section",
+          "confidence": "grounded"
+        },
+        "sourceId": "6e78066a-d726-4d7f-b534-ac8dbd4056a9",
+        "targetId": "63e10e2c-9be4-4bd2-a876-8708cd3ac1f9",
+        "relationshipType": "DERIVED_FROM"
+      },
+      "timestampUtcMs": "2026-09-02T22:23:56.803Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "QFXkb9MbS33zZGNVoFsQhxn78ag=",
+    "timestampUtcMs": "2026-09-02T22:12:33.757Z",
+    "action": {
+      "type": "SET_NOTE_TYPE",
+      "input": {
+        "noteType": "REFERENCE",
+        "updatedAt": "2026-09-02T22:12:33.757Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:12:33.757Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "",
+    "timestampUtcMs": "2026-09-02T22:23:57.992Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "metadata": {
+          "reason": "The withWorkerPool requirements (real Postgres, worker-importable models) are what these environment variables switch on in a switchboard deployment, plus the auto-sizing rule",
+          "confidence": "grounded"
+        },
+        "sourceId": "6e78066a-d726-4d7f-b534-ac8dbd4056a9",
+        "targetId": "290fd86b-db3b-4d33-b278-fd7b84838929",
+        "relationshipType": "BUILDS_ON"
+      },
+      "timestampUtcMs": "2026-09-02T22:23:57.992Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "jfFpXsaP8XX/txgfy6IHD8Fve/8=",
+    "timestampUtcMs": "2026-09-02T22:12:33.757Z",
+    "action": {
+      "type": "SET_CONTENT",
+      "input": {
+        "content": "By default the reactor executes jobs on a single in-process executor. `REACTOR_WORKERS > 0` moves execution into N `node:worker_threads` workers; jobs route to a worker **stickily by document id**, and each worker opens its own Postgres pool.\n\n| Variable | Description | Default |\n| --- | --- | --- |\n| `REACTOR_WORKERS` | Executor worker threads: a number (0 = in-process) or `auto` | `0` |\n| `REACTOR_DB_POOL_SIZE_WORKER` | Per-worker Postgres pool size | `2` |\n| `REACTOR_DB_ACQUIRE_TIMEOUT_MS` | Pool connection acquire timeout | `5000` |\n\n`auto` sizes the pool from `os.availableParallelism()` (which respects container CPU limits) as **`max(1, min(8, cores - 2))`**: two cores stay reserved for the host event loop, the cap bounds the connection budget, and `auto` always enables worker mode with at least one worker.\n\nRequirements when workers are on: **Postgres only** \u2014 the reactor database must be a `postgres://` URL with explicit credentials (`PH_REACTOR_DATABASE_URL` or `PH_SWITCHBOARD_DATABASE_URL`), because PGlite cannot be shared across threads and switchboard refuses to start on local PGlite storage; **built packages only** \u2014 workers import document models by file path, so every configured package needs a built `document-models` entry and `dev` mode (Vite-loaded models, e.g. `ph vetra`) is rejected; and a **connection budget** of roughly `host pool + REACTOR_WORKERS \u00d7 REACTOR_DB_POOL_SIZE_WORKER`, to keep under the server's `max_connections`. The same settings are available programmatically via `startSwitchboard({ workerPool: { numWorkers, dbPoolSizePerWorker, acquireTimeoutMs } })`, which takes precedence over the environment.\n\n_Source: apps/switchboard/README.md (Powerhouse v6.2.2-dev.74)._\n\n## Provenance\n- `apps/switchboard/README.md` \u2014 Executor Worker Pool section\n\n_Recorded from the Powerhouse repository at **v6.2.2-dev.74** during the v6.2.2-dev.74 source sync._",
+        "updatedAt": "2026-09-02T22:12:33.757Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:12:33.757Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "",
+    "timestampUtcMs": "2026-09-02T22:23:58.473Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "metadata": {
+          "reason": "Worker mode is the one configuration where the PGlite fallback is refused rather than silently taken",
+          "confidence": "grounded"
+        },
+        "sourceId": "6e78066a-d726-4d7f-b534-ac8dbd4056a9",
+        "targetId": "15121fe4-c0d6-44bf-b8fd-cc5d4e4dda61",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-09-02T22:23:58.473Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "Mdg+Kom8rqJreAq87kAsNv6WIM4=",
+    "timestampUtcMs": "2026-09-02T22:12:33.757Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "ac06f530-2dbf-4273-bf73-88cccbc870a3",
+        "name": "switchboard"
+      },
+      "timestampUtcMs": "2026-09-02T22:12:33.757Z"
+    }
+  },
+  {
+    "index": 5,
+    "hash": "RFwACvfqr7OoSN81gqpH8ZGG+7g=",
+    "timestampUtcMs": "2026-09-02T22:12:33.757Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "2109b32b-7207-4518-a9a3-2f10964d812d",
+        "name": "reactor"
+      },
+      "timestampUtcMs": "2026-09-02T22:12:33.757Z"
+    }
+  },
+  {
+    "index": 6,
+    "hash": "DHA7DH2U2XkpF9cDMyn+gUKX95Q=",
+    "timestampUtcMs": "2026-09-02T22:12:33.757Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "ffdd4a65-0f23-42b5-9485-f1f2c4290a5d",
+        "name": "worker-pool"
+      },
+      "timestampUtcMs": "2026-09-02T22:12:33.757Z"
+    }
+  },
+  {
+    "index": 7,
+    "hash": "5DthDEzSZT5QJwu49fLpNoeNUiA=",
+    "timestampUtcMs": "2026-09-02T22:12:33.757Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "29be861b-dfb4-4ae5-8154-32f6d7b0f5ac",
+        "name": "configuration"
+      },
+      "timestampUtcMs": "2026-09-02T22:12:33.757Z"
+    }
+  },
+  {
+    "index": 8,
+    "hash": "c6jMxqqNHmSfn4ozaDS5laYdJ28=",
+    "timestampUtcMs": "2026-09-02T22:12:33.757Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "e3da2b27-68f1-4e0e-bf6f-6cc28077bd0c",
+        "name": "scaling"
+      },
+      "timestampUtcMs": "2026-09-02T22:12:33.757Z"
+    }
+  },
+  {
+    "index": 9,
+    "hash": "BHbXTQahXr+HmMY/BftQez82BZ0=",
+    "timestampUtcMs": "2026-09-02T22:12:33.757Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "version",
+        "value": "v6.2.2-dev.74",
+        "updatedAt": "2026-09-02T22:12:33.757Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:12:33.757Z"
+    }
+  },
+  {
+    "index": 10,
+    "hash": "oA4IRAxcVZT2UORpCPShMm4vbJY=",
+    "timestampUtcMs": "2026-09-02T22:12:33.757Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "filePath",
+        "value": "apps/switchboard/README.md",
+        "updatedAt": "2026-09-02T22:12:33.757Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:12:33.757Z"
+    }
+  },
+  {
+    "index": 11,
+    "hash": "iOd8wmIgm4d6nIDC5QfkQOmw6lY=",
+    "timestampUtcMs": "2026-09-02T22:12:33.757Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "confidence",
+        "value": "grounded",
+        "updatedAt": "2026-09-02T22:12:33.757Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:12:33.757Z"
+    }
+  },
+  {
+    "index": 12,
+    "hash": "OTie+DmhlJasQUSuxKzS0G5gwoM=",
+    "timestampUtcMs": "2026-09-02T22:12:36.356Z",
+    "action": {
+      "type": "SET_PROVENANCE",
+      "input": {
+        "author": "knowledge-agent",
+        "createdAt": "2026-09-02T22:12:36.356Z",
+        "sourceOrigin": "DERIVED"
+      },
+      "timestampUtcMs": "2026-09-02T22:12:36.356Z"
+    }
+  },
+  {
+    "index": 13,
+    "hash": "IVNg5za6QnhWyzJr3lMTTbbeF8o=",
+    "timestampUtcMs": "2026-09-02T22:12:36.842Z",
+    "action": {
+      "type": "SUBMIT_FOR_REVIEW",
+      "input": {
+        "id": "22d51f03-c975-4817-8df3-0dce669aae11",
+        "actor": "knowledge-agent",
+        "comment": "extracted from the Powerhouse repository at v6.2.2-dev.74",
+        "timestamp": "2026-09-02T22:12:36.842Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:12:36.842Z"
+    }
+  },
+  {
+    "index": 14,
+    "hash": "MiQbYhj474Eh1G9wHbES0LphQfc=",
+    "timestampUtcMs": "2026-09-02T22:12:37.375Z",
+    "action": {
+      "type": "APPROVE_NOTE",
+      "input": {
+        "id": "486518b0-6e37-473b-85b9-9ae59124cfcb",
+        "actor": "liberuum",
+        "comment": "claim checked against the cited repository file at the pinned tag",
+        "timestamp": "2026-09-02T22:12:37.375Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:12:37.375Z"
+    }
+  },
+  {
+    "index": 15,
+    "hash": "DbQfOscH/xB8ATndzch7hVvfqI4=",
+    "timestampUtcMs": "2026-09-02T22:16:17.050Z",
+    "action": {
+      "type": "SET_TITLE",
+      "input": {
+        "title": "REACTOR_WORKERS moves job execution into worker threads routed stickily by document id, and 'auto' sizes the pool as max(1, min(8, cores \u2212 2))",
+        "updatedAt": "2026-09-02T22:16:17.049Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:16:17.050Z"
+    }
+  },
+  {
+    "index": 16,
+    "hash": "DbQfOscH/xB8ATndzch7hVvfqI4=",
+    "timestampUtcMs": "2026-09-02T22:16:17.050Z",
+    "action": {
+      "type": "SET_DESCRIPTION",
+      "input": {
+        "updatedAt": "2026-09-02T22:16:17.049Z",
+        "description": "Default 0 = one in-process executor. Workers need a postgres:// URL with credentials (PGlite cannot be shared across threads) and built packages; connections \u2248 host pool + workers \u00d7 per-worker pool."
+      },
+      "timestampUtcMs": "2026-09-02T22:16:17.050Z"
+    }
+  },
+  {
+    "index": 17,
+    "hash": "DbQfOscH/xB8ATndzch7hVvfqI4=",
+    "timestampUtcMs": "2026-09-02T22:16:17.050Z",
+    "action": {
+      "type": "SET_NOTE_TYPE",
+      "input": {
+        "noteType": "REFERENCE",
+        "updatedAt": "2026-09-02T22:16:17.049Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:16:17.050Z"
+    }
+  },
+  {
+    "index": 18,
+    "hash": "DbQfOscH/xB8ATndzch7hVvfqI4=",
+    "timestampUtcMs": "2026-09-02T22:16:17.050Z",
+    "action": {
+      "type": "SET_CONTENT",
+      "input": {
+        "content": "By default the reactor executes jobs on a single in-process executor. `REACTOR_WORKERS > 0` moves execution into N `node:worker_threads` workers; jobs route to a worker **stickily by document id**, and each worker opens its own Postgres pool.\n\n| Variable | Description | Default |\n| --- | --- | --- |\n| `REACTOR_WORKERS` | Executor worker threads: a number (0 = in-process) or `auto` | `0` |\n| `REACTOR_DB_POOL_SIZE_WORKER` | Per-worker Postgres pool size | `2` |\n| `REACTOR_DB_ACQUIRE_TIMEOUT_MS` | Pool connection acquire timeout | `5000` |\n\n`auto` sizes the pool from `os.availableParallelism()` (which respects container CPU limits) as **`max(1, min(8, cores - 2))`**: two cores stay reserved for the host event loop, the cap bounds the connection budget, and `auto` always enables worker mode with at least one worker.\n\nRequirements when workers are on: **Postgres only** \u2014 the reactor database must be a `postgres://` URL with explicit credentials (`PH_REACTOR_DATABASE_URL` or `PH_SWITCHBOARD_DATABASE_URL`), because PGlite cannot be shared across threads and switchboard refuses to start on local PGlite storage; **built packages only** \u2014 workers import document models by file path, so every configured package needs a built `document-models` entry and `dev` mode (Vite-loaded models, e.g. `ph vetra`) is rejected; and a **connection budget** of roughly `host pool + REACTOR_WORKERS \u00d7 REACTOR_DB_POOL_SIZE_WORKER`, to keep under the server's `max_connections`. The same settings are available programmatically via `startSwitchboard({ workerPool: { numWorkers, dbPoolSizePerWorker, acquireTimeoutMs } })`, which takes precedence over the environment.\n\n_Source: apps/switchboard/README.md (Powerhouse v6.2.2-dev.74)._\n\n## Provenance\n- `apps/switchboard/README.md` \u2014 Executor Worker Pool section\n\n_Recorded from the Powerhouse repository at **v6.2.2-dev.74** during the v6.2.2-dev.74 source sync._",
+        "updatedAt": "2026-09-02T22:16:17.049Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:16:17.050Z"
+    }
+  },
+  {
+    "index": 19,
+    "hash": "DbQfOscH/xB8ATndzch7hVvfqI4=",
+    "timestampUtcMs": "2026-09-02T22:16:17.050Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "version",
+        "value": "v6.2.2-dev.74",
+        "updatedAt": "2026-09-02T22:16:17.049Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:16:17.050Z"
+    }
+  },
+  {
+    "index": 20,
+    "hash": "DbQfOscH/xB8ATndzch7hVvfqI4=",
+    "timestampUtcMs": "2026-09-02T22:16:17.050Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "filePath",
+        "value": "apps/switchboard/README.md",
+        "updatedAt": "2026-09-02T22:16:17.049Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:16:17.050Z"
+    }
+  },
+  {
+    "index": 21,
+    "hash": "DbQfOscH/xB8ATndzch7hVvfqI4=",
+    "timestampUtcMs": "2026-09-02T22:16:17.050Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "confidence",
+        "value": "grounded",
+        "updatedAt": "2026-09-02T22:16:17.049Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:16:17.050Z"
+    }
+  },
+  {
+    "index": 22,
+    "hash": "5eXbRBaxu7PXGBfKp28nWOQ82mE=",
+    "timestampUtcMs": "2026-09-02T22:20:57.655Z",
+    "action": {
+      "type": "SET_TITLE",
+      "input": {
+        "title": "REACTOR_WORKERS moves job execution into worker threads routed stickily by document id, and 'auto' sizes the pool as max(1, min(8, cores \u2212 2))",
+        "updatedAt": "2026-09-02T22:20:57.654Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:20:57.655Z"
+    }
+  },
+  {
+    "index": 23,
+    "hash": "5eXbRBaxu7PXGBfKp28nWOQ82mE=",
+    "timestampUtcMs": "2026-09-02T22:20:57.655Z",
+    "action": {
+      "type": "SET_DESCRIPTION",
+      "input": {
+        "updatedAt": "2026-09-02T22:20:57.654Z",
+        "description": "Default 0 = one in-process executor. Workers need a postgres:// URL with credentials (PGlite cannot be shared across threads) and built packages; connections \u2248 host pool + workers \u00d7 per-worker pool."
+      },
+      "timestampUtcMs": "2026-09-02T22:20:57.655Z"
+    }
+  },
+  {
+    "index": 24,
+    "hash": "5eXbRBaxu7PXGBfKp28nWOQ82mE=",
+    "timestampUtcMs": "2026-09-02T22:20:57.655Z",
+    "action": {
+      "type": "SET_NOTE_TYPE",
+      "input": {
+        "noteType": "REFERENCE",
+        "updatedAt": "2026-09-02T22:20:57.654Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:20:57.655Z"
+    }
+  },
+  {
+    "index": 25,
+    "hash": "5eXbRBaxu7PXGBfKp28nWOQ82mE=",
+    "timestampUtcMs": "2026-09-02T22:20:57.655Z",
+    "action": {
+      "type": "SET_CONTENT",
+      "input": {
+        "content": "By default the reactor executes jobs on a single in-process executor. `REACTOR_WORKERS > 0` moves execution into N `node:worker_threads` workers; jobs route to a worker **stickily by document id**, and each worker opens its own Postgres pool.\n\n| Variable | Description | Default |\n| --- | --- | --- |\n| `REACTOR_WORKERS` | Executor worker threads: a number (0 = in-process) or `auto` | `0` |\n| `REACTOR_DB_POOL_SIZE_WORKER` | Per-worker Postgres pool size | `2` |\n| `REACTOR_DB_ACQUIRE_TIMEOUT_MS` | Pool connection acquire timeout | `5000` |\n\n`auto` sizes the pool from `os.availableParallelism()` (which respects container CPU limits) as **`max(1, min(8, cores - 2))`**: two cores stay reserved for the host event loop, the cap bounds the connection budget, and `auto` always enables worker mode with at least one worker.\n\nRequirements when workers are on: **Postgres only** \u2014 the reactor database must be a `postgres://` URL with explicit credentials (`PH_REACTOR_DATABASE_URL` or `PH_SWITCHBOARD_DATABASE_URL`), because PGlite cannot be shared across threads and switchboard refuses to start on local PGlite storage; **built packages only** \u2014 workers import document models by file path, so every configured package needs a built `document-models` entry and `dev` mode (Vite-loaded models, e.g. `ph vetra`) is rejected; and a **connection budget** of roughly `host pool + REACTOR_WORKERS \u00d7 REACTOR_DB_POOL_SIZE_WORKER`, to keep under the server's `max_connections`. The same settings are available programmatically via `startSwitchboard({ workerPool: { numWorkers, dbPoolSizePerWorker, acquireTimeoutMs } })`, which takes precedence over the environment.\n\n_Source: apps/switchboard/README.md (Powerhouse v6.2.2-dev.74)._\n\n## Provenance\n- `apps/switchboard/README.md` \u2014 Executor Worker Pool section\n\n_Recorded from the Powerhouse repository at **v6.2.2-dev.74** during the v6.2.2-dev.74 source sync._",
+        "updatedAt": "2026-09-02T22:20:57.654Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:20:57.655Z"
+    }
+  },
+  {
+    "index": 26,
+    "hash": "5eXbRBaxu7PXGBfKp28nWOQ82mE=",
+    "timestampUtcMs": "2026-09-02T22:20:57.655Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "version",
+        "value": "v6.2.2-dev.74",
+        "updatedAt": "2026-09-02T22:20:57.654Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:20:57.655Z"
+    }
+  },
+  {
+    "index": 27,
+    "hash": "5eXbRBaxu7PXGBfKp28nWOQ82mE=",
+    "timestampUtcMs": "2026-09-02T22:20:57.655Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "filePath",
+        "value": "apps/switchboard/README.md",
+        "updatedAt": "2026-09-02T22:20:57.654Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:20:57.655Z"
+    }
+  },
+  {
+    "index": 28,
+    "hash": "n0et5MpMBHCNfgcwGrKjmKVwqb0=",
+    "timestampUtcMs": "2026-09-02T22:20:57.655Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "confidence",
+        "value": "grounded",
+        "updatedAt": "2026-09-02T22:20:57.655Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:20:57.655Z"
+    }
+  }
+]

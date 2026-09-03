@@ -1,0 +1,98 @@
+{
+  "links": [
+    {
+      "id": "lnk-51157ecc-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "51157ecc-b57e-49a9-ad60-9ba3d84ea08e",
+      "targetTitle": "document-permissions-support-groups-and-ops"
+    },
+    {
+      "id": "lnk-6fa0a6ea-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "6fa0a6ea-a295-4da9-85da-1e8ba852c91a",
+      "targetTitle": "authorization-uses-layered-model"
+    },
+    {
+      "id": "lnk-500d9a33-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "500d9a33-45a5-45e4-8df1-e9eee8d3f11a",
+      "targetTitle": "Academy \u203a Build \u203a BuildingUserExperiences \u203a Authorization \u203a Document Permission System",
+      "reason": "The note names apps/academy/docs/academy/03-Build/03-BuildingUserExperiences/07-Authorization/02-DocumentPermissions.md as its source; page text revised between v6.2.2-dev.47 and v6.2.2-dev.74 \u2014 re-verified in the v6.2.2-dev.74 pass",
+      "confidence": "grounded"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Renaming a document is UPDATE_NODE on the parent drive, not WRITE on the document itself",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "bdb9516e-25a9-4b19-8b0b-dc6943ff9a3f",
+      "name": "permissions",
+      "topicDocumentId": null
+    },
+    {
+      "id": "e909f5ac-7c96-4f39-bd49-dc8a0e7f775b",
+      "name": "document-drive",
+      "topicDocumentId": null
+    },
+    {
+      "id": "0e91af72-fd22-4bec-ad02-ddf091bdf423",
+      "name": "gotchas",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "## The gotcha\n\nA user with `WRITE` on a document **cannot rename it**. Renaming is not part of the document's own write permission \u2014 the name lives on the drive's node entry, so renaming is an `UPDATE_NODE` operation on the **drive** document. Grant it there, not on the document.\n\nThis catches people because \"rename\" feels like the mildest possible edit. Structurally it is not an edit to the document at all.\n\n## Drive operation types\n\nFor document drives specifically, these operation permissions are available:\n\n| Operation | What it allows |\n| --- | --- |\n| `ADD_FILE` | Create new files within the drive |\n| `ADD_FOLDER` | Create new folders within the drive |\n| `DELETE_NODE` | Delete files or folders within the drive |\n| `UPDATE_FILE` | Modify existing files within the drive |\n| `UPDATE_NODE` | Update properties of files or folders \u2014 **including renaming documents** |\n| `COPY_NODE` | Copy files or folders within the drive |\n| `MOVE_NODE` | Move files or folders within the drive |\n\n## Two orthogonal axes\n\nOperation permissions give fine-grained control over specific actions, **separate from** the general document permission levels (`READ`, `WRITE`, `ADMIN`). They are two axes, not a hierarchy: a grant on one says nothing about the other.\n\nOperation permissions are queried and granted per `(documentId, operationType)` pair, with both user and group grants:\n\n```graphql\nquery GetOperationPermissions($documentId: String!, $operationType: String!) {\n  operationPermissions(documentId: $documentId, operationType: $operationType) {\n    documentId\n    operationType\n    userPermissions { userAddress grantedBy createdAt }\n    groupPermissions { groupId group { id name } grantedBy createdAt }\n  }\n}\n```\n\nThe list above is drive-specific. If you need operation permissions for documents of other models, look up the available operations of the installed document-model package \u2014 the operation type is just the action name, so the vocabulary is per model.\n\n_Source: apps/academy/docs/academy/03-Build/03-BuildingUserExperiences/07-Authorization/02-DocumentPermissions.md (Powerhouse v6.2.2-dev.45)._",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": "v6.2.2-dev.74",
+  "computes": null,
+  "filePath": "apps/academy/docs/academy/03-Build/03-BuildingUserExperiences/07-Authorization/02-DocumentPermissions.md",
+  "noteType": "REFERENCE",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "claude",
+    "createdAt": "2026-08-13T14:33:49.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-09-02T22:26:21.968Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Drive operation permissions (ADD_FILE, ADD_FOLDER, DELETE_NODE, UPDATE_FILE, UPDATE_NODE, COPY_NODE, MOVE_NODE) are separate from the READ/WRITE/ADMIN levels.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "1e0e1bf6-750d-4429-ae6a-ba9a712231ca",
+      "actor": "claude",
+      "comment": "Knowledge registered against powerhouse v6.2.2-dev.47",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-14T12:00:00.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "689d5387-e4ec-4747-bac7-2d243eb42c77",
+      "actor": "liberuum",
+      "comment": "Canonical as of powerhouse v6.2.2-dev.47",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-14T12:00:00.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

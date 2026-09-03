@@ -1,0 +1,90 @@
+{
+  "links": [
+    {
+      "id": "lnk-003757e2-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "003757e2-d95f-43f5-ac56-e7b29cfef504",
+      "targetTitle": "webhook-hmac-verify-raw-bytes-before-parsing"
+    },
+    {
+      "id": "lnk-e4b534d5-bui",
+      "linkType": "BUILDS_ON",
+      "targetDocumentId": "e4b534d5-a51c-4632-a306-7b90a838869f",
+      "targetTitle": "The integration seam for Paperless is an endpoint plus a webhook"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Paperless-ngx can push document events to external systems, so integrations do not need polling",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "0ba701db-5275-414f-9357-a4ea13b371d7",
+      "name": "paperless",
+      "topicDocumentId": null
+    },
+    {
+      "id": "1d656f14-cce6-45f8-ad0a-882917712501",
+      "name": "webhook",
+      "topicDocumentId": null
+    },
+    {
+      "id": "5259ea80-8d22-438a-a79b-2e3ef650a157",
+      "name": "integration-seam",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "Paperless-ngx 3.0.5 exposes a workflow API at `/api/workflows/`. A workflow couples one or more triggers to one or more actions, and action **type 4 is Webhook**: it carries a `url`, plus `headers`, `body` and `params`, and an `include_document` flag that decides whether the stored file travels with the call or only its metadata does. The trigger set includes **Document Added** and **Document Updated**.\n\nTwo consequences follow, and the second is the one that matters for integration design.\n\nFirst, the integration can be configured programmatically. Because workflows are ordinary REST resources, the integrating package can create its own workflow rather than asking an operator to click through the Paperless admin UI. Creating it by a fixed workflow name makes the call idempotent: the integration checks for a workflow of that name and creates it only if absent, so repeated setup runs converge on one workflow instead of accumulating duplicates.\n\nSecond, and more important: **the source system pushes, so the integration does not have to poll.** A polling integration has to hold a cursor, decide a poll interval, and trade freshness against request volume; every interval choice is wrong in one direction or the other. With Document Added and Document Updated as triggers, Paperless tells the consumer when something happened and the consumer does no work in between. That moves the design problem from \"how often do we ask\" to \"how do we authenticate and de-duplicate what arrives\" \u2014 a strictly better problem, because it has correct answers rather than tuned compromises.\n\nThe push direction does impose the obligations that come with accepting unsolicited traffic: the receiving endpoint is publicly reachable, so it needs its own authentication, and the same event can arrive more than once, so the receiver must be idempotent.\n\nVerified against a live Paperless-ngx 3.0.5 instance during the Paperless x Powerhouse integration work on 21 Aug 2026.\n\n## Connections\n\n- **BUILDS_ON [[The integration seam for Paperless is an endpoint plus a webhook]]** \u2014 that note names the seam Powerhouse needs from Paperless; this one supplies the verified API surface (`/api/workflows/`, action type 4, Document Added / Document Updated) that shows the seam actually exists in 3.0.5 rather than being an assumption.\n- **RELATES_TO [[Inbound webhook HMAC must be verified against the raw request bytes before parsing]]** \u2014 because pushing rather than polling means the consumer runs a publicly reachable endpoint, and that note states the constraint the endpoint must satisfy to trust what arrives.\n\n## Methodology grounding\n\nCreating the workflow by name is the unique-identifier form of [[idempotent maintenance operations are safe to automate because running them twice produces the same result as running them once]] \u2014 the claim names compare-before-acting, upsert semantics and unique identifiers as the patterns that make a repeated operation safe, and workflow-name lookup is exactly the third. Without it, \"configure the webhook\" would be a non-idempotent write needing a guard outside the system.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "INTEGRATION",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "knowledge-agent",
+    "createdAt": "2026-08-21T15:40:00.000Z",
+    "sessionId": "paperless-eng-2026-08-21",
+    "updatedAt": "2026-09-02T19:18:57.365Z",
+    "sourceOrigin": "SESSION_MINE"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Version 3.0.5 exposes /api/workflows/ with action type 4 = Webhook carrying url, headers, body, params and an include_document flag, fired by Document Added and Document Updated triggers.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "9007289f-6a80-410b-9b44-86297c455488",
+      "actor": "knowledge-agent",
+      "comment": "Extracted from the 21 Aug 2026 Paperless x Powerhouse working session; each claim was observed in working code or against the live Paperless-ngx 3.0.5 instance. Needs a second actor to approve - the authoring agent cannot legitimately be its own reviewer.",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-21T15:55:00.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "b736fe26-76b0-4a93-b7c7-1e3fdee49a6a",
+      "actor": "Liberuum",
+      "comment": null,
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-09-02T19:18:57.365Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

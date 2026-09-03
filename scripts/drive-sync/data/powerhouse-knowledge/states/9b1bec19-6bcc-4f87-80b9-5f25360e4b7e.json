@@ -1,0 +1,104 @@
+{
+  "links": [
+    {
+      "id": "lnk-43b82c81-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "43b82c81-4d28-4e69-9a0a-84c0dddb87ef",
+      "targetTitle": "reactor-read-models-pre-ready-phase"
+    },
+    {
+      "id": "lnk-645e18ed-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "645e18ed-6da5-4daf-8ed3-7a96cb085b48",
+      "targetTitle": "analytics-paths-lod-dimension-querying"
+    },
+    {
+      "id": "lnk-f7e6d116-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "f7e6d116-bd5d-4052-9f2a-974e4d7cb7e2",
+      "targetTitle": "relational-db-processor-base-class"
+    },
+    {
+      "id": "lnk-f2aaccd3-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "f2aaccd3-7c26-4327-881e-f5ad9e267b89",
+      "targetTitle": "Academy \u203a Lookup \u203a Cookbook",
+      "reason": "Backing page found by content match in the v6.2.2-dev.74 source backfill \u2014 identifiers bucketed, counters, ireadmodel from the claim appear in this page (text revised between v6.2.2-dev.47 and v6.2.2-dev.74 \u2014 re-verified in the v6.2.2-dev.74 pass); attribution, not the original extraction record",
+      "confidence": "grounded"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Choose the analytics engine, a custom read model, or a relational DB by the shape of the query you need",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "a4712a4e-04c6-41b9-91a4-677525ff3536",
+      "name": "read-models",
+      "topicDocumentId": null
+    },
+    {
+      "id": "9fda9261-4bbf-4545-905b-bdc81f306ed8",
+      "name": "architecture-decisions",
+      "topicDocumentId": null
+    },
+    {
+      "id": "cee9cf29-9c96-4690-a3e2-d0294147a0d2",
+      "name": "analytics",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "Powerhouse offers three ways to project the operation log into something queryable, and the Cookbook's Analytics Processor recipe gives the selection criterion as a table rather than a preference:\n\n| | analytics-processor | custom-read-model | relational-db-subgraph |\n| --- | --- | --- | --- |\n| Storage model | Dimensional time-series (source, metric, dimensions, unit) | In-memory map | Relational rows (Kysely schema) |\n| Query style | Time-bucketed aggregates, dimension rollups via `lod` | Direct lookup | Arbitrary SQL: joins, filters, ordering |\n| Best for | \"Total per category per month in USD\" \u2014 dashboards, budgets, spend analytics | Simple derived counts | Searchable catalogs, tag filters |\n\nThe decisive test is stated compactly: use the analytics engine when queries are shaped like *aggregate metric X, grouped by dimension Y, over period Z, rolled up to depth N*. Use a relational DB when you need relational queries. Use a custom read model for lightweight synchronous counters.\n\nThe dimensions that actually separate them are query shape and where the result lives, not data volume. A custom `IReadModel` is in-memory and synchronous, which is why it suits counters and suits nothing that must survive a restart on its own. The analytics engine is the only one of the three that understands *time intervals* natively \u2014 values carry a start and end, deltas are first class, and rollups happen at query time via `lod` \u2014 so re-bucketing \"monthly\" into \"quarterly\" needs no reprojection. A relational read model is the only one that can answer a question you did not anticipate when you designed the projection.\n\nThe analytics recipe also surfaces two modelling constraints that follow from picking it: updates and deletes must be written as **compensating entries** (\u2212old, +new) rather than mutations, and values should be dated by *business time* (when the money was spent) rather than event or processing time, so a March correction to a January expense still lands in January.\n\nProvenance: academy `05-Lookup/00-Cookbook.md`, Analytics Processor recipe (\"When to use the analytics engine vs a SQL read model\"), academy 6.2.2-dev.45.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": "v6.2.2-dev.74",
+  "computes": null,
+  "filePath": "apps/academy/docs/academy/05-Lookup/00-Cookbook.md",
+  "noteType": "DECISION",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "claude",
+    "createdAt": "2026-08-13T14:39:38.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-09-02T22:26:44.232Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Analytics engine for time-bucketed aggregates with dimension rollups, IReadModel for lightweight synchronous counters, relational DB for arbitrary SQL joins, filters and ordering.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "ce9fd1fa-0db0-4607-892b-429c2459a024",
+      "actor": "claude",
+      "comment": "Knowledge registered against powerhouse v6.2.2-dev.47",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-14T12:00:00.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "c7b10859-5666-4ec8-acaf-b38a4796763f",
+      "actor": "liberuum",
+      "comment": "Canonical as of powerhouse v6.2.2-dev.47",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-14T12:00:00.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

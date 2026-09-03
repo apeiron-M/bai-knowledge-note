@@ -1,0 +1,500 @@
+[
+  {
+    "index": 0,
+    "hash": "",
+    "timestampUtcMs": "2026-09-03T07:19:38.742Z",
+    "action": {
+      "type": "CREATE_DOCUMENT",
+      "input": {
+        "meta": {},
+        "name": "attachment-lru-gc",
+        "slug": "",
+        "model": "bai/knowledge-note",
+        "branch": "main",
+        "signing": {
+          "nonce": "",
+          "publicKey": {},
+          "signature": "c2fedf9c-464c-422f-bf81-7f505b87e335",
+          "documentType": "bai/knowledge-note",
+          "createdAtUtcIso": "2026-09-03T07:19:38.742Z"
+        },
+        "version": 0,
+        "documentId": "c2fedf9c-464c-422f-bf81-7f505b87e335",
+        "protocolVersions": {
+          "base-reducer": 2
+        }
+      },
+      "timestampUtcMs": "2026-09-03T07:19:38.742Z"
+    }
+  },
+  {
+    "index": 0,
+    "hash": "3CVqrZOUMbGmVwA32YyOGvYrFjk=",
+    "timestampUtcMs": "2026-09-03T07:19:40.176Z",
+    "action": {
+      "type": "SET_TITLE",
+      "input": {
+        "title": "Attachment garbage collection is LRU under storage pressure with no reference counting, so an evicted attachment keeps its metadata and can be re-fetched from any peer",
+        "updatedAt": "2026-09-03T07:19:40.176Z"
+      },
+      "timestampUtcMs": "2026-09-03T07:19:40.176Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "",
+    "timestampUtcMs": "2026-09-03T07:19:38.742Z",
+    "action": {
+      "type": "UPGRADE_DOCUMENT",
+      "input": {
+        "model": "bai/knowledge-note",
+        "toVersion": 1,
+        "documentId": "c2fedf9c-464c-422f-bf81-7f505b87e335",
+        "fromVersion": 0,
+        "initialState": {
+          "auth": {
+            "grants": [],
+            "version": 0
+          },
+          "local": {
+            "lastViewedAt": null,
+            "personalTags": []
+          },
+          "global": {
+            "links": [],
+            "model": null,
+            "scope": null,
+            "title": null,
+            "editor": null,
+            "inputs": [],
+            "models": [],
+            "status": "DRAFT",
+            "topics": [],
+            "content": null,
+            "context": null,
+            "modelId": null,
+            "modules": [],
+            "outputs": [],
+            "version": null,
+            "computes": null,
+            "filePath": null,
+            "noteType": null,
+            "severity": null,
+            "hooksUsed": [],
+            "rootCause": null,
+            "confidence": null,
+            "consumedBy": [],
+            "provenance": null,
+            "sourceType": null,
+            "targetType": null,
+            "cardinality": null,
+            "description": null,
+            "alternatives": [],
+            "consequences": [],
+            "errorMessage": null,
+            "relationType": null,
+            "correctPattern": null,
+            "decisionStatus": null,
+            "dispatchTargets": [],
+            "lifecycleEvents": []
+          },
+          "document": {
+            "hash": {
+              "encoding": "base64",
+              "algorithm": "sha1"
+            },
+            "version": 1
+          }
+        }
+      },
+      "timestampUtcMs": "2026-09-03T07:19:38.742Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "pp+Le4n+bx9MDhk4BtXSmBFS38o=",
+    "timestampUtcMs": "2026-09-03T07:19:40.176Z",
+    "action": {
+      "type": "SET_DESCRIPTION",
+      "input": {
+        "updatedAt": "2026-09-03T07:19:40.176Z",
+        "description": "A periodic task evicts by last_accessed_at_utc ascending until storage drops below target. Reservations are swept by deleteExpired(), default TTL 24h, so abandoned uploads do not pile up."
+      },
+      "timestampUtcMs": "2026-09-03T07:19:40.176Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "",
+    "timestampUtcMs": "2026-09-03T07:21:21.093Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "metadata": {
+          "reason": "Extracted from packages/reactor/docs/attachments.md at v6.2.2-dev.74 \u2014 Design \u203a Principles (LRU eviction); Garbage Collection",
+          "confidence": "grounded"
+        },
+        "sourceId": "c2fedf9c-464c-422f-bf81-7f505b87e335",
+        "targetId": "5b4a52c0-6345-4bfc-a279-76ea1f37db5d",
+        "relationshipType": "DERIVED_FROM"
+      },
+      "timestampUtcMs": "2026-09-03T07:21:21.093Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "dvckSFJIir1JllPTdgGiZ5FoKQI=",
+    "timestampUtcMs": "2026-09-03T07:19:40.176Z",
+    "action": {
+      "type": "SET_NOTE_TYPE",
+      "input": {
+        "noteType": "DECISION",
+        "updatedAt": "2026-09-03T07:19:40.176Z"
+      },
+      "timestampUtcMs": "2026-09-03T07:19:40.176Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "",
+    "timestampUtcMs": "2026-09-03T07:21:21.566Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "metadata": {
+          "reason": "Extracted from packages/reactor/docs/attachments-hash-first.md at v6.2.2-dev.74 \u2014 Failure modes (no-transport deployments must not enable eviction)",
+          "confidence": "grounded"
+        },
+        "sourceId": "c2fedf9c-464c-422f-bf81-7f505b87e335",
+        "targetId": "e25bc920-d3bc-4b36-9c7f-cb35b64c27b9",
+        "relationshipType": "DERIVED_FROM"
+      },
+      "timestampUtcMs": "2026-09-03T07:21:21.566Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "qfDhoMTirJ7/Ox62PQRXJJB0eiM=",
+    "timestampUtcMs": "2026-09-03T07:19:40.176Z",
+    "action": {
+      "type": "SET_CONTENT",
+      "input": {
+        "content": "The attachment system does **not** reference-count. GC is storage-pressure-driven:\n\n1. query attachments ordered by `last_accessed_at_utc` ascending;\n2. evict until storage drops below the target threshold;\n3. evicted rows **retain metadata** (`hash`, `mime_type`, \u2026) so the hash stays known;\n4. if the data is needed again, `get()` re-fetches it from a peer through the transport.\n\nThat choice is what makes \"lazy data availability\" (design principle 4) coherent: a ref in document state never depends on this reactor holding the bytes, so dropping bytes is a cache decision rather than a data loss. For mutable backends (disk, S3) eviction removes the files; on immutable backends it stops serving them.\n\nThere is one hard constraint that predates the design: a deployment **without a functioning transport** (for example `NullAttachmentTransport`) must not enable eviction at all \u2014 there would be nothing to restore from.\n\nReservations are cleaned up on a different schedule and by a different mechanism: `IReservationStore.deleteExpired(now?)` deletes every row whose `expires_at_utc` has passed and returns the count, and should run on an interval (hourly is suggested) so aborted or failed uploads do not accumulate in `attachment_reservation`. The default TTL is `DEFAULT_RESERVATION_TTL_MS`, **24 hours**, configurable per store instance.\n\n## Provenance\n- `packages/reactor/docs/attachments.md` \u2014 Design \u203a Principles (LRU eviction); Garbage Collection\n- `packages/reactor/docs/attachments-hash-first.md` \u2014 Failure modes (no-transport deployments must not enable eviction)\n\n_Extracted from the Powerhouse repository at **v6.2.2-dev.74**._",
+        "updatedAt": "2026-09-03T07:19:40.176Z"
+      },
+      "timestampUtcMs": "2026-09-03T07:19:40.176Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "",
+    "timestampUtcMs": "2026-09-03T07:21:22.015Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "metadata": {
+          "reason": "Eviction is only safe because the store can restore bytes through the transport on the next get(), which is that note's mechanism",
+          "confidence": "grounded"
+        },
+        "sourceId": "c2fedf9c-464c-422f-bf81-7f505b87e335",
+        "targetId": "0d8024a6-332f-457f-86eb-414251cd65a3",
+        "relationshipType": "BUILDS_ON"
+      },
+      "timestampUtcMs": "2026-09-03T07:21:22.015Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "75FHZNIEuavxgThEqem1zAG5s1U=",
+    "timestampUtcMs": "2026-09-03T07:19:40.176Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "616ccda4-29e0-4c7e-987c-98bdfbea5847",
+        "name": "attachments"
+      },
+      "timestampUtcMs": "2026-09-03T07:19:40.176Z"
+    }
+  },
+  {
+    "index": 5,
+    "hash": "",
+    "timestampUtcMs": "2026-09-03T07:21:22.506Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "metadata": {
+          "reason": "The two sweeps act on the two different tables: LRU on attachment, deleteExpired on attachment_reservation",
+          "confidence": "grounded"
+        },
+        "sourceId": "c2fedf9c-464c-422f-bf81-7f505b87e335",
+        "targetId": "0a6393ba-6798-445d-8b24-d325b50e262e",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-09-03T07:21:22.506Z"
+    }
+  },
+  {
+    "index": 5,
+    "hash": "1WxGAQq7vEZJTldjm9pKkNkNRbQ=",
+    "timestampUtcMs": "2026-09-03T07:19:40.176Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "1d0b98f0-669b-44a1-8677-33205f91cac5",
+        "name": "garbage-collection"
+      },
+      "timestampUtcMs": "2026-09-03T07:19:40.176Z"
+    }
+  },
+  {
+    "index": 6,
+    "hash": "",
+    "timestampUtcMs": "2026-09-03T07:23:12.355Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "metadata": {
+          "reason": "Extracted from packages/reactor/docs/attachments.md at v6.2.2-dev.74 \u2014 Design \u203a Principles (LRU eviction); Garbage Collection",
+          "confidence": "grounded"
+        },
+        "sourceId": "c2fedf9c-464c-422f-bf81-7f505b87e335",
+        "targetId": "5b4a52c0-6345-4bfc-a279-76ea1f37db5d",
+        "relationshipType": "DERIVED_FROM"
+      },
+      "timestampUtcMs": "2026-09-03T07:23:12.355Z"
+    }
+  },
+  {
+    "index": 6,
+    "hash": "j/ldiF78jxuLqn5GgyICJ3bOHC8=",
+    "timestampUtcMs": "2026-09-03T07:19:40.176Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "de5a4a0b-40b4-44df-9994-07955ac90585",
+        "name": "storage"
+      },
+      "timestampUtcMs": "2026-09-03T07:19:40.176Z"
+    }
+  },
+  {
+    "index": 7,
+    "hash": "",
+    "timestampUtcMs": "2026-09-03T07:23:12.795Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "metadata": {
+          "reason": "Extracted from packages/reactor/docs/attachments-hash-first.md at v6.2.2-dev.74 \u2014 Failure modes (no-transport deployments must not enable eviction)",
+          "confidence": "grounded"
+        },
+        "sourceId": "c2fedf9c-464c-422f-bf81-7f505b87e335",
+        "targetId": "e25bc920-d3bc-4b36-9c7f-cb35b64c27b9",
+        "relationshipType": "DERIVED_FROM"
+      },
+      "timestampUtcMs": "2026-09-03T07:23:12.795Z"
+    }
+  },
+  {
+    "index": 7,
+    "hash": "Lf/vI1DvWazi3c0eqrvumceikg8=",
+    "timestampUtcMs": "2026-09-03T07:19:40.176Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "b446da6a-27e5-4111-96a0-b3cd667770e2",
+        "name": "lru"
+      },
+      "timestampUtcMs": "2026-09-03T07:19:40.176Z"
+    }
+  },
+  {
+    "index": 8,
+    "hash": "",
+    "timestampUtcMs": "2026-09-03T07:23:13.244Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "metadata": {
+          "reason": "Eviction is only safe because the store can restore bytes through the transport on the next get(), which is that note's mechanism",
+          "confidence": "grounded"
+        },
+        "sourceId": "c2fedf9c-464c-422f-bf81-7f505b87e335",
+        "targetId": "0d8024a6-332f-457f-86eb-414251cd65a3",
+        "relationshipType": "BUILDS_ON"
+      },
+      "timestampUtcMs": "2026-09-03T07:23:13.244Z"
+    }
+  },
+  {
+    "index": 8,
+    "hash": "vt2NL02LJDlvSlGGVl/jKqMElAs=",
+    "timestampUtcMs": "2026-09-03T07:19:40.176Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "version",
+        "value": "v6.2.2-dev.74",
+        "updatedAt": "2026-09-03T07:19:40.176Z"
+      },
+      "timestampUtcMs": "2026-09-03T07:19:40.176Z"
+    }
+  },
+  {
+    "index": 9,
+    "hash": "",
+    "timestampUtcMs": "2026-09-03T07:23:13.703Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "metadata": {
+          "reason": "The two sweeps act on the two different tables: LRU on attachment, deleteExpired on attachment_reservation",
+          "confidence": "grounded"
+        },
+        "sourceId": "c2fedf9c-464c-422f-bf81-7f505b87e335",
+        "targetId": "0a6393ba-6798-445d-8b24-d325b50e262e",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-09-03T07:23:13.703Z"
+    }
+  },
+  {
+    "index": 9,
+    "hash": "vKCrq1XM+WMnUECDQxdodxESkPo=",
+    "timestampUtcMs": "2026-09-03T07:19:40.176Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "filePath",
+        "value": "packages/reactor/docs/attachments.md",
+        "updatedAt": "2026-09-03T07:19:40.176Z"
+      },
+      "timestampUtcMs": "2026-09-03T07:19:40.176Z"
+    }
+  },
+  {
+    "index": 10,
+    "hash": "OC14795QswwPAvoMVpCYHjtJiBU=",
+    "timestampUtcMs": "2026-09-03T07:19:42.845Z",
+    "action": {
+      "type": "SET_PROVENANCE",
+      "input": {
+        "author": "knowledge-agent",
+        "createdAt": "2026-09-03T07:19:42.845Z",
+        "sourceOrigin": "DERIVED"
+      },
+      "timestampUtcMs": "2026-09-03T07:19:42.845Z"
+    }
+  },
+  {
+    "index": 11,
+    "hash": "cT1MnGHAARyCI4nz/bp/mwwq8Sw=",
+    "timestampUtcMs": "2026-09-03T07:19:43.865Z",
+    "action": {
+      "type": "SUBMIT_FOR_REVIEW",
+      "input": {
+        "id": "868dce97-5cc7-4aa6-95e6-eaf046108a8f",
+        "actor": "knowledge-agent",
+        "comment": "extracted from packages/reactor/docs/attachments.md at v6.2.2-dev.74",
+        "timestamp": "2026-09-03T07:19:43.865Z"
+      },
+      "timestampUtcMs": "2026-09-03T07:19:43.865Z"
+    }
+  },
+  {
+    "index": 12,
+    "hash": "LQEsg2CiMrx3YocjktHfKK0hsfY=",
+    "timestampUtcMs": "2026-09-03T07:19:44.376Z",
+    "action": {
+      "type": "APPROVE_NOTE",
+      "input": {
+        "id": "9066dd16-c858-4ed4-873c-6b72a788408d",
+        "actor": "liberuum",
+        "comment": "claim checked against the cited file at the pinned tag",
+        "timestamp": "2026-09-03T07:19:44.376Z"
+      },
+      "timestampUtcMs": "2026-09-03T07:19:44.376Z"
+    }
+  },
+  {
+    "index": 13,
+    "hash": "7KDQCwL9X9O9yekQpEP4yDwkbfk=",
+    "timestampUtcMs": "2026-09-03T07:22:31.682Z",
+    "action": {
+      "type": "SET_TITLE",
+      "input": {
+        "title": "Attachment garbage collection is LRU under storage pressure with no reference counting, so an evicted attachment keeps its metadata and can be re-fetched from any peer",
+        "updatedAt": "2026-09-03T07:22:31.682Z"
+      },
+      "timestampUtcMs": "2026-09-03T07:22:31.682Z"
+    }
+  },
+  {
+    "index": 14,
+    "hash": "7KDQCwL9X9O9yekQpEP4yDwkbfk=",
+    "timestampUtcMs": "2026-09-03T07:22:31.682Z",
+    "action": {
+      "type": "SET_DESCRIPTION",
+      "input": {
+        "updatedAt": "2026-09-03T07:22:31.682Z",
+        "description": "A periodic task evicts by last_accessed_at_utc ascending until storage drops below target. Reservations are swept by deleteExpired(), default TTL 24h, so abandoned uploads do not pile up."
+      },
+      "timestampUtcMs": "2026-09-03T07:22:31.682Z"
+    }
+  },
+  {
+    "index": 15,
+    "hash": "7KDQCwL9X9O9yekQpEP4yDwkbfk=",
+    "timestampUtcMs": "2026-09-03T07:22:31.682Z",
+    "action": {
+      "type": "SET_NOTE_TYPE",
+      "input": {
+        "noteType": "DECISION",
+        "updatedAt": "2026-09-03T07:22:31.682Z"
+      },
+      "timestampUtcMs": "2026-09-03T07:22:31.682Z"
+    }
+  },
+  {
+    "index": 16,
+    "hash": "7KDQCwL9X9O9yekQpEP4yDwkbfk=",
+    "timestampUtcMs": "2026-09-03T07:22:31.682Z",
+    "action": {
+      "type": "SET_CONTENT",
+      "input": {
+        "content": "The attachment system does **not** reference-count. GC is storage-pressure-driven:\n\n1. query attachments ordered by `last_accessed_at_utc` ascending;\n2. evict until storage drops below the target threshold;\n3. evicted rows **retain metadata** (`hash`, `mime_type`, \u2026) so the hash stays known;\n4. if the data is needed again, `get()` re-fetches it from a peer through the transport.\n\nThat choice is what makes \"lazy data availability\" (design principle 4) coherent: a ref in document state never depends on this reactor holding the bytes, so dropping bytes is a cache decision rather than a data loss. For mutable backends (disk, S3) eviction removes the files; on immutable backends it stops serving them.\n\nThere is one hard constraint that predates the design: a deployment **without a functioning transport** (for example `NullAttachmentTransport`) must not enable eviction at all \u2014 there would be nothing to restore from.\n\nReservations are cleaned up on a different schedule and by a different mechanism: `IReservationStore.deleteExpired(now?)` deletes every row whose `expires_at_utc` has passed and returns the count, and should run on an interval (hourly is suggested) so aborted or failed uploads do not accumulate in `attachment_reservation`. The default TTL is `DEFAULT_RESERVATION_TTL_MS`, **24 hours**, configurable per store instance.\n\n## Provenance\n- `packages/reactor/docs/attachments.md` \u2014 Design \u203a Principles (LRU eviction); Garbage Collection\n- `packages/reactor/docs/attachments-hash-first.md` \u2014 Failure modes (no-transport deployments must not enable eviction)\n\n_Extracted from the Powerhouse repository at **v6.2.2-dev.74**._",
+        "updatedAt": "2026-09-03T07:22:31.682Z"
+      },
+      "timestampUtcMs": "2026-09-03T07:22:31.682Z"
+    }
+  },
+  {
+    "index": 17,
+    "hash": "7KDQCwL9X9O9yekQpEP4yDwkbfk=",
+    "timestampUtcMs": "2026-09-03T07:22:31.682Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "version",
+        "value": "v6.2.2-dev.74",
+        "updatedAt": "2026-09-03T07:22:31.682Z"
+      },
+      "timestampUtcMs": "2026-09-03T07:22:31.682Z"
+    }
+  },
+  {
+    "index": 18,
+    "hash": "7KDQCwL9X9O9yekQpEP4yDwkbfk=",
+    "timestampUtcMs": "2026-09-03T07:22:31.682Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "filePath",
+        "value": "packages/reactor/docs/attachments.md",
+        "updatedAt": "2026-09-03T07:22:31.682Z"
+      },
+      "timestampUtcMs": "2026-09-03T07:22:31.682Z"
+    }
+  }
+]

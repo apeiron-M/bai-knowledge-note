@@ -1,0 +1,94 @@
+{
+  "links": [
+    {
+      "id": "lnk-4d8e59af-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "4d8e59af-51f2-4ab7-b290-e1d5744abbd7",
+      "targetTitle": "Integration-gap tool screen: ERPNext / Frappe (primary-source research, 2026-08-19)"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Camunda closed the audit gap in 8.9 with a User Operations Audit Log",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "ab3b88af-9f98-49da-8750-43d5e9fd09cb",
+      "name": "tool-screen",
+      "topicDocumentId": null
+    },
+    {
+      "id": "54eb61c5-a5b8-43df-b25f-69017dc9fd92",
+      "name": "camunda",
+      "topicDocumentId": null
+    },
+    {
+      "id": "86be474c-d539-44a5-89f8-8e29e9bb1d7d",
+      "name": "audit-trail",
+      "topicDocumentId": null
+    },
+    {
+      "id": "9c74883e-06b7-49bc-8549-33026ae28152",
+      "name": "slot-occupied",
+      "topicDocumentId": null
+    },
+    {
+      "id": "c5a9b7ed-d0ef-4770-80c6-947fe2f39e04",
+      "name": "competitive-landscape",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "The Orchestration Cluster API gained a user-task audit-log search marked *\"Added in 8.9\"*, and Camunda's own roadmap frames the pre-8.9 state as exactly the gap in question: organisations lacked a unified trail recording who did what, when, and to which entities. Release 8.9.16 shipped on 2026-08-14; the audit-log follow-up epic closed on 2026-03-10.\n\nRetention ships disabled (`retention.enabled: false`, 30-day minimum age when switched on), which is a genuinely better default than most tools in this class.\n\nThe residual technical differences are real but too subtle to carry an argument: the log is documented as \"Eventually Consistent\" rather than transactionally coupled to the decision, and records live in ordinary mutable Elasticsearch indices with no hash chain. A demo asserting that Camunda cannot say who decided something would be factually wrong against 8.9 and corrected in the room.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "OBSERVATION",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "knowledge-agent",
+    "createdAt": "2026-08-20T08:45:30.242150Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-20T08:45:31.444191Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "The 8.9 release adds a queryable cross-domain log of who did what to which entity across process, identity and user-task domains, with retention disabled by default.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "a2c00b67-dca9-4e3f-9919-8363ff10f2ca",
+      "actor": "knowledge-agent",
+      "comment": "Extracted from the primary-source tool screen; each claim quotable from a cited source.",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-20T08:45:31.302269Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "f4c41729-3419-4998-98df-4e065a93a38e",
+      "actor": "liberuum",
+      "comment": "Approved: tool-screen extraction.",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-20T08:45:31.444191Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

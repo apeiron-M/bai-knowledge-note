@@ -1,0 +1,113 @@
+{
+  "links": [
+    {
+      "id": "lnk-c0be1308-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "c0be1308-8115-4dcf-8353-98b69636178f",
+      "targetTitle": "bee-health-maps-to-channel-connection-state"
+    },
+    {
+      "id": "lnk-154ec79a-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "154ec79a-268a-4426-a340-a422ac3f125b",
+      "targetTitle": "masterchef-accumulator-pattern-enables-per-token-revenue-tracking"
+    },
+    {
+      "id": "lnk-1e3e3772-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "1e3e3772-e865-4797-aebe-8b64a3f34fdd",
+      "targetTitle": "chat-history-persists-in-an-act-protected-feed-because-pss-m"
+    },
+    {
+      "id": "lnk-97c0a282-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "97c0a282-5f24-47bd-a2cd-f5d563fa8d11",
+      "targetTitle": "bee-reactor-adapter-chat-settings-features"
+    },
+    {
+      "id": "lnk-0e4efc8b-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "0e4efc8b-43d3-447b-a779-a20fbf19c715",
+      "targetTitle": "gsoc-triggered-pull-debounced-with-polling-fallback"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Offline edits accumulate locally and replay to Swarm on reconnect via the outbox cursor.",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "t-44e2d872-1",
+      "name": "offline-first",
+      "topicDocumentId": null
+    },
+    {
+      "id": "t-44e2d872-2",
+      "name": "outbox-cursor",
+      "topicDocumentId": null
+    },
+    {
+      "id": "t-44e2d872-3",
+      "name": "durability",
+      "topicDocumentId": null
+    },
+    {
+      "id": "t-44e2d872-4",
+      "name": "user-flow",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "## Claim\nOffline-edit durability is provided by PGlite + the outbox cursor: the local reactor keeps working, and on reconnect the cursor replays accumulated ops to Swarm.\n\n## Flow\n1. User edits documents while Bee node is unreachable.\n2. Operations accumulate in PGlite (local reactor works fine).\n3. SwarmChannel connection state transitions to `error` \u2192 push is blocked.\n4. User reconnects Bee node \u2192 state becomes `connected`.\n5. Outbox cursor catches up: all accumulated ops are pushed to Swarm.\n6. No data loss \u2014 cursors in PGlite track exactly what was synced.\n\n## Why this is safe\n- The cursor is only advanced after a successful feed write, so a crash mid-push is idempotent.\n- The local reactor is the source of truth; Swarm is purely a mirror.\n- User never loses work due to Bee downtime.\n\n## Source\nSwarm Channel Architecture, \"Flow 4: Offline Edits \u2192 Reconnect\".",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "WORKFLOW",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "knowledge-agent",
+    "createdAt": "2026-04-21T14:19:49.348Z",
+    "sessionId": null,
+    "updatedAt": "2026-09-03T09:58:32.505Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "When Bee is unreachable the channel goes to error; ops pile up in PGlite; on reconnect the outbox cursor catches up, replaying everything with no data loss.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "be3701b8-b207-4de8-b1cb-cc5b8fff319e",
+      "actor": "claude",
+      "comment": "Knowledge registered against powerhouse v6.2.2-dev.47",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-14T12:00:00.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "0feef01c-b52c-4ee2-951e-e00bd38abc0b",
+      "actor": "liberuum",
+      "comment": "Canonical as of powerhouse v6.2.2-dev.47",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-14T12:00:00.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

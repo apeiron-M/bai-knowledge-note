@@ -1,0 +1,118 @@
+{
+  "links": [
+    {
+      "id": "lnk-306ee520-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "306ee520-f540-4510-863e-8c2f87969869",
+      "targetTitle": "Holisticon AG \u2014 Camunda"
+    },
+    {
+      "id": "lnk-80abf9cf-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "80abf9cf-8789-4fca-bee9-df9c0326792c",
+      "targetTitle": "WDW eLab GmbH \u2014 Camunda"
+    },
+    {
+      "id": "lnk-a4c7d044-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "a4c7d044-a62a-4398-a840-257e74c66781",
+      "targetTitle": "Phactum Softwareentwicklung GmbH \u2014 Camunda"
+    },
+    {
+      "id": "lnk-cef14ff6-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "cef14ff6-ca33-46a7-ac1e-84431f39a278",
+      "targetTitle": "envite consulting GmbH \u2014 Camunda"
+    },
+    {
+      "id": "lnk-57a392bc-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "57a392bc-7e19-4eeb-b131-96b6218ce0b9",
+      "targetTitle": "Apendo AB \u2014 Camunda"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Deleting the Camunda process instance and replaying the approval chain is the Camunda demo",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "8af5055c-6588-4a3f-b866-204e1827b06b",
+      "name": "leads",
+      "topicDocumentId": null
+    },
+    {
+      "id": "ad64ea55-72bf-471f-8879-f24c2bcd20c1",
+      "name": "camunda",
+      "topicDocumentId": null
+    },
+    {
+      "id": "d6acfa8b-0f97-4522-986e-06da2c6810d4",
+      "name": "demo-design",
+      "topicDocumentId": null
+    },
+    {
+      "id": "68e60b31-03b4-4823-94aa-c5ad261e8566",
+      "name": "replay",
+      "topicDocumentId": null
+    },
+    {
+      "id": "32f7ddb8-4c19-47d2-b301-34cf6558811b",
+      "name": "process-orchestration",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "The integration point is a Camunda job worker dispatching a typed operation at each user-task boundary \u2014 the moment a human decision is recorded is the moment the operation is emitted. The demo then does the thing no orchestration vendor demonstrates: it deletes the process instance in Camunda and replays the entire approval chain from Powerhouse, recovering who approved, when, and the prior state at each step.\n\nDeletion rather than mere retention expiry is the strongest available form of the claim. It removes any argument that the record merely lives somewhere else in the same system, and it maps onto a real operational event \u2014 instances are deleted for data-protection, cleanup and migration reasons, not only by accident.\n\nFive leads carry this demo, in DE (three, one with an unverified city), AT and SE. Two are at \"1 \u00b7 start here\", two at \"2 \u00b7 next\" and one at \"3 \u00b7 later\" \u2014 the warmest small cohort in this slice, and the one where a working reference build has the shortest path to a conversation.\n\n---\n\n## Leads sharing this finding (5)\n\n**1 \u00b7 start here**\n- Holisticon AG (DE (city unverified)) \u2014 Roman Schl\u00f6mmer + Bj\u00f6rn Serving, Vorstand \u00b7 info@holisticon.de \u00b7 https://holisticon.de\n- WDW eLab GmbH (DE Aachen) \u2014 Peter Offermann + Andreas Welz \u00b7 info.aachen@wdw-consulting.com \u00b7 https://wdw-elab.de\n\n**2 \u00b7 next**\n- Phactum Softwareentwicklung GmbH (AT Vienna) \u2014 not published (no GF on imprint \u2014 \u00a75 ECG gap) \u00b7 office@phactum.at \u00b7 https://phactum.at\n- envite consulting GmbH (DE Stuttgart) \u2014 Konrad Pfeilsticker \u00b7 office@envite.de \u00b7 https://envite.de\n\n**3 \u00b7 later**\n- Apendo AB (SE Danderyd) \u2014 https://apendo.se\n\nVerbatim research text this claim was extracted from:\n\n> Camunda job worker dispatching a typed operation at each user-task boundary. Then DELETE the process instance in Camunda and replay the whole approval chain from Powerhouse \u2014 who approved, when, prior state.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "INTEGRATION",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "knowledge-agent",
+    "createdAt": "2026-08-19T11:26:36.270229Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-19T11:26:39.286630Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "A job worker dispatches a typed operation at each user-task boundary; after the instance is gone, Powerhouse still answers who approved, when, and what the prior state was.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "ea5c2fe0-5769-4e00-af5f-cd903c2e6a97",
+      "actor": "knowledge-agent",
+      "comment": "Extracted from lead research; claim checked against the source record.",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-19T11:26:39.145446Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "43c7f3c5-9025-40be-88b6-b8e69fc47eac",
+      "actor": "liberuum",
+      "comment": "Approved: lead corpus extraction.",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-19T11:26:39.286630Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

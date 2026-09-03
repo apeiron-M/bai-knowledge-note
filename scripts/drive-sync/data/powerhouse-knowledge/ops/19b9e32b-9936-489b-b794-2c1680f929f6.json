@@ -1,0 +1,303 @@
+[
+  {
+    "index": 0,
+    "hash": "",
+    "timestampUtcMs": "2026-08-16T20:32:44.352Z",
+    "action": {
+      "type": "CREATE_DOCUMENT",
+      "input": {
+        "meta": {},
+        "name": "knowledge-unit-epistemic-schema",
+        "slug": "",
+        "model": "bai/knowledge-note",
+        "branch": "main",
+        "signing": {
+          "nonce": "",
+          "publicKey": {},
+          "signature": "19b9e32b-9936-489b-b794-2c1680f929f6",
+          "documentType": "bai/knowledge-note",
+          "createdAtUtcIso": "2026-08-16T20:32:44.352Z"
+        },
+        "version": 0,
+        "documentId": "19b9e32b-9936-489b-b794-2c1680f929f6",
+        "protocolVersions": {
+          "base-reducer": 2
+        }
+      },
+      "timestampUtcMs": "2026-08-16T20:32:44.352Z"
+    }
+  },
+  {
+    "index": 0,
+    "hash": "GKtaPWZ2Qu6D+NIxK+iZTflO4UI=",
+    "timestampUtcMs": "2026-08-16T20:32:44.709Z",
+    "action": {
+      "type": "SET_TITLE",
+      "input": {
+        "title": "A KnowledgeUnit schema forces epistemic standing at every long-lived memory write",
+        "updatedAt": "2026-08-16T20:32:44.708Z"
+      },
+      "timestampUtcMs": "2026-08-16T20:32:44.709Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "",
+    "timestampUtcMs": "2026-08-16T20:32:44.352Z",
+    "action": {
+      "type": "UPGRADE_DOCUMENT",
+      "input": {
+        "model": "bai/knowledge-note",
+        "toVersion": 1,
+        "documentId": "19b9e32b-9936-489b-b794-2c1680f929f6",
+        "fromVersion": 0,
+        "initialState": {
+          "auth": {
+            "grants": [],
+            "version": 0
+          },
+          "local": {
+            "lastViewedAt": null,
+            "personalTags": []
+          },
+          "global": {
+            "links": [],
+            "model": null,
+            "scope": null,
+            "title": null,
+            "editor": null,
+            "inputs": [],
+            "models": [],
+            "status": "DRAFT",
+            "topics": [],
+            "content": null,
+            "context": null,
+            "modelId": null,
+            "modules": [],
+            "outputs": [],
+            "version": null,
+            "computes": null,
+            "filePath": null,
+            "noteType": null,
+            "severity": null,
+            "hooksUsed": [],
+            "rootCause": null,
+            "confidence": null,
+            "consumedBy": [],
+            "provenance": null,
+            "sourceType": null,
+            "targetType": null,
+            "cardinality": null,
+            "description": null,
+            "alternatives": [],
+            "consequences": [],
+            "errorMessage": null,
+            "relationType": null,
+            "correctPattern": null,
+            "decisionStatus": null,
+            "dispatchTargets": [],
+            "lifecycleEvents": []
+          },
+          "document": {
+            "hash": {
+              "encoding": "base64",
+              "algorithm": "sha1"
+            },
+            "version": 1
+          }
+        }
+      },
+      "timestampUtcMs": "2026-08-16T20:32:44.352Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "gT7i8jvwHT1xAyhiCwkFxzG4XTA=",
+    "timestampUtcMs": "2026-08-16T20:32:44.709Z",
+    "action": {
+      "type": "SET_DESCRIPTION",
+      "input": {
+        "updatedAt": "2026-08-16T20:32:44.708Z",
+        "description": "Mandatory fields for author, producer skill, epistemic mode, confidence, sources, derivation, and review status keep vault contributions attributable."
+      },
+      "timestampUtcMs": "2026-08-16T20:32:44.709Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "",
+    "timestampUtcMs": "2026-08-16T20:32:49.953Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "19b9e32b-9936-489b-b794-2c1680f929f6",
+        "targetId": "2b423487-123f-414c-bd20-edce7de891f4",
+        "relationshipType": "DERIVED_FROM"
+      },
+      "timestampUtcMs": "2026-08-16T20:32:49.953Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "+1s7hGL2Lt4uT0Lw6cufO3Y2UoU=",
+    "timestampUtcMs": "2026-08-16T20:32:44.709Z",
+    "action": {
+      "type": "SET_NOTE_TYPE",
+      "input": {
+        "noteType": "ARCHITECTURE",
+        "updatedAt": "2026-08-16T20:32:44.708Z"
+      },
+      "timestampUtcMs": "2026-08-16T20:32:44.709Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "",
+    "timestampUtcMs": "2026-08-16T20:32:51.616Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "19b9e32b-9936-489b-b794-2c1680f929f6",
+        "targetId": "28ad70dd-0252-43ba-bc60-83c32a506581",
+        "relationshipType": "BUILDS_ON"
+      },
+      "timestampUtcMs": "2026-08-16T20:32:51.616Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "LGo1gjTsxfe1zSw/6uT5oqkI6lE=",
+    "timestampUtcMs": "2026-08-16T20:32:44.709Z",
+    "action": {
+      "type": "SET_CONTENT",
+      "input": {
+        "content": "## Claim\n\nAny skill writing into a long-lived knowledge layer should emit operations against a `KnowledgeUnit` (or equivalent) document model whose state requires epistemic context at write time.\n\n## Required standing\n\n- `author` (human or agent)\n- `producer` skill ref when agent-authored\n- `epistemicMode` (OBSERVATION, INFERENCE, RETRIEVAL, SYNTHESIS, SPECULATION)\n- optional `confidence`\n- `sources` and `derivedFrom`\n- `reviewStatus` and `scope`\n\n## Payoff\n\nThe vault becomes queryable: everything I asserted; exclude low-confidence agent units; all units derived from skill X. The human/agent boundary stays legible after the session ends.\n\n```graphql\ntype KnowledgeUnit {\n  id: ID!\n  claim: String!\n  author: Actor!\n  producer: SkillRef\n  epistemicMode: EpistemicMode!\n  confidence: Float\n  sources: [Source!]!\n  derivedFrom: [ID!]!\n  reviewStatus: ReviewStatus!\n  scope: Scope!\n  createdAt: DateTime!\n}\n```",
+        "updatedAt": "2026-08-16T20:32:44.708Z"
+      },
+      "timestampUtcMs": "2026-08-16T20:32:44.709Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "",
+    "timestampUtcMs": "2026-08-16T20:32:58.000Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "19b9e32b-9936-489b-b794-2c1680f929f6",
+        "targetId": "e2186433-6a5b-4e9a-90e8-37c698b35e89",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-08-16T20:32:58.000Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "KYQbgVWord/teGJzjk8XTkqmvzU=",
+    "timestampUtcMs": "2026-08-16T20:32:44.709Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "a876edc0-8a3c-49df-85ec-77f2d61431c1",
+        "name": "knowledge-vault"
+      },
+      "timestampUtcMs": "2026-08-16T20:32:44.709Z"
+    }
+  },
+  {
+    "index": 5,
+    "hash": "EmeJzS92Zcq2NJvsroXW4tAAySg=",
+    "timestampUtcMs": "2026-08-16T20:32:44.709Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "2f8fb76a-5ebf-4a3c-88ce-d3d596fdbcac",
+        "name": "document-models"
+      },
+      "timestampUtcMs": "2026-08-16T20:32:44.709Z"
+    }
+  },
+  {
+    "index": 6,
+    "hash": "eYRCPi2q9uDdKB3LuGQOq3vsVDM=",
+    "timestampUtcMs": "2026-08-16T20:32:44.709Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "a4d902c3-0b88-46b3-a239-2b9060ebd6f2",
+        "name": "provenance"
+      },
+      "timestampUtcMs": "2026-08-16T20:32:44.709Z"
+    }
+  },
+  {
+    "index": 7,
+    "hash": "x9U+7w5grGwwEIu8aaT8hGz1r7E=",
+    "timestampUtcMs": "2026-08-16T20:32:44.709Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "f0760509-bd2c-4c9f-ba1d-b84d70c608e6",
+        "name": "epistemology"
+      },
+      "timestampUtcMs": "2026-08-16T20:32:44.709Z"
+    }
+  },
+  {
+    "index": 8,
+    "hash": "C+3UOteX618I7+4//sfpuB7jB8g=",
+    "timestampUtcMs": "2026-08-16T20:32:45.093Z",
+    "action": {
+      "type": "SET_PROVENANCE",
+      "input": {
+        "author": "knowledge-agent",
+        "createdAt": "2026-08-16T20:32:44.708Z",
+        "sourceOrigin": "DERIVED"
+      },
+      "timestampUtcMs": "2026-08-16T20:32:45.093Z"
+    }
+  },
+  {
+    "index": 9,
+    "hash": "5aXveXflRPokmN9ypORUfgFc0E8=",
+    "timestampUtcMs": "2026-08-16T20:32:45.861Z",
+    "action": {
+      "type": "SUBMIT_FOR_REVIEW",
+      "input": {
+        "id": "689b02bb-79e6-4354-9787-381516e3b5be",
+        "actor": "knowledge-agent",
+        "comment": "pipeline extract",
+        "timestamp": "2026-08-16T20:32:45.861Z"
+      },
+      "timestampUtcMs": "2026-08-16T20:32:45.861Z"
+    }
+  },
+  {
+    "index": 10,
+    "hash": "bwo5++M5CNmX+414Jo5ZlX9y1ro=",
+    "timestampUtcMs": "2026-08-16T20:32:46.035Z",
+    "action": {
+      "type": "APPROVE_NOTE",
+      "input": {
+        "id": "b6ea2bab-b297-49c8-854b-16be176499b9",
+        "actor": "pipeline-reviewer",
+        "comment": "pipeline verify",
+        "timestamp": "2026-08-16T20:32:46.035Z"
+      },
+      "timestampUtcMs": "2026-08-16T20:32:46.035Z"
+    }
+  },
+  {
+    "index": 11,
+    "hash": "XQcZtHGs2gU5871UtqUzB7eAeeI=",
+    "timestampUtcMs": "2026-09-03T10:03:23.305Z",
+    "action": {
+      "type": "SET_CONTENT",
+      "input": {
+        "content": "## Claim\n\nAny skill writing into a long-lived knowledge layer should emit operations against a `KnowledgeUnit` (or equivalent) document model whose state requires epistemic context at write time.\n\n## Required standing\n\n- `author` (human or agent)\n- `producer` skill ref when agent-authored\n- `epistemicMode` (OBSERVATION, INFERENCE, RETRIEVAL, SYNTHESIS, SPECULATION)\n- optional `confidence`\n- `sources` and `derivedFrom`\n- `reviewStatus` and `scope`\n\n## Payoff\n\nThe vault becomes queryable: everything I asserted; exclude low-confidence agent units; all units derived from skill X. The human/agent boundary stays legible after the session ends.\n\n```graphql\ntype KnowledgeUnit {\n  id: ID!\n  claim: String!\n  author: Actor!\n  producer: SkillRef\n  epistemicMode: EpistemicMode!\n  confidence: Float\n  sources: [Source!]!\n  derivedFrom: [ID!]!\n  reviewStatus: ReviewStatus!\n  scope: Scope!\n  createdAt: DateTime!\n}\n```\n\n## Methodology grounding\nThe claims below live in the plugin's `data/methodology/` corpus; the relationship is stated per claim.\n\n- **[[agent self-memory should be architecturally separate from user knowledge systems]]** \u2014 BUILDS_ON. The methodology claim separates an agent's working preferences from the research graph on the grounds that self-knowledge need not pass the composability test. A typed KnowledgeUnit is the mechanism that makes the boundary enforceable rather than conventional: the schema is what refuses an untyped write into the long-lived layer.\n- **[[IBIS framework maps claim-based architecture to structured argumentation]]** \u2014 RELATES_TO. Both hold that a knowledge record's *kind* is load-bearing. IBIS types a contribution as issue, position or argument; a KnowledgeUnit types it by epistemic standing. Neither leaves the reader to infer status from prose.\n",
+        "updatedAt": "2026-09-03T10:03:23.304Z"
+      },
+      "timestampUtcMs": "2026-09-03T10:03:23.305Z"
+    }
+  }
+]

@@ -1,0 +1,123 @@
+{
+  "links": [
+    {
+      "id": "lnk-851f3b4d-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "851f3b4d-92aa-4601-b6f8-06f27ba514a5",
+      "targetTitle": "reactor-client-auto-signs-all-actions",
+      "reason": "ReactorClient's automatic action signing is the production path that supplies the signer context the recipes fake by hand",
+      "confidence": "established"
+    },
+    {
+      "id": "lnk-20f4f796-bui",
+      "linkType": "BUILDS_ON",
+      "targetDocumentId": "20f4f796-28d4-4b9c-aa3f-4b71a8b0df1a",
+      "targetTitle": "auth-creator-keeps-auth",
+      "reason": "The creator carve-out is what an unsigned document lacks, and its absence is the attack surface described here",
+      "confidence": "grounded"
+    },
+    {
+      "id": "lnk-8cbea140-bui",
+      "linkType": "BUILDS_ON",
+      "targetDocumentId": "8cbea140-21d6-4b63-8780-5d44831018aa",
+      "targetTitle": "two-signing-mechanisms-header-and-action",
+      "reason": "Header signing (document id = signature of the creator) is the mechanism that gives a document a verifiable creator at all",
+      "confidence": "grounded"
+    },
+    {
+      "id": "lnk-223bb12a-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "223bb12a-be7f-4209-9ab2-f04f7bb2b6c8",
+      "targetTitle": "Spec \u203a Spec \u2014 Attribute-based access control in the auth scope with DCB",
+      "reason": "Extracted from docs/specs/auth-scope.md at v6.2.2-dev.74 \u2014 Administration and bootstrap: 'Auth on an unsigned-header document does not resist an adversary'; Stage 9 creator paragraph",
+      "confidence": "grounded"
+    },
+    {
+      "id": "lnk-f2aaccd3-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "f2aaccd3-7c26-4327-881e-f5ad9e267b89",
+      "targetTitle": "Academy \u203a Lookup \u203a Cookbook",
+      "reason": "Extracted from apps/academy/docs/academy/05-Lookup/00-Cookbook.md at v6.2.2-dev.74 \u2014 Document ACL / Group Principals: signer context attached by hand vs ReactorClient.withSigner",
+      "confidence": "grounded"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Auth on an unsigned-header document does not resist an adversary, so an enforceable policy needs a signed header \u2014 ideally with INITIALIZE_AUTH in the create batch",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "3e53d5e7-d15a-4902-999d-0c8ec4fd8997",
+      "name": "auth-scope",
+      "topicDocumentId": null
+    },
+    {
+      "id": "e4b60ff3-2e27-43e3-a093-b63de923eb2c",
+      "name": "signing",
+      "topicDocumentId": null
+    },
+    {
+      "id": "bdcb1bf5-7f2d-4fe3-adde-e8a96eca152e",
+      "name": "security",
+      "topicDocumentId": null
+    },
+    {
+      "id": "71e2bda6-a87d-453d-b1c8-af459754b29b",
+      "name": "gotchas",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "A document's policy begins with `INITIALIZE_AUTH`, and its creator is whoever signed the header. An **unsigned-header document has no creator**, so its genesis is open: anyone can run `INITIALIZE_AUTH` first, and \u2014 because judgment is positional \u2014 anyone can *backdate* one that retroactively re-evaluates the whole history under a policy of their choosing. The spec states it flatly: auth on such a document does not resist an adversary.\n\nThe rule that follows: a document that wants an enforceable policy is **created with a signed header**, ideally with `INITIALIZE_AUTH` in its create batch so no window exists between existence and policy. The recipes attach unsigned `action.context.signer` by hand only to play several callers from one process; in production the `ReactorClient` populates and signs it via `.withSigner(...)` (the `audit-trail` recipe shows a real `RenownCryptoSigner`).\n\nThe same fact shapes the migration of the host's permission tables (stage 9): no existing document has a signed header, so a genesis binds no creator whoever signs it, and every migrated policy must therefore carry an explicit `execute`-on-`auth` grant naming the table's owner \u2014 or be refused as born locked out. A document with no owner is refused and reported rather than given an administrator its access list never mentioned.\n\n_Source: docs/specs/auth-scope.md (Powerhouse v6.2.2-dev.74)._\n_Source: apps/academy/docs/academy/05-Lookup/00-Cookbook.md (Powerhouse v6.2.2-dev.74)._\n\n## Provenance\n- `docs/specs/auth-scope.md` \u2014 Administration and bootstrap: 'Auth on an unsigned-header document does not resist an adversary'; Stage 9 creator paragraph\n- `apps/academy/docs/academy/05-Lookup/00-Cookbook.md` \u2014 Document ACL / Group Principals: signer context attached by hand vs ReactorClient.withSigner\n\n_Recorded from the Powerhouse repository at **v6.2.2-dev.74** during the v6.2.2-dev.74 source sync._",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": "v6.2.2-dev.74",
+  "computes": null,
+  "filePath": "docs/specs/auth-scope.md",
+  "noteType": "PATTERN",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": "grounded",
+  "consumedBy": [],
+  "provenance": {
+    "author": "knowledge-agent",
+    "createdAt": "2026-09-02T22:10:50.091Z",
+    "sessionId": null,
+    "updatedAt": "2026-09-02T22:20:27.738Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "With no creator the genesis is open: anyone can run INITIALIZE_AUTH first, or backdate one that re-evaluates the whole history under a policy of their choosing. Migrated documents all lack a creator.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "ec58f3d9-0f9a-45c8-9bfd-bbf2e2c08b40",
+      "actor": "knowledge-agent",
+      "comment": "extracted from the Powerhouse repository at v6.2.2-dev.74",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-09-02T22:10:50.626Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "78f47175-73b7-4eb4-aa0c-90145193498c",
+      "actor": "liberuum",
+      "comment": "claim checked against the cited repository file at the pinned tag",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-09-02T22:10:51.124Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

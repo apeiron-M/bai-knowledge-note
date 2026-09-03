@@ -1,0 +1,109 @@
+{
+  "links": [
+    {
+      "id": "lnk-5646522f-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "5646522f-bc2d-4257-bfa7-a455e5855197",
+      "targetTitle": "renown-creates-did-from-ethereum-wallet"
+    },
+    {
+      "id": "lnk-2ae31ea4-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "2ae31ea4-b8f4-4128-8531-93b932d6b6bb",
+      "targetTitle": "renown-sdk-decentralized-identity-auth"
+    },
+    {
+      "id": "lnk-e475e1de-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "e475e1de-d479-41b0-8185-41ea96a20bc1",
+      "targetTitle": "moc-authorization-and-identity"
+    },
+    {
+      "id": "lnk-a7186ab5-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "a7186ab5-9e32-4c1a-bf03-8d485203504b",
+      "targetTitle": "Academy \u203a Build \u203a BuildingUserExperiences \u203a Authorization \u203a Renown authentication flow",
+      "reason": "The note names apps/academy/docs/academy/03-Build/03-BuildingUserExperiences/07-Authorization/01-RenownAuthenticationFlow.md as its source; page text revised between v6.2.2-dev.47 and v6.2.2-dev.74 \u2014 re-verified in the v6.2.2-dev.74 pass",
+      "confidence": "grounded"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Connect enables in-page Renown sign-in via connect.renown.switchboardUrl plus rainbow/privy adapters",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "87f45957-f393-42ad-a19f-a773f6123aac",
+      "name": "renown",
+      "topicDocumentId": null
+    },
+    {
+      "id": "0b2b0af2-2cda-4c27-b572-e452c2c18470",
+      "name": "authentication",
+      "topicDocumentId": null
+    },
+    {
+      "id": "44f297df-43cc-49ad-a278-eff22195aa9b",
+      "name": "connect",
+      "topicDocumentId": null
+    },
+    {
+      "id": "9ebba903-d273-4e59-af3e-2d27ef425e97",
+      "name": "configuration",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "## Redirect by default, in-page by config\n\nBy default Connect authenticates by **redirecting** the user to the Renown portal to connect a wallet and mint the credential, then returning to the app. In-page sign-in \u2014 pick a login method inside Connect, sign the credential there, written and logged in via Switchboard without leaving the app \u2014 is opt-in and configured entirely through `powerhouse.config.json`.\n\n- **`connect.renown.switchboardUrl`** \u2014 the Switchboard GraphQL endpoint. When set, Connect *attempts* in-page sign-in. When absent, or when no wallet session can be produced, Connect falls back to the redirect flow automatically, so nothing breaks if it is left unset.\n- **`connect.renown.adapters`** \u2014 presence of a key enables that adapter.\n\n```json\n\"renown\": {\n  \"url\": \"https://www.renown.id\",\n  \"switchboardUrl\": \"https://switchboard.example/graphql\",\n  \"adapters\": {\n    \"rainbow\": { \"walletConnectProjectId\": \"...\" },\n    \"privy\": { \"appId\": \"...\", \"methods\": [\"google\", \"email\"] }\n  }\n}\n```\n\n## The two adapters\n\n**`rainbow`** (`{ walletConnectProjectId }`) \u2014 external wallets via RainbowKit + wagmi. Treat `walletConnectProjectId` as **required in practice**: without it only an installed browser wallet (or a Safe App iframe) can sign in, because every other RainbowKit wallet connects over the WalletConnect relay, which needs a project id. Those wallets are omitted rather than offered and failing.\n\n**`privy`** (`{ appId, clientId?, methods? }`) \u2014 embedded wallets plus social/email login. `methods` defaults to `[\"google\", \"email\"]`. Social and email login run inside Privy's own modal, with OAuth in a popup so the page stays alive. Each method must be enabled in the Privy dashboard with Connect's origin allowlisted.\n\n## Two operational notes\n\nOnly **public** identifiers belong in the config \u2014 a Privy **App Secret** is server-only and must never appear in `powerhouse.config.json`. And each adapter's wallet library is fetched only on the first login click, so enabling in-page auth adds nothing to startup cost; Connect ships with every adapter's peer dependencies installed, so operators only edit config.\n\n_Source: apps/academy/docs/academy/03-Build/03-BuildingUserExperiences/07-Authorization/01-RenownAuthenticationFlow.md (Powerhouse v6.2.2-dev.45)._",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": "v6.2.2-dev.74",
+  "computes": null,
+  "filePath": "apps/academy/docs/academy/03-Build/03-BuildingUserExperiences/07-Authorization/01-RenownAuthenticationFlow.md",
+  "noteType": "REFERENCE",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "claude",
+    "createdAt": "2026-08-13T14:33:32.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-09-02T22:26:19.860Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Presence of switchboardUrl opts into in-page sign-in; without it Connect falls back to the redirect flow. Adapters are keyed rainbow and privy in powerhouse.config.json.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "d85c5ee9-540a-43c4-be1c-662236012c5d",
+      "actor": "claude",
+      "comment": "Knowledge registered against powerhouse v6.2.2-dev.47",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-14T12:00:00.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "ae2f93e4-d5c6-4b05-beb6-594341338fd8",
+      "actor": "liberuum",
+      "comment": "Canonical as of powerhouse v6.2.2-dev.47",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-14T12:00:00.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

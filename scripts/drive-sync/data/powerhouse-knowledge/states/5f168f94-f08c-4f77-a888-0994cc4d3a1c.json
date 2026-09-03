@@ -1,0 +1,109 @@
+{
+  "links": [
+    {
+      "id": "lnk-2c856393-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "2c856393-31e4-4c1f-96aa-46c0a23cd072",
+      "targetTitle": "packages-published-to-npm-installed-with-ph"
+    },
+    {
+      "id": "lnk-15a216b2-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "15a216b2-f6e8-40ba-bfcb-604c1059297a",
+      "targetTitle": "packages-publish-to-npm-install-via-ph"
+    },
+    {
+      "id": "lnk-e5905516-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "e5905516-830e-4fac-9464-298c12e958fb",
+      "targetTitle": "vetra-package-module-types"
+    },
+    {
+      "id": "lnk-d08d7863-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "d08d7863-1ce4-4378-b3e4-e97c6c5e43e1",
+      "targetTitle": "Academy \u203a ReleaseNotes \u203a Powerhouse v6.0.0 \ud83d\ude80",
+      "reason": "Backing page found by content match in the v6.2.2-dev.74 source backfill \u2014 identifiers unpublish, uplink, v6.0.0 from the claim appear in this page (text identical at v6.2.2-dev.47 and v6.2.2-dev.74); attribution, not the original extraction record",
+      "confidence": "grounded"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "The Powerhouse registry is a private Verdaccio-backed npm mirror that Connect and Switchboard load packages from at runtime with no rebuild",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "78547f50-32b1-4cca-bc21-6fa647c1d80c",
+      "name": "packaging",
+      "topicDocumentId": null
+    },
+    {
+      "id": "c9092d52-c619-4bf6-9d9a-1800ffe14d08",
+      "name": "registry",
+      "topicDocumentId": null
+    },
+    {
+      "id": "8929278b-3f86-4389-a192-b8b4a819bea8",
+      "name": "deployment",
+      "topicDocumentId": null
+    },
+    {
+      "id": "ba3972ee-9c86-4555-bc4f-4a9dd8e5b76f",
+      "name": "v6-migration",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "The registry is not a bespoke artifact store \u2014 it is **Verdaccio**, the npm-compatible private registry, wrapped in Powerhouse-specific machinery. That choice is what makes `ph publish` / `ph install` / `ph unpublish` behave like npm commands while still being a closed ecosystem.\n\nWhat v6.0.0 added around Verdaccio is the interesting part:\n\n- **Renown JWT auth in front of Verdaccio** \u2014 identity comes from the Powerhouse identity layer, not from npm accounts.\n- **npm uplink** for transparent CDN fallback, so a package that resolves publicly still resolves through the private registry.\n- **SSE plus webhook publish notifications**, so subscribers learn about a publish rather than polling.\n- `ph unpublish` **purges the CDN cache** as part of unpublishing, which matters because the CDN is the read path.\n\nThe architectural payoff is the runtime-loading property: *Connect and Switchboard load processors and subgraphs at runtime from the HTTP registry \u2014 no rebuild required when new packages are published.* Two behaviours follow. Connect **auto-discovers** and offers to install the correct package when it meets an unknown document type, and a Connect **version picker** lets a user choose a specific dist-tag at install time. The registry URL itself is configuration, not a constant:\n\n```json\n// powerhouse.config.json\n{ \"registry\": \"https://your-registry-url\" }\n```\n\nwith `PH_REGISTRY_URL` taking precedence over the config file. `ph install` gained `--allow-build`, and prompts for a dist-tag when publishing a prerelease.\n\nThe reliability work is a hint about what the hard part was: concurrent tarball extraction had to be prevented, and correct package version resolution on the CDN had to be fixed.\n\nProvenance: academy `ReleaseNotes/v6.0.0.md` (\"Vetra Package Ecosystem\" highlight, \"Improvements\", \"Bug Fixes\") at academy 6.2.2-dev.45.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": "v6.2.2-dev.74",
+  "computes": null,
+  "filePath": "apps/academy/docs/academy/ReleaseNotes/v6.0.0.md",
+  "noteType": "WORKFLOW",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "claude",
+    "createdAt": "2026-08-13T14:39:04.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-09-02T21:41:16.260Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "v6.0.0 shipped ph publish/install/unpublish against it, Renown JWT auth in front of Verdaccio, an npm uplink for CDN fallback, and SSE plus webhook publish notifications.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "70f02edc-8418-479b-a46d-57eb3b02e8eb",
+      "actor": "claude",
+      "comment": "Knowledge registered against powerhouse v6.2.2-dev.47",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-14T12:00:00.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "ed55cfa6-e80a-4a3d-bc1e-fcd3a145b034",
+      "actor": "liberuum",
+      "comment": "Canonical as of powerhouse v6.2.2-dev.47",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-14T12:00:00.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

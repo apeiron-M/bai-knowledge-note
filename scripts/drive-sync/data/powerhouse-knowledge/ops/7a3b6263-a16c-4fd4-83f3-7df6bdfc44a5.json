@@ -1,0 +1,500 @@
+[
+  {
+    "index": 0,
+    "hash": "",
+    "timestampUtcMs": "2026-09-03T07:19:19.552Z",
+    "action": {
+      "type": "CREATE_DOCUMENT",
+      "input": {
+        "meta": {},
+        "name": "tla-phase1-safety",
+        "slug": "",
+        "model": "bai/knowledge-note",
+        "branch": "main",
+        "signing": {
+          "nonce": "",
+          "publicKey": {},
+          "signature": "7a3b6263-a16c-4fd4-83f3-7df6bdfc44a5",
+          "documentType": "bai/knowledge-note",
+          "createdAtUtcIso": "2026-09-03T07:19:19.552Z"
+        },
+        "version": 0,
+        "documentId": "7a3b6263-a16c-4fd4-83f3-7df6bdfc44a5",
+        "protocolVersions": {
+          "base-reducer": 2
+        }
+      },
+      "timestampUtcMs": "2026-09-03T07:19:19.552Z"
+    }
+  },
+  {
+    "index": 0,
+    "hash": "ifhg5zRnQnobKnUwpDTTBhtf1hY=",
+    "timestampUtcMs": "2026-09-03T07:19:20.973Z",
+    "action": {
+      "type": "SET_TITLE",
+      "input": {
+        "title": "The reactor's sync protocol has a machine-checked proof of four safety properties, but only for two reactors, one document and five operations",
+        "updatedAt": "2026-09-03T07:19:20.973Z"
+      },
+      "timestampUtcMs": "2026-09-03T07:19:20.973Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "",
+    "timestampUtcMs": "2026-09-03T07:19:19.552Z",
+    "action": {
+      "type": "UPGRADE_DOCUMENT",
+      "input": {
+        "model": "bai/knowledge-note",
+        "toVersion": 1,
+        "documentId": "7a3b6263-a16c-4fd4-83f3-7df6bdfc44a5",
+        "fromVersion": 0,
+        "initialState": {
+          "auth": {
+            "grants": [],
+            "version": 0
+          },
+          "local": {
+            "lastViewedAt": null,
+            "personalTags": []
+          },
+          "global": {
+            "links": [],
+            "model": null,
+            "scope": null,
+            "title": null,
+            "editor": null,
+            "inputs": [],
+            "models": [],
+            "status": "DRAFT",
+            "topics": [],
+            "content": null,
+            "context": null,
+            "modelId": null,
+            "modules": [],
+            "outputs": [],
+            "version": null,
+            "computes": null,
+            "filePath": null,
+            "noteType": null,
+            "severity": null,
+            "hooksUsed": [],
+            "rootCause": null,
+            "confidence": null,
+            "consumedBy": [],
+            "provenance": null,
+            "sourceType": null,
+            "targetType": null,
+            "cardinality": null,
+            "description": null,
+            "alternatives": [],
+            "consequences": [],
+            "errorMessage": null,
+            "relationType": null,
+            "correctPattern": null,
+            "decisionStatus": null,
+            "dispatchTargets": [],
+            "lifecycleEvents": []
+          },
+          "document": {
+            "hash": {
+              "encoding": "base64",
+              "algorithm": "sha1"
+            },
+            "version": 1
+          }
+        }
+      },
+      "timestampUtcMs": "2026-09-03T07:19:19.552Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "JNDFtH2npSqX/DDtM05tCHZK2bU=",
+    "timestampUtcMs": "2026-09-03T07:19:20.973Z",
+    "action": {
+      "type": "SET_DESCRIPTION",
+      "input": {
+        "updatedAt": "2026-09-03T07:19:20.973Z",
+        "description": "TLC explored 357,574 distinct states in 11 seconds and verified TypeOK, OperationUniqueness, StreamMonotonicity and CursorMonotonicity. Eventual consistency is specified but not checked here."
+      },
+      "timestampUtcMs": "2026-09-03T07:19:20.973Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "",
+    "timestampUtcMs": "2026-09-03T07:21:13.473Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "metadata": {
+          "reason": "Extracted from packages/reactor/specs/tla/README.md at v6.2.2-dev.74 \u2014 Phase 1 Model; Properties Verified; What is Proven (Phase 1); Verification Results",
+          "confidence": "grounded"
+        },
+        "sourceId": "7a3b6263-a16c-4fd4-83f3-7df6bdfc44a5",
+        "targetId": "fff29bdc-424a-4a8e-902c-fb6d07b040b4",
+        "relationshipType": "DERIVED_FROM"
+      },
+      "timestampUtcMs": "2026-09-03T07:21:13.473Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "jDC9lEEoe2VWcrGAjUuGcltUbfE=",
+    "timestampUtcMs": "2026-09-03T07:19:20.973Z",
+    "action": {
+      "type": "SET_NOTE_TYPE",
+      "input": {
+        "noteType": "OBSERVATION",
+        "updatedAt": "2026-09-03T07:19:20.973Z"
+      },
+      "timestampUtcMs": "2026-09-03T07:19:20.973Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "",
+    "timestampUtcMs": "2026-09-03T07:21:13.991Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "metadata": {
+          "reason": "Gives the reshuffle claim a machine-checked basis: the model merges divergent streams by timestamp and TLC finds no state where uniqueness or monotonicity breaks",
+          "confidence": "grounded"
+        },
+        "sourceId": "7a3b6263-a16c-4fd4-83f3-7df6bdfc44a5",
+        "targetId": "5ba85b55-4ac1-4cd5-a9d2-e1855c5b9633",
+        "relationshipType": "BUILDS_ON"
+      },
+      "timestampUtcMs": "2026-09-03T07:21:13.991Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "7nzkxCV/spPzak/9PecCIHtj5L8=",
+    "timestampUtcMs": "2026-09-03T07:19:20.973Z",
+    "action": {
+      "type": "SET_CONTENT",
+      "input": {
+        "content": "`packages/reactor/specs/tla/ReactorSync.tla` models the sync protocol in TLA+ and TLC checks it. The Phase-1 configuration is deliberately tiny \u2014 2 reactors (`r1`, `r2`), 1 document, 3 operations per reactor, bounded by `nextOpId <= 5` \u2014 and explores **357,574 distinct states (1,806,603 generated, max depth 42) in about 11 seconds.**\n\nFour **safety** invariants hold in every state explored:\n\n1. `TypeOK` \u2014 all variables well-typed;\n2. `OperationUniqueness` \u2014 no duplicate operation ids anywhere;\n3. `StreamMonotonicity` \u2014 operation indices within a stream never decrease;\n4. `CursorMonotonicity` \u2014 sync cursors never move backwards.\n\nThe **liveness** property, `EventualConsistency` (all reactors converge once nothing is in transit), is specified but **not checked** in Phase 1, because the unbounded temporal property is expensive. So \"verified\" here means safety only.\n\nWhat the model proves, in the authors' own framing: no data corruption, operation uniqueness within a stream, stream and cursor monotonicity, **idempotency** (an operation received repeatedly creates no duplicate), and that the reshuffle algorithm merges divergent streams deterministically by timestamp.\n\n## Provenance\n- `packages/reactor/specs/tla/README.md` \u2014 Phase 1 Model; Properties Verified; What is Proven (Phase 1); Verification Results\n\n_Extracted from the Powerhouse repository at **v6.2.2-dev.74**._",
+        "updatedAt": "2026-09-03T07:19:20.973Z"
+      },
+      "timestampUtcMs": "2026-09-03T07:19:20.973Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "",
+    "timestampUtcMs": "2026-09-03T07:21:14.432Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "metadata": {
+          "reason": "The same run's bounds are what limit how far the proof can be carried, which is that note's subject",
+          "confidence": "grounded"
+        },
+        "sourceId": "7a3b6263-a16c-4fd4-83f3-7df6bdfc44a5",
+        "targetId": "e0c114b2-9d22-4040-b24c-50fc4da594a6",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-09-03T07:21:14.432Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "gMvmbmEJPEquPlOvPBxaElXaLqM=",
+    "timestampUtcMs": "2026-09-03T07:19:20.973Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "0a7bcae8-00e3-4e0a-bff5-ef77407da368",
+        "name": "reactor-sync"
+      },
+      "timestampUtcMs": "2026-09-03T07:19:20.973Z"
+    }
+  },
+  {
+    "index": 5,
+    "hash": "",
+    "timestampUtcMs": "2026-09-03T07:21:15.169Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "metadata": {
+          "reason": "CursorMonotonicity is proven over the model's abstract cursors, while the real protocol's cursors carry two different reactors' ordinals",
+          "confidence": "speculative"
+        },
+        "sourceId": "7a3b6263-a16c-4fd4-83f3-7df6bdfc44a5",
+        "targetId": "936ddc46-3b5a-40d1-b69f-6a3f6c3c6b8f",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-09-03T07:21:15.169Z"
+    }
+  },
+  {
+    "index": 5,
+    "hash": "WiRMx1+s2HN5iFvuElVYnSIZbO4=",
+    "timestampUtcMs": "2026-09-03T07:19:20.973Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "6d1a2970-eda8-4d75-a250-672ad5d2aa07",
+        "name": "formal-verification"
+      },
+      "timestampUtcMs": "2026-09-03T07:19:20.973Z"
+    }
+  },
+  {
+    "index": 6,
+    "hash": "",
+    "timestampUtcMs": "2026-09-03T07:23:05.390Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "metadata": {
+          "reason": "Extracted from packages/reactor/specs/tla/README.md at v6.2.2-dev.74 \u2014 Phase 1 Model; Properties Verified; What is Proven (Phase 1); Verification Results",
+          "confidence": "grounded"
+        },
+        "sourceId": "7a3b6263-a16c-4fd4-83f3-7df6bdfc44a5",
+        "targetId": "fff29bdc-424a-4a8e-902c-fb6d07b040b4",
+        "relationshipType": "DERIVED_FROM"
+      },
+      "timestampUtcMs": "2026-09-03T07:23:05.390Z"
+    }
+  },
+  {
+    "index": 6,
+    "hash": "aEjv/09phFSzzXj3/7nxqdzd7F4=",
+    "timestampUtcMs": "2026-09-03T07:19:20.973Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "9b5b1e33-5c2d-47d8-a06b-efcbb2318fe5",
+        "name": "tla-plus"
+      },
+      "timestampUtcMs": "2026-09-03T07:19:20.973Z"
+    }
+  },
+  {
+    "index": 7,
+    "hash": "",
+    "timestampUtcMs": "2026-09-03T07:23:05.860Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "metadata": {
+          "reason": "Gives the reshuffle claim a machine-checked basis: the model merges divergent streams by timestamp and TLC finds no state where uniqueness or monotonicity breaks",
+          "confidence": "grounded"
+        },
+        "sourceId": "7a3b6263-a16c-4fd4-83f3-7df6bdfc44a5",
+        "targetId": "5ba85b55-4ac1-4cd5-a9d2-e1855c5b9633",
+        "relationshipType": "BUILDS_ON"
+      },
+      "timestampUtcMs": "2026-09-03T07:23:05.860Z"
+    }
+  },
+  {
+    "index": 7,
+    "hash": "H5KfUOql/dUWYoQDtSKhlpX0wEk=",
+    "timestampUtcMs": "2026-09-03T07:19:20.973Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "3d29d513-1a9c-41f5-8c2b-e523cf2aae0e",
+        "name": "correctness"
+      },
+      "timestampUtcMs": "2026-09-03T07:19:20.973Z"
+    }
+  },
+  {
+    "index": 8,
+    "hash": "",
+    "timestampUtcMs": "2026-09-03T07:23:06.316Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "metadata": {
+          "reason": "The same run's bounds are what limit how far the proof can be carried, which is that note's subject",
+          "confidence": "grounded"
+        },
+        "sourceId": "7a3b6263-a16c-4fd4-83f3-7df6bdfc44a5",
+        "targetId": "e0c114b2-9d22-4040-b24c-50fc4da594a6",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-09-03T07:23:06.316Z"
+    }
+  },
+  {
+    "index": 8,
+    "hash": "w5jb5KCT7QTIraWVOinQVACw84o=",
+    "timestampUtcMs": "2026-09-03T07:19:20.973Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "version",
+        "value": "v6.2.2-dev.74",
+        "updatedAt": "2026-09-03T07:19:20.973Z"
+      },
+      "timestampUtcMs": "2026-09-03T07:19:20.973Z"
+    }
+  },
+  {
+    "index": 9,
+    "hash": "",
+    "timestampUtcMs": "2026-09-03T07:23:06.752Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "metadata": {
+          "reason": "CursorMonotonicity is proven over the model's abstract cursors, while the real protocol's cursors carry two different reactors' ordinals",
+          "confidence": "speculative"
+        },
+        "sourceId": "7a3b6263-a16c-4fd4-83f3-7df6bdfc44a5",
+        "targetId": "936ddc46-3b5a-40d1-b69f-6a3f6c3c6b8f",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-09-03T07:23:06.752Z"
+    }
+  },
+  {
+    "index": 9,
+    "hash": "hNtxz0FqT94CEKnfqqm7/XnHJWQ=",
+    "timestampUtcMs": "2026-09-03T07:19:20.973Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "filePath",
+        "value": "packages/reactor/specs/tla/README.md",
+        "updatedAt": "2026-09-03T07:19:20.973Z"
+      },
+      "timestampUtcMs": "2026-09-03T07:19:20.973Z"
+    }
+  },
+  {
+    "index": 10,
+    "hash": "LjTECvlnBuG9PmIeBlDHCFjZwxY=",
+    "timestampUtcMs": "2026-09-03T07:19:23.558Z",
+    "action": {
+      "type": "SET_PROVENANCE",
+      "input": {
+        "author": "knowledge-agent",
+        "createdAt": "2026-09-03T07:19:23.558Z",
+        "sourceOrigin": "DERIVED"
+      },
+      "timestampUtcMs": "2026-09-03T07:19:23.558Z"
+    }
+  },
+  {
+    "index": 11,
+    "hash": "R6TyEGyq8poV8wy0/2kitw3YnCI=",
+    "timestampUtcMs": "2026-09-03T07:19:24.232Z",
+    "action": {
+      "type": "SUBMIT_FOR_REVIEW",
+      "input": {
+        "id": "219bf154-3217-4935-bec8-e6a3c5038640",
+        "actor": "knowledge-agent",
+        "comment": "extracted from packages/reactor/specs/tla/README.md at v6.2.2-dev.74",
+        "timestamp": "2026-09-03T07:19:24.232Z"
+      },
+      "timestampUtcMs": "2026-09-03T07:19:24.232Z"
+    }
+  },
+  {
+    "index": 12,
+    "hash": "B+KSv0pOgYon5LpiPvlFSAqfBq8=",
+    "timestampUtcMs": "2026-09-03T07:19:24.842Z",
+    "action": {
+      "type": "APPROVE_NOTE",
+      "input": {
+        "id": "2205a3e6-3a22-4f18-b69b-1dd4e8593ffb",
+        "actor": "liberuum",
+        "comment": "claim checked against the cited file at the pinned tag",
+        "timestamp": "2026-09-03T07:19:24.842Z"
+      },
+      "timestampUtcMs": "2026-09-03T07:19:24.842Z"
+    }
+  },
+  {
+    "index": 13,
+    "hash": "w1kSk+Zyr25HQpzy9aaeIMxc+0U=",
+    "timestampUtcMs": "2026-09-03T07:22:28.827Z",
+    "action": {
+      "type": "SET_TITLE",
+      "input": {
+        "title": "The reactor's sync protocol has a machine-checked proof of four safety properties, but only for two reactors, one document and five operations",
+        "updatedAt": "2026-09-03T07:22:28.827Z"
+      },
+      "timestampUtcMs": "2026-09-03T07:22:28.827Z"
+    }
+  },
+  {
+    "index": 14,
+    "hash": "w1kSk+Zyr25HQpzy9aaeIMxc+0U=",
+    "timestampUtcMs": "2026-09-03T07:22:28.827Z",
+    "action": {
+      "type": "SET_DESCRIPTION",
+      "input": {
+        "updatedAt": "2026-09-03T07:22:28.827Z",
+        "description": "TLC explored 357,574 distinct states in 11 seconds and verified TypeOK, OperationUniqueness, StreamMonotonicity and CursorMonotonicity. Eventual consistency is specified but not checked here."
+      },
+      "timestampUtcMs": "2026-09-03T07:22:28.827Z"
+    }
+  },
+  {
+    "index": 15,
+    "hash": "w1kSk+Zyr25HQpzy9aaeIMxc+0U=",
+    "timestampUtcMs": "2026-09-03T07:22:28.827Z",
+    "action": {
+      "type": "SET_NOTE_TYPE",
+      "input": {
+        "noteType": "OBSERVATION",
+        "updatedAt": "2026-09-03T07:22:28.827Z"
+      },
+      "timestampUtcMs": "2026-09-03T07:22:28.827Z"
+    }
+  },
+  {
+    "index": 16,
+    "hash": "w1kSk+Zyr25HQpzy9aaeIMxc+0U=",
+    "timestampUtcMs": "2026-09-03T07:22:28.827Z",
+    "action": {
+      "type": "SET_CONTENT",
+      "input": {
+        "content": "`packages/reactor/specs/tla/ReactorSync.tla` models the sync protocol in TLA+ and TLC checks it. The Phase-1 configuration is deliberately tiny \u2014 2 reactors (`r1`, `r2`), 1 document, 3 operations per reactor, bounded by `nextOpId <= 5` \u2014 and explores **357,574 distinct states (1,806,603 generated, max depth 42) in about 11 seconds.**\n\nFour **safety** invariants hold in every state explored:\n\n1. `TypeOK` \u2014 all variables well-typed;\n2. `OperationUniqueness` \u2014 no duplicate operation ids anywhere;\n3. `StreamMonotonicity` \u2014 operation indices within a stream never decrease;\n4. `CursorMonotonicity` \u2014 sync cursors never move backwards.\n\nThe **liveness** property, `EventualConsistency` (all reactors converge once nothing is in transit), is specified but **not checked** in Phase 1, because the unbounded temporal property is expensive. So \"verified\" here means safety only.\n\nWhat the model proves, in the authors' own framing: no data corruption, operation uniqueness within a stream, stream and cursor monotonicity, **idempotency** (an operation received repeatedly creates no duplicate), and that the reshuffle algorithm merges divergent streams deterministically by timestamp.\n\n## Provenance\n- `packages/reactor/specs/tla/README.md` \u2014 Phase 1 Model; Properties Verified; What is Proven (Phase 1); Verification Results\n\n_Extracted from the Powerhouse repository at **v6.2.2-dev.74**._",
+        "updatedAt": "2026-09-03T07:22:28.827Z"
+      },
+      "timestampUtcMs": "2026-09-03T07:22:28.827Z"
+    }
+  },
+  {
+    "index": 17,
+    "hash": "w1kSk+Zyr25HQpzy9aaeIMxc+0U=",
+    "timestampUtcMs": "2026-09-03T07:22:28.827Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "version",
+        "value": "v6.2.2-dev.74",
+        "updatedAt": "2026-09-03T07:22:28.827Z"
+      },
+      "timestampUtcMs": "2026-09-03T07:22:28.827Z"
+    }
+  },
+  {
+    "index": 18,
+    "hash": "w1kSk+Zyr25HQpzy9aaeIMxc+0U=",
+    "timestampUtcMs": "2026-09-03T07:22:28.827Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "filePath",
+        "value": "packages/reactor/specs/tla/README.md",
+        "updatedAt": "2026-09-03T07:22:28.827Z"
+      },
+      "timestampUtcMs": "2026-09-03T07:22:28.827Z"
+    }
+  }
+]

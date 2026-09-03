@@ -1,0 +1,103 @@
+[
+  {
+    "index": 0,
+    "hash": "",
+    "timestampUtcMs": "2026-09-03T07:39:21.388Z",
+    "action": {
+      "type": "CREATE_DOCUMENT",
+      "input": {
+        "meta": {},
+        "name": "Contradiction: RemoteDocumentController does no conflict check\u2026 / Operational reshuffle preserves immutable actions\u2026",
+        "slug": "",
+        "model": "bai/tension",
+        "branch": "main",
+        "signing": {
+          "nonce": "",
+          "publicKey": {},
+          "signature": "269e5287-6844-4c1b-b839-f7946b07b485",
+          "documentType": "bai/tension",
+          "createdAtUtcIso": "2026-09-03T07:39:21.388Z"
+        },
+        "version": 0,
+        "documentId": "269e5287-6844-4c1b-b839-f7946b07b485",
+        "protocolVersions": {
+          "base-reducer": 2
+        }
+      },
+      "timestampUtcMs": "2026-09-03T07:39:21.388Z"
+    }
+  },
+  {
+    "index": 0,
+    "hash": "wk5iOYdo5x6mvWanYlB39KLfJj0=",
+    "timestampUtcMs": "2026-09-03T07:39:21.829Z",
+    "action": {
+      "type": "CREATE_TENSION",
+      "input": {
+        "title": "Contradiction: RemoteDocumentController does no conflict check\u2026 / Operational reshuffle preserves immutable actions\u2026",
+        "content": "## Involved claims\n\n- RemoteDocumentController does no conflict check by default, so concurrent editors are last-write-wins until onConflict is set to reject, rebase or a custom merge \u2014 `981a7608-312e-4df7-bae3-942491b9e023`\n- Operational reshuffle preserves immutable actions where CRDTs and OT cannot \u2014 `5ba85b55-4ac1-4cd5-a9d2-e1855c5b9633`\n\n## Why this exists\n\nA `CONTRADICTS` relationship was recorded between these two notes at 2026-09-03T07:39:21.382Z. The vault treats a recorded contradiction as an open question, not a fact to leave implicit: until someone resolves or dissolves this tension, both claims stand and readers should see that they disagree.\n\n## How to close it\n\n- **Resolve** when one claim is correct: say which, and consider `SUPERSEDES` on the winner.\n- **Dissolve** when both are right in different scopes: state the boundary in each note's content.",
+        "observedAt": "2026-09-03T07:39:21.382Z",
+        "observedBy": "graph-indexer",
+        "description": "\u201cRemoteDocumentController does no conflict check by default, so concurrent editors are last-write-wins until onConflict is set to reject, re\u2026\u201d contradicts \u201cOperational reshuffle preserves immutable actions where CRDTs and OT cannot\u201d. Opened automatically from a CONTRADICTS link \u2014 resolve if one side is right, dissolve if both hold in different contexts.",
+        "involvedRefs": [
+          "981a7608-312e-4df7-bae3-942491b9e023",
+          "5ba85b55-4ac1-4cd5-a9d2-e1855c5b9633"
+        ]
+      },
+      "timestampUtcMs": "2026-09-03T07:39:21.829Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "",
+    "timestampUtcMs": "2026-09-03T07:39:21.388Z",
+    "action": {
+      "type": "UPGRADE_DOCUMENT",
+      "input": {
+        "model": "bai/tension",
+        "toVersion": 1,
+        "documentId": "269e5287-6844-4c1b-b839-f7946b07b485",
+        "fromVersion": 0,
+        "initialState": {
+          "auth": {
+            "grants": [],
+            "version": 0
+          },
+          "local": {},
+          "global": {
+            "title": null,
+            "status": "OPEN",
+            "content": null,
+            "observedAt": null,
+            "observedBy": null,
+            "resolution": null,
+            "resolvedAt": null,
+            "description": null,
+            "involvedRefs": []
+          },
+          "document": {
+            "hash": {
+              "encoding": "base64",
+              "algorithm": "sha1"
+            },
+            "version": 1
+          }
+        }
+      },
+      "timestampUtcMs": "2026-09-03T07:39:21.388Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "hUI2WM72Fztmhpt7d2M0ErLf2Ts=",
+    "timestampUtcMs": "2026-09-03T07:59:26.576Z",
+    "action": {
+      "type": "DISSOLVE_TENSION",
+      "input": {
+        "resolution": "Dissolved: the two claims are about different layers. Operational reshuffle is how the reactor merges immutable operations it already stores, by timestamp, on every replica. RemoteDocumentController is a client pushing actions over GraphQL that has not reached that machinery yet, and its default is last-write-wins until onConflict is set. Nothing the controller does changes how stored operations merge; nothing reshuffle does gives the client a pull-before-push check.",
+        "resolvedAt": "2026-09-03T07:59:26.576Z"
+      },
+      "timestampUtcMs": "2026-09-03T07:59:26.576Z"
+    }
+  }
+]

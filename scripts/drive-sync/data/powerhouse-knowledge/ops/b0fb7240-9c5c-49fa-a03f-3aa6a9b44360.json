@@ -1,0 +1,133 @@
+[
+  {
+    "index": 0,
+    "hash": "",
+    "timestampUtcMs": "2026-09-02T21:32:28.388Z",
+    "action": {
+      "type": "CREATE_DOCUMENT",
+      "input": {
+        "meta": {},
+        "name": "Academy \u203a Build \u203a GettingStartedBuilding \u203a Prerequisites",
+        "slug": "",
+        "model": "bai/source",
+        "branch": "main",
+        "signing": {
+          "nonce": "",
+          "publicKey": {},
+          "signature": "b0fb7240-9c5c-49fa-a03f-3aa6a9b44360",
+          "documentType": "bai/source",
+          "createdAtUtcIso": "2026-09-02T21:32:28.387Z"
+        },
+        "version": 0,
+        "documentId": "b0fb7240-9c5c-49fa-a03f-3aa6a9b44360",
+        "protocolVersions": {
+          "base-reducer": 2
+        }
+      },
+      "timestampUtcMs": "2026-09-02T21:32:28.388Z"
+    }
+  },
+  {
+    "index": 0,
+    "hash": "8UNjCYQfqu5vdTHOL5M5t6Tb5wM=",
+    "timestampUtcMs": "2026-09-02T21:32:28.538Z",
+    "action": {
+      "type": "INGEST_SOURCE",
+      "input": {
+        "url": "https://github.com/powerhouse-inc/powerhouse/blob/v6.2.2-dev.74/apps/academy/docs/academy/03-Build/00-GettingStartedBuilding/01-Prerequisites.md",
+        "tool": "sync-repo-docs",
+        "title": "Academy \u203a Build \u203a GettingStartedBuilding \u203a Prerequisites",
+        "author": "Powerhouse Inc.",
+        "method": "sha256:de6eb4a5b8569698fd369994647c993e55d21d7494a841f69c58e995fc36b0f6 git:v6.2.2-dev.74",
+        "content": "# Prerequisites\n\n:::tip[Two ways to build: manual vs. AI-guided]\nThis **Build** chapter is the **manual experience** \u2014 you build Powerhouse packages by hand on your own machine with the Powerhouse CLI, controlling every step (document models, editors, processors, and publishing).\n\nIf you'd rather have an AI agent build for you, use the **AI-guided experience** in [**Vetra Studio**](/academy/GetStarted/VetraStudio): you describe what you want in chat and the agent writes the specs and code for you \u2014 no local setup required.\n\nThe two paths produce the same kind of package, so you can mix and match: prototype with the agent, then drop down to the manual workflow for fine-grained control.\n:::\n\nThe rest of this section sets up your machine for the manual path and walks you through the end-to-end package workflow. It covers Node.js 24, VS Code, Git, and the Powerhouse CLI.\n\n:::info\nIf you've already set up **Git, Node.js 24, and a package manager (pnpm or npm)**, your most important step is to install the **Powerhouse CLI** with the command: `pnpm install -g ph-cmd` or `npm install -g ph-cmd`. A global install is recommended if you want to use the command from any directory as a power user. The Powerhouse CLI is used to create, build, and run your Document Models and gives you direct access to a series of Powerhouse Builder Tools. Move to the end of this page to [verify your installation.](#verify-installation)\n:::\n\n---\n\n## Overview\n\nBefore building your Document Model, install some software on your machine. You need three tools:\n\n- Node.js 24, which runs your code.\n- Visual Studio Code (VS Code), where you write your code.\n- Git, which manages your code.\n\nFollow the steps below based on your computer's operating system.\n\n### Windows Users: Consider Using WSL\n\nIf you're on Windows, we recommend using **Windows Subsystem for Linux (WSL)** for the best development experience. WSL lets you run a full Linux environment directly on Windows without the overhead of a virtual machine. This gives you access to Linux command-line tools and utilities, which are often preferred for modern web development workflows.\n\n**To install WSL:**\n\n1. Open PowerShell as Administrator (right-click and select \"Run as administrator\")\n2. Run the following command:\n\n```powershell\nwsl --install\n```\n\n3. Restart your computer when prompted\n4. After restart, a terminal will open asking you to create a Linux username and password\n\nOnce WSL is set up, you can follow the **Linux (Ubuntu/Debian)** instructions below for installing Node.js, Git, and other tools. Your Linux environment will be accessible through the Windows Terminal or by typing `wsl` in PowerShell.\n\n:::tip\nUsing WSL provides a consistent development experience that matches most production environments and online tutorials. You can still use VS Code on Windows \u2014 it integrates with WSL through the [Remote - WSL extension](https://marketplace.visualstudio.com/items?itemName=ms-vscode-remote.remote-wsl).\n:::\n\nFor more details, see the official [WSL installation guide](https://learn.microsoft.com/en-us/windows/wsl/install).\n\n---\n\n### Installing Node.js 24\n\nNode.js 24 runs your application. Install it with the steps below.\n\n#### For Windows:\n\n1. **Set up PowerShell for running commands:**\n   - Press the Windows key\n   - Type \"PowerShell\"\n   - Right-click on \"Windows PowerShell\" and select \"Run as administrator\"\n   - In the PowerShell window, type this command and press Enter:\n\n   ```powershell\n   Set-ExecutionPolicy RemoteSigned -Scope CurrentUser\n   ```\n\n   - Type 'A' when prompted to confirm\n   - You can now close this window and open PowerShell normally for the remaining steps\n\n2. **Install Node.js 24:**\n   - Visit the [Node.js official website](https://nodejs.org/)\n   - Click the big green button that says \"LTS\" (this means Long Term Support - it's the most stable version)\n   - Once the installer downloads, double-click it to start installation\n   - Click \"Next\" through the installation wizard, leaving all settings at their defaults\n\n3. **Install a package manager (pnpm or npm):**\n   - Open PowerShell (no need for admin mode)\n   - For pnpm (recommended), type this command and press Enter:\n\n   ```powershell\n   npm install -g pnpm\n   ```\n\n   - Note: Node.js comes with npm by default, so npm is already available after installing Node.js\n\n4. **Verify Installation:**\n   - Open PowerShell (no need for admin mode)\n   - Type these commands one at a time and press Enter after each:\n\n   ```powershell\n   node --version\n   pnpm --version\n   # or\n   npm --version\n   ```\n\n   - Version numbers should appear after each command (e.g., v24.x.x for Node.js). If they do, Node.js and your package manager are installed.\n\n> **Note**: If Node.js commands don't work in VS Code, restart VS Code to refresh environment variables.\n\n#### For macOS:\n\n1. **Install Homebrew:**\n   - Open Terminal (press Command + Space and type \"Terminal\")\n   - Copy and paste this command into Terminal and press Enter:\n\n   ```bash\n   /bin/bash -c \"$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)\"\n   ```\n\n   - Follow any additional instructions that appear\n\n2. **Install Node.js 24:**\n   - In the same Terminal window, type this command and press Enter:\n\n   ```bash\n   brew install node@24\n   ```\n\n   - Then, optionally install pnpm (npm comes with Node.js):\n\n   ```bash\n   brew install pnpm\n   ```\n\n3. **Verify Installation:**\n   - In Terminal, type these commands one at a time and press Enter after each:\n\n   ```bash\n   node --version\n   pnpm --version\n   # or\n   npm --version\n   ```\n\n   - If version numbers appear, Node.js and your package manager are installed.\n\n#### For Linux (Ubuntu/Debian):\n\n1. **Open Terminal:**\n   - Press Ctrl + Alt + T on your keyboard, or\n   - Click the Activities button and type \"Terminal\"\n\n2. **Update Package List:**\n\n   ```bash\n   sudo apt update\n   ```\n\n3. **Install Node.js 24 and optionally pnpm:**\n\n   ```bash\n   sudo apt install nodejs\n   # Optionally install pnpm (npm comes with Node.js)\n   sudo apt install pnpm\n   ```\n\n4. **Verify Installation:**\n   - Type these commands one at a time and press Enter after each:\n\n   ```bash\n   node --version\n   pnpm --version\n   # or\n   npm --version\n   ```\n\n   - If version numbers appear, your installation is complete.\n\n### Installing Visual Studio Code\n\nVS Code is the editor we'll use to write our code. Here's how to install it:\n\n#### For Windows:\n\n1. Visit the [Visual Studio Code website](https://code.visualstudio.com/)\n2. Click the blue \"Download for Windows\" button\n3. Once the installer downloads, double-click it\n4. Accept the license agreement and click \"Next\"\n5. Leave the default installation location and click \"Next\"\n6. In the Select Additional Tasks window, make sure \"Add to PATH\" is checked\n7. Click \"Next\" and then \"Install\"\n8. When installation is complete, click \"Finish\"\n\n#### For macOS:\n\n1. Visit the [Visual Studio Code website](https://code.visualstudio.com/)\n2. Click the blue \"Download for Mac\" button\n3. Once the .zip file downloads, double-click it to extract\n4. Drag Visual Studio Code.app to the Applications folder\n5. Double-click the app to launch it\n6. To make VS Code available in your terminal:\n   - Open VS Code\n   - Press Command + Shift + P\n   - Type \"shell command\" and select \"Shell Command: Install 'code' command in PATH\"\n\n#### For Linux (Ubuntu/Debian):\n\n1. Open Terminal (Ctrl + Alt + T)\n2. First, update the packages list:\n   ```bash\n   sudo apt update\n   ```\n3. Install the dependencies needed to add Microsoft's repository:\n   ```bash\n   sudo apt install software-properties-common apt-transport-https wget\n   ```\n4. Import Microsoft's GPG key:\n   ```bash\n   wget -q https://packages.microsoft.com/keys/microsoft.asc -O- | sudo apt-key add -\n   ```\n5. Add the VS Code repository:\n   ```bash\n   sudo add-apt-repository \"deb [arch=amd64] https://packages.microsoft.com/repos/vscode stable main\"\n   ```\n6. Install VS Code:\n   ```bash\n   sudo apt install code\n   ```\n7. Once installed, you can launch VS Code by:\n   - Typing `code` in the terminal, or\n   - Finding it in your Applications menu\n\n### Install Git\n\n#### For Windows\n\n1. Open PowerShell (press Windows key, type \"PowerShell\", and press Enter)\n2. Visit the [Git website](https://git-scm.com/)\n3. Download the latest version for Windows\n4. Run the installer and use the recommended settings\n5. Verify installation by opening PowerShell:\n   ```powershell\n   git --version\n   ```\n\n#### For macOS\n\n1. Install using Homebrew:\n   ```bash\n   brew install git\n   ```\n2. Verify installation:\n   ```bash\n   git --version\n   ```\n\n#### For Linux (Ubuntu/Debian)\n\n1. Update package list:\n   ```bash\n   sudo apt update\n   ```\n2. Install Git:\n   ```bash\n   sudo apt install git\n   ```\n3. Verify installation:\n   ```bash\n   git --version\n   ```\n\n### Configure Git (All Systems)\n\nAfter installation, set up your identity:\n\n```bash\ngit config --global user.name \"Your Name\"\ngit config --global user.email \"your.email@example.com\"\n```\n\n### Install the Powerhouse CLI\n\nThe Powerhouse CLI (installed via the `ph-cmd` package) is a command-line interface tool. It provides the `ph` command, which is essential for managing Powerhouse projects. You can get access to the Powerhouse Ecosystem tools by installing them globally using:\n\n```bash\npnpm install -g ph-cmd\n```\n\nOr if you're using npm:\n\n```bash\nnpm install -g ph-cmd\n```\n\nKey commands include:\n\n- `ph connect` for running the Connect application locally\n- `ph switchboard` or `ph reactor` for starting the API service\n- `ph init` to start a new project and build a document model\n- `ph help` to get an overview of all the available commands\n\nUse it to create, build, and run Document Models.\n\n<details>\n<summary> How to use different branches? </summary>\n\nWhen installing or using the Powerhouse CLI commands you can use the dev & staging branches. These branches contain more experimental features than the latest stable release the PH CLI uses by default. They can be used to get access to a bug fix or features under development.\n\n| Command                            | Description                                       |\n| ---------------------------------- | ------------------------------------------------- |\n| **pnpm install -g ph-cmd**         | Install latest stable version                     |\n| **pnpm install -g ph-cmd@dev**     | Install development version                       |\n| **pnpm install -g ph-cmd@staging** | Install staging version                           |\n| **ph init**                        | Use latest stable version of the boilerplate      |\n| **ph init --dev**                  | Use development version of the boilerplate        |\n| **ph init --staging**              | Use staging version of the boilerplate            |\n| **ph use latest**                  | Switch all dependencies to latest stable versions |\n| **ph use dev**                     | Switch all dependencies to development versions   |\n| **ph use staging**                 | Switch all dependencies to staging versions       |\n\nPlease be aware that these versions can contain bugs and experimental features that aren't fully tested.\n\n</details>\n\n<details>\n<summary>Managing ph-cmd Versions and Package Information</summary>\n\n### Switching Between Versions\n\nTo change to a different version of `ph-cmd`, reinstall it globally with your package manager:\n\n```bash\n# Install latest version with a specific tag\nnpm install -g ph-cmd@staging\npnpm install -g ph-cmd@dev\n\n# Install a specific version number\nnpm install -g ph-cmd@1.2.3-staging.10\npnpm install -g ph-cmd@6.0.0-dev.33\n```\n\n**Important:** Always use the same package manager you used for the original global install to avoid conflicting installations.\n\n### Checking Your Installation\n\nUse the `which` command to see where your global install is located:\n\n```bash\nwhich ph\n# Example output: /Users/username/Library/pnpm/ph\n```\n\nThis shows which package manager was used (in this case, pnpm).\n\n### Viewing Available Versions\n\nUse `npm view` to see all available versions and tags:\n\n```bash\nnpm view ph-cmd\n```\n\n**Example dist-tags output:**\n\n```\ndist-tags:\nlatest: 5.3.0\ndev: 6.0.0-dev.33\nstaging: 5.3.0-staging.24\ntest: 2.5.0-test.0\n```\n\n### Best Practices\n\n- Use specific version numbers instead of tags when you need exact version consistency\n- Check `npm view ph-cmd` before switching to see the latest available versions\n- Remember that without specifying a version, `@latest` is installed by default\n\n</details>\n\n### Verify Installation\n\nOpen your terminal (command prompt) and run the following commands to verify your setup:\n\n```bash\nnode --version\npnpm --version\ngit --version\nph --version\n```\n\nYou should see version numbers displayed for all commands, similar to the example output below (your versions might be higher). The output for `ph --version` includes its version and may also show additional messages if further setup like `ph setup-globals` is needed.\nYou're now ready to start building your first Document Model!\n\n```bash\n% node --version\nv24.13.0\n% pnpm --version\n10.10.0\n% git --version\ngit version 2.39.3\n% ph --version\nPH CMD version:  0.43.18\n-------------------------------------\nPH CLI is not available, please run `ph setup-globals` to generate the default global project\n```\n\n## Up next\n\nYour machine is ready. Next, set up your [Vetra Drive](/academy/Build/GettingStartedBuilding/VetraDrive) \u2014 the workspace where you'll manage document model specifications, editors, and data integrations.\n",
+        "createdAt": "2026-09-02T21:32:28.538Z",
+        "createdBy": "repo-docs-sync",
+        "sourceType": "DOCUMENTATION",
+        "description": "Powerhouse v6.2.2-dev.74 (unchanged since v6.2.2-dev.47) \u2014 If you'd rather have an AI agent build for you, use the AI-guided experience in Vetra Studio: you describe what you want in chat and the age\u2026",
+        "publishedAt": "2026-06-24T00:07:15.000Z"
+      },
+      "timestampUtcMs": "2026-09-02T21:32:28.538Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "",
+    "timestampUtcMs": "2026-09-02T21:32:28.388Z",
+    "action": {
+      "type": "UPGRADE_DOCUMENT",
+      "input": {
+        "model": "bai/source",
+        "toVersion": 1,
+        "documentId": "b0fb7240-9c5c-49fa-a03f-3aa6a9b44360",
+        "fromVersion": 0,
+        "initialState": {
+          "auth": {
+            "grants": [],
+            "version": 0
+          },
+          "local": {},
+          "global": {
+            "title": null,
+            "status": "INBOX",
+            "content": null,
+            "createdAt": null,
+            "createdBy": null,
+            "provenance": null,
+            "sourceType": null,
+            "description": null,
+            "extractedClaims": [],
+            "extractionStats": null
+          },
+          "document": {
+            "hash": {
+              "encoding": "base64",
+              "algorithm": "sha1"
+            },
+            "version": 1
+          }
+        }
+      },
+      "timestampUtcMs": "2026-09-02T21:32:28.388Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "RO0uasmMASZrEOJVZC6Oud5m1ro=",
+    "timestampUtcMs": "2026-09-03T07:55:47.261Z",
+    "action": {
+      "type": "ADD_EXTRACTED_CLAIM",
+      "input": {
+        "claimRef": "fc0b2dad-3dce-4cdc-b79d-95e7d0c052f4"
+      },
+      "timestampUtcMs": "2026-09-03T07:55:47.261Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "AS/RcZJ8yS4r4weeKndnNAtPeHg=",
+    "timestampUtcMs": "2026-09-03T07:55:57.028Z",
+    "action": {
+      "type": "RECORD_EXTRACTION_STATS",
+      "input": {
+        "skipRate": 0.8,
+        "claimCount": 1,
+        "extractedAt": "2026-09-03T07:55:57.028Z",
+        "extractedBy": "knowledge-agent",
+        "skippedCount": 4
+      },
+      "timestampUtcMs": "2026-09-03T07:55:57.028Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "GS62KfEX0HC8O64VnUvrQ7UGrCE=",
+    "timestampUtcMs": "2026-09-03T07:55:57.634Z",
+    "action": {
+      "type": "SET_SOURCE_STATUS",
+      "input": {
+        "status": "EXTRACTED"
+      },
+      "timestampUtcMs": "2026-09-03T07:55:57.634Z"
+    }
+  }
+]

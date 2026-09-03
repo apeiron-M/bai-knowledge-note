@@ -1,0 +1,111 @@
+{
+  "links": [
+    {
+      "id": "lnk-947c91a2-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "947c91a2-3619-4fb7-a4dc-3680cfedcb25",
+      "targetTitle": "ALYF GmbH \u2014 ERPNext / Frappe"
+    },
+    {
+      "id": "lnk-df60a9ff-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "df60a9ff-990b-4d92-bdce-cb78618d03a1",
+      "targetTitle": "K&K Software AG \u2014 ERPNext / Frappe"
+    },
+    {
+      "id": "lnk-1c986bdc-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "1c986bdc-0351-4144-8951-a361f7e11c1a",
+      "targetTitle": "phamos GmbH \u2014 ERPNext / Frappe"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "A Frappe on_submit server script is enough to record the submitted business event outside the ERP",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "2b11c361-947c-4ba4-a937-9e562efb76f7",
+      "name": "leads",
+      "topicDocumentId": null
+    },
+    {
+      "id": "9371c532-5113-46d5-9ed6-b81e49e60f4d",
+      "name": "erpnext",
+      "topicDocumentId": null
+    },
+    {
+      "id": "f0a90c8b-5aea-4046-bacf-e4b98392d25e",
+      "name": "frappe",
+      "topicDocumentId": null
+    },
+    {
+      "id": "4f417289-30ca-4cfc-99ad-7d0a49a83899",
+      "name": "erp",
+      "topicDocumentId": null
+    },
+    {
+      "id": "3b9de5d3-25c5-49a1-9ca1-194048c67258",
+      "name": "demo-design",
+      "topicDocumentId": null
+    },
+    {
+      "id": "f557a6d2-b09f-40f6-a782-bed5c205154c",
+      "name": "replay",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "The ERPNext demo uses a Frappe server script hooking on_submit for Sales Invoice, dispatching a typed operation into Powerhouse. Submission is the right boundary because it is where the paired fit finding locates the business event \u2014 the moment the document stops being a draft and becomes an assertion the organisation stands behind.\n\nThe demonstration then deletes the ERPNext record and replays it from Powerhouse. Against an ERP this is a pointed choice: the invoice is the canonical example of a record whose disappearance is a compliance problem rather than an inconvenience, so the replay answers a question the audience already has to answer for their own customers.\n\nThree leads carry this demo \u2014 ALYF, K&K Software and phamos, all German \u2014 and all three are marked \"1 \u00b7 start here\". That makes it the only tool cohort in this slice with unanimous top priority, and it pairs a fully specified integration point with an audience that is already qualified in.\n\n---\n\n## Leads sharing this finding (3)\n\n**1 \u00b7 start here**\n- ALYF GmbH (DE Leipzig) \u2014 Raffael Meyer, Gesch\u00e4ftsf\u00fchrer \u00b7 hallo@alyf.de \u00b7 https://alyf.de\n- K&K Software AG (DE Gerolzhofen) \u2014 Arnulf Koch, Vertretungsberechtigter \u00b7 info@kk-software.de \u00b7 https://kk-software.de\n- phamos GmbH (DE Ammerbuch) \u2014 Wolfram Schmidt, Gesch\u00e4ftsf\u00fchrer \u00b7 post@phamos.eu \u00b7 https://phamos.eu\n\nVerbatim research text this claim was extracted from:\n\n> Frappe server script hooking on_submit for Sales Invoice, dispatching a typed operation. Delete the ERPNext record, then replay it from Powerhouse.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "INTEGRATION",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "knowledge-agent",
+    "createdAt": "2026-08-19T11:27:01.285164Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-19T11:27:03.700273Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "The script hooks on_submit for Sales Invoice and dispatches a typed operation; the ERPNext record is then deleted and replayed from Powerhouse. All three leads here sit at priority 1.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "60086349-291c-46f7-9961-4f60b188fcf0",
+      "actor": "knowledge-agent",
+      "comment": "Extracted from lead research; claim checked against the source record.",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-19T11:27:03.547125Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "144fe529-dfcf-4483-9248-3880e49622cf",
+      "actor": "liberuum",
+      "comment": "Approved: lead corpus extraction.",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-19T11:27:03.700273Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

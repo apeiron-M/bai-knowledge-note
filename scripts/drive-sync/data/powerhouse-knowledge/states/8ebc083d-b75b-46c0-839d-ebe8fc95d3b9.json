@@ -1,0 +1,131 @@
+{
+  "links": [
+    {
+      "id": "lnk-86a23fb2-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "86a23fb2-4ba6-43be-b051-49aeb065158d",
+      "targetTitle": "swarm-pull-cycle-manifest-to-inbox"
+    },
+    {
+      "id": "lnk-752bee27-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "752bee27-d361-4981-b353-d8082ef05b25",
+      "targetTitle": "pglite-sync-tables-persist-remote-state"
+    },
+    {
+      "id": "lnk-f2124247-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "f2124247-9efa-48bb-bda6-c929f59e4f12",
+      "targetTitle": "push-flow-encrypt-upload-manifest"
+    },
+    {
+      "id": "lnk-521e4779-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "521e4779-3e2e-430c-a933-82b6a774c21e",
+      "targetTitle": "operations-not-state-log"
+    },
+    {
+      "id": "lnk-1f8f4551-bui",
+      "linkType": "BUILDS_ON",
+      "targetDocumentId": "1f8f4551-682c-4245-94ef-5e5846862ee4",
+      "targetTitle": "ddup-swarm-channel-replaces-gql"
+    },
+    {
+      "id": "lnk-914767af-bui",
+      "linkType": "BUILDS_ON",
+      "targetDocumentId": "914767af-8aaa-4713-860d-0801224734c4",
+      "targetTitle": "swarm-bytes-vs-feeds"
+    },
+    {
+      "id": "lnk-50a6a870-bui",
+      "linkType": "BUILDS_ON",
+      "targetDocumentId": "50a6a870-f29e-4164-820a-5d074f7443d7",
+      "targetTitle": "swarmchannel-push-pull-flow"
+    },
+    {
+      "id": "lnk-18419c72-bui",
+      "linkType": "BUILDS_ON",
+      "targetDocumentId": "18419c72-7f82-41a8-820b-085cf5e925a5",
+      "targetTitle": "wallet-derived-aes256-encryption"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "The Swarm push cycle serializes, AES-256-GCM encrypts, uploads to /bytes, then writes a feed SOC.",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "t-88ec1460-1",
+      "name": "push-cycle",
+      "topicDocumentId": null
+    },
+    {
+      "id": "t-88ec1460-2",
+      "name": "swarm-channel",
+      "topicDocumentId": null
+    },
+    {
+      "id": "t-88ec1460-3",
+      "name": "encryption",
+      "topicDocumentId": null
+    },
+    {
+      "id": "t-88ec1460-4",
+      "name": "feeds",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "## Claim\nOn every new ordinal beyond the outbox cursor, SwarmChannel pushes operations via: serialize \u2192 encrypt \u2192 /bytes upload \u2192 feed write \u2192 manifest update \u2192 cursor advance.\n\n## Step-by-step\n1. SyncManager detects new ordinals in `operation_index_operations` beyond the outbox cursor.\n2. Ops are grouped by `(documentId, scope, branch)` into `SyncOperation` objects.\n3. Each `SyncOperation` is added to `SwarmChannel.outbox`.\n4. `outbox.onAdded` fires, running:\n   - serialize to JSON\n   - encrypt with AES-256-GCM (wallet-derived key)\n   - upload to `/bytes` endpoint on the Bee node\n   - write the reference to the document's feed (SOC)\n   - update the drive manifest feed\n   - call `syncOp.executed()` \u2014 SyncManager advances the cursor in `sync_cursors`.\n\n## Why this ordering matters\nThe cursor only advances after the feed write succeeds, so a mid-push failure leaves the outbox ready to retry the same batch on next cycle \u2014 no data loss, no duplicates.\n\n## Source\nSwarm Channel Architecture, \"Push Cycle (local \u2192 Swarm)\"; `adapter/src/channel/swarm-channel.ts`.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "PROCEDURE",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "knowledge-agent",
+    "createdAt": "2026-04-21T14:19:49.348Z",
+    "sessionId": null,
+    "updatedAt": "2026-09-03T09:57:49.889Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "SyncManager groups new ops into SyncOperation batches, SwarmChannel encrypts, uploads to the Bee /bytes endpoint, writes a feed SOC, and advances the outbox cursor.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "0ac2dc7c-8dc8-4fee-9002-693e35b391ec",
+      "actor": "claude",
+      "comment": "Knowledge registered against powerhouse v6.2.2-dev.47",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-14T12:00:00.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "01d83c8f-97ee-4baa-b9ee-00232a55cb16",
+      "actor": "liberuum",
+      "comment": "Canonical as of powerhouse v6.2.2-dev.47",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-14T12:00:00.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

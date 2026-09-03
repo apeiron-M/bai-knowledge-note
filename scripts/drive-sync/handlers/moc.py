@@ -52,14 +52,12 @@ def build_actions(
             if drop_unmapped:
                 continue
             note_new = note_old
-        crossref.append({
-            "type": "ADD_RELATIONSHIP",
-            "scope": "document",
-            "input": {
-                "targetId": note_new,
-                "relationshipType": "CORE_IDEA",
-            },
-        })
+        inp: dict = {"targetId": note_new, "relationshipType": "CORE_IDEA"}
+        # download.py stores the edge's reason in contextPhrase; keep it as
+        # relationship metadata so the membership edge stays articulated.
+        if ci.get("contextPhrase"):
+            inp["metadata"] = {"reason": ci["contextPhrase"]}
+        crossref.append({"type": "ADD_RELATIONSHIP", "scope": "document", "input": inp})
 
     # Tensions reference multiple docs as a set — kept on MoC state for now
     # (no clean parent-child shape; revisit when bai/tension docs replace

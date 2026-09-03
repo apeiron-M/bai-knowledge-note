@@ -1,0 +1,133 @@
+[
+  {
+    "index": 0,
+    "hash": "",
+    "timestampUtcMs": "2026-09-02T21:44:09.932Z",
+    "action": {
+      "type": "CREATE_DOCUMENT",
+      "input": {
+        "meta": {},
+        "name": "Package \u203a opentelemetry-instrumentation-reactor \u203a README",
+        "slug": "",
+        "model": "bai/source",
+        "branch": "main",
+        "signing": {
+          "nonce": "",
+          "publicKey": {},
+          "signature": "751a6e99-6e7b-4447-8d57-0fa3ae4b35ac",
+          "documentType": "bai/source",
+          "createdAtUtcIso": "2026-09-02T21:44:09.932Z"
+        },
+        "version": 0,
+        "documentId": "751a6e99-6e7b-4447-8d57-0fa3ae4b35ac",
+        "protocolVersions": {
+          "base-reducer": 2
+        }
+      },
+      "timestampUtcMs": "2026-09-02T21:44:09.932Z"
+    }
+  },
+  {
+    "index": 0,
+    "hash": "xEzWNEESMoDy4+0nmPzvwNIjsTc=",
+    "timestampUtcMs": "2026-09-02T21:44:10.315Z",
+    "action": {
+      "type": "INGEST_SOURCE",
+      "input": {
+        "url": "https://github.com/powerhouse-inc/powerhouse/blob/v6.2.2-dev.74/packages/opentelemetry-instrumentation-reactor/README.md",
+        "tool": "sync-repo-docs",
+        "title": "Package \u203a opentelemetry-instrumentation-reactor \u203a README",
+        "author": "Powerhouse Inc.",
+        "method": "sha256:2d25233afafa041c78bb604f25ca05ba488e44ceef3ab475a33fc36abd092986 git:v6.2.2-dev.74",
+        "content": "# @powerhousedao/opentelemetry-instrumentation-reactor\n\nOpenTelemetry metrics instrumentation for `@powerhousedao/reactor`. This package inspects `ReactorModule` dependencies, and subscribes to reactor event bus events to register observable gauges for counters, histograms, and other metrics covering the job queue, executor, read model indexing, and sync subsystems.\n\nThis package only creates OTel instruments on the global meter. It does not configure exporters or collector endpoints -- that is the responsibility of the host application (see [Usage](#usage)).\n\nFor a full list of emitted metrics, attributes, and tracked event types, see [docs/taxonomy.md](docs/taxonomy.md).\n\n## Install\n\n```sh\npnpm add @powerhousedao/opentelemetry-instrumentation-reactor\n```\n\nPeer dependency: `@powerhousedao/reactor`\n\n## Usage\n\n```ts\nimport { ReactorInstrumentation } from \"@powerhousedao/opentelemetry-instrumentation-reactor\";\n\n// `module` is the ReactorModule returned by ReactorBuilder\nconst instrumentation = new ReactorInstrumentation(module);\ninstrumentation.start();\n\n// On shutdown:\ninstrumentation.stop();\n```\n\n`start()` subscribes to event bus events and registers observable gauge callbacks. `stop()` removes all subscriptions and clears internal state.\n\nMetrics are recorded on the `@powerhousedao/reactor` meter via the global `@opentelemetry/api` `metrics.getMeter()`. To actually export them, configure a `MeterProvider` with an exporter in your application entry point. For example, using OTLP over HTTP:\n\n```ts\nimport { OTLPMetricExporter } from \"@opentelemetry/exporter-metrics-otlp-http\";\nimport { PeriodicExportingMetricReader } from \"@opentelemetry/sdk-metrics\";\nimport { NodeSDK } from \"@opentelemetry/sdk-node\";\n\nconst sdk = new NodeSDK({\n  metricReader: new PeriodicExportingMetricReader({\n    exporter: new OTLPMetricExporter({\n      url: process.env.OTEL_EXPORTER_OTLP_ENDPOINT,\n    }),\n    exportIntervalMillis: Number(\n      process.env.OTEL_METRIC_EXPORT_INTERVAL ?? 60_000,\n    ),\n  }),\n});\n\nsdk.start();\n```\n",
+        "createdAt": "2026-09-02T21:44:10.315Z",
+        "createdBy": "repo-docs-sync",
+        "sourceType": "DOCUMENTATION",
+        "description": "Powerhouse v6.2.2-dev.74 (unchanged since v6.2.2-dev.47) \u2014 OpenTelemetry metrics instrumentation for @powerhousedao/reactor. This package inspects ReactorModule dependencies, and subscribes to reacto\u2026",
+        "publishedAt": "2026-05-11T09:03:15.000Z"
+      },
+      "timestampUtcMs": "2026-09-02T21:44:10.315Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "",
+    "timestampUtcMs": "2026-09-02T21:44:09.932Z",
+    "action": {
+      "type": "UPGRADE_DOCUMENT",
+      "input": {
+        "model": "bai/source",
+        "toVersion": 1,
+        "documentId": "751a6e99-6e7b-4447-8d57-0fa3ae4b35ac",
+        "fromVersion": 0,
+        "initialState": {
+          "auth": {
+            "grants": [],
+            "version": 0
+          },
+          "local": {},
+          "global": {
+            "title": null,
+            "status": "INBOX",
+            "content": null,
+            "createdAt": null,
+            "createdBy": null,
+            "provenance": null,
+            "sourceType": null,
+            "description": null,
+            "extractedClaims": [],
+            "extractionStats": null
+          },
+          "document": {
+            "hash": {
+              "encoding": "base64",
+              "algorithm": "sha1"
+            },
+            "version": 1
+          }
+        }
+      },
+      "timestampUtcMs": "2026-09-02T21:44:09.932Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "hwq3csYfAYJYtTPEyOEHKpYL0jc=",
+    "timestampUtcMs": "2026-09-03T07:44:59.250Z",
+    "action": {
+      "type": "ADD_EXTRACTED_CLAIM",
+      "input": {
+        "claimRef": "3734f5ab-ebc7-4ea7-96a3-8a10128a4265"
+      },
+      "timestampUtcMs": "2026-09-03T07:44:59.250Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "2NdFIAcJrBNDXamTgWoLKEjImpo=",
+    "timestampUtcMs": "2026-09-03T07:45:09.651Z",
+    "action": {
+      "type": "RECORD_EXTRACTION_STATS",
+      "input": {
+        "skipRate": 0.5,
+        "claimCount": 1,
+        "extractedAt": "2026-09-03T07:45:09.651Z",
+        "extractedBy": "knowledge-agent",
+        "skippedCount": 1
+      },
+      "timestampUtcMs": "2026-09-03T07:45:09.651Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "BgfHX3TQ1NT+VDA6aubSvB8fnpc=",
+    "timestampUtcMs": "2026-09-03T07:45:10.207Z",
+    "action": {
+      "type": "SET_SOURCE_STATUS",
+      "input": {
+        "status": "EXTRACTED"
+      },
+      "timestampUtcMs": "2026-09-03T07:45:10.207Z"
+    }
+  }
+]

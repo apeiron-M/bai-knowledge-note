@@ -1,0 +1,290 @@
+[
+  {
+    "index": 0,
+    "hash": "",
+    "timestampUtcMs": "2026-08-17T10:16:59.387Z",
+    "action": {
+      "type": "CREATE_DOCUMENT",
+      "input": {
+        "meta": {},
+        "name": "speckle-content-addressing",
+        "slug": "",
+        "model": "bai/knowledge-note",
+        "branch": "main",
+        "signing": {
+          "nonce": "",
+          "publicKey": {},
+          "signature": "e143c0b4-5b90-4ae3-891d-9f09b61086a5",
+          "documentType": "bai/knowledge-note",
+          "createdAtUtcIso": "2026-08-17T10:16:59.386Z"
+        },
+        "version": 0,
+        "documentId": "e143c0b4-5b90-4ae3-891d-9f09b61086a5",
+        "protocolVersions": {
+          "base-reducer": 2
+        }
+      },
+      "timestampUtcMs": "2026-08-17T10:16:59.387Z"
+    }
+  },
+  {
+    "index": 0,
+    "hash": "JugbV1Epty3w4X99c0vXTrdOCfc=",
+    "timestampUtcMs": "2026-08-17T10:16:59.415Z",
+    "action": {
+      "type": "SET_TITLE",
+      "input": {
+        "title": "Speckle content-addresses model objects, so identity survives re-export but not modification",
+        "updatedAt": "2026-08-17T10:16:59.000Z"
+      },
+      "timestampUtcMs": "2026-08-17T10:16:59.415Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "",
+    "timestampUtcMs": "2026-08-17T10:16:59.387Z",
+    "action": {
+      "type": "UPGRADE_DOCUMENT",
+      "input": {
+        "model": "bai/knowledge-note",
+        "toVersion": 1,
+        "documentId": "e143c0b4-5b90-4ae3-891d-9f09b61086a5",
+        "fromVersion": 0,
+        "initialState": {
+          "auth": {
+            "grants": [],
+            "version": 0
+          },
+          "local": {
+            "lastViewedAt": null,
+            "personalTags": []
+          },
+          "global": {
+            "links": [],
+            "model": null,
+            "scope": null,
+            "title": null,
+            "editor": null,
+            "inputs": [],
+            "models": [],
+            "status": "DRAFT",
+            "topics": [],
+            "content": null,
+            "context": null,
+            "modelId": null,
+            "modules": [],
+            "outputs": [],
+            "version": null,
+            "computes": null,
+            "filePath": null,
+            "noteType": null,
+            "severity": null,
+            "hooksUsed": [],
+            "rootCause": null,
+            "confidence": null,
+            "consumedBy": [],
+            "provenance": null,
+            "sourceType": null,
+            "targetType": null,
+            "cardinality": null,
+            "description": null,
+            "alternatives": [],
+            "consequences": [],
+            "errorMessage": null,
+            "relationType": null,
+            "correctPattern": null,
+            "decisionStatus": null,
+            "dispatchTargets": [],
+            "lifecycleEvents": []
+          },
+          "document": {
+            "hash": {
+              "encoding": "base64",
+              "algorithm": "sha1"
+            },
+            "version": 1
+          }
+        }
+      },
+      "timestampUtcMs": "2026-08-17T10:16:59.387Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "sHM5BC97jABg04rC4XD1xBd3830=",
+    "timestampUtcMs": "2026-08-17T10:16:59.415Z",
+    "action": {
+      "type": "SET_DESCRIPTION",
+      "input": {
+        "updatedAt": "2026-08-17T10:16:59.000Z",
+        "description": "Speckle derives object ids by hashing serialized content, so unchanged objects survive re-export with churned GUIDs, but any modification yields a new id and breaks tracking."
+      },
+      "timestampUtcMs": "2026-08-17T10:16:59.415Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "",
+    "timestampUtcMs": "2026-08-17T11:59:33.189Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "e143c0b4-5b90-4ae3-891d-9f09b61086a5",
+        "targetId": "ae38bccd-4102-457f-81e2-99351fc17dfe",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-08-17T11:59:33.189Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "18Mfxw+10qj0C0DtmacLSqOG084=",
+    "timestampUtcMs": "2026-08-17T10:16:59.415Z",
+    "action": {
+      "type": "SET_NOTE_TYPE",
+      "input": {
+        "noteType": "architecture",
+        "updatedAt": "2026-08-17T10:16:59.000Z"
+      },
+      "timestampUtcMs": "2026-08-17T10:16:59.415Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "",
+    "timestampUtcMs": "2026-08-17T11:59:33.515Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "e143c0b4-5b90-4ae3-891d-9f09b61086a5",
+        "targetId": "207b4bdd-b1b2-4d12-8473-8d2e54c407cf",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-08-17T11:59:33.515Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "sg5i8ZZwGNRRKnJFfgU03yK6DEY=",
+    "timestampUtcMs": "2026-08-17T10:16:59.415Z",
+    "action": {
+      "type": "SET_CONTENT",
+      "input": {
+        "content": "Speckle's serializer sets `traversed.id = hash` \u2014 an md5 over the serialized object \u2014 so identity is **content-addressed** rather than derived from the source application's identifier.\n\nTwo consequences pull in opposite directions. A re-export that reissues source GUIDs but leaves an object unchanged produces the same Speckle id, so Speckle matches the object where GUID comparison fails outright. But any modification changes the content and therefore the id, so tracking a *changed* object across versions falls back to `applicationId` \u2014 for IFC, the `GlobalId` that Synchro's 4D exporter was measured reissuing wholesale between two consecutive weekly exports.\n\nSo content-addressing improves identity for the objects that did not change, and inherits the identity problem for the objects that did. That is inverted relative to what coordination work needs: the changed objects are precisely the ones a reviewer must follow across versions.\n\nThe practical reading is that content-addressing answers \"is this byte-identical\" and not \"is this the same thing over time\". A system that needs the second guarantee has to assign and hold its own stable identity, mapping churned incoming identifiers onto it by fingerprint on ingest.",
+        "updatedAt": "2026-08-17T10:16:59.000Z"
+      },
+      "timestampUtcMs": "2026-08-17T10:16:59.415Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "",
+    "timestampUtcMs": "2026-08-17T12:03:51.123Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "e143c0b4-5b90-4ae3-891d-9f09b61086a5",
+        "targetId": "f9d5e4f0-badd-42e2-8ea8-9df149f2412f",
+        "relationshipType": "BUILDS_ON"
+      },
+      "timestampUtcMs": "2026-08-17T12:03:51.123Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "bNgZXmcz4eMiV9OdZ23wImZhCi4=",
+    "timestampUtcMs": "2026-08-17T10:16:59.415Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "38ca30d1-c7ed-46bf-ac01-11acab898a50",
+        "name": "model-identity"
+      },
+      "timestampUtcMs": "2026-08-17T10:16:59.415Z"
+    }
+  },
+  {
+    "index": 5,
+    "hash": "5XMMMQ//Qn5mCqlO3EM/1n9pJSE=",
+    "timestampUtcMs": "2026-08-17T10:16:59.415Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "1fe5b30b-ae15-4164-a8bf-ef568eedff87",
+        "name": "speckle"
+      },
+      "timestampUtcMs": "2026-08-17T10:16:59.415Z"
+    }
+  },
+  {
+    "index": 6,
+    "hash": "UoWEwmFS+0EjsX+7ESaQbqW7+Pk=",
+    "timestampUtcMs": "2026-08-17T10:18:29.422Z",
+    "action": {
+      "type": "SET_PROVENANCE",
+      "input": {
+        "author": "apeiron",
+        "createdAt": "2026-08-14T15:20:00.000Z",
+        "sourceOrigin": "DERIVED"
+      },
+      "timestampUtcMs": "2026-08-17T10:18:29.422Z"
+    }
+  },
+  {
+    "index": 7,
+    "hash": "O0FOBept5r0YETes7tq5U5ysLdI=",
+    "timestampUtcMs": "2026-08-17T12:04:16.138Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "da9ba9ce-c6d3-4ad5-9c98-973fa19134ec",
+        "name": "bim"
+      },
+      "timestampUtcMs": "2026-08-17T12:04:16.138Z"
+    }
+  },
+  {
+    "index": 8,
+    "hash": "p9O0FzpkNNHKlSAv4OrsABkB7/g=",
+    "timestampUtcMs": "2026-08-17T12:49:11.058Z",
+    "action": {
+      "type": "SUBMIT_FOR_REVIEW",
+      "input": {
+        "id": "1de3fa06-33a1-423f-8c3e-41c71f392d63",
+        "actor": "knowledge-agent",
+        "comment": "rescued incident notes \u2014 lifecycle normalization",
+        "timestamp": "2026-08-17T12:49:09.000Z"
+      },
+      "timestampUtcMs": "2026-08-17T12:49:11.058Z"
+    }
+  },
+  {
+    "index": 9,
+    "hash": "eWTi3eHfgiWZ+wbWOLBv5lYYMUk=",
+    "timestampUtcMs": "2026-08-17T12:49:12.411Z",
+    "action": {
+      "type": "APPROVE_NOTE",
+      "input": {
+        "id": "341a5099-497c-4abc-99dd-4e94c9deb8f0",
+        "actor": "liberuum",
+        "comment": "approved for canonical",
+        "timestamp": "2026-08-17T12:49:09.000Z"
+      },
+      "timestampUtcMs": "2026-08-17T12:49:12.411Z"
+    }
+  },
+  {
+    "index": 10,
+    "hash": "hsXEfgxWMA0+EaCO1sVCZsOLnWE=",
+    "timestampUtcMs": "2026-08-17T13:14:01.930Z",
+    "action": {
+      "type": "SET_NOTE_TYPE",
+      "input": {
+        "noteType": "ARCHITECTURE",
+        "updatedAt": "2026-08-17T13:14:00.000Z"
+      },
+      "timestampUtcMs": "2026-08-17T13:14:01.930Z"
+    }
+  }
+]

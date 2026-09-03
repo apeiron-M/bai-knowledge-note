@@ -1,0 +1,117 @@
+[
+  {
+    "index": 0,
+    "hash": "",
+    "timestampUtcMs": "2026-09-02T21:35:18.318Z",
+    "action": {
+      "type": "CREATE_DOCUMENT",
+      "input": {
+        "meta": {},
+        "name": "Academy \u203a Build \u203a WorkWithData \u203a Building a processor",
+        "slug": "",
+        "model": "bai/source",
+        "branch": "main",
+        "signing": {
+          "nonce": "",
+          "publicKey": {},
+          "signature": "f79ca4d1-3d30-4fdb-9d01-60f55655faeb",
+          "documentType": "bai/source",
+          "createdAtUtcIso": "2026-09-02T21:35:18.318Z"
+        },
+        "version": 0,
+        "documentId": "f79ca4d1-3d30-4fdb-9d01-60f55655faeb",
+        "protocolVersions": {
+          "base-reducer": 2
+        }
+      },
+      "timestampUtcMs": "2026-09-02T21:35:18.318Z"
+    }
+  },
+  {
+    "index": 0,
+    "hash": "Nj1QmNynAZwp248m5OucZplqEz0=",
+    "timestampUtcMs": "2026-09-02T21:35:18.421Z",
+    "action": {
+      "type": "INGEST_SOURCE",
+      "input": {
+        "url": "https://github.com/powerhouse-inc/powerhouse/blob/v6.2.2-dev.74/apps/academy/docs/academy/03-Build/04-WorkWithData/04-BuildingAProcessor.md",
+        "tool": "sync-repo-docs",
+        "title": "Academy \u203a Build \u203a WorkWithData \u203a Building a processor",
+        "author": "Powerhouse Inc.",
+        "method": "sha256:05c37310662f70bf6265a52f4b6340a21a49cb82e6bc237dcda2041fc830eb19 git:v6.2.2-dev.74",
+        "content": "# Building a processor\n\nProcessors are components that receive document operations from the reactor and perform side effects. While specialized processor types like [relational database processors](/academy/Build/WorkWithData/RelationalDbProcessor) exist, you can build a plain processor by implementing the `IProcessor` interface directly.\n\nIn this tutorial you'll build a **logging processor** that prints a structured summary of every operation to the console.\n\n## What is a processor?\n\nA processor implements two methods:\n\n- **`onOperations(operations)`** \u2014 called when document operations match the processor's filter\n- **`onDisconnect()`** \u2014 called when the processor is disconnected (for cleanup)\n\nThe reactor calls your processor's `onOperations` method with a list of `OperationWithContext` items. Each item pairs an `Operation` (what happened) with an `OperationContext` (where it happened).\n\n## Key types\n\n```typescript\nimport type {\n  IProcessor,\n  ProcessorFilter,\n  ProcessorRecord,\n  ProcessorFactory,\n  IProcessorHostModule,\n} from \"@powerhousedao/reactor-browser\";\nimport type { OperationWithContext } from \"document-model\";\n```\n\n:::info[Import paths]\n`@powerhousedao/reactor-browser` re-exports these types for convenience in browser environments. If you are working outside the browser (Node.js scripts, CLI tools, server-side code), import directly from `@powerhousedao/reactor`.\n:::\n\n### `OperationWithContext`\n\nEach item your processor receives contains:\n\n**`context`** \u2014 where the operation happened:\n\n| Field            | Type      | Description                                                         |\n| ---------------- | --------- | ------------------------------------------------------------------- |\n| `documentId`     | `string`  | The document that was modified                                      |\n| `documentType`   | `string`  | e.g. `\"powerhouse/todo-list\"`                                       |\n| `scope`          | `string`  | The scope (e.g. `\"global\"`, `\"local\"`)                              |\n| `branch`         | `string`  | The branch (e.g. `\"main\"`)                                          |\n| `ordinal`        | `number`  | Global monotonically increasing ordinal for cross-document ordering |\n| `resultingState` | `string?` | JSON string of the document state after the operation               |\n\n**`operation`** \u2014 what happened:\n\n| Field            | Type     | Description                                          |\n| ---------------- | -------- | ---------------------------------------------------- |\n| `action`         | `Action` | Contains `type` (e.g. `\"ADD_TODO_ITEM\"`) and `input` |\n| `index`          | `number` | Position in the operation history                    |\n| `timestampUtcMs` | `string` | When the operation was created                       |\n| `hash`           | `string` | Hash of the resulting document state                 |\n\n### `ProcessorFilter`\n\nDetermines which operations your processor receives. All fields are optional arrays \u2014 when provided, operations must match at least one value in each specified field. When a field is omitted, it matches everything.\n\n```typescript\ntype ProcessorFilter = {\n  documentType?: string[]; // e.g. [\"powerhouse/todo-list\"]\n  scope?: string[]; // e.g. [\"global\"]\n  branch?: string[]; // e.g. [\"main\"]\n  documentId?: string[]; // e.g. [\"*\"] for all documents\n};\n```\n\n## 1. Implement the processor\n\nCreate `processors/operation-logger/index.ts`:\n\n```typescript\nimport type { IProcessor } from \"@powerhousedao/reactor-browser\";\nimport type { OperationWithContext } from \"document-model\";\n\nexport class OperationLoggerProcessor implements IProcessor {\n  private driveId: string;\n\n  constructor(driveId: string) {\n    this.driveId = driveId;\n    console.log(`[OperationLogger] Initialized for drive: ${driveId}`);\n  }\n\n  async onOperations(operations: OperationWithContext[]): Promise<void> {\n    for (const { operation, context } of operations) {\n      console.log(\n        `[OperationLogger] drive=${this.driveId}`,\n        `doc=${context.documentId}`,\n        `type=${context.documentType}`,\n        `action=${operation.action.type}`,\n        `index=${operation.index}`,\n        `ordinal=${context.ordinal}`,\n        `scope=${context.scope}`,\n        `branch=${context.branch}`,\n      );\n    }\n  }\n\n  async onDisconnect(): Promise<void> {\n    console.log(`[OperationLogger] Disconnected from drive: ${this.driveId}`);\n  }\n}\n```\n\nThe processor is straightforward: it receives operations and logs a structured summary for each one. In a real-world scenario, you might send these to an external logging service, a webhook endpoint, or a monitoring system.\n\n## 2. Write the processor factory\n\nThe factory is responsible for creating processor instances. The reactor calls your factory once per drive.\n\nCreate `processors/operation-logger/factory.ts`:\n\n```typescript\nimport type {\n  ProcessorRecord,\n  ProcessorFilter,\n  IProcessorHostModule,\n} from \"@powerhousedao/reactor-browser\";\nimport type { PHDocumentHeader } from \"document-model\";\nimport { OperationLoggerProcessor } from \"./index.js\";\n\nexport const operationLoggerProcessorFactory =\n  (module: IProcessorHostModule) =>\n  async (driveHeader: PHDocumentHeader): Promise<ProcessorRecord[]> => {\n    const filter: ProcessorFilter = {\n      branch: [\"main\"],\n      documentId: [\"*\"],\n      scope: [\"global\"],\n      // Omit documentType to receive operations for ALL document types\n    };\n\n    const processor = new OperationLoggerProcessor(driveHeader.id);\n\n    return [\n      {\n        processor,\n        filter,\n      },\n    ];\n  };\n```\n\n**How the factory pattern works:**\n\n1. The outer function `(module: IProcessorHostModule) => ...` is called once at initialization. The `module` object provides access to shared resources like `analyticsStore`, `relationalDb`, and `config`.\n2. The returned function `(driveHeader: PHDocumentHeader) => ProcessorRecord[]` is called once per drive. The `driveHeader` provides access to `driveHeader.id`, `driveHeader.name`, `driveHeader.documentType`, and other header fields.\n3. Each factory can return multiple `ProcessorRecord` entries \u2014 useful when you want different filters for different aspects of processing (e.g., one processor per document type).\n\n### Filter options explained\n\n| Field          | Description                                                        |\n| -------------- | ------------------------------------------------------------------ |\n| `branch`       | Which branches to monitor \u2014 usually `[\"main\"]` for production data |\n| `documentId`   | Specific document IDs, or `[\"*\"]` for all documents                |\n| `scope`        | `[\"global\"]` for shared state, `[\"local\"]` for user-specific state |\n| `documentType` | Document types to process \u2014 omit to match all types                |\n\n### Starting position\n\nBy default, new processors catch up from the beginning \u2014 they replay all existing operations. You can change this by setting `startFrom` on the `ProcessorRecord`:\n\n```typescript\nreturn [\n  {\n    processor,\n    filter,\n    startFrom: \"current\", // Skip historical operations, only process new ones\n  },\n];\n```\n\n## 3. Register the factory\n\nYour processor factory is automatically registered when it is included in your project's processor exports. After creating the files above, make sure they are exported from your `processors/index.ts`:\n\n```typescript\nexport { operationLoggerProcessorFactory } from \"./operation-logger/factory.js\";\n```\n\n## 4. Test it\n\nStart the reactor:\n\n```bash\nph reactor\n```\n\nCreate or modify documents in the drive. You should see log output like:\n\n```\n[OperationLogger] Initialized for drive: powerhouse\n[OperationLogger] drive=powerhouse doc=abc123 type=powerhouse/todo-list action=ADD_TODO_ITEM index=0 ordinal=1 scope=global branch=main\n[OperationLogger] drive=powerhouse doc=abc123 type=powerhouse/todo-list action=ADD_TODO_ITEM index=1 ordinal=2 scope=global branch=main\n```\n\n## Summary\n\nYou've built a plain processor from scratch. The key concepts are:\n\n- **`IProcessor`** \u2014 the interface your processor implements (`onOperations`, `onDisconnect`)\n- **`ProcessorFactory`** \u2014 a function that creates `ProcessorRecord[]` per drive\n- **`ProcessorFilter`** \u2014 determines which operations your processor receives\n- **`OperationWithContext`** \u2014 the data your processor receives, pairing operations with their document context\n\nFor processors that need a relational database, see the [Relational Database Processor](/academy/Build/WorkWithData/RelationalDbProcessor) tutorial, which builds on these concepts with database migrations and type-safe queries.\n",
+        "createdAt": "2026-09-02T21:35:18.421Z",
+        "createdBy": "repo-docs-sync",
+        "sourceType": "DOCUMENTATION",
+        "description": "Powerhouse v6.2.2-dev.74 (unchanged since v6.2.2-dev.47) \u2014 Processors are components that receive document operations from the reactor and perform side effects. While specialized processor types like\u2026",
+        "publishedAt": "2026-06-24T00:07:15.000Z"
+      },
+      "timestampUtcMs": "2026-09-02T21:35:18.421Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "",
+    "timestampUtcMs": "2026-09-02T21:35:18.318Z",
+    "action": {
+      "type": "UPGRADE_DOCUMENT",
+      "input": {
+        "model": "bai/source",
+        "toVersion": 1,
+        "documentId": "f79ca4d1-3d30-4fdb-9d01-60f55655faeb",
+        "fromVersion": 0,
+        "initialState": {
+          "auth": {
+            "grants": [],
+            "version": 0
+          },
+          "local": {},
+          "global": {
+            "title": null,
+            "status": "INBOX",
+            "content": null,
+            "createdAt": null,
+            "createdBy": null,
+            "provenance": null,
+            "sourceType": null,
+            "description": null,
+            "extractedClaims": [],
+            "extractionStats": null
+          },
+          "document": {
+            "hash": {
+              "encoding": "base64",
+              "algorithm": "sha1"
+            },
+            "version": 1
+          }
+        }
+      },
+      "timestampUtcMs": "2026-09-02T21:35:18.318Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "1cmY6wj88vTgnkuo1WB3/E9tMYE=",
+    "timestampUtcMs": "2026-09-02T21:35:27.781Z",
+    "action": {
+      "type": "ADD_EXTRACTED_CLAIM",
+      "input": {
+        "claimRef": "6a3275cd-d71e-4342-8cd3-3fb29b8fe58c"
+      },
+      "timestampUtcMs": "2026-09-02T21:35:27.781Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "XQmzbwefp94BYoqkx1ngtqO3X2U=",
+    "timestampUtcMs": "2026-09-02T21:35:35.717Z",
+    "action": {
+      "type": "SET_SOURCE_STATUS",
+      "input": {
+        "status": "EXTRACTED"
+      },
+      "timestampUtcMs": "2026-09-02T21:35:35.717Z"
+    }
+  }
+]

@@ -1,0 +1,330 @@
+[
+  {
+    "index": 0,
+    "hash": "",
+    "timestampUtcMs": "2026-09-03T07:34:28.710Z",
+    "action": {
+      "type": "CREATE_DOCUMENT",
+      "input": {
+        "meta": {},
+        "name": "lb-immutable-backend-list",
+        "slug": "",
+        "model": "bai/knowledge-note",
+        "branch": "main",
+        "signing": {
+          "nonce": "",
+          "publicKey": {},
+          "signature": "9a4b1323-40df-4f2c-9c6c-47db12d501d7",
+          "documentType": "bai/knowledge-note",
+          "createdAtUtcIso": "2026-09-03T07:34:28.710Z"
+        },
+        "version": 0,
+        "documentId": "9a4b1323-40df-4f2c-9c6c-47db12d501d7",
+        "protocolVersions": {
+          "base-reducer": 2
+        }
+      },
+      "timestampUtcMs": "2026-09-03T07:34:28.710Z"
+    }
+  },
+  {
+    "index": 0,
+    "hash": "wYLD/dwAX55/Ag5k2qsX4zMuaHs=",
+    "timestampUtcMs": "2026-09-03T07:34:30.071Z",
+    "action": {
+      "type": "SET_TITLE",
+      "input": {
+        "title": "The backend list is effectively immutable in production, because adding or removing a switchboard remaps about 1/N of documents with no migration story",
+        "updatedAt": "2026-09-03T07:34:30.071Z"
+      },
+      "timestampUtcMs": "2026-09-03T07:34:30.071Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "",
+    "timestampUtcMs": "2026-09-03T07:34:28.710Z",
+    "action": {
+      "type": "UPGRADE_DOCUMENT",
+      "input": {
+        "model": "bai/knowledge-note",
+        "toVersion": 1,
+        "documentId": "9a4b1323-40df-4f2c-9c6c-47db12d501d7",
+        "fromVersion": 0,
+        "initialState": {
+          "auth": {
+            "grants": [],
+            "version": 0
+          },
+          "local": {
+            "lastViewedAt": null,
+            "personalTags": []
+          },
+          "global": {
+            "links": [],
+            "model": null,
+            "scope": null,
+            "title": null,
+            "editor": null,
+            "inputs": [],
+            "models": [],
+            "status": "DRAFT",
+            "topics": [],
+            "content": null,
+            "context": null,
+            "modelId": null,
+            "modules": [],
+            "outputs": [],
+            "version": null,
+            "computes": null,
+            "filePath": null,
+            "noteType": null,
+            "severity": null,
+            "hooksUsed": [],
+            "rootCause": null,
+            "confidence": null,
+            "consumedBy": [],
+            "provenance": null,
+            "sourceType": null,
+            "targetType": null,
+            "cardinality": null,
+            "description": null,
+            "alternatives": [],
+            "consequences": [],
+            "errorMessage": null,
+            "relationType": null,
+            "correctPattern": null,
+            "decisionStatus": null,
+            "dispatchTargets": [],
+            "lifecycleEvents": []
+          },
+          "document": {
+            "hash": {
+              "encoding": "base64",
+              "algorithm": "sha1"
+            },
+            "version": 1
+          }
+        }
+      },
+      "timestampUtcMs": "2026-09-03T07:34:28.710Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "0Bicj4rc30m3UQlayy2DfSoJyIk=",
+    "timestampUtcMs": "2026-09-03T07:34:30.071Z",
+    "action": {
+      "type": "SET_DESCRIPTION",
+      "input": {
+        "updatedAt": "2026-09-03T07:34:30.071Z",
+        "description": "Consistent hashing remaps ~1/N of keys on a membership change and removing a server makes its documents unroutable, so both are coordinated maintenance events until the reactor supports document."
+      },
+      "timestampUtcMs": "2026-09-03T07:34:30.071Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "",
+    "timestampUtcMs": "2026-09-03T07:34:57.334Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "metadata": {
+          "reason": "Extracted from apps/switchboard-lb/ARCHITECTURE.md at v6.2.2-dev.74 \u2014 \u00a76.3 Adding / removing backends; \u00a75.4 External directory (deferred); \u00a76.2 Reload semantics; \u00a79 Q3 and Q4",
+          "confidence": "grounded"
+        },
+        "sourceId": "9a4b1323-40df-4f2c-9c6c-47db12d501d7",
+        "targetId": "704020e6-eefd-4e1f-9fc6-f9ec801d8255",
+        "relationshipType": "DERIVED_FROM"
+      },
+      "timestampUtcMs": "2026-09-03T07:34:57.334Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "Q0kCWtde4DlSbZpv15NpnTSAQ94=",
+    "timestampUtcMs": "2026-09-03T07:34:30.071Z",
+    "action": {
+      "type": "SET_NOTE_TYPE",
+      "input": {
+        "noteType": "OBSERVATION",
+        "updatedAt": "2026-09-03T07:34:30.071Z"
+      },
+      "timestampUtcMs": "2026-09-03T07:34:30.071Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "",
+    "timestampUtcMs": "2026-09-03T07:34:57.822Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "metadata": {
+          "reason": "Immutability follows directly from strict pinning: if a document may only ever be served by its hashed peer, changing the peer set orphans documents",
+          "confidence": "grounded"
+        },
+        "sourceId": "9a4b1323-40df-4f2c-9c6c-47db12d501d7",
+        "targetId": "7252c41c-7185-4177-aaeb-4fe9dc0505c1",
+        "relationshipType": "BUILDS_ON"
+      },
+      "timestampUtcMs": "2026-09-03T07:34:57.822Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "ucB3VFuJdGYPjWdC1+GXJj91nxg=",
+    "timestampUtcMs": "2026-09-03T07:34:30.071Z",
+    "action": {
+      "type": "SET_CONTENT",
+      "input": {
+        "content": "This is named as **the biggest operational sharp edge of the MVP**, in the architecture document and again in the repo's `CLAUDE.md` so it is not forgotten.\n\n`hash $doc_id consistent` is Ketama-style consistent hashing across the `server` entries, so:\n\n- **adding** a backend remaps ~1/N of documents \u2014 the same fundamental tradeoff any stateless scheme has \u2014 and until `switchboard` supports migration this is a coordinated maintenance event, not a self-serve operation;\n- **removing** a backend makes the documents pinned to it **unroutable**, under the same rule.\n\nThe long-term fix is acknowledged and deferred: an explicit `doc_id \u2192 backend` **directory** (Redis or Postgres) so adding a backend does not remap anything. It requires coordinated migration support in `switchboard`, which does not exist \u2014 recorded as open question 4, \"how do operators migrate a document between backends?\", cross-cutting `switchboard` and `reactor`, to be decided *before operating this at any meaningful scale*.\n\nReload itself is safe and uses nginx's own mechanics: master parses the new config and old workers keep running if it fails; on success new workers start, old workers finish in-flight requests and exit, zero dropped connections. `scripts/reload.sh` wraps `nginx -t` then `nginx -s reload` and fails loudly if validation fails. A long-lived WebSocket survives a reload because old workers drain gracefully \u2014 proven by an integration test that opens a real WS, reloads mid-flight and asserts both the connection and a frame round-trip survive.\n\n## Provenance\n- `apps/switchboard-lb/ARCHITECTURE.md` \u2014 \u00a76.3 Adding / removing backends; \u00a75.4 External directory (deferred); \u00a76.2 Reload semantics; \u00a79 Q3 and Q4\n\n_Extracted from the Powerhouse repository at **v6.2.2-dev.74**._",
+        "updatedAt": "2026-09-03T07:34:30.071Z"
+      },
+      "timestampUtcMs": "2026-09-03T07:34:30.071Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "",
+    "timestampUtcMs": "2026-09-03T07:34:58.316Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "metadata": {
+          "reason": "Both are the horizontal-scaling story for switchboard: worker threads scale one instance, the LB shards drives across instances at the cost of a fixed backend list",
+          "confidence": "grounded"
+        },
+        "sourceId": "9a4b1323-40df-4f2c-9c6c-47db12d501d7",
+        "targetId": "6e78066a-d726-4d7f-b534-ac8dbd4056a9",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-09-03T07:34:58.316Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "MnQD/RUweD1hZosrgQXut7m8dXM=",
+    "timestampUtcMs": "2026-09-03T07:34:30.071Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "fa126932-00b8-4597-aa79-78f6d353e88a",
+        "name": "switchboard-lb"
+      },
+      "timestampUtcMs": "2026-09-03T07:34:30.071Z"
+    }
+  },
+  {
+    "index": 5,
+    "hash": "sa4/HHx618Ih31r6wLCZYG3z8ik=",
+    "timestampUtcMs": "2026-09-03T07:34:30.071Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "902a414c-a095-47f0-91ea-550344aa987c",
+        "name": "operations"
+      },
+      "timestampUtcMs": "2026-09-03T07:34:30.071Z"
+    }
+  },
+  {
+    "index": 6,
+    "hash": "8D/cZ6hcF4mkT8B2+B3B4VLeSQY=",
+    "timestampUtcMs": "2026-09-03T07:34:30.071Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "a1517d8a-4814-4e97-adcc-5ea5bbadb346",
+        "name": "scaling"
+      },
+      "timestampUtcMs": "2026-09-03T07:34:30.071Z"
+    }
+  },
+  {
+    "index": 7,
+    "hash": "6upJwx+8BuE5I5WdpkoEzUJCaXE=",
+    "timestampUtcMs": "2026-09-03T07:34:30.071Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "05618845-4f2b-4522-894c-365b0f935fb7",
+        "name": "limitations"
+      },
+      "timestampUtcMs": "2026-09-03T07:34:30.071Z"
+    }
+  },
+  {
+    "index": 8,
+    "hash": "PQznHwpCARDfhI1Qv+fU6ycRxMQ=",
+    "timestampUtcMs": "2026-09-03T07:34:30.071Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "version",
+        "value": "v6.2.2-dev.74",
+        "updatedAt": "2026-09-03T07:34:30.071Z"
+      },
+      "timestampUtcMs": "2026-09-03T07:34:30.071Z"
+    }
+  },
+  {
+    "index": 9,
+    "hash": "20OFCpE6eb3PDQfmjR5rFl1OGRs=",
+    "timestampUtcMs": "2026-09-03T07:34:30.071Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "filePath",
+        "value": "apps/switchboard-lb/ARCHITECTURE.md",
+        "updatedAt": "2026-09-03T07:34:30.071Z"
+      },
+      "timestampUtcMs": "2026-09-03T07:34:30.071Z"
+    }
+  },
+  {
+    "index": 10,
+    "hash": "ic0oDrPe1noZFGHkjHEFOoPkzEo=",
+    "timestampUtcMs": "2026-09-03T07:34:32.525Z",
+    "action": {
+      "type": "SET_PROVENANCE",
+      "input": {
+        "author": "knowledge-agent",
+        "createdAt": "2026-09-03T07:34:32.525Z",
+        "sourceOrigin": "DERIVED"
+      },
+      "timestampUtcMs": "2026-09-03T07:34:32.525Z"
+    }
+  },
+  {
+    "index": 11,
+    "hash": "S/Ncdh3CX8GpPn/2MXJG6m4wwp4=",
+    "timestampUtcMs": "2026-09-03T07:34:33.188Z",
+    "action": {
+      "type": "SUBMIT_FOR_REVIEW",
+      "input": {
+        "id": "23362f2b-cce3-4595-b24e-f0e7ab0c3909",
+        "actor": "knowledge-agent",
+        "comment": "extracted from apps/switchboard-lb/ARCHITECTURE.md at v6.2.2-dev.74",
+        "timestamp": "2026-09-03T07:34:33.188Z"
+      },
+      "timestampUtcMs": "2026-09-03T07:34:33.188Z"
+    }
+  },
+  {
+    "index": 12,
+    "hash": "C0HxhoHNnGCYTwipUmfVk1dMXpQ=",
+    "timestampUtcMs": "2026-09-03T07:34:33.791Z",
+    "action": {
+      "type": "APPROVE_NOTE",
+      "input": {
+        "id": "d8b6cd4f-15bc-4315-863f-71e8bfeec124",
+        "actor": "liberuum",
+        "comment": "claim checked against the cited file at the pinned tag",
+        "timestamp": "2026-09-03T07:34:33.791Z"
+      },
+      "timestampUtcMs": "2026-09-03T07:34:33.791Z"
+    }
+  }
+]

@@ -1,0 +1,107 @@
+{
+  "links": [
+    {
+      "id": "lnk-3c9df40d-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "3c9df40d-1f3d-4bb5-b01a-f2d16e6ec0e4",
+      "targetTitle": "reactor-kysely-tables",
+      "reason": "The edges it maintains are the DocumentRelationship table in the reactor schema",
+      "confidence": "grounded"
+    },
+    {
+      "id": "lnk-e4ef060b-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "e4ef060b-4d61-41b4-95bd-2f562eea3cfa",
+      "targetTitle": "Package \u203a reactor \u203a ARCHITECTURE \u2014 Reactor Architecture",
+      "reason": "Extracted from packages/reactor/docs/ARCHITECTURE.md at v6.2.2-dev.74 \u2014 Components \u203a DocumentIndexer",
+      "confidence": "grounded"
+    },
+    {
+      "id": "lnk-b7ea248d-bui",
+      "linkType": "BUILDS_ON",
+      "targetDocumentId": "b7ea248d-d62f-4463-8036-8e19b7444edf",
+      "targetTitle": "add-relationship-keeps-container-state-flat",
+      "reason": "That note establishes relationships as table rows rather than container state; this one is the query surface that makes the table usable, including BFS path finding",
+      "confidence": "grounded"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "DocumentIndexer answers graph questions the document itself cannot: getOutgoing, getIncoming, findPath by BFS and findAncestors over the full graph",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "6b5ea340-e195-44cf-b27d-cd2f5875d635",
+      "name": "reactor",
+      "topicDocumentId": null
+    },
+    {
+      "id": "4e6d400e-7f76-437b-bd56-fe8b1839c952",
+      "name": "relationships",
+      "topicDocumentId": null
+    },
+    {
+      "id": "805b9d3b-23a6-4e00-ac02-3969757e6927",
+      "name": "graph",
+      "topicDocumentId": null
+    },
+    {
+      "id": "5731c0ad-06fe-4d6a-bb7e-450a79bae58e",
+      "name": "read-models",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "`IDocumentIndexer` (`src/storage/kysely/document-indexer.ts`) is the read model behind every relationship question. It indexes exactly two operations \u2014 `ADD_RELATIONSHIP` creates an edge, `REMOVE_RELATIONSHIP` removes one \u2014 and exposes four queries:\n\n- **`getOutgoing()`** \u2014 children and other targets of a document;\n- **`getIncoming()`** \u2014 parents and other sources;\n- **`findPath()`** \u2014 path finding by breadth-first search;\n- **`findAncestors()`** \u2014 the full ancestor graph.\n\nThe last two are the ones worth remembering, because they are not derivable from a document's own state at any reasonable cost: a path or an ancestor set spans documents, and each document knows nothing about its parents. The relationship table is indexed on both `sourceId` and `targetId`, which is what makes the graph genuinely bidirectional rather than a parent pointer plus a scan.\n\n`getOutgoing` / `getIncoming` are paged (`{ cursor, limit }`), so enumeration of a large container is DB-native rather than a state read.\n\n## Provenance\n- `packages/reactor/docs/ARCHITECTURE.md` \u2014 Components \u203a DocumentIndexer\n\n_Extracted from the Powerhouse repository at **v6.2.2-dev.74**._",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": "v6.2.2-dev.74",
+  "computes": null,
+  "filePath": "packages/reactor/docs/ARCHITECTURE.md",
+  "noteType": "REFERENCE",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "knowledge-agent",
+    "createdAt": "2026-09-03T07:18:52.520Z",
+    "sessionId": null,
+    "updatedAt": "2026-09-03T07:22:23.426Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "It indexes ADD_RELATIONSHIP and REMOVE_RELATIONSHIP into DocumentRelationship edges, so traversal is a SQL-backed query rather than a walk over document state.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "8ce616d3-da02-41b6-b27c-7634e596b369",
+      "actor": "knowledge-agent",
+      "comment": "extracted from packages/reactor/docs/ARCHITECTURE.md at v6.2.2-dev.74",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-09-03T07:18:53.723Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "0a70fd23-33c7-4dc3-a43e-b8715944da2c",
+      "actor": "liberuum",
+      "comment": "claim checked against the cited file at the pinned tag",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-09-03T07:18:54.252Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

@@ -1,0 +1,340 @@
+[
+  {
+    "index": 0,
+    "hash": "",
+    "timestampUtcMs": "2026-08-14T12:34:24.536Z",
+    "action": {
+      "type": "CREATE_DOCUMENT",
+      "input": {
+        "meta": {},
+        "name": "withworkerpool-requires-postgres-and-importable-sources",
+        "slug": "",
+        "model": "bai/knowledge-note",
+        "branch": "main",
+        "signing": {
+          "nonce": "",
+          "publicKey": {},
+          "signature": "290fd86b-db3b-4d33-b278-fd7b84838929",
+          "documentType": "bai/knowledge-note",
+          "createdAtUtcIso": "2026-08-14T12:34:24.536Z"
+        },
+        "version": 0,
+        "documentId": "290fd86b-db3b-4d33-b278-fd7b84838929",
+        "protocolVersions": {
+          "base-reducer": 2
+        }
+      },
+      "timestampUtcMs": "2026-08-14T12:34:24.536Z"
+    }
+  },
+  {
+    "index": 0,
+    "hash": "JWkLpCgV/twPxYVN4/jQMwjVNKM=",
+    "timestampUtcMs": "2026-08-14T12:36:11.000Z",
+    "action": {
+      "type": "SET_TITLE",
+      "input": {
+        "title": "withWorkerPool requires real Postgres and worker-importable document-model sources, enforced at build time",
+        "updatedAt": "2026-08-14T12:36:11.000Z"
+      },
+      "timestampUtcMs": "2026-08-14T12:36:11.000Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "",
+    "timestampUtcMs": "2026-08-14T12:34:24.536Z",
+    "action": {
+      "type": "UPGRADE_DOCUMENT",
+      "input": {
+        "model": "bai/knowledge-note",
+        "toVersion": 1,
+        "documentId": "290fd86b-db3b-4d33-b278-fd7b84838929",
+        "fromVersion": 0,
+        "initialState": {
+          "auth": {
+            "grants": [],
+            "version": 0
+          },
+          "local": {
+            "lastViewedAt": null,
+            "personalTags": []
+          },
+          "global": {
+            "links": [],
+            "model": null,
+            "scope": null,
+            "title": null,
+            "editor": null,
+            "inputs": [],
+            "models": [],
+            "status": "DRAFT",
+            "topics": [],
+            "content": null,
+            "context": null,
+            "modelId": null,
+            "modules": [],
+            "outputs": [],
+            "version": null,
+            "computes": null,
+            "filePath": null,
+            "noteType": null,
+            "severity": null,
+            "hooksUsed": [],
+            "rootCause": null,
+            "confidence": null,
+            "consumedBy": [],
+            "provenance": null,
+            "sourceType": null,
+            "targetType": null,
+            "cardinality": null,
+            "description": null,
+            "alternatives": [],
+            "consequences": [],
+            "errorMessage": null,
+            "relationType": null,
+            "correctPattern": null,
+            "decisionStatus": null,
+            "dispatchTargets": [],
+            "lifecycleEvents": []
+          },
+          "document": {
+            "hash": {
+              "encoding": "base64",
+              "algorithm": "sha1"
+            },
+            "version": 1
+          }
+        }
+      },
+      "timestampUtcMs": "2026-08-14T12:34:24.536Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "fTtRUe06j6uV/XDXaIMTJOTzZao=",
+    "timestampUtcMs": "2026-08-14T12:36:11.000Z",
+    "action": {
+      "type": "SET_DESCRIPTION",
+      "input": {
+        "updatedAt": "2026-08-14T12:36:11.000Z",
+        "description": "Jobs route stickily by document id across N worker threads. A model registered only as a live module throws at buildModule(). PGlite cannot cross threads."
+      },
+      "timestampUtcMs": "2026-08-14T12:36:11.000Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "",
+    "timestampUtcMs": "2026-08-14T12:39:11.911Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "290fd86b-db3b-4d33-b278-fd7b84838929",
+        "targetId": "291bfd93-8d9f-4836-b791-d5d656545eb4",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-08-14T12:39:11.911Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "QH0tztraO+cGrb6S2SAbGaBuiZg=",
+    "timestampUtcMs": "2026-08-14T12:36:11.000Z",
+    "action": {
+      "type": "SET_NOTE_TYPE",
+      "input": {
+        "noteType": "ARCHITECTURE",
+        "updatedAt": "2026-08-14T12:36:11.000Z"
+      },
+      "timestampUtcMs": "2026-08-14T12:36:11.000Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "",
+    "timestampUtcMs": "2026-08-14T12:39:12.011Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "290fd86b-db3b-4d33-b278-fd7b84838929",
+        "targetId": "501f87dd-ff84-4a59-8894-033f209dfdf0",
+        "relationshipType": "BUILDS_ON"
+      },
+      "timestampUtcMs": "2026-08-14T12:39:12.011Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "iLQ9zr2NkxEAgL/9m1taPfnLzYU=",
+    "timestampUtcMs": "2026-08-14T12:36:11.000Z",
+    "action": {
+      "type": "SET_CONTENT",
+      "input": {
+        "content": "The executor worker pool moves job execution off the main thread into N `node:worker_threads` workers. Each worker opens its own Postgres pool and runs document models in isolation. Jobs route to a worker **stickily by document id**, so all work for one document lands on the same worker \u2014 which is how per-document serialization survives the move to multiple threads.\n\nCalling `withWorkerPool` is what enables it; there is no `enabled` flag.\n\n```typescript\nconst reactor = await new ReactorBuilder()\n  .withDocumentModelSources([\n    { packageName: \"@my-org/account-document-model\", subpath: \"document-models\" },\n  ])\n  .withWorkerPool({ numWorkers: 4, db: { host: \"localhost\", port: 5432, /* ... */ } })\n  .build();\n```\n\nTwo hard requirements, and the notable thing is that both are enforced up front rather than at runtime.\n\n**Importable sources.** Workers re-import document models across the thread boundary, so a live module object cannot cross. Models must be registered as `{ filePath }` or `{ packageName }` sources. `buildModule()` throws on violation: `\"withWorkerPool requires at least one worker-importable document-model source ({ filePath } or { packageName }).\"`, and for a model registered only as a live module, `\"withWorkerPool requires worker-importable sources, but these models were registered only as live modules: ...\"`. A live module for the same `documentType@version` may coexist as long as an importable source covers it. Sources resolve in one pass \u2014 file and package sources are imported host-side and their exports scanned for `DocumentModelModule` values \u2014 so host and workers are derived from the same list and cannot diverge.\n\n**Real Postgres.** PGlite cannot be shared across threads, so parent and workers must point at the same Postgres instance. When the pool carries a `db`, the builder builds the parent's database from that same config unless `withKysely` overrides it.\n\nConnection info, by contrast, is a *compile-time* guarantee: `WorkerPoolOptions` is a union requiring either `db` or a custom `factory`, making an enabled pool without connection info unrepresentable. `DbConfig` crosses worker IPC so it must be JSON-clonable; `ssl: true` maps to `{ rejectUnauthorized: false }`, `poolSize` to pg's `max`. The optional `verifier` is off by default \u2014 omit it and workers perform no executor-side signature verification, matching the in-process executor.\n\n_Source: apps/academy/docs/academy/04-Reference/01-Reactor/07-StorageAndScaling.md (Powerhouse v6.2.2-dev.45)._",
+        "updatedAt": "2026-08-14T12:36:11.000Z"
+      },
+      "timestampUtcMs": "2026-08-14T12:36:11.000Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "",
+    "timestampUtcMs": "2026-09-02T21:38:39.904Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "metadata": {
+          "reason": "The note names apps/academy/docs/academy/04-Reference/01-Reactor/07-StorageAndScaling.md as its source; page text identical at v6.2.2-dev.47 and v6.2.2-dev.74",
+          "confidence": "grounded"
+        },
+        "sourceId": "290fd86b-db3b-4d33-b278-fd7b84838929",
+        "targetId": "c1116781-e617-4620-bb42-f622cbf113cd",
+        "relationshipType": "DERIVED_FROM"
+      },
+      "timestampUtcMs": "2026-09-02T21:38:39.904Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "OZft3eCuSU6nznvdWFxyNs8jOS8=",
+    "timestampUtcMs": "2026-08-14T12:36:11.000Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "version",
+        "value": "v6.2.2-dev.44",
+        "updatedAt": "2026-08-14T12:36:11.000Z"
+      },
+      "timestampUtcMs": "2026-08-14T12:36:11.000Z"
+    }
+  },
+  {
+    "index": 5,
+    "hash": "xq6jbxQV3S0EswJ6uccxVxI7oyw=",
+    "timestampUtcMs": "2026-08-14T12:36:11.000Z",
+    "action": {
+      "type": "SET_PROVENANCE",
+      "input": {
+        "author": "claude",
+        "createdAt": "2026-08-13T14:34:40.000Z",
+        "sourceOrigin": "DERIVED"
+      },
+      "timestampUtcMs": "2026-08-14T12:36:11.000Z"
+    }
+  },
+  {
+    "index": 6,
+    "hash": "lcRFykR6YNxpx+Iccm+E3Fm/IIw=",
+    "timestampUtcMs": "2026-08-14T12:36:11.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "fd981b5d-ce28-45f7-93dd-4f0131aaa92f",
+        "name": "reactor",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-08-14T12:36:11.000Z"
+    }
+  },
+  {
+    "index": 7,
+    "hash": "6WVjmFDoJvgMWLaLMPta8zCiwps=",
+    "timestampUtcMs": "2026-08-14T12:36:11.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "a5793eff-cf9c-4eb6-a7dd-f37c3f7f7d9d",
+        "name": "scaling",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-08-14T12:36:11.000Z"
+    }
+  },
+  {
+    "index": 8,
+    "hash": "lFsXZwT2v3ivtRy73BaL/q+LM5s=",
+    "timestampUtcMs": "2026-08-14T12:36:11.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "45779521-8bdc-4b2c-b037-017ace63a781",
+        "name": "worker-pool",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-08-14T12:36:11.000Z"
+    }
+  },
+  {
+    "index": 9,
+    "hash": "U1aTstfhbbtn0Y7iErPmHPNYK/E=",
+    "timestampUtcMs": "2026-08-14T14:36:53.000Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "version",
+        "value": "v6.2.2-dev.47",
+        "updatedAt": "2026-08-14T12:00:00.000Z"
+      },
+      "timestampUtcMs": "2026-08-14T14:36:53.000Z"
+    }
+  },
+  {
+    "index": 10,
+    "hash": "ryWIjUuu7P1/V3XwraGL6Dn+WRI=",
+    "timestampUtcMs": "2026-08-14T14:36:53.000Z",
+    "action": {
+      "type": "SUBMIT_FOR_REVIEW",
+      "input": {
+        "id": "69483707-d53d-4762-b8c5-2c5300dd2549",
+        "actor": "claude",
+        "comment": "Knowledge registered against powerhouse v6.2.2-dev.47",
+        "timestamp": "2026-08-14T12:00:00.000Z"
+      },
+      "timestampUtcMs": "2026-08-14T14:36:53.000Z"
+    }
+  },
+  {
+    "index": 11,
+    "hash": "Zunnl1n7jiv7eF1KUWvp0x2Iffg=",
+    "timestampUtcMs": "2026-08-14T14:36:53.000Z",
+    "action": {
+      "type": "APPROVE_NOTE",
+      "input": {
+        "id": "201f39ac-9a19-49c8-967b-c63d3ca71a36",
+        "actor": "liberuum",
+        "comment": "Canonical as of powerhouse v6.2.2-dev.47",
+        "timestamp": "2026-08-14T12:00:00.000Z"
+      },
+      "timestampUtcMs": "2026-08-14T14:36:53.000Z"
+    }
+  },
+  {
+    "index": 12,
+    "hash": "xZjc80DuQYS+qQK0r+56WKDGiwI=",
+    "timestampUtcMs": "2026-09-02T21:38:40.569Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "filePath",
+        "value": "apps/academy/docs/academy/04-Reference/01-Reactor/07-StorageAndScaling.md",
+        "updatedAt": "2026-09-02T21:38:40.569Z"
+      },
+      "timestampUtcMs": "2026-09-02T21:38:40.569Z"
+    }
+  },
+  {
+    "index": 13,
+    "hash": "hjq9Eh7CkGazbUIIluY607jIBSw=",
+    "timestampUtcMs": "2026-09-02T21:38:40.569Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "version",
+        "value": "v6.2.2-dev.74",
+        "updatedAt": "2026-09-02T21:38:40.569Z"
+      },
+      "timestampUtcMs": "2026-09-02T21:38:40.569Z"
+    }
+  }
+]

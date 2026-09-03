@@ -1,0 +1,334 @@
+[
+  {
+    "index": 0,
+    "hash": "",
+    "timestampUtcMs": "2026-08-14T12:33:50.815Z",
+    "action": {
+      "type": "CREATE_DOCUMENT",
+      "input": {
+        "meta": {},
+        "name": "swarm-feed-bottleneck-propagation",
+        "slug": "",
+        "model": "bai/knowledge-note",
+        "branch": "main",
+        "signing": {
+          "nonce": "",
+          "publicKey": {},
+          "signature": "94e6d28e-5d0b-4d04-997e-3b926b4766bf",
+          "documentType": "bai/knowledge-note",
+          "createdAtUtcIso": "2026-08-14T12:33:50.815Z"
+        },
+        "version": 0,
+        "documentId": "94e6d28e-5d0b-4d04-997e-3b926b4766bf",
+        "protocolVersions": {
+          "base-reducer": 2
+        }
+      },
+      "timestampUtcMs": "2026-08-14T12:33:50.815Z"
+    }
+  },
+  {
+    "index": 0,
+    "hash": "nWHaJsxANxSI+c9cgGABGkoSAB0=",
+    "timestampUtcMs": "2026-08-14T12:35:57.000Z",
+    "action": {
+      "type": "SET_TITLE",
+      "input": {
+        "title": "Feed write throughput is bounded by neighborhood propagation, not upload bandwidth",
+        "updatedAt": "2026-08-14T12:35:57.000Z"
+      },
+      "timestampUtcMs": "2026-08-14T12:35:57.000Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "",
+    "timestampUtcMs": "2026-08-14T12:33:50.815Z",
+    "action": {
+      "type": "UPGRADE_DOCUMENT",
+      "input": {
+        "model": "bai/knowledge-note",
+        "toVersion": 1,
+        "documentId": "94e6d28e-5d0b-4d04-997e-3b926b4766bf",
+        "fromVersion": 0,
+        "initialState": {
+          "auth": {
+            "grants": [],
+            "version": 0
+          },
+          "local": {
+            "lastViewedAt": null,
+            "personalTags": []
+          },
+          "global": {
+            "links": [],
+            "model": null,
+            "scope": null,
+            "title": null,
+            "editor": null,
+            "inputs": [],
+            "models": [],
+            "status": "DRAFT",
+            "topics": [],
+            "content": null,
+            "context": null,
+            "modelId": null,
+            "modules": [],
+            "outputs": [],
+            "version": null,
+            "computes": null,
+            "filePath": null,
+            "noteType": null,
+            "severity": null,
+            "hooksUsed": [],
+            "rootCause": null,
+            "confidence": null,
+            "consumedBy": [],
+            "provenance": null,
+            "sourceType": null,
+            "targetType": null,
+            "cardinality": null,
+            "description": null,
+            "alternatives": [],
+            "consequences": [],
+            "errorMessage": null,
+            "relationType": null,
+            "correctPattern": null,
+            "decisionStatus": null,
+            "dispatchTargets": [],
+            "lifecycleEvents": []
+          },
+          "document": {
+            "hash": {
+              "encoding": "base64",
+              "algorithm": "sha1"
+            },
+            "version": 1
+          }
+        }
+      },
+      "timestampUtcMs": "2026-08-14T12:33:50.815Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "fBDuINRwR/0JmUTWttCILXC3Zt0=",
+    "timestampUtcMs": "2026-08-14T12:35:57.000Z",
+    "action": {
+      "type": "SET_DESCRIPTION",
+      "input": {
+        "updatedAt": "2026-08-14T12:35:57.000Z",
+        "description": "A SOC must be stored by the responsible neighborhood before the next index is visible, so feed write rate is propagation-limited even on a fast local node."
+      },
+      "timestampUtcMs": "2026-08-14T12:35:57.000Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "",
+    "timestampUtcMs": "2026-08-14T12:38:46.962Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "94e6d28e-5d0b-4d04-997e-3b926b4766bf",
+        "targetId": "e071271c-5589-4590-a5ac-e95da03b9c0f",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-08-14T12:38:46.962Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "D/ZVs/SqsoOHweTW6KCAuHK3og0=",
+    "timestampUtcMs": "2026-08-14T12:35:57.000Z",
+    "action": {
+      "type": "SET_NOTE_TYPE",
+      "input": {
+        "noteType": "reference",
+        "updatedAt": "2026-08-14T12:35:57.000Z"
+      },
+      "timestampUtcMs": "2026-08-14T12:35:57.000Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "",
+    "timestampUtcMs": "2026-08-14T12:38:47.068Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "94e6d28e-5d0b-4d04-997e-3b926b4766bf",
+        "targetId": "bda80293-c43b-4441-a2be-bf6ca6489ed8",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-08-14T12:38:47.068Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "oOS4+sd1Xuj2YesMWJ3LZ3kxIEA=",
+    "timestampUtcMs": "2026-08-14T12:35:57.000Z",
+    "action": {
+      "type": "SET_CONTENT",
+      "input": {
+        "content": "## Claim\n\nThe throughput ceiling on a single feed is **network propagation of the SOC through the responsible neighborhood**, not the bandwidth between the client and its Bee node.\n\n## Evidence\n\n- Bee processes feed writes sequentially per topic because SOC index is monotonic\n- A newly-written SOC at index N must be stored by the responsible neighborhood before a reader at any other node will see it \u2014 and therefore before index N+1's causal \"based on\" is reliable\n- The adapter's 3-second debounce already batches rapid edits into single writes, so per-topic write rate is typically well below the propagation limit\n- The throttled flush (max 5 concurrent writes) prevents overloading the node across topics\n- Quoted key insight from source: *\"the bottleneck is not upload speed but feed propagation time (SOC must be stored by the neighborhood before the next write is visible).\"*\n\n## Why it matters\n\nTuning the debounce window smaller than propagation time buys nothing \u2014 you just queue writes behind each other. It reframes performance work: invest in propagation-side strategies (mutable stamps, GSOC notifications, advance retrieve requests) rather than client upload parallelism for single-feed scenarios.\n",
+        "updatedAt": "2026-08-14T12:35:57.000Z"
+      },
+      "timestampUtcMs": "2026-08-14T12:35:57.000Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "e1MWP/rhWGphmjHcButNtEdOhfk=",
+    "timestampUtcMs": "2026-08-14T12:35:57.000Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "version",
+        "value": "v6.2.2-dev.44",
+        "updatedAt": "2026-08-14T12:35:57.000Z"
+      },
+      "timestampUtcMs": "2026-08-14T12:35:57.000Z"
+    }
+  },
+  {
+    "index": 5,
+    "hash": "CpOsUqHabkSddRSkttJbsDfG92w=",
+    "timestampUtcMs": "2026-08-14T12:35:57.000Z",
+    "action": {
+      "type": "SET_PROVENANCE",
+      "input": {
+        "author": "knowledge-agent",
+        "createdAt": "2026-04-21T14:24:54.753Z",
+        "sourceOrigin": "DERIVED"
+      },
+      "timestampUtcMs": "2026-08-14T12:35:57.000Z"
+    }
+  },
+  {
+    "index": 6,
+    "hash": "26XGivzkTynZEtZOt+oYExRB+00=",
+    "timestampUtcMs": "2026-08-14T12:35:57.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "137afead-e3fe-4ebf-9091-195e33075fcf",
+        "name": "swarm-feeds",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-08-14T12:35:57.000Z"
+    }
+  },
+  {
+    "index": 7,
+    "hash": "vPIxGtuP7r8XLxf6pSb6AkY+Sio=",
+    "timestampUtcMs": "2026-08-14T12:35:57.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "7ddc7b13-cd3e-4607-ad3d-30ec5ceb770e",
+        "name": "performance",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-08-14T12:35:57.000Z"
+    }
+  },
+  {
+    "index": 8,
+    "hash": "ZvHBtuvCkoPM7e3hfLTIF52RDPE=",
+    "timestampUtcMs": "2026-08-14T12:35:57.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "97acb321-5e9c-4233-ad42-02694beb1a44",
+        "name": "soc",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-08-14T12:35:57.000Z"
+    }
+  },
+  {
+    "index": 9,
+    "hash": "2OmQgkGklrVgna8oRIVKsZnQJjA=",
+    "timestampUtcMs": "2026-08-14T12:35:57.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "9f5279b5-d769-4eeb-9d80-b3d1aad40967",
+        "name": "swarm",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-08-14T12:35:57.000Z"
+    }
+  },
+  {
+    "index": 10,
+    "hash": "2V0A/0Ohdamic9DU+WvmZIaVAiY=",
+    "timestampUtcMs": "2026-08-14T14:37:21.000Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "version",
+        "value": "v6.2.2-dev.47",
+        "updatedAt": "2026-08-14T12:00:00.000Z"
+      },
+      "timestampUtcMs": "2026-08-14T14:37:21.000Z"
+    }
+  },
+  {
+    "index": 11,
+    "hash": "Kxq++N2oL4/OPMmmMY7aiNlhuXk=",
+    "timestampUtcMs": "2026-08-14T14:37:21.000Z",
+    "action": {
+      "type": "SUBMIT_FOR_REVIEW",
+      "input": {
+        "id": "16d6c7a2-e4b6-49e7-991c-25d30172166a",
+        "actor": "claude",
+        "comment": "Knowledge registered against powerhouse v6.2.2-dev.47",
+        "timestamp": "2026-08-14T12:00:00.000Z"
+      },
+      "timestampUtcMs": "2026-08-14T14:37:21.000Z"
+    }
+  },
+  {
+    "index": 12,
+    "hash": "R8t7ymcKt1arIe/aNFe2LssNinA=",
+    "timestampUtcMs": "2026-08-14T14:37:21.000Z",
+    "action": {
+      "type": "APPROVE_NOTE",
+      "input": {
+        "id": "ec7062e1-1ef3-46c4-8234-9ae8bc03ba0f",
+        "actor": "liberuum",
+        "comment": "Canonical as of powerhouse v6.2.2-dev.47",
+        "timestamp": "2026-08-14T12:00:00.000Z"
+      },
+      "timestampUtcMs": "2026-08-14T14:37:21.000Z"
+    }
+  },
+  {
+    "index": 13,
+    "hash": "AiYmpOjLgC8HPytEZDzl2jNjRX8=",
+    "timestampUtcMs": "2026-08-16T09:49:53.000Z",
+    "action": {
+      "type": "SET_NOTE_TYPE",
+      "input": {
+        "noteType": "REFERENCE",
+        "updatedAt": "2026-08-16T09:49:53.000Z"
+      },
+      "timestampUtcMs": "2026-08-16T09:49:53.000Z"
+    }
+  },
+  {
+    "index": 14,
+    "hash": "MmloLGzipaVKQN6yg4ekz7bZciY=",
+    "timestampUtcMs": "2026-09-03T09:58:06.076Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "version",
+        "updatedAt": "2026-09-03T09:58:06.076Z"
+      },
+      "timestampUtcMs": "2026-09-03T09:58:06.076Z"
+    }
+  }
+]

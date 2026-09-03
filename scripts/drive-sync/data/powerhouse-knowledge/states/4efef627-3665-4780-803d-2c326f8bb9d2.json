@@ -1,0 +1,27 @@
+{
+  "title": "Package \u203a reactor-api \u203a README",
+  "status": "EXTRACTED",
+  "content": "# @powerhousedao/reactor-api\n\nA powerful API server implementation for the Powerhouse ecosystem that provides GraphQL capabilities, document processing, and package management.\n\n## Features\n\n- \ud83d\ude80 Express-based API server with GraphQL support\n- \ud83d\udce6 Flexible package management system\n- \ud83d\udd04 Document processing and event handling\n- \ud83d\udd10 Authentication and authorization support\n- \ud83d\udcca Analytics integration\n- \ud83d\uddc4\ufe0f Database management with PostgreSQL support\n- \ud83d\udd0c Extensible subgraph system\n\n## Installation\n\n```bash\nnpm install @powerhousedao/reactor-api\n```\n\n## Quick Start\n\n```typescript\nimport { startAPI } from \"@powerhousedao/reactor-api\";\n\nconst api = await startAPI(reactor, {\n  port: 3000,\n  dbPath: \"./data\",\n  auth: {\n    enabled: true,\n    admins: [\"0x...\"],\n    users: [\"0x...\"],\n    guests: [\"0x...\"],\n  },\n});\n```\n\n## Core Components\n\n### API Server\n\nThe API server provides a robust Express-based implementation with GraphQL support, authentication middleware, and HTTPS capabilities.\n\n### Package Manager\n\nManages document models, subgraphs, and processors through a flexible loading system that supports multiple package sources.\n\n### GraphQL Manager\n\nHandles GraphQL operations, subgraph management, and schema composition using Apollo Server.\n\nThe GraphQL and HTTP layers are decoupled behind `IGatewayAdapter` and `IHttpAdapter`\ninterfaces, making it straightforward to swap the underlying HTTP framework or GraphQL\nengine without touching application logic. See\n[ARCHITECTURE.md](ARCHITECTURE.md) for a full\nexplanation of the interfaces, auth threading pattern, and how to add new adapters.\n\n### Processor Manager\n\nManages document processors and their lifecycle, including registration and event handling.\n\n## Configuration\n\nThe API can be configured with the following options:\n\n```typescript\ntype Options = {\n  express?: Express;\n  port?: number;\n  dbPath: string;\n  client?: PGlite | Pool;\n  configFile?: string;\n  packages?: string[];\n  auth?: {\n    enabled: boolean;\n    admins: string[];\n  };\n  https?:\n    | {\n        keyPath: string;\n        certPath: string;\n      }\n    | boolean;\n  packageLoader?: IPackageLoader;\n};\n```\n\n## Development\n\n```bash\n# Install dependencies\nnpm install\n\n# Build the package\nnpm run build\n\n# Run tests\nnpm test\n\n# Run linter\nnpm run lint\n```\n\n## License\n\nAGPL-3.0-only - See [LICENSE](LICENSE) for details.\n",
+  "createdAt": "2026-09-02T21:44:17.858Z",
+  "createdBy": "repo-docs-sync",
+  "provenance": {
+    "url": "https://github.com/powerhouse-inc/powerhouse/blob/v6.2.2-dev.74/packages/reactor-api/README.md",
+    "tool": "sync-repo-docs",
+    "author": "Powerhouse Inc.",
+    "method": "sha256:d712a8bcf318bac157f38c469425ab7a23ce6e92d68cc1312791d91605a08702 git:v6.2.2-dev.74",
+    "publishedAt": "2026-06-09T16:19:40.000Z"
+  },
+  "sourceType": "DOCUMENTATION",
+  "description": "Powerhouse v6.2.2-dev.74 (unchanged since v6.2.2-dev.47) \u2014 A powerful API server implementation for the Powerhouse ecosystem that provides GraphQL capabilities, document processing, and package manag\u2026",
+  "extractedClaims": [
+    "49106443-8aa1-4246-971c-a934ef9313fb"
+  ],
+  "extractionStats": {
+    "skipRate": 1,
+    "claimCount": 0,
+    "extractedAt": "2026-09-03T07:39:40.201Z",
+    "extractedBy": "knowledge-agent",
+    "skippedCount": 3
+  },
+  "links": []
+}

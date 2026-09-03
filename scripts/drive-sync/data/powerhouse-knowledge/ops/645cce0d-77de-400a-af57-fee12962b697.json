@@ -1,0 +1,340 @@
+[
+  {
+    "index": 0,
+    "hash": "",
+    "timestampUtcMs": "2026-08-14T12:12:15.941Z",
+    "action": {
+      "type": "CREATE_DOCUMENT",
+      "input": {
+        "meta": {},
+        "name": "ph-connect-config-dual-writes-source-and-dist",
+        "slug": "",
+        "model": "bai/knowledge-note",
+        "branch": "main",
+        "signing": {
+          "nonce": "",
+          "publicKey": {},
+          "signature": "645cce0d-77de-400a-af57-fee12962b697",
+          "documentType": "bai/knowledge-note",
+          "createdAtUtcIso": "2026-08-14T12:12:15.940Z"
+        },
+        "version": 0,
+        "documentId": "645cce0d-77de-400a-af57-fee12962b697",
+        "protocolVersions": {
+          "base-reducer": 2
+        }
+      },
+      "timestampUtcMs": "2026-08-14T12:12:15.941Z"
+    }
+  },
+  {
+    "index": 0,
+    "hash": "gIVYylV98PbOqoQbaI5qDSfFGEM=",
+    "timestampUtcMs": "2026-08-14T12:35:34.000Z",
+    "action": {
+      "type": "SET_TITLE",
+      "input": {
+        "title": "ph connect config dual-writes a connect.* change into both the source config and the served dist config",
+        "updatedAt": "2026-08-14T12:35:34.000Z"
+      },
+      "timestampUtcMs": "2026-08-14T12:35:34.000Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "",
+    "timestampUtcMs": "2026-08-14T12:12:15.941Z",
+    "action": {
+      "type": "UPGRADE_DOCUMENT",
+      "input": {
+        "model": "bai/knowledge-note",
+        "toVersion": 1,
+        "documentId": "645cce0d-77de-400a-af57-fee12962b697",
+        "fromVersion": 0,
+        "initialState": {
+          "auth": {
+            "grants": [],
+            "version": 0
+          },
+          "local": {
+            "lastViewedAt": null,
+            "personalTags": []
+          },
+          "global": {
+            "links": [],
+            "model": null,
+            "scope": null,
+            "title": null,
+            "editor": null,
+            "inputs": [],
+            "models": [],
+            "status": "DRAFT",
+            "topics": [],
+            "content": null,
+            "context": null,
+            "modelId": null,
+            "modules": [],
+            "outputs": [],
+            "version": null,
+            "computes": null,
+            "filePath": null,
+            "noteType": null,
+            "severity": null,
+            "hooksUsed": [],
+            "rootCause": null,
+            "confidence": null,
+            "consumedBy": [],
+            "provenance": null,
+            "sourceType": null,
+            "targetType": null,
+            "cardinality": null,
+            "description": null,
+            "alternatives": [],
+            "consequences": [],
+            "errorMessage": null,
+            "relationType": null,
+            "correctPattern": null,
+            "decisionStatus": null,
+            "dispatchTargets": [],
+            "lifecycleEvents": []
+          },
+          "document": {
+            "hash": {
+              "encoding": "base64",
+              "algorithm": "sha1"
+            },
+            "version": 1
+          }
+        }
+      },
+      "timestampUtcMs": "2026-08-14T12:12:15.941Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "Ga1vpJ24dzZ+RuVrwjRsHfFW8NM=",
+    "timestampUtcMs": "2026-08-14T12:35:34.000Z",
+    "action": {
+      "type": "SET_DESCRIPTION",
+      "input": {
+        "updatedAt": "2026-08-14T12:35:34.000Z",
+        "description": "One invocation patches powerhouse.config.json and the built dist copy, so the running SPA picks the change up on refresh without a rebuild."
+      },
+      "timestampUtcMs": "2026-08-14T12:35:34.000Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "",
+    "timestampUtcMs": "2026-08-14T12:38:07.519Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "645cce0d-77de-400a-af57-fee12962b697",
+        "targetId": "0534c4d8-93fc-4c8a-a4c9-53dc7a87aafe",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-08-14T12:38:07.519Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "+n7He43QLj8BLwEOIQJp2gTS8v8=",
+    "timestampUtcMs": "2026-08-14T12:35:34.000Z",
+    "action": {
+      "type": "SET_NOTE_TYPE",
+      "input": {
+        "noteType": "PROCEDURE",
+        "updatedAt": "2026-08-14T12:35:34.000Z"
+      },
+      "timestampUtcMs": "2026-08-14T12:35:34.000Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "",
+    "timestampUtcMs": "2026-08-14T12:38:07.621Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "645cce0d-77de-400a-af57-fee12962b697",
+        "targetId": "0eafe53b-efdf-4310-9a1c-7d3e8b5cc669",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-08-14T12:38:07.621Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "i6T/QuZlRhW3ZItZUjnbvi+/0/g=",
+    "timestampUtcMs": "2026-08-14T12:35:34.000Z",
+    "action": {
+      "type": "SET_CONTENT",
+      "input": {
+        "content": "## Six modes, one per invocation\n\n`ph connect config` reads and writes every `connect.*` field:\n\n```bash\nph connect config                                   # list the effective merged block\nph connect config connect.renown.url                # get (positional)\nph connect config --get connect.renown.url          # get (flag form, equivalent)\nph connect config connect.renown.chainId 137        # set (positional)\nph connect config --renown-chain-id 137             # set (per-field flag)\nph connect config --json '{\"drives\":{\"allowAddDrive\":false}}'   # bulk set\n```\n\nPositional `<key>/<value>`, `--get`, `--json`, and the field flags are **mutually exclusive** \u2014 combining them errors out. A positional `<value>` is JSON-parsed first (`137` \u2192 number, `false` \u2192 boolean) then Ajv-validated against the runtime schema at that path; bad types fail loudly *before* any write. Arrays and objects must go through `--json`.\n\n## The dual write\n\nA set or bulk-set patches two files:\n\n1. The **source** `powerhouse.config.json` at the project root, deep-merged into `connect.*` \u2014 so the next `ph connect build` inherits it.\n2. The **dist** `powerhouse.config.json` (default `.ph/connect-build/dist/`, overridable with `--dist-dir` or `PH_CONNECT_OUTDIR`), deep-merged the same way \u2014 so the currently-served SPA picks it up on its next refresh, no rebuild needed.\n\nIf the dist file does not exist the second write is skipped **silently** \u2014 that is the intended \"configure before the first build\" workflow, not an error.\n\nTwo gotchas. `--packages-registry` does not land under `connect.*`: it writes the top-level `packageRegistryUrl`, a project-wide field also read by `ph install`, `ph publish` and Switchboard. And `connect.pwa` is build-time only \u2014 `ph connect config` will happily write it but cannot rebuild the service worker, so PWA changes need `ph connect build`.\n\n`ph connect build` exposes the identical flag surface but has no read mode; passing `<key>` without `<value>` there errors out. Note a doc lag: the academy closes every config recipe with `ph service restart`, yet `service` is absent from the CLI's dispatch table (`phCliCommandNames`).\n\n_Source: `clis/ph-cli/src/services/connect-config.ts` and `apps/academy/docs/academy/03-Build/05-Launch/04-ConfigureEnvironment.md`, Powerhouse v6.2.2-dev.45._",
+        "updatedAt": "2026-08-14T12:35:34.000Z"
+      },
+      "timestampUtcMs": "2026-08-14T12:35:34.000Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "",
+    "timestampUtcMs": "2026-09-02T21:36:56.111Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "metadata": {
+          "reason": "The note names apps/academy/docs/academy/03-Build/05-Launch/04-ConfigureEnvironment.md as its source; page text identical at v6.2.2-dev.47 and v6.2.2-dev.74",
+          "confidence": "grounded"
+        },
+        "sourceId": "645cce0d-77de-400a-af57-fee12962b697",
+        "targetId": "d15a9a31-8c3b-4bdf-80c9-2511196ce029",
+        "relationshipType": "DERIVED_FROM"
+      },
+      "timestampUtcMs": "2026-09-02T21:36:56.111Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "YL8VP7Za3RyRlbtGsVMXPSB2gfo=",
+    "timestampUtcMs": "2026-08-14T12:35:34.000Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "version",
+        "value": "v6.2.2-dev.44",
+        "updatedAt": "2026-08-14T12:35:34.000Z"
+      },
+      "timestampUtcMs": "2026-08-14T12:35:34.000Z"
+    }
+  },
+  {
+    "index": 5,
+    "hash": "xnReA1xNFNztqfVjagsVoOEs2lc=",
+    "timestampUtcMs": "2026-08-14T12:35:34.000Z",
+    "action": {
+      "type": "SET_PROVENANCE",
+      "input": {
+        "author": "claude",
+        "createdAt": "2026-08-13T14:37:08.000Z",
+        "sourceOrigin": "DERIVED"
+      },
+      "timestampUtcMs": "2026-08-14T12:35:34.000Z"
+    }
+  },
+  {
+    "index": 6,
+    "hash": "k1K/ZXYBSxx9m2nFc6AHTBOPTkg=",
+    "timestampUtcMs": "2026-08-14T12:35:34.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "b9eb5db6-b57f-4e0e-8d2c-efa0f2438d55",
+        "name": "cli",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-08-14T12:35:34.000Z"
+    }
+  },
+  {
+    "index": 7,
+    "hash": "He7e9wEsJdaN41ssErmTGn3Iehk=",
+    "timestampUtcMs": "2026-08-14T12:35:34.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "63d07d9b-7f77-4a6f-97d7-b8ec0b24612c",
+        "name": "configuration",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-08-14T12:35:34.000Z"
+    }
+  },
+  {
+    "index": 8,
+    "hash": "eM3roD3cLenxM9KaVVetV4Gl8zk=",
+    "timestampUtcMs": "2026-08-14T12:35:34.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "a0f24b5f-f46f-4e4d-89e7-5452f4d9c4c4",
+        "name": "connect",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-08-14T12:35:34.000Z"
+    }
+  },
+  {
+    "index": 9,
+    "hash": "D/gxtFhAMUByUp4LeC+M1DsYAa8=",
+    "timestampUtcMs": "2026-08-14T14:37:10.000Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "version",
+        "value": "v6.2.2-dev.47",
+        "updatedAt": "2026-08-14T12:00:00.000Z"
+      },
+      "timestampUtcMs": "2026-08-14T14:37:10.000Z"
+    }
+  },
+  {
+    "index": 10,
+    "hash": "sVXjTNIJx28KuzbkDHmbmsAFQ0Q=",
+    "timestampUtcMs": "2026-08-14T14:37:10.000Z",
+    "action": {
+      "type": "SUBMIT_FOR_REVIEW",
+      "input": {
+        "id": "4f65011e-3dd5-4910-8e78-97d508661be5",
+        "actor": "claude",
+        "comment": "Knowledge registered against powerhouse v6.2.2-dev.47",
+        "timestamp": "2026-08-14T12:00:00.000Z"
+      },
+      "timestampUtcMs": "2026-08-14T14:37:10.000Z"
+    }
+  },
+  {
+    "index": 11,
+    "hash": "/m+H2dLkW+xl+K9LjKOfYoOL038=",
+    "timestampUtcMs": "2026-08-14T14:37:10.000Z",
+    "action": {
+      "type": "APPROVE_NOTE",
+      "input": {
+        "id": "40c8bd19-8b32-49cc-9fed-e85e6e35e18b",
+        "actor": "liberuum",
+        "comment": "Canonical as of powerhouse v6.2.2-dev.47",
+        "timestamp": "2026-08-14T12:00:00.000Z"
+      },
+      "timestampUtcMs": "2026-08-14T14:37:10.000Z"
+    }
+  },
+  {
+    "index": 12,
+    "hash": "tdZQQiccu2qdAc7lh+OfN4pooxw=",
+    "timestampUtcMs": "2026-09-02T21:36:56.797Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "filePath",
+        "value": "apps/academy/docs/academy/03-Build/05-Launch/04-ConfigureEnvironment.md",
+        "updatedAt": "2026-09-02T21:36:56.797Z"
+      },
+      "timestampUtcMs": "2026-09-02T21:36:56.797Z"
+    }
+  },
+  {
+    "index": 13,
+    "hash": "gadpOUJ4M9K9divrZXn/owZk8F8=",
+    "timestampUtcMs": "2026-09-02T21:36:56.797Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "version",
+        "value": "v6.2.2-dev.74",
+        "updatedAt": "2026-09-02T21:36:56.797Z"
+      },
+      "timestampUtcMs": "2026-09-02T21:36:56.797Z"
+    }
+  }
+]

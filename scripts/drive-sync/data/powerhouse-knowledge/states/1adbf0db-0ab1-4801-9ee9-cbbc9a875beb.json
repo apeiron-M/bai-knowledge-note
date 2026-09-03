@@ -1,0 +1,101 @@
+{
+  "links": [
+    {
+      "id": "lnk-91b96b84-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "91b96b84-43aa-4403-892d-445fd04a5f35",
+      "targetTitle": "document-models-have-37-available-operations-across-7-categories"
+    },
+    {
+      "id": "lnk-64f7c52f-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "64f7c52f-dc21-4446-bad6-e88ef492a25c",
+      "targetTitle": "drives-are-documents-in-reactors"
+    },
+    {
+      "id": "lnk-d907616b-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "d907616b-cc88-4ea5-8d91-dc6d8e5bace6",
+      "targetTitle": "cli-identity-did-key-ethereum-delegation"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "document model vs document editor vs app serves different purposes",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "78ea34a6-3787-4242-88d0-f8afb0f5aa6a",
+      "name": "architecture decisions",
+      "topicDocumentId": null
+    },
+    {
+      "id": "8ad5134f-7cb3-4c3c-8579-28ca69ae364f",
+      "name": "document model",
+      "topicDocumentId": null
+    },
+    {
+      "id": "c8785969-2e3d-475b-852a-70a2bcf46134",
+      "name": "document editor",
+      "topicDocumentId": null
+    },
+    {
+      "id": "e7a0bec0-12d8-4ba7-9a4f-083a90642b82",
+      "name": "app",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "# document model vs document editor vs app serves different purposes\n\nThree distinct document types serve different needs:\n\n| Type | Purpose | Document Type |\n|------|---------|---------------|\n| **Document Model** | Defines structure \u2014 schema and operations for a document type | `powerhouse/document-model` |\n| **Document Editor** | UI for editing a single document instance | `powerhouse/document-editor` |\n| **App (Drive Editor)** | UI for managing collections of documents in a drive | `powerhouse/app` |\n\nThe critical distinction: when a user says \"create an app\" or \"manage multiple documents,\" create a `powerhouse/app`, NOT a `powerhouse/document-model`.\n\nSince [[apps use useSelectedDrive to access drive state and filter nodes]], apps work at the drive level. Since [[editors use the modern React hooks pattern from reactor-browser]], editors work at the individual document level.\n\n---\n\nTopics:\n- [[architecture decisions]]",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": "v6.2.2-dev.74",
+  "computes": null,
+  "filePath": null,
+  "noteType": "DECISION",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "knowledge-agent",
+    "createdAt": "2026-04-03T14:03:32.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-09-03T09:57:05.427Z",
+    "sourceOrigin": "IMPORT"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Document models define structure; editors provide UI for single documents; apps manage collections in a drive",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "f813425d-9fec-4988-8f0c-9bdc1040b7a6",
+      "actor": "claude",
+      "comment": "Knowledge registered against powerhouse v6.2.2-dev.47",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-14T12:00:00.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "d285391e-dfb2-44c8-a16d-6af313d5899b",
+      "actor": "liberuum",
+      "comment": "Canonical as of powerhouse v6.2.2-dev.47",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-14T12:00:00.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

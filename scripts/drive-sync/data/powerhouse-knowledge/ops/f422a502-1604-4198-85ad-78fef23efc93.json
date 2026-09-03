@@ -1,0 +1,354 @@
+[
+  {
+    "index": 0,
+    "hash": "",
+    "timestampUtcMs": "2026-08-14T12:33:59.864Z",
+    "action": {
+      "type": "CREATE_DOCUMENT",
+      "input": {
+        "meta": {},
+        "name": "sync-is-off-by-default-on-a-reactor",
+        "slug": "",
+        "model": "bai/knowledge-note",
+        "branch": "main",
+        "signing": {
+          "nonce": "",
+          "publicKey": {},
+          "signature": "f422a502-1604-4198-85ad-78fef23efc93",
+          "documentType": "bai/knowledge-note",
+          "createdAtUtcIso": "2026-08-14T12:33:59.864Z"
+        },
+        "version": 0,
+        "documentId": "f422a502-1604-4198-85ad-78fef23efc93",
+        "protocolVersions": {
+          "base-reducer": 2
+        }
+      },
+      "timestampUtcMs": "2026-08-14T12:33:59.864Z"
+    }
+  },
+  {
+    "index": 0,
+    "hash": "rJ+jclO83vER1q851j8HaWg0gRs=",
+    "timestampUtcMs": "2026-08-14T12:36:01.000Z",
+    "action": {
+      "type": "SET_TITLE",
+      "input": {
+        "title": "Sync is off by default: a reactor has no sync manager unless withChannelScheme or withSync is called",
+        "updatedAt": "2026-08-14T12:36:01.000Z"
+      },
+      "timestampUtcMs": "2026-08-14T12:36:01.000Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "",
+    "timestampUtcMs": "2026-08-14T12:33:59.864Z",
+    "action": {
+      "type": "UPGRADE_DOCUMENT",
+      "input": {
+        "model": "bai/knowledge-note",
+        "toVersion": 1,
+        "documentId": "f422a502-1604-4198-85ad-78fef23efc93",
+        "fromVersion": 0,
+        "initialState": {
+          "auth": {
+            "grants": [],
+            "version": 0
+          },
+          "local": {
+            "lastViewedAt": null,
+            "personalTags": []
+          },
+          "global": {
+            "links": [],
+            "model": null,
+            "scope": null,
+            "title": null,
+            "editor": null,
+            "inputs": [],
+            "models": [],
+            "status": "DRAFT",
+            "topics": [],
+            "content": null,
+            "context": null,
+            "modelId": null,
+            "modules": [],
+            "outputs": [],
+            "version": null,
+            "computes": null,
+            "filePath": null,
+            "noteType": null,
+            "severity": null,
+            "hooksUsed": [],
+            "rootCause": null,
+            "confidence": null,
+            "consumedBy": [],
+            "provenance": null,
+            "sourceType": null,
+            "targetType": null,
+            "cardinality": null,
+            "description": null,
+            "alternatives": [],
+            "consequences": [],
+            "errorMessage": null,
+            "relationType": null,
+            "correctPattern": null,
+            "decisionStatus": null,
+            "dispatchTargets": [],
+            "lifecycleEvents": []
+          },
+          "document": {
+            "hash": {
+              "encoding": "base64",
+              "algorithm": "sha1"
+            },
+            "version": 1
+          }
+        }
+      },
+      "timestampUtcMs": "2026-08-14T12:33:59.864Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "nbfOHNTAnnh86NqoM07Tw3qJM3I=",
+    "timestampUtcMs": "2026-08-14T12:36:01.000Z",
+    "action": {
+      "type": "SET_DESCRIPTION",
+      "input": {
+        "updatedAt": "2026-08-14T12:36:01.000Z",
+        "description": "module.syncModule is undefined unless one of the two is called on ReactorBuilder. Setting both silently discards the custom SyncBuilder."
+      },
+      "timestampUtcMs": "2026-08-14T12:36:01.000Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "",
+    "timestampUtcMs": "2026-08-14T12:38:55.972Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "f422a502-1604-4198-85ad-78fef23efc93",
+        "targetId": "90ce5eef-d899-430a-abcd-d4a679738cc1",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-08-14T12:38:55.972Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "YgXfuu2Lp+U5LYFfX4SAJyTwadQ=",
+    "timestampUtcMs": "2026-08-14T12:36:01.000Z",
+    "action": {
+      "type": "SET_NOTE_TYPE",
+      "input": {
+        "noteType": "ARCHITECTURE",
+        "updatedAt": "2026-08-14T12:36:01.000Z"
+      },
+      "timestampUtcMs": "2026-08-14T12:36:01.000Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "",
+    "timestampUtcMs": "2026-08-14T12:38:56.074Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "f422a502-1604-4198-85ad-78fef23efc93",
+        "targetId": "bae7ff6f-70a8-4dad-aa99-555dd0b0535c",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-08-14T12:38:56.074Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "5FeTOMxVx5NOJ5JGTT0Rsik9Hjk=",
+    "timestampUtcMs": "2026-08-14T12:36:01.000Z",
+    "action": {
+      "type": "SET_CONTENT",
+      "input": {
+        "content": "A freshly built reactor does not sync. The sync subsystem in `@powerhousedao/reactor` is opt-in, and there are exactly two ways to opt in on the `ReactorBuilder`: `withChannelScheme(scheme)` or `withSync(syncBuilder)`. Call neither and `module.syncModule` is `undefined` \u2014 the reactor stores and reduces operations locally and never contacts a remote.\n\n`withChannelScheme` is the shortcut. It constructs the channel factory and a `SyncBuilder` for you and starts the sync manager during `build()`:\n\n```typescript\nconst module = await new ReactorBuilder()\n  .withDocumentModelSources([/* ... */])\n  .withChannelScheme(ChannelScheme.CONNECT)\n  .buildModule();\n\nconst sync = module.syncModule?.syncManager; // ISyncManager | undefined\n```\n\n`withSync` is the full-control path: you hand over a pre-configured `SyncBuilder` when you need a custom channel factory, custom storages, or different limits. On this path the reactor builder still calls `syncManager.startup()` for you.\n\nThe gotcha is what happens when you call both. There is no error and no warning: **only the scheme path runs, and your custom `SyncBuilder` is discarded.** The scheme path always constructs a fresh `SyncBuilder` around the scheme's own factory, so any `withChannelFactory`, `withMaxInboxBatchSize`, or storage override you configured is silently thrown away. Use one or the other, never both.\n\nA second, related trap: `SyncBuilder.build()` and `buildModule()` do *not* call `startup()`. That call is only made for you when the builder is routed through `ReactorBuilder`. If you construct a `SyncBuilder` directly, you must call `syncManager.startup()` yourself before adding remotes, or `add` will operate on a manager that was never started.\n\nNote also that `withJwtHandler` only flows through the `CONNECT` factory; on the `SWITCHBOARD` path it is accepted and ignored.\n\n_Source: apps/academy/docs/academy/04-Reference/01-Reactor/04-Synchronization.md (Powerhouse v6.2.2-dev.45)._",
+        "updatedAt": "2026-08-14T12:36:01.000Z"
+      },
+      "timestampUtcMs": "2026-08-14T12:36:01.000Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "",
+    "timestampUtcMs": "2026-08-14T12:38:56.168Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "f422a502-1604-4198-85ad-78fef23efc93",
+        "targetId": "501f87dd-ff84-4a59-8894-033f209dfdf0",
+        "relationshipType": "BUILDS_ON"
+      },
+      "timestampUtcMs": "2026-08-14T12:38:56.168Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "CK4MyLEfnBtgMjqFYnWzJqHzfRI=",
+    "timestampUtcMs": "2026-08-14T12:36:01.000Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "version",
+        "value": "v6.2.2-dev.44",
+        "updatedAt": "2026-08-14T12:36:01.000Z"
+      },
+      "timestampUtcMs": "2026-08-14T12:36:01.000Z"
+    }
+  },
+  {
+    "index": 5,
+    "hash": "",
+    "timestampUtcMs": "2026-09-02T21:38:02.842Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "metadata": {
+          "reason": "The note names apps/academy/docs/academy/04-Reference/01-Reactor/04-Synchronization.md as its source; page text identical at v6.2.2-dev.47 and v6.2.2-dev.74",
+          "confidence": "grounded"
+        },
+        "sourceId": "f422a502-1604-4198-85ad-78fef23efc93",
+        "targetId": "d713d0e0-b6a9-4302-9463-fa8a34bf69b1",
+        "relationshipType": "DERIVED_FROM"
+      },
+      "timestampUtcMs": "2026-09-02T21:38:02.842Z"
+    }
+  },
+  {
+    "index": 5,
+    "hash": "ZXBnS5cY7csbbrLDnQDmfMeDsy0=",
+    "timestampUtcMs": "2026-08-14T12:36:01.000Z",
+    "action": {
+      "type": "SET_PROVENANCE",
+      "input": {
+        "author": "claude",
+        "createdAt": "2026-08-13T14:33:59.000Z",
+        "sourceOrigin": "DERIVED"
+      },
+      "timestampUtcMs": "2026-08-14T12:36:01.000Z"
+    }
+  },
+  {
+    "index": 6,
+    "hash": "jt45+KTN3lmOpqLc1d4G9ypl/Aw=",
+    "timestampUtcMs": "2026-08-14T12:36:01.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "cc29e9dd-4382-4982-bce9-1bd91c72b67c",
+        "name": "reactor-sync",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-08-14T12:36:01.000Z"
+    }
+  },
+  {
+    "index": 7,
+    "hash": "5QjFCpkZWCwYkUnpK4bTau4v2yc=",
+    "timestampUtcMs": "2026-08-14T12:36:01.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "763679ef-b198-436c-968a-731ada3808c7",
+        "name": "reactor-builder",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-08-14T12:36:01.000Z"
+    }
+  },
+  {
+    "index": 8,
+    "hash": "NytOCh3W9PP40cxb4JTAettGLy8=",
+    "timestampUtcMs": "2026-08-14T12:36:01.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "ca1ebcd6-6b96-4266-ac0a-3dae6acb4079",
+        "name": "gotchas",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-08-14T12:36:01.000Z"
+    }
+  },
+  {
+    "index": 9,
+    "hash": "MAvPa0ZPUXldq8Ge+A6zyiyYB1o=",
+    "timestampUtcMs": "2026-08-14T14:37:45.000Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "version",
+        "value": "v6.2.2-dev.47",
+        "updatedAt": "2026-08-14T12:00:00.000Z"
+      },
+      "timestampUtcMs": "2026-08-14T14:37:45.000Z"
+    }
+  },
+  {
+    "index": 10,
+    "hash": "mRjq91DKsHXjRYXVEu4iiPptDWw=",
+    "timestampUtcMs": "2026-08-14T14:37:45.000Z",
+    "action": {
+      "type": "SUBMIT_FOR_REVIEW",
+      "input": {
+        "id": "ebdb476e-9155-4be4-818c-d1ca5bd4c578",
+        "actor": "claude",
+        "comment": "Knowledge registered against powerhouse v6.2.2-dev.47",
+        "timestamp": "2026-08-14T12:00:00.000Z"
+      },
+      "timestampUtcMs": "2026-08-14T14:37:45.000Z"
+    }
+  },
+  {
+    "index": 11,
+    "hash": "aJ5//l7iP/C3OEjZz5h1yTIq4HY=",
+    "timestampUtcMs": "2026-08-14T14:37:45.000Z",
+    "action": {
+      "type": "APPROVE_NOTE",
+      "input": {
+        "id": "cac752c4-3ce9-4644-9392-f3a7af8d05f9",
+        "actor": "liberuum",
+        "comment": "Canonical as of powerhouse v6.2.2-dev.47",
+        "timestamp": "2026-08-14T12:00:00.000Z"
+      },
+      "timestampUtcMs": "2026-08-14T14:37:45.000Z"
+    }
+  },
+  {
+    "index": 12,
+    "hash": "an4SUeerZiigiXdk1OjFSHA9TLw=",
+    "timestampUtcMs": "2026-09-02T21:38:03.475Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "filePath",
+        "value": "apps/academy/docs/academy/04-Reference/01-Reactor/04-Synchronization.md",
+        "updatedAt": "2026-09-02T21:38:03.475Z"
+      },
+      "timestampUtcMs": "2026-09-02T21:38:03.475Z"
+    }
+  },
+  {
+    "index": 13,
+    "hash": "anbaEviP+66eDXeK7CCUw1EolvY=",
+    "timestampUtcMs": "2026-09-02T21:38:03.475Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "version",
+        "value": "v6.2.2-dev.74",
+        "updatedAt": "2026-09-02T21:38:03.475Z"
+      },
+      "timestampUtcMs": "2026-09-02T21:38:03.475Z"
+    }
+  }
+]

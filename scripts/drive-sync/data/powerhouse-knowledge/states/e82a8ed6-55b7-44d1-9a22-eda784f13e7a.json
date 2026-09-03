@@ -1,0 +1,96 @@
+{
+  "links": [
+    {
+      "id": "lnk-00147bfc-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "00147bfc-06e3-4c4b-975e-fa3220726fb2",
+      "targetTitle": "editors-use-react-hooks-for-document-state"
+    },
+    {
+      "id": "lnk-db144dcd-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "db144dcd-42c6-467b-a108-ddebd1d421d6",
+      "targetTitle": "reducers-are-pure-functions-with-immer"
+    },
+    {
+      "id": "lnk-c4204299-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "c4204299-3b8c-4e90-88c9-082d0c130234",
+      "targetTitle": "actions-become-operations-after-dispatch-adding-metadata"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Rendering and side effects belong to the editor; validation and state transitions belong to the reducer",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "3378cc17-af67-445d-b2a2-d2c7df162bee",
+      "name": "editors",
+      "topicDocumentId": null
+    },
+    {
+      "id": "54c0843e-1895-4884-8717-9748e0b29b2a",
+      "name": "reducer-patterns",
+      "topicDocumentId": null
+    },
+    {
+      "id": "7afd5fab-1043-49e6-a695-69c5fa3c698c",
+      "name": "architecture",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "The division of labour between an editor and a reducer is the cleanest boundary in the Powerhouse stack, and it is easy to blur because both feel like \"handling the user's click\".\n\n| Job | Belongs in |\n| --- | --- |\n| Rendering state on screen | Editor |\n| Dispatching an action when the user clicks | Editor |\n| Showing a toast notification | Editor |\n| Computing the next state from an action | Reducer |\n| Validating that a field is non-empty | Reducer |\n| Generating the new document history | Reducer |\n\nThe rule underneath: **reducers are pure, editors are impure.** Reducers have no access to the DOM, the network, or the clock. Editors can touch all three freely, because they are just React components. The editor dispatches; the reducer computes; never the other way around.\n\nThe counter-intuitive row is validation. Instinct puts \"is this title non-empty?\" in the form, because that is where the user is. But a document model can have several editors, and it also has a subgraph \u2014 a GraphQL mutation dispatches the same action with no form in sight. Validation in the editor guards one entry point; validation in the reducer guards the state transition itself, so the invariant holds regardless of which editor, API call or processor fired the action. That is why the reducer owns it and why validation failures come back through `dispatch`'s `onErrors` callback rather than being prevented client-side.\n\nConcretely, an editor never mutates `document.state`, never talks to the network, and never generates timestamps or hashes \u2014 the Reactor stamps those. The full sequence for a checkbox click is: editor dispatches `completeTodo` \u2192 the reducer produces the next state \u2192 the Reactor appends the operation \u2192 the new state flows back and the editor re-renders. The editor's only product is actions.\n\n_Source: apps/academy/docs/academy/02-Learn/04-editors/{01-what-is-an-editor,02-your-first-editor}.mdx (Powerhouse v6.2.2-dev.45)._",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "CONCEPT",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "claude",
+    "createdAt": "2026-08-13T14:37:57.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-09-03T09:59:31.230Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Editors are impure React components that only dispatch. Reducers are pure and own field validation, so the rules hold no matter which editor fired the action.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "af011e5c-a47c-4c1c-9dbe-ac6212c23c9b",
+      "actor": "claude",
+      "comment": "Knowledge registered against powerhouse v6.2.2-dev.47",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-14T12:00:00.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "3b50b8b7-91ca-4909-9ff6-f7fb3242710e",
+      "actor": "liberuum",
+      "comment": "Canonical as of powerhouse v6.2.2-dev.47",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-14T12:00:00.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

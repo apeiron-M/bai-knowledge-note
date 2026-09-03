@@ -1,0 +1,93 @@
+{
+  "links": [
+    {
+      "id": "lnk-e9996a1c-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "e9996a1c-c9fa-44dc-bcc4-15b03a0c088d",
+      "targetTitle": "moc-powerhouse-ecosystem"
+    },
+    {
+      "id": "lnk-787398c0-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "787398c0-fa8c-4e79-bd9f-71b60d57f482",
+      "targetTitle": "document-model-versioning-system"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "The vault's Powerhouse knowledge corpus is baselined at stack v6.0.0-dev.254 (2026-05-18)",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "ARCHIVED",
+  "topics": [
+    {
+      "id": "8f70e0cf-0162-4d1c-a134-215746bf46bf",
+      "name": "versioning",
+      "topicDocumentId": null
+    },
+    {
+      "id": "4bbac019-e709-4602-9926-4c8886a2a909",
+      "name": "corpus-baseline",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "## Corpus version baseline\n\nNearly all Powerhouse knowledge in this vault was farmed from `apps/academy` in the powerhouse-inc/powerhouse monorepo at **v6.0.0-dev.254**:\n\n- **Released:** 2026-05-18\n- **Commit:** `eaf7ea34a9c63dff39a6b51f25ba4ac793ceac4d` (tag `v6.0.0-dev.254`)\n- The remote knowledge-vault deployment (eager-hen-55-switchboard.vetra.io) ran this same stack version.\n\n## Why this matters\n\nTreat v6.0.0-dev.254 as the corpus's knowledge cutoff. Any claim in this vault about stack behavior, APIs, CLI commands, or package layout describes the stack **as of that version** unless a note says otherwise.\n\n## Known drift at time of writing (2026-08-13)\n\n- Current stack: v6.2.2-dev.45 \u2014 two minor versions ahead.\n- 242 commits have touched `apps/academy` since the baseline.\n- Known breaking changes since baseline include the 6.2.x project format (no package.json dependencies, oxlint/oxfmt replacing eslint/prettier, reactor headless entry) and the drive-override migration (edges via ADD_RELATIONSHIP system actions instead of document-scope link ops).\n\n## How to use this marker\n\n- When healing/re-validating a note against newer academy docs, update the note (or supersede it with a SUPERSEDES link) and record the newer version in its content.\n- When the corpus is re-farmed wholesale against a newer stack, create a new baseline marker note and link it to this one with SUPERSEDES.\n\n## Note on v6.2.2-dev.44 vs dev.45\n\nThe vault is stamped `v6.2.2-dev.44`, but many notes carry provenance footers naming `v6.2.2-dev.45`. Both are correct: the two releases are **source-identical**. `git diff v6.2.2-dev.44..v6.2.2-dev.45` changes zero `.ts` / `.tsx` / `.graphql` files \u2014 the single commit between them is `chore(release): publish 6.2.2-dev.44`, and every changed file is a `package.json` version bump, a `CHANGELOG.md` entry, or a version string in a generated `COMMANDS.md` header.\n\nVerification done against dev.45 therefore holds unchanged on dev.44. The project pins dev.44 because Vetra had trouble installing the remote package at dev.45, so the stamp names the release actually deployed.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "REFERENCE",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "claude",
+    "createdAt": "2026-08-13T13:45:29.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-09-03T11:09:51.943Z",
+    "sourceOrigin": "MANUAL"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Historical marker: all academy-farmed knowledge reflects Powerhouse v6.0.0-dev.254 (commit eaf7ea34a, 2026-05-18). Claims about newer stack behavior need re-validation.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "a4292e5f-005c-49dd-8bcb-9f5abc2f8aa6",
+      "actor": "claude",
+      "comment": "Knowledge registered against powerhouse v6.2.2-dev.47",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-14T12:00:00.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "8db133bb-22a7-4e18-a1a6-c5262cebf0b0",
+      "actor": "liberuum",
+      "comment": "Canonical as of powerhouse v6.2.2-dev.47",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-14T12:00:00.000Z",
+      "fromStatus": "IN_REVIEW"
+    },
+    {
+      "id": "113265d6-225f-41e8-8818-96fa582565f8",
+      "actor": "liberuum",
+      "comment": "No longer valid, and no successor is needed. The claim that one stack version dates the whole corpus was superseded by per-note provenance: 393 live notes carry a verified `version` plus the `filePath` that verified it, all 159 powerhouse repository sources pin a blob URL and sha256 to a git tag, and 234 unverifiable stamps were cleared rather than guessed. A single vault-wide cutoff now asserts something false about a corpus dated note by note.",
+      "toStatus": "ARCHIVED",
+      "timestamp": "2026-09-03T11:09:51.943Z",
+      "fromStatus": "CANONICAL"
+    }
+  ]
+}

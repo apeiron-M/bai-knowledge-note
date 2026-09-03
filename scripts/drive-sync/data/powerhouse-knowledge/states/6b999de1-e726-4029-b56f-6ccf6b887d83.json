@@ -1,0 +1,28 @@
+{
+  "title": "Package \u203a reactor \u203a sync-gaps",
+  "status": "EXTRACTED",
+  "content": "Sync Gap Analysis - Open Issues\n\n4. Dead Letter Handling\n\n4a. No dead letter retry/resolution API\n\n- ISyncManager interface has no methods for dead letter management. KyselySyncDeadLetterStorage has remove(id) and removeByRemote()\n  but these aren't exposed through ISyncManager.\n\n---\n\n7. Batch Aggregator\n\n7b. Partial batch emits on failure (batch-aggregator.ts:40-55)\n\n- handleJobFailed deletes the pending batch and processes whatever events arrived. The failed job's operations are silently dropped\n  with no notification of incompleteness.\n",
+  "createdAt": "2026-09-02T21:45:02.019Z",
+  "createdBy": "repo-docs-sync",
+  "provenance": {
+    "url": "https://github.com/powerhouse-inc/powerhouse/blob/v6.2.2-dev.74/packages/reactor/sync-gaps.md",
+    "tool": "sync-repo-docs",
+    "author": "Powerhouse Inc.",
+    "method": "sha256:fe18516c3ae40251813c10be9699be1131ffad501a49a8ba215fb115e58d1774 git:v6.2.2-dev.74",
+    "publishedAt": "2026-03-24T16:19:22.000Z"
+  },
+  "sourceType": "DOCUMENTATION",
+  "description": "Powerhouse v6.2.2-dev.74 (unchanged since v6.2.2-dev.47) \u2014 Sync Gap Analysis - Open Issues",
+  "extractedClaims": [
+    "f3c2f9bb-e554-44c6-9551-05273aaf5720",
+    "bb823a22-5304-40dd-b087-5ae6a35e9755"
+  ],
+  "extractionStats": {
+    "skipRate": 0,
+    "claimCount": 2,
+    "extractedAt": "2026-09-03T07:23:37.788Z",
+    "extractedBy": "knowledge-agent",
+    "skippedCount": 0
+  },
+  "links": []
+}

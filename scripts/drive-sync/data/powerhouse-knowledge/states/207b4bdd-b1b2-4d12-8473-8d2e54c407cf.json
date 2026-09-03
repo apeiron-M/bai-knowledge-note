@@ -1,0 +1,107 @@
+{
+  "links": [
+    {
+      "id": "lnk-075115a4-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "075115a4-d269-4515-91df-5b40568ca4b4",
+      "targetTitle": "document-model-driven-architecture-rad"
+    },
+    {
+      "id": "lnk-4e650379-bui",
+      "linkType": "BUILDS_ON",
+      "targetDocumentId": "4e650379-926b-4f72-9918-6805bf976a69",
+      "targetTitle": "powerhouse-high-level-bi-positioning"
+    },
+    {
+      "id": "lnk-3908a38a-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "3908a38a-c1d9-421c-b360-3aeeb2a7afbd",
+      "targetTitle": "meeting-notes-2026-08-12-14"
+    },
+    {
+      "id": "lnk-c720df00-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "c720df00-e3a4-49d1-b583-e7ed14c256f8",
+      "targetTitle": "bim-demo-scenario-briefing"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Speckle bridges low-level 3D data so Powerhouse document models can stay high-level",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "f2db4563-d258-4ee9-aca0-9013d351532d",
+      "name": "speckle",
+      "topicDocumentId": null
+    },
+    {
+      "id": "bd49c36d-bb8d-4ca6-a99f-34cc579b1c5c",
+      "name": "integrations",
+      "topicDocumentId": null
+    },
+    {
+      "id": "26100a51-eaac-4ffa-9e43-1008ef3e8153",
+      "name": "strategy",
+      "topicDocumentId": null
+    },
+    {
+      "id": "84b215d7-974b-4506-a9cd-0159687e11f1",
+      "name": "bim",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "The integration strategy for construction pairs two layers (BAI weekly, 00:15:57\u201300:22:09):\n\n- **Speckle** (open-source) manages low-level, industry-specific 3D data \u2014 synchronizing models across Revit, Blender, AutoCAD, with a robust, mature ecosystem. It handles details like door counts or piping data.\n- **Powerhouse document models** sit at the high level \u2014 project management, requirements, approvals \u2014 referencing the low-level data.\n\nThe payoff: documents automatically update when the underlying 3D models change, delivering value **without requiring clients to replace their existing software stacks** (00:17:17).\n\nDiligence notes (BIM briefing):\n- Speckle's server is partially enterprise-licensed \u2014 the Apache vs enterprise boundary needs mapping (speckle-server repo; specklepy's IFC handling includes per-file licenses)\n- Under the hood Speckle partially uses **ifcopenshell** for IFC work, so the open toolchain remains reachable if Speckle's licensing becomes a constraint\n\nThis is the general shape of the positioning: don't compete with mature low-level tools \u2014 compose with them and own the document/process layer above.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "INTEGRATION",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "knowledge-agent",
+    "createdAt": "2026-08-14T18:13:42.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-17T13:14:00.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Integration strategy: Speckle syncs 3D data across Revit/Blender/AutoCAD; Powerhouse document models sit above it, auto-updating when models change \u2014 no stack replacement required.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "1403c1bc-175d-4e4b-9b77-70a364f27d83",
+      "actor": "knowledge-agent",
+      "comment": "Extracted from Aug 12-14 meeting sources; links + methodology grounding applied",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-14T18:17:22.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "60af32d8-8ca2-47c5-af3f-f0a5d62e091d",
+      "actor": "liberuum",
+      "comment": "Pipeline verify: quality gate passed",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-14T18:17:22.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

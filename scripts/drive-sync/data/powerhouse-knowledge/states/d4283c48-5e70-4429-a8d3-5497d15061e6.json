@@ -1,0 +1,94 @@
+{
+  "links": [
+    {
+      "id": "lnk-d8334f75-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "d8334f75-cf50-4de7-9966-bf59531f981b",
+      "targetTitle": "Open Social \u2014 (generalist \u2014 see fit)"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "A Drupal hook dispatching typed operations turns moderation and membership decisions into an audit trail",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "16f11d20-eab8-4732-a43a-6afd5e6ebb3a",
+      "name": "leads",
+      "topicDocumentId": null
+    },
+    {
+      "id": "06ef89f8-1a14-408b-b5fd-67b2ccbb47df",
+      "name": "demo-design",
+      "topicDocumentId": null
+    },
+    {
+      "id": "115a6dc8-6e1b-431f-aa9b-af2e56898939",
+      "name": "drupal",
+      "topicDocumentId": null
+    },
+    {
+      "id": "76450db3-5846-4f02-8692-7f5b13d3677a",
+      "name": "community-governance",
+      "topicDocumentId": null
+    },
+    {
+      "id": "b1b19cb4-832e-4607-bc0f-9f7d6107f9e1",
+      "name": "audit-trail",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "Open Social's platform is built on Drupal, and Drupal exposes hooks at the points where moderation and membership decisions are applied. The demo attaches to those hooks and dispatches a typed operation for each decision, so an approval, a rejection or a membership change becomes an event in its own right instead of only a changed field on a node.\n\nThe distinction matters because community governance is a sequence of decisions taken by people with different standing. A node revision shows the content after a moderator acted; it does not assert that the moderator acted, on what basis, or in what order relative to other decisions. Dispatching the decision as an operation records the act itself, which is what an audit trail of governance consists of.\n\nFor institutional communities, whose membership rules are written down and whose decisions can be contested afterwards, that trail is the deliverable rather than a by-product. It is also narrow enough to build against a single hook, which keeps the demo small enough to finish.\n\n---\n\n## Leads sharing this finding (1)\n\n**2 \u00b7 next**\n- Open Social (NL Amsterdam) \u2014 Taco Potze, CEO; Bram ten Hove, CTO \u00b7 sales@getopensocial.com \u00b7 https://getopensocial.com\n\nVerbatim research text this claim was extracted from:\n\n> Drupal hook dispatching typed operations on moderation and membership decisions \u2014 an audit trail for institutional community governance.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "PATTERN",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "knowledge-agent",
+    "createdAt": "2026-08-19T11:24:20.332818Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-19T11:24:21.815482Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "The hook fires on governance decisions rather than on content edits, so the record that results is about who decided what \u2014 the object institutional governance is judged on.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "d4e65702-fe5b-4487-a608-6b6844232795",
+      "actor": "knowledge-agent",
+      "comment": "Extracted from lead research; claim checked against the source record.",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-19T11:24:21.657875Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "fa96e122-5731-4f04-ac52-fb0bf488a6f3",
+      "actor": "liberuum",
+      "comment": "Approved: lead corpus extraction.",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-19T11:24:21.815482Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

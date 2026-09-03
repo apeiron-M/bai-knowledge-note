@@ -1,0 +1,116 @@
+{
+  "links": [
+    {
+      "id": "lnk-9b3ba4de-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "9b3ba4de-4e1a-46a3-8865-200c4d1280e9",
+      "targetTitle": "vetra-studio-is-builder-environment"
+    },
+    {
+      "id": "lnk-15a216b2-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "15a216b2-f6e8-40ba-bfcb-604c1059297a",
+      "targetTitle": "packages-publish-to-npm-install-via-ph"
+    },
+    {
+      "id": "lnk-d907616b-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "d907616b-cc88-4ea5-8d91-dc6d8e5bace6",
+      "targetTitle": "cli-identity-did-key-ethereum-delegation"
+    },
+    {
+      "id": "lnk-9c9ffb95-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "9c9ffb95-9100-4839-b00e-57ec8b6ccbe6",
+      "targetTitle": "account-transactions-model-tracks-financial-transaction-records"
+    },
+    {
+      "id": "lnk-b4582ec1-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "b4582ec1-d727-49a4-aaef-3c7f88c4be19",
+      "targetTitle": "open-source-capitalism-makes-oss-self-sustaining-investable-and-scalable"
+    },
+    {
+      "id": "lnk-cef816d8-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "cef816d8-96f7-402f-bbaf-e0c8afa1cc18",
+      "targetTitle": "Academy \u203a Reference \u203a CLITooling \u203a Powerhouse CLI",
+      "reason": "Backing page found by content match (score 0.16) in the v6.2.2-dev.74 source backfill; no distinctive identifier verified, attribution by topic overlap \u2014 not the original extraction record (text revised between v6.2.2-dev.47 and v6.2.2-dev.74 \u2014 re-verified in the v6.2.2-dev.74 pass)",
+      "confidence": "established"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "The Powerhouse CLI (ph-cmd) provides all essential commands for project lifecycle management",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "5d28d6b5-b7ae-4a71-930b-b9ba47a41b4a",
+      "name": "cli",
+      "topicDocumentId": null
+    },
+    {
+      "id": "ce627af0-a00a-41fd-a1ee-5aca16ff7c46",
+      "name": "builder-tools",
+      "topicDocumentId": null
+    },
+    {
+      "id": "1bd68fcb-2e47-485e-943a-fc11c2ba8328",
+      "name": "commands",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "The Powerhouse CLI (`ph-cmd`) is the primary tool for managing Powerhouse projects. Key commands:\n\n- `ph init` - Initialize a new project (scaffolds directory structure from boilerplate)\n- `ph vetra --watch` - Launch Vetra Studio with live code generation (recommended)\n- `ph vetra --interactive` - Launch with confirmation prompts before generation\n- `ph connect` - Run Connect locally. It is a subcommand group over `studio`, `build`, `preview`, and `config`, defaulting to `studio`; `ph connect build` is the mandatory production build step\n- `ph generate` - Generate code. This is a **subcommand group**, not a flag-driven command; its subcommands are `all`, `document-model`, `editor`, `app`, `processor`, `subgraph`, `migration-file`\n  - `ph generate document-model --document <file>` - Generate code from an exported specification\n  - `ph generate editor --name <str> --document-type <str>` - Generate an editor template (the option is singular: `--document-type`)\n  - `ph generate app --name <str> --document-types <value>` - Generate a drive app; this replaced the old `--drive-editor`\n  - `ph generate subgraph --name <str>` and `ph generate processor --name <str> --type <str> --document-types <str>`\n- `ph reactor` / `ph switchboard` - Start the API service (`reactor` is an alias of `switchboard`)\n- `ph install <package>` / `ph uninstall <package>` - Manage published Powerhouse packages\n- `ph publish` - Publish the project to a registry\n- `ph login` - Create/link a Renown identity; `ph access-token` - mint a bearer token from that identity\n- `ph list` - List installed Powerhouse packages; `ph inspect <package>` - show a package's structure and config\n- `ph migrate` - Run migrations to a newer Powerhouse version\n- `ph use <tag>` - Switch dependency release tag; `ph use-local <path>` - point dependencies at a local monorepo checkout\n- `ph update` - Update dependencies to latest versions\n\nThe CLI supports four release tags: `latest` (stable), `staging`, `dev`, and `rc`. There is no `prod` tag, and `local` is not a tag either -- local monorepo dependencies are handled by the separate `ph use-local` command.\n\n_Corrected 2026-08-13 against Powerhouse v6.2.2-dev.45._",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": "v6.2.2-dev.74",
+  "computes": null,
+  "filePath": "apps/academy/docs/academy/04-Reference/07-CLITooling/00-PowerhouseCLI.md",
+  "noteType": "REFERENCE",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "knowledge-agent",
+    "createdAt": "2026-04-02T12:00:00.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-09-02T22:26:37.107Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Install globally via `pnpm install -g ph-cmd`. Key commands: ph init, ph vetra, ph connect, ph generate, ph reactor.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "6b3d4306-f444-4ab8-a8f2-d6454e4f55c4",
+      "actor": "claude",
+      "comment": "Knowledge registered against powerhouse v6.2.2-dev.47",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-14T12:00:00.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "7d127217-74e0-474d-8bfc-a26685e10987",
+      "actor": "liberuum",
+      "comment": "Canonical as of powerhouse v6.2.2-dev.47",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-14T12:00:00.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

@@ -1,0 +1,107 @@
+{
+  "links": [
+    {
+      "id": "lnk-48b95d6d-bui",
+      "linkType": "BUILDS_ON",
+      "targetDocumentId": "48b95d6d-2b69-4999-9e79-dddfc7e9ed3f",
+      "targetTitle": "reactor-job-five-statuses-two-terminal",
+      "reason": "Adds the queueing rules beneath the five job statuses: what runs in parallel, what is serialized, and what a job carries between retries",
+      "confidence": "grounded"
+    },
+    {
+      "id": "lnk-0ef319a9-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "0ef319a9-520b-4759-b30b-a08146b567a9",
+      "targetTitle": "op-stored-per-triple",
+      "reason": "The queue keys on the same triple the operation store sequences by, but deliberately serializes more coarsely than that key",
+      "confidence": "grounded"
+    },
+    {
+      "id": "lnk-e4ef060b-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "e4ef060b-4d61-41b4-95bd-2f562eea3cfa",
+      "targetTitle": "Package \u203a reactor \u203a ARCHITECTURE \u2014 Reactor Architecture",
+      "reason": "Extracted from packages/reactor/docs/ARCHITECTURE.md at v6.2.2-dev.74 \u2014 Core Concepts \u203a Job; Components \u203a Queue; Design Decisions \u203a Why Async Job Processing",
+      "confidence": "grounded"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "The job queue keys work by (documentId, scope, branch) but serializes execution per document, so two scopes of one document never run concurrently",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "4cea10d5-bcc8-4339-b374-236326185f94",
+      "name": "reactor",
+      "topicDocumentId": null
+    },
+    {
+      "id": "e56788fb-4709-4122-86fb-e6278cac5947",
+      "name": "queue",
+      "topicDocumentId": null
+    },
+    {
+      "id": "f584ede5-2344-49fd-a285-833d85d3dda4",
+      "name": "jobs",
+      "topicDocumentId": null
+    },
+    {
+      "id": "03ddd4ec-d634-4ba4-8729-c59412bd11b8",
+      "name": "concurrency",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "The queue organises jobs in a Map keyed by `(documentId, scope, branch)`, but the guarantee it gives is stronger than that key suggests: **execution is serialized per document even across scopes and branches.** Jobs for different documents proceed in parallel; two jobs touching the same document never overlap, whichever scopes they name.\n\nThat is why the architecture lists ordering, not throughput, as the first reason for async job processing \u2014 and it is what makes a decision that reads one scope to authorize a write in another safe on the local reactor, without any additional lock.\n\nA job carries its own retry state:\n\n```ts\ntype Job = {\n  id: string;\n  kind: \"mutation\" | \"load\";\n  documentId: string; scope: string; branch: string;\n  actions: Action[];        // for mutations\n  operations: Operation[];  // for loads (sync)\n  queueHint: string[];      // job dependencies\n  maxRetries: number;\n  errorHistory: ErrorInfo[];\n};\n```\n\n`kind` splits the two entry points: a **mutation** carries actions to reduce, a **load** carries operations that already exist elsewhere and arrived by sync. `queueHint` is how one job waits for another, and `errorHistory` accumulates across retries rather than being overwritten, so a job that failed three different ways can be diagnosed after the fact.\n\n## Provenance\n- `packages/reactor/docs/ARCHITECTURE.md` \u2014 Core Concepts \u203a Job; Components \u203a Queue; Design Decisions \u203a Why Async Job Processing\n\n_Extracted from the Powerhouse repository at **v6.2.2-dev.74**._",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": "v6.2.2-dev.74",
+  "computes": null,
+  "filePath": "packages/reactor/docs/ARCHITECTURE.md",
+  "noteType": "ARCHITECTURE",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "knowledge-agent",
+    "createdAt": "2026-09-03T07:18:20.502Z",
+    "sessionId": null,
+    "updatedAt": "2026-09-03T07:22:19.256Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Jobs for different documents run in parallel; jobs for one document run sequentially even across scopes and branches. Ordering, retry with error history and queueHint dependencies are its work.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "54068b08-274f-418d-b684-b9bdd4cf2377",
+      "actor": "knowledge-agent",
+      "comment": "extracted from packages/reactor/docs/ARCHITECTURE.md at v6.2.2-dev.74",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-09-03T07:18:22.435Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "a707a1d2-e3b9-4ac5-9652-ad3869cfd5b9",
+      "actor": "liberuum",
+      "comment": "claim checked against the cited file at the pinned tag",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-09-03T07:18:22.916Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

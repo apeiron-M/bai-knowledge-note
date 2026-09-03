@@ -1,0 +1,500 @@
+[
+  {
+    "index": 0,
+    "hash": "",
+    "timestampUtcMs": "2026-09-03T07:18:10.776Z",
+    "action": {
+      "type": "CREATE_DOCUMENT",
+      "input": {
+        "meta": {},
+        "name": "op-with-context-resulting-state",
+        "slug": "",
+        "model": "bai/knowledge-note",
+        "branch": "main",
+        "signing": {
+          "nonce": "",
+          "publicKey": {},
+          "signature": "14d47019-4ebc-4d7d-acfd-352b344a291f",
+          "documentType": "bai/knowledge-note",
+          "createdAtUtcIso": "2026-09-03T07:18:10.776Z"
+        },
+        "version": 0,
+        "documentId": "14d47019-4ebc-4d7d-acfd-352b344a291f",
+        "protocolVersions": {
+          "base-reducer": 2
+        }
+      },
+      "timestampUtcMs": "2026-09-03T07:18:10.776Z"
+    }
+  },
+  {
+    "index": 0,
+    "hash": "KmnaY8hMYHWEPqRtjNvlme92/Q0=",
+    "timestampUtcMs": "2026-09-03T07:18:12.249Z",
+    "action": {
+      "type": "SET_TITLE",
+      "input": {
+        "title": "Read models and sync depend on resultingState and a global ordinal in OperationContext, and DocumentView will not rebuild state from operations",
+        "updatedAt": "2026-09-03T07:18:12.249Z"
+      },
+      "timestampUtcMs": "2026-09-03T07:18:12.249Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "",
+    "timestampUtcMs": "2026-09-03T07:18:10.776Z",
+    "action": {
+      "type": "UPGRADE_DOCUMENT",
+      "input": {
+        "model": "bai/knowledge-note",
+        "toVersion": 1,
+        "documentId": "14d47019-4ebc-4d7d-acfd-352b344a291f",
+        "fromVersion": 0,
+        "initialState": {
+          "auth": {
+            "grants": [],
+            "version": 0
+          },
+          "local": {
+            "lastViewedAt": null,
+            "personalTags": []
+          },
+          "global": {
+            "links": [],
+            "model": null,
+            "scope": null,
+            "title": null,
+            "editor": null,
+            "inputs": [],
+            "models": [],
+            "status": "DRAFT",
+            "topics": [],
+            "content": null,
+            "context": null,
+            "modelId": null,
+            "modules": [],
+            "outputs": [],
+            "version": null,
+            "computes": null,
+            "filePath": null,
+            "noteType": null,
+            "severity": null,
+            "hooksUsed": [],
+            "rootCause": null,
+            "confidence": null,
+            "consumedBy": [],
+            "provenance": null,
+            "sourceType": null,
+            "targetType": null,
+            "cardinality": null,
+            "description": null,
+            "alternatives": [],
+            "consequences": [],
+            "errorMessage": null,
+            "relationType": null,
+            "correctPattern": null,
+            "decisionStatus": null,
+            "dispatchTargets": [],
+            "lifecycleEvents": []
+          },
+          "document": {
+            "hash": {
+              "encoding": "base64",
+              "algorithm": "sha1"
+            },
+            "version": 1
+          }
+        }
+      },
+      "timestampUtcMs": "2026-09-03T07:18:10.776Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "OtRjtGGxcQkCXExwrIWXNxkkj2o=",
+    "timestampUtcMs": "2026-09-03T07:18:12.249Z",
+    "action": {
+      "type": "SET_DESCRIPTION",
+      "input": {
+        "updatedAt": "2026-09-03T07:18:12.249Z",
+        "description": "OperationWithContext adds documentId, documentType, scope, branch, resultingState and ordinal. DocumentView needs resultingState to advance a snapshot; ordinal is what sync cursors track."
+      },
+      "timestampUtcMs": "2026-09-03T07:18:12.249Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "",
+    "timestampUtcMs": "2026-09-03T07:20:47.025Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "metadata": {
+          "reason": "Extracted from packages/reactor/docs/ARCHITECTURE.md at v6.2.2-dev.74 \u2014 Core Concepts \u203a OperationWithContext; Components \u203a DocumentView",
+          "confidence": "grounded"
+        },
+        "sourceId": "14d47019-4ebc-4d7d-acfd-352b344a291f",
+        "targetId": "e4ef060b-4d61-41b4-95bd-2f562eea3cfa",
+        "relationshipType": "DERIVED_FROM"
+      },
+      "timestampUtcMs": "2026-09-03T07:20:47.025Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "P4ycb9wpGa3HSLEcxefse1AVmqo=",
+    "timestampUtcMs": "2026-09-03T07:18:12.249Z",
+    "action": {
+      "type": "SET_NOTE_TYPE",
+      "input": {
+        "noteType": "ARCHITECTURE",
+        "updatedAt": "2026-09-03T07:18:12.249Z"
+      },
+      "timestampUtcMs": "2026-09-03T07:18:12.249Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "",
+    "timestampUtcMs": "2026-09-03T07:20:47.472Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "metadata": {
+          "reason": "The context supplies exactly the scope and branch the operation itself omits, plus the two derived fields consumers cannot compute themselves",
+          "confidence": "grounded"
+        },
+        "sourceId": "14d47019-4ebc-4d7d-acfd-352b344a291f",
+        "targetId": "0ef319a9-520b-4759-b30b-a08146b567a9",
+        "relationshipType": "BUILDS_ON"
+      },
+      "timestampUtcMs": "2026-09-03T07:20:47.472Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "aEriPT9rUfEA3OrQGvftxKKft4c=",
+    "timestampUtcMs": "2026-09-03T07:18:12.249Z",
+    "action": {
+      "type": "SET_CONTENT",
+      "input": {
+        "content": "Every operation travels with its context:\n\n```ts\ntype OperationWithContext = {\n  operation: Operation;\n  context: {\n    documentId: string;\n    documentType: string;\n    scope: string;\n    branch: string;\n    resultingState?: string;\n    ordinal: number; // global ordering across ALL operations\n  };\n};\n```\n\nTwo of those fields are load-bearing rather than informational.\n\n**`resultingState`** is what `IDocumentView` applies. The architecture is explicit that the view *requires* it and **does not rebuild from operations** \u2014 so a producer that omits it does not merely slow the read model down, it leaves the snapshot unable to advance. This is the price of a read model that never replays: the writer must hand it the state.\n\n**`ordinal`** is a global sequence across every operation in the reactor, assigned by the operation index. It is what sync cursors track, because a cursor over a flattened multi-document stream cannot use per-scope `index` values.\n\nThe distinction matters when writing a processor or a custom read model: `operation.index` is a position inside one scope, `context.ordinal` is a position in the reactor's whole history.\n\n## Provenance\n- `packages/reactor/docs/ARCHITECTURE.md` \u2014 Core Concepts \u203a OperationWithContext; Components \u203a DocumentView\n\n_Extracted from the Powerhouse repository at **v6.2.2-dev.74**._",
+        "updatedAt": "2026-09-03T07:18:12.249Z"
+      },
+      "timestampUtcMs": "2026-09-03T07:18:12.249Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "",
+    "timestampUtcMs": "2026-09-03T07:20:47.948Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "metadata": {
+          "reason": "Explains what the operations handed to a pre-ready read model actually carry, and why a read model can index without replaying",
+          "confidence": "grounded"
+        },
+        "sourceId": "14d47019-4ebc-4d7d-acfd-352b344a291f",
+        "targetId": "43b82c81-4d28-4e69-9a0a-84c0dddb87ef",
+        "relationshipType": "BUILDS_ON"
+      },
+      "timestampUtcMs": "2026-09-03T07:20:47.948Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "XdEN1CuqhjEuj14DDdnQS8a0RKY=",
+    "timestampUtcMs": "2026-09-03T07:18:12.249Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "a40bc074-6e97-42a8-b091-45fa621a5835",
+        "name": "reactor"
+      },
+      "timestampUtcMs": "2026-09-03T07:18:12.249Z"
+    }
+  },
+  {
+    "index": 5,
+    "hash": "",
+    "timestampUtcMs": "2026-09-03T07:20:48.414Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "metadata": {
+          "reason": "The ordinal in this context is the value a collection cursor advances through",
+          "confidence": "grounded"
+        },
+        "sourceId": "14d47019-4ebc-4d7d-acfd-352b344a291f",
+        "targetId": "562d84eb-ef1d-40b7-81b0-b6b7438544e1",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-09-03T07:20:48.414Z"
+    }
+  },
+  {
+    "index": 5,
+    "hash": "5zLEhg69+gOsrFRoFBUsZWfbMhI=",
+    "timestampUtcMs": "2026-09-03T07:18:12.249Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "ee57aaa0-8f39-41b7-9e22-a9bd29522811",
+        "name": "read-models"
+      },
+      "timestampUtcMs": "2026-09-03T07:18:12.249Z"
+    }
+  },
+  {
+    "index": 6,
+    "hash": "",
+    "timestampUtcMs": "2026-09-03T07:22:40.520Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "metadata": {
+          "reason": "Extracted from packages/reactor/docs/ARCHITECTURE.md at v6.2.2-dev.74 \u2014 Core Concepts \u203a OperationWithContext; Components \u203a DocumentView",
+          "confidence": "grounded"
+        },
+        "sourceId": "14d47019-4ebc-4d7d-acfd-352b344a291f",
+        "targetId": "e4ef060b-4d61-41b4-95bd-2f562eea3cfa",
+        "relationshipType": "DERIVED_FROM"
+      },
+      "timestampUtcMs": "2026-09-03T07:22:40.520Z"
+    }
+  },
+  {
+    "index": 6,
+    "hash": "AQVuHIIDKbJiVG71oY9o+IeRkPs=",
+    "timestampUtcMs": "2026-09-03T07:18:12.249Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "dfe820b7-a5ea-45ee-a7a8-b68910ce9725",
+        "name": "sync"
+      },
+      "timestampUtcMs": "2026-09-03T07:18:12.249Z"
+    }
+  },
+  {
+    "index": 7,
+    "hash": "",
+    "timestampUtcMs": "2026-09-03T07:22:40.979Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "metadata": {
+          "reason": "The context supplies exactly the scope and branch the operation itself omits, plus the two derived fields consumers cannot compute themselves",
+          "confidence": "grounded"
+        },
+        "sourceId": "14d47019-4ebc-4d7d-acfd-352b344a291f",
+        "targetId": "0ef319a9-520b-4759-b30b-a08146b567a9",
+        "relationshipType": "BUILDS_ON"
+      },
+      "timestampUtcMs": "2026-09-03T07:22:40.979Z"
+    }
+  },
+  {
+    "index": 7,
+    "hash": "uzq1ptJXHQkW6dOfW/hycUssb2U=",
+    "timestampUtcMs": "2026-09-03T07:18:12.249Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "0be7a296-3468-467d-946d-150b2edab7d1",
+        "name": "operations"
+      },
+      "timestampUtcMs": "2026-09-03T07:18:12.249Z"
+    }
+  },
+  {
+    "index": 8,
+    "hash": "",
+    "timestampUtcMs": "2026-09-03T07:22:41.430Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "metadata": {
+          "reason": "Explains what the operations handed to a pre-ready read model actually carry, and why a read model can index without replaying",
+          "confidence": "grounded"
+        },
+        "sourceId": "14d47019-4ebc-4d7d-acfd-352b344a291f",
+        "targetId": "43b82c81-4d28-4e69-9a0a-84c0dddb87ef",
+        "relationshipType": "BUILDS_ON"
+      },
+      "timestampUtcMs": "2026-09-03T07:22:41.430Z"
+    }
+  },
+  {
+    "index": 8,
+    "hash": "j8/gcGfe6++IADLwqRbG42PIi4c=",
+    "timestampUtcMs": "2026-09-03T07:18:12.249Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "version",
+        "value": "v6.2.2-dev.74",
+        "updatedAt": "2026-09-03T07:18:12.249Z"
+      },
+      "timestampUtcMs": "2026-09-03T07:18:12.249Z"
+    }
+  },
+  {
+    "index": 9,
+    "hash": "",
+    "timestampUtcMs": "2026-09-03T07:22:41.889Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "metadata": {
+          "reason": "The ordinal in this context is the value a collection cursor advances through",
+          "confidence": "grounded"
+        },
+        "sourceId": "14d47019-4ebc-4d7d-acfd-352b344a291f",
+        "targetId": "562d84eb-ef1d-40b7-81b0-b6b7438544e1",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-09-03T07:22:41.889Z"
+    }
+  },
+  {
+    "index": 9,
+    "hash": "KIFozPWdTpUaLQ5UhgK8lg/umLM=",
+    "timestampUtcMs": "2026-09-03T07:18:12.249Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "filePath",
+        "value": "packages/reactor/docs/ARCHITECTURE.md",
+        "updatedAt": "2026-09-03T07:18:12.249Z"
+      },
+      "timestampUtcMs": "2026-09-03T07:18:12.249Z"
+    }
+  },
+  {
+    "index": 10,
+    "hash": "UUaI3+0rkLRsxHxykz3Fml49V0U=",
+    "timestampUtcMs": "2026-09-03T07:18:14.626Z",
+    "action": {
+      "type": "SET_PROVENANCE",
+      "input": {
+        "author": "knowledge-agent",
+        "createdAt": "2026-09-03T07:18:14.626Z",
+        "sourceOrigin": "DERIVED"
+      },
+      "timestampUtcMs": "2026-09-03T07:18:14.626Z"
+    }
+  },
+  {
+    "index": 11,
+    "hash": "DrikGmQ8ChQK8J88x1NEpwHZv84=",
+    "timestampUtcMs": "2026-09-03T07:18:15.300Z",
+    "action": {
+      "type": "SUBMIT_FOR_REVIEW",
+      "input": {
+        "id": "cb04c5e6-42e7-49a7-878f-2a403867a72c",
+        "actor": "knowledge-agent",
+        "comment": "extracted from packages/reactor/docs/ARCHITECTURE.md at v6.2.2-dev.74",
+        "timestamp": "2026-09-03T07:18:15.300Z"
+      },
+      "timestampUtcMs": "2026-09-03T07:18:15.300Z"
+    }
+  },
+  {
+    "index": 12,
+    "hash": "O21lDRumLRBII0X0QnsaLwAO7Tc=",
+    "timestampUtcMs": "2026-09-03T07:18:15.888Z",
+    "action": {
+      "type": "APPROVE_NOTE",
+      "input": {
+        "id": "c1f38ba2-918e-4b08-a992-2c85abe8085e",
+        "actor": "liberuum",
+        "comment": "claim checked against the cited file at the pinned tag",
+        "timestamp": "2026-09-03T07:18:15.888Z"
+      },
+      "timestampUtcMs": "2026-09-03T07:18:15.888Z"
+    }
+  },
+  {
+    "index": 13,
+    "hash": "sOThlyCuXanv4nwl+1ijLDPt1Aw=",
+    "timestampUtcMs": "2026-09-03T07:22:17.332Z",
+    "action": {
+      "type": "SET_TITLE",
+      "input": {
+        "title": "Read models and sync depend on resultingState and a global ordinal in OperationContext, and DocumentView will not rebuild state from operations",
+        "updatedAt": "2026-09-03T07:22:17.332Z"
+      },
+      "timestampUtcMs": "2026-09-03T07:22:17.332Z"
+    }
+  },
+  {
+    "index": 14,
+    "hash": "sOThlyCuXanv4nwl+1ijLDPt1Aw=",
+    "timestampUtcMs": "2026-09-03T07:22:17.332Z",
+    "action": {
+      "type": "SET_DESCRIPTION",
+      "input": {
+        "updatedAt": "2026-09-03T07:22:17.332Z",
+        "description": "OperationWithContext adds documentId, documentType, scope, branch, resultingState and ordinal. DocumentView needs resultingState to advance a snapshot; ordinal is what sync cursors track."
+      },
+      "timestampUtcMs": "2026-09-03T07:22:17.332Z"
+    }
+  },
+  {
+    "index": 15,
+    "hash": "sOThlyCuXanv4nwl+1ijLDPt1Aw=",
+    "timestampUtcMs": "2026-09-03T07:22:17.332Z",
+    "action": {
+      "type": "SET_NOTE_TYPE",
+      "input": {
+        "noteType": "ARCHITECTURE",
+        "updatedAt": "2026-09-03T07:22:17.332Z"
+      },
+      "timestampUtcMs": "2026-09-03T07:22:17.332Z"
+    }
+  },
+  {
+    "index": 16,
+    "hash": "sOThlyCuXanv4nwl+1ijLDPt1Aw=",
+    "timestampUtcMs": "2026-09-03T07:22:17.332Z",
+    "action": {
+      "type": "SET_CONTENT",
+      "input": {
+        "content": "Every operation travels with its context:\n\n```ts\ntype OperationWithContext = {\n  operation: Operation;\n  context: {\n    documentId: string;\n    documentType: string;\n    scope: string;\n    branch: string;\n    resultingState?: string;\n    ordinal: number; // global ordering across ALL operations\n  };\n};\n```\n\nTwo of those fields are load-bearing rather than informational.\n\n**`resultingState`** is what `IDocumentView` applies. The architecture is explicit that the view *requires* it and **does not rebuild from operations** \u2014 so a producer that omits it does not merely slow the read model down, it leaves the snapshot unable to advance. This is the price of a read model that never replays: the writer must hand it the state.\n\n**`ordinal`** is a global sequence across every operation in the reactor, assigned by the operation index. It is what sync cursors track, because a cursor over a flattened multi-document stream cannot use per-scope `index` values.\n\nThe distinction matters when writing a processor or a custom read model: `operation.index` is a position inside one scope, `context.ordinal` is a position in the reactor's whole history.\n\n## Provenance\n- `packages/reactor/docs/ARCHITECTURE.md` \u2014 Core Concepts \u203a OperationWithContext; Components \u203a DocumentView\n\n_Extracted from the Powerhouse repository at **v6.2.2-dev.74**._",
+        "updatedAt": "2026-09-03T07:22:17.332Z"
+      },
+      "timestampUtcMs": "2026-09-03T07:22:17.332Z"
+    }
+  },
+  {
+    "index": 17,
+    "hash": "sOThlyCuXanv4nwl+1ijLDPt1Aw=",
+    "timestampUtcMs": "2026-09-03T07:22:17.332Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "version",
+        "value": "v6.2.2-dev.74",
+        "updatedAt": "2026-09-03T07:22:17.332Z"
+      },
+      "timestampUtcMs": "2026-09-03T07:22:17.332Z"
+    }
+  },
+  {
+    "index": 18,
+    "hash": "sOThlyCuXanv4nwl+1ijLDPt1Aw=",
+    "timestampUtcMs": "2026-09-03T07:22:17.332Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "filePath",
+        "value": "packages/reactor/docs/ARCHITECTURE.md",
+        "updatedAt": "2026-09-03T07:22:17.332Z"
+      },
+      "timestampUtcMs": "2026-09-03T07:22:17.332Z"
+    }
+  }
+]

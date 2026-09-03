@@ -1,0 +1,600 @@
+[
+  {
+    "index": 0,
+    "hash": "",
+    "timestampUtcMs": "2026-09-02T22:13:46.247Z",
+    "action": {
+      "type": "CREATE_DOCUMENT",
+      "input": {
+        "meta": {},
+        "name": "processor-host-module-shape",
+        "slug": "",
+        "model": "bai/knowledge-note",
+        "branch": "main",
+        "signing": {
+          "nonce": "",
+          "publicKey": {},
+          "signature": "2ddae2ce-5409-4173-b76b-54a55b475c07",
+          "documentType": "bai/knowledge-note",
+          "createdAtUtcIso": "2026-09-02T22:13:46.247Z"
+        },
+        "version": 0,
+        "documentId": "2ddae2ce-5409-4173-b76b-54a55b475c07",
+        "protocolVersions": {
+          "base-reducer": 2
+        }
+      },
+      "timestampUtcMs": "2026-09-02T22:13:46.247Z"
+    }
+  },
+  {
+    "index": 0,
+    "hash": "nhmqbWcs7WUBu5RbGpfvbismyHc=",
+    "timestampUtcMs": "2026-09-02T22:13:46.184Z",
+    "action": {
+      "type": "SET_TITLE",
+      "input": {
+        "title": "The processor host module is layered across three packages: IProcessorHostModuleBase in shared, client added by reactor, attachments added by reactor-browser and reactor-api",
+        "updatedAt": "2026-09-02T22:13:46.184Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:13:46.184Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "",
+    "timestampUtcMs": "2026-09-02T22:13:46.247Z",
+    "action": {
+      "type": "UPGRADE_DOCUMENT",
+      "input": {
+        "model": "bai/knowledge-note",
+        "toVersion": 1,
+        "documentId": "2ddae2ce-5409-4173-b76b-54a55b475c07",
+        "fromVersion": 0,
+        "initialState": {
+          "auth": {
+            "grants": [],
+            "version": 0
+          },
+          "local": {
+            "lastViewedAt": null,
+            "personalTags": []
+          },
+          "global": {
+            "links": [],
+            "model": null,
+            "scope": null,
+            "title": null,
+            "editor": null,
+            "inputs": [],
+            "models": [],
+            "status": "DRAFT",
+            "topics": [],
+            "content": null,
+            "context": null,
+            "modelId": null,
+            "modules": [],
+            "outputs": [],
+            "version": null,
+            "computes": null,
+            "filePath": null,
+            "noteType": null,
+            "severity": null,
+            "hooksUsed": [],
+            "rootCause": null,
+            "confidence": null,
+            "consumedBy": [],
+            "provenance": null,
+            "sourceType": null,
+            "targetType": null,
+            "cardinality": null,
+            "description": null,
+            "alternatives": [],
+            "consequences": [],
+            "errorMessage": null,
+            "relationType": null,
+            "correctPattern": null,
+            "decisionStatus": null,
+            "dispatchTargets": [],
+            "lifecycleEvents": []
+          },
+          "document": {
+            "hash": {
+              "encoding": "base64",
+              "algorithm": "sha1"
+            },
+            "version": 1
+          }
+        }
+      },
+      "timestampUtcMs": "2026-09-02T22:13:46.247Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "5yG8IiKTa1fh12bn4bKvLGJMqE0=",
+    "timestampUtcMs": "2026-09-02T22:13:46.184Z",
+    "action": {
+      "type": "SET_DESCRIPTION",
+      "input": {
+        "updatedAt": "2026-09-02T22:13:46.184Z",
+        "description": "Factory builders now receive the full IProcessorHostModule with client and attachments already on it, so the old cast is obsolete; that name survives as a deprecated alias. getReadModel is typed."
+      },
+      "timestampUtcMs": "2026-09-02T22:13:46.184Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "",
+    "timestampUtcMs": "2026-09-02T22:25:13.768Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "metadata": {
+          "reason": "Extracted from apps/academy/docs/academy/04-Reference/01-Reactor/05-Processors.md at v6.2.2-dev.74 \u2014 Host module section: IProcessorHostModuleBase in shared, reactor adds client + typed getReadModel, browser/api add attachments",
+          "confidence": "grounded"
+        },
+        "sourceId": "2ddae2ce-5409-4173-b76b-54a55b475c07",
+        "targetId": "c12de121-f575-4c71-95f7-bd298533dd51",
+        "relationshipType": "DERIVED_FROM"
+      },
+      "timestampUtcMs": "2026-09-02T22:25:13.768Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "sCza8tLpLi8zqda007ZNw9O04UE=",
+    "timestampUtcMs": "2026-09-02T22:13:46.184Z",
+    "action": {
+      "type": "SET_NOTE_TYPE",
+      "input": {
+        "noteType": "ARCHITECTURE",
+        "updatedAt": "2026-09-02T22:13:46.184Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:13:46.184Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "",
+    "timestampUtcMs": "2026-09-02T22:25:14.938Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "metadata": {
+          "reason": "Extracted from apps/academy/docs/academy/04-Reference/01-Reactor/01-WorkingWithTheReactor.md at v6.2.2-dev.74 \u2014 'In a generated processor (server-side)' \u2014 the cast removed from the scaffold",
+          "confidence": "grounded"
+        },
+        "sourceId": "2ddae2ce-5409-4173-b76b-54a55b475c07",
+        "targetId": "43f0b3b4-51f3-4d18-8c6c-b033d94e8bbc",
+        "relationshipType": "DERIVED_FROM"
+      },
+      "timestampUtcMs": "2026-09-02T22:25:14.938Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "/dE017rTBK4rCiyoB/6/Y32AP8I=",
+    "timestampUtcMs": "2026-09-02T22:13:46.184Z",
+    "action": {
+      "type": "SET_CONTENT",
+      "input": {
+        "content": "The host module a processor factory receives is now assembled in layers, and the type a builder gets is the **complete** one:\n\n- `@powerhousedao/shared` \u2014 `IProcessorHostModuleBase`: `analyticsStore`, `relationalDb`, `processorApp`, `dispatch`, `getReadModel<T>(name)`, optional `config`. Host-agnostic core.\n- `@powerhousedao/reactor` \u2014 `IReactorProcessorHostModuleBase`: adds `client: IReactorClient` and the **typed** `getReadModel` (`getReadModel(\"document-view\")` returns `IDocumentView`, `\"document-indexer\"` returns `IDocumentIndexer`; other names take an explicit type argument).\n- `@powerhousedao/reactor-browser` and `@powerhousedao/reactor-api` \u2014 `IProcessorHostModule`: adds `attachments: IAttachmentClient`, since neither shared nor reactor can depend on reactor-attachments.\n\nSo the generated scaffold no longer needs a cast. Where it used to read `const { client } = module as IReactorProcessorHostModule;`, it is now simply:\n\n```ts\nimport type { ProcessorFactoryBuilder } from \"@powerhousedao/reactor-browser\";\n\nexport const factoryBuilder: ProcessorFactoryBuilder = (module) => {\n  const { client } = module; // client: IReactorClient\n  return async () => [];\n};\n```\n\n`IReactorProcessorHostModule` still exists as a `@deprecated` alias of `IProcessorHostModule` in both packages, so old code compiles \u2014 but new code should not import it, and a cast is now a smell rather than a requirement. Connect still sets `processorApp: \"connect\"`, and Connect's implementation of `getReadModel` throws `Read model \"<name>\" not found` on a miss.\n\n_Source: apps/academy/docs/academy/04-Reference/01-Reactor/05-Processors.md (Powerhouse v6.2.2-dev.74)._\n_Source: apps/academy/docs/academy/04-Reference/01-Reactor/01-WorkingWithTheReactor.md (Powerhouse v6.2.2-dev.74)._\n\n## Provenance\n- `apps/academy/docs/academy/04-Reference/01-Reactor/05-Processors.md` \u2014 Host module section: IProcessorHostModuleBase in shared, reactor adds client + typed getReadModel, browser/api add attachments\n- `apps/academy/docs/academy/04-Reference/01-Reactor/01-WorkingWithTheReactor.md` \u2014 'In a generated processor (server-side)' \u2014 the cast removed from the scaffold\n\n_Recorded from the Powerhouse repository at **v6.2.2-dev.74** during the v6.2.2-dev.74 source sync._",
+        "updatedAt": "2026-09-02T22:13:46.184Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:13:46.184Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "",
+    "timestampUtcMs": "2026-09-02T22:25:16.023Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "metadata": {
+          "reason": "Renames and re-layers what that note describes: the six core fields are now IProcessorHostModuleBase in shared, client comes from reactor with a typed getReadModel, and attachments are added by the host packages",
+          "confidence": "grounded"
+        },
+        "sourceId": "2ddae2ce-5409-4173-b76b-54a55b475c07",
+        "targetId": "b69f8c2b-0f19-4373-8839-e10f697e9e26",
+        "relationshipType": "SUPERSEDES"
+      },
+      "timestampUtcMs": "2026-09-02T22:25:16.023Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "Bsq23CIp1Z2GREennoN7P/eyXcQ=",
+    "timestampUtcMs": "2026-09-02T22:13:46.184Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "05df83f6-b2e2-456b-bf99-30c7a073c264",
+        "name": "processors"
+      },
+      "timestampUtcMs": "2026-09-02T22:13:46.184Z"
+    }
+  },
+  {
+    "index": 5,
+    "hash": "",
+    "timestampUtcMs": "2026-09-02T22:25:16.492Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "metadata": {
+          "reason": "Its code sample casts module to IReactorProcessorHostModule to reach client; the factory builder now receives client directly and that name is a deprecated alias",
+          "confidence": "grounded"
+        },
+        "sourceId": "2ddae2ce-5409-4173-b76b-54a55b475c07",
+        "targetId": "4c7fdd1a-3c11-4b55-8a48-52554da800c1",
+        "relationshipType": "SUPERSEDES"
+      },
+      "timestampUtcMs": "2026-09-02T22:25:16.492Z"
+    }
+  },
+  {
+    "index": 5,
+    "hash": "taSRbNhDhJ7w0C7F3yRtsnoA+6Y=",
+    "timestampUtcMs": "2026-09-02T22:13:46.184Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "d6fe6477-9609-42fe-92f1-b130056852b0",
+        "name": "reactor"
+      },
+      "timestampUtcMs": "2026-09-02T22:13:46.184Z"
+    }
+  },
+  {
+    "index": 6,
+    "hash": "",
+    "timestampUtcMs": "2026-09-02T22:25:16.960Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "metadata": {
+          "reason": "client being on the module by default makes the 'do not call client.execute from inside a processor' warning easier to trip, so the injected dispatch remains the right tool",
+          "confidence": "grounded"
+        },
+        "sourceId": "2ddae2ce-5409-4173-b76b-54a55b475c07",
+        "targetId": "d0f0ef19-9525-45d1-9d48-ebc8f7922cfc",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-09-02T22:25:16.960Z"
+    }
+  },
+  {
+    "index": 6,
+    "hash": "u+ep19mteLgGFCW2anLJDtYgmMU=",
+    "timestampUtcMs": "2026-09-02T22:13:46.184Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "55e15f74-d224-47fe-9945-f1400b397852",
+        "name": "architecture"
+      },
+      "timestampUtcMs": "2026-09-02T22:13:46.184Z"
+    }
+  },
+  {
+    "index": 7,
+    "hash": "",
+    "timestampUtcMs": "2026-09-02T22:26:57.052Z",
+    "action": {
+      "type": "REMOVE_RELATIONSHIP",
+      "input": {
+        "sourceId": "2ddae2ce-5409-4173-b76b-54a55b475c07",
+        "targetId": "4c7fdd1a-3c11-4b55-8a48-52554da800c1",
+        "relationshipType": "SUPERSEDES"
+      },
+      "timestampUtcMs": "2026-09-02T22:26:57.052Z"
+    }
+  },
+  {
+    "index": 7,
+    "hash": "AG8OqN1tHhC/54DzPxmT6F/Lwyw=",
+    "timestampUtcMs": "2026-09-02T22:13:46.184Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "8e37973b-69f4-4d38-ae00-6b141f838b69",
+        "name": "api"
+      },
+      "timestampUtcMs": "2026-09-02T22:13:46.184Z"
+    }
+  },
+  {
+    "index": 8,
+    "hash": "",
+    "timestampUtcMs": "2026-09-02T22:26:57.540Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "metadata": {
+          "reason": "That note's factory-builder sample carried the cast this layering removes; its subject (the browser entry-point hooks) stands, so it was corrected rather than replaced",
+          "confidence": "grounded"
+        },
+        "sourceId": "2ddae2ce-5409-4173-b76b-54a55b475c07",
+        "targetId": "4c7fdd1a-3c11-4b55-8a48-52554da800c1",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-09-02T22:26:57.540Z"
+    }
+  },
+  {
+    "index": 8,
+    "hash": "9EDFjOTyogBVMLLMFpVkIogyk98=",
+    "timestampUtcMs": "2026-09-02T22:13:46.184Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "version",
+        "value": "v6.2.2-dev.74",
+        "updatedAt": "2026-09-02T22:13:46.184Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:13:46.184Z"
+    }
+  },
+  {
+    "index": 9,
+    "hash": "FbGY5yF4XtIoObHq6eIOHYDR80k=",
+    "timestampUtcMs": "2026-09-02T22:13:46.184Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "filePath",
+        "value": "apps/academy/docs/academy/04-Reference/01-Reactor/05-Processors.md",
+        "updatedAt": "2026-09-02T22:13:46.184Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:13:46.184Z"
+    }
+  },
+  {
+    "index": 10,
+    "hash": "aIgjksbcubPQWSoE9yuD5TU0ly4=",
+    "timestampUtcMs": "2026-09-02T22:13:46.184Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "confidence",
+        "value": "grounded",
+        "updatedAt": "2026-09-02T22:13:46.184Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:13:46.184Z"
+    }
+  },
+  {
+    "index": 11,
+    "hash": "3sMqd9knO4zLah2Pktp5QnIdOOk=",
+    "timestampUtcMs": "2026-09-02T22:13:49.071Z",
+    "action": {
+      "type": "SET_PROVENANCE",
+      "input": {
+        "author": "knowledge-agent",
+        "createdAt": "2026-09-02T22:13:49.071Z",
+        "sourceOrigin": "DERIVED"
+      },
+      "timestampUtcMs": "2026-09-02T22:13:49.071Z"
+    }
+  },
+  {
+    "index": 12,
+    "hash": "2cLT/0w9pEhou5Vuwpg3mrJ7Lqc=",
+    "timestampUtcMs": "2026-09-02T22:13:49.543Z",
+    "action": {
+      "type": "SUBMIT_FOR_REVIEW",
+      "input": {
+        "id": "aba66cc0-0464-4f34-8643-4d53581c3be9",
+        "actor": "knowledge-agent",
+        "comment": "extracted from the Powerhouse repository at v6.2.2-dev.74",
+        "timestamp": "2026-09-02T22:13:49.543Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:13:49.543Z"
+    }
+  },
+  {
+    "index": 13,
+    "hash": "AA0PSC6fF4D6GQKYWLCV2vuifxk=",
+    "timestampUtcMs": "2026-09-02T22:13:50.041Z",
+    "action": {
+      "type": "APPROVE_NOTE",
+      "input": {
+        "id": "f6a96884-851c-4daf-8dc9-cd543ff36a79",
+        "actor": "liberuum",
+        "comment": "claim checked against the cited repository file at the pinned tag",
+        "timestamp": "2026-09-02T22:13:50.041Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:13:50.041Z"
+    }
+  },
+  {
+    "index": 14,
+    "hash": "cF9Wud3fUTfgiY4NJQDRW2IvqaE=",
+    "timestampUtcMs": "2026-09-02T22:16:40.238Z",
+    "action": {
+      "type": "SET_TITLE",
+      "input": {
+        "title": "The processor host module is layered across three packages: IProcessorHostModuleBase in shared, client added by reactor, attachments added by reactor-browser and reactor-api",
+        "updatedAt": "2026-09-02T22:16:40.238Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:16:40.238Z"
+    }
+  },
+  {
+    "index": 15,
+    "hash": "cF9Wud3fUTfgiY4NJQDRW2IvqaE=",
+    "timestampUtcMs": "2026-09-02T22:16:40.238Z",
+    "action": {
+      "type": "SET_DESCRIPTION",
+      "input": {
+        "updatedAt": "2026-09-02T22:16:40.238Z",
+        "description": "Factory builders now receive the full IProcessorHostModule with client and attachments already on it, so the old cast is obsolete; that name survives as a deprecated alias. getReadModel is typed."
+      },
+      "timestampUtcMs": "2026-09-02T22:16:40.238Z"
+    }
+  },
+  {
+    "index": 16,
+    "hash": "cF9Wud3fUTfgiY4NJQDRW2IvqaE=",
+    "timestampUtcMs": "2026-09-02T22:16:40.238Z",
+    "action": {
+      "type": "SET_NOTE_TYPE",
+      "input": {
+        "noteType": "ARCHITECTURE",
+        "updatedAt": "2026-09-02T22:16:40.238Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:16:40.238Z"
+    }
+  },
+  {
+    "index": 17,
+    "hash": "cF9Wud3fUTfgiY4NJQDRW2IvqaE=",
+    "timestampUtcMs": "2026-09-02T22:16:40.238Z",
+    "action": {
+      "type": "SET_CONTENT",
+      "input": {
+        "content": "The host module a processor factory receives is now assembled in layers, and the type a builder gets is the **complete** one:\n\n- `@powerhousedao/shared` \u2014 `IProcessorHostModuleBase`: `analyticsStore`, `relationalDb`, `processorApp`, `dispatch`, `getReadModel<T>(name)`, optional `config`. Host-agnostic core.\n- `@powerhousedao/reactor` \u2014 `IReactorProcessorHostModuleBase`: adds `client: IReactorClient` and the **typed** `getReadModel` (`getReadModel(\"document-view\")` returns `IDocumentView`, `\"document-indexer\"` returns `IDocumentIndexer`; other names take an explicit type argument).\n- `@powerhousedao/reactor-browser` and `@powerhousedao/reactor-api` \u2014 `IProcessorHostModule`: adds `attachments: IAttachmentClient`, since neither shared nor reactor can depend on reactor-attachments.\n\nSo the generated scaffold no longer needs a cast. Where it used to read `const { client } = module as IReactorProcessorHostModule;`, it is now simply:\n\n```ts\nimport type { ProcessorFactoryBuilder } from \"@powerhousedao/reactor-browser\";\n\nexport const factoryBuilder: ProcessorFactoryBuilder = (module) => {\n  const { client } = module; // client: IReactorClient\n  return async () => [];\n};\n```\n\n`IReactorProcessorHostModule` still exists as a `@deprecated` alias of `IProcessorHostModule` in both packages, so old code compiles \u2014 but new code should not import it, and a cast is now a smell rather than a requirement. Connect still sets `processorApp: \"connect\"`, and Connect's implementation of `getReadModel` throws `Read model \"<name>\" not found` on a miss.\n\n_Source: apps/academy/docs/academy/04-Reference/01-Reactor/05-Processors.md (Powerhouse v6.2.2-dev.74)._\n_Source: apps/academy/docs/academy/04-Reference/01-Reactor/01-WorkingWithTheReactor.md (Powerhouse v6.2.2-dev.74)._\n\n## Provenance\n- `apps/academy/docs/academy/04-Reference/01-Reactor/05-Processors.md` \u2014 Host module section: IProcessorHostModuleBase in shared, reactor adds client + typed getReadModel, browser/api add attachments\n- `apps/academy/docs/academy/04-Reference/01-Reactor/01-WorkingWithTheReactor.md` \u2014 'In a generated processor (server-side)' \u2014 the cast removed from the scaffold\n\n_Recorded from the Powerhouse repository at **v6.2.2-dev.74** during the v6.2.2-dev.74 source sync._",
+        "updatedAt": "2026-09-02T22:16:40.238Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:16:40.238Z"
+    }
+  },
+  {
+    "index": 18,
+    "hash": "cF9Wud3fUTfgiY4NJQDRW2IvqaE=",
+    "timestampUtcMs": "2026-09-02T22:16:40.238Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "version",
+        "value": "v6.2.2-dev.74",
+        "updatedAt": "2026-09-02T22:16:40.238Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:16:40.238Z"
+    }
+  },
+  {
+    "index": 19,
+    "hash": "cF9Wud3fUTfgiY4NJQDRW2IvqaE=",
+    "timestampUtcMs": "2026-09-02T22:16:40.238Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "filePath",
+        "value": "apps/academy/docs/academy/04-Reference/01-Reactor/05-Processors.md",
+        "updatedAt": "2026-09-02T22:16:40.238Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:16:40.238Z"
+    }
+  },
+  {
+    "index": 20,
+    "hash": "cF9Wud3fUTfgiY4NJQDRW2IvqaE=",
+    "timestampUtcMs": "2026-09-02T22:16:40.238Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "confidence",
+        "value": "grounded",
+        "updatedAt": "2026-09-02T22:16:40.238Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:16:40.238Z"
+    }
+  },
+  {
+    "index": 21,
+    "hash": "EJFKEL1rTVWx/LotMWp6tKZJlOc=",
+    "timestampUtcMs": "2026-09-02T22:21:17.897Z",
+    "action": {
+      "type": "SET_TITLE",
+      "input": {
+        "title": "The processor host module is layered across three packages: IProcessorHostModuleBase in shared, client added by reactor, attachments added by reactor-browser and reactor-api",
+        "updatedAt": "2026-09-02T22:21:17.897Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:21:17.897Z"
+    }
+  },
+  {
+    "index": 22,
+    "hash": "EJFKEL1rTVWx/LotMWp6tKZJlOc=",
+    "timestampUtcMs": "2026-09-02T22:21:17.897Z",
+    "action": {
+      "type": "SET_DESCRIPTION",
+      "input": {
+        "updatedAt": "2026-09-02T22:21:17.897Z",
+        "description": "Factory builders now receive the full IProcessorHostModule with client and attachments already on it, so the old cast is obsolete; that name survives as a deprecated alias. getReadModel is typed."
+      },
+      "timestampUtcMs": "2026-09-02T22:21:17.897Z"
+    }
+  },
+  {
+    "index": 23,
+    "hash": "EJFKEL1rTVWx/LotMWp6tKZJlOc=",
+    "timestampUtcMs": "2026-09-02T22:21:17.897Z",
+    "action": {
+      "type": "SET_NOTE_TYPE",
+      "input": {
+        "noteType": "ARCHITECTURE",
+        "updatedAt": "2026-09-02T22:21:17.897Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:21:17.897Z"
+    }
+  },
+  {
+    "index": 24,
+    "hash": "EJFKEL1rTVWx/LotMWp6tKZJlOc=",
+    "timestampUtcMs": "2026-09-02T22:21:17.897Z",
+    "action": {
+      "type": "SET_CONTENT",
+      "input": {
+        "content": "The host module a processor factory receives is now assembled in layers, and the type a builder gets is the **complete** one:\n\n- `@powerhousedao/shared` \u2014 `IProcessorHostModuleBase`: `analyticsStore`, `relationalDb`, `processorApp`, `dispatch`, `getReadModel<T>(name)`, optional `config`. Host-agnostic core.\n- `@powerhousedao/reactor` \u2014 `IReactorProcessorHostModuleBase`: adds `client: IReactorClient` and the **typed** `getReadModel` (`getReadModel(\"document-view\")` returns `IDocumentView`, `\"document-indexer\"` returns `IDocumentIndexer`; other names take an explicit type argument).\n- `@powerhousedao/reactor-browser` and `@powerhousedao/reactor-api` \u2014 `IProcessorHostModule`: adds `attachments: IAttachmentClient`, since neither shared nor reactor can depend on reactor-attachments.\n\nSo the generated scaffold no longer needs a cast. Where it used to read `const { client } = module as IReactorProcessorHostModule;`, it is now simply:\n\n```ts\nimport type { ProcessorFactoryBuilder } from \"@powerhousedao/reactor-browser\";\n\nexport const factoryBuilder: ProcessorFactoryBuilder = (module) => {\n  const { client } = module; // client: IReactorClient\n  return async () => [];\n};\n```\n\n`IReactorProcessorHostModule` still exists as a `@deprecated` alias of `IProcessorHostModule` in both packages, so old code compiles \u2014 but new code should not import it, and a cast is now a smell rather than a requirement. Connect still sets `processorApp: \"connect\"`, and Connect's implementation of `getReadModel` throws `Read model \"<name>\" not found` on a miss.\n\n_Source: apps/academy/docs/academy/04-Reference/01-Reactor/05-Processors.md (Powerhouse v6.2.2-dev.74)._\n_Source: apps/academy/docs/academy/04-Reference/01-Reactor/01-WorkingWithTheReactor.md (Powerhouse v6.2.2-dev.74)._\n\n## Provenance\n- `apps/academy/docs/academy/04-Reference/01-Reactor/05-Processors.md` \u2014 Host module section: IProcessorHostModuleBase in shared, reactor adds client + typed getReadModel, browser/api add attachments\n- `apps/academy/docs/academy/04-Reference/01-Reactor/01-WorkingWithTheReactor.md` \u2014 'In a generated processor (server-side)' \u2014 the cast removed from the scaffold\n\n_Recorded from the Powerhouse repository at **v6.2.2-dev.74** during the v6.2.2-dev.74 source sync._",
+        "updatedAt": "2026-09-02T22:21:17.897Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:21:17.897Z"
+    }
+  },
+  {
+    "index": 25,
+    "hash": "EJFKEL1rTVWx/LotMWp6tKZJlOc=",
+    "timestampUtcMs": "2026-09-02T22:21:17.897Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "version",
+        "value": "v6.2.2-dev.74",
+        "updatedAt": "2026-09-02T22:21:17.897Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:21:17.897Z"
+    }
+  },
+  {
+    "index": 26,
+    "hash": "EJFKEL1rTVWx/LotMWp6tKZJlOc=",
+    "timestampUtcMs": "2026-09-02T22:21:17.897Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "filePath",
+        "value": "apps/academy/docs/academy/04-Reference/01-Reactor/05-Processors.md",
+        "updatedAt": "2026-09-02T22:21:17.897Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:21:17.897Z"
+    }
+  },
+  {
+    "index": 27,
+    "hash": "EJFKEL1rTVWx/LotMWp6tKZJlOc=",
+    "timestampUtcMs": "2026-09-02T22:21:17.897Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "confidence",
+        "value": "grounded",
+        "updatedAt": "2026-09-02T22:21:17.897Z"
+      },
+      "timestampUtcMs": "2026-09-02T22:21:17.897Z"
+    }
+  }
+]

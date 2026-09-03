@@ -1,0 +1,117 @@
+[
+  {
+    "index": 0,
+    "hash": "",
+    "timestampUtcMs": "2026-09-02T21:32:54.181Z",
+    "action": {
+      "type": "CREATE_DOCUMENT",
+      "input": {
+        "meta": {},
+        "name": "Academy \u203a Build \u203a ManualTodoTutorial \u203a Implement the document model reducers",
+        "slug": "",
+        "model": "bai/source",
+        "branch": "main",
+        "signing": {
+          "nonce": "",
+          "publicKey": {},
+          "signature": "1658c791-35a9-4475-a2fb-a2df26c1288e",
+          "documentType": "bai/source",
+          "createdAtUtcIso": "2026-09-02T21:32:54.181Z"
+        },
+        "version": 0,
+        "documentId": "1658c791-35a9-4475-a2fb-a2df26c1288e",
+        "protocolVersions": {
+          "base-reducer": 2
+        }
+      },
+      "timestampUtcMs": "2026-09-02T21:32:54.181Z"
+    }
+  },
+  {
+    "index": 0,
+    "hash": "Ls6t6i+1iRv1MreEGyLYSfXoiUk=",
+    "timestampUtcMs": "2026-09-02T21:32:54.320Z",
+    "action": {
+      "type": "INGEST_SOURCE",
+      "input": {
+        "url": "https://github.com/powerhouse-inc/powerhouse/blob/v6.2.2-dev.74/apps/academy/docs/academy/03-Build/01-ManualTodoTutorial/03-ImplementOperationReducers.md",
+        "tool": "sync-repo-docs",
+        "title": "Academy \u203a Build \u203a ManualTodoTutorial \u203a Implement the document model reducers",
+        "author": "Powerhouse Inc.",
+        "method": "sha256:a929e3b3ae315b6d8ca005a218237c8cdd3ce2a335224deec97854daa40a8748 git:v6.2.2-dev.74",
+        "content": "# Implement the document model reducers\n\n:::tip[Tutorial Repository]\n\ud83d\udce6 **Reference Code**: [step-3-implement-reducer-operation-handlers](https://github.com/powerhouse-inc/todo-tutorial/tree/step-3-implement-reducer-operation-handlers)\n\nThis step focuses on implementing the reducer logic for add, update, and delete operations.\n:::\n\n<details>\n<summary>\ud83d\udcd6 How to use this tutorial</summary>\n\n### Compare your reducer implementation\n\nAfter implementing your reducers:\n\n```bash\n# Compare your reducers with the reference\ngit diff tutorial/step-3-implement-reducer-operation-handlers -- document-models/todo-list/src/reducers/\n\n# View the reference reducer implementation\ngit show tutorial/step-3-implement-reducer-operation-handlers:document-models/todo-list/src/reducers/todos.ts\n```\n\n### Visual comparison with GitHub Desktop\n\nAfter committing your work, compare visually:\n\n1. **Branch** menu \u2192 **\"Compare to Branch...\"**\n2. Select `tutorial/step-3-implement-reducer-operation-handlers`\n3. Review differences in the visual interface\n\n### If you get stuck\n\nView or reset to a specific step:\n\n```bash\n# View the reducer code\ngit show tutorial/step-3-implement-reducer-operation-handlers:document-models/todo-list/src/reducers/todos.ts\n\n# Reset to this step (WARNING: loses your changes)\ngit reset --hard tutorial/step-3-implement-reducer-operation-handlers\n```\n\n</details>\n\nNow implement the operation reducers for the **todo-list** document model. In the previous step, Vetra imported the document specification and scaffolded the code and directory through live code generation.\n\n:::info\n\nReducers are a core concept in Powerhouse document models. They implement the state transition logic for each operation defined in your schema.\n\n**Connection to schema definition language (SDL)**: The reducers directly implement the operations you defined in your SDL. Remember how we defined `AddTodoItemInput`, `UpdateTodoItemInput`, and `DeleteTodoItemInput` in our schema?  \nThe reducers provide the actual implementation of what happens when those operations are performed.\n:::\n\n## Explore the generated reducer file\n\nNavigate to `/document-models/todo-list/src/reducers/todos.ts` and open it. You should see scaffolding code that needs to be filled for the three operations you specified:\n\n```typescript\nimport type { TodoListTodosOperations } from \"todo-tutorial/document-models/todo-list\";\n\nexport const todoListTodosOperations: TodoListTodosOperations = {\n  addTodoItemOperation(state, action) {\n    // TODO: Implement \"addTodoItemOperation\" reducer\n    throw new Error('Reducer \"addTodoItemOperation\" not yet implemented');\n  },\n  updateTodoItemOperation(state, action) {\n    // TODO: Implement \"updateTodoItemOperation\" reducer\n    throw new Error('Reducer \"updateTodoItemOperation\" not yet implemented');\n  },\n  deleteTodoItemOperation(state, action) {\n    // TODO: Implement \"deleteTodoItemOperation\" reducer\n    throw new Error('Reducer \"deleteTodoItemOperation\" not yet implemented');\n  },\n};\n```\n\n## Implement the operation reducers\n\nLet's implement each reducer one by one.\n\n### Step 1: Add the import\n\nFirst, add the `generateId` import at the top of the file:\n\n```typescript\n// added-line\nimport { generateId } from \"document-model/core\";\nimport type { TodoListTodosOperations } from \"todo-tutorial/document-models/todo-list\";\n```\n\n### Step 2: Implement addTodoItemOperation\n\nReplace the boilerplate `addTodoItemOperation` with the actual implementation:\n\n```typescript\nexport const todoListTodosOperations: TodoListTodosOperations = {\n  // removed-start\n  addTodoItemOperation(state, action) {\n    // TODO: Implement \"addTodoItemOperation\" reducer\n    throw new Error('Reducer \"addTodoItemOperation\" not yet implemented');\n  },\n  // removed-end\n  // added-start\n  addTodoItemOperation(state, action) {\n    const id = generateId();\n    state.items.push({ ...action.input, id, checked: false });\n  },\n  // added-end\n  updateTodoItemOperation(state, action) {\n    // ...\n  },\n  deleteTodoItemOperation(state, action) {\n    // ...\n  },\n};\n```\n\n**What's happening here:**\n\n- We generate a unique ID using `generateId()` from `document-model/core`\n- We push a new item to the `items` array with the input text, new ID, and `checked: false`\n- Under the hood, Powerhouse uses Immer.js, so this \"mutation\" is actually immutable\n\n### Step 3: Implement updateTodoItemOperation\n\nReplace the boilerplate `updateTodoItemOperation`:\n\n```typescript\n  // removed-start\n  updateTodoItemOperation(state, action) {\n    // TODO: Implement \"updateTodoItemOperation\" reducer\n    throw new Error('Reducer \"updateTodoItemOperation\" not yet implemented');\n  },\n  // removed-end\n  // added-start\n  updateTodoItemOperation(state, action) {\n    const item = state.items.find((item) => item.id === action.input.id);\n    if (!item) return;\n    item.text = action.input.text ?? item.text;\n    item.checked = action.input.checked ?? item.checked;\n  },\n  // added-end\n```\n\n**What's happening here:**\n\n- We find the item by its ID\n- We return early if the item is not found\n- We use nullish coalescing (`??`) to only update fields that are provided\n\n### Step 4: Implement deleteTodoItemOperation\n\nReplace the boilerplate `deleteTodoItemOperation`:\n\n```typescript\n  // removed-start\n  deleteTodoItemOperation(state, action) {\n    // TODO: Implement \"deleteTodoItemOperation\" reducer\n    throw new Error('Reducer \"deleteTodoItemOperation\" not yet implemented');\n  },\n  // removed-end\n  // added-start\n  deleteTodoItemOperation(state, action) {\n    state.items = state.items.filter((item) => item.id !== action.input.id);\n  },\n  // added-end\n```\n\n**What's happening here:**\n\n- We filter out the item with the matching ID\n- This creates a new array without the deleted item\n\n## Complete reducer file\n\nHere's the complete implementation:\n\n<details>\n<summary>Complete todos.ts</summary>\n\n```typescript\nimport { generateId } from \"document-model/core\";\nimport type { TodoListTodosOperations } from \"todo-tutorial/document-models/todo-list\";\n\nexport const todoListTodosOperations: TodoListTodosOperations = {\n  addTodoItemOperation(state, action) {\n    const id = generateId();\n    state.items.push({ ...action.input, id, checked: false });\n  },\n\n  updateTodoItemOperation(state, action) {\n    const item = state.items.find((item) => item.id === action.input.id);\n    if (!item) return;\n    item.text = action.input.text ?? item.text;\n    item.checked = action.input.checked ?? item.checked;\n  },\n\n  deleteTodoItemOperation(state, action) {\n    state.items = state.items.filter((item) => item.id !== action.input.id);\n  },\n};\n```\n\n</details>\n\n:::tip[Check your work]\n\nTo make sure everything works as expected:\n\n```bash\n# Check types compile correctly\npnpm tsc\n\n# Check linting passes\npnpm lint\n\n# Compare with reference implementation\ngit diff tutorial/step-3-implement-reducer-operation-handlers -- document-models/todo-list/src/reducers/\n```\n\n:::\n\n## Up next: Writing tests\n\nIn the next chapter, you'll write tests to verify your reducer implementations work correctly.\n",
+        "createdAt": "2026-09-02T21:32:54.320Z",
+        "createdBy": "repo-docs-sync",
+        "sourceType": "DOCUMENTATION",
+        "description": "Powerhouse v6.2.2-dev.74 (unchanged since v6.2.2-dev.47) \u2014 This step focuses on implementing the reducer logic for add, update, and delete operations. :::",
+        "publishedAt": "2026-06-24T00:07:15.000Z"
+      },
+      "timestampUtcMs": "2026-09-02T21:32:54.320Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "",
+    "timestampUtcMs": "2026-09-02T21:32:54.181Z",
+    "action": {
+      "type": "UPGRADE_DOCUMENT",
+      "input": {
+        "model": "bai/source",
+        "toVersion": 1,
+        "documentId": "1658c791-35a9-4475-a2fb-a2df26c1288e",
+        "fromVersion": 0,
+        "initialState": {
+          "auth": {
+            "grants": [],
+            "version": 0
+          },
+          "local": {},
+          "global": {
+            "title": null,
+            "status": "INBOX",
+            "content": null,
+            "createdAt": null,
+            "createdBy": null,
+            "provenance": null,
+            "sourceType": null,
+            "description": null,
+            "extractedClaims": [],
+            "extractionStats": null
+          },
+          "document": {
+            "hash": {
+              "encoding": "base64",
+              "algorithm": "sha1"
+            },
+            "version": 1
+          }
+        }
+      },
+      "timestampUtcMs": "2026-09-02T21:32:54.181Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "jowa/x2HlaCIYKzN6eJ1dTnBshk=",
+    "timestampUtcMs": "2026-09-02T21:32:58.617Z",
+    "action": {
+      "type": "ADD_EXTRACTED_CLAIM",
+      "input": {
+        "claimRef": "b1f51c77-ea9a-41a7-bef1-f1bca83ebd1e"
+      },
+      "timestampUtcMs": "2026-09-02T21:32:58.617Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "Y/oO0e/9C6+iJINWCeBCS0JEGFI=",
+    "timestampUtcMs": "2026-09-02T21:33:18.083Z",
+    "action": {
+      "type": "SET_SOURCE_STATUS",
+      "input": {
+        "status": "EXTRACTED"
+      },
+      "timestampUtcMs": "2026-09-02T21:33:18.083Z"
+    }
+  }
+]

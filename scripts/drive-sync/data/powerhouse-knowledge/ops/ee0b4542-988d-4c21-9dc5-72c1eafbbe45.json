@@ -1,0 +1,276 @@
+[
+  {
+    "index": 0,
+    "hash": "",
+    "timestampUtcMs": "2026-08-16T20:32:30.950Z",
+    "action": {
+      "type": "CREATE_DOCUMENT",
+      "input": {
+        "meta": {},
+        "name": "skills-provenance-blind",
+        "slug": "",
+        "model": "bai/knowledge-note",
+        "branch": "main",
+        "signing": {
+          "nonce": "",
+          "publicKey": {},
+          "signature": "ee0b4542-988d-4c21-9dc5-72c1eafbbe45",
+          "documentType": "bai/knowledge-note",
+          "createdAtUtcIso": "2026-08-16T20:32:30.950Z"
+        },
+        "version": 0,
+        "documentId": "ee0b4542-988d-4c21-9dc5-72c1eafbbe45",
+        "protocolVersions": {
+          "base-reducer": 2
+        }
+      },
+      "timestampUtcMs": "2026-08-16T20:32:30.950Z"
+    }
+  },
+  {
+    "index": 0,
+    "hash": "ds1DhGSudbqqDQ63zNiixoMzZZs=",
+    "timestampUtcMs": "2026-08-16T20:32:31.340Z",
+    "action": {
+      "type": "SET_TITLE",
+      "input": {
+        "title": "Agent systems are provenance-blind when skills are treated as tool calls",
+        "updatedAt": "2026-08-16T20:32:31.340Z"
+      },
+      "timestampUtcMs": "2026-08-16T20:32:31.340Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "",
+    "timestampUtcMs": "2026-08-16T20:32:30.950Z",
+    "action": {
+      "type": "UPGRADE_DOCUMENT",
+      "input": {
+        "model": "bai/knowledge-note",
+        "toVersion": 1,
+        "documentId": "ee0b4542-988d-4c21-9dc5-72c1eafbbe45",
+        "fromVersion": 0,
+        "initialState": {
+          "auth": {
+            "grants": [],
+            "version": 0
+          },
+          "local": {
+            "lastViewedAt": null,
+            "personalTags": []
+          },
+          "global": {
+            "links": [],
+            "model": null,
+            "scope": null,
+            "title": null,
+            "editor": null,
+            "inputs": [],
+            "models": [],
+            "status": "DRAFT",
+            "topics": [],
+            "content": null,
+            "context": null,
+            "modelId": null,
+            "modules": [],
+            "outputs": [],
+            "version": null,
+            "computes": null,
+            "filePath": null,
+            "noteType": null,
+            "severity": null,
+            "hooksUsed": [],
+            "rootCause": null,
+            "confidence": null,
+            "consumedBy": [],
+            "provenance": null,
+            "sourceType": null,
+            "targetType": null,
+            "cardinality": null,
+            "description": null,
+            "alternatives": [],
+            "consequences": [],
+            "errorMessage": null,
+            "relationType": null,
+            "correctPattern": null,
+            "decisionStatus": null,
+            "dispatchTargets": [],
+            "lifecycleEvents": []
+          },
+          "document": {
+            "hash": {
+              "encoding": "base64",
+              "algorithm": "sha1"
+            },
+            "version": 1
+          }
+        }
+      },
+      "timestampUtcMs": "2026-08-16T20:32:30.950Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "DrWaAwxwiQkGT/yPC74Ed5DXXas=",
+    "timestampUtcMs": "2026-08-16T20:32:31.340Z",
+    "action": {
+      "type": "SET_DESCRIPTION",
+      "input": {
+        "updatedAt": "2026-08-16T20:32:31.340Z",
+        "description": "Tool-call logs record arguments and returns but not which skill wrote which artifact fragment, so evaluation and audit collapse."
+      },
+      "timestampUtcMs": "2026-08-16T20:32:31.340Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "",
+    "timestampUtcMs": "2026-08-16T20:32:48.862Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "ee0b4542-988d-4c21-9dc5-72c1eafbbe45",
+        "targetId": "2b423487-123f-414c-bd20-edce7de891f4",
+        "relationshipType": "DERIVED_FROM"
+      },
+      "timestampUtcMs": "2026-08-16T20:32:48.862Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "QsCpL+9hn0k/N49dOevFZOTagwo=",
+    "timestampUtcMs": "2026-08-16T20:32:31.340Z",
+    "action": {
+      "type": "SET_NOTE_TYPE",
+      "input": {
+        "noteType": "CONCEPT",
+        "updatedAt": "2026-08-16T20:32:31.340Z"
+      },
+      "timestampUtcMs": "2026-08-16T20:32:31.340Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "",
+    "timestampUtcMs": "2026-08-16T20:32:55.033Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "ee0b4542-988d-4c21-9dc5-72c1eafbbe45",
+        "targetId": "e2186433-6a5b-4e9a-90e8-37c698b35e89",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-08-16T20:32:55.033Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "7QmQr5Fqj057uBgvtT9iqKg0SnM=",
+    "timestampUtcMs": "2026-08-16T20:32:31.340Z",
+    "action": {
+      "type": "SET_CONTENT",
+      "input": {
+        "content": "## Claim\n\nWhen skill invocations are recorded only as tool calls and log lines, the downstream artifact carries no structured trace of which skill produced which fragment under whose authority.\n\n## Why it matters\n\nWithout that trace, evaluation collapses to output scoring, safety auditing has only the prompt and final string to inspect, and knowledge claims become unfalsifiable\u2014even a true answer cannot be shown to come from a reliable process.\n\n## Evidence from source\n\nThe paper frames this as the missing fourth question in the Agent Skills literature: not only how to design, evaluate, and secure skills, but how to *record what a skill did*.",
+        "updatedAt": "2026-08-16T20:32:31.340Z"
+      },
+      "timestampUtcMs": "2026-08-16T20:32:31.340Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "BMDAWlk5qptQ7YdUdviWCqNyzh4=",
+    "timestampUtcMs": "2026-08-16T20:32:31.340Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "8b85d7d8-8934-4d32-8cc4-6ddb13aa991f",
+        "name": "provenance"
+      },
+      "timestampUtcMs": "2026-08-16T20:32:31.340Z"
+    }
+  },
+  {
+    "index": 5,
+    "hash": "62KTYRso8IcHBvqNtqwekdBU5q0=",
+    "timestampUtcMs": "2026-08-16T20:32:31.340Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "8224bd45-6d45-4c4d-bb28-1f9ce4587c53",
+        "name": "agent-skills"
+      },
+      "timestampUtcMs": "2026-08-16T20:32:31.340Z"
+    }
+  },
+  {
+    "index": 6,
+    "hash": "16u0IGX+5xZZfLy0ZWUpqu+fcbo=",
+    "timestampUtcMs": "2026-08-16T20:32:31.340Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "64cf3bff-05c5-4fa0-93f5-03b5d7a48b8b",
+        "name": "attribution"
+      },
+      "timestampUtcMs": "2026-08-16T20:32:31.340Z"
+    }
+  },
+  {
+    "index": 7,
+    "hash": "kQ3IzqLzMhpHkcdA91SjIxqJ14g=",
+    "timestampUtcMs": "2026-08-16T20:32:31.712Z",
+    "action": {
+      "type": "SET_PROVENANCE",
+      "input": {
+        "author": "knowledge-agent",
+        "createdAt": "2026-08-16T20:32:31.340Z",
+        "sourceOrigin": "DERIVED"
+      },
+      "timestampUtcMs": "2026-08-16T20:32:31.712Z"
+    }
+  },
+  {
+    "index": 8,
+    "hash": "1PkKRGpAaRAFyUoIAbPem9uUWf8=",
+    "timestampUtcMs": "2026-08-16T20:32:32.202Z",
+    "action": {
+      "type": "SUBMIT_FOR_REVIEW",
+      "input": {
+        "id": "c8618f15-6053-40b2-b7bc-27e35839b326",
+        "actor": "knowledge-agent",
+        "comment": "pipeline extract",
+        "timestamp": "2026-08-16T20:32:32.202Z"
+      },
+      "timestampUtcMs": "2026-08-16T20:32:32.202Z"
+    }
+  },
+  {
+    "index": 9,
+    "hash": "BdFE9SDoUUypgV3/mBSkj9lcbQM=",
+    "timestampUtcMs": "2026-08-16T20:32:32.344Z",
+    "action": {
+      "type": "APPROVE_NOTE",
+      "input": {
+        "id": "862f12f4-8ee3-4377-b787-07cb9305b9d8",
+        "actor": "pipeline-reviewer",
+        "comment": "pipeline verify",
+        "timestamp": "2026-08-16T20:32:32.344Z"
+      },
+      "timestampUtcMs": "2026-08-16T20:32:32.344Z"
+    }
+  },
+  {
+    "index": 10,
+    "hash": "y4PWRIq9YONrniZHUIoZsRkqoH8=",
+    "timestampUtcMs": "2026-09-03T10:03:30.116Z",
+    "action": {
+      "type": "SET_CONTENT",
+      "input": {
+        "content": "## Claim\n\nWhen skill invocations are recorded only as tool calls and log lines, the downstream artifact carries no structured trace of which skill produced which fragment under whose authority.\n\n## Why it matters\n\nWithout that trace, evaluation collapses to output scoring, safety auditing has only the prompt and final string to inspect, and knowledge claims become unfalsifiable\u2014even a true answer cannot be shown to come from a reliable process.\n\n## Evidence from source\n\nThe paper frames this as the missing fourth question in the Agent Skills literature: not only how to design, evaluate, and secure skills, but how to *record what a skill did*.\n\n## Methodology grounding\nThe claims below live in the plugin's `data/methodology/` corpus; the relationship is stated per claim.\n\n- **[[agents are simultaneously methodology executors and subjects creating a unique trust asymmetry]]** \u2014 BUILDS_ON. Provenance blindness is obliviousness seen from the outside: the methodology claim borrows Kiczales' term for base code that cannot observe the aspects modifying it, and a tool call is exactly a transformation whose provenance the calling agent cannot see.\n- **[[prospective memory requires externalization]]** \u2014 RELATES_TO. A tool call leaves nothing for a later session to read, so any obligation it created is lost at the session boundary \u2014 the failure mode that claim generalises.\n",
+        "updatedAt": "2026-09-03T10:03:30.116Z"
+      },
+      "timestampUtcMs": "2026-09-03T10:03:30.116Z"
+    }
+  }
+]

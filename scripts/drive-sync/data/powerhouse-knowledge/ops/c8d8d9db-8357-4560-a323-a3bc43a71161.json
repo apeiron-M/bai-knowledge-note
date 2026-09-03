@@ -1,0 +1,368 @@
+[
+  {
+    "index": 0,
+    "hash": "",
+    "timestampUtcMs": "2026-08-14T12:16:12.401Z",
+    "action": {
+      "type": "CREATE_DOCUMENT",
+      "input": {
+        "meta": {},
+        "name": "reactor-default-database-is-ephemeral-in-memory-pglite",
+        "slug": "",
+        "model": "bai/knowledge-note",
+        "branch": "main",
+        "signing": {
+          "nonce": "",
+          "publicKey": {},
+          "signature": "c8d8d9db-8357-4560-a323-a3bc43a71161",
+          "documentType": "bai/knowledge-note",
+          "createdAtUtcIso": "2026-08-14T12:16:12.401Z"
+        },
+        "version": 0,
+        "documentId": "c8d8d9db-8357-4560-a323-a3bc43a71161",
+        "protocolVersions": {
+          "base-reducer": 2
+        }
+      },
+      "timestampUtcMs": "2026-08-14T12:16:12.401Z"
+    }
+  },
+  {
+    "index": 0,
+    "hash": "TLO8HInkoTnZtSTN0PD2gbjiVDQ=",
+    "timestampUtcMs": "2026-08-14T12:35:43.000Z",
+    "action": {
+      "type": "SET_TITLE",
+      "input": {
+        "title": "The reactor's default database is an ephemeral in-memory PGlite; persistence requires an explicit choice",
+        "updatedAt": "2026-08-14T12:35:43.000Z"
+      },
+      "timestampUtcMs": "2026-08-14T12:35:43.000Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "",
+    "timestampUtcMs": "2026-08-14T12:16:12.401Z",
+    "action": {
+      "type": "UPGRADE_DOCUMENT",
+      "input": {
+        "model": "bai/knowledge-note",
+        "toVersion": 1,
+        "documentId": "c8d8d9db-8357-4560-a323-a3bc43a71161",
+        "fromVersion": 0,
+        "initialState": {
+          "auth": {
+            "grants": [],
+            "version": 0
+          },
+          "local": {
+            "lastViewedAt": null,
+            "personalTags": []
+          },
+          "global": {
+            "links": [],
+            "model": null,
+            "scope": null,
+            "title": null,
+            "editor": null,
+            "inputs": [],
+            "models": [],
+            "status": "DRAFT",
+            "topics": [],
+            "content": null,
+            "context": null,
+            "modelId": null,
+            "modules": [],
+            "outputs": [],
+            "version": null,
+            "computes": null,
+            "filePath": null,
+            "noteType": null,
+            "severity": null,
+            "hooksUsed": [],
+            "rootCause": null,
+            "confidence": null,
+            "consumedBy": [],
+            "provenance": null,
+            "sourceType": null,
+            "targetType": null,
+            "cardinality": null,
+            "description": null,
+            "alternatives": [],
+            "consequences": [],
+            "errorMessage": null,
+            "relationType": null,
+            "correctPattern": null,
+            "decisionStatus": null,
+            "dispatchTargets": [],
+            "lifecycleEvents": []
+          },
+          "document": {
+            "hash": {
+              "encoding": "base64",
+              "algorithm": "sha1"
+            },
+            "version": 1
+          }
+        }
+      },
+      "timestampUtcMs": "2026-08-14T12:16:12.401Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "rwBx9P+Z3oe7RIaAsKy1ENPdEvY=",
+    "timestampUtcMs": "2026-08-14T12:35:43.000Z",
+    "action": {
+      "type": "SET_DESCRIPTION",
+      "input": {
+        "updatedAt": "2026-08-14T12:35:43.000Z",
+        "description": "Precedence in buildModule(): withKysely instance, then the worker pool's Postgres db, then in-memory PGlite. Nothing survives the process on the default path."
+      },
+      "timestampUtcMs": "2026-08-14T12:35:43.000Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "",
+    "timestampUtcMs": "2026-08-14T12:38:23.473Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "c8d8d9db-8357-4560-a323-a3bc43a71161",
+        "targetId": "30c759d9-9abf-427e-b0e8-c9c382064883",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-08-14T12:38:23.473Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "l/uaqJ44XgymCehOhS6dC2Z8Vhs=",
+    "timestampUtcMs": "2026-08-14T12:35:43.000Z",
+    "action": {
+      "type": "SET_NOTE_TYPE",
+      "input": {
+        "noteType": "ARCHITECTURE",
+        "updatedAt": "2026-08-14T12:35:43.000Z"
+      },
+      "timestampUtcMs": "2026-08-14T12:35:43.000Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "",
+    "timestampUtcMs": "2026-08-14T12:38:23.577Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "c8d8d9db-8357-4560-a323-a3bc43a71161",
+        "targetId": "291bfd93-8d9f-4836-b791-d5d656545eb4",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-08-14T12:38:23.577Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "mogSsyt6udBu1wNphbze4Is5Lbs=",
+    "timestampUtcMs": "2026-08-14T12:35:43.000Z",
+    "action": {
+      "type": "SET_CONTENT",
+      "input": {
+        "content": "Build a reactor with nothing but document models registered and you get an **in-memory** PGlite database. The builder calls an internal `createDefaultDatabase()` that constructs `new Kysely({ dialect: new PGliteDialect(new PGlite()) })` \u2014 and `new PGlite()` with no arguments is in-memory. Nothing is written to disk and nothing survives the process.\n\n```typescript\nconst reactor = await new ReactorBuilder()\n  .withDocumentModelSources([myDocumentModel])\n  .build();\n```\n\n`buildModule()` picks the base database in a strict precedence order:\n\n1. The instance passed to `withKysely(...)`, if any.\n2. A Postgres pool, if the worker pool is enabled and a worker `db` config is set.\n3. The in-memory PGlite default.\n\nSo persistence is never inferred \u2014 there is no auto-detection, no environment sniffing. If you did not pass a Kysely instance or a worker-pool `db`, your data is gone at process exit. That is the correct backend for unit tests and local development (fresh isolated database every run, no external service), and a silent data-loss bug in anything else.\n\nWhat you get on the default path: migrations run automatically (strategy defaults to `\"auto\"`, running `runMigrations(db, REACTOR_SCHEMA)`), all storage under the `\"reactor\"` Postgres schema, a single in-process executor (`maxConcurrency` defaults to `1`), an in-process read-model coordinator, and `module.pools === []` since there is no `pg.Pool` to instrument.\n\nMove to Postgres when state must survive a restart, when more than one process must share storage, or when you scale \u2014 and note that **neither scaling path can run on PGlite at all**, because PGlite cannot be shared across threads. Both `withWorkerPool` and `withProjectionShards` therefore require a real Postgres server.\n\nFor `\"manual\"` or `\"none\"` migration strategies, run migrations yourself. `runMigrations` never throws on a migration error \u2014 it returns `{ success, migrationsExecuted, error? }`, so you must check the result:\n\n```typescript\nconst result = await runMigrations(db, REACTOR_SCHEMA);\nif (!result.success && result.error) throw result.error;\n```\n\n_Source: apps/academy/docs/academy/04-Reference/01-Reactor/07-StorageAndScaling.md (Powerhouse v6.2.2-dev.45)._",
+        "updatedAt": "2026-08-14T12:35:43.000Z"
+      },
+      "timestampUtcMs": "2026-08-14T12:35:43.000Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "",
+    "timestampUtcMs": "2026-08-14T12:38:23.669Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "c8d8d9db-8357-4560-a323-a3bc43a71161",
+        "targetId": "bc0da529-6bf7-422e-952b-518c16751c2c",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-08-14T12:38:23.669Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "LCXM+kSKd6HzL2Sls9q4LtMLrQ4=",
+    "timestampUtcMs": "2026-08-14T12:35:43.000Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "version",
+        "value": "v6.2.2-dev.44",
+        "updatedAt": "2026-08-14T12:35:43.000Z"
+      },
+      "timestampUtcMs": "2026-08-14T12:35:43.000Z"
+    }
+  },
+  {
+    "index": 5,
+    "hash": "",
+    "timestampUtcMs": "2026-08-14T12:38:23.759Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "c8d8d9db-8357-4560-a323-a3bc43a71161",
+        "targetId": "501f87dd-ff84-4a59-8894-033f209dfdf0",
+        "relationshipType": "BUILDS_ON"
+      },
+      "timestampUtcMs": "2026-08-14T12:38:23.759Z"
+    }
+  },
+  {
+    "index": 5,
+    "hash": "ohmhzrHBeG1+aIfAJ1ljMGllisg=",
+    "timestampUtcMs": "2026-08-14T12:35:43.000Z",
+    "action": {
+      "type": "SET_PROVENANCE",
+      "input": {
+        "author": "claude",
+        "createdAt": "2026-08-13T14:34:37.000Z",
+        "sourceOrigin": "DERIVED"
+      },
+      "timestampUtcMs": "2026-08-14T12:35:43.000Z"
+    }
+  },
+  {
+    "index": 6,
+    "hash": "",
+    "timestampUtcMs": "2026-09-02T21:38:42.553Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "metadata": {
+          "reason": "The note names apps/academy/docs/academy/04-Reference/01-Reactor/07-StorageAndScaling.md as its source; page text identical at v6.2.2-dev.47 and v6.2.2-dev.74",
+          "confidence": "grounded"
+        },
+        "sourceId": "c8d8d9db-8357-4560-a323-a3bc43a71161",
+        "targetId": "c1116781-e617-4620-bb42-f622cbf113cd",
+        "relationshipType": "DERIVED_FROM"
+      },
+      "timestampUtcMs": "2026-09-02T21:38:42.553Z"
+    }
+  },
+  {
+    "index": 6,
+    "hash": "fXy7AwtVlC7SuP6tqJ920LY0JcY=",
+    "timestampUtcMs": "2026-08-14T12:35:43.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "c38d2995-f805-4cf9-8a31-2ed5754e1e08",
+        "name": "reactor",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-08-14T12:35:43.000Z"
+    }
+  },
+  {
+    "index": 7,
+    "hash": "qHrWiLjdCGewBEvlKGD1JXqfsHY=",
+    "timestampUtcMs": "2026-08-14T12:35:43.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "38e55a6f-4497-4e93-8b69-814a8bd44935",
+        "name": "storage",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-08-14T12:35:43.000Z"
+    }
+  },
+  {
+    "index": 8,
+    "hash": "7hxDt68QG9pZcMmRreeGMS2etYE=",
+    "timestampUtcMs": "2026-08-14T12:35:43.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "f2791e80-68dc-4673-bdf6-dd7e08d6e2c0",
+        "name": "pglite",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-08-14T12:35:43.000Z"
+    }
+  },
+  {
+    "index": 9,
+    "hash": "RqTiNKlg0c6X+YbNuBSl7pBxlVQ=",
+    "timestampUtcMs": "2026-08-14T14:37:35.000Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "version",
+        "value": "v6.2.2-dev.47",
+        "updatedAt": "2026-08-14T12:00:00.000Z"
+      },
+      "timestampUtcMs": "2026-08-14T14:37:35.000Z"
+    }
+  },
+  {
+    "index": 10,
+    "hash": "3Pm7JIwSPTlE8FKwVERgJL+a69w=",
+    "timestampUtcMs": "2026-08-14T14:37:35.000Z",
+    "action": {
+      "type": "SUBMIT_FOR_REVIEW",
+      "input": {
+        "id": "e7f30427-fd85-4580-a4d9-96b6fc60ddc3",
+        "actor": "claude",
+        "comment": "Knowledge registered against powerhouse v6.2.2-dev.47",
+        "timestamp": "2026-08-14T12:00:00.000Z"
+      },
+      "timestampUtcMs": "2026-08-14T14:37:35.000Z"
+    }
+  },
+  {
+    "index": 11,
+    "hash": "DV5W4QyKhmmkOIDm0AGyazu0O1Q=",
+    "timestampUtcMs": "2026-08-14T14:37:35.000Z",
+    "action": {
+      "type": "APPROVE_NOTE",
+      "input": {
+        "id": "74c60e67-133f-4b05-b262-b68a7e8be9ff",
+        "actor": "liberuum",
+        "comment": "Canonical as of powerhouse v6.2.2-dev.47",
+        "timestamp": "2026-08-14T12:00:00.000Z"
+      },
+      "timestampUtcMs": "2026-08-14T14:37:35.000Z"
+    }
+  },
+  {
+    "index": 12,
+    "hash": "SXnJp5wad+3DwHHjG5SquJMwoss=",
+    "timestampUtcMs": "2026-09-02T21:38:43.226Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "filePath",
+        "value": "apps/academy/docs/academy/04-Reference/01-Reactor/07-StorageAndScaling.md",
+        "updatedAt": "2026-09-02T21:38:43.226Z"
+      },
+      "timestampUtcMs": "2026-09-02T21:38:43.226Z"
+    }
+  },
+  {
+    "index": 13,
+    "hash": "7O2pEGuxSSkuW5Dpd+4Cj8VOOAU=",
+    "timestampUtcMs": "2026-09-02T21:38:43.226Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "version",
+        "value": "v6.2.2-dev.74",
+        "updatedAt": "2026-09-02T21:38:43.226Z"
+      },
+      "timestampUtcMs": "2026-09-02T21:38:43.226Z"
+    }
+  }
+]

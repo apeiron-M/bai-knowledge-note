@@ -1,0 +1,115 @@
+{
+  "links": [
+    {
+      "id": "lnk-de06fba3-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "de06fba3-5cdf-413c-b6e0-f1a094c62f34",
+      "targetTitle": "custom-subgraphs-v6-reactor-client-access"
+    },
+    {
+      "id": "lnk-58724313-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "58724313-552e-4eda-b9a0-037112bf1a66",
+      "targetTitle": "phdocument-v4-header-consolidation"
+    },
+    {
+      "id": "lnk-04374aa9-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "04374aa9-c0dc-477b-86c2-35841f3c8857",
+      "targetTitle": "relational-db-processor-for-sql-projections"
+    },
+    {
+      "id": "lnk-f7e6d116-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "f7e6d116-bd5d-4052-9f2a-974e4d7cb7e2",
+      "targetTitle": "relational-db-processor-base-class"
+    },
+    {
+      "id": "lnk-7f35d994-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "7f35d994-2dcd-43bd-b90f-d71147dff5b9",
+      "targetTitle": "Academy \u203a Reference \u203a GraphQLData \u203a Subgraph Migration Guide (v6)",
+      "reason": "Backing page found by content match in the v6.2.2-dev.74 source backfill \u2014 identifiers hardcoded, namespaced from the claim appear in this page (text identical at v6.2.2-dev.47 and v6.2.2-dev.74); attribution, not the original extraction record",
+      "confidence": "grounded"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "The v6 reactor replaced legacy hardcoded subgraphs with a reactor subgraph at /graphql/r and auto-generated per-model subgraphs",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "3d5d19d7-bf63-4d3b-9560-67deed1463d8",
+      "name": "graphql",
+      "topicDocumentId": null
+    },
+    {
+      "id": "226cbbfc-1c9d-4d9e-b14b-d1445b7c7d2a",
+      "name": "subgraph",
+      "topicDocumentId": null
+    },
+    {
+      "id": "190a9375-be4f-413f-b20b-1c97c386a7ca",
+      "name": "migration",
+      "topicDocumentId": null
+    },
+    {
+      "id": "8e74f3b9-1f33-4d24-bdff-c04858f70aa6",
+      "name": "v6-reactor",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "The v6 Reactor introduced three subgraph types: the reactor subgraph (`/graphql/r`) for drives, documents, sync, and subscriptions; auto-generated document-model subgraphs (`/graphql/<model-name>`) with namespaced queries/mutations per registered model; and custom user-defined subgraphs. Document-model subgraphs auto-generate `document(identifier)`, `documents(paging)`, `findDocuments(search)`, `documentOutgoingRelationships(sourceIdentifier, relationshipType)`, `documentIncomingRelationships(targetIdentifier, relationshipType)`, `createDocument(name, parentIdentifier)`, and per-operation mutations (e.g., `addTodoItem(docId, input)`) with async variants. Legacy strand-based sync (`registerPullResponderListener`, `system.sync.strands`) was replaced with channel-based sync (`touchChannel`, `pollSyncEnvelopes`) and GraphQL subscriptions (`documentChanges`).\n\n_Corrected 2026-08-13 against Powerhouse v6.2.2-dev.45._",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": "v6.2.2-dev.74",
+  "computes": null,
+  "filePath": "apps/academy/docs/academy/04-Reference/03-GraphQLData/07-SubgraphMigrationGuide.md",
+  "noteType": "ARCHITECTURE",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "knowledge-agent",
+    "createdAt": "2026-04-02T12:00:00.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-09-02T21:39:00.713Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Legacy /graphql/document-drive and /graphql/system merged into /graphql/r; each document model gets its own namespaced subgraph.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "17dfa7fa-76ca-4672-98d0-054fb5d53b5c",
+      "actor": "claude",
+      "comment": "Knowledge registered against powerhouse v6.2.2-dev.47",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-14T12:00:00.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "e0365ea2-5146-41ee-96e2-3553b193937f",
+      "actor": "liberuum",
+      "comment": "Canonical as of powerhouse v6.2.2-dev.47",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-14T12:00:00.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}
