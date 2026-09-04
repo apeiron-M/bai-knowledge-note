@@ -101,14 +101,6 @@ function AssistantTurn({
     () => new Map((citations ?? []).map((c) => [c.documentId, c] as const)),
     [citations],
   );
-  // The first passage a document was cited for — what its Sources chip shows.
-  const firstQuote = useMemo(() => {
-    const m = new Map<string, string>();
-    for (const e of evidence ?? []) {
-      if (e.quote && !m.has(e.documentId)) m.set(e.documentId, e.quote);
-    }
-    return m;
-  }, [evidence]);
 
   // Inline chips are rendered from HTML, so hover, focus and click are
   // delegated from the wrapper; the card is positioned from the chip's box.
@@ -227,7 +219,6 @@ function AssistantTurn({
               index={i + 1}
               citation={c}
               currency={currency?.(c.documentId)}
-              quote={firstQuote.get(c.documentId) ?? null}
             />
           ))}
           {(message.consulted ?? []).map((c) => (
