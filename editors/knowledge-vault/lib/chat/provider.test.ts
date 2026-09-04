@@ -12,6 +12,8 @@ import {
   normalizeBaseUrl,
   readSavedProviders,
   savedKinds,
+  thinkingDisabled,
+  withThinking,
   writeSavedProviders,
 } from "./provider.js";
 
@@ -170,5 +172,27 @@ describe("fetchEndpointModels", () => {
   it("throws on a refusal so a bad key fails at connect time", async () => {
     respond(401, { error: "unauthorised" });
     await expect(fetchEndpointModels(ep)).rejects.toThrow(/localhost:11434 answered 401/);
+  });
+});
+
+describe("thinking switch", () => {
+  it("adds every server family's spelling when switched off, and removes exactly those when switched on", () => {
+    const off = withThinking(null, false);
+    expect(off).toEqual({
+      enable_thinking: false,
+      think: false,
+      chat_template_kwargs: { enable_thinking: false },
+    });
+    expect(thinkingDisabled(off)).toBe(true);
+    expect(withThinking(off, true)).toBeNull();
+    expect(thinkingDisabled(null)).toBe(false);
+  });
+
+  it("keeps the user's own fields either way", () => {
+    const mine = { temperature: 0.7, chat_template_kwargs: { reasoning_effort: "low" } };
+    const off = withThinking(mine, false)!;
+    expect(off.temperature).toBe(0.7);
+    expect(off.chat_template_kwargs).toEqual({ reasoning_effort: "low", enable_thinking: false });
+    expect(withThinking(off, true)).toEqual(mine);
   });
 });

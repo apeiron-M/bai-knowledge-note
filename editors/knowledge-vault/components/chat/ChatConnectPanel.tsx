@@ -67,6 +67,7 @@ export function ChatConnectPanel({
   const [model, setModel] = useState("");
   const [showExtra, setShowExtra] = useState(false);
   const [extraBody, setExtraBody] = useState("");
+  const [disableThinking, setDisableThinking] = useState(true);
   const [customBusy, setCustomBusy] = useState(false);
   const [customError, setCustomError] = useState<string | null>(null);
 
@@ -84,7 +85,7 @@ export function ChatConnectPanel({
     if (!baseUrl.trim() || customBusy) return;
     setCustomBusy(true);
     setCustomError(null);
-    const problem = await onConnectCustom({ baseUrl, apiKey, model, extraBody });
+    const problem = await onConnectCustom({ baseUrl, apiKey, model, extraBody, disableThinking });
     setCustomBusy(false);
     if (problem) setCustomError(problem);
   }
@@ -288,6 +289,22 @@ export function ChatConnectPanel({
               />
             </label>
           </div>
+          <label
+            className="flex items-start gap-2 text-[11px] leading-relaxed"
+            style={{ color: "var(--bai-text-muted)" }}
+          >
+            <input
+              type="checkbox"
+              checked={disableThinking}
+              onChange={(e) => setDisableThinking(e.target.checked)}
+              className="mt-0.5"
+            />
+            <span>
+              Turn the model&apos;s thinking off — reasoning models (Qwen3, DeepSeek)
+              otherwise think before every tool round, which is slow on a local
+              machine. You can switch it back on from the endpoint menu.
+            </span>
+          </label>
           <button
             type="button"
             onClick={() => setShowExtra((v) => !v)}

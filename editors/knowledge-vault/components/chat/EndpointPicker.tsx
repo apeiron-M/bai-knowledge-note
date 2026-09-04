@@ -14,12 +14,17 @@ export function EndpointPicker({
   saved,
   onSwitch,
   onAdd,
+  thinkingDisabled,
+  onToggleThinking,
 }: {
   active: ProviderKind | null;
   label: string;
   saved: SavedConnection[];
   onSwitch: (kind: ProviderKind) => void;
   onAdd: () => void;
+  /** For a named server: whether its thinking is switched off; null when not applicable. */
+  thinkingDisabled?: boolean | null;
+  onToggleThinking?: (enabled: boolean) => void;
 }) {
   const [open, setOpen] = useState(false);
   return (
@@ -95,6 +100,28 @@ export function EndpointPicker({
                 </button>
               );
             })}
+            {thinkingDisabled !== null && thinkingDisabled !== undefined && onToggleThinking && (
+              <button
+                type="button"
+                role="menuitemcheckbox"
+                aria-checked={!thinkingDisabled}
+                onClick={() => onToggleThinking(thinkingDisabled)}
+                className="mt-1 flex w-full items-center justify-between gap-2 border-t px-3 py-2 text-left text-xs transition-colors hover:bg-[var(--bai-hover)]"
+                style={{ borderColor: "var(--bai-border)", color: "var(--bai-text-secondary)" }}
+                title="Reasoning models think before every tool round; off is much faster locally"
+              >
+                <span>Model thinking</span>
+                <span
+                  className="rounded px-1.5 py-0.5 text-[10px] font-medium uppercase tracking-wide"
+                  style={{
+                    backgroundColor: thinkingDisabled ? "var(--bai-hover)" : "var(--bai-accent-soft)",
+                    color: thinkingDisabled ? "var(--bai-text-faint)" : "var(--bai-accent)",
+                  }}
+                >
+                  {thinkingDisabled ? "off" : "on"}
+                </span>
+              </button>
+            )}
             <button
               type="button"
               role="menuitem"

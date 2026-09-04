@@ -26,6 +26,8 @@ import {
   normalizeBaseUrl,
   readSavedProviders,
   savedKinds,
+  thinkingDisabled,
+  withThinking,
   writeSavedProviders,
   type ChatEndpoint,
   type ChatProvider,
@@ -61,6 +63,8 @@ export interface CustomEndpointInput {
   model: string;
   /** JSON object of server-specific request fields; empty for none. */
   extraBody?: string;
+  /** Switch the model's thinking off (default true: faster tool rounds). */
+  disableThinking?: boolean;
 }
 
 /** A saved connection as the UI lists it. */
@@ -89,6 +93,9 @@ export interface UseChatProvider {
   switchTo: (kind: ProviderKind) => void;
   /** Show the connect screen to add a connection, keeping the saved ones. */
   addAnother: () => void;
+  /** Whether the active named server is asked not to think; null when not applicable. */
+  thinkingDisabled: boolean | null;
+  setThinking: (enabled: boolean) => void;
   model: string;
   models: ModelInfo[];
   modelsLoading: boolean;
@@ -221,7 +228,7 @@ export function useChatProvider(): UseChatProvider {
       baseUrl,
       apiKey: input.apiKey.trim() || null,
       model: input.model.trim() || null,
-      extraBody,
+      extraBody: withThinking(extraBody, !(input.disableThinking ?? true)),
     };
     const ep = endpointFor(next);
     if (!ep) return "That does not look like a URL.";
@@ -262,6 +269,18 @@ export function useChatProvider(): UseChatProvider {
   const addAnother = useCallback(() => {
     save({ ...readSavedProviders(), active: null });
   }, [save]);
+
+  const setThinking = useCallback(
+    (enabled: boolean) => {
+      const current = readSavedProviders();
+      if (!current.custom) return;
+      save({
+        ...current,
+        custom: { ...current.custom, extraBody: withThinking(current.custom.extraBody, enabled) },
+      });
+    },
+    [save],
+  );
 
   const disconnect = useCallback(() => {
     const current = readSavedProviders();
@@ -403,6 +422,9 @@ export function useChatProvider(): UseChatProvider {
     saved: savedConnections,
     switchTo,
     addAnother,
+    thinkingDisabled:
+      provider?.kind === "custom" ? thinkingDisabled(provider.extraBody) : null,
+    setThinking,
     model,
     models,
     modelsLoading,

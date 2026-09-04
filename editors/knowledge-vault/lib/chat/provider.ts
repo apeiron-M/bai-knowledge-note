@@ -299,6 +299,54 @@ export function savedKinds(s: SavedProviders): ProviderKind[] {
   return out;
 }
 
+/**
+ * Reasoning models think before every reply — including every tool round of
+ * the agent loop, which is where a local model spends most of its time. The
+ * switch is a request field, spelled the way each server family reads it:
+ * top-level `enable_thinking` (Unsloth Studio, Qwen-style servers) and
+ * `chat_template_kwargs.enable_thinking` (vLLM, llama.cpp, SGLang). Servers
+ * ignore the spelling they do not know. Ollama's `think` rides along too.
+ */
+const THINKING_OFF: Record<string, unknown> = {
+  enable_thinking: false,
+  think: false,
+  chat_template_kwargs: { enable_thinking: false },
+};
+
+/** True when the extra fields switch the model's thinking off. */
+export function thinkingDisabled(extraBody: Record<string, unknown> | null): boolean {
+  return extraBody?.enable_thinking === false;
+}
+
+/**
+ * The extra fields with thinking switched on or off. Turning it on removes
+ * exactly what turning it off added and nothing else — a user's own
+ * `chat_template_kwargs` keys survive.
+ */
+export function withThinking(
+  extraBody: Record<string, unknown> | null,
+  enabled: boolean,
+): Record<string, unknown> | null {
+  const rest = { ...(extraBody ?? {}) };
+  const kwargs =
+    rest.chat_template_kwargs && typeof rest.chat_template_kwargs === "object"
+      ? { ...(rest.chat_template_kwargs as Record<string, unknown>) }
+      : {};
+  if (enabled) {
+    delete rest.enable_thinking;
+    delete rest.think;
+    delete kwargs.enable_thinking;
+    if (Object.keys(kwargs).length > 0) rest.chat_template_kwargs = kwargs;
+    else delete rest.chat_template_kwargs;
+    return Object.keys(rest).length > 0 ? rest : null;
+  }
+  return {
+    ...rest,
+    ...THINKING_OFF,
+    chat_template_kwargs: { ...kwargs, enable_thinking: false },
+  };
+}
+
 /** A model as an OpenAI-compatible `/models` listing names it. */
 export interface EndpointModel {
   id: string;

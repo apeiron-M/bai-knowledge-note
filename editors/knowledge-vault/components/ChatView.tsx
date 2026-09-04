@@ -242,6 +242,8 @@ export function ChatView({
             saved={prov.saved}
             onSwitch={prov.switchTo}
             onAdd={prov.addAnother}
+            thinkingDisabled={prov.thinkingDisabled}
+            onToggleThinking={prov.setThinking}
           />
           <ModelPicker
             model={prov.model}
