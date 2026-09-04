@@ -1,6 +1,6 @@
 import "../../../shared/test/browser-globals.js";
-import { afterEach, describe, expect, it, vi } from "vitest";
-import { DOCUMENT_TYPES, VAULT_TOOLS, executeTool } from "./vault-tools.js";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+import { DOCUMENT_TYPES, VAULT_TOOLS, executeTool, resetVaultDocumentListing } from "./vault-tools.js";
 
 const CTX = { driveId: "drive-1" };
 
@@ -579,34 +579,98 @@ describe("list_documents nameContains", () => {
   });
 });
 
-describe("recent_changes", () => {
+describe("recent_changes — every document in the vault by last edit", () => {
   const CTX = { driveId: "d1" };
-  const rows = [
-    { documentId: "s1", title: "Powerhouse PMF", description: null, noteType: "Scope (IN_PROGRESS)", status: "SCOPE", documentType: "powerhouse/scopeofwork", updatedAt: "2026-09-04T16:00:00.000Z" },
-    { documentId: "n1", title: "A note", description: "d", noteType: "concept", status: "CANONICAL", documentType: "bai/knowledge-note", updatedAt: "2026-09-03T10:00:00.000Z" },
-  ];
+  const tree = {
+    data: {
+      document: {
+        document: {
+          state: {
+            global: {
+              nodes: [
+                { id: "f1", kind: "folder", name: "sources" },
+                { id: "s-old", kind: "file", name: "Old import", documentType: "bai/source" },
+                { id: "s-new", kind: "file", name: "Board minutes 2026-09", documentType: "bai/source" },
+                { id: "n1", kind: "file", name: "a-slug", documentType: "bai/knowledge-note" },
+                { id: "hr", kind: "file", name: "HealthReport", documentType: "bai/health-report" },
+                { id: "elsewhere", kind: "file", name: "not stamped", documentType: "bai/moc" },
+              ],
+            },
+          },
+        },
+      },
+    },
+  };
+  const contained = {
+    data: {
+      findDocuments: {
+        items: [
+          { id: "s-new", lastModifiedAtUtcIso: "2026-09-04T09:00:00.000Z" },
+          { id: "hr", lastModifiedAtUtcIso: "2026-09-04T16:00:00.000Z" },
+          { id: "n1", lastModifiedAtUtcIso: "2026-09-01T00:00:00.000Z" },
+          { id: "stranger", lastModifiedAtUtcIso: "2026-09-05T00:00:00.000Z" }, // another drive: not in the tree
+        ],
+      },
+    },
+  };
+  const indexed = {
+    data: {
+      knowledgeGraphRecent: [
+        // The index saw a later edit of n1 than the reactor listing did.
+        { documentId: "n1", title: "A real title", noteType: "concept", status: "CANONICAL", updatedAt: "2026-09-03T10:00:00.000Z" },
+      ],
+    },
+  };
 
-  it("lists the most recently edited documents newest first, with updatedAt, via knowledgeGraphRecent", async () => {
-    mockGqlSequence({ data: { knowledgeGraphRecent: rows } });
-    const r = await executeTool("recent_changes", { limit: 2 }, CTX);
+  beforeEach(() => resetVaultDocumentListing());
+
+  it("merges the drive tree with both time sources, newest first, and counts documents with no known edit time", async () => {
+    mockGqlSequence(tree, contained, indexed);
+    const r = await executeTool("recent_changes", {}, CTX);
     expect(r.ok).toBe(true);
     if (!r.ok) throw new Error(r.error);
-    expect(requestAt(0).body.query).toContain("knowledgeGraphRecent");
-    expect(requestAt(0).body.variables).toEqual({ driveId: "d1", limit: 2, since: null });
-    expect(r.data).toEqual(rows);
-    expect(r.summary).toBe("listed the 2 most recently edited documents");
+    const d = r.data as { items: { documentId: string; title: string; documentType: string; lastModifiedAt: string; noteType: string | null }[]; undated: number };
+    expect(d.items.map((i) => i.documentId)).toEqual(["hr", "s-new", "n1"]);
+    expect(d.items[0]).toEqual({ documentId: "hr", title: "HealthReport", documentType: "bai/health-report", lastModifiedAt: "2026-09-04T16:00:00.000Z", noteType: null, status: null });
+    // The later of the two stamps wins, and the index supplies the note's real title.
+    expect(d.items[2]).toMatchObject({ documentId: "n1", title: "A real title", lastModifiedAt: "2026-09-03T10:00:00.000Z", noteType: "concept" });
+    // s-old and elsewhere are in the vault but have no edit time anywhere; stranger is not in the vault.
+    expect(d.undated).toBe(2);
+    expect(r.summary).toBe("listed the 3 most recently edited documents of 3 (2 more have no recorded edit time)");
+    // Membership came from the tree, times from the two listings.
+    expect(requestAt(0).body.query).toContain("document(identifier");
+    expect(requestAt(1).body.variables).toEqual({ parentId: "d1" });
+    expect(requestAt(2).body.query).toContain("knowledgeGraphRecent");
   });
 
-  it("normalises since to an ISO instant and rejects a date it cannot read", async () => {
-    mockGqlSequence({ data: { knowledgeGraphRecent: [rows[0]] } });
-    const r = await executeTool("recent_changes", { since: "2026-09-04" }, CTX);
-    if (!r.ok) throw new Error(r.error);
-    expect(requestAt(0).body.variables).toEqual({ driveId: "d1", limit: 15, since: "2026-09-04T00:00:00.000Z" });
-    expect(r.summary).toBe("listed the 1 most recently edited document since 2026-09-04");
+  it("filters by type and by since, and serves repeat calls from the cache", async () => {
+    mockGqlSequence(tree, contained, indexed);
+    const sources = await executeTool("recent_changes", { documentType: "bai/source" }, CTX);
+    if (!sources.ok) throw new Error(sources.error);
+    expect((sources.data as { items: { documentId: string }[] }).items.map((i) => i.documentId)).toEqual(["s-new"]);
+    expect(sources.summary).toContain("bai/source document of 3");
 
+    const recent = await executeTool("recent_changes", { since: "2026-09-04", limit: 1 }, CTX);
+    if (!recent.ok) throw new Error(recent.error);
+    expect((recent.data as { items: { documentId: string }[] }).items.map((i) => i.documentId)).toEqual(["hr"]);
+    expect(recent.summary).toContain("since 2026-09-04");
+    // Three requests in total — the second call did not refetch.
+    expect((globalThis.fetch as ReturnType<typeof vi.fn>).mock.calls).toHaveLength(3);
+  });
+
+  it("rejects a date it cannot read and an unknown type", async () => {
     const bad = await executeTool("recent_changes", { since: "yesterday" }, CTX);
     expect(bad.ok).toBe(false);
     if (!bad.ok) expect(bad.error).toContain("ISO 8601");
+    const badType = await executeTool("recent_changes", { documentType: "evil/type" }, CTX);
+    expect(badType.ok).toBe(false);
+  });
+
+  it("still answers when one time source fails", async () => {
+    mockGqlSequence(tree, { errors: [{ message: "boom" }] }, indexed);
+    const r = await executeTool("recent_changes", {}, CTX);
+    if (!r.ok) throw new Error(r.error);
+    expect((r.data as { items: { documentId: string }[] }).items.map((i) => i.documentId)).toEqual(["n1"]);
   });
 });
 

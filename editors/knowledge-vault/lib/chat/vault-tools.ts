@@ -210,7 +210,7 @@ export const VAULT_TOOLS: ToolSchema[] = [
     function: {
       name: "recent_changes",
       description:
-        "The most recently edited documents in the vault — notes, maps of content, tensions, observations, scopes of work and work breakdowns — newest first, each with its updatedAt. THE tool for 'what changed lately', 'what was last updated', 'what is new since <date>': never infer recency from the order of another list. Pass since (an ISO date or date-time) to bound the window. Every row is citable as [[documentId]].",
+        "Every document in the vault — any type: notes, maps of content, sources, tensions, observations, scopes of work, work breakdowns, the health report, the pipeline queue — ordered by last edit, newest first, each with lastModifiedAt. THE tool for 'what changed lately', 'what was last updated', 'what is the newest document', 'what is new since <date>': never infer recency from the order of another list. Optional documentType narrows to one kind; since (ISO date or date-time) bounds the window. Every row is citable as [[documentId]]; read a row with read_note (notes, MoCs) or read_document (anything).",
       parameters: {
         type: "object",
         properties: {
@@ -221,6 +221,11 @@ export const VAULT_TOOLS: ToolSchema[] = [
           since: {
             type: "string",
             description: "Only documents edited at or after this ISO 8601 date or date-time, e.g. 2026-09-01 or 2026-09-01T00:00:00Z.",
+          },
+          documentType: {
+            type: "string",
+            enum: [...DOCUMENT_TYPES],
+            description: "Only documents of this type, e.g. bai/source for the newest source material.",
           },
         },
       },
@@ -382,6 +387,133 @@ const envelopeRefs = (env: { knowledgeRefs: string[] }): string[] =>
   (env as { knowledgeRefs?: string[] }).knowledgeRefs ?? [];
 
 /* ------------------------------------------------------------------ */
+/*  Every document in the vault, by last edit                          */
+/* ------------------------------------------------------------------ */
+
+export interface VaultDocumentRow {
+  documentId: string;
+  title: string;
+  documentType: string;
+  /** ISO instant of the last operation on the document. */
+  lastModifiedAt: string;
+  /** From the graph index when the kind is indexed; null for sources etc. */
+  noteType: string | null;
+  status: string | null;
+}
+
+interface VaultDocumentListing {
+  /** Newest edit first; only documents with a known edit time. */
+  documents: VaultDocumentRow[];
+  /** Documents in the vault with no recorded edit time — older than change tracking. */
+  undated: number;
+  fetchedAt: number;
+}
+
+/** Long enough to make the follow-up calls of one answer free; short enough to see this hour's edits. */
+const LISTING_TTL_MS = 60_000;
+const listingCache = new Map<string, VaultDocumentListing>();
+
+/**
+ * Which documents are in the vault, and when each was last edited.
+ *
+ * No single query answers this. The drive document's node tree is the
+ * authority on membership — every type, every age — but carries no times.
+ * The reactor's `findDocuments(parentId)` has `lastModifiedAtUtcIso` but only
+ * for documents whose containment was recorded as a relationship (older
+ * imports are missing), and its per-type listing loads whole documents and
+ * takes seconds. The graph index has `updatedAt` for indexed kinds only.
+ * So: tree for membership and names, the two cheap time sources merged by
+ * taking the later stamp, one cached result per drive.
+ */
+async function vaultDocumentListing(
+  driveId: string,
+): Promise<VaultDocumentListing | { error: string }> {
+  const cached = listingCache.get(driveId);
+  if (cached && Date.now() - cached.fetchedAt < LISTING_TTL_MS) return cached;
+
+  const [tree, contained, indexed] = await Promise.all([
+    gql<{ document: { document: { state: unknown } | null } | null }>(
+      reactorEndpoint(),
+      `query DriveTree($id: String!) { document(identifier: $id) { document { state } } }`,
+      { id: driveId },
+    ),
+    gql<{ findDocuments: { items: { id: string; lastModifiedAtUtcIso: string | null }[] } }>(
+      reactorEndpoint(),
+      `query Contained($parentId: String!) {
+        findDocuments(search: { parentId: $parentId }, paging: { limit: 5000 }) {
+          items { id lastModifiedAtUtcIso }
+        }
+      }`,
+      { parentId: driveId },
+    ),
+    gql<{ knowledgeGraphRecent: { documentId: string; title: string | null; noteType: string | null; status: string | null; updatedAt: string }[] }>(
+      graphEndpoint(),
+      `query Indexed($driveId: ID!) {
+        knowledgeGraphRecent(driveId: $driveId, limit: 5000) { documentId title noteType status updatedAt }
+      }`,
+      { driveId },
+    ),
+  ]);
+  if ("error" in tree) return { error: tree.error };
+
+  const rawState = tree.data.document?.document?.state;
+  const state = typeof rawState === "string" ? (JSON.parse(rawState) as unknown) : rawState;
+  const nodes = ((state as { global?: { nodes?: unknown[] } } | null)?.global?.nodes ?? []) as {
+    id?: unknown;
+    kind?: unknown;
+    name?: unknown;
+    documentType?: unknown;
+  }[];
+
+  const stamps = new Map<string, string>();
+  const stamp = (id: string, iso: string | null | undefined) => {
+    if (!iso) return;
+    const prev = stamps.get(id);
+    if (!prev || iso > prev) stamps.set(id, iso);
+  };
+  // Either time source may be unavailable; the other still serves.
+  if (!("error" in contained)) {
+    for (const d of contained.data.findDocuments.items) stamp(d.id, d.lastModifiedAtUtcIso);
+  }
+  const index = new Map<string, { title: string | null; noteType: string | null; status: string | null }>();
+  if (!("error" in indexed)) {
+    for (const n of indexed.data.knowledgeGraphRecent) {
+      stamp(n.documentId, n.updatedAt);
+      index.set(n.documentId, { title: n.title, noteType: n.noteType, status: n.status });
+    }
+  }
+
+  const documents: VaultDocumentRow[] = [];
+  let undated = 0;
+  for (const n of nodes) {
+    if (n.kind !== "file" || typeof n.id !== "string" || typeof n.documentType !== "string") continue;
+    const lastModifiedAt = stamps.get(n.id);
+    if (!lastModifiedAt) {
+      undated++;
+      continue;
+    }
+    const meta = index.get(n.id);
+    documents.push({
+      documentId: n.id,
+      title: meta?.title || (typeof n.name === "string" && n.name ? n.name : n.id),
+      documentType: n.documentType,
+      lastModifiedAt,
+      noteType: meta?.noteType ?? null,
+      status: meta?.status ?? null,
+    });
+  }
+  documents.sort((a, b) => (a.lastModifiedAt < b.lastModifiedAt ? 1 : a.lastModifiedAt > b.lastModifiedAt ? -1 : 0));
+  const listing = { documents, undated, fetchedAt: Date.now() };
+  listingCache.set(driveId, listing);
+  return listing;
+}
+
+/** Test seam: forget cached listings. */
+export function resetVaultDocumentListing(): void {
+  listingCache.clear();
+}
+
+/* ------------------------------------------------------------------ */
 /*  Argument helpers                                                  */
 /* ------------------------------------------------------------------ */
 
@@ -521,22 +653,22 @@ export async function executeTool(
         if (Number.isNaN(t)) return fail(`since must be an ISO 8601 date, e.g. 2026-09-01 — got "${sinceRaw}"`);
         since = new Date(t).toISOString();
       }
-      const r = await gql<{
-        knowledgeGraphRecent: Record<string, unknown>[];
-      }>(
-        graphEndpoint(),
-        `query R($driveId: ID!, $limit: Int, $since: String) {
-          knowledgeGraphRecent(driveId: $driveId, limit: $limit, since: $since) {
-            ${NOTE_FIELDS} updatedAt
-          }
-        }`,
-        { driveId, limit, since },
-      );
-      if ("error" in r) return fail(r.error);
-      const items = r.data.knowledgeGraphRecent;
+      const type = str(args, "documentType");
+      if (type && !(DOCUMENT_TYPES as readonly string[]).includes(type)) {
+        return fail(`documentType must be one of: ${DOCUMENT_TYPES.join(", ")}`);
+      }
+      const listing = await vaultDocumentListing(driveId);
+      if ("error" in listing) return fail(listing.error);
+      const { documents, undated } = listing;
+      const rows = documents
+        .filter((d) => (type ? d.documentType === type : true))
+        .filter((d) => (since ? d.lastModifiedAt >= since : true))
+        .slice(0, limit);
+      const scope = type ? `${type} document` : "document";
       return ok(
-        items,
-        `listed the ${items.length} most recently edited document${items.length === 1 ? "" : "s"}${since ? ` since ${since.slice(0, 10)}` : ""}`,
+        { items: rows, undated },
+        `listed the ${rows.length} most recently edited ${scope}${rows.length === 1 ? "" : "s"} of ${documents.length}${since ? ` since ${since.slice(0, 10)}` : ""}` +
+          (undated ? ` (${undated} more have no recorded edit time)` : ""),
       );
     }
 
