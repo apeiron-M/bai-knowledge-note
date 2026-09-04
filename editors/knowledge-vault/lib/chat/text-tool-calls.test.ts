@@ -1,5 +1,9 @@
 import { describe, expect, it } from "vitest";
-import { parseTextToolCalls } from "./text-tool-calls.js";
+import {
+  hasToolCallMarkup,
+  parseTextToolCalls,
+  stripToolCallMarkup,
+} from "./text-tool-calls.js";
 
 const ID = "3086699a-f507-475b-8c3a-cac515a617d4";
 
@@ -59,5 +63,37 @@ describe("parseTextToolCalls", () => {
   it("does not mistake an unrelated tag or a bare bracket list for a call", () => {
     const r = parseTextToolCalls("Use <code>tool_call</code>; see [1], [2].");
     expect(r.calls).toEqual([]);
+  });
+
+  it("parses Qwen3's <function=…><parameter=…> template, wrapped in <tool_call> or bare, as seen from a local server", () => {
+    const text =
+      `Now let me read the most recent ones:\n\n` +
+      `<tool_call>\n\n<function=read_note>\n\n<parameter=documentId>\n\n[[${ID}]]\n\n</parameter>\n\n</function>\n\n</tool_call>\n\n` +
+      `<function=search_vault>\n<parameter=query>\nrecent changes\n</parameter>\n<parameter=limit>\n5\n</parameter>\n</function>\n` +
+      `<tool_call><function=vault_stats></function></tool_call>`;
+    const r = parseTextToolCalls(text, "q");
+    expect(r.text).toBe("Now let me read the most recent ones:");
+    expect(r.calls.map((c) => [c.function.name, JSON.parse(c.function.arguments) as unknown])).toEqual([
+      // The [[…]] a model copies from our citation syntax is unwrapped.
+      ["read_note", { documentId: ID }],
+      ["search_vault", { query: "recent changes", limit: 5 }],
+      ["vault_stats", {}],
+    ]);
+  });
+
+  it("leaves markup it cannot turn into a call in the text, and says so", () => {
+    const text = "Thinking…\n<tool_call>\n<weird>read_note</weird>\n</tool_call>\nDone.";
+    const r = parseTextToolCalls(text);
+    expect(r.calls).toEqual([]);
+    expect(r.text).toBe(text);
+    expect(hasToolCallMarkup(text)).toBe(true);
+    expect(hasToolCallMarkup("plain prose [[x]]")).toBe(false);
+  });
+
+  it("strips every tool-call-shaped block as a last resort, keeping the prose", () => {
+    const text =
+      `Here is what I found.\n\n<tool_call>\n<weird/>\n</tool_call>\n\n\n<function=read_note><parameter=documentId>x</parameter></function>\n` +
+      `[TOOL_CALLS][{"name":"a"}]\nThe answer is 42.`;
+    expect(stripToolCallMarkup(text)).toBe("Here is what I found.\n\nThe answer is 42.");
   });
 });

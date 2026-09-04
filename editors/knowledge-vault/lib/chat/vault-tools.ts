@@ -65,6 +65,7 @@ const LIMITS = {
   related: { default: 8, max: 20 },
   links: 15,
   documents: { default: 50, max: 100 },
+  recent: { default: 15, max: 50 },
   projects: 25,
   knowledgeRefTitles: 20,
   noteContent: 6000,
@@ -201,6 +202,27 @@ export const VAULT_TOOLS: ToolSchema[] = [
         type: "object",
         properties: { documentId: { type: "string" } },
         required: ["documentId"],
+      },
+    },
+  },
+  {
+    type: "function",
+    function: {
+      name: "recent_changes",
+      description:
+        "The most recently edited documents in the vault — notes, maps of content, tensions, observations, scopes of work and work breakdowns — newest first, each with its updatedAt. THE tool for 'what changed lately', 'what was last updated', 'what is new since <date>': never infer recency from the order of another list. Pass since (an ISO date or date-time) to bound the window. Every row is citable as [[documentId]].",
+      parameters: {
+        type: "object",
+        properties: {
+          limit: {
+            type: "integer",
+            description: `Documents to return (default ${LIMITS.recent.default}, max ${LIMITS.recent.max}).`,
+          },
+          since: {
+            type: "string",
+            description: "Only documents edited at or after this ISO 8601 date or date-time, e.g. 2026-09-01 or 2026-09-01T00:00:00Z.",
+          },
+        },
       },
     },
   },
@@ -368,9 +390,20 @@ function bool(args: Record<string, unknown>, key: string): boolean {
   return v === true || v === "true";
 }
 
+/**
+ * A string argument, or null. A value wrapped as `[[id]]` (or quoted) is a
+ * model copying the citation syntax it was taught into a tool argument —
+ * the id inside is what it meant, so that is what the tool gets.
+ */
 function str(args: Record<string, unknown>, key: string): string | null {
   const v = args[key];
-  return typeof v === "string" && v.trim() ? v.trim() : null;
+  if (typeof v !== "string") return null;
+  const unwrapped = v
+    .trim()
+    .replace(/^\[\[\s*([\s\S]*?)\s*\]\]$/, "$1")
+    .replace(/^["'`]+|["'`]+$/g, "")
+    .trim();
+  return unwrapped ? unwrapped : null;
 }
 
 function int(
@@ -476,6 +509,34 @@ export async function executeTool(
           truncated,
         },
         `read "${typeof node.title === "string" ? node.title : documentId}"`,
+      );
+    }
+
+    case "recent_changes": {
+      const limit = int(args, "limit", LIMITS.recent.default, LIMITS.recent.max);
+      const sinceRaw = str(args, "since");
+      let since: string | null = null;
+      if (sinceRaw) {
+        const t = Date.parse(sinceRaw);
+        if (Number.isNaN(t)) return fail(`since must be an ISO 8601 date, e.g. 2026-09-01 — got "${sinceRaw}"`);
+        since = new Date(t).toISOString();
+      }
+      const r = await gql<{
+        knowledgeGraphRecent: Record<string, unknown>[];
+      }>(
+        graphEndpoint(),
+        `query R($driveId: ID!, $limit: Int, $since: String) {
+          knowledgeGraphRecent(driveId: $driveId, limit: $limit, since: $since) {
+            ${NOTE_FIELDS} updatedAt
+          }
+        }`,
+        { driveId, limit, since },
+      );
+      if ("error" in r) return fail(r.error);
+      const items = r.data.knowledgeGraphRecent;
+      return ok(
+        items,
+        `listed the ${items.length} most recently edited document${items.length === 1 ? "" : "s"}${since ? ` since ${since.slice(0, 10)}` : ""}`,
       );
     }
 

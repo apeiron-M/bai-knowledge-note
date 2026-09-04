@@ -36,7 +36,7 @@ const lastRequest = () =>
 afterEach(() => vi.restoreAllMocks());
 
 describe("VAULT_TOOLS", () => {
-  it("exposes exactly the ten read-only tools", () => {
+  it("exposes exactly the eleven read-only tools", () => {
     expect(VAULT_TOOLS.map((t) => t.function.name).sort()).toEqual([
       "linked_notes",
       "list_documents",
@@ -45,6 +45,7 @@ describe("VAULT_TOOLS", () => {
       "notes_by_topic",
       "read_document",
       "read_note",
+      "recent_changes",
       "related_notes",
       "search_vault",
       "vault_stats",
@@ -575,5 +576,45 @@ describe("list_documents nameContains", () => {
     expect(plain.data).not.toHaveProperty("matched");
     // The mock ignores paging, so the page holds 3; the tool still trims to the limit.
     expect(plain.summary).toBe("listed 2 of 3 bai/source");
+  });
+});
+
+describe("recent_changes", () => {
+  const CTX = { driveId: "d1" };
+  const rows = [
+    { documentId: "s1", title: "Powerhouse PMF", description: null, noteType: "Scope (IN_PROGRESS)", status: "SCOPE", documentType: "powerhouse/scopeofwork", updatedAt: "2026-09-04T16:00:00.000Z" },
+    { documentId: "n1", title: "A note", description: "d", noteType: "concept", status: "CANONICAL", documentType: "bai/knowledge-note", updatedAt: "2026-09-03T10:00:00.000Z" },
+  ];
+
+  it("lists the most recently edited documents newest first, with updatedAt, via knowledgeGraphRecent", async () => {
+    mockGqlSequence({ data: { knowledgeGraphRecent: rows } });
+    const r = await executeTool("recent_changes", { limit: 2 }, CTX);
+    expect(r.ok).toBe(true);
+    if (!r.ok) throw new Error(r.error);
+    expect(requestAt(0).body.query).toContain("knowledgeGraphRecent");
+    expect(requestAt(0).body.variables).toEqual({ driveId: "d1", limit: 2, since: null });
+    expect(r.data).toEqual(rows);
+    expect(r.summary).toBe("listed the 2 most recently edited documents");
+  });
+
+  it("normalises since to an ISO instant and rejects a date it cannot read", async () => {
+    mockGqlSequence({ data: { knowledgeGraphRecent: [rows[0]] } });
+    const r = await executeTool("recent_changes", { since: "2026-09-04" }, CTX);
+    if (!r.ok) throw new Error(r.error);
+    expect(requestAt(0).body.variables).toEqual({ driveId: "d1", limit: 15, since: "2026-09-04T00:00:00.000Z" });
+    expect(r.summary).toBe("listed the 1 most recently edited document since 2026-09-04");
+
+    const bad = await executeTool("recent_changes", { since: "yesterday" }, CTX);
+    expect(bad.ok).toBe(false);
+    if (!bad.ok) expect(bad.error).toContain("ISO 8601");
+  });
+});
+
+describe("tool arguments a model wraps in citation syntax", () => {
+  it("read_note unwraps a [[documentId]] before asking the graph", async () => {
+    mockGqlSequence({ data: { knowledgeGraphNodeByDocumentId: { documentId: "n1", title: "T", content: "body", topics: [] } } });
+    const r = await executeTool("read_note", { documentId: "[[n1]]" }, { driveId: "d1" });
+    expect(r.ok).toBe(true);
+    expect(requestAt(0).body.variables).toEqual({ driveId: "d1", documentId: "n1" });
   });
 });

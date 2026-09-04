@@ -23,7 +23,11 @@ import {
   executeTool as realExecuteTool,
 } from "../lib/chat/vault-tools.js";
 import { classifyFailure, type Failure } from "../lib/chat/failure.js";
-import { parseTextToolCalls } from "../lib/chat/text-tool-calls.js";
+import {
+  hasToolCallMarkup,
+  parseTextToolCalls,
+  stripToolCallMarkup,
+} from "../lib/chat/text-tool-calls.js";
 import {
   deleteThread,
   loadThreads,
@@ -74,6 +78,19 @@ export const CITE_NOW = (documents: string): string =>
 
 /** How many surfaced documents the repair nudge lists by id. */
 const CITE_NOW_MAX_DOCUMENTS = 12;
+
+/**
+ * The nudge when a reply carried tool calls written in a form none of the
+ * templates could read (see text-tool-calls.ts). Local servers that do not
+ * parse their model's tool template hand it to us as prose; the model is told
+ * the one text form that always works and asked again. Once — a second miss
+ * is stripped from the answer and noted in the trail.
+ */
+export const TOOL_TEXT_RETRY =
+  "Your reply contained tool calls written as text in a format this interface cannot run, so nothing ran and the user saw the raw markup. " +
+  "Call tools through the function-calling interface. If your runtime cannot, write each call on its own line exactly as " +
+  '<tool_call>{"name": "<tool>", "arguments": {<arguments>}}</tool_call> — JSON, nothing else inside the tags. ' +
+  "A documentId is the full UUID string exactly as a result gave it, never a number and never wrapped in brackets. Continue now.";
 
 /**
  * True when an answer should be sent back for citations: at least one tool
@@ -155,6 +172,7 @@ export async function runAgentLoop(o: LoopOptions): Promise<LoopResult> {
   let uncitedDraft: string | null = null;
   let repairedCitations = false;
   let toolsOffNextRound = false;
+  let retriedToolMarkup = false;
 
   for (;;) {
     iterations++;
@@ -219,6 +237,32 @@ export async function runAgentLoop(o: LoopOptions): Promise<LoopResult> {
 
     const wantsTools = !toolsOff && toolCalls.length > 0;
     if (!wantsTools) {
+      // Tool calls in a shape no template reads: ask once for a form that
+      // runs; the second time, drop the markup rather than show it.
+      if (!toolsOff && toolCalls.length === 0 && hasToolCallMarkup(text)) {
+        if (!retriedToolMarkup) {
+          retriedToolMarkup = true;
+          const entry: TrailEntry = {
+            tool: "compat",
+            summary: "model wrote tool calls in a format that cannot be run — asked once for a runnable form",
+            ok: true,
+          };
+          trail.push(entry);
+          o.onTrail?.(entry);
+          messages.push({ role: "assistant", content: result.text });
+          messages.push({ role: "system", content: TOOL_TEXT_RETRY });
+          continue;
+        }
+        const entry: TrailEntry = {
+          tool: "compat",
+          summary: "model kept writing unrunnable tool calls — removed from the answer",
+          ok: false,
+          error: "tool-call markup in an unrecognised format",
+        };
+        trail.push(entry);
+        o.onTrail?.(entry);
+        text = stripToolCallMarkup(text);
+      }
       // A repair round that came back empty keeps the uncited draft: an
       // answer without markers beats no answer.
       if (uncitedDraft !== null && !text.trim()) text = uncitedDraft;
@@ -562,7 +606,7 @@ export function resolveCitations(
   text: string,
   trail: TrailEntry[],
   priorCitations: Citation[] = [],
-): { text: string; citations: Citation[] } {
+): { text: string; citations: Citation[]; dropped: number } {
   const known = collectKnownDocuments(trail);
   for (const c of priorCitations) {
     if (!known.has(c.documentId)) {
@@ -575,6 +619,10 @@ export function resolveCitations(
   }
   const order: string[] = [];
   const byId = new Map<string, Citation>();
+  // UUID-shaped markers naming a document no tool returned and no earlier
+  // turn cited. A model cannot know an id it was never shown; such a marker
+  // is invented, and a chip that opens nothing is worse than no chip.
+  let dropped = 0;
   const grounded = groundMarkdownLinks(text, known, collectKnownUrls(trail));
   const rewritten = grounded.replace(
     CITATION_RE,
@@ -607,7 +655,11 @@ export function resolveCitations(
         doc = known.get(label) ?? null;
         if (!doc) return match;
       } else if (UUID_RE.test(label)) {
-        doc = known.get(label) ?? { documentId: label, title: label, documentType: null };
+        doc = known.get(label) ?? null;
+        if (!doc) {
+          dropped++;
+          return "";
+        }
       } else if (double !== undefined) {
         // Explicit citation syntax: resolve generously, drop what fails.
         doc = known.get(label) ?? resolveLabel(label, known);
@@ -629,7 +681,10 @@ export function resolveCitations(
       return `[[${doc.documentId}${anchor ? `#${anchor}` : ""}]]`;
     },
   );
-  const folded = foldSourcesSection(rewritten, known);
+  // A marker repeated back to back ("[[a]] [[a]] [[a]]") is one citation
+  // the model stuttered, not three; collapse before numbering.
+  const collapsed = rewritten.replace(/(\[\[([^\]]+)\]\])(?:\s*\[\[\2\]\])+/g, "$1");
+  const folded = foldSourcesSection(collapsed, known);
   for (const doc of folded.sources) {
     if (!byId.has(doc.documentId)) {
       order.push(doc.documentId);
@@ -643,6 +698,7 @@ export function resolveCitations(
   return {
     text: folded.text,
     citations: order.map((id) => byId.get(id)!),
+    dropped,
   };
 }
 
@@ -857,6 +913,18 @@ export function useChat(o: UseChatOptions): UseChat {
         // let a by-name citation resolve) without re-running the tools.
         const prior = withUser.messages.flatMap((m) => m.citations ?? []);
         const resolved = resolveCitations(finalText, collected, prior);
+        if (resolved.dropped > 0) {
+          // Visible like every other harness move: the reader should know a
+          // reference was removed, and why.
+          const entry: TrailEntry = {
+            tool: "compat",
+            summary: `removed ${resolved.dropped} citation${resolved.dropped === 1 ? "" : "s"} of an id no tool returned`,
+            ok: false,
+            error: "invented document id",
+          };
+          collected.push(entry);
+          setTrail((t) => [...t, entry]);
+        }
         const consulted = consultedDocuments(collected, resolved.citations);
         // The passage behind each marker, from the documents the tools
         // returned this turn — the only moment their text is at hand.

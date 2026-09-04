@@ -3,6 +3,7 @@ import { describe, expect, it, vi } from "vitest";
 import {
   ANSWER_NOW,
   MAX_ITERATIONS,
+  TOOL_TEXT_RETRY,
   consultedDocuments,
   extractCitations,
   needsCitationRepair,
@@ -40,7 +41,7 @@ describe("runAgentLoop", () => {
     // Tools are always offered so the model can choose.
     expect(
       (streamChat.mock.calls[0][0] as { tools: unknown[] }).tools.length,
-    ).toBe(10);
+    ).toBe(11);
   });
 
   it("executes a tool call and feeds the result back keyed to the call id", async () => {
@@ -326,6 +327,66 @@ describe("runAgentLoop", () => {
   });
 });
 
+describe("runAgentLoop unreadable tool markup", () => {
+  const round = (text: string) => ({ text, toolCalls: [], finishReason: "stop" });
+  const junk = "Let me look.\n<tool_call>\n<weird>read_note</weird>\n</tool_call>";
+
+  it("asks once for a runnable form, then runs what comes back", async () => {
+    const streamChat = vi
+      .fn()
+      .mockResolvedValueOnce(round(junk))
+      .mockResolvedValueOnce({
+        text: "",
+        toolCalls: [tc("vault_stats", "{}")],
+        finishReason: "tool_calls",
+      })
+      .mockResolvedValueOnce(round("The vault holds 521 notes."));
+    const executeTool = vi.fn().mockResolvedValue({ ok: true, data: { noteCount: 521 }, summary: "vault: 521 notes" });
+    const trail: TrailEntry[] = [];
+    const r = await runAgentLoop({
+      ...base,
+      messages: [{ role: "user", content: "how big?" }],
+      onTrail: (e) => trail.push(e),
+      deps: { streamChat, executeTool } as never,
+    });
+    expect(r.text).toBe("The vault holds 521 notes.");
+    // The loop hands every round the same messages array, so look for the
+    // nudge where it was inserted rather than at the end.
+    const sent = (streamChat.mock.calls[1][0] as { messages: { role: string; content: string }[] }).messages;
+    const nudge = sent.findIndex((m) => m.role === "system" && m.content === TOOL_TEXT_RETRY);
+    expect(nudge).toBeGreaterThan(0);
+    expect(sent[nudge].content).toContain('<tool_call>{"name": "<tool>"');
+    expect(sent[nudge - 1]).toEqual({ role: "assistant", content: junk });
+    expect(trail.map((e) => e.tool)).toEqual(["compat", "vault_stats"]);
+    expect(trail[0].summary).toContain("runnable form");
+  });
+
+  it("strips the markup from the answer when the model does it again, and says so in the trail", async () => {
+    const streamChat = vi.fn().mockResolvedValueOnce(round(junk)).mockResolvedValueOnce(round(`${junk}\nSo: 42.`));
+    const trail: TrailEntry[] = [];
+    const r = await runAgentLoop({
+      ...base,
+      messages: [{ role: "user", content: "q" }],
+      onTrail: (e) => trail.push(e),
+      deps: { streamChat, executeTool: vi.fn() } as never,
+    });
+    expect(r.text).toBe("Let me look.\n\nSo: 42.");
+    expect(trail.map((e) => [e.tool, e.ok])).toEqual([["compat", true], ["compat", false]]);
+  });
+
+  it("runs Qwen-style text calls directly, with no nudge", async () => {
+    const streamChat = vi
+      .fn()
+      .mockResolvedValueOnce(round("<tool_call>\n<function=vault_stats>\n</function>\n</tool_call>"))
+      .mockResolvedValueOnce(round("521 notes."));
+    const executeTool = vi.fn().mockResolvedValue({ ok: true, data: { noteCount: 521 }, summary: "vault: 521 notes" });
+    const r = await runAgentLoop({ ...base, messages: [{ role: "user", content: "q" }], deps: { streamChat, executeTool } as never });
+    expect(executeTool).toHaveBeenCalledWith("vault_stats", {}, { driveId: "d" });
+    expect(r.text).toBe("521 notes.");
+    expect(r.trail.map((e) => e.tool)).toEqual(["compat", "vault_stats"]);
+  });
+});
+
 describe("runAgentLoop citation repair", () => {
   const readNote = {
     ok: true,
@@ -595,10 +656,20 @@ describe("extractCitations / resolveCitations", () => {
     expect(r.text).toBe(" and  and  and [[n1]]");
   });
 
-  it("keeps an unseen UUID with a fallback title — still a door the user can try", () => {
-    expect(extractCitations(`[[${N1}]]`, trail)).toEqual([
-      { documentId: N1, title: N1, documentType: null },
-    ]);
+  it("collapses a marker repeated back to back — '[[a]] [[a]]' is one citation, not a stutter", () => {
+    const r = resolveCitations("Blocked by Apeiron [[n1]] [[n1]] [[n1]]. Also [[n2]] [[n1]].", trail);
+    expect(r.text).toBe("Blocked by Apeiron [[n1]]. Also [[n2]] [[n1]].");
+    expect(r.citations.map((c) => c.documentId)).toEqual(["n1", "n2"]);
+  });
+
+  it("drops a UUID no tool returned and no earlier turn cited — an id the model cannot know is invented", () => {
+    const r = resolveCitations(`Real [[n1]] and invented [[${N1}]] and (${N1}).`, trail);
+    expect(r.citations.map((c) => c.documentId)).toEqual(["n1"]);
+    expect(r.text).toBe("Real [[n1]] and invented  and .");
+    expect(r.dropped).toBe(2);
+    // The same id cited in an earlier turn is known, and kept.
+    const prior = [{ documentId: N1, title: "Known before", documentType: "bai/knowledge-note" }];
+    expect(resolveCitations(`[[${N1}]]`, trail, prior).citations).toEqual(prior);
   });
 
   it("uses earlier turns' citations for titles and by-name resolution", () => {
@@ -613,7 +684,8 @@ describe("extractCitations / resolveCitations", () => {
       `Sessions live in a cookie [1], [${P1}]. Every op passes four gates [${N1}]. ` +
       `No hooks for authorization [linked_notes]. Mapped in the [Auth Scope Enforcement] project. ` +
       `See [the docs](https://example.com) and [[n1]].`;
-    const r = resolveCitations(text, trail);
+    // N1 is known from an earlier turn; an id nothing surfaced would be dropped.
+    const r = resolveCitations(text, trail, [{ documentId: N1, title: "Four gates", documentType: "bai/knowledge-note" }]);
     expect(r.citations.map((c) => c.documentId)).toEqual([P1, N1, "n1"]);
     // The example.com link is unwrapped: no tool result produced that URL,
     // so it is the model's invention, not something the vault knows.
@@ -631,9 +703,11 @@ describe("extractCitations / resolveCitations", () => {
       [{ documentId: N1, title: "No hooks", documentType: "bai/knowledge-note" }],
     );
     expect(r.citations.map((c) => c.documentId)).toEqual([N1, P1]);
+    // A bare unknown UUID is data being discussed, not a citation: untouched.
     expect(r.text).toBe(
       `No hooks exist [[${N1}]]. Also [[${P1}]] is active. Unknown id 11111111-2222-3333-4444-555555555555 stays.`,
     );
+    expect(r.dropped).toBe(0);
   });
 
   it("does not let single brackets resolve by prefix — prose is not a citation", () => {
@@ -756,7 +830,7 @@ describe("foldSourcesSection (a model's own Sources list)", () => {
   it("ignores a Sources heading that is not followed by a list, and ordinary prose", () => {
     expect(resolveCitations("Sources:\n", trail).text).toBe("Sources:\n");
     const prose = "The sources of truth are the reactor tables.";
-    expect(resolveCitations(prose, trail)).toEqual({ text: prose, citations: [] });
+    expect(resolveCitations(prose, trail)).toEqual({ text: prose, citations: [], dropped: 0 });
   });
 });
 

@@ -8,6 +8,8 @@
  *
  *   GLM        <tool_call>read_note\n<arg_key>documentId</arg_key>\n<arg_value>…</arg_value>\n</tool_call>
  *   dots       <dots_function_call><invoke name="read_note"><parameter name="documentId">…</parameter></invoke></dots_function_call>
+ *   Qwen3      <tool_call><function=read_note><parameter=documentId>…</parameter></function></tool_call>
+ *              (Qwen3-Coder's template; local servers that do not parse it hand it to us as text)
  *
  * plus the templates other families are known for:
  *
@@ -17,7 +19,10 @@
  *   Anthropic    <function_calls><invoke name="read_note"><parameter name="documentId">…</parameter></invoke></function_calls>
  *
  * The loop turns these into real tool calls and strips them from the text,
- * so the user sees the tools run — not the template.
+ * so the user sees the tools run — not the template. Markup that looks like
+ * a call but fits no template is left in place (`hasToolCallMarkup`) so the
+ * loop can ask the model for a form it can run, and stripped as a last
+ * resort (`stripToolCallMarkup`) rather than shown to the reader.
  */
 import type { ToolCall } from "./completions-client.js";
 
@@ -29,9 +34,15 @@ export interface ParsedTextToolCalls {
 
 type RawCall = { name: string; args: Record<string, unknown> };
 
-/** XML-ish parameter values are strings; recover the types JSON would carry. */
+/**
+ * XML-ish parameter values are strings; recover the types JSON would carry.
+ * A value wrapped as `[[id]]` is a model copying our citation syntax into a
+ * tool argument — the id is what it meant.
+ */
 function coerce(raw: string): unknown {
-  const v = raw.trim();
+  let v = raw.trim();
+  const cited = /^\[\[\s*([\s\S]*?)\s*\]\]$/.exec(v);
+  if (cited) v = cited[1].trim();
   if (v === "") return "";
   if (v === "true") return true;
   if (v === "false") return false;
@@ -86,6 +97,36 @@ function fromArgKeyValue(body: string): Record<string, unknown> {
   return args;
 }
 
+/**
+ * `<function=f>BODY</function>` blocks → calls. BODY is either JSON
+ * (Llama 3) or Qwen3's `<parameter=k>v</parameter>` list; an empty body is a
+ * zero-argument call.
+ */
+function fromFunctionBlocks(body: string): RawCall[] {
+  const out: RawCall[] = [];
+  const block = /<function=([\w.-]+)>([\s\S]*?)<\/function>/g;
+  const param = /<parameter=([\w.-]+)>([\s\S]*?)<\/parameter>/g;
+  for (const m of body.matchAll(block)) {
+    const inner = m[2].trim();
+    if (/<parameter=/.test(inner)) {
+      const args: Record<string, unknown> = {};
+      for (const p of inner.matchAll(param)) args[p[1].trim()] = coerce(p[2]);
+      out.push({ name: m[1], args });
+      continue;
+    }
+    if (inner === "") {
+      out.push({ name: m[1], args: {} });
+      continue;
+    }
+    try {
+      out.push({ name: m[1], args: argsObject(JSON.parse(inner)) });
+    } catch {
+      out.push({ name: m[1], args: {} });
+    }
+  }
+  return out;
+}
+
 /** `<invoke name="f"><parameter name="k">v</parameter>…</invoke>` → calls. */
 function fromInvokes(body: string): RawCall[] {
   const out: RawCall[] = [];
@@ -106,7 +147,8 @@ type Template = {
 };
 
 const TEMPLATES: Template[] = [
-  // <tool_call>…</tool_call> — GLM arg_key/arg_value, or Hermes/Qwen JSON.
+  // <tool_call>…</tool_call> — GLM arg_key/arg_value, Qwen3 <function=…>
+  // blocks, an <invoke>, or Hermes/Qwen JSON.
   {
     re: /<tool_call>([\s\S]*?)<\/tool_call>/g,
     extract: (m) => {
@@ -115,6 +157,8 @@ const TEMPLATES: Template[] = [
         const name = body.split(/\s|</, 1)[0]?.trim();
         return name ? [{ name, args: fromArgKeyValue(body) }] : [];
       }
+      if (/<function=/.test(body)) return fromFunctionBlocks(body);
+      if (/<invoke\s/.test(body)) return fromInvokes(body);
       // A bare tool name is a call with no arguments (GLM, zero-arg tool).
       if (/^[\w.-]+$/.test(body)) return [{ name: body, args: {} }];
       try {
@@ -134,16 +178,11 @@ const TEMPLATES: Template[] = [
     re: /<invoke\s+name\s*=\s*["'][^"']+["']\s*>[\s\S]*?<\/invoke>/g,
     extract: (m) => fromInvokes(m[0]),
   },
-  // Llama 3: <function=name>{json}</function>
+  // Llama 3 <function=name>{json}</function>, or Qwen3's bare
+  // <function=name><parameter=k>v</parameter></function>.
   {
     re: /<function=([\w.-]+)>([\s\S]*?)<\/function>/g,
-    extract: (m) => {
-      try {
-        return [{ name: m[1], args: argsObject(JSON.parse(m[2])) }];
-      } catch {
-        return [{ name: m[1], args: {} }];
-      }
-    },
+    extract: (m) => fromFunctionBlocks(m[0]),
   },
   // Mistral: [TOOL_CALLS][{…},{…}]
   {
@@ -161,16 +200,42 @@ const TEMPLATES: Template[] = [
   },
 ];
 
+const MARKUP_RE = /<tool_call>|<invoke\s|<function=|\[TOOL_CALLS\]|function_calls?>/;
+
+/** True when the text carries something shaped like a tool call. */
+export function hasToolCallMarkup(text: string): boolean {
+  return MARKUP_RE.test(text);
+}
+
+/**
+ * Remove every tool-call-shaped block, recognised or not — the last resort
+ * when the model keeps writing calls the templates cannot read. The reader
+ * gets the prose, not the template.
+ */
+export function stripToolCallMarkup(text: string): string {
+  return text
+    .replace(/<tool_call>[\s\S]*?<\/tool_call>/g, "")
+    .replace(/<(\w*function_calls?)>[\s\S]*?<\/\1>/g, "")
+    .replace(/<invoke\s[\s\S]*?<\/invoke>/g, "")
+    .replace(/<function=[\s\S]*?<\/function>/g, "")
+    .replace(/\[TOOL_CALLS\][^\n]*/g, "")
+    .replace(/\n{3,}/g, "\n\n")
+    .trim();
+}
+
 /**
  * Find every tool call written into `text`, in the order they appear, and
  * return them as the structured calls the loop already knows how to run,
- * with the text they occupied removed. `idPrefix` keeps ids unique per round.
+ * with the text they occupied removed. Markup a template matches but cannot
+ * turn into a call is left in the text, so the caller can tell "nothing to
+ * run" from "something we could not read". `idPrefix` keeps ids unique per
+ * round.
  */
 export function parseTextToolCalls(
   text: string,
   idPrefix = "text",
 ): ParsedTextToolCalls {
-  if (!/<tool_call>|<invoke\s|<function=|\[TOOL_CALLS\]|function_calls?>/.test(text)) {
+  if (!hasToolCallMarkup(text)) {
     return { text, calls: [] };
   }
   const found: { at: number; call: RawCall }[] = [];
@@ -179,7 +244,9 @@ export function parseTextToolCalls(
     remaining = remaining.replace(t.re, (whole: string, ...rest: unknown[]) => {
       const offset = rest[rest.length - 2] as number;
       const m = [whole, ...rest.slice(0, -2)] as unknown as RegExpMatchArray;
-      for (const call of t.extract(m)) found.push({ at: offset, call });
+      const calls = t.extract(m);
+      if (calls.length === 0) return whole;
+      for (const call of calls) found.push({ at: offset, call });
       return "";
     });
   }
