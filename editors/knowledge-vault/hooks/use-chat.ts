@@ -56,6 +56,35 @@ const ANSWER_NOW_RETRY =
   "That reply contained tool calls written as text; they were not run and were removed. " +
   "Answer in prose now, from the results above, with [[documentId]] citations.";
 
+/**
+ * The one nudge a final answer gets when it was built on documents the tools
+ * surfaced yet cites none of them. A model that reads three notes and then
+ * answers in fluent prose drops the markers more often than it keeps them;
+ * a single repair round with the ids spelled out fixes most of those. One is
+ * the cap — a second miss is shown as written, and the documents it read are
+ * still listed under the answer as consulted.
+ */
+export const CITE_NOW = (documents: string): string =>
+  "Your answer draws on documents you read this turn but cites none of them. " +
+  "Rewrite the same answer with a [[documentId]] marker directly after each claim it supports — keep the content, add nothing new, call no tools. " +
+  "If the vault did not answer the question, keep saying so and cite the closest documents as leads. The documents you read:\n" +
+  documents;
+
+/** How many surfaced documents the repair nudge lists by id. */
+const CITE_NOW_MAX_DOCUMENTS = 12;
+
+/**
+ * True when an answer should be sent back for citations: at least one tool
+ * result named a document (so there is something to cite) and the text
+ * resolves to no citation at all — not a `[[…]]`, not a bracketed title,
+ * not a Sources section.
+ */
+export function needsCitationRepair(text: string, trail: TrailEntry[]): boolean {
+  if (!text.trim()) return false;
+  if (collectKnownDocuments(trail).size === 0) return false;
+  return resolveCitations(text, trail).citations.length === 0;
+}
+
 export interface TrailEntry {
   tool: string;
   summary: string;
@@ -119,6 +148,11 @@ export async function runAgentLoop(o: LoopOptions): Promise<LoopResult> {
   let routed = false;
 
   let retriedForcedAnswer = false;
+  // The citation repair round: the uncited draft is kept so an empty rewrite
+  // falls back to it rather than to an empty bubble, and it happens once.
+  let uncitedDraft: string | null = null;
+  let repairedCitations = false;
+  let toolsOffNextRound = false;
 
   for (;;) {
     iterations++;
@@ -127,13 +161,17 @@ export async function runAgentLoop(o: LoopOptions): Promise<LoopResult> {
     if (forceAnswer && iterations === MAX_ITERATIONS + 1) {
       messages.push({ role: "system", content: ANSWER_NOW });
     }
+    // Tools are withheld when the budget is spent and during a repair round,
+    // which only rewrites what the model already said.
+    const toolsOff = forceAnswer || toolsOffNextRound;
+    toolsOffNextRound = false;
     const result = await deps.streamChat({
       key: o.key,
       model: o.model,
       fallbackModels: o.fallbackModels,
       messages,
       tools: VAULT_TOOLS,
-      toolChoice: forceAnswer ? "none" : "auto",
+      toolChoice: toolsOff ? "none" : "auto",
       signal: o.signal,
       onText: o.onText,
     });
@@ -163,7 +201,7 @@ export async function runAgentLoop(o: LoopOptions): Promise<LoopResult> {
       const parsed = parseTextToolCalls(result.text, `text-${iterations}`);
       if (parsed.calls.length > 0) {
         text = parsed.text;
-        if (!forceAnswer) {
+        if (!toolsOff) {
           toolCalls = parsed.calls;
           const entry: TrailEntry = {
             tool: "compat",
@@ -177,8 +215,11 @@ export async function runAgentLoop(o: LoopOptions): Promise<LoopResult> {
       }
     }
 
-    const wantsTools = !forceAnswer && toolCalls.length > 0;
+    const wantsTools = !toolsOff && toolCalls.length > 0;
     if (!wantsTools) {
+      // A repair round that came back empty keeps the uncited draft: an
+      // answer without markers beats no answer.
+      if (uncitedDraft !== null && !text.trim()) text = uncitedDraft;
       // A forced answer that was nothing but stripped tool calls gets one
       // more chance, with the reason spelled out; after that the user gets
       // an honest note instead of an empty bubble.
@@ -199,6 +240,32 @@ export async function runAgentLoop(o: LoopOptions): Promise<LoopResult> {
         o.onTrail?.(entry);
         text =
           "The model kept trying to read more instead of answering. The documents it read are listed below — try asking again, or pick another model.";
+      }
+      // An answer that used the tools but cites nothing goes back once, with
+      // the ids it could have cited — see `CITE_NOW`.
+      if (!repairedCitations && needsCitationRepair(text, trail)) {
+        repairedCitations = true;
+        uncitedDraft = text;
+        const known = [...collectKnownDocuments(trail).values()];
+        const entry: TrailEntry = {
+          tool: "compat",
+          summary: "answer cited none of the documents it read — asked once for a cited rewrite",
+          ok: true,
+          data: { documents: known.length },
+        };
+        trail.push(entry);
+        o.onTrail?.(entry);
+        const list = known
+          .slice(0, CITE_NOW_MAX_DOCUMENTS)
+          .map(
+            (d) =>
+              `- [[${d.documentId}]] ${d.title}${d.documentType ? ` (${d.documentType})` : ""}`,
+          )
+          .join("\n");
+        messages.push({ role: "assistant", content: text });
+        messages.push({ role: "system", content: CITE_NOW(list) });
+        toolsOffNextRound = true;
+        continue;
       }
       return { text, trail, iterations, answeredBy };
     }

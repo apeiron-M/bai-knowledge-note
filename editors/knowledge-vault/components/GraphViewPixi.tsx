@@ -97,6 +97,9 @@ const STATUS_COLOR_NUM: Record<string, number> = {
   IN_REVIEW: 0x3b82f6,
   CANONICAL: 0x10b981,
   ARCHIVED: 0x6b7280,
+  // Sentinel statuses of the indexed execution documents.
+  SCOPE: 0xf472b6,
+  WBS: 0x14b8a6,
 };
 
 const LINK_TYPE_COLOR_HEX: Record<string, string> = {
@@ -105,6 +108,8 @@ const LINK_TYPE_COLOR_HEX: Record<string, string> = {
   CONTRADICTS: "#ef4444",
   SUPERSEDES: "#a855f7",
   DERIVED_FROM: "#f59e0b",
+  CITES: "#f472b6",
+  DELIVERED_BY: "#14b8a6",
 };
 
 const LINK_TYPE_COLOR_NUM: Record<string, number> = {
@@ -113,6 +118,8 @@ const LINK_TYPE_COLOR_NUM: Record<string, number> = {
   CONTRADICTS: 0xef4444,
   SUPERSEDES: 0xa855f7,
   DERIVED_FROM: 0xf59e0b,
+  CITES: 0xf472b6,
+  DELIVERED_BY: 0x14b8a6,
 };
 
 const MOC_COLOR_HEX = "#cba6f7";

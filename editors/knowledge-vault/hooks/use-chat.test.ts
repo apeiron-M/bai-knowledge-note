@@ -5,6 +5,7 @@ import {
   MAX_ITERATIONS,
   consultedDocuments,
   extractCitations,
+  needsCitationRepair,
   resolveCitations,
   runAgentLoop,
   type TrailEntry,
@@ -320,6 +321,114 @@ describe("runAgentLoop", () => {
       deps: { streamChat, executeTool: vi.fn() } as never,
     });
     expect(seen).toEqual(["a", "b"]);
+  });
+});
+
+describe("runAgentLoop citation repair", () => {
+  const readNote = {
+    ok: true,
+    data: { documentId: "n1", title: "Operation store", documentType: "bai/knowledge-note", content: "…" },
+    summary: 'read "Operation store"',
+  };
+  const round = (text: string, toolCalls: unknown[] = []) => ({
+    text,
+    toolCalls,
+    finishReason: toolCalls.length ? "tool_calls" : "stop",
+  });
+
+  it("asks once for a cited rewrite when an answer built on tool reads cites nothing", async () => {
+    const streamChat = vi
+      .fn()
+      .mockResolvedValueOnce(round("", [tc("read_note", '{"documentId":"n1"}')]))
+      .mockResolvedValueOnce(round("The reactor stores operations in PGlite."))
+      .mockResolvedValueOnce(round("The reactor stores operations in PGlite [[n1]]."));
+    const executeTool = vi.fn().mockResolvedValue(readNote);
+    const trail: TrailEntry[] = [];
+
+    const r = await runAgentLoop({
+      ...base,
+      messages: [{ role: "user", content: "where are operations stored?" }],
+      onTrail: (e) => trail.push(e),
+      deps: { streamChat, executeTool } as never,
+    });
+
+    expect(r.text).toBe("The reactor stores operations in PGlite [[n1]].");
+    expect(r.iterations).toBe(3);
+    expect(streamChat).toHaveBeenCalledTimes(3);
+    // The repair round only rewrites: no tools, and the ids spelled out.
+    const repair = streamChat.mock.calls[2][0] as {
+      toolChoice: string;
+      messages: { role: string; content: string }[];
+    };
+    expect(repair.toolChoice).toBe("none");
+    expect(repair.messages.at(-2)).toEqual({
+      role: "assistant",
+      content: "The reactor stores operations in PGlite.",
+    });
+    expect(repair.messages.at(-1)?.role).toBe("system");
+    expect(repair.messages.at(-1)?.content).toContain("cites none of them");
+    expect(repair.messages.at(-1)?.content).toContain("- [[n1]] Operation store (bai/knowledge-note)");
+    // The intervention is visible in the trail, like every other harness move.
+    expect(trail.map((e) => e.tool)).toEqual(["read_note", "compat"]);
+    expect(trail[1]).toMatchObject({ ok: true, data: { documents: 1 } });
+    expect(trail[1].summary).toContain("cited rewrite");
+  });
+
+  it("leaves an answer that already cites what it read alone", async () => {
+    const streamChat = vi
+      .fn()
+      .mockResolvedValueOnce(round("", [tc("read_note", '{"documentId":"n1"}')]))
+      .mockResolvedValueOnce(round("Operations live in PGlite [[n1]]."));
+    const r = await runAgentLoop({
+      ...base,
+      messages: [{ role: "user", content: "q" }],
+      deps: { streamChat, executeTool: vi.fn().mockResolvedValue(readNote) } as never,
+    });
+    expect(r.text).toBe("Operations live in PGlite [[n1]].");
+    expect(streamChat).toHaveBeenCalledTimes(2);
+    expect(r.trail.map((e) => e.tool)).toEqual(["read_note"]);
+  });
+
+  it("does not ask when no tool surfaced a document to cite", async () => {
+    const streamChat = vi
+      .fn()
+      .mockResolvedValueOnce(round("", [tc("vault_stats", "{}")]))
+      .mockResolvedValueOnce(round("The vault holds 521 notes."));
+    const r = await runAgentLoop({
+      ...base,
+      messages: [{ role: "user", content: "how big?" }],
+      deps: {
+        streamChat,
+        executeTool: vi.fn().mockResolvedValue({ ok: true, data: { noteCount: 521 }, summary: "vault: 521 notes" }),
+      } as never,
+    });
+    expect(r.text).toBe("The vault holds 521 notes.");
+    expect(streamChat).toHaveBeenCalledTimes(2);
+  });
+
+  it("asks only once, and keeps the uncited draft when the rewrite comes back empty", async () => {
+    const streamChat = vi
+      .fn()
+      .mockResolvedValueOnce(round("", [tc("read_note", '{"documentId":"n1"}')]))
+      .mockResolvedValueOnce(round("Uncited but useful."))
+      .mockResolvedValueOnce(round(""));
+    const r = await runAgentLoop({
+      ...base,
+      messages: [{ role: "user", content: "q" }],
+      deps: { streamChat, executeTool: vi.fn().mockResolvedValue(readNote) } as never,
+    });
+    expect(r.text).toBe("Uncited but useful.");
+    expect(streamChat).toHaveBeenCalledTimes(3);
+  });
+
+  it("needsCitationRepair recognises bracketed titles and Sources sections as citations", () => {
+    const trail: TrailEntry[] = [{ tool: "read_note", ok: true, summary: "", data: readNote.data }];
+    expect(needsCitationRepair("Plain prose.", trail)).toBe(true);
+    expect(needsCitationRepair("Prose [[n1]].", trail)).toBe(false);
+    expect(needsCitationRepair("Prose [Operation store].", trail)).toBe(false);
+    expect(needsCitationRepair("Prose.\n\nSources:\n- Operation store", trail)).toBe(false);
+    expect(needsCitationRepair("", trail)).toBe(false);
+    expect(needsCitationRepair("Plain prose.", [])).toBe(false);
   });
 });
 

@@ -148,6 +148,8 @@ export interface GraphStatsResult {
   tensionCount: number;
   openTensionCount: number;
   observationCount: number;
+  scopeCount: number;
+  wbsCount: number;
   /**
    * Knowledge edges that carry a `reason` — the articulation test, in data.
    * Divide by `edgeCount` for coverage; the health check reports the gap.
@@ -398,6 +400,8 @@ export function createGraphQuery(db: Kysely<DB>) {
           byKind.find((r) => r.kind === "bai/tension")?.open_cnt ?? 0,
         ),
         observationCount: count("bai/observation"),
+        scopeCount: count("powerhouse/scopeofwork"),
+        wbsCount: count("bai/wbs"),
         articulatedEdgeCount: Number(edgeCountResult.articulated),
       };
     },

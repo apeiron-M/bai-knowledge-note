@@ -27,7 +27,11 @@ import {
 import { fetchDocumentState } from "../../../shared/document-state.js";
 import type { WorkBreakdownStructureState } from "document-models/work-breakdown-structure";
 import type { ToolSchema } from "./openrouter-client.js";
-import { renderScope, renderWbs } from "./project-view.js";
+import {
+  renderScope,
+  renderWbs,
+  rollupDeliverables,
+} from "../../../../processors/graph-indexer/work-outline.js";
 import type { ScopeOfWorkState } from "document-models/scope-of-work";
 
 export type ToolResult =
@@ -85,7 +89,7 @@ export const VAULT_TOOLS: ToolSchema[] = [
     function: {
       name: "search_vault",
       description:
-        "Default entry point. Semantic + keyword search over the vault's knowledge notes and maps of content. Pass the user's question or a short phrase as-is. Returns ranked hits with a 0–1 similarity; use read_note on the promising ones for their full text. Does NOT search sources — use list_documents for those. ARCHIVED notes — claims the vault no longer holds as current — are excluded unless includeArchived is true; set it only when the user asks what the vault USED to say.",
+        "Default entry point. Semantic + keyword search over the vault's knowledge notes, maps of content, tensions, observations, scopes of work and work breakdowns. Pass the user's question or a short phrase as-is. Returns ranked hits with a 0–1 similarity; use read_note on the promising notes for their full text, and read_document on a hit whose status is SCOPE or WBS (a project or goal tree — its real state is in noteType). Does NOT search sources — use list_documents for those. ARCHIVED notes — claims the vault no longer holds as current — are excluded unless includeArchived is true; set it only when the user asks what the vault USED to say.",
       parameters: {
         type: "object",
         properties: {
@@ -213,11 +217,15 @@ export const VAULT_TOOLS: ToolSchema[] = [
     type: "function",
     function: {
       name: "list_documents",
-      description: `List documents of one type with their documentId and title. The graph tools only cover knowledge notes and maps of content; everything else — especially bai/source, the long-form material notes were extracted from — is reached through this tool and then read_document. Every documentId returned is citable as [[documentId]]. Valid types: ${DOCUMENT_TYPES.join(", ")}.`,
+      description: `List documents of one type with their documentId and title. The graph index does not cover sources, so bai/source — the long-form material notes were extracted from — is reached through this tool and then read_document; the same goes for the health report, the pipeline queue and the vault config. Pass nameContains to find a document by title, e.g. a source the user could open when the notes do not answer. Every documentId returned is citable as [[documentId]]. Valid types: ${DOCUMENT_TYPES.join(", ")}.`,
       parameters: {
         type: "object",
         properties: {
           documentType: { type: "string", enum: [...DOCUMENT_TYPES] },
+          nameContains: {
+            type: "string",
+            description: `Keep only documents whose title contains this text (case-insensitive). Scans the first ${LIMITS.documents.max} documents of the type; the result says how many were scanned.`,
+          },
           limit: {
             type: "integer",
             description: `Documents to return (default ${LIMITS.documents.default}, max ${LIMITS.documents.max}).`,
@@ -232,7 +240,7 @@ export const VAULT_TOOLS: ToolSchema[] = [
     function: {
       name: "list_projects",
       description:
-        "Every project in the vault. Projects are envelopes inside scope-of-work documents (powerhouse/scopeofwork): each row gives the scope's documentId (what you cite), the envelope's id/code/title, its set status, owner, deliverable progress, cited-knowledge count and its work breakdown's documentId. Start here for any question about projects, deliverables, goals or who is working on what; then read_document the documentId for the full outline. Cite as [[documentId]] — the UUID, never a name.",
+        "Every project in the vault. Projects are envelopes inside scope-of-work documents (powerhouse/scopeofwork): each row is one envelope — its documentId and title are the SCOPE's (the documentId is what you cite), and `envelope` holds the project's own id, code, title, set status and owner — with deliverable progress (delivered/total and %), budget (type, currency, stored budget, fixed target if any, Σ quoted lines), cited-knowledge count and its work breakdown as a citable {documentId, title}. Start here for any question about projects, deliverables, goals or who is working on what; then read_document the documentId for the full outline. Cite as [[documentId]] — the UUID, never a name.",
       parameters: { type: "object", properties: {} },
     },
   },
@@ -241,7 +249,7 @@ export const VAULT_TOOLS: ToolSchema[] = [
     function: {
       name: "read_document",
       description:
-        "Read any document by documentId. For a powerhouse/scopeofwork this returns the whole scope — status, every envelope (code, title, owner, budget, references, cited knowledge, linked WBS), every deliverable with its status and the goal that delivers it, roadmaps and milestones, contributors. For a bai/wbs it returns the goal tree. For everything else (notably bai/source) it returns metadata plus an 8,000-character window of the main text starting at offset; when hasMore is true, call again with nextOffset. A source's metadata includes extractedClaims — ids of notes derived from it — which you can read_note. The reverse is not available: a note does not record its source. Every result carries the documentId you cite it by.",
+        "Read any document by documentId. For a powerhouse/scopeofwork this returns the whole scope as one outline (text) plus structured data: status, every envelope (code, title, owner, set status and progress, budget type/currency, fixed or quote-derived budget, spend, references, cited knowledge with titles, linked WBS and its goal progress), every deliverable with status, owner, progress, quote (quantity × unit cost, margin), milestone and the WBS goal that delivers it, the deliverables no envelope funds, roadmaps and milestones (date, status, coordinators, budget, deliverables), and contributors. For a bai/wbs it returns the goal tree with block reasons, outcomes and notes. For everything else (notably bai/source) it returns metadata plus an 8,000-character window of the main text starting at offset; when hasMore is true, call again with nextOffset. A source's metadata includes extractedClaims — ids of notes derived from it — which you can read_note. The reverse is not available: a note does not record its source. Every result carries the documentId you cite it by.",
       parameters: {
         type: "object",
         properties: {
@@ -633,6 +641,8 @@ export async function executeTool(
           tensionCount: number;
           openTensionCount: number;
           observationCount: number;
+          scopeCount: number;
+          wbsCount: number;
           edgeCount: number;
           orphanCount: number;
         };
@@ -642,7 +652,7 @@ export async function executeTool(
         `query V($driveId: ID!) {
           knowledgeGraphStats(driveId: $driveId) {
             nodeCount noteCount mocCount claimCount tensionCount openTensionCount observationCount
-            edgeCount orphanCount
+            scopeCount wbsCount edgeCount orphanCount
           }
           knowledgeGraphDensity(driveId: $driveId)
         }`,
@@ -652,7 +662,7 @@ export async function executeTool(
       const s = r.data.knowledgeGraphStats;
       return ok(
         { ...s, density: r.data.knowledgeGraphDensity },
-        `vault: ${s.noteCount} notes, ${s.mocCount} maps, ${s.edgeCount} links, ${s.orphanCount} orphans, ${s.openTensionCount} open tension${s.openTensionCount === 1 ? "" : "s"}`,
+        `vault: ${s.noteCount} notes, ${s.mocCount} maps, ${s.scopeCount} scope${s.scopeCount === 1 ? "" : "s"} of work, ${s.edgeCount} links, ${s.orphanCount} orphans, ${s.openTensionCount} open tension${s.openTensionCount === 1 ? "" : "s"}`,
       );
     }
 
@@ -669,6 +679,10 @@ export async function executeTool(
         LIMITS.documents.default,
         LIMITS.documents.max,
       );
+      // The reactor's findDocuments has no title filter, so a name match is
+      // applied here over the largest page it will serve. Honest about the
+      // window: `scanned` says how many titles were actually looked at.
+      const nameContains = str(args, "nameContains")?.toLowerCase() ?? null;
       const r = await gql<{
         findDocuments: {
           totalCount: number;
@@ -685,18 +699,27 @@ export async function executeTool(
             totalCount items { id name documentType }
           }
         }`,
-        { type, limit },
+        { type, limit: nameContains ? LIMITS.documents.max : limit },
       );
       if ("error" in r) return fail(r.error);
       const { totalCount, items } = r.data.findDocuments;
+      const matching = nameContains
+        ? items.filter((d) => (d.name ?? "").toLowerCase().includes(nameContains))
+        : items;
       // Same citation contract as every other tool: documentId + title (+
       // documentType), so [[documentId]] works for a source or a tension
       // exactly as it does for a note.
-      const listed = items.map((d) => ({
+      const listed = matching.slice(0, limit).map((d) => ({
         documentId: d.id,
         title: d.name ?? d.id,
         documentType: d.documentType ?? type,
       }));
+      if (nameContains) {
+        return ok(
+          { total: totalCount, scanned: items.length, matched: matching.length, items: listed },
+          `listed ${listed.length} of ${matching.length} ${type} whose title contains "${nameContains}" (scanned ${items.length} of ${totalCount})`,
+        );
+      }
       return ok(
         { total: totalCount, items: listed },
         `listed ${listed.length} of ${totalCount} ${type}`,
@@ -728,23 +751,31 @@ export async function executeTool(
           for (const env of g.projects) {
             const ids = new Set(env.scope?.deliverables ?? []);
             const ds = g.deliverables.filter((d) => ids.has(d.id));
+            // `documentId` + `title` name the SCOPE: that pair is what the
+            // citation harvester registers, and a chip for [[scopeId]] must
+            // read as the scope, not as whichever envelope was listed first.
             envelopeRows.push({
               documentId: item.id,
               documentType: "powerhouse/scopeofwork",
-              scopeTitle: g.title || item.name || item.id,
-              envelopeId: env.id,
-              code: env.code,
-              title: env.title,
-              status: env.scope?.status ?? "DRAFT",
-              owner: env.projectOwner ? (agentName.get(env.projectOwner) ?? env.projectOwner) : null,
-              budget: env.budget ?? null,
-              currency: env.currency ?? null,
-              deliverables: {
-                delivered: ds.filter((d) => d.status === "DELIVERED").length,
-                total: ds.length,
+              title: g.title || item.name || item.id,
+              envelope: {
+                id: env.id,
+                code: env.code,
+                title: env.title,
+                status: env.scope?.status ?? "DRAFT",
+                owner: env.projectOwner ? (agentName.get(env.projectOwner) ?? env.projectOwner) : null,
+              },
+              progress: rollupDeliverables(ds),
+              budget: {
+                type: env.budgetType ?? null,
+                currency: env.currency ?? null,
+                budget: env.budget ?? null,
+                targetBudget: env.targetBudget ?? null,
               },
               knowledgeRefs: envelopeRefs(env).length,
-              wbs: env.wbsRef ? { documentId: env.wbsRef, documentType: "bai/wbs" } : null,
+              wbs: env.wbsRef
+                ? { documentId: env.wbsRef, documentType: "bai/wbs", title: `Work breakdown for ${env.title}` }
+                : null,
             });
           }
         }

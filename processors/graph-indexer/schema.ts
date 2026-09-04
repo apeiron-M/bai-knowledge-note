@@ -12,7 +12,8 @@ export interface GraphNode {
   updated_at: string;
   /**
    * The document's type — `bai/knowledge-note`, `bai/moc`, `bai/tension`,
-   * `bai/observation`, `bai/research-claim`. Nullable only because rows
+   * `bai/observation`, `bai/research-claim`, `powerhouse/scopeofwork`,
+   * `bai/wbs` (see `project.ts`). Nullable only because rows
    * written before the column existed are backfilled by the migration from
    * the MoC status sentinel; the processor always sets it.
    */

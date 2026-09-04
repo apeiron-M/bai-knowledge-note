@@ -459,17 +459,17 @@ describe("scope of work envelopes", () => {
     const d = r.data as { total: number; scopes: number; projects: Record<string, unknown>[] };
     expect(d.scopes).toBe(1);
     expect(d.total).toBe(1);
+    // documentId + title name the SCOPE (what the citation chip shows and
+    // opens); the envelope's own identity is nested.
     expect(d.projects[0]).toMatchObject({
       documentId: "s1",
       documentType: "powerhouse/scopeofwork",
-      envelopeId: "env1",
-      code: "PPD",
-      title: "Paperless demo",
-      owner: "Frank",
-      status: "IN_PROGRESS",
-      deliverables: { delivered: 1, total: 2 },
+      title: "Powerhouse PMF",
+      envelope: { id: "env1", code: "PPD", title: "Paperless demo", owner: "Frank", status: "IN_PROGRESS" },
+      progress: { delivered: 1, total: 2, pct: 50 },
+      budget: { type: "OPEX", currency: "USD", budget: 0, targetBudget: null },
       knowledgeRefs: 1,
-      wbs: { documentId: "w9", documentType: "bai/wbs" },
+      wbs: { documentId: "w9", documentType: "bai/wbs", title: "Work breakdown for Paperless demo" },
     });
     expect(r.summary).toBe("listed 1 envelope across 1 scope");
   });
@@ -483,7 +483,12 @@ describe("scope of work envelopes", () => {
     const r = await executeTool("read_document", { documentId: "s1" }, CTX);
     expect(r.ok).toBe(true);
     if (!r.ok) throw new Error(r.error);
-    const d = r.data as { text: string; envelopes: { code: string; goals: { completed: number; total: number } | null; deliverables: { goal: string | null }[] }[]; deliverables: { delivered: number; total: number } };
+    const d = r.data as {
+      text: string;
+      envelopes: { code: string; goals: { completed: number; total: number } | null; deliverables: { goal: string | null }[]; wbs: unknown }[];
+      unfundedDeliverables: unknown[];
+      deliverables: { delivered: number; total: number };
+    };
     expect(d.text.split("\n")[0]).toBe("# Scope of work: Powerhouse PMF — DRAFT [[s1]]");
     expect(d.text).toContain("### PPD · Paperless demo — owner Frank (IN_PROGRESS)");
     expect(d.text).toContain("[DELIVERED] PPD-01 Configured instance — goal: Step 1 (COMPLETED)");
@@ -492,6 +497,17 @@ describe("scope of work envelopes", () => {
     expect(d.envelopes[0]?.goals).toEqual({ completed: 1, total: 2, byStatus: { COMPLETED: 1, TODO: 1 } });
     expect(d.envelopes[0]?.deliverables.map((x) => x.goal)).toEqual(["Step 1", "Step 5"]);
     expect(d.deliverables).toEqual({ delivered: 1, total: 2 });
+    // The whole scope in one read: schedule and people too, and the WBS as a
+    // citable object so a [[w9]] marker resolves to a titled chip.
+    expect(d.text).toContain("## Schedule");
+    expect(d.text).toContain("- M1 Demo ready — 2026-08-28 (DRAFT); 1/2 delivered · 50%; coordinators Frank");
+    expect(d.text).toContain("- Frank (a-frank)");
+    expect(d.envelopes[0]?.wbs).toEqual({
+      documentId: "w9",
+      documentType: "bai/wbs",
+      title: "Work breakdown for Paperless demo",
+    });
+    expect(d.unfundedDeliverables).toEqual([]);
     expect(r.summary).toContain("1 envelopes, 1/2 delivered");
   });
 
@@ -509,5 +525,54 @@ describe("scope of work envelopes", () => {
     expect(d.text).toContain("[COMPLETED] Step 1");
     expect(d.goalCount).toBe(2);
     expect(r.summary).toContain('for "Paperless demo"');
+  });
+});
+
+describe("list_documents nameContains", () => {
+  const CTX = { driveId: "d1" };
+  const page = {
+    data: {
+      findDocuments: {
+        totalCount: 3,
+        items: [
+          { id: "s1", name: "Swarm Protocol Reference", documentType: "bai/source" },
+          { id: "s2", name: "Book of Powerhouse — overview", documentType: "bai/source" },
+          { id: "s3", name: "How Connect Swarm Integration Works", documentType: "bai/source" },
+        ],
+      },
+    },
+  };
+
+  it("filters by title over the largest page and says how much it scanned", async () => {
+    mockGqlSequence(page);
+    const r = await executeTool("list_documents", { documentType: "bai/source", nameContains: "swarm" }, CTX);
+    expect(r.ok).toBe(true);
+    if (!r.ok) throw new Error(r.error);
+    expect(requestAt(0).body.variables).toEqual({ type: "bai/source", limit: 100 });
+    expect(r.data).toEqual({
+      total: 3,
+      scanned: 3,
+      matched: 2,
+      items: [
+        { documentId: "s1", title: "Swarm Protocol Reference", documentType: "bai/source" },
+        { documentId: "s3", title: "How Connect Swarm Integration Works", documentType: "bai/source" },
+      ],
+    });
+    expect(r.summary).toBe('listed 2 of 2 bai/source whose title contains "swarm" (scanned 3 of 3)');
+  });
+
+  it("still honours limit on the filtered list and behaves as before without a filter", async () => {
+    mockGqlSequence(page);
+    const filtered = await executeTool("list_documents", { documentType: "bai/source", nameContains: "swarm", limit: 1 }, CTX);
+    if (!filtered.ok) throw new Error(filtered.error);
+    expect((filtered.data as { items: unknown[] }).items).toHaveLength(1);
+
+    mockGqlSequence(page);
+    const plain = await executeTool("list_documents", { documentType: "bai/source", limit: 2 }, CTX);
+    if (!plain.ok) throw new Error(plain.error);
+    expect(requestAt(0).body.variables).toEqual({ type: "bai/source", limit: 2 });
+    expect(plain.data).not.toHaveProperty("matched");
+    // The mock ignores paging, so the page holds 3; the tool still trims to the limit.
+    expect(plain.summary).toBe("listed 2 of 3 bai/source");
   });
 });

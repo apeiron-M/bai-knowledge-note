@@ -1,17 +1,18 @@
 /**
- * Tensions, observations and research claims are indexed alongside notes and
- * MoCs — as searchable nodes, with derived edges to what they are about —
- * without being counted as knowledge.
+ * Tensions, observations, research claims, scopes of work and work
+ * breakdowns are indexed alongside notes and MoCs — as searchable nodes,
+ * with derived edges to what they are about — without being counted as
+ * knowledge.
  *
  * The contract these tests pin:
  *
  *   - `projectNode` maps every indexed kind to one row shape, and the two
  *     write paths (live processor, reindex) share it.
- *   - Derived edges (`INVOLVES`, `PROMOTED_TO`) are reconciled from state and
- *     show up in backlinks / forward links / the edge list, but NOT in
- *     `edgeCount`, `density` or the orphan predicate.
- *   - Tensions and observations are never orphans; notes, MoCs and research
- *     claims still are when nothing links to them.
+ *   - Derived edges (`INVOLVES`, `PROMOTED_TO`, `CITES`, `DELIVERED_BY`) are
+ *     reconciled from state and show up in backlinks / forward links / the
+ *     edge list, but NOT in `edgeCount`, `density` or the orphan predicate.
+ *   - Tensions, observations, scopes and work breakdowns are never orphans;
+ *     notes, MoCs and research claims still are when nothing links to them.
  *   - `stats()` reports per-kind counts, and `nodeCount` stays the total.
  *   - The migration backfills `document_type` on rows that predate it.
  *   - The processor stores the signer's did:key and signature tuple per op.
@@ -122,13 +123,15 @@ describe("link-type sets", () => {
 });
 
 describe("document kinds", () => {
-  it("five kinds are indexed; three are knowledge", () => {
+  it("seven kinds are indexed; three are knowledge", () => {
     expect([...INDEXED_DOCUMENT_TYPES]).toEqual([
       "bai/knowledge-note",
       "bai/moc",
       "bai/research-claim",
       "bai/tension",
       "bai/observation",
+      "powerhouse/scopeofwork",
+      "bai/wbs",
     ]);
     expect([...KNOWLEDGE_NODE_TYPES]).toEqual([
       "bai/knowledge-note",
@@ -139,9 +142,42 @@ describe("document kinds", () => {
     expect(isIndexedDocumentType("powerhouse/document-drive")).toBe(false);
     expect(isKnowledgeNodeType("bai/tension")).toBe(false);
     expect(isKnowledgeNodeType("bai/observation")).toBe(false);
+    expect(isKnowledgeNodeType("powerhouse/scopeofwork")).toBe(false);
+    expect(isKnowledgeNodeType("bai/wbs")).toBe(false);
     expect(isKnowledgeNodeType(null)).toBe(false);
   });
 });
+
+/** A scope of work as the reducer stores it: two envelopes sharing a WBS and a note. */
+const SCOPE_STATE = {
+  title: "Powerhouse PMF",
+  description: "Scoping approaches",
+  status: "IN_PROGRESS",
+  contributors: [{ id: "a1", name: "Frank", icon: null, description: null }],
+  projects: [
+    {
+      id: "e1", slug: "ppd", code: "PPD", title: "Paperless demo", projectOwner: "a1",
+      abstract: "First demo", imageUrl: null,
+      scope: { deliverables: ["d1"], status: "IN_PROGRESS", progress: { value: 50, total: null, completed: null, done: null }, deliverablesCompleted: { total: 1, completed: 0 } },
+      budgetType: "OPEX", currency: "USD", budget: 1320, targetBudget: null, expenditure: null,
+      wbsRef: "w9", knowledgeRefs: ["n-a", "n-b"], references: ["https://example.com"],
+    },
+    {
+      id: "e2", slug: "auth", code: "AUTH", title: "Auth", projectOwner: null,
+      abstract: null, imageUrl: null, scope: null,
+      budgetType: null, currency: null, budget: null, targetBudget: null, expenditure: null,
+      wbsRef: "w9", knowledgeRefs: ["n-a"], references: [],
+    },
+  ],
+  deliverables: [
+    {
+      id: "d1", owner: "a1", icon: null, title: "Configured Paperless instance", code: "PPD-01", description: "",
+      status: "IN_PROGRESS", workProgress: { value: 50, total: null, completed: null, done: null }, keyResults: [],
+      budgetAnchor: { project: "e1", unit: "Hours", unitCost: 120, quantity: 10, margin: 10, marginPinned: true }, goalRef: null,
+    },
+  ],
+  roadmaps: [],
+};
 
 describe("projectNode()", () => {
   it("knowledge note: provenance, topics, DRAFT default", () => {
@@ -253,6 +289,67 @@ describe("projectNode()", () => {
     expect(p.title).toBeNull();
     expect(p.content).toBeNull();
   });
+
+  it("scope of work: SCOPE sentinel, lifecycle in note_type, outline as content, one edge per (type, target)", () => {
+    const p = projectNode("powerhouse/scopeofwork", SCOPE_STATE);
+    expect(p).toMatchObject({
+      title: "Powerhouse PMF",
+      description: "Scoping approaches",
+      note_type: "Scope (IN_PROGRESS)",
+      status: "SCOPE",
+      document_type: "powerhouse/scopeofwork",
+      topics: [],
+    });
+    // The searchable body is the outline: envelopes, owners, deliverables, quotes.
+    expect(p.content).toContain("### PPD · Paperless demo — owner Frank (IN_PROGRESS)");
+    expect(p.content).toContain("[IN_PROGRESS] PPD-01 Configured Paperless instance — owner Frank; 50%; quote: 10 hours × 120 USD = 1,200 USD, +10% margin → 1,320 USD");
+    expect(p.content).toContain("Knowledge: [[n-a]]; [[n-b]]");
+    expect(p.content).not.toContain("[[]]");
+    // Both envelopes point at w9 and n-a; the edge set is deduplicated.
+    expect(p.derivedEdges).toEqual([
+      { linkType: "DELIVERED_BY", targetId: "w9" },
+      { linkType: "CITES", targetId: "n-a" },
+      { linkType: "CITES", targetId: "n-b" },
+    ]);
+  });
+
+  it("a freshly created scope (initial state) projects to an empty outline", () => {
+    const p = projectNode("powerhouse/scopeofwork", {
+      title: "", description: "", status: "DRAFT", deliverables: [], projects: [], roadmaps: [], contributors: [],
+    });
+    expect(p.title).toBeNull();
+    expect(p.status).toBe("SCOPE");
+    expect(p.note_type).toBe("Scope (DRAFT)");
+    expect(p.content).toContain("No projects yet.");
+    expect(p.derivedEdges).toEqual([]);
+  });
+
+  it("work breakdown: WBS sentinel, phase in note_type, goal summary as description, no edges of its own", () => {
+    const goal = (id: string, description: string, status: string, extra: Record<string, unknown> = {}) => ({
+      id, description, status, parentId: null, assignee: null, dependencies: [], blockReason: null, outcome: null, notes: [], ...extra,
+    });
+    const p = projectNode("bai/wbs", {
+      projectRef: null, sowRef: "s1", sowProjectId: "e1", owner: "Frank", references: [],
+      goals: [
+        goal("g1", "Install", "COMPLETED"),
+        goal("g2", "Wire payments", "BLOCKED", { blockReason: "waiting on keys" }),
+        goal("g3", "Write docs", "TODO"),
+        goal("g4", "Old idea", "WONT_DO"),
+      ],
+    });
+    expect(p).toMatchObject({
+      title: "Work breakdown — Frank (1/3 goals done)",
+      description: "4 goals: 1 completed, 1 blocked, 1 to do, 1 won't do",
+      note_type: "WBS (BLOCKED)",
+      status: "WBS",
+      author: "Frank",
+      document_type: "bai/wbs",
+      derivedEdges: [],
+    });
+    expect(p.content).toContain("Delivers an envelope in scope of work [[s1]]");
+    expect(p.content).toContain("[BLOCKED] Wire payments — blocked: waiting on keys");
+    expect(p.content).not.toContain("[[]]");
+  });
 });
 
 describe("migration backfill", () => {
@@ -283,30 +380,37 @@ describe("query semantics with meta-documents present", () => {
     await node("tension", "bai/tension", { status: "OPEN" });
     await node("tension-2", "bai/tension", { status: "RESOLVED" });
     await node("obs", "bai/observation", { status: "PROMOTED" });
+    await node("scope", "powerhouse/scopeofwork", { status: "SCOPE" });
+    await node("wbs", "bai/wbs", { status: "WBS" });
     await edge("a", "b", "CONTRADICTS");
     await edge("moc", "a", "CORE_IDEA");
     await edge("tension", "a", "INVOLVES");
     await edge("tension", "b", "INVOLVES");
     await edge("obs", "b", "PROMOTED_TO");
+    await edge("scope", "a", "CITES");
+    await edge("scope", "wbs", "DELIVERED_BY");
   });
 
   it("stats: per-kind counts, nodeCount is the total, edges exclude derived", async () => {
     const s = await query.stats();
-    expect(s.nodeCount).toBe(8);
+    expect(s.nodeCount).toBe(10);
     expect(s.noteCount).toBe(3);
     expect(s.mocCount).toBe(1);
     expect(s.claimCount).toBe(1);
     expect(s.tensionCount).toBe(2);
     expect(s.openTensionCount).toBe(1);
     expect(s.observationCount).toBe(1);
+    expect(s.scopeCount).toBe(1);
+    expect(s.wbsCount).toBe(1);
     // CONTRADICTS + CORE_IDEA only
     expect(s.edgeCount).toBe(2);
   });
 
-  it("orphans: knowledge nodes only — tension/observation never count", async () => {
+  it("orphans: knowledge nodes only — tension/observation/scope/wbs never count", async () => {
     const orphans = (await query.orphanNodes()).map((n) => n.documentId).sort();
-    // `a` has CORE_IDEA in, `b` has CONTRADICTS in (INVOLVES/PROMOTED_TO don't
-    // count, but b is still covered by a→b). lonely, moc, claim have nothing.
+    // `a` has CORE_IDEA in, `b` has CONTRADICTS in (INVOLVES/PROMOTED_TO/CITES
+    // don't count, but b is still covered by a→b). lonely, moc, claim have
+    // nothing; scope and wbs are not knowledge, whatever points at them.
     expect(orphans).toEqual(["claim", "lonely", "moc"]);
     expect((await query.stats()).orphanCount).toBe(3);
   });
@@ -324,10 +428,14 @@ describe("query semantics with meta-documents present", () => {
 
   it("backlinks / forwardLinks / allEdges include derived edges", async () => {
     const back = (await query.backlinks("a")).map((e) => e.linkType ?? "").sort((x, y) => x.localeCompare(y));
-    expect(back).toEqual(["CORE_IDEA", "INVOLVES"]);
+    // A note's backlinks say which project cites it (CITES) — the reason
+    // scopes are indexed at all.
+    expect(back).toEqual(["CITES", "CORE_IDEA", "INVOLVES"]);
     const fwd = (await query.forwardLinks("tension")).map((e) => e.targetDocumentId).sort();
     expect(fwd).toEqual(["a", "b"]);
-    expect((await query.allEdges()).length).toBe(5);
+    const scopeFwd = (await query.forwardLinks("scope")).map((e) => `${e.linkType}:${e.targetDocumentId}`).sort();
+    expect(scopeFwd).toEqual(["CITES:a", "DELIVERED_BY:wbs"]);
+    expect((await query.allEdges()).length).toBe(7);
   });
 
   it("knowledgeDegree counts knowledge edges only", async () => {
@@ -370,7 +478,7 @@ describe("query semantics with meta-documents present", () => {
     const left = (await db.selectFrom("graph_edges").select("link_type").execute())
       .map((r) => r.link_type ?? "")
       .sort((x, y) => x.localeCompare(y));
-    expect(left).toEqual(["CONTRADICTS", "CORE_IDEA", "INVOLVES", "INVOLVES", "PROMOTED_TO"]);
+    expect(left).toEqual(["CITES", "CONTRADICTS", "CORE_IDEA", "DELIVERED_BY", "INVOLVES", "INVOLVES", "PROMOTED_TO"]);
   });
 });
 
@@ -550,6 +658,67 @@ describe("GraphIndexerProcessor.onOperations()", () => {
     expect(await query.nodeByDocumentId("gone")).toBeUndefined();
     expect((await query.forwardLinks("gone")).length).toBe(0);
     expect(await query.history("gone")).toEqual([]);
+  });
+
+  it("indexes a scope of work: SCOPE row, titled CITES / DELIVERED_BY edges, reconciled on unlink", async () => {
+    await node("n-a", "bai/knowledge-note", { title: "Note A" });
+    await node("n-b", "bai/knowledge-note", { title: "Note B" });
+    await node("w9", "bai/wbs", { title: "Work breakdown — Frank (0/1 goals done)", status: "WBS" });
+
+    await processor.onOperations([
+      op("s1", "powerhouse/scopeofwork", 0, "ADD_PROJECT",
+        { id: "e1", code: "PPD", title: "Paperless demo" }, SCOPE_STATE),
+    ]);
+
+    const row = await query.nodeByDocumentId("s1");
+    expect(row).toMatchObject({
+      documentType: "powerhouse/scopeofwork",
+      status: "SCOPE",
+      noteType: "Scope (IN_PROGRESS)",
+      title: "Powerhouse PMF",
+    });
+    const byTarget = (a: unknown[], b: unknown[]) => String(a[0]).localeCompare(String(b[0]));
+    expect((await query.forwardLinks("s1")).map((e) => [e.targetDocumentId, e.linkType, e.targetTitle]).sort(byTarget)).toEqual([
+      ["n-a", "CITES", "Note A"],
+      ["n-b", "CITES", "Note B"],
+      ["w9", "DELIVERED_BY", "Work breakdown — Frank (0/1 goals done)"],
+    ]);
+    // The note's backlinks now name the project that cites it …
+    expect((await query.backlinks("n-a")).map((e) => e.linkType)).toEqual(["CITES"]);
+    // … without making it look connected in the knowledge sense.
+    expect((await query.stats()).edgeCount).toBe(0);
+    expect((await query.orphanNodes()).map((n) => n.documentId).sort()).toEqual(["n-a", "n-b"]);
+    expect((await query.history("s1"))[0]?.summary).toBe('Project added: PPD "Paperless demo"');
+
+    // Unlinking the WBS everywhere and dropping a citation reconciles the set.
+    const unlinked = {
+      ...SCOPE_STATE,
+      projects: SCOPE_STATE.projects.map((e) => ({ ...e, wbsRef: null, knowledgeRefs: ["n-a"] })),
+    };
+    await processor.onOperations([
+      op("s1", "powerhouse/scopeofwork", 1, "LINK_PROJECT_WBS", { projectId: "e1", wbsRef: null }, unlinked),
+    ]);
+    expect((await query.forwardLinks("s1")).map((e) => `${e.linkType}:${e.targetDocumentId}`)).toEqual(["CITES:n-a"]);
+    expect((await query.history("s1")).map((h) => h.summary)).toContain("Work breakdown unlinked");
+  });
+
+  it("indexes a work breakdown with its phase and goal summary", async () => {
+    await processor.onOperations([
+      op("w1", "bai/wbs", 0, "SET_GOAL_STATUS", { id: "g1", status: "BLOCKED", blockReason: "keys" }, {
+        projectRef: null, sowRef: "s1", sowProjectId: "e1", owner: "Frank", references: [],
+        goals: [{ id: "g1", description: "Wire payments", status: "BLOCKED", parentId: null, assignee: "Frank", dependencies: [], blockReason: "keys", outcome: null, notes: [] }],
+      }),
+    ]);
+    const row = await query.nodeByDocumentId("w1");
+    expect(row).toMatchObject({
+      documentType: "bai/wbs",
+      status: "WBS",
+      noteType: "WBS (BLOCKED)",
+      title: "Work breakdown — Frank (0/1 goals done)",
+      description: "1 goal: 1 blocked",
+      author: "Frank",
+    });
+    expect((await query.history("w1"))[0]?.summary).toBe("Goal BLOCKED: keys");
   });
 
   it("ignores document types outside the indexed set", async () => {

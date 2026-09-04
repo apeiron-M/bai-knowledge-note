@@ -74,6 +74,9 @@ const STATUS_NODE_COLORS: Record<string, string> = {
   IN_REVIEW: "#3b82f6",
   CANONICAL: "#10b981",
   ARCHIVED: "#6b7280",
+  // Sentinel statuses of the indexed execution documents.
+  SCOPE: "#f472b6",
+  WBS: "#14b8a6",
 };
 
 const LINK_TYPE_COLORS: Record<string, string> = {
@@ -82,6 +85,9 @@ const LINK_TYPE_COLORS: Record<string, string> = {
   CONTRADICTS: "#ef4444",
   SUPERSEDES: "#a855f7",
   DERIVED_FROM: "#f59e0b",
+  // Derived from scope-of-work state: a project citing a note / its WBS.
+  CITES: "#f472b6",
+  DELIVERED_BY: "#14b8a6",
 };
 
 const MOC_NODE_COLOR = "#cba6f7";

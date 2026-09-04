@@ -64,8 +64,14 @@ export type KnowledgeLinkType = (typeof KNOWLEDGE_LINK_TYPES)[number];
  * keeps *about* its knowledge — tensions and observations — show up in the
  * graph attached to the notes they are about:
  *
- *   - `INVOLVES`     tension     → each note in its `involvedRefs`
- *   - `PROMOTED_TO`  observation → the note/proposal in `promotedTo`
+ *   - `INVOLVES`      tension       → each note in its `involvedRefs`
+ *   - `PROMOTED_TO`   observation   → the note/proposal in `promotedTo`
+ *   - `CITES`         scope of work → each note/MoC in an envelope's `knowledgeRefs`
+ *   - `DELIVERED_BY`  scope of work → the work breakdown in an envelope's `wbsRef`
+ *
+ * The last two attach the vault's execution documents to the knowledge they
+ * draw on: a note's backlinks show which project cites it, and a scope's
+ * forward links lead to its work breakdowns.
  *
  * They are mirrored into `graph_edges` (so backlinks, forward links, the
  * graph view and neighbourhood traversal see them) but are deliberately NOT
@@ -78,7 +84,12 @@ export type KnowledgeLinkType = (typeof KNOWLEDGE_LINK_TYPES)[number];
  * Reconciled from state on every change of the owning document (delete +
  * reinsert, like topics), so they can never go stale relative to the doc.
  */
-export const DERIVED_LINK_TYPES = ["INVOLVES", "PROMOTED_TO"] as const;
+export const DERIVED_LINK_TYPES = [
+  "INVOLVES",
+  "PROMOTED_TO",
+  "CITES",
+  "DELIVERED_BY",
+] as const;
 
 export type DerivedLinkType = (typeof DERIVED_LINK_TYPES)[number];
 

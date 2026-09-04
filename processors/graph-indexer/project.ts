@@ -16,23 +16,48 @@
  *                           different provenance shape
  *   - `bai/tension`         an unresolved contradiction BETWEEN claims
  *   - `bai/observation`     a signal ABOUT the methodology or process
+ *   - `powerhouse/scopeofwork`  a scope of work: envelopes (projects),
+ *                           deliverables, milestones, contributors
+ *   - `bai/wbs`             a work breakdown: the goal tree that delivers
+ *                           one envelope
  *
- * The last two are meta-documents: they are indexed so that search finds
- * them and a note can show "involved in tension X", not so that they count
- * as knowledge. `document_type` on the row lets every consumer draw that
- * line itself (`isKnowledgeNodeType`), and the orphan predicate excludes
- * them — a tension has, by design, nothing pointing at it.
+ * Tensions and observations are meta-documents: they are indexed so that
+ * search finds them and a note can show "involved in tension X", not so
+ * that they count as knowledge. Scopes and work breakdowns are execution
+ * documents: indexed so a search for "payments demo" finds the project that
+ * delivers it and a note shows which project cites it (`CITES`), again
+ * without counting as knowledge. `document_type` on the row lets every
+ * consumer draw that line itself (`isKnowledgeNodeType`), and the orphan
+ * predicate excludes all four — a tension or a scope has, by design,
+ * nothing pointing at it.
  *
  * ## Conventions kept from the old mapping
  *
  * The frontend recognises MoCs by `note_type` starting with `MOC (` and by
  * `status === "MOC"`; that stays exactly as it was. The new kinds follow the
  * same pattern for `note_type` (`Tension (OPEN)`, `Observation (FRICTION)`,
- * `Claim (research)`) so a badge can render any node without knowing every
- * type. `status` carries the document's OWN lifecycle value for the new
- * kinds (OPEN / RESOLVED / DISSOLVED, PENDING / PROMOTED / …) — those are
- * real states a user filters on, unlike the MoC sentinel.
+ * `Claim (research)`, `Scope (IN_PROGRESS)`, `WBS (BLOCKED)`) so a badge can
+ * render any node without knowing every type. `status` carries the
+ * document's OWN lifecycle value for tensions and observations (OPEN /
+ * RESOLVED / DISSOLVED, PENDING / PROMOTED / …) — real states a user filters
+ * on that never collide with a note's. A scope's lifecycle (DRAFT,
+ * IN_PROGRESS, DELIVERED, …) DOES collide with the note lifecycle, and a
+ * DRAFT scope must not surface in "draft notes" or inflate STALE_NOTES, so
+ * scopes and work breakdowns take a sentinel like MoCs — `SCOPE` / `WBS` —
+ * and carry the real state in `note_type`. `nodesByStatus("SCOPE")` lists
+ * every scope the way `("MOC")` lists every map.
  */
+import type { DerivedLinkType } from "./link-types.js";
+import type { ScopeOfWorkState } from "document-models/scope-of-work";
+import type { WorkBreakdownStructureState } from "document-models/work-breakdown-structure";
+import {
+  envelopeList,
+  goalProgress,
+  goalSummary,
+  renderScope,
+  renderWbs,
+  wbsPhase,
+} from "./work-outline.js";
 
 export const INDEXED_DOCUMENT_TYPES = [
   "bai/knowledge-note",
@@ -40,6 +65,8 @@ export const INDEXED_DOCUMENT_TYPES = [
   "bai/research-claim",
   "bai/tension",
   "bai/observation",
+  "powerhouse/scopeofwork",
+  "bai/wbs",
 ] as const;
 
 export type IndexedDocumentType = (typeof INDEXED_DOCUMENT_TYPES)[number];
@@ -57,7 +84,7 @@ export function isIndexedDocumentType(
 /**
  * Node kinds that ARE knowledge: they take part in orphan detection and in
  * the "every note has ≥ 2 connections" standard. Tensions and observations
- * are about the graph, not in it.
+ * are about the graph, not in it; scopes and work breakdowns use it.
  */
 export const KNOWLEDGE_NODE_TYPES = [
   "bai/knowledge-note",
@@ -79,7 +106,7 @@ export function isKnowledgeNodeType(
 
 /** A derived edge, reconciled from the owning document's state. */
 export type DerivedEdge = {
-  linkType: "INVOLVES" | "PROMOTED_TO";
+  linkType: DerivedLinkType;
   targetId: string;
 };
 
@@ -115,6 +142,44 @@ function strList(v: unknown): string[] {
     )
     .filter((name): name is string => typeof name === "string" && name !== "");
 }
+
+function arr<T>(v: unknown): T[] {
+  return Array.isArray(v) ? (v as T[]) : [];
+}
+
+/**
+ * The reducer-validated state, with every collection present. A document
+ * that has only just been created may carry the model's initial state with
+ * the arrays already there; anything older is complete by construction.
+ */
+function scopeFromGlobal(g: Record<string, unknown>): ScopeOfWorkState {
+  return {
+    title: str(g.title) ?? "",
+    description: str(g.description) ?? "",
+    status: (str(g.status) ?? "DRAFT") as ScopeOfWorkState["status"],
+    deliverables: arr(g.deliverables),
+    projects: arr(g.projects),
+    roadmaps: arr(g.roadmaps),
+    contributors: arr(g.contributors),
+  };
+}
+
+function wbsFromGlobal(
+  g: Record<string, unknown>,
+): WorkBreakdownStructureState {
+  return {
+    projectRef: str(g.projectRef),
+    owner: str(g.owner),
+    goals: arr(g.goals),
+    references: arr(g.references),
+    sowRef: str(g.sowRef),
+    sowProjectId: str(g.sowProjectId),
+  };
+}
+
+/** The indexer sees one document at a time: no joins, ids stand alone. */
+const NO_WBS = new Map<string, WorkBreakdownStructureState>();
+const NO_TITLES = new Map<string, string>();
 
 /**
  * Project a document's global state onto a `graph_nodes` row.
@@ -216,6 +281,73 @@ export function projectNode(
         derivedEdges: promotedTo
           ? [{ linkType: "PROMOTED_TO", targetId: promotedTo }]
           : [],
+      };
+    }
+    case "powerhouse/scopeofwork": {
+      const scope = scopeFromGlobal(global);
+      // One edge per (type, target) however many envelopes share a ref.
+      const seen = new Set<string>();
+      const derivedEdges: DerivedEdge[] = [];
+      for (const env of scope.projects) {
+        const refs: DerivedEdge[] = [
+          ...(env.wbsRef
+            ? [{ linkType: "DELIVERED_BY" as const, targetId: env.wbsRef }]
+            : []),
+          ...envelopeList(env, "knowledgeRefs").map((targetId) => ({
+            linkType: "CITES" as const,
+            targetId,
+          })),
+        ];
+        for (const e of refs) {
+          const key = `${e.linkType}:${e.targetId}`;
+          if (seen.has(key)) continue;
+          seen.add(key);
+          derivedEdges.push(e);
+        }
+      }
+      return {
+        title: str(scope.title),
+        description: str(scope.description),
+        note_type: `Scope (${scope.status})`,
+        // Sentinel, like MoCs — see the file comment for why not the real
+        // lifecycle value.
+        status: "SCOPE",
+        // The outline is the searchable body: deliverable titles, owners,
+        // milestones and contributors all live in arrays otherwise.
+        content: renderScope({
+          id: "",
+          scope,
+          wbsById: NO_WBS,
+          noteTitles: NO_TITLES,
+        }).text,
+        author: null,
+        source_origin: null,
+        created_at: null,
+        document_type: documentType,
+        topics: [],
+        derivedEdges,
+      };
+    }
+    case "bai/wbs": {
+      const wbs = wbsFromGlobal(global);
+      const progress = goalProgress(wbs.goals);
+      return {
+        // A work breakdown has no title of its own; the envelope it delivers
+        // names it in the editor and the chat. From state alone, say what
+        // it is and how far along.
+        title: `Work breakdown${wbs.owner ? ` — ${wbs.owner}` : ""} (${progress.completed}/${progress.total} goals done)`,
+        description: goalSummary(wbs.goals),
+        note_type: `WBS (${wbsPhase(wbs.goals)})`,
+        status: "WBS",
+        content: renderWbs(wbs, { id: "" }).text,
+        author: str(wbs.owner),
+        source_origin: null,
+        created_at: null,
+        document_type: documentType,
+        topics: [],
+        // The scope owns the scope↔WBS edge (`DELIVERED_BY`): the editor
+        // links both ways, and one owner keeps the pair from doubling.
+        derivedEdges: [],
       };
     }
   }

@@ -34,6 +34,18 @@ const STATUS_COLORS: Record<string, CSSProperties> = {
     color: "var(--bai-text-muted)",
     borderColor: "var(--bai-border)",
   },
+  // Execution documents — a scope of work and its work breakdowns — are
+  // indexed under sentinel statuses; their real state is in noteType.
+  SCOPE: {
+    background: "rgba(244, 114, 182, 0.2)",
+    color: "rgba(249, 168, 212, 1)",
+    borderColor: "rgba(244, 114, 182, 0.3)",
+  },
+  WBS: {
+    background: "rgba(20, 184, 166, 0.2)",
+    color: "rgba(94, 234, 212, 1)",
+    borderColor: "rgba(20, 184, 166, 0.3)",
+  },
 };
 
 // Buckets for the server's 0..1 relevance. A note matched by BOTH the

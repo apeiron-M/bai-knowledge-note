@@ -64,6 +64,10 @@ export const schema: DocumentNode = gql`
     tensionCount: Int!
     openTensionCount: Int!
     observationCount: Int!
+    """Scope-of-work documents (projects live inside them as envelopes)."""
+    scopeCount: Int!
+    """Work breakdowns — the goal trees that deliver envelopes."""
+    wbsCount: Int!
     """Knowledge edges carrying a reason. Coverage = this / edgeCount."""
     articulatedEdgeCount: Int!
   }
