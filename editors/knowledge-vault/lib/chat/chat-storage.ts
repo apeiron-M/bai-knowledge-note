@@ -21,11 +21,26 @@ export interface Citation {
   documentType?: string | null;
 }
 
+/** What backs one inline marker — see `lib/chat/evidence.ts`. */
+export interface Evidence {
+  documentId: string;
+  /** The item inside the document the marker named, if any. */
+  anchor: string | null;
+  /** The supporting passage; null when none could be identified. */
+  quote: string | null;
+}
+
 export interface StoredMessage {
   role: "user" | "assistant";
   content: string;
   /** Documents the answer cites inline, in order of first mention. */
   citations?: Citation[];
+  /**
+   * One entry per inline marker, in text order: the passage of the cited
+   * document that supports the sentence, shown when the chip is hovered.
+   * Absent on turns stored before this existed.
+   */
+  evidence?: Evidence[];
   /**
    * Documents the model read in full during this turn but did not cite.
    * Listed in the same Sources row after the cited ones, so the reader sees

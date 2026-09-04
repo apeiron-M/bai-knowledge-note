@@ -1,5 +1,6 @@
 /**
- * One-shot hand-off from the vault into the Scope of Work editor.
+ * One-shot hand-off from the vault into the Scope of Work editor — and into
+ * the WBS editor, which reads the same key for a goal.
  *
  * Connect instantiates an editor from a node selection, so there is no props
  * channel through which the vault can say "open this document *at this
@@ -21,7 +22,16 @@ const STORAGE_KEY = "bai:sow-open-intent";
 export type SowIntentView =
   | { kind: "project"; id: string }
   | { kind: "deliverables" }
-  | { kind: "team" };
+  | { kind: "team" }
+  /**
+   * Any item by id — envelope, deliverable, milestone, roadmap or
+   * contributor. A chat citation names an item without saying what it is;
+   * the scope resolves the id against its own state (`locate` in the
+   * editor's model) and opens the view that shows it.
+   */
+  | { kind: "locate"; id: string }
+  /** A goal in a work breakdown — read by the WBS editor, which selects it. */
+  | { kind: "goal"; id: string };
 
 export type SowIntent = {
   documentId: string;
@@ -60,6 +70,12 @@ export function readSowIntent(documentId: string): SowIntentView | null {
     const kind = parsed.view?.kind;
     if (kind === "project" && typeof parsed.view?.id === "string") {
       return { kind: "project", id: parsed.view.id };
+    }
+    if (kind === "locate" && typeof parsed.view?.id === "string") {
+      return { kind: "locate", id: parsed.view.id };
+    }
+    if (kind === "goal" && typeof parsed.view?.id === "string") {
+      return { kind: "goal", id: parsed.view.id };
     }
     if (kind === "deliverables") return { kind: "deliverables" };
     if (kind === "team") return { kind: "team" };

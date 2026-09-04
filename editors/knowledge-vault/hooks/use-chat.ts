@@ -10,6 +10,7 @@
  * model asks for a tool, the tool runs locally against Switchboard, the
  * result goes back as a `tool` message, repeat until the model answers.
  */
+import { collectEvidence, parseMarker } from "../lib/chat/evidence.js";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import {
   streamChat as realStreamChat,
@@ -583,7 +584,21 @@ export function resolveCitations(
       parenthesised: string | undefined,
       bare: string | undefined,
     ) => {
-      const label = (double ?? single ?? parenthesised ?? bare ?? "").trim();
+      const raw = (double ?? single ?? parenthesised ?? bare ?? "").trim();
+      // An anchored marker — [[documentId#itemId]] — cites one item inside a
+      // document (an envelope, a deliverable, a goal). The document resolves
+      // exactly as before; the item id rides along on the rewritten marker
+      // and is what a click opens the document at.
+      const parsedMarker = double !== undefined ? parseMarker(raw) : null;
+      // Anchored only when the part before `#` is plainly a document — a
+      // UUID, or an id a tool surfaced — so a title containing `#` ("C# notes")
+      // is still treated as a by-name label.
+      const anchored =
+        parsedMarker !== null &&
+        parsedMarker.anchor !== null &&
+        (UUID_RE.test(parsedMarker.documentId) || known.has(parsedMarker.documentId));
+      const label = anchored ? parsedMarker.documentId : raw;
+      const anchor = anchored ? parsedMarker.anchor : null;
       let doc: KnownDocument | null;
       if (bare !== undefined) {
         // A naked UUID in prose is a citation only when we know the
@@ -610,7 +625,7 @@ export function resolveCitations(
           documentType: doc.documentType,
         });
       }
-      return `[[${doc.documentId}]]`;
+      return `[[${doc.documentId}${anchor ? `#${anchor}` : ""}]]`;
     },
   );
   const folded = foldSourcesSection(rewritten, known);
@@ -841,10 +856,14 @@ export function useChat(o: UseChatOptions): UseChat {
         const prior = withUser.messages.flatMap((m) => m.citations ?? []);
         const resolved = resolveCitations(finalText, collected, prior);
         const consulted = consultedDocuments(collected, resolved.citations);
+        // The passage behind each marker, from the documents the tools
+        // returned this turn — the only moment their text is at hand.
+        const evidence = collectEvidence(resolved.text, collected);
         const assistant: StoredMessage = {
           role: "assistant",
           content: resolved.text,
           citations: resolved.citations,
+          ...(evidence.length > 0 ? { evidence } : {}),
           ...(consulted.length > 0 ? { consulted } : {}),
         };
         const done: Thread = {

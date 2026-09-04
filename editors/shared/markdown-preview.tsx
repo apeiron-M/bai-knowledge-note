@@ -79,7 +79,7 @@ function renderTable(tableLines: string[]): string {
   return out;
 }
 
-function renderMarkdown(md: string): string {
+export function renderMarkdown(md: string): string {
   const lines = md.split("\n");
   const html: string[] = [];
   let inCodeBlock = false;
@@ -199,6 +199,15 @@ function renderMarkdown(md: string): string {
 
 function inlineFormat(text: string): string {
   let out = escapeHtml(text);
+  // Inline citation chips. `[[cite:n:k]]` is emitted by the chat's numbering
+  // pass (n = source number, k = marker position) and rendered as a button
+  // the chat drives through delegated events — see ChatMessage. Digits only,
+  // so nothing here needs escaping; matched first so no other rule can see
+  // the brackets.
+  out = out.replace(
+    /\[\[cite:(\d+):(\d+)\]\]/g,
+    '<button type="button" class="md-cite" data-cite="$1" data-occurrence="$2" aria-label="Source $1">$1</button>',
+  );
   // Inline code
   out = out.replace(/`([^`]+)`/g, '<code class="md-inline-code">$1</code>');
   // Bold
@@ -240,6 +249,8 @@ export function MarkdownPreview({ content }: MarkdownPreviewProps) {
         .md-preview .md-inline-code { background: var(--bai-accent-soft); color: var(--bai-accent); padding: 0.1rem 0.35rem; border-radius: 0.25rem; font-size: 0.85em; font-family: monospace; }
         .md-preview .md-link { color: #89b4fa; text-decoration: underline; }
         .md-preview .md-wikilink { color: var(--bai-accent); font-weight: 500; }
+        .md-preview .md-cite { display: inline-flex; align-items: center; justify-content: center; min-width: 1.15rem; height: 1.15rem; padding: 0 0.3rem; margin-left: 0.15rem; border-radius: 9999px; border: 1px solid var(--bai-border); background: var(--bai-accent-soft); color: var(--bai-accent); font: 600 10px/1 ui-monospace, SFMono-Regular, Menlo, monospace; vertical-align: 0.2em; cursor: pointer; }
+        .md-preview .md-cite:hover, .md-preview .md-cite:focus-visible { background: var(--bai-accent); color: var(--bai-accent-text); border-color: var(--bai-accent); outline: none; }
         .md-preview .md-hr { border: none; border-top: 1px solid var(--bai-border); margin: 1rem 0; }
         .md-preview strong { color: var(--bai-text); }
         .md-preview em { color: var(--bai-text-secondary); }

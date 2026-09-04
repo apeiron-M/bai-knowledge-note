@@ -240,7 +240,7 @@ export const VAULT_TOOLS: ToolSchema[] = [
     function: {
       name: "list_projects",
       description:
-        "Every project in the vault. Projects are envelopes inside scope-of-work documents (powerhouse/scopeofwork): each row is one envelope — its documentId and title are the SCOPE's (the documentId is what you cite), and `envelope` holds the project's own id, code, title, set status and owner — with deliverable progress (delivered/total and %), budget (type, currency, stored budget, fixed target if any, Σ quoted lines), cited-knowledge count and its work breakdown as a citable {documentId, title}. Start here for any question about projects, deliverables, goals or who is working on what; then read_document the documentId for the full outline. Cite as [[documentId]] — the UUID, never a name.",
+        "Every project in the vault. Projects are envelopes inside scope-of-work documents (powerhouse/scopeofwork): each row is one envelope — its documentId and title are the SCOPE's (the documentId is what you cite), and `envelope` holds the project's own id, code, title, set status, owner and `cite`, the anchored marker [[scopeId#envelopeId]] that cites this one project — with deliverable progress (delivered/total and %), budget (type, currency, stored budget, fixed target if any, Σ quoted lines), cited-knowledge count and its work breakdown as a citable {documentId, title}. Start here for any question about projects, deliverables, goals or who is working on what; then read_document the documentId for the full outline. Cite as [[documentId]] — the UUID, never a name.",
       parameters: { type: "object", properties: {} },
     },
   },
@@ -764,6 +764,8 @@ export async function executeTool(
                 title: env.title,
                 status: env.scope?.status ?? "DRAFT",
                 owner: env.projectOwner ? (agentName.get(env.projectOwner) ?? env.projectOwner) : null,
+                // Ready-made anchored marker: cite this envelope, not just its scope.
+                cite: `[[${item.id}#${env.id}]]`,
               },
               progress: rollupDeliverables(ds),
               budget: {

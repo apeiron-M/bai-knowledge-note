@@ -72,6 +72,34 @@ export const deliverablesIn = (
     .map((id) => deliverableById(s, id))
     .filter((d): d is Deliverable => d !== undefined);
 
+/**
+ * Where an id from a deep link lives: the view that shows the item and, for
+ * a deliverable, the selection that opens its inspector. A deliverable is
+ * shown inside the envelope that funds it when there is one, else in the
+ * flat list. Null when the scope holds nothing by that id.
+ */
+export const locate = (
+  s: ScopeOfWorkState,
+  id: string,
+): { view: View; selected: string | null } | null => {
+  if (s.projects.some((p) => p.id === id))
+    return { view: { kind: "project", id }, selected: null };
+  if (s.roadmaps.some((r) => r.id === id))
+    return { view: { kind: "roadmap", id }, selected: null };
+  if (allMilestones(s).some((x) => x.milestone.id === id))
+    return { view: { kind: "milestone", id }, selected: null };
+  if (s.deliverables.some((d) => d.id === id)) {
+    const funder = projectOf(s, id);
+    return {
+      view: funder ? { kind: "project", id: funder.id } : { kind: "deliverables" },
+      selected: id,
+    };
+  }
+  if (s.contributors.some((c) => c.id === id))
+    return { view: { kind: "team" }, selected: null };
+  return null;
+};
+
 /* ── progress (mirrors the reducer rules) ───────────────────────────────── */
 export const isClosed = (d: Deliverable): boolean =>
   d.status === "CANCELED" || d.status === "WONT_DO";

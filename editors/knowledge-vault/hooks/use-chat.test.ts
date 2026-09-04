@@ -565,6 +565,20 @@ describe("extractCitations / resolveCitations", () => {
     ]);
   });
 
+  it("resolves an anchored marker to its document and keeps the item id on the rewritten marker", () => {
+    const r = resolveCitations(`PPD is half delivered [[${P1}#e1]]; the goal is blocked [[n3#g2]]. Plain [[${P1}]].`, trail);
+    // One citation per document; the anchors ride on the markers, not the list.
+    // n3 is not a UUID but a document the trail surfaced, so it anchors too.
+    expect(r.citations.map((c) => c.documentId)).toEqual([P1, "n3"]);
+    expect(r.text).toBe(`PPD is half delivered [[${P1}#e1]]; the goal is blocked [[n3#g2]]. Plain [[${P1}]].`);
+  });
+
+  it("does not treat a hash inside a by-name label as an anchor", () => {
+    const r = resolveCitations("[[C# notes]]", trail);
+    expect(r.citations).toEqual([]);
+    expect(r.text).toBe("");
+  });
+
   it("resolves a by-name citation to the one document it names, and rewrites the marker", () => {
     const r = resolveCitations("See [[AuthScope]] and [[Paperless × Powerhouse demo]].", trail);
     expect(r.citations.map((c) => c.documentId)).toEqual([P1, "p2"]);

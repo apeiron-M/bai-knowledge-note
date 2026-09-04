@@ -97,6 +97,14 @@ describe("renderWbs", () => {
     expect(data.progress.completed).toBe(1);
   });
 
+  it("marks each goal with an anchored citation when rendered for a document", () => {
+    const { text } = renderWbs(wbs, { id: "w1" });
+    expect(text).toContain("[IN_PROGRESS] Ship the chat — @liberuum [[w1#g1]]");
+    expect(text).toContain("blocked: Waiting on design tokens; depends on: Build the loop [[w1#g1b]]");
+    // Notes under a goal are not items; they carry no marker.
+    expect(text).toContain("    note (claude): Took two tries\n");
+  });
+
   it("omits citation markers when rendered without an id (the indexer's case)", () => {
     const { text } = renderWbs({ ...wbs, sowRef: null }, { id: "" });
     expect(text.split("\n")[0]).toBe("# Work breakdown");
@@ -272,7 +280,7 @@ describe("renderScope", () => {
     expect(full.text).toContain("- M1 Demo ready — 2026-08-28 (IN_PROGRESS); 1/2 delivered · 68.75%; coordinators Frank, ghost; budget 2,000");
     expect(full.text).toContain("    Everything for the first demo");
     expect(full.text).toContain("    deliverables: PPD-01, PPD-02");
-    expect(full.text).toContain("- M2 Hardening — no date (DRAFT)\n    deliverables: none scheduled");
+    expect(full.text).toContain("- M2 Hardening — no date (DRAFT) [[s1#m2]]\n    deliverables: none scheduled");
     expect(full.data.milestones[0]).toMatchObject({
       code: "M1", target: "2026-08-28", status: "IN_PROGRESS", coordinators: ["Frank", "ghost"], budget: 2000, deliverables: ["PPD-01", "PPD-02"],
     });
@@ -286,6 +294,14 @@ describe("renderScope", () => {
     ]);
   });
 
+  it("marks every envelope, deliverable and milestone with an anchored citation the model can copy", () => {
+    expect(full.text).toContain("· 1/2 delivered · 68.75% [[s1#e1]]");
+    expect(full.text).toContain("milestone M1 [[s1#d1]]");
+    expect(full.text).toContain("- [DRAFT] Loose end [[s1#d4]]");
+    expect(full.text).toContain("budget 2,000 [[s1#m1]]");
+    expect(full.data.milestones.map((m) => m.id)).toEqual(["m1", "m2"]);
+  });
+
   it("degrades to ids without joins and to no markers without an id — the indexer's rendering", () => {
     const bare = renderScope({ id: "", scope, wbsById: new Map(), noteTitles: new Map() });
     expect(bare.text.split("\n")[0]).toBe("# Scope of work: Powerhouse PMF — IN_PROGRESS");
@@ -294,6 +310,8 @@ describe("renderScope", () => {
     expect(bare.text).toContain("- [DELIVERED] PPD-01 Configured instance — owner Frank; done;");
     expect(bare.data.envelopes[0].goals).toBeNull();
     expect(bare.data.envelopes[0].deliverables[0].goal).toBeNull();
+    // No anchored markers either: the indexed body carries no ids.
+    expect(bare.text).not.toMatch(/\[\[[^\]]*#/);
   });
 
   it("says so when a scope is empty", () => {

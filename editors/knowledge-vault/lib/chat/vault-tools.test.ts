@@ -465,7 +465,7 @@ describe("scope of work envelopes", () => {
       documentId: "s1",
       documentType: "powerhouse/scopeofwork",
       title: "Powerhouse PMF",
-      envelope: { id: "env1", code: "PPD", title: "Paperless demo", owner: "Frank", status: "IN_PROGRESS" },
+      envelope: { id: "env1", code: "PPD", title: "Paperless demo", owner: "Frank", status: "IN_PROGRESS", cite: "[[s1#env1]]" },
       progress: { delivered: 1, total: 2, pct: 50 },
       budget: { type: "OPEX", currency: "USD", budget: 0, targetBudget: null },
       knowledgeRefs: 1,
@@ -491,6 +491,7 @@ describe("scope of work envelopes", () => {
     };
     expect(d.text.split("\n")[0]).toBe("# Scope of work: Powerhouse PMF — DRAFT [[s1]]");
     expect(d.text).toContain("### PPD · Paperless demo — owner Frank (IN_PROGRESS)");
+    expect(d.text).toContain("[[s1#env1]]"); // anchored marker the model can copy to cite this envelope
     expect(d.text).toContain("[DELIVERED] PPD-01 Configured instance — goal: Step 1 (COMPLETED)");
     expect(d.text).toContain("Work breakdown [[w9]]: 1/2 goals completed");
     expect(d.text).toContain("A note [[n-a]]");

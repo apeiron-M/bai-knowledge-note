@@ -14,7 +14,15 @@
  * Pure functions over document state. The joins that need other documents —
  * the linked work breakdowns, the titles of cited notes — are passed in as
  * maps; an empty map degrades to ids, which is what the indexer (one document
- * at a time) wants. An empty `id` omits the `[[id]]` citation markers.
+ * at a time) wants.
+ *
+ * Citation markers. Rendered with an `id`, the outline carries `[[id]]` in its
+ * heading and an anchored marker — `[[id#itemId]]` — at the end of every
+ * envelope, deliverable, milestone and goal line. A model that copies the
+ * marker cites that one item, and the vault opens the document *at* it (see
+ * `editors/shared/sow-intent.ts`, kinds `locate` / `goal`); the chat's
+ * evidence pass uses the same line as the chip's quote. An empty `id` — the
+ * indexer's case — omits every marker, so embeddings carry no ids.
  *
  * Progress and money mirror the reducers and the scope-of-work editor's
  * `lib/model.ts` (`rollup`, `costOf`, `budgetOf`, `isQuoted`); keep them in
@@ -119,6 +127,7 @@ function goalLines(
   all: Map<string, Goal>,
   depth: number,
   out: string[],
+  mark: (itemId: string) => string,
 ): void {
   for (const { goal, children } of nodes) {
     const indent = "  ".repeat(depth);
@@ -132,16 +141,22 @@ function goalLines(
       );
     }
     out.push(
-      `${indent}- [${goal.status}] ${goal.description}${bits.length ? ` — ${bits.join("; ")}` : ""}`,
+      `${indent}- [${goal.status}] ${goal.description}${bits.length ? ` — ${bits.join("; ")}` : ""}${mark(goal.id)}`,
     );
     for (const n of goal.notes) {
       out.push(
         `${indent}    note${n.author ? ` (${n.author})` : ""}: ${n.note}`,
       );
     }
-    goalLines(children, all, depth + 1, out);
+    goalLines(children, all, depth + 1, out, mark);
   }
 }
+
+/** `[[docId#itemId]]` when the outline is rendered for a known document; nothing for the indexer. */
+const anchorMarker =
+  (documentId: string) =>
+  (itemId: string): string =>
+    documentId ? ` [[${documentId}#${itemId}]]` : "";
 
 export interface WbsRendering {
   text: string;
@@ -185,7 +200,7 @@ export function renderWbs(
   );
   lines.push("");
   if (wbs.goals.length === 0) lines.push("No goals yet.");
-  else goalLines(buildGoalTree(wbs.goals), all, 0, lines);
+  else goalLines(buildGoalTree(wbs.goals), all, 0, lines, anchorMarker(ctx.id));
   if (wbs.references.length > 0) {
     lines.push("", "References:", ...wbs.references.map((r) => `- ${r}`));
   }
@@ -367,6 +382,7 @@ export interface EnvelopeSummary {
 }
 
 export interface MilestoneSummary {
+  id: string;
   code: string;
   title: string;
   target: string;
@@ -441,6 +457,7 @@ export function renderScope(o: {
   noteTitles: Map<string, string>;
 }): ScopeRendering {
   const g = o.scope;
+  const mark = anchorMarker(o.id);
   const agent = new Map(g.contributors.map((c) => [c.id, c.name] as const));
   const nameOf = (id: string | null | undefined): string | null =>
     id ? (agent.get(id) ?? id) : null;
@@ -484,7 +501,7 @@ export function renderScope(o: {
     const ms = milestoneOf.get(d.id);
     if (ms) bits.push(`milestone ${ms}`);
     const out = [
-      `- [${d.status}] ${d.code ? `${d.code} ` : ""}${d.title}${bits.length ? ` — ${bits.join("; ")}` : ""}`,
+      `- [${d.status}] ${d.code ? `${d.code} ` : ""}${d.title}${bits.length ? ` — ${bits.join("; ")}` : ""}${mark(d.id)}`,
     ];
     if (d.description.trim())
       out.push(`    ${d.description.trim().replace(/\s*\n\s*/g, " ")}`);
@@ -512,7 +529,8 @@ export function renderScope(o: {
     lines.push(
       "",
       `### ${env.code} · ${env.title}${owner ? ` — owner ${owner}` : ""} (${setStatus(env.scope)})` +
-        (roll.total ? ` · ${roll.delivered}/${roll.total} delivered · ${roll.pct}%` : ""),
+        (roll.total ? ` · ${roll.delivered}/${roll.total} delivered · ${roll.pct}%` : "") +
+        mark(env.id),
     );
     if (env.abstract) lines.push(env.abstract);
     lines.push(...budgetLines(env, ds));
@@ -607,7 +625,7 @@ export function renderScope(o: {
       if (coordinators.length) bits.push(`coordinators ${coordinators.join(", ")}`);
       if (m.budget) bits.push(`budget ${money(m.budget)}`);
       lines.push(
-        `- ${m.sequenceCode} ${m.title} — ${m.deliveryTarget || "no date"} (${setStatus(m.scope)})${bits.length ? `; ${bits.join("; ")}` : ""}`,
+        `- ${m.sequenceCode} ${m.title} — ${m.deliveryTarget || "no date"} (${setStatus(m.scope)})${bits.length ? `; ${bits.join("; ")}` : ""}${mark(m.id)}`,
       );
       if (m.description.trim()) lines.push(`    ${m.description.trim()}`);
       const codes = ds.map((d) => d.code || d.title);
@@ -615,6 +633,7 @@ export function renderScope(o: {
         `    deliverables: ${codes.length ? codes.join(", ") : "none scheduled"}`,
       );
       milestones.push({
+        id: m.id,
         code: m.sequenceCode,
         title: m.title,
         target: m.deliveryTarget,

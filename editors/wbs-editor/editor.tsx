@@ -2,7 +2,7 @@ import { useState } from "react";
 import { DocumentToolbar } from "@powerhousedao/design-system/connect";
 import { setSelectedNode } from "@powerhousedao/reactor-browser";
 import { SafeDocument } from "../shared/safe-document.js";
-import { writeSowIntent } from "../shared/sow-intent.js";
+import { readSowIntent, writeSowIntent } from "../shared/sow-intent.js";
 import type { DocumentDispatch } from "@powerhousedao/reactor-browser";
 import {
   actions,
@@ -27,8 +27,15 @@ function isValidUrl(value: string): boolean {
 
 export default function Editor() {
   const [document, dispatch] = useSelectedWorkBreakdownStructureDocument();
-  const [selectedGoalId, setSelectedGoalId] = useState<string | null>(null);
   const state = document.state.global;
+  // A chat citation of one goal ([[wbsId#goalId]]) lands with that goal
+  // selected. One-shot, id-checked read — see shared/sow-intent.ts.
+  const [selectedGoalId, setSelectedGoalId] = useState<string | null>(() => {
+    const intent = readSowIntent(document.header.id);
+    return intent?.kind === "goal" && state.goals.some((g) => g.id === intent.id)
+      ? intent.id
+      : null;
+  });
   const rollup = goalRollup(state.goals);
   const selected = state.goals.find((g) => g.id === selectedGoalId) ?? null;
   // The scope-of-work envelope this tree delivers (SET_SOW_PROJECT_REF).
