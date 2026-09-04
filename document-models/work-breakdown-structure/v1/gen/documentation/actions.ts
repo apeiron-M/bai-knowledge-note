@@ -9,6 +9,7 @@ import type {
   SetOwnerInput,
   SetProjectRefInput,
   SetReferencesInput,
+  SetSowProjectRefInput,
 } from "../types.js";
 
 export type AddNoteAction = Action & { type: "ADD_NOTE"; input: AddNoteInput };
@@ -28,10 +29,15 @@ export type SetProjectRefAction = Action & {
   type: "SET_PROJECT_REF";
   input: SetProjectRefInput;
 };
+export type SetSowProjectRefAction = Action & {
+  type: "SET_SOW_PROJECT_REF";
+  input: SetSowProjectRefInput;
+};
 
 export type WorkBreakdownStructureDocumentationAction =
   | AddNoteAction
   | RemoveNoteAction
   | SetOwnerAction
   | SetReferencesAction
-  | SetProjectRefAction;
+  | SetProjectRefAction
+  | SetSowProjectRefAction;

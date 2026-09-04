@@ -54,7 +54,7 @@ async function fetchDriveNodes(driveId: string): Promise<Node[] | null> {
  *   /knowledge/inbox/      <- unprocessed captures
  *   /knowledge/insights/   <- synthesized insights
  * /sources/                <- archived source material
- * /projects/               <- bai/project + bai/wbs documents
+ * /projects/               <- powerhouse/scopeofwork + bai/wbs documents
  * /ops/                    <- operational coordination
  *   /ops/sessions/         <- session transcripts
  *   /ops/health/           <- health reports

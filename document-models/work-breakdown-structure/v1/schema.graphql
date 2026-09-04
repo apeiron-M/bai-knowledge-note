@@ -24,6 +24,10 @@ type WorkBreakdownStructureState {
   owner: String
   goals: [Goal!]!
   references: [URL!]!
+  # the scope-of-work document and the envelope (SoW Project) this tree delivers;
+  # both null when the work is not yet compiled into a scope
+  sowRef: PHID
+  sowProjectId: OID
 }
 
 type Goal {
@@ -120,4 +124,10 @@ input SetReferencesInput {
 
 input SetProjectRefInput {
   projectRef: PHID
+}
+
+input SetSowProjectRefInput {
+  # omit or null both to unlink
+  sowRef: PHID
+  sowProjectId: OID
 }

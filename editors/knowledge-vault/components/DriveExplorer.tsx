@@ -1,17 +1,19 @@
 import { useState, useMemo, useCallback, useEffect } from "react";
 import type { EditorProps } from "document-model";
 import {
+  isFileNodeKind,
   setSelectedNode,
   useFileNodesInSelectedDrive,
   useSelectedDriveId,
+  useSelectedNode,
 } from "@powerhousedao/reactor-browser";
-import type { ProjectStatus } from "document-models/project";
 import { VaultSidebar } from "./VaultSidebar.js";
 import { CreateDocumentDialog } from "./CreateDocumentDialog.js";
 import GraphViewPixi, { type GraphFocus } from "./GraphViewPixi.js";
 import { NoteList } from "./NoteList.js";
 import { SourceList } from "./SourceList.js";
 import { ProjectsView } from "./ProjectsView.js";
+import { ScopeOfWorkView } from "./ScopeOfWorkView.js";
 import { HealthDashboard } from "./HealthDashboard.js";
 import { SearchView } from "./SearchView.js";
 import { ChatView } from "./ChatView.js";
@@ -33,11 +35,24 @@ type ViewMode =
   | "graph"
   | "sources"
   | "projects"
+  | "scope"
   | "search"
   | "activity"
   | "pipeline"
   | "health"
   | "config";
+
+/**
+ * Document types whose editor ships its own left rail and therefore takes the
+ * whole width: the vault sidebar is hidden while one is open.
+ *
+ * Without this the user faces two stacked navigation columns — the vault's
+ * 236px sidebar plus the editor's own rail (264px for Scope of Work) — half a
+ * laptop viewport spent on navigation, with two different trees competing to
+ * say where you are. The vault's top bar stays put either way, so the tab row
+ * remains the way back out.
+ */
+const EDITORS_WITH_OWN_SIDEBAR = new Set<string>(["powerhouse/scopeofwork"]);
 
 export function DriveExplorer({ children }: EditorProps) {
   const [viewMode, setViewMode] = useState<ViewMode>("chat");
@@ -67,7 +82,21 @@ export function DriveExplorer({ children }: EditorProps) {
   // the two index round-trips itself.
   useVaultDocIndex();
   const fileNodes = useFileNodesInSelectedDrive();
+  // Tree-only count, like sources: no document reads just to draw a badge.
+  const sowCount = (fileNodes ?? []).filter(
+    (n) => n.documentType === "powerhouse/scopeofwork",
+  ).length;
   const showDocumentEditor = !!children;
+  // `useSelectedNode` can hand back a folder, which carries no documentType.
+  const selectedNode = useSelectedNode();
+  const selectedDocumentType =
+    selectedNode && isFileNodeKind(selectedNode)
+      ? selectedNode.documentType
+      : undefined;
+  const editorOwnsSidebar =
+    showDocumentEditor &&
+    selectedDocumentType !== undefined &&
+    EDITORS_WITH_OWN_SIDEBAR.has(selectedDocumentType);
 
   const handleGraphFocusChange = useCallback((focus: GraphFocus | null) => {
     setGraphFocus(focus);
@@ -92,25 +121,25 @@ export function DriveExplorer({ children }: EditorProps) {
     (n) => n.documentType === "bai/source",
   ).length;
 
-  // Project badge counts non-ARCHIVED projects. FileNode only carries
-  // documentType, not state, so the (few) project documents are read
-  // from the server directly.
+  // Project badge: every live envelope across the drive's scope-of-work
+  // documents. FileNode only carries documentType, not state, so the (few)
+  // scope documents are read from the server directly.
   const projectSpecs = useMemo<ReactorDocSpec[]>(
     () =>
       allFiles
-        .filter((n) => n.documentType === "bai/project")
+        .filter((n) => n.documentType === "powerhouse/scopeofwork")
         .map((n) => ({ id: n.id, documentType: n.documentType, name: n.name })),
     [allFiles],
   );
   const { docs: projectDocs } = useReactorDocsWithRefetch(projectSpecs, {
     pollMs: 60_000,
   });
-  const projectCount = projectDocs.filter((d) => {
-    const status = (
-      d.state as unknown as { global: { status?: ProjectStatus } }
-    ).global.status;
-    return status !== "ARCHIVED";
-  }).length;
+  const projectCount = projectDocs.reduce((n, d) => {
+    const envelopes =
+      (d.state as unknown as { global: { projects?: { scope?: { status?: string } | null }[] } })
+        .global.projects ?? [];
+    return n + envelopes.filter((p) => p.scope?.status !== "CANCELED").length;
+  }, 0);
 
   // Find singleton doc IDs for direct navigation
   const pipelineDocId = allFiles.find(
@@ -253,17 +282,36 @@ export function DriveExplorer({ children }: EditorProps) {
         </svg>
       ),
     },
+    {
+      key: "scope",
+      label: "Scope",
+      badge: sowCount > 0 ? sowCount : undefined,
+      icon: (
+        <svg
+          className="h-4 w-4"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="2"
+        >
+          <path d="M3 6h18M3 12h12M3 18h6" />
+          <circle cx="19" cy="17" r="3" />
+        </svg>
+      ),
+    },
   ];
 
   return (
     <div className="flex h-full relative">
-      <VaultSidebar
-        notes={notes}
-        mocs={mocs}
-        isLoading={notesLoading}
-        graphFocus={graphFocus}
-        onClearGraphFocus={handleClearGraphFocus}
-      />
+      {!editorOwnsSidebar && (
+        <VaultSidebar
+          notes={notes}
+          mocs={mocs}
+          isLoading={notesLoading}
+          graphFocus={graphFocus}
+          onClearGraphFocus={handleClearGraphFocus}
+        />
+      )}
 
       <div className="flex flex-1 flex-col overflow-hidden">
         {/* Top bar */}
@@ -360,6 +408,8 @@ export function DriveExplorer({ children }: EditorProps) {
             <ActivityView />
           ) : viewMode === "sources" ? (
             <SourceList />
+          ) : viewMode === "scope" ? (
+            <ScopeOfWorkView />
           ) : viewMode === "projects" ? (
             <ProjectsView />
           ) : viewMode === "health" ? (
@@ -572,12 +622,6 @@ const CREATE_ITEMS = [
     primary: false,
     hint: "Organize notes by topic",
   },
-  {
-    label: "Project",
-    type: "bai/project",
-    primary: false,
-    hint: "Track goals, team, and deliverables",
-  },
 ];
 
 function CreateMenu() {
@@ -616,7 +660,7 @@ function CreateMenu() {
               Click-catcher behind the menu: a click anywhere else lands here
               and closes it, so the dropdown does not sit open while the user
               works elsewhere. Same approach as the status menus in
-              project-editor — no document-level listener to leak, and it
+              a document editor — no document-level listener to leak, and it
               stays below the menu's own z-index so the items remain
               clickable.
             */}

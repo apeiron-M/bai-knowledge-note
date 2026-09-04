@@ -159,6 +159,11 @@ export type SetReferencesInput = {
   references: Array<Scalars["URL"]["input"]>;
 };
 
+export type SetSowProjectRefInput = {
+  sowProjectId?: InputMaybe<Scalars["OID"]["input"]>;
+  sowRef?: InputMaybe<Scalars["PHID"]["input"]>;
+};
+
 export type UpdateGoalDescriptionInput = {
   description: Scalars["String"]["input"];
   id: Scalars["OID"]["input"];
@@ -169,4 +174,6 @@ export type WorkBreakdownStructureState = {
   owner: Maybe<Scalars["String"]["output"]>;
   projectRef: Maybe<Scalars["PHID"]["output"]>;
   references: Array<Scalars["URL"]["output"]>;
+  sowProjectId: Maybe<Scalars["OID"]["output"]>;
+  sowRef: Maybe<Scalars["PHID"]["output"]>;
 };

@@ -71,7 +71,7 @@ import {
 
 /**
  * Re-exported from `shared/vault-pull.ts`, where the registration slot
- * now lives so write paths outside this editor (project-editor's remote
+ * now lives so write paths outside this editor (the scope-of-work editor's remote
  * WBS create) can nudge the same hydrator.
  */
 export { triggerVaultPull } from "../../shared/vault-pull.js";

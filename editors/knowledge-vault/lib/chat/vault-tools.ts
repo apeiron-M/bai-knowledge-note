@@ -25,10 +25,10 @@ import {
   resolveReactorEndpoint,
 } from "../../../shared/subgraph-endpoint.js";
 import { fetchDocumentState } from "../../../shared/document-state.js";
-import type { ProjectState } from "document-models/project";
 import type { WorkBreakdownStructureState } from "document-models/work-breakdown-structure";
 import type { ToolSchema } from "./openrouter-client.js";
-import { renderProject, renderWbs } from "./project-view.js";
+import { renderScope, renderWbs } from "./project-view.js";
+import type { ScopeOfWorkState } from "document-models/scope-of-work";
 
 export type ToolResult =
   | { ok: true; data: unknown; summary: string }
@@ -47,8 +47,8 @@ export const DOCUMENT_TYPES = [
   "bai/observation",
   "bai/research-claim",
   "bai/derivation",
-  "bai/project",
   "bai/wbs",
+  "powerhouse/scopeofwork",
   "bai/health-report",
   "bai/pipeline-queue",
   "bai/vault-config",
@@ -232,7 +232,7 @@ export const VAULT_TOOLS: ToolSchema[] = [
     function: {
       name: "list_projects",
       description:
-        "Every project in the vault with its documentId, title, status (PLANNING, ACTIVE, ON_HOLD, COMPLETED, ARCHIVED), owner, target date, deliverable progress and its work breakdown's documentId. Start here for any question about projects, deliverables, goals or who is working on what; then read_document a project's documentId for its full outline. Cite a project as [[documentId]] — the UUID, never its name.",
+        "Every project in the vault. Projects are envelopes inside scope-of-work documents (powerhouse/scopeofwork): each row gives the scope's documentId (what you cite), the envelope's id/code/title, its set status, owner, deliverable progress, cited-knowledge count and its work breakdown's documentId. Start here for any question about projects, deliverables, goals or who is working on what; then read_document the documentId for the full outline. Cite as [[documentId]] — the UUID, never a name.",
       parameters: { type: "object", properties: {} },
     },
   },
@@ -241,7 +241,7 @@ export const VAULT_TOOLS: ToolSchema[] = [
     function: {
       name: "read_document",
       description:
-        "Read any document by documentId. For a bai/project this returns a full outline — status, team, deliverables each joined to their WBS goal, the whole work-breakdown goal tree with statuses, and linked knowledge notes — in one call. For a bai/wbs it returns the goal tree. For everything else (notably bai/source) it returns metadata plus an 8,000-character window of the main text starting at offset; when hasMore is true, call again with nextOffset. A source's metadata includes extractedClaims — ids of notes derived from it — which you can read_note. The reverse is not available: a note does not record its source. Every result carries the documentId you cite it by.",
+        "Read any document by documentId. For a powerhouse/scopeofwork this returns the whole scope — status, every envelope (code, title, owner, budget, references, cited knowledge, linked WBS), every deliverable with its status and the goal that delivers it, roadmaps and milestones, contributors. For a bai/wbs it returns the goal tree. For everything else (notably bai/source) it returns metadata plus an 8,000-character window of the main text starting at offset; when hasMore is true, call again with nextOffset. A source's metadata includes extractedClaims — ids of notes derived from it — which you can read_note. The reverse is not available: a note does not record its source. Every result carries the documentId you cite it by.",
       parameters: {
         type: "object",
         properties: {
@@ -343,10 +343,13 @@ async function readDoc(
   }
 }
 
-const projectState = (state: Record<string, unknown>) =>
-  (state.global ?? {}) as ProjectState;
 const wbsState = (state: Record<string, unknown>) =>
   (state.global ?? {}) as WorkBreakdownStructureState;
+const scopeState = (state: Record<string, unknown>) =>
+  (state.global ?? {}) as ScopeOfWorkState;
+/** Envelopes stored before knowledgeRefs existed have no array at all. */
+const envelopeRefs = (env: { knowledgeRefs: string[] }): string[] =>
+  (env as { knowledgeRefs?: string[] }).knowledgeRefs ?? [];
 
 /* ------------------------------------------------------------------ */
 /*  Argument helpers                                                  */
@@ -701,58 +704,54 @@ export async function executeTool(
     }
 
     case "list_projects": {
-      const r = await gql<{
-        findDocuments: {
-          totalCount: number;
-          items: { id: string; name: string | null }[];
-        };
+      // Envelopes: every scope-of-work document contributes its projects[].
+      const sc = await gql<{
+        findDocuments: { totalCount: number; items: { id: string; name: string | null }[] };
       }>(
         reactorEndpoint(),
-        `query P($limit: Int) {
-          findDocuments(search: { type: "bai/project" }, paging: { limit: $limit }) {
+        `query S($limit: Int) {
+          findDocuments(search: { type: "powerhouse/scopeofwork" }, paging: { limit: $limit }) {
             totalCount items { id name }
           }
         }`,
         { limit: LIMITS.projects },
       );
-      if ("error" in r) return fail(r.error);
-      const { totalCount, items } = r.data.findDocuments;
-      // One state read per project. Projects are few (bounded above), and the
-      // status/owner/progress the question needs live in state, not the tree.
-      const rows = await Promise.all(
-        items.map(async (item) => {
+      const envelopeRows: Record<string, unknown>[] = [];
+      let scopeCount = 0;
+      if (!("error" in sc)) {
+        scopeCount = sc.data.findDocuments.totalCount;
+        for (const item of sc.data.findDocuments.items) {
           const read = await readDoc(item.id);
-          if ("error" in read)
-            return {
+          if ("error" in read) continue;
+          const g = scopeState(read.doc.state);
+          const agentName = new Map(g.contributors.map((c) => [c.id, c.name] as const));
+          for (const env of g.projects) {
+            const ids = new Set(env.scope?.deliverables ?? []);
+            const ds = g.deliverables.filter((d) => ids.has(d.id));
+            envelopeRows.push({
               documentId: item.id,
-              title: item.name ?? item.id,
-              documentType: "bai/project",
-              error: read.error,
-            };
-          const p = projectState(read.doc.state);
-          return {
-            documentId: item.id,
-            title: p.name ?? item.name ?? item.id,
-            documentType: "bai/project",
-            status: p.status,
-            owner: p.owner ?? null,
-            targetDate: p.targetDate ? String(p.targetDate).slice(0, 10) : null,
-            deliverables: {
-              delivered: p.deliverables.filter((d) => d.status === "DELIVERED")
-                .length,
-              total: p.deliverables.length,
-            },
-            teamSize: p.team.length,
-            // The work breakdown is a document of its own, citable like the project.
-            wbs: p.wbsRef
-              ? { documentId: p.wbsRef, documentType: "bai/wbs" }
-              : null,
-          };
-        }),
-      );
+              documentType: "powerhouse/scopeofwork",
+              scopeTitle: g.title || item.name || item.id,
+              envelopeId: env.id,
+              code: env.code,
+              title: env.title,
+              status: env.scope?.status ?? "DRAFT",
+              owner: env.projectOwner ? (agentName.get(env.projectOwner) ?? env.projectOwner) : null,
+              budget: env.budget ?? null,
+              currency: env.currency ?? null,
+              deliverables: {
+                delivered: ds.filter((d) => d.status === "DELIVERED").length,
+                total: ds.length,
+              },
+              knowledgeRefs: envelopeRefs(env).length,
+              wbs: env.wbsRef ? { documentId: env.wbsRef, documentType: "bai/wbs" } : null,
+            });
+          }
+        }
+      }
       return ok(
-        { total: totalCount, projects: rows },
-        `listed ${rows.length} of ${totalCount} projects`,
+        { total: envelopeRows.length, projects: envelopeRows, scopes: scopeCount },
+        `listed ${envelopeRows.length} envelope${envelopeRows.length === 1 ? "" : "s"} across ${scopeCount} scope${scopeCount === 1 ? "" : "s"}`,
       );
     }
 
@@ -766,32 +765,34 @@ export async function executeTool(
 
       // Projects and work breakdowns are structured, not prose: render them
       // as an outline with their links resolved rather than paging a field.
-      if (doc.documentType === "bai/project") {
-        const p = projectState(doc.state);
-        const [wbsRead, titles] = await Promise.all([
-          p.wbsRef ? readDoc(p.wbsRef) : Promise.resolve(null),
-          noteTitles(driveId, p.knowledgeRefs, LIMITS.knowledgeRefTitles),
+      if (doc.documentType === "powerhouse/scopeofwork") {
+        const g = scopeState(doc.state);
+        const wbsRefs = g.projects.map((e) => e.wbsRef).filter((x): x is string => Boolean(x));
+        const allRefs = g.projects.flatMap((e) => envelopeRefs(e));
+        const [wbsReads, titles] = await Promise.all([
+          Promise.all(wbsRefs.map((id) => readDoc(id))),
+          noteTitles(driveId, allRefs, LIMITS.knowledgeRefTitles),
         ]);
-        const wbs =
-          wbsRead && !("error" in wbsRead) ? wbsState(wbsRead.doc.state) : null;
-        const view = renderProject({
-          id: doc.id,
-          project: p,
-          wbs,
-          noteTitles: titles,
+        const wbsById = new Map<string, WorkBreakdownStructureState>();
+        wbsRefs.forEach((id, i) => {
+          const r = wbsReads[i];
+          if (!("error" in r)) wbsById.set(id, wbsState(r.doc.state));
         });
+        const view = renderScope({ id: doc.id, scope: g, wbsById, noteTitles: titles });
         return ok(
           { text: view.text, ...view.data },
-          `read project "${p.name ?? doc.name ?? documentId}" (${p.status}${wbs ? `, ${view.data.goals?.completed}/${view.data.goals?.total} goals done` : ""})`,
+          `read scope of work "${g.title || doc.name || documentId}" (${g.status}, ${view.data.envelopes.length} envelopes, ${view.data.deliverables.delivered}/${view.data.deliverables.total} delivered)`,
         );
       }
 
+
       if (doc.documentType === "bai/wbs") {
         const w = wbsState(doc.state);
-        const projectRead = w.projectRef ? await readDoc(w.projectRef) : null;
+        // The work breakdown delivers an envelope inside a scope of work.
+        const scopeRead = w.sowRef ? await readDoc(w.sowRef) : null;
         const projectName =
-          projectRead && !("error" in projectRead)
-            ? projectState(projectRead.doc.state).name
+          scopeRead && !("error" in scopeRead)
+            ? (scopeState(scopeRead.doc.state).projects.find((e) => e.id === w.sowProjectId)?.title ?? null)
             : null;
         const view = renderWbs(w, { id: doc.id, projectName });
         return ok(

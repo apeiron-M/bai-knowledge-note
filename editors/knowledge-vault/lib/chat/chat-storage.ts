@@ -17,7 +17,7 @@ const TITLE_MAX = 60;
 export interface Citation {
   documentId: string;
   title: string;
-  /** `bai/knowledge-note`, `bai/moc`, `bai/project`, … when the tool that surfaced it said. */
+  /** `bai/knowledge-note`, `bai/moc`, `powerhouse/scopeofwork`, … when the tool that surfaced it said. */
   documentType?: string | null;
 }
 

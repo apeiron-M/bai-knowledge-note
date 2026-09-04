@@ -45,8 +45,9 @@ const NAMESPACE_BY_TYPE: Record<string, string> = {
   "bai/tension": "Tension",
   "bai/derivation": "Derivation",
   "bai/research-claim": "ResearchClaim",
-  "bai/project": "Project",
   "bai/wbs": "WorkBreakdownStructure",
+  // the supergraph namespaces the SoW model by its model name (ScopeOfWorkMutations)
+  "powerhouse/scopeofwork": "ScopeOfWork",
 };
 
 type GraphQLResponse<T> = {

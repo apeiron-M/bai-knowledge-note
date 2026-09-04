@@ -1,0 +1,1663 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Concept B — Board · Scope of Work</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500..800&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      :root {
+        --canvas: #f6f7f9;
+        --panel: #ffffff;
+        --panel-2: #f0f2f5;
+        --ink: #1b2230;
+        --ink-2: #5b6474;
+        --ink-3: #8b94a5;
+        --rule: #e1e5eb;
+        --rule-2: #cbd2dc;
+        --meridian: #0e8a7a;
+        --meridian-soft: #ddf3ef;
+        --signal: #d98a00;
+        --signal-soft: #fbefd9;
+        --ember: #c2412b;
+        --ember-soft: #f9e1dc;
+        --slate: #6b7a90;
+        --slate-soft: #e7ebf1;
+        --focus: #2f5bff;
+        --r: 10px;
+        --display: "Bricolage Grotesque", Inter, system-ui, sans-serif;
+        --ui: Inter, system-ui, sans-serif;
+        --mono: "JetBrains Mono", ui-monospace, Menlo, monospace;
+      }
+      .dark {
+        --canvas: #0f141b;
+        --panel: #161c25;
+        --panel-2: #1c2330;
+        --ink: #e6eaf0;
+        --ink-2: #9aa5b5;
+        --ink-3: #6c778a;
+        --rule: #263040;
+        --rule-2: #33405a;
+        --meridian: #2fb8a4;
+        --meridian-soft: #12332e;
+        --signal: #f0a72b;
+        --signal-soft: #3a2e12;
+        --ember: #e4644e;
+        --ember-soft: #3e1f1a;
+        --slate: #8c9ab0;
+        --slate-soft: #232c3a;
+      }
+      * {
+        box-sizing: border-box;
+      }
+      html,
+      body {
+        margin: 0;
+        height: 100%;
+      }
+      body {
+        font: 14px/1.45 var(--ui);
+        color: var(--ink);
+        background: var(--canvas);
+        -webkit-font-smoothing: antialiased;
+      }
+      button,
+      input,
+      select,
+      textarea {
+        font: inherit;
+        color: inherit;
+      }
+      button {
+        cursor: pointer;
+        background: none;
+        border: 0;
+      }
+      :focus-visible {
+        outline: 2px solid var(--focus);
+        outline-offset: 2px;
+        border-radius: 4px;
+      }
+      .mono {
+        font-family: var(--mono);
+        font-size: 12.5px;
+      }
+      .muted {
+        color: var(--ink-2);
+      }
+      .faint {
+        color: var(--ink-3);
+      }
+      .app {
+        display: grid;
+        grid-template-rows: auto 1fr;
+        height: 100vh;
+      }
+      .top {
+        background: var(--panel);
+        border-bottom: 1px solid var(--rule);
+      }
+      .top .titlebar {
+        display: flex;
+        align-items: center;
+        gap: 14px;
+        padding: 12px 22px 0;
+      }
+      .top h1 {
+        font-family: var(--display);
+        font-size: 22px;
+        font-weight: 700;
+        letter-spacing: -0.02em;
+        margin: 0;
+      }
+      .top .grow {
+        flex: 1;
+      }
+      .tabs {
+        display: flex;
+        gap: 4px;
+        padding: 8px 22px 0;
+      }
+      .tab {
+        padding: 8px 12px 10px;
+        border-bottom: 2px solid transparent;
+        color: var(--ink-2);
+        font-weight: 500;
+        font-size: 13.5px;
+      }
+      .tab:hover {
+        color: var(--ink);
+      }
+      .tab.on {
+        color: var(--ink);
+        border-color: var(--ink);
+      }
+      .tab .n {
+        font-family: var(--mono);
+        font-size: 11px;
+        color: var(--ink-3);
+        margin-left: 6px;
+      }
+      .btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        height: 32px;
+        padding: 0 12px;
+        border-radius: 8px;
+        border: 1px solid var(--rule-2);
+        background: var(--panel);
+        font-weight: 500;
+        font-size: 13px;
+      }
+      .btn:hover {
+        background: var(--panel-2);
+      }
+      .btn.primary {
+        background: var(--ink);
+        color: var(--canvas);
+        border-color: var(--ink);
+      }
+      .btn.ghost {
+        border-color: transparent;
+      }
+      .btn.sm {
+        height: 26px;
+        padding: 0 9px;
+        font-size: 12.5px;
+      }
+      .main {
+        overflow: auto;
+        padding: 22px 22px 80px;
+        position: relative;
+      }
+      .chip {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        height: 22px;
+        padding: 0 8px;
+        border-radius: 999px;
+        font-size: 12px;
+        font-weight: 500;
+        background: var(--slate-soft);
+        color: var(--ink-2);
+        white-space: nowrap;
+      }
+      .chip::before {
+        content: "";
+        width: 6px;
+        height: 6px;
+        border-radius: 50%;
+        background: currentColor;
+        opacity: 0.8;
+      }
+      .chip.DELIVERED,
+      .chip.FINISHED {
+        background: var(--meridian-soft);
+        color: var(--meridian);
+      }
+      .chip.IN_PROGRESS,
+      .chip.SUBMITTED {
+        background: var(--signal-soft);
+        color: var(--signal);
+      }
+      .chip.BLOCKED {
+        background: var(--ember-soft);
+        color: var(--ember);
+      }
+      .chip.CANCELED,
+      .chip.WONT_DO {
+        text-decoration: line-through;
+        opacity: 0.7;
+      }
+      .chip.TODO {
+        color: var(--slate);
+      }
+      .chip.DRAFT {
+        background: transparent;
+        border: 1px dashed var(--rule-2);
+        color: var(--ink-3);
+      }
+      .chip.DRAFT::before {
+        display: none;
+      }
+      .tag {
+        display: inline-flex;
+        height: 18px;
+        align-items: center;
+        padding: 0 6px;
+        border-radius: 5px;
+        font-size: 11px;
+        font-weight: 500;
+        background: var(--ember-soft);
+        color: var(--ember);
+      }
+      .tag.warn {
+        background: var(--signal-soft);
+        color: var(--signal);
+      }
+      .av {
+        width: 20px;
+        height: 20px;
+        border-radius: 50%;
+        background: var(--slate-soft);
+        color: var(--ink-2);
+        font-size: 10px;
+        font-weight: 600;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        flex: none;
+        border: 1px solid var(--panel);
+      }
+      .avs {
+        display: inline-flex;
+      }
+      .avs .av + .av {
+        margin-left: -6px;
+      }
+      .bar {
+        height: 6px;
+        background: var(--rule);
+        border-radius: 4px;
+        overflow: hidden;
+      }
+      .bar i {
+        display: block;
+        height: 100%;
+        background: var(--meridian);
+        border-radius: 4px;
+        transition: width 0.4s;
+      }
+      /* board */
+      .board {
+        display: grid;
+        gap: 0;
+        border: 1px solid var(--rule);
+        border-radius: var(--r);
+        background: var(--panel);
+        overflow: hidden;
+        min-width: 900px;
+      }
+      .bc {
+        border-right: 1px solid var(--rule);
+        border-bottom: 1px solid var(--rule);
+        padding: 10px;
+        min-height: 96px;
+        position: relative;
+      }
+      .bc.h {
+        background: var(--panel-2);
+        min-height: 0;
+        padding: 12px 12px 10px;
+      }
+      .bc.h .code {
+        font-family: var(--mono);
+        font-size: 11px;
+        color: var(--ink-3);
+      }
+      .bc.h b {
+        display: block;
+        font-weight: 600;
+      }
+      .bc.h .d {
+        font-size: 12px;
+        color: var(--ink-2);
+      }
+      .bc.h .ring {
+        position: absolute;
+        right: 12px;
+        top: 14px;
+      }
+      .ring {
+        --p: 0;
+        width: 18px;
+        height: 18px;
+        border-radius: 50%;
+        background: conic-gradient(
+          var(--meridian) calc(var(--p) * 1%),
+          var(--rule-2) 0
+        );
+        position: relative;
+      }
+      .ring::after {
+        content: "";
+        position: absolute;
+        inset: 4px;
+        border-radius: 50%;
+        background: var(--panel-2);
+      }
+      .bc.rh {
+        background: var(--panel-2);
+        padding: 12px;
+      }
+      .bc.rh .code {
+        font-family: var(--mono);
+        font-size: 11px;
+        color: var(--ink-3);
+      }
+      .bc.rh b {
+        display: block;
+        font-weight: 600;
+      }
+      .bc.rh .money {
+        font-family: var(--mono);
+        font-size: 12px;
+        margin-top: 6px;
+      }
+      .bc.rh .bar {
+        margin-top: 6px;
+      }
+      .bc.over {
+        background: var(--meridian-soft);
+        outline: 2px dashed var(--meridian);
+        outline-offset: -4px;
+      }
+      .bc .plus {
+        position: absolute;
+        right: 8px;
+        bottom: 6px;
+        color: var(--ink-3);
+        font-size: 16px;
+        opacity: 0;
+      }
+      .bc:hover .plus {
+        opacity: 1;
+      }
+      .bc .plus:hover {
+        color: var(--ink);
+      }
+      .card {
+        background: var(--panel);
+        border: 1px solid var(--rule);
+        border-radius: 8px;
+        padding: 8px 10px;
+        margin-bottom: 8px;
+        cursor: grab;
+        box-shadow: 0 1px 0 rgba(0, 0, 0, 0.02);
+      }
+      .card:hover {
+        border-color: var(--rule-2);
+      }
+      .card.sel {
+        border-color: var(--focus);
+        box-shadow: 0 0 0 2px rgba(47, 91, 255, 0.15);
+      }
+      .card.drag {
+        opacity: 0.4;
+      }
+      .card .l1 {
+        display: flex;
+        gap: 6px;
+        align-items: center;
+        font-size: 11.5px;
+        color: var(--ink-3);
+      }
+      .card .l1 .st {
+        width: 7px;
+        height: 7px;
+        border-radius: 50%;
+        background: var(--slate);
+      }
+      .card.DELIVERED .st {
+        background: var(--meridian);
+      }
+      .card.IN_PROGRESS .st {
+        background: var(--signal);
+      }
+      .card.BLOCKED .st {
+        background: var(--ember);
+      }
+      .card.CANCELED {
+        opacity: 0.55;
+      }
+      .card.CANCELED .t {
+        text-decoration: line-through;
+      }
+      .card .t {
+        font-weight: 500;
+        font-size: 13px;
+        margin: 3px 0 6px;
+        line-height: 1.3;
+      }
+      .card .l3 {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+      .card .l3 .bar {
+        flex: 1;
+      }
+      .card .l3 .money {
+        font-family: var(--mono);
+        font-size: 11px;
+        color: var(--ink-2);
+      }
+      .card .l3 .av {
+        margin-left: auto;
+      }
+      .legend {
+        display: flex;
+        gap: 16px;
+        font-size: 12px;
+        color: var(--ink-3);
+        margin: 10px 2px 0;
+        align-items: center;
+      }
+      .legend i {
+        display: inline-block;
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
+        margin-right: 5px;
+      }
+      /* table */
+      .filters {
+        display: flex;
+        gap: 8px;
+        flex-wrap: wrap;
+        margin-bottom: 12px;
+        align-items: center;
+      }
+      .filters select,
+      .filters input {
+        height: 30px;
+        border: 1px solid var(--rule-2);
+        border-radius: 8px;
+        padding: 0 10px;
+        background: var(--panel);
+        font-size: 12.5px;
+      }
+      table {
+        width: 100%;
+        border-collapse: separate;
+        border-spacing: 0;
+        background: var(--panel);
+        border: 1px solid var(--rule);
+        border-radius: var(--r);
+        overflow: hidden;
+      }
+      th {
+        text-align: left;
+        font-size: 11.5px;
+        text-transform: uppercase;
+        letter-spacing: 0.06em;
+        color: var(--ink-3);
+        padding: 9px 12px;
+        background: var(--panel-2);
+        border-bottom: 1px solid var(--rule);
+        cursor: pointer;
+        user-select: none;
+        white-space: nowrap;
+      }
+      th.r {
+        text-align: right;
+      }
+      th:hover {
+        color: var(--ink);
+      }
+      td {
+        padding: 8px 12px;
+        border-bottom: 1px solid var(--rule);
+        vertical-align: middle;
+      }
+      tr:last-child td {
+        border-bottom: 0;
+      }
+      tbody tr {
+        cursor: pointer;
+      }
+      tbody tr:hover td {
+        background: var(--panel-2);
+      }
+      tr.sel td {
+        background: var(--slate-soft);
+      }
+      td.r {
+        text-align: right;
+        font-family: var(--mono);
+        font-size: 12.5px;
+      }
+      td .sub {
+        font-size: 12px;
+        color: var(--ink-3);
+      }
+      td select {
+        height: 26px;
+        border: 1px solid transparent;
+        border-radius: 6px;
+        background: transparent;
+        font-size: 12.5px;
+        padding: 0 4px;
+      }
+      td select:hover {
+        border-color: var(--rule-2);
+        background: var(--panel);
+      }
+      .bulk {
+        display: flex;
+        gap: 8px;
+        align-items: center;
+        padding: 8px 12px;
+        background: var(--slate-soft);
+        border-radius: 8px;
+        margin-bottom: 10px;
+        font-size: 13px;
+      }
+      /* ledger */
+      .grid2 {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 14px;
+      }
+      .panel {
+        background: var(--panel);
+        border: 1px solid var(--rule);
+        border-radius: var(--r);
+        padding: 16px 18px;
+      }
+      .panel h3 {
+        font-family: var(--display);
+        font-size: 17px;
+        font-weight: 650;
+        margin: 0 0 4px;
+      }
+      .panel .sub {
+        font-size: 12.5px;
+        color: var(--ink-3);
+        margin-bottom: 12px;
+      }
+      .lrow {
+        display: grid;
+        grid-template-columns: 1fr 90px 60px 100px;
+        gap: 10px;
+        padding: 7px 0;
+        border-bottom: 1px solid var(--rule);
+        font-size: 13px;
+        align-items: center;
+      }
+      .lrow:last-child {
+        border-bottom: 0;
+      }
+      .lrow .money {
+        font-family: var(--mono);
+        font-size: 12.5px;
+        text-align: right;
+      }
+      .lrow.tot {
+        font-weight: 600;
+        border-top: 2px solid var(--rule-2);
+        border-bottom: 0;
+      }
+      .lrow input {
+        width: 70px;
+        height: 26px;
+        border: 1px solid var(--rule-2);
+        border-radius: 6px;
+        padding: 0 6px;
+        font-family: var(--mono);
+        font-size: 12px;
+        text-align: right;
+        background: var(--panel);
+      }
+      .team {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 12px;
+      }
+      .member {
+        display: flex;
+        gap: 12px;
+        align-items: center;
+        padding: 12px 14px;
+        background: var(--panel);
+        border: 1px solid var(--rule);
+        border-radius: var(--r);
+      }
+      .member .av {
+        width: 36px;
+        height: 36px;
+        font-size: 13px;
+      }
+      .member .n {
+        font-weight: 600;
+      }
+      .member .r {
+        font-size: 12px;
+        color: var(--ink-3);
+      }
+      .member .s {
+        margin-left: auto;
+        font-size: 12px;
+        color: var(--ink-2);
+        text-align: right;
+      }
+      /* drawer */
+      .scrim {
+        position: fixed;
+        inset: 0;
+        background: rgba(15, 20, 27, 0.25);
+        opacity: 0;
+        pointer-events: none;
+        transition: opacity 0.15s;
+      }
+      .scrim.on {
+        opacity: 1;
+        pointer-events: auto;
+      }
+      .drawer {
+        position: fixed;
+        top: 0;
+        right: 0;
+        bottom: 0;
+        width: 420px;
+        background: var(--panel);
+        border-left: 1px solid var(--rule);
+        transform: translateX(100%);
+        transition: transform 0.2s ease;
+        overflow: auto;
+        box-shadow: -12px 0 40px rgba(0, 0, 0, 0.08);
+      }
+      .drawer.on {
+        transform: none;
+      }
+      .dh {
+        position: sticky;
+        top: 0;
+        background: var(--panel);
+        padding: 14px 18px 10px;
+        border-bottom: 1px solid var(--rule);
+        z-index: 2;
+      }
+      .dh .eyebrow {
+        display: flex;
+        justify-content: space-between;
+        font-size: 11.5px;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        color: var(--ink-3);
+        font-weight: 600;
+      }
+      .dh .x {
+        font-size: 16px;
+        color: var(--ink-3);
+      }
+      .dh .x:hover {
+        color: var(--ink);
+      }
+      .field {
+        padding: 0 18px;
+        margin-top: 14px;
+      }
+      .field label {
+        display: block;
+        font-size: 11.5px;
+        color: var(--ink-3);
+        margin-bottom: 5px;
+        font-weight: 500;
+      }
+      .in {
+        width: 100%;
+        height: 34px;
+        border: 1px solid var(--rule-2);
+        border-radius: 8px;
+        padding: 0 10px;
+        background: var(--panel);
+      }
+      .in:focus {
+        border-color: var(--focus);
+        outline: 0;
+      }
+      textarea.in {
+        height: auto;
+        min-height: 64px;
+        padding: 8px 10px;
+      }
+      .two {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 10px;
+      }
+      .three {
+        display: grid;
+        grid-template-columns: 1fr 1fr 1fr;
+        gap: 10px;
+      }
+      .seg {
+        display: inline-grid;
+        grid-auto-flow: column;
+        border: 1px solid var(--rule-2);
+        border-radius: 8px;
+        overflow: hidden;
+        background: var(--panel-2);
+      }
+      .seg button {
+        height: 30px;
+        padding: 0 12px;
+        font-size: 12.5px;
+        font-weight: 500;
+        color: var(--ink-2);
+      }
+      .seg button.on {
+        background: var(--panel);
+        color: var(--ink);
+        box-shadow: inset 0 0 0 1px var(--rule-2);
+      }
+      .range {
+        width: 100%;
+        accent-color: var(--meridian);
+      }
+      .sec {
+        margin-top: 22px;
+        padding: 0 18px;
+        font-size: 11.5px;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        color: var(--ink-3);
+        font-weight: 600;
+      }
+      .calc {
+        margin: 8px 18px 0;
+        padding: 10px 12px;
+        border: 1px solid var(--rule);
+        border-radius: 8px;
+        background: var(--panel-2);
+        font-family: var(--mono);
+        font-size: 12.5px;
+      }
+      .calc div {
+        display: flex;
+        justify-content: space-between;
+        padding: 2px 0;
+      }
+      .calc .tot {
+        border-top: 1px solid var(--rule-2);
+        margin-top: 4px;
+        padding-top: 6px;
+        font-weight: 600;
+      }
+      .hint {
+        padding: 0 18px;
+        font-size: 12px;
+        color: var(--ink-3);
+        margin-top: 6px;
+      }
+      .err {
+        color: var(--ember);
+      }
+      .danger {
+        margin: 26px 18px 30px;
+        display: flex;
+        justify-content: space-between;
+        font-size: 12.5px;
+        color: var(--ink-3);
+      }
+      .danger button {
+        color: var(--ember);
+        font-weight: 500;
+      }
+      .toast {
+        position: fixed;
+        bottom: 18px;
+        left: 50%;
+        transform: translateX(-50%);
+        background: var(--ink);
+        color: var(--canvas);
+        padding: 8px 14px;
+        border-radius: 8px;
+        font-size: 13px;
+        opacity: 0;
+        transition: opacity 0.2s;
+        pointer-events: none;
+        z-index: 9;
+      }
+      .toast.show {
+        opacity: 1;
+      }
+      .kpis {
+        display: flex;
+        gap: 18px;
+        padding: 6px 22px 12px;
+        font-size: 12.5px;
+        color: var(--ink-2);
+      }
+      .kpis b {
+        font-family: var(--mono);
+        color: var(--ink);
+        font-weight: 500;
+      }
+      @media (prefers-reduced-motion: reduce) {
+        * {
+          transition: none !important;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="app">
+      <header class="top">
+        <div class="titlebar">
+          <span class="faint" style="font-size: 12.5px"
+            >Connect › Atlas drive ›</span
+          >
+          <h1
+            id="title"
+            contenteditable="true"
+            spellcheck="false"
+            onblur="D.title = this.textContent.trim()"
+          >
+            Atlas Platform — H2 2026
+          </h1>
+          <span class="chip IN_PROGRESS" id="sowChip">In progress</span>
+          <div class="grow"></div>
+          <button
+            class="btn"
+            onclick="
+              D.status = 'SUBMITTED';
+              render();
+              toast('Submitted for review');
+            "
+          >
+            Submit for review</button
+          ><button
+            class="btn ghost"
+            onclick="document.documentElement.classList.toggle('dark')"
+          >
+            ◐
+          </button>
+        </div>
+        <div class="kpis" id="kpis"></div>
+        <nav class="tabs" id="tabs"></nav>
+      </header>
+      <main class="main" id="main"></main>
+    </div>
+    <div class="scrim" id="scrim" onclick="select(null)"></div>
+    <aside class="drawer" id="drawer"></aside>
+    <div class="toast" id="toast"></div>
+    <script>
+      const D = {
+        title: "Atlas Platform — H2 2026",
+        status: "IN_PROGRESS",
+        contributors: [
+          { id: "phd:alice", name: "Alice Ramos", role: "Backend lead" },
+          { id: "phd:bob", name: "Bob Chen", role: "Product" },
+          { id: "phd:dana", name: "Dana Okafor", role: "Docs" },
+          { id: "phd:eli", name: "Eli Novak", role: "Frontend" },
+        ],
+        roadmaps: [
+          {
+            id: "r1",
+            title: "Delivery 2026 H2",
+            milestones: [
+              {
+                id: "m1",
+                code: "M1",
+                title: "Alpha",
+                target: "2026-09-30",
+                coordinators: ["phd:alice"],
+                deliverables: ["d1", "d2", "d5"],
+              },
+              {
+                id: "m2",
+                code: "M2",
+                title: "Beta",
+                target: "2026-11-15",
+                coordinators: ["phd:bob"],
+                deliverables: ["d3", "d6", "d7"],
+              },
+              {
+                id: "m3",
+                code: "M3",
+                title: "General availability",
+                target: "2026-12-20",
+                coordinators: ["phd:bob", "phd:dana"],
+                deliverables: ["d4", "d8"],
+              },
+            ],
+          },
+          {
+            id: "r2",
+            title: "Research track",
+            milestones: [
+              {
+                id: "m4",
+                code: "R1",
+                title: "Discovery",
+                target: "2026-10-10",
+                coordinators: ["phd:eli"],
+                deliverables: ["d9"],
+              },
+            ],
+          },
+        ],
+        projects: [
+          {
+            id: "p1",
+            code: "PLT",
+            title: "Platform core",
+            owner: "phd:bob",
+            currency: "USD",
+            budgetType: "CAPEX",
+            deliverables: ["d1", "d3", "d4"],
+          },
+          {
+            id: "p2",
+            code: "API",
+            title: "Public API",
+            owner: "phd:alice",
+            currency: "USD",
+            budgetType: "OPEX",
+            deliverables: ["d2", "d6", "d10"],
+          },
+          {
+            id: "p3",
+            code: "DOC",
+            title: "Docs & onboarding",
+            owner: "phd:dana",
+            currency: "EUR",
+            budgetType: "OPEX",
+            deliverables: ["d5", "d7", "d8"],
+          },
+        ],
+        deliverables: [
+          {
+            id: "d1",
+            code: "PLT-01",
+            title: "Operation store on PGlite",
+            owner: "phd:alice",
+            status: "DELIVERED",
+            description: "",
+            progress: { kind: "pct", value: 100 },
+            anchor: { unit: "Hours", unitCost: 120, quantity: 80, margin: 20 },
+          },
+          {
+            id: "d2",
+            code: "API-01",
+            title: "Auth & API keys",
+            owner: "phd:alice",
+            status: "IN_PROGRESS",
+            description: "",
+            progress: { kind: "sp", total: 21, completed: 13 },
+            anchor: {
+              unit: "StoryPoints",
+              unitCost: 450,
+              quantity: 21,
+              margin: 20,
+            },
+          },
+          {
+            id: "d3",
+            code: "PLT-02",
+            title: "Realtime sync channel",
+            owner: "phd:eli",
+            status: "BLOCKED",
+            description: "",
+            progress: { kind: "pct", value: 35 },
+            anchor: { unit: "Hours", unitCost: 120, quantity: 120, margin: 20 },
+          },
+          {
+            id: "d4",
+            code: "PLT-03",
+            title: "Hardening & SLOs",
+            owner: null,
+            status: "TODO",
+            description: "",
+            progress: { kind: "pct", value: 0 },
+            anchor: { unit: "Hours", unitCost: 120, quantity: 60, margin: 20 },
+          },
+          {
+            id: "d5",
+            code: "DOC-01",
+            title: "Quickstart guide",
+            owner: "phd:dana",
+            status: "DELIVERED",
+            description: "",
+            progress: { kind: "bin", done: true },
+            anchor: { unit: "Hours", unitCost: 90, quantity: 24, margin: 15 },
+          },
+          {
+            id: "d6",
+            code: "API-02",
+            title: "Webhooks",
+            owner: "phd:alice",
+            status: "IN_PROGRESS",
+            description: "",
+            progress: { kind: "sp", total: 13, completed: 5 },
+            anchor: {
+              unit: "StoryPoints",
+              unitCost: 450,
+              quantity: 13,
+              margin: 20,
+            },
+          },
+          {
+            id: "d7",
+            code: "DOC-02",
+            title: "API reference site",
+            owner: "phd:dana",
+            status: "TODO",
+            description: "",
+            progress: { kind: "pct", value: 0 },
+            anchor: { unit: "Hours", unitCost: 90, quantity: 40, margin: 15 },
+          },
+          {
+            id: "d8",
+            code: "DOC-03",
+            title: "Migration playbook",
+            owner: null,
+            status: "DRAFT",
+            description: "",
+            progress: { kind: "pct", value: 0 },
+            anchor: { unit: "Hours", unitCost: 90, quantity: 0, margin: 15 },
+          },
+          {
+            id: "d9",
+            code: "RES-01",
+            title: "Offline-first spike",
+            owner: "phd:eli",
+            status: "IN_PROGRESS",
+            description: "",
+            progress: { kind: "bin", done: false },
+            anchor: null,
+          },
+          {
+            id: "d10",
+            code: "API-03",
+            title: "Rate limiting",
+            owner: "phd:eli",
+            status: "CANCELED",
+            description: "",
+            progress: { kind: "pct", value: 10 },
+            anchor: {
+              unit: "StoryPoints",
+              unitCost: 450,
+              quantity: 8,
+              margin: 20,
+            },
+          },
+          {
+            id: "d11",
+            code: "",
+            title: "Partner sandbox environment",
+            owner: null,
+            status: "DRAFT",
+            description: "",
+            progress: { kind: "pct", value: 0 },
+            anchor: null,
+          },
+        ],
+      };
+      const $ = (s, r = document) => r.querySelector(s);
+      const byId = (id) => D.deliverables.find((d) => d.id === id);
+      const agent = (id) => D.contributors.find((c) => c.id === id);
+      const initials = (id) => {
+        const a = agent(id);
+        return a
+          ? a.name
+              .split(" ")
+              .map((w) => w[0])
+              .join("")
+              .slice(0, 2)
+          : "?";
+      };
+      const allMs = () =>
+        D.roadmaps
+          .flatMap((r) => r.milestones.map((m) => ({ ...m, roadmap: r })))
+          .sort((a, b) => a.target.localeCompare(b.target));
+      const realMs = (id) =>
+        D.roadmaps.flatMap((r) => r.milestones).find((m) => m.id === id);
+      const msOf = (did) => allMs().find((m) => m.deliverables.includes(did));
+      const prOf = (did) =>
+        D.projects.find((p) => p.deliverables.includes(did));
+      const project = (id) => D.projects.find((p) => p.id === id);
+      const ignored = (d) => d.status === "CANCELED" || d.status === "WONT_DO";
+      const pctOf = (d) => {
+        const p = d.progress;
+        if (!p) return 0;
+        if (p.kind === "pct") return p.value;
+        if (p.kind === "sp")
+          return p.total > 0 ? (p.completed / p.total) * 100 : 0;
+        return d.status === "IN_PROGRESS" ? 50 : p.done ? 100 : 0;
+      };
+      const isDone = (d) =>
+        d.status === "DELIVERED" ||
+        (d.progress?.kind === "bin" && d.progress.done);
+      function rollup(ids) {
+        const ds = ids.map(byId).filter((d) => d && !ignored(d));
+        if (!ds.length) return { pct: 0, total: 0, done: 0 };
+        if (ds.every((d) => d.progress?.kind === "sp")) {
+          const t = ds.reduce((a, d) => a + d.progress.total, 0),
+            c = ds.reduce((a, d) => a + d.progress.completed, 0);
+          return {
+            kind: "sp",
+            spTotal: t,
+            spDone: c,
+            pct: t ? (c / t) * 100 : 0,
+            total: ds.length,
+            done: ds.filter(isDone).length,
+          };
+        }
+        return {
+          kind: "pct",
+          pct:
+            Math.round(
+              (ds.reduce((a, d) => a + pctOf(d), 0) / ds.length) * 100,
+            ) / 100,
+          total: ds.length,
+          done: ds.filter(isDone).length,
+        };
+      }
+      const cost = (d) =>
+        d.anchor ? d.anchor.unitCost * d.anchor.quantity : 0;
+      const budget = (d) =>
+        d.anchor
+          ? Math.round(cost(d) * (1 + d.anchor.margin / 100) * 100) / 100
+          : 0;
+      const sumB = (ids) =>
+        ids
+          .map(byId)
+          .filter(Boolean)
+          .reduce((a, d) => a + budget(d), 0);
+      const sumC = (ids) =>
+        ids
+          .map(byId)
+          .filter(Boolean)
+          .reduce((a, d) => a + cost(d), 0);
+      const money = (n, cur = "USD") =>
+        new Intl.NumberFormat("en", {
+          style: "currency",
+          currency: cur,
+          maximumFractionDigits: 0,
+        }).format(n);
+      const dateFmt = (s) =>
+        s
+          ? new Date(s + "T00:00:00").toLocaleDateString("en", {
+              month: "short",
+              day: "numeric",
+            })
+          : "—";
+      const L = {
+        DRAFT: "Draft",
+        TODO: "To do",
+        BLOCKED: "Blocked",
+        IN_PROGRESS: "In progress",
+        DELIVERED: "Delivered",
+        CANCELED: "Canceled",
+        WONT_DO: "Won't do",
+        SUBMITTED: "Submitted",
+        APPROVED: "Approved",
+        REJECTED: "Rejected",
+      };
+      const chip = (s) => `<span class="chip ${s}">${L[s] || s}</span>`;
+      const avatar = (id) =>
+        id
+          ? `<span class="av" title="${agent(id)?.name}">${initials(id)}</span>`
+          : `<span class="av" title="No owner" style="border:1px dashed var(--rule-2);background:transparent">·</span>`;
+      const badges = (d) =>
+        [
+          !prOf(d.id) && `<span class="tag">Unfunded</span>`,
+          !msOf(d.id) && `<span class="tag warn">Unscheduled</span>`,
+          prOf(d.id) &&
+            (!d.anchor || !d.anchor.quantity) &&
+            `<span class="tag warn">Unquoted</span>`,
+        ]
+          .filter(Boolean)
+          .join(" ");
+      let uid = 100;
+      const newId = (p) => `${p}${++uid}`;
+      const S = {
+        tab: "plan",
+        sel: null,
+        f: { status: "", project: "", milestone: "", q: "" },
+        sort: { k: "code", dir: 1 },
+        bulk: new Set(),
+      };
+      function toast(t) {
+        const e = $("#toast");
+        e.textContent = t;
+        e.classList.add("show");
+        clearTimeout(e._t);
+        e._t = setTimeout(() => e.classList.remove("show"), 1600);
+      }
+      function select(id) {
+        S.sel = id;
+        render();
+      }
+      // ── plan (matrix with drag & drop) ──
+      function plan() {
+        const ms = allMs();
+        const cols = [{ id: "__none", title: "Unscheduled" }, ...ms];
+        const rows = [
+          ...D.projects,
+          {
+            id: "__none",
+            title: "Unfunded",
+            currency: "USD",
+            deliverables: D.deliverables
+              .filter((d) => !prOf(d.id))
+              .map((d) => d.id),
+          },
+        ];
+        const card = (d) => {
+          const pc = pctOf(d);
+          return `<div class="card ${d.status} ${S.sel === d.id ? "sel" : ""}" draggable="true" ondragstart="dragStart(event,'${d.id}')" ondragend="this.classList.remove('drag')" onclick="select('${d.id}')"><div class="l1"><span class="st"></span><span class="mono">${d.code || "—"}</span>${badges(d)}</div><div class="t">${d.title || "<span class='faint'>Untitled</span>"}</div><div class="l3"><div class="bar"><i style="width:${pc}%"></i></div><span class="money">${d.anchor ? money(budget(d), prOf(d.id)?.currency) : ""}</span>${avatar(d.owner)}</div></div>`;
+        };
+        const cellDs = (p, m) =>
+          p.deliverables
+            .map(byId)
+            .filter(
+              (d) =>
+                d &&
+                ((m.id === "__none" && !msOf(d.id)) || msOf(d.id)?.id === m.id),
+            );
+        return `<div class="board" style="grid-template-columns:170px repeat(${cols.length},minmax(190px,1fr))">
+    <div class="bc h"></div>${cols
+      .map((m) => {
+        const r = m.id === "__none" ? null : rollup(m.deliverables);
+        return `<div class="bc h">${m.code ? `<span class="code">${m.code} · ${m.roadmap.title}</span>` : ""}<b>${m.title}</b>${m.target ? `<div class="d">${dateFmt(m.target)} · ${r.done}/${r.total} done · ${money(sumB(m.deliverables))}</div><span class="ring" style="--p:${r.pct}" title="${Math.round(r.pct)}%"></span>` : `<div class="d">${D.deliverables.filter((d) => !msOf(d.id) && !ignored(d)).length} waiting for a date</div>`}</div>`;
+      })
+      .join("")}
+    ${rows
+      .map(
+        (
+          p,
+        ) => `<div class="bc rh"><span class="code">${p.code || ""}${p.owner ? ` · ${agent(p.owner)?.name.split(" ")[0]}` : ""}</span><b>${p.title}</b>${p.id !== "__none" ? `<div class="money">${money(sumB(p.deliverables), p.currency)}</div><div class="bar"><i style="width:${rollup(p.deliverables).pct}%"></i></div>` : `<div class="d faint" style="font-size:12px">no project pays for these</div>`}</div>
+      ${cols.map((m) => `<div class="bc drop" ondragover="dragOver(event)" ondragleave="this.classList.remove('over')" ondrop="drop(event,'${p.id}','${m.id}')">${cellDs(p, m).map(card).join("")}<button class="plus" title="New deliverable here" onclick="addHere('${p.id}','${m.id}')">+</button></div>`).join("")}`,
+      )
+      .join("")}
+  </div>
+  <div class="legend"><span><i style="background:var(--meridian)"></i>delivered</span><span><i style="background:var(--signal)"></i>in progress</span><span><i style="background:var(--ember)"></i>blocked</span><span><i style="background:var(--slate)"></i>to do / draft</span><span style="margin-left:auto">Drag a card to reschedule (column) or refund (row). Click to edit. Hover a cell for +.</span></div>`;
+      }
+      let dragging = null;
+      function dragStart(e, id) {
+        dragging = id;
+        e.dataTransfer.effectAllowed = "move";
+        e.target.classList.add("drag");
+      }
+      function dragOver(e) {
+        e.preventDefault();
+        e.currentTarget.classList.add("over");
+      }
+      function drop(e, pid, mid) {
+        e.preventDefault();
+        e.currentTarget.classList.remove("over");
+        if (!dragging) return;
+        const id = dragging;
+        dragging = null;
+        D.roadmaps.forEach((r) =>
+          r.milestones.forEach(
+            (m) => (m.deliverables = m.deliverables.filter((x) => x !== id)),
+          ),
+        );
+        if (mid !== "__none") realMs(mid).deliverables.push(id);
+        D.projects.forEach(
+          (p) => (p.deliverables = p.deliverables.filter((x) => x !== id)),
+        );
+        const d = byId(id);
+        if (pid !== "__none") {
+          project(pid).deliverables.push(id);
+          d.anchor = d.anchor || {
+            unit: "Hours",
+            unitCost: 0,
+            quantity: 0,
+            margin: 0,
+          };
+        }
+        render();
+        toast(
+          `${d.code || "Deliverable"} → ${pid !== "__none" ? project(pid).code : "unfunded"} · ${mid !== "__none" ? realMs(mid).code : "unscheduled"}`,
+        );
+      }
+      function addHere(pid, mid) {
+        const id = newId("d");
+        D.deliverables.push({
+          id,
+          code: "",
+          title: "",
+          owner: null,
+          status: "DRAFT",
+          description: "",
+          progress: { kind: "pct", value: 0 },
+          anchor:
+            pid !== "__none"
+              ? { unit: "Hours", unitCost: 0, quantity: 0, margin: 0 }
+              : null,
+        });
+        if (pid !== "__none") project(pid).deliverables.push(id);
+        if (mid !== "__none") realMs(mid).deliverables.push(id);
+        select(id);
+        setTimeout(
+          () =>
+            $("#drawer input[placeholder='What will be delivered?']")?.focus(),
+          50,
+        );
+      }
+      // ── deliverables table ──
+      function table() {
+        const f = S.f;
+        let ds = D.deliverables.filter(
+          (d) =>
+            (!f.status || d.status === f.status) &&
+            (!f.project ||
+              (f.project === "__none"
+                ? !prOf(d.id)
+                : prOf(d.id)?.id === f.project)) &&
+            (!f.milestone ||
+              (f.milestone === "__none"
+                ? !msOf(d.id)
+                : msOf(d.id)?.id === f.milestone)) &&
+            (!f.q ||
+              (d.title + " " + d.code)
+                .toLowerCase()
+                .includes(f.q.toLowerCase())),
+        );
+        const key = {
+          code: (d) => d.code,
+          title: (d) => d.title,
+          status: (d) => d.status,
+          progress: (d) => pctOf(d),
+          budget: (d) => budget(d),
+          milestone: (d) => msOf(d.id)?.target || "9",
+          project: (d) => prOf(d.id)?.code || "~",
+          owner: (d) => agent(d.owner)?.name || "~",
+        }[S.sort.k];
+        ds.sort(
+          (a, b) =>
+            (key(a) > key(b) ? 1 : key(a) < key(b) ? -1 : 0) * S.sort.dir,
+        );
+        const th = (k, l, r) =>
+          `<th class="${r ? "r" : ""}" onclick="S.sort={k:'${k}',dir:S.sort.k==='${k}'?-S.sort.dir:1};render()">${l}${S.sort.k === k ? (S.sort.dir > 0 ? " ↑" : " ↓") : ""}</th>`;
+        return `<div class="filters"><input placeholder="Search…" value="${f.q}" oninput="S.f.q=this.value;render()">
+    <select onchange="S.f.status=this.value;render()"><option value="">Any status</option>${Object.keys(
+      L,
+    )
+      .slice(0, 7)
+      .map(
+        (s) =>
+          `<option value="${s}" ${f.status === s ? "selected" : ""}>${L[s]}</option>`,
+      )
+      .join("")}</select>
+    <select onchange="S.f.project=this.value;render()"><option value="">Any project</option><option value="__none" ${f.project === "__none" ? "selected" : ""}>Unfunded</option>${D.projects.map((p) => `<option value="${p.id}" ${f.project === p.id ? "selected" : ""}>${p.code} ${p.title}</option>`).join("")}</select>
+    <select onchange="S.f.milestone=this.value;render()"><option value="">Any milestone</option><option value="__none" ${f.milestone === "__none" ? "selected" : ""}>Unscheduled</option>${allMs()
+      .map(
+        (m) =>
+          `<option value="${m.id}" ${f.milestone === m.id ? "selected" : ""}>${m.code} ${m.title}</option>`,
+      )
+      .join("")}</select>
+    <span class="faint" style="font-size:12.5px">${ds.length} of ${D.deliverables.length}</span><div style="flex:1"></div><button class="btn sm" onclick="addHere('__none','__none')">+ New deliverable</button></div>
+    ${
+      S.bulk.size
+        ? `<div class="bulk"><b>${S.bulk.size} selected</b><select onchange="if(this.value){S.bulk.forEach(id=>byId(id).status=this.value);S.bulk.clear();render();toast('Status updated')}"><option value="">Set status…</option>${Object.keys(
+            L,
+          )
+            .slice(0, 7)
+            .map((s) => `<option value="${s}">${L[s]}</option>`)
+            .join(
+              "",
+            )}</select><select onchange="if(this.value){S.bulk.forEach(id=>byId(id).owner=this.value);S.bulk.clear();render();toast('Owner updated')}"><option value="">Set owner…</option>${D.contributors.map((a) => `<option value="${a.id}">${a.name}</option>`).join("")}</select><button class="btn sm ghost" onclick="S.bulk.clear();render()">Clear</button></div>`
+        : ""
+    }
+    <table><thead><tr><th style="width:28px"><input type="checkbox" onchange="S.bulk=this.checked?new Set(D.deliverables.map(d=>d.id)):new Set();render()"></th>${th("code", "Code")}${th("title", "Deliverable")}${th("status", "Status")}${th("progress", "Progress")}${th("milestone", "Milestone")}${th("project", "Project")}${th("budget", "Budget", 1)}${th("owner", "Owner")}</tr></thead>
+    <tbody>${ds
+      .map((d) => {
+        const m = msOf(d.id),
+          p = prOf(d.id),
+          pc = pctOf(d);
+        return `<tr class="${S.sel === d.id ? "sel" : ""}" onclick="select('${d.id}')"><td onclick="event.stopPropagation()"><input type="checkbox" ${S.bulk.has(d.id) ? "checked" : ""} onchange="this.checked?S.bulk.add('${d.id}'):S.bulk.delete('${d.id}');render()"></td><td class="mono faint">${d.code || "—"}</td><td><div style="font-weight:500">${d.title}</div><div class="sub">${badges(d)}</div></td>
+      <td onclick="event.stopPropagation()"><select onchange="byId('${d.id}').status=this.value;render()">${Object.keys(
+        L,
+      )
+        .slice(0, 7)
+        .map(
+          (s) =>
+            `<option value="${s}" ${d.status === s ? "selected" : ""}>${L[s]}</option>`,
+        )
+        .join("")}</select></td>
+      <td style="min-width:130px"><div class="bar"><i style="width:${pc}%"></i></div><div class="sub" style="margin-top:3px">${d.progress?.kind === "sp" ? `${d.progress.completed}/${d.progress.total} SP` : d.progress?.kind === "bin" ? (d.progress.done ? "Done" : "Not done") : Math.round(pc) + "%"}</div></td>
+      <td>${m ? `<span class="mono">${m.code}</span> <span class="sub">${dateFmt(m.target)}</span>` : "<span class='faint'>—</span>"}</td><td>${p ? `<span class="mono">${p.code}</span>` : "<span class='faint'>—</span>"}</td><td class="r">${d.anchor ? money(budget(d), p?.currency) : "—"}</td><td>${avatar(d.owner)}</td></tr>`;
+      })
+      .join("")}</tbody></table>`;
+      }
+      // ── budget ──
+      function budgetTab() {
+        return `<div class="grid2">${D.projects
+          .map((p) => {
+            const c = sumC(p.deliverables),
+              b = sumB(p.deliverables);
+            return `<div class="panel"><h3><span class="mono faint">${p.code}</span> ${p.title}</h3><div class="sub">${p.budgetType} · ${p.currency} · owner ${agent(p.owner)?.name || "—"}</div>
+    <div class="lrow" style="font-size:11.5px;text-transform:uppercase;letter-spacing:.06em;color:var(--ink-3)"><span>Deliverable</span><span class="money">Cost</span><span class="money">Margin</span><span class="money">Budget</span></div>
+    ${p.deliverables
+      .map(byId)
+      .filter(Boolean)
+      .map(
+        (d) =>
+          `<div class="lrow" style="cursor:pointer" onclick="select('${d.id}')"><span><span class="mono faint">${d.code}</span> ${d.title} ${badges(d)}</span><span class="money">${d.anchor ? money(cost(d), p.currency) : "—"}</span><span class="money"><input type="number" value="${d.anchor?.margin ?? 0}" onclick="event.stopPropagation()" onchange="byId('${d.id}').anchor={unit:'Hours',unitCost:0,quantity:0,...(byId('${d.id}').anchor||{}),margin:+this.value};render()">%</span><span class="money">${money(budget(d), p.currency)}</span></div>`,
+      )
+      .join("")}
+    <div class="lrow tot"><span>Total <span class="faint" style="font-weight:400">· implied margin ${c ? Math.round((b / c - 1) * 1000) / 10 : 0}%</span></span><span class="money">${money(c, p.currency)}</span><span></span><span class="money">${money(b, p.currency)}</span></div>
+    <div style="display:flex;gap:8px;align-items:center;margin-top:12px;font-size:12.5px" class="muted">Set total budget <input class="mono" style="width:110px;height:28px;border:1px solid var(--rule-2);border-radius:6px;padding:0 8px;background:var(--panel)" placeholder="${Math.round(b)}" onkeydown="if(event.key==='Enter'){setTotal('${p.id}',this.value)}"> <span class="faint">→ re-derives every margin</span><span style="flex:1"></span>Margin for all <input class="mono" style="width:60px;height:28px;border:1px solid var(--rule-2);border-radius:6px;padding:0 8px;background:var(--panel)" placeholder="%" onkeydown="if(event.key==='Enter'){setMargin('${p.id}',this.value)}"></div></div>`;
+          })
+          .join("")}
+  <div class="panel"><h3>By milestone</h3><div class="sub">what each date commits, across projects</div>${allMs()
+    .map(
+      (m) =>
+        `<div class="lrow" style="grid-template-columns:1fr 120px"><span><span class="mono faint">${m.code}</span> ${m.title} <span class="faint">· ${dateFmt(m.target)}</span></span><span class="money">${money(sumB(m.deliverables))}</span></div>`,
+    )
+    .join("")}</div></div>`;
+      }
+      function setTotal(pid, v) {
+        const p = project(pid);
+        const c = sumC(p.deliverables);
+        if (!c) return toast("Quote a deliverable first");
+        if (+v < c)
+          return toast(`Cannot go below cost ${money(c, p.currency)}`);
+        const m = Math.round((+v / c - 1) * 1000) / 10;
+        p.deliverables.map(byId).forEach((d) => {
+          if (d.anchor) d.anchor.margin = m;
+        });
+        render();
+        toast(`Margins → ${m}%`);
+      }
+      function setMargin(pid, v) {
+        if (+v < 0) return toast("Margin must be zero or positive");
+        project(pid)
+          .deliverables.map(byId)
+          .forEach((d) => {
+            if (d.anchor) d.anchor.margin = +v;
+          });
+        render();
+      }
+      function team() {
+        return `<div class="team">${D.contributors
+          .map((a) => {
+            const owns = D.deliverables.filter((d) => d.owner === a.id).length,
+              leads = D.projects.filter((p) => p.owner === a.id).length,
+              co = allMs().filter((m) => m.coordinators.includes(a.id)).length;
+            return `<div class="member">${avatar(a.id)}<div><div class="n">${a.name}</div><div class="r mono">${a.id}</div></div><div class="s">${leads ? leads + " project<br>" : ""}${owns} deliverables${co ? "<br>coordinates " + co : ""}</div></div>`;
+          })
+          .join(
+            "",
+          )}<button class="member" style="justify-content:center;border-style:dashed;color:var(--ink-3)" onclick="const n=prompt('Name');if(n){D.contributors.push({id:'phd:'+n.toLowerCase().replace(/\\s+/g,'-'),name:n});render()}">+ Add contributor</button></div>`;
+      }
+      // ── drawer ──
+      function drawer() {
+        const d = S.sel && byId(S.sel);
+        $("#scrim").classList.toggle("on", !!d);
+        $("#drawer").classList.toggle("on", !!d);
+        if (!d) return;
+        const p = prOf(d.id),
+          m = msOf(d.id),
+          pr = d.progress || { kind: "pct", value: 0 },
+          c = cost(d),
+          b = budget(d);
+        $("#drawer").innerHTML =
+          `<div class="dh"><div class="eyebrow"><span>Deliverable</span><button class="x" onclick="select(null)">×</button></div>
+    <div style="display:flex;gap:8px;margin-top:6px"><input class="in mono" style="width:90px" value="${d.code}" placeholder="CODE" onchange="byId('${d.id}').code=this.value;render()"><input class="in" style="flex:1;font-weight:600" value="${d.title}" placeholder="What will be delivered?" onchange="byId('${d.id}').title=this.value;render()"></div><div style="margin-top:8px;display:flex;gap:6px">${chip(d.status)} ${badges(d)}</div></div>
+    <div class="field two"><div><label>Status</label><select class="in" onchange="byId('${d.id}').status=this.value;render()">${Object.keys(
+      L,
+    )
+      .slice(0, 7)
+      .map(
+        (s) =>
+          `<option value="${s}" ${d.status === s ? "selected" : ""}>${L[s]}</option>`,
+      )
+      .join(
+        "",
+      )}</select></div><div><label>Owner</label><select class="in" onchange="byId('${d.id}').owner=this.value||null;render()"><option value="">Unassigned</option>${D.contributors.map((a) => `<option value="${a.id}" ${d.owner === a.id ? "selected" : ""}>${a.name}</option>`).join("")}</select></div></div>
+    <div class="field"><label>Description</label><textarea class="in" placeholder="What does done look like?" onchange="byId('${d.id}').description=this.value">${d.description || ""}</textarea></div>
+    <div class="sec">Progress</div><div class="field"><div class="seg">${[
+      ["pct", "Percent"],
+      ["sp", "Story points"],
+      ["bin", "Done / not done"],
+    ]
+      .map(
+        ([k, l]) =>
+          `<button class="${pr.kind === k ? "on" : ""}" onclick="setKind('${d.id}','${k}')">${l}</button>`,
+      )
+      .join("")}</div></div>
+    ${pr.kind === "pct" ? `<div class="field"><input type="range" class="range" min="0" max="100" value="${pr.value}" oninput="setPct('${d.id}',this.value)"><div class="mono muted" style="text-align:right"><b style="color:var(--ink)">${Math.round(pr.value)}%</b></div></div>` : pr.kind === "sp" ? `<div class="field two"><div><label>Completed</label><input type="number" class="in mono" value="${pr.completed}" onchange="setSP('${d.id}',this.value,null)"></div><div><label>Total</label><input type="number" class="in mono" value="${pr.total}" onchange="setSP('${d.id}',null,this.value)"></div></div>` : `<div class="field"><label style="display:flex;gap:8px;align-items:center;cursor:pointer;font-size:13px;color:var(--ink)"><input type="checkbox" ${pr.done ? "checked" : ""} onchange="setDone('${d.id}',this.checked)"> Mark as delivered</label></div>`}
+    <div class="hint">${["CANCELED", "WONT_DO"].includes(d.status) ? "<span class='err'>Closed deliverables don't accept progress.</span>" : "Reaching 100% sets the status to Delivered automatically."}</div>
+    <div class="sec">Placement</div><div class="field two"><div><label>Milestone (when)</label><select class="in" onchange="schedule('${d.id}',this.value)"><option value="">Unscheduled</option>${allMs()
+      .map(
+        (x) =>
+          `<option value="${x.id}" ${m?.id === x.id ? "selected" : ""}>${x.code} · ${x.title}</option>`,
+      )
+      .join(
+        "",
+      )}</select></div><div><label>Project (who pays)</label><select class="in" onchange="fund('${d.id}',this.value)"><option value="">Unfunded</option>${D.projects.map((x) => `<option value="${x.id}" ${p?.id === x.id ? "selected" : ""}>${x.code} · ${x.title}</option>`).join("")}</select></div></div>
+    <div class="sec">Quote</div><div class="field three"><div><label>Unit</label><select class="in" onchange="anchor('${d.id}',{unit:this.value})"><option value="Hours" ${d.anchor?.unit === "Hours" ? "selected" : ""}>Hours</option><option value="StoryPoints" ${d.anchor?.unit === "StoryPoints" ? "selected" : ""}>Story pts</option></select></div><div><label>Unit cost</label><input type="number" class="in mono" value="${d.anchor?.unitCost ?? ""}" placeholder="0" onchange="anchor('${d.id}',{unitCost:+this.value})"></div><div><label>Quantity</label><input type="number" class="in mono" value="${d.anchor?.quantity ?? ""}" placeholder="0" onchange="anchor('${d.id}',{quantity:+this.value})"></div></div>
+    <div class="field"><label>Margin %</label><input type="range" class="range" min="0" max="100" value="${d.anchor?.margin ?? 0}" oninput="anchor('${d.id}',{margin:+this.value})"><div class="mono muted" style="text-align:right">${d.anchor?.margin ?? 0}%</div></div>
+    <div class="calc"><div><span>cost</span><span>${d.anchor ? money(c, p?.currency) : "—"}</span></div><div><span>margin</span><span>${d.anchor ? money(b - c, p?.currency) : "—"}</span></div><div class="tot"><span>budget</span><span>${money(b, p?.currency)}</span></div></div>
+    <div class="danger"><span>Esc closes</span><button onclick="if(confirm('Remove everywhere?')){D.deliverables=D.deliverables.filter(x=>x.id!=='${d.id}');D.projects.forEach(p=>p.deliverables=p.deliverables.filter(x=>x!=='${d.id}'));D.roadmaps.forEach(r=>r.milestones.forEach(m=>m.deliverables=m.deliverables.filter(x=>x!=='${d.id}')));select(null)}">Remove deliverable</button></div>`;
+      }
+      function after(d) {
+        d.status = isDone(d) ? "DELIVERED" : "IN_PROGRESS";
+      }
+      function setKind(id, k) {
+        const d = byId(id);
+        if (["CANCELED", "WONT_DO"].includes(d.status))
+          return toast("Closed deliverables don't accept progress");
+        d.progress =
+          k === "pct"
+            ? { kind: "pct", value: 0 }
+            : k === "sp"
+              ? { kind: "sp", total: 10, completed: 0 }
+              : { kind: "bin", done: false };
+        render();
+      }
+      function setPct(id, v) {
+        const d = byId(id);
+        d.progress = { kind: "pct", value: +v };
+        after(d);
+        render();
+      }
+      function setSP(id, c, t) {
+        const d = byId(id),
+          p = d.progress;
+        const nc = c === null ? p.completed : +c,
+          nt = t === null ? p.total : +t;
+        if (nc > nt || nc < 0 || nt < 0) {
+          toast("completed must be ≤ total");
+          return render();
+        }
+        d.progress = { kind: "sp", total: nt, completed: nc };
+        after(d);
+        render();
+      }
+      function setDone(id, v) {
+        const d = byId(id);
+        d.progress = { kind: "bin", done: !!v };
+        after(d);
+        render();
+      }
+      function schedule(id, mid) {
+        D.roadmaps.forEach((r) =>
+          r.milestones.forEach(
+            (m) => (m.deliverables = m.deliverables.filter((x) => x !== id)),
+          ),
+        );
+        if (mid) realMs(mid).deliverables.push(id);
+        render();
+      }
+      function fund(id, pid) {
+        D.projects.forEach(
+          (p) => (p.deliverables = p.deliverables.filter((x) => x !== id)),
+        );
+        const d = byId(id);
+        if (pid) {
+          project(pid).deliverables.push(id);
+          d.anchor = d.anchor || {
+            unit: "Hours",
+            unitCost: 0,
+            quantity: 0,
+            margin: 0,
+          };
+        }
+        render();
+      }
+      function anchor(id, patch) {
+        const d = byId(id);
+        const a = {
+          unit: "Hours",
+          unitCost: 0,
+          quantity: 0,
+          margin: 0,
+          ...(d.anchor || {}),
+          ...patch,
+        };
+        if (a.unitCost < 0 || a.quantity < 0 || a.margin < 0)
+          return toast("Quotes must be zero or positive");
+        d.anchor = a;
+        render();
+      }
+      function render() {
+        const all = rollup(D.deliverables.map((d) => d.id));
+        const byCur = {};
+        D.projects.forEach(
+          (p) =>
+            (byCur[p.currency] =
+              (byCur[p.currency] || 0) + sumB(p.deliverables)),
+        );
+        const next = allMs().find((m) => m.target >= "2026-10-20");
+        $("#kpis").innerHTML = `<span>Budget <b>${Object.entries(byCur)
+          .map(([c, v]) => money(v, c))
+          .join(
+            " · ",
+          )}</b></span><span>Progress <b>${Math.round(all.pct)}%</b></span><span>Delivered <b>${all.done}/${all.total}</b></span><span>Blocked <b>${D.deliverables.filter((d) => d.status === "BLOCKED").length}</b></span><span>Next <b>${next ? next.code + " " + dateFmt(next.target) : "—"}</b></span><span>Unscheduled <b>${D.deliverables.filter((d) => !msOf(d.id) && !ignored(d)).length}</b></span><span>Unfunded <b>${D.deliverables.filter((d) => !prOf(d.id) && !ignored(d)).length}</b></span>`;
+        const tabs = [
+          ["plan", "Plan"],
+          ["table", "Deliverables", D.deliverables.length],
+          ["budget", "Budget"],
+          ["team", "Team", D.contributors.length],
+        ];
+        $("#tabs").innerHTML = tabs
+          .map(
+            ([k, l, n]) =>
+              `<button class="tab ${S.tab === k ? "on" : ""}" onclick="S.tab='${k}';render()">${l}${n != null ? `<span class="n">${n}</span>` : ""}</button>`,
+          )
+          .join("");
+        $("#main").innerHTML =
+          S.tab === "plan"
+            ? plan()
+            : S.tab === "table"
+              ? table()
+              : S.tab === "budget"
+                ? budgetTab()
+                : team();
+        const sc = $("#sowChip");
+        sc.className = "chip " + D.status;
+        sc.textContent = L[D.status];
+        drawer();
+      }
+      document.addEventListener("keydown", (e) => {
+        if (e.key === "Escape") select(null);
+      });
+      render();
+    </script>
+  </body>
+</html>

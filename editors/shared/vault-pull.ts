@@ -9,7 +9,7 @@
  *
  * The hydrator itself lives in the knowledge-vault app (it needs the
  * remote client and Connect's `setDrives`), but the write paths that
- * need to nudge it do not all live there: `project-editor` creates WBS
+ * need to nudge it do not all live there: the scope-of-work editor creates WBS
  * documents too. So the registration slot lives here, in `shared`,
  * which imports from no editor folder and therefore cannot cycle.
  */

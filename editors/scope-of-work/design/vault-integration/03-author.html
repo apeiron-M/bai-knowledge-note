@@ -1,0 +1,246 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>03 · Author bottom-up</title>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,650&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      :root {
+        --bg: #1e1e2e;
+        --surface: #181825;
+        --deep: #11111b;
+        --hover: #313244;
+        --border: rgba(255, 255, 255, 0.1);
+        --text: #e4e4e7;
+        --text-3: #9ca3af;
+        --muted: #6b7280;
+        --accent: #cba6f7;
+        --accent-text: #1e1e2e;
+        --green: #10b981;
+        --blue: #3b82f6;
+        --amber: #f59e0b;
+        --red: rgb(248, 113, 113);
+      }
+      * {
+        box-sizing: border-box;
+      }
+      body {
+        margin: 0;
+        background: var(--bg);
+        color: var(--text);
+        font: 14px/1.5 "IBM Plex Sans", system-ui, sans-serif;
+      }
+      nav {
+        display: flex;
+        gap: 14px;
+        padding: 12px 22px;
+        border-bottom: 1px solid var(--border);
+        font-family: "IBM Plex Mono", monospace;
+        font-size: 12px;
+      }
+      nav a {
+        color: var(--muted);
+        text-decoration: none;
+      }
+      nav a.on,
+      nav a:hover {
+        color: var(--accent);
+      }
+      .wrap {
+        max-width: 1040px;
+        margin: 0 auto;
+        padding: 32px 22px 64px;
+      }
+      h1 {
+        font-family: Fraunces, serif;
+        font-size: 30px;
+        margin: 0 0 6px;
+      }
+      .lead {
+        color: var(--text-3);
+        max-width: 620px;
+      }
+      .steps {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 10px;
+        margin: 28px 0;
+      }
+      .step {
+        background: var(--surface);
+        border: 1px solid var(--border);
+        border-radius: 12px;
+        padding: 14px;
+      }
+      .step .n {
+        font-family: "IBM Plex Mono", monospace;
+        font-size: 11px;
+        color: var(--accent);
+      }
+      .step h3 {
+        margin: 6px 0 4px;
+        font-size: 14px;
+      }
+      .step p {
+        margin: 0;
+        font-size: 12.5px;
+        color: var(--text-3);
+      }
+      .editor {
+        display: grid;
+        grid-template-columns: 1fr 280px;
+        gap: 14px;
+        background: var(--deep);
+        border: 1px solid var(--border);
+        border-radius: 16px;
+        padding: 16px;
+      }
+      .eyebrow {
+        font-size: 11px;
+        color: var(--muted);
+        margin-bottom: 8px;
+      }
+      .eyebrow em {
+        color: var(--accent);
+        font-style: normal;
+      }
+      .goal {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        background: var(--surface);
+        border: 1px solid var(--border);
+        border-radius: 10px;
+        padding: 8px 10px;
+        margin-bottom: 6px;
+        font-size: 13px;
+      }
+      .goal.child {
+        margin-left: 22px;
+      }
+      .st {
+        font-size: 10px;
+        padding: 1px 7px;
+        border-radius: 99px;
+        border: 1px solid;
+      }
+      .st.todo {
+        color: var(--text-3);
+        border-color: var(--border);
+      }
+      .st.prog {
+        color: var(--blue);
+        border-color: rgba(59, 130, 246, 0.4);
+      }
+      .st.ok {
+        color: var(--green);
+        border-color: rgba(16, 185, 129, 0.4);
+      }
+      .know {
+        background: var(--surface);
+        border: 1px solid var(--border);
+        border-radius: 12px;
+        padding: 12px;
+      }
+      .know h3 {
+        margin: 0 0 8px;
+        font-size: 11px;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        color: var(--muted);
+      }
+      .know .row {
+        font-size: 12.5px;
+        padding: 6px 8px;
+        border-radius: 8px;
+        background: var(--bg);
+        border: 1px solid var(--border);
+        margin-bottom: 6px;
+        color: var(--accent);
+      }
+      .hint {
+        margin-top: 16px;
+        font-size: 13px;
+        color: var(--text-3);
+      }
+    </style>
+  </head>
+  <body>
+    <nav>
+      <a href="index.html">hub</a>
+      <a href="01-layers.html">01 layers</a>
+      <a href="02-nav.html">02 nav</a>
+      <a class="on" href="03-author.html">03 author</a>
+      <a href="04-compile.html">04 compile</a>
+    </nav>
+    <div class="wrap">
+      <h1>Work starts here. Scope is optional.</h1>
+      <p class="lead">
+        Same path as today. A brief becomes a project and a goal tree. Vault
+        notes are cited on the project. Nobody asks for a deliverable code
+        yet.
+      </p>
+
+      <div class="steps">
+        <div class="step">
+          <div class="n">1</div>
+          <h3>Brief</h3>
+          <p>Demo steps, a conversation, a Sky request.</p>
+        </div>
+        <div class="step">
+          <div class="n">2</div>
+          <h3>New Project</h3>
+          <p>Projects tab. File lands in /projects/.</p>
+        </div>
+        <div class="step">
+          <div class="n">3</div>
+          <h3>Goals</h3>
+          <p>Create WBS, write tasks, assign, block with a reason.</p>
+        </div>
+        <div class="step">
+          <div class="n">4</div>
+          <h3>Knowledge</h3>
+          <p>Link notes and MOCs. These stay on the project forever.</p>
+        </div>
+      </div>
+
+      <div class="editor">
+        <div>
+          <div class="eyebrow">bai/project · <em>uncompiled</em></div>
+          <div style="font-size: 22px; font-family: Fraunces, serif; margin-bottom: 12px">
+            Remote-first vault
+          </div>
+          <div class="goal">
+            <span class="st ok">Done</span> Snapshot the production drive
+          </div>
+          <div class="goal child">
+            <span class="st ok">Done</span> Preserve edge reason + confidence
+          </div>
+          <div class="goal">
+            <span class="st prog">In progress</span> Restore path uses ADD_RELATIONSHIP
+          </div>
+          <div class="goal">
+            <span class="st todo">To do</span> Tension / project / WBS upload handlers
+          </div>
+        </div>
+        <div class="know">
+          <h3>Knowledge · 3</h3>
+          <div class="row">edge metadata — articulation test</div>
+          <div class="row">drive-scoped indexing</div>
+          <div class="row">remote-first vault notes</div>
+          <p style="margin: 10px 0 0; font-size: 11.5px; color: var(--muted)">
+            ADD_KNOWLEDGE_REF on this document. Not docs link. Not copied
+            into SoW.
+          </p>
+        </div>
+      </div>
+      <p class="hint">
+        Compile is a later button on this header — only if a SoW exists.
+        Until then the project is just work, which is the point.
+      </p>
+    </div>
+  </body>
+</html>

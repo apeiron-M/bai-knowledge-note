@@ -1,7 +1,7 @@
 /**
  * Re-export shim. The remote reactor client moved to
  * `editors/shared/remote-reactor.ts` so editors outside knowledge-vault
- * (project-editor, which must create WBS documents server-side under
+ * (the scope-of-work editor, which must create WBS documents server-side under
  * remote-first mode) can use the one create/mutate/delete path instead
  * of growing a second GraphQL client.
  *

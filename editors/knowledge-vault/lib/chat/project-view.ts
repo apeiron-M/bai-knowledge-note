@@ -8,12 +8,12 @@
  * an outline the model can quote and a compact `data` shape it can reason
  * over. Pure functions; the tool layer does the fetching.
  */
-import type { Deliverable, ProjectState } from "document-models/project";
 import type {
   Goal,
   GoalStatus,
   WorkBreakdownStructureState,
 } from "document-models/work-breakdown-structure";
+import type { ScopeOfWorkState } from "document-models/scope-of-work";
 
 export interface GoalNode {
   goal: Goal;
@@ -137,126 +137,146 @@ export function renderWbs(
   };
 }
 
-export interface ProjectRendering {
+/**
+ * `knowledgeRefs` / `references` are non-nullable in the schema, but a scope
+ * written before the fields existed stores envelopes with neither. The cast is
+ * the one place this file admits stored data can predate the schema.
+ */
+function envelopeList(
+  env: { knowledgeRefs: string[]; references: string[] },
+  key: "knowledgeRefs" | "references",
+): string[] {
+  return (env as Partial<Record<typeof key, string[]>>)[key] ?? [];
+}
+
+/* ── Scope of work ─────────────────────────────────────────────────────── */
+
+export interface ScopeRendering {
   text: string;
   data: {
-    /** The project document's id — what a citation of this outline points at. */
     documentId: string;
-    documentType: "bai/project";
+    documentType: "powerhouse/scopeofwork";
     title: string;
-    status: ProjectState["status"];
-    owner: string | null;
-    targetDate: string | null;
-    wbsRef: string | null;
-    team: { name: string; role: string | null; kind: string | null }[];
-    deliverables: {
+    status: ScopeOfWorkState["status"];
+    envelopes: {
       id: string;
+      code: string;
       title: string;
-      status: Deliverable["status"];
-      goal: { id: string; description: string; status: GoalStatus } | null;
-      url: string | null;
+      owner: string | null;
+      status: string;
+      budget: number | null;
+      currency: string | null;
+      wbsRef: string | null;
+      goals: GoalProgress | null;
+      deliverables: { id: string; code: string; title: string; status: string; goal: string | null }[];
+      knowledgeRefs: { documentId: string; title: string | null }[];
+      references: string[];
     }[];
-    deliverableProgress: { delivered: number; total: number };
-    goals: GoalProgress | null;
-    knowledgeRefs: { documentId: string; title: string | null }[];
-    references: string[];
+    deliverables: { delivered: number; total: number };
+    milestones: { code: string; title: string; target: string; deliverables: number }[];
+    contributors: string[];
   };
 }
 
-export function renderProject(o: {
+/**
+ * A scope of work as one outline: envelopes (the projects) with their
+ * deliverables joined to the WBS goal that delivers each, then the schedule
+ * and the people. Everything citable in it is the scope document itself —
+ * envelopes and deliverables have no documentId of their own; the linked
+ * work breakdowns do.
+ */
+export function renderScope(o: {
   id: string;
-  project: ProjectState;
-  wbs: WorkBreakdownStructureState | null;
-  /** Titles for `knowledgeRefs`, where the graph index knew them. */
+  scope: ScopeOfWorkState;
+  wbsById: Map<string, WorkBreakdownStructureState>;
   noteTitles: Map<string, string>;
-}): ProjectRendering {
-  const { project: p, wbs } = o;
-  const goals = new Map((wbs?.goals ?? []).map((g) => [g.id, g]));
+}): ScopeRendering {
+  const g = o.scope;
+  const agent = new Map(g.contributors.map((c) => [c.id, c.name] as const));
+  const byId = new Map(g.deliverables.map((d) => [d.id, d] as const));
   const lines: string[] = [];
+  lines.push(`# Scope of work: ${g.title || "(untitled)"} — ${g.status} [[${o.id}]]`);
+  if (g.description) lines.push("", g.description);
 
-  const title = p.name ?? "(unnamed)";
-  lines.push(`# Project: ${title} — ${p.status} [[${o.id}]]`);
-  const meta: string[] = [];
-  if (p.owner) meta.push(`Owner: ${p.owner}`);
-  if (p.targetDate) meta.push(`Target: ${String(p.targetDate).slice(0, 10)}`);
-  if (meta.length) lines.push(meta.join(" · "));
-  if (p.description) lines.push("", p.description);
-
-  lines.push("", "## Team");
-  if (p.team.length === 0) lines.push("No team listed.");
-  for (const t of p.team) {
-    lines.push(
-      `- ${t.name}${t.role ? ` — ${t.role}` : ""}${t.kind === "AGENT" ? " (agent)" : ""}`,
-    );
+  const envelopes: ScopeRendering["data"]["envelopes"] = [];
+  lines.push("", "## Projects (envelopes)");
+  if (g.projects.length === 0) lines.push("No projects yet.");
+  for (const env of g.projects) {
+    const owner = env.projectOwner ? (agent.get(env.projectOwner) ?? env.projectOwner) : null;
+    const wbs = env.wbsRef ? (o.wbsById.get(env.wbsRef) ?? null) : null;
+    const goalById = new Map((wbs?.goals ?? []).map((x) => [x.id, x] as const));
+    const ids = env.scope?.deliverables ?? [];
+    const ds = ids.map((id) => byId.get(id)).filter((d): d is NonNullable<typeof d> => Boolean(d));
+    lines.push("", `### ${env.code} · ${env.title}${owner ? ` — owner ${owner}` : ""} (${env.scope?.status ?? "DRAFT"})`);
+    if (env.abstract) lines.push(env.abstract);
+    if (env.budget) lines.push(`Budget: ${env.budget} ${env.currency ?? ""}`.trim());
+    for (const d of ds) {
+      const goal = d.goalRef ? goalById.get(d.goalRef) : undefined;
+      lines.push(`- [${d.status}] ${d.code ? `${d.code} ` : ""}${d.title}${goal ? ` — goal: ${goal.description} (${goal.status})` : ""}`);
+      for (const kr of d.keyResults) lines.push(`    ${kr.title}: ${kr.link}`);
+    }
+    if (ds.length === 0) lines.push("- No deliverables yet.");
+    if (wbs) {
+      const gp = goalProgress(wbs.goals);
+      lines.push(`Work breakdown [[${env.wbsRef}]]: ${gp.completed}/${gp.total} goals completed`);
+    } else if (env.wbsRef) {
+      lines.push(`Work breakdown [[${env.wbsRef}]] (not loaded)`);
+    }
+    const refs = envelopeList(env, "knowledgeRefs");
+    if (refs.length) lines.push("Knowledge: " + refs.map((r) => `${o.noteTitles.get(r) ?? "(untitled)"} [[${r}]]`).join("; "));
+    const extRefs = envelopeList(env, "references");
+    if (extRefs.length) lines.push("References: " + extRefs.join(", "));
+    envelopes.push({
+      id: env.id,
+      code: env.code,
+      title: env.title,
+      owner,
+      status: env.scope?.status ?? "DRAFT",
+      budget: env.budget ?? null,
+      currency: env.currency ?? null,
+      wbsRef: env.wbsRef ?? null,
+      goals: wbs ? goalProgress(wbs.goals) : null,
+      deliverables: ds.map((d) => ({
+        id: d.id,
+        code: d.code,
+        title: d.title,
+        status: d.status,
+        goal: d.goalRef ? (goalById.get(d.goalRef)?.description ?? null) : null,
+      })),
+      knowledgeRefs: refs.map((r) => ({ documentId: r, title: o.noteTitles.get(r) ?? null })),
+      references: extRefs,
+    });
   }
 
-  lines.push("", "## Deliverables");
-  const deliverables = p.deliverables.map((d) => {
-    const g = d.goalRef ? goals.get(d.goalRef) : undefined;
-    return {
-      id: d.id,
-      title: d.title,
-      status: d.status,
-      goal: g
-        ? { id: g.id, description: g.description, status: g.status }
-        : null,
-      url: d.url ?? null,
-    };
-  });
-  if (deliverables.length === 0) lines.push("No deliverables yet.");
-  for (const d of deliverables) {
-    const bits: string[] = [];
-    if (d.goal) bits.push(`goal: ${d.goal.description} (${d.goal.status})`);
-    if (d.url) bits.push(d.url);
-    lines.push(
-      `- [${d.status}] ${d.title}${bits.length ? ` — ${bits.join("; ")}` : ""}`,
-    );
+  const milestones: ScopeRendering["data"]["milestones"] = [];
+  lines.push("", "## Schedule");
+  for (const r of g.roadmaps) {
+    lines.push(`Roadmap: ${r.title}`);
+    for (const m of r.milestones) {
+      const n = m.scope?.deliverables.length ?? 0;
+      lines.push(`- ${m.sequenceCode} ${m.title} — ${m.deliveryTarget || "no date"} (${n} deliverable${n === 1 ? "" : "s"})`);
+      milestones.push({ code: m.sequenceCode, title: m.title, target: m.deliveryTarget, deliverables: n });
+    }
   }
+  if (g.roadmaps.length === 0) lines.push("No roadmap yet.");
 
-  lines.push("");
-  if (wbs) {
-    const w = renderWbs(wbs, { id: p.wbsRef ?? "", projectName: p.name });
-    lines.push(w.text.replace(/^# Work breakdown[^\n]*/, "## Work breakdown"));
-  } else {
-    lines.push("## Work breakdown", "No work breakdown linked.");
-  }
-
-  const knowledgeRefs = p.knowledgeRefs.map((id) => ({
-    documentId: id,
-    title: o.noteTitles.get(id) ?? null,
-  }));
-  if (knowledgeRefs.length > 0) {
-    lines.push("", "## Linked knowledge");
-    for (const k of knowledgeRefs)
-      lines.push(`- ${k.title ? `${k.title} ` : ""}[[${k.documentId}]]`);
-  }
-  if (p.references.length > 0) {
-    lines.push("", "## References", ...p.references.map((r) => `- ${r}`));
-  }
+  lines.push("", "## Contributors");
+  lines.push(g.contributors.length ? g.contributors.map((c) => c.name).join(", ") : "None listed.");
 
   return {
     text: lines.join("\n"),
     data: {
       documentId: o.id,
-      documentType: "bai/project",
-      title,
-      status: p.status,
-      owner: p.owner ?? null,
-      targetDate: p.targetDate ? String(p.targetDate) : null,
-      wbsRef: p.wbsRef ?? null,
-      team: p.team.map((t) => ({
-        name: t.name,
-        role: t.role ?? null,
-        kind: t.kind ?? null,
-      })),
-      deliverables,
-      deliverableProgress: {
-        delivered: deliverables.filter((d) => d.status === "DELIVERED").length,
-        total: deliverables.length,
+      documentType: "powerhouse/scopeofwork",
+      title: g.title,
+      status: g.status,
+      envelopes,
+      deliverables: {
+        delivered: g.deliverables.filter((d) => d.status === "DELIVERED").length,
+        total: g.deliverables.length,
       },
-      goals: wbs ? goalProgress(wbs.goals) : null,
-      knowledgeRefs,
-      references: [...p.references],
+      milestones,
+      contributors: g.contributors.map((c) => c.name),
     },
   };
 }

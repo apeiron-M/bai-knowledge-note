@@ -424,8 +424,8 @@ describe("extractCitations / resolveCitations", () => {
       data: {
         total: 2,
         projects: [
-          { documentId: P1, title: "Auth Scope Enforcement", documentType: "bai/project", wbs: { documentId: "w1", documentType: "bai/wbs" } },
-          { documentId: "p2", title: "Paperless × Powerhouse demo", documentType: "bai/project" },
+          { documentId: P1, title: "Auth Scope Enforcement", documentType: "powerhouse/scopeofwork", wbs: { documentId: "w1", documentType: "bai/wbs" } },
+          { documentId: "p2", title: "Paperless × Powerhouse demo", documentType: "powerhouse/scopeofwork" },
         ],
       },
     },
@@ -452,7 +452,7 @@ describe("extractCitations / resolveCitations", () => {
 
   it("cites projects exactly like notes — any document with a documentId", () => {
     expect(extractCitations(`The project [[${P1}]] is active.`, trail)).toEqual([
-      { documentId: P1, title: "Auth Scope Enforcement", documentType: "bai/project" },
+      { documentId: P1, title: "Auth Scope Enforcement", documentType: "powerhouse/scopeofwork" },
     ]);
   });
 
@@ -540,7 +540,7 @@ describe("groundMarkdownLinks (links the vault did not produce)", () => {
       tool: "read_document",
       summary: "d",
       ok: true,
-      data: { documentId: "p1", title: "Vault chat", documentType: "bai/project", deliverables: [{ url: "https://github.com/powerhouse/vault/pull/7" }] },
+      data: { documentId: "p1", title: "Vault chat", documentType: "powerhouse/scopeofwork", deliverables: [{ url: "https://github.com/powerhouse/vault/pull/7" }] },
     },
   ];
 
@@ -641,14 +641,14 @@ describe("consultedDocuments", () => {
     { tool: "read_note", summary: "r", ok: true, data: { documentId: "n1", title: "Read one", documentType: "bai/knowledge-note", content: "…" } },
     { tool: "read_note", summary: "r", ok: true, data: { documentId: "n2", title: "Read two", documentType: "bai/moc", content: "…" } },
     { tool: "read_note", summary: "r", ok: true, data: { documentId: "n1", title: "Read one", content: "…" } },
-    { tool: "read_document", summary: "d", ok: true, data: { documentId: "p1", title: "A project", documentType: "bai/project", text: "…" } },
+    { tool: "read_document", summary: "d", ok: true, data: { documentId: "p1", title: "A project", documentType: "powerhouse/scopeofwork", text: "…" } },
     { tool: "read_note", summary: "x", ok: false, error: "gone" },
   ];
 
   it("lists documents read in full and not cited, once each, in read order", () => {
     expect(consultedDocuments(trail, [{ documentId: "n2", title: "Read two" }])).toEqual([
       { documentId: "n1", title: "Read one", documentType: "bai/knowledge-note" },
-      { documentId: "p1", title: "A project", documentType: "bai/project" },
+      { documentId: "p1", title: "A project", documentType: "powerhouse/scopeofwork" },
     ]);
   });
 

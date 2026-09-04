@@ -400,225 +400,114 @@ describe("executeTool", () => {
   });
 });
 
-describe("projects and work breakdowns", () => {
-  const project = {
-    name: "Vault chat",
-    description: "d",
-    status: "ACTIVE",
-    owner: "liberuum",
-    targetDate: "2026-09-15T00:00:00.000Z",
-    wbsRef: "w1",
-    team: [{ id: "t1", name: "liberuum", role: "Lead", kind: "HUMAN" }],
-    deliverables: [
+describe("scope of work envelopes", () => {
+  const CTX = { driveId: "d1" };
+  const scope = {
+    title: "Powerhouse PMF",
+    description: "Scoping approaches",
+    status: "DRAFT",
+    contributors: [{ id: "a-frank", name: "Frank", icon: null, description: "" }],
+    projects: [
       {
-        id: "d1",
-        title: "Chat tab",
-        description: null,
-        status: "DELIVERED",
-        goalRef: "g1",
-        url: null,
-        deliveredAt: null,
-      },
-      {
-        id: "d2",
-        title: "Docs",
-        description: null,
-        status: "PLANNED",
-        goalRef: "g2",
-        url: null,
-        deliveredAt: null,
+        id: "env1",
+        slug: "ppd",
+        code: "PPD",
+        title: "Paperless demo",
+        projectOwner: "a-frank",
+        abstract: "First demo",
+        imageUrl: null,
+        scope: { deliverables: ["d1", "d2"], status: "IN_PROGRESS", progress: { value: 50, total: null, completed: null, done: null }, deliverablesCompleted: { total: 2, completed: 1 } },
+        budgetType: "OPEX",
+        currency: "USD",
+        budget: 0,
+        targetBudget: null,
+        expenditure: { percentage: 0, actuals: 0, cap: 0 },
+        wbsRef: "w9",
+        knowledgeRefs: ["n-a"],
+        references: ["https://example.com"],
       },
     ],
-    knowledgeRefs: ["n-a"],
-    references: [],
-    createdAt: null,
+    deliverables: [
+      { id: "d1", owner: "a-frank", icon: null, title: "Configured instance", code: "PPD-01", description: "", status: "DELIVERED", workProgress: { done: true, value: null, total: null, completed: null }, keyResults: [{ id: "k", title: "Shipped", link: "https://x.example" }], budgetAnchor: null, goalRef: "g1" },
+      { id: "d2", owner: null, icon: null, title: "Payments", code: "PPD-02", description: "", status: "TODO", workProgress: null, keyResults: [], budgetAnchor: null, goalRef: "g2" },
+    ],
+    roadmaps: [{ id: "r", slug: "r", title: "H2", description: "", milestones: [{ id: "m1", sequenceCode: "M1", title: "Demo ready", description: "", deliveryTarget: "2026-08-28", scope: { deliverables: ["d1", "d2"], status: "DRAFT", progress: { value: 0, total: null, completed: null, done: null }, deliverablesCompleted: { total: 2, completed: 1 } }, coordinators: ["a-frank"], budget: 0 }] }],
   };
   const wbs = {
-    projectRef: "p1",
-    owner: "liberuum",
+    projectRef: null,
+    sowRef: "s1",
+    sowProjectId: "env1",
+    owner: "Frank",
     references: [],
     goals: [
-      {
-        id: "g1",
-        description: "Ship it",
-        status: "COMPLETED",
-        parentId: null,
-        assignee: null,
-        dependencies: [],
-        blockReason: null,
-        outcome: null,
-        notes: [],
-      },
-      {
-        id: "g2",
-        description: "Document it",
-        status: "TODO",
-        parentId: null,
-        assignee: null,
-        dependencies: [],
-        blockReason: null,
-        outcome: null,
-        notes: [],
-      },
+      { id: "g1", description: "Step 1", status: "COMPLETED", parentId: null, assignee: "Frank", dependencies: [], blockReason: null, outcome: null, notes: [] },
+      { id: "g2", description: "Step 5", status: "TODO", parentId: null, assignee: null, dependencies: [], blockReason: null, outcome: null, notes: [] },
     ],
   };
-  const docResponse = (
-    id: string,
-    documentType: string,
-    name: string,
-    global: unknown,
-  ) => ({
-    data: {
-      document: { document: { id, name, documentType, state: { global } } },
-    },
+  const docResponse = (id: string, documentType: string, name: string, global: unknown) => ({
+    data: { document: { document: { id, name, documentType, state: { global } } } },
   });
 
-  it("list_projects reads each project's state and summarises it", async () => {
+  it("list_projects lists every envelope of every scope, citing the scope document", async () => {
     mockGqlSequence(
-      {
-        data: {
-          findDocuments: {
-            totalCount: 1,
-            items: [{ id: "p1", name: "Vault chat" }],
-          },
-        },
-      },
-      docResponse("p1", "bai/project", "Vault chat", project),
+      { data: { findDocuments: { totalCount: 1, items: [{ id: "s1", name: "Powerhouse PMF" }] } } },
+      docResponse("s1", "powerhouse/scopeofwork", "Powerhouse PMF", scope),
     );
     const r = await executeTool("list_projects", {}, CTX);
     expect(r.ok).toBe(true);
-    if (r.ok) {
-      const d = r.data as {
-        total: number;
-        projects: Record<string, unknown>[];
-      };
-      expect(d.total).toBe(1);
-      // The citation contract: documentId + title + documentType, so a
-      // project is citable as [[documentId]] exactly like a note.
-      expect(d.projects[0]).toMatchObject({
-        documentId: "p1",
-        title: "Vault chat",
-        documentType: "bai/project",
-        status: "ACTIVE",
-        owner: "liberuum",
-        targetDate: "2026-09-15",
-        deliverables: { delivered: 1, total: 2 },
-        teamSize: 1,
-        wbs: { documentId: "w1", documentType: "bai/wbs" },
-      });
-      expect(d.projects[0]).not.toHaveProperty("id");
-      expect(r.summary).toContain("1 of 1 projects");
-    }
-    expect(requestAt(0).url).toMatch(/\/graphql$/);
-  });
-
-  it("read_document on a project joins its WBS and resolves knowledge titles in one outline", async () => {
-    mockGqlSequence(
-      docResponse("p1", "bai/project", "Vault chat", project),
-      docResponse("w1", "bai/wbs", "WBS", wbs),
-      { data: { n0: { title: "A note about chat" } } },
-    );
-    const r = await executeTool("read_document", { documentId: "p1" }, CTX);
-    expect(r.ok).toBe(true);
-    if (r.ok) {
-      const d = r.data as {
-        documentId: string;
-        title: string;
-        documentType: string;
-        text: string;
-        status: string;
-        deliverables: { goal: { description: string } | null }[];
-        goals: { completed: number; total: number };
-      };
-      expect(d).toMatchObject({ documentId: "p1", title: "Vault chat", documentType: "bai/project" });
-      expect(d.status).toBe("ACTIVE");
-      // The outline opens with its own citation marker, so the model cites
-      // the document it read rather than a label it made up.
-      expect(d.text.split("\n")[0]).toBe("# Project: Vault chat — ACTIVE [[p1]]");
-      expect(d.text).toContain(
-        "[DELIVERED] Chat tab — goal: Ship it (COMPLETED)",
-      );
-      expect(d.text).toContain("[TODO] Document it");
-      expect(d.text).toContain("A note about chat [[n-a]]");
-      expect(d.deliverables[0].goal?.description).toBe("Ship it");
-      expect(d.goals).toEqual({
-        completed: 1,
-        total: 2,
-        byStatus: { COMPLETED: 1, TODO: 1 },
-      });
-      expect(r.summary).toContain("1/2 goals done");
-    }
-    // project + wbs on the reactor endpoint, titles on the graph endpoint
-    expect(requestAt(0).url).toMatch(/\/graphql$/);
-    expect(requestAt(1).url).toMatch(/\/graphql$/);
-    expect(requestAt(2).url).toContain("/graphql/knowledgeGraph");
-  });
-
-  it("read_document on a project survives a missing WBS", async () => {
-    mockGqlSequence(
-      docResponse("p1", "bai/project", "Vault chat", project),
-      { errors: [{ message: "not found" }] },
-      { data: {} },
-    );
-    const r = await executeTool("read_document", { documentId: "p1" }, CTX);
-    expect(r.ok).toBe(true);
-    if (r.ok)
-      expect((r.data as { text: string }).text).toContain(
-        "No work breakdown linked",
-      );
-  });
-
-  it("read_document on a WBS renders the goal tree and names its project", async () => {
-    mockGqlSequence(
-      docResponse("w1", "bai/wbs", "WBS", wbs),
-      docResponse("p1", "bai/project", "Vault chat", project),
-    );
-    const r = await executeTool("read_document", { documentId: "w1" }, CTX);
-    expect(r.ok).toBe(true);
-    if (r.ok) {
-      const d = r.data as {
-        documentId: string;
-        title: string;
-        documentType: string;
-        text: string;
-        goalCount: number;
-      };
-      expect(d).toMatchObject({ documentId: "w1", title: "WBS", documentType: "bai/wbs" });
-      expect(d.text.split("\n")[0]).toBe("# Work breakdown for Vault chat [[w1]]");
-      expect(d.text).toContain("[COMPLETED] Ship it");
-      expect(d.goalCount).toBe(2);
-    }
-  });
-
-  it("list_documents returns the citation contract for every kind", async () => {
-    mockGql({
-      findDocuments: {
-        totalCount: 1,
-        items: [{ id: "s1", name: "Src", documentType: "bai/source" }],
-      },
+    if (!r.ok) throw new Error(r.error);
+    const d = r.data as { total: number; scopes: number; projects: Record<string, unknown>[] };
+    expect(d.scopes).toBe(1);
+    expect(d.total).toBe(1);
+    expect(d.projects[0]).toMatchObject({
+      documentId: "s1",
+      documentType: "powerhouse/scopeofwork",
+      envelopeId: "env1",
+      code: "PPD",
+      title: "Paperless demo",
+      owner: "Frank",
+      status: "IN_PROGRESS",
+      deliverables: { delivered: 1, total: 2 },
+      knowledgeRefs: 1,
+      wbs: { documentId: "w9", documentType: "bai/wbs" },
     });
-    const r = await executeTool("list_documents", { documentType: "bai/source" }, CTX);
-    expect(r.ok).toBe(true);
-    if (r.ok)
-      expect((r.data as { items: unknown[] }).items).toEqual([
-        { documentId: "s1", title: "Src", documentType: "bai/source" },
-      ]);
+    expect(r.summary).toBe("listed 1 envelope across 1 scope");
   });
 
-  it("read_document on a source carries documentId and its title", async () => {
-    mockGql({
-      document: {
-        document: {
-          id: "s1",
-          name: "Src file",
-          documentType: "bai/source",
-          state: { global: { title: "The Source", content: "body" } },
-        },
-      },
-    });
+  it("read_document on a scope joins deliverables to their goals and names the wbs", async () => {
+    mockGqlSequence(
+      docResponse("s1", "powerhouse/scopeofwork", "Powerhouse PMF", scope),
+      docResponse("w9", "bai/wbs", "PPD — WBS", wbs),
+      { data: { n0: { title: "A note" } } },
+    );
     const r = await executeTool("read_document", { documentId: "s1" }, CTX);
     expect(r.ok).toBe(true);
-    if (r.ok)
-      expect(r.data).toMatchObject({ documentId: "s1", title: "The Source", documentType: "bai/source" });
+    if (!r.ok) throw new Error(r.error);
+    const d = r.data as { text: string; envelopes: { code: string; goals: { completed: number; total: number } | null; deliverables: { goal: string | null }[] }[]; deliverables: { delivered: number; total: number } };
+    expect(d.text.split("\n")[0]).toBe("# Scope of work: Powerhouse PMF — DRAFT [[s1]]");
+    expect(d.text).toContain("### PPD · Paperless demo — owner Frank (IN_PROGRESS)");
+    expect(d.text).toContain("[DELIVERED] PPD-01 Configured instance — goal: Step 1 (COMPLETED)");
+    expect(d.text).toContain("Work breakdown [[w9]]: 1/2 goals completed");
+    expect(d.text).toContain("A note [[n-a]]");
+    expect(d.envelopes[0]?.goals).toEqual({ completed: 1, total: 2, byStatus: { COMPLETED: 1, TODO: 1 } });
+    expect(d.envelopes[0]?.deliverables.map((x) => x.goal)).toEqual(["Step 1", "Step 5"]);
+    expect(d.deliverables).toEqual({ delivered: 1, total: 2 });
+    expect(r.summary).toContain("1 envelopes, 1/2 delivered");
+  });
+
+  it("read_document on a WBS renders the goal tree and names the envelope it delivers", async () => {
+    mockGqlSequence(
+      docResponse("w9", "bai/wbs", "PPD — WBS", wbs),
+      docResponse("s1", "powerhouse/scopeofwork", "Powerhouse PMF", scope),
+    );
+    const r = await executeTool("read_document", { documentId: "w9" }, CTX);
+    expect(r.ok).toBe(true);
+    if (!r.ok) throw new Error(r.error);
+    const d = r.data as { text: string; goalCount: number; documentType: string };
+    expect(d.documentType).toBe("bai/wbs");
+    expect(d.text.split("\n")[0]).toBe("# Work breakdown for Paperless demo [[w9]]");
+    expect(d.text).toContain("[COMPLETED] Step 1");
+    expect(d.goalCount).toBe(2);
+    expect(r.summary).toContain('for "Paperless demo"');
   });
 });

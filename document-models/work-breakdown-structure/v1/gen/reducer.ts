@@ -22,6 +22,7 @@ import {
   SetOwnerInputSchema,
   SetProjectRefInputSchema,
   SetReferencesInputSchema,
+  SetSowProjectRefInputSchema,
   UpdateGoalDescriptionInputSchema,
 } from "./schema/zod.js";
 
@@ -194,6 +195,18 @@ const stateReducer: StateReducer<WorkBreakdownStructurePHState> = (
       SetProjectRefInputSchema().parse(action.input);
 
       workBreakdownStructureDocumentationOperations.setProjectRefOperation(
+        (state as any)[action.scope],
+        action as any,
+        dispatch,
+      );
+
+      break;
+    }
+
+    case "SET_SOW_PROJECT_REF": {
+      SetSowProjectRefInputSchema().parse(action.input);
+
+      workBreakdownStructureDocumentationOperations.setSowProjectRefOperation(
         (state as any)[action.scope],
         action as any,
         dispatch,

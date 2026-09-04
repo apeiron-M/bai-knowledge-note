@@ -4,8 +4,8 @@ export { KnowledgeNote as KnowledgeNoteV1 } from "./knowledge-note/v1/module.js"
 export { Moc as MocV1 } from "./moc/v1/module.js";
 export { Observation as ObservationV1 } from "./observation/v1/module.js";
 export { PipelineQueue as PipelineQueueV1 } from "./pipeline-queue/v1/module.js";
-export { Project as ProjectV1 } from "./project/v1/module.js";
 export { ResearchClaim as ResearchClaimV1 } from "./research-claim/v1/module.js";
+export { ScopeOfWork as ScopeOfWorkV1 } from "./scope-of-work/v1/module.js";
 export { Source as SourceV1 } from "./source/v1/module.js";
 export { Tension as TensionV1 } from "./tension/v1/module.js";
 export { upgradeManifests } from "./upgrade-manifests.js";

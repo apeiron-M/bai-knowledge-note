@@ -2,7 +2,6 @@ import type {
   GoalStatus,
   Goal,
 } from "document-models/work-breakdown-structure";
-import type { ProjectStatus, DeliverableStatus } from "document-models/project";
 
 // Color palette: rgba(r, g, b, alpha)
 // Gray: rgb(156, 163, 175)
@@ -66,81 +65,7 @@ export const GOAL_STATUS_META: Record<
   },
 };
 
-export const PROJECT_STATUS_META: Record<
-  ProjectStatus,
-  {
-    label: string;
-    fg: string;
-    bg: string;
-    border: string;
-  }
-> = {
-  PLANNING: {
-    label: "Planning",
-    fg: "rgba(252, 211, 77, 1)",
-    bg: "rgba(245, 158, 11, 0.15)",
-    border: "rgba(245, 158, 11, 0.3)",
-  },
-  ACTIVE: {
-    label: "Active",
-    fg: "rgba(110, 231, 183, 1)",
-    bg: "rgba(52, 211, 153, 0.15)",
-    border: "rgba(16, 185, 129, 0.3)",
-  },
-  ON_HOLD: {
-    label: "On Hold",
-    fg: "rgba(147, 197, 253, 1)",
-    bg: "rgba(59, 130, 246, 0.15)",
-    border: "rgba(59, 130, 246, 0.3)",
-  },
-  COMPLETED: {
-    label: "Completed",
-    fg: "var(--bai-accent)",
-    bg: "rgba(203, 166, 247, 0.15)",
-    border: "rgba(203, 166, 247, 0.3)",
-  },
-  ARCHIVED: {
-    label: "Archived",
-    fg: "rgba(209, 213, 219, 1)",
-    bg: "rgba(156, 163, 175, 0.15)",
-    border: "rgba(156, 163, 175, 0.3)",
-  },
-};
 
-export const DELIVERABLE_STATUS_META: Record<
-  DeliverableStatus,
-  {
-    label: string;
-    fg: string;
-    bg: string;
-    border: string;
-  }
-> = {
-  PLANNED: {
-    label: "Planned",
-    fg: "rgba(209, 213, 219, 1)",
-    bg: "rgba(156, 163, 175, 0.15)",
-    border: "rgba(156, 163, 175, 0.3)",
-  },
-  IN_PROGRESS: {
-    label: "In Progress",
-    fg: "rgba(147, 197, 253, 1)",
-    bg: "rgba(59, 130, 246, 0.15)",
-    border: "rgba(59, 130, 246, 0.3)",
-  },
-  DELIVERED: {
-    label: "Delivered",
-    fg: "rgba(110, 231, 183, 1)",
-    bg: "rgba(52, 211, 153, 0.15)",
-    border: "rgba(16, 185, 129, 0.3)",
-  },
-  CANCELLED: {
-    label: "Cancelled",
-    fg: "rgba(252, 165, 165, 1)",
-    bg: "rgba(248, 113, 113, 0.15)",
-    border: "rgba(248, 113, 113, 0.3)",
-  },
-};
 
 /**
  * Roll up goal statuses for a WBS progress badge.

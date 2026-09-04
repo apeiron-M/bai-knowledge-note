@@ -16,10 +16,10 @@ export function citationKind(documentType: string | null | undefined): string | 
       return "observation";
     case "bai/research-claim":
       return "claim";
-    case "bai/project":
-      return "project";
     case "bai/wbs":
       return "WBS";
+    case "powerhouse/scopeofwork":
+      return "scope";
     case "bai/source":
       return "source";
     default:

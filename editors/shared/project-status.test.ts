@@ -2,8 +2,6 @@ import { describe, it, expect } from "vitest";
 import {
   goalRollup,
   GOAL_STATUS_META,
-  PROJECT_STATUS_META,
-  DELIVERABLE_STATUS_META,
 } from "./project-status.js";
 import type { GoalStatus } from "document-models/work-breakdown-structure";
 
@@ -180,44 +178,4 @@ describe("project-status", () => {
     });
   });
 
-  describe("PROJECT_STATUS_META", () => {
-    it("should have metadata for all ProjectStatus values", () => {
-      const statuses = [
-        "PLANNING",
-        "ACTIVE",
-        "ON_HOLD",
-        "COMPLETED",
-        "ARCHIVED",
-      ] as const;
-
-      statuses.forEach((status) => {
-        expect(PROJECT_STATUS_META[status]).toBeDefined();
-        const meta = PROJECT_STATUS_META[status];
-        expect(meta.label).toBeDefined();
-        expect(meta.fg).toBeDefined();
-        expect(meta.bg).toBeDefined();
-        expect(meta.border).toBeDefined();
-      });
-    });
-  });
-
-  describe("DELIVERABLE_STATUS_META", () => {
-    it("should have metadata for all DeliverableStatus values", () => {
-      const statuses = [
-        "PLANNED",
-        "IN_PROGRESS",
-        "DELIVERED",
-        "CANCELLED",
-      ] as const;
-
-      statuses.forEach((status) => {
-        expect(DELIVERABLE_STATUS_META[status]).toBeDefined();
-        const meta = DELIVERABLE_STATUS_META[status];
-        expect(meta.label).toBeDefined();
-        expect(meta.fg).toBeDefined();
-        expect(meta.bg).toBeDefined();
-        expect(meta.border).toBeDefined();
-      });
-    });
-  });
 });

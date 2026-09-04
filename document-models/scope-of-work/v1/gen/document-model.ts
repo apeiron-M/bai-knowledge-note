@@ -1,0 +1,771 @@
+import type { DocumentModelGlobalState } from "document-model";
+
+export const documentModel: DocumentModelGlobalState = {
+  id: "powerhouse/scopeofwork",
+  name: "ScopeOfWork",
+  author: {
+    name: "Powerhouse",
+    website: "https://powerhouse.inc",
+  },
+  extension: "",
+  description:
+    "The Scope of Work v2 model defines a structured plan for executing contributor work; on top of deliverables and roadmaps with milestones it now also includes projects as budget anchors for project based budgeting.",
+  specifications: [
+    {
+      state: {
+        local: {
+          schema: "",
+          examples: [],
+          initialValue: "",
+        },
+        global: {
+          schema:
+            "type ScopeOfWorkState {\n  title: String!\n  description: String!\n  status: ScopeOfWorkStatus!\n  deliverables: [Deliverable!]!\n  projects: [Project!]!\n  roadmaps: [Roadmap!]!\n  contributors: [Agent!]!\n}\n\nenum ScopeOfWorkStatus {\n  DRAFT\n  SUBMITTED\n  IN_PROGRESS\n  REJECTED\n  APPROVED\n  DELIVERED\n  CANCELED\n}\n\ntype Agent {\n  id: PHID!\n  name: String!\n  icon: URL\n  description: String\n}\n\ntype Deliverable {\n  id: OID!\n  owner: ID\n  icon: String\n  title: String!\n  code: String!\n  description: String!\n  status: DeliverableStatus!\n  workProgress: Progress\n  keyResults: [KeyResult!]!\n  budgetAnchor: BudgetAnchorProject\n  # the goal (in the anchoring project's WBS) whose subtree delivers this\n  # deliverable; null until the work is compiled into a scope\n  goalRef: OID\n}\n\ntype BudgetAnchorProject {\n  project: OID\n  unit: Unit\n  unitCost: Float!\n  quantity: Float!\n  margin: Float!\n  # true when the margin was set by a person; false/null when it is derived from a fixed project budget\n  marginPinned: Boolean\n}\n\nenum Unit {\n  StoryPoints\n  Hours\n}\n\nenum DeliverableStatus {\n  WONT_DO\n  DRAFT\n  TODO\n  BLOCKED\n  IN_PROGRESS\n  DELIVERED\n  CANCELED\n}\n\n# Work progress. Exactly one representation is populated:\n#   percentage   -> value\n#   story points -> total + completed\n#   binary       -> done\ntype Progress {\n  value: Float\n  total: Int\n  completed: Int\n  done: Boolean\n}\n\ntype KeyResult {\n  id: OID!\n  title: String!\n  link: String!\n}\n\ntype Project {\n  id: OID!\n  slug: String!\n  code: String!\n  title: String!\n  projectOwner: ID\n  abstract: String\n  imageUrl: URL\n  scope: DeliverablesSet\n  budgetType: BudgetType\n  currency: PMCurrency\n  budget: Float\n  # when set, the project budget is fixed at this envelope and unpinned margins are derived from it\n  targetBudget: Float\n  expenditure: BudgetExpenditure\n  # execution links \u2014 the work that delivers this envelope (see bai/wbs) and\n  # the vault notes/MOCs and external references that inform it\n  wbsRef: PHID\n  knowledgeRefs: [PHID!]!\n  references: [URL!]!\n}\n\nenum PMCurrency {\n  DAI\n  USDS\n  EUR\n  USD\n}\n\nenum BudgetType {\n  CONTINGENCY\n  OPEX\n  CAPEX\n  OVERHEAD\n}\n\ntype BudgetExpenditure {\n  percentage: Float!\n  actuals: Float!\n  cap: Float!\n}\n\ntype Roadmap {\n  id: OID!\n  slug: String!\n  title: String!\n  description: String!\n  milestones: [Milestone!]!\n}\n\ntype Milestone {\n  id: OID!\n  sequenceCode: String!\n  title: String!\n  description: String!\n  deliveryTarget: String!\n  scope: DeliverablesSet\n  coordinators: [ID!]!\n  budget: Float\n}\n\ntype DeliverablesSet {\n  deliverables: [OID!]!\n  status: DeliverableSetStatus!\n  progress: Progress!\n  deliverablesCompleted: DeliverablesCompleted!\n}\n\ntype DeliverablesCompleted {\n  total: Int!\n  completed: Int!\n}\n\nenum DeliverableSetStatus {\n  DRAFT\n  TODO\n  IN_PROGRESS\n  FINISHED\n  CANCELED\n}",
+          examples: [],
+          initialValue:
+            '{\n  "title": "",\n  "description": "",\n  "status": "DRAFT",\n  "deliverables": [],\n  "projects": [],\n  "roadmaps": [],\n  "contributors": []\n}',
+        },
+      },
+      modules: [
+        {
+          id: "70ad1129-4aa4-4e2a-842e-e85eeaa2ec4c",
+          name: "scope_of_work",
+          description: "",
+          operations: [
+            {
+              id: "8a9f1559-3aba-48e3-97fd-ceafbcc28b06",
+              name: "EDIT_SCOPE_OF_WORK",
+              description:
+                "This operation allows a user to edit the basic details of a Scope of Work (SoW) document. ",
+              schema:
+                "input EditScopeOfWorkInput {\n    title: String\n    description: String\n\tstatus: ScopeOfWorkStatusInput #defaults to DRAFT\n}\n\nenum ScopeOfWorkStatusInput {\n  DRAFT\n  SUBMITTED\n  IN_PROGRESS\n  REJECTED\n  APPROVED\n  DELIVERED\n  CANCELED\n}",
+              template:
+                "This operation allows a user to edit the basic details of a Scope of Work (SoW) document. ",
+              reducer: "",
+              errors: [],
+              examples: [],
+              scope: "global",
+            },
+          ],
+        },
+        {
+          id: "6e592f85-6188-4111-887b-fa689c651b37",
+          name: "deliverables",
+          description: "",
+          operations: [
+            {
+              id: "9a986a3a-a546-494e-b008-d31cdf125383",
+              name: "ADD_DELIVERABLE",
+              description:
+                "This operation is used to create a new deliverable. ",
+              schema:
+                "input AddDeliverableInput {\n  id: OID!\n  owner: ID\n  title: String\n  code: String\n  description: String\n  status: PMDeliverableStatusInput\n}\n\nenum PMDeliverableStatusInput {\n  WONT_DO\n  DRAFT\n  TODO\n  BLOCKED\n  IN_PROGRESS\n  DELIVERED\n  CANCELED\n}",
+              template: "This operation is used to create a new deliverable. ",
+              reducer: "",
+              errors: [
+                {
+                  id: "deliverable-already-exists",
+                  name: "DeliverableAlreadyExistsError",
+                  code: "DELIVERABLE_ALREADY_EXISTS",
+                  description: "A deliverable with this id already exists",
+                  template: "Deliverable with ID ${id} already exists",
+                },
+              ],
+              examples: [],
+              scope: "global",
+            },
+            {
+              id: "0567776c-2778-43a5-86b8-0035a3b80702",
+              name: "REMOVE_DELIVERABLE",
+              description: "",
+              schema: "input RemoveDeliverableInput {\n  id: OID!\n}",
+              template: "",
+              reducer: "",
+              errors: [],
+              examples: [],
+              scope: "global",
+            },
+            {
+              id: "e031053f-f1c8-40b5-93fb-47d68161ecca",
+              name: "EDIT_DELIVERABLE",
+              description:
+                "This operation allows a user to edit the core attributes of a deliverable, a concrete piece of work within a project or a milestone. Deliverables are the building blocks of execution, typically assigned to contributors or teams.",
+              schema:
+                "input EditDeliverableInput {\n  id: OID!\n  owner: ID\n  icon: String\n  title: String\n  code: String\n  description: String\n  status: PMDeliverableStatusInput\n}\n\n",
+              template:
+                "This operation allows a user to edit the core attributes of a deliverable, a concrete piece of work within a project or a milestone. Deliverables are the building blocks of execution, typically assigned to contributors or teams.",
+              reducer: "",
+              errors: [],
+              examples: [],
+              scope: "global",
+            },
+            {
+              id: "505fb5d9-1698-428c-935c-a0e64cf48a01",
+              name: "SET_DELIVERABLE_PROGRESS",
+              description: "",
+              schema:
+                "input SetDeliverableProgressInput {\n  id: OID! #deliverable id\n  workProgress: ProgressInput\n}\n\ninput ProgressInput {\n  # Only one of these fields should be provided\n  percentage: Float\n  storyPoints: StoryPointInput\n  done: Boolean\n}\n\ninput StoryPointInput {\n  total: Int!\n  completed: Int!\n}\n",
+              template: "",
+              reducer: "",
+              errors: [
+                {
+                  id: "invalid-progress",
+                  name: "InvalidProgressError",
+                  code: "INVALID_PROGRESS",
+                  description:
+                    "Percentage must be between 0 and 100; story points must be non-negative with completed not exceeding total",
+                  template: "Invalid progress value",
+                },
+                {
+                  id: "deliverable-closed",
+                  name: "DeliverableClosedError",
+                  code: "DELIVERABLE_CLOSED",
+                  description:
+                    "Progress cannot be recorded on a CANCELED or WONT_DO deliverable",
+                  template: "Deliverable ${id} is closed",
+                },
+              ],
+              examples: [],
+              scope: "global",
+            },
+            {
+              id: "166929bc-1416-4bbb-812d-5fe09fb81884",
+              name: "ADD_KEY_RESULT",
+              description:
+                "This operation allows a user to add a key result to a specific deliverable. Key results are measurable outcomes or indicators that help track progress on a deliverable. ",
+              schema:
+                "input AddKeyResultInput {\n  id: OID!\n  deliverableId:OID!\n  title: String!\n  link: String\n}",
+              template:
+                "This operation allows a user to add a key result to a specific deliverable. Key results are measurable outcomes or indicators that help track progress on a deliverable. ",
+              reducer: "",
+              errors: [
+                {
+                  id: "key-result-already-exists",
+                  name: "KeyResultAlreadyExistsError",
+                  code: "KEY_RESULT_ALREADY_EXISTS",
+                  description:
+                    "A key result with this id already exists on the deliverable",
+                  template: "Key result with ID ${id} already exists",
+                },
+              ],
+              examples: [],
+              scope: "global",
+            },
+            {
+              id: "7a692317-2ad3-4392-8935-74a9d2650874",
+              name: "REMOVE_KEY_RESULT",
+              description: "",
+              schema:
+                "input RemoveKeyResultInput {\n  id: OID!\n  deliverableId:OID!\n}",
+              template: "",
+              reducer: "",
+              errors: [],
+              examples: [],
+              scope: "global",
+            },
+            {
+              id: "af639826-2a15-419f-a1ef-ebfd6cd048eb",
+              name: "EDIT_KEY_RESULT",
+              description: "",
+              schema:
+                "input EditKeyResultInput {\n  id: OID!\n  deliverableId: OID!\n  title: String\n  link: URL\n}",
+              template: "",
+              reducer: "",
+              errors: [],
+              examples: [],
+              scope: "global",
+            },
+            {
+              id: "306568c6-39d1-415b-b096-670ed99eaa04",
+              name: "SET_DELIVERABLE_BUDGET_ANCHOR_PROJECT",
+              description:
+                "Updates a deliverable's quote: unit, unit cost, quantity and margin (all zero or positive, two decimals). A provided margin is pinned unless `marginPinned: false`; `marginPinned` on its own pins or releases the current margin. Budgets and progress are re-derived.",
+              schema:
+                "input SetDeliverableBudgetAnchorProjectInput {\n  deliverableId: ID!\n  project: OID\n  unit: Unit\n  unitCost: Float\n  quantity: Float\n  margin: Float\n  # omit: a provided margin pins itself; false: unpin so a fixed project budget derives it\n  marginPinned: Boolean\n}",
+              template:
+                "Updates a deliverable's quote: unit, unit cost, quantity and margin (all zero or positive, two decimals). A provided margin is pinned unless `marginPinned: false`; `marginPinned` on its own pins or releases the current margin. Budgets and progress are re-derived.",
+              reducer: "",
+              errors: [
+                {
+                  id: "invalid-budget-anchor",
+                  name: "InvalidBudgetAnchorError",
+                  code: "INVALID_BUDGET_ANCHOR",
+                  description:
+                    "unitCost, quantity and margin must be zero or positive",
+                  template: "Budget anchor values must be zero or positive",
+                },
+              ],
+              examples: [],
+              scope: "global",
+            },
+            {
+              id: "d038d336-86cb-4878-b75a-e3ca5cdba9db",
+              name: "LINK_DELIVERABLE_GOAL",
+              description:
+                "Link (or unlink) the WBS goal whose subtree delivers this deliverable.",
+              schema:
+                "input LinkDeliverableGoalInput {\n  deliverableId: OID!\n  # a goal in the anchoring project's WBS; omit or null to unlink\n  goalRef: OID\n}",
+              template:
+                "Link (or unlink) the WBS goal whose subtree delivers this deliverable.",
+              reducer: "",
+              errors: [
+                {
+                  id: "99d3471b-738d-471d-a32f-43716e0c3ab8",
+                  name: "DeliverableNotFoundError",
+                  code: "DELIVERABLE_NOT_FOUND",
+                  description:
+                    "No deliverable with this id exists in the scope of work",
+                  template: "Deliverable ${deliverableId} not found",
+                },
+              ],
+              examples: [],
+              scope: "global",
+            },
+          ],
+        },
+        {
+          id: "f68517e0-68d4-4c88-9fdd-108ca55874e5",
+          name: "roadmaps",
+          description: "",
+          operations: [
+            {
+              id: "4d510d30-a82d-48be-b643-c22c50b6f19e",
+              name: "ADD_ROADMAP",
+              description: "",
+              schema:
+                "input AddRoadmapInput {\n  id: OID!\n  title: String!\n  slug: String\n  description: String\n}",
+              template: "",
+              reducer: "",
+              errors: [
+                {
+                  id: "roadmap-already-exists",
+                  name: "RoadmapAlreadyExistsError",
+                  code: "ROADMAP_ALREADY_EXISTS",
+                  description: "A roadmap with this id already exists",
+                  template: "Roadmap with ID ${id} already exists",
+                },
+              ],
+              examples: [],
+              scope: "global",
+            },
+            {
+              id: "ef0ac627-a852-4e08-8c75-53b23b34c298",
+              name: "REMOVE_ROADMAP",
+              description: "",
+              schema: "input RemoveRoadmapInput {\n  id: OID!\n}",
+              template: "",
+              reducer: "",
+              errors: [],
+              examples: [],
+              scope: "global",
+            },
+            {
+              id: "7b1863fe-fc12-4855-949c-869ce19c55e1",
+              name: "EDIT_ROADMAP",
+              description:
+                "This operation allows a user to edit the details of a roadmap document, which outlines the structure ",
+              schema:
+                'input EditRoadmapInput {\n  id: OID!\n  title: String \n  slug: String #computed title: "The Logical Structure of  Atlas"\n              # id: "abcd1234" #=> slug: "the-logical-structure-of-atlas-abcd1234"\n  description: String\n}',
+              template:
+                "This operation allows a user to edit the details of a roadmap document, which outlines the structure ",
+              reducer: "",
+              errors: [],
+              examples: [],
+              scope: "global",
+            },
+          ],
+        },
+        {
+          id: "016b8c61-35c7-4962-908d-e47666a68721",
+          name: "milestones",
+          description: "",
+          operations: [
+            {
+              id: "2aee07b8-4836-4468-a9ad-a2ff6075309c",
+              name: "ADD_MILESTONE",
+              description: "",
+              schema:
+                "input AddMilestoneInput {\n  id: OID!\n  roadmapId:OID!\n  sequenceCode: String\n  title: String\n  description: String\n  deliveryTarget: String\n}",
+              template: "",
+              reducer: "",
+              errors: [
+                {
+                  id: "milestone-already-exists",
+                  name: "MilestoneAlreadyExistsError",
+                  code: "MILESTONE_ALREADY_EXISTS",
+                  description: "A milestone with this id already exists",
+                  template: "Milestone with ID ${id} already exists",
+                },
+              ],
+              examples: [],
+              scope: "global",
+            },
+            {
+              id: "b2662adc-bf97-486f-a012-6ddda9266768",
+              name: "REMOVE_MILESTONE",
+              description: "",
+              schema:
+                "input RemoveMilestoneInput {\n  id: OID!\n  roadmapId:OID!\n}",
+              template: "",
+              reducer: "",
+              errors: [],
+              examples: [],
+              scope: "global",
+            },
+            {
+              id: "8d838a5d-8901-43db-8130-5adde9d0a025",
+              name: "EDIT_MILESTONE",
+              description: "",
+              schema:
+                "input EditMilestoneInput {\n  id: OID!\n  roadmapId: OID!\n  sequenceCode: String\n  title: String\n  description: String\n  deliveryTarget: String\n}",
+              template: "",
+              reducer: "",
+              errors: [],
+              examples: [],
+              scope: "global",
+            },
+            {
+              id: "0db5f01b-33b5-486b-9e67-a95ebea85107",
+              name: "ADD_COORDINATOR",
+              description:
+                "This operation allows a user to assign a contributor as a coordinator for a specific milestone. Coordinators are the people responsible for ensuring the milestone gets delivered; they're often leads, facilitators, or project managers.\n\n",
+              schema:
+                "input AddCoordinatorInput {\n  id: ID! \n  milestoneId: OID!\n}",
+              template:
+                "This operation allows a user to assign a contributor as a coordinator for a specific milestone. Coordinators are the people responsible for ensuring the milestone gets delivered; they're often leads, facilitators, or project managers.\n\n",
+              reducer: "",
+              errors: [],
+              examples: [],
+              scope: "global",
+            },
+            {
+              id: "6472175b-feb2-4ec5-b28d-2f0b46ca6072",
+              name: "REMOVE_COORDINATOR",
+              description: "",
+              schema:
+                "input RemoveCoordinatorInput {\n  id: ID! \n  milestoneId: OID! # Coordinator can potentially be coordinating multiple milestones/roadmaps. \n}",
+              template: "",
+              reducer: "",
+              errors: [],
+              examples: [],
+              scope: "global",
+            },
+            {
+              id: "afc100a7-836d-4396-98b5-c5a045fe626e",
+              name: "ADD_MILESTONE_DELIVERABLE",
+              description: "",
+              schema:
+                "input AddMilestoneDeliverableInput {\n  milestoneId: OID!\n  deliverableId: OID!\n  title: String!\n}",
+              template: "",
+              reducer: "",
+              errors: [
+                {
+                  id: "milestone-deliverable-already-exists",
+                  name: "MilestoneDeliverableAlreadyExistsError",
+                  code: "MILESTONE_DELIVERABLE_ALREADY_EXISTS",
+                  description: "A deliverable with this id already exists",
+                  template:
+                    "Deliverable with ID ${deliverableId} already exists",
+                },
+              ],
+              examples: [],
+              scope: "global",
+            },
+            {
+              id: "532a4d3d-389c-4d58-a933-4bbf5604b089",
+              name: "REMOVE_MILESTONE_DELIVERABLE",
+              description: "",
+              schema:
+                "input RemoveMilestoneDeliverableInput {\n  milestoneId: OID!\n  deliverableId: OID!\n}",
+              template: "",
+              reducer: "",
+              errors: [],
+              examples: [],
+              scope: "global",
+            },
+          ],
+        },
+        {
+          id: "52a1e993-adf3-4a2c-acc1-41f0336203ee",
+          name: "deliverables_set",
+          description: "",
+          operations: [
+            {
+              id: "68ba1e27-8979-4762-a779-f1f2ef86500e",
+              name: "EDIT_DELIVERABLES_SET",
+              description: "",
+              schema:
+                "input EditDeliverablesSetInput {\n  milestoneId: ID\n  projectId: ID\n  status: DeliverableSetStatusInput\n  deliverablesCompleted: DeliverablesCompletedInput\n}\n\nenum DeliverableSetStatusInput {\n  DRAFT\n  TODO\n  IN_PROGRESS\n  FINISHED\n  CANCELED\n}\n\ninput DeliverablesCompletedInput {\n  total: Int!\n  completed: Int!\n}",
+              template: "",
+              reducer: "",
+              errors: [],
+              examples: [],
+              scope: "global",
+            },
+            {
+              id: "34a36572-1ad4-4c32-ad31-86988e93a31a",
+              name: "ADD_DELIVERABLE_IN_SET",
+              description:
+                "Links an existing deliverable into a milestone set (when it lands) or a project set (who pays). Linking into a project makes that project fund the deliverable's quote. The deliverable must exist.",
+              schema:
+                "input AddDeliverableInSetInput {\n  milestoneId: ID\n  projectId: ID\n  deliverableId: OID!\n}",
+              template:
+                "Links an existing deliverable into a milestone set (when it lands) or a project set (who pays). Linking into a project makes that project fund the deliverable's quote. The deliverable must exist.",
+              reducer: "",
+              errors: [
+                {
+                  id: "set-deliverable-not-found",
+                  name: "SetDeliverableNotFoundError",
+                  code: "SET_DELIVERABLE_NOT_FOUND",
+                  description:
+                    "The deliverable to link into the set was not found",
+                  template: "Deliverable ${deliverableId} not found",
+                },
+              ],
+              examples: [],
+              scope: "global",
+            },
+            {
+              id: "94e5b395-9798-48ae-921e-70983f17155d",
+              name: "REMOVE_DELIVERABLE_IN_SET",
+              description: "",
+              schema:
+                "input RemoveDeliverableInSetInput {\n  milestoneId: ID\n  projectId: ID\n  deliverableId: OID!\n}",
+              template: "",
+              reducer: "",
+              errors: [],
+              examples: [],
+              scope: "global",
+            },
+          ],
+        },
+        {
+          id: "7f2db8cf-9fe9-4095-91f0-cfd61b43fc02",
+          name: "contributors",
+          description: "",
+          operations: [
+            {
+              id: "1273f82b-b6db-4504-bc4b-49fbdb2a2c68",
+              name: "ADD_AGENT",
+              description: "",
+              schema:
+                "input AddAgentInput {\n  id: PHID!\n  name: String!\n  icon: URL\n  description: String\n}",
+              template: "",
+              reducer: "",
+              errors: [
+                {
+                  id: "agent-already-exists",
+                  name: "AgentAlreadyExistsError",
+                  code: "AGENT_ALREADY_EXISTS",
+                  description: "An agent with this id already exists",
+                  template: "Agent with ID ${id} already exists",
+                },
+              ],
+              examples: [],
+              scope: "global",
+            },
+            {
+              id: "eec0e5aa-b4c9-4e62-8f2e-4a36fbde6f96",
+              name: "REMOVE_AGENT",
+              description: "",
+              schema: "input RemoveAgentInput {\n  id: PHID!\n}",
+              template: "",
+              reducer: "",
+              errors: [
+                {
+                  id: "agent-not-found",
+                  name: "AgentNotFoundError",
+                  code: "AGENT_NOT_FOUND",
+                  description: "The specified agent was not found",
+                  template: "Agent with ID ${id} not found",
+                },
+              ],
+              examples: [],
+              scope: "global",
+            },
+            {
+              id: "33534820-0c51-4f04-8ad2-bb378fb9c60e",
+              name: "EDIT_AGENT",
+              description: "",
+              schema:
+                "input EditAgentInput {\n  id: PHID!\n  name: String\n  icon: URL\n  description: String\n}",
+              template: "",
+              reducer: "",
+              errors: [],
+              examples: [],
+              scope: "global",
+            },
+          ],
+        },
+        {
+          id: "0578e71b-6205-4c19-86ab-5c581cc71b93",
+          name: "projects",
+          description: "",
+          operations: [
+            {
+              id: "773aebd7-98af-46f3-8f6a-161be1d2e176",
+              name: "ADD_PROJECT",
+              description:
+                "Creates a project \u2014 a budget line \u2014 with an empty deliverable set. A `budget` given here fixes the project's envelope from creation (targetBudget); otherwise the budget is derived from the quotes of the deliverables the project funds.",
+              schema:
+                "input AddProjectInput {\n  id: OID!\n  code: String!\n  title: String!\n  slug: String\n  projectOwner: ID # Initial project owner\n  abstract: String\n  imageUrl: URL\n  budgetType: PMBudgetTypeInput\n  currency: PMCurrencyInput\n  budget: Float\n}\n\nenum PMBudgetTypeInput {\n  CONTINGENCY\n  OPEX\n  CAPEX\n  OVERHEAD\n}\n\nenum PMCurrencyInput {\n  DAI\n  USDS\n  EUR\n  USD\n}\n\n",
+              template:
+                "Creates a new project in a DRAFT status, initializing its core fields. The status of the new project defaults to DRAFT. The Deliverables list (scope) is initialized as empty.",
+              reducer: "",
+              errors: [
+                {
+                  id: "project-already-exists",
+                  name: "ProjectAlreadyExistsError",
+                  code: "PROJECT_ALREADY_EXISTS",
+                  description: "A project with this id already exists",
+                  template: "Project with ID ${id} already exists",
+                },
+                {
+                  id: "invalid-initial-budget",
+                  name: "InvalidInitialBudgetError",
+                  code: "INVALID_INITIAL_BUDGET",
+                  description:
+                    "The initial project budget must be zero or positive",
+                  template: "Budget must be zero or positive",
+                },
+              ],
+              examples: [],
+              scope: "global",
+            },
+            {
+              id: "e978628b-ed5f-4867-83f4-45d5ed284f16",
+              name: "UPDATE_PROJECT",
+              description:
+                "Updates a project's descriptive fields (code, slug, title, abstract, image, budget type, currency). `budget` sets the fixed envelope: every unpinned quote margin is then derived so the lines add up to it; `budget: null` releases the envelope and the budget follows the quotes again. Null on a required field is ignored.",
+              schema:
+                "input UpdateProjectInput {\n  id: OID! \n  code: String \n  slug: String\n  title: String \n  abstract: String \n  imageUrl: URL \n  budgetType:  PMBudgetTypeInput\n  currency:  PMCurrencyInput\n  budget: Float \n}",
+              template:
+                "Updates general, non-status-related fields of an existing project. This operation is for minor content adjustments. Project must exist; only allowed if the project status is DRAFT or REJECTED. For projects in other statuses, specific operations for status transitions or scope management should be used.\n\nIf code is updated, it must remain unique.",
+              reducer: "",
+              errors: [
+                {
+                  id: "invalid-budget-update",
+                  name: "InvalidBudgetUpdateError",
+                  code: "INVALID_BUDGET_UPDATE",
+                  description: "The project budget must be zero or positive",
+                  template: "Budget must be zero or positive",
+                },
+              ],
+              examples: [],
+              scope: "global",
+            },
+            {
+              id: "a6c4ce6a-fe2d-4242-bc8d-783ec3c7db9a",
+              name: "UPDATE_PROJECT_OWNER",
+              description:
+                "Changes the primary owner of a project. This is a specific update due to its potential impact on permissions and responsibilities. Project must exist. The projectOwner must correspond to a valid existing Agent.\nOnly allowed if the project status is DRAFT, REJECTED, APPROVED, or IN_PROGRESS. Requires appropriate permissions (e.g., current owner, admin, or coordinator).",
+              schema:
+                "input UpdateProjectOwnerInput {\n  id: OID! # The ID of the project\n  projectOwner: ID! # The ID of the new owner (Agent)\n}",
+              template:
+                "Changes the primary owner of a project. This is a specific update due to its potential impact on permissions and responsibilities. Project must exist. The projectOwner must correspond to a valid existing Agent.\nOnly allowed if the project status is DRAFT, REJECTED, APPROVED, or IN_PROGRESS. Requires appropriate permissions (e.g., current owner, admin, or coordinator).",
+              reducer: "",
+              errors: [],
+              examples: [],
+              scope: "global",
+            },
+            {
+              id: "3cbe7c0c-4198-4f56-9cb9-35bc3e2e5171",
+              name: "REMOVE_PROJECT",
+              description: "",
+              schema: "input RemoveProjectInput {\n  projectId: ID!\n}",
+              template: "",
+              reducer: "",
+              errors: [
+                {
+                  id: "project-not-found",
+                  name: "ProjectNotFoundError",
+                  code: "PROJECT_NOT_FOUND",
+                  description: "The specified project was not found",
+                  template: "Project not found",
+                },
+              ],
+              examples: [],
+              scope: "global",
+            },
+            {
+              id: "19624daf-39dc-4562-a248-ff1645d301bf",
+              name: "SET_PROJECT_MARGIN",
+              description:
+                "Sets the same margin on every quote the project funds and pins them, so a fixed budget solves around them rather than over them. Margin must be zero or positive.",
+              schema:
+                "input SetProjectMarginInput {\n  projectId: OID!\n  margin: Float!\n}",
+              template:
+                "Sets the same margin on every quote the project funds and pins them, so a fixed budget solves around them rather than over them. Margin must be zero or positive.",
+              reducer: "",
+              errors: [
+                {
+                  id: "invalid-project-margin",
+                  name: "InvalidProjectMarginError",
+                  code: "INVALID_PROJECT_MARGIN",
+                  description: "The margin must be zero or positive",
+                  template: "Margin must be zero or positive",
+                },
+              ],
+              examples: [],
+              scope: "global",
+            },
+            {
+              id: "1e97d233-5ac0-4167-97cf-e03e8ac186c1",
+              name: "SET_PROJECT_TOTAL_BUDGET",
+              description:
+                "Fixes the project's budget envelope (targetBudget). Every unpinned quote receives the single margin that makes the lines add up to the envelope; pinned margins are held. Cost above the envelope yields a negative derived margin \u2014 the over-budget signal \u2014 not an error.",
+              schema:
+                "input SetProjectTotalBudgetInput {\n  projectId: OID!\n  totalBudget: Float!\n}",
+              template:
+                "Fixes the project's budget envelope (targetBudget). Every unpinned quote receives the single margin that makes the lines add up to the envelope; pinned margins are held. Cost above the envelope yields a negative derived margin \u2014 the over-budget signal \u2014 not an error.",
+              reducer: "",
+              errors: [
+                {
+                  id: "invalid-project-budget",
+                  name: "InvalidProjectBudgetError",
+                  code: "INVALID_PROJECT_BUDGET",
+                  description: "The total budget must be zero or positive",
+                  template: "Total budget must be zero or positive",
+                },
+              ],
+              examples: [],
+              scope: "global",
+            },
+            {
+              id: "abf9ff5b-8339-4a94-92b1-96d843ad5c96",
+              name: "ADD_PROJECT_DELIVERABLE",
+              description:
+                "Creates a deliverable funded by this project (its anchor points at the project) and adds it to the project's deliverable set. Fails if the id already exists.",
+              schema:
+                "input AddProjectDeliverableInput {\n  projectId: OID!\n  deliverableId: ID!\n  title: String!\n}",
+              template:
+                "Creates a deliverable funded by this project (its anchor points at the project) and adds it to the project's deliverable set. Fails if the id already exists.",
+              reducer: "",
+              errors: [
+                {
+                  id: "project-deliverable-already-exists",
+                  name: "ProjectDeliverableAlreadyExistsError",
+                  code: "PROJECT_DELIVERABLE_ALREADY_EXISTS",
+                  description: "A deliverable with this id already exists",
+                  template:
+                    "Deliverable with ID ${deliverableId} already exists",
+                },
+              ],
+              examples: [],
+              scope: "global",
+            },
+            {
+              id: "89341293-cdf9-4f88-b085-604a37444be7",
+              name: "REMOVE_PROJECT_DELIVERABLE",
+              description:
+                "Removes a deliverable from the project's set without deleting it; the quote is kept but no longer funded (anchor project cleared). Budgets and progress are re-derived.",
+              schema:
+                "input RemoveProjectDeliverableInput {\n  projectId: OID!\n  deliverableId: OID!\n}",
+              template:
+                "Removes a deliverable from the project's set without deleting it; the quote is kept but no longer funded (anchor project cleared). Budgets and progress are re-derived.",
+              reducer: "",
+              errors: [],
+              examples: [],
+              scope: "global",
+            },
+            {
+              id: "7bd6ba7a-5f8a-468c-bde1-84ef0146315e",
+              name: "SET_PROJECT_EXPENDITURE",
+              description:
+                "Records spending against the project: `actuals` (spent so far) and/or `cap` (an optional hard limit), both zero or positive with two decimals. `expenditure.percentage` is derived \u2014 actuals over the cap when one is set, otherwise over the project budget \u2014 and kept current whenever the budget changes.",
+              schema:
+                "input SetProjectExpenditureInput {\n  projectId: OID!\n  actuals: Float\n  cap: Float\n}",
+              template:
+                "Records spending against the project: `actuals` (spent so far) and/or `cap` (an optional hard limit), both zero or positive with two decimals. `expenditure.percentage` is derived \u2014 actuals over the cap when one is set, otherwise over the project budget \u2014 and kept current whenever the budget changes.",
+              reducer: "",
+              errors: [
+                {
+                  id: "invalid-expenditure",
+                  name: "InvalidExpenditureError",
+                  code: "INVALID_EXPENDITURE",
+                  description: "Actuals and cap must be zero or positive",
+                  template: "Actuals and cap must be zero or positive",
+                },
+              ],
+              examples: [],
+              scope: "global",
+            },
+            {
+              id: "2952fcab-2138-463b-92b8-10074da953c3",
+              name: "LINK_PROJECT_WBS",
+              description:
+                "Link (or unlink) the work-breakdown-structure document whose goals deliver this project.",
+              schema:
+                "input LinkProjectWbsInput {\n  projectId: OID!\n  # the bai/wbs document that delivers this project; omit or null to unlink\n  wbsRef: PHID\n}",
+              template:
+                "Link (or unlink) the work-breakdown-structure document whose goals deliver this project.",
+              reducer: "",
+              errors: [],
+              examples: [],
+              scope: "global",
+            },
+            {
+              id: "cd701d63-3864-4829-b2f2-ac2cdfa0d620",
+              name: "ADD_PROJECT_KNOWLEDGE_REF",
+              description:
+                "Cite a vault knowledge note or map of content on a project.",
+              schema:
+                "input AddProjectKnowledgeRefInput {\n  projectId: OID!\n  # a bai/knowledge-note or bai/moc in the same drive\n  ref: PHID!\n}",
+              template:
+                "Cite a vault knowledge note or map of content on a project.",
+              reducer: "",
+              errors: [
+                {
+                  id: "bd87fc6b-9e38-4f77-9060-90e0d1663fbb",
+                  name: "KnowledgeRefAlreadyExistsError",
+                  code: "KNOWLEDGE_REF_ALREADY_EXISTS",
+                  description:
+                    "The project already cites this knowledge document",
+                  template: "Project ${projectId} already cites ${ref}",
+                },
+              ],
+              examples: [],
+              scope: "global",
+            },
+            {
+              id: "366ab3a4-0c69-4745-8b56-3704604d1193",
+              name: "REMOVE_PROJECT_KNOWLEDGE_REF",
+              description: "Remove a knowledge citation from a project.",
+              schema:
+                "input RemoveProjectKnowledgeRefInput {\n  projectId: OID!\n  ref: PHID!\n}",
+              template: "Remove a knowledge citation from a project.",
+              reducer: "",
+              errors: [
+                {
+                  id: "a8301ddb-4e27-4600-a1f0-223ab6467eca",
+                  name: "KnowledgeRefNotFoundError",
+                  code: "KNOWLEDGE_REF_NOT_FOUND",
+                  description:
+                    "The project does not cite this knowledge document",
+                  template: "Project ${projectId} does not cite ${ref}",
+                },
+              ],
+              examples: [],
+              scope: "global",
+            },
+            {
+              id: "4445f5ff-5d9e-42cc-8586-098cfabbab39",
+              name: "SET_PROJECT_REFERENCES",
+              description:
+                "Replace a project's list of external reference URLs.",
+              schema:
+                "input SetProjectReferencesInput {\n  projectId: OID!\n  # replaces the whole list, as bai/project's SET_REFERENCES does\n  references: [URL!]!\n}",
+              template: "Replace a project's list of external reference URLs.",
+              reducer: "",
+              errors: [],
+              examples: [],
+              scope: "global",
+            },
+          ],
+        },
+      ],
+      version: 1,
+      changeLog: [],
+    },
+  ],
+};

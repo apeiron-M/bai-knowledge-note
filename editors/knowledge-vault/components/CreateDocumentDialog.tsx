@@ -26,7 +26,6 @@ const DOC_TYPE_FOLDER: Record<string, string> = {
   "bai/tension": "ops",
   "bai/health-report": "ops/health",
   "bai/research-claim": "research",
-  "bai/project": "projects",
   "bai/wbs": "projects",
 };
 

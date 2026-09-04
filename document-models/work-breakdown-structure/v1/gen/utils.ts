@@ -29,6 +29,8 @@ export const initialGlobalState: WorkBreakdownStructureGlobalState = {
   owner: null,
   goals: [],
   references: [],
+  sowRef: null,
+  sowProjectId: null,
 };
 export const initialLocalState: WorkBreakdownStructureLocalState = {};
 

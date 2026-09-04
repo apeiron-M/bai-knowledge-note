@@ -1,0 +1,262 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>04 · Compile</title>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,650&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      :root {
+        --bg: #1e1e2e;
+        --surface: #181825;
+        --deep: #11111b;
+        --hover: #313244;
+        --border: rgba(255, 255, 255, 0.1);
+        --text: #e4e4e7;
+        --text-2: #d4d4d8;
+        --text-3: #9ca3af;
+        --muted: #6b7280;
+        --accent: #cba6f7;
+        --accent-text: #1e1e2e;
+        --accent-soft: rgba(203, 166, 247, 0.12);
+        --green: #10b981;
+        --blue: #3b82f6;
+      }
+      * {
+        box-sizing: border-box;
+      }
+      body {
+        margin: 0;
+        background: var(--bg);
+        color: var(--text);
+        font: 14px/1.5 "IBM Plex Sans", system-ui, sans-serif;
+      }
+      nav {
+        display: flex;
+        gap: 14px;
+        padding: 12px 22px;
+        border-bottom: 1px solid var(--border);
+        font-family: "IBM Plex Mono", monospace;
+        font-size: 12px;
+      }
+      nav a {
+        color: var(--muted);
+        text-decoration: none;
+      }
+      nav a.on,
+      nav a:hover {
+        color: var(--accent);
+      }
+      .wrap {
+        max-width: 1100px;
+        margin: 0 auto;
+        padding: 28px 22px 64px;
+      }
+      h1 {
+        font-family: Fraunces, serif;
+        font-size: 30px;
+        margin: 0 0 6px;
+      }
+      .lead {
+        color: var(--text-3);
+        max-width: 640px;
+      }
+      .grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 16px;
+        margin-top: 24px;
+      }
+      .pane {
+        background: var(--deep);
+        border: 1px solid var(--border);
+        border-radius: 16px;
+        overflow: hidden;
+      }
+      .pane h2 {
+        margin: 0;
+        padding: 12px 16px;
+        font-size: 11px;
+        letter-spacing: 0.1em;
+        text-transform: uppercase;
+        color: var(--muted);
+        border-bottom: 1px solid var(--border);
+        font-weight: 500;
+      }
+      .modal {
+        margin: 16px;
+        background: var(--surface);
+        border: 1px solid var(--border);
+        border-radius: 14px;
+        padding: 16px;
+      }
+      .modal h3 {
+        margin: 0 0 4px;
+        font-size: 16px;
+      }
+      .modal .sub {
+        color: var(--text-3);
+        font-size: 12.5px;
+        margin-bottom: 12px;
+      }
+      .pair {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 10px;
+      }
+      .box {
+        border: 1px solid var(--border);
+        border-radius: 10px;
+        padding: 10px;
+        font-size: 12.5px;
+      }
+      .box b {
+        display: block;
+        margin-bottom: 4px;
+      }
+      .row {
+        display: flex;
+        justify-content: space-between;
+        padding: 7px 8px;
+        border-radius: 8px;
+        margin-top: 4px;
+      }
+      .row:hover,
+      .row.sel {
+        background: var(--accent-soft);
+      }
+      .row.sel {
+        outline: 1px solid var(--accent);
+      }
+      .row.off {
+        opacity: 0.4;
+      }
+      .ft {
+        display: flex;
+        justify-content: flex-end;
+        gap: 8px;
+        margin-top: 14px;
+      }
+      .btn {
+        background: var(--accent);
+        color: var(--accent-text);
+        border: 0;
+        border-radius: 8px;
+        padding: 7px 12px;
+        font: 600 12px "IBM Plex Sans", sans-serif;
+      }
+      .btn.ghost {
+        background: transparent;
+        color: var(--text-3);
+      }
+      .insp {
+        padding: 14px 16px 20px;
+      }
+      .insp .code {
+        font-family: "IBM Plex Mono", monospace;
+        font-size: 11px;
+        color: var(--muted);
+      }
+      .insp h3 {
+        margin: 4px 0 12px;
+        font-size: 18px;
+      }
+      .chip {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        padding: 4px 10px;
+        border-radius: 999px;
+        background: var(--accent-soft);
+        color: var(--accent);
+        font-size: 12px;
+        margin: 4px 4px 0 0;
+      }
+      .chip.note {
+        color: var(--text-2);
+        background: var(--hover);
+      }
+      .lbl {
+        font-size: 11px;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        color: var(--muted);
+        margin: 16px 0 6px;
+      }
+      .write {
+        font-size: 12px;
+        color: var(--muted);
+        margin-top: 8px;
+      }
+    </style>
+  </head>
+  <body>
+    <nav>
+      <a href="index.html">hub</a>
+      <a href="01-layers.html">01 layers</a>
+      <a href="02-nav.html">02 nav</a>
+      <a href="03-author.html">03 author</a>
+      <a class="on" href="04-compile.html">04 compile</a>
+    </nav>
+    <div class="wrap">
+      <h1>Compile is grouping, not spawning.</h1>
+      <p class="lead">
+        The project already exists. A PM binds it to a named SoW
+        deliverable. Two PHIDs, no copy of knowledge, no new goal tree.
+      </p>
+
+      <div class="grid">
+        <div class="pane">
+          <h2>From the project editor · Compile into scope</h2>
+          <div class="modal">
+            <h3>Compile “Remote-first vault”</h3>
+            <div class="sub">8/12 goals · 3 knowledge notes · not yet in a scope</div>
+            <div class="pair">
+              <div class="box">
+                <b>This execution</b>
+                Paperless-adjacent work on drive sync.
+                <div class="write">knowledgeRefs stay here</div>
+              </div>
+              <div class="box">
+                <b>Atlas Platform — H2 2026</b>
+                <div class="row off">
+                  PLT-01 Snapshot pipeline <span>taken</span>
+                </div>
+                <div class="row sel">
+                  PLT-04 Restore with reasons <span>empty</span>
+                </div>
+                <div class="row">
+                  PLT-05 Tension upload <span>empty</span>
+                </div>
+              </div>
+            </div>
+            <div class="ft">
+              <button class="btn ghost">Cancel</button>
+              <button class="btn">Link to PLT-04</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="pane">
+          <h2>SoW inspector · after the link</h2>
+          <div class="insp">
+            <div class="code">PLT-04</div>
+            <h3>Restore with reasons</h3>
+            <div class="lbl">Execution</div>
+            <span class="chip">Remote-first vault · 8/12 goals →</span>
+            <div class="lbl">Knowledge on that project</div>
+            <span class="chip note">edge metadata</span>
+            <span class="chip note">drive-scoped indexing</span>
+            <span class="chip note">remote-first vault notes</span>
+            <p class="write">
+              Read-only here. Add or remove notes in the project editor.
+              Completing a goal does not mark this deliverable Delivered.
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>

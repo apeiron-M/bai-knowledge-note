@@ -1,6 +1,8 @@
 import { useState } from "react";
 import { DocumentToolbar } from "@powerhousedao/design-system/connect";
 import { setSelectedNode } from "@powerhousedao/reactor-browser";
+import { SafeDocument } from "../shared/safe-document.js";
+import { writeSowIntent } from "../shared/sow-intent.js";
 import type { DocumentDispatch } from "@powerhousedao/reactor-browser";
 import {
   actions,
@@ -29,7 +31,8 @@ export default function Editor() {
   const state = document.state.global;
   const rollup = goalRollup(state.goals);
   const selected = state.goals.find((g) => g.id === selectedGoalId) ?? null;
-  const projectRef = state.projectRef;
+  // The scope-of-work envelope this tree delivers (SET_SOW_PROJECT_REF).
+  const sowRef = state.sowRef ?? null;
 
   return (
     <ThemeProvider>
@@ -39,16 +42,41 @@ export default function Editor() {
         style={{ backgroundColor: "var(--bai-bg)", color: "var(--bai-text)" }}
       >
         <div className="flex-1 space-y-4 overflow-y-auto p-6">
-          {projectRef && (
-            <button
-              type="button"
-              onClick={() => setSelectedNode(projectRef)}
-              className="text-xs hover:underline"
-              style={{ color: "var(--bai-accent)" }}
-            >
-              ← Part of project
-            </button>
-          )}
+          <div className="flex flex-wrap items-center gap-x-4 gap-y-1">
+            {sowRef && (
+              <SafeDocument id={sowRef}>
+                {(sowDoc, failed) => {
+                  const sowGlobal = (sowDoc?.state as { global?: Record<string, unknown> } | undefined)?.global;
+                  const envelope = (
+                    (sowGlobal?.projects as { id: string; code?: string; title?: string }[] | undefined) ?? []
+                  ).find((x) => x.id === state.sowProjectId);
+                  const sowTitle = (sowGlobal?.title as string | undefined) || sowDoc?.header.name;
+                  return (
+                    <button
+                      type="button"
+                      title={failed ? "The linked scope of work could not be loaded" : "Open this envelope in its scope of work"}
+                      disabled={failed}
+                      onClick={() => {
+                        if (state.sowProjectId) {
+                          writeSowIntent({
+                            documentId: sowRef,
+                            view: { kind: "project", id: state.sowProjectId },
+                          });
+                        }
+                        setSelectedNode(sowRef);
+                      }}
+                      className="text-xs hover:underline disabled:opacity-50 disabled:no-underline"
+                      style={{ color: "var(--bai-accent)" }}
+                    >
+                      ← Delivers {envelope?.code ? `${envelope.code} · ` : ""}
+                      {envelope?.title ?? "an envelope"}
+                      {sowTitle ? ` in ${sowTitle}` : ""}
+                    </button>
+                  );
+                }}
+              </SafeDocument>
+            )}
+          </div>
 
           <OwnerRow owner={state.owner} dispatch={dispatch} />
           <ProgressCard rollup={rollup} />
