@@ -10,13 +10,15 @@
  * progress is shown as the reading trail of graph queries the model actually
  * ran, and every citation opens the real note.
  *
- * Everything runs in the browser: the model via OpenRouter, the data via the
- * same Switchboard endpoints the search field uses. Nothing here can write.
+ * Everything runs in the browser: the model through OpenRouter or any
+ * OpenAI-compatible endpoint the user names (see lib/chat/provider.ts), the
+ * data via the same Switchboard endpoints the search field uses. Nothing here
+ * can write.
  */
 import { useEffect, useMemo, useRef, useState, type ReactNode } from "react";
 import { useSelectedDriveId } from "@powerhousedao/reactor-browser";
 import { useVaultName } from "../hooks/use-vault-name.js";
-import { useOpenRouter } from "../hooks/use-openrouter.js";
+import { useChatProvider } from "../hooks/use-chat-provider.js";
 import { useChat, type ChatFailure } from "../hooks/use-chat.js";
 import { executeTool } from "../lib/chat/vault-tools.js";
 import {
@@ -31,6 +33,7 @@ import { ChatMessage } from "./chat/ChatMessage.js";
 import { currencyLookup } from "../lib/supersession.js";
 import type { KnowledgeNoteInfo } from "../hooks/use-knowledge-notes.js";
 import { ModelPicker } from "./chat/ModelPicker.js";
+import { EndpointPicker } from "./chat/EndpointPicker.js";
 import { LandingStage } from "./chat/LandingStage.js";
 
 interface Orientation {
@@ -95,8 +98,8 @@ export function ChatView({
   const currency = useMemo(() => currencyLookup(notes), [notes]);
   const driveId = useSelectedDriveId();
   const vaultName = useVaultName();
-  const or = useOpenRouter();
-  const orientation = useOrientation(driveId, or.isConnected);
+  const prov = useChatProvider();
+  const orientation = useOrientation(driveId, prov.isConnected);
   // The composer's draft survives the chat view being replaced by a note
   // editor. Tab-scoped like the current-thread pointer; the OAuth return
   // intent takes precedence when both exist.
@@ -126,24 +129,26 @@ export function ChatView({
 
   const chat = useChat({
     driveId,
-    key: or.key,
-    model: or.model,
-    fallbackModels: or.fallbackModels,
-    modelName: or.modelName,
+    endpoint: prov.endpoint,
+    model: prov.model,
+    fallbackModels: prov.fallbackModels,
+    modelName: prov.modelName,
     systemPrompt,
   });
 
-  // Automation only touches automatically chosen models. When one is down —
-  // either OpenRouter fell back mid-request, or the whole request failed for
-  // that model — skip it for the rest of the session so the next turn starts
-  // on a model that works. An explicit choice is never swapped out.
-  const { modelIsExplicit, skipModel } = or;
+  // Automation only touches automatically chosen OpenRouter models. When one
+  // is down — either OpenRouter fell back mid-request, or the whole request
+  // failed for that model — skip it for the rest of the session so the next
+  // turn starts on a model that works. An explicit choice is never swapped
+  // out, and a server the user named has nothing to fall back to.
+  const { modelIsExplicit, skipModel } = prov;
+  const openRouter = prov.endpoint?.openRouter ?? false;
   useEffect(() => {
-    if (modelIsExplicit) return;
+    if (!openRouter || modelIsExplicit) return;
     if (chat.routedFrom) skipModel(chat.routedFrom);
     if (chat.failure?.kind === "model-unavailable")
       skipModel(chat.failure.model);
-  }, [chat.routedFrom, chat.failure, modelIsExplicit, skipModel]);
+  }, [chat.routedFrom, chat.failure, openRouter, modelIsExplicit, skipModel]);
   const inConversation = chat.messages.length > 0 || chat.isStreaming;
 
   // Follow the stream, but only if the user is already near the bottom —
@@ -166,15 +171,20 @@ export function ChatView({
 
   if (!driveId) return null;
 
-  if (!or.isConnected) {
+  if (!prov.isConnected) {
     return (
       <div className="flex h-full flex-col">
         <ChatConnectPanel
           vaultName={vaultName}
-          busy={or.isCompletingOAuth}
-          interrupted={or.interruptedAttempt}
-          onConnect={() => void or.connect({ driveId, draft })}
-          onConnectWithKey={or.connectWithKey}
+          busy={prov.isCompletingOAuth}
+          interrupted={prov.interruptedAttempt}
+          onConnect={() => void prov.connectOpenRouter({ driveId, draft })}
+          onConnectWithKey={prov.connectWithOpenRouterKey}
+          onConnectCustom={prov.connectCustom}
+          connectSettings={prov.connectSettings}
+          onUseConnectSettings={prov.useConnectSettings}
+          saved={prov.saved}
+          onUseSaved={prov.switchTo}
         />
       </div>
     );
@@ -226,19 +236,27 @@ export function ChatView({
           </button>
         )}
         <div className="ml-auto flex items-center gap-1">
+          <EndpointPicker
+            active={prov.provider?.kind ?? null}
+            label={prov.providerLabel}
+            saved={prov.saved}
+            onSwitch={prov.switchTo}
+            onAdd={prov.addAnother}
+          />
           <ModelPicker
-            model={or.model}
-            models={or.models}
-            loading={or.modelsLoading}
-            fellBack={or.modelFellBack}
-            onChange={or.setModel}
+            model={prov.model}
+            models={prov.models}
+            loading={prov.modelsLoading}
+            fellBack={prov.modelFellBack}
+            onChange={prov.setModel}
+            allowCustomId={!openRouter}
           />
           <button
             type="button"
-            onClick={or.disconnect}
+            onClick={prov.disconnect}
             className="rounded-md px-2 py-1.5 text-xs transition-colors hover:bg-[var(--bai-hover)]"
             style={{ color: "var(--bai-text-muted)" }}
-            title="Remove the OpenRouter key from this browser"
+            title={`Forget the ${prov.providerLabel} connection in this browser`}
           >
             Disconnect
           </button>
@@ -270,10 +288,12 @@ export function ChatView({
               {chat.failure && chat.failure.kind !== "aborted" && (
                 <FailureNotice
                   failure={chat.failure}
-                  modelIsFree={or.modelIsFree}
-                  modelIsExplicit={or.modelIsExplicit}
-                  nextModel={or.model}
-                  modelName={or.modelName}
+                  openRouter={openRouter}
+                  providerLabel={prov.providerLabel}
+                  modelIsFree={prov.modelIsFree}
+                  modelIsExplicit={prov.modelIsExplicit}
+                  nextModel={prov.model}
+                  modelName={prov.modelName}
                 />
               )}
             </div>
@@ -354,12 +374,17 @@ function TrailFooter({ count }: { count: number }) {
  */
 function FailureNotice({
   failure,
+  openRouter,
+  providerLabel,
   modelIsFree,
   modelIsExplicit,
   nextModel,
   modelName,
 }: {
   failure: ChatFailure;
+  /** OpenRouter's billing and quota advice only makes sense on OpenRouter. */
+  openRouter: boolean;
+  providerLabel: string;
   modelIsFree: boolean;
   modelIsExplicit: boolean;
   /** The model the next turn will use (already re-resolved after a skip). */
@@ -368,8 +393,19 @@ function FailureNotice({
 }) {
   let next: ReactNode = null;
   switch (failure.kind) {
+    case "auth":
+      next = (
+        <>
+          {providerLabel} rejected the key. Disconnect, then connect again with
+          a valid one{openRouter ? "" : " — or with none, if the server does not need it"}.
+        </>
+      );
+      break;
+    case "unreachable":
+      next = <>Once the server answers, just send the message again.</>;
+      break;
     case "credits":
-      next = modelIsFree ? null : (
+      next = !openRouter ? null : modelIsFree ? null : (
         <>
           This model bills per token. Pick one marked{" "}
           <span className="font-semibold">free</span> from the model menu, or
@@ -378,7 +414,7 @@ function FailureNotice({
       );
       break;
     case "free-quota":
-      next = (
+      next = !openRouter ? null : (
         <>
           You have used today&apos;s free-model quota on OpenRouter — it is
           shared across every free model, so switching will not help and each
@@ -389,7 +425,14 @@ function FailureNotice({
       );
       break;
     case "model-unavailable":
-      next = modelIsExplicit ? (
+      next = !openRouter ? (
+        <>
+          {providerLabel} could not serve {modelName(failure.model)}. Pick a
+          model it lists from the menu — or, for Ollama, pull it first
+          (<span className="font-mono">ollama pull {failure.model}</span>) —
+          and send again.
+        </>
+      ) : modelIsExplicit ? (
         <>
           {modelName(failure.model)} is not responding right now. Pick another
           model from the menu and send again.

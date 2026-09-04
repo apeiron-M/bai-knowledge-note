@@ -16,10 +16,18 @@ function contextLabel(n: number): string {
   return n ? `${n} ctx` : "";
 }
 
+/** "128k ctx · free" for OpenRouter's catalog; nothing for a plain server that reports neither. */
+function metaLabel(m: ModelInfo): string {
+  if (!m.contextLength && !m.promptPrice && !m.free) return "";
+  return [contextLabel(m.contextLength), price(m.promptPrice)].filter(Boolean).join(" · ");
+}
+
 /**
- * Searchable picker over the live tool-capable catalog. The catalog changes
- * weekly, so nothing here is hardcoded; the current id is shown even while
- * the list is still loading.
+ * Searchable picker over the endpoint's live catalog. For OpenRouter that is
+ * the tool-capable list with prices and context sizes; for a server the user
+ * named it is whatever `/models` returns — possibly nothing, in which case a
+ * typed id is accepted as the model. Nothing here is hardcoded; the current
+ * id is shown even while the list is still loading.
  */
 export function ModelPicker({
   model,
@@ -27,16 +35,22 @@ export function ModelPicker({
   loading,
   fellBack,
   onChange,
+  allowCustomId = false,
 }: {
   model: string;
   models: ModelInfo[];
   loading: boolean;
   fellBack: boolean;
   onChange: (id: string) => void;
+  /** Offer the typed text as a model id when the catalog does not list it. */
+  allowCustomId?: boolean;
 }) {
   const [open, setOpen] = useState(false);
   const [filter, setFilter] = useState("");
   const current = models.find((m) => m.id === model);
+  const typed = filter.trim();
+  const offerTyped =
+    allowCustomId && typed.length > 0 && !models.some((m) => m.id === typed);
 
   const shown = useMemo(() => {
     const q = filter.trim().toLowerCase();
@@ -115,7 +129,13 @@ export function ModelPicker({
               value={filter}
               onChange={(e) => setFilter(e.target.value)}
               placeholder={
-                loading ? "Loading models…" : `Search ${models.length} models…`
+                loading
+                  ? "Loading models…"
+                  : models.length === 0
+                    ? allowCustomId
+                      ? "Type a model id…"
+                      : "No models"
+                    : `Search ${models.length} models…`
               }
               aria-label="Search models"
               className="m-2 rounded-md px-3 py-1.5 text-xs outline-none focus:border-[var(--bai-accent)]"
@@ -126,12 +146,36 @@ export function ModelPicker({
               }}
             />
             <ul role="listbox" className="max-h-72 overflow-auto pb-1">
-              {shown.length === 0 && (
+              {offerTyped && (
+                <li>
+                  <button
+                    type="button"
+                    role="option"
+                    aria-selected={typed === model}
+                    onClick={() => {
+                      onChange(typed);
+                      setOpen(false);
+                      setFilter("");
+                    }}
+                    className="flex w-full items-baseline gap-2 px-3 py-1.5 text-left transition-colors hover:bg-[var(--bai-hover)]"
+                    style={{ color: "var(--bai-accent)" }}
+                  >
+                    <span className="min-w-0 flex-1 truncate text-xs">
+                      Use “{typed}” as the model id
+                    </span>
+                  </button>
+                </li>
+              )}
+              {shown.length === 0 && !offerTyped && (
                 <li
                   className="px-3 py-3 text-center text-xs"
                   style={{ color: "var(--bai-text-faint)" }}
                 >
-                  {loading ? "Loading…" : "No models match"}
+                  {loading
+                    ? "Loading…"
+                    : models.length === 0 && allowCustomId
+                      ? "The server lists no models — type the id of one it serves."
+                      : "No models match"}
                 </li>
               )}
               {shown.map((m) => {
@@ -157,12 +201,14 @@ export function ModelPicker({
                       <span className="min-w-0 flex-1 truncate text-xs">
                         {m.name}
                       </span>
-                      <span
-                        className="shrink-0 font-mono text-[10px]"
-                        style={{ color: "var(--bai-text-faint)" }}
-                      >
-                        {contextLabel(m.contextLength)} · {price(m.promptPrice)}
-                      </span>
+                      {metaLabel(m) && (
+                        <span
+                          className="shrink-0 font-mono text-[10px]"
+                          style={{ color: "var(--bai-text-faint)" }}
+                        >
+                          {metaLabel(m)}
+                        </span>
+                      )}
                     </button>
                   </li>
                 );

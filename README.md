@@ -414,3 +414,30 @@ The knowledge graph visualization uses `cytoscape-fcose` (force-directed layout)
 ## License
 
 AGPL-3.0-only
+
+## Chat: choose where the model runs
+
+The vault's chat is a read-only agent over the graph index (`search_vault`, `read_note`,
+`list_projects`, `read_document`, …). Which model answers is up to you; the connect
+screen offers three routes, all stored only in your browser:
+
+| Route | When | How |
+|-------|------|-----|
+| **OpenRouter** | You want hosted models with a free tier | Sign in (browser OAuth) or paste a key. Tool-capable models are listed live; free ones are picked by default. |
+| **Your own endpoint** | You run Ollama, LM Studio, vLLM, llama.cpp, or a gateway | Enter the base URL (`http://localhost:11434/v1`), an API key if the server needs one, and optionally a model id. The vault probes `/models`, lets you pick, and talks to `/chat/completions`. |
+| **Connect's AI settings** | Your Connect has *Settings → AI assistant* configured | One click reuses that endpoint and model. Choosing a different model turns it into a vault-owned endpoint; Connect's settings are left untouched. |
+
+Because the browser calls the server directly, a local server must allow the Connect
+origin: Ollama `OLLAMA_ORIGINS="http://localhost:3000"` (or your Connect URL), LM Studio
+"enable CORS" in the server tab, vLLM/llama.cpp their CORS flag. The model must support
+tool calling; the vault's tools are how it reads anything.
+
+## Connect's AI assistant can read the vault
+
+Connect's built-in assistant (reactor-browser `ai`, Sept 2026 onwards) merges every
+installed package's `aiTools` export into its tool set. This package exports the same
+ten read tools its own chat uses, typed after `PhAiToolDescriptor` and flagged
+`readOnlyHint`, so asking Connect's assistant "what does the vault say about X" runs the
+vault's search and returns cited notes without approval prompts. Calls default to the
+drive you have open; pass `driveId` to read another vault. Older Connect versions
+ignore the export.

@@ -1,7 +1,8 @@
 /**
- * Turn a failed OpenRouter request into something the UI can act on.
+ * Turn a failed request into something the UI can act on.
  *
- * The distinction that matters most is between two 429s that look alike:
+ * On OpenRouter the distinction that matters most is between two 429s that
+ * look alike:
  *
  *  - **The account's free-request quota is spent** (20/min, 50/day — 1,000/day
  *    once $10 of credits has ever been bought). This applies across *every*
@@ -11,19 +12,26 @@
  *
  *  - **One model's provider is throttling** — OpenRouter wraps these as
  *    "Provider returned error" with the provider named in `metadata`. Another
- *    model will answer fine. (In practice OpenRouter's own `models` fallback
- *    handles this in-request; this branch covers the case where every
- *    candidate was exhausted.)
+ *    model will answer fine.
+ *
+ * On any other endpoint the failures that matter are simpler: the key was
+ * refused (401/403), the model is not there (404 — Ollama says so when a
+ * model was never pulled), or the server could not be reached at all — which
+ * in a browser is almost always CORS, so the message says how to allow the
+ * origin.
  *
  * Nothing here retries. The only automation downstream is skipping an
- * unavailable model when choosing the *next* turn's default.
+ * unavailable OpenRouter model when choosing the *next* turn's default.
  */
-import { OpenRouterError } from "./openrouter-client.js";
+import { ProviderError } from "./completions-client.js";
+import { isLocalEndpoint } from "./provider.js";
 
 export type FailureKind =
   | "credits"
   | "free-quota"
   | "model-unavailable"
+  | "auth"
+  | "unreachable"
   | "aborted"
   | "other";
 
@@ -44,19 +52,34 @@ function providerNamed(raw: string): boolean {
   }
 }
 
-export function classifyFailure(err: unknown): Failure {
+/** The endpoint facts the classifier needs when the request never got a response. */
+export type EndpointHint = { label: string; completionsUrl?: string } | null;
+
+function isNetworkError(err: unknown): boolean {
+  return (
+    err instanceof TypeError ||
+    (err instanceof Error && /NetworkError|Failed to fetch|Load failed/i.test(err.message))
+  );
+}
+
+export function classifyFailure(err: unknown, endpoint: EndpointHint = null): Failure {
   if (err instanceof DOMException && err.name === "AbortError") {
     return { kind: "aborted", message: "Stopped." };
   }
 
-  if (err instanceof OpenRouterError) {
+  if (err instanceof ProviderError) {
     const said = err.providerMessage || `HTTP ${err.status}`;
+
+    if (err.status === 401 || err.status === 403) {
+      return { kind: "auth", message: said };
+    }
 
     if (err.status === 402) {
       return { kind: "credits", message: said };
     }
 
     if (err.status === 429) {
+      if (!err.openRouter) return { kind: "model-unavailable", message: said };
       // An upstream provider named in the body is that model's limit, not
       // the account's. Anything else at 429 is treated as the account quota:
       // the safe default, because retrying against a spent quota is the one
@@ -71,6 +94,19 @@ export function classifyFailure(err: unknown): Failure {
     }
 
     return { kind: "other", message: said };
+  }
+
+  if (isNetworkError(err)) {
+    const label = endpoint?.label ?? "the model endpoint";
+    const detail = err instanceof Error ? err.message : String(err);
+    const origin = typeof location === "undefined" ? "this app" : location.origin;
+    const local = endpoint?.completionsUrl ? isLocalEndpoint(endpoint.completionsUrl) : false;
+    return {
+      kind: "unreachable",
+      message: local
+        ? `Could not reach ${label} (${detail}). Is the server running, and does it allow browser requests from ${origin}? Ollama: start it with OLLAMA_ORIGINS="${origin}". LM Studio: enable CORS in the server settings.`
+        : `Could not reach ${label} (${detail}). Check the address and your connection; if the server is yours, it must allow requests from ${origin}.`,
+    };
   }
 
   if (err instanceof Error) return { kind: "other", message: err.message };

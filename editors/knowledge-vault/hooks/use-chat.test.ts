@@ -10,13 +10,15 @@ import {
   runAgentLoop,
   type TrailEntry,
 } from "./use-chat.js";
+import { endpointFor } from "../lib/chat/provider.js";
 
 const tc = (name: string, args: string, id = "c1") => ({
   id,
   type: "function" as const,
   function: { name, arguments: args },
 });
-const base = { key: "k", model: "m", driveId: "d" };
+const ENDPOINT = endpointFor({ kind: "openrouter", key: "k" })!;
+const base = { endpoint: ENDPOINT, model: "m", driveId: "d" };
 
 describe("runAgentLoop", () => {
   it("returns a plain answer when the model asks for no tools", async () => {

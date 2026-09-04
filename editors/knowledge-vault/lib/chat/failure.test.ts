@@ -1,9 +1,9 @@
 import { describe, expect, it } from "vitest";
-import { OpenRouterError } from "./openrouter-client.js";
+import { ProviderError } from "./completions-client.js";
 import { classifyFailure } from "./failure.js";
 
 const or = (status: number, message: string, raw?: string) =>
-  new OpenRouterError(
+  new ProviderError(
     status,
     message,
     raw ?? JSON.stringify({ error: { code: status, message } }),
@@ -58,10 +58,40 @@ describe("classifyFailure", () => {
     expect(classifyFailure(e).kind).toBe("aborted");
   });
 
+  it("a network failure is 'unreachable', with a CORS hint when the endpoint is on this machine", () => {
+    const plain = classifyFailure(new TypeError("Failed to fetch"));
+    expect(plain.kind).toBe("unreachable");
+    expect(plain.message).toContain("Failed to fetch");
+    expect(plain.message).not.toContain("OLLAMA_ORIGINS");
+
+    const local = classifyFailure(new TypeError("Failed to fetch"), {
+      label: "localhost:11434",
+      completionsUrl: "http://localhost:11434/v1/chat/completions",
+    });
+    expect(local.kind).toBe("unreachable");
+    expect(local.message).toContain("localhost:11434");
+    expect(local.message).toContain("OLLAMA_ORIGINS");
+
+    const remote = classifyFailure(new TypeError("Failed to fetch"), {
+      label: "llm.example",
+      completionsUrl: "https://llm.example/v1/chat/completions",
+    });
+    expect(remote.message).not.toContain("OLLAMA_ORIGINS");
+  });
+
+  it("a refused key is 'auth' on any endpoint", () => {
+    expect(classifyFailure(or(401, "No auth credentials found")).kind).toBe("auth");
+    expect(classifyFailure(new ProviderError(403, "forbidden", "{}", "llm.example", false)).kind).toBe("auth");
+  });
+
+  it("outside OpenRouter a 429 is the server throttling, never the free-quota story", () => {
+    const f = classifyFailure(new ProviderError(429, "slow down", "{}", "localhost:11434", false));
+    expect(f.kind).toBe("model-unavailable");
+    expect(f.message).toBe("slow down");
+  });
+
   it("anything else is reported verbatim", () => {
-    const f = classifyFailure(new TypeError("Failed to fetch"));
-    expect(f.kind).toBe("other");
-    expect(f.message).toContain("Failed to fetch");
+    expect(classifyFailure(new Error("odd")).message).toBe("odd");
     expect(classifyFailure("weird").kind).toBe("other");
   });
 

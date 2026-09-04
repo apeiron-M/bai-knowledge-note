@@ -1,25 +1,15 @@
 /**
- * OpenRouter connection state and the live model catalog.
+ * OpenRouter's live model catalog and the rules for choosing a model from it.
  *
  * The catalog is fetched from OpenRouter each session and filtered to models
  * that list `tools` in `supported_parameters` (353 of 419 when this was
  * written). It is never hardcoded: the list changes weekly, and a stale
  * shortlist would either hide new models or offer retired ones.
  *
- * The pure helpers (`fetchToolCapableModels`, `resolveModel`) are exported
- * and tested directly; the hook composes them with the auth module.
+ * Pure helpers, exported and tested directly; `useChatProvider` composes
+ * them with the auth module and with the other endpoint kinds.
  */
-import { useCallback, useEffect, useRef, useState } from "react";
-import { MAX_MODELS_IN_REQUEST } from "../lib/chat/openrouter-client.js";
-import {
-  beginOAuth,
-  clearKey,
-  completeOAuthFromUrl,
-  getStoredKey,
-  storeKey,
-  takeInterruptedAttempt,
-  validateKey,
-} from "../lib/chat/openrouter-auth.js";
+import { MAX_MODELS_IN_REQUEST } from "../lib/chat/completions-client.js";
 
 const MODELS_URL = "https://openrouter.ai/api/v1/models";
 const MODEL_STORAGE = "bai-chat-model:v1";
@@ -189,145 +179,5 @@ export function resolveModel(
     model: pickDefaultModel(catalog, exclude),
     explicit: false,
     fellBack: stored !== null,
-  };
-}
-
-export interface UseOpenRouter {
-  key: string | null;
-  isConnected: boolean;
-  /** True while the post-redirect code exchange is in flight. */
-  isCompletingOAuth: boolean;
-  /**
-   * Connect was started in this tab and the user came back without a code —
-   * typically after creating a new OpenRouter account, whose sign-up flow
-   * drops our callback. One more click will complete.
-   */
-  interruptedAttempt: boolean;
-  model: string;
-  models: ModelInfo[];
-  modelsLoading: boolean;
-  /** The stored model vanished from the catalog and the default is in use. */
-  modelFellBack: boolean;
-  /** The active model costs nothing per token. */
-  modelIsFree: boolean;
-  /** False when the model was chosen automatically rather than by the user. */
-  modelIsExplicit: boolean;
-  /**
-   * Free models OpenRouter may fail over to within a request. Empty when the
-   * user chose a model explicitly — their choice is not silently swapped.
-   */
-  fallbackModels: string[];
-  /** Mark a model as unavailable for this session so it is not auto-chosen again. */
-  skipModel: (id: string) => void;
-  /** Display name for a model id, or the id itself if unknown. */
-  modelName: (id: string) => string;
-  connect: (intent: { driveId: string; draft: string }) => Promise<void>;
-  connectWithKey: (key: string) => Promise<boolean>;
-  disconnect: () => void;
-  setModel: (id: string) => void;
-}
-
-export function useOpenRouter(): UseOpenRouter {
-  const [key, setKey] = useState<string | null>(() => getStoredKey());
-  const [isCompletingOAuth, setCompleting] = useState(false);
-  // Read once at mount; the flag is consumed by reading it.
-  const [interruptedAttempt] = useState(
-    () => !getStoredKey() && takeInterruptedAttempt(),
-  );
-  const [models, setModels] = useState<ModelInfo[]>([]);
-  const [modelsLoading, setModelsLoading] = useState(false);
-  const [stored, setStored] = useState<string | null>(() => readStoredModel());
-  const [skipped, setSkipped] = useState<ReadonlySet<string>>(() => new Set());
-  const completedRef = useRef(false);
-
-  // Finish a redirect exactly once per mount. `completeOAuthFromUrl` is a
-  // no-op when there is no ?code=, so this is safe on every load.
-  useEffect(() => {
-    if (completedRef.current) return;
-    completedRef.current = true;
-    if (!new URL(location.href).searchParams.has("code")) return;
-    setCompleting(true);
-    void completeOAuthFromUrl()
-      .then((r) => {
-        if (r) setKey(r.key);
-      })
-      .finally(() => setCompleting(false));
-  }, []);
-
-  // The catalog is only useful once connected; fetching it earlier would be
-  // a network call on behalf of a user who never opens the chat.
-  useEffect(() => {
-    if (!key) return;
-    let cancelled = false;
-    setModelsLoading(true);
-    void fetchToolCapableModels().then((list) => {
-      if (cancelled) return;
-      setModels(list);
-      setModelsLoading(false);
-    });
-    return () => {
-      cancelled = true;
-    };
-  }, [key]);
-
-  const connect = useCallback(
-    (intent: { driveId: string; draft: string }) => beginOAuth(intent),
-    [],
-  );
-
-  const connectWithKey = useCallback(async (candidate: string) => {
-    const trimmed = candidate.trim();
-    if (!trimmed) return false;
-    const valid = await validateKey(trimmed);
-    if (!valid) return false;
-    storeKey(trimmed);
-    setKey(trimmed);
-    return true;
-  }, []);
-
-  const disconnect = useCallback(() => {
-    clearKey();
-    setKey(null);
-    setModels([]);
-  }, []);
-
-  const setModel = useCallback((id: string) => {
-    storeModel(id);
-    setStored(id);
-  }, []);
-
-  const skipModel = useCallback((id: string) => {
-    setSkipped((prev) => (prev.has(id) ? prev : new Set([...prev, id])));
-  }, []);
-
-  const modelName = useCallback(
-    (id: string) => models.find((m) => m.id === id)?.name ?? id,
-    [models],
-  );
-
-  const { model, explicit, fellBack } = resolveModel(stored, models, skipped);
-  const modelIsFree = models.find((m) => m.id === model)?.free ?? false;
-  const fallbackModels = explicit
-    ? []
-    : pickFallbackModels(models, model, skipped);
-
-  return {
-    key,
-    isConnected: key !== null,
-    isCompletingOAuth,
-    interruptedAttempt,
-    model,
-    models,
-    modelsLoading,
-    modelFellBack: fellBack,
-    modelIsFree,
-    modelIsExplicit: explicit,
-    fallbackModels,
-    skipModel,
-    modelName,
-    connect,
-    connectWithKey,
-    disconnect,
-    setModel,
   };
 }

@@ -10,13 +10,14 @@
  * model asks for a tool, the tool runs locally against Switchboard, the
  * result goes back as a `tool` message, repeat until the model answers.
  */
+import type { ChatEndpoint } from "../lib/chat/provider.js";
 import { collectEvidence, parseMarker } from "../lib/chat/evidence.js";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import {
   streamChat as realStreamChat,
   type ChatMessage,
   type ToolCall,
-} from "../lib/chat/openrouter-client.js";
+} from "../lib/chat/completions-client.js";
 import {
   VAULT_TOOLS,
   executeTool as realExecuteTool,
@@ -100,7 +101,7 @@ interface LoopDeps {
 }
 
 export interface LoopOptions {
-  key: string;
+  endpoint: ChatEndpoint;
   model: string;
   /** Free models OpenRouter may fail over to inside each request. */
   fallbackModels?: string[];
@@ -167,7 +168,7 @@ export async function runAgentLoop(o: LoopOptions): Promise<LoopResult> {
     const toolsOff = forceAnswer || toolsOffNextRound;
     toolsOffNextRound = false;
     const result = await deps.streamChat({
-      key: o.key,
+      endpoint: o.endpoint,
       model: o.model,
       fallbackModels: o.fallbackModels,
       messages,
@@ -692,7 +693,8 @@ export function extractCitations(
 
 export interface UseChatOptions {
   driveId: string | undefined;
-  key: string | null;
+  /** Where to send completions; null until a provider is connected. */
+  endpoint: ChatEndpoint | null;
   model: string;
   fallbackModels?: string[];
   modelName?: (id: string) => string;
@@ -728,7 +730,7 @@ function newId(): string {
 }
 
 export function useChat(o: UseChatOptions): UseChat {
-  const { driveId, key, model, fallbackModels, modelName, systemPrompt } = o;
+  const { driveId, endpoint, model, fallbackModels, modelName, systemPrompt } = o;
   const [threads, setThreads] = useState<Thread[]>([]);
   const [thread, setThread] = useState<Thread | null>(null);
   const [streamingText, setStreamingText] = useState("");
@@ -772,7 +774,7 @@ export function useChat(o: UseChatOptions): UseChat {
   const send = useCallback(
     async (text: string) => {
       const content = text.trim();
-      if (!content || !driveId || !key || isStreaming) return;
+      if (!content || !driveId || !endpoint || isStreaming) return;
 
       const now = new Date().toISOString();
       const current: Thread = thread ?? {
@@ -811,7 +813,7 @@ export function useChat(o: UseChatOptions): UseChat {
       setRoutedFrom(null);
       try {
         const r = await runAgentLoop({
-          key,
+          endpoint,
           model,
           fallbackModels,
           modelName,
@@ -841,7 +843,7 @@ export function useChat(o: UseChatOptions): UseChat {
           // Keep whatever streamed; the user asked for it to stop.
           finalText = streamedRef.current;
         } else {
-          setFailure({ ...classifyFailure(err), model });
+          setFailure({ ...classifyFailure(err, endpoint), model });
         }
       } finally {
         setIsStreaming(false);
@@ -878,7 +880,7 @@ export function useChat(o: UseChatOptions): UseChat {
     },
     [
       driveId,
-      key,
+      endpoint,
       model,
       fallbackModels,
       modelName,

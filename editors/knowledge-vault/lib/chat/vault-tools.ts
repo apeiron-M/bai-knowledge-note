@@ -26,7 +26,7 @@ import {
 } from "../../../shared/subgraph-endpoint.js";
 import { fetchDocumentState } from "../../../shared/document-state.js";
 import type { WorkBreakdownStructureState } from "document-models/work-breakdown-structure";
-import type { ToolSchema } from "./openrouter-client.js";
+import type { ToolSchema } from "./completions-client.js";
 import {
   renderScope,
   renderWbs,

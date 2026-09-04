@@ -9,6 +9,11 @@ export { upgradeManifests } from "./document-models/upgrade-manifests.js";
 export { editors } from "./editors/editors.js";
 export { processorFactory } from "./processors/factory.js";
 export { startRemoteFirstBoot } from "./editors/knowledge-vault/lib/boot.js";
+// Connect's built-in AI assistant merges every package's `aiTools` into its
+// tool set (DocumentModelLib.aiTools, reactor-browser ≥ Sept 2026). Hand-added
+// like the boot export above: codegen's template for this file does not know
+// about it, so restore both if a regeneration ever rewrites the file.
+export { aiTools } from "./editors/knowledge-vault/lib/chat/ai-tools.js";
 export const manifest = manifestJson as Manifest;
 
 // Engage remote-first as soon as the package is loaded, before Connect tries to

@@ -19,7 +19,7 @@
  * The loop turns these into real tool calls and strips them from the text,
  * so the user sees the tools run — not the template.
  */
-import type { ToolCall } from "./openrouter-client.js";
+import type { ToolCall } from "./completions-client.js";
 
 export interface ParsedTextToolCalls {
   /** The text with every recognised call removed. */
