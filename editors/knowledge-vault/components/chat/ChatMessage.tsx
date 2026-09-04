@@ -8,6 +8,7 @@ import {
   numberCitations,
 } from "../../lib/chat/inline-citations.js";
 import {
+  CITATION_CARD_HEIGHT,
   CITATION_CARD_WIDTH,
   ChatCitation,
   CitationCard,
@@ -111,8 +112,19 @@ function AssistantTurn({
 
   // Inline chips are rendered from HTML, so hover, focus and click are
   // delegated from the wrapper; the card is positioned from the chip's box.
+  // Showing is tied to a chip under the pointer (or focused); hiding is
+  // unconditional — any pointer movement that is not over a chip, leaving
+  // the message, or a click — so a missed `mouseout` on a node the markdown
+  // pass re-rendered can never leave a card stranded on screen.
   const wrapRef = useRef<HTMLDivElement>(null);
-  const [hover, setHover] = useState<{ position: number; left: number; top: number } | null>(null);
+  const [hover, setHover] = useState<{
+    position: number;
+    left: number;
+    /** Offset within the wrapper: the card's top edge, or its bottom edge when `above`. */
+    y: number;
+    above: boolean;
+  } | null>(null);
+  const hide = () => setHover((h) => (h === null ? h : null));
   const showFor = (chip: HTMLElement) => {
     const wrap = wrapRef.current;
     const position = positionOf(chip);
@@ -120,16 +132,27 @@ function AssistantTurn({
     const r = chip.getBoundingClientRect();
     const w = wrap.getBoundingClientRect();
     const left = Math.max(0, Math.min(r.left - w.left, w.width - CITATION_CARD_WIDTH));
-    setHover({ position, left, top: r.bottom - w.top + 6 });
+    // Below the chip unless that would run off the bottom of the viewport.
+    const above = r.bottom + CITATION_CARD_HEIGHT > window.innerHeight - 8;
+    const y = above ? r.top - w.top - 6 : r.bottom - w.top + 6;
+    // Same chip, same place: keep the state object so React skips the render.
+    setHover((h) =>
+      h && h.position === position && h.left === left && h.y === y && h.above === above
+        ? h
+        : { position, left, y, above },
+    );
   };
-  const onOver = (e: MouseEvent<HTMLDivElement> | FocusEvent<HTMLDivElement>) => {
+  const onPointer = (e: MouseEvent<HTMLDivElement>) => {
+    const chip = chipAt(e.target);
+    if (chip) showFor(chip);
+    else hide();
+  };
+  const onFocusIn = (e: FocusEvent<HTMLDivElement>) => {
     const chip = chipAt(e.target);
     if (chip) showFor(chip);
   };
-  const onOut = (e: MouseEvent<HTMLDivElement> | FocusEvent<HTMLDivElement>) => {
-    if (chipAt(e.target)) setHover(null);
-  };
   const onClick = (e: MouseEvent<HTMLDivElement>) => {
+    hide();
     const chip = chipAt(e.target);
     if (!chip) return;
     e.preventDefault();
@@ -157,10 +180,11 @@ function AssistantTurn({
         <div
           ref={wrapRef}
           className="relative"
-          onMouseOver={onOver}
-          onMouseOut={onOut}
-          onFocus={onOver}
-          onBlur={onOut}
+          onMouseMove={onPointer}
+          onMouseOver={onPointer}
+          onMouseLeave={hide}
+          onFocus={onFocusIn}
+          onBlur={hide}
           onClick={onClick}
         >
           <MarkdownPreview content={body} />
@@ -170,7 +194,11 @@ function AssistantTurn({
               anchor={hovered.anchor}
               quote={hovered.quote ?? null}
               stale={staleness(currency?.(hovered.documentId))}
-              style={{ left: hover.left, top: hover.top }}
+              style={
+                hover.above
+                  ? { left: hover.left, top: hover.y, transform: "translateY(-100%)" }
+                  : { left: hover.left, top: hover.y }
+              }
             />
           )}
         </div>

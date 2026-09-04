@@ -31,6 +31,8 @@ export function citationKind(documentType: string | null | undefined): string | 
 
 /** Width of the hover card, used to keep it inside the viewport. */
 export const CITATION_CARD_WIDTH = 320;
+/** Its typical height — enough to decide whether to open it above the chip. */
+export const CITATION_CARD_HEIGHT = 150;
 
 /**
  * Open a cited document — at the cited item when the marker carried one. A
@@ -107,6 +109,7 @@ export function CitationCard({
       role="tooltip"
       className="pointer-events-none absolute z-50 rounded-lg border p-2.5 text-left text-[11px] leading-snug shadow-lg"
       style={{
+        pointerEvents: "none",
         width: CITATION_CARD_WIDTH,
         maxWidth: "80vw",
         backgroundColor: "var(--bai-bg)",
@@ -159,14 +162,17 @@ export function HoverCard({
   children,
   className,
 }: {
-  card: (alignRight: boolean) => ReactNode;
+  card: (alignRight: boolean, above: boolean) => ReactNode;
   children: ReactNode;
   className?: string;
 }) {
-  const [open, setOpen] = useState<{ alignRight: boolean } | null>(null);
+  const [open, setOpen] = useState<{ alignRight: boolean; above: boolean } | null>(null);
   const show = (el: Element) => {
     const r = el.getBoundingClientRect();
-    setOpen({ alignRight: r.left + CITATION_CARD_WIDTH > window.innerWidth - 16 });
+    setOpen({
+      alignRight: r.left + CITATION_CARD_WIDTH > window.innerWidth - 16,
+      above: r.bottom + CITATION_CARD_HEIGHT > window.innerHeight - 8,
+    });
   };
   return (
     <span
@@ -177,7 +183,7 @@ export function HoverCard({
       onBlur={() => setOpen(null)}
     >
       {children}
-      {open && card(open.alignRight)}
+      {open && card(open.alignRight, open.above)}
     </span>
   );
 }
@@ -208,12 +214,15 @@ export function ChatCitation({
   const stale = staleness(currency);
   return (
     <HoverCard
-      card={(alignRight) => (
+      card={(alignRight, above) => (
         <CitationCard
           citation={citation}
           quote={quote}
           stale={stale}
-          style={{ top: "100%", marginTop: 6, ...(alignRight ? { right: 0 } : { left: 0 }) }}
+          style={{
+            ...(above ? { bottom: "100%", marginBottom: 6 } : { top: "100%", marginTop: 6 }),
+            ...(alignRight ? { right: 0 } : { left: 0 }),
+          }}
         />
       )}
     >
