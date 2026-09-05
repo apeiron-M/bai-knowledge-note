@@ -4,8 +4,10 @@ import {
   ANSWER_NOW,
   CHECK_NOW,
   MAX_ITERATIONS,
+  NO_OUTAGE,
   TOOL_TEXT_RETRY,
   answeredWithoutLooking,
+  claimsAnOutageThatDidNotHappen,
   consultedDocuments,
   extractCitations,
   needsCitationRepair,
@@ -387,6 +389,73 @@ describe("runAgentLoop unreadable tool markup", () => {
     expect(executeTool).toHaveBeenCalledWith("vault_stats", {}, { driveId: "d" });
     expect(r.text).toBe("521 notes.");
     expect(r.trail.map((e) => e.tool)).toEqual(["compat", "vault_stats"]);
+  });
+});
+
+describe("runAgentLoop false outage", () => {
+  const round = (text: string, toolCalls: unknown[] = []) => ({
+    text,
+    toolCalls,
+    finishReason: toolCalls.length ? "tool_calls" : "stop",
+  });
+
+  it("asks once when an answer blames the vault though nothing failed", async () => {
+    const streamChat = vi
+      .fn()
+      .mockResolvedValueOnce(round("I cannot access the vault right now — the tool for listing projects is not responding."))
+      .mockResolvedValueOnce(round("", [tc("list_projects", "{}")]))
+      .mockResolvedValueOnce(round("There is one project: Powerhouse PMF [[s1]]."));
+    const executeTool = vi.fn().mockResolvedValue({
+      ok: true,
+      data: { projects: [{ documentId: "s1", title: "Powerhouse PMF" }] },
+      summary: "listed 1 envelope across 1 scope",
+    });
+    const trail: TrailEntry[] = [];
+    const r = await runAgentLoop({
+      ...base,
+      messages: [{ role: "user", content: "What projects are there?" }],
+      onTrail: (e) => trail.push(e),
+      deps: { streamChat, executeTool } as never,
+    });
+    expect(r.text).toContain("Powerhouse PMF");
+    const sent = (streamChat.mock.calls[1][0] as { messages: { role: string; content: string }[] }).messages;
+    expect(sent.some((m) => m.role === "system" && m.content === NO_OUTAGE)).toBe(true);
+    expect(trail[0].summary).toContain("reported the vault as unreachable");
+  });
+
+  it("leaves the answer alone when a tool really did fail", async () => {
+    const streamChat = vi
+      .fn()
+      .mockResolvedValueOnce(round("", [tc("list_projects", "{}")]))
+      .mockResolvedValueOnce(round("I could not retrieve the projects: the reactor answered 502."));
+    const executeTool = vi.fn().mockResolvedValue({ ok: false, error: "HTTP 502 from the reactor" });
+    const streams = await runAgentLoop({
+      ...base,
+      messages: [{ role: "user", content: "What projects are there?" }],
+      deps: { streamChat, executeTool } as never,
+    });
+    // Two rounds, not three: the claim was true, so nothing was asked again.
+    expect(streamChat).toHaveBeenCalledTimes(2);
+    expect(streams.text).toContain("502");
+  });
+
+  it("claimsAnOutageThatDidNotHappen recognises the phrasings models use", () => {
+    const clean: TrailEntry[] = [{ tool: "list_projects", summary: "ok", ok: true, data: {} }];
+    const failed: TrailEntry[] = [{ tool: "list_projects", summary: "boom", ok: false, error: "HTTP 500" }];
+    for (const claim of [
+      "The vault is currently inaccessible.",
+      "I cannot access the vault right now.",
+      "the tool for listing projects is not responding",
+      "This appears to be a temporary outage.",
+      "I am unable to retrieve Scope of Work documents.",
+    ]) {
+      expect(claimsAnOutageThatDidNotHappen(claim, clean)).toBe(true);
+      // The same words are fair once something actually failed.
+      expect(claimsAnOutageThatDidNotHappen(claim, failed)).toBe(false);
+    }
+    expect(claimsAnOutageThatDidNotHappen("The vault holds 505 notes.", clean)).toBe(false);
+    // A document that is genuinely absent is not an outage claim.
+    expect(claimsAnOutageThatDidNotHappen("The vault has no note about Docling.", clean)).toBe(false);
   });
 });
 

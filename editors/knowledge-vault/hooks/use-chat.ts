@@ -110,6 +110,36 @@ export function answeredWithoutLooking(
   return !consulted && FRESHNESS_RE.test(userText);
 }
 
+/**
+ * An answer that reports the vault as unreachable. Worth detecting because
+ * the vault being down is a claim like any other: it has to have happened.
+ * A model that produced one of these earlier in a conversation will produce
+ * more — the transcript teaches it that this is what answers look like here
+ * — and the reader is told the vault is broken when it is not.
+ */
+const OUTAGE_CLAIM_RE =
+  /\b(?:not responding|unavailable|inaccessible|offline|temporary outage|system-wide issue)\b|\b(?:cannot|can(?:'|’)t|could\s?not|couldn(?:'|’)t|unable to)\b[^.]{0,80}\b(?:access|reach|retrieve|read|query|check)\b/i;
+
+/**
+ * True when an answer blames the vault for something that did not happen:
+ * it reports an outage while every tool this turn either succeeded or was
+ * never called. A tool that genuinely failed leaves its error in the trail,
+ * and then the claim is fair.
+ */
+export function claimsAnOutageThatDidNotHappen(
+  text: string,
+  trail: TrailEntry[],
+): boolean {
+  if (!OUTAGE_CLAIM_RE.test(text)) return false;
+  return !trail.some((e) => !e.ok);
+}
+
+/** The nudge for an answer that reports a failure nothing recorded. */
+export const NO_OUTAGE =
+  "Your answer says the vault could not be read, but no tool reported an error this turn. " +
+  "The vault is there. Call the tool you need now — list_projects for projects, recent_changes for what changed, search_vault for anything else — and answer from what it returns. " +
+  "If a call does fail, quote the error it gave you instead of describing an outage.";
+
 /** The nudge for an answer given from memory rather than from the vault. */
 export const CHECK_NOW =
   "You answered without calling any tool, and the question is about what is true in the vault right now. " +
@@ -206,6 +236,7 @@ export async function runAgentLoop(o: LoopOptions): Promise<LoopResult> {
   let toolsOffNextRound = false;
   let retriedToolMarkup = false;
   let retriedStaleAnswer = false;
+  let retriedFalseOutage = false;
   const tools = o.tools ?? CHAT_TOOLS;
   const asked =
     [...o.messages].reverse().find((m) => m.role === "user")?.content ?? "";
@@ -298,6 +329,21 @@ export async function runAgentLoop(o: LoopOptions): Promise<LoopResult> {
         trail.push(entry);
         o.onTrail?.(entry);
         text = stripToolCallMarkup(text);
+      }
+      // An answer that reports an outage nothing recorded. Checked before
+      // the freshness nudge: this one is wrong whatever was asked.
+      if (!toolsOff && !retriedFalseOutage && claimsAnOutageThatDidNotHappen(text, trail)) {
+        retriedFalseOutage = true;
+        const entry: TrailEntry = {
+          tool: "compat",
+          summary: "answer reported the vault as unreachable, but nothing failed — asked once to call the tool",
+          ok: true,
+        };
+        trail.push(entry);
+        o.onTrail?.(entry);
+        messages.push({ role: "assistant", content: text });
+        messages.push({ role: "system", content: NO_OUTAGE });
+        continue;
       }
       // An answer about the vault's present, given without looking at it.
       // Ask once; a model that still declines has said its piece.
