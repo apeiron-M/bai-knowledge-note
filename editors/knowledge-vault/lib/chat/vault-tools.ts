@@ -27,6 +27,7 @@ import {
 import { fetchDocumentState } from "../../../shared/document-state.js";
 import type { WorkBreakdownStructureState } from "document-models/work-breakdown-structure";
 import type { ToolSchema } from "./completions-client.js";
+import { resolveEns } from "./ens.js";
 import {
   PAGE_MAX_CHARS,
   readUrl,
@@ -114,6 +115,24 @@ export const WEB_TOOLS: ToolSchema[] = [
           limit: {
             type: "integer",
             description: `Results to return (default ${LIMITS.web.default}, max ${LIMITS.web.max}).`,
+          },
+        },
+        required: ["query"],
+      },
+    },
+  },
+  {
+    type: "function",
+    function: {
+      name: "ens_lookup",
+      description:
+        "Resolve an Ethereum address to its ENS name, or an ENS name to its address — the same service the vault's own signer badges use, so a name here matches a name there. Use it whenever an address needs a person: document_history returns the signer's address, and this turns 0xadbA…BcA4 into a name. An address with no registered name comes back with name: null — report that plainly rather than searching the web for it.",
+      parameters: {
+        type: "object",
+        properties: {
+          query: {
+            type: "string",
+            description: "An address (0x…) or an ENS name (something.eth).",
           },
         },
         required: ["query"],
@@ -1078,6 +1097,22 @@ export async function executeTool(
         return ok(
           { ...found, outsideTheVault: true },
           `searched the web for "${query}" via ${source} → ${found.results.length} result${found.results.length === 1 ? "" : "s"}`,
+        );
+      } catch (err) {
+        return fail(err instanceof Error ? err.message : String(err));
+      }
+    }
+
+    case "ens_lookup": {
+      const query = str(args, "query");
+      if (!query) return fail("ens_lookup needs an address or an ENS name");
+      try {
+        const id = await resolveEns(query);
+        return ok(
+          { ...id, outsideTheVault: true },
+          id.name
+            ? `${id.name} is the ENS name of ${id.address ?? query}`
+            : `${query} has no ENS name${id.reason ? ` — ${id.reason.split(".")[0]}` : ""}`,
         );
       } catch (err) {
         return fail(err instanceof Error ? err.message : String(err));

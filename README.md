@@ -448,7 +448,12 @@ Two more reach outside the vault, always available:
 | Tool | Answers |
 |------|---------|
 | `search_web` | A ranked result list for a query. Uses [Tavily](https://tavily.com) when this browser has a key stored (`bai-chat-web:v1` → `{"tavilyKey":"tvly-…"}`), otherwise DuckDuckGo's results read through [r.jina.ai](https://jina.ai/reader) — no key, no account. |
-| `read_url` | The text of one public page, including plain JSON when the address is an API. Private and loopback addresses are refused. |
+| `read_url` | The text of one public page, including plain JSON when the address is an API. Private and loopback addresses are refused. A 404 or an empty shell comes back flagged, so a missing page cannot read as an answer. |
+| `ens_lookup` | An Ethereum address ↔ its ENS name, through `api.ensdata.net` — the same service the vault's signer badges use, so the chat and the UI never disagree. `document_history` returns a signer's address; this turns it into a person. |
+
+Only DuckDuckGo survives a browser-side fetch among the keyless engines (Bing, Mojeek,
+Startpage, Brave and Ecosia all block the reader with 403/422/Cloudflare, and Marginalia's
+search page returns its syntax help). A Tavily key is the way to better results.
 
 The vault is answered from the vault first. A web result is never cited as `[[documentId]]` — the model cites it as a markdown link — and page text is treated as untrusted input exactly like note content. Queries and the addresses read leave the browser for whichever service serves them, which is why the keyless path is a public reader rather than anything of ours.
 

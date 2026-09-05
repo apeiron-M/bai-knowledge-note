@@ -60,8 +60,8 @@ describe("VAULT_TOOLS", () => {
     ]);
   });
 
-  it("adds the two web tools to the chat's set, but not to what the vault offers Connect", () => {
-    expect(WEB_TOOLS.map((t) => t.function.name)).toEqual(["search_web", "read_url"]);
+  it("adds the outside-the-vault tools to the chat's set, but not to what the vault offers Connect", () => {
+    expect(WEB_TOOLS.map((t) => t.function.name)).toEqual(["search_web", "ens_lookup", "read_url"]);
     expect(CHAT_TOOLS).toHaveLength(VAULT_TOOLS.length + WEB_TOOLS.length);
     // aiTools (Connect's assistant) is built from VAULT_TOOLS alone.
     expect(VAULT_TOOLS.some((t) => t.function.name.includes("web"))).toBe(false);
@@ -892,5 +892,36 @@ describe("read_url surfaces a useless page in the trail", () => {
     if (!r.ok) throw new Error(r.error);
     expect(r.summary).toBe("read https://example.com/gone — nothing usable: This is a not-found page, not content");
     expect((r.data as { warning?: string }).warning).toMatch(/not-found page/);
+  });
+});
+
+describe("ens_lookup", () => {
+  const ADDRESS = "0xadbA7C2F82139031D7564D18aC22D09B12A0BcA4";
+
+  it("answers who an address is, in one line the model can quote", async () => {
+    globalThis.fetch = vi.fn().mockResolvedValue({
+      ok: true,
+      status: 200,
+      json: () => Promise.resolve({ address: ADDRESS, ens: "liberuum.eth", ens_primary: "liberuum.eth" }),
+    }) as unknown as typeof fetch;
+    const r = await executeTool("ens_lookup", { query: ADDRESS }, { driveId: "d1" });
+    expect(r.ok).toBe(true);
+    if (!r.ok) throw new Error(r.error);
+    expect(r.summary).toBe(`liberuum.eth is the ENS name of ${ADDRESS}`);
+    expect((r.data as { name: string }).name).toBe("liberuum.eth");
+  });
+
+  it("says plainly when an address has no name, and needs a query", async () => {
+    globalThis.fetch = vi.fn().mockResolvedValue({
+      ok: false,
+      status: 404,
+      json: () => Promise.resolve({ error: true, message: "Unable to resolve 0x…dead because it's not registered. Register at app.ens.domains" }),
+    }) as unknown as typeof fetch;
+    const r = await executeTool("ens_lookup", { query: "0x000000000000000000000000000000000000dEaD" }, { driveId: "d1" });
+    if (!r.ok) throw new Error(r.error);
+    expect(r.summary).toMatch(/has no ENS name — Unable to resolve/);
+    expect((r.data as { name: string | null }).name).toBeNull();
+
+    expect((await executeTool("ens_lookup", {}, { driveId: "d1" })).ok).toBe(false);
   });
 });
