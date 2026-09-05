@@ -432,6 +432,17 @@ origin: Ollama `OLLAMA_ORIGINS="http://localhost:3000"` (or your Connect URL), L
 "enable CORS" in the server tab, vLLM/llama.cpp their CORS flag. The model must support
 tool calling; the vault's tools are how it reads anything.
 
+### What the chat can ask the vault
+
+Twelve read-only tools. Two are about change rather than content:
+
+| Tool | Answers |
+|------|---------|
+| `recent_changes` | *Which* documents changed and when — every type, newest first, optionally narrowed by `documentType` or `since`. Membership comes from the drive tree, times from the reactor's `lastModifiedAtUtcIso`, human titles from the graph index. |
+| `document_history` | *Who* changed one document, when, and *what* — the newest operations with the signing address, the app used, and a phrase per change (the same vocabulary the Activity view shows). Works for every document type. |
+
+"Who made the last change in the vault?" is the two chained: `recent_changes` for the document, `document_history` for the person.
+
 ## Connect's AI assistant can read the vault
 
 Connect's built-in assistant (reactor-browser `ai`, Sept 2026 onwards) merges every

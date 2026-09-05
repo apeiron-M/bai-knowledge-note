@@ -27,6 +27,8 @@ import {
 import { fetchDocumentState } from "../../../shared/document-state.js";
 import type { WorkBreakdownStructureState } from "document-models/work-breakdown-structure";
 import type { ToolSchema } from "./completions-client.js";
+import { shortAddress } from "../../../shared/identity.js";
+import { summarizeOperation } from "../../../../processors/graph-indexer/summarize.js";
 import {
   renderScope,
   renderWbs,
@@ -66,6 +68,7 @@ const LIMITS = {
   links: 15,
   documents: { default: 50, max: 100 },
   recent: { default: 15, max: 50 },
+  history: { default: 10, max: 50 },
   projects: 25,
   knowledgeRefTitles: 20,
   noteContent: 6000,
@@ -228,6 +231,28 @@ export const VAULT_TOOLS: ToolSchema[] = [
             description: "Only documents of this type, e.g. bai/source for the newest source material.",
           },
         },
+      },
+    },
+  },
+  {
+    type: "function",
+    function: {
+      name: "document_history",
+      description:
+        "Who changed one document, when, and what they changed — the newest operations first, each with the editor's signing address, the app they used, and a phrase describing the change. Works for EVERY document type, indexed or not. Use after recent_changes to answer 'who made the last change', 'who wrote this', 'what was edited here'. It reports operations, not the document's content: read_note or read_document for what the document says now.",
+      parameters: {
+        type: "object",
+        properties: {
+          documentId: {
+            type: "string",
+            description: "The document's documentId, exactly as a previous result gave it.",
+          },
+          limit: {
+            type: "integer",
+            description: `Operations to return, newest first (default ${LIMITS.history.default}, max ${LIMITS.history.max}).`,
+          },
+        },
+        required: ["documentId"],
       },
     },
   },
@@ -416,14 +441,25 @@ const listingCache = new Map<string, VaultDocumentListing>();
 /**
  * Which documents are in the vault, and when each was last edited.
  *
- * No single query answers this. The drive document's node tree is the
- * authority on membership — every type, every age — but carries no times.
- * The reactor's `findDocuments(parentId)` has `lastModifiedAtUtcIso` but only
- * for documents whose containment was recorded as a relationship (older
- * imports are missing), and its per-type listing loads whole documents and
- * takes seconds. The graph index has `updatedAt` for indexed kinds only.
- * So: tree for membership and names, the two cheap time sources merged by
- * taking the later stamp, one cached result per drive.
+ * Two facts make this two queries rather than one. `findDocuments(parentId)`
+ * returns every document the reactor holds for the drive WITH
+ * `lastModifiedAtUtcIso` — measured on the live vault: 1,504 rows, all
+ * stamped, in ~2s — so it is the authority on time. But it also returns
+ * documents that have left the drive tree (40 on that vault: notes deleted
+ * from the tree whose records the reactor still holds), so the drive
+ * document's own node list stays the authority on membership, and it is
+ * where a document's name comes from.
+ *
+ * The graph index is asked for titles, not times: a note's tree name is its
+ * slug (`recovery-flow-from-wallet`), and the index has the human title. It
+ * covers indexed kinds only, which is why it can never be the time source —
+ * a source or the health report would be missing. Compared across the live
+ * vault's 1,057 indexed documents, its `updatedAt` was never ahead of the
+ * reactor's stamp (equal on 945, behind on 112 — reindex lag), so the
+ * reactor wins wherever both know a document and the index stands in only
+ * where it does not.
+ *
+ * One cached result per drive; `recent_changes` filters and slices it.
  */
 async function vaultDocumentListing(
   driveId: string,
@@ -466,19 +502,17 @@ async function vaultDocumentListing(
   }[];
 
   const stamps = new Map<string, string>();
-  const stamp = (id: string, iso: string | null | undefined) => {
-    if (!iso) return;
-    const prev = stamps.get(id);
-    if (!prev || iso > prev) stamps.set(id, iso);
-  };
-  // Either time source may be unavailable; the other still serves.
   if (!("error" in contained)) {
-    for (const d of contained.data.findDocuments.items) stamp(d.id, d.lastModifiedAtUtcIso);
+    for (const d of contained.data.findDocuments.items) {
+      if (d.lastModifiedAtUtcIso) stamps.set(d.id, d.lastModifiedAtUtcIso);
+    }
   }
   const index = new Map<string, { title: string | null; noteType: string | null; status: string | null }>();
   if (!("error" in indexed)) {
     for (const n of indexed.data.knowledgeGraphRecent) {
-      stamp(n.documentId, n.updatedAt);
+      // Titles and badges from the index; its `updatedAt` only stands in
+      // when the reactor listing failed or did not carry the document.
+      if (!stamps.has(n.documentId)) stamps.set(n.documentId, n.updatedAt);
       index.set(n.documentId, { title: n.title, noteType: n.noteType, status: n.status });
     }
   }
@@ -668,7 +702,7 @@ export async function executeTool(
       return ok(
         { items: rows, undated },
         `listed the ${rows.length} most recently edited ${scope}${rows.length === 1 ? "" : "s"} of ${documents.length}${since ? ` since ${since.slice(0, 10)}` : ""}` +
-          (undated ? ` (${undated} more have no recorded edit time)` : ""),
+          (undated ? ` (${undated} more ${undated === 1 ? "has" : "have"} no recorded edit time)` : ""),
       );
     }
 
@@ -978,6 +1012,124 @@ export async function executeTool(
       return ok(
         { total: envelopeRows.length, projects: envelopeRows, scopes: scopeCount },
         `listed ${envelopeRows.length} envelope${envelopeRows.length === 1 ? "" : "s"} across ${scopeCount} scope${scopeCount === 1 ? "" : "s"}`,
+      );
+    }
+
+    case "document_history": {
+      const documentId = str(args, "documentId");
+      if (!documentId) return fail("document_history needs a documentId");
+      const limit = int(args, "limit", LIMITS.history.default, LIMITS.history.max);
+
+      // The document first: its identity, and how many operations it has.
+      // `revisionsList` is the real count per scope — `totalCount` on an
+      // operations page only counts that page.
+      const head = await gql<{
+        document: {
+          document: {
+            id: string;
+            name: string | null;
+            documentType: string | null;
+            createdAtUtcIso: string | null;
+            lastModifiedAtUtcIso: string | null;
+            revisionsList: { scope: string; revision: number }[];
+          } | null;
+        } | null;
+      }>(
+        reactorEndpoint(),
+        `query History($id: String!) {
+          document(identifier: $id) {
+            document {
+              id name documentType createdAtUtcIso lastModifiedAtUtcIso
+              revisionsList { scope revision }
+            }
+          }
+        }`,
+        { id: documentId },
+      );
+      if ("error" in head) return fail(head.error);
+      const doc = head.data.document?.document;
+      if (!doc) return fail(`no document with id ${documentId}`);
+      const revision =
+        doc.revisionsList.find((r) => r.scope === "global")?.revision ?? 0;
+
+      // The reactor ignores `paging.offset`, so the tail is selected by
+      // revision: everything from (revision - limit) onwards.
+      const ops = await gql<{
+        documentOperations: {
+          items: {
+            index: number;
+            timestampUtcMs: string | null;
+            error: string | null;
+            action: {
+              type: string;
+              input: Record<string, unknown> | null;
+              context: {
+                signer: {
+                  user: { address: string | null } | null;
+                  app: { name: string | null } | null;
+                } | null;
+              } | null;
+            };
+          }[];
+        };
+      }>(
+        reactorEndpoint(),
+        `query Ops($id: String!, $since: Int, $limit: Int) {
+          documentOperations(
+            filter: { documentId: $id, scopes: ["global"], sinceRevision: $since }
+            paging: { limit: $limit }
+          ) {
+            items {
+              index timestampUtcMs error
+              action {
+                type input
+                context { signer { user { address } app { name } } }
+              }
+            }
+          }
+        }`,
+        { id: documentId, since: Math.max(0, revision - limit), limit },
+      );
+      if ("error" in ops) return fail(ops.error);
+
+      const changes = ops.data.documentOperations.items
+        .map((op) => {
+          const signer = op.action.context?.signer;
+          // Unsigned operations carry an empty address, not a missing one.
+          const address = signer?.user?.address || null;
+          return {
+            revision: op.index + 1,
+            at: op.timestampUtcMs,
+            action: op.action.type,
+            change: summarizeOperation(op.action.type, op.action.input ?? {}),
+            by: address,
+            byShort: address ? shortAddress(address) : null,
+            via: signer?.app?.name || null,
+            ...(op.error ? { failed: op.error } : {}),
+          };
+        })
+        .reverse();
+
+      // `.at` rather than `[0]`: a document with no global operations is
+      // a real case, and the type should say so.
+      const newest = changes.at(0);
+      const who = newest?.byShort
+        ? ` by ${newest.byShort}${newest.via ? ` via ${newest.via}` : ""}`
+        : newest?.via
+          ? ` via ${newest.via}`
+          : "";
+      return ok(
+        {
+          documentId: doc.id,
+          title: doc.name ?? doc.id,
+          documentType: doc.documentType,
+          createdAt: doc.createdAtUtcIso,
+          lastModifiedAt: doc.lastModifiedAtUtcIso,
+          revision,
+          changes,
+        },
+        `read the last ${changes.length} of ${revision} change${revision === 1 ? "" : "s"} to "${doc.name ?? documentId}"` +
+          (newest ? ` — newest: ${newest.change}${who}` : ""),
       );
     }
 

@@ -41,7 +41,7 @@ describe("runAgentLoop", () => {
     // Tools are always offered so the model can choose.
     expect(
       (streamChat.mock.calls[0][0] as { tools: unknown[] }).tools.length,
-    ).toBe(11);
+    ).toBe(12);
   });
 
   it("executes a tool call and feeds the result back keyed to the call id", async () => {
