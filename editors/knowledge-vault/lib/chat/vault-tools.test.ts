@@ -1,6 +1,13 @@
 import "../../../shared/test/browser-globals.js";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
-import { DOCUMENT_TYPES, VAULT_TOOLS, executeTool, resetVaultDocumentListing } from "./vault-tools.js";
+import {
+  CHAT_TOOLS,
+  DOCUMENT_TYPES,
+  VAULT_TOOLS,
+  WEB_TOOLS,
+  executeTool,
+  resetVaultDocumentListing,
+} from "./vault-tools.js";
 
 const CTX = { driveId: "drive-1" };
 
@@ -51,6 +58,13 @@ describe("VAULT_TOOLS", () => {
       "search_vault",
       "vault_stats",
     ]);
+  });
+
+  it("adds the two web tools to the chat's set, but not to what the vault offers Connect", () => {
+    expect(WEB_TOOLS.map((t) => t.function.name)).toEqual(["search_web", "read_url"]);
+    expect(CHAT_TOOLS).toHaveLength(VAULT_TOOLS.length + WEB_TOOLS.length);
+    // aiTools (Connect's assistant) is built from VAULT_TOOLS alone.
+    expect(VAULT_TOOLS.some((t) => t.function.name.includes("web"))).toBe(false);
   });
 
   it("declares no mutation anywhere", () => {
@@ -807,5 +821,61 @@ describe("document_history — who changed a document, and what", () => {
     const r = await executeTool("document_history", { documentId: "nope" }, CTX);
     expect(r.ok).toBe(false);
     if (!r.ok) expect(r.error).toBe("no document with id nope");
+  });
+});
+
+describe("search_web / read_url", () => {
+  const CTX = { driveId: "d1" };
+  const READER = `Title: Example Domain\n\nMarkdown Content:\n# Example Domain\n\nIllustrative text.`;
+
+  beforeEach(() => localStorage.clear());
+
+  it("searches the keyless path and labels the result as outside the vault", async () => {
+    const ddg = (u: string) => `https://duckduckgo.com/l/?uddg=${encodeURIComponent(u)}`;
+    mockGqlSequence(); // no GraphQL here; the tool talks to the reader
+    globalThis.fetch = vi.fn().mockResolvedValue({
+      ok: true,
+      status: 200,
+      text: () =>
+        Promise.resolve(
+          `Markdown Content:\n## [Alan Turing - Wikipedia](${ddg("https://en.wikipedia.org/wiki/Alan_Turing")})\n\n[English mathematician.](${ddg("https://en.wikipedia.org/wiki/Alan_Turing")})`,
+        ),
+    }) as unknown as typeof fetch;
+    const r = await executeTool("search_web", { query: "alan turing", limit: 3 }, CTX);
+    expect(r.ok).toBe(true);
+    if (!r.ok) throw new Error(r.error);
+    const d = r.data as { via: string; outsideTheVault: boolean; results: { url: string }[] };
+    expect(d.via).toBe("duckduckgo");
+    expect(d.outsideTheVault).toBe(true);
+    expect(d.results[0].url).toBe("https://en.wikipedia.org/wiki/Alan_Turing");
+    expect(r.summary).toBe('searched the web for "alan turing" via DuckDuckGo → 1 result');
+  });
+
+  it("reads a page and reports a failure in the model's terms", async () => {
+    globalThis.fetch = vi.fn().mockResolvedValue({ ok: true, status: 200, text: () => Promise.resolve(READER) }) as unknown as typeof fetch;
+    const r = await executeTool("read_url", { url: "https://example.com" }, CTX);
+    if (!r.ok) throw new Error(r.error);
+    expect(r.summary).toBe('read "Example Domain"');
+    expect((r.data as { outsideTheVault: boolean }).outsideTheVault).toBe(true);
+
+    const bad = await executeTool("read_url", { url: "http://localhost:11434" }, CTX);
+    expect(bad.ok).toBe(false);
+    if (!bad.ok) expect(bad.error).toContain("private address");
+
+    const missing = await executeTool("search_web", {}, CTX);
+    expect(missing.ok).toBe(false);
+  });
+
+  it("uses a Tavily key when this browser has one stored", async () => {
+    localStorage.setItem("bai-chat-web:v1", JSON.stringify({ tavilyKey: "tvly-x" }));
+    globalThis.fetch = vi.fn().mockResolvedValue({
+      ok: true,
+      status: 200,
+      json: () => Promise.resolve({ answer: "a", results: [{ title: "t", url: "https://x.example", content: "c" }] }),
+    }) as unknown as typeof fetch;
+    const r = await executeTool("search_web", { query: "q" }, CTX);
+    if (!r.ok) throw new Error(r.error);
+    expect((r.data as { via: string }).via).toBe("tavily");
+    expect(r.summary).toContain("via Tavily");
   });
 });

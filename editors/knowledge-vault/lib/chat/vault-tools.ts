@@ -27,6 +27,12 @@ import {
 import { fetchDocumentState } from "../../../shared/document-state.js";
 import type { WorkBreakdownStructureState } from "document-models/work-breakdown-structure";
 import type { ToolSchema } from "./completions-client.js";
+import {
+  PAGE_MAX_CHARS,
+  readUrl,
+  readWebSettings,
+  searchWeb,
+} from "./web.js";
 import { shortAddress } from "../../../shared/identity.js";
 import { summarizeOperation } from "../../../../processors/graph-indexer/summarize.js";
 import {
@@ -69,6 +75,7 @@ const LIMITS = {
   documents: { default: 50, max: 100 },
   recent: { default: 15, max: 50 },
   history: { default: 10, max: 50 },
+  web: { default: 5, max: 10 },
   projects: 25,
   knowledgeRefTitles: 20,
   noteContent: 6000,
@@ -86,6 +93,49 @@ const LIMITS = {
 // Search ranks them together; the model should not cite a tension as a claim.
 const NOTE_FIELDS =
   "documentId title description noteType status documentType";
+
+/**
+ * Looking outside the vault — see lib/chat/web.ts for how each is served
+ * from a browser. Kept apart from `VAULT_TOOLS` because that list is also
+ * what this package offers Connect's own assistant, which has its own tools
+ * and its own policy about reaching the network.
+ */
+export const WEB_TOOLS: ToolSchema[] = [
+  {
+    type: "function",
+    function: {
+      name: "search_web",
+      description:
+        "Search the public web. Use ONLY when the vault does not hold the answer and the user wants outside information, or when they ask for something current (news, a release, today's documentation). Returns ranked results with title, url and a snippet; read_url fetches the full text of one. Web results are NOT vault knowledge: report them as outside the vault, cite them by their url as a markdown link, and never as [[documentId]].",
+      parameters: {
+        type: "object",
+        properties: {
+          query: { type: "string", description: "What to search for, in plain words." },
+          limit: {
+            type: "integer",
+            description: `Results to return (default ${LIMITS.web.default}, max ${LIMITS.web.max}).`,
+          },
+        },
+        required: ["query"],
+      },
+    },
+  },
+  {
+    type: "function",
+    function: {
+      name: "read_url",
+      description:
+        "Fetch one public web page and return its text. Use after search_web to read a promising result, or when the user names a page. Public http/https addresses only. The text is truncated; say so if you were cut off. Like search_web, this is outside the vault — cite it by url, never as [[documentId]].",
+      parameters: {
+        type: "object",
+        properties: {
+          url: { type: "string", description: "Full address, e.g. https://example.com/page." },
+        },
+        required: ["url"],
+      },
+    },
+  },
+];
 
 export const VAULT_TOOLS: ToolSchema[] = [
   {
@@ -410,6 +460,9 @@ const scopeState = (state: Record<string, unknown>) =>
 /** Envelopes stored before knowledgeRefs existed have no array at all. */
 const envelopeRefs = (env: { knowledgeRefs: string[] }): string[] =>
   (env as { knowledgeRefs?: string[] }).knowledgeRefs ?? [];
+
+/** Everything the vault's own chat may call: the vault, plus the web. */
+export const CHAT_TOOLS: ToolSchema[] = [...VAULT_TOOLS, ...WEB_TOOLS];
 
 /* ------------------------------------------------------------------ */
 /*  Every document in the vault, by last edit                          */
@@ -1013,6 +1066,36 @@ export async function executeTool(
         { total: envelopeRows.length, projects: envelopeRows, scopes: scopeCount },
         `listed ${envelopeRows.length} envelope${envelopeRows.length === 1 ? "" : "s"} across ${scopeCount} scope${scopeCount === 1 ? "" : "s"}`,
       );
+    }
+
+    case "search_web": {
+      const query = str(args, "query");
+      if (!query) return fail("search_web needs a query");
+      const limit = int(args, "limit", LIMITS.web.default, LIMITS.web.max);
+      try {
+        const found = await searchWeb(query, { limit, settings: readWebSettings() });
+        const source = found.via === "tavily" ? "Tavily" : "DuckDuckGo";
+        return ok(
+          { ...found, outsideTheVault: true },
+          `searched the web for "${query}" via ${source} → ${found.results.length} result${found.results.length === 1 ? "" : "s"}`,
+        );
+      } catch (err) {
+        return fail(err instanceof Error ? err.message : String(err));
+      }
+    }
+
+    case "read_url": {
+      const url = str(args, "url");
+      if (!url) return fail("read_url needs a url");
+      try {
+        const page = await readUrl(url, { maxChars: PAGE_MAX_CHARS });
+        return ok(
+          { ...page, outsideTheVault: true },
+          `read ${page.title ? `"${page.title}"` : page.url}${page.truncated ? " (truncated)" : ""}`,
+        );
+      } catch (err) {
+        return fail(err instanceof Error ? err.message : String(err));
+      }
     }
 
     case "document_history": {

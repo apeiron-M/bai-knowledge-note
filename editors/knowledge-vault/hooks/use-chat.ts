@@ -17,9 +17,10 @@ import {
   streamChat as realStreamChat,
   type ChatMessage,
   type ToolCall,
+  type ToolSchema,
 } from "../lib/chat/completions-client.js";
 import {
-  VAULT_TOOLS,
+  CHAT_TOOLS,
   executeTool as realExecuteTool,
 } from "../lib/chat/vault-tools.js";
 import { classifyFailure, type Failure } from "../lib/chat/failure.js";
@@ -126,6 +127,8 @@ export interface LoopOptions {
   modelName?: (id: string) => string;
   driveId: string;
   messages: ChatMessage[];
+  /** What the model may call this turn; defaults to the chat's whole set. */
+  tools?: ToolSchema[];
   onText?: (delta: string) => void;
   onTrail?: (entry: TrailEntry) => void;
   /** Fires when a new round starts; the UI clears the streamed text of the previous one. */
@@ -173,6 +176,7 @@ export async function runAgentLoop(o: LoopOptions): Promise<LoopResult> {
   let repairedCitations = false;
   let toolsOffNextRound = false;
   let retriedToolMarkup = false;
+  const tools = o.tools ?? CHAT_TOOLS;
 
   for (;;) {
     iterations++;
@@ -190,7 +194,7 @@ export async function runAgentLoop(o: LoopOptions): Promise<LoopResult> {
       model: o.model,
       fallbackModels: o.fallbackModels,
       messages,
-      tools: VAULT_TOOLS,
+      tools,
       toolChoice: toolsOff ? "none" : "auto",
       signal: o.signal,
       onText: o.onText,

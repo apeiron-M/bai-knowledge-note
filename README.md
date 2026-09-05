@@ -443,6 +443,17 @@ Twelve read-only tools. Two are about change rather than content:
 
 "Who made the last change in the vault?" is the two chained: `recent_changes` for the document, `document_history` for the person.
 
+Two more reach outside the vault, always available:
+
+| Tool | Answers |
+|------|---------|
+| `search_web` | A ranked result list for a query. Uses [Tavily](https://tavily.com) when this browser has a key stored (`bai-chat-web:v1` → `{"tavilyKey":"tvly-…"}`), otherwise DuckDuckGo's results read through [r.jina.ai](https://jina.ai/reader) — no key, no account. |
+| `read_url` | The text of one public page, including plain JSON when the address is an API. Private and loopback addresses are refused. |
+
+The vault is answered from the vault first. A web result is never cited as `[[documentId]]` — the model cites it as a markdown link — and page text is treated as untrusted input exactly like note content. Queries and the addresses read leave the browser for whichever service serves them, which is why the keyless path is a public reader rather than anything of ours.
+
+The chat has no shell or code-execution tool, and will not get one: it reads note and web text that anyone can write, and a tool that executes would turn any of that text into a way to run commands on the reader's machine.
+
 ## Connect's AI assistant can read the vault
 
 Connect's built-in assistant (reactor-browser `ai`, Sept 2026 onwards) merges every
