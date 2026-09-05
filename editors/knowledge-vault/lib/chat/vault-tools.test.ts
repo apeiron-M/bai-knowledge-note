@@ -18,6 +18,14 @@ function mockGql(data: unknown) {
     json: () => Promise.resolve({ data }),
   }) as unknown as typeof fetch;
 }
+// Drive membership and resolved names are cached across calls by design;
+// between tests they must not be, or the first test to look decides what the
+// rest of the file believes the vault contains.
+beforeEach(() => {
+  resetVaultDocumentListing();
+  resetEnsCache();
+});
+
 function mockGqlSequence(...payloads: unknown[]) {
   const fn = vi.fn();
   for (const p of payloads) {
@@ -25,6 +33,27 @@ function mockGqlSequence(...payloads: unknown[]) {
   }
   globalThis.fetch = fn as unknown as typeof fetch;
 }
+/**
+ * The drive's own file list — what `driveMembers` reads to decide whether a
+ * document is still in the vault. Tools that ask the reactor by id or by type
+ * check it first, so a mocked sequence has to include it.
+ */
+function driveTree(...ids: string[]) {
+  return {
+    data: {
+      document: {
+        document: {
+          state: {
+            global: {
+              nodes: ids.map((id) => ({ id, kind: "file", name: id, documentType: "bai/knowledge-note" })),
+            },
+          },
+        },
+      },
+    },
+  };
+}
+
 function requestAt(i: number) {
   const calls = (globalThis.fetch as ReturnType<typeof vi.fn>).mock.calls;
   const [url, init] = calls[i] as [string, RequestInit];
@@ -278,7 +307,8 @@ describe("executeTool", () => {
       CTX,
     );
     expect(r.ok).toBe(true);
-    const { url, body } = lastRequest();
+    // Request 0 is the listing; the membership check follows it.
+    const { url, body } = requestAt(0);
     expect(url).toMatch(/\/graphql$/);
     expect(body.variables).toMatchObject({ type: "bai/source", limit: 50 });
     if (r.ok) expect((r.data as { total: number }).total).toBe(18);
@@ -469,6 +499,7 @@ describe("scope of work envelopes", () => {
   it("list_projects lists every envelope of every scope, citing the scope document", async () => {
     mockGqlSequence(
       { data: { findDocuments: { totalCount: 1, items: [{ id: "s1", name: "Powerhouse PMF" }] } } },
+      driveTree("s1"),
       docResponse("s1", "powerhouse/scopeofwork", "Powerhouse PMF", scope),
     );
     const r = await executeTool("list_projects", {}, CTX);
@@ -494,6 +525,7 @@ describe("scope of work envelopes", () => {
 
   it("read_document on a scope joins deliverables to their goals and names the wbs", async () => {
     mockGqlSequence(
+      driveTree("s1", "w9"),
       docResponse("s1", "powerhouse/scopeofwork", "Powerhouse PMF", scope),
       docResponse("w9", "bai/wbs", "PPD — WBS", wbs),
       { data: { n0: { title: "A note" } } },
@@ -532,6 +564,7 @@ describe("scope of work envelopes", () => {
 
   it("read_document on a WBS renders the goal tree and names the envelope it delivers", async () => {
     mockGqlSequence(
+      driveTree("w9", "s1"),
       docResponse("w9", "bai/wbs", "PPD — WBS", wbs),
       docResponse("s1", "powerhouse/scopeofwork", "Powerhouse PMF", scope),
     );
@@ -563,7 +596,7 @@ describe("list_documents nameContains", () => {
   };
 
   it("filters by title over the largest page and says how much it scanned", async () => {
-    mockGqlSequence(page);
+    mockGqlSequence(page, driveTree("s1", "s2", "s3"));
     const r = await executeTool("list_documents", { documentType: "bai/source", nameContains: "swarm" }, CTX);
     expect(r.ok).toBe(true);
     if (!r.ok) throw new Error(r.error);
@@ -577,22 +610,25 @@ describe("list_documents nameContains", () => {
         { documentId: "s3", title: "How Connect Swarm Integration Works", documentType: "bai/source" },
       ],
     });
-    expect(r.summary).toBe('listed 2 of 2 bai/source whose title contains "swarm" (scanned 3 of 3)');
+    expect(r.summary).toBe(
+      'listed 2 of 2 bai/source whose title contains "swarm" (scanned 3 in the vault of 3 the reactor holds)',
+    );
   });
 
   it("still honours limit on the filtered list and behaves as before without a filter", async () => {
-    mockGqlSequence(page);
+    mockGqlSequence(page, driveTree("s1", "s2", "s3"));
     const filtered = await executeTool("list_documents", { documentType: "bai/source", nameContains: "swarm", limit: 1 }, CTX);
     if (!filtered.ok) throw new Error(filtered.error);
     expect((filtered.data as { items: unknown[] }).items).toHaveLength(1);
 
-    mockGqlSequence(page);
+    mockGqlSequence(page, driveTree("s1", "s2", "s3"));
     const plain = await executeTool("list_documents", { documentType: "bai/source", limit: 2 }, CTX);
     if (!plain.ok) throw new Error(plain.error);
     expect(requestAt(0).body.variables).toEqual({ type: "bai/source", limit: 2 });
     expect(plain.data).not.toHaveProperty("matched");
     // The mock ignores paging, so the page holds 3; the tool still trims to the limit.
-    expect(plain.summary).toBe("listed 2 of 3 bai/source");
+    // "in the vault" is only claimed when membership was actually read.
+    expect(plain.summary).toBe("listed 2 of 3 bai/source in the vault");
   });
 });
 
@@ -821,12 +857,13 @@ describe("document_history — who changed a document, and what", () => {
   };
 
   it("selects the tail by revision (offset is ignored by the reactor) and returns it newest first", async () => {
-    mockGqlSequence(head(85), ops);
+    mockGqlSequence(driveTree("w9"), head(85), ops);
     const r = await executeTool("document_history", { documentId: "w9", limit: 2 }, CTX);
     expect(r.ok).toBe(true);
     if (!r.ok) throw new Error(r.error);
     // 85 operations, 2 wanted → everything from revision 83 on.
-    expect(requestAt(1).body.variables).toEqual({ id: "w9", since: 83, limit: 2 });
+    // request 0 is the membership check, 1 the document, 2 its operations
+    expect(requestAt(2).body.variables).toEqual({ id: "w9", since: 83, limit: 2 });
     const d = r.data as { revision: number; title: string; changes: Record<string, unknown>[] };
     expect(d.revision).toBe(85);
     expect(d.changes.map((c) => c.action)).toEqual(["SET_GOAL_STATUS", "ASSIGN_GOAL"]);
@@ -848,14 +885,14 @@ describe("document_history — who changed a document, and what", () => {
   });
 
   it("asks for everything when the document has fewer operations than the limit", async () => {
-    mockGqlSequence(head(2), { data: { documentOperations: { items: ops.data.documentOperations.items.slice(0, 1) } } });
+    mockGqlSequence(driveTree("w9"), head(2), { data: { documentOperations: { items: ops.data.documentOperations.items.slice(0, 1) } } });
     const r = await executeTool("document_history", { documentId: "w9" }, CTX);
     if (!r.ok) throw new Error(r.error);
-    expect(requestAt(1).body.variables).toEqual({ id: "w9", since: 0, limit: 10 });
+    expect(requestAt(2).body.variables).toEqual({ id: "w9", since: 0, limit: 10 });
   });
 
   it("reports an unsigned operation as the app that made it, with no person", async () => {
-    mockGqlSequence(head(1), {
+    mockGqlSequence(driveTree("w9"), head(1), {
       data: {
         documentOperations: {
           items: [
@@ -872,7 +909,7 @@ describe("document_history — who changed a document, and what", () => {
   });
 
   it("records a rejected operation as failed, and needs a documentId", async () => {
-    mockGqlSequence(head(1), {
+    mockGqlSequence(driveTree("w9"), head(1), {
       data: {
         documentOperations: {
           items: [
@@ -890,7 +927,7 @@ describe("document_history — who changed a document, and what", () => {
   });
 
   it("says so when the document does not exist", async () => {
-    mockGqlSequence({ data: { document: null } });
+    mockGqlSequence(driveTree("nope"), { data: { document: null } });
     const r = await executeTool("document_history", { documentId: "nope" }, CTX);
     expect(r.ok).toBe(false);
     if (!r.ok) expect(r.error).toBe("no document with id nope");
@@ -1082,5 +1119,100 @@ describe("tool name aliases", () => {
     const unknown = await executeTool("definitely_not_a_tool", {}, { driveId: "d1" });
     expect(unknown.ok).toBe(false);
     if (!unknown.ok) expect(unknown.error).toContain('unknown tool "definitely_not_a_tool"');
+  });
+});
+
+describe("a deleted document is not the vault's", () => {
+  const CTX = { driveId: "d1" };
+  // The drive tree holds one scope; the reactor still answers for both.
+  const tree = {
+    data: {
+      document: {
+        document: {
+          state: {
+            global: {
+              nodes: [
+                { id: "live-sow", kind: "file", name: "Powerhouse PMF", documentType: "powerhouse/scopeofwork" },
+                { id: "n1", kind: "file", name: "a-note", documentType: "bai/knowledge-note" },
+              ],
+            },
+          },
+        },
+      },
+    },
+  };
+  const byType = (items: { id: string; name: string; documentType?: string }[]) => ({
+    data: { findDocuments: { totalCount: items.length, items } },
+  });
+  const scope = {
+    title: "Sow of the year",
+    description: "",
+    status: "SUBMITTED",
+    contributors: [],
+    projects: [],
+    deliverables: [],
+    roadmaps: [],
+  };
+
+  beforeEach(() => {
+    resetVaultDocumentListing();
+    resetEnsCache();
+  });
+
+  it("list_projects skips a scope the drive tree no longer holds", async () => {
+    mockGqlSequence(
+      byType([
+        { id: "live-sow", name: "Powerhouse PMF" },
+        { id: "ghost-sow", name: "test sowi" },
+      ]),
+      tree,
+      { data: { document: { document: { id: "live-sow", name: "Powerhouse PMF", documentType: "powerhouse/scopeofwork", state: { global: { ...scope, title: "Powerhouse PMF" } } } } } },
+    );
+    const r = await executeTool("list_projects", {}, CTX);
+    expect(r.ok).toBe(true);
+    if (!r.ok) throw new Error(r.error);
+    const d = r.data as { scopes: number; projects: unknown[] };
+    expect(d.scopes).toBe(1);
+    // The ghost was never read: only the live scope's document was fetched.
+    const reads = (globalThis.fetch as ReturnType<typeof vi.fn>).mock.calls
+      .map((c) => JSON.parse(((c as [string, RequestInit])[1].body as string)) as { variables: Record<string, unknown> })
+      .filter((b) => b.variables.id === "ghost-sow");
+    expect(reads).toHaveLength(0);
+  });
+
+  it("list_documents counts what the vault holds, not what the reactor remembers", async () => {
+    mockGqlSequence(
+      byType([
+        { id: "n1", name: "a-note", documentType: "bai/knowledge-note" },
+        { id: "deleted", name: "gone", documentType: "bai/knowledge-note" },
+      ]),
+      tree,
+    );
+    const r = await executeTool("list_documents", { documentType: "bai/knowledge-note" }, CTX);
+    if (!r.ok) throw new Error(r.error);
+    expect((r.data as { items: { documentId: string }[] }).items.map((i) => i.documentId)).toEqual(["n1"]);
+    expect(r.summary).toBe("listed 1 of 1 bai/knowledge-note in the vault");
+  });
+
+  it("read_document and document_history refuse a document the vault no longer holds", async () => {
+    mockGqlSequence(tree, tree);
+    const read = await executeTool("read_document", { documentId: "ghost-sow" }, CTX);
+    expect(read.ok).toBe(false);
+    if (!read.ok) expect(read.error).toMatch(/not in this vault — it was deleted/);
+
+    const history = await executeTool("document_history", { documentId: "ghost-sow" }, CTX);
+    expect(history.ok).toBe(false);
+    if (!history.ok) expect(history.error).toMatch(/not in this vault/);
+  });
+
+  it("lets everything through when membership cannot be established", async () => {
+    // The drive tree failed: hiding the whole vault would be worse than
+    // occasionally showing a document that has left it.
+    mockGqlSequence(
+      { errors: [{ message: "drive unreachable" }] },
+      { data: { document: { document: { id: "ghost-doc", name: "gone", documentType: "bai/source", state: { global: { title: "x", content: "y" } } } } } },
+    );
+    const r = await executeTool("read_document", { documentId: "ghost-doc" }, CTX);
+    expect(r.ok).toBe(true);
   });
 });

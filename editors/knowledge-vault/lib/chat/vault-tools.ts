@@ -482,6 +482,16 @@ async function noteTitles(
   return titles;
 }
 
+/**
+ * The refusal for a document the vault no longer holds, or null when it does
+ * (or when membership could not be checked, which must never hide the vault).
+ */
+async function notInVault(driveId: string, documentId: string): Promise<string | null> {
+  const live = await liveDocumentIds(driveId);
+  if (!live || live.has(documentId)) return null;
+  return `${documentId} is not in this vault — it was deleted, or it belongs to another drive. Do not report its contents; use recent_changes or search_vault to find what the vault holds now.`;
+}
+
 /** Read a document, or return the failure the tool should report. */
 async function readDoc(
   documentId: string,
@@ -497,10 +507,31 @@ async function readDoc(
   }
 }
 
-const wbsState = (state: Record<string, unknown>) =>
-  (state.global ?? {}) as WorkBreakdownStructureState;
-const scopeState = (state: Record<string, unknown>) =>
-  (state.global ?? {}) as ScopeOfWorkState;
+/**
+ * A document's global scope, with its collections guaranteed.
+ *
+ * The reducers keep these arrays present, but a document written by an older
+ * version of a model — or a partial read — can arrive without them, and a
+ * renderer that maps over `projects` would then take the whole tool down
+ * rather than show what it did get.
+ */
+function arrayOf<T>(v: unknown): T[] {
+  return Array.isArray(v) ? (v as T[]) : [];
+}
+const wbsState = (state: Record<string, unknown>): WorkBreakdownStructureState => {
+  const g = (state.global ?? {}) as WorkBreakdownStructureState;
+  return { ...g, goals: arrayOf(g.goals), references: arrayOf(g.references) };
+};
+const scopeState = (state: Record<string, unknown>): ScopeOfWorkState => {
+  const g = (state.global ?? {}) as ScopeOfWorkState;
+  return {
+    ...g,
+    projects: arrayOf(g.projects),
+    deliverables: arrayOf(g.deliverables),
+    roadmaps: arrayOf(g.roadmaps),
+    contributors: arrayOf(g.contributors),
+  };
+};
 /** Envelopes stored before knowledgeRefs existed have no array at all. */
 const envelopeRefs = (env: { knowledgeRefs: string[] }): string[] =>
   (env as { knowledgeRefs?: string[] }).knowledgeRefs ?? [];
@@ -543,12 +574,74 @@ interface VaultDocumentListing {
   documents: VaultDocumentRow[];
   /** Documents in the vault with no recorded edit time — older than change tracking. */
   undated: number;
+  /**
+   * Every document the drive tree holds — the vault's membership, whether or
+   * not an edit time is known for it. The reactor keeps a deleted document's
+   * record, so this is what separates "in the vault" from "the reactor still
+   * remembers it".
+   */
+  memberIds: Set<string>;
   fetchedAt: number;
 }
 
 /** Long enough to make the follow-up calls of one answer free; short enough to see this hour's edits. */
 const LISTING_TTL_MS = 60_000;
 const listingCache = new Map<string, VaultDocumentListing>();
+
+/** A file in the drive tree: the vault's own record of what it holds. */
+interface DriveMember {
+  name: string | null;
+  documentType: string;
+}
+const membersCache = new Map<string, { at: number; members: Map<string, DriveMember> }>();
+
+/**
+ * What the drive holds, from the drive document's own node list.
+ *
+ * This is the vault's membership and nothing else — one small query, shared
+ * by everything that needs to know whether a document is still here. The
+ * reactor keeps a deleted document's record and will happily answer for it,
+ * so any tool that asks the reactor by type or by id checks here first.
+ *
+ * `null` means the tree could not be read. Callers then let everything
+ * through: a failed request must not make the vault look empty.
+ */
+async function driveMembers(
+  driveId: string,
+): Promise<Map<string, DriveMember> | null> {
+  const cached = membersCache.get(driveId);
+  if (cached && Date.now() - cached.at < LISTING_TTL_MS) return cached.members;
+  const tree = await gql<{
+    document: { document: { state: unknown } | null } | null;
+  }>(
+    reactorEndpoint(),
+    `query DriveTree($id: String!) { document(identifier: $id) { document { state } } }`,
+    { id: driveId },
+  );
+  if ("error" in tree) return null;
+  const rawState = tree.data.document?.document?.state;
+  const state = typeof rawState === "string" ? (JSON.parse(rawState) as unknown) : rawState;
+  const nodes = (state as { global?: { nodes?: unknown[] } } | null)?.global?.nodes;
+  // No node list is not an empty vault — it is a drive we failed to read.
+  // Reporting it as empty would hide every document behind one bad response.
+  if (!Array.isArray(nodes)) return null;
+  const members = new Map<string, DriveMember>();
+  for (const raw of nodes as {
+    id?: unknown;
+    kind?: unknown;
+    name?: unknown;
+    documentType?: unknown;
+  }[]) {
+    const n = raw;
+    if (n.kind !== "file" || typeof n.id !== "string" || typeof n.documentType !== "string") continue;
+    members.set(n.id, {
+      name: typeof n.name === "string" && n.name ? n.name : null,
+      documentType: n.documentType,
+    });
+  }
+  membersCache.set(driveId, { at: Date.now(), members });
+  return members;
+}
 
 /**
  * Which documents are in the vault, and when each was last edited.
@@ -579,12 +672,8 @@ async function vaultDocumentListing(
   const cached = listingCache.get(driveId);
   if (cached && Date.now() - cached.fetchedAt < LISTING_TTL_MS) return cached;
 
-  const [tree, contained, indexed] = await Promise.all([
-    gql<{ document: { document: { state: unknown } | null } | null }>(
-      reactorEndpoint(),
-      `query DriveTree($id: String!) { document(identifier: $id) { document { state } } }`,
-      { id: driveId },
-    ),
+  const [members, contained, indexed] = await Promise.all([
+    driveMembers(driveId),
     gql<{ findDocuments: { items: { id: string; lastModifiedAtUtcIso: string | null }[] } }>(
       reactorEndpoint(),
       `query Contained($parentId: String!) {
@@ -602,16 +691,7 @@ async function vaultDocumentListing(
       { driveId },
     ),
   ]);
-  if ("error" in tree) return { error: tree.error };
-
-  const rawState = tree.data.document?.document?.state;
-  const state = typeof rawState === "string" ? (JSON.parse(rawState) as unknown) : rawState;
-  const nodes = ((state as { global?: { nodes?: unknown[] } } | null)?.global?.nodes ?? []) as {
-    id?: unknown;
-    kind?: unknown;
-    name?: unknown;
-    documentType?: unknown;
-  }[];
+  if (!members) return { error: "could not read the drive's document list" };
 
   const stamps = new Map<string, string>();
   if (!("error" in contained)) {
@@ -631,27 +711,39 @@ async function vaultDocumentListing(
 
   const documents: VaultDocumentRow[] = [];
   let undated = 0;
-  for (const n of nodes) {
-    if (n.kind !== "file" || typeof n.id !== "string" || typeof n.documentType !== "string") continue;
-    const lastModifiedAt = stamps.get(n.id);
+  for (const [id, member] of members) {
+    const lastModifiedAt = stamps.get(id);
     if (!lastModifiedAt) {
       undated++;
       continue;
     }
-    const meta = index.get(n.id);
+    const meta = index.get(id);
     documents.push({
-      documentId: n.id,
-      title: meta?.title || (typeof n.name === "string" && n.name ? n.name : n.id),
-      documentType: n.documentType,
+      documentId: id,
+      title: meta?.title || member.name || id,
+      documentType: member.documentType,
       lastModifiedAt,
       noteType: meta?.noteType ?? null,
       status: meta?.status ?? null,
     });
   }
   documents.sort((a, b) => (a.lastModifiedAt < b.lastModifiedAt ? 1 : a.lastModifiedAt > b.lastModifiedAt ? -1 : 0));
-  const listing = { documents, undated, fetchedAt: Date.now() };
+  const listing = { documents, undated, memberIds: new Set(members.keys()), fetchedAt: Date.now() };
   listingCache.set(driveId, listing);
   return listing;
+}
+
+/**
+ * The ids the vault actually holds, or `null` when membership could not be
+ * established. A document deleted from the drive keeps its record in the
+ * reactor, so a query that asks the reactor by type — rather than the graph
+ * index, which processes deletions — will hand back documents nobody can
+ * open any more. `null` means the tree could not be read: the caller lets
+ * everything through rather than hiding the vault behind a failed request.
+ */
+async function liveDocumentIds(driveId: string): Promise<Set<string> | null> {
+  const members = await driveMembers(driveId);
+  return members ? new Set(members.keys()) : null;
 }
 
 /** A document's most recent operation: who made it, and what it was. */
@@ -727,9 +819,10 @@ async function lastOperationOf(
   };
 }
 
-/** Test seam: forget cached listings. */
+/** Test seam: forget the cached listing and drive membership. */
 export function resetVaultDocumentListing(): void {
   listingCache.clear();
+  membersCache.clear();
 }
 
 /* ------------------------------------------------------------------ */
@@ -1246,9 +1339,13 @@ export async function executeTool(
       );
       if ("error" in r) return fail(r.error);
       const { totalCount, items } = r.data.findDocuments;
+      // The reactor answers for every drive it holds, and keeps deleted
+      // documents; the vault is what its drive tree lists.
+      const live = await liveDocumentIds(driveId);
+      const inVault = live ? items.filter((d) => live.has(d.id)) : items;
       const matching = nameContains
-        ? items.filter((d) => (d.name ?? "").toLowerCase().includes(nameContains))
-        : items;
+        ? inVault.filter((d) => (d.name ?? "").toLowerCase().includes(nameContains))
+        : inVault;
       // Same citation contract as every other tool: documentId + title (+
       // documentType), so [[documentId]] works for a source or a tension
       // exactly as it does for a note.
@@ -1257,15 +1354,19 @@ export async function executeTool(
         title: d.name ?? d.id,
         documentType: d.documentType ?? type,
       }));
+      // With membership known, the honest total is what the vault holds;
+      // without it, the reactor's own count is all anyone can say.
+      const total = live ? inVault.length : totalCount;
+      const where = live ? " in the vault" : "";
       if (nameContains) {
         return ok(
-          { total: totalCount, scanned: items.length, matched: matching.length, items: listed },
-          `listed ${listed.length} of ${matching.length} ${type} whose title contains "${nameContains}" (scanned ${items.length} of ${totalCount})`,
+          { total, scanned: inVault.length, matched: matching.length, items: listed },
+          `listed ${listed.length} of ${matching.length} ${type} whose title contains "${nameContains}" (scanned ${inVault.length}${where} of ${totalCount} the reactor holds)`,
         );
       }
       return ok(
-        { total: totalCount, items: listed },
-        `listed ${listed.length} of ${totalCount} ${type}`,
+        { total, items: listed },
+        `listed ${listed.length} of ${total} ${type}${where}`,
       );
     }
 
@@ -1285,8 +1386,14 @@ export async function executeTool(
       const envelopeRows: Record<string, unknown>[] = [];
       let scopeCount = 0;
       if (!("error" in sc)) {
-        scopeCount = sc.data.findDocuments.totalCount;
-        for (const item of sc.data.findDocuments.items) {
+        // Scopes deleted from the drive still answer here — read them and
+        // their envelopes would be reported as work in progress.
+        const live = await liveDocumentIds(driveId);
+        const scopes = live
+          ? sc.data.findDocuments.items.filter((d) => live.has(d.id))
+          : sc.data.findDocuments.items;
+        scopeCount = scopes.length;
+        for (const item of scopes) {
           const read = await readDoc(item.id);
           if ("error" in read) continue;
           const g = scopeState(read.doc.state);
@@ -1382,6 +1489,8 @@ export async function executeTool(
     case "document_history": {
       const documentId = str(args, "documentId");
       if (!documentId) return fail("document_history needs a documentId");
+      const gone = await notInVault(driveId, documentId);
+      if (gone) return fail(gone);
       const limit = int(args, "limit", LIMITS.history.default, LIMITS.history.max);
 
       // The document first: its identity, and how many operations it has.
@@ -1508,6 +1617,8 @@ export async function executeTool(
       const documentId = str(args, "documentId");
       if (!documentId) return fail("read_document needs a documentId");
       const offset = nonNegativeInt(args, "offset");
+      const gone = await notInVault(driveId, documentId);
+      if (gone) return fail(gone);
       const read = await readDoc(documentId);
       if ("error" in read) return fail(read.error);
       const { doc } = read;
