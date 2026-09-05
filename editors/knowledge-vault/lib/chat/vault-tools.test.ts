@@ -826,7 +826,7 @@ describe("document_history — who changed a document, and what", () => {
 
 describe("search_web / read_url", () => {
   const CTX = { driveId: "d1" };
-  const READER = `Title: Example Domain\n\nMarkdown Content:\n# Example Domain\n\nIllustrative text.`;
+  const READER = `Title: Example Domain\n\nMarkdown Content:\n# Example Domain\n\nThis domain is for use in illustrative examples. You may use this domain in literature without prior coordination or asking for permission.`;
 
   beforeEach(() => localStorage.clear());
 
@@ -877,5 +877,20 @@ describe("search_web / read_url", () => {
     if (!r.ok) throw new Error(r.error);
     expect((r.data as { via: string }).via).toBe("tavily");
     expect(r.summary).toContain("via Tavily");
+  });
+});
+
+describe("read_url surfaces a useless page in the trail", () => {
+  it("says nothing usable rather than reading out a 404", async () => {
+    globalThis.fetch = vi.fn().mockResolvedValue({
+      ok: true,
+      status: 200,
+      text: () => Promise.resolve("Title: t\n\nMarkdown Content:\n## 404\n\n## This page could not be found."),
+    }) as unknown as typeof fetch;
+    const r = await executeTool("read_url", { url: "https://example.com/gone" }, { driveId: "d1" });
+    expect(r.ok).toBe(true);
+    if (!r.ok) throw new Error(r.error);
+    expect(r.summary).toBe("read https://example.com/gone — nothing usable: This is a not-found page, not content");
+    expect((r.data as { warning?: string }).warning).toMatch(/not-found page/);
   });
 });

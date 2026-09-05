@@ -153,10 +153,42 @@ export function parseDuckDuckGoMarkdown(markdown: string): WebResult[] {
   return results;
 }
 
-async function getText(url: string, timeoutMs: number): Promise<string> {
+/**
+ * The reader explains itself in JSON when it cannot fetch something — a dead
+ * host comes back as "Domain 'x.example' could not be resolved". Passing that
+ * through matters: a model told only "422" will try the same invented address
+ * again, while one told the host does not exist looks for a real source.
+ */
+export function readerFailure(status: number, body: string): string {
+  try {
+    const parsed = JSON.parse(body) as {
+      message?: unknown;
+      readableMessage?: unknown;
+    };
+    const reason =
+      (typeof parsed.message === "string" && parsed.message) ||
+      (typeof parsed.readableMessage === "string" && parsed.readableMessage) ||
+      "";
+    if (reason) return truncate(clean(reason), 200);
+  } catch {
+    /* not JSON — fall through to the status */
+  }
+  return `the reader answered ${status}`;
+}
+
+/**
+ * `subject` is what the caller asked for; the fetched URL is the reader
+ * wrapping it, which is our plumbing and means nothing to the model.
+ */
+async function getText(
+  url: string,
+  timeoutMs: number,
+  subject = url,
+): Promise<string> {
   const res = await fetch(url, { signal: AbortSignal.timeout(timeoutMs) });
   if (!res.ok) {
-    throw new Error(`the reader answered ${res.status} for ${url}`);
+    const body = await res.text().catch(() => "");
+    throw new Error(`could not fetch ${subject} — ${readerFailure(res.status, body)}`);
   }
   return res.text();
 }
@@ -234,6 +266,35 @@ export interface WebPage {
   title: string | null;
   text: string;
   truncated: boolean;
+  /**
+   * Set when the fetch succeeded but the page is not an answer — a 404 page,
+   * or a shell with no text. Without it a model reads "This page could not be
+   * found", and reports whatever it was hoping for.
+   */
+  warning?: string;
+}
+
+/** Short enough that a not-found line is the whole page, not a mention of one. */
+const THIN_PAGE_CHARS = 600;
+/**
+ * Below this there is no page at all — a shell, a spinner, a blocked fetch.
+ * Deliberately tiny: example.com is a legitimate page of about 200
+ * characters, and calling that unread would be worse than saying nothing.
+ */
+const EMPTY_PAGE_CHARS = 60;
+const NOT_FOUND_RE =
+  /^#{0,6}\s*404\b|page (?:could not be|couldn't be|cannot be|can't be) found|\bnot found\b|no such page/im;
+
+/** What is wrong with a page that came back, if anything. */
+export function pageWarning(text: string): string | undefined {
+  const body = text.trim();
+  if (body.length < THIN_PAGE_CHARS && NOT_FOUND_RE.test(body)) {
+    return "This is a not-found page, not content: the address does not exist. Do not treat anything on it as an answer.";
+  }
+  if (body.length < EMPTY_PAGE_CHARS) {
+    return "The page returned almost no text — it probably renders with JavaScript or blocked the reader. Treat it as unread and try another source.";
+  }
+  return undefined;
 }
 
 /**
@@ -260,15 +321,17 @@ export async function readUrl(
       `${parsed.hostname} is a private address; this tool reads public web pages only.`,
     );
   }
-  const raw = await getText(`${READER}${parsed.toString()}`, READ_TIMEOUT_MS);
+  const raw = await getText(`${READER}${parsed.toString()}`, READ_TIMEOUT_MS, parsed.toString());
   // The reader prefixes `Title:`, `URL Source:` and `Markdown Content:`.
   const title = /^Title:\s*(.+)$/m.exec(raw)?.[1]?.trim() ?? null;
   const body = raw.split(/^Markdown Content:\s*$/m).slice(1).join("\n").trim() || raw.trim();
   const max = options.maxChars ?? PAGE_MAX_CHARS;
+  const warning = pageWarning(body);
   return {
     url: parsed.toString(),
     title,
     text: body.slice(0, max),
     truncated: body.length > max,
+    ...(warning ? { warning } : {}),
   };
 }

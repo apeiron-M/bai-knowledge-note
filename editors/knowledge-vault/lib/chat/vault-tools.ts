@@ -125,7 +125,7 @@ export const WEB_TOOLS: ToolSchema[] = [
     function: {
       name: "read_url",
       description:
-        "Fetch one public web page and return its text. Use after search_web to read a promising result, or when the user names a page. Public http/https addresses only. The text is truncated; say so if you were cut off. Like search_web, this is outside the vault — cite it by url, never as [[documentId]].",
+        "Fetch one public web page and return its text — plain JSON too, when the address is an API. Use after search_web to read a promising result, or when the user names a page. Give an address you actually saw in a result: invented API hostnames fail, and the failure says so. If the result carries a warning, the page is a 404 or an empty shell — it answered nothing, so say so rather than reporting what you hoped it said. Public http/https addresses only; long pages are truncated. Like search_web this is outside the vault — cite it by url, never as [[documentId]].",
       parameters: {
         type: "object",
         properties: {
@@ -1091,7 +1091,9 @@ export async function executeTool(
         const page = await readUrl(url, { maxChars: PAGE_MAX_CHARS });
         return ok(
           { ...page, outsideTheVault: true },
-          `read ${page.title ? `"${page.title}"` : page.url}${page.truncated ? " (truncated)" : ""}`,
+          page.warning
+            ? `read ${page.url} — nothing usable: ${page.warning.split(":")[0]}`
+            : `read ${page.title ? `"${page.title}"` : page.url}${page.truncated ? " (truncated)" : ""}`,
         );
       } catch (err) {
         return fail(err instanceof Error ? err.message : String(err));

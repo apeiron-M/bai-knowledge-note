@@ -3,9 +3,11 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import {
   NO_WEB_SETTINGS,
   duckDuckGoTarget,
+  pageWarning,
   parseDuckDuckGoMarkdown,
   readUrl,
   readWebSettings,
+  readerFailure,
   searchWeb,
   writeWebSettings,
 } from "./web.js";
@@ -157,6 +159,7 @@ describe("searchWeb", () => {
 });
 
 describe("readUrl", () => {
+  // As the reader returns example.com: short, but a real page.
   const PAGE = `Title: Example Domain
 
 URL Source: https://example.com/
@@ -164,18 +167,20 @@ URL Source: https://example.com/
 Markdown Content:
 # Example Domain
 
-This domain is for use in illustrative examples.`;
+This domain is for use in illustrative examples. You may use this domain in
+literature without prior coordination or asking for permission.
+
+[More information...](https://www.iana.org/domains/example)`;
 
   it("returns the page's title and body, fetched through the reader", async () => {
     mockFetch({ body: PAGE });
     const page = await readUrl("https://example.com/");
     expect(requestAt(0)[0]).toBe("https://r.jina.ai/https://example.com/");
-    expect(page).toEqual({
-      url: "https://example.com/",
-      title: "Example Domain",
-      text: "# Example Domain\n\nThis domain is for use in illustrative examples.",
-      truncated: false,
-    });
+    expect(page.title).toBe("Example Domain");
+    expect(page.text).toContain("This domain is for use in illustrative examples.");
+    expect(page.truncated).toBe(false);
+    // A short but real page carries no warning.
+    expect(page.warning).toBeUndefined();
   });
 
   it("marks a long page as truncated instead of flooding the answer", async () => {
@@ -211,5 +216,54 @@ describe("web settings", () => {
     expect(readWebSettings()).toEqual(NO_WEB_SETTINGS);
     localStorage.setItem("bai-chat-web:v1", "{oops");
     expect(readWebSettings()).toEqual(NO_WEB_SETTINGS);
+  });
+});
+
+describe("a fetch that failed, and a page that is not an answer", () => {
+  // Both payloads are verbatim from r.jina.ai (2026-09-05).
+  const DEAD_HOST = '{"data":null,"path":"url","code":422,"name":"SubmittedDataMalformedError","status":42203,"message":"Domain \'ensdomain.info\' could not be resolved","readableMessage":"SubmittedDataMalformedError: Domain could not be resolved"}';
+  const NOT_FOUND_PAGE = `Title: evmtools - Essential EVM Development Tools
+
+URL Source: https://www.evmtools.xyz/ens-lookup
+
+Markdown Content:
+## 404
+
+## This page could not be found.`;
+
+  it("passes the reader's own reason through instead of a bare status", () => {
+    expect(readerFailure(422, DEAD_HOST)).toBe("Domain 'ensdomain.info' could not be resolved");
+    // No message, or not JSON at all: the status is still said plainly.
+    expect(readerFailure(451, '{"data":null}')).toBe("the reader answered 451");
+    expect(readerFailure(500, "<html>oops</html>")).toBe("the reader answered 500");
+  });
+
+  it("read_url reports which address failed and why", async () => {
+    mockFetch({ ok: false, status: 422, body: DEAD_HOST });
+    await expect(readUrl("https://ensdomain.info/?address=0xabc")).rejects.toThrow(
+      /could not fetch https:\/\/ensdomain\.info\/\?address=0xabc — Domain 'ensdomain\.info' could not be resolved/,
+    );
+  });
+
+  it("flags a 404 page so it cannot be mistaken for an answer", async () => {
+    mockFetch({ body: NOT_FOUND_PAGE });
+    const page = await readUrl("https://www.evmtools.xyz/ens-lookup");
+    expect(page.warning).toMatch(/not-found page/);
+    // The text is still returned — the warning is the judgement, not censorship.
+    expect(page.text).toContain("404");
+  });
+
+  it("flags a page that came back essentially empty", () => {
+    expect(pageWarning("Loading…")).toMatch(/almost no text/);
+    // example.com is short and entirely real: no warning.
+    expect(
+      pageWarning(
+        "# Example Domain\n\nThis domain is for use in illustrative examples. You may use this domain in literature without prior coordination.",
+      ),
+    ).toBeUndefined();
+    expect(pageWarning("# Not Found\n\nno such page")).toMatch(/not-found page/);
+    // A real page, and one that merely discusses 404s, are left alone.
+    expect(pageWarning("x".repeat(700))).toBeUndefined();
+    expect(pageWarning(`A long essay about HTTP status codes. ${"The 404 status means not found. ".repeat(30)}`)).toBeUndefined();
   });
 });
