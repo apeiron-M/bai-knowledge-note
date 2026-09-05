@@ -22,6 +22,7 @@ import {
 import {
   CHAT_TOOLS,
   executeTool as realExecuteTool,
+  resetVaultDocumentListing,
 } from "../lib/chat/vault-tools.js";
 import { classifyFailure, type Failure } from "../lib/chat/failure.js";
 import {
@@ -87,6 +88,34 @@ const CITE_NOW_MAX_DOCUMENTS = 12;
  * the one text form that always works and asked again. Once — a second miss
  * is stripped from the answer and noted in the trail.
  */
+/**
+ * Questions whose answer is only true at the moment it is asked. A model
+ * that has answered one of these before will happily repeat itself from the
+ * transcript — which is wrong the moment anyone edits the vault, and someone
+ * always has. Deliberately narrow: it gates a nudge, not an accusation.
+ */
+const FRESHNESS_RE =
+  /\b(latest|last|newest|recent(ly)?|current(ly)?|now|today|yesterday|this (week|month)|up[- ]to[- ]date|changed?|updated?|who (is|are|has|have|did|made|edits?|edited|wrote|works?|working))\b/i;
+
+/**
+ * True when a turn answered a "what is true right now" question without
+ * consulting the vault at all. Tool failures count as looking: the model
+ * tried, and a second nudge would not help.
+ */
+export function answeredWithoutLooking(
+  userText: string,
+  trail: TrailEntry[],
+): boolean {
+  const consulted = trail.some((e) => e.tool !== "compat" && e.tool !== "router");
+  return !consulted && FRESHNESS_RE.test(userText);
+}
+
+/** The nudge for an answer given from memory rather than from the vault. */
+export const CHECK_NOW =
+  "You answered without calling any tool, and the question is about what is true in the vault right now. " +
+  "The vault changes between messages, and an earlier answer in this conversation is not evidence about the present. " +
+  "Check now — recent_changes for what changed, document_history for who changed it, vault_editors for who works here — and answer from what the tools return.";
+
 export const TOOL_TEXT_RETRY =
   "Your reply contained tool calls written as text in a format this interface cannot run, so nothing ran and the user saw the raw markup. " +
   "Call tools through the function-calling interface. If your runtime cannot, write each call on its own line exactly as " +
@@ -176,7 +205,10 @@ export async function runAgentLoop(o: LoopOptions): Promise<LoopResult> {
   let repairedCitations = false;
   let toolsOffNextRound = false;
   let retriedToolMarkup = false;
+  let retriedStaleAnswer = false;
   const tools = o.tools ?? CHAT_TOOLS;
+  const asked =
+    [...o.messages].reverse().find((m) => m.role === "user")?.content ?? "";
 
   for (;;) {
     iterations++;
@@ -266,6 +298,21 @@ export async function runAgentLoop(o: LoopOptions): Promise<LoopResult> {
         trail.push(entry);
         o.onTrail?.(entry);
         text = stripToolCallMarkup(text);
+      }
+      // An answer about the vault's present, given without looking at it.
+      // Ask once; a model that still declines has said its piece.
+      if (!toolsOff && !retriedStaleAnswer && answeredWithoutLooking(asked, trail)) {
+        retriedStaleAnswer = true;
+        const entry: TrailEntry = {
+          tool: "compat",
+          summary: "answered from the conversation without checking the vault — asked once to look",
+          ok: true,
+        };
+        trail.push(entry);
+        o.onTrail?.(entry);
+        messages.push({ role: "assistant", content: text });
+        messages.push({ role: "system", content: CHECK_NOW });
+        continue;
       }
       // A repair round that came back empty keeps the uncited draft: an
       // answer without markers beats no answer.
@@ -871,6 +918,10 @@ export function useChat(o: UseChatOptions): UseChat {
       let finalText = "";
       const collected: TrailEntry[] = [];
       setRoutedFrom(null);
+      // Every answer starts from fresh data. The listing cache exists so
+      // that several tool calls within one answer are free, not so that a
+      // later question is answered from an earlier minute's vault.
+      resetVaultDocumentListing();
       try {
         const r = await runAgentLoop({
           endpoint,

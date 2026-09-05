@@ -74,7 +74,9 @@ const LIMITS = {
   related: { default: 8, max: 20 },
   links: 15,
   documents: { default: 50, max: 100 },
-  recent: { default: 15, max: 50 },
+  recent: { default: 10, max: 50 },
+  /** How many rows carry who/what: one extra request each, run in parallel. */
+  recentDetail: 12,
   history: { default: 10, max: 50 },
   web: { default: 5, max: 10 },
   editors: { default: 10, max: 25 },
@@ -284,7 +286,7 @@ export const VAULT_TOOLS: ToolSchema[] = [
     function: {
       name: "recent_changes",
       description:
-        "Every document in the vault — any type: notes, maps of content, sources, tensions, observations, scopes of work, work breakdowns, the health report, the pipeline queue — ordered by last edit, newest first, each with lastModifiedAt. THE tool for 'what changed lately', 'what was last updated', 'what is the newest document', 'what is new since <date>': never infer recency from the order of another list. Optional documentType narrows to one kind; since (ISO date or date-time) bounds the window. Every row is citable as [[documentId]]; read a row with read_note (notes, MoCs) or read_document (anything).",
+        "What changed in the vault, newest first — one call answers who, what, when and where: each row carries the editor's ENS name and address, a phrase describing their last change, the time of it, and the document's title, type and documentId to cite. Covers every type (notes, maps of content, sources, scopes of work, work breakdowns, tensions, the health report, the queue). THE tool for 'what changed lately', 'what was last updated', 'what is new since <date>': never infer recency from the order of another list, and never answer it from an earlier turn. Optional documentType narrows to one kind; since (ISO date or date-time) bounds the window. Cite each row as [[documentId]]; document_history gives more of one document's history, read_note or read_document its contents.",
       parameters: {
         type: "object",
         properties: {
@@ -652,6 +654,79 @@ async function vaultDocumentListing(
   return listing;
 }
 
+/** A document's most recent operation: who made it, and what it was. */
+interface LastOperation {
+  action: string;
+  change: string;
+  address: string | null;
+  app: string | null;
+}
+
+/**
+ * The last operation of one document, in a single request.
+ *
+ * `paging.offset` is ignored by the reactor and a page's `totalCount` counts
+ * only that page, so neither can find the end of a history. But the document
+ * listing already knows when it was last modified, and `timestampFrom` takes
+ * that instant: what comes back is the handful of operations at that moment,
+ * of which the highest index is the one being asked about.
+ */
+async function lastOperationOf(
+  documentId: string,
+  lastModifiedAt: string,
+): Promise<LastOperation | null> {
+  const r = await gql<{
+    // Optional on purpose: a partial GraphQL response carries `data` without
+    // the field, and this must degrade rather than throw.
+    documentOperations?: {
+      items: {
+        index: number;
+        action: {
+          type: string;
+          input: Record<string, unknown> | null;
+          context: {
+            signer: {
+              user: { address: string | null } | null;
+              app: { name: string | null } | null;
+            } | null;
+          } | null;
+        };
+      }[];
+    };
+  }>(
+    reactorEndpoint(),
+    `query LastOp($id: String!, $from: String) {
+      documentOperations(
+        filter: { documentId: $id, scopes: ["global"], timestampFrom: $from }
+        paging: { limit: 10 }
+      ) {
+        items {
+          index
+          action { type input context { signer { user { address } app { name } } } }
+        }
+      }
+    }`,
+    { id: documentId, from: lastModifiedAt },
+  );
+  if ("error" in r) return null;
+  // A response shaped unexpectedly (a partial error, a schema that moved on)
+  // costs this row its detail, never the whole answer.
+  const items = r.data.documentOperations?.items ?? [];
+  const last = items.reduce<(typeof items)[number] | null>(
+    (newest, op) => (!newest || op.index > newest.index ? op : newest),
+    null,
+  );
+  if (!last) return null;
+  const signer = last.action.context?.signer;
+  return {
+    action: last.action.type,
+    change: summarizeOperation(last.action.type, last.action.input ?? {}),
+    // An unsigned operation carries an empty address, not a missing one.
+    address: signer?.user?.address || null,
+    app: signer?.app?.name || null,
+  };
+}
+
 /** Test seam: forget cached listings. */
 export function resetVaultDocumentListing(): void {
   listingCache.clear();
@@ -910,11 +985,40 @@ export async function executeTool(
         .filter((d) => (type ? d.documentType === type : true))
         .filter((d) => (since ? d.lastModifiedAt >= since : true))
         .slice(0, limit);
+
+      // Who and what, for the rows the reader will actually look at. One
+      // request per document, all in flight together: the alternative is the
+      // model calling document_history once per row, which is the same
+      // requests done slowly and usually not done at all.
+      const detailed = rows.slice(0, LIMITS.recentDetail);
+      const lastOps = await Promise.all(
+        detailed.map((d) => lastOperationOf(d.documentId, d.lastModifiedAt)),
+      );
+      const names = await resolveEnsNames(
+        lastOps.map((op) => op?.address ?? "").filter((a) => a !== ""),
+      );
+      const items = rows.map((row, i) => {
+        const op = i < lastOps.length ? lastOps[i] : null;
+        if (!op) return row;
+        return {
+          ...row,
+          change: op.change,
+          action: op.action,
+          by: op.address,
+          byName: op.address ? (names.get(op.address) ?? null) : null,
+          byShort: op.address ? shortAddress(op.address) : null,
+          via: op.app,
+        };
+      });
+
       const scope = type ? `${type} document` : "document";
       return ok(
-        { items: rows, undated },
+        { items, undated },
         `listed the ${rows.length} most recently edited ${scope}${rows.length === 1 ? "" : "s"} of ${documents.length}${since ? ` since ${since.slice(0, 10)}` : ""}` +
-          (undated ? ` (${undated} more ${undated === 1 ? "has" : "have"} no recorded edit time)` : ""),
+          (undated ? ` (${undated} more ${undated === 1 ? "has" : "have"} no recorded edit time)` : "") +
+          (items[0] && "change" in items[0]
+            ? `; newest: ${(items[0] as { byName?: string | null; byShort?: string | null }).byName ?? (items[0] as { byShort?: string | null }).byShort ?? "someone"} — ${(items[0] as { change?: string }).change ?? ""}`
+            : ""),
       );
     }
 

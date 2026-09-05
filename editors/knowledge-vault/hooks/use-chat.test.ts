@@ -2,8 +2,10 @@ import "../../shared/test/browser-globals.js";
 import { describe, expect, it, vi } from "vitest";
 import {
   ANSWER_NOW,
+  CHECK_NOW,
   MAX_ITERATIONS,
   TOOL_TEXT_RETRY,
+  answeredWithoutLooking,
   consultedDocuments,
   extractCitations,
   needsCitationRepair,
@@ -385,6 +387,75 @@ describe("runAgentLoop unreadable tool markup", () => {
     expect(executeTool).toHaveBeenCalledWith("vault_stats", {}, { driveId: "d" });
     expect(r.text).toBe("521 notes.");
     expect(r.trail.map((e) => e.tool)).toEqual(["compat", "vault_stats"]);
+  });
+});
+
+describe("runAgentLoop freshness", () => {
+  const round = (text: string, toolCalls: unknown[] = []) => ({
+    text,
+    toolCalls,
+    finishReason: toolCalls.length ? "tool_calls" : "stop",
+  });
+  const ASKED = "What was the last change in the vault, and by who?";
+
+  it("asks once when a question about now is answered without looking", async () => {
+    const streamChat = vi
+      .fn()
+      // The model repeats an earlier answer from the transcript.
+      .mockResolvedValueOnce(round("The last change was on 2026-09-04 by 0xadbA…BcA4."))
+      .mockResolvedValueOnce(round("", [tc("recent_changes", "{}")]))
+      .mockResolvedValueOnce(round("The last change was today at 14:03 by liberuum.eth [[s1]]."));
+    const executeTool = vi.fn().mockResolvedValue({
+      ok: true,
+      data: { items: [{ documentId: "s1", title: "Powerhouse PMF", change: "Deliverable progress updated" }] },
+      summary: "listed the 1 most recently edited document",
+    });
+    const trail: TrailEntry[] = [];
+    const r = await runAgentLoop({
+      ...base,
+      messages: [{ role: "user", content: ASKED }],
+      onTrail: (e) => trail.push(e),
+      deps: { streamChat, executeTool } as never,
+    });
+    expect(r.text).toContain("14:03");
+    const sent = (streamChat.mock.calls[1][0] as { messages: { role: string; content: string }[] }).messages;
+    expect(sent.some((m) => m.role === "system" && m.content === CHECK_NOW)).toBe(true);
+    expect(trail[0]).toMatchObject({ tool: "compat", ok: true });
+    expect(trail[0].summary).toContain("without checking the vault");
+  });
+
+  it("does not nudge when the turn did consult the vault, nor for a question that is not about now", async () => {
+    const answered = vi
+      .fn()
+      .mockResolvedValueOnce(round("", [tc("search_vault", '{"query":"x"}')]))
+      .mockResolvedValueOnce(round("Here is what the vault says [[n1]]."));
+    const executeTool = vi.fn().mockResolvedValue({ ok: true, data: [{ documentId: "n1", title: "A note" }], summary: "searched" });
+    const consulted = await runAgentLoop({
+      ...base,
+      messages: [{ role: "user", content: ASKED }],
+      deps: { streamChat: answered, executeTool } as never,
+    });
+    expect(answered).toHaveBeenCalledTimes(2);
+    expect(consulted.text).toContain("Here is what the vault says");
+
+    const chatty = vi.fn().mockResolvedValueOnce(round("I can search notes, read documents and follow links."));
+    const r = await runAgentLoop({
+      ...base,
+      messages: [{ role: "user", content: "What can you do?" }],
+      deps: { streamChat: chatty, executeTool: vi.fn() } as never,
+    });
+    expect(chatty).toHaveBeenCalledTimes(1);
+    expect(r.text).toContain("I can search notes");
+  });
+
+  it("answeredWithoutLooking fires only on a present-tense question with no tool of substance", () => {
+    const searched: TrailEntry[] = [{ tool: "recent_changes", summary: "s", ok: true, data: {} }];
+    const onlyHarness: TrailEntry[] = [{ tool: "compat", summary: "c", ok: true }];
+    expect(answeredWithoutLooking("what changed last?", [])).toBe(true);
+    expect(answeredWithoutLooking("who is working on the vault?", onlyHarness)).toBe(true);
+    expect(answeredWithoutLooking("what changed last?", searched)).toBe(false);
+    expect(answeredWithoutLooking("explain event sourcing", [])).toBe(false);
+    expect(answeredWithoutLooking("thanks!", [])).toBe(false);
   });
 });
 

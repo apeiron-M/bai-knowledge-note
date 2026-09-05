@@ -642,25 +642,68 @@ describe("recent_changes — every document in the vault by last edit", () => {
     },
   };
 
-  beforeEach(() => resetVaultDocumentListing());
+  /** One document's last operation, as `lastOperationOf` asks for it. */
+  const lastOp = (type: string, input: Record<string, unknown>, address: string | null, app: string) => ({
+    data: {
+      documentOperations: {
+        items: [
+          { index: 3, action: { type, input, context: { signer: { user: { address }, app: { name: app } } } } },
+          // An earlier operation at the same instant: the highest index wins.
+          { index: 2, action: { type: "SET_TITLE", input: { title: "older" }, context: { signer: { user: { address }, app: { name: app } } } } },
+        ],
+      },
+    },
+  });
+  const ens = (name: string) => ({ address: A, ens_primary: name });
+  const A = "0xadbA7C2F82139031D7564D18aC22D09B12A0BcA4";
+
+  beforeEach(() => {
+    resetVaultDocumentListing();
+    resetEnsCache();
+  });
 
   it("merges the drive tree with both time sources, newest first, and counts documents with no known edit time", async () => {
-    mockGqlSequence(tree, contained, indexed);
+    mockGqlSequence(
+      tree,
+      contained,
+      indexed,
+      // one per returned row, in order
+      lastOp("SET_STATUS", { status: "CANONICAL" }, A, "switchboard"),
+      lastOp("SET_TITLE", { title: "Board minutes" }, A, "connect"),
+      lastOp("SET_CONTENT", { content: "x".repeat(40) }, null, "switchboard"),
+      lastOp("ADD_TOPIC", { name: "ingestion" }, A, "connect"),
+      ens("liberuum.eth"), // the one ENS lookup all three signed rows share
+    );
     const r = await executeTool("recent_changes", {}, CTX);
     expect(r.ok).toBe(true);
     if (!r.ok) throw new Error(r.error);
-    const d = r.data as { items: { documentId: string; title: string; documentType: string; lastModifiedAt: string; noteType: string | null }[]; undated: number };
+    const d = r.data as { items: { documentId: string; title: string; documentType: string; lastModifiedAt: string; noteType: string | null; change?: string; by?: string | null; via?: string | null }[]; undated: number };
     expect(d.items.map((i) => i.documentId)).toEqual(["hr", "s-new", "n1", "s-old"]);
-    expect(d.items[0]).toEqual({ documentId: "hr", title: "HealthReport", documentType: "bai/health-report", lastModifiedAt: "2026-09-04T16:00:00.000Z", noteType: null, status: null });
+    expect(d.items[0]).toMatchObject({ documentId: "hr", title: "HealthReport", documentType: "bai/health-report", lastModifiedAt: "2026-09-04T16:00:00.000Z", noteType: null, status: null });
     // The reactor's stamp wins over the index's older one; the index still
     // supplies the note's human title in place of its slug.
     expect(d.items[2]).toMatchObject({ documentId: "n1", title: "A real title", lastModifiedAt: "2026-09-03T10:00:00.000Z", noteType: "concept" });
     // s-old is missing from the reactor listing, so its index stamp stands in.
     expect(d.items[3]).toMatchObject({ documentId: "s-old", lastModifiedAt: "2026-08-01T00:00:00.000Z" });
+    // Each row answers who / what / when / where in one call.
+    expect(d.items[0]).toMatchObject({
+      documentType: "bai/health-report",
+      change: "Status changed to CANONICAL",
+      action: "SET_STATUS",
+      by: A,
+      byName: "liberuum.eth",
+      byShort: "0xadbA…BcA4",
+      via: "switchboard",
+    });
+    // An unsigned operation names the app and nobody else.
+    expect(d.items[2]).toMatchObject({ change: "Content updated (40 chars)", by: null, via: "switchboard" });
     // `elsewhere` is in the vault but no source knows a time; `stranger` has
     // left the drive tree, so it is not the vault's any more.
     expect(d.undated).toBe(1);
-    expect(r.summary).toBe("listed the 4 most recently edited documents of 4 (1 more has no recorded edit time)");
+    // The summary alone answers who and what for the newest change.
+    expect(r.summary).toBe(
+      "listed the 4 most recently edited documents of 4 (1 more has no recorded edit time); newest: liberuum.eth — Status changed to CANONICAL",
+    );
     // Membership came from the tree, times from the two listings.
     expect(requestAt(0).body.query).toContain("document(identifier");
     expect(requestAt(1).body.variables).toEqual({ parentId: "d1" });
@@ -668,7 +711,15 @@ describe("recent_changes — every document in the vault by last edit", () => {
   });
 
   it("filters by type and by since, and serves repeat calls from the cache", async () => {
-    mockGqlSequence(tree, contained, indexed);
+    mockGqlSequence(
+      tree,
+      contained,
+      indexed,
+      lastOp("INGEST_SOURCE", {}, A, "switchboard"),
+      lastOp("INGEST_SOURCE", {}, A, "switchboard"),
+      ens("liberuum.eth"),
+      lastOp("SET_STATUS", { status: "CANONICAL" }, A, "switchboard"),
+    );
     const sources = await executeTool("recent_changes", { documentType: "bai/source" }, CTX);
     if (!sources.ok) throw new Error(sources.error);
     expect((sources.data as { items: { documentId: string }[] }).items.map((i) => i.documentId)).toEqual(["s-new", "s-old"]);
@@ -678,8 +729,19 @@ describe("recent_changes — every document in the vault by last edit", () => {
     if (!recent.ok) throw new Error(recent.error);
     expect((recent.data as { items: { documentId: string }[] }).items.map((i) => i.documentId)).toEqual(["hr"]);
     expect(recent.summary).toContain("since 2026-09-04");
-    // Three requests in total — the second call did not refetch.
-    expect((globalThis.fetch as ReturnType<typeof vi.fn>).mock.calls).toHaveLength(3);
+    // The listing itself was fetched once: the second call reused it and
+    // only asked for the rows' last operations.
+    const urls = (globalThis.fetch as ReturnType<typeof vi.fn>).mock.calls.map((c) => (c as [string])[0]);
+    expect(urls.filter((u) => u.includes("/graphql/knowledgeGraph"))).toHaveLength(1);
+  });
+
+  it("keeps the row when its last operation cannot be fetched", async () => {
+    mockGqlSequence(tree, contained, indexed, { errors: [{ message: "nope" }] });
+    const r = await executeTool("recent_changes", { limit: 1 }, CTX);
+    if (!r.ok) throw new Error(r.error);
+    const item = (r.data as { items: Record<string, unknown>[] }).items[0];
+    expect(item.documentId).toBe("hr");
+    expect(item.change).toBeUndefined();
   });
 
   it("rejects a date it cannot read and an unknown type", async () => {
@@ -691,7 +753,14 @@ describe("recent_changes — every document in the vault by last edit", () => {
   });
 
   it("still answers when one time source fails", async () => {
-    mockGqlSequence(tree, { errors: [{ message: "boom" }] }, indexed);
+    mockGqlSequence(
+      tree,
+      { errors: [{ message: "boom" }] },
+      indexed,
+      lastOp("SET_TITLE", { title: "t" }, A, "connect"),
+      lastOp("SET_TITLE", { title: "t" }, A, "connect"),
+      ens("liberuum.eth"),
+    );
     const r = await executeTool("recent_changes", {}, CTX);
     if (!r.ok) throw new Error(r.error);
     expect((r.data as { items: { documentId: string }[] }).items.map((i) => i.documentId)).toEqual(["n1", "s-old"]);

@@ -89,6 +89,12 @@ describe("buildSystemPrompt", () => {
     expect(p).toMatch(/rather than counting editors yourself/);
   });
 
+  it("says the vault changes between messages, so 'now' must be re-checked", () => {
+    const p = buildSystemPrompt(base);
+    expect(p).toMatch(/vault changes between messages/);
+    expect(p).toMatch(/your own earlier answer is not evidence about now/i);
+  });
+
   it("forbids reporting what a failed or empty page did not say", () => {
     const p = buildSystemPrompt(base);
     expect(p).toMatch(/Report only what a tool actually returned/);
