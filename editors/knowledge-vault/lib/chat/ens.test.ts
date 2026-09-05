@@ -1,6 +1,7 @@
-import { afterEach, describe, expect, it, vi } from "vitest";
-import { looksResolvable, resolveEns } from "./ens.js";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+import { looksResolvable, resetEnsCache, resolveEns, resolveEnsNames } from "./ens.js";
 
+beforeEach(() => resetEnsCache());
 afterEach(() => vi.restoreAllMocks());
 
 const ADDRESS = "0xadbA7C2F82139031D7564D18aC22D09B12A0BcA4";
@@ -77,8 +78,36 @@ describe("resolveEns", () => {
     expect(fetchMock).not.toHaveBeenCalled();
   });
 
-  it("throws when the service itself is broken", async () => {
+  it("falls back to the second resolver when the first is unavailable", async () => {
+    const fn = vi.fn();
+    // ensdata rate-limits under a burst; ensideas answers the same question.
+    fn.mockResolvedValueOnce({ ok: false, status: 403, json: () => Promise.resolve({ message: "forbidden" }) });
+    fn.mockResolvedValueOnce({
+      ok: true,
+      status: 200,
+      json: () => Promise.resolve({ address: ADDRESS, name: "liberuum.eth", avatar: null }),
+    });
+    globalThis.fetch = fn as unknown as typeof fetch;
+    const id = await resolveEns(ADDRESS);
+    expect(id.name).toBe("liberuum.eth");
+    expect((fn.mock.calls[1] as [string])[0]).toContain("ensideas.com");
+  });
+
+  it("throws only when no resolver can answer, naming each failure", async () => {
     respond(503, { oops: true });
-    await expect(resolveEns(ADDRESS)).rejects.toThrow(/answered 503/);
+    await expect(resolveEns(ADDRESS)).rejects.toThrow(/could not resolve .*ensdata\.net.*ensideas\.com/s);
+  });
+
+  it("caches a resolved name so a burst of lookups costs one request", async () => {
+    const fn = vi.fn().mockResolvedValue({
+      ok: true,
+      status: 200,
+      json: () => Promise.resolve({ address: ADDRESS, ens_primary: "liberuum.eth" }),
+    });
+    globalThis.fetch = fn as unknown as typeof fetch;
+    const names = await resolveEnsNames([ADDRESS, ADDRESS.toLowerCase(), ADDRESS, "not-an-address"]);
+    expect(names.get(ADDRESS)).toBe("liberuum.eth");
+    // Two distinct spellings of one address, one request each at most.
+    expect(fn.mock.calls.length).toBeLessThanOrEqual(2);
   });
 });

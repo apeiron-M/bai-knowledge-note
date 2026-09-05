@@ -8,6 +8,7 @@ import {
   executeTool,
   resetVaultDocumentListing,
 } from "./vault-tools.js";
+import { resetEnsCache } from "./ens.js";
 
 const CTX = { driveId: "drive-1" };
 
@@ -43,7 +44,7 @@ const lastRequest = () =>
 afterEach(() => vi.restoreAllMocks());
 
 describe("VAULT_TOOLS", () => {
-  it("exposes exactly the twelve read-only tools", () => {
+  it("exposes exactly the thirteen read-only tools", () => {
     expect(VAULT_TOOLS.map((t) => t.function.name).sort()).toEqual([
       "document_history",
       "linked_notes",
@@ -56,6 +57,7 @@ describe("VAULT_TOOLS", () => {
       "recent_changes",
       "related_notes",
       "search_vault",
+      "vault_editors",
       "vault_stats",
     ]);
   });
@@ -766,6 +768,8 @@ describe("document_history — who changed a document, and what", () => {
       action: "SET_GOAL_STATUS",
       change: "Goal IN_REVIEW",
       by: ADDRESS,
+      // No ENS name for this signer in the mocked resolver.
+      byName: null,
       byShort: "0x1AD3…b16C",
       via: "powerhouse-knowledge",
     });
@@ -923,5 +927,91 @@ describe("ens_lookup", () => {
     expect((r.data as { name: string | null }).name).toBeNull();
 
     expect((await executeTool("ens_lookup", {}, { driveId: "d1" })).ok).toBe(false);
+  });
+});
+
+describe("vault_editors", () => {
+  const CTX = { driveId: "d1" };
+  const A = "0xadbA7C2F82139031D7564D18aC22D09B12A0BcA4";
+  const B = "0x1AD3d72e54Fb0eB46e87F82f77B284FC8a66b16C";
+  const op = (signerAddress: string | null, signerApp: string, documentId: string, timestamp: string) => ({
+    documentId,
+    timestamp,
+    signerAddress,
+    signerApp,
+  });
+  const activity = {
+    data: {
+      knowledgeGraphActivity: [
+        op(A, "switchboard", "n1", "2026-09-01T10:00:00.000Z"),
+        op(A, "powerhouse-knowledge", "n2", "2026-09-04T10:00:00.000Z"),
+        op(A, "powerhouse-knowledge", "n2", "2026-09-05T10:00:00.000Z"),
+        op(B, "powerhouse-knowledge", "n3", "2026-09-03T10:00:00.000Z"),
+        op("", "switchboard", "n4", "2026-08-30T10:00:00.000Z"),
+      ],
+    },
+  };
+
+  beforeEach(() => {
+    resetEnsCache();
+    localStorage.clear();
+  });
+
+  it("groups by person — one address through two apps is one editor, not two", async () => {
+    mockGqlSequence(activity);
+    // The ENS lookups that follow the GraphQL call.
+    const gqlFetch = globalThis.fetch as ReturnType<typeof vi.fn>;
+    gqlFetch.mockResolvedValue({
+      ok: true,
+      status: 200,
+      json: () => Promise.resolve({ address: A, ens_primary: "liberuum.eth" }),
+    });
+    const r = await executeTool("vault_editors", {}, CTX);
+    expect(r.ok).toBe(true);
+    if (!r.ok) throw new Error(r.error);
+    const d = r.data as {
+      editors: { name: string | null; address: string; operations: number; apps: Record<string, number>; documents: number; firstEdit: string; lastEdit: string }[];
+      signedOperations: number;
+      unsignedOperations: number;
+      countedOperations: number;
+      coverage: string;
+    };
+    expect(d.editors).toHaveLength(2);
+    expect(d.editors[0]).toMatchObject({
+      address: A,
+      operations: 3,
+      documents: 2,
+      apps: { switchboard: 1, "powerhouse-knowledge": 2 },
+    });
+    expect(d.editors[0].firstEdit).toBe("2026-09-01T10:00:00.000Z");
+    expect(d.editors[0].lastEdit).toBe("2026-09-05T10:00:00.000Z");
+    // Unsigned operations are counted, never attributed to somebody.
+    expect(d.unsignedOperations).toBe(1);
+    expect(d.signedOperations).toBe(4);
+    expect(d.countedOperations).toBe(5);
+    expect(d.coverage).toContain("graph index");
+    expect(r.summary).toMatch(/^2 editors across 5 recorded operations \(1 unsigned\); most active: /);
+  });
+
+  it("rejects a date it cannot read", async () => {
+    const r = await executeTool("vault_editors", { since: "lately" }, CTX);
+    expect(r.ok).toBe(false);
+    if (!r.ok) expect(r.error).toContain("ISO 8601");
+  });
+});
+
+describe("tool name aliases", () => {
+  it("answers the names other harnesses use instead of refusing", async () => {
+    globalThis.fetch = vi.fn().mockResolvedValue({
+      ok: true,
+      status: 200,
+      text: () => Promise.resolve("Title: Example\n\nMarkdown Content:\n" + "Real page text about a subject. ".repeat(10)),
+    }) as unknown as typeof fetch;
+    // A proxy that injects its own web tools calls them web_search / web_fetch.
+    const fetched = await executeTool("web_fetch", { url: "https://example.com" }, { driveId: "d1" });
+    expect(fetched.ok).toBe(true);
+    const unknown = await executeTool("definitely_not_a_tool", {}, { driveId: "d1" });
+    expect(unknown.ok).toBe(false);
+    if (!unknown.ok) expect(unknown.error).toContain('unknown tool "definitely_not_a_tool"');
   });
 });

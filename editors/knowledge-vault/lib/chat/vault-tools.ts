@@ -27,7 +27,7 @@ import {
 import { fetchDocumentState } from "../../../shared/document-state.js";
 import type { WorkBreakdownStructureState } from "document-models/work-breakdown-structure";
 import type { ToolSchema } from "./completions-client.js";
-import { resolveEns } from "./ens.js";
+import { resolveEns, resolveEnsNames } from "./ens.js";
 import {
   PAGE_MAX_CHARS,
   readUrl,
@@ -77,6 +77,8 @@ const LIMITS = {
   recent: { default: 15, max: 50 },
   history: { default: 10, max: 50 },
   web: { default: 5, max: 10 },
+  editors: { default: 10, max: 25 },
+  activity: 5000,
   projects: 25,
   knowledgeRefTitles: 20,
   noteContent: 6000,
@@ -328,6 +330,27 @@ export const VAULT_TOOLS: ToolSchema[] = [
   {
     type: "function",
     function: {
+      name: "vault_editors",
+      description:
+        "Who edits this vault, ranked by how many changes they made: each editor's ENS name where they have one, their signing address, the apps they edit through, how many documents they touched and when they were last active. THE tool for 'who works on this vault', 'who is the main author', 'who has been active lately'. Never count editors yourself from other results — this counts every recorded operation, and reports how many carry no signature at all.",
+      parameters: {
+        type: "object",
+        properties: {
+          limit: {
+            type: "integer",
+            description: `Editors to return (default ${LIMITS.editors.default}, max ${LIMITS.editors.max}).`,
+          },
+          since: {
+            type: "string",
+            description: "Only operations at or after this ISO 8601 date or date-time.",
+          },
+        },
+      },
+    },
+  },
+  {
+    type: "function",
+    function: {
       name: "vault_stats",
       description:
         "Size and shape of the vault: note count, link count, orphan count, graph density. Use for 'how big is this' or to sanity-check coverage.",
@@ -479,6 +502,21 @@ const scopeState = (state: Record<string, unknown>) =>
 /** Envelopes stored before knowledgeRefs existed have no array at all. */
 const envelopeRefs = (env: { knowledgeRefs: string[] }): string[] =>
   (env as { knowledgeRefs?: string[] }).knowledgeRefs ?? [];
+
+/**
+ * Names other harnesses use for the same jobs. A model prompted elsewhere —
+ * or a proxy that injects its own web tools alongside ours — reaches for
+ * `web_search` or `web_fetch`; answering those rather than replying "unknown
+ * tool" costs one lookup and saves a round trip.
+ */
+const TOOL_ALIASES: Record<string, string> = {
+  web_search: "search_web",
+  search: "search_web",
+  browse: "read_url",
+  web_fetch: "read_url",
+  fetch_url: "read_url",
+  open_url: "read_url",
+};
 
 /** Everything the vault's own chat may call: the vault, plus the web. */
 export const CHAT_TOOLS: ToolSchema[] = [...VAULT_TOOLS, ...WEB_TOOLS];
@@ -676,11 +714,12 @@ const ok = (data: unknown, summary: string): ToolResult => ({
 /* ------------------------------------------------------------------ */
 
 export async function executeTool(
-  name: string,
+  rawName: string,
   args: Record<string, unknown>,
   ctx: ToolContext,
 ): Promise<ToolResult> {
   const { driveId } = ctx;
+  const name = TOOL_ALIASES[rawName] ?? rawName;
 
   switch (name) {
     case "search_vault": {
@@ -747,6 +786,107 @@ export async function executeTool(
           truncated,
         },
         `read "${typeof node.title === "string" ? node.title : documentId}"`,
+      );
+    }
+
+    case "vault_editors": {
+      const limit = int(args, "limit", LIMITS.editors.default, LIMITS.editors.max);
+      const sinceRaw = str(args, "since");
+      let since: string | null = null;
+      if (sinceRaw) {
+        const t = Date.parse(sinceRaw);
+        if (Number.isNaN(t)) return fail(`since must be an ISO 8601 date, e.g. 2026-09-01 — got "${sinceRaw}"`);
+        since = new Date(t).toISOString();
+      }
+      const r = await gql<{
+        knowledgeGraphActivity: {
+          documentId: string;
+          timestamp: string;
+          signerAddress: string | null;
+          signerApp: string | null;
+        }[];
+      }>(
+        graphEndpoint(),
+        `query Editors($driveId: ID!, $limit: Int, $since: String) {
+          knowledgeGraphActivity(driveId: $driveId, limit: $limit, since: $since) {
+            documentId timestamp signerAddress signerApp
+          }
+        }`,
+        { driveId, limit: LIMITS.activity, since },
+      );
+      if ("error" in r) return fail(r.error);
+      const operations = r.data.knowledgeGraphActivity;
+
+      interface Tally {
+        address: string;
+        operations: number;
+        apps: Record<string, number>;
+        documents: Set<string>;
+        firstEdit: string;
+        lastEdit: string;
+      }
+      const byAddress = new Map<string, Tally>();
+      let unsigned = 0;
+      let from: string | null = null;
+      let to: string | null = null;
+      for (const op of operations) {
+        if (!from || op.timestamp < from) from = op.timestamp;
+        if (!to || op.timestamp > to) to = op.timestamp;
+        // An unsigned operation carries an empty address, not a missing one.
+        const address = op.signerAddress || null;
+        if (!address) {
+          unsigned++;
+          continue;
+        }
+        const tally = byAddress.get(address) ?? {
+          address,
+          operations: 0,
+          apps: {},
+          documents: new Set<string>(),
+          firstEdit: op.timestamp,
+          lastEdit: op.timestamp,
+        };
+        tally.operations++;
+        const app = op.signerApp || "unknown";
+        tally.apps[app] = (tally.apps[app] ?? 0) + 1;
+        tally.documents.add(op.documentId);
+        if (op.timestamp < tally.firstEdit) tally.firstEdit = op.timestamp;
+        if (op.timestamp > tally.lastEdit) tally.lastEdit = op.timestamp;
+        byAddress.set(address, tally);
+      }
+      const ranked = [...byAddress.values()]
+        .sort((a, b) => b.operations - a.operations)
+        .slice(0, limit);
+      // One person, one row: the same address editing through two apps is
+      // not two editors, which is exactly the mistake a hand count makes.
+      const names = await resolveEnsNames(ranked.map((e) => e.address));
+      const editors = ranked.map((e) => ({
+        name: names.get(e.address) ?? null,
+        address: e.address,
+        short: shortAddress(e.address),
+        operations: e.operations,
+        documents: e.documents.size,
+        apps: e.apps,
+        firstEdit: e.firstEdit,
+        lastEdit: e.lastEdit,
+      }));
+      // `.at` rather than `[0]`: a vault whose operations are all unsigned
+      // has no top editor, and the type should admit it.
+      const top = editors.at(0);
+      return ok(
+        {
+          editors,
+          countedOperations: operations.length,
+          signedOperations: operations.length - unsigned,
+          unsignedOperations: unsigned,
+          from,
+          to,
+          coverage:
+            "Operations recorded in the graph index — indexed document types only, and only those the indexer has consumed. Sources and other unindexed types are not counted.",
+        },
+        `${byAddress.size} editor${byAddress.size === 1 ? "" : "s"} across ${operations.length} recorded operation${operations.length === 1 ? "" : "s"}` +
+          (unsigned ? ` (${unsigned} unsigned)` : "") +
+          (top ? `; most active: ${top.name ?? top.short} with ${top.operations}` : ""),
       );
     }
 
@@ -1212,6 +1352,12 @@ export async function executeTool(
       );
       if ("error" in ops) return fail(ops.error);
 
+      const addresses = ops.data.documentOperations.items
+        .map((op) => op.action.context?.signer?.user?.address || "")
+        .filter((a) => a !== "");
+      // Usually one or two people touched a document; a name costs a cached
+      // lookup and turns 0xadbA…BcA4 into someone the reader knows.
+      const signerNames = await resolveEnsNames(addresses);
       const changes = ops.data.documentOperations.items
         .map((op) => {
           const signer = op.action.context?.signer;
@@ -1223,6 +1369,7 @@ export async function executeTool(
             action: op.action.type,
             change: summarizeOperation(op.action.type, op.action.input ?? {}),
             by: address,
+            byName: address ? (signerNames.get(address) ?? null) : null,
             byShort: address ? shortAddress(address) : null,
             via: signer?.app?.name || null,
             ...(op.error ? { failed: op.error } : {}),
@@ -1234,7 +1381,7 @@ export async function executeTool(
       // a real case, and the type should say so.
       const newest = changes.at(0);
       const who = newest?.byShort
-        ? ` by ${newest.byShort}${newest.via ? ` via ${newest.via}` : ""}`
+        ? ` by ${newest.byName ?? newest.byShort}${newest.via ? ` via ${newest.via}` : ""}`
         : newest?.via
           ? ` via ${newest.via}`
           : "";

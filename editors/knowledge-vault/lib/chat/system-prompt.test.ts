@@ -79,7 +79,14 @@ describe("buildSystemPrompt", () => {
   it("says an address becomes a name through ens_lookup, not through the web", () => {
     const p = buildSystemPrompt(base);
     expect(p).toContain("ens_lookup");
-    expect(p).toMatch(/no ENS name, which is an answer/);
+    expect(p).toMatch(/"no ENS name" is an answer/);
+  });
+
+  it("asks for a person to be named before their address, and for vault_editors to do the counting", () => {
+    const p = buildSystemPrompt(base);
+    expect(p).toMatch(/liberuum\.eth \(0xadbA…BcA4\)/);
+    expect(p).toContain("vault_editors");
+    expect(p).toMatch(/rather than counting editors yourself/);
   });
 
   it("forbids reporting what a failed or empty page did not say", () => {

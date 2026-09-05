@@ -449,7 +449,11 @@ Two more reach outside the vault, always available:
 |------|---------|
 | `search_web` | A ranked result list for a query. Uses [Tavily](https://tavily.com) when this browser has a key stored (`bai-chat-web:v1` → `{"tavilyKey":"tvly-…"}`), otherwise DuckDuckGo's results read through [r.jina.ai](https://jina.ai/reader) — no key, no account. |
 | `read_url` | The text of one public page, including plain JSON when the address is an API. Private and loopback addresses are refused. A 404 or an empty shell comes back flagged, so a missing page cannot read as an answer. |
-| `ens_lookup` | An Ethereum address ↔ its ENS name, through `api.ensdata.net` — the same service the vault's signer badges use, so the chat and the UI never disagree. `document_history` returns a signer's address; this turns it into a person. |
+| `ens_lookup` | An Ethereum address ↔ its ENS name, through `api.ensdata.net` — the same service the vault's signer badges use, so the chat and the UI never disagree (`api.ensideas.com` stands behind it when that rate-limits). |
+| `vault_editors` | Who edits the vault, ranked: ENS name, address, apps, documents touched, last active. Grouped by person, so one address editing through two apps is one editor, and it reports how many operations carry no signature at all. |
+
+`document_history` and `vault_editors` resolve ENS themselves, so a person is named
+`liberuum.eth (0xadbA…BcA4)` rather than as a bare address.
 
 Only DuckDuckGo survives a browser-side fetch among the keyless engines (Bing, Mojeek,
 Startpage, Brave and Ecosia all block the reader with 403/422/Cloudflare, and Marginalia's
