@@ -197,7 +197,7 @@ full refresh.
 | Directory | Source | Snapshot | Contents |
 |---|---|---|---|
 | `data/knowledge-vault/` | the original local vault | 2026-05 | 543 docs, 2,211 cross-refs — the historical baseline |
-| `data/powerhouse-knowledge/` | **the remote vault** `powerhouse-knowledge` (`c5893e1b-854b-49b1-b8aa-6b133ab87969` on `light-colt-c497cfbd-switchboard.vetra.io`) | **2026-09-03**, corpus at Powerhouse `v6.2.2-dev.74`, package `1.0.54-dev.6` | 1,465 docs: 982 notes, 403 sources, 58 MoCs, 13 tensions, 3 projects, 3 WBS, 3 singletons; 12 folders; **4,718 edges, 843 with a reason** |
+| `data/powerhouse-knowledge/` | **the remote vault** `powerhouse-knowledge` (`c5893e1b-854b-49b1-b8aa-6b133ab87969` on `light-colt-c497cfbd-switchboard.vetra.io`) | **2026-09-03**; the scope of work and both demo WBS refreshed 2026-09-08 | 1,467 docs: 982 notes, 403 sources, 58 MoCs, 13 tensions, 3 retired projects, **4 WBS**, **1 scope of work**, 3 singletons; 12 folders; **4,718 edges, 843 with a reason** |
 
 The second snapshot exists so a full copy of the production vault can be
 stood up on a local reactor — first use: **testing Switchboard authorization**
@@ -232,11 +232,42 @@ is dispatched as an `ADD_RELATIONSHIP` action with `metadata`, which is how
 `switchboard docs link --reason` writes it; the native `addRelationship`
 mutation has no metadata argument and would silently drop all 843 reasons.
 
-**Not restored yet:** the 13 `bai/tension`, 3 `bai/project` and 3 `bai/wbs`
-documents (no handlers in `handlers/`, and `lib/gql.py`'s namespace map
-lacks project/wbs), and the 27 `INVOLVES` edges that hang off tensions.
-They are all in the snapshot (`states/`, `edges.json`); only the upload side
-is missing. `upload.py` skips unknown types rather than failing.
+A `powerhouse/scopeofwork` restores too, via `handlers/scope_of_work.py`:
+the document's own fields, contributors, deliverables (with key results,
+progress, budget anchors), project envelopes, roadmaps and milestones, plus
+each envelope's `knowledgeRefs` remapped through `id_map` — which is what
+gives the restored scope its `CITES` edges into the vault.
+
+Two things inside a scope of work are deliberately **not** written when
+their target is unrestorable: an envelope's `wbsRef` (`LINK_PROJECT_WBS`)
+and a deliverable's `goalRef` (`LINK_DELIVERABLE_GOAL`). Both point into a
+`bai/wbs` document, so until WBS has a handler they would be dangling
+references; the handler skips them rather than storing a broken link. The
+visible consequence is that the restored scope has no `DELIVERED_BY` edge.
+
+`bai/wbs` restores through `handlers/wbs.py`: the goal tree emitted
+parents-first (`CREATE_GOAL` rejects a child whose parent does not exist
+yet), then per-goal status, outcomes, assignees, notes and dependencies,
+plus `owner`, `references` and the `sowRef`/`sowProjectId` back-pointer.
+**Goal ids are intra-document OIDs and are restored verbatim, never through
+`id_map`** — that is precisely what makes a scope of work's `goalRef` valid
+again, so restore the WBS and the SoW's 19 goal links resolve.
+
+`bai/tension` restores through `handlers/tension.py`: `CREATE_TENSION` plus
+the terminal transition, because status is not settable — `RESOLVE_TENSION`
+and `DISSOLVE_TENSION` are the only ways out of OPEN. `involvedRefs` are
+remapped and are where the graph's `INVOLVES` edges come from.
+
+**Tension duplication.** The graph-indexer opens a tension for every
+`CONTRADICTS` pair not already covered by one (any status suppresses a new
+one). A clean full run is safe: documents land in Phase 2/3, relationships
+in Phase 4, so these tensions exist before the edges that would trigger
+auto-creation. Restoring into a drive that **already** holds indexer-created
+tensions duplicates the overlapping pairs — match on title and skip, as the
+2026-09-08 restore did (7 of 13 skipped, 6 restored).
+
+**Not restored yet:** the 3 retired `bai/project` documents. `upload.py`
+skips unknown types rather than failing.
 
 ### Verify a snapshot
 
@@ -260,6 +291,22 @@ on every commit; default `PGLITE_FLUSH_INTERVAL_MS=100` (set by
 switchboard) coalesces them, but for the fastest local iteration just
 use `PH_PGLITE_IN_MEMORY=1` (no disk writes at all). Restart vetra
 after changing this env.
+
+**A restored MoC is missing its `RELATES_TO` edges.**
+Fixed 2026-09-08. `handlers/moc.py` looped over `coreIdeas` (`CORE_IDEA`)
+and `childRefs` (`CHILD_MOC`) but never over `links[]`, so every
+MoC-sourced `RELATES_TO` was dropped while Phase 4 still reported
+`0 failures` — 201 edges on the `powerhouse-knowledge` snapshot, across 26
+MoCs. If you restored a vault before that date, re-run the link phase or
+compare per-type edge totals against `edges.json` before trusting them.
+
+**`ADD_PROJECT_DELIVERABLE` / `ADD_MILESTONE_DELIVERABLE` are not link
+operations.** Both *create* a deliverable and reject an id that already
+exists (`Deliverable with ID … already exists`). To put an existing
+deliverable in a project or milestone set, use `ADD_DELIVERABLE_IN_SET`
+with `projectId` or `milestoneId`. Getting this wrong loses every
+membership row while the surrounding actions still apply, and the job still
+reports success — read `project.scope.deliverables` back to check.
 
 **Connect dead-letters ~1–2 % of docs on the first sync after upload.**
 A known upstream sync-envelope race — see

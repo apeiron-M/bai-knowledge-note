@@ -31,6 +31,9 @@ from handlers import (
     pipeline_queue,
     health_report,
     vault_config,
+    scope_of_work,
+    tension as tension_handler,
+    wbs as wbs_handler,
 )
 
 
@@ -41,6 +44,9 @@ HANDLERS = {
     "bai/pipeline-queue": pipeline_queue,
     "bai/health-report": health_report,
     "bai/vault-config": vault_config,
+    "powerhouse/scopeofwork": scope_of_work,
+    "bai/tension": tension_handler,
+    "bai/wbs": wbs_handler,
 }
 
 # Order Phase 2 doc creation by type so cross-doc refs resolve naturally:
@@ -52,6 +58,9 @@ TYPE_ORDER = {
     "bai/pipeline-queue": 3,
     "bai/health-report": 4,
     "bai/vault-config": 5,
+    "bai/tension": 6,
+    "bai/wbs": 7,
+    "powerhouse/scopeofwork": 8,
 }
 
 

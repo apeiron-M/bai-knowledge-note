@@ -186,6 +186,8 @@ NAMESPACE_BY_TYPE: dict[str, str] = {
     "bai/tension": "Tension",
     "bai/derivation": "Derivation",
     "bai/research-claim": "ResearchClaim",
+    "powerhouse/scopeofwork": "ScopeOfWork",
+    "bai/wbs": "WorkBreakdownStructure",
 }
 
 SUPERGRAPH_ENDPOINT = DEFAULT_ENDPOINT  # /graphql
