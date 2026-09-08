@@ -17,6 +17,15 @@ type GoalSidebarProps = {
   allGoals: Goal[];
   dispatch: Dispatch;
   onClose: () => void;
+  /**
+   * How the host mounts this panel. "sidebar" (default) is the docked
+   * right rail with its own width and left border; "modal" fills whatever
+   * dialog the host puts it in. Only the scope-of-work editor uses the
+   * modal — the standalone WBS editor passes nothing and is unchanged.
+   */
+  layout?: "modal" | "sidebar";
+  /** When given, an expand/dock button appears beside Close. */
+  onToggleLayout?: () => void;
 };
 
 const SECTION_LABEL_STYLE = { color: "var(--bai-text-muted)" };
@@ -32,9 +41,17 @@ export function GoalSidebar({
   allGoals,
   dispatch,
   onClose,
+  layout = "sidebar",
+  onToggleLayout,
 }: GoalSidebarProps) {
+  const expanded = layout === "modal";
   const [author, setAuthor] = useState("");
   const [noteDraft, setNoteDraft] = useState("");
+  // The dependency picker is closed by default: the panel shows what this
+  // goal waits on, not every goal it could wait on. A 65-goal tree made the
+  // old always-open checklist the tallest thing in the panel.
+  const [picking, setPicking] = useState(false);
+  const [depQuery, setDepQuery] = useState("");
 
   function toggleDependency(depId: string, currentlyChecked: boolean) {
     if (currentlyChecked) {
@@ -62,10 +79,24 @@ export function GoalSidebar({
   }
 
   const otherGoals = allGoals.filter((g) => g.id !== goal.id);
+  // What this goal waits on, in the order it was recorded; a dependency
+  // whose goal was deleted stays listed so it can be removed.
+  const deps = goal.dependencies.map((id) => ({
+    id,
+    goal: allGoals.find((g) => g.id === id),
+  }));
+  const q = depQuery.trim().toLowerCase();
+  const candidates = q
+    ? otherGoals.filter((g) => g.description.toLowerCase().includes(q))
+    : otherGoals;
 
   return (
     <div
-      className="flex h-full w-[360px] shrink-0 flex-col border-l"
+      className={
+        expanded
+          ? "flex h-full w-full flex-col"
+          : "flex h-full w-[360px] shrink-0 flex-col border-l"
+      }
       style={{
         borderColor: "var(--bai-border)",
         backgroundColor: "var(--bai-surface)",
@@ -81,6 +112,19 @@ export function GoalSidebar({
         >
           Goal Details
         </h3>
+        <span className="flex items-center gap-2">
+          {onToggleLayout && (
+            <button
+              type="button"
+              onClick={onToggleLayout}
+              className="rounded p-1 text-base leading-none hover:bg-white/5"
+              style={{ color: "var(--bai-text-faint)" }}
+              title={expanded ? "Back to the side panel" : "Expand to focus"}
+              aria-label={expanded ? "Dock goal details" : "Expand goal details"}
+            >
+              {expanded ? "⤡" : "⤢"}
+            </button>
+          )}
         <button
           type="button"
           onClick={onClose}
@@ -98,6 +142,7 @@ export function GoalSidebar({
             <path d="M18 6L6 18M6 6l12 12" />
           </svg>
         </button>
+        </span>
       </div>
 
       <div className="flex-1 space-y-5 overflow-y-auto p-4">
@@ -212,9 +257,9 @@ export function GoalSidebar({
               }
             }}
             placeholder="No outcome recorded yet"
-            rows={2}
             className="w-full resize-none rounded-lg px-3 py-2 text-sm outline-none"
             style={{
+              height: 150,
               backgroundColor: "var(--bai-bg)",
               color: "var(--bai-text-secondary)",
               border: "1px solid var(--bai-border)",
@@ -223,42 +268,137 @@ export function GoalSidebar({
         </div>
 
         <div>
-          <label
-            className="mb-1.5 block text-xs font-semibold uppercase tracking-wider"
-            style={SECTION_LABEL_STYLE}
-          >
-            Dependencies
-          </label>
-          {otherGoals.length === 0 ? (
+          <div className="mb-1.5 flex items-center justify-between">
+            <span
+              className="text-xs font-semibold uppercase tracking-wider"
+              style={SECTION_LABEL_STYLE}
+            >
+              Dependencies{deps.length > 0 ? ` (${deps.length})` : ""}
+            </span>
+            {otherGoals.length > 0 && (
+              <button
+                type="button"
+                className="rounded px-1.5 py-0.5 text-xs hover:bg-white/5"
+                style={{ color: "var(--bai-text-secondary)" }}
+                aria-expanded={picking}
+                aria-controls={`dep-picker-${goal.id}`}
+                onClick={() => {
+                  setPicking((v) => !v);
+                  setDepQuery("");
+                }}
+              >
+                {picking ? "Done" : deps.length > 0 ? "Edit" : "Add dependency"}
+              </button>
+            )}
+          </div>
+
+          {deps.length === 0 && !picking ? (
             <p className="text-xs" style={{ color: "var(--bai-text-faint)" }}>
-              No other goals to depend on.
+              {otherGoals.length === 0
+                ? "No other goals to depend on."
+                : "Nothing this goal waits on."}
             </p>
           ) : (
-            <div
-              className="max-h-40 space-y-0.5 overflow-y-auto rounded-lg p-1"
-              style={{ border: "1px solid var(--bai-border)" }}
-            >
-              {otherGoals.map((g) => {
-                const checked = goal.dependencies.includes(g.id);
+            <ul className="space-y-0.5">
+              {deps.map(({ id, goal: g }) => {
+                const meta = g ? GOAL_STATUS_META[g.status] : undefined;
                 return (
-                  <label
-                    key={g.id}
-                    className="flex cursor-pointer items-center gap-2 rounded-md px-2 py-1.5 text-xs hover:bg-white/5"
+                  <li
+                    key={id}
+                    className="flex items-center gap-2 rounded-md px-2 py-1.5 text-xs"
+                    style={{ border: "1px solid var(--bai-border)" }}
                   >
-                    <input
-                      type="checkbox"
-                      checked={checked}
-                      onChange={() => toggleDependency(g.id, checked)}
+                    <span
+                      aria-hidden
+                      className="h-2 w-2 shrink-0 rounded-full"
+                      style={{ backgroundColor: meta?.fg ?? "var(--bai-border)" }}
                     />
                     <span
-                      className="truncate"
-                      style={{ color: "var(--bai-text-secondary)" }}
+                      className="min-w-0 flex-1 truncate"
+                      style={{ color: g ? "var(--bai-text-secondary)" : "var(--bai-text-faint)" }}
+                      title={g ? `${g.description}${meta ? ` — ${meta.label}` : ""}` : undefined}
                     >
-                      {g.description}
+                      {g ? g.description : "Goal no longer exists"}
                     </span>
-                  </label>
+                    <button
+                      type="button"
+                      className="shrink-0 rounded px-1 leading-none hover:bg-white/5"
+                      style={{ color: "var(--bai-text-faint)" }}
+                      aria-label={`Remove dependency: ${g?.description ?? id}`}
+                      title="Remove dependency"
+                      onClick={() => toggleDependency(id, true)}
+                    >
+                      ×
+                    </button>
+                  </li>
                 );
               })}
+            </ul>
+          )}
+
+          {picking && (
+            <div
+              id={`dep-picker-${goal.id}`}
+              className="mt-2 rounded-lg p-1"
+              style={{ border: "1px solid var(--bai-border)" }}
+            >
+              <input
+                type="search"
+                autoFocus
+                value={depQuery}
+                placeholder="Search goals"
+                aria-label="Search goals to depend on"
+                className="mb-1 w-full rounded-md bg-transparent px-2 py-1.5 text-xs outline-none focus:ring-1"
+                style={{
+                  color: "var(--bai-text)",
+                  border: "1px solid var(--bai-border)",
+                }}
+                onChange={(e) => setDepQuery(e.target.value)}
+                onKeyDown={(e) => {
+                  // Esc closes the picker only. Stop it here or the host's
+                  // own Esc handler closes the whole panel with it.
+                  if (e.key === "Escape") {
+                    e.stopPropagation();
+                    setPicking(false);
+                  }
+                }}
+              />
+              <div className="max-h-56 space-y-0.5 overflow-y-auto">
+                {candidates.length === 0 ? (
+                  <p
+                    className="px-2 py-1.5 text-xs"
+                    style={{ color: "var(--bai-text-faint)" }}
+                  >
+                    No goals match.
+                  </p>
+                ) : (
+                  candidates.map((g) => {
+                    const checked = goal.dependencies.includes(g.id);
+                    return (
+                      <label
+                        key={g.id}
+                        className="flex cursor-pointer items-center gap-2 rounded-md px-2 py-1.5 text-xs hover:bg-white/5"
+                      >
+                        <input
+                          type="checkbox"
+                          checked={checked}
+                          onChange={() => toggleDependency(g.id, checked)}
+                        />
+                        <span
+                          className="truncate"
+                          style={{
+                            color: checked
+                              ? "var(--bai-text)"
+                              : "var(--bai-text-secondary)",
+                          }}
+                        >
+                          {g.description}
+                        </span>
+                      </label>
+                    );
+                  })
+                )}
+              </div>
             </div>
           )}
         </div>
