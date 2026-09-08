@@ -1,6 +1,7 @@
 import { actions } from "document-models/scope-of-work";
 import { generateId } from "document-model/core";
 import {
+  useCallback,
   useEffect,
   useState,
   type ReactNode,
@@ -31,6 +32,19 @@ export function OutlineRail({
   const toggle = (key: string, fallback: boolean) =>
     setOpen((s) => ({ ...s, [key]: !(s[key] ?? fallback) }));
   const reveal = (patch: OpenMap) => setOpen((s) => ({ ...s, ...patch }));
+  // Overview is the tree at rest: every roadmap and envelope branch folds
+  // back to its default; the two sections keep whatever state they have.
+  const collapseBranches = useCallback(
+    () =>
+      setOpen((s) =>
+        Object.fromEntries(
+          Object.entries(s).filter(
+            ([k]) => !k.startsWith("rm:") && !k.startsWith("pr:"),
+          ),
+        ),
+      ),
+    [],
+  );
 
   const unscheduled = state.deliverables.filter(
     (d) => !isClosed(d) && !milestoneOf(state, d.id),
@@ -45,12 +59,29 @@ export function OutlineRail({
       ? state.roadmaps.find((r) => r.milestones.some((m) => m.id === viewId))
           ?.id
       : undefined;
+  // The list views show everything, so the rail shows everything too: every
+  // roadmap branch for "roadmaps", every envelope that has a WBS for
+  // "projects". Joined to one string so the effect below depends on a value,
+  // not on the arrays the render recreates.
+  const revealKey =
+    view.kind === "roadmaps"
+      ? state.roadmaps.map((r) => `rm:${r.id}`).join("|")
+      : view.kind === "projects"
+        ? state.projects.filter((p) => p.wbsRef).map((p) => `pr:${p.id}`).join("|")
+        : "";
   // Keep the active branch visible when navigation comes from the canvas.
   // Re-runs only when the view target changes, so a manual collapse on the
   // current item is not immediately forced back open.
   useEffect(() => {
     const patch: OpenMap = {};
-    if (view.kind === "roadmap") {
+    if (view.kind === "overview") {
+      collapseBranches();
+      return;
+    }
+    if (view.kind === "roadmaps" || view.kind === "projects") {
+      patch[view.kind] = true;
+      for (const k of revealKey.split("|")) if (k) patch[k] = true;
+    } else if (view.kind === "roadmap") {
       patch.roadmaps = true;
       patch[`rm:${viewId}`] = true;
     } else if (view.kind === "milestone") {
@@ -61,7 +92,7 @@ export function OutlineRail({
       patch[`pr:${activeProjectId}`] = true;
     }
     if (Object.keys(patch).length > 0) setOpen((s) => ({ ...s, ...patch }));
-  }, [view.kind, viewId, parentRoadmapId, activeProjectId]);
+  }, [view.kind, viewId, parentRoadmapId, activeProjectId, revealKey, collapseBranches]);
 
   const addRoadmap = () => {
     const id = generateId();
@@ -95,7 +126,12 @@ export function OutlineRail({
       <button
         type="button"
         className={`node ${is("overview") ? "active" : ""}`}
-        onClick={() => go({ kind: "overview" })}
+        onClick={() => {
+          // Also here, not only in the effect: re-clicking Overview while
+          // already on it changes no dependency, yet should still fold.
+          collapseBranches();
+          go({ kind: "overview" });
+        }}
       >
         ◫ <span>Overview</span>
       </button>
@@ -104,6 +140,8 @@ export function OutlineRail({
         label="Roadmaps"
         open={shown("roadmaps", SECTIONS.roadmaps)}
         onToggle={() => toggle("roadmaps", SECTIONS.roadmaps)}
+        active={is("roadmaps")}
+        onSelect={() => go({ kind: "roadmaps" })}
         action={
           <button type="button" onClick={addRoadmap} title="Add roadmap">
             + add
@@ -154,6 +192,8 @@ export function OutlineRail({
         label="Projects"
         open={shown("projects", SECTIONS.projects)}
         onToggle={() => toggle("projects", SECTIONS.projects)}
+        active={is("projects")}
+        onSelect={() => go({ kind: "projects" })}
         action={
           <button type="button" onClick={addProject} title="Add project">
             + add
@@ -260,12 +300,17 @@ function Section({
   label,
   open,
   onToggle,
+  onSelect,
+  active,
   action,
   children,
 }: {
   label: string;
   open: boolean;
   onToggle: () => void;
+  /** When given, the label opens a view of its own; the chevron only folds. */
+  onSelect?: () => void;
+  active?: boolean;
   action?: ReactNode;
   children: ReactNode;
 }) {
@@ -273,18 +318,41 @@ function Section({
   return (
     <>
       <div className="sect">
-        <button
-          type="button"
-          className="sect-toggle"
-          aria-expanded={open}
-          aria-controls={id}
-          onClick={onToggle}
-        >
-          <span className={`chev ${open ? "open" : ""}`} aria-hidden>
-            ▸
+        {onSelect ? (
+          <span className="sect-toggle">
+            <button
+              type="button"
+              className={`chev ${open ? "open" : ""}`}
+              aria-expanded={open}
+              aria-controls={id}
+              title={open ? "Collapse" : "Expand"}
+              onClick={onToggle}
+            >
+              ▸
+            </button>
+            <button
+              type="button"
+              className={`sect-label ${active ? "active" : ""}`}
+              aria-current={active ? "page" : undefined}
+              onClick={onSelect}
+            >
+              {label}
+            </button>
           </span>
-          {label}
-        </button>
+        ) : (
+          <button
+            type="button"
+            className="sect-toggle"
+            aria-expanded={open}
+            aria-controls={id}
+            onClick={onToggle}
+          >
+            <span className={`chev ${open ? "open" : ""}`} aria-hidden>
+              ▸
+            </span>
+            {label}
+          </button>
+        )}
         {action}
       </div>
       {open ? (

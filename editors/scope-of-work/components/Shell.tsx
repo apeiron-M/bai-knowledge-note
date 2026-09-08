@@ -24,7 +24,9 @@ import { DeliverablesView } from "../views/DeliverablesView.js";
 import { MilestoneView } from "../views/MilestoneView.js";
 import { OverviewView } from "../views/OverviewView.js";
 import { ProjectView } from "../views/ProjectView.js";
+import { ProjectsView } from "../views/ProjectsView.js";
 import { RoadmapView } from "../views/RoadmapView.js";
+import { RoadmapsView } from "../views/RoadmapsView.js";
 import { TeamView } from "../views/TeamView.js";
 import { WbsView } from "../views/WbsView.js";
 import { readSowIntent } from "../../shared/sow-intent.js";
@@ -245,6 +247,10 @@ export function Shell({
 
   const canvas = (() => {
     switch (view.kind) {
+      case "roadmaps":
+        return <RoadmapsView />;
+      case "projects":
+        return <ProjectsView />;
       case "roadmap":
         return <RoadmapView id={view.id} />;
       case "milestone":

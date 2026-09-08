@@ -1,7 +1,7 @@
 import { actions } from "document-models/scope-of-work";
 import { generateId } from "document-model/core";
 import { DeliverableTable } from "../components/DeliverableRow.js";
-import { Avatar, CopyableId, InlineText, Kpi } from "../components/ui.js";
+import { Avatar, CopyableId, InlineText, Kpi, MoneyStack } from "../components/ui.js";
 import { useEditor } from "../lib/context.js";
 import {
   LOCKED_HINT,
@@ -11,7 +11,6 @@ import {
   dateFmt,
   deliverablesIn,
   isEditable,
-  moneyList,
   rollup,
 } from "../lib/model.js";
 import { OverviewView } from "./OverviewView.js";
@@ -203,7 +202,7 @@ export function MilestoneView({ id }: { id: string }) {
         />
         <Kpi
           label="Budget in this milestone"
-          value={moneyList(budgetsByCurrencyFor(state, ids))}
+          value={<MoneyStack byCur={budgetsByCurrencyFor(state, ids)} />}
           sub="sum of quotes, per currency"
         />
       </div>

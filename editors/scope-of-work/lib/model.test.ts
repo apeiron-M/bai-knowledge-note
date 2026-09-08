@@ -1,6 +1,10 @@
 import { describe, expect, it } from "vitest";
 import type { ScopeOfWorkState } from "document-models/scope-of-work";
-import { locate } from "./model.js";
+import {
+  locate,
+  money,
+  moneyAmount,
+} from "./model.js";
 
 const set = (deliverables: string[]) => ({
   deliverables,
@@ -47,5 +51,21 @@ describe("locate", () => {
 
   it("returns null for an id the scope does not hold", () => {
     expect(locate(s, "nope")).toBeNull();
+  });
+});
+
+describe("money formatting across fiat and tokens", () => {
+  it("keeps fiat symbols", () => {
+    expect(money(412637.5, "USD")).toBe("$412,637.50");
+    expect(money(117204.5, "EUR")).toBe("€117,204.50");
+  });
+  it("formats tokens as a grouped number with the code after it", () => {
+    // Intl throws on the 4-letter USDS and prefixes the 3-letter DAI; both used
+    // to come out differently from each other and from fiat.
+    expect(money(61070.5, "USDS")).toBe("61,070.50 USDS");
+    expect(money(40000, "DAI")).toBe("40,000.00 DAI");
+  });
+  it("exposes the bare amount for stacked layouts", () => {
+    expect(moneyAmount(1234.5)).toBe("1,234.50");
   });
 });

@@ -25,8 +25,12 @@ export const emptyFilters: Filters = {
 };
 export type View =
   | { kind: "overview" }
+  /** Every roadmap, as a table; the sidebar section header opens it. */
+  | { kind: "roadmaps" }
   | { kind: "roadmap"; id: string }
   | { kind: "milestone"; id: string }
+  /** Every envelope, as a table; the sidebar section header opens it. */
+  | { kind: "projects" }
   | { kind: "project"; id: string }
   | { kind: "deliverables"; filters?: Partial<Filters> }
   /** The work breakdown that delivers one envelope, edited without leaving the scope. */
@@ -208,19 +212,31 @@ export const budgetsByCurrencyFor = (
   }
   return out;
 };
+/** Tokens are not ISO currencies: Intl prefixes a 3-letter one ("DAI 1.00") and
+ *  throws on a 4-letter one, so USDS fell into a no-grouping fallback. Format them
+ *  as a grouped number with the code after it, and keep fiat symbols as they were. */
+const TOKEN_CODES = new Set(["DAI", "USDS"]);
+const AMOUNT = new Intl.NumberFormat("en", {
+  minimumFractionDigits: 2,
+  maximumFractionDigits: 2,
+});
+/** "412,637.50" — the number alone, for layouts that set the code apart. */
+export const moneyAmount = (n: number): string => AMOUNT.format(n);
 export const money = (
   n: number,
   currency: string | null | undefined = "USD",
 ): string => {
+  const code = currency ?? "USD";
+  if (TOKEN_CODES.has(code)) return `${moneyAmount(n)} ${code}`;
   try {
     return new Intl.NumberFormat("en", {
       style: "currency",
-      currency: currency ?? "USD",
+      currency: code,
       minimumFractionDigits: 2,
       maximumFractionDigits: 2,
     }).format(n);
   } catch {
-    return `${n.toFixed(2)} ${currency ?? ""}`.trim();
+    return `${moneyAmount(n)} ${code}`;
   }
 };
 export const round2 = (n: number): number => {

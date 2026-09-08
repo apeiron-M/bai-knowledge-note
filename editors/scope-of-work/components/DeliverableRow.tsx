@@ -2,10 +2,11 @@ import { actions, type Deliverable } from "document-models/scope-of-work";
 import type { ReactNode } from "react";
 import { useEditor } from "../lib/context.js";
 import {
-  LOCKED_HINT,
   agentById,
   budgetOf,
   isEditable,
+  isQuoted,
+  LOCKED_HINT,
   milestoneOf,
   money,
   pctOf,
@@ -115,8 +116,11 @@ export function DeliverableRow({
         </div>
       </td>
       <td className="num">
-        {d.budgetAnchor ? (
-          money(budgetOf(d), p?.currency)
+        {/* ADD_DELIVERABLE initialises a zeroed anchor, so "has an anchor" is
+            not "has a budget": show a figure only with a payer and a quote —
+            the same test the Unfunded / Unquoted badges use. */}
+        {p && isQuoted(d) ? (
+          money(budgetOf(d), p.currency)
         ) : (
           <span className="faint">—</span>
         )}

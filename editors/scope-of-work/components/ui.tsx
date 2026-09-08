@@ -13,7 +13,7 @@ import {
   type MouseEvent as ReactMouseEvent,
   type ReactNode,
 } from "react";
-import { STATUS_LABEL, badgesFor, initials } from "../lib/model.js";
+import { STATUS_LABEL, badgesFor, initials, money, moneyAmount } from "../lib/model.js";
 
 export function StatusChip({ status }: { status: string }) {
   return (
@@ -471,6 +471,32 @@ export function CopyableId({
       <span className="doc-id-said" aria-live="polite">
         {copied ? "Copied" : ""}
       </span>
+    </span>
+  );
+}
+
+/**
+ * Money in one or several currencies.
+ *
+ * One currency is the common case and stays a single figure. Several stack as
+ * a two-column grid — amount, then code — instead of one string joined with
+ * middle dots: a joined string wraps wherever the box runs out, leaving the
+ * separators dangling at line ends, and at KPI size four currencies became
+ * four lines of 26px type. Amounts are right-aligned tabular numerals so the
+ * decimals line up; the code sits small and faint beside each.
+ */
+export function MoneyStack({ byCur }: { byCur: Record<string, number> }) {
+  const entries = Object.entries(byCur);
+  if (entries.length === 0) return <span className="faint">—</span>;
+  if (entries.length === 1) return <>{money(entries[0][1], entries[0][0])}</>;
+  return (
+    <span className="money-stack" role="list">
+      {entries.map(([cur, v]) => (
+        <span key={cur} role="listitem" className="money-row">
+          <span className="amt">{moneyAmount(v)}</span>
+          <span className="cur">{cur}</span>
+        </span>
+      ))}
     </span>
   );
 }

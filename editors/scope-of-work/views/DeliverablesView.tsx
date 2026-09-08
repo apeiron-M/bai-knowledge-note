@@ -15,6 +15,10 @@ import {
   type Filters,
 } from "../lib/model.js";
 
+/** Option labels feed the native select's width; keep them to one readable line. */
+const clip = (s: string, n = 56): string =>
+  s.length > n ? `${s.slice(0, n - 1).trimEnd()}…` : s;
+
 export function DeliverablesView({ initial }: { initial?: Partial<Filters> }) {
   const { state, dispatch, select, documentId } = useEditor();
   const [f, setF] = useState<Filters>({ ...emptyFilters, ...initial });
@@ -92,8 +96,8 @@ export function DeliverablesView({ initial }: { initial?: Partial<Filters> }) {
           <option value="">Any project</option>
           <option value="__none">Unfunded</option>
           {state.projects.map((p) => (
-            <option key={p.id} value={p.id}>
-              {p.code} {p.title}
+            <option key={p.id} value={p.id} title={`${p.code} ${p.title}`}>
+              {clip(`${p.code} ${p.title}`)}
             </option>
           ))}
         </select>
@@ -105,8 +109,12 @@ export function DeliverablesView({ initial }: { initial?: Partial<Filters> }) {
           <option value="">Any milestone</option>
           <option value="__none">Unscheduled</option>
           {allMilestones(state).map((x) => (
-            <option key={x.milestone.id} value={x.milestone.id}>
-              {x.milestone.sequenceCode} {x.milestone.title}
+            <option
+              key={x.milestone.id}
+              value={x.milestone.id}
+              title={`${x.milestone.sequenceCode} ${x.milestone.title}`}
+            >
+              {clip(`${x.milestone.sequenceCode} ${x.milestone.title}`)}
             </option>
           ))}
         </select>

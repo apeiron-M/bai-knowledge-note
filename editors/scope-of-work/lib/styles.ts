@@ -46,6 +46,25 @@ export const SOW_CSS = `
 .sow .rail{min-width:0;min-height:0;height:100%;border-right:1px solid var(--rule);background:var(--panel);overflow:auto;padding:12px 10px}
 .sow .sect{margin-top:14px;padding:0 4px 0 2px;font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-3);display:flex;align-items:center;justify-content:space-between;gap:8px}
 .sow .sect button{color:var(--ink-3);font-size:12px} .sow .sect button:hover{color:var(--ink)}
+/* a section label that is also a view link; outranks the .sect button reset above */
+.sow .sect button.sect-label{font:inherit;letter-spacing:inherit;text-transform:inherit;color:inherit;padding:2px 5px;margin-left:-2px;border-radius:5px}
+.sow .sect button.sect-label:hover{color:var(--ink);background:var(--panel-2)}
+.sow .sect button.sect-label.active{color:var(--ink);background:var(--slate-soft);font-weight:600}
+/* list views: a roadmap row folds open to its milestones */
+.sow .tbl td.fold{width:26px;padding:0 0 0 6px}
+.sow .tbl tr.sub td{background:color-mix(in srgb,var(--panel-2) 45%,transparent)}
+.sow .tbl tr.sub td.grow{padding-left:34px}
+.sow .msdot{display:inline-block;width:8px;height:8px;border-radius:50%;background:var(--panel);border:2px solid var(--rule-2);margin-right:8px;vertical-align:-1px;flex:none}
+.sow .msdot.done{background:var(--meridian);border-color:var(--meridian)}
+.sow .msdot.live{border-color:var(--signal);box-shadow:0 0 0 3px var(--signal-soft)}
+.sow .tbl td .prog-sub{font-size:11.5px;color:var(--ink-3);margin-top:3px;font-variant-numeric:tabular-nums}
+/* A table's primary column never collapses: td.grow's max-width:0 hands it only
+   the leftover width, and with enough nowrap siblings that is zero. min-width
+   wins over max-width, and .rows.scroll lets a too-wide table scroll instead of
+   the later .rows{overflow:hidden} clipping it. */
+.sow .tbl td.grow.primary,.sow .tbl th.grow.primary{min-width:200px}
+.sow .rows.scroll{overflow-x:auto}
+.sow .tbl tfoot tr+tr td{border-top:1px solid var(--rule)}
 .sow .sect-toggle{display:inline-flex;align-items:center;gap:2px;min-width:0;font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:inherit}
 .sow .chev{width:18px;height:22px;flex:none;display:inline-flex;align-items:center;justify-content:center;color:var(--ink-3);transform:rotate(0deg);transition:transform .15s ease;border-radius:4px;font-size:11px;line-height:1}
 .sow .chev.open{transform:rotate(90deg)}
@@ -97,6 +116,14 @@ export const SOW_CSS = `
 .sow .kpis.three{grid-template-columns:repeat(3,1fr)}
 .sow .kpi{background:var(--panel);border:1px solid var(--rule);border-radius:var(--r);padding:14px 16px;min-width:0}
 .sow .kpi .l{font-size:12px;color:var(--ink-3)} .sow .kpi .v{font-family:var(--display);font-size:26px;font-weight:650;letter-spacing:-.02em;margin-top:2px;overflow-wrap:anywhere} .sow .kpi .s{font-size:12px;color:var(--ink-2);margin-top:2px}
+/* several currencies in one figure: amount column right-aligned, code beside it */
+.sow .money-stack{display:inline-grid;grid-template-columns:auto auto;column-gap:8px;row-gap:1px;align-items:baseline;font-variant-numeric:tabular-nums}
+.sow .money-stack .money-row{display:contents}
+.sow .money-stack .amt{text-align:right}
+.sow .money-stack .cur{font-family:var(--mono);font-size:11px;font-weight:500;letter-spacing:.04em;color:var(--ink-3)}
+.sow .kpi .v .money-stack{font-size:17px;line-height:1.3;margin-top:4px}
+.sow .tbl .money-stack{font-family:var(--mono);font-size:12.5px;font-weight:400;letter-spacing:.01em;row-gap:0}
+.sow .tbl .money-stack .cur{font-size:10.5px}
 .sow .card{background:var(--panel);border:1px solid var(--rule);border-radius:var(--r);padding:18px 20px}
 .sow .section{margin-top:34px} .sow .section .hd{display:flex;align-items:baseline;gap:12px;margin-bottom:12px;flex-wrap:wrap} .sow .grow{flex:1}
 .sow .toolbar{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-top:6px;font-size:12.5px;color:var(--ink-2)}
@@ -198,6 +225,15 @@ export const SOW_CSS = `
 .sow .kr input{border:0;background:transparent;flex:1;min-width:0} .sow .kr input:focus{outline:0}
 .sow .danger{margin:26px 18px 30px;display:flex;justify-content:space-between;align-items:center;font-size:12.5px;color:var(--ink-3)} .sow .danger button{color:var(--ember);font-weight:500}
 .sow .filters{display:flex;gap:8px;flex-wrap:wrap;margin:14px 0 12px;align-items:center} .sow .filters select,.sow .filters input{height:30px;border:1px solid var(--rule-2);border-radius:8px;padding:0 10px;background:var(--panel);font-size:12.5px;color:var(--ink)}
+/* A native select sizes its control to its widest option, and an option can be a
+   150-character title. Cap the control; the labels are clipped in the view so the
+   open list stays well inside the window, with the full text in each option's tooltip. */
+.sow .filters select{flex:0 1 auto;min-width:110px;max-width:210px;text-overflow:ellipsis}
+.sow .filters input{flex:1 1 220px;min-width:160px;max-width:380px}
+/* tags sit after a title and can stack (Unfunded + Unscheduled): keep the house
+   tag style, just space them out */
+.sow .tag+.tag{margin-left:4px}
+.sow .tbl td.grow .t .tag{margin-left:2px;vertical-align:middle}
 .sow .team{display:grid;grid-template-columns:repeat(2,1fr);gap:12px;margin-top:18px}
 .sow .member{display:flex;gap:12px;align-items:center;padding:12px 14px;background:var(--panel);border:1px solid var(--rule);border-radius:var(--r);text-align:left;width:100%}
 .sow .member .av{width:36px;height:36px;font-size:13px} .sow .member .n{font-weight:600} .sow .member .r{font-size:12px;color:var(--ink-3)} .sow .member .s{margin-left:auto;font-size:12px;color:var(--ink-2);text-align:right;white-space:nowrap}

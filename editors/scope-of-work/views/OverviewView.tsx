@@ -14,7 +14,6 @@ import {
   milestoneOf,
   milestoneState,
   money,
-  moneyList,
   nextMilestone,
   projectOf,
   rollup,
@@ -23,7 +22,7 @@ import {
   STATUS_LABEL,
   isClosed,
 } from "../lib/model.js";
-import { Avatar, Bar, CopyableId, InlineText, Kpi } from "../components/ui.js";
+import { Avatar, Bar, CopyableId, InlineText, Kpi, MoneyStack } from "../components/ui.js";
 import { agentById } from "../lib/model.js";
 
 export function OverviewView() {
@@ -90,7 +89,7 @@ export function OverviewView() {
       <div className="kpis">
         <Kpi
           label="Budget"
-          value={moneyList(budgetsByCurrency(state))}
+          value={<MoneyStack byCur={budgetsByCurrency(state)} />}
           sub={`${state.projects.length} project${state.projects.length === 1 ? "" : "s"} · derived from quotes`}
         />
         <Kpi
@@ -130,9 +129,9 @@ export function OverviewView() {
         <div className="hd">
           <h2>Roadmaps</h2>
           <div className="grow" />
-          <span className="faint" style={{ fontSize: 12 }}>
-            click a row to open
-          </span>
+          <button className="btn sm ghost" onClick={() => go({ kind: "roadmaps" })}>
+            All roadmaps
+          </button>
         </div>
         <RoadmapsSummary />
       </section>
