@@ -5,6 +5,7 @@ import {
   debounced,
   isStructuralChange,
   isVaultLive,
+  LIVE_EVENT_TTL_MS,
   onVaultLiveChange,
   onVaultRemoteChange,
   setVaultLive,
@@ -66,5 +67,58 @@ describe("vault-live bus", () => {
     expect(fn).not.toHaveBeenCalled();
     vi.advanceTimersByTime(600);
     expect(fn).toHaveBeenCalledTimes(1);
+  });
+  it("debounced() fires at the ceiling under a sustained firehose", () => {
+    vi.useFakeTimers();
+    const fn = vi.fn();
+    // The observed bulk-import rate: an event every 166ms for 60s.
+    const run = debounced(fn, 1_500, 6_000);
+    for (let i = 0; i < 360; i++) {
+      run();
+      vi.advanceTimersByTime(166);
+    }
+    // A pure trailing-edge debounce would still be at zero here.
+    expect(fn.mock.calls.length).toBeGreaterThanOrEqual(9);
+    const duringFirehose = fn.mock.calls.length;
+    // And it still settles once the writes stop.
+    vi.advanceTimersByTime(1_500);
+    expect(fn.mock.calls.length).toBeGreaterThan(duringFirehose);
+  });
+
+  it("debounced() still fully coalesces a burst shorter than the ceiling", () => {
+    vi.useFakeTimers();
+    const fn = vi.fn();
+    const run = debounced(fn, 1_500, 6_000);
+    run();
+    vi.advanceTimersByTime(500);
+    run();
+    vi.advanceTimersByTime(500);
+    run();
+    expect(fn).not.toHaveBeenCalled();
+    vi.advanceTimersByTime(1_500);
+    expect(fn).toHaveBeenCalledTimes(1);
+  });
+
+  it("liveness expires unless events renew it", () => {
+    vi.useFakeTimers();
+    setVaultLive(true);
+    expect(isVaultLive()).toBe(true);
+    vi.advanceTimersByTime(LIVE_EVENT_TTL_MS - 1);
+    expect(isVaultLive()).toBe(true);
+    vi.advanceTimersByTime(2);
+    // Socket never said "closed" — the vouch simply ran out.
+    expect(isVaultLive()).toBe(false);
+  });
+
+  it("each event renews the vouch, so a delivering feed stays live", () => {
+    vi.useFakeTimers();
+    setVaultLive(true);
+    for (let i = 0; i < 5; i++) {
+      vi.advanceTimersByTime(LIVE_EVENT_TTL_MS - 1_000);
+      setVaultLive(true); // renews even though already live
+      expect(isVaultLive()).toBe(true);
+    }
+    vi.advanceTimersByTime(LIVE_EVENT_TTL_MS + 1);
+    expect(isVaultLive()).toBe(false);
   });
 });

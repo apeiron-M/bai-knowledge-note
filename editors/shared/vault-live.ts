@@ -14,10 +14,14 @@
  * This module lives in `shared` so it imports from no editor folder and can
  * be listened to from any of them without a cycle.
  *
- * `isVaultLive()` reports whether that socket is currently connected. Polls
- * stay in place as a safety net but back off to a slow cadence while it is
- * true — realtime is an enhancement, and a silently dead socket must never
- * leave the UI frozen on stale data.
+ * `isVaultLive()` reports whether that socket is currently *delivering* —
+ * connected AND seen an event within `LIVE_EVENT_TTL_MS`. Polls stay in
+ * place as a safety net but back off to a slow cadence while it is true —
+ * realtime is an enhancement, and a silently dead socket must never leave
+ * the UI frozen on stale data. Connectedness alone is not enough for that
+ * promise: a socket can hold an acked handshake and deliver nothing (a
+ * server restart between pings, a proxy buffering the stream), so liveness
+ * expires unless events keep renewing it.
  */
 
 export const VAULT_REMOTE_CHANGE_EVENT = "vault:remote-change";
@@ -79,15 +83,34 @@ export function onVaultRemoteChange(
 }
 
 let live = false;
+let lastLiveEventAt = 0;
 const liveListeners = new Set<(live: boolean) => void>();
 
-/** Whether the vault's change socket is connected right now. */
+/**
+ * How long one delivered event vouches for the socket.
+ *
+ * Liveness suppresses the safety-net polls, so it must not outlive the
+ * evidence for it. Past this, `isVaultLive()` reads false and the polls
+ * resume on their own cadence — bounding how long a silently dead feed can
+ * leave the UI stale, with no dependency on the socket noticing.
+ */
+export const LIVE_EVENT_TTL_MS = 60_000;
+
+/**
+ * Whether the vault's change socket is delivering right now: connected, and
+ * an event arrived within {@link LIVE_EVENT_TTL_MS}.
+ */
 export function isVaultLive(): boolean {
-  return live;
+  return live && Date.now() - lastLiveEventAt < LIVE_EVENT_TTL_MS;
 }
 
-/** Called only by the socket owner (`useRemoteFirst`). */
+/**
+ * Called only by the socket owner (`useRemoteFirst`). A `true` renews the
+ * vouch on every call, including when already live — liveness is a statement
+ * about recent delivery, so each event has to refresh it.
+ */
 export function setVaultLive(next: boolean): void {
+  if (next) lastLiveEventAt = Date.now();
   if (live === next) return;
   live = next;
   for (const l of liveListeners) l(next);
@@ -108,14 +131,35 @@ export function onVaultLiveChange(
  * behind them is updated asynchronously by the indexer. Waiting `delayMs`
  * after the LAST event both dedupes the burst and gives the projection a
  * moment to catch up.
+ *
+ * `maxWaitMs` bounds that wait. A pure trailing-edge debounce is reset by
+ * every event, so a write stream arriving faster than `delayMs` starves it
+ * for as long as the writes last — a bulk import pushes events for minutes
+ * and the callback never runs, which reads to a user as "the app stopped
+ * updating". The ceiling turns a sustained firehose into a steady refresh
+ * every `maxWaitMs` while leaving short bursts fully coalesced.
  */
-export function debounced(fn: () => void, delayMs: number): () => void {
+export function debounced(
+  fn: () => void,
+  delayMs: number,
+  maxWaitMs: number = delayMs * 4,
+): () => void {
   let timer: ReturnType<typeof setTimeout> | null = null;
+  let burstStartedAt: number | null = null;
   return () => {
+    const now = Date.now();
+    burstStartedAt ??= now;
     if (timer) clearTimeout(timer);
-    timer = setTimeout(() => {
-      timer = null;
-      fn();
-    }, delayMs);
+    // Never schedule past the current burst's remaining budget; at zero the
+    // call fires on the next tick and the burst starts over.
+    const remaining = Math.max(0, maxWaitMs - (now - burstStartedAt));
+    timer = setTimeout(
+      () => {
+        timer = null;
+        burstStartedAt = null;
+        fn();
+      },
+      Math.min(delayMs, remaining),
+    );
   };
 }

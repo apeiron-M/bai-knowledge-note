@@ -89,11 +89,12 @@ const DRIVE_HYDRATE_MS = 30_000;
 
 /**
  * Safety-net cadence for both polls while the change socket is live — and
- * "live" means an event has actually been delivered on it, not merely that
- * the handshake was acked (see the feed effect). Not zero: a socket can be
- * up and still miss an event (server restart between pings, a filtered
- * event we mis-classified), and five minutes bounds how long such a miss
- * can go unnoticed.
+ * "live" means an event was delivered within `LIVE_EVENT_TTL_MS`, not
+ * merely that the handshake was acked (see the feed effect). Not zero: a
+ * socket can be up and still miss an event (server restart between pings, a
+ * filtered event we mis-classified). Liveness expiring is the tighter of
+ * the two bounds — a feed that goes quiet resumes polling one TTL later,
+ * whatever this says — so this only caps a feed that is still delivering.
  */
 const LIVE_SAFETY_NET_MS = 5 * 60_000;
 
@@ -415,8 +416,10 @@ export function useRemoteFirst(): void {
           const event = result.data?.documentChanges;
           if (!event || stopped) return;
           // Proof the socket delivers, not just connects: any event —
-          // ours or another drive's — is enough to trust it.
-          if (!isVaultLive()) setVaultLive(true);
+          // ours or another drive's — is enough to trust it. Called on
+          // EVERY event, not only the first: liveness expires (see
+          // LIVE_EVENT_TTL_MS) and each event is what renews it.
+          setVaultLive(true);
 
           const members = driveMembers();
           const structural =
