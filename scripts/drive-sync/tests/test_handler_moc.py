@@ -113,3 +113,42 @@ def test_sort_mocs_for_creation_parents_before_children():
     sorted_ids = sort_mocs_for_creation(docs, states)
     assert sorted_ids.index("root") < sorted_ids.index("child1")
     assert sorted_ids.index("child1") < sorted_ids.index("child2")
+
+
+def test_links_emitted_as_relates_to_crossrefs(tmp_path):
+    """Regression: moc.py handled coreIdeas and childRefs but never links[],
+    so every MoC-sourced RELATES_TO was silently dropped on restore (201
+    edges on the 2026-09-03 powerhouse-knowledge snapshot)."""
+    id_map = _idmap(tmp_path)
+    id_map.set("note-old", "note-new")
+    state = {"title": "T", "description": "D", "orientation": "O", "tier": "TOPIC",
+             "coreIdeas": [], "tensions": [], "openQuestions": [], "childRefs": [],
+             "links": [{"id": "lnk-1-rel", "linkType": "RELATES_TO",
+                        "targetDocumentId": "note-old", "targetTitle": "n"}]}
+    _, crossrefs = build_actions(state, id_map)
+    assert len(crossrefs) == 1
+    assert crossrefs[0]["type"] == "ADD_RELATIONSHIP"
+    assert crossrefs[0]["input"] == {"targetId": "note-new",
+                                     "relationshipType": "RELATES_TO"}
+
+
+def test_link_metadata_reason_and_confidence_preserved(tmp_path):
+    id_map = _idmap(tmp_path); id_map.set("t", "T2")
+    state = {"title": "T", "description": "D", "orientation": "O", "tier": "TOPIC",
+             "coreIdeas": [], "tensions": [], "openQuestions": [], "childRefs": [],
+             "links": [{"id": "l", "linkType": "BUILDS_ON", "targetDocumentId": "t",
+                        "reason": "because X extends Y", "confidence": "grounded"}]}
+    _, crossrefs = build_actions(state, id_map)
+    assert crossrefs[0]["input"]["relationshipType"] == "BUILDS_ON"
+    assert crossrefs[0]["input"]["metadata"] == {"reason": "because X extends Y",
+                                                 "confidence": "grounded"}
+
+
+def test_unmapped_link_target_dropped_when_requested(tmp_path):
+    state = {"title": "T", "description": "D", "orientation": "O", "tier": "TOPIC",
+             "coreIdeas": [], "tensions": [], "openQuestions": [], "childRefs": [],
+             "links": [{"id": "l", "linkType": "RELATES_TO", "targetDocumentId": "gone"}]}
+    _, dropped = build_actions(state, _idmap(tmp_path), drop_unmapped=True)
+    assert dropped == []
+    _, kept = build_actions(state, _idmap(tmp_path), drop_unmapped=False)
+    assert kept[0]["input"]["targetId"] == "gone"

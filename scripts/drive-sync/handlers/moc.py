@@ -72,6 +72,28 @@ def build_actions(
             "addedAt": t.get("addedAt") or now,
         }))
 
+    # Plain links reference notes or other mocs — emit ADD_RELATIONSHIP.
+    # Without this loop every MoC-sourced RELATES_TO edge is silently
+    # dropped on restore: `coreIdeas` and `childRefs` below cover only
+    # CORE_IDEA and CHILD_MOC, so a MoC's supplementary links vanished
+    # while Phase 4 still reported success (201 edges on the 2026-09-03
+    # powerhouse-knowledge snapshot). Mirrors handlers/knowledge_note.py.
+    for ln in state.get("links") or []:
+        target_old = ln.get("targetDocumentId")
+        target_new = id_map.get(target_old) if target_old else None
+        if target_new is None:
+            if drop_unmapped:
+                continue
+            target_new = target_old
+        inp = {
+            "targetId": target_new,
+            "relationshipType": ln.get("linkType") or "RELATES_TO",
+        }
+        metadata = {k: ln[k] for k in ("reason", "confidence") if ln.get(k)}
+        if metadata:
+            inp["metadata"] = metadata
+        crossref.append({"type": "ADD_RELATIONSHIP", "scope": "document", "input": inp})
+
     # Child mocs reference other mocs — emit ADD_RELATIONSHIP
     for child in state.get("childRefs") or []:
         new_child = id_map.get(child)
