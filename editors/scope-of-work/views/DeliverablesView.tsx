@@ -2,10 +2,12 @@ import { actions } from "document-models/scope-of-work";
 import { generateId } from "document-model/core";
 import { useState } from "react";
 import { DeliverableTable } from "../components/DeliverableRow.js";
+import { CopyableId } from "../components/ui.js";
 import { useEditor } from "../lib/context.js";
 import {
   DELIVERABLE_STATUSES,
   STATUS_LABEL,
+  agentById,
   allMilestones,
   emptyFilters,
   milestoneOf,
@@ -14,11 +16,11 @@ import {
 } from "../lib/model.js";
 
 export function DeliverablesView({ initial }: { initial?: Partial<Filters> }) {
-  const { state, dispatch, select } = useEditor();
+  const { state, dispatch, select, documentId } = useEditor();
   const [f, setF] = useState<Filters>({ ...emptyFilters, ...initial });
   const set = (patch: Partial<Filters>) =>
     setF((prev) => ({ ...prev, ...patch }));
-  const active = f.status || f.project || f.milestone || f.q;
+  const active = f.status || f.project || f.milestone || f.owner || f.q;
 
   const ds = state.deliverables.filter((d) => {
     if (f.status && d.status !== f.status) return false;
@@ -32,11 +34,13 @@ export function DeliverablesView({ initial }: { initial?: Partial<Filters> }) {
         : f.milestone !== "" && m?.milestone.id !== f.milestone
     )
       return false;
-    if (
-      f.q &&
-      !`${d.title} ${d.code}`.toLowerCase().includes(f.q.toLowerCase())
-    )
+    if (f.owner === "__none" ? !!d.owner : f.owner !== "" && d.owner !== f.owner)
       return false;
+    if (f.q) {
+      const ownerName = agentById(state, d.owner)?.name ?? "";
+      const hay = `${d.title} ${d.code} ${ownerName}`.toLowerCase();
+      if (!hay.includes(f.q.toLowerCase())) return false;
+    }
     return true;
   });
 
@@ -48,7 +52,13 @@ export function DeliverablesView({ initial }: { initial?: Partial<Filters> }) {
 
   return (
     <div className="doc">
-      <div className="eyebrow">All deliverables</div>
+      <div className="eyebrow eyebrow-row">
+        <span>All deliverables</span>
+        {/* A list has no one deliverable to identify, so this is the
+            document doing the listing — each row carries its own id in
+            the inspector. */}
+        <CopyableId id={documentId} label="Scope of work id" />
+      </div>
       <h1 className="title">
         {ds.length}{" "}
         <span className="faint" style={{ fontWeight: 500 }}>
@@ -57,7 +67,7 @@ export function DeliverablesView({ initial }: { initial?: Partial<Filters> }) {
       </h1>
       <div className="filters">
         <input
-          placeholder="Search title or code…"
+          placeholder="Search title, code, or owner…"
           value={f.q}
           onChange={(e) => set({ q: e.target.value })}
           aria-label="Search"
@@ -97,6 +107,19 @@ export function DeliverablesView({ initial }: { initial?: Partial<Filters> }) {
           {allMilestones(state).map((x) => (
             <option key={x.milestone.id} value={x.milestone.id}>
               {x.milestone.sequenceCode} {x.milestone.title}
+            </option>
+          ))}
+        </select>
+        <select
+          value={f.owner}
+          onChange={(e) => set({ owner: e.target.value })}
+          aria-label="Owner filter"
+        >
+          <option value="">Any owner</option>
+          <option value="__none">Unassigned</option>
+          {state.contributors.map((a) => (
+            <option key={a.id} value={a.id}>
+              {a.name}
             </option>
           ))}
         </select>

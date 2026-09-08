@@ -5,6 +5,7 @@ import type {
 } from "document-models/scope-of-work";
 import { createContext, useContext } from "react";
 import type { View } from "./model.js";
+import type { InspectorLayout } from "./prefs.js";
 
 export type Dispatch = (
   action: ScopeOfWorkAction | ScopeOfWorkAction[],
@@ -29,9 +30,9 @@ export type EditorContextValue = {
   selected: string | null;
   select: (deliverableId: string | null) => void;
   today: Date;
-  /** Inspector shown as a focused modal instead of the side panel. */
-  expanded: boolean;
-  toggleExpanded: () => void;
+  /** How the deliverable inspector opens. Remembered per browser. */
+  inspectorLayout: InspectorLayout;
+  toggleInspectorLayout: () => void;
   /** In-editor confirmation. Resolves true if the person confirms. */
   confirm: ConfirmFn;
 };

@@ -29,6 +29,13 @@ import { TeamView } from "../views/TeamView.js";
 import { WbsView } from "../views/WbsView.js";
 import { readSowIntent } from "../../shared/sow-intent.js";
 import { locate } from "../lib/model.js";
+import {
+  readInspectorLayout,
+  writeInspectorLayout,
+  readRailOpen,
+  writeRailOpen,
+  type InspectorLayout,
+} from "../lib/prefs.js";
 import { OutlineRail } from "./OutlineRail.js";
 import { ConfirmDialog, Toast } from "./ui.js";
 
@@ -60,7 +67,9 @@ export function Shell({
   });
   const [view, setView] = useState<View>(initial.view);
   const [selected, setSelected] = useState<string | null>(initial.selected);
-  const [expanded, setExpanded] = useState(false);
+  const [inspectorLayout, setInspectorLayout] =
+    useState<InspectorLayout>(readInspectorLayout);
+  const [railOpen, setRailOpen] = useState(readRailOpen);
   const [error, setError] = useState<string | null>(null);
   const [seenOps, setSeenOps] = useState(
     () => globalOperations(document).length,
@@ -76,7 +85,6 @@ export function Shell({
   }, []);
   const close = useCallback(() => {
     setSelected(null);
-    setExpanded(false);
   }, []);
   const select = useCallback(
     (id: string | null) => {
@@ -173,10 +181,20 @@ export function Shell({
   );
   const go = useCallback((v: View) => setView(v), []);
   const today = useMemo(() => new Date(), []);
-  const toggleExpanded = useCallback(() => {
+  const toggleInspectorLayout = useCallback(() => {
     consumeClick();
-    setExpanded((v) => !v);
+    setInspectorLayout((v) => (v === "modal" ? "sidebar" : "modal"));
   }, [consumeClick]);
+  useEffect(() => {
+    writeInspectorLayout(inspectorLayout);
+  }, [inspectorLayout]);
+  const toggleRail = useCallback(() => {
+    consumeClick();
+    setRailOpen((v) => !v);
+  }, [consumeClick]);
+  useEffect(() => {
+    writeRailOpen(railOpen);
+  }, [railOpen]);
   const pendingConfirm = useRef<{
     resolve: (ok: boolean) => void;
   } | null>(null);
@@ -203,8 +221,8 @@ export function Shell({
       selected,
       select,
       today,
-      expanded,
-      toggleExpanded,
+      inspectorLayout,
+      toggleInspectorLayout,
       confirm,
     }),
     [
@@ -216,11 +234,14 @@ export function Shell({
       selected,
       select,
       today,
-      expanded,
-      toggleExpanded,
+      inspectorLayout,
+      toggleInspectorLayout,
       confirm,
     ],
   );
+
+  const showSidebar = selected !== null && inspectorLayout === "sidebar";
+  const showModal = selected !== null && inspectorLayout === "modal";
 
   const canvas = (() => {
     switch (view.kind) {
@@ -231,7 +252,12 @@ export function Shell({
       case "project":
         return <ProjectView id={view.id} />;
       case "deliverables":
-        return <DeliverablesView initial={view.filters} />;
+        return (
+          <DeliverablesView
+            key={JSON.stringify(view.filters ?? {})}
+            initial={view.filters}
+          />
+        );
       case "wbs":
         return <WbsView projectId={view.projectId} />;
       case "team":
@@ -246,9 +272,9 @@ export function Shell({
       <style>{SOW_CSS}</style>
       <div
         ref={rootRef}
-        className={`sow ${selected && !expanded ? "" : "no-inspector"}`}
+        className={`sow ${showSidebar ? "" : "no-inspector"}${railOpen ? "" : " no-rail"}`}
       >
-        <OutlineRail />
+        <OutlineRail railOpen={railOpen} onToggle={toggleRail} />
         <main
           className="canvas"
           key={`${view.kind}:${"id" in view ? view.id : ""}`}
@@ -256,9 +282,9 @@ export function Shell({
           {canvas}
         </main>
         <aside ref={inspectorRef} className="inspector" aria-label="Inspector">
-          {selected && !expanded && <DeliverableInspector id={selected} />}
+          {showSidebar && selected && <DeliverableInspector id={selected} />}
         </aside>
-        {selected && expanded && (
+        {showModal && selected && (
           <div
             className="sow-scrim"
             role="presentation"

@@ -1,7 +1,7 @@
 import { actions } from "document-models/scope-of-work";
 import { generateId } from "document-model/core";
 import { DeliverableTable } from "../components/DeliverableRow.js";
-import { Avatar, InlineText } from "../components/ui.js";
+import { Avatar, CopyableId, InlineText } from "../components/ui.js";
 import { useEditor } from "../lib/context.js";
 import {
   LOCKED_HINT,
@@ -74,7 +74,10 @@ export function RoadmapView({ id }: { id: string }) {
 
   return (
     <div className="doc">
-      <div className="eyebrow">Roadmap</div>
+      <div className="eyebrow eyebrow-row">
+        <span>Roadmap</span>
+        <CopyableId id={r.id} label="Roadmap id (inside this scope of work)" />
+      </div>
       <h1 className="title">
         <InlineText
           ariaLabel="Roadmap title"

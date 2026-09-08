@@ -1,7 +1,7 @@
 import { actions } from "document-models/scope-of-work";
 import { generateId } from "document-model/core";
 import { DeliverableTable } from "../components/DeliverableRow.js";
-import { Avatar, InlineText, Kpi } from "../components/ui.js";
+import { Avatar, CopyableId, InlineText, Kpi } from "../components/ui.js";
 import { useEditor } from "../lib/context.js";
 import {
   LOCKED_HINT,
@@ -57,19 +57,22 @@ export function MilestoneView({ id }: { id: string }) {
 
   return (
     <div className="doc">
-      <div className="eyebrow">
-        <button
-          className="faint"
-          onClick={() => go({ kind: "roadmap", id: r.id })}
-          style={{
-            font: "inherit",
-            letterSpacing: "inherit",
-            textTransform: "inherit",
-          }}
-        >
-          {r.title}
-        </button>{" "}
-        · milestone
+      <div className="eyebrow eyebrow-row">
+        <span>
+          <button
+            className="faint"
+            onClick={() => go({ kind: "roadmap", id: r.id })}
+            style={{
+              font: "inherit",
+              letterSpacing: "inherit",
+              textTransform: "inherit",
+            }}
+          >
+            {r.title}
+          </button>{" "}
+          · milestone
+        </span>
+        <CopyableId id={m.id} label="Milestone id (inside this scope of work)" />
       </div>
       <div style={{ display: "flex", alignItems: "baseline", gap: 14 }}>
         <span

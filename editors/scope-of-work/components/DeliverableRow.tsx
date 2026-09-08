@@ -35,9 +35,10 @@ export function DeliverableTable({
             <th>Code</th>
             <th className="grow">Deliverable</th>
             <th>Status</th>
+            <th>Owner</th>
             <th className="prog">Progress</th>
             <th className="num">Budget</th>
-            <th aria-label="Owner and actions" />
+            <th aria-label="Actions" />
           </tr>
         </thead>
       )}
@@ -59,6 +60,7 @@ export function DeliverableRow({
   const { state, dispatch, selected, select, confirm } = useEditor();
   const m = milestoneOf(state, d.id);
   const p = projectOf(state, d.id);
+  const owner = agentById(state, d.owner);
   const pct = pctOf(d);
   const editable = isEditable(state);
   const remove = async () => {
@@ -96,6 +98,16 @@ export function DeliverableRow({
       <td>
         <StatusChip status={d.status} />
       </td>
+      <td>
+        {owner ? (
+          <span className="owner">
+            <Avatar agent={owner} />
+            <span>{owner.name}</span>
+          </span>
+        ) : (
+          <span className="faint">Unassigned</span>
+        )}
+      </td>
       <td className="prog">
         <Bar pct={pct} tone={d.status === "BLOCKED" ? "signal" : undefined} />
         <div className="faint" style={{ fontSize: 11, marginTop: 3 }}>
@@ -110,7 +122,6 @@ export function DeliverableRow({
         )}
       </td>
       <td className="end">
-        <Avatar agent={agentById(state, d.owner)} />
         {editable ? (
           <button
             className="rm"

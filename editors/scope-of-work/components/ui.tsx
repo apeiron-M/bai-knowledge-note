@@ -3,7 +3,16 @@ import type {
   Deliverable,
   ScopeOfWorkState,
 } from "document-models/scope-of-work";
-import { useEffect, useRef, useState, type ReactNode } from "react";
+import {
+  useEffect,
+  useRef,
+  useState,
+  // Aliased: ConfirmDialog below binds a real `keydown` listener and needs
+  // the DOM KeyboardEvent, which a bare `type KeyboardEvent` import shadows.
+  type KeyboardEvent as ReactKeyboardEvent,
+  type MouseEvent as ReactMouseEvent,
+  type ReactNode,
+} from "react";
 import { STATUS_LABEL, badgesFor, initials } from "../lib/model.js";
 
 export function StatusChip({ status }: { status: string }) {
@@ -374,5 +383,94 @@ export function ConfirmDialog({
         </div>
       </div>
     </div>
+  );
+}
+
+const COPIED_FEEDBACK_MS = 1_200;
+
+/**
+ * A document id, small and monospaced, that copies itself on click.
+ *
+ * The id is the handle for everything outside this editor — an envelope's
+ * `wbsRef`, a `switchboard docs get`, a GraphQL query — so it is shown in
+ * full rather than truncated: a half-shown uuid cannot be checked against
+ * the one someone is holding, and copy is the whole point of showing it.
+ *
+ * Two details are load-bearing. It renders inside `.eyebrow`, whose
+ * `text-transform:uppercase` would mangle a uuid, so `.doc-id` resets it.
+ * And `navigator.clipboard` is typed non-nullable but is absent over plain
+ * http, so the guard is real rather than defensive — without it the click
+ * throws instead of doing nothing.
+ */
+export function CopyableId({
+  id,
+  label = "Document id",
+}: {
+  id: string;
+  label?: string;
+}) {
+  const [copied, setCopied] = useState(false);
+  const timer = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  useEffect(
+    () => () => {
+      if (timer.current) clearTimeout(timer.current);
+    },
+    [],
+  );
+
+  const copy = (e: ReactMouseEvent | ReactKeyboardEvent) => {
+    e.stopPropagation();
+    e.preventDefault();
+    const clipboard = (navigator as { clipboard?: Clipboard }).clipboard;
+    if (!clipboard) return;
+    void clipboard.writeText(id).then(() => {
+      setCopied(true);
+      if (timer.current) clearTimeout(timer.current);
+      timer.current = setTimeout(() => setCopied(false), COPIED_FEEDBACK_MS);
+    });
+  };
+
+  if (!id) return null;
+
+  return (
+    <span
+      role="button"
+      tabIndex={0}
+      className="doc-id"
+      onClick={copy}
+      onKeyDown={(e) => {
+        if (e.key === "Enter" || e.key === " ") copy(e);
+      }}
+      title={`${label}\n${id}\n\nClick to copy`}
+      aria-label={`${label} ${id} \u2014 click to copy`}
+      data-copied={copied ? "" : undefined}
+    >
+      <span className="doc-id-text">{id}</span>
+      <svg
+        className="doc-id-icon"
+        viewBox="0 0 14 14"
+        width="11"
+        height="11"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="1.4"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        aria-hidden="true"
+      >
+        {copied ? (
+          <polyline points="2.5,7.5 5.5,10.5 11.5,4" />
+        ) : (
+          <>
+            <rect x="4.75" y="4.75" width="7.5" height="7.5" rx="1.5" />
+            <path d="M9.25 2.25H3.25a1.5 1.5 0 0 0-1.5 1.5v6" />
+          </>
+        )}
+      </svg>
+      <span className="doc-id-said" aria-live="polite">
+        {copied ? "Copied" : ""}
+      </span>
+    </span>
   );
 }

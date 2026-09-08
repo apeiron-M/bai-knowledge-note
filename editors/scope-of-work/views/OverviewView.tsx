@@ -23,11 +23,11 @@ import {
   STATUS_LABEL,
   isClosed,
 } from "../lib/model.js";
-import { Avatar, Bar, InlineText, Kpi } from "../components/ui.js";
+import { Avatar, Bar, CopyableId, InlineText, Kpi } from "../components/ui.js";
 import { agentById } from "../lib/model.js";
 
 export function OverviewView() {
-  const { state, dispatch, go, today } = useEditor();
+  const { state, dispatch, go, today, documentId } = useEditor();
   const all = rollup(
     state,
     state.deliverables.map((d) => d.id),
@@ -45,7 +45,10 @@ export function OverviewView() {
 
   return (
     <div className="doc">
-      <div className="eyebrow">Scope of work</div>
+      <div className="eyebrow eyebrow-row">
+        <span>Scope of work</span>
+        <CopyableId id={documentId} label="Scope of work id" />
+      </div>
       <h1 className="title">
         <InlineText
           ariaLabel="Title"
@@ -125,26 +128,25 @@ export function OverviewView() {
 
       <section className="section">
         <div className="hd">
-          <h2>Delivery</h2>
-          <span className="muted">
-            {ms.length} milestone{ms.length === 1 ? "" : "s"} across{" "}
-            {state.roadmaps.length} roadmap
-            {state.roadmaps.length === 1 ? "" : "s"}
-          </span>
+          <h2>Roadmaps</h2>
           <div className="grow" />
-          {state.roadmaps[0] && (
-            <button
-              className="btn sm"
-              onClick={() => go({ kind: "roadmap", id: state.roadmaps[0].id })}
-            >
-              Open roadmap
-            </button>
-          )}
+          <span className="faint" style={{ fontSize: 12 }}>
+            click a row to open
+          </span>
+        </div>
+        <RoadmapsSummary />
+      </section>
+
+      <section className="section">
+        <div className="hd">
+          <h2>Delivery</h2>
         </div>
         {ms.length === 0 ? (
           <div className="card empty">
-            <b>No milestones yet</b>Add a roadmap from the outline, then give it
-            dated milestones.
+            <b>No milestones yet</b>
+            {state.roadmaps.length === 0
+              ? "Add a roadmap from the outline, then give it dated milestones."
+              : "Open a roadmap and add dated milestones."}
           </div>
         ) : (
           <div className="spine">
@@ -188,14 +190,6 @@ export function OverviewView() {
         <PlanMatrix />
         <div className="legend" aria-label="How to read the plan">
           <span>
-            <b>Rows</b> projects — who pays
-          </span>
-          <span className="sep" />
-          <span>
-            <b>Columns</b> milestones — when it lands
-          </span>
-          <span className="sep" />
-          <span>
             <b>Cards</b> deliverables:
             <i className="DELIVERED" />
             delivered
@@ -235,6 +229,85 @@ export function OverviewView() {
           </div>
         </section>
       )}
+    </div>
+  );
+}
+
+function RoadmapsSummary() {
+  const { state, go, today } = useEditor();
+  if (state.roadmaps.length === 0) {
+    return (
+      <div className="card empty">
+        <b>No roadmaps yet</b>Add a roadmap from the outline, then give it dated
+        milestones.
+      </div>
+    );
+  }
+  const t = today.toISOString().slice(0, 10);
+  return (
+    <div className="rows">
+      <table className="tbl">
+        <thead>
+          <tr>
+            <th className="grow">Roadmap</th>
+            <th className="num">Milestones</th>
+            <th>Next</th>
+            <th className="prog">Progress</th>
+          </tr>
+        </thead>
+        <tbody>
+          {state.roadmaps.map((r) => {
+            const ids = r.milestones.flatMap((m) => m.scope?.deliverables ?? []);
+            const ru = rollup(state, ids);
+            const dated = r.milestones
+              .slice()
+              .sort((a, b) =>
+                (a.deliveryTarget || "9999").localeCompare(
+                  b.deliveryTarget || "9999",
+                ),
+              );
+            const next = dated.find((m) => m.deliveryTarget >= t);
+            return (
+              <tr
+                key={r.id}
+                tabIndex={0}
+                onClick={() => go({ kind: "roadmap", id: r.id })}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter" || e.key === " ") {
+                    e.preventDefault();
+                    go({ kind: "roadmap", id: r.id });
+                  }
+                }}
+              >
+                <td className="grow">
+                  <div className="t">{r.title || "Untitled"}</div>
+                </td>
+                <td className="num">{r.milestones.length}</td>
+                <td>
+                  {next ? (
+                    <>
+                      <span className="mono faint">{next.sequenceCode}</span>{" "}
+                      {dateFmt(next.deliveryTarget)}
+                    </>
+                  ) : (
+                    <span className="faint">
+                      {r.milestones.length === 0
+                        ? "no milestones"
+                        : "nothing scheduled"}
+                    </span>
+                  )}
+                </td>
+                <td className="prog">
+                  <Bar pct={ru.pct} />
+                  <div className="faint" style={{ fontSize: 12, marginTop: 4 }}>
+                    {ru.done}/{ru.total} done
+                  </div>
+                </td>
+              </tr>
+            );
+          })}
+        </tbody>
+      </table>
     </div>
   );
 }
@@ -317,7 +390,21 @@ function PlanMatrix() {
         gridTemplateColumns: `150px repeat(${cols.length}, minmax(0, 1fr))`,
       }}
     >
-      <div className="c h" />
+      <div
+        className="c h key"
+        aria-label="Projects down the side, milestones across the top"
+      >
+        <svg
+          className="key-diag"
+          viewBox="0 0 1 1"
+          preserveAspectRatio="none"
+          aria-hidden="true"
+        >
+          <line x1="0" y1="0" x2="1" y2="1" />
+        </svg>
+        <span className="key-col">Milestones</span>
+        <span className="key-row">Projects</span>
+      </div>
       {cols.map((c) => (
         <div key={c.id} className="c h">
           {c.code && (

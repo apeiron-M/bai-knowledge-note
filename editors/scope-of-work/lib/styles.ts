@@ -4,10 +4,13 @@ export const SOW_CSS = `
   --meridian:var(--bai-status-canonical);--meridian-soft:color-mix(in srgb,var(--bai-status-canonical) 16%,transparent);--signal:var(--bai-status-review);--signal-soft:color-mix(in srgb,var(--bai-status-review) 16%,transparent);--ember:rgb(248,113,113);--ember-soft:rgba(248,113,113,.15);--slate:var(--bai-text-muted);--slate-soft:var(--bai-hover);--focus:var(--bai-accent);
   --r:10px;--display:"Bricolage Grotesque",Inter,system-ui,sans-serif;--ui:Inter,system-ui,sans-serif;--mono:"JetBrains Mono",ui-monospace,SFMono-Regular,Menlo,monospace;
   font:14px/1.45 var(--ui);color:var(--ink);background:var(--canvas);-webkit-font-smoothing:antialiased;
-  display:grid;grid-template-columns:264px minmax(0,1fr) 372px;height:calc(100vh - 96px);min-height:420px}
+  display:grid;grid-template-columns:264px minmax(0,1fr) 372px;grid-template-rows:minmax(0,1fr);grid-template-areas:"rail canvas inspector";overflow:visible;height:calc(100vh - 96px);min-height:420px}
 [data-bai-theme="dark"] .sow{color-scheme:dark}
 [data-bai-theme="light"] .sow{color-scheme:light}
 .sow.no-inspector{grid-template-columns:264px minmax(0,1fr) 0}
+.sow.no-rail{grid-template-columns:0 minmax(0,1fr) 372px}
+.sow.no-rail.no-inspector{grid-template-columns:0 minmax(0,1fr) 0}
+.sow.no-rail .rail{display:none}
 .sow *{box-sizing:border-box}
 .sow button:where(:not(.wbs-embed *)),.sow input:where(:not(.wbs-embed *)),.sow select:where(:not(.wbs-embed *)),.sow textarea:where(:not(.wbs-embed *)){font:inherit;color:inherit}
 .sow button:where(:not(.wbs-embed *)){cursor:pointer;background:none;border:0;padding:0}
@@ -19,18 +22,28 @@ export const SOW_CSS = `
 .sow .btn.ghost{border-color:transparent} .sow .btn.sm{height:26px;padding:0 9px;font-size:12.5px;border-radius:7px} .sow .btn.danger{color:var(--ember)}
 /* collapsible document toolbar — zero height when folded; the handle floats over the canvas's top padding */
 .sow-tb{position:relative;z-index:6}
-.sow-tb-handle{position:absolute;left:50%;top:100%;transform:translateX(-50%);display:inline-flex;align-items:center;gap:4px;height:16px;padding:0 9px;border:1px solid var(--bai-border);border-top:0;border-radius:0 0 9px 9px;background:var(--bai-surface);color:var(--bai-text-faint);font:10.5px/1 Inter,system-ui,sans-serif;letter-spacing:.03em;cursor:pointer;opacity:.75;transition:opacity .12s ease,color .12s ease,background .12s ease}
-.sow-tb-handle:hover,.sow-tb-handle:focus-visible{opacity:1;color:var(--bai-text-secondary);background:var(--bai-hover)}
-.sow-tb-handle:focus-visible{outline:2px solid var(--bai-accent);outline-offset:1px}
-.sow-tb-chev{display:inline-block;font-size:10px;transition:transform .15s ease}
+.sow .sow-rail-wrap{grid-area:rail;position:relative;min-width:0;min-height:0;height:100%}
+/* One drawer handle, hung from two edges. The toolbar's hangs from the bar's
+   bottom edge, the rail's from the rail's right edge; both are absolutely
+   positioned so a hover that widens the label never re-lays-out the grid the
+   canvas lives in — the difference between a smooth reveal and a judder.
+   The rail selectors carry an extra 'button' so they outrank the .sow button reset. */
+.sow-tb-handle,.sow button.sow-rail-handle{position:absolute;z-index:6;display:inline-flex;align-items:center;gap:4px;height:14px;padding:0 7px;border:1px solid var(--bai-border);background:var(--bai-surface);color:var(--bai-text-faint);font:10px/1 Inter,system-ui,sans-serif;letter-spacing:.03em;white-space:nowrap;cursor:pointer;opacity:.75;transition:opacity .12s ease,color .12s ease,background .12s ease}
+.sow-tb-handle{left:50%;top:100%;transform:translateX(-50%);border-top:0;border-radius:0 0 8px 8px}
+.sow button.sow-rail-handle{left:100%;top:20px;border-left:0;border-radius:0 8px 8px 0}
+.sow-tb-handle:hover,.sow-tb-handle:focus-visible,.sow button.sow-rail-handle:hover,.sow button.sow-rail-handle:focus-visible{opacity:1;color:var(--bai-text-secondary);background:var(--bai-hover)}
+.sow-tb-handle:focus-visible,.sow button.sow-rail-handle:focus-visible{outline:2px solid var(--bai-accent);outline-offset:1px}
+.sow-tb-chev,.sow-rail-chev{display:inline-block;font-size:9px;transition:transform .15s ease}
 .sow-tb-handle.open .sow-tb-chev{transform:rotate(180deg)}
-.sow-tb-label{max-width:0;overflow:hidden;white-space:nowrap;transition:max-width .15s ease}
-.sow-tb-handle:hover .sow-tb-label,.sow-tb-handle:focus-visible .sow-tb-label,.sow-tb-handle.open .sow-tb-label{max-width:60px}
+.sow-rail-chev{transform:rotate(-90deg)}
+.sow-rail-handle.open .sow-rail-chev{transform:rotate(90deg)}
+.sow-tb-label,.sow-rail-label{display:inline-block;max-width:0;overflow:hidden;white-space:nowrap;transition:max-width .15s ease}
+.sow-tb-handle:hover .sow-tb-label,.sow-tb-handle:focus-visible .sow-tb-label,.sow-tb-handle.open .sow-tb-label,.sow-rail-handle:hover .sow-rail-label,.sow-rail-handle:focus-visible .sow-rail-label{max-width:60px}
 /* embedded WBS (wbs-editor components, tailwind + --bai vars): give tailwind a sane base and keep .sow resets away */
 .sow .wbs-embed{font:13px/1.5 var(--ui);color:var(--bai-text)}
 .sow .wbs-embed button{cursor:pointer}
 /* rail */
-.sow .rail{border-right:1px solid var(--rule);background:var(--panel);overflow:auto;padding:12px 10px}
+.sow .rail{min-width:0;min-height:0;height:100%;border-right:1px solid var(--rule);background:var(--panel);overflow:auto;padding:12px 10px}
 .sow .sect{margin-top:14px;padding:0 4px 0 2px;font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-3);display:flex;align-items:center;justify-content:space-between;gap:8px}
 .sow .sect button{color:var(--ink-3);font-size:12px} .sow .sect button:hover{color:var(--ink)}
 .sow .sect-toggle{display:inline-flex;align-items:center;gap:2px;min-width:0;font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:inherit}
@@ -50,9 +63,18 @@ export const SOW_CSS = `
 .sow .ring{--p:0;width:14px;height:14px;border-radius:50%;background:conic-gradient(var(--meridian) calc(var(--p)*1%),var(--rule) 0);position:relative;flex:none}
 .sow .ring::after{content:"";position:absolute;inset:3px;border-radius:50%;background:var(--panel)}
 /* canvas */
-.sow .canvas{overflow:auto;padding:28px 36px 80px}
+.sow .canvas{grid-area:canvas;overflow:auto;padding:28px 36px 80px}
 .sow .doc{max-width:980px;margin:0 auto}
 .sow .eyebrow{font-size:11.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-3);font-weight:600}
+.sow .eyebrow-row{display:flex;align-items:center;gap:10px;min-width:0;flex-wrap:wrap}
+.sow .doc-id{display:inline-flex;align-items:center;gap:5px;min-width:0;max-width:100%;font-family:var(--mono);font-size:10.5px;font-weight:500;letter-spacing:0;text-transform:none;color:var(--ink-3);background:transparent;border:1px solid transparent;border-radius:6px;padding:1px 5px;cursor:pointer;transition:background .12s ease,color .12s ease,border-color .12s ease}
+.sow .doc-id:hover{background:var(--panel-2);color:var(--ink-2);border-color:var(--rule-2)}
+.sow .doc-id:focus-visible{outline:0;border-color:var(--focus);color:var(--ink-2)}
+.sow .doc-id[data-copied]{color:var(--meridian);border-color:transparent;background:var(--meridian-soft)}
+.sow .doc-id-text{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.sow .doc-id-icon{flex:none;opacity:.75}
+.sow .doc-id:hover .doc-id-icon{opacity:1}
+.sow .doc-id-said{position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%);white-space:nowrap}
 .sow h1.title{font-family:var(--display);font-size:34px;font-weight:700;letter-spacing:-.02em;line-height:1.1;margin:6px 0 8px}
 .sow h2:where(:not(.wbs-embed *)){font-family:var(--display);font-size:20px;font-weight:650;letter-spacing:-.01em;margin:0}
 .sow h3:where(:not(.wbs-embed *)){font-size:14px;font-weight:600;margin:0}
@@ -95,6 +117,12 @@ export const SOW_CSS = `
 .sow .matrix{display:grid;border:1px solid var(--rule);border-radius:var(--r);overflow:hidden;background:var(--panel)}
 .sow .matrix .c{padding:10px;border-right:1px solid var(--rule);border-bottom:1px solid var(--rule);min-height:64px;min-width:0}
 .sow .matrix .c.h{background:var(--panel-2);font-size:12px;color:var(--ink-2);min-height:0}
+.sow .matrix .c.key{position:relative;overflow:hidden;padding:0;min-height:72px}
+.sow .matrix .key-diag{position:absolute;inset:0;width:100%;height:100%;display:block;pointer-events:none}
+.sow .matrix .key-diag line{stroke:var(--rule);stroke-width:1;vector-effect:non-scaling-stroke}
+.sow .matrix .key-col,.sow .matrix .key-row{position:absolute;z-index:1;font-size:11px;font-weight:500;color:var(--ink-3);line-height:1.2}
+.sow .matrix .key-col{top:8px;right:10px;text-align:right}
+.sow .matrix .key-row{bottom:8px;left:10px}
 .sow .matrix .c.rh{background:var(--panel-2);font-size:12.5px}
 .sow .matrix .rh .code{font-family:var(--mono);font-size:11px;color:var(--ink-3)} .sow .matrix .rh b{display:block;font-weight:600;color:var(--ink)}
 .sow .matrix .rh .money{font-family:var(--mono);font-size:11.5px;color:var(--ink-2);margin-top:4px}
@@ -115,6 +143,7 @@ export const SOW_CSS = `
 .sow .tbl .num,.sow .tbl th.num{text-align:right;font-family:var(--mono);font-size:12.5px;font-variant-numeric:tabular-nums}
 .sow .tbl td.prog{min-width:150px}.sow .tbl td.code{max-width:120px;overflow:hidden;text-overflow:ellipsis}
 .sow .tbl td.end{text-align:right}.sow .tbl td.end>*{vertical-align:middle}.sow .tbl td.end .rm{margin-left:6px}
+.sow .tbl .owner{display:inline-flex;align-items:center;gap:8px}
 .sow .tbl tbody tr{cursor:pointer}.sow .tbl tbody tr:hover td{background:var(--panel-2)}.sow .tbl tbody tr.sel td{background:var(--slate-soft)}
 .sow .tbl tbody tr:focus-visible{outline:2px solid var(--focus);outline-offset:-2px}
 .sow .tbl tfoot td{font-weight:600;background:var(--panel-2);border-bottom:0}
@@ -143,7 +172,7 @@ export const SOW_CSS = `
 .sow .ck.ok{color:var(--ink)} .sow .ck.ok i{background:var(--meridian);border-color:var(--meridian);color:var(--bai-accent-text)}
 .sow .ck button{color:var(--focus);font-weight:500;margin-left:auto;font-size:12.5px}
 /* inspector */
-.sow .inspector{border-left:1px solid var(--rule);background:var(--panel);overflow:auto;min-width:0}
+.sow .inspector{grid-area:inspector;border-left:1px solid var(--rule);background:var(--panel);overflow:auto;min-width:0}
 .sow.no-inspector .inspector{display:none}
 .sow .insp-hd{position:sticky;top:0;background:var(--panel);padding:14px 18px 10px;border-bottom:1px solid var(--rule);z-index:2}
 .sow .insp-hd .eyebrow{display:flex;justify-content:space-between;align-items:center}
@@ -194,7 +223,10 @@ export const SOW_CSS = `
 .sow-modal .insp-body{display:grid;grid-template-columns:1fr 1fr;column-gap:12px;padding-bottom:6px}
 .sow-modal .insp-body .col+.col{border-left:1px solid var(--rule)}
 .sow-modal .insp-hd input[aria-label=Title]{font-size:16px}
+.sow-modal textarea.in{min-height:250px;height:250px}
 .sow-modal .danger{grid-column:1/-1}
+/* The goal panel is one column; the inspector's 1040px would stretch its fields. */
+.sow-modal.sow-modal-goal{width:min(640px,100%)}
 .sow .toast{position:fixed;bottom:18px;left:50%;transform:translateX(-50%);background:var(--ink);color:var(--canvas);padding:9px 14px;border-radius:8px;font-size:13px;z-index:50;display:flex;gap:12px;align-items:center;max-width:70vw}
 .sow .toast.error{background:var(--ember);color:#fff} .sow .toast button{color:inherit;opacity:.8;font-weight:600}
 .sow .sow-confirm{position:fixed;inset:0;z-index:60;background:color-mix(in srgb,#11111b 50%,transparent);backdrop-filter:blur(4px);-webkit-backdrop-filter:blur(4px);display:flex;align-items:center;justify-content:center;padding:24px}
@@ -206,5 +238,5 @@ export const SOW_CSS = `
 .sow .sow-confirm-actions .btn.confirm-go:hover{opacity:.92}
 .sow kbd{font-family:var(--mono);font-size:11px;border:1px solid var(--rule-2);border-bottom-width:2px;border-radius:4px;padding:0 5px;color:var(--ink-2)}
 @media (prefers-reduced-motion:reduce){.sow *{transition:none!important}}
-@media (max-width:1180px){.sow{grid-template-columns:220px minmax(0,1fr) 320px}.sow .kpis{grid-template-columns:repeat(2,1fr)}}
+@media (max-width:1180px){.sow{grid-template-columns:220px minmax(0,1fr) 320px}.sow.no-inspector{grid-template-columns:220px minmax(0,1fr) 0}.sow.no-rail{grid-template-columns:0 minmax(0,1fr) 320px}.sow.no-rail.no-inspector{grid-template-columns:0 minmax(0,1fr) 0}.sow .kpis{grid-template-columns:repeat(2,1fr)}}
 `;

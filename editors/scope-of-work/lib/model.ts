@@ -13,12 +13,14 @@ export type Filters = {
   status: string;
   project: string;
   milestone: string;
+  owner: string;
   q: string;
 };
 export const emptyFilters: Filters = {
   status: "",
   project: "",
   milestone: "",
+  owner: "",
   q: "",
 };
 export type View =
@@ -420,7 +422,7 @@ export const checklist = (s: ScopeOfWorkState): Check[] => {
     {
       label: "Every deliverable has an owner",
       ok: live.length > 0 && live.every((d) => !!d.owner),
-      go: { kind: "deliverables" },
+      go: { kind: "deliverables", filters: { owner: "__none" } },
     },
   ];
 };

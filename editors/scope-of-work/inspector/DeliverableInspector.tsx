@@ -7,7 +7,13 @@ import { generateId } from "document-model/core";
 import { useEffect, useRef, useState } from "react";
 import { goalRollup } from "../../shared/project-status.js";
 import { LinkedWbsReader, subtreeOf } from "../lib/linked-wbs.js";
-import { Badges, Field, NumberInput, StatusChip } from "../components/ui.js";
+import {
+  Badges,
+  CopyableId,
+  Field,
+  NumberInput,
+  StatusChip,
+} from "../components/ui.js";
 import { useEditor } from "../lib/context.js";
 import {
   DELIVERABLE_STATUSES,
@@ -44,8 +50,8 @@ function InspectorBody({ d }: { d: Deliverable }) {
     state,
     dispatch,
     select,
-    expanded,
-    toggleExpanded,
+    inspectorLayout,
+    toggleInspectorLayout,
     confirm,
     go,
   } = useEditor();
@@ -134,16 +140,42 @@ function InspectorBody({ d }: { d: Deliverable }) {
   return (
     <>
       <div className="insp-hd">
+        {/* `.insp-hd .eyebrow` is already flex/space-between, so the
+            label and the id share a left group rather than becoming
+            flex siblings of the window buttons. minWidth:0 lets the id
+            ellipsise in the narrow side panel; it shows in full in the
+            modal, and copies in full either way. */}
         <div className="eyebrow">
-          <span>Deliverable</span>
+          <span
+            style={{
+              display: "inline-flex",
+              alignItems: "center",
+              gap: 10,
+              minWidth: 0,
+            }}
+          >
+            <span>Deliverable</span>
+            <CopyableId
+              id={d.id}
+              label="Deliverable id (inside this scope of work)"
+            />
+          </span>
           <span style={{ display: "inline-flex", gap: 10 }}>
             <button
               className="x"
-              onClick={toggleExpanded}
-              title={expanded ? "Back to the side panel" : "Expand to focus"}
-              aria-label={expanded ? "Collapse inspector" : "Expand inspector"}
+              onClick={toggleInspectorLayout}
+              title={
+                inspectorLayout === "modal"
+                  ? "Dock to the side panel — remembered as your default"
+                  : "Open as a modal — remembered as your default"
+              }
+              aria-label={
+                inspectorLayout === "modal"
+                  ? "Dock inspector to the side panel"
+                  : "Open inspector as a modal"
+              }
             >
-              {expanded ? "⤡" : "⤢"}
+              {inspectorLayout === "modal" ? "⤡" : "⤢"}
             </button>
             <button
               className="x"
@@ -368,7 +400,14 @@ function InspectorBody({ d }: { d: Deliverable }) {
                               {progress.finished}/{progress.total} goals done
                               {progress.blocked > 0 ? ` · ${progress.blocked} blocked` : ""}
                             </span>
-                            <button type="button" className="btn ghost sm" onClick={() => go({ kind: "wbs", projectId: p.id })}>
+                            <button
+                              type="button"
+                              className="btn ghost sm"
+                              onClick={() => {
+                                select(null);
+                                go({ kind: "wbs", projectId: p.id });
+                              }}
+                            >
                               Open work breakdown →
                             </button>
                           </div>

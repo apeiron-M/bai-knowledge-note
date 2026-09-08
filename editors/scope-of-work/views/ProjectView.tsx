@@ -3,6 +3,7 @@ import { generateId } from "document-model/core";
 import { useState } from "react";
 import {
   Badges,
+  CopyableId,
   InlineText,
   Kpi,
   NumberInput,
@@ -127,7 +128,13 @@ export function ProjectView({ id }: { id: string }) {
 
   return (
     <div className="doc">
-      <div className="eyebrow">Project</div>
+      <div className="eyebrow eyebrow-row">
+        <span>Project</span>
+        <CopyableId
+          id={p.id}
+          label="Envelope id (inside this scope of work; a WBS sowProjectId points here)"
+        />
+      </div>
       <div style={{ display: "flex", alignItems: "baseline", gap: 14 }}>
         <span
           className="mono"

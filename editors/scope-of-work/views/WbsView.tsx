@@ -2,9 +2,10 @@ import { actions } from "document-models/scope-of-work";
 import { generateId } from "document-model/core";
 import { setSelectedNode } from "@powerhousedao/reactor-browser";
 import type { Goal } from "document-models/work-breakdown-structure";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { GoalSidebar } from "../../wbs-editor/components/GoalSidebar.js";
 import { GoalTree } from "../../wbs-editor/components/GoalTree.js";
+import { CopyableId } from "../components/ui.js";
 import { useEditor } from "../lib/context.js";
 import { LinkedWbsReader } from "../lib/linked-wbs.js";
 import { OverviewView } from "./OverviewView.js";
@@ -21,9 +22,20 @@ import { OverviewView } from "./OverviewView.js";
  * offered for the full-page editor.
  */
 export function WbsView({ projectId }: { projectId: string }) {
-  const { state, dispatch: sowDispatch, go } = useEditor();
+  const { state, dispatch: sowDispatch, go, inspectorLayout, toggleInspectorLayout } =
+    useEditor();
   const p = state.projects.find((x) => x.id === projectId);
   const [selectedGoalId, setSelectedGoalId] = useState<string | null>(null);
+  // Same Esc-to-close the deliverable inspector has; bound only while a
+  // goal is open so an idle view adds no listener.
+  useEffect(() => {
+    if (!selectedGoalId) return;
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape") setSelectedGoalId(null);
+    };
+    globalThis.addEventListener("keydown", onKey);
+    return () => globalThis.removeEventListener("keydown", onKey);
+  }, [selectedGoalId]);
   if (!p) return <OverviewView />;
 
   const backToProject = (
@@ -75,7 +87,12 @@ export function WbsView({ projectId }: { projectId: string }) {
           const selectedGoal = selectedGoalId ? goals.find((g) => g.id === selectedGoalId) : undefined;
           return (
             <>
-              <div className="eyebrow">Work breakdown · {p.code}</div>
+              <div className="eyebrow eyebrow-row">
+                <span>Work breakdown · {p.code}</span>
+                {/* A real document id, unlike the OIDs the other views
+                    show: this is the linked bai/wbs document itself. */}
+                <CopyableId id={wbsRef} label="Work breakdown document id" />
+              </div>
               <div style={{ display: "flex", alignItems: "baseline", gap: 12, flexWrap: "wrap" }}>
                 <h1 className="title" style={{ flex: 1, minWidth: 240 }}>
                   {wbsDoc?.header.name ?? `${p.title} — WBS`}
@@ -111,7 +128,7 @@ export function WbsView({ projectId }: { projectId: string }) {
                       dispatch={dispatch}
                     />
                   </div>
-                  {selectedGoal && (
+                  {selectedGoal && inspectorLayout === "sidebar" && (
                     <div style={{ width: 360, flex: "none" }}>
                       <GoalSidebar
                         key={selectedGoal.id}
@@ -119,9 +136,38 @@ export function WbsView({ projectId }: { projectId: string }) {
                         allGoals={goals}
                         dispatch={dispatch}
                         onClose={() => setSelectedGoalId(null)}
+                        layout="sidebar"
+                        onToggleLayout={toggleInspectorLayout}
                       />
                     </div>
                   )}
+                </div>
+              )}
+              {/* Goal details open the way the deliverable inspector does:
+                  the same remembered preference, modal unless docked. */}
+              {selectedGoal && dispatch && inspectorLayout === "modal" && (
+                <div
+                  className="sow-scrim"
+                  role="presentation"
+                  onClick={() => setSelectedGoalId(null)}
+                >
+                  <div
+                    className="sow-modal sow-modal-goal"
+                    role="dialog"
+                    aria-modal="true"
+                    aria-label="Goal details"
+                    onClick={(e) => e.stopPropagation()}
+                  >
+                    <GoalSidebar
+                      key={selectedGoal.id}
+                      goal={selectedGoal}
+                      allGoals={goals}
+                      dispatch={dispatch}
+                      onClose={() => setSelectedGoalId(null)}
+                      layout="modal"
+                      onToggleLayout={toggleInspectorLayout}
+                    />
+                  </div>
                 </div>
               )}
             </>

@@ -16,7 +16,13 @@ const SECTIONS = {
 
 type OpenMap = Record<string, boolean>;
 
-export function OutlineRail() {
+export function OutlineRail({
+  railOpen,
+  onToggle,
+}: {
+  railOpen: boolean;
+  onToggle: () => void;
+}) {
   const { state, view, go, dispatch } = useEditor();
   const [open, setOpen] = useState<OpenMap>({});
   const is = (kind: string, id?: string) =>
@@ -84,7 +90,8 @@ export function OutlineRail() {
   };
 
   return (
-    <nav className="rail" aria-label="Outline">
+    <div className="sow-rail-wrap">
+      <nav id="sow-outline-rail" className="rail" aria-label="Outline">
       <button
         type="button"
         className={`node ${is("overview") ? "active" : ""}`}
@@ -221,7 +228,21 @@ export function OutlineRail() {
       >
         ◉ <span>Contributors</span>
       </Node>
-    </nav>
+      </nav>
+      <button
+        type="button"
+        className={`sow-rail-handle ${railOpen ? "open" : ""}`}
+        aria-expanded={railOpen}
+        aria-controls="sow-outline-rail"
+        title={railOpen ? "Hide outline" : "Show outline"}
+        onClick={onToggle}
+      >
+        <span className="sow-rail-chev" aria-hidden>
+          ▾
+        </span>
+        <span className="sow-rail-label">{railOpen ? "hide" : "outline"}</span>
+      </button>
+    </div>
   );
 }
 
