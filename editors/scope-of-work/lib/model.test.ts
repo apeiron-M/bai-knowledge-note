@@ -1,9 +1,23 @@
 import { describe, expect, it } from "vitest";
-import type { ScopeOfWorkState } from "document-models/scope-of-work";
+import type {
+  Deliverable,
+  Milestone,
+  ScopeOfWorkState,
+} from "document-models/scope-of-work";
 import {
+  deliveryHorizon,
+  isOverdue,
   locate,
+  milestoneIndex,
+  milestoneState,
   money,
   moneyAmount,
+  nextMilestone,
+  planMode,
+  planWindow,
+  projectIndex,
+  triage,
+  worstStatus,
 } from "./model.js";
 
 const set = (deliverables: string[]) => ({
@@ -67,5 +81,114 @@ describe("money formatting across fiat and tokens", () => {
   });
   it("exposes the bare amount for stacked layouts", () => {
     expect(moneyAmount(1234.5)).toBe("1,234.50");
+  });
+});
+
+describe("delivery horizon, triage and the plan window", () => {
+  const today = new Date("2026-09-08T12:00:00Z");
+  const dl = (id: string, status: Deliverable["status"]): Deliverable => ({
+    id, owner: null, icon: null, title: id, code: id.toUpperCase(), description: "", status,
+    workProgress: null, keyResults: [], budgetAnchor: null, goalRef: null,
+  });
+  const ms = (
+    id: string,
+    sequenceCode: string,
+    deliveryTarget: string,
+    deliverables: string[],
+  ): Milestone => ({
+    id, sequenceCode, title: id, description: "", deliveryTarget,
+    scope: deliverables.length > 0 ? set(deliverables) : null,
+    coordinators: [], budget: null,
+  });
+  // a: delivered in July · h: delivered, though its date is still a week away
+  // c: blocked, its milestone a month late · d: in progress at the next date
+  // e: to do, later · f: canceled and scheduled nowhere · g: to do, unfunded and unscheduled
+  const big: ScopeOfWorkState = {
+    ...s,
+    deliverables: [
+      dl("a", "DELIVERED"), dl("h", "DELIVERED"), dl("c", "BLOCKED"), dl("d", "IN_PROGRESS"),
+      dl("e", "TODO"), dl("f", "CANCELED"), dl("g", "TODO"),
+    ],
+    projects: s.projects.map((p) => ({ ...p, scope: set(["a", "h", "c", "d", "e", "f"]) })),
+    roadmaps: s.roadmaps.map((r) => ({
+      ...r,
+      // deliberately out of order: the horizon sorts by date
+      milestones: [
+        ms("then", "M4", "2026-10-30", ["e"]),
+        ms("late", "M2", "2026-08-15", ["c"]),
+        ms("done", "M1", "2026-07-01", ["a"]),
+        ms("early", "M0", "2026-09-15", ["h"]),
+        ms("next", "M3", "2026-09-30", ["d"]),
+        ms("undated", "M5", "", []),
+      ],
+    })),
+  };
+  const ids = (refs: { milestone: Milestone }[]) => refs.map((r) => r.milestone.id);
+  const at = (id: string): Milestone => {
+    const m = big.roadmaps.flatMap((r) => r.milestones).find((x) => x.id === id);
+    if (!m) throw new Error(`no milestone ${id}`);
+    return m;
+  };
+  const dv = (id: string): Deliverable => {
+    const d = big.deliverables.find((x) => x.id === id);
+    if (!d) throw new Error(`no deliverable ${id}`);
+    return d;
+  };
+  const h = deliveryHorizon(big, today);
+
+  it("sorts every milestone into delivered, overdue, upcoming or undated, by date", () => {
+    expect(ids(h.delivered)).toEqual(["done", "early"]);
+    expect(ids(h.overdue)).toEqual(["late"]);
+    expect(ids(h.upcoming)).toEqual(["next", "then"]);
+    expect(ids(h.undated)).toEqual(["undated"]);
+  });
+
+  it("treats a milestone finished ahead of its date as done, not next", () => {
+    expect(nextMilestone(big, today)?.milestone.id).toBe("next");
+    expect(milestoneState(big, at("early"), today)).toBe("done");
+    expect(milestoneState(big, at("next"), today)).toBe("live");
+    expect(milestoneState(big, at("late"), today)).toBe("");
+    expect(isOverdue(big, at("late"), today)).toBe(true);
+    expect(isOverdue(big, at("done"), today)).toBe(false);
+    expect(isOverdue(big, at("undated"), today)).toBe(false);
+  });
+
+  it("counts what needs attention, ignoring canceled work", () => {
+    expect(triage(big, today)).toEqual({ blocked: 1, unfunded: 1, unscheduled: 1, overdue: 1 });
+  });
+
+  it("indexes deliverables to their milestone and envelope once", () => {
+    expect(milestoneIndex(big).get("c")?.milestone.id).toBe("late");
+    expect(milestoneIndex(big).has("g")).toBe(false);
+    expect(projectIndex(big).get("a")?.id).toBe("e1");
+    expect(projectIndex(big).has("g")).toBe(false);
+  });
+
+  it("windows the plan to the next open milestones and folds the rest", () => {
+    const one = planWindow(h, 1);
+    expect(ids(one.done)).toEqual(["done", "early"]);
+    expect(ids(one.shown)).toEqual(["late"]);
+    expect(ids(one.later)).toEqual(["next", "then", "undated"]);
+    const wide = planWindow(h, 8);
+    expect(ids(wide.shown)).toEqual(["late", "next", "then"]);
+    expect(ids(wide.later)).toEqual(["undated"]);
+  });
+
+  it("colours a cell by its worst status", () => {
+    expect(worstStatus([])).toBe("");
+    expect(worstStatus([dv("a"), dv("h")])).toBe("DELIVERED");
+    expect(worstStatus([dv("a"), dv("d")])).toBe("IN_PROGRESS");
+    expect(worstStatus([dv("d"), dv("c")])).toBe("BLOCKED");
+    expect(worstStatus([dv("e")])).toBe("");
+  });
+});
+
+describe("plan density", () => {
+  it("shows cards only while the grid is a few projects by a few milestones", () => {
+    expect(planMode(3, 1)).toBe("cards");
+    expect(planMode(5, 4)).toBe("cards");
+    expect(planMode(5, 5)).toBe("chips");
+    expect(planMode(6, 1)).toBe("chips");
+    expect(planMode(0, 0)).toBe("cards");
   });
 });

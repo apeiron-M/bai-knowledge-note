@@ -298,12 +298,22 @@ export const dateFmt = (
   const d = new Date(`${iso}T00:00:00`);
   return Number.isNaN(d.getTime()) ? iso : d.toLocaleDateString("en", opts);
 };
+/** Every live deliverable in it delivered — the timeline's filled dot. A
+ *  milestone with nothing scheduled is not done, it is empty. */
+export const isMilestoneDone = (s: ScopeOfWorkState, m: Milestone): boolean => {
+  const r = rollup(s, m.scope?.deliverables ?? []);
+  return r.total > 0 && r.done === r.total;
+};
 export const nextMilestone = (
   s: ScopeOfWorkState,
   today: Date,
 ): MilestoneRef | undefined => {
   const t = today.toISOString().slice(0, 10);
-  return sortedMilestones(s).find((x) => x.milestone.deliveryTarget >= t);
+  // the next date still to be reached whose work is not all delivered — a
+  // milestone finished early is done, not next
+  return sortedMilestones(s).find(
+    (x) => x.milestone.deliveryTarget >= t && !isMilestoneDone(s, x.milestone),
+  );
 };
 export type MilestoneState = "done" | "live" | "";
 export const milestoneState = (
@@ -311,8 +321,7 @@ export const milestoneState = (
   m: Milestone,
   today: Date,
 ): MilestoneState => {
-  const r = rollup(s, m.scope?.deliverables ?? []);
-  if (r.total > 0 && r.done === r.total) return "done";
+  if (isMilestoneDone(s, m)) return "done";
   return nextMilestone(s, today)?.milestone.id === m.id ? "live" : "";
 };
 
@@ -442,3 +451,114 @@ export const checklist = (s: ScopeOfWorkState): Check[] => {
     },
   ];
 };
+
+/* ── overview: indexes, delivery horizon, triage, plan window ───────────── */
+/** deliverable id → the milestone it is scheduled in. Built once per render
+ *  where a view would otherwise scan every milestone per deliverable. */
+export const milestoneIndex = (
+  s: ScopeOfWorkState,
+): Map<string, MilestoneRef> => {
+  const out = new Map<string, MilestoneRef>();
+  for (const ref of allMilestones(s))
+    for (const id of ref.milestone.scope?.deliverables ?? []) out.set(id, ref);
+  return out;
+};
+/** deliverable id → the envelope that funds it. */
+export const projectIndex = (s: ScopeOfWorkState): Map<string, Project> => {
+  const out = new Map<string, Project>();
+  for (const p of s.projects)
+    for (const id of p.scope?.deliverables ?? []) out.set(id, p);
+  return out;
+};
+/** Dated before today and not delivered. */
+export const isOverdue = (
+  s: ScopeOfWorkState,
+  m: Milestone,
+  today: Date,
+): boolean =>
+  m.deliveryTarget !== "" &&
+  m.deliveryTarget < today.toISOString().slice(0, 10) &&
+  !isMilestoneDone(s, m);
+
+/** Every milestone sorted into what the overview needs to say about it. */
+export type Horizon = {
+  /** dated before today, not delivered — oldest first */
+  overdue: MilestoneRef[];
+  /** dated today or later, not delivered — soonest first; [0] is the live one */
+  upcoming: MilestoneRef[];
+  /** all live work delivered, whatever the date */
+  delivered: MilestoneRef[];
+  /** no delivery target yet */
+  undated: MilestoneRef[];
+};
+export const deliveryHorizon = (s: ScopeOfWorkState, today: Date): Horizon => {
+  const t = today.toISOString().slice(0, 10);
+  const h: Horizon = { overdue: [], upcoming: [], delivered: [], undated: [] };
+  for (const ref of sortedMilestones(s)) {
+    const m = ref.milestone;
+    if (isMilestoneDone(s, m)) h.delivered.push(ref);
+    else if (m.deliveryTarget === "") h.undated.push(ref);
+    else if (m.deliveryTarget < t) h.overdue.push(ref);
+    else h.upcoming.push(ref);
+  }
+  return h;
+};
+
+/** What still needs a decision or a fix. Closed deliverables are not counted:
+ *  canceled work needs no payer, date or unblocking. */
+export type Triage = {
+  blocked: number;
+  unfunded: number;
+  unscheduled: number;
+  overdue: number;
+};
+export const triage = (s: ScopeOfWorkState, today: Date): Triage => {
+  const live = s.deliverables.filter((d) => !isClosed(d));
+  const funded = projectIndex(s);
+  const scheduled = milestoneIndex(s);
+  return {
+    blocked: live.filter((d) => d.status === "BLOCKED").length,
+    unfunded: live.filter((d) => !funded.has(d.id)).length,
+    unscheduled: live.filter((d) => !scheduled.has(d.id)).length,
+    overdue: deliveryHorizon(s, today).overdue.length,
+  };
+};
+
+/** The plan grid's columns: the next `n` open milestones (overdue first, then
+ *  upcoming) get a column each; delivered ones fold into "done", the rest
+ *  and the undated into "later". */
+export type PlanWindow = {
+  done: MilestoneRef[];
+  shown: MilestoneRef[];
+  later: MilestoneRef[];
+};
+export const planWindow = (h: Horizon, n: number): PlanWindow => {
+  const open = [...h.overdue, ...h.upcoming];
+  return {
+    done: h.delivered,
+    shown: open.slice(0, n),
+    later: [...open.slice(n), ...h.undated],
+  };
+};
+
+/** The one status a cell of several deliverables is coloured by: anything
+ *  blocked outranks work in progress, which outranks all delivered. */
+export type CellTone = "BLOCKED" | "IN_PROGRESS" | "DELIVERED" | "";
+export const worstStatus = (ds: readonly Deliverable[]): CellTone => {
+  if (ds.some((d) => d.status === "BLOCKED")) return "BLOCKED";
+  if (ds.some((d) => d.status === "IN_PROGRESS")) return "IN_PROGRESS";
+  if (ds.length > 0 && ds.every(isDelivered)) return "DELIVERED";
+  return "";
+};
+
+/** The plan shows deliverable cards in every cell only while the grid is small:
+ *  at most this many columns across the canvas (a card needs ~140px to read),
+ *  and at most this many cells in all — "few projects × milestones". Past
+ *  either, cells count and zoom on demand. */
+export const PLAN_CARD_COLS = 5;
+export const PLAN_CARD_CELLS = 20;
+export type PlanMode = "cards" | "chips";
+export const planMode = (columns: number, rows: number): PlanMode =>
+  columns <= PLAN_CARD_COLS && columns * rows <= PLAN_CARD_CELLS
+    ? "cards"
+    : "chips";

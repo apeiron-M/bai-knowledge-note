@@ -57,6 +57,8 @@ export const SOW_CSS = `
 .sow .msdot{display:inline-block;width:8px;height:8px;border-radius:50%;background:var(--panel);border:2px solid var(--rule-2);margin-right:8px;vertical-align:-1px;flex:none}
 .sow .msdot.done{background:var(--meridian);border-color:var(--meridian)}
 .sow .msdot.live{border-color:var(--signal);box-shadow:0 0 0 3px var(--signal-soft)}
+.sow .msdot.overdue{border-color:var(--ember);background:var(--ember-soft)}
+.sow .tbl td .prog-sub.ember{color:var(--ember)}
 .sow .tbl td .prog-sub{font-size:11.5px;color:var(--ink-3);margin-top:3px;font-variant-numeric:tabular-nums}
 /* A table's primary column never collapses: td.grow's max-width:0 hands it only
    the leftover width, and with enough nowrap siblings that is zero. min-width
@@ -65,6 +67,10 @@ export const SOW_CSS = `
 .sow .tbl td.grow.primary,.sow .tbl th.grow.primary{min-width:200px}
 .sow .rows.scroll{overflow-x:auto}
 .sow .tbl tfoot tr+tr td{border-top:1px solid var(--rule)}
+/* a footer row that is one quiet link to the rest of the list */
+.sow .tbl tfoot td.link{font-weight:500;background:transparent;padding:0}
+.sow .tbl tfoot td.link button{display:block;width:100%;text-align:left;padding:9px 12px;color:var(--ink-2);font-size:12.5px}
+.sow .tbl tfoot td.link button:hover{color:var(--ink);background:var(--panel-2)}
 .sow .sect-toggle{display:inline-flex;align-items:center;gap:2px;min-width:0;font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:inherit}
 .sow .chev{width:18px;height:22px;flex:none;display:inline-flex;align-items:center;justify-content:center;color:var(--ink-3);transform:rotate(0deg);transition:transform .15s ease;border-radius:4px;font-size:11px;line-height:1}
 .sow .chev.open{transform:rotate(90deg)}
@@ -128,36 +134,89 @@ export const SOW_CSS = `
 .sow .section{margin-top:34px} .sow .section .hd{display:flex;align-items:baseline;gap:12px;margin-bottom:12px;flex-wrap:wrap} .sow .grow{flex:1}
 .sow .toolbar{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-top:6px;font-size:12.5px;color:var(--ink-2)}
 .sow .toolbar select,.sow .toolbar input{height:30px}
-/* spine */
-.sow .spine{position:relative;padding:28px 0 8px;margin:6px 0 4px}
-.sow .spine .line{position:absolute;left:0;right:0;top:44px;height:2px;background:var(--rule-2);border-radius:2px}
-.sow .spine .fill{position:absolute;left:0;top:44px;height:2px;background:var(--meridian);border-radius:2px;transition:width .6s ease}
-.sow .spine .notches{display:grid;grid-auto-flow:column;grid-auto-columns:1fr;gap:8px}
-.sow .notch{position:relative;padding-top:30px;text-align:left}
-.sow .notch .dot{position:absolute;left:0;top:9px;width:14px;height:14px;border-radius:50%;background:var(--panel);border:2px solid var(--rule-2)}
-.sow .notch.done .dot{background:var(--meridian);border-color:var(--meridian)} .sow .notch.live .dot{border-color:var(--signal);box-shadow:0 0 0 4px var(--signal-soft)}
-.sow .notch .code{font-family:var(--mono);font-size:11.5px;color:var(--ink-3)} .sow .notch .t{font-weight:600;font-size:13.5px;margin-top:1px} .sow .notch .d{font-size:12px;color:var(--ink-2)}
-.sow .notch button{text-align:left;display:block;padding:4px 6px 6px 0;border-radius:6px} .sow .notch button:hover .t{color:var(--meridian)}
+/* next up: every dated milestone as an unlabelled tick on one proportional
+   time line; the list beneath names the few that matter now */
+.sow .minimap{padding:0 8px;margin:2px 0 12px}
+.sow .minimap .track{position:relative;height:52px}
+.sow .minimap .end{position:absolute;top:0;font-size:10.5px;color:var(--ink-3);font-variant-numeric:tabular-nums;white-space:nowrap}
+.sow .minimap .end.lo{left:0} .sow .minimap .end.hi{right:0}
+.sow .minimap .axis{position:absolute;left:0;right:0;top:25px;height:2px;background:var(--rule-2);border-radius:2px}
+.sow .minimap .today{position:absolute;top:17px;width:1px;height:18px;background:var(--ink-2);transform:translateX(-50%)}
+.sow .minimap .today span{position:absolute;top:20px;left:50%;transform:translateX(-50%);font-size:10.5px;color:var(--ink-3);white-space:nowrap}
+.sow .minimap .tick{position:absolute;top:20px;width:12px;height:12px;border-radius:50%;background:var(--panel);border:2px solid var(--rule-2);transform:translateX(-50%);display:inline-flex;align-items:center;justify-content:center;font:9px/1 var(--mono);color:var(--ink-2);transition:transform .12s ease}
+.sow .minimap .tick.multi{width:16px;height:16px;top:18px}
+.sow .minimap .tick.done{background:var(--meridian);border-color:var(--meridian);color:#fff}
+.sow .minimap .tick.live{border-color:var(--signal);box-shadow:0 0 0 4px var(--signal-soft)}
+.sow .minimap .tick.overdue{border-color:var(--ember);background:var(--ember-soft);color:var(--ember)}
+.sow .minimap .tick:hover,.sow .minimap .tick:focus-visible{transform:translateX(-50%) scale(1.3);z-index:1}
+/* triage: only what needs a decision, only while it does */
+.sow .triage{display:flex;flex-wrap:wrap;gap:8px;margin:-10px 0 0}
+.sow .pill{display:inline-flex;align-items:center;gap:7px;height:26px;padding:0 11px 0 9px;border-radius:13px;border:1px solid var(--rule);background:var(--panel);font-size:12.5px;font-weight:500;color:var(--ink-2)}
+.sow .pill i{width:8px;height:8px;border-radius:50%;background:var(--slate);flex:none}
+.sow .pill.ember{color:var(--ember);background:var(--ember-soft);border-color:transparent} .sow .pill.ember i{background:var(--ember)}
+.sow .pill.signal{color:var(--signal);background:var(--signal-soft);border-color:transparent} .sow .pill.signal i{background:var(--signal)}
+.sow .pill:hover{filter:brightness(1.08)}
 .sow .bar{height:6px;background:var(--rule);border-radius:4px;overflow:hidden;min-width:60px} .sow .bar i{display:block;height:100%;background:var(--meridian);border-radius:4px;transition:width .4s}
 .sow .bar.signal i{background:var(--signal)}
-/* matrix */
-.sow .matrix{display:grid;border:1px solid var(--rule);border-radius:var(--r);overflow:hidden;background:var(--panel)}
-.sow .matrix .c{padding:10px;border-right:1px solid var(--rule);border-bottom:1px solid var(--rule);min-height:64px;min-width:0}
-.sow .matrix .c.h{background:var(--panel-2);font-size:12px;color:var(--ink-2);min-height:0}
-.sow .matrix .c.key{position:relative;overflow:hidden;padding:0;min-height:72px}
-.sow .matrix .key-diag{position:absolute;inset:0;width:100%;height:100%;display:block;pointer-events:none}
-.sow .matrix .key-diag line{stroke:var(--rule);stroke-width:1;vector-effect:non-scaling-stroke}
-.sow .matrix .key-col,.sow .matrix .key-row{position:absolute;z-index:1;font-size:11px;font-weight:500;color:var(--ink-3);line-height:1.2}
-.sow .matrix .key-col{top:8px;right:10px;text-align:right}
-.sow .matrix .key-row{bottom:8px;left:10px}
-.sow .matrix .c.rh{background:var(--panel-2);font-size:12.5px}
-.sow .matrix .rh .code{font-family:var(--mono);font-size:11px;color:var(--ink-3)} .sow .matrix .rh b{display:block;font-weight:600;color:var(--ink)}
-.sow .matrix .rh .money{font-family:var(--mono);font-size:11.5px;color:var(--ink-2);margin-top:4px}
-.sow .mini{display:flex;align-items:center;gap:6px;width:100%;text-align:left;padding:6px 8px;border:1px solid var(--rule);border-radius:7px;background:var(--panel);margin-bottom:6px;cursor:pointer;font-size:12.5px}
-.sow .mini:hover{border-color:var(--rule-2);background:var(--panel-2)} .sow .mini.sel{border-color:var(--focus);box-shadow:0 0 0 2px var(--bai-accent-soft)}
-.sow .mini .st{width:7px;height:7px;border-radius:50%;background:var(--slate);flex:none}
-.sow .mini.DELIVERED .st{background:var(--meridian)} .sow .mini.IN_PROGRESS .st{background:var(--signal)} .sow .mini.BLOCKED .st{background:var(--ember)} .sow .mini.CANCELED,.sow .mini.WONT_DO{opacity:.55;text-decoration:line-through}
-.sow .mini .code{font-family:var(--mono);font-size:11px;color:var(--ink-3)} .sow .mini .t{flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+/* plan: envelopes down, milestones across; a cell counts what lands there */
+.sow .plan{display:grid;border:1px solid var(--rule);border-radius:var(--r);overflow:hidden;background:var(--panel)}
+.sow .plan.wide{overflow:auto;max-height:72vh}
+.sow .plan .c{padding:8px;border-right:1px solid var(--rule);border-bottom:1px solid var(--rule);min-height:52px;min-width:0;display:flex;align-items:center;justify-content:center}
+.sow .plan .c.h{background:var(--panel-2);font-size:11.5px;color:var(--ink-2);flex-direction:column;align-items:flex-start;justify-content:flex-end;gap:1px;padding:8px 8px 7px;min-height:0}
+.sow .plan .c.h .code{font-family:var(--mono);font-size:11px;color:var(--ink-3)}
+.sow .plan .c.h b{display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;max-width:100%;font-weight:600;color:var(--ink);overflow:hidden;white-space:normal;overflow-wrap:anywhere;line-height:1.25}
+.sow .plan .c.h .dt{font-size:10.5px;color:var(--ink-3);font-variant-numeric:tabular-nums;white-space:nowrap}
+.sow .plan .c.h.agg .dt{white-space:normal}
+.sow .plan .c.h.agg b{overflow-wrap:normal}
+.sow .plan .c.agg{background:color-mix(in srgb,var(--panel-2) 45%,transparent)}
+.sow .plan .c.h.agg{background:color-mix(in srgb,var(--panel-2) 70%,var(--panel))}
+.sow .plan .c.key{position:relative;overflow:hidden;padding:0;min-height:72px;display:block}
+.sow .plan .key-diag{position:absolute;inset:0;width:100%;height:100%;display:block;pointer-events:none}
+.sow .plan .key-diag line{stroke:var(--rule);stroke-width:1;vector-effect:non-scaling-stroke}
+.sow .plan .key-col,.sow .plan .key-row{position:absolute;z-index:1;font-size:11px;font-weight:500;color:var(--ink-3);line-height:1.2}
+.sow .plan .key-col{top:8px;right:10px;text-align:right}
+.sow .plan .key-row{bottom:8px;left:10px}
+.sow .plan .c.rh{display:block;background:var(--panel-2);font-size:12.5px;padding:10px}
+.sow .plan .rh .code{font-family:var(--mono);font-size:11px;color:var(--ink-3)}
+.sow .plan .rh b{display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;font-weight:600;color:var(--ink);line-height:1.3}
+.sow .plan .rh .money{font-family:var(--mono);font-size:11.5px;color:var(--ink-2);margin-top:4px}
+.sow .plan.wide .c.rh,.sow .plan.wide .c.key{position:sticky;left:0;z-index:2}
+.sow .plan.wide .c.h{position:sticky;top:0;z-index:3}
+.sow .plan.wide .c.key{z-index:4}
+.sow .hc{min-width:32px;height:26px;padding:0 9px;border-radius:13px;display:inline-flex;align-items:center;justify-content:center;gap:6px;border:1px solid var(--rule-2);background:var(--panel);color:var(--ink);font-family:var(--mono);font-size:12.5px;font-variant-numeric:tabular-nums;transition:background .12s ease,border-color .12s ease}
+.sow .hc i{width:6px;height:6px;border-radius:50%;background:var(--slate);flex:none}
+.sow .hc.DELIVERED{border-color:var(--meridian);color:var(--meridian)} .sow .hc.DELIVERED i{background:var(--meridian)}
+.sow .hc.IN_PROGRESS{border-color:var(--signal)} .sow .hc.IN_PROGRESS i{background:var(--signal)}
+.sow .hc.BLOCKED{border-color:var(--ember);color:var(--ember);background:var(--ember-soft)} .sow .hc.BLOCKED i{background:var(--ember)}
+.sow .hc:hover{background:var(--panel-2)}
+/* the plan at two densities. cards: a small plan shows every deliverable in its
+   cell. chips: a count per cell; clicking one zooms that cell in place — its
+   column widens, its row grows, the sibling columns compress to their codes */
+.sow .plan{transition:grid-template-columns .22s ease}
+.sow .plan.zoomed{overflow-x:auto}
+.sow .plan.cards .c{display:block;padding:8px}
+.sow .plan.cards .c.h{display:flex}
+.sow .plan .c.h{position:relative}
+.sow .plan .c.h .h-open{position:absolute;top:5px;right:5px;padding:1px 6px;border-radius:5px;font-size:10.5px;color:var(--ink-2);background:var(--panel);border:1px solid var(--rule);opacity:0;transition:opacity .12s ease}
+.sow .plan .c.h:hover .h-open,.sow .plan .c.h .h-open:focus-visible{opacity:1}
+.sow .plan .c.h .h-open:hover{color:var(--ink);background:var(--panel-2)}
+.sow .plan .mini{display:flex;align-items:center;gap:6px;width:100%;min-width:0;text-align:left;padding:6px 8px;border:1px solid var(--rule);border-radius:7px;background:var(--panel);font-size:12.5px}
+.sow .plan .mini+.mini{margin-top:6px}
+.sow .plan .mini:hover{border-color:var(--rule-2);background:var(--panel-2)} .sow .plan .mini.sel{border-color:var(--focus);box-shadow:0 0 0 2px var(--bai-accent-soft)}
+.sow .plan .mini .st{width:7px;height:7px;border-radius:50%;background:var(--slate);flex:none}
+.sow .plan .mini.DELIVERED .st{background:var(--meridian)} .sow .plan .mini.IN_PROGRESS .st{background:var(--signal)} .sow .plan .mini.BLOCKED .st{background:var(--ember)}
+.sow .plan .mini .code{font-family:var(--mono);font-size:11px;color:var(--ink-3);flex:none} .sow .plan .mini .t{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.sow .plan.zoomed .c:not(.zoom):not(.rh):not(.key){padding:6px 4px}
+.sow .plan.zoomed .c.h:not(.focus):not(.agg) b,.sow .plan.zoomed .c.h:not(.focus) .dt{display:none}
+.sow .plan.zoomed .hc{min-width:26px;height:22px;padding:0 6px;font-size:11.5px;gap:4px}
+.sow .plan.zoomed .c.in-row,.sow .plan.zoomed .c.focus{background:color-mix(in srgb,var(--panel-2) 55%,var(--panel))}
+.sow .plan.zoomed .c.h.focus{color:var(--ink);box-shadow:inset 0 -2px 0 var(--focus)}
+.sow .plan.zoomed .c.rh.in-row{box-shadow:inset 2px 0 0 var(--focus)}
+.sow .plan .c.zoom,.sow .plan.zoomed .c.zoom{display:block;padding:10px;background:var(--panel);box-shadow:inset 0 0 0 1px var(--focus)}
+.sow .plan .zoom-hd{display:flex;align-items:center;gap:8px;margin-bottom:8px;font-size:12px;color:var(--ink-2)}
+.sow .plan .zoom-hd .where{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap} .sow .plan .zoom-hd .where b{color:var(--ink);font-weight:600}
+.sow .plan .zoom-x{width:22px;height:22px;flex:none;border-radius:6px;color:var(--ink-3);font-size:15px;line-height:1} .sow .plan .zoom-x:hover{color:var(--ink);background:var(--panel-2)}
+.sow .plan .zoom-more{display:block;width:100%;text-align:left;margin-top:6px;padding:7px 8px;font-size:12px;color:var(--ink-2);border:1px dashed var(--rule-2);border-radius:7px} .sow .plan .zoom-more:hover{color:var(--ink);background:var(--panel-2)}
 .sow .av{width:20px;height:20px;border-radius:50%;background:var(--slate-soft);color:var(--ink-2);font-size:10px;font-weight:600;display:inline-flex;align-items:center;justify-content:center;flex:none;border:1px solid var(--panel)}
 .sow .av.none{border:1px dashed var(--rule-2);background:transparent}
 .sow .avs{display:inline-flex} .sow .avs .av+.av{margin-left:-6px}
@@ -176,7 +235,7 @@ export const SOW_CSS = `
 .sow .tbl tfoot td{font-weight:600;background:var(--panel-2);border-bottom:0}
 .sow .tbl tbody tr:hover .rm,.sow .tbl tbody tr:focus-within .rm{opacity:1}
 /* collision guards: numbers never wrap, text truncates, nothing overlaps */
-.sow .matrix .c,.sow .node>*,.sow .kpi>*{min-width:0}
+.sow .plan .c,.sow .node>*,.sow .kpi>*{min-width:0}
 .sow .money,.sow .mono,.sow .lock,.sow .calc,.sow .kpi .v,.sow .node .cnt,.sow .tot{font-variant-numeric:tabular-nums}
 .sow .money,.sow .lock,.sow .node .cnt{white-space:nowrap}
 .sow .rows{overflow-x:auto}
@@ -184,7 +243,7 @@ export const SOW_CSS = `
 .sow .kpi .v{overflow-wrap:anywhere;line-height:1.15}
 .sow .calc div{flex-wrap:wrap}.sow .calc div>span:last-child{margin-left:auto;text-align:right;white-space:nowrap}
 .sow .member .s{white-space:normal}
-.sow .matrix .rh .money{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.sow .plan .rh .money{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 /* rows */
 .sow .rows{border:1px solid var(--rule);border-radius:var(--r);overflow:hidden;background:var(--panel)}
 .sow .add{display:flex;align-items:center;gap:8px;width:100%;padding:10px 14px;color:var(--ink-3);font-size:13px;border-top:1px dashed var(--rule);text-align:left} .sow .add:hover{color:var(--ink);background:var(--panel-2)}
@@ -214,6 +273,7 @@ export const SOW_CSS = `
 .sow .two{display:grid;grid-template-columns:1fr 1fr;gap:10px} .sow .three{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px}
 .sow .seg{display:inline-grid;grid-auto-flow:column;border:1px solid var(--rule-2);border-radius:8px;overflow:hidden;background:var(--panel-2)}
 .sow .seg button{height:30px;padding:0 12px;font-size:12.5px;font-weight:500;color:var(--ink-2)} .sow .seg button.on{background:var(--panel);color:var(--ink);box-shadow:inset 0 0 0 1px var(--rule-2)}
+.sow .seg.sm button{height:26px;padding:0 10px}
 .sow .range{width:100%;accent-color:var(--meridian)}
 .sow .calc{margin:8px 18px 0;padding:10px 12px;border:1px solid var(--rule);border-radius:8px;background:var(--panel-2);font-family:var(--mono);font-size:12.5px}
 .sow .calc div{display:flex;justify-content:space-between;padding:2px 0;gap:12px} .sow .calc .tot{border-top:1px solid var(--rule-2);margin-top:4px;padding-top:6px;font-weight:600}

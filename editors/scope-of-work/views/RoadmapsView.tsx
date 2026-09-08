@@ -7,6 +7,7 @@ import {
   agentById,
   budgetsByCurrencyFor,
   dateFmt,
+  isOverdue,
   milestoneState,
   nextMilestone,
   rollup,
@@ -204,6 +205,7 @@ export function RoadmapsView() {
                           const mids = m.scope?.deliverables ?? [];
                           const mru = rollup(state, mids);
                           const st = milestoneState(state, m, today);
+                          const late = isOverdue(state, m, today);
                           return (
                             <tr
                               key={m.id}
@@ -224,7 +226,10 @@ export function RoadmapsView() {
                               <td className="fold" />
                               <td className="grow primary">
                                 <div className="t">
-                                  <span className={`msdot ${st}`} aria-hidden />
+                                  <span
+                                    className={`msdot ${st}${late ? " overdue" : ""}`}
+                                    aria-hidden
+                                  />
                                   <span className="mono faint">
                                     {m.sequenceCode}
                                   </span>{" "}
@@ -259,6 +264,9 @@ export function RoadmapsView() {
                                 )}
                                 {st === "live" && (
                                   <div className="prog-sub">next up</div>
+                                )}
+                                {late && (
+                                  <div className="prog-sub ember">overdue</div>
                                 )}
                               </td>
                               <td className="prog">

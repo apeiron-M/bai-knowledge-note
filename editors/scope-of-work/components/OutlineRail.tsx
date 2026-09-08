@@ -71,9 +71,12 @@ export function OutlineRail({
         : "";
   // Keep the active branch visible when navigation comes from the canvas.
   // Re-runs only when the view target changes, so a manual collapse on the
-  // current item is not immediately forced back open.
+  // current item is not immediately forced back open. Opening one roadmap or
+  // envelope folds its siblings: the rail focuses on what the canvas shows,
+  // so a person is never reading one roadmap beside five open ones.
   useEffect(() => {
     const patch: OpenMap = {};
+    let focus: "rm:" | "pr:" | null = null;
     if (view.kind === "overview") {
       collapseBranches();
       return;
@@ -84,14 +87,26 @@ export function OutlineRail({
     } else if (view.kind === "roadmap") {
       patch.roadmaps = true;
       patch[`rm:${viewId}`] = true;
+      focus = "rm:";
     } else if (view.kind === "milestone") {
       patch.roadmaps = true;
       if (parentRoadmapId) patch[`rm:${parentRoadmapId}`] = true;
+      focus = "rm:";
     } else if (activeProjectId) {
       patch.projects = true;
       patch[`pr:${activeProjectId}`] = true;
+      focus = "pr:";
     }
-    if (Object.keys(patch).length > 0) setOpen((s) => ({ ...s, ...patch }));
+    if (Object.keys(patch).length === 0) return;
+    const fold = focus;
+    setOpen((s) => ({
+      ...(fold
+        ? Object.fromEntries(
+            Object.entries(s).filter(([k]) => !k.startsWith(fold)),
+          )
+        : s),
+      ...patch,
+    }));
   }, [view.kind, viewId, parentRoadmapId, activeProjectId, revealKey, collapseBranches]);
 
   const addRoadmap = () => {
