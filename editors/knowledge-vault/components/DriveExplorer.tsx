@@ -82,26 +82,6 @@ const HOSTED_SIDEBAR_SELECTOR = ".sow-rail-wrap";
  */
 const HOSTED_TOOLBAR_SELECTOR = ".sow-tb";
 
-/**
- * Extra room between a hosted editor's sidebar and the tab bar.
- *
- * The vault's own sidebar keeps its collapse button inside its width, so the
- * tab bar can sit flush against it. The scope-of-work rail hangs its outline
- * toggle OFF its right edge (`left:100%`), so flush would put the tab bar on
- * top of the toggle. Reserving the toggle's width is what makes the two
- * sidebars look equivalent — and it lets the toggle stay exactly where the
- * editor puts it, rather than being nudged out of the way.
- *
- * A constant, not a measurement: the toggle widens on hover to reveal its
- * label, and a measured gutter would slide the whole tab bar sideways every
- * time the pointer crossed it.
- *
- * Reserved even when the rail is collapsed to zero. The toggle is how the
- * rail is REOPENED, so that is exactly when covering it would trap the user
- * with no outline and no way back.
- */
-const HOSTED_SIDEBAR_GUTTER = 28;
-
 export function DriveExplorer({ children }: EditorProps) {
   const [viewMode, setViewMode] = useState<ViewMode>("chat");
   const driveId = useSelectedDriveId();
@@ -408,17 +388,13 @@ export function DriveExplorer({ children }: EditorProps) {
         style={
           editorOwnsSidebar
             ? {
-                gridTemplateColumns: `${
-                  hostedRailWidth + HOSTED_SIDEBAR_GUTTER
-                }px minmax(0, 1fr)`,
+                gridTemplateColumns: `${hostedRailWidth}px minmax(0, 1fr)`,
                 gridTemplateRows: "auto minmax(0, 1fr)",
                 // Read by the hosted editor's stylesheet, which reserves a
                 // matching top row so its canvas starts below the bar, and
                 // parks its own toolbar drawer in the corner they leave.
                 "--vault-topbar-h": `${topBarHeight}px`,
-                "--vault-sidebar-w": `${
-                  hostedRailWidth + HOSTED_SIDEBAR_GUTTER
-                }px`,
+                "--vault-sidebar-w": `${hostedRailWidth}px`,
                 "--vault-doctoolbar-h": `${hostedToolbarHeight}px`,
               } as CSSProperties
             : undefined
@@ -431,10 +407,15 @@ export function DriveExplorer({ children }: EditorProps) {
           style={{
             borderBottom: "1px solid var(--bai-border)",
             backgroundColor: "var(--bai-surface)",
-            // Column 2 only, so the hosted sidebar in column 1 runs to the top.
-            // Above the editor, which spans every cell underneath it.
+            // Column 2 only, so the hosted sidebar in column 1 runs to the
+            // top. z-index 5 places it deliberately WITHIN the hosted editor's
+            // own scale rather than above all of it: over its sticky table
+            // headers (1-4), under its drawer handles (6) so the sidebar's
+            // collapse toggle can overhang the bar rather than be walled off
+            // from it, and under its modals and scrims (40-60), which should
+            // cover everything.
             ...(editorOwnsSidebar
-              ? { gridColumn: 2, gridRow: 1, zIndex: 2 }
+              ? { gridColumn: 2, gridRow: 1, zIndex: 5 }
               : null),
           }}
         >
@@ -512,8 +493,10 @@ export function DriveExplorer({ children }: EditorProps) {
               : "flex-1 overflow-auto"
           }
           style={
+            // Deliberately no z-index: it would open a stacking context and
+            // cap everything inside below the bar, toggle included.
             editorOwnsSidebar
-              ? { gridColumn: "1 / -1", gridRow: "1 / -1", zIndex: 1 }
+              ? { gridColumn: "1 / -1", gridRow: "1 / -1" }
               : undefined
           }
         >
