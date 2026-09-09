@@ -1,4 +1,5 @@
 import { AccessView } from "./access/AccessView.js";
+import { useIsVaultAdmin } from "./access/use-is-admin.js";
 import { useState, useMemo, useCallback, useEffect } from "react";
 import type { EditorProps } from "document-model";
 import {
@@ -454,8 +455,17 @@ function SettingsMenu({
   onSelect: (mode: ViewMode) => void;
 }) {
   const [open, setOpen] = useState(false);
+  // Access administers authorization, so it is offered only to those who can
+  // use it. The server refuses a non-admin regardless — hiding the entry means
+  // they are not invited into a dead end. `null` (undetermined) hides it too,
+  // to avoid flashing an item that is about to disappear.
+  const driveId = useSelectedDriveId();
+  const isVaultAdmin = useIsVaultAdmin(driveId);
+  const items = SETTINGS_ITEMS.filter(
+    (i) => i.key !== "access" || isVaultAdmin === true,
+  );
   const showingSettingsView =
-    isActive && SETTINGS_ITEMS.some((i) => i.key === activeView);
+    isActive && items.some((i) => i.key === activeView);
 
   return (
     <div className="relative">
@@ -496,7 +506,7 @@ function SettingsMenu({
               backgroundColor: "var(--bai-surface)",
             }}
           >
-            {SETTINGS_ITEMS.map((item) => {
+            {items.map((item) => {
               const current = isActive && activeView === item.key;
               return (
                 <button

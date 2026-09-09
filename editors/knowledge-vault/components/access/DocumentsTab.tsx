@@ -29,11 +29,13 @@ import {
   LevelSelect,
   OPERATION_FOOTGUN,
   PrimaryButton,
+  Row,
   SearchInput,
   SectionHeader,
   short,
   TextInput,
 } from "./parts.js";
+import { LEVEL_RANK } from "./use-auth-api.js";
 import {
   documentAccess,
   documentProtection,
@@ -45,13 +47,20 @@ import {
   setProtection,
   transferOwnership,
   type DriveNode,
-  type Grant,
   type Level,
   type OperationGrant,
   type Protection,
 } from "./use-auth-api.js";
 
 type Selected = { id: string; name: string; documentType?: string | null };
+
+/** A grant as it actually applies here, with the ancestor that supplies it. */
+type EffectiveGrant = {
+  userAddress: string;
+  permission: Level;
+  sourceId: string;
+  sourceName: string;
+};
 
 /** Walk to the drive, so the strip can name the ancestor that confers state. */
 function ancestry(nodes: DriveNode[], id: string): DriveNode[] {
@@ -145,6 +154,8 @@ export function DocumentsTab({
         <DocumentPanel
           key={selected.id}
           selected={selected}
+          driveId={driveId}
+          driveName={driveName}
           nodes={nodes}
           operationTypesByModel={operationTypesByModel}
           onChanged={onChanged}
@@ -188,22 +199,26 @@ function TreeRow({
 
 function DocumentPanel({
   selected,
+  driveId,
+  driveName,
   nodes,
   operationTypesByModel,
   onChanged,
 }: {
   selected: Selected;
+  driveId: string;
+  driveName: string;
   nodes: DriveNode[];
   operationTypesByModel: Record<string, string[]>;
   onChanged: () => void;
 }) {
   const [protection, setProt] = useState<Protection | null>(null);
-  const [grants, setGrants] = useState<Grant[] | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
   const [addr, setAddr] = useState("");
   const [level, setLevel] = useState<Level>("READ");
   const [newOwner, setNewOwner] = useState("");
+  const [effective, setEffective] = useState<EffectiveGrant[] | null>(null);
 
   async function load() {
     const [p, a] = await Promise.all([
@@ -211,8 +226,49 @@ function DocumentPanel({
       documentAccess(selected.id),
     ]);
     setProt(p.data?.documentProtection ?? null);
-    setGrants(a.data?.documentAccess.permissions ?? null);
     setError(a.error ?? p.error ?? null);
+
+    // Effective access is the union over the inheritance chain, because
+    // `#hasGrantInHierarchy` honours a grant sitting on the document OR any
+    // ancestor. Reading only this document's own rows is what made a
+    // drive-level grant look like nobody had access.
+    const chain = [
+      { id: driveId, name: driveName },
+      ...ancestry(nodes, selected.id).map((n) => ({
+        id: n.id,
+        name: n.name || n.id.slice(0, 8),
+      })),
+    ].filter((c, i, all) => all.findIndex((x) => x.id === c.id) === i);
+
+    const results = await Promise.all(
+      chain.map(async (link) => ({
+        link,
+        rows:
+          link.id === selected.id
+            ? (a.data?.documentAccess.permissions ?? [])
+            : ((await documentAccess(link.id)).data?.documentAccess.permissions ??
+              []),
+      })),
+    );
+
+    // The highest level anywhere in the chain wins, and we remember where it
+    // came from so a row can say whether it is revocable here.
+    const merged = new Map<string, EffectiveGrant>();
+    for (const { link, rows } of results) {
+      for (const row of rows) {
+        const key = row.userAddress.toLowerCase();
+        const prev = merged.get(key);
+        if (!prev || LEVEL_RANK[row.permission] > LEVEL_RANK[prev.permission]) {
+          merged.set(key, {
+            userAddress: row.userAddress,
+            permission: row.permission,
+            sourceId: link.id,
+            sourceName: link.name,
+          });
+        }
+      }
+    }
+    setEffective([...merged.values()]);
   }
 
   useEffect(() => {
@@ -327,48 +383,93 @@ function DocumentPanel({
         </div>
       </Card>
 
-      {/* ── Grants on this document ────────────────────────────── */}
+      {/* ── Who has access, including inherited ────────────────── */}
       <Card>
-        <SectionHeader title="Grants on this document" />
-        {grants === null ? (
+        <SectionHeader
+          title="Who has access here"
+          subtitle="Includes grants inherited from the drive and any parent folder — that is how access normally reaches a document."
+          right={
+            effective ? (
+              <span
+                className="rounded-md px-2 py-1 font-mono text-xs"
+                style={{
+                  backgroundColor: "var(--bai-hover)",
+                  color: "var(--bai-text-tertiary)",
+                }}
+              >
+                {effective.length}
+              </span>
+            ) : null
+          }
+        />
+        {effective === null ? (
           <Hint>Requires ADMIN of this document to view.</Hint>
-        ) : grants.length === 0 ? (
-          <EmptyState title="No grants set here">
+        ) : effective.length === 0 ? (
+          <EmptyState title="Nobody has an explicit grant">
             <Hint>
-              Access comes from an ancestor — most vaults grant on the drive and
-              let it inherit.
+              Only supreme admins from the server&apos;s ADMINS list can reach
+              it. Those cannot be listed by the API.
             </Hint>
           </EmptyState>
         ) : (
-          <table className="mt-1 w-full text-left text-xs">
-            <tbody>
-              {grants.map((g) => (
-                <tr key={g.userAddress}>
-                  <td className="py-1">
-                    <AddressChip address={g.userAddress} />
-                  </td>
-                  <td className="py-1">
-                    <LevelBadge level={g.permission} />
-                  </td>
-                  <td className="py-1 text-right">
-                    <ConfirmButton
-                      label="Revoke"
-                      confirmLabel="Confirm"
-                      onConfirm={() =>
-                        void run(() => revokeDocument(selected.id, g.userAddress))
+          <div>
+            {[...effective]
+              .sort(
+                (a, b) =>
+                  LEVEL_RANK[b.permission] - LEVEL_RANK[a.permission] ||
+                  a.userAddress.localeCompare(b.userAddress),
+              )
+              .map((e) => {
+                const here = e.sourceId === selected.id;
+                return (
+                  <Row key={e.userAddress}>
+                    <span className="flex-1">
+                      <AddressChip address={e.userAddress} />
+                    </span>
+                    <LevelBadge level={e.permission} />
+                    <span
+                      className="w-44 text-right text-[10px]"
+                      style={{ color: "var(--bai-text-muted)" }}
+                      title={
+                        here
+                          ? "Granted directly on this document."
+                          : `Inherited from ${e.sourceName}. Revoke it there, not here.`
                       }
-                      disabled={busy}
-                    />
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
+                    >
+                      {here ? "granted here" : `from ${e.sourceName}`}
+                    </span>
+                    <span className="w-24 text-right">
+                      {here ? (
+                        <ConfirmButton
+                          label="Revoke"
+                          confirmLabel="Confirm"
+                          onConfirm={() =>
+                            void run(() =>
+                              revokeDocument(selected.id, e.userAddress),
+                            )
+                          }
+                          disabled={busy}
+                        />
+                      ) : (
+                        <span
+                          className="text-[10px]"
+                          style={{ color: "var(--bai-text-faint)" }}
+                          title={`This grant lives on ${e.sourceName}. Select it in the tree to change it.`}
+                        >
+                          inherited
+                        </span>
+                      )}
+                    </span>
+                  </Row>
+                );
+              })}
+          </div>
         )}
+
         <Inset className="mt-3">
           <div className="flex flex-wrap items-end gap-3">
             <div className="min-w-[16rem] flex-1">
-              <Field label="Grant here only">
+              <Field label="Grant on this document only">
                 <TextInput value={addr} onChange={setAddr} placeholder="0x…" mono />
               </Field>
             </div>

@@ -7,7 +7,8 @@
  * tab cannot claim a problem that is already fixed, or miss one that is not.
  */
 import { Card, Hint, SectionHeader, SeverityPill, short } from "./parts.js";
-import type { Grant, Protection } from "./use-auth-api.js";
+import { AccessRoster } from "./AccessRoster.js";
+import type { Grant, Level, Protection } from "./use-auth-api.js";
 import { LEVEL_RANK } from "./use-auth-api.js";
 
 type Finding = {
@@ -94,11 +95,21 @@ export function ExposureTab({
   grants,
   documentCount,
   driveName,
+  myAddress,
+  viewerIsSupremeAdmin,
+  busy,
+  onChangeLevel,
+  onRevoke,
 }: {
   protection: Protection | null;
   grants: Grant[];
   documentCount: number;
   driveName: string;
+  myAddress: string;
+  viewerIsSupremeAdmin: boolean;
+  busy: boolean;
+  onChangeLevel: (address: string, level: Level) => void;
+  onRevoke: (address: string) => void;
 }) {
   const findings = buildFindings(protection, grants, documentCount);
   const exposed = protection !== null && !protection.protected;
@@ -133,6 +144,33 @@ export function ExposureTab({
             separate from the grants list.
           </Hint>
         ) : null}
+      </Card>
+
+      <Card>
+        <SectionHeader
+          title="Everyone with access"
+          subtitle="Change a role or remove access without leaving this page."
+          right={
+            <span
+              className="rounded-md px-2 py-1 font-mono text-xs"
+              style={{
+                backgroundColor: "var(--bai-hover)",
+                color: "var(--bai-text-tertiary)",
+              }}
+            >
+              {grants.length} grant{grants.length === 1 ? "" : "s"}
+            </span>
+          }
+        />
+        <AccessRoster
+          grants={grants}
+          ownerAddress={protection?.ownerAddress ?? null}
+          myAddress={myAddress}
+          viewerIsSupremeAdmin={viewerIsSupremeAdmin}
+          busy={busy}
+          onChangeLevel={onChangeLevel}
+          onRevoke={onRevoke}
+        />
       </Card>
 
       <div>

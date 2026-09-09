@@ -106,6 +106,21 @@ export function AccessView() {
     );
   }
 
+  /**
+   * `documentAccess` answering at all means canManage passed, which is one of:
+   * supreme admin, owner, or an ADMIN grant. If neither of the latter two
+   * holds, the viewer must be on the server's ADMINS list — the only way to
+   * surface a principal the API cannot enumerate.
+   */
+  const mine = address?.toLowerCase() ?? "";
+  const viewerIsSupremeAdmin =
+    isAdmin === true &&
+    mine !== "" &&
+    protection?.ownerAddress?.toLowerCase() !== mine &&
+    !grants.some(
+      (g) => g.userAddress.toLowerCase() === mine && g.permission === "ADMIN",
+    );
+
   if (isAdmin === false) {
     return (
       <div className="p-6">
@@ -130,6 +145,14 @@ export function AccessView() {
       </div>
     );
   }
+
+  const changeLevel = (addr: string, level: Level) =>
+    void apply(
+      () => grantDocument(driveId, addr, level),
+      `${addr.slice(0, 10)}… now has ${level} across the vault.`,
+    );
+  const revoke = (addr: string) =>
+    void apply(() => revokeDocument(driveId, addr), `Removed ${addr.slice(0, 10)}….`);
 
   async function apply(
     fn: () => Promise<{ error?: string }>,
@@ -205,24 +228,22 @@ export function AccessView() {
           grants={grants}
           documentCount={nodes.length}
           driveName="This vault"
+          myAddress={address ?? ""}
+          viewerIsSupremeAdmin={viewerIsSupremeAdmin}
+          busy={busy}
+          onChangeLevel={changeLevel}
+          onRevoke={revoke}
         />
       ) : tab === "people" ? (
         <PeopleTab
           grants={grants}
+          ownerAddress={protection?.ownerAddress ?? null}
           myAddress={address ?? ""}
+          viewerIsSupremeAdmin={viewerIsSupremeAdmin}
           busy={busy}
-          onGrant={(addr, level: Level) =>
-            void apply(
-              () => grantDocument(driveId, addr, level),
-              `${addr.slice(0, 10)}… now has ${level} across the vault.`,
-            )
-          }
-          onRevoke={(addr) =>
-            void apply(
-              () => revokeDocument(driveId, addr),
-              `Revoked ${addr.slice(0, 10)}….`,
-            )
-          }
+          onGrant={changeLevel}
+          onChangeLevel={changeLevel}
+          onRevoke={revoke}
         />
       ) : (
         <DocumentsTab

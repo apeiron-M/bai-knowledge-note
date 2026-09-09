@@ -12,16 +12,13 @@
 import { useMemo, useState } from "react";
 import {
   ADDRESS_RE,
-  AddressChip,
   Callout,
   Card,
-  ConfirmButton,
   EmptyState,
   Field,
   Hint,
   Inset,
   LEVEL_MEANING,
-  LevelBadge,
   LevelSelect,
   NO_DENY_NOTE,
   PrimaryButton,
@@ -31,49 +28,34 @@ import {
   short,
   TextInput,
 } from "./parts.js";
+import { AccessRoster } from "./AccessRoster.js";
 import { LEVEL_RANK, type Grant, type Level } from "./use-auth-api.js";
 
 type SortKey = "level" | "address" | "added";
 
 export function PeopleTab({
   grants,
+  ownerAddress,
   myAddress,
+  viewerIsSupremeAdmin,
   busy,
   onGrant,
+  onChangeLevel,
   onRevoke,
 }: {
   grants: Grant[];
+  ownerAddress: string | null;
   myAddress: string;
+  viewerIsSupremeAdmin: boolean;
   busy: boolean;
   onGrant: (addr: string, level: Level) => void;
+  onChangeLevel: (addr: string, level: Level) => void;
   onRevoke: (addr: string) => void;
 }) {
   const [query, setQuery] = useState("");
   const [sort, setSort] = useState<SortKey>("level");
   const [address, setAddress] = useState("");
   const [level, setLevel] = useState<Level>("READ");
-
-  const admins = useMemo(
-    () => grants.filter((g) => LEVEL_RANK[g.permission] >= LEVEL_RANK.ADMIN),
-    [grants],
-  );
-
-  /**
-   * Lockout prevention. The tables have no such check: revoking the row that
-   * carries the acting admin's only administration path succeeds server-side
-   * and leaves nobody able to grant, with no recovery through the API. A
-   * supreme admin from ADMINS survives it, so this only refuses when the row
-   * really is the last way in.
-   */
-  function lockoutReason(g: Grant): string | undefined {
-    const isMine = g.userAddress.toLowerCase() === myAddress.toLowerCase();
-    const isLastAdmin =
-      LEVEL_RANK[g.permission] >= LEVEL_RANK.ADMIN && admins.length <= 1;
-    if (isMine && isLastAdmin) {
-      return "This is the only administrator grant, and it is yours. Revoking it would leave nobody able to manage access, and there is no way back through the API. Grant a second administrator first.";
-    }
-    return undefined;
-  }
 
   const rows = useMemo(() => {
     const q = query.trim().toLowerCase();
@@ -140,59 +122,18 @@ export function PeopleTab({
         />
       </div>
 
-      {grants.length === 0 ? (
-        <EmptyState title="No grants yet">
-          <Hint>
-            Only addresses in the server&apos;s ADMINS list can reach this
-            vault. Grant one below to change that.
-          </Hint>
-        </EmptyState>
-      ) : rows.length === 0 ? (
+      {rows.length === 0 && grants.length > 0 ? (
         <EmptyState title={`No grant matches “${query}”`} />
       ) : (
-        <table className="w-full text-left text-sm">
-          <thead>
-            <tr style={{ color: "var(--bai-text-tertiary)" }}>
-              <th className="py-1 text-[11px] font-medium uppercase">Address</th>
-              <th className="py-1 text-[11px] font-medium uppercase">Level</th>
-              <th className="py-1 text-[11px] font-medium uppercase">Granted by</th>
-              <th />
-            </tr>
-          </thead>
-          <tbody>
-            {rows.map((g) => {
-              const reason = lockoutReason(g);
-              const isMe =
-                g.userAddress.toLowerCase() === myAddress.toLowerCase();
-              return (
-                <tr
-                  key={g.userAddress}
-                  className="border-t"
-                  style={{ borderColor: "var(--bai-border)" }}
-                >
-                  <td className="py-2.5">
-                    <AddressChip address={g.userAddress} you={isMe} />
-                  </td>
-                  <td className="py-2.5">
-                    <LevelBadge level={g.permission} />
-                  </td>
-                  <td className="py-2.5">
-                    <AddressChip address={g.grantedBy} />
-                  </td>
-                  <td className="py-2.5 text-right">
-                    <ConfirmButton
-                      label="Revoke"
-                      confirmLabel={`Revoke ${short(g.userAddress)}`}
-                      onConfirm={() => onRevoke(g.userAddress)}
-                      disabled={busy || reason !== undefined}
-                      disabledReason={reason}
-                    />
-                  </td>
-                </tr>
-              );
-            })}
-          </tbody>
-        </table>
+        <AccessRoster
+          grants={rows}
+          ownerAddress={ownerAddress}
+          myAddress={myAddress}
+          viewerIsSupremeAdmin={viewerIsSupremeAdmin}
+          busy={busy}
+          onChangeLevel={onChangeLevel}
+          onRevoke={onRevoke}
+        />
       )}
 
       <Card>
