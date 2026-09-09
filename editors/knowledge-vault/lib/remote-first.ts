@@ -46,6 +46,7 @@
  * replacement.
  */
 import { getBearerToken } from "../../shared/authed-fetch.js";
+import { notifyRequestError } from "../../shared/notify.js";
 import {
   GraphQLReactorClient,
   makeAuthMiddleware,
@@ -482,10 +483,20 @@ export function enableRemoteFirst(options: {
   // protected document answers FORBIDDEN, which is what broke boot's
   // hydrateDriveSnapshot. The provider is resolved per request, so a login
   // after the client was built is picked up.
-  const sdk = createClient(
-    options.endpoint,
-    makeAuthMiddleware(getBearerToken),
-  );
+  // The SDK wrapper sees every call this client makes, which is the only place
+  // that covers all of them: each document editor dispatches through here, and
+  // a refusal surfaced by the caller is a refusal most callers swallow. Auth
+  // runs first so the request is authenticated; reporting wraps it so a
+  // rejection is announced before it propagates.
+  const withAuth = makeAuthMiddleware(getBearerToken);
+  const sdk = createClient(options.endpoint, async (action, op, type, vars) => {
+    try {
+      return await withAuth(action, op, type, vars);
+    } catch (err) {
+      notifyRequestError(err);
+      throw err;
+    }
+  });
   const remoteClient = new GraphQLReactorClient({
     url: options.endpoint,
     graphqlClient: sdk,

@@ -70,3 +70,37 @@ export function notifyGraphQLError(messages: string[]): void {
   }
   notify("error", "That did not work", `${first}${rest ? ` (${rest})` : ""}`);
 }
+
+/**
+ * Report any thrown request error, whatever threw it.
+ *
+ * graphql-request rejects with a ClientError carrying the full payload on
+ * `.response.errors`, so the server's own message survives — including the
+ * FORBIDDEN wording that names the refused operation. Anything else falls back
+ * to the error's message.
+ *
+ * This exists because there are two write paths in this app, and the first
+ * version of these notifications only covered one: the hand-rolled GraphQL
+ * helper. Everything dispatched from a document editor goes through
+ * reactor-browser's client instead, so a refused SET_CONTENT still failed
+ * silently.
+ */
+export function notifyRequestError(err: unknown): void {
+  const response = (err as { response?: { errors?: { message?: string }[] } })
+    ?.response;
+  const messages = response?.errors
+    ?.map((e) => e.message)
+    .filter((m): m is string => typeof m === "string" && m.length > 0);
+
+  if (messages && messages.length > 0) {
+    notifyGraphQLError(messages);
+    return;
+  }
+  const message = err instanceof Error ? err.message : String(err);
+  // A bare network failure is not worth a modal-grade error; the app retries.
+  if (/fetch failed|network|load failed/i.test(message)) {
+    notify("warning", "Lost contact with the Switchboard", message);
+    return;
+  }
+  notify("error", "That did not work", message);
+}
