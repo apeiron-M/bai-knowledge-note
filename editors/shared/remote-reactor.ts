@@ -22,6 +22,7 @@
  * `GraphQLClientDocumentCache` listens for, so any open editor showing
  * the document refetches.
  */
+import { authedGraphQLFetch } from "./authed-fetch.js";
 import { resolveReactorEndpoint } from "./subgraph-endpoint.js";
 
 /** Reactor read/mutate endpoint (`/graphql/r`) for the current host. */
@@ -60,11 +61,7 @@ async function gqlRequest<T>(
   query: string,
   variables: Record<string, unknown>,
 ): Promise<T> {
-  const res = await fetch(endpoint, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ query, variables }),
-  });
+  const res = await authedGraphQLFetch(endpoint, { query, variables });
   if (!res.ok) {
     throw new Error(`HTTP ${res.status} from ${endpoint}`);
   }
