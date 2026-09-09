@@ -481,8 +481,14 @@ function OperationsPanel({
                     <td className="py-1">
                       <AddressChip address={r.userAddress} />
                     </td>
-                    <td className="py-1" style={{ color: "var(--bai-text-muted)" }}>
-                      by {short(r.grantedBy)}
+                    <td className="py-1">
+                      <span
+                        className="mr-1 text-[10px]"
+                        style={{ color: "var(--bai-text-muted)" }}
+                      >
+                        by
+                      </span>
+                      <AddressChip address={r.grantedBy} />
                     </td>
                     <td className="py-1 text-right">
                       <ConfirmButton

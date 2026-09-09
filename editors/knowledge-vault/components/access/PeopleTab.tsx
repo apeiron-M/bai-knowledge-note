@@ -177,12 +177,7 @@ export function PeopleTab({
                     <LevelBadge level={g.permission} />
                   </td>
                   <td className="py-2.5">
-                    <span
-                      className="font-mono text-xs"
-                      style={{ color: "var(--bai-text-muted)" }}
-                    >
-                      {short(g.grantedBy)}
-                    </span>
+                    <AddressChip address={g.grantedBy} />
                   </td>
                   <td className="py-2.5 text-right">
                     <ConfirmButton

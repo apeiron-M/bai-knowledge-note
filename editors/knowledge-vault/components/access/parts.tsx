@@ -13,6 +13,7 @@
  */
 import { useState } from "react";
 import { LEVEL_RANK, type Level } from "./use-auth-api.js";
+import { useEnsName } from "./use-ens.js";
 
 /* ── copy the audit requires ────────────────────────────────────── */
 
@@ -221,7 +222,12 @@ export function SeverityPill({
   );
 }
 
-/** Click-to-copy address. An admin's job is largely pasting these around. */
+/**
+ * Click-to-copy identity. Shows the ENS name when there is one, because an
+ * admin thinks in names while `0xf205…be06` is a machine identifier — but the
+ * raw address stays visible beside it and is always what gets copied, since
+ * that is what a grant actually needs.
+ */
 export function AddressChip({
   address,
   you,
@@ -230,6 +236,7 @@ export function AddressChip({
   you?: boolean;
 }) {
   const [copied, setCopied] = useState(false);
+  const ens = useEnsName(address);
   return (
     <span className="inline-flex items-center gap-1.5">
       <button
@@ -239,14 +246,27 @@ export function AddressChip({
           setCopied(true);
           setTimeout(() => setCopied(false), 1200);
         }}
-        className="rounded-md px-1.5 py-0.5 font-mono text-xs transition-colors"
-        style={{
-          color: copied ? "var(--bai-ok)" : "var(--bai-text-secondary)",
-          backgroundColor: "var(--bai-hover)",
-        }}
-        title={`${address} — click to copy`}
+        className="inline-flex items-center gap-1.5 rounded-md px-1.5 py-0.5 text-xs transition-colors"
+        style={{ backgroundColor: "var(--bai-hover)" }}
+        title={`${address}${ens ? ` (${ens})` : ""} — click to copy the address`}
       >
-        {copied ? "copied ✓" : short(address)}
+        {copied ? (
+          <span style={{ color: "var(--bai-ok)" }}>copied ✓</span>
+        ) : ens ? (
+          <>
+            <span style={{ color: "var(--bai-text)" }}>{ens}</span>
+            <span
+              className="font-mono text-[10px]"
+              style={{ color: "var(--bai-text-muted)" }}
+            >
+              {short(address)}
+            </span>
+          </>
+        ) : (
+          <span className="font-mono" style={{ color: "var(--bai-text-secondary)" }}>
+            {short(address)}
+          </span>
+        )}
       </button>
       {you ? (
         <span className="text-[10px]" style={{ color: "var(--bai-text-muted)" }}>

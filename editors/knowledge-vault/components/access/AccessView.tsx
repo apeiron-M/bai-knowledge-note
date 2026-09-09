@@ -16,6 +16,7 @@
 import { useCallback, useEffect, useState } from "react";
 import { useRenownAuth, useSelectedDriveId } from "@powerhousedao/reactor-browser";
 import { AddressChip, Card, Hint, INHERIT_NOTE, Notice } from "./parts.js";
+import { seedEns } from "./use-ens.js";
 import { ExposureTab } from "./ExposureTab.js";
 import { PeopleTab } from "./PeopleTab.js";
 import { DocumentsTab } from "./DocumentsTab.js";
@@ -44,7 +45,7 @@ const TABS: { key: Tab; label: string; hint: string }[] = [
 
 export function AccessView() {
   const driveId = useSelectedDriveId();
-  const { address } = useRenownAuth();
+  const { address, ensName } = useRenownAuth();
 
   const [tab, setTab] = useState<Tab>("exposure");
   const [loading, setLoading] = useState(true);
@@ -55,6 +56,13 @@ export function AccessView() {
   const [opsByModel, setOpsByModel] = useState<Record<string, string[]>>({});
   const [notice, setNotice] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
+
+  // Renown already knows the signed-in user's ENS name, so prime the cache
+  // rather than asking the public gateway for an address we can resolve
+  // locally.
+  useEffect(() => {
+    if (address) seedEns(address, ensName);
+  }, [address, ensName]);
 
   const load = useCallback(async () => {
     if (!driveId) return;
