@@ -25,6 +25,7 @@
  * - idempotent per drive, and safe to run alongside `useRemoteFirst()`, which
  *   still owns drive hydration and selected-document freshness.
  */
+import { PollBehavior } from "@powerhousedao/reactor";
 import { authHeaders } from "../../shared/authed-fetch.js";
 import { enableRemoteFirst } from "./remote-first.js";
 import { resolveReactorEndpoint } from "../hooks/subgraph-endpoint.js";
@@ -152,7 +153,21 @@ async function adopt(driveId: string, remote: Remote, sync: SyncManager) {
         scope: filter.scope,
         branch: filter.branch || "main",
       },
-      meta.options,
+      // A channel scoped to SYNC_NOTHING has nothing to fetch, so leaving the
+      // cadence at its default (PollBehavior.Auto) spends a request a second
+      // on an empty outbox — measured at 136 requests and 3.2 MB in one
+      // session, all of it `outboxAck: 0, outboxLatest: 0`.
+      //
+      // Manual keeps the channel registered, which is the point of re-adding
+      // rather than removing (a removed channel makes Connect present the
+      // drive as local), while stopping the timer. Nothing is lost: the
+      // filter already guarantees there is nothing to replicate, and
+      // `ISyncManager.triggerPull(name)` remains available if a pull is ever
+      // wanted.
+      {
+        ...((meta.options ?? {}) as Record<string, unknown>),
+        pollBehavior: PollBehavior.Manual,
+      } as typeof meta.options,
     );
     console.info(
       `[RemoteFirst] Sync neutralised at package load for drive ${driveId.slice(0, 8)} — ` +

@@ -46,6 +46,7 @@
  *     every UPDATE — so membership is decided here, against the hydrated
  *     drive snapshot.
  */
+import { PollBehavior } from "@powerhousedao/reactor";
 import { getBearerToken } from "../../shared/authed-fetch.js";
 import { useEffect, useRef } from "react";
 import {
@@ -208,7 +209,18 @@ export function useRemoteFirst(): void {
               scope: filter.scope,
               branch: filter.branch || "main",
             },
-            meta.options,
+            // A channel scoped to SYNC_NOTHING has nothing to fetch, so leaving the
+            // cadence at its default (PollBehavior.Auto) spends a request a second
+            // on an empty outbox — measured at 136 requests and 3.2 MB in one
+            // session, all of it `outboxAck: 0, outboxLatest: 0`.
+            //
+            // Manual keeps the channel registered, which is the point of re-adding
+            // rather than removing (a removed channel makes Connect present the
+            // drive as local), while stopping the timer. Nothing is lost: the
+            // filter already guarantees there is nothing to replicate, and
+            // `ISyncManager.triggerPull(name)` remains available if a pull is ever
+            // wanted.
+            { ...meta.options, pollBehavior: PollBehavior.Manual },
           );
           console.info(
             `[RemoteFirst] Sync channel for drive ${driveId.slice(0, 8)} neutralised — all reads/writes go to the Switchboard.`,
