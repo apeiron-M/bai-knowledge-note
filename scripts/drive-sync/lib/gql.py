@@ -44,6 +44,11 @@ DEFAULT_ENDPOINT = os.environ.get(
     "PH_GRAPHQL_ENDPOINT", "http://localhost:4001/graphql"
 )
 
+# Renown bearer for every request. `ph access-token` prints one; it lasts 7
+# days, so this is a per-session export rather than something to persist:
+#   export PH_ACCESS_TOKEN="$(ph access-token | tail -1)"
+ACCESS_TOKEN = os.environ.get("PH_ACCESS_TOKEN", "").strip()
+
 
 class GraphQLError(RuntimeError):
     """A GraphQL request returned errors."""
@@ -124,6 +129,13 @@ def post(
         "Accept": "application/json",
         "Connection": "keep-alive",
     }
+    # The Switchboard reads identity from the bearer, not from the signed
+    # actions inside the payload. Mint one with `ph access-token`. Absent is
+    # left absent rather than sent empty: a missing header is an anonymous
+    # caller (which a host with authorization off serves normally), while a
+    # malformed one is a hard 401.
+    if ACCESS_TOKEN:
+        headers["Authorization"] = f"Bearer {ACCESS_TOKEN}"
 
     last: Exception | None = None
     for attempt in range(attempts):

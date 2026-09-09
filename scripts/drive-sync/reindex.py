@@ -7,6 +7,7 @@ index used by semantic search.
 """
 import argparse
 import json
+import os
 import sys
 import urllib.error
 from pathlib import Path
@@ -26,8 +27,12 @@ mutation Reindex($driveId: ID!) {
 
 def reindex(endpoint: str, drive_id: str) -> dict:
     body = {"query": REINDEX_MUTATION, "variables": {"driveId": drive_id}}
+    headers = {"Content-Type": "application/json"}
+    token = os.environ.get("PH_ACCESS_TOKEN", "").strip()
+    if token:
+        headers["Authorization"] = f"Bearer {token}"
     req = Request(endpoint, data=json.dumps(body).encode(),
-                  headers={"Content-Type": "application/json"}, method="POST")
+                  headers=headers, method="POST")
     with urlopen(req, timeout=300) as resp:
         payload = json.loads(resp.read().decode())
     if payload.get("errors"):

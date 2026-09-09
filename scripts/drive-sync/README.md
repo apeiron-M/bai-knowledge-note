@@ -4,6 +4,33 @@ This folder holds the canonical scripts and a committed dataset
 (`data/knowledge-vault/`, 543 docs, plus the 2026-09 remote snapshot in `data/powerhouse-knowledge/` — see *Datasets*) so anyone with a fresh clone can
 recreate the vault on a clean local reactor in one command.
 
+
+## Authentication
+
+The Switchboard reads identity from the request's bearer, not from the signed
+actions inside the payload. Every script here sends `PH_ACCESS_TOKEN` when it is
+set, and omits the header when it is not — a missing header is an anonymous
+caller (fine on a host with authorization off), while a malformed one is a hard
+401.
+
+```bash
+export PH_ACCESS_TOKEN="$(ph access-token | tail -1)"
+```
+
+Tokens are Renown delegation credentials and last **7 days**, so this is a
+per-session export. `grants.py` requires one unconditionally, because managing
+access needs ADMIN.
+
+Manage who can reach a drive — grants go on the drive and inherit to every
+document beneath it, so one row per person covers the whole vault:
+
+```bash
+python3 scripts/drive-sync/grants.py --drive <id> --list
+python3 scripts/drive-sync/grants.py --drive <id> --read 0xabc… --write 0xdef…   # dry run
+python3 scripts/drive-sync/grants.py --drive <id> --read 0xabc… --apply
+python3 scripts/drive-sync/grants.py --drive <id> --revoke 0xabc… --apply
+```
+
 ---
 
 ## Quick start: upload to a clean local reactor
