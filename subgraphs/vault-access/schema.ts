@@ -1,0 +1,65 @@
+import { gql } from "graphql-tag";
+import type { DocumentNode } from "graphql";
+
+export const schema: DocumentNode = gql`
+  type VaultAccessGrant {
+    documentId: ID!
+    documentTitle: String
+    documentType: String
+    userAddress: String!
+    permission: String!
+    grantedBy: String
+  }
+
+  type VaultAccessProtection {
+    documentId: ID!
+    documentTitle: String
+    protected: Boolean!
+    ownerAddress: String
+  }
+
+  type VaultAccessOperationGrant {
+    documentId: ID!
+    documentTitle: String
+    operationType: String!
+    userAddress: String!
+  }
+
+  """
+  Who has access to what, in one query.
+
+  The host owns the address-to-document relation but exposes it only one
+  document at a time, or for the calling user alone. Answering "who has access
+  to what" from a client therefore cost one request per document — around 1,500
+  round trips on a full vault. This reads the same tables server-side.
+  """
+  type VaultAccessMap {
+    """
+    False when the Switchboard runs without document permissions enabled: the
+    tables do not exist and every list below is empty. Callers should report
+    that authorization is off rather than that nobody has access.
+    """
+    available: Boolean!
+    """Grants on the drive itself. These reach every document by inheritance."""
+    driveGrants: [VaultAccessGrant!]!
+    """Grants set on individual documents."""
+    documentGrants: [VaultAccessGrant!]!
+    """Documents carrying their own protection row."""
+    protections: [VaultAccessProtection!]!
+    """
+    Per-operation restrictions. The existence of any row restricts that
+    operation on that document to the addresses listed.
+    """
+    operationGrants: [VaultAccessOperationGrant!]!
+    distinctAddresses: Int!
+    documentsWithOwnGrants: Int!
+  }
+
+  extend type Query {
+    """
+    Every grant, protection and operation restriction in a drive, in one call.
+    Requires ADMIN of the drive: it publishes the whole access list.
+    """
+    vaultAccessMap(driveId: ID!): VaultAccessMap!
+  }
+`;
