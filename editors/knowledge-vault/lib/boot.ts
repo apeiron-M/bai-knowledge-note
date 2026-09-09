@@ -46,7 +46,17 @@ const SYNC_NOTHING = "remote-first-sync-nothing";
 
 const POLL_MS = 400;
 /** Refresh the drive snapshot on this cadence until the editor takes over. */
-const HYDRATE_MS = 30_000;
+/**
+ * How often the drive snapshot is re-read as a safety net.
+ *
+ * Was 30s, which re-downloaded the whole drive document — ~300 kB on a
+ * 1,500-node drive, so roughly 36 MB an hour per open tab — to detect changes
+ * that usually had not happened. The `documentChanges` subscription is the
+ * real-time path; this is only the backstop for when it drops, so it does not
+ * need to be fast. Paired with the cheap freshness check below, an unchanged
+ * drive now costs a few hundred bytes instead of 300 kB.
+ */
+const HYDRATE_MS = 180_000;
 /** Stop looking after this long; Connect either has a sync manager by now or never will. */
 const MAX_WAIT_MS = 120_000;
 
@@ -166,7 +176,14 @@ async function adopt(driveId: string, remote: Remote, sync: SyncManager) {
   await hydrateDriveSnapshot(driveId, handle.remoteClient);
   const timer = setInterval(() => {
     if (document.visibilityState !== "visible") return;
-    void hydrateDriveSnapshot(driveId, handle.remoteClient).catch(() => {});
+    // The first hydration above is unconditional — nothing about a
+    // remote-first drive is persisted locally, so the snapshot must exist.
+    // Only the refresh is skippable.
+    void driveChangedSince(driveId)
+      .then((changed) =>
+        changed ? hydrateDriveSnapshot(driveId, handle.remoteClient) : undefined,
+      )
+      .catch(() => {});
   }, HYDRATE_MS);
   timer.unref?.();
 }
@@ -180,6 +197,45 @@ async function adopt(driveId: string, remote: Remote, sync: SyncManager) {
  * drops it, and `meta.preferredEditor` is how Connect routes a drive to its
  * app — overwriting it flips the UI to the generic explorer.
  */
+/**
+ * Last value we hydrated, so an unchanged drive can be skipped without pulling
+ * its whole node list.
+ */
+let lastHydratedAt: string | null = null;
+
+/**
+ * Cheap check: has the drive changed since we last hydrated?
+ *
+ * `lastModifiedAtUtcIso` is a scalar on the drive document, so asking for it
+ * alone costs a few hundred bytes against ~300 kB for the full state. Any
+ * failure returns true — a freshness probe must never be the reason the
+ * snapshot goes stale.
+ */
+async function driveChangedSince(driveId: string): Promise<boolean> {
+  try {
+    const res = await fetch(`${resolveReactorEndpoint()}/r`, {
+      method: "POST",
+      headers: await authHeaders(),
+      body: JSON.stringify({
+        query:
+          "query F($id:String!){ document(identifier:$id){ document { lastModifiedAtUtcIso } } }",
+        variables: { id: driveId },
+      }),
+    });
+    if (!res.ok) return true;
+    const json = (await res.json()) as {
+      data?: { document?: { document?: { lastModifiedAtUtcIso?: string } } };
+    };
+    const stamp = json.data?.document?.document?.lastModifiedAtUtcIso;
+    if (!stamp) return true;
+    if (stamp === lastHydratedAt) return false;
+    lastHydratedAt = stamp;
+    return true;
+  } catch {
+    return true;
+  }
+}
+
 async function hydrateDriveSnapshot(
   driveId: string,
   client: { get: (id: string) => Promise<unknown> },
