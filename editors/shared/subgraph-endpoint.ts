@@ -63,6 +63,17 @@ export function resolveReactorEndpoint(): string {
   return origin ? `${origin}/graphql` : "/graphql";
 }
 
+/**
+ * Switchboard's core `auth` subgraph, which serves the host's document
+ * permission tables. It is registered only when `DOCUMENT_PERMISSIONS_ENABLED`
+ * is true, so every query against it must tolerate the whole endpoint being
+ * absent on a deployment that has authorization switched off.
+ */
+export function resolveAuthEndpoint(): string {
+  const origin = resolveSwitchboardOrigin();
+  return origin ? `${origin}/graphql/auth` : "/graphql/auth";
+}
+
 export function resolveKnowledgeGraphEndpoint(): string {
   const envUrl =
     typeof import.meta !== "undefined" &&

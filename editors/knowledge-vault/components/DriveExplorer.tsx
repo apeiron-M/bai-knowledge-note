@@ -1,3 +1,4 @@
+import { AccessView } from "./AccessView.js";
 import { useState, useMemo, useCallback, useEffect } from "react";
 import type { EditorProps } from "document-model";
 import {
@@ -40,6 +41,7 @@ type ViewMode =
   | "activity"
   | "pipeline"
   | "health"
+  | "access"
   | "config";
 
 /**
@@ -412,6 +414,8 @@ export function DriveExplorer({ children }: EditorProps) {
             <ScopeOfWorkView />
           ) : viewMode === "projects" ? (
             <ProjectsView />
+          ) : viewMode === "access" ? (
+            <AccessView />
           ) : viewMode === "health" ? (
             <HealthDashboard />
           ) : (
@@ -535,6 +539,23 @@ const SETTINGS_ITEMS: {
   hint: string;
   icon: React.ReactNode;
 }[] = [
+  {
+    key: "access",
+    hint: "Who can read and write this vault",
+    label: "Access",
+    icon: (
+      <svg
+        className="h-4 w-4"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="2"
+      >
+        <rect x="3" y="11" width="18" height="11" rx="2" />
+        <path d="M7 11V7a5 5 0 0 1 10 0v4" />
+      </svg>
+    ),
+  },
   {
     key: "activity",
     hint: "Recent writes across the vault",
