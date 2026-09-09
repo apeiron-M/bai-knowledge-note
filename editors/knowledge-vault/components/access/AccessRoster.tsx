@@ -42,11 +42,21 @@ import {
 } from "./parts.js";
 import { LEVEL_RANK, type Grant, type Level } from "./use-auth-api.js";
 
+/**
+ * Why removing or lowering this grant is refused, if it is.
+ *
+ * Only when it would genuinely leave nobody able to administer. A supreme
+ * admin from the server's ADMINS list keeps administering regardless, so
+ * blocking them would be a guard against nothing — and worse, it would trap
+ * an admin who granted themselves a row they never needed, unable to undo it.
+ */
 export function lockoutReason(
   g: Grant,
   grants: Grant[],
   myAddress: string,
+  viewerIsSupremeAdmin: boolean,
 ): string | undefined {
+  if (viewerIsSupremeAdmin) return undefined;
   const admins = grants.filter(
     (x) => LEVEL_RANK[x.permission] >= LEVEL_RANK.ADMIN,
   );
@@ -147,6 +157,7 @@ export function AccessRoster({
               grant={g}
               grants={grants}
               myAddress={myAddress}
+              viewerIsSupremeAdmin={viewerIsSupremeAdmin}
               busy={busy}
               onChangeLevel={onChangeLevel}
               onRevoke={onRevoke}
@@ -168,6 +179,7 @@ function GrantRow({
   grant,
   grants,
   myAddress,
+  viewerIsSupremeAdmin,
   busy,
   onChangeLevel,
   onRevoke,
@@ -175,12 +187,18 @@ function GrantRow({
   grant: Grant;
   grants: Grant[];
   myAddress: string;
+  viewerIsSupremeAdmin: boolean;
   busy: boolean;
   onChangeLevel: (address: string, level: Level) => void;
   onRevoke: (address: string) => void;
 }) {
   const [pending, setPending] = useState<Level | null>(null);
-  const reason = lockoutReason(grant, grants, myAddress);
+  const reason = lockoutReason(
+    grant,
+    grants,
+    myAddress,
+    viewerIsSupremeAdmin,
+  );
   const isMe = grant.userAddress.toLowerCase() === myAddress.toLowerCase();
 
   return (

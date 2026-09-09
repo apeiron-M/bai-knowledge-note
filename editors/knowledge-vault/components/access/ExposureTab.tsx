@@ -24,6 +24,7 @@ export function buildFindings(
   protection: Protection | null,
   grants: Grant[],
   documentCount: number,
+  viewerIsSupremeAdmin: boolean,
 ): Finding[] {
   const out: Finding[] = [];
   const admins = grants.filter((g) => LEVEL_RANK[g.permission] >= LEVEL_RANK.ADMIN);
@@ -58,22 +59,41 @@ export function buildFindings(
     });
   }
 
+  // A supreme admin from the server's ADMINS list administers the vault
+  // perfectly well without a grant, so the absence of an ADMIN row is only a
+  // problem when nobody is administering it at all. Reporting it as a warning
+  // regardless is what pushes an admin into granting themselves a row they
+  // never needed.
   if (admins.length === 0 && protection?.protected) {
-    out.push({
-      severity: "warning",
-      title: "No administrator grant on the drive",
-      detail:
-        "Access is currently administrable only through the server's ADMINS environment variable. That cannot be changed from this UI, and it is not per-vault.",
-      fix: "Grant a trusted address ADMIN so access can be managed here.",
-    });
+    out.push(
+      viewerIsSupremeAdmin
+        ? {
+            severity: "ok",
+            title: "Administered from the server's ADMINS list",
+            detail:
+              "You reach this vault as a supreme admin, which bypasses every check — no grant is needed, and granting yourself one changes nothing about your access.",
+            fix: "Optional: give a trusted address ADMIN so access can also be managed by someone without server access.",
+          }
+        : {
+            severity: "warning",
+            title: "No administrator grant on the drive",
+            detail:
+              "Nothing in the vault names an administrator. Access is administrable only through the server's ADMINS environment variable, which cannot be changed from here.",
+            fix: "Grant a trusted address ADMIN so access can be managed from this screen.",
+          },
+    );
   } else if (admins.length === 1) {
     out.push({
-      severity: "warning",
-      title: "Only one administrator",
-      detail:
-        `${short(admins[0].userAddress)} is the sole ADMIN grant. Losing that key leaves nobody able to grant or revoke, ` +
-        "and there is no recovery path through the API.",
-      fix: "Grant a second trusted address ADMIN.",
+      severity: viewerIsSupremeAdmin ? "ok" : "warning",
+      title: viewerIsSupremeAdmin
+        ? "One administrator grant, plus the server's ADMINS list"
+        : "Only one administrator",
+      detail: viewerIsSupremeAdmin
+        ? `${short(admins[0].userAddress)} holds the only ADMIN grant, and you also administer this vault through the server's ADMINS list — so a lost key is recoverable from the environment.`
+        : `${short(admins[0].userAddress)} is the sole ADMIN grant. Losing that key leaves nobody able to grant or revoke, and there is no recovery path through the API.`,
+      fix: viewerIsSupremeAdmin
+        ? ""
+        : "Grant a second trusted address ADMIN.",
     });
   }
 
@@ -111,7 +131,12 @@ export function ExposureTab({
   onChangeLevel: (address: string, level: Level) => void;
   onRevoke: (address: string) => void;
 }) {
-  const findings = buildFindings(protection, grants, documentCount);
+  const findings = buildFindings(
+    protection,
+    grants,
+    documentCount,
+    viewerIsSupremeAdmin,
+  );
   const exposed = protection !== null && !protection.protected;
 
   return (

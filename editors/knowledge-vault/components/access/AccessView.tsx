@@ -20,7 +20,9 @@ import { seedEns } from "./use-ens.js";
 import { ExposureTab } from "./ExposureTab.js";
 import { PeopleTab } from "./PeopleTab.js";
 import { DocumentsTab } from "./DocumentsTab.js";
+import { AccessMap } from "./AccessMap.js";
 import {
+  cachedScan,
   documentAccess,
   documentProtection,
   driveNodes,
@@ -30,14 +32,17 @@ import {
   type DriveNode,
   type Grant,
   type Level,
+  scanDocumentGrants,
   type Protection,
+  type ScanState,
 } from "./use-auth-api.js";
 
-type Tab = "exposure" | "people" | "documents";
+type Tab = "exposure" | "people" | "map" | "documents";
 
 const TABS: { key: Tab; label: string; hint: string }[] = [
   { key: "exposure", label: "Exposure", hint: "Is anything open?" },
   { key: "people", label: "People", hint: "Who can reach the vault" },
+  { key: "map", label: "Who has what", hint: "Every grant, across every document" },
   { key: "documents", label: "Documents", hint: "One document, and its operations" },
 ];
 
@@ -53,6 +58,7 @@ export function AccessView() {
   const [nodes, setNodes] = useState<DriveNode[]>([]);
   const [opsByModel, setOpsByModel] = useState<Record<string, string[]>>({});
   const [notice, setNotice] = useState<string | null>(null);
+  const [scan, setScan] = useState<ScanState | null>(null);
   const [busy, setBusy] = useState(false);
 
   // Renown already knows the signed-in user's ENS name, so prime the cache
@@ -61,6 +67,22 @@ export function AccessView() {
   useEffect(() => {
     if (address) seedEns(address, ensName);
   }, [address, ensName]);
+
+  useEffect(() => {
+    if (!driveId || nodes.length === 0) return;
+    const cached = cachedScan(driveId);
+    if (cached) {
+      setScan(cached);
+      return;
+    }
+    let live = true;
+    void scanDocumentGrants(driveId, nodes, (state) => {
+      if (live) setScan(state);
+    });
+    return () => {
+      live = false;
+    };
+  }, [driveId, nodes]);
 
   const load = useCallback(async () => {
     if (!driveId) return;
@@ -234,6 +256,10 @@ export function AccessView() {
           onChangeLevel={changeLevel}
           onRevoke={revoke}
         />
+      ) : tab === "map" ? (
+        <Card>
+          <AccessMap driveGrants={grants} scan={scan} />
+        </Card>
       ) : tab === "people" ? (
         <PeopleTab
           grants={grants}

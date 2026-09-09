@@ -261,3 +261,92 @@ export function revokeOperation(id: string, op: string, addr: string) {
     { id, op, a: addr },
   );
 }
+
+/* ── vault-wide scan ───────────────────────────────────────────── */
+
+export type DocumentGrant = {
+  documentId: string;
+  documentName: string;
+  documentType: string | null;
+  userAddress: string;
+  permission: Level;
+};
+
+export type ScanState = {
+  rows: DocumentGrant[];
+  scanned: number;
+  total: number;
+  done: boolean;
+  refused: number;
+};
+
+const scanCache = new Map<string, ScanState>();
+
+export function cachedScan(driveId: string): ScanState | undefined {
+  return scanCache.get(driveId);
+}
+
+export function invalidateScan(driveId: string): void {
+  scanCache.delete(driveId);
+}
+
+/**
+ * Every document-level grant in the drive.
+ *
+ * There is no bulk query — the auth subgraph exposes `documentAccess` per
+ * document and `userDocumentPermissions` for the caller alone — so the only
+ * way to answer "who has access to what" across a vault is to ask per
+ * document. At ~1,500 documents that is a real scan, so it is batched with
+ * bounded concurrency, reports progress, and is cached per drive: hammering
+ * the Switchboard with 1,500 simultaneous ADMIN-gated queries is how an admin
+ * screen becomes an outage.
+ *
+ * Only non-empty results are kept. Most documents carry no grants of their own
+ * because access normally arrives by inheritance from the drive, so the result
+ * is small even though the scan is wide.
+ */
+export async function scanDocumentGrants(
+  driveId: string,
+  nodes: DriveNode[],
+  onProgress: (state: ScanState) => void,
+  concurrency = 12,
+): Promise<ScanState> {
+  const targets = nodes.filter((n) => n.id !== driveId);
+  const state: ScanState = {
+    rows: [],
+    scanned: 0,
+    total: targets.length,
+    done: false,
+    refused: 0,
+  };
+
+  for (let i = 0; i < targets.length; i += concurrency) {
+    const batch = targets.slice(i, i + concurrency);
+    const results = await Promise.all(
+      batch.map(async (node) => ({ node, res: await documentAccess(node.id) })),
+    );
+    for (const { node, res } of results) {
+      if (res.data === undefined) {
+        state.refused += 1;
+        continue;
+      }
+      for (const g of res.data.documentAccess.permissions) {
+        state.rows.push({
+          documentId: node.id,
+          documentName: node.name || node.id.slice(0, 8),
+          documentType: node.documentType ?? null,
+          userAddress: g.userAddress,
+          permission: g.permission,
+        });
+      }
+    }
+    state.scanned = Math.min(i + concurrency, targets.length);
+    onProgress({ ...state, rows: [...state.rows] });
+  }
+
+  state.done = true;
+  const final = { ...state, rows: [...state.rows] };
+  scanCache.set(driveId, final);
+  onProgress(final);
+  return final;
+}
