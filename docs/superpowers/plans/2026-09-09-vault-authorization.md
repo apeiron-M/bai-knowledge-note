@@ -90,6 +90,34 @@ That was the cause of the `pollSyncEnvelopes … Forbidden` log spam.
 
 `bun run tsc` exit 0; suite 974 passed / 6 skipped. Committed.
 
+### Tasks 4, 5 and the dashboard — COMPLETE
+
+**Task 4** — `scripts/drive-sync/lib/gql.py` and `reindex.py` send
+`PH_ACCESS_TOKEN` when set. The bearer sits on gql.py's shared header dict, so
+all six mutations and both reads inherit it. Absent is left absent so the
+scripts still work against an open reactor. README documents
+`export PH_ACCESS_TOKEN="$(ph access-token | tail -1)"` and the 7-day expiry.
+
+**Task 5** — `scripts/drive-sync/grants.py`. Dry run by default, idempotent,
+and it writes on the *drive* so one row per person covers every document.
+Verified live: list on an empty drive, dry run writing nothing, apply,
+idempotent re-run, READ→WRITE upsert producing one row not two, revoke, and a
+no-op revoke.
+
+**Dashboard** (was deferred; pulled forward on request) — `AccessView.tsx` under
+the gear in `SettingsMenu`, plus `resolveAuthEndpoint()`. Verdict-first layout,
+inheritance stated in words, lockout prevention, confirm-then-revoke, and an
+explicit note that the model is allow-only.
+
+**An extra fix that was not in the plan.** `editors/knowledge-vault/lib/remote-first.ts`
+built the app's `GraphQLReactorClient` with `createClient(endpoint)` and no
+middleware, so every read through it was anonymous and a logged-in admin still
+got FORBIDDEN at boot. Easy to miss because that client already *signs* the
+actions it pushes — but a signature is provenance on the payload, not
+authentication of the request. Fixed with `makeAuthMiddleware(getBearerToken)`.
+
+Remaining: **Task 3** (the Renown login gate). Everything else is done.
+
 ### Task 1 — COMPLETE
 
 `editors/shared/authed-fetch.ts` + 4 passing tests; `remote-reactor.ts:gqlRequest` now
