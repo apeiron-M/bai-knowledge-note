@@ -65,6 +65,7 @@ import { enableRemoteFirst, withTransientRetry } from "../lib/remote-first.js";
 import { registerVaultHydrator } from "../../shared/vault-pull.js";
 import {
   announceVaultRemoteChange,
+  debounced,
   isStructuralChange,
   isVaultLive,
   setVaultLive,
@@ -144,6 +145,8 @@ export function useRemoteFirst(): void {
   drivesRef.current = drives;
   /** Step 3's hydrator, for step 5 to call on structural events. */
   const hydrateRef = useRef<(() => void) | null>(null);
+  /** The same hydrator, coalesced — for the high-frequency event paths. */
+  const hydrateSoonRef = useRef<(() => void) | null>(null);
 
   // ── 1. Client + cache swap (render-time, idempotent per drive) ────
   const handleRef = useRef<ReturnType<typeof enableRemoteFirst> | null>(null);
@@ -191,7 +194,19 @@ export function useRemoteFirst(): void {
           const alreadyScoped =
             filter.documentId.length === 1 &&
             filter.documentId[0] === SYNC_NOTHING;
-          if (alreadyScoped) return;
+          // Scoped is NOT sufficient. A channel persisted by a session from
+          // before the cadence fix is already scoped to the sentinel and
+          // still on PollBehavior.Auto — returning here would leave it
+          // polling an empty outbox roughly once a second, forever, which is
+          // the exact traffic the scoping was meant to stop. Skip only when
+          // the filter AND the cadence are both already right.
+          // `meta.options` is typed non-nullish on a registered channel, and
+          // the whole loop runs inside the try/catch below, so a surprising
+          // absence degrades to "re-add the channel" rather than throwing.
+          const alreadyManual =
+            (meta.options as { pollBehavior?: PollBehavior }).pollBehavior ===
+            PollBehavior.Manual;
+          if (alreadyScoped && alreadyManual) return;
 
           // Re-add under a sentinel filter rather than removing. The
           // channel keeps polling (`pollSyncEnvelopes`, always empty),
@@ -300,13 +315,22 @@ export function useRemoteFirst(): void {
       lastPollAt = Date.now();
       void hydrate();
     }, DRIVE_HYDRATE_MS);
-    // Any announced mutation may have changed the tree.
-    const onMutation = () => void hydrate();
+    // Any announced mutation may have changed the tree — but a write burst
+    // announces one event per operation, and each hydrate is a full ~300 kB
+    // drive read. The `inFlight` guard above only drops CONCURRENT calls, so
+    // a sequence of writes spaced further apart than one round-trip used to
+    // pay the full cost for every one of them. Coalesce instead; 400 ms is
+    // imperceptible for a local write and collapses an agent's `docs apply`
+    // into a single read.
+    const hydrateSoon = debounced(() => void hydrate(), 400, 2_000);
+    hydrateSoonRef.current = hydrateSoon;
+    const onMutation = () => hydrateSoon();
     window.addEventListener("MutateDocument", onMutation);
     return () => {
       cancelled = true;
       registerVaultHydrator(null);
       hydrateRef.current = null;
+      hydrateSoonRef.current = null;
       clearInterval(interval);
       window.removeEventListener("MutateDocument", onMutation);
     };
@@ -470,9 +494,12 @@ export function useRemoteFirst(): void {
             }
           }
 
-          // 2. The tree changed, or the drive document itself did.
+          // 2. The tree changed, or the drive document itself did. Routed
+          //    through the coalescing hydrator for the same reason as the
+          //    MutateDocument path: a bulk server-side import pushes a
+          //    structural event per document.
           if (structural || documents.some((d) => d.id === driveId)) {
-            hydrateRef.current?.();
+            hydrateSoonRef.current?.();
           }
 
           // 3. Tell everyone else (sidebar projection, graph, health).
