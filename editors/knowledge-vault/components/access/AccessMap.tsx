@@ -218,14 +218,6 @@ export function AccessMap({
             </div>
           )}
 
-          {scan.done && scan.missing > 0 ? (
-            <Callout tone="warn">
-              {scan.missing} document{scan.missing === 1 ? "" : "s"} in the drive
-              tree no longer exist on the Switchboard — they were deleted but the
-              tree still lists them, so their grants cannot be read. This is a
-              stale-tree problem, not a permissions one.
-            </Callout>
-          ) : null}
           {scan.done && scan.refused > 0 ? (
             <Callout tone="warn">
               {scan.refused} document{scan.refused === 1 ? "" : "s"} refused the

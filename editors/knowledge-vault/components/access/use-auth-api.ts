@@ -279,8 +279,12 @@ export type ScanState = {
   done: boolean;
   /** Answered FORBIDDEN *and* still exists — a genuine permissions gap. */
   refused: number;
-  /** Answered FORBIDDEN but no longer exists — a stale drive-tree entry. */
-  missing: number;
+  /**
+   * Ids the drive tree lists but the reactor no longer has. Callers filter
+   * these out rather than reporting them: a deleted document is not part of
+   * the vault, so it has no place in an access view.
+   */
+  missingIds: string[];
 };
 
 const scanCache = new Map<string, ScanState>();
@@ -321,7 +325,7 @@ export async function scanDocumentGrants(
     total: targets.length,
     done: false,
     refused: 0,
-    missing: 0,
+    missingIds: [],
   };
   const unanswered: string[] = [];
 
@@ -349,7 +353,11 @@ export async function scanDocumentGrants(
       }
     }
     state.scanned = Math.min(i + concurrency, targets.length);
-    onProgress({ ...state, rows: [...state.rows] });
+    onProgress({
+      ...state,
+      rows: [...state.rows],
+      missingIds: [...state.missingIds],
+    });
   }
 
   // Classify the failures by asking whether the document still exists. Only
@@ -361,12 +369,16 @@ export async function scanDocumentGrants(
       `query E($id: String!) { document(identifier: $id) { document { id } } }`,
       { id },
     );
-    if (probe.error && /not found/i.test(probe.error)) state.missing += 1;
+    if (probe.error && /not found/i.test(probe.error)) state.missingIds.push(id);
     else state.refused += 1;
   }
 
   state.done = true;
-  const final = { ...state, rows: [...state.rows] };
+  const final = {
+    ...state,
+    rows: [...state.rows],
+    missingIds: [...state.missingIds],
+  };
   scanCache.set(driveId, final);
   onProgress(final);
   return final;

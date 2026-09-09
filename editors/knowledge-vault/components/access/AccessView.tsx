@@ -56,6 +56,10 @@ export function AccessView() {
   const [protection, setProtection] = useState<Protection | null>(null);
   const [grants, setGrants] = useState<Grant[]>([]);
   const [nodes, setNodes] = useState<DriveNode[]>([]);
+  // Documents the drive tree still lists but the reactor has deleted. They are
+  // not part of the vault, so they are excluded from the tree, the counts and
+  // the access map rather than explained.
+  const [deletedIds, setDeletedIds] = useState<Set<string>>(new Set());
   const [opsByModel, setOpsByModel] = useState<Record<string, string[]>>({});
   const [notice, setNotice] = useState<string | null>(null);
   const [scan, setScan] = useState<ScanState | null>(null);
@@ -73,11 +77,20 @@ export function AccessView() {
     const cached = cachedScan(driveId);
     if (cached) {
       setScan(cached);
+      if (cached.missingIds.length > 0) setDeletedIds(new Set(cached.missingIds));
       return;
     }
     let live = true;
     void scanDocumentGrants(driveId, nodes, (state) => {
-      if (live) setScan(state);
+      if (!live) return;
+      setScan(state);
+      if (state.missingIds.length > 0) {
+        setDeletedIds((prev) => {
+          const next = new Set(prev);
+          for (const id of state.missingIds) next.add(id);
+          return next;
+        });
+      }
     });
     return () => {
       live = false;
@@ -134,6 +147,9 @@ export function AccessView() {
    * holds, the viewer must be on the server's ADMINS list — the only way to
    * surface a principal the API cannot enumerate.
    */
+  const liveNodes =
+    deletedIds.size === 0 ? nodes : nodes.filter((n) => !deletedIds.has(n.id));
+
   const mine = address?.toLowerCase() ?? "";
   const viewerIsSupremeAdmin =
     isAdmin === true &&
@@ -248,7 +264,7 @@ export function AccessView() {
         <ExposureTab
           protection={protection}
           grants={grants}
-          documentCount={nodes.length}
+          documentCount={liveNodes.length}
           driveName="This vault"
           myAddress={address ?? ""}
           viewerIsSupremeAdmin={viewerIsSupremeAdmin}
@@ -275,7 +291,7 @@ export function AccessView() {
         <DocumentsTab
           driveId={driveId}
           driveName="This vault (drive)"
-          nodes={nodes}
+          nodes={liveNodes}
           operationTypesByModel={opsByModel}
           onChanged={() => void load()}
         />
