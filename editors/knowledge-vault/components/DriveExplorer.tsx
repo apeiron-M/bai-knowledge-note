@@ -1,4 +1,4 @@
-import { AccessView } from "./AccessView.js";
+import { AccessView } from "./access/AccessView.js";
 import { useState, useMemo, useCallback, useEffect } from "react";
 import type { EditorProps } from "document-model";
 import {
