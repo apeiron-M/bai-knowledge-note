@@ -14,6 +14,7 @@
  * everything by inheritance.
  */
 import { useMemo, useState } from "react";
+import { setSelectedNode } from "@powerhousedao/reactor-browser";
 import {
   AddressChip,
   Callout,
@@ -195,7 +196,9 @@ export function AccessMap({
                         grant={r}
                         label={
                           <>
-                            {r.documentName}
+                            <DocumentLink documentId={r.documentId}>
+                              {r.documentName}
+                            </DocumentLink>
                             <span
                               className="ml-2 text-[10px]"
                               style={{ color: "var(--bai-text-faint)" }}
@@ -216,10 +219,10 @@ export function AccessMap({
             <div className="flex flex-col gap-3">
               {byDocument.map(([docId, list]) => (
                 <div key={docId}>
-                  <div className="flex items-center gap-2">
-                    <span className="truncate text-xs font-medium">
+                  <div className="flex items-center gap-2 text-xs font-medium">
+                    <DocumentLink documentId={docId}>
                       {list[0].documentName}
-                    </span>
+                    </DocumentLink>
                     <span
                       className="text-[10px]"
                       style={{ color: "var(--bai-text-faint)" }}
@@ -332,5 +335,31 @@ function GrantActionRow({
         </Callout>
       ) : null}
     </>
+  );
+}
+
+/**
+ * Opens the document, the same way clicking a note or a scope-of-work row
+ * does. An access list that names a document you cannot reach makes the admin
+ * hunt for it in the tree; `setSelectedNode` is the app's own navigation, so
+ * this behaves exactly like every other document link in the vault.
+ */
+function DocumentLink({
+  documentId,
+  children,
+}: {
+  documentId: string;
+  children: React.ReactNode;
+}) {
+  return (
+    <button
+      type="button"
+      onClick={() => setSelectedNode(documentId)}
+      className="truncate text-left transition-colors hover:underline"
+      style={{ color: "var(--bai-accent)" }}
+      title="Open this document"
+    >
+      {children}
+    </button>
   );
 }
