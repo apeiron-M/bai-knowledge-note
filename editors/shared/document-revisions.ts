@@ -12,6 +12,7 @@
  * takes the model's `createDocument` and `reducer`. Per-model modules
  * (`<editor>/lib/revisions.ts`) add only the one-line operation summaries.
  */
+import { authHeaders } from "./authed-fetch.js";
 import {
   garbageCollect,
   sortOperations,
@@ -107,13 +108,24 @@ export async function fetchDocumentOperations(
   for (let page = 0; page < maxPages; page++) {
     const res = await fetchImpl(endpoint, {
       method: "POST",
-      headers: { "content-type": "application/json" },
+      // Reading a document's history is a read of the document, so it needs
+      // the same identity every other read carries. Without this the request
+      // is anonymous and a protected document refuses it — which looks like a
+      // permissions bug to a user who has read access, and is not one.
+      headers: await authHeaders(),
       body: JSON.stringify({
         query: DOCUMENT_OPERATIONS_QUERY,
         variables: { id: documentId, cursor },
       }),
     });
-    if (!res.ok) throw new Error(`operations fetch failed: HTTP ${res.status}`);
+    if (!res.ok) {
+      if (res.status === 401) {
+        throw new Error(
+          "Not signed in — history could not be loaded. Sign in again if your session expired.",
+        );
+      }
+      throw new Error(`operations fetch failed: HTTP ${res.status}`);
+    }
     const json = (await res.json()) as {
       data?: {
         document?: { document?: { operations?: DocumentOperationsPage } };
