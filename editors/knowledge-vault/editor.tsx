@@ -1,6 +1,7 @@
 import { useSetPHAppConfig } from "@powerhousedao/reactor-browser";
 import type { EditorProps } from "document-model";
 import { DebugErrorBoundary } from "./components/DebugErrorBoundary.js";
+import { AuthGate } from "./components/AuthGate.js";
 import { DriveExplorer } from "./components/DriveExplorer.js";
 import { editorConfig } from "./config.js";
 import { useDriveInit } from "./hooks/use-drive-init.js";
@@ -21,7 +22,9 @@ export default function Editor(props: EditorProps) {
         style={{ backgroundColor: "var(--bai-bg)", color: "var(--bai-text)" }}
       >
         <DebugErrorBoundary>
-          <DriveExplorer {...props} />
+          <AuthGate>
+            <DriveExplorer {...props} />
+          </AuthGate>
         </DebugErrorBoundary>
       </div>
     </ThemeProvider>
