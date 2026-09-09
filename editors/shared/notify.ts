@@ -34,6 +34,23 @@ type Listener = (notice: Notice) => void;
 const listeners = new Set<Listener>();
 let nextId = 1;
 
+/**
+ * Suppress repeats of the same headline in quick succession.
+ *
+ * One user action often dispatches several operations — ingesting a source
+ * sends INGEST_SOURCE and SET_SOURCE_STATUS — and when the document is
+ * protected every one of them is refused. Reporting each produces a stack of
+ * toasts saying the same thing, which is noise rather than information: the
+ * headline is the actionable part, and it is identical.
+ *
+ * Deliberately keyed on the headline rather than the full text, since the
+ * detail differs by operation name and keying on it would defeat the purpose.
+ * The first message through wins, so the detail shown is the first refusal
+ * rather than an arbitrary one.
+ */
+const DEDUPE_WINDOW_MS = 4000;
+const recent = new Map<string, number>();
+
 export function subscribeNotifications(fn: Listener): () => void {
   listeners.add(fn);
   return () => listeners.delete(fn);
@@ -44,6 +61,19 @@ export function notify(
   message: string,
   detail?: string,
 ): void {
+  const key = `${level}|${message}`;
+  const now = Date.now();
+  const last = recent.get(key);
+  if (last !== undefined && now - last < DEDUPE_WINDOW_MS) return;
+
+  recent.set(key, now);
+  // Keep the map from growing across a long session.
+  if (recent.size > 32) {
+    for (const [k, t] of recent) {
+      if (now - t >= DEDUPE_WINDOW_MS) recent.delete(k);
+    }
+  }
+
   const notice: Notice = { id: nextId++, level, message, detail };
   for (const fn of listeners) fn(notice);
 }
