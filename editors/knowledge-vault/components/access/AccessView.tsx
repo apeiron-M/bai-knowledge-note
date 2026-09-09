@@ -20,7 +20,6 @@ import { seedEns } from "./use-ens.js";
 import { ExposureTab } from "./ExposureTab.js";
 import { PeopleTab } from "./PeopleTab.js";
 import { DocumentsTab } from "./DocumentsTab.js";
-import { TypesTab } from "./TypesTab.js";
 import {
   documentAccess,
   documentProtection,
@@ -34,12 +33,11 @@ import {
   type Protection,
 } from "./use-auth-api.js";
 
-type Tab = "exposure" | "people" | "types" | "documents";
+type Tab = "exposure" | "people" | "documents";
 
 const TABS: { key: Tab; label: string; hint: string }[] = [
   { key: "exposure", label: "Exposure", hint: "Is anything open?" },
   { key: "people", label: "People", hint: "Who can reach the vault" },
-  { key: "types", label: "By type", hint: "Write notes but not projects" },
   { key: "documents", label: "Documents", hint: "One document, and its operations" },
 ];
 
@@ -226,8 +224,6 @@ export function AccessView() {
             )
           }
         />
-      ) : tab === "types" ? (
-        <TypesTab nodes={nodes} busy={busy} onChanged={() => void load()} />
       ) : (
         <DocumentsTab
           driveId={driveId}
