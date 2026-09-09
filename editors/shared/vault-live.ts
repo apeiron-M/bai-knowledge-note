@@ -60,6 +60,22 @@ export function isStructuralChange(type: string): boolean {
   return STRUCTURAL.has(type);
 }
 
+/**
+ * Whether a document type belongs to the vault.
+ *
+ * Used as the membership fallback on a COLD open, before the drive snapshot
+ * exists to answer properly. It was a bare `startsWith("bai/")`, which is
+ * true of every vault model except one: `powerhouse/scopeofwork`. So until
+ * the snapshot landed, a change to a scope of work was silently dropped from
+ * the live feed and the editor showed stale data with no indication why.
+ */
+export function isVaultDocumentType(
+  documentType: string | null | undefined,
+): boolean {
+  const type = documentType ?? "";
+  return type.startsWith("bai/") || type === "powerhouse/scopeofwork";
+}
+
 export function announceVaultRemoteChange(change: VaultRemoteChange): void {
   if (typeof window === "undefined") return;
   window.dispatchEvent(

@@ -4,6 +4,7 @@ import {
   announceVaultRemoteChange,
   debounced,
   isStructuralChange,
+  isVaultDocumentType,
   isVaultLive,
   LIVE_EVENT_TTL_MS,
   onVaultLiveChange,
@@ -120,5 +121,41 @@ describe("vault-live bus", () => {
     }
     vi.advanceTimersByTime(LIVE_EVENT_TTL_MS + 1);
     expect(isVaultLive()).toBe(false);
+  });
+});
+
+describe("isVaultDocumentType", () => {
+  it("accepts every bai/ model", () => {
+    for (const type of [
+      "bai/knowledge-note",
+      "bai/moc",
+      "bai/source",
+      "bai/tension",
+      "bai/observation",
+      "bai/research-claim",
+      "bai/health-report",
+      "bai/pipeline-queue",
+      "bai/vault-config",
+      "bai/wbs",
+    ]) {
+      expect(isVaultDocumentType(type)).toBe(true);
+    }
+  });
+
+  it("accepts the one vault model that is not under bai/", () => {
+    // The whole reason this function exists: a bare startsWith("bai/") drops
+    // scope-of-work changes from the live feed on a cold open.
+    expect(isVaultDocumentType("powerhouse/scopeofwork")).toBe(true);
+  });
+
+  it("rejects types from outside the vault", () => {
+    expect(isVaultDocumentType("powerhouse/document-model")).toBe(false);
+    expect(isVaultDocumentType("some/other")).toBe(false);
+  });
+
+  it("rejects an absent type rather than throwing", () => {
+    expect(isVaultDocumentType(null)).toBe(false);
+    expect(isVaultDocumentType(undefined)).toBe(false);
+    expect(isVaultDocumentType("")).toBe(false);
   });
 });

@@ -67,6 +67,7 @@ import {
   announceVaultRemoteChange,
   debounced,
   isStructuralChange,
+  isVaultDocumentType,
   isVaultLive,
   setVaultLive,
   type VaultRemoteChangeType,
@@ -479,9 +480,7 @@ export function useRemoteFirst(): void {
           const documents = event.documents.filter(
             (d) =>
               d.id === driveId ||
-              (members
-                ? members.has(d.id)
-                : (d.documentType ?? "").startsWith("bai/")),
+              (members ? members.has(d.id) : isVaultDocumentType(d.documentType)),
           );
           if (documents.length === 0 && !structural) return;
 
