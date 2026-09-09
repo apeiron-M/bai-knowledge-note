@@ -45,8 +45,10 @@
  * is why this is a delegating hybrid rather than a wholesale
  * replacement.
  */
+import { getBearerToken } from "../../shared/authed-fetch.js";
 import {
   GraphQLReactorClient,
+  makeAuthMiddleware,
   addPromiseState,
   setDocumentCache,
   setReactorClient,
@@ -473,7 +475,17 @@ export function enableRemoteFirst(options: {
   active?.handle.restore();
 
   suppressSentryWebVitalsNoise();
-  const sdk = createClient(options.endpoint);
+  // Every read and push this client makes must carry the caller's identity.
+  // GraphQLReactorClient signs the *actions* it pushes with the Renown user's
+  // key, but that is provenance on the payload, not authentication of the
+  // request -- so without this middleware the client calls anonymously and a
+  // protected document answers FORBIDDEN, which is what broke boot's
+  // hydrateDriveSnapshot. The provider is resolved per request, so a login
+  // after the client was built is picked up.
+  const sdk = createClient(
+    options.endpoint,
+    makeAuthMiddleware(getBearerToken),
+  );
   const remoteClient = new GraphQLReactorClient({
     url: options.endpoint,
     graphqlClient: sdk,
