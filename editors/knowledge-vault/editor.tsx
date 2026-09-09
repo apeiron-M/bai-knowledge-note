@@ -3,6 +3,7 @@ import type { EditorProps } from "document-model";
 import { DebugErrorBoundary } from "./components/DebugErrorBoundary.js";
 import { AuthGate } from "./components/AuthGate.js";
 import { DriveExplorer } from "./components/DriveExplorer.js";
+import { Notifications } from "./components/Notifications.js";
 import { editorConfig } from "./config.js";
 import { useDriveInit } from "./hooks/use-drive-init.js";
 import { useRemoteFirst } from "./hooks/use-remote-first.js";
@@ -26,6 +27,7 @@ export default function Editor(props: EditorProps) {
             <DriveExplorer {...props} />
           </AuthGate>
         </DebugErrorBoundary>
+        <Notifications />
       </div>
     </ThemeProvider>
   );

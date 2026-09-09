@@ -23,6 +23,7 @@
  * the document refetches.
  */
 import { authedGraphQLFetch } from "./authed-fetch.js";
+import { notify, notifyGraphQLError } from "./notify.js";
 import { resolveReactorEndpoint } from "./subgraph-endpoint.js";
 
 /** Reactor read/mutate endpoint (`/graphql/r`) for the current host. */
@@ -63,10 +64,20 @@ async function gqlRequest<T>(
 ): Promise<T> {
   const res = await authedGraphQLFetch(endpoint, { query, variables });
   if (!res.ok) {
+    notify(
+      "error",
+      res.status === 401 ? "You are signed out" : "The Switchboard is unreachable",
+      res.status === 401
+        ? "Sign in again to continue — your session or credential has expired."
+        : `HTTP ${res.status} from ${endpoint}`,
+    );
     throw new Error(`HTTP ${res.status} from ${endpoint}`);
   }
   const json = (await res.json()) as GraphQLResponse<T>;
   if (json.errors?.length) {
+    // Surface it before throwing: callers largely swallow the rejection, which
+    // is how a permissions refusal became a devtools-only event.
+    notifyGraphQLError(json.errors.map((e) => e.message ?? "?"));
     throw new Error(json.errors.map((e) => e.message ?? "?").join("; "));
   }
   if (!json.data) throw new Error("GraphQL response carried no data");
