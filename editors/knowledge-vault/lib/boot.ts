@@ -27,6 +27,7 @@
  */
 import { PollBehavior } from "@powerhousedao/reactor";
 import { authHeaders } from "../../shared/authed-fetch.js";
+import { hasVaultHydrator } from "../../shared/vault-pull.js";
 import { enableRemoteFirst } from "./remote-first.js";
 import { resolveReactorEndpoint } from "../hooks/subgraph-endpoint.js";
 
@@ -189,8 +190,15 @@ async function adopt(driveId: string, remote: Remote, sync: SyncManager) {
   // and re-adds the drive. `useRemoteFirst` takes over freshness once the
   // editor mounts.
   await hydrateDriveSnapshot(driveId, handle.remoteClient);
-  const timer = setInterval(() => {
+  setInterval(() => {
     if (document.visibilityState !== "visible") return;
+    // Stand down once the editor is mounted: `useRemoteFirst` installs its
+    // own hydrator with a tighter cadence, a change-feed subscription and
+    // MutateDocument handling. Running both meant two independent full
+    // drive reads of the same document. (This timer cannot simply be
+    // cleared — the editor unmounts on hot-updates and drive switches, and
+    // this is the only refresh before it mounts again.)
+    if (hasVaultHydrator()) return;
     // The first hydration above is unconditional — nothing about a
     // remote-first drive is persisted locally, so the snapshot must exist.
     // Only the refresh is skippable.
@@ -200,7 +208,9 @@ async function adopt(driveId: string, remote: Remote, sync: SyncManager) {
       )
       .catch(() => {});
   }, HYDRATE_MS);
-  timer.unref?.();
+  // NOTE: no `unref()` here. `Timeout.unref` is a Node API; in the browser
+  // `setInterval` returns a number and the call was silently a no-op, which
+  // read as if the timer had been made harmless when it had not.
 }
 
 /**
@@ -284,11 +294,17 @@ async function hydrateDriveSnapshot(
 }
 
 function sweep(startedAt: number, timer: ReturnType<typeof setInterval>): void {
-  const sync = syncManager();
-  if (!sync) {
-    if (Date.now() - startedAt > MAX_WAIT_MS) clearInterval(timer);
+  // Boot-time adoption is a bounded job: `useRemoteFirst` neutralises the
+  // channel for any drive the user selects later. The deadline used to apply
+  // only to the "no sync manager yet" branch, so as soon as a manager
+  // existed this 400 ms timer ran for the life of the page, re-listing
+  // remotes forever with nothing left to adopt.
+  if (Date.now() - startedAt > MAX_WAIT_MS) {
+    clearInterval(timer);
     return;
   }
+  const sync = syncManager();
+  if (!sync) return;
   let remotes: Remote[];
   try {
     remotes = sync.list();

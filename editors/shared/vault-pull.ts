@@ -27,6 +27,15 @@ export function registerVaultHydrator(fn: (() => void) | null): void {
 }
 
 /**
+ * Whether a hydrator is installed, i.e. the vault editor is mounted and
+ * owns drive-tree freshness. The boot-time poll uses this to stand down
+ * rather than duplicating the editor's refresh.
+ */
+export function hasVaultHydrator(): boolean {
+  return hydrateNow !== null;
+}
+
+/**
  * Refresh the drive tree snapshot from the server immediately — call
  * after any write that changes the tree so the new node appears without
  * waiting for the poll. A no-op outside the vault app.
