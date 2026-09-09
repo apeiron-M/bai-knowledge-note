@@ -126,6 +126,18 @@ export function AuthGate({ children }: { children: React.ReactNode }) {
 
   if (!driveId || verdict.kind === "allowed") return <>{children}</>;
 
+  if (verdict.kind === "checking") {
+    return (
+      <div className="flex h-full items-center justify-center p-8">
+        <span
+          role="status"
+          aria-label="Checking access"
+          className="h-6 w-6 animate-spin rounded-full border-2 border-current border-t-transparent opacity-40"
+        />
+      </div>
+    );
+  }
+
   return (
     <div className="flex h-full items-center justify-center p-8">
       <div
@@ -135,14 +147,7 @@ export function AuthGate({ children }: { children: React.ReactNode }) {
           backgroundColor: "var(--bai-surface)",
         }}
       >
-        {verdict.kind === "checking" ? (
-          <>
-            <h1 className="text-base font-semibold">Checking your access…</h1>
-            <p className="mt-2 text-sm opacity-70">
-              Asking the Switchboard whether this vault is readable by you.
-            </p>
-          </>
-        ) : verdict.kind === "anonymous" ? (
+        {verdict.kind === "anonymous" ? (
           <>
             <h1 className="text-base font-semibold">Sign in to open this vault</h1>
             <p className="mt-2 text-sm opacity-80">
