@@ -25,6 +25,8 @@
  *    that is the whole point of stale-while-revalidate. Gating the paint
  *    on 30s would put the spinner back for any revisit half a minute
  *    later, which is exactly the complaint this module exists to fix.
+ *    It DOES gate revalidation, for callers that opt in via
+ *    `fetchThroughCache`'s `maxAgeMs` — see the note there.
  *  - {@link DOC_CACHE_MAX_AGE_MS} is the *retention* horizon: entries
  *    older than that are dropped on access so a long session can't grow
  *    the cache without bound.
@@ -164,7 +166,24 @@ export function fetchThroughCache(
   id: string,
   fetcher: (id: string) => Promise<DocFetchOutcome>,
   now: () => number = Date.now,
+  maxAgeMs = 0,
 ): Promise<DocFetchOutcome> {
+  // Freshness gate. Painting is never gated — that is the whole point of
+  // stale-while-revalidate and the reason `isStale` does not appear here —
+  // but REVALIDATING unconditionally is a different matter: with it, seven
+  // polling call sites plus every remount re-read their entire id list from
+  // the network however recently it had landed. A caller that can tolerate
+  // `maxAgeMs` of staleness (a remount, a tab switch) skips the request; a
+  // caller that cannot (a poll tick, an explicit refetch) passes 0 and keeps
+  // the original always-revalidate behaviour, which is the default.
+  if (maxAgeMs > 0) {
+    const at = now();
+    const cached = peekDoc(id, at);
+    if (cached && at - cached.fetchedAt < maxAgeMs) {
+      return Promise.resolve({ kind: "doc", doc: cached.doc });
+    }
+  }
+
   const existing = inFlight.get(id);
   if (existing) return existing.promise;
 

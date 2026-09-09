@@ -25,6 +25,7 @@ import { withTransientRetry } from "../lib/remote-first.js";
 import { isVaultLive } from "../../shared/vault-live.js";
 import {
   cachedDocsFor,
+  DOC_CACHE_TTL_MS,
   everyDocCached,
   fetchThroughCache,
   peekDoc,
@@ -186,6 +187,7 @@ export function useReactorDocsWithRefetch(
   } | null>(null);
   const [fetchTick, setFetchTick] = useState(0);
   const lastKeyRef = useRef<string>("");
+  const lastTickRef = useRef<number>(0);
   // Latest specs, for the mutation handler — reading them through a ref
   // keeps its subscription keyed on the stable `ids`.
   const specsRef = useRef(specs);
@@ -288,9 +290,18 @@ export function useReactorDocsWithRefetch(
 
     // Note this runs on EVERY mount, cache hit or not: the cache decides
     // what to paint, never whether to revalidate.
+    // A poll tick or an explicit `refetch()` asked for fresh data, so it
+    // bypasses the freshness gate. A mount or a navigation did not: it just
+    // needs the list, and re-reading every document because the user came
+    // back to a tab thirty seconds later is the waste this gate exists to
+    // stop.
+    const forced = fetchTick !== lastTickRef.current;
+    lastTickRef.current = fetchTick;
+    const maxAgeMs = forced ? 0 : DOC_CACHE_TTL_MS;
+
     let cancelled = false;
     void pMap(specs, FETCH_CONCURRENCY, (spec) =>
-      fetchThroughCache(spec.id, () => fetchDocOutcome(spec)),
+      fetchThroughCache(spec.id, () => fetchDocOutcome(spec), Date.now, maxAgeMs),
     ).then((outcomes) => {
       if (cancelled) return;
       const next: PHDocument[] = [];

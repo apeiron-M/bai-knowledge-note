@@ -335,4 +335,55 @@ describe("reactor-doc-cache module state", () => {
     expect(cachedDocsFor(seedIds, T0 + 5_000).map(title)).toEqual(["a", "b"]);
     expect(everyDocCached(seedIds, T0 + 5_000)).toBe(true);
   });
+
+  describe("freshness gate (maxAgeMs)", () => {
+    it("skips the network for an entry younger than maxAgeMs", async () => {
+      const fetcher = vi
+        .fn()
+        .mockResolvedValue({ kind: "doc", doc: doc("a") } as DocFetchOutcome);
+      await fetchThroughCache("a", fetcher, () => T0, 30_000);
+      expect(fetcher).toHaveBeenCalledTimes(1);
+
+      const outcome = await fetchThroughCache("a", fetcher, () => T0 + 29_000, 30_000);
+      expect(fetcher).toHaveBeenCalledTimes(1);
+      expect(outcome).toEqual({ kind: "doc", doc: doc("a") });
+    });
+
+    it("revalidates once the entry is older than maxAgeMs", async () => {
+      const fetcher = vi
+        .fn()
+        .mockResolvedValue({ kind: "doc", doc: doc("a") } as DocFetchOutcome);
+      await fetchThroughCache("a", fetcher, () => T0, 30_000);
+      await fetchThroughCache("a", fetcher, () => T0 + 30_001, 30_000);
+      expect(fetcher).toHaveBeenCalledTimes(2);
+    });
+
+    it("always revalidates by default, preserving the original behaviour", async () => {
+      const fetcher = vi
+        .fn()
+        .mockResolvedValue({ kind: "doc", doc: doc("a") } as DocFetchOutcome);
+      await fetchThroughCache("a", fetcher, () => T0);
+      await fetchThroughCache("a", fetcher, () => T0);
+      expect(fetcher).toHaveBeenCalledTimes(2);
+    });
+
+    it("does not serve a document a write has evicted, however fresh", async () => {
+      const fetcher = vi
+        .fn()
+        .mockResolvedValue({ kind: "doc", doc: doc("a") } as DocFetchOutcome);
+      await fetchThroughCache("a", fetcher, () => T0, 30_000);
+      evictDoc("a");
+      await fetchThroughCache("a", fetcher, () => T0, 30_000);
+      expect(fetcher).toHaveBeenCalledTimes(2);
+    });
+
+    it("fetches when there is nothing cached, whatever maxAgeMs says", async () => {
+      const fetcher = vi
+        .fn()
+        .mockResolvedValue({ kind: "doc", doc: doc("z") } as DocFetchOutcome);
+      await fetchThroughCache("z", fetcher, () => T0, 30_000);
+      expect(fetcher).toHaveBeenCalledTimes(1);
+    });
+  });
+
 });
