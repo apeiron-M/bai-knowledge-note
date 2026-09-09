@@ -1,3 +1,5 @@
+import type { BaseSubgraph } from "@powerhousedao/reactor-api";
+import { GraphQLError } from "graphql";
 import type { ISubgraph } from "@powerhousedao/reactor-api";
 import { getDb, getQuery, resolveCanonicalDriveId } from "./helpers/db.js";
 import { reindexDrive } from "./helpers/reindex.js";
@@ -23,22 +25,89 @@ type Resolver = (
 ) => unknown;
 
 /**
- * Wraps a record of resolvers so that any `driveId` argument is
- * resolved to its canonical UUID before the resolver runs. This
- * fixes a class of "relation does not exist" errors when GraphQL
- * clients pass a slug — the GraphIndexerProcessor's namespace is
- * keyed by the drive's canonical UUID and a slug-driven query
- * looks up a non-existent SQL namespace.
+ * The context shape `assertCanRead` expects, derived rather than imported so
+ * this file does not depend on the exported name of reactor-api's context type.
  */
-function withCanonicalDriveIds<T extends Record<string, Resolver>>(
-  subgraph: ISubgraph,
+type SubgraphContext = Parameters<BaseSubgraph["assertCanRead"]>[1];
+
+/**
+ * Resolvers that must not be served on a bare READ grant.
+ *
+ * Two mutations because they write: `knowledgeGraphReindex` DELETEs and rebuilds
+ * the projection (and CREATEs its tables when a namespace has none), and
+ * `knowledgeGraphUpsertEmbedding` stores a caller-supplied vector under a hash
+ * the processor's staleness gate then agrees with, so a poisoned embedding is
+ * never re-computed.
+ *
+ * Four queries because of what they expose rather than what they change:
+ * `knowledgeGraphDebug` serves the raw projection tables, and the three
+ * activity/history resolvers serve `input_json` diffs together with
+ * `signer_address` — real contributor Ethereum addresses. That is an audit log
+ * and an address book, not vault content.
+ */
+const PRIVILEGED_RESOLVERS = new Set([
+  "knowledgeGraphReindex",
+  "knowledgeGraphUpsertEmbedding",
+  "knowledgeGraphDebug",
+  "knowledgeGraphHistory",
+  "knowledgeGraphActivity",
+  "knowledgeGraphActivityByType",
+]);
+
+/**
+ * Drive-scoped guards for every resolver: authorize the caller against the
+ * drive, then resolve the drive's `driveId` argument to its canonical UUID.
+ *
+ * **Why the authorization lives here and not in the reactor.** This subgraph
+ * reads the graph-indexer's own relational tables, not the reactor, so it
+ * inherits none of the reactor's read gate: with `DEFAULT_PROTECTION=true` and
+ * every document protected, an anonymous `knowledgeGraphRecent` still returned
+ * full note bodies (measured: 12,696 characters) while the same content was
+ * correctly refused through `document()`. A processor is inside the trust
+ * boundary and sees everything; whatever it re-exposes is its own surface to
+ * gate. This is that gate, and it sits in the one wrapper every resolver
+ * already passes through so no resolver can be added ungated by omission.
+ *
+ * The check deliberately does no policy branching. `assertCanRead` /
+ * `assertCanWrite` already answer correctly for each configured policy — open
+ * under `OPEN`, admins-only under `ADMIN_ONLY`, per-drive grants under
+ * `DOCUMENT_PERMISSIONS` — and a grant on the drive inherits to every document
+ * beneath it. Testing `isSupremeAdmin` here instead would be wrong, because
+ * under `OPEN` it answers true for everyone, anonymous callers included.
+ *
+ * A slug is authorized identically to a UUID: `assertCanRead` resolves the
+ * identifier itself, and it runs before the canonical rewrite below, so the
+ * slug-aliasing path cannot skip the check.
+ */
+function withDriveGuards<T extends Record<string, Resolver>>(
+  subgraph: BaseSubgraph,
   resolvers: T,
 ): T {
   const out: Record<string, Resolver> = {};
   for (const [name, fn] of Object.entries(resolvers)) {
+    const privileged = PRIVILEGED_RESOLVERS.has(name);
     out[name] = async (parent, args, ctx, info) => {
-      if (args && typeof args.driveId === "string") {
-        const canonical = await resolveCanonicalDriveId(subgraph, args.driveId);
+      const requested =
+        typeof args.driveId === "string" ? args.driveId : undefined;
+
+      if (requested === undefined) {
+        // Nothing to scope the check to. A privileged resolver fails closed
+        // rather than running unguarded.
+        if (privileged) {
+          // reactor-api's own ForbiddenError is not in its public type
+          // surface, so mirror the wire shape clients already handle.
+          throw new GraphQLError(`Forbidden: ${name} requires write access`, {
+            extensions: { code: "FORBIDDEN" },
+          });
+        }
+      } else if (privileged) {
+        await subgraph.assertCanWrite(requested, ctx as SubgraphContext);
+      } else {
+        await subgraph.assertCanRead(requested, ctx as SubgraphContext);
+      }
+
+      if (requested !== undefined) {
+        const canonical = await resolveCanonicalDriveId(subgraph, requested);
         args = { ...args, driveId: canonical };
       }
       return fn(parent, args, ctx, info);
@@ -108,7 +177,7 @@ async function searchWithEmbedding(
   }));
 }
 
-export const getResolvers = (subgraph: ISubgraph): Record<string, unknown> => {
+export const getResolvers = (subgraph: BaseSubgraph): Record<string, unknown> => {
   return {
     KnowledgeGraphNode: {
       topics: async (parent: {
@@ -138,7 +207,7 @@ export const getResolvers = (subgraph: ISubgraph): Record<string, unknown> => {
       },
     },
 
-    Mutation: withCanonicalDriveIds(subgraph, {
+    Mutation: withDriveGuards(subgraph, {
       knowledgeGraphReindex: ((_: unknown, args: { driveId: string }) =>
         reindexDrive(subgraph, args.driveId)) as unknown as Resolver,
 
@@ -165,7 +234,7 @@ export const getResolvers = (subgraph: ISubgraph): Record<string, unknown> => {
       }) as unknown as Resolver,
     }),
 
-    Query: withCanonicalDriveIds(subgraph, {
+    Query: withDriveGuards(subgraph, {
       // --- Core graph queries ---
       //
       // NOTE: `ensureGraphDoc` is intentionally NOT called from read
