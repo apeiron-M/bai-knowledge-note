@@ -65,6 +65,31 @@ Measured live (hot-reloaded, no restart):
 `bun run tsc` exit 0; full suite 972 passed / 6 skipped; no lint findings in the file.
 Not yet committed.
 
+### Task 2 — COMPLETE
+
+**The plan's inventory was wrong: ten call sites, not five.** A full sweep of
+`fetch(` across `editors/` found `ActivityView`, `use-graph-metadata` (x2),
+`use-graph-search`, `use-drive-init`, `vault-tools`, `boot`,
+`use-vault-doc-index` (x2) and `document-state` — each a credential-free POST to
+the reactor or our own subgraph, i.e. each its own bypass. Anyone repeating this
+work should inventory before planning, not after.
+
+Added `authHeaders()` beside `authedGraphQLFetch`. Nine sites take the headers
+helper (one `headers:` line changed, every query and response path untouched);
+`document-state.ts` uses the wrapper since its call was already uniform.
+
+The chat's third-party endpoints are deliberately excluded — `completions-client`,
+`provider`, `openrouter-auth`. Sending a Renown credential to an arbitrary
+user-configured LLM base URL would leak it. `openrouter-auth`'s own token
+exchange matches the same header shape, so the transform excluded it by name.
+
+The subscription needed `connectionParams`, not a header:
+`REQUIRE_AUTHENTICATED_CALLER` is a fetch middleware and never sees the WS
+upgrade, while `AUTH_ENABLED=true` refuses a tokenless connection outright.
+That was the cause of the `pollSyncEnvelopes … Forbidden` log spam.
+
+`bun run tsc` exit 0; suite 974 passed / 6 skipped. Committed.
+
 ### Task 1 — COMPLETE
 
 `editors/shared/authed-fetch.ts` + 4 passing tests; `remote-reactor.ts:gqlRequest` now
@@ -177,7 +202,7 @@ git commit -m "feat(auth): attach a Renown bearer to every browser GraphQL write
 ### Task 2: The remaining browser read sites and the WebSocket
 
 **Files:**
-- Modify: `editors/shared/document-state.ts`, `editors/shared/use-document-revisions.ts`, `editors/shared/use-vault-doc-index.ts`, `editors/knowledge-vault/lib/boot.ts`, `editors/knowledge-vault/lib/chat/vault-tools.ts`
+- Modify (actual, 10 sites): `editors/shared/document-state.ts`, `editors/shared/use-vault-doc-index.ts` (x2), `editors/knowledge-vault/components/ActivityView.tsx`, `editors/knowledge-vault/hooks/use-graph-metadata.ts` (x2), `editors/knowledge-vault/hooks/use-graph-search.ts`, `editors/knowledge-vault/hooks/use-drive-init.ts`, `editors/knowledge-vault/lib/boot.ts`, `editors/knowledge-vault/lib/chat/vault-tools.ts` — note `use-document-revisions.ts` has no fetch of its own
 - Modify: `editors/knowledge-vault/hooks/use-remote-first.ts:355` (the `graphql-ws` client)
 
 **Interfaces:**
