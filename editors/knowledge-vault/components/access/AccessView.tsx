@@ -24,6 +24,7 @@ import { AccessMap } from "./AccessMap.js";
 import {
   cachedScan,
   documentAccess,
+  fetchAccessMap,
   documentProtection,
   driveNodes,
   grantDocument,
@@ -81,16 +82,26 @@ export function AccessView() {
       return;
     }
     let live = true;
-    void scanDocumentGrants(driveId, nodes, (state) => {
+    // One server-side query first. Only fall back to asking per document when
+    // the subgraph is unavailable — an older deployment, or authorization
+    // switched off — because the scan is ~1,500 round trips.
+    void fetchAccessMap(driveId).then((server) => {
+      if (!live) return;
+      if (server) {
+        setScan(server);
+        return;
+      }
+      void scanDocumentGrants(driveId, nodes, (state) => {
       if (!live) return;
       setScan(state);
-      if (state.missingIds.length > 0) {
-        setDeletedIds((prev) => {
-          const next = new Set(prev);
-          for (const id of state.missingIds) next.add(id);
-          return next;
-        });
-      }
+        if (state.missingIds.length > 0) {
+          setDeletedIds((prev) => {
+            const next = new Set(prev);
+            for (const id of state.missingIds) next.add(id);
+            return next;
+          });
+        }
+      });
     });
     return () => {
       live = false;

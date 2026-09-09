@@ -383,3 +383,56 @@ export async function scanDocumentGrants(
   onProgress(final);
   return final;
 }
+
+/**
+ * The whole access list in one request, from the vaultAccess subgraph.
+ *
+ * Returns null when the query is unavailable — the field does not exist
+ * (an older deployment, or the package not yet reloaded) or the subgraph
+ * reports `available: false` because document permissions are switched off.
+ * Callers fall back to scanning rather than showing an empty vault.
+ */
+export async function fetchAccessMap(
+  driveId: string,
+): Promise<ScanState | null> {
+  const res = await reactor<{
+    vaultAccessMap?: {
+      available: boolean;
+      documentGrants: {
+        documentId: string;
+        documentTitle: string | null;
+        documentType: string | null;
+        userAddress: string;
+        permission: Level;
+      }[];
+    };
+  }>(
+    `query AccessMap($id: ID!) {
+       vaultAccessMap(driveId: $id) {
+         available
+         documentGrants {
+           documentId documentTitle documentType userAddress permission
+         }
+       }
+     }`,
+    { id: driveId },
+  );
+
+  const map = res.data?.vaultAccessMap;
+  if (!map?.available) return null;
+
+  return {
+    rows: map.documentGrants.map((g) => ({
+      documentId: g.documentId,
+      documentName: g.documentTitle ?? g.documentId.slice(0, 8),
+      documentType: g.documentType,
+      userAddress: g.userAddress,
+      permission: g.permission,
+    })),
+    scanned: map.documentGrants.length,
+    total: map.documentGrants.length,
+    done: true,
+    refused: 0,
+    missingIds: [],
+  };
+}
