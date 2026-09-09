@@ -22,6 +22,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import type { PHDocument } from "document-model";
 import { fetchDocumentState } from "../../shared/document-state.js";
 import { withTransientRetry } from "../lib/remote-first.js";
+import { isVaultLive } from "../../shared/vault-live.js";
 import {
   cachedDocsFor,
   everyDocCached,
@@ -34,6 +35,15 @@ import {
 } from "./reactor-doc-cache.js";
 
 const FETCH_CONCURRENCY = 6;
+
+/**
+ * Cadence a `pollMs` list falls back to while the change feed is
+ * delivering. Every poll tick re-reads the WHOLE list — one request per
+ * document — and there are seven call sites doing it every 10-60s, so on a
+ * live socket this was the app's single largest source of requests while
+ * the socket was already pushing the same news for free.
+ */
+const LIVE_SAFETY_NET_MS = 5 * 60_000;
 
 /** Attempts per document read, for transient transport failures. */
 const FETCH_ATTEMPTS = 3;
@@ -176,13 +186,23 @@ export function useReactorDocsWithRefetch(
   } | null>(null);
   const [fetchTick, setFetchTick] = useState(0);
   const lastKeyRef = useRef<string>("");
+  // Latest specs, for the mutation handler — reading them through a ref
+  // keeps its subscription keyed on the stable `ids`.
+  const specsRef = useRef(specs);
+  specsRef.current = specs;
 
   // Stable string key for the dep array (specs identity changes per render).
   const key = useMemo(
     () => specs.map((s) => `${s.id}:${s.documentType}`).join(","),
     [specs],
   );
-  const ids = useMemo(() => specs.map((s) => s.id), [specs]);
+  // Keyed on `key`, NOT on `specs`: `specs` comes from a `.filter()` in a
+  // caller's render body and so has a new identity every render, which
+  // rippled into `seedIds`, `seeded`, `seedComplete`, `rememberIds` and the
+  // mutation subscription below — all of them re-running every render. An
+  // unchanged `key` means an identical id list, so this is safe.
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  const ids = useMemo(() => specs.map((s) => s.id), [key]);
 
   const retainKey = options?.retainKey;
   useEffect(() => {
@@ -208,8 +228,19 @@ export function useReactorDocsWithRefetch(
   const pollMs = options?.pollMs;
   useEffect(() => {
     if (!pollMs) return;
+    let lastPollAt = Date.now();
     const interval = setInterval(() => {
       if (document.visibilityState !== "visible") return;
+      // While the Switchboard's change feed is delivering, every write in
+      // this drive arrives as a push and the mutation subscription below
+      // revalidates exactly the document that changed. This poll is then a
+      // safety net for a silently dead socket, not the update mechanism, so
+      // it backs off — matching what `use-remote-first` and
+      // `use-graph-metadata` already do. Liveness expires on its own
+      // (LIVE_EVENT_TTL_MS), so a feed that goes quiet resumes the fast
+      // cadence without this needing to notice.
+      if (isVaultLive() && Date.now() - lastPollAt < LIVE_SAFETY_NET_MS) return;
+      lastPollAt = Date.now();
       setFetchTick((t) => t + 1);
     }, pollMs);
     return () => clearInterval(interval);
@@ -218,11 +249,34 @@ export function useReactorDocsWithRefetch(
   // A write to a document this view shows was already evicted from the
   // cache by the global listener; revalidate so the row updates (or, for
   // a delete, disappears) without waiting for the poll.
+  //
+  // ONLY the document that changed. This used to bump `fetchTick`, which
+  // re-ran `pMap` over the entire spec list: editing one source re-read
+  // every source in the drive, and an agent's write burst multiplied that
+  // by the number of events.
   useEffect(() => {
     if (ids.length === 0) return;
     const watched = new Set(ids);
     return subscribeDocMutations((id) => {
-      if (watched.has(id)) setFetchTick((t) => t + 1);
+      if (!watched.has(id)) return;
+      const spec = specsRef.current.find((s) => s.id === id);
+      if (!spec) return;
+      void fetchThroughCache(spec.id, () => fetchDocOutcome(spec)).then(
+        (outcome) => {
+          // `error` is "unreachable", not "gone" — keep the last good body.
+          if (outcome.kind === "error") return;
+          setFetched((prev) => {
+            if (!prev) return prev;
+            const docs =
+              outcome.kind === "doc"
+                ? prev.docs.some((d) => d.header.id === id)
+                  ? prev.docs.map((d) => (d.header.id === id ? outcome.doc : d))
+                  : [...prev.docs, outcome.doc]
+                : prev.docs.filter((d) => d.header.id !== id);
+            return { key: prev.key, docs };
+          });
+        },
+      );
     });
   }, [ids]);
 
