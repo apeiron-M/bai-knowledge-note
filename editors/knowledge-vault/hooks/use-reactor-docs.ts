@@ -23,6 +23,7 @@ import type { PHDocument } from "document-model";
 import { fetchDocumentState } from "../../shared/document-state.js";
 import { withTransientRetry } from "../lib/remote-first.js";
 import { isVaultLive } from "../../shared/vault-live.js";
+import { createPollCoordinator } from "./poll-coordinator.js";
 import {
   cachedDocsFor,
   DOC_CACHE_TTL_MS,
@@ -45,6 +46,20 @@ const FETCH_CONCURRENCY = 6;
  * the socket was already pushing the same news for free.
  */
 const LIVE_SAFETY_NET_MS = 5 * 60_000;
+
+/**
+ * One timer per distinct id set. Three components read the scope-of-work
+ * documents over the identical set on three different periods, and because
+ * `fetchThroughCache` dedupes only CONCURRENT reads, three out-of-phase
+ * timers fetched the same list three times per cycle. Grouped by the spec
+ * key, they now tick together and collapse into one request.
+ */
+const pollCoordinator = createPollCoordinator({
+  isLive: isVaultLive,
+  isVisible: () =>
+    typeof document === "undefined" || document.visibilityState === "visible",
+  liveSafetyNetMs: LIVE_SAFETY_NET_MS,
+});
 
 /** Attempts per document read, for transient transport failures. */
 const FETCH_ATTEMPTS = 3;
@@ -227,26 +242,18 @@ export function useReactorDocsWithRefetch(
 
   const refetch = useCallback(() => setFetchTick((t) => t + 1), []);
 
+  // Visibility and live-feed backoff are the coordinator's job now — while
+  // the change feed is delivering, every write arrives as a push and the
+  // mutation subscription below revalidates exactly the document that
+  // changed, so this poll is the safety net for a silently dead socket
+  // rather than the update mechanism.
   const pollMs = options?.pollMs;
   useEffect(() => {
-    if (!pollMs) return;
-    let lastPollAt = Date.now();
-    const interval = setInterval(() => {
-      if (document.visibilityState !== "visible") return;
-      // While the Switchboard's change feed is delivering, every write in
-      // this drive arrives as a push and the mutation subscription below
-      // revalidates exactly the document that changed. This poll is then a
-      // safety net for a silently dead socket, not the update mechanism, so
-      // it backs off — matching what `use-remote-first` and
-      // `use-graph-metadata` already do. Liveness expires on its own
-      // (LIVE_EVENT_TTL_MS), so a feed that goes quiet resumes the fast
-      // cadence without this needing to notice.
-      if (isVaultLive() && Date.now() - lastPollAt < LIVE_SAFETY_NET_MS) return;
-      lastPollAt = Date.now();
-      setFetchTick((t) => t + 1);
-    }, pollMs);
-    return () => clearInterval(interval);
-  }, [pollMs]);
+    if (!pollMs || key.length === 0) return;
+    return pollCoordinator.register(key, pollMs, () =>
+      setFetchTick((t) => t + 1),
+    );
+  }, [pollMs, key]);
 
   // A write to a document this view shows was already evicted from the
   // cache by the global listener; revalidate so the row updates (or, for
