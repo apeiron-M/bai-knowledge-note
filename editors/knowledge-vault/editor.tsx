@@ -1,3 +1,4 @@
+import { useEffect } from "react";
 import { useSetPHAppConfig } from "@powerhousedao/reactor-browser";
 import type { EditorProps } from "document-model";
 import { DebugErrorBoundary } from "./components/DebugErrorBoundary.js";
@@ -7,10 +8,14 @@ import { Notifications } from "./components/Notifications.js";
 import { editorConfig } from "./config.js";
 import { useDriveInit } from "./hooks/use-drive-init.js";
 import { useRemoteFirst } from "./hooks/use-remote-first.js";
+import { installMetricsConsole } from "../shared/request-metrics.js";
 import { ThemeProvider } from "../shared/theme-context.js";
 
 export default function Editor(props: EditorProps) {
   useSetPHAppConfig(editorConfig);
+  // Expose `vaultMetrics` on `window` so a request burst can be captured
+  // and attributed from the console. Records nothing until started.
+  useEffect(() => installMetricsConsole(), []);
   // Route document reads/writes to the Switchboard and scope the sync
   // channel to the drive document — the vault corpus (1,500+ docs) is
   // server-authoritative and must not replicate into IndexedDB.
