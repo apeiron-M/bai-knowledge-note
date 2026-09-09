@@ -16,6 +16,7 @@
  *
  * Collapsing both into `null` would make a 502 look like a deletion.
  */
+import { authedGraphQLFetch } from "./authed-fetch.js";
 import { resolveReactorEndpoint } from "./subgraph-endpoint.js";
 
 export interface RawDocument {
@@ -61,10 +62,9 @@ type Payload = {
 export async function fetchDocumentState(
   id: string,
 ): Promise<RawDocument | null> {
-  const res = await fetch(resolveReactorEndpoint(), {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ query: DOC_QUERY, variables: { id } }),
+  const res = await authedGraphQLFetch(resolveReactorEndpoint(), {
+    query: DOC_QUERY,
+    variables: { id },
   });
   if (!res.ok) throw new Error(`reactor responded HTTP ${res.status}`);
   const json = (await res.json()) as Payload;

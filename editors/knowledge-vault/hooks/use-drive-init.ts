@@ -1,3 +1,4 @@
+import { authHeaders } from "../../shared/authed-fetch.js";
 import { useEffect } from "react";
 import {
   useSelectedDrive,
@@ -24,7 +25,7 @@ async function fetchDriveNodes(driveId: string): Promise<Node[] | null> {
   try {
     const res = await fetch(endpoint, {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
+      headers: await authHeaders(),
       body: JSON.stringify({
         query:
           "query DriveNodes($id: String!){document(identifier:$id){document{state}}}",

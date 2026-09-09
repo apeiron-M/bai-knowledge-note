@@ -22,6 +22,7 @@
  * across every consumer, so opening five editors costs the same two
  * requests as opening one.
  */
+import { authHeaders } from "./authed-fetch.js";
 import { useEffect, useMemo, useState } from "react";
 import { useSelectedDriveId } from "@powerhousedao/reactor-browser";
 import {
@@ -61,7 +62,7 @@ async function fetchIndex(
   const [graphRes, treeRes]: [unknown, unknown] = await Promise.all([
     fetch(resolveKnowledgeGraphEndpoint(), {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
+      headers: await authHeaders(),
       body: JSON.stringify({
         query: `query VaultIndex($driveId: ID!) {
           knowledgeGraphNodes(driveId: $driveId) { documentId title noteType }
@@ -71,7 +72,7 @@ async function fetchIndex(
     }).then((r): Promise<unknown> | null => (r.ok ? (r.json() as Promise<unknown>) : null)),
     fetch(resolveReactorEndpoint(), {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
+      headers: await authHeaders(),
       body: JSON.stringify({
         query: `query VaultIndexTree($id: String!) {
           document(identifier: $id) { document { state } }

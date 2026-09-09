@@ -35,6 +35,29 @@ export const getBearerToken: TokenProvider = async () => {
   }
 };
 
+/**
+ * The JSON headers a reactor request needs, plus the bearer when one exists.
+ *
+ * Preferred at call sites whose body shape is already established — swapping
+ * one `headers:` line is a far smaller change than restructuring the call, and
+ * it keeps every request's query/variables exactly as written. Use
+ * `authedGraphQLFetch` for new code.
+ *
+ * Only for the reactor and its subgraphs. The chat's OpenRouter and
+ * OpenAI-compatible calls must NOT receive this: sending a Renown credential to
+ * a third-party endpoint would leak it.
+ */
+export async function authHeaders(
+  tokenProvider: TokenProvider = getBearerToken,
+): Promise<Record<string, string>> {
+  const token = await tokenProvider();
+  const headers: Record<string, string> = {
+    "Content-Type": "application/json",
+  };
+  if (token) headers.Authorization = `Bearer ${token}`;
+  return headers;
+}
+
 /** POST a GraphQL body, carrying the caller's bearer when one is available. */
 export async function authedGraphQLFetch(
   endpoint: string,

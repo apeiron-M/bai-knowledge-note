@@ -1,5 +1,5 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
-import { authedGraphQLFetch } from "./authed-fetch.js";
+import { authedGraphQLFetch, authHeaders } from "./authed-fetch.js";
 
 function stubFetch() {
   const spy = vi.fn().mockResolvedValue(new Response("{}", { status: 200 }));
@@ -58,5 +58,20 @@ describe("authedGraphQLFetch", () => {
       ),
     ).rejects.toThrow("no session");
     expect(spy).not.toHaveBeenCalled();
+  });
+});
+
+describe("authHeaders", () => {
+  it("includes the bearer alongside the JSON content type", async () => {
+    expect(await authHeaders(() => Promise.resolve("tok123"))).toEqual({
+      "Content-Type": "application/json",
+      Authorization: "Bearer tok123",
+    });
+  });
+
+  it("omits Authorization entirely when there is no token", async () => {
+    expect(await authHeaders(() => Promise.resolve(undefined))).toEqual({
+      "Content-Type": "application/json",
+    });
   });
 });

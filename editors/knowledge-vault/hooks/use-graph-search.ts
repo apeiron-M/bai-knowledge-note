@@ -1,3 +1,4 @@
+import { authHeaders } from "../../shared/authed-fetch.js";
 import { useState, useEffect, useRef, useCallback, useMemo } from "react";
 import { useSelectedDriveId } from "@powerhousedao/reactor-browser";
 import { resolveKnowledgeGraphEndpoint } from "./subgraph-endpoint.js";
@@ -36,7 +37,7 @@ async function graphqlFetch<T>(
   try {
     const res = await fetch(endpoint, {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
+      headers: await authHeaders(),
       body: JSON.stringify({ query, variables }),
     });
     if (!res.ok) return null;

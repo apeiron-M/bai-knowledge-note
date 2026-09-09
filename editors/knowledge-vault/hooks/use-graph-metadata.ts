@@ -45,6 +45,7 @@
  * The full per-document state is still fetched lazily when the user
  * opens a single note (via `useDocumentByIdSafe`).
  */
+import { authHeaders } from "../../shared/authed-fetch.js";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import {
   useFileNodesInSelectedDrive,
@@ -322,7 +323,7 @@ type FetchOutcome = {
 async function fetchDriveAllNodes(driveId: string): Promise<DriveTreeNode[]> {
   const res = await fetch(resolveReactorEndpoint(), {
     method: "POST",
-    headers: { "Content-Type": "application/json" },
+    headers: await authHeaders(),
     body: JSON.stringify({
       query: DRIVE_TREE_QUERY,
       variables: { id: driveId },
@@ -369,7 +370,7 @@ async function fetchGraphNodesAndEdges(
   const endpoint = resolveKnowledgeGraphEndpoint();
   const res = await fetch(endpoint, {
     method: "POST",
-    headers: { "Content-Type": "application/json" },
+    headers: await authHeaders(),
     body: JSON.stringify({ query: NODES_QUERY, variables: { driveId } }),
   });
   if (!res.ok) {

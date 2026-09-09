@@ -46,6 +46,7 @@
  *     every UPDATE — so membership is decided here, against the hydrated
  *     drive snapshot.
  */
+import { getBearerToken } from "../../shared/authed-fetch.js";
 import { useEffect, useRef } from "react";
 import {
   DriveCollectionId,
@@ -355,6 +356,16 @@ export function useRemoteFirst(): void {
     const wsUrl = subscriptionsUrlFromGraphqlUrl(resolveReactorEndpoint());
     const client = createWsClient({
       url: wsUrl,
+      // The subscription is a second door onto the same data as the HTTP
+      // reads, and it is NOT covered by REQUIRE_AUTHENTICATED_CALLER, which
+      // is a fetch middleware. With AUTH_ENABLED=true the server refuses a
+      // tokenless connection outright ("Missing authorization in connection
+      // parameters"), so without this the live change feed simply dies.
+      // Resolved per connection, so a reconnect after login is authenticated.
+      connectionParams: async () => {
+        const token = await getBearerToken();
+        return token ? { authorization: `Bearer ${token}` } : {};
+      },
       // Keep trying for as long as the drive is selected: the Switchboard
       // restarts during development and deploys, and a socket that gives
       // up after five attempts silently degrades the app to polling.

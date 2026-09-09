@@ -25,6 +25,7 @@
  * - idempotent per drive, and safe to run alongside `useRemoteFirst()`, which
  *   still owns drive hydration and selected-document freshness.
  */
+import { authHeaders } from "../../shared/authed-fetch.js";
 import { enableRemoteFirst } from "./remote-first.js";
 import { resolveReactorEndpoint } from "../hooks/subgraph-endpoint.js";
 
@@ -95,7 +96,7 @@ async function isVaultDrive(driveId: string): Promise<boolean> {
   const endpoint = `${resolveReactorEndpoint()}/r`;
   const res = await fetch(endpoint, {
     method: "POST",
-    headers: { "Content-Type": "application/json" },
+    headers: await authHeaders(),
     body: JSON.stringify({
       query:
         "query($id:String!){ document(identifier:$id){ document { ... on PHDocument { preferredEditor } } } }",

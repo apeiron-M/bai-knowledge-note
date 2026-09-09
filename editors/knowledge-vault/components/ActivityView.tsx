@@ -1,3 +1,4 @@
+import { authHeaders } from "../../shared/authed-fetch.js";
 import { useState, useEffect, useMemo, useCallback } from "react";
 import {
   setSelectedNode,
@@ -93,7 +94,7 @@ async function fetchActivity(
   try {
     const res = await fetch(resolveKnowledgeGraphEndpoint(), {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
+      headers: await authHeaders(),
       body: JSON.stringify({
         query: ACTIVITY_QUERY,
         variables: { driveId, limit },

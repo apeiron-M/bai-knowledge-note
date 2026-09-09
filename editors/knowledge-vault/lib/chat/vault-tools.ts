@@ -20,6 +20,7 @@
  *
  * Every tool returns a one-line `summary` for the reading trail in the UI.
  */
+import { authHeaders } from "../../../shared/authed-fetch.js";
 import {
   resolveKnowledgeGraphEndpoint,
   resolveReactorEndpoint,
@@ -280,7 +281,7 @@ async function gql<T>(
   try {
     res = await fetch(endpoint, {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
+      headers: await authHeaders(),
       body: JSON.stringify({ query, variables }),
     });
   } catch (err) {
