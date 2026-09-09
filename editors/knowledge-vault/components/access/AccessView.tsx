@@ -16,7 +16,7 @@
 import { useCallback, useEffect, useState } from "react";
 import { useRenownAuth, useSelectedDriveId } from "@powerhousedao/reactor-browser";
 import { AddressChip, Card, Hint, INHERIT_NOTE, Notice } from "./parts.js";
-import { seedEns } from "./use-ens.js";
+import { describeAddress, seedEns } from "./use-ens.js";
 import { ExposureTab } from "./ExposureTab.js";
 import { PeopleTab } from "./PeopleTab.js";
 import { DocumentsTab } from "./DocumentsTab.js";
@@ -217,7 +217,7 @@ export function AccessView() {
       setBusy(true);
       const res = await grantDocument(documentId, addr, level);
       setBusy(false);
-      setNotice(res.error ?? `${addr.slice(0, 10)}… now has ${level} there.`);
+      setNotice(res.error ?? `${await describeAddress(addr)} now has ${level} there.`);
       await reloadMap();
     })();
 
@@ -226,17 +226,24 @@ export function AccessView() {
       setBusy(true);
       const res = await revokeDocument(documentId, addr);
       setBusy(false);
-      setNotice(res.error ?? `Removed ${addr.slice(0, 10)}… from that document.`);
+      setNotice(
+        res.error ?? `Removed ${await describeAddress(addr)} from that document.`,
+      );
       await reloadMap();
     })();
 
   const changeLevel = (addr: string, level: Level) =>
-    void apply(
-      () => grantDocument(driveId, addr, level),
-      `${addr.slice(0, 10)}… now has ${level} across the vault.`,
-    );
+    void (async () =>
+      apply(
+        () => grantDocument(driveId, addr, level),
+        `${await describeAddress(addr)} now has ${level} across the vault.`,
+      ))();
   const revoke = (addr: string) =>
-    void apply(() => revokeDocument(driveId, addr), `Removed ${addr.slice(0, 10)}….`);
+    void (async () =>
+      apply(
+        () => revokeDocument(driveId, addr),
+        `Removed ${await describeAddress(addr)}.`,
+      ))();
 
   async function apply(
     fn: () => Promise<{ error?: string }>,

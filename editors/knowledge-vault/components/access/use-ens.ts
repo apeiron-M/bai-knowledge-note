@@ -93,3 +93,18 @@ export function useEnsName(address: string | undefined): string | null {
 
   return name;
 }
+
+/**
+ * How an address should read in prose: "noroc.eth (0xbb63…2ae8)", or the short
+ * address alone when there is no ENS name.
+ *
+ * Used for confirmations and errors, where a bare 0xbb63738f… tells an admin
+ * nothing about who they just changed. Resolution is cached and seeded, so in
+ * practice this is a map lookup rather than a request.
+ */
+export async function describeAddress(address: string): Promise<string> {
+  const shortForm =
+    address.length > 12 ? `${address.slice(0, 6)}…${address.slice(-4)}` : address;
+  const name = await resolveEns(address);
+  return name ? `${name} (${shortForm})` : shortForm;
+}
