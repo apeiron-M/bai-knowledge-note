@@ -11,6 +11,12 @@
  */
 import { useLayoutEffect, useState, type RefObject } from "react";
 
+/** A measured border box. */
+export type Box = { width: number; height: number };
+
+/** Shared, so "not measured" keeps a stable identity across renders. */
+const ZERO_BOX: Box = Object.freeze({ width: 0, height: 0 });
+
 /**
  * An element's border-box height, updated as it changes; 0 when disabled or
  * not yet measured.
@@ -40,8 +46,8 @@ export function useMeasuredHeight(
 }
 
 /**
- * The border-box width of the first descendant of `ref` matching `selector`,
- * or 0 when there is none.
+ * The border-box size of the first descendant of `ref` matching `selector`,
+ * or zero when there is none.
  *
  * The descendant belongs to a subtree this component renders but does not
  * control, so it may arrive a commit later than the host — hence the
@@ -50,17 +56,17 @@ export function useMeasuredHeight(
  * caller should lay out sensibly at zero, so a renamed class in the other
  * editor degrades to the previous layout instead of breaking this one.
  */
-export function useDescendantWidth(
+export function useDescendantBox(
   ref: RefObject<HTMLElement | null>,
   selector: string,
   enabled: boolean,
-): number {
-  const [width, setWidth] = useState(0);
+): Box {
+  const [box, setBox] = useState(ZERO_BOX);
 
   useLayoutEffect(() => {
     const root = ref.current;
     if (!enabled || !root || typeof ResizeObserver === "undefined") {
-      setWidth(0);
+      setBox(ZERO_BOX);
       return;
     }
 
@@ -68,7 +74,16 @@ export function useDescendantWidth(
     const attach = (): boolean => {
       const el = root.querySelector<HTMLElement>(selector);
       if (!el) return false;
-      const measure = () => setWidth(el.getBoundingClientRect().width);
+      const measure = () => {
+        const rect = el.getBoundingClientRect();
+        // Keep the identity stable when nothing moved, so a ResizeObserver
+        // that fires on an unrelated reflow does not re-render the shell.
+        setBox((prev) =>
+          prev.width === rect.width && prev.height === rect.height
+            ? prev
+            : { width: rect.width, height: rect.height },
+        );
+      };
       measure();
       resize = new ResizeObserver(measure);
       resize.observe(el);
@@ -92,5 +107,5 @@ export function useDescendantWidth(
     };
   }, [ref, selector, enabled]);
 
-  return enabled ? width : 0;
+  return enabled ? box : ZERO_BOX;
 }

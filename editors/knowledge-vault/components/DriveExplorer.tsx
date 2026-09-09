@@ -30,7 +30,7 @@ import {
   useStableList,
 } from "../../shared/use-stable-list.js";
 import {
-  useDescendantWidth,
+  useDescendantBox,
   useMeasuredHeight,
 } from "../../shared/use-measured.js";
 import {
@@ -73,6 +73,14 @@ const EDITORS_WITH_OWN_SIDEBAR = new Set<string>(["powerhouse/scopeofwork"]);
  * bar spanning the full width, which is where it started.
  */
 const HOSTED_SIDEBAR_SELECTOR = ".sow-rail-wrap";
+
+/**
+ * The hosted editor's own document toolbar. It is a drawer: zero-height
+ * while collapsed, a full bar when the user opens it. Measured for the same
+ * reason as the sidebar — the shell has to know how much room it takes to
+ * keep the canvas clear of it.
+ */
+const HOSTED_TOOLBAR_SELECTOR = ".sow-tb";
 
 /**
  * Extra room between a hosted editor's sidebar and the tab bar.
@@ -160,9 +168,14 @@ export function DriveExplorer({ children }: EditorProps) {
   // knowable from here. `useDescendantWidth` follows whatever it actually is.
   const hostedRef = useRef<HTMLDivElement>(null);
   const topBarRef = useRef<HTMLDivElement>(null);
-  const hostedRailWidth = useDescendantWidth(
+  const { width: hostedRailWidth } = useDescendantBox(
     hostedRef,
     HOSTED_SIDEBAR_SELECTOR,
+    editorOwnsSidebar,
+  );
+  const { height: hostedToolbarHeight } = useDescendantBox(
+    hostedRef,
+    HOSTED_TOOLBAR_SELECTOR,
     editorOwnsSidebar,
   );
   // Published to the hosted editor as `--vault-topbar-h` so it can keep its
@@ -400,8 +413,13 @@ export function DriveExplorer({ children }: EditorProps) {
                 }px minmax(0, 1fr)`,
                 gridTemplateRows: "auto minmax(0, 1fr)",
                 // Read by the hosted editor's stylesheet, which reserves a
-                // matching top row so its canvas starts below the bar.
+                // matching top row so its canvas starts below the bar, and
+                // parks its own toolbar drawer in the corner they leave.
                 "--vault-topbar-h": `${topBarHeight}px`,
+                "--vault-sidebar-w": `${
+                  hostedRailWidth + HOSTED_SIDEBAR_GUTTER
+                }px`,
+                "--vault-doctoolbar-h": `${hostedToolbarHeight}px`,
               } as CSSProperties
             : undefined
         }

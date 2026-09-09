@@ -23,11 +23,17 @@ export const SOW_CSS = `
    keep their own spacing exactly as designed, and the rail spans both rows so
    it still starts at the very top. The rail keeps its own outline toggle
    where it puts it -- the shell leaves a gutter beside the rail wide enough
-   for it. The toolbar drawer's handle is centred across the full width, which
-   no gutter can clear, so that one shifts below the bar. Everything defaults
-   to 0, so outside the vault this block is inert. */
-[data-vault-hosts-editor] .sow{grid-template-rows:var(--vault-topbar-h,0px) minmax(0,1fr);grid-template-areas:"rail . ." "rail canvas inspector"}
-[data-vault-hosts-editor] .sow-tb-handle{top:calc(100% + var(--vault-topbar-h,0px))}
+   for it.
+
+   The document toolbar is the one piece that has to move. It is first in the
+   flow and full width, so in place it would slide under the tab bar and, once
+   opened, push the rail down out of the top-left corner. Parked in the corner
+   the bar and the sidebar leave -- below one, beside the other -- it does
+   neither, and the row above reserves its height so it never covers the
+   canvas. Its handle hangs from its own bottom edge and follows it. Every
+   value defaults to 0, so outside the vault this block is inert. */
+[data-vault-hosts-editor] .sow{grid-template-rows:calc(var(--vault-topbar-h,0px) + var(--vault-doctoolbar-h,0px)) minmax(0,1fr);grid-template-areas:"rail . ." "rail canvas inspector"}
+[data-vault-hosts-editor] .sow-tb{position:absolute;top:var(--vault-topbar-h,0px);left:var(--vault-sidebar-w,0px);right:0}
 .sow button:where(:not(.wbs-embed *)),.sow input:where(:not(.wbs-embed *)),.sow select:where(:not(.wbs-embed *)),.sow textarea:where(:not(.wbs-embed *)){font:inherit;color:inherit}
 .sow button:where(:not(.wbs-embed *)){cursor:pointer;background:none;border:0;padding:0}
 .sow :focus-visible{outline:2px solid var(--focus);outline-offset:2px;border-radius:4px}
