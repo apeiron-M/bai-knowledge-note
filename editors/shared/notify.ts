@@ -86,8 +86,11 @@ export function notifyGraphQLError(messages: string[]): void {
  * silently.
  */
 export function notifyRequestError(err: unknown): void {
-  const response = (err as { response?: { errors?: { message?: string }[] } })
-    ?.response;
+  // `err` is genuinely unknown here — a thrown null is legal — so the cast has
+  // to admit that rather than the optional chain being decorative.
+  const response = (
+    err as { response?: { errors?: { message?: string }[] } } | null | undefined
+  )?.response;
   const messages = response?.errors
     ?.map((e) => e.message)
     .filter((m): m is string => typeof m === "string" && m.length > 0);
