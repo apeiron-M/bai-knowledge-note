@@ -396,7 +396,7 @@ export async function fetchAccessMap(
   driveId: string,
 ): Promise<ScanState | null> {
   const res = await reactor<{
-    vaultAccessMap?: {
+    accessMap?: {
       available: boolean;
       documentGrants: {
         documentId: string;
@@ -408,7 +408,7 @@ export async function fetchAccessMap(
     };
   }>(
     `query AccessMap($id: ID!) {
-       vaultAccessMap(driveId: $id) {
+       accessMap(driveId: $id) {
          available
          documentGrants {
            documentId documentTitle documentType userAddress permission
@@ -418,7 +418,7 @@ export async function fetchAccessMap(
     { id: driveId },
   );
 
-  const map = res.data?.vaultAccessMap;
+  const map = res.data?.accessMap;
   if (!map?.available) return null;
 
   return {

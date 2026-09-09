@@ -2,7 +2,7 @@ import { gql } from "graphql-tag";
 import type { DocumentNode } from "graphql";
 
 export const schema: DocumentNode = gql`
-  type VaultAccessGrant {
+  type AccessGrant {
     documentId: ID!
     documentTitle: String
     documentType: String
@@ -11,14 +11,14 @@ export const schema: DocumentNode = gql`
     grantedBy: String
   }
 
-  type VaultAccessProtection {
+  type AccessProtection {
     documentId: ID!
     documentTitle: String
     protected: Boolean!
     ownerAddress: String
   }
 
-  type VaultAccessOperationGrant {
+  type AccessOperationGrant {
     documentId: ID!
     documentTitle: String
     operationType: String!
@@ -33,7 +33,7 @@ export const schema: DocumentNode = gql`
   to what" from a client therefore cost one request per document — around 1,500
   round trips on a full vault. This reads the same tables server-side.
   """
-  type VaultAccessMap {
+  type AccessMap {
     """
     False when the Switchboard runs without document permissions enabled: the
     tables do not exist and every list below is empty. Callers should report
@@ -41,16 +41,16 @@ export const schema: DocumentNode = gql`
     """
     available: Boolean!
     """Grants on the drive itself. These reach every document by inheritance."""
-    driveGrants: [VaultAccessGrant!]!
+    driveGrants: [AccessGrant!]!
     """Grants set on individual documents."""
-    documentGrants: [VaultAccessGrant!]!
+    documentGrants: [AccessGrant!]!
     """Documents carrying their own protection row."""
-    protections: [VaultAccessProtection!]!
+    protections: [AccessProtection!]!
     """
     Per-operation restrictions. The existence of any row restricts that
     operation on that document to the addresses listed.
     """
-    operationGrants: [VaultAccessOperationGrant!]!
+    operationGrants: [AccessOperationGrant!]!
     distinctAddresses: Int!
     documentsWithOwnGrants: Int!
   }
@@ -60,6 +60,6 @@ export const schema: DocumentNode = gql`
     Every grant, protection and operation restriction in a drive, in one call.
     Requires ADMIN of the drive: it publishes the whole access list.
     """
-    vaultAccessMap(driveId: ID!): VaultAccessMap!
+    accessMap(driveId: ID!): AccessMap!
   }
 `;
