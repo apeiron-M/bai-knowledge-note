@@ -12,7 +12,7 @@ import {
   type DocumentOperation,
 } from "./document-revisions.js";
 import { resolveReactorEndpoint } from "./subgraph-endpoint.js";
-import { onVaultRemoteChange } from "./vault-live.js";
+import { debounced, onVaultRemoteChange } from "./vault-live.js";
 
 export type UseDocumentRevisionsResult = {
   operations: DocumentOperation[];
@@ -66,10 +66,18 @@ export function useDocumentRevisions(
 
   useEffect(() => {
     if (!documentId) return;
+    // One history read is up to 20 sequential pages carrying every
+    // operation's full input — for a source that includes the entire source
+    // text. An agent's `docs apply` announces one event PER OPERATION, so
+    // refetching per event meant tens of paged reads for a single write
+    // burst. `debounced` carries a max-wait ceiling, so a sustained firehose
+    // still refreshes on a steady cadence rather than starving the trailing
+    // edge forever (the failure e4f5f94 fixed for the change feed).
+    const refetchSoon = debounced(() => setTick((t) => t + 1), 1_000);
     return onVaultRemoteChange((change) => {
-      if (change.documents.some((d) => d.id === documentId)) refetch();
+      if (change.documents.some((d) => d.id === documentId)) refetchSoon();
     });
-  }, [documentId, refetch]);
+  }, [documentId]);
 
   return { operations, isLoading, error, refetch };
 }
