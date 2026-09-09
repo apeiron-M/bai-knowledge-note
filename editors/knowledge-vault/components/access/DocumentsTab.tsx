@@ -438,17 +438,22 @@ function DocumentPanel({
                     >
                       {here ? "granted here" : `from ${e.sourceName}`}
                     </span>
-                    <span className="w-24 text-right">
+                    <span className="flex w-44 items-center justify-end gap-2">
                       {here ? (
-                        <ConfirmButton
-                          label="Revoke"
-                          confirmLabel="Confirm"
-                          onConfirm={() =>
+                        <EffectiveRowActions
+                          address={e.userAddress}
+                          permission={e.permission}
+                          busy={busy}
+                          onChange={(level) =>
+                            void run(() =>
+                              grantDocument(selected.id, e.userAddress, level),
+                            )
+                          }
+                          onRevoke={() =>
                             void run(() =>
                               revokeDocument(selected.id, e.userAddress),
                             )
                           }
-                          disabled={busy}
                         />
                       ) : (
                         <span
@@ -645,5 +650,55 @@ function OperationsPanel({
         <Hint>Pick an operation to see who may run it.</Hint>
       )}
     </Card>
+  );
+}
+
+/**
+ * Change or remove a grant written on this document, without leaving the row.
+ *
+ * Only offered for grants that live HERE. An inherited grant is shown but not
+ * editable, because writing one on this document would not remove the
+ * ancestor's — it would silently add a second, narrower row and leave the
+ * original in force. The label points at the ancestor instead.
+ */
+function EffectiveRowActions({
+  address,
+  permission,
+  busy,
+  onChange,
+  onRevoke,
+}: {
+  address: string;
+  permission: Level;
+  busy: boolean;
+  onChange: (level: Level) => void;
+  onRevoke: () => void;
+}) {
+  const [pending, setPending] = useState<Level | null>(null);
+  return (
+    <>
+      <LevelSelect
+        value={pending ?? permission}
+        onChange={(l) => setPending(l === permission ? null : l)}
+      />
+      {pending !== null ? (
+        <GhostButton
+          disabled={busy}
+          onClick={() => {
+            onChange(pending);
+            setPending(null);
+          }}
+        >
+          Apply
+        </GhostButton>
+      ) : (
+        <ConfirmButton
+          label="Revoke"
+          confirmLabel={`Revoke ${short(address)}`}
+          onConfirm={onRevoke}
+          disabled={busy}
+        />
+      )}
+    </>
   );
 }

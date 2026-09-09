@@ -25,6 +25,7 @@ import {
   cachedScan,
   documentAccess,
   fetchAccessMap,
+  invalidateScan,
   documentProtection,
   driveNodes,
   grantDocument,
@@ -195,6 +196,40 @@ export function AccessView() {
     );
   }
 
+  /**
+   * Re-read the access map after a per-document change. The cached scan is
+   * dropped first, otherwise a stale entry would be served straight back and
+   * the row would appear not to have changed.
+   */
+  const reloadMap = async () => {
+    if (!driveId) return;
+    invalidateScan(driveId);
+    const server = await fetchAccessMap(driveId);
+    if (server) setScan(server);
+  };
+
+  const changeDocumentGrant = (
+    documentId: string,
+    addr: string,
+    level: Level,
+  ) =>
+    void (async () => {
+      setBusy(true);
+      const res = await grantDocument(documentId, addr, level);
+      setBusy(false);
+      setNotice(res.error ?? `${addr.slice(0, 10)}… now has ${level} there.`);
+      await reloadMap();
+    })();
+
+  const revokeDocumentGrant = (documentId: string, addr: string) =>
+    void (async () => {
+      setBusy(true);
+      const res = await revokeDocument(documentId, addr);
+      setBusy(false);
+      setNotice(res.error ?? `Removed ${addr.slice(0, 10)}… from that document.`);
+      await reloadMap();
+    })();
+
   const changeLevel = (addr: string, level: Level) =>
     void apply(
       () => grantDocument(driveId, addr, level),
@@ -285,7 +320,13 @@ export function AccessView() {
         />
       ) : tab === "map" ? (
         <Card>
-          <AccessMap driveGrants={grants} scan={scan} />
+          <AccessMap
+            driveGrants={grants}
+            scan={scan}
+            busy={busy}
+            onChangeGrant={changeDocumentGrant}
+            onRevokeGrant={revokeDocumentGrant}
+          />
         </Card>
       ) : tab === "people" ? (
         <PeopleTab
@@ -299,13 +340,30 @@ export function AccessView() {
           onRevoke={revoke}
         />
       ) : (
-        <DocumentsTab
-          driveId={driveId}
-          driveName="This vault (drive)"
-          nodes={liveNodes}
-          operationTypesByModel={opsByModel}
-          onChanged={() => void load()}
-        />
+        <>
+          <DocumentsTab
+            driveId={driveId}
+            driveName="This vault (drive)"
+            nodes={liveNodes}
+            operationTypesByModel={opsByModel}
+            onChanged={() => {
+              void load();
+              void reloadMap();
+            }}
+          />
+          {/* The same summary as the "Who has what" tab, below the picker.
+              An admin working document-by-document still needs to see where
+              else a grant exists, and to fix it without navigating away. */}
+          <Card>
+            <AccessMap
+              driveGrants={grants}
+              scan={scan}
+              busy={busy}
+              onChangeGrant={changeDocumentGrant}
+              onRevokeGrant={revokeDocumentGrant}
+            />
+          </Card>
+        </>
       )}
 
       <Hint>{INHERIT_NOTE}</Hint>

@@ -17,23 +17,39 @@ import { useMemo, useState } from "react";
 import {
   AddressChip,
   Callout,
+  ConfirmButton,
+  GhostButton,
   Hint,
   LevelBadge,
+  LevelSelect,
   Row,
   SearchInput,
   SectionHeader,
   Select,
+  short,
 } from "./parts.js";
-import { LEVEL_RANK, type DocumentGrant, type Grant, type ScanState } from "./use-auth-api.js";
+import {
+  LEVEL_RANK,
+  type DocumentGrant,
+  type Grant,
+  type Level,
+  type ScanState,
+} from "./use-auth-api.js";
 
 type GroupBy = "person" | "document";
 
 export function AccessMap({
   driveGrants,
   scan,
+  busy,
+  onChangeGrant,
+  onRevokeGrant,
 }: {
   driveGrants: Grant[];
   scan: ScanState | null;
+  busy: boolean;
+  onChangeGrant: (documentId: string, address: string, level: Level) => void;
+  onRevokeGrant: (documentId: string, address: string) => void;
 }) {
   const [groupBy, setGroupBy] = useState<GroupBy>("person");
   const [query, setQuery] = useState("");
@@ -174,18 +190,24 @@ export function AccessMap({
                   {list
                     .sort((a, b) => a.documentName.localeCompare(b.documentName))
                     .map((r) => (
-                      <Row key={`${r.documentId}-${r.userAddress}`}>
-                        <span className="flex-1 truncate text-xs">
-                          {r.documentName}
-                          <span
-                            className="ml-2 text-[10px]"
-                            style={{ color: "var(--bai-text-faint)" }}
-                          >
-                            {(r.documentType ?? "").replace(/^bai\//, "")}
-                          </span>
-                        </span>
-                        <LevelBadge level={r.permission} />
-                      </Row>
+                      <GrantActionRow
+                        key={`${r.documentId}-${r.userAddress}`}
+                        grant={r}
+                        label={
+                          <>
+                            {r.documentName}
+                            <span
+                              className="ml-2 text-[10px]"
+                              style={{ color: "var(--bai-text-faint)" }}
+                            >
+                              {(r.documentType ?? "").replace(/^bai\//, "")}
+                            </span>
+                          </>
+                        }
+                        busy={busy}
+                        onChangeGrant={onChangeGrant}
+                        onRevokeGrant={onRevokeGrant}
+                      />
                     ))}
                 </div>
               ))}
@@ -206,12 +228,14 @@ export function AccessMap({
                     </span>
                   </div>
                   {list.map((r) => (
-                    <Row key={r.userAddress}>
-                      <span className="flex-1">
-                        <AddressChip address={r.userAddress} />
-                      </span>
-                      <LevelBadge level={r.permission} />
-                    </Row>
+                    <GrantActionRow
+                      key={r.userAddress}
+                      grant={r}
+                      label={<AddressChip address={r.userAddress} />}
+                      busy={busy}
+                      onChangeGrant={onChangeGrant}
+                      onRevokeGrant={onRevokeGrant}
+                    />
                   ))}
                 </div>
               ))}
@@ -228,5 +252,85 @@ export function AccessMap({
         </>
       )}
     </div>
+  );
+}
+
+/**
+ * One document-level grant, editable in place.
+ *
+ * The point of this view is to avoid hunting for a document in the tree just
+ * to change one row, so the two actions an admin actually wants — change the
+ * level, remove the grant — live on the row itself. A change still previews as
+ * "WRITE → READ" and applies on confirm rather than firing on select, because
+ * lowering a level silently removes capability someone has today.
+ *
+ * These are grants written ON the document, so revoking here removes them.
+ * Inherited access is not shown in this list at all — it lives on the drive
+ * row above, which is where it can be changed.
+ */
+function GrantActionRow({
+  grant,
+  label,
+  busy,
+  onChangeGrant,
+  onRevokeGrant,
+}: {
+  grant: DocumentGrant;
+  label: React.ReactNode;
+  busy: boolean;
+  onChangeGrant: (documentId: string, address: string, level: Level) => void;
+  onRevokeGrant: (documentId: string, address: string) => void;
+}) {
+  const [pending, setPending] = useState<Level | null>(null);
+  return (
+    <>
+      <Row>
+        <span className="min-w-0 flex-1 truncate text-xs">{label}</span>
+        {pending === null ? (
+          <LevelBadge level={grant.permission} />
+        ) : (
+          <span className="inline-flex items-center gap-1.5">
+            <LevelBadge level={grant.permission} />
+            <span aria-hidden style={{ color: "var(--bai-text-muted)" }}>
+              →
+            </span>
+            <LevelBadge level={pending} />
+          </span>
+        )}
+        <span className="flex w-44 items-center justify-end gap-2">
+          <LevelSelect
+            value={pending ?? grant.permission}
+            onChange={(l) => setPending(l === grant.permission ? null : l)}
+          />
+          {pending !== null ? (
+            <GhostButton
+              disabled={busy}
+              onClick={() => {
+                onChangeGrant(grant.documentId, grant.userAddress, pending);
+                setPending(null);
+              }}
+            >
+              Apply
+            </GhostButton>
+          ) : (
+            <ConfirmButton
+              label="Revoke"
+              confirmLabel={`Revoke ${short(grant.userAddress)}`}
+              onConfirm={() =>
+                onRevokeGrant(grant.documentId, grant.userAddress)
+              }
+              disabled={busy}
+            />
+          )}
+        </span>
+      </Row>
+      {pending !== null &&
+      LEVEL_RANK[pending] < LEVEL_RANK[grant.permission] ? (
+        <Callout tone="warn">
+          Lowering {short(grant.userAddress)} on {grant.documentName} removes
+          capability they have today.
+        </Callout>
+      ) : null}
+    </>
   );
 }
