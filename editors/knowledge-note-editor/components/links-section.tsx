@@ -1,4 +1,5 @@
 import { useState, useMemo, useRef, useEffect } from "react";
+import { useEventCallback } from "../../shared/use-event-callback.js";
 import { generateId } from "document-model/core";
 import { setSelectedNode } from "@powerhousedao/reactor-browser";
 import { useVaultDocIndex } from "../../shared/use-vault-doc-index.js";
@@ -231,16 +232,20 @@ function LinkCard({
   const editRef = useRef<HTMLDivElement>(null);
   const [isArticulating, setIsArticulating] = useState(false);
 
+  // The parent supplies `onCancelEdit` as an inline arrow, so this
+  // click-outside listener was re-subscribed on every render — once per link
+  // card on the page.
+  const cancelEdit = useEventCallback(onCancelEdit);
   useEffect(() => {
     if (!isEditing) return;
     function handleClickOutside(e: MouseEvent) {
       if (editRef.current && !editRef.current.contains(e.target as Node)) {
-        onCancelEdit();
+        cancelEdit();
       }
     }
     document.addEventListener("mousedown", handleClickOutside);
     return () => document.removeEventListener("mousedown", handleClickOutside);
-  }, [isEditing, onCancelEdit]);
+  }, [isEditing, cancelEdit]);
 
   if (isEditing) {
     return (

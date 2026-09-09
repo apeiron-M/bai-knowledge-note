@@ -73,9 +73,10 @@ export function Shell({
     useState<InspectorLayout>(readInspectorLayout);
   const [railOpen, setRailOpen] = useState(readRailOpen);
   const [error, setError] = useState<string | null>(null);
-  const [seenOps, setSeenOps] = useState(
-    () => globalOperations(document).length,
-  );
+  // A high-water mark, not rendered — so a ref, not state. As state it was
+  // a dependency of the effect that also set it, which meant the effect
+  // re-ran to observe its own write.
+  const seenOpsRef = useRef(globalOperations(document).length);
 
   const selectionClick = useRef(false);
   // a click that changes the selection or the mode must not be mistaken for a click outside
@@ -128,18 +129,19 @@ export function Shell({
 
   // reducer rejections are recorded on the operation, not thrown: surface the newest one.
   // Connect may hand the editor a document without an operations log, so read it defensively.
-  const ops = globalOperations(document);
+  // Memoized on the document: `globalOperations` returns a fresh array every
+  // call, so as a bare render-body value it made this effect re-run after
+  // every single render of the Shell.
+  const ops = useMemo(() => globalOperations(document), [document]);
   useEffect(() => {
-    if (ops.length <= seenOps) {
-      if (ops.length !== seenOps) setSeenOps(ops.length);
-      return;
-    }
+    const seen = seenOpsRef.current;
+    seenOpsRef.current = ops.length;
+    if (ops.length <= seen) return;
     const failed = ops
-      .slice(seenOps)
+      .slice(seen)
       .find((op) => op.error !== undefined && op.error !== "");
     if (failed?.error) setError(failed.error);
-    setSeenOps(ops.length);
-  }, [ops, seenOps]);
+  }, [ops]);
 
   // the inspected deliverable may have been removed
   useEffect(() => {

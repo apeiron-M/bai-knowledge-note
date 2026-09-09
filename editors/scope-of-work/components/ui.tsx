@@ -13,6 +13,7 @@ import {
   type MouseEvent as ReactMouseEvent,
   type ReactNode,
 } from "react";
+import { useEventCallback } from "../../shared/use-event-callback.js";
 import { STATUS_LABEL, badgesFor, initials, money, moneyAmount } from "../lib/model.js";
 
 export function StatusChip({ status }: { status: string }) {
@@ -267,10 +268,14 @@ export function Toast({
   error?: boolean;
   onClose: () => void;
 }) {
+  // Stable identity: the parent passes `onClose` as an inline arrow, so
+  // without this the auto-dismiss timer was cleared and restarted on every
+  // parent render and an error toast never dismissed at all.
+  const close = useEventCallback(onClose);
   useEffect(() => {
-    const t = setTimeout(onClose, error ? 8000 : 2500);
+    const t = setTimeout(close, error ? 8000 : 2500);
     return () => clearTimeout(t);
-  }, [message, error, onClose]);
+  }, [message, error, close]);
   return (
     <div
       className={`toast ${error ? "error" : ""}`}
@@ -318,12 +323,15 @@ export function ConfirmDialog({
   useEffect(() => {
     cancelRef.current?.focus();
   }, []);
+  // See the toast above: `onCancel` arrives as a fresh arrow each render, so
+  // the capture-phase listener was torn down and re-added on every one.
+  const cancel = useEventCallback(onCancel);
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
       if (e.key === "Escape") {
         e.preventDefault();
         e.stopPropagation();
-        onCancel();
+        cancel();
         return;
       }
       if (e.key !== "Tab" || !boxRef.current) return;
@@ -343,7 +351,7 @@ export function ConfirmDialog({
     };
     globalThis.addEventListener("keydown", onKey, true);
     return () => globalThis.removeEventListener("keydown", onKey, true);
-  }, [onCancel]);
+  }, [cancel]);
   return (
     <div
       className="sow-confirm"
