@@ -1,6 +1,7 @@
+import type { CSSProperties } from "react";
 import { AccessView } from "./access/AccessView.js";
 import { useIsVaultAdmin } from "./access/use-is-admin.js";
-import { useState, useMemo, useCallback, useEffect } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import type { EditorProps } from "document-model";
 import {
   isFileNodeKind,
@@ -28,6 +29,10 @@ import {
   sameDriveNode,
   useStableList,
 } from "../../shared/use-stable-list.js";
+import {
+  useDescendantWidth,
+  useMeasuredHeight,
+} from "../../shared/use-measured.js";
 import {
   useReactorDocsWithRefetch,
   type ReactorDocSpec,
@@ -60,6 +65,14 @@ type ViewMode =
  * remains the way back out.
  */
 const EDITORS_WITH_OWN_SIDEBAR = new Set<string>(["powerhouse/scopeofwork"]);
+
+/**
+ * The element a hosted editor draws its sidebar into. Measured, not
+ * configured — see the note beside `hostedRailWidth`. If this class ever
+ * disappears the measurement reads 0 and the layout falls back to the tab
+ * bar spanning the full width, which is where it started.
+ */
+const HOSTED_SIDEBAR_SELECTOR = ".sow-rail-wrap";
 
 export function DriveExplorer({ children }: EditorProps) {
   const [viewMode, setViewMode] = useState<ViewMode>("chat");
@@ -96,7 +109,7 @@ export function DriveExplorer({ children }: EditorProps) {
     sameDriveNode,
   );
   // Tree-only count, like sources: no document reads just to draw a badge.
-  const sowCount = (fileNodes ?? []).filter(
+  const sowCount = fileNodes.filter(
     (n) => n.documentType === "powerhouse/scopeofwork",
   ).length;
   const showDocumentEditor = !!children;
@@ -110,6 +123,31 @@ export function DriveExplorer({ children }: EditorProps) {
     showDocumentEditor &&
     selectedDocumentType !== undefined &&
     EDITORS_WITH_OWN_SIDEBAR.has(selectedDocumentType);
+
+  // A hosted editor draws its own sidebar. Placed naively that sidebar lands
+  // BELOW the vault's tab bar while the tab bar slides left to the window
+  // edge — so opening a scope of work moved every tab and the settings menu
+  // several hundred pixels, and the editor's sidebar started halfway down the
+  // window while the vault's own sidebar starts at the top.
+  //
+  // Instead the shell reserves a left column exactly as wide as the hosted
+  // editor's sidebar and lets the editor span the full height, with the tab
+  // bar occupying only the column beside it. The tab bar keeps the x-offset
+  // it has next to the vault sidebar, and the hosted sidebar reaches the top.
+  //
+  // The width is measured rather than agreed: the scope-of-work rail is
+  // 264px, 220px under 1180px wide, and 0 when collapsed, and none of that is
+  // knowable from here. `useDescendantWidth` follows whatever it actually is.
+  const hostedRef = useRef<HTMLDivElement>(null);
+  const topBarRef = useRef<HTMLDivElement>(null);
+  const hostedRailWidth = useDescendantWidth(
+    hostedRef,
+    HOSTED_SIDEBAR_SELECTOR,
+    editorOwnsSidebar,
+  );
+  // Published to the hosted editor as `--vault-topbar-h` so it can keep its
+  // own content clear of the bar that now overlaps its top edge.
+  const topBarHeight = useMeasuredHeight(topBarRef, editorOwnsSidebar);
 
   const handleGraphFocusChange = useCallback((focus: GraphFocus | null) => {
     setGraphFocus(focus);
@@ -326,13 +364,39 @@ export function DriveExplorer({ children }: EditorProps) {
         />
       )}
 
-      <div className="flex flex-1 flex-col overflow-hidden">
+      <div
+        ref={hostedRef}
+        data-vault-hosts-editor={editorOwnsSidebar ? "" : undefined}
+        className={
+          editorOwnsSidebar
+            ? "grid flex-1 overflow-hidden"
+            : "flex flex-1 flex-col overflow-hidden"
+        }
+        style={
+          editorOwnsSidebar
+            ? {
+                gridTemplateColumns: `${hostedRailWidth}px minmax(0, 1fr)`,
+                gridTemplateRows: "auto minmax(0, 1fr)",
+                // Read by the hosted editor's stylesheet, which uses them to
+                // keep its own chrome clear of the bar overlapping its top.
+                "--vault-topbar-h": `${topBarHeight}px`,
+                "--vault-rail-w": `${hostedRailWidth}px`,
+              } as CSSProperties
+            : undefined
+        }
+      >
         {/* Top bar */}
         <div
+          ref={topBarRef}
           className="flex items-center justify-between px-4 py-2"
           style={{
             borderBottom: "1px solid var(--bai-border)",
             backgroundColor: "var(--bai-surface)",
+            // Column 2 only, so the hosted sidebar in column 1 runs to the top.
+            // Above the editor, which spans every cell underneath it.
+            ...(editorOwnsSidebar
+              ? { gridColumn: 2, gridRow: 1, zIndex: 2 }
+              : null),
           }}
         >
           <div className="flex items-center gap-1">
@@ -402,7 +466,18 @@ export function DriveExplorer({ children }: EditorProps) {
         </div>
 
         {/* Content */}
-        <div className="flex-1 overflow-auto">
+        <div
+          className={
+            editorOwnsSidebar
+              ? "relative min-w-0 overflow-hidden"
+              : "flex-1 overflow-auto"
+          }
+          style={
+            editorOwnsSidebar
+              ? { gridColumn: "1 / -1", gridRow: "1 / -1", zIndex: 1 }
+              : undefined
+          }
+        >
           {showDocumentEditor ? (
             <div className="h-full">{children}</div>
           ) : viewMode === "graph" ? (

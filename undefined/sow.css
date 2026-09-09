@@ -1,5 +1,4 @@
-/** Scoped stylesheet for the Scope of Work editor. Every selector is prefixed with `.sow`. */
-export const SOW_CSS = `
+
 .sow{--canvas:var(--bai-bg);--panel:var(--bai-surface);--panel-2:var(--bai-hover);--ink:var(--bai-text);--ink-2:var(--bai-text-secondary);--ink-3:var(--bai-text-muted);--rule:var(--bai-border);--rule-2:var(--bai-border);
   --meridian:var(--bai-status-canonical);--meridian-soft:color-mix(in srgb,var(--bai-status-canonical) 16%,transparent);--signal:var(--bai-status-review);--signal-soft:color-mix(in srgb,var(--bai-status-review) 16%,transparent);--ember:rgb(248,113,113);--ember-soft:rgba(248,113,113,.15);--slate:var(--bai-text-muted);--slate-soft:var(--bai-hover);--focus:var(--bai-accent);
   --r:10px;--display:"Bricolage Grotesque",Inter,system-ui,sans-serif;--ui:Inter,system-ui,sans-serif;--mono:"JetBrains Mono",ui-monospace,SFMono-Regular,Menlo,monospace;
@@ -351,4 +350,3 @@ export const SOW_CSS = `
 .sow kbd{font-family:var(--mono);font-size:11px;border:1px solid var(--rule-2);border-bottom-width:2px;border-radius:4px;padding:0 5px;color:var(--ink-2)}
 @media (prefers-reduced-motion:reduce){.sow *{transition:none!important}}
 @media (max-width:1180px){.sow{grid-template-columns:220px minmax(0,1fr) 320px}.sow.no-inspector{grid-template-columns:220px minmax(0,1fr) 0}.sow.no-rail{grid-template-columns:0 minmax(0,1fr) 320px}.sow.no-rail.no-inspector{grid-template-columns:0 minmax(0,1fr) 0}.sow .kpis{grid-template-columns:repeat(2,1fr)}}
-`;
