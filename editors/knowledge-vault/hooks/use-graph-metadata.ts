@@ -46,7 +46,14 @@
  * opens a single note (via `useDocumentByIdSafe`).
  */
 import { authHeaders } from "../../shared/authed-fetch.js";
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import {
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+  useSyncExternalStore,
+} from "react";
 import {
   useFileNodesInSelectedDrive,
   useSelectedDriveId,
@@ -430,6 +437,114 @@ function loadGraphSnapshot(driveId: string): Promise<FetchOutcome> {
   return pending;
 }
 
+/** Document types whose changes the graph projection reflects. */
+const PROJECTED_TYPES: ReadonlySet<string> = new Set([
+  "bai/knowledge-note",
+  "bai/moc",
+  "bai/tension",
+  "bai/observation",
+  "bai/research-claim",
+  // Before the drive snapshot exists the type may be unknown.
+  "",
+]);
+
+/** Whether a remote change can alter what this projection reports. */
+export function projectionAffected(change: {
+  structural: boolean;
+  documents: Array<{ documentType: string | null }>;
+}): boolean {
+  if (change.structural) return true;
+  return change.documents.some((d) =>
+    PROJECTED_TYPES.has(d.documentType ?? ""),
+  );
+}
+
+/**
+ * ONE refresh signal for the whole process.
+ *
+ * `useGraphMetadata` is called independently by `useKnowledgeNotes`,
+ * `useKnowledgeMocs` and `useKnowledgeTensions` — and `DriveExplorer` mounts
+ * all three, so three instances are always live. Each used to own a 60 s
+ * timer, its own change-feed subscription and its own `refetchKey`, while one
+ * refresh costs ~0.9 MB of nodes + ~2.3 MB of edges + a ~300 kB drive tree.
+ * `loadGraphSnapshot` dedupes only CONCURRENT fetches, so the moment those
+ * three timers drifted apart the same refresh was paid for three times —
+ * about 10 MB per cycle for data that is identical in all three.
+ *
+ * A single generation counter fixes it structurally rather than by tuning:
+ * every instance observes the same bump in the same commit, so their fetches
+ * are concurrent by construction and collapse into one request.
+ */
+let refreshGeneration = 0;
+const generationListeners = new Set<() => void>();
+
+function bumpGeneration(): void {
+  refreshGeneration++;
+  for (const notify of [...generationListeners]) notify();
+}
+
+export function subscribeGeneration(notify: () => void): () => void {
+  generationListeners.add(notify);
+  return () => {
+    generationListeners.delete(notify);
+  };
+}
+
+export function getGeneration(): number {
+  return refreshGeneration;
+}
+
+/** Coalesces the count-driven refetch across instances, not just within one. */
+const bumpGenerationSoon = debounced(bumpGeneration, 1_500);
+
+/** Safety-net cadence while the change feed is delivering. */
+const LIVE_SAFETY_NET_MS = 5 * 60_000;
+const POLL_MS = 60_000;
+
+let sharedConsumers = 0;
+let sharedTimer: ReturnType<typeof setInterval> | null = null;
+let stopSharedRemote: (() => void) | null = null;
+let sharedDriveId: string | undefined;
+
+/**
+ * Install the shared timer and change-feed listener for the first consumer;
+ * tear them down when the last one leaves.
+ */
+export function attachSharedRefresh(driveId: string | undefined): () => void {
+  sharedConsumers++;
+  sharedDriveId = driveId;
+  if (sharedConsumers === 1) {
+    let lastPollAt = Date.now();
+    sharedTimer = setInterval(() => {
+      if (
+        typeof document !== "undefined" &&
+        document.visibilityState !== "visible"
+      )
+        return;
+      if (isVaultLive() && Date.now() - lastPollAt < LIVE_SAFETY_NET_MS) return;
+      lastPollAt = Date.now();
+      bumpGeneration();
+    }, POLL_MS);
+
+    // An agent's `docs apply` lands several operations within milliseconds
+    // and the indexer rebuilds the projection a beat after the reactor
+    // commits, so coalesce and give it that beat.
+    const refetchSoon = debounced(bumpGeneration, 1_500);
+    stopSharedRemote = onVaultRemoteChange((change) => {
+      if (change.driveId !== sharedDriveId) return;
+      if (projectionAffected(change)) refetchSoon();
+    });
+  }
+  return () => {
+    sharedConsumers = Math.max(0, sharedConsumers - 1);
+    if (sharedConsumers > 0) return;
+    if (sharedTimer) clearInterval(sharedTimer);
+    sharedTimer = null;
+    stopSharedRemote?.();
+    stopSharedRemote = null;
+  };
+}
+
 export function useGraphMetadata(): GraphMetadata {
   const driveId = useSelectedDriveId();
   const fileNodes = useFileNodesInSelectedDrive();
@@ -455,7 +570,12 @@ export function useGraphMetadata(): GraphMetadata {
   // caller must be able to say "loading" rather than "empty vault".
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<Error | null>(null);
-  const [refetchKey, setRefetchKey] = useState(0);
+  // Shared across every instance — see `attachSharedRefresh` above.
+  const generation = useSyncExternalStore(
+    subscribeGeneration,
+    getGeneration,
+    getGeneration,
+  );
   /** Drive whose first fetch has settled — gates `isLoading` and warm start. */
   const settledDriveRef = useRef<string | null>(null);
 
@@ -465,52 +585,13 @@ export function useGraphMetadata(): GraphMetadata {
   // and the per-change cancel-and-restart prevents any fetch from
   // resolving. Instead the count-driven refetch is debounced below.
   const driveFingerprint = useMemo(
-    () => `${driveId ?? ""}:${refetchKey}`,
-    [driveId, refetchKey],
+    () => `${driveId ?? ""}:${generation}`,
+    [driveId, generation],
   );
 
-  // Periodic refresh: edges and titles change server-side (agents write
-  // via GraphQL) without any browser event and without the file count
-  // moving — a graph edge added by an agent would otherwise be invisible
-  // until a manual reload. Visibility-gated so background tabs stay quiet.
-  // While the live change feed is connected (see `useRemoteFirst` step 5)
-  // the pushed events below drive refetches and this poll backs off to a
-  // five-minute safety net.
-  useEffect(() => {
-    let lastPollAt = Date.now();
-    const interval = setInterval(() => {
-      if (typeof document !== "undefined" && document.visibilityState !== "visible") return;
-      if (isVaultLive() && Date.now() - lastPollAt < 5 * 60_000) return;
-      lastPollAt = Date.now();
-      setRefetchKey((k) => k + 1);
-    }, 60_000);
-    return () => clearInterval(interval);
-  }, []);
-
-  // Live refresh: any change to a document this projection indexes, or to
-  // the drive tree, refetches — coalesced, because an agent's `docs apply`
-  // lands several operations within milliseconds and the indexer updates
-  // the projection a beat after the reactor commits.
-  useEffect(() => {
-    if (!driveId) return;
-    const refetchSoon = debounced(() => setRefetchKey((k) => k + 1), 1_500);
-    return onVaultRemoteChange((change) => {
-      if (change.driveId !== driveId) return;
-      const touchesProjection = change.documents.some((d) => {
-        const t = d.documentType ?? "";
-        return (
-          t === "bai/knowledge-note" ||
-          t === "bai/moc" ||
-          t === "bai/tension" ||
-          t === "bai/observation" ||
-          t === "bai/research-claim" ||
-          // Before the drive snapshot exists the type may be unknown.
-          t === ""
-        );
-      });
-      if (touchesProjection || change.structural) refetchSoon();
-    });
-  }, [driveId]);
+  // The 60 s safety-net poll and the change-feed subscription are shared by
+  // every instance, so a refresh happens once rather than once per instance.
+  useEffect(() => attachSharedRefresh(driveId), [driveId]);
 
   // Debounced count-driven refetch: when fileNodes.length changes (new
   // docs landed), bump the refetch key after 1.5s of stability.
@@ -524,8 +605,9 @@ export function useGraphMetadata(): GraphMetadata {
     // already covers it). Only schedule a refetch on subsequent file
     // count changes.
     if (prev === -1) return;
-    const timer = setTimeout(() => setRefetchKey((k) => k + 1), 1500);
-    return () => clearTimeout(timer);
+    // Shared debounce: all three instances observe the same count change
+    // in the same commit, and one bump is enough for all of them.
+    bumpGenerationSoon();
   }, [fileCount]);
 
   useEffect(() => {
@@ -603,7 +685,7 @@ export function useGraphMetadata(): GraphMetadata {
   }, [nodes]);
 
   const refetch = useCallback(() => {
-    setRefetchKey((k) => k + 1);
+    bumpGeneration();
   }, []);
 
   return {
