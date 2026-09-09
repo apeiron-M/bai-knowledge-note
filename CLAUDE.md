@@ -2,6 +2,30 @@
 
 This project creates document models, editors, processors and subgraphs for the Powerhouse ecosystem. Your role is to help users create these modules based on their needs.
 
+## ⚠️ Toolchain: bun locally, node in the remote
+
+**Local development uses `bun` exclusively.** `bun.lock` is the sole lockfile — running `npm install` or `pnpm install` generates a competing lockfile and can silently resolve different versions than the ones the team is running.
+
+| Instead of (locally)               | Use                             |
+| ---------------------------------- | ------------------------------- |
+| `npm install`                      | `bun install`                   |
+| `npm ci`                           | `bun install --frozen-lockfile` |
+| `npm add <pkg>` / `pnpm add <pkg>` | `bun add <pkg>`                 |
+| `npm run <script>`                 | `bun run <script>`              |
+| `npx <cli>`                        | `bunx <cli>`                    |
+
+**Scope: your local machine only.** bun is the *development* toolchain — installing dependencies and running scripts here. **The remote runtime is node**: the published package is consumed by a node Switchboard, which is what the `"node"` conditions in `exports` are for. Concretely:
+
+- ❌ **Do not rewrite `node ...` invocations inside `package.json` scripts.** `build`, `prepack` and `vetra` shell out to `node` deliberately — they run in build, publish and deploy contexts that must stay node. The `npx dpdm` in `check-circular-imports` stays too. Leave all of them alone.
+- ❌ **Do not use bun-only APIs (`Bun.*`, `bun:*` imports) in anything that ships in `dist/`.** Processors, subgraphs, document models and editors all execute under node on the remote Switchboard — a `Bun.file()` that works locally is a production crash.
+- ✅ **Do use bun for** `bun install`, `bun run tsc|lint:fix|test`, `bun add`, and local scratch scripts.
+
+The npm/pnpm/yarn install-and-run commands are blocked by a `deny` rule in `.claude/settings.json`, so a local slip fails loudly instead of quietly writing a second lockfile.
+
+**Exception — read-only registry queries.** `npm view`, `npm info` and `npm diff` have no bun equivalent and touch nothing local. They stay allowed; use them freely to inspect published versions.
+
+`ph use dev` and the other `ph-cli` commands already shell out to bun on their own — let them.
+
 ## Core Concepts
 
 - **Document Model**: A template for creating documents. Defines schema and allowed operations for a document type.
@@ -71,9 +95,9 @@ If the `reactor-mcp` server is unavailable, ask the user to run `ph vetra` on a 
 
 After doing changes to the code, or after creating a new document model or a new editor, _YOU MUST RUN_ the following commands to check for errors in your implementation:
 
-- **TypeScript Check**: Run `npm run tsc` to validate type safety
-- **Lint Check**: Run `npm run lint:fix` to check for errors with oxlint (type-aware rules plus TypeScript type checking)
-- **Reducer Test Coverage**: Run `npm run test:coverage` after any change to a document model reducer. Document model reducers are pure synchronous functions and **MUST** stay at or above **95%** coverage on lines, branches, functions, and statements. If coverage drops below the threshold, add tests in `document-models/<name>/v<n>/tests/` until the threshold is restored — **DO NOT** lower the threshold or exclude files to make the check pass. Cover the happy path _and_ every error code defined via `ADD_OPERATION_ERROR` (each error is a branch that needs explicit test coverage). Push toward 100% by following the strategy below.
+- **TypeScript Check**: Run `bun run tsc` to validate type safety
+- **Lint Check**: Run `bun run lint:fix` to check for errors with oxlint (type-aware rules plus TypeScript type checking)
+- **Reducer Test Coverage**: Run `bun run test:coverage` after any change to a document model reducer. Document model reducers are pure synchronous functions and **MUST** stay at or above **95%** coverage on lines, branches, functions, and statements. If coverage drops below the threshold, add tests in `document-models/<name>/v<n>/tests/` until the threshold is restored — **DO NOT** lower the threshold or exclude files to make the check pass. Cover the happy path _and_ every error code defined via `ADD_OPERATION_ERROR` (each error is a branch that needs explicit test coverage). Push toward 100% by following the strategy below.
 
 #### Strategy: reaching 100% reducer coverage
 
@@ -268,7 +292,7 @@ Use this **only** when your editor needs UI primitives not covered by `@powerhou
 
 #### Setup steps
 
-1. **Install deps**: `pnpm add class-variance-authority clsx tailwind-merge lucide-react tw-animate-css`
+1. **Install deps**: `bun add class-variance-authority clsx tailwind-merge lucide-react tw-animate-css`
 
 2. **Create `components.json`** at the project root. The `@/*` alias here is consumed by the shadcn / AI Elements CLIs at install time only — do **NOT** add a matching `@/*` alias to `tsconfig.json`:
 
@@ -302,7 +326,7 @@ Use this **only** when your editor needs UI primitives not covered by `@powerhou
 5. **Install AI Elements** using Vercel's CLI (not shadcn's). Verify each name exists at https://ai-sdk.dev/elements first — unknown names abort the install:
 
    ```bash
-   npx ai-elements@latest add conversation message reasoning tool prompt-input code-block
+   bunx ai-elements@latest add conversation message reasoning tool prompt-input code-block
    ```
 
    The CLI auto-installs `ai`, `use-stick-to-bottom`, `streamdown` (+ `@streamdown/{cjk,code,math,mermaid}`), and `@radix-ui/react-use-controllable-state`.
@@ -383,7 +407,7 @@ editing `<name>.json` directly.
 A document imported from an older `.phd` can be **behind** the working tree. Regenerating from it
 overwrites the derived files and can silently revert unrelated parts of the model. After any
 regeneration, run `git diff document-models/` and confirm **only** the intended lines changed, then
-`npm run tsc` and `npm run test`.
+`bun run tsc` and `bun run test`.
 
 Regeneration also picks up changes from the **stack**, not just from the model document. Real
 example: after upgrading to 6.2.2-dev.45 and running `ph generate all`, the scalar block in

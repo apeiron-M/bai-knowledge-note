@@ -451,7 +451,29 @@
       "Bash(grep \"\\\\.json$\")",
       "Bash(grep -c \"pyc$\")",
       "Bash(node -e \"const s=require\\('./package.json'\\).scripts; console.log\\(JSON.stringify\\(s,null,1\\)\\)\")",
-      "Bash(python3 -c \"import json;print\\(json.load\\(open\\('package.json'\\)\\)['scripts']\\)\")"
+      "Bash(python3 -c \"import json;print\\(json.load\\(open\\('package.json'\\)\\)['scripts']\\)\")",
+      "Bash(bun install)",
+      "Bash(bun install --frozen-lockfile)",
+      "Bash(bun run:*)",
+      "Bash(bun test:*)"
+    ],
+    "deny": [
+      "Bash(npm install:*)",
+      "Bash(npm i:*)",
+      "Bash(npm ci:*)",
+      "Bash(npm add:*)",
+      "Bash(npm run:*)",
+      "Bash(npm test:*)",
+      "Bash(npm update:*)",
+      "Bash(pnpm install:*)",
+      "Bash(pnpm i:*)",
+      "Bash(pnpm add:*)",
+      "Bash(pnpm run:*)",
+      "Bash(pnpm test:*)",
+      "Bash(yarn install:*)",
+      "Bash(yarn add:*)",
+      "Bash(yarn run:*)",
+      "Bash(yarn test:*)"
     ]
   },
   "enabledPlugins": {
