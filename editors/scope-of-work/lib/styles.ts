@@ -12,22 +12,6 @@ export const SOW_CSS = `
 .sow.no-rail.no-inspector{grid-template-columns:0 minmax(0,1fr) 0}
 .sow.no-rail .rail{display:none}
 .sow *{box-sizing:border-box}
-/* ── hosted inside the vault shell ───────────────────────────────────────
-   DriveExplorer reserves a left column exactly as wide as this editor's rail
-   and puts the vault tab bar in the column beside it, so the rail reaches the
-   top of the window like the vault's own sidebar and the tab bar keeps the
-   x-offset it has there. The tab bar therefore overlaps this editor's top
-   edge; --vault-topbar-h and --vault-rail-w are published by the shell so
-   the parts that would sit underneath it can move clear. Both default to 0,
-   so opened outside the vault this block changes nothing. */
-[data-vault-hosts-editor] .sow .canvas{padding-top:calc(28px + var(--vault-topbar-h,0px))}
-[data-vault-hosts-editor] .sow .inspector{padding-top:var(--vault-topbar-h,0px)}
-/* The toolbar drawer is zero-height collapsed but full width open, and it is
-   the first thing in the flow — left alone it would push the rail down out of
-   the top-left corner and slide under the tab bar. Out of flow, below the bar
-   and beside the rail, it does neither. Its handle is positioned against it
-   (top:100%) and follows. */
-[data-vault-hosts-editor] .sow-tb{position:absolute;top:var(--vault-topbar-h,0px);left:var(--vault-rail-w,0px);right:0}
 .sow button:where(:not(.wbs-embed *)),.sow input:where(:not(.wbs-embed *)),.sow select:where(:not(.wbs-embed *)),.sow textarea:where(:not(.wbs-embed *)){font:inherit;color:inherit}
 .sow button:where(:not(.wbs-embed *)){cursor:pointer;background:none;border:0;padding:0}
 .sow :focus-visible{outline:2px solid var(--focus);outline-offset:2px;border-radius:4px}
