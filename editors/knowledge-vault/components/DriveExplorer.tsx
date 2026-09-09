@@ -25,6 +25,10 @@ import { GettingStartedButton } from "./GettingStarted.js";
 import { useKnowledgeNotes } from "../hooks/use-knowledge-notes.js";
 import { useVaultDocIndex } from "../../shared/use-vault-doc-index.js";
 import {
+  sameDriveNode,
+  useStableList,
+} from "../../shared/use-stable-list.js";
+import {
   useReactorDocsWithRefetch,
   type ReactorDocSpec,
 } from "../hooks/use-reactor-docs.js";
@@ -84,7 +88,13 @@ export function DriveExplorer({ children }: EditorProps) {
   // first document editor the user opens finds it hot instead of paying
   // the two index round-trips itself.
   useVaultDocIndex();
-  const fileNodes = useFileNodesInSelectedDrive();
+  // Stable identity while the tree is unchanged; the upstream hook
+  // re-`filter()`s every render, which invalidated `allFiles` →
+  // `projectSpecs` → the whole scope-of-work document fetch below.
+  const fileNodes = useStableList(
+    useFileNodesInSelectedDrive(),
+    sameDriveNode,
+  );
   // Tree-only count, like sources: no document reads just to draw a badge.
   const sowCount = (fileNodes ?? []).filter(
     (n) => n.documentType === "powerhouse/scopeofwork",
@@ -119,7 +129,7 @@ export function DriveExplorer({ children }: EditorProps) {
   const { tensions } = useKnowledgeTensions();
 
   // Count doc types
-  const allFiles = useMemo(() => fileNodes ?? [], [fileNodes]);
+  const allFiles = useMemo(() => fileNodes, [fileNodes]);
   const sourceCount = allFiles.filter(
     (n) => n.documentType === "bai/source",
   ).length;

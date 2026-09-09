@@ -5,6 +5,7 @@ import {
   type DriveFileNode,
   type DriveTreeNode,
 } from "./use-graph-metadata.js";
+import { sameDriveNode, useStableList } from "../../shared/use-stable-list.js";
 
 export type KnowledgeNoteInfo = {
   id: string;
@@ -66,7 +67,13 @@ export function useKnowledgeNotes(): UseKnowledgeNotesResult {
   // metadata hook now also fetches the drive's authoritative file-node
   // list from the reactor; prefer that source. Fall back to the local
   // cache only if the server fetch hasn't completed or returned empty.
-  const cachedFileNodes = useFileNodesInSelectedDrive();
+  // Wrapped in `useStableList`: the upstream hook re-`filter()`s on every
+  // render, so without this every render invalidated `knowledgeFileNodes` →
+  // `notes` (a fresh object per note) → `noteMap` → the Pixi scene rebuild.
+  const cachedFileNodes = useStableList(
+    useFileNodesInSelectedDrive(),
+    sameDriveNode,
+  );
   const {
     nodeMap,
     edges,
@@ -78,7 +85,7 @@ export function useKnowledgeNotes(): UseKnowledgeNotesResult {
   } = useGraphMetadata();
 
   const fileNodes =
-    serverFileNodes.length > 0 ? serverFileNodes : (cachedFileNodes ?? []);
+    serverFileNodes.length > 0 ? serverFileNodes : cachedFileNodes;
 
   const knowledgeFileNodes = useMemo(
     () => fileNodes.filter((n) => n.documentType === "bai/knowledge-note"),
