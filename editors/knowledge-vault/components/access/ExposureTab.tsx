@@ -6,7 +6,7 @@
  * list. Every finding is computed from live state — none is hardcoded — so this
  * tab cannot claim a problem that is already fixed, or miss one that is not.
  */
-import { Card, Hint, short } from "./parts.js";
+import { Card, Hint, SectionHeader, SeverityPill, short } from "./parts.js";
 import type { Grant, Protection } from "./use-auth-api.js";
 import { LEVEL_RANK } from "./use-auth-api.js";
 
@@ -16,12 +16,6 @@ type Finding = {
   detail: string;
   fix: string;
 };
-
-const SEVERITY_TONE = {
-  critical: "var(--bai-status-archived)",
-  warning: "var(--bai-status-draft)",
-  ok: "var(--bai-status-canonical)",
-} as const;
 
 const SEVERITY_ORDER = { critical: 0, warning: 1, ok: 2 } as const;
 
@@ -112,14 +106,14 @@ export function ExposureTab({
   return (
     <div className="flex flex-col gap-4">
       {/* The anchor. One thing to look at first, by contrast and scale. */}
-      <Card tone={exposed ? "alarm" : "calm"}>
+      <Card tone={exposed ? "alarm" : protection?.protected ? "ok" : undefined}>
         <p
           className="text-[11px] font-medium uppercase tracking-wide"
           style={{ color: "var(--bai-text-tertiary)" }}
         >
           {driveName}
         </p>
-        <h2 className="mt-1 text-lg font-semibold">
+        <h2 className="mt-1 text-2xl font-semibold tracking-tight">
           {exposed
             ? "⚠ Open to anyone on the network"
             : protection?.protected
@@ -142,40 +136,39 @@ export function ExposureTab({
       </Card>
 
       <div>
-        <h3 className="mb-2 text-sm font-semibold">
-          Findings{findings.length === 0 ? " — nothing to report" : ""}
-        </h3>
+        <SectionHeader
+          title="Findings"
+          subtitle="Computed from live state and ordered by severity — nothing here is hardcoded."
+        />
         <ul className="flex flex-col gap-2">
           {findings.map((f) => (
             <li
               key={f.title}
-              className="rounded-md border p-3"
-              style={{ borderColor: "var(--bai-border)" }}
+              className="rounded-xl border p-4"
+              style={{
+                borderColor: "var(--bai-border)",
+                backgroundColor: "var(--bai-surface)",
+              }}
             >
-              <div className="flex items-start gap-2">
-                <span
-                  aria-hidden
-                  className="mt-1.5 h-2 w-2 shrink-0 rounded-full"
-                  style={{ backgroundColor: SEVERITY_TONE[f.severity] }}
-                />
-                <div>
-                  <p className="text-sm font-medium">{f.title}</p>
-                  <p
-                    className="mt-0.5 text-xs"
-                    style={{ color: "var(--bai-text-secondary)" }}
-                  >
-                    {f.detail}
-                  </p>
-                  {f.fix ? (
-                    <p
-                      className="mt-1 text-xs font-medium"
-                      style={{ color: "var(--bai-accent)" }}
-                    >
-                      → {f.fix}
-                    </p>
-                  ) : null}
-                </div>
+              <div className="flex items-start justify-between gap-3">
+                <p className="text-sm font-medium leading-snug">{f.title}</p>
+                <SeverityPill severity={f.severity} />
               </div>
+              <p
+                className="mt-1.5 text-xs leading-relaxed"
+                style={{ color: "var(--bai-text-tertiary)" }}
+              >
+                {f.detail}
+              </p>
+              {f.fix ? (
+                <p
+                  className="mt-2 flex gap-1.5 text-xs font-medium leading-relaxed"
+                  style={{ color: "var(--bai-accent)" }}
+                >
+                  <span aria-hidden>→</span>
+                  <span>{f.fix}</span>
+                </p>
+              ) : null}
             </li>
           ))}
         </ul>

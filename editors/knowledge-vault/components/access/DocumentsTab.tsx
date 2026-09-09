@@ -16,17 +16,23 @@ import { useEffect, useMemo, useState } from "react";
 import {
   ADDRESS_RE,
   AddressChip,
+  Callout,
+  Card,
   ConfirmButton,
+  EmptyState,
   Field,
+  GhostButton,
   Hint,
+  Inset,
   LEVEL_MEANING,
   LevelBadge,
   LevelSelect,
   OPERATION_FOOTGUN,
   PrimaryButton,
   SearchInput,
-  TextInput,
+  SectionHeader,
   short,
+  TextInput,
 } from "./parts.js";
 import {
   documentAccess,
@@ -254,14 +260,9 @@ function DocumentPanel({
       ) : null}
 
       {/* ── Protection & ownership ─────────────────────────────── */}
-      <div
-        className="rounded-md border p-3"
-        style={{ borderColor: "var(--bai-border)" }}
-      >
-        <p className="text-[11px] font-medium uppercase" style={{ color: "var(--bai-text-tertiary)" }}>
-          Protection
-        </p>
-        <p className="mt-1 text-sm">
+      <Card>
+        <SectionHeader title="Protection" />
+        <p className="text-sm">
           {protection === null
             ? "unknown"
             : protection.protected
@@ -273,7 +274,7 @@ function DocumentPanel({
           unprotecting this one may change nothing while a parent stays
           protected.
         </Hint>
-        <div className="mt-2">
+        <div className="mt-3">
           {protection?.protected ? (
             <ConfirmButton
               label="Unprotect"
@@ -282,21 +283,17 @@ function DocumentPanel({
               disabled={busy}
             />
           ) : (
-            <button
-              type="button"
+            <GhostButton
               disabled={busy}
               onClick={() => void run(() => setProtection(selected.id, true))}
-              className="text-xs underline disabled:opacity-40"
             >
               Protect
-            </button>
+            </GhostButton>
           )}
         </div>
 
-        <div className="mt-3">
-          <p className="text-[11px] font-medium uppercase" style={{ color: "var(--bai-text-tertiary)" }}>
-            Owner
-          </p>
+        <div className="mt-5">
+          <SectionHeader title="Owner" />
           <p className="mt-1 text-xs">
             {protection?.ownerAddress ? (
               <AddressChip address={protection.ownerAddress} />
@@ -307,7 +304,7 @@ function DocumentPanel({
             )}
           </p>
           <Hint>An owner is an implicit administrator, separate from grants.</Hint>
-          <div className="mt-1 flex items-end gap-2">
+          <div className="mt-2 flex items-end gap-3">
             <div className="min-w-[16rem] flex-1">
               <TextInput
                 value={newOwner}
@@ -319,7 +316,6 @@ function DocumentPanel({
             <ConfirmButton
               label="Transfer"
               confirmLabel="Transfer ownership"
-              danger
               onConfirm={() => {
                 void run(() => transferOwnership(selected.id, newOwner.trim()));
                 setNewOwner("");
@@ -329,23 +325,20 @@ function DocumentPanel({
             />
           </div>
         </div>
-      </div>
+      </Card>
 
       {/* ── Grants on this document ────────────────────────────── */}
-      <div
-        className="rounded-md border p-3"
-        style={{ borderColor: "var(--bai-border)" }}
-      >
-        <p className="text-[11px] font-medium uppercase" style={{ color: "var(--bai-text-tertiary)" }}>
-          Grants on this document
-        </p>
+      <Card>
+        <SectionHeader title="Grants on this document" />
         {grants === null ? (
           <Hint>Requires ADMIN of this document to view.</Hint>
         ) : grants.length === 0 ? (
-          <Hint>
-            None here. Access comes from an ancestor — most vaults grant on the
-            drive and let it inherit.
-          </Hint>
+          <EmptyState title="No grants set here">
+            <Hint>
+              Access comes from an ancestor — most vaults grant on the drive and
+              let it inherit.
+            </Hint>
+          </EmptyState>
         ) : (
           <table className="mt-1 w-full text-left text-xs">
             <tbody>
@@ -372,25 +365,27 @@ function DocumentPanel({
             </tbody>
           </table>
         )}
-        <div className="mt-2 flex flex-wrap items-end gap-2">
-          <div className="min-w-[16rem] flex-1">
-            <Field label="Grant here only">
-              <TextInput value={addr} onChange={setAddr} placeholder="0x…" mono />
-            </Field>
+        <Inset className="mt-3">
+          <div className="flex flex-wrap items-end gap-3">
+            <div className="min-w-[16rem] flex-1">
+              <Field label="Grant here only">
+                <TextInput value={addr} onChange={setAddr} placeholder="0x…" mono />
+              </Field>
+            </div>
+            <LevelSelect value={level} onChange={setLevel} />
+            <PrimaryButton
+              onClick={() => {
+                void run(() => grantDocument(selected.id, trimmed, level));
+                setAddr("");
+              }}
+              disabled={busy || !valid}
+            >
+              Grant
+            </PrimaryButton>
           </div>
-          <LevelSelect value={level} onChange={setLevel} />
-          <PrimaryButton
-            onClick={() => {
-              void run(() => grantDocument(selected.id, trimmed, level));
-              setAddr("");
-            }}
-            disabled={busy || !valid}
-          >
-            Grant
-          </PrimaryButton>
-        </div>
-        <Hint>{LEVEL_MEANING[level]}</Hint>
-      </div>
+          <Hint>{LEVEL_MEANING[level]}</Hint>
+        </Inset>
+      </Card>
 
       {/* ── Per-operation grants ───────────────────────────────── */}
       <OperationsPanel
@@ -439,11 +434,11 @@ function OperationsPanel({
   const restricted = (rows?.length ?? 0) > 0;
 
   return (
-    <div className="rounded-md border p-3" style={{ borderColor: "var(--bai-border)" }}>
-      <p className="text-[11px] font-medium uppercase" style={{ color: "var(--bai-text-tertiary)" }}>
-        Who can run a specific operation
-      </p>
-      <Hint>{OPERATION_FOOTGUN}</Hint>
+    <Card>
+      <SectionHeader
+        title="Who can run a specific operation"
+        subtitle={OPERATION_FOOTGUN}
+      />
 
       <div className="mt-2 flex flex-wrap items-end gap-2">
         <Field label="Operation">
@@ -473,18 +468,11 @@ function OperationsPanel({
 
       {op && rows !== null ? (
         <>
-          <p
-            className="mt-2 text-xs font-medium"
-            style={{
-              color: restricted
-                ? "var(--bai-status-draft)"
-                : "var(--bai-text-secondary)",
-            }}
-          >
+          <Callout tone={restricted ? "warn" : "ok"}>
             {restricted
               ? `${op} is RESTRICTED — only these ${rows.length} address(es), document admins, and supreme admins may run it.`
               : `${op} is unrestricted — anyone with WRITE here may run it.`}
-          </p>
+          </Callout>
           {rows.length > 0 ? (
             <table className="mt-1 w-full text-left text-xs">
               <tbody>
@@ -539,16 +527,16 @@ function OperationsPanel({
             </PrimaryButton>
           </div>
           {valid && !restricted ? (
-            <p className="mt-1 text-xs" style={{ color: "var(--bai-status-draft)" }}>
-              ⚠ This is the first grant for {op}. Applying it restricts {op} to{" "}
+            <Callout tone="warn">
+              This is the first grant for {op}. Applying it restricts {op} to{" "}
               {short(trimmed)} alone — everyone else with WRITE loses the ability
               to run it on this document.
-            </p>
+            </Callout>
           ) : null}
         </>
       ) : (
         <Hint>Pick an operation to see who may run it.</Hint>
       )}
-    </div>
+    </Card>
   );
 }

@@ -15,10 +15,11 @@
  */
 import { useCallback, useEffect, useState } from "react";
 import { useRenownAuth, useSelectedDriveId } from "@powerhousedao/reactor-browser";
-import { Card, Hint, INHERIT_NOTE } from "./parts.js";
+import { AddressChip, Card, Hint, INHERIT_NOTE, Notice } from "./parts.js";
 import { ExposureTab } from "./ExposureTab.js";
 import { PeopleTab } from "./PeopleTab.js";
 import { DocumentsTab } from "./DocumentsTab.js";
+import { TypesTab } from "./TypesTab.js";
 import {
   documentAccess,
   documentProtection,
@@ -32,12 +33,13 @@ import {
   type Protection,
 } from "./use-auth-api.js";
 
-type Tab = "exposure" | "people" | "documents";
+type Tab = "exposure" | "people" | "types" | "documents";
 
 const TABS: { key: Tab; label: string; hint: string }[] = [
   { key: "exposure", label: "Exposure", hint: "Is anything open?" },
   { key: "people", label: "People", hint: "Who can reach the vault" },
-  { key: "documents", label: "Documents", hint: "Per-document and per-operation" },
+  { key: "types", label: "By type", hint: "Write notes but not projects" },
+  { key: "documents", label: "Documents", hint: "One document, and its operations" },
 ];
 
 export function AccessView() {
@@ -135,36 +137,60 @@ export function AccessView() {
   }
 
   return (
-    <div className="flex flex-col gap-4 overflow-y-auto p-6">
-      <nav
-        className="flex items-center gap-1 border-b pb-2"
-        style={{ borderColor: "var(--bai-border)" }}
-      >
-        {TABS.map((t) => (
-          <button
-            key={t.key}
-            type="button"
-            onClick={() => setTab(t.key)}
-            title={t.hint}
-            className="rounded-md px-2.5 py-1 text-xs font-medium"
-            style={{
-              backgroundColor: tab === t.key ? "var(--bai-hover)" : "transparent",
-              color:
-                tab === t.key ? "var(--bai-accent)" : "var(--bai-text-tertiary)",
-            }}
-          >
-            {t.label}
-          </button>
-        ))}
-        <span className="ml-auto">
+    <div className="flex flex-col gap-5 overflow-y-auto p-6">
+      <header className="flex items-end justify-between gap-4">
+        <div>
+          <h1 className="text-xl font-semibold tracking-tight">Access</h1>
+          <p className="mt-0.5 text-xs" style={{ color: "var(--bai-text-tertiary)" }}>
+            Who can read and write this vault, and what they may change.
+          </p>
+        </div>
+        <div className="flex items-center gap-3">
+          {address ? <AddressChip address={address} you /> : null}
           <button
             type="button"
             onClick={() => void load()}
-            className="text-xs underline opacity-60"
+            disabled={loading}
+            className="rounded-md border px-2.5 py-1 text-xs font-medium transition-colors disabled:opacity-40"
+            style={{
+              borderColor: "var(--bai-border)",
+              color: "var(--bai-text-secondary)",
+            }}
           >
-            refresh
+            {loading ? "Refreshing…" : "Refresh"}
           </button>
-        </span>
+        </div>
+      </header>
+
+      {/* Segmented control: the tabs are the audit's microgoal order, so they
+          read as one grouped choice rather than four loose links. */}
+      <nav
+        className="inline-flex w-fit gap-0.5 rounded-xl border p-1"
+        style={{
+          borderColor: "var(--bai-border)",
+          backgroundColor: "var(--bai-deep)",
+        }}
+      >
+        {TABS.map((t) => {
+          const active = tab === t.key;
+          return (
+            <button
+              key={t.key}
+              type="button"
+              onClick={() => setTab(t.key)}
+              title={t.hint}
+              aria-current={active ? "page" : undefined}
+              className="rounded-lg px-3 py-1.5 text-xs font-medium transition-colors"
+              style={{
+                backgroundColor: active ? "var(--bai-surface)" : "transparent",
+                color: active ? "var(--bai-accent)" : "var(--bai-text-tertiary)",
+                boxShadow: active ? "0 1px 2px rgba(0,0,0,0.25)" : undefined,
+              }}
+            >
+              {t.label}
+            </button>
+          );
+        })}
       </nav>
 
       {tab === "exposure" ? (
@@ -192,6 +218,8 @@ export function AccessView() {
             )
           }
         />
+      ) : tab === "types" ? (
+        <TypesTab nodes={nodes} busy={busy} onChanged={() => void load()} />
       ) : (
         <DocumentsTab
           driveId={driveId}
@@ -203,14 +231,7 @@ export function AccessView() {
       )}
 
       <Hint>{INHERIT_NOTE}</Hint>
-      {notice ? (
-        <p
-          className="rounded-md border px-3 py-2 text-sm"
-          style={{ borderColor: "var(--bai-border)" }}
-        >
-          {notice}
-        </p>
-      ) : null}
+      {notice ? <Notice>{notice}</Notice> : null}
     </div>
   );
 }

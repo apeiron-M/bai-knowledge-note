@@ -13,17 +13,23 @@ import { useMemo, useState } from "react";
 import {
   ADDRESS_RE,
   AddressChip,
+  Callout,
+  Card,
   ConfirmButton,
+  EmptyState,
   Field,
   Hint,
+  Inset,
   LEVEL_MEANING,
   LevelBadge,
   LevelSelect,
   NO_DENY_NOTE,
   PrimaryButton,
   SearchInput,
-  TextInput,
+  SectionHeader,
+  Select,
   short,
+  TextInput,
 } from "./parts.js";
 import { LEVEL_RANK, type Grant, type Level } from "./use-auth-api.js";
 
@@ -98,13 +104,21 @@ export function PeopleTab({
 
   return (
     <div className="flex flex-col gap-4">
-      <div>
-        <h3 className="text-sm font-semibold">People with access to the vault</h3>
-        <Hint>
-          Granted on the drive, so each row applies to every document in it.{" "}
-          {NO_DENY_NOTE}
-        </Hint>
-      </div>
+      <SectionHeader
+        title="People with access to the vault"
+        subtitle={`Granted on the drive, so each row applies to every document in it. ${NO_DENY_NOTE}`}
+        right={
+          <span
+            className="rounded-md px-2 py-1 text-xs font-mono"
+            style={{
+              backgroundColor: "var(--bai-hover)",
+              color: "var(--bai-text-tertiary)",
+            }}
+          >
+            {grants.length} grant{grants.length === 1 ? "" : "s"}
+          </span>
+        }
+      />
 
       <div className="flex items-center gap-2">
         <div className="flex-1">
@@ -114,30 +128,27 @@ export function PeopleTab({
             placeholder="Filter by address or level…"
           />
         </div>
-        <select
+        <Select
           value={sort}
-          onChange={(e) => setSort(e.target.value as SortKey)}
-          className="rounded-md border px-2 py-1 text-xs"
-          style={{
-            borderColor: "var(--bai-border)",
-            backgroundColor: "var(--bai-bg)",
-            color: "var(--bai-text)",
-          }}
-          aria-label="Sort by"
-        >
-          <option value="level">Sort: level</option>
-          <option value="address">Sort: address</option>
-          <option value="added">Sort: newest</option>
-        </select>
+          onChange={setSort}
+          ariaLabel="Sort by"
+          options={[
+            { value: "level", label: "Sort: level" },
+            { value: "address", label: "Sort: address" },
+            { value: "added", label: "Sort: newest" },
+          ]}
+        />
       </div>
 
       {grants.length === 0 ? (
-        <Hint>
-          No grants yet. Only addresses in the server&apos;s ADMINS list can
-          reach this vault.
-        </Hint>
+        <EmptyState title="No grants yet">
+          <Hint>
+            Only addresses in the server&apos;s ADMINS list can reach this
+            vault. Grant one below to change that.
+          </Hint>
+        </EmptyState>
       ) : rows.length === 0 ? (
-        <Hint>No grant matches “{query}”.</Hint>
+        <EmptyState title={`No grant matches “${query}”`} />
       ) : (
         <table className="w-full text-left text-sm">
           <thead>
@@ -159,21 +170,13 @@ export function PeopleTab({
                   className="border-t"
                   style={{ borderColor: "var(--bai-border)" }}
                 >
-                  <td className="py-1.5">
-                    <AddressChip address={g.userAddress} />
-                    {isMe ? (
-                      <span
-                        className="ml-2 text-[10px]"
-                        style={{ color: "var(--bai-text-muted)" }}
-                      >
-                        you
-                      </span>
-                    ) : null}
+                  <td className="py-2.5">
+                    <AddressChip address={g.userAddress} you={isMe} />
                   </td>
-                  <td className="py-1.5">
+                  <td className="py-2.5">
                     <LevelBadge level={g.permission} />
                   </td>
-                  <td className="py-1.5">
+                  <td className="py-2.5">
                     <span
                       className="font-mono text-xs"
                       style={{ color: "var(--bai-text-muted)" }}
@@ -181,7 +184,7 @@ export function PeopleTab({
                       {short(g.grantedBy)}
                     </span>
                   </td>
-                  <td className="py-1.5 text-right">
+                  <td className="py-2.5 text-right">
                     <ConfirmButton
                       label="Revoke"
                       confirmLabel={`Revoke ${short(g.userAddress)}`}
@@ -197,11 +200,10 @@ export function PeopleTab({
         </table>
       )}
 
-      <div
-        className="rounded-md border p-3"
-        style={{ borderColor: "var(--bai-border)" }}
-      >
-        <div className="flex flex-wrap items-end gap-2">
+      <Card>
+        <SectionHeader title="Give someone access" />
+        <Inset>
+        <div className="flex flex-wrap items-end gap-3">
           <div className="min-w-[20rem] flex-1">
             <Field label="Wallet address">
               <TextInput
@@ -231,20 +233,18 @@ export function PeopleTab({
 
         {/* Preview before apply. */}
         {trimmed.length > 0 && !valid ? (
-          <p
-            className="mt-1 text-xs"
-            style={{ color: "var(--bai-status-archived)" }}
-          >
+          <Callout tone="danger">
             Not an Ethereum address — expected 0x followed by 40 hex characters.
-          </p>
+          </Callout>
         ) : valid ? (
-          <p className="mt-1 text-xs" style={{ color: "var(--bai-accent)" }}>
+          <Callout tone="info">
             {existing
               ? `${short(trimmed)} currently has ${existing.permission} → will have ${level}. Levels replace rather than add.`
               : `${short(trimmed)} has no access → will have ${level} across the whole vault.`}
-          </p>
+          </Callout>
         ) : null}
-      </div>
+        </Inset>
+      </Card>
     </div>
   );
 }
