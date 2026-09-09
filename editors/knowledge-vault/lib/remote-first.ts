@@ -248,6 +248,17 @@ function versionKey(doc: PHDocument): string {
   return JSON.stringify([header.revision ?? null, header.lastModifiedAtUtcIso ?? null]);
 }
 
+/**
+ * Whether a batch key (an `ids.join(",")`) names `id` as a member.
+ *
+ * Deliberately a split rather than `key.includes(id)`: document ids are
+ * substrings of one another often enough that a substring test would drop
+ * unrelated batches, and that failure would present as a mystery re-suspend.
+ */
+export function batchKeyContains(key: string, id: string): boolean {
+  return key.split(",").includes(id);
+}
+
 class VaultDocumentCache implements IDocumentCache {
   private documents = new Map<string, ReturnType<typeof addPromiseState<PHDocument>>>();
   private listeners = new Map<string, Set<() => void>>();
@@ -270,6 +281,9 @@ class VaultDocumentCache implements IDocumentCache {
     }
   >();
 
+  /** Removes the window listeners this instance installed. */
+  private detachListeners: (() => void) | null = null;
+
   constructor(private fetchDocument: (id: string) => Promise<PHDocument>) {
     const onMutated = (event: Event) => {
       const identifier = (event as CustomEvent<{ identifier?: string }>)
@@ -280,6 +294,24 @@ class VaultDocumentCache implements IDocumentCache {
     };
     window.addEventListener("MutateDocument", onMutated);
     window.addEventListener("MutateDocumentAsync", onMutated);
+    this.detachListeners = () => {
+      window.removeEventListener("MutateDocument", onMutated);
+      window.removeEventListener("MutateDocumentAsync", onMutated);
+    };
+  }
+
+  /**
+   * Detach from the window.
+   *
+   * Swapping this cache out of `window.ph` makes it unreachable to the app
+   * but does NOT silence it: the two listeners above stay registered, and
+   * every subsequent write makes the dead cache re-fetch every document it
+   * still holds. One instance is created per drive, so switching drives a
+   * few times left several of them racing on every mutation.
+   */
+  dispose(): void {
+    this.detachListeners?.();
+    this.detachListeners = null;
   }
 
   /** Fetch with backoff so a transient reactor blip doesn't fail a pane. */
@@ -357,6 +389,17 @@ class VaultDocumentCache implements IDocumentCache {
     this.revalidate(id, current, current.value);
   }
 
+  /**
+   * Drop only the batches that contain `id`. Clearing ALL of them made one
+   * changed document invalidate every list in the app, each of which then
+   * rebuilt its promise for data that had not changed.
+   */
+  private dropBatchesContaining(id: string): void {
+    for (const key of [...this.batchPromises.keys()]) {
+      if (batchKeyContains(key, id)) this.batchPromises.delete(key);
+    }
+  }
+
   getBatch(ids: string[]): Promise<PHDocument[]> {
     const key = ids.join(",");
     const parts = ids.map((id) => this.get(id));
@@ -426,7 +469,7 @@ class VaultDocumentCache implements IDocumentCache {
         if (this.documents.get(id) !== current) return;
         if (versionKey(previous) === versionKey(doc)) return;
         this.documents.set(id, fulfilledPromiseState(doc));
-        this.batchPromises.clear();
+        this.dropBatchesContaining(id);
         this.notify(id);
       })
       .catch(() => {
@@ -548,13 +591,15 @@ export function enableRemoteFirst(options: {
     setReactorClient(hybrid as never);
   }
 
-  setDocumentCache(
-    new VaultDocumentCache((id) => remoteClient.get(id)),
-  );
+  const vaultCache = new VaultDocumentCache((id) => remoteClient.get(id));
+  setDocumentCache(vaultCache);
 
   const handle: RemoteFirstHandle = {
     remoteClient,
     restore: () => {
+      // Silence this cache before handing the slot back, or it keeps
+      // revalidating from the window events it is still subscribed to.
+      vaultCache.dispose();
       if (previousClient) setReactorClient(previousClient);
       if (previousCache) setDocumentCache(previousCache);
       if (active?.driveId === options.driveId) active = null;
