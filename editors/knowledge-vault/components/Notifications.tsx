@@ -1,11 +1,17 @@
 /**
  * Renders whatever `notify()` publishes. Mounted once, at the app root.
  *
- * Errors persist until dismissed; everything else auto-dismisses. A failed
- * write is the case this exists for, and a permissions refusal that vanishes
- * after three seconds is barely better than one nobody showed at all.
+ * Prefers Connect's own toast so notifications look like the rest of the
+ * platform. `usePHToast` returns `PHToastFn | undefined`, though, and an error
+ * reporter that silently does nothing would be worse than none — so the local
+ * renderer below stays as the fallback for when no toast host is mounted.
+ *
+ * Errors do not auto-close. A failed write is the case this exists for, and a
+ * permissions refusal that vanishes after a few seconds is barely better than
+ * one nobody showed at all.
  */
 import { useEffect, useState } from "react";
+import { usePHToast } from "@powerhousedao/reactor-browser";
 import {
   subscribeNotifications,
   type Notice,
@@ -22,11 +28,24 @@ const TONE: Record<NoticeLevel, { fg: string; bg: string }> = {
 const AUTO_DISMISS_MS = 6000;
 
 export function Notifications() {
+  const toast = usePHToast();
   const [notices, setNotices] = useState<Notice[]>([]);
 
   useEffect(
     () =>
       subscribeNotifications((notice) => {
+        if (toast) {
+          toast(
+            notice.detail
+              ? `${notice.message} — ${notice.detail}`
+              : notice.message,
+            {
+              type: notice.level,
+              autoClose: notice.level === "error" ? false : AUTO_DISMISS_MS,
+            },
+          );
+          return;
+        }
         setNotices((prev) => [...prev.slice(-4), notice]);
         if (notice.level !== "error") {
           setTimeout(
@@ -35,7 +54,7 @@ export function Notifications() {
           );
         }
       }),
-    [],
+    [toast],
   );
 
   if (notices.length === 0) return null;
