@@ -74,6 +74,26 @@ const EDITORS_WITH_OWN_SIDEBAR = new Set<string>(["powerhouse/scopeofwork"]);
  */
 const HOSTED_SIDEBAR_SELECTOR = ".sow-rail-wrap";
 
+/**
+ * Extra room between a hosted editor's sidebar and the tab bar.
+ *
+ * The vault's own sidebar keeps its collapse button inside its width, so the
+ * tab bar can sit flush against it. The scope-of-work rail hangs its outline
+ * toggle OFF its right edge (`left:100%`), so flush would put the tab bar on
+ * top of the toggle. Reserving the toggle's width is what makes the two
+ * sidebars look equivalent — and it lets the toggle stay exactly where the
+ * editor puts it, rather than being nudged out of the way.
+ *
+ * A constant, not a measurement: the toggle widens on hover to reveal its
+ * label, and a measured gutter would slide the whole tab bar sideways every
+ * time the pointer crossed it.
+ *
+ * Reserved even when the rail is collapsed to zero. The toggle is how the
+ * rail is REOPENED, so that is exactly when covering it would trap the user
+ * with no outline and no way back.
+ */
+const HOSTED_SIDEBAR_GUTTER = 28;
+
 export function DriveExplorer({ children }: EditorProps) {
   const [viewMode, setViewMode] = useState<ViewMode>("chat");
   const driveId = useSelectedDriveId();
@@ -375,7 +395,9 @@ export function DriveExplorer({ children }: EditorProps) {
         style={
           editorOwnsSidebar
             ? {
-                gridTemplateColumns: `${hostedRailWidth}px minmax(0, 1fr)`,
+                gridTemplateColumns: `${
+                  hostedRailWidth + HOSTED_SIDEBAR_GUTTER
+                }px minmax(0, 1fr)`,
                 gridTemplateRows: "auto minmax(0, 1fr)",
                 // Read by the hosted editor's stylesheet, which reserves a
                 // matching top row so its canvas starts below the bar.

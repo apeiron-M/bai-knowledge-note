@@ -21,12 +21,12 @@ export const SOW_CSS = `
 
    A reserved top ROW, not padding on the canvas: the canvas and inspector
    keep their own spacing exactly as designed, and the rail spans both rows so
-   it still starts at the very top. The two drawer handles hang at fixed
-   offsets that land inside the bar's band, so they shift down by the same
-   amount -- without that the outline's collapse toggle is buried under the
-   bar. Everything defaults to 0, so outside the vault this block is inert. */
+   it still starts at the very top. The rail keeps its own outline toggle
+   where it puts it -- the shell leaves a gutter beside the rail wide enough
+   for it. The toolbar drawer's handle is centred across the full width, which
+   no gutter can clear, so that one shifts below the bar. Everything defaults
+   to 0, so outside the vault this block is inert. */
 [data-vault-hosts-editor] .sow{grid-template-rows:var(--vault-topbar-h,0px) minmax(0,1fr);grid-template-areas:"rail . ." "rail canvas inspector"}
-[data-vault-hosts-editor] .sow button.sow-rail-handle{top:calc(20px + var(--vault-topbar-h,0px))}
 [data-vault-hosts-editor] .sow-tb-handle{top:calc(100% + var(--vault-topbar-h,0px))}
 .sow button:where(:not(.wbs-embed *)),.sow input:where(:not(.wbs-embed *)),.sow select:where(:not(.wbs-embed *)),.sow textarea:where(:not(.wbs-embed *)){font:inherit;color:inherit}
 .sow button:where(:not(.wbs-embed *)){cursor:pointer;background:none;border:0;padding:0}
