@@ -39,12 +39,90 @@ export type View =
 
 /* ── lookups ────────────────────────────────────────────────────────────── */
 export type MilestoneRef = { milestone: Milestone; roadmap: Roadmap };
+
+type ScopeIndexes = {
+  milestones: MilestoneRef[];
+  milestoneByDeliverable: Map<string, MilestoneRef>;
+  projectByDeliverable: Map<string, Project>;
+  deliverableById: Map<string, Deliverable>;
+  agentById: Map<string, Agent>;
+};
+
+/**
+ * Per-state lookup indexes, built once and reused.
+ *
+ * Every lookup below used to be a full scan. `milestoneOf` rebuilt a flatMap
+ * over every roadmap × milestone and then searched it — ON EVERY CALL — and
+ * it is called once per deliverable row: in `DeliverablesView`'s filter, in
+ * `DeliverableRow`, in `badgesFor`, in `OutlineRail`, and inside
+ * `ProjectsView`'s nested projects × deliverables map. A scope with 200
+ * deliverables therefore rebuilt that list 200+ times per render, and
+ * `milestoneState` → `rollup` → `deliverablesIn` compounded it.
+ *
+ * Keyed on the state OBJECT in a WeakMap. Document state is immutable and
+ * replaced wholesale on every revision, so a new state is a cache miss by
+ * construction, a stale index is impossible, and the entry is collected with
+ * the state it describes. There is nothing to invalidate.
+ */
+const indexCache = new WeakMap<ScopeOfWorkState, ScopeIndexes>();
+
+function indexesOf(s: ScopeOfWorkState): ScopeIndexes {
+  const cached = indexCache.get(s);
+  if (cached) return cached;
+
+  const milestones: MilestoneRef[] = [];
+  for (const roadmap of s.roadmaps) {
+    for (const milestone of roadmap.milestones) {
+      milestones.push({ milestone, roadmap });
+    }
+  }
+
+  // FIRST wins throughout, which is what the `.find()` / `.includes()` scans
+  // these replace returned. A deliverable listed under two milestones is
+  // malformed data and either answer is arbitrary — but `milestoneIndex`
+  // used to answer LAST while `milestoneOf` answered FIRST, so the two
+  // disagreed. They agree now.
+  const milestoneByDeliverable = new Map<string, MilestoneRef>();
+  for (const ref of milestones) {
+    for (const id of ref.milestone.scope?.deliverables ?? []) {
+      if (!milestoneByDeliverable.has(id)) milestoneByDeliverable.set(id, ref);
+    }
+  }
+
+  const projectByDeliverable = new Map<string, Project>();
+  for (const project of s.projects) {
+    for (const id of project.scope?.deliverables ?? []) {
+      if (!projectByDeliverable.has(id)) projectByDeliverable.set(id, project);
+    }
+  }
+
+  const deliverableById = new Map<string, Deliverable>();
+  for (const d of s.deliverables) {
+    if (!deliverableById.has(d.id)) deliverableById.set(d.id, d);
+  }
+
+  const agentById = new Map<string, Agent>();
+  for (const a of s.contributors) {
+    if (!agentById.has(a.id)) agentById.set(a.id, a);
+  }
+
+  const indexes: ScopeIndexes = {
+    milestones,
+    milestoneByDeliverable,
+    projectByDeliverable,
+    deliverableById,
+    agentById,
+  };
+  indexCache.set(s, indexes);
+  return indexes;
+}
+
 export const allMilestones = (s: ScopeOfWorkState): MilestoneRef[] =>
-  s.roadmaps.flatMap((r) =>
-    r.milestones.map((m) => ({ milestone: m, roadmap: r })),
-  );
+  indexesOf(s).milestones;
 export const sortedMilestones = (s: ScopeOfWorkState): MilestoneRef[] =>
-  allMilestones(s).sort((a, b) =>
+  // Copy before sorting: `allMilestones` is now a shared cached array, and
+  // `.sort()` mutates in place.
+  [...allMilestones(s)].sort((a, b) =>
     (a.milestone.deliveryTarget || "9999").localeCompare(
       b.milestone.deliveryTarget || "9999",
     ),
@@ -53,30 +131,31 @@ export const milestoneOf = (
   s: ScopeOfWorkState,
   deliverableId: string,
 ): MilestoneRef | undefined =>
-  allMilestones(s).find((x) =>
-    x.milestone.scope?.deliverables.includes(deliverableId),
-  );
+  indexesOf(s).milestoneByDeliverable.get(deliverableId);
 export const projectOf = (
   s: ScopeOfWorkState,
   deliverableId: string,
-): Project | undefined =>
-  s.projects.find((p) => p.scope?.deliverables.includes(deliverableId));
+): Project | undefined => indexesOf(s).projectByDeliverable.get(deliverableId);
 export const deliverableById = (
   s: ScopeOfWorkState,
   id: string,
-): Deliverable | undefined => s.deliverables.find((d) => d.id === id);
+): Deliverable | undefined => indexesOf(s).deliverableById.get(id);
 export const agentById = (
   s: ScopeOfWorkState,
   id: string | null | undefined,
-): Agent | undefined =>
-  id ? s.contributors.find((a) => a.id === id) : undefined;
+): Agent | undefined => (id ? indexesOf(s).agentById.get(id) : undefined);
 export const deliverablesIn = (
   s: ScopeOfWorkState,
   ids: readonly string[],
-): Deliverable[] =>
-  ids
-    .map((id) => deliverableById(s, id))
-    .filter((d): d is Deliverable => d !== undefined);
+): Deliverable[] => {
+  const byId = indexesOf(s).deliverableById;
+  const out: Deliverable[] = [];
+  for (const id of ids) {
+    const d = byId.get(id);
+    if (d !== undefined) out.push(d);
+  }
+  return out;
+};
 
 /**
  * Where an id from a deep link lives: the view that shows the item and, for
@@ -455,21 +534,16 @@ export const checklist = (s: ScopeOfWorkState): Check[] => {
 /* ── overview: indexes, delivery horizon, triage, plan window ───────────── */
 /** deliverable id → the milestone it is scheduled in. Built once per render
  *  where a view would otherwise scan every milestone per deliverable. */
+// `ReadonlyMap`, because these now hand back the SHARED cached index rather
+// than a fresh map per call — a caller that mutated it would corrupt every
+// later lookup for that state.
 export const milestoneIndex = (
   s: ScopeOfWorkState,
-): Map<string, MilestoneRef> => {
-  const out = new Map<string, MilestoneRef>();
-  for (const ref of allMilestones(s))
-    for (const id of ref.milestone.scope?.deliverables ?? []) out.set(id, ref);
-  return out;
-};
+): ReadonlyMap<string, MilestoneRef> => indexesOf(s).milestoneByDeliverable;
 /** deliverable id → the envelope that funds it. */
-export const projectIndex = (s: ScopeOfWorkState): Map<string, Project> => {
-  const out = new Map<string, Project>();
-  for (const p of s.projects)
-    for (const id of p.scope?.deliverables ?? []) out.set(id, p);
-  return out;
-};
+export const projectIndex = (
+  s: ScopeOfWorkState,
+): ReadonlyMap<string, Project> => indexesOf(s).projectByDeliverable;
 /** Dated before today and not delivered. */
 export const isOverdue = (
   s: ScopeOfWorkState,

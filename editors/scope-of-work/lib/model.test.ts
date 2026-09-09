@@ -5,10 +5,15 @@ import type {
   ScopeOfWorkState,
 } from "document-models/scope-of-work";
 import {
+  agentById,
+  allMilestones,
+  deliverableById,
+  deliverablesIn,
   deliveryHorizon,
   isOverdue,
   locate,
   milestoneIndex,
+  milestoneOf,
   milestoneState,
   money,
   moneyAmount,
@@ -16,6 +21,8 @@ import {
   planMode,
   planWindow,
   projectIndex,
+  projectOf,
+  sortedMilestones,
   triage,
   worstStatus,
 } from "./model.js";
@@ -190,5 +197,90 @@ describe("plan density", () => {
     expect(planMode(5, 5)).toBe("chips");
     expect(planMode(6, 1)).toBe("chips");
     expect(planMode(0, 0)).toBe("cards");
+  });
+});
+
+describe("per-state lookup indexes", () => {
+  it("reuses the index for the same state object", () => {
+    // Same reference: the WeakMap hit, so nothing was rebuilt.
+    expect(allMilestones(s)).toBe(allMilestones(s));
+    expect(milestoneIndex(s)).toBe(milestoneIndex(s));
+  });
+
+  it("builds a fresh index for a new state object", () => {
+    const next: ScopeOfWorkState = { ...s, title: "changed" };
+    expect(allMilestones(next)).not.toBe(allMilestones(s));
+  });
+
+  it("resolves the same answers the scans used to give", () => {
+    expect(deliverableById(s, "d1")?.title).toBe("Funded");
+    expect(deliverableById(s, "nope")).toBeUndefined();
+    expect(projectOf(s, "d1")?.id).toBe("e1");
+    expect(projectOf(s, "d2")).toBeUndefined();
+    expect(agentById(s, "a1")?.name).toBe("Frank");
+    expect(agentById(s, null)).toBeUndefined();
+    expect(agentById(s, "ghost")).toBeUndefined();
+  });
+
+  it("deliverablesIn keeps request order and drops unknown ids", () => {
+    expect(deliverablesIn(s, ["d2", "ghost", "d1"]).map((d) => d.id)).toEqual([
+      "d2",
+      "d1",
+    ]);
+  });
+
+  it("sortedMilestones does not mutate the shared cached array", () => {
+    const twoRoadmaps: ScopeOfWorkState = {
+      ...s,
+      roadmaps: [
+        {
+          id: "r1", slug: "r1", title: "R", description: "",
+          milestones: [
+            { id: "late", sequenceCode: "M2", title: "Late", description: "", deliveryTarget: "2030-01-01", scope: null, coordinators: [], budget: null },
+            { id: "early", sequenceCode: "M1", title: "Early", description: "", deliveryTarget: "2020-01-01", scope: null, coordinators: [], budget: null },
+          ],
+        },
+      ],
+    };
+    const declaredOrder = allMilestones(twoRoadmaps).map((x) => x.milestone.id);
+    expect(sortedMilestones(twoRoadmaps).map((x) => x.milestone.id)).toEqual([
+      "early",
+      "late",
+    ]);
+    // The cached array is shared, so an in-place sort would corrupt it.
+    expect(allMilestones(twoRoadmaps).map((x) => x.milestone.id)).toEqual(
+      declaredOrder,
+    );
+  });
+
+  it("answers FIRST for a deliverable listed under two milestones", () => {
+    const duplicated: ScopeOfWorkState = {
+      ...s,
+      roadmaps: [
+        {
+          id: "r1", slug: "r1", title: "R", description: "",
+          milestones: [
+            { id: "first", sequenceCode: "M1", title: "First", description: "", deliveryTarget: "", scope: set(["d1"]), coordinators: [], budget: null },
+            { id: "second", sequenceCode: "M2", title: "Second", description: "", deliveryTarget: "", scope: set(["d1"]), coordinators: [], budget: null },
+          ],
+        },
+      ],
+    };
+    // `milestoneOf` (a `.find()`) always answered FIRST while `milestoneIndex`
+    // (a last-write-wins map) answered SECOND. They agree now.
+    expect(milestoneOf(duplicated, "d1")?.milestone.id).toBe("first");
+    expect(milestoneIndex(duplicated).get("d1")?.milestone.id).toBe("first");
+  });
+
+  it("answers FIRST for a deliverable funded by two envelopes", () => {
+    const duplicated: ScopeOfWorkState = {
+      ...s,
+      projects: [
+        { ...s.projects[0], id: "first", scope: set(["d1"]) },
+        { ...s.projects[0], id: "second", scope: set(["d1"]) },
+      ],
+    };
+    expect(projectOf(duplicated, "d1")?.id).toBe("first");
+    expect(projectIndex(duplicated).get("d1")?.id).toBe("first");
   });
 });
