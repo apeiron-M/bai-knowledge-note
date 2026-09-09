@@ -277,7 +277,10 @@ export type ScanState = {
   scanned: number;
   total: number;
   done: boolean;
+  /** Answered FORBIDDEN *and* still exists — a genuine permissions gap. */
   refused: number;
+  /** Answered FORBIDDEN but no longer exists — a stale drive-tree entry. */
+  missing: number;
 };
 
 const scanCache = new Map<string, ScanState>();
@@ -318,7 +321,9 @@ export async function scanDocumentGrants(
     total: targets.length,
     done: false,
     refused: 0,
+    missing: 0,
   };
+  const unanswered: string[] = [];
 
   for (let i = 0; i < targets.length; i += concurrency) {
     const batch = targets.slice(i, i + concurrency);
@@ -327,7 +332,10 @@ export async function scanDocumentGrants(
     );
     for (const { node, res } of results) {
       if (res.data === undefined) {
-        state.refused += 1;
+        // Deferred: `documentAccess` answers FORBIDDEN both for a document you
+        // may not administer AND for one that no longer exists, so the cause
+        // cannot be read off this response. Classified after the scan.
+        unanswered.push(node.id);
         continue;
       }
       for (const g of res.data.documentAccess.permissions) {
@@ -342,6 +350,19 @@ export async function scanDocumentGrants(
     }
     state.scanned = Math.min(i + concurrency, targets.length);
     onProgress({ ...state, rows: [...state.rows] });
+  }
+
+  // Classify the failures by asking whether the document still exists. Only
+  // the failures need this, so it costs a handful of extra queries rather than
+  // doubling the scan — and it is the difference between telling an admin they
+  // have a permissions problem and telling them their drive tree is stale.
+  for (const id of unanswered) {
+    const probe = await reactor<{ document?: unknown }>(
+      `query E($id: String!) { document(identifier: $id) { document { id } } }`,
+      { id },
+    );
+    if (probe.error && /not found/i.test(probe.error)) state.missing += 1;
+    else state.refused += 1;
   }
 
   state.done = true;
