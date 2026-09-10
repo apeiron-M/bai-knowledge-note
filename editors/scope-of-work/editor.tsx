@@ -6,7 +6,10 @@ import {
 } from "@powerhousedao/design-system/connect";
 import { useSelectedScopeOfWorkDocument } from "document-models/scope-of-work";
 import { ThemeProvider, TOOLBAR_CLASS } from "../shared/theme-context.js";
-import { CollapsibleToolbar } from "./components/CollapsibleToolbar.js";
+import {
+  CollapsibleToolbar,
+  readToolbarOpen,
+} from "./components/CollapsibleToolbar.js";
 import { Shell } from "./components/Shell.js";
 
 /**
@@ -25,6 +28,9 @@ import { Shell } from "./components/Shell.js";
 export default function Editor() {
   const [document, dispatch] = useSelectedScopeOfWorkDocument();
   const [historyOpen, setHistoryOpen] = useState(false);
+  // Mirrors the drawer: while it is hidden the Shell shows a close button in
+  // the canvas corner, so the document can still be left without the tab bar.
+  const [toolbarOpen, setToolbarOpen] = useState(readToolbarOpen);
   const closeHistory = useCallback(() => setHistoryOpen(false), []);
 
   // A stable component, not an inline arrow: a fresh component identity per
@@ -46,8 +52,9 @@ export default function Editor() {
         dispatch={dispatch}
         historyOpen={historyOpen}
         onCloseHistory={closeHistory}
+        toolbarOpen={toolbarOpen}
         toolbar={
-          <CollapsibleToolbar>
+          <CollapsibleToolbar onOpenChange={setToolbarOpen}>
             <DocumentToolbar
               toolbarClassName={TOOLBAR_CLASS}
               componentOverrides={{ history: HistoryControl }}

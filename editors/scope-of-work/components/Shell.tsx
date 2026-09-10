@@ -19,7 +19,10 @@ import {
   type EditorContextValue,
 } from "../lib/context.js";
 import { SOW_CSS } from "../lib/styles.js";
-import { RevisionHistory } from "@powerhousedao/design-system/connect";
+import {
+  RevisionHistory,
+  ToolbarCloseButton,
+} from "@powerhousedao/design-system/connect";
 import { useDocumentOperations } from "@powerhousedao/reactor-browser";
 import { notify } from "../../shared/notify.js";
 import type { View } from "../lib/model.js";
@@ -53,6 +56,7 @@ export function Shell({
   document,
   dispatch: rawDispatch,
   toolbar,
+  toolbarOpen = true,
   historyOpen = false,
   onCloseHistory,
 }: {
@@ -60,6 +64,11 @@ export function Shell({
   dispatch: DocumentDispatch<ScopeOfWorkAction>;
   /** The document toolbar; laid out in the grid row above the canvas. */
   toolbar?: ReactNode;
+  /**
+   * Whether the toolbar drawer is open. While it is hidden, its close button is
+   * hidden with it, so the Shell shows one in the canvas corner instead.
+   */
+  toolbarOpen?: boolean;
   /** Show the document's revision history in the canvas, rail intact. */
   historyOpen?: boolean;
   onCloseHistory?: () => void;
@@ -311,6 +320,14 @@ export function Shell({
         className={`sow ${showSidebar ? "" : "no-inspector"}${railOpen ? "" : " no-rail"}`}
       >
         {toolbar}
+        {!toolbarOpen && !historyOpen && (
+          // The toolbar's own close button, in the canvas corner while the
+          // drawer that holds it is collapsed. Same component, so it closes
+          // the document the same way: back to the parent folder.
+          <div className="sow-close sow-embed">
+            <ToolbarCloseButton document={document} />
+          </div>
+        )}
         <OutlineRail railOpen={railOpen} onToggle={toggleRail} />
         {historyOpen ? (
           // The same component Connect shows for history — but here, in the

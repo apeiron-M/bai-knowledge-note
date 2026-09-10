@@ -24,6 +24,11 @@ import { useEffect, useState, type ReactNode } from "react";
  */
 const STORAGE_KEY = "sow:toolbar-open";
 
+/** The persisted drawer state — exported so a parent can start in sync. */
+export function readToolbarOpen(): boolean {
+  return readPreference();
+}
+
 function readPreference(): boolean {
   try {
     return globalThis.localStorage.getItem(STORAGE_KEY) === "1";
@@ -32,8 +37,18 @@ function readPreference(): boolean {
   }
 }
 
-export function CollapsibleToolbar({ children }: { children: ReactNode }) {
+export function CollapsibleToolbar({
+  children,
+  onOpenChange,
+}: {
+  children: ReactNode;
+  /** Reports the drawer state, so the Shell can offer a close button while it is hidden. */
+  onOpenChange?: (open: boolean) => void;
+}) {
   const [open, setOpen] = useState<boolean>(readPreference);
+  useEffect(() => {
+    onOpenChange?.(open);
+  }, [open, onOpenChange]);
 
   useEffect(() => {
     try {

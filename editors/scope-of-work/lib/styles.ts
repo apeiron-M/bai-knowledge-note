@@ -45,6 +45,10 @@ export const SOW_CSS = `
 .sow .btn.ghost{border-color:transparent} .sow .btn.sm{height:26px;padding:0 9px;font-size:12.5px;border-radius:7px} .sow .btn.danger{color:var(--ember)}
 /* collapsible document toolbar — zero height when folded; the handle floats over the canvas's top padding */
 .sow-tb{grid-area:tb;position:relative;z-index:6}
+/* Close button shown while the toolbar drawer is collapsed: a grid item over the
+   canvas area, so it stays in the corner as the canvas scrolls, above the
+   canvas's own sticky headers (z 3-4). */
+.sow .sow-close{grid-area:canvas;justify-self:end;align-self:start;z-index:5;margin:10px 14px}
 .sow .sow-rail-wrap{grid-area:rail;position:relative;min-width:0;min-height:0;height:100%}
 /* One drawer handle, hung from two edges. The toolbar's hangs from the bar's
    bottom edge, the rail's from the rail's right edge; both are absolutely
