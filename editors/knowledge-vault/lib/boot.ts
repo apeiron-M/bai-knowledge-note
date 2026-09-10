@@ -26,7 +26,13 @@
  *   still owns drive hydration and selected-document freshness.
  */
 import { PollBehavior } from "@powerhousedao/reactor";
-import { authHeaders } from "../../shared/authed-fetch.js";
+import { authHeaders, getBearerToken } from "../../shared/authed-fetch.js";
+import {
+  createRemoteMemory,
+  driveUrlFromSearch,
+  type RemoteMemory,
+  type StorageLike,
+} from "./remote-memory.js";
 import { hasVaultHydrator } from "../../shared/vault-pull.js";
 import { enableRemoteFirst } from "./remote-first.js";
 import { resolveReactorEndpoint } from "../hooks/subgraph-endpoint.js";
@@ -64,6 +70,43 @@ const MAX_WAIT_MS = 120_000;
 
 let started = false;
 const claimed = new Set<string>();
+
+/**
+ * How long after the sync manager first appears before a remembered drive
+ * missing from `sync.list()` counts as dropped. `startup()` fills the list
+ * asynchronously, one `channel.init()` at a time; acting on a half-built list
+ * would re-add a remote the manager is about to add itself.
+ */
+const RECOVERY_GRACE_MS = 3_000;
+let syncSeenAt: number | null = null;
+let recovering = false;
+let shareLinkReplayed = false;
+/** Drives whose read probe was refused this page: signed in, but not granted. */
+const refused = new Set<string>();
+
+let memory: RemoteMemory | null = null;
+/**
+ * The cross-page memory of adopted drives (see remote-memory.ts). Falls back
+ * to a page-scoped map when localStorage is absent or throws, so the memory
+ * can never be the reason boot fails.
+ */
+function remoteMemory(): RemoteMemory {
+  if (memory) return memory;
+  let storage: StorageLike;
+  try {
+    storage = globalThis.localStorage;
+    storage.getItem("remote-first:probe");
+  } catch {
+    const map = new Map<string, string>();
+    storage = {
+      getItem: (k) => map.get(k) ?? null,
+      setItem: (k, v) => void map.set(k, v),
+      removeItem: (k) => void map.delete(k),
+    };
+  }
+  memory = createRemoteMemory(storage);
+  return memory;
+}
 
 type Remote = {
   // `meta` and `collectionId` are typed optional on purpose: these objects
@@ -175,6 +218,18 @@ async function adopt(driveId: string, remote: Remote, sync: SyncManager) {
         `replication skipped, reads and writes go to the Switchboard.`,
     );
   }
+
+  // Remember the registration, so a boot that drops this remote — a tokenless
+  // `channel.init()` at startup, see remote-memory.ts — can put it back once a
+  // session exists, without a refresh and without the user re-adding it.
+  remoteMemory().remember({
+    driveId,
+    name: meta.name,
+    branch: filter.branch || "main",
+    scope: filter.scope ?? [],
+    channelConfig: meta.channelConfig,
+    options: (meta.options ?? undefined) as Record<string, unknown> | undefined,
+  });
 
   // Hydration must run on EVERY boot, warm or cold — this is the fix for
   // the disappearing-drive bug. Nothing about a remote-first drive is
@@ -293,6 +348,119 @@ async function hydrateDriveSnapshot(
   );
 }
 
+type ReadVerdict = "readable" | "refused" | "unreachable";
+
+/**
+ * Can the current session read this drive? Asked BEFORE re-adding a dropped
+ * remote, because `sync.add` removes the persisted record when its init fails:
+ * re-adding blind would turn "hidden until refresh" into "gone until re-added
+ * by link" for someone who has signed in but not yet been granted.
+ */
+async function probeDriveReadable(driveId: string): Promise<ReadVerdict> {
+  try {
+    const res = await fetch(`${resolveReactorEndpoint()}/r`, {
+      method: "POST",
+      headers: await authHeaders(),
+      body: JSON.stringify({
+        query: "query P($id:String!){ document(identifier:$id){ document { id } } }",
+        variables: { id: driveId },
+      }),
+    });
+    if (res.status === 401 || res.status === 403) return "refused";
+    if (!res.ok) return "unreachable";
+    const json = (await res.json()) as {
+      data?: { document?: { document?: { id?: string } | null } | null };
+      errors?: { extensions?: { code?: string } }[];
+    };
+    const code = json.errors?.[0]?.extensions?.code;
+    if (code === "FORBIDDEN" || code === "UNAUTHENTICATED") return "refused";
+    return json.data?.document?.document?.id ? "readable" : "unreachable";
+  } catch {
+    return "unreachable";
+  }
+}
+
+/**
+ * Put back what a tokenless boot dropped, now that a session exists.
+ *
+ * Runs from the sweep once the sync manager has had a moment to finish its own
+ * startup. Both jobs wait for a bearer: without one the requests would fail
+ * exactly as the boot-time ones did — and `sync.add`'s failure path deletes
+ * the persisted record, which is worse than leaving the drive hidden.
+ */
+async function recover(sync: SyncManager): Promise<void> {
+  if (recovering) return;
+  recovering = true;
+  try {
+    const token = await getBearerToken();
+    if (!token) return;
+    const mem = remoteMemory();
+
+    // 1. A share link whose `driveUrl` the Renown redirect discarded.
+    const url = mem.pendingDriveUrl();
+    if (url && !shareLinkReplayed) {
+      shareLinkReplayed = true;
+      try {
+        const { addRemoteDrive } = await import("@powerhousedao/reactor-browser");
+        await addRemoteDrive(url);
+        mem.clearDriveUrl();
+        console.info(`[RemoteFirst] Added the shared drive from ${url} after sign-in.`);
+      } catch (error) {
+        // Signed in but not granted: Connect has shown its own "access
+        // required" modal. Do not replay on every boot after that.
+        mem.clearDriveUrl();
+        console.warn("[RemoteFirst] Could not add the shared drive after sign-in:", error);
+      }
+    }
+
+    // 2. Remembered drives the manager dropped at its startup.
+    const listed: string[] = [];
+    for (const r of sync.list()) {
+      const id = r.meta?.collectionId?.driveId;
+      if (id) listed.push(id);
+    }
+    for (const r of mem.missing(listed)) {
+      if (claimed.has(r.driveId) || refused.has(r.driveId)) continue;
+      claimed.add(r.driveId);
+      try {
+        const verdict = await probeDriveReadable(r.driveId);
+        if (verdict === "refused") {
+          refused.add(r.driveId);
+          console.info(
+            `[RemoteFirst] Drive ${r.driveId.slice(0, 8)} is not readable by this account; leaving it hidden.`,
+          );
+          continue;
+        }
+        if (verdict === "unreachable") {
+          claimed.delete(r.driveId); // try again next tick
+          continue;
+        }
+        // Same name as the dropped record, so the persisted entry is
+        // overwritten rather than joined by a duplicate channel.
+        const { DriveCollectionId } = await import("@powerhousedao/reactor-browser");
+        await sync.add(
+          r.name,
+          DriveCollectionId.forDrive(r.driveId, r.branch),
+          r.channelConfig,
+          { documentId: [SYNC_NOTHING], scope: r.scope, branch: r.branch },
+          { ...(r.options ?? {}), pollBehavior: PollBehavior.Manual },
+        );
+        const remote = sync.list().find((x) => x.meta?.name === r.name);
+        if (!remote) throw new Error("the re-added remote is not listed");
+        console.info(
+          `[RemoteFirst] Drive ${r.driveId.slice(0, 8)} was dropped at boot (no session yet); re-registered now that one exists.`,
+        );
+        await adopt(r.driveId, remote, sync);
+      } catch (error) {
+        claimed.delete(r.driveId);
+        console.warn(`[RemoteFirst] Could not restore drive ${r.driveId.slice(0, 8)}:`, error);
+      }
+    }
+  } finally {
+    recovering = false;
+  }
+}
+
 function sweep(startedAt: number, timer: ReturnType<typeof setInterval>): void {
   // Boot-time adoption is a bounded job: `useRemoteFirst` neutralises the
   // channel for any drive the user selects later. The deadline used to apply
@@ -305,6 +473,10 @@ function sweep(startedAt: number, timer: ReturnType<typeof setInterval>): void {
   }
   const sync = syncManager();
   if (!sync) return;
+  // Once the manager has had time to finish its own startup, put back
+  // anything it dropped for want of a session.
+  syncSeenAt ??= Date.now();
+  if (Date.now() - syncSeenAt >= RECOVERY_GRACE_MS) void recover(sync);
   let remotes: Remote[];
   try {
     remotes = sync.list();
@@ -334,6 +506,16 @@ export function startRemoteFirstBoot(): void {
   if (started) return;
   if (typeof window === "undefined") return;
   started = true;
+  // A share link's `driveUrl` does not survive the Renown redirect — the
+  // return URL is built from the pathname alone — and a failed anonymous
+  // `addRemoteDrive` deletes its own record. Keep the URL so the page after
+  // sign-in can add the drive the link pointed at.
+  // `location` is read defensively: the boot tests stub `window` with only
+  // the `ph` slot, and a share link is an optional input, not a precondition.
+  const driveUrl = driveUrlFromSearch(
+    (window as { location?: { search?: string } }).location?.search ?? "",
+  );
+  if (driveUrl) remoteMemory().stashDriveUrl(driveUrl);
   const startedAt = Date.now();
   const timer = setInterval(() => sweep(startedAt, timer), POLL_MS);
   // Also sweep immediately: on a warm reload the sync manager already exists.
