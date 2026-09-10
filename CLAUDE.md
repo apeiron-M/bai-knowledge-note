@@ -26,6 +26,23 @@ The npm/pnpm/yarn install-and-run commands are blocked by a `deny` rule in `.cla
 
 `ph use dev` and the other `ph-cli` commands already shell out to bun on their own — let them.
 
+## ⚠️ Subgraph changes need `bun run build` — `ph vetra --watch` does not cover them
+
+The Switchboard loads this package's subgraphs through `package.json`'s
+`exports["./subgraphs"]`, which points at **`dist/node/subgraphs/index.mjs`** —
+built output, not source. Vetra's watcher rebuilds document models and editors
+on save, but a change under `subgraphs/` (a new query, a resolver fix, a guard)
+is invisible to the running Switchboard until you:
+
+1. `bun run build`
+2. restart the Switchboard (`ph vetra`)
+
+Forgetting this is silent: the old subgraph keeps serving, `tsc` and tests
+pass against the new source, and nothing says the two disagree. It has bitten
+this project twice — a new subgraph "wouldn't register", and an authorization
+wrapper "stopped working" — and both were the same cause. If a subgraph change
+seems to have no effect, check `dist/` before debugging the code.
+
 ## Core Concepts
 
 - **Document Model**: A template for creating documents. Defines schema and allowed operations for a document type.
