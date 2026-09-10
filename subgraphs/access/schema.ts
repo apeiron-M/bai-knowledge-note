@@ -61,5 +61,17 @@ export const schema: DocumentNode = gql`
     Requires ADMIN of the drive: it publishes the whole access list.
     """
     accessMap(driveId: ID!): AccessMap!
+
+    """
+    Whether the caller administers this document — the host's own canManage
+    predicate: supreme admin, owner, or an ADMIN grant. Anonymous callers get
+    false.
+
+    A boolean, so asking has no side effects. The host's documentAccess answers
+    the same question but by REFUSING, and it logs every refusal as an error —
+    so probing it to decide whether to show an admin menu wrote an error line
+    into the Switchboard log for every non-admin session.
+    """
+    canManage(documentId: ID!): Boolean!
   }
 `;

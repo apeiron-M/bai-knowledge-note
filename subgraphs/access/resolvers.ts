@@ -22,17 +22,35 @@ import { readAccessMap } from "./access-map.js";
  *    mere reader passes, and not isSupremeAdmin, which answers true for
  *    everyone including anonymous callers when authorization is switched off.
  */
+/**
+ * Does the caller administer `documentId`? Resolves the canonical id first
+ * (see above), then asks the host. Returns the canonical id alongside so a
+ * caller that goes on to read can use the same one.
+ */
+async function callerCanManage(
+  subgraph: BaseSubgraph,
+  documentId: string,
+  ctx: unknown,
+): Promise<{ canonical: string; canManage: boolean }> {
+  const canonical = await subgraph.resolveCanonicalDocumentId(
+    documentId,
+    ctx as object,
+  );
+  const address = (ctx as { user?: { address?: string } }).user?.address;
+  const canManage = await subgraph.authorizationService.canManage(
+    canonical,
+    address,
+  );
+  return { canonical, canManage };
+}
+
 export const getResolvers = (subgraph: BaseSubgraph): Record<string, unknown> => ({
   Query: {
     accessMap: async (_: unknown, args: { driveId: string }, ctx: unknown) => {
-      const canonical = await subgraph.resolveCanonicalDocumentId(
+      const { canonical, canManage } = await callerCanManage(
+        subgraph,
         args.driveId,
-        ctx as object,
-      );
-      const address = (ctx as { user?: { address?: string } }).user?.address;
-      const canManage = await subgraph.authorizationService.canManage(
-        canonical,
-        address,
+        ctx,
       );
       if (!canManage) {
         throw new GraphQLError(
@@ -42,5 +60,10 @@ export const getResolvers = (subgraph: BaseSubgraph): Record<string, unknown> =>
       }
       return readAccessMap(subgraph, canonical);
     },
+
+    // Deliberately a plain answer, never a refusal: the whole point is that
+    // asking must not produce an error anywhere, for anyone.
+    canManage: async (_: unknown, args: { documentId: string }, ctx: unknown) =>
+      (await callerCanManage(subgraph, args.documentId, ctx)).canManage,
   },
 });

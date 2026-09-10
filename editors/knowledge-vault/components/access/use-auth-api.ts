@@ -117,6 +117,21 @@ export function myPermissions() {
   );
 }
 
+/**
+ * Does the caller administer this document? From THIS package's access
+ * subgraph, as a plain boolean. The host's `documentAccess` answers the same
+ * question but by refusing — and it logs every refusal as an error, so using
+ * it as a probe wrote an error line into the Switchboard log for every
+ * non-admin session. On a deployment whose subgraph predates the field this
+ * returns an error and no data; callers fall back to the refusing probe then.
+ */
+export function canManageDocument(documentId: string) {
+  return reactor<{ canManage: boolean }>(
+    `query M($id: ID!) { canManage(documentId: $id) }`,
+    { id: documentId },
+  );
+}
+
 /** Grants ON one document. Requires ADMIN of that document. */
 export function documentAccess(documentId: string) {
   return auth<{ documentAccess: { documentId: string; permissions: Grant[] } }>(
