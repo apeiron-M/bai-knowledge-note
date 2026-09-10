@@ -30,15 +30,24 @@ import { authHeaders, getBearerToken } from "../../shared/authed-fetch.js";
 import {
   createRemoteMemory,
   driveUrlFromSearch,
+  type RememberedRemote,
   type RemoteMemory,
   type StorageLike,
 } from "./remote-memory.js";
+import {
+  hasDrive,
+  isVaultDriveInfo,
+  presentationOf,
+  stubFromDriveInfo,
+  stubFromPresentation,
+  VAULT_APP_ID,
+  type DriveInfo,
+  type DriveLike,
+} from "./drive-stub.js";
 import { hasVaultHydrator } from "../../shared/vault-pull.js";
 import { enableRemoteFirst } from "./remote-first.js";
 import { resolveReactorEndpoint } from "../hooks/subgraph-endpoint.js";
 
-/** The drive app this package registers; drives asking for it are vault drives. */
-const VAULT_APP_ID = "knowledge-vault";
 
 /**
  * Sentinel filter that leaves the channel registered but delivering nothing.
@@ -83,6 +92,9 @@ let recovering = false;
 let shareLinkReplayed = false;
 /** Drives whose read probe was refused this page: signed in, but not granted. */
 const refused = new Set<string>();
+/** Drives already shown as a locked tile this page, so the log line is said once. */
+const stubbed = new Set<string>();
+let shareLinkStubbed = false;
 
 let memory: RemoteMemory | null = null;
 /**
@@ -324,9 +336,7 @@ async function hydrateDriveSnapshot(
     header: { id: string; meta?: Record<string, unknown> };
   };
   const { setDrives } = await import("@powerhousedao/reactor-browser");
-  const current =
-    ((globalThis as unknown as { ph?: { drives?: { header: { id: string } }[] } })
-      .ph?.drives ?? []) as { header: { id: string; meta?: Record<string, unknown> } }[];
+  const current = currentDrives();
   const prior = current.find((d) => d.header.id === driveId);
   const merged = {
     ...serverDrive,
@@ -343,9 +353,77 @@ async function hydrateDriveSnapshot(
     ? current.map((d) => (d.header.id === driveId ? merged : d))
     : [...current, merged];
   setDrives(next as never);
+  // Keep the drive's presentation (nodes stripped) so it can still be shown
+  // as a tile on a later boot that cannot read it — see drive-stub.ts.
+  remoteMemory().rememberPresentation(
+    driveId,
+    presentationOf(merged as unknown as DriveLike),
+  );
   console.info(
     `[RemoteFirst] Drive snapshot hydrated from the Switchboard for ${driveId.slice(0, 8)}.`,
   );
+}
+
+/** Connect's in-memory drive list, as the vault app and the tiles read it. */
+function currentDrives(): DriveLike[] {
+  return (
+    (globalThis as unknown as { ph?: { drives?: DriveLike[] } }).ph?.drives ?? []
+  );
+}
+
+/**
+ * Put a locked tile for `drive` into Connect's list, once. Idempotent by id, so
+ * the sweep may call it on every tick; and a real hydration later REPLACES the
+ * entry by the same id, so the stub never outlives the drive being readable.
+ */
+async function showStub(drive: DriveLike): Promise<void> {
+  const current = currentDrives();
+  if (hasDrive(current, drive.header.id)) return;
+  const { setDrives } = await import("@powerhousedao/reactor-browser");
+  setDrives([...current, drive] as never);
+  if (!stubbed.has(drive.header.id)) {
+    stubbed.add(drive.header.id);
+    console.info(
+      `[RemoteFirst] Drive ${drive.header.id.slice(0, 8)} is shown as a locked tile; opening it explains how to get access.`,
+    );
+  }
+}
+
+/** Locked tiles for every remembered drive this session cannot read. */
+async function showStubsFor(remotes: RememberedRemote[]): Promise<void> {
+  for (const r of remotes) {
+    if (r.presentation) await showStub(stubFromPresentation(r.presentation));
+  }
+}
+
+/**
+ * `GET /d/<id>` — the Switchboard's drive-info route, which it serves without
+ * a session (it is what lets `addRemoteDrive` get far enough to show its own
+ * sign-in modal). Null when it will not answer; nothing depends on it.
+ */
+async function fetchDriveInfo(url: string): Promise<DriveInfo | null> {
+  try {
+    const res = await fetch(url);
+    if (!res.ok) return null;
+    const json = (await res.json()) as Partial<DriveInfo>;
+    return typeof json.id === "string" ? (json as DriveInfo) : null;
+  } catch {
+    return null;
+  }
+}
+
+/**
+ * A locked tile for a share link opened on a browser that has never had a
+ * session — the one case with no remembered presentation to show. Only for a
+ * drive that asks for the vault app: the stub routes a click there, and
+ * another app would meet an empty tree it does not expect.
+ */
+async function showShareLinkStub(url: string): Promise<void> {
+  if (shareLinkStubbed) return;
+  shareLinkStubbed = true;
+  const info = await fetchDriveInfo(url);
+  if (!info || !isVaultDriveInfo(info)) return;
+  await showStub(stubFromDriveInfo(info, new Date().toISOString()));
 }
 
 type ReadVerdict = "readable" | "refused" | "unreachable";
@@ -393,8 +471,22 @@ async function recover(sync: SyncManager): Promise<void> {
   recovering = true;
   try {
     const token = await getBearerToken();
-    if (!token) return;
     const mem = remoteMemory();
+
+    if (!token) {
+      // Signed out: nothing can be read, but the vault can still be SHOWN.
+      // Opening the tile mounts the vault app, whose AuthGate offers sign-in.
+      // Both are idempotent, so the sweep may repeat this every tick.
+      const listedNow: string[] = [];
+      for (const r of sync.list()) {
+        const id = r.meta?.collectionId?.driveId;
+        if (id) listedNow.push(id);
+      }
+      await showStubsFor(mem.missing(listedNow));
+      const pending = mem.pendingDriveUrl();
+      if (pending) await showShareLinkStub(pending);
+      return;
+    }
 
     // 1. A share link whose `driveUrl` the Renown redirect discarded.
     const url = mem.pendingDriveUrl();
@@ -425,9 +517,13 @@ async function recover(sync: SyncManager): Promise<void> {
       try {
         const verdict = await probeDriveReadable(r.driveId);
         if (verdict === "refused") {
+          // Signed in, not granted. Show the tile anyway: opening it lands on
+          // AuthGate's "not yet granted" screen with the address to hand an
+          // administrator — far better than the drive silently not existing.
           refused.add(r.driveId);
+          if (r.presentation) await showStub(stubFromPresentation(r.presentation));
           console.info(
-            `[RemoteFirst] Drive ${r.driveId.slice(0, 8)} is not readable by this account; leaving it hidden.`,
+            `[RemoteFirst] Drive ${r.driveId.slice(0, 8)} is not readable by this account.`,
           );
           continue;
         }

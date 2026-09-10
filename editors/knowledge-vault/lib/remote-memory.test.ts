@@ -102,3 +102,36 @@ describe("pending share link", () => {
     expect(createRemoteMemory(storage).pendingDriveUrl()).toBeNull();
   });
 });
+
+describe("remembered presentation", () => {
+  const presentation = {
+    header: { id: "d1", name: "Vault", meta: { preferredEditor: "knowledge-vault" } },
+    state: { global: { name: "Vault", icon: null, nodes: [] } },
+  };
+
+  it("attaches to an existing record and survives a registration refresh", () => {
+    const memory = createRemoteMemory(fakeStorage());
+    memory.remember(remote("d1"));
+    memory.rememberPresentation("d1", presentation);
+    expect(memory.recall()[0].presentation).toEqual(presentation);
+
+    // The next boot re-writes the registration; the presentation must stay.
+    memory.remember(remote("d1", "renamed"));
+    expect(memory.recall()[0]).toMatchObject({ name: "renamed", presentation });
+  });
+
+  it("is a no-op for a drive with no registration", () => {
+    const storage = fakeStorage();
+    const memory = createRemoteMemory(storage);
+    memory.rememberPresentation("ghost", presentation);
+    expect(memory.recall()).toEqual([]);
+    expect(storage.dump()).toEqual({});
+  });
+
+  it("is carried by missing(), so a dropped drive can be shown", () => {
+    const memory = createRemoteMemory(fakeStorage());
+    memory.remember(remote("d1"));
+    memory.rememberPresentation("d1", presentation);
+    expect(memory.missing([])[0].presentation).toEqual(presentation);
+  });
+});

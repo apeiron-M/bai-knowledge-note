@@ -137,13 +137,24 @@ export function useDriveInit() {
     driveSyncSeen.add(driveId);
     void (async () => {
       const serverNodes = await fetchDriveNodes(driveId);
+      // An UNREADABLE tree is not an EMPTY tree. `fetchDriveNodes` answers
+      // null when the Switchboard refused (no session, no grant) or could not
+      // be reached, and falling through to the local cache — always empty for
+      // a remote-first drive — read that as "fresh drive, scaffold it": twelve
+      // folder creates and three singleton creates, every one refused, with a
+      // toast each. Nothing is lost by waiting: the check runs again on the
+      // next open, and a drive that IS empty answers `[]`, not null.
+      if (serverNodes === null) {
+        console.info(
+          `[VaultInit] Drive ${driveId.slice(0, 8)} tree is not readable in this session; skipping the initialisation check.`,
+        );
+        return;
+      }
       // Use whichever source has more entries — the reactor query is
       // authoritative, but if the local cache happens to have more
       // (race during the fetch), take the union via cache.
       const truth =
-        serverNodes && serverNodes.length >= (nodes ?? []).length
-          ? serverNodes
-          : (nodes ?? []);
+        serverNodes.length >= (nodes ?? []).length ? serverNodes : (nodes ?? []);
       void initDrive(driveId, truth);
     })();
   }, [driveId]);

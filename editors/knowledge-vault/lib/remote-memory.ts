@@ -31,6 +31,8 @@
  * Storage is injected so the rules are unit-testable without a DOM.
  */
 
+import type { DriveLike } from "./drive-stub.js";
+
 export type StorageLike = Pick<Storage, "getItem" | "setItem" | "removeItem">;
 
 /** A remote's registration, as `sync.add` needs it back. */
@@ -42,6 +44,12 @@ export type RememberedRemote = {
   channelConfig: unknown;
   options: Record<string, unknown> | undefined;
   rememberedAt: number;
+  /**
+   * The drive document minus its node tree, as last hydrated — enough to show
+   * the drive as a tile while it cannot be read (see drive-stub.ts). Absent
+   * until the first successful hydration.
+   */
+  presentation?: DriveLike;
 };
 
 const REMOTES_KEY = "remote-first:adopted-drives";
@@ -94,10 +102,37 @@ export function createRemoteMemory(storage: StorageLike) {
   return {
     recall,
 
-    /** Record (or refresh) a remote's registration. One entry per drive. */
-    remember(remote: Omit<RememberedRemote, "rememberedAt">, now = Date.now()): void {
-      const others = recall().filter((r) => r.driveId !== remote.driveId);
-      writeJson(storage, REMOTES_KEY, [...others, { ...remote, rememberedAt: now }]);
+    /**
+     * Record (or refresh) a remote's registration. One entry per drive. A
+     * presentation already remembered for the drive is kept: registration is
+     * re-written on every boot, hydration only when the drive is readable.
+     */
+    remember(
+      remote: Omit<RememberedRemote, "rememberedAt" | "presentation">,
+      now = Date.now(),
+    ): void {
+      const all = recall();
+      const previous = all.find((r) => r.driveId === remote.driveId);
+      const others = all.filter((r) => r.driveId !== remote.driveId);
+      writeJson(storage, REMOTES_KEY, [
+        ...others,
+        { ...remote, rememberedAt: now, presentation: previous?.presentation },
+      ]);
+    },
+
+    /**
+     * Attach the drive's presentation to its record. A no-op without a record:
+     * a presentation alone is not a registration and must not make `missing`
+     * try to re-add a channel it knows nothing about.
+     */
+    rememberPresentation(driveId: string, presentation: DriveLike): void {
+      const all = recall();
+      const record = all.find((r) => r.driveId === driveId);
+      if (!record) return;
+      writeJson(storage, REMOTES_KEY, [
+        ...all.filter((r) => r.driveId !== driveId),
+        { ...record, presentation },
+      ]);
     },
 
     forget(driveId: string): void {
