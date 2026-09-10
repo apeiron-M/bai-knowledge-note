@@ -320,11 +320,17 @@ export function Shell({
         className={`sow ${showSidebar ? "" : "no-inspector"}${railOpen ? "" : " no-rail"}`}
       >
         {toolbar}
-        {!toolbarOpen && !historyOpen && (
+        {!historyOpen && (
           // The toolbar's own close button, in the canvas corner while the
           // drawer that holds it is collapsed. Same component, so it closes
-          // the document the same way: back to the parent folder.
-          <div className="sow-close sow-embed">
+          // the document the same way: back to the parent folder. Kept
+          // mounted and faded rather than unmounted, so it can animate out as
+          // the drawer animates in; `inert` takes it out of the tab order.
+          <div
+            className={`sow-close sow-embed${toolbarOpen ? " is-hidden" : ""}`}
+            aria-hidden={toolbarOpen}
+            inert={toolbarOpen}
+          >
             <ToolbarCloseButton document={document} />
           </div>
         )}

@@ -48,7 +48,14 @@ export const SOW_CSS = `
 /* Close button shown while the toolbar drawer is collapsed: a grid item over the
    canvas area, so it stays in the corner as the canvas scrolls, above the
    canvas's own sticky headers (z 3-4). */
-.sow .sow-close{grid-area:canvas;justify-self:end;align-self:start;z-index:5;margin:10px 14px}
+.sow .sow-close{grid-area:canvas;justify-self:end;align-self:start;z-index:5;margin:10px 14px;transition:opacity .14s ease,transform .14s ease,visibility 0s}
+.sow .sow-close.is-hidden{opacity:0;transform:translateY(-4px) scale(.92);visibility:hidden;pointer-events:none;transition:opacity .14s ease,transform .14s ease,visibility 0s linear .14s}
+/* The drawer animates its grid row 0fr -> 1fr; the content clips inside it. The
+   visibility delay keeps the toolbar visible until the row has finished
+   closing, and shows it at once when opening. */
+.sow-tb-drawer{display:grid;grid-template-rows:0fr;visibility:hidden;transition:grid-template-rows .18s ease,visibility 0s linear .18s}
+.sow-tb-drawer.open{grid-template-rows:1fr;visibility:visible;transition:grid-template-rows .18s ease,visibility 0s}
+.sow-tb-content{min-height:0;overflow:hidden}
 .sow .sow-rail-wrap{grid-area:rail;position:relative;min-width:0;min-height:0;height:100%}
 /* One drawer handle, hung from two edges. The toolbar's hangs from the bar's
    bottom edge, the rail's from the rail's right edge; both are absolutely

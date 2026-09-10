@@ -1,4 +1,4 @@
-import { useCallback, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import {
   DocumentToolbar,
   ToolbarHistoryButton,
@@ -9,6 +9,7 @@ import { ThemeProvider, TOOLBAR_CLASS } from "../shared/theme-context.js";
 import {
   CollapsibleToolbar,
   readToolbarOpen,
+  writeToolbarOpen,
 } from "./components/CollapsibleToolbar.js";
 import { Shell } from "./components/Shell.js";
 
@@ -28,9 +29,15 @@ import { Shell } from "./components/Shell.js";
 export default function Editor() {
   const [document, dispatch] = useSelectedScopeOfWorkDocument();
   const [historyOpen, setHistoryOpen] = useState(false);
-  // Mirrors the drawer: while it is hidden the Shell shows a close button in
-  // the canvas corner, so the document can still be left without the tab bar.
+  // The drawer's state lives here, not in the drawer: the Shell shows a close
+  // button in the canvas corner only while the drawer is closed, and both
+  // must change in the SAME render — an effect-reported state left the close
+  // button visible for a frame after the drawer opened.
   const [toolbarOpen, setToolbarOpen] = useState(readToolbarOpen);
+  const toggleToolbar = useCallback(() => setToolbarOpen((v) => !v), []);
+  useEffect(() => {
+    writeToolbarOpen(toolbarOpen);
+  }, [toolbarOpen]);
   const closeHistory = useCallback(() => setHistoryOpen(false), []);
 
   // A stable component, not an inline arrow: a fresh component identity per
@@ -54,7 +61,7 @@ export default function Editor() {
         onCloseHistory={closeHistory}
         toolbarOpen={toolbarOpen}
         toolbar={
-          <CollapsibleToolbar onOpenChange={setToolbarOpen}>
+          <CollapsibleToolbar open={toolbarOpen} onToggle={toggleToolbar}>
             <DocumentToolbar
               toolbarClassName={TOOLBAR_CLASS}
               componentOverrides={{ history: HistoryControl }}
