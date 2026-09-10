@@ -46,6 +46,8 @@ import {
 } from "./drive-stub.js";
 import { hasVaultHydrator } from "../../shared/vault-pull.js";
 import { enableRemoteFirst } from "./remote-first.js";
+import { installDriveAuthModalDismissal } from "./dismiss-drive-auth-modal.js";
+import { hideDriveLoading, showDriveLoading } from "./drive-loading-indicator.js";
 import { resolveReactorEndpoint } from "../hooks/subgraph-endpoint.js";
 
 
@@ -79,6 +81,15 @@ const MAX_WAIT_MS = 120_000;
 
 let started = false;
 const claimed = new Set<string>();
+/**
+ * Remote clients for the drives adopted on this page, keyed by driveId. Kept so
+ * a Renown session change can re-read each drive without building a fresh
+ * client (or swapping the global reactor again).
+ */
+const adoptedClients = new Map<
+  string,
+  { get: (id: string) => Promise<unknown> }
+>();
 
 /**
  * How long after the sync manager first appears before a remembered drive
@@ -87,6 +98,12 @@ const claimed = new Set<string>();
  * would re-add a remote the manager is about to add itself.
  */
 const RECOVERY_GRACE_MS = 3_000;
+/**
+ * How long after a Renown change to wait before re-reading drives. A login
+ * emits several updates (status, user, token); coalescing them avoids a burst
+ * of probes.
+ */
+const SESSION_RECOVERY_DEBOUNCE_MS = 300;
 let syncSeenAt: number | null = null;
 let recovering = false;
 let shareLinkReplayed = false;
@@ -189,6 +206,7 @@ async function adopt(driveId: string, remote: Remote, sync: SyncManager) {
     endpoint: resolveReactorEndpoint(),
     driveId,
   });
+  adoptedClients.set(driveId, handle.remoteClient);
 
   const filter = meta.filter;
   const alreadyScoped =
@@ -557,6 +575,59 @@ async function recover(sync: SyncManager): Promise<void> {
   }
 }
 
+/**
+ * Re-read every drive this page holds a client for, so a new Renown session's
+ * permissions and content are what Connect shows.
+ *
+ * The sweep is bounded to MAX_WAIT_MS, and a logout/login does not reload the
+ * page — so without this the home screen keeps the previous session's snapshot
+ * until the editor mounts or the user reloads. Runs on `ph:renownUpdated`,
+ * coalesced, and only when a bearer exists.
+ */
+async function recoverSession(): Promise<void> {
+  const token = await getBearerToken();
+  if (!token) return;
+  const sync = syncManager();
+  if (!sync) return;
+
+  // A new identity: the previous user's refusals say nothing about this one.
+  refused.clear();
+
+  const remembered = remoteMemory().recall();
+  if (remembered.length === 0 && adoptedClients.size === 0) return;
+
+  showDriveLoading();
+  try {
+    // Put back anything the manager dropped for want of a session, then
+    // re-read the drives this page already holds a client for.
+    await recover(sync);
+    for (const [driveId, client] of adoptedClients) {
+      try {
+        if ((await probeDriveReadable(driveId)) !== "readable") continue;
+        await hydrateDriveSnapshot(driveId, client);
+      } catch (error) {
+        console.warn(
+          `[RemoteFirst] Could not refresh drive ${driveId.slice(0, 8)} after a session change:`,
+          error,
+        );
+      }
+    }
+  } finally {
+    hideDriveLoading();
+  }
+}
+
+let sessionRecoveryTimer: ReturnType<typeof setTimeout> | null = null;
+
+/** Coalesce the burst of Renown updates a login emits into one recovery. */
+function scheduleSessionRecovery(): void {
+  if (sessionRecoveryTimer) clearTimeout(sessionRecoveryTimer);
+  sessionRecoveryTimer = setTimeout(() => {
+    sessionRecoveryTimer = null;
+    void recoverSession().catch(() => {});
+  }, SESSION_RECOVERY_DEBOUNCE_MS);
+}
+
 function sweep(startedAt: number, timer: ReturnType<typeof setInterval>): void {
   // Boot-time adoption is a bounded job: `useRemoteFirst` neutralises the
   // channel for any drive the user selects later. The deadline used to apply
@@ -602,6 +673,16 @@ export function startRemoteFirstBoot(): void {
   if (started) return;
   if (typeof window === "undefined") return;
   started = true;
+  // Connect's own "Log in to access this drive" modal has no exit; add a
+  // Cancel button. JSX-free, so this stays a plain package-load side effect
+  // alongside the sync neutralisation below.
+  installDriveAuthModalDismissal();
+  // A logout/login does not reload the page, and the sweep below is bounded to
+  // MAX_WAIT_MS; this re-reads the drives when the session changes, however
+  // long the page has been open.
+  if (typeof window.addEventListener === "function") {
+    window.addEventListener("ph:renownUpdated", scheduleSessionRecovery);
+  }
   // A share link's `driveUrl` does not survive the Renown redirect — the
   // return URL is built from the pathname alone — and a failed anonymous
   // `addRemoteDrive` deletes its own record. Keep the URL so the page after

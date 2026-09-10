@@ -350,7 +350,7 @@ export function useRemoteFirst(): void {
       clearInterval(interval);
       window.removeEventListener("MutateDocument", onMutation);
     };
-  }, [driveId]);
+  }, [driveId, address]);
 
   // ── 4. Selected-document freshness ────────────────────────────────
   const selectedId = selectedNode?.id;

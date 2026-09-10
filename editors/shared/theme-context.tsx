@@ -14,8 +14,9 @@
  * it, so following the OS preference comes for free and needs no extra
  * handling here.
  */
-import { createContext, useContext, type ReactNode } from "react";
+import { createContext, useContext, useEffect, type ReactNode } from "react";
 import { useTheme as useConnectTheme } from "@powerhousedao/reactor-browser";
+import { acquireToastTheme } from "./toast-theme.js";
 
 export type BaiTheme = "dark" | "light";
 
@@ -33,6 +34,14 @@ const ThemeContext = createContext<ThemeContextValue | null>(null);
 export function ThemeProvider({ children }: { children: ReactNode }) {
   const parent = useContext(ThemeContext);
   const { theme } = useConnectTheme();
+  const outermost = parent === null;
+
+  // Connect's toasts render outside this subtree; the outermost provider
+  // mirrors the theme onto <html> so style.css can reach them (toast-theme.ts).
+  useEffect(() => {
+    if (!outermost) return;
+    return acquireToastTheme(theme);
+  }, [outermost, theme]);
 
   if (parent) return <>{children}</>;
 

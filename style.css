@@ -20,13 +20,23 @@
  * Toggled via data-bai-theme attribute on .bai-theme wrapper
  */
 
-/* Default: dark theme */
+/* Default: dark theme. Also declared on <html data-bai-toast-theme> so the
+   toast rules at the end of this section can use the same tokens outside
+   the .bai-theme subtree (see editors/shared/toast-theme.ts). */
 .bai-theme,
-[data-bai-theme="dark"] {
+[data-bai-theme="dark"],
+html[data-bai-toast-theme="dark"] {
   --bai-bg: #1e1e2e;
   --bai-surface: #181825;
   --bai-deep: #11111b;
   --bai-hover: #313244;
+  /* Floating layers (toasts). Lighter than the page, the way Mocha's
+     mantle/base/surface ladder expresses elevation in the dark — but a half
+     step: surface0 (#313244) read as a grey card in side-by-side renders,
+     while this lifts off both the page (#1e1e2e) and the sidebar (#181825)
+     and lets the hairline and shadow do the rest. */
+  --bai-overlay: #262638;
+  --bai-overlay-hover: rgba(255, 255, 255, 0.08);
   --bai-border: rgba(255, 255, 255, 0.1);
   --bai-ring: rgba(255, 255, 255, 0.1);
   --bai-text: #e4e4e7;
@@ -54,11 +64,14 @@
   --bai-ok-soft: rgba(166, 227, 161, 0.12);
 }
 
-[data-bai-theme="light"] {
+[data-bai-theme="light"],
+html[data-bai-toast-theme="light"] {
   --bai-bg: #f8f9fc;
   --bai-surface: #ffffff;
   --bai-deep: #f1f3f8;
   --bai-hover: #e8eaf0;
+  --bai-overlay: #ffffff;
+  --bai-overlay-hover: #e8eaf0;
   --bai-border: #e2e4e9;
   --bai-ring: #e2e4e9;
   --bai-text: #1f2937;
@@ -81,6 +94,235 @@
   --bai-warn-soft: rgba(217, 119, 6, 0.08);
   --bai-ok: #059669;
   --bai-ok-soft: rgba(5, 150, 105, 0.08);
+}
+
+/*
+ * --- Notices (Connect's react-toastify, and the vault's fallback card) ---
+ *
+ * Connect renders toasts in a portal at <body> level, outside .bai-theme, and
+ * mounts its container with no theme — so every toast was the library's
+ * default light card, white on a dark vault. The outermost ThemeProvider
+ * mirrors the theme to <html data-bai-toast-theme> while one of this
+ * package's editors is mounted (editors/shared/toast-theme.ts); the card rules
+ * key on that, so Connect's toasts look like Connect again as soon as the user
+ * leaves the vault.
+ *
+ * The design: a quiet elevated card — luminance and shadow say "floating",
+ * never a coloured frame — with severity carried by one glyph disc on a soft
+ * tint. Title and detail are two lines (ToastContent.tsx). No progress bar:
+ * stack + pause-on-hover is the convention people know from Linear, GitHub
+ * and Sonner, and a draining bar was one more coloured stripe. Motion answers
+ * where the toast lives: it rises from the bottom edge and settles, rather
+ * than bouncing in from the right.
+ *
+ * react-toastify paints from its own --toastify-* custom properties, declared
+ * on :root. Redeclaring them on html[data-bai-toast-theme] outranks :root on
+ * the same element. The per-type colours still feed Connect's own toasts (our
+ * bodies hide the library icon and draw their own).
+ */
+html[data-bai-toast-theme] {
+  --toastify-font-family: inherit;
+  --toastify-toast-width: 360px;
+  --toastify-toast-bd-radius: 10px;
+  --toastify-toast-min-height: 0px;
+  --toastify-color-error: var(--bai-danger);
+  --toastify-color-warning: var(--bai-warn);
+  --toastify-color-success: var(--bai-ok);
+  --toastify-color-info: var(--bai-accent);
+  --toastify-color-light: var(--bai-overlay);
+  --toastify-text-color-light: var(--bai-text);
+  --toastify-color-dark: var(--bai-overlay);
+  --toastify-text-color-dark: var(--bai-text);
+}
+
+html[data-bai-toast-theme] .Toastify__toast {
+  align-items: flex-start;
+  padding: 12px 12px 12px 14px;
+  border: 1px solid var(--bai-border);
+  /* An edge-lit top hairline plus a soft, tight-then-diffuse shadow: how a
+     dark surface reads as lifted without getting lighter overall. */
+  box-shadow:
+    inset 0 1px 0 0 rgba(255, 255, 255, 0.05),
+    0 2px 6px rgba(0, 0, 0, 0.28),
+    0 14px 36px -10px rgba(0, 0, 0, 0.6);
+}
+html[data-bai-toast-theme="light"] .Toastify__toast {
+  box-shadow:
+    0 1px 3px rgba(15, 23, 42, 0.07),
+    0 14px 36px -12px rgba(15, 23, 42, 0.2);
+}
+
+html[data-bai-toast-theme] .Toastify__toast-body {
+  padding: 0;
+  margin: 0;
+  align-items: flex-start;
+  color: var(--bai-text);
+  /* Connect's own toasts inherit the page's 16px otherwise, and sit next to
+     ours at a different scale. */
+  font-size: 13px;
+  line-height: 1.45;
+}
+/* Connect's own toasts keep the library icon; give it the same breathing room. */
+html[data-bai-toast-theme] .Toastify__toast-icon {
+  margin-top: 1px;
+}
+html[data-bai-toast-theme] .Toastify__progress-bar--wrp {
+  display: none;
+}
+
+/* The design-system close button (a bare <button> with Connect's token). */
+html[data-bai-toast-theme] .Toastify__toast > button {
+  align-self: flex-start;
+  margin: -3px -4px 0 8px;
+  padding: 4px;
+  border-radius: 6px;
+  color: var(--bai-text-muted);
+  transition: color 120ms ease, background-color 120ms ease;
+}
+html[data-bai-toast-theme] .Toastify__toast > button:hover {
+  color: var(--bai-text);
+  background: var(--bai-overlay-hover);
+}
+html[data-bai-toast-theme] .Toastify__toast > button:focus-visible {
+  outline: 2px solid var(--bai-accent);
+  outline-offset: 1px;
+}
+
+/* Arrive from the edge the toast lives on; leave the way it came. */
+@keyframes bai-toast-in {
+  from {
+    opacity: 0;
+    transform: translateY(10px) scale(0.98);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+@keyframes bai-toast-out {
+  to {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+}
+html[data-bai-toast-theme] .Toastify__bounce-enter--bottom-right,
+html[data-bai-toast-theme] .Toastify__bounce-enter--bottom-left,
+html[data-bai-toast-theme] .Toastify__bounce-enter--bottom-center {
+  animation-name: bai-toast-in;
+  animation-duration: 220ms;
+  animation-timing-function: cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+html[data-bai-toast-theme] .Toastify__bounce-exit--bottom-right,
+html[data-bai-toast-theme] .Toastify__bounce-exit--bottom-left,
+html[data-bai-toast-theme] .Toastify__bounce-exit--bottom-center {
+  animation-name: bai-toast-out;
+  animation-duration: 160ms;
+  animation-timing-function: ease-in;
+}
+@media (prefers-reduced-motion: reduce) {
+  /* Not `none`: react-toastify removes the node on animationend. */
+  html[data-bai-toast-theme] .Toastify__bounce-enter--bottom-right,
+  html[data-bai-toast-theme] .Toastify__bounce-enter--bottom-left,
+  html[data-bai-toast-theme] .Toastify__bounce-enter--bottom-center,
+  html[data-bai-toast-theme] .Toastify__bounce-exit--bottom-right,
+  html[data-bai-toast-theme] .Toastify__bounce-exit--bottom-left,
+  html[data-bai-toast-theme] .Toastify__bounce-exit--bottom-center {
+    animation-duration: 1ms;
+  }
+}
+
+/* The vault's own notice body — inside a Connect toast or the fallback card. */
+.bai-toast {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  min-width: 0;
+}
+.bai-toast-glyph {
+  flex: none;
+  display: grid;
+  place-items: center;
+  width: 28px;
+  height: 28px;
+  border-radius: 999px;
+  color: var(--bai-toast-tone);
+  background: var(--bai-toast-tone-soft);
+}
+.bai-toast[data-level="error"] {
+  --bai-toast-tone: var(--bai-danger);
+  --bai-toast-tone-soft: var(--bai-danger-soft);
+}
+.bai-toast[data-level="warning"] {
+  --bai-toast-tone: var(--bai-warn);
+  --bai-toast-tone-soft: var(--bai-warn-soft);
+}
+.bai-toast[data-level="success"] {
+  --bai-toast-tone: var(--bai-ok);
+  --bai-toast-tone-soft: var(--bai-ok-soft);
+}
+.bai-toast[data-level="info"] {
+  --bai-toast-tone: var(--bai-accent);
+  --bai-toast-tone-soft: var(--bai-accent-soft);
+}
+.bai-toast-text {
+  min-width: 0;
+  flex: 1 1 auto;
+  padding-top: 4px;
+}
+.bai-toast-title {
+  margin: 0;
+  font-size: 13px;
+  font-weight: 600;
+  line-height: 1.4;
+  letter-spacing: -0.005em;
+  color: var(--bai-text);
+}
+.bai-toast-detail {
+  margin: 3px 0 0;
+  font-size: 12.5px;
+  line-height: 1.5;
+  color: var(--bai-text-tertiary);
+  overflow-wrap: anywhere;
+}
+
+/* The fallback host: the same card, drawn by us when Connect has no toast. */
+.bai-toast-card {
+  display: flex;
+  align-items: flex-start;
+  padding: 12px 12px 12px 14px;
+  border-radius: 10px;
+  border: 1px solid var(--bai-border);
+  background: var(--bai-overlay);
+  color: var(--bai-text);
+  box-shadow:
+    inset 0 1px 0 0 rgba(255, 255, 255, 0.05),
+    0 2px 6px rgba(0, 0, 0, 0.28),
+    0 14px 36px -10px rgba(0, 0, 0, 0.6);
+}
+[data-bai-theme="light"] .bai-toast-card {
+  box-shadow:
+    0 1px 3px rgba(15, 23, 42, 0.07),
+    0 14px 36px -12px rgba(15, 23, 42, 0.2);
+}
+.bai-toast-card > .bai-toast {
+  flex: 1 1 auto;
+}
+.bai-toast-close {
+  flex: none;
+  align-self: flex-start;
+  margin: -3px -4px 0 8px;
+  padding: 4px;
+  border-radius: 6px;
+  color: var(--bai-text-muted);
+  transition: color 120ms ease, background-color 120ms ease;
+}
+.bai-toast-close:hover {
+  color: var(--bai-text);
+  background: var(--bai-overlay-hover);
+}
+.bai-toast-close:focus-visible {
+  outline: 2px solid var(--bai-accent);
+  outline-offset: 1px;
 }
 
 /*

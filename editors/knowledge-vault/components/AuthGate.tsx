@@ -35,6 +35,7 @@ import {
   useSelectedDriveId,
 } from "@powerhousedao/reactor-browser";
 import { authHeaders } from "../../shared/authed-fetch.js";
+import { notifyUnauthorized } from "../../shared/notify.js";
 import { resolveReactorEndpoint } from "../../shared/subgraph-endpoint.js";
 
 type Verdict =
@@ -110,19 +111,31 @@ export function AuthGate({ children }: { children: React.ReactNode }) {
     setVerdict({ kind: "checking" });
     const result = await probeDrive(driveId);
     // Attribute a refusal to the identity that earned it, so the message can
-    // name the address an administrator needs to grant.
+    // name the address an administrator needs to grant. A refusal while a
+    // session EXISTS is never "sign in again": either the account holds no
+    // grant (FORBIDDEN) or the server rejected the very credential Renown
+    // issued (a 401 for a signed-in caller). Both are "credential not
+    // authorised", so both land on the administrator card.
+    if (!isAuthenticated) {
+      setVerdict(result.kind === "unauthorized" ? { kind: "anonymous" } : result);
+      return;
+    }
     setVerdict(
-      result.kind === "unauthorized" && !isAuthenticated
-        ? { kind: "anonymous" }
-        : result.kind === "unauthorized"
-          ? { kind: "unauthorized", address }
-          : result,
+      result.kind === "anonymous" || result.kind === "unauthorized"
+        ? { kind: "unauthorized", address }
+        : result,
     );
   }, [driveId, isAuthenticated, address]);
 
   useEffect(() => {
     void check();
   }, [check]);
+
+  // Say it as well as show it: a toast is what a user notices right after
+  // signing in, while the card below (or behind a tab) is easy to miss.
+  useEffect(() => {
+    if (verdict.kind === "unauthorized") notifyUnauthorized();
+  }, [verdict]);
 
   if (!driveId || verdict.kind === "allowed") return <>{children}</>;
 
@@ -163,12 +176,12 @@ export function AuthGate({ children }: { children: React.ReactNode }) {
         ) : verdict.kind === "unauthorized" ? (
           <>
             <h1 className="text-base font-semibold">
-              You are signed in, but not yet granted access
+              Your credential is not authorised
             </h1>
             <p className="mt-2 text-sm opacity-80">
-              The vault recognises your identity and has no grant for it. Signing
-              in again will not change that — an administrator has to grant your
-              address <strong>READ</strong> access.
+              You are signed in, but this vault did not accept your credential.
+              Signing in again will not change that — please contact an
+              administrator to be granted access.
             </p>
             {verdict.address ? (
               <div className="mt-3">
@@ -190,10 +203,6 @@ export function AuthGate({ children }: { children: React.ReactNode }) {
                 </button>
               </div>
             ) : null}
-            <p className="mt-3 text-xs opacity-60">
-              An administrator grants it under the gear menu → Access. A grant on
-              the drive covers every document in the vault.
-            </p>
             <button
               type="button"
               onClick={() => void check()}
