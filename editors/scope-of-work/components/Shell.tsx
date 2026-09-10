@@ -78,10 +78,11 @@ export function Shell({
   // citation, for any item by id — when it opens this document (see
   // shared/sow-intent.ts). Read during render so the first paint is already
   // the requested view — a useEffect would flash the overview first — and
-  // consumed only after commit, so a first render that suspends (the project
-  // view's WBS read, on a cold cache) and is retried still finds it. That
-  // retry losing the intent is what made the deep link land on the overview
-  // the first time and work the second.
+  // released only when the document is left, so a first render that suspends
+  // and is retried, or an editor Connect remounts for the same document (it
+  // re-keys on the package version, which resolves late on a cold start),
+  // still finds it. Losing it in either case is what made the deep link land
+  // on the overview the first time and work the second.
   const intent = useSowIntent(document.header.id);
   const [initial] = useState<{
     view: View;

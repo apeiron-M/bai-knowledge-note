@@ -3,6 +3,7 @@ import { beforeEach, describe, expect, it } from "vitest";
 import {
   clearSowIntent,
   peekSowIntent,
+  releaseSowIntent,
   SOW_INTENT_TTL_MS,
   writeSowIntent,
 } from "./sow-intent.js";
@@ -63,5 +64,25 @@ describe("sow-intent", () => {
     expect(peekSowIntent("d")).toBeNull();
     sessionStorage.setItem(key, "not json");
     expect(peekSowIntent("d")).toBeNull();
+  });
+
+  it("is kept across a remount while the document is still selected", () => {
+    // Connect re-keys the editor when the package version resolves on a cold
+    // start; the remount must find the intent the first mount saw.
+    writeSowIntent({ documentId: "doc-1", view: { kind: "project", id: "e1" } });
+    releaseSowIntent("doc-1", true);
+    expect(peekSowIntent("doc-1")).toEqual({ kind: "project", id: "e1" });
+  });
+
+  it("is released when the document is left", () => {
+    writeSowIntent({ documentId: "doc-1", view: { kind: "project", id: "e1" } });
+    releaseSowIntent("doc-1", false);
+    expect(peekSowIntent("doc-1")).toBeNull();
+  });
+
+  it("leaving one document never releases another's intent", () => {
+    writeSowIntent({ documentId: "doc-2", view: { kind: "team" } });
+    releaseSowIntent("doc-1", false);
+    expect(peekSowIntent("doc-2")).toEqual({ kind: "team" });
   });
 });

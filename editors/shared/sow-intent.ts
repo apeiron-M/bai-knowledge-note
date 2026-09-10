@@ -25,8 +25,21 @@
  * render leaves the intent in place for the retry. Idempotent under
  * StrictMode's double-invocation of both.
  *
- * A time-to-live bounds the cost of the one case that could now leave an
- * intent behind (the editor never committing at all): a stale intent is
+ * ## Released when the document is LEFT, not when the editor first commits
+ *
+ * Consuming on the first commit was still one step too early. Connect keys
+ * the editor component by `${packageName}@${packageVersion}:${documentId}`,
+ * and on a cold start the package version resolves AFTER the editor has
+ * mounted — the key changes and Connect REMOUNTS the editor for the same
+ * document. The first mount had consumed the intent; the remount found
+ * nothing and showed the overview. A warm session already knows the version,
+ * so the key is stable and the bug never showed. The intent therefore stays
+ * put across remounts and is released only when the document stops being the
+ * selected node — which is what distinguishes a re-key (still selected) from
+ * the user actually leaving (not).
+ *
+ * A time-to-live bounds the cost of the one case that could still leave an
+ * intent behind (a tab reload, which keeps sessionStorage): a stale intent is
  * ignored and dropped rather than steering an unrelated open minutes later.
  */
 import { useEffect, useState } from "react";
@@ -124,14 +137,34 @@ export function clearSowIntent(documentId: string): void {
 }
 
 /**
- * The intent for this document as of the first committed mount: read during
- * render (so the first paint honours it), consumed in an effect (so a render
- * that suspends and is retried still finds it).
+ * Release this document's intent when the editor unmounts — unless the
+ * document is still the selected node, in which case the unmount is Connect
+ * re-keying the editor and the remount must find the intent again.
+ */
+export function releaseSowIntent(documentId: string, stillSelected: boolean): void {
+  if (stillSelected) return;
+  clearSowIntent(documentId);
+}
+
+/** Connect's selected node, read synchronously (the hook sibling is `useSelectedNodeId`). */
+function selectedNodeIdNow(): string | undefined {
+  return (globalThis as unknown as { ph?: { selectedNodeId?: string } }).ph
+    ?.selectedNodeId;
+}
+
+/**
+ * The intent for this document as of the mount: read during render (so the
+ * first paint honours it) and released only when the document is left (so a
+ * render that suspends and is retried, or an editor Connect remounts for the
+ * same document, still finds it).
  */
 export function useSowIntent(documentId: string): SowIntentView | null {
   const [intent] = useState(() => peekSowIntent(documentId));
   useEffect(() => {
-    if (intent) clearSowIntent(documentId);
+    if (!intent) return;
+    return () => {
+      releaseSowIntent(documentId, selectedNodeIdNow() === documentId);
+    };
   }, [documentId, intent]);
   return intent;
 }
