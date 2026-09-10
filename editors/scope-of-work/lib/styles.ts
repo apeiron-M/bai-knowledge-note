@@ -4,38 +4,39 @@ export const SOW_CSS = `
   --meridian:var(--bai-status-canonical);--meridian-soft:color-mix(in srgb,var(--bai-status-canonical) 16%,transparent);--signal:var(--bai-status-review);--signal-soft:color-mix(in srgb,var(--bai-status-review) 16%,transparent);--ember:rgb(248,113,113);--ember-soft:rgba(248,113,113,.15);--slate:var(--bai-text-muted);--slate-soft:var(--bai-hover);--focus:var(--bai-accent);
   --r:10px;--display:"Bricolage Grotesque",Inter,system-ui,sans-serif;--ui:Inter,system-ui,sans-serif;--mono:"JetBrains Mono",ui-monospace,SFMono-Regular,Menlo,monospace;
   font:14px/1.45 var(--ui);color:var(--ink);background:var(--canvas);-webkit-font-smoothing:antialiased;
-  display:grid;grid-template-columns:264px minmax(0,1fr) 372px;grid-template-rows:minmax(0,1fr);grid-template-areas:"rail canvas inspector";overflow:visible;height:calc(100vh - 96px);min-height:420px}
+  --sow-rail-w:264px;--sow-insp-w:372px;
+  display:grid;grid-template-columns:var(--sow-rail-w) minmax(0,1fr) var(--sow-insp-w);grid-template-rows:auto minmax(0,1fr);grid-template-areas:"tb tb tb" "rail canvas inspector";overflow:visible;height:calc(100vh - 96px);min-height:420px}
 [data-bai-theme="dark"] .sow{color-scheme:dark}
 [data-bai-theme="light"] .sow{color-scheme:light}
-.sow.no-inspector{grid-template-columns:264px minmax(0,1fr) 0}
-.sow.no-rail{grid-template-columns:0 minmax(0,1fr) 372px}
-.sow.no-rail.no-inspector{grid-template-columns:0 minmax(0,1fr) 0}
+/* Column widths are variables so one rule serves every combination of
+   collapsed rail and hidden inspector, and so the vault shell can read the
+   rail width (see the hosted block below). */
+.sow.no-inspector{--sow-insp-w:0px}
+.sow.no-rail{--sow-rail-w:0px}
 .sow.no-rail .rail{display:none}
 .sow *{box-sizing:border-box}
 /* -- hosted inside the vault shell ---------------------------------------
-   DriveExplorer reserves a left column as wide as this editor's rail and puts
-   the vault tab bar in the column beside it, so the rail reaches the top of
-   the window like the vault's own sidebar instead of starting below the bar.
-   The bar covers this editor's top-right corner; the shell publishes its
-   height as --vault-topbar-h.
+   The vault's DriveExplorer marks its wrapper [data-vault-hosts-editor] and
+   sizes its left column to var(--sow-rail-w): the width is DECLARED here, by
+   the editor that owns the rail, with the same breakpoint and the same
+   collapsed state — Shell mirrors railOpen onto the host as data-sow-rail.
+   (The previous design measured the rail from outside with a ResizeObserver
+   on a lazily-mounted subtree; it read 0 in the live app, which put the tab
+   bar and the toolbar across the rail.) The rule lives in this stylesheet,
+   which is present exactly while a scope of work is mounted, so with no
+   editor the variable is undefined and the shell's fallback of 0 is right.
 
-   A reserved top ROW, not padding on the canvas: the canvas and inspector
-   keep their own spacing exactly as designed, and the rail spans both rows so
-   it still starts at the very top. The rail keeps its own outline toggle
-   where it puts it -- the shell leaves a gutter beside the rail wide enough
-   for it.
-
-   The document toolbar is the one piece that has to move. It is first in the
-   flow and full width, so in place it would slide under the tab bar and, once
-   opened, push the rail down out of the top-left corner. Parked in the corner
-   the bar and the sidebar leave -- below one, beside the other -- it does
-   neither, and the row above reserves its height so it never covers the
-   canvas. Its handle hangs from its own bottom edge and follows it. Every
-   value defaults to 0, so outside the vault this block is inert. */
-[data-vault-hosts-editor] .sow{grid-template-rows:calc(var(--vault-topbar-h,0px) + var(--vault-doctoolbar-h,0px)) minmax(0,1fr);grid-template-areas:"rail . ." "rail canvas inspector"}
-[data-vault-hosts-editor] .sow-tb{position:absolute;top:var(--vault-topbar-h,0px);left:var(--vault-sidebar-w,0px);right:0}
-.sow button:where(:not(.wbs-embed *)),.sow input:where(:not(.wbs-embed *)),.sow select:where(:not(.wbs-embed *)),.sow textarea:where(:not(.wbs-embed *)){font:inherit;color:inherit}
-.sow button:where(:not(.wbs-embed *)){cursor:pointer;background:none;border:0;padding:0}
+   Rows: the shell publishes its tab-bar height as --vault-topbar-h, and the
+   grid reserves that row so the canvas and the toolbar start below the bar
+   while the rail spans every row and reaches the top. The document toolbar
+   is the second row, beside the rail — a grid item, not an overlay, so an
+   open toolbar takes real height and needs no measuring. Everything here
+   defaults to 0 or is scoped to the host, so standalone the block is inert. */
+[data-vault-hosts-editor]{--sow-rail-w:264px}
+[data-vault-hosts-editor][data-sow-rail="closed"]{--sow-rail-w:0px}
+[data-vault-hosts-editor] .sow{grid-template-rows:var(--vault-topbar-h,0px) auto minmax(0,1fr);grid-template-areas:"rail . ." "rail tb tb" "rail canvas inspector"}
+.sow button:where(:not(.wbs-embed *, .sow-embed *)),.sow input:where(:not(.wbs-embed *, .sow-embed *)),.sow select:where(:not(.wbs-embed *, .sow-embed *)),.sow textarea:where(:not(.wbs-embed *, .sow-embed *)){font:inherit;color:inherit}
+.sow button:where(:not(.wbs-embed *, .sow-embed *)){cursor:pointer;background:none;border:0;padding:0}
 .sow :focus-visible{outline:2px solid var(--focus);outline-offset:2px;border-radius:4px}
 .sow .mono{font-family:var(--mono);font-size:12.5px;letter-spacing:.01em}
 .sow .muted{color:var(--ink-2)} .sow .faint{color:var(--ink-3)}
@@ -43,7 +44,7 @@ export const SOW_CSS = `
 .sow .btn:hover{background:var(--panel-2)} .sow .btn.primary{background:var(--bai-accent);color:var(--bai-accent-text);border-color:var(--bai-accent)} .sow .btn.primary:hover{opacity:.92}
 .sow .btn.ghost{border-color:transparent} .sow .btn.sm{height:26px;padding:0 9px;font-size:12.5px;border-radius:7px} .sow .btn.danger{color:var(--ember)}
 /* collapsible document toolbar — zero height when folded; the handle floats over the canvas's top padding */
-.sow-tb{position:relative;z-index:6}
+.sow-tb{grid-area:tb;position:relative;z-index:6}
 .sow .sow-rail-wrap{grid-area:rail;position:relative;min-width:0;min-height:0;height:100%}
 /* One drawer handle, hung from two edges. The toolbar's hangs from the bar's
    bottom edge, the rail's from the rail's right edge; both are absolutely
@@ -123,8 +124,8 @@ export const SOW_CSS = `
 .sow .doc-id:hover .doc-id-icon{opacity:1}
 .sow .doc-id-said{position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%);white-space:nowrap}
 .sow h1.title{font-family:var(--display);font-size:34px;font-weight:700;letter-spacing:-.02em;line-height:1.1;margin:6px 0 8px}
-.sow h2:where(:not(.wbs-embed *)){font-family:var(--display);font-size:20px;font-weight:650;letter-spacing:-.01em;margin:0}
-.sow h3:where(:not(.wbs-embed *)){font-size:14px;font-weight:600;margin:0}
+.sow h2:where(:not(.wbs-embed *, .sow-embed *)){font-family:var(--display);font-size:20px;font-weight:650;letter-spacing:-.01em;margin:0}
+.sow h3:where(:not(.wbs-embed *, .sow-embed *)){font-size:14px;font-weight:600;margin:0}
 .sow .inline{background:transparent;border:1px solid transparent;border-radius:6px;padding:2px 6px;margin-left:-6px;width:100%;color:inherit;font:inherit;letter-spacing:inherit;line-height:inherit}
 .sow .inline:hover{background:var(--panel-2)} .sow .inline:focus{background:var(--panel);outline:0;border-color:var(--focus)}
 .sow .inline::placeholder{color:var(--ink-3);font-weight:400}
@@ -356,5 +357,5 @@ export const SOW_CSS = `
 .sow .sow-confirm-actions .btn.confirm-go:hover{opacity:.92}
 .sow kbd{font-family:var(--mono);font-size:11px;border:1px solid var(--rule-2);border-bottom-width:2px;border-radius:4px;padding:0 5px;color:var(--ink-2)}
 @media (prefers-reduced-motion:reduce){.sow *{transition:none!important}}
-@media (max-width:1180px){.sow{grid-template-columns:220px minmax(0,1fr) 320px}.sow.no-inspector{grid-template-columns:220px minmax(0,1fr) 0}.sow.no-rail{grid-template-columns:0 minmax(0,1fr) 320px}.sow.no-rail.no-inspector{grid-template-columns:0 minmax(0,1fr) 0}.sow .kpis{grid-template-columns:repeat(2,1fr)}}
+@media (max-width:1180px){.sow{--sow-rail-w:220px;--sow-insp-w:320px}.sow.no-inspector{--sow-insp-w:0px}.sow.no-rail{--sow-rail-w:0px}[data-vault-hosts-editor]{--sow-rail-w:220px}[data-vault-hosts-editor][data-sow-rail="closed"]{--sow-rail-w:0px}.sow .kpis{grid-template-columns:repeat(2,1fr)}}
 `;

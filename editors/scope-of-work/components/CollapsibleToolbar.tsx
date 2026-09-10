@@ -47,7 +47,9 @@ export function CollapsibleToolbar({ children }: { children: ReactNode }) {
 
   return (
     <div className="sow-tb">
-      <div id="sow-document-toolbar" hidden={!open}>
+      {/* `sow-embed`: the design-system toolbar keeps its own button and
+          input styling — the editor's resets skip foreign widgets. */}
+      <div id="sow-document-toolbar" className="sow-embed" hidden={!open}>
         {children}
       </div>
       <button

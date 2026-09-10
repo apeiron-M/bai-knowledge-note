@@ -10,6 +10,7 @@ import {
   useMemo,
   useRef,
   useState,
+  type ReactNode,
 } from "react";
 import {
   EditorContext,
@@ -18,6 +19,9 @@ import {
   type EditorContextValue,
 } from "../lib/context.js";
 import { SOW_CSS } from "../lib/styles.js";
+import { RevisionHistory } from "@powerhousedao/design-system/connect";
+import { useDocumentOperations } from "@powerhousedao/reactor-browser";
+import { notify } from "../../shared/notify.js";
 import type { View } from "../lib/model.js";
 import { DeliverableInspector } from "../inspector/DeliverableInspector.js";
 import { DeliverablesView } from "../views/DeliverablesView.js";
@@ -48,9 +52,17 @@ const FONTS_HREF =
 export function Shell({
   document,
   dispatch: rawDispatch,
+  toolbar,
+  historyOpen = false,
+  onCloseHistory,
 }: {
   document: ScopeOfWorkDocument;
   dispatch: DocumentDispatch<ScopeOfWorkAction>;
+  /** The document toolbar; laid out in the grid row above the canvas. */
+  toolbar?: ReactNode;
+  /** Show the document's revision history in the canvas, rail intact. */
+  historyOpen?: boolean;
+  onCloseHistory?: () => void;
 }) {
   const state = document.state.global;
   // The vault can ask for a specific project/section — or, from a chat
@@ -199,6 +211,22 @@ export function Shell({
   useEffect(() => {
     writeRailOpen(railOpen);
   }, [railOpen]);
+  // Tell the vault shell (when hosted) whether the rail is open. The shell
+  // sizes its tab-bar column from --sow-rail-w, which this editor's
+  // stylesheet defines on the host — by breakpoint, and as 0 while
+  // data-sow-rail="closed". Nothing measures anything.
+  useEffect(() => {
+    const host = rootRef.current?.closest<HTMLElement>(
+      "[data-vault-hosts-editor]",
+    );
+    if (!host) return;
+    host.setAttribute("data-sow-rail", railOpen ? "open" : "closed");
+    return () => host.removeAttribute("data-sow-rail");
+  }, [railOpen]);
+
+  // Operations are fetched only while history is open: a null id keeps the
+  // hook mounted (rules of hooks) without a request.
+  const operations = useDocumentOperations(historyOpen ? document.header.id : null);
   const pendingConfirm = useRef<{
     resolve: (ok: boolean) => void;
   } | null>(null);
@@ -282,13 +310,40 @@ export function Shell({
         ref={rootRef}
         className={`sow ${showSidebar ? "" : "no-inspector"}${railOpen ? "" : " no-rail"}`}
       >
+        {toolbar}
         <OutlineRail railOpen={railOpen} onToggle={toggleRail} />
-        <main
-          className="canvas"
-          key={`${view.kind}:${"id" in view ? view.id : ""}`}
-        >
-          {canvas}
-        </main>
+        {historyOpen ? (
+          // The same component Connect shows for history — but here, in the
+          // canvas, so the rail stays as the user left it. `sow-embed` keeps
+          // the editor's button/input resets off its controls.
+          <main className="canvas sow-embed" key="history">
+            {operations.isLoading ? (
+              <p className="muted">Loading operations…</p>
+            ) : (
+              <RevisionHistory
+                documentTitle={document.header.name}
+                documentId={document.header.id}
+                globalOperations={operations.globalOperations}
+                localOperations={operations.localOperations}
+                documentState={document.state}
+                onClose={() => onCloseHistory?.()}
+                onCopyState={() =>
+                  notify("success", "Copied document state to clipboard")
+                }
+                onCopyDocId={() =>
+                  notify("success", "Copied document ID to clipboard")
+                }
+              />
+            )}
+          </main>
+        ) : (
+          <main
+            className="canvas"
+            key={`${view.kind}:${"id" in view ? view.id : ""}`}
+          >
+            {canvas}
+          </main>
+        )}
         <aside ref={inspectorRef} className="inspector" aria-label="Inspector">
           {showSidebar && selected && <DeliverableInspector id={selected} />}
         </aside>

@@ -2,20 +2,13 @@
  * Layout measurements, for the cases where a number has to cross a component
  * boundary that props cannot.
  *
- * The vault shell hosts document editors it does not own — Connect hands them
- * over as `children` — so it cannot ask a hosted editor how wide its sidebar
- * is or be told when that changes. Measuring the rendered element is the only
- * honest answer: it tracks the editor's own CSS, including its media queries
- * and its collapse toggle, without either side having to know the other's
- * numbers.
+ * Only for elements the caller renders itself. Measuring an element from
+ * another editor's subtree was tried here and read 0 in the live app; the
+ * hosted layout now takes the sidebar width as a CSS variable the owning
+ * editor declares (see scope-of-work/lib/styles.ts, hosted block).
  */
 import { useLayoutEffect, useState, type RefObject } from "react";
 
-/** A measured border box. */
-export type Box = { width: number; height: number };
-
-/** Shared, so "not measured" keeps a stable identity across renders. */
-const ZERO_BOX: Box = Object.freeze({ width: 0, height: 0 });
 
 /**
  * An element's border-box height, updated as it changes; 0 when disabled or
@@ -43,69 +36,4 @@ export function useMeasuredHeight(
     return () => observer.disconnect();
   }, [ref, enabled]);
   return height;
-}
-
-/**
- * The border-box size of the first descendant of `ref` matching `selector`,
- * or zero when there is none.
- *
- * The descendant belongs to a subtree this component renders but does not
- * control, so it may arrive a commit later than the host — hence the
- * MutationObserver that waits for it rather than a single lookup that would
- * silently measure nothing. Returning 0 when absent is deliberate: every
- * caller should lay out sensibly at zero, so a renamed class in the other
- * editor degrades to the previous layout instead of breaking this one.
- */
-export function useDescendantBox(
-  ref: RefObject<HTMLElement | null>,
-  selector: string,
-  enabled: boolean,
-): Box {
-  const [box, setBox] = useState(ZERO_BOX);
-
-  useLayoutEffect(() => {
-    const root = ref.current;
-    if (!enabled || !root || typeof ResizeObserver === "undefined") {
-      setBox(ZERO_BOX);
-      return;
-    }
-
-    let resize: ResizeObserver | null = null;
-    const attach = (): boolean => {
-      const el = root.querySelector<HTMLElement>(selector);
-      if (!el) return false;
-      const measure = () => {
-        const rect = el.getBoundingClientRect();
-        // Keep the identity stable when nothing moved, so a ResizeObserver
-        // that fires on an unrelated reflow does not re-render the shell.
-        setBox((prev) =>
-          prev.width === rect.width && prev.height === rect.height
-            ? prev
-            : { width: rect.width, height: rect.height },
-        );
-      };
-      measure();
-      resize = new ResizeObserver(measure);
-      resize.observe(el);
-      return true;
-    };
-
-    let mutation: MutationObserver | null = null;
-    if (!attach() && typeof MutationObserver !== "undefined") {
-      mutation = new MutationObserver(() => {
-        if (attach()) {
-          mutation?.disconnect();
-          mutation = null;
-        }
-      });
-      mutation.observe(root, { childList: true, subtree: true });
-    }
-
-    return () => {
-      resize?.disconnect();
-      mutation?.disconnect();
-    };
-  }, [ref, selector, enabled]);
-
-  return enabled ? box : ZERO_BOX;
 }
