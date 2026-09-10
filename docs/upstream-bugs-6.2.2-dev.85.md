@@ -441,7 +441,79 @@ login button's current `closePHModal()` + `openLogin()` behaviour.
 
 ---
 
-## How the five compound
+## 6. The attachment reference read model refuses to replay across a hole in the operation index — and holes are normal, so a restart crashes the Switchboard
+
+**Package:** `@powerhousedao/reactor-attachments` (read model); the index is `@powerhousedao/reactor`
+
+**Describe the bug**
+
+`operation_index_operations.ordinal` is `serial` (`nextval(…_ordinal_seq)`). A
+Postgres sequence is not transactional: every rolled-back insert consumes a
+value that never gets a row, so holes in the ordinal sequence are an expected
+property of the index, not corruption.
+
+`AttachmentReferenceReadModel.indexOperationsInOrdinalOrder` assumes the
+opposite. Walking from its checkpoint (`ViewState.lastOrdinal`) it expects every
+ordinal up to the newest incoming one to exist; when the replay it fetches from
+the operation index (`getSinceOrdinal`) lacks `lastOrdinal + 1` it throws
+`Attachment reference read model cannot advance past missing ordinal N`. Two
+consequences, both observed:
+
+1. **At run time the read model silently stops** — the throw is swallowed by
+   its own queue (`this.indexingQueue = result.catch(() => void 0)`); the
+   checkpoint stays before the hole while every other read model moves on, and
+   nothing is logged.
+2. **The next restart is a startup crash** — `init()` replays from the stuck
+   checkpoint, hits the same hole, `App crashed`, and the Switchboard cannot
+   start until the checkpoint is edited by hand.
+
+A replay from the operation index can never be *waiting* for an ordinal the
+index does not have: when higher ordinals already exist, the missing one is
+gone for good. Contiguity is only meaningful for live delivery.
+
+**To Reproduce**
+
+1. PGlite or Postgres. Cause one write to roll back after its operation insert
+   took a sequence value (a failed batch apply, a rejected write).
+2. Apply one more successful operation — the attachment read model stalls
+   (`reactor."ViewState"`: every row advances except `attachment-reference-read-model`).
+3. Restart the Switchboard.
+
+**Resulting behavior** (local vault, seen on the restart after upgrading to `6.2.3-dev.2`; code identical in `dev.85`):
+
+```
+operation_index_operations: rows=27145, min=1, max=27172; 27145–27171 absent; sequence last_value=27172
+reactor."Operation" rows written in that window: 3          ← nothing deleted: the 27 were rolled back
+ViewState: document-view 27172 · document-indexer 27172 · reactor-drive-node-processor 27172
+           processor-manager 27172 · attachment-reference-read-model 27144   ← stuck
+[switchboard] App crashed: Error: Attachment reference read model cannot advance past missing ordinal 27145
+```
+
+**Expected behavior**
+
+On the replay path, an ordinal absent below the index's maximum is permanently
+missing: index everything the index returns, in order, and advance
+`lastOrdinal` to the highest ordinal processed. Keep the contiguity test only as
+the trigger for that replay. A run-time stall, if ever unavoidable, is logged at
+error level, never swallowed.
+
+**Suggested fix**
+
+In `indexOperationsInOrdinalOrder`, once `loadThroughOrdinal(incomingMax)` has
+been merged the candidates are the truth for that range: index them all and set
+`lastOrdinal = incomingMax` instead of requiring `expectedOrdinal > incomingMax`.
+
+**How will regressions be avoided in the future**
+
+- Unit test: checkpoint N, index holds N+1 and N+3 → both indexed, ends at N+3.
+- Integration test: roll back one insert, apply one operation, restart → starts.
+- Assert a run-time read-model failure is logged, not swallowed.
+
+**Workaround** (done here): reactor stopped, store backed up, then
+`scripts/repair-read-model-checkpoint.mjs --apply`, which moves the checkpoint
+to just before the next existing ordinal. Reverting to `dev.85` does not help.
+
+## How the first five compound
 
 ```
 share link ?driveUrl=…            (4) Renown returnUrl drops the query → drive never added after login

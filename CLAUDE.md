@@ -43,6 +43,24 @@ this project twice — a new subgraph "wouldn't register", and an authorization
 wrapper "stopped working" — and both were the same cause. If a subgraph change
 seems to have no effect, check `dist/` before debugging the code.
 
+## ⚠️ `ph reactor` crash: "read model cannot advance past missing ordinal N"
+
+`operation_index_operations.ordinal` is a Postgres `serial`; a rolled-back write
+consumes a number that never gets a row, which is normal. The attachment
+reference read model (`@powerhousedao/reactor-attachments`) replays from its
+checkpoint and refuses to cross such a hole. At run time it fails silently and
+stops; the **next restart crashes** with the line above. Nothing is lost — the
+missing ordinals have no rows. Fix, with the reactor stopped:
+
+```bash
+cp -a .ph/reactor-storage .ph/reactor-storage.bak-$(date +%Y%m%d-%H%M%S)   # always
+node scripts/repair-read-model-checkpoint.mjs           # dry run: shows the hole
+node scripts/repair-read-model-checkpoint.mjs --apply   # moves the checkpoint to just before the next real ordinal
+```
+
+Reverting the stack version does not help (dev.85 has the same check). The
+upstream bug is documented in `docs/upstream-bugs-6.2.2-dev.85.md` (#5).
+
 ## Core Concepts
 
 - **Document Model**: A template for creating documents. Defines schema and allowed operations for a document type.
