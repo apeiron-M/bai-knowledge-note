@@ -150,5 +150,36 @@
       "id": "access"
     }
   ],
-  "config": []
+  "config": [
+    {
+      "name": "AUTH_ENABLED",
+      "type": "var",
+      "description": "\"true\" or \"false\". Verify Renown bearer tokens and resolve the caller's identity.",
+      "required": true
+    },
+    {
+      "name": "ADMINS",
+      "type": "var",
+      "description": "Comma-separated Ethereum addresses that bypass every permission check (supreme admins). Give it at least two.",
+      "required": true
+    },
+    {
+      "name": "DOCUMENT_PERMISSIONS_ENABLED",
+      "type": "var",
+      "description": "\"true\" or \"false\". Enable per-document READ/WRITE/ADMIN grants; runs the permission migrations at boot.",
+      "required": true
+    },
+    {
+      "name": "DEFAULT_PROTECTION",
+      "type": "var",
+      "description": "\"true\" or \"false\". Documents are protected by default and need an explicit grant to read or write.",
+      "required": true
+    },
+    {
+      "name": "REQUIRE_AUTHENTICATED_CALLER",
+      "type": "var",
+      "description": "\"true\" or \"false\". Reject anonymous GraphQL callers with 401 before any resolver runs. Requires AUTH_ENABLED=true.",
+      "required": true
+    }
+  ]
 }
