@@ -5,7 +5,7 @@ import {
   type WorkBreakdownStructureAction,
   type WorkBreakdownStructureDocument,
 } from "document-models/work-breakdown-structure";
-import { Component, useMemo, type ReactNode } from "react";
+import { Component, Suspense, useMemo, type ReactNode } from "react";
 
 /**
  * Read the work-breakdown-structure a scope-of-work envelope links to, safely.
@@ -65,13 +65,30 @@ class Boundary extends Component<
 
   render() {
     const failed = this.state.error !== null;
+    const wbsRef = failed ? null : this.props.wbsRef;
+    // A Suspense boundary of our own. `use()` suspends the first time the WBS
+    // document is not cached; without a boundary here that unwinds to
+    // Connect's, discarding the whole editor's in-progress render — including
+    // whatever the Shell decided in its initialisers. Meanwhile the consumer
+    // gets the same "not loaded yet" shape it already handles.
     return (
-      <Fetcher
-        wbsRef={failed ? null : this.props.wbsRef}
-        missingRef={failed ? this.props.wbsRef : null}
+      <Suspense
+        fallback={
+          <>
+            {this.props.children({
+              wbsRef,
+              wbsDoc: undefined,
+              goals: [],
+              dispatch: undefined,
+              missingRef: failed ? this.props.wbsRef : null,
+            })}
+          </>
+        }
       >
-        {this.props.children}
-      </Fetcher>
+        <Fetcher wbsRef={wbsRef} missingRef={failed ? this.props.wbsRef : null}>
+          {this.props.children}
+        </Fetcher>
+      </Suspense>
     );
   }
 }

@@ -36,7 +36,7 @@ import { RoadmapView } from "../views/RoadmapView.js";
 import { RoadmapsView } from "../views/RoadmapsView.js";
 import { TeamView } from "../views/TeamView.js";
 import { WbsView } from "../views/WbsView.js";
-import { readSowIntent } from "../../shared/sow-intent.js";
+import { useSowIntent } from "../../shared/sow-intent.js";
 import { locate } from "../lib/model.js";
 import {
   readInspectorLayout,
@@ -76,20 +76,45 @@ export function Shell({
   const state = document.state.global;
   // The vault can ask for a specific project/section — or, from a chat
   // citation, for any item by id — when it opens this document (see
-  // shared/sow-intent.ts). Read in an initialiser so the first paint is
-  // already the requested view — a useEffect would flash the overview first.
-  // The read is one-shot and id-checked, so it happens in exactly one
-  // initialiser and both the view and the selection derive from it.
-  const [initial] = useState<{ view: View; selected: string | null }>(() => {
-    const overview = { view: { kind: "overview" } as View, selected: null };
-    const intent = readSowIntent(document.header.id);
+  // shared/sow-intent.ts). Read during render so the first paint is already
+  // the requested view — a useEffect would flash the overview first — and
+  // consumed only after commit, so a first render that suspends (the project
+  // view's WBS read, on a cold cache) and is retried still finds it. That
+  // retry losing the intent is what made the deep link land on the overview
+  // the first time and work the second.
+  const intent = useSowIntent(document.header.id);
+  const [initial] = useState<{
+    view: View;
+    selected: string | null;
+    /** A `locate` the state could not answer yet; retried as state arrives. */
+    pendingLocate: string | null;
+  }>(() => {
+    const overview = { view: { kind: "overview" } as View, selected: null, pendingLocate: null };
     if (!intent) return overview;
-    if (intent.kind === "locate") return locate(state, intent.id) ?? overview;
+    if (intent.kind === "locate") {
+      const found = locate(state, intent.id);
+      return found
+        ? { ...found, pendingLocate: null }
+        : { ...overview, pendingLocate: intent.id };
+    }
     if (intent.kind === "goal") return overview; // goals live in the WBS editor
-    return { view: intent, selected: null };
+    return { view: intent, selected: null, pendingLocate: null };
   });
   const [view, setView] = useState<View>(initial.view);
   const [selected, setSelected] = useState<string | null>(initial.selected);
+  // An id the document did not hold at mount — a citation of an item that a
+  // revalidation is about to deliver — is resolved the moment it appears,
+  // then forgotten. `state` is replaced wholesale per revision, so this runs
+  // exactly when there is something new to look at.
+  const [pendingLocate, setPendingLocate] = useState(initial.pendingLocate);
+  useEffect(() => {
+    if (!pendingLocate) return;
+    const found = locate(state, pendingLocate);
+    if (!found) return;
+    setPendingLocate(null);
+    setView(found.view);
+    setSelected(found.selected);
+  }, [pendingLocate, state]);
   const [inspectorLayout, setInspectorLayout] =
     useState<InspectorLayout>(readInspectorLayout);
   const [railOpen, setRailOpen] = useState(readRailOpen);

@@ -1,6 +1,6 @@
 import { useDocumentById } from "@powerhousedao/reactor-browser";
 import type { PHDocument } from "document-model";
-import { Component, type ReactNode } from "react";
+import { Component, Suspense, type ReactNode } from "react";
 
 /**
  * Read another document by id without letting a dangling reference take the
@@ -33,10 +33,15 @@ class Boundary extends Component<{ id: string | null; children: RenderFn }, Stat
   }
   render() {
     const failed = this.state.error !== null;
+    // Suspense of our own: `use()` suspends until the document is cached, and
+    // without a boundary here that unwinds the whole hosting editor's render.
+    // The consumer already renders for `doc === undefined`.
     return (
-      <Reader id={failed ? null : this.props.id} failed={failed}>
-        {this.props.children}
-      </Reader>
+      <Suspense fallback={<>{this.props.children(undefined, failed)}</>}>
+        <Reader id={failed ? null : this.props.id} failed={failed}>
+          {this.props.children}
+        </Reader>
+      </Suspense>
     );
   }
 }
