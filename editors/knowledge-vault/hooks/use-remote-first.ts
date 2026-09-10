@@ -54,6 +54,7 @@ import {
   setDrives,
   subscriptionsUrlFromGraphqlUrl,
   useDrives,
+  useRenownAuth,
   useSelectedDrive,
   useSelectedNode,
   useSync,
@@ -63,6 +64,7 @@ import { createClient as createWsClient } from "graphql-ws";
 import { resolveReactorEndpoint } from "./subgraph-endpoint.js";
 import { enableRemoteFirst, withTransientRetry } from "../lib/remote-first.js";
 import { registerVaultHydrator } from "../../shared/vault-pull.js";
+import { closeCodeOf, refusedForMissingToken } from "../lib/live-feed-policy.js";
 import {
   announceVaultRemoteChange,
   debounced,
@@ -119,9 +121,17 @@ type DocumentChangesEvent = {
   context: { parentId: string | null; childId: string | null } | null;
 };
 
-/** Drives whose sync channel we already neutralised this session. */
 /** Drives whose sync channel has already been scoped to nothing. */
 const scopedDrives = new Set<string>();
+
+/**
+ * Set once a tokenless websocket handshake has been refused this page. A
+ * protected Switchboard refuses every such handshake the same way and logs
+ * each one as an error, so having learnt it once there is nothing to gain by
+ * asking again until a session exists — and the feed effect re-runs the
+ * moment one does.
+ */
+let anonymousRefused = false;
 
 /**
  * Sentinel document id the sync channel is filtered to. Keeps the channel
@@ -142,6 +152,11 @@ export function useRemoteFirst(): void {
   const sync = useSync();
   const selectedNode = useSelectedNode();
   const drives = useDrives();
+  // The signed-in address, from the same source AuthGate reads. It is a
+  // dependency of the live-feed effect: a refused tokenless handshake is
+  // never retried by graphql-ws, so the socket has to be re-created — not
+  // reconnected — when a session appears, changes, or ends.
+  const { address } = useRenownAuth();
   const drivesRef = useRef(drives);
   drivesRef.current = drives;
   /** Step 3's hydrator, for step 5 to call on structural events. */
@@ -388,7 +403,18 @@ export function useRemoteFirst(): void {
   // ── 5. Live change feed ───────────────────────────────────────────
   useEffect(() => {
     if (!driveId) return;
+    // Do not knock again on a door this page already found locked. Without
+    // this, every mount while signed out (StrictMode doubles them in dev)
+    // wrote another "Internal error" line into the Switchboard log.
+    if (!address && anonymousRefused) {
+      console.info(
+        "[RemoteFirst] Live change feed is waiting for sign-in; polling continues.",
+      );
+      return;
+    }
     let stopped = false;
+    /** Whether the most recent handshake carried a bearer. */
+    let hadToken = false;
 
     const wsUrl = subscriptionsUrlFromGraphqlUrl(resolveReactorEndpoint());
     const client = createWsClient({
@@ -397,15 +423,20 @@ export function useRemoteFirst(): void {
       // reads, and it is NOT covered by REQUIRE_AUTHENTICATED_CALLER, which
       // is a fetch middleware. With AUTH_ENABLED=true the server refuses a
       // tokenless connection outright ("Missing authorization in connection
-      // parameters"), so without this the live change feed simply dies.
-      // Resolved per connection, so a reconnect after login is authenticated.
+      // parameters"). Resolved per connection so a reconnect carries the
+      // current session; the effect's `address` dependency covers the case
+      // graphql-ws will not reconnect from (see `error` below).
       connectionParams: async () => {
         const token = await getBearerToken();
+        hadToken = !!token;
         return token ? { authorization: `Bearer ${token}` } : {};
       },
       // Keep trying for as long as the drive is selected: the Switchboard
       // restarts during development and deploys, and a socket that gives
       // up after five attempts silently degrades the app to polling.
+      // graphql-ws still treats a handful of close codes as fatal whatever
+      // this says — 4500 among them, which is what a tokenless handshake
+      // gets — so those are handled by re-creating the socket, not here.
       retryAttempts: Number.POSITIVE_INFINITY,
       shouldRetry: () => !stopped,
       // Note when the SERVER stops answering, not just when the TCP link
@@ -427,7 +458,12 @@ export function useRemoteFirst(): void {
           // revalidation covers the selected document on its next poll.
           hydrateRef.current?.();
         },
-        closed: () => setVaultLive(false),
+        closed: (event) => {
+          setVaultLive(false);
+          if (refusedForMissingToken(closeCodeOf(event), hadToken)) {
+            anonymousRefused = true;
+          }
+        },
         error: () => setVaultLive(false),
       },
     });
@@ -511,6 +547,17 @@ export function useRemoteFirst(): void {
           });
         },
         error: (error) => {
+          setVaultLive(false);
+          // A tokenless handshake refused for want of credentials is not a
+          // fault, it is a state: say so plainly instead of warning, and
+          // stop asking until a session exists (the effect re-runs then).
+          if (refusedForMissingToken(closeCodeOf(error), hadToken)) {
+            anonymousRefused = true;
+            console.info(
+              "[RemoteFirst] Live change feed needs a signed-in session; it will connect after sign-in. Polling continues.",
+            );
+            return;
+          }
           // graphql-ws delivers this when retries are exhausted or the
           // server rejected the subscription; with infinite retries it is
           // effectively "rejected". Polling is still running.
@@ -518,7 +565,6 @@ export function useRemoteFirst(): void {
             "[RemoteFirst] Live change feed unavailable; polling continues:",
             error,
           );
-          setVaultLive(false);
         },
         complete: () => setVaultLive(false),
       },
@@ -533,5 +579,5 @@ export function useRemoteFirst(): void {
         void client.dispose();
       }
     };
-  }, [driveId]);
+  }, [driveId, address]);
 }
