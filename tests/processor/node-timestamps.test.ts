@@ -14,6 +14,7 @@ import type { OperationWithContext } from "@powerhousedao/shared/document-model"
 import { createTestDb } from "../helpers/create-test-db.js";
 import { makeOp } from "../helpers/make-op.js";
 import { GraphIndexerProcessor } from "../../processors/graph-indexer/index.js";
+import { createGraphQuery } from "../../processors/graph-indexer/query.js";
 import type { DB } from "../../processors/graph-indexer/schema.js";
 
 // Under vitest `typeof window === "undefined"`, so the processor takes its
@@ -156,5 +157,50 @@ describe("graph_nodes.updated_at reflects document edit time", () => {
     ]);
     const value = await updatedAtFor("note-c");
     expect(Number.isNaN(new Date(value).getTime())).toBe(false);
+  });
+
+  it("orders `recent` by edit time, including kinds whose creation time is unknown", async () => {
+    // A MoC, a scope and a WBS project to `created_at: null` — their state
+    // carries no creation stamp. Ordering by that column put them in an
+    // arbitrary place and `since` excluded them, which is the whole point
+    // of selecting on `updated_at` instead.
+    const row = async (
+      documentId: string,
+      document_type: string,
+      updated_at: string,
+      created_at: string | null,
+    ) => {
+      await harness.db
+        .insertInto("graph_nodes")
+        .values({
+          id: documentId,
+          document_id: documentId,
+          title: documentId,
+          description: null,
+          note_type: null,
+          status: "CANONICAL",
+          document_type,
+          created_at,
+          updated_at,
+        })
+        .execute();
+    };
+    await row("old-note", "bai/knowledge-note", "2026-09-01T00:00:00.000Z", "2026-08-01T00:00:00.000Z");
+    // Created first of all, edited last: recency is about the edit.
+    await row("new-edit", "bai/knowledge-note", "2026-09-05T00:00:00.000Z", "2026-07-01T00:00:00.000Z");
+    await row("a-scope", "powerhouse/scopeofwork", "2026-09-04T00:00:00.000Z", null);
+    await row("a-moc", "bai/moc", "2026-09-03T00:00:00.000Z", null);
+
+    const query = createGraphQuery(harness.db);
+    expect((await query.recentNodes(10)).map((n) => n.documentId)).toEqual([
+      "new-edit",
+      "a-scope",
+      "a-moc",
+      "old-note",
+    ]);
+    // `since` follows the same column, so the null-created kinds survive it.
+    expect(
+      (await query.recentNodes(10, "2026-09-02T00:00:00.000Z")).map((n) => n.documentId),
+    ).toEqual(["new-edit", "a-scope", "a-moc"]);
   });
 });

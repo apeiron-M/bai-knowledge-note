@@ -852,15 +852,30 @@ export function createGraphQuery(db: Kysely<DB>) {
       return rows.map(rowToNode);
     },
 
+    /**
+     * The most recently EDITED nodes — the mirror of `staleNodes`, which
+     * selects on the same column.
+     *
+     * `created_at` would be the wrong column twice over: it is the creation
+     * time, not the last edit, and the projection leaves it null for MoCs,
+     * scopes and work breakdowns (their state carries no creation stamp), so
+     * ordering by it put those kinds in an arbitrary place — Postgres sorts
+     * NULLs first under DESC — and `since` dropped them entirely, because
+     * `null > <date>` is never true. `updated_at` is non-null by schema and
+     * carries the document's own modification time.
+     */
     async recentNodes(limit = 20, since?: string): Promise<GraphNodeResult[]> {
       let query = db
         .selectFrom("graph_nodes")
         .selectAll()
-        .orderBy("created_at", "desc")
+        // A stable tiebreak: two documents edited in the same millisecond
+        // must not swap places between calls.
+        .orderBy("updated_at", "desc")
+        .orderBy("document_id", "asc")
         .limit(limit);
 
       if (since) {
-        query = query.where("created_at", ">", since);
+        query = query.where("updated_at", ">", since);
       }
 
       const rows = await query.execute();

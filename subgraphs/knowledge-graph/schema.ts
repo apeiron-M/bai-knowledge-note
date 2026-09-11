@@ -240,6 +240,11 @@ export const schema: DocumentNode = gql`
       driveId: ID!
       origin: String!
     ): [KnowledgeGraphNode!]!
+    """
+    The most recently edited nodes, newest first. 'since' is an ISO instant
+    and filters on the same edit time, so a note created long ago but
+    changed today is included. The mirror of knowledgeGraphStale.
+    """
     knowledgeGraphRecent(
       driveId: ID!
       limit: Int

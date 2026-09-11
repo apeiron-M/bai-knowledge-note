@@ -1,6 +1,14 @@
 import "../../../shared/test/browser-globals.js";
-import { afterEach, describe, expect, it, vi } from "vitest";
-import { DOCUMENT_TYPES, VAULT_TOOLS, executeTool } from "./vault-tools.js";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+import {
+  CHAT_TOOLS,
+  DOCUMENT_TYPES,
+  VAULT_TOOLS,
+  WEB_TOOLS,
+  executeTool,
+  resetVaultDocumentListing,
+} from "./vault-tools.js";
+import { resetEnsCache } from "./ens.js";
 
 const CTX = { driveId: "drive-1" };
 
@@ -10,6 +18,14 @@ function mockGql(data: unknown) {
     json: () => Promise.resolve({ data }),
   }) as unknown as typeof fetch;
 }
+// Drive membership and resolved names are cached across calls by design;
+// between tests they must not be, or the first test to look decides what the
+// rest of the file believes the vault contains.
+beforeEach(() => {
+  resetVaultDocumentListing();
+  resetEnsCache();
+});
+
 function mockGqlSequence(...payloads: unknown[]) {
   const fn = vi.fn();
   for (const p of payloads) {
@@ -17,6 +33,27 @@ function mockGqlSequence(...payloads: unknown[]) {
   }
   globalThis.fetch = fn as unknown as typeof fetch;
 }
+/**
+ * The drive's own file list — what `driveMembers` reads to decide whether a
+ * document is still in the vault. Tools that ask the reactor by id or by type
+ * check it first, so a mocked sequence has to include it.
+ */
+function driveTree(...ids: string[]) {
+  return {
+    data: {
+      document: {
+        document: {
+          state: {
+            global: {
+              nodes: ids.map((id) => ({ id, kind: "file", name: id, documentType: "bai/knowledge-note" })),
+            },
+          },
+        },
+      },
+    },
+  };
+}
+
 function requestAt(i: number) {
   const calls = (globalThis.fetch as ReturnType<typeof vi.fn>).mock.calls;
   const [url, init] = calls[i] as [string, RequestInit];
@@ -36,8 +73,9 @@ const lastRequest = () =>
 afterEach(() => vi.restoreAllMocks());
 
 describe("VAULT_TOOLS", () => {
-  it("exposes exactly the ten read-only tools", () => {
+  it("exposes exactly the thirteen read-only tools", () => {
     expect(VAULT_TOOLS.map((t) => t.function.name).sort()).toEqual([
+      "document_history",
       "linked_notes",
       "list_documents",
       "list_projects",
@@ -45,10 +83,19 @@ describe("VAULT_TOOLS", () => {
       "notes_by_topic",
       "read_document",
       "read_note",
+      "recent_changes",
       "related_notes",
       "search_vault",
+      "vault_editors",
       "vault_stats",
     ]);
+  });
+
+  it("adds the outside-the-vault tools to the chat's set, but not to what the vault offers Connect", () => {
+    expect(WEB_TOOLS.map((t) => t.function.name)).toEqual(["search_web", "ens_lookup", "read_url"]);
+    expect(CHAT_TOOLS).toHaveLength(VAULT_TOOLS.length + WEB_TOOLS.length);
+    // aiTools (Connect's assistant) is built from VAULT_TOOLS alone.
+    expect(VAULT_TOOLS.some((t) => t.function.name.includes("web"))).toBe(false);
   });
 
   it("declares no mutation anywhere", () => {
@@ -260,7 +307,8 @@ describe("executeTool", () => {
       CTX,
     );
     expect(r.ok).toBe(true);
-    const { url, body } = lastRequest();
+    // Request 0 is the listing; the membership check follows it.
+    const { url, body } = requestAt(0);
     expect(url).toMatch(/\/graphql$/);
     expect(body.variables).toMatchObject({ type: "bai/source", limit: 50 });
     if (r.ok) expect((r.data as { total: number }).total).toBe(18);
@@ -451,6 +499,7 @@ describe("scope of work envelopes", () => {
   it("list_projects lists every envelope of every scope, citing the scope document", async () => {
     mockGqlSequence(
       { data: { findDocuments: { totalCount: 1, items: [{ id: "s1", name: "Powerhouse PMF" }] } } },
+      driveTree("s1"),
       docResponse("s1", "powerhouse/scopeofwork", "Powerhouse PMF", scope),
     );
     const r = await executeTool("list_projects", {}, CTX);
@@ -476,6 +525,7 @@ describe("scope of work envelopes", () => {
 
   it("read_document on a scope joins deliverables to their goals and names the wbs", async () => {
     mockGqlSequence(
+      driveTree("s1", "w9"),
       docResponse("s1", "powerhouse/scopeofwork", "Powerhouse PMF", scope),
       docResponse("w9", "bai/wbs", "PPD — WBS", wbs),
       { data: { n0: { title: "A note" } } },
@@ -514,6 +564,7 @@ describe("scope of work envelopes", () => {
 
   it("read_document on a WBS renders the goal tree and names the envelope it delivers", async () => {
     mockGqlSequence(
+      driveTree("w9", "s1"),
       docResponse("w9", "bai/wbs", "PPD — WBS", wbs),
       docResponse("s1", "powerhouse/scopeofwork", "Powerhouse PMF", scope),
     );
@@ -545,7 +596,7 @@ describe("list_documents nameContains", () => {
   };
 
   it("filters by title over the largest page and says how much it scanned", async () => {
-    mockGqlSequence(page);
+    mockGqlSequence(page, driveTree("s1", "s2", "s3"));
     const r = await executeTool("list_documents", { documentType: "bai/source", nameContains: "swarm" }, CTX);
     expect(r.ok).toBe(true);
     if (!r.ok) throw new Error(r.error);
@@ -559,21 +610,609 @@ describe("list_documents nameContains", () => {
         { documentId: "s3", title: "How Connect Swarm Integration Works", documentType: "bai/source" },
       ],
     });
-    expect(r.summary).toBe('listed 2 of 2 bai/source whose title contains "swarm" (scanned 3 of 3)');
+    expect(r.summary).toBe(
+      'listed 2 of 2 bai/source whose title contains "swarm" (scanned 3 in the vault of 3 the reactor holds)',
+    );
   });
 
   it("still honours limit on the filtered list and behaves as before without a filter", async () => {
-    mockGqlSequence(page);
+    mockGqlSequence(page, driveTree("s1", "s2", "s3"));
     const filtered = await executeTool("list_documents", { documentType: "bai/source", nameContains: "swarm", limit: 1 }, CTX);
     if (!filtered.ok) throw new Error(filtered.error);
     expect((filtered.data as { items: unknown[] }).items).toHaveLength(1);
 
-    mockGqlSequence(page);
+    mockGqlSequence(page, driveTree("s1", "s2", "s3"));
     const plain = await executeTool("list_documents", { documentType: "bai/source", limit: 2 }, CTX);
     if (!plain.ok) throw new Error(plain.error);
     expect(requestAt(0).body.variables).toEqual({ type: "bai/source", limit: 2 });
     expect(plain.data).not.toHaveProperty("matched");
     // The mock ignores paging, so the page holds 3; the tool still trims to the limit.
-    expect(plain.summary).toBe("listed 2 of 3 bai/source");
+    // "in the vault" is only claimed when membership was actually read.
+    expect(plain.summary).toBe("listed 2 of 3 bai/source in the vault");
+  });
+});
+
+describe("recent_changes — every document in the vault by last edit", () => {
+  const CTX = { driveId: "d1" };
+  const tree = {
+    data: {
+      document: {
+        document: {
+          state: {
+            global: {
+              nodes: [
+                { id: "f1", kind: "folder", name: "sources" },
+                { id: "s-old", kind: "file", name: "Old import", documentType: "bai/source" },
+                { id: "s-new", kind: "file", name: "Board minutes 2026-09", documentType: "bai/source" },
+                { id: "n1", kind: "file", name: "a-slug", documentType: "bai/knowledge-note" },
+                { id: "hr", kind: "file", name: "HealthReport", documentType: "bai/health-report" },
+                { id: "elsewhere", kind: "file", name: "not stamped", documentType: "bai/moc" },
+              ],
+            },
+          },
+        },
+      },
+    },
+  };
+  const contained = {
+    data: {
+      findDocuments: {
+        items: [
+          { id: "s-new", lastModifiedAtUtcIso: "2026-09-04T09:00:00.000Z" },
+          { id: "hr", lastModifiedAtUtcIso: "2026-09-04T16:00:00.000Z" },
+          { id: "n1", lastModifiedAtUtcIso: "2026-09-03T10:00:00.000Z" },
+          { id: "stranger", lastModifiedAtUtcIso: "2026-09-05T00:00:00.000Z" }, // left the tree: still in the reactor
+        ],
+      },
+    },
+  };
+  const indexed = {
+    data: {
+      knowledgeGraphRecent: [
+        // The index supplies the human title; its own stamp lags a reindex
+        // behind the reactor's, which is why the reactor's is used.
+        { documentId: "n1", title: "A real title", noteType: "concept", status: "CANONICAL", updatedAt: "2026-09-02T08:00:00.000Z" },
+        // Indexed but absent from the reactor listing: the index stands in.
+        { documentId: "s-old", title: "Old import", noteType: null, status: null, updatedAt: "2026-08-01T00:00:00.000Z" },
+      ],
+    },
+  };
+
+  /** One document's last operation, as `lastOperationOf` asks for it. */
+  const lastOp = (type: string, input: Record<string, unknown>, address: string | null, app: string) => ({
+    data: {
+      documentOperations: {
+        items: [
+          { index: 3, action: { type, input, context: { signer: { user: { address }, app: { name: app } } } } },
+          // An earlier operation at the same instant: the highest index wins.
+          { index: 2, action: { type: "SET_TITLE", input: { title: "older" }, context: { signer: { user: { address }, app: { name: app } } } } },
+        ],
+      },
+    },
+  });
+  const ens = (name: string) => ({ address: A, ens_primary: name });
+  const A = "0xadbA7C2F82139031D7564D18aC22D09B12A0BcA4";
+
+  beforeEach(() => {
+    resetVaultDocumentListing();
+    resetEnsCache();
+  });
+
+  it("merges the drive tree with both time sources, newest first, and counts documents with no known edit time", async () => {
+    mockGqlSequence(
+      tree,
+      contained,
+      indexed,
+      // one per returned row, in order
+      lastOp("SET_STATUS", { status: "CANONICAL" }, A, "switchboard"),
+      lastOp("SET_TITLE", { title: "Board minutes" }, A, "connect"),
+      lastOp("SET_CONTENT", { content: "x".repeat(40) }, null, "switchboard"),
+      lastOp("ADD_TOPIC", { name: "ingestion" }, A, "connect"),
+      ens("liberuum.eth"), // the one ENS lookup all three signed rows share
+    );
+    const r = await executeTool("recent_changes", {}, CTX);
+    expect(r.ok).toBe(true);
+    if (!r.ok) throw new Error(r.error);
+    const d = r.data as { items: { documentId: string; title: string; documentType: string; lastModifiedAt: string; noteType: string | null; change?: string; by?: string | null; via?: string | null }[]; undated: number };
+    expect(d.items.map((i) => i.documentId)).toEqual(["hr", "s-new", "n1", "s-old"]);
+    expect(d.items[0]).toMatchObject({ documentId: "hr", title: "HealthReport", documentType: "bai/health-report", lastModifiedAt: "2026-09-04T16:00:00.000Z", noteType: null, status: null });
+    // The reactor's stamp wins over the index's older one; the index still
+    // supplies the note's human title in place of its slug.
+    expect(d.items[2]).toMatchObject({ documentId: "n1", title: "A real title", lastModifiedAt: "2026-09-03T10:00:00.000Z", noteType: "concept" });
+    // s-old is missing from the reactor listing, so its index stamp stands in.
+    expect(d.items[3]).toMatchObject({ documentId: "s-old", lastModifiedAt: "2026-08-01T00:00:00.000Z" });
+    // Each row answers who / what / when / where in one call.
+    expect(d.items[0]).toMatchObject({
+      documentType: "bai/health-report",
+      change: "Status changed to CANONICAL",
+      action: "SET_STATUS",
+      by: A,
+      byName: "liberuum.eth",
+      byShort: "0xadbA…BcA4",
+      via: "switchboard",
+    });
+    // An unsigned operation names the app and nobody else.
+    expect(d.items[2]).toMatchObject({ change: "Content updated (40 chars)", by: null, via: "switchboard" });
+    // `elsewhere` is in the vault but no source knows a time; `stranger` has
+    // left the drive tree, so it is not the vault's any more.
+    expect(d.undated).toBe(1);
+    // The summary alone answers who and what for the newest change.
+    expect(r.summary).toBe(
+      "listed the 4 most recently edited documents of 4 (1 more has no recorded edit time); newest: liberuum.eth — Status changed to CANONICAL",
+    );
+    // Membership came from the tree, times from the two listings.
+    expect(requestAt(0).body.query).toContain("document(identifier");
+    expect(requestAt(1).body.variables).toEqual({ parentId: "d1" });
+    expect(requestAt(2).body.query).toContain("knowledgeGraphRecent");
+  });
+
+  it("filters by type and by since, and serves repeat calls from the cache", async () => {
+    mockGqlSequence(
+      tree,
+      contained,
+      indexed,
+      lastOp("INGEST_SOURCE", {}, A, "switchboard"),
+      lastOp("INGEST_SOURCE", {}, A, "switchboard"),
+      ens("liberuum.eth"),
+      lastOp("SET_STATUS", { status: "CANONICAL" }, A, "switchboard"),
+    );
+    const sources = await executeTool("recent_changes", { documentType: "bai/source" }, CTX);
+    if (!sources.ok) throw new Error(sources.error);
+    expect((sources.data as { items: { documentId: string }[] }).items.map((i) => i.documentId)).toEqual(["s-new", "s-old"]);
+    expect(sources.summary).toContain("bai/source documents of 4");
+
+    const recent = await executeTool("recent_changes", { since: "2026-09-04", limit: 1 }, CTX);
+    if (!recent.ok) throw new Error(recent.error);
+    expect((recent.data as { items: { documentId: string }[] }).items.map((i) => i.documentId)).toEqual(["hr"]);
+    expect(recent.summary).toContain("since 2026-09-04");
+    // The listing itself was fetched once: the second call reused it and
+    // only asked for the rows' last operations.
+    const urls = (globalThis.fetch as ReturnType<typeof vi.fn>).mock.calls.map((c) => (c as [string])[0]);
+    expect(urls.filter((u) => u.includes("/graphql/knowledgeGraph"))).toHaveLength(1);
+  });
+
+  it("keeps the row when its last operation cannot be fetched", async () => {
+    mockGqlSequence(tree, contained, indexed, { errors: [{ message: "nope" }] });
+    const r = await executeTool("recent_changes", { limit: 1 }, CTX);
+    if (!r.ok) throw new Error(r.error);
+    const item = (r.data as { items: Record<string, unknown>[] }).items[0];
+    expect(item.documentId).toBe("hr");
+    expect(item.change).toBeUndefined();
+  });
+
+  it("rejects a date it cannot read and an unknown type", async () => {
+    const bad = await executeTool("recent_changes", { since: "yesterday" }, CTX);
+    expect(bad.ok).toBe(false);
+    if (!bad.ok) expect(bad.error).toContain("ISO 8601");
+    const badType = await executeTool("recent_changes", { documentType: "evil/type" }, CTX);
+    expect(badType.ok).toBe(false);
+  });
+
+  it("still answers when one time source fails", async () => {
+    mockGqlSequence(
+      tree,
+      { errors: [{ message: "boom" }] },
+      indexed,
+      lastOp("SET_TITLE", { title: "t" }, A, "connect"),
+      lastOp("SET_TITLE", { title: "t" }, A, "connect"),
+      ens("liberuum.eth"),
+    );
+    const r = await executeTool("recent_changes", {}, CTX);
+    if (!r.ok) throw new Error(r.error);
+    expect((r.data as { items: { documentId: string }[] }).items.map((i) => i.documentId)).toEqual(["n1", "s-old"]);
+  });
+});
+
+describe("tool arguments a model wraps in citation syntax", () => {
+  it("read_note unwraps a [[documentId]] before asking the graph", async () => {
+    mockGqlSequence({ data: { knowledgeGraphNodeByDocumentId: { documentId: "n1", title: "T", content: "body", topics: [] } } });
+    const r = await executeTool("read_note", { documentId: "[[n1]]" }, { driveId: "d1" });
+    expect(r.ok).toBe(true);
+    expect(requestAt(0).body.variables).toEqual({ driveId: "d1", documentId: "n1" });
+  });
+});
+
+describe("document_history — who changed a document, and what", () => {
+  const CTX = { driveId: "d1" };
+  const ADDRESS = "0x1AD3d72e54Fb0eB46e87F82f77B284FC8a66b16C";
+  const head = (revision: number) => ({
+    data: {
+      document: {
+        document: {
+          id: "w9",
+          name: "Treasury Management — WBS",
+          documentType: "bai/wbs",
+          createdAtUtcIso: "2026-09-05T10:14:34.900Z",
+          lastModifiedAtUtcIso: "2026-09-05T12:13:25.697Z",
+          revisionsList: [
+            { scope: "document", revision: 2 },
+            { scope: "global", revision },
+          ],
+        },
+      },
+    },
+  });
+  const signer = (address: string, app: string) => ({
+    signer: { user: { address }, app: { name: app } },
+  });
+  const ops = {
+    data: {
+      documentOperations: {
+        items: [
+          {
+            index: 83,
+            timestampUtcMs: "2026-09-05T11:51:14.100Z",
+            error: null,
+            action: { type: "ASSIGN_GOAL", input: { assignee: "vault-harness" }, context: signer(ADDRESS, "powerhouse-knowledge") },
+          },
+          {
+            index: 84,
+            timestampUtcMs: "2026-09-05T12:13:25.697Z",
+            error: null,
+            action: { type: "SET_GOAL_STATUS", input: { status: "IN_REVIEW" }, context: signer(ADDRESS, "powerhouse-knowledge") },
+          },
+        ],
+      },
+    },
+  };
+
+  it("selects the tail by revision (offset is ignored by the reactor) and returns it newest first", async () => {
+    mockGqlSequence(driveTree("w9"), head(85), ops);
+    const r = await executeTool("document_history", { documentId: "w9", limit: 2 }, CTX);
+    expect(r.ok).toBe(true);
+    if (!r.ok) throw new Error(r.error);
+    // 85 operations, 2 wanted → everything from revision 83 on.
+    // request 0 is the membership check, 1 the document, 2 its operations
+    expect(requestAt(2).body.variables).toEqual({ id: "w9", since: 83, limit: 2 });
+    const d = r.data as { revision: number; title: string; changes: Record<string, unknown>[] };
+    expect(d.revision).toBe(85);
+    expect(d.changes.map((c) => c.action)).toEqual(["SET_GOAL_STATUS", "ASSIGN_GOAL"]);
+    // Each change reads in the vault's own vocabulary, with who and how.
+    expect(d.changes[0]).toEqual({
+      revision: 85,
+      at: "2026-09-05T12:13:25.697Z",
+      action: "SET_GOAL_STATUS",
+      change: "Goal IN_REVIEW",
+      by: ADDRESS,
+      // No ENS name for this signer in the mocked resolver.
+      byName: null,
+      byShort: "0x1AD3…b16C",
+      via: "powerhouse-knowledge",
+    });
+    expect(r.summary).toBe(
+      'read the last 2 of 85 changes to "Treasury Management — WBS" — newest: Goal IN_REVIEW by 0x1AD3…b16C via powerhouse-knowledge',
+    );
+  });
+
+  it("asks for everything when the document has fewer operations than the limit", async () => {
+    mockGqlSequence(driveTree("w9"), head(2), { data: { documentOperations: { items: ops.data.documentOperations.items.slice(0, 1) } } });
+    const r = await executeTool("document_history", { documentId: "w9" }, CTX);
+    if (!r.ok) throw new Error(r.error);
+    expect(requestAt(2).body.variables).toEqual({ id: "w9", since: 0, limit: 10 });
+  });
+
+  it("reports an unsigned operation as the app that made it, with no person", async () => {
+    mockGqlSequence(driveTree("w9"), head(1), {
+      data: {
+        documentOperations: {
+          items: [
+            { index: 0, timestampUtcMs: "2026-08-14T11:35:17.301Z", error: null, action: { type: "SET_DRIVE_NAME", input: { name: "powerhouse-knowledge" }, context: signer("", "switchboard") } },
+          ],
+        },
+      },
+    });
+    const r = await executeTool("document_history", { documentId: "w9" }, CTX);
+    if (!r.ok) throw new Error(r.error);
+    const c = (r.data as { changes: { by: unknown; byShort: unknown; via: unknown }[] }).changes[0];
+    expect(c).toMatchObject({ by: null, byShort: null, via: "switchboard" });
+    expect(r.summary).toContain("via switchboard");
+  });
+
+  it("records a rejected operation as failed, and needs a documentId", async () => {
+    mockGqlSequence(driveTree("w9"), head(1), {
+      data: {
+        documentOperations: {
+          items: [
+            { index: 0, timestampUtcMs: "2026-09-01T00:00:00.000Z", error: "Description exceeds 200 characters", action: { type: "SET_DESCRIPTION", input: { description: "x" }, context: signer(ADDRESS, "connect") } },
+          ],
+        },
+      },
+    });
+    const r = await executeTool("document_history", { documentId: "w9" }, CTX);
+    if (!r.ok) throw new Error(r.error);
+    expect((r.data as { changes: { failed?: string }[] }).changes[0].failed).toBe("Description exceeds 200 characters");
+
+    const missing = await executeTool("document_history", {}, CTX);
+    expect(missing.ok).toBe(false);
+  });
+
+  it("says so when the document does not exist", async () => {
+    mockGqlSequence(driveTree("nope"), { data: { document: null } });
+    const r = await executeTool("document_history", { documentId: "nope" }, CTX);
+    expect(r.ok).toBe(false);
+    if (!r.ok) expect(r.error).toBe("no document with id nope");
+  });
+});
+
+describe("search_web / read_url", () => {
+  const CTX = { driveId: "d1" };
+  const READER = `Title: Example Domain\n\nMarkdown Content:\n# Example Domain\n\nThis domain is for use in illustrative examples. You may use this domain in literature without prior coordination or asking for permission.`;
+
+  beforeEach(() => localStorage.clear());
+
+  it("searches the keyless path and labels the result as outside the vault", async () => {
+    const ddg = (u: string) => `https://duckduckgo.com/l/?uddg=${encodeURIComponent(u)}`;
+    mockGqlSequence(); // no GraphQL here; the tool talks to the reader
+    globalThis.fetch = vi.fn().mockResolvedValue({
+      ok: true,
+      status: 200,
+      text: () =>
+        Promise.resolve(
+          `Markdown Content:\n## [Alan Turing - Wikipedia](${ddg("https://en.wikipedia.org/wiki/Alan_Turing")})\n\n[English mathematician.](${ddg("https://en.wikipedia.org/wiki/Alan_Turing")})`,
+        ),
+    }) as unknown as typeof fetch;
+    const r = await executeTool("search_web", { query: "alan turing", limit: 3 }, CTX);
+    expect(r.ok).toBe(true);
+    if (!r.ok) throw new Error(r.error);
+    const d = r.data as { via: string; outsideTheVault: boolean; results: { url: string }[] };
+    expect(d.via).toBe("duckduckgo");
+    expect(d.outsideTheVault).toBe(true);
+    expect(d.results[0].url).toBe("https://en.wikipedia.org/wiki/Alan_Turing");
+    expect(r.summary).toBe('searched the web for "alan turing" via DuckDuckGo → 1 result');
+  });
+
+  it("reads a page and reports a failure in the model's terms", async () => {
+    globalThis.fetch = vi.fn().mockResolvedValue({ ok: true, status: 200, text: () => Promise.resolve(READER) }) as unknown as typeof fetch;
+    const r = await executeTool("read_url", { url: "https://example.com" }, CTX);
+    if (!r.ok) throw new Error(r.error);
+    expect(r.summary).toBe('read "Example Domain"');
+    expect((r.data as { outsideTheVault: boolean }).outsideTheVault).toBe(true);
+
+    const bad = await executeTool("read_url", { url: "http://localhost:11434" }, CTX);
+    expect(bad.ok).toBe(false);
+    if (!bad.ok) expect(bad.error).toContain("private address");
+
+    const missing = await executeTool("search_web", {}, CTX);
+    expect(missing.ok).toBe(false);
+  });
+
+  it("uses a Tavily key when this browser has one stored", async () => {
+    localStorage.setItem("bai-chat-web:v1", JSON.stringify({ tavilyKey: "tvly-x" }));
+    globalThis.fetch = vi.fn().mockResolvedValue({
+      ok: true,
+      status: 200,
+      json: () => Promise.resolve({ answer: "a", results: [{ title: "t", url: "https://x.example", content: "c" }] }),
+    }) as unknown as typeof fetch;
+    const r = await executeTool("search_web", { query: "q" }, CTX);
+    if (!r.ok) throw new Error(r.error);
+    expect((r.data as { via: string }).via).toBe("tavily");
+    expect(r.summary).toContain("via Tavily");
+  });
+});
+
+describe("read_url surfaces a useless page in the trail", () => {
+  it("says nothing usable rather than reading out a 404", async () => {
+    globalThis.fetch = vi.fn().mockResolvedValue({
+      ok: true,
+      status: 200,
+      text: () => Promise.resolve("Title: t\n\nMarkdown Content:\n## 404\n\n## This page could not be found."),
+    }) as unknown as typeof fetch;
+    const r = await executeTool("read_url", { url: "https://example.com/gone" }, { driveId: "d1" });
+    expect(r.ok).toBe(true);
+    if (!r.ok) throw new Error(r.error);
+    expect(r.summary).toBe("read https://example.com/gone — nothing usable: This is a not-found page, not content");
+    expect((r.data as { warning?: string }).warning).toMatch(/not-found page/);
+  });
+});
+
+describe("ens_lookup", () => {
+  const ADDRESS = "0xadbA7C2F82139031D7564D18aC22D09B12A0BcA4";
+
+  it("answers who an address is, in one line the model can quote", async () => {
+    globalThis.fetch = vi.fn().mockResolvedValue({
+      ok: true,
+      status: 200,
+      json: () => Promise.resolve({ address: ADDRESS, ens: "liberuum.eth", ens_primary: "liberuum.eth" }),
+    }) as unknown as typeof fetch;
+    const r = await executeTool("ens_lookup", { query: ADDRESS }, { driveId: "d1" });
+    expect(r.ok).toBe(true);
+    if (!r.ok) throw new Error(r.error);
+    expect(r.summary).toBe(`liberuum.eth is the ENS name of ${ADDRESS}`);
+    expect((r.data as { name: string }).name).toBe("liberuum.eth");
+  });
+
+  it("says plainly when an address has no name, and needs a query", async () => {
+    globalThis.fetch = vi.fn().mockResolvedValue({
+      ok: false,
+      status: 404,
+      json: () => Promise.resolve({ error: true, message: "Unable to resolve 0x…dead because it's not registered. Register at app.ens.domains" }),
+    }) as unknown as typeof fetch;
+    const r = await executeTool("ens_lookup", { query: "0x000000000000000000000000000000000000dEaD" }, { driveId: "d1" });
+    if (!r.ok) throw new Error(r.error);
+    expect(r.summary).toMatch(/has no ENS name — Unable to resolve/);
+    expect((r.data as { name: string | null }).name).toBeNull();
+
+    expect((await executeTool("ens_lookup", {}, { driveId: "d1" })).ok).toBe(false);
+  });
+});
+
+describe("vault_editors", () => {
+  const CTX = { driveId: "d1" };
+  const A = "0xadbA7C2F82139031D7564D18aC22D09B12A0BcA4";
+  const B = "0x1AD3d72e54Fb0eB46e87F82f77B284FC8a66b16C";
+  const op = (signerAddress: string | null, signerApp: string, documentId: string, timestamp: string) => ({
+    documentId,
+    timestamp,
+    signerAddress,
+    signerApp,
+  });
+  const activity = {
+    data: {
+      knowledgeGraphActivity: [
+        op(A, "switchboard", "n1", "2026-09-01T10:00:00.000Z"),
+        op(A, "powerhouse-knowledge", "n2", "2026-09-04T10:00:00.000Z"),
+        op(A, "powerhouse-knowledge", "n2", "2026-09-05T10:00:00.000Z"),
+        op(B, "powerhouse-knowledge", "n3", "2026-09-03T10:00:00.000Z"),
+        op("", "switchboard", "n4", "2026-08-30T10:00:00.000Z"),
+      ],
+    },
+  };
+
+  beforeEach(() => {
+    resetEnsCache();
+    localStorage.clear();
+  });
+
+  it("groups by person — one address through two apps is one editor, not two", async () => {
+    mockGqlSequence(activity);
+    // The ENS lookups that follow the GraphQL call.
+    const gqlFetch = globalThis.fetch as ReturnType<typeof vi.fn>;
+    gqlFetch.mockResolvedValue({
+      ok: true,
+      status: 200,
+      json: () => Promise.resolve({ address: A, ens_primary: "liberuum.eth" }),
+    });
+    const r = await executeTool("vault_editors", {}, CTX);
+    expect(r.ok).toBe(true);
+    if (!r.ok) throw new Error(r.error);
+    const d = r.data as {
+      editors: { name: string | null; address: string; operations: number; apps: Record<string, number>; documents: number; firstEdit: string; lastEdit: string }[];
+      signedOperations: number;
+      unsignedOperations: number;
+      countedOperations: number;
+      coverage: string;
+    };
+    expect(d.editors).toHaveLength(2);
+    expect(d.editors[0]).toMatchObject({
+      address: A,
+      operations: 3,
+      documents: 2,
+      apps: { switchboard: 1, "powerhouse-knowledge": 2 },
+    });
+    expect(d.editors[0].firstEdit).toBe("2026-09-01T10:00:00.000Z");
+    expect(d.editors[0].lastEdit).toBe("2026-09-05T10:00:00.000Z");
+    // Unsigned operations are counted, never attributed to somebody.
+    expect(d.unsignedOperations).toBe(1);
+    expect(d.signedOperations).toBe(4);
+    expect(d.countedOperations).toBe(5);
+    expect(d.coverage).toContain("graph index");
+    expect(r.summary).toMatch(/^2 editors across 5 recorded operations \(1 unsigned\); most active: /);
+  });
+
+  it("rejects a date it cannot read", async () => {
+    const r = await executeTool("vault_editors", { since: "lately" }, CTX);
+    expect(r.ok).toBe(false);
+    if (!r.ok) expect(r.error).toContain("ISO 8601");
+  });
+});
+
+describe("tool name aliases", () => {
+  it("answers the names other harnesses use instead of refusing", async () => {
+    globalThis.fetch = vi.fn().mockResolvedValue({
+      ok: true,
+      status: 200,
+      text: () => Promise.resolve("Title: Example\n\nMarkdown Content:\n" + "Real page text about a subject. ".repeat(10)),
+    }) as unknown as typeof fetch;
+    // A proxy that injects its own web tools calls them web_search / web_fetch.
+    const fetched = await executeTool("web_fetch", { url: "https://example.com" }, { driveId: "d1" });
+    expect(fetched.ok).toBe(true);
+    const unknown = await executeTool("definitely_not_a_tool", {}, { driveId: "d1" });
+    expect(unknown.ok).toBe(false);
+    if (!unknown.ok) expect(unknown.error).toContain('unknown tool "definitely_not_a_tool"');
+  });
+});
+
+describe("a deleted document is not the vault's", () => {
+  const CTX = { driveId: "d1" };
+  // The drive tree holds one scope; the reactor still answers for both.
+  const tree = {
+    data: {
+      document: {
+        document: {
+          state: {
+            global: {
+              nodes: [
+                { id: "live-sow", kind: "file", name: "Powerhouse PMF", documentType: "powerhouse/scopeofwork" },
+                { id: "n1", kind: "file", name: "a-note", documentType: "bai/knowledge-note" },
+              ],
+            },
+          },
+        },
+      },
+    },
+  };
+  const byType = (items: { id: string; name: string; documentType?: string }[]) => ({
+    data: { findDocuments: { totalCount: items.length, items } },
+  });
+  const scope = {
+    title: "Sow of the year",
+    description: "",
+    status: "SUBMITTED",
+    contributors: [],
+    projects: [],
+    deliverables: [],
+    roadmaps: [],
+  };
+
+  beforeEach(() => {
+    resetVaultDocumentListing();
+    resetEnsCache();
+  });
+
+  it("list_projects skips a scope the drive tree no longer holds", async () => {
+    mockGqlSequence(
+      byType([
+        { id: "live-sow", name: "Powerhouse PMF" },
+        { id: "ghost-sow", name: "test sowi" },
+      ]),
+      tree,
+      { data: { document: { document: { id: "live-sow", name: "Powerhouse PMF", documentType: "powerhouse/scopeofwork", state: { global: { ...scope, title: "Powerhouse PMF" } } } } } },
+    );
+    const r = await executeTool("list_projects", {}, CTX);
+    expect(r.ok).toBe(true);
+    if (!r.ok) throw new Error(r.error);
+    const d = r.data as { scopes: number; projects: unknown[] };
+    expect(d.scopes).toBe(1);
+    // The ghost was never read: only the live scope's document was fetched.
+    const reads = (globalThis.fetch as ReturnType<typeof vi.fn>).mock.calls
+      .map((c) => JSON.parse(((c as [string, RequestInit])[1].body as string)) as { variables: Record<string, unknown> })
+      .filter((b) => b.variables.id === "ghost-sow");
+    expect(reads).toHaveLength(0);
+  });
+
+  it("list_documents counts what the vault holds, not what the reactor remembers", async () => {
+    mockGqlSequence(
+      byType([
+        { id: "n1", name: "a-note", documentType: "bai/knowledge-note" },
+        { id: "deleted", name: "gone", documentType: "bai/knowledge-note" },
+      ]),
+      tree,
+    );
+    const r = await executeTool("list_documents", { documentType: "bai/knowledge-note" }, CTX);
+    if (!r.ok) throw new Error(r.error);
+    expect((r.data as { items: { documentId: string }[] }).items.map((i) => i.documentId)).toEqual(["n1"]);
+    expect(r.summary).toBe("listed 1 of 1 bai/knowledge-note in the vault");
+  });
+
+  it("read_document and document_history refuse a document the vault no longer holds", async () => {
+    mockGqlSequence(tree, tree);
+    const read = await executeTool("read_document", { documentId: "ghost-sow" }, CTX);
+    expect(read.ok).toBe(false);
+    if (!read.ok) expect(read.error).toMatch(/not in this vault — it was deleted/);
+
+    const history = await executeTool("document_history", { documentId: "ghost-sow" }, CTX);
+    expect(history.ok).toBe(false);
+    if (!history.ok) expect(history.error).toMatch(/not in this vault/);
+  });
+
+  it("lets everything through when membership cannot be established", async () => {
+    // The drive tree failed: hiding the whole vault would be worse than
+    // occasionally showing a document that has left it.
+    mockGqlSequence(
+      { errors: [{ message: "drive unreachable" }] },
+      { data: { document: { document: { id: "ghost-doc", name: "gone", documentType: "bai/source", state: { global: { title: "x", content: "y" } } } } } },
+    );
+    const r = await executeTool("read_document", { documentId: "ghost-doc" }, CTX);
+    expect(r.ok).toBe(true);
   });
 });

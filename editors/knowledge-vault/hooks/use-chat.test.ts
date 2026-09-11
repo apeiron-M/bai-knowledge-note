@@ -2,7 +2,12 @@ import "../../shared/test/browser-globals.js";
 import { describe, expect, it, vi } from "vitest";
 import {
   ANSWER_NOW,
+  CHECK_NOW,
   MAX_ITERATIONS,
+  NO_OUTAGE,
+  TOOL_TEXT_RETRY,
+  answeredWithoutLooking,
+  claimsAnOutageThatDidNotHappen,
   consultedDocuments,
   extractCitations,
   needsCitationRepair,
@@ -37,10 +42,11 @@ describe("runAgentLoop", () => {
     expect(r.trail).toEqual([]);
     expect(r.iterations).toBe(1);
     expect(executeTool).not.toHaveBeenCalled();
-    // Tools are always offered so the model can choose.
+    // Tools are always offered so the model can choose: the vault's thirteen
+    // plus search_web, ens_lookup and read_url.
     expect(
       (streamChat.mock.calls[0][0] as { tools: unknown[] }).tools.length,
-    ).toBe(10);
+    ).toBe(16);
   });
 
   it("executes a tool call and feeds the result back keyed to the call id", async () => {
@@ -326,6 +332,202 @@ describe("runAgentLoop", () => {
   });
 });
 
+describe("runAgentLoop unreadable tool markup", () => {
+  const round = (text: string) => ({ text, toolCalls: [], finishReason: "stop" });
+  const junk = "Let me look.\n<tool_call>\n<weird>read_note</weird>\n</tool_call>";
+
+  it("asks once for a runnable form, then runs what comes back", async () => {
+    const streamChat = vi
+      .fn()
+      .mockResolvedValueOnce(round(junk))
+      .mockResolvedValueOnce({
+        text: "",
+        toolCalls: [tc("vault_stats", "{}")],
+        finishReason: "tool_calls",
+      })
+      .mockResolvedValueOnce(round("The vault holds 521 notes."));
+    const executeTool = vi.fn().mockResolvedValue({ ok: true, data: { noteCount: 521 }, summary: "vault: 521 notes" });
+    const trail: TrailEntry[] = [];
+    const r = await runAgentLoop({
+      ...base,
+      messages: [{ role: "user", content: "how big?" }],
+      onTrail: (e) => trail.push(e),
+      deps: { streamChat, executeTool } as never,
+    });
+    expect(r.text).toBe("The vault holds 521 notes.");
+    // The loop hands every round the same messages array, so look for the
+    // nudge where it was inserted rather than at the end.
+    const sent = (streamChat.mock.calls[1][0] as { messages: { role: string; content: string }[] }).messages;
+    const nudge = sent.findIndex((m) => m.role === "system" && m.content === TOOL_TEXT_RETRY);
+    expect(nudge).toBeGreaterThan(0);
+    expect(sent[nudge].content).toContain('<tool_call>{"name": "<tool>"');
+    expect(sent[nudge - 1]).toEqual({ role: "assistant", content: junk });
+    expect(trail.map((e) => e.tool)).toEqual(["compat", "vault_stats"]);
+    expect(trail[0].summary).toContain("runnable form");
+  });
+
+  it("strips the markup from the answer when the model does it again, and says so in the trail", async () => {
+    const streamChat = vi.fn().mockResolvedValueOnce(round(junk)).mockResolvedValueOnce(round(`${junk}\nSo: 42.`));
+    const trail: TrailEntry[] = [];
+    const r = await runAgentLoop({
+      ...base,
+      messages: [{ role: "user", content: "q" }],
+      onTrail: (e) => trail.push(e),
+      deps: { streamChat, executeTool: vi.fn() } as never,
+    });
+    expect(r.text).toBe("Let me look.\n\nSo: 42.");
+    expect(trail.map((e) => [e.tool, e.ok])).toEqual([["compat", true], ["compat", false]]);
+  });
+
+  it("runs Qwen-style text calls directly, with no nudge", async () => {
+    const streamChat = vi
+      .fn()
+      .mockResolvedValueOnce(round("<tool_call>\n<function=vault_stats>\n</function>\n</tool_call>"))
+      .mockResolvedValueOnce(round("521 notes."));
+    const executeTool = vi.fn().mockResolvedValue({ ok: true, data: { noteCount: 521 }, summary: "vault: 521 notes" });
+    const r = await runAgentLoop({ ...base, messages: [{ role: "user", content: "q" }], deps: { streamChat, executeTool } as never });
+    expect(executeTool).toHaveBeenCalledWith("vault_stats", {}, { driveId: "d" });
+    expect(r.text).toBe("521 notes.");
+    expect(r.trail.map((e) => e.tool)).toEqual(["compat", "vault_stats"]);
+  });
+});
+
+describe("runAgentLoop false outage", () => {
+  const round = (text: string, toolCalls: unknown[] = []) => ({
+    text,
+    toolCalls,
+    finishReason: toolCalls.length ? "tool_calls" : "stop",
+  });
+
+  it("asks once when an answer blames the vault though nothing failed", async () => {
+    const streamChat = vi
+      .fn()
+      .mockResolvedValueOnce(round("I cannot access the vault right now — the tool for listing projects is not responding."))
+      .mockResolvedValueOnce(round("", [tc("list_projects", "{}")]))
+      .mockResolvedValueOnce(round("There is one project: Powerhouse PMF [[s1]]."));
+    const executeTool = vi.fn().mockResolvedValue({
+      ok: true,
+      data: { projects: [{ documentId: "s1", title: "Powerhouse PMF" }] },
+      summary: "listed 1 envelope across 1 scope",
+    });
+    const trail: TrailEntry[] = [];
+    const r = await runAgentLoop({
+      ...base,
+      messages: [{ role: "user", content: "What projects are there?" }],
+      onTrail: (e) => trail.push(e),
+      deps: { streamChat, executeTool } as never,
+    });
+    expect(r.text).toContain("Powerhouse PMF");
+    const sent = (streamChat.mock.calls[1][0] as { messages: { role: string; content: string }[] }).messages;
+    expect(sent.some((m) => m.role === "system" && m.content === NO_OUTAGE)).toBe(true);
+    expect(trail[0].summary).toContain("reported the vault as unreachable");
+  });
+
+  it("leaves the answer alone when a tool really did fail", async () => {
+    const streamChat = vi
+      .fn()
+      .mockResolvedValueOnce(round("", [tc("list_projects", "{}")]))
+      .mockResolvedValueOnce(round("I could not retrieve the projects: the reactor answered 502."));
+    const executeTool = vi.fn().mockResolvedValue({ ok: false, error: "HTTP 502 from the reactor" });
+    const streams = await runAgentLoop({
+      ...base,
+      messages: [{ role: "user", content: "What projects are there?" }],
+      deps: { streamChat, executeTool } as never,
+    });
+    // Two rounds, not three: the claim was true, so nothing was asked again.
+    expect(streamChat).toHaveBeenCalledTimes(2);
+    expect(streams.text).toContain("502");
+  });
+
+  it("claimsAnOutageThatDidNotHappen recognises the phrasings models use", () => {
+    const clean: TrailEntry[] = [{ tool: "list_projects", summary: "ok", ok: true, data: {} }];
+    const failed: TrailEntry[] = [{ tool: "list_projects", summary: "boom", ok: false, error: "HTTP 500" }];
+    for (const claim of [
+      "The vault is currently inaccessible.",
+      "I cannot access the vault right now.",
+      "the tool for listing projects is not responding",
+      "This appears to be a temporary outage.",
+      "I am unable to retrieve Scope of Work documents.",
+    ]) {
+      expect(claimsAnOutageThatDidNotHappen(claim, clean)).toBe(true);
+      // The same words are fair once something actually failed.
+      expect(claimsAnOutageThatDidNotHappen(claim, failed)).toBe(false);
+    }
+    expect(claimsAnOutageThatDidNotHappen("The vault holds 505 notes.", clean)).toBe(false);
+    // A document that is genuinely absent is not an outage claim.
+    expect(claimsAnOutageThatDidNotHappen("The vault has no note about Docling.", clean)).toBe(false);
+  });
+});
+
+describe("runAgentLoop freshness", () => {
+  const round = (text: string, toolCalls: unknown[] = []) => ({
+    text,
+    toolCalls,
+    finishReason: toolCalls.length ? "tool_calls" : "stop",
+  });
+  const ASKED = "What was the last change in the vault, and by who?";
+
+  it("asks once when a question about now is answered without looking", async () => {
+    const streamChat = vi
+      .fn()
+      // The model repeats an earlier answer from the transcript.
+      .mockResolvedValueOnce(round("The last change was on 2026-09-04 by 0xadbA…BcA4."))
+      .mockResolvedValueOnce(round("", [tc("recent_changes", "{}")]))
+      .mockResolvedValueOnce(round("The last change was today at 14:03 by liberuum.eth [[s1]]."));
+    const executeTool = vi.fn().mockResolvedValue({
+      ok: true,
+      data: { items: [{ documentId: "s1", title: "Powerhouse PMF", change: "Deliverable progress updated" }] },
+      summary: "listed the 1 most recently edited document",
+    });
+    const trail: TrailEntry[] = [];
+    const r = await runAgentLoop({
+      ...base,
+      messages: [{ role: "user", content: ASKED }],
+      onTrail: (e) => trail.push(e),
+      deps: { streamChat, executeTool } as never,
+    });
+    expect(r.text).toContain("14:03");
+    const sent = (streamChat.mock.calls[1][0] as { messages: { role: string; content: string }[] }).messages;
+    expect(sent.some((m) => m.role === "system" && m.content === CHECK_NOW)).toBe(true);
+    expect(trail[0]).toMatchObject({ tool: "compat", ok: true });
+    expect(trail[0].summary).toContain("without checking the vault");
+  });
+
+  it("does not nudge when the turn did consult the vault, nor for a question that is not about now", async () => {
+    const answered = vi
+      .fn()
+      .mockResolvedValueOnce(round("", [tc("search_vault", '{"query":"x"}')]))
+      .mockResolvedValueOnce(round("Here is what the vault says [[n1]]."));
+    const executeTool = vi.fn().mockResolvedValue({ ok: true, data: [{ documentId: "n1", title: "A note" }], summary: "searched" });
+    const consulted = await runAgentLoop({
+      ...base,
+      messages: [{ role: "user", content: ASKED }],
+      deps: { streamChat: answered, executeTool } as never,
+    });
+    expect(answered).toHaveBeenCalledTimes(2);
+    expect(consulted.text).toContain("Here is what the vault says");
+
+    const chatty = vi.fn().mockResolvedValueOnce(round("I can search notes, read documents and follow links."));
+    const r = await runAgentLoop({
+      ...base,
+      messages: [{ role: "user", content: "What can you do?" }],
+      deps: { streamChat: chatty, executeTool: vi.fn() } as never,
+    });
+    expect(chatty).toHaveBeenCalledTimes(1);
+    expect(r.text).toContain("I can search notes");
+  });
+
+  it("answeredWithoutLooking fires only on a present-tense question with no tool of substance", () => {
+    const searched: TrailEntry[] = [{ tool: "recent_changes", summary: "s", ok: true, data: {} }];
+    const onlyHarness: TrailEntry[] = [{ tool: "compat", summary: "c", ok: true }];
+    expect(answeredWithoutLooking("what changed last?", [])).toBe(true);
+    expect(answeredWithoutLooking("who is working on the vault?", onlyHarness)).toBe(true);
+    expect(answeredWithoutLooking("what changed last?", searched)).toBe(false);
+    expect(answeredWithoutLooking("explain event sourcing", [])).toBe(false);
+    expect(answeredWithoutLooking("thanks!", [])).toBe(false);
+  });
+});
+
 describe("runAgentLoop citation repair", () => {
   const readNote = {
     ok: true,
@@ -595,10 +797,20 @@ describe("extractCitations / resolveCitations", () => {
     expect(r.text).toBe(" and  and  and [[n1]]");
   });
 
-  it("keeps an unseen UUID with a fallback title — still a door the user can try", () => {
-    expect(extractCitations(`[[${N1}]]`, trail)).toEqual([
-      { documentId: N1, title: N1, documentType: null },
-    ]);
+  it("collapses a marker repeated back to back — '[[a]] [[a]]' is one citation, not a stutter", () => {
+    const r = resolveCitations("Blocked by Apeiron [[n1]] [[n1]] [[n1]]. Also [[n2]] [[n1]].", trail);
+    expect(r.text).toBe("Blocked by Apeiron [[n1]]. Also [[n2]] [[n1]].");
+    expect(r.citations.map((c) => c.documentId)).toEqual(["n1", "n2"]);
+  });
+
+  it("drops a UUID no tool returned and no earlier turn cited — an id the model cannot know is invented", () => {
+    const r = resolveCitations(`Real [[n1]] and invented [[${N1}]] and (${N1}).`, trail);
+    expect(r.citations.map((c) => c.documentId)).toEqual(["n1"]);
+    expect(r.text).toBe("Real [[n1]] and invented  and .");
+    expect(r.dropped).toBe(2);
+    // The same id cited in an earlier turn is known, and kept.
+    const prior = [{ documentId: N1, title: "Known before", documentType: "bai/knowledge-note" }];
+    expect(resolveCitations(`[[${N1}]]`, trail, prior).citations).toEqual(prior);
   });
 
   it("uses earlier turns' citations for titles and by-name resolution", () => {
@@ -613,7 +825,8 @@ describe("extractCitations / resolveCitations", () => {
       `Sessions live in a cookie [1], [${P1}]. Every op passes four gates [${N1}]. ` +
       `No hooks for authorization [linked_notes]. Mapped in the [Auth Scope Enforcement] project. ` +
       `See [the docs](https://example.com) and [[n1]].`;
-    const r = resolveCitations(text, trail);
+    // N1 is known from an earlier turn; an id nothing surfaced would be dropped.
+    const r = resolveCitations(text, trail, [{ documentId: N1, title: "Four gates", documentType: "bai/knowledge-note" }]);
     expect(r.citations.map((c) => c.documentId)).toEqual([P1, N1, "n1"]);
     // The example.com link is unwrapped: no tool result produced that URL,
     // so it is the model's invention, not something the vault knows.
@@ -631,9 +844,11 @@ describe("extractCitations / resolveCitations", () => {
       [{ documentId: N1, title: "No hooks", documentType: "bai/knowledge-note" }],
     );
     expect(r.citations.map((c) => c.documentId)).toEqual([N1, P1]);
+    // A bare unknown UUID is data being discussed, not a citation: untouched.
     expect(r.text).toBe(
       `No hooks exist [[${N1}]]. Also [[${P1}]] is active. Unknown id 11111111-2222-3333-4444-555555555555 stays.`,
     );
+    expect(r.dropped).toBe(0);
   });
 
   it("does not let single brackets resolve by prefix — prose is not a citation", () => {
@@ -756,7 +971,7 @@ describe("foldSourcesSection (a model's own Sources list)", () => {
   it("ignores a Sources heading that is not followed by a list, and ordinary prose", () => {
     expect(resolveCitations("Sources:\n", trail).text).toBe("Sources:\n");
     const prose = "The sources of truth are the reactor tables.";
-    expect(resolveCitations(prose, trail)).toEqual({ text: prose, citations: [] });
+    expect(resolveCitations(prose, trail)).toEqual({ text: prose, citations: [], dropped: 0 });
   });
 });
 

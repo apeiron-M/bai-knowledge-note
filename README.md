@@ -432,6 +432,37 @@ origin: Ollama `OLLAMA_ORIGINS="http://localhost:3000"` (or your Connect URL), L
 "enable CORS" in the server tab, vLLM/llama.cpp their CORS flag. The model must support
 tool calling; the vault's tools are how it reads anything.
 
+### What the chat can ask the vault
+
+Twelve read-only tools. Two are about change rather than content:
+
+| Tool | Answers |
+|------|---------|
+| `recent_changes` | *Which* documents changed and when — every type, newest first, optionally narrowed by `documentType` or `since`. Membership comes from the drive tree, times from the reactor's `lastModifiedAtUtcIso`, human titles from the graph index. |
+| `document_history` | *Who* changed one document, when, and *what* — the newest operations with the signing address, the app used, and a phrase per change (the same vocabulary the Activity view shows). Works for every document type. |
+
+"Who made the last change in the vault?" is the two chained: `recent_changes` for the document, `document_history` for the person.
+
+Two more reach outside the vault, always available:
+
+| Tool | Answers |
+|------|---------|
+| `search_web` | A ranked result list for a query. Uses [Tavily](https://tavily.com) when this browser has a key stored (`bai-chat-web:v1` → `{"tavilyKey":"tvly-…"}`), otherwise DuckDuckGo's results read through [r.jina.ai](https://jina.ai/reader) — no key, no account. |
+| `read_url` | The text of one public page, including plain JSON when the address is an API. Private and loopback addresses are refused. A 404 or an empty shell comes back flagged, so a missing page cannot read as an answer. |
+| `ens_lookup` | An Ethereum address ↔ its ENS name, through `api.ensdata.net` — the same service the vault's signer badges use, so the chat and the UI never disagree (`api.ensideas.com` stands behind it when that rate-limits). |
+| `vault_editors` | Who edits the vault, ranked: ENS name, address, apps, documents touched, last active. Grouped by person, so one address editing through two apps is one editor, and it reports how many operations carry no signature at all. |
+
+`document_history` and `vault_editors` resolve ENS themselves, so a person is named
+`liberuum.eth (0xadbA…BcA4)` rather than as a bare address.
+
+Only DuckDuckGo survives a browser-side fetch among the keyless engines (Bing, Mojeek,
+Startpage, Brave and Ecosia all block the reader with 403/422/Cloudflare, and Marginalia's
+search page returns its syntax help). A Tavily key is the way to better results.
+
+The vault is answered from the vault first. A web result is never cited as `[[documentId]]` — the model cites it as a markdown link — and page text is treated as untrusted input exactly like note content. Queries and the addresses read leave the browser for whichever service serves them, which is why the keyless path is a public reader rather than anything of ours.
+
+The chat has no shell or code-execution tool, and will not get one: it reads note and web text that anyone can write, and a tool that executes would turn any of that text into a way to run commands on the reader's machine.
+
 ## Connect's AI assistant can read the vault
 
 Connect's built-in assistant (reactor-browser `ai`, Sept 2026 onwards) merges every

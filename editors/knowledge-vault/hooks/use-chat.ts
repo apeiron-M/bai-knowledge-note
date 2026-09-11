@@ -17,13 +17,19 @@ import {
   streamChat as realStreamChat,
   type ChatMessage,
   type ToolCall,
+  type ToolSchema,
 } from "../lib/chat/completions-client.js";
 import {
-  VAULT_TOOLS,
+  CHAT_TOOLS,
   executeTool as realExecuteTool,
+  resetVaultDocumentListing,
 } from "../lib/chat/vault-tools.js";
 import { classifyFailure, type Failure } from "../lib/chat/failure.js";
-import { parseTextToolCalls } from "../lib/chat/text-tool-calls.js";
+import {
+  hasToolCallMarkup,
+  parseTextToolCalls,
+  stripToolCallMarkup,
+} from "../lib/chat/text-tool-calls.js";
 import {
   deleteThread,
   loadThreads,
@@ -76,6 +82,77 @@ export const CITE_NOW = (documents: string): string =>
 const CITE_NOW_MAX_DOCUMENTS = 12;
 
 /**
+ * The nudge when a reply carried tool calls written in a form none of the
+ * templates could read (see text-tool-calls.ts). Local servers that do not
+ * parse their model's tool template hand it to us as prose; the model is told
+ * the one text form that always works and asked again. Once — a second miss
+ * is stripped from the answer and noted in the trail.
+ */
+/**
+ * Questions whose answer is only true at the moment it is asked. A model
+ * that has answered one of these before will happily repeat itself from the
+ * transcript — which is wrong the moment anyone edits the vault, and someone
+ * always has. Deliberately narrow: it gates a nudge, not an accusation.
+ */
+const FRESHNESS_RE =
+  /\b(latest|last|newest|recent(ly)?|current(ly)?|now|today|yesterday|this (week|month)|up[- ]to[- ]date|changed?|updated?|who (is|are|has|have|did|made|edits?|edited|wrote|works?|working))\b/i;
+
+/**
+ * True when a turn answered a "what is true right now" question without
+ * consulting the vault at all. Tool failures count as looking: the model
+ * tried, and a second nudge would not help.
+ */
+export function answeredWithoutLooking(
+  userText: string,
+  trail: TrailEntry[],
+): boolean {
+  const consulted = trail.some((e) => e.tool !== "compat" && e.tool !== "router");
+  return !consulted && FRESHNESS_RE.test(userText);
+}
+
+/**
+ * An answer that reports the vault as unreachable. Worth detecting because
+ * the vault being down is a claim like any other: it has to have happened.
+ * A model that produced one of these earlier in a conversation will produce
+ * more — the transcript teaches it that this is what answers look like here
+ * — and the reader is told the vault is broken when it is not.
+ */
+const OUTAGE_CLAIM_RE =
+  /\b(?:not responding|unavailable|inaccessible|offline|temporary outage|system-wide issue)\b|\b(?:cannot|can(?:'|’)t|could\s?not|couldn(?:'|’)t|unable to)\b[^.]{0,80}\b(?:access|reach|retrieve|read|query|check)\b/i;
+
+/**
+ * True when an answer blames the vault for something that did not happen:
+ * it reports an outage while every tool this turn either succeeded or was
+ * never called. A tool that genuinely failed leaves its error in the trail,
+ * and then the claim is fair.
+ */
+export function claimsAnOutageThatDidNotHappen(
+  text: string,
+  trail: TrailEntry[],
+): boolean {
+  if (!OUTAGE_CLAIM_RE.test(text)) return false;
+  return !trail.some((e) => !e.ok);
+}
+
+/** The nudge for an answer that reports a failure nothing recorded. */
+export const NO_OUTAGE =
+  "Your answer says the vault could not be read, but no tool reported an error this turn. " +
+  "The vault is there. Call the tool you need now — list_projects for projects, recent_changes for what changed, search_vault for anything else — and answer from what it returns. " +
+  "If a call does fail, quote the error it gave you instead of describing an outage.";
+
+/** The nudge for an answer given from memory rather than from the vault. */
+export const CHECK_NOW =
+  "You answered without calling any tool, and the question is about what is true in the vault right now. " +
+  "The vault changes between messages, and an earlier answer in this conversation is not evidence about the present. " +
+  "Check now — recent_changes for what changed, document_history for who changed it, vault_editors for who works here — and answer from what the tools return.";
+
+export const TOOL_TEXT_RETRY =
+  "Your reply contained tool calls written as text in a format this interface cannot run, so nothing ran and the user saw the raw markup. " +
+  "Call tools through the function-calling interface. If your runtime cannot, write each call on its own line exactly as " +
+  '<tool_call>{"name": "<tool>", "arguments": {<arguments>}}</tool_call> — JSON, nothing else inside the tags. ' +
+  "A documentId is the full UUID string exactly as a result gave it, never a number and never wrapped in brackets. Continue now.";
+
+/**
  * True when an answer should be sent back for citations: at least one tool
  * result named a document (so there is something to cite) and the text
  * resolves to no citation at all — not a `[[…]]`, not a bracketed title,
@@ -109,6 +186,8 @@ export interface LoopOptions {
   modelName?: (id: string) => string;
   driveId: string;
   messages: ChatMessage[];
+  /** What the model may call this turn; defaults to the chat's whole set. */
+  tools?: ToolSchema[];
   onText?: (delta: string) => void;
   onTrail?: (entry: TrailEntry) => void;
   /** Fires when a new round starts; the UI clears the streamed text of the previous one. */
@@ -155,6 +234,12 @@ export async function runAgentLoop(o: LoopOptions): Promise<LoopResult> {
   let uncitedDraft: string | null = null;
   let repairedCitations = false;
   let toolsOffNextRound = false;
+  let retriedToolMarkup = false;
+  let retriedStaleAnswer = false;
+  let retriedFalseOutage = false;
+  const tools = o.tools ?? CHAT_TOOLS;
+  const asked =
+    [...o.messages].reverse().find((m) => m.role === "user")?.content ?? "";
 
   for (;;) {
     iterations++;
@@ -172,7 +257,7 @@ export async function runAgentLoop(o: LoopOptions): Promise<LoopResult> {
       model: o.model,
       fallbackModels: o.fallbackModels,
       messages,
-      tools: VAULT_TOOLS,
+      tools,
       toolChoice: toolsOff ? "none" : "auto",
       signal: o.signal,
       onText: o.onText,
@@ -219,6 +304,62 @@ export async function runAgentLoop(o: LoopOptions): Promise<LoopResult> {
 
     const wantsTools = !toolsOff && toolCalls.length > 0;
     if (!wantsTools) {
+      // Tool calls in a shape no template reads: ask once for a form that
+      // runs; the second time, drop the markup rather than show it.
+      if (!toolsOff && toolCalls.length === 0 && hasToolCallMarkup(text)) {
+        if (!retriedToolMarkup) {
+          retriedToolMarkup = true;
+          const entry: TrailEntry = {
+            tool: "compat",
+            summary: "model wrote tool calls in a format that cannot be run — asked once for a runnable form",
+            ok: true,
+          };
+          trail.push(entry);
+          o.onTrail?.(entry);
+          messages.push({ role: "assistant", content: result.text });
+          messages.push({ role: "system", content: TOOL_TEXT_RETRY });
+          continue;
+        }
+        const entry: TrailEntry = {
+          tool: "compat",
+          summary: "model kept writing unrunnable tool calls — removed from the answer",
+          ok: false,
+          error: "tool-call markup in an unrecognised format",
+        };
+        trail.push(entry);
+        o.onTrail?.(entry);
+        text = stripToolCallMarkup(text);
+      }
+      // An answer that reports an outage nothing recorded. Checked before
+      // the freshness nudge: this one is wrong whatever was asked.
+      if (!toolsOff && !retriedFalseOutage && claimsAnOutageThatDidNotHappen(text, trail)) {
+        retriedFalseOutage = true;
+        const entry: TrailEntry = {
+          tool: "compat",
+          summary: "answer reported the vault as unreachable, but nothing failed — asked once to call the tool",
+          ok: true,
+        };
+        trail.push(entry);
+        o.onTrail?.(entry);
+        messages.push({ role: "assistant", content: text });
+        messages.push({ role: "system", content: NO_OUTAGE });
+        continue;
+      }
+      // An answer about the vault's present, given without looking at it.
+      // Ask once; a model that still declines has said its piece.
+      if (!toolsOff && !retriedStaleAnswer && answeredWithoutLooking(asked, trail)) {
+        retriedStaleAnswer = true;
+        const entry: TrailEntry = {
+          tool: "compat",
+          summary: "answered from the conversation without checking the vault — asked once to look",
+          ok: true,
+        };
+        trail.push(entry);
+        o.onTrail?.(entry);
+        messages.push({ role: "assistant", content: text });
+        messages.push({ role: "system", content: CHECK_NOW });
+        continue;
+      }
       // A repair round that came back empty keeps the uncited draft: an
       // answer without markers beats no answer.
       if (uncitedDraft !== null && !text.trim()) text = uncitedDraft;
@@ -562,7 +703,7 @@ export function resolveCitations(
   text: string,
   trail: TrailEntry[],
   priorCitations: Citation[] = [],
-): { text: string; citations: Citation[] } {
+): { text: string; citations: Citation[]; dropped: number } {
   const known = collectKnownDocuments(trail);
   for (const c of priorCitations) {
     if (!known.has(c.documentId)) {
@@ -575,6 +716,10 @@ export function resolveCitations(
   }
   const order: string[] = [];
   const byId = new Map<string, Citation>();
+  // UUID-shaped markers naming a document no tool returned and no earlier
+  // turn cited. A model cannot know an id it was never shown; such a marker
+  // is invented, and a chip that opens nothing is worse than no chip.
+  let dropped = 0;
   const grounded = groundMarkdownLinks(text, known, collectKnownUrls(trail));
   const rewritten = grounded.replace(
     CITATION_RE,
@@ -607,7 +752,11 @@ export function resolveCitations(
         doc = known.get(label) ?? null;
         if (!doc) return match;
       } else if (UUID_RE.test(label)) {
-        doc = known.get(label) ?? { documentId: label, title: label, documentType: null };
+        doc = known.get(label) ?? null;
+        if (!doc) {
+          dropped++;
+          return "";
+        }
       } else if (double !== undefined) {
         // Explicit citation syntax: resolve generously, drop what fails.
         doc = known.get(label) ?? resolveLabel(label, known);
@@ -629,7 +778,10 @@ export function resolveCitations(
       return `[[${doc.documentId}${anchor ? `#${anchor}` : ""}]]`;
     },
   );
-  const folded = foldSourcesSection(rewritten, known);
+  // A marker repeated back to back ("[[a]] [[a]] [[a]]") is one citation
+  // the model stuttered, not three; collapse before numbering.
+  const collapsed = rewritten.replace(/(\[\[([^\]]+)\]\])(?:\s*\[\[\2\]\])+/g, "$1");
+  const folded = foldSourcesSection(collapsed, known);
   for (const doc of folded.sources) {
     if (!byId.has(doc.documentId)) {
       order.push(doc.documentId);
@@ -643,6 +795,7 @@ export function resolveCitations(
   return {
     text: folded.text,
     citations: order.map((id) => byId.get(id)!),
+    dropped,
   };
 }
 
@@ -811,6 +964,10 @@ export function useChat(o: UseChatOptions): UseChat {
       let finalText = "";
       const collected: TrailEntry[] = [];
       setRoutedFrom(null);
+      // Every answer starts from fresh data. The listing cache exists so
+      // that several tool calls within one answer are free, not so that a
+      // later question is answered from an earlier minute's vault.
+      resetVaultDocumentListing();
       try {
         const r = await runAgentLoop({
           endpoint,
@@ -857,6 +1014,18 @@ export function useChat(o: UseChatOptions): UseChat {
         // let a by-name citation resolve) without re-running the tools.
         const prior = withUser.messages.flatMap((m) => m.citations ?? []);
         const resolved = resolveCitations(finalText, collected, prior);
+        if (resolved.dropped > 0) {
+          // Visible like every other harness move: the reader should know a
+          // reference was removed, and why.
+          const entry: TrailEntry = {
+            tool: "compat",
+            summary: `removed ${resolved.dropped} citation${resolved.dropped === 1 ? "" : "s"} of an id no tool returned`,
+            ok: false,
+            error: "invented document id",
+          };
+          collected.push(entry);
+          setTrail((t) => [...t, entry]);
+        }
         const consulted = consultedDocuments(collected, resolved.citations);
         // The passage behind each marker, from the documents the tools
         // returned this turn — the only moment their text is at hand.
