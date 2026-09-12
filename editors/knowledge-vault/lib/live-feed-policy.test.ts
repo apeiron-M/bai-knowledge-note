@@ -1,18 +1,17 @@
 import { describe, expect, it } from "vitest";
 import {
   CLOSE_FORBIDDEN,
-  CLOSE_INTERNAL_SERVER_ERROR,
   CLOSE_UNAUTHORIZED,
   closeCodeOf,
   refusedForMissingToken,
 } from "./live-feed-policy.js";
 
 describe("refusedForMissingToken", () => {
-  it("reads 4500 as a credential refusal ONLY when no token was sent", () => {
-    // What the current Switchboard actually emits for a tokenless connection.
-    expect(refusedForMissingToken(CLOSE_INTERNAL_SERVER_ERROR, false)).toBe(true);
-    // The same code with a token is a genuine server fault, not "sign in".
-    expect(refusedForMissingToken(CLOSE_INTERNAL_SERVER_ERROR, true)).toBe(false);
+  it("does not read a 4500 as a credential refusal — that is a server fault", () => {
+    // Before 6.2.3-dev.4 a tokenless handshake surfaced as a 4500; the server
+    // now closes 4403, so a 4500 is a genuine fault with or without a token.
+    expect(refusedForMissingToken(4500, false)).toBe(false);
+    expect(refusedForMissingToken(4500, true)).toBe(false);
   });
 
   it("reads the explicit auth close codes as refusals when tokenless", () => {

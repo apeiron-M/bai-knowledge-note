@@ -1,6 +1,6 @@
 # Upstream bug report — Powerhouse `6.2.2-dev.85`
 
-Five defects in the Powerhouse stack found while building vault authorization
+Six defects in the Powerhouse stack found while building vault authorization
 (`feat/vault-authorization`). Each is reported in the shape of upstream's
 `.github/ISSUE_TEMPLATE/bug_report.md` so a section can be pasted into an issue
 as-is. Together they produce the user-visible failure *"a protected drive
@@ -532,15 +532,16 @@ Fixing #4 and #3 restores the share-link and sign-out/sign-in flows; #5 lets a
 visitor decline the login and keep using Connect; #2 keeps the live feed alive
 across a login; #1 makes the remaining failures diagnosable.
 
-## Local mitigations in this repo (to remove once upstream fixes land)
+## Local mitigations in this repo — status after `6.2.3-dev.4`
 
-| # | Where | What it does |
-|---|-------|--------------|
-| 1 | — | Not fixable from outside `reactor-browser`. We avoid the pattern in our own code. |
-| 2 | `editors/knowledge-vault/lib/live-feed-policy.ts`, `hooks/use-remote-first.ts` | `refusedForMissingToken(closeCode, hadToken)` reads a 4500-with-no-token as "sign in", sets `anonymousRefused`, and suppresses reconnects until a session exists; 4500 *with* a token stays a real error. |
-| 3 | `editors/knowledge-vault/lib/boot.ts` (`recover`, `probeDriveReadable`, `RECOVERY_GRACE_MS`), `lib/remote-memory.ts`, `lib/drive-stub.ts` | Remembers adopted drives in localStorage, re-adds a remote the SyncManager dropped (same name, `SYNC_NOTHING` filter, manual polling) and shows a locked drive tile until the user signs in. |
-| 4 | `lib/remote-memory.ts` (`stashDriveUrl` / `pendingDriveUrl`, 24 h TTL), `lib/boot.ts` (`startRemoteFirstBoot`) | Stashes `?driveUrl` before the Renown redirect and replays it through `addRemoteDrive` on return. |
-| 5 | `lib/dismiss-drive-auth-modal.ts`, installed from `lib/boot.ts` (`startRemoteFirstBoot`) | Reads `window.ph.modal` and adds a `✕` Cancel control to Connect's `driveAuthRequired` modal, whose only call is `closePHModal()`. Dismissal is button-only on purpose: an outside-click/Escape handler also fired when the cookie banner was clicked, closing the card. No `node_modules` change; remove once upstream adds `onClose`/backdrop dismissal. |
+| # | Where | What it did | After `dev.4` |
+|---|-------|-------------|---------------|
+| 1 | — | Not fixable from outside `reactor-browser`; we avoid the pattern in our own code. | Fixed upstream; nothing to remove. |
+| 2 | `editors/knowledge-vault/lib/live-feed-policy.ts`, `hooks/use-remote-first.ts` | `refusedForMissingToken(closeCode, hadToken)` read a tokenless 4500 as "sign in", set `anonymousRefused`, and stopped reconnecting until a session existed. | **Kept; 4500 arm removed.** The server now closes a tokenless socket with 4403, which the policy already read as a refusal; a 4500 is a genuine server fault again. Because 4403 is *retryable* where 4500 was fatal, `shouldRetry` now also honours `anonymousRefused` — otherwise the client would knock forever with backoff, one server warning per knock. |
+| 3 | `lib/boot.ts` (`recover`, `probeDriveReadable`), `lib/remote-memory.ts`, `lib/drive-stub.ts` | Remembers adopted drives, re-adds a remote the SyncManager dropped once a bearer exists, shows a locked tile meanwhile. | **Kept.** Upstream keeps the storage record but still drops the in-memory remote and does not retry; in-session recovery is still ours. |
+| 4 | `lib/remote-memory.ts` (`stashDriveUrl` / `pendingDriveUrl`), `lib/boot.ts` | Stashed `?driveUrl` across the Renown redirect and replayed it through `addRemoteDrive`. | **Kept, re-documented.** The query string now survives Renown, but the `addRemoteDrive` Connect fires on the return page can still run tokenless and the dropped remote is not re-inited (see #3); the replay covers that. Remove once a runtime test shows the return page adds the drive on its own. |
+| 5 | `lib/dismiss-drive-auth-modal.ts` | Injected a `✕` into Connect's `driveAuthRequired` modal. | **Removed.** `DriveAuthGate` has `onClose` and the modal closes on Escape; the shim would have rendered a second `✕`. |
+| 6 | `scripts/repair-ordinal-gap.mjs` (was the `vetra` pre-step), `scripts/repair-read-model-checkpoint.mjs` | Moved a stuck read-model checkpoint past an ordinal hole before boot. | **Pre-step removed; scripts kept as optional.** The read model crosses holes itself; a permanent hole still costs a per-boot re-read of the tail, which moving the checkpoint avoids. |
 
 ## Appendix — verification method
 
@@ -551,3 +552,33 @@ across a login; #1 makes the remaining failures diagnosable.
 5. **Releases in the window:** `v6.2.2-dev.86` `5dd5406`, `v6.2.2-dev.87` `1537bf3`, `v6.2.2-dev.88` `bceb508`, `v6.2.2` `13b2fca`, `v6.2.3-dev.0` `1bdf48a`.
 6. **graphql-ws semantics** were read from the installed `graphql-ws@6.0.7` (`dist/server*.js`, `dist/use/ws.js`, `dist/client.js`, `dist/common*.js`), not from memory.
 7. **Duplicate check:** GitHub issue search on the repo for `logger.error catch`, `Missing authorization in connection parameters`, `4500 websocket`, `returnUrl driveUrl`, `renown returnUrl`, `sync remote 401 startup`, `Error initializing channel` — no matching issue.
+
+## Status at `6.2.3-dev.4` — 2026-09-12
+
+Upstream fixed these in PR #3017 (`e30f072`, merged 2026-09-12 01:58 UTC), one
+commit before the `v6.2.3-dev.4` release (`457b5f8`, published 06:56 UTC), and
+wrote an investigation of each (`docs/upstream-bugs-6.2.2-dev.85-investigation.md`
+in the monorepo). Verified here by grepping the published `dev.4` tarballs and
+the installed `node_modules` for the defective and the fixed patterns — not by
+reading the PR.
+
+| # | Verdict | What shipped |
+|---|---------|--------------|
+| 1 | **Fixed** (3 sites, not 1) | `ConsoleLogger` methods are arrow class fields; `dispatch.ts` uses `.catch((error) => logger.error("Failed to dispatch actions: @error", error))`. Our one-line fix would not have typechecked (`ILogger.error` takes a string first), and a `vi.spyOn(logger, "error")` regression test would have false-greened. |
+| 2 | **Fixed, differently than suggested** | Auth runs once in graphql-ws `onConnect` (`createWsAuthHandlers`) and refuses with **4403** — 4401 is also in the client's fatal list, so our suggestion would have reproduced the bug. A missing header is anonymous (`null`), as over HTTP. **Behaviour change:** the refusal is keyed on `REQUIRE_AUTHENTICATED_CALLER`; `AUTH_ENABLED=true` alone now admits a tokenless subscription, and the server warns at boot (`8460533`). We set the flag. |
+| 3 | **Partial, by design** | `add()` → `dropRemoteAfterFailedInit(remote, !isCredentialOrNetworkError(error))`: the storage record survives a credential/network refusal; `startup()` keeps it too. Both still drop the in-memory remote — no degraded health, no retry (`9bfa0ea`); upstream's reason is that `addRemoteDrive` short-circuits on `sync.list()`, so a kept-but-dead remote would block re-adding. A resource leak in both paths was also fixed. |
+| 4 | **Fixed** | `new URL(window.location.href)` minus `RENOWN_RETURN_URL_STRIPPED_PARAMS = ["user", "privy_oauth_code", "privy_oauth_state"]` (`7ae4e8b`). Copying `href` wholesale, as we suggested, would round-trip a stale `?user=`. |
+| 5 | **Fixed** (the PR body says "not included"; `30da305`, in the same PR, did it) | Optional `onClose` on `DriveAuthGate` (top-right Close), `DriveAuthRequiredModal` passes `closePHModal` and closes on Escape; the backdrop stays `pointer-events-none` because of the cookie-banner misfire we also found. The full-page gate is scoped to the selected drive. |
+| 6 | **Fixed** | The throw is gone; the cursor parks at the gap, `replayedThrough` bounds the replay and the gap is re-probed (`97a44ec`, `37734c7`, `b92d80d`). Read-model factory failures are no longer fatal at boot. Their caveat: a permanent hole is re-read on every boot (bounded, linear). Our "silently swallowed" claim was wrong at that HEAD — it logged at error level. |
+
+Also in `dev.4` and relevant here: `ce44e69` authorizes `GET /d/<id>` (drive
+info) — our anonymous `fetchDriveInfo` in `lib/boot.ts` returns `null` for a
+protected drive, so the share-link locked tile may lose its title; cosmetic,
+nothing depends on it.
+
+Verification after upgrading this repo (2026-09-12): every installed
+`@powerhousedao/*` package and `document-model` at `6.2.3-dev.4`; 11 pattern
+checks for the six fixes pass against `node_modules`; `bun run tsc` clean;
+`bun run lint` exit 0 (warnings only, pre-existing); `bun run test` 121 files /
+1210 tests passed, 6 skipped; `bun run build` green and
+`dist/node/subgraphs/index.mjs` imports.

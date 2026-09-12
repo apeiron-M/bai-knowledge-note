@@ -127,9 +127,11 @@ const scopedDrives = new Set<string>();
 /**
  * Set once a tokenless websocket handshake has been refused this page. A
  * protected Switchboard refuses every such handshake the same way and logs
- * each one as an error, so having learnt it once there is nothing to gain by
- * asking again until a session exists — and the feed effect re-runs the
- * moment one does.
+ * each one as a warning, so having learnt it once there is nothing to gain by
+ * asking again until a session exists — the feed effect re-runs the moment
+ * one does, and clears this so a later sign-out can learn it afresh. It also
+ * gates graphql-ws's own retries: the refusal is a 4403, which the client
+ * would otherwise retry with backoff for as long as the drive is selected.
  */
 let anonymousRefused = false;
 
@@ -412,6 +414,9 @@ export function useRemoteFirst(): void {
       );
       return;
     }
+    // A session exists: forget an earlier anonymous refusal, so this client
+    // retries transient closes and a later sign-out learns the lock afresh.
+    if (address) anonymousRefused = false;
     let stopped = false;
     /** Whether the most recent handshake carried a bearer. */
     let hadToken = false;
@@ -420,12 +425,11 @@ export function useRemoteFirst(): void {
     const client = createWsClient({
       url: wsUrl,
       // The subscription is a second door onto the same data as the HTTP
-      // reads, and it is NOT covered by REQUIRE_AUTHENTICATED_CALLER, which
-      // is a fetch middleware. With AUTH_ENABLED=true the server refuses a
-      // tokenless connection outright ("Missing authorization in connection
-      // parameters"). Resolved per connection so a reconnect carries the
-      // current session; the effect's `address` dependency covers the case
-      // graphql-ws will not reconnect from (see `error` below).
+      // reads. Since 6.2.3-dev.4 it is gated like HTTP: with
+      // REQUIRE_AUTHENTICATED_CALLER=true the server refuses a tokenless
+      // connection in `onConnect` and closes it 4403. Resolved per connection
+      // so a reconnect carries the current session; the effect's `address`
+      // dependency covers the case we stop retrying from (see `closed`).
       connectionParams: async () => {
         const token = await getBearerToken();
         hadToken = !!token;
@@ -435,10 +439,11 @@ export function useRemoteFirst(): void {
       // restarts during development and deploys, and a socket that gives
       // up after five attempts silently degrades the app to polling.
       // graphql-ws still treats a handful of close codes as fatal whatever
-      // this says — 4500 among them, which is what a tokenless handshake
-      // gets — so those are handled by re-creating the socket, not here.
+      // this says (4500 and 4401 among them). A tokenless handshake is closed
+      // 4403, which it WOULD retry — so once `closed` has read that as "sign
+      // in", stop here; the effect re-runs when a session appears.
       retryAttempts: Number.POSITIVE_INFINITY,
-      shouldRetry: () => !stopped,
+      shouldRetry: () => !stopped && !anonymousRefused,
       // Note when the SERVER stops answering, not just when the TCP link
       // is up; a half-open connection would otherwise report live.
       keepAlive: 30_000,

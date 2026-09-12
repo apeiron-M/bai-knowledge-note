@@ -43,14 +43,20 @@ this project twice — a new subgraph "wouldn't register", and an authorization
 wrapper "stopped working" — and both were the same cause. If a subgraph change
 seems to have no effect, check `dist/` before debugging the code.
 
-## ⚠️ `ph reactor` crash: "read model cannot advance past missing ordinal N"
+## `ph reactor` and ordinal holes in the operation index
 
 `operation_index_operations.ordinal` is a Postgres `serial`; a rolled-back write
-consumes a number that never gets a row, which is normal. The attachment
-reference read model (`@powerhousedao/reactor-attachments`) replays from its
-checkpoint and refuses to cross such a hole. At run time it fails silently and
-stops; the **next restart crashes** with the line above. Nothing is lost — the
-missing ordinals have no rows. Fix, with the reactor stopped:
+consumes a number that never gets a row, which is normal. On stacks **before
+`6.2.3-dev.4`** the attachment reference read model
+(`@powerhousedao/reactor-attachments`) refused to replay across such a hole:
+it stalled at run time and the **next restart crashed** with
+`read model cannot advance past missing ordinal N`. Fixed upstream in
+`6.2.3-dev.4` (PR #3017) — the read model now parks its cursor at the gap and
+re-probes it, so `bun run vetra` no longer runs a repair first.
+
+What remains: a *permanent* hole makes every boot re-read the tail after it
+(bounded, linear). If that gets slow, move the checkpoint past the hole, with
+the reactor stopped:
 
 ```bash
 cp -a .ph/reactor-storage .ph/reactor-storage.bak-$(date +%Y%m%d-%H%M%S)   # always
@@ -58,8 +64,8 @@ node scripts/repair-read-model-checkpoint.mjs           # dry run: shows the hol
 node scripts/repair-read-model-checkpoint.mjs --apply   # moves the checkpoint to just before the next real ordinal
 ```
 
-Reverting the stack version does not help (dev.85 has the same check). The
-upstream bug is documented in `docs/upstream-bugs-6.2.2-dev.85.md` (#5).
+History and verification: `docs/upstream-bugs-6.2.2-dev.85.md` (#6 and the
+`dev.4` status section).
 
 ## Core Concepts
 

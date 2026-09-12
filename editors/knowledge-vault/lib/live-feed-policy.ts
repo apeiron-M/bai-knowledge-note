@@ -1,43 +1,35 @@
 /**
  * When a refused WebSocket handshake means "sign in", not "the server broke".
  *
- * The Switchboard's websocket context factory throws a plain `Error` when a
- * connection arrives without a bearer and authorization is enabled. graphql-ws
- * treats any throw from `context()` as an implementation fault: it logs
- * "Internal error occurred during message handling" server-side and closes the
- * socket with 4500 InternalServerError — and the client, seeing 4500, refuses
- * to retry however it was configured. So a tokenless connection against a
- * protected Switchboard costs one error line in the server log and leaves the
- * client's feed dead until something re-creates the socket.
+ * Since Powerhouse `6.2.3-dev.4` the Switchboard authenticates a WebSocket
+ * once, in graphql-ws's `onConnect`, and refuses a connection it will not
+ * admit by closing **4403 Forbidden** — the one auth close code graphql-ws
+ * keeps retryable (4401 and 4500 are in its fatal list). Before `dev.4` the
+ * same refusal surfaced as a 4500 thrown from `context()`; that shape is
+ * gone, and a 4500 is a genuine server fault again on every version we run.
  *
- * That shape is upstream's to fix (it should close 4401). What this module
- * decides is how the client should read such a close: a 4500 while we sent NO
- * token is, on this server, the credential refusal — so it should be reported
- * as "sign in" and not attempted again until a session exists. A 4500 while we
- * DID send a token is a genuine server fault and must keep its warning.
+ * What this module decides is how the client should read a close: 4401/4403
+ * while we sent NO token is the credential refusal — report it as "sign in"
+ * and do not knock again until a session exists. The same codes with a token
+ * in hand are a real refusal of that session and keep their warning.
  */
 
 /** graphql-ws close codes. Named here so the policy reads as intent. */
 export const CLOSE_UNAUTHORIZED = 4401;
 export const CLOSE_FORBIDDEN = 4403;
-export const CLOSE_INTERNAL_SERVER_ERROR = 4500;
 
 /**
  * True when a close should be read as "no credentials were offered and the
- * server wanted some". 4401/4403 say so directly; 4500 says so only because
- * we know this server's auth check throws instead of closing cleanly, and only
- * when we genuinely sent nothing — with a token in hand, 4500 is a real error.
+ * server wanted some": one of the explicit auth close codes, and we genuinely
+ * sent nothing. Anything else — a normal close, a network drop, a 4500 — is
+ * not a request to sign in.
  */
 export function refusedForMissingToken(
   closeCode: number | undefined,
   hadToken: boolean,
 ): boolean {
   if (hadToken) return false;
-  return (
-    closeCode === CLOSE_UNAUTHORIZED ||
-    closeCode === CLOSE_FORBIDDEN ||
-    closeCode === CLOSE_INTERNAL_SERVER_ERROR
-  );
+  return closeCode === CLOSE_UNAUTHORIZED || closeCode === CLOSE_FORBIDDEN;
 }
 
 /**

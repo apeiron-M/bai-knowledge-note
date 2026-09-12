@@ -11,10 +11,11 @@
  *   App crashed: Error: Attachment reference read model cannot advance past
  *   missing ordinal 27145
  *
- * At run time the failure is swallowed and the read model silently stops; the
- * next restart turns it into a startup crash. Until upstream tolerates holes,
- * this moves the checkpoint to just BEFORE the next ordinal that exists, so
- * nothing real is skipped — the missing ordinals have no rows to process.
+ * On stacks before 6.2.3-dev.4 the next restart turns that into a startup
+ * crash; since dev.4 the read model crosses the hole itself but re-reads the
+ * tail after a permanent hole on every boot. Either way this moves the
+ * checkpoint to just BEFORE the next ordinal that exists, so nothing real is
+ * skipped — the missing ordinals have no rows to process.
  *
  * Usage (reactor stopped; take a copy of the store first):
  *   node scripts/repair-read-model-checkpoint.mjs                    # dry run: report only

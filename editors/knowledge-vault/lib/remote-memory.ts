@@ -8,25 +8,27 @@
  * on the drive — with whatever credentials exist at that instant.
  *
  *  - **Signed out, or just back from Renown.** The request is tokenless, the
- *    Switchboard answers 401, and the sync manager DELETES the remote from
- *    memory (`this.remotes.delete(record.name); continue;`) while leaving the
- *    record in storage. Nothing retries. The drive is invisible for the whole
- *    page — including the page the Renown redirect lands on, because Connect
- *    boots before the session it carries in `?user=` has been restored. A
- *    refresh works only because by then the session is in storage.
+ *    Switchboard answers 401, and the sync manager drops the remote from
+ *    memory while leaving the record in storage. Nothing retries in-session
+ *    (upstream's `6.2.3-dev.4` fix kept it that way on purpose: a kept-but-dead
+ *    remote would block re-adding). The drive is invisible for the whole page —
+ *    including the page the Renown redirect lands on, because Connect boots
+ *    before the session it carries in `?user=` has been restored. A refresh
+ *    works only because by then the session is in storage.
  *
  *  - **A fresh share link.** `?driveUrl=` makes Connect call `addRemoteDrive`,
- *    whose `sync.add` persists the record and then inits; on failure it
- *    REMOVES the record from storage and throws. The Renown return URL is
- *    built from `location.pathname` alone, so `driveUrl` is gone too. The
- *    user signs in and lands on an empty Connect.
+ *    whose `sync.add` persists the record and then inits. Before `dev.4` a
+ *    failure REMOVED the record and the Renown return URL lost `driveUrl`;
+ *    both are fixed upstream. What remains is the timing above: the add that
+ *    Connect fires on the return page can still run tokenless, and the remote
+ *    it drops is not re-inited until the next reload.
  *
  * Both are recovered from here. On every successful adoption the remote's
  * registration is remembered; at boot, a remembered drive missing from
  * `sync.list()` is re-added — with the same name, so the persisted record is
  * overwritten rather than duplicated — once a bearer exists and a probe shows
  * the drive is readable. A `driveUrl` seen in the URL is stashed and replayed
- * through `addRemoteDrive` on the next boot that has a session.
+ * through `addRemoteDrive` on the first recovery that has a session.
  *
  * Storage is injected so the rules are unit-testable without a DOM.
  */

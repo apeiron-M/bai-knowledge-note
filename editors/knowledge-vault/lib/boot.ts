@@ -46,7 +46,6 @@ import {
 } from "./drive-stub.js";
 import { hasVaultHydrator } from "../../shared/vault-pull.js";
 import { enableRemoteFirst } from "./remote-first.js";
-import { installDriveAuthModalDismissal } from "./dismiss-drive-auth-modal.js";
 import { hideDriveLoading, showDriveLoading } from "./drive-loading-indicator.js";
 import { resolveReactorEndpoint } from "../hooks/subgraph-endpoint.js";
 
@@ -506,7 +505,7 @@ async function recover(sync: SyncManager): Promise<void> {
       return;
     }
 
-    // 1. A share link whose `driveUrl` the Renown redirect discarded.
+    // 1. A share link whose `addRemoteDrive` ran before the session existed.
     const url = mem.pendingDriveUrl();
     if (url && !shareLinkReplayed) {
       shareLinkReplayed = true;
@@ -673,20 +672,18 @@ export function startRemoteFirstBoot(): void {
   if (started) return;
   if (typeof window === "undefined") return;
   started = true;
-  // Connect's own "Log in to access this drive" modal has no exit; add a
-  // Cancel button. JSX-free, so this stays a plain package-load side effect
-  // alongside the sync neutralisation below.
-  installDriveAuthModalDismissal();
   // A logout/login does not reload the page, and the sweep below is bounded to
   // MAX_WAIT_MS; this re-reads the drives when the session changes, however
   // long the page has been open.
   if (typeof window.addEventListener === "function") {
     window.addEventListener("ph:renownUpdated", scheduleSessionRecovery);
   }
-  // A share link's `driveUrl` does not survive the Renown redirect — the
-  // return URL is built from the pathname alone — and a failed anonymous
-  // `addRemoteDrive` deletes its own record. Keep the URL so the page after
-  // sign-in can add the drive the link pointed at.
+  // A share link's `driveUrl` survives the Renown redirect since 6.2.3-dev.4
+  // (the return URL keeps the query string), but the `addRemoteDrive` Connect
+  // fires for it at boot can still run before the session is restored; the
+  // sync manager then keeps the storage record yet drops the in-memory remote
+  // and never re-inits it (upstream's fix was deliberately limited to the
+  // record). Keep the URL so `recover` can add the drive once a bearer exists.
   // `location` is read defensively: the boot tests stub `window` with only
   // the `ph` slot, and a share link is an optional input, not a precondition.
   const driveUrl = driveUrlFromSearch(

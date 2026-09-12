@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 /**
- * Repair a Switchboard that refuses to boot with
+ * Repair a Switchboard (stack < 6.2.3-dev.4) that refuses to boot with
  *   "Attachment reference read model cannot advance past missing ordinal N".
  *
  * The attachment-reference read model replays `operation_index_operations`
@@ -24,11 +24,12 @@
  *
  *   node scripts/repair-ordinal-gap.mjs [.ph/reactor-storage] [--dry-run]
  *
- * Safe as a pre-start step (`bun run vetra` runs it first): when no read
- * model is stuck it changes nothing and writes no backup. The attachment
- * read model's registration in @powerhousedao/switchboard is unconditional —
- * there is no flag to turn it off — so healing the hole before boot is the
- * only fix available on this side of the dependency.
+ * Since 6.2.3-dev.4 the read model crosses holes on its own (it parks its
+ * cursor at the gap and re-probes it), so this is no longer a pre-start step.
+ * It stays useful as an optional repair: a permanent hole still makes every
+ * boot re-read the tail after it, and moving the checkpoint past the hole
+ * saves that. When no read model is stuck it changes nothing and writes no
+ * backup.
  */
 import { PGlite } from "@electric-sql/pglite";
 import { AtomicNodeFs } from "@powerhousedao/pglite-fs";
