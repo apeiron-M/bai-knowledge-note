@@ -5,6 +5,8 @@ import { searchVault } from "../knowledge-graph/helpers/search.js";
 import { buildHttpRouteDeps, buildStructureRouteDeps } from "./live-deps.js";
 import { getResolvers } from "./resolvers.js";
 import { createActionsRoute } from "./routes/actions.js";
+import { createBadgeRoute, createHealthRoute } from "./routes/health.js";
+import { createLlmsRoute } from "./routes/llms.js";
 import { createNotesRoute } from "./routes/notes.js";
 import { createRelationshipRoute } from "./routes/relationships.js";
 import { registerStructureRoutes } from "./routes/structure.js";
@@ -97,6 +99,22 @@ export class HttpSubgraph extends BaseSubgraph {
         createClaimRoute(deps),
       );
       registerStructureRoutes(this.http, buildStructureRouteDeps(this));
+      const llmsDeps = {
+        ...deps,
+        getQuery: (driveId: string) => getQuery(this, driveId),
+      };
+      this.http.get(
+        "llms.txt",
+        { auth: "renown-optional" },
+        createLlmsRoute(llmsDeps, false),
+      );
+      this.http.get(
+        "llms-full.txt",
+        { auth: "renown-optional" },
+        createLlmsRoute(llmsDeps, true),
+      );
+      this.http.get("health.json", { auth: "renown" }, createHealthRoute(deps));
+      this.http.get("badge.svg", { auth: "public" }, createBadgeRoute(deps));
     } catch (error) {
       // An UnroutableScope throws here; the GraphQL surface must survive it.
       console.warn(
