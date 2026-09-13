@@ -4,6 +4,7 @@ import { getQuery } from "../knowledge-graph/helpers/db.js";
 import { searchVault } from "../knowledge-graph/helpers/search.js";
 import { buildHttpRouteDeps } from "./live-deps.js";
 import { getResolvers } from "./resolvers.js";
+import { createActionsRoute } from "./routes/actions.js";
 import { createNotesRoute } from "./routes/notes.js";
 import { createSearchRoute } from "./routes/search.js";
 import { schema } from "./schema.js";
@@ -67,6 +68,11 @@ export class HttpSubgraph extends BaseSubgraph {
         createNotesRoute(notesDeps),
       );
       this.http.get("notes/:id", { auth: "renown" }, createNotesRoute(notesDeps));
+      this.http.post(
+        "actions",
+        { auth: "renown", body: "parsed", maxBodyBytes: 2 * 1024 * 1024 },
+        createActionsRoute(deps),
+      );
     } catch (error) {
       // An UnroutableScope throws here; the GraphQL surface must survive it.
       console.warn(
