@@ -1,3 +1,4 @@
+import type { CanonicalDocumentId } from "@powerhousedao/reactor-api";
 import type { RouteContext } from "@powerhousedao/shared/processors";
 import type { HttpRouteDeps } from "./deps.js";
 import { HttpError } from "./respond.js";
@@ -15,7 +16,7 @@ async function canonical(
   deps: HttpRouteDeps,
   identifier: string,
   ctx: RouteContext,
-): Promise<string> {
+): Promise<CanonicalDocumentId> {
   return deps.resolveCanonicalDocumentId(identifier, ctx);
 }
 
@@ -23,7 +24,7 @@ export async function canonicalForRead(
   deps: HttpRouteDeps,
   identifier: string,
   ctx: RouteContext,
-): Promise<string> {
+): Promise<CanonicalDocumentId> {
   const user = requireUser(ctx);
   const id = await canonical(deps, identifier, ctx);
   if (!(await deps.authorization.canRead(id, user.address))) {
@@ -36,7 +37,7 @@ export async function canonicalForWrite(
   deps: HttpRouteDeps,
   identifier: string,
   ctx: RouteContext,
-): Promise<string> {
+): Promise<CanonicalDocumentId> {
   const user = requireUser(ctx);
   const id = await canonical(deps, identifier, ctx);
   if (!(await deps.authorization.canWrite(id, user.address))) {
