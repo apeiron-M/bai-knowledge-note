@@ -10,12 +10,8 @@ import {
   upsertEmbedding,
   sha256Hex,
 } from "../../processors/graph-indexer/embedding-store.js";
-import { embedQuery } from "./helpers/query-embedder.js";
-import {
-  RRF_K,
-  isCurrentNode,
-  normalizeFusedScore,
-} from "../../processors/graph-indexer/query.js";
+import { isCurrentNode } from "../../processors/graph-indexer/query.js";
+import { searchVault, searchWithEmbedding } from "./helpers/search.js";
 
 type Resolver = (
   parent: unknown,
@@ -114,67 +110,6 @@ function withDriveGuards<T extends Record<string, Resolver>>(
     };
   }
   return out as T;
-}
-
-/**
- * Shared body of knowledgeGraphSearchByEmbedding (client-supplied vector) and
- * knowledgeGraphSemanticSearch (server-embedded query).
- *
- * SEMANTIC ranks purely by cosine similarity. HYBRID fuses semantic + keyword
- * via RRF in graphQuery.hybridSearch, which ranks well but produces ORDINAL
- * weights topping out at `2 / RRF_K` (~0.033). Those must not reach a UI as a
- * similarity: rendered as a percentage they cap at 3% regardless of how good
- * the match is. So `similarity` carries the rescaled 0..1 relevance while
- * `score` keeps the raw fused weight for callers doing their own maths.
- * Ordering is untouched — the rescale is monotonic.
- */
-async function searchWithEmbedding(
-  subgraph: ISubgraph,
-  driveId: string,
-  query: string,
-  embedding: number[],
-  mode: "SEMANTIC" | "HYBRID",
-  limit: number,
-  includeArchived = false,
-) {
-  const db = getDb(subgraph, driveId);
-  const semanticHits = await searchSimilar(db, embedding, limit * 2);
-  const graphQuery = getQuery(subgraph, driveId);
-
-  if (mode === "SEMANTIC") {
-    const out = [];
-    // The embedding store knows nothing about status: archived notes are
-    // still embedded (their history is knowledge) and are dropped here.
-    for (const hit of semanticHits) {
-      if (out.length >= limit) break;
-      const node = await graphQuery.nodeByDocumentId(hit.documentId);
-      if (node && (includeArchived || isCurrentNode(node))) {
-        out.push({
-          node: { ...node, _driveId: driveId },
-          similarity: hit.similarity,
-          score: hit.similarity,
-          matchedBy: ["semantic"],
-        });
-      }
-    }
-    return out;
-  }
-
-  const hybridResults = await graphQuery.hybridSearch(
-    query,
-    semanticHits,
-    limit,
-    { includeArchived },
-  );
-  return hybridResults.map((r) => ({
-    node: { ...r.node, _driveId: driveId },
-    // Rescaled against the number of legs that actually produced this hit's
-    // ceiling: a note found by BOTH signals can reach 1.0, while a note only
-    // one leg could ever surface is judged against a single leg's maximum.
-    similarity: normalizeFusedScore(r.score, 2),
-    score: r.score,
-    matchedBy: r.matchedBy,
-  }));
 }
 
 export const getResolvers = (subgraph: BaseSubgraph): Record<string, unknown> => {
@@ -503,46 +438,15 @@ export const getResolvers = (subgraph: BaseSubgraph): Record<string, unknown> =>
           includeArchived?: boolean | null;
         },
       ) => {
-        // The query is embedded HERE so clients never load the model. Any
-        // failure on the embedding path — model unavailable, embedding store
-        // missing (e.g. a deployment without the pgvector bundle), no vectors
-        // pushed yet — degrades to keyword fullSearch instead of erroring.
-        // A search box must never be the thing that breaks.
         const limit = args.limit ?? 20;
-        const embedding = await embedQuery(args.query);
-        if (embedding) {
-          try {
-            return await searchWithEmbedding(
-              subgraph,
-              args.driveId,
-              args.query,
-              embedding,
-              args.mode ?? "HYBRID",
-              limit,
-              args.includeArchived ?? false,
-            );
-          } catch (err) {
-            console.warn(
-              `[knowledgeGraph] embedding store unavailable, keyword fallback: ${err instanceof Error ? err.message : String(err)}`,
-            );
-          }
-        }
-        const graphQuery = getQuery(subgraph, args.driveId);
-        const keywordHits = await graphQuery.fullSearch(args.query, limit, {
-          includeArchived: args.includeArchived ?? false,
-        });
-        // Only one leg ran, so score these on the same rank-decay curve RRF
-        // uses and rescale against a SINGLE leg's ceiling. The old flat
-        // `similarity: 0` rendered every perfectly good keyword hit as "0%".
-        return keywordHits.map((node, rank) => {
-          const score = 1 / (RRF_K + rank);
-          return {
-            node: { ...node, _driveId: args.driveId },
-            similarity: normalizeFusedScore(score, 1),
-            score,
-            matchedBy: ["keyword"],
-          };
-        });
+        return searchVault(
+          subgraph,
+          args.driveId,
+          args.query,
+          args.mode ?? "HYBRID",
+          limit,
+          args.includeArchived ?? false,
+        );
       },
 
       knowledgeGraphMissingEmbeddings: async (
