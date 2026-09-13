@@ -3,7 +3,7 @@
 Status: proposed · 2026-09-13
 Branch: `feat/http-surface`
 Parent plan: [`docs/plans/http-surface.md`](../../plans/http-surface.md) — this document narrows it to slice 1 and corrects it against the running stack.
-Scope: **slice 1 only, this repository only** (the `powerhouse-knowledge` plugin is not touched in this branch).
+Scope: **slice 1 implemented; extended by owner direction (2026-09-13) to carry the atomic claim guard and slice 2** (see `docs/superpowers/plans/2026-09-13-http-surface-slice1.md` Tasks 14–19). The `powerhouse-knowledge` plugin is not touched in this branch.
 
 ## Goal
 
@@ -157,11 +157,15 @@ imports them; `routes/search.ts` calls the same function. No duplication, no dri
 
 ### `POST actions`
 
-Body: `{ documentId: string, actions: Action[], wait?: boolean }`.
+Body: `{ documentId: string, actions: Action[], wait?: boolean, allowLiteralEscapes?: boolean }`.
+`allowLiteralEscapes` is the server-side equivalent of the CLI's `--allow-literal-escapes`: with
+it, the `VAULT_CONVENTION` literal-`\n` check is skipped.
 
 `POST actions` targets **existing** documents: creation and upgrade base actions
 (`CREATE_DOCUMENT`, `UPGRADE_DOCUMENT`) are out of scope and are linted as unknown, so a slice-1
-caller cannot create a document through this route.
+caller cannot create a document through this route. The three relationship base actions
+(`ADD_RELATIONSHIP`, `UPDATE_RELATIONSHIP`, `REMOVE_RELATIONSHIP`) are recognized by the lint — no
+model defines them — and validated by the relationship route.
 
 Pipeline, in order — steps 1–6 refuse before anything is dispatched:
 
@@ -221,7 +225,8 @@ Pipeline, in order — steps 1–6 refuse before anything is dispatched:
 
 ### `GET search`
 
-- Params: `q` (required), `mode=hybrid|semantic` (default `hybrid`), `limit` (default 6, max 25),
+- Params: `q` (required), `drive` (required; document UUID — the graph index is namespaced per
+  drive), `mode=hybrid|semantic` (default `hybrid`), `limit` (default 6, max 25),
   `content=1`, `includeArchived=1`.
 - Backed by the extracted `searchWithEmbedding` — the same function the GraphQL resolver calls.
 - JSON: `{ query, mode, hits: [{ similarity, score, matchedBy, node }] }` with
@@ -235,6 +240,8 @@ Pipeline, in order — steps 1–6 refuse before anything is dispatched:
 
 - JSON: document state plus `forwardLinks` and `backlinks` with `reason` / `confidence` read from
   the graph index — explicitly not the legacy `links[]` array.
+- Both forms take `drive` (required; the index is per drive) and an `id` that is a document UUID;
+  slug resolution is deferred. Markdown links carry `?drive=`.
 - Markdown: YAML frontmatter (`title, description, noteType, status, topics, provenance, links`)
   in the `data/methodology/*.md` convention, body = `content`. Edges render as absolute links
   built from `ctx.transport.baseUrl` pointing at `notes/<target>.md`.
