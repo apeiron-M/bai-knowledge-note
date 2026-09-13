@@ -6,6 +6,7 @@ import { buildHttpRouteDeps } from "./live-deps.js";
 import { getResolvers } from "./resolvers.js";
 import { createActionsRoute } from "./routes/actions.js";
 import { createNotesRoute } from "./routes/notes.js";
+import { createRelationshipRoute } from "./routes/relationships.js";
 import { createSearchRoute } from "./routes/search.js";
 import { schema } from "./schema.js";
 
@@ -72,6 +73,21 @@ export class HttpSubgraph extends BaseSubgraph {
         "actions",
         { auth: "renown", body: "parsed", maxBodyBytes: 2 * 1024 * 1024 },
         createActionsRoute(deps),
+      );
+      this.http.post(
+        "relationships",
+        { auth: "renown", body: "parsed" },
+        createRelationshipRoute(deps, "POST"),
+      );
+      this.http.patch(
+        "relationships",
+        { auth: "renown", body: "parsed" },
+        createRelationshipRoute(deps, "PATCH"),
+      );
+      this.http.delete(
+        "relationships",
+        { auth: "renown", body: "parsed" },
+        createRelationshipRoute(deps, "DELETE"),
       );
     } catch (error) {
       // An UnroutableScope throws here; the GraphQL surface must survive it.

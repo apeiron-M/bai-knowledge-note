@@ -76,4 +76,18 @@ describe("lintActions — generic rules", () => {
       }),
     ]);
   });
+
+  it("accepts the relationship base actions no model defines", () => {
+    for (const type of [
+      "ADD_RELATIONSHIP",
+      "UPDATE_RELATIONSHIP",
+      "REMOVE_RELATIONSHIP",
+    ]) {
+      expect(
+        lintActions("bai/knowledge-note", state, [
+          { type, input: { sourceId: "a", targetId: "b", relationshipType: "BUILDS_ON" } },
+        ]),
+      ).toEqual([]);
+    }
+  });
 });

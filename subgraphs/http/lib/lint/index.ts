@@ -5,6 +5,18 @@ import type { LintFinding, LintOptions } from "./types.js";
 
 const LITERAL_ESCAPE = /\\(n|t|r)/;
 
+/**
+ * Reactor base actions the write routes dispatch themselves. They are not
+ * operations of any document model, so the model-operation check must not
+ * reject them, and the models' zod input schemas do not cover them. The
+ * relationships route validates their input and articulation before dispatch.
+ */
+const BASE_WRITE_ACTIONS = new Set([
+  "ADD_RELATIONSHIP",
+  "UPDATE_RELATIONSHIP",
+  "REMOVE_RELATIONSHIP",
+]);
+
 function scanEscapes(
   value: unknown,
   path: string,
@@ -56,6 +68,7 @@ export function lintActions(
 
   actions.forEach((action, index) => {
     const base = `actions[${index}]`;
+    if (BASE_WRITE_ACTIONS.has(action.type)) return;
     if (!operations.has(action.type)) {
       findings.push({
         path: `${base}.type`,
