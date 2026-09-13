@@ -1,8 +1,10 @@
 import { BaseSubgraph } from "@powerhousedao/reactor-api";
 import type { DocumentNode } from "graphql";
+import { getQuery } from "../knowledge-graph/helpers/db.js";
 import { searchVault } from "../knowledge-graph/helpers/search.js";
 import { buildHttpRouteDeps } from "./live-deps.js";
 import { getResolvers } from "./resolvers.js";
+import { createNotesRoute } from "./routes/notes.js";
 import { createSearchRoute } from "./routes/search.js";
 import { schema } from "./schema.js";
 
@@ -31,6 +33,40 @@ export class HttpSubgraph extends BaseSubgraph {
             searchVault(this, driveId, query, mode, limit, includeArchived),
         }),
       );
+      const notesDeps = {
+        ...deps,
+        edges: async (driveId: string, documentId: string) => {
+          const query = getQuery(this, driveId);
+          const [out, incoming] = await Promise.all([
+            query.forwardLinks(documentId),
+            query.backlinks(documentId),
+          ]);
+          return [
+            ...out.map((edge) => ({
+              direction: "out" as const,
+              documentId: edge.targetDocumentId,
+              linkType: edge.linkType ?? "",
+              title: edge.targetTitle,
+              reason: edge.reason,
+              confidence: edge.confidence,
+            })),
+            ...incoming.map((edge) => ({
+              direction: "in" as const,
+              documentId: edge.sourceDocumentId,
+              linkType: edge.linkType ?? "",
+              title: null,
+              reason: edge.reason,
+              confidence: edge.confidence,
+            })),
+          ];
+        },
+      };
+      this.http.get(
+        "notes/:id.md",
+        { auth: "renown" },
+        createNotesRoute(notesDeps),
+      );
+      this.http.get("notes/:id", { auth: "renown" }, createNotesRoute(notesDeps));
     } catch (error) {
       // An UnroutableScope throws here; the GraphQL surface must survive it.
       console.warn(
