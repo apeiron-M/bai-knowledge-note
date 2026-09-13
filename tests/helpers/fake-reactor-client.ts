@@ -21,6 +21,7 @@ export function createFakeReactorClient(
       status: "READ_READY",
       error: null,
     })) as never,
+    find: vi.fn(async () => ({ results: [] })) as never,
     ...overrides,
   };
 }

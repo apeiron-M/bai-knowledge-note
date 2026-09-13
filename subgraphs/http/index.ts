@@ -2,11 +2,13 @@ import { BaseSubgraph } from "@powerhousedao/reactor-api";
 import type { DocumentNode } from "graphql";
 import { getQuery } from "../knowledge-graph/helpers/db.js";
 import { searchVault } from "../knowledge-graph/helpers/search.js";
-import { buildHttpRouteDeps } from "./live-deps.js";
+import { buildHttpRouteDeps, buildStructureRouteDeps } from "./live-deps.js";
 import { getResolvers } from "./resolvers.js";
 import { createActionsRoute } from "./routes/actions.js";
 import { createNotesRoute } from "./routes/notes.js";
 import { createRelationshipRoute } from "./routes/relationships.js";
+import { registerStructureRoutes } from "./routes/structure.js";
+import { createClaimRoute } from "./routes/tasks.js";
 import { createSearchRoute } from "./routes/search.js";
 import { schema } from "./schema.js";
 
@@ -89,6 +91,12 @@ export class HttpSubgraph extends BaseSubgraph {
         { auth: "renown", body: "parsed" },
         createRelationshipRoute(deps, "DELETE"),
       );
+      this.http.post(
+        "tasks/:id/claim",
+        { auth: "renown", body: "parsed" },
+        createClaimRoute(deps),
+      );
+      registerStructureRoutes(this.http, buildStructureRouteDeps(this));
     } catch (error) {
       // An UnroutableScope throws here; the GraphQL surface must survive it.
       console.warn(
