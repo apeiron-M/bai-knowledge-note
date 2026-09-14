@@ -33,16 +33,31 @@ const queueDocument = {
   },
 };
 
+const driveDocument = {
+  header: { id: "d", documentType: "powerhouse/document-drive" },
+  state: {
+    global: {
+      nodes: [{ id: "queue-1", documentType: "bai/pipeline-queue" }],
+    },
+  },
+};
+
+const emptyDriveDocument = {
+  header: { id: "d", documentType: "powerhouse/document-drive" },
+  state: { global: { nodes: [] } },
+};
+
 function deps(
-  findResult: unknown[] = [queueDocument],
+  drive: unknown = driveDocument,
   operations: unknown[] = [
     { index: 5, error: null, action: { id: "uuid-1", type: "ASSIGN_TASK" } },
   ],
 ): HttpRouteDeps {
   return {
     reactorClient: createFakeReactorClient({
-      find: vi.fn(async () => ({ results: findResult })) as never,
-      get: vi.fn(async () => queueDocument) as never,
+      get: vi.fn(async (id: string) =>
+        id === "d" ? drive : queueDocument,
+      ) as never,
       getOperations: vi.fn(async () => ({ results: operations })) as never,
     } as never),
     resolveCanonicalDocumentId: vi.fn(async () => "queue-1") as never,
@@ -75,7 +90,7 @@ describe("POST tasks/:id/claim", () => {
   });
 
   it("404s when the drive has no pipeline queue", async () => {
-    const res = await createClaimRoute(deps([]))(post(), ctx);
+    const res = await createClaimRoute(deps(emptyDriveDocument))(post(), ctx);
     expect(res.status).toBe(404);
   });
 
@@ -103,32 +118,31 @@ describe("POST tasks/:id/claim", () => {
     expect(actions[0].input.assignedTo).toBe("0xworker");
   });
 
+  it("503s when the read-back cannot confirm the claim", async () => {
+    const res = await createClaimRoute(deps(driveDocument, []))(post(), ctx);
+    expect(res.status).toBe(503);
+  });
+
   it("409s when the task is already assigned", async () => {
-    const d = deps(
-      [queueDocument],
-      [
-        {
-          index: 5,
-          error: "Task task-1 is already assigned to 0xaaa",
-          action: { id: "uuid-1", type: "ASSIGN_TASK" },
-        },
-      ],
-    );
+    const d = deps(driveDocument, [
+      {
+        index: 5,
+        error: "Task task-1 is already assigned to 0xaaa",
+        action: { id: "uuid-1", type: "ASSIGN_TASK" },
+      },
+    ]);
     const res = await createClaimRoute(d)(post(), ctx);
     expect(res.status).toBe(409);
   });
 
   it("404s when the task id is unknown", async () => {
-    const d = deps(
-      [queueDocument],
-      [
-        {
-          index: 5,
-          error: "Task not found",
-          action: { id: "uuid-1", type: "ASSIGN_TASK" },
-        },
-      ],
-    );
+    const d = deps(driveDocument, [
+      {
+        index: 5,
+        error: "Task not found",
+        action: { id: "uuid-1", type: "ASSIGN_TASK" },
+      },
+    ]);
     const res = await createClaimRoute(d)(post(), ctx);
     expect(res.status).toBe(404);
   });

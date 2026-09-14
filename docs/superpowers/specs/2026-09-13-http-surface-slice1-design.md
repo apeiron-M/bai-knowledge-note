@@ -66,7 +66,8 @@ Scope mismatches fail the whole job after 4 retries with a GraphQL error.
 - **`evaluateActions` is unavailable**: `AUTH_EVALUATION_UNSUPPORTED` — the reactor runs without
   the `authEnforcement` feature flag. `dryRun` is cut from slice 1.
 - **HTTP scope verified live**: `/api/@powerhousedao/knowledge-note/ping` and the
-  `%40…%2F…` spelling both reach the mounted namespace (404 "Cannot GET" — no routes yet).
+  `%40` spelling (`/api/%40powerhousedao/knowledge-note/…`; only the `@` is encoded — the slash
+  stays literal) both reach the mounted namespace (404 "Cannot GET" — no routes yet).
   `ph generate subgraph` scaffolds a GraphQL subgraph; there is no HTTP-specific generator — HTTP
   endpoints are code registered in `onSetup()`.
 - All planned reads have working GraphQL backing today (stats/density/topics/orphans/triangles/
@@ -147,8 +148,9 @@ imports them; `routes/search.ts` calls the same function. No duplication, no dri
 
 ### Namespace and build
 
-- URL: `<basePath>/api/@powerhousedao/knowledge-note/<path>`, plus the percent-encoded
-  `%40powerhousedao%2Fknowledge-note` spelling, both auto-registered by the host.
+- URL: `<basePath>/api/@powerhousedao/knowledge-note/<path>`, plus the host-registered
+  `/api/%40powerhousedao/knowledge-note/<path>` spelling (only `@` percent-encoded; the slash
+  stays literal).
 - Routes match in registration order; registering the same method+path twice throws.
 - Subgraphs load from built output: every change requires `bun run build` and a Switchboard
   restart before it is visible.

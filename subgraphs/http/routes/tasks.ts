@@ -1,6 +1,7 @@
 import type { RouteContext } from "@powerhousedao/shared/processors";
 import { canonicalForWrite } from "../lib/authorize.js";
 import type { HttpRouteDeps } from "../lib/deps.js";
+import { findDocumentInDrive } from "../lib/drive-tree.js";
 import { HttpError, jsonError, OK_CACHE } from "../lib/respond.js";
 import { executeWrite } from "../lib/write.js";
 
@@ -23,22 +24,23 @@ export function createClaimRoute(deps: HttpRouteDeps) {
         body = {};
       }
 
-      const found = await deps.reactorClient.find({
-        type: "bai/pipeline-queue",
-        parentId: drive,
-      });
-      const queue = found.results[0];
-      if (!queue) {
+      const queueId = await findDocumentInDrive(
+        deps,
+        drive,
+        "bai/pipeline-queue",
+      );
+      if (!queueId) {
         throw new HttpError(
           404,
           "NOT_FOUND",
           `No pipeline queue in drive ${drive}`,
         );
       }
-      const queueId = await canonicalForWrite(deps, queue.header.id, ctx);
+      const canonicalQueueId = await canonicalForWrite(deps, queueId, ctx);
+      const queue = await deps.reactorClient.get(canonicalQueueId);
 
       const result = await executeWrite(deps, {
-        documentId: queueId,
+        documentId: canonicalQueueId,
         document: queue,
         actions: [
           {
@@ -55,6 +57,13 @@ export function createClaimRoute(deps: HttpRouteDeps) {
       });
 
       const failed = result.operations.find((op) => op.error);
+      if (result.operations.length === 0) {
+        throw new HttpError(
+          503,
+          "READ_BACK_INCOMPLETE",
+          "The claim could not be confirmed; read the queue before retrying",
+        );
+      }
       if (failed?.error && /already assigned/i.test(failed.error)) {
         throw new HttpError(409, "CONFLICT", failed.error);
       }

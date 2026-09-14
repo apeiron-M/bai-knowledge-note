@@ -69,9 +69,9 @@ describe("GET notes/:id", () => {
   });
 
   it("renders markdown for notes/:id.md", async () => {
-    const res = await createNotesRoute(deps())(
+    const res = await createNotesRoute(deps(), true)(
       new Request("http://h/notes/n1.md?drive=d"),
-      ctxFor("n1.md"),
+      ctxFor("n1"),
     );
     expect(res.status).toBe(200);
     expect(res.headers.get("content-type")).toContain("text/markdown");

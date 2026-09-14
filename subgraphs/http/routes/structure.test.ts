@@ -149,6 +149,9 @@ describe("structure routes", () => {
       new Request("http://h/notes/n1/similar?drive=d&limit=999"),
       ctxFor({ id: "n1" }),
     );
-    expect(d.similar).toHaveBeenCalledWith("d", "n1", 50);
+    const calls = (
+      d.similar as unknown as { mock: { calls: unknown[][] } }
+    ).mock.calls;
+    expect(calls[0]).toEqual(["d", "n1", 50]);
   });
 });

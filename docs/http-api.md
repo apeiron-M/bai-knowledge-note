@@ -5,7 +5,7 @@ namespace:
 
 ```
 <origin>/api/@powerhousedao/knowledge-note/<path>
-<origin>/api/%40powerhousedao%2Fknowledge-note/<path>   (same routes, encoded @ and /)
+<origin>/api/%40powerhousedao/knowledge-note/<path>   (same routes; the host registers the `@` encoded — only `@`, the slash stays literal)
 ```
 
 Every route matches in registration order and answers as a Fetch handler. `auth` is enforced by
@@ -25,6 +25,20 @@ route that reads the index takes `drive` (a document UUID).
 | `POST` | `relationships` | `renown` | body `{ source, target, type, reason?, confidence? }` | `{ revision, operations }` |
 | `PATCH` | `relationships` | `renown` | same body; replaces the stored `reason`/`confidence` | same |
 | `DELETE` | `relationships` | `renown` | body `{ source, target, type }` | same |
+| `POST` | `tasks/:id/claim` | `renown` | `drive` (required); body `{ assignedTo? }` (defaults to the caller) | `{ taskId, assignedTo }`; `409` when already assigned, `404` unknown task, `503` when the read-back cannot confirm |
+| `GET` | `stats` / `density` / `topics` | `renown` | `drive` (required) | the graph aggregate, as `createGraphQuery` produces it |
+| `GET` | `topics/:name` | `renown` | `drive` | notes tagged with the topic |
+| `GET` | `orphans` / `triangles?limit=` / `graph.json` | `renown` | `drive`; `triangles` defaults 20, max 100 | nodes with no incoming edge / synthesis opportunities / `{ nodes, edges }` |
+| `GET` | `embeddings/missing` | `renown` | `drive` | document ids without an embedding |
+| `GET` | `notes/:id/similar?limit=` / `links` / `backlinks` / `connections?depth=` | `renown` | `drive`, `id` | semantic neighbours / forward edges / back edges / BFS, each with edge reasons |
+| `GET` | `activity?since=&limit=` / `notes/:id/history` | `renown` | `drive`; **requires `canWrite`** | the audit log (`inputJson`, signer, signature) |
+| `GET` | `bridges` | `renown` | `drive`; **requires `canManage`** (O(V·E)) | articulation points |
+| `GET` | `access-map` | `renown` | `drive`; **requires `canManage`** | grants, protections, operation grants |
+| `POST` | `admin/reindex` | `renown` | `drive`; **requires `canManage`** | `{ indexedNodes, indexedEdges, errors }` (reindex does not re-embed) |
+| `GET` | `llms.txt` | `renown-optional` | `drive` | MoC index as plain text; anonymous only when the drive is anonymously readable, titles only |
+| `GET` | `llms-full.txt` | `renown-optional` | `drive` | canonical notes plus the scope-of-work and WBS outlines; signed-in only |
+| `GET` | `health.json` | `renown` | `drive` | the last health report |
+| `GET` | `badge.svg` | `public` | `drive` | SVG status word (`PASS`/`WARN`/`FAIL`/`UNKNOWN`, 5-minute cache); public because it carries the status word only |
 
 ### Write semantics
 
@@ -43,18 +57,14 @@ characters; `CORE_IDEA` and `CHILD_MOC` may be bare.
 
 ## Unauthenticated routes
 
-Grepping this document for `"public"` must list every unauthenticated route. Currently there are
-**none** in this slice: `ping`, `search`, `notes`, `actions` and `relationships` are all
-`renown`. `badge.svg`, `llms.txt` and `health.json` arrive in the slice-2 tasks with their own
-modes.
+Grepping this document for `"public"` lists every unauthenticated route: **`GET badge.svg`** is
+the only one (status word only, never vault content). `llms.txt` is `renown-optional`: anonymous
+callers get MoC titles when the drive is anonymously readable and a `401` hint otherwise.
 
 ## Deferred (not yet served)
 
-`llms.txt` / `llms-full.txt`, `health.json` / `badge.svg`, the structure reads (`stats`,
-`density`, `topics`, `topics/:name`, `orphans`, `triangles`, `bridges`, `graph.json`,
-`embeddings/missing`, `notes/:id/similar|links|backlinks|connections`, `activity`,
-`notes/:id/history`), `access-map`, `admin/reindex`, `POST tasks/:id/claim`, and the MCP endpoint
-— each is specified in `docs/plans/http-surface.md` and `docs/superpowers/plans/2026-09-13-http-surface-slice1.md`.
+The vault-native MCP endpoint (`mcp`, planned in `docs/plans/http-surface.md` slice 4) and
+webhooks (slice 3, plus its GitHub/Slack/generic-token presets and the Integrations screen).
 
 ## Operational notes
 

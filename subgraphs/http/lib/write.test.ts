@@ -154,6 +154,46 @@ describe("executeWrite", () => {
     expect(waitForJob).not.toHaveBeenCalled();
   });
 
+  it("retries the read-back when the operation log lags", async () => {
+    const getOperations = vi
+      .fn()
+      .mockResolvedValueOnce({ results: [] })
+      .mockResolvedValue({
+        results: [
+          { index: 1, error: null, action: { id: "uuid-1", type: "SET_TITLE" } },
+        ],
+      });
+    const d = deps({
+      reactorClient: createFakeReactorClient({
+        getOperations: getOperations as never,
+      } as never),
+    });
+    const result = await executeWrite(d, {
+      documentId: "doc",
+      document: sourceDocument,
+      actions: [validAction],
+      ctx,
+      wait: true,
+    });
+    expect(result.operations).toHaveLength(1);
+    expect(getOperations).toHaveBeenCalledTimes(2);
+  });
+
+  it("ignores an already-aborted request signal", async () => {
+    const executeAsync = vi.fn(async () => ({ id: "job-1" }));
+    const d = deps({
+      reactorClient: createFakeReactorClient({ executeAsync } as never),
+    });
+    await executeWrite(d, {
+      documentId: "doc",
+      document: sourceDocument,
+      actions: [validAction],
+      ctx: { ...ctx, signal: AbortSignal.abort() } as unknown as RouteContext,
+      wait: true,
+    });
+    expect((executeAsync.mock.calls[0] as unknown[])[3]).toBeUndefined();
+  });
+
   it("prefers a supplied scope over the default", async () => {
     const executeAsync = vi.fn(async () => ({ id: "job-1" }));
     const d = deps({

@@ -1,15 +1,12 @@
 import type { RouteContext } from "@powerhousedao/shared/processors";
 import { canonicalForRead } from "../lib/authorize.js";
 import type { HttpRouteDeps } from "../lib/deps.js";
+import { findDocumentInDrive } from "../lib/drive-tree.js";
 import { badgeSvg, overallStatusOf } from "../lib/health.js";
 import { HttpError, jsonError, OK_CACHE } from "../lib/respond.js";
 
-async function findHealthReport(deps: HttpRouteDeps, drive: string) {
-  const found = await deps.reactorClient.find({
-    type: "bai/health-report",
-    parentId: drive,
-  });
-  return found.results[0];
+async function healthReportId(deps: HttpRouteDeps, drive: string) {
+  return findDocumentInDrive(deps, drive, "bai/health-report");
 }
 
 export function createHealthRoute(deps: HttpRouteDeps) {
@@ -21,11 +18,12 @@ export function createHealthRoute(deps: HttpRouteDeps) {
       const url = new URL(request.url);
       const drive = url.searchParams.get("drive");
       if (!drive) throw new HttpError(400, "BAD_REQUEST", "drive is required");
-      const report = await findHealthReport(deps, drive);
-      if (!report) {
+      const reportId = await healthReportId(deps, drive);
+      if (!reportId) {
         throw new HttpError(404, "NOT_FOUND", "No health report in this drive");
       }
-      await canonicalForRead(deps, report.header.id, ctx);
+      await canonicalForRead(deps, reportId, ctx);
+      const report = await deps.reactorClient.get(reportId);
       const state = report.state as { global?: unknown } | undefined;
       return Response.json(state?.global ?? {}, { headers: OK_CACHE });
     } catch (error) {
@@ -43,12 +41,12 @@ export function createBadgeRoute(deps: HttpRouteDeps) {
       const url = new URL(request.url);
       const drive = url.searchParams.get("drive");
       if (!drive) throw new HttpError(400, "BAD_REQUEST", "drive is required");
-      const report = await findHealthReport(deps, drive);
+      const reportId = await healthReportId(deps, drive);
       let status = "UNKNOWN";
-      if (report) {
+      if (reportId) {
         try {
-          const fresh = await deps.reactorClient.get(report.header.id);
-          status = overallStatusOf(fresh.state);
+          const report = await deps.reactorClient.get(reportId);
+          status = overallStatusOf(report.state);
         } catch (error) {
           // A public badge must never fabricate a PASS; an unreadable report
           // is honestly unknown.

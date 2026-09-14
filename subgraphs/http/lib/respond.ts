@@ -41,6 +41,9 @@ export function jsonError(error: unknown): Response {
       { status: 403 },
     );
   }
+  console.error(
+    `[http] unhandled route error: ${error instanceof Error ? `${error.name}: ${error.message}` : String(error)}`,
+  );
   return Response.json(
     { error: "Internal error", code: "INTERNAL" },
     { status: 500 },

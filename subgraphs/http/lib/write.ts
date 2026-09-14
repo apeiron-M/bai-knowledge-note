@@ -63,8 +63,8 @@ export async function executeWrite(
 
   const stamped = stampActions(
     options.actions,
-    deps.now,
-    deps.uuid,
+    () => deps.now(),
+    () => deps.uuid(),
     options.defaultScope ?? "global",
   );
 
@@ -104,43 +104,67 @@ export async function executeWrite(
     global: 0,
   });
   const prior = revisions.length ? Math.min(...revisions) : 0;
+  // The host hands routes a signal that is already aborted once the body has
+  // been consumed, which makes the reactor client's signer abort every write.
+  // Use it only while it is live.
+  const signal =
+    options.ctx.signal && !options.ctx.signal.aborted
+      ? options.ctx.signal
+      : undefined;
 
   const job = await deps.reactorClient.executeAsync(
     options.documentId,
     "main",
     stamped as unknown as Action[],
-    options.ctx.signal,
+    signal,
   );
   if (!options.wait) {
     return { revision: null, operations: [], jobId: job.id };
   }
 
-  const finished = await deps.reactorClient.waitForJob(
-    job.id,
-    options.ctx.signal,
-  );
+  const finished = await deps.reactorClient.waitForJob(job.id, signal);
   if (finished.error) {
     throw new HttpError(422, "DISPATCH_FAILED", finished.error.message);
   }
 
-  const page = await deps.reactorClient.getOperations(
+  const wanted = new Map(stamped.map((action) => [action.id, action]));
+  let page = await deps.reactorClient.getOperations(
     options.documentId,
     undefined,
     { sinceRevision: prior },
     { cursor: "", limit: 200 },
   );
-  const wanted = new Map(stamped.map((action) => [action.id, action]));
-  const operations = page.results
-    .filter((op) => op.action?.id && wanted.has(op.action.id))
-    .map((op) => {
-      const action = wanted.get(op.action.id)!;
-      return {
-        index: op.index,
-        type: op.action.type,
-        error: op.error ?? null,
-        attribution: signerAddressOf(action) ? "agent" : "server",
-      } as const;
-    });
+  let matched = page.results.filter(
+    (op) => op.action?.id && wanted.has(op.action.id),
+  );
+  // The operation log a write is read back from can lag the job that produced
+  // it; poll briefly rather than reporting an empty result as success.
+  for (let attempt = 0; attempt < 5 && matched.length === 0; attempt++) {
+    await new Promise((resolve) => setTimeout(resolve, 200));
+    page = await deps.reactorClient.getOperations(
+      options.documentId,
+      undefined,
+      { sinceRevision: prior },
+      { cursor: "", limit: 200 },
+    );
+    matched = page.results.filter(
+      (op) => op.action?.id && wanted.has(op.action.id),
+    );
+  }
+  if (matched.length === 0) {
+    console.warn(
+      `[http] write read-back found no operations (prior revision ${prior}, doc ${options.documentId})`,
+    );
+  }
+  const operations = matched.map((op) => {
+    const action = wanted.get(op.action.id)!;
+    return {
+      index: op.index,
+      type: op.action.type,
+      error: op.error ?? null,
+      attribution: signerAddressOf(action) ? "agent" : "server",
+    } as const;
+  });
 
   const updated = await deps.reactorClient.get(options.documentId);
   return { revision: updated.header.revision, operations };

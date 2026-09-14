@@ -21,11 +21,24 @@ const reportDocument = {
   state: { global: { overallStatus: "PASS", checks: [] } },
 };
 
-function deps(report: unknown = reportDocument): HttpRouteDeps {
+const driveDocument = {
+  header: { id: "d", documentType: "powerhouse/document-drive" },
+  state: {
+    global: { nodes: [{ id: "health-1", documentType: "bai/health-report" }] },
+  },
+};
+
+const emptyDriveDocument = {
+  header: { id: "d", documentType: "powerhouse/document-drive" },
+  state: { global: { nodes: [] } },
+};
+
+function deps(drive: unknown = driveDocument): HttpRouteDeps {
   return {
     reactorClient: createFakeReactorClient({
-      find: vi.fn(async () => ({ results: report ? [report] : [] })) as never,
-      get: vi.fn(async () => reportDocument) as never,
+      get: vi.fn(async (id: string) =>
+        id === "d" ? drive : reportDocument,
+      ) as never,
     } as never),
     resolveCanonicalDocumentId: vi.fn(async () => "health-1") as never,
     authorization: {
@@ -52,7 +65,7 @@ describe("health routes", () => {
   });
 
   it("health.json 404s without a report", async () => {
-    const res = await createHealthRoute(deps(null))(
+    const res = await createHealthRoute(deps(emptyDriveDocument))(
       new Request("http://h/health.json?drive=d"),
       ctx,
     );
@@ -71,7 +84,8 @@ describe("health routes", () => {
 
   it("badge.svg stays UNKNOWN when the report cannot be read", async () => {
     const d = deps();
-    d.reactorClient.get = vi.fn(async () => {
+    d.reactorClient.get = vi.fn(async (id: string) => {
+      if (id === "d") return driveDocument;
       throw new Error("forbidden");
     }) as never;
     const res = await createBadgeRoute(d)(

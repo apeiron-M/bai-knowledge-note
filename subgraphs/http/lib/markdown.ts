@@ -17,8 +17,9 @@ export function renderNoteMarkdown(
   linkBase: string,
   drive: string,
 ): string {
-  const global = ((doc.state as { global?: Record<string, unknown> } | undefined)
-    ?.global ?? {}) as Record<string, unknown>;
+  const global: Record<string, unknown> =
+    (doc.state as { global?: Record<string, unknown> } | undefined)?.global ??
+    {};
   const lines: string[] = ["---"];
   const title = typeof global.title === "string" ? global.title : doc.name;
   lines.push(`title: ${yamlString(title)}`);

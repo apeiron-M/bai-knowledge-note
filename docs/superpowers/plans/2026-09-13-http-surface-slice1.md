@@ -122,7 +122,7 @@ TOKEN=$(ph access-token)   # or the token the user supplied
 curl -s -H "Authorization: Bearer $TOKEN" \
   http://localhost:4001/api/@powerhousedao/knowledge-note/ping
 curl -s -H "Authorization: Bearer $TOKEN" \
-  "http://localhost:4001/api/%40powerhousedao%2Fknowledge-note/ping"
+  "http://localhost:4001/api/%40powerhousedao/knowledge-note/ping"
 curl -s -o /dev/null -w '%{http_code}\n' \
   http://localhost:4001/api/@powerhousedao/knowledge-note/ping
 ```

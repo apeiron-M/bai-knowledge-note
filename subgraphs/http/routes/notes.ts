@@ -8,7 +8,10 @@ export interface NotesRouteDeps extends HttpRouteDeps {
   edges(driveId: string, documentId: string): Promise<EdgeView[]>;
 }
 
-export function createNotesRoute(deps: NotesRouteDeps) {
+export function createNotesRoute(
+  deps: NotesRouteDeps,
+  wantsMarkdown = false,
+) {
   return async function handleNote(
     request: Request,
     ctx: RouteContext,
@@ -17,9 +20,7 @@ export function createNotesRoute(deps: NotesRouteDeps) {
       const url = new URL(request.url);
       const drive = url.searchParams.get("drive");
       if (!drive) throw new HttpError(400, "BAD_REQUEST", "drive is required");
-      const rawId = ctx.params.id ?? "";
-      const wantsMarkdown = rawId.endsWith(".md");
-      const id = wantsMarkdown ? rawId.slice(0, -3) : rawId;
+      const id = ctx.params.id ?? "";
       if (!id) throw new HttpError(400, "BAD_REQUEST", "id is required");
       const canonicalId = await canonicalForRead(deps, id, ctx);
       const doc = await deps.reactorClient.get(canonicalId);

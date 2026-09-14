@@ -70,7 +70,7 @@ export class HttpSubgraph extends BaseSubgraph {
       this.http.get(
         "notes/:id.md",
         { auth: "renown" },
-        createNotesRoute(notesDeps),
+        createNotesRoute(notesDeps, true),
       );
       this.http.get("notes/:id", { auth: "renown" }, createNotesRoute(notesDeps));
       this.http.post(
