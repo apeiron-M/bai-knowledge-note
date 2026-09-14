@@ -215,3 +215,166 @@ describe("executeWrite", () => {
     expect(actions[0].scope).toBe("document");
   });
 });
+describe("executeWrite read-back scope arithmetic", () => {
+  // A reactor-faithful operation log: getOperations only returns operations
+  // whose per-scope index is >= filter.sinceRevision, which is exactly what
+  // the real OperationFilter does. Without this the read-back tests pass
+  // vacuously.
+  function opLog(
+    ops: { index: number; id: string; type: string }[],
+    pageSize = 200,
+  ) {
+    return vi.fn(
+      async (
+        _id: string,
+        _view: unknown,
+        filter: { sinceRevision?: number } | undefined,
+        paging: { cursor?: string; limit?: number } | undefined,
+      ) => {
+        const visible = ops.filter(
+          (o) => o.index >= (filter?.sinceRevision ?? 0),
+        );
+        const start = paging?.cursor ? Number(paging.cursor) : 0;
+        const slice = visible.slice(start, start + pageSize);
+        const nextStart = start + pageSize;
+        return {
+          results: slice.map((o) => ({
+            index: o.index,
+            error: null,
+            action: { id: o.id, type: o.type },
+          })),
+          nextCursor: nextStart < visible.length ? String(nextStart) : undefined,
+        };
+      },
+    );
+  }
+
+  const freshNote = {
+    header: {
+      id: "doc",
+      documentType: "bai/knowledge-note",
+      // A freshly created document really does look like this: containment
+      // wrote two document-scope operations and there is no global entry.
+      revision: { document: 2 },
+    },
+    state: { global: { title: "x", status: "DRAFT" } },
+  } as unknown as PHDocument;
+
+  it("matches a first global write on a document with no global revision yet", async () => {
+    const getOperations = opLog([
+      { index: 0, id: "uuid-1", type: "SET_TITLE" },
+    ]);
+    const d = deps({
+      reactorClient: createFakeReactorClient({ getOperations } as never),
+    });
+    const result = await executeWrite(d, {
+      documentId: "doc",
+      document: freshNote,
+      actions: [validAction],
+      ctx,
+      wait: true,
+    });
+    expect(result.operations).toHaveLength(1);
+    expect(result.readBack).toBe("confirmed");
+  });
+
+  it("asks the log for the written scope's prior revision, not the map minimum", async () => {
+    const getOperations = opLog([
+      { index: 0, id: "uuid-1", type: "SET_TITLE" },
+    ]);
+    const d = deps({
+      reactorClient: createFakeReactorClient({ getOperations } as never),
+    });
+    await executeWrite(d, {
+      documentId: "doc",
+      document: freshNote,
+      actions: [validAction],
+      ctx,
+      wait: true,
+    });
+    const [, , filter] = getOperations.mock.calls[0] as unknown as [
+      string,
+      unknown,
+      { sinceRevision: number },
+    ];
+    expect(filter.sinceRevision).toBe(0);
+  });
+
+  it("matches a document-scope write when only global is present", async () => {
+    const noDocScope = {
+      header: {
+        id: "doc",
+        documentType: "bai/knowledge-note",
+        revision: { global: 5 },
+      },
+      state: { global: { title: "x", status: "DRAFT" } },
+    } as unknown as PHDocument;
+    const getOperations = opLog([
+      { index: 0, id: "uuid-1", type: "ADD_RELATIONSHIP" },
+    ]);
+    const d = deps({
+      reactorClient: createFakeReactorClient({ getOperations } as never),
+    });
+    const result = await executeWrite(d, {
+      documentId: "doc",
+      document: noDocScope,
+      actions: [
+        {
+          type: "ADD_RELATIONSHIP",
+          input: {
+            sourceId: "a",
+            targetId: "b",
+            relationshipType: "RELATES_TO",
+            metadata: { reason: "a specific and checkable reason here" },
+          },
+        },
+      ],
+      ctx,
+      wait: true,
+      defaultScope: "document",
+    });
+    expect(result.operations).toHaveLength(1);
+    expect(result.readBack).toBe("confirmed");
+  });
+
+  it("follows the cursor when the wanted operation is not on the first page", async () => {
+    const filler = Array.from({ length: 200 }, (_, i) => ({
+      index: i,
+      id: `other-${i}`,
+      type: "SET_CONTENT",
+    }));
+    const getOperations = opLog(
+      [...filler, { index: 200, id: "uuid-1", type: "SET_TITLE" }],
+      200,
+    );
+    const d = deps({
+      reactorClient: createFakeReactorClient({ getOperations } as never),
+    });
+    const result = await executeWrite(d, {
+      documentId: "doc",
+      document: freshNote,
+      actions: [validAction],
+      ctx,
+      wait: true,
+    });
+    expect(result.operations).toHaveLength(1);
+    expect(result.readBack).toBe("confirmed");
+  });
+
+  it("reports readBack unconfirmed instead of a clean write when nothing matches", async () => {
+    const getOperations = opLog([]);
+    const d = deps({
+      reactorClient: createFakeReactorClient({ getOperations } as never),
+    });
+    const result = await executeWrite(d, {
+      documentId: "doc",
+      document: freshNote,
+      actions: [validAction],
+      ctx,
+      wait: true,
+    });
+    expect(result.operations).toEqual([]);
+    expect(result.readBack).toBe("unconfirmed");
+    expect(result.jobId).toBe("job-1");
+  });
+});

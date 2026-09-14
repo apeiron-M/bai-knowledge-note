@@ -76,7 +76,12 @@ export function createRelationshipRoute(
         defaultScope: "document",
       });
       return Response.json(
-        { revision: result.revision, operations: result.operations },
+        {
+          revision: result.revision,
+          operations: result.operations,
+          readBack: result.readBack,
+          jobId: result.jobId,
+        },
         { headers: OK_CACHE },
       );
     } catch (error) {

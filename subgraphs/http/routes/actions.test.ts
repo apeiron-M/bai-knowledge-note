@@ -95,6 +95,51 @@ describe("POST actions", () => {
     expect(executeAsync).toHaveBeenCalledOnce();
   });
 
+  it("reports a confirmed read-back with a pollable job id, still 200", async () => {
+    const d = deps({
+      reactorClient: createFakeReactorClient({
+        get: vi.fn(async () => noteDocument) as never,
+        getOperations: vi.fn(async () => ({
+          results: [
+            { index: 0, error: null, action: { id: "uuid-1", type: "SET_TITLE" } },
+          ],
+        })) as never,
+      } as never),
+    });
+    const res = await createActionsRoute(d)(
+      post({ documentId: "doc", actions: [validAction] }),
+      ctx,
+    );
+    // A synchronous write reports its job id too. The 202 branch must key on
+    // the async dispatch, not on `jobId` being present.
+    expect(res.status).toBe(200);
+    const body = (await res.json()) as { readBack: string; jobId: string };
+    expect(body.readBack).toBe("confirmed");
+    expect(body.jobId).toBe("job-1");
+  });
+
+  it("says unconfirmed rather than reporting an empty write as clean", async () => {
+    const d = deps({
+      reactorClient: createFakeReactorClient({
+        get: vi.fn(async () => noteDocument) as never,
+        getOperations: vi.fn(async () => ({ results: [] })) as never,
+      } as never),
+    });
+    const res = await createActionsRoute(d)(
+      post({ documentId: "doc", actions: [validAction] }),
+      ctx,
+    );
+    expect(res.status).toBe(200);
+    const body = (await res.json()) as {
+      readBack: string;
+      operations: unknown[];
+      jobId: string;
+    };
+    expect(body.readBack).toBe("unconfirmed");
+    expect(body.operations).toEqual([]);
+    expect(body.jobId).toBe("job-1");
+  });
+
   it("refuses a signed action from another identity with 403", async () => {
     const d = deps();
     const res = await createActionsRoute(d)(

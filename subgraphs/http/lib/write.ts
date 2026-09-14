@@ -16,6 +16,15 @@ export interface WriteResult {
     error: string | null;
     attribution: "agent" | "server";
   }[];
+  /**
+   * Whether the dispatched actions were observed in the operation log.
+   *
+   * `unconfirmed` means the write WAS dispatched and its job reported success,
+   * but the log could not be read back in time. Callers must not retry on it:
+   * the actions are not idempotent and may already have applied. Poll `jobId`
+   * or re-read the document instead.
+   */
+  readBack: "confirmed" | "unconfirmed" | "skipped";
   jobId?: string;
 }
 
@@ -28,6 +37,10 @@ export interface WriteOptions {
   allowLiteralEscapes?: boolean;
   defaultScope?: string;
 }
+
+const READ_BACK_PAGE_SIZE = 200;
+const MAX_READ_BACK_PAGES = 5;
+const READ_BACK_BACKOFF_MS = [50, 100, 200, 400, 800];
 
 const LIFECYCLE_OPERATIONS = new Set([
   "SUBMIT_FOR_REVIEW",
@@ -100,10 +113,24 @@ export async function executeWrite(
     }
   }
 
-  const revisions = Object.values(options.document.header.revision ?? {
-    global: 0,
-  });
-  const prior = revisions.length ? Math.min(...revisions) : 0;
+  // `sinceRevision` filters a PER-SCOPE operation index, so the floor must be
+  // read per scope. Taking Math.min across the whole revision map mixes scopes:
+  // a freshly created document is `{ document: 2 }` with no `global` entry, so
+  // the floor came out as 2 and silently excluded that document's very first
+  // global operation (index 0) from its own read-back — reported as a clean
+  // write with an empty `operations` array.
+  const revision = (options.document.header.revision ?? {}) as Record<
+    string,
+    number
+  >;
+  const writtenScopes = new Set(
+    stamped.map(
+      (action) => action.scope ?? options.defaultScope ?? "global",
+    ),
+  );
+  const prior = Math.min(
+    ...[...writtenScopes].map((scope) => revision[scope] ?? 0),
+  );
   // The host hands routes a signal that is already aborted once the body has
   // been consumed, which makes the reactor client's signer abort every write.
   // Use it only while it is live.
@@ -119,7 +146,12 @@ export async function executeWrite(
     signal,
   );
   if (!options.wait) {
-    return { revision: null, operations: [], jobId: job.id };
+    return {
+      revision: null,
+      operations: [],
+      readBack: "skipped",
+      jobId: job.id,
+    };
   }
 
   const finished = await deps.reactorClient.waitForJob(job.id, signal);
@@ -128,44 +160,74 @@ export async function executeWrite(
   }
 
   const wanted = new Map(stamped.map((action) => [action.id, action]));
-  let page = await deps.reactorClient.getOperations(
-    options.documentId,
-    undefined,
-    { sinceRevision: prior },
-    { cursor: "", limit: 200 },
-  );
-  let matched = page.results.filter(
-    (op) => op.action?.id && wanted.has(op.action.id),
-  );
-  // The operation log a write is read back from can lag the job that produced
-  // it; poll briefly rather than reporting an empty result as success.
-  for (let attempt = 0; attempt < 5 && matched.length === 0; attempt++) {
-    await new Promise((resolve) => setTimeout(resolve, 200));
-    page = await deps.reactorClient.getOperations(
-      options.documentId,
-      undefined,
-      { sinceRevision: prior },
-      { cursor: "", limit: 200 },
-    );
-    matched = page.results.filter(
-      (op) => op.action?.id && wanted.has(op.action.id),
-    );
+
+  // `action` is optional on purpose: the operation log can return records
+  // whose action envelope is absent, which is why the id is guarded below.
+  type LoggedOperation = {
+    index: number;
+    error?: string | null;
+    action?: { id: string; type: string };
+  };
+
+  // One sweep of the log, following the cursor: a busy document can push the
+  // operations we just wrote off the first page.
+  const sweep = async (): Promise<LoggedOperation[]> => {
+    const found: LoggedOperation[] = [];
+    let cursor = "";
+    for (let page = 0; page < MAX_READ_BACK_PAGES; page++) {
+      const result = (await deps.reactorClient.getOperations(
+        options.documentId,
+        undefined,
+        { sinceRevision: prior },
+        { cursor, limit: READ_BACK_PAGE_SIZE },
+      )) as unknown as {
+        results: LoggedOperation[];
+        nextCursor?: string;
+      };
+      found.push(
+        ...result.results.filter(
+          (op) => op.action?.id && wanted.has(op.action.id),
+        ),
+      );
+      if (found.length >= wanted.size || !result.nextCursor) break;
+      cursor = result.nextCursor;
+    }
+    return found;
+  };
+
+  // The operation log can lag the job that produced it. Back off rather than
+  // hammering at a flat interval, so the common case returns fast.
+  let matched = await sweep();
+  for (const delay of READ_BACK_BACKOFF_MS) {
+    if (matched.length) break;
+    await new Promise((resolve) => setTimeout(resolve, delay));
+    matched = await sweep();
   }
-  if (matched.length === 0) {
+
+  const readBack: WriteResult["readBack"] = matched.length
+    ? "confirmed"
+    : "unconfirmed";
+  if (readBack === "unconfirmed") {
     console.warn(
-      `[http] write read-back found no operations (prior revision ${prior}, doc ${options.documentId})`,
+      `[http] write read-back found no operations (doc ${options.documentId}, ` +
+        `scopes ${[...writtenScopes].join(",")}, sinceRevision ${prior}, job ${job.id})`,
     );
   }
   const operations = matched.map((op) => {
-    const action = wanted.get(op.action.id)!;
+    const action = wanted.get(op.action!.id)!;
     return {
       index: op.index,
-      type: op.action.type,
+      type: op.action!.type,
       error: op.error ?? null,
       attribution: signerAddressOf(action) ? "agent" : "server",
     } as const;
   });
 
   const updated = await deps.reactorClient.get(options.documentId);
-  return { revision: updated.header.revision, operations };
+  return {
+    revision: updated.header.revision,
+    operations,
+    readBack,
+    jobId: job.id,
+  };
 }

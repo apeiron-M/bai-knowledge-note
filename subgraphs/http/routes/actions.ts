@@ -44,11 +44,19 @@ export function createActionsRoute(deps: HttpRouteDeps) {
         wait: body.wait !== false,
         allowLiteralEscapes: body.allowLiteralEscapes,
       });
-      if (result.jobId) {
+      // Branch on the async dispatch itself, not on the presence of `jobId`:
+      // a synchronous write reports its job id too, so that an unconfirmed
+      // read-back can be polled rather than blindly retried.
+      if (result.readBack === "skipped") {
         return Response.json({ jobId: result.jobId }, { status: 202 });
       }
       return Response.json(
-        { revision: result.revision, operations: result.operations },
+        {
+          revision: result.revision,
+          operations: result.operations,
+          readBack: result.readBack,
+          jobId: result.jobId,
+        },
         { headers: OK_CACHE },
       );
     } catch (error) {
