@@ -423,7 +423,7 @@ export const getResolvers = (subgraph: BaseSubgraph): Record<string, unknown> =>
           driveId: string;
           query: string;
           embedding: number[];
-          mode: "SEMANTIC" | "HYBRID";
+          mode: "SEMANTIC";
           limit?: number;
           includeArchived?: boolean | null;
         },
@@ -444,7 +444,7 @@ export const getResolvers = (subgraph: BaseSubgraph): Record<string, unknown> =>
         args: {
           driveId: string;
           query: string;
-          mode?: "SEMANTIC" | "HYBRID" | null;
+          mode?: "SEMANTIC" | null;
           limit?: number;
           includeArchived?: boolean | null;
         },
@@ -454,7 +454,7 @@ export const getResolvers = (subgraph: BaseSubgraph): Record<string, unknown> =>
           subgraph,
           args.driveId,
           args.query,
-          args.mode ?? "HYBRID",
+          args.mode ?? "SEMANTIC",
           limit,
           args.includeArchived ?? false,
         );

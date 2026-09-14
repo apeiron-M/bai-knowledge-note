@@ -14,7 +14,7 @@ export interface SearchRouteDeps extends HttpRouteDeps {
   search(
     driveId: string,
     query: string,
-    mode: "SEMANTIC" | "HYBRID",
+    mode: "SEMANTIC",
     limit: number,
     includeArchived: boolean,
   ): Promise<SearchHit[]>;
@@ -56,12 +56,16 @@ export function createSearchRoute(deps: SearchRouteDeps) {
       const q = url.searchParams.get("q");
       if (!drive) throw new HttpError(400, "BAD_REQUEST", "drive is required");
       if (!q) throw new HttpError(400, "BAD_REQUEST", "q is required");
-      const rawMode = (url.searchParams.get("mode") ?? "hybrid").toLowerCase();
-      if (rawMode !== "hybrid" && rawMode !== "semantic") {
+      // `mode` is accepted for compatibility but only `semantic` exists.
+      // Hybrid was removed: its keyword leg ANDs its terms, so a question
+      // matched nothing there, and it then rescaled a genuine 0.97 match down
+      // to ~0.5 — which made `similarity` unusable as a threshold.
+      const rawMode = (url.searchParams.get("mode") ?? "semantic").toLowerCase();
+      if (rawMode !== "semantic") {
         throw new HttpError(
           400,
           "BAD_REQUEST",
-          "mode must be hybrid or semantic",
+          `mode must be semantic (got "${rawMode}"); hybrid was removed`,
         );
       }
       const limit = Math.min(
@@ -74,7 +78,7 @@ export function createSearchRoute(deps: SearchRouteDeps) {
       const hits = await deps.search(
         drive,
         q,
-        rawMode === "semantic" ? "SEMANTIC" : "HYBRID",
+        "SEMANTIC",
         limit,
         includeArchived,
       );

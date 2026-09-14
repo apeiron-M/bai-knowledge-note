@@ -8,7 +8,7 @@ import {
   normalizeFusedScore,
 } from "../../../processors/graph-indexer/query.js";
 
-export type SearchMode = "SEMANTIC" | "HYBRID";
+export type SearchMode = "SEMANTIC";
 
 export interface VaultSearchHit {
   node: Record<string, unknown>;
@@ -21,13 +21,14 @@ export interface VaultSearchHit {
  * Shared body of knowledgeGraphSearchByEmbedding (client-supplied vector) and
  * knowledgeGraphSemanticSearch (server-embedded query).
  *
- * SEMANTIC ranks purely by cosine similarity. HYBRID fuses semantic + keyword
- * via RRF in graphQuery.hybridSearch, which ranks well but produces ORDINAL
- * weights topping out at `2 / RRF_K` (~0.033). Those must not reach a UI as a
- * similarity: rendered as a percentage they cap at 3% regardless of how good
- * the match is. So `similarity` carries the rescaled 0..1 relevance while
- * `score` keeps the raw fused weight for callers doing their own maths.
- * Ordering is untouched — the rescale is monotonic.
+ * Ranks purely by cosine similarity, so `similarity` is a true 0..1 relevance
+ * that can be compared and thresholded.
+ *
+ * A hybrid mode fusing this with keyword search via RRF was removed: its
+ * keyword leg ANDed its terms, so a natural-language question matched nothing
+ * there, and the fused score was then rescaled as though both legs had fired —
+ * reporting a genuine 0.97 match as ~0.5. A caller filtering on
+ * `similarity > 0.7` discarded every hit.
  */
 export async function searchWithEmbedding(
   subgraph: ISubgraph,
@@ -42,46 +43,28 @@ export async function searchWithEmbedding(
   const semanticHits = await searchSimilar(db, embedding, limit * 2);
   const graphQuery = getQuery(subgraph, driveId);
 
-  if (mode === "SEMANTIC") {
-    const out: VaultSearchHit[] = [];
-    // One query for every hit, rather than one query per hit. Ranking is
-    // unchanged: `semanticHits` is already ordered by similarity and the loop
-    // below still walks it in that order.
-    const nodes = await graphQuery.nodesByDocumentIds(
-      semanticHits.map((hit) => hit.documentId),
-    );
-    // The embedding store knows nothing about status: archived notes are
-    // still embedded (their history is knowledge) and are dropped here.
-    for (const hit of semanticHits) {
-      if (out.length >= limit) break;
-      const node = nodes.get(hit.documentId);
-      if (node && (includeArchived || isCurrentNode(node))) {
-        out.push({
-          node: { ...node, _driveId: driveId },
-          similarity: hit.similarity,
-          score: hit.similarity,
-          matchedBy: ["semantic"],
-        });
-      }
-    }
-    return out;
-  }
-
-  const hybridResults = await graphQuery.hybridSearch(
-    query,
-    semanticHits,
-    limit,
-    { includeArchived },
+  // One query for every hit, rather than one query per hit. Ranking is
+  // unchanged: `semanticHits` is already ordered by similarity and the loop
+  // below still walks it in that order.
+  const nodes = await graphQuery.nodesByDocumentIds(
+    semanticHits.map((hit) => hit.documentId),
   );
-  return hybridResults.map((r) => ({
-    node: { ...r.node, _driveId: driveId },
-    // Rescaled against the number of legs that actually produced this hit's
-    // ceiling: a note found by BOTH signals can reach 1.0, while a note only
-    // one leg could ever surface is judged against a single leg's maximum.
-    similarity: normalizeFusedScore(r.score, 2),
-    score: r.score,
-    matchedBy: r.matchedBy,
-  }));
+  // The embedding store knows nothing about status: archived notes are still
+  // embedded (their history is knowledge) and are dropped here.
+  const out: VaultSearchHit[] = [];
+  for (const hit of semanticHits) {
+    if (out.length >= limit) break;
+    const node = nodes.get(hit.documentId);
+    if (node && (includeArchived || isCurrentNode(node))) {
+      out.push({
+        node: { ...node, _driveId: driveId },
+        similarity: hit.similarity,
+        score: hit.similarity,
+        matchedBy: ["semantic"],
+      });
+    }
+  }
+  return out;
 }
 
 /**
@@ -122,7 +105,7 @@ export async function searchVault(
   subgraph: ISubgraph,
   driveId: string,
   query: string,
-  mode: SearchMode = "HYBRID",
+  mode: SearchMode = "SEMANTIC",
   limit = 20,
   includeArchived = false,
 ): Promise<VaultSearchHit[]> {

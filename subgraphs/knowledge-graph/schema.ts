@@ -96,17 +96,10 @@ export const schema: DocumentNode = gql`
   }
 
   """
-  A ranked search hit. The 'similarity' field is ALWAYS a 0..1 relevance and
-  is always monotonic with the order results are returned in, so it is safe
-  to render as a percentage in any mode:
-    - SEMANTIC  -> cosine similarity of the query and note embeddings.
-    - HYBRID    -> the fused rank score rescaled onto 0..1 (see 'score').
-  The 'score' field carries the RAW underlying number for callers doing their
-  own maths: cosine in SEMANTIC mode, the Reciprocal Rank Fusion weight in
-  HYBRID mode. An RRF weight is ordinal and tops out at ~0.033, so never
-  render 'score' as a percentage - use 'similarity'.
-  The 'matchedBy' field explains WHY a note matched: "semantic", "keyword",
-  or both.
+  A ranked search hit. 'similarity' is the cosine similarity of the query and
+  note embeddings — a true 0..1 relevance, safe to compare, threshold and
+  render as a percentage. 'score' carries the same number for callers doing
+  their own maths. 'matchedBy' is always ["semantic"].
   """
   type SemanticResult {
     node: KnowledgeGraphNode!
@@ -123,7 +116,6 @@ export const schema: DocumentNode = gql`
 
   enum SearchMode {
     SEMANTIC
-    HYBRID
   }
 
   type OperationRecord {
@@ -261,7 +253,7 @@ export const schema: DocumentNode = gql`
       includeArchived: Boolean
     ): [SemanticResult!]!
     """
-    Semantic/hybrid search from plain query text — the query is embedded
+    Semantic search from plain query text — the query is embedded
     SERVER-side, so clients never need the model. Falls back to keyword
     fullSearch transparently when the embedder or embeddings are unavailable,
     so it is always safe to call.

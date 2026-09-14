@@ -330,8 +330,7 @@ export function createGraphQuery(db: GraphReadDb) {
      * Search used to resolve its hits one query at a time: `hybridSearch`
      * issued up to `limit * 2` round trips for the semantic leg alone, which
      * dominated search latency once the embedding matrix was cached
-     * (measured 2026-09-14: HYBRID 180ms vs SEMANTIC 43ms, the difference being
-     * the keyword leg plus its extra per-hit lookups).
+     * one round trip per hit, which dominated search latency.
      */
     async nodesByDocumentIds(
       documentIds: string[],
@@ -911,64 +910,6 @@ export function createGraphQuery(db: GraphReadDb) {
      * Reciprocal Rank Fusion (RRF). semanticResults must be pre-fetched
      * from the embedding store by the caller.
      */
-    async hybridSearch(
-      keywordQuery: string,
-      semanticResults: Array<{ documentId: string; similarity: number }>,
-      limit = 20,
-      opts: DiscoveryOptions = {},
-    ): Promise<HybridSearchResult[]> {
-      const K = RRF_K;
-      const scores = new Map<
-        string,
-        { score: number; matchedBy: string[]; node?: GraphNodeResult }
-      >();
-
-      // Keyword leg
-      const keywordResults = await this.fullSearch(keywordQuery, limit * 2, opts);
-      keywordResults.forEach((node, rank) => {
-        const existing = scores.get(node.documentId) ?? {
-          score: 0,
-          matchedBy: [],
-        };
-        existing.score += 1 / (K + rank);
-        existing.matchedBy.push("keyword");
-        existing.node = node;
-        scores.set(node.documentId, existing);
-      });
-
-      // Semantic leg. Resolve every node the keyword leg did not already
-      // supply in ONE query rather than one per hit.
-      const unresolved = semanticResults
-        .map((sr) => sr.documentId)
-        .filter((id) => !scores.get(id)?.node);
-      const fetched = await this.nodesByDocumentIds(unresolved);
-
-      for (let rank = 0; rank < semanticResults.length; rank++) {
-        const sr = semanticResults[rank];
-        const existing = scores.get(sr.documentId) ?? {
-          score: 0,
-          matchedBy: [],
-        };
-        existing.score += 1 / (K + rank);
-        if (!existing.matchedBy.includes("semantic")) {
-          existing.matchedBy.push("semantic");
-        }
-        // The embedding store knows nothing about status, so archived notes
-        // are dropped here unless asked for.
-        if (!existing.node) {
-          const node = fetched.get(sr.documentId);
-          if (!opts.includeArchived && !isCurrentNode(node)) continue;
-          existing.node = node;
-        }
-        scores.set(sr.documentId, existing);
-      }
-
-      return [...scores.values()]
-        .filter((e): e is typeof e & { node: GraphNodeResult } => !!e.node)
-        .sort((a, b) => b.score - a.score)
-        .slice(0, limit)
-        .map(({ score, matchedBy, node }) => ({ node, score, matchedBy }));
-    },
 
     // ---- Operation history queries ----
 

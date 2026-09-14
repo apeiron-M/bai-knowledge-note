@@ -68,12 +68,15 @@ describe("archived notes and discovery", () => {
     expect(all.map((r) => r.node.documentId).sort()).toEqual(["moc", "nul", "old"]);
   });
 
-  it("hybrid search drops an archived semantic hit that the keyword leg never saw", async () => {
-    const semantic = [{ documentId: "old", similarity: 0.99 }, { documentId: "cur", similarity: 0.5 }];
-    const hits = await query.hybridSearch("nothing-matches-by-keyword", semantic, 10);
-    expect(hits.map((h) => h.node.documentId)).toEqual(["cur"]);
-    const archaeology = await query.hybridSearch("nothing-matches-by-keyword", semantic, 10, { includeArchived: true });
-    expect(archaeology.map((h) => h.node.documentId)).toEqual(["old", "cur"]);
+  it("keyword search drops an archived note unless archaeology is asked for", async () => {
+    // Hybrid search is gone; the archived filter it exercised lives in
+    // fullSearch and in the semantic path's isCurrentNode check.
+    const hits = await query.fullSearch("six database tables", 10);
+    expect(hits.map((h) => h.documentId)).not.toContain("old");
+    const archaeology = await query.fullSearch("six database tables", 10, {
+      includeArchived: true,
+    });
+    expect(archaeology.map((h) => h.documentId)).toContain("old");
   });
 
   it("structural reads are untouched: the archived note is still a node with a title", async () => {

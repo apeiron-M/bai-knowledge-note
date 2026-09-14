@@ -51,6 +51,14 @@ export class HttpSubgraph extends BaseSubgraph {
             query.forwardLinks(documentId),
             query.backlinks(documentId),
           ]);
+          // The index denormalises only `target_title`, so an incoming edge
+          // carries no name for the note at the far end. Without this, a
+          // reader following backlinks to strengthen an answer learns what a
+          // note points TO but never what points AT it — which is where MoC
+          // membership and the notes building on it live. One batched lookup.
+          const sources = await query.nodesByDocumentIds([
+            ...new Set(incoming.map((edge) => edge.sourceDocumentId)),
+          ]);
           return [
             ...out.map((edge) => ({
               direction: "out" as const,
@@ -64,7 +72,7 @@ export class HttpSubgraph extends BaseSubgraph {
               direction: "in" as const,
               documentId: edge.sourceDocumentId,
               linkType: edge.linkType ?? "",
-              title: null,
+              title: sources.get(edge.sourceDocumentId)?.title ?? null,
               reason: edge.reason,
               confidence: edge.confidence,
             })),

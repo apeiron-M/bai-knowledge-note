@@ -344,53 +344,9 @@ describe("nodesByDocumentIds()", () => {
   });
 });
 
-describe("hybridSearch()", () => {
-  it("ranks a note matched by both legs above single-leg matches", async () => {
-    await seedNodes(
-      { id: "n1", document_id: "both", title: "Construction scheduling" },
-      { id: "n2", document_id: "kw", title: "Construction permits" },
-      { id: "n3", document_id: "sem", title: "Unrelated analytics note" },
-    );
-
-    // "sem" and "both" come back from the (stubbed) embedding leg; the
-    // keyword leg finds the two titles containing "Construction".
-    const results = await query.hybridSearch(
-      "Construction",
-      [
-        { documentId: "both", similarity: 0.9 },
-        { documentId: "sem", similarity: 0.85 },
-      ],
-      10,
-    );
-
-    const both = results.find((r) => r.node.documentId === "both");
-    expect(both).toBeDefined();
-    expect(both!.matchedBy.sort()).toEqual(["keyword", "semantic"]);
-    // Two legs beat one, so it must sort first.
-    expect(results[0].node.documentId).toBe("both");
-    // And its rescaled relevance must be a high percentage, not 3%.
-    expect(normalizeFusedScore(both!.score, 2)).toBeGreaterThan(0.9);
-  });
-
-  it("reports single-leg hits with only that leg in matchedBy", async () => {
-    await seedNodes({ id: "n1", document_id: "sem", title: "Analytics note" });
-
-    const results = await query.hybridSearch(
-      "Construction",
-      [{ documentId: "sem", similarity: 0.8 }],
-      10,
-    );
-
-    expect(results).toHaveLength(1);
-    expect(results[0].matchedBy).toEqual(["semantic"]);
-    expect(results[0].score).toBeCloseTo(1 / RRF_K, 6);
-  });
-});
-
 describe("fullSearch() relevance ordering", () => {
-  // Regression: fullSearch had no ORDER BY, so hybridSearch turned arbitrary
-  // heap order into RRF ranks. A body-only mention could take rank 0 while a
-  // title match fell outside the limit window and contributed nothing.
+  // Regression: fullSearch had no ORDER BY, so a body-only mention could
+  // outrank a title match, or fall outside the limit window entirely.
   it("ranks title matches above description above body", async () => {
     await db
       .insertInto("graph_nodes")

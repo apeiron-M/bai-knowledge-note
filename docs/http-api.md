@@ -19,7 +19,7 @@ route that reads the index takes `drive` (a document UUID).
 |---|---|---|---|---|
 | `GET` | `ping` | `renown` | — | `{ ok, subgraph, user }` |
 | `GET` | `drives` | `renown` | — | `{ drives: [{ id, name, slug, nodes }] }` — only drives whose `preferredEditor` is `knowledge-vault` and that the caller may read; each `id` is the `drive` value for every other route |
-| `GET` | `search` | `renown` | `drive` (required), `q` (required), `mode=hybrid\|semantic`, `limit` (default 6, max 25), `content=1`, `includeArchived=1` | `{ query, mode, hits: [{ similarity, score, matchedBy, node }] }`; `Accept: text/markdown` renders a digest |
+| `GET` | `search` | `renown` | `drive` (required), `q` (required), `mode=semantic` (the only mode), `limit` (default 6, max 25), `content=1`, `includeArchived=1` | `{ query, mode, hits: [{ similarity, score, matchedBy, node }] }`; `Accept: text/markdown` renders a digest |
 | `GET` | `notes/:id` | `renown` | `drive` (required); `id` is a UUID | `{ id, name, documentType, state, edges }` |
 | `GET` | `notes/:id.md` | `renown` | same | markdown with YAML frontmatter; edges as absolute links carrying `?drive=` |
 | `POST` | `actions` | `renown` | body `{ documentId, actions[], wait?, allowLiteralEscapes? }` | `{ revision, operations: [{ index, type, error, attribution }], readBack, jobId }`; `202 { jobId }` when `wait: false` |

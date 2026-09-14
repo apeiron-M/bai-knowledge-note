@@ -62,7 +62,7 @@ async function graphqlFetch<T>(
 // every deployment state.
 const SEMANTIC_SEARCH_QUERY = `
   query SemanticSearch($driveId: ID!, $query: String!, $limit: Int) {
-    knowledgeGraphSemanticSearch(driveId: $driveId, query: $query, mode: HYBRID, limit: $limit) {
+    knowledgeGraphSemanticSearch(driveId: $driveId, query: $query, mode: SEMANTIC, limit: $limit) {
       node { documentId title description noteType status topics }
       similarity
       matchedBy
