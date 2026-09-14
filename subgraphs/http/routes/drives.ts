@@ -4,8 +4,14 @@ import { requireUser } from "../lib/authorize.js";
 import type { HttpRouteDeps } from "../lib/deps.js";
 import { jsonError, OK_CACHE } from "../lib/respond.js";
 
-interface DriveNode {
-  documentType?: string;
+/** The drive app id a knowledge vault's drive document is stamped with. */
+export const VAULT_DRIVE_APP = "knowledge-vault";
+
+interface DriveHeader {
+  id: string;
+  name?: string;
+  slug?: string;
+  meta?: { preferredEditor?: string };
 }
 
 export function createDrivesRoute(deps: HttpRouteDeps) {
@@ -22,11 +28,10 @@ export function createDrivesRoute(deps: HttpRouteDeps) {
       );
       const drives = [];
       for (const drive of found.results) {
-        const header = drive.header as {
-          id: string;
-          name?: string;
-          slug?: string;
-        };
+        const header = drive.header as DriveHeader;
+        // Only vaults: the drive app stamps preferredEditor when it opens a
+        // drive, so this is the reliable marker of a knowledge-vault drive.
+        if (header.meta?.preferredEditor !== VAULT_DRIVE_APP) continue;
         if (
           !(await deps.authorization.canRead(
             header.id as CanonicalDocumentId,
@@ -37,15 +42,12 @@ export function createDrivesRoute(deps: HttpRouteDeps) {
         }
         const nodes =
           (
-            drive.state as { global?: { nodes?: DriveNode[] } } | undefined
+            drive.state as { global?: { nodes?: unknown[] } } | undefined
           )?.global?.nodes ?? [];
         drives.push({
           id: header.id,
           name: header.name ?? header.slug ?? header.id,
           slug: header.slug ?? null,
-          vault: nodes.some(
-            (node) => node.documentType === "bai/vault-config",
-          ),
           nodes: nodes.length,
         });
       }

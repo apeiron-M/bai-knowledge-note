@@ -17,7 +17,12 @@ const ctx = {
 } as unknown as RouteContext;
 
 const vaultDrive = {
-  header: { id: "vault-1", name: "powerhouse-knowledge", slug: "vault" },
+  header: {
+    id: "vault-1",
+    name: "powerhouse-knowledge",
+    slug: "vault",
+    meta: { preferredEditor: "knowledge-vault" },
+  },
   state: {
     global: {
       nodes: [
@@ -28,16 +33,31 @@ const vaultDrive = {
   },
 };
 
-const otherDrive = {
-  header: { id: "other-1", name: "playground", slug: "play" },
+const secondVault = {
+  header: {
+    id: "vault-2",
+    name: "second-vault",
+    slug: "second",
+    meta: { preferredEditor: "knowledge-vault" },
+  },
   state: { global: { nodes: [] } },
+};
+
+const nonVaultDrive = {
+  header: {
+    id: "vetra-1",
+    name: "Vetra",
+    slug: "vetra",
+    meta: { preferredEditor: "vetra-drive-app" },
+  },
+  state: { global: { nodes: [{ documentType: "bai/knowledge-note" }] } },
 };
 
 function deps(canRead: (id: string) => boolean = () => true): HttpRouteDeps {
   return {
     reactorClient: createFakeReactorClient({
       find: vi.fn(async () => ({
-        results: [vaultDrive, otherDrive],
+        results: [vaultDrive, secondVault, nonVaultDrive],
       })) as never,
     } as never),
     resolveCanonicalDocumentId: vi.fn(async () => "d") as never,
@@ -53,46 +73,33 @@ function deps(canRead: (id: string) => boolean = () => true): HttpRouteDeps {
 }
 
 describe("GET drives", () => {
-  it("lists drives with the vault flag and node count", async () => {
+  it("lists only knowledge-vault drives, with node counts", async () => {
     const res = await createDrivesRoute(deps())(
       new Request("http://h/drives"),
       ctx,
     );
     expect(res.status).toBe(200);
     const body = (await res.json()) as {
-      drives: {
-        id: string;
-        name: string;
-        slug: string | null;
-        vault: boolean;
-        nodes: number;
-      }[];
+      drives: { id: string; name: string; slug: string | null; nodes: number }[];
     };
     expect(body.drives).toEqual([
       {
         id: "vault-1",
         name: "powerhouse-knowledge",
         slug: "vault",
-        vault: true,
         nodes: 2,
       },
-      {
-        id: "other-1",
-        name: "playground",
-        slug: "play",
-        vault: false,
-        nodes: 0,
-      },
+      { id: "vault-2", name: "second-vault", slug: "second", nodes: 0 },
     ]);
   });
 
-  it("hides drives the caller cannot read", async () => {
-    const res = await createDrivesRoute(deps((id) => id === "other-1"))(
+  it("hides a vault drive the caller cannot read", async () => {
+    const res = await createDrivesRoute(deps((id) => id === "vault-2"))(
       new Request("http://h/drives"),
       ctx,
     );
     const body = (await res.json()) as { drives: { id: string }[] };
-    expect(body.drives.map((d) => d.id)).toEqual(["other-1"]);
+    expect(body.drives.map((d) => d.id)).toEqual(["vault-2"]);
   });
 
   it("401s without an identity", async () => {
