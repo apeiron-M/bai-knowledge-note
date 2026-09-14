@@ -589,6 +589,70 @@ document's standard. Candidates, all observed on `6.2.3-dev.4`:
 
 ---
 
+
+## Final surface comparison — 2026-09-14
+
+Measured with each surface **isolated on its own freshly restarted, idle
+reactor** (owner's instruction), 1.5 s spacing, median of 7 rounds for reads /
+5 for writes. Vault verified back at 1489 nodes with zero orphans afterwards.
+
+### Reads — median ms (payload)
+
+| operation | REST | GraphQL | CLI |
+|---|---|---|---|
+| semantic search | **37** (4.2k) | 42 (2.5k) | 46 (3.2k) |
+| keyword search | **15** | 28 | 31 |
+| note + both edge directions | **11** (10k) | 14 (6.6k) | 18 (1.9k) |
+| stats | **19** | 24 | 26 |
+| topics (all) | **16** (38k) | 26 (38k) | 30 (66k) |
+| orphans | **15** | 18 | — |
+| triangles | 57 (131k) | **5** (4.7k) | — |
+| connections depth 2 | 61 (243k) | **68** (21k) | — |
+| whole graph | **61** (4.2 MB) | 105 (863k) | — |
+| markdown / llms.txt / llms-full.txt | **11 / 7 / 8** | — | — |
+| drive tree | — | — | 720 (370k) |
+| drives list | **85** (147 B) | — | 106 (**435k**) |
+
+**The read gap has closed.** REST leads by 1.2-2x, not the 30x reported before
+Task 6 — that gap *was* the drive-refetch overhead, now fixed. GraphQL is
+better where a narrow projection of a wide result is wanted: `triangles` is
+5 ms / 4.7 KB against REST's 57 ms / 131 KB.
+
+### Writes — median ms
+
+| operation | REST | GraphQL | CLI | REST vs CLI |
+|---|---|---|---|---|
+| 1 action, sync | 757 | 626 | 811 | 1.1x |
+| 1 action, async | **104** | 108 | 647 | 6.2x |
+| 5-action batch | **135** | 712 | 1760 | **13x** |
+| articulated edge (+delete) | **1138** | unsupported | 1567 | 1.4x |
+| extract 3 notes x5 actions | **3255** | 6355 | 13460 | **4.1x** |
+| ingest source | **2338** | 3359 | 3073 | 1.3x |
+
+**GraphQL is read-only for vault work (owner decision, 2026-09-14).** Measured:
+**13 of 14 GraphQL-created documents landed at drive root**, because
+`createEmptyDocument(parentIdentifier:)` takes a *document* and a folder is not
+one — raw GraphQL cannot file a document. It also cannot write an articulated
+edge (§E5).
+
+### E9 — Remote vaults: call count dominates, not surface
+
+Measured against a real remote HTTPS Powerhouse host:
+
+| | median |
+|---|---|
+| curl, new process + new TLS per call | **329 ms** |
+| one persistent connection | **64.5 ms** (first call 314 ms incl. handshake) |
+
+Reuse saves **~265 ms per call (5.1x)**. Locally the same overhead is 4.2 ms and
+is negligible. Bash-native reuse works: 6 requests as separate curl processes
+= 1876 ms; one curl process with `--next` = 779 ms; repeated `-o URL` = 722 ms.
+
+**So on a remote vault the first-order rule is "make fewer calls", not "pick the
+faster surface".** A 3-note extraction is 1 REST call against 6 CLI calls —
+remotely that is ~1.3 s of pure handshake avoided on top of the 4.1x. The CLI is
+worse than curl here: it spawns a process *and* handshakes per call.
+
 ## Results
 
 _(filled in by Tasks 3, 5, 6, 8)_
@@ -614,8 +678,8 @@ with 0 documents at drive root.
 | First write to a new note — latency | 2.83 s | **0.40 s** ✅ | ~0.2 s |
 | Relationship write (document scope) | not covered | **`confirmed`, 0.72 s** ✅ | confirmed |
 | Bare `BUILDS_ON` refused | 400 | **400 `LINT_CONVENTION`** ✅ | 400 |
-| Create 3 notes (extraction phase) | 12 223 ms | | < 3 000 ms |
-| 3-note extraction, end to end | 17 875 ms | | < 8 000 ms |
+| Create 3 notes + populate (one `POST notes` call) | 17 434 ms | **2 698 ms** ✅ | < 3 000 ms |
+| 3-note extraction, end to end | 17 875 ms | **3 255 ms** ✅ | < 8 000 ms |
 | `knowledgeGraphNodeByDocumentId` | 290 ms | **10.2 ms** ✅ | < 30 ms |
 | `knowledgeGraphStats` | 306 ms | **21.1 ms** ✅ | < 40 ms |
 | 3-alias node + edges | 360 ms | **12.0 ms** ✅ | < 40 ms |
