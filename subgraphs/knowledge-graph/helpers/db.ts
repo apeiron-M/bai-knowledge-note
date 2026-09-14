@@ -11,13 +11,53 @@ import { createGraphQuery } from "../../../processors/graph-indexer/query.js";
 import type { DB } from "../../../processors/graph-indexer/schema.js";
 
 /**
+ * Memoized namespaced query builders, keyed on the relational db and namespace.
+ *
+ * `RelationalDbProcessor.query` returns a **fresh object literal** on every
+ * call — a thin, stateless wrapper of bound methods over the one long-lived
+ * Kysely instance. Building it is free, but its *identity* is not free:
+ * `embedding-store.ts` caches the embedding matrix in a
+ * `WeakMap` keyed on this handle, so a new handle per call meant the cache
+ * never hit from a subgraph and every semantic search reloaded and
+ * `JSON.parse`d the entire `note_embeddings` table (measured 2026-09-14: ~250ms
+ * per query). Only the processor, which holds a stable handle, ever got the
+ * cache the comment there promises.
+ *
+ * Keying on the db object as well as the namespace means a replaced relational
+ * db cannot serve a stale builder, and the outer WeakMap lets both be
+ * collected together.
+ */
+const dbHandles = new WeakMap<object, Map<string, Kysely<DB>>>();
+
+/** Test seam: drop every memoized query builder. */
+export function clearDbHandleCache(): void {
+  // WeakMap has no clear(); dropping the per-db maps is enough because the
+  // only reachable entries are keyed by live relational db objects.
+  cachedRelationalDbs.forEach((db) => dbHandles.delete(db));
+  cachedRelationalDbs.clear();
+}
+const cachedRelationalDbs = new Set<object>();
+
+/**
  * Read-only namespaced query builder — use for all SELECT resolvers.
  */
 export function getDb(subgraph: ISubgraph, driveId: string): Kysely<DB> {
-  return GraphIndexerProcessor.query(
+  const relationalDb = subgraph.relationalDb as unknown as IRelationalDb;
+  const namespace = GraphIndexerProcessor.getNamespace(driveId);
+  let perDb = dbHandles.get(relationalDb as unknown as object);
+  if (!perDb) {
+    perDb = new Map();
+    dbHandles.set(relationalDb as unknown as object, perDb);
+    cachedRelationalDbs.add(relationalDb as unknown as object);
+  }
+  const existing = perDb.get(namespace);
+  if (existing) return existing;
+  const handle = GraphIndexerProcessor.query(
     driveId,
-    subgraph.relationalDb as unknown as IRelationalDb,
+    relationalDb,
   ) as unknown as Kysely<DB>;
+  perDb.set(namespace, handle);
+  return handle;
 }
 
 /**
@@ -63,19 +103,55 @@ export function getQuery(subgraph: ISubgraph, driveId: string) {
  * caller will then surface the original error from the downstream
  * query instead of masking a real misconfiguration.
  */
+/**
+ * Cache of identifier -> canonical drive UUID.
+ *
+ * Resolving used to cost a full `reactorClient.get(driveId)` on EVERY graph
+ * query, which fetches and JSON-parses the entire drive document — on a vault
+ * drive that is the whole node list. Measured 2026-09-14: this was ~285ms of
+ * the ~290ms a `knowledgeGraphNodeByDocumentId` took, against ~4ms of actual
+ * SQL and 2.8ms of GraphQL parsing.
+ *
+ * A TTL rather than a permanent cache, and keyed on the identifier as given:
+ * a UUID -> id mapping is immutable, but a *slug* can in principle be
+ * reassigned to another drive, and silently serving the old namespace for the
+ * life of the process would be worse than the round trip. Failures are never
+ * cached, so a transient error cannot poison the entry.
+ */
+const driveIdCache = new Map<string, { canonical: string; expiresAt: number }>();
+const DRIVE_ID_TTL_MS = 60_000;
+const DRIVE_ID_CACHE_MAX = 256;
+
+/** Test seam: drop every memoized drive id. */
+export function clearDriveIdCache(): void {
+  driveIdCache.clear();
+}
+
 export async function resolveCanonicalDriveId(
   subgraph: ISubgraph,
   driveId: string,
 ): Promise<string> {
+  const now = Date.now();
+  const hit = driveIdCache.get(driveId);
+  if (hit && hit.expiresAt > now) return hit.canonical;
+
   try {
     const drive = await subgraph.reactorClient.get(driveId);
-    return (
+    const canonical =
       (drive as unknown as { header?: { id?: string }; id?: string }).header
         ?.id ??
       (drive as unknown as { id?: string }).id ??
-      driveId
-    );
+      driveId;
+    // Bounded: this only ever holds the drives a process actually serves.
+    if (driveIdCache.size >= DRIVE_ID_CACHE_MAX) driveIdCache.clear();
+    driveIdCache.set(driveId, {
+      canonical,
+      expiresAt: now + DRIVE_ID_TTL_MS,
+    });
+    return canonical;
   } catch {
+    // Deliberately uncached: surface the downstream error next time rather
+    // than masking a real misconfiguration for a minute.
     return driveId;
   }
 }

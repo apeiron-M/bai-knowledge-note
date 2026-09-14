@@ -321,6 +321,27 @@ export function createGraphQuery(db: Kysely<DB>) {
       return row ? rowToNode(row) : undefined;
     },
 
+    /**
+     * Bulk form of `nodeByDocumentId`, for callers holding a list of ids.
+     *
+     * Search used to resolve its hits one query at a time: `hybridSearch`
+     * issued up to `limit * 2` round trips for the semantic leg alone, which
+     * dominated search latency once the embedding matrix was cached
+     * (measured 2026-09-14: HYBRID 180ms vs SEMANTIC 43ms, the difference being
+     * the keyword leg plus its extra per-hit lookups).
+     */
+    async nodesByDocumentIds(
+      documentIds: string[],
+    ): Promise<Map<string, GraphNodeResult>> {
+      if (documentIds.length === 0) return new Map();
+      const rows = await db
+        .selectFrom("graph_nodes")
+        .where("document_id", "in", documentIds)
+        .selectAll()
+        .execute();
+      return new Map(rows.map((row) => [row.document_id, rowToNode(row)]));
+    },
+
     async nodesByStatus(status: string): Promise<GraphNodeResult[]> {
       const rows = await db
         .selectFrom("graph_nodes")
@@ -912,7 +933,13 @@ export function createGraphQuery(db: Kysely<DB>) {
         scores.set(node.documentId, existing);
       });
 
-      // Semantic leg
+      // Semantic leg. Resolve every node the keyword leg did not already
+      // supply in ONE query rather than one per hit.
+      const unresolved = semanticResults
+        .map((sr) => sr.documentId)
+        .filter((id) => !scores.get(id)?.node);
+      const fetched = await this.nodesByDocumentIds(unresolved);
+
       for (let rank = 0; rank < semanticResults.length; rank++) {
         const sr = semanticResults[rank];
         const existing = scores.get(sr.documentId) ?? {
@@ -923,11 +950,10 @@ export function createGraphQuery(db: Kysely<DB>) {
         if (!existing.matchedBy.includes("semantic")) {
           existing.matchedBy.push("semantic");
         }
-        // Fetch node data if we don't have it from keyword results. The
-        // embedding store knows nothing about status, so archived notes
+        // The embedding store knows nothing about status, so archived notes
         // are dropped here unless asked for.
         if (!existing.node) {
-          const node = await this.nodeByDocumentId(sr.documentId);
+          const node = fetched.get(sr.documentId);
           if (!opts.includeArchived && !isCurrentNode(node)) continue;
           existing.node = node;
         }

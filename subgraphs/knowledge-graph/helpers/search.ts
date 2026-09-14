@@ -44,11 +44,17 @@ export async function searchWithEmbedding(
 
   if (mode === "SEMANTIC") {
     const out: VaultSearchHit[] = [];
+    // One query for every hit, rather than one query per hit. Ranking is
+    // unchanged: `semanticHits` is already ordered by similarity and the loop
+    // below still walks it in that order.
+    const nodes = await graphQuery.nodesByDocumentIds(
+      semanticHits.map((hit) => hit.documentId),
+    );
     // The embedding store knows nothing about status: archived notes are
     // still embedded (their history is knowledge) and are dropped here.
     for (const hit of semanticHits) {
       if (out.length >= limit) break;
-      const node = await graphQuery.nodeByDocumentId(hit.documentId);
+      const node = nodes.get(hit.documentId);
       if (node && (includeArchived || isCurrentNode(node))) {
         out.push({
           node: { ...node, _driveId: driveId },

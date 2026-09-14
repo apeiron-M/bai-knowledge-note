@@ -1,6 +1,5 @@
 import type { BaseSubgraph } from "@powerhousedao/reactor-api";
 import { GraphQLError } from "graphql";
-import type { ISubgraph } from "@powerhousedao/reactor-api";
 import { getDb, getQuery, resolveCanonicalDriveId } from "./helpers/db.js";
 import { reindexDrive } from "./helpers/reindex.js";
 import { GraphIndexerProcessor } from "../../processors/graph-indexer/index.js";
@@ -75,6 +74,48 @@ const PRIVILEGED_RESOLVERS = new Set([
  * identifier itself, and it runs before the canonical rewrite below, so the
  * slug-aliasing path cannot skip the check.
  */
+/**
+ * Per-request memo of authorization checks, keyed on the GraphQL context.
+ *
+ * `assertCanRead` walks the ancestor / protection / grant chain on every call,
+ * and a multi-alias query repeats it once per alias against the same drive.
+ * The context object is per-request, so this can never leak a decision across
+ * identities or requests — which is why it is a WeakMap on ctx rather than a
+ * process-level cache.
+ *
+ * The *promise* is memoized, not its result: concurrent aliases then share one
+ * in-flight check, and a refusal is shared too, so no alias can slip past a
+ * check that another alias already failed.
+ */
+const authorizedByCtx = new WeakMap<object, Map<string, Promise<unknown>>>();
+
+/** Exported for tests; the guard is the only production caller. */
+export async function assertOncePerRequest(
+  subgraph: BaseSubgraph,
+  ctx: unknown,
+  driveId: string,
+  privileged: boolean,
+): Promise<unknown> {
+  const check = (): Promise<unknown> =>
+    privileged
+      ? subgraph.assertCanWrite(driveId, ctx as SubgraphContext)
+      : subgraph.assertCanRead(driveId, ctx as SubgraphContext);
+
+  if (typeof ctx !== "object" || ctx === null) return check();
+
+  let perCtx = authorizedByCtx.get(ctx);
+  if (!perCtx) {
+    perCtx = new Map();
+    authorizedByCtx.set(ctx, perCtx);
+  }
+  const key = `${privileged ? "write" : "read"}:${driveId}`;
+  const cached = perCtx.get(key);
+  if (cached) return cached;
+  const pending = check();
+  perCtx.set(key, pending);
+  return pending;
+}
+
 function withDriveGuards<T extends Record<string, Resolver>>(
   subgraph: BaseSubgraph,
   resolvers: T,
@@ -96,10 +137,8 @@ function withDriveGuards<T extends Record<string, Resolver>>(
             extensions: { code: "FORBIDDEN" },
           });
         }
-      } else if (privileged) {
-        await subgraph.assertCanWrite(requested, ctx as SubgraphContext);
       } else {
-        await subgraph.assertCanRead(requested, ctx as SubgraphContext);
+        await assertOncePerRequest(subgraph, ctx, requested, privileged);
       }
 
       if (requested !== undefined) {

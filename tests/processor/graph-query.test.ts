@@ -308,6 +308,42 @@ describe("normalizeFusedScore()", () => {
   });
 });
 
+describe("nodesByDocumentIds()", () => {
+  it("resolves many ids in one call", async () => {
+    await seedNodes(
+      { id: "n1", document_id: "a", title: "Alpha" },
+      { id: "n2", document_id: "b", title: "Beta" },
+      { id: "n3", document_id: "c", title: "Gamma" },
+    );
+    const found = await query.nodesByDocumentIds(["a", "c"]);
+    expect([...found.keys()].sort()).toEqual(["a", "c"]);
+    expect(found.get("a")?.title).toBe("Alpha");
+    expect(found.get("c")?.title).toBe("Gamma");
+  });
+
+  it("returns an empty map for no ids, without querying", async () => {
+    await expect(query.nodesByDocumentIds([])).resolves.toEqual(new Map());
+  });
+
+  it("omits ids that do not exist rather than yielding undefined entries", async () => {
+    await seedNodes({ id: "n1", document_id: "a", title: "Alpha" });
+    const found = await query.nodesByDocumentIds(["a", "missing"]);
+    expect(found.size).toBe(1);
+    expect(found.has("missing")).toBe(false);
+  });
+
+  it("agrees with nodeByDocumentId one id at a time", async () => {
+    await seedNodes(
+      { id: "n1", document_id: "a", title: "Alpha" },
+      { id: "n2", document_id: "b", title: "Beta" },
+    );
+    const batch = await query.nodesByDocumentIds(["a", "b"]);
+    for (const id of ["a", "b"]) {
+      expect(batch.get(id)).toEqual(await query.nodeByDocumentId(id));
+    }
+  });
+});
+
 describe("hybridSearch()", () => {
   it("ranks a note matched by both legs above single-leg matches", async () => {
     await seedNodes(
