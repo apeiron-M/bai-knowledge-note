@@ -77,7 +77,17 @@ export async function executeWrite(
     const code = findings.some((f) => f.class === "REACTOR_REJECTS")
       ? "LINT_REACTOR"
       : "LINT_CONVENTION";
-    throw new HttpError(400, code, `${findings.length} lint findings`, findings);
+    // Lead with the first finding. "3 lint findings" tells the caller nothing;
+    // the path and the reason are what they need to fix it.
+    const first = findings[0];
+    const more =
+      findings.length > 1 ? ` (+${findings.length - 1} more)` : "";
+    throw new HttpError(
+      400,
+      code,
+      `${first.path}: ${first.message}${more}`,
+      findings,
+    );
   }
 
   const stamped = stampActions(

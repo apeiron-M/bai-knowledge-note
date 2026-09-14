@@ -128,7 +128,8 @@ export function createNotesRoute(deps: HttpRouteDeps) {
             findings.some((f) => f.class === "REACTOR_REJECTS")
               ? "LINT_REACTOR"
               : "LINT_CONVENTION",
-            `${findings.length} lint findings in notes[${index}]`,
+            `notes[${index}].${findings[0].path}: ${findings[0].message}` +
+              (findings.length > 1 ? ` (+${findings.length - 1} more)` : ""),
             findings.map((f) => ({ ...f, path: `notes[${index}].${f.path}` })),
           );
         }
