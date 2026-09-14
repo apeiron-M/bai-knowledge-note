@@ -162,6 +162,17 @@ webhooks (slice 3, plus its GitHub/Slack/generic-token presets and the Integrati
 
 ## Operational notes
 
+- **After deploying a change to the graph indexer, reindex once.** The
+  projection is built by the indexer's code, so existing rows were written by
+  the previous version. Restarting does not rebuild them: the processor cursor
+  advances past history and never revisits it, and the only boot-time backfill
+  is for embeddings (`processors/graph-indexer/index.ts`, `initAndUpgrade`).
+  One call, `POST admin/reindex?drive=<UUID>`. This is episodic — do not put it
+  on a timer; the live processor already indexes every write, and a rebuild
+  blocks every read while it runs.
+  `node scripts/check-index-drift.mjs --drive <UUID>` reports whether it is needed.
+
+
 - Subgraph changes only take effect after `bun run build` and a Switchboard restart.
 - `dryRun` is not implemented: `evaluateActions` answers `AUTH_EVALUATION_UNSUPPORTED` unless the
   reactor runs with `authEnforcement`.
