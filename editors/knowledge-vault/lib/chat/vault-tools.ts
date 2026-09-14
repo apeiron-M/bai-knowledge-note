@@ -910,7 +910,7 @@ export async function executeTool(
       }>(
         graphEndpoint(),
         `query S($driveId: ID!, $query: String!, $limit: Int, $includeArchived: Boolean) {
-          knowledgeGraphSemanticSearch(driveId: $driveId, query: $query, mode: HYBRID, limit: $limit, includeArchived: $includeArchived) {
+          knowledgeGraphSemanticSearch(driveId: $driveId, query: $query, mode: SEMANTIC, limit: $limit, includeArchived: $includeArchived) {
             similarity matchedBy node { ${NOTE_FIELDS} }
           }
         }`,

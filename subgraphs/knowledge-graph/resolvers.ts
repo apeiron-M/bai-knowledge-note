@@ -1,21 +1,14 @@
 import type { BaseSubgraph } from "@powerhousedao/reactor-api";
 import { GraphQLError } from "graphql";
-import type { ISubgraph } from "@powerhousedao/reactor-api";
 import { getDb, getQuery, resolveCanonicalDriveId } from "./helpers/db.js";
 import { reindexDrive } from "./helpers/reindex.js";
 import { GraphIndexerProcessor } from "../../processors/graph-indexer/index.js";
 import {
   searchSimilar,
   getEmbedding,
-  upsertEmbedding,
-  sha256Hex,
 } from "../../processors/graph-indexer/embedding-store.js";
-import { embedQuery } from "./helpers/query-embedder.js";
-import {
-  RRF_K,
-  isCurrentNode,
-  normalizeFusedScore,
-} from "../../processors/graph-indexer/query.js";
+import { isCurrentNode } from "../../processors/graph-indexer/query.js";
+import { searchVault, searchWithEmbedding } from "./helpers/search.js";
 
 type Resolver = (
   parent: unknown,
@@ -33,11 +26,8 @@ type SubgraphContext = Parameters<BaseSubgraph["assertCanRead"]>[1];
 /**
  * Resolvers that must not be served on a bare READ grant.
  *
- * Two mutations because they write: `knowledgeGraphReindex` DELETEs and rebuilds
- * the projection (and CREATEs its tables when a namespace has none), and
- * `knowledgeGraphUpsertEmbedding` stores a caller-supplied vector under a hash
- * the processor's staleness gate then agrees with, so a poisoned embedding is
- * never re-computed.
+ * One mutation because it writes: `knowledgeGraphReindex` DELETEs and rebuilds
+ * the projection (and CREATEs its tables when a namespace has none).
  *
  * Four queries because of what they expose rather than what they change:
  * `knowledgeGraphDebug` serves the raw projection tables, and the three
@@ -47,7 +37,6 @@ type SubgraphContext = Parameters<BaseSubgraph["assertCanRead"]>[1];
  */
 const PRIVILEGED_RESOLVERS = new Set([
   "knowledgeGraphReindex",
-  "knowledgeGraphUpsertEmbedding",
   "knowledgeGraphDebug",
   "knowledgeGraphHistory",
   "knowledgeGraphActivity",
@@ -79,6 +68,48 @@ const PRIVILEGED_RESOLVERS = new Set([
  * identifier itself, and it runs before the canonical rewrite below, so the
  * slug-aliasing path cannot skip the check.
  */
+/**
+ * Per-request memo of authorization checks, keyed on the GraphQL context.
+ *
+ * `assertCanRead` walks the ancestor / protection / grant chain on every call,
+ * and a multi-alias query repeats it once per alias against the same drive.
+ * The context object is per-request, so this can never leak a decision across
+ * identities or requests — which is why it is a WeakMap on ctx rather than a
+ * process-level cache.
+ *
+ * The *promise* is memoized, not its result: concurrent aliases then share one
+ * in-flight check, and a refusal is shared too, so no alias can slip past a
+ * check that another alias already failed.
+ */
+const authorizedByCtx = new WeakMap<object, Map<string, Promise<unknown>>>();
+
+/** Exported for tests; the guard is the only production caller. */
+export async function assertOncePerRequest(
+  subgraph: BaseSubgraph,
+  ctx: unknown,
+  driveId: string,
+  privileged: boolean,
+): Promise<unknown> {
+  const check = (): Promise<unknown> =>
+    privileged
+      ? subgraph.assertCanWrite(driveId, ctx as SubgraphContext)
+      : subgraph.assertCanRead(driveId, ctx as SubgraphContext);
+
+  if (typeof ctx !== "object" || ctx === null) return check();
+
+  let perCtx = authorizedByCtx.get(ctx);
+  if (!perCtx) {
+    perCtx = new Map();
+    authorizedByCtx.set(ctx, perCtx);
+  }
+  const key = `${privileged ? "write" : "read"}:${driveId}`;
+  const cached = perCtx.get(key);
+  if (cached) return cached;
+  const pending = check();
+  perCtx.set(key, pending);
+  return pending;
+}
+
 function withDriveGuards<T extends Record<string, Resolver>>(
   subgraph: BaseSubgraph,
   resolvers: T,
@@ -100,10 +131,8 @@ function withDriveGuards<T extends Record<string, Resolver>>(
             extensions: { code: "FORBIDDEN" },
           });
         }
-      } else if (privileged) {
-        await subgraph.assertCanWrite(requested, ctx as SubgraphContext);
       } else {
-        await subgraph.assertCanRead(requested, ctx as SubgraphContext);
+        await assertOncePerRequest(subgraph, ctx, requested, privileged);
       }
 
       if (requested !== undefined) {
@@ -114,67 +143,6 @@ function withDriveGuards<T extends Record<string, Resolver>>(
     };
   }
   return out as T;
-}
-
-/**
- * Shared body of knowledgeGraphSearchByEmbedding (client-supplied vector) and
- * knowledgeGraphSemanticSearch (server-embedded query).
- *
- * SEMANTIC ranks purely by cosine similarity. HYBRID fuses semantic + keyword
- * via RRF in graphQuery.hybridSearch, which ranks well but produces ORDINAL
- * weights topping out at `2 / RRF_K` (~0.033). Those must not reach a UI as a
- * similarity: rendered as a percentage they cap at 3% regardless of how good
- * the match is. So `similarity` carries the rescaled 0..1 relevance while
- * `score` keeps the raw fused weight for callers doing their own maths.
- * Ordering is untouched — the rescale is monotonic.
- */
-async function searchWithEmbedding(
-  subgraph: ISubgraph,
-  driveId: string,
-  query: string,
-  embedding: number[],
-  mode: "SEMANTIC" | "HYBRID",
-  limit: number,
-  includeArchived = false,
-) {
-  const db = getDb(subgraph, driveId);
-  const semanticHits = await searchSimilar(db, embedding, limit * 2);
-  const graphQuery = getQuery(subgraph, driveId);
-
-  if (mode === "SEMANTIC") {
-    const out = [];
-    // The embedding store knows nothing about status: archived notes are
-    // still embedded (their history is knowledge) and are dropped here.
-    for (const hit of semanticHits) {
-      if (out.length >= limit) break;
-      const node = await graphQuery.nodeByDocumentId(hit.documentId);
-      if (node && (includeArchived || isCurrentNode(node))) {
-        out.push({
-          node: { ...node, _driveId: driveId },
-          similarity: hit.similarity,
-          score: hit.similarity,
-          matchedBy: ["semantic"],
-        });
-      }
-    }
-    return out;
-  }
-
-  const hybridResults = await graphQuery.hybridSearch(
-    query,
-    semanticHits,
-    limit,
-    { includeArchived },
-  );
-  return hybridResults.map((r) => ({
-    node: { ...r.node, _driveId: driveId },
-    // Rescaled against the number of legs that actually produced this hit's
-    // ceiling: a note found by BOTH signals can reach 1.0, while a note only
-    // one leg could ever surface is judged against a single leg's maximum.
-    similarity: normalizeFusedScore(r.score, 2),
-    score: r.score,
-    matchedBy: r.matchedBy,
-  }));
 }
 
 export const getResolvers = (subgraph: BaseSubgraph): Record<string, unknown> => {
@@ -210,28 +178,6 @@ export const getResolvers = (subgraph: BaseSubgraph): Record<string, unknown> =>
     Mutation: withDriveGuards(subgraph, {
       knowledgeGraphReindex: ((_: unknown, args: { driveId: string }) =>
         reindexDrive(subgraph, args.driveId)) as unknown as Resolver,
-
-      knowledgeGraphUpsertEmbedding: (async (
-        _: unknown,
-        args: { driveId: string; documentId: string; embedding: number[] },
-      ) => {
-        // Legacy client-push path (headless backfill script). The processor
-        // self-embeds now, so this is a manual override. The content hash is
-        // computed from the indexed node text so the processor's hash gate
-        // agrees with pushed vectors instead of re-embedding them on the
-        // next unrelated operation.
-        const db = getDb(subgraph, args.driveId);
-        const graphQuery = getQuery(subgraph, args.driveId);
-        const node = await graphQuery.nodeByDocumentId(args.documentId);
-        const text = node
-          ? [node.title, node.description, node.content?.slice(0, 1500)]
-              .filter((x): x is string => !!x && x.trim().length > 0)
-              .join(" ")
-          : "";
-        const hash = text ? await sha256Hex(text) : "client-pushed";
-        await upsertEmbedding(db, args.documentId, args.embedding, hash);
-        return { documentId: args.documentId, ok: true };
-      }) as unknown as Resolver,
     }),
 
     Query: withDriveGuards(subgraph, {
@@ -477,7 +423,7 @@ export const getResolvers = (subgraph: BaseSubgraph): Record<string, unknown> =>
           driveId: string;
           query: string;
           embedding: number[];
-          mode: "SEMANTIC" | "HYBRID";
+          mode: "SEMANTIC";
           limit?: number;
           includeArchived?: boolean | null;
         },
@@ -498,51 +444,20 @@ export const getResolvers = (subgraph: BaseSubgraph): Record<string, unknown> =>
         args: {
           driveId: string;
           query: string;
-          mode?: "SEMANTIC" | "HYBRID" | null;
+          mode?: "SEMANTIC" | null;
           limit?: number;
           includeArchived?: boolean | null;
         },
       ) => {
-        // The query is embedded HERE so clients never load the model. Any
-        // failure on the embedding path — model unavailable, embedding store
-        // missing (e.g. a deployment without the pgvector bundle), no vectors
-        // pushed yet — degrades to keyword fullSearch instead of erroring.
-        // A search box must never be the thing that breaks.
         const limit = args.limit ?? 20;
-        const embedding = await embedQuery(args.query);
-        if (embedding) {
-          try {
-            return await searchWithEmbedding(
-              subgraph,
-              args.driveId,
-              args.query,
-              embedding,
-              args.mode ?? "HYBRID",
-              limit,
-              args.includeArchived ?? false,
-            );
-          } catch (err) {
-            console.warn(
-              `[knowledgeGraph] embedding store unavailable, keyword fallback: ${err instanceof Error ? err.message : String(err)}`,
-            );
-          }
-        }
-        const graphQuery = getQuery(subgraph, args.driveId);
-        const keywordHits = await graphQuery.fullSearch(args.query, limit, {
-          includeArchived: args.includeArchived ?? false,
-        });
-        // Only one leg ran, so score these on the same rank-decay curve RRF
-        // uses and rescale against a SINGLE leg's ceiling. The old flat
-        // `similarity: 0` rendered every perfectly good keyword hit as "0%".
-        return keywordHits.map((node, rank) => {
-          const score = 1 / (RRF_K + rank);
-          return {
-            node: { ...node, _driveId: args.driveId },
-            similarity: normalizeFusedScore(score, 1),
-            score,
-            matchedBy: ["keyword"],
-          };
-        });
+        return searchVault(
+          subgraph,
+          args.driveId,
+          args.query,
+          args.mode ?? "SEMANTIC",
+          limit,
+          args.includeArchived ?? false,
+        );
       },
 
       knowledgeGraphMissingEmbeddings: async (

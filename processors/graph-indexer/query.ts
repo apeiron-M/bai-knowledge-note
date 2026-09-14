@@ -275,7 +275,10 @@ function rowToOperation(row: {
   };
 }
 
-export function createGraphQuery(db: Kysely<DB>) {
+/** Everything `createGraphQuery` needs. Read-only by construction. */
+export type GraphReadDb = Pick<Kysely<DB>, "selectFrom">;
+
+export function createGraphQuery(db: GraphReadDb) {
   return {
     async allNodes(): Promise<GraphNodeResult[]> {
       const rows = await db.selectFrom("graph_nodes").selectAll().execute();
@@ -319,6 +322,26 @@ export function createGraphQuery(db: Kysely<DB>) {
         .selectAll()
         .executeTakeFirst();
       return row ? rowToNode(row) : undefined;
+    },
+
+    /**
+     * Bulk form of `nodeByDocumentId`, for callers holding a list of ids.
+     *
+     * Search used to resolve its hits one query at a time: `hybridSearch`
+     * issued up to `limit * 2` round trips for the semantic leg alone, which
+     * dominated search latency once the embedding matrix was cached
+     * one round trip per hit, which dominated search latency.
+     */
+    async nodesByDocumentIds(
+      documentIds: string[],
+    ): Promise<Map<string, GraphNodeResult>> {
+      if (documentIds.length === 0) return new Map();
+      const rows = await db
+        .selectFrom("graph_nodes")
+        .where("document_id", "in", documentIds)
+        .selectAll()
+        .execute();
+      return new Map(rows.map((row) => [row.document_id, rowToNode(row)]));
     },
 
     async nodesByStatus(status: string): Promise<GraphNodeResult[]> {
@@ -887,59 +910,6 @@ export function createGraphQuery(db: Kysely<DB>) {
      * Reciprocal Rank Fusion (RRF). semanticResults must be pre-fetched
      * from the embedding store by the caller.
      */
-    async hybridSearch(
-      keywordQuery: string,
-      semanticResults: Array<{ documentId: string; similarity: number }>,
-      limit = 20,
-      opts: DiscoveryOptions = {},
-    ): Promise<HybridSearchResult[]> {
-      const K = RRF_K;
-      const scores = new Map<
-        string,
-        { score: number; matchedBy: string[]; node?: GraphNodeResult }
-      >();
-
-      // Keyword leg
-      const keywordResults = await this.fullSearch(keywordQuery, limit * 2, opts);
-      keywordResults.forEach((node, rank) => {
-        const existing = scores.get(node.documentId) ?? {
-          score: 0,
-          matchedBy: [],
-        };
-        existing.score += 1 / (K + rank);
-        existing.matchedBy.push("keyword");
-        existing.node = node;
-        scores.set(node.documentId, existing);
-      });
-
-      // Semantic leg
-      for (let rank = 0; rank < semanticResults.length; rank++) {
-        const sr = semanticResults[rank];
-        const existing = scores.get(sr.documentId) ?? {
-          score: 0,
-          matchedBy: [],
-        };
-        existing.score += 1 / (K + rank);
-        if (!existing.matchedBy.includes("semantic")) {
-          existing.matchedBy.push("semantic");
-        }
-        // Fetch node data if we don't have it from keyword results. The
-        // embedding store knows nothing about status, so archived notes
-        // are dropped here unless asked for.
-        if (!existing.node) {
-          const node = await this.nodeByDocumentId(sr.documentId);
-          if (!opts.includeArchived && !isCurrentNode(node)) continue;
-          existing.node = node;
-        }
-        scores.set(sr.documentId, existing);
-      }
-
-      return [...scores.values()]
-        .filter((e): e is typeof e & { node: GraphNodeResult } => !!e.node)
-        .sort((a, b) => b.score - a.score)
-        .slice(0, limit)
-        .map(({ score, matchedBy, node }) => ({ node, score, matchedBy }));
-    },
 
     // ---- Operation history queries ----
 

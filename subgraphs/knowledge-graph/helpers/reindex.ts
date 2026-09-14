@@ -469,6 +469,41 @@ export async function reindexDrive(
       errors.push(`prune-containment: ${msg}`);
     }
 
+    // Backfill edge titles LAST, once every node exists.
+    //
+    // `applyAddRelationship` reads the target's title at the moment the edge
+    // is processed and leaves it null when the target is not indexed yet,
+    // expecting a later pass to fill it in. Nothing ever did: a replay
+    // processes edges before their targets, so every edge in a rebuilt index
+    // ended up with a null `target_title` (measured 2026-09-14: 4724 of 4743,
+    // 100%). Every MoC traversal and backlink read then cost one extra lookup
+    // per edge just to learn what it pointed at.
+    try {
+      const titled = await db
+        .selectFrom("graph_edges")
+        .innerJoin("graph_nodes", "graph_nodes.document_id", "graph_edges.target_document_id")
+        .select(["graph_edges.id as id", "graph_nodes.title as title"])
+        .execute();
+      let filled = 0;
+      for (const row of titled) {
+        if (!row.title) continue;
+        await db
+          .updateTable("graph_edges")
+          .set({ target_title: row.title })
+          .where("id", "=", row.id)
+          .execute();
+        filled++;
+      }
+      console.log(
+        `[KnowledgeGraphSubgraph] Backfilled ${filled} edge titles`,
+      );
+    } catch (err: unknown) {
+      // Titles are a rendering convenience; a failure here must not fail the
+      // reindex, but it must be reported rather than swallowed.
+      const msg = err instanceof Error ? err.message : String(err);
+      errors.push(`backfill-edge-titles: ${msg}`);
+    }
+
     console.log(
       `[KnowledgeGraphSubgraph] Reindex complete: ${indexedNodes} nodes, ${indexedEdges} edges, ${errors.length} errors`,
     );

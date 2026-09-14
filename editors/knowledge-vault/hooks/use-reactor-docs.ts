@@ -203,6 +203,12 @@ export function useReactorDocsWithRefetch(
   const [fetchTick, setFetchTick] = useState(0);
   const lastKeyRef = useRef<string>("");
   const lastTickRef = useRef<number>(0);
+  /**
+   * The read pass currently in flight, if any. A pass for the SAME id set
+   * is never restarted while it runs (see the fetch effect); a pass for a
+   * superseded id set recognizes itself and drops its result.
+   */
+  const runningRef = useRef<{ key: string; token: object } | null>(null);
   // Latest specs, for the mutation handler — reading them through a ref
   // keeps its subscription keyed on the stable `ids`.
   const specsRef = useRef(specs);
@@ -295,6 +301,16 @@ export function useReactorDocsWithRefetch(
     if (fetchKey === lastKeyRef.current) return;
     lastKeyRef.current = fetchKey;
 
+    // A pass over this same id set is still in flight. Do NOT supersede
+    // it: `pMap` has no cancellation, so the old pass would keep spending
+    // requests while the new one starts from zero — and on a list long
+    // enough that one pass outlasts `pollMs` (404 sources ≈ 20s+), every
+    // tick restarted the list before it could land and the view hung on
+    // its spinner forever. Coalesce the tick: the running pass's result
+    // is still current for this key and will paint when it resolves; the
+    // next tick gets a fresh pass.
+    if (runningRef.current?.key === key) return;
+
     // Note this runs on EVERY mount, cache hit or not: the cache decides
     // what to paint, never whether to revalidate.
     // A poll tick or an explicit `refetch()` asked for fresh data, so it
@@ -306,27 +322,69 @@ export function useReactorDocsWithRefetch(
     lastTickRef.current = fetchTick;
     const maxAgeMs = forced ? 0 : DOC_CACHE_TTL_MS;
 
-    let cancelled = false;
-    void pMap(specs, FETCH_CONCURRENCY, (spec) =>
-      fetchThroughCache(spec.id, () => fetchDocOutcome(spec), Date.now, maxAgeMs),
-    ).then((outcomes) => {
-      if (cancelled) return;
-      const next: PHDocument[] = [];
-      outcomes.forEach((outcome, index) => {
-        if (outcome.kind === "doc") {
-          next.push(outcome.doc);
-        } else if (outcome.kind === "error") {
-          // Unreachable, not gone: keep the last good body if we have one.
-          const cached = peekDoc(specs[index].id);
-          if (cached) next.push(cached.doc);
-        }
-      });
-      setFetched({ key, docs: next });
-    });
+    const token = {};
+    runningRef.current = { key, token };
 
-    return () => {
-      cancelled = true;
+    // Paint documents as they land while this list has never been shown in
+    // full (the same condition `isLoading` reports). A 404-source vault is
+    // 404 reads and a blank panel for their duration reads as a hang;
+    // `isLoading` with a growing `docs` array is the contract this hook
+    // already documents, and every consumer gates its spinner on
+    // `isLoading && docs.length === 0`. Once a pass has painted the list
+    // (and on a remount whose cache already answers it), results are
+    // applied once at the end instead, so a revalidation can't flicker a
+    // full list down to whatever arrived first.
+    const streaming = fetched?.key !== key && !seedComplete;
+    const landed = new Map<string, PHDocument>();
+    if (streaming) {
+      // Start from whatever the cache could already answer so a partial
+      // warm list isn't replaced by a shorter, freshly-fetched one.
+      for (const doc of seeded) landed.set(doc.header.id, doc);
+    }
+    const paint = (spec: ReactorDocSpec, outcome: DocFetchOutcome) => {
+      if (!streaming || runningRef.current?.token !== token) return;
+      if (outcome.kind === "doc") {
+        landed.set(spec.id, outcome.doc);
+      } else if (outcome.kind === "error") {
+        // Unreachable, not gone: keep the last good body if we have one.
+        const cached = peekDoc(spec.id);
+        if (cached) landed.set(spec.id, cached.doc);
+      } else {
+        landed.delete(spec.id);
+      }
+      setFetched({ key, docs: [...landed.values()] });
     };
+    void pMap(specs, FETCH_CONCURRENCY, (spec) =>
+      fetchThroughCache(spec.id, () => fetchDocOutcome(spec), Date.now, maxAgeMs).then(
+        (outcome) => {
+          paint(spec, outcome);
+          return outcome;
+        },
+      ),
+    )
+      .then((outcomes) => {
+        // The id set changed while this pass ran (a source was deleted or
+        // added); a newer pass owns the result now, so this one must not
+        // paint over it with a stale key.
+        if (runningRef.current?.token !== token) return;
+        runningRef.current = null;
+        const next: PHDocument[] = [];
+        outcomes.forEach((outcome, index) => {
+          if (outcome.kind === "doc") {
+            next.push(outcome.doc);
+          } else if (outcome.kind === "error") {
+            // Unreachable, not gone: keep the last good body if we have one.
+            const cached = peekDoc(specs[index].id);
+            if (cached) next.push(cached.doc);
+          }
+        });
+        setFetched({ key, docs: next });
+      })
+      .catch(() => {
+        // Never leave a dead pass recorded as running, or the list waits
+        // on a promise that already rejected.
+        if (runningRef.current?.token === token) runningRef.current = null;
+      });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [key, fetchTick]);
 
