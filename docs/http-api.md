@@ -18,6 +18,7 @@ route that reads the index takes `drive` (a document UUID).
 | Method | Path | `auth` | Parameters / body | Response |
 |---|---|---|---|---|
 | `GET` | `ping` | `renown` | — | `{ ok, subgraph, user }` |
+| `GET` | `drives` | `renown` | — | `{ drives: [{ id, name, slug, vault, nodes }] }` — only drives the caller may read; `vault: true` marks a drive holding a `bai/vault-config` (its `id` is the `drive` value for every other route) |
 | `GET` | `search` | `renown` | `drive` (required), `q` (required), `mode=hybrid\|semantic`, `limit` (default 6, max 25), `content=1`, `includeArchived=1` | `{ query, mode, hits: [{ similarity, score, matchedBy, node }] }`; `Accept: text/markdown` renders a digest |
 | `GET` | `notes/:id` | `renown` | `drive` (required); `id` is a UUID | `{ id, name, documentType, state, edges }` |
 | `GET` | `notes/:id.md` | `renown` | same | markdown with YAML frontmatter; edges as absolute links carrying `?drive=` |
@@ -36,7 +37,7 @@ route that reads the index takes `drive` (a document UUID).
 | `GET` | `access-map` | `renown` | `drive`; **requires `canManage`** | grants, protections, operation grants |
 | `POST` | `admin/reindex` | `renown` | `drive`; **requires `canManage`** | `{ indexedNodes, indexedEdges, errors }` (reindex does not re-embed) |
 | `GET` | `llms.txt` | `renown-optional` | `drive` | MoC index as plain text; anonymous only when the drive is anonymously readable, titles only |
-| `GET` | `llms-full.txt` | `renown-optional` | `drive` | canonical notes plus the scope-of-work and WBS outlines; signed-in only |
+| `GET` | `llms-full.txt` | `renown-optional` | `drive`; `includeDrafts=1` to inline every non-archived note, not just canonical ones | canonical notes plus the scope-of-work and WBS outlines; signed-in only |
 | `GET` | `health.json` | `renown` | `drive` | the last health report |
 | `GET` | `badge.svg` | `public` | `drive` | SVG status word (`PASS`/`WARN`/`FAIL`/`UNKNOWN`, 5-minute cache); public because it carries the status word only |
 

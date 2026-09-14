@@ -5,6 +5,7 @@ import { searchVault } from "../knowledge-graph/helpers/search.js";
 import { buildHttpRouteDeps, buildStructureRouteDeps } from "./live-deps.js";
 import { getResolvers } from "./resolvers.js";
 import { createActionsRoute } from "./routes/actions.js";
+import { createDrivesRoute } from "./routes/drives.js";
 import { createBadgeRoute, createHealthRoute } from "./routes/health.js";
 import { createLlmsRoute } from "./routes/llms.js";
 import { createNotesRoute } from "./routes/notes.js";
@@ -30,6 +31,7 @@ export class HttpSubgraph extends BaseSubgraph {
           user: ctx.user?.address ?? null,
         }),
       );
+      this.http.get("drives", { auth: "renown" }, createDrivesRoute(deps));
       this.http.get(
         "search",
         { auth: "renown" },

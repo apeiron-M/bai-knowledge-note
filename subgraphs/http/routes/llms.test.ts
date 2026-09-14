@@ -55,7 +55,28 @@ function deps(canReadAnonymous = true): LlmsRouteDeps {
                 },
               ],
         ),
-        nodesByDocumentType: vi.fn(async () => []),
+        nodesByDocumentType: vi.fn(async (documentType: string) =>
+          documentType === "bai/knowledge-note"
+            ? [
+                {
+                  documentId: "d1",
+                  title: "A draft claim",
+                  noteType: "concept",
+                  status: "DRAFT",
+                  content: "draft body",
+                  description: null,
+                },
+                {
+                  documentId: "a1",
+                  title: "An archived claim",
+                  noteType: "concept",
+                  status: "ARCHIVED",
+                  content: "old",
+                  description: null,
+                },
+              ]
+            : [],
+        ),
       }) as never,
   };
 }
@@ -94,5 +115,23 @@ describe("llms routes", () => {
     );
     expect(res.status).toBe(200);
     expect(await res.text()).toContain("# A claim");
+  });
+
+  it("excludes draft notes from the full index by default", async () => {
+    const res = await createLlmsRoute(deps(), true)(
+      new Request("http://h/llms-full.txt?drive=d"),
+      ctx(true),
+    );
+    expect(await res.text()).not.toContain("# A draft claim");
+  });
+
+  it("includes non-archived notes with includeDrafts=1", async () => {
+    const res = await createLlmsRoute(deps(), true)(
+      new Request("http://h/llms-full.txt?drive=d&includeDrafts=1"),
+      ctx(true),
+    );
+    const text = await res.text();
+    expect(text).toContain("# A draft claim");
+    expect(text).not.toContain("# An archived claim");
   });
 });

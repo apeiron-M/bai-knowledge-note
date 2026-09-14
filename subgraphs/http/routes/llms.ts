@@ -64,11 +64,26 @@ export function createLlmsRoute(deps: LlmsRouteDeps, full: boolean) {
         );
       }
 
-      const [notes, scopes, wbs] = await Promise.all([
+      const includeDrafts = url.searchParams.get("includeDrafts") === "1";
+      const [canonical, scopes, wbs] = await Promise.all([
         query.nodesByStatus("CANONICAL"),
         query.nodesByDocumentType("powerhouse/scopeofwork"),
         query.nodesByDocumentType("bai/wbs"),
       ]);
+      let notes = canonical;
+      if (includeDrafts) {
+        // A vault whose notes never leave DRAFT would otherwise serve an index
+        // with no knowledge in it. Opt-in: every non-archived note joins the
+        // canonical set (deduplicated).
+        const allNotes = await query.nodesByDocumentType("bai/knowledge-note");
+        const seen = new Set(canonical.map((note) => note.documentId));
+        notes = [
+          ...canonical,
+          ...allNotes.filter(
+            (note) => note.status !== "ARCHIVED" && !seen.has(note.documentId),
+          ),
+        ];
+      }
       const sections = [
         ...notes.map((note) => ({
           title: note.title ?? note.documentId,
