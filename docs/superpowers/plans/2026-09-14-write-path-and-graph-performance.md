@@ -407,27 +407,27 @@ From E2/E3/E6 the route:
 4. Applies each note's `actions[]` via `executeWrite`. **Depends on Task 1**: these are
    first-global-scope writes, which before the fix always read back empty.
 
-- [ ] **Step 1:** Body `{ drive, documentType?, notes: [{ name, actions? }] }` — no `parentFolder`.
+- [x] **Step 1:** Body `{ drive, documentType?, notes: [{ name, actions? }] }` — no `parentFolder`.
       Cap N at 25; reject duplicate names in the request.
-- [ ] **Step 2: Lint every note's actions up front and 400 before creating anything**, preserving
+- [x] **Step 2: Lint every note's actions up front and 400 before creating anything**, preserving
       the "a 400 means nothing was dispatched" guarantee. This is the property the CLI lacks.
-- [ ] **Step 3:** Partial-failure semantics. Creation is not transactional: if containment fails
+- [x] **Step 3:** Partial-failure semantics. Creation is not transactional: if containment fails
       after the documents are created, orphans exist at drive root — the E7 failure mode, now ours
       to own. Either roll back (delete the created ids) or report them explicitly as
       `orphaned: [...]` with their ids. **Decide and document — never report a partial create as
       success.**
-- [ ] **Step 4:** Return per-note `{ id, name, parentFolder, readBack, operations }`, with
+- [x] **Step 4:** Return per-note `{ id, name, parentFolder, readBack, operations }`, with
       placement read back from the drive.
-- [ ] **Step 5:** Tests with fakes: happy path; lint failure creates nothing; ADD_FILE failure is
+- [x] **Step 5:** Tests with fakes: happy path; lint failure creates nothing; ADD_FILE failure is
       reported; N=1 matches the old behaviour.
-- [ ] **Step 6:** Register (mind route order) and document in `docs/http-api.md`.
+- [x] **Step 6:** Register (mind route order) and document in `docs/http-api.md`.
 
 ### Task 5: Prove the speedup, and amend the spec
 
-- [ ] Re-run the 3-note extraction harness (create 3 / populate 3×5 / link 2) against the new
+- [x] Re-run the 3-note extraction harness (create 3 / populate 3×5 / link 2) against the new
       route and compare to the recorded baseline: CLI 18 018 ms, REST-hybrid 17 875 ms.
       Target: creation phase from ~12 s to ~2 s; total under 8 s.
-- [ ] Record the numbers in this file under a "Results" heading. **Report honestly** — if the
+- [x] Record the numbers in this file under a "Results" heading. **Report honestly** — if the
       containment dispatch dominates at N=3, say so.
 - [ ] Amend `docs/superpowers/specs/2026-09-13-http-surface-slice1-design.md` to note that the
       HTTP surface now owns creation, which the slice-1 spec explicitly deferred.
@@ -538,25 +538,17 @@ is never re-embedded") and as a candidate for deletion.
       both lying in their types.
 - [x] Add `tests/processor/embedding-store.test.ts`; the store had no tests.
 
-### Task 10: A GraphQL mutation that can write an articulated edge
+### Task 10: ~~A GraphQL mutation that can write an articulated edge~~ — WITHDRAWN
 
-- [ ] Add `knowledgeGraphAddRelationship(driveId, source, target, linkType, reason, confidence)`
-      and an update/remove counterpart, mirroring `subgraphs/http/routes/relationships.ts`:
-      the same `checkArticulation` gate and the same `executeWrite` path, so REST and GraphQL
-      cannot drift.
-- [ ] Name the argument `linkType` to match `KnowledgeGraphEdge.linkType`, and document in
-      `schema.ts` that upstream's `addRelationship.relationshipType` is a different, metadata-less
-      mutation.
-- [ ] Tests: a bare knowledge edge is refused; `CORE_IDEA`/`CHILD_MOC` are allowed bare; a
-      reason that merely restates the type is refused.
-
----
-
-## Part D — Documentation and upstream
+**Withdrawn 2026-09-14.** The owner's decision is that **GraphQL is read-only
+for vault work**, and the plugin now says so everywhere. Adding a GraphQL write
+mutation — even a well-guarded one — would reopen the surface that decision
+closed. Articulated edges are written over `POST/PATCH relationships`, which
+already enforces the articulation rule server-side.
 
 ### Task 11: Correct the docs
 
-- [ ] `docs/http-api.md` — the `operations[]` contract (Task 2) and the new create route (Task 4).
+- [x] `docs/http-api.md` — the `operations[]` contract (Task 2) and the new create route (Task 4).
       Re-verify the `"public"` grep invariant.
 - [ ] Add a short "Field-name traps" note where the graph API is documented: the edge field is
       **`linkType`**; `relationshipType` is only the upstream mutation's argument name.
