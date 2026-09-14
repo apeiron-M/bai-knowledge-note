@@ -10,6 +10,7 @@ import { createBadgeRoute, createHealthRoute } from "./routes/health.js";
 import { createLlmsRoute } from "./routes/llms.js";
 import { createNotesRoute } from "./routes/notes.js";
 import { createRelationshipRoute } from "./routes/relationships.js";
+import { createIngestSourceRoute } from "./routes/sources.js";
 import { registerStructureRoutes } from "./routes/structure.js";
 import { createClaimRoute } from "./routes/tasks.js";
 import { createSearchRoute } from "./routes/search.js";
@@ -79,6 +80,14 @@ export class HttpSubgraph extends BaseSubgraph {
         "actions",
         { auth: "renown", body: "parsed", maxBodyBytes: 2 * 1024 * 1024 },
         createActionsRoute(deps),
+      );
+      // A source is ingested from content alone; the route places it in
+      // /sources itself. Body cap matches `actions` — source content is the
+      // one payload that is routinely large.
+      this.http.post(
+        "sources",
+        { auth: "renown", body: "parsed", maxBodyBytes: 2 * 1024 * 1024 },
+        createIngestSourceRoute(deps),
       );
       this.http.post(
         "relationships",

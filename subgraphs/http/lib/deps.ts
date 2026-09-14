@@ -10,7 +10,14 @@ export type GraphQuery = ReturnType<typeof createGraphQuery>;
 export interface HttpRouteDeps {
   reactorClient: Pick<
     IReactorClient,
-    "get" | "getOperations" | "execute" | "executeAsync" | "waitForJob" | "find"
+    | "get"
+    | "getOperations"
+    | "execute"
+    | "executeAsync"
+    | "waitForJob"
+    | "find"
+    | "createDocumentInDrive"
+    | "getDocumentModelModule"
   >;
   resolveCanonicalDocumentId: BaseSubgraph["resolveCanonicalDocumentId"];
   authorization: Pick<

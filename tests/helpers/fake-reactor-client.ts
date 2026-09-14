@@ -22,6 +22,27 @@ export function createFakeReactorClient(
       error: null,
     })) as never,
     find: vi.fn(async () => ({ results: [] })) as never,
+    createDocumentInDrive: vi.fn(async () => ({
+      header: {
+        id: "new-doc",
+        documentType: "bai/source",
+        revision: { document: 2 },
+      },
+      state: { global: {} },
+    })) as never,
+    getDocumentModelModule: vi.fn(async () => ({
+      utils: {
+        createDocument: () => ({
+          header: {
+            id: "new-doc",
+            documentType: "bai/source",
+            name: "",
+            revision: {},
+          },
+          state: { global: {} },
+        }),
+      },
+    })) as never,
     ...overrides,
   };
 }
