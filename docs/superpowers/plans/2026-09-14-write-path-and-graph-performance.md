@@ -451,14 +451,20 @@ From E2/E3/E6 the route:
 - [x] **Step 3: Memoize the authorization decision per `(ctx, driveId)`** on the ctx WeakMap, the
       way reactor-api already memoizes canonical-id resolution. Per-request, so it cannot leak
       across identities.
-- [ ] **Step 4: Benchmark before/after** with the E4 harness. Target: `nodeByDocumentId` from
+- [x] **Step 4: Benchmark before/after** with the E4 harness. Target: `nodeByDocumentId` from
       290 ms to < 30 ms. **Verify authorization still refuses an unauthorized drive** — add a test
       that a caller without read access is still rejected after memoization.
 
 ### Task 7: Batch the `KnowledgeGraphNode` field resolvers
 
-- [ ] Replace the per-row `topics` / `inDegree` / `outDegree` resolvers with a per-request
-      DataLoader (batch by `documentId`), or return them from the base query via join/aggregate.
+**Scoped down 2026-09-14 after checking real usage:** `inDegree` / `outDegree` are **selected
+nowhere** in this repo — their N+1 is theoretical. `topics` **is** selected, by
+`editors/knowledge-vault/hooks/use-graph-search.ts:76`, on a multi-row search, so it costs one
+extra query per result on every search the app runs. Batch `topics`; leave the degree fields
+alone (or batch them for free if the same mechanism covers all three).
+
+- [ ] Batch the per-row `topics` resolver with a per-request DataLoader (by `documentId`), or
+      return it from the base query via a join/aggregate.
 - [ ] Remove or fix the dead `if (parent.topics)` short-circuit at `resolvers.ts:123`.
 - [ ] Test: a 50-row search selecting `topics inDegree outDegree` issues O(1) extra queries, not 150.
 
@@ -555,7 +561,7 @@ is never re-embedded") and as a candidate for deletion.
 - [ ] Add a short "Field-name traps" note where the graph API is documented: the edge field is
       **`linkType`**; `relationshipType` is only the upstream mutation's argument name.
 
-### Task 12: Upstream bug entries
+### Task 12: Upstream bug entries — DONE (`docs/upstream-bugs-6.2.3-dev.4.md`)
 
 **File:** new `docs/upstream-bugs-6.2.3-dev.4.md`, following the format of
 `docs/upstream-bugs-6.2.2-dev.85.md` (symptom → repro → root cause with source citation → impact).
@@ -563,15 +569,15 @@ is never re-embedded") and as a candidate for deletion.
 Each entry must be **re-verified against a clean probe before it is written down** — the existing
 document's standard. Candidates, all observed on `6.2.3-dev.4`:
 
-- [ ] **`docs apply` reports a partially-rejected batch as success.** `status: READ_READY,
+- [x] **`docs apply` reports a partially-rejected batch as success.** `status: READ_READY,
       error: null` while an over-length description was dropped and the surrounding actions
       applied. Job status does not reflect per-action errors.
-- [ ] **`docs create` can report a connection timeout on a create that succeeded** — and leave the
+- [x] **`docs create` can report a connection timeout on a create that succeeded** — and leave the
       document at drive root with `--parent-folder` ignored. Contrast with E3, where a direct
       batched `ADD_FILE` places correctly.
-- [ ] **`addRelationship` cannot carry metadata**, and there is no `updateRelationship`. Feature
+- [x] **`addRelationship` cannot carry metadata**, and there is no `updateRelationship`. Feature
       gap: the GraphQL surface cannot express an articulated edge.
-- [ ] **Slug resolution is inconsistent across CLI verbs:** `docs create --drive powerhouse-knowledge`
+- [x] **Slug resolution is inconsistent across CLI verbs:** `docs create --drive powerhouse-knowledge`
       resolves the slug; `docs tree powerhouse-knowledge` fails with `Document not found`.
 
 ### Task 13: Close-out

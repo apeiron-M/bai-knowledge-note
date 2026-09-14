@@ -23,6 +23,7 @@ route that reads the index takes `drive` (a document UUID).
 | `GET` | `notes/:id` | `renown` | `drive` (required); `id` is a UUID | `{ id, name, documentType, state, edges }` |
 | `GET` | `notes/:id.md` | `renown` | same | markdown with YAML frontmatter; edges as absolute links carrying `?drive=` |
 | `POST` | `actions` | `renown` | body `{ documentId, actions[], wait?, allowLiteralEscapes? }` | `{ revision, operations: [{ index, type, error, attribution }], readBack, jobId }`; `202 { jobId }` when `wait: false` |
+| `POST` | `notes` | `renown` | body `{ drive, documentType?, notes: [{ name, actions? }] }` (max 25) | `201 { drive, parentFolder, notes: [{ id, name, parentFolder, path, readBack, operations }] }` — creates many documents and places them in **one** containment dispatch |
 | `POST` | `sources` | `renown` | body `{ drive, title, content, sourceType?, description?, author?, url?, publishedAt?, method?, tool?, queue? }` | `201 { id, parentFolder, path, status, revision, operations, readBack, jobId, task? }` — ingests a source from content alone; **the route places it in `/sources` itself** |
 | `POST` | `relationships` | `renown` | body `{ source, target, type, reason?, confidence? }` | `{ revision, operations, readBack, jobId }` |
 | `PATCH` | `relationships` | `renown` | same body; replaces the stored `reason`/`confidence` | same |
@@ -51,6 +52,30 @@ findings returned as `400` with the JSON path of each), envelope stamping (`id`/
 only when absent; `input` forwarded byte-for-byte), attribution (a signed `context.signer` must
 match the caller, otherwise the action is host-signed and reported as `attribution: "server"`),
 dispatch, and a per-action read-back. A `400` means nothing was dispatched.
+
+#### A failed write never leaves the vault worse than it found it
+
+Creating a document and placing it in its folder cannot be one transaction —
+the reactor runs them as two jobs. A failure in between strands the document at
+the drive root, where folder views and the pipeline will never find it. So
+**every route that creates documents undoes its own work on failure**, rather
+than reporting the stranded ids and making them the caller's problem.
+
+| failure | what happens |
+|---|---|
+| creation fails partway | everything created so far is deleted |
+| containment does not land | everything created is deleted; **verified by reading the drive back**, not by trusting the job result |
+| a write *after* containment succeeded | reported, **not** rolled back — the document is visible and in the right folder, its per-action errors are returned, and deleting it would discard the actions that did apply |
+
+A `502 CREATE_FAILED` or `502 CONTAINMENT_FAILED` therefore means nothing was
+left behind. In the one case where the rollback *itself* fails, the response
+says `Rollback INCOMPLETE` and lists the stranded ids in
+`details[].orphaned` — the absence of that field is the caller's assurance the
+vault is clean.
+
+Routes that only mutate existing documents (`POST actions`, the relationship
+verbs, `tasks/:id/claim`, `admin/reindex`) create nothing and cannot strand
+anything; operations are append-only and their errors are reported per action.
 
 #### Placement is the API's job
 

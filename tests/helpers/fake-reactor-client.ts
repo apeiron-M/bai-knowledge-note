@@ -30,6 +30,8 @@ export function createFakeReactorClient(
       },
       state: { global: {} },
     })) as never,
+    create: vi.fn(async (document: unknown) => document) as never,
+    deleteDocuments: vi.fn(async () => undefined) as never,
     getDocumentModelModule: vi.fn(async () => ({
       utils: {
         createDocument: () => ({

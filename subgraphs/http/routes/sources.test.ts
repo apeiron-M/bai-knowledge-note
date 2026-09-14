@@ -234,6 +234,54 @@ describe("POST sources", () => {
     expect(body.task).toEqual({ id: "existing", created: false });
   });
 
+  it("ROLLS BACK a source that was created but not placed in /sources", async () => {
+    // The drive reports the new document at the root: containment did not
+    // land. That must never be returned as a success.
+    const d = deps({
+      reactorClient: createFakeReactorClient({
+        get: vi.fn(async (id: string) => {
+          if (id === "drive")
+            return driveDoc([
+              { id: "src-1", name: "s", documentType: "bai/source", parentFolder: null },
+            ]);
+          return createdSource;
+        }) as never,
+        createDocumentInDrive: vi.fn(async () => createdSource) as never,
+      } as never),
+    });
+    const res = await createIngestSourceRoute(d)(
+      post({ drive: "drive", title: "T", content: "C" }),
+      ctx,
+    );
+    expect(res.status).toBe(502);
+    expect((await res.json()) as { code: string }).toMatchObject({
+      code: "CONTAINMENT_FAILED",
+    });
+    expect(d.reactorClient.deleteDocuments).toHaveBeenCalledWith(["src-1"]);
+    // and it must not have ingested content into a doomed document
+    expect(d.reactorClient.executeAsync).not.toHaveBeenCalled();
+  });
+
+  it("rolls back when creation itself throws", async () => {
+    const d = deps({
+      reactorClient: createFakeReactorClient({
+        get: vi.fn(async () => driveDoc()) as never,
+        createDocumentInDrive: vi.fn(async () => {
+          throw new Error("reactor unavailable");
+        }) as never,
+      } as never),
+    });
+    const res = await createIngestSourceRoute(d)(
+      post({ drive: "drive", title: "T", content: "C" }),
+      ctx,
+    );
+    expect(res.status).toBe(502);
+    expect((await res.json()) as { code: string }).toMatchObject({
+      code: "CREATE_FAILED",
+    });
+    expect(d.reactorClient.deleteDocuments).toHaveBeenCalled();
+  });
+
   it("refuses a caller without write access to the drive", async () => {
     const d = deps({
       authorization: {

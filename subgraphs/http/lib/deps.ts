@@ -18,6 +18,8 @@ export interface HttpRouteDeps {
     | "find"
     | "createDocumentInDrive"
     | "getDocumentModelModule"
+    | "create"
+    | "deleteDocuments"
   >;
   resolveCanonicalDocumentId: BaseSubgraph["resolveCanonicalDocumentId"];
   authorization: Pick<

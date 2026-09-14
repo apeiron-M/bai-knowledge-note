@@ -4,6 +4,7 @@ import { canonicalForWrite, requireUser } from "../lib/authorize.js";
 import type { HttpRouteDeps } from "../lib/deps.js";
 import { findDocumentInDrive } from "../lib/drive-tree.js";
 import { HttpError, jsonError, OK_CACHE } from "../lib/respond.js";
+import { failAndRollback, readPlacement } from "../lib/rollback.js";
 import { folderPaths, resolveVaultFolder } from "../lib/vault-folders.js";
 import { executeWrite } from "../lib/write.js";
 
@@ -100,12 +101,44 @@ export function createIngestSourceRoute(deps: HttpRouteDeps) {
       const module = await deps.reactorClient.getDocumentModelModule(SOURCE_TYPE);
       const draft = module.utils.createDocument() as PHDocument;
       draft.header.name = body.title.trim();
-      const created = await deps.reactorClient.createDocumentInDrive(
-        driveId,
-        draft,
-        folderId,
-      );
+
+      // `createDocumentInDrive` is create + contain as TWO reactor jobs. If it
+      // throws we may already own a document, so roll back on the id we asked
+      // for rather than assume nothing happened.
+      let created;
+      try {
+        created = await deps.reactorClient.createDocumentInDrive(
+          driveId,
+          draft,
+          folderId,
+        );
+      } catch (error) {
+        await failAndRollback(
+          deps,
+          [draft.header.id],
+          "CREATE_FAILED",
+          `Creating the source failed: ${
+            error instanceof Error ? error.message : String(error)
+          }`,
+        );
+        throw error; // unreachable; failAndRollback always throws
+      }
       const documentId = created.header.id;
+
+      // Containment is the job that can silently not happen. Verify it landed
+      // BEFORE ingesting content: a source at the drive root is invisible to
+      // the pipeline, and returning it as a success is how orphans accumulate.
+      const landed = await readPlacement(deps, driveId, documentId);
+      if (landed.parentFolder !== folderId) {
+        await failAndRollback(
+          deps,
+          [documentId],
+          "CONTAINMENT_FAILED",
+          `The source was created but not placed in /sources (parentFolder=${
+            landed.parentFolder ?? "none"
+          })`,
+        );
+      }
 
       const now = deps.now().toISOString();
       const actions: { type: string; input: Record<string, unknown> }[] = [

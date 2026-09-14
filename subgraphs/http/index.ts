@@ -10,6 +10,7 @@ import { createBadgeRoute, createHealthRoute } from "./routes/health.js";
 import { createLlmsRoute } from "./routes/llms.js";
 import { createNotesRoute } from "./routes/notes.js";
 import { createRelationshipRoute } from "./routes/relationships.js";
+import { createNotesRoute as createNotesBatchRoute } from "./routes/create.js";
 import { createIngestSourceRoute } from "./routes/sources.js";
 import { registerStructureRoutes } from "./routes/structure.js";
 import { createClaimRoute } from "./routes/tasks.js";
@@ -84,6 +85,13 @@ export class HttpSubgraph extends BaseSubgraph {
       // A source is ingested from content alone; the route places it in
       // /sources itself. Body cap matches `actions` — source content is the
       // one payload that is routinely large.
+      // Batch create. Distinct method from `GET notes/:id`, so route order
+      // with the note reads does not matter.
+      this.http.post(
+        "notes",
+        { auth: "renown", body: "parsed", maxBodyBytes: 2 * 1024 * 1024 },
+        createNotesBatchRoute(deps),
+      );
       this.http.post(
         "sources",
         { auth: "renown", body: "parsed", maxBodyBytes: 2 * 1024 * 1024 },
