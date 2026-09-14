@@ -7,6 +7,7 @@ import type { HttpRouteDeps } from "./deps.js";
 import { stampActions, type RawAction } from "./envelope.js";
 import { lintActions } from "./lint/index.js";
 import { HttpError } from "./respond.js";
+import { validateEnvelopes } from "./validate.js";
 
 export interface WriteResult {
   revision: unknown;
@@ -64,9 +65,14 @@ export async function executeWrite(
   const user = requireUser(options.ctx);
   const documentType = options.document.header.documentType;
 
-  const findings = lintActions(documentType, options.document.state, options.actions, {
-    allowLiteralEscapes: options.allowLiteralEscapes,
-  });
+  // Envelope first: a malformed or duplicated action id is refused here rather
+  // than forwarded to the reactor, which would answer 422 after dispatching.
+  const findings = [
+    ...validateEnvelopes(options.actions),
+    ...lintActions(documentType, options.document.state, options.actions, {
+      allowLiteralEscapes: options.allowLiteralEscapes,
+    }),
+  ];
   if (findings.length) {
     const code = findings.some((f) => f.class === "REACTOR_REJECTS")
       ? "LINT_REACTOR"

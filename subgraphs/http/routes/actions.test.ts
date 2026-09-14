@@ -140,6 +140,51 @@ describe("POST actions", () => {
     expect(body.jobId).toBe("job-1");
   });
 
+  it("refuses an unknown body field instead of ignoring it", async () => {
+    const d = deps();
+    const res = await createActionsRoute(d)(
+      post({ documentId: "doc", actions: [validAction], wai: false }),
+      ctx,
+    );
+    expect(res.status).toBe(400);
+    const body = (await res.json()) as { code: string; message?: string; error: string };
+    expect(body.code).toBe("UNKNOWN_FIELD");
+    expect(body.error).toContain("wai");
+    expect(d.reactorClient.executeAsync).not.toHaveBeenCalled();
+  });
+
+  it("refuses a duplicate action id before dispatching anything", async () => {
+    const d = deps();
+    const id = "3f1a2b4c-5d6e-4f80-9a1b-2c3d4e5f6071";
+    const res = await createActionsRoute(d)(
+      post({
+        documentId: "doc",
+        actions: [
+          { ...validAction, id },
+          { ...validAction, id },
+        ],
+      }),
+      ctx,
+    );
+    expect(res.status).toBe(400);
+    const body = (await res.json()) as { details: { rule: string }[] };
+    expect(body.details.some((f) => f.rule === "DUPLICATE_ACTION_ID")).toBe(true);
+    expect(d.reactorClient.executeAsync).not.toHaveBeenCalled();
+  });
+
+  it("refuses a malformed timestamp as 400, not 422 after dispatch", async () => {
+    const d = deps();
+    const res = await createActionsRoute(d)(
+      post({
+        documentId: "doc",
+        actions: [{ ...validAction, timestampUtcMs: "1789393465164" }],
+      }),
+      ctx,
+    );
+    expect(res.status).toBe(400);
+    expect(d.reactorClient.executeAsync).not.toHaveBeenCalled();
+  });
+
   it("refuses a signed action from another identity with 403", async () => {
     const d = deps();
     const res = await createActionsRoute(d)(

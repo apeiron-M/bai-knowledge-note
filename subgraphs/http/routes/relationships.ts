@@ -3,6 +3,7 @@ import { checkArticulation } from "../lib/articulation.js";
 import { canonicalForWrite } from "../lib/authorize.js";
 import type { HttpRouteDeps } from "../lib/deps.js";
 import { HttpError, jsonError, OK_CACHE } from "../lib/respond.js";
+import { rejectUnknownFields } from "../lib/validate.js";
 import { executeWrite } from "../lib/write.js";
 
 export interface RelationshipBody {
@@ -34,6 +35,13 @@ export function createRelationshipRoute(
       } catch {
         throw new HttpError(400, "BAD_REQUEST", "body must be JSON");
       }
+      rejectUnknownFields(body as unknown as Record<string, unknown>, [
+        "source",
+        "target",
+        "type",
+        "reason",
+        "confidence",
+      ]);
       if (!body.source || !body.target || !body.type) {
         throw new HttpError(
           400,

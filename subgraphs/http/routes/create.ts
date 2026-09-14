@@ -5,6 +5,7 @@ import type { HttpRouteDeps } from "../lib/deps.js";
 import { stampActions, type RawAction } from "../lib/envelope.js";
 import { lintActions } from "../lib/lint/index.js";
 import { HttpError, jsonError, OK_CACHE } from "../lib/respond.js";
+import { rejectUnknownFields } from "../lib/validate.js";
 import { failAndRollback } from "../lib/rollback.js";
 import { folderPaths, resolveVaultFolder } from "../lib/vault-folders.js";
 import { executeWrite } from "../lib/write.js";
@@ -61,6 +62,12 @@ export function createNotesRoute(deps: HttpRouteDeps) {
       } catch {
         throw new HttpError(400, "BAD_REQUEST", "body must be JSON");
       }
+      rejectUnknownFields(body as unknown as Record<string, unknown>, [
+        "drive",
+        "documentType",
+        "notes",
+        "parentFolder",
+      ]);
       if (!body.drive) {
         throw new HttpError(400, "BAD_REQUEST", "drive is required");
       }

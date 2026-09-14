@@ -3,6 +3,7 @@ import { canonicalForWrite } from "../lib/authorize.js";
 import type { HttpRouteDeps } from "../lib/deps.js";
 import type { RawAction } from "../lib/envelope.js";
 import { HttpError, jsonError, OK_CACHE } from "../lib/respond.js";
+import { rejectUnknownFields } from "../lib/validate.js";
 import { executeWrite } from "../lib/write.js";
 
 interface ActionsBody {
@@ -24,6 +25,12 @@ export function createActionsRoute(deps: HttpRouteDeps) {
       } catch {
         throw new HttpError(400, "BAD_REQUEST", "body must be JSON");
       }
+      rejectUnknownFields(body as unknown as Record<string, unknown>, [
+        "documentId",
+        "actions",
+        "wait",
+        "allowLiteralEscapes",
+      ]);
       if (!body.documentId || typeof body.documentId !== "string") {
         throw new HttpError(400, "BAD_REQUEST", "documentId is required");
       }

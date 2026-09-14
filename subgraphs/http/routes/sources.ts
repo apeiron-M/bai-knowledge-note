@@ -1,23 +1,18 @@
 import type { PHDocument } from "document-model";
+import { SourceTypeSchema } from "../../../document-models/source/v1/gen/schema/zod.js";
 import type { RouteContext } from "@powerhousedao/shared/processors";
 import { canonicalForWrite, requireUser } from "../lib/authorize.js";
 import type { HttpRouteDeps } from "../lib/deps.js";
 import { findDocumentInDrive } from "../lib/drive-tree.js";
 import { HttpError, jsonError, OK_CACHE } from "../lib/respond.js";
+import { rejectUnknownFields } from "../lib/validate.js";
 import { failAndRollback, readPlacement } from "../lib/rollback.js";
 import { folderPaths, resolveVaultFolder } from "../lib/vault-folders.js";
 import { executeWrite } from "../lib/write.js";
 
-const SOURCE_TYPES = new Set([
-  "ARTICLE",
-  "PAPER",
-  "BOOK_CHAPTER",
-  "TRANSCRIPT",
-  "DOCUMENTATION",
-  "CONVERSATION",
-  "WEB_PAGE",
-  "MANUAL_ENTRY",
-]);
+// Taken from the model's own zod schema rather than restated here, so the
+// route cannot drift from what the reducer will actually accept.
+const SOURCE_TYPES = new Set<string>(SourceTypeSchema.options);
 
 const SOURCE_TYPE = "bai/source";
 
@@ -64,6 +59,21 @@ export function createIngestSourceRoute(deps: HttpRouteDeps) {
       } catch {
         throw new HttpError(400, "BAD_REQUEST", "body must be JSON");
       }
+      rejectUnknownFields(body as unknown as Record<string, unknown>, [
+        "drive",
+        "title",
+        "content",
+        "sourceType",
+        "description",
+        "author",
+        "url",
+        "publishedAt",
+        "method",
+        "tool",
+        "queue",
+        // allowed through so it hits the specific placement error below
+        "parentFolder",
+      ]);
       if (!body.drive) {
         throw new HttpError(400, "BAD_REQUEST", "drive is required");
       }
@@ -88,7 +98,7 @@ export function createIngestSourceRoute(deps: HttpRouteDeps) {
         throw new HttpError(
           400,
           "BAD_REQUEST",
-          `sourceType must be one of ${[...SOURCE_TYPES].join(", ")}`,
+          `sourceType must be one of ${[...SOURCE_TYPES].sort().join(", ")}`,
           [{ path: "sourceType", rule: "ENUM" }],
         );
       }

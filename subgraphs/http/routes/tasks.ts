@@ -3,6 +3,7 @@ import { canonicalForWrite } from "../lib/authorize.js";
 import type { HttpRouteDeps } from "../lib/deps.js";
 import { findDocumentInDrive } from "../lib/drive-tree.js";
 import { HttpError, jsonError, OK_CACHE } from "../lib/respond.js";
+import { rejectUnknownFields } from "../lib/validate.js";
 import { executeWrite } from "../lib/write.js";
 
 export function createClaimRoute(deps: HttpRouteDeps) {
@@ -23,6 +24,7 @@ export function createClaimRoute(deps: HttpRouteDeps) {
       } catch {
         body = {};
       }
+      rejectUnknownFields(body as Record<string, unknown>, ["assignedTo"]);
 
       const queueId = await findDocumentInDrive(
         deps,

@@ -282,6 +282,21 @@ describe("POST sources", () => {
     expect(d.reactorClient.deleteDocuments).toHaveBeenCalled();
   });
 
+  it("refuses a misspelt optional field rather than silently ignoring it", async () => {
+    // `queu` used to be dropped, so the caller believed they had opted out of
+    // queueing and had not.
+    const d = deps();
+    const res = await createIngestSourceRoute(d)(
+      post({ drive: "drive", title: "T", content: "C", queu: false }),
+      ctx,
+    );
+    expect(res.status).toBe(400);
+    expect((await res.json()) as { code: string }).toMatchObject({
+      code: "UNKNOWN_FIELD",
+    });
+    expect(d.reactorClient.createDocumentInDrive).not.toHaveBeenCalled();
+  });
+
   it("refuses a caller without write access to the drive", async () => {
     const d = deps({
       authorization: {

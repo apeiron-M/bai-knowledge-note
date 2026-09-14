@@ -104,6 +104,25 @@ cannot look like a success.
 already has that `documentRef`, and its id is always freshly generated — a duplicate task id is
 unrecoverable, since every queue operation resolves by first match and there is no `REMOVE_TASK`.
 
+#### Request validation
+
+A request is either accepted or refused with the JSON path of what is wrong.
+Nothing is silently reinterpreted.
+
+- **Unknown body fields are a `400`**, naming the offending key and listing the
+  allowed ones. A misspelt optional field cannot quietly change what the request
+  does.
+- **Envelope fields are optional, and checked when supplied.** `id`,
+  `timestampUtcMs` and `scope` are generated for you when absent. If you send
+  them they must be valid: `id` a UUID and unique within the batch,
+  `timestampUtcMs` an ISO 8601 instant, `scope` one of `global`, `local`,
+  `document`, `auth`. A duplicate `id` is refused — two operations sharing one
+  is the case that corrupts sync for connected clients.
+- **Model validation** runs before dispatch: unknown action types, bad enum
+  values and the 200-character description limit all return `400`.
+- These are checked **before anything is dispatched**, so a malformed envelope
+  is a `400` here rather than a `422` from the reactor after the fact.
+
 #### `readBack` — the write may be dispatched but unverified
 
 Every synchronous write reports `readBack`:
