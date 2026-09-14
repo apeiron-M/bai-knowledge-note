@@ -21,6 +21,10 @@
  *
  *   node scripts/check-index-drift.mjs --drive <uuid> [--base <origin>]
  *
+ * Falls back to GraphQL when the REST surface is not deployed — an older
+ * Switchboard is exactly where drift is most likely, so the check has to work
+ * there too.
+ *
  * Exit 0 when the index matches, 1 when it has drifted. Reads only.
  */
 const INDEXED_DOCUMENT_TYPES = new Set([
@@ -68,47 +72,93 @@ const get = async (path) => {
   return res.json();
 };
 
-const [stats, graph] = await Promise.all([
-  get(`/stats?drive=${drive}`),
-  get(`/graph.json?drive=${drive}`),
-]);
+const gql = async (query) => {
+  const res = await fetch(`${origin}/graphql`, {
+    method: "POST",
+    headers: { ...headers, "content-type": "application/json" },
+    body: JSON.stringify({ query }),
+  });
+  const body = await res.json();
+  if (body.errors) {
+    console.error(`graphql: ${body.errors[0].message}`);
+    process.exit(2);
+  }
+  return body.data;
+};
 
-// What the drive says should be indexed.
-const drives = await get("/drives");
-const driveInfo = drives.drives?.find((d) => d.id === drive);
-if (!driveInfo) {
-  console.error(`drive ${drive} not found, or not readable`);
-  process.exit(2);
+// Prefer REST; fall back to GraphQL where the http subgraph is not deployed.
+const probe = await fetch(`${base}/ping`, { headers }).catch(() => null);
+const viaRest = probe !== null && probe.status !== 404;
+if (!viaRest) console.log("note: REST surface not deployed here — using GraphQL");
+
+let stats, edges;
+if (viaRest) {
+  const graph = await get(`/graph.json?drive=${drive}`);
+  stats = await get(`/stats?drive=${drive}`);
+  const nodeIds = new Set((graph.nodes ?? []).map((n) => n.documentId ?? n.id));
+  edges = (graph.edges ?? []).map((e) => ({
+    linkType: e.linkType,
+    targetTitle: e.targetTitle,
+    targetIndexed: nodeIds.has(e.targetDocumentId),
+  }));
+} else {
+  const d = await gql(
+    `{ knowledgeGraphStats(driveId:"${drive}"){ nodeCount edgeCount }
+       knowledgeGraphNodes(driveId:"${drive}"){ documentId }
+       knowledgeGraphEdges(driveId:"${drive}"){ linkType targetTitle targetDocumentId } }`,
+  );
+  stats = d.knowledgeGraphStats;
+  const nodeIds = new Set(d.knowledgeGraphNodes.map((n) => n.documentId));
+  edges = d.knowledgeGraphEdges.map((e) => ({
+    linkType: e.linkType,
+    targetTitle: e.targetTitle,
+    targetIndexed: nodeIds.has(e.targetDocumentId),
+  }));
 }
 
 const problems = [];
 
 // Every edge whose target is an indexed node should carry that node's title.
 // A null there means the row predates the backfill; reads then return bare
-// UUIDs and every traversal costs an extra lookup per edge.
-const nodeIds = new Set((graph.nodes ?? []).map((n) => n.documentId ?? n.id));
-const untitled = (graph.edges ?? []).filter(
-  (e) => nodeIds.has(e.targetDocumentId) && !e.targetTitle,
-);
+// UUIDs and every traversal costs an extra lookup per edge. Edges pointing at
+// a NON-indexed document (DERIVED_FROM -> a source) are correctly null.
+const untitled = edges.filter((e) => e.targetIndexed && !e.targetTitle);
 if (untitled.length) {
   problems.push(
     `${untitled.length} edge(s) point at an indexed node but carry no title — the projection predates the edge-title backfill`,
   );
 }
 
-const missing = await get(`/embeddings/missing?drive=${drive}`);
+const missing = viaRest
+  ? await get(`/embeddings/missing?drive=${drive}`)
+  : (await gql(`{ knowledgeGraphMissingEmbeddings(driveId:"${drive}") }`))
+      .knowledgeGraphMissingEmbeddings;
 if (Array.isArray(missing) && missing.length) {
   // Not drift: the boot backfill fills these in. Report, do not fail.
   console.log(`note: ${missing.length} note(s) awaiting an embedding (the processor backfills these at boot)`);
 }
 
-console.log(`index:  ${stats.nodeCount} nodes, ${stats.edgeCount} edges`);
-console.log(`drive:  ${driveInfo.nodes} nodes total (folders and non-indexed types included)`);
+console.log(`index:  ${stats.nodeCount} nodes, ${stats.edgeCount} knowledge edges`);
+console.log(`edges:  ${edges.length} total, ${edges.filter((e) => !e.targetIndexed).length} pointing at non-indexed documents (correctly untitled)`);
 
 if (problems.length === 0) {
   console.log("no drift detected");
   process.exit(0);
 }
 for (const p of problems) console.error(`DRIFT: ${p}`);
-console.error(`\nrebuild with: POST ${base}/admin/reindex?drive=${drive}`);
+
+if (!viaRest) {
+  // The edge-title backfill runs inside reindexDrive, and only the version
+  // that also serves REST has it. On an older deployment a reindex replays
+  // edges before their targets exist and writes NULL for every title — it
+  // made a local vault 100% untitled. Do not send someone there.
+  console.error(
+    `\nDo NOT reindex this deployment yet: it predates the edge-title backfill,` +
+      `\nand its reindex would null the titles on all ${edges.length} edges instead of fixing ${untitled.length}.` +
+      `\nDeploy @powerhousedao/knowledge-note (a version serving /api/@powerhousedao/knowledge-note),` +
+      `\nrestart the Switchboard, then reindex.`,
+  );
+} else {
+  console.error(`\nrebuild with: POST ${base}/admin/reindex?drive=${drive}`);
+}
 process.exit(1);
