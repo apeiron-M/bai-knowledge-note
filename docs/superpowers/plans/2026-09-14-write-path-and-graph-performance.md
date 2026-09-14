@@ -500,13 +500,37 @@ stale search results.
       `searchWithEmbedding` (SEMANTIC) and `hybridSearch` into one `WHERE document_id IN (...)`.
       With both fixes, and measured spaced: **HYBRID 250 ms -> 39.7 ms, SEMANTIC 22.3 ms.**
 
-### Task 9: Fix `knowledgeGraphUpsertEmbedding`
+### Task 9: ~~Fix~~ REMOVE `knowledgeGraphUpsertEmbedding`
 
-- [ ] Switch it to `getWritableDb` (as `reindex.ts` already does) so `insertInto` exists.
-- [ ] **Narrow `getDb`'s return type** to the actual query-builder surface and delete the
-      `as unknown as Kysely<DB>` cast at `helpers/db.ts:20`, so the next such mistake is a compile
-      error. Fix any fallout.
-- [ ] Add a test that exercises the mutation against a real test db (`tests/helpers/create-test-db.ts`).
+Reproduced live: the mutation failed with `db.insertInto is not a function`.
+`getDb` returns the read-only query builder (`selectFrom`, `selectNoFrom`,
+`with`, `withRecursive`, `withSchema`) but was cast `as unknown as Kysely<DB>`,
+so passing it to `upsertEmbedding` — which calls `db.insertInto(...)` —
+type-checked and then threw at runtime.
+
+**Owner decision (2026-09-14): delete it rather than fix it.** The processor
+self-embeds, so the client-push path is dead weight, and
+`docs/superpowers/specs/2026-09-09-vault-authorization-design.md` had already
+flagged it twice: as an attack vector ("permanently poison semantic search —
+arbitrary vector stored with a hash that makes the staleness gate agree, so it
+is never re-embedded") and as a candidate for deletion.
+
+- [x] Remove the mutation and `UpsertEmbeddingResult` from `schema.ts`, the
+      resolver, and its `PRIVILEGED_RESOLVERS` entry.
+- [x] Delete `scripts/drive-sync/embed-backfill.mjs`, whose only purpose was
+      calling it, and update `scripts/drive-sync/README.md` to describe the
+      server-side path instead.
+- [x] Keep `upsertEmbedding` / `sha256Hex` — the processor uses both
+      (`processors/graph-indexer/index.ts:229-235`). Only the GraphQL surface goes.
+- [x] **Narrow the types so this class of bug cannot recur.** `getDb` now
+      returns `NamespacedReadDb` and the embedding store separates its read
+      surface (`selectFrom`) from its write surface (`insertInto`/`deleteFrom`),
+      so a read handle on a write path is a compile error. This immediately
+      caught two further call sites passing read handles into write-typed
+      functions (`subgraphs/http/live-deps.ts:32`,
+      `subgraphs/knowledge-graph/resolvers.ts:427`) — both harmless in practice,
+      both lying in their types.
+- [x] Add `tests/processor/embedding-store.test.ts`; the store had no tests.
 
 ### Task 10: A GraphQL mutation that can write an articulated edge
 

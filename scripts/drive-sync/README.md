@@ -96,9 +96,9 @@ Three things to check before you start:
   and is keyed to the *previous* target's document ids, so a stale one makes
   the upload skip documents it wrongly believes already exist. It is
   deliberately absent from the committed dataset.
-- **Semantic search needs a separate step.** Embeddings are computed
-  client-side and pushed, so run `embed-backfill.mjs` against the remote after
-  the upload; `reindex` does not create them.
+- **Semantic search fills itself in.** The graph-indexer processor embeds
+  server-side, on content change and via a hash-gated sweep on boot. Watch
+  `knowledgeGraphMissingEmbeddings` drain; `reindex` does not create them.
 
 ---
 
@@ -169,33 +169,28 @@ the drive and re-fans-out per relationship type from
 
 ---
 
-## After upload: backfill embeddings (semantic search)
+## After upload: embeddings (semantic search)
 
-Reindexing does **not** compute embeddings — vectors are pushed by
-clients via `knowledgeGraphUpsertEmbedding`, normally by the Connect
-drive-app when someone opens the vault (`use-embedding-backfill.ts`).
-After a headless upload, `knowledgeGraphSimilar` and
-`knowledgeGraphSearchByEmbedding` return nothing until embeddings
-exist. Backfill them without opening Connect:
+Reindexing does **not** compute embeddings, but you no longer need to do
+anything about it: the graph-indexer processor embeds server-side, on every
+content change and via a hash-gated backfill sweep on boot.
 
-```bash
-bun scripts/drive-sync/embed-backfill.mjs --drive <drive-uuid-or-slug>
-# optionally: --endpoint http://localhost:4001/graphql
+After a headless upload, start the reactor and watch the queue drain:
+
+```graphql
+{ knowledgeGraphMissingEmbeddings(driveId: "<drive-uuid>") }
 ```
 
-The script queries `knowledgeGraphMissingEmbeddings`, embeds
-`title + " " + description` per node with `Supabase/gte-small` (q8 —
-the same model/quantization the browser uses, so vectors are
-interchangeable), and pushes each via the upsert mutation. The model
-(~34 MB) downloads from the Hugging Face hub on first run and is
-cached. ~385 docs take about 2 minutes; re-runs are incremental
-(only missing embeddings are computed). Verify with:
+It should reach `[]` shortly after boot. Until it does,
+`knowledgeGraphSimilar` and `knowledgeGraphSemanticSearch` return partial
+results.
 
-```bash
-switchboard query '{ knowledgeGraphMissingEmbeddings(driveId: "<UUID>") }'
-```
-
----
+> **Removed 2026-09-14.** The client-push path — the
+> `knowledgeGraphUpsertEmbedding` mutation and the `embed-backfill.mjs`
+> script — is gone. The processor self-embeds, so the mutation was dead
+> weight, and it let any caller with write access store an arbitrary vector
+> under a hash the staleness gate would then agree with, permanently
+> poisoning semantic search for that note.
 
 ## Refreshing the dataset from a live reactor
 
@@ -356,7 +351,6 @@ dev.246+ — match your vetra version.
 | `upload.sh` | Bash wrapper that enforces `switchboard config` profile is `local` before delegating to `upload.py`. Use it in CI/automation to prevent accidental remote uploads. |
 | `download.py` | Snapshot a vault from any reactor (works against `/graphql/r` on local or remote). |
 | `reindex.py` / `reindex.sh` | Force the `knowledgeGraph` subgraph to rebuild from `DocumentRelationship`. |
-| `embed-backfill.mjs` | Compute + push embeddings for nodes missing them (headless counterpart of the Connect drive-app backfill). Required for semantic search after a headless upload. |
 | `compare.py` | Diff two `data/` dumps to detect drift between snapshots. |
 | `cleanup-duplicates.py` | Operator tool to dedupe drive-level node entries (rare). |
 | `lib/gql.py` | Direct GraphQL helpers used by `upload.py` (no subprocess overhead). |

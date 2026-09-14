@@ -275,7 +275,10 @@ function rowToOperation(row: {
   };
 }
 
-export function createGraphQuery(db: Kysely<DB>) {
+/** Everything `createGraphQuery` needs. Read-only by construction. */
+export type GraphReadDb = Pick<Kysely<DB>, "selectFrom">;
+
+export function createGraphQuery(db: GraphReadDb) {
   return {
     async allNodes(): Promise<GraphNodeResult[]> {
       const rows = await db.selectFrom("graph_nodes").selectAll().execute();

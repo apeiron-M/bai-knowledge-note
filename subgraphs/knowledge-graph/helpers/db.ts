@@ -27,7 +27,7 @@ import type { DB } from "../../../processors/graph-indexer/schema.js";
  * db cannot serve a stale builder, and the outer WeakMap lets both be
  * collected together.
  */
-const dbHandles = new WeakMap<object, Map<string, Kysely<DB>>>();
+const dbHandles = new WeakMap<object, Map<string, NamespacedReadDb>>();
 
 /** Test seam: drop every memoized query builder. */
 export function clearDbHandleCache(): void {
@@ -39,9 +39,27 @@ export function clearDbHandleCache(): void {
 const cachedRelationalDbs = new Set<object>();
 
 /**
+ * What `RelationalDbProcessor.query` actually returns: `selectFrom`,
+ * `selectNoFrom`, `with`, `withRecursive`, `withSchema` and nothing else.
+ *
+ * This used to be typed `Kysely<DB>` through an `as unknown as` cast, which
+ * claimed methods the object does not have. `knowledgeGraphUpsertEmbedding`
+ * passed one of these to `upsertEmbedding`, which calls `db.insertInto(...)`,
+ * and the mutation failed at runtime with `db.insertInto is not a function`
+ * while type-checking cleanly. Writes must use `getWritableDb`.
+ */
+export type NamespacedReadDb = Pick<
+  Kysely<DB>,
+  "selectFrom" | "with" | "withRecursive" | "withSchema"
+>;
+
+/**
  * Read-only namespaced query builder — use for all SELECT resolvers.
  */
-export function getDb(subgraph: ISubgraph, driveId: string): Kysely<DB> {
+export function getDb(
+  subgraph: ISubgraph,
+  driveId: string,
+): NamespacedReadDb {
   const relationalDb = subgraph.relationalDb as unknown as IRelationalDb;
   const namespace = GraphIndexerProcessor.getNamespace(driveId);
   let perDb = dbHandles.get(relationalDb as unknown as object);
@@ -55,7 +73,7 @@ export function getDb(subgraph: ISubgraph, driveId: string): Kysely<DB> {
   const handle = GraphIndexerProcessor.query(
     driveId,
     relationalDb,
-  ) as unknown as Kysely<DB>;
+  ) as unknown as NamespacedReadDb;
   perDb.set(namespace, handle);
   return handle;
 }

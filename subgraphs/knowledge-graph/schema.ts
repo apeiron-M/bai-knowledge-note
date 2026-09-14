@@ -126,11 +126,6 @@ export const schema: DocumentNode = gql`
     HYBRID
   }
 
-  type UpsertEmbeddingResult {
-    documentId: ID!
-    ok: Boolean!
-  }
-
   type OperationRecord {
     id: String!
     documentId: String!
@@ -314,14 +309,5 @@ export const schema: DocumentNode = gql`
     the processor missed historical operations.
     """
     knowledgeGraphReindex(driveId: ID!): ReindexResult!
-    """
-    Store or update a pre-computed embedding for a document.
-    Called by browser clients after running the embedding model locally.
-    """
-    knowledgeGraphUpsertEmbedding(
-      driveId: ID!
-      documentId: ID!
-      embedding: [Float!]!
-    ): UpsertEmbeddingResult!
   }
 `;

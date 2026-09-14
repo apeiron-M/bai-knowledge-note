@@ -6,8 +6,6 @@ import { GraphIndexerProcessor } from "../../processors/graph-indexer/index.js";
 import {
   searchSimilar,
   getEmbedding,
-  upsertEmbedding,
-  sha256Hex,
 } from "../../processors/graph-indexer/embedding-store.js";
 import { isCurrentNode } from "../../processors/graph-indexer/query.js";
 import { searchVault, searchWithEmbedding } from "./helpers/search.js";
@@ -28,11 +26,8 @@ type SubgraphContext = Parameters<BaseSubgraph["assertCanRead"]>[1];
 /**
  * Resolvers that must not be served on a bare READ grant.
  *
- * Two mutations because they write: `knowledgeGraphReindex` DELETEs and rebuilds
- * the projection (and CREATEs its tables when a namespace has none), and
- * `knowledgeGraphUpsertEmbedding` stores a caller-supplied vector under a hash
- * the processor's staleness gate then agrees with, so a poisoned embedding is
- * never re-computed.
+ * One mutation because it writes: `knowledgeGraphReindex` DELETEs and rebuilds
+ * the projection (and CREATEs its tables when a namespace has none).
  *
  * Four queries because of what they expose rather than what they change:
  * `knowledgeGraphDebug` serves the raw projection tables, and the three
@@ -42,7 +37,6 @@ type SubgraphContext = Parameters<BaseSubgraph["assertCanRead"]>[1];
  */
 const PRIVILEGED_RESOLVERS = new Set([
   "knowledgeGraphReindex",
-  "knowledgeGraphUpsertEmbedding",
   "knowledgeGraphDebug",
   "knowledgeGraphHistory",
   "knowledgeGraphActivity",
@@ -184,28 +178,6 @@ export const getResolvers = (subgraph: BaseSubgraph): Record<string, unknown> =>
     Mutation: withDriveGuards(subgraph, {
       knowledgeGraphReindex: ((_: unknown, args: { driveId: string }) =>
         reindexDrive(subgraph, args.driveId)) as unknown as Resolver,
-
-      knowledgeGraphUpsertEmbedding: (async (
-        _: unknown,
-        args: { driveId: string; documentId: string; embedding: number[] },
-      ) => {
-        // Legacy client-push path (headless backfill script). The processor
-        // self-embeds now, so this is a manual override. The content hash is
-        // computed from the indexed node text so the processor's hash gate
-        // agrees with pushed vectors instead of re-embedding them on the
-        // next unrelated operation.
-        const db = getDb(subgraph, args.driveId);
-        const graphQuery = getQuery(subgraph, args.driveId);
-        const node = await graphQuery.nodeByDocumentId(args.documentId);
-        const text = node
-          ? [node.title, node.description, node.content?.slice(0, 1500)]
-              .filter((x): x is string => !!x && x.trim().length > 0)
-              .join(" ")
-          : "";
-        const hash = text ? await sha256Hex(text) : "client-pushed";
-        await upsertEmbedding(db, args.documentId, args.embedding, hash);
-        return { documentId: args.documentId, ok: true };
-      }) as unknown as Resolver,
     }),
 
     Query: withDriveGuards(subgraph, {
