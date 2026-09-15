@@ -133,7 +133,7 @@ Every query takes `driveId` as its first argument; it is omitted below.
 | `knowledgeGraphBacklinks(documentId)` / `knowledgeGraphForwardLinks(documentId)` | Edges into / out of a document, with `reason` and `confidence` |
 | `knowledgeGraphOrphans` | Knowledge nodes with no incoming knowledge edge |
 | `knowledgeGraphTriangles(limit?)` | Pairs that share a target but are not linked to each other |
-| `knowledgeGraphBridges` | Articulation points joining clusters — the notes holding two clusters together. One DFS pass (Tarjan), O(V+E) |
+| `knowledgeGraphBridges` | Articulation points — the notes holding two clusters together, and what archiving one would strand. One DFS pass (Tarjan), O(V+E). **Requires write**: a curation question, not a discovery one |
 | `knowledgeGraphStats` / `knowledgeGraphDensity` | Per-kind counts, articulation coverage / density |
 
 **Audit** (privileged — these expose operation diffs and signer addresses)

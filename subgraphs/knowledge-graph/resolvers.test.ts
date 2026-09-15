@@ -1,6 +1,6 @@
 import { describe, expect, it, vi } from "vitest";
 import type { BaseSubgraph } from "@powerhousedao/reactor-api";
-import { assertOncePerRequest } from "./resolvers.js";
+import { assertOncePerRequest, PRIVILEGED_RESOLVERS } from "./resolvers.js";
 
 function subgraph(
   assertCanRead = vi.fn(async () => ({}) as never),
@@ -73,5 +73,40 @@ describe("assertOncePerRequest", () => {
     await assertOncePerRequest(s, undefined, "drive", false);
     await assertOncePerRequest(s, undefined, "drive", false);
     expect(assertCanRead).toHaveBeenCalledTimes(2);
+  });
+});
+
+describe("PRIVILEGED_RESOLVERS", () => {
+  it("pins exactly which resolvers demand write access", () => {
+    // An authorization boundary, so it is pinned rather than described: adding
+    // or dropping a name here changes who can call what, and that should be a
+    // deliberate edit with a failing test in front of it.
+    expect([...PRIVILEGED_RESOLVERS].sort()).toEqual([
+      // writes the projection
+      "knowledgeGraphReindex",
+      // serve operation diffs and signer addresses — an audit log
+      "knowledgeGraphActivity",
+      "knowledgeGraphActivityByType",
+      "knowledgeGraphHistory",
+      // serves the raw projection tables
+      "knowledgeGraphDebug",
+      // curation tool: answers what structural work needs doing
+      "knowledgeGraphBridges",
+    ].sort());
+  });
+
+  it("does not gate ordinary discovery", () => {
+    for (const name of [
+      "knowledgeGraphSemanticSearch",
+      "knowledgeGraphFullSearch",
+      "knowledgeGraphNodes",
+      "knowledgeGraphEdges",
+      "knowledgeGraphStats",
+      "knowledgeGraphOrphans",
+      "knowledgeGraphTriangles",
+      "knowledgeGraphConnections",
+    ]) {
+      expect(PRIVILEGED_RESOLVERS.has(name)).toBe(false);
+    }
   });
 });

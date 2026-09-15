@@ -35,7 +35,7 @@ route that reads the index takes `drive` (a document UUID).
 | `GET` | `embeddings/missing` | `renown` | `drive` | document ids without an embedding |
 | `GET` | `notes/:id/similar?limit=` / `links` / `backlinks` / `connections?depth=` | `renown` | `drive`, `id` | semantic neighbours / forward edges / back edges / BFS, each with edge reasons |
 | `GET` | `activity?since=&limit=` / `notes/:id/history` | `renown` | `drive`; **requires `canWrite`** | the audit log (`inputJson`, signer, signature) |
-| `GET` | `bridges` | `renown` | `drive`; **requires `canManage`** | articulation points (Tarjan, one DFS pass — O(V+E)) |
+| `GET` | `bridges` | `renown` | `drive`; **requires `canWrite`** | articulation points — notes whose removal would split the graph (Tarjan, one DFS pass, O(V+E)). A curation tool: it answers what structural work needs doing, so it sits with `activity`/`history` rather than with discovery |
 | `GET` | `access-map` | `renown` | `drive`; **requires `canManage`** | grants, protections, operation grants |
 | `POST` | `admin/reindex` | `renown` | `drive`; **requires `canManage`** | `{ indexedNodes, indexedEdges, errors }` (reindex does not re-embed) |
 | `GET` | `llms.txt` | `renown-optional` | `drive` | MoC index as plain text; anonymous only when the drive is anonymously readable, titles only |

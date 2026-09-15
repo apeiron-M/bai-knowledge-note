@@ -115,6 +115,32 @@ describe("structure routes", () => {
     expect(res.status).toBe(403);
   });
 
+  it("serves bridges to a writer who is not an admin", async () => {
+    // Curation tool, not an admin one: the old canManage gate was a cost
+    // guard that Tarjan retired.
+    const canManage = vi.fn(async () => false);
+    const d = deps();
+    d.authorization.canManage = canManage;
+    const res = await createStructureRoute(d, "bridges")(
+      new Request("http://h/bridges?drive=d"),
+      ctxFor(),
+    );
+    expect(res.status).toBe(200);
+    expect(canManage).not.toHaveBeenCalled();
+  });
+
+  it("refuses bridges to a read-only caller", async () => {
+    // It answers "what structural work needs doing", which only someone who
+    // can write can act on.
+    const d = deps();
+    d.authorization.canWrite = vi.fn(async () => false);
+    const res = await createStructureRoute(d, "bridges")(
+      new Request("http://h/bridges?drive=d"),
+      ctxFor(),
+    );
+    expect(res.status).toBe(403);
+  });
+
   it("requires manage access for access-map and reindex", async () => {
     const d = deps();
     d.authorization.canManage = vi.fn(async () => false);

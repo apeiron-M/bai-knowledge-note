@@ -38,13 +38,22 @@ type SubgraphContext = Parameters<BaseSubgraph["assertCanRead"]>[1];
  * activity/history resolvers serve `input_json` diffs together with
  * `signer_address` — real contributor Ethereum addresses. That is an audit log
  * and an address book, not vault content.
+ *
+ * One query because of who it is FOR: `knowledgeGraphBridges` exposes nothing
+ * a reader could not already fetch — it returns nodes from the same graph —
+ * but it answers "which notes are load-bearing, and what would archiving one
+ * strand". That is a curation question, actionable only with write access, so
+ * it sits with the curation tools rather than with discovery. It is also the
+ * one query that reads the whole graph, which makes the narrower grant worth
+ * having on its own.
  */
-const PRIVILEGED_RESOLVERS = new Set([
+export const PRIVILEGED_RESOLVERS = new Set([
   "knowledgeGraphReindex",
   "knowledgeGraphDebug",
   "knowledgeGraphHistory",
   "knowledgeGraphActivity",
   "knowledgeGraphActivityByType",
+  "knowledgeGraphBridges",
 ]);
 
 /**

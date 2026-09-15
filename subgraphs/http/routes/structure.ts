@@ -148,7 +148,13 @@ export function createStructureRoute(
             headers: OK_CACHE,
           });
         case "bridges":
-          await canonicalForManage(deps, drive, ctx);
+          // Write, like `activity` and `history`. Not `canManage`: the old
+          // gate was a cost guard from when the analysis re-ran a full
+          // component count per node, and Tarjan retired that reason. Not
+          // `canRead` either — bridges answers "what structural work needs
+          // doing", and only someone who can write can act on it. Gating it
+          // with the curation tools keeps the privilege matched to the use.
+          await canonicalForWrite(deps, drive, ctx);
           return Response.json(await query().bridges(), { headers: OK_CACHE });
         case "access-map":
           await canonicalForManage(deps, drive, ctx);
