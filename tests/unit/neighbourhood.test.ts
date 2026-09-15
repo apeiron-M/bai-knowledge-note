@@ -295,6 +295,22 @@ describe("buildNeighbourhood", () => {
     expect(graph.links).toEqual([]);
   });
 
+  it("ranks the work breakdown that delivers a scope above the notes it cites", async () => {
+    // Both were 0.5, and the tie-break is alphabetical, so every WBS sorted
+    // below every citation whose title happened to start earlier.
+    const query = fakeQuery(
+      [
+        edge("scope", "A cited note", "CITES"),
+        edge("scope", "B cited note", "CITES"),
+        edge("scope", "Work breakdown", "DELIVERED_BY"),
+      ],
+      [node("A cited note"), node("B cited note"), node("Work breakdown")],
+    );
+    const graph = await buildNeighbourhood(query, [hit("scope", 0.9)]);
+    expect(graph.related[0].documentId).toBe("Work breakdown");
+    expect(LINK_TYPE_WEIGHT.DELIVERED_BY).toBeGreaterThan(LINK_TYPE_WEIGHT.CITES);
+  });
+
   it("gives an articulated edge a higher score than a bare one", async () => {
     const query = fakeQuery(
       [

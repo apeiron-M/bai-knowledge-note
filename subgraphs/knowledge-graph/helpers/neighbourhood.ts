@@ -96,8 +96,18 @@ export const LINK_TYPE_WEIGHT: Record<string, number> = {
   CHILD_MOC: 0.9,
   RELATES_TO: 0.8,
   PROMOTED_TO: 0.6,
+  // The scope -> WBS link is STRUCTURAL, not provenance: it answers "what
+  // work actually delivers this project", which is the first thing anyone
+  // asking about a scope wants. It was tied with CITES at 0.5, and the
+  // tie-break is alphabetical — so "Work breakdown — …" lost to every cited
+  // note whose title starts earlier in the alphabet, and a scope with five
+  // WBS and nine citations showed the citations first and truncated two of
+  // the work breakdowns away. Weighted with CORE_IDEA, the membership edge it
+  // is the project analogue of.
+  DELIVERED_BY: 1.0,
+  // A scope citing a note is closer to provenance: useful for "what backs
+  // this project", but not the answer to "what is this project".
   CITES: 0.5,
-  DELIVERED_BY: 0.5,
   DERIVED_FROM: 0.4,
 };
 const DEFAULT_WEIGHT = 0.7;

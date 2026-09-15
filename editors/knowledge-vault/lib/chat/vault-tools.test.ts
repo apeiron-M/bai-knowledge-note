@@ -1321,6 +1321,19 @@ describe("a deleted document is not the vault's", () => {
     resetEnsCache();
   });
 
+  it("list_projects reports a failed scope query instead of an empty vault", async () => {
+    // A reactor error used to be swallowed into "listed 0 envelopes across 0
+    // scopes", which the model reads as "this vault has no projects".
+    globalThis.fetch = vi.fn().mockResolvedValue({
+      ok: true,
+      json: () => Promise.resolve({ errors: [{ message: "reactor unavailable" }] }),
+    }) as unknown as typeof fetch;
+    const r = await executeTool("list_projects", {}, CTX);
+    expect(r.ok).toBe(false);
+    if (r.ok) return;
+    expect(r.error).toContain("reactor unavailable");
+  });
+
   it("list_projects skips a scope the drive tree no longer holds", async () => {
     mockGqlSequence(
       byType([

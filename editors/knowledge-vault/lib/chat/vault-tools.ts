@@ -1554,9 +1554,14 @@ export async function executeTool(
         }`,
         { limit: LIMITS.projects },
       );
+      // Fail loudly. Swallowing this reported "listed 0 envelopes across 0
+      // scopes" for a query that never ran, which the model cannot tell apart
+      // from a vault that genuinely has no projects — so a reactor hiccup
+      // became a confident "there are no projects here".
+      if ("error" in sc) return fail(sc.error);
       const envelopeRows: Record<string, unknown>[] = [];
       let scopeCount = 0;
-      if (!("error" in sc)) {
+      {
         // Scopes deleted from the drive still answer here — read them and
         // their envelopes would be reported as work in progress.
         const live = await liveDocumentIds(driveId);
