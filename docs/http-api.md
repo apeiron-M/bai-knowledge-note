@@ -168,8 +168,10 @@ webhooks (slice 3, plus its GitHub/Slack/generic-token presets and the Integrati
   advances past history and never revisits it, and the only boot-time backfill
   is for embeddings (`processors/graph-indexer/index.ts`, `initAndUpgrade`).
   One call, `POST admin/reindex?drive=<UUID>`. This is episodic — do not put it
-  on a timer; the live processor already indexes every write, and a rebuild
-  blocks every read while it runs.
+  on a timer. The live processor already indexes every write, and a rebuild
+  blocks every read while it runs: measured 18 s on a local PGlite vault and
+  **3 m 26 s on a hosted one** of the same size. Hourly, that is ~6% of all
+  wall-clock time spent unresponsive to reproduce work already done.
   `node scripts/check-index-drift.mjs --drive <UUID>` reports whether it is needed.
 
 
