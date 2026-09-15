@@ -105,7 +105,7 @@ Every query takes `driveId` as its first argument; it is omitted below.
 
 | Query | Description |
 |-------|-------------|
-| `knowledgeGraphSemanticSearch(query, mode?, limit?, includeArchived?)` | **Start here.** Plain-language search; the query is embedded server-side. Select `related` on a hit for its one-hop neighbourhood in the same round trip. Falls back to keyword search when embeddings are unavailable |
+| `knowledgeGraphSemanticSearch(query, mode?, limit?, includeArchived?)` | **Start here.** Plain-language search; the query is embedded server-side. Select `related` for a hit's one-hop neighbourhood and `linkedHits` for the edges to OTHER hits — select both: `related` excludes nodes that are themselves hits, so a `CONTRADICTS` between two results only ever arrives through `linkedHits`. Neither costs a query per hit. Falls back to keyword search when embeddings are unavailable |
 | `knowledgeGraphSearchByEmbedding(query, embedding, mode, limit?, includeArchived?)` | Same ranking from a client-supplied vector |
 | `knowledgeGraphFullSearch(query, limit?, includeArchived?)` | Keyword search over title + description + content. **ANDs its terms** — pass 1–2 distinctive words, not a sentence |
 | `knowledgeGraphSearch(query, limit?)` | Keyword search over title + description only |

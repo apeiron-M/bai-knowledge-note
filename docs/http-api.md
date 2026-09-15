@@ -211,9 +211,16 @@ empty and the route logs a warning rather than returning 500.
 
 `related=0` opts out when a caller wants the ranking alone.
 
-In GraphQL the same expansion is a selectable field, `SemanticResult.related(limit: Int = 5)`,
-computed once for the whole result set and sliced per hit — selecting it on twenty hits costs the
-same two queries, and selecting nothing costs none.
+In GraphQL the same expansion is **two** selectable fields on `SemanticResult`, both computed from
+the one neighbourhood the search already loads — selecting them on twenty hits costs the same two
+queries, and selecting neither costs none:
+
+- **`related(limit: Int = 5)`** — this hit's neighbourhood, the per-hit form of the `related` array above.
+- **`linkedHits`** — the edges from this hit to **other hits in the same result set**. This is the
+  GraphQL equivalent of `links`, and selecting it is not optional for correctness: `related`
+  excludes nodes that are themselves hits, and semantic search returns both sides of a
+  disagreement often enough that the `CONTRADICTS` joining two results would otherwise be the one
+  fact nobody sees. The same edge is reported on both of its ends, written source → target.
 
 ## Unauthenticated routes
 
