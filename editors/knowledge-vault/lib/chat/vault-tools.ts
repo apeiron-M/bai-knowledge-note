@@ -70,6 +70,8 @@ export const DOCUMENT_TYPES = [
 
 const LIMITS = {
   search: { default: 8, max: 20 },
+  /** Neighbours asked for PER HIT; deduped across hits before the model sees them. */
+  searchRelated: 4,
   topics: { default: 40, max: 100 },
   byTopic: { default: 25, max: 50 },
   related: { default: 8, max: 20 },
@@ -167,7 +169,7 @@ export const VAULT_TOOLS: ToolSchema[] = [
     function: {
       name: "search_vault",
       description:
-        "Default entry point. Semantic + keyword search over the vault's knowledge notes, maps of content, tensions, observations, scopes of work and work breakdowns. Pass the user's question or a short phrase as-is. Returns ranked hits with a 0–1 similarity; use read_note on the promising notes for their full text, and read_document on a hit whose status is SCOPE or WBS (a project or goal tree — its real state is in noteType). Does NOT search sources — use list_documents for those. ARCHIVED notes — claims the vault no longer holds as current — are excluded unless includeArchived is true; set it only when the user asks what the vault USED to say.",
+        "Default entry point. Semantic search over the vault's knowledge notes, maps of content, tensions, observations, scopes of work and work breakdowns. Pass the user's question or a short phrase as-is. Returns three things: `hits`, ranked with a 0–1 similarity; `related`, the notes ONE link from those hits with the edge that reached each one (`via`, written from -> to) and `hitCount`, how many hits point at it — a high hitCount means several results agree it matters; and `contested`, any hit that another note CONTRADICTS or SUPERSEDES. READ `contested` FIRST: it means a hit is disputed or stale, so answering from that hit alone would be wrong, not merely thin — say the claim is disputed and cite both sides. `related` already gives you the graph around the answer, so you do NOT need linked_notes for the common case; reach for it only to see ALL edges of one specific note. Use read_note on promising notes for their full text, and read_document on a hit whose status is SCOPE or WBS (a project or goal tree — its real state is in noteType). Does NOT search sources — use list_documents for those. ARCHIVED notes — claims the vault no longer holds as current — are excluded unless includeArchived is true; set it only when the user asks what the vault USED to say.",
       parameters: {
         type: "object",
         properties: {
@@ -879,6 +881,137 @@ const ok = (data: unknown, summary: string): ToolResult => ({
 });
 
 /* ------------------------------------------------------------------ */
+/*  Search neighbourhood                                              */
+/* ------------------------------------------------------------------ */
+
+/** One edge, always written source -> target. */
+interface ViaRow {
+  from: string;
+  to: string;
+  linkType: string | null;
+  reason: string | null;
+}
+
+/** A node one link from a hit, as the graph returns it per hit. */
+interface RelatedRow {
+  documentId: string;
+  title: string | null;
+  noteType: string | null;
+  documentType: string | null;
+  hitCount: number;
+  via: ViaRow[];
+}
+
+/**
+ * A hit whose claim is disputed or replaced by something else in the graph.
+ *
+ * `documentId` is always the HIT; `direction` says which way the edge runs, so
+ * an incoming SUPERSEDES means this hit is the stale one while an outgoing
+ * SUPERSEDES means it is the replacement.
+ */
+interface ContestedRow {
+  documentId: string;
+  title: string | null;
+  linkType: string;
+  direction: "incoming" | "outgoing";
+  otherDocumentId: string;
+  otherTitle: string | null;
+  reason: string | null;
+}
+
+/** Link types that change whether an answer is CORRECT, not just how full. */
+const CONTESTING = new Set(["CONTRADICTS", "SUPERSEDES"]);
+
+type SearchRow = {
+  node: Record<string, unknown>;
+  /** Absent on a Switchboard older than the field, so never assumed present. */
+  related?: RelatedRow[] | null;
+  linkedHits?: ViaRow[] | null;
+};
+
+/**
+ * Flatten the per-hit neighbourhood into one deduped block, and pull out the
+ * hits something disputes.
+ *
+ * The graph returns `related` per hit, so a node several hits point at arrives
+ * several times — measured at 39% repeats over eight hits on this vault. The
+ * model pays for every repeat in context, and a repeated node reads as several
+ * findings rather than one, so they are merged here with their `via` edges
+ * combined and `hitCount` kept as the convergence signal.
+ */
+function neighbourhoodOf(rows: SearchRow[]): {
+  related: RelatedRow[];
+  contested: ContestedRow[];
+} {
+  const titleById = new Map<string, string | null>();
+  for (const row of rows) {
+    const id = row.node.documentId;
+    if (typeof id === "string") {
+      titleById.set(
+        id,
+        typeof row.node.title === "string" ? row.node.title : null,
+      );
+    }
+  }
+  const hitIds = new Set(titleById.keys());
+
+  // Merge, preserving first-seen order: hits arrive in rank order and each
+  // hit's own list is already globally ranked, so this keeps the strongest
+  // neighbours first without re-sorting.
+  const merged = new Map<string, RelatedRow>();
+  for (const row of rows) {
+    for (const rel of row.related ?? []) {
+      titleById.set(rel.documentId, rel.title);
+      const seen = merged.get(rel.documentId);
+      if (!seen) {
+        merged.set(rel.documentId, { ...rel, via: [...rel.via] });
+        continue;
+      }
+      for (const via of rel.via) {
+        const dup = seen.via.some(
+          (v) =>
+            v.from === via.from &&
+            v.to === via.to &&
+            v.linkType === via.linkType,
+        );
+        if (!dup) seen.via.push(via);
+      }
+    }
+  }
+
+  const contested: ContestedRow[] = [];
+  const emitted = new Set<string>();
+  const consider = (via: ViaRow) => {
+    if (!via.linkType || !CONTESTING.has(via.linkType)) return;
+    for (const [end, other, direction] of [
+      [via.to, via.from, "incoming"],
+      [via.from, via.to, "outgoing"],
+    ] as const) {
+      if (!hitIds.has(end)) continue;
+      const key = `${end}|${other}|${via.linkType}|${direction}`;
+      if (emitted.has(key)) continue;
+      emitted.add(key);
+      contested.push({
+        documentId: end,
+        title: titleById.get(end) ?? null,
+        linkType: via.linkType,
+        direction,
+        otherDocumentId: other,
+        otherTitle: titleById.get(other) ?? null,
+        reason: via.reason,
+      });
+    }
+  };
+  // Both populations: an edge to a neighbour, and an edge to another hit.
+  // The second is the one `related` can never carry, and the one most likely
+  // to matter — semantic search returns both sides of a disagreement.
+  for (const row of merged.values()) for (const via of row.via) consider(via);
+  for (const row of rows) for (const via of row.linkedHits ?? []) consider(via);
+
+  return { related: [...merged.values()], contested };
+}
+
+/* ------------------------------------------------------------------ */
 /*  Executor                                                          */
 /* ------------------------------------------------------------------ */
 
@@ -906,25 +1039,40 @@ export async function executeTool(
           similarity: number;
           matchedBy: string[];
           node: Record<string, unknown>;
+          related?: RelatedRow[] | null;
+          linkedHits?: ViaRow[] | null;
         }[];
       }>(
         graphEndpoint(),
+        // `related` is the neighbourhood AROUND the hits; `linkedHits` the
+        // edges BETWEEN them. Both are needed: search returns both sides of a
+        // disagreement often enough that the CONTRADICTS joining two hits
+        // would otherwise be the one thing nobody sees. Neither costs a query
+        // per hit — the server reads the neighbourhood once and slices it.
         `query S($driveId: ID!, $query: String!, $limit: Int, $includeArchived: Boolean) {
           knowledgeGraphSemanticSearch(driveId: $driveId, query: $query, mode: SEMANTIC, limit: $limit, includeArchived: $includeArchived) {
             similarity matchedBy node { ${NOTE_FIELDS} }
+            related(limit: ${LIMITS.searchRelated}) { documentId title noteType documentType hitCount via { from to linkType reason } }
+            linkedHits { from to linkType reason }
           }
         }`,
         { driveId, query, limit, includeArchived },
       );
       if ("error" in r) return fail(r.error);
-      const hits = r.data.knowledgeGraphSemanticSearch.map((h) => ({
+      const raw = r.data.knowledgeGraphSemanticSearch;
+      const hits = raw.map((h) => ({
         ...h.node,
         similarity: Number(h.similarity.toFixed(3)),
         matchedBy: h.matchedBy,
       }));
+      const { related, contested } = neighbourhoodOf(raw);
       return ok(
-        hits,
-        `searched "${query}" → ${hits.length} note${hits.length === 1 ? "" : "s"}`,
+        { hits, related, contested },
+        `searched "${query}" → ${hits.length} note${hits.length === 1 ? "" : "s"}` +
+          (related.length ? `, ${related.length} connected` : "") +
+          (contested.length
+            ? `, ${contested.length} CONTESTED — read the contradiction before answering`
+            : ""),
       );
     }
 

@@ -158,8 +158,119 @@ describe("executeTool", () => {
     if (r.ok) {
       expect(r.summary).toContain("audit trails");
       expect(r.summary).toContain("1");
-      expect((r.data as { documentId: string }[])[0].documentId).toBe("n1");
+      const d = r.data as { hits: { documentId: string }[] };
+      expect(d.hits[0].documentId).toBe("n1");
     }
+  });
+
+  it("search_vault asks for the neighbourhood and the edges between hits", async () => {
+    mockGql({ knowledgeGraphSemanticSearch: [] });
+    await executeTool("search_vault", { query: "x" }, CTX);
+    const { body } = lastRequest();
+    expect(body.query).toMatch(/related\(limit: 4\)/);
+    expect(body.query).toMatch(/linkedHits/);
+    // still no full text: the model reads bodies with read_note
+    expect(body.query).not.toMatch(/\bcontent\b/);
+  });
+
+  it("search_vault merges a neighbour several hits point at into one row", async () => {
+    const shared = {
+      documentId: "shared",
+      title: "Shared",
+      noteType: "CONCEPT",
+      documentType: "bai/knowledge-note",
+      hitCount: 2,
+    };
+    mockGql({
+      knowledgeGraphSemanticSearch: [
+        {
+          similarity: 0.9,
+          matchedBy: ["semantic"],
+          node: { documentId: "n1", title: "One" },
+          related: [
+            { ...shared, via: [{ from: "n1", to: "shared", linkType: "BUILDS_ON", reason: null }] },
+          ],
+          linkedHits: [],
+        },
+        {
+          similarity: 0.8,
+          matchedBy: ["semantic"],
+          node: { documentId: "n2", title: "Two" },
+          related: [
+            { ...shared, via: [{ from: "n2", to: "shared", linkType: "RELATES_TO", reason: null }] },
+          ],
+          linkedHits: [],
+        },
+      ],
+    });
+    const r = await executeTool("search_vault", { query: "x" }, CTX);
+    expect(r.ok).toBe(true);
+    if (!r.ok) return;
+    const d = r.data as { related: { documentId: string; via: unknown[] }[] };
+    // one row, not two — and it carries BOTH edges that reached it
+    expect(d.related).toHaveLength(1);
+    expect(d.related[0].documentId).toBe("shared");
+    expect(d.related[0].via).toHaveLength(2);
+    expect(r.summary).toContain("1 connected");
+  });
+
+  it("search_vault reports a hit contradicted by ANOTHER HIT", async () => {
+    // The case `related` structurally cannot carry: both ends are hits, so the
+    // edge only ever arrives through linkedHits.
+    mockGql({
+      knowledgeGraphSemanticSearch: [
+        {
+          similarity: 0.91,
+          matchedBy: ["semantic"],
+          node: { documentId: "claim", title: "The broad claim" },
+          related: [],
+          linkedHits: [
+            { from: "correction", to: "claim", linkType: "CONTRADICTS", reason: "wildcard is documentId-only" },
+          ],
+        },
+        {
+          similarity: 0.86,
+          matchedBy: ["semantic"],
+          node: { documentId: "correction", title: "The correction" },
+          related: [],
+          linkedHits: [
+            { from: "correction", to: "claim", linkType: "CONTRADICTS", reason: "wildcard is documentId-only" },
+          ],
+        },
+      ],
+    });
+    const r = await executeTool("search_vault", { query: "x" }, CTX);
+    expect(r.ok).toBe(true);
+    if (!r.ok) return;
+    const d = r.data as { contested: Record<string, unknown>[] };
+    // both ends are hits, so both are reported, with direction distinguishing them
+    expect(d.contested).toHaveLength(2);
+    expect(d.contested).toContainEqual({
+      documentId: "claim",
+      title: "The broad claim",
+      linkType: "CONTRADICTS",
+      direction: "incoming",
+      otherDocumentId: "correction",
+      otherTitle: "The correction",
+      reason: "wildcard is documentId-only",
+    });
+    expect(r.summary).toContain("CONTESTED");
+  });
+
+  it("search_vault survives a Switchboard that has neither field", async () => {
+    mockGql({
+      knowledgeGraphSemanticSearch: [
+        { similarity: 0.9, matchedBy: ["semantic"], node: { documentId: "n1", title: "T" } },
+      ],
+    });
+    const r = await executeTool("search_vault", { query: "x" }, CTX);
+    expect(r.ok).toBe(true);
+    if (!r.ok) return;
+    const d = r.data as { hits: unknown[]; related: unknown[]; contested: unknown[] };
+    expect(d.hits).toHaveLength(1);
+    expect(d.related).toEqual([]);
+    expect(d.contested).toEqual([]);
+    expect(r.summary).not.toContain("CONTESTED");
   });
 
   it("search_vault caps the limit at 20 and rejects an empty query", async () => {

@@ -33,12 +33,18 @@ function hitsOf(entry: TrailEntry): Hit[] {
     const obj = d as {
       outgoing?: Hit[];
       incoming?: Hit[];
+      hits?: Hit[];
+      related?: Hit[];
       documentId?: string;
       title?: string;
       items?: { id: string; name: string | null }[];
     };
     if (obj.outgoing || obj.incoming)
       return [...(obj.outgoing ?? []), ...(obj.incoming ?? [])];
+    // search_vault returns its hits beside the neighbourhood it found; both
+    // are openable, and the related notes are often what the reader wants next.
+    if (obj.hits || obj.related)
+      return [...(obj.hits ?? []), ...(obj.related ?? [])];
     if (typeof obj.documentId === "string") return [obj as Hit];
     if (Array.isArray(obj.items))
       return obj.items.map((i) => ({ documentId: i.id, title: i.name }));
