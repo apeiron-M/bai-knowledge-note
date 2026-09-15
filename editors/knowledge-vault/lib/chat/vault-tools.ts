@@ -70,8 +70,21 @@ export const DOCUMENT_TYPES = [
 
 const LIMITS = {
   search: { default: 8, max: 20 },
-  /** Neighbours asked for PER HIT; deduped across hits before the model sees them. */
-  searchRelated: 4,
+  /**
+   * Neighbours PER HIT: how many to read, and how many the model then sees.
+   *
+   * These differ on purpose. `contested` is only trustworthy if it is computed
+   * over the whole neighbourhood, because per-hit lists inherit the GLOBAL
+   * ranking: a note several hits point at weakly (RELATES_TO, x5 = 3.52)
+   * outranks a note one hit CONTRADICTS (1.44), so a small cap silently drops
+   * the contradiction and `contested` comes back empty. A "read this first"
+   * signal that can be quietly wrong is worse than no signal.
+   *
+   * So: read `scan` per hit and detect over all of it, then show `show` rows.
+   * The wider read costs no extra query — the server slices one neighbourhood
+   * it has already loaded — and the trim keeps the model's context bounded.
+   */
+  searchRelated: { scan: 15, show: 12 },
   topics: { default: 40, max: 100 },
   byTopic: { default: 25, max: 50 },
   related: { default: 8, max: 20 },
@@ -1008,7 +1021,16 @@ function neighbourhoodOf(rows: SearchRow[]): {
   for (const row of merged.values()) for (const via of row.via) consider(via);
   for (const row of rows) for (const via of row.linkedHits ?? []) consider(via);
 
-  return { related: [...merged.values()], contested };
+  // Trim AFTER detection, never before. Rows involved in a contradiction are
+  // pinned to the front: the model is told to read them first, so it must be
+  // able to see what they say.
+  const all = [...merged.values()];
+  const contestedIds = new Set(contested.flatMap((c) => [c.documentId, c.otherDocumentId]));
+  const pinned = all.filter((r) => contestedIds.has(r.documentId));
+  const rest = all.filter((r) => !contestedIds.has(r.documentId));
+  const related = [...pinned, ...rest].slice(0, LIMITS.searchRelated.show);
+
+  return { related, contested };
 }
 
 /* ------------------------------------------------------------------ */
@@ -1052,7 +1074,7 @@ export async function executeTool(
         `query S($driveId: ID!, $query: String!, $limit: Int, $includeArchived: Boolean) {
           knowledgeGraphSemanticSearch(driveId: $driveId, query: $query, mode: SEMANTIC, limit: $limit, includeArchived: $includeArchived) {
             similarity matchedBy node { ${NOTE_FIELDS} }
-            related(limit: ${LIMITS.searchRelated}) { documentId title noteType documentType hitCount via { from to linkType reason } }
+            related(limit: ${LIMITS.searchRelated.scan}) { documentId title noteType documentType hitCount via { from to linkType reason } }
             linkedHits { from to linkType reason }
           }
         }`,

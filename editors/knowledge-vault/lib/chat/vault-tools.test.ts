@@ -167,7 +167,7 @@ describe("executeTool", () => {
     mockGql({ knowledgeGraphSemanticSearch: [] });
     await executeTool("search_vault", { query: "x" }, CTX);
     const { body } = lastRequest();
-    expect(body.query).toMatch(/related\(limit: 4\)/);
+    expect(body.query).toMatch(/related\(limit: 15\)/);
     expect(body.query).toMatch(/linkedHits/);
     // still no full text: the model reads bodies with read_note
     expect(body.query).not.toMatch(/\bcontent\b/);
@@ -254,6 +254,57 @@ describe("executeTool", () => {
       otherTitle: "The correction",
       reason: "wildcard is documentId-only",
     });
+    expect(r.summary).toContain("CONTESTED");
+  });
+
+  it("search_vault finds a contradiction the per-hit ranking would have buried", async () => {
+    // Per-hit lists inherit the GLOBAL ranking, so a note several hits point
+    // at weakly outranks a note one hit contradicts. Detection must run over
+    // everything that was read, and the trim must happen after it.
+    const filler = (n: number) => ({
+      documentId: `pop${n}`,
+      title: `Popular ${n}`,
+      noteType: "CONCEPT",
+      documentType: "bai/knowledge-note",
+      hitCount: 5,
+      via: [{ from: "n1", to: `pop${n}`, linkType: "RELATES_TO", reason: null }],
+    });
+    mockGql({
+      knowledgeGraphSemanticSearch: [
+        {
+          similarity: 0.9,
+          matchedBy: ["semantic"],
+          node: { documentId: "n1", title: "The claim" },
+          // 12 convergent neighbours ahead of the disputer, as the server
+          // would order them
+          related: [
+            ...Array.from({ length: 12 }, (_, i) => filler(i)),
+            {
+              documentId: "disputer",
+              title: "The objection",
+              noteType: "PATTERN",
+              documentType: "bai/knowledge-note",
+              hitCount: 1,
+              via: [{ from: "disputer", to: "n1", linkType: "CONTRADICTS", reason: "measured the opposite" }],
+            },
+          ],
+          linkedHits: [],
+        },
+      ],
+    });
+    const r = await executeTool("search_vault", { query: "x" }, CTX);
+    expect(r.ok).toBe(true);
+    if (!r.ok) return;
+    const d = r.data as {
+      related: { documentId: string }[];
+      contested: { documentId: string; otherDocumentId: string }[];
+    };
+    // found despite sitting 13th
+    expect(d.contested).toHaveLength(1);
+    expect(d.contested[0]).toMatchObject({ documentId: "n1", otherDocumentId: "disputer" });
+    // and pinned into view, not trimmed away
+    expect(d.related[0].documentId).toBe("disputer");
+    expect(d.related).toHaveLength(12);
     expect(r.summary).toContain("CONTESTED");
   });
 
