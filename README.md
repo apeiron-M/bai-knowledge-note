@@ -99,20 +99,50 @@ GraphQL query layer exposing the indexed data (`subgraphs/knowledge-graph/`). Re
 
 ### Queries
 
+Every query takes `driveId` as its first argument; it is omitted below.
+
+**Search and retrieval**
+
 | Query | Description |
 |-------|-------------|
-| `knowledgeGraphNodes(driveId)` | All indexed nodes |
-| `knowledgeGraphEdges(driveId)` | All indexed edges |
-| `knowledgeGraphStats(driveId)` | Node count, edge count, orphan count |
-| `knowledgeGraphSearch(driveId, query, limit?)` | Text search on title + description |
-| `knowledgeGraphOrphans(driveId)` | Nodes with no incoming edges |
-| `knowledgeGraphConnections(driveId, documentId, depth?)` | BFS traversal from a node |
-| `knowledgeGraphBacklinks(driveId, documentId)` | Edges pointing TO a document |
-| `knowledgeGraphForwardLinks(driveId, documentId)` | Edges pointing FROM a document |
-| `knowledgeGraphTriangles(driveId, limit?)` | Pairs that share a target but aren't linked |
-| `knowledgeGraphBridges(driveId)` | Articulation points that connect clusters |
-| `knowledgeGraphDensity(driveId)` | Graph density metric |
-| `knowledgeGraphDebug(driveId)` | Raw DB rows for debugging |
+| `knowledgeGraphSemanticSearch(query, mode?, limit?, includeArchived?)` | **Start here.** Plain-language search; the query is embedded server-side. Select `related` on a hit for its one-hop neighbourhood in the same round trip. Falls back to keyword search when embeddings are unavailable |
+| `knowledgeGraphSearchByEmbedding(query, embedding, mode, limit?, includeArchived?)` | Same ranking from a client-supplied vector |
+| `knowledgeGraphFullSearch(query, limit?, includeArchived?)` | Keyword search over title + description + content. **ANDs its terms** — pass 1–2 distinctive words, not a sentence |
+| `knowledgeGraphSearch(query, limit?)` | Keyword search over title + description only |
+| `knowledgeGraphSimilar(documentId, limit?, includeArchived?)` | Semantic neighbours of a note |
+| `knowledgeGraphNodeByDocumentId(documentId)` | One node, with content |
+| `knowledgeGraphMissingEmbeddings` | Documents the embedder has not reached; should be empty |
+
+**Browsing**
+
+| Query | Description |
+|-------|-------------|
+| `knowledgeGraphNodes` / `knowledgeGraphEdges` | The whole graph, one call each |
+| `knowledgeGraphNodesByStatus(status)` | Notes in a lifecycle state; `"MOC"`, `"SCOPE"` and `"WBS"` are sentinels for those kinds |
+| `knowledgeGraphNodesByType(documentType)` | All nodes of one document type |
+| `knowledgeGraphByTopic(topic, includeArchived?)` / `knowledgeGraphTopics` | Topic membership / the topic vocabulary with counts |
+| `knowledgeGraphRelatedByTopic(documentId, limit?)` | Notes sharing topics, ranked by overlap |
+| `knowledgeGraphByAuthor(author)` / `knowledgeGraphByOrigin(origin)` | Provenance |
+| `knowledgeGraphRecent(limit?, since?)` / `knowledgeGraphStale(since, limit?)` | Recency |
+
+**Structure**
+
+| Query | Description |
+|-------|-------------|
+| `knowledgeGraphConnections(documentId, depth?)` | Breadth-first walk out from a node, one query per depth level |
+| `knowledgeGraphBacklinks(documentId)` / `knowledgeGraphForwardLinks(documentId)` | Edges into / out of a document, with `reason` and `confidence` |
+| `knowledgeGraphOrphans` | Knowledge nodes with no incoming knowledge edge |
+| `knowledgeGraphTriangles(limit?)` | Pairs that share a target but are not linked to each other |
+| `knowledgeGraphBridges` | Articulation points joining clusters — the notes holding two clusters together. One DFS pass (Tarjan), O(V+E) |
+| `knowledgeGraphStats` / `knowledgeGraphDensity` | Per-kind counts, articulation coverage / density |
+
+**Audit** (privileged — these expose operation diffs and signer addresses)
+
+| Query | Description |
+|-------|-------------|
+| `knowledgeGraphHistory(documentId, limit?)` | Operations on one document |
+| `knowledgeGraphActivity(limit?, since?)` / `knowledgeGraphActivityByType(operationType, limit?)` | Drive-wide operation log |
+| `knowledgeGraphDebug` | Raw projection rows |
 
 ### Mutations
 

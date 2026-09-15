@@ -2,6 +2,7 @@ import { BaseSubgraph } from "@powerhousedao/reactor-api";
 import type { DocumentNode } from "graphql";
 import { getQuery } from "../knowledge-graph/helpers/db.js";
 import { searchVault } from "../knowledge-graph/helpers/search.js";
+import { buildNeighbourhood } from "../knowledge-graph/helpers/neighbourhood.js";
 import { buildHttpRouteDeps, buildStructureRouteDeps } from "./live-deps.js";
 import { getResolvers } from "./resolvers.js";
 import { createActionsRoute } from "./routes/actions.js";
@@ -41,6 +42,16 @@ export class HttpSubgraph extends BaseSubgraph {
           ...deps,
           search: (driveId, query, mode, limit, includeArchived) =>
             searchVault(this, driveId, query, mode, limit, includeArchived),
+          neighbourhood: (driveId, hits, options) =>
+            buildNeighbourhood(
+              getQuery(this, driveId),
+              hits.map((hit) => ({
+                documentId: String(hit.node.documentId),
+                similarity: hit.similarity,
+                node: hit.node,
+              })),
+              options,
+            ),
         }),
       );
       const notesDeps = {

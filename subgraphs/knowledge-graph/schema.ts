@@ -96,6 +96,40 @@ export const schema: DocumentNode = gql`
   }
 
   """
+  One edge, always written source -> target so there is no direction to
+  decode. Carries the articulation ('reason') when the link has one.
+  """
+  type GraphVia {
+    from: String!
+    fromTitle: String
+    to: String!
+    toTitle: String
+    linkType: String
+    reason: String
+    confidence: String
+  }
+
+  """
+  A node one link away from a search hit. This is what turns a result list
+  into a map: the searcher sees not just which notes match, but what those
+  notes connect to and how.
+  """
+  type GraphNeighbour {
+    documentId: String!
+    title: String
+    description: String
+    noteType: String
+    status: String
+    documentType: String
+    """How many of this search's hits touch this node. Convergence is signal."""
+    hitCount: Int!
+    """Rank within this response. Not comparable across responses."""
+    score: Float!
+    """The edges that reached it, narrowed to this hit."""
+    via: [GraphVia!]!
+  }
+
+  """
   A ranked search hit. 'similarity' is the cosine similarity of the query and
   note embeddings — a true 0..1 relevance, safe to compare, threshold and
   render as a percentage. 'score' carries the same number for callers doing
@@ -106,6 +140,18 @@ export const schema: DocumentNode = gql`
     similarity: Float!
     score: Float!
     matchedBy: [String!]!
+    """
+    Nodes one knowledge link from this hit, ranked. Costs no extra query per
+    hit — the whole result set's neighbourhood is read once and sliced — but
+    it IS two extra queries for the search as a whole, so it is only computed
+    when selected.
+
+    Ordering is global across the result set: a node that several hits point
+    at sorts above one that only this hit points at. Empty on hits from
+    'knowledgeGraphSimilar' and 'knowledgeGraphSearchByEmbedding', which do
+    not expand.
+    """
+    related(limit: Int): [GraphNeighbour!]!
   }
 
   type HybridResult {
@@ -257,6 +303,11 @@ export const schema: DocumentNode = gql`
     SERVER-side, so clients never need the model. Falls back to keyword
     fullSearch transparently when the embedder or embeddings are unavailable,
     so it is always safe to call.
+
+    Select 'related' on the result to get each hit's neighbourhood in the
+    same round trip. A flat hit list hides most of what the vault knows
+    about a question: the notes that match are a small fraction of the
+    notes connected to them.
     """
     knowledgeGraphSemanticSearch(
       driveId: ID!

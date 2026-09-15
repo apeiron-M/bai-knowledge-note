@@ -9,6 +9,10 @@ import {
 } from "../../processors/graph-indexer/embedding-store.js";
 import { isCurrentNode } from "../../processors/graph-indexer/query.js";
 import { searchVault, searchWithEmbedding } from "./helpers/search.js";
+import {
+  buildNeighbourhood,
+  type Neighbourhood,
+} from "./helpers/neighbourhood.js";
 
 type Resolver = (
   parent: unknown,
@@ -145,8 +149,39 @@ function withDriveGuards<T extends Record<string, Resolver>>(
   return out as T;
 }
 
+/** Neighbours computed per search, then sliced per hit. Also the arg ceiling. */
+const NEIGHBOUR_POOL = 25;
+/** What a caller gets from `related` without asking for a size. */
+const DEFAULT_RELATED_PER_HIT = 5;
+
 export const getResolvers = (subgraph: BaseSubgraph): Record<string, unknown> => {
   return {
+    SemanticResult: {
+      /**
+       * Per-hit neighbourhood. The parent resolver attaches a memoized loader
+       * rather than the data, so selecting `related` on twenty hits still
+       * costs the two queries it takes to read the whole neighbourhood once —
+       * and selecting nothing costs none.
+       */
+      related: async (
+        parent: {
+          node?: { documentId?: string };
+          _neighbourhood?: () => Promise<Neighbourhood>;
+        },
+        args: { limit?: number | null },
+      ) => {
+        const documentId = parent.node?.documentId;
+        if (!parent._neighbourhood || !documentId) return [];
+        const limit = Math.min(
+          NEIGHBOUR_POOL,
+          Math.max(0, args.limit ?? DEFAULT_RELATED_PER_HIT),
+        );
+        if (limit === 0) return [];
+        const graph = await parent._neighbourhood();
+        return (graph.byHit[documentId] ?? []).slice(0, limit);
+      },
+    },
+
     KnowledgeGraphNode: {
       topics: async (parent: {
         documentId: string;
@@ -401,10 +436,18 @@ export const getResolvers = (subgraph: BaseSubgraph): Record<string, unknown> =>
         const results = await searchSimilar(db, embedding, (args.limit ?? 10) * 2 + 1);
         const graphQuery = getQuery(subgraph, args.driveId);
 
+        // One query for every candidate, not one per candidate. Ranking is
+        // unchanged: `results` is already ordered by similarity and the loop
+        // below still walks it in that order.
+        const nodes = await graphQuery.nodesByDocumentIds(
+          results
+            .map((result) => result.documentId)
+            .filter((documentId) => documentId !== args.documentId),
+        );
         const semanticResults = [];
         for (const result of results) {
           if (result.documentId === args.documentId) continue;
-          const node = await graphQuery.nodeByDocumentId(result.documentId);
+          const node = nodes.get(result.documentId);
           if (node && (args.includeArchived || isCurrentNode(node))) {
             semanticResults.push({
               node: { ...node, _driveId: args.driveId },
@@ -450,7 +493,7 @@ export const getResolvers = (subgraph: BaseSubgraph): Record<string, unknown> =>
         },
       ) => {
         const limit = args.limit ?? 20;
-        return searchVault(
+        const hits = await searchVault(
           subgraph,
           args.driveId,
           args.query,
@@ -458,6 +501,27 @@ export const getResolvers = (subgraph: BaseSubgraph): Record<string, unknown> =>
           limit,
           args.includeArchived ?? false,
         );
+        // Built at most once per search, and only if `related` is selected.
+        let pending: Promise<Neighbourhood> | undefined;
+        const loadNeighbourhood = (): Promise<Neighbourhood> => {
+          pending ??= buildNeighbourhood(
+            getQuery(subgraph, args.driveId),
+            hits.map((hit) => ({
+              documentId: String(hit.node.documentId),
+              similarity: hit.similarity,
+              node: hit.node,
+            })),
+            {
+              limit: NEIGHBOUR_POOL,
+              includeArchived: args.includeArchived ?? false,
+            },
+          );
+          return pending;
+        };
+        return hits.map((hit) => ({
+          ...hit,
+          _neighbourhood: loadNeighbourhood,
+        }));
       },
 
       knowledgeGraphMissingEmbeddings: async (

@@ -19,7 +19,7 @@ route that reads the index takes `drive` (a document UUID).
 |---|---|---|---|---|
 | `GET` | `ping` | `renown` | — | `{ ok, subgraph, user }` |
 | `GET` | `drives` | `renown` | — | `{ drives: [{ id, name, slug, nodes }] }` — only drives whose `preferredEditor` is `knowledge-vault` and that the caller may read; each `id` is the `drive` value for every other route |
-| `GET` | `search` | `renown` | `drive` (required), `q` (required), `mode=semantic` (the only mode), `limit` (default 6, max 25), `content=1`, `includeArchived=1` | `{ query, mode, hits: [{ similarity, score, matchedBy, node }] }`; `Accept: text/markdown` renders a digest |
+| `GET` | `search` | `renown` | `drive` (required), `q` (required), `mode=semantic` (the only mode), `limit` (default 6, max 25), `related` (default 10, max 50, `0` disables), `content=1`, `includeArchived=1` | `{ query, mode, hits: [{ similarity, score, matchedBy, node }], related, links, expansion }`; `Accept: text/markdown` renders a digest. See [Search expands the graph](#search-expands-the-graph) |
 | `GET` | `notes/:id` | `renown` | `drive` (required); `id` is a UUID | `{ id, name, documentType, state, edges }` |
 | `GET` | `notes/:id.md` | `renown` | same | markdown with YAML frontmatter; edges as absolute links carrying `?drive=` |
 | `POST` | `actions` | `renown` | body `{ documentId, actions[], wait?, allowLiteralEscapes? }` | `{ revision, operations: [{ index, type, error, attribution }], readBack, jobId }`; `202 { jobId }` when `wait: false` |
@@ -35,7 +35,7 @@ route that reads the index takes `drive` (a document UUID).
 | `GET` | `embeddings/missing` | `renown` | `drive` | document ids without an embedding |
 | `GET` | `notes/:id/similar?limit=` / `links` / `backlinks` / `connections?depth=` | `renown` | `drive`, `id` | semantic neighbours / forward edges / back edges / BFS, each with edge reasons |
 | `GET` | `activity?since=&limit=` / `notes/:id/history` | `renown` | `drive`; **requires `canWrite`** | the audit log (`inputJson`, signer, signature) |
-| `GET` | `bridges` | `renown` | `drive`; **requires `canManage`** (O(V·E)) | articulation points |
+| `GET` | `bridges` | `renown` | `drive`; **requires `canManage`** | articulation points (Tarjan, one DFS pass — O(V+E)) |
 | `GET` | `access-map` | `renown` | `drive`; **requires `canManage`** | grants, protections, operation grants |
 | `POST` | `admin/reindex` | `renown` | `drive`; **requires `canManage`** | `{ indexedNodes, indexedEdges, errors }` (reindex does not re-embed) |
 | `GET` | `llms.txt` | `renown-optional` | `drive` | MoC index as plain text; anonymous only when the drive is anonymously readable, titles only |
@@ -148,6 +148,72 @@ Relationship actions are stamped with `scope: "document"` (required by the react
 authorized on the **source** document. Knowledge link types (`RELATES_TO`, `BUILDS_ON`,
 `CONTRADICTS`, `SUPERSEDES`, `DERIVED_FROM`) require a specific `reason` of at least 20
 characters; `CORE_IDEA` and `CHILD_MOC` may be bare.
+
+## Search expands the graph
+
+A flat ranked list is not what this vault holds. A six-hit search over 983 notes sits next to
+about 105 notes one link away that the caller never sees — most of what the vault knows about
+the question is in the edges, not in the ranking. So `GET search` returns the neighbourhood of
+its hits **by default**, and a caller that only knows how to search still gets told what to read
+next.
+
+```
+GET search?drive=<uuid>&q=how+do+document+models+work
+```
+
+```jsonc
+{
+  "query": "how do document models work",
+  "mode": "semantic",
+  "hits": [ { "similarity": 0.96, "score": 0.96, "matchedBy": ["semantic"], "node": { … } } ],
+
+  // Nodes one knowledge link from the hits, ranked, excluding the hits themselves.
+  "related": [
+    {
+      "documentId": "…", "title": "…", "description": "…",
+      "noteType": "concept", "status": "CANONICAL", "documentType": "bai/knowledge-note",
+      "hitCount": 3,        // how many hits point at it — convergence is signal
+      "score": 2.71,        // rank within THIS response only
+      "via": [              // always source -> target, so there is no direction to decode
+        { "from": "<hit id>", "fromTitle": "…", "to": "<this node>", "toTitle": "…",
+          "linkType": "BUILDS_ON", "reason": "…", "confidence": "grounded" }
+      ]
+    }
+  ],
+
+  // Edges BETWEEN hits — the shape of the result set itself.
+  "links": [ { "from": "…", "to": "…", "linkType": "RELATES_TO", "reason": null } ],
+
+  "expansion": { "hops": 1, "relatedTotal": 105, "relatedShown": 10, "truncated": true }
+}
+```
+
+**One hop, not two.** Two hops from six hits reaches most of the vault and stops being context.
+
+**Ranking.** A neighbour's score is the sum, over every edge joining it to a hit, of
+`hit similarity × link-type weight`, with a 1.15× bonus for an articulated edge (one carrying a
+`reason`). Summing means a node several hits point at outranks a node one hit points at, without
+a separate rule for convergence. The link-type weights live in
+`subgraphs/knowledge-graph/helpers/neighbourhood.ts` and encode one judgement: a link that
+changes whether an answer is **correct** outranks one that merely adds material — `CONTRADICTS`
+(1.6) and `SUPERSEDES` (1.4) above `BUILDS_ON` (1.2) above `RELATES_TO` (0.8), with
+`DERIVED_FROM` (0.4) last because it points at a source document rather than at an answer.
+
+**Per-hit cap.** Any single hit contributes at most 15 edges, chosen by weight. A MoC is a
+legitimate hit and carries a `CORE_IDEA` edge to every note it holds — 60+ on this vault's domain
+MoCs — which would otherwise fill the list from one result.
+
+**Cost.** Two extra queries for the whole response, not two per hit: one `IN (…)` over
+`graph_edges` for every hit at once, one over `graph_nodes` for the neighbours it found.
+
+**Failure is not fatal.** If the graph read fails the search still answers; `related` comes back
+empty and the route logs a warning rather than returning 500.
+
+`related=0` opts out when a caller wants the ranking alone.
+
+In GraphQL the same expansion is a selectable field, `SemanticResult.related(limit: Int = 5)`,
+computed once for the whole result set and sliced per hit — selecting it on twenty hits costs the
+same two queries, and selecting nothing costs none.
 
 ## Unauthenticated routes
 
