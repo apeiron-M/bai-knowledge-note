@@ -152,6 +152,21 @@ export const schema: DocumentNode = gql`
     not expand.
     """
     related(limit: Int): [GraphNeighbour!]!
+    """
+    Edges from this hit to OTHER hits in the same result set.
+
+    These can never appear in 'related', which by definition excludes nodes
+    that are themselves hits — and that exclusion is exactly wrong for
+    correctness. Semantic search naturally returns both sides of a
+    disagreement, so the CONTRADICTS edge joining two hits is invisible
+    without this field: a reader sees two confident claims and no sign that
+    one disputes the other.
+
+    Written source -> target like every other edge; the same hit-to-hit edge
+    is reported on BOTH of its ends. Shares the neighbourhood 'related'
+    reads, so selecting both costs no more than selecting one.
+    """
+    linkedHits: [GraphVia!]!
   }
 
   type HybridResult {

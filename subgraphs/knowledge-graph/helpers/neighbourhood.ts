@@ -59,6 +59,18 @@ export interface Neighbourhood {
   byHit: Record<string, Neighbour[]>;
   /** Edges BETWEEN hits — the shape of the result set itself. */
   links: NeighbourVia[];
+  /**
+   * The same edges, grouped under each hit they touch (either end), so a
+   * per-object presentation can show them.
+   *
+   * These cannot appear in `byHit`: a node that is itself a hit is not a
+   * neighbour, so an edge between two hits is dropped from `related` by
+   * construction. That is the right call for "what am I missing" but the
+   * wrong one for correctness — semantic search naturally returns BOTH sides
+   * of a contradiction, and the `CONTRADICTS` edge joining them would then be
+   * the one fact nobody sees.
+   */
+  linksByHit: Record<string, NeighbourVia[]>;
   /** Distinct adjacent nodes found before `limit` was applied. */
   totalRelated: number;
   truncated: boolean;
@@ -134,6 +146,7 @@ export async function buildNeighbourhood(
     related: [],
     byHit: {},
     links: [],
+    linksByHit: {},
     totalRelated: 0,
     truncated: false,
   };
@@ -250,10 +263,20 @@ export async function buildNeighbourhood(
     }
   }
 
+  // Hit-to-hit edges, filed under BOTH ends so either hit shows the edge.
+  const links = internal.map(toVia);
+  const linksByHit: Record<string, NeighbourVia[]> = {};
+  for (const hitId of hitIds) linksByHit[hitId] = [];
+  for (const via of links) {
+    linksByHit[via.from]?.push(via);
+    linksByHit[via.to]?.push(via);
+  }
+
   return {
     related: related.slice(0, limit),
     byHit,
-    links: internal.map(toVia),
+    links,
+    linksByHit,
     totalRelated: related.length,
     truncated: related.length > limit,
   };

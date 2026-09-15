@@ -186,6 +186,7 @@ export function createSearchRoute(deps: SearchRouteDeps) {
         related: [],
         byHit: {},
         links: [],
+        linksByHit: {},
         totalRelated: 0,
         truncated: false,
       };

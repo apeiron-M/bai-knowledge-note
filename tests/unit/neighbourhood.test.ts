@@ -145,6 +145,51 @@ describe("buildNeighbourhood", () => {
     });
   });
 
+  it("files a hit-to-hit edge under BOTH of its ends", async () => {
+    // The case that matters: search returns both sides of a disagreement, so
+    // the CONTRADICTS edge joining them is invisible in `related` — which
+    // excludes hits by construction — and must be reachable from either end.
+    const query = fakeQuery(
+      [edge("h1", "h2", "CONTRADICTS", "h1 disputes h2's claim about scope")],
+      [],
+    );
+    const graph = await buildNeighbourhood(query, [
+      hit("h1", 0.9),
+      hit("h2", 0.88),
+    ]);
+    expect(graph.related).toEqual([]);
+    expect(graph.linksByHit.h1).toHaveLength(1);
+    expect(graph.linksByHit.h2).toHaveLength(1);
+    expect(graph.linksByHit.h1[0]).toMatchObject({
+      from: "h1",
+      to: "h2",
+      linkType: "CONTRADICTS",
+      reason: "h1 disputes h2's claim about scope",
+    });
+    // Both ends report the SAME edge, source -> target, not a mirrored copy.
+    expect(graph.linksByHit.h2[0]).toEqual(graph.linksByHit.h1[0]);
+  });
+
+  it("gives every hit a linksByHit entry, empty when it links to no other hit", async () => {
+    const query = fakeQuery(
+      [edge("h1", "h2", "BUILDS_ON"), edge("h3", "x", "RELATES_TO")],
+      [node("x")],
+    );
+    const graph = await buildNeighbourhood(query, [
+      hit("h1", 0.9),
+      hit("h2", 0.8),
+      hit("h3", 0.7),
+    ]);
+    expect(Object.keys(graph.linksByHit).sort()).toEqual(["h1", "h2", "h3"]);
+    expect(graph.linksByHit.h3).toEqual([]);
+  });
+
+  it("does not file a self-edge under linksByHit", async () => {
+    const query = fakeQuery([edge("h1", "h1", "RELATES_TO")], [node("h1")]);
+    const graph = await buildNeighbourhood(query, [hit("h1", 0.9)]);
+    expect(graph.linksByHit.h1).toEqual([]);
+  });
+
   it("caps one hit's contribution so a MoC cannot fill the list", async () => {
     const members = Array.from({ length: 40 }, (_, i) => `m${i}`);
     const query = fakeQuery(

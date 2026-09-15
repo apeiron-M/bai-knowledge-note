@@ -39,6 +39,7 @@ function deps(overrides: Partial<SearchRouteDeps> = {}): SearchRouteDeps {
     neighbourhood: vi.fn(async () => ({
       related: [],
       byHit: {},
+      linksByHit: {},
       links: [],
       totalRelated: 0,
       truncated: false,
@@ -125,6 +126,7 @@ describe("GET search", () => {
         },
       ],
       byHit: {},
+      linksByHit: {},
       links: [],
       totalRelated: 42,
       truncated: true,
@@ -155,6 +157,7 @@ describe("GET search", () => {
     const neighbourhood = vi.fn(async () => ({
       related: [],
       byHit: {},
+      linksByHit: {},
       links: [],
       totalRelated: 0,
       truncated: false,
@@ -172,6 +175,7 @@ describe("GET search", () => {
     const neighbourhood = vi.fn(async () => ({
       related: [],
       byHit: {},
+      linksByHit: {},
       links: [],
       totalRelated: 0,
       truncated: false,
@@ -232,6 +236,7 @@ describe("GET search", () => {
           },
         ],
         byHit: {},
+        linksByHit: {},
         links: [
           {
             from: "n1",
@@ -290,6 +295,7 @@ describe("GET search", () => {
         neighbourhood: vi.fn(async () => ({
           related: [contradicting],
           byHit: {},
+        linksByHit: {},
           links: [],
           totalRelated: 1,
           truncated: false,

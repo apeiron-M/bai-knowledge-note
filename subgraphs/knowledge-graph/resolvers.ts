@@ -189,6 +189,21 @@ export const getResolvers = (subgraph: BaseSubgraph): Record<string, unknown> =>
         const graph = await parent._neighbourhood();
         return (graph.byHit[documentId] ?? []).slice(0, limit);
       },
+
+      /**
+       * Edges to other hits in the same result set. Same memoized loader as
+       * `related`, so selecting both is still the two queries the whole
+       * search costs.
+       */
+      linkedHits: async (parent: {
+        node?: { documentId?: string };
+        _neighbourhood?: () => Promise<Neighbourhood>;
+      }) => {
+        const documentId = parent.node?.documentId;
+        if (!parent._neighbourhood || !documentId) return [];
+        const graph = await parent._neighbourhood();
+        return graph.linksByHit[documentId] ?? [];
+      },
     },
 
     KnowledgeGraphNode: {
