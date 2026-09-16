@@ -17,6 +17,7 @@ import {
   recallIds,
   rememberIds,
   resetDocCache,
+  scopedRetainKey,
   subscribeDocMutations,
   type DocFetchOutcome,
   wireDocMutationEvents,
@@ -434,4 +435,36 @@ describe("reactor-doc-cache module state", () => {
     });
   });
 
+});
+
+describe("retained id lists are per drive", () => {
+  it("does not hand one drive's list to another", () => {
+    // The list is a paint hint used while a drive tree loads. Keyed by name
+    // alone, opening a second vault painted the first vault's documents —
+    // 404 sources from another drive, which reads as a corrupted vault.
+    rememberIds(scopedRetainKey("source-list", "drive-a"), ["a1", "a2"]);
+    expect(recallIds(scopedRetainKey("source-list", "drive-b"))).toEqual([]);
+    expect(recallIds(scopedRetainKey("source-list", "drive-a"))).toEqual([
+      "a1",
+      "a2",
+    ]);
+  });
+
+  it("still recalls within the same drive, which is the point of retaining", () => {
+    rememberIds(scopedRetainKey("source-list", "drive-a"), ["a1"]);
+    expect(recallIds(scopedRetainKey("source-list", "drive-a"))).toEqual(["a1"]);
+  });
+
+  it("keeps two views on the same drive apart", () => {
+    rememberIds(scopedRetainKey("source-list", "drive-a"), ["s1"]);
+    rememberIds(scopedRetainKey("projects-view", "drive-a"), ["p1"]);
+    expect(recallIds(scopedRetainKey("source-list", "drive-a"))).toEqual(["s1"]);
+    expect(recallIds(scopedRetainKey("projects-view", "drive-a"))).toEqual(["p1"]);
+  });
+
+  it("retains nothing until a drive is known, rather than under a shared key", () => {
+    // Before the drive resolves there is no safe bucket: anything stored
+    // would be recalled by whichever drive loads next.
+    expect(scopedRetainKey("source-list", undefined)).toBeUndefined();
+  });
 });

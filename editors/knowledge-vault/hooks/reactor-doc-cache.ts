@@ -293,12 +293,39 @@ export function subscribeDocMutations(
  * fetched from a recalled list: the authoritative read starts when the
  * real spec list arrives, and reconciles against it.
  */
-export function rememberIds(retainKey: string, ids: readonly string[]): void {
+/**
+ * Scope a view's retain key to one drive.
+ *
+ * The retained list is a paint hint, used while a drive tree loads. Keyed
+ * by view name alone it was shared across drives, so opening a second
+ * vault painted the first one's documents — 404 sources belonging to
+ * another drive, which reads as a corrupted vault rather than a stale
+ * cache. Document ids are globally unique, so the cached bodies were real;
+ * it was the LIST that did not belong.
+ *
+ * Returns undefined until the drive is known: before that there is no safe
+ * bucket, and anything stored would be recalled by whichever drive loads
+ * next.
+ */
+export function scopedRetainKey(
+  retainKey: string | undefined,
+  driveId: string | undefined,
+): string | undefined {
+  if (!retainKey || !driveId) return undefined;
+  return `${driveId}::${retainKey}`;
+}
+
+export function rememberIds(
+  retainKey: string | undefined,
+  ids: readonly string[],
+): void {
+  if (!retainKey) return;
   if (ids.length === 0) return;
   retainedIds.set(retainKey, [...ids]);
 }
 
-export function recallIds(retainKey: string): string[] {
+export function recallIds(retainKey: string | undefined): string[] {
+  if (!retainKey) return [];
   return retainedIds.get(retainKey) ?? [];
 }
 

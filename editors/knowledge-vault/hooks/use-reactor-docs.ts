@@ -19,6 +19,7 @@
  * re-running the whole fetch behind a spinner.
  */
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useSelectedDriveId } from "@powerhousedao/reactor-browser";
 import type { PHDocument } from "document-model";
 import { fetchDocumentState } from "../../shared/document-state.js";
 import { withTransientRetry } from "../lib/remote-first.js";
@@ -32,6 +33,7 @@ import {
   peekDoc,
   recallIds,
   rememberIds,
+  scopedRetainKey,
   subscribeDocMutations,
   type DocFetchOutcome,
 } from "./reactor-doc-cache.js";
@@ -196,6 +198,7 @@ export function useReactorDocsWithRefetch(
   specs: ReactorDocSpec[],
   options?: UseReactorDocsOptions,
 ): UseReactorDocsResult {
+  const selectedDriveId = useSelectedDriveId();
   const [fetched, setFetched] = useState<{
     key: string;
     docs: PHDocument[];
@@ -227,9 +230,12 @@ export function useReactorDocsWithRefetch(
   // eslint-disable-next-line react-hooks/exhaustive-deps
   const ids = useMemo(() => specs.map((s) => s.id), [key]);
 
-  const retainKey = options?.retainKey;
+  // Scoped to the drive HERE rather than at each call site: the key is a
+  // paint hint shared by five views, and one that forgot to scope it would
+  // paint another vault's documents with nothing failing.
+  const retainKey = scopedRetainKey(options?.retainKey, selectedDriveId);
   useEffect(() => {
-    if (retainKey) rememberIds(retainKey, ids);
+    rememberIds(retainKey, ids);
   }, [retainKey, ids]);
 
   /**
