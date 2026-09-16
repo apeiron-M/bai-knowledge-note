@@ -43,6 +43,9 @@ export const CITATION_CARD_HEIGHT = 150;
  * intent is written just before the navigation and read once by the editor
  * (see shared/sow-intent.ts); any other kind simply opens.
  */
+/** Anchor prefix that asks a scope to open a project's work breakdown in place. */
+export const WBS_ANCHOR_PREFIX = "wbs:";
+
 export function openCitation(c: {
   documentId: string;
   documentType?: string | null;
@@ -50,9 +53,17 @@ export function openCitation(c: {
 }): void {
   if (c.anchor) {
     if (c.documentType === "powerhouse/scopeofwork") {
+      // `wbs:<envelopeId>` asks for the breakdown that delivers that envelope,
+      // shown inside the scope — the view the scope's own outline rail opens.
+      // Every other anchor names an item the scope resolves for itself.
+      const wbsOf = c.anchor.startsWith(WBS_ANCHOR_PREFIX)
+        ? c.anchor.slice(WBS_ANCHOR_PREFIX.length)
+        : null;
       writeSowIntent({
         documentId: c.documentId,
-        view: { kind: "locate", id: c.anchor },
+        view: wbsOf
+          ? { kind: "wbs", projectId: wbsOf }
+          : { kind: "locate", id: c.anchor },
       });
     } else if (c.documentType === "bai/wbs") {
       writeSowIntent({

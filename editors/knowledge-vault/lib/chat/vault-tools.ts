@@ -402,7 +402,7 @@ export const VAULT_TOOLS: ToolSchema[] = [
     function: {
       name: "list_projects",
       description:
-        "Every project in the vault. Projects are envelopes inside scope-of-work documents (powerhouse/scopeofwork). ONE ROW IS ONE PROJECT: `project` is its name, with `code`, `status`, `owner`, `envelopeId`, and `cite` — the anchored marker [[scopeId#envelopeId]] that cites this one project. `scope` is the document HOLDING it ({documentId, title}) — several projects share one scope, so the scope title is NOT the project name and must never be listed as a project in its own right. Each row also carries deliverable progress (delivered/total and %), budget (type, currency, stored budget, fixed target if any, Σ quoted lines), cited-knowledge count, and its work breakdown as a citable {documentId, title}. Start here for any question about projects, deliverables, goals or who is working on what; then read_document on scope.documentId for the full outline. Cite a project with its `cite` marker, or the scope as [[scope.documentId]] — the UUID, never a name.",
+        "Every project in the vault. Projects are envelopes inside scope-of-work documents (powerhouse/scopeofwork). ONE ROW IS ONE PROJECT: `project` is its name, with `code`, `status`, `owner`, `envelopeId`, and `cite` — the anchored marker [[scopeId#envelopeId]] that cites this one project. `scope` is the document HOLDING it ({documentId, title}) — several projects share one scope, so the scope title is NOT the project name and must never be listed as a project in its own right. Each row also carries deliverable progress (delivered/total and %), budget (type, currency, stored budget, fixed target if any, Σ quoted lines), cited-knowledge count, and `wbs`, the work breakdown that delivers this project — use its `cite` to open that breakdown INSIDE the scope, which is what a reader asking about the work wants; `wbs.documentId` opens the standalone WBS editor instead. Cite exactly one project per row and never repeat a project under a second name. Start here for any question about projects, deliverables, goals or who is working on what; then read_document on scope.documentId for the full outline. Cite a project with its `cite` marker, or the scope as [[scope.documentId]] — the UUID, never a name.",
       parameters: { type: "object", properties: {} },
     },
   },
@@ -1615,7 +1615,16 @@ export async function executeTool(
               },
               knowledgeRefs: envelopeRefs(env).length,
               wbs: env.wbsRef
-                ? { documentId: env.wbsRef, documentType: "bai/wbs", title: `Work breakdown for ${env.title}` }
+                ? {
+                    documentId: env.wbsRef,
+                    documentType: "bai/wbs",
+                    title: `Work breakdown for ${env.title}`,
+                    // Anchored on the SCOPE, so the breakdown opens inside it
+                    // — the view the scope's own outline rail shows. Citing
+                    // the WBS document id alone opens the standalone editor
+                    // and loses the scope around it.
+                    cite: `[[${item.id}#wbs:${env.id}]]`,
+                  }
                 : null,
             });
           }

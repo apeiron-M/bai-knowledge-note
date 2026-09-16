@@ -3,6 +3,7 @@ import { beforeEach, describe, expect, it } from "vitest";
 import {
   clearSowIntent,
   peekSowIntent,
+  type SowIntentView,
   releaseSowIntent,
   SOW_INTENT_TTL_MS,
   writeSowIntent,
@@ -29,6 +30,29 @@ describe("sow-intent", () => {
     writeSowIntent({ documentId: "doc-1", view: { kind: "project", id: "e1" } });
     expect(peekSowIntent("doc-1")).toEqual({ kind: "project", id: "e1" });
     expect(peekSowIntent("doc-1")).toEqual({ kind: "project", id: "e1" });
+  });
+
+  it("round-trips a wbs view, keyed by the envelope id", () => {
+    // `viewOf` is a validating parser, so a kind absent from it is dropped
+    // and the deep link lands on the overview with no error. Adding the
+    // variant to the type alone did exactly that.
+    writeSowIntent({ documentId: "doc-2", view: { kind: "wbs", projectId: "e1" } });
+    expect(peekSowIntent("doc-2")).toEqual({ kind: "wbs", projectId: "e1" });
+  });
+
+  it("drops a view whose kind it does not know", () => {
+    // Written through the module's own writer so the storage key cannot
+    // drift out of sync with the test — a wrong key here would make this
+    // pass by reading nothing at all.
+    writeSowIntent({
+      documentId: "doc-3",
+      view: { kind: "teleport", id: "x" } as unknown as SowIntentView,
+    });
+    expect(peekSowIntent("doc-3")).toBeNull();
+    // and a known kind through the same path still round-trips, proving the
+    // null above came from the parser and not from an empty store
+    writeSowIntent({ documentId: "doc-3", view: { kind: "team" } });
+    expect(peekSowIntent("doc-3")).toEqual({ kind: "team" });
   });
 
   it("clearing consumes it", () => {

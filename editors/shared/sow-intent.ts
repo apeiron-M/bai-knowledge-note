@@ -61,7 +61,18 @@ export type SowIntentView =
    */
   | { kind: "locate"; id: string }
   /** A goal in a work breakdown — read by the WBS editor, which selects it. */
-  | { kind: "goal"; id: string };
+  | { kind: "goal"; id: string }
+  /**
+   * The work breakdown that delivers one envelope, shown INSIDE the scope of
+   * work rather than as its own document — the same view the scope's own
+   * outline rail opens. `projectId` is the envelope's id, not the WBS
+   * document's: the scope resolves the breakdown from the envelope.
+   *
+   * Citing the WBS document on its own opens the standalone WBS editor, which
+   * loses the scope around it; a reader who asked which work delivers a
+   * project wants it in place.
+   */
+  | { kind: "wbs"; projectId: string };
 
 export type SowIntent = {
   documentId: string;
@@ -93,13 +104,26 @@ function readStored(): Stored | null {
   }
 }
 
+/**
+ * Parse a stored view, accepting only kinds this module knows.
+ *
+ * A validating parser, not a cast: a kind missing from here is dropped and
+ * the deep link silently lands on the overview. Adding a variant to
+ * `SowIntentView` is therefore only half the change — it must be admitted
+ * here too, and `wbs` carries `projectId` rather than `id`.
+ */
 function viewOf(raw: unknown): SowIntentView | null {
-  const view = raw as { kind?: unknown; id?: unknown } | undefined;
+  const view = raw as
+    | { kind?: unknown; id?: unknown; projectId?: unknown }
+    | undefined;
   const kind = view?.kind;
   const id = typeof view?.id === "string" ? view.id : null;
+  const projectId =
+    typeof view?.projectId === "string" ? view.projectId : null;
   if (kind === "project" && id) return { kind: "project", id };
   if (kind === "locate" && id) return { kind: "locate", id };
   if (kind === "goal" && id) return { kind: "goal", id };
+  if (kind === "wbs" && projectId) return { kind: "wbs", projectId };
   if (kind === "deliverables") return { kind: "deliverables" };
   if (kind === "team") return { kind: "team" };
   return null;

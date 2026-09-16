@@ -682,10 +682,17 @@ describe("scope of work envelopes", () => {
       cite: "[[s1#env1]]",
       envelopeId: "env1",
       scope: { documentId: "s1", documentType: "powerhouse/scopeofwork", title: "Powerhouse PMF" },
+      // Anchored on the SCOPE with a wbs: prefix, so the breakdown opens
+      // inside the scope rather than as a standalone document.
+      wbs: {
+        documentId: "w9",
+        documentType: "bai/wbs",
+        title: "Work breakdown for Paperless demo",
+        cite: "[[s1#wbs:env1]]",
+      },
       progress: { delivered: 1, total: 2, pct: 50 },
       budget: { type: "OPEX", currency: "USD", budget: 0, targetBudget: null },
       knowledgeRefs: 1,
-      wbs: { documentId: "w9", documentType: "bai/wbs", title: "Work breakdown for Paperless demo" },
     });
     // and nothing at the top level can be mistaken for the project's name
     expect(d.projects[0]).not.toHaveProperty("title");
