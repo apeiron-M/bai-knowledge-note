@@ -670,18 +670,25 @@ describe("scope of work envelopes", () => {
     const d = r.data as { total: number; scopes: number; projects: Record<string, unknown>[] };
     expect(d.scopes).toBe(1);
     expect(d.total).toBe(1);
-    // documentId + title name the SCOPE (what the citation chip shows and
-    // opens); the envelope's own identity is nested.
+    // One row is ONE PROJECT and the PROJECT names it. The scope keeps its
+    // {documentId, title} pair — the citation harvester needs it to label a
+    // [[scopeId]] chip — but nested, so several projects sharing a scope no
+    // longer arrive carrying the scope's title as their own.
     expect(d.projects[0]).toMatchObject({
-      documentId: "s1",
-      documentType: "powerhouse/scopeofwork",
-      title: "Powerhouse PMF",
-      envelope: { id: "env1", code: "PPD", title: "Paperless demo", owner: "Frank", status: "IN_PROGRESS", cite: "[[s1#env1]]" },
+      project: "Paperless demo",
+      code: "PPD",
+      owner: "Frank",
+      status: "IN_PROGRESS",
+      cite: "[[s1#env1]]",
+      envelopeId: "env1",
+      scope: { documentId: "s1", documentType: "powerhouse/scopeofwork", title: "Powerhouse PMF" },
       progress: { delivered: 1, total: 2, pct: 50 },
       budget: { type: "OPEX", currency: "USD", budget: 0, targetBudget: null },
       knowledgeRefs: 1,
       wbs: { documentId: "w9", documentType: "bai/wbs", title: "Work breakdown for Paperless demo" },
     });
+    // and nothing at the top level can be mistaken for the project's name
+    expect(d.projects[0]).not.toHaveProperty("title");
     expect(r.summary).toBe("listed 1 envelope across 1 scope");
   });
 

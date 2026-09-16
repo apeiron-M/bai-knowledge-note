@@ -9,6 +9,7 @@ import {
   answeredWithoutLooking,
   claimsAnOutageThatDidNotHappen,
   consultedDocuments,
+  collectKnownDocuments,
   extractCitations,
   needsCitationRepair,
   resolveCitations,
@@ -999,5 +1000,56 @@ describe("consultedDocuments", () => {
   it("is empty when everything read was cited", () => {
     const cited = ["n1", "n2", "p1"].map((id) => ({ documentId: id, title: id }));
     expect(consultedDocuments(trail, cited)).toEqual([]);
+  });
+});
+
+describe("collectKnownDocuments over a list_projects row", () => {
+  /** One row as `list_projects` now shapes it: the PROJECT names the row. */
+  const projectRow = {
+    project: "Paperless × Powerhouse demo",
+    code: "PPD",
+    status: "DRAFT",
+    owner: "Frank",
+    cite: "[[s1#env1]]",
+    envelopeId: "env1",
+    scope: {
+      documentId: "s1",
+      documentType: "powerhouse/scopeofwork",
+      title: "Powerhouse PMF",
+    },
+    wbs: {
+      documentId: "e44929e3-d486-4837-abcb-3f57a4458115",
+      documentType: "bai/wbs",
+      title: "Work breakdown for Paperless × Powerhouse demo",
+    },
+  };
+  const trail: TrailEntry[] = [
+    { ok: true, data: { total: 1, scopes: 1, projects: [projectRow] } } as TrailEntry,
+  ];
+
+  it("finds the scope and the work breakdown, each with its own title and type", () => {
+    const known = collectKnownDocuments(trail);
+    // The scope moved under `scope`, so this proves the harvester still
+    // reaches it — collectKnownDocuments recurses, which is what makes the
+    // restructure safe.
+    expect(known.get("s1")).toEqual({
+      documentId: "s1",
+      documentType: "powerhouse/scopeofwork",
+      title: "Powerhouse PMF",
+    });
+    // The WBS every project links: citable as [[wbsId]], which opens it.
+    expect(known.get("e44929e3-d486-4837-abcb-3f57a4458115")).toEqual({
+      documentId: "e44929e3-d486-4837-abcb-3f57a4458115",
+      documentType: "bai/wbs",
+      title: "Work breakdown for Paperless × Powerhouse demo",
+    });
+  });
+
+  it("does not let the project's own name become the scope's chip label", () => {
+    const known = collectKnownDocuments(trail);
+    // The bug this shape fixes: when the row led with the scope's id AND the
+    // envelope's title was a sibling, a chip for the scope could be labelled
+    // with whichever envelope happened to be listed first.
+    expect(known.get("s1")?.title).not.toBe("Paperless × Powerhouse demo");
   });
 });

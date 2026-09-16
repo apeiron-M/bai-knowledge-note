@@ -402,7 +402,7 @@ export const VAULT_TOOLS: ToolSchema[] = [
     function: {
       name: "list_projects",
       description:
-        "Every project in the vault. Projects are envelopes inside scope-of-work documents (powerhouse/scopeofwork): each row is one envelope — its documentId and title are the SCOPE's (the documentId is what you cite), and `envelope` holds the project's own id, code, title, set status, owner and `cite`, the anchored marker [[scopeId#envelopeId]] that cites this one project — with deliverable progress (delivered/total and %), budget (type, currency, stored budget, fixed target if any, Σ quoted lines), cited-knowledge count and its work breakdown as a citable {documentId, title}. Start here for any question about projects, deliverables, goals or who is working on what; then read_document the documentId for the full outline. Cite as [[documentId]] — the UUID, never a name.",
+        "Every project in the vault. Projects are envelopes inside scope-of-work documents (powerhouse/scopeofwork). ONE ROW IS ONE PROJECT: `project` is its name, with `code`, `status`, `owner`, `envelopeId`, and `cite` — the anchored marker [[scopeId#envelopeId]] that cites this one project. `scope` is the document HOLDING it ({documentId, title}) — several projects share one scope, so the scope title is NOT the project name and must never be listed as a project in its own right. Each row also carries deliverable progress (delivered/total and %), budget (type, currency, stored budget, fixed target if any, Σ quoted lines), cited-knowledge count, and its work breakdown as a citable {documentId, title}. Start here for any question about projects, deliverables, goals or who is working on what; then read_document on scope.documentId for the full outline. Cite a project with its `cite` marker, or the scope as [[scope.documentId]] — the UUID, never a name.",
       parameters: { type: "object", properties: {} },
     },
   },
@@ -1580,18 +1580,31 @@ export async function executeTool(
             // `documentId` + `title` name the SCOPE: that pair is what the
             // citation harvester registers, and a chip for [[scopeId]] must
             // read as the scope, not as whichever envelope was listed first.
+            // One row is ONE PROJECT, so the project names the row. This used
+            // to lead with the SCOPE's documentId and title, which meant ten
+            // projects arrived carrying only two distinct titles — every
+            // envelope of "Powerhouse Platform 2027" was labelled
+            // "Powerhouse Platform 2027", and its real name sat a level down
+            // in `envelope.title`. A model listing projects duly reported the
+            // scope title as the project, then found the nested one and
+            // emitted the same project twice, once suffixed "(envelope)".
+            //
+            // The scope keeps its {documentId, title} pair because the
+            // citation harvester needs it to label a [[scopeId]] chip — but
+            // nested under `scope`, where it reads as the container it is.
+            // collectKnownDocuments recurses, so it still finds it.
             envelopeRows.push({
-              documentId: item.id,
-              documentType: "powerhouse/scopeofwork",
-              title: g.title || item.name || item.id,
-              envelope: {
-                id: env.id,
-                code: env.code,
-                title: env.title,
-                status: env.scope?.status ?? "DRAFT",
-                owner: env.projectOwner ? (agentName.get(env.projectOwner) ?? env.projectOwner) : null,
-                // Ready-made anchored marker: cite this envelope, not just its scope.
-                cite: `[[${item.id}#${env.id}]]`,
+              project: env.title,
+              code: env.code,
+              status: env.scope?.status ?? "DRAFT",
+              owner: env.projectOwner ? (agentName.get(env.projectOwner) ?? env.projectOwner) : null,
+              // The marker for THIS project, not merely the scope holding it.
+              cite: `[[${item.id}#${env.id}]]`,
+              envelopeId: env.id,
+              scope: {
+                documentId: item.id,
+                documentType: "powerhouse/scopeofwork",
+                title: g.title || item.name || item.id,
               },
               progress: rollupDeliverables(ds),
               budget: {
