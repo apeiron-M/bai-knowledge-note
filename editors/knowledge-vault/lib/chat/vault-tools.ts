@@ -402,7 +402,7 @@ export const VAULT_TOOLS: ToolSchema[] = [
     function: {
       name: "list_projects",
       description:
-        "Every project in the vault. Projects are envelopes inside scope-of-work documents (powerhouse/scopeofwork). ONE ROW IS ONE PROJECT: `project` is its name, with `code`, `status`, `owner`, `envelopeId`, and `cite` — the anchored marker [[scopeId#envelopeId]] that cites this one project. `scope` is the document HOLDING it ({documentId, title}) — several projects share one scope, so the scope title is NOT the project name and must never be listed as a project in its own right. Each row also carries deliverable progress (delivered/total and %), budget (type, currency, stored budget, fixed target if any, Σ quoted lines), cited-knowledge count, and `wbs`, the work breakdown that delivers this project — use its `cite` to open that breakdown INSIDE the scope, which is what a reader asking about the work wants; `wbs.documentId` opens the standalone WBS editor instead. Cite exactly one project per row and never repeat a project under a second name. Start here for any question about projects, deliverables, goals or who is working on what; then read_document on scope.documentId for the full outline. Cite a project with its `cite` marker, or the scope as [[scope.documentId]] — the UUID, never a name.",
+        "Every project in the vault. Projects are envelopes inside scope-of-work documents (powerhouse/scopeofwork). ONE ROW IS ONE PROJECT: `project` is its name, with `code`, `status`, `owner`, `envelopeId`, and `cite` — the anchored marker [[scopeId#envelopeId]] that cites this one project. `scope` is the document HOLDING it ({documentId, title}) — several projects share one scope, so the scope title is NOT the project name and must never be listed as a project in its own right. Each row also carries `progress` as {delivered, total, pct}. Report BOTH when you state progress — for example, 6 of 10 delivered and 74% of the work — because they measure different things: `delivered`/`total` counts deliverables that are finished (closed ones are excluded from both), while `pct` averages how far each open deliverable has got. A project can legitimately read 0 of 3 delivered at 39%, and a bare percentage hides that. It also carries budget (type, currency, stored budget, fixed target if any, Σ quoted lines), cited-knowledge count, and `wbs`, the work breakdown that delivers this project — use its `cite` to open that breakdown INSIDE the scope, which is what a reader asking about the work wants; `wbs.documentId` opens the standalone WBS editor instead. Cite exactly one project per row and never repeat a project under a second name. Start here for any question about projects, deliverables, goals or who is working on what; then read_document on scope.documentId for the full outline. Cite a project with its `cite` marker, or the scope as [[scope.documentId]] — the UUID, never a name.",
       parameters: { type: "object", properties: {} },
     },
   },
@@ -1630,9 +1630,18 @@ export async function executeTool(
           }
         }
       }
+      // The count leads the summary because a model listing these dropped one
+      // of ten and still wrote "all ten projects". Naming every code makes the
+      // omission visible in the same line that states the total.
+      const codes = envelopeRows
+        .map((r) => (typeof r.code === "string" && r.code ? r.code : "?"))
+        .join(", ");
+      const many = envelopeRows.length > 1;
       return ok(
         { total: envelopeRows.length, projects: envelopeRows, scopes: scopeCount },
-        `listed ${envelopeRows.length} envelope${envelopeRows.length === 1 ? "" : "s"} across ${scopeCount} scope${scopeCount === 1 ? "" : "s"}`,
+        `listed ${envelopeRows.length} project${many ? "s" : ""} across ${scopeCount} scope${scopeCount === 1 ? "" : "s"}` +
+          (codes ? ` — ${codes}` : "") +
+          (many ? `. Answer with all ${envelopeRows.length}.` : ""),
       );
     }
 

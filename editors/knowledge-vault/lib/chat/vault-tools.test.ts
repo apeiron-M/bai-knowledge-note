@@ -696,7 +696,31 @@ describe("scope of work envelopes", () => {
     });
     // and nothing at the top level can be mistaken for the project's name
     expect(d.projects[0]).not.toHaveProperty("title");
-    expect(r.summary).toBe("listed 1 envelope across 1 scope");
+    // The summary names every project, so a model that lists nine of ten has
+    // the omission staring at it in the same line that states the total.
+    expect(r.summary).toBe("listed 1 project across 1 scope — PPD");
+  });
+
+  it("list_projects names every project and says how many to answer with", async () => {
+    // A model listed nine of ten and still wrote "all ten projects". The
+    // codes make an omission visible in the line that states the total.
+    mockGqlSequence(
+      { data: { findDocuments: { totalCount: 1, items: [{ id: "s1", name: "Powerhouse PMF" }] } } },
+      driveTree("s1"),
+      docResponse("s1", "powerhouse/scopeofwork", "Powerhouse PMF", {
+        ...scope,
+        projects: [
+          scope.projects[0],
+          { ...scope.projects[0], id: "env2", code: "UMH", title: "UMH demo" },
+        ],
+      }),
+    );
+    const r = await executeTool("list_projects", {}, CTX);
+    expect(r.ok).toBe(true);
+    if (!r.ok) return;
+    expect(r.summary).toBe(
+      "listed 2 projects across 1 scope — PPD, UMH. Answer with all 2.",
+    );
   });
 
   it("read_document on a scope joins deliverables to their goals and names the wbs", async () => {

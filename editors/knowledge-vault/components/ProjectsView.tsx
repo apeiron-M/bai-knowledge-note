@@ -9,6 +9,8 @@ import {
 import { mutateDocumentRemote } from "../lib/remote-reactor.js";
 import { triggerVaultPull } from "../hooks/use-remote-first.js";
 import { writeSowIntent } from "../../shared/sow-intent.js";
+import { rollupDeliverables } from "../../../processors/graph-indexer/work-outline.js";
+import type { Deliverable } from "document-models/scope-of-work";
 
 /**
  * The Projects tab.
@@ -32,6 +34,16 @@ type EnvelopeRow = {
   currency: string | null;
   deliverables: number;
   completed: number;
+  /**
+   * Progress as `rollupDeliverables` computes it — the SAME figure the chat
+   * and the rendered scope outline report. This card used to divide
+   * `completed / deliverables` itself, which disagreed with them twice over:
+   * the rollup drops closed deliverables from the denominator, and it
+   * averages each one's `workProgress` rather than counting DELIVERED. One
+   * project therefore showed 68% here and 75.95% in chat, and a project with
+   * nothing delivered but work under way showed 0% here and 39% there.
+   */
+  pct: number;
   knowledgeRefs: number;
   references: number;
   hasWbs: boolean;
@@ -71,8 +83,7 @@ function formatMoney(amount: number | null, currency: string | null): string {
 
 const EnvelopeCard = memo(function EnvelopeCard({ env }: { env: EnvelopeRow }) {
   const setMeta = SET_STATUS_META[env.setStatus] ?? SET_STATUS_META.DRAFT;
-  const pct =
-    env.deliverables > 0 ? Math.round((env.completed / env.deliverables) * 100) : 0;
+  const pct = Math.round(env.pct);
   return (
     <button
       type="button"
@@ -364,8 +375,8 @@ export function ProjectsView() {
         const g = (d.state as unknown as { global: Record<string, unknown> }).global;
         const allDeliverables =
           (g.deliverables as { id: string; status?: string }[] | undefined) ?? [];
-        const doneIds = new Set(
-          allDeliverables.filter((x) => x.status === "DELIVERED").map((x) => x.id),
+        const deliverableById = new Map(
+          (allDeliverables as unknown as Deliverable[]).map((x) => [x.id, x]),
         );
         const agentName = new Map(
           ((g.contributors as { id: string; name?: string }[] | undefined) ?? []).map(
@@ -376,6 +387,10 @@ export function ProjectsView() {
           (p) => {
             const scoped =
               (p.scope as { deliverables?: string[] } | null | undefined)?.deliverables ?? [];
+            const scopedDeliverables = scoped
+              .map((id) => deliverableById.get(id))
+              .filter((x): x is Deliverable => Boolean(x));
+            const roll = rollupDeliverables(scopedDeliverables);
             return {
               id: p.id as string,
               sowId: d.header.id,
@@ -383,8 +398,11 @@ export function ProjectsView() {
               title: (p.title as string | undefined) || "Untitled envelope",
               budget: typeof p.budget === "number" ? p.budget : null,
               currency: (p.currency as string | undefined) ?? null,
-              deliverables: scoped.length,
-              completed: scoped.filter((id) => doneIds.has(id)).length,
+              // delivered/total also come from the rollup, so the ratio and
+              // the percentage describe the same population.
+              deliverables: roll.total,
+              completed: roll.delivered,
+              pct: roll.pct,
               knowledgeRefs: ((p.knowledgeRefs as unknown[] | undefined) ?? []).length,
               references: ((p.references as unknown[] | undefined) ?? []).length,
               hasWbs: typeof p.wbsRef === "string" && p.wbsRef.length > 0,
