@@ -12,7 +12,7 @@ import {
 import { deleteDocumentRemote } from "../lib/remote-reactor.js";
 import { prefetchOnHover } from "../lib/prefetch.js";
 import { triggerVaultPull } from "../hooks/use-remote-first.js";
-import { filterSources } from "../lib/source-search.js";
+import { filterSources, toSourceRow } from "../lib/source-search.js";
 
 type DeleteTarget = { id: string; title: string } | null;
 
@@ -181,27 +181,18 @@ export function SourceList() {
   // screen, and a spinner over real content would be a regression.
   const isLoading = (treeLoading && sourceSpecs.length === 0) || docsLoading;
 
-  const sources = useMemo(() => {
-    return documents
-      .filter((d) => d.header.documentType === "bai/source")
-      .map((d) => {
-        const state = (
-          d.state as unknown as { global: Record<string, unknown> }
-        ).global;
-        return {
-          id: d.header.id,
-          name: d.header.name,
-          title: (state.title as string) ?? d.header.name,
-          description: (state.description as string) ?? null,
-          author: (state.author as string) ?? null,
-          url: (state.url as string) ?? null,
-          sourceType: (state.sourceType as string) ?? null,
-          status: (state.status as string) ?? "INBOX",
-          claimCount: ((state.extractedClaims as string[]) ?? []).length,
-          createdBy: (state.createdBy as string) ?? null,
-        };
-      });
-  }, [documents]);
+  const sources = useMemo(
+    () =>
+      documents
+        .filter((d) => d.header.documentType === "bai/source")
+        .map((d) =>
+          toSourceRow(
+            d.header,
+            (d.state as unknown as { global: Record<string, unknown> }).global,
+          ),
+        ),
+    [documents],
+  );
 
   // The filter narrows what the groups show; an active query also opens
   // every group, because a match hidden behind a collapsed header is a

@@ -18,6 +18,51 @@ export interface SearchableSource {
   createdBy?: string | null;
 }
 
+/** A row of the Sources list: what it searches by, plus what it shows. */
+export interface SourceRow extends SearchableSource {
+  id: string;
+  name: string;
+  claimCount: number;
+  /** Always present — the list groups by it, so it is narrowed from the
+   * optional field on `SearchableSource` and defaults to INBOX. */
+  status: string;
+  /** Always present — falls back to the document name. */
+  title: string;
+}
+
+/**
+ * Project one `bai/source` document into a list row.
+ *
+ * Lives here, beside the shape it has to satisfy. It used to be inline in
+ * SourceList, and the two drifted: the projection read `state.author` and
+ * `state.url`, but the model keeps both under `provenance`, so every row was
+ * built with nulls. Nothing looked broken — author and url are search-only —
+ * except that the filter box promises "title, author, URL, type" and could
+ * never match two of the four.
+ */
+export function toSourceRow(
+  header: { id: string; name: string },
+  global: Record<string, unknown>,
+): SourceRow {
+  const provenance = (global.provenance ?? {}) as Record<string, unknown>;
+  const str = (v: unknown): string | null =>
+    typeof v === "string" && v.length > 0 ? v : null;
+  return {
+    id: header.id,
+    name: header.name,
+    title: str(global.title) ?? header.name,
+    description: str(global.description),
+    author: str(provenance.author),
+    url: str(provenance.url),
+    sourceType: str(global.sourceType),
+    status: str(global.status) ?? "INBOX",
+    claimCount: Array.isArray(global.extractedClaims)
+      ? global.extractedClaims.length
+      : 0,
+    createdBy: str(global.createdBy),
+  };
+}
+
 export function normalizeQuery(query: string): string[] {
   return query
     .toLowerCase()
