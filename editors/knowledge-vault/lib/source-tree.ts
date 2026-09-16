@@ -170,6 +170,34 @@ export function describeStatuses(byStatus: Record<string, number>): string {
     .join(" · ");
 }
 
+/**
+ * Everything a folder delete must take with it.
+ *
+ * Deleting the folder node alone would leave its sources in the reactor with
+ * nothing pointing at them — the state this vault is already in for nine test
+ * sources, which answer `findDocuments` but appear in no drive. So the caller
+ * deletes the documents first and the folder second.
+ */
+export function folderContents(
+  nodes: TreeNode[],
+  folderId: string,
+): { folderIds: string[]; sourceIds: string[] } {
+  const exists = nodes.some((n) => n.id === folderId && n.kind === "folder");
+  if (!exists) return { folderIds: [], sourceIds: [] };
+  const folderIds = [...subtree(nodes, folderId)];
+  const within = new Set(folderIds);
+  const sourceIds = nodes
+    .filter(
+      (n) =>
+        n.kind === "file" &&
+        n.documentType === "bai/source" &&
+        n.parentFolder !== null &&
+        within.has(n.parentFolder),
+    )
+    .map((n) => n.id);
+  return { folderIds, sourceIds };
+}
+
 /* ── remembering where you were ──────────────────────────────────────────── */
 
 const OPEN_FOLDER_KEY = "bai:sources-open-folder";

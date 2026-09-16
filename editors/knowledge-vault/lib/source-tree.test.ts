@@ -1,6 +1,7 @@
 import { beforeEach, describe, expect, it } from "vitest";
 import {
   describeStatuses,
+  folderContents,
   readOpenFolder,
   sourceView,
   writeOpenFolder,
@@ -196,5 +197,38 @@ describe("remembering the open folder", () => {
       configurable: true,
       value: original,
     });
+  });
+});
+
+describe("folderContents", () => {
+  it("collects every source and subfolder beneath, deepest folder last", () => {
+    // Deleting a book must take its chapters with it, including any in
+    // parts — otherwise the documents survive with no folder pointing at
+    // them, which is how the vault accumulated nine stranded sources.
+    const c = folderContents(NODES, "f-book");
+    expect(c.sourceIds.sort()).toEqual(["s-ch1", "s-ch2", "s-deep"]);
+    expect(c.folderIds).toContain("f-book");
+    expect(c.folderIds).toContain("f-part");
+  });
+
+  it("does not reach outside the folder", () => {
+    const c = folderContents(NODES, "f-part");
+    expect(c.sourceIds).toEqual(["s-deep"]);
+    expect(c.folderIds).toEqual(["f-part"]);
+  });
+
+  it("returns nothing for a folder the tree does not hold", () => {
+    expect(folderContents(NODES, "gone")).toEqual({
+      folderIds: [],
+      sourceIds: [],
+    });
+  });
+
+  it("ignores files that are not sources", () => {
+    const withNote = [
+      ...NODES,
+      { id: "n-1", name: "a note", kind: "file" as const, documentType: "bai/knowledge-note", parentFolder: "f-book" },
+    ];
+    expect(folderContents(withNote, "f-book").sourceIds).not.toContain("n-1");
   });
 });

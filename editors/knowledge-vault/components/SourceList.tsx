@@ -9,18 +9,28 @@ import {
   useReactorDocsWithRefetch,
   type ReactorDocSpec,
 } from "../hooks/use-reactor-docs.js";
-import { deleteDocumentRemote } from "../lib/remote-reactor.js";
+import { deleteDocumentRemote, mutateDocumentRemote } from "../lib/remote-reactor.js";
 import { prefetchOnHover } from "../lib/prefetch.js";
 import { triggerVaultPull } from "../hooks/use-remote-first.js";
 import { filterSources, toSourceRow } from "../lib/source-search.js";
 import {
   describeStatuses,
+  folderContents,
   readOpenFolder,
   sourceView,
   writeOpenFolder,
 } from "../lib/source-tree.js";
 
-type DeleteTarget = { id: string; title: string } | null;
+type DeleteTarget =
+  | { kind: "source"; id: string; title: string }
+  /**
+   * A folder takes its sources with it. `sourceIds` is resolved when the
+   * prompt opens, so the confirmation can say how many documents are about
+   * to go — "delete this folder" and "delete these twenty sources" are
+   * different decisions and the user is making the second one.
+   */
+  | { kind: "folder"; id: string; title: string; sourceIds: string[] }
+  | null;
 
 function DeleteModal({
   target,
@@ -41,9 +51,23 @@ function DeleteModal({
     if (!driveId || !target) return;
     setDeleting(true);
     try {
-      // Server-side delete removes the document AND its drive node in
-      // one call; the scoped sync channel delivers the tree change.
-      await deleteDocumentRemote(target.id, driveId);
+      if (target.kind === "folder") {
+        // Documents first, folder second. DELETE_NODE on a folder drops its
+        // descendants from the drive, so doing it the other way round would
+        // leave every source inside answering findDocuments while belonging
+        // to no drive — unreachable from the app and invisible to the
+        // pipeline.
+        for (const id of target.sourceIds) {
+          await deleteDocumentRemote(id, driveId);
+        }
+        await mutateDocumentRemote(driveId, [
+          { type: "DELETE_NODE", input: { id: target.id }, scope: "global" },
+        ]);
+      } else {
+        // Server-side delete removes the document AND its drive node in
+        // one call; the scoped sync channel delivers the tree change.
+        await deleteDocumentRemote(target.id, driveId);
+      }
       triggerVaultPull();
       onDeleted();
     } finally {
@@ -79,7 +103,7 @@ function DeleteModal({
               className="text-sm font-semibold"
               style={{ color: "var(--bai-text)" }}
             >
-              Delete Source
+              {target.kind === "folder" ? "Delete Folder" : "Delete Source"}
             </h3>
             <p
               className="mt-1.5 text-xs"
@@ -92,7 +116,14 @@ function DeleteModal({
               >
                 {target.title}
               </span>
-              ? This will remove the source and its history from the vault.
+              ?{" "}
+              {target.kind === "folder"
+                ? target.sourceIds.length === 0
+                  ? "The folder is empty, so only the folder is removed."
+                  : `This also deletes ${target.sourceIds.length} source${
+                      target.sourceIds.length === 1 ? "" : "s"
+                    } inside it, with their history. This cannot be undone.`
+                : "This will remove the source and its history from the vault."}
             </p>
           </div>
         </div>
@@ -430,35 +461,72 @@ export function SourceList() {
 
           {/* Folders first: a book is one row, not twenty chapters. */}
           {view.folders.map((folder) => (
-            <button
+            // A row, not a button: it holds its own delete control, and a
+            // button inside a button is invalid and unreachable by keyboard.
+            <div
               key={folder.id}
-              type="button"
-              onClick={() => setFolderId(folder.id)}
-              className="flex w-full items-center gap-2 rounded-lg px-3 py-2 text-left transition-colors hover:border-[var(--bai-accent)]"
+              className="group flex w-full items-center gap-2 rounded-lg px-3 py-2 transition-colors hover:border-[var(--bai-accent)]"
               style={{
                 backgroundColor: "var(--bai-surface)",
                 border: "1px solid var(--bai-border)",
               }}
             >
-              <svg
-                className="h-4 w-4 shrink-0"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="2"
-                style={{ color: "var(--bai-text-muted)" }}
-                aria-hidden="true"
+              <button
+                type="button"
+                onClick={() => setFolderId(folder.id)}
+                className="flex flex-1 items-center gap-2 text-left min-w-0"
+                aria-label={`Open folder ${folder.name}`}
               >
-                <path d="M3 7a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" />
-              </svg>
-              <span className="flex-1 truncate text-sm" style={{ color: "var(--bai-text)" }}>
-                {folder.name}
-              </span>
-              <span className="text-[11px]" style={{ color: "var(--bai-text-faint)" }}>
+                <svg
+                  className="h-4 w-4 shrink-0"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                  style={{ color: "var(--bai-text-muted)" }}
+                  aria-hidden="true"
+                >
+                  <path d="M3 7a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" />
+                </svg>
+                <span className="flex-1 truncate text-sm" style={{ color: "var(--bai-text)" }}>
+                  {folder.name}
+                </span>
+              </button>
+              <span className="shrink-0 text-[11px]" style={{ color: "var(--bai-text-faint)" }}>
                 {describeStatuses(folder.byStatus) ||
                   `${folder.count} ${folder.count === 1 ? "source" : "sources"}`}
               </span>
-            </button>
+              <button
+                type="button"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setDeleteTarget({
+                    kind: "folder",
+                    id: folder.id,
+                    title: folder.name,
+                    // Resolved from the tree, not from the visible rows: a
+                    // filtered or collapsed view must not make the prompt
+                    // understate what is about to be deleted.
+                    sourceIds: folderContents(serverAllNodes, folder.id).sourceIds,
+                  });
+                }}
+                aria-label={`Delete folder ${folder.name}`}
+                title="Delete folder and its sources"
+                className="shrink-0 rounded p-1 opacity-0 transition-opacity hover:bg-red-500/10 focus:opacity-100 group-hover:opacity-100"
+              >
+                <svg
+                  className="h-4 w-4"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                  style={{ color: "var(--bai-text-faint)" }}
+                  aria-hidden="true"
+                >
+                  <path d="M3 6h18M8 6V4a2 2 0 012-2h4a2 2 0 012 2v2M19 6l-1 14a2 2 0 01-2 2H8a2 2 0 01-2-2L5 6" />
+                </svg>
+              </button>
+            </div>
           ))}
 
           {/* An empty folder would otherwise be a breadcrumb over blank space,
@@ -570,6 +638,7 @@ export function SourceList() {
                           onClick={(e) => {
                             e.stopPropagation();
                             setDeleteTarget({
+                              kind: "source",
                               id: source.id,
                               title: source.title,
                             });
