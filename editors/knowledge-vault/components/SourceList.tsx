@@ -13,6 +13,7 @@ import { deleteDocumentRemote } from "../lib/remote-reactor.js";
 import { prefetchOnHover } from "../lib/prefetch.js";
 import { triggerVaultPull } from "../hooks/use-remote-first.js";
 import { filterSources, toSourceRow } from "../lib/source-search.js";
+import { sourceView } from "../lib/source-tree.js";
 
 type DeleteTarget = { id: string; title: string } | null;
 
@@ -155,7 +156,8 @@ export function SourceList() {
   // Source ids come from the authoritative server tree; the doc states
   // come from the reactor directly. Polls because agents move sources
   // through the extraction lifecycle server-side.
-  const { serverFileNodes, isLoading: treeLoading } = useKnowledgeNotes();
+  const { serverFileNodes, serverAllNodes, isLoading: treeLoading } =
+    useKnowledgeNotes();
   const sourceSpecs = useMemo<ReactorDocSpec[]>(
     () =>
       serverFileNodes
@@ -198,7 +200,16 @@ export function SourceList() {
   // every group, because a match hidden behind a collapsed header is a
   // search that looks broken.
   const searching = query.trim().length > 0;
-  const visible = useMemo(() => filterSources(sources, query), [sources, query]);
+  const matching = useMemo(() => filterSources(sources, query), [sources, query]);
+
+  // Which folder is open; null is /sources itself. A search flattens the
+  // view for the same reason it opens every status group.
+  const [folderId, setFolderId] = useState<string | null>(null);
+  const view = useMemo(
+    () => sourceView(matching, serverAllNodes, folderId, { flatten: searching }),
+    [matching, serverAllNodes, folderId, searching],
+  );
+  const visible = view.sources;
 
   const grouped = useMemo(() => {
     const groups: Record<string, typeof sources> = {
@@ -370,6 +381,85 @@ export function SourceList() {
         </div>
       ) : (
         <>
+          {/* Breadcrumb — only once there is somewhere to go back to. */}
+          {view.breadcrumb.length > 1 && (
+            <nav
+              className="flex flex-wrap items-center gap-1 text-xs"
+              aria-label="Source folders"
+            >
+              {view.breadcrumb.map((crumb, i) => {
+                const last = i === view.breadcrumb.length - 1;
+                return (
+                  <span key={crumb.id ?? "root"} className="flex items-center gap-1">
+                    {i > 0 && (
+                      <span style={{ color: "var(--bai-text-faint)" }}>/</span>
+                    )}
+                    {last ? (
+                      <span style={{ color: "var(--bai-text)" }}>{crumb.name}</span>
+                    ) : (
+                      <button
+                        type="button"
+                        onClick={() => setFolderId(crumb.id)}
+                        className="rounded px-1 py-0.5 transition-colors hover:underline"
+                        style={{ color: "var(--bai-text-muted)" }}
+                      >
+                        {crumb.name}
+                      </button>
+                    )}
+                  </span>
+                );
+              })}
+            </nav>
+          )}
+
+          {/* Folders first: a book is one row, not twenty chapters. */}
+          {view.folders.map((folder) => (
+            <button
+              key={folder.id}
+              type="button"
+              onClick={() => setFolderId(folder.id)}
+              className="flex w-full items-center gap-2 rounded-lg px-3 py-2 text-left transition-colors hover:border-[var(--bai-accent)]"
+              style={{
+                backgroundColor: "var(--bai-surface)",
+                border: "1px solid var(--bai-border)",
+              }}
+            >
+              <svg
+                className="h-4 w-4 shrink-0"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+                style={{ color: "var(--bai-text-muted)" }}
+                aria-hidden="true"
+              >
+                <path d="M3 7a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" />
+              </svg>
+              <span className="flex-1 truncate text-sm" style={{ color: "var(--bai-text)" }}>
+                {folder.name}
+              </span>
+              <span className="text-[11px]" style={{ color: "var(--bai-text-faint)" }}>
+                {folder.count} {folder.count === 1 ? "source" : "sources"}
+              </span>
+            </button>
+          ))}
+
+          {/* An empty folder would otherwise be a breadcrumb over blank space,
+              which reads as a failed load rather than an empty folder. */}
+          {view.folders.length === 0 && visible.length === 0 && (
+            <div
+              className="flex h-24 items-center justify-center rounded-xl"
+              style={{
+                backgroundColor: "var(--bai-surface)",
+                border: "1px solid var(--bai-border)",
+              }}
+            >
+              <p className="text-sm" style={{ color: "var(--bai-text-muted)" }}>
+                This folder has no sources yet
+              </p>
+            </div>
+          )}
+
           {(["INBOX", "EXTRACTING", "EXTRACTED", "ARCHIVED"] as const).map(
             (status) => {
               const items = grouped[status];
