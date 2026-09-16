@@ -13,7 +13,12 @@ import { deleteDocumentRemote } from "../lib/remote-reactor.js";
 import { prefetchOnHover } from "../lib/prefetch.js";
 import { triggerVaultPull } from "../hooks/use-remote-first.js";
 import { filterSources, toSourceRow } from "../lib/source-search.js";
-import { sourceView } from "../lib/source-tree.js";
+import {
+  describeStatuses,
+  readOpenFolder,
+  sourceView,
+  writeOpenFolder,
+} from "../lib/source-tree.js";
 
 type DeleteTarget = { id: string; title: string } | null;
 
@@ -204,7 +209,18 @@ export function SourceList() {
 
   // Which folder is open; null is /sources itself. A search flattens the
   // view for the same reason it opens every status group.
-  const [folderId, setFolderId] = useState<string | null>(null);
+  //
+  // Persisted because opening a source unmounts this list: without it you
+  // came back to the root every time, which makes a folder of twenty
+  // chapters unusable. sessionStorage rather than a module variable so a
+  // reload keeps your place, and per tab so two windows can sit in
+  // different folders. A stale id is harmless — `sourceView` falls back to
+  // the root when the folder is gone.
+  const [folderId, setFolderIdState] = useState<string | null>(readOpenFolder);
+  const setFolderId = useCallback((id: string | null) => {
+    setFolderIdState(id);
+    writeOpenFolder(id);
+  }, []);
   const view = useMemo(
     () => sourceView(matching, serverAllNodes, folderId, { flatten: searching }),
     [matching, serverAllNodes, folderId, searching],
@@ -233,7 +249,7 @@ export function SourceList() {
           className="text-sm font-semibold"
           style={{ color: "var(--bai-text-tertiary)" }}
         >
-          Sources ({sources.length})
+          Sources ({view.total})
         </h2>
         <button
           type="button"
@@ -439,7 +455,8 @@ export function SourceList() {
                 {folder.name}
               </span>
               <span className="text-[11px]" style={{ color: "var(--bai-text-faint)" }}>
-                {folder.count} {folder.count === 1 ? "source" : "sources"}
+                {describeStatuses(folder.byStatus) ||
+                  `${folder.count} ${folder.count === 1 ? "source" : "sources"}`}
               </span>
             </button>
           ))}

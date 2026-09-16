@@ -27,11 +27,23 @@ export interface SourceFolder {
   name: string;
   /** Sources anywhere beneath it — a book with parts still reads as one. */
   count: number;
+  /**
+   * How those sources are split by status, e.g. `{ EXTRACTED: 2, INBOX: 1 }`.
+   *
+   * A folder cannot live inside one status group because it is not in one
+   * status. Deriving a single one would lie — a twenty-chapter book with one
+   * chapter left shows as INBOX and reads as untouched — and listing the
+   * folder under every status it touches duplicates it. So the row stays
+   * above the groups and says what is actually inside.
+   */
+  byStatus: Record<string, number>;
 }
 
 export interface SourceView {
   folders: SourceFolder[];
   sources: SourceRow[];
+  /** Sources at or beneath the current folder — what the header counts. */
+  total: number;
   /** Root first; `id: null` is /sources itself. */
   breadcrumb: { id: string | null; name: string }[];
 }
@@ -76,7 +88,12 @@ export function sourceView(
   // behind a folder reads as a search that does not work — the same reason the
   // status groups all open when a query is active.
   if (!root || options.flatten) {
-    return { folders: [], sources: rows, breadcrumb: [{ id: null, name: ROOT_LABEL }] };
+    return {
+      folders: [],
+      sources: rows,
+      total: rows.length,
+      breadcrumb: [{ id: null, name: ROOT_LABEL }],
+    };
   }
 
   const byId = new Map(nodes.map((n) => [n.id, n]));
@@ -92,14 +109,13 @@ export function sourceView(
   const folders = childFolders(nodes, currentId)
     .map((folder) => {
       const beneath = subtree(nodes, folder.id);
-      return {
-        id: folder.id,
-        name: folder.name,
-        count: rows.filter((r) => {
-          const parent = parentOf(r);
-          return parent !== null && beneath.has(parent);
-        }).length,
-      };
+      const inside = rows.filter((r) => {
+        const parent = parentOf(r);
+        return parent !== null && beneath.has(parent);
+      });
+      const byStatus: Record<string, number> = {};
+      for (const r of inside) byStatus[r.status] = (byStatus[r.status] ?? 0) + 1;
+      return { id: folder.id, name: folder.name, count: inside.length, byStatus };
     })
     .sort((a, b) => a.name.localeCompare(b.name));
 
@@ -121,9 +137,63 @@ export function sourceView(
     trail.unshift({ id: node.id, name: node.name });
     walk = node.parentFolder;
   }
+  // Everything reachable from here, not just this level: at the root that is
+  // the whole vault, inside a book it is the book.
+  const here = subtree(nodes, currentId);
+  const total = rows.filter((r) => {
+    const parent = parentOf(r);
+    return parent === null ? currentId === root.id : here.has(parent);
+  }).length;
+
   return {
     folders,
     sources,
+    total,
     breadcrumb: [{ id: null, name: ROOT_LABEL }, ...trail],
   };
+}
+
+/**
+ * The status tally as a phrase: "2 extracted · 1 inbox", or just
+ * "3 extracted" when they all agree. Ordered by the pipeline, not by count,
+ * so the same folder reads the same way from one render to the next.
+ */
+const STATUS_ORDER = ["INBOX", "EXTRACTING", "EXTRACTED", "ARCHIVED"];
+
+export function describeStatuses(byStatus: Record<string, number>): string {
+  const known = STATUS_ORDER.filter((s) => byStatus[s]);
+  const rest = Object.keys(byStatus)
+    .filter((s) => !STATUS_ORDER.includes(s))
+    .sort();
+  return [...known, ...rest]
+    .map((s) => `${byStatus[s]} ${s.toLowerCase()}`)
+    .join(" · ");
+}
+
+/* ── remembering where you were ──────────────────────────────────────────── */
+
+const OPEN_FOLDER_KEY = "bai:sources-open-folder";
+
+/**
+ * The folder the Sources list was left in.
+ *
+ * Opening a source unmounts the list, so without this every visit to a
+ * chapter sends you back to the root. Session-scoped: the place you were
+ * reading is worth keeping across a reload, not across a week.
+ */
+export function readOpenFolder(): string | null {
+  try {
+    return sessionStorage.getItem(OPEN_FOLDER_KEY) || null;
+  } catch {
+    return null;
+  }
+}
+
+export function writeOpenFolder(folderId: string | null): void {
+  try {
+    if (folderId) sessionStorage.setItem(OPEN_FOLDER_KEY, folderId);
+    else sessionStorage.removeItem(OPEN_FOLDER_KEY);
+  } catch {
+    // Private mode or a full quota only costs the remembered position.
+  }
 }

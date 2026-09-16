@@ -1,8 +1,14 @@
-import { describe, expect, it } from "vitest";
-import { sourceView, type TreeNode } from "./source-tree.js";
+import { beforeEach, describe, expect, it } from "vitest";
+import {
+  describeStatuses,
+  readOpenFolder,
+  sourceView,
+  writeOpenFolder,
+  type TreeNode,
+} from "./source-tree.js";
 import type { SourceRow } from "./source-search.js";
 
-const row = (id: string, title = id): SourceRow => ({
+const row = (id: string, status = "INBOX", title = id): SourceRow => ({
   id,
   name: title,
   title,
@@ -10,7 +16,7 @@ const row = (id: string, title = id): SourceRow => ({
   author: null,
   url: null,
   sourceType: null,
-  status: "INBOX",
+  status,
   claimCount: 0,
   createdBy: null,
 });
@@ -92,5 +98,103 @@ describe("sourceView", () => {
     // one and not yet the other must not disappear from the root.
     const v = sourceView([...ROWS, row("s-unknown")], NODES, null);
     expect(v.sources.map((s) => s.id)).toContain("s-unknown");
+  });
+});
+
+describe("sourceView status tally", () => {
+  it("counts each status beneath a folder, so a mixed book says so", () => {
+    // The whole reason a folder cannot sit inside one status group: it is
+    // not in one status.
+    const rows = [
+      row("s-ch1", "EXTRACTED"),
+      row("s-ch2", "EXTRACTED"),
+      row("s-deep", "INBOX"),
+      row("s-loose", "INBOX"),
+    ];
+    const v = sourceView(rows, NODES, null);
+    expect(v.folders[0].byStatus).toEqual({ EXTRACTED: 2, INBOX: 1 });
+  });
+
+  it("reports a single status when every source beneath shares one", () => {
+    const rows = [
+      row("s-ch1", "EXTRACTED"),
+      row("s-ch2", "EXTRACTED"),
+      row("s-deep", "EXTRACTED"),
+      row("s-loose", "INBOX"),
+    ];
+    expect(sourceView(rows, NODES, null).folders[0].byStatus).toEqual({
+      EXTRACTED: 3,
+    });
+  });
+
+  it("totals every source at or beneath the current folder", () => {
+    // What the header counts: the whole vault at the root, the book inside it.
+    const rows = [row("s-loose"), row("s-ch1"), row("s-ch2"), row("s-deep")];
+    expect(sourceView(rows, NODES, null).total).toBe(4);
+    expect(sourceView(rows, NODES, "f-book").total).toBe(3);
+    expect(sourceView(rows, NODES, "f-part").total).toBe(1);
+  });
+
+  it("counts what a search matched when flattened", () => {
+    const rows = [row("s-ch1"), row("s-ch2")];
+    expect(sourceView(rows, NODES, "f-book", { flatten: true }).total).toBe(2);
+  });
+});
+
+describe("describeStatuses", () => {
+  it("collapses to one phrase when every source agrees", () => {
+    expect(describeStatuses({ EXTRACTED: 3 })).toBe("3 extracted");
+  });
+
+  it("lists a mixed folder in pipeline order, not by count", () => {
+    // Stable ordering matters: the same folder must read the same way
+    // between renders, and INBOX first is what a reader scans for.
+    expect(describeStatuses({ EXTRACTED: 2, INBOX: 1 })).toBe(
+      "1 inbox · 2 extracted",
+    );
+  });
+
+  it("puts an unrecognised status last rather than dropping it", () => {
+    expect(describeStatuses({ INBOX: 1, WEIRD: 2 })).toBe("1 inbox · 2 weird");
+  });
+
+  it("is empty for an empty folder", () => {
+    expect(describeStatuses({})).toBe("");
+  });
+});
+
+describe("remembering the open folder", () => {
+  beforeEach(() => sessionStorage.clear());
+
+  it("round-trips the folder you were in", () => {
+    writeOpenFolder("f-book");
+    expect(readOpenFolder()).toBe("f-book");
+  });
+
+  it("clears back to the root", () => {
+    writeOpenFolder("f-book");
+    writeOpenFolder(null);
+    expect(readOpenFolder()).toBeNull();
+  });
+
+  it("reads null when nothing was stored", () => {
+    expect(readOpenFolder()).toBeNull();
+  });
+
+  it("survives storage being unavailable", () => {
+    // Private mode: losing your place must not take the list down with it.
+    const original = globalThis.sessionStorage;
+    Object.defineProperty(globalThis, "sessionStorage", {
+      configurable: true,
+      get() {
+        throw new Error("denied");
+      },
+    });
+    expect(() => writeOpenFolder("f-book")).not.toThrow();
+    expect(readOpenFolder()).toBeNull();
+    Object.defineProperty(globalThis, "sessionStorage", {
+      configurable: true,
+      value: original,
+    });
   });
 });
