@@ -1,6 +1,7 @@
 import { describe, it, expect, beforeEach, afterEach, vi } from "vitest";
 import type { PHDocument } from "document-model";
 import {
+  DELETED_TOMBSTONE_MS,
   DOC_CACHE_MAX_AGE_MS,
   DOC_CACHE_MAX_ENTRIES,
   DOC_CACHE_TTL_MS,
@@ -10,14 +11,15 @@ import {
   fetchThroughCache,
   handleDocumentMutation,
   isStale,
+  markDocumentDeleted,
   peekDoc,
   putDoc,
   recallIds,
   rememberIds,
   resetDocCache,
   subscribeDocMutations,
-  wireDocMutationEvents,
   type DocFetchOutcome,
+  wireDocMutationEvents,
 } from "./reactor-doc-cache.js";
 
 function doc(id: string, title = id): PHDocument {
@@ -279,6 +281,52 @@ describe("reactor-doc-cache", () => {
 
       expect(outcome).toEqual({ kind: "error" });
       expect(cachedDocsFor(["a"], T0).map(title)).toEqual(["last-good"]);
+    });
+
+    it("stops asking for a document this client deleted", async () => {
+      // The drive tree is the source of the id list, so until it refreshes
+      // a deleted document is still polled — every tick a request, a
+      // GraphQL error, a reactor log line and a toast. The tombstone
+      // answers locally instead.
+      putDoc("a", doc("a"), T0);
+      markDocumentDeleted("a", T0);
+
+      const fetcher = vi.fn(
+        (): Promise<DocFetchOutcome> => Promise.resolve({ kind: "doc", doc: doc("a") }),
+      );
+      const outcome = await fetchThroughCache("a", fetcher, () => T0);
+
+      expect(outcome).toEqual({ kind: "missing" });
+      expect(fetcher).not.toHaveBeenCalled();
+      expect(peekDoc("a", T0)).toBeUndefined();
+    });
+
+    it("tells mounted views so the row disappears without a round trip", () => {
+      const seen: string[] = [];
+      const stop = subscribeDocMutations((id) => seen.push(id));
+      markDocumentDeleted("a", T0);
+      stop();
+      expect(seen).toEqual(["a"]);
+    });
+
+    it("forgets the tombstone once the tree has had time to catch up", async () => {
+      // Not permanent: the map would grow for the session, and an id that
+      // came back must be fetchable again.
+      markDocumentDeleted("a", T0);
+      const fetcher = vi.fn(
+        (): Promise<DocFetchOutcome> => Promise.resolve({ kind: "doc", doc: doc("a") }),
+      );
+      await fetchThroughCache("a", fetcher, () => T0 + DELETED_TOMBSTONE_MS + 1);
+      expect(fetcher).toHaveBeenCalled();
+    });
+
+    it("leaves other documents alone", async () => {
+      markDocumentDeleted("a", T0);
+      const fetcher = vi.fn(
+        (): Promise<DocFetchOutcome> => Promise.resolve({ kind: "doc", doc: doc("b") }),
+      );
+      await fetchThroughCache("b", fetcher, () => T0);
+      expect(fetcher).toHaveBeenCalled();
     });
 
     it("reports a thrown fetcher as an error rather than rejecting", async () => {

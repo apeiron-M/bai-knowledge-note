@@ -150,6 +150,46 @@ export function everyDocCached(
 }
 
 /** Drop `id` and invalidate any read of it that is already in flight. */
+/**
+ * How long a deleted id is answered locally.
+ *
+ * Long enough for the drive tree to refresh and stop listing it; short
+ * enough that the map does not grow for the session, and that an id which
+ * somehow returns becomes fetchable again.
+ */
+export const DELETED_TOMBSTONE_MS = 60_000;
+const deletedAt = new Map<string, number>();
+
+/**
+ * Record that THIS client deleted a document.
+ *
+ * The id list every view polls comes from the drive tree, so between the
+ * delete and the tree refreshing, a deleted document is still asked for on
+ * every tick — each one a request, a GraphQL error, a line in the reactor
+ * log and a toast at the user. Evicting is not enough, because eviction
+ * only means "fetch it again". This says "it is gone", so the fetch is
+ * answered locally and mounted views drop the row at once.
+ */
+export function markDocumentDeleted(id: string, now = Date.now()): void {
+  evictDoc(id);
+  deletedAt.set(id, now);
+  for (const listener of mutationListeners) {
+    try {
+      listener(id);
+    } catch {
+      /* one broken subscriber must not break the rest */
+    }
+  }
+}
+
+function isTombstoned(id: string, now: number): boolean {
+  const at = deletedAt.get(id);
+  if (at === undefined) return false;
+  if (now - at < DELETED_TOMBSTONE_MS) return true;
+  deletedAt.delete(id);
+  return false;
+}
+
 export function evictDoc(id: string): void {
   entries.delete(id);
   inFlight.delete(id);
@@ -176,6 +216,13 @@ export function fetchThroughCache(
   // `maxAgeMs` of staleness (a remount, a tab switch) skips the request; a
   // caller that cannot (a poll tick, an explicit refetch) passes 0 and keeps
   // the original always-revalidate behaviour, which is the default.
+  // A document this client deleted is answered without a request: the
+  // server would say the same thing, loudly, once per poll tick.
+  if (isTombstoned(id, now())) {
+    entries.delete(id);
+    return Promise.resolve({ kind: "missing" });
+  }
+
   if (maxAgeMs > 0) {
     const at = now();
     const cached = peekDoc(id, at);
@@ -261,6 +308,7 @@ export function resetDocCache(): void {
   inFlight.clear();
   generations.clear();
   retainedIds.clear();
+  deletedAt.clear();
 }
 
 let wired = false;
@@ -278,8 +326,14 @@ export function wireDocMutationEvents(): void {
       .detail;
     if (detail?.identifier) handleDocumentMutation(detail.identifier);
   };
+  const onDeleted = (event: Event) => {
+    const detail = (event as CustomEvent<{ identifier?: string } | undefined>)
+      .detail;
+    if (detail?.identifier) markDocumentDeleted(detail.identifier);
+  };
   window.addEventListener("MutateDocument", onMutated);
   window.addEventListener("MutateDocumentAsync", onMutated);
+  window.addEventListener("DeleteDocument", onDeleted);
 }
 
 wireDocMutationEvents();

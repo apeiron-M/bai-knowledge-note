@@ -119,6 +119,24 @@ export function announceDocumentMutation(identifier: string): void {
 }
 
 /**
+ * Announce that a document is GONE, which is not the same as changed.
+ *
+ * A mutation means "read it again"; a delete means "stop reading it". Sent
+ * as its own event because the id lists views poll come from the drive
+ * tree, and until that refreshes a deleted document is still requested on
+ * every tick — each one answered `Document not found`, logged by the
+ * reactor and toasted at the user.
+ *
+ * An event rather than a direct call: this module is shared, and the cache
+ * that acts on it belongs to the vault editor.
+ */
+export function announceDocumentDeleted(identifier: string): void {
+  window.dispatchEvent(
+    new CustomEvent("DeleteDocument", { detail: { identifier } }),
+  );
+}
+
+/**
  * Apply a batch of actions to one document on the server. The reactor
  * commits the whole batch or rolls back — no partial application.
  */
@@ -292,6 +310,8 @@ export async function deleteDocumentRemote(
     `mutation VaultDelete($id: String!) { deleteDocument(identifier: $id) }`,
     { id: documentId },
   );
-  announceDocumentMutation(documentId);
+  announceDocumentDeleted(documentId);
+  // The drive DID change — its node list lost an entry — so that stays a
+  // mutation.
   if (driveId) announceDocumentMutation(driveId);
 }
