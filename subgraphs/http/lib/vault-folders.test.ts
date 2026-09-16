@@ -90,3 +90,52 @@ describe("resolveVaultFolder", () => {
     ).rejects.toMatchObject({ status: 400, code: "FOLDER_UNRESOLVED" });
   });
 });
+
+describe("placing a source in a subfolder of /sources", () => {
+  // A book split into chapters: one folder under /sources holding them all.
+  const withBook = [
+    ...nodes,
+    { id: "f-book", name: "Building the Knowledge Vault", kind: "folder", parentFolder: "f-sources" },
+    { id: "f-book-part", name: "Part II", kind: "folder", parentFolder: "f-book" },
+  ];
+
+  it("accepts the canonical folder itself", async () => {
+    await expect(
+      resolveVaultFolder(deps(withBook), "drive", "bai/source", "f-sources"),
+    ).resolves.toBe("f-sources");
+  });
+
+  it("accepts a folder nested under it, at any depth", async () => {
+    await expect(
+      resolveVaultFolder(deps(withBook), "drive", "bai/source", "f-book"),
+    ).resolves.toBe("f-book");
+    await expect(
+      resolveVaultFolder(deps(withBook), "drive", "bai/source", "f-book-part"),
+    ).resolves.toBe("f-book-part");
+  });
+
+  it("still defaults to /sources when none is asked for", async () => {
+    await expect(
+      resolveVaultFolder(deps(withBook), "drive", "bai/source"),
+    ).resolves.toBe("f-sources");
+  });
+
+  it("refuses a folder that belongs to another part of the vault", async () => {
+    // The guardrail: sources must not scatter across the drive.
+    await expect(
+      resolveVaultFolder(deps(withBook), "drive", "bai/source", "f-notes"),
+    ).rejects.toMatchObject({ status: 400, code: "FOLDER_OUTSIDE_VAULT_PATH" });
+  });
+
+  it("refuses an id that is a document, not a folder", async () => {
+    await expect(
+      resolveVaultFolder(deps(withBook), "drive", "bai/source", "d-1"),
+    ).rejects.toMatchObject({ status: 400, code: "FOLDER_OUTSIDE_VAULT_PATH" });
+  });
+
+  it("refuses an id the drive does not hold at all", async () => {
+    await expect(
+      resolveVaultFolder(deps(withBook), "drive", "bai/source", "nope"),
+    ).rejects.toMatchObject({ status: 400, code: "FOLDER_OUTSIDE_VAULT_PATH" });
+  });
+});

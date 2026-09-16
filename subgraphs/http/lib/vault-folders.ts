@@ -57,16 +57,52 @@ export function folderPaths(nodes: DriveNode[]): Map<string, string> {
 }
 
 /**
+ * Is `candidateId` the folder `ancestorId`, or a folder nested under it?
+ *
+ * The containment walk carries a `seen` guard: a cycle in `parentFolder`
+ * would otherwise spin forever, and this runs on a request path.
+ */
+export function isWithinFolder(
+  nodes: DriveNode[],
+  candidateId: string,
+  ancestorId: string,
+): boolean {
+  const byId = new Map<string, DriveNode>();
+  for (const node of nodes) if (node.id) byId.set(node.id, node);
+
+  const candidate = byId.get(candidateId);
+  // A document id is not a placement target, however convincing it looks.
+  if (!candidate || !isFolder(candidate)) return false;
+  if (candidateId === ancestorId) return true;
+
+  let parent = candidate.parentFolder ?? undefined;
+  const seen = new Set<string>([candidateId]);
+  while (parent && !seen.has(parent)) {
+    if (parent === ancestorId) return true;
+    seen.add(parent);
+    parent = byId.get(parent)?.parentFolder ?? undefined;
+  }
+  return false;
+}
+
+/**
  * Resolves the folder a document of `documentType` must be created in.
  *
  * Throws rather than falling back to the drive root. A document at the root is
  * invisible to the pipeline and to the app's folder views, and a create whose
  * containment quietly degraded is exactly how orphans accumulate.
+ *
+ * `requestedFolderId` places the document in a SUBFOLDER of its canonical
+ * home — a book's chapters under `/sources/<book>`, say. It must be that home
+ * or something nested under it: the point of the fixed rule is that a caller
+ * cannot scatter sources across the drive, and an arbitrary folder id would
+ * hand that back. Absent, the canonical folder is used, exactly as before.
  */
 export async function resolveVaultFolder(
   deps: HttpRouteDeps,
   driveId: string,
   documentType: string,
+  requestedFolderId?: string | null,
 ): Promise<string> {
   const path = VAULT_FOLDERS[documentType];
   if (!path) {
@@ -91,5 +127,15 @@ export async function resolveVaultFolder(
       [{ path, rule: "VAULT_LAYOUT" }],
     );
   }
-  return folderId;
+  if (!requestedFolderId) return folderId;
+  if (!isWithinFolder(nodes, requestedFolderId, folderId)) {
+    throw new HttpError(
+      400,
+      "FOLDER_OUTSIDE_VAULT_PATH",
+      `${requestedFolderId} is not ${path} or a folder within it, so a ` +
+        `${documentType} cannot be placed there.`,
+      [{ path: "parentFolder", rule: "VAULT_LAYOUT" }],
+    );
+  }
+  return requestedFolderId;
 }

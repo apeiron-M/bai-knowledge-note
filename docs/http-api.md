@@ -24,7 +24,8 @@ route that reads the index takes `drive` (a document UUID).
 | `GET` | `notes/:id.md` | `renown` | same | markdown with YAML frontmatter; edges as absolute links carrying `?drive=` |
 | `POST` | `actions` | `renown` | body `{ documentId, actions[], wait?, allowLiteralEscapes? }` | `{ revision, operations: [{ index, type, error, attribution }], readBack, jobId }`; `202 { jobId }` when `wait: false` |
 | `POST` | `notes` | `renown` | body `{ drive, documentType?, notes: [{ name, actions? }] }` (max 25) | `201 { drive, parentFolder, notes: [{ id, name, parentFolder, path, readBack, operations }] }` — creates many documents and places them in **one** containment dispatch |
-| `POST` | `sources` | `renown` | body `{ drive, title, content, sourceType?, description?, author?, url?, publishedAt?, method?, tool?, queue? }` | `201 { id, parentFolder, path, status, revision, operations, readBack, jobId, task? }` — ingests a source from content alone; **the route places it in `/sources` itself** |
+| `POST` | `sources/folders` | `renown` | body `{ drive, name }`; needs `canWrite` | `201 { id, name, path, created: true }`, or `200 { … created: false }` when a folder of that name already exists under `/sources`. Groups sources for navigation — see [Grouping sources](#grouping-sources) |
+| `POST` | `sources` | `renown` | body `{ drive, title, content, sourceType?, description?, author?, url?, publishedAt?, method?, tool?, queue?, parentFolder? }` | `201 { id, parentFolder, path, status, revision, operations, readBack, jobId, task? }` — ingests a source from content alone; **the route places it in `/sources` itself**. `parentFolder` is a folder **id** and must be `/sources` or a folder within it; anything else is `400 FOLDER_OUTSIDE_VAULT_PATH` |
 | `POST` | `relationships` | `renown` | body `{ source, target, type, reason?, confidence? }` | `{ revision, operations, readBack, jobId }` |
 | `PATCH` | `relationships` | `renown` | same body; replaces the stored `reason`/`confidence` | same |
 | `DELETE` | `relationships` | `renown` | body `{ source, target, type }` | same |
@@ -221,6 +222,41 @@ queries, and selecting neither costs none:
   excludes nodes that are themselves hits, and semantic search returns both sides of a
   disagreement often enough that the `CONTRADICTS` joining two results would otherwise be the one
   fact nobody sees. The same edge is reported on both of its ends, written source → target.
+
+## Grouping sources
+
+One long source is expensive to keep: every operation stores a full JSON copy
+of the document's state, so each `ADD_EXTRACTED_CLAIM` on a book-sized source
+re-serialises the whole book. Splitting it into chapters fixes that and creates
+a new problem — twenty loose sources with nothing saying they are one book.
+
+`POST sources/folders` restores it, for **navigation only**. Everything a query
+needs still lives in each source's own fields; the folder is what a reader
+browses.
+
+```bash
+# once per book
+curl -s -H "$AUTH" -X POST "$BASE/sources/folders" \
+  -d '{"drive":"<uuid>","name":"Building the Knowledge Vault"}'
+# -> { "id": "f-book", "name": "…", "path": "/sources/Building the Knowledge Vault", "created": true }
+
+# then every chapter names that id
+curl -s -H "$AUTH" -X POST "$BASE/sources" \
+  -d '{"drive":"<uuid>","title":"Chapter 3","content":"…","parentFolder":"f-book"}'
+```
+
+**Why a folder id and not a name on `POST sources`.** A name would make the
+server guess which folder was meant on every ingest, and twenty chapters racing
+would mint several folders sharing one name. One deliberate call creates the
+folder; the chapters all name the same id. `POST sources/folders` is itself
+idempotent on name within `/sources`, so a re-run returns the existing folder
+rather than a duplicate — a folder of the same name elsewhere in the drive is a
+different folder and is ignored.
+
+**The guardrail survives.** `parentFolder` must be `/sources` or something
+nested under it. The point of the fixed layout is that no caller can scatter
+sources across the drive, and accepting an arbitrary folder id would hand that
+back.
 
 ## Unauthenticated routes
 

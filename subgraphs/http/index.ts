@@ -13,6 +13,7 @@ import { createNotesRoute } from "./routes/notes.js";
 import { createRelationshipRoute } from "./routes/relationships.js";
 import { createNotesRoute as createNotesBatchRoute } from "./routes/create.js";
 import { createIngestSourceRoute } from "./routes/sources.js";
+import { createSourceFolderRoute } from "./routes/source-folders.js";
 import { registerStructureRoutes } from "./routes/structure.js";
 import { createClaimRoute } from "./routes/tasks.js";
 import { createSearchRoute } from "./routes/search.js";
@@ -110,6 +111,13 @@ export class HttpSubgraph extends BaseSubgraph {
         "notes",
         { auth: "renown", body: "parsed", maxBodyBytes: 2 * 1024 * 1024 },
         createNotesBatchRoute(deps),
+      );
+      // Registered BEFORE `sources` so the more specific path matches first:
+      // routes match in registration order.
+      this.http.post(
+        "sources/folders",
+        { auth: "renown", body: "parsed" },
+        createSourceFolderRoute(deps),
       );
       this.http.post(
         "sources",

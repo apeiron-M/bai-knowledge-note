@@ -42,9 +42,11 @@ interface DriveNode {
 /**
  * `POST sources` — ingest a source from its content alone.
  *
- * The caller supplies content; the API decides where it lives. A source always
- * lands in `/sources`, resolved from the drive at request time, and the route
- * refuses `parentFolder` outright so no client can put one elsewhere.
+ * The caller supplies content; the API decides where it lives. A source lands
+ * in `/sources`, resolved from the drive at request time. `parentFolder` may
+ * name a folder WITHIN `/sources` — a book's chapters grouped under one — and
+ * is refused anywhere else, so the rule that sources cannot scatter across the
+ * drive survives having an option at all.
  */
 export function createIngestSourceRoute(deps: HttpRouteDeps) {
   return async function handleIngestSource(
@@ -71,7 +73,6 @@ export function createIngestSourceRoute(deps: HttpRouteDeps) {
         "method",
         "tool",
         "queue",
-        // allowed through so it hits the specific placement error below
         "parentFolder",
       ]);
       if (!body.drive) {
@@ -82,14 +83,6 @@ export function createIngestSourceRoute(deps: HttpRouteDeps) {
       }
       if (!body.content?.trim()) {
         throw new HttpError(400, "BAD_REQUEST", "content is required");
-      }
-      if (body.parentFolder !== undefined) {
-        throw new HttpError(
-          400,
-          "BAD_REQUEST",
-          "parentFolder is not accepted: a source is always placed in /sources",
-          [{ path: "parentFolder", rule: "VAULT_LAYOUT" }],
-        );
       }
       const sourceType = body.sourceType ?? "MANUAL_ENTRY";
       if (!SOURCE_TYPES.has(sourceType)) {
@@ -106,7 +99,12 @@ export function createIngestSourceRoute(deps: HttpRouteDeps) {
       const driveId = await canonicalForWrite(deps, body.drive, ctx);
       // Resolve placement BEFORE creating anything: a drive without /sources
       // must fail with nothing written, not leave an orphan behind.
-      const folderId = await resolveVaultFolder(deps, driveId, SOURCE_TYPE);
+      const folderId = await resolveVaultFolder(
+        deps,
+        driveId,
+        SOURCE_TYPE,
+        body.parentFolder,
+      );
 
       const module = await deps.reactorClient.getDocumentModelModule(SOURCE_TYPE);
       const draft = module.utils.createDocument() as PHDocument;

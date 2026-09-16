@@ -19,6 +19,8 @@ const ctx = {
 
 const FOLDERS = [
   { id: "f-sources", name: "sources", kind: "folder" },
+  // a book's chapters grouped under /sources
+  { id: "f-book", name: "Building the Knowledge Vault", kind: "folder", parentFolder: "f-sources" },
   { id: "f-knowledge", name: "knowledge", kind: "folder" },
   { id: "f-notes", name: "notes", kind: "folder", parentFolder: "f-knowledge" },
   { id: "f-ops", name: "ops", kind: "folder" },
@@ -130,14 +132,32 @@ describe("POST sources", () => {
     expect(actions[0].input.createdBy).toBe("0xabc");
   });
 
-  it("refuses parentFolder so nothing can be placed elsewhere", async () => {
+  it("refuses a parentFolder outside /sources, so nothing scatters", async () => {
     const d = deps();
     const res = await createIngestSourceRoute(d)(
       post({ drive: "drive", title: "T", content: "C", parentFolder: "f-notes" }),
       ctx,
     );
     expect(res.status).toBe(400);
+    expect(await res.json()).toMatchObject({ code: "FOLDER_OUTSIDE_VAULT_PATH" });
     expect(d.reactorClient.createDocumentInDrive).not.toHaveBeenCalled();
+  });
+
+  it("places a source in a folder within /sources when asked", async () => {
+    // A book's chapters: each ingest names the folder the book was given.
+    // The drive is read back to verify placement, so the fixture must show
+    // the document actually landing in f-book.
+    const d = deps({}, [
+      { id: "src-1", name: "Chapter 3", documentType: "bai/source", parentFolder: "f-book" },
+    ]);
+    const res = await createIngestSourceRoute(d)(
+      post({ drive: "drive", title: "Chapter 3", content: "C", parentFolder: "f-book", queue: false }),
+      ctx,
+    );
+    expect(res.status).toBe(201);
+    const body = (await res.json()) as { parentFolder: string; path: string };
+    expect(body.parentFolder).toBe("f-book");
+    expect(body.path).toBe("/sources/Building the Knowledge Vault");
   });
 
   it("refuses an invalid sourceType instead of dropping it silently", async () => {
