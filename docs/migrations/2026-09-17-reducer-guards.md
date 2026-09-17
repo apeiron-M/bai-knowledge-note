@@ -114,7 +114,7 @@ drives has an auditable repair:
 | `extractionStats.claimCount ≠ len(extractedClaims)` | [`scripts/repair-source-stats.mjs`](../../scripts/repair-source-stats.mjs) — dry run, then `--apply`; keeps `skippedCount`, recomputes `skipRate`, re-records through `RECORD_EXTRACTION_STATS` | `cf9b51d2…`: 50/50 repaired 2026-09-17; both drives read 0 mismatches |
 | queue `completedCount` / `activeCount` drift | `RECONCILE_COUNTERS { updatedAt }` — new queue operation, recomputes both from the tasks | dispatched on all three queues 2026-09-17: `0bcc7d77…` 139 → 81; `4666b59e…` and `accde087…` consistent |
 | `EXTRACTED` sources with no stats (86 on `cf9b51d2…`) | **none** — inventing a `skippedCount` would be a lie; stays a health finding | — |
-| duplicate singletons on `cf9b51d2…` | vault-config: `/self/VaultConfig` (`d8caf037…`) is empty, `(copy) 1` (`1eb4724a…`) holds the config → delete the empty one, rename the copy. Health-report `(copy) 1` (`2f3420ec…`, 2026-09-03) is a superseded snapshot → delete. Queue `(copy) 1` (`accde087…`) holds 25 DONE tasks with handoffs → **keep**; the active queue is `4666b59e…` | pending a human: `switchboard docs delete` is irreversible |
+| duplicate singletons on `cf9b51d2…` | vault-config: `/self/VaultConfig` (`d8caf037…`) is empty, `(copy) 1` (`1eb4724a…`) holds the config → delete the empty one, rename the copy. Health-report `(copy) 1` (`2f3420ec…`, 2026-09-03) is a superseded snapshot → delete. Queue `(copy) 1` (`accde087…`) holds 25 DONE tasks with handoffs → **keep**; the active queue is `4666b59e…` | done 2026-09-17 on the owner's instruction: `d8caf037…` and `2f3420ec…` deleted, `1eb4724a…` renamed `VaultConfig`; queue `accde087…` kept |
 
 ## Deploy order
 
