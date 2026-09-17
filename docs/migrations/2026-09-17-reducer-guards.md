@@ -67,6 +67,43 @@ status dropdown is a legitimate manual path. "EXTRACTED without stats" stays a h
 - The model-specific `noteType` lint rule was removed: the generic `INVALID_INPUT` check (generated
   zod schema) now rejects it first, as `LINT_REACTOR`.
 
+## Replay on write — the hazard every reducer tightening carries
+
+**The reactor rebuilds a document by replaying its full operation history through the
+current reducers when it writes; reads serve the last stored state.** Observed 2026-09-17:
+a queue read 25 tasks, took one harmless `RECONCILE_COUNTERS`, and read 22 afterwards —
+its three `PROCESS_SOURCE` tasks had been recorded before `ADD_TASK` checked `taskType`,
+were rejected on replay, and their `COMPLETE_TASK`s with them. The stored operations still
+show `error: null`; only the materialised state changed.
+
+Consequences:
+
+- An operation that was valid when recorded but is rejected by the current reducer
+  disappears from the state on the document's **next write** — silently, per document,
+  whenever that document happens to be touched.
+- `docs get` / `GET notes/:id` show the *stored* state, which is not what the next write
+  will produce. The only honest measurement is to replay.
+- New drives are unaffected: their history is written under the guards.
+
+Tools (this repo, `bun run build` first — they replay through `dist/`):
+
+| Step | Tool |
+|---|---|
+| Measure | [`scripts/audit-replay-drift.mjs --drive <id>`](../../scripts/audit-replay-drift.mjs) replays every document as the server would and diffs against stored state. **Harmful** drift = a stored value the replay will not reproduce (exit 2). **Benign** drift = replay only adds a field the document predates (`knowledge-note.updatedAt`, source provenance the old reducer dropped). Writes `drift-<drive>.json`. |
+| Re-assert | for each harmful document, dispatch legal new operations that make the replayed state converge on the stored one (last write wins): re-`SET_NOTE_TYPE` with the enum value, re-`UPDATE_DIMENSION` with the enum key, walk a source back through `EXTRACTING → EXTRACTED`, `PROMOTE` then `IMPLEMENT` an observation, `RECONCILE_COUNTERS` a queue. State a replay *cannot* reproduce (a task whose type no longer exists) is recorded as lost, not faked. |
+| Prove | re-run the audit: harmful must be 0. |
+
+Record, 2026-09-17:
+
+| Drive | Before re-assert | Re-asserted | After |
+|---|---|---|---|
+| `c60679ae…` (my-personal-vault) | 0 harmful · 241 benign · 25 rejected-history/same-state | — | 0 harmful |
+| `cf9b51d2…` | **354 harmful** — 353 sources whose history went `INBOX → EXTRACTED` directly (they would revert to `INBOX`; 256 also losing stats recorded before their claims) and the vault-config's 8 dimensions (lowercase keys) · 981 benign · 51 rejected-history/same-state | 706 `SET_SOURCE_STATUS` (`EXTRACTING`, `EXTRACTED`), 256 `RECORD_EXTRACTION_STATS`, 8 `UPDATE_DIMENSION` — 354/354 verified | **0 harmful** · 982 benign · 405 rejected-history/same-state |
+
+Known loss on `cf9b51d2…`: queue `accde087…` dropped its three `PROCESS_SOURCE` tasks (a
+type with no phase order) on its first post-guard write; their operations remain in the log,
+a task with that type cannot be re-added, and nothing was faked to replace them.
+
 ## Repairs for live data the guards do not rewrite
 
 Guards constrain future writes; they do not rewrite history. Each drift found on the local
@@ -75,7 +112,7 @@ drives has an auditable repair:
 | Drift | Repair | Record |
 |---|---|---|
 | `extractionStats.claimCount ≠ len(extractedClaims)` | [`scripts/repair-source-stats.mjs`](../../scripts/repair-source-stats.mjs) — dry run, then `--apply`; keeps `skippedCount`, recomputes `skipRate`, re-records through `RECORD_EXTRACTION_STATS` | `cf9b51d2…`: 50/50 repaired 2026-09-17; both drives read 0 mismatches |
-| queue `completedCount` / `activeCount` drift | `RECONCILE_COUNTERS { updatedAt }` — new queue operation, recomputes both from the tasks | `c60679ae…` queue was 139 for 81 tasks — dispatch after deploying this package |
+| queue `completedCount` / `activeCount` drift | `RECONCILE_COUNTERS { updatedAt }` — new queue operation, recomputes both from the tasks | dispatched on all three queues 2026-09-17: `0bcc7d77…` 139 → 81; `4666b59e…` and `accde087…` consistent |
 | `EXTRACTED` sources with no stats (86 on `cf9b51d2…`) | **none** — inventing a `skippedCount` would be a lie; stays a health finding | — |
 | duplicate singletons on `cf9b51d2…` | vault-config: `/self/VaultConfig` (`d8caf037…`) is empty, `(copy) 1` (`1eb4724a…`) holds the config → delete the empty one, rename the copy. Health-report `(copy) 1` (`2f3420ec…`, 2026-09-03) is a superseded snapshot → delete. Queue `(copy) 1` (`accde087…`) holds 25 DONE tasks with handoffs → **keep**; the active queue is `4666b59e…` | pending a human: `switchboard docs delete` is irreversible |
 
