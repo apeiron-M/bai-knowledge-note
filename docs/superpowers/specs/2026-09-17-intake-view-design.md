@@ -1,6 +1,6 @@
 # Intake view — design
 
-**Status:** design proposal. Nothing in the React editor has been changed.
+**Status:** approved for execution 2026-09-17, with the amendments recorded at the head of the plan (`plans/2026-09-17-intake-view.md`). Nothing in the React editor has been changed yet.
 **Date:** 2026-09-17
 **Depends on:** `specs/2026-09-17-convert-subgraph-design.md` (the conversion
 subgraph), whose §12 defers exactly this view.
@@ -40,7 +40,7 @@ Answers given by the product owner, 2026-09-17. The plan implements these.
 | 4 | **`SourceType` is chosen per file and shared by all its sections** (one book ⇒ every section is `BOOK_CHAPTER`). |
 | 5 | **The tab must stay open.** In-flight conversions live only in the tab; a reload loses them, and the UI says so. |
 | 6 | *Proposed, not yet answered:* **Tier 1 progress** (§9) — per-file state, free today; page-level progress is a later service change. |
-| 7 | *Proposed:* `SourceType` default — multi-section file ⇒ `BOOK_CHAPTER`, single-section ⇒ `ARTICLE`, both overridable per file. |
+| 7 | **`SourceType` default is by format, never `BOOK_CHAPTER`** — `html`/`htm` ⇒ `WEB_PAGE`, `vtt`/audio/video ⇒ `TRANSCRIPT`, everything else ⇒ `ARTICLE`; overridable per file. Decided 2026-09-17: a section count is a shape, not a genre — a two-section CV is not a book. |
 | 8 | *Proposed:* creation provenance — `tool: "docling.rs"`, `method: "converted"`, and `convertedBy: "docling.rs"` on the attachment. |
 
 ## 4. Architecture
@@ -75,7 +75,7 @@ empty vault ──▶ Intake landing        "Welcome to your knowledge vault…"
 | step | call | returns |
 |---|---|---|
 | supported formats | `GET …/convert/health` | `{configured, ok, ready, backend, formats[29], missing}` |
-| convert | `POST …/convert?filename=<name>` (raw body) | `{filename, format, chars, chunks, sections[], plan, timings}` |
+| convert | `POST …/convert?filename=<name>&markdown=1` (raw body) | `{filename, format, chars, chunks, sections[{…, mergedFrom[], markdownRange}], plan{…, rejoinedSections}, markdown, timings}` — each source's `content` is the markdown sliced at the section's `markdownRange` (tables intact); chunk `text` is the fallback |
 | folder per document | `POST <vault>/sources/folders` `{drive, name}` | `{id, name, path, created}` — **idempotent on name within `/sources`** |
 | create each section | `POST <vault>/sources` `{drive, title, content, sourceType, parentFolder, queue, method, tool}` | `{id, path, status, task, …}` |
 | attach the original | `POST <vault>/actions` with `ATTACH_ORIGINAL_FILE` | the source's revision |
@@ -153,10 +153,14 @@ primary control. "Add sources" — the vault's word for this is *source*.
 ## 7. The review step
 
 One panel per converted file, listing the sections `deriveSections` produced:
-title, heading path, char count, chunk count. All ticked by default — the
-section rule already folded the undersized and split the oversized, so the
-default is "this is right"; the step exists so the user can *disagree*, not so
-they must assemble the result by hand.
+title, heading path, char count, chunk count, and — for a merged section — what
+it contains (`mergedFrom`). Ticked by default **except furniture**: the section
+rule already folded the undersized and split the oversized, so the default is
+"this is right"; but a title such as `[ contents ]`, `Praise for …`, `Index` or
+`Copyright` arrives unticked (`isLikelyFurniture`, a heuristic the user can
+override by re-ticking). Measured on the 238-page book at the default floor, the
+first two sections were exactly those. The step exists so the user can
+*disagree*, not so they must assemble the result by hand.
 
 The file-level controls sit above the list and apply to every section in it:
 
@@ -240,7 +244,7 @@ The view must be indistinguishable from what is there now:
 | conversion fails | that file's row shows failed + the server's message; the batch continues; retry on the row |
 | conversion succeeds, nothing is published | nothing was ever created — `POST convert` writes nothing |
 | tab closed or reloaded mid-conversion | work is lost; decision 5, warned up front |
-| publish partially fails | per-file publish is sequential and idempotent (folder by name, sources by content), so the row reports what landed and re-running does not duplicate |
+| publish partially fails | per-file publish is sequential; the folder is idempotent by name but **`POST sources` is not idempotent on content** (only the queue task is deduped per `documentRef`). The row records what landed (`publishedIds`) and refuses a second publish rather than duplicating; a partial failure is reported with the count that landed, and the remainder is a manual step |
 | attachment upload fails | the sources exist and are queued; the panel offers retry — a missing original must not read as an absent one (convert spec §12.1) |
 
 ## 12. Not in this plan
@@ -260,10 +264,16 @@ The view must be indistinguishable from what is there now:
    or does the model want a neutral `DOCUMENT` value?
 3. Does the section plan belong on each source as provenance (`method`/`tool`
    already anticipate this), or is the attachment's `convertedBy` enough?
-4. Section titles are the LLM-free heading text the extractor found. Should a
-   title that is obviously furniture (`[ contents ]`, `Praise for …`) be dropped
-   by default rather than ticked? Measured: 97 of 99 chunks on the 20-page sample
-   came back at heading depth 1, most of them furniture.
+4. ~~Should a title that is obviously furniture be dropped by default?~~
+   **Answered 2026-09-17: unticked by default, not dropped** — `isLikelyFurniture`
+   in `intake-model.ts` (§7). Kept in the list so the user can re-tick. The
+   calibrated version of the same step (a per-section judgement with a
+   confidence) is a later enhancement.
+5. The folding floor (`?minSectionChars=`, now on the route) is a real dial —
+   measured on the book: 2 000 → 117 sections, 4 000 → 68, 8 000 → 36. Offering
+   it in the review step needs either a re-conversion or a pure
+   `POST convert/sections` route over the chunks the client already holds.
+   Not in this plan.
 
 ## 14. Testing
 

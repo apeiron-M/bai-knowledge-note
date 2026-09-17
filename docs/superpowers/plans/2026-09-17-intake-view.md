@@ -10,6 +10,20 @@
 
 **Spec:** `docs/superpowers/specs/2026-09-17-intake-view-design.md`
 
+> **Amended 2026-09-17, before execution**, after a review of the plan against the code and against the convert route as it now is (contiguous-run grouping, `mergedFrom`, `markdownRange`, `rejoinedSections`, `?minSectionChars`). Seven gaps closed, one default changed:
+>
+> 1. **Sources are built from the markdown, not from chunk text.** Chunk text flattens tables (measured: a CV's education table came back as `🟤, 1 = … , 2 = …` triplets; the markdown holds the correct 3-column table). `convertFile` asks for `&markdown=1` and gives each section a `content` sliced by its `markdownRange`, falling back to `text` only when the range is null. `publishPlan` sends `content`. (Tasks 4, 6)
+> 2. **The `Section` type carries `mergedFrom` and `markdownRange`**, and the review shows what a merged section contains. Fixtures carry `plan.rejoinedSections`. (Tasks 3, 6, 7, 8)
+> 3. **Task 10 expects 117 sections** for the book, not 107 — the number under the current rule.
+> 4. **Re-publishing is refused, not duplicated.** `POST sources` is *not* idempotent on content (only the queue task is deduped per `documentRef`); a row remembers what it published and the button is disabled afterwards. (Tasks 3, 8)
+> 5. **Furniture is unticked by default.** `isLikelyFurniture(title)` — bracketed titles, praise, contents, index, copyright, colophon, revision history, "how to contact" — leaves those sections unticked; the user can re-tick. Measured on the book: the first two sections at the default floor are `Praise for …` (3.7k chars) and `[ contents ]` (13.7k). (Task 3, spec §13.4)
+> 6. **`VaultApi.get` is defined in Task 2**, where it belongs, not forward-referenced from Task 8.
+> 7. **Empty-vault detection is verified against what `fileNodes` holds** before it decides the default view: the drive app scaffolds twelve folders on first open. (Task 8 step 6)
+>
+> **Default changed:** `defaultSourceType` is **format-driven and never `BOOK_CHAPTER`** — `html`/`htm` ⇒ `WEB_PAGE`, `vtt`/audio/video ⇒ `TRANSCRIPT`, everything else ⇒ `ARTICLE`; per file, overridable. A section count is a shape, not a genre: a two-section CV is not a book.
+>
+> Not in this plan, recorded as follow-ups: the folding-floor dial in the review step (needs a pure `POST convert/sections` route or a re-conversion), and `original*` fields on `POST sources` to fold the per-source attach pass into the create.
+
 ## Global Constraints
 
 - **The vault's vocabulary wins at the UI surface.** *source*, *folder*, *Queue for processing*, `INBOX`/`EXTRACTING`/`EXTRACTED`/`ARCHIVED`. Never "chunk", never "document upload" — a raw chunk is a *part*, and what the user approves becomes *sources*.
@@ -146,7 +160,7 @@ approved. The point of the gate is that the shape is theirs.
   - `type VaultApiError = { status: number; code: string; message: string }`
   - `class VaultApiFailure extends Error { readonly status: number; readonly code: string; }`
   - `createVaultApi(options?: { fetchImpl?: typeof fetch; origin?: string }): VaultApi`
-  - `type VaultApi = { post<T>(path: string, body: unknown): Promise<T> }`
+  - `type VaultApi = { get<T>(path: string): Promise<T>; post<T>(path: string, body: unknown): Promise<T> }`
 
 - [ ] **Step 1: Write the failing test**
 
@@ -243,6 +257,20 @@ describe("createVaultApi", () => {
       code: "UNREACHABLE",
     });
   });
+
+  it("sends a GET with the bearer and no body", async () => {
+    // `GET convert/health` is how the picker learns its formats (Task 8).
+    const calls: RequestInit[] = [];
+    const fetchImpl = ((_url: string, init: RequestInit) => {
+      calls.push(init);
+      return Promise.resolve(ok({ configured: true, formats: ["pdf"] }));
+    }) as unknown as typeof fetch;
+    const api = createVaultApi({ fetchImpl, origin: "http://localhost:4001" });
+    const health = await api.get<{ formats: string[] }>("/convert/health");
+    expect(calls[0].method).toBe("GET");
+    expect(calls[0].body).toBeUndefined();
+    expect(health.formats).toEqual(["pdf"]);
+  });
 });
 ```
 
@@ -286,6 +314,7 @@ export class VaultApiFailure extends Error {
 }
 
 export type VaultApi = {
+  get<T>(path: string): Promise<T>;
   post<T>(path: string, body: unknown): Promise<T>;
 };
 
@@ -297,48 +326,47 @@ export function createVaultApi(
   options: { fetchImpl?: typeof fetch; origin?: string } = {},
 ): VaultApi {
   const doFetch = options.fetchImpl ?? fetch;
-  const origin = trimOrigin(
-    options.origin ?? resolveSwitchboardOrigin() ?? "",
-  );
+  const origin = trimOrigin(options.origin ?? resolveSwitchboardOrigin() ?? "");
+  const url = (path: string) => `${origin}/api/${PACKAGE}/${path.replace(/^\/+/, "")}`;
+
+  // One send for every verb, so the error handling and the URL shape exist once.
+  async function send<T>(fullUrl: string, init: RequestInit): Promise<T> {
+    let response: Response;
+    try {
+      response = await doFetch(fullUrl, init);
+    } catch (error) {
+      throw new VaultApiFailure(
+        0,
+        "UNREACHABLE",
+        `Could not reach the vault: ${error instanceof Error ? error.message : String(error)}`,
+      );
+    }
+    if (!response.ok) {
+      const text = await response.text().catch(() => "");
+      let code = "UNKNOWN";
+      let message = `The vault refused the request (${response.status}).`;
+      try {
+        const parsed = JSON.parse(text) as { error?: string; code?: string };
+        if (parsed.code) code = parsed.code;
+        if (parsed.error) message = parsed.error;
+      } catch {
+        // Not JSON: keep the status-shaped message above.
+      }
+      throw new VaultApiFailure(response.status, code, message);
+    }
+    return (await response.json()) as T;
+  }
 
   return {
+    async get<T>(path: string): Promise<T> {
+      return send<T>(url(path), { method: "GET", headers: await authHeaders() });
+    },
     async post<T>(path: string, body: unknown): Promise<T> {
-      const url = `${origin}/api/${PACKAGE}/${path.replace(/^\/+/, "")}`;
-      let response: Response;
-      try {
-        response = await doFetch(url, {
-          method: "POST",
-          headers: {
-            ...(await authHeaders()),
-            "content-type": "application/json",
-          },
-          body: JSON.stringify(body),
-        });
-      } catch (error) {
-        throw new VaultApiFailure(
-          0,
-          "UNREACHABLE",
-          `Could not reach the vault: ${
-            error instanceof Error ? error.message : String(error)
-          }`,
-        );
-      }
-
-      if (!response.ok) {
-        const text = await response.text().catch(() => "");
-        let code = "UNKNOWN";
-        let message = `The vault refused the request (${response.status}).`;
-        try {
-          const parsed = JSON.parse(text) as { error?: string; code?: string };
-          if (parsed.code) code = parsed.code;
-          if (parsed.error) message = parsed.error;
-        } catch {
-          // Not JSON: keep the status-shaped message above.
-        }
-        throw new VaultApiFailure(response.status, code, message);
-      }
-
-      return (await response.json()) as T;
+      return send<T>(url(path), {
+        method: "POST",
+        headers: { ...(await authHeaders()), "content-type": "application/json" },
+        body: JSON.stringify(body),
+      });
     },
   };
 }
@@ -350,7 +378,7 @@ export function createVaultApi(
 bun run test editors/knowledge-vault/lib/vault-api.test.ts
 ```
 
-Expected: PASS, 5 tests.
+Expected: PASS, 6 tests.
 
 - [ ] **Step 5: Typecheck and lint**
 
@@ -380,11 +408,14 @@ actually decided, so this is where the tests are.
 - Test: `editors/knowledge-vault/lib/intake-model.test.ts`
 
 **Interfaces:**
-- Consumes: `Section` and `SectionPlan` types from the convert summary (§5 of the spec; the route returns `sections[]` with `title`, `headingPath`, `text`, `charCount`, `chunks`).
+- Consumes: the convert route's `Section` shape (`title`, `headingPath`, `text`, `charCount`, `chunks`, `mergedFrom[]`, `markdownRange | null`) plus the `content` Task 6 derives from the markdown.
 - Produces:
-  - `type ConvertedFile = { filename: string; format: string; sections: Section[]; }
+  - `type Section = { title; headingPath; text; content; charCount; chunks; mergedFrom: { title; headingPath; charCount }[]; markdownRange: { start; end } | null }`
+  - `type ConvertedFile = { filename: string; format: string; sections: Section[]; plan: { cutLevel; splitSections; mergedSections; rejoinedSections; minSectionChars } }`
   - `type FileState = "queued" | "converting" | "converted" | "failed"`
-  - `type IntakeFile = { id: string; name: string; size: number; mimeType: string; state: FileState; converted?: ConvertedFile; error?: string; sourceType: string; folderName: string; selected: boolean[]; startedAt?: number; finishedAt?: number }`
+  - `type IntakeFile = { id: string; name: string; size: number; mimeType: string; state: FileState; converted?: ConvertedFile; error?: string; sourceType: string; folderName: string; selected: boolean[]; publishedIds?: string[]; startedAt?: number; finishedAt?: number }`
+  - `isLikelyFurniture(title: string): boolean` — what stays unticked by default
+  - `markPublished(files, id, sourceIds): IntakeFile[]`
   - `const MAX_UPLOAD_BYTES = 30 * 1024 * 1024`
   - `addFiles(files: IntakeFile[], additions: { name; size; mimeType }[]): IntakeFile[]`
   - `validateFile(file: { name: string; size: number }, formats: string[]): { ok: true } | { ok: false; reason: string }`
@@ -392,7 +423,7 @@ actually decided, so this is where the tests are.
   - `toggleSection(files, id, index): IntakeFile[]`, `setAllSections(files, id, on: boolean): IntakeFile[]`
   - `selectedCount(file: IntakeFile): number`, `totalSelected(files: IntakeFile[]): number`
   - `canPublish(files: IntakeFile[]): boolean`, `nextQueued(files: IntakeFile[]): IntakeFile | undefined`
-  - `defaultSourceType(sectionCount: number): string`
+  - `defaultSourceType(fileName: string): string` — by format, never `BOOK_CHAPTER`
 
 - [ ] **Step 1: Write the failing test**
 
@@ -403,6 +434,8 @@ import {
   addFiles,
   canPublish,
   defaultSourceType,
+  isLikelyFurniture,
+  markPublished,
   nextQueued,
   selectedCount,
   setAllSections,
@@ -410,6 +443,7 @@ import {
   toggleSection,
   totalSelected,
   validateFile,
+  type Section,
 } from "./intake-model.js";
 
 const formats = ["pdf", "docx", "html", "md"];
@@ -452,7 +486,7 @@ describe("validateFile", () => {
 });
 
 describe("addFiles", () => {
-  it("adds rows as queued, with every section ticked once converted", () => {
+  it("adds rows as queued, typed by format, with no sections yet", () => {
     const files = addFiles([], [
       { name: "book.pdf", size: 10, mimeType: "application/pdf" },
     ]);
@@ -460,6 +494,7 @@ describe("addFiles", () => {
     expect(files[0].state).toBe("queued");
     expect(files[0].selected).toEqual([]);
     expect(files[0].folderName).toBe("book");
+    expect(files[0].sourceType).toBe("ARTICLE");
   });
 
   it("gives each row a distinct id", () => {
@@ -481,18 +516,23 @@ describe("the state machine", () => {
   const one = () =>
     addFiles([], [{ name: "book.pdf", size: 10, mimeType: "application/pdf" }]);
 
+  const sec = (title: string, text: string): Section => ({
+    title,
+    headingPath: [title],
+    text,
+    content: text,
+    charCount: text.length,
+    chunks: [0],
+    mergedFrom: [],
+    markdownRange: null,
+  });
+  const plan = { cutLevel: 1, splitSections: 0, mergedSections: 0, rejoinedSections: 0, minSectionChars: 2000 };
+
   /** The same file, converted, with two sections. */
   const twoSections = () =>
     setState(one(), one()[0].id, {
       state: "converted",
-      converted: {
-        filename: "book.pdf",
-        format: "pdf",
-        sections: [
-          { title: "One", headingPath: ["One"], text: "a", charCount: 1, chunks: [0] },
-          { title: "Two", headingPath: ["Two"], text: "b", charCount: 1, chunks: [1] },
-        ],
-      },
+      converted: { filename: "book.pdf", format: "pdf", plan, sections: [sec("One", "a"), sec("Two", "b")] },
     });
 
   it("carries a conversion result and ticks every section by default", () => {
@@ -503,6 +543,28 @@ describe("the state machine", () => {
     expect(files[0].state).toBe("converted");
     expect(files[0].selected).toEqual([true, true]);
     expect(selectedCount(files[0])).toBe(2);
+  });
+
+  it("leaves furniture unticked by default, so the user re-ticks rather than culls", () => {
+    // Measured on a 238-page book at the default floor: the first two sections
+    // were `Praise for …` (3.7k chars) and `[ contents ]` (13.7k). Ticked by
+    // default, both would have become sources.
+    const files = setState(one(), one()[0].id, {
+      state: "converted",
+      converted: {
+        filename: "book.pdf",
+        format: "pdf",
+        plan,
+        sections: [sec("Praise for Design for How People Think", "…"), sec("[ contents ]", "…"), sec("Emotion", "…")],
+      },
+    });
+    expect(files[0].selected).toEqual([false, false, true]);
+  });
+
+  it("remembers what it published and stops counting it as publishable", () => {
+    const files = markPublished(twoSections(), one()[0].id, ["s1", "s2"]);
+    expect(files[0].publishedIds).toEqual(["s1", "s2"]);
+    expect(canPublish(files)).toBe(false);
   });
 
   it("keeps the error message on failure and leaves the row retryable", () => {
@@ -557,7 +619,7 @@ describe("scheduling", () => {
     let files = two();
     files = setState(files, files[0].id, {
       state: "converted",
-      converted: { filename: "a.pdf", format: "pdf", sections: [] },
+      converted: { filename: "a.pdf", format: "pdf", plan, sections: [] },
     });
     expect(canPublish(files)).toBe(false);
     expect(totalSelected(files)).toBe(0);
@@ -565,12 +627,50 @@ describe("scheduling", () => {
 });
 
 describe("defaultSourceType", () => {
-  it("calls a document with many sections a book chapter", () => {
-    expect(defaultSourceType(12)).toBe("BOOK_CHAPTER");
+  // By format, never by section count: a two-section CV is not a book, and a
+  // twelve-section PDF may be a report. BOOK_CHAPTER is a choice the user makes.
+  it("calls a web page a web page", () => {
+    expect(defaultSourceType("page.html")).toBe("WEB_PAGE");
+    expect(defaultSourceType("PAGE.HTM")).toBe("WEB_PAGE");
   });
 
-  it("calls a single-section document an article", () => {
-    expect(defaultSourceType(1)).toBe("ARTICLE");
+  it("calls captions and media transcripts", () => {
+    expect(defaultSourceType("talk.vtt")).toBe("TRANSCRIPT");
+    expect(defaultSourceType("talk.mp3")).toBe("TRANSCRIPT");
+    expect(defaultSourceType("talk.mp4")).toBe("TRANSCRIPT");
+  });
+
+  it("calls everything else an article, and never a book chapter", () => {
+    for (const name of ["book.pdf", "notes.md", "report.docx", "data.csv", "README"]) {
+      expect(defaultSourceType(name)).toBe("ARTICLE");
+    }
+  });
+});
+
+describe("isLikelyFurniture", () => {
+  it("recognises the furniture a real book produced", () => {
+    for (const title of [
+      "[ contents ]",
+      "[ SIDE NOTE ]",
+      "Praise for Design for How People Think",
+      "Contents",
+      "Table of Contents",
+      "Index",
+      "Copyright",
+      "Colophon",
+      "Revision History for the First Edition:",
+      "How to Contact Us",
+      "About the Author",
+      "Acknowledgments",
+    ]) {
+      expect(isLikelyFurniture(title)).toBe(true);
+    }
+  });
+
+  it("does not flag a chapter", () => {
+    for (const title of ["Emotion", "Wayfinding", "Core Competencies", "Selected Projects", "Design for How People Think — front matter"]) {
+      expect(isLikelyFurniture(title)).toBe(false);
+    }
   });
 });
 ```
@@ -604,18 +704,40 @@ export const SECTION_TYPES = [
   "MANUAL_ENTRY",
 ] as const;
 
+/** A group the section rule folded into a section — kept so the fold is visible. */
+export type SectionPart = { title: string; headingPath: string[]; charCount: number };
+
+/**
+ * A section as the convert route returns it, plus `content`.
+ *
+ * `text` is chunk text and flattens tables; `content` is the markdown slice at
+ * `markdownRange` (Task 6 derives it), falling back to `text` when the range is
+ * null. `content` is what becomes the source.
+ */
 export type Section = {
   title: string;
   headingPath: string[];
   text: string;
+  content: string;
   charCount: number;
   chunks: number[];
+  mergedFrom: SectionPart[];
+  markdownRange: { start: number; end: number } | null;
+};
+
+export type SectionPlanSummary = {
+  cutLevel: number;
+  splitSections: number;
+  mergedSections: number;
+  rejoinedSections: number;
+  minSectionChars: number;
 };
 
 export type ConvertedFile = {
   filename: string;
   format: string;
   sections: Section[];
+  plan: SectionPlanSummary;
 };
 
 export type FileState = "queued" | "converting" | "converted" | "failed";
@@ -632,11 +754,42 @@ export type IntakeFile = {
   sourceType: string;
   /** The `/sources/<folderName>` this document's sources will land in. */
   folderName: string;
-  /** One flag per section; converted files arrive fully ticked. */
+  /** One flag per section; converted files arrive ticked except for furniture. */
   selected: boolean[];
+  /**
+   * Set once this row has been published. `POST sources` is not idempotent on
+   * content — only the queue task is deduped — so a second publish would create
+   * a second set of sources in the same folder. The row refuses instead.
+   */
+  publishedIds?: string[];
   startedAt?: number;
   finishedAt?: number;
 };
+
+/**
+ * Titles that are almost never a source: the book's own furniture, read as
+ * headings by the layout model. A heuristic, not a verdict — these arrive
+ * unticked and the user re-ticks. Measured on a 238-page book: at the default
+ * floor the first two sections were `Praise for …` and `[ contents ]`.
+ */
+const FURNITURE = [
+  /^\[.*\]$/, // `[ contents ]`, `[ SIDE NOTE ]`
+  /^praise for\b/i,
+  /^(table of )?contents$/i,
+  /^index$/i,
+  /^copyright\b/i,
+  /^colophon$/i,
+  /^revision history\b/i,
+  /^how to contact\b/i,
+  /^about the authors?$/i,
+  /^acknowledg(e)?ments$/i,
+  /^dedication$/i,
+];
+
+export function isLikelyFurniture(title: string): boolean {
+  const t = title.trim();
+  return FURNITURE.some((rule) => rule.test(t));
+}
 
 /** `/sources/<name>`: the file's name without its extension. */
 export function folderNameFor(fileName: string): string {
@@ -661,7 +814,7 @@ export function addFiles(
       size: a.size,
       mimeType: a.mimeType,
       state: "queued" as const,
-      sourceType: "BOOK_CHAPTER",
+      sourceType: defaultSourceType(a.name),
       folderName: folderNameFor(a.name),
       selected: [],
     })),
@@ -704,13 +857,18 @@ export function setState(
   return files.map((f) => {
     if (f.id !== id) return f;
     const next = { ...f, ...patch };
-    // A conversion result arrives with every section ticked: the review exists
-    // so the user can disagree, not so they must do the work.
+    // A conversion result arrives ticked — except for furniture: the review
+    // exists so the user can disagree, not so they must do the work, and
+    // culling `[ contents ]` by hand is work.
     if (patch.converted) {
-      next.selected = patch.converted.sections.map(() => true);
+      next.selected = patch.converted.sections.map((s) => !isLikelyFurniture(s.title));
     }
     return next;
   });
+}
+
+export function markPublished(files: IntakeFile[], id: string, sourceIds: string[]): IntakeFile[] {
+  return files.map((f) => (f.id === id ? { ...f, publishedIds: sourceIds } : f));
 }
 
 export function toggleSection(
@@ -735,7 +893,9 @@ export function setAllSections(
   );
 }
 
+/** Ticked sections on a row that has not been published yet. */
 export function selectedCount(file: IntakeFile): number {
+  if (file.publishedIds) return 0;
   return file.selected.filter(Boolean).length;
 }
 
@@ -752,8 +912,19 @@ export function nextQueued(files: IntakeFile[]): IntakeFile | undefined {
   return files.find((f) => f.state === "queued");
 }
 
-export function defaultSourceType(sectionCount: number): string {
-  return sectionCount > 1 ? "BOOK_CHAPTER" : "ARTICLE";
+const TRANSCRIPT_EXTENSIONS = new Set(["vtt", "srt", "mp3", "wav", "m4a", "ogg", "flac", "mp4", "webm", "mkv", "mov"]);
+
+/**
+ * By format, never by section count. A two-section CV is not a book and a
+ * twelve-section PDF may be a report; `BOOK_CHAPTER` is a choice the user makes
+ * in the review, per file.
+ */
+export function defaultSourceType(fileName: string): string {
+  const dot = fileName.lastIndexOf(".");
+  const ext = dot > 0 ? fileName.slice(dot + 1).toLowerCase() : "";
+  if (ext === "html" || ext === "htm") return "WEB_PAGE";
+  if (TRANSCRIPT_EXTENSIONS.has(ext)) return "TRANSCRIPT";
+  return "ARTICLE";
 }
 ```
 
@@ -805,13 +976,17 @@ import { describe, expect, it } from "vitest";
 import type { IntakeFile, Section } from "./intake-model.js";
 import { publishPlan, sanitiseFolderName, sectionTitle } from "./intake-publish.js";
 
-const section = (title: string, text: string): Section => ({
+const section = (title: string, text: string, content = text): Section => ({
   title,
   headingPath: [title],
   text,
+  content,
   charCount: text.length,
   chunks: [0],
+  mergedFrom: [],
+  markdownRange: null,
 });
+const plan = { cutLevel: 1, splitSections: 0, mergedSections: 0, rejoinedSections: 0, minSectionChars: 2000 };
 
 const file = (over: Partial<IntakeFile> = {}): IntakeFile => ({
   id: "f1",
@@ -825,6 +1000,7 @@ const file = (over: Partial<IntakeFile> = {}): IntakeFile => ({
   converted: {
     filename: "Design for How People Think.pdf",
     format: "pdf",
+    plan,
     sections: [section("One", "first"), section("Two", "second")],
   },
   ...over,
@@ -875,19 +1051,37 @@ describe("publishPlan", () => {
     expect(plan.sources.every((s) => s.sourceType === "BOOK_CHAPTER")).toBe(true);
   });
 
-  it("skips a section with no text, and counts it, because content is required", () => {
-    const plan = publishPlan(
+  it("skips a section with no content, and counts it, because content is required", () => {
+    const result = publishPlan(
       file({
         selected: [true, true, true],
         converted: {
           filename: "b.pdf",
           format: "pdf",
+          plan,
           sections: [section("One", "first"), section("Two", "   "), section("Three", "third")],
         },
       }),
     );
-    expect(plan.sources.map((s) => s.title)).toEqual(["One", "Three"]);
-    expect(plan.skipped).toBe(1);
+    expect(result.sources.map((s) => s.title)).toEqual(["One", "Three"]);
+    expect(result.skipped).toBe(1);
+  });
+
+  it("sends the markdown slice as content, not the chunk text", () => {
+    // The chunk text of a table is `🟤, 1 = … , 2 = …` triplets; the markdown
+    // is the table. `content` is what Task 6 sliced from the markdown.
+    const result = publishPlan(
+      file({
+        selected: [true],
+        converted: {
+          filename: "cv.pdf",
+          format: "pdf",
+          plan,
+          sections: [section("Education", "🟤, 1 = Academy. , 2 = 2016", "## Education\n\n| Academy | 2016 |")],
+        },
+      }),
+    );
+    expect(result.sources[0].content).toBe("## Education\n\n| Academy | 2016 |");
   });
 
   it("produces an empty plan when nothing is ticked", () => {
@@ -974,15 +1168,15 @@ export function publishPlan(file: IntakeFile): PublishPlan {
 
   sections.forEach((section, index) => {
     if (file.selected[index] !== true) return;
-    if (!section.text.trim()) {
+    if (!section.content.trim()) {
       skipped += 1;
       return;
     }
     sources.push({
       title: sectionTitle(section, index, file.folderName),
-      // Untrimmed on purpose: the markdown is the source's content as the
-      // extractor produced it, and trailing whitespace is not worth a copy.
-      content: section.text,
+      // `content` is the markdown slice (tables intact), or the chunk text when
+      // the section could not be located in the markdown. Untrimmed on purpose.
+      content: section.content,
       sourceType: file.sourceType,
       sectionIndex: index,
     });
@@ -1002,7 +1196,7 @@ export function publishPlan(file: IntakeFile): PublishPlan {
 bun run test editors/knowledge-vault/lib/intake-publish.test.ts
 ```
 
-Expected: PASS, 11 tests.
+Expected: PASS, 12 tests.
 
 - [ ] **Step 5: Typecheck and lint**
 
@@ -1308,16 +1502,24 @@ import { describe, expect, it } from "vitest";
 import type { VaultApi } from "./vault-api.js";
 import { convertFile } from "./intake-service.js";
 
+const markdown = "## Core Competencies\n\nskills\n\n## Education\n\n| Academy | 2016 |\n";
 const summary = {
   filename: "Book chapter.pdf",
   format: "pdf",
-  chars: 5529,
+  chars: markdown.length,
   chunks: 55,
   sections: [
-    { title: "MakerDAO SES", headingPath: ["MakerDAO SES"], text: "a", charCount: 1, chunks: [0] },
-    { title: "Education", headingPath: ["Education"], text: "b", charCount: 1, chunks: [1] },
+    {
+      title: "Core Competencies", headingPath: ["Core Competencies"], text: "skills", charCount: 6, chunks: [0],
+      mergedFrom: [], markdownRange: { start: 0, end: markdown.indexOf("## Education") },
+    },
+    {
+      title: "Education", headingPath: ["Education"], text: "Academy, 1 = 2016", charCount: 17, chunks: [1],
+      mergedFrom: [], markdownRange: { start: markdown.indexOf("## Education"), end: markdown.length },
+    },
   ],
-  plan: { cutLevel: 1, splitSections: 0, mergedSections: 0, ceiling: 40000, minSectionChars: 2000 },
+  plan: { cutLevel: 1, splitSections: 0, mergedSections: 0, rejoinedSections: 0, ceiling: 40000, minSectionChars: 2000 },
+  markdown,
   timings: { convertMs: 1, chunkMs: 1, totalMs: 2 },
 };
 
@@ -1334,22 +1536,41 @@ function recordingApi(response: unknown = summary) {
 }
 
 describe("convertFile", () => {
-  it("asks the convert route for this filename, with the bytes", async () => {
+  it("asks the convert route for this filename and the markdown, with the bytes", async () => {
     const { api, calls } = recordingApi();
     const bytes = new Uint8Array([1, 2, 3]);
     const result = await convertFile({ name: "Book chapter.pdf", bytes }, { api });
 
-    expect(calls[0].path).toBe("/convert?filename=Book%20chapter.pdf");
+    expect(calls[0].path).toBe("/convert?filename=Book%20chapter.pdf&markdown=1");
     expect(calls[0].bytes).toBe(bytes);
     expect(result.sections).toHaveLength(2);
     expect(result.format).toBe("pdf");
+    expect(result.plan.rejoinedSections).toBe(0);
+  });
+
+  it("gives each section the markdown slice as content, so tables survive", async () => {
+    const { api } = recordingApi();
+    const result = await convertFile({ name: "cv.pdf", bytes: new Uint8Array() }, { api });
+    expect(result.sections[1].content).toBe("## Education\n\n| Academy | 2016 |\n");
+    expect(result.sections[0].content).toBe("## Core Competencies\n\nskills\n\n");
+    // The chunk text is kept beside it, for display and as the fallback.
+    expect(result.sections[1].text).toBe("Academy, 1 = 2016");
+  });
+
+  it("falls back to the chunk text when a section has no markdown range", async () => {
+    const { api } = recordingApi({
+      ...summary,
+      sections: [{ ...summary.sections[0], markdownRange: null }],
+    });
+    const result = await convertFile({ name: "cv.pdf", bytes: new Uint8Array() }, { api });
+    expect(result.sections[0].content).toBe("skills");
   });
 
   it("encodes a filename that would otherwise break the query string", async () => {
     const { api, calls } = recordingApi();
     await convertFile({ name: "Q&A #1 (final).pdf", bytes: new Uint8Array() }, { api });
     expect(calls[0].path).toBe(
-      `/convert?filename=${encodeURIComponent("Q&A #1 (final).pdf")}`,
+      `/convert?filename=${encodeURIComponent("Q&A #1 (final).pdf")}&markdown=1`,
     );
   });
 
@@ -1376,7 +1597,7 @@ Expected: FAIL — module not found.
 - [ ] **Step 6: Implement `convertFile`**
 
 ```ts
-import type { ConvertedFile, Section } from "./intake-model.js";
+import type { ConvertedFile, Section, SectionPlanSummary } from "./intake-model.js";
 import type { VaultApi } from "./vault-api.js";
 
 /**
@@ -1387,17 +1608,28 @@ import type { VaultApi } from "./vault-api.js";
  * route refuses to answer with anything but `{ sections, ... }`, so a body
  * without them is a misconfigured URL rather than a document with no sections.
  */
+type RouteSection = Omit<Section, "content">;
+
 type ConvertSummary = {
   filename?: string;
   format?: string;
-  sections?: Section[];
+  sections?: RouteSection[];
+  plan?: Partial<SectionPlanSummary>;
+  markdown?: string;
 };
 
+/**
+ * `&markdown=1` is asked for on purpose, even though it doubles the response
+ * for a book: the markdown is where tables are rendered correctly, and each
+ * section's `markdownRange` is the slice that becomes its `content`. The whole
+ * markdown is dropped once the sections have their slices — only the slices
+ * are kept, so a 400 000-character book does not sit in memory twice.
+ */
 export async function convertFile(
   input: { name: string; bytes: Uint8Array },
   deps: { api: VaultApi },
 ): Promise<ConvertedFile> {
-  const path = `/convert?filename=${encodeURIComponent(input.name)}`;
+  const path = `/convert?filename=${encodeURIComponent(input.name)}&markdown=1`;
   const body = await deps.api.postRaw<ConvertSummary>(path, input.bytes, {
     contentType: "application/octet-stream",
   });
@@ -1408,10 +1640,28 @@ export async function convertFile(
     );
   }
 
+  const markdown = typeof body.markdown === "string" ? body.markdown : null;
+  const sections: Section[] = body.sections.map((s) => ({
+    ...s,
+    mergedFrom: s.mergedFrom ?? [],
+    markdownRange: s.markdownRange ?? null,
+    content:
+      markdown !== null && s.markdownRange
+        ? markdown.slice(s.markdownRange.start, s.markdownRange.end)
+        : s.text,
+  }));
+
   return {
     filename: body.filename ?? input.name,
     format: body.format ?? "unknown",
-    sections: body.sections,
+    sections,
+    plan: {
+      cutLevel: body.plan?.cutLevel ?? 0,
+      splitSections: body.plan?.splitSections ?? 0,
+      mergedSections: body.plan?.mergedSections ?? 0,
+      rejoinedSections: body.plan?.rejoinedSections ?? 0,
+      minSectionChars: body.plan?.minSectionChars ?? 0,
+    },
   };
 }
 ```
@@ -1485,9 +1735,10 @@ const convertedFile = (over: Partial<IntakeFile> = {}): IntakeFile => ({
   converted: {
     filename: "Book.pdf",
     format: "pdf",
+    plan: { cutLevel: 1, splitSections: 0, mergedSections: 0, rejoinedSections: 0, minSectionChars: 2000 },
     sections: [
-      { title: "Record", headingPath: ["Record"], text: "first", charCount: 5, chunks: [0] },
-      { title: "Reduce", headingPath: ["Reduce"], text: "second", charCount: 6, chunks: [1] },
+      { title: "Record", headingPath: ["Record"], text: "first", content: "first", charCount: 5, chunks: [0], mergedFrom: [], markdownRange: null },
+      { title: "Reduce", headingPath: ["Reduce"], text: "second", content: "second", charCount: 6, chunks: [1], mergedFrom: [], markdownRange: null },
     ],
   },
   ...over,
@@ -1609,9 +1860,10 @@ describe("publishFile", () => {
         converted: {
           filename: "Book.pdf",
           format: "pdf",
+          plan: { cutLevel: 1, splitSections: 0, mergedSections: 0, rejoinedSections: 0, minSectionChars: 2000 },
           sections: [
-            { title: "Record", headingPath: [], text: "first", charCount: 5, chunks: [0] },
-            { title: "Blank", headingPath: [], text: "  ", charCount: 0, chunks: [1] },
+            { title: "Record", headingPath: [], text: "first", content: "first", charCount: 5, chunks: [0], mergedFrom: [], markdownRange: null },
+            { title: "Blank", headingPath: [], text: "  ", content: "  ", charCount: 0, chunks: [1], mergedFrom: [], markdownRange: null },
           ],
         },
       }),
@@ -2021,7 +2273,11 @@ export function ConversionQueue({
           {file.state === "converting" && <Spinner className="h-3 w-3" />}
           <span className="shrink-0 text-[11px]" style={{ color: "var(--bai-text-faint)" }}>
             {LABEL[file.state]}
-            {file.converted ? ` · ${file.converted.sections.length} parts` : ""}
+            {file.converted
+              ? ` · ${file.converted.sections.length} parts${
+                  file.converted.plan.mergedSections > 0 ? ` (${file.converted.plan.mergedSections} folded)` : ""
+                }`
+              : ""}
             {file.error ? ` · ${file.error}` : ""}
           </span>
 
@@ -2158,7 +2414,15 @@ export function SectionReview({
                 </span>
                 <span className="block truncate text-[10px]" style={{ color: "var(--bai-text-faint)" }}>
                   {section.headingPath.join(" › ") || "no heading"} · {section.charCount.toLocaleString()} chars
+                  {section.markdownRange ? "" : " · from text"}
                 </span>
+                {section.mergedFrom.length > 1 && (
+                  // What the section rule folded in — the titles a reader would
+                  // otherwise never see, and the reason the section is named as it is.
+                  <span className="block truncate text-[10px]" style={{ color: "var(--bai-text-faint)" }}>
+                    contains: {section.mergedFrom.map((p) => p.title).join(" · ")}
+                  </span>
+                )}
               </span>
             </label>
           </li>
@@ -2168,7 +2432,7 @@ export function SectionReview({
       <div className="mt-4 flex items-center gap-3">
         <button
           type="button"
-          disabled={chosen === 0 || publishing || !driveId}
+          disabled={chosen === 0 || publishing || !driveId || file.publishedIds !== undefined}
           onClick={onPublish}
           className="intake-primary rounded-lg px-4 py-2 text-sm font-medium disabled:opacity-40"
           style={{
@@ -2177,10 +2441,16 @@ export function SectionReview({
             color: "var(--bai-accent)",
           }}
         >
-          {publishing ? "Adding…" : `Add ${chosen} source${chosen === 1 ? "" : "s"} to the vault`}
+          {publishing
+            ? "Adding…"
+            : file.publishedIds
+              ? `Added ${file.publishedIds.length} source${file.publishedIds.length === 1 ? "" : "s"}`
+              : `Add ${chosen} source${chosen === 1 ? "" : "s"} to the vault`}
         </button>
         <span className="text-[11px]" style={{ color: "var(--bai-text-faint)" }}>
-          Queued for processing as soon as they are created
+          {file.publishedIds
+            ? "Already in the vault — publishing again would create duplicates"
+            : "Queued for processing as soon as they are created"}
         </span>
       </div>
 
@@ -2202,6 +2472,7 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { useSelectedDriveId } from "@powerhousedao/reactor-browser";
 import {
   addFiles,
+  markPublished,
   nextQueued,
   setAllSections,
   setState,
@@ -2270,7 +2541,6 @@ export function IntakeView({
           setState(current, next.id, {
             state: "converted",
             converted,
-            sourceType: current.find((f) => f.id === next.id)?.sourceType ?? "BOOK_CHAPTER",
             finishedAt: Date.now(),
           }),
         ),
@@ -2312,7 +2582,9 @@ export function IntakeView({
   const onPublish = useCallback(async () => {
     const file = files.find((f) => f.id === openId);
     const data = file ? bytes.current.get(file.id) : undefined;
-    if (!file || !data || !driveId) return;
+    // A published row stays visible for its message but never publishes twice:
+    // `POST sources` is not idempotent on content.
+    if (!file || !data || !driveId || file.publishedIds) return;
 
     setPublishing(true);
     try {
@@ -2322,9 +2594,9 @@ export function IntakeView({
           result.skipped > 0 ? ` (${result.skipped} empty part${result.skipped === 1 ? "" : "s"} skipped)` : ""
         }${result.attached ? ", original attached" : ""}`,
       );
-      setFiles((current) => current.filter((f) => f.id !== file.id));
+      setFiles((current) => markPublished(current, file.id, result.sourceIds));
       setOpenId(null);
-      setStage(files.length > 1 ? "batch" : "upload");
+      setStage("batch");
     } catch (error) {
       setPublished(
         `Could not add the sources: ${error instanceof Error ? error.message : String(error)}`,
@@ -2433,9 +2705,13 @@ const [viewMode, setViewMode] = useState<ViewMode>("chat");
 // unreadable tree is not an empty one, so this waits for both reads to settle
 // and treats an unreadable tree as "not empty" rather than as "new".
 const convert = useConvertHealth();
-const driveTreeRead = fileNodes.length > 0;
+// CHECK FIRST (gap 7): the drive app scaffolds twelve folders on first open.
+// If `fileNodes` (from `useFileNodesInSelectedDrive`) includes folder nodes,
+// an empty vault is never "empty" and this landing never shows. Verify what it
+// holds; if folders are present, count only nodes that carry a `documentType`.
+const documentNodes = fileNodes.filter((n) => Boolean(n.documentType));
 const settled = !notesLoading && convert.settled;
-const vaultIsEmpty = settled && !driveTreeRead && notes.length === 0;
+const vaultIsEmpty = settled && documentNodes.length === 0 && notes.length === 0;
 const landedOn = useRef(false);
 useEffect(() => {
   if (!landedOn.current && vaultIsEmpty) {
@@ -2526,22 +2802,7 @@ export function useConvertHealth() {
 }
 ```
 
-This needs `VaultApi.get` — add it in Task 2 beside `post`, with the same `send`
-helper (`method: "GET"`, no body), and a test that a GET carries the bearer:
-
-```ts
-it("sends a GET with the bearer and no body", async () => {
-  const calls: RequestInit[] = [];
-  const fetchImpl = ((_url: string, init: RequestInit) => {
-    calls.push(init);
-    return Promise.resolve(ok({ configured: true, formats: ["pdf"] }));
-  }) as unknown as typeof fetch;
-  const api = createVaultApi({ fetchImpl, origin: "http://localhost:4001" });
-  await api.get("/convert/health");
-  expect(calls[0].method).toBe("GET");
-  expect(calls[0].body).toBeUndefined();
-});
-```
+`VaultApi.get` is defined and tested in Task 2.
 
 - [ ] **Step 8: The copy in `GettingStarted.tsx`**
 
@@ -2808,9 +3069,13 @@ did not convert the whole file.
 
 - [ ] **Step 3: The review shows real structure, and the selection works**
 
-Expected for the book: **107 sections** with `minSectionChars` applied, titles
-that are real chapter names rather than `[ contents ]`; unticking one and adding
-the rest creates one fewer source.
+Expected for the book: **117 sections** with `minSectionChars` applied (the
+contiguous-run rule; 106 under the old keyed grouping), chapter titles such as
+`Emotion`, `Wayfinding`, `Revealing Words`; `Praise for …` and `[ contents ]`
+present but **unticked** by default; merged rows show "contains: …"; unticking
+one more and adding the rest creates one fewer source. After publish, the row
+reads "Added N sources" and the button is disabled — a second click must not
+create a second set.
 
 - [ ] **Step 4: Verify what landed, from the server, not from the screen**
 
@@ -2832,7 +3097,9 @@ Assert, per created source:
 - every source's `status` is `EXTRACTING`, and the pipeline queue holds a task
   per source with `documentRef` = that source;
 - every source has `originalFile` set, and the same ref for all of them, with
-  `convertedBy: "docling.rs"`.
+  `convertedBy: "docling.rs"`;
+- a source whose section held a table (the CV's *Education*, or any book table)
+  has that table as a **markdown table** in `content` — not `🟤, 1 = …` triplets.
 
 The fastest reliable way to check the last four is the vault's own REST surface
 (`GET sources/:id` style reads, or the Switchboard CLI skill's document read),
@@ -2883,9 +3150,10 @@ references — `SECTION_TYPES` (Task 3) and `VaultApi.get` (Task 2) — are stat
 with their exact definitions where they belong, and Task 8 says which import to
 fix and which dead line to delete.
 
-**Type consistency:** `IntakeFile`, `ConvertedFile`, `Section`, `PublishPlan`,
-`AttachmentPort`, `PublishResult` and `VaultApi` are defined once (Tasks 3, 4, 2)
-and used with the same names and shapes in Tasks 6–9. `folderNameFor` lives in
+**Type consistency:** `IntakeFile`, `ConvertedFile`, `Section` (with `content`,
+`mergedFrom`, `markdownRange`), `SectionPlanSummary`, `PublishPlan`,
+`AttachmentPort`, `PublishResult` and `VaultApi` (with `get`) are defined once
+(Tasks 3, 4, 2) and used with the same names and shapes in Tasks 6–9. `folderNameFor` lives in
 `intake-model.ts` (Task 3) and is consumed by `publishPlan` (Task 4) — one
 derivation, not two.
 
