@@ -62,6 +62,16 @@ type SourceState {
     provenance: SourceProvenance
     extractedClaims: [String!]!
     extractionStats: ExtractionStats
+    # the artefact this source was derived from. The vault's premise is that a
+    # source is the unrecoverable anchor, so the original bytes are kept here
+    # rather than discarded at ingestion. Content-addressed: see the attachment store.
+    originalFile: AttachmentRef
+    originalFileName: String
+    originalMimeType: String
+    originalSizeBytes: Int
+    originalAttachedAt: DateTime
+    # what produced `content` from the original, so a re-ingest can say what changed
+    convertedBy: String
     createdAt: DateTime
     createdBy: String
 }
@@ -100,4 +110,13 @@ input RecordExtractionStatsInput {
 
 input RemoveExtractedClaimInput {
     claimRef: String!
+}
+
+input AttachOriginalFileInput {
+    originalFile: AttachmentRef!
+    originalFileName: String
+    originalMimeType: String
+    originalSizeBytes: Int
+    convertedBy: String
+    attachedAt: DateTime!
 }

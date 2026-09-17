@@ -66,6 +66,15 @@ export type AddExtractedClaimInput = {
   claimRef: Scalars["String"]["input"];
 };
 
+export type AttachOriginalFileInput = {
+  attachedAt: Scalars["DateTime"]["input"];
+  convertedBy?: InputMaybe<Scalars["String"]["input"]>;
+  originalFile: Scalars["AttachmentRef"]["input"];
+  originalFileName?: InputMaybe<Scalars["String"]["input"]>;
+  originalMimeType?: InputMaybe<Scalars["String"]["input"]>;
+  originalSizeBytes?: InputMaybe<Scalars["Int"]["input"]>;
+};
+
 export type ExtractionStats = {
   claimCount: Scalars["Int"]["output"];
   extractedAt: Maybe<Scalars["DateTime"]["output"]>;
@@ -114,11 +123,17 @@ export type SourceProvenance = {
 
 export type SourceState = {
   content: Maybe<Scalars["String"]["output"]>;
+  convertedBy: Maybe<Scalars["String"]["output"]>;
   createdAt: Maybe<Scalars["DateTime"]["output"]>;
   createdBy: Maybe<Scalars["String"]["output"]>;
   description: Maybe<Scalars["String"]["output"]>;
   extractedClaims: Array<Scalars["String"]["output"]>;
   extractionStats: Maybe<ExtractionStats>;
+  originalAttachedAt: Maybe<Scalars["DateTime"]["output"]>;
+  originalFile: Maybe<Scalars["AttachmentRef"]["output"]>;
+  originalFileName: Maybe<Scalars["String"]["output"]>;
+  originalMimeType: Maybe<Scalars["String"]["output"]>;
+  originalSizeBytes: Maybe<Scalars["Int"]["output"]>;
   provenance: Maybe<SourceProvenance>;
   sourceType: Maybe<SourceType>;
   status: Maybe<SourceStatus>;

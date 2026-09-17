@@ -8,6 +8,7 @@ import { sourceSourceManagementOperations } from "../src/reducers/source-managem
 
 import {
   AddExtractedClaimInputSchema,
+  AttachOriginalFileInputSchema,
   IngestSourceInputSchema,
   RecordExtractionStatsInputSchema,
   RemoveExtractedClaimInputSchema,
@@ -71,6 +72,18 @@ const stateReducer: StateReducer<SourcePHState> = (state, action, dispatch) => {
       RemoveExtractedClaimInputSchema().parse(action.input);
 
       sourceSourceManagementOperations.removeExtractedClaimOperation(
+        (state as any)[action.scope],
+        action as any,
+        dispatch,
+      );
+
+      break;
+    }
+
+    case "ATTACH_ORIGINAL_FILE": {
+      AttachOriginalFileInputSchema().parse(action.input);
+
+      sourceSourceManagementOperations.attachOriginalFileOperation(
         (state as any)[action.scope],
         action as any,
         dispatch,

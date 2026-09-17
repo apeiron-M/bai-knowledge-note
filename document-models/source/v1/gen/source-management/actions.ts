@@ -5,6 +5,7 @@
 import type { Action } from "document-model";
 import type {
   AddExtractedClaimInput,
+  AttachOriginalFileInput,
   IngestSourceInput,
   RecordExtractionStatsInput,
   RemoveExtractedClaimInput,
@@ -31,10 +32,15 @@ export type RemoveExtractedClaimAction = Action & {
   type: "REMOVE_EXTRACTED_CLAIM";
   input: RemoveExtractedClaimInput;
 };
+export type AttachOriginalFileAction = Action & {
+  type: "ATTACH_ORIGINAL_FILE";
+  input: AttachOriginalFileInput;
+};
 
 export type SourceSourceManagementAction =
   | IngestSourceAction
   | SetSourceStatusAction
   | AddExtractedClaimAction
   | RecordExtractionStatsAction
-  | RemoveExtractedClaimAction;
+  | RemoveExtractedClaimAction
+  | AttachOriginalFileAction;

@@ -22,6 +22,11 @@ vault-fix-scripts/
 __pycache__/
 *.pyc
 
+# docling.rs models + pdfium (~707MB). Fetched once with
+# `node scripts/docling-serve/fetch-models.mjs`, which defaults to these paths.
+.models/
+.pdfium/
+
 # drive-sync run artifacts (resume markers, never commit)
 scripts/drive-sync/data/*/id-map.json
 

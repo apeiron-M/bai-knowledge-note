@@ -3,6 +3,7 @@
 import * as z from "zod";
 import type {
   AddExtractedClaimInput,
+  AttachOriginalFileInput,
   ExtractionStats,
   IngestSourceInput,
   RecordExtractionStatsInput,
@@ -50,6 +51,21 @@ export function AddExtractedClaimInputSchema(): z.ZodObject<
 > {
   return z.object({
     claimRef: z.string(),
+  });
+}
+
+export function AttachOriginalFileInputSchema(): z.ZodObject<
+  Properties<AttachOriginalFileInput>
+> {
+  return z.object({
+    attachedAt: z.iso.datetime(),
+    convertedBy: z.string().nullish(),
+    originalFile: z.custom<`attachment://v${number}:${string}`>((val) =>
+      /^attachment:\/\/v\d+:.+$/.test(val as string),
+    ),
+    originalFileName: z.string().nullish(),
+    originalMimeType: z.string().nullish(),
+    originalSizeBytes: z.number().nullish(),
   });
 }
 
@@ -129,11 +145,21 @@ export function SourceStateSchema(): z.ZodObject<Properties<SourceState>> {
   return z.object({
     __typename: z.literal("SourceState").optional(),
     content: z.string().nullish(),
+    convertedBy: z.string().nullish(),
     createdAt: z.iso.datetime().nullish(),
     createdBy: z.string().nullish(),
     description: z.string().nullish(),
     extractedClaims: z.array(z.string()),
     extractionStats: z.lazy(() => ExtractionStatsSchema().nullish()),
+    originalAttachedAt: z.iso.datetime().nullish(),
+    originalFile: z
+      .custom<`attachment://v${number}:${string}`>((val) =>
+        /^attachment:\/\/v\d+:.+$/.test(val as string),
+      )
+      .nullish(),
+    originalFileName: z.string().nullish(),
+    originalMimeType: z.string().nullish(),
+    originalSizeBytes: z.number().nullish(),
     provenance: z.lazy(() => SourceProvenanceSchema().nullish()),
     sourceType: SourceTypeSchema.nullish(),
     status: SourceStatusSchema.nullish(),

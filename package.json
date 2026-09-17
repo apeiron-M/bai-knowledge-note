@@ -5,7 +5,8 @@
   "license": "AGPL-3.0-only",
   "type": "module",
   "files": [
-    "/dist"
+    "/dist",
+    "scripts/docling-serve"
   ],
   "publishConfig": {
     "access": "public"
@@ -76,7 +77,11 @@
     "format:check": "oxfmt --check"
   },
   "dependencies": {
-    "@huggingface/transformers": "^4.0.1"
+    "@huggingface/transformers": "^4.0.1",
+    "@powerhousedao/reactor-attachments": "6.2.3-dev.11"
+  },
+  "optionalDependencies": {
+    "docling.rs": "^1.55.0"
   },
   "devDependencies": {
     "@electric-sql/pglite": "0.3.15",

@@ -9,6 +9,7 @@ export default defineConfig({
       include: [
         "document-models/**/src/reducers/**",
         "document-models/**/src/tree-utils.ts",
+        "subgraphs/convert/lib/**",
         "subgraphs/http/lib/**",
       ],
       exclude: [

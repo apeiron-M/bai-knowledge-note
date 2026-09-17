@@ -7,6 +7,7 @@ import {
   ExtractionStatsMismatchError,
   InvalidExtractionStatsError,
   InvalidSourceStatusTransitionError,
+  OriginalAlreadyAttachedError,
 } from "../../gen/source-management/error.js";
 
 // Lifecycle: INBOX → EXTRACTING → EXTRACTED → ARCHIVED. The only ways back are
@@ -95,5 +96,21 @@ export const sourceSourceManagementOperations: SourceSourceManagementOperations 
       state.extractedClaims = state.extractedClaims.filter(
         (ref) => ref !== action.input.claimRef,
       );
+    },
+    attachOriginalFileOperation(state, action) {
+      if (
+        state.originalFile &&
+        state.originalFile !== action.input.originalFile
+      ) {
+        throw new OriginalAlreadyAttachedError(
+          "This source already has an original file; attach it again only with the same ref",
+        );
+      }
+      state.originalFile = action.input.originalFile;
+      state.originalFileName = action.input.originalFileName || null;
+      state.originalMimeType = action.input.originalMimeType || null;
+      state.originalSizeBytes = action.input.originalSizeBytes ?? null;
+      state.originalAttachedAt = action.input.attachedAt;
+      state.convertedBy = action.input.convertedBy || null;
     },
   };

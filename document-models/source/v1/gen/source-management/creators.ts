@@ -5,6 +5,7 @@
 import { createAction } from "document-model";
 import {
   AddExtractedClaimInputSchema,
+  AttachOriginalFileInputSchema,
   IngestSourceInputSchema,
   RecordExtractionStatsInputSchema,
   RemoveExtractedClaimInputSchema,
@@ -12,6 +13,7 @@ import {
 } from "../schema/zod.js";
 import type {
   AddExtractedClaimInput,
+  AttachOriginalFileInput,
   IngestSourceInput,
   RecordExtractionStatsInput,
   RemoveExtractedClaimInput,
@@ -19,6 +21,7 @@ import type {
 } from "../types.js";
 import type {
   AddExtractedClaimAction,
+  AttachOriginalFileAction,
   IngestSourceAction,
   RecordExtractionStatsAction,
   RemoveExtractedClaimAction,
@@ -67,5 +70,14 @@ export const removeExtractedClaim = (input: RemoveExtractedClaimInput) =>
     { ...input },
     undefined,
     RemoveExtractedClaimInputSchema,
+    "global",
+  );
+
+export const attachOriginalFile = (input: AttachOriginalFileInput) =>
+  createAction<AttachOriginalFileAction>(
+    "ATTACH_ORIGINAL_FILE",
+    { ...input },
+    undefined,
+    AttachOriginalFileInputSchema,
     "global",
   );

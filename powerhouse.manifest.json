@@ -152,6 +152,10 @@
     {
       "id": "http",
       "name": "http"
+    },
+    {
+      "id": "convert",
+      "name": "convert"
     }
   ],
   "config": [
@@ -184,6 +188,23 @@
       "type": "var",
       "description": "\"true\" or \"false\". Reject anonymous GraphQL callers with 401 before any resolver runs. Requires AUTH_ENABLED=true.",
       "required": true
+    },
+    {
+      "name": "CONVERT_SERVICE_URL",
+      "type": "var",
+      "description": "Base URL of the document conversion service, e.g. http://127.0.0.1:5011. Unset is supported: GET convert/health reports configured=false and POST convert answers 503 CONVERT_NOT_CONFIGURED.",
+      "required": false
+    },
+    {
+      "name": "CONVERT_SERVICE_API_KEY",
+      "type": "var",
+      "description": "Sent as X-Api-Key when the conversion backend requires one (the docling-serve container does). Not needed for the local docling.rs service.",
+      "required": false
+    },
+    {
+      "name": "CONVERT_SERVICE_AUTOSTART",
+      "description": "Start the conversion service from the subgraph on load, if nothing already answers CONVERT_SERVICE_URL. Ignored when CONVERT_SERVICE_API_KEY is set. Single-box affordance: under N replicas each would spawn its own engine.",
+      "required": false
     }
   ]
 }

@@ -35,6 +35,12 @@ export const initialGlobalState: SourceGlobalState = {
   extractionStats: null,
   createdAt: null,
   createdBy: null,
+  originalFile: null,
+  originalFileName: null,
+  originalMimeType: null,
+  originalSizeBytes: null,
+  originalAttachedAt: null,
+  convertedBy: null,
 };
 export const initialLocalState: SourceLocalState = {};
 

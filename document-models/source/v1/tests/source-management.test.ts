@@ -2,6 +2,8 @@ import { generateMock } from "document-model/mock";
 import {
   addExtractedClaim,
   AddExtractedClaimInputSchema,
+  attachOriginalFile,
+  AttachOriginalFileInputSchema,
   ingestSource,
   IngestSourceInputSchema,
   isSourceDocument,
@@ -366,5 +368,25 @@ describe("SourceManagementOperations", () => {
       "Claim note-zzz is not listed on this source",
     );
     expect(updated.state.global.extractedClaims).toStrictEqual(["note-a"]);
+  });
+
+  it("should handle attachOriginalFile operation", () => {
+    const document = utils.createDocument();
+    const input = generateMock(AttachOriginalFileInputSchema(), {
+      originalFile:
+        "attachment://v1:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+    });
+
+    const updatedDocument = reducer(document, attachOriginalFile(input));
+
+    expect(isSourceDocument(updatedDocument)).toBe(true);
+    expect(updatedDocument.operations.global).toHaveLength(1);
+    expect(updatedDocument.operations.global[0].action.type).toBe(
+      "ATTACH_ORIGINAL_FILE",
+    );
+    expect(updatedDocument.operations.global[0].action.input).toStrictEqual(
+      input,
+    );
+    expect(updatedDocument.operations.global[0].index).toEqual(0);
   });
 });

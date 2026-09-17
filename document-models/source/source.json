@@ -16,9 +16,9 @@
           "initialValue": ""
         },
         "global": {
-          "schema": "enum SourceType {\n    ARTICLE\n    PAPER\n    BOOK_CHAPTER\n    TRANSCRIPT\n    DOCUMENTATION\n    CONVERSATION\n    WEB_PAGE\n    MANUAL_ENTRY\n}\n\nenum SourceStatus {\n    INBOX\n    EXTRACTING\n    EXTRACTED\n    ARCHIVED\n}\n\ntype SourceProvenance {\n    url: String\n    author: String\n    publishedAt: DateTime\n    method: String\n    tool: String\n}\n\ntype ExtractionStats {\n    claimCount: Int!\n    skippedCount: Int!\n    skipRate: Float!\n    extractedAt: DateTime\n    extractedBy: String\n}\n\ntype SourceState {\n    title: String\n    description: String\n    content: String\n    sourceType: SourceType\n    status: SourceStatus\n    provenance: SourceProvenance\n    extractedClaims: [String!]!\n    extractionStats: ExtractionStats\n    createdAt: DateTime\n    createdBy: String\n}",
+          "schema": "enum SourceType {\n    ARTICLE\n    PAPER\n    BOOK_CHAPTER\n    TRANSCRIPT\n    DOCUMENTATION\n    CONVERSATION\n    WEB_PAGE\n    MANUAL_ENTRY\n}\n\nenum SourceStatus {\n    INBOX\n    EXTRACTING\n    EXTRACTED\n    ARCHIVED\n}\n\ntype SourceProvenance {\n    url: String\n    author: String\n    publishedAt: DateTime\n    method: String\n    tool: String\n}\n\ntype ExtractionStats {\n    claimCount: Int!\n    skippedCount: Int!\n    skipRate: Float!\n    extractedAt: DateTime\n    extractedBy: String\n}\n\ntype SourceState {\n    title: String\n    description: String\n    content: String\n    sourceType: SourceType\n    status: SourceStatus\n    provenance: SourceProvenance\n    extractedClaims: [String!]!\n    extractionStats: ExtractionStats\n    # the artefact this source was derived from. The vault's premise is that a\n    # source is the unrecoverable anchor, so the original bytes are kept here\n    # rather than discarded at ingestion. Content-addressed: see the attachment store.\n    originalFile: AttachmentRef\n    originalFileName: String\n    originalMimeType: String\n    originalSizeBytes: Int\n    originalAttachedAt: DateTime\n    # what produced `content` from the original, so a re-ingest can say what changed\n    convertedBy: String\n    createdAt: DateTime\n    createdBy: String\n}",
           "examples": [],
-          "initialValue": "{\n    \"title\": null,\n    \"description\": null,\n    \"content\": null,\n    \"sourceType\": null,\n    \"status\": \"INBOX\",\n    \"provenance\": null,\n    \"extractedClaims\": [],\n    \"extractionStats\": null,\n    \"createdAt\": null,\n    \"createdBy\": null\n}"
+          "initialValue": "{\n    \"title\": null,\n    \"description\": null,\n    \"content\": null,\n    \"sourceType\": null,\n    \"status\": \"INBOX\",\n    \"provenance\": null,\n    \"extractedClaims\": [],\n    \"extractionStats\": null,\n    \"createdAt\": null,\n    \"createdBy\": null,\n    \"originalFile\": null,\n    \"originalFileName\": null,\n    \"originalMimeType\": null,\n    \"originalSizeBytes\": null,\n    \"originalAttachedAt\": null,\n    \"convertedBy\": null\n}"
         }
       },
       "modules": [
@@ -107,6 +107,25 @@
                   "name": "ClaimNotFoundError",
                   "code": "CLAIM_NOT_FOUND",
                   "description": "The claim reference is not listed in this source's extractedClaims",
+                  "template": ""
+                }
+              ],
+              "examples": [],
+              "scope": "global"
+            },
+            {
+              "id": "attach-original-file",
+              "name": "ATTACH_ORIGINAL_FILE",
+              "description": "Records the original file this source was converted from, as an attachment ref.",
+              "schema": "input AttachOriginalFileInput {\n    originalFile: AttachmentRef!\n    originalFileName: String\n    originalMimeType: String\n    originalSizeBytes: Int\n    convertedBy: String\n    attachedAt: DateTime!\n}",
+              "template": "Records the original file this source was converted from, as an attachment ref.",
+              "reducer": "if (state.originalFile && state.originalFile !== action.input.originalFile) {\n  throw new OriginalAlreadyAttachedError(\"This source already has an original file; attach it again only with the same ref\");\n}\nstate.originalFile = action.input.originalFile;\nstate.originalFileName = action.input.originalFileName || null;\nstate.originalMimeType = action.input.originalMimeType || null;\nstate.originalSizeBytes = action.input.originalSizeBytes ?? null;\nstate.originalAttachedAt = action.input.attachedAt;\nstate.convertedBy = action.input.convertedBy || null;",
+              "errors": [
+                {
+                  "id": "original-already-attached",
+                  "name": "OriginalAlreadyAttachedError",
+                  "code": "ORIGINAL_ALREADY_ATTACHED",
+                  "description": "The source already has a different original file attached.",
                   "template": ""
                 }
               ],
