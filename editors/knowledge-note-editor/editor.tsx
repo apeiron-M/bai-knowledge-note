@@ -5,7 +5,9 @@ import { dispatchActions } from "@powerhousedao/reactor-browser";
 import {
   useSelectedKnowledgeNoteDocument,
   actions,
+  NoteTypeSchema,
 } from "document-models/knowledge-note";
+import type { NoteType } from "document-models/knowledge-note";
 import { StatusBar } from "./components/status-bar.js";
 import { TopicsBar } from "./components/topics-bar.js";
 import { LinksSection } from "./components/links-section.js";
@@ -38,18 +40,10 @@ type NoteLinkLite = {
   confidence: string | null;
 };
 
-const NOTE_TYPES = [
-  "concept",
-  "decision",
-  "pattern",
-  "observation",
-  "procedure",
-  "architecture",
-  "bug-pattern",
-  "integration",
-  "workflow",
-  "reference",
-] as const;
+// The ten values come from the model's NoteType enum; the reducer rejects
+// anything else, so the picker must offer exactly this set.
+const NOTE_TYPES = NoteTypeSchema.options;
+const noteTypeLabel = (t: NoteType) => t.toLowerCase().replace(/_/g, " ");
 
 function timestamp() {
   return new Date().toISOString();
@@ -112,8 +106,12 @@ export default function Editor() {
   );
 
   const handleSetNoteType = useCallback(
-    (noteType: string) => {
-      dispatch?.(actions.setNoteType({ noteType, updatedAt: timestamp() }));
+    (value: string) => {
+      const parsed = NoteTypeSchema.safeParse(value);
+      if (!parsed.success) return; // only enum values reach the reducer
+      dispatch?.(
+        actions.setNoteType({ noteType: parsed.data, updatedAt: timestamp() }),
+      );
     },
     [dispatch],
   );
@@ -285,7 +283,7 @@ export default function Editor() {
                 </option>
                 {NOTE_TYPES.map((t) => (
                   <option key={t} value={t}>
-                    {t}
+                    {noteTypeLabel(t)}
                   </option>
                 ))}
               </select>
@@ -620,7 +618,8 @@ export default function Editor() {
                         actions.setProvenance({
                           author,
                           sourceOrigin,
-                          createdAt: timestamp(),
+                          // createdAt is immutable once set: pass it back
+                          createdAt: state.provenance?.createdAt ?? timestamp(),
                         }),
                       )
                     }

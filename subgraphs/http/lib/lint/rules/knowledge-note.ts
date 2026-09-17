@@ -1,17 +1,8 @@
 import type { LintFinding, ModelRule } from "../types.js";
 
-const NOTE_TYPES = [
-  "concept",
-  "decision",
-  "pattern",
-  "observation",
-  "procedure",
-  "architecture",
-  "bug-pattern",
-  "integration",
-  "workflow",
-  "reference",
-];
+// noteType needs no rule here: it is a NoteType enum in the model, so the
+// generic INVALID_INPUT check (generated zod schema) rejects a stray value
+// before model rules run — and the reducer would reject it again.
 const METADATA_FIELDS = [
   "scope",
   "confidence",
@@ -101,20 +92,6 @@ export const knowledgeNoteRules: ModelRule[] = [
             "field",
             "INVALID_METADATA_LIST_FIELD",
             `metadata list field ${a.input.field} is not allowed`,
-          ),
-        ]
-      : [],
-  (a, i) =>
-    a.type === "SET_NOTE_TYPE" &&
-    typeof a.input.noteType === "string" &&
-    !NOTE_TYPES.includes(a.input.noteType)
-      ? [
-          fail(
-            i,
-            "noteType",
-            "NOTE_TYPE_CONVENTION",
-            `noteType must be one of ${NOTE_TYPES.join(", ")}`,
-            "VAULT_CONVENTION",
           ),
         ]
       : [],

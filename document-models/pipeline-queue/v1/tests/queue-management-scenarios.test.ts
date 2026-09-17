@@ -156,7 +156,8 @@ describe("QueueManagement scenarios", () => {
     expect(document.state.global.completedCount).toBe(2);
     expect(document.state.global.activeCount).toBe(0);
 
-    // Advancing a DONE claim task (currentPhase null) restarts it at the first phase
+    // Advancing a DONE task is refused — it used to resurrect the task at the
+    // first phase because indexOf(null || "") is -1.
     document = reducer(
       document,
       advancePhase({
@@ -166,32 +167,37 @@ describe("QueueManagement scenarios", () => {
       }),
     );
     task = document.state.global.tasks[1];
-    expect(task.currentPhase).toBe("create");
-    expect(task.status).toBe("PENDING");
-    // completedPhases untouched because currentPhase was null before advancing
+    expect(document.operations.global.at(-1)?.error).toBe(
+      "Task task-2 is DONE; only PENDING or IN_PROGRESS tasks advance",
+    );
+    expect(task.status).toBe("DONE");
+    expect(task.currentPhase).toBeNull();
     expect(task.completedPhases).toStrictEqual(["verify"]);
+    expect(document.state.global.completedCount).toBe(2);
 
-    // Failing a task while activeCount is already 0 keeps the count at 0
+    // Failing a DONE task is refused too, so activeCount is never decremented twice
     document = reducer(
       document,
       failTask({ taskId: "task-2", reason: "verification failed", updatedAt: T5 }),
     );
-    expect(document.state.global.tasks[1].status).toBe("FAILED");
+    expect(document.operations.global.at(-1)?.error).toBe(
+      "Task task-2 is already DONE",
+    );
+    expect(document.state.global.tasks[1].status).toBe("DONE");
     expect(document.state.global.activeCount).toBe(0);
-    expect(document.state.global.lastProcessedAt).toBe(T5);
+    expect(document.state.global.lastProcessedAt).toBe(T4);
 
     expect(isPipelineQueueDocument(document)).toBe(true);
-    for (const operation of document.operations.global) {
+    for (const operation of document.operations.global.slice(0, -2)) {
       expect(operation.error).toBeUndefined();
     }
   });
 
-  it("should leave a task without a phase-order entry unphased when added and advanced", () => {
-    let document = utils.createDocument();
-
-    // taskType not present in phaseOrder → no first phase
-    document = reducer(
-      document,
+  it("refuses a task type without a phase-order entry instead of creating an unphased task", () => {
+    // Such a task used to be created with currentPhase null: it could never
+    // advance or complete and held an activeCount slot forever.
+    const document = reducer(
+      utils.createDocument(),
       addTask({
         id: "task-custom",
         taskType: "custom",
@@ -199,41 +205,11 @@ describe("QueueManagement scenarios", () => {
         createdAt: T1,
       }),
     );
-    let task = document.state.global.tasks[0];
-    expect(task.currentPhase).toBeNull();
-    expect(document.state.global.activeCount).toBe(1);
-
-    // Advancing records the handoff but cannot move phases (no phase entry)
-    document = reducer(
-      document,
-      advancePhase({
-        taskId: "task-custom",
-        handoff: makeHandoff("handoff-custom", "adhoc"),
-        updatedAt: T2,
-      }),
+    expect(document.operations.global[0].error).toBe(
+      "No phase order is defined for task type custom",
     );
-    task = document.state.global.tasks[0];
-    expect(task.handoffs).toHaveLength(1);
-    expect(task.completedPhases).toStrictEqual([]);
-    expect(task.currentPhase).toBeNull();
-    expect(task.status).toBe("PENDING");
-    expect(task.updatedAt).toBe(T2);
-    expect(document.state.global.lastProcessedAt).toBe(T2);
-
-    // Explicit completion still works for such tasks
-    document = reducer(
-      document,
-      completeTask({ taskId: "task-custom", updatedAt: T3 }),
-    );
-    task = document.state.global.tasks[0];
-    expect(task.status).toBe("DONE");
-    expect(task.currentPhase).toBeNull();
-    expect(document.state.global.completedCount).toBe(1);
+    expect(document.state.global.tasks).toHaveLength(0);
     expect(document.state.global.activeCount).toBe(0);
-
-    for (const operation of document.operations.global) {
-      expect(operation.error).toBeUndefined();
-    }
   });
 
   it("should block and unblock a task", () => {
@@ -266,7 +242,7 @@ describe("QueueManagement scenarios", () => {
     }
   });
 
-  it("should clamp activeCount at zero when settling tasks that are no longer active", () => {
+  it("refuses to settle a task that is already terminal, so the counters stay consistent", () => {
     let document = utils.createDocument();
 
     document = reducer(
@@ -281,76 +257,67 @@ describe("QueueManagement scenarios", () => {
     );
     expect(document.state.global.activeCount).toBe(1);
 
-    // Failing drops the active count to 0
     document = reducer(
       document,
       failTask({ taskId: "task-1", reason: "bad source", updatedAt: T2 }),
     );
     expect(document.state.global.activeCount).toBe(0);
 
-    // Completing the already-failed task must not push activeCount below 0
+    // Completing the failed task used to mark it DONE and count a completion
     document = reducer(document, completeTask({ taskId: "task-1", updatedAt: T3 }));
-    expect(document.state.global.tasks[0].status).toBe("DONE");
-    expect(document.state.global.completedCount).toBe(1);
+    expect(document.operations.global[2].error).toBe("Task task-1 is already FAILED");
+    expect(document.state.global.tasks[0].status).toBe("FAILED");
+    expect(document.state.global.completedCount).toBe(0);
     expect(document.state.global.activeCount).toBe(0);
 
-    // Restart the task on its final phase, fail it, then advance to DONE
-    // while activeCount is already 0
+    // Advancing it used to restart it at the first phase
     document = reducer(
       document,
       advancePhase({
         taskId: "task-1",
-        handoff: makeHandoff("handoff-1", "restart"),
+        handoff: makeHandoff("handoff-1", "verify"),
         updatedAt: T4,
       }),
     );
-    expect(document.state.global.tasks[0].currentPhase).toBe("create");
+    expect(document.operations.global[3].error).toBe(
+      "Task task-1 is FAILED; only PENDING or IN_PROGRESS tasks advance",
+    );
+    expect(document.state.global.tasks[0].currentPhase).toBe("verify");
 
+    // Failing it again would have decremented activeCount a second time
     document = reducer(
       document,
       failTask({ taskId: "task-1", reason: "flaky", updatedAt: T4 }),
     );
+    expect(document.operations.global[4].error).toBe("Task task-1 is already FAILED");
     expect(document.state.global.activeCount).toBe(0);
 
+    // A retry is a new task
+    document = reducer(
+      document,
+      addTask({
+        id: "task-1-retry",
+        taskType: "claim",
+        target: "inbox/source-a.md",
+        currentPhase: "verify",
+        createdAt: T5,
+      }),
+    );
+    expect(document.state.global.activeCount).toBe(1);
     document = reducer(
       document,
       advancePhase({
-        taskId: "task-1",
-        handoff: makeHandoff("handoff-2", "create"),
+        taskId: "task-1-retry",
+        handoff: makeHandoff("handoff-2", "verify"),
         updatedAt: T5,
       }),
     );
-    expect(document.state.global.tasks[0].currentPhase).toBe("reflect");
-
-    document = reducer(
-      document,
-      advancePhase({
-        taskId: "task-1",
-        handoff: makeHandoff("handoff-3", "reflect"),
-        updatedAt: T5,
-      }),
-    );
-    document = reducer(
-      document,
-      advancePhase({
-        taskId: "task-1",
-        handoff: makeHandoff("handoff-4", "reweave"),
-        updatedAt: T5,
-      }),
-    );
-    document = reducer(
-      document,
-      advancePhase({
-        taskId: "task-1",
-        handoff: makeHandoff("handoff-5", "verify"),
-        updatedAt: T5,
-      }),
-    );
-    expect(document.state.global.tasks[0].status).toBe("DONE");
-    expect(document.state.global.completedCount).toBe(2);
+    expect(document.state.global.tasks[1].status).toBe("DONE");
+    expect(document.state.global.completedCount).toBe(1);
     expect(document.state.global.activeCount).toBe(0);
 
-    for (const operation of document.operations.global) {
+    for (const [i, operation] of document.operations.global.entries()) {
+      if (i === 2 || i === 3 || i === 4) continue;
       expect(operation.error).toBeUndefined();
     }
   });

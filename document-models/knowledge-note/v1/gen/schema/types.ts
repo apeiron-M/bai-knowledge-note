@@ -118,7 +118,7 @@ export type KnowledgeNoteState = {
   modelId: Maybe<Scalars["String"]["output"]>;
   models: Array<Scalars["String"]["output"]>;
   modules: Array<Scalars["String"]["output"]>;
-  noteType: Maybe<Scalars["String"]["output"]>;
+  noteType: Maybe<NoteType>;
   outputs: Array<Scalars["String"]["output"]>;
   provenance: Maybe<Provenance>;
   relationType: Maybe<Scalars["String"]["output"]>;
@@ -130,6 +130,7 @@ export type KnowledgeNoteState = {
   targetType: Maybe<Scalars["String"]["output"]>;
   title: Maybe<Scalars["String"]["output"]>;
   topics: Array<Topic>;
+  updatedAt: Maybe<Scalars["DateTime"]["output"]>;
   version: Maybe<Scalars["String"]["output"]>;
 };
 
@@ -157,6 +158,18 @@ export type NoteLink = {
 };
 
 export type NoteStatus = "ARCHIVED" | "CANONICAL" | "DRAFT" | "IN_REVIEW";
+
+export type NoteType =
+  | "ARCHITECTURE"
+  | "BUG_PATTERN"
+  | "CONCEPT"
+  | "DECISION"
+  | "INTEGRATION"
+  | "OBSERVATION"
+  | "PATTERN"
+  | "PROCEDURE"
+  | "REFERENCE"
+  | "WORKFLOW";
 
 export type PatchContentInput = {
   insert: Scalars["String"]["input"];
@@ -227,7 +240,7 @@ export type SetMetadataListFieldInput = {
 };
 
 export type SetNoteTypeInput = {
-  noteType: Scalars["String"]["input"];
+  noteType: NoteType;
   updatedAt: Scalars["DateTime"]["input"];
 };
 

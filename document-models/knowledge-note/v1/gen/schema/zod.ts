@@ -12,6 +12,7 @@ import type {
   LinkType,
   NoteLink,
   NoteStatus,
+  NoteType,
   PatchContentInput,
   PersonalTag,
   Provenance,
@@ -59,6 +60,19 @@ export const NoteStatusSchema = z.enum([
   "CANONICAL",
   "DRAFT",
   "IN_REVIEW",
+]);
+
+export const NoteTypeSchema = z.enum([
+  "ARCHITECTURE",
+  "BUG_PATTERN",
+  "CONCEPT",
+  "DECISION",
+  "INTEGRATION",
+  "OBSERVATION",
+  "PATTERN",
+  "PROCEDURE",
+  "REFERENCE",
+  "WORKFLOW",
 ]);
 
 export const SourceOriginSchema = z.enum([
@@ -145,7 +159,7 @@ export function KnowledgeNoteStateSchema(): z.ZodObject<
     modelId: z.string().nullish(),
     models: z.array(z.string()),
     modules: z.array(z.string()),
-    noteType: z.string().nullish(),
+    noteType: NoteTypeSchema.nullish(),
     outputs: z.array(z.string()),
     provenance: z.lazy(() => ProvenanceSchema().nullish()),
     relationType: z.string().nullish(),
@@ -157,6 +171,7 @@ export function KnowledgeNoteStateSchema(): z.ZodObject<
     targetType: z.string().nullish(),
     title: z.string().nullish(),
     topics: z.array(z.lazy(() => TopicSchema())),
+    updatedAt: z.iso.datetime().nullish(),
     version: z.string().nullish(),
   });
 }
@@ -303,7 +318,7 @@ export function SetNoteTypeInputSchema(): z.ZodObject<
   Properties<SetNoteTypeInput>
 > {
   return z.object({
-    noteType: z.string(),
+    noteType: NoteTypeSchema,
     updatedAt: z.iso.datetime(),
   });
 }

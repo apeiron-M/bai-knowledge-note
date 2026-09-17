@@ -15,6 +15,7 @@ import type {
   PhaseOrderEntry,
   PipelineQueueState,
   PipelineTask,
+  ReconcileCountersInput,
   TaskStatus,
   UnblockTaskInput,
 } from "./types.js";
@@ -180,6 +181,14 @@ export function PipelineTaskSchema(): z.ZodObject<Properties<PipelineTask>> {
     target: z.string(),
     taskType: z.string(),
     updatedAt: z.iso.datetime().nullish(),
+  });
+}
+
+export function ReconcileCountersInputSchema(): z.ZodObject<
+  Properties<ReconcileCountersInput>
+> {
+  return z.object({
+    updatedAt: z.iso.datetime(),
   });
 }
 

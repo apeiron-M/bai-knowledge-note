@@ -51,10 +51,23 @@ enum LinkType {
     DERIVED_FROM
 }
 
+enum NoteType {
+    CONCEPT
+    DECISION
+    PATTERN
+    OBSERVATION
+    PROCEDURE
+    ARCHITECTURE
+    BUG_PATTERN
+    INTEGRATION
+    WORKFLOW
+    REFERENCE
+}
+
 type KnowledgeNoteState {
     title: String
     description: String
-    noteType: String
+    noteType: NoteType
     content: String
     status: NoteStatus
     provenance: Provenance
@@ -88,6 +101,7 @@ type KnowledgeNoteState {
     rootCause: String
     correctPattern: String
     lifecycleEvents: [LifecycleEvent!]!
+    updatedAt: DateTime
 }
 
 type Provenance {
@@ -133,7 +147,7 @@ input SetDescriptionInput {
 }
 
 input SetNoteTypeInput {
-    noteType: String!
+    noteType: NoteType!
     updatedAt: DateTime!
 }
 

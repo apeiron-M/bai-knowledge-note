@@ -209,7 +209,8 @@ describe("POST actions", () => {
       post({
         documentId: "doc",
         actions: [
-          { type: "SET_NOTE_TYPE", input: { noteType: "WRONG_CASE", updatedAt: "2026-09-13T12:00:00.000Z" } },
+          // a literal backslash-n is the vault convention the lint enforces
+          { type: "SET_CONTENT", input: { content: "line one\\nline two", updatedAt: "2026-09-13T12:00:00.000Z" } },
         ],
       }),
       ctx,

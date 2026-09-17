@@ -36,7 +36,8 @@ const log: DocumentOperation[] = [
   op(1, actions.setSourceStatus({ status: "EXTRACTING" })),
   op(2, actions.addExtractedClaim({ claimRef: "c1" })),
   op(3, ingest("one\ntwo revised\nthree")),
-  op(4, actions.setSourceStatus({ status: "EXTRACTED" })),
+  // Re-ingest left it INBOX; EXTRACTING is the only forward step from there.
+  op(4, actions.setSourceStatus({ status: "EXTRACTING" })),
 ];
 const at = (i: number) => M.replay(log, i).snapshot;
 

@@ -12,11 +12,23 @@
  */
 import type { DocumentDispatch } from "@powerhousedao/reactor-browser";
 import { actions } from "document-models/vault-config";
+import type { MaintenanceCondition } from "document-models/vault-config";
 import type {
   MaintenanceConfig,
   VaultConfigAction,
 } from "document-models/vault-config";
 import { UNSAVED_HINT } from "./defaults.js";
+
+/** State key → UPDATE_MAINTENANCE_THRESHOLD's `MaintenanceCondition` enum value. */
+const CONDITION_ENUM: Record<string, MaintenanceCondition> = {
+  orphanThreshold: "ORPHAN_THRESHOLD",
+  danglingThreshold: "DANGLING_THRESHOLD",
+  inboxPressure: "INBOX_PRESSURE",
+  observationAccumulation: "OBSERVATION_ACCUMULATION",
+  tensionAccumulation: "TENSION_ACCUMULATION",
+  mocOversize: "MOC_OVERSIZE",
+  staleNoteDays: "STALE_NOTE_DAYS",
+};
 import {
   Card,
   Row,
@@ -112,10 +124,11 @@ export function MaintenanceSection({
                     e.currentTarget.value = String(value);
                     return;
                   }
-                  if (next !== value) {
+                  const condition = CONDITION_ENUM[key];
+                  if (next !== value && condition) {
                     dispatch(
                       actions.updateMaintenanceThreshold({
-                        condition: key,
+                        condition,
                         threshold: next,
                         updatedAt: ts(),
                       }),

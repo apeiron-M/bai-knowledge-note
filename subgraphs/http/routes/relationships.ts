@@ -4,6 +4,7 @@ import { canonicalForWrite } from "../lib/authorize.js";
 import type { HttpRouteDeps } from "../lib/deps.js";
 import { HttpError, jsonError, OK_CACHE } from "../lib/respond.js";
 import { rejectUnknownFields } from "../lib/validate.js";
+import { KNOWLEDGE_LINK_TYPES } from "../../../processors/graph-indexer/link-types.js";
 import { executeWrite } from "../lib/write.js";
 
 export interface RelationshipBody {
@@ -47,6 +48,17 @@ export function createRelationshipRoute(
           400,
           "BAD_REQUEST",
           "source, target and type are required",
+        );
+      }
+      // ADD_RELATIONSHIP is a reactor action with a free-string type: an
+      // unknown type (BUILD_ON, builds_on) is stored and then ignored by the
+      // indexer — an edge that exists but no graph query can see.
+      if (!(KNOWLEDGE_LINK_TYPES as readonly string[]).includes(body.type)) {
+        throw new HttpError(
+          400,
+          "BAD_REQUEST",
+          `type must be one of ${KNOWLEDGE_LINK_TYPES.join(", ")}`,
+          [{ path: "type", rule: "UNKNOWN_LINK_TYPE" }],
         );
       }
       if (method !== "DELETE") {

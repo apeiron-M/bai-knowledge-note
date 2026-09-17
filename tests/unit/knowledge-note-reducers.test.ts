@@ -121,12 +121,39 @@ describe("Content module — state mutations", () => {
     const updated = reducer(
       document,
       actions.setNoteType({
-        noteType: "concept",
+        noteType: "CONCEPT",
         updatedAt: "2026-01-01T00:00:00Z",
       }),
     );
 
-    expect(updated.state.global.noteType).toBe("concept");
+    expect(updated.state.global.noteType).toBe("CONCEPT");
+  });
+
+  it("SET_NOTE_TYPE — rejects a value outside the NoteType enum at both gates", () => {
+    // noteType used to be a free String: `concept`, `CONCEPT`, `bug-pattern`
+    // and `BUG-PATTERN` all landed on real drives. As an enum the value is
+    // checked twice: the action creator refuses to build the action, and a
+    // raw action that bypasses the creator is recorded with an error.
+    expect(() =>
+      actions.setNoteType({
+        // @ts-expect-error — the old lowercase spelling is no longer a NoteType
+        noteType: "concept",
+        updatedAt: "2026-01-01T00:00:00Z",
+      }),
+    ).toThrow(/noteType|Invalid option/);
+
+    const document = utils.createDocument();
+    const raw = {
+      ...actions.setNoteType({
+        noteType: "CONCEPT",
+        updatedAt: "2026-01-01T00:00:00Z",
+      }),
+      input: { noteType: "concept", updatedAt: "2026-01-01T00:00:00Z" },
+    } as unknown as ReturnType<typeof actions.setNoteType>;
+    const updated = reducer(document, raw);
+
+    expect(updated.operations.global[0].error).toMatch(/Invalid option/);
+    expect(updated.state.global.noteType).toBeNull();
   });
 
   it("SET_METADATA_FIELD with valid field — updates state.global.confidence", () => {
@@ -136,12 +163,12 @@ describe("Content module — state mutations", () => {
       document,
       actions.setMetadataField({
         field: "confidence",
-        value: "high",
+        value: "grounded",
         updatedAt: "2026-01-01T00:00:00Z",
       }),
     );
 
-    expect(updated.state.global.confidence).toBe("high");
+    expect(updated.state.global.confidence).toBe("grounded");
   });
 
   it("SET_METADATA_FIELD with invalid field — records error and leaves state unchanged", () => {

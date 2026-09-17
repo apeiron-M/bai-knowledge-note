@@ -37,10 +37,24 @@
                   "code": "DUPLICATE_TASK_ID",
                   "description": "A task with this id already exists",
                   "template": ""
+                },
+                {
+                  "id": "err-unknown-task-type",
+                  "name": "UnknownTaskTypeError",
+                  "code": "UNKNOWN_TASK_TYPE",
+                  "description": "taskType has no entry in phaseOrder; such a task could never advance or complete",
+                  "template": ""
+                },
+                {
+                  "id": "err-invalid-phase-add",
+                  "name": "InvalidPhaseError",
+                  "code": "INVALID_PHASE",
+                  "description": "currentPhase is not a phase of the task type",
+                  "template": ""
                 }
               ],
               "schema": "input AddTaskInput {\n    id: OID!\n    taskType: String!\n    target: String!\n    batchId: String\n    documentRef: String\n    currentPhase: String\n    createdAt: DateTime!\n}",
-              "reducer": "addTaskOperation(state, action) {\n  if (state.tasks.some((t) => t.id === action.input.id)) {\n    throw new DuplicateTaskIdError(`Task ${action.input.id} already exists`);\n  }\n  const phaseEntry = state.phaseOrder.find(\n    (p) => p.taskType === action.input.taskType,\n  );\n  const firstPhase =\n    action.input.currentPhase || (phaseEntry ? phaseEntry.phases[0] : null);\n  state.tasks.push({\n    id: action.input.id,\n    taskType: action.input.taskType,\n    status: \"PENDING\",\n    target: action.input.target,\n    batchId: action.input.batchId || null,\n    documentRef: action.input.documentRef || null,\n    currentPhase: firstPhase || null,\n    completedPhases: [],\n    handoffs: [],\n    assignedTo: null,\n    createdAt: action.input.createdAt,\n    updatedAt: null,\n  });\n  state.activeCount = (state.activeCount || 0) + 1;\n}",
+              "reducer": "if (state.tasks.some((t) => t.id === action.input.id)) {\n  throw new DuplicateTaskIdError(`Task ${action.input.id} already exists`);\n}\nconst phaseEntry = state.phaseOrder.find(\n  (p) => p.taskType === action.input.taskType,\n);\nif (!phaseEntry) {\n  throw new UnknownTaskTypeError(\n    `No phase order is defined for task type ${action.input.taskType}`,\n  );\n}\nconst firstPhase = action.input.currentPhase || phaseEntry.phases[0];\nif (!phaseEntry.phases.includes(firstPhase)) {\n  throw new InvalidPhaseError(\n    `${firstPhase} is not a phase of task type ${action.input.taskType}`,\n  );\n}\nstate.tasks.push({\n  id: action.input.id,\n  taskType: action.input.taskType,\n  status: \"PENDING\",\n  target: action.input.target,\n  batchId: action.input.batchId || null,\n  documentRef: action.input.documentRef || null,\n  currentPhase: firstPhase,\n  completedPhases: [],\n  handoffs: [],\n  assignedTo: null,\n  createdAt: action.input.createdAt,\n  updatedAt: null,\n});\nstate.activeCount = (state.activeCount || 0) + 1;",
               "examples": [],
               "template": "Add a new task to the pipeline",
               "description": "Add a new task to the pipeline"
@@ -82,10 +96,24 @@
                   "name": "TaskNotFoundError",
                   "template": "",
                   "description": "Task not found"
+                },
+                {
+                  "id": "err-invalid-task-status-advance",
+                  "name": "InvalidTaskStatusError",
+                  "code": "INVALID_TASK_STATUS",
+                  "description": "Only PENDING or IN_PROGRESS tasks advance; a DONE task must not be resurrected",
+                  "template": ""
+                },
+                {
+                  "id": "err-phase-mismatch",
+                  "name": "PhaseMismatchError",
+                  "code": "PHASE_MISMATCH",
+                  "description": "The handoff names a phase other than the task's current phase",
+                  "template": ""
                 }
               ],
               "schema": "input PhaseHandoffInput {\n    id: OID!\n    phase: String!\n    workDone: String!\n    filesModified: [String!]!\n    completedAt: DateTime!\n    completedBy: String\n}\n\ninput AdvancePhaseInput {\n    taskId: OID!\n    handoff: PhaseHandoffInput!\n    updatedAt: DateTime!\n}",
-              "reducer": "const task = state.tasks.find(t => t.id === action.input.taskId);\nif (!task) throw new TaskNotFoundError(\"Task not found\");\nconst handoff = action.input.handoff;\ntask.handoffs.push({\n    id: handoff.id,\n    phase: handoff.phase,\n    workDone: handoff.workDone,\n    filesModified: handoff.filesModified,\n    learnings: [],\n    completedAt: handoff.completedAt,\n    completedBy: handoff.completedBy || null,\n});\nif (task.currentPhase) {\n    task.completedPhases.push(task.currentPhase);\n}\nconst phaseEntry = state.phaseOrder.find(p => p.taskType === task.taskType);\nif (phaseEntry) {\n    const currentIdx = phaseEntry.phases.indexOf(task.currentPhase || \"\");\n    const nextPhase = phaseEntry.phases[currentIdx + 1];\n    if (nextPhase) {\n        task.currentPhase = nextPhase;\n        task.status = \"PENDING\";\n    } else {\n        task.currentPhase = null;\n        task.status = \"DONE\";\n        state.completedCount = (state.completedCount || 0) + 1;\n        state.activeCount = Math.max(0, (state.activeCount || 0) - 1);\n    }\n}\ntask.assignedTo = null;\ntask.updatedAt = action.input.updatedAt;\nstate.lastProcessedAt = action.input.updatedAt;",
+              "reducer": "const task = state.tasks.find((t) => t.id === action.input.taskId);\nif (!task) throw new TaskNotFoundError(\"Task not found\");\nif (task.status !== \"PENDING\" && task.status !== \"IN_PROGRESS\") {\n  throw new InvalidTaskStatusError(\n    `Task ${task.id} is ${task.status}; only PENDING or IN_PROGRESS tasks advance`,\n  );\n}\nconst handoff = action.input.handoff;\n// A task with no current phase (legacy: created before ADD_TASK checked\n// taskType) cannot advance; COMPLETE_TASK or FAIL_TASK is its exit.\nconst current = task.currentPhase;\nif (current === null || handoff.phase !== current) {\n  throw new PhaseMismatchError(\n    `Handoff is for phase ${handoff.phase} but the task is at ${current}`,\n  );\n}\ntask.handoffs.push({\n  id: handoff.id,\n  phase: handoff.phase,\n  workDone: handoff.workDone,\n  filesModified: handoff.filesModified,\n  learnings: [],\n  completedAt: handoff.completedAt,\n  completedBy: handoff.completedBy || null,\n});\ntask.completedPhases.push(current);\nconst phaseEntry = state.phaseOrder.find(\n  (p) => p.taskType === task.taskType,\n);\n// No phase order (legacy task type): there is no next phase, so it settles.\nconst nextPhase = phaseEntry\n  ? phaseEntry.phases[phaseEntry.phases.indexOf(current) + 1]\n  : undefined;\nif (nextPhase) {\n  task.currentPhase = nextPhase;\n  task.status = \"PENDING\";\n} else {\n  task.currentPhase = null;\n  task.status = \"DONE\";\n  state.completedCount = (state.completedCount || 0) + 1;\n  state.activeCount = Math.max(0, (state.activeCount || 0) - 1);\n}\ntask.assignedTo = null;\ntask.updatedAt = action.input.updatedAt;\nstate.lastProcessedAt = action.input.updatedAt;",
               "examples": [],
               "template": "Complete current phase, advance to next",
               "description": "Complete current phase, advance to next"
@@ -101,10 +129,17 @@
                   "name": "TaskNotFoundError",
                   "template": "",
                   "description": "Task not found"
+                },
+                {
+                  "id": "err-invalid-task-status-complete",
+                  "name": "InvalidTaskStatusError",
+                  "code": "INVALID_TASK_STATUS",
+                  "description": "Task is already DONE or FAILED; completing again double-counts completedCount",
+                  "template": ""
                 }
               ],
               "schema": "input CompleteTaskInput {\n    taskId: OID!\n    updatedAt: DateTime!\n}",
-              "reducer": "const task = state.tasks.find(t => t.id === action.input.taskId);\nif (!task) throw new TaskNotFoundError(\"Task not found\");\ntask.status = \"DONE\";\ntask.currentPhase = null;\ntask.updatedAt = action.input.updatedAt;\nstate.completedCount = (state.completedCount || 0) + 1;\nstate.activeCount = Math.max(0, (state.activeCount || 0) - 1);\nstate.lastProcessedAt = action.input.updatedAt;",
+              "reducer": "const task = state.tasks.find((t) => t.id === action.input.taskId);\nif (!task) throw new TaskNotFoundError(\"Task not found\");\nif (task.status === \"DONE\" || task.status === \"FAILED\") {\n  throw new InvalidTaskStatusError(\n    `Task ${task.id} is already ${task.status}`,\n  );\n}\ntask.status = \"DONE\";\ntask.currentPhase = null;\ntask.updatedAt = action.input.updatedAt;\nstate.completedCount = (state.completedCount || 0) + 1;\nstate.activeCount = Math.max(0, (state.activeCount || 0) - 1);\nstate.lastProcessedAt = action.input.updatedAt;",
               "examples": [],
               "template": "Mark task as done",
               "description": "Mark task as done"
@@ -120,10 +155,17 @@
                   "name": "TaskNotFoundError",
                   "template": "",
                   "description": "Task not found"
+                },
+                {
+                  "id": "err-invalid-task-status-fail",
+                  "name": "InvalidTaskStatusError",
+                  "code": "INVALID_TASK_STATUS",
+                  "description": "Task is already DONE or FAILED; failing again decrements activeCount twice",
+                  "template": ""
                 }
               ],
               "schema": "input FailTaskInput {\n    taskId: OID!\n    reason: String!\n    updatedAt: DateTime!\n}",
-              "reducer": "const task = state.tasks.find(t => t.id === action.input.taskId);\nif (!task) throw new TaskNotFoundError(\"Task not found\");\ntask.status = \"FAILED\";\ntask.updatedAt = action.input.updatedAt;\nstate.activeCount = Math.max(0, (state.activeCount || 0) - 1);\nstate.lastProcessedAt = action.input.updatedAt;",
+              "reducer": "const task = state.tasks.find((t) => t.id === action.input.taskId);\nif (!task) throw new TaskNotFoundError(\"Task not found\");\nif (task.status === \"DONE\" || task.status === \"FAILED\") {\n  throw new InvalidTaskStatusError(\n    `Task ${task.id} is already ${task.status}`,\n  );\n}\ntask.status = \"FAILED\";\ntask.updatedAt = action.input.updatedAt;\nstate.activeCount = Math.max(0, (state.activeCount || 0) - 1);\nstate.lastProcessedAt = action.input.updatedAt;",
               "examples": [],
               "template": "Mark task as failed",
               "description": "Mark task as failed"
@@ -139,10 +181,17 @@
                   "name": "TaskNotFoundError",
                   "template": "",
                   "description": "Task not found"
+                },
+                {
+                  "id": "err-invalid-task-status-block",
+                  "name": "InvalidTaskStatusError",
+                  "code": "INVALID_TASK_STATUS",
+                  "description": "Only PENDING or IN_PROGRESS tasks can be blocked",
+                  "template": ""
                 }
               ],
               "schema": "input BlockTaskInput {\n    taskId: OID!\n    reason: String!\n    updatedAt: DateTime!\n}",
-              "reducer": "const task = state.tasks.find(t => t.id === action.input.taskId);\nif (!task) throw new TaskNotFoundError(\"Task not found\");\ntask.status = \"BLOCKED\";\ntask.updatedAt = action.input.updatedAt;",
+              "reducer": "const task = state.tasks.find((t) => t.id === action.input.taskId);\nif (!task) throw new TaskNotFoundError(\"Task not found\");\nif (task.status !== \"PENDING\" && task.status !== \"IN_PROGRESS\") {\n  throw new InvalidTaskStatusError(\n    `Task ${task.id} is ${task.status}; only PENDING or IN_PROGRESS tasks can be blocked`,\n  );\n}\ntask.status = \"BLOCKED\";\ntask.updatedAt = action.input.updatedAt;",
               "examples": [],
               "template": "Mark task as blocked",
               "description": "Mark task as blocked"
@@ -172,6 +221,17 @@
               "examples": [],
               "template": "Unblock a task",
               "description": "Unblock a task"
+            },
+            {
+              "id": "reconcile-counters",
+              "name": "RECONCILE_COUNTERS",
+              "description": "Recompute completedCount and activeCount from the tasks",
+              "schema": "input ReconcileCountersInput {\n    updatedAt: DateTime!\n}",
+              "template": "Recompute completedCount and activeCount from the tasks",
+              "reducer": "// Derived counters can drift when history predates the status guards (a live\n// queue reached completedCount 139 for 81 tasks). Recompute both from the\n// tasks — the one source of truth — as an auditable operation.\nstate.completedCount = state.tasks.filter((t) => t.status === \"DONE\").length;\nstate.activeCount = state.tasks.filter(\n  (t) =>\n    t.status === \"PENDING\" ||\n    t.status === \"IN_PROGRESS\" ||\n    t.status === \"BLOCKED\",\n).length;\nstate.lastProcessedAt = action.input.updatedAt;",
+              "errors": [],
+              "examples": [],
+              "scope": "global"
             }
           ],
           "description": "Pipeline task lifecycle and phase progression"

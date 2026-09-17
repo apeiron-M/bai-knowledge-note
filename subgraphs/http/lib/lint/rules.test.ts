@@ -41,17 +41,39 @@ describe("knowledge-note rules", () => {
     ).toContain("INVALID_METADATA_LIST_FIELD");
   });
 
-  it("flags a foreign noteType as a vault convention", () => {
+  it("flags a noteType outside the enum as a reactor rejection", () => {
+    // `concept` was the accepted spelling while noteType was a free String;
+    // as a NoteType enum it fails the generated input schema, which is the
+    // same check the reducer applies.
     const found = note(
-      { noteType: "WRONG_CASE", updatedAt: "2026-01-01T00:00:00.000Z" },
+      { noteType: "concept", updatedAt: "2026-01-01T00:00:00.000Z" },
       "SET_NOTE_TYPE",
     );
     expect(found).toEqual([
       expect.objectContaining({
-        rule: "NOTE_TYPE_CONVENTION",
-        class: "VAULT_CONVENTION",
+        path: "actions[0].input.noteType",
+        rule: "INVALID_INPUT",
+        class: "REACTOR_REJECTS",
       }),
     ]);
+  });
+
+  it("treats a state without a status as DRAFT for lifecycle checks", () => {
+    expect(
+      note(
+        { id: "e1", actor: "a", timestamp: "2026-01-01T00:00:00.000Z" },
+        "SUBMIT_FOR_REVIEW",
+        {},
+      ),
+    ).toEqual([]);
+  });
+
+  it("accepts every NoteType enum value", () => {
+    for (const noteType of ["CONCEPT", "BUG_PATTERN", "REFERENCE"]) {
+      expect(
+        note({ noteType, updatedAt: "2026-01-01T00:00:00.000Z" }, "SET_NOTE_TYPE"),
+      ).toEqual([]);
+    }
   });
 
   it("rejects a negative PATCH_CONTENT offset", () => {

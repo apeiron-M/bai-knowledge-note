@@ -30,59 +30,85 @@ export const documentModel: DocumentModelGlobalState = {
         {
           id: "observation-management",
           name: "observation-management",
+          description: "Observation lifecycle",
           operations: [
             {
               id: "create-observation",
               name: "CREATE_OBSERVATION",
-              scope: "global",
-              errors: [],
+              description: "Capture a new friction signal",
               schema:
                 "input CreateObservationInput {\n    title: String!\n    description: String!\n    content: String\n    category: ObservationCategory!\n    observedAt: DateTime!\n    observedBy: String\n}",
+              template: "Capture a new friction signal",
               reducer:
                 'state.title = action.input.title;\nstate.description = action.input.description;\nstate.content = action.input.content || null;\nstate.category = action.input.category;\nstate.status = "PENDING";\nstate.observedAt = action.input.observedAt;\nstate.observedBy = action.input.observedBy || null;',
+              errors: [],
               examples: [],
-              template: "Capture a new friction signal",
-              description: "Capture a new friction signal",
+              scope: "global",
             },
             {
               id: "promote-observation",
               name: "PROMOTE_OBSERVATION",
-              scope: "global",
-              errors: [],
+              description: "Promote to a permanent note",
               schema:
                 "input PromoteObservationInput {\n    promotedTo: String!\n    promotedAt: DateTime!\n}",
-              reducer:
-                'state.status = "PROMOTED";\nstate.promotedTo = action.input.promotedTo;\nstate.promotedAt = action.input.promotedAt;',
-              examples: [],
               template: "Promote to a permanent note",
-              description: "Promote to a permanent note",
+              reducer:
+                'if (state.status !== "PENDING") {\n  throw new InvalidObservationTransitionError(\n    `Only a PENDING observation can be promoted (status is ${state.status})`,\n  );\n}\nstate.status = "PROMOTED";\nstate.promotedTo = action.input.promotedTo;\nstate.promotedAt = action.input.promotedAt;',
+              errors: [
+                {
+                  id: "err-invalid-transition-promote",
+                  name: "InvalidObservationTransitionError",
+                  code: "INVALID_OBSERVATION_TRANSITION",
+                  description: "Only a PENDING observation can be promoted",
+                  template: "",
+                },
+              ],
+              examples: [],
+              scope: "global",
             },
             {
               id: "implement-observation",
               name: "IMPLEMENT_OBSERVATION",
-              scope: "global",
-              errors: [],
+              description: "Mark as implemented in system",
               schema:
                 "input ImplementObservationInput {\n    updatedAt: DateTime!\n}",
-              reducer: 'state.status = "IMPLEMENTED";',
-              examples: [],
               template: "Mark as implemented in system",
-              description: "Mark as implemented in system",
+              reducer:
+                'if (state.status !== "PROMOTED") {\n  throw new InvalidObservationTransitionError(\n    `Only a PROMOTED observation can be implemented (status is ${state.status})`,\n  );\n}\nstate.status = "IMPLEMENTED";',
+              errors: [
+                {
+                  id: "err-invalid-transition-implement",
+                  name: "InvalidObservationTransitionError",
+                  code: "INVALID_OBSERVATION_TRANSITION",
+                  description: "Only a PROMOTED observation can be implemented",
+                  template: "",
+                },
+              ],
+              examples: [],
+              scope: "global",
             },
             {
               id: "archive-observation",
               name: "ARCHIVE_OBSERVATION",
-              scope: "global",
-              errors: [],
+              description: "Archive observation",
               schema:
                 "input ArchiveObservationInput {\n    updatedAt: DateTime!\n}",
-              reducer: 'state.status = "ARCHIVED";',
-              examples: [],
               template: "Archive observation",
-              description: "Archive observation",
+              reducer:
+                'if (state.status === "ARCHIVED") {\n  throw new InvalidObservationTransitionError("Observation is already archived");\n}\nstate.status = "ARCHIVED";',
+              errors: [
+                {
+                  id: "err-invalid-transition-archive",
+                  name: "InvalidObservationTransitionError",
+                  code: "INVALID_OBSERVATION_TRANSITION",
+                  description: "Observation is already archived",
+                  template: "",
+                },
+              ],
+              examples: [],
+              scope: "global",
             },
           ],
-          description: "Observation lifecycle",
         },
       ],
       version: 1,

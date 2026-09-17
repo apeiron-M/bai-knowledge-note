@@ -25,50 +25,74 @@
         {
           "id": "source-management",
           "name": "source-management",
+          "description": "Source lifecycle and extraction tracking",
           "operations": [
             {
               "id": "ingest-source",
               "name": "INGEST_SOURCE",
-              "scope": "global",
-              "errors": [],
+              "description": "Add new source material",
               "schema": "input IngestSourceInput {\n    title: String!\n    content: String!\n    sourceType: SourceType!\n    description: String\n    url: String\n    author: String\n    publishedAt: DateTime\n    method: String\n    tool: String\n    createdAt: DateTime!\n    createdBy: String\n}",
-              "reducer": "state.title = action.input.title;\nstate.content = action.input.content;\nstate.sourceType = action.input.sourceType;\nstate.description = action.input.description || null;\nstate.status = \"INBOX\";\nstate.createdAt = action.input.createdAt;\nstate.createdBy = action.input.createdBy || null;\nif (action.input.url || action.input.author || action.input.publishedAt) {\n    state.provenance = {\n        url: action.input.url || null,\n        author: action.input.author || null,\n        publishedAt: action.input.publishedAt || null,\n        method: action.input.method || null,\n        tool: action.input.tool || null,\n    };\n}",
-              "examples": [],
               "template": "Add new source material",
-              "description": "Add new source material"
+              "reducer": "state.title = action.input.title;\nstate.content = action.input.content;\nstate.sourceType = action.input.sourceType;\nstate.description = action.input.description || null;\nstate.status = \"INBOX\";\nstate.createdAt = action.input.createdAt;\nstate.createdBy = action.input.createdBy || null;\nconst { url, author, publishedAt, method, tool } = action.input;\nif (url || author || publishedAt || method || tool) {\n  state.provenance = {\n    url: url || null,\n    author: author || null,\n    publishedAt: publishedAt || null,\n    method: method || null,\n    tool: tool || null,\n  };\n}",
+              "errors": [],
+              "examples": [],
+              "scope": "global"
             },
             {
               "id": "set-source-status",
               "name": "SET_SOURCE_STATUS",
-              "scope": "global",
-              "errors": [],
+              "description": "Transition source status",
               "schema": "input SetSourceStatusInput {\n    status: SourceStatus!\n}",
-              "reducer": "state.status = action.input.status;",
-              "examples": [],
               "template": "Transition source status",
-              "description": "Transition source status"
+              "reducer": "const from: SourceStatus = state.status || \"INBOX\";\nconst to = action.input.status;\nif (from === to) return;\nconst ALLOWED: Record<SourceStatus, readonly SourceStatus[]> = {\n  INBOX: [\"EXTRACTING\", \"ARCHIVED\"],\n  EXTRACTING: [\"EXTRACTED\", \"INBOX\", \"ARCHIVED\"],\n  EXTRACTED: [\"ARCHIVED\", \"EXTRACTING\"],\n  ARCHIVED: [\"INBOX\"],\n};\nif (!ALLOWED[from].includes(to)) {\n  throw new InvalidSourceStatusTransitionError(\n    `A source cannot move from ${from} to ${to}`,\n  );\n}\nstate.status = to;",
+              "errors": [
+                {
+                  "id": "err-invalid-source-status-transition",
+                  "name": "InvalidSourceStatusTransitionError",
+                  "code": "INVALID_SOURCE_STATUS_TRANSITION",
+                  "description": "Lifecycle is INBOX → EXTRACTING → EXTRACTED → ARCHIVED (with EXTRACTING→INBOX, EXTRACTED→EXTRACTING and ARCHIVED→INBOX as the only ways back)",
+                  "template": ""
+                }
+              ],
+              "examples": [],
+              "scope": "global"
             },
             {
               "id": "add-extracted-claim",
               "name": "ADD_EXTRACTED_CLAIM",
-              "scope": "global",
-              "errors": [],
+              "description": "Record that a knowledge note was extracted from this source. Idempotent on claimRef: re-adding a listed claim is a no-op.",
               "schema": "input AddExtractedClaimInput {\n    claimRef: String!\n}",
-              "reducer": "// Idempotent on claimRef: a claim is listed once, however many times an\n// extraction, a sync or a retry asserts it. Re-adding is a no-op, not an\n// error, so pipelines can assert membership without reading state first.\nif (state.extractedClaims.includes(action.input.claimRef)) {\n  return;\n}\nstate.extractedClaims.push(action.input.claimRef);",
-              "examples": [],
               "template": "Link an extracted claim to this source",
-              "description": "Record that a knowledge note was extracted from this source. Idempotent on claimRef: re-adding a listed claim is a no-op."
+              "reducer": "// Idempotent on claimRef: a claim is listed once, however many times an\n// extraction, a sync or a retry asserts it. Re-adding is a no-op, not an\n// error, so pipelines can assert membership without reading state first.\nif (state.extractedClaims.includes(action.input.claimRef)) {\n  return;\n}\nstate.extractedClaims.push(action.input.claimRef);",
+              "errors": [],
+              "examples": [],
+              "scope": "global"
             },
             {
               "id": "record-extraction-stats",
               "name": "RECORD_EXTRACTION_STATS",
-              "scope": "global",
-              "errors": [],
+              "description": "Record extraction statistics",
               "schema": "input RecordExtractionStatsInput {\n    claimCount: Int!\n    skippedCount: Int!\n    skipRate: Float!\n    extractedAt: DateTime!\n    extractedBy: String\n}",
-              "reducer": "state.extractionStats = {\n    claimCount: action.input.claimCount,\n    skippedCount: action.input.skippedCount,\n    skipRate: action.input.skipRate,\n    extractedAt: action.input.extractedAt,\n    extractedBy: action.input.extractedBy || null,\n};",
-              "examples": [],
               "template": "Record extraction statistics",
-              "description": "Record extraction statistics"
+              "reducer": "const { claimCount, skippedCount, skipRate } = action.input;\nif (claimCount < 0 || skippedCount < 0 || skipRate < 0 || skipRate > 1) {\n  throw new InvalidExtractionStatsError(\n    \"claimCount and skippedCount must be >= 0 and skipRate within 0..1\",\n  );\n}\nif (claimCount !== state.extractedClaims.length) {\n  throw new ExtractionStatsMismatchError(\n    `claimCount ${claimCount} does not match the ${state.extractedClaims.length} extracted claims on this source; add the claims first`,\n  );\n}\nstate.extractionStats = {\n  claimCount,\n  skippedCount,\n  skipRate,\n  extractedAt: action.input.extractedAt,\n  extractedBy: action.input.extractedBy || null,\n};",
+              "errors": [
+                {
+                  "id": "err-invalid-extraction-stats",
+                  "name": "InvalidExtractionStatsError",
+                  "code": "INVALID_EXTRACTION_STATS",
+                  "description": "Counts must be non-negative and skipRate a fraction in 0..1",
+                  "template": ""
+                },
+                {
+                  "id": "err-extraction-stats-mismatch",
+                  "name": "ExtractionStatsMismatchError",
+                  "code": "EXTRACTION_STATS_MISMATCH",
+                  "description": "claimCount must equal the number of extractedClaims already on the source",
+                  "template": ""
+                }
+              ],
+              "examples": [],
+              "scope": "global"
             },
             {
               "id": "remove-extracted-claim",
@@ -89,8 +113,7 @@
               "examples": [],
               "scope": "global"
             }
-          ],
-          "description": "Source lifecycle and extraction tracking"
+          ]
         }
       ],
       "version": 1,

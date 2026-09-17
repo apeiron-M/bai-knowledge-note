@@ -25,53 +25,53 @@
         {
           "id": "claim-management",
           "name": "claim-management",
+          "description": "Research claim content management",
           "operations": [
             {
               "id": "create-claim",
               "name": "CREATE_CLAIM",
-              "scope": "global",
-              "errors": [],
+              "description": "Create a research claim",
               "schema": "input CreateClaimInput {\n    title: String!\n    description: String!\n    content: String!\n    kind: String!\n    methodology: [String!]!\n    sources: [String!]!\n    topics: [String!]!\n}",
-              "reducer": "state.title = action.input.title;\nstate.description = action.input.description;\nstate.content = action.input.content;\nstate.kind = action.input.kind;\nstate.methodology = action.input.methodology;\nstate.sources = action.input.sources;\nstate.topics = action.input.topics;",
-              "examples": [],
               "template": "Create a research claim",
-              "description": "Create a research claim"
+              "reducer": "state.title = action.input.title;\nstate.description = action.input.description;\nstate.content = action.input.content;\nstate.kind = action.input.kind;\nstate.methodology = action.input.methodology;\nstate.sources = action.input.sources;\nstate.topics = action.input.topics;",
+              "errors": [],
+              "examples": [],
+              "scope": "global"
             },
             {
               "id": "add-research-connection",
               "name": "ADD_RESEARCH_CONNECTION",
-              "scope": "global",
-              "errors": [],
+              "description": "Add a connection to another research claim",
               "schema": "input AddResearchConnectionInput {\n    id: OID!\n    targetRef: String!\n    contextPhrase: String!\n}",
-              "reducer": "state.connections.push({\n    id: action.input.id,\n    targetRef: action.input.targetRef,\n    contextPhrase: action.input.contextPhrase,\n});",
-              "examples": [],
               "template": "Add a connection to another research claim",
-              "description": "Add a connection to another research claim"
+              "reducer": "state.connections.push({\n    id: action.input.id,\n    targetRef: action.input.targetRef,\n    contextPhrase: action.input.contextPhrase,\n});",
+              "errors": [],
+              "examples": [],
+              "scope": "global"
             },
             {
               "id": "remove-research-connection",
               "name": "REMOVE_RESEARCH_CONNECTION",
-              "scope": "global",
-              "errors": [],
+              "description": "Remove a connection",
               "schema": "input RemoveResearchConnectionInput {\n    id: OID!\n}",
-              "reducer": "state.connections = state.connections.filter(c => c.id !== action.input.id);",
-              "examples": [],
               "template": "Remove a connection",
-              "description": "Remove a connection"
+              "reducer": "state.connections = state.connections.filter(c => c.id !== action.input.id);",
+              "errors": [],
+              "examples": [],
+              "scope": "global"
             },
             {
               "id": "update-claim-content",
               "name": "UPDATE_CLAIM_CONTENT",
-              "scope": "global",
-              "errors": [],
+              "description": "Update claim content",
               "schema": "input UpdateClaimContentInput {\n    content: String!\n}",
-              "reducer": "state.content = action.input.content;",
-              "examples": [],
               "template": "Update claim content",
-              "description": "Update claim content"
+              "reducer": "state.content = action.input.content;",
+              "errors": [],
+              "examples": [],
+              "scope": "global"
             }
-          ],
-          "description": "Research claim content management"
+          ]
         }
       ],
       "version": 1,

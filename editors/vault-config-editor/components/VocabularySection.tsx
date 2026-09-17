@@ -8,12 +8,26 @@
  */
 import type { DocumentDispatch } from "@powerhousedao/reactor-browser";
 import { actions } from "document-models/vault-config";
+import type { VocabularyKey } from "document-models/vault-config";
 import type {
   VaultConfigAction,
   VocabularyMap,
 } from "document-models/vault-config";
 import { UNSAVED_HINT } from "./defaults.js";
 import { Card, controlClass, controlStyle, ts } from "./ui.js";
+
+/** State key → UPDATE_VOCABULARY's `VocabularyKey` enum value. */
+const VOCABULARY_ENUM: Record<string, VocabularyKey> = {
+  notes: "NOTES",
+  inbox: "INBOX",
+  reduce: "REDUCE",
+  reflect: "REFLECT",
+  reweave: "REWEAVE",
+  verify: "VERIFY",
+  rethink: "RETHINK",
+  topicMap: "TOPIC_MAP",
+  description: "DESCRIPTION",
+};
 
 type Dispatch = DocumentDispatch<VaultConfigAction>;
 
@@ -57,10 +71,11 @@ export function VocabularySection({
                   e.currentTarget.value = value;
                   return;
                 }
-                if (next !== value) {
+                const enumKey = VOCABULARY_ENUM[key];
+                if (next !== value && enumKey) {
                   dispatch(
                     actions.updateVocabulary({
-                      key,
+                      key: enumKey,
                       value: next,
                       updatedAt: ts(),
                     }),

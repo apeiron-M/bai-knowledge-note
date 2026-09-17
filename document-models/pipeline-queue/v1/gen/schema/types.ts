@@ -161,6 +161,10 @@ export type PipelineTask = {
   updatedAt: Maybe<Scalars["DateTime"]["output"]>;
 };
 
+export type ReconcileCountersInput = {
+  updatedAt: Scalars["DateTime"]["input"];
+};
+
 export type TaskStatus =
   | "BLOCKED"
   | "DONE"

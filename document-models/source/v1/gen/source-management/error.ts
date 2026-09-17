@@ -1,7 +1,38 @@
-export type ErrorCode = "ClaimNotFoundError";
+export type ErrorCode =
+  | "InvalidSourceStatusTransitionError"
+  | "InvalidExtractionStatsError"
+  | "ExtractionStatsMismatchError"
+  | "ClaimNotFoundError";
 
 export interface ReducerError {
   errorCode: ErrorCode;
+}
+
+export class InvalidSourceStatusTransitionError
+  extends Error
+  implements ReducerError
+{
+  errorCode = "InvalidSourceStatusTransitionError" as ErrorCode;
+  constructor(message = "InvalidSourceStatusTransitionError") {
+    super(message);
+  }
+}
+
+export class InvalidExtractionStatsError extends Error implements ReducerError {
+  errorCode = "InvalidExtractionStatsError" as ErrorCode;
+  constructor(message = "InvalidExtractionStatsError") {
+    super(message);
+  }
+}
+
+export class ExtractionStatsMismatchError
+  extends Error
+  implements ReducerError
+{
+  errorCode = "ExtractionStatsMismatchError" as ErrorCode;
+  constructor(message = "ExtractionStatsMismatchError") {
+    super(message);
+  }
 }
 
 export class ClaimNotFoundError extends Error implements ReducerError {
@@ -12,5 +43,12 @@ export class ClaimNotFoundError extends Error implements ReducerError {
 }
 
 export const errors = {
+  SetSourceStatus: { InvalidSourceStatusTransitionError },
+
+  RecordExtractionStats: {
+    InvalidExtractionStatsError,
+    ExtractionStatsMismatchError,
+  },
+
   RemoveExtractedClaim: { ClaimNotFoundError },
 };

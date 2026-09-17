@@ -20,7 +20,7 @@ export const documentModel: DocumentModelGlobalState = {
         },
         global: {
           schema:
-            "type DimensionPosition {\n    value: Int!\n    confidence: Float!\n    rationale: String\n}\n\ntype DimensionConfig {\n    granularity: DimensionPosition!\n    organization: DimensionPosition!\n    linking: DimensionPosition!\n    processing: DimensionPosition!\n    navigation: DimensionPosition!\n    maintenance: DimensionPosition!\n    schema: DimensionPosition!\n    automation: DimensionPosition!\n}\n\ntype VocabularyMap {\n    notes: String!\n    inbox: String!\n    reduce: String!\n    reflect: String!\n    reweave: String!\n    verify: String!\n    rethink: String!\n    topicMap: String!\n    description: String!\n}\n\ntype PipelineConfig {\n    depth: PipelineDepth!\n    autoChain: Boolean!\n    extractionSelectivity: Float!\n}\nenum PipelineDepth { QUICK STANDARD DEEP }\n\ntype MaintenanceConfig {\n    orphanThreshold: Int!\n    danglingThreshold: Int!\n    inboxPressure: Int!\n    observationAccumulation: Int!\n    tensionAccumulation: Int!\n    mocOversize: Int!\n    staleNoteDays: Int!\n}\n\ntype ExtractionCategory {\n    id: OID!\n    name: String!\n    description: String!\n    active: Boolean!\n}\n\ntype NoteSchemaConfig {\n    requiredFields: [String!]!\n    optionalFields: [String!]!\n    kindValues: [String!]!\n    confidenceValues: [String!]!\n}\n\ntype MocSchemaConfig {\n    requiredFields: [String!]!\n    tierValues: [String!]!\n}\n\ntype VaultConfigState {\n    name: String\n    domain: String\n    dimensions: DimensionConfig\n    vocabulary: VocabularyMap\n    features: [String!]!\n    pipeline: PipelineConfig\n    maintenance: MaintenanceConfig\n    extractionCategories: [ExtractionCategory!]!\n    noteSchema: NoteSchemaConfig\n    mocSchema: MocSchemaConfig\n    updatedAt: DateTime\n}",
+            "enum Dimension {\n    GRANULARITY\n    ORGANIZATION\n    LINKING\n    PROCESSING\n    NAVIGATION\n    MAINTENANCE\n    SCHEMA\n    AUTOMATION\n}\n\nenum VocabularyKey {\n    NOTES\n    INBOX\n    REDUCE\n    REFLECT\n    REWEAVE\n    VERIFY\n    RETHINK\n    TOPIC_MAP\n    DESCRIPTION\n}\n\nenum MaintenanceCondition {\n    ORPHAN_THRESHOLD\n    DANGLING_THRESHOLD\n    INBOX_PRESSURE\n    OBSERVATION_ACCUMULATION\n    TENSION_ACCUMULATION\n    MOC_OVERSIZE\n    STALE_NOTE_DAYS\n}\n\ntype DimensionPosition {\n    value: Int!\n    confidence: Float!\n    rationale: String\n}\n\ntype DimensionConfig {\n    granularity: DimensionPosition!\n    organization: DimensionPosition!\n    linking: DimensionPosition!\n    processing: DimensionPosition!\n    navigation: DimensionPosition!\n    maintenance: DimensionPosition!\n    schema: DimensionPosition!\n    automation: DimensionPosition!\n}\n\ntype VocabularyMap {\n    notes: String!\n    inbox: String!\n    reduce: String!\n    reflect: String!\n    reweave: String!\n    verify: String!\n    rethink: String!\n    topicMap: String!\n    description: String!\n}\n\ntype PipelineConfig {\n    depth: PipelineDepth!\n    autoChain: Boolean!\n    extractionSelectivity: Float!\n}\nenum PipelineDepth { QUICK STANDARD DEEP }\n\ntype MaintenanceConfig {\n    orphanThreshold: Int!\n    danglingThreshold: Int!\n    inboxPressure: Int!\n    observationAccumulation: Int!\n    tensionAccumulation: Int!\n    mocOversize: Int!\n    staleNoteDays: Int!\n}\n\ntype ExtractionCategory {\n    id: OID!\n    name: String!\n    description: String!\n    active: Boolean!\n}\n\ntype NoteSchemaConfig {\n    requiredFields: [String!]!\n    optionalFields: [String!]!\n    kindValues: [String!]!\n    confidenceValues: [String!]!\n}\n\ntype MocSchemaConfig {\n    requiredFields: [String!]!\n    tierValues: [String!]!\n}\n\ntype VaultConfigState {\n    name: String\n    domain: String\n    dimensions: DimensionConfig\n    vocabulary: VocabularyMap\n    features: [String!]!\n    pipeline: PipelineConfig\n    maintenance: MaintenanceConfig\n    extractionCategories: [ExtractionCategory!]!\n    noteSchema: NoteSchemaConfig\n    mocSchema: MocSchemaConfig\n    updatedAt: DateTime\n}",
           examples: [],
           initialValue:
             '{\n    "name": null,\n    "domain": null,\n    "dimensions": null,\n    "vocabulary": null,\n    "features": [],\n    "pipeline": null,\n    "maintenance": null,\n    "extractionCategories": [],\n    "noteSchema": null,\n    "mocSchema": null,\n    "updatedAt": null\n}',
@@ -30,114 +30,139 @@ export const documentModel: DocumentModelGlobalState = {
         {
           id: "config-management",
           name: "config-management",
+          description: "Vault configuration lifecycle",
           operations: [
             {
               id: "initialize-config",
               name: "INITIALIZE_CONFIG",
-              scope: "global",
-              errors: [],
-              schema:
-                "input InitializeConfigInput {\n    name: String!\n    domain: String!\n    updatedAt: DateTime!\n}",
-              reducer:
-                "state.name = action.input.name;\nstate.domain = action.input.domain;\nstate.updatedAt = action.input.updatedAt;",
-              examples: [],
-              template: "Initialize vault configuration with name and domain",
               description:
                 "Initialize vault configuration with name and domain",
+              schema:
+                "input InitializeConfigInput {\n    name: String!\n    domain: String!\n    updatedAt: DateTime!\n}",
+              template: "Initialize vault configuration with name and domain",
+              reducer:
+                "state.name = action.input.name;\nstate.domain = action.input.domain;\nstate.updatedAt = action.input.updatedAt;",
+              errors: [],
+              examples: [],
+              scope: "global",
             },
             {
               id: "update-dimension",
               name: "UPDATE_DIMENSION",
-              scope: "global",
-              errors: [],
-              schema:
-                "input UpdateDimensionInput {\n    dimension: String!\n    value: Int!\n    confidence: Float!\n    rationale: String\n    updatedAt: DateTime!\n}",
-              reducer:
-                "if (!state.dimensions) state.dimensions = {\n    granularity: { value: 3, confidence: 0.5, rationale: null },\n    organization: { value: 3, confidence: 0.5, rationale: null },\n    linking: { value: 3, confidence: 0.5, rationale: null },\n    processing: { value: 3, confidence: 0.5, rationale: null },\n    navigation: { value: 3, confidence: 0.5, rationale: null },\n    maintenance: { value: 3, confidence: 0.5, rationale: null },\n    schema: { value: 3, confidence: 0.5, rationale: null },\n    automation: { value: 3, confidence: 0.5, rationale: null },\n};\nconst dim = action.input.dimension;\nif (dim in state.dimensions) {\n    (state.dimensions as any)[dim] = {\n        value: action.input.value,\n        confidence: action.input.confidence,\n        rationale: action.input.rationale || null,\n    };\n}\nstate.updatedAt = action.input.updatedAt;",
-              examples: [],
-              template: "Update a dimension position",
               description: "Update a dimension position",
+              schema:
+                "input UpdateDimensionInput {\n    dimension: Dimension!\n    value: Int!\n    confidence: Float!\n    rationale: String\n    updatedAt: DateTime!\n}",
+              template: "Update a dimension position",
+              reducer:
+                'if (action.input.value < 1 || action.input.value > 5) {\n  throw new InvalidDimensionValueError(\n    `Dimension position must be within 1..5, got ${action.input.value}`,\n  );\n}\nif (action.input.confidence < 0 || action.input.confidence > 1) {\n  throw new InvalidDimensionValueError(\n    `Dimension confidence must be within 0..1, got ${action.input.confidence}`,\n  );\n}\nif (!state.dimensions)\n  state.dimensions = {\n    granularity: { value: 3, confidence: 0.5, rationale: null },\n    organization: { value: 3, confidence: 0.5, rationale: null },\n    linking: { value: 3, confidence: 0.5, rationale: null },\n    processing: { value: 3, confidence: 0.5, rationale: null },\n    navigation: { value: 3, confidence: 0.5, rationale: null },\n    maintenance: { value: 3, confidence: 0.5, rationale: null },\n    schema: { value: 3, confidence: 0.5, rationale: null },\n    automation: { value: 3, confidence: 0.5, rationale: null },\n  };\nconst DIMENSION_KEYS = {\n  GRANULARITY: "granularity",\n  ORGANIZATION: "organization",\n  LINKING: "linking",\n  PROCESSING: "processing",\n  NAVIGATION: "navigation",\n  MAINTENANCE: "maintenance",\n  SCHEMA: "schema",\n  AUTOMATION: "automation",\n} as const;\nstate.dimensions[DIMENSION_KEYS[action.input.dimension]] = {\n  value: action.input.value,\n  confidence: action.input.confidence,\n  rationale: action.input.rationale || null,\n};\nstate.updatedAt = action.input.updatedAt;',
+              errors: [
+                {
+                  id: "err-invalid-dimension-value",
+                  name: "InvalidDimensionValueError",
+                  code: "INVALID_DIMENSION_VALUE",
+                  description: "Position must be 1..5 and confidence 0..1",
+                  template: "",
+                },
+              ],
+              examples: [],
+              scope: "global",
             },
             {
               id: "update-vocabulary",
               name: "UPDATE_VOCABULARY",
-              scope: "global",
-              errors: [],
-              schema:
-                "input UpdateVocabularyInput {\n    key: String!\n    value: String!\n    updatedAt: DateTime!\n}",
-              reducer:
-                'if (!state.vocabulary) state.vocabulary = {\n    notes: "notes", inbox: "inbox", reduce: "reduce", reflect: "reflect",\n    reweave: "reweave", verify: "verify", rethink: "rethink",\n    topicMap: "topic map", description: "description",\n};\nif (action.input.key in state.vocabulary) {\n    (state.vocabulary as any)[action.input.key] = action.input.value;\n}\nstate.updatedAt = action.input.updatedAt;',
-              examples: [],
-              template: "Update a vocabulary term",
               description: "Update a vocabulary term",
+              schema:
+                "input UpdateVocabularyInput {\n    key: VocabularyKey!\n    value: String!\n    updatedAt: DateTime!\n}",
+              template: "Update a vocabulary term",
+              reducer:
+                'if (!state.vocabulary)\n  state.vocabulary = {\n    notes: "notes",\n    inbox: "inbox",\n    reduce: "reduce",\n    reflect: "reflect",\n    reweave: "reweave",\n    verify: "verify",\n    rethink: "rethink",\n    topicMap: "topic map",\n    description: "description",\n  };\nconst VOCABULARY_KEYS = {\n  NOTES: "notes",\n  INBOX: "inbox",\n  REDUCE: "reduce",\n  REFLECT: "reflect",\n  REWEAVE: "reweave",\n  VERIFY: "verify",\n  RETHINK: "rethink",\n  TOPIC_MAP: "topicMap",\n  DESCRIPTION: "description",\n} as const;\nstate.vocabulary[VOCABULARY_KEYS[action.input.key]] = action.input.value;\nstate.updatedAt = action.input.updatedAt;',
+              errors: [],
+              examples: [],
+              scope: "global",
             },
             {
               id: "update-pipeline-config",
               name: "UPDATE_PIPELINE_CONFIG",
-              scope: "global",
-              errors: [],
+              description: "Update pipeline settings",
               schema:
                 "input UpdatePipelineConfigInput {\n    depth: PipelineDepth\n    autoChain: Boolean\n    extractionSelectivity: Float\n    updatedAt: DateTime!\n}",
-              reducer:
-                'if (!state.pipeline) state.pipeline = { depth: "STANDARD", autoChain: false, extractionSelectivity: 0.1 };\nif (action.input.depth) state.pipeline.depth = action.input.depth;\nif (action.input.autoChain !== undefined && action.input.autoChain !== null) state.pipeline.autoChain = action.input.autoChain;\nif (action.input.extractionSelectivity !== undefined && action.input.extractionSelectivity !== null) state.pipeline.extractionSelectivity = action.input.extractionSelectivity;\nstate.updatedAt = action.input.updatedAt;',
-              examples: [],
               template: "Update pipeline settings",
-              description: "Update pipeline settings",
+              reducer:
+                'if (\n  action.input.extractionSelectivity !== undefined &&\n  action.input.extractionSelectivity !== null &&\n  (action.input.extractionSelectivity < 0 ||\n    action.input.extractionSelectivity > 1)\n) {\n  throw new InvalidPipelineConfigError(\n    `extractionSelectivity must be within 0..1, got ${action.input.extractionSelectivity}`,\n  );\n}\nif (!state.pipeline)\n  state.pipeline = {\n    depth: "STANDARD",\n    autoChain: false,\n    extractionSelectivity: 0.1,\n  };\nif (action.input.depth) state.pipeline.depth = action.input.depth;\nif (\n  action.input.autoChain !== undefined &&\n  action.input.autoChain !== null\n)\n  state.pipeline.autoChain = action.input.autoChain;\nif (\n  action.input.extractionSelectivity !== undefined &&\n  action.input.extractionSelectivity !== null\n)\n  state.pipeline.extractionSelectivity =\n    action.input.extractionSelectivity;\nstate.updatedAt = action.input.updatedAt;',
+              errors: [
+                {
+                  id: "err-invalid-pipeline-config",
+                  name: "InvalidPipelineConfigError",
+                  code: "INVALID_PIPELINE_CONFIG",
+                  description:
+                    "extractionSelectivity must be a fraction in 0..1",
+                  template: "",
+                },
+              ],
+              examples: [],
+              scope: "global",
             },
             {
               id: "update-maintenance-threshold",
               name: "UPDATE_MAINTENANCE_THRESHOLD",
-              scope: "global",
-              errors: [],
-              schema:
-                "input UpdateMaintenanceThresholdInput {\n    condition: String!\n    threshold: Int!\n    updatedAt: DateTime!\n}",
-              reducer:
-                "if (!state.maintenance) state.maintenance = {\n    orphanThreshold: 1, danglingThreshold: 1, inboxPressure: 5,\n    observationAccumulation: 10, tensionAccumulation: 5, mocOversize: 40, staleNoteDays: 30,\n};\nif (action.input.condition in state.maintenance) {\n    (state.maintenance as any)[action.input.condition] = action.input.threshold;\n}\nstate.updatedAt = action.input.updatedAt;",
-              examples: [],
-              template: "Update a maintenance threshold",
               description: "Update a maintenance threshold",
+              schema:
+                "input UpdateMaintenanceThresholdInput {\n    condition: MaintenanceCondition!\n    threshold: Int!\n    updatedAt: DateTime!\n}",
+              template: "Update a maintenance threshold",
+              reducer:
+                'if (action.input.threshold < 0) {\n  throw new InvalidThresholdError(\n    `A maintenance threshold cannot be negative, got ${action.input.threshold}`,\n  );\n}\nif (!state.maintenance)\n  state.maintenance = {\n    orphanThreshold: 1,\n    danglingThreshold: 1,\n    inboxPressure: 5,\n    observationAccumulation: 10,\n    tensionAccumulation: 5,\n    mocOversize: 40,\n    staleNoteDays: 30,\n  };\nconst MAINTENANCE_KEYS = {\n  ORPHAN_THRESHOLD: "orphanThreshold",\n  DANGLING_THRESHOLD: "danglingThreshold",\n  INBOX_PRESSURE: "inboxPressure",\n  OBSERVATION_ACCUMULATION: "observationAccumulation",\n  TENSION_ACCUMULATION: "tensionAccumulation",\n  MOC_OVERSIZE: "mocOversize",\n  STALE_NOTE_DAYS: "staleNoteDays",\n} as const;\nstate.maintenance[MAINTENANCE_KEYS[action.input.condition]] =\n  action.input.threshold;\nstate.updatedAt = action.input.updatedAt;',
+              errors: [
+                {
+                  id: "err-invalid-threshold",
+                  name: "InvalidThresholdError",
+                  code: "INVALID_THRESHOLD",
+                  description: "A maintenance threshold cannot be negative",
+                  template: "",
+                },
+              ],
+              examples: [],
+              scope: "global",
             },
             {
               id: "add-extraction-category",
               name: "ADD_EXTRACTION_CATEGORY",
-              scope: "global",
-              errors: [],
+              description: "Add an extraction category",
               schema:
                 "input AddExtractionCategoryInput {\n    id: OID!\n    name: String!\n    description: String!\n    active: Boolean!\n}",
+              template: "Add an extraction category",
               reducer:
                 "state.extractionCategories.push({\n    id: action.input.id,\n    name: action.input.name,\n    description: action.input.description,\n    active: action.input.active,\n});",
+              errors: [],
               examples: [],
-              template: "Add an extraction category",
-              description: "Add an extraction category",
+              scope: "global",
             },
             {
               id: "toggle-extraction-category",
               name: "TOGGLE_EXTRACTION_CATEGORY",
-              scope: "global",
-              errors: [],
+              description: "Enable/disable an extraction category",
               schema:
                 "input ToggleExtractionCategoryInput {\n    id: OID!\n    active: Boolean!\n}",
+              template: "Enable/disable an extraction category",
               reducer:
                 "const cat = state.extractionCategories.find(c => c.id === action.input.id);\nif (cat) cat.active = action.input.active;",
+              errors: [],
               examples: [],
-              template: "Enable/disable an extraction category",
-              description: "Enable/disable an extraction category",
+              scope: "global",
             },
             {
               id: "toggle-feature",
               name: "TOGGLE_FEATURE",
-              scope: "global",
-              errors: [],
+              description: "Enable/disable a feature block",
               schema:
                 "input ToggleFeatureInput {\n    feature: String!\n    enabled: Boolean!\n}",
+              template: "Enable/disable a feature block",
               reducer:
                 "if (action.input.enabled && !state.features.includes(action.input.feature)) {\n    state.features.push(action.input.feature);\n} else if (!action.input.enabled) {\n    state.features = state.features.filter(f => f !== action.input.feature);\n}",
+              errors: [],
               examples: [],
-              template: "Enable/disable a feature block",
-              description: "Enable/disable a feature block",
+              scope: "global",
             },
           ],
-          description: "Vault configuration lifecycle",
         },
       ],
       version: 1,

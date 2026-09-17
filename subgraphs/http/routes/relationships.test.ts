@@ -58,6 +58,21 @@ const validReason =
   "The source extends the target's claim about edge metadata to this route.";
 
 describe("relationship routes", () => {
+  it("400s on a relationship type outside the knowledge set", async () => {
+    // A typo'd type used to be written and then ignored by the indexer — an
+    // edge that existed but no graph query could see.
+    const d = deps();
+    const res = await createRelationshipRoute(d, "POST")(
+      request("POST", { source: "src", target: "tgt", type: "BUILD_ON", reason: validReason }),
+      ctx,
+    );
+    expect(res.status).toBe(400);
+    const body = (await res.json()) as { code: string; details: { rule: string }[] };
+    expect(body.code).toBe("BAD_REQUEST");
+    expect(body.details[0].rule).toBe("UNKNOWN_LINK_TYPE");
+    expect(d.reactorClient.executeAsync).not.toHaveBeenCalled();
+  });
+
   it("400s on a bare knowledge edge (articulation)", async () => {
     const d = deps();
     const res = await createRelationshipRoute(d, "POST")(

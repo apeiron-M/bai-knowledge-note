@@ -10,6 +10,7 @@
  */
 import type { DocumentDispatch } from "@powerhousedao/reactor-browser";
 import { actions } from "document-models/vault-config";
+import type { Dimension } from "document-models/vault-config";
 import type {
   DimensionConfig,
   VaultConfigAction,
@@ -29,6 +30,18 @@ const DIMENSIONS = [
   "schema",
   "automation",
 ] as const;
+
+/** State key → UPDATE_DIMENSION's `Dimension` enum value. */
+const DIMENSION_ENUM: Record<(typeof DIMENSIONS)[number], Dimension> = {
+  granularity: "GRANULARITY",
+  organization: "ORGANIZATION",
+  linking: "LINKING",
+  processing: "PROCESSING",
+  navigation: "NAVIGATION",
+  maintenance: "MAINTENANCE",
+  schema: "SCHEMA",
+  automation: "AUTOMATION",
+};
 
 /**
  * The poles each dimension runs between, and what moving it is meant to
@@ -112,7 +125,7 @@ export function DimensionsSection({
           const update = (patch: Partial<Position>) =>
             dispatch(
               actions.updateDimension({
-                dimension: dim,
+                dimension: DIMENSION_ENUM[dim],
                 value: patch.value ?? value,
                 confidence: patch.confidence ?? confidence,
                 rationale:

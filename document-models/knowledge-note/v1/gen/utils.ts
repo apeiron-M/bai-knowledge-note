@@ -61,6 +61,7 @@ export const initialGlobalState: KnowledgeNoteGlobalState = {
   rootCause: null,
   correctPattern: null,
   lifecycleEvents: [],
+  updatedAt: null,
 };
 export const initialLocalState: KnowledgeNoteLocalState = {
   lastViewedAt: null,

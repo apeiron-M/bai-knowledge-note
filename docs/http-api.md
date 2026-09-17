@@ -146,9 +146,11 @@ freshly created document is `{ document: 2 }` with no `global` entry, so the fir
 any new document read back empty and was reported as clean. Fixed 2026-09-14.)
 
 Relationship actions are stamped with `scope: "document"` (required by the reactor) and are
-authorized on the **source** document. Knowledge link types (`RELATES_TO`, `BUILDS_ON`,
-`CONTRADICTS`, `SUPERSEDES`, `DERIVED_FROM`) require a specific `reason` of at least 20
-characters; `CORE_IDEA` and `CHILD_MOC` may be bare.
+authorized on the **source** document. `type` must be one of the seven knowledge link types
+(`RELATES_TO`, `BUILDS_ON`, `CONTRADICTS`, `SUPERSEDES`, `DERIVED_FROM`, `CORE_IDEA`, `CHILD_MOC`);
+anything else is `400 BAD_REQUEST` with rule `UNKNOWN_LINK_TYPE` — `ADD_RELATIONSHIP` itself takes
+a free string, and an unknown type used to be stored and then ignored by the indexer. The first
+five require a specific `reason` of at least 20 characters; `CORE_IDEA` and `CHILD_MOC` may be bare.
 
 ## Search expands the graph
 
@@ -172,7 +174,7 @@ GET search?drive=<uuid>&q=how+do+document+models+work
   "related": [
     {
       "documentId": "…", "title": "…", "description": "…",
-      "noteType": "concept", "status": "CANONICAL", "documentType": "bai/knowledge-note",
+      "noteType": "CONCEPT", "status": "CANONICAL", "documentType": "bai/knowledge-note",
       "hitCount": 3,        // how many hits point at it — convergence is signal
       "score": 2.71,        // rank within THIS response only
       "via": [              // always source -> target, so there is no direction to decode

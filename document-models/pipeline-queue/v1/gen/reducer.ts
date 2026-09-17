@@ -13,6 +13,7 @@ import {
   BlockTaskInputSchema,
   CompleteTaskInputSchema,
   FailTaskInputSchema,
+  ReconcileCountersInputSchema,
   UnblockTaskInputSchema,
 } from "./schema/zod.js";
 
@@ -101,6 +102,18 @@ const stateReducer: StateReducer<PipelineQueuePHState> = (
       UnblockTaskInputSchema().parse(action.input);
 
       pipelineQueueQueueManagementOperations.unblockTaskOperation(
+        (state as any)[action.scope],
+        action as any,
+        dispatch,
+      );
+
+      break;
+    }
+
+    case "RECONCILE_COUNTERS": {
+      ReconcileCountersInputSchema().parse(action.input);
+
+      pipelineQueueQueueManagementOperations.reconcileCountersOperation(
         (state as any)[action.scope],
         action as any,
         dispatch,

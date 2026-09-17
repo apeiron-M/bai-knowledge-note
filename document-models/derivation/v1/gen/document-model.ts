@@ -30,61 +30,61 @@ export const documentModel: DocumentModelGlobalState = {
         {
           id: "derivation-management",
           name: "derivation-management",
+          description: "Derivation audit trail",
           operations: [
             {
               id: "initialize-derivation",
               name: "INITIALIZE_DERIVATION",
-              scope: "global",
-              errors: [],
+              description: "Initialize derivation record",
               schema:
                 "input InitializeDerivationInput {\n    engineVersion: String!\n    derivedAt: DateTime!\n}",
+              template: "Initialize derivation record",
               reducer:
                 "state.engineVersion = action.input.engineVersion;\nstate.derivedAt = action.input.derivedAt;",
+              errors: [],
               examples: [],
-              template: "Initialize derivation record",
-              description: "Initialize derivation record",
+              scope: "global",
             },
             {
               id: "add-signal",
               name: "ADD_SIGNAL",
-              scope: "global",
-              errors: [],
+              description: "Record a user signal that influenced derivation",
               schema:
                 "input AddSignalInput {\n    id: OID!\n    utterance: String!\n    influencedDimensions: [String!]!\n    interpretation: String!\n}",
+              template: "Record a user signal that influenced derivation",
               reducer:
                 "state.signals.push({\n    id: action.input.id,\n    utterance: action.input.utterance,\n    influencedDimensions: action.input.influencedDimensions,\n    interpretation: action.input.interpretation,\n});",
+              errors: [],
               examples: [],
-              template: "Record a user signal that influenced derivation",
-              description: "Record a user signal that influenced derivation",
+              scope: "global",
             },
             {
               id: "add-reseed-entry",
               name: "ADD_RESEED_ENTRY",
-              scope: "global",
-              errors: [],
+              description: "Record a re-derivation event",
               schema:
                 "input AddReseedEntryInput {\n    id: OID!\n    reseededAt: DateTime!\n    reason: String!\n    changes: [String!]!\n}",
+              template: "Record a re-derivation event",
               reducer:
                 "state.reseedHistory.push({\n    id: action.input.id,\n    reseededAt: action.input.reseededAt,\n    reason: action.input.reason,\n    changes: action.input.changes,\n});",
+              errors: [],
               examples: [],
-              template: "Record a re-derivation event",
-              description: "Record a re-derivation event",
+              scope: "global",
             },
             {
               id: "update-dimension-rationale",
               name: "UPDATE_DIMENSION_RATIONALE",
-              scope: "global",
-              errors: [],
+              description: "Update rationale for a dimension position",
               schema:
                 "input UpdateDimensionRationaleInput {\n    dimension: String!\n    position: Int!\n    confidence: Float!\n    rationale: String!\n    supportingClaims: [String!]!\n    failureModes: [String!]!\n}",
+              template: "Update rationale for a dimension position",
               reducer:
                 "const existing = state.dimensionRationale.findIndex(d => d.dimension === action.input.dimension);\nconst entry = {\n    dimension: action.input.dimension,\n    position: action.input.position,\n    confidence: action.input.confidence,\n    rationale: action.input.rationale,\n    supportingClaims: action.input.supportingClaims,\n    failureModes: action.input.failureModes,\n};\nif (existing >= 0) {\n    state.dimensionRationale[existing] = entry;\n} else {\n    state.dimensionRationale.push(entry);\n}",
+              errors: [],
               examples: [],
-              template: "Update rationale for a dimension position",
-              description: "Update rationale for a dimension position",
+              scope: "global",
             },
           ],
-          description: "Derivation audit trail",
         },
       ],
       version: 1,

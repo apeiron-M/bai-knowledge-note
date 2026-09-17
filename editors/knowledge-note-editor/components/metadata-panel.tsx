@@ -7,17 +7,27 @@ type MetadataPanelProps = {
   onSetListField: (field: string, values: string[]) => void;
 };
 
-const STRING_FIELDS = [
+type StringFieldSpec = {
+  key: string;
+  label: string;
+  placeholder: string;
+  /** Closed vocabulary — the reducer rejects anything else, so offer a select. */
+  options?: readonly string[];
+};
+
+const STRING_FIELDS: readonly StringFieldSpec[] = [
   { key: "scope", label: "Scope", placeholder: "e.g. global, team, personal" },
   {
     key: "confidence",
     label: "Confidence",
     placeholder: "grounded, established, or speculative",
+    options: ["grounded", "established", "speculative"],
   },
   {
     key: "severity",
     label: "Severity",
     placeholder: "e.g. critical, warning, info",
+    options: ["critical", "warning", "info"],
   },
   {
     key: "context",
@@ -41,6 +51,7 @@ const STRING_FIELDS = [
     key: "decisionStatus",
     label: "Decision Status",
     placeholder: "e.g. proposed, accepted, rejected",
+    options: ["proposed", "accepted", "rejected", "superseded"],
   },
   {
     key: "sourceType",
@@ -147,6 +158,7 @@ export function MetadataPanel({
             {STRING_FIELDS.map((f) => (
               <MetadataStringField
                 key={f.key}
+                options={f.options}
                 label={f.label}
                 placeholder={f.placeholder}
                 value={
@@ -187,13 +199,20 @@ function MetadataStringField({
   label,
   value,
   placeholder,
+  options,
   onChange,
 }: {
   label: string;
   value: string | null;
   placeholder: string;
+  options?: readonly string[];
   onChange: (value: string | null) => void;
 }) {
+  const controlStyle = {
+    backgroundColor: "var(--bai-bg)",
+    color: "var(--bai-text-secondary)",
+    borderColor: "var(--bai-border)",
+  };
   return (
     <label className="block text-xs">
       <span
@@ -202,18 +221,30 @@ function MetadataStringField({
       >
         {label}
       </span>
+      {options ? (
+        <select
+          value={value ?? ""}
+          onChange={(e) => onChange(e.target.value || null)}
+          className="metadata-input w-full rounded border px-2 py-1 text-xs outline-none focus:border-[#cba6f7]/50"
+          style={controlStyle}
+        >
+          <option value="">{placeholder}</option>
+          {options.map((o) => (
+            <option key={o} value={o}>
+              {o}
+            </option>
+          ))}
+        </select>
+      ) : (
       <input
         type="text"
         defaultValue={value ?? ""}
         placeholder={placeholder}
         onBlur={(e) => onChange(e.target.value || null)}
         className="metadata-input w-full rounded border px-2 py-1 text-xs outline-none focus:border-[#cba6f7]/50"
-        style={{
-          backgroundColor: "var(--bai-bg)",
-          color: "var(--bai-text-secondary)",
-          borderColor: "var(--bai-border)",
-        }}
+        style={controlStyle}
       />
+      )}
     </label>
   );
 }

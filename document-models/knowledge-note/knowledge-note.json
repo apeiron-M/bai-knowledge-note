@@ -16,374 +16,389 @@
           "initialValue": "{\n    \"lastViewedAt\": null,\n    \"personalTags\": []\n}"
         },
         "global": {
-          "schema": "enum NoteStatus {\n    DRAFT\n    IN_REVIEW\n    CANONICAL\n    ARCHIVED\n}\n\nenum SourceOrigin {\n    MANUAL\n    SESSION_MINE\n    IMPORT\n    DERIVED\n}\n\nenum LinkType {\n    RELATES_TO\n    BUILDS_ON\n    CONTRADICTS\n    SUPERSEDES\n    DERIVED_FROM\n}\n\ntype KnowledgeNoteState {\n    title: String\n    description: String\n    noteType: String\n    content: String\n    status: NoteStatus\n    provenance: Provenance\n    links: [NoteLink!]!\n    topics: [Topic!]!\n    scope: String\n    confidence: String\n    severity: String\n    editor: String\n    models: [String!]!\n    hooksUsed: [String!]!\n    dispatchTargets: [String!]!\n    modelId: String\n    modules: [String!]!\n    version: String\n    filePath: String\n    computes: String\n    inputs: [String!]!\n    outputs: [String!]!\n    consumedBy: [String!]!\n    context: String\n    alternatives: [String!]!\n    consequences: [String!]!\n    decisionStatus: String\n    model: String\n    sourceType: String\n    targetType: String\n    relationType: String\n    cardinality: String\n    errorMessage: String\n    rootCause: String\n    correctPattern: String\n    lifecycleEvents: [LifecycleEvent!]!\n}\n\ntype Provenance {\n    author: String\n    sourceOrigin: SourceOrigin\n    sessionId: String\n    createdAt: DateTime\n    updatedAt: DateTime\n}\n\ntype NoteLink {\n    id: OID!\n    targetDocumentId: String\n    targetTitle: String\n    linkType: LinkType\n}\n\ntype Topic {\n    id: OID!\n    name: String!\n    topicDocumentId: String\n}\n\ntype LifecycleEvent {\n    id: OID!\n    fromStatus: NoteStatus\n    toStatus: NoteStatus\n    actor: String\n    timestamp: DateTime\n    comment: String\n}",
+          "schema": "enum NoteStatus {\n    DRAFT\n    IN_REVIEW\n    CANONICAL\n    ARCHIVED\n}\n\nenum SourceOrigin {\n    MANUAL\n    SESSION_MINE\n    IMPORT\n    DERIVED\n}\n\nenum LinkType {\n    RELATES_TO\n    BUILDS_ON\n    CONTRADICTS\n    SUPERSEDES\n    DERIVED_FROM\n}\n\nenum NoteType {\n    CONCEPT\n    DECISION\n    PATTERN\n    OBSERVATION\n    PROCEDURE\n    ARCHITECTURE\n    BUG_PATTERN\n    INTEGRATION\n    WORKFLOW\n    REFERENCE\n}\n\ntype KnowledgeNoteState {\n    title: String\n    description: String\n    noteType: NoteType\n    content: String\n    status: NoteStatus\n    provenance: Provenance\n    links: [NoteLink!]!\n    topics: [Topic!]!\n    scope: String\n    confidence: String\n    severity: String\n    editor: String\n    models: [String!]!\n    hooksUsed: [String!]!\n    dispatchTargets: [String!]!\n    modelId: String\n    modules: [String!]!\n    version: String\n    filePath: String\n    computes: String\n    inputs: [String!]!\n    outputs: [String!]!\n    consumedBy: [String!]!\n    context: String\n    alternatives: [String!]!\n    consequences: [String!]!\n    decisionStatus: String\n    model: String\n    sourceType: String\n    targetType: String\n    relationType: String\n    cardinality: String\n    errorMessage: String\n    rootCause: String\n    correctPattern: String\n    lifecycleEvents: [LifecycleEvent!]!\n    updatedAt: DateTime\n}\n\ntype Provenance {\n    author: String\n    sourceOrigin: SourceOrigin\n    sessionId: String\n    createdAt: DateTime\n    updatedAt: DateTime\n}\n\ntype NoteLink {\n    id: OID!\n    targetDocumentId: String\n    targetTitle: String\n    linkType: LinkType\n}\n\ntype Topic {\n    id: OID!\n    name: String!\n    topicDocumentId: String\n}\n\ntype LifecycleEvent {\n    id: OID!\n    fromStatus: NoteStatus\n    toStatus: NoteStatus\n    actor: String\n    timestamp: DateTime\n    comment: String\n}",
           "examples": [],
-          "initialValue": "{\n    \"title\": null,\n    \"description\": null,\n    \"noteType\": null,\n    \"content\": null,\n    \"status\": \"DRAFT\",\n    \"provenance\": null,\n    \"links\": [],\n    \"topics\": [],\n    \"scope\": null,\n    \"confidence\": null,\n    \"severity\": null,\n    \"editor\": null,\n    \"models\": [],\n    \"hooksUsed\": [],\n    \"dispatchTargets\": [],\n    \"modelId\": null,\n    \"modules\": [],\n    \"version\": null,\n    \"filePath\": null,\n    \"computes\": null,\n    \"inputs\": [],\n    \"outputs\": [],\n    \"consumedBy\": [],\n    \"context\": null,\n    \"alternatives\": [],\n    \"consequences\": [],\n    \"decisionStatus\": null,\n    \"model\": null,\n    \"sourceType\": null,\n    \"targetType\": null,\n    \"relationType\": null,\n    \"cardinality\": null,\n    \"errorMessage\": null,\n    \"rootCause\": null,\n    \"correctPattern\": null,\n    \"lifecycleEvents\": []\n}"
+          "initialValue": "{\n    \"title\": null,\n    \"description\": null,\n    \"noteType\": null,\n    \"content\": null,\n    \"status\": \"DRAFT\",\n    \"provenance\": null,\n    \"links\": [],\n    \"topics\": [],\n    \"scope\": null,\n    \"confidence\": null,\n    \"severity\": null,\n    \"editor\": null,\n    \"models\": [],\n    \"hooksUsed\": [],\n    \"dispatchTargets\": [],\n    \"modelId\": null,\n    \"modules\": [],\n    \"version\": null,\n    \"filePath\": null,\n    \"computes\": null,\n    \"inputs\": [],\n    \"outputs\": [],\n    \"consumedBy\": [],\n    \"context\": null,\n    \"alternatives\": [],\n    \"consequences\": [],\n    \"decisionStatus\": null,\n    \"model\": null,\n    \"sourceType\": null,\n    \"targetType\": null,\n    \"relationType\": null,\n    \"cardinality\": null,\n    \"errorMessage\": null,\n    \"rootCause\": null,\n    \"correctPattern\": null,\n    \"lifecycleEvents\": [],\n    \"updatedAt\": null\n}"
         }
       },
       "modules": [
         {
           "id": "content-module",
           "name": "content",
+          "description": "Core note editing",
           "operations": [
             {
               "id": "set-title",
               "name": "SET_TITLE",
-              "scope": "global",
-              "errors": [],
+              "description": "Set the note title",
               "schema": "input SetTitleInput {\n    title: String!\n    updatedAt: DateTime!\n}",
-              "reducer": "state.title = action.input.title;\nif (state.provenance) {\n    state.provenance.updatedAt = action.input.updatedAt;\n}",
-              "examples": [],
               "template": "Set the note title",
-              "description": "Set the note title"
+              "reducer": "state.title = action.input.title;\nstate.updatedAt = action.input.updatedAt;\nif (state.provenance) {\n  state.provenance.updatedAt = action.input.updatedAt;\n}",
+              "errors": [],
+              "examples": [],
+              "scope": "global"
             },
             {
               "id": "set-description",
               "name": "SET_DESCRIPTION",
-              "scope": "global",
+              "description": "Set the note description (max 200 chars)",
+              "schema": "input SetDescriptionInput {\n    description: String!\n    updatedAt: DateTime!\n}",
+              "template": "Set the note description (max 200 chars)",
+              "reducer": "if (action.input.description.length > 200) {\n  throw new DescriptionTooLongError(\"Description exceeds 200 characters\");\n}\nstate.description = action.input.description;\nstate.updatedAt = action.input.updatedAt;\nif (state.provenance) {\n  state.provenance.updatedAt = action.input.updatedAt;\n}",
               "errors": [
                 {
                   "id": "err-description-too-long",
-                  "code": "DESCRIPTION_TOO_LONG",
                   "name": "DescriptionTooLongError",
-                  "template": "",
-                  "description": "Description exceeds 200 characters"
+                  "code": "DESCRIPTION_TOO_LONG",
+                  "description": "Description exceeds 200 characters",
+                  "template": ""
                 }
               ],
-              "schema": "input SetDescriptionInput {\n    description: String!\n    updatedAt: DateTime!\n}",
-              "reducer": "if (action.input.description.length > 200) {\n    throw new DescriptionTooLongError(\"Description exceeds 200 characters\");\n}\nstate.description = action.input.description;\nif (state.provenance) {\n    state.provenance.updatedAt = action.input.updatedAt;\n}",
               "examples": [],
-              "template": "Set the note description (max 200 chars)",
-              "description": "Set the note description (max 200 chars)"
+              "scope": "global"
             },
             {
               "id": "set-note-type",
               "name": "SET_NOTE_TYPE",
-              "scope": "global",
-              "errors": [],
-              "schema": "input SetNoteTypeInput {\n    noteType: String!\n    updatedAt: DateTime!\n}",
-              "reducer": "state.noteType = action.input.noteType;\nif (state.provenance) {\n    state.provenance.updatedAt = action.input.updatedAt;\n}",
-              "examples": [],
+              "description": "Set or change the note type",
+              "schema": "input SetNoteTypeInput {\n    noteType: NoteType!\n    updatedAt: DateTime!\n}",
               "template": "Set or change the note type",
-              "description": "Set or change the note type"
+              "reducer": "state.noteType = action.input.noteType;\nstate.updatedAt = action.input.updatedAt;\nif (state.provenance) {\n  state.provenance.updatedAt = action.input.updatedAt;\n}",
+              "errors": [],
+              "examples": [],
+              "scope": "global"
             },
             {
               "id": "set-content",
               "name": "SET_CONTENT",
-              "scope": "global",
-              "errors": [],
+              "description": "Replace the markdown content body",
               "schema": "input SetContentInput {\n    content: String!\n    updatedAt: DateTime!\n}",
-              "reducer": "state.content = action.input.content;\nif (state.provenance) {\n    state.provenance.updatedAt = action.input.updatedAt;\n}",
-              "examples": [],
               "template": "Replace the markdown content body",
-              "description": "Replace the markdown content body"
+              "reducer": "state.content = action.input.content;\nstate.updatedAt = action.input.updatedAt;\nif (state.provenance) {\n  state.provenance.updatedAt = action.input.updatedAt;\n}",
+              "errors": [],
+              "examples": [],
+              "scope": "global"
             },
             {
               "id": "patch-content",
               "name": "PATCH_CONTENT",
-              "scope": "global",
+              "description": "Surgical edit to content",
+              "schema": "input PatchContentInput {\n    offset: Int!\n    removeCount: Int!\n    insert: String!\n    updatedAt: DateTime!\n}",
+              "template": "Surgical edit to content",
+              "reducer": "const content = state.content || \"\";\nconst { offset, removeCount, insert } = action.input;\nif (offset < 0 || offset + removeCount > content.length) {\n  throw new PatchOutOfBoundsError(\"Offset + removeCount exceeds content length\");\n}\nstate.content =\n  content.slice(0, offset) + insert + content.slice(offset + removeCount);\nstate.updatedAt = action.input.updatedAt;\nif (state.provenance) {\n  state.provenance.updatedAt = action.input.updatedAt;\n}",
               "errors": [
                 {
                   "id": "err-patch-out-of-bounds",
-                  "code": "PATCH_OUT_OF_BOUNDS",
                   "name": "PatchOutOfBoundsError",
-                  "template": "",
-                  "description": "Offset + removeCount exceeds content length"
+                  "code": "PATCH_OUT_OF_BOUNDS",
+                  "description": "Offset + removeCount exceeds content length",
+                  "template": ""
                 }
               ],
-              "schema": "input PatchContentInput {\n    offset: Int!\n    removeCount: Int!\n    insert: String!\n    updatedAt: DateTime!\n}",
-              "reducer": "const content = state.content || \"\";\nconst { offset, removeCount, insert } = action.input;\nif (offset < 0 || offset + removeCount > content.length) {\n    throw new PatchOutOfBoundsError(\"Offset + removeCount exceeds content length\");\n}\nstate.content = content.slice(0, offset) + insert + content.slice(offset + removeCount);\nif (state.provenance) {\n    state.provenance.updatedAt = action.input.updatedAt;\n}",
               "examples": [],
-              "template": "Surgical edit to content",
-              "description": "Surgical edit to content"
+              "scope": "global"
             },
             {
               "id": "set-metadata-field",
               "name": "SET_METADATA_FIELD",
-              "scope": "global",
+              "description": "Set any string metadata field by name",
+              "schema": "input SetMetadataFieldInput {\n    field: String!\n    value: String\n    updatedAt: DateTime!\n}",
+              "template": "Set any string metadata field by name",
+              "reducer": "const STRING_METADATA_FIELDS = [\n  \"scope\",\n  \"confidence\",\n  \"severity\",\n  \"editor\",\n  \"modelId\",\n  \"version\",\n  \"filePath\",\n  \"computes\",\n  \"context\",\n  \"decisionStatus\",\n  \"model\",\n  \"sourceType\",\n  \"targetType\",\n  \"relationType\",\n  \"cardinality\",\n  \"errorMessage\",\n  \"rootCause\",\n  \"correctPattern\",\n] as const;\n// Fields with a closed vocabulary. Anything else is free text.\nconst METADATA_VALUES: Record<string, readonly string[]> = {\n  confidence: [\"grounded\", \"established\", \"speculative\"],\n  severity: [\"critical\", \"warning\", \"info\"],\n  decisionStatus: [\"proposed\", \"accepted\", \"rejected\", \"superseded\"],\n};\nconst { field, value } = action.input;\nconst stringField = STRING_METADATA_FIELDS.find((f) => f === field);\nif (!stringField) {\n  throw new InvalidMetadataFieldError(\n    `\"${field}\" is not a recognized string metadata field`,\n  );\n}\nconst allowed = METADATA_VALUES[stringField];\nif (allowed && value && !allowed.includes(value)) {\n  throw new InvalidMetadataValueError(\n    `\"${value}\" is not a valid ${stringField}; expected one of ${allowed.join(\", \")}`,\n  );\n}\nstate[stringField] = value || null;\nstate.updatedAt = action.input.updatedAt;\nif (state.provenance) {\n  state.provenance.updatedAt = action.input.updatedAt;\n}",
               "errors": [
                 {
                   "id": "err-invalid-metadata-field",
-                  "code": "INVALID_METADATA_FIELD",
                   "name": "InvalidMetadataFieldError",
-                  "template": "",
-                  "description": "Field name is not a recognized string metadata field"
+                  "code": "INVALID_METADATA_FIELD",
+                  "description": "Field name is not a recognized string metadata field",
+                  "template": ""
+                },
+                {
+                  "id": "err-invalid-metadata-value",
+                  "name": "InvalidMetadataValueError",
+                  "code": "INVALID_METADATA_VALUE",
+                  "description": "confidence, severity and decisionStatus take a closed vocabulary",
+                  "template": ""
                 }
               ],
-              "schema": "input SetMetadataFieldInput {\n    field: String!\n    value: String\n    updatedAt: DateTime!\n}",
-              "reducer": "const STRING_METADATA_FIELDS = [\n    \"scope\", \"confidence\", \"severity\", \"editor\", \"modelId\", \"version\",\n    \"filePath\", \"computes\", \"context\", \"decisionStatus\", \"model\",\n    \"sourceType\", \"targetType\", \"relationType\", \"cardinality\",\n    \"errorMessage\", \"rootCause\", \"correctPattern\"\n] as const;\nconst { field, value } = action.input;\nconst stringField = STRING_METADATA_FIELDS.find((f) => f === field);\nif (!stringField) {\n    throw new InvalidMetadataFieldError(`\"${field}\" is not a recognized string metadata field`);\n}\nstate[stringField] = value || null;\nif (state.provenance) {\n    state.provenance.updatedAt = action.input.updatedAt;\n}",
               "examples": [],
-              "template": "Set any string metadata field by name",
-              "description": "Set any string metadata field by name"
+              "scope": "global"
             },
             {
               "id": "set-metadata-list-field",
               "name": "SET_METADATA_LIST_FIELD",
-              "scope": "global",
+              "description": "Set any string-array metadata field by name",
+              "schema": "input SetMetadataListFieldInput {\n    field: String!\n    values: [String!]!\n    updatedAt: DateTime!\n}",
+              "template": "Set any string-array metadata field by name",
+              "reducer": "const LIST_METADATA_FIELDS = [\n  \"models\",\n  \"hooksUsed\",\n  \"dispatchTargets\",\n  \"modules\",\n  \"inputs\",\n  \"outputs\",\n  \"consumedBy\",\n  \"alternatives\",\n  \"consequences\",\n] as const;\nconst { field, values } = action.input;\nconst listField = LIST_METADATA_FIELDS.find((f) => f === field);\nif (!listField) {\n  throw new InvalidMetadataListFieldError(\n    `\"${field}\" is not a recognized list metadata field`,\n  );\n}\nstate[listField] = values;\nstate.updatedAt = action.input.updatedAt;\nif (state.provenance) {\n  state.provenance.updatedAt = action.input.updatedAt;\n}",
               "errors": [
                 {
                   "id": "err-invalid-metadata-list-field",
-                  "code": "INVALID_METADATA_LIST_FIELD",
                   "name": "InvalidMetadataListFieldError",
-                  "template": "",
-                  "description": "Field name is not a recognized list metadata field"
+                  "code": "INVALID_METADATA_LIST_FIELD",
+                  "description": "Field name is not a recognized list metadata field",
+                  "template": ""
                 }
               ],
-              "schema": "input SetMetadataListFieldInput {\n    field: String!\n    values: [String!]!\n    updatedAt: DateTime!\n}",
-              "reducer": "const LIST_METADATA_FIELDS = [\n    \"models\", \"hooksUsed\", \"dispatchTargets\", \"modules\", \"inputs\",\n    \"outputs\", \"consumedBy\", \"alternatives\", \"consequences\"\n] as const;\nconst { field, values } = action.input;\nconst listField = LIST_METADATA_FIELDS.find((f) => f === field);\nif (!listField) {\n    throw new InvalidMetadataListFieldError(`\"${field}\" is not a recognized list metadata field`);\n}\nstate[listField] = values;\nif (state.provenance) {\n    state.provenance.updatedAt = action.input.updatedAt;\n}",
               "examples": [],
-              "template": "Set any string-array metadata field by name",
-              "description": "Set any string-array metadata field by name"
+              "scope": "global"
             }
-          ],
-          "description": "Core note editing"
+          ]
         },
         {
           "id": "provenance-module",
           "name": "provenance",
+          "description": "Source tracking",
           "operations": [
             {
               "id": "set-provenance",
               "name": "SET_PROVENANCE",
-              "scope": "global",
-              "errors": [],
+              "description": "Record author, source origin, session ID, and creation timestamp",
               "schema": "input SetProvenanceInput {\n    author: String!\n    sourceOrigin: SourceOrigin!\n    sessionId: String\n    createdAt: DateTime!\n}",
-              "reducer": "state.provenance = {\n    author: action.input.author,\n    sourceOrigin: action.input.sourceOrigin,\n    sessionId: action.input.sessionId || null,\n    createdAt: action.input.createdAt,\n    updatedAt: action.input.createdAt,\n};",
-              "examples": [],
               "template": "Record author, source origin, session ID, and creation timestamp",
-              "description": "Record author, source origin, session ID, and creation timestamp"
+              "reducer": "// createdAt is written once. Author and origin may be corrected later (the\n// editor offers that), but the creation time is not negotiable — pass the\n// existing value back unchanged.\nif (state.provenance && action.input.createdAt !== state.provenance.createdAt) {\n  throw new ProvenanceCreatedAtImmutableError(\n    `provenance.createdAt is ${state.provenance.createdAt} and cannot be changed`,\n  );\n}\nconst lastTouched = state.updatedAt || action.input.createdAt;\nstate.provenance = {\n  author: action.input.author,\n  sourceOrigin: action.input.sourceOrigin,\n  sessionId: action.input.sessionId || null,\n  createdAt: action.input.createdAt,\n  updatedAt: lastTouched,\n};\nif (!state.updatedAt) state.updatedAt = action.input.createdAt;",
+              "errors": [
+                {
+                  "id": "err-provenance-created-at-immutable",
+                  "name": "ProvenanceCreatedAtImmutableError",
+                  "code": "PROVENANCE_CREATED_AT_IMMUTABLE",
+                  "description": "provenance.createdAt cannot change once set; author and sourceOrigin can",
+                  "template": ""
+                }
+              ],
+              "examples": [],
+              "scope": "global"
             }
-          ],
-          "description": "Source tracking"
+          ]
         },
         {
           "id": "linking-module",
           "name": "linking",
+          "description": "Knowledge graph edges",
           "operations": [
             {
               "id": "add-link",
               "name": "ADD_LINK",
-              "scope": "global",
+              "description": "Create a typed link to another note",
+              "schema": "input AddLinkInput {\n    id: OID!\n    targetDocumentId: String!\n    targetTitle: String\n    linkType: LinkType!\n}",
+              "template": "Create a typed link to another note",
+              "reducer": "const existing = state.links.find(l => l.id === action.input.id);\nif (existing) {\n    throw new DuplicateLinkIdError(\"A link with this OID already exists\");\n}\nstate.links.push({\n    id: action.input.id,\n    targetDocumentId: action.input.targetDocumentId,\n    targetTitle: action.input.targetTitle || null,\n    linkType: action.input.linkType,\n});",
               "errors": [
                 {
                   "id": "err-duplicate-link-id",
-                  "code": "DUPLICATE_LINK_ID",
                   "name": "DuplicateLinkIdError",
-                  "template": "",
-                  "description": "A link with this OID already exists"
+                  "code": "DUPLICATE_LINK_ID",
+                  "description": "A link with this OID already exists",
+                  "template": ""
                 }
               ],
-              "schema": "input AddLinkInput {\n    id: OID!\n    targetDocumentId: String!\n    targetTitle: String\n    linkType: LinkType!\n}",
-              "reducer": "const existing = state.links.find(l => l.id === action.input.id);\nif (existing) {\n    throw new DuplicateLinkIdError(\"A link with this OID already exists\");\n}\nstate.links.push({\n    id: action.input.id,\n    targetDocumentId: action.input.targetDocumentId,\n    targetTitle: action.input.targetTitle || null,\n    linkType: action.input.linkType,\n});",
               "examples": [],
-              "template": "Create a typed link to another note",
-              "description": "Create a typed link to another note"
+              "scope": "global"
             },
             {
               "id": "remove-link",
               "name": "REMOVE_LINK",
-              "scope": "global",
+              "description": "Remove a link by ID",
+              "schema": "input RemoveLinkInput {\n    id: OID!\n}",
+              "template": "Remove a link by ID",
+              "reducer": "const index = state.links.findIndex(l => l.id === action.input.id);\nif (index === -1) {\n    throw new LinkNotFoundError(\"No link with this OID\");\n}\nstate.links.splice(index, 1);",
               "errors": [
                 {
                   "id": "err-link-not-found-remove",
-                  "code": "LINK_NOT_FOUND",
                   "name": "LinkNotFoundError",
-                  "template": "",
-                  "description": "No link with this OID"
+                  "code": "LINK_NOT_FOUND",
+                  "description": "No link with this OID",
+                  "template": ""
                 }
               ],
-              "schema": "input RemoveLinkInput {\n    id: OID!\n}",
-              "reducer": "const index = state.links.findIndex(l => l.id === action.input.id);\nif (index === -1) {\n    throw new LinkNotFoundError(\"No link with this OID\");\n}\nstate.links.splice(index, 1);",
               "examples": [],
-              "template": "Remove a link by ID",
-              "description": "Remove a link by ID"
+              "scope": "global"
             },
             {
               "id": "update-link-type",
               "name": "UPDATE_LINK_TYPE",
-              "scope": "global",
+              "description": "Change a link's type",
+              "schema": "input UpdateLinkTypeInput {\n    id: OID!\n    linkType: LinkType!\n}",
+              "template": "Change a link's type",
+              "reducer": "const link = state.links.find(l => l.id === action.input.id);\nif (!link) {\n    throw new LinkNotFoundError(\"No link with this OID\");\n}\nlink.linkType = action.input.linkType;",
               "errors": [
                 {
                   "id": "err-link-not-found-update",
-                  "code": "LINK_NOT_FOUND",
                   "name": "LinkNotFoundError",
-                  "template": "",
-                  "description": "No link with this OID"
+                  "code": "LINK_NOT_FOUND",
+                  "description": "No link with this OID",
+                  "template": ""
                 }
               ],
-              "schema": "input UpdateLinkTypeInput {\n    id: OID!\n    linkType: LinkType!\n}",
-              "reducer": "const link = state.links.find(l => l.id === action.input.id);\nif (!link) {\n    throw new LinkNotFoundError(\"No link with this OID\");\n}\nlink.linkType = action.input.linkType;",
               "examples": [],
-              "template": "Change a link's type",
-              "description": "Change a link's type"
+              "scope": "global"
             },
             {
               "id": "add-topic",
               "name": "ADD_TOPIC",
-              "scope": "global",
+              "description": "Tag the note with a topic",
+              "schema": "input AddTopicInput {\n    id: OID!\n    name: String!\n    topicDocumentId: String\n}",
+              "template": "Tag the note with a topic",
+              "reducer": "const duplicate = state.topics.find(t => t.name === action.input.name);\nif (duplicate) {\n    throw new DuplicateTopicError(\"A topic with this name already exists on this note\");\n}\nstate.topics.push({\n    id: action.input.id,\n    name: action.input.name,\n    topicDocumentId: action.input.topicDocumentId || null,\n});",
               "errors": [
                 {
                   "id": "err-duplicate-topic",
-                  "code": "DUPLICATE_TOPIC",
                   "name": "DuplicateTopicError",
-                  "template": "",
-                  "description": "A topic with this name already exists on this note"
+                  "code": "DUPLICATE_TOPIC",
+                  "description": "A topic with this name already exists on this note",
+                  "template": ""
                 }
               ],
-              "schema": "input AddTopicInput {\n    id: OID!\n    name: String!\n    topicDocumentId: String\n}",
-              "reducer": "const duplicate = state.topics.find(t => t.name === action.input.name);\nif (duplicate) {\n    throw new DuplicateTopicError(\"A topic with this name already exists on this note\");\n}\nstate.topics.push({\n    id: action.input.id,\n    name: action.input.name,\n    topicDocumentId: action.input.topicDocumentId || null,\n});",
               "examples": [],
-              "template": "Tag the note with a topic",
-              "description": "Tag the note with a topic"
+              "scope": "global"
             },
             {
               "id": "remove-topic",
               "name": "REMOVE_TOPIC",
-              "scope": "global",
+              "description": "Remove a topic tag by ID",
+              "schema": "input RemoveTopicInput {\n    id: OID!\n}",
+              "template": "Remove a topic tag by ID",
+              "reducer": "const index = state.topics.findIndex(t => t.id === action.input.id);\nif (index === -1) {\n    throw new TopicNotFoundError(\"No topic with this OID\");\n}\nstate.topics.splice(index, 1);",
               "errors": [
                 {
                   "id": "err-topic-not-found",
-                  "code": "TOPIC_NOT_FOUND",
                   "name": "TopicNotFoundError",
-                  "template": "",
-                  "description": "No topic with this OID"
+                  "code": "TOPIC_NOT_FOUND",
+                  "description": "No topic with this OID",
+                  "template": ""
                 }
               ],
-              "schema": "input RemoveTopicInput {\n    id: OID!\n}",
-              "reducer": "const index = state.topics.findIndex(t => t.id === action.input.id);\nif (index === -1) {\n    throw new TopicNotFoundError(\"No topic with this OID\");\n}\nstate.topics.splice(index, 1);",
               "examples": [],
-              "template": "Remove a topic tag by ID",
-              "description": "Remove a topic tag by ID"
+              "scope": "global"
             }
-          ],
-          "description": "Knowledge graph edges"
+          ]
         },
         {
           "id": "lifecycle-module",
           "name": "lifecycle",
+          "description": "Status transitions with audit trail",
           "operations": [
             {
               "id": "submit-for-review",
               "name": "SUBMIT_FOR_REVIEW",
-              "scope": "global",
+              "description": "Transition DRAFT → IN_REVIEW",
+              "schema": "input SubmitForReviewInput {\n    id: OID!\n    actor: String!\n    timestamp: DateTime!\n    comment: String\n}",
+              "template": "Transition DRAFT → IN_REVIEW",
+              "reducer": "if (state.status !== \"DRAFT\") {\n  throw new InvalidStatusTransitionError(\"Can only submit for review from DRAFT status\");\n}\nstate.status = \"IN_REVIEW\";\nstate.lifecycleEvents.push({\n  id: action.input.id,\n  fromStatus: \"DRAFT\",\n  toStatus: \"IN_REVIEW\",\n  actor: action.input.actor,\n  timestamp: action.input.timestamp,\n  comment: action.input.comment || null,\n});\nstate.updatedAt = action.input.timestamp;\nif (state.provenance) {\n  state.provenance.updatedAt = action.input.timestamp;\n}",
               "errors": [
                 {
                   "id": "err-invalid-transition-submit",
-                  "code": "INVALID_STATUS_TRANSITION",
                   "name": "InvalidStatusTransitionError",
-                  "template": "",
-                  "description": "Current status doesn't allow this transition"
+                  "code": "INVALID_STATUS_TRANSITION",
+                  "description": "Current status doesn't allow this transition",
+                  "template": ""
                 }
               ],
-              "schema": "input SubmitForReviewInput {\n    id: OID!\n    actor: String!\n    timestamp: DateTime!\n    comment: String\n}",
-              "reducer": "if (state.status !== \"DRAFT\") {\n    throw new InvalidStatusTransitionError(\"Can only submit for review from DRAFT status\");\n}\nstate.status = \"IN_REVIEW\";\nstate.lifecycleEvents.push({\n    id: action.input.id,\n    fromStatus: \"DRAFT\",\n    toStatus: \"IN_REVIEW\",\n    actor: action.input.actor,\n    timestamp: action.input.timestamp,\n    comment: action.input.comment || null,\n});\nif (state.provenance) {\n    state.provenance.updatedAt = action.input.timestamp;\n}",
               "examples": [],
-              "template": "Transition DRAFT → IN_REVIEW",
-              "description": "Transition DRAFT → IN_REVIEW"
+              "scope": "global"
             },
             {
               "id": "approve-note",
               "name": "APPROVE_NOTE",
-              "scope": "global",
+              "description": "Transition IN_REVIEW → CANONICAL (actor ≠ author)",
+              "schema": "input ApproveNoteInput {\n    id: OID!\n    actor: String!\n    timestamp: DateTime!\n    comment: String\n}",
+              "template": "Transition IN_REVIEW → CANONICAL (actor ≠ author)",
+              "reducer": "if (state.status !== \"IN_REVIEW\") {\n  throw new InvalidStatusTransitionError(\"Can only approve from IN_REVIEW status\");\n}\nif (state.provenance && state.provenance.author === action.input.actor) {\n  throw new SelfApprovalError(\"Actor cannot approve their own note\");\n}\nstate.status = \"CANONICAL\";\nstate.lifecycleEvents.push({\n  id: action.input.id,\n  fromStatus: \"IN_REVIEW\",\n  toStatus: \"CANONICAL\",\n  actor: action.input.actor,\n  timestamp: action.input.timestamp,\n  comment: action.input.comment || null,\n});\nstate.updatedAt = action.input.timestamp;\nif (state.provenance) {\n  state.provenance.updatedAt = action.input.timestamp;\n}",
               "errors": [
                 {
                   "id": "err-invalid-transition-approve",
-                  "code": "INVALID_STATUS_TRANSITION",
                   "name": "InvalidStatusTransitionError",
-                  "template": "",
-                  "description": "Current status doesn't allow this transition"
+                  "code": "INVALID_STATUS_TRANSITION",
+                  "description": "Current status doesn't allow this transition",
+                  "template": ""
                 },
                 {
                   "id": "err-self-approval",
-                  "code": "SELF_APPROVAL",
                   "name": "SelfApprovalError",
-                  "template": "",
-                  "description": "Actor cannot approve their own note"
+                  "code": "SELF_APPROVAL",
+                  "description": "Actor cannot approve their own note",
+                  "template": ""
                 }
               ],
-              "schema": "input ApproveNoteInput {\n    id: OID!\n    actor: String!\n    timestamp: DateTime!\n    comment: String\n}",
-              "reducer": "if (state.status !== \"IN_REVIEW\") {\n    throw new InvalidStatusTransitionError(\"Can only approve from IN_REVIEW status\");\n}\nif (state.provenance && state.provenance.author === action.input.actor) {\n    throw new SelfApprovalError(\"Actor cannot approve their own note\");\n}\nstate.status = \"CANONICAL\";\nstate.lifecycleEvents.push({\n    id: action.input.id,\n    fromStatus: \"IN_REVIEW\",\n    toStatus: \"CANONICAL\",\n    actor: action.input.actor,\n    timestamp: action.input.timestamp,\n    comment: action.input.comment || null,\n});\nif (state.provenance) {\n    state.provenance.updatedAt = action.input.timestamp;\n}",
               "examples": [],
-              "template": "Transition IN_REVIEW → CANONICAL (actor ≠ author)",
-              "description": "Transition IN_REVIEW → CANONICAL (actor ≠ author)"
+              "scope": "global"
             },
             {
               "id": "reject-note",
               "name": "REJECT_NOTE",
-              "scope": "global",
+              "description": "Transition IN_REVIEW → DRAFT with feedback",
+              "schema": "input RejectNoteInput {\n    id: OID!\n    actor: String!\n    timestamp: DateTime!\n    comment: String!\n}",
+              "template": "Transition IN_REVIEW → DRAFT with feedback",
+              "reducer": "if (state.status !== \"IN_REVIEW\") {\n  throw new InvalidStatusTransitionError(\"Can only reject from IN_REVIEW status\");\n}\nstate.status = \"DRAFT\";\nstate.lifecycleEvents.push({\n  id: action.input.id,\n  fromStatus: \"IN_REVIEW\",\n  toStatus: \"DRAFT\",\n  actor: action.input.actor,\n  timestamp: action.input.timestamp,\n  comment: action.input.comment,\n});\nstate.updatedAt = action.input.timestamp;\nif (state.provenance) {\n  state.provenance.updatedAt = action.input.timestamp;\n}",
               "errors": [
                 {
                   "id": "err-invalid-transition-reject",
-                  "code": "INVALID_STATUS_TRANSITION",
                   "name": "InvalidStatusTransitionError",
-                  "template": "",
-                  "description": "Current status doesn't allow this transition"
+                  "code": "INVALID_STATUS_TRANSITION",
+                  "description": "Current status doesn't allow this transition",
+                  "template": ""
                 }
               ],
-              "schema": "input RejectNoteInput {\n    id: OID!\n    actor: String!\n    timestamp: DateTime!\n    comment: String!\n}",
-              "reducer": "if (state.status !== \"IN_REVIEW\") {\n    throw new InvalidStatusTransitionError(\"Can only reject from IN_REVIEW status\");\n}\nstate.status = \"DRAFT\";\nstate.lifecycleEvents.push({\n    id: action.input.id,\n    fromStatus: \"IN_REVIEW\",\n    toStatus: \"DRAFT\",\n    actor: action.input.actor,\n    timestamp: action.input.timestamp,\n    comment: action.input.comment,\n});\nif (state.provenance) {\n    state.provenance.updatedAt = action.input.timestamp;\n}",
               "examples": [],
-              "template": "Transition IN_REVIEW → DRAFT with feedback",
-              "description": "Transition IN_REVIEW → DRAFT with feedback"
+              "scope": "global"
             },
             {
               "id": "archive-note",
               "name": "ARCHIVE_NOTE",
-              "scope": "global",
+              "description": "Transition CANONICAL → ARCHIVED",
+              "schema": "input ArchiveNoteInput {\n    id: OID!\n    actor: String!\n    timestamp: DateTime!\n    comment: String!\n}",
+              "template": "Transition CANONICAL → ARCHIVED",
+              "reducer": "if (state.status !== \"CANONICAL\") {\n  throw new InvalidStatusTransitionError(\"Can only archive from CANONICAL status\");\n}\nstate.status = \"ARCHIVED\";\nstate.lifecycleEvents.push({\n  id: action.input.id,\n  fromStatus: \"CANONICAL\",\n  toStatus: \"ARCHIVED\",\n  actor: action.input.actor,\n  timestamp: action.input.timestamp,\n  comment: action.input.comment,\n});\nstate.updatedAt = action.input.timestamp;\nif (state.provenance) {\n  state.provenance.updatedAt = action.input.timestamp;\n}",
               "errors": [
                 {
                   "id": "err-invalid-transition-archive",
-                  "code": "INVALID_STATUS_TRANSITION",
                   "name": "InvalidStatusTransitionError",
-                  "template": "",
-                  "description": "Current status doesn't allow this transition"
+                  "code": "INVALID_STATUS_TRANSITION",
+                  "description": "Current status doesn't allow this transition",
+                  "template": ""
                 }
               ],
-              "schema": "input ArchiveNoteInput {\n    id: OID!\n    actor: String!\n    timestamp: DateTime!\n    comment: String!\n}",
-              "reducer": "if (state.status !== \"CANONICAL\") {\n    throw new InvalidStatusTransitionError(\"Can only archive from CANONICAL status\");\n}\nstate.status = \"ARCHIVED\";\nstate.lifecycleEvents.push({\n    id: action.input.id,\n    fromStatus: \"CANONICAL\",\n    toStatus: \"ARCHIVED\",\n    actor: action.input.actor,\n    timestamp: action.input.timestamp,\n    comment: action.input.comment,\n});\nif (state.provenance) {\n    state.provenance.updatedAt = action.input.timestamp;\n}",
               "examples": [],
-              "template": "Transition CANONICAL → ARCHIVED",
-              "description": "Transition CANONICAL → ARCHIVED"
+              "scope": "global"
             },
             {
               "id": "restore-note",
               "name": "RESTORE_NOTE",
-              "scope": "global",
+              "description": "Transition ARCHIVED → DRAFT",
+              "schema": "input RestoreNoteInput {\n    id: OID!\n    actor: String!\n    timestamp: DateTime!\n    comment: String\n}",
+              "template": "Transition ARCHIVED → DRAFT",
+              "reducer": "if (state.status !== \"ARCHIVED\") {\n  throw new InvalidStatusTransitionError(\"Can only restore from ARCHIVED status\");\n}\nstate.status = \"DRAFT\";\nstate.lifecycleEvents.push({\n  id: action.input.id,\n  fromStatus: \"ARCHIVED\",\n  toStatus: \"DRAFT\",\n  actor: action.input.actor,\n  timestamp: action.input.timestamp,\n  comment: action.input.comment || null,\n});\nstate.updatedAt = action.input.timestamp;\nif (state.provenance) {\n  state.provenance.updatedAt = action.input.timestamp;\n}",
               "errors": [
                 {
                   "id": "err-invalid-transition-restore",
-                  "code": "INVALID_STATUS_TRANSITION",
                   "name": "InvalidStatusTransitionError",
-                  "template": "",
-                  "description": "Current status doesn't allow this transition"
+                  "code": "INVALID_STATUS_TRANSITION",
+                  "description": "Current status doesn't allow this transition",
+                  "template": ""
                 }
               ],
-              "schema": "input RestoreNoteInput {\n    id: OID!\n    actor: String!\n    timestamp: DateTime!\n    comment: String\n}",
-              "reducer": "if (state.status !== \"ARCHIVED\") {\n    throw new InvalidStatusTransitionError(\"Can only restore from ARCHIVED status\");\n}\nstate.status = \"DRAFT\";\nstate.lifecycleEvents.push({\n    id: action.input.id,\n    fromStatus: \"ARCHIVED\",\n    toStatus: \"DRAFT\",\n    actor: action.input.actor,\n    timestamp: action.input.timestamp,\n    comment: action.input.comment || null,\n});\nif (state.provenance) {\n    state.provenance.updatedAt = action.input.timestamp;\n}",
               "examples": [],
-              "template": "Transition ARCHIVED → DRAFT",
-              "description": "Transition ARCHIVED → DRAFT"
+              "scope": "global"
             }
-          ],
-          "description": "Status transitions with audit trail"
+          ]
         },
         {
           "id": "local-module",
           "name": "local",
+          "description": "Per-user local state",
           "operations": [
             {
               "id": "set-last-viewed",
               "name": "SET_LAST_VIEWED",
-              "scope": "local",
-              "errors": [],
+              "description": "Update the local lastViewedAt timestamp",
               "schema": "input SetLastViewedInput {\n    lastViewedAt: DateTime!\n}",
-              "reducer": "state.lastViewedAt = action.input.lastViewedAt;",
-              "examples": [],
               "template": "Update the local lastViewedAt timestamp",
-              "description": "Update the local lastViewedAt timestamp"
+              "reducer": "state.lastViewedAt = action.input.lastViewedAt;",
+              "errors": [],
+              "examples": [],
+              "scope": "local"
             }
-          ],
-          "description": "Per-user local state"
+          ]
         }
       ],
       "version": 1,

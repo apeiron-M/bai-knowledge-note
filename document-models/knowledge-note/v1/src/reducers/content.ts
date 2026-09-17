@@ -3,12 +3,21 @@ import {
   DescriptionTooLongError,
   InvalidMetadataFieldError,
   InvalidMetadataListFieldError,
+  InvalidMetadataValueError,
   PatchOutOfBoundsError,
 } from "../../gen/content/error.js";
+
+// Metadata fields with a closed vocabulary. Everything else is free text.
+const METADATA_VALUES: Record<string, readonly string[]> = {
+  confidence: ["grounded", "established", "speculative"],
+  severity: ["critical", "warning", "info"],
+  decisionStatus: ["proposed", "accepted", "rejected", "superseded"],
+};
 
 export const knowledgeNoteContentOperations: KnowledgeNoteContentOperations = {
   setTitleOperation(state, action) {
     state.title = action.input.title;
+    state.updatedAt = action.input.updatedAt;
     if (state.provenance) {
       state.provenance.updatedAt = action.input.updatedAt;
     }
@@ -18,18 +27,21 @@ export const knowledgeNoteContentOperations: KnowledgeNoteContentOperations = {
       throw new DescriptionTooLongError("Description exceeds 200 characters");
     }
     state.description = action.input.description;
+    state.updatedAt = action.input.updatedAt;
     if (state.provenance) {
       state.provenance.updatedAt = action.input.updatedAt;
     }
   },
   setNoteTypeOperation(state, action) {
     state.noteType = action.input.noteType;
+    state.updatedAt = action.input.updatedAt;
     if (state.provenance) {
       state.provenance.updatedAt = action.input.updatedAt;
     }
   },
   setContentOperation(state, action) {
     state.content = action.input.content;
+    state.updatedAt = action.input.updatedAt;
     if (state.provenance) {
       state.provenance.updatedAt = action.input.updatedAt;
     }
@@ -44,6 +56,7 @@ export const knowledgeNoteContentOperations: KnowledgeNoteContentOperations = {
     }
     state.content =
       content.slice(0, offset) + insert + content.slice(offset + removeCount);
+    state.updatedAt = action.input.updatedAt;
     if (state.provenance) {
       state.provenance.updatedAt = action.input.updatedAt;
     }
@@ -76,7 +89,14 @@ export const knowledgeNoteContentOperations: KnowledgeNoteContentOperations = {
         `"${field}" is not a recognized string metadata field`,
       );
     }
+    const allowed = METADATA_VALUES[stringField];
+    if (allowed && value && !allowed.includes(value)) {
+      throw new InvalidMetadataValueError(
+        `"${value}" is not a valid ${stringField}; expected one of ${allowed.join(", ")}`,
+      );
+    }
     state[stringField] = value || null;
+    state.updatedAt = action.input.updatedAt;
     if (state.provenance) {
       state.provenance.updatedAt = action.input.updatedAt;
     }
@@ -101,6 +121,7 @@ export const knowledgeNoteContentOperations: KnowledgeNoteContentOperations = {
       );
     }
     state[listField] = values;
+    state.updatedAt = action.input.updatedAt;
     if (state.provenance) {
       state.provenance.updatedAt = action.input.updatedAt;
     }
