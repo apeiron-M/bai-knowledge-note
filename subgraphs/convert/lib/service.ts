@@ -13,6 +13,69 @@ export interface ConversionResult {
   chunks: ConversionChunk[];
   format?: string;
   timings?: Record<string, unknown>;
+  /** Which OCR engine read the file, when one did. */
+  ocr?: "tesseract" | "docling" | null;
+  /** Which rung produced the text — `pdfjs` means the text layer, without layout. */
+  textSource?: "docling" | "pdfjs" | "tesseract" | "docling-ocr";
+  /** Set when OCR is needed but over the budget: the caller may re-request with `ocr: true`. */
+  needsOcr?: {
+    via: "tesseract" | "docling-ocr";
+    estimateSeconds: number;
+  } | null;
+  pages?: number | null;
+  /** With `figures: true`: the document's pictures and display formulas as PNGs, keyed to the n-th placeholder. */
+  figures?: ConversionFigure[];
+  figureStats?: {
+    pictures: number;
+    formulas: number;
+    located: number;
+    skipped: number;
+    droppedForBudget: number;
+    unplaced?: number;
+    jsonMs: number;
+    renderMs: number;
+  } | null;
+  /** The text layer was read flat (`textSource: "pdfjs"`): what OCR would cost to recover tables. */
+  ocrOffer?: {
+    via: "tesseract" | "docling-ocr";
+    estimateSeconds: number;
+  } | null;
+  /** How much of the file's text layer survived, and the losses docling announces. A floor, not a proof. */
+  quality?: ConversionQualityReport | null;
+}
+
+export interface ConversionQualityReport {
+  coverage: number | null;
+  rawTokens: number;
+  formulas: { total: number; decoded: number };
+  images: number;
+}
+
+export interface ConversionFigure {
+  id: string;
+  kind: "picture" | "formula";
+  page: number;
+  /** The n-th `<!-- image -->` (pictures) or `<!-- formula-not-decoded -->` (formulas) in the markdown. */
+  placeholderIndex: number;
+  alt: string;
+  mimeType: string;
+  width: number;
+  height: number;
+  bytesBase64: string;
+}
+
+export interface ConversionProgress {
+  phase:
+    | "starting"
+    | "reading"
+    | "structuring"
+    | "text-layer"
+    | "ocr"
+    | "done"
+    | "failed";
+  pages: number | null;
+  pagesDone: number;
+  elapsedMs: number;
 }
 
 export interface ConversionHealth {
@@ -27,7 +90,15 @@ export interface ConversionService {
   convert(input: {
     filename: string;
     bytes: Uint8Array;
+    /** Ask the service to OCR regardless of its budget. */
+    ocr?: boolean;
+    /** A caller-chosen id to watch this conversion through `progress()`. */
+    job?: string;
+    /** Ask for the pictures and display formulas as images (PDF only; costs a second docling pass). */
+    figures?: boolean;
   }): Promise<ConversionResult>;
+  /** Live progress of a conversion started with `job`; null once the service has forgotten it. */
+  progress(job: string): Promise<ConversionProgress | null>;
   health(): Promise<ConversionHealth>;
 }
 
@@ -89,6 +160,15 @@ export function createHttpConversionService(options: {
   async function readJson<T>(response: Response): Promise<T> {
     if (!response.ok) {
       const text = await response.text().catch(() => "");
+      // The service runs one conversion at a time and says so; that is a
+      // retry-later, not an outage, and the client must be able to tell.
+      if (response.status === 503 && text.includes("CONVERSION_BUSY")) {
+        throw new HttpError(
+          503,
+          "CONVERT_BUSY",
+          `The conversion service is busy: ${text.slice(0, 300)}`,
+        );
+      }
       throw new HttpError(
         502,
         "CONVERT_UNAVAILABLE",
@@ -99,9 +179,9 @@ export function createHttpConversionService(options: {
   }
 
   return {
-    async convert({ filename, bytes }) {
+    async convert({ filename, bytes, ocr, job, figures }) {
       const response = await request(
-        `/convert?filename=${encodeURIComponent(filename)}`,
+        `/convert?filename=${encodeURIComponent(filename)}${ocr ? "&ocr=1" : ""}${job ? `&job=${encodeURIComponent(job)}` : ""}${figures ? "&figures=1" : ""}`,
         {
           method: "POST",
           headers: { "content-type": "application/octet-stream" },
@@ -113,6 +193,17 @@ export function createHttpConversionService(options: {
         chunks: ConversionChunk[];
         format?: string;
         timings?: Record<string, unknown>;
+        ocr?: "tesseract" | "docling" | null;
+        textSource?: "docling" | "pdfjs" | "tesseract" | "docling-ocr";
+        needsOcr?: {
+          via: "tesseract" | "docling-ocr";
+          estimateSeconds: number;
+        } | null;
+        pages?: number | null;
+        quality?: ConversionQualityReport | null;
+        ocrOffer?: ConversionResult["ocrOffer"];
+        figures?: ConversionFigure[];
+        figureStats?: ConversionResult["figureStats"];
       }>(response);
       if (typeof body.markdown !== "string" || !Array.isArray(body.chunks)) {
         throw new HttpError(
@@ -126,7 +217,23 @@ export function createHttpConversionService(options: {
         chunks: body.chunks,
         format: body.format,
         timings: body.timings,
+        ocr: body.ocr ?? null,
+        textSource: body.textSource ?? "docling",
+        needsOcr: body.needsOcr ?? null,
+        pages: body.pages ?? null,
+        quality: body.quality ?? null,
+        ocrOffer: body.ocrOffer ?? null,
+        figures: body.figures ?? [],
+        figureStats: body.figureStats ?? null,
       };
+    },
+
+    async progress(job) {
+      const response = await request(`/progress/${encodeURIComponent(job)}`, {
+        method: "GET",
+      });
+      if (response.status === 404) return null;
+      return readJson<ConversionProgress>(response);
     },
 
     async health() {

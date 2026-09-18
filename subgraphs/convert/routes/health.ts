@@ -42,7 +42,10 @@ export function createHealthRoute(deps: ConvertRouteDeps) {
       }
       try {
         const health = await deps.service.health();
-        return Response.json({ ...health, configured: true }, { headers: OK_CACHE });
+        return Response.json(
+          { ...health, configured: true },
+          { headers: OK_CACHE },
+        );
       } catch {
         // Configured but unreachable is a *state*, not a failed request.
         return Response.json(unreachableHealth, { headers: OK_CACHE });

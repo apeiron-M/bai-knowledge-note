@@ -15,7 +15,11 @@ export function requireUser(
   ctx: RouteContext,
 ): NonNullable<RouteContext["user"]> {
   if (!ctx.user) {
-    throw new HttpError(401, "UNAUTHENTICATED", "A verified bearer is required");
+    throw new HttpError(
+      401,
+      "UNAUTHENTICATED",
+      "A verified bearer is required",
+    );
   }
   return ctx.user;
 }

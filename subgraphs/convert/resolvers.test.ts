@@ -22,12 +22,18 @@ const fakeHttp = () => {
     ): void => {
       routes.push({ method, path, options });
     };
-  const scope = { get: record("GET"), post: record("POST") } as unknown as IHttpScope;
+  const scope = {
+    get: record("GET"),
+    post: record("POST"),
+  } as unknown as IHttpScope;
   return { routes, scope };
 };
 
-const stubService = (over: Partial<ConversionService> = {}): ConversionService => ({
+const stubService = (
+  over: Partial<ConversionService> = {},
+): ConversionService => ({
   convert: async () => ({ markdown: "", chunks: [] }),
+  progress: async () => null,
   health: async () => ({
     ok: true,
     backend: "docling.rs",
@@ -65,8 +71,10 @@ describe("registerConvertRoutes", () => {
     // Switchboard when this registered unconditionally.
     const { routes, scope } = fakeHttp();
     registerConvertRoutes(scope, { service: stubService() });
-    expect(() => registerConvertRoutes(scope, { service: stubService() })).not.toThrow();
-    expect(routes).toHaveLength(2);
+    expect(() =>
+      registerConvertRoutes(scope, { service: stubService() }),
+    ).not.toThrow();
+    expect(routes).toHaveLength(3);
   });
 
   it("registers on a fresh scope, so a real reload still gets its routes", () => {
@@ -74,8 +82,8 @@ describe("registerConvertRoutes", () => {
     const second = fakeHttp();
     registerConvertRoutes(first.scope, { service: stubService() });
     registerConvertRoutes(second.scope, { service: stubService() });
-    expect(first.routes).toHaveLength(2);
-    expect(second.routes).toHaveLength(2);
+    expect(first.routes).toHaveLength(3);
+    expect(second.routes).toHaveLength(3);
   });
 
   it("does not crash when the scope reports the route as already registered", () => {
@@ -84,13 +92,17 @@ describe("registerConvertRoutes", () => {
     const routes: Registered[] = [];
     const scope = {
       get: () => {
-        throw new Error('Route GET /api/…/convert/health is already registered by "x"');
+        throw new Error(
+          'Route GET /api/…/convert/health is already registered by "x"',
+        );
       },
       post: () => {
         throw new Error("should not be reached");
       },
     } as unknown as IHttpScope;
-    expect(() => registerConvertRoutes(scope, { service: stubService() })).not.toThrow();
+    expect(() =>
+      registerConvertRoutes(scope, { service: stubService() }),
+    ).not.toThrow();
     expect(routes).toHaveLength(0);
   });
 
@@ -101,9 +113,9 @@ describe("registerConvertRoutes", () => {
       },
       post: () => {},
     } as unknown as IHttpScope;
-    expect(() => registerConvertRoutes(scope, { service: stubService() })).toThrow(
-      /something else entirely/,
-    );
+    expect(() =>
+      registerConvertRoutes(scope, { service: stubService() }),
+    ).toThrow(/something else entirely/);
   });
 });
 
@@ -123,7 +135,11 @@ describe("getResolvers", () => {
   it("reports configured: false when there is no service", async () => {
     const resolvers = getResolvers(fakeSubgraph({}));
     const health = await resolvers.ConvertQueries.health();
-    expect(health).toMatchObject({ ok: false, configured: false, ready: false });
+    expect(health).toMatchObject({
+      ok: false,
+      configured: false,
+      ready: false,
+    });
   });
 
   it("reports configured but not ok when the service is unreachable", async () => {

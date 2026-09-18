@@ -40,6 +40,7 @@ const stubService = (
     chunks: [CHUNK("The Vault"), CHUNK("Record"), CHUNK("Reduce")],
     format: "md",
   }),
+  progress: async () => null,
   health: async () => ({
     ok: true,
     backend: "docling.rs",
@@ -80,6 +81,81 @@ describe("createConvertRoute", () => {
     );
     expect(((await res.json()) as Record<string, unknown>).markdown).toBe(
       STUB_MARKDOWN,
+    );
+  });
+
+  it("passes the service's ocr verdict through, and null when there was none", async () => {
+    // The UI tells the user when a file was read by OCR: OCR text has its own
+    // kinds of mistakes (names, numbers), and the user should check those.
+    const plain = createConvertRoute({ service: stubService() });
+    const a = (await (
+      await plain(post("Book.md"), ctx(Buffer.from("abc")))
+    ).json()) as { ocr: unknown };
+    expect(a.ocr).toBeNull();
+    const ocrd = createConvertRoute({
+      service: stubService({
+        convert: async () => ({
+          markdown: STUB_MARKDOWN,
+          chunks: [CHUNK("The Vault")],
+          format: "pdf",
+          ocr: "tesseract",
+        }),
+      }),
+    });
+    const b = (await (
+      await ocrd(post("scan.pdf"), ctx(Buffer.from("abc")))
+    ).json()) as { ocr: unknown };
+    expect(b.ocr).toBe("tesseract");
+  });
+
+  it("forwards ?ocr=1 to the service and passes needsOcr/textSource/pages through", async () => {
+    let seen: { ocr?: boolean } | undefined;
+    const handler = createConvertRoute({
+      service: stubService({
+        convert: async (input) => {
+          seen = input;
+          return {
+            markdown: "",
+            chunks: [],
+            format: "pdf",
+            needsOcr: { via: "tesseract", estimateSeconds: 90 },
+            pages: 300,
+            textSource: "docling",
+          };
+        },
+      }),
+    });
+    const res = await handler(
+      new Request("http://vault.test/x/convert?filename=scan.pdf&ocr=1", {
+        method: "POST",
+        body: "abc",
+      }),
+      ctx(Buffer.from("abc")),
+    );
+    const body = (await res.json()) as Record<string, unknown>;
+    expect(seen?.ocr).toBe(true);
+    expect(body.needsOcr).toEqual({ via: "tesseract", estimateSeconds: 90 });
+    expect(body.pages).toBe(300);
+    expect(body.textSource).toBe("docling");
+    expect(body.sections).toEqual([]);
+  });
+
+  it("answers 503 CONVERT_BUSY when the service is mid-conversion, distinct from an outage", async () => {
+    const handler = createConvertRoute({
+      service: stubService({
+        convert: async () => {
+          throw new HttpError(
+            503,
+            "CONVERT_BUSY",
+            "The conversion service is busy",
+          );
+        },
+      }),
+    });
+    const res = await handler(post("Book.md"), ctx(Buffer.from("abc")));
+    expect(res.status).toBe(503);
+    expect(((await res.json()) as Record<string, unknown>).code).toBe(
+      "CONVERT_BUSY",
     );
   });
 

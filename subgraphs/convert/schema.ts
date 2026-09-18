@@ -15,15 +15,25 @@ export const schema: DocumentNode = gql`
   Whether a conversion backend is configured, and what it can do.
   """
   type ConvertHealth {
-    """True when a backend answered."""
+    """
+    True when a backend answered.
+    """
     ok: Boolean!
-    """Identifies the engine, e.g. "docling.rs". Null when nothing answered."""
+    """
+    Identifies the engine, e.g. "docling.rs". Null when nothing answered.
+    """
     backend: String
-    """True when the backend can convert PDFs — i.e. its models are present."""
+    """
+    True when the backend can convert PDFs — i.e. its models are present.
+    """
     ready: Boolean!
-    """The assets a not-ready backend is missing, as it reports them."""
+    """
+    The assets a not-ready backend is missing, as it reports them.
+    """
     missing: [String!]!
-    """The format ids this backend reads (docling-rs serves 29)."""
+    """
+    The format ids this backend reads (docling-rs serves 29).
+    """
     formats: [String!]!
     """
     False when CONVERT_SERVICE_URL is unset. Distinct from ok: a vault with no
@@ -33,7 +43,9 @@ export const schema: DocumentNode = gql`
   }
 
   type ConvertQueries {
-    """Readiness of the conversion backend behind this subgraph."""
+    """
+    Readiness of the conversion backend behind this subgraph.
+    """
     health: ConvertHealth!
   }
 

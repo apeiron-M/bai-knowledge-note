@@ -79,7 +79,13 @@ export function createConvertRoute(deps: ConvertRouteDeps) {
       const minSectionChars = readMinSectionChars(url);
       if (!deps.service) throw notConfigured();
 
-      const result = await deps.service.convert({ filename, bytes });
+      const result = await deps.service.convert({
+        filename,
+        bytes,
+        ocr: url.searchParams.get("ocr") === "1",
+        job: url.searchParams.get("job") ?? undefined,
+        figures: url.searchParams.get("figures") === "1",
+      });
       // The markdown is handed to the section rule so each section can say
       // where it sits in it (`markdownRange`): the markdown is where tables
       // are rendered correctly, and `text` is not.
@@ -108,6 +114,22 @@ export function createConvertRoute(deps: ConvertRouteDeps) {
             ? { markdown: result.markdown }
             : {}),
           timings: result.timings ?? null,
+          // The service OCR'd the file because its text layer was unusable
+          // (or the caller asked): the UI should say so, since OCR text has
+          // its own kinds of mistakes.
+          ocr: result.ocr ?? null,
+          textSource: result.textSource ?? "docling",
+          // Over the OCR budget: no sections, an estimate, and the caller may
+          // re-request with `?ocr=1` — the user decides to spend the minutes.
+          needsOcr: result.needsOcr ?? null,
+          pages: result.pages ?? null,
+          // Measured completeness: share of the text layer's tokens that made
+          // it through, plus formulas left undecoded and pictures not transcribed.
+          quality: result.quality ?? null,
+          ocrOffer: result.ocrOffer ?? null,
+          // Pictures and display formulas as PNGs (with `?figures=1`), keyed to the n-th placeholder in `markdown`.
+          figures: result.figures ?? [],
+          figureStats: result.figureStats ?? null,
         },
         { headers: OK_CACHE },
       );

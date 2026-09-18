@@ -1,8 +1,13 @@
 import type { ChildProcess } from "node:child_process";
 import { describe, expect, it, vi } from "vitest";
-import { resolveServiceScript, startConversionService, stopStartedService } from "./autostart.js";
+import {
+  resolveServiceScript,
+  startConversionService,
+  stopStartedService,
+} from "./autostart.js";
 
-const healthy = (async () => new Response("{}", { status: 200 })) as typeof fetch;
+const healthy = (async () =>
+  new Response("{}", { status: 200 })) as typeof fetch;
 const unhealthy = (async () => {
   throw new Error("ECONNREFUSED");
 }) as typeof fetch;
@@ -137,7 +142,8 @@ describe("startConversionService", () => {
   it("treats a service that answers with a failure as not ready, and starts one anyway", async () => {
     // A 503 is "up but not usable" — the distinction matters, because treating it
     // as healthy would leave the vault reporting ready with no engine behind it.
-    const notOk = (async () => new Response("nope", { status: 503 })) as typeof fetch;
+    const notOk = (async () =>
+      new Response("nope", { status: 503 })) as typeof fetch;
     const { child } = fakeChild();
     const result = await startConversionService({
       url: "http://127.0.0.1:5099",

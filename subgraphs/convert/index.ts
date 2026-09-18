@@ -62,11 +62,17 @@ export class ConvertSubgraph extends BaseSubgraph {
     if (autostart && !apiKey) {
       // Probe first: anything already answering is left alone, which is what
       // keeps a reload (or an operator's own service) from being fought over.
-      const { service } = await startConversionService({ url, log: console.log });
+      const { service } = await startConversionService({
+        url,
+        log: console.log,
+      });
       this.routeDeps = { service };
     } else {
       this.routeDeps = {
-        service: createHttpConversionService({ baseUrl: url, apiKey: apiKey || undefined }),
+        service: createHttpConversionService({
+          baseUrl: url,
+          apiKey: apiKey || undefined,
+        }),
       };
     }
 

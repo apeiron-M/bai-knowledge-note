@@ -9,7 +9,11 @@ const json = (body: unknown, status = 200) =>
 
 /** fetch's input is `RequestInfo | URL`; the client always passes a string. */
 const toUrl = (input: RequestInfo | URL): string =>
-  typeof input === "string" ? input : input instanceof URL ? input.href : input.url;
+  typeof input === "string"
+    ? input
+    : input instanceof URL
+      ? input.href
+      : input.url;
 
 interface Call {
   url: string;
@@ -29,7 +33,9 @@ function fakeFetch(respond: (call: Call) => Response) {
     try {
       return Promise.resolve(respond(call));
     } catch (error) {
-      return Promise.reject(error instanceof Error ? error : new Error(String(error)));
+      return Promise.reject(
+        error instanceof Error ? error : new Error(String(error)),
+      );
     }
   }) as typeof fetch;
   return { calls, impl };
@@ -106,7 +112,9 @@ describe("createHttpConversionService", () => {
     // `encodeURIComponent`, so a space is %20 — not the `+` a form encoding
     // would produce. The service reads it back with URLSearchParams, which
     // decodes either, but the client sends what it says it sends.
-    expect(call.url).toBe("http://convert.test/convert?filename=Book%20chapter.pdf");
+    expect(call.url).toBe(
+      "http://convert.test/convert?filename=Book%20chapter.pdf",
+    );
     expect(call.init.method).toBe("POST");
     expect((call.init.headers as Record<string, string>)["content-type"]).toBe(
       "application/octet-stream",
@@ -134,7 +142,9 @@ describe("createHttpConversionService", () => {
       fetchImpl: impl,
     });
     await service.convert({ filename: "a.md", bytes: new Uint8Array([1]) });
-    expect((calls[0].init.headers as Record<string, string>)["x-api-key"]).toBe("secret");
+    expect((calls[0].init.headers as Record<string, string>)["x-api-key"]).toBe(
+      "secret",
+    );
   });
 
   it("sends no api key header when none is configured", async () => {
@@ -166,7 +176,13 @@ describe("createHttpConversionService", () => {
     // that has to survive the mapping, or the UI cannot tell the user what to
     // fetch.
     const { impl } = fakeFetch(() =>
-      json({ error: "cannot convert pdf without the docling models", missing: ["pdfium"] }, 415),
+      json(
+        {
+          error: "cannot convert pdf without the docling models",
+          missing: ["pdfium"],
+        },
+        415,
+      ),
     );
     const service = createHttpConversionService({
       baseUrl: "http://convert.test",
@@ -204,6 +220,62 @@ describe("createHttpConversionService", () => {
     await expect(
       service.convert({ filename: "a.pdf", bytes: new Uint8Array([1]) }),
     ).rejects.toMatchObject({ code: "CONVERT_UNAVAILABLE", status: 502 });
+  });
+
+  it("maps the service's ocr field, defaulting to null", async () => {
+    const withOcr = createHttpConversionService({
+      baseUrl: "http://convert.test",
+      fetchImpl: (async () =>
+        json({
+          markdown: "# x",
+          chunks: [],
+          ocr: "tesseract",
+        })) as typeof fetch,
+    });
+    expect(
+      (await withOcr.convert({ filename: "a.pdf", bytes: new Uint8Array([1]) }))
+        .ocr,
+    ).toBe("tesseract");
+    const without = createHttpConversionService({
+      baseUrl: "http://convert.test",
+      fetchImpl: (async () =>
+        json({ markdown: "# x", chunks: [] })) as typeof fetch,
+    });
+    expect(
+      (await without.convert({ filename: "a.pdf", bytes: new Uint8Array([1]) }))
+        .ocr,
+    ).toBeNull();
+  });
+
+  it("asks the service for OCR with ?ocr=1 when told to", async () => {
+    let url = "";
+    const service = createHttpConversionService({
+      baseUrl: "http://convert.test",
+      fetchImpl: (async (u) => {
+        url = typeof u === "string" ? u : u instanceof URL ? u.href : u.url;
+        return json({ markdown: "# x", chunks: [] });
+      }) as typeof fetch,
+    });
+    await service.convert({
+      filename: "scan.pdf",
+      bytes: new Uint8Array([1]),
+      ocr: true,
+    });
+    expect(url).toBe("http://convert.test/convert?filename=scan.pdf&ocr=1");
+  });
+
+  it("maps the service's busy answer to CONVERT_BUSY rather than CONVERT_UNAVAILABLE", async () => {
+    const service = createHttpConversionService({
+      baseUrl: "http://convert.test",
+      fetchImpl: (async () =>
+        json(
+          { error: "a conversion is already running", code: "CONVERSION_BUSY" },
+          503,
+        )) as typeof fetch,
+    });
+    await expect(
+      service.convert({ filename: "a.pdf", bytes: new Uint8Array([1]) }),
+    ).rejects.toMatchObject({ status: 503, code: "CONVERT_BUSY" });
   });
 
   it("reports health verbatim", async () => {

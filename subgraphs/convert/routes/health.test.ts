@@ -10,8 +10,11 @@ const ctx = (user = true) =>
     authEnabled: true,
   }) as RouteContext;
 
-const stubService = (over: Partial<ConversionService> = {}): ConversionService => ({
+const stubService = (
+  over: Partial<ConversionService> = {},
+): ConversionService => ({
   convert: async () => ({ markdown: "", chunks: [] }),
+  progress: async () => null,
   health: async () => ({
     ok: true,
     backend: "docling.rs",

@@ -264,7 +264,7 @@ function locateGroups(
   const starts: (number | null)[] = [];
   let cursor = 0;
   for (const group of groups) {
-    const leaf = group.path[group.path.length - 1];
+    const leaf = group.path.at(-1);
     let found: number | null = null;
     if (leaf !== undefined) {
       const wanted = normaliseHeading(leaf);
@@ -436,7 +436,7 @@ function rejoinSamePath(drafts: Draft[]): {
   const out: Draft[] = [];
   let rejoined = 0;
   for (const draft of drafts) {
-    const previous = out[out.length - 1];
+    const previous = out.at(-1);
     if (previous) {
       const a = dominantPart(previous.parts).headingPath;
       const b = dominantPart(draft.parts).headingPath;

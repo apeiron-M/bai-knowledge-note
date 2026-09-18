@@ -2,6 +2,7 @@ import type { IHttpScope } from "@powerhousedao/shared/processors";
 import type { ConvertSubgraph } from "./index.js";
 import { createConvertRoute, MAX_UPLOAD_BYTES } from "./routes/convert.js";
 import { createHealthRoute } from "./routes/health.js";
+import { createProgressRoute } from "./routes/progress.js";
 import type { ConvertRouteDeps } from "./lib/deps.js";
 
 /**
@@ -33,6 +34,11 @@ export function registerConvertRoutes(
   // the package's single namespace; neither path can shadow the other.
   try {
     http.get("convert/health", { auth: "renown" }, createHealthRoute(deps));
+    http.get(
+      "convert/progress/:job",
+      { auth: "renown" },
+      createProgressRoute(deps),
+    );
     http.post(
       "convert",
       { auth: "renown", body: "raw", maxBodyBytes: MAX_UPLOAD_BYTES },

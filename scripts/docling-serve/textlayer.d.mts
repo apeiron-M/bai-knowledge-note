@@ -1,0 +1,36 @@
+export interface Run {
+  str: string;
+  size: number;
+  x: number;
+  y: number;
+  width: number;
+  eol: boolean;
+}
+export interface Line {
+  text: string;
+  size: number;
+  x: number;
+  xEnd: number;
+  y: number;
+  hardBreak: boolean;
+}
+export type BlockKind = "title" | "heading" | "paragraph" | "placeholder";
+export interface Block { kind: BlockKind; text: string; top: number; bottom: number }
+export interface PageBlocks { page: number; blocks: Block[] }
+export const HEADING_RATIO: number;
+export const TITLE_RATIO: number;
+export const PARAGRAPH_GAP: number;
+export const GLUE_GAP: number;
+export function runFromItem(item: { str: string; transform: number[]; width: number; hasEOL: boolean }): Run;
+export function linesFromRuns(runs: Run[]): Line[];
+export function bodySize(lines: Line[]): number;
+export function blocksFromLines(lines: Line[], body: number): Block[];
+export function renderBlock(block: Block): string;
+export function documentToBlocks(pages: Run[][]): { pages: PageBlocks[]; bodySize: number };
+export function insertFigurePlaceholders<F extends { kind: "picture" | "formula"; page: number; box: { t: number; b: number } | null }>(
+  pageBlocks: PageBlocks[],
+  figures: F[],
+  placeholders: { picture: string; formula: string },
+): { markdown: string; placed: F[]; unplaced: F[] };
+export function pageToMarkdown(runs: Run[], body: number): string;
+export function documentToMarkdown(pages: Run[][]): { markdown: string; text: string; bodySize: number; headings: number };

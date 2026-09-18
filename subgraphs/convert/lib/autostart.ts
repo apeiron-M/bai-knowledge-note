@@ -2,7 +2,10 @@ import { spawn, type ChildProcess } from "node:child_process";
 import { existsSync } from "node:fs";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
-import { createHttpConversionService, type ConversionService } from "./service.js";
+import {
+  createHttpConversionService,
+  type ConversionService,
+} from "./service.js";
 
 /**
  * Starting the conversion service for a deployment that does not run one.
@@ -72,7 +75,10 @@ export interface AutostartResult {
   reused: boolean;
 }
 
-async function isHealthy(url: string, fetchImpl: typeof fetch): Promise<boolean> {
+async function isHealthy(
+  url: string,
+  fetchImpl: typeof fetch,
+): Promise<boolean> {
   try {
     const response = await fetchImpl(`${url.replace(/\/+$/, "")}/health`, {
       signal: AbortSignal.timeout(2_000),
@@ -135,7 +141,9 @@ export async function startConversionService(
 
   const script = (options.resolveScript ?? resolveServiceScript)();
   if (!script) {
-    log("[convert] autostart is on but scripts/docling-serve/server.ts was not found");
+    log(
+      "[convert] autostart is on but scripts/docling-serve/server.ts was not found",
+    );
     return { service, reused: false };
   }
 
@@ -144,11 +152,23 @@ export async function startConversionService(
 
   let child: ChildProcess;
   try {
-    child = spawnImpl(process.execPath, [script], {
+    const spawnOptions = {
       env: { ...process.env, CONVERT_SERVICE_PORT: port },
       // The service's own log lines are worth seeing where the Switchboard's are.
-      stdio: "inherit",
-    });
+      stdio: "inherit" as const,
+    };
+    // Lower scheduling priority on POSIX: conversion is CPU-bound and an OCR
+    // pass can take every core for a minute. Under `nice` the Switchboard, the
+    // browser and everything else keep priority; the conversion only takes
+    // what is left. Windows has no `nice`; the service runs at normal priority.
+    child =
+      process.platform === "win32"
+        ? spawnImpl(process.execPath, [script], spawnOptions)
+        : spawnImpl(
+            "nice",
+            ["-n", "10", process.execPath, script],
+            spawnOptions,
+          );
   } catch (error) {
     log(`[convert] could not start the service: ${String(error)}`);
     return { service, reused: false };
