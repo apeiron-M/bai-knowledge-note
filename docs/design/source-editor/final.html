@@ -1,284 +1,427 @@
 <!doctype html><html lang="en" data-bai-theme="dark"><head><meta charset="utf-8"><title>Source editor — final blended design (Six Minds)</title>
 <!-- design proposal, awaiting green light. Nothing in the React editor has been changed. -->
-<style>/* Live values copied from style.css (2026-09-17). Dark default; light toggle bottom-right. */
+<style>/* Live values copied from style.css (2026-09-17). Dark default; toggle bottom-right. */
 :root, [data-bai-theme="dark"] {
   --bai-bg:#1e1e2e; --bai-surface:#181825; --bai-deep:#11111b; --bai-hover:#313244;
   --bai-border:rgba(255,255,255,0.1); --bai-text:#e4e4e7; --bai-text-secondary:#d4d4d8;
   --bai-text-tertiary:#9ca3af; --bai-text-muted:#6b7280; --bai-text-faint:#4b5563;
   --bai-accent:#cba6f7; --bai-accent-text:#1e1e2e; --bai-accent-soft:rgba(203,166,247,0.1);
-  --bai-ok:#a6e3a1; --bai-ok-soft:rgba(166,227,161,0.12); --bai-warn:#fab387; --bai-danger:#f38ba8; --bai-danger-soft:rgba(243,139,168,0.12);
+  --bai-ok:#a6e3a1; --bai-ok-soft:rgba(166,227,161,0.12); --bai-warn:#fab387; --bai-warn-soft:rgba(250,179,135,0.12); --bai-danger:#f38ba8; --bai-danger-soft:rgba(243,139,168,0.12);
 }
 [data-bai-theme="light"] {
   --bai-bg:#f8f9fc; --bai-surface:#fff; --bai-deep:#f1f3f8; --bai-hover:#e8eaf0; --bai-border:#e2e4e9;
   --bai-text:#1f2937; --bai-text-secondary:#374151; --bai-text-tertiary:#6b7280; --bai-text-muted:#9ca3af; --bai-text-faint:#d1d5db;
   --bai-accent:#7c3aed; --bai-accent-text:#fff; --bai-accent-soft:rgba(124,58,237,0.08);
-  --bai-ok:#059669; --bai-ok-soft:rgba(5,150,105,0.08); --bai-warn:#d97706; --bai-danger:#dc2626; --bai-danger-soft:rgba(220,38,38,0.08);
+  --bai-ok:#059669; --bai-ok-soft:rgba(5,150,105,0.08); --bai-warn:#d97706; --bai-warn-soft:rgba(217,119,6,0.08); --bai-danger:#dc2626; --bai-danger-soft:rgba(220,38,38,0.08);
 }
-*{box-sizing:border-box} html,body{margin:0;height:100%;background:var(--bai-bg);color:var(--bai-text);font:13px/1.5 ui-sans-serif,system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
-.app{display:flex;flex-direction:column;height:100vh}
-/* 1 · the app the editor sits in — slim, so "back to work" is never lost (taken from B) */
-.appbar{display:flex;align-items:center;gap:3px;padding:4px 12px;background:var(--bai-surface);border-bottom:1px solid var(--bai-border);flex:none}
-.appbar .name{font-weight:600;margin-right:10px;font-size:12px}
-.appbar .t{display:inline-flex;align-items:center;gap:6px;border-radius:6px;padding:4px 10px;font-size:12px;font-weight:500;color:var(--bai-text-tertiary);background:transparent;border:0}
-.appbar .t.on{background:var(--bai-hover);color:var(--bai-accent)}
-/* 2 · the editor bar — 44px, sticky, identity + status + one action, everything else labelled (taken from A) */
-.bar{position:sticky;top:0;z-index:12;display:flex;align-items:center;gap:12px;padding:0 18px;height:44px;background:var(--bai-surface);border-bottom:1px solid var(--bai-border);flex:none}
-.crumb{font-size:12px;color:var(--bai-text-faint);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:44ch}
-.crumb b{color:var(--bai-text-secondary);font-weight:500}
-.pill{font-size:10px;font-weight:600;letter-spacing:.04em;text-transform:uppercase;border-radius:999px;padding:2px 9px}
-.pill.extracted{color:var(--bai-ok);background:var(--bai-ok-soft)}
-.count{font-size:12px;color:var(--bai-text-tertiary)} .count b{color:var(--bai-text-secondary);font-weight:500}
-.spacer{margin-left:auto}
-.a{font-size:12px;font-weight:500;color:var(--bai-text-tertiary);background:none;border:0;padding:4px 2px;border-radius:6px}
-.a:hover{color:var(--bai-accent)} .a[aria-pressed="true"]{color:var(--bai-accent)}
-.q{border-radius:8px;padding:5px 12px;font-size:12px;font-weight:600;background:var(--bai-accent);color:var(--bai-accent-text);border:0}
-.q.done{background:var(--bai-ok-soft);color:var(--bai-ok);font-weight:500}
-/* 3 · reading progress — the only permanent extra chrome (taken from C) */
-.progress{position:absolute;left:0;bottom:-1px;height:2px;width:0;background:var(--bai-accent);opacity:.7}
-.body{flex:1;min-height:0;display:flex;overflow:hidden}
-/* 4 · the page owns the reading. No card, no inner scroller. (C) */
-.reader{flex:1;min-width:0;overflow:auto;order:2}
-.md{max-width:78ch;margin:0 auto;padding:34px 26px 120px;font-size:16px;line-height:1.7;color:var(--bai-text-secondary)}
-.md h1{font-size:27px;line-height:1.2;margin:0 0 8px;color:var(--bai-text);font-weight:600}
-.md h2{font-size:19px;margin:38px 0 10px;color:var(--bai-text);font-weight:600}
-.md h3{font-size:15px;margin:26px 0 8px;color:var(--bai-text);font-weight:600}
-.md p{margin:0 0 17px}
-.md ul{margin:0 0 17px;padding-left:22px} .md li{margin:4px 0}
-.md blockquote{margin:22px 0;padding:2px 0 2px 16px;border-left:2px solid var(--bai-border);color:var(--bai-text-tertiary);font-style:italic}
-.md table{border-collapse:collapse;width:100%;margin:20px 0;font-size:13px}
-.md th{text-align:left;font-weight:600;color:var(--bai-text);padding:7px 10px;border-bottom:1px solid var(--bai-border)}
-.md td{padding:7px 10px;border-bottom:1px solid var(--bai-border);color:var(--bai-text-tertiary)}
-.ph{font-size:12px;color:var(--bai-text-faint);font-style:normal}
-/* provenance as one readable line, under the title — "is this text trustworthy" is a reading question (new) */
-.byline{font-size:12px;color:var(--bai-text-faint);margin:0 0 34px}
-.byline a{color:var(--bai-text-tertiary)}
-/* the end of a source meets what it produced (C) — and opens the drawer */
-.end{margin-top:44px;padding-top:16px;border-top:1px solid var(--bai-border);font-size:13px;color:var(--bai-text-muted)}
-.end b{color:var(--bai-accent);font-weight:600}
-/* 5 · the outline rail — off by default, because it costs 220px of measure (A + C) */
-.rail{display:none;flex:none;width:224px;order:1;border-right:1px solid var(--bai-border);background:var(--bai-surface);padding:16px 12px;overflow:auto}
+*{box-sizing:border-box}
+html,body{height:100%}
+body{margin:0;background:var(--bai-bg);color:var(--bai-text);font:14px/1.6 ui-sans-serif,system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
+.app{display:flex;flex-direction:column;height:100%}
+button{font:inherit;color:inherit;cursor:pointer}
+svg{display:block}
+
+/* ── the vault shell (unchanged, for context) ───────────────────────── */
+.appbar{display:flex;align-items:center;gap:2px;height:34px;padding:0 10px;background:var(--bai-bg);border-bottom:1px solid var(--bai-border);flex:0 0 auto;font-size:12.5px}
+.appbar .vault{color:var(--bai-text-muted);padding:0 8px 0 2px}
+.appbar .tab{padding:4px 10px;border-radius:6px;color:var(--bai-text-tertiary);background:none;border:0}
+.appbar .tab.on{background:var(--bai-hover);color:var(--bai-text)}
+.appbar .spacer{flex:1}
+.appbar .ghost{padding:4px 8px;border-radius:6px;color:var(--bai-text-muted);background:none;border:0}
+
+/* ── Connect's DocumentToolbar — as it renders today, untouched ─────── */
+.toolbar{display:flex;align-items:center;gap:8px;height:46px;padding:0 10px;background:var(--bai-surface);border-bottom:1px solid var(--bai-border);flex:0 0 auto}
+.toolbar .slot{display:flex;align-items:center;gap:6px}
+.toolbar .slot.right{margin-left:auto}
+.toolbar button{display:flex;align-items:center;gap:6px;height:28px;padding:0 8px;border-radius:7px;background:var(--bai-bg);border:1px solid var(--bai-border);color:var(--bai-text-tertiary)}
+.toolbar button:hover{background:var(--bai-hover);color:var(--bai-text-secondary)}
+.toolbar h1{margin:0;padding:0 10px;font-size:13px;font-weight:500;color:var(--bai-text-tertiary);max-width:340px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+
+/* ── the source bar: the one new strip ─────────────────────────────── */
+.bar{position:relative;display:flex;align-items:center;gap:10px;height:44px;padding:0 14px;background:var(--bai-bg);border-bottom:1px solid var(--bai-border);flex:0 0 auto;font-size:12.5px}
+.crumb{display:flex;align-items:center;gap:6px;color:var(--bai-text-muted);min-width:0}
+.crumb a{color:var(--bai-text-tertiary);text-decoration:none}
+.crumb .sep{color:var(--bai-text-faint)}
+.crumb .here{color:var(--bai-text-secondary);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.pill{display:inline-flex;align-items:center;gap:5px;padding:2px 8px;border-radius:999px;font-size:11px;font-weight:500;background:var(--bai-ok-soft);color:var(--bai-ok)}
+.pill .dot{width:5px;height:5px;border-radius:50%;background:currentColor}
+.facts{color:var(--bai-text-muted);font-size:11.5px}
+.facts b{color:var(--bai-text-tertiary);font-weight:500}
+.bar .spacer{flex:1}
+.bar button.act{display:flex;align-items:center;gap:6px;padding:5px 9px;border-radius:7px;background:none;border:1px solid transparent;color:var(--bai-text-tertiary);font-size:12.5px}
+.bar button.act:hover{background:var(--bai-hover);color:var(--bai-text)}
+.bar button.act.on{background:var(--bai-hover);color:var(--bai-text);border-color:var(--bai-border)}
+.bar button.primary{display:flex;align-items:center;gap:6px;padding:5px 12px;border-radius:7px;background:var(--bai-accent);border:1px solid var(--bai-accent);color:var(--bai-accent-text);font-size:12.5px;font-weight:600}
+.bar button.primary.q{background:var(--bai-warn-soft);border-color:var(--bai-warn-soft);color:var(--bai-warn)}
+#progress{position:absolute;left:0;bottom:-1px;height:2px;background:var(--bai-accent);width:0}
+
+/* ── the page: the reading surface is the darker --bai-surface ──────── */
+.body{flex:1;display:flex;min-height:0}
+.reader{flex:1;min-width:0;overflow-y:auto;background:var(--bai-surface)}
+.md{max-width:78ch;margin:0 auto;padding:40px 32px 96px;font-size:16px;line-height:1.72;color:var(--bai-text-secondary)}
+.md h1{font-size:24px;color:var(--bai-text);margin:0 0 6px;font-weight:600}
+.md h2{font-size:19px;color:var(--bai-text);margin:38px 0 12px;font-weight:600}
+.md h3{font-size:16px;color:var(--bai-text);margin:26px 0 8px;font-weight:600}
+.md p{margin:0 0 16px}
+.md ul,.md ol{margin:0 0 16px;padding-left:22px}
+.md li{margin:5px 0}
+.md blockquote{margin:20px 0;padding:2px 0 2px 16px;border-left:2px solid var(--bai-border);color:var(--bai-text-tertiary)}
+.md code{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:.9em;background:var(--bai-deep);padding:1px 5px;border-radius:4px}
+.md table{width:100%;border-collapse:collapse;margin:18px 0;font-size:14px}
+.md th{text-align:left;padding:8px 10px;border-bottom:1px solid var(--bai-border);color:var(--bai-text);font-size:12px;text-transform:uppercase;letter-spacing:.04em}
+.md td{padding:8px 10px;border-bottom:1px solid var(--bai-border);color:var(--bai-text-tertiary)}
+.md figcaption,.md .cap{margin:-8px 0 20px;font-size:12px;color:var(--bai-text-muted)}
+.md .srcnote{margin-top:44px;padding-top:14px;border-top:1px solid var(--bai-border);font-size:12px;color:var(--bai-text-faint)}
+.md .endline{display:flex;align-items:center;gap:10px;margin-top:30px;padding-top:18px;border-top:1px solid var(--bai-border);font-size:12.5px;color:var(--bai-text-muted)}
+.md .endline button{padding:4px 10px;border-radius:7px;background:var(--bai-hover);border:1px solid var(--bai-border);color:var(--bai-text-secondary);font-size:12.5px}
+.mdedit{display:none;width:100%;max-width:78ch;margin:0 auto;padding:32px;border:0;background:none;color:var(--bai-text);font:15px/1.75 ui-monospace,SFMono-Regular,Menlo,monospace;resize:none;min-height:60vh;outline:none}
+.empty{margin:0;color:var(--bai-text-muted);font-size:14px}
+
+/* ── outline rail (off by default) ─────────────────────────────────── */
+.rail{display:none;width:246px;flex:0 0 auto;border-right:1px solid var(--bai-border);background:var(--bai-bg);overflow-y:auto;padding:18px 8px 40px}
+.rail .lbl{padding:0 10px 8px;font-size:10px;letter-spacing:.08em;text-transform:uppercase;color:var(--bai-text-faint)}
+.rail a{display:block;padding:5px 10px;border-radius:6px;color:var(--bai-text-tertiary);text-decoration:none;font-size:12.5px;border-left:2px solid transparent}
+.rail a:hover{background:var(--bai-hover);color:var(--bai-text-secondary)}
+.rail a.l2{padding-left:20px;color:var(--bai-text-muted)}
+.rail a.on{border-left-color:var(--bai-accent);color:var(--bai-text);background:var(--bai-accent-soft)}
+.rail .divider{margin:14px 10px 8px;border-top:1px solid var(--bai-border)}
+
+/* ── details drawer (off by default) ───────────────────────────────── */
+.drawer{display:none;width:352px;flex:0 0 auto;border-left:1px solid var(--bai-border);background:var(--bai-bg);overflow-y:auto}
+.dhead{display:flex;gap:2px;padding:10px 10px 0;border-bottom:1px solid var(--bai-border);position:sticky;top:0;background:var(--bai-bg)}
+.dhead button{padding:7px 10px;border:0;background:none;color:var(--bai-text-tertiary);font-size:12px;border-bottom:2px solid transparent}
+.dhead button.on{color:var(--bai-text);border-bottom-color:var(--bai-accent)}
+.dhead button span{color:var(--bai-text-faint)}
+.pane{display:none;padding:16px}
+.pane.on{display:block}
+.plbl{margin:0 0 10px;font-size:10px;letter-spacing:.08em;text-transform:uppercase;color:var(--bai-text-faint)}
+.claim{display:block;width:100%;text-align:left;padding:11px 12px;margin-bottom:8px;border-radius:10px;background:var(--bai-surface);border:1px solid var(--bai-border);color:var(--bai-text-secondary);font-size:13px}
+.claim:hover{border-color:var(--bai-accent);color:var(--bai-text)}
+.claim .meta{display:block;margin-top:3px;font-size:11px;color:var(--bai-text-faint)}
+.row{display:flex;justify-content:space-between;gap:12px;padding:7px 0;border-bottom:1px solid var(--bai-border);font-size:12.5px}
+.row dt{color:var(--bai-text-muted);margin:0}
+.row dd{margin:0;color:var(--bai-text-secondary);text-align:right;word-break:break-word}
+.row dd a{color:var(--bai-accent);text-decoration:none}
+.orig{margin-top:14px;padding:12px;border-radius:10px;background:var(--bai-surface);border:1px solid var(--bai-border)}
+.orig .fn{font-size:12.5px;color:var(--bai-text-secondary);word-break:break-all}
+.orig .fm{font-size:11px;color:var(--bai-text-faint);margin-top:3px}
+.orig .acts{display:flex;gap:6px;margin-top:10px;flex-wrap:wrap}
+.orig button{padding:5px 10px;border-radius:7px;background:var(--bai-bg);border:1px solid var(--bai-border);color:var(--bai-text-tertiary);font-size:12px}
+.orig button:hover{background:var(--bai-hover);color:var(--bai-text)}
+.orig button.warn{border-color:var(--bai-danger-soft);color:var(--bai-danger)}
+.notice{margin-top:12px;padding:10px 12px;border-radius:10px;font-size:12px;background:var(--bai-warn-soft);color:var(--bai-warn)}
+.narr{margin:10px 0 0;font-size:12px;color:var(--bai-text-muted);line-height:1.6}
+.selrow{display:flex;align-items:center;justify-content:space-between;margin-top:16px;padding-top:14px;border-top:1px solid var(--bai-border)}
+.selrow label{font-size:12px;color:var(--bai-text-muted)}
+.selrow select{background:var(--bai-surface);border:1px solid var(--bai-border);color:var(--bai-text-secondary);border-radius:7px;padding:4px 8px;font:inherit;font-size:12px}
+
+/* ── history (the source's own revisions view) ─────────────────────── */
+.history{display:none;flex:1;min-width:0;overflow-y:auto;background:var(--bai-surface)}
+.hgrid{display:grid;grid-template-columns:minmax(0,1fr) 320px;gap:0;height:100%}
+.hmain{padding:26px 28px;min-width:0}
+.hside{border-left:1px solid var(--bai-border);background:var(--bai-bg);padding:18px 12px;overflow-y:auto}
+.scrub{display:flex;align-items:center;gap:10px;padding:12px 14px;border-radius:12px;background:var(--bai-bg);border:1px solid var(--bai-border);margin-bottom:18px}
+.scrub input[type=range]{flex:1;accent-color:var(--bai-accent)}
+.scrub .step{display:flex;gap:4px}
+.scrub button{width:26px;height:26px;border-radius:7px;background:var(--bai-surface);border:1px solid var(--bai-border);color:var(--bai-text-tertiary)}
+.snap{border-radius:12px;background:var(--bai-bg);border:1px solid var(--bai-border);padding:16px}
+.snap h3{margin:0 0 4px;font-size:13px;color:var(--bai-text)}
+.snap .when{font-size:11.5px;color:var(--bai-text-faint);margin-bottom:12px}
+.op{display:block;width:100%;text-align:left;padding:9px 10px;margin-bottom:6px;border-radius:9px;background:var(--bai-surface);border:1px solid var(--bai-border);color:var(--bai-text-tertiary);font-size:12px}
+.op.on{border-color:var(--bai-accent);color:var(--bai-text)}
+.op .when{display:block;color:var(--bai-text-faint);font-size:11px;margin-top:2px}
+.radios{display:flex;gap:10px;margin-top:10px;font-size:12px;color:var(--bai-text-muted)}
+
+/* ── original document overlay ─────────────────────────────────────── */
+.overlay{display:none;position:fixed;inset:0;z-index:50}
+body[data-state="original"] .overlay{display:block}
+.scrim{position:absolute;inset:0;background:rgba(0,0,0,.6)}
+.sheet{position:relative;z-index:10;margin:4vh auto 0;width:min(880px,92vw);max-height:88vh;display:flex;flex-direction:column;border-radius:16px;background:var(--bai-surface);border:1px solid var(--bai-border);box-shadow:0 25px 50px -12px rgba(0,0,0,.6)}
+.sheet header{display:flex;align-items:center;gap:10px;padding:14px 18px;border-bottom:1px solid var(--bai-border)}
+.sheet header .t{font-size:13px;color:var(--bai-text)}
+.sheet header .f{font-size:11.5px;color:var(--bai-text-faint)}
+.sheet header .x{margin-left:auto;width:28px;height:28px;border-radius:8px;background:var(--bai-bg);border:1px solid var(--bai-border);color:var(--bai-text-tertiary)}
+.body2{padding:18px;overflow-y:auto;color:var(--bai-text-tertiary);font-size:13px}
+.paper{margin:0 auto;width:min(620px,100%);padding:44px 40px;background:#fbfbf9;color:#22211f;border-radius:6px;font:13.5px/1.7 Georgia,serif;box-shadow:0 1px 3px rgba(0,0,0,.4)}
+.paper .pg{font-size:10px;color:#8a857c;text-align:center;margin-bottom:22px;letter-spacing:.08em}
+.paper h4{margin:0 0 10px;font-size:15px}
+.paper p{margin:0 0 12px;color:#3a3833}
+
+/* ── the ingest form (an uninitialized source) ─────────────────────── */
+.ingest{display:none;flex:1;overflow-y:auto;background:var(--bai-surface)}
+body[data-state="ingest"] .ingest{display:block}
+body[data-state="ingest"] .bar,body[data-state="ingest"] .body{display:none}
+.iform{max-width:660px;margin:0 auto;padding:40px 32px 80px}
+.iform h2{margin:0 0 6px;font-size:19px;color:var(--bai-text);font-weight:600}
+.iform .lede{margin:0 0 26px;font-size:13px;color:var(--bai-text-tertiary);line-height:1.6}
+.iform label{display:block;font-size:12px;color:var(--bai-text-tertiary);margin:0 0 6px}
+.iform input,.iform select,.iform textarea{width:100%;padding:9px 11px;border-radius:9px;background:var(--bai-bg);border:1px solid var(--bai-border);color:var(--bai-text);font:inherit;font-size:13.5px}
+.iform textarea{min-height:240px;resize:vertical;font-size:13px;line-height:1.6}
+.iform .two{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:16px}
+.iform .one{margin-bottom:16px}
+.iform .foot{display:flex;align-items:center;gap:12px;margin-top:22px}
+.iform button.submit{padding:8px 16px;border-radius:9px;background:var(--bai-accent);border:1px solid var(--bai-accent);color:var(--bai-accent-text);font-size:13px;font-weight:600}
+.iform button.submit[disabled]{background:var(--bai-hover);border-color:var(--bai-border);color:var(--bai-text-faint);cursor:not-allowed}
+.iform .hint{font-size:11.5px;color:var(--bai-text-faint)}
+
+/* ── proposal chrome ──────────────────────────────────────────────── */
+.switcher{position:fixed;left:12px;bottom:12px;z-index:40;display:flex;flex-wrap:wrap;gap:4px;max-width:56vw;padding:6px;border-radius:12px;background:var(--bai-surface);border:1px solid var(--bai-border);box-shadow:0 8px 24px rgba(0,0,0,.35)}
+.switcher button{padding:5px 9px;border-radius:8px;background:none;border:1px solid transparent;color:var(--bai-text-muted);font-size:11.5px}
+.switcher button.on{background:var(--bai-accent-soft);border-color:var(--bai-border);color:var(--bai-text)}
+.toggle{position:fixed;bottom:12px;right:12px;z-index:40;border-radius:9px;padding:7px 13px;font-size:12px;background:var(--bai-surface);border:1px solid var(--bai-border);color:var(--bai-accent)}
+.banner{position:fixed;top:12px;right:12px;z-index:40;max-width:250px;padding:8px 12px;border-radius:10px;background:var(--bai-surface);border:1px solid var(--bai-border);color:var(--bai-text-muted);font-size:11px;line-height:1.5}
 body[data-state="outline"] .rail{display:block}
-.rail .lbl{font-size:10px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--bai-text-faint);margin:0 0 8px}
-.rail button{display:block;width:100%;text-align:left;border:0;background:none;font-size:12px;color:var(--bai-text-tertiary);padding:4px 0 4px 9px;border-left:2px solid transparent}
-.rail button.h3{padding-left:20px;font-size:11px;color:var(--bai-text-muted)}
-.rail button:hover,.rail button.on{color:var(--bai-accent);border-left-color:var(--bai-accent)}
-/* 6 · the details drawer — off by default; claims first, because that is the source's purpose (B's tabs, relocated) */
-.drawer{display:none;flex:none;width:344px;order:3;border-left:1px solid var(--bai-border);background:var(--bai-surface);overflow:auto}
 body[data-state="details"] .drawer{display:block}
-.dhead{display:flex;gap:2px;padding:10px 12px 0;border-bottom:1px solid var(--bai-border);position:sticky;top:0;background:var(--bai-surface)}
-.dhead button{border:0;background:none;padding:8px 12px;font-size:12px;font-weight:500;color:var(--bai-text-muted);border-bottom:2px solid transparent}
-.dhead button.on{color:var(--bai-accent);border-bottom-color:var(--bai-accent)}
-.dpane{display:none;padding:14px} .dpane.on{display:block}
-.lbl{font-size:10px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--bai-text-faint);margin:0 0 8px}
-.claim{display:block;width:100%;text-align:left;font-size:12px;line-height:1.5;color:var(--bai-text-secondary);background:var(--bai-bg);border:1px solid var(--bai-border);border-radius:9px;padding:9px 11px;margin-top:6px}
-.claim:hover{color:var(--bai-accent);border-color:var(--bai-accent)}
-.kv{display:flex;justify-content:space-between;gap:10px;font-size:12px;margin:5px 0}
-.kv .k{color:var(--bai-text-faint)} .kv .v{color:var(--bai-text-secondary);text-align:right;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-select,input[type=text]{background:var(--bai-bg);border:1px solid var(--bai-border);color:var(--bai-text-secondary);border-radius:6px;padding:4px 8px;font-size:12px}
-/* the extraction narration: described, never scored (fixes finding 8) */
-.narr{font-size:12px;line-height:1.6;color:var(--bai-text-muted);background:var(--bai-deep);border:1px solid var(--bai-border);border-radius:9px;padding:10px 12px;margin-top:10px}
-.narr b{color:var(--bai-text-secondary);font-weight:500}
-/* 7 · history — the text steps aside rather than the tab bar owning it (B's vocabulary, full width) */
-.history{display:none;flex:1;order:2;overflow:auto;padding:22px 26px}
-body[data-state="history"] .history{display:block}
 body[data-state="history"] .reader{display:none}
-.hgrid{display:grid;grid-template-columns:minmax(0,1fr) 340px;gap:20px;max-width:1180px;margin:0 auto}
-.card{background:var(--bai-surface);border:1px solid var(--bai-border);border-radius:12px;padding:18px}
-/* 8 · edit — in place. Same column, same bar; the header, status and claims never leave. (new) */
-.mdedit{display:none;flex:1;order:2;overflow:auto}
+body[data-state="history"] .history{display:block}
+body[data-state="edit"] .md{display:none}
 body[data-state="edit"] .mdedit{display:block}
-body[data-state="edit"] .reader{display:none}
-.mdedit textarea{display:block;width:min(78ch,100%);margin:34px auto 0;min-height:60vh;background:var(--bai-deep);border:1px solid var(--bai-border);border-radius:12px;
-  padding:16px 18px;font:13px/1.7 ui-monospace,SFMono-Regular,Menlo,monospace;color:var(--bai-text-secondary);resize:vertical}
-.editbar{display:none;gap:8px;align-items:center}
-body[data-state="edit"] .editbar{display:flex}
-/* 9 · the original document — an overlay, not a panel that pushes the text down (new) */
-.overlay{display:none;position:fixed;inset:0;z-index:30;align-items:center;justify-content:center}
-body[data-state="original"] .overlay{display:flex}
-.overlay .scrim{position:absolute;inset:0;background:rgba(0,0,0,.6)}
-.sheet{position:relative;z-index:1;width:min(920px,92vw);height:min(720px,88vh);background:var(--bai-surface);border:1px solid var(--bai-border);border-radius:16px;box-shadow:0 18px 60px rgba(0,0,0,.5);display:flex;flex-direction:column;overflow:hidden}
-.sheet header{display:flex;align-items:center;gap:10px;padding:12px 16px;border-bottom:1px solid var(--bai-border)}
-.sheet .body2{flex:1;display:flex;align-items:center;justify-content:center;background:var(--bai-deep);color:var(--bai-text-faint);font-size:12px}
-/* switcher + chrome */
-.switcher{position:fixed;bottom:12px;left:12px;z-index:40;display:flex;flex-wrap:wrap;gap:4px;max-width:46vw;background:var(--bai-surface);border:1px solid var(--bai-border);border-radius:10px;padding:6px}
-.switcher button{border:0;background:var(--bai-hover);color:var(--bai-text-tertiary);font-size:11px;padding:4px 8px;border-radius:6px}
-.switcher button.on{background:var(--bai-accent);color:var(--bai-accent-text);font-weight:600}
-.toggle{position:fixed;bottom:12px;right:12px;z-index:40;border-radius:8px;padding:6px 12px;font-size:12px;font-weight:500;background:var(--bai-hover);border:1px solid var(--bai-border);color:var(--bai-accent)}
-.banner{position:fixed;top:8px;right:12px;z-index:40;font-size:10px;color:var(--bai-text-faint)}
-@media (max-width:1100px){ .drawer{width:100%;position:fixed;inset:44px 0 0 auto;z-index:14} .rail{position:fixed;inset:44px auto 0 0;z-index:14} }
+body[data-state="details"] .act.det,body[data-state="outline"] .act.out{background:var(--bai-hover);color:var(--bai-text);border-color:var(--bai-border)}
 </style></head><body data-state="read">
 <div class="app">
-  <div class="appbar"><span class="name">my-personal-vault</span>
-    <button class="t">Chat</button><button class="t">Search</button><button class="t">Notes</button>
-    <button class="t on">Sources</button><button class="t">Projects</button><button class="t">Pipeline</button><button class="t">Health</button>
+
+  <!-- the vault shell: unchanged, shown for context -->
+  <div class="appbar">
+    <span class="vault">my-personal-vault</span>
+    <button class="tab">Chat</button><button class="tab">Search</button><button class="tab">Notes</button>
+    <button class="tab on">Sources</button><button class="tab">Projects</button><button class="tab">Pipeline</button><button class="tab">Health</button>
+    <span class="spacer"></span>
+    <button class="ghost">⚙</button><button class="ghost">?</button><button class="ghost">☾</button>
   </div>
 
+  <!-- Connect's DocumentToolbar: the doc controller, exactly as it renders today -->
+  <div class="toolbar">
+    <div class="slot">
+      <button title="Undo" aria-label="Undo"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M9 14 4 9l5-5"/><path d="M4 9h10a6 6 0 0 1 0 12h-3"/></svg></button>
+      <button title="Redo" aria-label="Redo"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="m15 14 5-5-5-5"/><path d="M20 9H10a6 6 0 0 0 0 12h3"/></svg></button>
+      <button title="Download" aria-label="Download"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 3v12"/><path d="m7 10 5 5 5-5"/><path d="M5 21h14"/></svg></button>
+    </div>
+    <h1 aria-label="Document name">Design for How People Think — Wayfinding</h1>
+    <div class="slot right">
+      <button title="Update document" aria-label="Update document"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><path d="M17 21v-8H7v8M7 3v5h8"/></svg></button>
+      <button title="Open document revision history" aria-label="Open document revision history"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M3 12a9 9 0 1 0 3-6.7L3 8"/><path d="M3 3v5h5"/><path d="M12 8v4l3 2"/></svg></button>
+      <button title="Open link in Switchboard" aria-label="Open link in Switchboard"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><path d="M15 3h6v6"/><path d="M10 14 21 3"/></svg></button>
+      <button title="Close document" aria-label="Close document"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M18 6 6 18M6 6l12 12"/></svg></button>
+    </div>
+  </div>
+
+  <!-- the source bar: breadcrumb · status · claims, then source-only actions -->
   <div class="bar">
-    <span class="crumb"><b>Sources</b> / Design for How People Think / Wayfinding</span>
-    <span class="pill extracted">extracted</span>
-    <span class="count"><b>12</b> claims <span style="color:var(--bai-text-faint)">· 47 not taken</span></span>
+    <nav class="crumb">
+      <a>Sources</a><span class="sep">/</span><a>design-for-how-people-think</a><span class="sep">/</span>
+      <span class="here">Wayfinding</span>
+    </nav>
+    <span class="pill"><span class="dot"></span>EXTRACTED</span>
+    <span class="facts"><b>12</b> claims · <b>47</b> not taken</span>
     <span class="spacer"></span>
-    <span class="editbar"><span style="font-size:11px;color:var(--bai-text-faint)">editing markdown — Save re-dispatches the source content only</span>
-      <button class="a">Cancel</button><button class="q">Save</button></span>
-    <button class="a" data-go="outline" aria-pressed="false">Outline</button>
-    <button class="a" data-go="details">Details</button>
-    <button class="a" data-go="history">Revisions</button>
-    <button class="a" data-go="original">Original</button>
-    <button class="a" data-go="edit">Edit</button>
-    <button class="q" id="queue">Queue for processing</button>
-    <span class="progress" id="progress"></span>
+    <button class="act out" data-go="outline">Outline</button>
+    <button class="act det" data-go="details">Details</button>
+    <button class="act" data-go="edit">Edit</button>
+    <button class="primary" id="queue">Queue for processing</button>
+    <span id="progress"></span>
   </div>
 
   <div class="body">
     <nav class="rail">
       <p class="lbl">In this source</p>
-      <button class="on">Wayfinding</button>
-      <button class="h3">The Six Minds of Experience</button>
-      <button class="h3">Vision, Attention, and Automaticity</button>
-      <button class="h3">Applying it to a reading surface</button>
-      <p class="lbl" style="margin-top:16px">This source in the folder</p>
-      <button>Core Competencies</button>
-      <button>Selected Projects</button>
+      <a class="on">Wayfinding</a>
+      <a class="l2">A common definition of wayfinding</a>
+      <a class="l2">The Six Minds of Experience</a>
+      <a class="l2">Vision, Attention, and Automaticity</a>
+      <a class="l2">Applying it to reading codes</a>
+      <a class="l2">Signposting the reader</a>
+      <div class="divider"></div>
+      <p class="lbl">This source in the folder</p>
+      <a>1 of 117 sources · design-for-how-people-think</a>
     </nav>
 
-    <main class="reader"><article class="md">
-      <h1>Wayfinding</h1>
-      <p class="byline">Design for How People Think · book chapter · John Whalen (2019) · ingested by powerhouse-agent · converted by docling.rs · <a href="#">original 16.6 MB PDF</a></p>
-      <p><em class="ph">« placeholder excerpt — invented prose in the register of the book; the headings are its real ones »</em></p>
-      <p>A common definition of wayfinding is that it is about getting from point A to point B. For the products you build it is richer than that: it is the sum of every cue that tells someone where they are, what is around them, and how to get back.</p>
-
-      <h2>The Six Minds of Experience</h2>
-      <p>The six minds are not six features. They are six questions a person answers continuously, mostly without noticing, and each of them can fail on its own.</p>
-      <table>
-        <thead><tr><th>Mind</th><th>The question it answers</th></tr></thead>
-        <tbody>
-          <tr><td>Vision / Attention</td><td>What should I look at first?</td></tr>
-          <tr><td>Wayfinding</td><td>Where am I, and how do I get where I am going?</td></tr>
-          <tr><td>Memory</td><td>Have I seen this before?</td></tr>
-          <tr><td>Language</td><td>What does this mean?</td></tr>
-          <tr><td>Decision making</td><td>What should I do now?</td></tr>
-          <tr><td>Emotion</td><td>How do I feel about this?</td></tr>
-        </tbody>
-      </table>
-
-      <h3>Vision, Attention, and Automaticity</h3>
-      <p>Attention is a spotlight with a narrow beam and a very short memory. Anything the interface expects a person to find by searching has already cost them something they cannot get back, because finding is serial and looking is parallel.</p>
-      <blockquote>The most expensive words in an interface are the ones a person has to read twice.</blockquote>
-
-      <h3>Applying it to a reading surface</h3>
-      <ul>
-        <li>One column, one measure, one place the eye can rest.</li>
-        <li>Landmarks at every scale: a title, a section, a paragraph, a line.</li>
-        <li>Nothing that has to be hunted — if a control matters, it is present or it is one labelled move away.</li>
-      </ul>
-
-      <p class="end">End of this source · <b>12 claims</b> extracted · <button class="a" data-go="details" style="color:var(--bai-accent);font-weight:600">open the claims →</button></p>
-    </article></main>
-
-    <div class="mdedit"><textarea spellcheck="false">## The Six Minds of Experience
-
-A common definition of wayfinding is that it is about getting from point A to point B. For the products you build it is richer than that: it is the sum of every cue.
-
-| Mind | The question it answers |
-|---|---|
-| Vision / Attention | What should I look at first? |
-| Wayfinding | Where am I, and how do I get where I am going? |</textarea></div>
-
-    <section class="history"><div class="hgrid">
-      <div class="card">
-        <p class="lbl">Revision 7 of 7 · the current state</p>
-        <div class="kv"><span class="k">INGEST_SOURCE</span><span class="v">rev 1 · powerhouse-agent</span></div>
-        <div class="kv"><span class="k">SET_SOURCE_STATUS</span><span class="v">rev 2 · INBOX</span></div>
-        <div class="kv"><span class="k">SET_SOURCE_STATUS</span><span class="v">rev 3 · EXTRACTING</span></div>
-        <div class="kv"><span class="k">ADD_EXTRACTED_CLAIM ×12</span><span class="v">rev 4–6 · 12 claims</span></div>
-        <div class="kv"><span class="k">SET_EXTRACTION_STATS</span><span class="v">rev 7 · 47 not taken</span></div>
-        <p style="font-size:12px;color:var(--bai-text-muted);margin:16px 0 0">Scrub the log to see the source as it was; the operation list sits beside the snapshot, never below it.</p>
-      </div>
-      <aside class="drawer" style="display:block;width:auto;border:1px solid var(--bai-border);border-radius:12px;overflow:visible">
-        <div class="dpane on"><p class="lbl">Operations (7)</p>
-          <div class="kv"><span class="k">1 · INGEST_SOURCE</span><span class="v">powerhouse-agent</span></div>
-          <div class="kv"><span class="k">2 · SET_SOURCE_STATUS</span><span class="v">INBOX</span></div>
-          <div class="kv"><span class="k">3 · SET_SOURCE_STATUS</span><span class="v">EXTRACTING</span></div>
-          <div class="kv"><span class="k">4 · ADD_EXTRACTED_CLAIM</span><span class="v">Vocabulary signals expertise</span></div>
-          <div class="kv"><span class="k">5 · ADD_EXTRACTED_CLAIM</span><span class="v">Attention is serial</span></div>
-          <div class="kv"><span class="k">6 · ADD_EXTRACTED_CLAIM</span><span class="v">Landmarks make a long text navigable</span></div>
-          <div class="kv"><span class="k">7 · SET_EXTRACTION_STATS</span><span class="v">12 · 47</span></div>
+    <main class="reader">
+      <article class="md">
+        <p class="cap">Source content · converted from <code>design-for-how-people-think.pdf</code> by docling.rs · 13,687 characters · 117 parts</p>
+        <h2>Wayfinding</h2>
+        <p>A common definition of wayfinding is that it is all about helping people find their way around. In the built environment that means knowing where they are, what is around them, and how to get back.</p>
+        <p>In an interface the same question arrives as three smaller ones: <em>where am I, what is here, and how do I leave?</em> None of them are answered by a menu. They are answered by the shape of the page.</p>
+        <h3>The Six Minds of Experience</h3>
+        <p>The six minds are not features. They are six questions a person asks continuously, mostly without noticing, and each one has to be satisfied for a design to feel effortless.</p>
+        <table>
+          <thead><tr><th>Mind</th><th>The question it answers</th></tr></thead>
+          <tbody>
+            <tr><td>Vision / Attention</td><td>What should I look at?</td></tr>
+            <tr><td>Wayfinding</td><td>Where am I, and how do I get where I am going?</td></tr>
+            <tr><td>Memory</td><td>Have I seen this before?</td></tr>
+            <tr><td>Language</td><td>Does this make sense?</td></tr>
+            <tr><td>Decision making</td><td>What should I do next?</td></tr>
+            <tr><td>Emotion</td><td>How do I feel about this?</td></tr>
+          </tbody>
+        </table>
+        <h3>Vision, Attention, and Automaticity</h3>
+        <p>Attention is a spotlight with a narrow beam and a very short memory. Anything that does not earn a place in the beam is, for practical purposes, not on the screen.</p>
+        <blockquote>The most expensive words in an interface are the ones the user has to look for.</blockquote>
+        <h3>Applying it to reading codes</h3>
+        <ul>
+          <li>One dominant column, one measure, one place for the eye to land.</li>
+          <li>Landmarks at every scale: title, section, paragraph, a single figure.</li>
+          <li>Nothing that competes with the text may sit beside the text.</li>
+        </ul>
+        <h3>Signposting the reader</h3>
+        <p>Progress is the cheapest landmark there is. A reader who can see how far in they are will keep reading; a reader who cannot will go looking for a scrollbar instead.</p>
+        <p class="srcnote">Text is placeholder prose for layout. The headings, the character count and the part count are real, measured from this source. No claim is anchored to a paragraph — the model does not store that association, so the mock does not draw it.</p>
+        <div class="endline">
+          <span>End of source · 12 notes were derived from it</span>
+          <button data-go="details">See what it produced</button>
         </div>
-      </aside>
-    </div></section>
+      </article>
+      <textarea class="mdedit" spellcheck="false">## Wayfinding
+
+A common definition of wayfinding is that it is all about helping people find their way around. In the built environment that means knowing where they are, what is around them, and how to get back.
+
+### The Six Minds of Experience
+
+The six minds are not features. They are six questions a person asks continuously, mostly without noticing.</textarea>
+    </main>
+
+    <section class="history">
+      <div class="hgrid">
+        <div class="hmain">
+          <div class="scrub">
+            <div class="step"><button title="Previous operation">‹</button><button title="Next operation">›</button></div>
+            <input type="range" min="0" max="26" value="26" aria-label="Revision">
+            <span class="facts">revision 26 of 26</span>
+          </div>
+          <div class="snap">
+            <h3>Content at revision 26</h3>
+            <p class="when">set-source-content · 17 Sep 2026, 18:04</p>
+            <p style="color:var(--bai-text-tertiary);font-size:13px">## Wayfinding<br><br>A common definition of wayfinding is that it is all about helping people find their way around…</p>
+          </div>
+          <div class="radios"><span>Compare against:</span><span>previous</span><span>current</span></div>
+        </div>
+        <aside class="hside">
+          <p class="plbl">Applied operations</p>
+          <button class="op on">set-source-content<span class="when">17 Sep, 18:04</span></button>
+          <button class="op">attach-original-file<span class="when">17 Sep, 17:52</span></button>
+          <button class="op">ingest-source<span class="when">17 Sep, 17:40</span></button>
+          <button class="op">set-source-status<span class="when">17 Sep, 17:39</span></button>
+          <p class="plbl" style="margin-top:18px">Also changed</p>
+          <p class="narr">title · description · source type</p>
+        </aside>
+      </div>
+    </section>
 
     <aside class="drawer">
       <div class="dhead">
-        <button class="on" data-tab="claims">Claims (12)</button>
+        <button class="on" data-tab="claims">Claims <span>12</span></button>
         <button data-tab="prov">Provenance</button>
         <button data-tab="extr">Extraction</button>
       </div>
-      <div class="dpane on" data-pane="claims">
-        <p class="lbl">Notes derived from this source</p>
-        <button class="claim">Vocabulary signals expertise — record the words a person uses</button>
-        <button class="claim">Attention is serial; scanning is parallel</button>
-        <button class="claim">Landmarks make a long text navigable</button>
-        <button class="claim">Recognition beats recall in a navigation system</button>
-        <p style="font-size:11px;color:var(--bai-text-faint);margin-top:12px">Each opens the note itself. 12 in total — 8 more.</p>
+      <div class="pane on" data-pane="claims">
+        <p class="plbl">Notes derived from this source</p>
+        <button class="claim">Wayfinding is answered by the shape of the page, not by a menu<span class="meta">knowledge note · EXTRACTED</span></button>
+        <button class="claim">Attention is a narrow beam with a short memory<span class="meta">knowledge note · EXTRACTED</span></button>
+        <button class="claim">Progress is the cheapest landmark there is<span class="meta">knowledge note · EXTRACTED</span></button>
+        <button class="claim">Nine more from this source…<span class="meta">open the folder to see them all</span></button>
       </div>
-      <div class="dpane" data-pane="prov">
-        <p class="lbl">Where this text came from</p>
-        <div class="kv"><span class="k">Author</span><span class="v">John Whalen</span></div>
-        <div class="kv"><span class="k">Source type</span><span class="v">BOOK_CHAPTER</span></div>
-        <div class="kv"><span class="k">Ingested by</span><span class="v">powerhouse-agent</span></div>
-        <div class="kv"><span class="k">Method</span><span class="v">docling.rs → converted</span></div>
-        <div class="kv"><span class="k">Status</span><span class="v"><select><option>EXTRACTED</option><option>INBOX</option><option>EXTRACTING</option><option>ARCHIVED</option></select></span></div>
-        <div class="kv"><span class="k">Original</span><span class="v">16.6 MB · application/pdf</span></div>
-        <button class="a" style="color:var(--bai-accent);font-weight:600" data-go="original">Open the original document →</button>
-        <p style="font-size:11px;color:var(--bai-text-faint);margin-top:10px">Replacing the original is offered here, not in the reading path.</p>
+      <div class="pane" data-pane="prov">
+        <p class="plbl">Where this came from</p>
+        <dl style="margin:0">
+          <div class="row"><dt>Author</dt><dd>John Whalen</dd></div>
+          <div class="row"><dt>URL</dt><dd><a>oreilly.com/library/view/…</a></dd></div>
+          <div class="row"><dt>Method</dt><dd>document conversion</dd></div>
+          <div class="row"><dt>Ingested by</dt><dd>petru@powerhouse</dd></div>
+        </dl>
+        <p class="plbl" style="margin:18px 0 0">Original document</p>
+        <div class="orig">
+          <div class="fn">design-for-how-people-think.pdf</div>
+          <div class="fm">17.4 MB · application/pdf · converted by docling.rs</div>
+          <div class="acts">
+            <button data-go="original">View original</button>
+            <button>Download</button>
+            <button>Replace</button>
+          </div>
+        </div>
+        <p class="narr">The bytes are not fetched until you ask: a 17 MB PDF should not ride along uninvited. When a source has no original at all, this panel offers <em>Attach</em> instead of staying silent.</p>
       </div>
-      <div class="dpane" data-pane="extr">
-        <p class="lbl">What extraction took</p>
-        <div class="kv"><span class="k">Claims</span><span class="v" style="color:var(--bai-ok)">12</span></div>
-        <div class="kv"><span class="k">Passages not taken</span><span class="v">47</span></div>
-        <p class="narr">47 of 59 passages were not turned into claims. <b>That is a measurement, not a shortfall</b> — a title page, a contents list and a recap chapter can legitimately yield none, and writing one anyway costs every later query that touches the topic.</p>
+      <div class="pane" data-pane="extr">
+        <p class="plbl">What extraction did</p>
+        <dl style="margin:0">
+          <div class="row"><dt>Claims</dt><dd>12</dd></div>
+          <div class="row"><dt>Skipped</dt><dd>47</dd></div>
+          <div class="row"><dt>Skip rate</dt><dd>0.79</dd></div>
+        </dl>
+        <p class="narr">47 of 59 passages were not taken. That is a measurement, not a shortfall — a recap chapter can genuinely yield nothing, and a red number here would train you to distrust a source that behaved correctly.</p>
+        <div class="selrow">
+          <label for="status">Status</label>
+          <select id="status"><option>INBOX</option><option>EXTRACTING</option><option selected>EXTRACTED</option><option>ARCHIVED</option></select>
+        </div>
+        <p class="narr">Moved here from the title row: a status <em>change</em> is a rare, deliberate act, and it should not sit next to the pill that only reports it.</p>
       </div>
     </aside>
   </div>
+
+  <!-- an uninitialized source: the paste form, with the toolbar still above it -->
+  <section class="ingest">
+    <div class="iform">
+      <h2>Add Source Material</h2>
+      <p class="lede">Paste raw content here — articles, notes, transcripts. The AI agent will extract atomic claims from it.</p>
+      <div class="two">
+        <div><label>Title</label><input placeholder="Source title"></div>
+        <div><label>Source type</label><select><option>ARTICLE</option><option>PAPER</option><option>BOOK_CHAPTER</option><option>TRANSCRIPT</option><option>DOCUMENTATION</option><option>CONVERSATION</option><option>WEB_PAGE</option><option>MANUAL_ENTRY</option></select></div>
+      </div>
+      <div class="one"><label>Description</label><input placeholder="Brief description (optional)"></div>
+      <div class="two">
+        <div><label>Author</label><input placeholder="Author"></div>
+        <div><label>URL</label><input placeholder="URL (optional)"></div>
+      </div>
+      <div class="one"><label>Content</label><textarea placeholder="Paste source content here..."></textarea></div>
+      <div class="foot">
+        <button class="submit" disabled>Ingest Source</button>
+        <span class="hint">Title and content are required. This is the state a source opens in before it has any content — it is the same form, so nothing new is learned.</span>
+      </div>
+    </div>
+  </section>
 </div>
 
 <div class="overlay">
   <div class="scrim" data-go="read"></div>
   <div class="sheet">
     <header>
-      <span style="font-size:13px;color:var(--bai-text-secondary)">Design for How People Think - John Whalen (2019).pdf</span>
-      <span style="font-size:11px;color:var(--bai-text-faint)">16.6 MB · application/pdf · converted by docling.rs</span>
-      <span class="spacer"></span>
-      <button class="a">Download</button>
-      <button class="a" data-go="read">Close ✕</button>
+      <div><div class="t">design-for-how-people-think.pdf</div><div class="f">page 41 of 238 · 17.4 MB · converted by docling.rs</div></div>
+      <button class="x" data-go="read" title="Close">✕</button>
     </header>
-    <div class="body2">the original document renders inline — a PDF here; anything a browser cannot render becomes a file card with Download</div>
+    <div class="body2">
+      <div class="paper">
+        <div class="pg">[ 41 ]</div>
+        <h4>Wayfinding</h4>
+        <p>A common definition of wayfinding is that it is all about helping people find their way around. In the built environment that means knowing where they are, what is around them, and how to get back.</p>
+        <p>In an interface the same question arrives as three smaller ones: where am I, what is here, and how do I leave?</p>
+        <p style="color:#8a857c;font-size:12px">Rendered placeholder page — the real viewer renders the attached PDF. States this panel has today and keeps: <b>not renderable</b> (a card with name, size, type and Download), <b>failed</b> (an explicit failure with Retry), and <b>no original</b> (an Attach control, never silence).</p>
+      </div>
+    </div>
   </div>
 </div>
 
 <div class="switcher" id="switcher"></div>
-<script>// design proposal, awaiting green light. Nothing in the React editor has been changed.
-document.addEventListener("DOMContentLoaded",()=>{
-  const STATES=[["read","#read — the source, full page"],["outline","#outline — outline rail"],["details","#details — claims · provenance · extraction"],["history","#history — revisions"],["edit","#edit — editing in place"],["original","#original — the original document"]];
+<div class="banner">design proposal — awaiting green light — nothing in the React editor has been changed</div>
+<button class="toggle" id="theme">light / dark</button>
+
+<script>
+  const STATES=[["read","#read — the source, full page"],["outline","#outline — outline rail"],["details","#details — claims · provenance · extraction"],["history","#history — the source's revisions"],["edit","#edit — editing in place"],["original","#original — the original document"],["ingest","#ingest — a source with no content yet"]];
   const sw=document.getElementById("switcher");
   const set=(s)=>{document.body.dataset.state=s;
     document.querySelectorAll(".switcher button").forEach(b=>b.classList.toggle("on",b.dataset.s===s));};
   STATES.forEach(([s,label])=>{const b=document.createElement("button");b.textContent=label.split(" — ")[1];b.dataset.s=s;b.title=label;
     b.onclick=()=>set(s);sw.appendChild(b);});
   document.body.addEventListener("click",(e)=>{const g=e.target.closest("[data-go]");if(g)set(g.dataset.go);});
-  document.addEventListener("keydown",(e)=>{if(e.key==="Escape")set("read");});
-  sw.querySelectorAll("button").forEach(b=>b.classList.toggle("on",b.dataset.s==="read"));
-  // drawer tabs
+  document.addEventListener("keydown",(e)=>{if(e.key==="Escape")set("read")});
   document.querySelectorAll(".dhead button").forEach(b=>b.onclick=()=>{
     document.querySelectorAll(".dhead button").forEach(x=>x.classList.toggle("on",x===b));
-    document.querySelectorAll("[data-pane]").forEach(p=>p.classList.toggle("on",p.dataset.pane===b.dataset.tab));});
-  // queue action changes into its own state rather than disappearing
-  document.getElementById("queue").onclick=(e)=>{e.currentTarget.textContent="Queued · EXTRACTING";e.currentTarget.classList.add("done");};
-  // progress line
-  const p=document.getElementById("progress");
-  document.querySelector(".reader").addEventListener("scroll",(e)=>{const el=e.currentTarget;const max=el.scrollHeight-el.clientHeight;p.style.width=(max>0?(el.scrollTop/max)*100:0)+"%";},{passive:true});
-  // theme
-  const t=document.createElement("button");t.className="toggle";t.textContent="light / dark";
-  t.onclick=()=>{const h=document.documentElement;h.dataset.baiTheme=h.dataset.baiTheme==="light"?"dark":"light"};document.body.appendChild(t);
-  const n=document.createElement("div");n.className="banner";n.textContent="design proposal — awaiting green light — nothing in the React editor has been changed";document.body.appendChild(n);
-});</script></body></html>
+    document.querySelectorAll(".pane").forEach(p=>p.classList.toggle("on",p.dataset.pane===b.dataset.tab));});
+  document.getElementById("queue").onclick=(e)=>{const b=e.currentTarget;
+    b.classList.add("q");b.textContent="Queued — run /pipeline in Claude Code";};
+  const rd=document.querySelector(".reader");
+  rd.addEventListener("scroll",()=>{const p=document.getElementById("progress");
+    const max=rd.scrollHeight-rd.clientHeight;p.style.width=(max>0?(rd.scrollTop/max)*100:0)+"%";});
+  document.getElementById("theme").onclick=()=>{const h=document.documentElement;
+    h.dataset.baiTheme=h.dataset.baiTheme==="light"?"dark":"light";};
+  set("read");
+</script>
+</body></html>
