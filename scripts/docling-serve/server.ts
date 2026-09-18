@@ -695,7 +695,7 @@ const MAX_FIGURE_BYTES = Number(
  */
 const FIGURE_TARGET_PX = Math.max(
   200,
-  Number(process.env.CONVERT_FIGURE_TARGET_PX ?? 500),
+  Number(process.env.CONVERT_FIGURE_TARGET_PX ?? 900),
 );
 /** An embed at least this wide is accepted as is — rendering its page buys little. */
 /**
@@ -707,15 +707,15 @@ const FIGURE_TARGET_PX = Math.max(
 const FIGURE_PNG = {
   compressionLevel: 9,
   palette: true,
-  colours: Math.max(2, Number(process.env.CONVERT_FIGURE_COLOURS ?? 96)),
-  quality: Math.max(10, Number(process.env.CONVERT_FIGURE_PNG_QUALITY ?? 60)),
+  colours: Math.max(2, Number(process.env.CONVERT_FIGURE_COLOURS ?? 128)),
+  quality: Math.max(10, Number(process.env.CONVERT_FIGURE_PNG_QUALITY ?? 80)),
   effort: 8,
 } as const;
 
 /** Pictures never need the high end: they are read whole, not glyph by glyph. */
 const FIGURE_MAX_PICTURE_DPI = Math.max(
   36,
-  Number(process.env.CONVERT_FIGURE_MAX_PICTURE_DPI ?? 100),
+  Number(process.env.CONVERT_FIGURE_MAX_PICTURE_DPI ?? 150),
 );
 const FIGURE_EMBED_FLOOR_PX = Math.max(
   200,

@@ -1,0 +1,134 @@
+<!doctype html><html lang="en" data-bai-theme="dark"><head><meta charset="utf-8"><title>`bai/source` editor — the three concepts and the blend</title>
+<!-- design proposal, awaiting green light. Nothing in the React editor has been changed. -->
+<style>/* Live values copied from style.css (2026-09-17). Dark default; light toggle bottom-right. */
+:root, [data-bai-theme="dark"] {
+  --bai-bg:#1e1e2e; --bai-surface:#181825; --bai-deep:#11111b; --bai-hover:#313244;
+  --bai-border:rgba(255,255,255,0.1); --bai-text:#e4e4e7; --bai-text-secondary:#d4d4d8;
+  --bai-text-tertiary:#9ca3af; --bai-text-muted:#6b7280; --bai-text-faint:#4b5563;
+  --bai-accent:#cba6f7; --bai-accent-text:#1e1e2e; --bai-accent-soft:rgba(203,166,247,0.1);
+  --bai-ok:#a6e3a1; --bai-ok-soft:rgba(166,227,161,0.12); --bai-warn:#fab387; --bai-danger:#f38ba8; --bai-danger-soft:rgba(243,139,168,0.12);
+}
+[data-bai-theme="light"] {
+  --bai-bg:#f8f9fc; --bai-surface:#fff; --bai-deep:#f1f3f8; --bai-hover:#e8eaf0; --bai-border:#e2e4e9;
+  --bai-text:#1f2937; --bai-text-secondary:#374151; --bai-text-tertiary:#6b7280; --bai-text-muted:#9ca3af; --bai-text-faint:#d1d5db;
+  --bai-accent:#7c3aed; --bai-accent-text:#fff; --bai-accent-soft:rgba(124,58,237,0.08);
+  --bai-ok:#059669; --bai-ok-soft:rgba(5,150,105,0.08); --bai-warn:#d97706; --bai-danger:#dc2626; --bai-danger-soft:rgba(220,38,38,0.08);
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bai-bg);color:var(--bai-text);font:13px/1.6 ui-sans-serif,system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
+.wrap{max-width:1720px;margin:0 auto;padding:26px 22px 120px}
+h1{font-size:22px;margin:0 0 4px;font-weight:600}
+.sub{font-size:12px;color:var(--bai-text-muted);margin:0 0 6px}
+.stage{font-size:12px;color:var(--bai-warn);margin:0 0 22px}
+h2{font-size:14px;margin:38px 0 10px;font-weight:600;color:var(--bai-text)}
+h3{font-size:12px;margin:0 0 6px;font-weight:600;color:var(--bai-text-secondary)}
+p{color:var(--bai-text-tertiary);font-size:12.5px;margin:0 0 10px}
+a{color:var(--bai-accent)}
+.surface{background:var(--bai-surface);border:1px solid var(--bai-border);border-radius:12px;padding:14px 16px;margin:0 0 22px}
+.surface b{color:var(--bai-text-secondary);font-weight:600}
+/* four live frames, scaled so the whole composition is comparable at a glance */
+.row{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:16px;align-items:start}
+.col{min-width:0}
+.shot{position:relative;width:100%;aspect-ratio:504/620;overflow:hidden;border:1px solid var(--bai-border);border-radius:12px;background:var(--bai-deep)}
+.shot iframe{position:absolute;top:0;left:0;width:1440px;height:1772px;border:0;transform-origin:top left;transform:scale(var(--s,.35))}
+.tag{display:inline-flex;align-items:center;gap:6px;font-size:10px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--bai-text-faint);margin:8px 0 4px}
+.tag b{color:var(--bai-text-secondary)}
+ul{margin:6px 0 0;padding-left:16px;color:var(--bai-text-tertiary);font-size:12px} li{margin:3px 0}
+li.good::marker{color:var(--bai-ok)} li.cost::marker{color:var(--bai-danger)}
+li.good{color:var(--bai-text-secondary)}
+table{border-collapse:collapse;width:100%;font-size:12.5px;margin-top:8px}
+th,td{text-align:left;padding:8px 10px;border-bottom:1px solid var(--bai-border);vertical-align:top}
+th{color:var(--bai-text);font-weight:600;font-size:11px;letter-spacing:.04em;text-transform:uppercase}
+td{color:var(--bai-text-tertiary)} td b{color:var(--bai-text-secondary);font-weight:500}
+.toggle{position:fixed;bottom:12px;right:12px;z-index:40;border-radius:8px;padding:6px 12px;font-size:12px;font-weight:500;background:var(--bai-hover);border:1px solid var(--bai-border);color:var(--bai-accent)}
+.note{border-left:2px solid var(--bai-border);padding-left:12px;color:var(--bai-text-muted);font-size:12px}
+</style></head><body><div class="wrap">
+  <h1><code>bai/source</code> editor — three concepts and the blend</h1>
+  <p class="sub">Six Minds of Experience (`.claude/skills/six-minds-design-skill.md`) · live `--bai-*` tokens · same theme, re-arranged only.</p>
+  <p class="stage">design proposal, awaiting green light. Nothing in the React editor has been changed.</p>
+
+  <div class="surface">
+    <b>The surface, named first:</b> <b>Command / Inspect</b> — one object drilled into, where reading <em>is</em> the job and every other control is peripheral. Not a Monitor (nothing is watched over time), not Decide/Learn (there is no argument to make). That commitment is what rules out cards, tiles and hero compositions before a colour is chosen.
+  </div>
+
+  <div class="row">
+    <div class="col">
+      <div class="shot"><iframe src="a-minimal.html" title="Buxton A — minimal" loading="lazy"></iframe></div>
+      <span class="tag"><b>A</b> · minimal</span>
+      <ul>
+        <li class="good">the page is the reading surface: no card, no inner scroller</li>
+        <li class="good">40px bar, three facts, one action per intent — nothing to hunt</li>
+        <li class="good">text-only actions: weight, not boxes, carries hierarchy</li>
+        <li class="cost">hides the source's own purpose — 12 claims are one word in the bar</li>
+        <li class="cost">the queue action simply disappears once a source is extracted</li>
+      </ul>
+    </div>
+    <div class="col">
+      <div class="shot"><iframe src="b-conventional.html" title="Buxton B — conventional" loading="lazy"></iframe></div>
+      <span class="tag"><b>B</b> · conventional</span>
+      <ul>
+        <li class="good">nothing has to be learned — title, tabs, outline, inspector</li>
+        <li class="good">everything about the source is visible at once</li>
+        <li class="good">tabs are the right vocabulary for claims / history / original</li>
+        <li class="cost">the text is back inside a card, inside a page inside a scroller</li>
+        <li class="cost">212px rail + 268px inspector take the centre by default</li>
+        <li class="cost">reading becomes one of four equal tabs, two of them inert</li>
+      </ul>
+    </div>
+    <div class="col">
+      <div class="shot"><iframe src="c-immersive.html" title="Buxton C — immersive" loading="lazy"></iframe></div>
+      <span class="tag"><b>C</b> · immersive</span>
+      <ul>
+        <li class="good">reads like a document: generous measure, nothing else on screen</li>
+        <li class="good">the derived notes arrive as the payoff at the end of the text</li>
+        <li class="good">one 2px progress line is the only permanent chrome</li>
+        <li class="cost">summoned chrome is hostile to the *checking* half of the job</li>
+        <li class="cost">app navigation vanishes — “back to work” depends on finding the bar</li>
+      </ul>
+    </div>
+    <div class="col">
+      <div class="shot"><iframe src="final.html" title="the blended design" loading="lazy"></iframe></div>
+      <span class="tag"><b>final</b> · the blend</span>
+      <ul>
+        <li class="good">C's page + A's bar + B's vocabulary and panels</li>
+        <li class="good">outline and details are <em>off</em> by default, so the measure is never spent for you</li>
+        <li class="good">claims count in the bar; claims list one labelled move away</li>
+        <li class="good">editing happens in place; the original opens as an overlay</li>
+        <li class="cost">one more control than A — the bar carries six actions, all labelled</li>
+      </ul>
+    </div>
+  </div>
+
+  <h2>What the final took from each</h2>
+  <table>
+    <thead><tr><th>from</th><th>what</th><th>why it survived</th></tr></thead>
+    <tbody>
+      <tr><td><b>C</b> immersive</td><td>the page owns the reading surface; the 2px progress line; the end-of-source payoff</td><td>the eye must land on text, not chrome; “how far in am I?” should be a glance</td></tr>
+      <tr><td><b>A</b> minimal</td><td>the 44px bar; one action per intent; only the queue action carries accent; nothing is boxed that does not need a boundary</td><td>it is the fastest possible answer to “is this the right source, and what do I do with it?”</td></tr>
+      <tr><td><b>B</b> conventional</td><td>breadcrumb, tabs inside the drawer, the outline, the inspector's contents, the vault's own words</td><td>a reader already knows this schema; the fix was to relocate the panels, not to reinvent them</td></tr>
+      <tr><td><b>new</b></td><td>provenance as one line under the title · status change moved into Details · `skipRate` narrated instead of scored · editing in place · the original as an overlay</td><td>each answers a finding in the current editor — see the README's diagnosis table</td></tr>
+    </tbody>
+  </table>
+
+  <h2>Six minds, in the final</h2>
+  <table>
+    <thead><tr><th>mind</th><th>how the arrangement answers it</th></tr></thead>
+    <tbody>
+      <tr><td><b>Vision</b></td><td>one 78ch column of text on the page background, no card; the bar is 44px so it frames rather than walls; accent appears only on the queue action, the progress line and the active panel</td></tr>
+      <tr><td><b>Wayfinding</b></td><td>breadcrumb · status pill · outline rail for position inside the text · progress line · `Esc` returns from anything</td></tr>
+      <tr><td><b>Memory</b></td><td>sticky slim bar, text column, outline, inspector drawer, tabs inside it, ⌘E/Edit to edit in place</td></tr>
+      <tr><td><b>Language</b></td><td>source · source type · provenance · extracted claims · Queue for processing · INBOX/EXTRACTING/EXTRACTED/ARCHIVED · revisions · original document</td></tr>
+      <tr><td><b>Decision</b></td><td>reading is never blocked by chrome; the claims count is in the bar before the question is asked; the queue action changes into its own state instead of vanishing; the status *change* lives in Details so the pill can stay a pill</td></tr>
+      <tr><td><b>Emotion</b></td><td>a source reads like a document, not a database row; extraction is narrated neutrally, so a thin chapter is not a failure; progress and claims answer “how is this going?” without a spinner or a percentage</td></tr>
+    </tbody>
+  </table>
+
+  <h2>The diagnosis this answers (from the README)</h2>
+  <p class="note">The reading surface is a 600px window inside a page inside Connect's scroller · the text sits below title, description, original-file panel and tab bar · three nested card levels · the status is editable twice, once as a pill and once as a `<select>` · the source's purpose (its claims) lives in a 256px sidebar · no outline and no progress on a 117-part book · editing replaces the whole page and resets the status to INBOX · `skipRate` is painted red above 10% while the vault's own doctrine says it is a measurement, not a goal. The last two are behaviour, not layout — they need a decision beyond this mock.</p>
+
+  <h2>How to read these</h2>
+  <p>Each file is self-contained: open it directly (`file://` is enough). The three concepts are deliberately unfinished ideas — the value is in the final, which is the blend. `final.html` has a state switcher bottom-left: read · outline · claims · history · editing · the original. Light/dark is bottom-right in every file.</p>
+</div>
+<button class="toggle" id="t">light / dark</button>
+<script>document.getElementById("t").onclick=()=>{const h=document.documentElement;h.dataset.baiTheme=h.dataset.baiTheme==="light"?"dark":"light"};</script>
+</body></html>
