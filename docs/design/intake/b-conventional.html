@@ -1,0 +1,102 @@
+<!doctype html><html lang="en" data-bai-theme="dark"><head><meta charset="utf-8"><title>Intake — Buxton B: contextual / conventional</title>
+<!-- design proposal, awaiting green light. Nothing in the React editor has been changed. -->
+<style>/* Live values copied from style.css (2026-09-17). Dark default; light toggle bottom-right. */
+:root, [data-bai-theme="dark"] {
+  --bai-bg:#1e1e2e; --bai-surface:#181825; --bai-deep:#11111b; --bai-hover:#313244;
+  --bai-border:rgba(255,255,255,0.1); --bai-text:#e4e4e7; --bai-text-secondary:#d4d4d8;
+  --bai-text-tertiary:#9ca3af; --bai-text-muted:#6b7280; --bai-text-faint:#4b5563;
+  --bai-accent:#cba6f7; --bai-accent-text:#1e1e2e; --bai-accent-soft:rgba(203,166,247,0.1);
+  --bai-ok:#a6e3a1; --bai-ok-soft:rgba(166,227,161,0.12); --bai-warn:#fab387; --bai-danger:#f38ba8; --bai-danger-soft:rgba(243,139,168,0.12);
+}
+[data-bai-theme="light"] {
+  --bai-bg:#f8f9fc; --bai-surface:#fff; --bai-deep:#f1f3f8; --bai-hover:#e8eaf0; --bai-border:#e2e4e9;
+  --bai-text:#1f2937; --bai-text-secondary:#374151; --bai-text-tertiary:#6b7280; --bai-text-muted:#9ca3af; --bai-text-faint:#d1d5db;
+  --bai-accent:#7c3aed; --bai-accent-text:#fff; --bai-accent-soft:rgba(124,58,237,0.08);
+  --bai-ok:#059669; --bai-ok-soft:rgba(5,150,105,0.08); --bai-warn:#d97706; --bai-danger:#dc2626; --bai-danger-soft:rgba(220,38,38,0.08);
+}
+*{box-sizing:border-box} html,body{margin:0;height:100%;background:var(--bai-bg);color:var(--bai-text);font:13px/1.45 ui-sans-serif,system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
+.app{display:flex;flex-direction:column;height:100vh}
+.topbar{display:flex;align-items:center;gap:4px;padding:8px 12px;background:var(--bai-surface);border-bottom:1px solid var(--bai-border)}
+.topbar .name{font-weight:600;margin-right:12px;font-size:12px}
+.tab{display:inline-flex;align-items:center;gap:6px;border-radius:6px;padding:6px 12px;font-size:12px;font-weight:500;color:var(--bai-text-tertiary);background:transparent;border:0}
+.tab.on{background:var(--bai-hover);color:var(--bai-accent)} .tab .badge{font-size:10px;padding:0 5px;border-radius:999px;background:var(--bai-accent-soft);color:var(--bai-accent)}
+.pane{flex:1;min-height:0;overflow:auto;padding:20px 24px}
+.hint{font-size:11px;color:var(--bai-text-muted)} .faint{font-size:11px;color:var(--bai-text-faint)} .sec{color:var(--bai-text-secondary)} .ter{color:var(--bai-text-tertiary)}
+.card{background:var(--bai-surface);border:1px solid var(--bai-border);border-radius:12px}
+.btn{border-radius:8px;padding:6px 12px;font-size:12px;font-weight:500;background:var(--bai-hover);border:1px solid var(--bai-border);color:var(--bai-accent)}
+.btn.primary{background:var(--bai-accent);color:var(--bai-accent-text);border-color:transparent;font-weight:600;padding:8px 16px;font-size:13px}
+.btn.ghost{background:transparent} .btn:disabled{opacity:.4}
+.link{font-size:11px;font-weight:500;color:var(--bai-accent);background:none;border:0;padding:0}
+.spin{width:12px;height:12px;border-radius:999px;border:2px solid var(--bai-border);border-top-color:var(--bai-accent);animation:r 1s linear infinite;flex:none}@keyframes r{to{transform:rotate(360deg)}}
+.dot{width:8px;height:8px;border-radius:999px;flex:none}.dot.queued{background:var(--bai-text-faint)}.dot.converting{background:var(--bai-accent)}.dot.review{background:var(--bai-warn)}.dot.done{background:var(--bai-ok)}.dot.failed{background:var(--bai-danger)}
+/* the journey strip: four steps, one file's coordinates on the way to the goal */
+.journey{display:inline-flex;align-items:center;gap:0;font-size:10px;color:var(--bai-text-faint);white-space:nowrap}
+.journey i{display:inline-block;width:7px;height:7px;border-radius:999px;border:1px solid var(--bai-text-faint);margin:0 4px 0 0;vertical-align:middle}
+.journey s{text-decoration:none;display:inline-block;width:14px;height:1px;background:var(--bai-border);margin:0 4px}
+.journey b{font-weight:500;color:var(--bai-text-faint)}
+.journey .past i{background:var(--bai-ok);border-color:var(--bai-ok)} .journey .past b{color:var(--bai-text-muted)}
+.journey .now i{background:var(--bai-accent);border-color:var(--bai-accent);box-shadow:0 0 0 3px var(--bai-accent-soft)} .journey .now b{color:var(--bai-accent)}
+.journey .halt i{background:var(--bai-danger);border-color:var(--bai-danger)} .journey .halt b{color:var(--bai-danger)}
+.journey.big{font-size:12px} .journey.big i{width:10px;height:10px;margin-right:6px} .journey.big s{width:28px}
+.row{display:flex;align-items:center;gap:12px;padding:10px 12px;border-radius:8px;background:var(--bai-bg);border:1px solid var(--bai-border)}.row+.row{margin-top:4px}
+.row .name{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:12px;color:var(--bai-text-secondary)}
+.row.needs{border-left:3px solid var(--bai-warn)} .row.done .name{color:var(--bai-text-tertiary)}
+.group{margin-top:14px;font-size:10px;letter-spacing:.06em;text-transform:uppercase;color:var(--bai-text-faint);font-weight:600}
+.section{display:flex;align-items:flex-start;gap:12px;padding:8px 12px;border-radius:8px;background:var(--bai-bg);border:1px solid var(--bai-border)}.section+.section{margin-top:4px}
+.section input{margin-top:3px;accent-color:var(--bai-accent)}
+.section .t{display:block;font-size:12px;font-weight:500;color:var(--bai-text-secondary);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.section .m{display:block;font-size:10px;color:var(--bai-text-faint);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.section.off .t{color:var(--bai-text-muted)}
+select,input[type=text]{background:var(--bai-bg);border:1px solid var(--bai-border);color:var(--bai-text-secondary);border-radius:6px;padding:4px 8px;font-size:11px}
+label.f{display:inline-flex;align-items:center;gap:8px;font-size:11px;color:var(--bai-text-muted)}
+.bar{height:6px;border-radius:999px;background:var(--bai-hover);overflow:hidden;display:flex}.bar span{height:100%}
+.drop{border:1px dashed var(--bai-border);border-radius:12px;padding:14px 16px;display:flex;align-items:center;gap:12px;background:var(--bai-surface)}
+.drop.hero{padding:40px 24px;flex-direction:column;text-align:center;gap:10px}
+.safe{font-size:11px;color:var(--bai-text-muted)} .safe b{color:var(--bai-text-tertiary);font-weight:500}
+.banner{position:fixed;top:8px;right:12px;font-size:10px;color:var(--bai-text-faint)} .toggle{position:fixed;bottom:12px;right:12px}
+.ok{color:var(--bai-ok)} .warn{color:var(--bai-warn)} .danger{color:var(--bai-danger)}
+ table{width:100%;border-collapse:collapse;font-size:12px} th{font-size:10px;text-transform:uppercase;letter-spacing:.06em;color:var(--bai-text-faint);text-align:left;padding:6px 10px;border-bottom:1px solid var(--bai-border)} td{padding:9px 10px;border-bottom:1px solid var(--bai-border);color:var(--bai-text-secondary);vertical-align:middle}
+.crumb{font-size:11px;color:var(--bai-text-faint);margin-bottom:12px}.crumb b{color:var(--bai-text-secondary);font-weight:500}.pill{font-size:10px;padding:2px 8px;border-radius:999px;border:1px solid var(--bai-border)}
+.wiz{display:flex;gap:0;margin:0 0 16px;font-size:11px}.wiz span{flex:1;text-align:center;padding:8px;border:1px solid var(--bai-border);color:var(--bai-text-faint);background:var(--bai-surface)}.wiz span.on{color:var(--bai-accent);border-color:var(--bai-accent);background:var(--bai-accent-soft)}.wiz span.ok{color:var(--bai-text-muted)}</style></head><body><div class="app" id="app"></div>
+<script>// design proposal, awaiting green light. Nothing in the React editor has been changed.
+document.addEventListener("DOMContentLoaded",()=>{const b=document.createElement("button");b.className="btn toggle";b.textContent="light / dark";
+b.onclick=()=>{const h=document.documentElement;h.dataset.baiTheme=h.dataset.baiTheme==="light"?"dark":"light"};document.body.appendChild(b);
+const n=document.createElement("div");n.className="banner";n.textContent="design proposal — awaiting green light — nothing in the React editor has been changed";document.body.appendChild(n)});
+const TOPBAR=(active,needs=1)=>`<div class="topbar"><span class="name">my-personal-vault</span>${["Chat","Search","Notes","Sources","Projects","Pipeline","Health"].map(t=>`<button class="tab ${t===active?"on":""}" style="position:relative">${t}${t==="Notes"?' <span class="badge">241</span>':''}${t==="Sources"&&needs?` <span class="badge" title="${needs} file${needs===1?"":"s"} waiting for your review" style="background:var(--bai-warn);color:var(--bai-accent-text)">${needs}</span>`:''}</button>`).join("")}</div>`;
+// Measured 2026-09-17 through the convert route.
+const BOOK={name:"Design for How People Think - John Whalen (2019).pdf",folder:"Design for How People Think",size:"16.6 MB",parts:117,folded:265,elapsed:"5 m 33 s",
+ sections:[
+ {t:"Praise for Design for How People Think",c:3658,on:false,contains:["front matter","Design for How People Think","Praise for Design for How People Think"]},
+ {t:"[ contents ]",c:13687,on:false,contains:["Using Brain Science to Build Better Products","DESIGN FOR HOW PEOPLE THINK","Revision History for the First Edition:","[ contents ]"]},
+ {t:"PART III PUTTING THE SIX MINDS TO WORK IN YOUR DESIGNS",c:3852,on:true},
+ {t:"So Do You Want the Secret to Designing a Great Experience?",c:2326,on:true,contains:["'A Psychologist Doing Product and Service Design? How Interesting...'","So Do You Want the Secret to Designing a Great Experience?"]},
+ {t:"How Humans Think About Thinking (And What We Don't Realize)",c:2013,on:true},
+ {t:"How to Contact Us",c:2169,on:false,contains:["Conventions Used in This Book","[ SIDE NOTE ]","Warning","O'Reilly Online Learning","How to Contact Us","Acknowledgments"]},
+ {t:"Rethinking 'the' Experience",c:2714,on:true,contains:["A Final Note to the Psychologists and Cognitive Scientists Reading This","Let Me Know What You Think","Rethinking 'the' Experience"]},
+ {t:"Wayfinding",c:2423,on:true,contains:["The Six Minds of Experience","Vision, Attention, and Automaticity","FIGURE 1-2","Wayfinding"]},
+ {t:"Language",c:2348,on:true,contains:["Language","Memory","Decision Making"]},
+ {t:"Emotion",c:3069,on:true,contains:["Exposing Secrets","Vision/Attention","Wayfinding","Memory","Language","Decision Making","Emotion"]},
+ {t:"Why Choose a Contextual Interview?",c:5174,on:true,contains:["User Research: Contextual Interviews","Why Choose a Contextual Interview?"]}]};
+const CV={name:"main_example.pdf",folder:"main_example",size:"47 KB",parts:2,folded:9,elapsed:"2.3 s",sections:[
+ {t:"Core Competencies",c:2397,on:true,contains:["main_example.pdf — front matter","Core Competencies","Professional Experience","MakerDAO SES"]},
+ {t:"Selected Projects",c:2584,on:true,contains:["Remote / Copenhagen","Copenhagen, Denmark","Selected Projects","Education","Languages","Honors and Awards","References"]}]};
+const STEPS=["Chosen","Converted","Reviewed","In the vault"];
+// state: 0..3 = step reached (3 = in the vault); "now" is the step in progress; halt marks a failure at that step
+const journey=(reached,now,opts={})=>`<span class="journey ${opts.big?"big":""}">${STEPS.map((s,i)=>{
+ const cls=i<reached?"past":(i===now?(opts.halt?"halt":"now"):"");return `<span class="${cls}"><i></i><b>${opts.labels?.[i]??s}</b></span>${i<3?"<s></s>":""}`}).join("")}</span>`;
+const sectionRow=(s)=>`<label class="section ${s.on?"":"off"}"><input type="checkbox" ${s.on?"checked":""}><span style="min-width:0;flex:1"><span class="t">${s.t}</span>
+ <span class="m">${s.c.toLocaleString()} chars${s.on?"":" · looks like furniture — left unticked, tick to keep"}</span>${s.contains?`<span class="m">contains: ${s.contains.join(" · ")}</span>`:""}</span></label>`;
+const sel=(f)=>f.sections.filter(s=>s.on).length;
+</script><script>
+document.getElementById("app").innerHTML=TOPBAR("Sources")+`<div class="pane"><div style="max-width:900px;margin:0 auto">
+ <div class="crumb">my-personal-vault › Sources › <b>Add sources</b></div>
+ <div class="wiz"><span class="ok">1. Select files</span><span class="ok">2. Upload &amp; convert</span><span class="on">3. Review</span><span>4. Finish</span></div>
+ <div class="card"><table><tr><th>Name</th><th>Size</th><th>Type</th><th>Status</th><th>Actions</th></tr>
+ <tr><td>${BOOK.name}</td><td>${BOOK.size}</td><td>PDF</td><td><span class="pill warn">Ready for review</span></td><td><button class="btn">Review…</button></td></tr>
+ <tr><td>Building-a-Second-Brain.epub</td><td>1.2 MB</td><td>EPUB</td><td><span class="pill">Converting 47%</span></td><td><button class="link">Cancel</button></td></tr>
+ <tr><td>agent-notes-2026-09.md</td><td>18 KB</td><td>MD</td><td><span class="pill">Queued</span></td><td><button class="link">Remove</button></td></tr>
+ <tr><td>scan-2019.pdf</td><td>3.1 MB</td><td>PDF</td><td><span class="pill danger">Error</span></td><td><button class="link">Retry</button></td></tr>
+ <tr><td>${CV.name}</td><td>${CV.size}</td><td>PDF</td><td><span class="pill ok">Completed</span></td><td><button class="link">View</button></td></tr></table>
+ <div style="display:flex;justify-content:space-between;padding:10px 12px"><button class="btn ghost">＋ Upload more files</button><span class="faint">5 items</span></div></div>
+ <p class="hint" style="margin-top:20px">Buxton B — the upload-manager / wizard schema everyone knows (Drive, Dropbox, a checkout). Zero learning cost, strong Memory alignment. Its liabilities are the plan's: the wizard implies one linear pass while files are at different steps at once; "47%" is a percentage we cannot measure (Tier 1 progress is elapsed time only); and "Completed" says nothing about where the sources went.</p>
+</div></div>`;</script></body></html>

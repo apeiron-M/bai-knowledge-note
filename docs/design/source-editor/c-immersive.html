@@ -1,0 +1,134 @@
+<!doctype html><html lang="en" data-bai-theme="dark"><head><meta charset="utf-8"><title>Source editor — Buxton C: immersive / emotional</title>
+<!-- design proposal, awaiting green light. Nothing in the React editor has been changed. -->
+<style>/* Live values copied from style.css (2026-09-17). Dark default; light toggle bottom-right. */
+:root, [data-bai-theme="dark"] {
+  --bai-bg:#1e1e2e; --bai-surface:#181825; --bai-deep:#11111b; --bai-hover:#313244;
+  --bai-border:rgba(255,255,255,0.1); --bai-text:#e4e4e7; --bai-text-secondary:#d4d4d8;
+  --bai-text-tertiary:#9ca3af; --bai-text-muted:#6b7280; --bai-text-faint:#4b5563;
+  --bai-accent:#cba6f7; --bai-accent-text:#1e1e2e; --bai-accent-soft:rgba(203,166,247,0.1);
+  --bai-ok:#a6e3a1; --bai-ok-soft:rgba(166,227,161,0.12); --bai-warn:#fab387; --bai-danger:#f38ba8; --bai-danger-soft:rgba(243,139,168,0.12);
+}
+[data-bai-theme="light"] {
+  --bai-bg:#f8f9fc; --bai-surface:#fff; --bai-deep:#f1f3f8; --bai-hover:#e8eaf0; --bai-border:#e2e4e9;
+  --bai-text:#1f2937; --bai-text-secondary:#374151; --bai-text-tertiary:#6b7280; --bai-text-muted:#9ca3af; --bai-text-faint:#d1d5db;
+  --bai-accent:#7c3aed; --bai-accent-text:#fff; --bai-accent-soft:rgba(124,58,237,0.08);
+  --bai-ok:#059669; --bai-ok-soft:rgba(5,150,105,0.08); --bai-warn:#d97706; --bai-danger:#dc2626; --bai-danger-soft:rgba(220,38,38,0.08);
+}
+*{box-sizing:border-box} html,body{margin:0;min-height:100%;background:var(--bai-bg);color:var(--bai-text);font:14px/1.5 ui-sans-serif,system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
+/* reading progress — the one permanent piece of chrome */
+.progress{position:fixed;top:0;left:0;height:2px;width:38%;background:var(--bai-accent);z-index:20;transition:width .2s}
+/* chrome recedes: a 64px hot zone at the top summons it */
+.zone{position:fixed;top:0;left:0;right:0;height:64px;z-index:15}
+.chrome{position:fixed;top:0;left:0;right:0;z-index:16;display:flex;align-items:center;gap:12px;padding:0 20px;height:52px;
+  background:color-mix(in srgb, var(--bai-bg) 88%, transparent);backdrop-filter:blur(6px);border-bottom:1px solid var(--bai-border);
+  opacity:0;transform:translateY(-6px);transition:opacity .18s ease, transform .18s ease}
+.zone:hover + .chrome, .chrome:hover, .chrome:focus-within{opacity:1;transform:none}
+.crumb{font-size:12px;color:var(--bai-text-faint)}
+.crumb b{color:var(--bai-text-secondary);font-weight:500}
+.pill{font-size:10px;font-weight:600;letter-spacing:.04em;text-transform:uppercase;border-radius:999px;padding:2px 8px;color:var(--bai-ok);background:var(--bai-ok-soft)}
+.spacer{margin-left:auto}
+.a{font-size:12px;font-weight:500;color:var(--bai-text-tertiary);background:none;border:0;padding:0;border-radius:6px}
+.a:hover{color:var(--bai-accent)}
+.a.primary{color:var(--bai-accent);font-weight:600}
+/* the page, generously set. No card, no rail, no panel. */
+.page{max-width:70ch;margin:0 auto;padding:88px 28px 140px}
+.kicker{font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--bai-text-faint);margin:0 0 10px}
+h1{font-size:34px;line-height:1.18;margin:0 0 10px;color:var(--bai-text);font-weight:600;letter-spacing:-.01em}
+.byline{font-size:12px;color:var(--bai-text-faint);margin:0 0 44px}
+h2{font-size:21px;margin:46px 0 12px;color:var(--bai-text);font-weight:600}
+h3{font-size:16px;margin:32px 0 8px;color:var(--bai-text);font-weight:600}
+p{margin:0 0 20px;font-size:17px;line-height:1.8;color:var(--bai-text-secondary)}
+ul{margin:0 0 20px;padding-left:22px;font-size:17px;line-height:1.8;color:var(--bai-text-secondary)}
+blockquote{margin:28px 0;padding-left:18px;border-left:2px solid var(--bai-accent);font-size:18px;line-height:1.7;color:var(--bai-text);font-style:italic}
+table{border-collapse:collapse;width:100%;margin:22px 0;font-size:14px}
+th{text-align:left;font-weight:600;color:var(--bai-text);padding:8px 10px 8px 0;border-bottom:1px solid var(--bai-border)}
+td{padding:8px 10px 8px 0;border-bottom:1px solid var(--bai-border);color:var(--bai-text-tertiary)}
+em.ph{color:var(--bai-text-faint);font-style:normal;font-size:13px}
+/* the payoff: arriving at the end of the source meets what it produced */
+.produced{margin-top:56px;padding:22px 24px;border-radius:14px;background:var(--bai-surface);border:1px solid var(--bai-border)}
+.produced h4{margin:0 0 4px;font-size:13px;color:var(--bai-text);font-weight:600}
+.produced p{margin:0 0 14px;font-size:12px;color:var(--bai-text-muted)}
+.claim{display:block;width:100%;text-align:left;font-size:13px;line-height:1.5;color:var(--bai-text-secondary);background:var(--bai-bg);border:1px solid var(--bai-border);border-radius:10px;padding:10px 12px;margin-top:6px}
+.claim:hover{color:var(--bai-accent);border-color:var(--bai-accent)}
+/* the two floating controls: what the source produced, and the way back to work */
+.chip{position:fixed;bottom:16px;left:50%;transform:translateX(-50%);z-index:18;display:flex;align-items:center;gap:8px;
+  background:var(--bai-surface);border:1px solid var(--bai-border);border-radius:999px;padding:7px 14px;font-size:12px;color:var(--bai-text-tertiary);box-shadow:0 6px 20px rgba(0,0,0,.28)}
+.chip b{color:var(--bai-accent);font-weight:600}
+.hintbar{position:fixed;bottom:10px;left:50%;transform:translateX(-50%);font-size:10px;color:var(--bai-text-faint);z-index:1}
+.banner{position:fixed;bottom:12px;left:12px;font-size:10px;color:var(--bai-text-faint);background:var(--bai-surface);border:1px solid var(--bai-border);border-radius:6px;padding:4px 8px;z-index:19}
+.toggle{position:fixed;bottom:12px;right:12px;z-index:19}
+.note{margin-top:40px;padding-top:14px;border-top:1px dashed var(--bai-border);font-size:11px;line-height:1.6;color:var(--bai-text-faint)}
+</style></head><body>
+<div class="progress"></div>
+<div class="zone"></div>
+<div class="chrome">
+  <span class="crumb"><b>Sources</b> / Design for How People Think / Wayfinding</span>
+  <span class="pill">extracted</span>
+  <span class="spacer"></span>
+  <button class="a">12 claims</button>
+  <button class="a">Details</button>
+  <button class="a">History</button>
+  <button class="a">Original</button>
+  <button class="a">Edit</button>
+  <button class="a primary">Queue for processing</button>
+</div>
+
+<div class="page">
+  <p class="kicker">Source · book chapter</p>
+  <h1>Wayfinding</h1>
+  <p class="byline">Design for How People Think · John Whalen (2019) · 2,423 characters · converted by docling.rs</p>
+
+  <p><em class="ph">« placeholder excerpt — invented prose in the register of the book; the headings are its real ones »</em></p>
+
+  <p>A common definition of wayfinding is that it is about getting from point A to point B. For the products you build it is richer than that: it is the sum of every cue that tells someone where they are, what is around them, and how to get back.</p>
+
+  <h2>The Six Minds of Experience</h2>
+  <p>The six minds are not six features. They are six questions a person answers continuously, mostly without noticing, and each of them can fail on its own.</p>
+  <table>
+    <thead><tr><th>Mind</th><th>The question it answers</th></tr></thead>
+    <tbody>
+      <tr><td>Vision / Attention</td><td>What should I look at first?</td></tr>
+      <tr><td>Wayfinding</td><td>Where am I, and how do I get where I am going?</td></tr>
+      <tr><td>Memory</td><td>Have I seen this before?</td></tr>
+      <tr><td>Language</td><td>What does this mean?</td></tr>
+      <tr><td>Decision making</td><td>What should I do now?</td></tr>
+      <tr><td>Emotion</td><td>How do I feel about this?</td></tr>
+    </tbody>
+  </table>
+
+  <h3>Vision, Attention, and Automaticity</h3>
+  <p>Attention is a spotlight with a narrow beam and a very short memory. Anything the interface expects a person to find by searching has already cost them something they cannot get back, because finding is serial and looking is parallel.</p>
+
+  <blockquote>The most expensive words in an interface are the ones a person has to read twice.</blockquote>
+
+  <h3>Applying it to a reading surface</h3>
+  <ul>
+    <li>One column, one measure, one place the eye can rest.</li>
+    <li>Landmarks at every scale: a title, a section, a paragraph, a line.</li>
+    <li>Nothing that has to be hunted — if a control matters, it is present or it is one labelled move away.</li>
+  </ul>
+
+  <div class="produced">
+    <h4>What this source produced</h4>
+    <p>12 claims extracted from 2,423 characters · 47 passages not taken</p>
+    <button class="claim">Vocabulary signals expertise — record the words a person uses</button>
+    <button class="claim">Attention is serial; scanning is parallel</button>
+    <button class="claim">Landmarks make a long text navigable</button>
+  </div>
+
+  <p class="note"><strong>Buxton C — immersive, emotional.</strong> The source reads like a document and nothing else: no app bar, no cards, no panels, type set for long reads, and the derived notes arriving as the payoff at the end of the text rather than as a sidebar you never look at. Its permanent chrome is one 2px line, and the bar fades in when the pointer nears the top. Its cost is real: a person who opens a source to <em>check</em> something — the skip rate, the original, whether it is queued — is now hunting for controls that hide themselves, and the app's own navigation has vanished, so “back to work” depends entirely on that summoned bar.</p>
+</div>
+
+<div class="chip">Source · <b>12 claims</b> · <button class="a">back to work</button></div>
+
+<script>// design proposal, awaiting green light. Nothing in the React editor has been changed.
+document.addEventListener("DOMContentLoaded",()=>{
+  const b=document.createElement("button");b.className="btn toggle";b.textContent="light / dark";b.style.cssText="border-radius:8px;padding:6px 12px;font-size:12px;font-weight:500;background:var(--bai-hover);border:1px solid var(--bai-border);color:var(--bai-accent)";
+  b.onclick=()=>{const h=document.documentElement;h.dataset.baiTheme=h.dataset.baiTheme==="light"?"dark":"light"};
+  document.body.appendChild(b);
+  const n=document.createElement("div");n.className="banner";n.textContent="design proposal — awaiting green light — nothing in the React editor has been changed";document.body.appendChild(n);
+  // the progress line tracks the page, so "how far in am I" is a glance
+  const p=document.querySelector(".progress");
+  const tick=()=>{const h=document.documentElement;const max=h.scrollHeight-h.clientHeight;p.style.width=(max>0?Math.min(100,(h.scrollTop/max)*100):0)+"%";};
+  document.addEventListener("scroll",tick,{passive:true});tick();
+});</script></body></html>

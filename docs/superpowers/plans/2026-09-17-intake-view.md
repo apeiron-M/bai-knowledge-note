@@ -15,10 +15,24 @@
 > 1. **Sources are built from the markdown, not from chunk text.** Chunk text flattens tables (measured: a CV's education table came back as `🟤, 1 = … , 2 = …` triplets; the markdown holds the correct 3-column table). `convertFile` asks for `&markdown=1` and gives each section a `content` sliced by its `markdownRange`, falling back to `text` only when the range is null. `publishPlan` sends `content`. (Tasks 4, 6)
 > 2. **The `Section` type carries `mergedFrom` and `markdownRange`**, and the review shows what a merged section contains. Fixtures carry `plan.rejoinedSections`. (Tasks 3, 6, 7, 8)
 > 3. **Task 10 expects 117 sections** for the book, not 107 — the number under the current rule.
-> 4. **Re-publishing is refused, not duplicated.** `POST sources` is *not* idempotent on content (only the queue task is deduped per `documentRef`); a row remembers what it published and the button is disabled afterwards. (Tasks 3, 8)
+> 4. **Re-publishing is refused, not duplicated.** `POST sources` is _not_ idempotent on content (only the queue task is deduped per `documentRef`); a row remembers what it published and the button is disabled afterwards. (Tasks 3, 8)
 > 5. **Furniture is unticked by default.** `isLikelyFurniture(title)` — bracketed titles, praise, contents, index, copyright, colophon, revision history, "how to contact" — leaves those sections unticked; the user can re-tick. Measured on the book: the first two sections at the default floor are `Praise for …` (3.7k chars) and `[ contents ]` (13.7k). (Task 3, spec §13.4)
 > 6. **`VaultApi.get` is defined in Task 2**, where it belongs, not forward-referenced from Task 8.
 > 7. **Empty-vault detection is verified against what `fileNodes` holds** before it decides the default view: the drive app scaffolds twelve folders on first open. (Task 8 step 6)
+>
+> **Added after the design gate (2026-09-17):** the review's section rows **open to a rendered preview of the exact content that will be written** (`section.content` — the markdown slice, tables intact), because the tick was being decided on a title alone; real slices showed a section titled _Wayfinding_ opening with _The Six Minds of Experience_, and _Praise for …_ being the cover blurb. `SectionReview` renders the preview with the existing `markdown-preview.tsx`, collapsed to ~220 px with "Show all"; the content is already in memory from Task 6, so the preview costs no request. Keyboard: ↑/↓ move, space ticks, → opens. The preview footer also offers **"⤢ Full screen"**: a reader overlay (the app's modal pattern — `fixed inset-0 z-50`, `bg-black/60` click-catcher, `--bai-surface` panel) showing the whole part with the tick in its header and ← / → to move to the previous/next part; Esc, ✕, "Back to review" or a click outside closes it and the review is exactly as it was, because an overlay never touches the view behind it. Add a `SectionReader.tsx` component for it. (Task 8 step 4)
+>
+> **Placement changed (2026-09-17):** **no new tab.** The intake is a panel inside the **Sources view** — "＋ Add sources" in its header opens the drop zone, the batch and the review pane sit above the folder list, and an empty vault's Sources view _is_ the landing. The **Sources tab badge** shows how many files need the user (ready for review, or failed), so a book can convert while the user is in Chat and the badge calls them back. Consequence: the batch state (`files`, the bytes map, the running flag) lives **above the view switch** — a `useIntakeBatch()` hook instantiated in `DriveExplorer` and passed down — never inside the Sources view component, or a tab switch would unmount an in-flight conversion. `ViewMode` gains nothing. (Task 8 steps 5–6, spec §4/§6)
+>
+> **The batch has an end (2026-09-17):** when no file is queued, converting, ready for review or failed — every file is in the vault or was removed — the panel collapses to a **completion card**: sources and folders created, the journey strip fully green, one row per folder (linking into Sources), and **Finish**. Finish calls the hook's `reset()` (clears files and bytes, closes the panel); the Sources view is the folder list again with the new folders chipped _new_, and the tab badge is gone. "＋ Add sources" starts a fresh batch. A failed file blocks completion until retried or removed — the panel never quietly drops a file. Mid-batch (some published, others converting) is _not_ the end: published rows stay green in _In the vault_ and the review pane says what happens next. The **badge** counts files that need the user — review-ready + failed — never the batch size. **"Show all" is dropped** from the inline preview: it is a fixed-height glimpse, and "⤢ Read the whole part" (the reader overlay) is the one way to read all of it. (Task 8 steps 4–6; `use-intake-batch.ts` gains `isComplete`, `reset()`)
+>
+> **Card feel + fixes from the live test (2026-09-17):** `IntakePanel` is wrapped in one distinct frame (`--bai-deep` ground, an accent-tinted hairline, `box-shadow: 0 0 0 4px var(--bai-accent-soft)`) so it reads as a card sitting above the plain folder-list cards below it, not as loose sections on the same background. The goal header and the list/review split are laid out with inline flex styles rather than `sm:`/`lg:` utility variants — **this app does not generate responsive Tailwind classes** (measured: only 3 pre-existing uses in the whole editor, and the intake's `sm:flex-row` / `lg:flex-row` etc. rendered as if absent, stacking a header meant to be a row and putting the review pane below the list instead of beside it). Every `w-[Npx]` / `max-h-[…]` / `z-[100]` arbitrary-value class is inline `style` for the same reason — untested against this build. The section-review chevron became a labelled **Preview / Hide** button with a chevron icon (was a bare 10px glyph, too small to see as a control). `SectionReader`/`ConfirmDialog` render through `createPortal(…, document.body)` — inside the review pane they sat in the Sources list's own stacking context and its filter bar painted over them. Scroll containers (`SectionReview`'s list, `SectionReader`'s body) carry the app's `scrollbar-thin` class, matching every other scrollable panel.
+>
+> **OCR routing (2026-09-18).** The intake no longer waits on an automatic 163-second OCR pass. The service decides how to read a PDF from the file and the machine (convert spec §5.1, "How a PDF gets read"): a text layer pdfium cannot read is taken from pdf.js in under a second (`textSource: "pdfjs"`; the review says headings/tables were unavailable); a real scan goes to Tesseract when `ocrmypdf` is detected, else to docling's OCR when cheap enough, else it is **offered** — the row reads "Its text can't be read as it is — OCR would take ~N" with a **Run OCR** button (`forceOcr` on the row → `?ocr=1`), counted in the badge as needing the user. `CONVERT_BUSY` from the service re-queues the row after 8 s instead of failing it. The landing's capability line comes from `/health.ocrEngine`. (`intake-model.ts`: `needsOcr`, `forceOcr`, `needsOcrDecision`; `use-intake-batch.ts`: `onRunOcr`; `FileRow`, `IntakePanel`, `SectionReview`, `IntakeLanding`.)
+>
+> **Attachment failure, root-caused (2026-09-18).** A published source (`003a6db3…`) came out with `originalFile: null` and an operation log of exactly `INGEST_SOURCE`, `SET_SOURCE_STATUS` — no `ATTACH_ORIGINAL_FILE` at all. `publishFile` hashes once per file _before_ creating anything, so a throw in `prepare()` skipped the whole attach block for every source of that file. The throw was `"AttachmentClient not available"`: `setAttachmentService()` does not write `window.ph.attachmentService`, it dispatches a `ph:setAttachmentService` DOM event that a separately registered handler turns into the value `useAttachmentService()` reads; `useAttachmentUpload()`'s `preprocess` closes over the client of _that_ render, and the intake's port — memoised once in `DriveExplorer` — captured it before the round-trip landed. Proven the other way round headlessly: `createRemoteAttachmentService` → `createAttachmentClient` → `preprocess(File)` → `upload` against the live Switchboard succeeds with a bearer (`status: available`) and fails `401` without one, so server, auth and client are sound. **Fix:** `lib/attachments.ts` resolves the service at call time (`getAttachmentService()`: Connect's, else one this module created and keeps a reference to) and builds the client with `createAttachmentClient` inside `prepare`/`upload` — no hook timing, no dependency on the event handler. Also passes a named `File` instead of a bare `Blob`, which the client would have recorded as `fileName: "attachment"`. **And the missing half of the reference pattern:** `SourceDocumentCard` has a no-document branch (upload button); `OriginalFilePanel` rendered `null` for `originalFile == null`, leaving a source that lost its attachment with no way to get one — it now offers **Attach original file**, dispatched straight onto the document from the source editor through the same port. (Task 9)
+>
+> **Cancel flow (2026-09-17, from the live test):** the panel header carries **Cancel** whenever a batch exists and is not complete. Confirmed in the app's modal (`ConfirmDialog`, through a portal): with nothing published it discards every file and closes the panel; with some published it keeps those (they are documents now) and discards the rest, so the summary card with Finish is what remains. A review-ready row also has **Remove**. `discardUnpublished()` in the model (tested), `cancel()` on the hook. **Overlays go through `createPortal` to `document.body`**: rendered inside the review pane, the Sources filter bar painted over the section reader (measured in the live test). (Task 8 steps 4–5)
 >
 > **Default changed:** `defaultSourceType` is **format-driven and never `BOOK_CHAPTER`** — `html`/`htm` ⇒ `WEB_PAGE`, `vtt`/audio/video ⇒ `TRANSCRIPT`, everything else ⇒ `ARTICLE`; per file, overridable. A section count is a shape, not a genre: a two-section CV is not a book.
 >
@@ -26,12 +40,12 @@
 
 ## Global Constraints
 
-- **The vault's vocabulary wins at the UI surface.** *source*, *folder*, *Queue for processing*, `INBOX`/`EXTRACTING`/`EXTRACTED`/`ARCHIVED`. Never "chunk", never "document upload" — a raw chunk is a *part*, and what the user approves becomes *sources*.
+- **The vault's vocabulary wins at the UI surface.** _source_, _folder_, _Queue for processing_, `INBOX`/`EXTRACTING`/`EXTRACTED`/`ARCHIVED`. Never "chunk", never "document upload" — a raw chunk is a _part_, and what the user approves becomes _sources_.
 - **Colour comes only from the CSS variables**: `--bai-bg`, `--bai-deep`, `--bai-surface`, `--bai-hover`, `--bai-border`, `--bai-text`, `--bai-text-secondary`, `--bai-text-tertiary`, `--bai-text-muted`, `--bai-text-faint`, `--bai-accent`. Tailwind is for layout and size only.
 - **Pseudo-classes live in a scoped `<style>` block** with stable class names, because inline styles cannot express `:hover`.
 - **`bun`, never npm or yarn.** Commands: `bun run test <path>`, `bun run tsc`, `bun run lint`, `bun run test:coverage`.
-- **The lint gate is errors, not warnings.** `oxlint --type-aware --type-check` exits 0 with warnings; a new *error* is a failure. Never add a suppression comment to get past it.
-- **The upload cap is 30 MB per file** (`MAX_UPLOAD_BYTES = 30 * 1024 * 1024`) and the service's own cap is 256 MB. The browser must refuse an over-size file *before* the request.
+- **The lint gate is errors, not warnings.** `oxlint --type-aware --type-check` exits 0 with warnings; a new _error_ is a failure. Never add a suppression comment to get past it.
+- **The upload cap is 30 MB per file** (`MAX_UPLOAD_BYTES = 30 * 1024 * 1024`) and the service's own cap is 256 MB. The browser must refuse an over-size file _before_ the request.
 - **The file picker's formats come from the server** (`GET …/convert/health` → `formats`), never a hard-coded list.
 - **Never show a percentage that was not measured.** Tier 1 progress is per-file state and elapsed time.
 - **Nothing is created until the user approves** — `POST convert` writes nothing, and publish is the only write.
@@ -44,27 +58,29 @@
 
 New, all under `editors/knowledge-vault/`:
 
-| file | responsibility |
-|---|---|
-| `lib/vault-api.ts` | One authenticated call helper for the vault REST routes. Knows the URL shape, the bearer header, and how a refusal maps to a typed error. |
-| `lib/intake-model.ts` | The pure flow model: file rows, their state machine, section selection, size/format validation, derived counts. No React, no fetch. |
-| `lib/intake-publish.ts` | Pure publishing rules: folder-name derivation, section titles with fallbacks, the publish plan for a file. |
-| `lib/intake-service.ts` | The impure orchestration: convert one file, publish one file. Takes the api and attachment client as arguments so tests can assert the *call sequence*. |
-| `lib/mime.ts` | `isBrowserRenderable` — preview-or-download. |
-| `components/intake/IntakeView.tsx` | The view: owns the model state, sequences the batch, renders the four stages. |
-| `components/intake/IntakeLanding.tsx` | The empty-vault welcome, on `LandingStage`. |
-| `components/intake/UploadSurface.tsx` | Picker + drop zone + per-file validation feedback. |
-| `components/intake/ConversionQueue.tsx` | Per-file progress rows (Tier 1). |
-| `components/intake/SectionReview.tsx` | The section list, tick/untick, per-file type and folder name. |
-| `components/OriginalFilePanel.tsx` | Render-or-download for an attached original; used by the review and the source editor. |
+| file                                    | responsibility                                                                                                                                                                                                                                                                                                            |
+| --------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `lib/vault-api.ts`                      | One authenticated call helper for the vault REST routes. Knows the URL shape, the bearer header, and how a refusal maps to a typed error.                                                                                                                                                                                 |
+| `lib/intake-model.ts`                   | The pure flow model: file rows, their state machine, section selection, size/format validation, derived counts. No React, no fetch.                                                                                                                                                                                       |
+| `lib/intake-publish.ts`                 | Pure publishing rules: folder-name derivation, section titles with fallbacks, the publish plan for a file.                                                                                                                                                                                                                |
+| `lib/intake-service.ts`                 | The impure orchestration: convert one file, publish one file. Takes the api and attachment client as arguments so tests can assert the _call sequence_.                                                                                                                                                                   |
+| `lib/mime.ts`                           | `isBrowserRenderable` — preview-or-download.                                                                                                                                                                                                                                                                              |
+| `hooks/use-intake-batch.ts`             | The batch state and its scheduler (files, bytes, single-flight conversion, publish), hoisted so it survives view switches. Exposes `needsUser` (review-ready + failed) for the badge, `isComplete` (every file in the vault or removed, none failed) for the completion card, `open`/`reset()` for the panel's lifecycle. |
+| `components/intake/IntakePanel.tsx`     | The panel inside the Sources view: goal header + drop zone, grouped file rows with journey strips, the review pane beside them. Renders from the hook's state.                                                                                                                                                            |
+| `components/intake/IntakeLanding.tsx`   | The empty-vault welcome, on `LandingStage`.                                                                                                                                                                                                                                                                               |
+| `components/intake/UploadSurface.tsx`   | Picker + drop zone + per-file validation feedback.                                                                                                                                                                                                                                                                        |
+| `components/intake/ConversionQueue.tsx` | Per-file progress rows (Tier 1).                                                                                                                                                                                                                                                                                          |
+| `components/intake/SectionReview.tsx`   | The section list, tick/untick, per-file type and folder name.                                                                                                                                                                                                                                                             |
+| `components/OriginalFilePanel.tsx`      | Render-or-download for an attached original; used by the review and the source editor.                                                                                                                                                                                                                                    |
 
 Modified:
 
-| file | change |
-|---|---|
-| `components/DriveExplorer.tsx` | `ViewMode` gains `"intake"`; a `TABS` entry; the content switch branch; the conditional default view. |
-| `components/GettingStarted.tsx` | The quick-start step gains "or bring a document in". |
-| `editors/source-editor/editor.tsx` | Renders `<OriginalFilePanel>` for a source that has an original. |
+| file                               | change                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   |
+| ---------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `components/DriveExplorer.tsx`     | instantiates `useIntakeBatch()` once (state above the view switch); passes it to `SourceList`; the Sources `TABS` entry gets `badge: batch.needsUser` (files ready for review or failed); the empty-vault default view becomes `"sources"`. **No new `ViewMode`, no new tab.**                                                                                                                                                                                                                                                                                                                           |
+| `components/SourceList.tsx`        | hosts the intake: "＋ Add sources" beside "Ingest Source" (renamed "Paste text"); renders `<IntakePanel>` above the folder list when the batch is non-empty or the user opened the drop zone; the empty state becomes `<IntakeLanding>`. **Folder and source rows become cards** (design gate, `final.html#finished`): folder — lifted `--bai-surface`, accent folder glyph, bold name with trailing `/`, count, status pill, _Open_; source — indented under its folder, grey page glyph, title, chars, status pill (`extracting` warn / `extracted` ok). Same card language as the completion summary. |
+| `components/GettingStarted.tsx`    | The quick-start step gains "or bring a document in".                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     |
+| `editors/source-editor/editor.tsx` | Renders `<OriginalFilePanel>` for a source that has an original.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         |
 
 Tests live beside the module they test (`lib/*.test.ts`), as every other test in this editor does.
 
@@ -75,6 +91,7 @@ Tests live beside the module they test (`lib/*.test.ts`), as every other test in
 The house pattern for a new view, and it comes first: three self-contained concept HTMLs plus an index, so the shape is approved before any React changes.
 
 **Files:**
+
 - Create: `docs/design/intake/index.html`
 - Create: `docs/design/intake/a-queue-as-shell.html`
 - Create: `docs/design/intake/b-stepper.html`
@@ -82,6 +99,7 @@ The house pattern for a new view, and it comes first: three self-contained conce
 - Create: `docs/design/intake/README.md`
 
 **Interfaces:**
+
 - Consumes: nothing. Static HTML, the vault's real tokens copied in.
 - Produces: the approved shape for Tasks 7–8. **Nothing in the React editor changes until this is accepted** — the header of every file says so.
 
@@ -92,10 +110,17 @@ Each concept file is self-contained (no build step, no external CSS) and opens w
 ```html
 <style>
   :root {
-    --bai-bg: #0b0d10; --bai-deep: #0f1216; --bai-surface: #14181d;
-    --bai-hover: #1b2027; --bai-border: #262c34; --bai-text: #e8eaed;
-    --bai-text-secondary: #b9bfc7; --bai-text-tertiary: #8b929c;
-    --bai-text-muted: #6b7280; --bai-text-faint: #4b525c; --bai-accent: #7dd3fc;
+    --bai-bg: #0b0d10;
+    --bai-deep: #0f1216;
+    --bai-surface: #14181d;
+    --bai-hover: #1b2027;
+    --bai-border: #262c34;
+    --bai-text: #e8eaed;
+    --bai-text-secondary: #b9bfc7;
+    --bai-text-tertiary: #8b929c;
+    --bai-text-muted: #6b7280;
+    --bai-text-faint: #4b525c;
+    --bai-accent: #7dd3fc;
   }
 </style>
 ```
@@ -151,10 +176,12 @@ approved. The point of the gate is that the shape is theirs.
 ### Task 2: `lib/vault-api.ts` — one authenticated call helper
 
 **Files:**
+
 - Create: `editors/knowledge-vault/lib/vault-api.ts`
 - Test: `editors/knowledge-vault/lib/vault-api.test.ts`
 
 **Interfaces:**
+
 - Consumes: `resolveSwitchboardOrigin()` from `editors/shared/subgraph-endpoint.ts`; `authHeaders()` from `editors/shared/authed-fetch.ts`.
 - Produces:
   - `type VaultApiError = { status: number; code: string; message: string }`
@@ -222,7 +249,10 @@ describe("createVaultApi", () => {
     const fetchImpl = (() =>
       Promise.resolve(
         new Response(
-          JSON.stringify({ error: "name is one folder, not a path", code: "BAD_REQUEST" }),
+          JSON.stringify({
+            error: "name is one folder, not a path",
+            code: "BAD_REQUEST",
+          }),
           { status: 400, headers: { "content-type": "application/json" } },
         ),
       )) as unknown as typeof fetch;
@@ -241,7 +271,9 @@ describe("createVaultApi", () => {
   it("survives a refusal that is not JSON", async () => {
     // A proxy or a crashed Switchboard answers HTML or nothing at all.
     const fetchImpl = (() =>
-      Promise.resolve(new Response("<html>502</html>", { status: 502 }))) as unknown as typeof fetch;
+      Promise.resolve(
+        new Response("<html>502</html>", { status: 502 }),
+      )) as unknown as typeof fetch;
     const api = createVaultApi({ fetchImpl, origin: "http://localhost:4001" });
     await expect(api.post("/sources", {})).rejects.toMatchObject({
       status: 502,
@@ -250,7 +282,8 @@ describe("createVaultApi", () => {
   });
 
   it("turns a network failure into a typed failure rather than a raw TypeError", async () => {
-    const fetchImpl = (() => Promise.reject(new Error("fetch failed"))) as unknown as typeof fetch;
+    const fetchImpl = (() =>
+      Promise.reject(new Error("fetch failed"))) as unknown as typeof fetch;
     const api = createVaultApi({ fetchImpl, origin: "http://localhost:4001" });
     await expect(api.post("/sources", {})).rejects.toMatchObject({
       status: 0,
@@ -327,7 +360,8 @@ export function createVaultApi(
 ): VaultApi {
   const doFetch = options.fetchImpl ?? fetch;
   const origin = trimOrigin(options.origin ?? resolveSwitchboardOrigin() ?? "");
-  const url = (path: string) => `${origin}/api/${PACKAGE}/${path.replace(/^\/+/, "")}`;
+  const url = (path: string) =>
+    `${origin}/api/${PACKAGE}/${path.replace(/^\/+/, "")}`;
 
   // One send for every verb, so the error handling and the URL shape exist once.
   async function send<T>(fullUrl: string, init: RequestInit): Promise<T> {
@@ -359,12 +393,18 @@ export function createVaultApi(
 
   return {
     async get<T>(path: string): Promise<T> {
-      return send<T>(url(path), { method: "GET", headers: await authHeaders() });
+      return send<T>(url(path), {
+        method: "GET",
+        headers: await authHeaders(),
+      });
     },
     async post<T>(path: string, body: unknown): Promise<T> {
       return send<T>(url(path), {
         method: "POST",
-        headers: { ...(await authHeaders()), "content-type": "application/json" },
+        headers: {
+          ...(await authHeaders()),
+          "content-type": "application/json",
+        },
         body: JSON.stringify(body),
       });
     },
@@ -404,10 +444,12 @@ its states, what is selected, and what is publishable. This is where the flow is
 actually decided, so this is where the tests are.
 
 **Files:**
+
 - Create: `editors/knowledge-vault/lib/intake-model.ts`
 - Test: `editors/knowledge-vault/lib/intake-model.test.ts`
 
 **Interfaces:**
+
 - Consumes: the convert route's `Section` shape (`title`, `headingPath`, `text`, `charCount`, `chunks`, `mergedFrom[]`, `markdownRange | null`) plus the `content` Task 6 derives from the markdown.
 - Produces:
   - `type Section = { title; headingPath; text; content; charCount; chunks; mergedFrom: { title; headingPath; charCount }[]; markdownRange: { start; end } | null }`
@@ -487,9 +529,10 @@ describe("validateFile", () => {
 
 describe("addFiles", () => {
   it("adds rows as queued, typed by format, with no sections yet", () => {
-    const files = addFiles([], [
-      { name: "book.pdf", size: 10, mimeType: "application/pdf" },
-    ]);
+    const files = addFiles(
+      [],
+      [{ name: "book.pdf", size: 10, mimeType: "application/pdf" }],
+    );
     expect(files).toHaveLength(1);
     expect(files[0].state).toBe("queued");
     expect(files[0].selected).toEqual([]);
@@ -498,10 +541,13 @@ describe("addFiles", () => {
   });
 
   it("gives each row a distinct id", () => {
-    const files = addFiles([], [
-      { name: "a.pdf", size: 1, mimeType: "application/pdf" },
-      { name: "b.pdf", size: 1, mimeType: "application/pdf" },
-    ]);
+    const files = addFiles(
+      [],
+      [
+        { name: "a.pdf", size: 1, mimeType: "application/pdf" },
+        { name: "b.pdf", size: 1, mimeType: "application/pdf" },
+      ],
+    );
     expect(new Set(files.map((f) => f.id)).size).toBe(2);
   });
 
@@ -526,13 +572,24 @@ describe("the state machine", () => {
     mergedFrom: [],
     markdownRange: null,
   });
-  const plan = { cutLevel: 1, splitSections: 0, mergedSections: 0, rejoinedSections: 0, minSectionChars: 2000 };
+  const plan = {
+    cutLevel: 1,
+    splitSections: 0,
+    mergedSections: 0,
+    rejoinedSections: 0,
+    minSectionChars: 2000,
+  };
 
   /** The same file, converted, with two sections. */
   const twoSections = () =>
     setState(one(), one()[0].id, {
       state: "converted",
-      converted: { filename: "book.pdf", format: "pdf", plan, sections: [sec("One", "a"), sec("Two", "b")] },
+      converted: {
+        filename: "book.pdf",
+        format: "pdf",
+        plan,
+        sections: [sec("One", "a"), sec("Two", "b")],
+      },
     });
 
   it("carries a conversion result and ticks every section by default", () => {
@@ -555,7 +612,11 @@ describe("the state machine", () => {
         filename: "book.pdf",
         format: "pdf",
         plan,
-        sections: [sec("Praise for Design for How People Think", "…"), sec("[ contents ]", "…"), sec("Emotion", "…")],
+        sections: [
+          sec("Praise for Design for How People Think", "…"),
+          sec("[ contents ]", "…"),
+          sec("Emotion", "…"),
+        ],
       },
     });
     expect(files[0].selected).toEqual([false, false, true]);
@@ -594,10 +655,13 @@ describe("the state machine", () => {
 
 describe("scheduling", () => {
   const two = () =>
-    addFiles([], [
-      { name: "a.pdf", size: 1, mimeType: "application/pdf" },
-      { name: "b.pdf", size: 1, mimeType: "application/pdf" },
-    ]);
+    addFiles(
+      [],
+      [
+        { name: "a.pdf", size: 1, mimeType: "application/pdf" },
+        { name: "b.pdf", size: 1, mimeType: "application/pdf" },
+      ],
+    );
 
   it("picks the first queued file, so the batch runs in the order it was added", () => {
     const files = two();
@@ -611,7 +675,8 @@ describe("scheduling", () => {
 
   it("has nothing to do once every file has settled", () => {
     let files = two();
-    for (const f of files) files = setState(files, f.id, { state: "converted" });
+    for (const f of files)
+      files = setState(files, f.id, { state: "converted" });
     expect(nextQueued(files)).toBeUndefined();
   });
 
@@ -641,7 +706,13 @@ describe("defaultSourceType", () => {
   });
 
   it("calls everything else an article, and never a book chapter", () => {
-    for (const name of ["book.pdf", "notes.md", "report.docx", "data.csv", "README"]) {
+    for (const name of [
+      "book.pdf",
+      "notes.md",
+      "report.docx",
+      "data.csv",
+      "README",
+    ]) {
       expect(defaultSourceType(name)).toBe("ARTICLE");
     }
   });
@@ -668,7 +739,13 @@ describe("isLikelyFurniture", () => {
   });
 
   it("does not flag a chapter", () => {
-    for (const title of ["Emotion", "Wayfinding", "Core Competencies", "Selected Projects", "Design for How People Think — front matter"]) {
+    for (const title of [
+      "Emotion",
+      "Wayfinding",
+      "Core Competencies",
+      "Selected Projects",
+      "Design for How People Think — front matter",
+    ]) {
       expect(isLikelyFurniture(title)).toBe(false);
     }
   });
@@ -705,7 +782,11 @@ export const SECTION_TYPES = [
 ] as const;
 
 /** A group the section rule folded into a section — kept so the fold is visible. */
-export type SectionPart = { title: string; headingPath: string[]; charCount: number };
+export type SectionPart = {
+  title: string;
+  headingPath: string[];
+  charCount: number;
+};
 
 /**
  * A section as the convert route returns it, plus `content`.
@@ -838,7 +919,10 @@ export function validateFile(
   const dot = file.name.lastIndexOf(".");
   const ext = dot > 0 ? file.name.slice(dot + 1).toLowerCase() : "";
   if (!ext) {
-    return { ok: false, reason: `“${file.name}” has no file extension, so its format cannot be told.` };
+    return {
+      ok: false,
+      reason: `“${file.name}” has no file extension, so its format cannot be told.`,
+    };
   }
   if (!formats.some((f) => f.toLowerCase() === ext)) {
     return {
@@ -861,14 +945,22 @@ export function setState(
     // exists so the user can disagree, not so they must do the work, and
     // culling `[ contents ]` by hand is work.
     if (patch.converted) {
-      next.selected = patch.converted.sections.map((s) => !isLikelyFurniture(s.title));
+      next.selected = patch.converted.sections.map(
+        (s) => !isLikelyFurniture(s.title),
+      );
     }
     return next;
   });
 }
 
-export function markPublished(files: IntakeFile[], id: string, sourceIds: string[]): IntakeFile[] {
-  return files.map((f) => (f.id === id ? { ...f, publishedIds: sourceIds } : f));
+export function markPublished(
+  files: IntakeFile[],
+  id: string,
+  sourceIds: string[],
+): IntakeFile[] {
+  return files.map((f) =>
+    f.id === id ? { ...f, publishedIds: sourceIds } : f,
+  );
 }
 
 export function toggleSection(
@@ -912,7 +1004,19 @@ export function nextQueued(files: IntakeFile[]): IntakeFile | undefined {
   return files.find((f) => f.state === "queued");
 }
 
-const TRANSCRIPT_EXTENSIONS = new Set(["vtt", "srt", "mp3", "wav", "m4a", "ogg", "flac", "mp4", "webm", "mkv", "mov"]);
+const TRANSCRIPT_EXTENSIONS = new Set([
+  "vtt",
+  "srt",
+  "mp3",
+  "wav",
+  "m4a",
+  "ogg",
+  "flac",
+  "mp4",
+  "webm",
+  "mkv",
+  "mov",
+]);
 
 /**
  * By format, never by section count. A two-section CV is not a book and a
@@ -958,10 +1062,12 @@ What actually gets created, and what the vault's routes will refuse. All pure,
 because these are the rules a reviewer would reject the flow over.
 
 **Files:**
+
 - Create: `editors/knowledge-vault/lib/intake-publish.ts`
 - Test: `editors/knowledge-vault/lib/intake-publish.test.ts`
 
 **Interfaces:**
+
 - Consumes: `folderNameFor` from `intake-model.ts` (Task 3); `IntakeFile`, `Section` types.
 - Produces:
   - `sanitiseFolderName(raw: string): string`
@@ -974,7 +1080,11 @@ because these are the rules a reviewer would reject the flow over.
 ```ts
 import { describe, expect, it } from "vitest";
 import type { IntakeFile, Section } from "./intake-model.js";
-import { publishPlan, sanitiseFolderName, sectionTitle } from "./intake-publish.js";
+import {
+  publishPlan,
+  sanitiseFolderName,
+  sectionTitle,
+} from "./intake-publish.js";
 
 const section = (title: string, text: string, content = text): Section => ({
   title,
@@ -986,7 +1096,13 @@ const section = (title: string, text: string, content = text): Section => ({
   mergedFrom: [],
   markdownRange: null,
 });
-const plan = { cutLevel: 1, splitSections: 0, mergedSections: 0, rejoinedSections: 0, minSectionChars: 2000 };
+const plan = {
+  cutLevel: 1,
+  splitSections: 0,
+  mergedSections: 0,
+  rejoinedSections: 0,
+  minSectionChars: 2000,
+};
 
 const file = (over: Partial<IntakeFile> = {}): IntakeFile => ({
   id: "f1",
@@ -1048,7 +1164,9 @@ describe("publishPlan", () => {
 
   it("carries the file's type onto every source", () => {
     const plan = publishPlan(file({ selected: [true, true] }));
-    expect(plan.sources.every((s) => s.sourceType === "BOOK_CHAPTER")).toBe(true);
+    expect(plan.sources.every((s) => s.sourceType === "BOOK_CHAPTER")).toBe(
+      true,
+    );
   });
 
   it("skips a section with no content, and counts it, because content is required", () => {
@@ -1059,7 +1177,11 @@ describe("publishPlan", () => {
           filename: "b.pdf",
           format: "pdf",
           plan,
-          sections: [section("One", "first"), section("Two", "   "), section("Three", "third")],
+          sections: [
+            section("One", "first"),
+            section("Two", "   "),
+            section("Three", "third"),
+          ],
         },
       }),
     );
@@ -1077,11 +1199,19 @@ describe("publishPlan", () => {
           filename: "cv.pdf",
           format: "pdf",
           plan,
-          sections: [section("Education", "🟤, 1 = Academy. , 2 = 2016", "## Education\n\n| Academy | 2016 |")],
+          sections: [
+            section(
+              "Education",
+              "🟤, 1 = Academy. , 2 = 2016",
+              "## Education\n\n| Academy | 2016 |",
+            ),
+          ],
         },
       }),
     );
-    expect(result.sources[0].content).toBe("## Education\n\n| Academy | 2016 |");
+    expect(result.sources[0].content).toBe(
+      "## Education\n\n| Academy | 2016 |",
+    );
   });
 
   it("produces an empty plan when nothing is ticked", () => {
@@ -1131,10 +1261,7 @@ import type { IntakeFile, Section } from "./intake-model.js";
 const MAX_NAME = 120;
 
 export function sanitiseFolderName(raw: string): string {
-  const cleaned = raw
-    .replace(/[/\\]/g, "-")
-    .replace(/\s+/g, " ")
-    .trim();
+  const cleaned = raw.replace(/[/\\]/g, "-").replace(/\s+/g, " ").trim();
   if (!cleaned) return "Untitled";
   return cleaned.slice(0, MAX_NAME).trim() || "Untitled";
 }
@@ -1216,10 +1343,12 @@ git commit -m "feat(intake): what gets created — folder names, titles, the pub
 ### Task 5: `lib/mime.ts` — preview or download
 
 **Files:**
+
 - Create: `editors/knowledge-vault/lib/mime.ts`
 - Test: `editors/knowledge-vault/lib/mime.test.ts`
 
 **Interfaces:**
+
 - Consumes: nothing.
 - Produces: `isBrowserRenderable(mimeType: string | null | undefined): boolean`, `formatFileSize(bytes: number | null | undefined): string`.
 
@@ -1249,7 +1378,11 @@ describe("isBrowserRenderable", () => {
   });
 
   it("downloads what the browser cannot render", () => {
-    expect(isBrowserRenderable("application/vnd.openxmlformats-officedocument.wordprocessingml.document")).toBe(false);
+    expect(
+      isBrowserRenderable(
+        "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+      ),
+    ).toBe(false);
     expect(isBrowserRenderable("application/epub+zip")).toBe(false);
     expect(isBrowserRenderable("text/csv")).toBe(false);
   });
@@ -1364,12 +1497,14 @@ method. The filename goes through `encodeURIComponent`, which yields `%20` and
 not `+` — a mistake this plan's predecessor already made and recorded.
 
 **Files:**
+
 - Modify: `editors/knowledge-vault/lib/vault-api.ts`
 - Modify: `editors/knowledge-vault/lib/vault-api.test.ts`
 - Create: `editors/knowledge-vault/lib/intake-service.ts`
 - Test: `editors/knowledge-vault/lib/intake-service.test.ts`
 
 **Interfaces:**
+
 - Consumes: `VaultApi` (Task 2), `ConvertedFile` (Task 3).
 - Produces:
   - `VaultApi` gains `postRaw<T>(path: string, bytes: Uint8Array, options?: { contentType?: string }): Promise<T>`
@@ -1502,7 +1637,8 @@ import { describe, expect, it } from "vitest";
 import type { VaultApi } from "./vault-api.js";
 import { convertFile } from "./intake-service.js";
 
-const markdown = "## Core Competencies\n\nskills\n\n## Education\n\n| Academy | 2016 |\n";
+const markdown =
+  "## Core Competencies\n\nskills\n\n## Education\n\n| Academy | 2016 |\n";
 const summary = {
   filename: "Book chapter.pdf",
   format: "pdf",
@@ -1510,15 +1646,35 @@ const summary = {
   chunks: 55,
   sections: [
     {
-      title: "Core Competencies", headingPath: ["Core Competencies"], text: "skills", charCount: 6, chunks: [0],
-      mergedFrom: [], markdownRange: { start: 0, end: markdown.indexOf("## Education") },
+      title: "Core Competencies",
+      headingPath: ["Core Competencies"],
+      text: "skills",
+      charCount: 6,
+      chunks: [0],
+      mergedFrom: [],
+      markdownRange: { start: 0, end: markdown.indexOf("## Education") },
     },
     {
-      title: "Education", headingPath: ["Education"], text: "Academy, 1 = 2016", charCount: 17, chunks: [1],
-      mergedFrom: [], markdownRange: { start: markdown.indexOf("## Education"), end: markdown.length },
+      title: "Education",
+      headingPath: ["Education"],
+      text: "Academy, 1 = 2016",
+      charCount: 17,
+      chunks: [1],
+      mergedFrom: [],
+      markdownRange: {
+        start: markdown.indexOf("## Education"),
+        end: markdown.length,
+      },
     },
   ],
-  plan: { cutLevel: 1, splitSections: 0, mergedSections: 0, rejoinedSections: 0, ceiling: 40000, minSectionChars: 2000 },
+  plan: {
+    cutLevel: 1,
+    splitSections: 0,
+    mergedSections: 0,
+    rejoinedSections: 0,
+    ceiling: 40000,
+    minSectionChars: 2000,
+  },
   markdown,
   timings: { convertMs: 1, chunkMs: 1, totalMs: 2 },
 };
@@ -1539,9 +1695,14 @@ describe("convertFile", () => {
   it("asks the convert route for this filename and the markdown, with the bytes", async () => {
     const { api, calls } = recordingApi();
     const bytes = new Uint8Array([1, 2, 3]);
-    const result = await convertFile({ name: "Book chapter.pdf", bytes }, { api });
+    const result = await convertFile(
+      { name: "Book chapter.pdf", bytes },
+      { api },
+    );
 
-    expect(calls[0].path).toBe("/convert?filename=Book%20chapter.pdf&markdown=1");
+    expect(calls[0].path).toBe(
+      "/convert?filename=Book%20chapter.pdf&markdown=1",
+    );
     expect(calls[0].bytes).toBe(bytes);
     expect(result.sections).toHaveLength(2);
     expect(result.format).toBe("pdf");
@@ -1550,9 +1711,16 @@ describe("convertFile", () => {
 
   it("gives each section the markdown slice as content, so tables survive", async () => {
     const { api } = recordingApi();
-    const result = await convertFile({ name: "cv.pdf", bytes: new Uint8Array() }, { api });
-    expect(result.sections[1].content).toBe("## Education\n\n| Academy | 2016 |\n");
-    expect(result.sections[0].content).toBe("## Core Competencies\n\nskills\n\n");
+    const result = await convertFile(
+      { name: "cv.pdf", bytes: new Uint8Array() },
+      { api },
+    );
+    expect(result.sections[1].content).toBe(
+      "## Education\n\n| Academy | 2016 |\n",
+    );
+    expect(result.sections[0].content).toBe(
+      "## Core Competencies\n\nskills\n\n",
+    );
     // The chunk text is kept beside it, for display and as the fallback.
     expect(result.sections[1].text).toBe("Academy, 1 = 2016");
   });
@@ -1562,13 +1730,19 @@ describe("convertFile", () => {
       ...summary,
       sections: [{ ...summary.sections[0], markdownRange: null }],
     });
-    const result = await convertFile({ name: "cv.pdf", bytes: new Uint8Array() }, { api });
+    const result = await convertFile(
+      { name: "cv.pdf", bytes: new Uint8Array() },
+      { api },
+    );
     expect(result.sections[0].content).toBe("skills");
   });
 
   it("encodes a filename that would otherwise break the query string", async () => {
     const { api, calls } = recordingApi();
-    await convertFile({ name: "Q&A #1 (final).pdf", bytes: new Uint8Array() }, { api });
+    await convertFile(
+      { name: "Q&A #1 (final).pdf", bytes: new Uint8Array() },
+      { api },
+    );
     expect(calls[0].path).toBe(
       `/convert?filename=${encodeURIComponent("Q&A #1 (final).pdf")}&markdown=1`,
     );
@@ -1597,7 +1771,11 @@ Expected: FAIL — module not found.
 - [ ] **Step 6: Implement `convertFile`**
 
 ```ts
-import type { ConvertedFile, Section, SectionPlanSummary } from "./intake-model.js";
+import type {
+  ConvertedFile,
+  Section,
+  SectionPlanSummary,
+} from "./intake-model.js";
 import type { VaultApi } from "./vault-api.js";
 
 /**
@@ -1691,10 +1869,12 @@ The write half, and the one with an ordering rule: the attachment ref is known
 happens once for the whole document.
 
 **Files:**
+
 - Modify: `editors/knowledge-vault/lib/intake-service.ts`
 - Modify: `editors/knowledge-vault/lib/intake-service.test.ts`
 
 **Interfaces:**
+
 - Consumes: `publishPlan` (Task 4), `VaultApi` (Task 2/6), `IntakeFile` (Task 3).
 - Produces:
   - `type AttachmentPort = { prepare(file: { name: string; mimeType: string; bytes: Uint8Array }): Promise<{ ref: string }>; upload(prepared: { ref: string }): Promise<void>; }`
@@ -1710,11 +1890,20 @@ function publishApi() {
     post: (path: string, body: unknown) => {
       calls.push({ path, body });
       if (path === "/sources/folders") {
-        return Promise.resolve({ id: "folder-1", name: "Book", path: "/sources/Book", created: true });
+        return Promise.resolve({
+          id: "folder-1",
+          name: "Book",
+          path: "/sources/Book",
+          created: true,
+        });
       }
       if (path === "/sources") {
         const n = calls.filter((c) => c.path === "/sources").length;
-        return Promise.resolve({ id: `source-${n}`, status: "EXTRACTING", task: { id: "t1" } });
+        return Promise.resolve({
+          id: `source-${n}`,
+          status: "EXTRACTING",
+          task: { id: "t1" },
+        });
       }
       return Promise.resolve({ revision: 2 });
     },
@@ -1735,10 +1924,34 @@ const convertedFile = (over: Partial<IntakeFile> = {}): IntakeFile => ({
   converted: {
     filename: "Book.pdf",
     format: "pdf",
-    plan: { cutLevel: 1, splitSections: 0, mergedSections: 0, rejoinedSections: 0, minSectionChars: 2000 },
+    plan: {
+      cutLevel: 1,
+      splitSections: 0,
+      mergedSections: 0,
+      rejoinedSections: 0,
+      minSectionChars: 2000,
+    },
     sections: [
-      { title: "Record", headingPath: ["Record"], text: "first", content: "first", charCount: 5, chunks: [0], mergedFrom: [], markdownRange: null },
-      { title: "Reduce", headingPath: ["Reduce"], text: "second", content: "second", charCount: 6, chunks: [1], mergedFrom: [], markdownRange: null },
+      {
+        title: "Record",
+        headingPath: ["Record"],
+        text: "first",
+        content: "first",
+        charCount: 5,
+        chunks: [0],
+        mergedFrom: [],
+        markdownRange: null,
+      },
+      {
+        title: "Reduce",
+        headingPath: ["Reduce"],
+        text: "second",
+        content: "second",
+        charCount: 6,
+        chunks: [1],
+        mergedFrom: [],
+        markdownRange: null,
+      },
     ],
   },
   ...over,
@@ -1761,7 +1974,10 @@ describe("publishFile", () => {
 
   it("names the folder, and places every source in it", async () => {
     const { api, calls } = publishApi();
-    await publishFile(convertedFile(), new Uint8Array([1]), { api, driveId: "d" });
+    await publishFile(convertedFile(), new Uint8Array([1]), {
+      api,
+      driveId: "d",
+    });
 
     expect(calls[0].body).toEqual({ drive: "d", name: "Book" });
     const sourceBodies = calls
@@ -1774,8 +1990,13 @@ describe("publishFile", () => {
     // `queue` defaults to true server-side; sending it explicitly means the
     // intent survives a change to that default.
     const { api, calls } = publishApi();
-    await publishFile(convertedFile(), new Uint8Array([1]), { api, driveId: "d" });
-    const sourceBodies = calls.filter((c) => c.path === "/sources").map((c) => c.body as Record<string, unknown>);
+    await publishFile(convertedFile(), new Uint8Array([1]), {
+      api,
+      driveId: "d",
+    });
+    const sourceBodies = calls
+      .filter((c) => c.path === "/sources")
+      .map((c) => c.body as Record<string, unknown>);
     expect(sourceBodies.every((b) => b.queue === true)).toBe(true);
     expect(sourceBodies.every((b) => b.method === "converted")).toBe(true);
     expect(sourceBodies.every((b) => b.tool === "docling.rs")).toBe(true);
@@ -1791,7 +2012,9 @@ describe("publishFile", () => {
       new Uint8Array([1]),
       { api, driveId: "d" },
     );
-    const sourceBodies = calls.filter((c) => c.path === "/sources").map((c) => c.body as Record<string, unknown>);
+    const sourceBodies = calls
+      .filter((c) => c.path === "/sources")
+      .map((c) => c.body as Record<string, unknown>);
     expect(sourceBodies).toHaveLength(1);
     expect(sourceBodies[0].title).toBe("Reduce");
     expect(result.sourceIds).toHaveLength(1);
@@ -1829,13 +2052,24 @@ describe("publishFile", () => {
     expect(order[0]).toBe("prepare");
     expect(order.filter((o) => o === "attach")).toHaveLength(2);
     expect(order.filter((o) => o === "upload")).toHaveLength(1);
-    expect(order.indexOf("upload")).toBeGreaterThan(order.lastIndexOf("attach"));
+    expect(order.indexOf("upload")).toBeGreaterThan(
+      order.lastIndexOf("attach"),
+    );
     expect(result.attached).toBe(true);
 
     const attachBodies = calls
       .filter((c) => c.path === "/actions")
-      .map((c) => (c.body as { actions: { type: string; input: Record<string, unknown> }[] }).actions[0]);
-    expect(attachBodies.every((a) => a.type === "ATTACH_ORIGINAL_FILE")).toBe(true);
+      .map(
+        (c) =>
+          (
+            c.body as {
+              actions: { type: string; input: Record<string, unknown> }[];
+            }
+          ).actions[0],
+      );
+    expect(attachBodies.every((a) => a.type === "ATTACH_ORIGINAL_FILE")).toBe(
+      true,
+    );
     expect(attachBodies[0].input.originalFile).toBe("attachment://v1:abc");
     expect(attachBodies[0].input.convertedBy).toBe("docling.rs");
     expect(attachBodies[0].input.originalFileName).toBe("Book.pdf");
@@ -1860,10 +2094,34 @@ describe("publishFile", () => {
         converted: {
           filename: "Book.pdf",
           format: "pdf",
-          plan: { cutLevel: 1, splitSections: 0, mergedSections: 0, rejoinedSections: 0, minSectionChars: 2000 },
+          plan: {
+            cutLevel: 1,
+            splitSections: 0,
+            mergedSections: 0,
+            rejoinedSections: 0,
+            minSectionChars: 2000,
+          },
           sections: [
-            { title: "Record", headingPath: [], text: "first", content: "first", charCount: 5, chunks: [0], mergedFrom: [], markdownRange: null },
-            { title: "Blank", headingPath: [], text: "  ", content: "  ", charCount: 0, chunks: [1], mergedFrom: [], markdownRange: null },
+            {
+              title: "Record",
+              headingPath: [],
+              text: "first",
+              content: "first",
+              charCount: 5,
+              chunks: [0],
+              mergedFrom: [],
+              markdownRange: null,
+            },
+            {
+              title: "Blank",
+              headingPath: [],
+              text: "  ",
+              content: "  ",
+              charCount: 0,
+              chunks: [1],
+              mergedFrom: [],
+              markdownRange: null,
+            },
           ],
         },
       }),
@@ -2028,6 +2286,7 @@ Tailwind, `:hover` in a scoped `<style>` block, exactly as `VaultSidebar` and
 `CreateDocumentDialog` do.
 
 **Files:**
+
 - Create: `editors/knowledge-vault/components/intake/IntakeView.tsx`
 - Create: `editors/knowledge-vault/components/intake/IntakeLanding.tsx`
 - Create: `editors/knowledge-vault/components/intake/UploadSurface.tsx`
@@ -2037,6 +2296,7 @@ Tailwind, `:hover` in a scoped `<style>` block, exactly as `VaultSidebar` and
 - Modify: `editors/knowledge-vault/components/GettingStarted.tsx` (the copy)
 
 **Interfaces:**
+
 - Consumes: everything from Tasks 2–7; `LandingStage` from `../chat/LandingStage.js`; `Spinner`/`LoadingLine` from `../LoadingStates.js`; the attachment port (Task 9 supplies the real one).
 - Produces: `export function IntakeView(props: { attachments?: AttachmentPort; formats: string[]; configured: boolean }): JSX.Element`
 
@@ -2070,7 +2330,10 @@ export function IntakeLanding({
       anchorRef={buttonRef}
       tail={
         configured ? undefined : (
-          <p className="mt-4 text-xs" style={{ color: "var(--bai-text-faint)" }}>
+          <p
+            className="mt-4 text-xs"
+            style={{ color: "var(--bai-text-faint)" }}
+          >
             Conversion is not configured on this vault yet. Set{" "}
             <code>CONVERT_SERVICE_URL</code> and restart the Switchboard.
           </p>
@@ -2078,12 +2341,18 @@ export function IntakeLanding({
       }
     >
       <div className="flex flex-col items-center gap-3 text-center">
-        <h1 className="text-2xl font-semibold" style={{ color: "var(--bai-text)" }}>
+        <h1
+          className="text-2xl font-semibold"
+          style={{ color: "var(--bai-text)" }}
+        >
           Welcome to {vaultName}
         </h1>
-        <p className="max-w-md text-sm" style={{ color: "var(--bai-text-tertiary)" }}>
-          It is empty. Add your first sources — bring in a document and the vault
-          turns it into sources you can read, review and process.
+        <p
+          className="max-w-md text-sm"
+          style={{ color: "var(--bai-text-tertiary)" }}
+        >
+          It is empty. Add your first sources — bring in a document and the
+          vault turns it into sources you can read, review and process.
         </p>
         <button
           ref={buttonRef}
@@ -2128,7 +2397,9 @@ export function UploadSurface({
   onFiles,
 }: {
   formats: string[];
-  onFiles: (files: { name: string; size: number; mimeType: string; data: Uint8Array }[]) => void;
+  onFiles: (
+    files: { name: string; size: number; mimeType: string; data: Uint8Array }[],
+  ) => void;
 }) {
   const inputRef = useRef<HTMLInputElement>(null);
   const [refused, setRefused] = useState<string[]>([]);
@@ -2140,7 +2411,10 @@ export function UploadSurface({
     const rejected: string[] = [];
 
     for (const file of Array.from(list)) {
-      const verdict = validateFile({ name: file.name, size: file.size }, formats);
+      const verdict = validateFile(
+        { name: file.name, size: file.size },
+        formats,
+      );
       if (!verdict.ok) {
         rejected.push(`${file.name}: ${verdict.reason}`);
         continue;
@@ -2191,7 +2465,10 @@ export function UploadSurface({
         >
           choose files
         </button>
-        <p className="mt-3 text-[11px]" style={{ color: "var(--bai-text-faint)" }}>
+        <p
+          className="mt-3 text-[11px]"
+          style={{ color: "var(--bai-text-faint)" }}
+        >
           {formats.length} formats · up to 30 MB each · several at once is fine
         </p>
         <input
@@ -2207,7 +2484,11 @@ export function UploadSurface({
       {refused.length > 0 && (
         <ul className="mt-3 space-y-1">
           {refused.map((line) => (
-            <li key={line} className="text-xs" style={{ color: "var(--bai-text-muted)" }}>
+            <li
+              key={line}
+              className="text-xs"
+              style={{ color: "var(--bai-text-muted)" }}
+            >
               {line}
             </li>
           ))}
@@ -2263,19 +2544,33 @@ export function ConversionQueue({
         <li
           key={file.id}
           className="intake-row flex items-center gap-3 rounded-lg px-3 py-2"
-          style={{ backgroundColor: "var(--bai-surface)", border: "1px solid var(--bai-border)" }}
+          style={{
+            backgroundColor: "var(--bai-surface)",
+            border: "1px solid var(--bai-border)",
+          }}
         >
-          <span className="h-2 w-2 shrink-0 rounded-full" style={{ backgroundColor: dot[file.state] }} />
-          <span className="min-w-0 flex-1 truncate text-xs" style={{ color: "var(--bai-text-secondary)" }}>
+          <span
+            className="h-2 w-2 shrink-0 rounded-full"
+            style={{ backgroundColor: dot[file.state] }}
+          />
+          <span
+            className="min-w-0 flex-1 truncate text-xs"
+            style={{ color: "var(--bai-text-secondary)" }}
+          >
             {file.name}
           </span>
 
           {file.state === "converting" && <Spinner className="h-3 w-3" />}
-          <span className="shrink-0 text-[11px]" style={{ color: "var(--bai-text-faint)" }}>
+          <span
+            className="shrink-0 text-[11px]"
+            style={{ color: "var(--bai-text-faint)" }}
+          >
             {LABEL[file.state]}
             {file.converted
               ? ` · ${file.converted.sections.length} parts${
-                  file.converted.plan.mergedSections > 0 ? ` (${file.converted.plan.mergedSections} folded)` : ""
+                  file.converted.plan.mergedSections > 0
+                    ? ` (${file.converted.plan.mergedSections} folded)`
+                    : ""
                 }`
               : ""}
             {file.error ? ` · ${file.error}` : ""}
@@ -2312,10 +2607,16 @@ export function ConversionQueue({
 }
 ```
 
-- [ ] **Step 4: `SectionReview.tsx` — the editable list, and the file's own settings**
+- [ ] **Step 4: `SectionReview.tsx` — the editable list, the preview, and the file's own settings**
+
+> **Design gate outcome (2026-09-17, `docs/design/intake/final.html`):** the approved shape is the blend — rows grouped by what they need from the user (_Needs you_ / _Converting_ / _In the vault_), a four-step **journey strip** on every row (Chosen → Converted → Reviewed → In the vault), a goal header with a segmented batch bar and an always-present drop zone for file N+1, the review pane beside the list (never instead of it) headed "Step 3 of 4", one accent-filled CTA per screen, and after publish a green row naming `/sources/<folder>/` with links to Sources and Pipeline. **Each section row carries a chevron that opens a rendered preview of `section.content`** (use `markdown-preview.tsx`; collapsed to ~220 px with a "Show all N chars" toggle; a line under it says whether the part is ticked). The code below is the pre-gate sketch and must be brought to that shape: add the `open` state per section, the preview block, the `contains:` line, the furniture reason on unticked rows, and the `SectionReader` overlay (`readerIndex: number | null` in the panel's state; ←/→/Esc handled while it is open).
 
 ```tsx
-import { SECTION_TYPES, selectedCount, type IntakeFile } from "../../lib/intake-model.js";
+import {
+  SECTION_TYPES,
+  selectedCount,
+  type IntakeFile,
+} from "../../lib/intake-model.js";
 
 /**
  * What this file would become. Every section ticked by default, because the
@@ -2347,22 +2648,41 @@ export function SectionReview({
   return (
     <section className="mx-auto w-full max-w-3xl">
       <header className="mb-3 flex flex-wrap items-center gap-3">
-        <h2 className="text-sm font-semibold" style={{ color: "var(--bai-text)" }}>
+        <h2
+          className="text-sm font-semibold"
+          style={{ color: "var(--bai-text)" }}
+        >
           {file.name}
         </h2>
-        <span className="text-[11px]" style={{ color: "var(--bai-text-faint)" }}>
+        <span
+          className="text-[11px]"
+          style={{ color: "var(--bai-text-faint)" }}
+        >
           {chosen} of {sections.length} parts selected
         </span>
-        <button type="button" onClick={() => onAll(true)} className="intake-link text-[11px]" style={{ color: "var(--bai-accent)" }}>
+        <button
+          type="button"
+          onClick={() => onAll(true)}
+          className="intake-link text-[11px]"
+          style={{ color: "var(--bai-accent)" }}
+        >
           select all
         </button>
-        <button type="button" onClick={() => onAll(false)} className="intake-link text-[11px]" style={{ color: "var(--bai-accent)" }}>
+        <button
+          type="button"
+          onClick={() => onAll(false)}
+          className="intake-link text-[11px]"
+          style={{ color: "var(--bai-accent)" }}
+        >
           select none
         </button>
       </header>
 
       <div className="mb-4 flex flex-wrap items-center gap-3">
-        <label className="flex items-center gap-2 text-[11px]" style={{ color: "var(--bai-text-muted)" }}>
+        <label
+          className="flex items-center gap-2 text-[11px]"
+          style={{ color: "var(--bai-text-muted)" }}
+        >
           Source type
           <select
             value={file.sourceType}
@@ -2375,11 +2695,16 @@ export function SectionReview({
             }}
           >
             {SECTION_TYPES.map((type) => (
-              <option key={type} value={type}>{type}</option>
+              <option key={type} value={type}>
+                {type}
+              </option>
             ))}
           </select>
         </label>
-        <label className="flex items-center gap-2 text-[11px]" style={{ color: "var(--bai-text-muted)" }}>
+        <label
+          className="flex items-center gap-2 text-[11px]"
+          style={{ color: "var(--bai-text-muted)" }}
+        >
           Folder
           <span style={{ color: "var(--bai-text-faint)" }}>/sources/</span>
           <input
@@ -2400,7 +2725,10 @@ export function SectionReview({
           <li key={index}>
             <label
               className="intake-row flex cursor-pointer items-start gap-3 rounded-lg px-3 py-2"
-              style={{ backgroundColor: "var(--bai-surface)", border: "1px solid var(--bai-border)" }}
+              style={{
+                backgroundColor: "var(--bai-surface)",
+                border: "1px solid var(--bai-border)",
+              }}
             >
               <input
                 type="checkbox"
@@ -2409,18 +2737,29 @@ export function SectionReview({
                 className="mt-0.5"
               />
               <span className="min-w-0 flex-1">
-                <span className="block truncate text-xs font-medium" style={{ color: "var(--bai-text-secondary)" }}>
+                <span
+                  className="block truncate text-xs font-medium"
+                  style={{ color: "var(--bai-text-secondary)" }}
+                >
                   {section.title || `part ${index + 1}`}
                 </span>
-                <span className="block truncate text-[10px]" style={{ color: "var(--bai-text-faint)" }}>
-                  {section.headingPath.join(" › ") || "no heading"} · {section.charCount.toLocaleString()} chars
+                <span
+                  className="block truncate text-[10px]"
+                  style={{ color: "var(--bai-text-faint)" }}
+                >
+                  {section.headingPath.join(" › ") || "no heading"} ·{" "}
+                  {section.charCount.toLocaleString()} chars
                   {section.markdownRange ? "" : " · from text"}
                 </span>
                 {section.mergedFrom.length > 1 && (
                   // What the section rule folded in — the titles a reader would
                   // otherwise never see, and the reason the section is named as it is.
-                  <span className="block truncate text-[10px]" style={{ color: "var(--bai-text-faint)" }}>
-                    contains: {section.mergedFrom.map((p) => p.title).join(" · ")}
+                  <span
+                    className="block truncate text-[10px]"
+                    style={{ color: "var(--bai-text-faint)" }}
+                  >
+                    contains:{" "}
+                    {section.mergedFrom.map((p) => p.title).join(" · ")}
                   </span>
                 )}
               </span>
@@ -2432,7 +2771,12 @@ export function SectionReview({
       <div className="mt-4 flex items-center gap-3">
         <button
           type="button"
-          disabled={chosen === 0 || publishing || !driveId || file.publishedIds !== undefined}
+          disabled={
+            chosen === 0 ||
+            publishing ||
+            !driveId ||
+            file.publishedIds !== undefined
+          }
           onClick={onPublish}
           className="intake-primary rounded-lg px-4 py-2 text-sm font-medium disabled:opacity-40"
           style={{
@@ -2447,7 +2791,10 @@ export function SectionReview({
               ? `Added ${file.publishedIds.length} source${file.publishedIds.length === 1 ? "" : "s"}`
               : `Add ${chosen} source${chosen === 1 ? "" : "s"} to the vault`}
         </button>
-        <span className="text-[11px]" style={{ color: "var(--bai-text-faint)" }}>
+        <span
+          className="text-[11px]"
+          style={{ color: "var(--bai-text-faint)" }}
+        >
           {file.publishedIds
             ? "Already in the vault — publishing again would create duplicates"
             : "Queued for processing as soon as they are created"}
@@ -2465,7 +2812,9 @@ export function SectionReview({
 }
 ```
 
-- [ ] **Step 5: `IntakeView.tsx` — the shell that owns the batch**
+- [ ] **Step 5: `hooks/use-intake-batch.ts` + `IntakePanel.tsx` — the batch, hoisted**
+
+> **Superseded shape (placement change):** the code below was written as a standalone `IntakeView` owning its state. Split it: everything stateful (`files`, `bytes`, `running`, the scheduling effect, `onFiles`, `onRetry`, `onPublish`, and a derived `needsUser = files.filter(f => f.state === "review-ready" || f.state === "failed").length` — "review-ready" meaning converted and not yet published) moves into `useIntakeBatch()`; the JSX becomes `IntakePanel` taking the hook's return as props. `DriveExplorer` calls the hook once and passes the result to `SourceList`, which renders `IntakePanel` above the folder list. The four stages collapse into two: the panel is either the landing/drop zone (empty batch) or the batch with the review pane beside it (rows grouped _Needs you / Converting / In the vault_, each with a journey strip — see the design-gate outcome under step 4).
 
 ```tsx
 import { useCallback, useEffect, useRef, useState } from "react";
@@ -2533,7 +2882,12 @@ export function IntakeView({
     if (!data) return;
 
     running.current = true;
-    setFiles((current) => setState(current, next.id, { state: "converting", startedAt: Date.now() }));
+    setFiles((current) =>
+      setState(current, next.id, {
+        state: "converting",
+        startedAt: Date.now(),
+      }),
+    );
 
     void convertFile({ name: next.name, bytes: data }, { api })
       .then((converted) =>
@@ -2561,13 +2915,26 @@ export function IntakeView({
   }, [files, api]);
 
   const onFiles = useCallback(
-    (incoming: { name: string; size: number; mimeType: string; data: Uint8Array }[]) => {
-      const additions = incoming.map(({ name, size, mimeType }) => ({ name, size, mimeType }));
+    (
+      incoming: {
+        name: string;
+        size: number;
+        mimeType: string;
+        data: Uint8Array;
+      }[],
+    ) => {
+      const additions = incoming.map(({ name, size, mimeType }) => ({
+        name,
+        size,
+        mimeType,
+      }));
       setFiles((current) => {
         const next = addFiles(current, additions);
         // `addFiles` mints the ids; pair each new id with the bytes, in order.
         const fresh = next.slice(current.length);
-        fresh.forEach((file, index) => bytes.current.set(file.id, incoming[index].data));
+        fresh.forEach((file, index) =>
+          bytes.current.set(file.id, incoming[index].data),
+        );
         return next;
       });
       setStage("batch");
@@ -2576,7 +2943,9 @@ export function IntakeView({
   );
 
   const onRetry = useCallback((id: string) => {
-    setFiles((current) => setState(current, id, { state: "queued", error: undefined }));
+    setFiles((current) =>
+      setState(current, id, { state: "queued", error: undefined }),
+    );
   }, []);
 
   const onPublish = useCallback(async () => {
@@ -2588,10 +2957,16 @@ export function IntakeView({
 
     setPublishing(true);
     try {
-      const result = await publishFile(file, data, { api, attachments, driveId });
+      const result = await publishFile(file, data, {
+        api,
+        attachments,
+        driveId,
+      });
       setPublished(
         `${result.sourceIds.length} source${result.sourceIds.length === 1 ? "" : "s"} added to /sources/${file.folderName}${
-          result.skipped > 0 ? ` (${result.skipped} empty part${result.skipped === 1 ? "" : "s"} skipped)` : ""
+          result.skipped > 0
+            ? ` (${result.skipped} empty part${result.skipped === 1 ? "" : "s"} skipped)`
+            : ""
         }${result.attached ? ", original attached" : ""}`,
       );
       setFiles((current) => markPublished(current, file.id, result.sourceIds));
@@ -2612,23 +2987,37 @@ export function IntakeView({
     <div className="h-full overflow-auto px-6 py-8">
       {/* The tab must stay open: an in-flight conversion lives here and nowhere
           else, so a reload loses it. Said once, where the batch starts. */}
-      {stage === "batch" && files.some((f) => f.state === "converting" || f.state === "queued") && (
-        <p className="mx-auto mb-4 w-full max-w-2xl text-[11px]" style={{ color: "var(--bai-text-muted)" }}>
-          Keep this tab open until the conversion finishes — the work is not saved anywhere yet.
-        </p>
-      )}
+      {stage === "batch" &&
+        files.some((f) => f.state === "converting" || f.state === "queued") && (
+          <p
+            className="mx-auto mb-4 w-full max-w-2xl text-[11px]"
+            style={{ color: "var(--bai-text-muted)" }}
+          >
+            Keep this tab open until the conversion finishes — the work is not
+            saved anywhere yet.
+          </p>
+        )}
 
       {published && (
-        <p className="mx-auto mb-4 w-full max-w-2xl text-xs" style={{ color: "var(--bai-accent)" }}>
+        <p
+          className="mx-auto mb-4 w-full max-w-2xl text-xs"
+          style={{ color: "var(--bai-accent)" }}
+        >
           {published}
         </p>
       )}
 
       {stage === "landing" && (
-        <IntakeLanding vaultName={vaultName} configured={configured} onStart={() => setStage("upload")} />
+        <IntakeLanding
+          vaultName={vaultName}
+          configured={configured}
+          onStart={() => setStage("upload")}
+        />
       )}
 
-      {stage === "upload" && <UploadSurface formats={formats} onFiles={onFiles} />}
+      {stage === "upload" && (
+        <UploadSurface formats={formats} onFiles={onFiles} />
+      )}
 
       {stage === "batch" && (
         <ConversionQueue
@@ -2646,10 +3035,22 @@ export function IntakeView({
           file={open}
           driveId={driveId}
           publishing={publishing}
-          onToggle={(index) => setFiles((current) => toggleSection(current, open.id, index))}
-          onAll={(on) => setFiles((current) => setAllSections(current, open.id, on))}
-          onType={(type) => setFiles((current) => setState(current, open.id, { sourceType: type }))}
-          onFolderName={(name) => setFiles((current) => setState(current, open.id, { folderName: name }))}
+          onToggle={(index) =>
+            setFiles((current) => toggleSection(current, open.id, index))
+          }
+          onAll={(on) =>
+            setFiles((current) => setAllSections(current, open.id, on))
+          }
+          onType={(type) =>
+            setFiles((current) =>
+              setState(current, open.id, { sourceType: type }),
+            )
+          }
+          onFolderName={(name) =>
+            setFiles((current) =>
+              setState(current, open.id, { folderName: name }),
+            )
+          }
           onPublish={() => void onPublish()}
         />
       )}
@@ -2672,7 +3073,9 @@ export function IntakeView({
 `SECTION_TYPES` comes from `intake-model.ts` (Task 3), so the select cannot
 drift from what `POST sources` will accept.
 
-- [ ] **Step 6: Wire it into `DriveExplorer.tsx` — four edits, no more**
+- [ ] **Step 6: Wire it into `DriveExplorer.tsx` and `SourceList.tsx`**
+
+> **Superseded (placement change):** no `ViewMode` union change, no `TABS` entry, no content-switch branch. Instead: (1) `const batch = useIntakeBatch();` in `DriveExplorer`; (2) the existing Sources `TABS` entry gets `badge: batch.needsUser > 0 ? batch.needsUser : undefined` — rendered in the warn colour, not the accent, so it reads as "needs you" and not as a count; (3) `<SourceList … intake={batch} />`; (4) the empty-vault default becomes `setViewMode("sources")`, and `SourceList`'s empty state renders `<IntakeLanding>`. The `fileNodes` check below still applies to (4). The edits listed under 1–4 below are kept only for the `useConvertHealth` hook and the empty-vault rule.
 
 1. The union (`:40`):
 
@@ -2711,7 +3114,8 @@ const convert = useConvertHealth();
 // holds; if folders are present, count only nodes that carry a `documentType`.
 const documentNodes = fileNodes.filter((n) => Boolean(n.documentType));
 const settled = !notesLoading && convert.settled;
-const vaultIsEmpty = settled && documentNodes.length === 0 && notes.length === 0;
+const vaultIsEmpty =
+  settled && documentNodes.length === 0 && notes.length === 0;
 const landedOn = useRef(false);
 useEffect(() => {
   if (!landedOn.current && vaultIsEmpty) {
@@ -2838,12 +3242,14 @@ git commit -m "feat(intake): the view — landing, upload, convert queue, sectio
 ### Task 9: The original file, where a source can be opened
 
 **Files:**
+
 - Create: `editors/knowledge-vault/lib/attachments.ts`
 - Create: `editors/knowledge-vault/components/OriginalFilePanel.tsx`
 - Modify: `editors/source-editor/editor.tsx`
 - Modify: `editors/knowledge-vault/components/intake/IntakeView.tsx` (pass the real port)
 
 **Interfaces:**
+
 - Consumes: `AttachmentPort` (Task 7); `isBrowserRenderable` / `formatFileSize` (Task 5); `SourceState["originalFile"]` and the other five fields (the model change, already dispatched).
 - Produces:
   - `createAttachmentPort(): AttachmentPort` — the real implementation.
@@ -2885,12 +3291,12 @@ falls back to downloading, via `isBrowserRenderable`.
 
 Four states, all reachable and all different to the user:
 
-| state | what it shows |
-|---|---|
-| no original | nothing (an older source is still valid — all six fields are nullable) |
-| renderable mime | the file inline — PDF, text, markdown, image, audio, video |
-| not renderable | a card: name, `formatFileSize(size)`, the type, and **Download** |
-| fetch failed | an explicit failure with **Retry** — never the same as "there is none" |
+| state           | what it shows                                                          |
+| --------------- | ---------------------------------------------------------------------- |
+| no original     | nothing (an older source is still valid — all six fields are nullable) |
+| renderable mime | the file inline — PDF, text, markdown, image, audio, video             |
+| not renderable  | a card: name, `formatFileSize(size)`, the type, and **Download**       |
+| fetch failed    | an explicit failure with **Retry** — never the same as "there is none" |
 
 ```tsx
 import { useEffect, useState } from "react";
@@ -2952,20 +3358,36 @@ export function OriginalFilePanel({
   if (!ref) return null;
 
   return (
-    <section className="original-panel rounded-xl p-3" style={{ backgroundColor: "var(--bai-surface)", border: "1px solid var(--bai-border)" }}>
+    <section
+      className="original-panel rounded-xl p-3"
+      style={{
+        backgroundColor: "var(--bai-surface)",
+        border: "1px solid var(--bai-border)",
+      }}
+    >
       <header className="flex items-center gap-2">
-        <span className="min-w-0 flex-1 truncate text-xs" style={{ color: "var(--bai-text-secondary)" }}>
+        <span
+          className="min-w-0 flex-1 truncate text-xs"
+          style={{ color: "var(--bai-text-secondary)" }}
+        >
           {name}
         </span>
-        <span className="shrink-0 text-[10px]" style={{ color: "var(--bai-text-faint)" }}>
+        <span
+          className="shrink-0 text-[10px]"
+          style={{ color: "var(--bai-text-faint)" }}
+        >
           {mime}
-          {source.originalSizeBytes ? ` · ${formatFileSize(source.originalSizeBytes)}` : ""}
+          {source.originalSizeBytes
+            ? ` · ${formatFileSize(source.originalSizeBytes)}`
+            : ""}
           {source.convertedBy ? ` · converted by ${source.convertedBy}` : ""}
         </span>
         {!renderable && (
           <button
             type="button"
-            onClick={() => void load(ref).then((r) => window.open(r.url, "_blank"))}
+            onClick={() =>
+              void load(ref).then((r) => window.open(r.url, "_blank"))
+            }
             className="original-link shrink-0 text-[11px] font-medium"
             style={{ color: "var(--bai-accent)" }}
           >
@@ -2975,23 +3397,46 @@ export function OriginalFilePanel({
       </header>
 
       {renderable && state.kind === "loading" && (
-        <p className="mt-2 text-[11px]" style={{ color: "var(--bai-text-faint)" }}>Loading the original…</p>
+        <p
+          className="mt-2 text-[11px]"
+          style={{ color: "var(--bai-text-faint)" }}
+        >
+          Loading the original…
+        </p>
       )}
 
       {renderable && state.kind === "failed" && (
-        <p className="mt-2 text-[11px]" style={{ color: "var(--bai-text-muted)" }}>
+        <p
+          className="mt-2 text-[11px]"
+          style={{ color: "var(--bai-text-muted)" }}
+        >
           The original could not be fetched: {state.message}{" "}
-          <button type="button" className="original-link" style={{ color: "var(--bai-accent)" }} onClick={() => setState({ kind: "idle" })}>
+          <button
+            type="button"
+            className="original-link"
+            style={{ color: "var(--bai-accent)" }}
+            onClick={() => setState({ kind: "idle" })}
+          >
             Retry
           </button>
         </p>
       )}
 
       {renderable && state.kind === "ready" && mime.includes("pdf") && (
-        <iframe title={name} src={state.url} className="mt-2 h-[520px] w-full rounded" />
+        <iframe
+          title={name}
+          src={state.url}
+          className="mt-2 h-[520px] w-full rounded"
+        />
       )}
       {renderable && state.kind === "ready" && !mime.includes("pdf") && (
-        <a href={state.url} target="_blank" rel="noreferrer" className="original-link mt-2 block text-[11px]" style={{ color: "var(--bai-accent)" }}>
+        <a
+          href={state.url}
+          target="_blank"
+          rel="noreferrer"
+          className="original-link mt-2 block text-[11px]"
+          style={{ color: "var(--bai-accent)" }}
+        >
           Open the original in a new tab
         </a>
       )}
@@ -3010,9 +3455,11 @@ In `editors/source-editor/editor.tsx`, above the content tabs, for a source that
 has an original:
 
 ```tsx
-{doc.state.global.originalFile && (
-  <OriginalFilePanel source={doc.state.global} load={loadOriginal} />
-)}
+{
+  doc.state.global.originalFile && (
+    <OriginalFilePanel source={doc.state.global} load={loadOriginal} />
+  );
+}
 ```
 
 `loadOriginal` comes from the same attachment viewer the ledger uses (its
@@ -3044,6 +3491,7 @@ against the live vault with the document that has been the test case throughout.
 **Files:** none. This is a verification task; its output is evidence.
 
 **Interfaces:**
+
 - Consumes: the running app, the running Switchboard, and the convert subgraph's health route.
 - Produces: evidence — the measured conversion time, the section count, and the five properties every created source must satisfy.
 
@@ -3098,7 +3546,7 @@ Assert, per created source:
   per source with `documentRef` = that source;
 - every source has `originalFile` set, and the same ref for all of them, with
   `convertedBy: "docling.rs"`;
-- a source whose section held a table (the CV's *Education*, or any book table)
+- a source whose section held a table (the CV's _Education_, or any book table)
   has that table as a **markdown table** in `content` — not `🟤, 1 = …` triplets.
 
 The fastest reliable way to check the last four is the vault's own REST surface
@@ -3115,6 +3563,7 @@ a working Download.
 
 Stop the conversion service (`fuser -k 5011/tcp`, or kill the child of the
 Switchboard) and:
+
 - the landing says conversion is unavailable and does not offer a dead picker;
 - a file row reports the failure with the server's message, and Retry works once
   the service is back.
@@ -3130,20 +3579,20 @@ easier to revisit with the real timings in hand), then commit the spec.
 
 Against the spec, section by section:
 
-| spec § | where it is implemented |
-|---|---|
-| §3 decisions 1–5 | Task 4 (folder per document, sanitisable), Task 8 (selection UI), Task 7 (`queue: true`), Task 8 (per-file type selector), Task 8 step 6 (the keep-the-tab-open notice) |
-| §4 architecture / the call table | Tasks 2, 6, 7 — every call in the table has a task step |
-| §5 contracts | Task 2 builds the helper; Tasks 6–7 consume the routes; Task 7 defines the attachment port the panel and the intake share |
-| §6 the empty-vault landing | Task 8 steps 1 and 6, including the "unreadable tree is not an empty tree" rule |
-| §7 the review step | Task 8 steps 4–5 |
-| §8 publish | Task 7, with the ordering rule asserted |
-| §9 progress | Task 8 step 3 (Tier 1 only; no invented percentage) |
-| §10 styling | Task 1 (the token block is copied from the live theme), Task 8 (tokens inline, Tailwind for layout, scoped `<style>` blocks) |
-| §11 error states | Task 5 (the mime rule), Task 8 (validation, failures, retry), Task 9 (the failed-fetch state) |
-| §12 not in this plan | nothing in the plan implements it — Tiers 2, section editing, OS drag-and-drop, per-part subfolders, replacing an original |
-| §13 open questions | left open deliberately; Task 10 step 7 is where the evidence for them gets recorded |
-| §14 testing | every `lib/` module has a test file in its own task; no component is tested, matching the repo |
+| spec §                           | where it is implemented                                                                                                                                                 |
+| -------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| §3 decisions 1–5                 | Task 4 (folder per document, sanitisable), Task 8 (selection UI), Task 7 (`queue: true`), Task 8 (per-file type selector), Task 8 step 6 (the keep-the-tab-open notice) |
+| §4 architecture / the call table | Tasks 2, 6, 7 — every call in the table has a task step                                                                                                                 |
+| §5 contracts                     | Task 2 builds the helper; Tasks 6–7 consume the routes; Task 7 defines the attachment port the panel and the intake share                                               |
+| §6 the empty-vault landing       | Task 8 steps 1 and 6, including the "unreadable tree is not an empty tree" rule                                                                                         |
+| §7 the review step               | Task 8 steps 4–5                                                                                                                                                        |
+| §8 publish                       | Task 7, with the ordering rule asserted                                                                                                                                 |
+| §9 progress                      | Task 8 step 3 (Tier 1 only; no invented percentage)                                                                                                                     |
+| §10 styling                      | Task 1 (the token block is copied from the live theme), Task 8 (tokens inline, Tailwind for layout, scoped `<style>` blocks)                                            |
+| §11 error states                 | Task 5 (the mime rule), Task 8 (validation, failures, retry), Task 9 (the failed-fetch state)                                                                           |
+| §12 not in this plan             | nothing in the plan implements it — Tiers 2, section editing, OS drag-and-drop, per-part subfolders, replacing an original                                              |
+| §13 open questions               | left open deliberately; Task 10 step 7 is where the evidence for them gets recorded                                                                                     |
+| §14 testing                      | every `lib/` module has a test file in its own task; no component is tested, matching the repo                                                                          |
 
 **Placeholder scan:** every code step carries the code. The two forward
 references — `SECTION_TYPES` (Task 3) and `VaultApi.get` (Task 2) — are stated
@@ -3157,6 +3606,30 @@ fix and which dead line to delete.
 `intake-model.ts` (Task 3) and is consumed by `publishPlan` (Task 4) — one
 derivation, not two.
 
+## Progress that is measured, and the extraction score (2026-09-18)
+
+The row used to say "Converted" with a spinner while the file was still
+converting. Two fixes: the journey labels are now tense-correct (`Converting…`
+while it happens, `Converted` once done — `JourneyStrip.tsx`), and the spinner
+is replaced by **measured progress**. `use-intake-batch.ts` mints a
+`crypto.randomUUID()` job per conversion, sends it as `?job=`, and polls
+`GET convert/progress/:job` every second while the row is `converting`;
+`FileRow.tsx` renders the phase (`reading page 12 of 23`, `structuring the
+text`, `reading the text layer`, `recognising text (OCR)`) and a thin bar
+during `reading` only — the chunking phase has no page signal, so the bar
+stops at full and the words change rather than a second bar being invented.
+`IntakeFile.progress` holds the last poll; `conversionProgress()` in
+`intake-service.ts` maps the 404 (job forgotten) to `null`.
+
+The **extraction score** arrives on `ConvertedFile.quality` and is shown twice:
+the review header (`Extraction: 96.9% of the file's text is here · 79 of 79
+formulas not decoded · 3 figures not transcribed`, amber under 95 %, with a
+tooltip saying it is a floor, not a proof) and the ready line on the row
+(`· 97% of the text`). It is not persisted on the `bai/source` — that would be
+a schema change, not approved. Formula decoding (docling's
+`doFormulaEnrichment`, models present, cost unmeasured on the warm pipeline)
+and a semantic score are deferred.
+
 ## Execution handoff
 
 The plan's owner works **inline, in one session, with no subagents** — so the
@@ -3165,4 +3638,3 @@ sub-agent option is not offered here. Execute with
 (the design gate) and again after Task 8 (the view is visible in the app for the
 first time). Nothing is committed to the branch without the owner's say-so,
 matching how the convert work was handled.
-

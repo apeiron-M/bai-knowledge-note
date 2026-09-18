@@ -45,11 +45,16 @@ Answers given by the product owner, 2026-09-17. The plan implements these.
 
 ## 4. Architecture
 
-Not a new editor. It is a view inside the existing drive app
-(`editors/knowledge-vault/`), because it is not a document and has no document
-model — exactly like Sources, Search or Pipeline. Four touchpoints:
-`ViewMode` (`components/DriveExplorer.tsx:40`), a `TABS` entry, the content
-switch (`:476-504`), and new components.
+Not a new editor, and — decided 2026-09-17 — **not a new tab either**. It is a
+panel inside the existing **Sources view** (`components/SourceList.tsx`):
+"＋ Add sources" in the Sources header opens the drop zone, the batch and the
+review pane sit above the folder list, and an empty vault's Sources view is the
+landing. The **Sources tab badge** carries the number of files that need the
+user (ready for review, or failed), in the warn colour, so a book can convert
+while the user is elsewhere and the badge calls them back. The batch state is
+hoisted to `DriveExplorer` (`useIntakeBatch()`) so a tab switch never unmounts a
+conversion in flight. Touchpoints: the hook in `DriveExplorer`, the badge on the
+existing Sources tab, `SourceList` hosting the panel, and new components.
 
 ```
 empty vault ──▶ Intake landing        "Welcome to your knowledge vault…"
@@ -138,7 +143,8 @@ and takes a `tail` for secondary content that must not move the control. The
 intake landing reuses it with the upload control as the anchor.
 
 **When it shows.** `viewMode`'s default becomes conditional: an *empty* vault
-opens on intake, everything else opens on chat as today.
+opens on **Sources**, whose empty state is this landing; everything else opens
+on chat as today.
 
 **Empty is a claim about the server, not about the cache.** `useDriveInit`
 already learned this the hard way — an unreadable tree is not an empty tree, and

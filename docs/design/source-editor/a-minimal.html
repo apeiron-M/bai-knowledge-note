@@ -1,0 +1,117 @@
+<!doctype html><html lang="en" data-bai-theme="dark"><head><meta charset="utf-8"><title>Source editor — Buxton A: task-oriented / minimalist</title>
+<!-- design proposal, awaiting green light. Nothing in the React editor has been changed. -->
+<style>/* Live values copied from style.css (2026-09-17). Dark default; light toggle bottom-right. */
+:root, [data-bai-theme="dark"] {
+  --bai-bg:#1e1e2e; --bai-surface:#181825; --bai-deep:#11111b; --bai-hover:#313244;
+  --bai-border:rgba(255,255,255,0.1); --bai-text:#e4e4e7; --bai-text-secondary:#d4d4d8;
+  --bai-text-tertiary:#9ca3af; --bai-text-muted:#6b7280; --bai-text-faint:#4b5563;
+  --bai-accent:#cba6f7; --bai-accent-text:#1e1e2e; --bai-accent-soft:rgba(203,166,247,0.1);
+  --bai-ok:#a6e3a1; --bai-ok-soft:rgba(166,227,161,0.12); --bai-warn:#fab387; --bai-danger:#f38ba8; --bai-danger-soft:rgba(243,139,168,0.12);
+}
+[data-bai-theme="light"] {
+  --bai-bg:#f8f9fc; --bai-surface:#fff; --bai-deep:#f1f3f8; --bai-hover:#e8eaf0; --bai-border:#e2e4e9;
+  --bai-text:#1f2937; --bai-text-secondary:#374151; --bai-text-tertiary:#6b7280; --bai-text-muted:#9ca3af; --bai-text-faint:#d1d5db;
+  --bai-accent:#7c3aed; --bai-accent-text:#fff; --bai-accent-soft:rgba(124,58,237,0.08);
+  --bai-ok:#059669; --bai-ok-soft:rgba(5,150,105,0.08); --bai-warn:#d97706; --bai-danger:#dc2626; --bai-danger-soft:rgba(220,38,38,0.08);
+}
+*{box-sizing:border-box} html,body{margin:0;height:100%;background:var(--bai-bg);color:var(--bai-text);font:13px/1.45 ui-sans-serif,system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
+.app{display:flex;flex-direction:column;height:100vh}
+/* the app shell this editor is opened inside (same tabs the intake mock drew) */
+.appbar{display:flex;align-items:center;gap:4px;padding:6px 12px;background:var(--bai-surface);border-bottom:1px solid var(--bai-border)}
+.appbar .name{font-weight:600;margin-right:10px;font-size:12px}
+.tab{display:inline-flex;align-items:center;gap:6px;border-radius:6px;padding:5px 11px;font-size:12px;font-weight:500;color:var(--bai-text-tertiary);background:transparent;border:0}
+.tab.on{background:var(--bai-hover);color:var(--bai-accent)}
+/* THE editor bar: 40px, three things, nothing else */
+.bar{display:flex;align-items:center;gap:10px;padding:0 16px;height:40px;background:var(--bai-surface);border-bottom:1px solid var(--bai-border);position:sticky;top:0;z-index:5}
+.crumb{font-size:12px;color:var(--bai-text-faint);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.crumb b{color:var(--bai-text-secondary);font-weight:500}
+.pill{font-size:10px;font-weight:600;letter-spacing:.04em;text-transform:uppercase;border-radius:999px;padding:2px 8px;border:1px solid var(--bai-border)}
+.pill.extracted{color:var(--bai-ok);background:var(--bai-ok-soft);border-color:transparent}
+.spacer{margin-left:auto}
+/* text-only actions: no icons, no boxes — weight is the hierarchy */
+.a{font-size:12px;font-weight:500;color:var(--bai-text-tertiary);background:none;border:0;padding:0}
+.a:hover{color:var(--bai-accent)}
+.a.primary{color:var(--bai-accent);font-weight:600}
+.a .n{color:var(--bai-text-faint);font-weight:400}
+/* the reader: the page is the reading surface. No card, no inner scroller. */
+.reader{flex:1;overflow:auto}
+.md{max-width:78ch;margin:0 auto;padding:36px 24px 96px;font-size:16px;line-height:1.7;color:var(--bai-text-secondary)}
+.md h1{font-size:26px;line-height:1.25;margin:0 0 6px;color:var(--bai-text);font-weight:600}
+.md .byline{font-size:11px;color:var(--bai-text-faint);margin:0 0 30px}
+.md h2{font-size:19px;margin:36px 0 10px;color:var(--bai-text);font-weight:600}
+.md h3{font-size:15px;margin:26px 0 8px;color:var(--bai-text);font-weight:600}
+.md p{margin:0 0 16px}
+.md ul{margin:0 0 16px;padding-left:22px} .md li{margin:4px 0}
+.md blockquote{margin:20px 0;padding:2px 0 2px 14px;border-left:2px solid var(--bai-border);color:var(--bai-text-tertiary);font-style:italic}
+.md table{border-collapse:collapse;width:100%;margin:18px 0;font-size:13px}
+.md th{text-align:left;font-weight:600;color:var(--bai-text);padding:7px 10px;border-bottom:1px solid var(--bai-border)}
+.md td{padding:7px 10px;border-bottom:1px solid var(--bai-border);color:var(--bai-text-tertiary)}
+.md code{font:12px ui-monospace,SFMono-Regular,Menlo,monospace;background:var(--bai-deep);border:1px solid var(--bai-border);border-radius:4px;padding:1px 4px}
+.md .fig{font-size:11px;color:var(--bai-text-faint);margin:10px 0 22px}
+.md hr{border:0;border-top:1px solid var(--bai-border);margin:34px 0}
+.note{margin-top:28px;padding-top:14px;border-top:1px dashed var(--bai-border);font-size:11px;line-height:1.6;color:var(--bai-text-faint)}
+.banner{position:fixed;bottom:12px;left:12px;font-size:10px;color:var(--bai-text-faint);background:var(--bai-surface);border:1px solid var(--bai-border);border-radius:6px;padding:4px 8px}
+.toggle{position:fixed;bottom:12px;right:12px}
+</style></head><body>
+<div class="app">
+  <div class="appbar"><span class="name">my-personal-vault</span>
+    <button class="tab">Chat</button><button class="tab">Search</button><button class="tab">Notes</button>
+    <button class="tab on">Sources</button><button class="tab">Projects</button><button class="tab">Pipeline</button><button class="tab">Health</button>
+  </div>
+
+  <div class="bar">
+    <span class="crumb"><b>Sources</b> / Design for How People Think / Wayfinding</span>
+    <span class="pill extracted">extracted</span>
+    <span class="spacer"></span>
+    <button class="a">12 claims <span class="n">· 47 not taken</span></button>
+    <button class="a">Details</button>
+    <button class="a">History</button>
+    <button class="a">Original</button>
+    <button class="a">Edit</button>
+    <button class="a primary">Queue for processing</button>
+  </div>
+
+  <div class="reader"><article class="md">
+    <h1>Wayfinding</h1>
+    <p class="byline">Design for How People Think · John Whalen (2019) · BOOK_CHAPTER · 2,423 characters · extracted by powerhouse-agent</p>
+
+    <p>A common definition of wayfinding is that it is about getting from point A to point B. For the products you build it is richer than that: it is the sum of every cue that tells someone where they are, what is around them, and how to get back.</p>
+
+    <h2>The Six Minds of Experience</h2>
+    <p>The six minds are not six features. They are six questions a person answers continuously, mostly without noticing, and each of them can fail on its own.</p>
+    <table>
+      <thead><tr><th>Mind</th><th>The question it answers</th></tr></thead>
+      <tbody>
+        <tr><td>Vision / Attention</td><td>What should I look at first?</td></tr>
+        <tr><td>Wayfinding</td><td>Where am I, and how do I get where I am going?</td></tr>
+        <tr><td>Memory</td><td>Have I seen this before?</td></tr>
+        <tr><td>Language</td><td>What does this mean?</td></tr>
+        <tr><td>Decision making</td><td>What should I do now?</td></tr>
+        <tr><td>Emotion</td><td>How do I feel about this?</td></tr>
+      </tbody>
+    </table>
+
+    <h3>Vision, Attention, and Automaticity</h3>
+    <p><em>« placeholder excerpt — the mock uses invented prose in the register of the book; headings are its real ones »</em></p>
+    <p>Attention is a spotlight with a narrow beam and a very short memory. Anything the interface expects a person to find by searching has already cost them something they cannot get back, because finding is serial and looking is parallel.</p>
+
+    <blockquote>The most expensive words in an interface are the ones a person has to read twice.</blockquote>
+
+    <h3>Applying it to a reading surface</h3>
+    <ul>
+      <li>One column, one measure, one place the eye can rest.</li>
+      <li>Landmarks at every scale: a title, a section, a paragraph, a line.</li>
+      <li>Nothing that has to be hunted — if a control matters, it is present or it is one labelled move away.</li>
+    </ul>
+
+    <hr>
+    <p class="note"><strong>Buxton A — task-oriented, minimal.</strong> One bar, three facts, one action per intent, no cards. Reading is uninterrupted and the whole page belongs to the text: the strongest answer to “read the source, then get back to work”. Its cost is the counter-case — a source is not only read, it is <em>the thing notes were derived from</em>, and here the claims are a single word in the bar with nothing about them on screen. It also hides the fact that the queue action is unavailable once a source is EXTRACTED (the button simply disappears). A is the bar and the page; it is not the whole editor.</p>
+  </article></div>
+</div>
+<script>// design proposal, awaiting green light. Nothing in the React editor has been changed.
+document.addEventListener("DOMContentLoaded",()=>{
+  const b=document.createElement("button");b.className="btn toggle";b.textContent="light / dark";b.style.cssText="border-radius:8px;padding:6px 12px;font-size:12px;font-weight:500;background:var(--bai-hover);border:1px solid var(--bai-border);color:var(--bai-accent)";
+  b.onclick=()=>{const h=document.documentElement;h.dataset.baiTheme=h.dataset.baiTheme==="light"?"dark":"light"};
+  document.body.appendChild(b);
+  const n=document.createElement("div");n.className="banner";n.textContent="design proposal — awaiting green light — nothing in the React editor has been changed";document.body.appendChild(n);
+});</script></body></html>

@@ -1,0 +1,267 @@
+<!doctype html><html lang="en" data-bai-theme="dark"><head><meta charset="utf-8"><title>Intake — the blended design</title>
+<!-- design proposal, awaiting green light. Nothing in the React editor has been changed. -->
+<style>/* Live values copied from style.css (2026-09-17). Dark default; light toggle bottom-right. */
+:root, [data-bai-theme="dark"] {
+  --bai-bg:#1e1e2e; --bai-surface:#181825; --bai-deep:#11111b; --bai-hover:#313244;
+  --bai-border:rgba(255,255,255,0.1); --bai-text:#e4e4e7; --bai-text-secondary:#d4d4d8;
+  --bai-text-tertiary:#9ca3af; --bai-text-muted:#6b7280; --bai-text-faint:#4b5563;
+  --bai-accent:#cba6f7; --bai-accent-text:#1e1e2e; --bai-accent-soft:rgba(203,166,247,0.1); --bai-overlay:#262638;
+  --bai-ok:#a6e3a1; --bai-ok-soft:rgba(166,227,161,0.12); --bai-warn:#fab387; --bai-danger:#f38ba8; --bai-danger-soft:rgba(243,139,168,0.12);
+}
+[data-bai-theme="light"] {
+  --bai-bg:#f8f9fc; --bai-surface:#fff; --bai-deep:#f1f3f8; --bai-hover:#e8eaf0; --bai-border:#e2e4e9;
+  --bai-text:#1f2937; --bai-text-secondary:#374151; --bai-text-tertiary:#6b7280; --bai-text-muted:#9ca3af; --bai-text-faint:#d1d5db;
+  --bai-accent:#7c3aed; --bai-accent-text:#fff; --bai-accent-soft:rgba(124,58,237,0.08); --bai-overlay:#ffffff;
+  --bai-ok:#059669; --bai-ok-soft:rgba(5,150,105,0.08); --bai-warn:#d97706; --bai-danger:#dc2626; --bai-danger-soft:rgba(220,38,38,0.08);
+}
+*{box-sizing:border-box} html,body{margin:0;height:100%;background:var(--bai-bg);color:var(--bai-text);font:13px/1.45 ui-sans-serif,system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
+.app{display:flex;flex-direction:column;height:100vh}
+.topbar{display:flex;align-items:center;gap:4px;padding:8px 12px;background:var(--bai-surface);border-bottom:1px solid var(--bai-border)}
+.topbar .name{font-weight:600;margin-right:12px;font-size:12px}
+.tab{display:inline-flex;align-items:center;gap:6px;border-radius:6px;padding:6px 12px;font-size:12px;font-weight:500;color:var(--bai-text-tertiary);background:transparent;border:0}
+.tab.on{background:var(--bai-hover);color:var(--bai-accent)} .tab .badge{font-size:10px;padding:0 5px;border-radius:999px;background:var(--bai-accent-soft);color:var(--bai-accent)}
+.pane{flex:1;min-height:0;overflow:auto;padding:20px 24px}
+.hint{font-size:11px;color:var(--bai-text-muted)} .faint{font-size:11px;color:var(--bai-text-faint)} .sec{color:var(--bai-text-secondary)} .ter{color:var(--bai-text-tertiary)}
+.card{background:var(--bai-surface);border:1px solid var(--bai-border);border-radius:12px}
+.btn{border-radius:8px;padding:6px 12px;font-size:12px;font-weight:500;background:var(--bai-hover);border:1px solid var(--bai-border);color:var(--bai-accent)}
+.btn.primary{background:var(--bai-accent);color:var(--bai-accent-text);border-color:transparent;font-weight:600;padding:8px 16px;font-size:13px}
+.btn.ghost{background:transparent} .btn:disabled{opacity:.4}
+.link{font-size:11px;font-weight:500;color:var(--bai-accent);background:none;border:0;padding:0}
+.spin{width:12px;height:12px;border-radius:999px;border:2px solid var(--bai-border);border-top-color:var(--bai-accent);animation:r 1s linear infinite;flex:none}@keyframes r{to{transform:rotate(360deg)}}
+.dot{width:8px;height:8px;border-radius:999px;flex:none}.dot.queued{background:var(--bai-text-faint)}.dot.converting{background:var(--bai-accent)}.dot.review{background:var(--bai-warn)}.dot.done{background:var(--bai-ok)}.dot.failed{background:var(--bai-danger)}
+/* the journey strip: four steps, one file's coordinates on the way to the goal */
+.journey{display:inline-flex;align-items:center;gap:0;font-size:10px;color:var(--bai-text-faint);white-space:nowrap}
+.journey i{display:inline-block;width:7px;height:7px;border-radius:999px;border:1px solid var(--bai-text-faint);margin:0 4px 0 0;vertical-align:middle}
+.journey s{text-decoration:none;display:inline-block;width:14px;height:1px;background:var(--bai-border);margin:0 4px}
+.journey b{font-weight:500;color:var(--bai-text-faint)}
+.journey .past i{background:var(--bai-ok);border-color:var(--bai-ok)} .journey .past b{color:var(--bai-text-muted)}
+.journey .now i{background:var(--bai-accent);border-color:var(--bai-accent);box-shadow:0 0 0 3px var(--bai-accent-soft)} .journey .now b{color:var(--bai-accent)}
+.journey .halt i{background:var(--bai-danger);border-color:var(--bai-danger)} .journey .halt b{color:var(--bai-danger)}
+.journey.big{font-size:12px} .journey.big i{width:10px;height:10px;margin-right:6px} .journey.big s{width:28px}
+.row{display:flex;align-items:center;gap:12px;padding:10px 12px;border-radius:8px;background:var(--bai-bg);border:1px solid var(--bai-border)}.row+.row{margin-top:4px}
+.row .name{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:12px;color:var(--bai-text-secondary)}
+.row.needs{border-left:3px solid var(--bai-warn)} .row.done .name{color:var(--bai-text-tertiary)}
+.group{margin-top:14px;font-size:10px;letter-spacing:.06em;text-transform:uppercase;color:var(--bai-text-faint);font-weight:600}
+.section{display:flex;align-items:flex-start;gap:12px;padding:8px 12px;border-radius:8px;background:var(--bai-bg);border:1px solid var(--bai-border)}.section+.section{margin-top:4px}
+.section input{margin-top:3px;accent-color:var(--bai-accent)}
+.section .t{display:block;font-size:12px;font-weight:500;color:var(--bai-text-secondary);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.section .m{display:block;font-size:10px;color:var(--bai-text-faint);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.section.off .t{color:var(--bai-text-muted)}
+select,input[type=text]{background:var(--bai-bg);border:1px solid var(--bai-border);color:var(--bai-text-secondary);border-radius:6px;padding:4px 8px;font-size:11px}
+label.f{display:inline-flex;align-items:center;gap:8px;font-size:11px;color:var(--bai-text-muted)}
+.bar{height:6px;border-radius:999px;background:var(--bai-hover);overflow:hidden;display:flex}.bar span{height:100%}
+.drop{border:1px dashed var(--bai-border);border-radius:12px;padding:14px 16px;display:flex;align-items:center;gap:12px;background:var(--bai-surface)}
+.drop.hero{padding:40px 24px;flex-direction:column;text-align:center;gap:10px}
+.safe{font-size:11px;color:var(--bai-text-muted)} .safe b{color:var(--bai-text-tertiary);font-weight:500}
+.banner{position:fixed;top:8px;right:12px;font-size:10px;color:var(--bai-text-faint)} .toggle{position:fixed;bottom:12px;right:12px}
+.ok{color:var(--bai-ok)} .warn{color:var(--bai-warn)} .danger{color:var(--bai-danger)}
+
+.states{position:fixed;bottom:12px;left:12px;display:flex;gap:4px}.states a{font-size:11px;padding:4px 8px;border-radius:6px;border:1px solid var(--bai-border);color:var(--bai-text-tertiary);text-decoration:none;background:var(--bai-surface)}.states a.on{color:var(--bai-accent);border-color:var(--bai-accent)}
+.goal{display:flex;align-items:center;gap:16px;padding:12px 16px}.goal .txt{flex:1;min-width:0}.goal h2{margin:0;font-size:13px;font-weight:600}.goal p{margin:2px 0 0;font-size:11px;color:var(--bai-text-tertiary)}
+.legend{display:flex;gap:12px;font-size:10px;color:var(--bai-text-muted);margin-top:6px}.legend i{display:inline-block;width:8px;height:8px;border-radius:2px;margin-right:4px;vertical-align:middle}
+.split{display:flex;gap:16px;align-items:flex-start}.list{width:420px;flex:none}.detail{flex:1;min-width:0;position:sticky;top:0}
+.detail .head{padding:14px 16px;border-bottom:1px solid var(--bai-border)}.detail .body{padding:12px 16px;max-height:52vh;overflow:auto}.detail .foot{padding:12px 16px;border-top:1px solid var(--bai-border);display:flex;align-items:center;gap:12px;background:var(--bai-surface);border-radius:0 0 12px 12px}
+.row{flex-direction:column;align-items:stretch;gap:6px}.row .top{display:flex;align-items:center;gap:10px}.row.sel{border-color:var(--bai-accent)}
+.stepnum{font-size:10px;letter-spacing:.06em;text-transform:uppercase;color:var(--bai-accent);font-weight:600}
+.path{display:flex;gap:0;justify-content:center;margin:16px auto 0;max-width:640px}.path div{flex:1;text-align:center;font-size:11px;color:var(--bai-text-tertiary);padding:0 8px}.path div b{display:block;font-size:12px;color:var(--bai-text-secondary);margin-bottom:2px}.path div i{display:block;width:8px;height:8px;border-radius:999px;background:var(--bai-text-faint);margin:0 auto 8px;position:relative}.path div:not(:last-child) i::after{content:"";position:absolute;left:12px;top:3px;width:calc(100% * 8);height:1px;background:var(--bai-border)}
+.chip{font-size:10px;padding:1px 6px;border-radius:999px;background:var(--bai-ok-soft);color:var(--bai-ok)}
+@keyframes pop{0%{transform:scale(.6);opacity:0}60%{transform:scale(1.15)}100%{transform:scale(1);opacity:1}}.pop{display:inline-block;animation:pop .5s ease-out}
+
+/* expandable section preview */
+.section{flex-wrap:wrap}.section .chev{flex:none;width:16px;height:16px;border:0;background:none;color:var(--bai-text-faint);font-size:10px;padding:0;margin-top:2px;cursor:pointer}.section.open .chev{color:var(--bai-accent)}
+.section .prev{flex-basis:100%;margin:8px 0 2px 28px;border-left:2px solid var(--bai-border);padding:8px 12px 8px 14px;background:var(--bai-surface);border-radius:0 8px 8px 0;display:none}.section.open .prev{display:block}
+.prev .crumb{font-size:10px;color:var(--bai-text-faint);margin-bottom:6px}.prev .crumb b{color:var(--bai-text-muted);font-weight:500}
+.prev .md{max-height:220px;overflow:hidden;position:relative;font-size:12px;line-height:1.55;color:var(--bai-text-secondary)}.prev .md.all{max-height:none}
+.prev .md::after{content:"";position:absolute;left:0;right:0;bottom:0;height:48px;background:linear-gradient(transparent,var(--bai-surface))}.prev .md.all::after{display:none}
+.prev .md h2{font-size:13px;margin:10px 0 4px;color:var(--bai-text)}.prev .md h2:first-child{margin-top:0}.prev .md p{margin:0 0 8px}.prev .md ul{margin:0 0 8px 16px;padding:0}.prev .md .img{display:inline-block;font-size:10px;color:var(--bai-text-faint);border:1px dashed var(--bai-border);border-radius:4px;padding:1px 6px;margin-bottom:8px}
+.prev .md table{border-collapse:collapse;font-size:11px;margin:0 0 8px}.prev .md td,.prev .md th{border:1px solid var(--bai-border);padding:3px 8px}
+.prev .pf{display:flex;align-items:center;gap:12px;margin-top:6px;font-size:10px;color:var(--bai-text-faint)}.prev .pf .link{font-size:10px}
+
+/* full-screen reader for one section (the app's modal pattern: fixed inset, dimmed catcher, surface panel) */
+.modal{position:fixed;inset:0;z-index:50;display:none;align-items:center;justify-content:center}.modal.on{display:flex}
+.modal .catch{position:absolute;inset:0;background:rgba(0,0,0,.6)}
+.modal .panel{position:relative;z-index:10;width:min(960px,92vw);height:min(88vh,1000px);display:flex;flex-direction:column;border-radius:16px;background:var(--bai-surface);border:1px solid var(--bai-border);box-shadow:0 25px 50px -12px rgba(0,0,0,.5)}
+.modal .mh{display:flex;align-items:flex-start;gap:12px;padding:16px 20px;border-bottom:1px solid var(--bai-border)}
+.modal .mh h3{margin:0;font-size:15px;color:var(--bai-text)}.modal .mh .crumb{font-size:11px;color:var(--bai-text-faint);margin-top:2px}.modal .mh .crumb b{color:var(--bai-text-muted);font-weight:500}
+.modal .mh .x{border:0;background:none;color:var(--bai-text-tertiary);font-size:16px;padding:2px 6px;border-radius:6px}.modal .mh .x:hover{background:var(--bai-hover)}
+.modal .mb{flex:1;min-height:0;overflow:auto;padding:20px 24px}.modal .mb .md{font-size:13px;line-height:1.65;color:var(--bai-text-secondary);max-width:72ch}
+.modal .mb .md h2{font-size:15px;margin:18px 0 6px;color:var(--bai-text)}.modal .mb .md h2:first-child{margin-top:0}.modal .mb .md p{margin:0 0 10px}.modal .mb .md ul{margin:0 0 10px 18px;padding:0}
+.modal .mb .md .img{display:inline-block;font-size:10px;color:var(--bai-text-faint);border:1px dashed var(--bai-border);border-radius:4px;padding:1px 6px;margin-bottom:10px}
+.modal .mb .md table{border-collapse:collapse;font-size:12px;margin:0 0 10px}.modal .mb .md td{border:1px solid var(--bai-border);padding:4px 10px}
+.modal .mf{display:flex;align-items:center;gap:12px;padding:12px 20px;border-top:1px solid var(--bai-border);font-size:11px;color:var(--bai-text-muted)}
+.modal .mf .nav{margin-left:auto;display:flex;gap:8px}.modal .mf .nav .btn{font-size:11px;padding:5px 10px}
+.modal label.tick{display:inline-flex;align-items:center;gap:6px;font-size:12px;color:var(--bai-text-secondary)}.modal label.tick input{accent-color:var(--bai-accent)}
+
+/* folder and source cards in the Sources list: lifted surface, not a bare outline */
+.fcard{display:flex;align-items:center;gap:10px;padding:10px 14px;border-radius:10px;background:var(--bai-surface);border:1px solid var(--bai-border);box-shadow:0 1px 0 rgba(0,0,0,.25)}
+.fcard+.fcard{margin-top:6px}.fcard .name{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:12px;color:var(--bai-text-secondary)}
+.fcard .ico{width:16px;height:16px;flex:none;color:var(--bai-text-tertiary)}.fcard.folder .ico{color:var(--bai-accent)}
+.fcard.folder .name{font-weight:500}
+/* a source card sits one step deeper than its folder: same lifted surface, a shade lighter, a hairline in the accent so it reads as "inside" */
+.fcard.source{margin-left:28px;background:var(--bai-overlay);border-color:color-mix(in srgb,var(--bai-accent) 22%,var(--bai-border));box-shadow:none}
+[data-bai-theme="light"] .fcard.source{background:var(--bai-deep)}
+.fcard .st{font-size:11px;color:var(--bai-text-faint)}.fcard .pill{font-size:10px;padding:1px 7px;border-radius:999px;background:var(--bai-hover);color:var(--bai-text-tertiary)}
+.fcard .pill.extracting{color:var(--bai-warn)}.fcard .pill.extracted{color:var(--bai-ok)}
+</style></head><body><div class="app" id="app"></div><div class="states" id="states"></div>
+<script>// design proposal, awaiting green light. Nothing in the React editor has been changed.
+document.addEventListener("DOMContentLoaded",()=>{const b=document.createElement("button");b.className="btn toggle";b.textContent="light / dark";
+b.onclick=()=>{const h=document.documentElement;h.dataset.baiTheme=h.dataset.baiTheme==="light"?"dark":"light"};document.body.appendChild(b);
+const n=document.createElement("div");n.className="banner";n.textContent="design proposal — awaiting green light — nothing in the React editor has been changed";document.body.appendChild(n)});
+const TOPBAR=(active,needs=1)=>`<div class="topbar"><span class="name">my-personal-vault</span>${["Chat","Search","Notes","Sources","Projects","Pipeline","Health"].map(t=>`<button class="tab ${t===active?"on":""}" style="position:relative">${t}${t==="Notes"?' <span class="badge">241</span>':''}${t==="Sources"&&needs?` <span class="badge" title="${needs} file${needs===1?"":"s"} waiting for your review" style="background:var(--bai-warn);color:var(--bai-accent-text)">${needs}</span>`:''}</button>`).join("")}</div>`;
+// Measured 2026-09-17 through the convert route.
+const BOOK={name:"Design for How People Think - John Whalen (2019).pdf",folder:"Design for How People Think",size:"16.6 MB",parts:117,folded:265,elapsed:"5 m 33 s",
+ sections:[
+ {t:"Praise for Design for How People Think",c:3658,on:false,contains:["front matter","Design for How People Think","Praise for Design for How People Think"]},
+ {t:"[ contents ]",c:13687,on:false,contains:["Using Brain Science to Build Better Products","DESIGN FOR HOW PEOPLE THINK","Revision History for the First Edition:","[ contents ]"]},
+ {t:"PART III PUTTING THE SIX MINDS TO WORK IN YOUR DESIGNS",c:3852,on:true},
+ {t:"So Do You Want the Secret to Designing a Great Experience?",c:2326,on:true,contains:["'A Psychologist Doing Product and Service Design? How Interesting...'","So Do You Want the Secret to Designing a Great Experience?"]},
+ {t:"How Humans Think About Thinking (And What We Don't Realize)",c:2013,on:true},
+ {t:"How to Contact Us",c:2169,on:false,contains:["Conventions Used in This Book","[ SIDE NOTE ]","Warning","O'Reilly Online Learning","How to Contact Us","Acknowledgments"]},
+ {t:"Rethinking 'the' Experience",c:2714,on:true,contains:["A Final Note to the Psychologists and Cognitive Scientists Reading This","Let Me Know What You Think","Rethinking 'the' Experience"]},
+ {t:"Wayfinding",c:2423,on:true,contains:["The Six Minds of Experience","Vision, Attention, and Automaticity","FIGURE 1-2","Wayfinding"]},
+ {t:"Language",c:2348,on:true,contains:["Language","Memory","Decision Making"]},
+ {t:"Emotion",c:3069,on:true,contains:["Exposing Secrets","Vision/Attention","Wayfinding","Memory","Language","Decision Making","Emotion"]},
+ {t:"Why Choose a Contextual Interview?",c:5174,on:true,contains:["User Research: Contextual Interviews","Why Choose a Contextual Interview?"]}]};
+const CV={name:"main_example.pdf",folder:"main_example",size:"47 KB",parts:2,folded:9,elapsed:"2.3 s",sections:[
+ {t:"Core Competencies",c:2397,on:true,contains:["main_example.pdf — front matter","Core Competencies","Professional Experience","MakerDAO SES"]},
+ {t:"Selected Projects",c:2584,on:true,contains:["Remote / Copenhagen","Copenhagen, Denmark","Selected Projects","Education","Languages","Honors and Awards","References"]}]};
+const STEPS=["Chosen","Converted","Reviewed","In the vault"];
+// state: 0..3 = step reached (3 = in the vault); "now" is the step in progress; halt marks a failure at that step
+const journey=(reached,now,opts={})=>`<span class="journey ${opts.big?"big":""}">${STEPS.map((s,i)=>{
+ const cls=i<reached?"past":(i===now?(opts.halt?"halt":"now"):"");return `<span class="${cls}"><i></i><b>${opts.labels?.[i]??s}</b></span>${i<3?"<s></s>":""}`}).join("")}</span>`;
+const sectionRow=(s)=>`<label class="section ${s.on?"":"off"}"><input type="checkbox" ${s.on?"checked":""}><span style="min-width:0;flex:1"><span class="t">${s.t}</span>
+ <span class="m">${s.c.toLocaleString()} chars${s.on?"":" · looks like furniture — left unticked, tick to keep"}</span>${s.contains?`<span class="m">contains: ${s.contains.join(" · ")}</span>`:""}</span></label>`;
+const sel=(f)=>f.sections.filter(s=>s.on).length;
+</script><script>
+// Real markdown slices (first 1 400 chars) from the book conversion of 2026-09-17 — what the source would contain.
+const PREVIEWS = {"Praise for Design for How People Think": {"chars": 3658, "md": "<!-- image -->\n\nDesign   for How People Think Using Brain Science to Build Better Products\n\nJohn Whalen, PhD\n\n<!-- image -->\n\n## Design for How People Think\n\nUserexperiencedoesn'thappenonascreen; ithappens in themind,and the experience is multidimensionalandmultisensory.Thispractica book will helpyouuncover critical insights abouthowyourcustomersthinksoyoucan createproducts orservices withan exceptional experience.\n\nCorporate leaders,marketers.product owners,and designers will learnhow cognitiveprocesses from different brain regions form what weperceive as a singularexperience.AuthorJohnwhalenshowsyou howanyoneonyourteamcanconduct\"contextual interviews\"to unlock insights.You'll then learn howto applythatknowledgetodesignbrilliant experiencesforyourcustomers\n\n- Learnaboutthe\"sixminds\"ofuser experienceandhoweachcontributestothe perceptionofasingularexperience\n- Findouthowyourteam-withoutany traininginpsychology-canuncovercritical insightsaboutyourcustomers'conscious andunconsciousprocesses\n- Learnhowtoimmediatelyapplywhatyou've learnedtoimproveyourproductsand services\n- Explorepractical examplesofhowthe Fortune100usedthissystemtobuildhighly successfulexperiences\n\nUXPRODUCTDESIGN\n\nUS$49.99\n\nCAN$65.99\n\nISBN:\n\n978-1-491-98545-8\n\n<!-- image -->\n\n<!-- image -->\n\n\"DesignforHowPeople Think reads just like aconversationwith John-clear,engaging. and quick to the point Thisisaterrificbookf", "total": 3831}, "[ contents ]": {"chars": 13687, "md": "## Using Brain Science to Build Better Products\n\nJohn Whalen, PhD\n\n<!-- image -->\n\n## DESIGN FOR HOW PEOPLE THINK\n\nby John Whalen, PhD\n\nCopyright \u00a9 2019 John Whalen. All rights reserved.\n\nPrinted in the United States of America.\n\nPublished by O'Reilly Media, Inc., 1005 Gravenstein Highway North, Sebastopol, CA 95472.\n\nO'Reilly books may be purchased for educational, business, or sales promotional use. Online editions are also available for most titles ( http://oreilly.com ). For more information, contact our corporate/institutional sales department: (800) 998-9938 or corporate@oreilly.com.\n\nDevelopment Editor:\n\nAngela Rufino\n\nAcquisition Editor:\n\nJessica Haberman\n\nProduction Editor:\n\nKatherine Tozer\n\nCopyeditor:\n\nJasmine Kwityn\n\nProofreader:\n\nRachel Head\n\nLucie Haskins\n\nIndexer:\n\nApril 2019: First Edition\n\n## Revision History for the First Edition:\n\n2019-03-20\n\nFirst Release\n\nSee https://www.oreilly.com/catalog/errata.csp?isbn=0636920077916 for release details.\n\ne O'Reilly logo is a registered trademark of O'Reilly Media, Inc. Design for How People ink and related trade dress are trademarks of O'Reilly Media, Inc.\n\nMany of the designations used by manufacturers and sellers to distinguish their products are claimed as trademarks. Where those designations appear in this book, and O'Reilly Media, Inc., was aware of a trademark claim, the designations have been printed in caps or i", "total": 20616}, "Wayfinding": {"chars": 2423, "md": "## The Six Minds of Experience\n\nSurely it is the case that there are hundreds of cognitive processes happening every second in your brain. But to simplify to a level that might be more relevant to product and service design, I propose that we limit ourselves to a subset that we can realistically  measure and influence.\n\nWhat are these processes and what are their functions? Let's use a concrete example to explain them. Consider the act of purchasing a chair suitable  for  your  mid-century  modern  house.  Perhaps  you  might  be interested in a classic design from that period, like the Eames chair and ottoman shown in Figure 1 - 1 . You are seeking to buy this online and browsing an ecommerce site.\n\nFIGURE 1-1 Eames chair and ottoman\n\n<!-- image -->\n\n## Vision, Attention, and Automaticity\n\nAs you first land on the furniture website to look for chairs, your attention and eyes might be drawn to the pictures to make sure you are on the right site. You might choose to look for the search option to type in 'Eames chair.' You might also scan the page for words such as 'furniture,' or for the word 'chair,' from which you might look for the appropriate category of chair. If you don't find 'chair,' you might look for other words that might represent a category that includes chairs. Let's suppose on scanning the options shown in Figure 1 - 2 ,  you  pick  the 'Living' option.\n\n## FIGURE", "total": 2543}, "Emotion": {"chars": 3069, "md": "## Exposing Secrets\n\nIf you've made it this far, chances are you've learned a lot about the six types of mental processes I'd like you to focus on. As a reminder, here are the things you should think about with regard to  your target customers:\n\n## Vision/Attention\n\nWhat is attracting your customers' attention? What are the words, images, and objects they are looking for?\n\n## Wayfinding\n\nHow are customers representing where they are (whether in the physical world, an app, or virtual space)? How do they believe they can interact with and navigate in this space?\n\n## Memory\n\nWhat are the past experiences customers are using to frame and understand what they are experiencing? What are mental models/ stereotypes that are forming their expectations about how things should work and what happens next?\n\n## Language\n\nWhat  are  the  words  your  customers  are  using?  What  do  those words,  and  their  associated  meanings  according  to  the  customers, say about their level of expertise (thereby suggesting how they might want to be engaged by you)?\n\n## Decision Making\n\nWhat is the problem your customers think they need to solve? How does that differ from the actual problem? How do they think they can get to the solution? What subproblems do they need solve and what decisions do they need to make along the way?\n\n## Emotion\n\nWhat are your customers'  deep-seated  goals,  desires,  and ", "total": 3194}};
+const renderMd = (md) => md.split(/\n{2,}/).map(b => { b = b.trim(); if (!b) return "";
+  if (b.startsWith("<!-- image -->")) return '<span class="img">image</span>';
+  if (/^##?#? /.test(b)) return `<h2>${b.replace(/^#+ /, "")}</h2>`;
+  if (/^\|/.test(b)) { const rows = b.split("\n").filter(r => !/^\|[-| ]+\|$/.test(r)); return `<table>${rows.map(r => `<tr>${r.split("|").slice(1, -1).map(c => `<td>${c.trim()}</td>`).join("")}</tr>`).join("")}</table>`; }
+  if (/^- /m.test(b)) return `<ul>${b.split("\n").map(l => `<li>${l.replace(/^- /, "")}</li>`).join("")}</ul>`;
+  return `<p>${b.replace(/\n/g, " ")}</p>`; }).join("");
+// Overrides the shared row: a chevron opens the section to show exactly what the source will contain.
+const sectionRowPreview = (s) => { const pv = PREVIEWS[s.t] ?? { md: "*(preview of this part — the mock only captured four real slices)*", total: s.c }; const open = s.open;
+ return `<div class="section ${s.on ? "" : "off"} ${open ? "open" : ""}">
+  <input type="checkbox" ${s.on ? "checked" : ""}>
+  <span style="min-width:0;flex:1"><span class="t">${s.t}</span>
+   <span class="m">${s.c.toLocaleString()} chars${s.on ? "" : " · looks like furniture — left unticked, tick to keep"}</span>
+   ${s.contains ? `<span class="m">contains: ${s.contains.join(" · ")}</span>` : ""}</span>
+  <button class="chev" data-open="${s.t}" title="Show what this source will contain">${open ? "▾" : "▸"}</button>
+  ${pv ? `<div class="prev"><div class="crumb">${BOOK.folder} › <b>${s.t}</b> · this is the source's content as it will be written — tables intact, ${pv.total.toLocaleString()} chars</div>
+   <div class="md">${renderMd(pv.md)}${pv.total > pv.md.length ? "<p class=\"faint\">…</p>" : ""}</div>
+   <div class="pf"><span class="link" data-full="${s.t}" title="Read the whole ${pv.total.toLocaleString()} chars full screen (Esc to come back)">⤢ Read the whole part</span><span>·</span><span>${s.on ? "ticked — will become a source" : "unticked — tick above to keep it"}</span><span style="margin-left:auto">↑ ↓ move · space ticks · → opens · F full screen</span></div></div>` : ""}
+ </div>`; };
+BOOK.sections.find(x => x.t === "Wayfinding").open = true;
+BOOK.sections.find(x => x.t === "Praise for Design for How People Think").open = true;
+
+
+// Sources-list cards: a folder is a folder (accent folder glyph, bold name, count); a source is a document (grey page glyph, indented, status pill).
+const FOLDER_ICO='<svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 7a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg>';
+const SOURCE_ICO='<svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M7 3h7l5 5v13H7z"/><path d="M14 3v5h5M9 13h7M9 17h5"/></svg>';
+const folderCard=(name,count,status,fresh=false,open=false)=>`<div class="fcard folder"><span class="ter" style="font-size:10px;width:10px">${open?"▾":"▸"}</span>${FOLDER_ICO}<span class="name">${name}/</span>${fresh?'<span class="chip">new</span>':''}<span class="st">${count}</span>${status?`<span class="pill ${status.includes("extracting")?"extracting":"extracted"}">${status}</span>`:""}<span class="link">Open</span></div>`;
+const sourceCard=(title,chars,status)=>`<div class="fcard source">${SOURCE_ICO}<span class="name">${title}</span><span class="st">${chars.toLocaleString()} chars</span><span class="pill ${status}">${status}</span></div>`;
+const state=(location.hash||"#batch").slice(1);
+const FILES=[
+ {f:BOOK,st:"review",reached:2,now:2,elapsed:BOOK.elapsed,sel:true},
+ {f:{name:"Building-a-Second-Brain.epub",size:"1.2 MB"},st:"converting",reached:1,now:1,elapsed:"1 m 12 s"},
+ {f:{name:"agent-notes-2026-09.md",size:"18 KB"},st:"queued",reached:1,now:1,wait:"file 4 of 5"},
+ {f:{name:"scan-2019.pdf",size:"3.1 MB"},st:"failed",reached:1,now:1,halt:true,err:"the document could not be read, even after rewriting it"},
+ {f:CV,st:"done",reached:4,now:3,sources:2,folder:CV.folder},
+ {f:{name:"reactor-6.2.3-release-notes.html",size:"92 KB"},st:"done",reached:4,now:3,sources:5,folder:"reactor-6.2.3-release-notes"},
+];
+if(state==="done"){FILES[0]={...FILES[0],st:"done",reached:4,now:3,sources:8,folder:BOOK.folder,sel:false};}
+if(state==="complete"||state==="finished"){
+ FILES[0]={...FILES[0],st:"done",reached:4,now:3,sources:8,folder:BOOK.folder,sel:false};
+ FILES[1]={...FILES[1],st:"done",reached:4,now:3,sources:6,folder:"Building-a-Second-Brain"};
+ FILES[2]={...FILES[2],st:"done",reached:4,now:3,sources:1,folder:"agent-notes-2026-09"};
+ FILES[3]={...FILES[3],st:"done",reached:4,now:3,sources:2,folder:"scan-2019"};   // retried after the failure, succeeded
+}
+const allIn = FILES.every(x=>x.st==="done");
+const counts=Object.fromEntries(["review","converting","queued","failed","done"].map(k=>[k,FILES.filter(x=>x.st===k).length]));
+const sourcesIn=FILES.filter(x=>x.st==="done").reduce((n,x)=>n+x.sources,0);
+const line=(x)=>{switch(x.st){
+ case"review":return `<span class="warn" style="font-size:11px">Ready — ${x.f.parts} parts, ${sel(x.f)} ticked</span>`;
+ case"converting":return `<span class="spin"></span><span class="faint">Converting · ${x.elapsed} · keep this tab open</span>`;
+ case"queued":return `<span class="faint">Waiting · ${x.wait}</span>`;
+ case"failed":return `<span class="danger" style="font-size:11px">${x.err}</span>`;
+ case"done":return `<span class="ok" style="font-size:11px"><span class="pop">✓</span> ${x.sources} sources in /sources/${x.folder}/ · queued for extraction</span>`}};
+const action=(x)=>({review:`<button class="btn ${x.sel?"":"primary"}" style="padding:5px 10px;font-size:11px">Review</button>`,converting:"",queued:`<button class="link">Remove</button>`,failed:`<button class="btn" style="padding:5px 10px;font-size:11px">Retry</button>`,done:`<button class="link">Open in Sources</button>`})[x.st];
+const row=(x)=>`<div class="row ${x.st==="review"?"needs":""} ${x.st==="done"?"done":""} ${x.sel?"sel":""}"><div class="top"><span class="dot ${x.st==="queued"?"queued":x.st==="converting"?"converting":x.st==="review"?"review":x.st==="failed"?"failed":"done"}"></span><span class="name">${x.f.name}</span>${action(x)}</div>
+ <div style="display:flex;align-items:center;justify-content:space-between;gap:10px;padding-left:18px">${journey(x.reached,x.now,{halt:x.halt})}<span style="display:flex;align-items:center;gap:6px;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${line(x)}</span></div></div>`;
+const group=(title,keys)=>{const xs=FILES.filter(x=>keys.includes(x.st));return xs.length?`<div class="group">${title} · ${xs.length}</div>${xs.map(row).join("")}`:""};
+const goal=`<div class="card goal"><div class="txt"><h2>Adding sources to my-personal-vault</h2>
+ <p><b class="ok">${sourcesIn} sources in the vault</b> from ${counts.done} of ${FILES.length} files${counts.review?` · <b class="warn">${counts.review} waiting for your review</b>`:""}${counts.converting+counts.queued?` · ${counts.converting+counts.queued} converting`:""}${counts.failed?` · <b class="danger">${counts.failed} failed</b>`:""}</p>
+ <div class="bar" style="margin-top:8px"><span style="width:${counts.done/FILES.length*100}%;background:var(--bai-ok)"></span><span style="width:${counts.review/FILES.length*100}%;background:var(--bai-warn)"></span><span style="width:${(counts.converting+counts.queued)/FILES.length*100}%;background:var(--bai-accent)"></span><span style="width:${counts.failed/FILES.length*100}%;background:var(--bai-danger)"></span></div>
+ <div class="legend"><span><i style="background:var(--bai-ok)"></i>in the vault</span><span><i style="background:var(--bai-warn)"></i>needs you</span><span><i style="background:var(--bai-accent)"></i>converting</span><span><i style="background:var(--bai-danger)"></i>failed</span></div></div>
+ <div class="drop" style="width:220px;flex:none;justify-content:center;flex-direction:column;text-align:center;gap:4px;padding:12px"><span class="sec" style="font-size:12px">Drop more files</span><span class="faint">or <span class="link">choose</span> · 29 formats · 30 MB each</span></div></div>`;
+const review=(x)=>`<div class="card detail"><div class="head"><div class="stepnum">Step 3 of 4 · Review</div>
+ <div style="display:flex;align-items:center;gap:12px;margin-top:4px"><strong style="font-size:13px;flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${x.f.name}</strong>${journey(2,2,{big:true})}</div>
+ <p class="hint" style="margin:6px 0 10px">We read ${x.f.parts} parts (${x.f.folded} small ones folded into their neighbours). Each ticked part becomes one source. <b class="sec">Nothing is written until you click Add.</b></p>
+ <div style="display:flex;flex-wrap:wrap;gap:12px;align-items:center"><label class="f">Source type <select><option>ARTICLE</option><option>BOOK_CHAPTER</option><option>PAPER</option><option>WEB_PAGE</option><option>TRANSCRIPT</option><option>DOCUMENTATION</option></select></label>
+ <label class="f">Folder <span class="faint">/sources/</span><input type="text" value="${x.f.folder}" style="width:260px"></label><span class="faint" style="margin-left:auto">${sel(x.f)} of ${x.f.parts} ticked · <span class="link">all</span> · <span class="link">none</span></span></div></div>
+ <div class="body">${x.f.sections.map(sectionRowPreview).join("")}<div class="faint" style="padding:8px 12px">… ${x.f.parts-x.f.sections.length} more parts</div></div>
+ <div class="foot"><button class="btn primary">Add ${sel(x.f)+ (x.f.parts-x.f.sections.length)} sources to the vault</button><span class="safe">They land in <b>/sources/${x.f.folder}/</b>, queued for extraction, each with the original ${x.f.size} file attached.</span></div></div>`;
+const landing=`<div style="max-width:1200px;margin:0 auto"><div style="display:flex;align-items:center;justify-content:space-between"><h2 class="ter" style="font-size:13px;margin:0">Sources (0)</h2><button class="btn ghost" style="font-size:11px">Paste text</button></div></div><div style="max-width:760px;margin:40px auto 0;text-align:center"><h1 style="font-size:22px;margin:0 0 6px">Your vault has no sources yet</h1><p class="ter" style="margin:0 0 20px">Bring in a PDF, a Word file, a web page, a book. The vault converts it, shows you the sources it would become, and writes nothing until you approve.</p>
+ <div class="drop hero"><span class="sec" style="font-size:14px">Drop files here</span><button class="btn primary">Choose files</button><span class="faint">29 formats · up to 30 MB each · several at once is fine</span></div>
+ <div class="path"><div><i></i><b>1 · Choose</b>pick one file or twenty</div><div><i></i><b>2 · Convert</b>we read it — seconds for a page, minutes for a book</div><div><i></i><b>3 · Review</b>tick the parts that should be sources</div><div><i></i><b>4 · In the vault</b>sources in /sources/, queued for extraction</div></div>
+ <p class="safe" style="margin-top:24px">Keep the tab open while a file converts — the work lives here until step 4.</p></div>`;
+const complete=`<div class="card" style="max-width:760px;margin:24px auto 0;padding:28px 28px 22px;text-align:center;border-color:var(--bai-ok)">
+ <div class="pop ok" style="font-size:40px;line-height:1">✓</div>
+ <h2 style="font-size:16px;margin:10px 0 4px">All ${FILES.length} files are in the vault</h2>
+ <p class="ter" style="margin:0 0 14px">${sourcesIn} sources across ${FILES.length} folders, queued for extraction. The original file is attached to every source.</p>
+ <div style="display:flex;justify-content:center;margin-bottom:18px">${journey(4,3,{big:true})}</div>
+ <div style="text-align:left;max-width:600px;margin:0 auto">${FILES.map(x=>folderCard(x.folder,`${x.sources} source${x.sources===1?"":"s"}`,"extracting")).join("")}</div>
+ <div style="display:flex;justify-content:center;gap:10px;margin-top:20px"><button class="btn primary" data-finish>Finish</button><button class="btn ghost">Add more files</button><button class="btn ghost">Watch in Pipeline</button></div>
+ <p class="safe" style="margin:14px 0 0">Finish closes this panel and shows your sources. Nothing else happens — the sources are already in the vault.</p></div>`;
+const done=`<div class="card" style="padding:14px 16px;margin-bottom:14px;display:flex;align-items:center;gap:14px;border-color:var(--bai-ok)"><span class="pop ok" style="font-size:22px">✓</span><div style="flex:1"><div class="sec" style="font-size:13px;font-weight:600">8 sources added from “${BOOK.folder}”</div><div class="hint">In /sources/${BOOK.folder}/ · queued for extraction · original 16.6 MB file attached to each · <span class="link">Open in Sources</span> · <span class="link">Watch in Pipeline</span></div></div><span class="chip">step 4 of 4</span></div>`;
+let body;
+if(state==="landing")body=landing;
+else if(state==="finished")body=`<div style="max-width:1200px;margin:0 auto">
+ <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px"><h2 class="ter" style="font-size:13px;margin:0">Sources (69)</h2><div style="display:flex;gap:8px"><button class="btn ghost" style="font-size:11px">Paste text</button><button class="btn" style="font-size:11px" data-addmore>＋ Add sources</button></div></div>
+ <div class="group">Folders in /sources</div>
+ ${folderCard(BOOK.folder,"8 sources","8 extracting",true,true)}
+ ${[["PART III PUTTING THE SIX MINDS TO WORK IN YOUR DESIGNS",3852],["So Do You Want the Secret to Designing a Great Experience?",2326],["How Humans Think About Thinking (And What We Don't Realize)",2013],["Rethinking 'the' Experience",2714],["Wayfinding",2423],["Language",2348],["Emotion",3069],["Why Choose a Contextual Interview?",5174]].map(([t,c])=>sourceCard(t,c,"extracting")).join("")}
+ ${[...FILES.slice(1).map(x=>[x.folder,`${x.sources} source${x.sources===1?"":"s"}`,`${x.sources} extracting`,true]),["Ars Contexta methodology","12 sources","12 extracted"],["Building the Knowledge Vault","31 sources","29 extracted"]].map(([n,c,st,fresh])=>folderCard(n,c,st,fresh)).join("")}
+ <div class="faint" style="padding:8px 12px">… 6 more folders</div>
+ <p class="hint" style="margin-top:16px">The panel is closed; the Sources tab badge is gone. "＋ Add sources" opens a fresh batch.</p></div>`;
+else if(state==="complete")body=`<div style="max-width:1200px;margin:0 auto">
+ <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px"><h2 class="ter" style="font-size:13px;margin:0">Sources (52)</h2><div style="display:flex;gap:8px"><button class="btn ghost" style="font-size:11px">Paste text</button><button class="btn" style="font-size:11px">＋ Add sources</button></div></div>
+ ${complete}</div>`;
+else body=`<div style="max-width:1200px;margin:0 auto">
+ <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px"><h2 class="ter" style="font-size:13px;margin:0">Sources (52)</h2><div style="display:flex;gap:8px"><button class="btn ghost" style="font-size:11px">Paste text</button><button class="btn" style="font-size:11px">＋ Add sources</button></div></div>
+ ${state==="done"?done:""}${goal}
+ <div class="split" style="margin-top:14px"><div class="list">${group("Needs you",["review","failed"])}${group("Converting",["converting","queued"])}${group("In the vault",["done"])}</div>
+ <div style="flex:1;min-width:0">${state==="done"?`<div class="card" style="padding:40px;text-align:center"><span class="ter">Nothing waiting for you — 2 files still converting. The next one that finishes opens here; when every file is in the vault, this panel becomes a summary with a Finish button.</span></div>`:review(FILES[0])}</div></div>
+ <p class="hint" style="margin-top:16px">Keep this tab open while files convert — the work lives here until it is in the vault. Switching to Chat or Notes and back is fine.</p>
+ <div class="group" style="margin-top:22px">Folders in /sources</div>
+ ${[["main_example","2 sources","2 extracting"],["reactor-6.2.3-release-notes","5 sources","5 extracting"],["Ars Contexta methodology","12 sources","12 extracted"],["Building the Knowledge Vault","31 sources","29 extracted"]].map(([n,c,st])=>folderCard(n,c,st)).join("")}
+ <div class="faint" style="padding:8px 12px">… 6 more folders</div></div>`;
+// the badge is what needs the user: files ready for review, or failed — never a count of the batch
+document.getElementById("app").innerHTML=TOPBAR("Sources", (state==="landing"||state==="finished")?0:counts.review+counts.failed)+`<div class="pane">${body}</div>`;
+document.addEventListener("click",(e)=>{ if(e.target.closest("[data-finish]")){location.hash="#finished";location.reload();} if(e.target.closest("[data-addmore]")){location.hash="#landing";location.reload();} });
+
+// ---- full-screen reader ----------------------------------------------------
+const modal = document.createElement("div"); modal.className = "modal"; modal.id = "reader"; document.body.appendChild(modal);
+let readerIndex = -1;
+const openReader = (title) => { readerIndex = BOOK.sections.findIndex(x => x.t === title); renderReader(); modal.classList.add("on"); };
+const closeReader = () => { modal.classList.remove("on"); readerIndex = -1; };   // the view behind is untouched — same scroll, same open rows
+const renderReader = () => { const s = BOOK.sections[readerIndex]; if (!s) return; const pv = PREVIEWS[s.t] ?? { md: "*(preview of this part — the mock only captured four real slices)*", total: s.c };
+ modal.innerHTML = `<div class="catch" data-close></div><div class="panel" role="dialog" aria-modal="true">
+  <div class="mh"><div style="flex:1;min-width:0"><h3>${s.t}</h3><div class="crumb">${BOOK.folder} › <b>${s.t}</b> · part ${readerIndex + 1} of ${BOOK.parts} · ${pv.total.toLocaleString()} chars${s.contains ? ` · contains: ${s.contains.join(" · ")}` : ""}</div></div>
+   <label class="tick"><input type="checkbox" ${s.on ? "checked" : ""} data-tick="${s.t}"> becomes a source</label><button class="x" data-close title="Close (Esc)">✕</button></div>
+  <div class="mb"><div class="md">${renderMd(pv.md)}${pv.total > pv.md.length ? `<p class="faint">… the mock holds the first ${pv.md.length.toLocaleString()} of ${pv.total.toLocaleString()} chars; the app shows all of it</p>` : ""}</div></div>
+  <div class="mf"><span>This is the source's content exactly as it will be written — tables intact.</span><div class="nav"><button class="btn ghost" data-nav="-1" ${readerIndex === 0 ? "disabled" : ""}>← previous part</button><button class="btn ghost" data-nav="1" ${readerIndex >= BOOK.sections.length - 1 ? "disabled" : ""}>next part →</button><button class="btn" data-close>Back to review</button></div></div></div>`; };
+const rerender = () => { const el = document.querySelector(".detail"); if (el) el.outerHTML = review(FILES[0]); };
+document.addEventListener("click", (e) => { const t = e.target.closest("[data-open],[data-full],[data-close],[data-nav],[data-tick]"); if (!t) return;
+ if (t.dataset.open !== undefined) { const s = BOOK.sections.find(x => x.t === t.dataset.open); s.open = !s.open; rerender(); }
+ else if (t.dataset.full !== undefined) openReader(t.dataset.full);
+ else if (t.dataset.close !== undefined) closeReader();
+ else if (t.dataset.nav !== undefined) { readerIndex = Math.max(0, Math.min(BOOK.sections.length - 1, readerIndex + Number(t.dataset.nav))); renderReader(); }
+ else if (t.dataset.tick !== undefined) { const s = BOOK.sections.find(x => x.t === t.dataset.tick); s.on = t.checked; rerender(); } });
+document.addEventListener("keydown", (e) => { if (!modal.classList.contains("on")) return;
+ if (e.key === "Escape") closeReader(); if (e.key === "ArrowRight" && readerIndex < BOOK.sections.length - 1) { readerIndex++; renderReader(); } if (e.key === "ArrowLeft" && readerIndex > 0) { readerIndex--; renderReader(); } });
+
+document.getElementById("states").innerHTML=[["landing","1 · empty / landing"],["batch","2–3 · batch + review"],["done","4a · one file published, others converting"],["complete","4b · all in the vault → Finish"],["finished","5 · panel closed, sources only"]].map(([k,l])=>`<a href="#${k}" class="${k===state?"on":""}" onclick="setTimeout(()=>location.reload(),0)">${l}</a>`).join("");
+</script></body></html>
