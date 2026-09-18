@@ -89,8 +89,46 @@ Re-audited after the first review, because the first pass missed flows. Nothing 
 | *Queue for Processing* / *Queued — run `/pipeline`* | :239–244 | **the bar's accent action**, same copy, changing into its own queued state rather than disappearing |
 | `EditForm` (title, description, author, URL, content) + *Ingest Source* | :165, :655–900 | **`#edit`** — the *same* fields, edited in place with the toolbar and bar intact instead of a full-page swap; the pre-content state is `#ingest`, which shows that form with the toolbar still above it |
 | *Add Source Material* / *Paste raw content here…* | :792–795 | **`#ingest`**'s heading and lede, verbatim |
-| Revisions (`RevisionHistory` + scrubber) | :390 | **`#history`** — the source's own revision view (scrubber, snapshot, applied operations, compare-against); the toolbar's `history` control opens it too |
+| Revisions (`RevisionScrubber` + `RevisionSnapshotPanel` + `RevisionOperationList`) | :390 | **`#history`** — a working port: the scrubber with its steppers, "N of M operations changed the text", the signed operation rows, the replayed snapshot with the revision's own chips, and `Show changes` → the real diff (heading, ±lines, `vs previous`/`vs current`, word-level marks, `Also changed`). Reachable from the bar's **History** button and from the toolbar's history control |
 | Vault nav bar (Chat…Health) | drive app shell | unchanged, shown for context at the top |
+
+## Schema coverage — every field in `document-models/source/v1/schema.graphql`
+
+The rule the placement follows: **a field is shown where the question it answers is asked.** Content is what is read, so it takes the page; the three facts needed while reading (identity, status, how many notes came out) take the bar; everything checked rather than read takes Details. Nothing is displayed twice, and nothing is displayed where it would be scrolled past.
+
+| `SourceState` field | where it renders in `final.html` |
+|---|---|
+| `title` | the toolbar's `name` control and the bar's breadcrumb — never repeated above the reading column |
+| `description` | Details → Provenance, under "What this source is" (a sentence to *check*, not to read past) |
+| `content` | **the reading surface** — the only thing on the page |
+| `sourceType` | Details → Provenance (and the `Type` select in the ingest and edit states) |
+| `status` | the bar's pill (read-only); the *change* in Details → Extraction; queueing moves the pill to `EXTRACTING` |
+| `provenance.author` | Details → Provenance, "Where it came from" |
+| `provenance.url` | same block, as a link |
+| `provenance.publishedAt` | same block — added this pass |
+| `provenance.method` | same block |
+| `provenance.tool` | same block — added this pass (it is not `convertedBy`; one is the ingesting tool, the other made the text) |
+| `extractedClaims[]` | Details → Claims, with the count in the bar; includes the **unresolved-reference** state (a ref whose note is not in the drive) |
+| `extractionStats.claimCount` | Details → Extraction, and the bar's `12 claims` |
+| `extractionStats.skippedCount` | Details → Extraction, and the bar's `47 not taken` |
+| `extractionStats.skipRate` | Details → Extraction, **narrated, not scored** |
+| `extractionStats.extractedAt` | Details → Extraction — added this pass |
+| `extractionStats.extractedBy` | Details → Extraction — added this pass |
+| `attachments[]` (`id`, `ref`, `mimeType`, `fileName`, `sizeBytes`, `role`, `page`, `alt`, `width`, `height`, `attachedAt`) | **two places, deliberately.** Rendered *inline in the reading path*, at the paragraph that references them — the model's own comment says they are referenced from `content` as `![alt](attachment://…)`, so they are content. And listed in Details → Provenance so the set is **checkable** (every figure cut from the page accounted for) |
+| `originalFile` · `originalFileName` · `originalMimeType` · `originalSizeBytes` | Details → Provenance, "Original document", plus the viewer overlay |
+| `originalAttachedAt` | same block — added this pass |
+| `convertedBy` | Details → Provenance, "The text itself" |
+| `createdAt` | Details → Provenance, "Who put it here" — added this pass |
+| `createdBy` | same block ("Ingested by") |
+
+**What the mock deliberately does not draw, because the model does not store it:**
+
+- **No `parts` / chunk count.** The first pass of this mock showed `117 parts`. There is no such field — the count belonged to a conversion *run*, not to the document — so it was removed rather than left as a plausible-looking invention.
+- **No character count as stored data.** `Characters: 13,687` is counted from `content`; the mock says so in the pane, because the model keeps the text itself, not a size for it.
+- **No folder membership field.** A source's placement lives in the vault (its parent folder), not in `bai/source`; it is therefore shown as the bar's breadcrumb, and the outline rail names the folder without inventing a position (`1 of 117` was invented and is gone).
+- **No claim↔paragraph anchoring**, because `extractedClaims` holds note refs with no source offsets.
+
+Fields in the inputs that are **system-set, not user-edited** — `IngestSourceInput.method`/`tool`/`createdAt`/`createdBy`, `RecordExtractionStatsInput`, `AttachOriginalFileInput.convertedBy` — appear in Details as facts the reader can verify, and are never form fields. `AddAttachmentInput`/`RemoveAttachmentInput` and `RemoveExtractedClaimInput` have no home in this editor: attachments are produced by the conversion and claims by the agent, so exposing add/remove here would be a different product decision, not a layout one.
 
 ## Decisions the mock takes (override any)
 

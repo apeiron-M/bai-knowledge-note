@@ -1,113 +1,413 @@
-<!doctype html><html lang="en" data-bai-theme="dark"><head><meta charset="utf-8"><title>Source editor — Buxton A: task-oriented / minimalist</title>
-<style>/* Live values copied from style.css (2026-09-17). Dark default; light toggle bottom-right. */
+<!doctype html><html lang="en" data-bai-theme="dark"><head><meta charset="utf-8"><title>Source editor — Buxton A: task-oriented / minimal</title>
+<style>/* Live values copied from style.css. Dark default; toggle bottom-right. */
 :root, [data-bai-theme="dark"] {
   --bai-bg:#1e1e2e; --bai-surface:#181825; --bai-deep:#11111b; --bai-hover:#313244;
   --bai-border:rgba(255,255,255,0.1); --bai-text:#e4e4e7; --bai-text-secondary:#d4d4d8;
   --bai-text-tertiary:#9ca3af; --bai-text-muted:#6b7280; --bai-text-faint:#4b5563;
   --bai-accent:#cba6f7; --bai-accent-text:#1e1e2e; --bai-accent-soft:rgba(203,166,247,0.1);
-  --bai-ok:#a6e3a1; --bai-ok-soft:rgba(166,227,161,0.12); --bai-warn:#fab387; --bai-danger:#f38ba8; --bai-danger-soft:rgba(243,139,168,0.12);
+  --bai-ok:#a6e3a1; --bai-ok-soft:rgba(166,227,161,0.12); --bai-warn:#fab387; --bai-warn-soft:rgba(250,179,135,0.12); --bai-danger:#f38ba8; --bai-danger-soft:rgba(243,139,168,0.12);
 }
 [data-bai-theme="light"] {
   --bai-bg:#f8f9fc; --bai-surface:#fff; --bai-deep:#f1f3f8; --bai-hover:#e8eaf0; --bai-border:#e2e4e9;
   --bai-text:#1f2937; --bai-text-secondary:#374151; --bai-text-tertiary:#6b7280; --bai-text-muted:#9ca3af; --bai-text-faint:#d1d5db;
   --bai-accent:#7c3aed; --bai-accent-text:#fff; --bai-accent-soft:rgba(124,58,237,0.08);
-  --bai-ok:#059669; --bai-ok-soft:rgba(5,150,105,0.08); --bai-warn:#d97706; --bai-danger:#dc2626; --bai-danger-soft:rgba(220,38,38,0.08);
+  --bai-ok:#059669; --bai-ok-soft:rgba(5,150,105,0.08); --bai-warn:#d97706; --bai-warn-soft:rgba(217,119,6,0.08); --bai-danger:#dc2626; --bai-danger-soft:rgba(220,38,38,0.08);
 }
 *{box-sizing:border-box} html,body{margin:0;height:100%;background:var(--bai-bg);color:var(--bai-text);font:13px/1.45 ui-sans-serif,system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
-.app{display:flex;flex-direction:column;height:100vh}
-/* the app shell this editor is opened inside (same tabs the intake mock drew) */
-.appbar{display:flex;align-items:center;gap:4px;padding:6px 12px;background:var(--bai-surface);border-bottom:1px solid var(--bai-border)}
-.appbar .name{font-weight:600;margin-right:10px;font-size:12px}
-.tab{display:inline-flex;align-items:center;gap:6px;border-radius:6px;padding:5px 11px;font-size:12px;font-weight:500;color:var(--bai-text-tertiary);background:transparent;border:0}
-.tab.on{background:var(--bai-hover);color:var(--bai-accent)}
-/* THE editor bar: 40px, three things, nothing else */
-.bar{display:flex;align-items:center;gap:10px;padding:0 16px;height:40px;background:var(--bai-bg);border-bottom:1px solid var(--bai-border);position:sticky;top:0;z-index:5}
-.crumb{font-size:12px;color:var(--bai-text-faint);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+button{font:inherit;color:inherit;cursor:pointer}
+svg{display:block}
+.app{display:flex;flex-direction:column;height:100%}
+
+/* ── the vault shell (context, unchanged) ───────────────────────────── */
+.appbar{display:flex;align-items:center;gap:2px;height:34px;padding:0 10px;background:var(--bai-surface);border-bottom:1px solid var(--bai-border);flex:0 0 auto;font-size:12.5px}
+.appbar .vault{color:var(--bai-text-muted);padding:0 8px 0 2px}
+.appbar .tab{padding:4px 10px;border-radius:6px;color:var(--bai-text-tertiary);background:none;border:0}
+.appbar .tab.on{background:var(--bai-hover);color:var(--bai-text)}
+.appbar .spacer{flex:1}
+.appbar .ghost{padding:4px 8px;border-radius:6px;color:var(--bai-text-muted);background:none;border:0}
+
+/* ── Connect's DocumentToolbar — as it renders today, untouched ─────── */
+.toolbar{display:flex;align-items:center;gap:8px;height:46px;padding:0 10px;background:var(--bai-surface);border-bottom:1px solid var(--bai-border);flex:0 0 auto}
+.toolbar .slot{display:flex;align-items:center;gap:6px}
+.toolbar .slot.right{margin-left:auto}
+.toolbar button{display:flex;align-items:center;gap:6px;height:28px;padding:0 8px;border-radius:7px;background:var(--bai-bg);border:1px solid var(--bai-border);color:var(--bai-text-tertiary)}
+.toolbar button:hover{background:var(--bai-hover);color:var(--bai-text-secondary)}
+.toolbar h1{margin:0;padding:0 10px;font-size:13px;font-weight:500;color:var(--bai-text-tertiary);max-width:340px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+
+/* ── A's bar: 40px, three facts, text-only actions. No boxes, no icons. ── */
+.bar{position:relative;display:flex;align-items:center;gap:14px;height:40px;padding:0 16px;background:var(--bai-surface);border-bottom:1px solid var(--bai-border);flex:0 0 auto;font-size:12px}
+.crumb{color:var(--bai-text-faint);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .crumb b{color:var(--bai-text-secondary);font-weight:500}
+.crumb .sep{color:var(--bai-text-faint);padding:0 4px}
 .pill{font-size:10px;font-weight:600;letter-spacing:.04em;text-transform:uppercase;border-radius:999px;padding:2px 8px;border:1px solid var(--bai-border)}
 .pill.extracted{color:var(--bai-ok);background:var(--bai-ok-soft);border-color:transparent}
-.spacer{margin-left:auto}
-/* text-only actions: no icons, no boxes — weight is the hierarchy */
+.facts{font-size:11.5px;color:var(--bai-text-muted)}
+.facts b{color:var(--bai-text-tertiary);font-weight:500}
+.bar .spacer{margin-left:auto}
 .a{font-size:12px;font-weight:500;color:var(--bai-text-tertiary);background:none;border:0;padding:0}
 .a:hover{color:var(--bai-accent)}
 .a.primary{color:var(--bai-accent);font-weight:600}
+.a.q{color:var(--bai-warn)}
 .a .n{color:var(--bai-text-faint);font-weight:400}
-/* the reader: the page is the reading surface. No card, no inner scroller. */
-.reader{flex:1;overflow:auto;background:var(--bai-surface)}
-.md{max-width:78ch;margin:0 auto;padding:36px 24px 96px;font-size:16px;line-height:1.7;color:var(--bai-text-secondary)}
+body[data-state="details"] .a.det,body[data-state="history"] .a.hist,body[data-state="edit"] .a.edit{color:var(--bai-accent)}
+#progress{position:absolute;left:0;bottom:-1px;height:2px;background:var(--bai-accent);width:0}
+
+/* ── A's whole point: THE PAGE IS THE READING SURFACE.
+      No card, no border, no inner scroller — the text sits on the page
+      and the page scrolls, so a long source is never in a small box. ── */
+.body{flex:1;display:flex;min-height:0}
+.reader{flex:1;min-width:0;overflow-y:auto;background:var(--bai-bg)}
+.md{max-width:92ch;margin:0 auto;padding:40px 40px 110px;font-size:16px;line-height:1.7;color:var(--bai-text-secondary)}
 .md h1{font-size:26px;line-height:1.25;margin:0 0 6px;color:var(--bai-text);font-weight:600}
-.md .byline{font-size:11px;color:var(--bai-text-faint);margin:0 0 30px}
 .md h2{font-size:19px;margin:36px 0 10px;color:var(--bai-text);font-weight:600}
 .md h3{font-size:15px;margin:26px 0 8px;color:var(--bai-text);font-weight:600}
 .md p{margin:0 0 16px}
 .md ul{margin:0 0 16px;padding-left:22px} .md li{margin:4px 0}
 .md blockquote{margin:20px 0;padding:2px 0 2px 14px;border-left:2px solid var(--bai-border);color:var(--bai-text-tertiary);font-style:italic}
-.md table{border-collapse:collapse;width:100%;margin:18px 0;font-size:13px}
-.md th{text-align:left;font-weight:600;color:var(--bai-text);padding:7px 10px;border-bottom:1px solid var(--bai-border)}
-.md td{padding:7px 10px;border-bottom:1px solid var(--bai-border);color:var(--bai-text-tertiary)}
-.md code{font:12px ui-monospace,SFMono-Regular,Menlo,monospace;background:var(--bai-deep);border:1px solid var(--bai-border);border-radius:4px;padding:1px 4px}
-.md .fig{font-size:11px;color:var(--bai-text-faint);margin:10px 0 22px}
-.md hr{border:0;border-top:1px solid var(--bai-border);margin:34px 0}
-.note{margin-top:28px;padding-top:14px;border-top:1px dashed var(--bai-border);font-size:11px;line-height:1.6;color:var(--bai-text-faint)}
-.toggle{position:fixed;bottom:12px;right:12px}
-</style></head><body>
+.md table{border-collapse:collapse;width:100%;margin:18px 0;font-size:13.5px}
+.md th{text-align:left;font-weight:600;color:var(--bai-text);padding:8px 12px 8px 0;border-bottom:1px solid var(--bai-border)}
+.md td{padding:9px 12px 9px 0;border-bottom:1px solid var(--bai-border);color:var(--bai-text-tertiary)}
+.md code{font:12px ui-monospace,SFMono-Regular,Menlo,monospace;background:var(--bai-surface);border:1px solid var(--bai-border);border-radius:4px;padding:1px 4px}
+.md .excerpt{margin:0 0 24px;font-size:15px;line-height:1.6;color:var(--bai-text-muted);font-style:italic}
+/* the editor, same restraint: the textarea is the page, not a box in it */
+.mdedit{display:none;width:100%;max-width:92ch;margin:0 auto;padding:40px 40px 110px;border:0;background:none;color:var(--bai-text);
+  font:15px/1.75 ui-monospace,SFMono-Regular,Menlo,monospace;min-height:70vh;resize:none;outline:none}
+.empty{margin:0;color:var(--bai-text-muted);font-size:14px}
+
+/* ── A's panels: full-width plain sheets, not inspectors. Rows and
+      hairline rules, no rounded cards — the same restraint as the bar. ── */
+.panel{display:none;flex:1;min-width:0;overflow-y:auto;background:var(--bai-bg)}
+.panel .inner{max-width:92ch;margin:0 auto;padding:34px 40px 90px}
+.panel h3{margin:0 0 4px;font-size:16px;color:var(--bai-text);font-weight:600}
+.panel .lede{margin:0 0 20px;font-size:12.5px;color:var(--bai-text-muted)}
+.claim{display:block;width:100%;text-align:left;padding:10px 0;border:0;border-bottom:1px solid var(--bai-border);background:none;color:var(--bai-text-secondary);font-size:13px}
+.claim:hover{color:var(--bai-accent)}
+.claim .meta{display:block;margin-top:2px;font-size:11px;color:var(--bai-text-faint)}
+.grp{margin-top:30px}
+.grp .lbl{font-size:10px;letter-spacing:.08em;text-transform:uppercase;color:var(--bai-text-faint);margin:0 0 6px}
+.row{display:flex;justify-content:space-between;gap:12px;padding:7px 0;border-bottom:1px solid var(--bai-border);font-size:12.5px}
+.row dt{color:var(--bai-text-muted);margin:0} .row dd{margin:0;color:var(--bai-text-secondary);text-align:right}
+.row dd a{color:var(--bai-accent);text-decoration:none}
+.narr{margin:12px 0 0;font-size:12px;color:var(--bai-text-muted);line-height:1.65}
+.selrow{display:flex;align-items:center;justify-content:space-between;margin-top:16px;padding-top:12px;border-top:1px solid var(--bai-border)}
+.selrow label{font-size:12px;color:var(--bai-text-muted)}
+.selrow select{background:var(--bai-bg);border:1px solid var(--bai-border);color:var(--bai-text-secondary);border-radius:7px;padding:4px 8px;font:inherit;font-size:12px}
+.orig{padding:10px 0;border-bottom:1px solid var(--bai-border)}
+.orig .fn{font-size:12.5px;color:var(--bai-text-secondary);word-break:break-all}
+.orig .fm{font-size:11px;color:var(--bai-text-faint);margin-top:2px}
+.orig .acts{display:flex;gap:14px;margin-top:8px;flex-wrap:wrap}
+.orig button{padding:0;border:0;background:none;color:var(--bai-accent);font-size:12px}
+.orig button:hover{text-decoration:underline}
+/* history, in the same plain register */
+.hgrid{display:grid;grid-template-columns:minmax(0,1fr) 320px;height:100%}
+.hmain{padding:28px 32px;min-width:0;overflow-y:auto}
+.hside{border-left:1px solid var(--bai-border);padding:20px 14px;overflow-y:auto}
+.scrub{display:flex;align-items:center;gap:12px;padding-bottom:14px;border-bottom:1px solid var(--bai-border);margin-bottom:22px}
+.scrub input[type=range]{flex:1;accent-color:var(--bai-accent)}
+.scrub .step{display:flex;gap:4px}
+.scrub button{width:24px;height:24px;border-radius:6px;background:none;border:1px solid var(--bai-border);color:var(--bai-text-tertiary)}
+.hmain h3{margin:0 0 4px;font-size:14px;color:var(--bai-text)}
+.hmain .when{font-size:11.5px;color:var(--bai-text-faint);margin-bottom:14px}
+.op{display:block;width:100%;text-align:left;padding:8px 0;border:0;border-bottom:1px solid var(--bai-border);background:none;color:var(--bai-text-tertiary);font-size:12px}
+.op.on{color:var(--bai-accent)}
+.op .when{display:block;color:var(--bai-text-faint);font-size:11px}
+
+/* the original document: the vault's own modal pattern (unchanged) */
+.overlay{display:none;position:fixed;inset:0;z-index:50}
+.scrim{position:absolute;inset:0;background:rgba(0,0,0,.6)}
+.sheet{position:relative;z-index:10;margin:4vh auto 0;width:min(880px,92vw);max-height:88vh;display:flex;flex-direction:column;border-radius:16px;background:var(--bai-surface);border:1px solid var(--bai-border);box-shadow:0 25px 50px -12px rgba(0,0,0,.6)}
+.sheet header{display:flex;align-items:center;gap:10px;padding:14px 18px;border-bottom:1px solid var(--bai-border)}
+.sheet header .t{font-size:13px;color:var(--bai-text)}
+.sheet header .f{font-size:11.5px;color:var(--bai-text-faint)}
+.sheet header .x{margin-left:auto;width:28px;height:28px;border-radius:8px;background:var(--bai-bg);border:1px solid var(--bai-border);color:var(--bai-text-tertiary)}
+.sheet .body2{padding:18px;overflow-y:auto;font-size:13px}
+.paper{margin:0 auto;width:min(620px,100%);padding:44px 40px;background:#fbfbf9;color:#22211f;border-radius:6px;font:13.5px/1.7 Georgia,serif;box-shadow:0 1px 3px rgba(0,0,0,.4)}
+.paper .pg{font-size:10px;color:#8a857c;text-align:center;margin-bottom:22px;letter-spacing:.08em}
+.paper h4{margin:0 0 10px;font-size:15px}
+.paper p{margin:0 0 12px;color:#3a3833}
+
+/* the ingest form: A keeps the bar, drops the ceremony */
+.ingest{display:none;flex:1;overflow-y:auto;background:var(--bai-bg)}
+.iform{max-width:660px;margin:0 auto;padding:34px 40px 90px}
+.iform h2{margin:0 0 6px;font-size:19px;color:var(--bai-text);font-weight:600}
+.iform .lede{margin:0 0 24px;font-size:13px;color:var(--bai-text-tertiary);line-height:1.6}
+.iform label{display:block;font-size:12px;color:var(--bai-text-tertiary);margin:0 0 5px}
+.iform input,.iform select,.iform textarea{width:100%;padding:8px 0;border:0;border-bottom:1px solid var(--bai-border);background:none;color:var(--bai-text);font:inherit;font-size:13.5px;outline:none}
+.iform input:focus,.iform textarea:focus,.iform select:focus{border-bottom-color:var(--bai-accent)}
+.iform textarea{min-height:240px;resize:vertical;font-size:13px;line-height:1.6}
+.iform .two{display:grid;grid-template-columns:1fr 1fr;gap:20px;margin-bottom:18px}
+.iform .one{margin-bottom:18px}
+.iform .foot{display:flex;align-items:center;gap:14px;margin-top:24px}
+.iform button.submit{padding:8px 0;border:0;background:none;color:var(--bai-accent);font-size:13px;font-weight:600}
+.iform button.submit[disabled]{color:var(--bai-text-faint);cursor:not-allowed}
+.iform .hint{font-size:11.5px;color:var(--bai-text-faint)}
+
+/* ── proposal chrome ──────────────────────────────────────────────── */
+.switcher{position:fixed;left:12px;bottom:12px;z-index:40;display:flex;flex-wrap:wrap;gap:4px;max-width:56vw;padding:6px;border-radius:12px;background:var(--bai-surface);border:1px solid var(--bai-border);box-shadow:0 8px 24px rgba(0,0,0,.35)}
+.switcher button{padding:5px 9px;border-radius:8px;background:none;border:1px solid transparent;color:var(--bai-text-muted);font-size:11.5px}
+.switcher button.on{background:var(--bai-accent-soft);border-color:var(--bai-border);color:var(--bai-text)}
+.toggle{position:fixed;bottom:12px;right:12px;z-index:40;border-radius:9px;padding:7px 13px;font-size:12px;background:var(--bai-surface);border:1px solid var(--bai-border);color:var(--bai-accent)}
+/* state machine */
+body[data-state="details"] .reader,body[data-state="details"] .history,
+body[data-state="history"] .reader,body[data-state="history"] .details,
+body[data-state="ingest"] .bar,body[data-state="ingest"] .body{display:none}
+body[data-state="details"] .details{display:block}
+body[data-state="history"] .history{display:block}
+body[data-state="ingest"] .ingest{display:block}
+body[data-state="edit"] .md{display:none}
+body[data-state="edit"] .mdedit{display:block}
+body[data-state="original"] .overlay{display:block}
+</style></head><body data-state="read">
 <div class="app">
-  <div class="appbar"><span class="name">my-personal-vault</span>
+  <div class="appbar">
+    <span class="vault">my-personal-vault</span>
     <button class="tab">Chat</button><button class="tab">Search</button><button class="tab">Notes</button>
     <button class="tab on">Sources</button><button class="tab">Projects</button><button class="tab">Pipeline</button><button class="tab">Health</button>
-  </div>
-
-  <div class="bar">
-    <span class="crumb"><b>Sources</b> / Design for How People Think / Wayfinding</span>
-    <span class="pill extracted">extracted</span>
     <span class="spacer"></span>
-    <button class="a">12 claims <span class="n">· 47 not taken</span></button>
-    <button class="a">Details</button>
-    <button class="a">History</button>
-    <button class="a">Original</button>
-    <button class="a">Edit</button>
-    <button class="a primary">Queue for processing</button>
+    <button class="ghost">⚙</button><button class="ghost">?</button><button class="ghost">☾</button>
   </div>
 
-  <div class="reader"><article class="md">
-    <h1>Wayfinding</h1>
-    <p class="byline">Design for How People Think · John Whalen (2019) · BOOK_CHAPTER · 2,423 characters · extracted by powerhouse-agent</p>
+  <!-- Connect's DocumentToolbar: the doc controller, exactly as it renders today -->
+  <div class="toolbar">
+    <div class="slot">
+      <button title="Undo" aria-label="Undo"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M9 14 4 9l5-5"/><path d="M4 9h10a6 6 0 0 1 0 12h-3"/></svg></button>
+      <button title="Redo" aria-label="Redo"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="m15 14 5-5-5-5"/><path d="M20 9H10a6 6 0 0 0 0 12h3"/></svg></button>
+      <button title="Download" aria-label="Download"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 3v12"/><path d="m7 10 5 5 5-5"/><path d="M5 21h14"/></svg></button>
+    </div>
+    <h1 aria-label="Document name">Design for How People Think — Wayfinding</h1>
+    <div class="slot right">
+      <button title="Update document" aria-label="Update document"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><path d="M17 21v-8H7v8M7 3v5h8"/></svg></button>
+      <button title="Open document revision history" aria-label="Open document revision history"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M3 12a9 9 0 1 0 3-6.7L3 8"/><path d="M3 3v5h5"/><path d="M12 8v4l3 2"/></svg></button>
+      <button title="Open link in Switchboard" aria-label="Open link in Switchboard"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><path d="M15 3h6v6"/><path d="M10 14 21 3"/></svg></button>
+      <button title="Close document" aria-label="Close document"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M18 6 6 18M6 6l12 12"/></svg></button>
+    </div>
+  </div>
 
-    <p>A common definition of wayfinding is that it is about getting from point A to point B. For the products you build it is richer than that: it is the sum of every cue that tells someone where they are, what is around them, and how to get back.</p>
+  <!-- A's bar: three facts, then text-only actions. No boxes, no icons. -->
+  <div class="bar">
+    <span class="crumb"><b>Sources</b><span class="sep">/</span>design-for-how-people-think<span class="sep">/</span>Wayfinding</span>
+    <span class="pill extracted">extracted</span>
+    <span class="facts"><b>12</b> claims · <b>47</b> not taken</span>
+    <span class="spacer"></span>
+    <button class="a" data-go="details">See what it produced <span class="n">12</span></button>
+    <button class="a det" data-go="details">Details</button>
+    <button class="a hist" data-go="history">History</button>
+    <button class="a edit" data-go="edit">Edit</button>
+    <button class="a primary" id="queue">Queue for processing</button>
+    <span id="progress"></span>
+  </div>
 
-    <h2>The Six Minds of Experience</h2>
-    <p>The six minds are not six features. They are six questions a person answers continuously, mostly without noticing, and each of them can fail on its own.</p>
-    <table>
-      <thead><tr><th>Mind</th><th>The question it answers</th></tr></thead>
-      <tbody>
-        <tr><td>Vision / Attention</td><td>What should I look at first?</td></tr>
-        <tr><td>Wayfinding</td><td>Where am I, and how do I get where I am going?</td></tr>
-        <tr><td>Memory</td><td>Have I seen this before?</td></tr>
-        <tr><td>Language</td><td>What does this mean?</td></tr>
-        <tr><td>Decision making</td><td>What should I do now?</td></tr>
-        <tr><td>Emotion</td><td>How do I feel about this?</td></tr>
-      </tbody>
-    </table>
+  <div class="body">
+    <main class="reader">
+      <article class="md">
+        <p class="excerpt">« placeholder excerpt — invented prose in the register of the book; the headings are its real ones »</p>
+        <h2>The Six Minds of Experience</h2>
+        <p>A common definition of wayfinding is that it is about getting from point A to point B. For the products you build it is richer than that: it is the sum of every cue that tells someone where they are, what is around them, and how to get back.</p>
+        <p>That definition is deliberately loose, because wayfinding is not one thing. It is a habit of the person moving through a space, and it is assembled out of whatever happens to be in front of them. A street sign, a colour, the shape of a doorway, the fact that the noisy room is behind you: all of it feeds the same running calculation. When the calculation succeeds, nobody notices it happened. When it fails, the failure is felt immediately and named precisely — <em>I don't know where I am</em> — which is why the craft of wayfinding is largely a craft of removing doubt rather than adding signage.</p>
+        <p>Interfaces inherit this. A person opening a document has the same three questions they have at a train station, and they ask them in the same order.</p>
+        <table>
+          <thead><tr><th>Mind</th><th>The question it answers</th></tr></thead>
+          <tbody>
+            <tr><td>Vision / Attention</td><td>What should I look at first?</td></tr>
+            <tr><td>Wayfinding</td><td>Where am I, and how do I get where I am going?</td></tr>
+            <tr><td>Memory</td><td>Have I seen this before?</td></tr>
+            <tr><td>Language</td><td>Does this make sense?</td></tr>
+            <tr><td>Decision making</td><td>What should I do next?</td></tr>
+            <tr><td>Emotion</td><td>How do I feel about this?</td></tr>
+          </tbody>
+        </table>
+        <p>The useful thing about the list is that it is ordered by how cheaply each question can be answered, and by how expensive it is to answer it late. Attention is resolved in a few hundred milliseconds and cannot be deferred. Emotion is resolved continuously and quietly, and is usually only noticed when it has already gone wrong.</p>
+        <h3>Vision, Attention, and Automaticity</h3>
+        <p>Attention is a spotlight with a narrow beam and a very short memory. Anything the interface expects a person to find by searching has already cost them something they cannot get back, because finding is serial and looking is parallel.</p>
+        <blockquote>The most expensive words in an interface are the ones a person has to read twice.</blockquote>
+        <p>Automaticity is the other half of the story. Skills that are practised enough stop consuming attention, and a person who has stopped attending is faster, calmer, and far harder to interrupt. The interface that supports automaticity is the one whose important things never move, whose labels never change meaning, and whose layout survives the arrival of new content without rearranging itself.</p>
+        <h3>Applying it to a reading surface</h3>
+        <ul>
+          <li>One column, one measure, one place the eye can rest.</li>
+          <li>Landmarks at every scale: a title, a section, a paragraph, a line.</li>
+          <li>Nothing that has to be hunted — if a control matters, it is present or it is one labelled move away.</li>
+        </ul>
+        <p>The last point is the one that is most often got wrong, and it is worth separating the two ideas properly. A control that is <em>near</em> the text costs nothing: the eye passes over it, registers it as furniture, and moves on. A control that is <em>in</em> the reading path interrupts the sentence, and an interrupted sentence is a sentence read twice.</p>
+        <h3>Signposting the reader</h3>
+        <p>Progress is the cheapest landmark there is. A reader who can see how far in they are will keep reading; a reader who cannot will go looking for a scrollbar instead, and the scrollbar will tell them something worse: that the end is a long way off and that they have no idea where they are in it.</p>
+        <p>There are two ways to answer the question, and they are not equivalent. A percentage is a number the reader has to convert into a feeling. A position — a chapter name, a section marker, a progress line that visibly belongs to a document rather than to a task — is already a feeling.</p>
+        <h3>Landmarks at every scale</h3>
+        <p>A long document needs landmarks at more than one scale, because a reader arrives with more than one intention. Some arrive to read it through and need the shape of the whole thing. Some arrive to check one fact and need to find a heading they can recognise. Some arrive knowing the exact phrase they want and need only a way back to where they left off.</p>
+        <h3>The problem with panels</h3>
+        <p>Panels are the default answer to the problem of having too much to show, and they are a good answer for a great many things. They are a poor answer for reading, for a structural reason: a panel takes its space permanently, while the need for the panel is intermittent.</p>
+        <p>A reader who checks the provenance of a source once, at the start, does not need provenance occupying a third of the screen for the rest of the session. The panel has been paid for in measure — the width of the text — and measure is the single resource that cannot be recovered by any other means.</p>
+        <h3>What this leaves</h3>
+        <p>Take the index out of the reading path, take the panels out of the measure, and leave the text the whole of what remains. Then use the smallest possible amount of chrome to answer the three questions a reader actually has — what is this, where am I, what can I do with it — and put everything else one deliberate move away.</p>
+      </article>
+      <textarea class="mdedit" spellcheck="false">## The Six Minds of Experience
 
-    <h3>Vision, Attention, and Automaticity</h3>
-    <p><em>« placeholder excerpt — the mock uses invented prose in the register of the book; headings are its real ones »</em></p>
-    <p>Attention is a spotlight with a narrow beam and a very short memory. Anything the interface expects a person to find by searching has already cost them something they cannot get back, because finding is serial and looking is parallel.</p>
+A common definition of wayfinding is that it is about getting from point A to point B. For the products you build it is richer than that: it is the sum of every cue that tells someone where they are, what is around them, and how to get back.
 
-    <blockquote>The most expensive words in an interface are the ones a person has to read twice.</blockquote>
+That definition is deliberately loose, because wayfinding is not one thing. It is a habit of the person moving through a space, and it is assembled out of whatever happens to be in front of them.
 
-    <h3>Applying it to a reading surface</h3>
-    <ul>
-      <li>One column, one measure, one place the eye can rest.</li>
-      <li>Landmarks at every scale: a title, a section, a paragraph, a line.</li>
-      <li>Nothing that has to be hunted — if a control matters, it is present or it is one labelled move away.</li>
-    </ul>
+Interfaces inherit this. A person opening a document has the same three questions they have at a train station, and they ask them in the same order.
 
-    <hr>
-    <p class="note"><strong>Buxton A — task-oriented, minimal.</strong> One bar, three facts, one action per intent, no cards. Reading is uninterrupted and the whole page belongs to the text: the strongest answer to “read the source, then get back to work”. Its cost is the counter-case — a source is not only read, it is <em>the thing notes were derived from</em>, and here the claims are a single word in the bar with nothing about them on screen. It also hides the fact that the queue action is unavailable once a source is EXTRACTED (the button simply disappears). A is the bar and the page; it is not the whole editor.</p>
-  </article></div>
+| Mind | The question it answers |
+| --- | --- |
+| Vision / Attention | What should I look at first? |
+| Wayfinding | Where am I, and how do I get where I am going? |
+| Memory | Have I seen this before? |
+
+### Vision, Attention, and Automaticity
+
+Attention is a spotlight with a narrow beam and a very short memory. Anything the interface expects a person to find by searching has already cost them something they cannot get back.
+
+> The most expensive words in an interface are the ones a person has to read twice.
+
+### Applying it to a reading surface
+
+- One column, one measure, one place the eye can rest.
+- Landmarks at every scale: a title, a section, a paragraph, a line.
+- Nothing that has to be hunted.</textarea>
+    </main>
+
+    <!-- details: A has no inspector. One plain full-width sheet, on demand. -->
+    <section class="details panel">
+      <div class="inner">
+        <h3>Extracted Claims (12)</h3>
+        <p class="lede">The notes this source produced — the reason it is in the vault.</p>
+        <button class="claim">Wayfinding is answered by the shape of the page, not by a menu<span class="meta">knowledge note · EXTRACTED</span></button>
+        <button class="claim">Attention is a narrow beam with a short memory<span class="meta">knowledge note · EXTRACTED</span></button>
+        <button class="claim">Progress is the cheapest landmark there is<span class="meta">knowledge note · EXTRACTED</span></button>
+        <button class="claim">Nine more from this source…<span class="meta">open the folder to see them all</span></button>
+        <div class="grp">
+          <p class="lbl">Provenance</p>
+          <dl style="margin:0">
+            <div class="row"><dt>Source type</dt><dd>BOOK_CHAPTER</dd></div>
+            <div class="row"><dt>Author</dt><dd>John Whalen</dd></div>
+            <div class="row"><dt>URL</dt><dd><a>oreilly.com/library/view/…</a></dd></div>
+            <div class="row"><dt>Converted by</dt><dd>docling.rs</dd></div>
+            <div class="row"><dt>Ingested by</dt><dd>petru@powerhouse</dd></div>
+          </dl>
+        </div>
+        <div class="grp">
+          <p class="lbl">The text itself</p>
+          <dl style="margin:0">
+            <div class="row"><dt>Characters</dt><dd>13,687</dd></div>
+            <div class="row"><dt>Parts</dt><dd>117</dd></div>
+          </dl>
+        </div>
+        <div class="grp">
+          <p class="lbl">Original document</p>
+          <div class="orig">
+            <div class="fn">design-for-how-people-think.pdf</div>
+            <div class="fm">17.4 MB · application/pdf · converted by docling.rs</div>
+            <div class="acts"><button data-go="original">View original</button><button>Download</button><button>Replace</button></div>
+          </div>
+          <div class="orig">
+            <div class="fn" style="color:var(--bai-text-muted)">No original attached</div>
+            <div class="fm">an older pasted source, or a conversion whose attachment step failed</div>
+            <div class="acts"><button>Attach file…</button></div>
+          </div>
+        </div>
+        <div class="grp">
+          <p class="lbl">Extraction</p>
+          <dl style="margin:0">
+            <div class="row"><dt>Claims</dt><dd>12</dd></div>
+            <div class="row"><dt>Skipped</dt><dd>47</dd></div>
+            <div class="row"><dt>Skip rate</dt><dd>0.79</dd></div>
+          </dl>
+          <p class="narr">47 of 59 passages were not taken. That is a measurement, not a shortfall — a recap chapter can genuinely yield nothing, and a red number here would train you to distrust a source that behaved correctly.</p>
+          <div class="selrow"><label for="status">Status</label>
+            <select id="status"><option>INBOX</option><option>EXTRACTING</option><option selected>EXTRACTED</option><option>ARCHIVED</option></select></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- history: the source's own revisions, in the same plain register -->
+    <section class="history panel" style="padding:0">
+      <div class="hgrid">
+        <div class="hmain">
+          <div class="scrub">
+            <div class="step"><button title="Previous operation">‹</button><button title="Next operation">›</button></div>
+            <input type="range" min="0" max="26" value="26" aria-label="Revision">
+            <span class="facts">revision 26 of 26</span>
+          </div>
+          <h3>Content at revision 26</h3>
+          <p class="when">set-source-content · 17 Sep 2026, 18:04</p>
+          <p style="color:var(--bai-text-tertiary);font-size:13px">## The Six Minds of Experience<br><br>A common definition of wayfinding is that it is about getting from point A to point B…</p>
+        </div>
+        <aside class="hside">
+          <p class="lbl">Applied operations</p>
+          <button class="op on">set-source-content<span class="when">17 Sep, 18:04</span></button>
+          <button class="op">attach-original-file<span class="when">17 Sep, 17:52</span></button>
+          <button class="op">ingest-source<span class="when">17 Sep, 17:40</span></button>
+          <button class="op">set-source-status<span class="when">17 Sep, 17:39</span></button>
+          <p class="lbl" style="margin-top:18px">Also changed</p>
+          <p class="narr">title · description · source type</p>
+        </aside>
+      </div>
+    </section>
+  </div>
+
+  <!-- a source with no content yet -->
+  <section class="ingest">
+    <div class="iform">
+      <h2>Add Source Material</h2>
+      <p class="lede">Paste raw content here — articles, notes, transcripts. The AI agent will extract atomic claims from it.</p>
+      <div class="two">
+        <div><label>Title</label><input placeholder="Source title"></div>
+        <div><label>Source type</label><select><option>ARTICLE</option><option>PAPER</option><option>BOOK_CHAPTER</option><option>TRANSCRIPT</option><option>DOCUMENTATION</option><option>CONVERSATION</option><option>WEB_PAGE</option><option>MANUAL_ENTRY</option></select></div>
+      </div>
+      <div class="one"><label>Description</label><input placeholder="Brief description (optional)"></div>
+      <div class="two">
+        <div><label>Author</label><input placeholder="Author"></div>
+        <div><label>URL</label><input placeholder="URL (optional)"></div>
+      </div>
+      <div class="one"><label>Content</label><textarea placeholder="Paste source content here..."></textarea></div>
+      <div class="foot">
+        <button class="submit" disabled>Ingest Source</button>
+        <span class="hint">Title and content are required.</span>
+      </div>
+    </div>
+  </section>
 </div>
-<script>document.addEventListener("DOMContentLoaded",()=>{
-  const b=document.createElement("button");b.className="btn toggle";b.textContent="light / dark";b.style.cssText="border-radius:8px;padding:6px 12px;font-size:12px;font-weight:500;background:var(--bai-hover);border:1px solid var(--bai-border);color:var(--bai-accent)";
-  b.onclick=()=>{const h=document.documentElement;h.dataset.baiTheme=h.dataset.baiTheme==="light"?"dark":"light"};
-  document.body.appendChild(b);
-});</script></body></html>
+
+<div class="overlay">
+  <div class="scrim" data-go="read"></div>
+  <div class="sheet">
+    <header>
+      <div><div class="t">design-for-how-people-think.pdf</div><div class="f">page 41 of 238 · 17.4 MB · converted by docling.rs</div></div>
+      <button class="x" data-go="read" title="Close">✕</button>
+    </header>
+    <div class="body2">
+      <div class="paper">
+        <div class="pg">[ 41 ]</div>
+        <h4>Wayfinding</h4>
+        <p>A common definition of wayfinding is that it is all about helping people find their way around. In the built environment that means knowing where they are, what is around them, and how to get back.</p>
+        <p style="color:#8a857c;font-size:12px">Rendered placeholder page — the real viewer renders the attached PDF. States kept: not renderable (name, size, type, Download), failed (explicit failure + Retry), and no original (an Attach control, never silence).</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="switcher" id="switcher"></div>
+<button class="toggle" id="theme">light / dark</button>
+
+<script>
+  const STATES=[["read","#read — the source, full page"],["details","#details — what it produced"],["history","#history — the source's revisions"],["edit","#edit — editing in place"],["original","#original — the original document"],["ingest","#ingest — a source with no content yet"]];
+  const sw=document.getElementById("switcher");
+  const set=(s)=>{document.body.dataset.state=s;
+    document.querySelectorAll(".switcher button").forEach(b=>b.classList.toggle("on",b.dataset.s===s));};
+  STATES.forEach(([s,label])=>{const b=document.createElement("button");b.textContent=label.split(" — ")[1];b.dataset.s=s;b.title=label;
+    b.onclick=()=>set(s);sw.appendChild(b);});
+  document.body.addEventListener("click",(e)=>{const g=e.target.closest("[data-go]");if(g){set(g.dataset.go);e.preventDefault();}});
+  document.addEventListener("keydown",(e)=>{if(e.key==="Escape")set("read")});
+  document.getElementById("queue").onclick=(e)=>{const b=e.currentTarget;
+    b.classList.add("q");b.textContent="Queued — run /pipeline in Claude Code";};
+  // A scrolls the page itself — no inner scroller anywhere
+  const rd=document.querySelector(".reader");
+  rd.addEventListener("scroll",()=>{const p=document.getElementById("progress");
+    const max=rd.scrollHeight-rd.clientHeight;p.style.width=(max>0?(rd.scrollTop/max)*100:0)+"%";});
+  document.getElementById("theme").onclick=()=>{const h=document.documentElement;
+    h.dataset.baiTheme=h.dataset.baiTheme==="light"?"dark":"light";};
+  const fromHash=()=>{const s=location.hash.slice(1);if(STATES.some(([k])=>k===s))set(s);};
+  window.addEventListener("hashchange",fromHash);
+  set("read");fromHash();
+</script>
+</body></html>

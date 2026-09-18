@@ -269,3 +269,98 @@ describe("two-column tables", () => {
     expect(detectTables(balanceSheet.slice(0, 6))).toEqual([]);
   });
 });
+
+describe("a page that puts other content beside a table", () => {
+  // Page 8 of the Sky report: a five-column metrics table on the left, a
+  // column chart on the right. Rows are grouped by baseline across the whole
+  // page, so the chart's tick labels land inside the table's rows. Geometry
+  // measured from the file.
+  const metricsPage: TableRun[] = [
+    // the section heading above the table spans its whole width
+    run("Sky Protocol Key Metrics, Q1 2025 – Q1 2026", 75, 822, 564, 30),
+    run("sUSDS Deposits, Q1 2025 – Q1 2026", 745, 822, 459, 30),
+    run("Protocol Metrics", 85, 762, 119),
+    run("Q1 ‘25", 263, 762, 44),
+    run("Q2 ‘25", 342, 762, 47),
+    run("Q3 ‘25", 421, 762, 47),
+    run("Q4 ‘25", 501, 762, 48),
+    run("Q1 ‘26", 583, 762, 45),
+    run("$7B", 749, 756, 20), // chart tick, on the header's baseline
+    run("USDS Supply ($B)", 85, 705, 116),
+    run("7.9", 276, 705, 19),
+    run("7.1", 358, 705, 15),
+    run("7.8", 436, 705, 18),
+    run("9.2", 515, 705, 20),
+    run("11.70", 590, 705, 31),
+    run("$5B Milestone (Feb 26)", 799, 699, 123),
+    run("$5B", 748, 698, 21),
+    run("Unique Holders", 85, 648, 101),
+    run("519, 524", 258, 648, 54),
+    run("532,008", 337, 648, 56),
+    run("551,089", 419, 648, 52),
+    run("581,990", 498, 648, 53),
+    run("680,170", 579, 648, 52),
+    run("$4B", 747, 640, 22),
+    run("End of Quarter SSR (%)", 85, 591, 148),
+    run("4.5", 274, 591, 21),
+    run("4.5", 354, 591, 21),
+    run("4.75", 431, 591, 28),
+    run("4", 520, 591, 9),
+    run("3.75", 591, 591, 27),
+    run("TVL ($B)", 85, 534, 55),
+    run("10.1", 273, 534, 23),
+    run("10.7", 352, 534, 25),
+    run("12.5", 432, 534, 26),
+    run("11.9", 513, 534, 23),
+    run("12.46", 588, 534, 35),
+  ];
+
+  it("reads the table and leaves the chart's ticks out of it", () => {
+    const tables = detectTables(metricsPage);
+    expect(tables).toHaveLength(1);
+    const [t] = tables;
+    // six columns — the chart's tick column stands further off than the
+    // table's own spacing and its top cell is a number, not a name
+    expect(t.grid[0]).toEqual([
+      "Protocol Metrics",
+      "Q1 ‘25",
+      "Q2 ‘25",
+      "Q3 ‘25",
+      "Q4 ‘25",
+      "Q1 ‘26",
+    ]);
+    expect(t.grid).toHaveLength(5);
+    expect(t.grid[1]).toEqual([
+      "USDS Supply ($B)",
+      "7.9",
+      "7.1",
+      "7.8",
+      "9.2",
+      "11.70",
+    ]);
+    // and the table's box stops before the chart, so the chart's own text is
+    // left where it is rather than replaced
+    expect(t.right).toBeLessThan(700);
+  });
+
+  it("refuses prose standing beside a chart's axis", () => {
+    // Page 5: a paragraph column on the left, a chart's ticks on the right.
+    // Two columns, every tick a value — and none of it a table. The tell is
+    // that most rows have no key of their own.
+    const prosePage: TableRun[] = [
+      run("Q1 2026 broke every revenue record in protocol history.", 55, 856, 611),
+      run("$140M", 747, 856, 46),
+      run("Gross Protocol Revenue reached $123.79M, ending three", 55, 830, 611),
+      run("$120M", 747, 830, 46),
+      run("$100M", 747, 804, 46),
+      run("consecutive quarters of decline.", 55, 778, 330),
+      run("$80M", 747, 778, 38),
+      run("in Q4 2025.", 55, 752, 102),
+      run("$60M", 747, 752, 38),
+      run("$40M", 747, 726, 38),
+      run("positive quarter.", 55, 700, 140),
+      run("$20M", 747, 700, 38),
+    ];
+    expect(detectTables(prosePage)).toEqual([]);
+  });
+});

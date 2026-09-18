@@ -36,38 +36,49 @@ svg{display:block}
 .toolbar button:hover{background:var(--bai-hover);color:var(--bai-text-secondary)}
 .toolbar h1{margin:0;padding:0 10px;font-size:13px;font-weight:500;color:var(--bai-text-tertiary);max-width:340px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 
-/* ── the source bar: the one new strip ─────────────────────────────── */
-.bar{position:relative;display:flex;align-items:center;gap:10px;height:44px;padding:0 14px;background:var(--bai-bg);border-bottom:1px solid var(--bai-border);flex:0 0 auto;font-size:12.5px}
-.crumb{display:flex;align-items:center;gap:6px;color:var(--bai-text-muted);min-width:0}
-.crumb a{color:var(--bai-text-tertiary);text-decoration:none}
-.crumb .sep{color:var(--bai-text-faint)}
-.crumb .here{color:var(--bai-text-secondary);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.pill{display:inline-flex;align-items:center;gap:5px;padding:2px 8px;border-radius:999px;font-size:11px;font-weight:500;background:var(--bai-ok-soft);color:var(--bai-ok)}
-.pill .dot{width:5px;height:5px;border-radius:50%;background:currentColor}
-.facts{color:var(--bai-text-muted);font-size:11.5px}
-.facts b{color:var(--bai-text-tertiary);font-weight:500}
-.bar .spacer{flex:1}
-.bar button.act{display:flex;align-items:center;gap:6px;padding:5px 9px;border-radius:7px;background:none;border:1px solid transparent;color:var(--bai-text-tertiary);font-size:12.5px}
-.bar button.act:hover{background:var(--bai-hover);color:var(--bai-text)}
-.bar button.act.on{background:var(--bai-hover);color:var(--bai-text);border-color:var(--bai-border)}
-/* the CTA: what this source produced, at the top where the reading starts */
-.bar button.produced{display:inline-flex;align-items:center;gap:8px;padding:5px 12px;border-radius:7px;
-  background:var(--bai-surface);border:1px solid var(--bai-border);color:var(--bai-text-secondary);font-size:12.5px}
-.bar button.produced:hover{border-color:var(--bai-accent);color:var(--bai-text)}
-.bar button.produced span{font-size:10px;font-weight:600;letter-spacing:.05em;text-transform:uppercase;color:var(--bai-text-faint)}
-.bar button.produced:hover span{color:var(--bai-accent)}
-.bar button.primary{display:flex;align-items:center;gap:6px;padding:5px 12px;border-radius:7px;background:var(--bai-accent);border:1px solid var(--bai-accent);color:var(--bai-accent-text);font-size:12.5px;font-weight:600}
-.bar button.primary.q{background:var(--bai-warn-soft);border-color:var(--bai-warn-soft);color:var(--bai-warn)}
-#progress{position:absolute;left:0;bottom:-1px;height:2px;background:var(--bai-accent);width:0}
-
-/* ── the page: the reading surface is the darker --bai-surface ──────── */
-.body{flex:1;display:flex;min-height:0}
-/* the reading surface: the page behind the sheet — the app's own bg, so the sheet reads as paper */
+/* ── the document header: the ORIGINAL editor's top section, in its own style —
+      status + type chips, the title, the original-document row, then the tabs.
+      It scrolls away with the page, exactly as the original's does. ────── */
+.dochead{padding:20px 0 0}
+.headrow{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.pill{display:inline-flex;align-items:center;gap:6px;padding:4px 12px;border-radius:999px;font-size:11.5px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;background:var(--bai-ok-soft);color:var(--bai-ok)}
+.pill.extracting{background:var(--bai-warn-soft);color:var(--bai-warn)}
+.pill.inbox{background:var(--bai-hover);color:var(--bai-text-tertiary)}
+.chip{display:inline-flex;align-items:center;padding:4px 10px;border-radius:7px;font-size:11.5px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;background:var(--bai-hover);color:var(--bai-text-tertiary)}
+.headrow .spacer{flex:1}
+.hbtn{display:inline-flex;align-items:center;gap:6px;padding:6px 12px;border-radius:8px;background:var(--bai-hover);border:1px solid transparent;color:var(--bai-text-tertiary);font-size:12.5px}
+.hbtn:hover{background:var(--bai-border);color:var(--bai-text)}
+.hbtn.on{color:var(--bai-accent)}
+.hbtn.primary{background:var(--bai-accent);border-color:var(--bai-accent);color:var(--bai-accent-text);font-weight:600}
+.hbtn.primary:hover{color:var(--bai-accent-text);filter:brightness(1.07)}
+.hbtn.primary.q{background:var(--bai-warn-soft);border-color:transparent;color:var(--bai-warn)}
+/* the CTA, in the chips row where the source's purpose belongs */
+.cta{display:inline-flex;align-items:center;gap:7px;padding:4px 10px;border-radius:7px;background:none;border:1px dashed var(--bai-border);color:var(--bai-text-secondary);font-size:12px}
+.cta:hover{border-color:var(--bai-accent);color:var(--bai-text)}
+.cta b{font-size:10px;font-weight:600;letter-spacing:.05em;text-transform:uppercase;color:var(--bai-text-faint)}
+.cta:hover b{color:var(--bai-accent)}
+.dochead h1{margin:14px 0 0;font-size:27px;line-height:1.22;font-weight:700;color:var(--bai-text)}
+/* the original document, the way the real panel collapses it: one bordered row */
+.filerow{display:flex;align-items:center;gap:12px;margin-top:18px;padding:13px 16px;border-radius:10px;border:1px solid var(--bai-border);background:var(--bai-surface)}
+.filerow .ico{flex:0 0 auto;color:var(--bai-text-muted)}
+.filerow .fname{font-size:13px;color:var(--bai-text-secondary);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.filerow .fmeta{font-size:11.5px;color:var(--bai-text-faint);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.filerow .spacer{flex:1}
+.filerow .none{font-size:12.5px;color:var(--bai-text-muted)}
+/* the tabs, with the accent underline and hairline rule the original uses */
+.tabs{display:flex;margin-top:18px;border-bottom:1px solid var(--bai-border)}
+.tabs button{border:0;background:none;margin:0 24px -1px 0;padding:9px 2px 11px;font-size:13.5px;font-weight:500;color:var(--bai-text-muted);border-bottom:2px solid transparent}
+.tabs button:hover{color:var(--bai-text-secondary)}
+.tabs button.on{color:var(--bai-accent);border-bottom-color:var(--bai-accent)}
+/* ─ the page: header, tabs and sheet scroll together, as one document ─ */
+.body{position:relative;flex:1;display:flex;min-height:0}
 .reader{flex:1;min-width:0;overflow-y:auto;background:var(--bai-bg)}
-/* the sheet: a darker card floating on that page, generous padding, like a printed page */
-.md{max-width:78ch;margin:32px auto 64px;padding:56px 60px 72px;border-radius:16px;
+.pagewrap{max-width:92ch;margin:0 auto;padding:0 0 64px}
+/* the sheet: a darker card on the page, as tall as its text — never a fixed box */
+.md{margin:20px 0 0;padding:48px 64px 64px;border-radius:16px;min-height:58vh;
     background:var(--bai-deep);border:1px solid var(--bai-border);box-shadow:0 18px 40px -24px rgba(0,0,0,.55);
     font-size:16px;line-height:1.72;color:var(--bai-text-secondary)}
+#progress{position:absolute;top:0;left:0;z-index:7;height:2px;width:0;background:var(--bai-accent)}
 .md h1{font-size:24px;color:var(--bai-text);margin:0 0 6px;font-weight:600}
 .md h2{font-size:19px;color:var(--bai-text);margin:38px 0 12px;font-weight:600}
 .md h3{font-size:16px;color:var(--bai-text);margin:26px 0 8px;font-weight:600}
@@ -82,21 +93,50 @@ svg{display:block}
 .md .cap{margin:0 0 8px;font-size:12px;color:var(--bai-text-muted)}
 .md .lede{margin:0 0 32px;font-size:15px;line-height:1.6;color:var(--bai-text-tertiary)}
 .md .excerpt{margin:0 0 24px;font-size:15px;line-height:1.6;color:var(--bai-text-muted);font-style:italic}
+/* an attachment, referenced from the content as ![alt](attachment://…) — an image, so it is
+   content and belongs in the reading path. Its facts (role, page, size) belong in Details. */
+.md figure.att{margin:24px 0;padding:0}
+.md .figbox{padding:18px;border-radius:10px;background:var(--bai-surface);border:1px solid var(--bai-border)}
+.md .figrow{display:grid;grid-template-columns:150px 1fr;align-items:center;gap:14px;margin:7px 0;font-size:12px;color:var(--bai-text-tertiary)}
+.md .figrow i{display:block;height:8px;border-radius:4px;background:var(--bai-accent-soft);border:1px solid var(--bai-border)}
+.md figure.att figcaption{margin-top:10px;font-size:12.5px;line-height:1.6;color:var(--bai-text-muted)}
+.md figure.att code{font-size:11px}
 .md .srcnote{margin-top:44px;padding-top:16px;border-top:1px solid var(--bai-border);font-size:12px;line-height:1.7;color:var(--bai-text-faint)}
 .md .endline{display:flex;align-items:center;gap:10px;margin-top:30px;padding-top:18px;border-top:1px solid var(--bai-border);font-size:12.5px;color:var(--bai-text-muted)}
 .md .endline button{padding:4px 10px;border-radius:7px;background:var(--bai-surface);border:1px solid var(--bai-border);color:var(--bai-text-secondary);font-size:12.5px}
-.mdedit{display:none;width:100%;max-width:78ch;margin:32px auto 64px;padding:56px 60px;border:1px solid var(--bai-border);border-radius:16px;
-    background:var(--bai-deep);color:var(--bai-text);font:15px/1.75 ui-monospace,SFMono-Regular,Menlo,monospace;resize:none;min-height:60vh;outline:none;
+.mdedit{display:none;width:100%;margin:20px 0 0;padding:48px 64px;border:1px solid var(--bai-border);border-radius:16px;min-height:70vh;overflow-y:auto;
+    background:var(--bai-deep);color:var(--bai-text);font:15px/1.75 ui-monospace,SFMono-Regular,Menlo,monospace;resize:none;outline:none;
     box-shadow:0 18px 40px -24px rgba(0,0,0,.55)}
+/* editing: the source's own fields above its text — the same fields the current EditForm
+   carries, but in place, with the bar, status, claims and provenance still on screen. */
+.editmeta{display:none;width:100%;margin:16px 0 0;padding:0 64px}
+body[data-state="edit"] .editmeta{display:block}
+/* the reader is usually editing the text, not the fields: details collapsed by default */
+.em-det summary{display:flex;align-items:center;gap:10px;padding:3px 0;cursor:pointer;list-style:none}
+.em-det summary::-webkit-details-marker{display:none}
+.em-sum{font-size:12px;color:var(--bai-text-tertiary)}
+.em-facts{flex:1;font-size:11.5px;color:var(--bai-text-muted);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.em-chev{font-size:11.5px;color:var(--bai-text-faint)}
+.em-det[open] .em-chev{color:var(--bai-accent)}
+.em-det summary:hover .em-chev,.em-det summary:hover .em-sum{color:var(--bai-accent)}
+.em-body{padding:12px 0 4px}
+.em-row{display:flex;align-items:center;gap:10px;margin-bottom:9px}
+.em-row label{flex:0 0 auto;width:74px;font-size:11px;color:var(--bai-text-faint)}
+.em-row input,.em-row select{flex:1;min-width:0;padding:6px 9px;border-radius:8px;background:var(--bai-surface);border:1px solid var(--bai-border);color:var(--bai-text);font:inherit;font-size:12.5px}
+.em-row input:focus,.em-row select:focus{outline:none;border-color:var(--bai-accent)}
+.em-foot{display:flex;align-items:center;gap:10px;padding-top:10px;border-top:1px solid var(--bai-border)}
+.em-foot span{flex:1;font-size:11.5px;line-height:1.5;color:var(--bai-text-muted)}
+.em-save{padding:5px 12px;border-radius:7px;background:var(--bai-accent);border:1px solid var(--bai-accent);color:var(--bai-accent-text);font-size:12.5px;font-weight:600}
+.em-cancel{padding:5px 10px;border-radius:7px;background:var(--bai-surface);border:1px solid var(--bai-border);color:var(--bai-text-tertiary);font-size:12.5px}
 .empty{margin:0;color:var(--bai-text-muted);font-size:14px}
 
 /* ── outline rail (off by default) ─────────────────────────────────── */
 .rail{display:none;width:246px;flex:0 0 auto;border-right:1px solid var(--bai-border);background:var(--bai-bg);overflow-y:auto;padding:18px 8px 40px}
 .rail .lbl{padding:0 10px 8px;font-size:10px;letter-spacing:.08em;text-transform:uppercase;color:var(--bai-text-faint)}
-.rail a{display:block;padding:5px 10px;border-radius:6px;color:var(--bai-text-tertiary);text-decoration:none;font-size:12.5px;border-left:2px solid transparent}
+.rail a{display:block;padding:5px 10px;border-radius:6px;color:var(--bai-text-tertiary);text-decoration:none;font-size:12.5px}
 .rail a:hover{background:var(--bai-hover);color:var(--bai-text-secondary)}
 .rail a.l2{padding-left:20px;color:var(--bai-text-muted)}
-.rail a.on{border-left-color:var(--bai-accent);color:var(--bai-text);background:var(--bai-accent-soft)}
+.rail a.on{color:var(--bai-text);background:var(--bai-accent-soft)}
 .rail .divider{margin:14px 10px 8px;border-top:1px solid var(--bai-border)}
 
 /* ── details drawer (off by default) ───────────────────────────────── */
@@ -115,9 +155,10 @@ svg{display:block}
 .row dt{color:var(--bai-text-muted);margin:0}
 .row dd{margin:0;color:var(--bai-text-secondary);text-align:right;word-break:break-word}
 .row dd a{color:var(--bai-accent);text-decoration:none}
-.orig{margin-top:14px;padding:12px;border-radius:10px;background:var(--bai-surface);border:1px solid var(--bai-border)}
-.orig .fn{font-size:12.5px;color:var(--bai-text-secondary);word-break:break-all}
-.orig .fm{font-size:11px;color:var(--bai-text-faint);margin-top:3px}
+.orig,.att-row{margin-top:14px;padding:12px;border-radius:10px;background:var(--bai-surface);border:1px solid var(--bai-border)}
+.orig .fn,.att-row .fn{font-size:12.5px;color:var(--bai-text-secondary);word-break:break-all}
+.orig .fm,.att-row .fm{font-size:11px;color:var(--bai-text-faint);margin-top:3px}
+.pane .lede{margin:0 0 20px;font-size:12.5px;line-height:1.6;color:var(--bai-text-tertiary)}
 .orig .acts{display:flex;gap:6px;margin-top:10px;flex-wrap:wrap}
 .orig button{padding:5px 10px;border-radius:7px;background:var(--bai-bg);border:1px solid var(--bai-border);color:var(--bai-text-tertiary);font-size:12px}
 .orig button:hover{background:var(--bai-hover);color:var(--bai-text)}
@@ -128,22 +169,80 @@ svg{display:block}
 .selrow label{font-size:12px;color:var(--bai-text-muted)}
 .selrow select{background:var(--bai-surface);border:1px solid var(--bai-border);color:var(--bai-text-secondary);border-radius:7px;padding:4px 8px;font:inherit;font-size:12px}
 
-/* ── history (the source's own revisions view) ─────────────────────── */
-.history{display:none;flex:1;min-width:0;overflow-y:auto;background:var(--bai-surface)}
-.hgrid{display:grid;grid-template-columns:minmax(0,1fr) 320px;gap:0;height:100%}
-.hmain{padding:26px 28px;min-width:0}
-.hside{border-left:1px solid var(--bai-border);background:var(--bai-bg);padding:18px 12px;overflow-y:auto}
-.scrub{display:flex;align-items:center;gap:10px;padding:12px 14px;border-radius:12px;background:var(--bai-bg);border:1px solid var(--bai-border);margin-bottom:18px}
-.scrub input[type=range]{flex:1;accent-color:var(--bai-accent)}
-.scrub .step{display:flex;gap:4px}
-.scrub button{width:26px;height:26px;border-radius:7px;background:var(--bai-surface);border:1px solid var(--bai-border);color:var(--bai-text-tertiary)}
-.snap{border-radius:12px;background:var(--bai-bg);border:1px solid var(--bai-border);padding:16px}
-.snap h3{margin:0 0 4px;font-size:13px;color:var(--bai-text)}
-.snap .when{font-size:11.5px;color:var(--bai-text-faint);margin-bottom:12px}
-.op{display:block;width:100%;text-align:left;padding:9px 10px;margin-bottom:6px;border-radius:9px;background:var(--bai-surface);border:1px solid var(--bai-border);color:var(--bai-text-tertiary);font-size:12px}
-.op.on{border-color:var(--bai-accent);color:var(--bai-text)}
-.op .when{display:block;color:var(--bai-text-faint);font-size:11px;margin-top:2px}
-.radios{display:flex;gap:10px;margin-top:10px;font-size:12px;color:var(--bai-text-muted)}
+/* ── history: a faithful port of RevisionScrubber + RevisionSnapshotPanel +
+      RevisionOperationList (editors/shared/revision-history.tsx), same labels,
+      same colours, same controls — laid out in the blended shell. ─────── */
+.history{display:none;padding:22px 26px 72px;background:var(--bai-surface)}
+.hgrid{display:grid;grid-template-columns:minmax(0,1fr) 336px;align-items:start;gap:0}
+.hmain{min-width:0}
+.hside{align-self:start;border-left:1px solid var(--bai-border);padding:0 0 0 16px}
+.hside h4{margin:0 0 8px;font-size:12px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--bai-text-muted)}
+.oplist{margin:0;padding:0 4px 0 0;list-style:none}
+.oplist button{width:100%;border:0;border-radius:6px;padding:5px 8px;text-align:left;background:transparent;color:var(--bai-text-secondary);font-size:11px}
+.oplist button:hover{background:var(--bai-hover)}
+.oplist button[aria-current="true"]{background:rgba(203,166,247,0.12)}
+.oplist .r1{display:flex;align-items:center;gap:6px}
+.oplist .idx{flex:0 0 auto;color:var(--bai-text-faint);font-variant-numeric:tabular-nums}
+.oplist .name{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.oplist .r2{display:flex;align-items:center;gap:6px;margin-top:2px;padding-left:18px}
+.dot{display:inline-block;flex:0 0 auto;width:8px;height:8px;border-radius:50%}
+/* the scrubber */
+.scrubcard{border-radius:8px;padding:12px;background:var(--bai-deep);border:1px solid var(--bai-border)}
+.sc-top{display:flex;align-items:center;justify-content:space-between;gap:12px;font-size:12px;color:var(--bai-text-tertiary)}
+.sc-top b{color:var(--bai-text-secondary);font-weight:600;font-variant-numeric:tabular-nums}
+.sc-cur{margin-left:6px;color:var(--bai-text-faint)}
+.sc-actions{display:flex;align-items:center;gap:8px}
+.sc-mini{border:0;border-radius:6px;padding:2px 8px;font-size:11px;background:var(--bai-hover);color:var(--bai-text-tertiary)}
+.sc-mini[aria-pressed="true"]{background:rgba(203,166,247,0.15);color:#cba6f7}
+.sc-mid{display:flex;align-items:center;gap:8px;margin-top:8px}
+.sc-step{display:flex;flex:0 0 auto;align-items:center;justify-content:center;width:24px;height:24px;border:0;border-radius:6px;background:var(--bai-hover);color:var(--bai-text-tertiary);font-size:12px}
+.sc-step[disabled]{opacity:.3;cursor:not-allowed}
+#rev-range{flex:1;min-width:0;accent-color:#cba6f7}
+.sc-note{margin:4px 0 0;font-size:10px;color:var(--bai-text-faint)}
+.sc-op{margin-top:6px;font-size:11px}
+.sc-op .r1{display:flex;align-items:center;gap:6px;color:var(--bai-text-secondary)}
+.sc-op .r1 .name{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.sc-op .r2{display:flex;flex-wrap:wrap;align-items:center;gap:8px;margin-top:4px}
+.sc-op .ts{flex:0 0 auto;color:var(--bai-text-faint);font-variant-numeric:tabular-nums}
+.sig{display:inline-flex;max-width:100%;align-items:center;gap:6px;border-radius:4px;padding:1px 6px;font-size:10px;line-height:1.5;background:rgba(166,227,161,0.12);color:#a6e3a1}
+.sig .gl{font-weight:600}
+.sig .who{display:inline-flex;align-items:center;gap:4px;color:var(--bai-text-secondary);font-family:ui-monospace,SFMono-Regular,Menlo,monospace}
+.sig .av{width:12px;height:12px;border-radius:50%;background:linear-gradient(135deg,#cba6f7,#89b4fa)}
+.sig .via{color:var(--bai-text-faint)}
+.sc-fail{margin:6px 0 0;font-size:11px;color:#f9e2af}
+/* the snapshot */
+.snapcard{margin-top:16px;border-radius:8px;padding:16px;background:var(--bai-surface);border:1px solid var(--bai-border)}
+.snapchips{display:flex;flex-wrap:wrap;align-items:center;gap:8px;font-size:10px}
+.chip{border-radius:4px;padding:2px 6px;font-weight:500;letter-spacing:.03em;text-transform:uppercase;background:var(--bai-hover);color:var(--bai-text-tertiary)}
+.snapcard h3{margin:8px 0 0;font-size:16px;font-weight:600;color:var(--bai-text)}
+.snapcard .desc{margin:6px 0 0;font-size:12px;font-style:italic;color:var(--bai-text-tertiary)}
+.snapbody{max-height:420px;margin-top:10px;padding-right:6px;overflow-y:auto}
+.mdtxt p{margin:0 0 12px;font-size:13.5px;line-height:1.7;color:var(--bai-text-tertiary)}
+.mdtxt p:nth-child(1),.mdtxt p:nth-child(5){font-size:15px;font-weight:600;color:var(--bai-text)}
+.snapnote{margin:12px 0 0;padding-top:10px;border-top:1px solid var(--bai-border);font-size:11px;color:var(--bai-text-faint)}
+/* the diff */
+.diffhead{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:8px;font-size:11px;color:var(--bai-text-tertiary)}
+.diffhead .h{color:var(--bai-text-secondary)}
+.d-added{color:#a6e3a1}
+.d-removed{color:#f38ba8}
+.basegroup{display:flex;align-items:center;gap:2px;border-radius:4px;padding:2px;background:var(--bai-hover)}
+.basegroup button{border:0;border-radius:4px;padding:1px 6px;background:transparent;color:var(--bai-text-muted);font-size:10px}
+.basegroup button[aria-checked="true"]{background:rgba(203,166,247,0.18);color:#cba6f7}
+.diffrows{max-height:52vh;margin-top:12px;border-radius:6px;background:var(--bai-deep);overflow-y:auto}
+.dline{display:flex;align-items:flex-start;gap:6px;padding:1px 8px;font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:11px;line-height:1.6}
+.dline .mark{flex:0 0 auto;width:12px;text-align:center;color:var(--bai-text-faint);user-select:none}
+.dline .txt{flex:1;min-width:0;white-space:pre-wrap;word-break:break-word;color:var(--bai-text-faint)}
+.dline button.txt{border:0;padding:0;background:none;text-align:left;font:inherit}
+.tint-add{background:rgba(166,227,161,0.10)}
+.tint-del{background:rgba(243,139,168,0.10)}
+.w-add{border-radius:2px;background:rgba(166,227,161,0.26);color:#a6e3a1}
+.w-del{border-radius:2px;background:rgba(243,139,168,0.26);color:#f38ba8;text-decoration:line-through}
+.diffnote{margin:12px 0 0;font-size:11px;color:var(--bai-text-faint)}
+.seclabel{margin:14px 0 4px;font-size:10px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--bai-text-muted)}
+.fieldchange{display:flex;flex-wrap:wrap;align-items:baseline;gap:8px;margin:0 0 4px;font-size:11px}
+.fieldchange dt{margin:0;color:var(--bai-text-muted);font-weight:500}
+.fieldchange dd{margin:0;min-width:0;color:var(--bai-text-secondary)}
+.arrow{color:var(--bai-text-faint)}
 
 /* ── original document overlay ─────────────────────────────────────── */
 .overlay{display:none;position:fixed;inset:0;z-index:50}
@@ -161,9 +260,9 @@ body[data-state="original"] .overlay{display:block}
 .paper p{margin:0 0 12px;color:#3a3833}
 
 /* ── the ingest form (an uninitialized source) ─────────────────────── */
-.ingest{display:none;flex:1;overflow-y:auto;background:var(--bai-surface)}
+.ingest{display:none;flex:1;overflow-y:auto;background:var(--bai-bg)}
 body[data-state="ingest"] .ingest{display:block}
-body[data-state="ingest"] .bar,body[data-state="ingest"] .body{display:none}
+body[data-state="ingest"] .body{display:none}
 .iform{max-width:660px;margin:0 auto;padding:40px 32px 80px}
 .iform h2{margin:0 0 6px;font-size:19px;color:var(--bai-text);font-weight:600}
 .iform .lede{margin:0 0 26px;font-size:13px;color:var(--bai-text-tertiary);line-height:1.6}
@@ -184,11 +283,12 @@ body[data-state="ingest"] .bar,body[data-state="ingest"] .body{display:none}
 .toggle{position:fixed;bottom:12px;right:12px;z-index:40;border-radius:9px;padding:7px 13px;font-size:12px;background:var(--bai-surface);border:1px solid var(--bai-border);color:var(--bai-accent)}
 body[data-state="outline"] .rail{display:block}
 body[data-state="details"] .drawer{display:block}
-body[data-state="history"] .reader{display:none}
+body[data-state="history"] .contentarea{display:none}
 body[data-state="history"] .history{display:block}
 body[data-state="edit"] .md{display:none}
 body[data-state="edit"] .mdedit{display:block}
-body[data-state="details"] .act.det,body[data-state="outline"] .act.out{background:var(--bai-hover);color:var(--bai-text);border-color:var(--bai-border)}
+body[data-state="details"] .hbtn.det,body[data-state="outline"] .hbtn.out,
+body[data-state="edit"] .hbtn.ed{color:var(--bai-accent)}
 </style></head><body data-state="read">
 <div class="app">
 
@@ -217,94 +317,268 @@ body[data-state="details"] .act.det,body[data-state="outline"] .act.out{backgrou
     </div>
   </div>
 
-  <!-- the source bar: breadcrumb · status · claims, then source-only actions -->
-  <div class="bar">
-    <nav class="crumb">
-      <a>Sources</a><span class="sep">/</span><a>design-for-how-people-think</a><span class="sep">/</span>
-      <span class="here">Wayfinding</span>
-    </nav>
-    <span class="pill"><span class="dot"></span>EXTRACTED</span>
-    <span class="facts"><b>12</b> claims · <b>47</b> not taken</span>
-    <button class="produced" data-go="details">See what it produced<span>12 notes</span></button>
-    <span class="spacer"></span>
-    <button class="act out" data-go="outline">Outline</button>
-    <button class="act det" data-go="details">Details</button>
-    <button class="act" data-go="edit">Edit</button>
-    <button class="primary" id="queue">Queue for processing</button>
-    <span id="progress"></span>
-  </div>
-
+  <!-- the document header: the original editor's top section, restyled -->
   <div class="body">
     <nav class="rail">
       <p class="lbl">In this source</p>
       <a class="on">The Six Minds of Experience</a>
       <a class="l2">Vision, Attention, and Automaticity</a>
       <a class="l2">Applying it to a reading surface</a>
-      <a class="l2">Wayfinding</a>
       <a class="l2">Signposting the reader</a>
-      <a class="l2">A common definition of wayfinding</a>
+      <a class="l2">Landmarks at every scale</a>
+      <a class="l2">The problem with panels</a>
+      <a class="l2">What this leaves</a>
       <div class="divider"></div>
-      <p class="lbl">This source in the folder</p>
-      <a>1 of 117 sources · design-for-how-people-think</a>
+      <p class="lbl">Folder</p>
+      <a>design-for-how-people-think</a>
     </nav>
 
     <main class="reader">
+      <div class="pagewrap">
+        <header class="dochead">
+          <div class="headrow">
+            <span class="pill" id="status-pill">EXTRACTED</span>
+            <span class="chip">BOOK_CHAPTER</span>
+            <button class="cta" data-go="details">See what it produced <b>12 notes</b></button>
+            <span class="spacer"></span>
+            <button class="hbtn out" data-go="outline">Outline</button>
+            <button class="hbtn det" data-go="details">Details</button>
+            <button class="hbtn ed" data-go="edit">Edit</button>
+            <button class="hbtn primary" id="queue">Queue for processing</button>
+          </div>
+          <h1>Wayfinding</h1>
+          <!-- the original document, as the real panel collapses it -->
+          <div class="filerow">
+            <svg class="ico" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/></svg>
+            <span class="fname">design-for-how-people-think.pdf</span>
+            <span class="fmeta">application/pdf · 17.4 MB · converted by docling.rs</span>
+            <span class="spacer"></span>
+            <button class="hbtn primary" data-go="original">View original</button>
+            <button class="hbtn">Download</button>
+          </div>
+          <div class="tabs">
+            <button class="on" data-go="read">Content</button>
+            <button class="hist" data-go="history">History</button>
+          </div>
+        </header>
+
+        <div class="contentarea">
       <article class="md">
         <p class="excerpt">« placeholder excerpt — invented prose in the register of the book; the headings are its real ones »</p>
         <h2>The Six Minds of Experience</h2>
         <p>A common definition of wayfinding is that it is about getting from point A to point B. For the products you build it is richer than that: it is the sum of every cue that tells someone where they are, what is around them, and how to get back.</p>
+        <p>That definition is deliberately loose, because wayfinding is not one thing. It is a habit of the person moving through a space, and it is assembled out of whatever happens to be in front of them. A street sign, a colour, the shape of a doorway, the fact that the noisy room is behind you: all of it feeds the same running calculation. When the calculation succeeds, nobody notices it happened. When it fails, the failure is felt immediately and named precisely — <em>I don't know where I am</em> — which is why the craft of wayfinding is largely a craft of removing doubt rather than adding signage.</p>
+        <p>Interfaces inherit this. A person opening a document has the same three questions they have at a train station, and they ask them in the same order.</p>
         <table>
           <thead><tr><th>Mind</th><th>The question it answers</th></tr></thead>
           <tbody>
             <tr><td>Vision / Attention</td><td>What should I look at first?</td></tr>
             <tr><td>Wayfinding</td><td>Where am I, and how do I get where I am going?</td></tr>
             <tr><td>Memory</td><td>Have I seen this before?</td></tr>
+            <tr><td>Language</td><td>Does this make sense?</td></tr>
+            <tr><td>Decision making</td><td>What should I do next?</td></tr>
+            <tr><td>Emotion</td><td>How do I feel about this?</td></tr>
           </tbody>
         </table>
+        <figure class="att">
+          <div class="figbox">
+            <div class="figrow"><span>Vision / Attention</span><i style="width:96%"></i></div>
+            <div class="figrow"><span>Emotion</span><i style="width:80%"></i></div>
+            <div class="figrow"><span>Wayfinding</span><i style="width:62%"></i></div>
+            <div class="figrow"><span>Language</span><i style="width:47%"></i></div>
+            <div class="figrow"><span>Memory</span><i style="width:33%"></i></div>
+            <div class="figrow"><span>Decision making</span><i style="width:19%"></i></div>
+          </div>
+          <figcaption>The six minds, arranged by how quickly each question has to be answered. Cut from the page during conversion and referenced from the text as <code>attachment://figure-02-01</code>.</figcaption>
+        </figure>
+
+        <p>The useful thing about the list is that it is ordered by how cheaply each question can be answered, and by how expensive it is to answer it late. Attention is resolved in a few hundred milliseconds and cannot be deferred. Emotion is resolved continuously and quietly, and is usually only noticed when it has already gone wrong.</p>
         <h3>Vision, Attention, and Automaticity</h3>
         <p>Attention is a spotlight with a narrow beam and a very short memory. Anything the interface expects a person to find by searching has already cost them something they cannot get back.</p>
+        <p>The cost is not the search itself. The cost is that the search requires a decision about where to look, and a decision requires the person to hold a model of the interface in their head while they make it. That is the expensive part, and it is why the number of things competing for the beam matters far more than the number of things on the screen.</p>
         <blockquote>The most expensive words in an interface are the ones a person has to read twice.</blockquote>
+        <p>Automaticity is the other half of the story. Skills that are practised enough stop consuming attention, and a person who has stopped attending is faster, calmer, and far harder to interrupt. The interface that supports automaticity is the one whose important things never move, whose labels never change meaning, and whose layout survives the arrival of new content without rearranging itself.</p>
+        <p>This is the argument against clever layouts. A layout that has to be understood once is a layout that has to be understood every time the person returns to it, and the return is where the cost lands.</p>
         <h3>Applying it to a reading surface</h3>
         <ul>
           <li>One column, one measure, one place the eye can rest.</li>
           <li>Landmarks at every scale: a title, a section, a paragraph, a line.</li>
+          <li>Nothing that competes with the text may sit inside the text's column.</li>
+          <li>Controls may be near the text, but they must not be in the reading path.</li>
         </ul>
+        <p>The last point is the one that is most often got wrong, and it is worth separating the two ideas properly. A control that is <em>near</em> the text costs nothing: the eye passes over it, registers it as furniture, and moves on. A control that is <em>in</em> the reading path — a toolbar in the middle of a paragraph, a badge between two lines, a banner that pushes the text down as it loads — interrupts the sentence, and an interrupted sentence is a sentence read twice.</p>
+        <h3>Signposting the reader</h3>
+        <p>Progress is the cheapest landmark there is. A reader who can see how far in they are will keep reading; a reader who cannot will go looking for a scrollbar instead, and the scrollbar will tell them something worse: that the end is a long way off and that they have no idea where they are in it.</p>
+        <p>There are two ways to answer the question, and they are not equivalent. A percentage is a number the reader has to convert into a feeling. A position — a chapter name, a section marker, a progress line that visibly belongs to a document rather than to a task — is already a feeling. The second one is what a reader is actually asking for, which is why the best reading interfaces tend to show position and hide quantity.</p>
+        <h3>Landmarks at every scale</h3>
+        <p>A long document needs landmarks at more than one scale, because a reader arrives with more than one intention. Some arrive to read it through and need the shape of the whole thing. Some arrive to check one fact and need to find a heading they can recognise. Some arrive knowing the exact phrase they want and need only a way back to where they left off.</p>
+        <p>Each of those is served by a different kind of landmark. The reader looking for the shape wants an outline. The reader chasing a fact wants headings that are visually distinct from body text. The reader returning to a place wants the interface to remember where they were, and to make the way back cheap.</p>
+        <h3>The problem with panels</h3>
+        <p>Panels are the default answer to the problem of having too much to show, and they are a good answer for a great many things. They are a poor answer for reading, for a structural reason: a panel takes its space permanently, while the need for the panel is intermittent.</p>
+        <p>A reader who checks the provenance of a source once, at the start, does not need provenance occupying a third of the screen for the rest of the session. The panel has been paid for in measure — the width of the text — and measure is the single resource that cannot be recovered by any other means. Narrow a column past the point where the eye can jump back to the start of the next line and every sentence becomes more expensive, permanently, for every reader, including the ones who never once looked at the panel.</p>
+        <p>The alternative is to make the panel available rather than present. The difference is not cosmetic: it is the difference between a cost paid by everyone and a cost paid by whoever needs it.</p>
+        <h3>What this leaves</h3>
+        <p>Take the index out of the reading path, take the panels out of the measure, and leave the text the whole of what remains. Then use the smallest possible amount of chrome to answer the three questions a reader actually has — what is this, where am I, what can I do with it — and put everything else one deliberate move away.</p>
+        <p>What is left over is not very much, and that is the point. The hard part is not deciding what to add. It is resisting the urge to add it again the next time somebody asks where a feature went.</p>
       </article>
-      <textarea class="mdedit" spellcheck="false">## Wayfinding
+      <!-- editing: the source's own fields, in place above its text — the fields the
+           current EditForm carries, but without leaving the page -->
+      <div class="editmeta">
+        <details class="em-det">
+          <summary>
+            <span class="em-sum">Source details</span>
+            <span class="em-facts">Wayfinding · BOOK_CHAPTER · John Whalen</span>
+            <span class="em-chev">Change details</span>
+          </summary>
+          <div class="em-body">
+            <div class="em-row">
+              <label>Title</label><input value="Wayfinding">
+              <label style="width:40px">Type</label><select><option>ARTICLE</option><option>PAPER</option><option selected>BOOK_CHAPTER</option><option>TRANSCRIPT</option><option>DOCUMENTATION</option><option>CONVERSATION</option><option>WEB_PAGE</option><option>MANUAL_ENTRY</option></select>
+            </div>
+            <div class="em-row"><label>Description</label><input value="A psychologist's account of the six questions a person asks continuously"></div>
+            <div class="em-row"><label>Author</label><input value="John Whalen"><label style="width:40px">URL</label><input value="https://oreilly.com/library/view/…"></div>
+          </div>
+        </details>
+        <div class="em-foot">
+          <span>Edits keep the status, claims and provenance intact.</span>
+          <button class="em-cancel" data-go="read">Cancel</button>
+          <button class="em-save">Save changes</button>
+        </div>
+      </div>
+      <textarea class="mdedit" spellcheck="false">## The Six Minds of Experience
 
-A common definition of wayfinding is that it is all about helping people find their way around. In the built environment that means knowing where they are, what is around them, and how to get back.
+A common definition of wayfinding is that it is about getting from point A to point B. For the products you build it is richer than that: it is the sum of every cue that tells someone where they are, what is around them, and how to get back.
 
-### The Six Minds of Experience
+That definition is deliberately loose, because wayfinding is not one thing. It is a habit of the person moving through a space, and it is assembled out of whatever happens to be in front of them. A street sign, a colour, the shape of a doorway, the fact that the noisy room is behind you: all of it feeds the same running calculation. When the calculation succeeds, nobody notices it happened. When it fails, the failure is felt immediately and named precisely — I don't know where I am — which is why the craft of wayfinding is largely a craft of removing doubt rather than adding signage.
 
-The six minds are not features. They are six questions a person asks continuously, mostly without noticing.</textarea>
-    </main>
+Interfaces inherit this. A person opening a document has the same three questions they have at a train station, and they ask them in the same order.
 
-    <section class="history">
+| Mind | The question it answers |
+| --- | --- |
+| Vision / Attention | What should I look at first? |
+| Wayfinding | Where am I, and how do I get where I am going? |
+| Memory | Have I seen this before? |
+| Language | Does this make sense? |
+| Decision making | What should I do next? |
+| Emotion | How do I feel about this? |
+
+The useful thing about the list is that it is ordered by how cheaply each question can be answered, and by how expensive it is to answer it late. Attention is resolved in a few hundred milliseconds and cannot be deferred. Emotion is resolved continuously and quietly, and is usually only noticed when it has already gone wrong.
+
+### Vision, Attention, and Automaticity
+
+Attention is a spotlight with a narrow beam and a very short memory. Anything the interface expects a person to find by searching has already cost them something they cannot get back.
+
+The cost is not the search itself. The cost is that the search requires a decision about where to look, and a decision requires the person to hold a model of the interface in their head while they make it. That is the expensive part, and it is why the number of things competing for the beam matters far more than the number of things on the screen.
+
+> The most expensive words in an interface are the ones a person has to read twice.
+
+Automaticity is the other half of the story. Skills that are practised enough stop consuming attention, and a person who has stopped attending is faster, calmer, and far harder to interrupt. The interface that supports automaticity is the one whose important things never move, whose labels never change meaning, and whose layout survives the arrival of new content without rearranging itself.
+
+This is the argument against clever layouts. A layout that has to be understood once is a layout that has to be understood every time the person returns to it, and the return is where the cost lands.
+
+### Applying it to a reading surface
+
+- One column, one measure, one place the eye can rest.
+- Landmarks at every scale: a title, a section, a paragraph, a line.
+- Nothing that competes with the text may sit inside the text's column.
+- Controls may be near the text, but they must not be in the reading path.
+
+The last point is the one that is most often got wrong, and it is worth separating the two ideas properly. A control that is near the text costs nothing: the eye passes over it, registers it as furniture, and moves on. A control that is in the reading path — a toolbar in the middle of a paragraph, a badge between two lines, a banner that pushes the text down as it loads — interrupts the sentence, and an interrupted sentence is a sentence read twice.
+
+### Signposting the reader
+
+Progress is the cheapest landmark there is. A reader who can see how far in they are will keep reading; a reader who cannot will go looking for a scrollbar instead, and the scrollbar will tell them something worse: that the end is a long way off and that they have no idea where they are in it.
+
+There are two ways to answer the question, and they are not equivalent. A percentage is a number the reader has to convert into a feeling. A position — a chapter name, a section marker, a progress line that visibly belongs to a document rather than to a task — is already a feeling. The second one is what a reader is actually asking for, which is why the best reading interfaces tend to show position and hide quantity.
+
+### Landmarks at every scale
+
+A long document needs landmarks at more than one scale, because a reader arrives with more than one intention. Some arrive to read it through and need the shape of the whole thing. Some arrive to check one fact and need to find a heading they can recognise. Some arrive knowing the exact phrase they want and need only a way back to where they left off.
+
+Each of those is served by a different kind of landmark. The reader looking for the shape wants an outline. The reader chasing a fact wants headings that are visually distinct from body text. The reader returning to a place wants the interface to remember where they were, and to make the way back cheap.
+
+### The problem with panels
+
+Panels are the default answer to the problem of having too much to show, and they are a good answer for a great many things. They are a poor answer for reading, for a structural reason: a panel takes its space permanently, while the need for the panel is intermittent.
+
+A reader who checks the provenance of a source once, at the start, does not need provenance occupying a third of the screen for the rest of the session. The panel has been paid for in measure — the width of the text — and measure is the single resource that cannot be recovered by any other means. Narrow a column past the point where the eye can jump back to the start of the next line and every sentence becomes more expensive, permanently, for every reader, including the ones who never once looked at the panel.
+
+The alternative is to make the panel available rather than present. The difference is not cosmetic: it is the difference between a cost paid by everyone and a cost paid by whoever needs it.
+
+### What this leaves
+
+Take the index out of the reading path, take the panels out of the measure, and leave the text the whole of what remains. Then use the smallest possible amount of chrome to answer the three questions a reader actually has — what is this, where am I, what can I do with it — and put everything else one deliberate move away.
+
+What is left over is not very much, and that is the point. The hard part is not deciding what to add. It is resisting the urge to add it again the next time somebody asks where a feature went.</textarea>
+        </div><!-- /contentarea -->
+
+        <section class="history">
       <div class="hgrid">
         <div class="hmain">
-          <div class="scrub">
-            <div class="step"><button title="Previous operation">‹</button><button title="Next operation">›</button></div>
-            <input type="range" min="0" max="26" value="26" aria-label="Revision">
-            <span class="facts">revision 26 of 26</span>
+          <!-- RevisionScrubber (editors/shared/revision-history.tsx) -->
+          <div class="scrubcard">
+            <div class="sc-top">
+              <span>Revision <b id="rev-n">5</b> of <span id="rev-total">5</span><span class="sc-cur" id="rev-cur">(current)</span></span>
+              <div class="sc-actions">
+                <button type="button" class="sc-mini" id="jump-current" hidden>Jump to current</button>
+                <button type="button" class="sc-mini" id="toggle-diff" aria-pressed="false" title="What this operation changed">Show changes</button>
+              </div>
+            </div>
+            <div class="sc-mid">
+              <button type="button" class="sc-step" id="step-prev" aria-label="Previous text change">‹</button>
+              <input type="range" id="rev-range" min="0" max="4" value="4" aria-label="Revision">
+              <button type="button" class="sc-step" id="step-next" aria-label="Next text change">›</button>
+            </div>
+            <p class="sc-note" id="sc-note"></p>
+            <div class="sc-op">
+              <div class="r1"><span class="dot" id="op-dot"></span><span class="name" id="op-desc"></span></div>
+              <div class="r2">
+                <span class="ts" id="op-ts"></span>
+                <span class="sig" title="Signature verified. Signed through switchboard. Acting for 0x…, a binding this check does not verify.">
+                  <span class="gl">✓</span><span>signed</span>
+                  <span class="who"><span class="av"></span>liberuum.eth</span>
+                  <span class="via">via switchboard</span>
+                </span>
+              </div>
+            </div>
           </div>
-          <div class="snap">
-            <h3>Content at revision 26</h3>
-            <p class="when">set-source-content · 17 Sep 2026, 18:04</p>
-            <p style="color:var(--bai-text-tertiary);font-size:13px">## Wayfinding<br><br>A common definition of wayfinding is that it is all about helping people find their way around…</p>
+
+          <!-- RevisionSnapshotPanel: the replayed document, or the diff -->
+          <div class="snapcard">
+            <div id="snap-view">
+              <div class="snapchips">
+                <span class="chip" id="snap-status"></span>
+                <span class="chip">BOOK_CHAPTER</span>
+                <span style="color:var(--bai-text-faint)">John Whalen</span>
+                <span id="snap-claims" style="color:var(--bai-text-faint)"></span>
+              </div>
+              <h3>Wayfinding</h3>
+              <p class="desc">A psychologist's account of the six questions a person asks continuously — and why the shape of a page answers them better than a menu.</p>
+              <div class="snapbody">
+                <div class="mdtxt">
+                  <p>The Six Minds of Experience</p>
+                  <p>A common definition of wayfinding is that it is about getting from point A to point B. For the products you build it is richer than that: it is the sum of every cue that tells someone where they are, what is around them, and how to get back.</p>
+                  <p>That definition is deliberately loose, because wayfinding is not one thing. It is a habit of the person moving through a space, and it is assembled out of whatever happens to be in front of them.</p>
+                  <p>Interfaces inherit this. A person opening a document has the same three questions they have at a train station, and they ask them in the same order.</p>
+                  <p>Vision, Attention, and Automaticity</p>
+                  <p>Attention is a spotlight with a narrow beam and a very short memory. Anything the interface expects a person to find by searching has already cost them something they cannot get back.</p>
+                </div>
+                <p class="snapnote">The snapshot is replayed from the operations applied up to this revision, capped so the page does not become a mile long.</p>
+              </div>
+            </div>
+            <div id="diff-view" hidden></div>
           </div>
-          <div class="radios"><span>Compare against:</span><span>previous</span><span>current</span></div>
         </div>
+
+        <!-- RevisionOperationList: every operation, newest first, signed -->
         <aside class="hside">
-          <p class="plbl">Applied operations</p>
-          <button class="op on">set-source-content<span class="when">17 Sep, 18:04</span></button>
-          <button class="op">attach-original-file<span class="when">17 Sep, 17:52</span></button>
-          <button class="op">ingest-source<span class="when">17 Sep, 17:40</span></button>
-          <button class="op">set-source-status<span class="when">17 Sep, 17:39</span></button>
-          <p class="plbl" style="margin-top:18px">Also changed</p>
-          <p class="narr">title · description · source type</p>
+          <h4 id="oplisthead">Operations (5)</h4>
+          <ol class="oplist" id="oplist"></ol>
         </aside>
       </div>
     </section>
+      </div><!-- /pagewrap -->
+    </main>
 
     <aside class="drawer">
       <div class="dhead">
@@ -318,26 +592,44 @@ The six minds are not features. They are six questions a person asks continuousl
         <button class="claim">Attention is a narrow beam with a short memory<span class="meta">knowledge note · EXTRACTED</span></button>
         <button class="claim">Progress is the cheapest landmark there is<span class="meta">knowledge note · EXTRACTED</span></button>
         <button class="claim">Nine more from this source…<span class="meta">open the folder to see them all</span></button>
+        <button class="claim" style="color:var(--bai-text-muted)">did:phid:z6Mk…7Qd<span class="meta">an unresolved reference — this note is not in this drive, so the editor shows the ref it holds</span></button>
       </div>
       <div class="pane" data-pane="prov">
-        <p class="plbl">Where this came from</p>
+        <p class="plbl">What this source is</p>
+        <p class="lede" style="margin-bottom:20px">A psychologist's account of the six questions a person asks continuously — and why the shape of a page answers them better than a menu.</p>
+        <p class="plbl">Where it came from</p>
         <dl style="margin:0">
           <div class="row"><dt>Source type</dt><dd>BOOK_CHAPTER</dd></div>
           <div class="row"><dt>Author</dt><dd>John Whalen</dd></div>
+          <div class="row"><dt>Published</dt><dd>April 2019</dd></div>
           <div class="row"><dt>URL</dt><dd><a>oreilly.com/library/view/…</a></dd></div>
           <div class="row"><dt>Method</dt><dd>document conversion</dd></div>
-          <div class="row"><dt>Converted by</dt><dd>docling.rs</dd></div>
+          <div class="row"><dt>Tool</dt><dd>powerhouse-agent</dd></div>
+        </dl>
+        <p class="plbl" style="margin:18px 0 0">Who put it here</p>
+        <dl style="margin:0">
           <div class="row"><dt>Ingested by</dt><dd>petru@powerhouse</dd></div>
+          <div class="row"><dt>Ingested</dt><dd>17 Sep 2026, 17:40</dd></div>
         </dl>
         <p class="plbl" style="margin:18px 0 0">The text itself</p>
         <dl style="margin:0">
           <div class="row"><dt>Characters</dt><dd>13,687</dd></div>
-          <div class="row"><dt>Parts</dt><dd>117</dd></div>
+          <div class="row"><dt>Converted by</dt><dd>docling.rs</dd></div>
         </dl>
+        <p class="narr">The character count is counted from the text, not stored — the model keeps the text, not a size for it. Nothing here is invented to fill a row.</p>
+        <p class="plbl" style="margin:18px 0 0">Attachments — the parts of the page the text points at</p>
+        <div class="att-row">
+          <div class="fn">figure-02-01 · figure-02-01.png</div>
+          <div class="fm">role: figure · page 41 · image/png · 62 KB · 640×360</div>
+          <div class="fm">alt: “The six minds, arranged by how quickly each question has to be answered”</div>
+          <div class="fm">attached 17 Sep 2026, 18:00 · referenced from the text, so it renders inline in the reading view</div>
+        </div>
+        <p class="narr">One attachment, and it is the only one. It is listed here to be <em>checkable</em> — every figure cut out of the original is accounted for — but it is never drawn here: it lives in the text, at the paragraph that references it.</p>
         <p class="plbl" style="margin:18px 0 0">Original document</p>
         <div class="orig">
           <div class="fn">design-for-how-people-think.pdf</div>
           <div class="fm">17.4 MB · application/pdf · converted by docling.rs</div>
+          <div class="fm">attached 17 Sep 2026, 17:52</div>
           <div class="acts">
             <button data-go="original">View original</button>
             <button>Download</button>
@@ -358,6 +650,8 @@ The six minds are not features. They are six questions a person asks continuousl
           <div class="row"><dt>Claims</dt><dd>12</dd></div>
           <div class="row"><dt>Skipped</dt><dd>47</dd></div>
           <div class="row"><dt>Skip rate</dt><dd>0.79</dd></div>
+          <div class="row"><dt>Extracted</dt><dd>17 Sep 2026, 18:04</dd></div>
+          <div class="row"><dt>Extracted by</dt><dd>powerhouse-agent</dd></div>
         </dl>
         <p class="narr">47 of 59 passages were not taken. That is a measurement, not a shortfall — a recap chapter can genuinely yield nothing, and a red number here would train you to distrust a source that behaved correctly.</p>
         <p class="narr" style="margin-top:14px;padding-top:12px;border-top:1px solid var(--bai-border)">This source is the one the design notes call <em>Buxton C</em>: generous measure, no rails, one 2px progress line as the only permanent chrome, and its notes arriving as the payoff when the text ends. Its cost is the one this blend had to fix — summoned chrome is hostile to the checking half of the job, because a reader hunting for a control should never have to wonder where it went.</p>
@@ -428,13 +722,141 @@ The six minds are not features. They are six questions a person asks continuousl
     document.querySelectorAll(".dhead button").forEach(x=>x.classList.toggle("on",x===b));
     document.querySelectorAll(".pane").forEach(p=>p.classList.toggle("on",p.dataset.pane===b.dataset.tab));});
   document.getElementById("queue").onclick=(e)=>{const b=e.currentTarget;
-    b.classList.add("q");b.textContent="Queued — run /pipeline in Claude Code";};
-  const rd=document.querySelector(".reader");
-  rd.addEventListener("scroll",()=>{const p=document.getElementById("progress");
-    const max=rd.scrollHeight-rd.clientHeight;p.style.width=(max>0?(rd.scrollTop/max)*100:0)+"%";});
+    b.classList.add("q");b.textContent="Queued — run /pipeline in Claude Code";
+    // queueing files a pipeline task and moves the source to EXTRACTING: the pill must follow,
+    // or the bar would say EXTRACTED while the pipeline is working on it.
+    const pill=document.querySelector(".bar .pill");
+    pill.className="pill extracting";pill.innerHTML='<span class="dot"></span>EXTRACTING';};
+  // progress follows the sheet's own scroll, and the editor's when editing
+  const track=(el)=>{el.addEventListener("scroll",()=>{const p=document.getElementById("progress");
+    const max=el.scrollHeight-el.clientHeight;p.style.width=(max>0?(el.scrollTop/max)*100:0)+"%";});};
+  track(document.querySelector(".reader .md"));
+  track(document.querySelector(".mdedit"));
   document.getElementById("theme").onclick=()=>{const h=document.documentElement;
     h.dataset.baiTheme=h.dataset.baiTheme==="light"?"dark":"light";};
   // deep links: index.html and the README point at final.html#<state>
+  /* ── history: a working port of RevisionScrubber, RevisionSnapshotPanel
+        and RevisionOperationList. Operation kinds and colours come from
+        editors/shared/document-revisions.ts; the labels come from the
+        source's own describeOperation(). ───────────────────────────────── */
+  const KIND={content:"#cba6f7",lifecycle:"#a6e3a1",links:"#89b4fa",topics:"#f9e2af",annotation:"#eba0ac",metadata:"#94e2d5",other:"#6c7086"};
+  const OPS=[
+    {i:0,type:"INGEST_SOURCE",          desc:"Ingest source",          kind:"content",   ts:"9/17/2026, 5:40:12 PM", status:"INBOX",      claims:0,  stats:false, text:true},
+    {i:1,type:"SET_SOURCE_STATUS",      desc:"Set source status",      kind:"lifecycle", ts:"9/17/2026, 5:52:30 PM", status:"EXTRACTING", claims:0,  stats:false, text:false},
+    {i:2,type:"ATTACH_ORIGINAL_FILE",   desc:"Attach original file",   kind:"metadata",  ts:"9/17/2026, 5:52:41 PM", status:"EXTRACTING", claims:0,  stats:false, text:false},
+    {i:3,type:"ADD_EXTRACTED_CLAIM",    desc:"Add extracted claim",    kind:"links",     ts:"9/17/2026, 6:04:02 PM", status:"EXTRACTING", claims:1,  stats:false, text:false},
+    {i:4,type:"RECORD_EXTRACTION_STATS",desc:"Record extraction stats",kind:"lifecycle", ts:"9/17/2026, 9:18:06 PM", status:"EXTRACTED",  claims:12, stats:true,  text:false}
+  ];
+  const TEXT_POS=OPS.filter(o=>o.text).map(o=>o.i);
+  const chipLine=o=>o.claims+" "+(o.claims===1?"claim":"claims")+(o.stats?" · 79.7% skipped":"");
+  const shortTime=ts=>{const m=ts.match(/^(\d+)\/(\d+)\/\d+, (\d+):(\d+):\d+ (AM|PM)$/);return m?`${m[1]}/${m[2]}, ${m[3]}:${m[4]} ${m[5]}`:ts;};
+  let pos=OPS.length-1, cmpBase="previous";
+  const $=h=>document.querySelector(h);
+  // The field list a snapshot diff reports (the model's snapshotFields()).
+  const F_STATUS={l:"Status",b:"INBOX",a:"EXTRACTING"};
+  const F_CLAIMS={l:"Claims linked",b:"0",a:"1"};
+  const F_EXTRACTED={l:"Claims linked",b:"1",a:"12"};
+  const F_STATS=[{l:"Claims extracted",b:null,a:"12"},{l:"Skipped",b:null,a:"47"},{l:"Skip rate",b:null,a:"79.7%"},{l:"Extracted by",b:null,a:"powerhouse-agent"}];
+  function diffData(p,b){
+    const empty=p===0&&b==="previous";
+    const since=b==="current";
+    const head=OPS[OPS.length-1];
+    const contentSame=!empty; // only INGEST_SOURCE wrote text, so every other diff leaves it alone
+    let fields=[];
+    if(empty) fields=[];
+    else if(since) fields=p===0?[F_STATS[0],F_STATS[1],F_STATS[2],F_STATS[3]]:p===1?[{l:"Claims linked",b:"0",a:"12"},...F_STATS]:p===2?[{l:"Claims linked",b:"0",a:"12"},...F_STATS]:[{l:"Claims linked",b:"1",a:"12"},...F_STATS];
+    else if(p===1) fields=[F_STATUS];
+    else if(p===3) fields=[F_CLAIMS];
+    else if(p===4) fields=[F_EXTRACTED,...F_STATS];
+    const heading=empty?"Revision 1 created the source"
+      :b==="previous"?`What revision ${p+1} changed`
+      :`What changed since revision ${p+1}`;
+    const nothing=empty?"with no text or fields set"
+      :b==="previous"?"This operation left the document as it was."
+      :"Nothing has changed since this revision.";
+    return {empty,since,heading,nothing,fields,contentSame,any:empty||fields.length>0};
+  }
+  function diffHTML(p,b){
+    const d=diffData(p,b);
+    const rows=d.empty?[
+      {m:"+",cls:"tint-add",c:"#a6e3a1",t:"## The Six Minds of Experience"},
+      {m:"+",cls:"tint-add",c:"#a6e3a1",t:""},
+      {m:"+",cls:"tint-add",c:"#a6e3a1",t:"A common definition of wayfinding is that it is about getting from point A to point B."},
+      {m:"+",cls:"tint-add",c:"#a6e3a1",t:"That definition is deliberately loose, because wayfinding is not one thing."},
+      {m:"+",cls:"tint-add",c:"#a6e3a1",t:"Interfaces inherit this. A person opening a document has the same three questions."},
+      {m:"⌄",cls:"",c:"var(--bai-text-faint)",t:"38 more lines"}
+    ]:null;
+    const headHTML=`<div class="diffhead">
+      <div style="display:flex;flex-wrap:wrap;align-items:center;gap:12px">
+        <span class="h">${d.heading}</span>
+        ${d.empty?'<span class="d-added">+42 lines</span>':""}
+        ${d.fields.length?`<span>${d.fields.length} field${d.fields.length===1?"":"s"}</span>`:""}
+        ${!d.any?`<span>${d.nothing}</span>`:""}
+      </div>
+      ${p<OPS.length-1?`<div class="basegroup" role="radiogroup" aria-label="Compare against">
+        <button type="button" role="radio" data-base="previous" aria-checked="${b==="previous"}" title="What this operation changed">vs previous</button>
+        <button type="button" role="radio" data-base="current" aria-checked="${b==="current"}" title="What has changed between this revision and now">vs current</button>
+      </div>`:""}
+    </div>`;
+    const rowsHTML=d.empty?`<div class="diffrows">${rows.map(r=>`<div class="dline ${r.cls}"><span class="mark">${r.m}</span><span class="txt" style="color:${r.c}">${r.t||" "}</span></div>`).join("")}</div>`:"";
+    const contentNote=(!d.empty&&d.contentSame)?`<p class="diffnote">${b==="previous"?"This operation did not change the content.":"The content is the same as now."}</p>`:"";
+    const fieldsHTML=d.fields.length?`${d.empty?"":`<h5 class="seclabel">${d.empty?"":"Also changed"}</h5>`}
+      <dl style="margin:0">${d.fields.map(f=>`<div class="fieldchange"><dt>${f.l}</dt><dd>
+        <span style="color:#f38ba8;${f.b===null?"":"text-decoration:line-through"}">${f.b??"<em style='color:var(--bai-text-faint)'>unset</em>"}</span>
+        <span class="arrow">  →  </span>
+        <span style="color:#a6e3a1">${f.a??"<em style='color:var(--bai-text-faint)'>unset</em>"}</span>
+      </dd></div>`).join("")}</dl>`:"";
+    return headHTML+rowsHTML+contentNote+fieldsHTML;
+  }
+  function renderHistory(){
+    const head=OPS[pos];
+    $("#rev-n").textContent=pos+1;
+    $("#rev-cur").hidden=pos!==OPS.length-1;
+    $("#jump-current").hidden=pos===OPS.length-1;
+    $("#rev-range").value=pos;
+    const prevT=TEXT_POS.filter(x=>x<pos).pop(), nextT=TEXT_POS.find(x=>x>pos);
+    const sp=$("#step-prev"), sn=$("#step-next");
+    sp.disabled=prevT===undefined; sn.disabled=nextT===undefined;
+    sp.title=prevT===undefined?"No earlier text change":`Previous text change: #${prevT} ${OPS[prevT].desc}`;
+    sn.title=nextT===undefined?"No later text change":`Next text change: #${nextT} ${OPS[nextT].desc}`;
+    $("#sc-note").textContent=TEXT_POS.length<OPS.length?`${TEXT_POS.length} of ${OPS.length} operations changed the text`:"";
+    $("#op-dot").style.background=KIND[head.kind];
+    $("#op-desc").textContent=head.desc; $("#op-desc").title=head.desc;
+    $("#op-ts").textContent=head.ts;
+    $("#snap-status").textContent=head.status;
+    $("#snap-claims").textContent=chipLine(head);
+    const diffOn=$("#toggle-diff").getAttribute("aria-pressed")==="true";
+    $("#snap-view").hidden=diffOn; $("#diff-view").hidden=!diffOn;
+    if(diffOn){$("#diff-view").innerHTML=diffHTML(pos,cmpBase);
+      document.querySelectorAll("[data-base]").forEach(b=>b.onclick=()=>{cmpBase=b.dataset.base;renderHistory();});}
+    document.querySelectorAll("#oplist button").forEach((b,idx)=>{
+      b.setAttribute("aria-current",(OPS.length-1-idx)===pos?"true":"false");});
+  }
+  // the operation list, newest first, each row signed — as the real list renders it
+  (()=>{const ol=$("#oplist");
+    [...OPS].reverse().forEach(o=>{
+      const li=document.createElement("li");
+      li.innerHTML=`<button type="button" title="${o.desc}">
+        <span class="r1"><span class="dot" style="background:${KIND[o.kind]}"></span><span class="idx">#${o.i}</span><span class="name">${o.desc}</span></span>
+        <span class="r2"><span class="idx">${shortTime(o.ts)}</span>
+          <span class="sig" style="padding:0 4px"><span class="gl">✓</span><span class="who"><span class="av"></span>liberuum.eth</span></span>
+        </span></button>`;
+      li.querySelector("button").onclick=()=>{pos=o.i;renderHistory();};
+      ol.appendChild(li);});
+    $("#oplisthead").textContent=`Operations (${OPS.length})`;
+  })();
+  $("#rev-range").addEventListener("input",()=>{pos=Number($("#rev-range").value);renderHistory();});
+  $("#step-prev").onclick=()=>{const t=TEXT_POS.filter(x=>x<pos).pop();if(t!==undefined){pos=t;renderHistory();}};
+  $("#step-next").onclick=()=>{const t=TEXT_POS.find(x=>x>pos);if(t!==undefined){pos=t;renderHistory();}};
+  $("#jump-current").onclick=()=>{pos=OPS.length-1;renderHistory();};
+  $("#toggle-diff").onclick=()=>{const b=$("#toggle-diff");
+    const on=b.getAttribute("aria-pressed")!=="true";
+    b.setAttribute("aria-pressed",String(on));
+    b.textContent=on?"Hide changes":"Show changes";
+    b.title=on?"Back to the document as it stood":"What this operation changed";
+    renderHistory();};
+  renderHistory();
+
   const fromHash=()=>{const s=location.hash.slice(1);if(STATES.some(([k])=>k===s))set(s);};
   window.addEventListener("hashchange",fromHash);
   set("read");fromHash();

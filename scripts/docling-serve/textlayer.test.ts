@@ -1,5 +1,6 @@
 import { describe, expect, it } from "vitest";
 import {
+  absorbFigureText,
   bodySize,
   documentToBlocks,
   documentToMarkdown,
@@ -314,5 +315,94 @@ describe("insertFigurePlaceholders", () => {
     const { markdown, placed } = insertFigurePlaceholders(pages, [later], ph);
     expect(markdown.endsWith("<!-- image -->")).toBe(true);
     expect(placed.map((f) => f.id)).toEqual(["p-later"]);
+  });
+});
+
+describe("absorbFigureText", () => {
+  // Page 7 of the Sky report as pdf.js reads it: a prose column above the
+  // chart, then the chart's own title, legend, axis ticks, bar labels and
+  // source note — all live text inside docling's picture box, which is why
+  // they reached the source twice. Geometry measured, not invented.
+  const box = { l: 52.5, t: 611.72, r: 948.75, b: 82.27 };
+  const page7: Run[] = [
+    run(
+      "Q1 saw the balance sheet expand by $2.97B in a single quarter, reaching $13.03B in total Protocol Collateral, concentrated in two categories.",
+      20,
+      55,
+      726,
+      880,
+      true,
+    ),
+    run("Protocol Collateral Composition, Q1 2025 – Q1 2026", 30, 75, 560, 700),
+    run("Sky Agent Vaults", 18, 94, 523, 120),
+    run("PSM Vaults", 18, 232, 523, 80),
+    run("Other", 18, 335, 523, 40),
+    run("$14B", 16, 80, 491, 40, true),
+    run("$12B", 16, 81, 442, 40, true),
+    run("$615.44M", 16, 171, 158, 70, true),
+    run(
+      "Source: Sky Ecosystem Financial Dashboard; data as of March 31, 2026.",
+      16,
+      75,
+      106,
+      600,
+      true,
+    ),
+  ];
+
+  it("takes the chart's own text and leaves the page's prose", () => {
+    const { pages } = documentToBlocks([page7]);
+    const { kept, caption, labels } = absorbFigureText(pages[0].blocks, box);
+    expect(caption).toBe("Protocol Collateral Composition, Q1 2025 – Q1 2026");
+    expect(labels).toContain("Sky Agent Vaults PSM Vaults Other");
+    expect(labels).toContain("$615.44M");
+    expect(labels).toContain(
+      "Source: Sky Ecosystem Financial Dashboard; data as of March 31, 2026.",
+    );
+    // the paragraph above the chart is the document's, not the figure's
+    expect(kept).toHaveLength(1);
+    expect(kept[0].text).toContain("balance sheet expand");
+  });
+
+  it("refuses a paragraph inside the box, so a page background cannot eat the page", () => {
+    const whole = { l: 0, t: 1080, r: 1920, b: 0 };
+    const { pages } = documentToBlocks([page7]);
+    const { kept, labels } = absorbFigureText(pages[0].blocks, whole);
+    expect(kept.map((b) => b.text)).toEqual([
+      expect.stringContaining("balance sheet expand"),
+    ]);
+    expect(labels.join(" ")).not.toContain("balance sheet expand");
+  });
+
+  it("takes nothing when the box holds no text", () => {
+    const { pages } = documentToBlocks([page7]);
+    const empty = { l: 1500, t: 1000, r: 1900, b: 900 };
+    const { kept, caption, labels } = absorbFigureText(pages[0].blocks, empty);
+    expect(caption).toBeNull();
+    expect(labels).toEqual([]);
+    expect(kept).toBe(pages[0].blocks);
+  });
+
+  it("writes the figure's text under its image and captions the figure", () => {
+    const { pages } = documentToBlocks([page7]);
+    const chart7 = {
+      id: "picture-1",
+      kind: "picture" as const,
+      page: 1,
+      box,
+    };
+    const { markdown, placed } = insertFigurePlaceholders(pages, [chart7], {
+      picture: "<!-- image -->",
+      formula: "<!-- formula-not-decoded -->",
+    });
+    expect(placed[0].caption).toBe(
+      "Protocol Collateral Composition, Q1 2025 – Q1 2026",
+    );
+    expect(markdown).toContain(
+      "<!-- image -->\n\n*Protocol Collateral Composition, Q1 2025 – Q1 2026*",
+    );
+    expect(markdown).toContain("*Figure text: ");
+    // the tick label is the figure's now, not a paragraph of the document
+    expect(markdown).not.toMatch(/^\$14B$/m);
   });
 });

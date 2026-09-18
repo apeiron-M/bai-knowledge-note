@@ -31,7 +31,7 @@ export const DEFAULT_MAX_FIGURE_BYTES = 8 * 1024 * 1024;
  * @typedef {{ l: number; t: number; r: number; b: number }} Box  BOTTOMLEFT origin, points
  * @typedef {{ page: number; box: Box; placeholderIndex: number }} FormulaRegion
  * @typedef {{ page: number; box: Box | null; placeholderIndex: number; png: string; caption: string; width: number; height: number }} PictureFigure
- * @typedef {{ id: string; kind: "picture" | "formula"; page: number; box: Box | null; placeholderIndex: number; alt: string; mimeType: string; width: number; height: number; bytesBase64: string }} Figure
+ * @typedef {{ id: string; kind: "picture" | "formula"; page: number; box: Box | null; placeholderIndex: number; caption?: string; alt: string; mimeType: string; width: number; height: number; bytesBase64: string }} Figure
  */
 
 /**

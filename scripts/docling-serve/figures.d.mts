@@ -7,7 +7,7 @@ export interface Figure {
   box: Box | null;
   kind: "picture" | "formula";
   page: number;
-  placeholderIndex: number;
+  placeholderIndex: number; caption?: string;
   alt: string;
   mimeType: string;
   width: number;

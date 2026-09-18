@@ -27,6 +27,9 @@ export const HEADING_RATIO = 1.35;
 export const TITLE_RATIO = 2.4;
 /** Vertical gap (in multiples of the line's size) that separates paragraphs. */
 export const PARAGRAPH_GAP = 1.7;
+
+/** A figure's own text is short: a title, a legend, ticks, data labels. Longer lines are the document's prose, not the picture's. */
+export const FIGURE_LABEL_MAX_CHARS = 120;
 /** Horizontal gap (in sizes) below which two runs on a line are one word. */
 export const GLUE_GAP = 0.15;
 
@@ -280,6 +283,68 @@ export function renderPages(pageBlocks) {
  * @param {{ picture: string; formula: string }} placeholders
  * @returns {{ markdown: string; placed: typeof figures; unplaced: typeof figures }}
  */
+/**
+ * A chart draws its labels as live text on top of its picture, so they sit in
+ * the text layer *and* in the image. Left alone they reach the markdown twice:
+ * once in a picture a reader can see, once as rubble underneath it — on the
+ * Sky report's collateral chart, `"$14B"`, `"$12B"`, `"$615.44M"` and 35 more,
+ * 38 of that page's 93 runs, and 109 of the document's 1117.
+ *
+ * Absorbing them gives the figure its own text: the largest line becomes the
+ * caption (and from there the alt text a model reads before it fetches the
+ * image), the rest becomes one line marked as the figure's. Nothing is
+ * discarded, so the coverage score stays true.
+ *
+ * Only short lines are taken. A picture that overlaps a paragraph — a page
+ * background, a scan — must not swallow the document's prose, and the
+ * difference that holds in practice is length: a chart's title, legend, ticks
+ * and data labels are short; a body paragraph is not.
+ * @param {{ kind: string; text: string; size: number; top: number; bottom: number; left?: number; right?: number }[]} blocks
+ * @param {{ t: number; b: number; l: number; r: number }} box
+ * @param {number} [maxChars]
+ * @returns {{ kept: typeof blocks; caption: string | null; labels: string[] }}
+ */
+export function absorbFigureText(blocks, box, maxChars = FIGURE_LABEL_MAX_CHARS) {
+  const top = Math.max(box.t, box.b);
+  const bottom = Math.min(box.t, box.b);
+  const left = Math.min(box.l, box.r);
+  const right = Math.max(box.l, box.r);
+  const inside = (b) => {
+    if (b.kind === "placeholder") return false;
+    if (b.text.length > maxChars) return false;
+    const middle = (b.top + b.bottom) / 2;
+    if (middle > top || middle < bottom) return false;
+    if (b.left === undefined || b.right === undefined) return true;
+    const centre = (b.left + b.right) / 2;
+    return centre >= left && centre <= right;
+  };
+  const taken = blocks.filter(inside);
+  if (taken.length === 0) return { kept: blocks, caption: null, labels: [] };
+  const kept = blocks.filter((b) => !inside(b));
+  // The caption is the figure's title: the largest line in the box, and the
+  // highest of those when several share that size.
+  const title = taken.reduce(
+    (best, b) =>
+      b.size > best.size || (b.size === best.size && b.top > best.top)
+        ? b
+        : best,
+    taken[0],
+  );
+  return {
+    kept,
+    caption: title.text,
+    labels: taken.filter((b) => b !== title).map((b) => b.text),
+  };
+}
+
+/** The figure's own text, under its image: caption, then the labels. */
+function figureTextBlock(caption, labels) {
+  const parts = [];
+  if (caption) parts.push(`*${caption}*`);
+  if (labels.length > 0) parts.push(`*Figure text: ${labels.join(" \u00b7 ")}*`);
+  return parts.length > 0 ? parts.join("\n\n") : null;
+}
+
 export function insertFigurePlaceholders(pageBlocks, figures, placeholders) {
   const placed = [];
   const unplaced = [];
@@ -294,23 +359,36 @@ export function insertFigurePlaceholders(pageBlocks, figures, placeholders) {
   }
   const parts = [];
   for (const { page, blocks } of pageBlocks) {
-    const out = blocks.map((b) => ({ ...b }));
+    let out = blocks.map((b) => ({ ...b }));
     const here = (byPage.get(page) ?? [])
       .slice()
       .sort((a, b) => b.box.t - a.box.t);
     byPage.delete(page);
     for (const f of here) {
+      const { kept, caption, labels } = absorbFigureText(out, f.box);
+      out = kept;
       let at = out.findIndex(
         (b) => b.kind !== "placeholder" && b.top < f.box.t,
       );
       if (at === -1) at = out.length;
-      out.splice(at, 0, {
-        kind: "placeholder",
-        text: placeholders[f.kind],
-        top: f.box.t,
-        bottom: f.box.b,
-      });
-      placed.push(f);
+      const insertion = [
+        {
+          kind: "placeholder",
+          text: placeholders[f.kind],
+          top: f.box.t,
+          bottom: f.box.b,
+        },
+      ];
+      const own = figureTextBlock(caption, labels);
+      if (own !== null)
+        insertion.push({
+          kind: "placeholder",
+          text: own,
+          top: f.box.b,
+          bottom: f.box.b,
+        });
+      out.splice(at, 0, ...insertion);
+      placed.push(caption === null ? f : { ...f, caption });
     }
     // placeholders were spliced in page order top-down; report them in document order
     const rendered = out.map(renderBlock).filter((t) => t.length > 0);

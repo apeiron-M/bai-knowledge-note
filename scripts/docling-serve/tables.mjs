@@ -53,6 +53,21 @@ export const DEFAULT_TABLE_OPTIONS = {
   minValueShare: 0.6,
   /** A cell longer than this is prose, not a value. */
   maxCellChars: 24,
+  /**
+   * A table's label is a name, not a sentence. Without this, page 5 of the Sky
+   * report — a prose column with a chart's axis ticks beside it — read as a
+   * fifteen-row, two-column table and its paragraphs were replaced by one.
+   */
+  maxLabelChars: 40,
+  /**
+   * A column is filled row after row; a chart standing beside a table shares
+   * its baselines, so the chart's labels land in the table's rows but occupy
+   * their own band once or twice. Measured on the Sky report's page 8, where
+   * "$5B Milestone (Feb 26)" sits on the same baseline as a metrics row.
+   */
+  minBandOccupancy: 0.4,
+  /** An edge column standing this much further off than the table's own spacing is another block of content. */
+  foreignColumnGap: 1.8,
   /** Label-only lines allowed between two tabular rows without ending the table. */
   maxRowsBetween: 3,
 };
@@ -111,6 +126,14 @@ export function columnBands(rows, gap = DEFAULT_TABLE_OPTIONS.columnGap) {
 }
 
 /** The band a run sits in: the one containing its centre, else the nearest. */
+/** The band a run is actually inside, or -1 — used once the bands have been filtered. */
+function bandIn(run, bands) {
+  const centre = run.x + Math.max(1, run.width) / 2;
+  for (let i = 0; i < bands.length; i++)
+    if (centre >= bands[i].left && centre <= bands[i].right) return i;
+  return -1;
+}
+
 function bandOf(run, bands) {
   const centre = run.x + Math.max(1, run.width) / 2;
   let best = 0;
@@ -126,34 +149,65 @@ function bandOf(run, bands) {
 }
 
 function isTabular(row, bands, o) {
-  const columns = new Set(row.runs.map((run) => bandOf(run, bands)));
+  const label = row.runs
+    .filter((run) => bandOf(run, bands) === 0)
+    .map((run) => run.str.trim())
+    .join(" ");
+  if (label.length > o.maxLabelChars) return false;
   const beyondFirst = row.runs.filter((run) => bandOf(run, bands) > 0);
-  if (columns.size < o.minColumns || beyondFirst.length === 0) return false;
-  const values = beyondFirst.filter((run) =>
+  if (beyondFirst.length === 0) return false;
+  const valueRuns = beyondFirst.filter((run) =>
     isValue(run.str, o.maxCellChars),
-  ).length;
-  return values / beyondFirst.length >= o.minValueShare;
+  );
+  const valueBands = new Set(valueRuns.map((run) => bandOf(run, bands)));
+  // The row has to reach a table's shape on its own: a label column and at
+  // least minColumns-1 columns of values. Judging it across the whole page
+  // width instead let anything sharing a baseline — a chart beside the table —
+  // decide whether the row counted.
+  if (valueBands.size < o.minColumns - 1) return false;
+  // A row with no label of its own must carry a row's worth of values. One
+  // value alone, unnamed, is a chart's tick label sharing the table's baseline.
+  if (label.length === 0 && valueBands.size < 2) return false;
+  // Within the span those values occupy they must still dominate, or a
+  // paragraph that happens to carry two numbers would qualify.
+  const lo = Math.min(...valueBands);
+  const hi = Math.max(...valueBands);
+  const inSpan = beyondFirst.filter((run) => {
+    const band = bandOf(run, bands);
+    return band >= lo && band <= hi;
+  });
+  return valueRuns.length / inSpan.length >= o.minValueShare;
 }
 
 function buildTable(rows, bands) {
   const used = new Set();
   for (const row of rows)
-    for (const run of row.runs) used.add(bandOf(run, bands));
+    for (const run of row.runs) {
+      const band = bandIn(run, bands);
+      if (band >= 0) used.add(band);
+    }
   const columns = [...used].sort((a, b) => a - b);
   const grid = rows.map((row) => {
     const cells = columns.map(() => "");
     for (const run of row.runs) {
       const text = run.str.trim();
       if (!text) continue;
-      const at = columns.indexOf(bandOf(run, bands));
+      // Outside every kept band: the page's other content, which stays where
+      // it is rather than being snapped into the nearest column.
+      const at = columns.indexOf(bandIn(run, bands));
+      if (at < 0) continue;
       cells[at] = cells[at] ? `${cells[at]} ${text}` : text;
     }
     return cells;
-  });
-  const sizes = rows.flatMap((r) => r.runs.map((run) => run.size || 10));
+  }).filter((cells) => cells.some((cell) => cell.length > 0));
+  const inside = rows.filter((row) =>
+    row.runs.some((run) => bandIn(run, bands) >= 0),
+  );
+  const spanRows = inside.length > 0 ? inside : rows;
+  const sizes = spanRows.flatMap((r) => r.runs.map((run) => run.size || 10));
   return {
-    top: rows[0].y + Math.max(...sizes),
-    bottom: rows.at(-1).y,
+    top: spanRows[0].y + Math.max(...sizes),
+    bottom: spanRows.at(-1).y,
     left: Math.min(...columns.map((c) => bands[c].left)),
     right: Math.max(...columns.map((c) => bands[c].right)),
     grid,
@@ -170,7 +224,18 @@ export function detectTables(runs, options = {}) {
   const o = { ...DEFAULT_TABLE_OPTIONS, ...options };
   const rows = groupRows(runs, o.rowTolerance);
   if (rows.length < o.minRows) return [];
-  const pageBands = columnBands(rows, o.columnGap);
+  // Columns are read only from rows that could belong to a table — rows
+  // carrying values. A heading above the table spans its whole width ("Sky
+  // Protocol Key Metrics, Q1 2025 – Q1 2026" covers x 75..639, every column of
+  // the metrics table under it), and projecting that span merged all six
+  // columns into one band, so the table was never seen.
+  const candidates = rows.filter(
+    (row) =>
+      row.runs.filter((run) => isValue(run.str, o.maxCellChars)).length >=
+      Math.max(1, o.minColumns - 1),
+  );
+  if (candidates.length < o.minRows) return [];
+  const pageBands = columnBands(candidates, o.columnGap);
   if (pageBands.length < o.minColumns) return [];
 
   const tabular = rows.map((row) => isTabular(row, pageBands, o));
@@ -190,30 +255,71 @@ export function detectTables(runs, options = {}) {
   const tables = [];
   for (const region of regions) {
     if (region.count < o.minRows) continue;
+    const data = rows.slice(region.from, region.to + 1);
+    // Columns are read from the table's own value-carrying rows: a heading
+    // above it spans the whole table and would merge every column into one.
+    const wide = columnBands(
+      data.filter((row) =>
+        row.runs.some((run) => isValue(run.str, o.maxCellChars)),
+      ),
+      o.columnGap,
+    );
+    if (wide.length < o.minColumns) continue;
+    // Keep the columns the table fills row after row. The label column is kept
+    // outright: in the P&L most rows carry values with no name of their own.
+    let own = wide.filter(
+      (_, i) =>
+        i === 0 ||
+        data.filter((row) => row.runs.some((run) => bandOf(run, wide) === i))
+          .length /
+          data.length >=
+          o.minBandOccupancy,
+    );
+    if (own.length < o.minColumns) continue;
     // The header is not tabular — "ACCOUNT | Q1 '25 | Q2 '25" holds no values —
     // so it sits just above the region and would be left behind, taking the
-    // meaning of every column with it. Take the row above when it reaches the
-    // same columns.
+    // meaning of every column with it. It is taken only when its cells land
+    // inside the columns just established; a section heading spans them
+    // instead of filling them, and is left where it belongs.
     let from = region.from;
     const above = rows[region.from - 1];
     if (above) {
-      const withAbove = columnBands(
-        rows.slice(region.from - 1, region.to + 1),
-        o.columnGap,
+      const lands = new Set(
+        above.runs.map((run) => bandIn(run, own)).filter((i) => i >= 0),
       );
-      const reach = new Set(above.runs.map((run) => bandOf(run, withAbove)))
-        .size;
-      if (reach >= o.minColumns) from = region.from - 1;
+      if (lands.size >= o.minColumns) from = region.from - 1;
     }
-    const slice = rows.slice(from, region.to + 1);
-    // Columns are re-read from the table's own rows: the rest of the page
-    // would otherwise widen or merge its bands.
-    const own = columnBands(slice, o.columnGap);
+    {
+      // An edge column whose top cell is a number rather than a name, standing
+      // further off than this table's own column spacing, belongs to something
+      // else sharing the page — on page 8 of the Sky report, the tick labels of
+      // the chart beside the metrics table. Interior columns are never dropped,
+      // so a table headed by bare years survives.
+      const header = rows[from];
+      const cellOf = (i) =>
+        header.runs
+          .filter((run) => bandIn(run, own) === i)
+          .map((run) => run.str.trim())
+          .join(" ");
+      const gaps = own
+        .slice(1)
+        .map((band, i) => band.left - own[i].right)
+        .sort((a, b) => a - b);
+      const median = gaps.length > 0 ? gaps[Math.floor(gaps.length / 2)] : 0;
+      const foreign = (i) => {
+        if (i !== 0 && i !== own.length - 1) return false;
+        const head = cellOf(i);
+        if (head.length > 0 && !isValue(head, o.maxCellChars)) return false;
+        const gap = i === 0 ? own[1].left - own[0].right : gaps.at(-1);
+        return gap > o.foreignColumnGap * median;
+      };
+      const kept = own.filter((_, i) => !foreign(i));
+      if (kept.length >= o.minColumns) own = kept;
+    }
     if (own.length < o.minColumns) continue;
     if (own.length < o.narrowColumns) {
       // Judged on the data rows: the header is a row of names by definition,
       // and counting it dragged a clean balance sheet under the bar.
-      const data = rows.slice(region.from, region.to + 1);
       const rowsWithValues = data.filter((row) =>
         row.runs.some(
           (run) => bandOf(run, own) > 0 && isValue(run.str, o.maxCellChars),
@@ -225,7 +331,17 @@ export function detectTables(runs, options = {}) {
       const values = cells.filter((run) =>
         isValue(run.str, o.maxCellChars),
       ).length;
+      // A two-column table is a key → value list, so every data row carries a
+      // key. Rows with none are a column of prose that happens to sit beside a
+      // chart's axis — page 5 of the Sky report, where paragraph fragments and
+      // tick labels read as a table and the prose would have been replaced.
+      const keyed = data.every((row) =>
+        row.runs.some(
+          (run) => bandIn(run, own) === 0 && run.str.trim().length > 0,
+        ),
+      );
       if (
+        !keyed ||
         rowsWithValues < o.minRowsNarrow ||
         cells.length === 0 ||
         values / cells.length < o.minValueShareNarrow
@@ -238,7 +354,7 @@ export function detectTables(runs, options = {}) {
     // it with either is a guess — and a mis-attributed financial figure is
     // worse than a table with a label on its own line. The rows are written as
     // the geometry gives them.
-    tables.push(buildTable(slice, own));
+    tables.push(buildTable(rows.slice(from, region.to + 1), own));
   }
   return tables;
 }

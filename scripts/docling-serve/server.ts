@@ -1374,10 +1374,16 @@ async function handleConvert(
             formula: "<!-- formula-not-decoded -->",
           });
           const counters = { picture: 0, formula: 0 };
-          figures = placed.placed.map((figure) => ({
-            ...figure,
-            placeholderIndex: counters[figure.kind]++,
-          }));
+          figures = placed.placed.map((figure) => {
+            // The caption may have just arrived from the chart's own title,
+            // absorbed out of the text layer, so the alt text — the first
+            // thing a model reads about a figure — is rebuilt from it.
+            const renumbered = {
+              ...figure,
+              placeholderIndex: counters[figure.kind]++,
+            };
+            return { ...renumbered, alt: altFor(renumbered) };
+          });
           result = await conversionFromText(placed.markdown, dir, filename);
           // `unplaced` is its own count: a figure with no box could not be
           // positioned among the text — not the same as one left out for size.
