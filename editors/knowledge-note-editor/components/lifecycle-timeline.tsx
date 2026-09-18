@@ -10,6 +10,16 @@ const STATUS_DOT: Record<string, string> = {
   ARCHIVED: "bg-gray-500",
 };
 
+/** The same four words the status pill uses — the timeline showed raw enums. */
+const STATUS_LABELS: Record<string, string> = {
+  DRAFT: "Draft",
+  IN_REVIEW: "In Review",
+  CANONICAL: "Canonical",
+  ARCHIVED: "Archived",
+};
+const statusLabel = (s: string | null | undefined) =>
+  s ? (STATUS_LABELS[s] ?? s) : "";
+
 export function LifecycleTimeline({ events }: LifecycleTimelineProps) {
   if (events.length === 0) {
     return (
@@ -36,7 +46,7 @@ export function LifecycleTimeline({ events }: LifecycleTimelineProps) {
             </div>
             <div className="pb-3">
               <p className="text-xs font-medium text-gray-300">
-                {event.fromStatus} &rarr; {event.toStatus}
+                {statusLabel(event.fromStatus)} &rarr; {statusLabel(event.toStatus)}
               </p>
               <p className="text-xs text-gray-500">
                 {event.actor} &middot; {date}

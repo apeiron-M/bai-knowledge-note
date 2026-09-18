@@ -15,6 +15,27 @@ type StringFieldSpec = {
   options?: readonly string[];
 };
 
+/**
+ * Which of the 27 fields a note of each type actually uses.
+ *
+ * The panel offered every field to every note, so a bug pattern was asked for
+ * `Cardinality`, `Hooks Used` and `Dispatch Targets` — 27 rows to find the
+ * three that apply. The rest are still reachable, one disclosure away, and an
+ * unknown type simply shows them all as before.
+ */
+const FIELDS_BY_NOTE_TYPE: Record<string, readonly string[]> = {
+  BUG_PATTERN: ["errorMessage", "rootCause", "correctPattern", "severity"],
+  DECISION: ["decisionStatus", "context", "alternatives", "consequences"],
+  ARCHITECTURE: ["models", "modules", "dispatchTargets", "computes"],
+  INTEGRATION: ["sourceType", "targetType", "relationType", "cardinality"],
+  PATTERN: ["model", "context", "alternatives", "filePath"],
+  PROCEDURE: ["inputs", "outputs", "computes"],
+  WORKFLOW: ["inputs", "outputs", "consumedBy"],
+  CONCEPT: ["scope", "context", "confidence"],
+  OBSERVATION: ["severity", "context", "confidence"],
+  REFERENCE: ["filePath", "version", "modelId"],
+};
+
 const STRING_FIELDS: readonly StringFieldSpec[] = [
   { key: "scope", label: "Scope", placeholder: "e.g. global, team, personal" },
   {
@@ -121,6 +142,21 @@ export function MetadataPanel({
   onSetListField,
 }: MetadataPanelProps) {
   const [expanded, setExpanded] = useState(false);
+  // Split the 27 fields into the ones this note's type uses and the rest.
+  const listKeys = new Set<string>(LIST_FIELDS.map((f) => f.key));
+  const isList = (key: string) => listKeys.has(key);
+  const specs = new Map<string, { key: string; label: string; placeholder: string }>(
+    [...STRING_FIELDS, ...LIST_FIELDS].map((f) => [f.key, f]),
+  );
+  const primary = (FIELDS_BY_NOTE_TYPE[state.noteType ?? ""] ?? [])
+    .map((key) => specs.get(key))
+    .filter((f): f is { key: string; label: string; placeholder: string } => !!f);
+  const primaryKeys = new Set(primary.map((f) => f.key));
+  const restStrings = STRING_FIELDS.filter((f) => !primaryKeys.has(f.key));
+  const restLists = LIST_FIELDS.filter((f) => !primaryKeys.has(f.key));
+  const noteTypeLabel = (state.noteType ?? "note")
+    .toLowerCase()
+    .replace(/_/g, " ");
   const populatedStringFields = STRING_FIELDS.filter(
     (f) => (state as Record<string, unknown>)[f.key] != null,
   );
@@ -154,8 +190,45 @@ export function MetadataPanel({
       </button>
       {expanded && (
         <div className="mt-3 space-y-3">
+          {primary.length > 0 && (
+            <div className="space-y-2">
+              {primary.map((f) =>
+                isList(f.key) ? (
+                  <MetadataListField
+                    key={f.key}
+                    label={f.label}
+                    placeholder={f.placeholder}
+                    values={
+                      ((state as Record<string, unknown>)[f.key] as
+                        | string[]
+                        | undefined) ?? []
+                    }
+                    onChange={(v) => onSetListField(f.key, v)}
+                  />
+                ) : (
+                  <MetadataStringField
+                    key={f.key}
+                    options={(f as StringFieldSpec).options}
+                    label={f.label}
+                    placeholder={f.placeholder}
+                    value={
+                      (state as Record<string, unknown>)[f.key] as string | null
+                    }
+                    onChange={(v) => onSetField(f.key, v)}
+                  />
+                ),
+              )}
+              <hr style={{ borderColor: "var(--bai-border)" }} />
+              <p
+                className="text-[10.5px] leading-relaxed"
+                style={{ color: "var(--bai-text-faint)" }}
+              >
+                The fields a {noteTypeLabel} uses. The rest are below.
+              </p>
+            </div>
+          )}
           <div className="space-y-2">
-            {STRING_FIELDS.map((f) => (
+            {restStrings.map((f) => (
               <MetadataStringField
                 key={f.key}
                 options={f.options}
@@ -170,7 +243,7 @@ export function MetadataPanel({
           </div>
           <hr style={{ borderColor: "var(--bai-border)" }} />
           <div className="space-y-2">
-            {LIST_FIELDS.map((f) => (
+            {restLists.map((f) => (
               <MetadataListField
                 key={f.key}
                 label={f.label}

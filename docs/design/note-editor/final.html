@@ -1,0 +1,495 @@
+<!doctype html><html lang="en" data-bai-theme="dark"><head><meta charset="utf-8"><title>bai/knowledge-note editor — final blended design (Six Minds)</title>
+<style>/* Live values copied from style.css (2026-09-18). Dark default; toggle bottom-right. */
+:root, [data-bai-theme="dark"] {
+  --bai-bg:#1e1e2e; --bai-surface:#181825; --bai-deep:#11111b; --bai-hover:#313244;
+  --bai-border:rgba(255,255,255,0.1); --bai-text:#e4e4e7; --bai-text-secondary:#d4d4d8;
+  --bai-text-tertiary:#9ca3af; --bai-text-muted:#6b7280; --bai-text-faint:#4b5563;
+  --bai-accent:#cba6f7; --bai-accent-text:#1e1e2e; --bai-accent-soft:rgba(203,166,247,0.1);
+  --bai-ok:#a6e3a1; --bai-ok-soft:rgba(166,227,161,0.12); --bai-warn:#fab387; --bai-warn-soft:rgba(250,179,135,0.12);
+  --bai-danger:#f38ba8; --bai-danger-soft:rgba(243,139,168,0.12); --bai-info:#89b4fa; --bai-info-soft:rgba(137,180,250,0.12);
+}
+[data-bai-theme="light"] {
+  --bai-bg:#f8f9fc; --bai-surface:#fff; --bai-deep:#f1f3f8; --bai-hover:#e8eaf0; --bai-border:#e2e4e9;
+  --bai-text:#1f2937; --bai-text-secondary:#374151; --bai-text-tertiary:#6b7280; --bai-text-muted:#9ca3af; --bai-text-faint:#d1d5db;
+  --bai-accent:#7c3aed; --bai-accent-text:#fff; --bai-accent-soft:rgba(124,58,237,0.08);
+  --bai-ok:#059669; --bai-ok-soft:rgba(5,150,105,0.08); --bai-warn:#d97706; --bai-warn-soft:rgba(217,119,6,0.08);
+  --bai-danger:#dc2626; --bai-danger-soft:rgba(220,38,38,0.08); --bai-info:#2563eb; --bai-info-soft:rgba(37,99,235,0.08);
+}
+*{box-sizing:border-box}
+html,body{height:100%}
+body{margin:0;background:var(--bai-bg);color:var(--bai-text);font:14px/1.6 ui-sans-serif,system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
+.app{display:flex;flex-direction:column;height:100%}
+button{font:inherit;color:inherit;cursor:pointer}
+svg{display:block}
+
+/* ── Connect's DocumentToolbar — as it renders today, untouched ─────── */
+.toolbar{display:flex;align-items:center;gap:8px;height:46px;padding:0 10px;background:var(--bai-surface);border-bottom:1px solid var(--bai-border);flex:0 0 auto}
+.toolbar .slot{display:flex;align-items:center;gap:6px}
+.toolbar .slot.right{margin-left:auto}
+.toolbar button{display:flex;align-items:center;gap:6px;height:28px;padding:0 8px;border-radius:7px;background:var(--bai-bg);border:1px solid var(--bai-border);color:var(--bai-text-tertiary)}
+.toolbar button:hover{background:var(--bai-hover);color:var(--bai-text-secondary)}
+.toolbar h1{margin:0;padding:0 10px;font-size:13px;font-weight:500;color:var(--bai-text-tertiary);max-width:420px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+
+.body{position:relative;flex:1;display:flex;min-height:0}
+.reader{flex:1;min-width:0;overflow-y:auto}
+.pagewrap{padding:0 26px 64px}
+
+/* ── the note header: identity, lifecycle, type, topics ─────────────── */
+/* the card is the top of one column in every view: top rounding only, no
+   bottom border — the tabs' own rule is the divider, and whatever follows
+   picks up the rounded foot. No gaps anywhere down the column. */
+.dochead{max-width:64rem;margin:20px auto 0;padding:18px 20px 0;background:var(--bai-surface);border:1px solid var(--bai-border);border-radius:14px 14px 0 0;border-bottom:0;overflow:hidden}
+.headrow{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.pill{display:inline-flex;align-items:center;gap:6px;padding:4px 12px;border-radius:999px;font-size:11.5px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;background:var(--bai-ok-soft);color:var(--bai-ok)}
+.pill.draft{background:var(--bai-warn-soft);color:var(--bai-warn)}
+.pill.review{background:var(--bai-info-soft);color:var(--bai-info)}
+.pill.archived{background:var(--bai-hover);color:var(--bai-text-muted)}
+.chip{display:inline-flex;align-items:center;padding:4px 10px;border-radius:7px;font-size:11.5px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;background:var(--bai-hover);color:var(--bai-text-tertiary)}
+.chip.sel{padding-right:6px}
+.chip select{border:0;background:none;color:inherit;font:inherit;text-transform:uppercase;letter-spacing:.06em;cursor:pointer}
+.headrow .spacer{flex:1}
+.hbtn{display:inline-flex;align-items:center;gap:6px;padding:6px 12px;border-radius:8px;background:var(--bai-hover);border:1px solid transparent;color:var(--bai-text-tertiary);font-size:12.5px}
+.hbtn:hover{background:var(--bai-border);color:var(--bai-text)}
+.hbtn.primary{background:var(--bai-accent);border-color:var(--bai-accent);color:var(--bai-accent-text);font-weight:600}
+.hbtn.ok{background:var(--bai-ok-soft);color:var(--bai-ok)}
+.hbtn.danger{background:var(--bai-danger-soft);color:var(--bai-danger)}
+.flow{font-size:10.5px;color:var(--bai-text-faint);letter-spacing:.02em}
+/* the claim */
+.claim{display:block;margin:14px 0 0;padding:0;font:600 22px/1.35 inherit;color:var(--bai-text);border:0;background:none;width:100%;resize:none;outline:none;overflow:hidden}
+.claim::placeholder{color:var(--bai-text-faint);font-weight:500}
+.claimhint{margin:6px 0 0;font-size:11px;color:var(--bai-text-faint)}
+/* the description, with its budget */
+.desc{display:block;width:100%;margin-top:14px;padding:9px 12px;border-radius:10px;background:var(--bai-deep);border:1px solid var(--bai-border);color:var(--bai-text-secondary);font:inherit;font-size:13px;line-height:1.55;resize:none;outline:none;overflow:hidden;min-height:56px}
+.desc:focus{border-color:var(--bai-accent)}
+.descfoot{display:flex;align-items:center;gap:8px;margin-top:5px}
+.descfoot .lbl{flex:1;font-size:11px;color:var(--bai-text-faint)}
+.budget{font-size:11px;font-variant-numeric:tabular-nums;color:var(--bai-text-muted)}
+.budget.near{color:var(--bai-warn)}
+/* topics */
+.topicrow{display:flex;flex-wrap:wrap;align-items:center;gap:7px;margin-top:14px}
+.topic{display:inline-flex;align-items:center;gap:6px;padding:3px 10px;border-radius:999px;font-size:11.5px;font-weight:500;background:var(--bai-accent-soft);color:var(--bai-accent)}
+.topic button{border:0;background:none;color:inherit;opacity:.45;font-size:12px;line-height:1}
+.topic:hover button{opacity:1}
+.topicadd{padding:3px 11px;border-radius:999px;border:1px dashed var(--bai-border);background:none;color:var(--bai-text-faint);font-size:11.5px;min-width:96px}
+.topicadd:focus{outline:none;border-color:var(--bai-accent);color:var(--bai-text)}
+/* tabs */
+.tabs{display:flex;margin:18px -20px 0;padding:0 20px;border-bottom:1px solid var(--bai-border)}
+.tabs button{border:0;background:none;margin:0 24px -1px 0;padding:9px 2px 11px;font-size:13.5px;font-weight:500;color:var(--bai-text-muted);border-bottom:2px solid transparent;display:inline-flex;align-items:center;gap:7px}
+.tabs button:hover{color:var(--bai-text-secondary)}
+.tabs button.on{color:var(--bai-accent);border-bottom-color:var(--bai-accent)}
+.tabs .count{padding:1px 6px;border-radius:999px;background:var(--bai-hover);color:var(--bai-text-tertiary);font-size:10.5px;font-weight:600}
+.tabs button.on .count{background:var(--bai-accent-soft);color:var(--bai-accent)}
+
+/* ── the sheet: the note's body, read or edited, same surface ───────── */
+.sheet,.sheetedit{display:block;width:100%;max-width:64rem;margin:0 auto;padding:32px 48px;min-height:44vh;background:var(--bai-deep);border:1px solid var(--bai-border);border-top:0}
+.sheetedit{display:none;color:var(--bai-text);font:13.5px/1.7 ui-monospace,SFMono-Regular,Menlo,monospace;resize:vertical;outline:none}
+body[data-view="edit"] .sheet{display:none}
+body[data-view="edit"] .sheetedit{display:block}
+.sheet{font-size:14.5px;line-height:1.7;color:var(--bai-text-secondary)}
+.sheet h2{font-size:17px;color:var(--bai-text);margin:32px 0 10px;font-weight:600}
+.sheet h2:first-child{margin-top:0}
+.sheet p{margin:0 0 14px}
+.sheet strong{color:var(--bai-text)}
+.sheet em{color:var(--bai-text-tertiary)}
+.sheet code{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:.88em;background:var(--bai-surface);padding:1px 5px;border-radius:4px}
+.sheet .empty{margin:0;font-style:italic;color:var(--bai-text-faint)}
+
+/* ── "where this sits": the graph position, under the body ──────────── */
+.sits{max-width:64rem;margin:0 auto;padding:16px 20px;border-radius:0 0 14px 14px;background:var(--bai-surface);border:1px solid var(--bai-border);border-top:0}
+.sits h4{margin:0 0 12px;font-size:10px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--bai-text-faint)}
+.sitsgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:14px}
+.sitscell .k{font-size:10.5px;letter-spacing:.06em;text-transform:uppercase;color:var(--bai-text-faint)}
+.sitscell .v{margin-top:5px;font-size:12.5px;color:var(--bai-text-secondary);line-height:1.55}
+.moclink{display:inline-flex;align-items:center;gap:6px;padding:3px 9px;margin:3px 5px 0 0;border-radius:7px;background:var(--bai-deep);border:1px solid var(--bai-border);color:var(--bai-text-secondary);font-size:12px}
+.moclink:hover{border-color:var(--bai-accent);color:var(--bai-text)}
+.moclink b{font-size:9.5px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--bai-text-faint)}
+.tally{display:inline-flex;align-items:baseline;gap:5px;margin-right:14px}
+.tally b{font-size:17px;font-weight:600;color:var(--bai-text);font-variant-numeric:tabular-nums}
+.tally span{font-size:11.5px;color:var(--bai-text-muted)}
+.sitsmore{margin-top:12px;padding-top:11px;border-top:1px solid var(--bai-border);font-size:11.5px;color:var(--bai-text-faint)}
+.sitsmore button{border:0;background:none;color:var(--bai-accent);padding:0;font-size:11.5px}
+
+/* ── views that continue the header card ────────────────────────────── */
+.view{display:none;max-width:64rem;margin:0 auto;padding:22px 20px 40px;background:var(--bai-surface);border:1px solid var(--bai-border);border-top:0;border-radius:0 0 14px 14px}
+body[data-view="links"] .v-links,body[data-view="details"] .v-details,body[data-view="history"] .v-history{display:block}
+body[data-view="links"] .contentarea,body[data-view="details"] .contentarea,body[data-view="history"] .contentarea{display:none}
+.plbl{margin:0 0 10px;font-size:10px;letter-spacing:.08em;text-transform:uppercase;color:var(--bai-text-faint)}
+.plbl.mt{margin-top:26px}
+.narr{margin:10px 0 0;font-size:11.5px;line-height:1.6;color:var(--bai-text-muted)}
+
+/* links */
+.edge{padding:11px 13px;margin-bottom:8px;border-radius:10px;background:var(--bai-deep);border:1px solid var(--bai-border)}
+.edge .top{display:flex;align-items:center;gap:9px}
+.etype{flex:0 0 auto;padding:2px 8px;border-radius:6px;font-size:10px;font-weight:600;letter-spacing:.05em;text-transform:uppercase}
+.etype.builds{background:var(--bai-info-soft);color:var(--bai-info)}
+.etype.derived{background:var(--bai-warn-soft);color:var(--bai-warn)}
+.etype.relates{background:var(--bai-hover);color:var(--bai-text-tertiary)}
+.etype.contra{background:var(--bai-danger-soft);color:var(--bai-danger)}
+.etype.core{background:var(--bai-accent-soft);color:var(--bai-accent)}
+.edge .t{flex:1;min-width:0;font-size:13px;color:var(--bai-text-secondary);text-align:left;background:none;border:0;padding:0}
+.edge .t:hover{color:var(--bai-text);text-decoration:underline}
+.kind{flex:0 0 auto;padding:1px 6px;border-radius:4px;background:var(--bai-hover);color:var(--bai-text-muted);font-size:9px;font-weight:600;letter-spacing:.06em;text-transform:uppercase}
+.edge .x{flex:0 0 auto;border:0;background:none;color:var(--bai-text-faint);font-size:14px;line-height:1;opacity:0}
+.edge:hover .x{opacity:1}
+.edge .x:hover{color:var(--bai-danger)}
+.why{display:flex;align-items:flex-start;gap:7px;margin-top:7px;font-size:11.5px;line-height:1.55}
+.why .b{flex:0 0 auto;color:var(--bai-text-faint)}
+.why .r{flex:1;min-width:0;font-style:italic;color:var(--bai-text-tertiary)}
+.conf{flex:0 0 auto;font-size:10px;color:var(--bai-ok)}
+.conf.est{color:var(--bai-info)}
+.conf.spec{color:var(--bai-warn)}
+.nowhy{margin-top:7px;border:0;background:none;padding:0;font-size:10.5px;color:var(--bai-warn);opacity:.75}
+.nowhy:hover{opacity:1}
+.addlink{width:100%;margin-top:4px;padding:8px;border-radius:10px;border:1px dashed var(--bai-border);background:none;color:var(--bai-text-muted);font-size:12px}
+.addlink:hover{border-color:var(--bai-accent);color:var(--bai-text-secondary)}
+.inbox{opacity:.92}
+.inbox .edge{background:var(--bai-surface)}
+
+/* details */
+.row{display:flex;justify-content:space-between;gap:12px;padding:7px 0;border-bottom:1px solid var(--bai-border);font-size:12.5px}
+.row dt{margin:0;color:var(--bai-text-muted);flex:0 0 auto}
+.row dd{margin:0;min-width:0;color:var(--bai-text-secondary);text-align:right;word-break:break-word}
+.mfield{display:flex;align-items:center;gap:10px;margin-bottom:8px}
+.mfield label{flex:0 0 auto;width:132px;font-size:11px;color:var(--bai-text-faint)}
+.mfield input,.mfield select{flex:1;min-width:0;padding:6px 9px;border-radius:8px;background:var(--bai-deep);border:1px solid var(--bai-border);color:var(--bai-text);font:inherit;font-size:12.5px}
+.mfield input:focus,.mfield select:focus{outline:none;border-color:var(--bai-accent)}
+.mfield .hintf{flex:0 0 auto;font-size:10.5px;color:var(--bai-text-faint)}
+details.more{margin-top:18px;border-top:1px solid var(--bai-border);padding-top:14px}
+details.more summary{list-style:none;cursor:pointer;font-size:11.5px;color:var(--bai-text-tertiary)}
+details.more summary::-webkit-details-marker{display:none}
+details.more summary:hover{color:var(--bai-accent)}
+details.more .body{display:block;padding-top:14px}
+
+/* history */
+.hgrid{display:grid;grid-template-columns:minmax(0,1fr) 320px;gap:0;align-items:start}
+.hside{border-left:1px solid var(--bai-border);padding-left:16px}
+.card{border-radius:10px;padding:13px;background:var(--bai-deep);border:1px solid var(--bai-border)}
+.life{display:flex;gap:11px}
+.life .rail{display:flex;flex-direction:column;align-items:center}
+.dot{width:9px;height:9px;border-radius:50%;margin-top:5px;flex:0 0 auto}
+.dot.d{background:var(--bai-warn)}.dot.r{background:var(--bai-info)}.dot.c{background:var(--bai-ok)}.dot.a{background:var(--bai-text-muted)}
+.life .line{width:1px;flex:1;background:var(--bai-border);margin-top:3px}
+.life .txt{padding-bottom:14px}
+.life .mv{font-size:12px;font-weight:500;color:var(--bai-text-secondary)}
+.life .who{margin-top:2px;font-size:11px;color:var(--bai-text-muted)}
+.life .cm{margin-top:3px;font-size:11px;font-style:italic;color:var(--bai-text-faint)}
+
+/* banner */
+.banner{max-width:64rem;margin:16px auto 0;padding:13px 16px;border-radius:12px;font-size:13px;color:var(--bai-text-secondary);background:var(--bai-warn-soft);border:1px solid rgba(250,179,135,.35)}
+.banner b{color:var(--bai-warn)}
+.banner .sup{display:block;margin-top:6px;font-size:12px}
+.banner .sup a{color:var(--bai-warn);text-decoration:none;font-weight:500}
+.banner .why2{margin-top:3px;font-size:11.5px;font-style:italic;color:var(--bai-text-muted)}
+
+/* review bar */
+.reviewbar{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-top:14px;padding:12px 14px;border-radius:12px;background:var(--bai-info-soft);border:1px solid rgba(137,180,250,.3)}
+.reviewbar .t{font-size:12.5px;color:var(--bai-text-secondary)}
+.reviewbar input{padding:6px 9px;border-radius:8px;background:var(--bai-deep);border:1px solid var(--bai-border);color:var(--bai-text);font:inherit;font-size:12.5px}
+.reviewbar .warn{flex-basis:100%;font-size:11px;color:var(--bai-warn)}
+
+/* proposal chrome */
+.switcher{position:fixed;left:12px;bottom:12px;z-index:40;display:flex;flex-wrap:wrap;gap:4px;max-width:58vw;padding:6px;border-radius:12px;background:var(--bai-surface);border:1px solid var(--bai-border);box-shadow:0 8px 24px rgba(0,0,0,.35)}
+.switcher button{padding:5px 9px;border-radius:8px;background:none;border:1px solid transparent;color:var(--bai-text-muted);font-size:11.5px}
+.switcher button.on{background:var(--bai-accent-soft);border-color:var(--bai-border);color:var(--bai-text)}
+.toggle{position:fixed;bottom:12px;right:12px;z-index:40;border-radius:9px;padding:7px 13px;font-size:12px;background:var(--bai-surface);border:1px solid var(--bai-border);color:var(--bai-accent)}
+.hide{display:none}
+</style></head><body data-view="note">
+<div class="app">
+
+  <!-- Connect's DocumentToolbar: untouched -->
+  <div class="toolbar">
+    <div class="slot">
+      <button title="Undo"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M9 14 4 9l5-5"/><path d="M4 9h10a6 6 0 0 1 0 12h-3"/></svg></button>
+      <button title="Redo"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="m15 14 5-5-5-5"/><path d="M20 9H10a6 6 0 0 0 0 12h3"/></svg></button>
+      <button title="Download"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 3v12"/><path d="m7 10 5 5 5-5"/><path d="M5 21h14"/></svg></button>
+    </div>
+    <h1>Because the processor manager has no drive dimension…</h1>
+    <div class="slot right">
+      <button title="Update document"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><path d="M17 21v-8H7v8M7 3v5h8"/></svg></button>
+      <button title="Revision history"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M3 12a9 9 0 1 0 3-6.7L3 8"/><path d="M3 3v5h5"/><path d="M12 8v4l3 2"/></svg></button>
+      <button title="Switchboard"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><path d="M15 3h6v6"/><path d="M10 14 21 3"/></svg></button>
+      <button title="Close"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M18 6 6 18M6 6l12 12"/></svg></button>
+    </div>
+  </div>
+
+  <div class="body">
+    <main class="reader">
+      <div class="pagewrap">
+
+        <!-- superseded / archived banner: unchanged wording, now above the card -->
+        <div class="banner hide" id="banner">
+          <b>Superseded — this claim is no longer the vault's current understanding.</b>
+          <span class="sup">Superseded by <a>The indexer gates membership at the processor factory instead →</a></span>
+          <span class="why2">the factory knows the drive at construction time, so the per-operation check became unnecessary</span>
+        </div>
+
+        <header class="dochead">
+          <div class="headrow">
+            <span class="pill" id="pill">CANONICAL</span>
+            <span class="chip sel"><select id="ntype">
+              <option>concept</option><option>decision</option><option>pattern</option><option>observation</option>
+              <option>procedure</option><option>architecture</option><option selected>bug-pattern</option>
+              <option>integration</option><option>workflow</option><option>reference</option>
+            </select></span>
+            <span class="spacer"></span>
+            <span class="flow" id="flow">Canonical → Archived</span>
+            <button class="hbtn" id="life">Archive</button>
+          </div>
+
+          <!-- the claim: a note's title IS its claim, so it is typed as a sentence -->
+          <textarea class="claim" id="claim" rows="2">Because the processor manager has no drive dimension, every indexer instance receives every drive's operations and must keep its own membership set</textarea>
+          <p class="claimhint">The title is the claim. One sentence, declarative — a reader should be able to agree or disagree with it.</p>
+
+          <textarea class="desc" id="desc" rows="2">Without the gate thirteen namespaces each indexed the same 594 documents; membership comes from the drive's node tree and the child containment relationships the processor already receives.</textarea>
+          <div class="descfoot">
+            <span class="lbl">The description adds what the claim leaves out — it is what search and the agent read first.</span>
+            <span class="budget" id="budget">188 / 200</span>
+          </div>
+
+          <div class="topicrow">
+            <span class="topic">knowledge-vault <button title="Remove">×</button></span>
+            <span class="topic">graph-indexer <button title="Remove">×</button></span>
+            <span class="topic">processors <button title="Remove">×</button></span>
+            <span class="topic">gotchas <button title="Remove">×</button></span>
+            <input class="topicadd" placeholder="Add topic…">
+          </div>
+
+          <div class="tabs">
+            <button class="on" data-go="note">Note</button>
+            <button data-go="links">Links <span class="count">5</span></button>
+            <button data-go="details">Details <span class="count">3</span></button>
+            <button data-go="history">History</button>
+          </div>
+        </header>
+
+        <div class="contentarea">
+          <div class="sheet" id="sheet">
+            <p>The processor factory creates one indexer per drive, but the reactor does not deliver operations per drive.</p>
+            <h2>Mechanism</h2>
+            <p><code>ProcessorFilter</code> has <code>documentType</code>, <code>scope</code>, <code>branch</code> and <code>documentId</code> arrays and nothing else; <code>OperationContext</code> carries no drive id. So every instance is fed every drive's matching operations. Measured locally before the gate: thirteen namespaces — one per drive, twelve of them e2e leftovers — each indexing and embedding the same 594 documents.</p>
+            <h2>The gate</h2>
+            <p>Membership has one authoritative source and two live signals the processor already receives: the drive document's <code>state.global.nodes</code>, loaded once through the reactor client and reloaded (throttled) when the set looks stale; <code>ADD_RELATIONSHIP(drive → document, "child")</code>, the containment edge the reactor writes when a document joins a drive; and <code>DELETE_NODE</code>. An operation on a document outside the set is ignored.</p>
+            <h2>Consequence elsewhere</h2>
+            <p>The tension automation has the same problem in miniature — an instance for another vault would otherwise open a tension for this vault's contradiction and file it into the wrong drive, which was observed live — so it re-checks membership before writing.</p>
+          </div>
+          <textarea class="sheetedit" id="sheetedit" spellcheck="false">The processor factory creates one indexer per drive, but the reactor does not deliver operations per drive.
+
+**Mechanism.** `ProcessorFilter` has `documentType`, `scope`, `branch` and `documentId` arrays and nothing else; `OperationContext` carries no drive id. So every instance is fed every drive's matching operations. Measured locally before the gate: thirteen namespaces — one per drive, twelve of them e2e leftovers — each indexing and embedding the same 594 documents.
+
+**The gate.** Membership has one authoritative source and two live signals the processor already receives: the drive document's `state.global.nodes`, loaded once through the reactor client and reloaded (throttled) when the set looks stale; `ADD_RELATIONSHIP(drive → document, "child")`, the containment edge the reactor writes when a document joins a drive; and `DELETE_NODE`. An operation on a document outside the set is ignored.</textarea>
+
+          <!-- the half of the graph the editor has never shown -->
+          <section class="sits">
+            <h4>Where this sits</h4>
+            <div class="sitsgrid">
+              <div class="sitscell">
+                <div class="k">Maps of content</div>
+                <div class="v">
+                  <button class="moclink">The Knowledge Vault: model, pipeline and use <b>domain</b></button>
+                  <button class="moclink">Storage, Indexing &amp; Search <b>topic</b></button>
+                </div>
+              </div>
+              <div class="sitscell">
+                <div class="k">Connections</div>
+                <div class="v" style="margin-top:8px">
+                  <span class="tally"><b>2</b><span>out</span></span>
+                  <span class="tally"><b>1</b><span>in</span></span>
+                  <span class="tally"><b>0</b><span>open tensions</span></span>
+                </div>
+              </div>
+              <div class="sitscell">
+                <div class="k">Derived from</div>
+                <div class="v">bai-knowledge-note Ch. 4 — Storage, indexing and search, § The graph indexer — membership</div>
+              </div>
+            </div>
+            <p class="sitsmore">Every edge carries why it exists. <button data-go="links">See all five with their reasons →</button></p>
+          </section>
+        </div>
+
+      <!-- ── LINKS ─────────────────────────────────────────────────── -->
+      <section class="view v-links">
+        <p class="plbl">What this note says about others — 2 outgoing</p>
+        <div class="edge">
+          <div class="top">
+            <span class="etype builds">Builds on</span>
+            <button class="t">The graph indexer is a materialized read model: a processor projects each document's resulting state into relational tables that the subgraph and REST API read from the same per-drive namespace</button>
+            <button class="x" title="Remove this link">×</button>
+          </div>
+          <div class="why"><span class="b">because</span><span class="r">per-drive namespaces only isolate vaults if each instance indexes only its own drive's documents; the membership set is what makes the namespace boundary real</span><span class="conf" title="Grounded — backed by evidence or a source">grounded</span></div>
+        </div>
+        <div class="edge">
+          <div class="top">
+            <span class="etype derived">Derived from</span>
+            <button class="t">bai-knowledge-note — the book</button>
+            <span class="kind">source</span>
+            <button class="x" title="Remove this link">×</button>
+          </div>
+          <div class="why"><span class="b">because</span><span class="r">Ch. 4: Storage, indexing and search — § The graph indexer — membership: this passage states the claim and gives its mechanism and rationale</span><span class="conf" title="Grounded — backed by evidence or a source">grounded</span></div>
+        </div>
+        <button class="addlink">+ Add link</button>
+
+        <p class="plbl mt">What others say about this — 1 incoming</p>
+        <div class="inbox">
+          <div class="edge">
+            <div class="top">
+              <span class="etype builds">Builds on</span>
+              <button class="t">The graph indexer writes documents itself when a fact implies one: a live CONTRADICTS edge opens a bai/tension, once per unordered pair, only for notes in its own drive</button>
+              <span class="kind">canonical</span>
+            </div>
+            <div class="why"><span class="b">because</span><span class="r">the automation's same-drive check reuses the indexer's membership set; without it another vault's instance files the tension into the wrong drive</span><span class="conf" title="Grounded — backed by evidence or a source">grounded</span></div>
+          </div>
+        </div>
+        <p class="narr">Incoming edges belong to the notes that made them, so they are read-only here — the × is deliberately absent. Opening one takes you to the note that can change it.</p>
+
+        <p class="plbl mt">Held as a core idea by — 2 maps of content</p>
+        <div class="inbox">
+          <div class="edge">
+            <div class="top"><span class="etype core">Core idea</span><button class="t">The Knowledge Vault: model, pipeline and use</button><span class="kind">domain</span></div>
+          </div>
+          <div class="edge">
+            <div class="top"><span class="etype core">Core idea</span><button class="t">Storage, Indexing &amp; Search</button><span class="kind">topic</span></div>
+          </div>
+        </div>
+        <p class="narr">A note that belongs to no map is unreachable from the vault's entry point. This one is in two.</p>
+      </section>
+
+      <!-- ── DETAILS ───────────────────────────────────────────────── -->
+      <section class="view v-details">
+        <p class="plbl">Provenance</p>
+        <dl style="margin:0">
+          <div class="row"><dt>Author</dt><dd>knowledge-agent</dd></div>
+          <div class="row"><dt>Source</dt><dd>Derived</dd></div>
+          <div class="row"><dt>Created</dt><dd>17 Sep 2026, 11:10</dd></div>
+          <div class="row"><dt>Updated</dt><dd>17 Sep 2026, 13:17</dd></div>
+        </dl>
+        <p class="narr">Created and updated show the time as well as the date — “17 Sep 2026” alone cannot tell you which of today's three edits you are looking at. <button style="border:0;background:none;color:var(--bai-accent);font-size:11.5px;padding:0">Change author or origin</button></p>
+
+        <p class="plbl mt">For a bug pattern</p>
+        <div class="mfield"><label for="m1">Error message</label><input id="m1" placeholder="Error text if applicable"></div>
+        <div class="mfield"><label for="m2">Root cause</label><input id="m2" value="ProcessorFilter has no drive dimension"></div>
+        <div class="mfield"><label for="m3">Correct pattern</label><input id="m3" value="keep a membership set per instance from the drive's node tree"></div>
+        <div class="mfield"><label for="m4">Severity</label><select id="m4"><option>—</option><option>critical</option><option selected>warning</option><option>info</option></select></div>
+        <p class="narr">These four are the fields a <em>bug pattern</em> uses. The other twenty-three exist for other kinds of note and are one click away rather than in your way.</p>
+
+        <details class="more">
+          <summary>All 27 metadata fields · 3 set ▾</summary>
+          <div class="body">
+            <div class="mfield"><label for="x1">Scope</label><input id="x1" placeholder="e.g. global, team, personal"></div>
+            <div class="mfield"><label for="x2">Confidence</label><select id="x2"><option>—</option><option>grounded</option><option>established</option><option>speculative</option></select></div>
+            <div class="mfield"><label for="x3">Context</label><input id="x3" placeholder="e.g. onboarding, deployment"></div>
+            <div class="mfield"><label for="x4">File path</label><input id="x4" placeholder="e.g. src/reducers/content.ts"></div>
+            <div class="mfield"><label for="x5">Modules</label><input id="x5" placeholder="Add module…"><span class="hintf">list</span></div>
+            <div class="mfield"><label for="x6">Cardinality</label><input id="x6" placeholder="e.g. one-to-many"></div>
+            <p class="narr">…and the rest, in the model's own order.</p>
+          </div>
+        </details>
+      </section>
+
+      <!-- ── HISTORY ───────────────────────────────────────────────── -->
+      <section class="view v-history">
+        <div class="hgrid">
+          <div>
+            <div class="card">
+              <div style="display:flex;align-items:center;justify-content:space-between;font-size:12px;color:var(--bai-text-tertiary)">
+                <span>Revision <b style="color:var(--bai-text-secondary)">14</b> of 14 <span style="color:var(--bai-text-faint)">(current)</span></span>
+                <button style="border:0;border-radius:6px;padding:2px 8px;font-size:11px;background:var(--bai-hover);color:var(--bai-text-tertiary)">Show changes</button>
+              </div>
+              <div style="display:flex;align-items:center;gap:8px;margin-top:8px">
+                <button style="width:24px;height:24px;border:0;border-radius:6px;background:var(--bai-hover);color:var(--bai-text-tertiary)">‹</button>
+                <input type="range" min="0" max="13" value="13" style="flex:1;accent-color:#cba6f7">
+                <button style="width:24px;height:24px;border:0;border-radius:6px;background:var(--bai-hover);color:var(--bai-text-tertiary)">›</button>
+              </div>
+              <p style="margin:4px 0 0;font-size:10px;color:var(--bai-text-faint)">4 of 14 operations changed the text</p>
+            </div>
+            <div class="card" style="margin-top:14px;background:var(--bai-surface)">
+              <div style="display:flex;gap:8px;font-size:10px"><span class="chip" style="padding:2px 6px">CANONICAL</span><span class="chip" style="padding:2px 6px">bug-pattern</span></div>
+              <h3 style="margin:8px 0 0;font-size:14px;font-weight:600;color:var(--bai-text)">Because the processor manager has no drive dimension…</h3>
+              <p style="margin:6px 0 0;font-size:12px;color:var(--bai-text-tertiary)">The replayed document at this revision.</p>
+            </div>
+          </div>
+          <aside class="hside">
+            <h4 style="margin:0 0 9px;font-size:11px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--bai-text-muted)">Lifecycle</h4>
+            <div class="life">
+              <div class="rail"><span class="dot c"></span></div>
+              <div class="txt">
+                <div class="mv">In review → Canonical</div>
+                <div class="who">liberuum · 17 Sep 2026, 13:17</div>
+                <div class="cm">“checked against the measured namespace count”</div>
+              </div>
+            </div>
+            <div class="life">
+              <div class="rail"><span class="dot r"></span><span class="line"></span></div>
+              <div class="txt">
+                <div class="mv">Draft → In review</div>
+                <div class="who">knowledge-agent · 17 Sep 2026, 11:42</div>
+              </div>
+            </div>
+            <h4 style="margin:16px 0 9px;font-size:11px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--bai-text-muted)">Operations (14)</h4>
+            <p style="margin:0;font-size:11px;color:var(--bai-text-faint)">The signed operation list, as it renders today.</p>
+          </aside>
+        </div>
+        <p class="narr">Lifecycle and revisions answer the same question — what happened to this note — so they are one view. Today the lifecycle is only visible on the History tab's sidebar and provenance disappears while you are there.</p>
+      </section>
+      </div>
+    </main>
+  </div>
+</div>
+
+<div class="switcher" id="switcher"></div>
+<button class="toggle" id="theme">light / dark</button>
+
+<script>
+  const STATES=[
+    ["note","the note, read"],["edit","editing the body"],["links","links — both directions"],
+    ["details","provenance + metadata"],["history","revisions + lifecycle"],
+    ["review","in review — approve or reject"],["draft","a new, empty note"],["superseded","superseded by another note"]
+  ];
+  const sw=document.getElementById("switcher");
+  const pill=document.getElementById("pill"), flow=document.getElementById("flow"), life=document.getElementById("life");
+  const banner=document.getElementById("banner"), sheet=document.getElementById("sheet"), claim=document.getElementById("claim"), desc=document.getElementById("desc");
+  const REAL={claim:claim.value,desc:desc.value,sheet:sheet.innerHTML};
+  // the claim and the description both grow with their text: a fixed row count
+  // either clips a long one or leaves a hole under a short one
+  const grow=el=>{el.style.height="auto";el.style.height=el.scrollHeight+"px";};
+  [claim,desc].forEach(el=>{el.addEventListener("input",()=>grow(el));grow(el);});
+  // the description's budget: the one hard limit in the whole model
+  const budget=document.getElementById("budget");
+  const measure=()=>{const n=desc.value.length;budget.textContent=`${n} / 200`;budget.classList.toggle("near",n>170);};
+  desc.addEventListener("input",measure); measure();
+  function set(s){
+    const view=["note","edit","links","details","history"].includes(s)?s:"note";
+    document.body.dataset.view=view;
+    document.querySelectorAll(".switcher button").forEach(b=>b.classList.toggle("on",b.dataset.s===s));
+    document.querySelectorAll(".tabs button").forEach(b=>b.classList.toggle("on",b.dataset.go===(view==="edit"?"note":view)));
+    banner.classList.add("hide");
+    pill.className="pill"; pill.textContent="CANONICAL"; flow.textContent="Canonical → Archived";
+    life.className="hbtn"; life.textContent="Archive"; life.hidden=false;
+    document.getElementById("reviewbar")?.remove();
+    claim.value=REAL.claim; desc.value=REAL.desc; sheet.innerHTML=REAL.sheet;
+    requestAnimationFrame(()=>{grow(claim);grow(desc);measure();});
+    if(s==="review"){
+      pill.className="pill review"; pill.textContent="IN REVIEW"; flow.textContent="In review → Canonical, or back to Draft";
+      life.hidden=true;
+      const bar=document.createElement("div"); bar.className="reviewbar"; bar.id="reviewbar";
+      bar.innerHTML=`<span class="t">Approve this note as</span><input placeholder="Reviewer name…" style="width:170px">
+        <button class="hbtn ok">Approve</button><button class="hbtn danger">Reject…</button>
+        <span class="warn">The reviewer must differ from the author (knowledge-agent) — the reducer refuses a self-approval, so the name is asked for before the button does anything.</span>`;
+      document.querySelector(".topicrow").after(bar);
+    }
+    if(s==="superseded"){ banner.classList.remove("hide"); }
+    if(s==="draft"){
+      pill.className="pill draft"; pill.textContent="DRAFT"; flow.textContent="Draft → In review → Canonical";
+      life.className="hbtn primary"; life.textContent="Submit for review";
+      claim.value=""; claim.placeholder="State the claim in one sentence…";
+      desc.value=""; desc.placeholder="What the claim leaves out…";
+      sheet.innerHTML='<p class="empty">No content yet — choose Edit to start writing.</p>';
+    }
+  }
+  STATES.forEach(([s,label])=>{const b=document.createElement("button");b.textContent=label;b.dataset.s=s;b.onclick=()=>set(s);sw.appendChild(b);});
+  document.body.addEventListener("click",e=>{const g=e.target.closest("[data-go]");if(g){set(g.dataset.go);e.preventDefault();}});
+  document.addEventListener("keydown",e=>{if(e.key==="Escape")set("note")});
+  document.getElementById("theme").onclick=()=>{const h=document.documentElement;h.dataset.baiTheme=h.dataset.baiTheme==="light"?"dark":"light";};
+  const fromHash=()=>{const s=location.hash.slice(1);if(STATES.some(([k])=>k===s))set(s);};
+  window.addEventListener("hashchange",fromHash); set("note"); fromHash();
+</script>
+</body></html>

@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import { DocumentToolbar } from "@powerhousedao/design-system/connect";
 import { useSelectedSourceDocument, actions } from "document-models/source";
 import { MarkdownPreview } from "../shared/markdown-preview.js";
@@ -92,13 +92,14 @@ const STYLES = `
 .src-ed .src-reader { flex: 1; min-width: 0; overflow-y: auto; }
 .src-ed .src-progress { position: absolute; top: 0; left: 0; z-index: 7; height: 2px; background: var(--bai-accent); }
 .src-ed .pagewrap { padding: 0 26px 64px; }
-/* History and Details continue the header card as one surface: the card loses
-   its bottom rounding and border, and the view picks them up. No gap, no seam
-   — the tabs' own rule is the divider. */
+/* Every view continues the header card as one column: same width, no gap, no
+   seam. The card keeps only its top rounding and drops its bottom border, so
+   the tabs' own rule is the divider and whatever follows picks up the rounded
+   foot. A sheet floating 16px below a card read as two unrelated objects. */
 .src-ed .history, .src-ed .detailsview { margin-top: 0; }
 
 .src-ed .dochead { max-width: 64rem; margin: 20px auto 0; padding: 18px 20px 0; background: var(--bai-surface); border: 1px solid var(--bai-border); border-radius: 14px; overflow: hidden; }
-.src-ed[data-view="history"] .dochead, .src-ed[data-view="details"] .dochead { border-radius: 14px 14px 0 0; border-bottom: 0; }
+.src-ed .dochead { border-radius: 14px 14px 0 0; border-bottom: 0; }
 .src-ed .headrow { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
 .src-ed .pill { display: inline-flex; align-items: center; gap: 6px; padding: 4px 12px; border-radius: 999px; font-size: 11.5px; font-weight: 600; letter-spacing: .06em; text-transform: uppercase; }
 .src-ed .chip { display: inline-flex; align-items: center; padding: 4px 10px; border-radius: 7px; font-size: 11.5px; font-weight: 600; letter-spacing: .06em; text-transform: uppercase; background: var(--bai-hover); color: var(--bai-text-tertiary); }
@@ -131,14 +132,16 @@ const STYLES = `
    while the textarea beside it — not an article — kept the right one. An
    !important on a bare element cannot be outbid from here, so the sheet stays
    out of its way. */
-.src-ed .src-sheet, .src-ed .mdedit { width: 100%; margin: 16px 0 0; padding: 32px 48px; border-radius: 16px; min-height: 60vh; background: var(--bai-deep); border: 1px solid var(--bai-border); }
+.src-ed .src-sheet, .src-ed .mdedit { display: block; width: 100%; max-width: 64rem; margin: 0 auto; padding: 32px 48px; border-radius: 0 0 14px 14px; min-height: 60vh; background: var(--bai-deep); border: 1px solid var(--bai-border); border-top: 0; }
 .src-ed .empty { margin: 0; color: var(--bai-text-muted); font-size: 14px; }
 
-.src-ed .editmeta { width: 100%; margin: 16px auto 0; max-width: 64rem; }
-.src-ed .em-row { display: flex; align-items: center; gap: 10px; margin-bottom: 9px; }
+.src-ed .editmeta { width: 100%; max-width: 64rem; margin: 0 auto; padding: 14px 20px; background: var(--bai-surface); border: 1px solid var(--bai-border); border-top: 0; }
+.src-ed .em-row { display: flex; align-items: flex-start; gap: 10px; margin-bottom: 9px; }
+.src-ed .em-row label { padding-top: 7px; }
 .src-ed .em-row label { flex: 0 0 auto; width: 74px; font-size: 11px; color: var(--bai-text-faint); }
-.src-ed .em-row input, .src-ed .em-row select { flex: 1; min-width: 0; padding: 6px 9px; border-radius: 8px; background: var(--bai-surface); border: 1px solid var(--bai-border); color: var(--bai-text); font: inherit; font-size: 12.5px; }
-.src-ed .em-row input:focus, .src-ed .em-row select:focus { outline: none; border-color: var(--bai-accent); }
+.src-ed .em-row input, .src-ed .em-row select, .src-ed .em-row textarea { flex: 1; min-width: 0; padding: 6px 9px; border-radius: 8px; background: var(--bai-surface); border: 1px solid var(--bai-border); color: var(--bai-text); font: inherit; font-size: 12.5px; }
+.src-ed .em-row textarea { line-height: 1.5; resize: none; overflow: hidden; }
+.src-ed .em-row input:focus, .src-ed .em-row select:focus, .src-ed .em-row textarea:focus { outline: none; border-color: var(--bai-accent); }
 .src-ed .em-foot { display: flex; align-items: center; gap: 10px; margin-top: 12px; padding-top: 10px; border-top: 1px solid var(--bai-border); }
 .src-ed .em-foot span { flex: 1; font-size: 11.5px; line-height: 1.5; color: var(--bai-text-muted); }
 .src-ed .em-save { padding: 5px 12px; border-radius: 7px; background: var(--bai-accent); border: 1px solid var(--bai-accent); color: var(--bai-accent-text); font-size: 12.5px; font-weight: 600; cursor: pointer; }
@@ -815,6 +818,16 @@ function EditInPlace({
   );
   const [author, setAuthor] = useState(state.provenance?.author ?? "");
   const [url, setUrl] = useState(state.provenance?.url ?? "");
+  // A source's description has no length limit in the model, so the field is
+  // sized by what is in it: measured on change rather than on every render,
+  // which would be a forced reflow per keystroke.
+  const descRef = useRef<HTMLTextAreaElement>(null);
+  useLayoutEffect(() => {
+    const el = descRef.current;
+    if (!el) return;
+    el.style.height = "auto";
+    el.style.height = `${el.scrollHeight}px`;
+  }, [desc]);
 
   function handleSave() {
     dispatch(
@@ -860,8 +873,10 @@ function EditInPlace({
         </div>
         <div className="em-row">
           <label htmlFor="ed-desc">Description</label>
-          <input
+          <textarea
             id="ed-desc"
+            ref={descRef}
+            rows={1}
             value={desc}
             onChange={(e) => setDesc(e.target.value)}
             placeholder="Brief description (optional)"

@@ -134,10 +134,10 @@ export function ProvenanceInfo({
   }
 
   const createdDate = provenance?.createdAt
-    ? new Date(provenance.createdAt).toLocaleDateString()
+    ? new Date(provenance.createdAt).toLocaleString()
     : "Unknown";
   const updatedDate = provenance?.updatedAt
-    ? new Date(provenance.updatedAt).toLocaleDateString()
+    ? new Date(provenance.updatedAt).toLocaleString()
     : "Unknown";
 
   return (
@@ -191,6 +191,18 @@ export function ProvenanceInfo({
           </span>
         </div>
       )}
+      <button
+        type="button"
+        onClick={() => {
+          setAuthor(provenance?.author ?? "");
+          setSourceOrigin(provenance?.sourceOrigin ?? "MANUAL");
+          setIsEditing(true);
+        }}
+        className="pt-1 text-left text-[11px] hover:underline"
+        style={{ color: "var(--bai-accent)" }}
+      >
+        Change author or origin
+      </button>
     </div>
   );
 }
