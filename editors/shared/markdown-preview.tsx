@@ -13,6 +13,12 @@ const ATTACHMENT_REF = /^attachment:\/\/v\d+:[0-9a-f]{16,}$/i;
 
 type MarkdownPreviewProps = {
   content: string;
+  /**
+   * `compact` is the vault's inline scale (cards, panels, chat). `reading` is
+   * the source editor's page: 16px/1.72 with headings, tables and figures
+   * sized to be read rather than scanned.
+   */
+  scale?: "compact" | "reading";
 };
 
 function escapeHtml(text: string): string {
@@ -281,7 +287,10 @@ function inlineFormat(text: string): string {
   return out;
 }
 
-export function MarkdownPreview({ content }: MarkdownPreviewProps) {
+export function MarkdownPreview({
+  content,
+  scale = "compact",
+}: MarkdownPreviewProps) {
   // Re-render whenever an attachment arrives or fails anywhere on the page:
   // the renderer then writes the picture (or the reason) into the HTML.
   const attachmentsVersion = useSyncExternalStore(
@@ -349,10 +358,29 @@ export function MarkdownPreview({ content }: MarkdownPreviewProps) {
         .md-preview .md-table th { color: var(--bai-text); font-weight: 600; text-align: left; padding: 0.5rem 0.75rem; border-bottom: 2px solid var(--bai-border); white-space: nowrap; }
         .md-preview .md-table td { color: var(--bai-text-secondary); padding: 0.4rem 0.75rem; border-bottom: 1px solid var(--bai-border); }
         .md-preview .md-table tbody tr:hover { background: color-mix(in srgb, var(--bai-text) 3%, transparent); }
+        .md-preview.md-reading { font-size: 14.5px; line-height: 1.7; color: var(--bai-text-secondary); }
+        .md-preview.md-reading h1.md-h1 { font-size: 21px; margin: 0 0 6px; }
+        .md-preview.md-reading h2.md-h2 { font-size: 17px; margin: 32px 0 10px; border-bottom: 0; padding-bottom: 0; }
+        .md-preview.md-reading h3.md-h3 { font-size: 14.8px; color: var(--bai-text); margin: 22px 0 7px; }
+        .md-preview.md-reading h4.md-h4, .md-preview.md-reading h5.md-h5, .md-preview.md-reading h6.md-h6 { font-size: 14px; margin: 18px 0 6px; }
+        .md-preview.md-reading .md-p { margin: 0 0 14px; line-height: 1.7; }
+        .md-preview.md-reading .md-list { margin: 0 0 16px; padding-left: 22px; }
+        .md-preview.md-reading .md-list li { margin: 4px 0; line-height: 1.7; }
+        .md-preview.md-reading .md-blockquote { margin: 22px 0; padding: 2px 0 2px 18px; border-left: 2px solid var(--bai-border); }
+        .md-preview.md-reading .md-table-wrap { margin: 22px 0; }
+        .md-preview.md-reading .md-table { font-size: 13px; }
+        .md-preview.md-reading .md-table th { padding: 8px 12px 8px 0; border-bottom: 1px solid var(--bai-border); font-size: 12.5px; }
+        .md-preview.md-reading .md-table td { padding: 8px 12px 8px 0; }
+        .md-preview.md-reading .md-img { margin: 24px auto; }
+        .md-preview.md-reading .md-hr { margin: 28px 0; }
       `}</style>
       <div
         ref={root}
-        className="md-preview text-sm leading-relaxed"
+        className={
+          scale === "reading"
+            ? "md-preview md-reading"
+            : "md-preview text-sm leading-relaxed"
+        }
         dangerouslySetInnerHTML={{ __html: html }}
       />
     </>
