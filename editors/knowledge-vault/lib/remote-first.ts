@@ -18,11 +18,18 @@
  * Two swaps, both using upstream-supported globals, both reversible on
  * unmount so other drives in the same Connect session are untouched:
  *
- * 1. **Reads** — `setDocumentCache(new GraphQLClientDocumentCache())`.
+ * 1. **Reads** — `setDocumentCache(new VaultDocumentCache(...))`.
  *    Every `useDocument`-based hook (all ten document editors included)
  *    then fetches document state from the Switchboard. The cache
  *    refetches whenever a `MutateDocument` window event announces a
  *    change.
+ *
+ *    That cache also implements `IOperationCache`, which is what serves
+ *    Connect's toolbar revision-history panel. It is not optional: the
+ *    toolbar reads history through `useDocumentOperations`, which probes
+ *    the installed cache for the operations methods and, finding none,
+ *    serves a frozen empty list with no error — an empty History panel
+ *    with nothing to debug. See the interface block on the class.
  *
  * 2. **Writes** — `setReactorClient(hybrid)`, where `hybrid` delegates
  *    everything to the original worker client EXCEPT `get`, `execute`,
@@ -54,12 +61,15 @@ import {
   setDocumentCache,
   setReactorClient,
   createClient,
+  IDLE_OPERATIONS_ENTRY,
 } from "@powerhousedao/reactor-browser";
 import type {
   IDocumentCache,
+  IOperationCache,
   IReactorBrowserClient,
+  OperationsCacheEntry,
 } from "@powerhousedao/reactor-browser";
-import type { PHDocument } from "document-model";
+import type { Operation, PHDocument } from "document-model";
 import type { DocumentModelModule } from "document-model";
 import * as vaultModels from "../../../document-models/index.js";
 import { announceDocumentMutation } from "./remote-reactor.js";
@@ -165,6 +175,39 @@ const FETCH_CONCURRENCY = 8;
 const FETCH_RETRIES = 3;
 
 /**
+ * Page size for the first page of a document's operation history. Connect's
+ * editor wrapper asks for 500 when the revision-history panel opens; this is
+ * only the floor used when a caller does not say.
+ */
+const OPERATIONS_PAGE_LIMIT = 100;
+
+/** One page of a document scope's operation history, as the client returns it. */
+export type OperationsPage = {
+  results: readonly Operation[];
+  nextCursor?: string;
+  totalCount?: number;
+};
+
+/**
+ * Fetches one page of operations for a document scope. Injected so the cache
+ * stays testable without a GraphQL client.
+ */
+export type FetchOperationsPage = (
+  documentId: string,
+  scope: string,
+  cursor: string,
+  limit: number,
+  signal: AbortSignal,
+) => Promise<OperationsPage>;
+
+/** In-flight request bookkeeping for one document scope. */
+type OperationsRequest = {
+  controller: AbortController;
+  nextCursor: string | undefined;
+  limit: number;
+};
+
+/**
  * Errors worth retrying: connection resets and timeouts from the
  * reactor's internal gateway hop (`/graphql` → `/graphql/r`), which
  * shows up under host memory pressure. A rejection like
@@ -259,7 +302,7 @@ export function batchKeyContains(key: string, id: string): boolean {
   return key.split(",").includes(id);
 }
 
-class VaultDocumentCache implements IDocumentCache {
+export class VaultDocumentCache implements IDocumentCache, IOperationCache {
   private documents = new Map<string, ReturnType<typeof addPromiseState<PHDocument>>>();
   private listeners = new Map<string, Set<() => void>>();
   private queue: Array<() => void> = [];
@@ -284,11 +327,29 @@ class VaultDocumentCache implements IDocumentCache {
   /** Removes the window listeners this instance installed. */
   private detachListeners: (() => void) | null = null;
 
-  constructor(private fetchDocument: (id: string) => Promise<PHDocument>) {
+  /**
+   * Operation history by document id, then scope. Entries are replaced,
+   * never mutated, so `useSyncExternalStore` sees a stable snapshot.
+   */
+  private operationEntries = new Map<string, Map<string, OperationsCacheEntry>>();
+
+  /** In-flight controller and next cursor, by document id then scope. */
+  private operationRequests = new Map<string, Map<string, OperationsRequest>>();
+
+  private operationListeners = new Map<string, Set<() => void>>();
+
+  constructor(
+    private fetchDocument: (id: string) => Promise<PHDocument>,
+    private fetchOperations?: FetchOperationsPage,
+  ) {
     const onMutated = (event: Event) => {
       const identifier = (event as CustomEvent<{ identifier?: string }>)
         .detail?.identifier;
-      if (identifier && this.documents.has(identifier)) {
+      if (!identifier) return;
+      // History is append-only, but the cheapest correct answer is to drop
+      // it and let the panel re-read: a write is rare next to a render.
+      this.invalidateOperations(identifier);
+      if (this.documents.has(identifier)) {
         void this.get(identifier, true);
       }
     };
@@ -312,6 +373,12 @@ class VaultDocumentCache implements IDocumentCache {
   dispose(): void {
     this.detachListeners?.();
     this.detachListeners = null;
+    for (const scopes of this.operationRequests.values()) {
+      for (const request of scopes.values()) request.controller.abort();
+    }
+    this.operationRequests.clear();
+    this.operationEntries.clear();
+    this.operationListeners.clear();
   }
 
   /** Fetch with backoff so a transient reactor blip doesn't fail a pane. */
@@ -480,6 +547,169 @@ class VaultDocumentCache implements IDocumentCache {
       });
   }
 
+  // ---------------------------------------------------------------------
+  // IOperationCache
+  //
+  // Connect's toolbar opens its revision-history panel through
+  // `useDocumentOperations`, which reads the cache in `window.ph` and
+  // silently serves an empty, never-loading list unless that cache also
+  // implements this interface (`isOperationCache` probes for these four
+  // methods by name). Before this existed the History button opened an
+  // empty panel with no error, while the editors' own History tab — which
+  // queries the Switchboard directly — worked, which is what made the
+  // fault look like a toolbar bug rather than a missing capability here.
+  // ---------------------------------------------------------------------
+
+  getOperationsState(documentId: string, scope: string): OperationsCacheEntry {
+    return (
+      this.operationEntries.get(documentId)?.get(scope) ?? IDLE_OPERATIONS_ENTRY
+    );
+  }
+
+  loadOperations(documentId: string, scope: string, limit: number): void {
+    if (!this.fetchOperations) return;
+    const current = this.getOperationsState(documentId, scope);
+    if (current.status !== "idle") return;
+    this.startOperationsPage(
+      documentId,
+      scope,
+      "",
+      limit || OPERATIONS_PAGE_LIMIT,
+      current,
+    );
+  }
+
+  loadMoreOperations(documentId: string, scope: string): void {
+    if (!this.fetchOperations) return;
+    const current = this.getOperationsState(documentId, scope);
+    const request = this.operationRequests.get(documentId)?.get(scope);
+    if (
+      current.status !== "success" ||
+      !current.hasNextPage ||
+      !request?.nextCursor
+    ) {
+      return;
+    }
+    this.startOperationsPage(
+      documentId,
+      scope,
+      request.nextCursor,
+      request.limit,
+      current,
+    );
+  }
+
+  invalidateOperations(documentId: string): void {
+    const requests = this.operationRequests.get(documentId);
+    if (requests) {
+      for (const request of requests.values()) request.controller.abort();
+      this.operationRequests.delete(documentId);
+    }
+    if (this.operationEntries.delete(documentId)) {
+      this.notifyOperations(documentId);
+    }
+  }
+
+  subscribeOperations(documentId: string, callback: () => void): () => void {
+    let set = this.operationListeners.get(documentId);
+    if (!set) {
+      set = new Set();
+      this.operationListeners.set(documentId, set);
+    }
+    set.add(callback);
+    return () => {
+      this.operationListeners.get(documentId)?.delete(callback);
+    };
+  }
+
+  /**
+   * Fetch one page and append it. Pages arrive oldest first, so appending
+   * keeps the list in revision order. An aborted request settles into
+   * nothing: its entry has already been dropped or superseded.
+   */
+  private startOperationsPage(
+    documentId: string,
+    scope: string,
+    cursor: string,
+    limit: number,
+    current: OperationsCacheEntry,
+  ): void {
+    const fetchOperations = this.fetchOperations;
+    if (!fetchOperations) return;
+    const controller = new AbortController();
+    this.setOperationsRequest(documentId, scope, {
+      controller,
+      nextCursor: undefined,
+      limit,
+    });
+    this.setOperationsEntry(documentId, scope, {
+      ...current,
+      status: "pending",
+    });
+    fetchOperations(documentId, scope, cursor, limit, controller.signal).then(
+      (page) => {
+        if (controller.signal.aborted) return;
+        const latest = this.getOperationsState(documentId, scope);
+        this.setOperationsRequest(documentId, scope, {
+          controller,
+          nextCursor: page.nextCursor,
+          limit,
+        });
+        this.setOperationsEntry(documentId, scope, {
+          status: "success",
+          operations: [...latest.operations, ...page.results],
+          error: undefined,
+          hasNextPage: !!page.nextCursor,
+          totalCount: page.totalCount,
+        });
+      },
+      (reason: unknown) => {
+        if (controller.signal.aborted) return;
+        const latest = this.getOperationsState(documentId, scope);
+        this.setOperationsEntry(documentId, scope, {
+          ...latest,
+          status: "error",
+          error: reason,
+        });
+      },
+    );
+  }
+
+  private setOperationsEntry(
+    documentId: string,
+    scope: string,
+    entry: OperationsCacheEntry,
+  ): void {
+    const scopes =
+      this.operationEntries.get(documentId) ??
+      new Map<string, OperationsCacheEntry>();
+    scopes.set(scope, entry);
+    this.operationEntries.set(documentId, scopes);
+    this.notifyOperations(documentId);
+  }
+
+  private setOperationsRequest(
+    documentId: string,
+    scope: string,
+    request: OperationsRequest,
+  ): void {
+    const scopes =
+      this.operationRequests.get(documentId) ??
+      new Map<string, OperationsRequest>();
+    scopes.set(scope, request);
+    this.operationRequests.set(documentId, scopes);
+  }
+
+  private notifyOperations(documentId: string): void {
+    for (const callback of this.operationListeners.get(documentId) ?? []) {
+      try {
+        callback();
+      } catch {
+        /* a broken subscriber must not break the rest */
+      }
+    }
+  }
+
   private notify(id: string): void {
     for (const callback of this.listeners.get(id) ?? []) {
       try {
@@ -591,7 +821,27 @@ export function enableRemoteFirst(options: {
     setReactorClient(hybrid as never);
   }
 
-  const vaultCache = new VaultDocumentCache((id) => remoteClient.get(id));
+  const vaultCache = new VaultDocumentCache(
+    (id) => remoteClient.get(id),
+    // Operation history for the toolbar's revision panel. The hybrid client
+    // reroutes `getOperations` to this same remote client, so history comes
+    // from the Switchboard rather than the (deliberately unpopulated) local
+    // replica — the same source the editors' own History tab reads.
+    async (id, scope, cursor, limit, signal) => {
+      const page = await remoteClient.getOperations(
+        id,
+        { scopes: [scope] },
+        undefined,
+        { cursor, limit },
+        signal,
+      );
+      return {
+        results: page.results,
+        nextCursor: page.nextCursor,
+        totalCount: page.totalCount,
+      };
+    },
+  );
   setDocumentCache(vaultCache);
 
   const handle: RemoteFirstHandle = {
