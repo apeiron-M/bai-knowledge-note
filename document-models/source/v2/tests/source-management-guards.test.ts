@@ -5,7 +5,7 @@ import {
   reducer,
   setSourceStatus,
   utils,
-} from "document-models/source/v1";
+} from "document-models/source/v2";
 import { describe, expect, it } from "vitest";
 
 const T = "2026-01-01T00:00:00.000Z";

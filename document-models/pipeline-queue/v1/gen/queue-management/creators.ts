@@ -10,7 +10,6 @@ import {
   BlockTaskInputSchema,
   CompleteTaskInputSchema,
   FailTaskInputSchema,
-  ReconcileCountersInputSchema,
   UnblockTaskInputSchema,
 } from "../schema/zod.js";
 import type {
@@ -20,7 +19,6 @@ import type {
   BlockTaskInput,
   CompleteTaskInput,
   FailTaskInput,
-  ReconcileCountersInput,
   UnblockTaskInput,
 } from "../types.js";
 import type {
@@ -30,7 +28,6 @@ import type {
   BlockTaskAction,
   CompleteTaskAction,
   FailTaskAction,
-  ReconcileCountersAction,
   UnblockTaskAction,
 } from "./actions.js";
 
@@ -94,14 +91,5 @@ export const unblockTask = (input: UnblockTaskInput) =>
     { ...input },
     undefined,
     UnblockTaskInputSchema,
-    "global",
-  );
-
-export const reconcileCounters = (input: ReconcileCountersInput) =>
-  createAction<ReconcileCountersAction>(
-    "RECONCILE_COUNTERS",
-    { ...input },
-    undefined,
-    ReconcileCountersInputSchema,
     "global",
   );

@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { generateId } from "document-model/core";
-import type { Topic } from "../../../document-models/knowledge-note/v1/gen/schema/types.js";
+import type { Topic } from "document-models/knowledge-note";
 
 type TopicsBarProps = {
   topics: Topic[];

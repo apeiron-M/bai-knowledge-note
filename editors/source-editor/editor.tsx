@@ -17,7 +17,7 @@ import {
 } from "@powerhousedao/reactor-browser";
 import { useVaultDocIndex } from "../shared/use-vault-doc-index.js";
 import { generateId } from "document-model/core";
-import { usePipelineQueueDocumentById } from "../../document-models/pipeline-queue/v1/hooks.js";
+import { usePipelineQueueDocumentById } from "document-models/pipeline-queue";
 import { actions as pipelineActions } from "document-models/pipeline-queue";
 import { TOOLBAR_CLASS } from "../shared/theme-context.js";
 import {

@@ -3,7 +3,7 @@ import { useEventCallback } from "../../shared/use-event-callback.js";
 import { generateId } from "document-model/core";
 import { setSelectedNode } from "@powerhousedao/reactor-browser";
 import { useVaultDocIndex } from "../../shared/use-vault-doc-index.js";
-import type { LinkType } from "../../../document-models/knowledge-note/v1/gen/schema/types.js";
+import type { LinkType } from "document-models/knowledge-note";
 import {
   CONFIDENCE_LABELS,
   EDGE_CONFIDENCE_LEVELS,

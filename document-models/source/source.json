@@ -16,9 +16,99 @@
           "initialValue": ""
         },
         "global": {
+          "schema": "enum SourceType {\n    ARTICLE\n    PAPER\n    BOOK_CHAPTER\n    TRANSCRIPT\n    DOCUMENTATION\n    CONVERSATION\n    WEB_PAGE\n    MANUAL_ENTRY\n}\n\nenum SourceStatus {\n    INBOX\n    EXTRACTING\n    EXTRACTED\n    ARCHIVED\n}\n\ntype SourceProvenance {\n    url: String\n    author: String\n    publishedAt: DateTime\n    method: String\n    tool: String\n}\n\ntype ExtractionStats {\n    claimCount: Int!\n    skippedCount: Int!\n    skipRate: Float!\n    extractedAt: DateTime\n    extractedBy: String\n}\n\ntype SourceState {\n    title: String\n    description: String\n    content: String\n    sourceType: SourceType\n    status: SourceStatus\n    provenance: SourceProvenance\n    extractedClaims: [String!]!\n    extractionStats: ExtractionStats\n    createdAt: DateTime\n    createdBy: String\n}",
+          "examples": [],
+          "initialValue": "{\n    \"title\": null,\n    \"description\": null,\n    \"content\": null,\n    \"sourceType\": null,\n    \"status\": \"INBOX\",\n    \"provenance\": null,\n    \"extractedClaims\": [],\n    \"extractionStats\": null,\n    \"createdAt\": null,\n    \"createdBy\": null\n}"
+        }
+      },
+      "modules": [
+        {
+          "id": "source-management",
+          "name": "source-management",
+          "description": "Source lifecycle and extraction tracking",
+          "operations": [
+            {
+              "id": "ingest-source",
+              "name": "INGEST_SOURCE",
+              "description": "Add new source material",
+              "schema": "input IngestSourceInput {\n    title: String!\n    content: String!\n    sourceType: SourceType!\n    description: String\n    url: String\n    author: String\n    publishedAt: DateTime\n    method: String\n    tool: String\n    createdAt: DateTime!\n    createdBy: String\n}",
+              "template": "Add new source material",
+              "reducer": "state.title = action.input.title;\nstate.content = action.input.content;\nstate.sourceType = action.input.sourceType;\nstate.description = action.input.description || null;\nstate.status = \"INBOX\";\nstate.createdAt = action.input.createdAt;\nstate.createdBy = action.input.createdBy || null;\nif (action.input.url || action.input.author || action.input.publishedAt) {\n    state.provenance = {\n        url: action.input.url || null,\n        author: action.input.author || null,\n        publishedAt: action.input.publishedAt || null,\n        method: action.input.method || null,\n        tool: action.input.tool || null,\n    };\n}",
+              "errors": [],
+              "examples": [],
+              "scope": "global"
+            },
+            {
+              "id": "set-source-status",
+              "name": "SET_SOURCE_STATUS",
+              "description": "Transition source status",
+              "schema": "input SetSourceStatusInput {\n    status: SourceStatus!\n}",
+              "template": "Transition source status",
+              "reducer": "state.status = action.input.status;",
+              "errors": [],
+              "examples": [],
+              "scope": "global"
+            },
+            {
+              "id": "add-extracted-claim",
+              "name": "ADD_EXTRACTED_CLAIM",
+              "description": "Record that a knowledge note was extracted from this source. Idempotent on claimRef: re-adding a listed claim is a no-op.",
+              "schema": "input AddExtractedClaimInput {\n    claimRef: String!\n}",
+              "template": "Link an extracted claim to this source",
+              "reducer": "// Idempotent on claimRef: a claim is listed once, however many times an\n// extraction, a sync or a retry asserts it. Re-adding is a no-op, not an\n// error, so pipelines can assert membership without reading state first.\nif (state.extractedClaims.includes(action.input.claimRef)) {\n  return;\n}\nstate.extractedClaims.push(action.input.claimRef);",
+              "errors": [],
+              "examples": [],
+              "scope": "global"
+            },
+            {
+              "id": "record-extraction-stats",
+              "name": "RECORD_EXTRACTION_STATS",
+              "description": "Record extraction statistics",
+              "schema": "input RecordExtractionStatsInput {\n    claimCount: Int!\n    skippedCount: Int!\n    skipRate: Float!\n    extractedAt: DateTime!\n    extractedBy: String\n}",
+              "template": "Record extraction statistics",
+              "reducer": "state.extractionStats = {\n    claimCount: action.input.claimCount,\n    skippedCount: action.input.skippedCount,\n    skipRate: action.input.skipRate,\n    extractedAt: action.input.extractedAt,\n    extractedBy: action.input.extractedBy || null,\n};",
+              "errors": [],
+              "examples": [],
+              "scope": "global"
+            },
+            {
+              "id": "remove-extracted-claim",
+              "name": "REMOVE_EXTRACTED_CLAIM",
+              "description": "Remove a claim reference from extractedClaims — every occurrence, so it also repairs lists that grew duplicates before ADD_EXTRACTED_CLAIM became idempotent. Fails with CLAIM_NOT_FOUND when the ref is not listed.",
+              "schema": "input RemoveExtractedClaimInput {\n    claimRef: String!\n}",
+              "template": "Remove a claim reference from extractedClaims — every occurrence, so it also repairs lists that grew duplicates before ADD_EXTRACTED_CLAIM became idempotent. Fails with CLAIM_NOT_FOUND when the ref is not listed.",
+              "reducer": "if (!state.extractedClaims.includes(action.input.claimRef)) {\n  throw new ClaimNotFoundError(\n    `Claim ${action.input.claimRef} is not listed on this source`,\n  );\n}\n// Every occurrence: this also repairs lists that grew duplicates before\n// ADD_EXTRACTED_CLAIM became idempotent.\nstate.extractedClaims = state.extractedClaims.filter(\n  (ref) => ref !== action.input.claimRef,\n);",
+              "errors": [
+                {
+                  "id": "claim-not-found",
+                  "name": "ClaimNotFoundError",
+                  "code": "CLAIM_NOT_FOUND",
+                  "description": "The claim reference is not listed in this source's extractedClaims",
+                  "template": ""
+                }
+              ],
+              "examples": [],
+              "scope": "global"
+            }
+          ]
+        }
+      ],
+      "version": 1,
+      "changeLog": []
+    },
+    {
+      "version": 2,
+      "changeLog": [],
+      "state": {
+        "global": {
           "schema": "enum SourceType {\n    ARTICLE\n    PAPER\n    BOOK_CHAPTER\n    TRANSCRIPT\n    DOCUMENTATION\n    CONVERSATION\n    WEB_PAGE\n    MANUAL_ENTRY\n}\n\nenum SourceStatus {\n    INBOX\n    EXTRACTING\n    EXTRACTED\n    ARCHIVED\n}\n\ntype SourceProvenance {\n    url: String\n    author: String\n    publishedAt: DateTime\n    method: String\n    tool: String\n}\n\ntype ExtractionStats {\n    claimCount: Int!\n    skippedCount: Int!\n    skipRate: Float!\n    extractedAt: DateTime\n    extractedBy: String\n}\n\n# a piece of the source the content points at — a figure, a formula cut out as an\n# image, a table, a page, a clip. Content-addressed like the original; `role` is\n# free text so a new kind of attachment needs no model change.\ntype SourceAttachment {\n    id: OID!\n    ref: AttachmentRef!\n    mimeType: String!\n    fileName: String\n    sizeBytes: Int\n    role: String\n    page: Int\n    alt: String\n    width: Int\n    height: Int\n    attachedAt: DateTime!\n}\n\ntype SourceState {\n    title: String\n    description: String\n    content: String\n    sourceType: SourceType\n    status: SourceStatus\n    provenance: SourceProvenance\n    extractedClaims: [String!]!\n    extractionStats: ExtractionStats\n    # attachments referenced from `content` as ![alt](attachment://…); what makes those refs claimed\n    attachments: [SourceAttachment!]!\n    # the artefact this source was derived from. The vault's premise is that a\n    # source is the unrecoverable anchor, so the original bytes are kept here\n    # rather than discarded at ingestion. Content-addressed: see the attachment store.\n    originalFile: AttachmentRef\n    originalFileName: String\n    originalMimeType: String\n    originalSizeBytes: Int\n    originalAttachedAt: DateTime\n    # what produced `content` from the original, so a re-ingest can say what changed\n    convertedBy: String\n    createdAt: DateTime\n    createdBy: String\n}",
           "examples": [],
           "initialValue": "{\n    \"title\": null,\n    \"description\": null,\n    \"content\": null,\n    \"sourceType\": null,\n    \"status\": \"INBOX\",\n    \"provenance\": null,\n    \"extractedClaims\": [],\n    \"extractionStats\": null,\n    \"createdAt\": null,\n    \"createdBy\": null,\n    \"originalFile\": null,\n    \"originalFileName\": null,\n    \"originalMimeType\": null,\n    \"originalSizeBytes\": null,\n    \"originalAttachedAt\": null,\n    \"convertedBy\": null,\n    \"attachments\": []\n}"
+        },
+        "local": {
+          "schema": "",
+          "examples": [],
+          "initialValue": ""
         }
       },
       "modules": [
@@ -172,9 +262,7 @@
             }
           ]
         }
-      ],
-      "version": 1,
-      "changeLog": []
+      ]
     }
   ]
 }

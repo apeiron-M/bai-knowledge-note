@@ -69,16 +69,6 @@ export type AddExtractionCategoryInput = {
   name: Scalars["String"]["input"];
 };
 
-export type Dimension =
-  | "AUTOMATION"
-  | "GRANULARITY"
-  | "LINKING"
-  | "MAINTENANCE"
-  | "NAVIGATION"
-  | "ORGANIZATION"
-  | "PROCESSING"
-  | "SCHEMA";
-
 export type DimensionConfig = {
   automation: DimensionPosition;
   granularity: DimensionPosition;
@@ -108,15 +98,6 @@ export type InitializeConfigInput = {
   name: Scalars["String"]["input"];
   updatedAt: Scalars["DateTime"]["input"];
 };
-
-export type MaintenanceCondition =
-  | "DANGLING_THRESHOLD"
-  | "INBOX_PRESSURE"
-  | "MOC_OVERSIZE"
-  | "OBSERVATION_ACCUMULATION"
-  | "ORPHAN_THRESHOLD"
-  | "STALE_NOTE_DAYS"
-  | "TENSION_ACCUMULATION";
 
 export type MaintenanceConfig = {
   danglingThreshold: Scalars["Int"]["output"];
@@ -160,14 +141,14 @@ export type ToggleFeatureInput = {
 
 export type UpdateDimensionInput = {
   confidence: Scalars["Float"]["input"];
-  dimension: Dimension;
+  dimension: Scalars["String"]["input"];
   rationale?: InputMaybe<Scalars["String"]["input"]>;
   updatedAt: Scalars["DateTime"]["input"];
   value: Scalars["Int"]["input"];
 };
 
 export type UpdateMaintenanceThresholdInput = {
-  condition: MaintenanceCondition;
+  condition: Scalars["String"]["input"];
   threshold: Scalars["Int"]["input"];
   updatedAt: Scalars["DateTime"]["input"];
 };
@@ -180,7 +161,7 @@ export type UpdatePipelineConfigInput = {
 };
 
 export type UpdateVocabularyInput = {
-  key: VocabularyKey;
+  key: Scalars["String"]["input"];
   updatedAt: Scalars["DateTime"]["input"];
   value: Scalars["String"]["input"];
 };
@@ -198,17 +179,6 @@ export type VaultConfigState = {
   updatedAt: Maybe<Scalars["DateTime"]["output"]>;
   vocabulary: Maybe<VocabularyMap>;
 };
-
-export type VocabularyKey =
-  | "DESCRIPTION"
-  | "INBOX"
-  | "NOTES"
-  | "REDUCE"
-  | "REFLECT"
-  | "RETHINK"
-  | "REWEAVE"
-  | "TOPIC_MAP"
-  | "VERIFY";
 
 export type VocabularyMap = {
   description: Scalars["String"]["output"];

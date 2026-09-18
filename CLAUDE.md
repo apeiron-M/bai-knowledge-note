@@ -660,17 +660,77 @@ expect(() => reducer(document, setName({ name: "invalid" }))).toThrow();
 - **Specifications**: Versioned specs with `version`, `changeLog`, `state` (global/local with schema, initialValue, examples)
 - **Modules**: Operational modules containing their operations
 
-## Available Document Model Operations (37 total)
+## Available Document Model Operations (38 total)
 
 | Category                         | Operations                                                                                                                                                                                                       | Count |
 | -------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----- |
 | **Header Management**            | `SET_MODEL_NAME`, `SET_MODEL_ID`, `SET_MODEL_EXTENSION`, `SET_MODEL_DESCRIPTION`, `SET_AUTHOR_NAME`, `SET_AUTHOR_WEBSITE`                                                                                        | 6     |
-| **Versioning**                   | ⚠️ **DO NOT USE** - Not implemented                                                                                                                                                                              | 0     |
+| **Versioning**                   | `RELEASE_NEW_VERSION` — empty input `{}`; appends a deep copy of the latest specification and freezes the current one. Verified working on 6.2.3-dev.11. See "Versioning a document model" below.                | 1     |
 | **Module Management**            | `ADD_MODULE`, `SET_MODULE_NAME`, `SET_MODULE_DESCRIPTION`, `DELETE_MODULE`, `REORDER_MODULES`                                                                                                                    | 5     |
 | **Operation Management**         | `ADD_OPERATION`, `SET_OPERATION_NAME`, `SET_OPERATION_SCHEMA`, `SET_OPERATION_DESCRIPTION`, `SET_OPERATION_TEMPLATE`, `SET_OPERATION_REDUCER`, `MOVE_OPERATION`, `DELETE_OPERATION`, `REORDER_MODULE_OPERATIONS` | 9     |
 | **Operation Error Management**   | `ADD_OPERATION_ERROR`, `SET_OPERATION_ERROR_CODE`, `SET_OPERATION_ERROR_NAME`, `SET_OPERATION_ERROR_DESCRIPTION`, `SET_OPERATION_ERROR_TEMPLATE`, `DELETE_OPERATION_ERROR`, `REORDER_OPERATION_ERRORS`           | 7     |
 | **Operation Example Management** | `ADD_OPERATION_EXAMPLE`, `UPDATE_OPERATION_EXAMPLE`, `DELETE_OPERATION_EXAMPLE`, `REORDER_OPERATION_EXAMPLES`                                                                                                    | 4     |
 | **State Management**             | `SET_STATE_SCHEMA`, `SET_INITIAL_STATE`, `ADD_STATE_EXAMPLE`, `UPDATE_STATE_EXAMPLE`, `DELETE_STATE_EXAMPLE`, `REORDER_STATE_EXAMPLES`                                                                           | 6     |
+
+## ⚠️ Versioning a document model (breaking state changes)
+
+**A state change that existing documents cannot satisfy — a new non-nullable
+field, a narrowed enum — MUST go in a new specification version.** Changing the
+schema in place leaves the reactor with one version number describing two
+shapes, and every document created before the change breaks in its editor:
+
+```
+ZodError: state.global.<field> — expected array, received undefined
+```
+
+That error cannot heal itself. Reads are a raw `jsonb` snapshot read of
+`reactor."DocumentSnapshot".content` (the reducer never runs at read time),
+`initialState` is the *same object* as `state`, and a document's initial values
+are frozen at creation into its `UPGRADE_DOCUMENT(fromVersion: 0)` operation —
+so editing the document does not add the field and neither does a cold rebuild.
+
+### Order of operations — it is forced
+
+`RELEASE_NEW_VERSION` copies the **latest** specification, and every other
+meta-model reducer edits the **latest** specification. So if the new schema is
+already in place under v1, it has to be reverted first, or v1 and v2 end up
+identical and codegen emits a no-op upgrade reducer.
+
+1. **Revert the spec to the last published shape** via MCP (`SET_STATE_SCHEMA`,
+   `SET_INITIAL_STATE`, `DELETE_OPERATION`, `SET_OPERATION_REDUCER`,
+   `DELETE_OPERATION_ERROR`). Diff it against the published tarball or git tag
+   and assert byte-equality before continuing.
+2. **`RELEASE_NEW_VERSION`** with empty input `{}` — v1 is now frozen history.
+3. **Re-apply the new schema and operations onto v2** (now the latest spec).
+4. **Regenerate** — Vetra's watcher does this on the document change, or
+   `ph generate document-model --dir document-models/<name>`.
+5. **Two manual fixups.** Codegen's carry-forward pass has an off-by-one
+   (`if (previousVersion <= 1) return`), so for v1→v2 only files it generates
+   itself reach `v2/`. Hand-written tests stay behind in `v1/tests/` and must be
+   moved with their import paths rewritten `source/v1` → `source/v2`. Restore
+   `v1/src/reducers/*.ts` from the published tag so v1 compiles against v1 types.
+6. `git diff document-models/`, then `bun run tsc`, `test`, `build`.
+
+Codegen writes `upgrades/v<N>.ts` **once and never overwrites it**, so hand
+edits survive. An added field is filled from the new spec's `initialValue`, else
+the schema zero value (`[T!]!` → `[]`); a *changed* field type yields a reducer
+that throws until you write the migration yourself. The generated reducer
+migrates **both `state` and `initialState`**, and existing data always wins.
+
+### Migrating the live documents
+
+There is no `upgradeDocument` GraphQL mutation, but `execute` accepts arbitrary
+actions, so `UPGRADE_DOCUMENT` can be dispatched against any Switchboard:
+
+```bash
+node scripts/upgrade-documents.mjs --drive <id> --type bai/source --expect attachments          # dry run
+node scripts/upgrade-documents.mjs --drive <id> --type bai/source --expect attachments --apply
+```
+
+`ActionInput` needs `id`, `scope`, `input`, and — despite the name —
+`timestampUtcMs` must be an **ISO-8601 string**, not epoch milliseconds.
+Upgrading is idempotent: a document already at the target version succeeds
+unchanged. Record each run in `docs/migrations/<date>-<slug>.md`.
 
 ## Best Practices & Design Principles
 

@@ -10,7 +10,6 @@ import type {
   BlockTaskInput,
   CompleteTaskInput,
   FailTaskInput,
-  ReconcileCountersInput,
   UnblockTaskInput,
 } from "../types.js";
 
@@ -39,10 +38,6 @@ export type UnblockTaskAction = Action & {
   type: "UNBLOCK_TASK";
   input: UnblockTaskInput;
 };
-export type ReconcileCountersAction = Action & {
-  type: "RECONCILE_COUNTERS";
-  input: ReconcileCountersInput;
-};
 
 export type PipelineQueueQueueManagementAction =
   | AddTaskAction
@@ -51,5 +46,4 @@ export type PipelineQueueQueueManagementAction =
   | CompleteTaskAction
   | FailTaskAction
   | BlockTaskAction
-  | UnblockTaskAction
-  | ReconcileCountersAction;
+  | UnblockTaskAction;

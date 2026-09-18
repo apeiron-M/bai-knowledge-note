@@ -3,12 +3,10 @@
 import * as z from "zod";
 import type {
   AddExtractionCategoryInput,
-  Dimension,
   DimensionConfig,
   DimensionPosition,
   ExtractionCategory,
   InitializeConfigInput,
-  MaintenanceCondition,
   MaintenanceConfig,
   MocSchemaConfig,
   NoteSchemaConfig,
@@ -21,7 +19,6 @@ import type {
   UpdatePipelineConfigInput,
   UpdateVocabularyInput,
   VaultConfigState,
-  VocabularyKey,
   VocabularyMap,
 } from "./types.js";
 
@@ -38,40 +35,7 @@ export const definedNonNullAnySchema = z
   .any()
   .refine((v) => isDefinedNonNullAny(v));
 
-export const DimensionSchema = z.enum([
-  "AUTOMATION",
-  "GRANULARITY",
-  "LINKING",
-  "MAINTENANCE",
-  "NAVIGATION",
-  "ORGANIZATION",
-  "PROCESSING",
-  "SCHEMA",
-]);
-
-export const MaintenanceConditionSchema = z.enum([
-  "DANGLING_THRESHOLD",
-  "INBOX_PRESSURE",
-  "MOC_OVERSIZE",
-  "OBSERVATION_ACCUMULATION",
-  "ORPHAN_THRESHOLD",
-  "STALE_NOTE_DAYS",
-  "TENSION_ACCUMULATION",
-]);
-
 export const PipelineDepthSchema = z.enum(["DEEP", "QUICK", "STANDARD"]);
-
-export const VocabularyKeySchema = z.enum([
-  "DESCRIPTION",
-  "INBOX",
-  "NOTES",
-  "REDUCE",
-  "REFLECT",
-  "RETHINK",
-  "REWEAVE",
-  "TOPIC_MAP",
-  "VERIFY",
-]);
 
 export function AddExtractionCategoryInputSchema(): z.ZodObject<
   Properties<AddExtractionCategoryInput>
@@ -204,7 +168,7 @@ export function UpdateDimensionInputSchema(): z.ZodObject<
 > {
   return z.object({
     confidence: z.number(),
-    dimension: DimensionSchema,
+    dimension: z.string(),
     rationale: z.string().nullish(),
     updatedAt: z.iso.datetime(),
     value: z.number(),
@@ -215,7 +179,7 @@ export function UpdateMaintenanceThresholdInputSchema(): z.ZodObject<
   Properties<UpdateMaintenanceThresholdInput>
 > {
   return z.object({
-    condition: MaintenanceConditionSchema,
+    condition: z.string(),
     threshold: z.number(),
     updatedAt: z.iso.datetime(),
   });
@@ -236,7 +200,7 @@ export function UpdateVocabularyInputSchema(): z.ZodObject<
   Properties<UpdateVocabularyInput>
 > {
   return z.object({
-    key: VocabularyKeySchema,
+    key: z.string(),
     updatedAt: z.iso.datetime(),
     value: z.string(),
   });

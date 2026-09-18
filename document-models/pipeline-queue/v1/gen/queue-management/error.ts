@@ -1,11 +1,8 @@
 export type ErrorCode =
   | "DuplicateTaskIdError"
-  | "UnknownTaskTypeError"
-  | "InvalidPhaseError"
   | "TaskNotFoundError"
   | "TaskAlreadyAssignedError"
-  | "InvalidTaskStatusError"
-  | "PhaseMismatchError";
+  | "InvalidTaskStatusError";
 
 export interface ReducerError {
   errorCode: ErrorCode;
@@ -14,20 +11,6 @@ export interface ReducerError {
 export class DuplicateTaskIdError extends Error implements ReducerError {
   errorCode = "DuplicateTaskIdError" as ErrorCode;
   constructor(message = "DuplicateTaskIdError") {
-    super(message);
-  }
-}
-
-export class UnknownTaskTypeError extends Error implements ReducerError {
-  errorCode = "UnknownTaskTypeError" as ErrorCode;
-  constructor(message = "UnknownTaskTypeError") {
-    super(message);
-  }
-}
-
-export class InvalidPhaseError extends Error implements ReducerError {
-  errorCode = "InvalidPhaseError" as ErrorCode;
-  constructor(message = "InvalidPhaseError") {
     super(message);
   }
 }
@@ -53,29 +36,18 @@ export class InvalidTaskStatusError extends Error implements ReducerError {
   }
 }
 
-export class PhaseMismatchError extends Error implements ReducerError {
-  errorCode = "PhaseMismatchError" as ErrorCode;
-  constructor(message = "PhaseMismatchError") {
-    super(message);
-  }
-}
-
 export const errors = {
-  AddTask: { DuplicateTaskIdError, UnknownTaskTypeError, InvalidPhaseError },
+  AddTask: { DuplicateTaskIdError },
 
   AssignTask: { TaskNotFoundError, TaskAlreadyAssignedError },
 
-  AdvancePhase: {
-    TaskNotFoundError,
-    InvalidTaskStatusError,
-    PhaseMismatchError,
-  },
+  AdvancePhase: { TaskNotFoundError },
 
-  CompleteTask: { TaskNotFoundError, InvalidTaskStatusError },
+  CompleteTask: { TaskNotFoundError },
 
-  FailTask: { TaskNotFoundError, InvalidTaskStatusError },
+  FailTask: { TaskNotFoundError },
 
-  BlockTask: { TaskNotFoundError, InvalidTaskStatusError },
+  BlockTask: { TaskNotFoundError },
 
   UnblockTask: { TaskNotFoundError, InvalidTaskStatusError },
 };

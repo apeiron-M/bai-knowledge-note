@@ -7,7 +7,7 @@ import {
   setTitle,
   submitForReview,
   utils,
-} from "document-models/knowledge-note/v1";
+} from "document-models/knowledge-note/v2";
 import { describe, expect, it } from "vitest";
 
 const T1 = "2026-01-01T00:00:00.000Z";

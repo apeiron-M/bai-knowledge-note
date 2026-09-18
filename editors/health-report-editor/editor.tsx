@@ -1,5 +1,5 @@
 import { DocumentToolbar } from "@powerhousedao/design-system/connect";
-import { useSelectedHealthReportDocument } from "../../document-models/health-report/v1/hooks.js";
+import { useSelectedHealthReportDocument } from "document-models/health-report";
 import { setSelectedNode } from "@powerhousedao/reactor-browser";
 import { useVaultDocIndex } from "../shared/use-vault-doc-index.js";
 import { TOOLBAR_CLASS } from "../shared/theme-context.js";

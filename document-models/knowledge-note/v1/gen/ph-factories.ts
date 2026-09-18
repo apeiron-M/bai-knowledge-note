@@ -51,7 +51,6 @@ export function defaultGlobalState(): KnowledgeNoteGlobalState {
     rootCause: null,
     correctPattern: null,
     lifecycleEvents: [],
-    updatedAt: null,
   };
 }
 

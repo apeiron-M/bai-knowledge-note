@@ -53,23 +53,6 @@ type ExtractionStats {
     extractedBy: String
 }
 
-# a piece of the source the content points at — a figure, a formula cut out as an
-# image, a table, a page, a clip. Content-addressed like the original; `role` is
-# free text so a new kind of attachment needs no model change.
-type SourceAttachment {
-    id: OID!
-    ref: AttachmentRef!
-    mimeType: String!
-    fileName: String
-    sizeBytes: Int
-    role: String
-    page: Int
-    alt: String
-    width: Int
-    height: Int
-    attachedAt: DateTime!
-}
-
 type SourceState {
     title: String
     description: String
@@ -79,18 +62,6 @@ type SourceState {
     provenance: SourceProvenance
     extractedClaims: [String!]!
     extractionStats: ExtractionStats
-    # attachments referenced from `content` as ![alt](attachment://…); what makes those refs claimed
-    attachments: [SourceAttachment!]!
-    # the artefact this source was derived from. The vault's premise is that a
-    # source is the unrecoverable anchor, so the original bytes are kept here
-    # rather than discarded at ingestion. Content-addressed: see the attachment store.
-    originalFile: AttachmentRef
-    originalFileName: String
-    originalMimeType: String
-    originalSizeBytes: Int
-    originalAttachedAt: DateTime
-    # what produced `content` from the original, so a re-ingest can say what changed
-    convertedBy: String
     createdAt: DateTime
     createdBy: String
 }
@@ -129,31 +100,4 @@ input RecordExtractionStatsInput {
 
 input RemoveExtractedClaimInput {
     claimRef: String!
-}
-
-input AttachOriginalFileInput {
-    originalFile: AttachmentRef!
-    originalFileName: String
-    originalMimeType: String
-    originalSizeBytes: Int
-    convertedBy: String
-    attachedAt: DateTime!
-}
-
-input AddAttachmentInput {
-    id: OID!
-    ref: AttachmentRef!
-    mimeType: String!
-    fileName: String
-    sizeBytes: Int
-    role: String
-    page: Int
-    alt: String
-    width: Int
-    height: Int
-    attachedAt: DateTime!
-}
-
-input RemoveAttachmentInput {
-    id: OID!
 }

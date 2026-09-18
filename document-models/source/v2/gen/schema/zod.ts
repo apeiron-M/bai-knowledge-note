@@ -1,0 +1,221 @@
+/* eslint-disable @typescript-eslint/no-empty-object-type */
+/* eslint-disable @typescript-eslint/no-unused-vars */
+import * as z from "zod";
+import type {
+  AddAttachmentInput,
+  AddExtractedClaimInput,
+  AttachOriginalFileInput,
+  ExtractionStats,
+  IngestSourceInput,
+  RecordExtractionStatsInput,
+  RemoveAttachmentInput,
+  RemoveExtractedClaimInput,
+  SetSourceStatusInput,
+  SourceAttachment,
+  SourceProvenance,
+  SourceState,
+  SourceStatus,
+  SourceType,
+} from "./types.js";
+
+type Properties<T> = Required<{
+  [K in keyof T]: z.ZodType<T[K]>;
+}>;
+
+type definedNonNullAny = {};
+
+export const isDefinedNonNullAny = (v: any): v is definedNonNullAny =>
+  v !== undefined && v !== null;
+
+export const definedNonNullAnySchema = z
+  .any()
+  .refine((v) => isDefinedNonNullAny(v));
+
+export const SourceStatusSchema = z.enum([
+  "ARCHIVED",
+  "EXTRACTED",
+  "EXTRACTING",
+  "INBOX",
+]);
+
+export const SourceTypeSchema = z.enum([
+  "ARTICLE",
+  "BOOK_CHAPTER",
+  "CONVERSATION",
+  "DOCUMENTATION",
+  "MANUAL_ENTRY",
+  "PAPER",
+  "TRANSCRIPT",
+  "WEB_PAGE",
+]);
+
+export function AddAttachmentInputSchema(): z.ZodObject<
+  Properties<AddAttachmentInput>
+> {
+  return z.object({
+    alt: z.string().nullish(),
+    attachedAt: z.iso.datetime(),
+    fileName: z.string().nullish(),
+    height: z.number().nullish(),
+    id: z.string(),
+    mimeType: z.string(),
+    page: z.number().nullish(),
+    ref: z.custom<`attachment://v${number}:${string}`>((val) =>
+      /^attachment:\/\/v\d+:.+$/.test(val as string),
+    ),
+    role: z.string().nullish(),
+    sizeBytes: z.number().nullish(),
+    width: z.number().nullish(),
+  });
+}
+
+export function AddExtractedClaimInputSchema(): z.ZodObject<
+  Properties<AddExtractedClaimInput>
+> {
+  return z.object({
+    claimRef: z.string(),
+  });
+}
+
+export function AttachOriginalFileInputSchema(): z.ZodObject<
+  Properties<AttachOriginalFileInput>
+> {
+  return z.object({
+    attachedAt: z.iso.datetime(),
+    convertedBy: z.string().nullish(),
+    originalFile: z.custom<`attachment://v${number}:${string}`>((val) =>
+      /^attachment:\/\/v\d+:.+$/.test(val as string),
+    ),
+    originalFileName: z.string().nullish(),
+    originalMimeType: z.string().nullish(),
+    originalSizeBytes: z.number().nullish(),
+  });
+}
+
+export function ExtractionStatsSchema(): z.ZodObject<
+  Properties<ExtractionStats>
+> {
+  return z.object({
+    __typename: z.literal("ExtractionStats").optional(),
+    claimCount: z.number(),
+    extractedAt: z.iso.datetime().nullish(),
+    extractedBy: z.string().nullish(),
+    skipRate: z.number(),
+    skippedCount: z.number(),
+  });
+}
+
+export function IngestSourceInputSchema(): z.ZodObject<
+  Properties<IngestSourceInput>
+> {
+  return z.object({
+    author: z.string().nullish(),
+    content: z.string(),
+    createdAt: z.iso.datetime(),
+    createdBy: z.string().nullish(),
+    description: z.string().nullish(),
+    method: z.string().nullish(),
+    publishedAt: z.iso.datetime().nullish(),
+    sourceType: SourceTypeSchema,
+    title: z.string(),
+    tool: z.string().nullish(),
+    url: z.string().nullish(),
+  });
+}
+
+export function RecordExtractionStatsInputSchema(): z.ZodObject<
+  Properties<RecordExtractionStatsInput>
+> {
+  return z.object({
+    claimCount: z.number(),
+    extractedAt: z.iso.datetime(),
+    extractedBy: z.string().nullish(),
+    skipRate: z.number(),
+    skippedCount: z.number(),
+  });
+}
+
+export function RemoveAttachmentInputSchema(): z.ZodObject<
+  Properties<RemoveAttachmentInput>
+> {
+  return z.object({
+    id: z.string(),
+  });
+}
+
+export function RemoveExtractedClaimInputSchema(): z.ZodObject<
+  Properties<RemoveExtractedClaimInput>
+> {
+  return z.object({
+    claimRef: z.string(),
+  });
+}
+
+export function SetSourceStatusInputSchema(): z.ZodObject<
+  Properties<SetSourceStatusInput>
+> {
+  return z.object({
+    status: SourceStatusSchema,
+  });
+}
+
+export function SourceAttachmentSchema(): z.ZodObject<
+  Properties<SourceAttachment>
+> {
+  return z.object({
+    __typename: z.literal("SourceAttachment").optional(),
+    alt: z.string().nullish(),
+    attachedAt: z.iso.datetime(),
+    fileName: z.string().nullish(),
+    height: z.number().nullish(),
+    id: z.string(),
+    mimeType: z.string(),
+    page: z.number().nullish(),
+    ref: z.custom<`attachment://v${number}:${string}`>((val) =>
+      /^attachment:\/\/v\d+:.+$/.test(val as string),
+    ),
+    role: z.string().nullish(),
+    sizeBytes: z.number().nullish(),
+    width: z.number().nullish(),
+  });
+}
+
+export function SourceProvenanceSchema(): z.ZodObject<
+  Properties<SourceProvenance>
+> {
+  return z.object({
+    __typename: z.literal("SourceProvenance").optional(),
+    author: z.string().nullish(),
+    method: z.string().nullish(),
+    publishedAt: z.iso.datetime().nullish(),
+    tool: z.string().nullish(),
+    url: z.string().nullish(),
+  });
+}
+
+export function SourceStateSchema(): z.ZodObject<Properties<SourceState>> {
+  return z.object({
+    __typename: z.literal("SourceState").optional(),
+    attachments: z.array(z.lazy(() => SourceAttachmentSchema())),
+    content: z.string().nullish(),
+    convertedBy: z.string().nullish(),
+    createdAt: z.iso.datetime().nullish(),
+    createdBy: z.string().nullish(),
+    description: z.string().nullish(),
+    extractedClaims: z.array(z.string()),
+    extractionStats: z.lazy(() => ExtractionStatsSchema().nullish()),
+    originalAttachedAt: z.iso.datetime().nullish(),
+    originalFile: z
+      .custom<`attachment://v${number}:${string}`>((val) =>
+        /^attachment:\/\/v\d+:.+$/.test(val as string),
+      )
+      .nullish(),
+    originalFileName: z.string().nullish(),
+    originalMimeType: z.string().nullish(),
+    originalSizeBytes: z.number().nullish(),
+    provenance: z.lazy(() => SourceProvenanceSchema().nullish()),
+    sourceType: SourceTypeSchema.nullish(),
+    status: SourceStatusSchema.nullish(),
+    title: z.string().nullish(),
+  });
+}

@@ -13,8 +13,6 @@ import {
   failTask,
   FailTaskInputSchema,
   isPipelineQueueDocument,
-  reconcileCounters,
-  ReconcileCountersInputSchema,
   reducer,
   unblockTask,
   UnblockTaskInputSchema,
@@ -129,25 +127,6 @@ describe("QueueManagementOperations", () => {
     expect(updatedDocument.operations.global).toHaveLength(1);
     expect(updatedDocument.operations.global[0].action.type).toBe(
       "UNBLOCK_TASK",
-    );
-    expect(updatedDocument.operations.global[0].action.input).toStrictEqual(
-      input,
-    );
-    expect(updatedDocument.operations.global[0].index).toEqual(0);
-  });
-
-  it("should handle reconcileCounters operation", () => {
-    const document = utils.createDocument();
-    const input = generateMock(ReconcileCountersInputSchema(), {
-      updatedAt: "2024-01-01T00:00:00.000Z",
-    });
-
-    const updatedDocument = reducer(document, reconcileCounters(input));
-
-    expect(isPipelineQueueDocument(updatedDocument)).toBe(true);
-    expect(updatedDocument.operations.global).toHaveLength(1);
-    expect(updatedDocument.operations.global[0].action.type).toBe(
-      "RECONCILE_COUNTERS",
     );
     expect(updatedDocument.operations.global[0].action.input).toStrictEqual(
       input,

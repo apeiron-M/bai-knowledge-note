@@ -2,7 +2,7 @@ import { useState } from "react";
 import type {
   Provenance,
   SourceOrigin,
-} from "../../../document-models/knowledge-note/v1/gen/schema/types.js";
+} from "document-models/knowledge-note";
 
 type ProvenanceInfoProps = {
   provenance: Provenance | null;

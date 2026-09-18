@@ -1,13 +1,17 @@
 export { Derivation as DerivationV1 } from "./derivation/v1/module.js";
 export { HealthReport as HealthReportV1 } from "./health-report/v1/module.js";
 export { KnowledgeNote as KnowledgeNoteV1 } from "./knowledge-note/v1/module.js";
+export { KnowledgeNote as KnowledgeNoteV2 } from "./knowledge-note/v2/module.js";
 export { Moc as MocV1 } from "./moc/v1/module.js";
 export { Observation as ObservationV1 } from "./observation/v1/module.js";
 export { PipelineQueue as PipelineQueueV1 } from "./pipeline-queue/v1/module.js";
+export { PipelineQueue as PipelineQueueV2 } from "./pipeline-queue/v2/module.js";
 export { ResearchClaim as ResearchClaimV1 } from "./research-claim/v1/module.js";
 export { ScopeOfWork as ScopeOfWorkV1 } from "./scope-of-work/v1/module.js";
 export { Source as SourceV1 } from "./source/v1/module.js";
+export { Source as SourceV2 } from "./source/v2/module.js";
 export { Tension as TensionV1 } from "./tension/v1/module.js";
 export { upgradeManifests } from "./upgrade-manifests.js";
 export { VaultConfig as VaultConfigV1 } from "./vault-config/v1/module.js";
+export { VaultConfig as VaultConfigV2 } from "./vault-config/v2/module.js";
 export { WorkBreakdownStructure as WorkBreakdownStructureV1 } from "./work-breakdown-structure/v1/module.js";

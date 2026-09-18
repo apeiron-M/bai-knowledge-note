@@ -35,7 +35,7 @@ describe("Content reducer branch coverage", () => {
       doc,
       setDescription({ description: "A short description", updatedAt: T1 }),
     );
-    doc = reducer(doc, setNoteType({ noteType: "CONCEPT", updatedAt: T1 }));
+    doc = reducer(doc, setNoteType({ noteType: "insight", updatedAt: T1 }));
     doc = reducer(doc, setContent({ content: "hello world", updatedAt: T1 }));
     doc = reducer(
       doc,
@@ -52,7 +52,7 @@ describe("Content reducer branch coverage", () => {
 
     expect(doc.state.global.title).toBe("My Note");
     expect(doc.state.global.description).toBe("A short description");
-    expect(doc.state.global.noteType).toBe("CONCEPT");
+    expect(doc.state.global.noteType).toBe("insight");
     expect(doc.state.global.content).toBe("hello world");
     expect(doc.state.global.scope).toBe("team");
     expect(doc.state.global.models).toStrictEqual(["knowledge-note"]);
@@ -77,7 +77,7 @@ describe("Content reducer branch coverage", () => {
     doc = reducer(doc, setDescription({ description: "d", updatedAt: T3 }));
     expect(doc.state.global.provenance?.updatedAt).toBe(T3);
 
-    doc = reducer(doc, setNoteType({ noteType: "PATTERN", updatedAt: T1 }));
+    doc = reducer(doc, setNoteType({ noteType: "pattern", updatedAt: T1 }));
     expect(doc.state.global.provenance?.updatedAt).toBe(T1);
 
     doc = reducer(doc, setContent({ content: "abcdef", updatedAt: T2 }));
@@ -92,9 +92,9 @@ describe("Content reducer branch coverage", () => {
 
     doc = reducer(
       doc,
-      setMetadataField({ field: "confidence", value: "grounded", updatedAt: T1 }),
+      setMetadataField({ field: "confidence", value: "high", updatedAt: T1 }),
     );
-    expect(doc.state.global.confidence).toBe("grounded");
+    expect(doc.state.global.confidence).toBe("high");
     expect(doc.state.global.provenance?.updatedAt).toBe(T1);
 
     doc = reducer(

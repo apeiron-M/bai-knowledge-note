@@ -3,6 +3,7 @@
  * This file is auto-generated and updated by codegen
  */
 import type { UpgradeManifest } from "document-model";
+import { v2 } from "./v2.js";
 import { latestVersion, supportedVersions } from "./versions.js";
 
 export const knowledgeNoteUpgradeManifest: UpgradeManifest<
@@ -11,5 +12,5 @@ export const knowledgeNoteUpgradeManifest: UpgradeManifest<
   documentType: "bai/knowledge-note",
   latestVersion,
   supportedVersions,
-  upgrades: {},
+  upgrades: { v2 },
 };

@@ -2,16 +2,12 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import * as z from "zod";
 import type {
-  AddAttachmentInput,
   AddExtractedClaimInput,
-  AttachOriginalFileInput,
   ExtractionStats,
   IngestSourceInput,
   RecordExtractionStatsInput,
-  RemoveAttachmentInput,
   RemoveExtractedClaimInput,
   SetSourceStatusInput,
-  SourceAttachment,
   SourceProvenance,
   SourceState,
   SourceStatus,
@@ -49,46 +45,11 @@ export const SourceTypeSchema = z.enum([
   "WEB_PAGE",
 ]);
 
-export function AddAttachmentInputSchema(): z.ZodObject<
-  Properties<AddAttachmentInput>
-> {
-  return z.object({
-    alt: z.string().nullish(),
-    attachedAt: z.iso.datetime(),
-    fileName: z.string().nullish(),
-    height: z.number().nullish(),
-    id: z.string(),
-    mimeType: z.string(),
-    page: z.number().nullish(),
-    ref: z.custom<`attachment://v${number}:${string}`>((val) =>
-      /^attachment:\/\/v\d+:.+$/.test(val as string),
-    ),
-    role: z.string().nullish(),
-    sizeBytes: z.number().nullish(),
-    width: z.number().nullish(),
-  });
-}
-
 export function AddExtractedClaimInputSchema(): z.ZodObject<
   Properties<AddExtractedClaimInput>
 > {
   return z.object({
     claimRef: z.string(),
-  });
-}
-
-export function AttachOriginalFileInputSchema(): z.ZodObject<
-  Properties<AttachOriginalFileInput>
-> {
-  return z.object({
-    attachedAt: z.iso.datetime(),
-    convertedBy: z.string().nullish(),
-    originalFile: z.custom<`attachment://v${number}:${string}`>((val) =>
-      /^attachment:\/\/v\d+:.+$/.test(val as string),
-    ),
-    originalFileName: z.string().nullish(),
-    originalMimeType: z.string().nullish(),
-    originalSizeBytes: z.number().nullish(),
   });
 }
 
@@ -135,14 +96,6 @@ export function RecordExtractionStatsInputSchema(): z.ZodObject<
   });
 }
 
-export function RemoveAttachmentInputSchema(): z.ZodObject<
-  Properties<RemoveAttachmentInput>
-> {
-  return z.object({
-    id: z.string(),
-  });
-}
-
 export function RemoveExtractedClaimInputSchema(): z.ZodObject<
   Properties<RemoveExtractedClaimInput>
 > {
@@ -156,27 +109,6 @@ export function SetSourceStatusInputSchema(): z.ZodObject<
 > {
   return z.object({
     status: SourceStatusSchema,
-  });
-}
-
-export function SourceAttachmentSchema(): z.ZodObject<
-  Properties<SourceAttachment>
-> {
-  return z.object({
-    __typename: z.literal("SourceAttachment").optional(),
-    alt: z.string().nullish(),
-    attachedAt: z.iso.datetime(),
-    fileName: z.string().nullish(),
-    height: z.number().nullish(),
-    id: z.string(),
-    mimeType: z.string(),
-    page: z.number().nullish(),
-    ref: z.custom<`attachment://v${number}:${string}`>((val) =>
-      /^attachment:\/\/v\d+:.+$/.test(val as string),
-    ),
-    role: z.string().nullish(),
-    sizeBytes: z.number().nullish(),
-    width: z.number().nullish(),
   });
 }
 
@@ -196,23 +128,12 @@ export function SourceProvenanceSchema(): z.ZodObject<
 export function SourceStateSchema(): z.ZodObject<Properties<SourceState>> {
   return z.object({
     __typename: z.literal("SourceState").optional(),
-    attachments: z.array(z.lazy(() => SourceAttachmentSchema())),
     content: z.string().nullish(),
-    convertedBy: z.string().nullish(),
     createdAt: z.iso.datetime().nullish(),
     createdBy: z.string().nullish(),
     description: z.string().nullish(),
     extractedClaims: z.array(z.string()),
     extractionStats: z.lazy(() => ExtractionStatsSchema().nullish()),
-    originalAttachedAt: z.iso.datetime().nullish(),
-    originalFile: z
-      .custom<`attachment://v${number}:${string}`>((val) =>
-        /^attachment:\/\/v\d+:.+$/.test(val as string),
-      )
-      .nullish(),
-    originalFileName: z.string().nullish(),
-    originalMimeType: z.string().nullish(),
-    originalSizeBytes: z.number().nullish(),
     provenance: z.lazy(() => SourceProvenanceSchema().nullish()),
     sourceType: SourceTypeSchema.nullish(),
     status: SourceStatusSchema.nullish(),

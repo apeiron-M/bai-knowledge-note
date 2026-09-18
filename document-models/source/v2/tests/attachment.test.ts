@@ -10,7 +10,7 @@ import {
   reducer,
   type SourceState,
   utils,
-} from "document-models/source/v1";
+} from "document-models/source/v2";
 import { generateMock } from "document-model/mock";
 
 /**

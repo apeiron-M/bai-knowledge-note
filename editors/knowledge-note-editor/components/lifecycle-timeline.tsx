@@ -1,4 +1,4 @@
-import type { LifecycleEvent } from "../../../document-models/knowledge-note/v1/gen/schema/types.js";
+import type { LifecycleEvent } from "document-models/knowledge-note";
 import { lifecycleKey } from "../lib/lifecycle-key.js";
 
 type LifecycleTimelineProps = { events: LifecycleEvent[] };

@@ -1,9 +1,9 @@
-import * as knowledgeNote from "../../../../document-models/knowledge-note/v1/gen/schema/zod.js";
+import * as knowledgeNote from "../../../../document-models/knowledge-note/v2/gen/schema/zod.js";
 import * as moc from "../../../../document-models/moc/v1/gen/schema/zod.js";
-import * as source from "../../../../document-models/source/v1/gen/schema/zod.js";
-import * as pipelineQueue from "../../../../document-models/pipeline-queue/v1/gen/schema/zod.js";
+import * as source from "../../../../document-models/source/v2/gen/schema/zod.js";
+import * as pipelineQueue from "../../../../document-models/pipeline-queue/v2/gen/schema/zod.js";
 import * as healthReport from "../../../../document-models/health-report/v1/gen/schema/zod.js";
-import * as vaultConfig from "../../../../document-models/vault-config/v1/gen/schema/zod.js";
+import * as vaultConfig from "../../../../document-models/vault-config/v2/gen/schema/zod.js";
 import * as observation from "../../../../document-models/observation/v1/gen/schema/zod.js";
 import * as tension from "../../../../document-models/tension/v1/gen/schema/zod.js";
 import * as researchClaim from "../../../../document-models/research-claim/v1/gen/schema/zod.js";

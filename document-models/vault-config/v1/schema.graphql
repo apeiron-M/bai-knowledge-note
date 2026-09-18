@@ -19,39 +19,6 @@ scalar Amount_Crypto
 scalar Amount
 scalar Upload
 
-enum Dimension {
-    GRANULARITY
-    ORGANIZATION
-    LINKING
-    PROCESSING
-    NAVIGATION
-    MAINTENANCE
-    SCHEMA
-    AUTOMATION
-}
-
-enum VocabularyKey {
-    NOTES
-    INBOX
-    REDUCE
-    REFLECT
-    REWEAVE
-    VERIFY
-    RETHINK
-    TOPIC_MAP
-    DESCRIPTION
-}
-
-enum MaintenanceCondition {
-    ORPHAN_THRESHOLD
-    DANGLING_THRESHOLD
-    INBOX_PRESSURE
-    OBSERVATION_ACCUMULATION
-    TENSION_ACCUMULATION
-    MOC_OVERSIZE
-    STALE_NOTE_DAYS
-}
-
 type DimensionPosition {
     value: Int!
     confidence: Float!
@@ -140,7 +107,7 @@ input InitializeConfigInput {
 }
 
 input UpdateDimensionInput {
-    dimension: Dimension!
+    dimension: String!
     value: Int!
     confidence: Float!
     rationale: String
@@ -148,7 +115,7 @@ input UpdateDimensionInput {
 }
 
 input UpdateVocabularyInput {
-    key: VocabularyKey!
+    key: String!
     value: String!
     updatedAt: DateTime!
 }
@@ -161,7 +128,7 @@ input UpdatePipelineConfigInput {
 }
 
 input UpdateMaintenanceThresholdInput {
-    condition: MaintenanceCondition!
+    condition: String!
     threshold: Int!
     updatedAt: DateTime!
 }

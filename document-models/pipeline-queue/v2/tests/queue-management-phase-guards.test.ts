@@ -6,7 +6,7 @@ import {
   reconcileCounters,
   reducer,
   utils,
-} from "document-models/pipeline-queue/v1";
+} from "document-models/pipeline-queue/v2";
 import { describe, expect, it } from "vitest";
 
 const T1 = "2026-01-01T00:00:00.000Z";

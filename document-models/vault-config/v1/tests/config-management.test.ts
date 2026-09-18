@@ -187,7 +187,7 @@ describe("ConfigManagementOperations scenarios", () => {
     const updatedDocument = reducer(
       document,
       updateDimension({
-        dimension: "GRANULARITY",
+        dimension: "granularity",
         value: 5,
         confidence: 0.9,
         rationale: "fine-grained notes",
@@ -214,7 +214,7 @@ describe("ConfigManagementOperations scenarios", () => {
     document = reducer(
       document,
       updateDimension({
-        dimension: "GRANULARITY",
+        dimension: "granularity",
         value: 5,
         confidence: 0.9,
         rationale: "first",
@@ -226,7 +226,7 @@ describe("ConfigManagementOperations scenarios", () => {
     document = reducer(
       document,
       updateDimension({
-        dimension: "LINKING",
+        dimension: "linking",
         value: 4,
         confidence: 0.7,
         updatedAt: ts,
@@ -242,7 +242,7 @@ describe("ConfigManagementOperations scenarios", () => {
     document = reducer(
       document,
       updateDimension({
-        dimension: "SCHEMA",
+        dimension: "schema",
         value: 2,
         confidence: 0.4,
         rationale: "",
@@ -260,66 +260,43 @@ describe("ConfigManagementOperations scenarios", () => {
     );
   });
 
-  it("rejects an unknown dimension key and an out-of-range position", () => {
-    // Before `Dimension` was an enum an unknown key was silently ignored while
-    // updatedAt was still bumped — a typo looked like a successful update.
-    expect(() =>
+  it("should silently ignore an unknown dimension key while still bumping updatedAt", () => {
+    let document = utils.createDocument();
+    document = reducer(
+      document,
       updateDimension({
-        // @ts-expect-error — not a Dimension
-        dimension: "not-a-dimension",
-        value: 5,
-        confidence: 1,
-        updatedAt: ts,
-      }),
-    ).toThrow();
-
-    let document = reducer(
-      utils.createDocument(),
-      updateDimension({
-        dimension: "AUTOMATION",
+        dimension: "automation",
         value: 1,
         confidence: 0.2,
         updatedAt: ts,
       }),
     );
-    const before = document.state.global.dimensions;
+    const dimensionsBefore = document.state.global.dimensions;
 
     document = reducer(
       document,
       updateDimension({
-        dimension: "AUTOMATION",
-        value: 6,
-        confidence: 0.2,
+        dimension: "not-a-dimension",
+        value: 5,
+        confidence: 1,
+        rationale: "ignored",
         updatedAt: laterTs,
       }),
     );
-    expect(document.operations.global[1].error).toBe(
-      "Dimension position must be within 1..5, got 6",
-    );
-    document = reducer(
-      document,
-      updateDimension({
-        dimension: "AUTOMATION",
-        value: 3,
-        confidence: 1.5,
-        updatedAt: laterTs,
-      }),
-    );
-    expect(document.operations.global[2].error).toBe(
-      "Dimension confidence must be within 0..1, got 1.5",
-    );
-    expect(document.state.global.dimensions).toStrictEqual(before);
-    expect(document.state.global.updatedAt).toBe(ts);
+
+    expect(document.state.global.dimensions).toStrictEqual(dimensionsBefore);
+    expect(document.state.global.updatedAt).toBe(laterTs);
+    expect(document.operations.global[1].error).toBeUndefined();
   });
 
-  it("should lazily initialize vocabulary, update matched keys and reject unknown keys", () => {
+  it("should lazily initialize vocabulary, update matched keys and ignore unknown keys", () => {
     let document = utils.createDocument();
     expect(document.state.global.vocabulary).toBe(null);
 
     // lazy init + matched key
     document = reducer(
       document,
-      updateVocabulary({ key: "NOTES", value: "cards", updatedAt: ts }),
+      updateVocabulary({ key: "notes", value: "cards", updatedAt: ts }),
     );
     expect(document.state.global.vocabulary?.notes).toBe("cards");
     expect(document.state.global.vocabulary?.inbox).toBe("inbox");
@@ -328,17 +305,19 @@ describe("ConfigManagementOperations scenarios", () => {
     // existing vocabulary: skips the lazy-init branch
     document = reducer(
       document,
-      updateVocabulary({ key: "TOPIC_MAP", value: "atlas", updatedAt: ts }),
+      updateVocabulary({ key: "topicMap", value: "atlas", updatedAt: ts }),
     );
     expect(document.state.global.vocabulary?.topicMap).toBe("atlas");
 
-    // an unknown key is not a VocabularyKey: the creator refuses to build it
-    expect(() =>
-      // @ts-expect-error — not a VocabularyKey
+    // unknown key is silently ignored but updatedAt is still set
+    document = reducer(
+      document,
       updateVocabulary({ key: "glossary", value: "nope", updatedAt: laterTs }),
-    ).toThrow();
+    );
     expect(document.state.global.vocabulary?.notes).toBe("cards");
     expect(document.state.global.vocabulary?.topicMap).toBe("atlas");
+    expect(document.state.global.updatedAt).toBe(laterTs);
+    expect(document.operations.global[2].error).toBeUndefined();
   });
 
   it("should lazily initialize pipeline config with defaults when all optional fields are omitted", () => {
@@ -414,7 +393,7 @@ describe("ConfigManagementOperations scenarios", () => {
     expect(document.state.global.updatedAt).toBe(laterTs);
   });
 
-  it("should lazily initialize maintenance thresholds, update matched conditions and reject bad input", () => {
+  it("should lazily initialize maintenance thresholds, update matched conditions and ignore unknown ones", () => {
     let document = utils.createDocument();
     expect(document.state.global.maintenance).toBe(null);
 
@@ -422,7 +401,7 @@ describe("ConfigManagementOperations scenarios", () => {
     document = reducer(
       document,
       updateMaintenanceThreshold({
-        condition: "INBOX_PRESSURE",
+        condition: "inboxPressure",
         threshold: 12,
         updatedAt: ts,
       }),
@@ -435,33 +414,21 @@ describe("ConfigManagementOperations scenarios", () => {
     document = reducer(
       document,
       updateMaintenanceThreshold({
-        condition: "STALE_NOTE_DAYS",
+        condition: "staleNoteDays",
         threshold: 60,
         updatedAt: ts,
       }),
     );
     expect(document.state.global.maintenance?.staleNoteDays).toBe(60);
 
-    // an unknown condition is not a MaintenanceCondition: the creator refuses it
-    expect(() =>
+    // unknown condition is silently ignored but updatedAt is still set
+    document = reducer(
+      document,
       updateMaintenanceThreshold({
-        // @ts-expect-error — not a MaintenanceCondition
         condition: "unknownCondition",
         threshold: 99,
         updatedAt: laterTs,
       }),
-    ).toThrow();
-    // a negative threshold is refused by the reducer
-    document = reducer(
-      document,
-      updateMaintenanceThreshold({
-        condition: "MOC_OVERSIZE",
-        threshold: -1,
-        updatedAt: laterTs,
-      }),
-    );
-    expect(document.operations.global[2].error).toBe(
-      "A maintenance threshold cannot be negative, got -1",
     );
     expect(document.state.global.maintenance).toStrictEqual({
       orphanThreshold: 1,
@@ -472,7 +439,8 @@ describe("ConfigManagementOperations scenarios", () => {
       mocOversize: 40,
       staleNoteDays: 60,
     });
-    expect(document.state.global.updatedAt).toBe(ts);
+    expect(document.state.global.updatedAt).toBe(laterTs);
+    expect(document.operations.global[2].error).toBeUndefined();
   });
 
   it("should add extraction categories and toggle them, ignoring unknown ids", () => {

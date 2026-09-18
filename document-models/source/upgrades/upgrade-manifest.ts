@@ -3,6 +3,7 @@
  * This file is auto-generated and updated by codegen
  */
 import type { UpgradeManifest } from "document-model";
+import { v2 } from "./v2.js";
 import { latestVersion, supportedVersions } from "./versions.js";
 
 export const sourceUpgradeManifest: UpgradeManifest<typeof supportedVersions> =
@@ -10,5 +11,5 @@ export const sourceUpgradeManifest: UpgradeManifest<typeof supportedVersions> =
     documentType: "bai/source",
     latestVersion,
     supportedVersions,
-    upgrades: {},
+    upgrades: { v2 },
   };

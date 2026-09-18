@@ -1,5 +1,5 @@
 import { useState } from "react";
-import type { KnowledgeNoteState } from "../../../document-models/knowledge-note/v1/gen/schema/types.js";
+import type { KnowledgeNoteState } from "document-models/knowledge-note";
 
 type MetadataPanelProps = {
   state: KnowledgeNoteState;

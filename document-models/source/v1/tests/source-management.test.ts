@@ -1,19 +1,13 @@
 import { generateMock } from "document-model/mock";
 import {
-  addAttachment,
-  AddAttachmentInputSchema,
   addExtractedClaim,
   AddExtractedClaimInputSchema,
-  attachOriginalFile,
-  AttachOriginalFileInputSchema,
   ingestSource,
   IngestSourceInputSchema,
   isSourceDocument,
   recordExtractionStats,
   RecordExtractionStatsInputSchema,
   reducer,
-  removeAttachment,
-  RemoveAttachmentInputSchema,
   removeExtractedClaim,
   RemoveExtractedClaimInputSchema,
   setSourceStatus,
@@ -266,12 +260,7 @@ describe("SourceManagementOperations", () => {
       extractedBy: null,
     });
 
-    // With extractedBy -> stored as provided (a third claim first: claimCount
-    // must equal the claims listed)
-    updatedDocument = reducer(
-      updatedDocument,
-      addExtractedClaim({ claimRef: "claim-3" }),
-    );
+    // With extractedBy -> stored as provided
     updatedDocument = reducer(
       updatedDocument,
       recordExtractionStats({
@@ -295,7 +284,7 @@ describe("SourceManagementOperations", () => {
       setSourceStatus({ status: "EXTRACTED" }),
     );
     expect(updatedDocument.state.global.status).toBe("EXTRACTED");
-    expect(updatedDocument.operations.global).toHaveLength(8);
+    expect(updatedDocument.operations.global).toHaveLength(7);
   });
 
   it("should handle removeExtractedClaim operation", () => {
@@ -343,17 +332,9 @@ describe("SourceManagementOperations", () => {
     // A document whose history predates the idempotent add: build the
     // duplicate state through the initial value, as the migration would find it.
     const document = utils.createDocument();
-    document.state.global.extractedClaims = [
-      "note-a",
-      "note-a",
-      "note-b",
-      "note-a",
-    ];
+    document.state.global.extractedClaims = ["note-a", "note-a", "note-b", "note-a"];
 
-    const updated = reducer(
-      document,
-      removeExtractedClaim({ claimRef: "note-a" }),
-    );
+    const updated = reducer(document, removeExtractedClaim({ claimRef: "note-a" }));
 
     expect(updated.state.global.extractedClaims).toStrictEqual(["note-b"]);
     expect(updated.operations.global[0].error).toBeUndefined();
@@ -363,71 +344,11 @@ describe("SourceManagementOperations", () => {
     let document = utils.createDocument();
     document = reducer(document, addExtractedClaim({ claimRef: "note-a" }));
 
-    const updated = reducer(
-      document,
-      removeExtractedClaim({ claimRef: "note-zzz" }),
-    );
+    const updated = reducer(document, removeExtractedClaim({ claimRef: "note-zzz" }));
 
     expect(updated.operations.global[1].error).toBe(
       "Claim note-zzz is not listed on this source",
     );
     expect(updated.state.global.extractedClaims).toStrictEqual(["note-a"]);
-  });
-
-  it("should handle attachOriginalFile operation", () => {
-    const document = utils.createDocument();
-    const input = generateMock(AttachOriginalFileInputSchema(), {
-      originalFile:
-        "attachment://v1:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
-    });
-
-    const updatedDocument = reducer(document, attachOriginalFile(input));
-
-    expect(isSourceDocument(updatedDocument)).toBe(true);
-    expect(updatedDocument.operations.global).toHaveLength(1);
-    expect(updatedDocument.operations.global[0].action.type).toBe(
-      "ATTACH_ORIGINAL_FILE",
-    );
-    expect(updatedDocument.operations.global[0].action.input).toStrictEqual(
-      input,
-    );
-    expect(updatedDocument.operations.global[0].index).toEqual(0);
-  });
-
-  it("should handle addAttachment operation", () => {
-    const document = utils.createDocument();
-    const input = generateMock(AddAttachmentInputSchema(), {
-      ref: "attachment://v1:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
-      attachedAt: "2024-01-01T00:00:00.000Z",
-    });
-
-    const updatedDocument = reducer(document, addAttachment(input));
-
-    expect(isSourceDocument(updatedDocument)).toBe(true);
-    expect(updatedDocument.operations.global).toHaveLength(1);
-    expect(updatedDocument.operations.global[0].action.type).toBe(
-      "ADD_ATTACHMENT",
-    );
-    expect(updatedDocument.operations.global[0].action.input).toStrictEqual(
-      input,
-    );
-    expect(updatedDocument.operations.global[0].index).toEqual(0);
-  });
-
-  it("should handle removeAttachment operation", () => {
-    const document = utils.createDocument();
-    const input = generateMock(RemoveAttachmentInputSchema());
-
-    const updatedDocument = reducer(document, removeAttachment(input));
-
-    expect(isSourceDocument(updatedDocument)).toBe(true);
-    expect(updatedDocument.operations.global).toHaveLength(1);
-    expect(updatedDocument.operations.global[0].action.type).toBe(
-      "REMOVE_ATTACHMENT",
-    );
-    expect(updatedDocument.operations.global[0].action.input).toStrictEqual(
-      input,
-    );
-    expect(updatedDocument.operations.global[0].index).toEqual(0);
   });
 });

@@ -2,7 +2,6 @@ export type ErrorCode =
   | "DescriptionTooLongError"
   | "PatchOutOfBoundsError"
   | "InvalidMetadataFieldError"
-  | "InvalidMetadataValueError"
   | "InvalidMetadataListFieldError";
 
 export interface ReducerError {
@@ -30,13 +29,6 @@ export class InvalidMetadataFieldError extends Error implements ReducerError {
   }
 }
 
-export class InvalidMetadataValueError extends Error implements ReducerError {
-  errorCode = "InvalidMetadataValueError" as ErrorCode;
-  constructor(message = "InvalidMetadataValueError") {
-    super(message);
-  }
-}
-
 export class InvalidMetadataListFieldError
   extends Error
   implements ReducerError
@@ -52,7 +44,7 @@ export const errors = {
 
   PatchContent: { PatchOutOfBoundsError },
 
-  SetMetadataField: { InvalidMetadataFieldError, InvalidMetadataValueError },
+  SetMetadataField: { InvalidMetadataFieldError },
 
   SetMetadataListField: { InvalidMetadataListFieldError },
 };

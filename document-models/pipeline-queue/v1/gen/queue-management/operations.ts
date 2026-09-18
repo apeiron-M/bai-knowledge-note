@@ -11,7 +11,6 @@ import type {
   BlockTaskAction,
   CompleteTaskAction,
   FailTaskAction,
-  ReconcileCountersAction,
   UnblockTaskAction,
 } from "./actions.js";
 
@@ -49,11 +48,6 @@ export interface PipelineQueueQueueManagementOperations {
   unblockTaskOperation: (
     state: PipelineQueueGlobalState,
     action: UnblockTaskAction,
-    dispatch?: SignalDispatch,
-  ) => void;
-  reconcileCountersOperation: (
-    state: PipelineQueueGlobalState,
-    action: ReconcileCountersAction,
     dispatch?: SignalDispatch,
   ) => void;
 }

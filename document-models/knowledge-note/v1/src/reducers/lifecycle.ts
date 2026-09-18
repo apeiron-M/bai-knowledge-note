@@ -21,7 +21,6 @@ export const knowledgeNoteLifecycleOperations: KnowledgeNoteLifecycleOperations 
         timestamp: action.input.timestamp,
         comment: action.input.comment || null,
       });
-      state.updatedAt = action.input.timestamp;
       if (state.provenance) {
         state.provenance.updatedAt = action.input.timestamp;
       }
@@ -44,7 +43,6 @@ export const knowledgeNoteLifecycleOperations: KnowledgeNoteLifecycleOperations 
         timestamp: action.input.timestamp,
         comment: action.input.comment || null,
       });
-      state.updatedAt = action.input.timestamp;
       if (state.provenance) {
         state.provenance.updatedAt = action.input.timestamp;
       }
@@ -64,7 +62,6 @@ export const knowledgeNoteLifecycleOperations: KnowledgeNoteLifecycleOperations 
         timestamp: action.input.timestamp,
         comment: action.input.comment,
       });
-      state.updatedAt = action.input.timestamp;
       if (state.provenance) {
         state.provenance.updatedAt = action.input.timestamp;
       }
@@ -84,7 +81,6 @@ export const knowledgeNoteLifecycleOperations: KnowledgeNoteLifecycleOperations 
         timestamp: action.input.timestamp,
         comment: action.input.comment,
       });
-      state.updatedAt = action.input.timestamp;
       if (state.provenance) {
         state.provenance.updatedAt = action.input.timestamp;
       }
@@ -104,7 +100,6 @@ export const knowledgeNoteLifecycleOperations: KnowledgeNoteLifecycleOperations 
         timestamp: action.input.timestamp,
         comment: action.input.comment || null,
       });
-      state.updatedAt = action.input.timestamp;
       if (state.provenance) {
         state.provenance.updatedAt = action.input.timestamp;
       }
