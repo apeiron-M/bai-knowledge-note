@@ -1,12 +1,12 @@
 import { BaseSubgraph } from "@powerhousedao/reactor-api";
 import type { DocumentNode } from "graphql";
-import { startConversionService, stopStartedService } from "./lib/autostart.js";
+import { connectConversionService } from "./lib/probe.js";
 import type { ConvertRouteDeps } from "./lib/deps.js";
 import { createHttpConversionService } from "./lib/service.js";
 import { getResolvers, registerConvertRoutes } from "./resolvers.js";
 import { schema } from "./schema.js";
 
-/** Where autostart looks when CONVERT_SERVICE_URL is not set. */
+/** Assumed when CONVERT_SERVICE_LOCAL is set and no explicit URL is given. */
 const DEFAULT_SERVICE_URL = "http://127.0.0.1:5011";
 
 /**
@@ -48,10 +48,14 @@ export class ConvertSubgraph extends BaseSubgraph {
   async onSetup(): Promise<void> {
     const configuredUrl = process.env.CONVERT_SERVICE_URL?.trim();
     const apiKey = process.env.CONVERT_SERVICE_API_KEY?.trim();
-    const autostart = isEnabled(process.env.CONVERT_SERVICE_AUTOSTART);
-    // Autostart needs somewhere to start it: the configured URL, or the local
-    // default. Without either, absence of a service is simply the state.
-    const url = configuredUrl ?? (autostart ? DEFAULT_SERVICE_URL : undefined);
+    // `CONVERT_SERVICE_AUTOSTART` is the historical spelling. It no longer
+    // starts anything — the engine is its own image now — but it still means
+    // "assume the service is on localhost", so honouring it keeps existing
+    // development environments working rather than silently going dark.
+    const useLocalDefault =
+      isEnabled(process.env.CONVERT_SERVICE_LOCAL) ||
+      isEnabled(process.env.CONVERT_SERVICE_AUTOSTART);
+    const url = configuredUrl ?? (useLocalDefault ? DEFAULT_SERVICE_URL : undefined);
 
     if (!url) {
       this.routeDeps = {};
@@ -59,34 +63,23 @@ export class ConvertSubgraph extends BaseSubgraph {
       return;
     }
 
-    if (autostart && !apiKey) {
-      // Probe first: anything already answering is left alone, which is what
-      // keeps a reload (or an operator's own service) from being fought over.
-      const { service } = await startConversionService({
+    if (apiKey) {
+      // An authenticated service is a managed one: it is somebody's deployment,
+      // so probing it at boot to print a warning earns nothing.
+      this.routeDeps = {
+        service: createHttpConversionService({ baseUrl: url, apiKey }),
+      };
+    } else {
+      const { service } = await connectConversionService({
         url,
         log: console.log,
       });
       this.routeDeps = { service };
-    } else {
-      this.routeDeps = {
-        service: createHttpConversionService({
-          baseUrl: url,
-          apiKey: apiKey || undefined,
-        }),
-      };
     }
 
     registerConvertRoutes(this.http, this.routeDeps);
   }
 
-  /**
-   * Stop the conversion service **only if this process started it**. One that
-   * was already running when we looked — a systemd unit, a container, something
-   * the operator launched — is not ours to kill.
-   */
-  async onDisconnect(): Promise<void> {
-    stopStartedService();
-  }
 }
 
 /** `true`/`1`/`yes` enable a flag; anything else (including unset) leaves it off. */

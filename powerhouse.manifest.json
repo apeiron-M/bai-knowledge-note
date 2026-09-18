@@ -1,6 +1,6 @@
 {
   "name": "@powerhousedao/knowledge-note",
-  "description": "Team-wide institutional memory system — atomic knowledge notes with typed content, structured links, lifecycle states, and provenance tracking.",
+  "description": "Team-wide institutional memory system \u2014 atomic knowledge notes with typed content, structured links, lifecycle states, and provenance tracking.",
   "category": "Productivity",
   "publisher": {
     "name": "Powerhouse",
@@ -198,13 +198,19 @@
     {
       "name": "CONVERT_SERVICE_API_KEY",
       "type": "var",
-      "description": "Sent as X-Api-Key when the conversion backend requires one (the docling-serve container does). Not needed for the local docling.rs service.",
+      "description": "Sent as X-Api-Key when the conversion service requires one. Omit for a service that is not authenticated; when set, the URL is treated as a managed deployment and is not probed at boot.",
+      "required": false
+    },
+    {
+      "name": "CONVERT_SERVICE_LOCAL",
+      "type": "var",
+      "description": "Assume the conversion service is reachable at http://127.0.0.1:5011 when CONVERT_SERVICE_URL is unset. A development convenience; nothing is started.",
       "required": false
     },
     {
       "name": "CONVERT_SERVICE_AUTOSTART",
       "type": "var",
-      "description": "Start the conversion service from the subgraph on load, if nothing already answers CONVERT_SERVICE_URL. Ignored when CONVERT_SERVICE_API_KEY is set. Single-box affordance: under N replicas each would spawn its own engine.",
+      "description": "Deprecated, kept so existing setups keep working: now means only 'assume the conversion service is on http://127.0.0.1:5011'. It no longer starts anything \u2014 the engine ships as its own container image. Prefer CONVERT_SERVICE_URL, or CONVERT_SERVICE_LOCAL for the same localhost default.",
       "required": false
     }
   ]
