@@ -1,4 +1,5 @@
 import type { LifecycleEvent } from "../../../document-models/knowledge-note/v1/gen/schema/types.js";
+import { lifecycleKey } from "../lib/lifecycle-key.js";
 
 type LifecycleTimelineProps = { events: LifecycleEvent[] };
 
@@ -26,7 +27,7 @@ export function LifecycleTimeline({ events }: LifecycleTimelineProps) {
           ? new Date(event.timestamp).toLocaleString()
           : "";
         return (
-          <div key={event.id} className="flex gap-3">
+          <div key={lifecycleKey(event, i)} className="flex gap-3">
             <div className="flex flex-col items-center">
               <div
                 className={`mt-1 h-2.5 w-2.5 rounded-full ${STATUS_DOT[event.toStatus ?? "DRAFT"]}`}

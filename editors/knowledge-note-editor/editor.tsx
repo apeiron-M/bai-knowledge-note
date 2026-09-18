@@ -1,4 +1,4 @@
-import { useState, useCallback, useMemo } from "react";
+import { useState, useCallback, useMemo, useLayoutEffect, useRef } from "react";
 import { DocumentToolbar } from "@powerhousedao/design-system/connect";
 import { generateId } from "document-model/core";
 import { dispatchActions } from "@powerhousedao/reactor-browser";
@@ -85,6 +85,19 @@ export default function Editor() {
     NOTE_REVISION_MODEL,
   );
 
+  // The title textarea grows with its content. Growing it from a `ref` callback
+  // meant reading `scrollHeight` and writing `height` on EVERY render — a forced
+  // reflow per render, above everything else on the page — and a height change
+  // above the scroll anchor is one of the ways a scroll position moves on its
+  // own. Measure when the value changes instead.
+  const titleRef = useRef<HTMLTextAreaElement>(null);
+  useLayoutEffect(() => {
+    const el = titleRef.current;
+    if (!el) return;
+    el.style.height = "auto";
+    el.style.height = `${el.scrollHeight}px`;
+  }, [stateTitle]);
+
   const handleSetTitle = useCallback(
     (title: string) => {
       if (title && title !== stateTitle) {
@@ -170,7 +183,19 @@ export default function Editor() {
   return (
     <div
       className="h-full overflow-y-auto"
-      style={{ backgroundColor: "var(--bai-bg)", color: "var(--bai-text)" }}
+      style={{
+        backgroundColor: "var(--bai-bg)",
+        color: "var(--bai-text)",
+        // This editor owns a scroll container inside the Connect host's own,
+        // and its content changes height under itself for reasons the browser
+        // cannot see coming: the title re-measures as you type, and the History
+        // tab's operation list grows when an agent writes to this note (a live
+        // change feed feeds it). Chrome's scroll anchoring reacts to those
+        // shifts by moving the scroll position to keep an anchor element still,
+        // which reads as the page scrolling back up by itself. The reader's
+        // position is more trustworthy here than the anchor's, so opt out.
+        overflowAnchor: "none",
+      }}
     >
       <div className="mx-auto max-w-6xl">
         <DocumentToolbar toolbarClassName={TOOLBAR_CLASS} />
@@ -239,12 +264,7 @@ export default function Editor() {
                   el.style.height = "auto";
                   el.style.height = `${el.scrollHeight}px`;
                 }}
-                ref={(el) => {
-                  if (el) {
-                    el.style.height = "auto";
-                    el.style.height = `${el.scrollHeight}px`;
-                  }
-                }}
+                ref={titleRef}
                 rows={1}
                 className="w-full resize-y border-0 bg-transparent text-2xl font-bold leading-snug outline-none"
                 style={{ color: "var(--bai-text)", overflow: "hidden" }}
