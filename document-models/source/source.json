@@ -16,9 +16,9 @@
           "initialValue": ""
         },
         "global": {
-          "schema": "enum SourceType {\n    ARTICLE\n    PAPER\n    BOOK_CHAPTER\n    TRANSCRIPT\n    DOCUMENTATION\n    CONVERSATION\n    WEB_PAGE\n    MANUAL_ENTRY\n}\n\nenum SourceStatus {\n    INBOX\n    EXTRACTING\n    EXTRACTED\n    ARCHIVED\n}\n\ntype SourceProvenance {\n    url: String\n    author: String\n    publishedAt: DateTime\n    method: String\n    tool: String\n}\n\ntype ExtractionStats {\n    claimCount: Int!\n    skippedCount: Int!\n    skipRate: Float!\n    extractedAt: DateTime\n    extractedBy: String\n}\n\ntype SourceState {\n    title: String\n    description: String\n    content: String\n    sourceType: SourceType\n    status: SourceStatus\n    provenance: SourceProvenance\n    extractedClaims: [String!]!\n    extractionStats: ExtractionStats\n    # the artefact this source was derived from. The vault's premise is that a\n    # source is the unrecoverable anchor, so the original bytes are kept here\n    # rather than discarded at ingestion. Content-addressed: see the attachment store.\n    originalFile: AttachmentRef\n    originalFileName: String\n    originalMimeType: String\n    originalSizeBytes: Int\n    originalAttachedAt: DateTime\n    # what produced `content` from the original, so a re-ingest can say what changed\n    convertedBy: String\n    createdAt: DateTime\n    createdBy: String\n}",
+          "schema": "enum SourceType {\n    ARTICLE\n    PAPER\n    BOOK_CHAPTER\n    TRANSCRIPT\n    DOCUMENTATION\n    CONVERSATION\n    WEB_PAGE\n    MANUAL_ENTRY\n}\n\nenum SourceStatus {\n    INBOX\n    EXTRACTING\n    EXTRACTED\n    ARCHIVED\n}\n\ntype SourceProvenance {\n    url: String\n    author: String\n    publishedAt: DateTime\n    method: String\n    tool: String\n}\n\ntype ExtractionStats {\n    claimCount: Int!\n    skippedCount: Int!\n    skipRate: Float!\n    extractedAt: DateTime\n    extractedBy: String\n}\n\n# a piece of the source the content points at — a figure, a formula cut out as an\n# image, a table, a page, a clip. Content-addressed like the original; `role` is\n# free text so a new kind of attachment needs no model change.\ntype SourceAttachment {\n    id: OID!\n    ref: AttachmentRef!\n    mimeType: String!\n    fileName: String\n    sizeBytes: Int\n    role: String\n    page: Int\n    alt: String\n    width: Int\n    height: Int\n    attachedAt: DateTime!\n}\n\ntype SourceState {\n    title: String\n    description: String\n    content: String\n    sourceType: SourceType\n    status: SourceStatus\n    provenance: SourceProvenance\n    extractedClaims: [String!]!\n    extractionStats: ExtractionStats\n    # attachments referenced from `content` as ![alt](attachment://…); what makes those refs claimed\n    attachments: [SourceAttachment!]!\n    # the artefact this source was derived from. The vault's premise is that a\n    # source is the unrecoverable anchor, so the original bytes are kept here\n    # rather than discarded at ingestion. Content-addressed: see the attachment store.\n    originalFile: AttachmentRef\n    originalFileName: String\n    originalMimeType: String\n    originalSizeBytes: Int\n    originalAttachedAt: DateTime\n    # what produced `content` from the original, so a re-ingest can say what changed\n    convertedBy: String\n    createdAt: DateTime\n    createdBy: String\n}",
           "examples": [],
-          "initialValue": "{\n    \"title\": null,\n    \"description\": null,\n    \"content\": null,\n    \"sourceType\": null,\n    \"status\": \"INBOX\",\n    \"provenance\": null,\n    \"extractedClaims\": [],\n    \"extractionStats\": null,\n    \"createdAt\": null,\n    \"createdBy\": null,\n    \"originalFile\": null,\n    \"originalFileName\": null,\n    \"originalMimeType\": null,\n    \"originalSizeBytes\": null,\n    \"originalAttachedAt\": null,\n    \"convertedBy\": null\n}"
+          "initialValue": "{\n    \"title\": null,\n    \"description\": null,\n    \"content\": null,\n    \"sourceType\": null,\n    \"status\": \"INBOX\",\n    \"provenance\": null,\n    \"extractedClaims\": [],\n    \"extractionStats\": null,\n    \"createdAt\": null,\n    \"createdBy\": null,\n    \"originalFile\": null,\n    \"originalFileName\": null,\n    \"originalMimeType\": null,\n    \"originalSizeBytes\": null,\n    \"originalAttachedAt\": null,\n    \"convertedBy\": null,\n    \"attachments\": []\n}"
         }
       },
       "modules": [
@@ -126,6 +126,44 @@
                   "name": "OriginalAlreadyAttachedError",
                   "code": "ORIGINAL_ALREADY_ATTACHED",
                   "description": "The source already has a different original file attached.",
+                  "template": ""
+                }
+              ],
+              "examples": [],
+              "scope": "global"
+            },
+            {
+              "id": "add-attachment",
+              "name": "ADD_ATTACHMENT",
+              "description": "Claim a content-addressed attachment the content refers to (a figure, a formula image, a table, a page, a clip). Idempotent per id.",
+              "schema": "input AddAttachmentInput {\n    id: OID!\n    ref: AttachmentRef!\n    mimeType: String!\n    fileName: String\n    sizeBytes: Int\n    role: String\n    page: Int\n    alt: String\n    width: Int\n    height: Int\n    attachedAt: DateTime!\n}",
+              "template": "Claim a content-addressed attachment the content refers to (a figure, a formula image, a table, a page, a clip). Idempotent per id.",
+              "reducer": "if (state.attachments.some((attachment) => attachment.id === action.input.id)) {\n  throw new DuplicateAttachmentIdError(`Attachment ${action.input.id} is already on this source`);\n}\nstate.attachments.push({\n  id: action.input.id,\n  ref: action.input.ref,\n  mimeType: action.input.mimeType,\n  fileName: action.input.fileName || null,\n  sizeBytes: action.input.sizeBytes ?? null,\n  role: action.input.role || null,\n  page: action.input.page ?? null,\n  alt: action.input.alt || null,\n  width: action.input.width ?? null,\n  height: action.input.height ?? null,\n  attachedAt: action.input.attachedAt,\n});",
+              "errors": [
+                {
+                  "id": "err-duplicate-attachment-id",
+                  "name": "DuplicateAttachmentIdError",
+                  "code": "DUPLICATE_ATTACHMENT_ID",
+                  "description": "An attachment with this id is already on the source",
+                  "template": ""
+                }
+              ],
+              "examples": [],
+              "scope": "global"
+            },
+            {
+              "id": "remove-attachment",
+              "name": "REMOVE_ATTACHMENT",
+              "description": "Drop an attachment from the source; the bytes stay in the store until nothing references them.",
+              "schema": "input RemoveAttachmentInput {\n    id: OID!\n}",
+              "template": "Drop an attachment from the source; the bytes stay in the store until nothing references them.",
+              "reducer": "const index = state.attachments.findIndex((attachment) => attachment.id === action.input.id);\nif (index === -1) {\n  throw new AttachmentNotFoundError(`No attachment ${action.input.id} on this source`);\n}\nstate.attachments.splice(index, 1);",
+              "errors": [
+                {
+                  "id": "err-attachment-not-found",
+                  "name": "AttachmentNotFoundError",
+                  "code": "ATTACHMENT_NOT_FOUND",
+                  "description": "No attachment with this id is on the source",
                   "template": ""
                 }
               ],

@@ -3,7 +3,9 @@ import type {
   SourceStatus,
 } from "document-models/source/v1";
 import {
+  AttachmentNotFoundError,
   ClaimNotFoundError,
+  DuplicateAttachmentIdError,
   ExtractionStatsMismatchError,
   InvalidExtractionStatsError,
   InvalidSourceStatusTransitionError,
@@ -112,5 +114,40 @@ export const sourceSourceManagementOperations: SourceSourceManagementOperations 
       state.originalSizeBytes = action.input.originalSizeBytes ?? null;
       state.originalAttachedAt = action.input.attachedAt;
       state.convertedBy = action.input.convertedBy || null;
+    },
+    addAttachmentOperation(state, action) {
+      if (
+        state.attachments.some(
+          (attachment) => attachment.id === action.input.id,
+        )
+      ) {
+        throw new DuplicateAttachmentIdError(
+          `Attachment ${action.input.id} is already on this source`,
+        );
+      }
+      state.attachments.push({
+        id: action.input.id,
+        ref: action.input.ref,
+        mimeType: action.input.mimeType,
+        fileName: action.input.fileName || null,
+        sizeBytes: action.input.sizeBytes ?? null,
+        role: action.input.role || null,
+        page: action.input.page ?? null,
+        alt: action.input.alt || null,
+        width: action.input.width ?? null,
+        height: action.input.height ?? null,
+        attachedAt: action.input.attachedAt,
+      });
+    },
+    removeAttachmentOperation(state, action) {
+      const index = state.attachments.findIndex(
+        (attachment) => attachment.id === action.input.id,
+      );
+      if (index === -1) {
+        throw new AttachmentNotFoundError(
+          `No attachment ${action.input.id} on this source`,
+        );
+      }
+      state.attachments.splice(index, 1);
     },
   };

@@ -1,5 +1,7 @@
 import { generateMock } from "document-model/mock";
 import {
+  addAttachment,
+  AddAttachmentInputSchema,
   addExtractedClaim,
   AddExtractedClaimInputSchema,
   attachOriginalFile,
@@ -10,6 +12,8 @@ import {
   recordExtractionStats,
   RecordExtractionStatsInputSchema,
   reducer,
+  removeAttachment,
+  RemoveAttachmentInputSchema,
   removeExtractedClaim,
   RemoveExtractedClaimInputSchema,
   setSourceStatus,
@@ -383,6 +387,43 @@ describe("SourceManagementOperations", () => {
     expect(updatedDocument.operations.global).toHaveLength(1);
     expect(updatedDocument.operations.global[0].action.type).toBe(
       "ATTACH_ORIGINAL_FILE",
+    );
+    expect(updatedDocument.operations.global[0].action.input).toStrictEqual(
+      input,
+    );
+    expect(updatedDocument.operations.global[0].index).toEqual(0);
+  });
+
+  it("should handle addAttachment operation", () => {
+    const document = utils.createDocument();
+    const input = generateMock(AddAttachmentInputSchema(), {
+      ref: "attachment://v1:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      attachedAt: "2024-01-01T00:00:00.000Z",
+    });
+
+    const updatedDocument = reducer(document, addAttachment(input));
+
+    expect(isSourceDocument(updatedDocument)).toBe(true);
+    expect(updatedDocument.operations.global).toHaveLength(1);
+    expect(updatedDocument.operations.global[0].action.type).toBe(
+      "ADD_ATTACHMENT",
+    );
+    expect(updatedDocument.operations.global[0].action.input).toStrictEqual(
+      input,
+    );
+    expect(updatedDocument.operations.global[0].index).toEqual(0);
+  });
+
+  it("should handle removeAttachment operation", () => {
+    const document = utils.createDocument();
+    const input = generateMock(RemoveAttachmentInputSchema());
+
+    const updatedDocument = reducer(document, removeAttachment(input));
+
+    expect(isSourceDocument(updatedDocument)).toBe(true);
+    expect(updatedDocument.operations.global).toHaveLength(1);
+    expect(updatedDocument.operations.global[0].action.type).toBe(
+      "REMOVE_ATTACHMENT",
     );
     expect(updatedDocument.operations.global[0].action.input).toStrictEqual(
       input,

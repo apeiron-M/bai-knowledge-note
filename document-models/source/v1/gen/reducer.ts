@@ -7,10 +7,12 @@ import type { SourcePHState } from "document-models/source/v1";
 import { sourceSourceManagementOperations } from "../src/reducers/source-management.js";
 
 import {
+  AddAttachmentInputSchema,
   AddExtractedClaimInputSchema,
   AttachOriginalFileInputSchema,
   IngestSourceInputSchema,
   RecordExtractionStatsInputSchema,
+  RemoveAttachmentInputSchema,
   RemoveExtractedClaimInputSchema,
   SetSourceStatusInputSchema,
 } from "./schema/zod.js";
@@ -84,6 +86,30 @@ const stateReducer: StateReducer<SourcePHState> = (state, action, dispatch) => {
       AttachOriginalFileInputSchema().parse(action.input);
 
       sourceSourceManagementOperations.attachOriginalFileOperation(
+        (state as any)[action.scope],
+        action as any,
+        dispatch,
+      );
+
+      break;
+    }
+
+    case "ADD_ATTACHMENT": {
+      AddAttachmentInputSchema().parse(action.input);
+
+      sourceSourceManagementOperations.addAttachmentOperation(
+        (state as any)[action.scope],
+        action as any,
+        dispatch,
+      );
+
+      break;
+    }
+
+    case "REMOVE_ATTACHMENT": {
+      RemoveAttachmentInputSchema().parse(action.input);
+
+      sourceSourceManagementOperations.removeAttachmentOperation(
         (state as any)[action.scope],
         action as any,
         dispatch,

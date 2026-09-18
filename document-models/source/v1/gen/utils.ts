@@ -41,6 +41,7 @@ export const initialGlobalState: SourceGlobalState = {
   originalSizeBytes: null,
   originalAttachedAt: null,
   convertedBy: null,
+  attachments: [],
 };
 export const initialLocalState: SourceLocalState = {};
 

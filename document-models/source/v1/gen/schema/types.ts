@@ -62,6 +62,20 @@ export type Scalars = {
   Upload: { input: File; output: File };
 };
 
+export type AddAttachmentInput = {
+  alt?: InputMaybe<Scalars["String"]["input"]>;
+  attachedAt: Scalars["DateTime"]["input"];
+  fileName?: InputMaybe<Scalars["String"]["input"]>;
+  height?: InputMaybe<Scalars["Int"]["input"]>;
+  id: Scalars["OID"]["input"];
+  mimeType: Scalars["String"]["input"];
+  page?: InputMaybe<Scalars["Int"]["input"]>;
+  ref: Scalars["AttachmentRef"]["input"];
+  role?: InputMaybe<Scalars["String"]["input"]>;
+  sizeBytes?: InputMaybe<Scalars["Int"]["input"]>;
+  width?: InputMaybe<Scalars["Int"]["input"]>;
+};
+
 export type AddExtractedClaimInput = {
   claimRef: Scalars["String"]["input"];
 };
@@ -105,12 +119,30 @@ export type RecordExtractionStatsInput = {
   skippedCount: Scalars["Int"]["input"];
 };
 
+export type RemoveAttachmentInput = {
+  id: Scalars["OID"]["input"];
+};
+
 export type RemoveExtractedClaimInput = {
   claimRef: Scalars["String"]["input"];
 };
 
 export type SetSourceStatusInput = {
   status: SourceStatus;
+};
+
+export type SourceAttachment = {
+  alt: Maybe<Scalars["String"]["output"]>;
+  attachedAt: Scalars["DateTime"]["output"];
+  fileName: Maybe<Scalars["String"]["output"]>;
+  height: Maybe<Scalars["Int"]["output"]>;
+  id: Scalars["OID"]["output"];
+  mimeType: Scalars["String"]["output"];
+  page: Maybe<Scalars["Int"]["output"]>;
+  ref: Scalars["AttachmentRef"]["output"];
+  role: Maybe<Scalars["String"]["output"]>;
+  sizeBytes: Maybe<Scalars["Int"]["output"]>;
+  width: Maybe<Scalars["Int"]["output"]>;
 };
 
 export type SourceProvenance = {
@@ -122,6 +154,7 @@ export type SourceProvenance = {
 };
 
 export type SourceState = {
+  attachments: Array<SourceAttachment>;
   content: Maybe<Scalars["String"]["output"]>;
   convertedBy: Maybe<Scalars["String"]["output"]>;
   createdAt: Maybe<Scalars["DateTime"]["output"]>;

@@ -4,10 +4,12 @@
  */
 import type { Action } from "document-model";
 import type {
+  AddAttachmentInput,
   AddExtractedClaimInput,
   AttachOriginalFileInput,
   IngestSourceInput,
   RecordExtractionStatsInput,
+  RemoveAttachmentInput,
   RemoveExtractedClaimInput,
   SetSourceStatusInput,
 } from "../types.js";
@@ -36,6 +38,14 @@ export type AttachOriginalFileAction = Action & {
   type: "ATTACH_ORIGINAL_FILE";
   input: AttachOriginalFileInput;
 };
+export type AddAttachmentAction = Action & {
+  type: "ADD_ATTACHMENT";
+  input: AddAttachmentInput;
+};
+export type RemoveAttachmentAction = Action & {
+  type: "REMOVE_ATTACHMENT";
+  input: RemoveAttachmentInput;
+};
 
 export type SourceSourceManagementAction =
   | IngestSourceAction
@@ -43,4 +53,6 @@ export type SourceSourceManagementAction =
   | AddExtractedClaimAction
   | RecordExtractionStatsAction
   | RemoveExtractedClaimAction
-  | AttachOriginalFileAction;
+  | AttachOriginalFileAction
+  | AddAttachmentAction
+  | RemoveAttachmentAction;

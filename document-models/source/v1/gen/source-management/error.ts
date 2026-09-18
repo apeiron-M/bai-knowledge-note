@@ -3,7 +3,9 @@ export type ErrorCode =
   | "InvalidExtractionStatsError"
   | "ExtractionStatsMismatchError"
   | "ClaimNotFoundError"
-  | "OriginalAlreadyAttachedError";
+  | "OriginalAlreadyAttachedError"
+  | "DuplicateAttachmentIdError"
+  | "AttachmentNotFoundError";
 
 export interface ReducerError {
   errorCode: ErrorCode;
@@ -53,6 +55,20 @@ export class OriginalAlreadyAttachedError
   }
 }
 
+export class DuplicateAttachmentIdError extends Error implements ReducerError {
+  errorCode = "DuplicateAttachmentIdError" as ErrorCode;
+  constructor(message = "DuplicateAttachmentIdError") {
+    super(message);
+  }
+}
+
+export class AttachmentNotFoundError extends Error implements ReducerError {
+  errorCode = "AttachmentNotFoundError" as ErrorCode;
+  constructor(message = "AttachmentNotFoundError") {
+    super(message);
+  }
+}
+
 export const errors = {
   SetSourceStatus: { InvalidSourceStatusTransitionError },
 
@@ -64,4 +80,8 @@ export const errors = {
   RemoveExtractedClaim: { ClaimNotFoundError },
 
   AttachOriginalFile: { OriginalAlreadyAttachedError },
+
+  AddAttachment: { DuplicateAttachmentIdError },
+
+  RemoveAttachment: { AttachmentNotFoundError },
 };

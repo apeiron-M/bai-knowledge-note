@@ -5,10 +5,12 @@
 import { type SignalDispatch } from "document-model";
 import type { SourceGlobalState } from "../types.js";
 import type {
+  AddAttachmentAction,
   AddExtractedClaimAction,
   AttachOriginalFileAction,
   IngestSourceAction,
   RecordExtractionStatsAction,
+  RemoveAttachmentAction,
   RemoveExtractedClaimAction,
   SetSourceStatusAction,
 } from "./actions.js";
@@ -42,6 +44,16 @@ export interface SourceSourceManagementOperations {
   attachOriginalFileOperation: (
     state: SourceGlobalState,
     action: AttachOriginalFileAction,
+    dispatch?: SignalDispatch,
+  ) => void;
+  addAttachmentOperation: (
+    state: SourceGlobalState,
+    action: AddAttachmentAction,
+    dispatch?: SignalDispatch,
+  ) => void;
+  removeAttachmentOperation: (
+    state: SourceGlobalState,
+    action: RemoveAttachmentAction,
     dispatch?: SignalDispatch,
   ) => void;
 }

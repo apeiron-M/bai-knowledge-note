@@ -4,26 +4,32 @@
  */
 import { createAction } from "document-model";
 import {
+  AddAttachmentInputSchema,
   AddExtractedClaimInputSchema,
   AttachOriginalFileInputSchema,
   IngestSourceInputSchema,
   RecordExtractionStatsInputSchema,
+  RemoveAttachmentInputSchema,
   RemoveExtractedClaimInputSchema,
   SetSourceStatusInputSchema,
 } from "../schema/zod.js";
 import type {
+  AddAttachmentInput,
   AddExtractedClaimInput,
   AttachOriginalFileInput,
   IngestSourceInput,
   RecordExtractionStatsInput,
+  RemoveAttachmentInput,
   RemoveExtractedClaimInput,
   SetSourceStatusInput,
 } from "../types.js";
 import type {
+  AddAttachmentAction,
   AddExtractedClaimAction,
   AttachOriginalFileAction,
   IngestSourceAction,
   RecordExtractionStatsAction,
+  RemoveAttachmentAction,
   RemoveExtractedClaimAction,
   SetSourceStatusAction,
 } from "./actions.js";
@@ -79,5 +85,23 @@ export const attachOriginalFile = (input: AttachOriginalFileInput) =>
     { ...input },
     undefined,
     AttachOriginalFileInputSchema,
+    "global",
+  );
+
+export const addAttachment = (input: AddAttachmentInput) =>
+  createAction<AddAttachmentAction>(
+    "ADD_ATTACHMENT",
+    { ...input },
+    undefined,
+    AddAttachmentInputSchema,
+    "global",
+  );
+
+export const removeAttachment = (input: RemoveAttachmentInput) =>
+  createAction<RemoveAttachmentAction>(
+    "REMOVE_ATTACHMENT",
+    { ...input },
+    undefined,
+    RemoveAttachmentInputSchema,
     "global",
   );

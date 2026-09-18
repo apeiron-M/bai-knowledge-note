@@ -31,6 +31,7 @@ export function defaultGlobalState(): SourceGlobalState {
     originalSizeBytes: null,
     originalAttachedAt: null,
     convertedBy: null,
+    attachments: [],
   };
 }
 
