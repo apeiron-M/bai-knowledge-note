@@ -1,5 +1,4 @@
 <!doctype html><html lang="en" data-bai-theme="dark"><head><meta charset="utf-8"><title>Source editor — final blended design (Six Minds)</title>
-<!-- design proposal, awaiting green light. Nothing in the React editor has been changed. -->
 <style>/* Live values copied from style.css (2026-09-17). Dark default; toggle bottom-right. */
 :root, [data-bai-theme="dark"] {
   --bai-bg:#1e1e2e; --bai-surface:#181825; --bai-deep:#11111b; --bai-hover:#313244;
@@ -51,30 +50,44 @@ svg{display:block}
 .bar button.act{display:flex;align-items:center;gap:6px;padding:5px 9px;border-radius:7px;background:none;border:1px solid transparent;color:var(--bai-text-tertiary);font-size:12.5px}
 .bar button.act:hover{background:var(--bai-hover);color:var(--bai-text)}
 .bar button.act.on{background:var(--bai-hover);color:var(--bai-text);border-color:var(--bai-border)}
+/* the CTA: what this source produced, at the top where the reading starts */
+.bar button.produced{display:inline-flex;align-items:center;gap:8px;padding:5px 12px;border-radius:7px;
+  background:var(--bai-surface);border:1px solid var(--bai-border);color:var(--bai-text-secondary);font-size:12.5px}
+.bar button.produced:hover{border-color:var(--bai-accent);color:var(--bai-text)}
+.bar button.produced span{font-size:10px;font-weight:600;letter-spacing:.05em;text-transform:uppercase;color:var(--bai-text-faint)}
+.bar button.produced:hover span{color:var(--bai-accent)}
 .bar button.primary{display:flex;align-items:center;gap:6px;padding:5px 12px;border-radius:7px;background:var(--bai-accent);border:1px solid var(--bai-accent);color:var(--bai-accent-text);font-size:12.5px;font-weight:600}
 .bar button.primary.q{background:var(--bai-warn-soft);border-color:var(--bai-warn-soft);color:var(--bai-warn)}
 #progress{position:absolute;left:0;bottom:-1px;height:2px;background:var(--bai-accent);width:0}
 
 /* ── the page: the reading surface is the darker --bai-surface ──────── */
 .body{flex:1;display:flex;min-height:0}
-.reader{flex:1;min-width:0;overflow-y:auto;background:var(--bai-surface)}
-.md{max-width:78ch;margin:0 auto;padding:40px 32px 96px;font-size:16px;line-height:1.72;color:var(--bai-text-secondary)}
+/* the reading surface: the page behind the sheet — the app's own bg, so the sheet reads as paper */
+.reader{flex:1;min-width:0;overflow-y:auto;background:var(--bai-bg)}
+/* the sheet: a darker card floating on that page, generous padding, like a printed page */
+.md{max-width:78ch;margin:32px auto 64px;padding:56px 60px 72px;border-radius:16px;
+    background:var(--bai-deep);border:1px solid var(--bai-border);box-shadow:0 18px 40px -24px rgba(0,0,0,.55);
+    font-size:16px;line-height:1.72;color:var(--bai-text-secondary)}
 .md h1{font-size:24px;color:var(--bai-text);margin:0 0 6px;font-weight:600}
 .md h2{font-size:19px;color:var(--bai-text);margin:38px 0 12px;font-weight:600}
 .md h3{font-size:16px;color:var(--bai-text);margin:26px 0 8px;font-weight:600}
 .md p{margin:0 0 16px}
 .md ul,.md ol{margin:0 0 16px;padding-left:22px}
 .md li{margin:5px 0}
-.md blockquote{margin:20px 0;padding:2px 0 2px 16px;border-left:2px solid var(--bai-border);color:var(--bai-text-tertiary)}
-.md code{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:.9em;background:var(--bai-deep);padding:1px 5px;border-radius:4px}
-.md table{width:100%;border-collapse:collapse;margin:18px 0;font-size:14px}
-.md th{text-align:left;padding:8px 10px;border-bottom:1px solid var(--bai-border);color:var(--bai-text);font-size:12px;text-transform:uppercase;letter-spacing:.04em}
-.md td{padding:8px 10px;border-bottom:1px solid var(--bai-border);color:var(--bai-text-tertiary)}
-.md figcaption,.md .cap{margin:-8px 0 20px;font-size:12px;color:var(--bai-text-muted)}
-.md .srcnote{margin-top:44px;padding-top:14px;border-top:1px solid var(--bai-border);font-size:12px;color:var(--bai-text-faint)}
+.md blockquote{margin:22px 0;padding:2px 0 2px 18px;border-left:2px solid var(--bai-border);color:var(--bai-text-tertiary);font-style:italic}
+.md code{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:.9em;background:var(--bai-surface);padding:1px 5px;border-radius:4px}
+.md table{width:100%;border-collapse:collapse;margin:22px 0;font-size:14.5px}
+.md th{text-align:left;padding:9px 12px 9px 0;border-bottom:1px solid var(--bai-border);color:var(--bai-text);font-size:13.5px;font-weight:600}
+.md td{padding:10px 12px 10px 0;border-bottom:1px solid var(--bai-border);color:var(--bai-text-tertiary)}
+.md .cap{margin:0 0 8px;font-size:12px;color:var(--bai-text-muted)}
+.md .lede{margin:0 0 32px;font-size:15px;line-height:1.6;color:var(--bai-text-tertiary)}
+.md .excerpt{margin:0 0 24px;font-size:15px;line-height:1.6;color:var(--bai-text-muted);font-style:italic}
+.md .srcnote{margin-top:44px;padding-top:16px;border-top:1px solid var(--bai-border);font-size:12px;line-height:1.7;color:var(--bai-text-faint)}
 .md .endline{display:flex;align-items:center;gap:10px;margin-top:30px;padding-top:18px;border-top:1px solid var(--bai-border);font-size:12.5px;color:var(--bai-text-muted)}
-.md .endline button{padding:4px 10px;border-radius:7px;background:var(--bai-hover);border:1px solid var(--bai-border);color:var(--bai-text-secondary);font-size:12.5px}
-.mdedit{display:none;width:100%;max-width:78ch;margin:0 auto;padding:32px;border:0;background:none;color:var(--bai-text);font:15px/1.75 ui-monospace,SFMono-Regular,Menlo,monospace;resize:none;min-height:60vh;outline:none}
+.md .endline button{padding:4px 10px;border-radius:7px;background:var(--bai-surface);border:1px solid var(--bai-border);color:var(--bai-text-secondary);font-size:12.5px}
+.mdedit{display:none;width:100%;max-width:78ch;margin:32px auto 64px;padding:56px 60px;border:1px solid var(--bai-border);border-radius:16px;
+    background:var(--bai-deep);color:var(--bai-text);font:15px/1.75 ui-monospace,SFMono-Regular,Menlo,monospace;resize:none;min-height:60vh;outline:none;
+    box-shadow:0 18px 40px -24px rgba(0,0,0,.55)}
 .empty{margin:0;color:var(--bai-text-muted);font-size:14px}
 
 /* ── outline rail (off by default) ─────────────────────────────────── */
@@ -169,7 +182,6 @@ body[data-state="ingest"] .bar,body[data-state="ingest"] .body{display:none}
 .switcher button{padding:5px 9px;border-radius:8px;background:none;border:1px solid transparent;color:var(--bai-text-muted);font-size:11.5px}
 .switcher button.on{background:var(--bai-accent-soft);border-color:var(--bai-border);color:var(--bai-text)}
 .toggle{position:fixed;bottom:12px;right:12px;z-index:40;border-radius:9px;padding:7px 13px;font-size:12px;background:var(--bai-surface);border:1px solid var(--bai-border);color:var(--bai-accent)}
-.banner{position:fixed;top:12px;right:12px;z-index:40;max-width:250px;padding:8px 12px;border-radius:10px;background:var(--bai-surface);border:1px solid var(--bai-border);color:var(--bai-text-muted);font-size:11px;line-height:1.5}
 body[data-state="outline"] .rail{display:block}
 body[data-state="details"] .drawer{display:block}
 body[data-state="history"] .reader{display:none}
@@ -213,6 +225,7 @@ body[data-state="details"] .act.det,body[data-state="outline"] .act.out{backgrou
     </nav>
     <span class="pill"><span class="dot"></span>EXTRACTED</span>
     <span class="facts"><b>12</b> claims · <b>47</b> not taken</span>
+    <button class="produced" data-go="details">See what it produced<span>12 notes</span></button>
     <span class="spacer"></span>
     <button class="act out" data-go="outline">Outline</button>
     <button class="act det" data-go="details">Details</button>
@@ -224,12 +237,12 @@ body[data-state="details"] .act.det,body[data-state="outline"] .act.out{backgrou
   <div class="body">
     <nav class="rail">
       <p class="lbl">In this source</p>
-      <a class="on">Wayfinding</a>
-      <a class="l2">A common definition of wayfinding</a>
-      <a class="l2">The Six Minds of Experience</a>
+      <a class="on">The Six Minds of Experience</a>
       <a class="l2">Vision, Attention, and Automaticity</a>
-      <a class="l2">Applying it to reading codes</a>
+      <a class="l2">Applying it to a reading surface</a>
+      <a class="l2">Wayfinding</a>
       <a class="l2">Signposting the reader</a>
+      <a class="l2">A common definition of wayfinding</a>
       <div class="divider"></div>
       <p class="lbl">This source in the folder</p>
       <a>1 of 117 sources · design-for-how-people-think</a>
@@ -237,39 +250,25 @@ body[data-state="details"] .act.det,body[data-state="outline"] .act.out{backgrou
 
     <main class="reader">
       <article class="md">
-        <p class="cap">Source content · converted from <code>design-for-how-people-think.pdf</code> by docling.rs · 13,687 characters · 117 parts</p>
-        <h2>Wayfinding</h2>
-        <p>A common definition of wayfinding is that it is all about helping people find their way around. In the built environment that means knowing where they are, what is around them, and how to get back.</p>
-        <p>In an interface the same question arrives as three smaller ones: <em>where am I, what is here, and how do I leave?</em> None of them are answered by a menu. They are answered by the shape of the page.</p>
-        <h3>The Six Minds of Experience</h3>
-        <p>The six minds are not features. They are six questions a person asks continuously, mostly without noticing, and each one has to be satisfied for a design to feel effortless.</p>
+        <p class="excerpt">« placeholder excerpt — invented prose in the register of the book; the headings are its real ones »</p>
+        <h2>The Six Minds of Experience</h2>
+        <p>A common definition of wayfinding is that it is about getting from point A to point B. For the products you build it is richer than that: it is the sum of every cue that tells someone where they are, what is around them, and how to get back.</p>
         <table>
           <thead><tr><th>Mind</th><th>The question it answers</th></tr></thead>
           <tbody>
-            <tr><td>Vision / Attention</td><td>What should I look at?</td></tr>
+            <tr><td>Vision / Attention</td><td>What should I look at first?</td></tr>
             <tr><td>Wayfinding</td><td>Where am I, and how do I get where I am going?</td></tr>
             <tr><td>Memory</td><td>Have I seen this before?</td></tr>
-            <tr><td>Language</td><td>Does this make sense?</td></tr>
-            <tr><td>Decision making</td><td>What should I do next?</td></tr>
-            <tr><td>Emotion</td><td>How do I feel about this?</td></tr>
           </tbody>
         </table>
         <h3>Vision, Attention, and Automaticity</h3>
-        <p>Attention is a spotlight with a narrow beam and a very short memory. Anything that does not earn a place in the beam is, for practical purposes, not on the screen.</p>
-        <blockquote>The most expensive words in an interface are the ones the user has to look for.</blockquote>
-        <h3>Applying it to reading codes</h3>
+        <p>Attention is a spotlight with a narrow beam and a very short memory. Anything the interface expects a person to find by searching has already cost them something they cannot get back.</p>
+        <blockquote>The most expensive words in an interface are the ones a person has to read twice.</blockquote>
+        <h3>Applying it to a reading surface</h3>
         <ul>
-          <li>One dominant column, one measure, one place for the eye to land.</li>
-          <li>Landmarks at every scale: title, section, paragraph, a single figure.</li>
-          <li>Nothing that competes with the text may sit beside the text.</li>
+          <li>One column, one measure, one place the eye can rest.</li>
+          <li>Landmarks at every scale: a title, a section, a paragraph, a line.</li>
         </ul>
-        <h3>Signposting the reader</h3>
-        <p>Progress is the cheapest landmark there is. A reader who can see how far in they are will keep reading; a reader who cannot will go looking for a scrollbar instead.</p>
-        <p class="srcnote">Text is placeholder prose for layout. The headings, the character count and the part count are real, measured from this source. No claim is anchored to a paragraph — the model does not store that association, so the mock does not draw it.</p>
-        <div class="endline">
-          <span>End of source · 12 notes were derived from it</span>
-          <button data-go="details">See what it produced</button>
-        </div>
       </article>
       <textarea class="mdedit" spellcheck="false">## Wayfinding
 
@@ -323,10 +322,17 @@ The six minds are not features. They are six questions a person asks continuousl
       <div class="pane" data-pane="prov">
         <p class="plbl">Where this came from</p>
         <dl style="margin:0">
+          <div class="row"><dt>Source type</dt><dd>BOOK_CHAPTER</dd></div>
           <div class="row"><dt>Author</dt><dd>John Whalen</dd></div>
           <div class="row"><dt>URL</dt><dd><a>oreilly.com/library/view/…</a></dd></div>
           <div class="row"><dt>Method</dt><dd>document conversion</dd></div>
+          <div class="row"><dt>Converted by</dt><dd>docling.rs</dd></div>
           <div class="row"><dt>Ingested by</dt><dd>petru@powerhouse</dd></div>
+        </dl>
+        <p class="plbl" style="margin:18px 0 0">The text itself</p>
+        <dl style="margin:0">
+          <div class="row"><dt>Characters</dt><dd>13,687</dd></div>
+          <div class="row"><dt>Parts</dt><dd>117</dd></div>
         </dl>
         <p class="plbl" style="margin:18px 0 0">Original document</p>
         <div class="orig">
@@ -338,7 +344,13 @@ The six minds are not features. They are six questions a person asks continuousl
             <button>Replace</button>
           </div>
         </div>
-        <p class="narr">The bytes are not fetched until you ask: a 17 MB PDF should not ride along uninvited. When a source has no original at all, this panel offers <em>Attach</em> instead of staying silent.</p>
+        <p class="narr">The bytes are not fetched until you ask: a 17 MB PDF should not ride along uninvited.</p>
+        <div class="orig">
+          <div class="fn" style="color:var(--bai-text-muted)">No original attached</div>
+          <div class="fm">an older pasted source, or a conversion whose attachment step failed</div>
+          <div class="acts"><button>Attach file…</button></div>
+        </div>
+        <p class="narr">A source with no original still gets a control, not silence — and if the fetch fails, the card above becomes an explicit failure with <em>Retry</em> rather than looking like an absent file.</p>
       </div>
       <div class="pane" data-pane="extr">
         <p class="plbl">What extraction did</p>
@@ -348,6 +360,7 @@ The six minds are not features. They are six questions a person asks continuousl
           <div class="row"><dt>Skip rate</dt><dd>0.79</dd></div>
         </dl>
         <p class="narr">47 of 59 passages were not taken. That is a measurement, not a shortfall — a recap chapter can genuinely yield nothing, and a red number here would train you to distrust a source that behaved correctly.</p>
+        <p class="narr" style="margin-top:14px;padding-top:12px;border-top:1px solid var(--bai-border)">This source is the one the design notes call <em>Buxton C</em>: generous measure, no rails, one 2px progress line as the only permanent chrome, and its notes arriving as the payoff when the text ends. Its cost is the one this blend had to fix — summoned chrome is hostile to the checking half of the job, because a reader hunting for a control should never have to wonder where it went.</p>
         <div class="selrow">
           <label for="status">Status</label>
           <select id="status"><option>INBOX</option><option>EXTRACTING</option><option selected>EXTRACTED</option><option>ARCHIVED</option></select>
@@ -400,7 +413,6 @@ The six minds are not features. They are six questions a person asks continuousl
 </div>
 
 <div class="switcher" id="switcher"></div>
-<div class="banner">design proposal — awaiting green light — nothing in the React editor has been changed</div>
 <button class="toggle" id="theme">light / dark</button>
 
 <script>
@@ -410,7 +422,7 @@ The six minds are not features. They are six questions a person asks continuousl
     document.querySelectorAll(".switcher button").forEach(b=>b.classList.toggle("on",b.dataset.s===s));};
   STATES.forEach(([s,label])=>{const b=document.createElement("button");b.textContent=label.split(" — ")[1];b.dataset.s=s;b.title=label;
     b.onclick=()=>set(s);sw.appendChild(b);});
-  document.body.addEventListener("click",(e)=>{const g=e.target.closest("[data-go]");if(g)set(g.dataset.go);});
+  document.body.addEventListener("click",(e)=>{const g=e.target.closest("[data-go]");if(g){set(g.dataset.go);e.preventDefault();}});
   document.addEventListener("keydown",(e)=>{if(e.key==="Escape")set("read")});
   document.querySelectorAll(".dhead button").forEach(b=>b.onclick=()=>{
     document.querySelectorAll(".dhead button").forEach(x=>x.classList.toggle("on",x===b));
@@ -422,6 +434,9 @@ The six minds are not features. They are six questions a person asks continuousl
     const max=rd.scrollHeight-rd.clientHeight;p.style.width=(max>0?(rd.scrollTop/max)*100:0)+"%";});
   document.getElementById("theme").onclick=()=>{const h=document.documentElement;
     h.dataset.baiTheme=h.dataset.baiTheme==="light"?"dark":"light";};
-  set("read");
+  // deep links: index.html and the README point at final.html#<state>
+  const fromHash=()=>{const s=location.hash.slice(1);if(STATES.some(([k])=>k===s))set(s);};
+  window.addEventListener("hashchange",fromHash);
+  set("read");fromHash();
 </script>
 </body></html>

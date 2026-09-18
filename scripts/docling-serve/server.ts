@@ -67,12 +67,14 @@ import { decideRoute, looksGarbled, type OcrCapabilities } from "./routing.mjs";
 import { conversionQuality, type ConversionQuality } from "./quality.mjs";
 import {
   documentToBlocks,
-  documentToMarkdown,
   insertFigurePlaceholders,
+  renderPages,
   runFromItem,
+  spliceTables,
   type PageBlocks,
   type Run,
 } from "./textlayer.mjs";
+import { detectTables, renderTable } from "./tables.mjs";
 import {
   altFor,
   applyBudget,
@@ -595,15 +597,36 @@ async function extractTextWithPdfjs(bytes: Uint8Array): Promise<{
   await task.destroy();
   // `text` is the flat layer (garble check, coverage); `markdown` has the
   // headings and paragraphs the geometry gives away — see textlayer.mjs.
-  const structured = documentToMarkdown(pages);
+  // Blocks first, then the tables that cover some of them: a table's cells
+  // arrive as ordinary blocks, so the grid has to take their place or every
+  // number is written twice (see tables.mjs).
+  const blocks = documentToBlocks(pages).pages.map((page, index) => ({
+    ...page,
+    blocks: spliceTables(
+      page.blocks,
+      detectTables(pages[index]).map((table) => ({
+        ...table,
+        markdown: renderTable(table.grid),
+      })),
+    ),
+  }));
+  const markdown = renderPages(blocks);
+  const flat = pages
+    .map((runs) =>
+      runs
+        .map((r) => r.str + (r.eol ? "\n" : " "))
+        .join("")
+        .trim(),
+    )
+    .join("\n\n");
   return {
-    text: structured.text,
-    markdown: structured.markdown,
+    text: flat,
+    markdown,
     pages: count,
-    headings: structured.headings,
-    // The same blocks with their vertical spans, so a figure can be placed
-    // among them when this rung's markdown is the one that ships.
-    blocks: documentToBlocks(pages).pages,
+    headings: (markdown.match(/^#{1,2} /gm) ?? []).length,
+    // The same blocks, so a figure can be placed among them when this rung's
+    // markdown is the one that ships.
+    blocks,
   };
 }
 

@@ -1,5 +1,4 @@
 <!doctype html><html lang="en" data-bai-theme="dark"><head><meta charset="utf-8"><title>Source editor — Buxton C: immersive / emotional</title>
-<!-- design proposal, awaiting green light. Nothing in the React editor has been changed. -->
 <style>/* Live values copied from style.css (2026-09-17). Dark default; light toggle bottom-right. */
 :root, [data-bai-theme="dark"] {
   --bai-bg:#1e1e2e; --bai-surface:#181825; --bai-deep:#11111b; --bai-hover:#313244;
@@ -14,13 +13,13 @@
   --bai-accent:#7c3aed; --bai-accent-text:#fff; --bai-accent-soft:rgba(124,58,237,0.08);
   --bai-ok:#059669; --bai-ok-soft:rgba(5,150,105,0.08); --bai-warn:#d97706; --bai-danger:#dc2626; --bai-danger-soft:rgba(220,38,38,0.08);
 }
-*{box-sizing:border-box} html,body{margin:0;min-height:100%;background:var(--bai-bg);color:var(--bai-text);font:14px/1.5 ui-sans-serif,system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
+*{box-sizing:border-box} html,body{margin:0;min-height:100%;background:var(--bai-surface);color:var(--bai-text);font:14px/1.5 ui-sans-serif,system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
 /* reading progress — the one permanent piece of chrome */
 .progress{position:fixed;top:0;left:0;height:2px;width:38%;background:var(--bai-accent);z-index:20;transition:width .2s}
 /* chrome recedes: a 64px hot zone at the top summons it */
 .zone{position:fixed;top:0;left:0;right:0;height:64px;z-index:15}
 .chrome{position:fixed;top:0;left:0;right:0;z-index:16;display:flex;align-items:center;gap:12px;padding:0 20px;height:52px;
-  background:color-mix(in srgb, var(--bai-bg) 88%, transparent);backdrop-filter:blur(6px);border-bottom:1px solid var(--bai-border);
+  background:color-mix(in srgb, var(--bai-surface) 88%, transparent);backdrop-filter:blur(6px);border-bottom:1px solid var(--bai-border);
   opacity:0;transform:translateY(-6px);transition:opacity .18s ease, transform .18s ease}
 .zone:hover + .chrome, .chrome:hover, .chrome:focus-within{opacity:1;transform:none}
 .crumb{font-size:12px;color:var(--bai-text-faint)}
@@ -45,17 +44,16 @@ th{text-align:left;font-weight:600;color:var(--bai-text);padding:8px 10px 8px 0;
 td{padding:8px 10px 8px 0;border-bottom:1px solid var(--bai-border);color:var(--bai-text-tertiary)}
 em.ph{color:var(--bai-text-faint);font-style:normal;font-size:13px}
 /* the payoff: arriving at the end of the source meets what it produced */
-.produced{margin-top:56px;padding:22px 24px;border-radius:14px;background:var(--bai-surface);border:1px solid var(--bai-border)}
+.produced{margin-top:56px;padding:22px 24px;border-radius:14px;background:var(--bai-bg);border:1px solid var(--bai-border)}
 .produced h4{margin:0 0 4px;font-size:13px;color:var(--bai-text);font-weight:600}
 .produced p{margin:0 0 14px;font-size:12px;color:var(--bai-text-muted)}
-.claim{display:block;width:100%;text-align:left;font-size:13px;line-height:1.5;color:var(--bai-text-secondary);background:var(--bai-bg);border:1px solid var(--bai-border);border-radius:10px;padding:10px 12px;margin-top:6px}
+.claim{display:block;width:100%;text-align:left;font-size:13px;line-height:1.5;color:var(--bai-text-secondary);background:var(--bai-surface);border:1px solid var(--bai-border);border-radius:10px;padding:10px 12px;margin-top:6px}
 .claim:hover{color:var(--bai-accent);border-color:var(--bai-accent)}
 /* the two floating controls: what the source produced, and the way back to work */
 .chip{position:fixed;bottom:16px;left:50%;transform:translateX(-50%);z-index:18;display:flex;align-items:center;gap:8px;
   background:var(--bai-surface);border:1px solid var(--bai-border);border-radius:999px;padding:7px 14px;font-size:12px;color:var(--bai-text-tertiary);box-shadow:0 6px 20px rgba(0,0,0,.28)}
 .chip b{color:var(--bai-accent);font-weight:600}
 .hintbar{position:fixed;bottom:10px;left:50%;transform:translateX(-50%);font-size:10px;color:var(--bai-text-faint);z-index:1}
-.banner{position:fixed;bottom:12px;left:12px;font-size:10px;color:var(--bai-text-faint);background:var(--bai-surface);border:1px solid var(--bai-border);border-radius:6px;padding:4px 8px;z-index:19}
 .toggle{position:fixed;bottom:12px;right:12px;z-index:19}
 .note{margin-top:40px;padding-top:14px;border-top:1px dashed var(--bai-border);font-size:11px;line-height:1.6;color:var(--bai-text-faint)}
 </style></head><body>
@@ -121,12 +119,10 @@ em.ph{color:var(--bai-text-faint);font-style:normal;font-size:13px}
 
 <div class="chip">Source · <b>12 claims</b> · <button class="a">back to work</button></div>
 
-<script>// design proposal, awaiting green light. Nothing in the React editor has been changed.
-document.addEventListener("DOMContentLoaded",()=>{
+<script>document.addEventListener("DOMContentLoaded",()=>{
   const b=document.createElement("button");b.className="btn toggle";b.textContent="light / dark";b.style.cssText="border-radius:8px;padding:6px 12px;font-size:12px;font-weight:500;background:var(--bai-hover);border:1px solid var(--bai-border);color:var(--bai-accent)";
   b.onclick=()=>{const h=document.documentElement;h.dataset.baiTheme=h.dataset.baiTheme==="light"?"dark":"light"};
   document.body.appendChild(b);
-  const n=document.createElement("div");n.className="banner";n.textContent="design proposal — awaiting green light — nothing in the React editor has been changed";document.body.appendChild(n);
   // the progress line tracks the page, so "how far in am I" is a glance
   const p=document.querySelector(".progress");
   const tick=()=>{const h=document.documentElement;const max=h.scrollHeight-h.clientHeight;p.style.width=(max>0?Math.min(100,(h.scrollTop/max)*100):0)+"%";};

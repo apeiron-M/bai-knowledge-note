@@ -1,5 +1,4 @@
 <!doctype html><html lang="en" data-bai-theme="dark"><head><meta charset="utf-8"><title>Source editor — Buxton A: task-oriented / minimalist</title>
-<!-- design proposal, awaiting green light. Nothing in the React editor has been changed. -->
 <style>/* Live values copied from style.css (2026-09-17). Dark default; light toggle bottom-right. */
 :root, [data-bai-theme="dark"] {
   --bai-bg:#1e1e2e; --bai-surface:#181825; --bai-deep:#11111b; --bai-hover:#313244;
@@ -22,7 +21,7 @@
 .tab{display:inline-flex;align-items:center;gap:6px;border-radius:6px;padding:5px 11px;font-size:12px;font-weight:500;color:var(--bai-text-tertiary);background:transparent;border:0}
 .tab.on{background:var(--bai-hover);color:var(--bai-accent)}
 /* THE editor bar: 40px, three things, nothing else */
-.bar{display:flex;align-items:center;gap:10px;padding:0 16px;height:40px;background:var(--bai-surface);border-bottom:1px solid var(--bai-border);position:sticky;top:0;z-index:5}
+.bar{display:flex;align-items:center;gap:10px;padding:0 16px;height:40px;background:var(--bai-bg);border-bottom:1px solid var(--bai-border);position:sticky;top:0;z-index:5}
 .crumb{font-size:12px;color:var(--bai-text-faint);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .crumb b{color:var(--bai-text-secondary);font-weight:500}
 .pill{font-size:10px;font-weight:600;letter-spacing:.04em;text-transform:uppercase;border-radius:999px;padding:2px 8px;border:1px solid var(--bai-border)}
@@ -34,7 +33,7 @@
 .a.primary{color:var(--bai-accent);font-weight:600}
 .a .n{color:var(--bai-text-faint);font-weight:400}
 /* the reader: the page is the reading surface. No card, no inner scroller. */
-.reader{flex:1;overflow:auto}
+.reader{flex:1;overflow:auto;background:var(--bai-surface)}
 .md{max-width:78ch;margin:0 auto;padding:36px 24px 96px;font-size:16px;line-height:1.7;color:var(--bai-text-secondary)}
 .md h1{font-size:26px;line-height:1.25;margin:0 0 6px;color:var(--bai-text);font-weight:600}
 .md .byline{font-size:11px;color:var(--bai-text-faint);margin:0 0 30px}
@@ -50,7 +49,6 @@
 .md .fig{font-size:11px;color:var(--bai-text-faint);margin:10px 0 22px}
 .md hr{border:0;border-top:1px solid var(--bai-border);margin:34px 0}
 .note{margin-top:28px;padding-top:14px;border-top:1px dashed var(--bai-border);font-size:11px;line-height:1.6;color:var(--bai-text-faint)}
-.banner{position:fixed;bottom:12px;left:12px;font-size:10px;color:var(--bai-text-faint);background:var(--bai-surface);border:1px solid var(--bai-border);border-radius:6px;padding:4px 8px}
 .toggle{position:fixed;bottom:12px;right:12px}
 </style></head><body>
 <div class="app">
@@ -108,10 +106,8 @@
     <p class="note"><strong>Buxton A — task-oriented, minimal.</strong> One bar, three facts, one action per intent, no cards. Reading is uninterrupted and the whole page belongs to the text: the strongest answer to “read the source, then get back to work”. Its cost is the counter-case — a source is not only read, it is <em>the thing notes were derived from</em>, and here the claims are a single word in the bar with nothing about them on screen. It also hides the fact that the queue action is unavailable once a source is EXTRACTED (the button simply disappears). A is the bar and the page; it is not the whole editor.</p>
   </article></div>
 </div>
-<script>// design proposal, awaiting green light. Nothing in the React editor has been changed.
-document.addEventListener("DOMContentLoaded",()=>{
+<script>document.addEventListener("DOMContentLoaded",()=>{
   const b=document.createElement("button");b.className="btn toggle";b.textContent="light / dark";b.style.cssText="border-radius:8px;padding:6px 12px;font-size:12px;font-weight:500;background:var(--bai-hover);border:1px solid var(--bai-border);color:var(--bai-accent)";
   b.onclick=()=>{const h=document.documentElement;h.dataset.baiTheme=h.dataset.baiTheme==="light"?"dark":"light"};
   document.body.appendChild(b);
-  const n=document.createElement("div");n.className="banner";n.textContent="design proposal — awaiting green light — nothing in the React editor has been changed";document.body.appendChild(n);
 });</script></body></html>

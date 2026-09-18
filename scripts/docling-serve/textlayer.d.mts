@@ -15,7 +15,7 @@ export interface Line {
   hardBreak: boolean;
 }
 export type BlockKind = "title" | "heading" | "paragraph" | "placeholder";
-export interface Block { kind: BlockKind; text: string; top: number; bottom: number }
+export interface Block { kind: BlockKind; text: string; top: number; bottom: number; left?: number; right?: number }
 export interface PageBlocks { page: number; blocks: Block[] }
 export const HEADING_RATIO: number;
 export const TITLE_RATIO: number;
@@ -27,6 +27,11 @@ export function bodySize(lines: Line[]): number;
 export function blocksFromLines(lines: Line[], body: number): Block[];
 export function renderBlock(block: Block): string;
 export function documentToBlocks(pages: Run[][]): { pages: PageBlocks[]; bodySize: number };
+export function spliceTables(
+  blocks: Block[],
+  tables: { top: number; bottom: number; left: number; right: number; markdown: string }[],
+): Block[];
+export function renderPages(pageBlocks: PageBlocks[]): string;
 export function insertFigurePlaceholders<F extends { kind: "picture" | "formula"; page: number; box: { t: number; b: number } | null }>(
   pageBlocks: PageBlocks[],
   figures: F[],

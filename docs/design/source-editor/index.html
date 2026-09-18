@@ -26,11 +26,17 @@ p{color:var(--bai-text-tertiary);font-size:12.5px;margin:0 0 10px}
 a{color:var(--bai-accent)}
 .surface{background:var(--bai-surface);border:1px solid var(--bai-border);border-radius:12px;padding:14px 16px;margin:0 0 22px}
 .surface b{color:var(--bai-text-secondary);font-weight:600}
-/* four live frames, scaled so the whole composition is comparable at a glance */
+/* the two controls, sitting together bottom-left */
+.controls{position:fixed;left:12px;bottom:12px;z-index:40;display:flex;align-items:center;gap:8px}
+.hint{font-size:11px;color:var(--bai-text-muted);background:var(--bai-surface);border:1px solid var(--bai-border);border-radius:8px;padding:6px 10px}
+/* the four live frames, each one a link to its full-page file */
 .row{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:16px;align-items:start}
-.col{min-width:0}
-.shot{position:relative;width:100%;aspect-ratio:504/620;overflow:hidden;border:1px solid var(--bai-border);border-radius:12px;background:var(--bai-deep)}
-.shot iframe{position:absolute;top:0;left:0;width:1440px;height:1772px;border:0;transform-origin:top left;transform:scale(var(--s,.35))}
+.col{min-width:0;display:flex;flex-direction:column}
+a.shot{position:relative;display:block;width:100%;aspect-ratio:504/620;overflow:hidden;border:1px solid var(--bai-border);border-radius:12px;background:var(--bai-deep);text-decoration:none;transition:border-color .15s ease,transform .15s ease}
+a.shot:hover{border-color:var(--bai-accent);transform:translateY(-2px)}
+a.shot iframe{position:absolute;top:0;left:0;width:1440px;height:1772px;border:0;transform-origin:top left;transform:scale(var(--s,.35));pointer-events:none}
+a.shot .open{position:absolute;left:0;right:0;bottom:0;z-index:2;display:flex;align-items:center;justify-content:center;gap:6px;padding:7px 10px;font-size:11px;font-weight:600;letter-spacing:.03em;color:var(--bai-text-secondary);background:color-mix(in srgb,var(--bai-surface) 92%,transparent);border-top:1px solid var(--bai-border);backdrop-filter:blur(4px)}
+a.shot:hover .open{color:var(--bai-accent)}
 .tag{display:inline-flex;align-items:center;gap:6px;font-size:10px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--bai-text-faint);margin:8px 0 4px}
 .tag b{color:var(--bai-text-secondary)}
 ul{margin:6px 0 0;padding-left:16px;color:var(--bai-text-tertiary);font-size:12px} li{margin:3px 0}
@@ -40,8 +46,15 @@ table{border-collapse:collapse;width:100%;font-size:12.5px;margin-top:8px}
 th,td{text-align:left;padding:8px 10px;border-bottom:1px solid var(--bai-border);vertical-align:top}
 th{color:var(--bai-text);font-weight:600;font-size:11px;letter-spacing:.04em;text-transform:uppercase}
 td{color:var(--bai-text-tertiary)} td b{color:var(--bai-text-secondary);font-weight:500}
-.toggle{position:fixed;bottom:12px;right:12px;z-index:40;border-radius:8px;padding:6px 12px;font-size:12px;font-weight:500;background:var(--bai-hover);border:1px solid var(--bai-border);color:var(--bai-accent)}
+button.toggle{border-radius:8px;padding:6px 12px;font-size:12px;font-weight:500;background:var(--bai-surface);border:1px solid var(--bai-border);color:var(--bai-accent);font-family:inherit;cursor:pointer}
+button.toggle:hover{background:var(--bai-hover)}
 .note{border-left:2px solid var(--bai-border);padding-left:12px;color:var(--bai-text-muted);font-size:12px}
+/* the seven states of the final, each a link into the file with that state preselected */
+.states{display:flex;flex-wrap:wrap;gap:8px;margin:10px 0 0}
+a.state{display:inline-flex;align-items:center;gap:8px;padding:7px 12px;border-radius:9px;background:var(--bai-surface);border:1px solid var(--bai-border);color:var(--bai-text-secondary);text-decoration:none;font-size:12.5px}
+a.state:hover{border-color:var(--bai-accent);color:var(--bai-text)}
+a.state b{font-size:10px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--bai-text-faint)}
+a.state:hover b{color:var(--bai-accent)}
 </style></head><body><div class="wrap">
   <h1><code>bai/source</code> editor — three concepts and the blend</h1>
   <p class="sub">Six Minds of Experience (`.claude/skills/six-minds-design-skill.md`) · live `--bai-*` tokens · same theme, re-arranged only.</p>
@@ -53,7 +66,7 @@ td{color:var(--bai-text-tertiary)} td b{color:var(--bai-text-secondary);font-wei
 
   <div class="row">
     <div class="col">
-      <div class="shot"><iframe src="a-minimal.html" title="Buxton A — minimal" loading="lazy"></iframe></div>
+      <a class="shot" href="a-minimal.html" title="Open Buxton A — minimal, full page"><iframe src="a-minimal.html" title="Buxton A — minimal" loading="lazy"></iframe><span class="open">Open full page ↗</span></a>
       <span class="tag"><b>A</b> · minimal</span>
       <ul>
         <li class="good">the page is the reading surface: no card, no inner scroller</li>
@@ -64,7 +77,7 @@ td{color:var(--bai-text-tertiary)} td b{color:var(--bai-text-secondary);font-wei
       </ul>
     </div>
     <div class="col">
-      <div class="shot"><iframe src="b-conventional.html" title="Buxton B — conventional" loading="lazy"></iframe></div>
+      <a class="shot" href="b-conventional.html" title="Open Buxton B — conventional, full page"><iframe src="b-conventional.html" title="Buxton B — conventional" loading="lazy"></iframe><span class="open">Open full page ↗</span></a>
       <span class="tag"><b>B</b> · conventional</span>
       <ul>
         <li class="good">nothing has to be learned — title, tabs, outline, inspector</li>
@@ -76,7 +89,7 @@ td{color:var(--bai-text-tertiary)} td b{color:var(--bai-text-secondary);font-wei
       </ul>
     </div>
     <div class="col">
-      <div class="shot"><iframe src="c-immersive.html" title="Buxton C — immersive" loading="lazy"></iframe></div>
+      <a class="shot" href="c-immersive.html" title="Open Buxton C — immersive, full page"><iframe src="c-immersive.html" title="Buxton C — immersive" loading="lazy"></iframe><span class="open">Open full page ↗</span></a>
       <span class="tag"><b>C</b> · immersive</span>
       <ul>
         <li class="good">reads like a document: generous measure, nothing else on screen</li>
@@ -87,7 +100,7 @@ td{color:var(--bai-text-tertiary)} td b{color:var(--bai-text-secondary);font-wei
       </ul>
     </div>
     <div class="col">
-      <div class="shot"><iframe src="final.html" title="the blended design" loading="lazy"></iframe></div>
+      <a class="shot" href="final.html" title="Open the blended design, full page"><iframe src="final.html" title="the blended design" loading="lazy"></iframe><span class="open">Open full page ↗</span></a>
       <span class="tag"><b>final</b> · the blend</span>
       <ul>
         <li class="good">C's page + A's bar + B's vocabulary and panels</li>
@@ -126,9 +139,27 @@ td{color:var(--bai-text-tertiary)} td b{color:var(--bai-text-secondary);font-wei
   <h2>The diagnosis this answers (from the README)</h2>
   <p class="note">The reading surface is a 600px window inside a page inside Connect's scroller · the text sits below title, description, original-file panel and tab bar · three nested card levels · the status is editable twice, once as a pill and once as a `<select>` · the source's purpose (its claims) lives in a 256px sidebar · no outline and no progress on a 117-part book · editing replaces the whole page and resets the status to INBOX · `skipRate` is painted red above 10% while the vault's own doctrine says it is a measurement, not a goal. The last two are behaviour, not layout — they need a decision beyond this mock.</p>
 
+  <h2>The states of the final — click any one to open it</h2>
+  <p class="note">Each link opens <code>final.html</code> with that state already selected. Inside the file the same switcher sits bottom-left, so you can move between them without coming back here.</p>
+  <div class="states">
+    <a class="state" href="final.html#read"><b>read</b> the source, full page</a>
+    <a class="state" href="final.html#outline"><b>outline</b> the rail on a 117-part book</a>
+    <a class="state" href="final.html#details"><b>details</b> claims · provenance · extraction</a>
+    <a class="state" href="final.html#history"><b>history</b> the source's own revisions</a>
+    <a class="state" href="final.html#edit"><b>edit</b> editing in place</a>
+    <a class="state" href="final.html#original"><b>original</b> the document it came from</a>
+    <a class="state" href="final.html#ingest"><b>ingest</b> a source with no content yet</a>
+  </div>
+
   <h2>How to read these</h2>
-  <p>Each file is self-contained: open it directly (`file://` is enough). The three concepts are deliberately unfinished ideas — the value is in the final, which is the blend. `final.html` has a state switcher bottom-left: read · outline · claims · history · editing · the original. Light/dark is bottom-right in every file.</p>
+  <p>Each file is self-contained: open it directly (`file://` is enough). Click any frame above — or any state — to open the file it belongs to at full size. The three concepts are deliberately unfinished ideas; the value is in the final, which is the blend. Light/dark is bottom-right in every file, and inside the frames too.</p>
 </div>
-<button class="toggle" id="t">light / dark</button>
-<script>document.getElementById("t").onclick=()=>{const h=document.documentElement;h.dataset.baiTheme=h.dataset.baiTheme==="light"?"dark":"light"};</script>
+<div class="controls">
+  <button class="toggle" id="t">light / dark</button>
+  <span class="hint">click a frame to open it full size</span>
+</div>
+<script>
+  document.getElementById("t").onclick=()=>{const h=document.documentElement;
+    h.dataset.baiTheme=h.dataset.baiTheme==="light"?"dark":"light";};
+</script>
 </body></html>

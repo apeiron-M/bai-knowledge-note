@@ -159,18 +159,24 @@ export function blocksFromLines(lines, body) {
         size: line.size,
         top: line.y + line.size,
         bottom: line.y,
+        left: line.x,
+        right: line.xEnd,
       });
     else if (last) {
       last.text += " " + line.text;
       last.bottom = line.y; // the block now reaches down to this line
+      last.left = Math.min(last.left, line.x);
+      last.right = Math.max(last.right, line.xEnd);
     }
     prev = line;
   }
-  return blocks.map(({ kind, text, top, bottom }) => ({
+  return blocks.map(({ kind, text, top, bottom, left, right }) => ({
     kind,
     text,
     top,
     bottom,
+    left,
+    right,
   }));
 }
 
@@ -212,6 +218,54 @@ export function documentToBlocks(pages) {
     })),
     bodySize: body,
   };
+}
+
+/**
+ * Replace the text blocks a table covers with the table itself.
+ *
+ * A table's cells arrive as ordinary blocks — on the Sky report's P&L page,
+ * twenty fragments like `"$96.01M 100%"` — so the rendered table has to take
+ * their place, or every number appears twice, once in a grid and once as
+ * rubble. A block belongs to a table when its vertical middle is inside the
+ * table's rows and it overlaps the table horizontally.
+ * @param {{ kind: string; text: string; top: number; bottom: number; left?: number; right?: number }[]} blocks
+ * @param {{ top: number; bottom: number; left: number; right: number; markdown: string }[]} tables
+ */
+export function spliceTables(blocks, tables) {
+  let out = blocks.map((b) => ({ ...b }));
+  for (const table of [...tables].sort((a, b) => b.top - a.top)) {
+    const covered = (block) => {
+      const middle = (block.top + block.bottom) / 2;
+      if (middle > table.top || middle < table.bottom) return false;
+      if (block.left === undefined || block.right === undefined) return true;
+      return block.right >= table.left && block.left <= table.right;
+    };
+    const at = out.findIndex(covered);
+    const kept = out.filter((block) => !covered(block));
+    const insertion = {
+      kind: "placeholder",
+      text: table.markdown,
+      top: table.top,
+      bottom: table.bottom,
+    };
+    if (at === -1) kept.push(insertion);
+    else kept.splice(Math.min(at, kept.length), 0, insertion);
+    out = kept;
+  }
+  return out;
+}
+
+/** Whole pages of blocks as markdown, blank-line separated. */
+export function renderPages(pageBlocks) {
+  return pageBlocks
+    .map(({ blocks }) =>
+      blocks
+        .map(renderBlock)
+        .filter((t) => t.length > 0)
+        .join("\n\n"),
+    )
+    .filter((page) => page.length > 0)
+    .join("\n\n");
 }
 
 /**
