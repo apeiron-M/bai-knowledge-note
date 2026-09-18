@@ -8,7 +8,7 @@ Open `index.html` (`file://` is enough; no build step). Self-contained HTML, liv
 
 | file | what |
 |---|---|
-| `final.html` | **the blended design.** One screen, seven states via the switcher bottom-left: `#read` (default — the source, full page), `#outline` (the outline rail open on a 117-part book), `#details` (claims + provenance + extraction drawer), `#history` (the source's own revisions, scrubbed), `#edit` (editing inline, not a page swap), `#original` (the document it was converted from), `#ingest` (a source that has no content yet — the paste form, with the toolbar still above it) |
+| `final.html` | **the blended design.** One screen, seven states via the switcher bottom-left: `#read` (default — the source, full page), `#details` (claims + provenance + extraction), `#history` (the source's own revisions, scrubbed), `#edit` (editing inline, not a page swap), `#original` (the document it was converted from), `#ingest` (a source that has no content yet — the paste form, with the toolbar still above it) |
 | `a-minimal.html` · `b-conventional.html` · `c-immersive.html` | the three Buxton sketches the final was blended from |
 | `index.html` | all four side by side, and what was taken from each |
 
@@ -18,11 +18,11 @@ Open `index.html` (`file://` is enough; no build step). Self-contained HTML, liv
 
 ## 🧠 COGNITIVE AUDIT CHECKPOINTS
 
-1. **Vision / Attention.** The markdown text is the *only* thing allowed to occupy the optical centre: `78ch` at 16px/1.7, on the **darker `--bai-surface`** rather than inside a card, with everything else at `--bai-text-faint` or lower contrast. Today the text sits in a `max-h-[600px] overflow-y-auto` box *below* the title, description, original-file panel and tab bar — so the eye lands on chrome first and reads a 13,687-character chapter through a 600px window.
-2. **Wayfinding.** Three questions must be answerable without scrolling: *which source is this?* (breadcrumb), *where is it in its life?* (one status pill: INBOX → EXTRACTING → EXTRACTED → ARCHIVED), *where am I in the text?* (outline rail + reading progress). A 117-part book needs the third one, which does not exist today.
-3. **Memory / Semantics.** Users arrive with a reader's schema, not an admin's: a slim sticky bar, a text column, an outline, an inspector. Editing *in place* rather than a full-page form. Status is a **pill**; a `<select>` that mutates state is a form control wearing a badge's clothes.
+1. **Vision / Attention.** The markdown text is the *only* thing allowed to occupy the optical centre: full width at 16px/1.7, on the **darker `--bai-surface`** sheet, with everything else at `--bai-text-faint` or lower contrast and confined to one header card. Today the text sits in a `max-h-[600px] overflow-y-auto` box *below* the title, description, original-file panel and tab bar — so the eye lands on chrome first and reads a 13,687-character chapter through a 600px window.
+2. **Wayfinding.** Three questions must be answerable without scrolling: *which source is this?* (the header's title), *where is it in its life?* (one status pill: INBOX → EXTRACTING → EXTRACTED → ARCHIVED), *where am I in the text?* (the reading-progress line, and headings that stand out from body text). The third is the weakest of the three today, and the outline view built for it was dropped on review.
+3. **Memory / Semantics.** Users arrive with a reader's schema, not an admin's: a document header, a text column, an outline, an inspector. Editing *in place* rather than a full-page form. Status is a **pill**; a `<select>` that mutates state is a form control wearing a badge's clothes.
 4. **Language.** The vault's own words, unchanged: *source*, *source type*, *provenance*, *extracted claims*, *Queue for processing*, `INBOX`/`EXTRACTING`/`EXTRACTED`/`ARCHIVED`, *revisions*, *original document*, *status*. No "document insights", no "AI summary", no invented nouns. `skipRate` stays a number and is *narrated*, never scored.
-5. **Decision making.** The microgoals, in the order a reader actually has them: ① *is this the text I think it is?* → read it; ② *did extraction get anything out of it?* → claims count, one drawer away; ③ *what do I do next?* → **Queue for processing** (or see that it already is); ④ *where did this text come from?* → the original document; ⑤ *what changed?* → revisions. Today ④ precedes ① on screen and ② is at the bottom of a 256px sidebar.
+5. **Decision making.** The microgoals, in the order a reader actually has them: ① *is this the text I think it is?* → read it; ② *did extraction get anything out of it?* → claims count, one view away; ③ *what do I do next?* → **Queue for processing** (or see that it already is); ④ *where did this text come from?* → the original document; ⑤ *what changed?* → revisions. Today ④ precedes ① on screen and ② is at the bottom of a 256px sidebar.
 6. **Emotion.** The anxiety is *"did the machine take the right things out of my source?"* — so the claims list is reassurance, not metadata, and it must be one gesture away. The second anxiety is *"I opened this to read one paragraph"* — so nothing may require scrolling past anything to start reading. Calm, not clever: no gradients, no glow, no motion except a progress line.
 
 ## 🎨 DIVERGENT CONCEPTS EVALUATED
@@ -33,23 +33,25 @@ Open `index.html` (`file://` is enough; no build step). Self-contained HTML, liv
 | **B** | **Conventional** — `b-conventional.html` | Memory: the docs-reader schema everyone knows — sticky header, tabs, outline left, inspector right, cards. | Re-introduces exactly the problem: cards around the text, and the inspector's default-open state steals the centre. |
 | **C** | **Immersive** — `c-immersive.html` | Attention and appeal: full-bleed type, chrome that recedes until summoned, a reading-progress line, the claims as a quiet rail. | Its strongest idea (summoned chrome) is hostile to the *checking* half of the job — a reader hunting for a control should never wonder where it went. |
 
-**The blend (and why):** C's *page*, A's *bar*, B's *vocabulary*. Concretely — the text takes the whole width and height of the viewport minus a slim sticky bar (C); that bar carries identity, the status pill, the claims count and the source-only actions, with everything else behind labelled buttons (A); and the panels that open are the familiar ones, named in the vault's words — details, revisions, original (B). A's "one button" idea survives as **Details**, because the claims drawer is the answer to the source's own reason to exist; B's tabs survive *inside* that drawer rather than over the text.
+**The blend (and why):** C's *page*, A's *restraint*, B's *vocabulary*, in the original editor's own furniture. Concretely — the content takes the width and the height of the viewport, the page scrolls (C); the top section is the **original's own header**, restyled into one bordered card: status pill, type chip, the title, the original-document row, and one row of **views** — Content · History · Details · Edit — each showing that view and nothing else (A's restraint: one thing on screen at a time, everything labelled, nothing competing with the text). The claims, provenance and extraction are the familiar panels of B, named in the vault's words, now as a view rather than a drawer.
 
 ## The four requirements, and where each is met
 
-1. **Full page for reading.** The reader column is `78ch` centred, and the *page* is the reading surface: the reading column is painted `--bai-surface` (the darker ground) and the page scrolls — there is no inner scroller anywhere in `#read`. The bar is 44px so the text is never below a wall of chrome.
-2. **Every control reachable.** Outline · Details · Edit sit in the bar's right cluster; Queue for processing is the accent action; the status pill is read-only and the status *change* lives in Details (where a state change belongs). The document controller (Connect's `DocumentToolbar`) sits directly above, untouched.
-3. **Check, then back to work.** Nothing needs a second screen: `Esc` closes whatever opened, and the drawer/rail never unmount the text. Reading progress is visible, so "am I nearly done?" is a glance.
-4. **This is the source the notes were derived from.** The claims are named as *extracted claims*, counted in the bar (`12 claims`), listed in the drawer with links straight into each note, with the extraction stats beside them. The original document is a first-class action, not a panel that pushes the text down.
+1. **Full page for reading.** The reading column is the full width of the page (minus a 26px gutter and the sheet's own padding), painted `--bai-surface` on the app's `--bai-bg`, and the *page* scrolls — there is no inner scroller anywhere in `#read`. The header card is the only chrome above it, and it scrolls away.
+2. **Every control reachable.** Content · History · Details · Edit are the header card's tabs; Queue for processing is the accent action; the status pill is read-only and the status *change* lives in Details (where a state change belongs). The document controller (Connect's `DocumentToolbar`) sits directly above, untouched.
+3. **Check, then back to work.** Nothing needs a second screen: `Esc` returns to the content, switching views costs nothing, and the header stays put so the way back is always one click. Reading progress is visible, so "am I nearly done?" is a glance.
+4. **This is the source the notes were derived from.** The claims are named as *extracted claims*, counted on the header's *See what it produced* CTA (`12 notes`), listed in the Details view with links straight into each note, with the extraction stats beside them. The original document is a first-class row in the header, not a panel that pushes the text down.
 
-## The document controller (Connect's `DocumentToolbar`)
+## The document header, and the document controller above it
 
-The toolbar is **not redesigned** — it renders exactly as it does today, directly above the source bar, because it is the document controller and its controls are Connect's, not this editor's. From `@powerhousedao/design-system` (`documentToolbarControls`, in slot order): **undo · redo · download · [document name] · update · history · switchboard · close** — seven buttons plus the name control, grouped into a left slot, the name, and a right slot.
+The **top section is the original editor's**, restyled: status pill and type chip, the CTA, the view actions, the title as an `h1`, the original-document row, then `Content` / `History` tabs with the accent underline — all inside one bordered card so it is distinguished from the page behind it. It scrolls away with the page, exactly as the original's header does.
 
-Two consequences for this design, both deliberate:
+Above it sits Connect's `DocumentToolbar`, **not redesigned** — it renders exactly as it does today, because it is the document controller and its controls are Connect's, not this editor's. From `@powerhousedao/design-system` (`documentToolbarControls`, in slot order): **undo · redo · download · [document name] · update · history · switchboard · close** — seven buttons plus the name control, grouped into a left slot, the name, and a right slot.
 
-- **The bar no longer duplicates the toolbar.** *Revisions* and *Original* are gone from the source bar: revision history is the toolbar's `history` control, and Download is the toolbar's `download`. The source bar carries only what the toolbar cannot know — the breadcrumb, the status pill, the claims count, and the three source-specific actions.
-- **The toolbar keeps its own `h1` document name** (shown truncating), so the source bar does not repeat the title either; it shows the breadcrumb path instead.
+Two consequences, both deliberate:
+
+- **The header does not duplicate the toolbar.** Download is the toolbar's `download`; the revision view is reachable from the toolbar's `history` control as well as the `History` tab. The header carries only what the toolbar cannot know — status, type, what the source produced, the original document, and the source's own view switch.
+- **The toolbar keeps its own `h1` document name** (truncating), so the header's title is the document's, not a repeat of the toolbar's chrome.
 
 The mock renders the toolbar faithfully in both themes via `TOOLBAR_CLASS` (`editors/shared/theme-context.tsx`): `--bai-surface` ground, buttons on `--bai-bg` at `--bai-text-tertiary`, hover to `--bai-hover`/`--bai-text-secondary`.
 
@@ -74,43 +76,43 @@ Re-audited after the first review, because the first pass missed flows. Nothing 
 
 | current control | where in `editor.tsx` | where it lands in the mock |
 |---|---|---|
-| Document name / header title | :276–283 | **the toolbar's `name` control** (`h1`), shown truncating; the source bar shows the breadcrumb instead |
-| Description | :285 | under the title in the reading column, above the first heading — it is reading matter, not a field |
-| **Source type** (`ARTICLE`…`MANUAL_ENTRY`) | :291 (`type-pill`) | the content caption at the top of the reading column (`BOOK_CHAPTER · converted from … · 13,687 characters · 117 parts`) |
-| Status pill | :192 | **the bar's pill** (read-only, `EXTRACTED`) |
-| Status `<select>` (dispatches `setSourceStatus`) | :248 | **Details → Extraction**, labelled *Status* — a deliberate, rare change, moved away from the pill that only reports |
-| `OriginalFilePanel` — renderable, not renderable, failed (+ Retry), no original (+ Attach) | :295 | **`Original` action → overlay** (`#original`); all four states kept: renderable (the viewer), not renderable (card with name/size/type/Download), failed (explicit failure + Retry), no original (**Attach file…**, never silence) |
-| Tab bar: Content / Claims / Stats | :304–333 | **gone as a bar over the text.** Content is the page; Claims, Provenance and Extraction are the Details drawer's tabs — the source no longer competes with its own metadata for the centre |
-| Content markdown (or *No content*) | :335–365 | **the reading surface** (`#read`), full page; the empty state stays the page with one line of text and no invented placeholder |
-| *Extracting…* hint | :370 | kept as the `EXTRACTING` pill in the bar (plus the progress line) |
+| Document name / header title | :276–283 | **the header card's title** (`h1`, 27px) and the toolbar's `name` control. There is no breadcrumb; the toolbar's `name` control and the title carry identity |
+| Description | :285 | Details → Provenance, "What this source is" — a sentence to *check*, not to read past |
+| **Source type** (`ARTICLE`…`MANUAL_ENTRY`) | :291 (`type-pill`) | **the header card's type chip**, beside the status; also a row in Details → Provenance |
+| Status pill | :192 | **the header card's status pill** (read-only, `EXTRACTED`) |
+| Status `<select>` (dispatches `setSourceStatus`) | :248 | **Details → Extraction**, labelled *Status* — a rare, deliberate act, kept away from the pill that only reports it. The original keeps a select in the header; this mock does not (override any) |
+| `OriginalFilePanel` — renderable, not renderable, failed (+ Retry), no original (+ Attach) | :295 | **the header card's original-document row** — the real panel's collapsed form: file icon, name, `mime · size · converted by`, then `View original` (accent) and `Download`. All four states kept, and the row swaps to **Attach file…** when a source has no original |
+| Tab bar: Content / Claims / Stats | :304–333 | **the header card's tabs**, extended into the view switch — `Content` · `History` · `Details` · `Edit`. Content is the document and History the revisions (the original's own two), and the panels the old sidebar carried became views of their own rather than a side column |
+| Content markdown (or *No content*) | :335–365 | **the reading surface** (`#read`) — the sheet, full width; the empty state stays the page with one line of text and no invented placeholder |
+| *Extracting…* hint | :370 | kept as the `EXTRACTING` pill in the header (plus the progress line) |
 | Sidebar: Provenance (Author, URL, method, Ingested by) | :445–470 | **Details → Provenance** |
 | Sidebar: Stats (Claims, Skipped, `skipRate`) | :480–520 | **Details → Extraction**, narrated rather than scored (see finding 8) |
-| Sidebar: Extracted Claims + "View note" links | :530 | **Details → Claims** (default tab), with the count also in the bar |
-| *Queue for Processing* / *Queued — run `/pipeline`* | :239–244 | **the bar's accent action**, same copy, changing into its own queued state rather than disappearing |
-| `EditForm` (title, description, author, URL, content) + *Ingest Source* | :165, :655–900 | **`#edit`** — the *same* fields, edited in place with the toolbar and bar intact instead of a full-page swap; the pre-content state is `#ingest`, which shows that form with the toolbar still above it |
+| Sidebar: Extracted Claims + "View note" links | :530 | **Details → Claims** (its default tab), with the count on the *See what it produced* CTA in the header |
+| *Queue for Processing* / *Queued — run `/pipeline`* | :239–244 | **the header card's accent action**, same copy, changing into its own queued state — and moving the pill to `EXTRACTING` — rather than disappearing |
+| `EditForm` (title, description, author, URL, content) + *Ingest Source* | :165, :655–900 | **`#edit`** — the same fields, edited in place under a `Source details` disclosure, with the header card intact instead of a full-page swap; the pre-content state is `#ingest`, which shows that form with the toolbar still above it |
 | *Add Source Material* / *Paste raw content here…* | :792–795 | **`#ingest`**'s heading and lede, verbatim |
-| Revisions (`RevisionScrubber` + `RevisionSnapshotPanel` + `RevisionOperationList`) | :390 | **`#history`** — a working port: the scrubber with its steppers, "N of M operations changed the text", the signed operation rows, the replayed snapshot with the revision's own chips, and `Show changes` → the real diff (heading, ±lines, `vs previous`/`vs current`, word-level marks, `Also changed`). Reachable from the bar's **History** button and from the toolbar's history control |
+| Revisions (`RevisionScrubber` + `RevisionSnapshotPanel` + `RevisionOperationList`) | :390 | **the `History` tab** — a working port: the scrubber with its steppers, "N of M operations changed the text", the signed operation rows, the replayed snapshot with the revision's own chips, and `Show changes` → the real diff (heading, ±lines, `vs previous`/`vs current`, word-level marks, `Also changed`). The toolbar's history control opens it too |
 | Vault nav bar (Chat…Health) | drive app shell | unchanged, shown for context at the top |
 
 ## Schema coverage — every field in `document-models/source/v1/schema.graphql`
 
-The rule the placement follows: **a field is shown where the question it answers is asked.** Content is what is read, so it takes the page; the three facts needed while reading (identity, status, how many notes came out) take the bar; everything checked rather than read takes Details. Nothing is displayed twice, and nothing is displayed where it would be scrolled past.
+The rule the placement follows: **a field is shown where the question it answers is asked.** Content is what is read, so it takes the page; the facts needed before reading (identity, status, what it produced) take the header card; everything checked rather than read takes Details. Nothing is displayed twice, and nothing is displayed where it would be scrolled past.
 
 | `SourceState` field | where it renders in `final.html` |
 |---|---|
-| `title` | the toolbar's `name` control and the bar's breadcrumb — never repeated above the reading column |
+| `title` | **the header card's `h1`** and the toolbar's `name` control — never repeated above the reading column |
 | `description` | Details → Provenance, under "What this source is" (a sentence to *check*, not to read past) |
 | `content` | **the reading surface** — the only thing on the page |
-| `sourceType` | Details → Provenance (and the `Type` select in the ingest and edit states) |
-| `status` | the bar's pill (read-only); the *change* in Details → Extraction; queueing moves the pill to `EXTRACTING` |
+| `sourceType` | **the header card's type chip**; also a row in Details → Provenance (and the `Type` select in the ingest and edit states) |
+| `status` | **the header card's pill** (read-only); the *change* in Details → Extraction; queueing moves the pill to `EXTRACTING` |
 | `provenance.author` | Details → Provenance, "Where it came from" |
 | `provenance.url` | same block, as a link |
 | `provenance.publishedAt` | same block — added this pass |
 | `provenance.method` | same block |
 | `provenance.tool` | same block — added this pass (it is not `convertedBy`; one is the ingesting tool, the other made the text) |
-| `extractedClaims[]` | Details → Claims, with the count in the bar; includes the **unresolved-reference** state (a ref whose note is not in the drive) |
-| `extractionStats.claimCount` | Details → Extraction, and the bar's `12 claims` |
-| `extractionStats.skippedCount` | Details → Extraction, and the bar's `47 not taken` |
+| `extractedClaims[]` | Details → Claims, with the count on the header's *See what it produced* CTA; includes the **unresolved-reference** state (a ref whose note is not in the drive) |
+| `extractionStats.claimCount` | Details → Extraction, and the header's `12 notes` |
+| `extractionStats.skippedCount` | Details → Extraction |
 | `extractionStats.skipRate` | Details → Extraction, **narrated, not scored** |
 | `extractionStats.extractedAt` | Details → Extraction — added this pass |
 | `extractionStats.extractedBy` | Details → Extraction — added this pass |
@@ -125,27 +127,28 @@ The rule the placement follows: **a field is shown where the question it answers
 
 - **No `parts` / chunk count.** The first pass of this mock showed `117 parts`. There is no such field — the count belonged to a conversion *run*, not to the document — so it was removed rather than left as a plausible-looking invention.
 - **No character count as stored data.** `Characters: 13,687` is counted from `content`; the mock says so in the pane, because the model keeps the text itself, not a size for it.
-- **No folder membership field.** A source's placement lives in the vault (its parent folder), not in `bai/source`; it is therefore shown as the bar's breadcrumb, and the outline rail names the folder without inventing a position (`1 of 117` was invented and is gone).
+- **No folder membership field.** A source's placement lives in the vault (its parent folder), not in `bai/source`; it is therefore not shown at all rather than invented (`1 of 117` was invented and is gone).
 - **No claim↔paragraph anchoring**, because `extractedClaims` holds note refs with no source offsets.
 
 Fields in the inputs that are **system-set, not user-edited** — `IngestSourceInput.method`/`tool`/`createdAt`/`createdBy`, `RecordExtractionStatsInput`, `AttachOriginalFileInput.convertedBy` — appear in Details as facts the reader can verify, and are never form fields. `AddAttachmentInput`/`RemoveAttachmentInput` and `RemoveExtractedClaimInput` have no home in this editor: attachments are produced by the conversion and claims by the agent, so exposing add/remove here would be a different product decision, not a layout one.
 
 ## Decisions the mock takes (override any)
 
-- **The reading surface is the darker `--bai-surface`**, not the app's `--bai-bg`. It is the same decision `b-conventional.html` already made, and it separates the page you read from the chrome around it without adding a card, a border or a shadow. The bar and rail keep `--bai-bg` so the text column reads as the page.
+- **The reading surface is the darker `--bai-surface`**, not the app's `--bai-bg`. It is the same decision `b-conventional.html` already made, and it separates the page you read from the chrome around it without adding a card, a border or a shadow. The header card uses the same `--bai-surface`, so the two read as paper and the furniture around it stays one step lighter.
 - **The `OriginalFilePanel` moves behind one action.** A converted source's `originalFile` is an affordance, opening as an overlay — not a panel that pushes the text down. A source *without* an original keeps the same button and says so there, which is also where re-attaching lives.
-- **Claims are a drawer, not a sidebar.** Closed by default; the bar shows the count (`12 claims`) so the fact is known without the space being spent. Inside, claims are the primary tab and provenance/extraction are its siblings.
+- **Widths.** The content and its editor are full-bleed; the header card, History and Details share one `64rem` column. In those two states the view **continues the header card as a single surface** — no gap, no seam, the tabs' rule as the divider, rounded only at the very top and the very bottom.
+- **Claims are a view, not a sidebar.** Nothing is spent until you ask for it; the header's CTA carries the count (`12 notes`) so the fact is known before the view is opened. Inside, claims are the primary tab and provenance/extraction are its siblings.
 - **`skipRate` is described, not scored.** `47 of 59 passages were not taken — a measurement, not a shortfall`, neutral colour. If a source yields *zero* claims that is stated plainly as a fine outcome, not as an error.
 - **No claim↔paragraph anchoring.** The model stores `extractedClaims` as a flat list of note ids; there are no source offsets. The mock therefore never draws a claim beside the paragraph it came from — an invented association is worse than none.
 - **Reading measure, not full-bleed text.** `78ch` at 16px/1.7. Full-window-width prose on a 27" monitor is unreadable; "full page" means the *page* is the reading surface, not that lines run to the edges.
-- **Outline rail is optional and off by default**, because it costs measure; it opens on the bar's `Outline` action.
+- **No outline view.** A rail costs measure on every screen and a view costs a click; on review the source's headings are already visible in the text itself, so neither earns its place. The reading-progress line is what remains of "where am I in the text".
 - **Dark and light are both mocked**, because the app ships both (`data-bai-theme`).
 
 ## 🔍 SIX MINDS MAPPING (the final)
 
 - **Vision:** one column of text at `78ch` on the darker `--bai-surface`, no card; the bar is `--bai-bg` at 44px so it reads as a frame, not a wall; the only accent-coloured things are the queue action, the active panel and the progress line.
-- **Wayfinding:** breadcrumb `Sources / design-for-how-people-think / Wayfinding` in the bar; status pill beside it; outline rail for position inside the text; a 2px progress line on the bar's bottom edge; `Esc` returns from anything opened.
-- **Memory:** the docs-reader schema — sticky bar, text column, outline, inspector drawer, `Edit` to edit in place, tabs inside the drawer, the toolbar above doing what a toolbar does.
+- **Wayfinding:** the title in the header card; the status pill beside the type chip; a 2px progress line at the top of the page; headings distinct from body text; `Esc` returns to the content.
+- **Memory:** the original editor's own furniture — chips, a title, a file row, tabs — plus the toolbar above doing what a toolbar does, and `Edit` editing in place.
 - **Language:** *source, source type, provenance, extracted claims, Queue for processing, INBOX/EXTRACTING/EXTRACTED/ARCHIVED, revisions, original document* — the vault's own vocabulary, never "chunks" or "AI summary".
-- **Decision:** reading is never blocked by chrome; the claims count is in the bar so the extraction question is answered before it is asked; the queue action changes to its own state rather than disappearing; the drawer carries the status *change* so the pill can stay a pill.
+- **Decision:** reading is never blocked by chrome; the CTA carries the claims count so the extraction question is answered before it is asked; the queue action changes to its own state rather than disappearing; the status *change* lives in Details so the pill can stay a pill.
 - **Emotion:** the source reads like a document, not a database row; extraction is narrated neutrally so a thin chapter is not a failure; the progress line and the claims count both answer "how is this going?" without a spinner or a percentage.

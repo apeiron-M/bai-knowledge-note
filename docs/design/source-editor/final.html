@@ -39,7 +39,9 @@ svg{display:block}
 /* ── the document header: the ORIGINAL editor's top section, in its own style —
       status + type chips, the title, the original-document row, then the tabs.
       It scrolls away with the page, exactly as the original's does. ────── */
-.dochead{padding:20px 0 0}
+/* the header as its own card, in a container width — the original's own
+   max-w-5xl (64rem) — while the preview below stays full-bleed */
+.dochead{max-width:64rem;margin:20px auto 0;padding:18px 20px 0;background:var(--bai-surface);border:1px solid var(--bai-border);border-radius:14px;overflow:hidden}
 .headrow{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
 .pill{display:inline-flex;align-items:center;gap:6px;padding:4px 12px;border-radius:999px;font-size:11.5px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;background:var(--bai-ok-soft);color:var(--bai-ok)}
 .pill.extracting{background:var(--bai-warn-soft);color:var(--bai-warn)}
@@ -59,21 +61,21 @@ svg{display:block}
 .cta:hover b{color:var(--bai-accent)}
 .dochead h1{margin:14px 0 0;font-size:27px;line-height:1.22;font-weight:700;color:var(--bai-text)}
 /* the original document, the way the real panel collapses it: one bordered row */
-.filerow{display:flex;align-items:center;gap:12px;margin-top:18px;padding:13px 16px;border-radius:10px;border:1px solid var(--bai-border);background:var(--bai-surface)}
+.filerow{display:flex;align-items:center;gap:12px;margin-top:18px;padding:13px 16px;border-radius:10px;border:1px solid var(--bai-border);background:var(--bai-deep)}
 .filerow .ico{flex:0 0 auto;color:var(--bai-text-muted)}
 .filerow .fname{font-size:13px;color:var(--bai-text-secondary);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .filerow .fmeta{font-size:11.5px;color:var(--bai-text-faint);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .filerow .spacer{flex:1}
 .filerow .none{font-size:12.5px;color:var(--bai-text-muted)}
 /* the tabs, with the accent underline and hairline rule the original uses */
-.tabs{display:flex;margin-top:18px;border-bottom:1px solid var(--bai-border)}
+.tabs{display:flex;margin:18px -20px 0;padding:0 20px;border-bottom:1px solid var(--bai-border)}
 .tabs button{border:0;background:none;margin:0 24px -1px 0;padding:9px 2px 11px;font-size:13.5px;font-weight:500;color:var(--bai-text-muted);border-bottom:2px solid transparent}
 .tabs button:hover{color:var(--bai-text-secondary)}
 .tabs button.on{color:var(--bai-accent);border-bottom-color:var(--bai-accent)}
 /* ─ the page: header, tabs and sheet scroll together, as one document ─ */
 .body{position:relative;flex:1;display:flex;min-height:0}
 .reader{flex:1;min-width:0;overflow-y:auto;background:var(--bai-bg)}
-.pagewrap{max-width:92ch;margin:0 auto;padding:0 0 64px}
+.pagewrap{max-width:none;padding:0 26px 64px}
 /* the sheet: a darker card on the page, as tall as its text — never a fixed box */
 .md{margin:20px 0 0;padding:48px 64px 64px;border-radius:16px;min-height:58vh;
     background:var(--bai-deep);border:1px solid var(--bai-border);box-shadow:0 18px 40px -24px rgba(0,0,0,.55);
@@ -130,32 +132,23 @@ body[data-state="edit"] .editmeta{display:block}
 .em-cancel{padding:5px 10px;border-radius:7px;background:var(--bai-surface);border:1px solid var(--bai-border);color:var(--bai-text-tertiary);font-size:12.5px}
 .empty{margin:0;color:var(--bai-text-muted);font-size:14px}
 
-/* ── outline rail (off by default) ─────────────────────────────────── */
-.rail{display:none;width:246px;flex:0 0 auto;border-right:1px solid var(--bai-border);background:var(--bai-bg);overflow-y:auto;padding:18px 8px 40px}
-.rail .lbl{padding:0 10px 8px;font-size:10px;letter-spacing:.08em;text-transform:uppercase;color:var(--bai-text-faint)}
-.rail a{display:block;padding:5px 10px;border-radius:6px;color:var(--bai-text-tertiary);text-decoration:none;font-size:12.5px}
-.rail a:hover{background:var(--bai-hover);color:var(--bai-text-secondary)}
-.rail a.l2{padding-left:20px;color:var(--bai-text-muted)}
-.rail a.on{color:var(--bai-text);background:var(--bai-accent-soft)}
-.rail .divider{margin:14px 10px 8px;border-top:1px solid var(--bai-border)}
-
-/* ── details drawer (off by default) ───────────────────────────────── */
-.drawer{display:none;width:352px;flex:0 0 auto;border-left:1px solid var(--bai-border);background:var(--bai-bg);overflow-y:auto}
-.dhead{display:flex;gap:2px;padding:10px 10px 0;border-bottom:1px solid var(--bai-border);position:sticky;top:0;background:var(--bai-bg)}
+/* ── the details view: claims · provenance · extraction ─────────────── */
+.detailsview{display:none;padding:0 20px 48px;background:var(--bai-surface)}
+.dhead{display:flex;gap:2px;padding:18px 0 0;border-bottom:1px solid var(--bai-border)}
 .dhead button{padding:7px 10px;border:0;background:none;color:var(--bai-text-tertiary);font-size:12px;border-bottom:2px solid transparent}
 .dhead button.on{color:var(--bai-text);border-bottom-color:var(--bai-accent)}
 .dhead button span{color:var(--bai-text-faint)}
-.pane{display:none;padding:16px}
+.pane{display:none;padding:20px 0 0}
 .pane.on{display:block}
 .plbl{margin:0 0 10px;font-size:10px;letter-spacing:.08em;text-transform:uppercase;color:var(--bai-text-faint)}
-.claim{display:block;width:100%;text-align:left;padding:11px 12px;margin-bottom:8px;border-radius:10px;background:var(--bai-surface);border:1px solid var(--bai-border);color:var(--bai-text-secondary);font-size:13px}
+.claim{display:block;width:100%;text-align:left;padding:11px 12px;margin-bottom:8px;border-radius:10px;background:var(--bai-deep);border:1px solid var(--bai-border);color:var(--bai-text-secondary);font-size:13px}
 .claim:hover{border-color:var(--bai-accent);color:var(--bai-text)}
 .claim .meta{display:block;margin-top:3px;font-size:11px;color:var(--bai-text-faint)}
 .row{display:flex;justify-content:space-between;gap:12px;padding:7px 0;border-bottom:1px solid var(--bai-border);font-size:12.5px}
 .row dt{color:var(--bai-text-muted);margin:0}
 .row dd{margin:0;color:var(--bai-text-secondary);text-align:right;word-break:break-word}
 .row dd a{color:var(--bai-accent);text-decoration:none}
-.orig,.att-row{margin-top:14px;padding:12px;border-radius:10px;background:var(--bai-surface);border:1px solid var(--bai-border)}
+.orig,.att-row{margin-top:14px;padding:12px;border-radius:10px;background:var(--bai-deep);border:1px solid var(--bai-border)}
 .orig .fn,.att-row .fn{font-size:12.5px;color:var(--bai-text-secondary);word-break:break-all}
 .orig .fm,.att-row .fm{font-size:11px;color:var(--bai-text-faint);margin-top:3px}
 .pane .lede{margin:0 0 20px;font-size:12.5px;line-height:1.6;color:var(--bai-text-tertiary)}
@@ -172,7 +165,13 @@ body[data-state="edit"] .editmeta{display:block}
 /* ── history: a faithful port of RevisionScrubber + RevisionSnapshotPanel +
       RevisionOperationList (editors/shared/revision-history.tsx), same labels,
       same colours, same controls — laid out in the blended shell. ─────── */
-.history{display:none;padding:22px 26px 72px;background:var(--bai-surface)}
+/* one view at a time. Only the content and its editor are full-bleed; the
+   other views keep the header card's width and continue it as one surface —
+   no gap, no seam, the tabs' rule as the divider. */
+.history,.detailsview{max-width:64rem;margin:0 auto;border:1px solid var(--bai-border);border-top:0;border-radius:0 0 14px 14px}
+body[data-state="history"] .pagewrap,body[data-state="details"] .pagewrap{padding-bottom:0}
+body[data-state="history"] .dochead,body[data-state="details"] .dochead{border-radius:14px 14px 0 0;border-bottom:0}
+.history{display:none;padding:22px 20px 56px;background:var(--bai-surface)}
 .hgrid{display:grid;grid-template-columns:minmax(0,1fr) 336px;align-items:start;gap:0}
 .hmain{min-width:0}
 .hside{align-self:start;border-left:1px solid var(--bai-border);padding:0 0 0 16px}
@@ -281,14 +280,11 @@ body[data-state="ingest"] .body{display:none}
 .switcher button{padding:5px 9px;border-radius:8px;background:none;border:1px solid transparent;color:var(--bai-text-muted);font-size:11.5px}
 .switcher button.on{background:var(--bai-accent-soft);border-color:var(--bai-border);color:var(--bai-text)}
 .toggle{position:fixed;bottom:12px;right:12px;z-index:40;border-radius:9px;padding:7px 13px;font-size:12px;background:var(--bai-surface);border:1px solid var(--bai-border);color:var(--bai-accent)}
-body[data-state="outline"] .rail{display:block}
-body[data-state="details"] .drawer{display:block}
-body[data-state="history"] .contentarea{display:none}
-body[data-state="history"] .history{display:block}
+/* one view at a time: Content · History · Details · Edit */
+body[data-state="history"] .contentarea,body[data-state="details"] .contentarea{display:none}
+body[data-state="history"] .history,body[data-state="details"] .detailsview{display:block}
 body[data-state="edit"] .md{display:none}
 body[data-state="edit"] .mdedit{display:block}
-body[data-state="details"] .hbtn.det,body[data-state="outline"] .hbtn.out,
-body[data-state="edit"] .hbtn.ed{color:var(--bai-accent)}
 </style></head><body data-state="read">
 <div class="app">
 
@@ -319,20 +315,7 @@ body[data-state="edit"] .hbtn.ed{color:var(--bai-accent)}
 
   <!-- the document header: the original editor's top section, restyled -->
   <div class="body">
-    <nav class="rail">
-      <p class="lbl">In this source</p>
-      <a class="on">The Six Minds of Experience</a>
-      <a class="l2">Vision, Attention, and Automaticity</a>
-      <a class="l2">Applying it to a reading surface</a>
-      <a class="l2">Signposting the reader</a>
-      <a class="l2">Landmarks at every scale</a>
-      <a class="l2">The problem with panels</a>
-      <a class="l2">What this leaves</a>
-      <div class="divider"></div>
-      <p class="lbl">Folder</p>
-      <a>design-for-how-people-think</a>
-    </nav>
-
+    <span id="progress"></span>
     <main class="reader">
       <div class="pagewrap">
         <header class="dochead">
@@ -341,9 +324,6 @@ body[data-state="edit"] .hbtn.ed{color:var(--bai-accent)}
             <span class="chip">BOOK_CHAPTER</span>
             <button class="cta" data-go="details">See what it produced <b>12 notes</b></button>
             <span class="spacer"></span>
-            <button class="hbtn out" data-go="outline">Outline</button>
-            <button class="hbtn det" data-go="details">Details</button>
-            <button class="hbtn ed" data-go="edit">Edit</button>
             <button class="hbtn primary" id="queue">Queue for processing</button>
           </div>
           <h1>Wayfinding</h1>
@@ -356,9 +336,12 @@ body[data-state="edit"] .hbtn.ed{color:var(--bai-accent)}
             <button class="hbtn primary" data-go="original">View original</button>
             <button class="hbtn">Download</button>
           </div>
+          <!-- the view switch: one view at a time -->
           <div class="tabs">
             <button class="on" data-go="read">Content</button>
             <button class="hist" data-go="history">History</button>
+            <button class="det" data-go="details">Details</button>
+            <button class="ed" data-go="edit">Edit</button>
           </div>
         </header>
 
@@ -511,8 +494,9 @@ Take the index out of the reading path, take the panels out of the measure, and 
 
 What is left over is not very much, and that is the point. The hard part is not deciding what to add. It is resisting the urge to add it again the next time somebody asks where a feature went.</textarea>
         </div><!-- /contentarea -->
+      </div><!-- /pagewrap -->
 
-        <section class="history">
+      <section class="history">
       <div class="hgrid">
         <div class="hmain">
           <!-- RevisionScrubber (editors/shared/revision-history.tsx) -->
@@ -577,10 +561,9 @@ What is left over is not very much, and that is the point. The hard part is not 
         </aside>
       </div>
     </section>
-      </div><!-- /pagewrap -->
-    </main>
 
-    <aside class="drawer">
+      <!-- the details view: claims · provenance · extraction, full width -->
+      <section class="detailsview">
       <div class="dhead">
         <button class="on" data-tab="claims">Claims <span>12</span></button>
         <button data-tab="prov">Provenance</button>
@@ -661,7 +644,8 @@ What is left over is not very much, and that is the point. The hard part is not 
         </div>
         <p class="narr">Moved here from the title row: a status <em>change</em> is a rare, deliberate act, and it should not sit next to the pill that only reports it.</p>
       </div>
-    </aside>
+      </section>
+    </main>
   </div>
 
   <!-- an uninitialized source: the paste form, with the toolbar still above it -->
@@ -710,10 +694,13 @@ What is left over is not very much, and that is the point. The hard part is not 
 <button class="toggle" id="theme">light / dark</button>
 
 <script>
-  const STATES=[["read","#read — the source, full page"],["outline","#outline — outline rail"],["details","#details — claims · provenance · extraction"],["history","#history — the source's revisions"],["edit","#edit — editing in place"],["original","#original — the original document"],["ingest","#ingest — a source with no content yet"]];
+  const STATES=[["read","#read — the source, full page"],["details","#details — claims · provenance · extraction"],["history","#history — the source's revisions"],["edit","#edit — editing in place"],["original","#original — the original document"],["ingest","#ingest — a source with no content yet"]];
   const sw=document.getElementById("switcher");
   const set=(s)=>{document.body.dataset.state=s;
-    document.querySelectorAll(".switcher button").forEach(b=>b.classList.toggle("on",b.dataset.s===s));};
+    document.querySelectorAll(".switcher button").forEach(b=>b.classList.toggle("on",b.dataset.s===s));
+    // the tabs are the view switch, one view at a time
+    document.querySelectorAll(".tabs button").forEach(b=>b.classList.toggle("on",
+      b.dataset.go===(s==="original"?"read":s)));};
   STATES.forEach(([s,label])=>{const b=document.createElement("button");b.textContent=label.split(" — ")[1];b.dataset.s=s;b.title=label;
     b.onclick=()=>set(s);sw.appendChild(b);});
   document.body.addEventListener("click",(e)=>{const g=e.target.closest("[data-go]");if(g){set(g.dataset.go);e.preventDefault();}});
@@ -725,12 +712,12 @@ What is left over is not very much, and that is the point. The hard part is not 
     b.classList.add("q");b.textContent="Queued — run /pipeline in Claude Code";
     // queueing files a pipeline task and moves the source to EXTRACTING: the pill must follow,
     // or the bar would say EXTRACTED while the pipeline is working on it.
-    const pill=document.querySelector(".bar .pill");
-    pill.className="pill extracting";pill.innerHTML='<span class="dot"></span>EXTRACTING';};
-  // progress follows the sheet's own scroll, and the editor's when editing
+    const pill=document.getElementById("status-pill");
+    pill.className="pill extracting";pill.textContent="EXTRACTING";};
+  // progress follows the page's scroll (and the editor's own, when it has one)
   const track=(el)=>{el.addEventListener("scroll",()=>{const p=document.getElementById("progress");
     const max=el.scrollHeight-el.clientHeight;p.style.width=(max>0?(el.scrollTop/max)*100:0)+"%";});};
-  track(document.querySelector(".reader .md"));
+  track(document.querySelector(".reader"));
   track(document.querySelector(".mdedit"));
   document.getElementById("theme").onclick=()=>{const h=document.documentElement;
     h.dataset.baiTheme=h.dataset.baiTheme==="light"?"dark":"light";};
