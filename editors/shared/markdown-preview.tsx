@@ -1,5 +1,15 @@
-import { useMemo } from "react";
+import { useEffect, useMemo, useRef, useSyncExternalStore } from "react";
+import {
+  attachmentFailure,
+  cachedAttachmentDataUrl,
+  fetchAttachmentDataUrl,
+  getAttachmentsVersion,
+  subscribeAttachments,
+} from "../knowledge-vault/lib/attachments.js";
 import { safeUrl } from "./sanitize-url.js";
+
+/** A content-addressed attachment ref, the only local image source the preview accepts. */
+const ATTACHMENT_REF = /^attachment:\/\/v\d+:[0-9a-f]{16,}$/i;
 
 type MarkdownPreviewProps = {
   content: string;
@@ -197,7 +207,15 @@ export function renderMarkdown(md: string): string {
   return html.join("\n");
 }
 
+/** docling's markers for what it saw but did not carry over — shown as a quiet note, not as a raw comment. */
+const PLACEHOLDER_NOTES: Record<string, string> = {
+  "<!-- formula-not-decoded -->": "formula — not decoded",
+  "<!-- image -->": "figure — not transcribed",
+};
+
 function inlineFormat(text: string): string {
+  const note = PLACEHOLDER_NOTES[text.trim()];
+  if (note) return `<span class="md-placeholder">${note}</span>`;
   let out = escapeHtml(text);
   // Inline citation chips. `[[cite:n:k]]` is emitted by the chat's numbering
   // pass (n = source number, k = marker position) and rendered as a button
@@ -214,6 +232,39 @@ function inlineFormat(text: string): string {
   out = out.replace(/\*\*([^*]+)\*\*/g, "<strong>$1</strong>");
   // Italic
   out = out.replace(/\*([^*]+)\*/g, "<em>$1</em>");
+  // Images — before links, because the syntax contains one. An attachment
+  // ref renders as an <img> without a src; MarkdownPreview resolves it through
+  // the attachment service (the bytes need the bearer, so no URL can be
+  // written here). An https image is allowed through as is; anything else —
+  // data:, javascript:, a relative path — renders as its alt text, so a
+  // poisoned note cannot make the vault fetch from an origin of its choosing.
+  out = out.replace(
+    /!\[([^\]]*)\]\(([^)\s]+)\)/g,
+    (_match: string, alt: string, src: string) => {
+      if (ATTACHMENT_REF.test(src)) {
+        // Already fetched on this page: the bytes go straight into the HTML, so
+        // a remount (the editor is re-created on every live-feed update) shows
+        // the picture without an effect having to run first.
+        const cached = cachedAttachmentDataUrl(src);
+        if (cached) {
+          return `<img class="md-img" data-attachment-ref="${src}" src="${cached}" alt="${alt}" loading="lazy" draggable="false">`;
+        }
+        // A known failure is written as the note at once: the mount that hit
+        // it may be gone before its promise settles.
+        const failure = attachmentFailure(src);
+        if (failure) {
+          return `<span class="md-img-unavailable">${alt} — image unavailable: ${escapeHtml(failure)}</span>`;
+        }
+        // `draggable="false"`: a dragged <img> starts a native drag that
+        // Connect's drop zone answers with "drop your documents here".
+        return `<img class="md-img" data-attachment-ref="${src}" alt="${alt}" loading="lazy" draggable="false">`;
+      }
+      const safe = safeUrl(src);
+      return safe !== null && /^https:/i.test(safe)
+        ? `<img class="md-img" src="${safe}" alt="${alt}" loading="lazy" referrerpolicy="no-referrer" draggable="false">`
+        : alt;
+    },
+  );
   // Links — the href is untrusted, so a rejected scheme renders as plain
   // text rather than a dead link, keeping the label visible.
   out = out.replace(
@@ -231,7 +282,42 @@ function inlineFormat(text: string): string {
 }
 
 export function MarkdownPreview({ content }: MarkdownPreviewProps) {
-  const html = useMemo(() => renderMarkdown(content), [content]);
+  // Re-render whenever an attachment arrives or fails anywhere on the page:
+  // the renderer then writes the picture (or the reason) into the HTML.
+  const attachmentsVersion = useSyncExternalStore(
+    subscribeAttachments,
+    getAttachmentsVersion,
+    getAttachmentsVersion,
+  );
+  const html = useMemo(
+    () => renderMarkdown(content),
+    // attachmentsVersion is the cache's clock: a bump means the same content renders differently.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [content, attachmentsVersion],
+  );
+  const root = useRef<HTMLDivElement>(null);
+
+  // Start the fetch for every image that has no bytes yet. Nothing here
+  // touches the DOM afterwards: the resolution re-renders the preview (above),
+  // and the renderer puts `src` — or the failure note — into the HTML itself.
+  useEffect(() => {
+    const container = root.current;
+    if (!container) return;
+    for (const img of container.querySelectorAll<HTMLImageElement>(
+      "img[data-attachment-ref]:not([src])",
+    )) {
+      const ref = img.dataset.attachmentRef;
+      if (!ref) continue;
+      img.classList.add("md-img-loading");
+      fetchAttachmentDataUrl(ref).catch((error: unknown) => {
+        console.warn(
+          "[preview] attachment unavailable:",
+          ref,
+          error instanceof Error ? error.message : error,
+        );
+      });
+    }
+  }, [html]);
 
   return (
     <>
@@ -251,6 +337,10 @@ export function MarkdownPreview({ content }: MarkdownPreviewProps) {
         .md-preview .md-wikilink { color: var(--bai-accent); font-weight: 500; }
         .md-preview .md-cite { display: inline-flex; align-items: center; justify-content: center; min-width: 1.15rem; height: 1.15rem; padding: 0 0.3rem; margin-left: 0.15rem; border-radius: 9999px; border: 1px solid var(--bai-border); background: var(--bai-accent-soft); color: var(--bai-accent); font: 600 10px/1 ui-monospace, SFMono-Regular, Menlo, monospace; vertical-align: 0.2em; cursor: pointer; }
         .md-preview .md-cite:hover, .md-preview .md-cite:focus-visible { background: var(--bai-accent); color: var(--bai-accent-text); border-color: var(--bai-accent); outline: none; }
+        .md-preview .md-img { display: block; max-width: 100%; height: auto; margin: 0.75rem auto; border-radius: 0.375rem; background: var(--bai-surface); }
+        .md-preview .md-img-loading { min-height: 2.5rem; min-width: 8rem; border: 1px dashed var(--bai-border); color: var(--bai-text-faint); font-size: 0.75rem; }
+        .md-preview .md-img-unavailable { display: block; border: 1px dashed var(--bai-warn); border-radius: 0.375rem; color: var(--bai-text-tertiary); font-size: 0.75rem; padding: 0.5rem; margin: 0.75rem 0; word-break: break-word; }
+        .md-preview .md-placeholder { display: inline-block; padding: 0.15rem 0.5rem; border: 1px dashed var(--bai-border); border-radius: 0.25rem; color: var(--bai-text-faint); font-size: 0.75rem; }
         .md-preview .md-hr { border: none; border-top: 1px solid var(--bai-border); margin: 1rem 0; }
         .md-preview strong { color: var(--bai-text); }
         .md-preview em { color: var(--bai-text-secondary); }
@@ -261,6 +351,7 @@ export function MarkdownPreview({ content }: MarkdownPreviewProps) {
         .md-preview .md-table tbody tr:hover { background: color-mix(in srgb, var(--bai-text) 3%, transparent); }
       `}</style>
       <div
+        ref={root}
         className="md-preview text-sm leading-relaxed"
         dangerouslySetInnerHTML={{ __html: html }}
       />

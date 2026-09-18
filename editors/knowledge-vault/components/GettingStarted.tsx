@@ -249,8 +249,10 @@ function OverviewSection() {
 
       <H>Quick Start Flow</H>
       <Step n={1} title="Add a source">
-        Click &quot;+ Add Source&quot; in the sidebar or &quot;New &gt; Add
-        Source&quot; in the top bar. Paste your raw content.
+        Open Sources and click &quot;Add sources&quot;: drop a PDF, a Word file,
+        a web page or a book. The vault converts it and shows you the sources it
+        would create before anything is written. Or &quot;Paste text&quot; if it
+        is short.
       </Step>
       <Step n={2} title="Queue for processing">
         In the source editor, click &quot;Queue for Processing&quot;. This adds

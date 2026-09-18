@@ -24,11 +24,11 @@ import { readReturnIntent } from "../lib/chat/openrouter-auth.js";
 import { ActivityView } from "./ActivityView.js";
 import { GettingStartedButton } from "./GettingStarted.js";
 import { useKnowledgeNotes } from "../hooks/use-knowledge-notes.js";
+import { useConvertHealth } from "../hooks/use-convert-health.js";
+import { useIntakeBatch } from "../hooks/use-intake-batch.js";
+import { useAttachmentPort } from "../lib/attachments.js";
 import { useVaultDocIndex } from "../../shared/use-vault-doc-index.js";
-import {
-  sameDriveNode,
-  useStableList,
-} from "../../shared/use-stable-list.js";
+import { sameDriveNode, useStableList } from "../../shared/use-stable-list.js";
 import { useMeasuredHeight } from "../../shared/use-measured.js";
 import {
   useReactorDocsWithRefetch,
@@ -63,7 +63,6 @@ type ViewMode =
  */
 const EDITORS_WITH_OWN_SIDEBAR = new Set<string>(["powerhouse/scopeofwork"]);
 
-
 export function DriveExplorer({ children }: EditorProps) {
   const [viewMode, setViewMode] = useState<ViewMode>("chat");
   const driveId = useSelectedDriveId();
@@ -87,6 +86,11 @@ export function DriveExplorer({ children }: EditorProps) {
   // their "empty vault" state during the several seconds the fetch takes,
   // which reads as "there is nothing here" rather than "not yet loaded".
   const { notes, isLoading: notesLoading } = useKnowledgeNotes();
+  // The intake batch lives here, above the view switch, so a tab switch never
+  // unmounts a conversion in flight and the Sources tab badge can read it.
+  const attachments = useAttachmentPort();
+  const intake = useIntakeBatch({ attachments });
+  const convert = useConvertHealth();
   // Pre-warm the shared doc-title index (module-level TTL cache) so the
   // first document editor the user opens finds it hot instead of paying
   // the two index round-trips itself.
@@ -94,10 +98,7 @@ export function DriveExplorer({ children }: EditorProps) {
   // Stable identity while the tree is unchanged; the upstream hook
   // re-`filter()`s every render, which invalidated `allFiles` →
   // `projectSpecs` → the whole scope-of-work document fetch below.
-  const fileNodes = useStableList(
-    useFileNodesInSelectedDrive(),
-    sameDriveNode,
-  );
+  const fileNodes = useStableList(useFileNodesInSelectedDrive(), sameDriveNode);
   // Tree-only count, like sources: no document reads just to draw a badge.
   const sowCount = fileNodes.filter(
     (n) => n.documentType === "powerhouse/scopeofwork",
@@ -161,6 +162,25 @@ export function DriveExplorer({ children }: EditorProps) {
     (n) => n.documentType === "bai/source",
   ).length;
 
+  // An empty vault opens on Sources, whose empty state is the intake landing.
+  // "Empty" is a claim about the server: the tree must have been read (the
+  // vault's singletons are files, so a read tree is never length 0), the note
+  // fetch settled, and both notes and sources genuinely absent. Decided once,
+  // so a user who navigates away is not dragged back.
+  const landedOnIntake = useRef(false);
+  useEffect(() => {
+    if (landedOnIntake.current) return;
+    if (
+      fileNodes.length > 0 &&
+      !notesLoading &&
+      notes.length === 0 &&
+      sourceCount === 0
+    ) {
+      landedOnIntake.current = true;
+      setViewMode("sources");
+    }
+  }, [fileNodes.length, notesLoading, notes.length, sourceCount]);
+
   // Project badge: every live envelope across the drive's scope-of-work
   // documents. FileNode only carries documentType, not state, so the (few)
   // scope documents are read from the server directly.
@@ -176,8 +196,11 @@ export function DriveExplorer({ children }: EditorProps) {
   });
   const projectCount = projectDocs.reduce((n, d) => {
     const envelopes =
-      (d.state as unknown as { global: { projects?: { scope?: { status?: string } | null }[] } })
-        .global.projects ?? [];
+      (
+        d.state as unknown as {
+          global: { projects?: { scope?: { status?: string } | null }[] };
+        }
+      ).global.projects ?? [];
     return n + envelopes.filter((p) => p.scope?.status !== "CANCELED").length;
   }, 0);
 
@@ -219,6 +242,8 @@ export function DriveExplorer({ children }: EditorProps) {
     key: ViewMode;
     label: string;
     badge?: number;
+    /** `warn`: the badge is a call to act ("needs you"), not a count. */
+    badgeTone?: "warn";
     icon: React.ReactNode;
   }[] = [
     {
@@ -291,7 +316,16 @@ export function DriveExplorer({ children }: EditorProps) {
     {
       key: "sources",
       label: "Sources",
-      badge: sourceCount > 0 ? sourceCount : undefined,
+      // Files waiting for the user (ready for review, or failed) outrank the
+      // plain count: a book can convert while the user is in Chat and the
+      // badge calls them back.
+      badge:
+        intake.needsUser > 0
+          ? intake.needsUser
+          : sourceCount > 0
+            ? sourceCount
+            : undefined,
+      badgeTone: intake.needsUser > 0 ? "warn" : undefined,
       icon: (
         <svg
           className="h-4 w-4"
@@ -362,14 +396,14 @@ export function DriveExplorer({ children }: EditorProps) {
         }
         style={
           editorOwnsSidebar
-            ? {
+            ? ({
                 // Defined by the hosted editor's stylesheet; see above.
                 gridTemplateColumns: "var(--sow-rail-w, 0px) minmax(0, 1fr)",
                 gridTemplateRows: "auto minmax(0, 1fr)",
                 // Read by the hosted editor's stylesheet, which reserves a
                 // matching top row so its canvas starts below the bar.
                 "--vault-topbar-h": `${topBarHeight}px`,
-              } as CSSProperties
+              } as CSSProperties)
             : undefined
         }
       >
@@ -415,10 +449,23 @@ export function DriveExplorer({ children }: EditorProps) {
                 {tab.badge !== undefined && (
                   <span
                     className="rounded-full px-1.5 py-0.5 text-[10px]"
-                    style={{
-                      backgroundColor: "var(--bai-hover)",
-                      color: "var(--bai-text-muted)",
-                    }}
+                    title={
+                      tab.badgeTone === "warn"
+                        ? `${tab.badge} file${tab.badge === 1 ? "" : "s"} waiting for your review`
+                        : undefined
+                    }
+                    style={
+                      tab.badgeTone === "warn"
+                        ? {
+                            backgroundColor: "var(--bai-warn)",
+                            color: "var(--bai-accent-text)",
+                            fontWeight: 600,
+                          }
+                        : {
+                            backgroundColor: "var(--bai-hover)",
+                            color: "var(--bai-text-muted)",
+                          }
+                    }
                   >
                     {tab.badge}
                   </span>
@@ -490,7 +537,7 @@ export function DriveExplorer({ children }: EditorProps) {
           ) : viewMode === "activity" ? (
             <ActivityView />
           ) : viewMode === "sources" ? (
-            <SourceList />
+            <SourceList intake={intake} convert={convert} />
           ) : viewMode === "scope" ? (
             <ScopeOfWorkView />
           ) : viewMode === "projects" ? (

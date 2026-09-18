@@ -2,6 +2,11 @@ import { useState } from "react";
 import { DocumentToolbar } from "@powerhousedao/design-system/connect";
 import { useSelectedSourceDocument, actions } from "document-models/source";
 import { MarkdownPreview } from "../shared/markdown-preview.js";
+import { OriginalFilePanel } from "../knowledge-vault/components/OriginalFilePanel.js";
+import {
+  useAttachmentLoader,
+  useAttachmentPort,
+} from "../knowledge-vault/lib/attachments.js";
 import {
   setSelectedNode,
   useFileNodesInSelectedDrive,
@@ -68,6 +73,51 @@ export default function Editor() {
   // Resolve extracted claim PHIDs → titles via the lightweight index
   // (subgraph + drive tree) instead of loading full document states.
   const { byId } = useVaultDocIndex();
+  // The original the source was converted from, when there is one. Installed
+  // at mount so the client resolved by this render is the one the panel uses.
+  const loadOriginal = useAttachmentLoader();
+  // Manual attach/re-attach: the same hash-first port the intake batch uses,
+  // but dispatched straight onto this document rather than through
+  // `POST actions` — a source whose original was lost or never attached (the
+  // intake's publish step degrades gracefully when the attachment step
+  // fails) is not stuck that way.
+  const attachOriginal = useAttachmentPort();
+  const [attaching, setAttaching] = useState(false);
+  const [attachError, setAttachError] = useState<string | undefined>(undefined);
+  const handleAttach = (file: File) => {
+    setAttaching(true);
+    setAttachError(undefined);
+    void (async () => {
+      try {
+        const prepared = await attachOriginal.prepare({
+          name: file.name,
+          mimeType: file.type || "application/octet-stream",
+          bytes: new Uint8Array(await file.arrayBuffer()),
+        });
+        dispatch(
+          actions.attachOriginalFile({
+            // The port returns the ref as a plain string (it also serves the
+            // REST publish path, which sends it as JSON); the branded format
+            // (`attachment://v<n>:<hex>`) is what the attachment service
+            // actually produces, so the cast reflects a real invariant.
+            originalFile: prepared.ref as NonNullable<
+              typeof state.originalFile
+            >,
+            originalFileName: file.name,
+            originalMimeType: file.type || "application/octet-stream",
+            originalSizeBytes: file.size,
+            convertedBy: null,
+            attachedAt: new Date().toISOString(),
+          }),
+        );
+        await attachOriginal.upload(prepared);
+      } catch (error) {
+        setAttachError(error instanceof Error ? error.message : String(error));
+      } finally {
+        setAttaching(false);
+      }
+    })();
+  };
 
   if (!initialized) {
     return <IngestForm dispatch={dispatch} />;
@@ -241,6 +291,15 @@ export default function Editor() {
               </p>
             )}
 
+            {/* The document this source was made from — only when it has one. */}
+            <OriginalFilePanel
+              source={state}
+              load={loadOriginal}
+              onAttach={handleAttach}
+              attaching={attaching}
+              attachError={attachError}
+            />
+
             {/* Tab bar */}
             <div
               className="flex gap-1"
@@ -329,194 +388,197 @@ export default function Editor() {
               <RevisionOperationList history={history} />
             ) : (
               <>
-              <div>
-                <h4
-                  className="mb-2 text-xs font-semibold uppercase tracking-wider"
-                  style={{ color: "var(--bai-text-muted)" }}
-                >
-                  Provenance
-                </h4>
-                <div
-                  className="space-y-1.5 text-xs"
-                  style={{ color: "var(--bai-text-tertiary)" }}
-                >
-                  {/* Long unbroken values (sha256 hashes, URLs) cannot wrap;
+                <div>
+                  <h4
+                    className="mb-2 text-xs font-semibold uppercase tracking-wider"
+                    style={{ color: "var(--bai-text-muted)" }}
+                  >
+                    Provenance
+                  </h4>
+                  <div
+                    className="space-y-1.5 text-xs"
+                    style={{ color: "var(--bai-text-tertiary)" }}
+                  >
+                    {/* Long unbroken values (sha256 hashes, URLs) cannot wrap;
                       each row pins the label and lets the value truncate with
                       the full text on hover. `min-w-0` is required for
                       truncate to work on a flex child. */}
-                  {state.provenance?.author && (
-                    <div className="flex justify-between gap-2">
-                      <span
-                        className="shrink-0"
-                        style={{ color: "var(--bai-text-faint)" }}
-                      >
-                        Author
-                      </span>
-                      <span
-                        className="min-w-0 truncate text-right"
-                        style={{ color: "var(--bai-text-secondary)" }}
-                        title={state.provenance.author}
-                      >
-                        {state.provenance.author}
-                      </span>
-                    </div>
-                  )}
-                  {state.provenance?.url && (
-                    <div className="flex justify-between gap-2">
-                      <span
-                        className="shrink-0"
-                        style={{ color: "var(--bai-text-faint)" }}
-                      >
-                        URL
-                      </span>
-                      <a
-                        className="min-w-0 truncate text-right hover:underline"
-                        style={{ color: "var(--bai-text-secondary)" }}
-                        title={state.provenance.url}
-                        href={state.provenance.url}
-                        target="_blank"
-                        rel="noreferrer"
-                      >
-                        {state.provenance.url}
-                      </a>
-                    </div>
-                  )}
-                  {state.provenance?.method && (
-                    <div className="flex justify-between gap-2">
-                      <span
-                        className="shrink-0"
-                        style={{ color: "var(--bai-text-faint)" }}
-                      >
-                        Method
-                      </span>
-                      <span
-                        className="min-w-0 truncate text-right"
-                        title={state.provenance.method}
-                      >
-                        {state.provenance.method}
-                      </span>
-                    </div>
-                  )}
-                  {state.createdBy && (
-                    <div className="flex justify-between gap-2">
-                      <span
-                        className="shrink-0"
-                        style={{ color: "var(--bai-text-faint)" }}
-                      >
-                        Ingested by
-                      </span>
-                      <span className="min-w-0 truncate text-right" title={state.createdBy}>
-                        {state.createdBy}
-                      </span>
-                    </div>
-                  )}
-                </div>
-              </div>
-
-              {stats && (
-                <>
-                  <hr style={{ borderColor: "var(--bai-border)" }} />
-                  <div>
-                    <h4
-                      className="mb-2 text-xs font-semibold uppercase tracking-wider"
-                      style={{ color: "var(--bai-text-muted)" }}
-                    >
-                      Extraction
-                    </h4>
-                    <div className="space-y-1.5 text-xs">
-                      <div className="flex justify-between">
-                        <span style={{ color: "var(--bai-text-faint)" }}>
-                          Claims
-                        </span>
-                        <span className="text-emerald-400 font-bold">
-                          {stats.claimCount}
-                        </span>
-                      </div>
-                      <div className="flex justify-between">
-                        <span style={{ color: "var(--bai-text-faint)" }}>
-                          Skipped
-                        </span>
-                        <span style={{ color: "var(--bai-text-tertiary)" }}>
-                          {stats.skippedCount}
-                        </span>
-                      </div>
-                      <div className="flex justify-between">
-                        <span style={{ color: "var(--bai-text-faint)" }}>
-                          Skip rate
+                    {state.provenance?.author && (
+                      <div className="flex justify-between gap-2">
+                        <span
+                          className="shrink-0"
+                          style={{ color: "var(--bai-text-faint)" }}
+                        >
+                          Author
                         </span>
                         <span
-                          className={
-                            stats.skipRate > 0.1
-                              ? "text-red-400"
-                              : "text-emerald-400"
-                          }
+                          className="min-w-0 truncate text-right"
+                          style={{ color: "var(--bai-text-secondary)" }}
+                          title={state.provenance.author}
                         >
-                          {(stats.skipRate * 100).toFixed(1)}%
+                          {state.provenance.author}
                         </span>
                       </div>
-                    </div>
-                  </div>
-                </>
-              )}
-
-              <hr style={{ borderColor: "var(--bai-border)" }} />
-              <div>
-                <h4
-                  className="mb-2 text-xs font-semibold uppercase tracking-wider"
-                  style={{ color: "var(--bai-text-muted)" }}
-                >
-                  Extracted Claims ({(state.extractedClaims ?? []).length})
-                </h4>
-                <div className="space-y-1.5 max-h-[600px] overflow-y-auto">
-                  {(state.extractedClaims ?? []).map((ref) => {
-                    const noteTitle = byId.get(ref)?.title ?? null;
-                    return (
-                      <div
-                        key={ref}
-                        className="rounded-lg px-3 py-2.5"
-                        style={{
-                          backgroundColor: "var(--bai-bg)",
-                          boxShadow: "0 0 0 1px var(--bai-ring)",
-                        }}
-                      >
-                        {noteTitle ? (
-                          <button
-                            type="button"
-                            onClick={() => setSelectedNode(ref)}
-                            className="text-left text-sm leading-snug transition-colors hover:underline w-full"
-                            style={{ color: "var(--bai-accent)" }}
-                            title={`Open note: ${noteTitle}`}
-                          >
-                            {noteTitle}
-                            <svg
-                              className="ml-1 inline h-3 w-3 shrink-0"
-                              style={{ color: "var(--bai-text-faint)" }}
-                              viewBox="0 0 24 24"
-                              fill="none"
-                              stroke="currentColor"
-                              strokeWidth="2"
-                            >
-                              <path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6" />
-                              <path d="M15 3h6v6" />
-                              <path d="M10 14L21 3" />
-                            </svg>
-                          </button>
-                        ) : (
-                          <button
-                            type="button"
-                            onClick={() => setSelectedNode(ref)}
-                            className="text-left text-xs font-mono transition-colors hover:underline w-full truncate"
-                            style={{ color: "var(--bai-text-faint)" }}
-                            title={`Open document: ${ref}`}
-                          >
-                            {ref.slice(0, 12)}...
-                          </button>
-                        )}
+                    )}
+                    {state.provenance?.url && (
+                      <div className="flex justify-between gap-2">
+                        <span
+                          className="shrink-0"
+                          style={{ color: "var(--bai-text-faint)" }}
+                        >
+                          URL
+                        </span>
+                        <a
+                          className="min-w-0 truncate text-right hover:underline"
+                          style={{ color: "var(--bai-text-secondary)" }}
+                          title={state.provenance.url}
+                          href={state.provenance.url}
+                          target="_blank"
+                          rel="noreferrer"
+                        >
+                          {state.provenance.url}
+                        </a>
                       </div>
-                    );
-                  })}
+                    )}
+                    {state.provenance?.method && (
+                      <div className="flex justify-between gap-2">
+                        <span
+                          className="shrink-0"
+                          style={{ color: "var(--bai-text-faint)" }}
+                        >
+                          Method
+                        </span>
+                        <span
+                          className="min-w-0 truncate text-right"
+                          title={state.provenance.method}
+                        >
+                          {state.provenance.method}
+                        </span>
+                      </div>
+                    )}
+                    {state.createdBy && (
+                      <div className="flex justify-between gap-2">
+                        <span
+                          className="shrink-0"
+                          style={{ color: "var(--bai-text-faint)" }}
+                        >
+                          Ingested by
+                        </span>
+                        <span
+                          className="min-w-0 truncate text-right"
+                          title={state.createdBy}
+                        >
+                          {state.createdBy}
+                        </span>
+                      </div>
+                    )}
+                  </div>
                 </div>
-              </div>
+
+                {stats && (
+                  <>
+                    <hr style={{ borderColor: "var(--bai-border)" }} />
+                    <div>
+                      <h4
+                        className="mb-2 text-xs font-semibold uppercase tracking-wider"
+                        style={{ color: "var(--bai-text-muted)" }}
+                      >
+                        Extraction
+                      </h4>
+                      <div className="space-y-1.5 text-xs">
+                        <div className="flex justify-between">
+                          <span style={{ color: "var(--bai-text-faint)" }}>
+                            Claims
+                          </span>
+                          <span className="text-emerald-400 font-bold">
+                            {stats.claimCount}
+                          </span>
+                        </div>
+                        <div className="flex justify-between">
+                          <span style={{ color: "var(--bai-text-faint)" }}>
+                            Skipped
+                          </span>
+                          <span style={{ color: "var(--bai-text-tertiary)" }}>
+                            {stats.skippedCount}
+                          </span>
+                        </div>
+                        <div className="flex justify-between">
+                          <span style={{ color: "var(--bai-text-faint)" }}>
+                            Skip rate
+                          </span>
+                          <span
+                            className={
+                              stats.skipRate > 0.1
+                                ? "text-red-400"
+                                : "text-emerald-400"
+                            }
+                          >
+                            {(stats.skipRate * 100).toFixed(1)}%
+                          </span>
+                        </div>
+                      </div>
+                    </div>
+                  </>
+                )}
+
+                <hr style={{ borderColor: "var(--bai-border)" }} />
+                <div>
+                  <h4
+                    className="mb-2 text-xs font-semibold uppercase tracking-wider"
+                    style={{ color: "var(--bai-text-muted)" }}
+                  >
+                    Extracted Claims ({(state.extractedClaims ?? []).length})
+                  </h4>
+                  <div className="space-y-1.5 max-h-[600px] overflow-y-auto">
+                    {(state.extractedClaims ?? []).map((ref) => {
+                      const noteTitle = byId.get(ref)?.title ?? null;
+                      return (
+                        <div
+                          key={ref}
+                          className="rounded-lg px-3 py-2.5"
+                          style={{
+                            backgroundColor: "var(--bai-bg)",
+                            boxShadow: "0 0 0 1px var(--bai-ring)",
+                          }}
+                        >
+                          {noteTitle ? (
+                            <button
+                              type="button"
+                              onClick={() => setSelectedNode(ref)}
+                              className="text-left text-sm leading-snug transition-colors hover:underline w-full"
+                              style={{ color: "var(--bai-accent)" }}
+                              title={`Open note: ${noteTitle}`}
+                            >
+                              {noteTitle}
+                              <svg
+                                className="ml-1 inline h-3 w-3 shrink-0"
+                                style={{ color: "var(--bai-text-faint)" }}
+                                viewBox="0 0 24 24"
+                                fill="none"
+                                stroke="currentColor"
+                                strokeWidth="2"
+                              >
+                                <path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6" />
+                                <path d="M15 3h6v6" />
+                                <path d="M10 14L21 3" />
+                              </svg>
+                            </button>
+                          ) : (
+                            <button
+                              type="button"
+                              onClick={() => setSelectedNode(ref)}
+                              className="text-left text-xs font-mono transition-colors hover:underline w-full truncate"
+                              style={{ color: "var(--bai-text-faint)" }}
+                              title={`Open document: ${ref}`}
+                            >
+                              {ref.slice(0, 12)}...
+                            </button>
+                          )}
+                        </div>
+                      );
+                    })}
+                  </div>
+                </div>
               </>
             )}
           </div>
