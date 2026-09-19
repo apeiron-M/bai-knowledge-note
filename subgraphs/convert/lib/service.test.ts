@@ -278,6 +278,65 @@ describe("createHttpConversionService", () => {
     ).rejects.toMatchObject({ status: 503, code: "CONVERT_BUSY" });
   });
 
+  // Behind a reverse proxy the service writes keep-alive bytes so a long
+  // conversion is not cut off; the first one commits the status to 200, so a
+  // later failure can only travel in the body.
+  it("recovers the real status from a deferred error in a 200 body", async () => {
+    const service = createHttpConversionService({
+      baseUrl: "http://convert.test",
+      fetchImpl: (async () =>
+        json({
+          error: "no text layer and OCR exceeded its budget",
+          code: "PDF_UNREADABLE",
+          deferredStatus: 415,
+        })) as typeof fetch,
+    });
+
+    const error = await service
+      .convert({ filename: "a.pdf", bytes: new Uint8Array([1]) })
+      .then(() => null)
+      .catch((thrown: unknown) => thrown);
+
+    expect(error).toMatchObject({ status: 502, code: "CONVERT_UNAVAILABLE" });
+    expect((error as Error).message).toContain("415");
+  });
+
+  it("keeps the busy distinction when it arrives deferred", async () => {
+    const service = createHttpConversionService({
+      baseUrl: "http://convert.test",
+      fetchImpl: (async () =>
+        json({
+          error: "a conversion is already running",
+          code: "CONVERSION_BUSY",
+          deferredStatus: 503,
+        })) as typeof fetch,
+    });
+
+    await expect(
+      service.convert({ filename: "a.pdf", bytes: new Uint8Array([1]) }),
+    ).rejects.toMatchObject({ status: 503, code: "CONVERT_BUSY" });
+  });
+
+  // The message is the whole point of the deferral — losing it would leave the
+  // caller with "unexpected body", which reads as a misconfigured URL.
+  it("surfaces the deferred error text, not just the code", async () => {
+    const service = createHttpConversionService({
+      baseUrl: "http://convert.test",
+      fetchImpl: (async () =>
+        json({
+          error: "pdfium refused the document after two rewrites",
+          deferredStatus: 415,
+        })) as typeof fetch,
+    });
+
+    const error = await service
+      .convert({ filename: "a.pdf", bytes: new Uint8Array([1]) })
+      .then(() => null)
+      .catch((thrown: unknown) => thrown);
+
+    expect((error as Error).message).toContain("pdfium refused");
+  });
+
   it("reports health verbatim", async () => {
     const { calls, impl } = fakeFetch(() =>
       json({

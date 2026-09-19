@@ -157,25 +157,56 @@ export function createHttpConversionService(options: {
     }
   }
 
+  /**
+   * One place to turn a conversion failure into an `HttpError`, because it can
+   * arrive two ways: as a status code, or — when the service had already begun
+   * heartbeating — inside a `200` body.
+   */
+  function conversionFailure(status: number, detail: string): HttpError {
+    // The service runs one conversion at a time and says so; that is a
+    // retry-later, not an outage, and the client must be able to tell.
+    if (status === 503 && detail.includes("CONVERSION_BUSY")) {
+      return new HttpError(
+        503,
+        "CONVERT_BUSY",
+        `The conversion service is busy: ${detail.slice(0, 300)}`,
+      );
+    }
+    return new HttpError(
+      502,
+      "CONVERT_UNAVAILABLE",
+      `Conversion service answered ${status}: ${detail.slice(0, 300)}`,
+    );
+  }
+
   async function readJson<T>(response: Response): Promise<T> {
     if (!response.ok) {
       const text = await response.text().catch(() => "");
-      // The service runs one conversion at a time and says so; that is a
-      // retry-later, not an outage, and the client must be able to tell.
-      if (response.status === 503 && text.includes("CONVERSION_BUSY")) {
-        throw new HttpError(
-          503,
-          "CONVERT_BUSY",
-          `The conversion service is busy: ${text.slice(0, 300)}`,
-        );
-      }
-      throw new HttpError(
-        502,
-        "CONVERT_UNAVAILABLE",
-        `Conversion service answered ${response.status}: ${text.slice(0, 300)}`,
-      );
+      throw conversionFailure(response.status, text);
     }
-    return (await response.json()) as T;
+
+    const body = (await response.json()) as
+      | (T & { error?: unknown; code?: unknown; deferredStatus?: unknown })
+      | null;
+
+    // A conversion behind a reverse proxy writes keep-alive bytes so the
+    // connection is not culled mid-document. The first of those commits the
+    // status to 200, so a failure after it cannot answer 4xx/5xx — the service
+    // puts the code it would have sent in `deferredStatus` instead. Without
+    // this branch the body would fall through to the shape check and be
+    // reported as "unexpected body", which reads as a misconfigured URL and
+    // discards a perfectly good error message.
+    if (body && typeof body.deferredStatus === "number") {
+      const detail = [
+        typeof body.error === "string" ? body.error : "",
+        typeof body.code === "string" ? `(${body.code})` : "",
+      ]
+        .filter(Boolean)
+        .join(" ");
+      throw conversionFailure(body.deferredStatus, detail || JSON.stringify(body));
+    }
+
+    return body as T;
   }
 
   return {
