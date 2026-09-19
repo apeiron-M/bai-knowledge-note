@@ -212,6 +212,12 @@
       "type": "var",
       "description": "Deprecated, kept so existing setups keep working: now means only 'assume the conversion service is on http://127.0.0.1:5011'. It no longer starts anything \u2014 the engine ships as its own container image. Prefer CONVERT_SERVICE_URL, or CONVERT_SERVICE_LOCAL for the same localhost default.",
       "required": false
+    },
+    {
+      "name": "EMBEDDER_CDN_BASE",
+      "type": "var",
+      "description": "Test override for where the graph indexer fetches its embedding model and onnxruntime wasm from. Normally derived from the module URL, so a deployed Switchboard needs nothing here; set it (e.g. http://localhost:8000/dist/node/) to exercise the deployed path from a local checkout.",
+      "required": false
     }
   ]
 }
