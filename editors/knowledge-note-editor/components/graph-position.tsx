@@ -143,6 +143,9 @@ export function WhereThisSits({
                   key={m.documentId}
                   type="button"
                   className="moclink"
+                  aria-label={
+                    m.tier ? `${m.title}, ${m.tier.toLowerCase()}` : m.title
+                  }
                   onClick={() => setSelectedNode(m.documentId)}
                 >
                   {m.title}

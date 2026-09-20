@@ -11,11 +11,8 @@ import { useEffect, type ReactNode } from "react";
  * (undo · redo · download · title · history · close) cost ~50px of every
  * viewport for controls most sessions never touch.
  *
- * Controlled, deliberately. The state used to live here and be reported to
- * the editor through an effect, which meant the canvas's close button — shown
- * only while this is closed — learned of a toggle one commit late: a visible
- * frame with the toolbar open AND the close button still there. With the
- * editor owning `open`, one click updates both in the same render.
+ * Controlled, deliberately. The editor owns `open` so the drawer and its
+ * handle update in the same render.
  *
  * The toolbar is collapsed by animating the drawer's grid row from 0fr to 1fr
  * rather than toggled with `hidden`: it stays mounted either way, so its

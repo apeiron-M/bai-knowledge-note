@@ -1,8 +1,9 @@
-import { useState, useMemo, useCallback, useRef } from "react";
+import { useState, useMemo, useCallback, useRef, useEffect } from "react";
 import {
   isFileNodeKind,
   setSelectedNode,
   useNodesInSelectedDrive,
+  useSelectedNode,
 } from "@powerhousedao/reactor-browser";
 import { prefetchOnHover } from "../lib/prefetch.js";
 import { useVaultName } from "../hooks/use-vault-name.js";
@@ -43,8 +44,24 @@ const STATUS_LABELS: Record<string, string> = {
 type SidebarSection = "notes" | "mocs" | "signals" | "folders";
 
 const MIN_WIDTH = 200;
+
+const SIDEBAR_NOTE_TYPE_COLORS: Record<string, { bg: string; color: string }> = {
+  CONCEPT: { bg: "rgba(139,92,246,0.15)", color: "rgba(167,139,250,1)" },
+  DECISION: { bg: "rgba(239,68,68,0.12)", color: "rgba(248,113,113,1)" },
+  PATTERN: { bg: "rgba(16,185,129,0.15)", color: "rgba(52,211,153,1)" },
+  PROCEDURE: { bg: "rgba(59,130,246,0.15)", color: "rgba(96,165,250,1)" },
+  REFERENCE: { bg: "rgba(245,158,11,0.15)", color: "rgba(252,211,77,1)" },
+  BUG_PATTERN: { bg: "rgba(239,68,68,0.15)", color: "rgba(248,113,113,1)" },
+  OBSERVATION: { bg: "rgba(244,114,182,0.15)", color: "rgba(243,156,185,1)" },
+  INTEGRATION: { bg: "rgba(16,185,129,0.15)", color: "rgba(52,211,153,1)" },
+  WORKFLOW: { bg: "rgba(59,130,246,0.15)", color: "rgba(96,165,250,1)" },
+};
 const MAX_WIDTH = 480;
 const DEFAULT_WIDTH = 256;
+
+const SELECTED_ROW_STYLE = {
+  backgroundColor: "var(--bai-hover)",
+} as const;
 
 export function VaultSidebar({
   notes,
@@ -55,6 +72,8 @@ export function VaultSidebar({
 }: VaultSidebarProps) {
   const [search, setSearch] = useState("");
   const [section, setSection] = useState<SidebarSection>("notes");
+  const selectedNode = useSelectedNode();
+  const selectedId = selectedNode?.id;
   const [collapsed, setCollapsed] = useState<Record<string, boolean>>({
     ARCHIVED: true,
   });
@@ -123,16 +142,36 @@ export function VaultSidebar({
       }));
   }, [fileNodes]);
 
+  const q = search.trim().toLowerCase();
+
   const filtered = useMemo(() => {
-    if (!search.trim()) return notes;
-    const q = search.toLowerCase();
+    if (!q) return notes;
     return notes.filter(
       (n) =>
         (n.title ?? n.name).toLowerCase().includes(q) ||
         (n.noteType ?? "").toLowerCase().includes(q) ||
         n.topics.some((t) => t.name.toLowerCase().includes(q)),
     );
-  }, [notes, search]);
+  }, [notes, q]);
+
+  const filteredMocs = useMemo(() => {
+    if (!q) return mocs;
+    return mocs.filter(
+      (m) =>
+        m.title.toLowerCase().includes(q) ||
+        (m.tier ?? "").toLowerCase().includes(q),
+    );
+  }, [mocs, q]);
+
+  const filteredObservations = useMemo(() => {
+    if (!q) return observations;
+    return observations.filter((o) => o.title.toLowerCase().includes(q));
+  }, [observations, q]);
+
+  const filteredTensions = useMemo(() => {
+    if (!q) return tensions;
+    return tensions.filter((t) => t.title.toLowerCase().includes(q));
+  }, [tensions, q]);
 
   const grouped = useMemo(() => {
     const groups: Record<string, KnowledgeNoteInfo[]> = {};
@@ -143,6 +182,28 @@ export function VaultSidebar({
     }
     return groups;
   }, [filtered]);
+
+  useEffect(() => {
+    if (!selectedId || !selectedNode || !isFileNodeKind(selectedNode)) return;
+    const docType = selectedNode.documentType;
+    if (docType === "bai/knowledge-note") setSection("notes");
+    else if (docType === "bai/moc") setSection("mocs");
+    else if (docType === "bai/observation" || docType === "bai/tension")
+      setSection("signals");
+    else setSection("folders");
+    const note = notes.find((n) => n.id === selectedId);
+    if (note) {
+      const status = note.status ?? "DRAFT";
+      setCollapsed((c) => (c[status] ? { ...c, [status]: false } : c));
+    }
+  }, [selectedId, selectedNode, notes]);
+
+  useEffect(() => {
+    if (!selectedId) return;
+    document
+      .querySelector("[data-sidebar-active=\"true\"]")
+      ?.scrollIntoView({ block: "nearest" });
+  }, [selectedId, section]);
 
   // A loading state is only honest while there is nothing to show. Once
   // any data has arrived — including a cached snapshot that the live fetch
@@ -334,7 +395,7 @@ export function VaultSidebar({
           type="text"
           value={search}
           onChange={(e) => setSearch(e.target.value)}
-          placeholder="Search..."
+          placeholder="Filter this list…"
           className="sidebar-search-input w-full rounded-md border px-3 py-1.5 text-xs outline-none"
           style={{
             borderColor: "var(--bai-border)",
@@ -344,8 +405,10 @@ export function VaultSidebar({
         />
       </div>
 
-      {/* Section tabs */}
-      <div className="flex gap-px px-3 pb-1">
+      {/* Section tabs — min height so the four labels stay clickable;
+          at text-[10px] py-1 they were a ~24px strip and pointer clicks
+          on MOCs/Signals/Tree never landed. */}
+      <div className="flex gap-1 px-2 pb-1">
         {(
           [
             ["notes", "Notes"],
@@ -357,11 +420,21 @@ export function VaultSidebar({
           <button
             key={key}
             type="button"
+            aria-pressed={section === key}
+            aria-label={
+              key === "notes"
+                ? `Notes, ${notes.length}`
+                : key === "mocs"
+                  ? `MOCs, ${mocs.length}`
+                  : key === "signals"
+                    ? `Signals, ${observations.length + tensions.length}`
+                    : "Tree"
+            }
             onClick={() => {
               if (graphFocus) onClearGraphFocus?.();
               setSection(key);
             }}
-            className={`sidebar-tab flex-1 rounded-md py-1 text-[10px] font-medium transition-colors`}
+            className="sidebar-tab flex min-h-8 flex-1 items-center justify-center rounded-md px-1 py-1.5 text-[11px] font-medium transition-colors"
             style={
               section === key
                 ? {
@@ -372,6 +445,16 @@ export function VaultSidebar({
             }
           >
             {label}
+            {key === "notes" && notes.length > 0 && (
+              <span className="ml-1" style={{ color: "var(--bai-text-faint)" }}>
+                {notes.length}
+              </span>
+            )}
+            {key === "mocs" && mocs.length > 0 && (
+              <span className="ml-1" style={{ color: "var(--bai-text-faint)" }}>
+                {mocs.length}
+              </span>
+            )}
             {key === "signals" && observations.length + tensions.length > 0 && (
               <span className="ml-1 text-amber-400">
                 {observations.length + tensions.length}
@@ -439,13 +522,9 @@ export function VaultSidebar({
                 onClick={() => setSelectedNode(item.id)}
                 {...prefetchOnHover(item.id)}
                 className="sidebar-row group flex w-full flex-col gap-0.5 rounded-md px-2 py-1.5 text-left transition-colors"
-                style={
-                  item.isSelected
-                    ? {
-                        backgroundColor: "var(--bai-hover)",
-                      }
-                    : undefined
-                }
+                data-sidebar-active={item.isSelected ? "true" : undefined}
+                aria-current={item.isSelected ? "page" : undefined}
+                style={item.isSelected ? SELECTED_ROW_STYLE : undefined}
               >
                 <span
                   className="sidebar-note-title truncate text-xs font-medium"
@@ -459,16 +538,42 @@ export function VaultSidebar({
                   {item.title}
                 </span>
                 <div className="flex items-center gap-1.5">
-                  <span
-                    className="rounded px-1.5 py-0.5 text-[10px]"
-                    style={{
-                      backgroundColor: "var(--bai-hover)",
-                      color: "var(--bai-text-tertiary)",
-                    }}
-                  >
-                    {item.kind}
-                    {item.meta ? ` · ${item.meta}` : ""}
-                  </span>
+                  {item.kind === "Note" && item.meta && (
+                    <span
+                      className="rounded px-1.5 py-0.5 text-[10px] font-medium"
+                      style={{
+                        backgroundColor:
+                          SIDEBAR_NOTE_TYPE_COLORS[item.meta]?.bg ?? "var(--bai-hover)",
+                        color:
+                          SIDEBAR_NOTE_TYPE_COLORS[item.meta]?.color ?? "var(--bai-text-tertiary)",
+                      }}
+                    >
+                      {item.meta}
+                    </span>
+                  )}
+                  {item.kind !== "Note" && item.meta && (
+                    <span
+                      className="rounded px-1.5 py-0.5 text-[10px]"
+                      style={{
+                        backgroundColor: "var(--bai-hover)",
+                        color: "var(--bai-text-tertiary)",
+                      }}
+                    >
+                      {item.kind}
+                      {item.meta ? ` · ${item.meta}` : ""}
+                    </span>
+                  )}
+                  {item.kind === "Note" && !item.meta && (
+                    <span
+                      className="rounded px-1.5 py-0.5 text-[10px]"
+                      style={{
+                        backgroundColor: "var(--bai-hover)",
+                        color: "var(--bai-text-tertiary)",
+                      }}
+                    >
+                      {item.kind}
+                    </span>
+                  )}
                   {item.topics.slice(0, 2).map((t) => (
                     <span
                       key={t.id}
@@ -545,7 +650,7 @@ export function VaultSidebar({
                 {STATUS_ORDER.map((status) => {
                   const groupNotes = grouped[status];
                   if (groupNotes.length === 0) return null;
-                  const isCollapsed = collapsed[status] ?? false;
+                  const isCollapsed = collapsed[status] ?? status === "ARCHIVED";
                   return (
                     <div key={status} className="mb-1">
                       <button
@@ -587,20 +692,34 @@ export function VaultSidebar({
                               onClick={() => setSelectedNode(note.id)}
                               {...prefetchOnHover(note.id)}
                               className="sidebar-row group flex w-full flex-col gap-0.5 rounded-md px-2 py-1.5 text-left transition-colors"
+                              data-sidebar-active={selectedId === note.id ? "true" : undefined}
+                              aria-current={selectedId === note.id ? "page" : undefined}
+                              style={
+                                selectedId === note.id ? SELECTED_ROW_STYLE : undefined
+                              }
                             >
                               <span
                                 className="sidebar-note-title truncate text-xs font-medium"
-                                style={{ color: "var(--bai-text-secondary)" }}
+                                style={{
+                                  color:
+                                    selectedId === note.id
+                                      ? "var(--bai-accent)"
+                                      : "var(--bai-text-secondary)",
+                                }}
                               >
                                 {note.title ?? note.name}
                               </span>
                               <div className="flex items-center gap-1.5">
                                 {note.noteType && (
                                   <span
-                                    className="rounded px-1.5 py-0.5 text-[10px]"
+                                    className="rounded px-1.5 py-0.5 text-[10px] font-medium"
                                     style={{
-                                      backgroundColor: "var(--bai-hover)",
-                                      color: "var(--bai-text-tertiary)",
+                                      backgroundColor:
+                                        SIDEBAR_NOTE_TYPE_COLORS[note.noteType]?.bg ??
+                                        "var(--bai-hover)",
+                                      color:
+                                        SIDEBAR_NOTE_TYPE_COLORS[note.noteType]?.color ??
+                                        "var(--bai-text-tertiary)",
                                     }}
                                   >
                                     {note.noteType}
@@ -640,10 +759,17 @@ export function VaultSidebar({
                   >
                     No MOCs yet
                   </p>
+                ) : filteredMocs.length === 0 ? (
+                  <p
+                    className="px-2 py-4 text-center text-xs"
+                    style={{ color: "var(--bai-text-faint)" }}
+                  >
+                    No MOCs match “{search}”
+                  </p>
                 ) : (
                   <>
                     {(["HUB", "DOMAIN", "TOPIC"] as const).map((tier) => {
-                      const tierMocs = mocs.filter((m) => m.tier === tier);
+                      const tierMocs = filteredMocs.filter((m) => m.tier === tier);
                       if (tierMocs.length === 0) return null;
                       return (
                         <div key={tier}>
@@ -654,47 +780,17 @@ export function VaultSidebar({
                             {tier}
                           </p>
                           {tierMocs.map((moc) => (
-                            <button
+                            <MocRow
                               key={moc.id}
-                              type="button"
-                              onClick={() => setSelectedNode(moc.id)}
-                              className="sidebar-row group flex w-full items-center gap-2 rounded-md px-2 py-1.5 text-left"
-                            >
-                              <svg
-                                className="h-3.5 w-3.5 shrink-0"
-                                style={{
-                                  color: "var(--bai-accent)",
-                                  opacity: 0.6,
-                                }}
-                                viewBox="0 0 24 24"
-                                fill="none"
-                                stroke="currentColor"
-                                strokeWidth="2"
-                              >
-                                <circle cx="12" cy="12" r="10" />
-                                <path d="M12 6v6l4 2" />
-                              </svg>
-                              <span
-                                className="sidebar-note-title truncate text-xs"
-                                style={{ color: "var(--bai-text-secondary)" }}
-                              >
-                                {moc.title}
-                              </span>
-                              {moc.noteCount + moc.childRefs.length > 0 && (
-                                <span
-                                  className="ml-auto text-[10px]"
-                                  style={{ color: "var(--bai-text-faint)" }}
-                                >
-                                  {moc.noteCount + moc.childRefs.length}
-                                </span>
-                              )}
-                            </button>
+                              moc={moc}
+                              selected={selectedId === moc.id}
+                            />
                           ))}
                         </div>
                       );
                     })}
                     {(() => {
-                      const untiered = mocs.filter((m) => m.tier === null);
+                      const untiered = filteredMocs.filter((m) => m.tier === null);
                       if (untiered.length === 0) return null;
                       return (
                         <div key="untiered">
@@ -702,44 +798,14 @@ export function VaultSidebar({
                             className="px-2 py-1 text-[10px] font-semibold uppercase tracking-wider"
                             style={{ color: "var(--bai-text-faint)" }}
                           >
-                            UNTIERED
+                            Untiered
                           </p>
                           {untiered.map((moc) => (
-                            <button
+                            <MocRow
                               key={moc.id}
-                              type="button"
-                              onClick={() => setSelectedNode(moc.id)}
-                              className="sidebar-row group flex w-full items-center gap-2 rounded-md px-2 py-1.5 text-left"
-                            >
-                              <svg
-                                className="h-3.5 w-3.5 shrink-0"
-                                style={{
-                                  color: "var(--bai-accent)",
-                                  opacity: 0.6,
-                                }}
-                                viewBox="0 0 24 24"
-                                fill="none"
-                                stroke="currentColor"
-                                strokeWidth="2"
-                              >
-                                <circle cx="12" cy="12" r="10" />
-                                <path d="M12 6v6l4 2" />
-                              </svg>
-                              <span
-                                className="sidebar-note-title truncate text-xs"
-                                style={{ color: "var(--bai-text-secondary)" }}
-                              >
-                                {moc.title}
-                              </span>
-                              {moc.noteCount + moc.childRefs.length > 0 && (
-                                <span
-                                  className="ml-auto text-[10px]"
-                                  style={{ color: "var(--bai-text-faint)" }}
-                                >
-                                  {moc.noteCount + moc.childRefs.length}
-                                </span>
-                              )}
-                            </button>
+                              moc={moc}
+                              selected={selectedId === moc.id}
+                            />
                           ))}
                         </div>
                       );
@@ -751,25 +817,35 @@ export function VaultSidebar({
 
             {section === "signals" && (
               <div className="space-y-3">
-                {observations.length > 0 && (
+                {filteredObservations.length > 0 && (
                   <div>
                     <p
                       className="px-2 py-1 text-[10px] font-semibold uppercase tracking-wider"
                       style={{ color: "var(--bai-text-faint)" }}
                     >
-                      Observations ({observations.length})
+                      Observations ({filteredObservations.length})
                     </p>
-                    {observations.map((obs) => (
+                    {filteredObservations.map((obs) => (
                       <button
                         key={obs.id}
                         type="button"
                         onClick={() => setSelectedNode(obs.id)}
                         className="sidebar-row group flex w-full items-center gap-2 rounded-md px-2 py-1.5 text-left"
+                        data-sidebar-active={selectedId === obs.id ? "true" : undefined}
+                        aria-current={selectedId === obs.id ? "page" : undefined}
+                        style={
+                          selectedId === obs.id ? SELECTED_ROW_STYLE : undefined
+                        }
                       >
                         <span className="h-2 w-2 shrink-0 rounded-full bg-amber-400" />
                         <span
                           className="sidebar-note-title truncate text-xs"
-                          style={{ color: "var(--bai-text-secondary)" }}
+                          style={{
+                            color:
+                              selectedId === obs.id
+                                ? "var(--bai-accent)"
+                                : "var(--bai-text-secondary)",
+                          }}
                         >
                           {obs.title}
                         </span>
@@ -788,25 +864,35 @@ export function VaultSidebar({
                     ))}
                   </div>
                 )}
-                {tensions.length > 0 && (
+                {filteredTensions.length > 0 && (
                   <div>
                     <p
                       className="px-2 py-1 text-[10px] font-semibold uppercase tracking-wider"
                       style={{ color: "var(--bai-text-faint)" }}
                     >
-                      Tensions ({tensions.length})
+                      Tensions ({filteredTensions.length})
                     </p>
-                    {tensions.map((ten) => (
+                    {filteredTensions.map((ten) => (
                       <button
                         key={ten.id}
                         type="button"
                         onClick={() => setSelectedNode(ten.id)}
                         className="sidebar-row group flex w-full items-center gap-2 rounded-md px-2 py-1.5 text-left"
+                        data-sidebar-active={selectedId === ten.id ? "true" : undefined}
+                        aria-current={selectedId === ten.id ? "page" : undefined}
+                        style={
+                          selectedId === ten.id ? SELECTED_ROW_STYLE : undefined
+                        }
                       >
                         <span className="h-2 w-2 shrink-0 rounded-full bg-red-400" />
                         <span
                           className="sidebar-note-title truncate text-xs"
-                          style={{ color: "var(--bai-text-secondary)" }}
+                          style={{
+                            color:
+                              selectedId === ten.id
+                                ? "var(--bai-accent)"
+                                : "var(--bai-text-secondary)",
+                          }}
                         >
                           {ten.title}
                         </span>
@@ -827,6 +913,17 @@ export function VaultSidebar({
                       No pending signals
                     </p>
                   )}
+                {!showSignalsSkeleton &&
+                  (observations.length > 0 || tensions.length > 0) &&
+                  filteredObservations.length === 0 &&
+                  filteredTensions.length === 0 && (
+                    <p
+                      className="px-2 py-4 text-center text-xs"
+                      style={{ color: "var(--bai-text-faint)" }}
+                    >
+                      No signals match “{search}”
+                    </p>
+                  )}
               </div>
             )}
 
@@ -834,13 +931,17 @@ export function VaultSidebar({
               (showTreeSkeleton ? (
                 <LoadingLine label="Loading drive tree…" />
               ) : (
-                <FolderTreeView nodes={allNodes ?? []} />
+                <FolderTreeView
+                  nodes={allNodes ?? []}
+                  query={q}
+                  selectedId={selectedId}
+                />
               ))}
           </>
         )}
       </div>
 
-      <style>{`
+      <style aria-hidden="true">{`
         .sidebar-collapse-btn:hover {
           background-color: var(--bai-hover);
           color: var(--bai-accent);
@@ -874,7 +975,59 @@ export function VaultSidebar({
   );
 }
 
-function FolderTreeView({ nodes }: { nodes: Node[] }) {
+function MocRow({ moc, selected }: { moc: MocInfo; selected: boolean }) {
+  return (
+    <button
+      type="button"
+      onClick={() => setSelectedNode(moc.id)}
+      className="sidebar-row group flex w-full items-center gap-2 rounded-md px-2 py-1.5 text-left"
+      data-sidebar-active={selected ? "true" : undefined}
+      aria-current={selected ? "page" : undefined}
+      style={selected ? SELECTED_ROW_STYLE : undefined}
+    >
+      <svg
+        className="h-3.5 w-3.5 shrink-0"
+        style={{
+          color: "var(--bai-accent)",
+          opacity: 0.6,
+        }}
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="2"
+      >
+        <circle cx="12" cy="12" r="10" />
+        <path d="M12 6v6l4 2" />
+      </svg>
+      <span
+        className="sidebar-note-title truncate text-xs"
+        style={{
+          color: selected ? "var(--bai-accent)" : "var(--bai-text-secondary)",
+        }}
+      >
+        {moc.title}
+      </span>
+      {moc.noteCount + moc.childRefs.length > 0 && (
+        <span
+          className="ml-auto text-[10px]"
+          style={{ color: "var(--bai-text-faint)" }}
+        >
+          {moc.noteCount + moc.childRefs.length}
+        </span>
+      )}
+    </button>
+  );
+}
+
+function FolderTreeView({
+  nodes,
+  query,
+  selectedId,
+}: {
+  nodes: Node[];
+  query: string;
+  selectedId?: string;
+}) {
   type TreeNode = {
     id: string;
     name: string;
@@ -910,13 +1063,45 @@ function FolderTreeView({ nodes }: { nodes: Node[] }) {
           return a.name.localeCompare(b.name);
         });
     }
-    return build(null);
-  }, [nodes]);
+
+    function matches(node: TreeNode): boolean {
+      if (!query) return true;
+      if (node.name.toLowerCase().includes(query)) return true;
+      return node.children.some(matches);
+    }
+
+    function prune(nodes: TreeNode[]): TreeNode[] {
+      if (!query) return nodes;
+      return nodes.filter(matches).map((n) => ({
+        ...n,
+        children: prune(n.children),
+      }));
+    }
+
+    return prune(build(null));
+  }, [nodes, query]);
+
+  if (query && tree.length === 0) {
+    return (
+      <p
+        className="px-2 py-4 text-center text-xs"
+        style={{ color: "var(--bai-text-faint)" }}
+      >
+        No files match “{query}”
+      </p>
+    );
+  }
 
   return (
     <div className="space-y-0.5">
       {tree.map((node) => (
-        <TreeItem key={node.id} node={node} depth={0} />
+        <TreeItem
+          key={node.id}
+          node={node}
+          depth={0}
+          forceExpand={!!query}
+          selectedId={selectedId}
+        />
       ))}
     </div>
   );
@@ -925,6 +1110,8 @@ function FolderTreeView({ nodes }: { nodes: Node[] }) {
 function TreeItem({
   node,
   depth,
+  forceExpand = false,
+  selectedId,
 }: {
   node: {
     id: string;
@@ -940,10 +1127,14 @@ function TreeItem({
     docType?: string;
   };
   depth: number;
+  forceExpand?: boolean;
+  selectedId?: string;
 }) {
   const [expanded, setExpanded] = useState(false);
   const isFolder = node.kind === "folder";
   const hasChildren = node.children.length > 0;
+  const open = forceExpand || expanded;
+  const selected = selectedId === node.id;
 
   return (
     <div>
@@ -953,11 +1144,16 @@ function TreeItem({
           isFolder ? setExpanded(!expanded) : setSelectedNode(node.id)
         }
         className="sidebar-row group flex w-full items-center gap-1 rounded px-1 py-1 text-left"
-        style={{ paddingLeft: `${depth * 12 + 4}px` }}
+        data-sidebar-active={selected ? "true" : undefined}
+        aria-current={selected ? "page" : undefined}
+        style={{
+          paddingLeft: `${depth * 12 + 4}px`,
+          ...(selected ? SELECTED_ROW_STYLE : {}),
+        }}
       >
         {isFolder ? (
           <svg
-            className={`h-3 w-3 shrink-0 transition-transform ${expanded ? "rotate-90" : ""}`}
+            className={`h-3 w-3 shrink-0 transition-transform ${open ? "rotate-90" : ""}`}
             style={{ color: "var(--bai-text-faint)" }}
             viewBox="0 0 24 24"
             fill="none"
@@ -993,9 +1189,11 @@ function TreeItem({
         <span
           className={`sidebar-note-title truncate text-[11px] ${isFolder ? "font-medium" : ""}`}
           style={{
-            color: isFolder
-              ? "var(--bai-text-secondary)"
-              : "var(--bai-text-tertiary)",
+            color: selected
+              ? "var(--bai-accent)"
+              : isFolder
+                ? "var(--bai-text-secondary)"
+                : "var(--bai-text-tertiary)",
           }}
         >
           {node.name}
@@ -1010,9 +1208,15 @@ function TreeItem({
         )}
       </button>
       {isFolder &&
-        expanded &&
+        open &&
         node.children.map((child) => (
-          <TreeItem key={child.id} node={child} depth={depth + 1} />
+          <TreeItem
+            key={child.id}
+            node={child}
+            depth={depth + 1}
+            forceExpand={forceExpand}
+            selectedId={selectedId}
+          />
         ))}
     </div>
   );

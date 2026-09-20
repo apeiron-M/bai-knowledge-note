@@ -353,7 +353,7 @@ export default function Editor() {
 
   return (
     <div className="src-ed" data-view={view}>
-      <style>{STYLES}</style>
+      <style aria-hidden="true">{STYLES}</style>
       <DocumentToolbar toolbarClassName={TOOLBAR_CLASS} />
       <div className="src-body">
         <span className="src-progress" style={{ width: `${progress}%` }} />
@@ -945,7 +945,7 @@ function IngestForm({
 
   return (
     <div className="src-ed">
-      <style>{STYLES}</style>
+      <style aria-hidden="true">{STYLES}</style>
       <DocumentToolbar toolbarClassName={TOOLBAR_CLASS} />
       <div className="src-body">
         <main className="src-reader">

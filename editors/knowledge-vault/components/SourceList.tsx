@@ -197,12 +197,12 @@ export function SourceList({
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
   }, []);
-  // Work queues start open (small, actionable); the ever-growing terminal
-  // groups start collapsed to a one-line header with the count.
+  // Work queues and the extracted set start open. Archived stays collapsed
+  // so a long history doesn't bury the live sources.
   const [openGroups, setOpenGroups] = useState<Record<string, boolean>>({
     INBOX: true,
     EXTRACTING: true,
-    EXTRACTED: false,
+    EXTRACTED: true,
     ARCHIVED: false,
   });
   const toggleGroup = useCallback(
@@ -668,6 +668,7 @@ export function SourceList({
                             type="button"
                             onClick={() => setSelectedNode(source.id)}
                             {...prefetchOnHover(source.id)}
+                            aria-label={`${source.title}${source.sourceType ? `, ${source.sourceType}` : ""}`}
                             className="flex flex-1 items-center gap-3 text-left min-w-0"
                           >
                             <svg
@@ -737,6 +738,7 @@ export function SourceList({
                             }}
                             className="shrink-0 rounded p-1.5 opacity-0 transition-all hover:bg-red-500/10 hover:text-red-400 group-hover:opacity-100"
                             style={{ color: "var(--bai-text-faint)" }}
+                            aria-label={`Delete source ${source.title}`}
                             title="Delete source"
                           >
                             <svg

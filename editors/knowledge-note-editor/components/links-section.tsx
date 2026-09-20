@@ -196,7 +196,7 @@ export function LinksSection({
         <button
           type="button"
           onClick={() => setIsAdding(true)}
-          className="w-full rounded-lg border border-dashed border-white/10 py-1.5 text-xs text-gray-500 hover:border-[#cba6f7]/30 hover:text-[#cba6f7]"
+          className="mt-3 w-full rounded-lg border border-dashed border-white/10 py-2.5 text-xs text-gray-500 hover:border-[#cba6f7]/30 hover:text-[#cba6f7]"
         >
           + Add link
         </button>
@@ -273,6 +273,7 @@ function LinkCard({
     <div className="flex items-center gap-2">
       <select
         value={link.linkType ?? "RELATES_TO"}
+        aria-label={`Link type, ${LINK_TYPE_LABELS[(link.linkType ?? "RELATES_TO") as LinkType]}`}
         onChange={(e) => onUpdateLinkType(link.id, e.target.value as LinkType)}
         className={`rounded-md border-0 px-2 py-0.5 text-xs font-medium ${LINK_TYPE_COLORS[(link.linkType ?? "RELATES_TO") as LinkType] ?? ""} bg-transparent`}
       >
@@ -294,7 +295,7 @@ function LinkCard({
           <span className="mr-1.5 rounded bg-white/5 px-1 py-px text-[9px] font-medium uppercase tracking-wide text-gray-400">
             {resolved.kind}
           </span>
-        )}
+        )}{" "}
         {resolved.title}
         <svg
           className="ml-1 inline-block h-3 w-3 opacity-0 group-hover:opacity-50"

@@ -19,10 +19,7 @@ import {
   type EditorContextValue,
 } from "../lib/context.js";
 import { SOW_CSS } from "../lib/styles.js";
-import {
-  RevisionHistory,
-  ToolbarCloseButton,
-} from "@powerhousedao/design-system/connect";
+import { RevisionHistory, ToolbarCloseButton } from "@powerhousedao/design-system/connect";
 import { useDocumentOperations } from "@powerhousedao/reactor-browser";
 import { notify } from "../../shared/notify.js";
 import type { View } from "../lib/model.js";
@@ -340,18 +337,17 @@ export function Shell({
 
   return (
     <EditorContext.Provider value={ctx}>
-      <style>{SOW_CSS}</style>
+      <style aria-hidden="true">{SOW_CSS}</style>
       <div
         ref={rootRef}
         className={`sow ${showSidebar ? "" : "no-inspector"}${railOpen ? "" : " no-rail"}`}
       >
         {toolbar}
         {!historyOpen && (
-          // The toolbar's own close button, in the canvas corner while the
-          // drawer that holds it is collapsed. Same component, so it closes
-          // the document the same way: back to the parent folder. Kept
-          // mounted and faded rather than unmounted, so it can animate out as
-          // the drawer animates in; `inert` takes it out of the tab order.
+          // Same close as the toolbar, in the canvas corner while the drawer
+          // is folded. Isolated inside `.sow` so Connect/vault settings paint
+          // above it; faded rather than unmounted so it can animate with the
+          // drawer. `inert` takes it out of the tab order while hidden.
           <div
             className={`sow-close sow-embed${toolbarOpen ? " is-hidden" : ""}`}
             aria-hidden={toolbarOpen}

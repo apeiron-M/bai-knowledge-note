@@ -93,9 +93,9 @@ const STYLES = `
 
 /* where this sits: the graph position, on the page rather than behind a tab */
 .note-ed .ne-sits { max-width: 64rem; margin: 0 auto; padding: 16px 20px; background: var(--bai-surface); border: 1px solid var(--bai-border); border-top: 0; border-radius: 0 0 14px 14px; }
-.note-ed .ne-sits h4 { margin: 0 0 12px; font-size: 10px; font-weight: 600; letter-spacing: .08em; text-transform: uppercase; color: var(--bai-text-faint); }
+.note-ed .ne-sits h4 { margin: 0 0 12px; font-size: 11px; font-weight: 600; color: var(--bai-text-muted); }
 .note-ed .ne-sits .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(230px, 1fr)); gap: 14px; }
-.note-ed .ne-sits .k { font-size: 10.5px; letter-spacing: .06em; text-transform: uppercase; color: var(--bai-text-faint); }
+.note-ed .ne-sits .k { font-size: 11px; color: var(--bai-text-faint); }
 .note-ed .ne-sits .v { margin-top: 5px; font-size: 12.5px; line-height: 1.55; color: var(--bai-text-secondary); }
 .note-ed .ne-sits .v.tallies { margin-top: 8px; }
 .note-ed .ne-sits .moclink { display: inline-flex; align-items: center; gap: 6px; margin: 3px 5px 0 0; padding: 3px 9px; border-radius: 7px; background: var(--bai-deep); border: 1px solid var(--bai-border); color: var(--bai-text-secondary); font-size: 12px; text-align: left; cursor: pointer; }
@@ -141,6 +141,7 @@ export default function Editor() {
   // The description's 200 characters are the one hard limit in the model, and
   // it was invisible until the field stopped accepting keystrokes.
   const [descLen, setDescLen] = useState<number | null>(null);
+  const [descFocused, setDescFocused] = useState(false);
   const [contentMode, setContentMode] = useState<"preview" | "edit">("preview");
 
   // Links now live in the reactor's DocumentRelationship table; read
@@ -280,13 +281,12 @@ export default function Editor() {
 
   const state = document.state.global;
   const graph = neighbourhood(document.header.id, edges, nodeMap);
-  const connections =
-    graph.outgoing.length + graph.incoming.length + graph.mocs.length;
+  const edgeCount = graph.outgoing.length + graph.incoming.length;
   const described = descLen ?? (state.description ?? "").length;
 
   return (
     <div className="note-ed" data-view={view}>
-      <style>{STYLES}</style>
+      <style aria-hidden="true">{STYLES}</style>
       <DocumentToolbar toolbarClassName={TOOLBAR_CLASS} />
       <div className="ne-body">
         <main className="ne-reader">
@@ -301,6 +301,7 @@ export default function Editor() {
                 status={state.status ?? null}
                 provenanceAuthor={state.provenance?.author ?? null}
                 hasProvenance={!!state.provenance}
+                showActions={view === "details"}
                 slot={
                   <select
                     className="chipsel"
@@ -380,27 +381,34 @@ export default function Editor() {
                 maxLength={200}
                 rows={2}
                 ref={descRef}
+                onFocus={() => setDescFocused(true)}
                 onInput={(e) => {
                   const el = e.currentTarget;
                   el.style.height = "auto";
                   el.style.height = `${el.scrollHeight}px`;
                   setDescLen(el.value.length);
                 }}
-                onBlur={(e) => handleSetDescription(e.target.value.trim())}
+                onBlur={(e) => {
+                  setDescFocused(false);
+                  handleSetDescription(e.target.value.trim());
+                }}
               />
               <div className="descfoot">
                 <span className="lbl">
                   The description adds what the claim leaves out — it is what
                   search and the agent read first.
                 </span>
-                <span className={described > 170 ? "budget near" : "budget"}>
-                  {described} / 200
-                </span>
+                {descFocused && (
+                  <span className={described > 170 ? "budget near" : "budget"}>
+                    {described} / 200
+                  </span>
+                )}
               </div>
 
               <div className="topicrow">
                 <TopicsBar
                   topics={state.topics}
+                  editable={contentMode === "edit"}
                   onAddTopic={(id, name) =>
                     dispatch(actions.addTopic({ id, name }))
                   }
@@ -412,7 +420,7 @@ export default function Editor() {
                 {(
                   [
                     ["note", "Note", null],
-                    ["links", "Links", connections],
+                    ["links", "Links", edgeCount],
                     ["details", "Details", null],
                     ["history", "History", null],
                   ] as const
@@ -421,6 +429,11 @@ export default function Editor() {
                     key={key}
                     type="button"
                     className={view === key ? "tab on" : "tab"}
+                    aria-label={
+                      count !== null && count > 0
+                        ? `${label}, ${count}`
+                        : label
+                    }
                     onClick={() => setView(key)}
                   >
                     {label}

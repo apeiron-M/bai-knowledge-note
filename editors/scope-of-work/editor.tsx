@@ -29,10 +29,6 @@ import { Shell } from "./components/Shell.js";
 export default function Editor() {
   const [document, dispatch] = useSelectedScopeOfWorkDocument();
   const [historyOpen, setHistoryOpen] = useState(false);
-  // The drawer's state lives here, not in the drawer: the Shell shows a close
-  // button in the canvas corner only while the drawer is closed, and both
-  // must change in the SAME render — an effect-reported state left the close
-  // button visible for a frame after the drawer opened.
   const [toolbarOpen, setToolbarOpen] = useState(readToolbarOpen);
   const toggleToolbar = useCallback(() => setToolbarOpen((v) => !v), []);
   useEffect(() => {

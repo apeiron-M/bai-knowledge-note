@@ -35,6 +35,62 @@ const STATUS_BADGE_STYLES: Record<string, CSSProperties> = {
   },
 };
 
+const NOTE_TYPE_COLORS: Record<string, CSSProperties> = {
+  CONCEPT: {
+    background: "rgba(139, 92, 246, 0.15)",
+    color: "rgba(167, 139, 250, 1)",
+    borderColor: "rgba(139, 92, 246, 0.25)",
+  },
+  DECISION: {
+    background: "rgba(239, 68, 68, 0.12)",
+    color: "rgba(248, 113, 113, 1)",
+    borderColor: "rgba(239, 68, 68, 0.2)",
+  },
+  PATTERN: {
+    background: "rgba(16, 185, 129, 0.15)",
+    color: "rgba(52, 211, 153, 1)",
+    borderColor: "rgba(16, 185, 129, 0.25)",
+  },
+  PROCEDURE: {
+    background: "rgba(59, 130, 246, 0.15)",
+    color: "rgba(96, 165, 250, 1)",
+    borderColor: "rgba(59, 130, 246, 0.25)",
+  },
+  REFERENCE: {
+    background: "rgba(245, 158, 11, 0.15)",
+    color: "rgba(252, 211, 77, 1)",
+    borderColor: "rgba(245, 158, 11, 0.25)",
+  },
+  BUG_PATTERN: {
+    background: "rgba(239, 68, 68, 0.15)",
+    color: "rgba(248, 113, 113, 1)",
+    borderColor: "rgba(239, 68, 68, 0.25)",
+  },
+  OBSERVATION: {
+    background: "rgba(244, 114, 182, 0.15)",
+    color: "rgba(243, 156, 185, 1)",
+    borderColor: "rgba(244, 114, 182, 0.25)",
+  },
+  INTEGRATION: {
+    background: "rgba(16, 185, 129, 0.15)",
+    color: "rgba(52, 211, 153, 1)",
+    borderColor: "rgba(16, 185, 129, 0.25)",
+  },
+  WORKFLOW: {
+    background: "rgba(59, 130, 246, 0.15)",
+    color: "rgba(96, 165, 250, 1)",
+    borderColor: "rgba(59, 130, 246, 0.25)",
+  },
+};
+
+const noteTypeStyle = (type: string | undefined): CSSProperties => {
+  return NOTE_TYPE_COLORS[type ?? ""] ?? {
+    background: "var(--bai-hover)",
+    color: "var(--bai-text-muted)",
+    borderColor: "var(--bai-border)",
+  };
+};
+
 export function NoteList({ notes, isLoading = false }: NoteListProps) {
   const [visibleCount, setVisibleCount] = useState(PAGE_SIZE);
 
@@ -136,10 +192,7 @@ const NoteCard = memo(function NoteCard({ note }: { note: KnowledgeNoteInfo }) {
         {note.noteType && (
           <span
             className="rounded px-1.5 py-0.5 text-[10px] font-medium"
-            style={{
-              background: "var(--bai-hover)",
-              color: "var(--bai-text-muted)",
-            }}
+            style={noteTypeStyle(note.noteType)}
           >
             {note.noteType}
           </span>

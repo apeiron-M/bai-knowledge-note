@@ -104,6 +104,7 @@ export function DriveExplorer({ children }: EditorProps) {
     (n) => n.documentType === "powerhouse/scopeofwork",
   ).length;
   const showDocumentEditor = !!children;
+  const [settingsOpen, setSettingsOpen] = useState(false);
   // `useSelectedNode` can hand back a folder, which carries no documentType.
   const selectedNode = useSelectedNode();
   const selectedDocumentType =
@@ -415,14 +416,13 @@ export function DriveExplorer({ children }: EditorProps) {
             borderBottom: "1px solid var(--bai-border)",
             backgroundColor: "var(--bai-surface)",
             // Column 2 only, so the hosted sidebar in column 1 runs to the
-            // top. z-index 5 places it deliberately WITHIN the hosted editor's
-            // own scale rather than above all of it: over its sticky table
-            // headers (1-4), under its drawer handles (6) so the sidebar's
-            // collapse toggle can overhang the bar rather than be walled off
-            // from it, and under its modals and scrims (40-60), which should
-            // cover everything.
+            // top. z-index 5 sits within the hosted editor's scale: over
+            // sticky table headers (1-4), under drawer handles (6) so the
+            // rail toggle can overhang the bar. While the settings menu is
+            // open the bar jumps above that scale so the dropdown is not
+            // trapped under the editor's close/handle layer.
             ...(editorOwnsSidebar
-              ? { gridColumn: 2, gridRow: 1, zIndex: 5 }
+              ? { gridColumn: 2, gridRow: 1, zIndex: settingsOpen ? 40 : 5 }
               : null),
           }}
         >
@@ -500,6 +500,8 @@ export function DriveExplorer({ children }: EditorProps) {
             <SettingsMenu
               activeView={viewMode}
               isActive={!showDocumentEditor}
+              open={settingsOpen}
+              onOpenChange={setSettingsOpen}
               onSelect={handleSwitchView}
             />
           </div>
@@ -574,14 +576,17 @@ export function DriveExplorer({ children }: EditorProps) {
 function SettingsMenu({
   activeView,
   isActive,
+  open,
+  onOpenChange,
   onSelect,
 }: {
   activeView: ViewMode;
   /** False while a document editor covers the view, matching the tab row. */
   isActive: boolean;
+  open: boolean;
+  onOpenChange: (open: boolean) => void;
   onSelect: (mode: ViewMode) => void;
 }) {
-  const [open, setOpen] = useState(false);
   // Access administers authorization, so it is offered only to those who can
   // use it. The server refuses a non-admin regardless — hiding the entry means
   // they are not invited into a dead end. `null` (undetermined) hides it too,
@@ -598,7 +603,7 @@ function SettingsMenu({
     <div className="relative">
       <button
         type="button"
-        onClick={() => setOpen((v) => !v)}
+        onClick={() => onOpenChange(!open)}
         className="flex items-center gap-1.5 rounded-md px-2 py-1.5 text-xs font-medium transition-colors"
         style={{
           backgroundColor: showingSettingsView
@@ -610,6 +615,7 @@ function SettingsMenu({
         }}
         title="Vault reports and settings"
         aria-label="Vault reports and settings"
+        aria-expanded={open}
       >
         <svg
           className="h-4 w-4"
@@ -625,7 +631,7 @@ function SettingsMenu({
 
       {open && (
         <>
-          <div className="fixed inset-0 z-10" onClick={() => setOpen(false)} />
+          <div className="fixed inset-0 z-10" onClick={() => onOpenChange(false)} />
           <div
             className="absolute right-0 z-20 mt-1 w-56 rounded-lg py-1 shadow-xl"
             style={{
@@ -641,7 +647,7 @@ function SettingsMenu({
                   type="button"
                   onClick={() => {
                     onSelect(item.key);
-                    setOpen(false);
+                    onOpenChange(false);
                   }}
                   className="flex w-full items-center gap-2 px-3 py-2 text-left hover:bg-white/5"
                   style={{

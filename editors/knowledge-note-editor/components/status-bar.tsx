@@ -8,6 +8,8 @@ type StatusBarProps = {
   slot?: ReactNode;
   provenanceAuthor: string | null;
   hasProvenance: boolean;
+  /** Lifecycle buttons (archive, approve, …). Off on the read header. */
+  showActions?: boolean;
   onSubmitForReview: (
     id: string,
     actor: string,
@@ -81,6 +83,7 @@ export function StatusBar({
   slot,
   provenanceAuthor,
   hasProvenance,
+  showActions = true,
   onSubmitForReview,
   onApprove,
   onReject,
@@ -155,13 +158,13 @@ export function StatusBar({
         </span>
         {slot}
 
-        {!hasProvenance && currentStatus === "DRAFT" && (
+        {showActions && !hasProvenance && currentStatus === "DRAFT" && (
           <span className="text-[10px]" style={{ color: "var(--bai-warn)" }}>
             {"Set provenance first \u2192"}
           </span>
         )}
 
-        {hasProvenance && currentStatus === "DRAFT" && !form && (
+        {showActions && hasProvenance && currentStatus === "DRAFT" && !form && (
           <button
             type="button"
             onClick={() => openForm("submit")}
@@ -172,7 +175,7 @@ export function StatusBar({
           </button>
         )}
 
-        {currentStatus === "IN_REVIEW" && !form && (
+        {showActions && currentStatus === "IN_REVIEW" && !form && (
           <>
             <button
               type="button"
@@ -193,7 +196,7 @@ export function StatusBar({
           </>
         )}
 
-        {currentStatus === "CANONICAL" && !form && (
+        {showActions && currentStatus === "CANONICAL" && !form && (
           <button
             type="button"
             onClick={() => openForm("archive")}
@@ -204,7 +207,7 @@ export function StatusBar({
           </button>
         )}
 
-        {currentStatus === "ARCHIVED" && !form && (
+        {showActions && currentStatus === "ARCHIVED" && !form && (
           <button
             type="button"
             onClick={() => openForm("restore")}
@@ -215,9 +218,11 @@ export function StatusBar({
           </button>
         )}
 
-        <span className="ml-auto text-[10px] text-gray-600">
-          {FLOW_HINT[currentStatus]}
-        </span>
+        {showActions && (
+          <span className="ml-auto text-[10px] text-gray-600">
+            {FLOW_HINT[currentStatus]}
+          </span>
+        )}
       </div>
 
       {form && (

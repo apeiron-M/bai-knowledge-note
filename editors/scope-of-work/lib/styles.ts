@@ -5,7 +5,7 @@ export const SOW_CSS = `
   --r:10px;--display:"Bricolage Grotesque",Inter,system-ui,sans-serif;--ui:Inter,system-ui,sans-serif;--mono:"JetBrains Mono",ui-monospace,SFMono-Regular,Menlo,monospace;
   font:14px/1.45 var(--ui);color:var(--ink);background:var(--canvas);-webkit-font-smoothing:antialiased;
   --sow-rail-w:264px;--sow-insp-w:372px;
-  display:grid;grid-template-columns:var(--sow-rail-w) minmax(0,1fr) var(--sow-insp-w);grid-template-rows:auto minmax(0,1fr);grid-template-areas:"tb tb tb" "rail canvas inspector";overflow:visible;height:calc(100vh - 96px);min-height:420px}
+  display:grid;grid-template-columns:var(--sow-rail-w) minmax(0,1fr) var(--sow-insp-w);grid-template-rows:auto minmax(0,1fr);grid-template-areas:"tb tb tb" "rail canvas inspector";overflow:visible;isolation:isolate;height:calc(100vh - 96px);min-height:420px}
 [data-bai-theme="dark"] .sow{color-scheme:dark}
 [data-bai-theme="light"] .sow{color-scheme:light}
 /* Column widths are variables so one rule serves every combination of
@@ -45,9 +45,8 @@ export const SOW_CSS = `
 .sow .btn.ghost{border-color:transparent} .sow .btn.sm{height:26px;padding:0 9px;font-size:12.5px;border-radius:7px} .sow .btn.danger{color:var(--ember)}
 /* collapsible document toolbar — zero height when folded; the handle floats over the canvas's top padding */
 .sow-tb{grid-area:tb;position:relative;z-index:6}
-/* Close button shown while the toolbar drawer is collapsed: a grid item over the
-   canvas area, so it stays in the corner as the canvas scrolls, above the
-   canvas's own sticky headers (z 3-4). */
+/* Close while the toolbar is folded: canvas corner, above sticky headers
+   (z 3-4). Isolation on .sow keeps this under Connect/vault settings. */
 .sow .sow-close{grid-area:canvas;justify-self:end;align-self:start;z-index:5;margin:10px 14px;transition:opacity .14s ease,transform .14s ease,visibility 0s}
 .sow .sow-close.is-hidden{opacity:0;transform:translateY(-4px) scale(.92);visibility:hidden;pointer-events:none;transition:opacity .14s ease,transform .14s ease,visibility 0s linear .14s}
 /* The drawer animates its grid row 0fr -> 1fr; the content clips inside it. The
