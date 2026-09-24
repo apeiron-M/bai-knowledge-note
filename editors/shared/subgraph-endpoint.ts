@@ -7,7 +7,7 @@
  * Priority:
  *   1. `VITE_SUBGRAPH_URL` env override (escape hatch for unusual deploys)
  *   2. Explicit Connect → Switchboard mappings (`DOMAIN_MAP`)
- *   3. Vetra subdomain pattern: connect.<slug>.vetra.io ↔ switchboard.<slug>.vetra.io
+ *   3. Vetra host patterns (see `resolveSwitchboardOrigin` for all three)
  *   4. Any localhost / 127.0.0.1 → http://localhost:4001
  *      (covers `ph vetra` direct on 3001 AND Cursor/VS Code remote-dev
  *      port-forwarding which proxies Connect to a random localhost port
@@ -25,14 +25,22 @@ const DOMAIN_MAP: Record<string, string> = {
  * Map a Connect hostname to its Switchboard origin, or `null` when the two are
  * co-hosted (same origin) and a relative path should be used instead.
  *
- * Vetra Cloud issues hostnames in two shapes and both must be handled:
+ * Vetra Cloud issues hostnames in three shapes and all must be handled:
  *   - `connect.<slug>.vetra.io`  → `switchboard.<slug>.vetra.io`  (subdomain)
  *   - `<slug>-connect.vetra.io`  → `<slug>-switchboard.vetra.io`  (suffix)
+ *   - `<slug>.vetra.io`          → `switchboard.<slug>.vetra.io`  (bare slug)
  *
  * The suffix form is what per-environment cloud deployments actually use
  * (e.g. `rare-emu-780314b9-connect.vetra.io`). It does NOT match the subdomain
  * pattern, so before this existed such hosts silently fell through to
  * same-origin and every subgraph call hit Connect instead of Switchboard.
+ *
+ * The bare-slug form is what a named Vetra domain produces: Connect at
+ * `knowledge-vault.vetra.io`, Switchboard at `switchboard.knowledge-vault.vetra.io`.
+ * It failed the same way until it was added — same-origin, so every call hit
+ * Connect. A miss here is never loud: `null` is also the legitimate answer for a
+ * co-hosted deployment, so an unrecognised host looks like a working one until
+ * the first request comes back as Connect's HTML.
  */
 export function resolveSwitchboardOrigin(): string | null {
   const hostname = globalThis.window?.location?.hostname;
@@ -52,6 +60,14 @@ export function resolveSwitchboardOrigin(): string | null {
 
   if (/^.+-connect\.vetra\.io$/.test(hostname)) {
     return `https://${hostname.replace(/-connect\.vetra\.io$/, "-switchboard.vetra.io")}`;
+  }
+
+  // Bare slug. Must stay after the suffix rule: `<slug>-connect.vetra.io` is a
+  // single label too, and would otherwise map to `switchboard.<slug>-connect…`.
+  // A host that is itself a Switchboard is left alone — same-origin is right there.
+  const bare = /^([a-z0-9-]+)\.vetra\.io$/i.exec(hostname);
+  if (bare && !/(^|-)switchboard$/i.test(bare[1])) {
+    return `https://switchboard.${hostname}`;
   }
 
   return null;
