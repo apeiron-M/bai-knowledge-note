@@ -14,6 +14,28 @@
  * Sources / Projects views so the whole app speaks one language.
  */
 
+import { useEffect, useState, type ReactNode } from "react";
+
+/**
+ * Renders nothing for `ms`, then its children. For a fallback that usually
+ * resolves almost at once: a document already on its way should not flash a
+ * spinner. Connect's own editor loader waits the same 200 ms.
+ */
+export function Delayed({
+  ms = 200,
+  children,
+}: {
+  ms?: number;
+  children: ReactNode;
+}) {
+  const [visible, setVisible] = useState(false);
+  useEffect(() => {
+    const timer = setTimeout(() => setVisible(true), ms);
+    return () => clearTimeout(timer);
+  }, [ms]);
+  return visible ? <>{children}</> : null;
+}
+
 export function Spinner({ className = "h-4 w-4" }: { className?: string }) {
   return (
     <svg

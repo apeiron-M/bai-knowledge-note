@@ -37,10 +37,16 @@ function isSyncRaceError(message: string | undefined): boolean {
 
 type State = { err: Error | null; retries: number };
 
-export class DebugErrorBoundary extends Component<
-  { children: ReactNode },
-  State
-> {
+type Props = {
+  children: ReactNode;
+  /**
+   * What the retry placeholder says. The boundary around the whole vault
+   * loads the vault; the one around the editor pane loads one document.
+   */
+  retryLabel?: string;
+};
+
+export class DebugErrorBoundary extends Component<Props, State> {
   state: State = { err: null, retries: 0 };
   private retryTimer: ReturnType<typeof setTimeout> | null = null;
 
@@ -82,7 +88,9 @@ export class DebugErrorBoundary extends Component<
           style={{ color: "var(--bai-text-muted)" }}
         >
           <div style={{ textAlign: "center" }}>
-            <div style={{ marginBottom: 8 }}>Loading vault…</div>
+            <div style={{ marginBottom: 8 }}>
+              {this.props.retryLabel ?? "Loading vault…"}
+            </div>
             <div style={{ fontSize: 12, opacity: 0.7 }}>
               syncing documents from reactor (attempt {this.state.retries + 1})
             </div>

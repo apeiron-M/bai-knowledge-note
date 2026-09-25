@@ -6,6 +6,7 @@ import {
   useSelectedNode,
 } from "@powerhousedao/reactor-browser";
 import { prefetchOnHover } from "../lib/prefetch.js";
+import { ancestorFolderIds } from "../lib/folder-path.js";
 import { useVaultName } from "../hooks/use-vault-name.js";
 import type { Node } from "@powerhousedao/shared/document-drive";
 import type { KnowledgeNoteInfo } from "../hooks/use-knowledge-notes.js";
@@ -1019,6 +1020,14 @@ function MocRow({ moc, selected }: { moc: MocInfo; selected: boolean }) {
   );
 }
 
+type FolderTreeNode = {
+  id: string;
+  name: string;
+  kind: string;
+  children: FolderTreeNode[];
+  docType?: string;
+};
+
 function FolderTreeView({
   nodes,
   query,
@@ -1028,16 +1037,8 @@ function FolderTreeView({
   query: string;
   selectedId?: string;
 }) {
-  type TreeNode = {
-    id: string;
-    name: string;
-    kind: string;
-    children: TreeNode[];
-    docType?: string;
-  };
-
   const tree = useMemo(() => {
-    function build(parentId: string | null): TreeNode[] {
+    function build(parentId: string | null): FolderTreeNode[] {
       return nodes
         .filter((n) =>
           parentId == null
@@ -1045,7 +1046,7 @@ function FolderTreeView({
             : n.parentFolder === parentId,
         )
         .map(
-          (node): TreeNode => ({
+          (node): FolderTreeNode => ({
             id: node.id,
             name: node.name,
             kind: node.kind,
@@ -1064,13 +1065,13 @@ function FolderTreeView({
         });
     }
 
-    function matches(node: TreeNode): boolean {
+    function matches(node: FolderTreeNode): boolean {
       if (!query) return true;
       if (node.name.toLowerCase().includes(query)) return true;
       return node.children.some(matches);
     }
 
-    function prune(nodes: TreeNode[]): TreeNode[] {
+    function prune(nodes: FolderTreeNode[]): FolderTreeNode[] {
       if (!query) return nodes;
       return nodes.filter(matches).map((n) => ({
         ...n,
@@ -1080,6 +1081,49 @@ function FolderTreeView({
 
     return prune(build(null));
   }, [nodes, query]);
+
+  // Open folders live here, not in each row, so the folders above the
+  // selection can be opened from one place. A selection is only useful if it
+  // is visible: after a reload, or when a document is opened from somewhere
+  // other than this tree (the Sources tab, search, a chat citation), every
+  // folder starts closed and the highlighted row would sit hidden inside
+  // them.
+  const selectedPath = useMemo(
+    () => ancestorFolderIds(nodes, selectedId),
+    [nodes, selectedId],
+  );
+  // Changes when the selection moves, or when the tree first learns where the
+  // selection lives (it can load after the selection is known).
+  const revealKey = `${selectedId ?? ""}|${selectedPath.join("/")}`;
+  const [expanded, setExpanded] = useState<ReadonlySet<string>>(
+    () => new Set(selectedPath),
+  );
+  const [revealedKey, setRevealedKey] = useState(revealKey);
+  // Adjusted during render rather than in an effect, so the first paint of a
+  // new selection already has its folders open. Once per selection: a folder
+  // the user closes afterwards stays closed until the selection moves again.
+  if (revealKey !== revealedKey) {
+    setRevealedKey(revealKey);
+    if (selectedPath.some((id) => !expanded.has(id))) {
+      setExpanded(new Set([...expanded, ...selectedPath]));
+    }
+  }
+  const toggleFolder = useCallback((id: string) => {
+    setExpanded((prev) => {
+      const next = new Set(prev);
+      if (next.has(id)) next.delete(id);
+      else next.add(id);
+      return next;
+    });
+  }, []);
+
+  const containerRef = useRef<HTMLDivElement>(null);
+  useEffect(() => {
+    if (!selectedId) return;
+    containerRef.current
+      ?.querySelector('[data-sidebar-active="true"]')
+      ?.scrollIntoView({ block: "nearest" });
+  }, [selectedId, revealKey]);
 
   if (query && tree.length === 0) {
     return (
@@ -1093,7 +1137,7 @@ function FolderTreeView({
   }
 
   return (
-    <div className="space-y-0.5">
+    <div ref={containerRef} className="space-y-0.5">
       {tree.map((node) => (
         <TreeItem
           key={node.id}
@@ -1101,6 +1145,8 @@ function FolderTreeView({
           depth={0}
           forceExpand={!!query}
           selectedId={selectedId}
+          expanded={expanded}
+          onToggleFolder={toggleFolder}
         />
       ))}
     </div>
@@ -1112,28 +1158,19 @@ function TreeItem({
   depth,
   forceExpand = false,
   selectedId,
+  expanded,
+  onToggleFolder,
 }: {
-  node: {
-    id: string;
-    name: string;
-    kind: string;
-    children: {
-      id: string;
-      name: string;
-      kind: string;
-      children: any[];
-      docType?: string;
-    }[];
-    docType?: string;
-  };
+  node: FolderTreeNode;
   depth: number;
   forceExpand?: boolean;
   selectedId?: string;
+  expanded: ReadonlySet<string>;
+  onToggleFolder: (id: string) => void;
 }) {
-  const [expanded, setExpanded] = useState(false);
   const isFolder = node.kind === "folder";
   const hasChildren = node.children.length > 0;
-  const open = forceExpand || expanded;
+  const open = forceExpand || expanded.has(node.id);
   const selected = selectedId === node.id;
 
   return (
@@ -1141,7 +1178,7 @@ function TreeItem({
       <button
         type="button"
         onClick={() =>
-          isFolder ? setExpanded(!expanded) : setSelectedNode(node.id)
+          isFolder ? onToggleFolder(node.id) : setSelectedNode(node.id)
         }
         className="sidebar-row group flex w-full items-center gap-1 rounded px-1 py-1 text-left"
         data-sidebar-active={selected ? "true" : undefined}
@@ -1216,6 +1253,8 @@ function TreeItem({
             depth={depth + 1}
             forceExpand={forceExpand}
             selectedId={selectedId}
+            expanded={expanded}
+            onToggleFolder={onToggleFolder}
           />
         ))}
     </div>

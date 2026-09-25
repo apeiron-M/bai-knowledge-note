@@ -1,7 +1,14 @@
 import type { CSSProperties } from "react";
 import { AccessView } from "./access/AccessView.js";
 import { useIsVaultAdmin } from "./access/use-is-admin.js";
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import {
+  Suspense,
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
 import type { EditorProps } from "document-model";
 import {
   isFileNodeKind,
@@ -11,6 +18,8 @@ import {
   useSelectedNode,
 } from "@powerhousedao/reactor-browser";
 import { VaultSidebar } from "./VaultSidebar.js";
+import { DebugErrorBoundary } from "./DebugErrorBoundary.js";
+import { Delayed, LoadingLine } from "./LoadingStates.js";
 import { CreateDocumentDialog } from "./CreateDocumentDialog.js";
 import GraphViewPixi, { type GraphFocus } from "./GraphViewPixi.js";
 import { NoteList } from "./NoteList.js";
@@ -523,7 +532,38 @@ export function DriveExplorer({ children }: EditorProps) {
           }
         >
           {showDocumentEditor ? (
-            <div className="h-full">{children}</div>
+            <div className="h-full">
+              {/*
+                The editor pane waits and fails on its own. `children` is
+                Connect's DocumentEditorContainer, whose useSelectedDocument()
+                suspends while an uncached document is fetched and throws
+                "There is no selected document" in a sync race. Without these
+                two, the nearest catchers were Connect's Suspense around the
+                whole app and the DebugErrorBoundary around this component —
+                so opening a document replaced the entire vault with a loader
+                and then mounted it again from scratch, taking the sidebar's
+                tab, search, open tree folders and width with it.
+
+                Keyed by document so a failure in one does not stick to the
+                next one opened from the (still usable) sidebar.
+              */}
+              <DebugErrorBoundary
+                key={selectedNode?.id}
+                retryLabel="Loading document…"
+              >
+                <Suspense
+                  fallback={
+                    <Delayed>
+                      <div className="flex h-full items-center justify-center">
+                        <LoadingLine label="Opening document…" />
+                      </div>
+                    </Delayed>
+                  }
+                >
+                  {children}
+                </Suspense>
+              </DebugErrorBoundary>
+            </div>
           ) : viewMode === "graph" ? (
             <GraphViewPixi
               notes={notes}
