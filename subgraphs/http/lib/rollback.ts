@@ -22,6 +22,7 @@ import { HttpError } from "./respond.js";
  * |---|---|---|
  * | creation fails partway | roll back what was created | the caller has nothing usable |
  * | containment fails | roll back | otherwise orphans, invisible |
+ * | the first write that gives it content fails (`POST sources`' INGEST_SOURCE) | roll back | an empty source is nothing the caller asked for |
  * | a write AFTER containment fails | report, do not roll back | the document is visible, in the right folder, and its per-action errors are returned; deleting it would also discard the actions that did apply |
  *
  * Routes that only mutate EXISTING documents (`POST actions`, the relationship

@@ -25,7 +25,7 @@ route that reads the index takes `drive` (a document UUID).
 | `POST` | `actions` | `renown` | body `{ documentId, actions[], wait?, allowLiteralEscapes? }` | `{ revision, operations: [{ index, type, error, attribution }], readBack, jobId }`; `202 { jobId }` when `wait: false` |
 | `POST` | `notes` | `renown` | body `{ drive, documentType?, notes: [{ name, actions? }] }` (max 25) | `201 { drive, parentFolder, notes: [{ id, name, parentFolder, path, readBack, operations }] }` — creates many documents and places them in **one** containment dispatch |
 | `POST` | `sources/folders` | `renown` | body `{ drive, name }`; needs `canWrite` | `201 { id, name, path, created: true }`, or `200 { … created: false }` when a folder of that name already exists under `/sources`. Groups sources for navigation — see [Grouping sources](#grouping-sources) |
-| `POST` | `sources` | `renown` | body `{ drive, title, content, sourceType?, description?, author?, url?, publishedAt?, method?, tool?, queue?, parentFolder? }` | `201 { id, parentFolder, path, status, revision, operations, readBack, jobId, task? }` — ingests a source from content alone; **the route places it in `/sources` itself**. `parentFolder` is a folder **id** and must be `/sources` or a folder within it; anything else is `400 FOLDER_OUTSIDE_VAULT_PATH` |
+| `POST` | `sources` | `renown` | body `{ drive, title, content, sourceType?, description?, author?, url?, publishedAt?, method?, tool?, queue?, parentFolder?, allowLiteralEscapes? }` | `201 { id, parentFolder, path, status, revision, operations, readBack, jobId, task? }` — ingests a source from content alone; **the route places it in `/sources` itself**. `parentFolder` is a folder **id** and must be `/sources` or a folder within it; anything else is `400 FOLDER_OUTSIDE_VAULT_PATH`. The content is linted **before** anything is created: `publishedAt` must be an ISO instant in UTC (`2026-09-28T08:00:00Z`; an offset, a date alone or an email `Date:` header is `400 LINT_REACTOR`), and a literal `\n` is `400 LINT_CONVENTION` unless `allowLiteralEscapes` |
 | `POST` | `relationships` | `renown` | body `{ source, target, type, reason?, confidence? }` | `{ revision, operations, readBack, jobId }` |
 | `PATCH` | `relationships` | `renown` | same body; replaces the stored `reason`/`confidence` | same |
 | `DELETE` | `relationships` | `renown` | body `{ source, target, type }` | same |
@@ -66,7 +66,8 @@ than reporting the stranded ids and making them the caller's problem.
 |---|---|
 | creation fails partway | everything created so far is deleted |
 | containment does not land | everything created is deleted; **verified by reading the drive back**, not by trusting the job result |
-| a write *after* containment succeeded | reported, **not** rolled back — the document is visible and in the right folder, its per-action errors are returned, and deleting it would discard the actions that did apply |
+| the *first* write that gives the new document its content fails (`POST sources`' `INGEST_SOURCE`: a dispatch failure, or the reducer rejecting it — `502 INGEST_REJECTED`) | the document is deleted and the original error is returned: an empty source is nothing the caller asked for |
+| a write *after* the document holds content | reported, **not** rolled back — the document is visible and in the right folder, its per-action errors are returned, and deleting it would discard the actions that did apply |
 
 A `502 CREATE_FAILED` or `502 CONTAINMENT_FAILED` therefore means nothing was
 left behind. In the one case where the rollback *itself* fails, the response
@@ -81,8 +82,9 @@ anything; operations are append-only and their errors are reported per action.
 #### Placement is the API's job
 
 `POST sources` takes **content, not a location**. The route resolves `/sources` from the drive's
-own tree at request time and creates the document there; a `parentFolder` in the body is rejected
-with `400`, so no client can put a source anywhere else. The folder *rule* is fixed in
+own tree at request time and creates the document there. A `parentFolder` may name a folder
+**within** `/sources` (see [Grouping sources](#grouping-sources)); anything else is `400
+FOLDER_OUTSIDE_VAULT_PATH`, so no client can put a source anywhere else. The folder *rule* is fixed in
 `subgraphs/http/lib/vault-folders.ts`; the folder **id** is never hardcoded, because ids differ per
 drive and this package serves several.
 

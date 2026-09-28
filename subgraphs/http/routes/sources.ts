@@ -6,9 +6,13 @@ import type { HttpRouteDeps } from "../lib/deps.js";
 import { findDocumentInDrive } from "../lib/drive-tree.js";
 import { HttpError, jsonError, OK_CACHE } from "../lib/respond.js";
 import { rejectUnknownFields } from "../lib/validate.js";
-import { failAndRollback, readPlacement } from "../lib/rollback.js";
+import {
+  failAndRollback,
+  readPlacement,
+  rollbackDocuments,
+} from "../lib/rollback.js";
 import { folderPaths, resolveVaultFolder } from "../lib/vault-folders.js";
-import { executeWrite } from "../lib/write.js";
+import { assertLintClean, executeWrite } from "../lib/write.js";
 
 // Taken from the model's own zod schema rather than restated here, so the
 // route cannot drift from what the reducer will actually accept.
@@ -28,8 +32,10 @@ interface SourceBody {
   method?: string;
   tool?: string;
   queue?: boolean;
-  /** Not accepted — placement is the API's job. Present only to reject it. */
+  /** A folder within `/sources`; refused anywhere else. */
   parentFolder?: string;
+  /** Allow literal `\n` / `\t` / `\r` in strings, as `POST actions` does. */
+  allowLiteralEscapes?: boolean;
 }
 
 interface DriveNode {
@@ -74,6 +80,7 @@ export function createIngestSourceRoute(deps: HttpRouteDeps) {
         "tool",
         "queue",
         "parentFolder",
+        "allowLiteralEscapes",
       ]);
       if (!body.drive) {
         throw new HttpError(400, "BAD_REQUEST", "drive is required");
@@ -109,6 +116,42 @@ export function createIngestSourceRoute(deps: HttpRouteDeps) {
       const module = await deps.reactorClient.getDocumentModelModule(SOURCE_TYPE);
       const draft = module.utils.createDocument() as PHDocument;
       draft.header.name = body.title.trim();
+
+      const now = deps.now().toISOString();
+      const actions: { type: string; input: Record<string, unknown> }[] = [
+        {
+          type: "INGEST_SOURCE",
+          input: {
+            title: body.title.trim(),
+            content: body.content,
+            sourceType,
+            ...(body.description ? { description: body.description } : {}),
+            ...(body.author ? { author: body.author } : {}),
+            ...(body.url ? { url: body.url } : {}),
+            ...(body.publishedAt ? { publishedAt: body.publishedAt } : {}),
+            ...(body.method ? { method: body.method } : {}),
+            ...(body.tool ? { tool: body.tool } : {}),
+            createdAt: now,
+            createdBy: user.address,
+          },
+        },
+      ];
+      const queue = body.queue !== false;
+      if (queue) {
+        actions.push({
+          type: "SET_SOURCE_STATUS",
+          input: { status: "EXTRACTING" },
+        });
+      }
+
+      // Lint what will be applied BEFORE anything exists. `executeWrite` lints
+      // too, but only after the create, and a refusal there (a publishedAt that
+      // is not an ISO instant, a literal \n in the content) used to leave an
+      // empty source in /sources behind a 400. Linting against the draft's
+      // initial state gives the same findings with nothing written.
+      assertLintClean(SOURCE_TYPE, draft.state, actions, {
+        allowLiteralEscapes: body.allowLiteralEscapes === true,
+      });
 
       // `createDocumentInDrive` is create + contain as TWO reactor jobs. If it
       // throws we may already own a document, so roll back on the id we asked
@@ -148,40 +191,34 @@ export function createIngestSourceRoute(deps: HttpRouteDeps) {
         );
       }
 
-      const now = deps.now().toISOString();
-      const actions: { type: string; input: Record<string, unknown> }[] = [
-        {
-          type: "INGEST_SOURCE",
-          input: {
-            title: body.title.trim(),
-            content: body.content,
-            sourceType,
-            ...(body.description ? { description: body.description } : {}),
-            ...(body.author ? { author: body.author } : {}),
-            ...(body.url ? { url: body.url } : {}),
-            ...(body.publishedAt ? { publishedAt: body.publishedAt } : {}),
-            ...(body.method ? { method: body.method } : {}),
-            ...(body.tool ? { tool: body.tool } : {}),
-            createdAt: now,
-            createdBy: user.address,
-          },
-        },
-      ];
-      const queue = body.queue !== false;
-      if (queue) {
-        actions.push({
-          type: "SET_SOURCE_STATUS",
-          input: { status: "EXTRACTING" },
+      // A source without its INGEST_SOURCE is an empty shell the caller never
+      // asked for, so a failure here rolls back like a failed create — unlike a
+      // later write to a document that already holds content (see rollback.ts).
+      let result;
+      try {
+        result = await executeWrite(deps, {
+          documentId,
+          document: created,
+          actions,
+          ctx,
+          wait: true,
+          allowLiteralEscapes: body.allowLiteralEscapes === true,
         });
+      } catch (error) {
+        await rollbackOrReport(deps, documentId, error);
+        throw error; // unreachable; rollbackOrReport always throws
       }
-
-      const result = await executeWrite(deps, {
-        documentId,
-        document: created,
-        actions,
-        ctx,
-        wait: true,
-      });
+      const ingest = result.operations.find(
+        (operation) => operation.type === "INGEST_SOURCE",
+      );
+      if (ingest?.error) {
+        await failAndRollback(
+          deps,
+          [documentId],
+          "INGEST_REJECTED",
+          `INGEST_SOURCE was rejected by the reducer: ${ingest.error}`,
+        );
+      }
 
       const task = queue
         ? await addQueueTask(deps, driveId, documentId, ctx, body.title.trim())
@@ -277,4 +314,28 @@ async function addQueueTask(
     wait: true,
   });
   return { id, created: true };
+}
+
+/**
+ * Rolls back a source whose ingest failed, then rethrows the original error so
+ * the caller sees why (a 400 lint finding, a 422 dispatch failure). Only when
+ * the rollback itself fails does it answer 502 with the stranded id instead.
+ */
+async function rollbackOrReport(
+  deps: HttpRouteDeps,
+  documentId: string,
+  error: unknown,
+): Promise<never> {
+  const stranded = await rollbackDocuments(deps, [documentId]);
+  if (stranded.length) {
+    throw new HttpError(
+      502,
+      "CREATE_FAILED",
+      `Ingesting the source failed (${
+        error instanceof Error ? error.message : String(error)
+      }). Rollback INCOMPLETE — these documents are stranded: ${stranded.join(", ")}`,
+      [{ path: "rollback", rule: "INCOMPLETE", orphaned: stranded }],
+    );
+  }
+  throw error;
 }

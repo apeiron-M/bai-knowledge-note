@@ -58,6 +58,44 @@ const signerAddressOf = (action: RawAction): string | undefined =>
       | undefined
   )?.signer?.user?.address;
 
+/**
+ * Throws the route surface's `400 LINT_REACTOR | LINT_CONVENTION` when the
+ * actions would be refused — by the envelope check, the reducer's zod schema
+ * or a vault convention. Nothing is dispatched.
+ *
+ * Exported so a route that CREATES a document can lint the actions it will
+ * apply against the draft's initial state BEFORE the create: linting only in
+ * `executeWrite`, after the document exists, left an empty document behind
+ * whenever its content was refused.
+ */
+export function assertLintClean(
+  documentType: string,
+  state: unknown,
+  actions: RawAction[],
+  options: { allowLiteralEscapes?: boolean } = {},
+): void {
+  const findings = [
+    ...validateEnvelopes(actions),
+    ...lintActions(documentType, state, actions, {
+      allowLiteralEscapes: options.allowLiteralEscapes,
+    }),
+  ];
+  if (!findings.length) return;
+  const code = findings.some((f) => f.class === "REACTOR_REJECTS")
+    ? "LINT_REACTOR"
+    : "LINT_CONVENTION";
+  // Lead with the first finding. "3 lint findings" tells the caller nothing;
+  // the path and the reason are what they need to fix it.
+  const first = findings[0];
+  const more = findings.length > 1 ? ` (+${findings.length - 1} more)` : "";
+  throw new HttpError(
+    400,
+    code,
+    `${first.path}: ${first.message}${more}`,
+    findings,
+  );
+}
+
 export async function executeWrite(
   deps: HttpRouteDeps,
   options: WriteOptions,
@@ -67,28 +105,9 @@ export async function executeWrite(
 
   // Envelope first: a malformed or duplicated action id is refused here rather
   // than forwarded to the reactor, which would answer 422 after dispatching.
-  const findings = [
-    ...validateEnvelopes(options.actions),
-    ...lintActions(documentType, options.document.state, options.actions, {
-      allowLiteralEscapes: options.allowLiteralEscapes,
-    }),
-  ];
-  if (findings.length) {
-    const code = findings.some((f) => f.class === "REACTOR_REJECTS")
-      ? "LINT_REACTOR"
-      : "LINT_CONVENTION";
-    // Lead with the first finding. "3 lint findings" tells the caller nothing;
-    // the path and the reason are what they need to fix it.
-    const first = findings[0];
-    const more =
-      findings.length > 1 ? ` (+${findings.length - 1} more)` : "";
-    throw new HttpError(
-      400,
-      code,
-      `${first.path}: ${first.message}${more}`,
-      findings,
-    );
-  }
+  assertLintClean(documentType, options.document.state, options.actions, {
+    allowLiteralEscapes: options.allowLiteralEscapes,
+  });
 
   const stamped = stampActions(
     options.actions,

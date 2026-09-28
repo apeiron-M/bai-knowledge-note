@@ -333,4 +333,132 @@ describe("POST sources", () => {
     expect(res.status).toBe(403);
     expect(d.reactorClient.createDocumentInDrive).not.toHaveBeenCalled();
   });
+
+  describe("content the reducer would refuse creates NOTHING", () => {
+    // Before the fix `executeWrite` linted INGEST_SOURCE only after the create
+    // and placement, so each of these answered 400 AND left an empty source in
+    // /sources. Observed live on 2026-09-28 with all four inputs.
+    it.each([
+      ["an RFC 2822 email date", { publishedAt: "Mon, 28 Sep 2026 10:00:00 +0200" }, "LINT_REACTOR"],
+      ["a date without a time", { publishedAt: "2026-09-28" }, "LINT_REACTOR"],
+      ["an ISO date with an offset", { publishedAt: "2026-09-28T10:00:00+02:00" }, "LINT_REACTOR"],
+      ["a literal backslash-n in the content", { content: "line one\\nline two" }, "LINT_CONVENTION"],
+    ])("refuses %s before creating anything", async (_name, patch, code) => {
+      const d = deps();
+      const res = await createIngestSourceRoute(d)(
+        post({ drive: "drive", title: "T", content: "C", queue: false, ...patch }),
+        ctx,
+      );
+      expect(res.status).toBe(400);
+      const body = (await res.json()) as { code: string; error: string };
+      expect(body.code).toBe(code);
+      expect(body.error).toMatch(/^actions\[0\]/);
+      expect(d.reactorClient.createDocumentInDrive).not.toHaveBeenCalled();
+      expect(d.reactorClient.executeAsync).not.toHaveBeenCalled();
+    });
+
+    it("accepts an ISO instant in UTC", async () => {
+      const d = deps();
+      const res = await createIngestSourceRoute(d)(
+        post({ drive: "drive", title: "T", content: "C", queue: false, publishedAt: "2026-09-28T08:00:00Z" }),
+        ctx,
+      );
+      expect(res.status).toBe(201);
+    });
+
+    it("lets allowLiteralEscapes through, as POST actions does", async () => {
+      const d = deps();
+      const res = await createIngestSourceRoute(d)(
+        post({
+          drive: "drive",
+          title: "LaTeX notes",
+          content: "\\newcommand is a macro",
+          queue: false,
+          allowLiteralEscapes: true,
+        }),
+        ctx,
+      );
+      expect(res.status).toBe(201);
+      const exec = d.reactorClient.executeAsync as unknown as {
+        mock: { calls: [string, string, { input: { content: string } }[]][] };
+      };
+      expect(exec.mock.calls[0][2][0].input.content).toBe("\\newcommand is a macro");
+    });
+  });
+
+  describe("an ingest that fails after the create rolls the empty source back", () => {
+    it("rethrows the dispatch failure after deleting the source", async () => {
+      const d = deps({
+        reactorClient: createFakeReactorClient({
+          get: vi.fn(async (id: string) =>
+            id === "drive" ? driveDoc([{ id: "src-1", documentType: "bai/source", parentFolder: "f-sources" }]) : createdSource,
+          ) as never,
+          createDocumentInDrive: vi.fn(async () => createdSource) as never,
+          waitForJob: vi.fn(async () => ({
+            id: "job-1",
+            status: "FAILED",
+            error: { message: "reducer exploded" },
+          })) as never,
+        } as never),
+      });
+      const res = await createIngestSourceRoute(d)(
+        post({ drive: "drive", title: "T", content: "C", queue: false }),
+        ctx,
+      );
+      expect(res.status).toBe(422);
+      expect((await res.json()) as { code: string }).toMatchObject({ code: "DISPATCH_FAILED" });
+      expect(d.reactorClient.deleteDocuments).toHaveBeenCalledWith(["src-1"]);
+    });
+
+    it("rolls back when the reducer rejects INGEST_SOURCE", async () => {
+      const d = deps({
+        reactorClient: createFakeReactorClient({
+          get: vi.fn(async (id: string) =>
+            id === "drive" ? driveDoc([{ id: "src-1", documentType: "bai/source", parentFolder: "f-sources" }]) : createdSource,
+          ) as never,
+          createDocumentInDrive: vi.fn(async () => createdSource) as never,
+          getOperations: vi.fn(async () => ({
+            results: [
+              { index: 0, error: "Source already ingested", action: { id: "uuid-1", type: "INGEST_SOURCE" } },
+            ],
+          })) as never,
+        } as never),
+      });
+      const res = await createIngestSourceRoute(d)(
+        post({ drive: "drive", title: "T", content: "C", queue: false }),
+        ctx,
+      );
+      expect(res.status).toBe(502);
+      const body = (await res.json()) as { code: string; error: string };
+      expect(body.code).toBe("INGEST_REJECTED");
+      expect(body.error).toContain("Source already ingested");
+      expect(body.error).toContain("rolled back");
+      expect(d.reactorClient.deleteDocuments).toHaveBeenCalledWith(["src-1"]);
+    });
+
+    it("names the stranded id when the rollback itself fails", async () => {
+      const d = deps({
+        reactorClient: createFakeReactorClient({
+          get: vi.fn(async (id: string) =>
+            id === "drive" ? driveDoc([{ id: "src-1", documentType: "bai/source", parentFolder: "f-sources" }]) : createdSource,
+          ) as never,
+          createDocumentInDrive: vi.fn(async () => createdSource) as never,
+          waitForJob: vi.fn(async () => ({ id: "job-1", status: "FAILED", error: { message: "boom" } })) as never,
+          deleteDocuments: vi.fn(async () => {
+            throw new Error("delete refused");
+          }) as never,
+        } as never),
+      });
+      const errorSpy = vi.spyOn(console, "error").mockImplementation(() => undefined);
+      const res = await createIngestSourceRoute(d)(
+        post({ drive: "drive", title: "T", content: "C", queue: false }),
+        ctx,
+      );
+      errorSpy.mockRestore();
+      expect(res.status).toBe(502);
+      const body = (await res.json()) as { code: string; details: { orphaned: string[] }[] };
+      expect(body.code).toBe("CREATE_FAILED");
+      expect(body.details[0].orphaned).toEqual(["src-1"]);
+    });
+  });
 });
