@@ -5,7 +5,7 @@ import { candidatesStage, checkVaultStage, draftStage, readSourceStage, reportSt
 import { assertWritable, writeStage } from "../agent/write.js";
 import { knowledgeVaultAuth } from "../auth.js";
 import { clientForContext } from "../common/context.js";
-import { driveProp, modelProp, sourceProp } from "../common/props.js";
+import { driveProp, modelProp, resolveSource, sourceIdProp, sourceProp } from "../common/props.js";
 import { modeProp } from "./modes.js";
 
 /**
@@ -27,6 +27,7 @@ export const extractClaimsAction = createAction({
   props: {
     drive: driveProp,
     source: sourceProp,
+    source_id: sourceIdProp,
     model: modelProp,
     mode: modeProp("Write: create notes for review"),
     threshold: Property.Number({
@@ -63,7 +64,7 @@ export const extractClaimsAction = createAction({
 
     const write = p.mode === "write";
     const read = await stage("read", async () => {
-      const bundle = await readSourceStage(client, drive, String(p.source));
+      const bundle = await readSourceStage(client, drive, resolveSource(p));
       // Checked before any model call: a rerun would duplicate the notes.
       if (write) assertWritable(bundle);
       return bundle;

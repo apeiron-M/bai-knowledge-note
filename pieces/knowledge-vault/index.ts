@@ -4,6 +4,7 @@ import { extractClaimsAction } from "./lib/actions/extract-claims.js";
 import { placeInMocsAction } from "./lib/actions/place-in-mocs.js";
 import { searchAction } from "./lib/actions/search.js";
 import { knowledgeVaultAuth } from "./lib/auth.js";
+import { newPipelineTaskTrigger } from "./lib/triggers/new-pipeline-task.js";
 import { KNOWLEDGE_VAULT_LOGO } from "./lib/logo.js";
 
 /**
@@ -23,7 +24,7 @@ export const knowledgeVault = createPiece({
   minimumSupportedRelease: "0.30.0",
   auth: knowledgeVaultAuth,
   actions: [searchAction, extractClaimsAction, connectNotesAction, placeInMocsAction],
-  triggers: [],
+  triggers: [newPipelineTaskTrigger],
 });
 
 export { knowledgeVaultAuth };

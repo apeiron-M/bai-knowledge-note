@@ -5,7 +5,7 @@ import { llmFor, stageRunner } from "../agent/runner.js";
 import { planStage, readMocs, writePlacementsStage } from "../agent/synthesize.js";
 import { knowledgeVaultAuth } from "../auth.js";
 import { clientForContext } from "../common/context.js";
-import { driveProp, modelProp, sourceProp } from "../common/props.js";
+import { driveProp, modelProp, resolveSource, sourceIdProp, sourceProp } from "../common/props.js";
 import { modeProp } from "./modes.js";
 
 /** The reweave phase: each of a source's notes becomes a core idea of a MoC. */
@@ -16,7 +16,7 @@ export const placeInMocsAction = createAction({
   description:
     "Makes each note a source produced a core idea of a Map of Content, creating a TOPIC MoC under a domain only when three or more notes share a theme no MoC covers. Write mode links them and advances the pipeline task to verify, where it waits for your review. Set the step's timeout to 300 s.",
   audience: "both",
-  props: { drive: driveProp, source: sourceProp, model: modelProp, mode: modeProp("Write: add the notes to MoCs") },
+  props: { drive: driveProp, source: sourceProp, source_id: sourceIdProp, model: modelProp, mode: modeProp("Write: add the notes to MoCs") },
   outputSchema: {
     fields: [
       { key: "summary", label: "What happened" },
@@ -31,7 +31,7 @@ export const placeInMocsAction = createAction({
     const { llm, model } = llmFor(context, p.model);
     const client = clientForContext(context);
     const drive = String(p.drive);
-    const sourceId = String(p.source);
+    const sourceId = resolveSource(p);
     const write = p.mode === "write";
     const { stage, finish } = stageRunner(context);
 

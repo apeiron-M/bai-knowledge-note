@@ -3,7 +3,7 @@ import { LlmClient, modelLabel } from "../agent/llm.js";
 import { knowledgeVaultAuth } from "../auth.js";
 import { readAuth } from "./auth-value.js";
 import { clientFor } from "./context.js";
-import { errorMessage } from "./errors.js";
+import { errorMessage, KnowledgeVaultApiError } from "./errors.js";
 
 /**
  * The vault drive a step acts on. Chosen per step, not per connection, so one
@@ -77,12 +77,16 @@ export const modelProp = Property.Dropdown({
 
 type DriveNode = { id: string; name: string; documentType?: string | null; parentFolder?: string | null };
 
-/** The vault's sources, labelled with the folder they sit in, for the chosen vault. */
+/**
+ * The vault's sources, labelled with the folder they sit in, for the chosen
+ * vault. Optional where a trigger can supply the source instead: Studio has
+ * no expression picker on a dropdown, so the trigger's id goes in sourceIdProp.
+ */
 export const sourceProp = Property.Dropdown({
   auth: knowledgeVaultAuth,
   displayName: "Source",
-  description: "A source in the vault's /sources",
-  required: true,
+  description: "A source in the vault's /sources. Leave empty when a trigger supplies it in Source id",
+  required: false,
   refreshers: ["drive"],
   refreshOnSearch: true,
   options: async ({ auth, drive }, ctx) => {
@@ -107,3 +111,19 @@ export const sourceProp = Property.Dropdown({
     }
   },
 });
+
+/** Where a trigger's source goes: {{trigger.payload.source_id}}. Wins over the dropdown. */
+export const sourceIdProp = Property.ShortText({
+  displayName: "Source id (from a trigger)",
+  description: "Map {{trigger.payload.source_id}} here to run on the source the trigger found. Overrides Source",
+  required: false,
+});
+
+/** The source a step works on: the mapped id first, else the dropdown. */
+export function resolveSource(props: { source?: unknown; source_id?: unknown }): string {
+  const mapped = typeof props.source_id === "string" ? props.source_id.trim() : "";
+  const picked = typeof props.source === "string" ? props.source.trim() : "";
+  const id = mapped || picked;
+  if (!id) throw new KnowledgeVaultApiError("Choose a Source, or map one into Source id (e.g. {{trigger.payload.source_id}})", { category: "validation" });
+  return id;
+}

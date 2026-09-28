@@ -4,7 +4,7 @@ import { advancePipeline } from "../agent/pipeline.js";
 import { llmFor, stageRunner } from "../agent/runner.js";
 import { knowledgeVaultAuth } from "../auth.js";
 import { clientForContext } from "../common/context.js";
-import { driveProp, modelProp, sourceProp } from "../common/props.js";
+import { driveProp, modelProp, resolveSource, sourceIdProp, sourceProp } from "../common/props.js";
 import { modeProp } from "./modes.js";
 
 /** The reflect phase: typed links, each with its reason, for a source's notes. */
@@ -15,7 +15,7 @@ export const connectNotesAction = createAction({
   description:
     "Links the notes a source produced to each other and to the vault: candidates from semantic neighbours, one model call to judge them, a specific reason on every link. Write mode creates the links and advances the source's pipeline task past reflect. Set the step's timeout to 300 s.",
   audience: "both",
-  props: { drive: driveProp, source: sourceProp, model: modelProp, mode: modeProp("Write: create the links") },
+  props: { drive: driveProp, source: sourceProp, source_id: sourceIdProp, model: modelProp, mode: modeProp("Write: create the links") },
   outputSchema: {
     fields: [
       { key: "summary", label: "What happened" },
@@ -30,7 +30,7 @@ export const connectNotesAction = createAction({
     const { llm, model } = llmFor(context, p.model);
     const client = clientForContext(context);
     const drive = String(p.drive);
-    const sourceId = String(p.source);
+    const sourceId = resolveSource(p);
     const write = p.mode === "write";
     const { stage, finish } = stageRunner(context);
 

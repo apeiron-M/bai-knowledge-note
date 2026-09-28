@@ -51,7 +51,7 @@ describe.skipIf(!ready)("built piece conformance", () => {
     const { piece } = await loadPieceFromDir(bundleDir);
     const descriptor = buildDescriptor(piece, { packageName: PIECE, version: VERSION });
     expect(descriptor.actions.map((a) => a.name)).toEqual(["search", "extract-claims", "connect-notes", "place-in-mocs"]);
-    expect(descriptor.triggers).toEqual([]);
+    expect(descriptor.triggers.map((t) => t.name)).toEqual(["new-pipeline-task"]);
     expect(descriptor.auth).toMatchObject({ type: "CUSTOM_AUTH" });
     const drive = descriptor.actions[0]?.props.find((p) => p.name === "drive");
     expect(drive?.type).toBe("DROPDOWN");

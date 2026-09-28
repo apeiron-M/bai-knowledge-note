@@ -20,7 +20,7 @@ describe("the piece definition", () => {
   // so an action left out of the piece fails here.
   it("ships exactly these actions and triggers", () => {
     expect(Object.keys(knowledgeVault.actions()).sort()).toEqual(["connect-notes", "extract-claims", "place-in-mocs", "search"]);
-    expect(Object.keys(knowledgeVault.triggers())).toEqual([]);
+    expect(Object.keys(knowledgeVault.triggers())).toEqual(["new-pipeline-task"]);
   });
 });
 
