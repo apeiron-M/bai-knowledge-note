@@ -206,7 +206,7 @@ describe("the extract-claims action", () => {
       const out = await run({ auth: auth(), propsValue: { drive: "d", source: "s1", threshold: 5 }, output: { update: async (o: { running: string | null }) => { live.push(o); } } });
       expect(out).toMatchObject({ dry_run: true, model: "m/default", proposed_count: 1, source_title: "Src" });
       expect((out.stages as string[]).map((s) => s.split(" · ")[0])).toEqual(["read", "candidates", "check", "draft", "report"]);
-      expect(String(out.summary)).toMatch(/^1 notes proposed.*, \d+ s\.$/);
+      expect(String(out.summary)).toMatch(/^Dry run: 1 notes proposed.*, \d+ s\.$/);
       expect(live.map((l) => l.running)).toEqual(["read", "candidates", "check", "draft", "report", null]);
       const noLive = await run({ auth: auth(), propsValue: { drive: "d", source: "s1", model: "m/x", threshold: 0.5 }, output: { update: async () => { throw new Error("no live output"); } } });
       expect(noLive.model).toBe("m/x");
@@ -218,6 +218,37 @@ describe("the extract-claims action", () => {
     });
     await withFetch(() => { throw new Error("plain"); }, async () => {
       await expect(run({ auth: auth(), propsValue: { drive: "d", source: "s1" } })).rejects.toThrow(/^Stage "read" failed: .*plain/);
+    });
+  });
+  it("writes in write mode, and refuses a source already extracted before any model call", async () => {
+    let posted = 0;
+    let modelCalls = 0;
+    const answers = (u: string) => {
+      if (u.startsWith("https://llm.test")) {
+        modelCalls++;
+        return json({ choices: [{ message: { content: model } }], usage: { cost: 0.001 } });
+      }
+      if (u.includes("/notes") && !u.includes("/notes/")) {
+        posted++;
+        return json({ notes: [{ id: "new1", name: "x", readBack: "confirmed", operations: [] }] }, 201);
+      }
+      if (u.includes("/relationships") || u.includes("/actions")) return json({ operations: [] });
+      return vaultAnswers(u);
+    };
+    await withFetch(answers, async () => {
+      const out = await run({ auth: auth(), propsValue: { drive: "d", source: "s1", mode: "write" } });
+      expect(out).toMatchObject({ dry_run: false, note_ids: ["new1"], source_updated: true });
+      expect(String(out.summary)).toMatch(/^Wrote 1 DRAFT note to \/knowledge\/notes, 1 linked to the source; the source is marked EXTRACTED\. /);
+      expect((out.stages as string[]).at(-1)).toMatch(/^write · /);
+      expect(posted).toBe(1);
+    });
+    modelCalls = 0;
+    const extracted = (u: string) => (u.includes("/notes/s1") ? json({ name: "s1", state: { global: { title: "Src", content: SOURCE, extractedClaims: ["n1", "n2"] } } }) : answers(u));
+    await withFetch(extracted, async () => {
+      await expect(run({ auth: auth(), propsValue: { drive: "d", source: "s1", mode: "write" } })).rejects.toThrow(/Stage "read" failed: "Src" already has 2 extracted notes/);
+      expect(modelCalls).toBe(0);
+      const dry = await run({ auth: auth(), propsValue: { drive: "d", source: "s1", mode: "dry_run" } });
+      expect(String(dry.summary)).toMatch(/^Dry run: /);
     });
   });
   it("needs an LLM key and a model", async () => {
