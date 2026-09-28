@@ -807,6 +807,7 @@ records what it would have done.
 | `agent-reweave` | `/synthesize` | MoC membership (`CORE_IDEA`), create or update MoCs, `CHILD_MOC` placement |
 | `agent-verify` | `/verify` | read-only checks; reports findings, fixes nothing on its own |
 | `agent-health` | `/health` | stats, orphans, tensions; writes the health report |
+| `agent-pipeline` | `/pipeline` | all of the above, phase by phase with exit gates (§18.2a) |
 
 - **Tools come from the piece's own client**, so every write keeps the vault's server-side
   guarantees: lint before dispatch, placement, rollback, read-back. A refused write returns the
@@ -824,9 +825,85 @@ records what it would have done.
 - **Output**: what was done (notes created, links, skipped claims with reasons), the model used,
   token usage and cost (OpenRouter's `usage.cost`), steps taken, and why it stopped.
 
+### 18.2a The full flow: `agent-pipeline` (`/powerhouse-knowledge:pipeline`)
+
+One action that drives a claim task through all four phases, in order, as the pipeline skill
+does. It is the other jobs run back to back, with the skill's **exit gates** checked by read-back
+between them, because advancing is a claim that the work exists.
+
+| Phase | Job it runs | Exit gate the harness checks (read back) before `ADVANCE_PHASE` |
+|---|---|---|
+| `create` | `agent-extract` | every new note has title, description (≤ 200), `noteType`, content, ≥ 1 topic, provenance, confidence and a `DERIVED_FROM` edge with its locus; the source reads `claimCount == extractedClaims.length == notes written` and status `EXTRACTED` |
+| `reflect` | `agent-connect` | every new note has ≥ 2 knowledge edges with reasons and confidence and ≥ 1 incoming; every `CONTRADICTS` has its tension read back |
+| `reweave` | `agent-reweave` (forward: MoC placement; backward: older notes the new claims touch) | every new note is a `CORE_IDEA` of a TOPIC or DOMAIN MoC; every MoC reachable from the HUB |
+| `verify` | `agent-verify` | every note graded; repairs read back; notes submitted for review; health report rewritten |
+
+- **Harness-owned tracking.** Per phase: `ASSIGN_TASK`, the job, the gate, then `ADVANCE_PHASE` with
+  a handoff built from the job's report (`workDone`, `filesModified`), then read the task back
+  (`status`, `currentPhase`, `handoffs.length`). The final advance completes the task; the harness
+  never follows it with `COMPLETE_TASK`.
+- **A failed gate does not advance.** The harness gives the job one repair turn with the gate's
+  findings; if the gate still fails, it `BLOCK_TASK`s with the findings in the handoff so a person
+  or a later run can pick it up. A source that yields zero claims is not a failure: close it out
+  and advance.
+- **Approval needs a different actor.** The verify gate wants passing notes at `CANONICAL`, and the
+  vault enforces author ≠ approver. A workflow running as one identity therefore stops at
+  `IN_REVIEW` and ends the task with `BLOCK_TASK` "awaiting review" rather than claiming a gate it
+  cannot pass. Two ways to finish: a person approves in the app, or a second connection with a
+  **reviewer** identity runs `agent-verify` in approval mode. It is never the same identity as
+  the writer.
+- **Budget across phases.** `max_cost_usd` and `max_steps` apply to the whole run; a phase that
+  would exceed them blocks the task with its handoff written, so no work is lost.
+- **Size.** A full run on one section is roughly 40–100 model calls, which is why §18.3 prefers one
+  workflow per phase. `agent-pipeline` is for a single source when a person wants it done end to
+  end (`core#trigger:manual`), or for a low-volume vault.
+
+### 18.2b Tools on the existing REST routes
+
+Every tool the jobs need maps onto a route in `subgraphs/http` today. The vault's server-side
+guarantees (lint before dispatch, placement, rollback, read-back, per-drive access) therefore apply
+to the agent exactly as they do to a person's writes.
+
+| Tool | Route | Used by |
+|---|---|---|
+| `search_vault` | `GET search` (`content=1`, `related`) | all |
+| `read_document`, `read_markdown` | `GET notes/:id`, `notes/:id.md` | all |
+| `similar_notes`, `links`, `backlinks`, `neighbourhood` | `GET notes/:id/similar`, `/links`, `/backlinks`, `/connections` | connect, reweave, verify |
+| `list_topics`, `notes_by_topic` | `GET topics`, `topics/:name` | extract, reweave |
+| `graph_snapshot` | `GET graph.json` (all nodes and edges) | reweave (MoC hierarchy), verify, health |
+| `graph_stats`, `orphans`, `synthesis_candidates` | `GET stats`, `density`, `orphans`, `triangles` | health, reweave |
+| `read_health` | `GET health.json` | health |
+| `list_sources`, `find_queue` | `GET notes/<driveId>` (the drive tree) | pipeline |
+| `create_notes`, `create_moc`, `create_observation` | `POST notes` (`documentType` note / MoC / observation; ≤ 25 per call) | extract, reweave, verify |
+| `update_note`, `set_metadata`, `add_topic` | `POST actions` on the note | extract, reweave, verify |
+| `submit_for_review` / `approve` (reviewer identity only) | `POST actions` `SUBMIT_FOR_REVIEW` / `APPROVE_NOTE` (server checks `canMutate` and author ≠ approver) | verify |
+| `supersede_note` | `POST relationships` `SUPERSEDES` + `POST actions` `ARCHIVE_NOTE` | reweave |
+| `link`, `update_link`, `unlink` | `POST`, `PATCH`, `DELETE relationships` (articulation rule server-side) | extract (`DERIVED_FROM`), connect, reweave (`CORE_IDEA`, `CHILD_MOC`) |
+| `record_extraction` | `POST actions` on the source: `ADD_EXTRACTED_CLAIM`, `RECORD_EXTRACTION_STATS`, `SET_SOURCE_STATUS` | extract |
+| `update_moc` | `POST actions` on the MoC: `UPDATE_ORIENTATION`, `UPDATE_DESCRIPTION` | reweave |
+| `write_health_report` | `POST actions` on the health report (lint covers `HealthCategory`) | health |
+| task transitions (harness only) | `POST tasks/:id/claim`; `POST actions` on the queue: `ADVANCE_PHASE`, `BLOCK_TASK`, `FAIL_TASK` | pipeline |
+| `read_methodology` | bundled with the piece: the methodology claims in `data/methodology` | connect (grounding), verify |
+
+**Gaps, and what closes them:**
+- **Finding the queue and its tasks** takes two whole-drive reads today (drive tree, then the
+  queue). V1 (`GET tasks`, `POST tasks/:id/advance | fail | block`) makes the harness's tracking one
+  call per transition.
+- **`ASSIGN_TASK` accepts a finished task** (V2). The harness claims only `PENDING` tasks it has
+  just read, but V2 is still required before any unattended schedule.
+- **Health checks** are computed from `graph.json`, `stats`, `orphans` and `embeddings/missing`.
+  Stale notes and description quality need each node's `updatedAt` and `description`, which
+  `graph.json` already carries, so nothing new is needed.
+- **Tension lookup after a `CONTRADICTS` link**: the indexer opens the tension, and it appears as an
+  `INVOLVES` backlink on either note (`GET notes/:id/backlinks`). No new route is needed.
+- **Idempotency** of `POST notes` on a rerun (V8) keeps a retried extract from duplicating notes;
+  until then, the extract job searches for its own claims (`DERIVED_FROM` backlinks of the source)
+  before creating.
+
 ### 18.3 Workflows
 
-One workflow per phase, so each run is short and a failure stays local:
+One workflow per phase for a steady stream of sources, so each run is short and a failure stays
+local; `agent-pipeline` (§18.2a) for one source end to end:
 `new-pipeline-task (phase)` → `claim-task` → `agent-<job>` → `advance-task`. `agent-health` runs on
 `core#trigger:schedule`. A step timeout of 600–900 s covers a job on a 2–3 k-character section.
 
