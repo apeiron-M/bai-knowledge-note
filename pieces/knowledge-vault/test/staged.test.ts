@@ -239,7 +239,7 @@ describe("the extract-claims action", () => {
       const out = await run({ auth: auth(), propsValue: { drive: "d", source: "s1", mode: "write" } });
       expect(out).toMatchObject({ dry_run: false, note_ids: ["new1"], source_updated: true });
       expect(String(out.summary)).toMatch(/^Wrote 1 DRAFT note to \/knowledge\/notes, 1 linked to the source; the source is marked EXTRACTED\. /);
-      expect((out.stages as string[]).at(-1)).toMatch(/^write · /);
+      expect((out.stages as string[]).slice(-2).map((x) => x.split(" · ")[0])).toEqual(["write", "pipeline"]);
       expect(posted).toBe(1);
     });
     modelCalls = 0;

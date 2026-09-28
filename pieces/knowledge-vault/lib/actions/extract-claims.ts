@@ -1,12 +1,12 @@
 import { createAction, Property } from "@powerhousedao/pieces-framework";
-import { LlmClient } from "../agent/llm.js";
+import { advancePipeline } from "../agent/pipeline.js";
+import { llmFor, stageRunner } from "../agent/runner.js";
 import { candidatesStage, checkVaultStage, draftStage, readSourceStage, reportStage } from "../agent/staged.js";
 import { assertWritable, writeStage } from "../agent/write.js";
 import { knowledgeVaultAuth } from "../auth.js";
-import { readAuth } from "../common/auth-value.js";
 import { clientForContext } from "../common/context.js";
-import { KnowledgeVaultApiError } from "../common/errors.js";
 import { driveProp, modelProp, sourceProp } from "../common/props.js";
+import { modeProp } from "./modes.js";
 
 /**
  * Extract claims in one step: read → candidates → vault check → draft →
@@ -16,17 +16,6 @@ import { driveProp, modelProp, sourceProp } from "../common/props.js";
  * so a host that shows live output (not Studio on dev.28) shows it tick by.
  * Dry run: nothing is written.
  */
-
-export type StageLine = { stage: string; seconds: number; summary: string };
-
-async function pushLive(context: unknown, stages: StageLine[], running: string | null): Promise<void> {
-  const output = (context as { output?: { update?: (o: unknown) => Promise<void> } }).output;
-  try {
-    await output?.update?.({ running, stages });
-  } catch {
-    // this host shows no live output
-  }
-}
 
 export const extractClaimsAction = createAction({
   auth: knowledgeVaultAuth,
@@ -39,19 +28,7 @@ export const extractClaimsAction = createAction({
     drive: driveProp,
     source: sourceProp,
     model: modelProp,
-    mode: Property.StaticDropdown({
-      displayName: "Mode",
-      description: "Dry run proposes notes and writes nothing. Write creates them as DRAFT notes for review in the app.",
-      required: true,
-      defaultValue: "dry_run",
-      options: {
-        disabled: false,
-        options: [
-          { label: "Dry run: propose only", value: "dry_run" },
-          { label: "Write: create DRAFT notes", value: "write" },
-        ],
-      },
-    }),
+    mode: modeProp("Write: create DRAFT notes"),
     threshold: Property.Number({
       displayName: "Duplicate threshold",
       description: "Similarity at or above which a claim counts as already in the vault, 0–1 (default 0.9)",
@@ -77,36 +54,12 @@ export const extractClaimsAction = createAction({
   },
   async run(context) {
     const p = context.propsValue;
-    const credentials = readAuth(context.auth);
-    if (!credentials.llm) {
-      throw new KnowledgeVaultApiError("This connection has no LLM API key. Add one to the Knowledge Vault connection to extract claims.", { category: "credential" });
-    }
-    const model = (typeof p.model === "string" && p.model.trim()) || credentials.llm.defaultModel;
-    if (!model) throw new KnowledgeVaultApiError("Choose a model, or set a default model on the connection.", { category: "validation" });
+    const { llm, model } = llmFor(context, p.model);
     const t = Number(p.threshold);
     const threshold = Number.isFinite(t) && t > 0 && t <= 1 ? t : 0.9;
     const client = clientForContext(context);
-    const llm = new LlmClient(credentials.llm);
     const drive = String(p.drive);
-    const started = Date.now();
-    const stages: StageLine[] = [];
-
-    async function stage<T extends { summary: string }>(name: string, work: () => Promise<T> | T): Promise<T> {
-      await pushLive(context, stages, name);
-      const t0 = Date.now();
-      try {
-        const out = await work();
-        stages.push({ stage: name, seconds: Math.round((Date.now() - t0) / 100) / 10, summary: out.summary });
-        return out;
-      } catch (error) {
-        const why = error instanceof Error ? error.message : String(error);
-        const done = stages.map((s) => `${s.stage}: ${s.summary}`).join(" | ");
-        throw new KnowledgeVaultApiError(`Stage "${name}" failed: ${why}${done ? ` (done before it: ${done})` : ""}`, {
-          category: error instanceof KnowledgeVaultApiError ? error.category : "server",
-          retryable: error instanceof KnowledgeVaultApiError ? error.retryable : false,
-        });
-      }
-    }
+    const { stage, finish } = stageRunner(context);
 
     const write = p.mode === "write";
     const read = await stage("read", async () => {
@@ -132,12 +85,23 @@ export const extractClaimsAction = createAction({
           }),
         )
       : null;
-    await pushLive(context, stages, null);
-
-    const seconds = Math.round((Date.now() - started) / 1000);
+    const pipeline = written
+      ? await stage("pipeline", () =>
+          advancePipeline(client, {
+            drive,
+            sourceId: read.source_id,
+            phase: "create",
+            workDone: `Extracted ${written.written.length} DRAFT notes (${report.skipped_count} candidates rejected on a gate, skip rate ${Math.round(report.skip_rate * 100)}%) with ${model}.`,
+            filesModified: written.note_ids,
+            completedBy: `extract-claims · ${model}`,
+          }),
+        )
+      : null;
+    const { stages, seconds } = await finish();
     return {
-      summary: written ? `${written.summary} ${report.summary.replace(/\.$/, "")}, ${seconds} s.` : `Dry run: ${report.summary.replace(/\.$/, "")}, ${seconds} s.`,
-      stages: stages.map((s) => `${s.stage} · ${s.seconds} s · ${s.summary}`),
+      summary: written ? `${written.summary}${pipeline ? ` ${pipeline.summary}` : ""} ${report.summary.replace(/\.$/, "")}, ${seconds} s.` : `Dry run: ${report.summary.replace(/\.$/, "")}, ${seconds} s.`,
+      stages,
+      pipeline,
       report: report.report,
       dry_run: !write,
       written: written?.written ?? [],

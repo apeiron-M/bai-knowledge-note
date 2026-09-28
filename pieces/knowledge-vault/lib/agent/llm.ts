@@ -136,6 +136,11 @@ export async function completeJson(
         usage: { include: true },
       }),
       signal: AbortSignal.timeout(CHAT_TIMEOUT_MS),
+    }).catch((error: unknown) => {
+      if (error instanceof Error && (error.name === "TimeoutError" || error.name === "AbortError")) {
+        throw new KnowledgeVaultApiError(`${request.model} did not answer within ${CHAT_TIMEOUT_MS / 1000} s. Run the step again, or choose a faster model.`, { category: "timeout", retryable: true });
+      }
+      throw error;
     });
     if (!response.ok) throw await llmError(response, `ask ${request.model}`);
     const body = (await response.json()) as { choices?: { message?: { content?: string | null }; finish_reason?: string | null }[]; usage?: { prompt_tokens?: number; completion_tokens?: number; cost?: number }; error?: { message?: string } };
