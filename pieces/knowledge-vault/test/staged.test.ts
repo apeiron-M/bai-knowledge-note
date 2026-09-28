@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { extractCandidatesAction, extractCheckAction, extractDraftAction, extractReadAction, extractReportAction } from "../lib/actions/extract-steps.js";
+import { extractClaimsAction } from "../lib/actions/extract-claims.js";
 import { completeJson, LlmClient, parseJsonAnswer } from "../lib/agent/llm.js";
 import { asObject, candidatesStage, checkVaultStage, containsVerbatim, draftStage, readSourceStage, reportStage } from "../lib/agent/staged.js";
 import type { KnowledgeVaultClient } from "../lib/common/client.js";
@@ -177,41 +177,43 @@ describe("5. report", () => {
   });
 });
 
-describe("the five step actions", () => {
-  const auth = (llm = true) => ({ props: { base_url: "http://127.0.0.1:1", token: "t", ...(llm ? { llm_api_key: "k", llm_base_url: "https://llm.test/v1", llm_default_model: "m/default" } : {}) } });
-  const run = (a: unknown, propsValue: Record<string, unknown>, llm = true) => (a as { run(c: unknown): Promise<Record<string, unknown>> }).run({ auth: auth(llm), propsValue });
-  it("chain through their outputs", async () => {
-    const realFetch = globalThis.fetch;
-    globalThis.fetch = (async (url: string) => {
-      const u = String(url);
-      if (u.startsWith("https://llm.test")) {
-        const content = u && JSON.stringify({ kept: [{ claim: "Budget stops separating organizations", disagreement: "d" }], notes: [{ candidate_id: "c1", title: "Budget no longer separates organizations", description: "why", note_type: "concept", content: "c".repeat(90), topics: ["t"], confidence: "grounded", locus: "p" }] });
-        return json({ choices: [{ message: { content } }], usage: { cost: 0.001 } });
-      }
-      if (u.includes("/topics")) return json([]);
-      if (u.includes("/search")) return json({ hits: [] });
-      return json({ name: "s1", state: { global: { title: "Src", content: SOURCE } } });
-    }) as typeof fetch;
+describe("the extract-claims action", () => {
+  const auth = (extra: Record<string, unknown> = {}) => ({ props: { base_url: "http://127.0.0.1:1", token: "t", llm_api_key: "k", llm_base_url: "https://llm.test/v1", llm_default_model: "m/default", ...extra } });
+  const run = (c: unknown) => (extractClaimsAction as unknown as { run(c: unknown): Promise<Record<string, unknown>> }).run(c);
+  const withFetch = async (fake: (u: string, body: string) => Response, body: () => Promise<void>) => {
+    const real = globalThis.fetch;
+    globalThis.fetch = (async (url: string, init?: RequestInit) => fake(String(url), (init?.body as string | undefined) ?? "")) as typeof fetch;
     try {
-      const read = await run(extractReadAction, { drive: "d", source: "s1" });
-      const cand = await run(extractCandidatesAction, { source: read });
-      expect(cand).toMatchObject({ kept_count: 1, model: "m/default" });
-      const check = await run(extractCheckAction, { drive: "d", candidates: JSON.stringify(cand), threshold: 7 });
-      expect(check.threshold).toBe(0.9);
-      expect((await run(extractCheckAction, { drive: "d", candidates: cand, threshold: 0.5 })).threshold).toBe(0.5);
-      const draft = await run(extractDraftAction, { model: "m/x", source: read, checked: check });
-      expect(draft).toMatchObject({ proposed_count: 1, model: "m/x" });
-      const report = await run(extractReportAction, { source: read, candidates: cand, checked: check, draft });
-      expect(report.summary).toMatch(/^1 notes proposed/);
-      expect(String(report.report)).toMatch(/`m\/x`/);
-      expect((await run(extractReportAction, { source: read, candidates: cand, checked: check, draft: { ...draft, model: 3 } })).report).toMatch(/Model ``/);
+      await body();
     } finally {
-      globalThis.fetch = realFetch;
+      globalThis.fetch = real;
     }
+  };
+  const vaultAnswers = (u: string) => (u.includes("/topics") ? json([]) : u.includes("/search") ? json({ hits: [] }) : json({ name: "s1", state: { global: { title: "Src", content: SOURCE } } }));
+  const model = JSON.stringify({ kept: [{ claim: "Budget stops separating organizations", disagreement: "d" }], notes: [{ candidate_id: "c1", title: "Budget no longer separates organizations", description: "why", note_type: "concept", content: "c".repeat(90), topics: ["t"], confidence: "grounded", locus: "p" }] });
+
+  it("runs the five stages in one step and reports each", async () => {
+    await withFetch((u) => (u.startsWith("https://llm.test") ? json({ choices: [{ message: { content: model } }], usage: { cost: 0.001 } }) : vaultAnswers(u)), async () => {
+      const live: { running: string | null }[] = [];
+      const out = await run({ auth: auth(), propsValue: { drive: "d", source: "s1", threshold: 5 }, output: { update: async (o: { running: string | null }) => { live.push(o); } } });
+      expect(out).toMatchObject({ dry_run: true, model: "m/default", proposed_count: 1, source_title: "Src" });
+      expect((out.stages as string[]).map((s) => s.split(" · ")[0])).toEqual(["read", "candidates", "check", "draft", "report"]);
+      expect(String(out.summary)).toMatch(/^1 notes proposed.*, \d+ s\.$/);
+      expect(live.map((l) => l.running)).toEqual(["read", "candidates", "check", "draft", "report", null]);
+      const noLive = await run({ auth: auth(), propsValue: { drive: "d", source: "s1", model: "m/x", threshold: 0.5 }, output: { update: async () => { throw new Error("no live output"); } } });
+      expect(noLive.model).toBe("m/x");
+    });
   });
-  it("need an LLM key and a model", async () => {
-    await expect(run(extractCandidatesAction, { source: {} }, false)).rejects.toMatchObject({ category: "credential" });
-    const noDefault = { props: { base_url: "http://127.0.0.1:1", token: "t", llm_api_key: "k" } };
-    await expect((extractDraftAction as unknown as { run(c: unknown): Promise<unknown> }).run({ auth: noDefault, propsValue: { model: "" } })).rejects.toMatchObject({ category: "validation" });
+  it("names the stage that failed and what finished before it", async () => {
+    await withFetch((u) => (u.startsWith("https://llm.test") ? new Response("down", { status: 503 }) : vaultAnswers(u)), async () => {
+      await expect(run({ auth: auth(), propsValue: { drive: "d", source: "s1" } })).rejects.toMatchObject({ category: "server", retryable: true, message: expect.stringMatching(/^Stage "candidates" failed: .*\(done before it: read: Read "Src"/) as unknown as string });
+    });
+    await withFetch(() => { throw new Error("plain"); }, async () => {
+      await expect(run({ auth: auth(), propsValue: { drive: "d", source: "s1" } })).rejects.toThrow(/^Stage "read" failed: .*plain/);
+    });
+  });
+  it("needs an LLM key and a model", async () => {
+    await expect(run({ auth: { props: { base_url: "http://127.0.0.1:1", token: "t" } }, propsValue: {} })).rejects.toMatchObject({ category: "credential" });
+    await expect(run({ auth: auth({ llm_default_model: "" }), propsValue: { model: " " } })).rejects.toMatchObject({ category: "validation" });
   });
 });
