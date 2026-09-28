@@ -124,7 +124,11 @@ export function describeAuthFailure(error: unknown): string {
   if (error instanceof KnowledgeVaultApiError) {
     switch (error.category) {
       case "credential":
-        return "The Switchboard rejected the token: it has expired or was revoked. Mint a new one with `ph access-token`.";
+        // Only a 401 from the Switchboard is about the vault token; the LLM
+        // key check and an empty field are credential errors too, with their own words.
+        return error.status === 401
+          ? "The Switchboard rejected the token: it has expired, was revoked, or was not copied whole. Paste only the token (eyJ…) from `ph access-token --expiry 90d`."
+          : error.message;
       case "not_found":
         return "That address answered, but not with a knowledge vault. Check the Switchboard URL, and that the knowledge-note package is installed there.";
       case "network":

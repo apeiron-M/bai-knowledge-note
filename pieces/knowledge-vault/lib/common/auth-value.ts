@@ -59,6 +59,16 @@ export function normalizeBaseUrl(raw: unknown): string {
 
 // `ctx.auth` arrives shaped as { type: "CUSTOM_AUTH", props }, while `validate`
 // and `getConnectionIdentifier` are handed the flat props. Take both.
+/**
+ * What people paste: the bare JWT, or "Bearer eyJ…", with quotes or a
+ * trailing newline from the terminal. A newline alone makes the request
+ * header invalid, so all of it is removed here.
+ */
+export function cleanToken(value: unknown): string {
+  if (typeof value !== "string") return "";
+  return value.trim().replace(/^["'`]+|["'`]+$/g, "").trim().replace(/^bearer\s+/i, "").trim();
+}
+
 export function readAuth(auth: unknown): KnowledgeVaultCredentials {
   const source = isRecord(auth) && isRecord(auth.props) ? auth.props : auth;
   if (!isRecord(source)) {
@@ -67,8 +77,8 @@ export function readAuth(auth: unknown): KnowledgeVaultCredentials {
       { category: "credential" },
     );
   }
-  const token = source.token;
-  if (typeof token !== "string" || token === "") {
+  const token = cleanToken(source.token);
+  if (!token) {
     throw new KnowledgeVaultApiError("The connection has no API token", {
       category: "credential",
     });

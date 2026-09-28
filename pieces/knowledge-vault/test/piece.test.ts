@@ -141,3 +141,21 @@ describe("search", () => {
     await expect(run({ drive: "", query: "x" }, server.baseUrl)).rejects.toMatchObject({ status: 400, category: "validation", code: "BAD_REQUEST" });
   });
 });
+
+describe("a pasted token", () => {
+  it.each([
+    ["eyJa.b.c", "eyJa.b.c"],
+    ["  eyJa.b.c\n", "eyJa.b.c"],
+    ["Bearer eyJa.b.c", "eyJa.b.c"],
+    ['"bearer  eyJa.b.c"\n', "eyJa.b.c"],
+  ])("%j is sent as the bare token", (pasted, sent) => {
+    expect(readAuth({ base_url: "https://v.test", token: pasted }).token).toBe(sent);
+  });
+  it("that is only whitespace or quotes counts as missing", () => {
+    expect(() => readAuth({ base_url: "https://v.test", token: " '' \n" })).toThrow(/no API token/);
+  });
+  it("gets a failure message that names what was actually wrong", () => {
+    expect(describeAuthFailure(new KnowledgeVaultApiError("x", { category: "credential", status: 401 }))).toMatch(/Paste only the token/);
+    expect(describeAuthFailure(new KnowledgeVaultApiError("The LLM provider rejected the API key.", { category: "credential" }))).toBe("The LLM provider rejected the API key.");
+  });
+});
