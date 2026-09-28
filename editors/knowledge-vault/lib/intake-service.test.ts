@@ -494,6 +494,54 @@ describe("publishFile", () => {
     expect(result.attachmentErrors).toBe(0);
   });
 
+  it("still uploads every figure when the original's upload fails, and says which failed", async () => {
+    // 2026-09-28: re-reserving an already-stored original answered 500 on a
+    // dev.28 Switchboard; the shared try skipped all 36 figure uploads.
+    const { api } = publishApi();
+    const uploaded: string[] = [];
+    const attachments: AttachmentPort = {
+      prepare: (f) => Promise.resolve({ ref: `attachment://v1:${f.name.replace(/\W/g, "").padEnd(64, "0")}` }),
+      upload: (p) => {
+        if (p.ref.includes("Bookpdf")) return Promise.reject(new Error("Internal error"));
+        if (p.ref.includes("picture2")) return Promise.reject(new Error("reserve 500"));
+        uploaded.push(p.ref);
+        return Promise.resolve();
+      },
+    };
+    const picture = (n: number) => ({
+      id: `picture-${n}`,
+      kind: "picture" as const,
+      page: 1,
+      placeholderIndex: n - 1,
+      alt: `figure ${n}`,
+      mimeType: "image/png",
+      width: 4,
+      height: 4,
+      bytesBase64: "iVBORw0KGgo=",
+    });
+    const file = convertedFile({
+      selected: [true],
+      converted: {
+        filename: "Paper.pdf",
+        format: "pdf",
+        plan,
+        sections: [
+          {
+            ...sec("Intro", "Intro\n\n<!-- image -->\n\n<!-- image -->\n\n<!-- image -->"),
+            markdownRange: { start: 0, end: 60 },
+            placeholderBase: { picture: 0, formula: 0 },
+          },
+        ],
+        figures: [picture(1), picture(2), picture(3)],
+      },
+    });
+    const result = await publishFile(file, new Uint8Array([1]), { api, attachments, driveId: "d" });
+    expect(uploaded).toHaveLength(2);
+    expect(result.attached).toBe(false);
+    expect(result.attachmentErrors).toBe(1);
+    expect(result.attachError).toBe("Upload failed for original: Internal error; 1 figure: reserve 500");
+  });
+
   it("keeps a figure's placeholder and finishes the publish when that figure cannot be hashed", async () => {
     const { api, calls } = publishApi();
     const attachments: AttachmentPort = {

@@ -349,10 +349,25 @@ export async function publishFile(
       // other field (a stray `drive` here cost every UI publish its attachment).
       await deps.api.post("/actions", { documentId, actions });
     }
-    if (prepared !== null) await deps.attachments.upload(prepared);
+    // Each upload stands alone. They used to share this try: when the
+    // original's upload threw, every figure upload was skipped, leaving sources
+    // whose content and ADD_ATTACHMENT entries named 36 images the store never
+    // received (2026-09-28: a dev.28 Switchboard answered 500 instead of 409 to
+    // re-reserving an already-stored PDF). A failure now costs only that file,
+    // and is reported.
+    let originalError: string | undefined;
+    if (prepared !== null) {
+      try {
+        await deps.attachments.upload(prepared);
+      } catch (error) {
+        originalError = error instanceof Error ? error.message : String(error);
+      }
+    }
     // Figures a few at a time: 73 sequential PUTs left a window in which an
     // opened source showed 404s for images its content already named.
     const queue = [...figureRefs.values()];
+    let figureErrors = 0;
+    let firstFigureError: string | undefined;
     await Promise.all(
       Array.from({ length: Math.min(4, queue.length) }, async () => {
         for (
@@ -360,11 +375,26 @@ export async function publishFile(
           next !== undefined;
           next = queue.shift()
         ) {
-          await deps.attachments!.upload(next);
+          try {
+            await deps.attachments!.upload(next);
+          } catch (error) {
+            figureErrors += 1;
+            firstFigureError ??= error instanceof Error ? error.message : String(error);
+          }
         }
       }),
     );
-    return { ...base, attached: prepared !== null, attachments: claimed };
+    const problems = [
+      originalError ? `original: ${originalError}` : undefined,
+      figureErrors ? `${figureErrors} figure${figureErrors === 1 ? "" : "s"}: ${firstFigureError}` : undefined,
+    ].filter(Boolean);
+    return {
+      ...base,
+      attached: prepared !== null && originalError === undefined,
+      attachments: claimed,
+      attachmentErrors: attachmentErrors + figureErrors,
+      ...(problems.length ? { attachError: `Upload failed for ${problems.join("; ")}` } : {}),
+    };
   } catch (error) {
     // The sources exist and are queued; only the attachments are missing. Say
     // so rather than fail a publish that already succeeded.
