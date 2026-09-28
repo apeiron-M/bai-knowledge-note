@@ -284,4 +284,26 @@ describe("GraphIndexerProcessor with a drive-membership gate", () => {
     ]);
     expect(await query.nodeByDocumentId("ours-1")).toBeUndefined();
   });
+
+  it("logs a deletion only when a node was actually indexed", async () => {
+    // ours-moc: the earlier test removed ours-1 from the drive, so the
+    // membership gate no longer indexes it. A replay from the beginning of the log re-applies every historical
+    // delete; logging each no-op buried the boot output (2026-09-28).
+    const log = vi.spyOn(console, "log").mockImplementation(() => undefined);
+    await processor.onOperations([
+      op("ours-moc", "bai/moc", 50, "CREATE_MOC", { title: "M" },
+        { title: "M", tier: "TOPIC", coreIdeas: [], childRefs: [], tensions: [], openQuestions: [] }),
+    ]);
+    await processor.onOperations([
+      op(OURS, "powerhouse/document-drive", 60, "DELETE_NODE", { id: "ours-moc" }),
+    ]);
+    // Replayed: the same delete again, and one for a node never indexed here.
+    await processor.onOperations([
+      op(OURS, "powerhouse/document-drive", 61, "DELETE_NODE", { id: "ours-moc" }),
+      op(OURS, "powerhouse/document-drive", 62, "DELETE_NODE", { id: "never-indexed" }),
+    ]);
+    const deleted = log.mock.calls.map((c) => String(c[0])).filter((line) => line.includes("Deleted node"));
+    expect(deleted).toEqual(["[GraphIndexer] Deleted node ours-moc"]);
+    log.mockRestore();
+  });
 });

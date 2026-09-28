@@ -704,7 +704,7 @@ export class GraphIndexerProcessor extends RelationalDbProcessor<DB> {
           ]),
         )
         .execute();
-      await this.relationalDb
+      const [removed] = await this.relationalDb
         .deleteFrom("graph_nodes")
         .where("document_id", "=", documentId)
         .execute();
@@ -720,7 +720,12 @@ export class GraphIndexerProcessor extends RelationalDbProcessor<DB> {
           err,
         ),
       );
-      console.log(`[GraphIndexer] Deleted node ${documentId}`);
+      // Only when a node was actually indexed. A replay from the beginning of
+      // the log re-applies every historical DELETE_NODE / DELETE_DOCUMENT, and
+      // logging each no-op buried the boot output in "Deleted node" lines.
+      if (Number(removed?.numDeletedRows ?? 0) > 0) {
+        console.log(`[GraphIndexer] Deleted node ${documentId}`);
+      }
     } catch (err: unknown) {
       console.error(`[GraphIndexer] Error deleting node ${documentId}:`, err);
     }

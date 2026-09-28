@@ -734,7 +734,14 @@ nothing. Consequences:
 3. **Shutdown.** After the Node client hung on a 1.1 MB upload, `ph vetra` ignored SIGTERM and
    SIGINT for 20+ minutes, with its piece workers already exited, and had to be killed. The client
    connection had closed by then, so something else held shutdown. Not reproduced yet.
-4. **A hard kill loses recent PGlite writes.** Everything from the last few minutes before
+4. **Re-registering a processor factory discards its cursors.** `ProcessorManager.registerFactory`
+   starts with `removeFactory`, which deletes that factory's `ProcessorCursor` rows, so a processor
+   with `startFrom: "beginning"` replays the whole log (about 53 k operations here) after any
+   re-registration. Since workflows were enabled locally, the graph indexer's cursor rows carry the
+   latest boot's `createdAt`, and every boot re-indexes from ordinal 0. That is harmless to the
+   data (automation ignores non-live operations) but costs the boot CPU. The indexer now logs
+   "Deleted node" only when it removed a row, so the replay no longer floods the log.
+5. **A hard kill loses recent PGlite writes.** Everything from the last few minutes before
    `kill -9` was gone after the restart: a `SET_TRIGGER` and two runs. Stop dev servers with
    Ctrl-C.
 
