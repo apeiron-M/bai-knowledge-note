@@ -120,6 +120,9 @@ export const extractClaimsAction = createAction({
       skipped: candidates.skipped,
       existing: draft.existing,
       rejected: draft.rejected,
+      overlaps: draft.overlaps,
+      restatement_count: report.restatement_count,
+      non_claim_count: report.non_claim_count,
     };
   },
 });

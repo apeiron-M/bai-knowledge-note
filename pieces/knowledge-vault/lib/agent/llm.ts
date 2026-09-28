@@ -116,7 +116,7 @@ export class LlmClient {
  */
 export async function completeJson(
   client: LlmClient,
-  request: { model: string; system: string; user: string; maxTokens?: number },
+  request: { model: string; system: string; user: string; maxTokens?: number; reasoningEffort?: "low" | "medium" | "high" },
   fetchImpl: typeof fetch = fetch,
 ): Promise<{ value: unknown; usage: Usage }> {
   const { baseUrl, apiKey } = client.credentials;
@@ -132,6 +132,7 @@ export async function completeJson(
         response_format: { type: "json_object" },
         temperature: 0.2,
         max_tokens: budget,
+        ...(request.reasoningEffort ? { reasoning: { effort: request.reasoningEffort } } : {}),
         usage: { include: true },
       }),
       signal: AbortSignal.timeout(CHAT_TIMEOUT_MS),
@@ -152,7 +153,13 @@ export async function completeJson(
       const why = choice?.finish_reason === "length" ? `it used its whole ${budget}-token budget before answering (reasoning models think first)` : `it returned an empty answer (finish reason: ${choice?.finish_reason ?? "none"})`;
       throw new KnowledgeVaultApiError(`${request.model} gave no answer twice: ${why}. Try a larger model or a shorter source.`, { category: "server", retryable: true });
     }
-    return { value: parseJsonAnswer(text), usage };
+    try {
+      return { value: parseJsonAnswer(text), usage };
+    } catch (error) {
+      // A reply that is not JSON is retried once, like an empty one.
+      if (attempt < 2) continue;
+      throw error;
+    }
   }
 }
 

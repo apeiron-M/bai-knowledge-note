@@ -88,23 +88,27 @@ describe("2. candidates", () => {
       kept: [
         { claim: "Budget stops separating organizations once spend is routine", locus: "p1", evidence: "e", disagreement: "budget still buys talent" },
         { claim: "74 percent of firms invest over $50m", disagreement: "x" },
-        { claim: "Spending more always helps", disagreement: "" },
+        { claim: "Spending more on technology always helps outcomes", disagreement: "" },
         { claim: "Capital is not the primary constraint on technology value", disagreement: "x" },
         { claim: "  " },
         "junk",
       ],
-      skipped: [{ candidate: "A heading", gate: "sentence", reason: "label" }, { candidate: "Odd", gate: "vibes", reason: "?" }, { candidate: "" }],
+      skipped: [{ candidate: "A heading", gate: "sentence", reason: "label" }, { candidate: "An odd candidate with no gate", gate: "vibes", reason: "?" }, { candidate: "" }],
+      non_claims: 2,
     };
     const m = modelSays(JSON.stringify(answer));
     const out = await candidatesStage(m.llm, "m", bundle, m.fetchImpl);
     expect(out.kept).toEqual([{ id: "c1", claim: "Budget stops separating organizations once spend is routine", locus: "p1", evidence: "e" }]);
-    expect(out.skipped.map((s) => s.gate)).toEqual(["falsifiability", "falsifiability", "sentence", "sentence", "coherence"]);
-    expect(out.summary).toBe("6 candidates: 1 pass all six gates, 5 struck (2 falsifiability, 2 sentence, 1 coherence).");
+    // Rejected on a gate: the claim nobody could dispute, the copied sentence, the unknown gate.
+    expect(out.skipped.map((s) => s.gate)).toEqual(["falsifiability", "sentence", "coherence"]);
+    // Set aside: the bare statistic and the heading are not claims.
+    expect(out.non_claims.map((s) => s.candidate)).toEqual(["74 percent of firms invest over $50m", "A heading"]);
+    expect(out.summary).toBe("4 distinct claims: 1 kept, 3 rejected on a gate; 4 non-claims (headings, captions, bare statistics).");
     expect(m.calls[0].user).toMatch(/Source title: Tech/);
   });
   it("reports zero survivors plainly", async () => {
     const m = modelSays("{}");
-    expect((await candidatesStage(m.llm, "m", {}, m.fetchImpl)).summary).toBe("0 candidates: 0 pass all six gates, 0 struck.");
+    expect((await candidatesStage(m.llm, "m", {}, m.fetchImpl)).summary).toBe("0 distinct claims: 0 kept, 0 rejected on a gate.");
   });
 });
 
@@ -152,10 +156,11 @@ describe("4. draft", () => {
     expect(out.repair_rounds).toBe(1);
   });
   it("stops after one round when every draft passes, and skips the model with nothing to draft", async () => {
-    const m = modelSays(JSON.stringify({ notes: [note("c2", "One", { topics: ["operations"] }), note("c3", "Two", { topics: ["operations"] })] }));
+    const m = modelSays(JSON.stringify({ notes: [note("c2", "One", { topics: ["operations"] }), note("c3", "Two", { topics: ["operations"] })] }), '{"same":[]}');
     const out = await draftStage(m.llm, "m", bundle, { candidates: [{ id: "c2" }, { id: "c3" }] }, m.fetchImpl);
     expect(out.summary).toBe("Drafted 2 notes.");
-    expect(m.calls).toHaveLength(1);
+    expect(out.overlap_check).toBe("done");
+    expect(m.calls).toHaveLength(2); // one draft round, one overlap check
     const none = await draftStage(m.llm, "m", bundle, {}, m.fetchImpl);
     expect(none).toMatchObject({ proposed_count: 0, cost_usd: 0 });
     expect(none.summary).toMatch(/No candidates/);
@@ -168,9 +173,12 @@ describe("5. report", () => {
       proposed: [{ title: "T", description: "D", note_type: "PATTERN", confidence: "grounded", topics: ["x"], locus: "p" }],
       existing: [{ title: "Old", note_id: "n1", reason: "same" }], rejected: [{}], new_topics: ["x"], cost_usd: 0.005,
     });
-    expect(out.summary).toBe("1 notes proposed, 1 skipped, 1 already in the vault, skip rate 25%, $0.0150.");
+    expect(out.summary).toBe("1 notes proposed, 1 rejected, 1 already in the vault, skip rate 25% (plus 0 restatements and 0 non-claims set aside), $0.0150.");
     expect(out.report).toMatch(/1 failed the rules/);
     expect(out.report).toMatch(/a \\\| b \| sentence/);
+    const withAside = reportStage("m", {}, { restatement_count: 1, non_claim_count: 2 }, {}, { overlaps: [{}] });
+    expect(withAside.report).toMatch(/1 dropped as duplicates of another draft/);
+    expect(withAside.report).toMatch(/1 restatement of kept claims, 2 non-claims/);
     expect(out.report).toMatch(/New topics not in the vault's vocabulary: x/);
     expect(out.proposed).toEqual([{ title: "T", description: "D", note_type: "PATTERN", topics: ["x"] }]);
     expect(reportStage("", {}, {}, {}, {})).toMatchObject({ skip_rate: 0, proposed_count: 0, cost_usd: 0 });
@@ -215,5 +223,69 @@ describe("the extract-claims action", () => {
   it("needs an LLM key and a model", async () => {
     await expect(run({ auth: { props: { base_url: "http://127.0.0.1:1", token: "t" } }, propsValue: {} })).rejects.toMatchObject({ category: "credential" });
     await expect(run({ auth: auth({ llm_default_model: "" }), propsValue: { model: " " } })).rejects.toMatchObject({ category: "validation" });
+  });
+});
+
+describe("the quality fixes", () => {
+  it("sort struck candidates into rejected, restatements and non-claims", async () => {
+    const { classifySkips } = await import("../lib/agent/staged.js");
+    const out = classifySkips([
+      { candidate: "Budget always wins over process in practice", gate: "falsifiability", reason: "truism" },
+      { candidate: "Same as the kept claim, said again", gate: "duplicate", reason: "restates c1" },
+      { candidate: "What do you think of legacy?", gate: "sentence", reason: "a question" },
+      { candidate: "Annual investment", gate: "sentence", reason: "label" },
+      { candidate: "Chad Seiler, Head of Technology, KPMG in the US", gate: "sentence", reason: "Attribution line, not a claim" },
+      { candidate: "60% say legacy slows them down a lot", gate: "sentence", reason: "stat" },
+    ]);
+    expect([out.rejected.length, out.restatement.length, out.not_a_claim.length]).toEqual([1, 1, 4]);
+  });
+  it("drop a draft that makes the same assertion as another, and survive a failed check", async () => {
+    const drafts = { notes: [1, 2, 3].map((i) => ({ candidate_id: `c${i}`, title: `Claim number ${i} holds`, description: "why", note_type: "CONCEPT", content: "c".repeat(90), topics: ["operations"], confidence: "grounded", locus: "p" })) };
+    const checked = { candidates: [{ id: "c1" }, { id: "c2" }, { id: "c3" }] };
+    const same = JSON.stringify({ same: [{ keep: "c1", drop: "c3", reason: "one assertion" }, { keep: "c3", drop: "c2" }, { keep: "c9", drop: "c1" }, { keep: "c2", drop: "c2" }] });
+    const m = modelSays(JSON.stringify(drafts), same);
+    const out = await draftStage(m.llm, "m", bundle, checked, m.fetchImpl);
+    expect(out.proposed.map((n) => n.candidate_id)).toEqual(["c1", "c2"]);
+    expect(out.overlaps).toEqual([{ kept: "c1", dropped: "c3", reason: "one assertion" }]);
+    expect(out.summary).toBe("Drafted 2 notes, 1 dropped as the same assertion as another.");
+    const broken = modelSays(JSON.stringify(drafts), "not json", "still not json");
+    const kept = await draftStage(broken.llm, "m", bundle, checked, broken.fetchImpl);
+    expect(kept.proposed).toHaveLength(3);
+    expect(kept.overlap_check).toBe("failed");
+    expect(kept.summary).toMatch(/duplicate check between drafts did not run/);
+  });
+  it("show the model each topic with an example, and what it covers", async () => {
+    const out = await readSourceStage(vault({
+      "notes/s1": { name: "s1", state: { global: { title: "T", content: "text", status: "EXTRACTING", extractedClaims: ["n1"] } } },
+      "topics/conversion": [{ status: "MOC", title: "Sales MoC" }, { title: "Downsells raise full-price sales" }],
+      "topics/lonely": () => { throw new Error("gone"); },
+      "topics/nested": { nodes: [{ title: "Nested example" }] },
+      topics: [{ name: "conversion", noteCount: 21 }, { name: "lonely", noteCount: 1 }, { name: "nested", noteCount: 2 }],
+    }), "d", "s1");
+    expect(out.topic_examples).toEqual([
+      { name: "conversion", notes: 21, example: "Downsells raise full-price sales" },
+      { name: "nested", notes: 2, example: "Nested example" },
+      { name: "lonely", notes: 1, example: null },
+    ]);
+    expect(out).toMatchObject({ status: "EXTRACTING", extracted_claims: 1 });
+    const m = modelSays(JSON.stringify({ notes: [] }));
+    await draftStage(m.llm, "m", { ...out, topics: ["conversion", "nested", "lonely", "extra"] }, { candidates: [{ id: "c1", claim: "x" }] }, m.fetchImpl);
+    expect(m.calls[0].user).toMatch(/- conversion \(21\): e\.g\. "Downsells raise full-price sales"/);
+    expect(m.calls[0].user).toMatch(/- lonely \(1\)\n/);
+    expect(m.calls[0].user).toMatch(/- also: extra/);
+  });
+  it("retry a reply that is not JSON, and bound the model's reasoning when asked", async () => {
+    const bodies: Record<string, unknown>[] = [];
+    let n = 0;
+    const fetchImpl = (async (_u: string, init?: RequestInit) => {
+      bodies.push(JSON.parse(init?.body as string) as Record<string, unknown>);
+      return json({ choices: [{ message: { content: n++ === 0 ? "Sure! Here you go" : '{"ok":true}' } }] });
+    }) as typeof fetch;
+    const out = await completeJson(new LlmClient(LLM), { model: "m", system: "s", user: "u", reasoningEffort: "low" }, fetchImpl);
+    expect(out.value).toEqual({ ok: true });
+    expect(bodies).toHaveLength(2);
+    expect(bodies[0].reasoning).toEqual({ effort: "low" });
+    await completeJson(new LlmClient(LLM), { model: "m", system: "s", user: "u" }, fetchImpl);
+    expect(bodies[2].reasoning).toBeUndefined();
   });
 });

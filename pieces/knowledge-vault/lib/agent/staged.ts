@@ -14,15 +14,24 @@ import { completeJson, type LlmClient, type Usage } from "./llm.js";
  * as JSON, so the human-readable line has to be a top-level string.
  */
 
+export type TopicInfo = { name: string; notes: number; example: string | null };
+
 export type SourceBundle = {
   source_id: string;
   title: string;
   source_type: string | null;
+  status: string | null;
   chars: number;
   text: string;
   figures: number;
+  /** Notes already recorded as extracted from this source. */
+  extracted_claims: number;
   topics: string[];
+  /** The most used topics, each with one note title, so the model knows what a name covers here. */
+  topic_examples: TopicInfo[];
 };
+
+const TOPIC_EXAMPLES = 60;
 
 export type Candidate = { id: string; claim: string; locus: string; evidence: string };
 export type VaultMatch = { id: string; title: string; similarity: number };
@@ -52,11 +61,20 @@ const arr = (v: unknown): unknown[] => (Array.isArray(v) ? v : []);
 // ── 1. read ──────────────────────────────────────────────────────────────
 
 export async function readSourceStage(client: KnowledgeVaultClient, drive: string, sourceId: string): Promise<SourceBundle & { summary: string }> {
-  const doc = await client.request<{ name: string; state?: { global?: { title?: string; content?: string; sourceType?: string; attachments?: unknown[] } } }>({ path: `notes/${encodeURIComponent(sourceId)}`, query: { drive } });
+  const doc = await client.request<{ name: string; state?: { global?: { title?: string; content?: string; sourceType?: string; status?: string; attachments?: unknown[]; extractedClaims?: unknown[] } } }>({ path: `notes/${encodeURIComponent(sourceId)}`, query: { drive } });
   const g = doc.state?.global ?? {};
   const content = g.content ?? "";
   const topicsBody = await client.request<{ topics?: { name: string; noteCount: number }[] } | { name: string; noteCount: number }[]>({ path: "topics", query: { drive } });
-  const topics = (Array.isArray(topicsBody) ? topicsBody : (topicsBody.topics ?? [])).sort((a, b) => b.noteCount - a.noteCount).map((t) => t.name);
+  const ranked = (Array.isArray(topicsBody) ? topicsBody : (topicsBody.topics ?? [])).sort((a, b) => b.noteCount - a.noteCount);
+  const topics = ranked.map((t) => t.name);
+  const topic_examples: TopicInfo[] = [];
+  for (const t of ranked.slice(0, TOPIC_EXAMPLES)) {
+    const notes = await client
+      .request<{ title?: string; status?: string }[] | { nodes?: { title?: string; status?: string }[] }>({ path: `topics/${encodeURIComponent(t.name)}`, query: { drive } })
+      .catch(() => []);
+    const list = Array.isArray(notes) ? notes : (notes.nodes ?? []);
+    topic_examples.push({ name: t.name, notes: t.noteCount, example: list.find((n) => n.status !== "MOC" && n.title)?.title ?? null });
+  }
   const figures = arr(g.attachments).length;
   const title = g.title ?? doc.name;
   if (!content.trim()) throw new KnowledgeVaultApiError(`The source "${title}" has no text to extract from`, { category: "validation" });
@@ -66,10 +84,13 @@ export async function readSourceStage(client: KnowledgeVaultClient, drive: strin
     source_id: sourceId,
     title,
     source_type: g.sourceType ?? null,
+    status: g.status ?? null,
     chars: content.length,
     text,
     figures,
+    extracted_claims: arr(g.extractedClaims).length,
     topics,
+    topic_examples,
   };
 }
 
@@ -93,13 +114,17 @@ Zero survivors is a valid answer for a foreword or glossary; a high skip rate is
 A kept claim is the INFERENCE a finding supports, never the finding restated: "74% invest over $50m" is evidence; "once spend is that high, budget no longer separates organizations" is a claim. Never copy a source sentence as the claim.
 For each kept claim, say what a competent practitioner who disagrees would argue. If you cannot, the claim fails falsifiability: strike it.
 
-Answer: {"kept":[{"claim":"...","locus":"section and paragraph","evidence":"the source's own words that support it","disagreement":"what a practitioner who disagrees would argue"}],"skipped":[{"candidate":"...","gate":"${GATES.join("|")}","reason":"..."}]}`;
+List only statements. Leave out headings, survey questions, figure captions and name credits entirely; count them in "non_claims".
+
+Answer: {"non_claims":0,"kept":[{"claim":"...","locus":"section and paragraph","evidence":"the source's own words that support it","disagreement":"what a practitioner who disagrees would argue"}],"skipped":[{"candidate":"...","gate":"${GATES.join("|")}","reason":"..."}]}`;
 
 export async function candidatesStage(llm: LlmClient, model: string, bundle: Record<string, unknown>, fetchImpl?: typeof fetch) {
   const { value, usage } = await completeJson(llm, {
     model,
     system: CANDIDATES_SYSTEM,
     user: `Source title: ${str(bundle.title)}\n\n${str(bundle.text)}`,
+    // Listing candidates needs little deliberation; unbounded reasoning took 45-180 s here.
+    reasoningEffort: "low",
   }, fetchImpl);
   const answer = asObject(value, "The model's answer");
   const skipped: SkippedCandidate[] = [];
@@ -117,13 +142,19 @@ export async function candidatesStage(llm: LlmClient, model: string, bundle: Rec
     .map((c) => asRecord(c))
     .filter((c) => str(c.candidate).trim())
     .map((c) => ({ candidate: str(c.candidate), gate: (GATES as readonly string[]).includes(str(c.gate)) ? (str(c.gate) as SkippedCandidate["gate"]) : "coherence", reason: str(c.reason) })));
-  const gates = countBy(skipped.map((s) => s.gate));
+  const breakdown = classifySkips(skipped);
+  const nonClaims = Math.max(0, Math.round(Number(answer.non_claims) || 0)) + breakdown.not_a_claim.length;
+  const distinct = kept.length + breakdown.rejected.length;
   return {
-    summary: `${kept.length + skipped.length} candidates: ${kept.length} pass all six gates, ${skipped.length} struck${skipped.length ? ` (${Object.entries(gates).map(([g, n]) => `${n} ${g}`).join(", ")})` : ""}.`,
+    summary: `${distinct} distinct claim${distinct === 1 ? "" : "s"}: ${kept.length} kept, ${breakdown.rejected.length} rejected on a gate${breakdown.restatement.length ? `; ${breakdown.restatement.length} restatements of kept claims` : ""}${nonClaims ? `; ${nonClaims} non-claims (headings, captions, bare statistics)` : ""}.`,
     kept_count: kept.length,
-    skipped_count: skipped.length,
+    skipped_count: breakdown.rejected.length,
+    restatement_count: breakdown.restatement.length,
+    non_claim_count: nonClaims,
     kept,
-    skipped,
+    skipped: breakdown.rejected,
+    restatements: breakdown.restatement,
+    non_claims: breakdown.not_a_claim,
     cost_usd: round4(usage.cost),
     tokens: usage.prompt_tokens + usage.completion_tokens,
   };
@@ -139,9 +170,20 @@ export function containsVerbatim(source: string, sentence: string): boolean {
 }
 
 const asRecord = (v: unknown): Record<string, unknown> => (typeof v === "object" && v !== null && !Array.isArray(v) ? (v as Record<string, unknown>) : {});
-function countBy(values: string[]): Record<string, number> {
-  const out: Record<string, number> = {};
-  for (const v of values) out[v] = (out[v] ?? 0) + 1;
+/**
+ * The skip rate the vault reports is rejected claims over distinct claims.
+ * Restatements of a kept claim and things that were never claims (headings,
+ * captions, bare statistics) are counted apart, or a well-written source
+ * that says its thesis four times reads as a failed extraction.
+ */
+export function classifySkips(skipped: SkippedCandidate[]) {
+  const out = { rejected: [] as SkippedCandidate[], restatement: [] as SkippedCandidate[], not_a_claim: [] as SkippedCandidate[] };
+  for (const s of skipped) {
+    const words = s.candidate.trim().split(/\s+/).length;
+    if (s.gate === "duplicate") out.restatement.push(s);
+    else if (BARE_STATISTIC.test(s.candidate.trim()) || s.candidate.trim().endsWith("?") || words < 5 || /\b(heading|caption|question|credit|attribution line|bare (statistic|number|data))/i.test(s.reason)) out.not_a_claim.push(s);
+    else out.rejected.push(s);
+  }
   return out;
 }
 
@@ -177,13 +219,29 @@ For each claim you are given, EITHER write a note OR, when a listed vault match 
 A note has:
 - title: the claim as one declarative sentence, with no statistics in it (numbers belong in description and content).
 - description: at most 200 characters; adds information beyond the title (what holds -> why -> so what). Never paraphrase the title.
-- note_type: one of ${NOTE_TYPES.join(", ")}.
+- note_type, by what the note IS:
+  CONCEPT an idea or relationship that explains something · OBSERVATION a finding about how things are, from evidence · PATTERN a recurring approach and when it works · DECISION a choice with its alternatives and why · PROCEDURE steps to do something · WORKFLOW how work moves between people or systems · ARCHITECTURE how a system is structured · INTEGRATION how two systems connect · BUG_PATTERN a recurring SOFTWARE defect with its root cause and fix (never a business problem) · REFERENCE facts to look up.
 - content: the argument: mechanism, the source's evidence (quoted), when it holds and when it does not, what it lets a reader predict. Use real line breaks.
-- topics: 1-4 names; use the vault's topic list; invent one only when none fits.
+- topics: 1-4 names from the vault's list. A name means what its example note shows, not what the word could mean: do not tag a note with a topic whose example is about something else. Invent a name only when none fits.
 - confidence: ${CONFIDENCE.join(" | ")} (grounded: the source demonstrates it).
 - locus: where in the source it comes from.
 
 Answer: {"notes":[{"candidate_id":"c1","merged_ids":["c3"],"title":"...","description":"...","note_type":"...","content":"...","topics":["..."],"confidence":"...","locus":"..."}],"existing":[{"candidate_id":"c2","note_id":"...","title":"...","reason":"..."}]}`;
+
+function topicLines(bundle: Record<string, unknown>): string[] {
+  const examples = arr(bundle.topic_examples).map(asRecord);
+  const shown = new Set(examples.map((t) => str(t.name)));
+  const rest = arr(bundle.topics).map(str).filter((t) => !shown.has(t));
+  return [
+    ...examples.map((t) => `- ${str(t.name)} (${str(t.notes)})${t.example ? `: e.g. "${str(t.example)}"` : ""}`),
+    ...(rest.length ? [`- also: ${rest.slice(0, 150).join(", ")}`] : []),
+  ];
+}
+
+export const OVERLAP_SYSTEM = `You compare drafted knowledge notes. Answer with JSON only.
+Two notes are the SAME when a reader who accepted one would learn nothing new from the other: one assertion in different words, or one a restatement of the other's consequence. Related notes on one topic are NOT the same.
+For each same pair, keep the note that states the claim more precisely.
+Answer: {"same":[{"keep":"c1","drop":"c4","reason":"..."}]}  (an empty list when all differ)`;
 
 export type DraftedNote = ProposedNote & { candidate_id: string; new_topics: string[] };
 
@@ -196,7 +254,7 @@ export async function draftStage(llm: LlmClient, model: string, bundle: Record<s
   let rounds = 0;
   let rejected: { candidate_id: string; issues: string[] }[] = [];
   if (candidates.length === 0) {
-    return { summary: "No candidates passed the gates, so no notes were drafted.", proposed_count: 0, existing_count: 0, rejected_count: 0, repair_rounds: 0, proposed: [], existing: [], rejected: [], new_topics: [], cost_usd: 0, tokens: 0 };
+    return { summary: "No candidates passed the gates, so no notes were drafted.", proposed_count: 0, existing_count: 0, rejected_count: 0, repair_rounds: 0, proposed: [], existing: [], rejected: [], overlaps: [], new_topics: [], cost_usd: 0, tokens: 0 };
   }
 
   let pending = candidates;
@@ -205,7 +263,8 @@ export async function draftStage(llm: LlmClient, model: string, bundle: Record<s
     rounds++;
     const user = [
       `Source: ${str(bundle.title)}`,
-      `Vault topics: ${[...vocabulary].slice(0, 150).join(", ")}`,
+      "Vault topics (name, notes, an example note):",
+      ...topicLines(bundle),
       "",
       "Claims:",
       ...pending.map((c) => `- ${str(c.id)}: ${str(c.claim)}\n  locus: ${str(c.locus)}\n  evidence: ${str(c.evidence)}\n  vault matches: ${arr(c.matches).map(asRecord).map((m) => `${str(m.id)} "${str(m.title)}" (${str(m.similarity)})`).join("; ") || "none"}`),
@@ -214,7 +273,7 @@ export async function draftStage(llm: LlmClient, model: string, bundle: Record<s
       "Source text for evidence and conditions:",
       str(bundle.text),
     ].join("\n");
-    const reply = await completeJson(llm, { model, system: DRAFT_SYSTEM, user, maxTokens: 12_000 }, fetchImpl);
+    const reply = await completeJson(llm, { model, system: DRAFT_SYSTEM, user, maxTokens: 24_000, reasoningEffort: "medium" }, fetchImpl);
     usage.prompt_tokens += reply.usage.prompt_tokens;
     usage.completion_tokens += reply.usage.completion_tokens;
     usage.cost += reply.usage.cost;
@@ -245,10 +304,40 @@ export async function draftStage(llm: LlmClient, model: string, bundle: Record<s
     pending = candidates.filter((c) => retry.has(str(c.id)) && !done.has(str(c.id)));
     feedback = rejected.length ? `\nYour previous drafts for these claims were rejected. Fix exactly these issues:\n${rejected.map((r) => `- ${r.candidate_id}: ${r.issues.join("; ")}`).join("\n")}` : "";
   }
+  // Two drafts can make one assertion in different words; a lexical check
+  // misses that, so one short model call compares them.
+  const overlaps: { kept: string; dropped: string; reason: string }[] = [];
+  let overlapCheck: "done" | "skipped" | "failed" = "skipped";
+  if (accepted.length > 1) {
+    // Best effort: a failed check keeps every draft and says so.
+    const reply = await completeJson(llm, {
+      model,
+      system: OVERLAP_SYSTEM,
+      user: accepted.map((n) => `${n.candidate_id}: ${n.title}\n  ${n.description}`).join("\n"),
+      maxTokens: 8000,
+      reasoningEffort: "low",
+    }, fetchImpl).catch(() => null);
+  if (reply) {
+    overlapCheck = "done";
+    usage.prompt_tokens += reply.usage.prompt_tokens;
+    usage.completion_tokens += reply.usage.completion_tokens;
+    usage.cost += reply.usage.cost;
+    const ids = new Set(accepted.map((n) => n.candidate_id));
+    const gone = new Set<string>();
+    for (const pair of arr(asObject(reply.value, "The overlap check").same).map(asRecord)) {
+      const keep = str(pair.keep);
+      const drop = str(pair.drop);
+      if (!ids.has(keep) || !ids.has(drop) || keep === drop || gone.has(keep) || gone.has(drop)) continue;
+      gone.add(drop);
+      overlaps.push({ kept: keep, dropped: drop, reason: str(pair.reason) });
+    }
+    for (let i = accepted.length - 1; i >= 0; i--) if (gone.has(accepted[i].candidate_id)) accepted.splice(i, 1);
+  } else overlapCheck = "failed";
+  }
   const newTopics = [...new Set(accepted.flatMap((n) => n.new_topics))];
-  const merged = candidates.length - accepted.length - existing.length - rejected.length;
+  const merged = candidates.length - accepted.length - existing.length - rejected.length - overlaps.length;
   return {
-    summary: `Drafted ${accepted.length} note${accepted.length === 1 ? "" : "s"}${existing.length ? `, ${existing.length} already in the vault` : ""}${merged > 0 ? `, ${merged} merged into others` : ""}${rejected.length ? `, ${rejected.length} still failing the vault's rules after ${rounds} rounds` : ""}${newTopics.length ? `; new topics: ${newTopics.join(", ")}` : ""}.`,
+    summary: `Drafted ${accepted.length} note${accepted.length === 1 ? "" : "s"}${existing.length ? `, ${existing.length} already in the vault` : ""}${merged > 0 ? `, ${merged} merged into others` : ""}${overlaps.length ? `, ${overlaps.length} dropped as the same assertion as another` : ""}${overlapCheck === "failed" ? " (the duplicate check between drafts did not run)" : ""}${rejected.length ? `, ${rejected.length} still failing the vault's rules after ${rounds} rounds` : ""}${newTopics.length ? `; new topics: ${newTopics.join(", ")}` : ""}.`,
     proposed_count: accepted.length,
     existing_count: existing.length,
     rejected_count: rejected.length,
@@ -256,6 +345,8 @@ export async function draftStage(llm: LlmClient, model: string, bundle: Record<s
     proposed: accepted,
     existing,
     rejected,
+    overlaps,
+    overlap_check: overlapCheck,
     new_topics: newTopics,
     cost_usd: round4(usage.cost),
     tokens: usage.prompt_tokens + usage.completion_tokens,
@@ -269,14 +360,19 @@ export function reportStage(model: string, read: Record<string, unknown>, candid
   const skipped = arr(candidates.skipped).map(asRecord);
   const existing = arr(draft.existing).map(asRecord);
   const rejected = arr(draft.rejected).map(asRecord);
-  const total = proposed.length + skipped.length + existing.length + rejected.length;
+  const restatements = Number(candidates.restatement_count ?? 0);
+  const nonClaims = Number(candidates.non_claim_count ?? 0);
+  const overlaps = arr(draft.overlaps).length;
+  // Rejected on a gate, over distinct claims: restatements and non-claims are reported apart.
+  const total = proposed.length + skipped.length + existing.length + rejected.length + overlaps;
   const skipRate = total ? skipped.length / total : 0;
   const cost = round4(Number(candidates.cost_usd ?? 0) + Number(draft.cost_usd ?? 0));
   const newTopics = arr(draft.new_topics).map(str);
   const lines = [
     `## Extract (dry run) — ${str(read.title)}`,
     "",
-    `**${proposed.length} proposed** · ${skipped.length} skipped · ${existing.length} already in the vault${rejected.length ? ` · ${rejected.length} failed the rules` : ""} · skip rate ${Math.round(skipRate * 100)}%`,
+    `**${proposed.length} proposed** · ${skipped.length} rejected on a gate · ${existing.length} already in the vault${rejected.length ? ` · ${rejected.length} failed the rules` : ""}${overlaps ? ` · ${overlaps} dropped as duplicates of another draft` : ""} · skip rate ${Math.round(skipRate * 100)}%`,
+    `Also set aside: ${restatements} restatement${restatements === 1 ? "" : "s"} of kept claims, ${nonClaims} non-claim${nonClaims === 1 ? "" : "s"} (headings, captions, bare statistics). Neither counts in the skip rate.`,
     `Model \`${model}\` · $${cost.toFixed(4)} · ${Number(checked.checked_count ?? 0)} vault searches`,
     "",
   ];
@@ -286,15 +382,17 @@ export function reportStage(model: string, read: Record<string, unknown>, candid
     lines.push("");
   }
   if (existing.length) lines.push("### Already in the vault", "", ...existing.map((e) => `- ${str(e.title)} (\`${str(e.note_id)}\`) — ${str(e.reason)}`), "");
-  if (skipped.length) lines.push("### Skipped", "", "| Candidate | Gate | Why |", "|---|---|---|", ...skipped.map((s) => `| ${cell(str(s.candidate))} | ${str(s.gate)} | ${cell(str(s.reason))} |`), "");
+  if (skipped.length) lines.push("### Rejected on a gate", "", "| Candidate | Gate | Why |", "|---|---|---|", ...skipped.map((s) => `| ${cell(str(s.candidate))} | ${str(s.gate)} | ${cell(str(s.reason))} |`), "");
   if (newTopics.length) lines.push(`New topics not in the vault's vocabulary: ${newTopics.join(", ")} — review before writing.`, "");
   return {
-    summary: `${proposed.length} notes proposed, ${skipped.length} skipped, ${existing.length} already in the vault, skip rate ${Math.round(skipRate * 100)}%, $${cost.toFixed(4)}.`,
+    summary: `${proposed.length} notes proposed, ${skipped.length} rejected, ${existing.length} already in the vault, skip rate ${Math.round(skipRate * 100)}% (plus ${restatements} restatements and ${nonClaims} non-claims set aside), $${cost.toFixed(4)}.`,
     report: lines.join("\n"),
     dry_run: true,
     source_id: str(read.source_id),
     proposed_count: proposed.length,
     skipped_count: skipped.length,
+    restatement_count: restatements,
+    non_claim_count: nonClaims,
     existing_count: existing.length,
     skip_rate: Math.round(skipRate * 100) / 100,
     cost_usd: cost,
