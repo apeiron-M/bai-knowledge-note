@@ -757,6 +757,12 @@ nothing. Consequences:
    Studio shows "No steps ran" for the whole of a long step. Wire `onPartialOutput`, keep the
    latest partial output and piece log lines on the running step, and render them. The piece
    ships the extract job as five steps meanwhile.
+8. **A piece cannot give its actions a default timeout.** A step without `timeoutSeconds` gets the
+   runtime's 30 s (`pieces/engine/blocks.ts:621`), and nothing in the descriptor or the
+   environment changes that. Model-backed actions need 1–3 minutes, so every step has to be set by
+   hand under *When it fails → Timeout*, and a forgotten one fails with "worker was replaced". Let
+   an action declare a default (a descriptor field), have the runtime fall back to it, and have
+   Studio prefill it when the step is added.
 
 **Hosted Vetra: the workflows addon.** On Vetra, workflows are enabled per environment as an addon
 ("Runs workflow documents on this environment and adds the workflow editors and Workflow Studio to
@@ -775,170 +781,109 @@ Connect"), and its settings replace the local `.env` lines:
 Locally, Workflow Studio also needs `connect.app.workflowsEnabled: true` in `powerhouse.config.json`;
 there is no environment switch for it.
 
-## 18. Vault agent jobs: an LLM that follows the pipeline
+## 18. Pipeline actions: an LLM that follows the vault's method (as built, 28 September 2026)
 
-**Goal.** A workflow step that takes a job, such as "extract this source" or "connect these notes",
-and has an LLM carry it out against the vault. It follows the same rules the Claude Code skills
-enforce (`/powerhouse-knowledge:extract`, `:connect`, `:synthesize`, `:verify`, `:health`), so an
-ingested source becomes atomic, linked, placed notes without a person running the pipeline.
+**Goal.** Workflow steps that take a source and carry it through the pipeline the Claude Code skills
+run (`/powerhouse-knowledge:extract`, `:connect`, `:synthesize`), with a model from the
+connection doing the judgement and the piece enforcing the vault's rules. An ingested source
+becomes atomic, linked, placed notes in the review queue without a person running the pipeline.
 
-**Why it lives in the piece.** The engine has no loop block, it hides Activepieces' AI and agent
-pieces (`piece-ai`, `agent`, …), and a registry LLM step is a single call. An agent needs a loop:
-send the job and the tool schemas, run each tool call against the vault, return the result,
-repeat until the job is done or a budget runs out. That loop is a piece action: the **harness**.
+**What changed from the first design.** It began as tool-loop agents (`agent-extract`,
+`agent-connect`, …), one loop per job. The loop worked but was slow and silent: the extract
+agent took ~6 minutes and $0.036 on a 3,215-character section, made 26 near-duplicate searches,
+and Studio showed nothing until it finished (report 7). The jobs are now **staged**: deterministic
+reads and searches in the piece, a small number of bounded model calls for the judgement, and the
+harness checking every answer before anything is written. The tool loop (`harness.ts`) stays for
+jobs that need a model to explore.
 
 ### 18.1 Credentials and model choice
 
-A step's props cannot hold secrets; only a connection can. The vault connection gains three
-optional fields:
+A step's props cannot hold secrets, so the vault connection carries three optional fields:
 
 | Field | Type | Default | Notes |
 |---|---|---|---|
-| `llm_base_url` | ShortText | `https://openrouter.ai/api/v1` | Any OpenAI-compatible endpoint (OpenRouter, OpenAI, a local gateway) |
-| `llm_api_key` | SecretText | — | Encrypted with the runtime's master key like the vault token. Absent: the agent actions refuse with a clear message; every other action works as before |
-| `llm_default_model` | ShortText | — | Used when a step leaves its model empty. Connection props cannot be dynamic dropdowns (CustomAuth allows static props only), so this is a model id |
+| `llm_api_key` | SecretText | — | Encrypted with the runtime's master key like the vault token. Absent: the model-backed actions refuse with a clear message |
+| `llm_base_url` | ShortText | `https://openrouter.ai/api/v1` | Any OpenAI-compatible endpoint |
+| `llm_default_model` | ShortText | — | Used when a step leaves its model empty |
 
-**The model picker.** Every agent action has a `model` prop, a **dynamic dropdown** filled live
-from the provider with the connection's key, the same way the drive picker is filled:
-- `GET {llm_base_url}/models?supported_parameters=tools` returns only models that can call tools.
-  On OpenRouter (28 Sep): **369 of 458**. A provider that ignores the filter is filtered on
-  `supported_parameters` client-side, and one without that field lists everything.
-- Each option reads `Name — $in / $out per M tokens · N k context`, from the model's `pricing`
-  and `context_length`, so cost is visible when choosing. The value is the model id
-  (`anthropic/claude-sonnet-4.5`).
-- `refreshOnSearch`, so typing narrows 369 options by name or id.
-- Empty: the connection's `llm_default_model`.
-- A standalone `list-models` action returns the same list for a workflow that picks a model itself.
+- **Model picker:** a dynamic dropdown filled live from `GET {base}/models?supported_parameters=tools`
+  (OpenRouter, 28 Sep: 369 of 458 models), labelled `Name — $in / $out per M · N k ctx`, searchable.
+- **Connection check:** OpenRouter's `GET /key` confirms the key; the label ends
+  `· LLM: openrouter.ai (limit $X, $Y left)` or `(no spending limit)`.
+- **Reasoning effort is set per call** (`reasoning.effort`). Unbounded, DeepSeek V4.1 Flash spent
+  45–180 s reasoning over a candidate list; `low` took 18 s with the same claims.
 
-`validate` also checks the LLM fields when they are set: OpenRouter's `GET /key` (free) confirms the
-key and reports its limit. The connection label gains `· LLM: openrouter.ai (limit $X | no limit)`,
-which puts a key with no spending limit in plain sight.
+### 18.2 The actions
 
-### 18.2 Jobs
+All three take the same **Vault**, **Source**, **Model** and **Mode** (dry run by default). A
+workflow chains them by picking the same source; nothing is wired between steps, because each
+reads the source's notes from the vault. Each output leads with a one-line `summary` and a
+`stages` list (`stage · seconds · what it did`), because Studio renders output as JSON; a
+failure names the stage and what finished before it. Each stage is also pushed through
+`ctx.output.update`, ready for a host that shows live output.
 
-One action per job. Each has fixed instructions, a tool whitelist and budgets (`max_steps`,
-`max_cost_usd`, `timeout`); a `dry_run` checkbox swaps every write tool for a "propose" tool that
-records what it would have done.
+| Action | Phase | Stages | Model calls |
+|---|---|---|---|
+| **Extract claims** (`extract-claims`) | create | read (text, figures, topic vocabulary with an example note per topic) → candidates (six gates) → vault check (one search per candidate) → draft (+ one repair round) → overlap check between drafts → report → write → pipeline | 2–4 |
+| **Connect notes** (`connect-notes`) | reflect | read the source's notes → candidates (semantic neighbours + siblings) → propose (3 notes per call, in parallel) → write → pipeline | ⌈notes / 3⌉ |
+| **Place notes in MoCs** (`place-in-mocs`) | reweave | read notes and the MoC tree (`graph.json`) → plan (+ one repair round) → write → pipeline | 1–2 |
 
-| Action | Skill it follows | Tools |
-|---|---|---|
-| `agent-extract` | `/extract` | read the source; search for near-duplicates; create notes with `DERIVED_FROM` + reason; record extraction stats |
-| `agent-connect` | `/connect` | search, read neighbours; create or annotate links with a reason and confidence |
-| `agent-reweave` | `/synthesize` | MoC membership (`CORE_IDEA`), create or update MoCs, `CHILD_MOC` placement |
-| `agent-verify` | `/verify` | read-only checks; reports findings, fixes nothing on its own |
-| `agent-health` | `/health` | stats, orphans, tensions; writes the health report |
-| `agent-pipeline` | `/pipeline` | all of the above, phase by phase with exit gates (§18.2a) |
+What the harness enforces, whatever the model says:
+- **Extract:** bare statistics, claims no practitioner could dispute, sentences copied from the
+  source and statistics in titles are struck or sent back; drafts are checked against the vault's
+  note rules (`checkProposal`); the skip rate is rejected-on-a-gate over distinct claims, with
+  restatements and non-claims (headings, captions, credits) reported apart; a source that already
+  has extracted notes is refused before any model call. Write mode creates the notes, **submits
+  each for review** (`SUBMIT_FOR_REVIEW`, actor `extract-claims · <model>`), links each to the
+  source with `DERIVED_FROM` carrying the passage it came from, and records
+  `ADD_EXTRACTED_CLAIM`, `RECORD_EXTRACTION_STATS` and `EXTRACTED` on the source.
+- **Connect:** the articulation test in data. A link is dropped unless its target was a candidate,
+  its type is one of the four knowledge types, and its reason is specific: at least 20 characters,
+  not the type name, and naming notes by subject rather than by letters or ids (the model labelled
+  notes "A"–"F" until this check existed). Duplicate pairs are removed across batches.
+- **Place:** a note goes to a TOPIC or DOMAIN MoC, never the HUB; a new TOPIC MoC needs three or
+  more of the notes and an existing DOMAIN or the HUB as parent, and is attached with `CHILD_MOC`
+  in the same run. What still breaks a rule after the repair round is not written.
+- **Pipeline:** each action advances the source's claim task only from the phase it owns,
+  claiming it if pending; a task at another phase is left alone, so a rerun or a step out of order
+  never skips a phase. `ADVANCE_PHASE` releases the task (`PENDING`, unassigned) for the next
+  phase. `verify` is left to a person: approval must come from someone other than the submitter.
 
-- **Tools come from the piece's own client**, so every write keeps the vault's server-side
-  guarantees: lint before dispatch, placement, rollback, read-back. A refused write returns the
-  server's findings to the model (for example `actions[0].input.description: exceeds 200
-  characters`) so it can correct and retry.
-- **The harness, not the model, moves the pipeline.** It claims the task, runs the job, and
-  advances the phase with a handoff built from the model's report. The model never advances,
-  completes or fails a task, and never approves a note. Notes stay DRAFT for human review.
-- **Instructions** are tool-shaped editions of the skills. The skills tell Claude Code to run
-  `switchboard …`, which a workflow LLM cannot do. The editions keep the skills' rules (one claim
-  per note, the 200-character description, a reason on every link, an honest skip rate) and name
-  tools instead of commands. The plugin's skills stay the source of truth; the editions ship with
-  the piece, and a vault skill document (`/powerhouse-knowledge:skills`) can override one so a vault
-  can tune its agent without a redeploy.
-- **Output**: what was done (notes created, links, skipped claims with reasons), the model used,
-  token usage and cost (OpenRouter's `usage.cost`), steps taken, and why it stopped.
+**Measured, deepseek/deepseek-v4.1-flash on "Tech investment" (3,215 characters):**
 
-### 18.2a The full flow: `agent-pipeline` (`/powerhouse-knowledge:pipeline`)
+| Step | Time | Cost | Result |
+|---|---|---|---|
+| Extract claims (write) | ~70–130 s | ~$0.014 | 6 notes, 3 rejected (skip rate 33%), 7 restatements and 24 non-claims set aside |
+| Connect notes (write, one call) | 158 s | $0.009 | 19 links (16 `RELATES_TO`, 3 `BUILDS_ON`), every note 4–7 links and ≥ 1 incoming; 5 to notes outside the report |
+| Place notes in MoCs (write) | 10 s | $0.001 | 1 new TOPIC MoC under the HUB holding all 6 notes |
 
-One action that drives a claim task through all four phases, in order, as the pipeline skill
-does. It is the other jobs run back to back, with the skill's **exit gates** checked by read-back
-between them, because advancing is a claim that the work exists.
+The task ended at `verify` with three handoffs. Connect now splits into calls of three notes,
+because one call for six notes came within 22 s of the 180 s per-call limit.
 
-| Phase | Job it runs | Exit gate the harness checks (read back) before `ADVANCE_PHASE` |
-|---|---|---|
-| `create` | `agent-extract` | every new note has title, description (≤ 200), `noteType`, content, ≥ 1 topic, provenance, confidence and a `DERIVED_FROM` edge with its locus; the source reads `claimCount == extractedClaims.length == notes written` and status `EXTRACTED` |
-| `reflect` | `agent-connect` | every new note has ≥ 2 knowledge edges with reasons and confidence and ≥ 1 incoming; every `CONTRADICTS` has its tension read back |
-| `reweave` | `agent-reweave` (forward: MoC placement; backward: older notes the new claims touch) | every new note is a `CORE_IDEA` of a TOPIC or DOMAIN MoC; every MoC reachable from the HUB |
-| `verify` | `agent-verify` | every note graded; repairs read back; notes submitted for review; health report rewritten |
+**Review findings worth carrying into the prompts:** notes collapse towards `observation` for survey
+material; most links are `RELATES_TO`; a statistic restated as a sentence can still survive the
+gates ("organizations adopt earlier than the global average"); outside links to unrelated domains
+are often `speculative` and worth a reviewer's eye.
 
-- **Harness-owned tracking.** Per phase: `ASSIGN_TASK`, the job, the gate, then `ADVANCE_PHASE` with
-  a handoff built from the job's report (`workDone`, `filesModified`), then read the task back
-  (`status`, `currentPhase`, `handoffs.length`). The final advance completes the task; the harness
-  never follows it with `COMPLETE_TASK`.
-- **A failed gate does not advance.** The harness gives the job one repair turn with the gate's
-  findings; if the gate still fails, it `BLOCK_TASK`s with the findings in the handoff so a person
-  or a later run can pick it up. A source that yields zero claims is not a failure: close it out
-  and advance.
-- **Approval needs a different actor.** The verify gate wants passing notes at `CANONICAL`, and the
-  vault enforces author ≠ approver. A workflow running as one identity therefore stops at
-  `IN_REVIEW` and ends the task with `BLOCK_TASK` "awaiting review" rather than claiming a gate it
-  cannot pass. Two ways to finish: a person approves in the app, or a second connection with a
-  **reviewer** identity runs `agent-verify` in approval mode. It is never the same identity as
-  the writer.
-- **Budget across phases.** `max_cost_usd` and `max_steps` apply to the whole run; a phase that
-  would exceed them blocks the task with its handoff written, so no work is lost.
-- **Size.** A full run on one section is roughly 40–100 model calls, which is why §18.3 prefers one
-  workflow per phase. `agent-pipeline` is for a single source when a person wants it done end to
-  end (`core#trigger:manual`), or for a low-volume vault.
+### 18.3 Still to build
 
-### 18.2b Tools on the existing REST routes
+- **A trigger** so a queued source runs through on its own: poll the queue for claim tasks at a
+  phase and emit one item per task; each step's Source becomes an expression on the trigger item.
+- **Verify notes:** read-only grading of a source's notes against the note rules and link
+  counts, with findings in the output; it never approves.
+- **Health on a schedule:** rewrite the health report from `graph.json`, `stats` and `orphans`.
+- **Ingest:** `ingest-source`, `convert-file`, `ingest-file(s)`, `ingest-email` (§5, §13), so the
+  email and Meet workflows feed the same pipeline.
+- **Vault changes:** V1 (task routes) removes two whole-drive reads per transition; V2
+  (`ASSIGN_TASK` refuses a finished task) is required before an unattended schedule; V8
+  (idempotency) for retried creates.
 
-Every tool the jobs need maps onto a route in `subgraphs/http` today. The vault's server-side
-guarantees (lint before dispatch, placement, rollback, read-back, per-drive access) therefore apply
-to the agent exactly as they do to a person's writes.
+### 18.4 Risks
 
-| Tool | Route | Used by |
-|---|---|---|
-| `search_vault` | `GET search` (`content=1`, `related`) | all |
-| `read_document`, `read_markdown` | `GET notes/:id`, `notes/:id.md` | all |
-| `similar_notes`, `links`, `backlinks`, `neighbourhood` | `GET notes/:id/similar`, `/links`, `/backlinks`, `/connections` | connect, reweave, verify |
-| `list_topics`, `notes_by_topic` | `GET topics`, `topics/:name` | extract, reweave |
-| `graph_snapshot` | `GET graph.json` (all nodes and edges) | reweave (MoC hierarchy), verify, health |
-| `graph_stats`, `orphans`, `synthesis_candidates` | `GET stats`, `density`, `orphans`, `triangles` | health, reweave |
-| `read_health` | `GET health.json` | health |
-| `list_sources`, `find_queue` | `GET notes/<driveId>` (the drive tree) | pipeline |
-| `create_notes`, `create_moc`, `create_observation` | `POST notes` (`documentType` note / MoC / observation; ≤ 25 per call) | extract, reweave, verify |
-| `update_note`, `set_metadata`, `add_topic` | `POST actions` on the note | extract, reweave, verify |
-| `submit_for_review` / `approve` (reviewer identity only) | `POST actions` `SUBMIT_FOR_REVIEW` / `APPROVE_NOTE` (server checks `canMutate` and author ≠ approver) | verify |
-| `supersede_note` | `POST relationships` `SUPERSEDES` + `POST actions` `ARCHIVE_NOTE` | reweave |
-| `link`, `update_link`, `unlink` | `POST`, `PATCH`, `DELETE relationships` (articulation rule server-side) | extract (`DERIVED_FROM`), connect, reweave (`CORE_IDEA`, `CHILD_MOC`) |
-| `record_extraction` | `POST actions` on the source: `ADD_EXTRACTED_CLAIM`, `RECORD_EXTRACTION_STATS`, `SET_SOURCE_STATUS` | extract |
-| `update_moc` | `POST actions` on the MoC: `UPDATE_ORIENTATION`, `UPDATE_DESCRIPTION` | reweave |
-| `write_health_report` | `POST actions` on the health report (lint covers `HealthCategory`) | health |
-| task transitions (harness only) | `POST tasks/:id/claim`; `POST actions` on the queue: `ADVANCE_PHASE`, `BLOCK_TASK`, `FAIL_TASK` | pipeline |
-| `read_methodology` | bundled with the piece: the methodology claims in `data/methodology` | connect (grounding), verify |
-
-**Gaps, and what closes them:**
-- **Finding the queue and its tasks** takes two whole-drive reads today (drive tree, then the
-  queue). V1 (`GET tasks`, `POST tasks/:id/advance | fail | block`) makes the harness's tracking one
-  call per transition.
-- **`ASSIGN_TASK` accepts a finished task** (V2). The harness claims only `PENDING` tasks it has
-  just read, but V2 is still required before any unattended schedule.
-- **Health checks** are computed from `graph.json`, `stats`, `orphans` and `embeddings/missing`.
-  Stale notes and description quality need each node's `updatedAt` and `description`, which
-  `graph.json` already carries, so nothing new is needed.
-- **Tension lookup after a `CONTRADICTS` link**: the indexer opens the tension, and it appears as an
-  `INVOLVES` backlink on either note (`GET notes/:id/backlinks`). No new route is needed.
-- **Idempotency** of `POST notes` on a rerun (V8) keeps a retried extract from duplicating notes;
-  until then, the extract job searches for its own claims (`DERIVED_FROM` backlinks of the source)
-  before creating.
-
-### 18.3 Workflows
-
-One workflow per phase for a steady stream of sources, so each run is short and a failure stays
-local; `agent-pipeline` (§18.2a) for one source end to end:
-`new-pipeline-task (phase)` → `claim-task` → `agent-<job>` → `advance-task`. `agent-health` runs on
-`core#trigger:schedule`. A step timeout of 600–900 s covers a job on a 2–3 k-character section.
-
-### 18.4 Reuse and risks
-
-- **Reuse:** the vault app's chat already has an OpenRouter tool-calling client
-  (`editors/knowledge-vault/lib/chat/completions-client.ts`), a text-tool-call fallback for models
-  that emit calls as text, a system prompt and 17 read-only tool schemas (`vault-tools.ts`). The
-  harness ports the client and adds write tools.
-- **Quality:** automated extraction can lower vault health. Mitigations: notes stay DRAFT,
-  `agent-verify` after each job, `/health` reports honestly, and nothing is auto-approved.
-- **Cost:** about 10–30 model calls per extract on one section. `max_cost_usd` stops a run, and the
-  provider key should carry its own spending limit.
-- **Secrets:** the key lives only in the connection (encrypted); give workflows their own key.
-
-**First spike:** `agent-extract` on one local source in `dry_run` mode, using the model picker above.
-Nothing is written; the proposed notes, the steps taken and the cost show whether the approach
-holds before any write tool is enabled.
+- **Quality:** notes land IN_REVIEW, nothing is auto-approved, and every link carries a reason a
+  reviewer can check. A weak model lowers vault health; the review queue is the gate.
+- **Cost:** about $0.02–0.03 per section for the three steps. The step has no spending cap of its
+  own beyond the model calls it makes, so the provider key needs a limit before anything runs
+  unattended.
+- **Timeouts:** a step's timeout must be set to about 300 s in the workflow (report 8).
+- **Secrets:** the key lives only in the connection; give workflows their own key.
