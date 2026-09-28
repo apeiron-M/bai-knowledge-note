@@ -583,10 +583,9 @@ No vault change is needed beyond the piece. `ingest-source` already takes `sourc
 
 ## 14. Risks and open questions
 
-- **Cross-step attachment refs.** A ref written by one step may be refused when a later step
-  hydrates it (`attachment-port.ts:74-86`). If so, file-passing actions accept data URIs, and
-  producer steps should emit those below a size threshold. **This is the first thing the spike
-  tests.**
+- **Cross-step attachment refs: confirmed broken (§17).** A file one action writes is refused
+  when a later step reads it. Composite actions keep conversion, ingest and attachment inside one
+  step; trigger files (inline data URIs) are unaffected.
 - **Bypass through piece-reactor.** `document-dispatch` writes into vault documents as the host,
   with no drive grant and no lint. Document "vault writes go through the vault piece", and ask the
   engine team for a per-drive policy on the reactor port.
@@ -693,3 +692,65 @@ The first write after a boot always took about 40 s, measured under both `ph vet
 4. **Deployments:** Postgres runs these queries asynchronously, so a hosted Switchboard should not freeze. It still accumulates one remote per Connect session and rebuilds all of their outboxes after each deploy. Check `select count(*) from reactor.sync_remotes` there.
 
 **Also found:** `vetra --watch` hot-swaps subgraphs on a rebuild but skips re-registering REST routes (`route registration skipped: … already registered`). A change to a REST route needs a full restart. `[http] slow step` logging (`subgraphs/http/lib/slow.ts`) stays in: it is silent under 2 s, and it now covers time spent before the handler when a client sends `x-client-sent-at`.
+
+## 17. Phase 0 on the workflow runtime (28 September 2026, dev.28)
+
+The piece (`42b5cfb0`) was run inside a live workflow runtime: `ph vetra` with workflows enabled, over
+`workflowRuntime` GraphQL, in a scratch drive named "Workflows (spike)", away from any vault.
+
+| Check | Result |
+|---|---|
+| The runtime loads the piece | ✅ `Holding 2 package piece(s) on disk: @powerhousedao/piece-reactor, @powerhousedao/piece-knowledge-vault` |
+| Catalogue entry | ✅ `@powerhousedao/piece-knowledge-vault#search`, with the connection form and its instructions |
+| A connection with a minted secret passes the runtime's `checkConnection` | ✅ label `0xadbA…BcA4 @ localhost:4001 · 2 vaults · token expires 2026-10-05` |
+| A webhook → `search` run | ✅ `{{trigger.payload.body.q}}` resolves; the step succeeds in 1.1 s; the run journal records the resolved input and the 1.4 KB output |
+| Webhook `token` scheme | ✅ 202 with the token; 401 "Signature verification failed" without it or with a wrong one |
+| `dedupeField: "body:id"` | ✅ a repeated id answers 200 and starts no run |
+| The 1 MiB body cap | ✅ 900 KB → 202; 1.1 MB → **413 "Payload too large" in 4 ms** (with curl; Node's `fetch` hangs after an early 413, which is client-side) |
+| A registry piece: `@activepieces/piece-imap@0.5.0` | ✅ downloaded to `.ph/ap-bundles`, runs in the worker (its own "Host not found" error through `checkConnection`). CustomAuth; `new_email` is POLLING with a `mailbox` dropdown. Polling a real mailbox is still untested |
+| **A file from one action to the next** | ❌ `file-helper#createFile` → `read_file` with `{{steps.make.output.url}}` fails: `No staged file for reference "attachment://v1:…"` |
+| Inlining the vault's lint in the piece | ✅ +109 KB minified (28 KB gzipped); inline it |
+
+**Why files do not cross steps.** Before a step runs, the host downloads the files its config
+references, but only those the **workflow document** references (`attachment-port.ts`: "a step's
+refs come from its own run journal: the workflow document is what vouches for them"). A file an
+earlier step wrote exists only in the run journal, so the check refuses it and the step finds
+nothing. Consequences:
+- The piece's composite actions (`ingest-file`, `ingest-files`, `ingest-email`) must convert, ingest
+  and attach inside **one step**, as §5.3 already designs.
+- Files from a **trigger** arrive as inline data URIs, not refs, so IMAP route A (§13.2) is
+  unaffected.
+- A workflow that needs a file from another piece's action must go through a data URI (for
+  example `file-helper#read_file` with base64 output), which is itself blocked for action-written
+  files today.
+
+**Upstream reports this phase produced:**
+1. **Webhook block type.** The catalogue (`pieceTriggers(packageName: "core")`) advertises
+   `core#trigger:webhook`, but the runtime arms only `core#webhook` (`service.ts`,
+   `trigger?.blockType === WEBHOOK_BLOCK`). A workflow built from the catalogue's string never arms:
+   "No piece answers for the trigger block type…". Studio may map the name itself; the API does not.
+2. **Files between steps.** Step-written files are refused by the next step in the same run
+   (above).
+3. **Shutdown.** After the Node client hung on a 1.1 MB upload, `ph vetra` ignored SIGTERM and
+   SIGINT for 20+ minutes, with its piece workers already exited, and had to be killed. The client
+   connection had closed by then, so something else held shutdown. Not reproduced yet.
+4. **A hard kill loses recent PGlite writes.** Everything from the last few minutes before
+   `kill -9` was gone after the restart: a `SET_TRIGGER` and two runs. Stop dev servers with
+   Ctrl-C.
+
+**Hosted Vetra: the workflows addon.** On Vetra, workflows are enabled per environment as an addon
+("Runs workflow documents on this environment and adds the workflow editors and Workflow Studio to
+Connect"), and its settings replace the local `.env` lines:
+
+| Setting | Why it matters here |
+|---|---|
+| `PH_WORKFLOWS_SECRETS_MASTER_KEY` (required, 64 hex) | Without it every connection's saved token becomes unreadable at the next restart; changing it later has the same effect |
+| `PH_WORKFLOWS_EGRESS_ALLOW_ADDRESSES` | Only needed when the vault is reached on a private address; the vault piece normally calls the Switchboard by its public origin |
+| `PH_WORKFLOWS_PIECE_MAX_FILE_BYTES` (default 8 MB) | The per-file ceiling in §8; raise it for larger PDFs, since convert itself takes 30 MiB |
+| `PH_WORKFLOWS_WEBHOOK_TIMEOUT_MS` (default 30 s) | Matters only for a webhook workflow in `responseMode: "sync"` that waits for a conversion |
+| `PH_WORKFLOWS_POLL_INTERVAL_MS` (default 60 s) | The IMAP route's delivery latency unless the trigger sets `pollEverySeconds` |
+| `PH_WORKFLOWS_RUN_CONCURRENCY` (default 4), `…_RUN_QUEUE_DEPTH` | Each run is its own process; convert serialises anyway (one file at a time) |
+| `PH_ATTACHMENT_URL_SIGNING_SECRET` (Switchboard) | Unset, signed download URLs use a per-process secret and die at restart |
+
+Locally, Workflow Studio also needs `connect.app.workflowsEnabled: true` in `powerhouse.config.json`;
+there is no environment switch for it.
