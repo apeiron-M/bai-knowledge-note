@@ -418,7 +418,7 @@ read from the JWT `exp`.
 
 | # | Change | Why | Size |
 |---|---|---|---|
-| **V0** | `POST sources`: lint the `INGEST_SOURCE` payload **before** `createDocumentInDrive`, or roll back on a lint failure. Today `routes/sources.ts:118-184` creates and places the source, then `executeWrite` rejects it, for example a non-ISO `publishedAt` (`z.iso.datetime()`) or a literal `\n` in content, and the caller gets a 400 with an **empty source left in `/sources`**. Also accept `allowLiteralEscapes` | Correctness. A workflow feeding email dates or code-heavy transcripts will hit it daily | XS |
+| **V0** ✅ done (`0c1d8ce5`) | `POST sources`: lint the `INGEST_SOURCE` payload **before** `createDocumentInDrive`, or roll back on a lint failure. Today `routes/sources.ts:118-184` creates and places the source, then `executeWrite` rejects it, for example a non-ISO `publishedAt` (`z.iso.datetime()`) or a literal `\n` in content, and the caller gets a 400 with an **empty source left in `/sources`**. Also accept `allowLiteralEscapes` | Correctness. A workflow feeding email dates or code-heavy transcripts will hit it daily | XS |
 | V1 | `GET tasks?drive=&status=&phase=`; `POST tasks/:id/advance \| fail \| block \| unblock`; `POST sources/:id/queue` | Pipeline actions in one call, not two whole-drive reads | S |
 | V2 | `ASSIGN_TASK` rejects a status other than `PENDING` (a new operation error: MCP **and** `src/`, tests ≥ 95%) | Automated claims must not resurrect DONE or BLOCKED tasks | S |
 | V3 | A lossless change feed, `GET changes?drive=&after=<cursor>` (ascending, opaque cursor), covering sources, queue and relationship operations. Fix the `${documentId}-${index}` operation id that collides across scopes | Gap-free triggers | M |
@@ -429,6 +429,7 @@ read from the JWT `exp`.
 | V8 | `POST sources {idempotencyKey}`, stored on the source; a repeat returns `200 {deduped:true, id}`. The same for `POST notes` | Cross-workflow dedupe (§6) | S |
 | V9 | `POST sources {original: {ref, fileName, mimeType, sizeBytes, convertedBy}}` dispatches `ATTACH_ORIGINAL_FILE` in the same write | One call instead of two, and one failure point | XS |
 | V10 | `GET sources?drive=&url=&status=&folder=` from the drive tree plus source state (sources stay out of the graph index) | `list-sources` without the whole drive; dedupe by URL | S |
+| V11 | Email-in endpoint owned by the vault (§13.2 C): a webhook family through reactor-api, 30 MiB cap, `token`/HMAC verification, Message-ID dedupe; raw MIME or Postmark JSON → body source plus converted attachment sources | Large or signed inbound email without a workflow's 1 MiB cap | M |
 
 ---
 
@@ -488,33 +489,94 @@ sit on the same REST semantics.
 
 ---
 
-## 13. Using it with other pieces (to design next)
+## 13. Integrating with Activepieces: email and Google Meet
 
-The piece is shaped so these need no more piece code:
+The two target workflows, designed against the engine as it is. The facts they rest on:
+- **Engine source (dev.24/dev.26):**
+  - OAuth2 is rejected. An `auth` array runs from dev.25 on; dev.24 refuses one.
+  - `core#trigger:webhook` caps a delivery at **1 MiB**. It uses reactor-api's `DEFAULT_MAX_BODY_BYTES`, and `WebhookConfig` has no field to raise it.
+  - Its `token` scheme compares one configurable header with the secret.
+- **Activepieces `main` (checked 28 Sep):** the auth type and trigger strategy of each piece.
+- **Live tests on the local vault (§16):** convert (12 pages in 13 s) and `.eml` conversion. Convert reads an email's headers and body but **ignores its attachments**.
 
-- **Email with PDFs → sources.** OAuth2 does not run, so Gmail and Outlook pieces are out.
-  Workable routes:
-  - **An inbound mail service posting to `core#trigger:webhook`.** Postmark sends JSON with base64
-    attachments and authenticates with basic auth. Whether the trigger's `token` scheme can check that through the
-    `authorization` header is **to verify**. Mailgun signs with HMAC. The chain is then `#ingest-files` with
-    `files: {{trigger.payload.body.Attachments}}` mapped to `{filename, base64}` rows, and
-    `dedupe_key: {{trigger.payload.body.MessageID}}`.
-  - **`@activepieces/piece-imap` `new_email`** (CustomAuth, polling) with an app password. It works
-    for personal Gmail and for Workspace where app passwords are allowed, but not for Microsoft 365.
-    Its attachments arrive as file refs *without* filename or MIME type, hence `ingest-files`'
-    `filter_extensions` plus a magic-byte check.
-- **Google Meet transcript or Gemini notes → source.** No Meet piece exists. The Google pieces are
-  OAuth2-only here, and since July 2026 Meet files land in per-meeting subfolders that folder
-  triggers miss.
-  - **Workable route:** a time-driven Apps Script in the organizer's account posts
-    `{docId, title, text, url, createdTime}` to `core#trigger:webhook` (token header), then
-    `#ingest-source` with `source_type: TRANSCRIPT`, `url`, `published_at` and
-    `dedupe_key: {{trigger.payload.body.docId}}`.
+### 13.1 What each connector can do here
 
-These rely on `ingest-files` accepting base64 rows, `published_at` normalization, `dedupe_key` and
-V0. That is why they are in phase 1 below.
+| Connector | Auth | Trigger | Works on this engine? |
+|---|---|---|---|
+| `@activepieces/piece-imap` 0.5.0 | CustomAuth (host, user, **app password**) | `new_email`, polling | **Yes.** Attachments come through `files.write`; inside a trigger that means inline data URIs (≤ 8 MiB each). The trigger output has **no filename or content type** for them |
+| `@activepieces/piece-gmail` 0.17.0 | `[OAuth2, CustomAuth service account]` | `new_attachment` and four more, polling | **From dev.25, service account only.** Needs a Workspace admin to grant domain-wide delegation. dev.24 rejects the auth array outright |
+| `@activepieces/piece-microsoft-outlook` | OAuth2 only | polling | **No** |
+| `@activepieces/piece-google-docs` / `-drive` | `[OAuth2, CustomAuth service account]` | `new-document` / `new_file`, polling | **From dev.25, service account only.** The folder filter matches direct children only, and Meet files land in per-meeting subfolders (July 2026), so they must be filtered by title instead |
+| Google Meet piece | — | — | **Does not exist** |
+| Inbound mail services (Postmark, Mailgun, SendGrid) posting to `core#trigger:webhook` | basic auth / HMAC in body fields / ECDSA | webhook | **Not with attachments.** Base64 attachments pass the 1 MiB cap at about 750 KB of files. The HMAC schemes read a header, so Mailgun's body-field signature cannot be checked |
+| Cloudflare Email Worker or Google Apps Script → `core#trigger:webhook` | a header secret (`token` scheme) | webhook | **Yes, for payloads ≤ 1 MiB.** That fits transcripts and email bodies, not attachments |
 
----
+Registry pieces install from the Activepieces CDN, or from npm with `npm install` on the host. No compatibility check runs. Whether `piece-imap` installs and runs in the worker is **the first thing to spike** (§15).
+
+### 13.2 Email with PDFs → sources
+
+A new vault-piece action does the whole job in one step, because the engine has no loops:
+
+**`ingest-email`**
+- **Props:**
+  - `message_id` (the dedupe key)
+  - `subject`, `from`, `date` (any format; normalised to UTC `…Z`)
+  - `text`, `html` (optional)
+  - `attachments` (an ARRAY of FILE rows: data URI, URL, `attachment://` or `{filename, base64}`)
+  - `filter_extensions` (default: the formats convert supports)
+  - `body_as_source` (default on)
+  - `source_type` for attachments (default `DOCUMENTATION`)
+- **Does:**
+  1. Creates the folder `/sources/Email — <subject> (<date>)`, which is idempotent on the name.
+  2. Ingests the body as a `CONVERSATION` source (author = sender, `url: mid:<message-id>`).
+  3. For each attachment, sniffs the type from its magic bytes when it has no filename, converts it, ingests one source per section with the fallback titles, and attaches the original.
+  4. Records `message_id` so a re-fired trigger returns the existing folder (§6).
+- **Returns:** `folder`, `body_source`, `sources[]`, `skipped[] {name, reason}`.
+- **Step timeout:** at least 60 s + 300 s per attachment.
+
+There are three ways to feed it, in order of how little they need:
+
+| Route | Chain | Needs | Limits |
+|---|---|---|---|
+| **A. IMAP polling** | `piece-imap#trigger:new_email` → `vault#ingest-email` with `attachments: {{trigger.payload.attachments}}` | An IMAP account with an app password (personal Gmail, or Workspace where app passwords are allowed; not Microsoft 365) | 8 MiB per attachment. No filenames (hence the type sniffing). Delivery latency = the poll interval |
+| **B. Gmail with a service account** | `piece-gmail#trigger:new_attachment` (filter `pdf`) → `vault#ingest-file` | Stack ≥ dev.25; Workspace domain-wide delegation | 8 MiB per attachment; Workspace only |
+| **C. Email-in owned by the vault** (V11) | Mail service or Cloudflare Worker → a vault webhook endpoint, **no workflow** | Vault work (below) | Up to the endpoint's own cap (30 MiB, as convert) |
+
+**V11: vault email-in.**
+- **Registration:** the vault registers a webhook family (`this.http.webhooks.register({ name: "email-in", … })`, reactor-api, already in dev.24) and mints one endpoint per drive.
+- **Policy:**
+  - `maxBodyBytes: 30 MiB`;
+  - `verify` per sender: `token` for a Cloudflare Worker or Postmark basic auth (`authorization` header, to verify live), or `hmac-prefixed` for a sender that signs a header;
+  - dedupe on the Message-ID header.
+- **Accepts:** raw MIME (`message/rfc822`, which is what a Cloudflare Email Worker forwards) or Postmark's JSON.
+- **Does:** the same work as `ingest-email`, server-side.
+
+This is the re-scoped slice 3 of `http-surface.md` (§11): the one thing a workflow cannot do is take a large, signed delivery. It also works for vaults that don't run workflows. Its cost is MIME parsing on the server (for example `postal-mime`) and an admin screen that shows the endpoint URL.
+
+**Recommendation:** build `ingest-email` in the piece and prove it with **route A** first; it needs no stack bump and no admin. Add **C** when attachments above 8 MiB, Microsoft 365 or no-poll delivery matter. Use **B** only for Workspace tenants that can grant delegation.
+
+### 13.3 Google Meet transcript or Gemini notes → source
+
+No vault change is needed beyond the piece. `ingest-source` already takes `source_type: TRANSCRIPT` and `url`, and with the piece it gains `published_at` normalisation and `dedupe_key`.
+
+| Route | Chain | Needs | Notes |
+|---|---|---|---|
+| **A. Apps Script push** | A time-driven Apps Script in the organizer's account finds new Docs whose title ends `- Transcript` or contains `Notes by Gemini` (searching Drive by name and modified time, **not** by folder), and POSTs `{docId, title, text, url, createdTime, organizer}` with an `x-webhook-token` header → `core#trigger:webhook` (`token` scheme, `dedupeField: {body: "docId"}`) → `vault#ingest-source` (`source_type: TRANSCRIPT`, `url`, `published_at: {{trigger.payload.body.createdTime}}`, `dedupe_key: {{trigger.payload.body.docId}}`) | `PUBLIC_URL` on the Switchboard; a one-time Apps Script consent inside Google | A transcript is far below 1 MiB. Files can appear up to 24 h after a meeting. Gemini notes have two tabs, so check that `getText()` reads both |
+| **B. Docs piece with a service account** | `piece-google-docs#trigger:new-document` (no folder filter) → `core#branch` on the title → `#get_document_plaintext` → `vault#ingest-source` | Stack ≥ dev.25; Workspace domain-wide delegation impersonating the organizer | Polling; one connection per organizer |
+| C. Meet REST API and Workspace Events via Pub/Sub | — | A custom piece, Pub/Sub, subscription renewal | Only worth it at scale; transcript entries are kept only 30 days |
+
+**Recommendation:** route **A**. It needs no Google credential in the engine, and `core#trigger:webhook`'s `token` scheme and dedupe cover it. The Apps Script ships as a documented snippet in this repo (`docs/integrations/meet-apps-script.gs`), with the endpoint URL and token set as script properties.
+
+### 13.4 What these add to the plan
+
+- **Piece actions:** `ingest-email` (new; phase 1), plus `ingest-source`'s `dedupe_key` and `published_at` normalisation (already phase 1).
+- **Vault:** V11 email-in (optional, after route A works).
+- **Stack:** bump to ≥ dev.25 **only** for the Google routes that use a service account.
+- **Spikes (phase 0):**
+  1. `piece-imap` installs and polls in the worker (npm on PATH, egress to port 993).
+  2. Its attachment data URIs hydrate into our FILE ARRAY prop.
+  3. The `token` scheme with `header: authorization` accepts Postmark's basic auth.
+  4. A 900 KB JSON delivery to `core#trigger:webhook` passes and a 1.1 MB one gets 413, to confirm the cap live.
 
 ## 14. Risks and open questions
 
@@ -545,12 +607,12 @@ V0. That is why they are in phase 1 below.
 
 | Phase | Scope | Vault changes |
 |---|---|---|
-| 0 — spike (≈ 1 day) | Generate the piece; `exports`; connection with `validate` and identifier; `search`; build; the block visible in Studio. Test the cross-step ref risk, bundle size with the inlined lint, and an upload through `/attachments/reservations` followed by `ATTACH_ORIGINAL_FILE` | — |
-| 1 — ingest | Client, errors, normalize, idempotency memo; `get-document`, `get-document-markdown`, `get-source`, `list-sources`; `ingest-source`, `ingest-sources`, `create-source-folder`, `convert-file`, `ingest-file`, `ingest-files`; `upload-attachment`, `attach-original`; `create-observation`; `dispatch-actions`, `custom-api-call`; trigger `new-source`; unit and conformance tests; §13's two workflows end to end with `core#trigger:webhook` | **V0**, V7, V8, V9 |
+| 0 — spike (≈ 1–2 days) | Generate the piece; `exports`; connection with `validate` and identifier; `search`; build; the block visible in Studio. Test the cross-step ref risk, bundle size with the inlined lint, and an upload through `/attachments/reservations` followed by `ATTACH_ORIGINAL_FILE`. The four integration spikes of §13.4 | — |
+| 1 — ingest | Client, errors, normalize, idempotency memo; `get-document`, `get-document-markdown`, `get-source`, `list-sources`; `ingest-source`, `ingest-sources`, `create-source-folder`, `convert-file`, `ingest-file`, `ingest-files`; `ingest-email`; `upload-attachment`, `attach-original`; `create-observation`; `dispatch-actions`, `custom-api-call`; trigger `new-source`; unit and conformance tests; §13's two workflows end to end: email by IMAP route A, Meet by Apps Script route A | **V0**, V7, V8, V9 |
 | 2 — author and pipeline | `create-note(s)`, `update-note`, `link/update/unlink`, `add-to-moc`, `create-moc`, `submit-for-review`, `review-note`, `supersede-note`, `complete-extraction`; the task actions and `queue-source`; trigger `new-pipeline-task`; the extraction workflow (task → claim → `get-document-markdown` → LLM → `create-notes` → `complete-extraction` → `advance-task`) | V1, V2, V10 |
 | 3 — graph and watch | `search` options, `get-related`, `find-nodes`, `export-context`, the graph and health reads, `graphql-query`, admin; triggers `note-changed`, `note-became-canonical`, `tension-opened`, `health-changed` | V5 |
 | 4 — hardening | Lossless triggers; service identity; `ingest-web-page` | V3, V4 |
-| Later | Outbound subscriptions and webhook triggers; publishing to the registries; a pieces-only package if cross-host use grows | V6 |
+| Later | V11 email-in; Google service-account routes (stack ≥ dev.25); outbound subscriptions and webhook triggers; publishing to the registries; a pieces-only package if cross-host use grows | V6, V11 |
 
 ---
 
