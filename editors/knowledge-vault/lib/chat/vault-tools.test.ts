@@ -459,7 +459,7 @@ describe("executeTool", () => {
   it("list_documents hits the reactor endpoint and rejects an unknown type", async () => {
     mockGql({
       findDocuments: {
-        totalCount: 18,
+        hasNextPage: false,
         items: [{ id: "s1", name: "Src", documentType: "bai/source" }],
       },
     });
@@ -473,7 +473,9 @@ describe("executeTool", () => {
     const { url, body } = requestAt(0);
     expect(url).toMatch(/\/graphql$/);
     expect(body.variables).toMatchObject({ type: "bai/source", limit: 50 });
-    if (r.ok) expect((r.data as { total: number }).total).toBe(18);
+    // The reactor no longer reports a total (dev.26, #3107): what it served,
+    // and whether it had more, is the honest answer.
+    if (r.ok) expect(r.data).toMatchObject({ total: 1, more: false });
 
     globalThis.fetch = vi.fn() as unknown as typeof fetch;
     expect(
@@ -660,7 +662,7 @@ describe("scope of work envelopes", () => {
 
   it("list_projects lists every envelope of every scope, citing the scope document", async () => {
     mockGqlSequence(
-      { data: { findDocuments: { totalCount: 1, items: [{ id: "s1", name: "Powerhouse PMF" }] } } },
+      { data: { findDocuments: { hasNextPage: false, items: [{ id: "s1", name: "Powerhouse PMF" }] } } },
       driveTree("s1"),
       docResponse("s1", "powerhouse/scopeofwork", "Powerhouse PMF", scope),
     );
@@ -705,7 +707,7 @@ describe("scope of work envelopes", () => {
     // A model listed nine of ten and still wrote "all ten projects". The
     // codes make an omission visible in the line that states the total.
     mockGqlSequence(
-      { data: { findDocuments: { totalCount: 1, items: [{ id: "s1", name: "Powerhouse PMF" }] } } },
+      { data: { findDocuments: { hasNextPage: false, items: [{ id: "s1", name: "Powerhouse PMF" }] } } },
       driveTree("s1"),
       docResponse("s1", "powerhouse/scopeofwork", "Powerhouse PMF", {
         ...scope,
@@ -785,7 +787,7 @@ describe("list_documents nameContains", () => {
   const page = {
     data: {
       findDocuments: {
-        totalCount: 3,
+        hasNextPage: false,
         items: [
           { id: "s1", name: "Swarm Protocol Reference", documentType: "bai/source" },
           { id: "s2", name: "Book of Powerhouse — overview", documentType: "bai/source" },
@@ -805,13 +807,14 @@ describe("list_documents nameContains", () => {
       total: 3,
       scanned: 3,
       matched: 2,
+      more: false,
       items: [
         { documentId: "s1", title: "Swarm Protocol Reference", documentType: "bai/source" },
         { documentId: "s3", title: "How Connect Swarm Integration Works", documentType: "bai/source" },
       ],
     });
     expect(r.summary).toBe(
-      'listed 2 of 2 bai/source whose title contains "swarm" (scanned 3 in the vault of 3 the reactor holds)',
+      'listed 2 of 2 bai/source whose title contains "swarm" (scanned 3 in the vault of 3 the reactor served)',
     );
   });
 
@@ -1342,7 +1345,7 @@ describe("a deleted document is not the vault's", () => {
     },
   };
   const byType = (items: { id: string; name: string; documentType?: string }[]) => ({
-    data: { findDocuments: { totalCount: items.length, items } },
+    data: { findDocuments: { hasNextPage: false, items } },
   });
   const scope = {
     title: "Sow of the year",

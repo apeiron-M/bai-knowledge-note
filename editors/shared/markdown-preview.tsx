@@ -19,6 +19,11 @@ type MarkdownPreviewProps = {
    * sized to be read rather than scanned.
    */
   scale?: "compact" | "reading";
+  /**
+   * The document whose content this is. Attachment figures are fetched through
+   * its read gate on dev.26+ hosts; without it they cannot be served there.
+   */
+  documentId?: string;
 };
 
 function escapeHtml(text: string): string {
@@ -290,6 +295,7 @@ function inlineFormat(text: string): string {
 export function MarkdownPreview({
   content,
   scale = "compact",
+  documentId,
 }: MarkdownPreviewProps) {
   // Re-render whenever an attachment arrives or fails anywhere on the page:
   // the renderer then writes the picture (or the reason) into the HTML.
@@ -318,7 +324,7 @@ export function MarkdownPreview({
       const ref = img.dataset.attachmentRef;
       if (!ref) continue;
       img.classList.add("md-img-loading");
-      fetchAttachmentDataUrl(ref).catch((error: unknown) => {
+      fetchAttachmentDataUrl(ref, documentId).catch((error: unknown) => {
         console.warn(
           "[preview] attachment unavailable:",
           ref,
@@ -326,7 +332,7 @@ export function MarkdownPreview({
         );
       });
     }
-  }, [html]);
+  }, [html, documentId]);
 
   return (
     <>

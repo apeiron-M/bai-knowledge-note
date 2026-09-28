@@ -233,7 +233,7 @@ export default function Editor() {
   const { byId } = useVaultDocIndex();
   // The original the source was converted from, when there is one. Installed
   // at mount so the client resolved by this render is the one the panel uses.
-  const loadOriginal = useAttachmentLoader();
+  const loadOriginal = useAttachmentLoader(document.header.id);
   // Manual attach/re-attach: the same hash-first port the intake batch uses,
   // but dispatched straight onto this document rather than through
   // `POST actions` — a source whose original was lost or never attached (the
@@ -442,7 +442,11 @@ export default function Editor() {
             {view === "content" && (
               <div className="src-sheet">
                 {state.content ? (
-                  <MarkdownPreview content={state.content} scale="reading" />
+                  <MarkdownPreview
+                    content={state.content}
+                    scale="reading"
+                    documentId={document.header.id}
+                  />
                 ) : (
                   <p className="empty">No content</p>
                 )}

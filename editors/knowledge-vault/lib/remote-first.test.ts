@@ -93,7 +93,7 @@ describe("VaultDocumentCache operation history", () => {
 
   it("loads the first page and reports it as success", async () => {
     const { cache, calls } = makeCache([
-      { results: [op(0), op(1)], nextCursor: "c1", totalCount: 4 },
+      { results: [op(0), op(1)], nextCursor: "c1" },
     ]);
     cache.loadOperations(DOC, SCOPE, 2);
     await vi.waitFor(() =>
@@ -102,7 +102,6 @@ describe("VaultDocumentCache operation history", () => {
     const entry = cache.getOperationsState(DOC, SCOPE);
     expect(entry.operations.map((o) => o.index)).toEqual([0, 1]);
     expect(entry.hasNextPage).toBe(true);
-    expect(entry.totalCount).toBe(4);
     expect(calls).toEqual([{ cursor: "", limit: 2 }]);
   });
 

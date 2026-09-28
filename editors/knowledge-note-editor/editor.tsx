@@ -468,7 +468,11 @@ export default function Editor() {
                 // could not be read calmly. Only the Edit button changes mode.
                 <div className="ne-sheet">
                   {state.content ? (
-                    <MarkdownPreview content={state.content} scale="reading" />
+                    <MarkdownPreview
+                      content={state.content}
+                      scale="reading"
+                      documentId={document.header.id}
+                    />
                   ) : (
                     <p className="ne-empty">
                       No content yet — choose Edit to start writing.

@@ -185,7 +185,6 @@ const OPERATIONS_PAGE_LIMIT = 100;
 export type OperationsPage = {
   results: readonly Operation[];
   nextCursor?: string;
-  totalCount?: number;
 };
 
 /**
@@ -660,7 +659,6 @@ export class VaultDocumentCache implements IDocumentCache, IOperationCache {
           operations: [...latest.operations, ...page.results],
           error: undefined,
           hasNextPage: !!page.nextCursor,
-          totalCount: page.totalCount,
         });
       },
       (reason: unknown) => {
@@ -838,7 +836,6 @@ export function enableRemoteFirst(options: {
       return {
         results: page.results,
         nextCursor: page.nextCursor,
-        totalCount: page.totalCount,
       };
     },
   );

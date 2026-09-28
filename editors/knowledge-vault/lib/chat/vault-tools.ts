@@ -1492,7 +1492,7 @@ export async function executeTool(
       const nameContains = str(args, "nameContains")?.toLowerCase() ?? null;
       const r = await gql<{
         findDocuments: {
-          totalCount: number;
+          hasNextPage: boolean;
           items: {
             id: string;
             name: string | null;
@@ -1503,13 +1503,16 @@ export async function executeTool(
         reactorEndpoint(),
         `query D($type: String!, $limit: Int) {
           findDocuments(search: { type: $type }, paging: { limit: $limit }) {
-            totalCount items { id name documentType }
+            hasNextPage items { id name documentType }
           }
         }`,
         { type, limit: nameContains ? LIMITS.documents.max : limit },
       );
       if ("error" in r) return fail(r.error);
-      const { totalCount, items } = r.data.findDocuments;
+      // The reactor stopped reporting a total (dev.26, #3107): what it served
+      // and whether more exist is all it says now.
+      const { hasNextPage, items } = r.data.findDocuments;
+      const held = `${items.length}${hasNextPage ? "+" : ""}`;
       // The reactor answers for every drive it holds, and keeps deleted
       // documents; the vault is what its drive tree lists.
       const live = await liveDocumentIds(driveId);
@@ -1526,30 +1529,30 @@ export async function executeTool(
         documentType: d.documentType ?? type,
       }));
       // With membership known, the honest total is what the vault holds;
-      // without it, the reactor's own count is all anyone can say.
-      const total = live ? inVault.length : totalCount;
+      // without it, what the reactor served (and whether it had more).
+      const total = live ? inVault.length : items.length;
       const where = live ? " in the vault" : "";
       if (nameContains) {
         return ok(
-          { total, scanned: inVault.length, matched: matching.length, items: listed },
-          `listed ${listed.length} of ${matching.length} ${type} whose title contains "${nameContains}" (scanned ${inVault.length}${where} of ${totalCount} the reactor holds)`,
+          { total, scanned: inVault.length, matched: matching.length, more: hasNextPage, items: listed },
+          `listed ${listed.length} of ${matching.length} ${type} whose title contains "${nameContains}" (scanned ${inVault.length}${where} of ${held} the reactor served)`,
         );
       }
       return ok(
-        { total, items: listed },
-        `listed ${listed.length} of ${total} ${type}${where}`,
+        { total, more: hasNextPage, items: listed },
+        `listed ${listed.length} of ${live ? total : held} ${type}${where}`,
       );
     }
 
     case "list_projects": {
       // Envelopes: every scope-of-work document contributes its projects[].
       const sc = await gql<{
-        findDocuments: { totalCount: number; items: { id: string; name: string | null }[] };
+        findDocuments: { items: { id: string; name: string | null }[] };
       }>(
         reactorEndpoint(),
         `query S($limit: Int) {
           findDocuments(search: { type: "powerhouse/scopeofwork" }, paging: { limit: $limit }) {
-            totalCount items { id name }
+            items { id name }
           }
         }`,
         { limit: LIMITS.projects },

@@ -218,7 +218,14 @@ export function useAttachmentPort(): AttachmentPort {
  * Unlike the ledger, no `application/pdf` default: a vault source may be any
  * of 29 formats, and the panel decides render-or-download from the real type.
  */
-export function useAttachmentLoader() {
+/**
+ * `documentId` is the document the attachment belongs to. From dev.26 on, the
+ * Switchboard serves attachment bytes only through that document's read gate
+ * (reactor #3109/#3112): a request that does not name a document referencing
+ * the attachment is answered 404. Optional so a host on an older stack, which
+ * needs no anchor, keeps working unchanged.
+ */
+export function useAttachmentLoader(documentId?: string) {
   useEffect(() => {
     ensureAttachmentService();
   }, []);
@@ -238,13 +245,13 @@ export function useAttachmentLoader() {
         null;
       for (let attempt = 0; ; attempt++) {
         try {
-          response = await service.get(refArg);
+          response = await service.get(refArg, downloadOptions(documentId));
           break;
         } catch (error) {
           // Second opinion before waiting: the store itself, with the bearer.
           if (remote && remote !== service) {
             try {
-              response = await remote.get(refArg);
+              response = await remote.get(refArg, downloadOptions(documentId));
               break;
             } catch {
               // fall through to the retry below
@@ -363,14 +370,18 @@ export function cachedAttachmentDataUrl(ref: string): string | undefined {
   return dataUrlCache.get(ref);
 }
 
-export function fetchAttachmentDataUrl(ref: string): Promise<string> {
+/** `documentId` anchors the download on dev.26+ hosts; see useAttachmentLoader. */
+export function fetchAttachmentDataUrl(
+  ref: string,
+  documentId?: string,
+): Promise<string> {
   const cached = dataUrlCache.get(ref);
   if (cached) return Promise.resolve(cached);
   const pending = inFlight.get(ref);
   if (pending) return pending;
   const task = (async () => {
     try {
-      const { bytes, mimeType } = await fetchAttachmentBytes(ref);
+      const { bytes, mimeType } = await fetchAttachmentBytes(ref, documentId);
       const url = `data:${mimeType};base64,${bytesToBase64(bytes)}`;
       dataUrlCache.set(ref, url);
       failedRefs.delete(ref);
@@ -393,6 +404,7 @@ export function fetchAttachmentDataUrl(ref: string): Promise<string> {
 
 async function fetchAttachmentBytes(
   ref: string,
+  documentId?: string,
 ): Promise<{ bytes: Uint8Array; mimeType: string }> {
   const errors: string[] = [];
   const service = getAttachmentService();
@@ -404,7 +416,10 @@ async function fetchAttachmentBytes(
       // Switchboard had answered 200 for the same hash all along). A deadline
       // turns that wait into the fallback below.
       const response = await withDeadline(
-        service.get(ref as Parameters<IAttachmentService["get"]>[0]),
+        service.get(
+          ref as Parameters<IAttachmentService["get"]>[0],
+          downloadOptions(documentId),
+        ),
         SERVICE_GET_DEADLINE_MS,
         "attachment service did not answer in time",
       );
@@ -437,7 +452,10 @@ async function fetchAttachmentBytes(
       `${errors.join("; ")}; Switchboard origin unknown for this host`,
     );
   const token = await bearerToken();
-  const response = await fetch(`${origin}/attachments/${hash}`, {
+  const anchor = documentId
+    ? `?documentId=${encodeURIComponent(documentId)}`
+    : "";
+  const response = await fetch(`${origin}/attachments/${hash}${anchor}`, {
     headers: token ? { Authorization: `Bearer ${token}` } : {},
     signal: AbortSignal.timeout(DIRECT_FETCH_DEADLINE_MS),
   });
@@ -453,6 +471,11 @@ async function fetchAttachmentBytes(
       response.headers.get("content-type")?.split(";")[0] ||
       "application/octet-stream",
   };
+}
+
+/** The options form of `IAttachmentService.get`, or nothing without an anchor. */
+function downloadOptions(documentId: string | undefined) {
+  return documentId ? { documentId } : undefined;
 }
 
 function bytesToBase64(bytes: Uint8Array): string {
