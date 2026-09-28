@@ -1,4 +1,5 @@
 import { createPiece, PieceCategory } from "@powerhousedao/pieces-framework";
+import { agentExtractAction } from "./lib/actions/agent-extract.js";
 import { searchAction } from "./lib/actions/search.js";
 import { knowledgeVaultAuth } from "./lib/auth.js";
 import { KNOWLEDGE_VAULT_LOGO } from "./lib/logo.js";
@@ -19,7 +20,7 @@ export const knowledgeVault = createPiece({
   categories: [PieceCategory.PRODUCTIVITY],
   minimumSupportedRelease: "0.30.0",
   auth: knowledgeVaultAuth,
-  actions: [searchAction],
+  actions: [searchAction, agentExtractAction],
   triggers: [],
 });
 

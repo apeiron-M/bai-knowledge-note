@@ -104,3 +104,8 @@ export function readErrorBody(body: unknown): { message?: string; code?: string 
   const code = typeof record.code === "string" ? record.code : undefined;
   return { message: message?.trim(), code };
 }
+
+/** The text of anything thrown, for placeholders and messages. */
+export function errorMessage(error: unknown): string {
+  return error instanceof Error ? error.message : String(error);
+}

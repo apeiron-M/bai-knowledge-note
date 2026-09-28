@@ -1,9 +1,20 @@
 import { KnowledgeVaultApiError } from "./errors.js";
 
+export interface LlmCredentials {
+  /** An OpenAI-compatible API root, e.g. https://openrouter.ai/api/v1. */
+  baseUrl: string;
+  apiKey: string;
+  defaultModel?: string;
+}
+
 export interface KnowledgeVaultCredentials {
   baseUrl: string;
   token: string;
+  /** Present only when the connection carries an LLM key (agent actions). */
+  llm?: LlmCredentials;
 }
+
+export const DEFAULT_LLM_BASE_URL = "https://openrouter.ai/api/v1";
 
 function isRecord(value: unknown): value is Record<string, unknown> {
   return typeof value === "object" && value !== null;
@@ -62,5 +73,16 @@ export function readAuth(auth: unknown): KnowledgeVaultCredentials {
       category: "credential",
     });
   }
-  return { baseUrl: normalizeBaseUrl(source.base_url), token };
+  const credentials: KnowledgeVaultCredentials = { baseUrl: normalizeBaseUrl(source.base_url), token };
+  const apiKey = typeof source.llm_api_key === "string" ? source.llm_api_key.trim() : "";
+  if (apiKey) {
+    const rawBase = typeof source.llm_base_url === "string" ? source.llm_base_url.trim() : "";
+    const model = typeof source.llm_default_model === "string" ? source.llm_default_model.trim() : "";
+    credentials.llm = {
+      baseUrl: (rawBase || DEFAULT_LLM_BASE_URL).replace(/\/+$/, ""),
+      apiKey,
+      ...(model ? { defaultModel: model } : {}),
+    };
+  }
+  return credentials;
 }

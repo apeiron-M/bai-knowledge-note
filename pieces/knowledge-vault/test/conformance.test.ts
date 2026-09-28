@@ -50,12 +50,20 @@ describe.skipIf(!ready)("built piece conformance", () => {
   it("describes into the descriptor Studio draws its forms from", async () => {
     const { piece } = await loadPieceFromDir(bundleDir);
     const descriptor = buildDescriptor(piece, { packageName: PIECE, version: VERSION });
-    expect(descriptor.actions.map((a) => a.name)).toEqual(["search"]);
+    expect(descriptor.actions.map((a) => a.name)).toEqual(["search", "agent-extract"]);
     expect(descriptor.triggers).toEqual([]);
     expect(descriptor.auth).toMatchObject({ type: "CUSTOM_AUTH" });
     const drive = descriptor.actions[0]?.props.find((p) => p.name === "drive");
     expect(drive?.type).toBe("DROPDOWN");
     expect(drive?.hasDynamicResolver).toBe(true);
+    const agent = descriptor.actions.find((a) => a.name === "agent-extract");
+    for (const name of ["drive", "source", "model"]) {
+      const prop = agent?.props.find((p) => p.name === name);
+      expect(prop?.type, name).toBe("DROPDOWN");
+      expect(prop?.hasDynamicResolver, name).toBe(true);
+    }
+    const authProps = JSON.stringify(descriptor.auth);
+    expect(authProps).toMatch(/llm_api_key/);
   });
 
   it("inlines the framework: the worker has no node_modules beside it", async () => {

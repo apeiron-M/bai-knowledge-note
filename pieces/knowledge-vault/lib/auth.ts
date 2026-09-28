@@ -1,5 +1,6 @@
 import { PieceAuth, Property } from "@powerhousedao/pieces-framework";
-import { readAuth } from "./common/auth-value.js";
+import { LlmClient } from "./agent/llm.js";
+import { readAuth, type LlmCredentials } from "./common/auth-value.js";
 import { KnowledgeVaultClient } from "./common/client.js";
 import { KnowledgeVaultApiError } from "./common/errors.js";
 
@@ -8,6 +9,8 @@ const AUTH_DESCRIPTION = `A Switchboard that hosts a knowledge vault, and a bear
 **Switchboard URL** — the origin only, e.g. \`https://vault.example.com\` or \`http://localhost:4001\`: no \`/graphql\`, no \`/api\`.
 
 **Access token** — a Renown bearer. After \`ph login\`, mint one with \`ph access-token --expiry 90d\`. Use a dedicated workflow identity with **WRITE** on the vault drive, not a person's: every write is recorded against this address, and a workflow must never approve its own notes.
+
+**LLM (optional)** — only the agent actions (\`agent-extract\`, …) use it. An API key from an OpenAI-compatible provider; the default is OpenRouter (https://openrouter.ai/keys). Give workflows their own key **with a spending limit**: the connection label says when a key has none.
 
 A Switchboard on \`localhost\` or a private network is refused by the workflow runtime unless its address is listed in \`PH_WORKFLOWS_EGRESS_ALLOW_ADDRESSES\` (e.g. \`127.0.0.1/32,::1/128\`).`;
 
@@ -26,6 +29,21 @@ export const knowledgeVaultAuth = PieceAuth.CustomAuth({
       required: true,
       description: "A Renown bearer: `ph access-token --expiry 90d`",
     }),
+    llm_api_key: PieceAuth.SecretText({
+      displayName: "LLM API key (optional)",
+      required: false,
+      description: "For the agent actions only. An OpenRouter key by default (sk-or-…)",
+    }),
+    llm_base_url: Property.ShortText({
+      displayName: "LLM provider URL (optional)",
+      required: false,
+      description: "An OpenAI-compatible API root. Empty: https://openrouter.ai/api/v1",
+    }),
+    llm_default_model: Property.ShortText({
+      displayName: "Default model (optional)",
+      required: false,
+      description: "Used when an agent step leaves its model empty, e.g. deepseek/deepseek-v4.1-flash",
+    }),
   },
   // `auth` here is the flat property value, not the envelope ctx.auth carries.
   validate: async ({ auth }) => {
@@ -39,19 +57,20 @@ export const knowledgeVaultAuth = PieceAuth.CustomAuth({
   // Called only after validate passes; best-effort.
   getConnectionIdentifier: async ({ auth }) => {
     const credentials = readAuth(auth);
-    const { address, vaults } = await checkConnection(new KnowledgeVaultClient(credentials));
+    const { address, vaults, llm } = await checkConnection(new KnowledgeVaultClient(credentials));
     const expiry = tokenExpiry(credentials.token);
     return [
       `${shortAddress(address)} @ ${new URL(credentials.baseUrl).host}`,
       `${vaults} vault${vaults === 1 ? "" : "s"}`,
       expiry ? `token expires ${expiry}` : undefined,
+      llm,
     ]
       .filter(Boolean)
       .join(" · ");
   },
 });
 
-export type ConnectionState = { address: string; vaults: number };
+export type ConnectionState = { address: string; vaults: number; llm?: string };
 
 /**
  * What must hold before any action can work, checked in the order a failure
@@ -73,7 +92,32 @@ export async function checkConnection(client: KnowledgeVaultClient): Promise<Con
       { category: "permission" },
     );
   }
-  return { address: user, vaults: drives.length };
+  const llm = client.credentials.llm ? await checkLlm(client.credentials.llm) : undefined;
+  return { address: user, vaults: drives.length, ...(llm ? { llm } : {}) };
+}
+
+/**
+ * The LLM half of the check, when the connection carries a key: the key must
+ * be accepted, and the label says whether it has a spending limit, because an
+ * unattended workflow with an unlimited key is the expensive failure mode.
+ * OpenRouter answers `GET /key` for free; any other provider is checked by
+ * listing its models.
+ */
+export async function checkLlm(llm: LlmCredentials, fetchImpl: typeof fetch = fetch): Promise<string> {
+  const host = new URL(llm.baseUrl).host;
+  const headers = { Authorization: `Bearer ${llm.apiKey}` };
+  if (/openrouter\.ai$/i.test(host)) {
+    const response = await fetchImpl(`${llm.baseUrl}/key`, { headers, signal: AbortSignal.timeout(20_000) });
+    if (response.status === 401 || response.status === 403) {
+      throw new KnowledgeVaultApiError("The LLM provider rejected the API key. Create a new one at https://openrouter.ai/keys.", { category: "credential" });
+    }
+    if (!response.ok) throw new KnowledgeVaultApiError(`The LLM provider answered ${response.status} to the key check`, { category: "server", retryable: true });
+    const { data } = (await response.json()) as { data?: { limit?: number | null; limit_remaining?: number | null } };
+    const limit = data?.limit;
+    return typeof limit === "number" ? `LLM: ${host} (limit $${limit}, $${(data?.limit_remaining ?? 0).toFixed(2)} left)` : `LLM: ${host} (no spending limit)`;
+  }
+  const models = await new LlmClient(llm, fetchImpl).listModels(true);
+  return `LLM: ${host} (${models.length} tool models)`;
 }
 
 export function describeAuthFailure(error: unknown): string {
