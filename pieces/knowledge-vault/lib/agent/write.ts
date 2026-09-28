@@ -3,11 +3,12 @@ import type { KnowledgeVaultClient } from "../common/client.js";
 import { errorMessage, KnowledgeVaultApiError } from "../common/errors.js";
 
 /**
- * Write mode for extract-claims: the drafted notes become DRAFT notes in
- * /knowledge/notes, each linked to its source with a DERIVED_FROM edge that
- * carries where in the source it came from, and the source records what was
- * extracted and moves to EXTRACTED. Nothing is approved: a person reviews in
- * the app. Every write goes through the vault's REST routes, so the
+ * Write mode for extract-claims: the drafted notes are created in
+ * /knowledge/notes and submitted for review (IN_REVIEW), each linked to its
+ * source with a DERIVED_FROM edge that carries where in the source it came
+ * from, and the source records what was extracted and moves to EXTRACTED.
+ * Nothing is approved: approval must come from someone other than the
+ * submitter, so it stays with a person in the app. Every write goes through the vault's REST routes, so the
  * server-side lint, placement and read-back apply as they do for a person.
  */
 
@@ -76,6 +77,8 @@ export async function writeStage(
             ...n.topics.map((name) => ({ type: "ADD_TOPIC", input: { id: randomUUID(), name } })),
             { type: "SET_METADATA_FIELD", input: { field: "confidence", value: n.confidence, updatedAt: at } },
             { type: "SET_PROVENANCE", input: { author, sourceOrigin: "DERIVED", createdAt: at } },
+            // Straight into the review queue, last: a rejected field above does not block it.
+            { type: "SUBMIT_FOR_REVIEW", input: { id: randomUUID(), actor: author, timestamp: at, comment: `Extracted from "${args.sourceTitle}" (${n.locus || "the source"}) by ${args.model}. Check the claim, its type and topics, then approve.` } },
           ],
         })),
       },
@@ -134,7 +137,7 @@ export async function writeStage(
   const linked = written.filter((n) => n.linked).length;
   return {
     summary:
-      `Wrote ${written.length} DRAFT note${written.length === 1 ? "" : "s"} to /knowledge/notes, ${linked} linked to the source` +
+      `Wrote ${written.length} note${written.length === 1 ? "" : "s"} to /knowledge/notes, submitted for review, ${linked} linked to the source` +
       (sourceUpdated ? "; the source is marked EXTRACTED." : `; the source was NOT updated (${sourceProblem}).`) +
       (withProblems.length ? ` ${withProblems.length} note${withProblems.length === 1 ? " has" : "s have"} problems: see written.` : ""),
     written,

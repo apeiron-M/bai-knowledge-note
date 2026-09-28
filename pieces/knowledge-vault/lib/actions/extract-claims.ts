@@ -22,13 +22,13 @@ export const extractClaimsAction = createAction({
   name: "extract-claims",
   displayName: "Extract claims",
   description:
-    "Reads one source and turns it into atomic notes, following the vault's extract method: six gates, a vault check for duplicates, drafts checked against the vault's rules. Dry run proposes only; Write creates the notes as DRAFT, links each to the source and marks the source EXTRACTED. About 1-2 minutes: set the step's timeout (under When it fails) to 300 s. Needs an LLM key on the connection.",
+    "Reads one source and turns it into atomic notes, following the vault's extract method: six gates, a vault check for duplicates, drafts checked against the vault's rules. Dry run proposes only; Write creates the notes, submits them for review, links each to the source and marks the source EXTRACTED. About 1-2 minutes: set the step's timeout (under When it fails) to 300 s. Needs an LLM key on the connection.",
   audience: "both",
   props: {
     drive: driveProp,
     source: sourceProp,
     model: modelProp,
-    mode: modeProp("Write: create DRAFT notes"),
+    mode: modeProp("Write: create notes for review"),
     threshold: Property.Number({
       displayName: "Duplicate threshold",
       description: "Similarity at or above which a claim counts as already in the vault, 0–1 (default 0.9)",
@@ -91,7 +91,7 @@ export const extractClaimsAction = createAction({
             drive,
             sourceId: read.source_id,
             phase: "create",
-            workDone: `Extracted ${written.written.length} DRAFT notes (${report.skipped_count} candidates rejected on a gate, skip rate ${Math.round(report.skip_rate * 100)}%) with ${model}.`,
+            workDone: `Extracted ${written.written.length} notes, submitted for review (${report.skipped_count} candidates rejected on a gate, skip rate ${Math.round(report.skip_rate * 100)}%) with ${model}.`,
             filesModified: written.note_ids,
             completedBy: `extract-claims · ${model}`,
           }),

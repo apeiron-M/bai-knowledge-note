@@ -145,14 +145,31 @@ describe("connect", () => {
     expect(out.links.map((l) => [l.from, l.to, l.confidence])).toEqual([["n1", "n2", "grounded"], ["n1", "x1", "speculative"]]);
     expect(out.dropped.map((d) => d.why)).toEqual(["a link between these two is already proposed", 'to "zz" was not a candidate for n1']);
     expect(out.thin).toEqual(["Legacy drags returns"]);
-    expect(out.summary).toBe("Proposed 2 links for 2 notes (2 dropped by the articulation check); 1 note has fewer than 2.");
+    expect(out.summary).toBe("Proposed 2 links for 2 notes in 1 call (2 dropped by the articulation check); 1 note has fewer than 2.");
     expect(m.users[0]).toMatch(/NEW n1: Capital is not the constraint/);
     expect(m.users[0]).toMatch(/- x1 \(0\.9\): Near — dx/);
     const none = modelSays("{}");
     const empty = await proposeLinksStage(none.llm, "m", [NOTES[0]], {}, none.fetchImpl);
-    expect(empty.summary).toBe("Proposed 0 links for 1 notes; 1 note has fewer than 2.");
+    expect(empty.summary).toBe("Proposed 0 links for 1 notes in 1 call; 1 note has fewer than 2.");
     const three = modelSays(JSON.stringify({ links: [{ from: "n1", to: "n2", type: "BUILDS_ON", reason }] }));
-    expect((await proposeLinksStage(three.llm, "m", [...NOTES, { id: "n3", title: "T3", description: "", status: null }], { n1: [{ ...NOTES[1], similarity: null }] }, three.fetchImpl)).summary).toMatch(/Proposed 1 link for 3 notes; 3 notes have fewer than 2\./);
+    expect((await proposeLinksStage(three.llm, "m", [...NOTES, { id: "n3", title: "T3", description: "", status: null }], { n1: [{ ...NOTES[1], similarity: null }] }, three.fetchImpl)).summary).toMatch(/Proposed 1 link for 3 notes in 1 call; 3 notes have fewer than 2\./);
+  });
+  it("splits the notes across parallel calls and removes duplicates between them", async () => {
+    const seven = Array.from({ length: 7 }, (_, i) => ({ id: `n${i + 1}`, title: `T${i + 1}`, description: "", status: null }));
+    const cands = Object.fromEntries(seven.map((n) => [n.id, seven.filter((m) => m.id !== n.id).map((m) => ({ ...m, similarity: null }))]));
+    const reason = "The first note extends the second by naming what the drag costs.";
+    const m = modelSays(
+      JSON.stringify({ links: [{ from: "n1", to: "n4", type: "BUILDS_ON", reason, confidence: "grounded" }] }),
+      JSON.stringify({ links: [{ from: "n4", to: "n1", type: "RELATES_TO", reason, confidence: "grounded" }] }),
+      JSON.stringify({ links: [] }),
+    );
+    const out = await proposeLinksStage(m.llm, "m", seven, cands, m.fetchImpl);
+    expect(m.users).toHaveLength(3);
+    expect(m.users[2]).toMatch(/NEW n7/);
+    expect(out.links).toHaveLength(1);
+    expect(out.dropped).toEqual([{ link: "n4 → n1", why: "a link between these two is already proposed" }]);
+    expect(out.summary).toMatch(/^Proposed 1 link for 7 notes in 3 calls \(1 dropped/);
+    expect(out.cost_usd).toBeCloseTo(0.003);
   });
   it("writes each link, and reports what the vault refused and what opens a tension", async () => {
     const v = vault({ relationships: (o: RequestOptions) => { if ((o.json as { target: string }).target === "bad") throw new Error("reason too short"); return {}; } });

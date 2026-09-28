@@ -28,16 +28,18 @@ function recordingVault(overrides: { notes?: (body: { notes: { name: string }[] 
 const args = (notes: NoteToWrite[]) => ({ drive: "d", sourceId: "src", sourceTitle: "Tech", model: "m/x", notes, rejectedCount: 2, skipRate: 0.25, now: () => new Date("2026-09-28T12:00:00Z") });
 
 describe("write mode", () => {
-  it("creates DRAFT notes, links each to its source, and marks the source extracted", async () => {
+  it("creates notes, submits them for review, links each to its source, and marks the source extracted", async () => {
     const { client, requests } = recordingVault();
     const out = await writeStage(client, args([note(1), note(2)]));
-    expect(out.summary).toBe("Wrote 2 DRAFT notes to /knowledge/notes, 2 linked to the source; the source is marked EXTRACTED.");
+    expect(out.summary).toBe("Wrote 2 notes to /knowledge/notes, submitted for review, 2 linked to the source; the source is marked EXTRACTED.");
     expect(out.note_ids).toEqual(["n1", "n2"]);
     const create = requests[0].json as { drive: string; notes: { name: string; actions: { type: string; input: Record<string, unknown> }[] }[] };
     expect(create.drive).toBe("d");
     expect(create.notes[0].name).toBe("claim-1-holds-under-load");
-    expect(create.notes[0].actions.map((a) => a.type)).toEqual(["SET_TITLE", "SET_DESCRIPTION", "SET_NOTE_TYPE", "SET_CONTENT", "ADD_TOPIC", "ADD_TOPIC", "SET_METADATA_FIELD", "SET_PROVENANCE"]);
-    expect(create.notes[0].actions.at(-1)?.input).toEqual({ author: "extract-claims · m/x", sourceOrigin: "DERIVED", createdAt: "2026-09-28T12:00:00.000Z" });
+    expect(create.notes[0].actions.map((a) => a.type)).toEqual(["SET_TITLE", "SET_DESCRIPTION", "SET_NOTE_TYPE", "SET_CONTENT", "ADD_TOPIC", "ADD_TOPIC", "SET_METADATA_FIELD", "SET_PROVENANCE", "SUBMIT_FOR_REVIEW"]);
+    expect(create.notes[0].actions.at(-2)?.input).toEqual({ author: "extract-claims · m/x", sourceOrigin: "DERIVED", createdAt: "2026-09-28T12:00:00.000Z" });
+    expect(create.notes[0].actions.at(-1)?.input).toMatchObject({ actor: "extract-claims · m/x", timestamp: "2026-09-28T12:00:00.000Z", comment: 'Extracted from "Tech" (paragraph 1) by m/x. Check the claim, its type and topics, then approve.' });
+    expect(create.notes[1].actions.at(-1)?.input).toMatchObject({ comment: expect.stringContaining("(paragraph 2)") as unknown as string });
     expect(requests[1].json).toEqual({ source: "n1", target: "src", type: "DERIVED_FROM", reason: 'Extracted from "Tech": paragraph 1', confidence: "grounded" });
     const source = requests[3].json as { documentId: string; actions: { type: string; input: Record<string, unknown> }[] };
     expect(source.documentId).toBe("src");
@@ -59,13 +61,16 @@ describe("write mode", () => {
       actions: () => ({ operations: [{ index: 0, type: "SET_SOURCE_STATUS", error: "bad status" }] }),
     });
     const out = await writeStage(client, args([note(1), { ...note(2), locus: "" }]));
+    const withoutLocus = recordingVault();
+    await writeStage(withoutLocus.client, args([{ ...note(3), locus: "" }]));
+    expect(JSON.stringify(withoutLocus.requests[0].json)).toContain("(the source)");
     expect(out.written[0].problems).toEqual(["read-back unconfirmed", "DERIVED_FROM link: reason too short"]);
     expect(out.written[1].problems).toEqual(["SET_DESCRIPTION: Description exceeds 200 characters"]);
     expect(out).toMatchObject({ linked_count: 1, source_updated: false, source_problem: "SET_SOURCE_STATUS: bad status", problem_count: 2 });
-    expect(out.summary).toBe("Wrote 2 DRAFT notes to /knowledge/notes, 1 linked to the source; the source was NOT updated (SET_SOURCE_STATUS: bad status). 2 notes have problems: see written.");
+    expect(out.summary).toBe("Wrote 2 notes to /knowledge/notes, submitted for review, 1 linked to the source; the source was NOT updated (SET_SOURCE_STATUS: bad status). 2 notes have problems: see written.");
     const down = recordingVault({ actions: () => { throw new Error("gateway down"); } });
     const one = await writeStage(down.client, args([note(1)]));
-    expect(one.summary).toBe("Wrote 1 DRAFT note to /knowledge/notes, 1 linked to the source; the source was NOT updated (gateway down).");
+    expect(one.summary).toBe("Wrote 1 note to /knowledge/notes, submitted for review, 1 linked to the source; the source was NOT updated (gateway down).");
     const oneBad = recordingVault({ notes: (b) => ({ notes: b.notes.map((n) => ({ id: "x", name: n.name, readBack: "skipped", operations: [] })) }) });
     expect((await writeStage(oneBad.client, args([note(1)]))).summary).toMatch(/1 note has problems/);
   });

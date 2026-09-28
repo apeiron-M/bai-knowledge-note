@@ -89,8 +89,11 @@ export function checkLink(link: Record<string, unknown>, allowed: Map<string, Se
   return null;
 }
 
-export async function proposeLinksStage(llm: LlmClient, model: string, notes: NoteSummary[], candidates: Record<string, (NoteSummary & { similarity: number | null })[]>, fetchImpl?: typeof fetch) {
-  const user = notes
+/** Notes per model call: all at once took 158 s for six notes, close to the 180 s per-call limit. */
+export const NOTES_PER_CALL = 3;
+
+function promptFor(notes: NoteSummary[], candidates: Record<string, (NoteSummary & { similarity: number | null })[]>): string {
+  return notes
     .map((n) => [
       `NEW ${n.id}: ${n.title}`,
       `  ${n.description}`,
@@ -98,20 +101,32 @@ export async function proposeLinksStage(llm: LlmClient, model: string, notes: No
       ...(candidates[n.id] ?? []).map((c) => `  - ${c.id}${c.similarity !== null ? ` (${c.similarity})` : " (same source)"}: ${c.title} — ${c.description}`),
     ].join("\n"))
     .join("\n\n");
-  const { value, usage } = await completeJson(llm, { model, system: CONNECT_SYSTEM, user, maxTokens: 24_000, reasoningEffort: "low" }, fetchImpl);
+}
+
+export async function proposeLinksStage(llm: LlmClient, model: string, notes: NoteSummary[], candidates: Record<string, (NoteSummary & { similarity: number | null })[]>, fetchImpl?: typeof fetch) {
+  const batches: NoteSummary[][] = [];
+  for (let i = 0; i < notes.length; i += NOTES_PER_CALL) batches.push(notes.slice(i, i + NOTES_PER_CALL));
+  // In parallel: each batch still sees every sibling as a candidate, so links across batches are found.
+  const replies = await Promise.all(
+    batches.map((batch) => completeJson(llm, { model, system: CONNECT_SYSTEM, user: promptFor(batch, candidates), maxTokens: 24_000, reasoningEffort: "low" }, fetchImpl)),
+  );
   const allowed = new Map(notes.map((n) => [n.id, new Set((candidates[n.id] ?? []).map((c) => c.id))]));
   const accepted: ProposedLink[] = [];
   const dropped: { link: string; why: string }[] = [];
   const seen = new Set<string>();
-  for (const raw of arr(rec(value).links).map(rec)) {
-    const why = checkLink(raw, allowed);
-    const key = `${str(raw.from)}>${str(raw.to)}`;
-    if (why) dropped.push({ link: `${str(raw.from)} → ${str(raw.to)}`, why });
-    else if (seen.has(key) || seen.has(`${str(raw.to)}>${str(raw.from)}`)) dropped.push({ link: key.replace(">", " → "), why: "a link between these two is already proposed" });
-    else {
-      seen.add(key);
-      const confidence = (CONFIDENCE as readonly string[]).includes(str(raw.confidence)) ? str(raw.confidence) : "speculative";
-      accepted.push({ from: str(raw.from), to: str(raw.to), type: str(raw.type) as LinkType, reason: str(raw.reason).trim(), confidence });
+  let cost = 0;
+  for (const { value, usage } of replies) {
+    cost += usage.cost;
+    for (const raw of arr(rec(value).links).map(rec)) {
+      const why = checkLink(raw, allowed);
+      const key = `${str(raw.from)}>${str(raw.to)}`;
+      if (why) dropped.push({ link: `${str(raw.from)} → ${str(raw.to)}`, why });
+      else if (seen.has(key) || seen.has(`${str(raw.to)}>${str(raw.from)}`)) dropped.push({ link: key.replace(">", " → "), why: "a link between these two is already proposed" });
+      else {
+        seen.add(key);
+        const confidence = (CONFIDENCE as readonly string[]).includes(str(raw.confidence)) ? str(raw.confidence) : "speculative";
+        accepted.push({ from: str(raw.from), to: str(raw.to), type: str(raw.type) as LinkType, reason: str(raw.reason).trim(), confidence });
+      }
     }
   }
   const byNote = new Map(notes.map((n) => [n.id, 0]));
@@ -121,11 +136,11 @@ export async function proposeLinksStage(llm: LlmClient, model: string, notes: No
   }
   const thin = notes.filter((n) => (byNote.get(n.id) ?? 0) < 2);
   return {
-    summary: `Proposed ${accepted.length} link${accepted.length === 1 ? "" : "s"} for ${notes.length} notes${dropped.length ? ` (${dropped.length} dropped by the articulation check)` : ""}${thin.length ? `; ${thin.length} note${thin.length === 1 ? " has" : "s have"} fewer than 2` : ""}.`,
+    summary: `Proposed ${accepted.length} link${accepted.length === 1 ? "" : "s"} for ${notes.length} notes in ${batches.length} call${batches.length === 1 ? "" : "s"}${dropped.length ? ` (${dropped.length} dropped by the articulation check)` : ""}${thin.length ? `; ${thin.length} note${thin.length === 1 ? " has" : "s have"} fewer than 2` : ""}.`,
     links: accepted,
     dropped,
     thin: thin.map((n) => n.title),
-    cost_usd: Math.round(usage.cost * 10_000) / 10_000,
+    cost_usd: Math.round(cost * 10_000) / 10_000,
   };
 }
 
