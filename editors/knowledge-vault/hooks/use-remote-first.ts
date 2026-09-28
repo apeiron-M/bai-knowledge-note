@@ -74,6 +74,7 @@ import {
   setVaultLive,
   type VaultRemoteChangeType,
 } from "../../shared/vault-live.js";
+import { channelIds, signedInAddress } from "../lib/channel-ids.js";
 
 /**
  * Re-exported from `shared/vault-pull.ts`, where the registration slot
@@ -224,6 +225,15 @@ export function useRemoteFirst(): void {
           const alreadyManual =
             (meta.options as { pollBehavior?: PollBehavior }).pollBehavior ===
             PollBehavior.Manual;
+          if (alreadyScoped) {
+            // Converge on this browser's existing server remote for the drive
+            // (channel-ids.ts): record it before any re-add below reuses it.
+            channelIds().adopt(
+              driveId,
+              signedInAddress(),
+              (meta as { id?: string }).id,
+            );
+          }
           if (alreadyScoped && alreadyManual) return;
 
           // Re-add under a sentinel filter rather than removing. The
@@ -254,6 +264,9 @@ export function useRemoteFirst(): void {
             // `ISyncManager.triggerPull(name)` remains available if a pull is ever
             // wanted.
             { ...meta.options, pollBehavior: PollBehavior.Manual },
+            // A stable id, so the re-add reuses the server remote instead of
+            // leaking a new one per session (channel-ids.ts).
+            await channelIds().idFor(driveId, signedInAddress()),
           );
           console.info(
             `[RemoteFirst] Sync channel for drive ${driveId.slice(0, 8)} neutralised — all reads/writes go to the Switchboard.`,

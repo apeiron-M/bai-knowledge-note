@@ -45,6 +45,7 @@ import {
   type DriveLike,
 } from "./drive-stub.js";
 import { hasVaultHydrator } from "../../shared/vault-pull.js";
+import { channelIds, signedInAddress } from "./channel-ids.js";
 import { enableRemoteFirst } from "./remote-first.js";
 import { hideDriveLoading, showDriveLoading } from "./drive-loading-indicator.js";
 import { resolveReactorEndpoint } from "../hooks/subgraph-endpoint.js";
@@ -142,6 +143,8 @@ type Remote = {
   // not guaranteed to match the declared one. The optional chaining below is
   // load-bearing, not defensive noise.
   meta?: {
+    /** The channel id the Switchboard knows this remote by (see channel-ids.ts). */
+    id?: string;
     name: string;
     collectionId?: { driveId?: string };
     filter: { documentId: string[]; scope?: string[]; branch?: string };
@@ -210,7 +213,12 @@ async function adopt(driveId: string, remote: Remote, sync: SyncManager) {
   const filter = meta.filter;
   const alreadyScoped =
     filter.documentId.length === 1 && filter.documentId[0] === SYNC_NOTHING;
-  if (!alreadyScoped) {
+  if (alreadyScoped) {
+    // A working neutralised channel: remember its id, so a later re-add (a
+    // tokenless boot that drops it, see recover()) reuses this server remote
+    // rather than creating another. See channel-ids.ts.
+    channelIds().adopt(driveId, signedInAddress(), meta.id);
+  } else {
     // Re-add under a sentinel filter rather than removing: a removed channel
     // makes Connect present the drive as local. See use-remote-first.ts.
     const { DriveCollectionId } = await import(
@@ -241,6 +249,9 @@ async function adopt(driveId: string, remote: Remote, sync: SyncManager) {
         ...((meta.options ?? {}) as Record<string, unknown>),
         pollBehavior: PollBehavior.Manual,
       } as typeof meta.options,
+      // A stable id, so each re-add lands on the same server-side remote
+      // instead of leaking a new one per session (channel-ids.ts).
+      await channelIds().idFor(driveId, signedInAddress()),
     );
     console.info(
       `[RemoteFirst] Sync neutralised at package load for drive ${driveId.slice(0, 8)} — ` +
@@ -557,6 +568,8 @@ async function recover(sync: SyncManager): Promise<void> {
           r.channelConfig,
           { documentId: [SYNC_NOTHING], scope: r.scope, branch: r.branch },
           { ...(r.options ?? {}), pollBehavior: PollBehavior.Manual },
+          // Same server remote as before the drop — see channel-ids.ts.
+          await channelIds().idFor(r.driveId, signedInAddress()),
         );
         const remote = sync.list().find((x) => x.meta?.name === r.name);
         if (!remote) throw new Error("the re-added remote is not listed");

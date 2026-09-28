@@ -41,6 +41,7 @@ vi.mock("@powerhousedao/reactor-browser", () => ({
 
 type FakeRemote = {
   meta: {
+    id?: string;
     name: string;
     collectionId: { driveId?: string };
     filter: { documentId: string[]; scope?: string[]; branch?: string };
@@ -84,23 +85,48 @@ function stubVaultLookup(preferredEditor: string) {
   );
 }
 
-async function bootWith(sync: ReturnType<typeof makeSync>) {
+/**
+ * The real setTimeout, captured before any test installs fake timers. The
+ * channel id is derived with `crypto.subtle.digest`, which completes on Node's
+ * thread pool in real time — a fake-timer flush alone does not wait for it.
+ */
+const realSetTimeout = globalThis.setTimeout;
+const realTick = (ms: number) => new Promise((done) => realSetTimeout(done, ms));
+
+/** A localStorage that outlives vi.resetModules(), as a real browser's does across reloads. */
+const browserStore = new Map<string, string>();
+
+async function bootWith(
+  sync: ReturnType<typeof makeSync>,
+  address: string | null = "0xabc",
+) {
   vi.stubGlobal("window", globalThis);
+  vi.stubGlobal("localStorage", {
+    getItem: (k: string) => browserStore.get(k) ?? null,
+    setItem: (k: string, v: string) => void browserStore.set(k, v),
+    removeItem: (k: string) => void browserStore.delete(k),
+  });
   vi.stubGlobal("ph", {
+    renown: { user: address ? { address } : undefined },
     reactorClientModule: {
       reactorModule: { syncModule: { syncManager: sync } },
     },
   });
   const { startRemoteFirstBoot } = await import("./boot.js");
   startRemoteFirstBoot();
-  // The immediate sweep kicks off adopt(); flush its promise chain.
-  await vi.advanceTimersByTimeAsync(5);
+  // The immediate sweep kicks off adopt(); flush its promise chain, letting the
+  // real-time digest inside it complete between flushes.
+  for (let i = 0; i < 4; i++) {
+    await vi.advanceTimersByTimeAsync(5);
+    await realTick(5);
+  }
 }
 
 describe("startRemoteFirstBoot / adopt", () => {
   beforeEach(() => {
     vi.resetModules();
     vi.useFakeTimers();
+    browserStore.clear();
     enableRemoteFirstMock.mockReturnValue({
       remoteClient: {
         get: vi.fn(() =>
@@ -158,6 +184,54 @@ describe("startRemoteFirstBoot / adopt", () => {
       header: { id: string };
     }[];
     expect(drives.map((d) => d.header.id)).toContain(DRIVE_ID);
+  });
+
+  it("COLD ADD: re-adds under a stable channel id, so no new server remote leaks per session", async () => {
+    stubVaultLookup(VAULT_APP);
+    const sync = makeSync(makeRemote(["*"]));
+    await bootWith(sync);
+    const id = sync.add.mock.calls[0]?.[5];
+    expect(typeof id).toBe("string");
+
+    // A second page load in the same browser, same account: the same id.
+    vi.resetModules();
+    const again = makeSync(makeRemote(["*"]));
+    await bootWith(again);
+    expect(again.add.mock.calls[0]?.[5]).toBe(id);
+  });
+
+  it("CLEARED SITE DATA: re-adding the drive lands on the same channel id", async () => {
+    stubVaultLookup(VAULT_APP);
+    const sync = makeSync(makeRemote(["*"]));
+    await bootWith(sync);
+    const id = sync.add.mock.calls[0]?.[5];
+
+    // The user clears app data (localStorage and all) and re-adds the drive.
+    browserStore.clear();
+    vi.resetModules();
+    const readded = makeSync(makeRemote(["*"]));
+    await bootWith(readded);
+    expect(readded.add.mock.calls[0]?.[5]).toBe(id);
+  });
+
+  it("WARM START: adopts the working channel's id, so a later re-add reuses its server remote", async () => {
+    stubVaultLookup(VAULT_APP);
+    const scoped = makeRemote([SENTINEL]);
+    scoped.meta.id = "server-remote-7";
+    await bootWith(makeSync(scoped));
+
+    vi.resetModules();
+    const cold = makeSync(makeRemote(["*"]));
+    await bootWith(cold);
+    expect(cold.add.mock.calls[0]?.[5]).toBe("server-remote-7");
+  });
+
+  it("SIGNED OUT: passes no id, leaving sync.add's own behaviour unchanged", async () => {
+    stubVaultLookup(VAULT_APP);
+    const sync = makeSync(makeRemote(["*"]));
+    await bootWith(sync, null);
+    expect(sync.add).toHaveBeenCalledTimes(1);
+    expect(sync.add.mock.calls[0]?.[5]).toBeUndefined();
   });
 
   it("NON-VAULT DRIVE: is left entirely alone", async () => {
