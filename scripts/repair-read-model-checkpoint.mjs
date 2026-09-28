@@ -17,9 +17,23 @@
  * checkpoint to just BEFORE the next ordinal that exists, so nothing real is
  * skipped — the missing ordinals have no rows to process.
  *
+ * That moves the cursor past ONE hole. It parks again at the next one: the read
+ * model saves its cursor only up to the end of the contiguous run it was handed,
+ * so a store with several rolled-back inserts (measured 2026-09-28: 32 holes,
+ * 276 missing ordinals) re-reads ~25 000 operations on every boot, and the first
+ * write after boot waits for it (~38 s). `--through-max` moves the cursor to the
+ * highest ordinal instead. That is safe only with the reactor STOPPED — then no
+ * transaction is open and every hole is permanent — and only once a boot has
+ * replayed the whole tail, which the read model does on every init (indexing
+ * everything it reads; only the cursor is conservative). The guard for the
+ * second condition: every other read model must already be at the highest
+ * ordinal, i.e. the reactor caught up before it was stopped.
+ *
  * Usage (reactor stopped; take a copy of the store first):
  *   node scripts/repair-read-model-checkpoint.mjs                    # dry run: report only
  *   node scripts/repair-read-model-checkpoint.mjs --apply            # write the new checkpoint
+ *   node scripts/repair-read-model-checkpoint.mjs --through-max      # dry run: past EVERY hole
+ *   node scripts/repair-read-model-checkpoint.mjs --through-max --apply
  *   node scripts/repair-read-model-checkpoint.mjs --store <dir> --read-model <id>
  *
  * Defaults: --store ./.ph/reactor-storage  --read-model attachment-reference-read-model
@@ -35,6 +49,7 @@ const flag = (name, fallback) => {
   return i >= 0 && args[i + 1] ? args[i + 1] : fallback;
 };
 const apply = args.includes("--apply");
+const throughMax = args.includes("--through-max");
 const store = resolve(flag("--store", "./.ph/reactor-storage"));
 const readModelId = flag("--read-model", "attachment-reference-read-model");
 
@@ -51,6 +66,9 @@ try {
     console.log(`no ViewState row for "${readModelId}" — nothing to repair`);
   } else {
     const last = Number(state.lastOrdinal);
+    if (throughMax) {
+      await repairThroughMax(last);
+    } else {
     const [{ next }] = await rows(
       `select min(ordinal)::int as next from reactor.operation_index_operations where ordinal > $1`,
       [last],
@@ -78,7 +96,54 @@ try {
         console.log(`applied — checkpoint is now ${after.lastOrdinal}`);
       }
     }
+    }
   }
 } finally {
   await db.close(); // AtomicNodeFs writes the snapshot atomically on close
+}
+
+async function repairThroughMax(last) {
+  const [{ max, holes, missing }] = await rows(
+    `select max(ordinal)::int as max,
+            count(*) filter (where next > ordinal + 1)::int as holes,
+            coalesce(sum(next - ordinal - 1) filter (where next > ordinal + 1), 0)::int as missing
+       from (select ordinal, lead(ordinal) over (order by ordinal) as next
+               from reactor.operation_index_operations
+              where ordinal >= $1) t`,
+    [last],
+  );
+  if (max === null || max <= last) {
+    console.log(`${readModelId}: checkpoint ${last}, no later operations — nothing to repair`);
+    return;
+  }
+  const others = await rows(
+    `select "readModelId", "lastOrdinal"::int as last from reactor."ViewState" where "readModelId" <> $1`,
+    [readModelId],
+  );
+  const behind = others.filter((o) => o.last < max);
+  console.log(
+    `${readModelId}: checkpoint ${last}, highest ordinal ${max}; ${max - last} ordinals ahead, ` +
+      `${holes} hole(s) (${missing} missing) — every boot re-reads this tail`,
+  );
+  if (behind.length > 0) {
+    console.log(
+      `REFUSED: ${behind.map((o) => `${o.readModelId} at ${o.last}`).join(", ")} ` +
+        `not at ${max} — the reactor had not caught up. Start it, let it settle, stop it, re-run.`,
+    );
+    process.exitCode = 1;
+    return;
+  }
+  if (!apply) {
+    console.log(`dry run — would set checkpoint to ${max}. Re-run with --through-max --apply (reactor stopped, store backed up).`);
+    return;
+  }
+  await db.query(
+    `update reactor."ViewState" set "lastOrdinal" = $1 where "readModelId" = $2`,
+    [max, readModelId],
+  );
+  const [after] = await rows(
+    `select "lastOrdinal" from reactor."ViewState" where "readModelId" = $1`,
+    [readModelId],
+  );
+  console.log(`applied — checkpoint is now ${after.lastOrdinal}`);
 }
