@@ -358,11 +358,64 @@ function dominantPart(parts: readonly SectionPart[]): SectionPart {
   return best;
 }
 
-function finishDraft(draft: Draft, chunks: readonly SourceChunk[]): Section {
-  const dominant = dominantPart(draft.parts);
+/**
+ * A heading that names nothing: a page number (`07`, `Page 7 of 12`), a
+ * running footer's domain (`kpmg.com`), or anything with no letter in it.
+ * Layout detection reads these as headings, and when one is the largest part
+ * of a merged section the section is titled after its page furniture —
+ * measured on a 12-page report on 2026-09-28: sections came out as `07` and
+ * `kpmg.com`, and those became the sources' titles.
+ */
+export function isFurnitureTitle(title: string): boolean {
+  const t = title.trim();
+  if (!t || !/\p{L}/u.test(t)) return true;
+  if (/^(page|pg\.?|p\.)\s*\d+(\s*(of|\/)\s*\d+)?$/i.test(t)) return true;
+  if (/^(https?:\/\/|www\.)\S+$/i.test(t)) return true;
+  // A bare domain only on a web TLD: a document's own name (`notes.md`,
+  // `report.pdf`) has the same shape and is a legitimate title.
+  return WEB_DOMAIN.test(t);
+}
+
+const WEB_DOMAIN =
+  /^[a-z0-9-]+(\.[a-z0-9-]+)*\.(com|org|net|io|co|ai|gov|edu|int|info|biz|app|dev|eu|uk|us|ca|au|de|fr|nl|es|it|ch|be|se|no|dk|pt|ie|jp|cn|in|br)(\/\S*)?$/i;
+
+/**
+ * A real part only names the section when it is a real share of it: a
+ * speaker's name or a caption that happens to be the only other heading is
+ * no better a title than the page number it would replace.
+ */
+const MIN_TITLE_SHARE = 0.25;
+
+/**
+ * The title and path a finished section carries: its dominant part, unless
+ * that part is furniture — then the largest real part holding at least a
+ * quarter of the section, else `fallback` (`<document> · part N`, the form the
+ * app's publish step already uses for an untitled section).
+ */
+function nameSection(
+  parts: readonly SectionPart[],
+  fallback: string,
+): { title: string; headingPath: string[] } {
+  const dominant = dominantPart(parts);
+  if (!isFurnitureTitle(dominant.title)) return dominant;
+  const total = parts.reduce((sum, part) => sum + part.charCount, 0);
+  const real = parts.filter((part) => !isFurnitureTitle(part.title));
+  if (real.length > 0) {
+    const best = dominantPart(real);
+    if (best.charCount >= total * MIN_TITLE_SHARE) return best;
+  }
+  return { title: fallback, headingPath: dominant.headingPath };
+}
+
+function finishDraft(
+  draft: Draft,
+  chunks: readonly SourceChunk[],
+  fallbackTitle: string,
+): Section {
+  const named = nameSection(draft.parts, fallbackTitle);
   const section = buildSection(
-    dominant.title,
-    dominant.headingPath,
+    named.title,
+    named.headingPath,
     draft.indexes,
     chunks,
   );
@@ -560,7 +613,7 @@ export function deriveSections(
   let splitSections = 0;
   const out: Section[] = [];
   joined.drafts.forEach((draft, i) => {
-    const section = finishDraft(draft, chunks);
+    const section = finishDraft(draft, chunks, `${name} · part ${i + 1}`);
     section.markdownRange = ranges[i];
     if (section.charCount <= ceiling) {
       out.push(section);

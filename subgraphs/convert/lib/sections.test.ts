@@ -2,7 +2,7 @@ import { describe, expect, it } from "vitest";
 import {
   SECTION_CHAR_CEILING,
   SECTION_MIN_CHARS,
-  deriveSections,
+  deriveSections, isFurnitureTitle,
 } from "./sections.js";
 
 const chunk = (text: string, headings: string[] = []) => ({ text, headings });
@@ -420,6 +420,77 @@ describe("deriveSections — naming a merged section", () => {
       "Chapter",
       "Index",
     ]);
+  });
+});
+
+/**
+ * Layout detection reads page numbers and running footers as headings. Measured
+ * on a 12-page report (2026-09-28): two sections were named after their largest
+ * part, `07` and `kpmg.com`, and those names became the sources' titles.
+ */
+describe("deriveSections — page furniture never names a section", () => {
+  it.each([
+    ["07", true],
+    ["  12 ", true],
+    ["— 3 —", true],
+    ["Page 7", true],
+    ["page 7 of 12", true],
+    ["kpmg.com", true],
+    ["https://kpmg.com/techreport", true],
+    ["www.example.org", true],
+    ["", true],
+    ["notes.md", false],
+    ["report.pdf", false],
+    ["Foreword", false],
+    ["Q3 results", false],
+    ["Web 3.0 adoption", false],
+    ["New opportunities", false],
+  ])("isFurnitureTitle(%j) is %s", (title, expected) => {
+    expect(isFurnitureTitle(title)).toBe(expected);
+  });
+
+  it("takes the largest real part when it holds a real share of the section", () => {
+    // Section 8 of the report: `07` (1094 chars) dominated `New opportunities`.
+    const plan = deriveSections(
+      [
+        chunk("x".repeat(300), ["Trends"]),
+        chunk("s".repeat(109), ["07"]),
+        chunk("o".repeat(72), ["New opportunities"]),
+        chunk("m".repeat(56), ["Methodology"]),
+      ],
+      { documentName: "report.pdf", minSectionChars: 200 },
+    );
+    expect(plan.sections.map((s) => s.title)).toEqual(["Trends", "New opportunities"]);
+    expect(plan.sections[1].headingPath).toEqual(["New opportunities"]);
+    expect(plan.sections[1].mergedFrom.map((p) => p.title)).toEqual([
+      "07",
+      "New opportunities",
+      "Methodology",
+    ]);
+  });
+
+  it("falls back to the document and part number when no real part is a real share", () => {
+    // Section 9 of the report: a `kpmg.com` back page with a few contact names.
+    const plan = deriveSections(
+      [
+        chunk("x".repeat(200), ["Trends"]),
+        chunk("a".repeat(10), ["Anna Scally"]),
+        chunk("c".repeat(23), ["Joe Cassidy"]),
+        chunk("k".repeat(154), ["kpmg.com"]),
+      ],
+      { documentName: "report.pdf", minSectionChars: 150 },
+    );
+    expect(plan.sections.map((s) => s.title)).toEqual(["Trends", "report.pdf · part 2"]);
+    // the structure the layout reported is kept; only the name is corrected
+    expect(plan.sections[1].headingPath).toEqual(["kpmg.com"]);
+  });
+
+  it("renames an unmerged section whose only heading is a page number", () => {
+    const plan = deriveSections(
+      [chunk("x".repeat(60), ["Intro"]), chunk("y".repeat(60), ["12"])],
+      { documentName: "doc.pdf", minSectionChars: 10 },
+    );
+    expect(plan.sections.map((s) => s.title)).toEqual(["Intro", "doc.pdf · part 2"]);
   });
 });
 
