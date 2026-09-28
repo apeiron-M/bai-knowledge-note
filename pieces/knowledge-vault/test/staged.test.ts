@@ -47,6 +47,23 @@ describe("JSON completions", () => {
     const empty = modelSays({ content: " " });
     await expect(completeJson(empty.llm, { model: "m", system: "s", user: "u" }, empty.fetchImpl)).rejects.toThrow(/empty answer \(finish reason: none\)/);
   });
+  it("retries once when the connection drops mid-answer, then gives up", async () => {
+    const { isDroppedConnection } = await import("../lib/agent/llm.js");
+    let n = 0;
+    const flaky = (async () => {
+      if (n++ === 0) throw new TypeError("terminated");
+      return json({ choices: [{ message: { content: '{"ok":1}' } }] });
+    }) as typeof fetch;
+    expect((await completeJson(new LlmClient(LLM), { model: "m", system: "s", user: "u" }, flaky)).value).toEqual({ ok: 1 });
+    const dead = (async () => { throw new TypeError("fetch failed", { cause: new Error("ECONNRESET") }); }) as typeof fetch;
+    await expect(completeJson(new LlmClient(LLM), { model: "m", system: "s", user: "u" }, dead)).rejects.toThrow(/fetch failed/);
+    let m = 0;
+    const cutBody = (async () => (m++ === 0 ? ({ ok: true, json: async () => { throw new TypeError("terminated"); } } as unknown as Response) : json({ choices: [{ message: { content: '{"ok":2}' } }] }))) as typeof fetch;
+    expect((await completeJson(new LlmClient(LLM), { model: "m", system: "s", user: "u" }, cutBody)).value).toEqual({ ok: 2 });
+    const badBody = (async () => ({ ok: true, json: async () => { throw new SyntaxError("Unexpected token"); } }) as unknown as Response) as typeof fetch;
+    await expect(completeJson(new LlmClient(LLM), { model: "m", system: "s", user: "u" }, badBody)).rejects.toThrow(/Unexpected token/);
+    expect([isDroppedConnection("text"), isDroppedConnection(new Error("socket hang up")), isDroppedConnection(new Error("nope"))]).toEqual([false, true, false]);
+  });
   it("surfaces provider errors", async () => {
     const llm = new LlmClient(LLM);
     await expect(completeJson(llm, { model: "m", system: "s", user: "u" }, (async () => new Response("{}", { status: 401 })) as typeof fetch)).rejects.toMatchObject({ category: "credential" });

@@ -140,10 +140,17 @@ export async function completeJson(
       if (error instanceof Error && (error.name === "TimeoutError" || error.name === "AbortError")) {
         throw new KnowledgeVaultApiError(`${request.model} did not answer within ${CHAT_TIMEOUT_MS / 1000} s. Run the step again, or choose a faster model.`, { category: "timeout", retryable: true });
       }
+      if (attempt < 2 && isDroppedConnection(error)) return null;
       throw error;
     });
+    // A connection dropped mid-answer ("terminated", "fetch failed") is retried once.
+    if (response === null) continue;
     if (!response.ok) throw await llmError(response, `ask ${request.model}`);
-    const body = (await response.json()) as { choices?: { message?: { content?: string | null }; finish_reason?: string | null }[]; usage?: { prompt_tokens?: number; completion_tokens?: number; cost?: number }; error?: { message?: string } };
+    const body = (await response.json().catch((error: unknown) => {
+      if (attempt < 2 && isDroppedConnection(error)) return null;
+      throw error;
+    })) as { choices?: { message?: { content?: string | null }; finish_reason?: string | null }[]; usage?: { prompt_tokens?: number; completion_tokens?: number; cost?: number }; error?: { message?: string } };
+    if (body === null) continue;
     if (body.error) throw new KnowledgeVaultApiError(`The model provider refused the request: ${body.error.message ?? "unknown error"}`, { category: "server", retryable: true });
     usage.prompt_tokens += body.usage?.prompt_tokens ?? 0;
     usage.completion_tokens += body.usage?.completion_tokens ?? 0;
@@ -166,6 +173,13 @@ export async function completeJson(
       throw error;
     }
   }
+}
+
+/** Node's fetch reports a connection the other side dropped as "terminated" or "fetch failed". */
+export function isDroppedConnection(error: unknown): boolean {
+  if (!(error instanceof Error)) return false;
+  const text = `${error.message} ${error.cause instanceof Error ? error.cause.message : ""}`;
+  return /terminated|fetch failed|socket hang up|ECONNRESET|other side closed|UND_ERR/i.test(text);
 }
 
 /** Models wrap JSON in fences or prose now and then; take the outermost object. */
