@@ -69,8 +69,27 @@ export function cleanToken(value: unknown): string {
   return value.trim().replace(/^["'`]+|["'`]+$/g, "").trim().replace(/^bearer\s+/i, "").trim();
 }
 
+/**
+ * The connection's props in the order the piece declares them (auth.ts; a
+ * test holds the two equal). On 6.2.3-dev.28 the runtime's pieceCatalog
+ * serves a package piece's CustomAuth props as a list, and Studio's form
+ * walks them with Object.entries, so a connection made in Studio stores
+ * base_url as "0", token as "1", and so on. Mapped back here by position.
+ */
+export const AUTH_PROP_ORDER = ["base_url", "token", "llm_api_key", "llm_base_url", "llm_default_model"] as const;
+
+function byName(props: Record<string, unknown>): Record<string, unknown> {
+  if ("base_url" in props || "token" in props || !("0" in props || "1" in props)) return props;
+  const named: Record<string, unknown> = { ...props };
+  AUTH_PROP_ORDER.forEach((name, i) => {
+    if (named[name] === undefined && props[String(i)] !== undefined) named[name] = props[String(i)];
+  });
+  return named;
+}
+
 export function readAuth(auth: unknown): KnowledgeVaultCredentials {
-  const source = isRecord(auth) && isRecord(auth.props) ? auth.props : auth;
+  const raw = isRecord(auth) && isRecord(auth.props) ? auth.props : auth;
+  const source = isRecord(raw) ? byName(raw) : raw;
   if (!isRecord(source)) {
     throw new KnowledgeVaultApiError(
       "No Knowledge Vault connection was provided",

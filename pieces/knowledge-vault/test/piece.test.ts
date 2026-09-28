@@ -3,7 +3,7 @@ import { knowledgeVault } from "../index.js";
 import type { shapeSearch } from "../lib/actions/search.js";
 import { searchAction } from "../lib/actions/search.js";
 import { checkConnection, describeAuthFailure, knowledgeVaultAuth, tokenExpiry } from "../lib/auth.js";
-import { normalizeBaseUrl, readAuth } from "../lib/common/auth-value.js";
+import { AUTH_PROP_ORDER, normalizeBaseUrl, readAuth } from "../lib/common/auth-value.js";
 import { KnowledgeVaultClient } from "../lib/common/client.js";
 import { classify, KnowledgeVaultApiError } from "../lib/common/errors.js";
 import { ADDRESS, DRIVE, GOOD_TOKEN, startVaultServer, type VaultServer } from "./vault-server.js";
@@ -157,5 +157,18 @@ describe("a pasted token", () => {
   it("gets a failure message that names what was actually wrong", () => {
     expect(describeAuthFailure(new KnowledgeVaultApiError("x", { category: "credential", status: 401 }))).toMatch(/Paste only the token/);
     expect(describeAuthFailure(new KnowledgeVaultApiError("The LLM provider rejected the API key.", { category: "credential" }))).toBe("The LLM provider rejected the API key.");
+  });
+});
+
+describe("a connection made in Studio on dev.28", () => {
+  it("stores fields by position; they are read back by name", () => {
+    const credentials = readAuth({ props: { "0": "https://v.test", "1": "Bearer eyJa.b.c", "2": "sk-or-1", "4": "m/x" } });
+    expect(credentials).toMatchObject({ baseUrl: "https://v.test", token: "eyJa.b.c", llm: { apiKey: "sk-or-1", defaultModel: "m/x" } });
+  });
+  it("declares its props in the order the position mapping assumes", () => {
+    expect(Object.keys((knowledgeVaultAuth as unknown as { props: Record<string, unknown> }).props)).toEqual([...AUTH_PROP_ORDER]);
+  });
+  it("leaves named props alone", () => {
+    expect(readAuth({ base_url: "https://v.test", token: "t", "0": "https://other.test" }).baseUrl).toBe("https://v.test");
   });
 });

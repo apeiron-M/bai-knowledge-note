@@ -744,6 +744,19 @@ nothing. Consequences:
 5. **A hard kill loses recent PGlite writes.** Everything from the last few minutes before
    `kill -9` was gone after the restart: a `SET_TRIGGER` and two runs. Stop dev servers with
    Ctrl-C.
+6. **Connections made in Studio save CustomAuth fields by position.** `pieceCatalog` serves a
+   package piece's auth props as a list of `{name, …}`, and the connection form
+   (`piece-auth.ts` → `planForDescriptor`) walks them with `Object.entries`, which expects a
+   map. The fields are stored as `"0"`, `"1"`, `"2"`, so the piece reads no `token` and the
+   check fails with "The connection has no API token". A connection created through
+   `Connection` mutations with named fields works. Fix in the runtime (serve the map) or in
+   the form (accept both). Until then the piece maps positional fields back by its declared
+   order (`AUTH_PROP_ORDER`, held equal to `auth.ts` by a test).
+7. **Running steps are invisible.** A step is journaled only when it ends, and
+   `reactor/lib.ts` never passes `onPartialOutput`, so `ctx.output.update` is dropped and
+   Studio shows "No steps ran" for the whole of a long step. Wire `onPartialOutput`, keep the
+   latest partial output and piece log lines on the running step, and render them. The piece
+   ships the extract job as five steps meanwhile.
 
 **Hosted Vetra: the workflows addon.** On Vetra, workflows are enabled per environment as an addon
 ("Runs workflow documents on this environment and adds the workflow editors and Workflow Studio to
