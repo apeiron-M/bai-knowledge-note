@@ -2,6 +2,7 @@ import { createPiece, PieceCategory } from "@powerhousedao/pieces-framework";
 import { connectNotesAction } from "./lib/actions/connect-notes.js";
 import { extractClaimsAction } from "./lib/actions/extract-claims.js";
 import { placeInMocsAction } from "./lib/actions/place-in-mocs.js";
+import { verifyNotesAction } from "./lib/actions/verify-notes.js";
 import { searchAction } from "./lib/actions/search.js";
 import { knowledgeVaultAuth } from "./lib/auth.js";
 import { newPipelineTaskTrigger } from "./lib/triggers/new-pipeline-task.js";
@@ -23,7 +24,7 @@ export const knowledgeVault = createPiece({
   categories: [PieceCategory.PRODUCTIVITY],
   minimumSupportedRelease: "0.30.0",
   auth: knowledgeVaultAuth,
-  actions: [searchAction, extractClaimsAction, connectNotesAction, placeInMocsAction],
+  actions: [searchAction, extractClaimsAction, connectNotesAction, placeInMocsAction, verifyNotesAction],
   triggers: [newPipelineTaskTrigger],
 });
 
