@@ -11,6 +11,7 @@ export default defineConfig({
         "document-models/**/src/tree-utils.ts",
         "subgraphs/convert/lib/**",
         "subgraphs/http/lib/**",
+        "pieces/**/lib/**",
       ],
       exclude: [
         "**/*.test.ts",

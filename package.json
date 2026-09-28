@@ -50,6 +50,14 @@
       "browser": "./dist/browser/processors/index.js",
       "node": "./dist/node/processors/index.mjs"
     },
+    "./pieces": {
+      "types": "./dist/types/pieces/index.d.ts",
+      "node": "./dist/node/pieces/index.mjs"
+    },
+    "./pieces/*": {
+      "types": "./dist/types/pieces/*/index.d.ts",
+      "node": "./dist/node/pieces/*/index.mjs"
+    },
     "./manifest": "./dist/powerhouse.manifest.json",
     "./style.css": "./dist/style.css"
   },
@@ -89,9 +97,11 @@
     "@powerhousedao/design-system": "6.2.3-dev.28",
     "@powerhousedao/document-engineering": "1.40.5",
     "@powerhousedao/ph-cli": "6.2.3-dev.28",
+    "@powerhousedao/pieces-framework": "6.2.3-dev.28",
     "@powerhousedao/reactor": "6.2.3-dev.28",
     "@powerhousedao/reactor-api": "6.2.3-dev.28",
     "@powerhousedao/reactor-browser": "6.2.3-dev.28",
+    "@powerhousedao/reactor-workflow": "6.2.3-dev.28",
     "@powerhousedao/shared": "6.2.3-dev.28",
     "@tailwindcss/cli": "^4.1.18",
     "@tailwindcss/vite": "^4.1.18",
