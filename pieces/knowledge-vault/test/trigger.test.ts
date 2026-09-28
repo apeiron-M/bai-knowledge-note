@@ -38,7 +38,7 @@ describe("the new-pipeline-task trigger", () => {
   });
 
   const hooks = newPipelineTaskTrigger as unknown as Record<"onEnable" | "onDisable" | "run" | "test", (c: unknown) => Promise<unknown>>;
-  const ctx = (store: ReturnType<typeof memoryStore>, props: Record<string, unknown>) => ({ auth: { props: { base_url: "http://127.0.0.1:1", token: "t" } }, store, propsValue: { drive: "d", phase: "create", ...props } });
+  const ctx = (store: ReturnType<typeof memoryStore>, props: Record<string, unknown>) => ({ auth: { props: { base_url: "http://127.0.0.1:1", token: "t" } }, store, propsValue: { drive: "d", ...props } });
   const withFetch = async (tasks: unknown[], body: () => Promise<void>) => {
     const real = globalThis.fetch;
     globalThis.fetch = (async (url: string) => {
@@ -68,6 +68,13 @@ describe("the new-pipeline-task trigger", () => {
       await hooks.onDisable(ctx(store, {}));
       expect(store.peek()).toBeNull();
     });
+  });
+});
+
+describe("an unsaved default", () => {
+  it("falls back to the create phase", async () => {
+    const { phaseOf } = await import("../lib/triggers/new-pipeline-task.js");
+    expect([phaseOf(undefined), phaseOf(""), phaseOf("reflect")]).toEqual(["create", "create", "reflect"]);
   });
 });
 

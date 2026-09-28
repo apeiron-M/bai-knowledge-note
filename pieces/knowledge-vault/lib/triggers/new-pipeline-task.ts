@@ -58,6 +58,9 @@ export async function pollTasks(client: KnowledgeVaultClient, store: StoreLike, 
   return fresh.map(toItem);
 }
 
+/** A default the form shows is not always stored; an unset phase must not silently match nothing. */
+export const phaseOf = (v: unknown): string => (typeof v === "string" && v ? v : "create");
+
 const perPoll = (v: unknown) => {
   const n = Math.round(Number(v));
   return Number.isFinite(n) && n >= 1 ? Math.min(n, 20) : 3;
@@ -117,7 +120,7 @@ export const newPipelineTaskTrigger = createTrigger({
       await context.store.put(SEEN_KEY, []);
       return;
     }
-    const tasks = await openTasks(clientFor(context.auth), p.drive, p.phase);
+    const tasks = await openTasks(clientFor(context.auth), p.drive, phaseOf(p.phase));
     await context.store.put(SEEN_KEY, tasks.map(seenKey).slice(-MAX_SEEN));
   },
   async onDisable(context) {
@@ -125,11 +128,11 @@ export const newPipelineTaskTrigger = createTrigger({
   },
   async run(context) {
     const p = context.propsValue as { drive: string; phase: string; per_poll?: unknown };
-    return pollTasks(clientFor(context.auth), context.store as StoreLike, { drive: p.drive, phase: p.phase, per_poll: perPoll(p.per_poll) });
+    return pollTasks(clientFor(context.auth), context.store as StoreLike, { drive: p.drive, phase: phaseOf(p.phase), per_poll: perPoll(p.per_poll) });
   },
   async test(context) {
     const p = context.propsValue as { drive: string; phase: string };
-    const tasks = await openTasks(clientFor(context.auth), p.drive, p.phase);
+    const tasks = await openTasks(clientFor(context.auth), p.drive, phaseOf(p.phase));
     return tasks.slice(-1).map(toItem);
   },
 });
