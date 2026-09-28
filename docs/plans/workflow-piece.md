@@ -754,3 +754,94 @@ Connect"), and its settings replace the local `.env` lines:
 
 Locally, Workflow Studio also needs `connect.app.workflowsEnabled: true` in `powerhouse.config.json`;
 there is no environment switch for it.
+
+## 18. Vault agent jobs: an LLM that follows the pipeline
+
+**Goal.** A workflow step that takes a job, such as "extract this source" or "connect these notes",
+and has an LLM carry it out against the vault. It follows the same rules the Claude Code skills
+enforce (`/powerhouse-knowledge:extract`, `:connect`, `:synthesize`, `:verify`, `:health`), so an
+ingested source becomes atomic, linked, placed notes without a person running the pipeline.
+
+**Why it lives in the piece.** The engine has no loop block, it hides Activepieces' AI and agent
+pieces (`piece-ai`, `agent`, …), and a registry LLM step is a single call. An agent needs a loop:
+send the job and the tool schemas, run each tool call against the vault, return the result,
+repeat until the job is done or a budget runs out. That loop is a piece action: the **harness**.
+
+### 18.1 Credentials and model choice
+
+A step's props cannot hold secrets; only a connection can. The vault connection gains three
+optional fields:
+
+| Field | Type | Default | Notes |
+|---|---|---|---|
+| `llm_base_url` | ShortText | `https://openrouter.ai/api/v1` | Any OpenAI-compatible endpoint (OpenRouter, OpenAI, a local gateway) |
+| `llm_api_key` | SecretText | — | Encrypted with the runtime's master key like the vault token. Absent: the agent actions refuse with a clear message; every other action works as before |
+| `llm_default_model` | ShortText | — | Used when a step leaves its model empty. Connection props cannot be dynamic dropdowns (CustomAuth allows static props only), so this is a model id |
+
+**The model picker.** Every agent action has a `model` prop, a **dynamic dropdown** filled live
+from the provider with the connection's key, the same way the drive picker is filled:
+- `GET {llm_base_url}/models?supported_parameters=tools` returns only models that can call tools.
+  On OpenRouter (28 Sep): **369 of 458**. A provider that ignores the filter is filtered on
+  `supported_parameters` client-side, and one without that field lists everything.
+- Each option reads `Name — $in / $out per M tokens · N k context`, from the model's `pricing`
+  and `context_length`, so cost is visible when choosing. The value is the model id
+  (`anthropic/claude-sonnet-4.5`).
+- `refreshOnSearch`, so typing narrows 369 options by name or id.
+- Empty: the connection's `llm_default_model`.
+- A standalone `list-models` action returns the same list for a workflow that picks a model itself.
+
+`validate` also checks the LLM fields when they are set: OpenRouter's `GET /key` (free) confirms the
+key and reports its limit. The connection label gains `· LLM: openrouter.ai (limit $X | no limit)`,
+which puts a key with no spending limit in plain sight.
+
+### 18.2 Jobs
+
+One action per job. Each has fixed instructions, a tool whitelist and budgets (`max_steps`,
+`max_cost_usd`, `timeout`); a `dry_run` checkbox swaps every write tool for a "propose" tool that
+records what it would have done.
+
+| Action | Skill it follows | Tools |
+|---|---|---|
+| `agent-extract` | `/extract` | read the source; search for near-duplicates; create notes with `DERIVED_FROM` + reason; record extraction stats |
+| `agent-connect` | `/connect` | search, read neighbours; create or annotate links with a reason and confidence |
+| `agent-reweave` | `/synthesize` | MoC membership (`CORE_IDEA`), create or update MoCs, `CHILD_MOC` placement |
+| `agent-verify` | `/verify` | read-only checks; reports findings, fixes nothing on its own |
+| `agent-health` | `/health` | stats, orphans, tensions; writes the health report |
+
+- **Tools come from the piece's own client**, so every write keeps the vault's server-side
+  guarantees: lint before dispatch, placement, rollback, read-back. A refused write returns the
+  server's findings to the model (for example `actions[0].input.description: exceeds 200
+  characters`) so it can correct and retry.
+- **The harness, not the model, moves the pipeline.** It claims the task, runs the job, and
+  advances the phase with a handoff built from the model's report. The model never advances,
+  completes or fails a task, and never approves a note. Notes stay DRAFT for human review.
+- **Instructions** are tool-shaped editions of the skills. The skills tell Claude Code to run
+  `switchboard …`, which a workflow LLM cannot do. The editions keep the skills' rules (one claim
+  per note, the 200-character description, a reason on every link, an honest skip rate) and name
+  tools instead of commands. The plugin's skills stay the source of truth; the editions ship with
+  the piece, and a vault skill document (`/powerhouse-knowledge:skills`) can override one so a vault
+  can tune its agent without a redeploy.
+- **Output**: what was done (notes created, links, skipped claims with reasons), the model used,
+  token usage and cost (OpenRouter's `usage.cost`), steps taken, and why it stopped.
+
+### 18.3 Workflows
+
+One workflow per phase, so each run is short and a failure stays local:
+`new-pipeline-task (phase)` → `claim-task` → `agent-<job>` → `advance-task`. `agent-health` runs on
+`core#trigger:schedule`. A step timeout of 600–900 s covers a job on a 2–3 k-character section.
+
+### 18.4 Reuse and risks
+
+- **Reuse:** the vault app's chat already has an OpenRouter tool-calling client
+  (`editors/knowledge-vault/lib/chat/completions-client.ts`), a text-tool-call fallback for models
+  that emit calls as text, a system prompt and 17 read-only tool schemas (`vault-tools.ts`). The
+  harness ports the client and adds write tools.
+- **Quality:** automated extraction can lower vault health. Mitigations: notes stay DRAFT,
+  `agent-verify` after each job, `/health` reports honestly, and nothing is auto-approved.
+- **Cost:** about 10–30 model calls per extract on one section. `max_cost_usd` stops a run, and the
+  provider key should carry its own spending limit.
+- **Secrets:** the key lives only in the connection (encrypted); give workflows their own key.
+
+**First spike:** `agent-extract` on one local source in `dry_run` mode, using the model picker above.
+Nothing is written; the proposed notes, the steps taken and the cost show whether the approach
+holds before any write tool is enabled.
