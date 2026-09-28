@@ -1,7 +1,7 @@
 # The Knowledge Vault piece — what to build
 
-**Revised:** 28 September 2026 (first draft 25 September) · **Stack:** `6.2.3-dev.24` as installed,
-checked against the `6.2.3-dev.26` monorepo source · **Vault:** `@powerhousedao/knowledge-note`
+**Revised:** 28 September 2026 (first draft 25 September) · **Stack:** `6.2.3-dev.28` (upgraded from
+dev.24 on 28 Sep; engine facts checked against the dev.26 source, and the dev.25–dev.28 changes against `main`) · **Vault:** `@powerhousedao/knowledge-note`
 `1.0.54-dev.17`
 
 **Sources:**
@@ -47,7 +47,9 @@ fails lint.
 | Fan-out | "Actions take arrays" | Confirmed. Nothing fans out inside a run; only a trigger returning N items starts N runs. Expression paths index with `.0`, not `[0]` |
 | `POST notes` | "Knowledge notes" | Also creates observations, tensions, MoCs, scopes and WBS, each placed in its folder by type |
 | REST surface | about 12 routes | 30 routes, including `density`, `topics`, `orphans`, `triangles`, `graph.json`, `history`, `activity`, `bridges`, `access-map`, `admin/reindex` and three convert routes |
-| Multi-auth | — | Rejected in dev.24 (auth arrays run from dev.25). Use a single CustomAuth |
+| Multi-auth | — | Rejected in dev.24; auth arrays run from dev.25, so on dev.28 Activepieces pieces that offer `[OAuth2, service account]` run with the service account. The vault piece still uses a single CustomAuth |
+| Attachment downloads | Bearer + `GET /attachments/:hash` | From dev.26 (reactor #3109, #3112) bytes are served only through the read gate of a document that references them. Use `GET /attachments/:hash?documentId=<doc>` with the bearer, or `…/download-target?documentId=` for a signed URL (which still needs the bearer on a Switchboard with `REQUIRE_AUTHENTICATED_CALLER`). A bare GET is 404. Verified live on dev.28 |
+| Paged results | `totalCount` | Removed in dev.26 (#3107): pages carry `hasNextPage` and `cursor` only |
 | Local pieces | "To verify" | Switchboard adds `process.cwd()` to the packages (unless `--ignore-local`) and resolves `${pkg}/pieces` through `exports["./pieces"].node`. Only built entries load |
 | Convert param | `min_section_chars` | `minSectionChars`. Convert also has `?job=` with a pollable `convert/progress/:job` route, and answers `503 CONVERT_BUSY` because it runs one conversion at a time |
 
@@ -92,7 +94,7 @@ form, then checks `canRead`, `canWrite` or `canManage`. Errors are `{error, code
 | Write | `POST actions {documentId, actions[], wait?, allowLiteralEscapes?}`; `POST notes {drive, documentType?, notes[≤25]}`; `POST sources`; `POST sources/folders` (idempotent on name); `POST`/`PATCH`/`DELETE relationships`; `POST tasks/:id/claim` | write |
 | Convert | `POST convert?filename&ocr=1&figures=1&markdown=1&minSectionChars&job` (raw bytes, **30 MiB**, one file); `GET convert/progress/:job` (pollable, kept about 1 min after the job ends); `GET convert/health` | requireUser |
 | GraphQL | 30 `knowledgeGraph*` queries plus `knowledgeGraphReindex`, guarded per drive; `History`, `Activity`, `ActivityByType`, `Bridges`, `Debug` and `Reindex` need write | read / write |
-| Switchboard (not the vault) | `POST /attachments/reservations` (409 `already_exists` with the `ref` if the sha256 is known), `PUT /attachments/reservations/:id`, `HEAD /attachments/:hash` | bearer |
+| Switchboard (not the vault) | `POST /attachments/reservations` (409 `already_exists` with the `ref` if the sha256 is known), `PUT /attachments/reservations/:id`, `HEAD /attachments/:hash`; reads through `GET /attachments/:hash?documentId=` (dev.26+: the document must reference the attachment and be readable by the caller) | bearer |
 
 **Guarantees the piece inherits:**
 - Lint before dispatch: enums, the 200-character description, literal `\n`, articulation, envelope.
@@ -244,6 +246,7 @@ workaround, and **V#** names the vault change (§10) that makes it clean.
 | Action | Calls | Output | Status |
 |---|---|---|---|
 | `upload-attachment` | sha256 → `POST /attachments/reservations` (409 `already_exists` → reuse its `ref`) → `PUT` | `file` → `ref`, `sha256`, `sizeBytes`, `mimeType`, `reused` | ✅ |
+| `get-attachment` | `GET /attachments/:hash?documentId=` (dev.26+ read gate) → `ctx.files.write` | `document_id`, `ref` → `file` (a ref or data URI), `mimeType`, `fileName` — for example, to hand a source's original PDF to another piece | ✅ |
 | `attach-original` | `POST actions` `ATTACH_ORIGINAL_FILE` (idempotent for the same ref) | `source_id`, `ref` or `file`, `converted_by` → `readBack` | ✅ |
 | `add-source-attachment` | `POST actions` `ADD_ATTACHMENT` | `source_id`, `file`, `role`, `page`, `alt` → `attachment_id` | ✅ |
 
@@ -504,9 +507,9 @@ The two target workflows, designed against the engine as it is. The facts they r
 | Connector | Auth | Trigger | Works on this engine? |
 |---|---|---|---|
 | `@activepieces/piece-imap` 0.5.0 | CustomAuth (host, user, **app password**) | `new_email`, polling | **Yes.** Attachments come through `files.write`; inside a trigger that means inline data URIs (≤ 8 MiB each). The trigger output has **no filename or content type** for them |
-| `@activepieces/piece-gmail` 0.17.0 | `[OAuth2, CustomAuth service account]` | `new_attachment` and four more, polling | **From dev.25, service account only.** Needs a Workspace admin to grant domain-wide delegation. dev.24 rejects the auth array outright |
+| `@activepieces/piece-gmail` 0.17.0 | `[OAuth2, CustomAuth service account]` | `new_attachment` and four more, polling | **Yes on dev.28, service account only** (auth arrays run from dev.25). Needs a Workspace admin to grant domain-wide delegation |
 | `@activepieces/piece-microsoft-outlook` | OAuth2 only | polling | **No** |
-| `@activepieces/piece-google-docs` / `-drive` | `[OAuth2, CustomAuth service account]` | `new-document` / `new_file`, polling | **From dev.25, service account only.** The folder filter matches direct children only, and Meet files land in per-meeting subfolders (July 2026), so they must be filtered by title instead |
+| `@activepieces/piece-google-docs` / `-drive` | `[OAuth2, CustomAuth service account]` | `new-document` / `new_file`, polling | **Yes on dev.28, service account only.** The folder filter matches direct children only, and Meet files land in per-meeting subfolders (July 2026), so they must be filtered by title instead |
 | Google Meet piece | — | — | **Does not exist** |
 | Inbound mail services (Postmark, Mailgun, SendGrid) posting to `core#trigger:webhook` | basic auth / HMAC in body fields / ECDSA | webhook | **Not with attachments.** Base64 attachments pass the 1 MiB cap at about 750 KB of files. The HMAC schemes read a header, so Mailgun's body-field signature cannot be checked |
 | Cloudflare Email Worker or Google Apps Script → `core#trigger:webhook` | a header secret (`token` scheme) | webhook | **Yes, for payloads ≤ 1 MiB.** That fits transcripts and email bodies, not attachments |
@@ -539,7 +542,7 @@ There are three ways to feed it, in order of how little they need:
 | Route | Chain | Needs | Limits |
 |---|---|---|---|
 | **A. IMAP polling** | `piece-imap#trigger:new_email` → `vault#ingest-email` with `attachments: {{trigger.payload.attachments}}` | An IMAP account with an app password (personal Gmail, or Workspace where app passwords are allowed; not Microsoft 365) | 8 MiB per attachment. No filenames (hence the type sniffing). Delivery latency = the poll interval |
-| **B. Gmail with a service account** | `piece-gmail#trigger:new_attachment` (filter `pdf`) → `vault#ingest-file` | Stack ≥ dev.25; Workspace domain-wide delegation | 8 MiB per attachment; Workspace only |
+| **B. Gmail with a service account** | `piece-gmail#trigger:new_attachment` (filter `pdf`) → `vault#ingest-file` | Workspace domain-wide delegation (the stack is already dev.28) | 8 MiB per attachment; Workspace only |
 | **C. Email-in owned by the vault** (V11) | Mail service or Cloudflare Worker → a vault webhook endpoint, **no workflow** | Vault work (below) | Up to the endpoint's own cap (30 MiB, as convert) |
 
 **V11: vault email-in.**
@@ -553,7 +556,7 @@ There are three ways to feed it, in order of how little they need:
 
 This is the re-scoped slice 3 of `http-surface.md` (§11): the one thing a workflow cannot do is take a large, signed delivery. It also works for vaults that don't run workflows. Its cost is MIME parsing on the server (for example `postal-mime`) and an admin screen that shows the endpoint URL.
 
-**Recommendation:** build `ingest-email` in the piece and prove it with **route A** first; it needs no stack bump and no admin. Add **C** when attachments above 8 MiB, Microsoft 365 or no-poll delivery matter. Use **B** only for Workspace tenants that can grant delegation.
+**Recommendation:** build `ingest-email` in the piece and prove it with **route A** first; it needs no admin. Add **C** when attachments above 8 MiB, Microsoft 365 or no-poll delivery matter. Use **B** only for Workspace tenants that can grant delegation.
 
 ### 13.3 Google Meet transcript or Gemini notes → source
 
@@ -562,7 +565,7 @@ No vault change is needed beyond the piece. `ingest-source` already takes `sourc
 | Route | Chain | Needs | Notes |
 |---|---|---|---|
 | **A. Apps Script push** | A time-driven Apps Script in the organizer's account finds new Docs whose title ends `- Transcript` or contains `Notes by Gemini` (searching Drive by name and modified time, **not** by folder), and POSTs `{docId, title, text, url, createdTime, organizer}` with an `x-webhook-token` header → `core#trigger:webhook` (`token` scheme, `dedupeField: {body: "docId"}`) → `vault#ingest-source` (`source_type: TRANSCRIPT`, `url`, `published_at: {{trigger.payload.body.createdTime}}`, `dedupe_key: {{trigger.payload.body.docId}}`) | `PUBLIC_URL` on the Switchboard; a one-time Apps Script consent inside Google | A transcript is far below 1 MiB. Files can appear up to 24 h after a meeting. Gemini notes have two tabs, so check that `getText()` reads both |
-| **B. Docs piece with a service account** | `piece-google-docs#trigger:new-document` (no folder filter) → `core#branch` on the title → `#get_document_plaintext` → `vault#ingest-source` | Stack ≥ dev.25; Workspace domain-wide delegation impersonating the organizer | Polling; one connection per organizer |
+| **B. Docs piece with a service account** | `piece-google-docs#trigger:new-document` (no folder filter) → `core#branch` on the title → `#get_document_plaintext` → `vault#ingest-source` | Workspace domain-wide delegation impersonating the organizer (the stack is already dev.28) | Polling; one connection per organizer |
 | C. Meet REST API and Workspace Events via Pub/Sub | — | A custom piece, Pub/Sub, subscription renewal | Only worth it at scale; transcript entries are kept only 30 days |
 
 **Recommendation:** route **A**. It needs no Google credential in the engine, and `core#trigger:webhook`'s `token` scheme and dedupe cover it. The Apps Script ships as a documented snippet in this repo (`docs/integrations/meet-apps-script.gs`), with the endpoint URL and token set as script properties.
@@ -571,7 +574,7 @@ No vault change is needed beyond the piece. `ingest-source` already takes `sourc
 
 - **Piece actions:** `ingest-email` (new; phase 1), plus `ingest-source`'s `dedupe_key` and `published_at` normalisation (already phase 1).
 - **Vault:** V11 email-in (optional, after route A works).
-- **Stack:** bump to ≥ dev.25 **only** for the Google routes that use a service account.
+- **Stack:** already dev.28, so the Google service-account routes need no bump; they need a Workspace admin.
 - **Spikes (phase 0):**
   1. `piece-imap` installs and polls in the worker (npm on PATH, egress to port 993).
   2. Its attachment data URIs hydrate into our FILE ARRAY prop.
@@ -612,7 +615,7 @@ No vault change is needed beyond the piece. `ingest-source` already takes `sourc
 | 2 — author and pipeline | `create-note(s)`, `update-note`, `link/update/unlink`, `add-to-moc`, `create-moc`, `submit-for-review`, `review-note`, `supersede-note`, `complete-extraction`; the task actions and `queue-source`; trigger `new-pipeline-task`; the extraction workflow (task → claim → `get-document-markdown` → LLM → `create-notes` → `complete-extraction` → `advance-task`) | V1, V2, V10 |
 | 3 — graph and watch | `search` options, `get-related`, `find-nodes`, `export-context`, the graph and health reads, `graphql-query`, admin; triggers `note-changed`, `note-became-canonical`, `tension-opened`, `health-changed` | V5 |
 | 4 — hardening | Lossless triggers; service identity; `ingest-web-page` | V3, V4 |
-| Later | V11 email-in; Google service-account routes (stack ≥ dev.25); outbound subscriptions and webhook triggers; publishing to the registries; a pieces-only package if cross-host use grows | V6, V11 |
+| Later | V11 email-in; Google service-account routes (dev.28 has them; they need a Workspace admin); outbound subscriptions and webhook triggers; publishing to the registries; a pieces-only package if cross-host use grows | V6, V11 |
 
 ---
 
