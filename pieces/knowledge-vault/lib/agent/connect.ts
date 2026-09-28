@@ -25,9 +25,11 @@ type NoteDoc = { name?: string; state?: { global?: { title?: string; description
 
 /** The notes a source produced, read from the source's own record of them. */
 export async function sourceNotes(client: KnowledgeVaultClient, drive: string, sourceId: string) {
-  const src = await client.request<{ name: string; state?: { global?: { title?: string; extractedClaims?: unknown[] } } }>({ path: `notes/${encodeURIComponent(sourceId)}`, query: { drive } });
+  const src = await client.request<{ name: string; state?: { global?: { title?: string; status?: string; extractedClaims?: unknown[] } } }>({ path: `notes/${encodeURIComponent(sourceId)}`, query: { drive } });
   const title = src.state?.global?.title ?? src.name;
   const ids = arr(src.state?.global?.extractedClaims).map((c) => (typeof c === "string" ? c : str(rec(c).claimRef))).filter(Boolean);
+  // Extracted with zero claims is a finished source, not a missing step: a foreword or glossary can yield none.
+  if (ids.length === 0 && src.state?.global?.status === "EXTRACTED") return { sourceTitle: title, notes: [] as (NoteSummary & { edges: NoteDoc["edges"] })[] };
   if (ids.length === 0) {
     throw new KnowledgeVaultApiError(`"${title}" has no extracted notes yet. Run Extract claims in write mode on it first.`, { category: "validation" });
   }

@@ -40,6 +40,13 @@ export const placeInMocsAction = createAction({
       const hub = tree.mocs.filter((m) => m.tier === "HUB").length;
       return { ...notes, ...tree, summary: `${notes.notes.length} notes from "${notes.sourceTitle}"; the vault has ${tree.mocs.length} MoCs (${hub} HUB).` };
     });
+    if (read.notes.length === 0) {
+      const pipeline = write
+        ? await stage("pipeline", () => advancePipeline(client, { drive, sourceId, phase: "reweave", workDone: "The source yielded no notes, so there was nothing to place. Ready for review.", filesModified: [], completedBy: `place-in-mocs · ${model}` }))
+        : null;
+      const { stages, seconds } = await finish();
+      return { summary: `${write ? "" : "Dry run: "}"${read.sourceTitle}" yielded no notes; nothing to place.${pipeline ? ` ${pipeline.summary}` : ""} ${seconds} s.`, stages, dry_run: !write, model, placements: [], new_mocs: [], unplaced: [], created_mocs: [], problems: [], pipeline, cost_usd: 0, seconds };
+    }
     const plan = await stage("plan", () => planStage(llm, model, read.notes, read.mocs));
     const written = write ? await stage("write", () => writePlacementsStage(client, { drive, placements: plan.placements, newMocs: plan.new_mocs, coreIdeas: read.coreIdeas })) : null;
     const pipeline = written

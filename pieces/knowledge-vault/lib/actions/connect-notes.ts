@@ -38,6 +38,14 @@ export const connectNotesAction = createAction({
       const r = await sourceNotes(client, drive, sourceId);
       return { ...r, summary: `"${r.sourceTitle}" has ${r.notes.length} note${r.notes.length === 1 ? "" : "s"} to connect.` };
     });
+    if (read.notes.length === 0) {
+      // Nothing extracted, nothing to connect: close the phase so the task still reaches verify.
+      const pipeline = write
+        ? await stage("pipeline", () => advancePipeline(client, { drive, sourceId, phase: "reflect", workDone: "The source yielded no notes, so there was nothing to connect.", filesModified: [], completedBy: `connect-notes · ${model}` }))
+        : null;
+      const { stages, seconds } = await finish();
+      return { summary: `${write ? "" : "Dry run: "}"${read.sourceTitle}" yielded no notes; nothing to connect.${pipeline ? ` ${pipeline.summary}` : ""} ${seconds} s.`, stages, dry_run: !write, model, links: [], dropped: [], thin: [], failed: [], pipeline, cost_usd: 0, seconds };
+    }
     const candidates = await stage("candidates", async () => {
       const c = await gatherCandidates(client, drive, read.notes);
       const total = Object.values(c).reduce((n, list) => n + list.length, 0);

@@ -274,7 +274,7 @@ describe("the connect and place actions", () => {
     if (u.startsWith("https://llm.test")) return json({ choices: [{ message: { content: answer((init?.body as string | undefined) ?? "") } }], usage: { cost: 0.002 } });
     if (u.includes("/similar")) return json(variant === "normal" ? [] : [{ node: { documentId: "x9" }, similarity: 0.8 }]);
     if (u.includes("/graph.json")) return json({ nodes: [{ documentId: "top", title: "Pricing", status: "MOC" }, { documentId: "hub", noteType: "MOC (HUB)", status: "MOC" }], edges: [] });
-    if (u.includes("/notes/s1")) return json({ name: "s1", state: { global: { title: "Tech", extractedClaims: variant === "one" ? ["n1"] : variant === "three" ? ["n1", "n2", "n3", "n4"] : ["n1", "n2"] } } });
+    if (u.includes("/notes/s1")) return json({ name: "s1", state: { global: { title: "Tech", status: "EXTRACTED", extractedClaims: variant === "none" ? [] : variant === "one" ? ["n1"] : variant === "three" ? ["n1", "n2", "n3", "n4"] : ["n1", "n2"] } } });
     if (u.includes("/notes/d")) return json({ state: { global: { nodes: [{ id: "q1", documentType: "bai/pipeline-queue" }] } } });
     if (u.includes("/notes/q1")) return json({ state: { global: { tasks: [{ id: "t1", taskType: "claim", status: "IN_PROGRESS", documentRef: "s1", currentPhase: u.includes("q1") ? phase : "create" }] } } });
     if (u.match(/\/notes\/n\d/)) return json({ state: { global: { title: u.includes("n1") ? "Capital" : "Legacy", status: "DRAFT" } } });
@@ -325,6 +325,24 @@ describe("the connect and place actions", () => {
       expect(dry.placements).toEqual(expect.arrayContaining([expect.objectContaining({ moc: "new: Tech investment" }) as unknown]));
       expect(dry.new_mocs).toEqual([expect.objectContaining({ parent_title: "hub" }) as unknown]);
       expect(dry.unplaced).toEqual(["Legacy"]);
+      variant = "normal";
+    });
+  });
+
+  it("finish cleanly on a source that yielded no notes, and still move the task on", async () => {
+    await withFetch(async () => {
+      variant = "none";
+      phase = "reflect";
+      const c = await run(connectNotesAction, { drive: "d", source: "s1", mode: "write" });
+      expect(String(c.summary)).toMatch(/^"Tech" yielded no notes; nothing to connect\. Pipeline task advanced reflect → reweave\./);
+      expect(c.links).toEqual([]);
+      phase = "reweave";
+      const pl = await run(placeInMocsAction, { drive: "d", source: "s1", mode: "write" });
+      expect(String(pl.summary)).toMatch(/^"Tech" yielded no notes; nothing to place\. Pipeline task advanced reweave → verify\./);
+      const dryC = await run(connectNotesAction, { drive: "d", source: "s1", mode: "dry_run" });
+      expect(String(dryC.summary)).toMatch(/^Dry run: "Tech" yielded no notes; nothing to connect\. \d+ s\.$/);
+      const dryP = await run(placeInMocsAction, { drive: "d", source: "s1", mode: "dry_run" });
+      expect(String(dryP.summary)).toMatch(/^Dry run: "Tech" yielded no notes; nothing to place\. \d+ s\.$/);
       variant = "normal";
     });
   });
