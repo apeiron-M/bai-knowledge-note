@@ -19,7 +19,7 @@ describe("the piece definition", () => {
   // Tests that call actions one by one never import index.ts; this one does,
   // so an action left out of the piece fails here.
   it("ships exactly these actions and triggers", () => {
-    expect(Object.keys(knowledgeVault.actions()).sort()).toEqual(["agent-extract", "search"]);
+    expect(Object.keys(knowledgeVault.actions()).sort()).toEqual(["agent-extract", "extract-check-vault", "extract-draft-notes", "extract-find-candidates", "extract-read-source", "extract-report", "search"]);
     expect(Object.keys(knowledgeVault.triggers())).toEqual([]);
   });
 });

@@ -108,6 +108,66 @@ export class LlmClient {
   }
 }
 
+/**
+ * One JSON answer, no tools: the staged jobs each make a single bounded call.
+ * Reasoning models spend part of max_tokens thinking; a reply cut off before
+ * any answer ("length" with empty content) is retried once with double the
+ * budget, and said plainly if it happens again.
+ */
+export async function completeJson(
+  client: LlmClient,
+  request: { model: string; system: string; user: string; maxTokens?: number },
+  fetchImpl: typeof fetch = fetch,
+): Promise<{ value: unknown; usage: Usage }> {
+  const { baseUrl, apiKey } = client.credentials;
+  const usage: Usage = { prompt_tokens: 0, completion_tokens: 0, cost: 0 };
+  let budget = request.maxTokens ?? 32_000;
+  for (let attempt = 1; ; attempt++) {
+    const response = await fetchImpl(`${baseUrl}/chat/completions`, {
+      method: "POST",
+      headers: { Authorization: `Bearer ${apiKey}`, "Content-Type": "application/json", "HTTP-Referer": "https://powerhouse.inc", "X-Title": "Powerhouse Knowledge Vault" },
+      body: JSON.stringify({
+        model: request.model,
+        messages: [{ role: "system", content: request.system }, { role: "user", content: request.user }],
+        response_format: { type: "json_object" },
+        temperature: 0.2,
+        max_tokens: budget,
+        usage: { include: true },
+      }),
+      signal: AbortSignal.timeout(CHAT_TIMEOUT_MS),
+    });
+    if (!response.ok) throw await llmError(response, `ask ${request.model}`);
+    const body = (await response.json()) as { choices?: { message?: { content?: string | null }; finish_reason?: string | null }[]; usage?: { prompt_tokens?: number; completion_tokens?: number; cost?: number }; error?: { message?: string } };
+    if (body.error) throw new KnowledgeVaultApiError(`The model provider refused the request: ${body.error.message ?? "unknown error"}`, { category: "server", retryable: true });
+    usage.prompt_tokens += body.usage?.prompt_tokens ?? 0;
+    usage.completion_tokens += body.usage?.completion_tokens ?? 0;
+    usage.cost += body.usage?.cost ?? 0;
+    const choice = body.choices?.[0];
+    const text = choice?.message?.content ?? "";
+    if (!text.trim()) {
+      if (attempt < 2) {
+        budget *= 2;
+        continue;
+      }
+      const why = choice?.finish_reason === "length" ? `it used its whole ${budget}-token budget before answering (reasoning models think first)` : `it returned an empty answer (finish reason: ${choice?.finish_reason ?? "none"})`;
+      throw new KnowledgeVaultApiError(`${request.model} gave no answer twice: ${why}. Try a larger model or a shorter source.`, { category: "server", retryable: true });
+    }
+    return { value: parseJsonAnswer(text), usage };
+  }
+}
+
+/** Models wrap JSON in fences or prose now and then; take the outermost object. */
+export function parseJsonAnswer(text: string): unknown {
+  const start = text.indexOf("{");
+  const end = text.lastIndexOf("}");
+  if (start < 0 || end <= start) throw new KnowledgeVaultApiError("The model did not answer with JSON", { category: "server", retryable: true, detail: text.slice(0, 300) });
+  try {
+    return JSON.parse(text.slice(start, end + 1));
+  } catch {
+    throw new KnowledgeVaultApiError("The model answered with malformed JSON", { category: "server", retryable: true, detail: text.slice(0, 300) });
+  }
+}
+
 function toModelInfo(raw: unknown): ModelInfo | null {
   if (typeof raw !== "object" || raw === null) return null;
   const m = raw as { id?: unknown; name?: unknown; context_length?: unknown; pricing?: { prompt?: unknown; completion?: unknown }; supported_parameters?: unknown };

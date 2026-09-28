@@ -50,7 +50,7 @@ describe.skipIf(!ready)("built piece conformance", () => {
   it("describes into the descriptor Studio draws its forms from", async () => {
     const { piece } = await loadPieceFromDir(bundleDir);
     const descriptor = buildDescriptor(piece, { packageName: PIECE, version: VERSION });
-    expect(descriptor.actions.map((a) => a.name)).toEqual(["search", "agent-extract"]);
+    expect(descriptor.actions.map((a) => a.name)).toEqual(["search", "agent-extract", "extract-read-source", "extract-find-candidates", "extract-check-vault", "extract-draft-notes", "extract-report"]);
     expect(descriptor.triggers).toEqual([]);
     expect(descriptor.auth).toMatchObject({ type: "CUSTOM_AUTH" });
     const drive = descriptor.actions[0]?.props.find((p) => p.name === "drive");
