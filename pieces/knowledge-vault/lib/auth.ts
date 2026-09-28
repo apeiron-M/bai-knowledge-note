@@ -10,7 +10,7 @@ const AUTH_DESCRIPTION = `A Switchboard that hosts a knowledge vault, and a bear
 
 **Access token** — a Renown bearer. After \`ph login\`, mint one with \`ph access-token --expiry 90d\`. Use a dedicated workflow identity with **WRITE** on the vault drive, not a person's: every write is recorded against this address, and a workflow must never approve its own notes.
 
-**LLM (optional)** — only the agent actions (\`agent-extract\`, …) use it. An API key from an OpenAI-compatible provider; the default is OpenRouter (https://openrouter.ai/keys). Give workflows their own key **with a spending limit**: the connection label says when a key has none.
+**LLM (optional)** — only the model-backed actions (\`Extract claims\`, …) use it. An API key from an OpenAI-compatible provider; the default is OpenRouter (https://openrouter.ai/keys). Give workflows their own key **with a spending limit**: the connection label says when a key has none.
 
 A Switchboard on \`localhost\` or a private network is refused by the workflow runtime unless its address is listed in \`PH_WORKFLOWS_EGRESS_ALLOW_ADDRESSES\` (e.g. \`127.0.0.1/32,::1/128\`).`;
 
