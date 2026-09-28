@@ -36,7 +36,7 @@ describe("fetchAttachmentDataUrl", () => {
   it("anchors the direct fetch with ?documentId= when the service fails", async () => {
     vi.stubGlobal("window", globalThis);
     vi.stubGlobal("ph", { attachmentService: { get: () => Promise.reject(new Error("404")) } });
-    const fetchMock = vi.fn(() =>
+    const fetchMock = vi.fn((..._args: unknown[]) =>
       Promise.resolve(new Response(new Uint8Array([9]), { headers: { "content-type": "image/png" } })),
     );
     vi.stubGlobal("fetch", fetchMock);
@@ -51,7 +51,7 @@ describe("fetchAttachmentDataUrl", () => {
     vi.stubGlobal("window", globalThis);
     const get = vi.fn(() => Promise.reject(new Error("unavailable")));
     vi.stubGlobal("ph", { attachmentService: { get } });
-    const fetchMock = vi.fn(() => Promise.resolve(new Response(new Uint8Array([9]))));
+    const fetchMock = vi.fn((..._args: unknown[]) => Promise.resolve(new Response(new Uint8Array([9]))));
     vi.stubGlobal("fetch", fetchMock);
     const { fetchAttachmentDataUrl } = await import("./attachments.js");
     await fetchAttachmentDataUrl(REF);
