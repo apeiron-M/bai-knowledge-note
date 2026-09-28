@@ -17,6 +17,7 @@ import { createSourceFolderRoute } from "./routes/source-folders.js";
 import { registerStructureRoutes } from "./routes/structure.js";
 import { createClaimRoute } from "./routes/tasks.js";
 import { createSearchRoute } from "./routes/search.js";
+import { timedRoute } from "./lib/slow.js";
 import { schema } from "./schema.js";
 
 export class HttpSubgraph extends BaseSubgraph {
@@ -28,13 +29,13 @@ export class HttpSubgraph extends BaseSubgraph {
   async onSetup(): Promise<void> {
     try {
       const deps = buildHttpRouteDeps(this);
-      this.http.get("ping", { auth: "renown" }, (_request, ctx) =>
+      this.http.get("ping", { auth: "renown" }, timedRoute("GET ping", (_request, ctx) =>
         Response.json({
           ok: true,
           subgraph: "http",
           user: ctx.user?.address ?? null,
         }),
-      );
+      ));
       this.http.get("drives", { auth: "renown" }, createDrivesRoute(deps));
       this.http.get(
         "search",
@@ -100,7 +101,7 @@ export class HttpSubgraph extends BaseSubgraph {
       this.http.post(
         "actions",
         { auth: "renown", body: "parsed", maxBodyBytes: 2 * 1024 * 1024 },
-        createActionsRoute(deps),
+        timedRoute("POST actions", createActionsRoute(deps)),
       );
       // A source is ingested from content alone; the route places it in
       // /sources itself. Body cap matches `actions` — source content is the
@@ -110,39 +111,39 @@ export class HttpSubgraph extends BaseSubgraph {
       this.http.post(
         "notes",
         { auth: "renown", body: "parsed", maxBodyBytes: 2 * 1024 * 1024 },
-        createNotesBatchRoute(deps),
+        timedRoute("POST notes", createNotesBatchRoute(deps)),
       );
       // Registered BEFORE `sources` so the more specific path matches first:
       // routes match in registration order.
       this.http.post(
         "sources/folders",
         { auth: "renown", body: "parsed" },
-        createSourceFolderRoute(deps),
+        timedRoute("POST sources/folders", createSourceFolderRoute(deps)),
       );
       this.http.post(
         "sources",
         { auth: "renown", body: "parsed", maxBodyBytes: 2 * 1024 * 1024 },
-        createIngestSourceRoute(deps),
+        timedRoute("POST sources", createIngestSourceRoute(deps)),
       );
       this.http.post(
         "relationships",
         { auth: "renown", body: "parsed" },
-        createRelationshipRoute(deps, "POST"),
+        timedRoute("POST relationships", createRelationshipRoute(deps, "POST")),
       );
       this.http.patch(
         "relationships",
         { auth: "renown", body: "parsed" },
-        createRelationshipRoute(deps, "PATCH"),
+        timedRoute("PATCH relationships", createRelationshipRoute(deps, "PATCH")),
       );
       this.http.delete(
         "relationships",
         { auth: "renown", body: "parsed" },
-        createRelationshipRoute(deps, "DELETE"),
+        timedRoute("DELETE relationships", createRelationshipRoute(deps, "DELETE")),
       );
       this.http.post(
         "tasks/:id/claim",
         { auth: "renown", body: "parsed" },
-        createClaimRoute(deps),
+        timedRoute("POST tasks/:id/claim", createClaimRoute(deps)),
       );
       registerStructureRoutes(this.http, buildStructureRouteDeps(this));
       const llmsDeps = {

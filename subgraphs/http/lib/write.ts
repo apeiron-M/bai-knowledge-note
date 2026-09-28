@@ -7,6 +7,7 @@ import type { HttpRouteDeps } from "./deps.js";
 import { stampActions, type RawAction } from "./envelope.js";
 import { lintActions } from "./lint/index.js";
 import { HttpError } from "./respond.js";
+import { timed } from "./slow.js";
 import { validateEnvelopes } from "./validate.js";
 
 export interface WriteResult {
@@ -174,11 +175,13 @@ export async function executeWrite(
       ? options.ctx.signal
       : undefined;
 
-  const job = await deps.reactorClient.executeAsync(
-    options.documentId,
-    "main",
-    stamped as unknown as Action[],
-    signal,
+  const job = await timed(`write: executeAsync ${documentType}`, () =>
+    deps.reactorClient.executeAsync(
+      options.documentId,
+      "main",
+      stamped as unknown as Action[],
+      signal,
+    ),
   );
   if (!options.wait) {
     return {
@@ -189,7 +192,9 @@ export async function executeWrite(
     };
   }
 
-  const finished = await deps.reactorClient.waitForJob(job.id, signal);
+  const finished = await timed(`write: waitForJob ${documentType}`, () =>
+    deps.reactorClient.waitForJob(job.id, signal),
+  );
   if (finished.error) {
     throw new HttpError(422, "DISPATCH_FAILED", finished.error.message);
   }

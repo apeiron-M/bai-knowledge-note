@@ -4,6 +4,7 @@ import type { HttpRouteDeps } from "../lib/deps.js";
 import type { RawAction } from "../lib/envelope.js";
 import { HttpError, jsonError, OK_CACHE } from "../lib/respond.js";
 import { rejectUnknownFields } from "../lib/validate.js";
+import { timed } from "../lib/slow.js";
 import { executeWrite } from "../lib/write.js";
 
 interface ActionsBody {
@@ -41,8 +42,12 @@ export function createActionsRoute(deps: HttpRouteDeps) {
           "actions must be a non-empty array",
         );
       }
-      const canonicalId = await canonicalForWrite(deps, body.documentId, ctx);
-      const doc = await deps.reactorClient.get(canonicalId);
+      const canonicalId = await timed("actions: canonicalForWrite", () =>
+        canonicalForWrite(deps, body.documentId!, ctx),
+      );
+      const doc = await timed("actions: reactorClient.get", () =>
+        deps.reactorClient.get(canonicalId),
+      );
       const result = await executeWrite(deps, {
         documentId: canonicalId,
         document: doc,

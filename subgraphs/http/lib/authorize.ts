@@ -3,6 +3,7 @@ import type { IAuthorizationService } from "@powerhousedao/reactor-api";
 import type { RouteContext } from "@powerhousedao/shared/processors";
 import type { HttpRouteDeps } from "./deps.js";
 import { HttpError } from "./respond.js";
+import { timed } from "./slow.js";
 
 export function requireUser(
   ctx: RouteContext,
@@ -40,8 +41,14 @@ export async function canonicalForWrite(
   ctx: RouteContext,
 ): Promise<CanonicalDocumentId> {
   const user = requireUser(ctx);
-  const id = await canonical(deps, identifier, ctx);
-  if (!(await deps.authorization.canWrite(id, user.address))) {
+  const id = await timed("canonical id (write)", () =>
+    canonical(deps, identifier, ctx),
+  );
+  if (
+    !(await timed("authorization.canWrite", () =>
+      deps.authorization.canWrite(id, user.address),
+    ))
+  ) {
     throw new HttpError(403, "FORBIDDEN", `No write access to ${identifier}`);
   }
   return id;
