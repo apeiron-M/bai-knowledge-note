@@ -18,6 +18,9 @@ const CONFIG = {
   WEBHOOK_TOKEN: '',
   TITLE_MATCH: 'Notes by Gemini',
   TAB_NAME: 'Quick notes',
+  // Older notes (before Gemini split them into tabs) have no Quick notes tab:
+  // send their first tab that is not a transcript instead. false: skip them.
+  FALLBACK_TO_NOTES_TAB: true,
   // Apps Script stops a run after 6 minutes; stop sending well before that.
   MAX_RUNTIME_MS: 5 * 60 * 1000,
 };
@@ -85,7 +88,7 @@ function sendPending_() {
       Logger.log('Could not open "%s" (%s): %s', file.getName(), file.getUrl(), error && error.message ? error.message : error);
       continue;
     }
-    if (!note) { result.skipped++; Logger.log('  no %s tab: skipped', CONFIG.TAB_NAME); continue; }
+    if (!note) { result.skipped++; Logger.log('  no %s tab%s: skipped', CONFIG.TAB_NAME, CONFIG.FALLBACK_TO_NOTES_TAB ? ' and no notes tab' : ''); continue; }
     const response = UrlFetchApp.fetch(CONFIG.WEBHOOK_URL, {
       method: 'post',
       contentType: 'application/json',
@@ -139,11 +142,13 @@ function quickNotesText_(file) {
   // A field mask the API does not accept is a 400: ask for the whole document instead.
   if (response.getResponseCode() === 400) response = get('');
   if (response.getResponseCode() === 200) {
-    const tab = findApiTab_(JSON.parse(response.getContentText()).tabs || [], CONFIG.TAB_NAME);
+    const tabs = JSON.parse(response.getContentText()).tabs || [];
+    const tab = findApiTab_(tabs, CONFIG.TAB_NAME) || (CONFIG.FALLBACK_TO_NOTES_TAB ? notesTab_(tabs, function (t) { return (t.tabProperties || {}).title || ''; }) : null);
     return tab ? apiTabText_(tab).trim() : '';
   }
   try {
-    const tab = findTab_(DocumentApp.openById(file.getId()).getTabs(), CONFIG.TAB_NAME);
+    const tabs = DocumentApp.openById(file.getId()).getTabs();
+    const tab = findTab_(tabs, CONFIG.TAB_NAME) || (CONFIG.FALLBACK_TO_NOTES_TAB ? notesTab_(tabs, function (t) { return t.getTitle(); }) : null);
     return tab ? tab.asDocumentTab().getBody().getText().trim() : '';
   } catch (documentAppError) {
     throw new Error('Docs API ' + response.getResponseCode() + ': ' + response.getContentText().slice(0, 200) +
@@ -156,6 +161,14 @@ const PARAGRAPH_FIELDS_ = 'paragraph(elements(textRun(content)))';
 const TEXT_FIELDS_ = 'documentTab(body(content(' + PARAGRAPH_FIELDS_ + ',table(tableRows(tableCells(content(' + PARAGRAPH_FIELDS_ + ')))))))';
 const TAB_FIELDS_ = 'tabs(tabProperties(title),' + TEXT_FIELDS_ + ',childTabs(tabProperties(title),' + TEXT_FIELDS_ +
   ',childTabs(tabProperties(title),' + TEXT_FIELDS_ + ')))';
+
+/** The first top-level tab that is not a transcript: where notes lived before Quick notes. */
+function notesTab_(tabs, titleOf) {
+  for (let i = 0; i < tabs.length; i++) {
+    if (!/transcript/i.test(titleOf(tabs[i]))) return tabs[i];
+  }
+  return null;
+}
 
 /** A Docs API tab by title, children included. */
 function findApiTab_(tabs, name) {
