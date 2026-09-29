@@ -887,3 +887,64 @@ are often `speculative` and worth a reviewer's eye.
   unattended.
 - **Timeouts:** a step's timeout must be set to about 300 s in the workflow (report 8).
 - **Secrets:** the key lives only in the connection; give workflows their own key.
+
+## 19. What 6.2.3-dev.31 changes (29 September 2026)
+
+Upgraded from dev.28 (`2b03c2da`). `ph use dev` leaves `pieces-framework`,
+`reactor-workflow` and the top-level `reactor-attachments` behind; bump them
+with bun too, and check that one copy of `reactor-attachments` is installed
+(two copies broke uploads on dev.28).
+
+**For the piece**
+
+- A package piece's version is its package's (`package.json`), read by
+  reactor-api; `PackagePiece` has no `version`. `pieces/index.ts` no longer
+  pins one, so the piece is `@powerhousedao/piece-knowledge-vault@1.0.54-dev.17`
+  and moves with every package release.
+- Props are validated before `run()`: an unset prop takes its `defaultValue`,
+  and a required prop missing from the input fails the step naming the field.
+  Every required prop of ours has a default or is a dropdown the form fills.
+- Studio's connection form now reads auth props listed as an array (upstream
+  report 6, fixed). `readAuth`'s positional mapping stays for connections
+  already stored as `"0"`, `"1"`, …
+- **Dropdown search never reaches the piece** (`refreshOnSearch` is listed as
+  unsupported: `searchValue` is never sent). The Model dropdown therefore
+  shows only its default list, the cheap qualifying models; a model outside
+  it, such as Claude Sonnet 5.5, cannot be picked in Studio. The Source
+  dropdown lists every source, so it is unaffected.
+- Still open: a running step shows nothing (report 7: `onPartialOutput` is
+  still not passed), and the default step timeout is still 30 s with no
+  setting (report 8; the worker has a `defaultTimeoutMs` the host never sets).
+
+**For workflows**
+
+- A step names its block with `pieceName`, an exact `pieceVersion` and
+  `actionName` (a trigger: `triggerName`) instead of one `blockType` string,
+  and a run executes the **published** snapshot (`PUBLISH_WORKFLOW`). The
+  workflow model was changed in place in v1, with no upgrade, so workflows
+  made before dev.31 must be rebuilt and published. Worth reporting upstream:
+  it is the in-place breaking change CLAUDE.md warns against for our models.
+- Resolution never blocks on a version: an exact match wins, local first,
+  else the closest compatible one, journaled on the step. Our piece is
+  always found locally.
+- `"workflows": { "enabled": true }` in `powerhouse.config.json` turns
+  workflows on for Switchboard and Connect together;
+  `connect.app.workflowsEnabled` only overrides Connect.
+- Under `ph vetra` and dev mode pieces may reach localhost, so
+  `PH_WORKFLOWS_EGRESS_ALLOW_ADDRESSES` is no longer needed locally.
+- A single step can be tested from Studio before publishing; webhook triggers
+  renew their subscriptions; vetra seeds a Workflows drive when workflows are
+  on.
+
+**OAuth2 now runs** (issue #3091, partly). A connection brings its own app:
+the authorization-code grant, `client_id` in the connection's config and
+`client_secret` in its secrets. Switchboard serves the redirect at
+`<workflow package base>/oauth/callback`, stores the token set as the
+connection's `token` secret and refreshes it 15 minutes before it expires.
+Not supported: `client_credentials`, OIDC, and any hosted or platform app.
+
+This changes §13: the Gmail, Google Drive and Google Docs pieces can run with
+OAuth2 instead of a service account, and Outlook (OAuth2 only) becomes
+possible. Each needs a Google Cloud (or Azure) app whose redirect URI is the
+Switchboard's callback. The IMAP and Apps Script routes still need no app at
+all, and remain the simplest.
