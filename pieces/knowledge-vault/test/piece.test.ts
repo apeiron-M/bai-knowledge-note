@@ -19,7 +19,7 @@ describe("the piece definition", () => {
   // Tests that call actions one by one never import index.ts; this one does,
   // so an action left out of the piece fails here.
   it("ships exactly these actions and triggers", () => {
-    expect(Object.keys(knowledgeVault.actions()).sort()).toEqual(["connect-notes", "extract-claims", "place-in-mocs", "search", "verify-notes"]);
+    expect(Object.keys(knowledgeVault.actions()).sort()).toEqual(["connect-notes", "extract-claims", "ingest-source", "place-in-mocs", "search", "verify-notes"]);
     expect(Object.keys(knowledgeVault.triggers())).toEqual(["new-pipeline-task"]);
   });
 });
