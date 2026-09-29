@@ -950,3 +950,28 @@ OAuth2 instead of a service account, and Outlook (OAuth2 only) becomes
 possible. Each needs a Google Cloud (or Azure) app whose redirect URI is the
 Switchboard's callback. The IMAP and Apps Script routes still need no app at
 all, and remain the simplest.
+
+**Upgrading a store from dev.28 breaks every trigger (found 29 September).**
+dev.31 names a block by piece and action and writes `trigger_state.piece_name`
+/ `trigger_name` and `step_execution.piece_name` / `block_name`, but creates
+them only in `createTable … ifNotExists`; there is no additive migration, so
+tables dev.28 made keep `block_type NOT NULL` without the new columns. Every
+trigger enable then fails with `column "piece_name" of relation
+"trigger_state" does not exist` (logged, never shown in Studio: the workflow
+looks enabled and never runs), and step journaling fails the same way.
+`scripts/migrate-workflow-block-columns.mjs` fixes a local store (reactor
+stopped, `.ph/read-storage` backed up). Any host whose workflow runtime ran on
+dev.28 or earlier needs the same, including the hosted Vetra addon. An
+upstream fix: the same `try { alterTable … addColumn } catch` pattern the
+store already uses for `piece_version`, plus a backfill from `block_type` and
+`DROP NOT NULL` on it.
+
+A workflow written before dev.31 no longer arms at all
+(`The trigger undefined@undefined … does not resolve`): the model changed in
+place, so its documents lack `pieceName`/`pieceVersion`. Rebuild them.
+
+The local pipeline workflow now runs as **Vault pipeline (auto)** in
+`my-workflow`: New pipeline task (phase create, backlog included, one run per
+poll) → Extract claims → Connect notes → Place notes in MoCs → Verify notes,
+each Write mode on GPT-6 Luna with a 300 s timeout, published, built through
+the runtime API. First automatic run 29 September 12:37 UTC.
