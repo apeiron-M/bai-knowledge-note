@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
 import { extractClaimsAction } from "../lib/actions/extract-claims.js";
-import { completeJson, LlmClient, parseJsonAnswer } from "../lib/agent/llm.js";
-import { asObject, candidatesStage, checkVaultStage, containsVerbatim, draftStage, readSourceStage, reportStage } from "../lib/agent/staged.js";
+import { completeJson, LlmClient, parseJsonAnswer, retryDelayMs } from "../lib/agent/llm.js";
+import { asObject, candidatesStage, checkVaultStage, containsVerbatim, draftStage, mapLimit, readSourceStage, reportStage } from "../lib/agent/staged.js";
 import type { KnowledgeVaultClient } from "../lib/common/client.js";
 
 const LLM = { baseUrl: "https://llm.test/v1", apiKey: "k" };
@@ -29,6 +29,35 @@ function vault(routes: Record<string, unknown>): KnowledgeVaultClient {
 }
 const SOURCE = "Capital is not the primary constraint on technology value today. Returns lag because legacy systems drag.";
 const bundle = { source_id: "s1", title: "Tech", text: SOURCE, topics: ["operations", "strategy"] };
+
+describe("waiting out a rate limit", () => {
+  const busy = (status: number) => new Response("busy", { status, headers: { "retry-after": "0" } });
+  const answer = () => new Response(JSON.stringify({ choices: [{ message: { content: '{"ok":5}' } }] }), { status: 200 });
+  it("retries a 429 or 5xx once, then reports it", async () => {
+    let calls = 0;
+    const once = (async () => (++calls === 1 ? busy(429) : answer())) as typeof fetch;
+    expect((await completeJson(new LlmClient(LLM), { model: "m", system: "s", user: "u" }, once)).value).toEqual({ ok: 5 });
+    const down = (async () => busy(503)) as typeof fetch;
+    await expect(completeJson(new LlmClient(LLM), { model: "m", system: "s", user: "u" }, down)).rejects.toMatchObject({ status: 503, category: "server" });
+    const refused = (async () => new Response('{"error":"bad model"}', { status: 400 })) as typeof fetch;
+    await expect(completeJson(new LlmClient(LLM), { model: "m", system: "s", user: "u" }, refused)).rejects.toMatchObject({ status: 400 });
+  });
+  it("uses Retry-After, within 30 s", () => {
+    const h = (v: string | null) => ({ headers: { get: () => v } });
+    expect(retryDelayMs(h("2"))).toBe(2000);
+    expect(retryDelayMs(h("600"))).toBe(30_000);
+    expect(retryDelayMs(h(null))).toBe(5000);
+    expect(retryDelayMs(h("soon"))).toBe(5000);
+  });
+  it("runs work a few at a time, in order", async () => {
+    let running = 0;
+    let peak = 0;
+    const out = await mapLimit([1, 2, 3, 4, 5], 2, async (n) => { peak = Math.max(peak, ++running); await new Promise((r) => setTimeout(r, 2)); running--; return n * 10; });
+    expect(out).toEqual([10, 20, 30, 40, 50]);
+    expect(peak).toBe(2);
+    expect(await mapLimit([], 4, async () => 1)).toEqual([]);
+  });
+});
 
 describe("JSON completions", () => {
   it("takes the outermost object and says when there is none", () => {
@@ -247,7 +276,7 @@ describe("the extract-claims action", () => {
     });
   });
   it("names the stage that failed and what finished before it", async () => {
-    await withFetch((u) => (u.startsWith("https://llm.test") ? new Response("down", { status: 503 }) : vaultAnswers(u)), async () => {
+    await withFetch((u) => (u.startsWith("https://llm.test") ? new Response("down", { status: 503, headers: { "retry-after": "0" } }) : vaultAnswers(u)), async () => {
       await expect(run({ auth: auth(), propsValue: { drive: "d", source: "s1" } })).rejects.toMatchObject({ category: "server", retryable: true, message: expect.stringMatching(/^Stage "candidates" failed: .*\(done before it: read: Read "Src"/) as unknown as string });
     });
     await withFetch(() => { throw new Error("plain"); }, async () => {
@@ -332,7 +361,16 @@ describe("the quality fixes", () => {
       { name: "nested", notes: 2, example: "Nested example" },
       { name: "lonely", notes: 1, example: null },
     ]);
-    expect(out).toMatchObject({ status: "EXTRACTING", extracted_claims: 1 });
+    expect(out).toMatchObject({ status: "EXTRACTING", extracted_claims: 1, derived_notes: 0 });
+    // Notes a stopped step created but never recorded on the source still count; archived ones do not.
+    const stopped = await readSourceStage(vault({
+      "notes/s1": { name: "s1", edges: [{ direction: "in", linkType: "DERIVED_FROM", documentId: "n1" }, { direction: "in", linkType: "DERIVED_FROM", documentId: "n1" }, { direction: "in", linkType: "DERIVED_FROM", documentId: "n2" }, { direction: "in", linkType: "DERIVED_FROM", documentId: "n3" }, { direction: "out", linkType: "DERIVED_FROM", documentId: "n4" }, { direction: "in", linkType: "RELATES_TO", documentId: "n5" }], state: { global: { content: "text" } } },
+      "notes/n1": { state: { global: { status: "IN_REVIEW" } } },
+      "notes/n2": { state: { global: { status: "ARCHIVED" } } },
+      "notes/n3": () => { throw new Error("gone"); },
+      topics: [],
+    }), "d", "s1");
+    expect(stopped.derived_notes).toBe(1);
     const m = modelSays(JSON.stringify({ notes: [] }));
     await draftStage(m.llm, "m", { ...out, topics: ["conversion", "nested", "lonely", "extra"] }, { candidates: [{ id: "c1", claim: "x" }] }, m.fetchImpl);
     expect(m.calls[0].user).toMatch(/- conversion \(21\): e\.g\. "Downsells raise full-price sales"/);

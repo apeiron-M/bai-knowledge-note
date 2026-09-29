@@ -89,6 +89,13 @@ describe("the client", () => {
     await expect(client.request({ path: "ping", timeoutMs: 5 })).rejects.toMatchObject({ category: "timeout", retryable: true });
   });
 
+  it("times out a response whose body stalls halfway", async () => {
+    const stalled = (error: Error) => async () => ({ ok: true, status: 200, text: async () => { throw error; } }) as unknown as Response;
+    const client = (error: Error) => new KnowledgeVaultClient({ baseUrl: "https://v.example", token: "t" }, stalled(error) as unknown as typeof fetch);
+    await expect(client(Object.assign(new Error("The operation was aborted"), { name: "AbortError" })).request({ path: "graph.json" })).rejects.toMatchObject({ category: "timeout", message: "The request timed out" });
+    await expect(client(new Error("terminated")).request({ path: "graph.json" })).rejects.toMatchObject({ category: "network", retryable: true });
+  });
+
   it("keeps a proxy's plain-text error and a non-JSON success body", async () => {
     vi.stubGlobal("fetch", async (url: URL) =>
       url.pathname.endsWith("/bad") ? new Response("upstream down", { status: 502 }) : new Response("not json", { status: 200 }),

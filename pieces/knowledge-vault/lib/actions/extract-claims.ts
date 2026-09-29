@@ -1,5 +1,5 @@
 import { createAction, Property } from "@powerhousedao/pieces-framework";
-import { advancePipeline } from "../agent/pipeline.js";
+import { advancePipeline, claimPhase } from "../agent/pipeline.js";
 import { llmFor, stageRunner } from "../agent/runner.js";
 import { candidatesStage, checkVaultStage, draftStage, readSourceStage, reportStage } from "../agent/staged.js";
 import { assertWritable, writeStage } from "../agent/write.js";
@@ -22,7 +22,7 @@ export const extractClaimsAction = createAction({
   name: "extract-claims",
   displayName: "Extract claims",
   description:
-    "Reads one source and turns it into atomic notes, following the vault's extract method: six gates, a vault check for duplicates, drafts checked against the vault's rules. Dry run proposes only; Write creates the notes, submits them for review, links each to the source and marks the source EXTRACTED. About 1-2 minutes: set the step's timeout (under When it fails) to 300 s. Needs an LLM key on the connection.",
+    "Reads one source and turns it into atomic notes, following the vault's extract method: six gates, a vault check for duplicates, drafts checked against the vault's rules. Dry run proposes only; Write creates the notes, submits them for review, links each to the source and marks the source EXTRACTED. About 1-2 minutes: set the step's timeout (under When it fails) to 300 s, or 600 s for a slow model. Needs an LLM key on the connection.",
   audience: "both",
   props: {
     drive: driveProp,
@@ -69,6 +69,8 @@ export const extractClaimsAction = createAction({
       if (write) assertWritable(bundle);
       return bundle;
     });
+    // Taken before the model runs, so nobody else starts on this source meanwhile.
+    if (write) await stage("claim", () => claimPhase(client, { drive, sourceId: read.source_id, phase: "create" }));
     const candidates = await stage("candidates", () => candidatesStage(llm, model, read));
     const checked = await stage("check", () => checkVaultStage(client, drive, candidates, threshold));
     const draft = await stage("draft", () => draftStage(llm, model, read, checked));
@@ -79,6 +81,7 @@ export const extractClaimsAction = createAction({
             drive,
             sourceId: read.source_id,
             sourceTitle: read.title,
+            sourceStatus: read.status,
             model,
             notes: draft.proposed,
             rejectedCount: report.skipped_count,
@@ -95,6 +98,7 @@ export const extractClaimsAction = createAction({
             workDone: `Extracted ${written.written.length} notes, submitted for review (${report.skipped_count} candidates rejected on a gate, skip rate ${Math.round(report.skip_rate * 100)}%) with ${model}.`,
             filesModified: written.note_ids,
             completedBy: `extract-claims · ${model}`,
+            incomplete: written.incomplete,
           }),
         )
       : null;

@@ -4,12 +4,13 @@ import { newPipelineTaskTrigger, pollTasks, toItem } from "../lib/triggers/new-p
 import type { KnowledgeVaultClient, RequestOptions } from "../lib/common/client.js";
 
 const task = (id: string, extra: Record<string, unknown> = {}) => ({ id, taskType: "claim", status: "PENDING", documentRef: `src-${id}`, target: `Source ${id}`, currentPhase: "create", createdAt: "2026-09-28T10:00:00Z", ...extra });
+const sources = ["t1", "t2", "t3", "t4", "t5", "t6", "t7"].map((t) => ({ id: `src-${t}`, documentType: "bai/source" }));
 function vault(tasks: unknown[], queue = true) {
   const requests: RequestOptions[] = [];
   const client = {
     request: async (o: RequestOptions) => {
       requests.push(o);
-      if (o.path === "notes/d") return { state: { global: { nodes: queue ? [{ id: "q1", documentType: "bai/pipeline-queue" }] : [] } } };
+      if (o.path === "notes/d") return { state: { global: { nodes: queue ? [{ id: "q1", documentType: "bai/pipeline-queue" }, ...sources] : [] } } };
       if (o.path === "notes/q1") return { state: { global: { tasks } } };
       throw new Error(`no route ${o.path}`);
     },
@@ -37,13 +38,18 @@ describe("the new-pipeline-task trigger", () => {
     expect(toItem({ id: "x", taskType: "claim", status: "PENDING" })).toMatchObject({ source_id: "", source_title: "", phase: "", queued_at: null });
   });
 
+  it("skips a task whose source was deleted: its run would fail on the first read", async () => {
+    const v = vault([task("gone", { documentRef: "src-deleted" }), task("t1")]);
+    expect((await pollTasks(v.client, memoryStore(), { drive: "d", phase: "create", per_poll: 5 })).map((i) => i.task_id)).toEqual(["t1"]);
+  });
+
   const hooks = newPipelineTaskTrigger as unknown as Record<"onEnable" | "onDisable" | "run" | "test", (c: unknown) => Promise<unknown>>;
   const ctx = (store: ReturnType<typeof memoryStore>, props: Record<string, unknown>) => ({ auth: { props: { base_url: "http://127.0.0.1:1", token: "t" } }, store, propsValue: { drive: "d", ...props } });
   const withFetch = async (tasks: unknown[], body: () => Promise<void>) => {
     const real = globalThis.fetch;
     globalThis.fetch = (async (url: string) => {
       const u = String(url);
-      const payload = u.includes("/notes/q1") ? { state: { global: { tasks } } } : { state: { global: { nodes: [{ id: "q1", documentType: "bai/pipeline-queue" }] } } };
+      const payload = u.includes("/notes/q1") ? { state: { global: { tasks } } } : { state: { global: { nodes: [{ id: "q1", documentType: "bai/pipeline-queue" }, ...sources] } } };
       return new Response(JSON.stringify(payload), { status: 200, headers: { "content-type": "application/json" } });
     }) as typeof fetch;
     try {

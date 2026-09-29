@@ -3,7 +3,7 @@ import { connectNotesAction } from "../lib/actions/connect-notes.js";
 import { placeInMocsAction } from "../lib/actions/place-in-mocs.js";
 import { checkLink, gatherCandidates, proposeLinksStage, sourceNotes, writeLinksStage } from "../lib/agent/connect.js";
 import { LlmClient } from "../lib/agent/llm.js";
-import { advancePipeline, findQueue } from "../lib/agent/pipeline.js";
+import { advancePipeline, claimPhase, findQueue } from "../lib/agent/pipeline.js";
 import { llmFor, stageRunner } from "../lib/agent/runner.js";
 import { checkPlan, planStage, readMocs, writePlacementsStage, type MocInfo } from "../lib/agent/synthesize.js";
 import type { KnowledgeVaultClient, RequestOptions } from "../lib/common/client.js";
@@ -52,7 +52,7 @@ describe("the pipeline helper", () => {
     expect(handoff).toMatchObject({ phase: "create", workDone: "did it", filesModified: ["n1"], completedBy: "me", completedAt: "2026-09-28T12:00:00.000Z" });
   });
   it("does not claim a task already in progress, and leaves a task at another phase alone", async () => {
-    const going = vault({ "notes/d": drive(), "notes/q1": queue([task({ status: "IN_PROGRESS", currentPhase: "reflect" })]), actions: { operations: [] } });
+    const going = vault({ "notes/d": drive(), "notes/q1": queue([task({ status: "IN_PROGRESS", currentPhase: "reflect", assignedTo: "0xME" })]), ping: { ok: true, user: "0xme" }, actions: { operations: [] } });
     expect((await advancePipeline(going.client, { ...args, phase: "reflect" })).to).toBe("reweave");
     expect(going.requests.some((r) => r.path.includes("claim"))).toBe(false);
     const elsewhere = vault({ "notes/d": drive(), "notes/q1": queue([task({ currentPhase: "reflect" })]) });
@@ -68,7 +68,38 @@ describe("the pipeline helper", () => {
     expect((await advancePipeline(refused.client, args)).summary).toBe("The pipeline task did not advance: Phase mismatch");
     expect((await advancePipeline(vault({}).client, args)).summary).toMatch(/could not be updated: no route/);
     expect(await findQueue(vault({ "notes/d": {} }).client, "d")).toBeNull();
+    const theirs = vault({ "notes/d": drive(), "notes/q1": queue([task({ status: "IN_PROGRESS", assignedTo: "0xother" })]), ping: { ok: true, user: "0xme" } });
+    expect((await advancePipeline(theirs.client, args)).summary).toBe("The pipeline task is held by 0xother, not this connection; left as it is.");
+    expect(theirs.requests.some((r) => r.path === "actions")).toBe(false);
+    const unowned = vault({ "notes/d": drive(), "notes/q1": queue([task({ status: "IN_PROGRESS" })]), ping: { ok: true, user: "0xme" } });
+    expect((await advancePipeline(unowned.client, args)).summary).toMatch(/held by someone else/);
+    const half = vault({ "notes/d": drive(), "notes/q1": queue([task({})]) });
+    expect(await advancePipeline(half.client, { ...args, incomplete: "the source was not updated" })).toEqual({ task_id: "t1", from: "create", to: "create", summary: "The pipeline task stays at create: the source was not updated. Fix that and run the step again." });
+    expect(half.requests.some((r) => r.path === "actions" || r.path.includes("claim"))).toBe(false);
     expect((await advancePipeline(vault({ "notes/d": drive(), "notes/q1": queue([task({})]), "tasks/t1/claim": {}, actions: { operations: [] } }).client, { ...args, now: undefined })).to).toBe("reflect");
+  });
+});
+
+describe("claiming a phase before the work", () => {
+  const drive = { state: { global: { nodes: [{ id: "q1", documentType: "bai/pipeline-queue" }] } } };
+  const queue = (tasks: unknown[]) => ({ state: { global: { tasks } } });
+  const task = (extra: Record<string, unknown>) => ({ id: "t1", taskType: "claim", status: "PENDING", documentRef: "s1", currentPhase: "create", ...extra });
+  const a = { drive: "d", sourceId: "s1", phase: "create" as const };
+  it("claims a pending task, keeps its own, and stops on someone else's", async () => {
+    const pending = vault({ "notes/d": drive, "notes/q1": queue([task({})]), ping: { user: "0xme" }, "tasks/t1/claim": {} });
+    expect(await claimPhase(pending.client, a)).toEqual({ task_id: "t1", summary: "Claimed the pipeline task at create." });
+    expect(pending.requests.map((r) => r.path)).toContain("tasks/t1/claim");
+    const mine = vault({ "notes/d": drive, "notes/q1": queue([task({ status: "IN_PROGRESS", assignedTo: "0xME" })]), ping: { user: "0xme" } });
+    expect((await claimPhase(mine.client, a)).summary).toMatch(/already held by this connection/);
+    const theirs = vault({ "notes/d": drive, "notes/q1": queue([task({ status: "IN_PROGRESS", assignedTo: "0xother" })]), ping: { user: "0xme" } });
+    await expect(claimPhase(theirs.client, a)).rejects.toThrow(/being worked by 0xother/);
+    const nobody = vault({ "notes/d": drive, "notes/q1": queue([task({ status: "IN_PROGRESS" })]), ping: { user: "0xme" } });
+    await expect(claimPhase(nobody.client, a)).rejects.toThrow(/being worked by someone else/);
+  });
+  it("leaves the step running when there is nothing to claim", async () => {
+    expect((await claimPhase(vault({ "notes/d": { state: { global: { nodes: [] } } } }).client, a)).summary).toMatch(/No pipeline queue/);
+    expect((await claimPhase(vault({ "notes/d": drive, "notes/q1": queue([]) }).client, a)).summary).toMatch(/no open pipeline task/);
+    expect((await claimPhase(vault({ "notes/d": drive, "notes/q1": queue([task({ currentPhase: "reflect" })]) }).client, a)).summary).toMatch(/is at "reflect", not "create"/);
   });
 });
 
@@ -124,6 +155,9 @@ describe("connect", () => {
     const allowed = new Map([["n1", new Set(["x1", "n2"])]]);
     const link = (extra: Record<string, unknown>) => ({ from: "n1", to: "x1", type: "BUILDS_ON", reason: "The capital note extends the payback note to technology budgets.", ...extra });
     expect(checkLink(link({}), allowed)).toBeNull();
+    // Real words with a capital letter and a hyphen are not note labels.
+    expect(checkLink(link({ reason: "The C-suite pressure note extends the E-commerce margin claim to technology budgets." }), allowed)).toBeNull();
+    expect(checkLink(link({ reason: "C supplies what the budget note needs to hold, so the claims build together." }), allowed)).toMatch(/by a letter or id/);
     expect(checkLink(link({ from: "zz" }), allowed)).toMatch(/not one of the new notes/);
     expect(checkLink(link({ to: "zz" }), allowed)).toMatch(/not a candidate/);
     expect(checkLink(link({ type: "LIKES" }), allowed)).toMatch(/type must be/);
@@ -276,7 +310,8 @@ describe("the connect and place actions", () => {
     if (u.includes("/graph.json")) return json({ nodes: [{ documentId: "top", title: "Pricing", status: "MOC" }, { documentId: "hub", noteType: "MOC (HUB)", status: "MOC" }], edges: [] });
     if (u.includes("/notes/s1")) return json({ name: "s1", state: { global: { title: "Tech", status: "EXTRACTED", extractedClaims: variant === "none" ? [] : variant === "one" ? ["n1"] : variant === "three" ? ["n1", "n2", "n3", "n4"] : ["n1", "n2"] } } });
     if (u.includes("/notes/d")) return json({ state: { global: { nodes: [{ id: "q1", documentType: "bai/pipeline-queue" }] } } });
-    if (u.includes("/notes/q1")) return json({ state: { global: { tasks: [{ id: "t1", taskType: "claim", status: "IN_PROGRESS", documentRef: "s1", currentPhase: u.includes("q1") ? phase : "create" }] } } });
+    if (u.includes("/notes/q1")) return json({ state: { global: { tasks: [{ id: "t1", taskType: "claim", status: "IN_PROGRESS", assignedTo: "0xme", documentRef: "s1", currentPhase: u.includes("q1") ? phase : "create" }] } } });
+    if (u.includes("/ping")) return json({ ok: true, user: "0xme" });
     if (u.match(/\/notes\/n\d/)) return json({ state: { global: { title: u.includes("n1") ? "Capital" : "Legacy", status: "DRAFT" } } });
     return json({ operations: [] });
   };

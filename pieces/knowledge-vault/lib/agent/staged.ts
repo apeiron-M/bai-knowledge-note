@@ -26,6 +26,8 @@ export type SourceBundle = {
   figures: number;
   /** Notes already recorded as extracted from this source. */
   extracted_claims: number;
+  /** Live (not archived) notes linked to it with DERIVED_FROM: set even when a stopped step never recorded them. */
+  derived_notes: number;
   topics: string[];
   /** The most used topics, each with one note title, so the model knows what a name covers here. */
   topic_examples: TopicInfo[];
@@ -55,26 +57,44 @@ function safeParse(text: string): unknown {
     return undefined;
   }
 }
+/** Run `work` over `items`, at most `limit` at a time, keeping the order. */
+export async function mapLimit<T, R>(items: readonly T[], limit: number, work: (item: T, index: number) => Promise<R>): Promise<R[]> {
+  const out: R[] = new Array<R>(items.length);
+  let next = 0;
+  const lanes = Array.from({ length: Math.min(limit, items.length) }, async () => {
+    while (next < items.length) {
+      const i = next++;
+      out[i] = await work(items[i], i);
+    }
+  });
+  await Promise.all(lanes);
+  return out;
+}
 const str = (v: unknown): string => (typeof v === "string" ? v : v == null ? "" : JSON.stringify(v));
 const arr = (v: unknown): unknown[] => (Array.isArray(v) ? v : []);
 
 // ── 1. read ──────────────────────────────────────────────────────────────
 
 export async function readSourceStage(client: KnowledgeVaultClient, drive: string, sourceId: string): Promise<SourceBundle & { summary: string }> {
-  const doc = await client.request<{ name: string; state?: { global?: { title?: string; content?: string; sourceType?: string; status?: string; attachments?: unknown[]; extractedClaims?: unknown[] } } }>({ path: `notes/${encodeURIComponent(sourceId)}`, query: { drive } });
+  const doc = await client.request<{ name: string; edges?: { direction?: string; documentId?: string; linkType?: string }[]; state?: { global?: { title?: string; content?: string; sourceType?: string; status?: string; attachments?: unknown[]; extractedClaims?: unknown[] } } }>({ path: `notes/${encodeURIComponent(sourceId)}`, query: { drive } });
+  const derivedIds = [...new Set((doc.edges ?? []).filter((e) => e.linkType === "DERIVED_FROM" && e.direction === "in" && e.documentId).map((e) => str(e.documentId)))];
+  const derivedStatus = await mapLimit(derivedIds, 8, (id) =>
+    client.request<{ state?: { global?: { status?: string } } }>({ path: `notes/${encodeURIComponent(id)}`, query: { drive } }).then((d) => d.state?.global?.status ?? null, () => null),
+  );
+  const derived_notes = derivedStatus.filter((st) => st !== null && st !== "ARCHIVED").length;
   const g = doc.state?.global ?? {};
   const content = g.content ?? "";
   const topicsBody = await client.request<{ topics?: { name: string; noteCount: number }[] } | { name: string; noteCount: number }[]>({ path: "topics", query: { drive } });
   const ranked = (Array.isArray(topicsBody) ? topicsBody : (topicsBody.topics ?? [])).sort((a, b) => b.noteCount - a.noteCount);
   const topics = ranked.map((t) => t.name);
-  const topic_examples: TopicInfo[] = [];
-  for (const t of ranked.slice(0, TOPIC_EXAMPLES)) {
+  // In parallel: sixty lookups one after another took 6 s on a remote vault.
+  const topic_examples: TopicInfo[] = await mapLimit(ranked.slice(0, TOPIC_EXAMPLES), 8, async (t) => {
     const notes = await client
       .request<{ title?: string; status?: string }[] | { nodes?: { title?: string; status?: string }[] }>({ path: `topics/${encodeURIComponent(t.name)}`, query: { drive } })
       .catch(() => []);
     const list = Array.isArray(notes) ? notes : (notes.nodes ?? []);
-    topic_examples.push({ name: t.name, notes: t.noteCount, example: list.find((n) => n.status !== "MOC" && n.title)?.title ?? null });
-  }
+    return { name: t.name, notes: t.noteCount, example: list.find((n) => n.status !== "MOC" && n.title)?.title ?? null };
+  });
   const figures = arr(g.attachments).length;
   const title = g.title ?? doc.name;
   if (!content.trim()) throw new KnowledgeVaultApiError(`The source "${title}" has no text to extract from`, { category: "validation" });
@@ -89,6 +109,7 @@ export async function readSourceStage(client: KnowledgeVaultClient, drive: strin
     text,
     figures,
     extracted_claims: arr(g.extractedClaims).length,
+    derived_notes,
     topics,
     topic_examples,
   };
@@ -191,15 +212,15 @@ export function classifySkips(skipped: SkippedCandidate[]) {
 
 export async function checkVaultStage(client: KnowledgeVaultClient, drive: string, candidates: Record<string, unknown>, threshold = 0.9) {
   const kept = arr(candidates.kept).map(asRecord);
-  const checked: CheckedCandidate[] = [];
-  for (const c of kept) {
+  // In parallel: a semantic search embeds its query, 3-4 s each on a remote vault.
+  const checked: CheckedCandidate[] = await mapLimit(kept, 4, async (c) => {
     const body = await client.request<{ hits: { node: { documentId?: string; title?: string; status?: string }; similarity: number }[] }>({
       path: "search",
       query: { drive, q: str(c.claim), mode: "semantic", limit: 3, related: 0 },
     });
     const matches = body.hits.filter((h) => h.node.status !== "MOC").map((h) => ({ id: str(h.node.documentId), title: str(h.node.title), similarity: Math.round(h.similarity * 1000) / 1000 }));
-    checked.push({ id: str(c.id), claim: str(c.claim), locus: str(c.locus), evidence: str(c.evidence), matches, likely_duplicate: (matches[0]?.similarity ?? 0) >= threshold });
-  }
+    return { id: str(c.id), claim: str(c.claim), locus: str(c.locus), evidence: str(c.evidence), matches, likely_duplicate: (matches[0]?.similarity ?? 0) >= threshold };
+  });
   const dups = checked.filter((c) => c.likely_duplicate);
   return {
     summary: `Searched the vault for ${checked.length} candidate${checked.length === 1 ? "" : "s"}: ${dups.length ? `${dups.length} likely already there (similarity ≥ ${threshold})` : "none already there"}${checked.length ? `; best match ${Math.max(0, ...checked.map((c) => c.matches[0]?.similarity ?? 0))}` : ""}.`,
@@ -369,7 +390,7 @@ export function reportStage(model: string, read: Record<string, unknown>, candid
   const cost = round4(Number(candidates.cost_usd ?? 0) + Number(draft.cost_usd ?? 0));
   const newTopics = arr(draft.new_topics).map(str);
   const lines = [
-    `## Extract (dry run) — ${str(read.title)}`,
+    `## Extract — ${str(read.title)}`,
     "",
     `**${proposed.length} proposed** · ${skipped.length} rejected on a gate · ${existing.length} already in the vault${rejected.length ? ` · ${rejected.length} failed the rules` : ""}${overlaps ? ` · ${overlaps} dropped as duplicates of another draft` : ""} · skip rate ${Math.round(skipRate * 100)}%`,
     `Also set aside: ${restatements} restatement${restatements === 1 ? "" : "s"} of kept claims, ${nonClaims} non-claim${nonClaims === 1 ? "" : "s"} (headings, captions, bare statistics). Neither counts in the skip rate.`,

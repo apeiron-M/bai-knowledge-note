@@ -40,8 +40,11 @@ describe("write mode", () => {
     expect(create.notes[0].actions.at(-2)?.input).toEqual({ author: "extract-claims · m/x", sourceOrigin: "DERIVED", createdAt: "2026-09-28T12:00:00.000Z" });
     expect(create.notes[0].actions.at(-1)?.input).toMatchObject({ actor: "extract-claims · m/x", timestamp: "2026-09-28T12:00:00.000Z", comment: 'Extracted from "Tech" (paragraph 1) by m/x. Check the claim, its type and topics, then approve.' });
     expect(create.notes[1].actions.at(-1)?.input).toMatchObject({ comment: expect.stringContaining("(paragraph 2)") as unknown as string });
-    expect(requests[1].json).toEqual({ source: "n1", target: "src", type: "DERIVED_FROM", reason: 'Extracted from "Tech": paragraph 1', confidence: "grounded" });
-    const source = requests[3].json as { documentId: string; actions: { type: string; input: Record<string, unknown> }[] };
+    // Recorded on the source straight after creation, before the links.
+    expect(requests[1].json).toEqual({ documentId: "src", actions: [{ type: "ADD_EXTRACTED_CLAIM", input: { claimRef: "n1" } }, { type: "ADD_EXTRACTED_CLAIM", input: { claimRef: "n2" } }] });
+    expect(requests[2].json).toEqual({ source: "n1", target: "src", type: "DERIVED_FROM", reason: 'Extracted from "Tech": paragraph 1', confidence: "grounded" });
+    expect(out.incomplete).toBeNull();
+    const source = requests[4].json as { documentId: string; actions: { type: string; input: Record<string, unknown> }[] };
     expect(source.documentId).toBe("src");
     expect(source.actions.map((a) => a.type)).toEqual(["ADD_EXTRACTED_CLAIM", "ADD_EXTRACTED_CLAIM", "RECORD_EXTRACTION_STATS", "SET_SOURCE_STATUS"]);
     expect(source.actions[2].input).toMatchObject({ claimCount: 2, skippedCount: 2, skipRate: 0.25 });
@@ -68,11 +71,29 @@ describe("write mode", () => {
     expect(out.written[1].problems).toEqual(["SET_DESCRIPTION: Description exceeds 200 characters"]);
     expect(out).toMatchObject({ linked_count: 1, source_updated: false, source_problem: "SET_SOURCE_STATUS: bad status", problem_count: 2 });
     expect(out.summary).toBe("Wrote 2 notes to /knowledge/notes, submitted for review, 1 linked to the source; the source was NOT updated (SET_SOURCE_STATUS: bad status). 2 notes have problems: see written.");
+    expect(out.incomplete).toBe("the source was not updated");
+    const unlinked = recordingVault({ relationships: () => { throw new Error("down"); } });
+    expect((await writeStage(unlinked.client, args([note(1), note(2)]))).incomplete).toBe("2 notes are not linked to the source");
     const down = recordingVault({ actions: () => { throw new Error("gateway down"); } });
     const one = await writeStage(down.client, args([note(1)]));
     expect(one.summary).toBe("Wrote 1 note to /knowledge/notes, submitted for review, 1 linked to the source; the source was NOT updated (gateway down).");
     const oneBad = recordingVault({ notes: (b) => ({ notes: b.notes.map((n) => ({ id: "x", name: n.name, readBack: "skipped", operations: [] })) }) });
     expect((await writeStage(oneBad.client, args([note(1)]))).summary).toMatch(/1 note has problems/);
+  });
+
+  it("moves a source that was never queued through EXTRACTING, which INBOX needs", async () => {
+    const inbox = recordingVault();
+    await writeStage(inbox.client, { ...args([note(1)]), sourceStatus: "INBOX" });
+    const types = (r: RequestOptions) => (r.json as { actions: { type: string; input: { status?: string } }[] }).actions.map((a) => a.input.status ?? a.type);
+    expect(types(inbox.requests.at(-1) as RequestOptions)).toEqual(["ADD_EXTRACTED_CLAIM", "EXTRACTING", "RECORD_EXTRACTION_STATS", "EXTRACTED"]);
+    const unset = recordingVault();
+    await writeStage(unset.client, { ...args([note(1)]), sourceStatus: null });
+    expect(types(unset.requests.at(-1) as RequestOptions)).toContain("EXTRACTING");
+  });
+
+  it("refuses a source whose notes a stopped step never recorded", () => {
+    expect(() => assertWritable({ title: "T", status: "EXTRACTING", extracted_claims: 0, derived_notes: 4 })).toThrow(/already has 4 extracted notes/);
+    expect(() => assertWritable({ title: "T", status: "EXTRACTING", extracted_claims: 2, derived_notes: 5 })).toThrow(/already has 5/);
   });
 
   it("refuses a source that already has notes, or is archived", () => {

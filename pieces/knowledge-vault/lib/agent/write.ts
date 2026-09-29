@@ -39,11 +39,16 @@ export function slugFor(title: string): string {
   return slug[72] === "-" ? cut : cut.replace(/-[^-]*$/, "") || cut;
 }
 
-/** Refuse a source that already has extracted notes: a rerun would duplicate them. */
-export function assertWritable(bundle: { title: string; status: string | null; extracted_claims: number }): void {
-  if (bundle.extracted_claims > 0) {
+/**
+ * Refuse a source that already has extracted notes: a rerun would duplicate
+ * them. Two records are checked, because a step stopped halfway leaves notes
+ * linked to the source (DERIVED_FROM) that the source does not list yet.
+ */
+export function assertWritable(bundle: { title: string; status: string | null; extracted_claims: number; derived_notes?: number }): void {
+  const existing = Math.max(bundle.extracted_claims, bundle.derived_notes ?? 0);
+  if (existing > 0) {
     throw new KnowledgeVaultApiError(
-      `"${bundle.title}" already has ${bundle.extracted_claims} extracted note${bundle.extracted_claims === 1 ? "" : "s"}; writing again would duplicate them. Run in dry-run mode, or archive the earlier notes and clear the source's claims first.`,
+      `"${bundle.title}" already has ${existing} extracted note${existing === 1 ? "" : "s"}; writing again would duplicate them. Run in dry-run mode, or archive the earlier notes first.`,
       { category: "validation" },
     );
   }
@@ -52,7 +57,7 @@ export function assertWritable(bundle: { title: string; status: string | null; e
 
 export async function writeStage(
   client: KnowledgeVaultClient,
-  args: { drive: string; sourceId: string; sourceTitle: string; model: string; notes: NoteToWrite[]; rejectedCount: number; skipRate: number; now?: () => Date },
+  args: { drive: string; sourceId: string; sourceTitle: string; sourceStatus?: string | null; model: string; notes: NoteToWrite[]; rejectedCount: number; skipRate: number; now?: () => Date },
 ) {
   const now = () => (args.now ?? (() => new Date()))().toISOString();
   const author = `extract-claims · ${args.model}`;
@@ -83,11 +88,17 @@ export async function writeStage(
         })),
       },
     });
-    body.notes.forEach((created, k) => {
+    const fresh: WrittenNote[] = body.notes.map((created, k) => {
       const problems = created.operations.filter((o) => o.error).map((o) => `${o.type}: ${o.error}`);
       if (created.readBack !== "confirmed") problems.push(`read-back ${created.readBack}`);
-      written.push({ id: created.id, title: batch[k]?.title ?? created.name, linked: false, problems });
+      return { id: created.id, title: batch[k]?.title ?? created.name, linked: false, problems };
     });
+    written.push(...fresh);
+    // Recorded on the source at once (idempotent), so a step stopped from
+    // here on still leaves the source saying what it produced.
+    await client
+      .request({ method: "POST", path: "actions", timeoutMs: 60_000, json: { documentId: args.sourceId, actions: fresh.map((n) => ({ type: "ADD_EXTRACTED_CLAIM", input: { claimRef: n.id } })) } })
+      .catch(() => undefined);
   }
 
   // Provenance edge per note: the reason says where in the source it came from.
@@ -118,6 +129,8 @@ export async function writeStage(
         documentId: args.sourceId,
         actions: [
           ...written.map((n) => ({ type: "ADD_EXTRACTED_CLAIM", input: { claimRef: n.id } })),
+          // A source that was never queued is still in INBOX, which cannot move straight to EXTRACTED.
+          ...(args.sourceStatus === null || args.sourceStatus === "INBOX" ? [{ type: "SET_SOURCE_STATUS", input: { status: "EXTRACTING" } }] : []),
           { type: "RECORD_EXTRACTION_STATS", input: { claimCount: written.length, skippedCount: args.rejectedCount, skipRate: args.skipRate, extractedAt: at, extractedBy: author } },
           { type: "SET_SOURCE_STATUS", input: { status: "EXTRACTED" } },
         ],
@@ -135,7 +148,14 @@ export async function writeStage(
 
   const withProblems = written.filter((n) => n.problems.length);
   const linked = written.filter((n) => n.linked).length;
+  // What must hold for the create phase to count as done.
+  const incomplete = !sourceUpdated
+    ? "the source was not updated"
+    : linked < written.length
+      ? `${written.length - linked} note${written.length - linked === 1 ? " is" : "s are"} not linked to the source`
+      : null;
   return {
+    incomplete,
     summary:
       `Wrote ${written.length} note${written.length === 1 ? "" : "s"} to /knowledge/notes, submitted for review, ${linked} linked to the source` +
       (sourceUpdated ? "; the source is marked EXTRACTED." : `; the source was NOT updated (${sourceProblem}).`) +

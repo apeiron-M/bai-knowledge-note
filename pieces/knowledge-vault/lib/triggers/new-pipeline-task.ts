@@ -1,5 +1,5 @@
 import { createTrigger, Property, TriggerStrategy } from "@powerhousedao/pieces-framework";
-import { findQueue } from "../agent/pipeline.js";
+import { driveNodes } from "../agent/pipeline.js";
 import { knowledgeVaultAuth } from "../auth.js";
 import type { KnowledgeVaultClient } from "../common/client.js";
 import { clientFor, type StoreLike } from "../common/context.js";
@@ -24,10 +24,13 @@ const MAX_SEEN = 5000;
 export type TaskItem = { task_id: string; source_id: string; source_title: string; phase: string; queued_at: string | null; _dedupe_key: string };
 
 async function openTasks(client: KnowledgeVaultClient, drive: string, phase: string): Promise<Task[]> {
-  const queueId = await findQueue(client, drive);
+  const nodes = await driveNodes(client, drive);
+  const queueId = nodes.find((n) => n.documentType === "bai/pipeline-queue")?.id;
   if (!queueId) return [];
+  // A task whose source was deleted would start a run that fails on its first read.
+  const sources = new Set(nodes.filter((n) => n.documentType === "bai/source").map((n) => n.id));
   const doc = await client.request<{ state?: { global?: { tasks?: Task[] } } }>({ path: `notes/${encodeURIComponent(queueId)}`, query: { drive } });
-  return (doc.state?.global?.tasks ?? []).filter((t) => t.taskType === "claim" && t.status === "PENDING" && t.currentPhase === phase && t.documentRef);
+  return (doc.state?.global?.tasks ?? []).filter((t) => t.taskType === "claim" && t.status === "PENDING" && t.currentPhase === phase && !!t.documentRef && sources.has(t.documentRef));
 }
 
 /** A task is new at a phase: the same task at its next phase fires again. */

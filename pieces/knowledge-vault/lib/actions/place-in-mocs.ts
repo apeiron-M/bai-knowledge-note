@@ -1,6 +1,6 @@
 import { createAction } from "@powerhousedao/pieces-framework";
 import { sourceNotes } from "../agent/connect.js";
-import { advancePipeline } from "../agent/pipeline.js";
+import { advancePipeline, claimPhase } from "../agent/pipeline.js";
 import { llmFor, stageRunner } from "../agent/runner.js";
 import { planStage, readMocs, writePlacementsStage } from "../agent/synthesize.js";
 import { knowledgeVaultAuth } from "../auth.js";
@@ -40,6 +40,7 @@ export const placeInMocsAction = createAction({
       const hub = tree.mocs.filter((m) => m.tier === "HUB").length;
       return { ...notes, ...tree, summary: `${notes.notes.length} notes from "${notes.sourceTitle}"; the vault has ${tree.mocs.length} MoCs (${hub} HUB).` };
     });
+    if (write) await stage("claim", () => claimPhase(client, { drive, sourceId, phase: "reweave" }));
     if (read.notes.length === 0) {
       const pipeline = write
         ? await stage("pipeline", () => advancePipeline(client, { drive, sourceId, phase: "reweave", workDone: "The source yielded no notes, so there was nothing to place. Ready for review.", filesModified: [], completedBy: `place-in-mocs · ${model}` }))
@@ -58,6 +59,7 @@ export const placeInMocsAction = createAction({
             workDone: `Placed ${plan.placements.length} of ${read.notes.length} notes in MoCs${plan.new_mocs.length ? ` (${plan.new_mocs.length} new TOPIC MoC)` : ""}. Ready for review.`,
             filesModified: [...read.notes.map((n) => n.id), ...written.created_mocs],
             completedBy: `place-in-mocs · ${model}`,
+            incomplete: written.problems.length ? `${written.problems.length} placement${written.problems.length === 1 ? "" : "s"} did not land (${written.problems[0]})` : null,
           }),
         )
       : null;

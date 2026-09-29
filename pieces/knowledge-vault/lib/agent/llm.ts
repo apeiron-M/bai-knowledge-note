@@ -156,7 +156,15 @@ export async function completeJson(
       if (retryable(error)) continue;
       return fail(error);
     }
-    if (!response.ok) throw await llmError(response, `ask ${request.model}`);
+    if (!response.ok) {
+      // A rate limit or a provider hiccup (429, 5xx) is waited out once; parallel runs and batches hit it.
+      if (attempt < 2 && (response.status === 429 || response.status >= 500)) {
+        await response.text().catch(() => "");
+        await sleep(retryDelayMs(response));
+        continue;
+      }
+      throw await llmError(response, `ask ${request.model}`);
+    }
     let body: { choices?: { message?: { content?: string | null }; finish_reason?: string | null }[]; usage?: { prompt_tokens?: number; completion_tokens?: number; cost?: number }; error?: { message?: string } } | null;
     try {
       body = (await response.json()) as typeof body;
@@ -191,6 +199,15 @@ export async function completeJson(
       throw error;
     }
   }
+}
+
+const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
+
+/** Retry-After in seconds when the provider sends it, else 5 s; never more than 30 s. */
+export function retryDelayMs(response: { headers: { get(name: string): string | null } }): number {
+  const header = response.headers.get("retry-after");
+  const seconds = header === null || header.trim() === "" ? NaN : Number(header);
+  return Number.isFinite(seconds) && seconds >= 0 ? Math.min(seconds, 30) * 1000 : 5000;
 }
 
 /** AbortSignal.timeout rejects with a TimeoutError, both on the request and while the body is read. */

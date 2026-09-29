@@ -55,16 +55,19 @@ export class KnowledgeVaultClient {
         signal: controller.signal,
       });
     } catch (error) {
-      const aborted = error instanceof Error && error.name === "AbortError";
-      throw new KnowledgeVaultApiError(
-        aborted ? "The request timed out" : `Could not reach the Switchboard: ${describeCause(error)}`,
-        { category: aborted ? "timeout" : "network", retryable: true, detail: describeCause(error) },
-      );
+      clearTimeout(timer);
+      throw unreachable(error);
+    }
+
+    // The timeout covers the body too: a response that stalls halfway must not hang the step.
+    let text: string;
+    try {
+      text = await response.text();
+    } catch (error) {
+      throw unreachable(error);
     } finally {
       clearTimeout(timer);
     }
-
-    const text = await response.text();
     const wantsText = options.accept !== undefined && options.accept !== "application/json";
     const body: unknown = text === "" ? undefined : response.ok && wantsText ? text : safeJson(text);
     if (!response.ok) {
@@ -90,6 +93,14 @@ export class KnowledgeVaultClient {
   drives(): Promise<{ drives: { id: string; name: string; slug: string }[] }> {
     return this.request({ path: "drives" });
   }
+}
+
+function unreachable(error: unknown): KnowledgeVaultApiError {
+  const aborted = error instanceof Error && (error.name === "AbortError" || error.name === "TimeoutError");
+  return new KnowledgeVaultApiError(
+    aborted ? "The request timed out" : `Could not reach the Switchboard: ${describeCause(error)}`,
+    { category: aborted ? "timeout" : "network", retryable: true, detail: describeCause(error) },
+  );
 }
 
 /** Node's fetch hides the useful part (ECONNREFUSED, ENOTFOUND, the egress refusal) in `cause`. */

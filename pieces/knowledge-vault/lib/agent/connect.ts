@@ -87,7 +87,7 @@ export function checkLink(link: Record<string, unknown>, allowed: Map<string, Se
   if (reason.length < 20) return "the reason is too short to say why the link holds";
   if (/^(relates to|builds on|contradicts|supersedes|because)\b/i.test(reason) && reason.split(/\s+/).length < 6) return "the reason names the link instead of explaining it";
   // Letter labels ("C supplies what E needs") mean nothing once the reason is stored on its own.
-  if (/\b[B-H]('s)?\b/.test(reason) || /\bA('s)? (connects|describes|takes|extends|builds|says|argues|claims|identifies|adds|supplies|shows|reports)\b/.test(reason) || reason.includes(from) || reason.includes(to)) return "the reason refers to notes by a letter or id; name them by their subject";
+  if (/(?<![\w-])[B-H]('s)?(?![\w-])/.test(reason) || /\bA('s)? (connects|describes|takes|extends|builds|says|argues|claims|identifies|adds|supplies|shows|reports)\b/.test(reason) || reason.includes(from) || reason.includes(to)) return "the reason refers to notes by a letter or id; name them by their subject";
   return null;
 }
 
