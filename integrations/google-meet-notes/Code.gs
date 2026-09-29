@@ -100,10 +100,7 @@ function sendPending_() {
 
 /** The Quick notes tab as plain text, with the meeting's title, time and link. */
 function readNote_(file) {
-  const doc = DocumentApp.openById(file.getId());
-  const tab = findTab_(doc.getTabs(), CONFIG.TAB_NAME);
-  if (!tab) return null;
-  const content = tab.asDocumentTab().getBody().getText().trim();
+  const content = quickNotesText_(file);
   if (!content) return null;
   const owner = file.getOwner();
   return {
@@ -114,6 +111,75 @@ function readNote_(file) {
     author: owner ? owner.getName() : '',
     meeting_at: new Date(meetingTime_(file)).toISOString(),
   };
+}
+
+/**
+ * The tab's text, or '' when the doc has no such tab. DocumentApp first; a
+ * doc it cannot open (a colleague's, shared with you to view) is read through
+ * the Docs API, which reads anything you can view and returns every tab.
+ */
+function quickNotesText_(file) {
+  try {
+    const tab = findTab_(DocumentApp.openById(file.getId()).getTabs(), CONFIG.TAB_NAME);
+    return tab ? tab.asDocumentTab().getBody().getText().trim() : '';
+  } catch (documentAppError) {
+    const response = UrlFetchApp.fetch(
+      'https://docs.googleapis.com/v1/documents/' + file.getId() + '?includeTabsContent=true',
+      { headers: { Authorization: 'Bearer ' + ScriptApp.getOAuthToken() }, muteHttpExceptions: true });
+    if (response.getResponseCode() !== 200) {
+      throw new Error('DocumentApp: ' + documentAppError.message + '; Docs API ' + response.getResponseCode() + ': ' +
+        response.getContentText().slice(0, 200) + whyUnreadable_(file));
+    }
+    const tab = findApiTab_(JSON.parse(response.getContentText()).tabs || [], CONFIG.TAB_NAME);
+    return tab ? apiTabText_(tab).trim() : '';
+  }
+}
+
+/** A Docs API tab by title, children included. */
+function findApiTab_(tabs, name) {
+  for (let i = 0; i < tabs.length; i++) {
+    const title = ((tabs[i].tabProperties || {}).title || '').trim().toLowerCase();
+    if (title === name.toLowerCase()) return tabs[i];
+    const child = findApiTab_(tabs[i].childTabs || [], name);
+    if (child) return child;
+  }
+  return null;
+}
+
+/** Plain text of a Docs API tab: its paragraphs, and those inside tables. */
+function apiTabText_(tab) {
+  const out = [];
+  const walk = function (elements) {
+    (elements || []).forEach(function (el) {
+      if (el.paragraph) {
+        out.push((el.paragraph.elements || []).map(function (e) {
+          return e.textRun ? e.textRun.content : '';
+        }).join(''));
+      } else if (el.table) {
+        (el.table.tableRows || []).forEach(function (row) {
+          (row.tableCells || []).forEach(function (cell) { walk(cell.content); });
+        });
+      }
+    });
+  };
+  walk(((tab.documentTab || {}).body || {}).content);
+  return out.join('').replace(/\n{3,}/g, '\n\n');
+}
+
+/** Why a doc cannot be read, when Drive says: its owner blocked copying and downloading for viewers. */
+function whyUnreadable_(file) {
+  try {
+    const r = UrlFetchApp.fetch(
+      'https://www.googleapis.com/drive/v3/files/' + file.getId() + '?fields=copyRequiresWriterPermission,capabilities(canCopy,canDownload)&supportsAllDrives=true',
+      { headers: { Authorization: 'Bearer ' + ScriptApp.getOAuthToken() }, muteHttpExceptions: true });
+    const f = JSON.parse(r.getContentText());
+    if (f.copyRequiresWriterPermission || (f.capabilities && f.capabilities.canCopy === false)) {
+      return ' (its owner disabled copying and downloading for viewers: ask them to allow it, or to share it with edit access)';
+    }
+  } catch (e) {
+    // the reason stays unknown
+  }
+  return '';
 }
 
 function findTab_(tabs, name) {
