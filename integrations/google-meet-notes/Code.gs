@@ -55,11 +55,18 @@ function sendPending_() {
   }
   const started = Date.now();
   const props = PropertiesService.getUserProperties();
-  const files = [];
+  const found = [];
   const iterator = DriveApp.searchFiles(
     'mimeType = "application/vnd.google-apps.document" and title contains "' + CONFIG.TITLE_MATCH + '" and trashed = false');
-  while (iterator.hasNext()) files.push(iterator.next());
-  files.sort(function (a, b) { return meetingTime_(a) - meetingTime_(b); });
+  // Each doc's date is read once: a sort that asked Drive inside its
+  // comparison made thousands of calls and ran out of time before sending.
+  while (iterator.hasNext()) {
+    const file = iterator.next();
+    found.push({ file: file, at: meetingTime_(file) });
+  }
+  found.sort(function (a, b) { return a.at - b.at; });
+  const files = found.map(function (f) { return f.file; });
+  Logger.log('Found %s doc(s) titled "%s".', files.length, CONFIG.TITLE_MATCH);
 
   const result = { sent: 0, skipped: 0, failed: 0, left: 0, unreadable: [] };
   for (let i = 0; i < files.length; i++) {
