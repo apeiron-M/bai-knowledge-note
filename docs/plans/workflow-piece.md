@@ -907,11 +907,13 @@ with bun too, and check that one copy of `reactor-attachments` is installed
 - Studio's connection form now reads auth props listed as an array (upstream
   report 6, fixed). `readAuth`'s positional mapping stays for connections
   already stored as `"0"`, `"1"`, …
-- **Dropdown search never reaches the piece** (`refreshOnSearch` is listed as
-  unsupported: `searchValue` is never sent). The Model dropdown therefore
-  shows only its default list, the cheap qualifying models; a model outside
-  it, such as Claude Sonnet 5.5, cannot be picked in Studio. The Source
-  dropdown lists every source, so it is unaffected.
+- **Dropdown search:** the runtime README lists `refreshOnSearch` as
+  unsupported ("`searchValue` is never sent"), but on dev.31 the runtime's
+  `blockOptions` query takes a `searchValue` and passes it to the piece:
+  "sonnet" returns the four Sonnet models, an empty search the eight cheap
+  ones (checked through the runtime API). Whether Studio's dropdown sends
+  what is typed is still to confirm in the UI; if it does not, a model
+  outside the cheap default list cannot be picked there.
 - Still open: a running step shows nothing (report 7: `onPartialOutput` is
   still not passed), and the default step timeout is still 30 s with no
   setting (report 8; the worker has a `defaultTimeoutMs` the host never sets).
