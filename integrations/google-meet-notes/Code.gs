@@ -27,6 +27,7 @@ function backfill() {
   const result = sendPending_();
   Logger.log('Sent %s, skipped %s (already sent or no %s tab), failed %s, left for the next run %s.',
     result.sent, result.skipped, CONFIG.TAB_NAME, result.failed, result.left);
+  if (result.unreadable.length) Logger.log('Could not open %s doc(s): %s', result.unreadable.length, result.unreadable.join(' | '));
 }
 
 /** What the hourly trigger runs: the same, for docs created since. */
@@ -60,12 +61,22 @@ function sendPending_() {
   while (iterator.hasNext()) files.push(iterator.next());
   files.sort(function (a, b) { return meetingTime_(a) - meetingTime_(b); });
 
-  const result = { sent: 0, skipped: 0, failed: 0, left: 0 };
+  const result = { sent: 0, skipped: 0, failed: 0, left: 0, unreadable: [] };
   for (let i = 0; i < files.length; i++) {
     const file = files[i];
     if (props.getProperty('sent:' + file.getId())) { result.skipped++; continue; }
     if (Date.now() - started > CONFIG.MAX_RUNTIME_MS) { result.left = files.length - i; break; }
-    const note = readNote_(file);
+    let note;
+    try {
+      note = readNote_(file);
+    } catch (error) {
+      // One doc the account cannot open as a Doc (commonly: its owner blocked
+      // copying and downloading for viewers) must not stop the run.
+      result.failed++;
+      result.unreadable.push(file.getName());
+      Logger.log('Could not open "%s" (%s): %s', file.getName(), file.getUrl(), error && error.message ? error.message : error);
+      continue;
+    }
     if (!note) { result.skipped++; continue; }
     const response = UrlFetchApp.fetch(CONFIG.WEBHOOK_URL, {
       method: 'post',
