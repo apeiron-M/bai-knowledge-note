@@ -23,13 +23,24 @@ import {
   UpdateOrientationInputSchema,
 } from "./schema/zod.js";
 
+const schemaMemo = new Map<() => unknown, unknown>();
+
+function memoizedSchema<T>(makeSchema: () => T): T {
+  let schema = schemaMemo.get(makeSchema) as T | undefined;
+  if (schema === undefined) {
+    schema = makeSchema();
+    schemaMemo.set(makeSchema, schema);
+  }
+  return schema;
+}
+
 const stateReducer: StateReducer<MocPHState> = (state, action, dispatch) => {
   if (isDocumentAction(action)) {
     return state;
   }
   switch (action.type) {
     case "CREATE_MOC": {
-      CreateMocInputSchema().parse(action.input);
+      memoizedSchema(CreateMocInputSchema).parse(action.input);
 
       mocMocManagementOperations.createMocOperation(
         (state as any)[action.scope],
@@ -41,7 +52,7 @@ const stateReducer: StateReducer<MocPHState> = (state, action, dispatch) => {
     }
 
     case "UPDATE_ORIENTATION": {
-      UpdateOrientationInputSchema().parse(action.input);
+      memoizedSchema(UpdateOrientationInputSchema).parse(action.input);
 
       mocMocManagementOperations.updateOrientationOperation(
         (state as any)[action.scope],
@@ -53,7 +64,7 @@ const stateReducer: StateReducer<MocPHState> = (state, action, dispatch) => {
     }
 
     case "UPDATE_DESCRIPTION": {
-      UpdateDescriptionInputSchema().parse(action.input);
+      memoizedSchema(UpdateDescriptionInputSchema).parse(action.input);
 
       mocMocManagementOperations.updateDescriptionOperation(
         (state as any)[action.scope],
@@ -65,7 +76,7 @@ const stateReducer: StateReducer<MocPHState> = (state, action, dispatch) => {
     }
 
     case "ADD_CORE_IDEA": {
-      AddCoreIdeaInputSchema().parse(action.input);
+      memoizedSchema(AddCoreIdeaInputSchema).parse(action.input);
 
       mocMocManagementOperations.addCoreIdeaOperation(
         (state as any)[action.scope],
@@ -77,7 +88,7 @@ const stateReducer: StateReducer<MocPHState> = (state, action, dispatch) => {
     }
 
     case "UPDATE_CORE_IDEA": {
-      UpdateCoreIdeaInputSchema().parse(action.input);
+      memoizedSchema(UpdateCoreIdeaInputSchema).parse(action.input);
 
       mocMocManagementOperations.updateCoreIdeaOperation(
         (state as any)[action.scope],
@@ -89,7 +100,7 @@ const stateReducer: StateReducer<MocPHState> = (state, action, dispatch) => {
     }
 
     case "REMOVE_CORE_IDEA": {
-      RemoveCoreIdeaInputSchema().parse(action.input);
+      memoizedSchema(RemoveCoreIdeaInputSchema).parse(action.input);
 
       mocMocManagementOperations.removeCoreIdeaOperation(
         (state as any)[action.scope],
@@ -101,7 +112,7 @@ const stateReducer: StateReducer<MocPHState> = (state, action, dispatch) => {
     }
 
     case "REORDER_CORE_IDEAS": {
-      ReorderCoreIdeasInputSchema().parse(action.input);
+      memoizedSchema(ReorderCoreIdeasInputSchema).parse(action.input);
 
       mocMocManagementOperations.reorderCoreIdeasOperation(
         (state as any)[action.scope],
@@ -113,7 +124,7 @@ const stateReducer: StateReducer<MocPHState> = (state, action, dispatch) => {
     }
 
     case "ADD_TENSION": {
-      AddTensionInputSchema().parse(action.input);
+      memoizedSchema(AddTensionInputSchema).parse(action.input);
 
       mocMocManagementOperations.addTensionOperation(
         (state as any)[action.scope],
@@ -125,7 +136,7 @@ const stateReducer: StateReducer<MocPHState> = (state, action, dispatch) => {
     }
 
     case "REMOVE_TENSION": {
-      RemoveTensionInputSchema().parse(action.input);
+      memoizedSchema(RemoveTensionInputSchema).parse(action.input);
 
       mocMocManagementOperations.removeTensionOperation(
         (state as any)[action.scope],
@@ -137,7 +148,7 @@ const stateReducer: StateReducer<MocPHState> = (state, action, dispatch) => {
     }
 
     case "ADD_OPEN_QUESTION": {
-      AddOpenQuestionInputSchema().parse(action.input);
+      memoizedSchema(AddOpenQuestionInputSchema).parse(action.input);
 
       mocMocManagementOperations.addOpenQuestionOperation(
         (state as any)[action.scope],
@@ -149,7 +160,7 @@ const stateReducer: StateReducer<MocPHState> = (state, action, dispatch) => {
     }
 
     case "REMOVE_OPEN_QUESTION": {
-      RemoveOpenQuestionInputSchema().parse(action.input);
+      memoizedSchema(RemoveOpenQuestionInputSchema).parse(action.input);
 
       mocMocManagementOperations.removeOpenQuestionOperation(
         (state as any)[action.scope],
@@ -161,7 +172,7 @@ const stateReducer: StateReducer<MocPHState> = (state, action, dispatch) => {
     }
 
     case "ADD_CHILD_MOC": {
-      AddChildMocInputSchema().parse(action.input);
+      memoizedSchema(AddChildMocInputSchema).parse(action.input);
 
       mocMocManagementOperations.addChildMocOperation(
         (state as any)[action.scope],
@@ -173,7 +184,7 @@ const stateReducer: StateReducer<MocPHState> = (state, action, dispatch) => {
     }
 
     case "REMOVE_CHILD_MOC": {
-      RemoveChildMocInputSchema().parse(action.input);
+      memoizedSchema(RemoveChildMocInputSchema).parse(action.input);
 
       mocMocManagementOperations.removeChildMocOperation(
         (state as any)[action.scope],
@@ -185,7 +196,7 @@ const stateReducer: StateReducer<MocPHState> = (state, action, dispatch) => {
     }
 
     case "SET_METADATA_FIELD": {
-      SetMetadataFieldInputSchema().parse(action.input);
+      memoizedSchema(SetMetadataFieldInputSchema).parse(action.input);
 
       mocMocManagementOperations.setMetadataFieldOperation(
         (state as any)[action.scope],

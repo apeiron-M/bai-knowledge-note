@@ -13,6 +13,17 @@ import {
   ResolveTensionInputSchema,
 } from "./schema/zod.js";
 
+const schemaMemo = new Map<() => unknown, unknown>();
+
+function memoizedSchema<T>(makeSchema: () => T): T {
+  let schema = schemaMemo.get(makeSchema) as T | undefined;
+  if (schema === undefined) {
+    schema = makeSchema();
+    schemaMemo.set(makeSchema, schema);
+  }
+  return schema;
+}
+
 const stateReducer: StateReducer<TensionPHState> = (
   state,
   action,
@@ -23,7 +34,7 @@ const stateReducer: StateReducer<TensionPHState> = (
   }
   switch (action.type) {
     case "CREATE_TENSION": {
-      CreateTensionInputSchema().parse(action.input);
+      memoizedSchema(CreateTensionInputSchema).parse(action.input);
 
       tensionTensionManagementOperations.createTensionOperation(
         (state as any)[action.scope],
@@ -35,7 +46,7 @@ const stateReducer: StateReducer<TensionPHState> = (
     }
 
     case "RESOLVE_TENSION": {
-      ResolveTensionInputSchema().parse(action.input);
+      memoizedSchema(ResolveTensionInputSchema).parse(action.input);
 
       tensionTensionManagementOperations.resolveTensionOperation(
         (state as any)[action.scope],
@@ -47,7 +58,7 @@ const stateReducer: StateReducer<TensionPHState> = (
     }
 
     case "DISSOLVE_TENSION": {
-      DissolveTensionInputSchema().parse(action.input);
+      memoizedSchema(DissolveTensionInputSchema).parse(action.input);
 
       tensionTensionManagementOperations.dissolveTensionOperation(
         (state as any)[action.scope],
@@ -59,7 +70,7 @@ const stateReducer: StateReducer<TensionPHState> = (
     }
 
     case "ADD_INVOLVED_REF": {
-      AddInvolvedRefInputSchema().parse(action.input);
+      memoizedSchema(AddInvolvedRefInputSchema).parse(action.input);
 
       tensionTensionManagementOperations.addInvolvedRefOperation(
         (state as any)[action.scope],

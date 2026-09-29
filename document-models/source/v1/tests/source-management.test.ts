@@ -332,9 +332,17 @@ describe("SourceManagementOperations", () => {
     // A document whose history predates the idempotent add: build the
     // duplicate state through the initial value, as the migration would find it.
     const document = utils.createDocument();
-    document.state.global.extractedClaims = ["note-a", "note-a", "note-b", "note-a"];
+    document.state.global.extractedClaims = [
+      "note-a",
+      "note-a",
+      "note-b",
+      "note-a",
+    ];
 
-    const updated = reducer(document, removeExtractedClaim({ claimRef: "note-a" }));
+    const updated = reducer(
+      document,
+      removeExtractedClaim({ claimRef: "note-a" }),
+    );
 
     expect(updated.state.global.extractedClaims).toStrictEqual(["note-b"]);
     expect(updated.operations.global[0].error).toBeUndefined();
@@ -344,7 +352,10 @@ describe("SourceManagementOperations", () => {
     let document = utils.createDocument();
     document = reducer(document, addExtractedClaim({ claimRef: "note-a" }));
 
-    const updated = reducer(document, removeExtractedClaim({ claimRef: "note-zzz" }));
+    const updated = reducer(
+      document,
+      removeExtractedClaim({ claimRef: "note-zzz" }),
+    );
 
     expect(updated.operations.global[1].error).toBe(
       "Claim note-zzz is not listed on this source",

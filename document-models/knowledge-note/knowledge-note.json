@@ -390,18 +390,16 @@
       "changeLog": []
     },
     {
-      "version": 2,
-      "changeLog": [],
       "state": {
-        "global": {
-          "schema": "enum NoteStatus {\n    DRAFT\n    IN_REVIEW\n    CANONICAL\n    ARCHIVED\n}\n\nenum SourceOrigin {\n    MANUAL\n    SESSION_MINE\n    IMPORT\n    DERIVED\n}\n\nenum LinkType {\n    RELATES_TO\n    BUILDS_ON\n    CONTRADICTS\n    SUPERSEDES\n    DERIVED_FROM\n}\n\nenum NoteType {\n    CONCEPT\n    DECISION\n    PATTERN\n    OBSERVATION\n    PROCEDURE\n    ARCHITECTURE\n    BUG_PATTERN\n    INTEGRATION\n    WORKFLOW\n    REFERENCE\n}\n\ntype KnowledgeNoteState {\n    title: String\n    description: String\n    noteType: NoteType\n    content: String\n    status: NoteStatus\n    provenance: Provenance\n    links: [NoteLink!]!\n    topics: [Topic!]!\n    scope: String\n    confidence: String\n    severity: String\n    editor: String\n    models: [String!]!\n    hooksUsed: [String!]!\n    dispatchTargets: [String!]!\n    modelId: String\n    modules: [String!]!\n    version: String\n    filePath: String\n    computes: String\n    inputs: [String!]!\n    outputs: [String!]!\n    consumedBy: [String!]!\n    context: String\n    alternatives: [String!]!\n    consequences: [String!]!\n    decisionStatus: String\n    model: String\n    sourceType: String\n    targetType: String\n    relationType: String\n    cardinality: String\n    errorMessage: String\n    rootCause: String\n    correctPattern: String\n    lifecycleEvents: [LifecycleEvent!]!\n    updatedAt: DateTime\n}\n\ntype Provenance {\n    author: String\n    sourceOrigin: SourceOrigin\n    sessionId: String\n    createdAt: DateTime\n    updatedAt: DateTime\n}\n\ntype NoteLink {\n    id: OID!\n    targetDocumentId: String\n    targetTitle: String\n    linkType: LinkType\n}\n\ntype Topic {\n    id: OID!\n    name: String!\n    topicDocumentId: String\n}\n\ntype LifecycleEvent {\n    id: OID!\n    fromStatus: NoteStatus\n    toStatus: NoteStatus\n    actor: String\n    timestamp: DateTime\n    comment: String\n}",
-          "examples": [],
-          "initialValue": "{\n    \"title\": null,\n    \"description\": null,\n    \"noteType\": null,\n    \"content\": null,\n    \"status\": \"DRAFT\",\n    \"provenance\": null,\n    \"links\": [],\n    \"topics\": [],\n    \"scope\": null,\n    \"confidence\": null,\n    \"severity\": null,\n    \"editor\": null,\n    \"models\": [],\n    \"hooksUsed\": [],\n    \"dispatchTargets\": [],\n    \"modelId\": null,\n    \"modules\": [],\n    \"version\": null,\n    \"filePath\": null,\n    \"computes\": null,\n    \"inputs\": [],\n    \"outputs\": [],\n    \"consumedBy\": [],\n    \"context\": null,\n    \"alternatives\": [],\n    \"consequences\": [],\n    \"decisionStatus\": null,\n    \"model\": null,\n    \"sourceType\": null,\n    \"targetType\": null,\n    \"relationType\": null,\n    \"cardinality\": null,\n    \"errorMessage\": null,\n    \"rootCause\": null,\n    \"correctPattern\": null,\n    \"lifecycleEvents\": [],\n    \"updatedAt\": null\n}"
-        },
         "local": {
           "schema": "type KnowledgeNoteLocalState {\n    lastViewedAt: DateTime\n    personalTags: [PersonalTag!]!\n}\n\ntype PersonalTag {\n    id: OID!\n    name: String!\n}",
           "examples": [],
           "initialValue": "{\n    \"lastViewedAt\": null,\n    \"personalTags\": []\n}"
+        },
+        "global": {
+          "schema": "enum NoteStatus {\n    DRAFT\n    IN_REVIEW\n    CANONICAL\n    ARCHIVED\n}\n\nenum SourceOrigin {\n    MANUAL\n    SESSION_MINE\n    IMPORT\n    DERIVED\n}\n\nenum LinkType {\n    RELATES_TO\n    BUILDS_ON\n    CONTRADICTS\n    SUPERSEDES\n    DERIVED_FROM\n}\n\nenum NoteType {\n    CONCEPT\n    DECISION\n    PATTERN\n    OBSERVATION\n    PROCEDURE\n    ARCHITECTURE\n    BUG_PATTERN\n    INTEGRATION\n    WORKFLOW\n    REFERENCE\n}\n\ntype KnowledgeNoteState {\n    title: String\n    description: String\n    noteType: NoteType\n    content: String\n    status: NoteStatus\n    provenance: Provenance\n    links: [NoteLink!]!\n    topics: [Topic!]!\n    scope: String\n    confidence: String\n    severity: String\n    editor: String\n    models: [String!]!\n    hooksUsed: [String!]!\n    dispatchTargets: [String!]!\n    modelId: String\n    modules: [String!]!\n    version: String\n    filePath: String\n    computes: String\n    inputs: [String!]!\n    outputs: [String!]!\n    consumedBy: [String!]!\n    context: String\n    alternatives: [String!]!\n    consequences: [String!]!\n    decisionStatus: String\n    model: String\n    sourceType: String\n    targetType: String\n    relationType: String\n    cardinality: String\n    errorMessage: String\n    rootCause: String\n    correctPattern: String\n    lifecycleEvents: [LifecycleEvent!]!\n    updatedAt: DateTime\n}\n\ntype Provenance {\n    author: String\n    sourceOrigin: SourceOrigin\n    sessionId: String\n    createdAt: DateTime\n    updatedAt: DateTime\n}\n\ntype NoteLink {\n    id: OID!\n    targetDocumentId: String\n    targetTitle: String\n    linkType: LinkType\n}\n\ntype Topic {\n    id: OID!\n    name: String!\n    topicDocumentId: String\n}\n\ntype LifecycleEvent {\n    id: OID!\n    fromStatus: NoteStatus\n    toStatus: NoteStatus\n    actor: String\n    timestamp: DateTime\n    comment: String\n}",
+          "examples": [],
+          "initialValue": "{\n    \"title\": null,\n    \"description\": null,\n    \"noteType\": null,\n    \"content\": null,\n    \"status\": \"DRAFT\",\n    \"provenance\": null,\n    \"links\": [],\n    \"topics\": [],\n    \"scope\": null,\n    \"confidence\": null,\n    \"severity\": null,\n    \"editor\": null,\n    \"models\": [],\n    \"hooksUsed\": [],\n    \"dispatchTargets\": [],\n    \"modelId\": null,\n    \"modules\": [],\n    \"version\": null,\n    \"filePath\": null,\n    \"computes\": null,\n    \"inputs\": [],\n    \"outputs\": [],\n    \"consumedBy\": [],\n    \"context\": null,\n    \"alternatives\": [],\n    \"consequences\": [],\n    \"decisionStatus\": null,\n    \"model\": null,\n    \"sourceType\": null,\n    \"targetType\": null,\n    \"relationType\": null,\n    \"cardinality\": null,\n    \"errorMessage\": null,\n    \"rootCause\": null,\n    \"correctPattern\": null,\n    \"lifecycleEvents\": [],\n    \"updatedAt\": null\n}"
         }
       },
       "modules": [
@@ -783,7 +781,9 @@
             }
           ]
         }
-      ]
+      ],
+      "version": 2,
+      "changeLog": []
     }
   ]
 }

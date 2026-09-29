@@ -122,18 +122,16 @@
       "changeLog": []
     },
     {
-      "version": 2,
-      "changeLog": [],
       "state": {
-        "global": {
-          "schema": "enum Dimension {\n    GRANULARITY\n    ORGANIZATION\n    LINKING\n    PROCESSING\n    NAVIGATION\n    MAINTENANCE\n    SCHEMA\n    AUTOMATION\n}\n\nenum VocabularyKey {\n    NOTES\n    INBOX\n    REDUCE\n    REFLECT\n    REWEAVE\n    VERIFY\n    RETHINK\n    TOPIC_MAP\n    DESCRIPTION\n}\n\nenum MaintenanceCondition {\n    ORPHAN_THRESHOLD\n    DANGLING_THRESHOLD\n    INBOX_PRESSURE\n    OBSERVATION_ACCUMULATION\n    TENSION_ACCUMULATION\n    MOC_OVERSIZE\n    STALE_NOTE_DAYS\n}\n\ntype DimensionPosition {\n    value: Int!\n    confidence: Float!\n    rationale: String\n}\n\ntype DimensionConfig {\n    granularity: DimensionPosition!\n    organization: DimensionPosition!\n    linking: DimensionPosition!\n    processing: DimensionPosition!\n    navigation: DimensionPosition!\n    maintenance: DimensionPosition!\n    schema: DimensionPosition!\n    automation: DimensionPosition!\n}\n\ntype VocabularyMap {\n    notes: String!\n    inbox: String!\n    reduce: String!\n    reflect: String!\n    reweave: String!\n    verify: String!\n    rethink: String!\n    topicMap: String!\n    description: String!\n}\n\ntype PipelineConfig {\n    depth: PipelineDepth!\n    autoChain: Boolean!\n    extractionSelectivity: Float!\n}\nenum PipelineDepth { QUICK STANDARD DEEP }\n\ntype MaintenanceConfig {\n    orphanThreshold: Int!\n    danglingThreshold: Int!\n    inboxPressure: Int!\n    observationAccumulation: Int!\n    tensionAccumulation: Int!\n    mocOversize: Int!\n    staleNoteDays: Int!\n}\n\ntype ExtractionCategory {\n    id: OID!\n    name: String!\n    description: String!\n    active: Boolean!\n}\n\ntype NoteSchemaConfig {\n    requiredFields: [String!]!\n    optionalFields: [String!]!\n    kindValues: [String!]!\n    confidenceValues: [String!]!\n}\n\ntype MocSchemaConfig {\n    requiredFields: [String!]!\n    tierValues: [String!]!\n}\n\ntype VaultConfigState {\n    name: String\n    domain: String\n    dimensions: DimensionConfig\n    vocabulary: VocabularyMap\n    features: [String!]!\n    pipeline: PipelineConfig\n    maintenance: MaintenanceConfig\n    extractionCategories: [ExtractionCategory!]!\n    noteSchema: NoteSchemaConfig\n    mocSchema: MocSchemaConfig\n    updatedAt: DateTime\n}",
-          "examples": [],
-          "initialValue": "{\n    \"name\": null,\n    \"domain\": null,\n    \"dimensions\": null,\n    \"vocabulary\": null,\n    \"features\": [],\n    \"pipeline\": null,\n    \"maintenance\": null,\n    \"extractionCategories\": [],\n    \"noteSchema\": null,\n    \"mocSchema\": null,\n    \"updatedAt\": null\n}"
-        },
         "local": {
           "schema": "",
           "examples": [],
           "initialValue": ""
+        },
+        "global": {
+          "schema": "enum Dimension {\n    GRANULARITY\n    ORGANIZATION\n    LINKING\n    PROCESSING\n    NAVIGATION\n    MAINTENANCE\n    SCHEMA\n    AUTOMATION\n}\n\nenum VocabularyKey {\n    NOTES\n    INBOX\n    REDUCE\n    REFLECT\n    REWEAVE\n    VERIFY\n    RETHINK\n    TOPIC_MAP\n    DESCRIPTION\n}\n\nenum MaintenanceCondition {\n    ORPHAN_THRESHOLD\n    DANGLING_THRESHOLD\n    INBOX_PRESSURE\n    OBSERVATION_ACCUMULATION\n    TENSION_ACCUMULATION\n    MOC_OVERSIZE\n    STALE_NOTE_DAYS\n}\n\ntype DimensionPosition {\n    value: Int!\n    confidence: Float!\n    rationale: String\n}\n\ntype DimensionConfig {\n    granularity: DimensionPosition!\n    organization: DimensionPosition!\n    linking: DimensionPosition!\n    processing: DimensionPosition!\n    navigation: DimensionPosition!\n    maintenance: DimensionPosition!\n    schema: DimensionPosition!\n    automation: DimensionPosition!\n}\n\ntype VocabularyMap {\n    notes: String!\n    inbox: String!\n    reduce: String!\n    reflect: String!\n    reweave: String!\n    verify: String!\n    rethink: String!\n    topicMap: String!\n    description: String!\n}\n\ntype PipelineConfig {\n    depth: PipelineDepth!\n    autoChain: Boolean!\n    extractionSelectivity: Float!\n}\nenum PipelineDepth { QUICK STANDARD DEEP }\n\ntype MaintenanceConfig {\n    orphanThreshold: Int!\n    danglingThreshold: Int!\n    inboxPressure: Int!\n    observationAccumulation: Int!\n    tensionAccumulation: Int!\n    mocOversize: Int!\n    staleNoteDays: Int!\n}\n\ntype ExtractionCategory {\n    id: OID!\n    name: String!\n    description: String!\n    active: Boolean!\n}\n\ntype NoteSchemaConfig {\n    requiredFields: [String!]!\n    optionalFields: [String!]!\n    kindValues: [String!]!\n    confidenceValues: [String!]!\n}\n\ntype MocSchemaConfig {\n    requiredFields: [String!]!\n    tierValues: [String!]!\n}\n\ntype VaultConfigState {\n    name: String\n    domain: String\n    dimensions: DimensionConfig\n    vocabulary: VocabularyMap\n    features: [String!]!\n    pipeline: PipelineConfig\n    maintenance: MaintenanceConfig\n    extractionCategories: [ExtractionCategory!]!\n    noteSchema: NoteSchemaConfig\n    mocSchema: MocSchemaConfig\n    updatedAt: DateTime\n}",
+          "examples": [],
+          "initialValue": "{\n    \"name\": null,\n    \"domain\": null,\n    \"dimensions\": null,\n    \"vocabulary\": null,\n    \"features\": [],\n    \"pipeline\": null,\n    \"maintenance\": null,\n    \"extractionCategories\": [],\n    \"noteSchema\": null,\n    \"mocSchema\": null,\n    \"updatedAt\": null\n}"
         }
       },
       "modules": [
@@ -256,7 +254,9 @@
             }
           ]
         }
-      ]
+      ],
+      "version": 2,
+      "changeLog": []
     }
   ]
 }

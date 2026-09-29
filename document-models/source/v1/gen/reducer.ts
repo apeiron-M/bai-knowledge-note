@@ -14,13 +14,24 @@ import {
   SetSourceStatusInputSchema,
 } from "./schema/zod.js";
 
+const schemaMemo = new Map<() => unknown, unknown>();
+
+function memoizedSchema<T>(makeSchema: () => T): T {
+  let schema = schemaMemo.get(makeSchema) as T | undefined;
+  if (schema === undefined) {
+    schema = makeSchema();
+    schemaMemo.set(makeSchema, schema);
+  }
+  return schema;
+}
+
 const stateReducer: StateReducer<SourcePHState> = (state, action, dispatch) => {
   if (isDocumentAction(action)) {
     return state;
   }
   switch (action.type) {
     case "INGEST_SOURCE": {
-      IngestSourceInputSchema().parse(action.input);
+      memoizedSchema(IngestSourceInputSchema).parse(action.input);
 
       sourceSourceManagementOperations.ingestSourceOperation(
         (state as any)[action.scope],
@@ -32,7 +43,7 @@ const stateReducer: StateReducer<SourcePHState> = (state, action, dispatch) => {
     }
 
     case "SET_SOURCE_STATUS": {
-      SetSourceStatusInputSchema().parse(action.input);
+      memoizedSchema(SetSourceStatusInputSchema).parse(action.input);
 
       sourceSourceManagementOperations.setSourceStatusOperation(
         (state as any)[action.scope],
@@ -44,7 +55,7 @@ const stateReducer: StateReducer<SourcePHState> = (state, action, dispatch) => {
     }
 
     case "ADD_EXTRACTED_CLAIM": {
-      AddExtractedClaimInputSchema().parse(action.input);
+      memoizedSchema(AddExtractedClaimInputSchema).parse(action.input);
 
       sourceSourceManagementOperations.addExtractedClaimOperation(
         (state as any)[action.scope],
@@ -56,7 +67,7 @@ const stateReducer: StateReducer<SourcePHState> = (state, action, dispatch) => {
     }
 
     case "RECORD_EXTRACTION_STATS": {
-      RecordExtractionStatsInputSchema().parse(action.input);
+      memoizedSchema(RecordExtractionStatsInputSchema).parse(action.input);
 
       sourceSourceManagementOperations.recordExtractionStatsOperation(
         (state as any)[action.scope],
@@ -68,7 +79,7 @@ const stateReducer: StateReducer<SourcePHState> = (state, action, dispatch) => {
     }
 
     case "REMOVE_EXTRACTED_CLAIM": {
-      RemoveExtractedClaimInputSchema().parse(action.input);
+      memoizedSchema(RemoveExtractedClaimInputSchema).parse(action.input);
 
       sourceSourceManagementOperations.removeExtractedClaimOperation(
         (state as any)[action.scope],

@@ -13,6 +13,17 @@ import {
   UpdateDimensionRationaleInputSchema,
 } from "./schema/zod.js";
 
+const schemaMemo = new Map<() => unknown, unknown>();
+
+function memoizedSchema<T>(makeSchema: () => T): T {
+  let schema = schemaMemo.get(makeSchema) as T | undefined;
+  if (schema === undefined) {
+    schema = makeSchema();
+    schemaMemo.set(makeSchema, schema);
+  }
+  return schema;
+}
+
 const stateReducer: StateReducer<DerivationPHState> = (
   state,
   action,
@@ -23,7 +34,7 @@ const stateReducer: StateReducer<DerivationPHState> = (
   }
   switch (action.type) {
     case "INITIALIZE_DERIVATION": {
-      InitializeDerivationInputSchema().parse(action.input);
+      memoizedSchema(InitializeDerivationInputSchema).parse(action.input);
 
       derivationDerivationManagementOperations.initializeDerivationOperation(
         (state as any)[action.scope],
@@ -35,7 +46,7 @@ const stateReducer: StateReducer<DerivationPHState> = (
     }
 
     case "ADD_SIGNAL": {
-      AddSignalInputSchema().parse(action.input);
+      memoizedSchema(AddSignalInputSchema).parse(action.input);
 
       derivationDerivationManagementOperations.addSignalOperation(
         (state as any)[action.scope],
@@ -47,7 +58,7 @@ const stateReducer: StateReducer<DerivationPHState> = (
     }
 
     case "ADD_RESEED_ENTRY": {
-      AddReseedEntryInputSchema().parse(action.input);
+      memoizedSchema(AddReseedEntryInputSchema).parse(action.input);
 
       derivationDerivationManagementOperations.addReseedEntryOperation(
         (state as any)[action.scope],
@@ -59,7 +70,7 @@ const stateReducer: StateReducer<DerivationPHState> = (
     }
 
     case "UPDATE_DIMENSION_RATIONALE": {
-      UpdateDimensionRationaleInputSchema().parse(action.input);
+      memoizedSchema(UpdateDimensionRationaleInputSchema).parse(action.input);
 
       derivationDerivationManagementOperations.updateDimensionRationaleOperation(
         (state as any)[action.scope],
