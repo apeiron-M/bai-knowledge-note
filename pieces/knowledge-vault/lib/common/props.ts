@@ -1,5 +1,5 @@
 import { Property } from "@powerhousedao/pieces-framework";
-import { LlmClient, modelLabel } from "../agent/llm.js";
+import { LlmClient, MODEL_CRITERIA, vaultModelLabel, vaultModels } from "../agent/llm.js";
 import { knowledgeVaultAuth } from "../auth.js";
 import { readAuth } from "./auth-value.js";
 import { clientFor } from "./context.js";
@@ -46,7 +46,7 @@ export const driveProp = Property.Dropdown({
 export const modelProp = Property.Dropdown({
   auth: knowledgeVaultAuth,
   displayName: "Model",
-  description: "Tool-capable models from the connection's LLM provider. Empty: the connection's default model",
+  description: `Cheap models that reason and answer in JSON (intelligence index ${MODEL_CRITERIA.minIntelligence}+, at most $${MODEL_CRITERIA.maxOutputPerM} per M output tokens; free ones when they qualify). Tested ones first. Type a name to find any other model, e.g. sonnet. Empty: the connection's default model`,
   required: false,
   refreshers: [],
   refreshOnSearch: true,
@@ -61,13 +61,11 @@ export const modelProp = Property.Dropdown({
     if (!llm) return { disabled: true, placeholder: "Add an LLM API key to the connection first", options: [] };
     try {
       const search = (ctx as { searchValue?: string } | undefined)?.searchValue?.trim().toLowerCase() ?? "";
-      const models = (await new LlmClient(llm).listModels(true)).filter(
-        (m) => !search || m.id.toLowerCase().includes(search) || m.name.toLowerCase().includes(search),
-      );
+      const models = await vaultModels(new LlmClient(llm), search);
       return {
         disabled: false,
         placeholder: llm.defaultModel ? `Default: ${llm.defaultModel}` : "Choose a model",
-        options: models.map((m) => ({ label: modelLabel(m), value: m.id })),
+        options: models.map((m) => ({ label: vaultModelLabel(m), value: m.id })),
       };
     } catch (error) {
       return { disabled: true, placeholder: `Could not list models: ${errorMessage(error)}`, options: [] };

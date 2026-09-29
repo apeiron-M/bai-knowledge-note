@@ -275,3 +275,113 @@ async function llmError(response: Response, what: string): Promise<KnowledgeVaul
     retryable: category === "server" || response.status === 429,
   });
 }
+
+// ── Choosing a model for the vault's staged jobs ────────────────────────
+
+/** A model is offered by default when it can do the job and is cheap. */
+export const MODEL_CRITERIA = {
+  /** Artificial Analysis intelligence index, from OpenRouter's model list. */
+  minIntelligence: 35,
+  /** US dollars per million output tokens; free models always pass. */
+  maxOutputPerM: 2,
+} as const;
+
+/**
+ * Measured on the candidates prompt of a real source (2026-09-29): seconds
+ * per stage, or `slow` for a model that reasons at length whatever effort it
+ * is asked for (DeepSeek V4.1 Flash wrote 6,000-14,000 reasoning tokens at
+ * "low", 35-90 s a call, and some of its providers never answered).
+ */
+export const TESTED_MODELS: Record<string, { seconds: number } | { slow: true }> = {
+  "openai/gpt-6-luna": { seconds: 10 },
+  "z-ai/glm-5.3-flash": { seconds: 5 },
+  "google/gemini-3.8-flash": { seconds: 6 },
+  "anthropic/claude-sonnet-5.5": { seconds: 6 },
+  "openai/gpt-6-sol": { seconds: 13 },
+  "deepseek/deepseek-v4.1-flash": { slow: true },
+  "x-ai/grok-4.7": { slow: true },
+};
+
+export type VaultModel = {
+  id: string;
+  name: string;
+  intelligence: number | null;
+  inputPerM: number;
+  outputPerM: number;
+  free: boolean;
+  /** Median tokens per second across the providers that serve it with JSON output, when known. */
+  tokensPerSecond: number | null;
+  tested: { seconds: number } | { slow: true } | null;
+};
+
+type RawModel = { id?: unknown; name?: unknown; pricing?: { prompt?: unknown; completion?: unknown }; benchmarks?: { artificial_analysis?: { intelligence_index?: unknown } } | null };
+
+const perMillion = (v: unknown) => {
+  const n = Number(v);
+  return Number.isFinite(n) && n >= 0 ? n * 1e6 : Number.POSITIVE_INFINITY;
+};
+
+/**
+ * The models worth offering for the staged jobs: they reason, answer in
+ * JSON, score at least minIntelligence and cost at most maxOutputPerM (free
+ * ones always, if they qualify on the rest). A free variant is scored by its
+ * paid twin. Tested models come first with their measured time, untested
+ * ones by score, slow ones last. With a search term, every reasoning + JSON
+ * model matching it is listed, however expensive, so a stronger model is one
+ * search away. Other providers than OpenRouter get their plain model list.
+ */
+export async function vaultModels(llm: LlmClient, search = "", fetchImpl: typeof fetch = fetch): Promise<VaultModel[]> {
+  const { baseUrl, apiKey } = llm.credentials;
+  const term = search.trim().toLowerCase();
+  if (!/openrouter\.ai/i.test(baseUrl)) {
+    const plain = await llm.listModels(false);
+    return plain
+      .filter((m) => !term || m.id.toLowerCase().includes(term) || m.name.toLowerCase().includes(term))
+      .map((m) => ({ id: m.id, name: m.name, intelligence: null, inputPerM: m.inputPerM ?? Number.POSITIVE_INFINITY, outputPerM: m.outputPerM ?? Number.POSITIVE_INFINITY, free: false, tokensPerSecond: null, tested: TESTED_MODELS[m.id] ?? null }));
+  }
+  const headers = { Authorization: `Bearer ${apiKey}` };
+  const response = await fetchImpl(`${baseUrl}/models?supported_parameters=reasoning,response_format`, { headers, signal: AbortSignal.timeout(30_000) });
+  if (!response.ok) throw await llmError(response, "list models");
+  const raw = ((await response.json()) as { data?: RawModel[] }).data ?? [];
+  const iqOf = new Map(raw.map((m) => [String(m.id), m.benchmarks?.artificial_analysis?.intelligence_index]));
+  const models: VaultModel[] = raw
+    .filter((m) => typeof m.id === "string" && !m.id.endsWith(":batch"))
+    .map((m) => {
+      const id = String(m.id);
+      const score = iqOf.get(id) ?? iqOf.get(id.replace(/:free$/, ""));
+      const inputPerM = perMillion(m.pricing?.prompt);
+      const outputPerM = perMillion(m.pricing?.completion);
+      return { id, name: typeof m.name === "string" ? m.name : id, intelligence: typeof score === "number" ? score : null, inputPerM, outputPerM, free: inputPerM === 0 && outputPerM === 0, tokensPerSecond: null, tested: TESTED_MODELS[id] ?? null };
+    });
+  const listed = term
+    ? models.filter((m) => m.id.toLowerCase().includes(term) || m.name.toLowerCase().includes(term))
+    : models.filter((m) => (m.intelligence ?? 0) >= MODEL_CRITERIA.minIntelligence && (m.free || m.outputPerM <= MODEL_CRITERIA.maxOutputPerM));
+  // Speed from the providers that serve the model with JSON output: a few calls, in parallel.
+  const speedFor = listed.slice(0, 25);
+  await Promise.all(
+    speedFor.map(async (m) => {
+      try {
+        const r = await fetchImpl(`${baseUrl}/models/${m.id}/endpoints`, { headers, signal: AbortSignal.timeout(10_000) });
+        if (!r.ok) return;
+        const eps = ((await r.json()) as { data?: { endpoints?: { supported_parameters?: string[]; throughput_last_30m?: { p50?: number } | null }[] } }).data?.endpoints ?? [];
+        const tps = eps.filter((e) => e.supported_parameters?.includes("response_format")).map((e) => e.throughput_last_30m?.p50 ?? 0).filter((n) => n > 0).sort((a, b) => a - b);
+        m.tokensPerSecond = tps.length ? Math.round(tps[Math.floor(tps.length / 2)] ?? 0) : null;
+      } catch {
+        // speed stays unknown
+      }
+    }),
+  );
+  const rank = (m: VaultModel) => (m.tested && "seconds" in m.tested ? 0 : m.tested ? 2 : 1);
+  return listed.sort((a, b) => rank(a) - rank(b) || (a.tested && "seconds" in a.tested && b.tested && "seconds" in b.tested ? a.tested.seconds - b.tested.seconds : 0) || (b.intelligence ?? 0) - (a.intelligence ?? 0) || a.name.localeCompare(b.name));
+}
+
+/** `GPT-6 Luna — IQ 37 · $0.05 / $0.25 per M · tested: 10 s a stage` */
+export function vaultModelLabel(m: VaultModel): string {
+  const parts = [
+    m.intelligence !== null ? `IQ ${Math.round(m.intelligence)}` : null,
+    m.free ? "free" : Number.isFinite(m.outputPerM) ? `$${m.inputPerM.toFixed(2)} / $${m.outputPerM.toFixed(2)} per M` : null,
+    m.tested ? ("seconds" in m.tested ? `tested: ${m.tested.seconds} s a stage` : "slow here: reasons at length") : m.tokensPerSecond ? `~${m.tokensPerSecond} tok/s` : null,
+    !m.free && Number.isFinite(m.outputPerM) && m.outputPerM > MODEL_CRITERIA.maxOutputPerM ? "not a cheap model" : null,
+  ].filter(Boolean);
+  return parts.length ? `${m.name} — ${parts.join(" · ")}` : m.name;
+}
