@@ -57,6 +57,26 @@ describe("authorize", () => {
     });
   });
 
+  it("throws 404 instead of 403 when the refused document was deleted", async () => {
+    const deleted = Object.assign(new Error("Document abc was deleted at 2026-09-28T19:00:00.000Z"), { name: "DocumentDeletedError" });
+    const d = deps({ reactorClient: { get: vi.fn(async () => { throw deleted; }) } as unknown as HttpRouteDeps["reactorClient"] });
+    d.authorization.canRead = vi.fn(async () => false);
+    await expect(canonicalForRead(d, "doc", ctx)).rejects.toMatchObject({ status: 404, code: "NOT_FOUND" });
+    d.authorization.canWrite = vi.fn(async () => false);
+    await expect(canonicalForWrite(d, "doc", ctx)).rejects.toMatchObject({ status: 404, code: "NOT_FOUND" });
+  });
+
+  it("keeps 403 for a document that exists but may not be read", async () => {
+    const d = deps({ reactorClient: { get: vi.fn(async () => ({})) } as unknown as HttpRouteDeps["reactorClient"] });
+    d.authorization.canRead = vi.fn(async () => false);
+    await expect(canonicalForRead(d, "doc", ctx)).rejects.toMatchObject({ status: 403, code: "FORBIDDEN" });
+    const missing = Object.assign(new Error("Document doc not found"), { name: "DocumentNotFoundError" });
+    d.reactorClient.get = vi.fn(async () => { throw missing; }) as never;
+    await expect(canonicalForRead(d, "doc", ctx)).rejects.toMatchObject({ status: 404 });
+    d.reactorClient.get = vi.fn(async () => { throw new Error("database unavailable"); }) as never;
+    await expect(canonicalForRead(d, "doc", ctx)).rejects.toMatchObject({ status: 403 });
+  });
+
   it("throws 403 when canWrite is false", async () => {
     const d = deps();
     d.authorization.canWrite = vi.fn(async () => false);

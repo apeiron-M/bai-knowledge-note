@@ -22,6 +22,31 @@ async function canonical(
   return deps.resolveCanonicalDocumentId(identifier, ctx);
 }
 
+/**
+ * A refusal for a document that no longer exists is a 404, not a 403: a
+ * deleted source reads as "Forbidden" otherwise, which sends callers after
+ * a permission they already have. Checked only once access is denied, so
+ * an existing document the caller may not read still answers 403.
+ */
+async function refusal(
+  deps: HttpRouteDeps,
+  id: CanonicalDocumentId,
+  identifier: string,
+  verb: "read" | "write" | "manage",
+): Promise<HttpError> {
+  try {
+    await deps.reactorClient.get(id);
+  } catch (error) {
+    if (
+      error instanceof Error &&
+      /not ?found|deleted|does not exist/i.test(`${error.name} ${error.message}`)
+    ) {
+      return new HttpError(404, "NOT_FOUND", `${identifier} does not exist (it may have been deleted)`);
+    }
+  }
+  return new HttpError(403, "FORBIDDEN", `No ${verb} access to ${identifier}`);
+}
+
 export async function canonicalForRead(
   deps: HttpRouteDeps,
   identifier: string,
@@ -30,7 +55,7 @@ export async function canonicalForRead(
   const user = requireUser(ctx);
   const id = await canonical(deps, identifier, ctx);
   if (!(await deps.authorization.canRead(id, user.address))) {
-    throw new HttpError(403, "FORBIDDEN", `No read access to ${identifier}`);
+    throw await refusal(deps, id, identifier, "read");
   }
   return id;
 }
@@ -49,7 +74,7 @@ export async function canonicalForWrite(
       deps.authorization.canWrite(id, user.address),
     ))
   ) {
-    throw new HttpError(403, "FORBIDDEN", `No write access to ${identifier}`);
+    throw await refusal(deps, id, identifier, "write");
   }
   return id;
 }
@@ -64,7 +89,7 @@ export async function canonicalForManage(
   const user = requireUser(ctx);
   const id = await canonical(deps, identifier, ctx);
   if (!(await deps.authorization.canManage(id, user.address))) {
-    throw new HttpError(403, "FORBIDDEN", `No manage access to ${identifier}`);
+    throw await refusal(deps, id, identifier, "manage");
   }
   return id;
 }
