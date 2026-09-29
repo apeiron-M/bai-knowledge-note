@@ -74,6 +74,7 @@ function sendPending_() {
     if (props.getProperty('sent:' + file.getId())) { result.skipped++; continue; }
     if (Date.now() - started > CONFIG.MAX_RUNTIME_MS) { result.left = files.length - i; break; }
     let note;
+    Logger.log('%s/%s %s', i + 1, files.length, file.getName());
     try {
       note = readNote_(file);
     } catch (error) {
@@ -84,7 +85,7 @@ function sendPending_() {
       Logger.log('Could not open "%s" (%s): %s', file.getName(), file.getUrl(), error && error.message ? error.message : error);
       continue;
     }
-    if (!note) { result.skipped++; continue; }
+    if (!note) { result.skipped++; Logger.log('  no %s tab: skipped', CONFIG.TAB_NAME); continue; }
     const response = UrlFetchApp.fetch(CONFIG.WEBHOOK_URL, {
       method: 'post',
       contentType: 'application/json',
@@ -96,6 +97,7 @@ function sendPending_() {
     if (code >= 200 && code < 300) {
       props.setProperty('sent:' + file.getId(), new Date().toISOString());
       result.sent++;
+      Logger.log('  sent (%s chars)', note.content.length);
     } else {
       result.failed++;
       Logger.log('%s: the vault answered %s: %s', file.getName(), code, response.getContentText().slice(0, 300));
@@ -121,26 +123,39 @@ function readNote_(file) {
 }
 
 /**
- * The tab's text, or '' when the doc has no such tab. DocumentApp first; a
- * doc it cannot open (a colleague's, shared with you to view) is read through
- * the Docs API, which reads anything you can view and returns every tab.
+ * The tab's text, or '' when the doc has no such tab. The Docs API first: it
+ * reads anything you can view, including colleagues' docs shared with you,
+ * which DocumentApp refuses. Only the text is asked for, not the formatting,
+ * so a long Transcript tab stays a small response. DocumentApp is the fallback.
  */
 function quickNotesText_(file) {
+  const get = function (fields) {
+    return UrlFetchApp.fetch(
+      'https://docs.googleapis.com/v1/documents/' + file.getId() + '?includeTabsContent=true' +
+        (fields ? '&fields=' + encodeURIComponent(fields) : ''),
+      { headers: { Authorization: 'Bearer ' + ScriptApp.getOAuthToken() }, muteHttpExceptions: true });
+  };
+  let response = get(TAB_FIELDS_);
+  // A field mask the API does not accept is a 400: ask for the whole document instead.
+  if (response.getResponseCode() === 400) response = get('');
+  if (response.getResponseCode() === 200) {
+    const tab = findApiTab_(JSON.parse(response.getContentText()).tabs || [], CONFIG.TAB_NAME);
+    return tab ? apiTabText_(tab).trim() : '';
+  }
   try {
     const tab = findTab_(DocumentApp.openById(file.getId()).getTabs(), CONFIG.TAB_NAME);
     return tab ? tab.asDocumentTab().getBody().getText().trim() : '';
   } catch (documentAppError) {
-    const response = UrlFetchApp.fetch(
-      'https://docs.googleapis.com/v1/documents/' + file.getId() + '?includeTabsContent=true',
-      { headers: { Authorization: 'Bearer ' + ScriptApp.getOAuthToken() }, muteHttpExceptions: true });
-    if (response.getResponseCode() !== 200) {
-      throw new Error('DocumentApp: ' + documentAppError.message + '; Docs API ' + response.getResponseCode() + ': ' +
-        response.getContentText().slice(0, 200) + whyUnreadable_(file));
-    }
-    const tab = findApiTab_(JSON.parse(response.getContentText()).tabs || [], CONFIG.TAB_NAME);
-    return tab ? apiTabText_(tab).trim() : '';
+    throw new Error('Docs API ' + response.getResponseCode() + ': ' + response.getContentText().slice(0, 200) +
+      '; DocumentApp: ' + documentAppError.message + whyUnreadable_(file));
   }
 }
+
+// Titles and text only, three tab levels deep.
+const PARAGRAPH_FIELDS_ = 'paragraph(elements(textRun(content)))';
+const TEXT_FIELDS_ = 'documentTab(body(content(' + PARAGRAPH_FIELDS_ + ',table(tableRows(tableCells(content(' + PARAGRAPH_FIELDS_ + ')))))))';
+const TAB_FIELDS_ = 'tabs(tabProperties(title),' + TEXT_FIELDS_ + ',childTabs(tabProperties(title),' + TEXT_FIELDS_ +
+  ',childTabs(tabProperties(title),' + TEXT_FIELDS_ + ')))';
 
 /** A Docs API tab by title, children included. */
 function findApiTab_(tabs, name) {
