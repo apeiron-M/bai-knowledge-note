@@ -4,7 +4,7 @@
  * inside the forked worker the way a Switchboard runs it. Skips until built.
  */
 import { copyFile, mkdtemp, readFile, writeFile } from "node:fs/promises";
-import { existsSync } from "node:fs";
+import { existsSync, readFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { dirname, join } from "node:path";
 import { fileURLToPath, pathToFileURL } from "node:url";
@@ -15,7 +15,8 @@ import { DRIVE, GOOD_TOKEN, startVaultServer, type VaultServer } from "./vault-s
 
 const root = dirname(dirname(dirname(dirname(fileURLToPath(import.meta.url)))));
 const PIECE = "@powerhousedao/piece-knowledge-vault";
-const VERSION = "1.0.0";
+// A package piece's version is its package's (reactor-api reads package.json).
+const VERSION = (JSON.parse(readFileSync(join(root, "package.json"), "utf8")) as { version: string }).version;
 const entryPath = join(root, "dist", "node", "pieces", "knowledge-vault", "index.mjs");
 const listPath = join(root, "dist", "node", "pieces", "index.mjs");
 const ready = existsSync(entryPath) && existsSync(listPath);
@@ -28,7 +29,7 @@ describe.skipIf(!ready)("built piece conformance", () => {
   beforeAll(async () => {
     const { pieces } = (await import(pathToFileURL(listPath).href)) as { pieces: PackagePiece[] };
     const registry = new PieceRegistry();
-    registry.setPieces(pieces.map((p) => ({ name: p.name, version: p.version, ...(p.entry ? { entryPath: join(root, p.entry) } : {}) })));
+    registry.setPieces(pieces.map((p) => ({ name: p.name, version: VERSION, ...(p.entry ? { entryPath: join(root, p.entry) } : {}) })));
     declared = registry.lookup(PIECE);
     bundleDir = await mkdtemp(join(tmpdir(), "vault-piece-"));
     await copyFile(entryPath, join(bundleDir, "index.mjs"));
