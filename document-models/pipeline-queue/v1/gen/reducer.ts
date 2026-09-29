@@ -16,6 +16,17 @@ import {
   UnblockTaskInputSchema,
 } from "./schema/zod.js";
 
+const schemaMemo = new Map<() => unknown, unknown>();
+
+function memoizedSchema<T>(makeSchema: () => T): T {
+  let schema = schemaMemo.get(makeSchema) as T | undefined;
+  if (schema === undefined) {
+    schema = makeSchema();
+    schemaMemo.set(makeSchema, schema);
+  }
+  return schema;
+}
+
 const stateReducer: StateReducer<PipelineQueuePHState> = (
   state,
   action,
@@ -26,7 +37,7 @@ const stateReducer: StateReducer<PipelineQueuePHState> = (
   }
   switch (action.type) {
     case "ADD_TASK": {
-      AddTaskInputSchema().parse(action.input);
+      memoizedSchema(AddTaskInputSchema).parse(action.input);
 
       pipelineQueueQueueManagementOperations.addTaskOperation(
         (state as any)[action.scope],
@@ -38,7 +49,7 @@ const stateReducer: StateReducer<PipelineQueuePHState> = (
     }
 
     case "ASSIGN_TASK": {
-      AssignTaskInputSchema().parse(action.input);
+      memoizedSchema(AssignTaskInputSchema).parse(action.input);
 
       pipelineQueueQueueManagementOperations.assignTaskOperation(
         (state as any)[action.scope],
@@ -50,7 +61,7 @@ const stateReducer: StateReducer<PipelineQueuePHState> = (
     }
 
     case "ADVANCE_PHASE": {
-      AdvancePhaseInputSchema().parse(action.input);
+      memoizedSchema(AdvancePhaseInputSchema).parse(action.input);
 
       pipelineQueueQueueManagementOperations.advancePhaseOperation(
         (state as any)[action.scope],
@@ -62,7 +73,7 @@ const stateReducer: StateReducer<PipelineQueuePHState> = (
     }
 
     case "COMPLETE_TASK": {
-      CompleteTaskInputSchema().parse(action.input);
+      memoizedSchema(CompleteTaskInputSchema).parse(action.input);
 
       pipelineQueueQueueManagementOperations.completeTaskOperation(
         (state as any)[action.scope],
@@ -74,7 +85,7 @@ const stateReducer: StateReducer<PipelineQueuePHState> = (
     }
 
     case "FAIL_TASK": {
-      FailTaskInputSchema().parse(action.input);
+      memoizedSchema(FailTaskInputSchema).parse(action.input);
 
       pipelineQueueQueueManagementOperations.failTaskOperation(
         (state as any)[action.scope],
@@ -86,7 +97,7 @@ const stateReducer: StateReducer<PipelineQueuePHState> = (
     }
 
     case "BLOCK_TASK": {
-      BlockTaskInputSchema().parse(action.input);
+      memoizedSchema(BlockTaskInputSchema).parse(action.input);
 
       pipelineQueueQueueManagementOperations.blockTaskOperation(
         (state as any)[action.scope],
@@ -98,7 +109,7 @@ const stateReducer: StateReducer<PipelineQueuePHState> = (
     }
 
     case "UNBLOCK_TASK": {
-      UnblockTaskInputSchema().parse(action.input);
+      memoizedSchema(UnblockTaskInputSchema).parse(action.input);
 
       pipelineQueueQueueManagementOperations.unblockTaskOperation(
         (state as any)[action.scope],

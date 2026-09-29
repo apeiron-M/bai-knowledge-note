@@ -6,6 +6,7 @@ import {
   PhaseMismatchError,
   TaskAlreadyAssignedError,
   TaskNotFoundError,
+  TaskNotPendingError,
   UnknownTaskTypeError,
 } from "../../gen/queue-management/error.js";
 
@@ -62,6 +63,14 @@ export const pipelineQueueQueueManagementOperations: PipelineQueueQueueManagemen
       if (task.assignedTo) {
         throw new TaskAlreadyAssignedError(
           `Task ${task.id} is already assigned to ${task.assignedTo}`,
+        );
+      }
+      // Only a queued task can be taken. Assigning a DONE or FAILED task would
+      // revive it as IN_PROGRESS and every later operation on it would skew
+      // completedCount and activeCount for good.
+      if (task.status !== "PENDING") {
+        throw new TaskNotPendingError(
+          `Task ${task.id} is ${task.status}; only a PENDING task can be assigned`,
         );
       }
       task.assignedTo = action.input.assignedTo;
