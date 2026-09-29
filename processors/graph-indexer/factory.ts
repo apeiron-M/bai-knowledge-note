@@ -11,6 +11,8 @@ import type {
 } from "@powerhousedao/reactor-browser";
 import type { PHDocumentHeader } from "document-model";
 import type { IReactorClient } from "@powerhousedao/reactor";
+import type { Kysely } from "kysely";
+import { migrateWorkflowJournalOnce } from "../workflow-journal/migrate.js";
 import { GraphIndexerProcessor } from "./index.js";
 import { INDEXED_DOCUMENT_TYPES } from "./project.js";
 
@@ -106,9 +108,16 @@ async function resolveDrive(
   }
 }
 
-export const graphIndexerFactoryBuilder =
-  (module: IProcessorHostModule) =>
-  async (driveHeader: PHDocumentHeader): Promise<ProcessorRecord[]> => {
+export const graphIndexerFactoryBuilder = (module: IProcessorHostModule) => {
+  // Not the graph index's job, but the one place this package runs on the
+  // Switchboard at boot with the relational database the workflow runtime
+  // uses: see processors/workflow-journal/migrate.ts. Never in the browser.
+  if (module.processorApp !== "connect" && typeof window === "undefined") {
+    void migrateWorkflowJournalOnce(
+      module.relationalDb as unknown as Kysely<unknown>,
+    );
+  }
+  return async (driveHeader: PHDocumentHeader): Promise<ProcessorRecord[]> => {
     // Scope: only knowledge-vault drives get a graph index + embeddings.
     // The processor manager broadcasts every filter-matching operation to
     // every instance regardless of drive (ProcessorFilter has no drive
@@ -166,9 +175,7 @@ export const graphIndexerFactoryBuilder =
       client !== undefined;
 
     const processor = new GraphIndexerProcessor(namespace, filter, store, {
-      automation: automate
-        ? { driveId: driveHeader.id, client }
-        : undefined,
+      automation: automate ? { driveId: driveHeader.id, client } : undefined,
       // Second gate (see above). Without a client the processor cannot
       // learn who its members are and stays open, exactly as before.
       membership: client ? { driveId: driveHeader.id, client } : undefined,
@@ -191,3 +198,4 @@ export const graphIndexerFactoryBuilder =
       },
     ];
   };
+};

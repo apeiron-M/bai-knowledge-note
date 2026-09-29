@@ -961,7 +961,15 @@ trigger enable then fails with `column "piece_name" of relation
 looks enabled and never runs), and step journaling fails the same way.
 `scripts/migrate-workflow-block-columns.mjs` fixes a local store (reactor
 stopped, `.ph/read-storage` backed up). Any host whose workflow runtime ran on
-dev.28 or earlier needs the same, including the hosted Vetra addon. An
+dev.28 or earlier needs the same, including the hosted Vetra addon, whose
+database nobody here can reach, so the package does it itself: the graph
+indexer's factory builder starts `processors/workflow-journal/migrate.ts` once
+per Switchboard boot, against the relational database the runtime shares with
+processors (never in the browser). It is a no-op on a fresh or migrated store,
+never blocks or throws, and the runtime's own enable retry arms the trigger
+once it has run. `scripts/sql/migrate-workflow-block-columns.sql` is the same
+migration for anyone with a Postgres console. Remove all three once the
+runtime migrates its own tables. An
 upstream fix: the same `try { alterTable … addColumn } catch` pattern the
 store already uses for `piece_version`, plus a backfill from `block_type` and
 `DROP NOT NULL` on it.
