@@ -64,6 +64,23 @@ describe("JSON completions", () => {
     await expect(completeJson(new LlmClient(LLM), { model: "m", system: "s", user: "u" }, badBody)).rejects.toThrow(/Unexpected token/);
     expect([isDroppedConnection("text"), isDroppedConnection(new Error("socket hang up")), isDroppedConnection(new Error("nope"))]).toEqual([false, true, false]);
   });
+  it("retries once when a call hangs, on the request or while the answer is read, then says so plainly", async () => {
+    const { isTimeout } = await import("../lib/agent/llm.js");
+    const timeout = () => Object.assign(new Error("The operation was aborted due to timeout"), { name: "TimeoutError" });
+    let a = 0;
+    const slowOnce = (async () => { if (a++ === 0) throw timeout(); return json({ choices: [{ message: { content: '{"ok":3}' } }] }); }) as typeof fetch;
+    expect((await completeJson(new LlmClient(LLM), { model: "m", system: "s", user: "u" }, slowOnce)).value).toEqual({ ok: 3 });
+    let b = 0;
+    const slowBody = (async () => (b++ === 0 ? ({ ok: true, json: async () => { throw timeout(); } } as unknown as Response) : json({ choices: [{ message: { content: '{"ok":4}' } }] }))) as typeof fetch;
+    expect((await completeJson(new LlmClient(LLM), { model: "m", system: "s", user: "u" }, slowBody)).value).toEqual({ ok: 4 });
+    const hung = (async () => { throw timeout(); }) as typeof fetch;
+    await expect(completeJson(new LlmClient(LLM), { model: "slow/m", system: "s", user: "u", timeoutMs: 5000 }, hung)).rejects.toMatchObject({ category: "timeout", retryable: true, message: "slow/m did not answer within 5 s, twice. Run the step again, or choose a faster model." });
+    const hungBody = (async () => ({ ok: true, json: async () => { throw timeout(); } }) as unknown as Response) as typeof fetch;
+    await expect(completeJson(new LlmClient(LLM), { model: "m", system: "s", user: "u" }, hungBody)).rejects.toMatchObject({ category: "timeout", message: /within 120 s, twice/ });
+    const nullBody = (async () => json(null)) as typeof fetch;
+    await expect(completeJson(new LlmClient(LLM), { model: "m", system: "s", user: "u" }, nullBody)).rejects.toThrow("m returned an empty response twice");
+    expect([isTimeout(new Error("x")), isTimeout(Object.assign(new Error("x"), { name: "AbortError" })), isTimeout("text")]).toEqual([false, true, false]);
+  });
   it("surfaces provider errors", async () => {
     const llm = new LlmClient(LLM);
     await expect(completeJson(llm, { model: "m", system: "s", user: "u" }, (async () => new Response("{}", { status: 401 })) as typeof fetch)).rejects.toMatchObject({ category: "credential" });

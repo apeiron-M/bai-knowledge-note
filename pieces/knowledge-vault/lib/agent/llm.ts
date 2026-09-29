@@ -32,6 +32,12 @@ export type ModelInfo = {
 };
 
 const CHAT_TIMEOUT_MS = 180_000;
+/**
+ * One staged call: a normal answer takes 5-60 s. Two attempts of 120 s fit
+ * inside a step's 300 s timeout, so a call that hangs is retried instead of
+ * taking the whole step down.
+ */
+export const JSON_CALL_TIMEOUT_MS = 120_000;
 
 export class LlmClient {
   constructor(
@@ -116,41 +122,53 @@ export class LlmClient {
  */
 export async function completeJson(
   client: LlmClient,
-  request: { model: string; system: string; user: string; maxTokens?: number; reasoningEffort?: "low" | "medium" | "high" },
+  request: { model: string; system: string; user: string; maxTokens?: number; reasoningEffort?: "low" | "medium" | "high"; timeoutMs?: number },
   fetchImpl: typeof fetch = fetch,
 ): Promise<{ value: unknown; usage: Usage }> {
   const { baseUrl, apiKey } = client.credentials;
   const usage: Usage = { prompt_tokens: 0, completion_tokens: 0, cost: 0 };
   let budget = request.maxTokens ?? 32_000;
+  const timeoutMs = request.timeoutMs ?? JSON_CALL_TIMEOUT_MS;
   for (let attempt = 1; ; attempt++) {
-    const response = await fetchImpl(`${baseUrl}/chat/completions`, {
-      method: "POST",
-      headers: { Authorization: `Bearer ${apiKey}`, "Content-Type": "application/json", "HTTP-Referer": "https://powerhouse.inc", "X-Title": "Powerhouse Knowledge Vault" },
-      body: JSON.stringify({
-        model: request.model,
-        messages: [{ role: "system", content: request.system }, { role: "user", content: request.user }],
-        response_format: { type: "json_object" },
-        temperature: 0.2,
-        max_tokens: budget,
-        ...(request.reasoningEffort ? { reasoning: { effort: request.reasoningEffort } } : {}),
-        usage: { include: true },
-      }),
-      signal: AbortSignal.timeout(CHAT_TIMEOUT_MS),
-    }).catch((error: unknown) => {
-      if (error instanceof Error && (error.name === "TimeoutError" || error.name === "AbortError")) {
-        throw new KnowledgeVaultApiError(`${request.model} did not answer within ${CHAT_TIMEOUT_MS / 1000} s. Run the step again, or choose a faster model.`, { category: "timeout", retryable: true });
-      }
-      if (attempt < 2 && isDroppedConnection(error)) return null;
+    // A hang, or a connection dropped before or while the answer arrives, gets one more try.
+    const retryable = (error: unknown) => attempt < 2 && (isTimeout(error) || isDroppedConnection(error));
+    const fail = (error: unknown): never => {
+      if (isTimeout(error)) throw new KnowledgeVaultApiError(`${request.model} did not answer within ${Math.round(timeoutMs / 1000)} s, twice. Run the step again, or choose a faster model.`, { category: "timeout", retryable: true });
       throw error;
-    });
-    // A connection dropped mid-answer ("terminated", "fetch failed") is retried once.
-    if (response === null) continue;
+    };
+    let response: Response;
+    try {
+      response = await fetchImpl(`${baseUrl}/chat/completions`, {
+        method: "POST",
+        headers: { Authorization: `Bearer ${apiKey}`, "Content-Type": "application/json", "HTTP-Referer": "https://powerhouse.inc", "X-Title": "Powerhouse Knowledge Vault" },
+        body: JSON.stringify({
+          model: request.model,
+          messages: [{ role: "system", content: request.system }, { role: "user", content: request.user }],
+          response_format: { type: "json_object" },
+          temperature: 0.2,
+          max_tokens: budget,
+          ...(request.reasoningEffort ? { reasoning: { effort: request.reasoningEffort } } : {}),
+          usage: { include: true },
+        }),
+        signal: AbortSignal.timeout(timeoutMs),
+      });
+    } catch (error) {
+      if (retryable(error)) continue;
+      return fail(error);
+    }
     if (!response.ok) throw await llmError(response, `ask ${request.model}`);
-    const body = (await response.json().catch((error: unknown) => {
-      if (attempt < 2 && isDroppedConnection(error)) return null;
-      throw error;
-    })) as { choices?: { message?: { content?: string | null }; finish_reason?: string | null }[]; usage?: { prompt_tokens?: number; completion_tokens?: number; cost?: number }; error?: { message?: string } };
-    if (body === null) continue;
+    let body: { choices?: { message?: { content?: string | null }; finish_reason?: string | null }[]; usage?: { prompt_tokens?: number; completion_tokens?: number; cost?: number }; error?: { message?: string } } | null;
+    try {
+      body = (await response.json()) as typeof body;
+    } catch (error) {
+      if (retryable(error)) continue;
+      return fail(error);
+    }
+    if (!body) {
+      // An empty body is an empty answer: once more, then say so.
+      if (attempt < 2) continue;
+      throw new KnowledgeVaultApiError(`${request.model} returned an empty response twice`, { category: "server", retryable: true });
+    }
     if (body.error) throw new KnowledgeVaultApiError(`The model provider refused the request: ${body.error.message ?? "unknown error"}`, { category: "server", retryable: true });
     usage.prompt_tokens += body.usage?.prompt_tokens ?? 0;
     usage.completion_tokens += body.usage?.completion_tokens ?? 0;
@@ -173,6 +191,11 @@ export async function completeJson(
       throw error;
     }
   }
+}
+
+/** AbortSignal.timeout rejects with a TimeoutError, both on the request and while the body is read. */
+export function isTimeout(error: unknown): boolean {
+  return error instanceof Error && (error.name === "TimeoutError" || error.name === "AbortError" || /aborted due to timeout/i.test(error.message));
 }
 
 /** Node's fetch reports a connection the other side dropped as "terminated" or "fetch failed". */
