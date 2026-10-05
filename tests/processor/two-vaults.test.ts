@@ -82,7 +82,7 @@ beforeAll(async () => {
   alpha = new GraphIndexerProcessor(
     "alpha_ns",
     { documentType: [], scope: [], branch: [], documentId: [] },
-    db as unknown as IRelationalDb<DB>,
+    db as unknown as IRelationalDb<DB>, undefined,
     {
       embed: false,
       membership: {
@@ -94,7 +94,7 @@ beforeAll(async () => {
   beta = new GraphIndexerProcessor(
     "beta_ns",
     { documentType: [], scope: [], branch: [], documentId: [] },
-    db as unknown as IRelationalDb<DB>,
+    db as unknown as IRelationalDb<DB>, undefined,
     {
       embed: false,
       membership: {

@@ -179,7 +179,7 @@ describe("GraphIndexerProcessor with a drive-membership gate", () => {
     processor = new GraphIndexerProcessor(
       "membership_ns",
       { documentType: [], scope: [], branch: [], documentId: [] },
-      db as unknown as IRelationalDb<DB>,
+      db as unknown as IRelationalDb<DB>, undefined,
       { embed: false, membership: { driveId: OURS, client } },
     );
   });

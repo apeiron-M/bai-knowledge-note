@@ -305,6 +305,7 @@ describe("through the processor", () => {
     const processor = new GraphIndexerProcessor(
       "ns", { documentType: [], scope: [], branch: [], documentId: [] },
       db as unknown as IRelationalDb<DB>,
+      undefined,
       // The instance "started" at T, so an operation stamped T is live.
       { embed: false, automation: { driveId: DRIVE, client, log: quiet }, now: () => Date.parse(T) },
     );
@@ -325,7 +326,7 @@ describe("through the processor", () => {
     // `startFrom: "beginning"` replay, exactly the boot-time case.
     const processor = new GraphIndexerProcessor(
       "ns", { documentType: [], scope: [], branch: [], documentId: [] },
-      db as unknown as IRelationalDb<DB>,
+      db as unknown as IRelationalDb<DB>, undefined,
       { embed: false, automation: { driveId: DRIVE, client, log: quiet }, now: () => Date.parse(T) + 60 * 60_000 },
     );
     expect(processor.isLiveOperation(T)).toBe(false);
@@ -342,7 +343,7 @@ describe("through the processor", () => {
   it("read-only when no automation is configured", async () => {
     const processor = new GraphIndexerProcessor(
       "ns", { documentType: [], scope: [], branch: [], documentId: [] },
-      db as unknown as IRelationalDb<DB>, { embed: false },
+      db as unknown as IRelationalDb<DB>, undefined, { embed: false },
     );
     expect(processor.automationEnabled).toBe(false);
   });

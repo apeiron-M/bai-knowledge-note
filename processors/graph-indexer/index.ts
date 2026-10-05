@@ -95,9 +95,12 @@ export class GraphIndexerProcessor extends RelationalDbProcessor<DB> {
     namespace: string,
     filter: ConstructorParameters<typeof RelationalDbProcessor<DB>>[1],
     relationalDb: ConstructorParameters<typeof RelationalDbProcessor<DB>>[2],
+    // The drive the factory made this processor for. The base class (≥
+    // 6.2.3-dev.34) uses it to tell its own drive's deletion from another's.
+    driveId?: string,
     options: GraphIndexerOptions = {},
   ) {
-    super(namespace, filter, relationalDb);
+    super(namespace, filter, relationalDb, driveId);
     this.embeddingEnabled = options.embed ?? EMBEDDING_ENABLED_DEFAULT;
     this.startedAtMs = options.now?.() ?? Date.now();
     // `IRelationalDb` is a Kysely instance with namespace helpers; the
@@ -322,12 +325,15 @@ export class GraphIndexerProcessor extends RelationalDbProcessor<DB> {
         continue;
       }
 
-      // Handle document/drive deletion. Two signals, either suffices:
+      // Handle document/drive deletion. Three signals, any suffices:
       //  - DELETE_NODE on a drive document (the file left the tree);
       //  - DELETE_DOCUMENT, the reactor's own system action on the deleted
       //    document itself (`deleteDocuments` emits it whether or not any
       //    drive still listed the file). Without the second, a document
-      //    deleted through the reactor API left a ghost row here.
+      //    deleted through the reactor API left a ghost row here;
+      //  - PURGE_DOCUMENT (≥ 6.2.3-dev.34), the erasure marker. A purged
+      //    document's other operations are never delivered, so this is the
+      //    only chance to forget it — and it must be forgotten entirely.
       if (
         context.documentType === "powerhouse/document-drive" &&
         operation.action.type === "DELETE_NODE"
@@ -339,10 +345,24 @@ export class GraphIndexerProcessor extends RelationalDbProcessor<DB> {
         lastByDocument.delete(deleteInput.id);
         continue;
       }
-      if (operation.action.type === "DELETE_DOCUMENT") {
+      if (
+        operation.action.type === "DELETE_DOCUMENT" ||
+        operation.action.type === "PURGE_DOCUMENT"
+      ) {
         const target =
           (operation.action.input as { documentId?: string }).documentId ??
           documentId;
+        // Our own vault drive deleted or purged: the whole projection is its
+        // data. The base class matches by the drive id the factory passed,
+        // so another drive's deletion never lands here. Nothing after the
+        // drive's own deletion is delivered, so stop.
+        if (this.isNamespaceDrive(target)) {
+          await this.dropNamespace();
+          console.log(
+            `[GraphIndexer] Drive ${target} ${operation.action.type === "PURGE_DOCUMENT" ? "purged" : "deleted"}: dropped namespace ${this.namespace}`,
+          );
+          return;
+        }
         // Membership is gone by now (the reactor drops containment first),
         // so use the index itself as the answer: deleting a row we never
         // had is a no-op.

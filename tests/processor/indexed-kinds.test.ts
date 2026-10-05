@@ -17,7 +17,7 @@
  *   - The migration backfills `document_type` on rows that predate it.
  *   - The processor stores the signer's did:key and signature tuple per op.
  */
-import { describe, it, expect, beforeAll, afterAll, beforeEach } from "vitest";
+import { describe, it, expect, beforeAll, afterAll, beforeEach, vi } from "vitest";
 import { Kysely } from "kysely";
 import { PGlite } from "@electric-sql/pglite";
 import { PGliteDialect } from "kysely-pglite-dialect";
@@ -545,7 +545,7 @@ describe("GraphIndexerProcessor.onOperations()", () => {
     processor = new GraphIndexerProcessor(
       "test_ns",
       { documentType: [], scope: [], branch: [], documentId: [] },
-      db as unknown as IRelationalDb<DB>,
+      db as unknown as IRelationalDb<DB>, undefined,
       { embed: false },
     );
   });
@@ -658,6 +658,51 @@ describe("GraphIndexerProcessor.onOperations()", () => {
     expect(await query.nodeByDocumentId("gone")).toBeUndefined();
     expect((await query.forwardLinks("gone")).length).toBe(0);
     expect(await query.history("gone")).toEqual([]);
+  });
+
+  it("forgets a node entirely on a PURGE_DOCUMENT erasure marker", async () => {
+    await processor.onOperations([
+      op("erased", "bai/tension", 0, "CREATE_TENSION",
+        { title: "e", description: "d", involvedRefs: ["n1"], observedAt: T },
+        { title: "e", involvedRefs: ["n1"], status: "OPEN" }),
+    ]);
+    expect(await query.nodeByDocumentId("erased")).toBeDefined();
+    await processor.onOperations([
+      op("erased", "bai/tension", 1, "PURGE_DOCUMENT", { documentId: "erased" }, undefined, "document"),
+    ]);
+    expect(await query.nodeByDocumentId("erased")).toBeUndefined();
+    expect((await query.forwardLinks("erased")).length).toBe(0);
+    expect(await query.history("erased")).toEqual([]);
+  });
+
+  it("drops its namespace only when its own drive is deleted or purged", async () => {
+    const DRIVE = "vault-drive";
+    const own = new GraphIndexerProcessor(
+      GraphIndexerProcessor.getNamespace(DRIVE),
+      { documentType: [], scope: [], branch: [], documentId: [] },
+      db as unknown as IRelationalDb<DB>, DRIVE,
+      { embed: false },
+    );
+    // The test database is not a namespaced one; observe the call instead.
+    const drop = vi
+      .spyOn(own as unknown as { dropNamespace: () => Promise<void> }, "dropNamespace")
+      .mockResolvedValue(undefined);
+    await node("kept", "bai/knowledge-note", { title: "Kept" });
+
+    // Another drive's deletion: an ordinary (no-op) node delete.
+    await own.onOperations([
+      op("other-drive", "powerhouse/document-drive", 0, "DELETE_DOCUMENT", { documentId: "other-drive" }, undefined, "document"),
+    ]);
+    expect(drop).not.toHaveBeenCalled();
+    expect(await query.nodeByDocumentId("kept")).toBeDefined();
+
+    // Its own drive: drop, and process nothing after it in the batch.
+    await own.onOperations([
+      op(DRIVE, "powerhouse/document-drive", 0, "PURGE_DOCUMENT", { documentId: DRIVE }, undefined, "document"),
+      op("kept", "bai/tension", 1, "DELETE_DOCUMENT", { documentId: "kept" }, undefined, "document"),
+    ]);
+    expect(drop).toHaveBeenCalledTimes(1);
+    expect(await query.nodeByDocumentId("kept")).toBeDefined();
   });
 
   it("indexes a scope of work: SCOPE row, titled CITES / DELIVERED_BY edges, reconciled on unlink", async () => {

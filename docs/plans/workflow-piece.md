@@ -967,12 +967,14 @@ indexer's factory builder starts `processors/workflow-journal/migrate.ts` once
 per Switchboard boot, against the relational database the runtime shares with
 processors (never in the browser). It is a no-op on a fresh or migrated store,
 never blocks or throws, and the runtime's own enable retry arms the trigger
-once it has run. `scripts/sql/migrate-workflow-block-columns.sql` is the same
-migration for anyone with a Postgres console. Remove all three once the
-runtime migrates its own tables. An
-upstream fix: the same `try { alterTable … addColumn } catch` pattern the
-store already uses for `piece_version`, plus a backfill from `block_type` and
-`DROP NOT NULL` on it.
+once it has run. `scripts/sql/migrate-workflow-block-columns.sql` was the same
+migration for anyone with a Postgres console.
+
+**Resolved upstream in 6.2.3-dev.34** (`236e2b00f`, `fix(reactor-workflow):
+migrate block_type journals to piece and block name columns`): the runtime now
+adds the columns, backfills them from `block_type` (mapping the pre-rename
+`core` piece) and drops NOT NULL itself. All three workarounds were removed
+when this package moved to 6.2.3-dev.43.
 
 A workflow written before dev.31 no longer arms at all
 (`The trigger undefined@undefined … does not resolve`): the model changed in

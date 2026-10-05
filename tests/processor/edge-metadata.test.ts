@@ -106,7 +106,7 @@ describe("edges carry their articulation", () => {
     processor = new GraphIndexerProcessor(
       "edge_meta_ns",
       { documentType: [], scope: [], branch: [], documentId: [] },
-      db as unknown as IRelationalDb<DB>,
+      db as unknown as IRelationalDb<DB>, undefined,
       { embed: false },
     );
   });
