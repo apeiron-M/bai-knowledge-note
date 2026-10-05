@@ -13,7 +13,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parent))
 from lib.graphql import GraphQLClient
 
 TYPES = ("RELATES_TO","BUILDS_ON","CONTRADICTS","SUPERSEDES","DERIVED_FROM","CORE_IDEA","CHILD_MOC","INVOLVES")
-Q = """query O($sid: String!, $t: String!){ documentOutgoingRelationships(sourceIdentifier:$sid, relationshipType:$t){ items { id } } }"""
+Q = """query O($sid: String!, $t: String!){ documentOutgoingRelationships(sourceIdOrSlug:$sid, relationshipType:$t){ items { id } } }"""
 
 ap = argparse.ArgumentParser()
 ap.add_argument("--data", required=True); ap.add_argument("--endpoint", required=True)

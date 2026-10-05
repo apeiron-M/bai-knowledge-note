@@ -631,7 +631,7 @@ async function driveMembers(
     document: { document: { state: unknown } | null } | null;
   }>(
     reactorEndpoint(),
-    `query DriveTree($id: String!) { document(identifier: $id) { document { state } } }`,
+    `query DriveTree($id: String!) { document(idOrSlug: $id) { document { state } } }`,
     { id: driveId },
   );
   if ("error" in tree) return null;
@@ -1720,7 +1720,7 @@ export async function executeTool(
       }>(
         reactorEndpoint(),
         `query History($id: String!) {
-          document(identifier: $id) {
+          document(idOrSlug: $id) {
             document {
               id name documentType createdAtUtcIso lastModifiedAtUtcIso
               revisionsList { scope revision }

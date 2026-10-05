@@ -89,7 +89,7 @@ async function fetchIndex(driveId: string): Promise<IndexData> {
       headers: await authHeaders(),
       body: JSON.stringify({
         query: `query VaultIndexTree($id: String!) {
-          document(identifier: $id) { document { state } }
+          document(idOrSlug: $id) { document { state } }
         }`,
         variables: { id: driveId },
       }),

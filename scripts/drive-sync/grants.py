@@ -89,20 +89,20 @@ def post(query: str, variables: dict) -> dict:
 
 
 ACCESS_Q = """query Access($id: String!) {
-  documentAccess(documentId: $id) {
+  documentAccess(documentIdOrSlug: $id) {
     permissions { userAddress permission grantedBy createdAt }
   }
 }"""
 PROTECTION_Q = """query Protection($id: String!) {
-  documentProtection(documentId: $id) { protected ownerAddress }
+  documentProtection(documentIdOrSlug: $id) { protected ownerAddress }
 }"""
 GRANT_M = """mutation Grant($id: String!, $addr: String!, $perm: DocumentPermissionLevel!) {
-  grantDocumentPermission(documentId: $id, userAddress: $addr, permission: $perm) {
+  grantDocumentPermission(documentIdOrSlug: $id, userAddress: $addr, permission: $perm) {
     userAddress permission
   }
 }"""
 REVOKE_M = """mutation Revoke($id: String!, $addr: String!) {
-  revokeDocumentPermission(documentId: $id, userAddress: $addr)
+  revokeDocumentPermission(documentIdOrSlug: $id, userAddress: $addr)
 }"""
 
 

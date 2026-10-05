@@ -88,7 +88,7 @@ const stampedVersion = (state) => {
 };
 
 const readDoc = async (id) => {
-  const d = await gql(`query($id: String!){ document(identifier:$id){ document{ state } } }`, { id });
+  const d = await gql(`query($id: String!){ document(idOrSlug:$id){ document{ state } } }`, { id });
   const s = d.document.document.state;
   return typeof s === "string" ? JSON.parse(s) : s;
 };
@@ -145,7 +145,7 @@ const results = await pool(todo, CONCURRENCY, async (p) => {
       input: { documentId: p.id, model: p.type, fromVersion: p.from, toVersion: TARGET(p) },
     };
     await gql(
-      `mutation($id: String!, $a: [ActionInput!]!){ execute(documentIdentifier: $id, actions: $a){ id } }`,
+      `mutation($id: String!, $a: [ActionInput!]!){ execute(documentIdOrSlug: $id, actions: $a){ id } }`,
       { id: p.id, a: [action] },
     );
     const after = await readDoc(p.id);

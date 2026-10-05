@@ -46,7 +46,7 @@ type Verdict =
   | { kind: "unreachable"; detail: string };
 
 const DRIVE_PROBE = `query Probe($id: String!) {
-  document(identifier: $id) { document { id } }
+  document(idOrSlug: $id) { document { id } }
 }`;
 
 /**

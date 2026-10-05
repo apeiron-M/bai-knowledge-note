@@ -20,7 +20,7 @@ W = "https://light-colt-c497cfbd-switchboard.vetra.io/graphql"
 R = W + "/r"
 MAP = Path("scripts/lead-import/id-map.json")
 
-Q = 'query($id:String!){ document(identifier:$id){ document { ... on PHDocument { state } } } }'
+Q = 'query($id:String!){ document(idOrSlug:$id){ document { ... on PHDocument { state } } } }'
 MUT = 'mutation($id:String!,$actions:[JSONObject!]!){ mutateDocument(documentIdentifier:$id, actions:$actions){ documentType } }'
 
 def now():

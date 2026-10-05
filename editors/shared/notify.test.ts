@@ -16,7 +16,7 @@ import {
  */
 function clientError(response: Record<string, unknown>): Error {
   const request = {
-    query: "query GetDocument($identifier: String!) { document(identifier: $identifier) { document { id } } }",
+    query: "query GetDocument($identifier: String!) { document(idOrSlug: $identifier) { document { id } } }",
     variables: { identifier: "cf9b51d2-2915-45be-be2c-0ad939bfc1ae" },
   };
   const status = typeof response.status === "number" ? response.status : 200;

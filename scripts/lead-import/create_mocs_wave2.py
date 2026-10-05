@@ -20,10 +20,10 @@ R = W + "/r"
 D = "c5893e1b-854b-49b1-b8aa-6b133ab87969"
 KNOWLEDGE_FOLDER = "ee107acb-6386-4f18-901b-5a7c12a49774"
 
-CREATE = 'mutation($name:String!,$parent:String){ Moc { createDocument(name:$name, parentIdentifier:$parent){ id } } }'
-MOVE = 'mutation($docId:PHID!,$input:DocumentDrive_MoveNodeInput!){ DocumentDrive { moveNode(docId:$docId, input:$input){ id } } }'
+CREATE = 'mutation($name:String!,$parent:String){ Moc { createDocument(name:$name, parentIdOrSlug:$parent){ id } } }'
+MOVE = 'mutation($docId:String!,$input:DocumentDrive_MoveNodeInput!){ DocumentDrive { moveNode(documentIdOrSlug:$docId, input:$input){ id } } }'
 MUT = 'mutation($id:String!,$actions:[JSONObject!]!){ mutateDocument(documentIdentifier:$id, actions:$actions){ documentType } }'
-REL = 'mutation($s:String!,$t:String!,$ty:String!){ addRelationship(sourceIdentifier:$s, targetIdentifier:$t, relationshipType:$ty, branch:"main"){ documentType } }'
+REL = 'mutation($s:String!,$t:String!,$ty:String!){ addRelationship(sourceIdOrSlug:$s, targetIdOrSlug:$t, relationshipType:$ty, branch:"main"){ documentType } }'
 
 WAVE2 = {
     "open-source-screening": ("Leads awaiting an open-source portfolio screen",

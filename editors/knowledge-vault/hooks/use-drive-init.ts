@@ -28,7 +28,7 @@ async function fetchDriveNodes(driveId: string): Promise<Node[] | null> {
       headers: await authHeaders(),
       body: JSON.stringify({
         query:
-          "query DriveNodes($id: String!){document(identifier:$id){document{state}}}",
+          "query DriveNodes($id: String!){document(idOrSlug:$id){document{state}}}",
         variables: { id: driveId },
       }),
     });

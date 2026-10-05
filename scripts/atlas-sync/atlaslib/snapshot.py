@@ -62,7 +62,7 @@ def chunks(items: list, size: int) -> Iterable[list]:
 
 def build_state_query(doc_ids: list[str]) -> str:
     parts = [
-        f' d{i}: document(identifier: "{safe_identifier(d)}") {{ document {{ id state }} }}'
+        f' d{i}: document(idOrSlug: "{safe_identifier(d)}") {{ document {{ id state }} }}'
         for i, d in enumerate(doc_ids)
     ]
     return "query{" + "".join(parts) + "}"
@@ -177,7 +177,7 @@ def attach_relationships(
 
 # ── Driver ──────────────────────────────────────────────────────────
 
-DRIVE_QUERY = "query($id: String!){ document(identifier:$id){ document { id slug name state } } }"
+DRIVE_QUERY = "query($id: String!){ document(idOrSlug:$id){ document { id slug name state } } }"
 
 
 def fetch_drive(gql, drive: str) -> dict:

@@ -65,10 +65,10 @@ def leads_block(group_index):
     lines.append(f"> {g['text']}")
     return "\n".join(lines)
 
-CREATE = 'mutation($name:String!,$parent:String){ KnowledgeNote { createDocument(name:$name, parentIdentifier:$parent){ id } } }'
-MOVE = 'mutation($docId:PHID!,$input:DocumentDrive_MoveNodeInput!){ DocumentDrive { moveNode(docId:$docId, input:$input){ id } } }'
+CREATE = 'mutation($name:String!,$parent:String){ KnowledgeNote { createDocument(name:$name, parentIdOrSlug:$parent){ id } } }'
+MOVE = 'mutation($docId:String!,$input:DocumentDrive_MoveNodeInput!){ DocumentDrive { moveNode(documentIdOrSlug:$docId, input:$input){ id } } }'
 MUT = 'mutation($id:String!,$actions:[JSONObject!]!){ mutateDocument(documentIdentifier:$id, actions:$actions){ documentType } }'
-REL = 'mutation($s:String!,$t:String!,$ty:String!){ addRelationship(sourceIdentifier:$s, targetIdentifier:$t, relationshipType:$ty, branch:"main"){ documentType } }'
+REL = 'mutation($s:String!,$t:String!,$ty:String!){ addRelationship(sourceIdOrSlug:$s, targetIdOrSlug:$t, relationshipType:$ty, branch:"main"){ documentType } }'
 
 def now():
     return datetime.datetime.now(datetime.timezone.utc).isoformat().replace("+00:00", "Z")

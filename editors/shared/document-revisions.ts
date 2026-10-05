@@ -57,7 +57,7 @@ export type DocumentOperationsPage = {
 
 export const DOCUMENT_OPERATIONS_QUERY = `
   query DocumentOperations($id: String!, $cursor: String) {
-    document(identifier: $id, view: { branch: "main" }) {
+    document(idOrSlug: $id, view: { branch: "main" }) {
       document {
         operations(
           filter: { scopes: ["global"] }

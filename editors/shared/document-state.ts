@@ -30,7 +30,7 @@ export interface RawDocument {
 
 const DOC_QUERY = `
   query DocState($id: String!) {
-    document(identifier: $id) {
+    document(idOrSlug: $id) {
       document {
         id
         name

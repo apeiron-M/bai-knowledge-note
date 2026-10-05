@@ -94,8 +94,8 @@ def post(query, variables, endpoint, attempts=4):
             time.sleep(1.5 * (i + 1))
     raise last
 
-CREATE = 'mutation($name:String!,$parent:String){ Source { createDocument(name:$name, parentIdentifier:$parent){ id } } }'
-MOVE = 'mutation($docId:PHID!,$input:DocumentDrive_MoveNodeInput!){ DocumentDrive { moveNode(docId:$docId, input:$input){ id } } }'
+CREATE = 'mutation($name:String!,$parent:String){ Source { createDocument(name:$name, parentIdOrSlug:$parent){ id } } }'
+MOVE = 'mutation($docId:String!,$input:DocumentDrive_MoveNodeInput!){ DocumentDrive { moveNode(documentIdOrSlug:$docId, input:$input){ id } } }'
 MUT = 'mutation($id:String!,$actions:[JSONObject!]!){ mutateDocument(documentIdentifier:$id, actions:$actions){ documentType } }'
 
 def main():

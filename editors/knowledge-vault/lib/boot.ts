@@ -185,7 +185,7 @@ async function isVaultDrive(driveId: string): Promise<boolean> {
     headers: await authHeaders(),
     body: JSON.stringify({
       query:
-        "query($id:String!){ document(identifier:$id){ document { ... on PHDocument { preferredEditor } } } }",
+        "query($id:String!){ document(idOrSlug:$id){ document { ... on PHDocument { preferredEditor } } } }",
       variables: { id: driveId },
     }),
   });
@@ -338,7 +338,7 @@ async function driveChangedSince(driveId: string): Promise<boolean> {
       headers: await authHeaders(),
       body: JSON.stringify({
         query:
-          "query F($id:String!){ document(identifier:$id){ document { lastModifiedAtUtcIso } } }",
+          "query F($id:String!){ document(idOrSlug:$id){ document { lastModifiedAtUtcIso } } }",
         variables: { id: driveId },
       }),
     });
@@ -468,7 +468,7 @@ async function probeDriveReadable(driveId: string): Promise<ReadVerdict> {
       method: "POST",
       headers: await authHeaders(),
       body: JSON.stringify({
-        query: "query P($id:String!){ document(identifier:$id){ document { id } } }",
+        query: "query P($id:String!){ document(idOrSlug:$id){ document { id } } }",
         variables: { id: driveId },
       }),
     });

@@ -168,7 +168,7 @@ const NODES_QUERY = `
 
 const DRIVE_TREE_QUERY = `
   query DriveTree($id: String!) {
-    document(identifier: $id) {
+    document(idOrSlug: $id) {
       document { state }
     }
   }

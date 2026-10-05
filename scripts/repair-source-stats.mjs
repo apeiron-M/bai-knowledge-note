@@ -46,7 +46,7 @@ async function pool(items, n, fn) {
 }
 
 // sources are not graph-indexed: enumerate them from the drive document
-const data = await gql(`query($d: String!) { document(identifier: $d) { document { state } } }`, { d: DRIVE }).catch(() => null);
+const data = await gql(`query($d: String!) { document(idOrSlug: $d) { document { state } } }`, { d: DRIVE }).catch(() => null);
 let ids;
 if (data?.document?.document?.state) {
   const nodes = data.document.document.state?.global?.nodes ?? [];

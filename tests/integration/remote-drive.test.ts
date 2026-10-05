@@ -215,7 +215,7 @@ describe.skipIf(!reactorAvailable)("Remote Drive Integration", () => {
     const docResult = await gql<DocumentResult>(
       `
       query GetDocument($identifier: String!) {
-        document(identifier: $identifier) {
+        document(idOrSlug: $identifier) {
           id
           documentType
         }

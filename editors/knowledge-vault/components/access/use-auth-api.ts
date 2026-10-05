@@ -135,7 +135,7 @@ export function canManageDocument(documentId: string) {
 /** Grants ON one document. Requires ADMIN of that document. */
 export function documentAccess(documentId: string) {
   return auth<{ documentAccess: { documentId: string; permissions: Grant[] } }>(
-    `query A($id: String!) { documentAccess(documentId: $id) {
+    `query A($id: String!) { documentAccess(documentIdOrSlug: $id) {
        documentId permissions { documentId userAddress permission grantedBy createdAt } } }`,
     { id: documentId },
   );
@@ -143,7 +143,7 @@ export function documentAccess(documentId: string) {
 
 export function documentProtection(documentId: string) {
   return auth<{ documentProtection: Protection }>(
-    `query P($id: String!) { documentProtection(documentId: $id) {
+    `query P($id: String!) { documentProtection(documentIdOrSlug: $id) {
        documentId protected ownerAddress } }`,
     { id: documentId },
   );
@@ -158,7 +158,7 @@ export function operationPermissions(documentId: string, operationType: string) 
     };
   }>(
     `query O($id: String!, $op: String!) {
-       operationPermissions(documentId: $id, operationType: $op) {
+       operationPermissions(documentIdOrSlug: $id, operationType: $op) {
          documentId operationType
          userPermissions { documentId operationType userAddress grantedBy } } }`,
     { id: documentId, op: operationType },
@@ -169,7 +169,7 @@ export function operationPermissions(documentId: string, operationType: string) 
 export function canExecuteOperation(documentId: string, operationType: string) {
   return auth<{ canExecuteOperation: boolean }>(
     `query C($id: String!, $op: String!) {
-       canExecuteOperation(documentId: $id, operationType: $op) }`,
+       canExecuteOperation(documentIdOrSlug: $id, operationType: $op) }`,
     { id: documentId, op: operationType },
   );
 }
@@ -179,7 +179,7 @@ export async function driveNodes(driveId: string): Promise<ApiResult<DriveNode[]
   const res = await reactor<{
     document?: { document?: { state?: { global?: { nodes?: DriveNode[] } } } };
   }>(
-    `query T($id: String!) { document(identifier: $id) { document { state } } }`,
+    `query T($id: String!) { document(idOrSlug: $id) { document { state } } }`,
     { id: driveId },
   );
   if (res.error) return { error: res.error, forbidden: res.forbidden };
@@ -228,7 +228,7 @@ export async function operationTypes(): Promise<Record<string, string[]>> {
 export function grantDocument(id: string, addr: string, perm: Level) {
   return auth<unknown>(
     `mutation G($id: String!, $a: String!, $p: DocumentPermissionLevel!) {
-       grantDocumentPermission(documentId: $id, userAddress: $a, permission: $p) {
+       grantDocumentPermission(documentIdOrSlug: $id, userAddress: $a, permission: $p) {
          userAddress permission } }`,
     { id, a: addr, p: perm },
   );
@@ -237,7 +237,7 @@ export function grantDocument(id: string, addr: string, perm: Level) {
 export function revokeDocument(id: string, addr: string) {
   return auth<unknown>(
     `mutation R($id: String!, $a: String!) {
-       revokeDocumentPermission(documentId: $id, userAddress: $a) }`,
+       revokeDocumentPermission(documentIdOrSlug: $id, userAddress: $a) }`,
     { id, a: addr },
   );
 }
@@ -245,7 +245,7 @@ export function revokeDocument(id: string, addr: string) {
 export function setProtection(id: string, isProtected: boolean) {
   return auth<{ setDocumentProtection: Protection }>(
     `mutation S($id: String!, $p: Boolean!) {
-       setDocumentProtection(documentId: $id, protected: $p) {
+       setDocumentProtection(documentIdOrSlug: $id, protected: $p) {
          documentId protected ownerAddress } }`,
     { id, p: isProtected },
   );
@@ -254,7 +254,7 @@ export function setProtection(id: string, isProtected: boolean) {
 export function transferOwnership(id: string, addr: string) {
   return auth<{ transferDocumentOwnership: Protection }>(
     `mutation T($id: String!, $a: String!) {
-       transferDocumentOwnership(documentId: $id, newOwnerAddress: $a) {
+       transferDocumentOwnership(documentIdOrSlug: $id, newOwnerAddress: $a) {
          documentId protected ownerAddress } }`,
     { id, a: addr },
   );
@@ -263,7 +263,7 @@ export function transferOwnership(id: string, addr: string) {
 export function grantOperation(id: string, op: string, addr: string) {
   return auth<unknown>(
     `mutation GO($id: String!, $op: String!, $a: String!) {
-       grantOperationPermission(documentId: $id, operationType: $op, userAddress: $a) {
+       grantOperationPermission(documentIdOrSlug: $id, operationType: $op, userAddress: $a) {
          userAddress operationType } }`,
     { id, op, a: addr },
   );
@@ -272,7 +272,7 @@ export function grantOperation(id: string, op: string, addr: string) {
 export function revokeOperation(id: string, op: string, addr: string) {
   return auth<unknown>(
     `mutation RO($id: String!, $op: String!, $a: String!) {
-       revokeOperationPermission(documentId: $id, operationType: $op, userAddress: $a) }`,
+       revokeOperationPermission(documentIdOrSlug: $id, operationType: $op, userAddress: $a) }`,
     { id, op, a: addr },
   );
 }
@@ -381,7 +381,7 @@ export async function scanDocumentGrants(
   // have a permissions problem and telling them their drive tree is stale.
   for (const id of unanswered) {
     const probe = await reactor<{ document?: unknown }>(
-      `query E($id: String!) { document(identifier: $id) { document { id } } }`,
+      `query E($id: String!) { document(idOrSlug: $id) { document { id } } }`,
       { id },
     );
     if (probe.error && /not found/i.test(probe.error)) state.missingIds.push(id);

@@ -14,10 +14,10 @@ DRIVE = "c5893e1b-854b-49b1-b8aa-6b133ab87969"
 NOTES = "d2be7d6a-7faa-43bf-96f6-fd428b9239e4"
 SOURCE = (sys.argv[2] if len(sys.argv)>2 else Path('/tmp/report/source-id.txt').read_text().strip())
 
-CREATE = 'mutation($n:String!,$p:String){ KnowledgeNote { createDocument(name:$n, parentIdentifier:$p){ id } } }'
-MOVE = 'mutation($d:PHID!,$i:DocumentDrive_MoveNodeInput!){ DocumentDrive { moveNode(docId:$d, input:$i){ id } } }'
+CREATE = 'mutation($n:String!,$p:String){ KnowledgeNote { createDocument(name:$n, parentIdOrSlug:$p){ id } } }'
+MOVE = 'mutation($d:String!,$i:DocumentDrive_MoveNodeInput!){ DocumentDrive { moveNode(documentIdOrSlug:$d, input:$i){ id } } }'
 MUT = 'mutation($id:String!,$a:[JSONObject!]!){ mutateDocument(documentIdentifier:$id, actions:$a){ documentType } }'
-REL = 'mutation($s:String!,$t:String!,$ty:String!){ addRelationship(sourceIdentifier:$s, targetIdentifier:$t, relationshipType:$ty, branch:"main"){ documentType } }'
+REL = 'mutation($s:String!,$t:String!,$ty:String!){ addRelationship(sourceIdOrSlug:$s, targetIdOrSlug:$t, relationshipType:$ty, branch:"main"){ documentType } }'
 
 def now(): return datetime.datetime.now(datetime.timezone.utc).isoformat().replace('+00:00','Z')
 def act(t,i): return {'id':str(uuid.uuid4()),'timestampUtcMs':now(),'scope':'global','type':t,'input':i}

@@ -222,7 +222,7 @@ def create_document(
         raise GraphQLError(f"no namespace mapping for {doc_type}")
     query = (
         f"mutation($name: String!, $parentIdentifier: String) "
-        f"{{ {ns} {{ createDocument(name: $name, parentIdentifier: $parentIdentifier) {{ id }} }} }}"
+        f"{{ {ns} {{ createDocument(name: $name, parentIdOrSlug: $parentIdentifier) {{ id }} }} }}"
     )
     data = post(query, {"name": name, "parentIdentifier": drive_id}, endpoint=SUPERGRAPH_ENDPOINT)
     new_id = (data.get(ns) or {}).get("createDocument", {}).get("id")
@@ -238,8 +238,8 @@ def move_node(drive_id: str, src_folder_or_doc_id: str, target_parent_folder: st
     item is a folder or a file — that's the reactor's naming, not a typo.
     """
     query = (
-        "mutation($docId: PHID!, $input: DocumentDrive_MoveNodeInput!) "
-        "{ DocumentDrive { moveNode(docId: $docId, input: $input) { id } } }"
+        "mutation($docId: String!, $input: DocumentDrive_MoveNodeInput!) "
+        "{ DocumentDrive { moveNode(documentIdOrSlug: $docId, input: $input) { id } } }"
     )
     variables = {
         "docId": drive_id,
@@ -314,7 +314,7 @@ def add_relationship(
     """
     query = (
         "mutation($source: String!, $target: String!, $type: String!, $branch: String) "
-        "{ addRelationship(sourceIdentifier: $source, targetIdentifier: $target, "
+        "{ addRelationship(sourceIdOrSlug: $source, targetIdOrSlug: $target, "
         "relationshipType: $type, branch: $branch) { documentType } }"
     )
     post(
@@ -367,7 +367,7 @@ def get_drive_info(drive_id: str) -> dict[str, Any]:
     own TLS handshake — the cost that makes remote runs fail.
     """
     query = (
-        "query($id: String!) { document(identifier: $id) "
+        "query($id: String!) { document(idOrSlug: $id) "
         "{ document { id slug name } } }"
     )
     data = post(query, {"id": drive_id})
@@ -380,7 +380,7 @@ def get_drive_nodes(drive_id: str) -> list[dict[str, Any]]:
     discover existing folder ids on a resumed run.
     """
     query = (
-        "query($id: String!) { document(identifier: $id) { document { state } } }"
+        "query($id: String!) { document(idOrSlug: $id) { document { state } } }"
     )
     data = post(query, {"id": drive_id}, endpoint=READ_ENDPOINT)
     doc = ((data.get("document") or {}).get("document") or {})

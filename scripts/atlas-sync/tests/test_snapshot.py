@@ -23,8 +23,8 @@ def test_chunks_covers_every_item_without_overlap():
 
 def test_state_query_aliases_each_document():
     q = build_state_query([A, B])
-    assert f'd0: document(identifier: "{A}")' in q
-    assert f'd1: document(identifier: "{B}")' in q
+    assert f'd0: document(idOrSlug: "{A}")' in q
+    assert f'd1: document(idOrSlug: "{B}")' in q
 
 
 def test_identifiers_are_validated_before_being_inlined():

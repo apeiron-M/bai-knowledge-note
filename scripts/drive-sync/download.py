@@ -46,7 +46,7 @@ from lib.graphql import GraphQLClient, GraphQLError
 
 DRIVE_TREE_QUERY = """
 query DriveTree($id: String!) {
-  document(identifier: $id) {
+  document(idOrSlug: $id) {
     document {
       id
       name
@@ -58,7 +58,7 @@ query DriveTree($id: String!) {
 
 DOC_STATE_QUERY = """
 query DocState($id: String!, $cursor: String) {
-  document(identifier: $id) {
+  document(idOrSlug: $id) {
     document {
       id
       state
@@ -96,7 +96,7 @@ ALL_LINK_TYPES = KNOWLEDGE_NOTE_LINK_TYPES + MOC_LINK_TYPES
 
 OUTGOING_RELATIONSHIPS_QUERY = """
 query Outgoing($sid: String!, $type: String!) {
-  documentOutgoingRelationships(sourceIdentifier: $sid, relationshipType: $type) {
+  documentOutgoingRelationships(sourceIdOrSlug: $sid, relationshipType: $type) {
     items { id }
   }
 }

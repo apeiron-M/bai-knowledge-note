@@ -177,7 +177,7 @@ async function resolveFolderIdByPath(
     document?: { document?: { state?: unknown } };
   }>(
     resolveReactorReadEndpoint(),
-    `query VaultTree($id: String!) { document(identifier: $id) { document { state } } }`,
+    `query VaultTree($id: String!) { document(idOrSlug: $id) { document { state } } }`,
     { id: driveId },
   );
   let state = data.document?.document?.state as
@@ -221,7 +221,7 @@ export async function createDocumentRemote(options: {
   >(
     resolveReactorEndpoint(),
     `mutation VaultCreate($name: String!, $parentIdentifier: String) {
-       ${ns} { createDocument(name: $name, parentIdentifier: $parentIdentifier) { id } }
+       ${ns} { createDocument(name: $name, parentIdOrSlug: $parentIdentifier) { id } }
      }`,
     { name: options.name, parentIdentifier: options.driveId },
   );
@@ -244,8 +244,8 @@ export async function createDocumentRemote(options: {
     // reactor's field name for the moved node, folder or file alike.
     await gqlRequest(
       resolveReactorEndpoint(),
-      `mutation VaultMove($docId: PHID!, $input: DocumentDrive_MoveNodeInput!) {
-         DocumentDrive { moveNode(docId: $docId, input: $input) { id } }
+      `mutation VaultMove($docId: String!, $input: DocumentDrive_MoveNodeInput!) {
+         DocumentDrive { moveNode(documentIdOrSlug: $docId, input: $input) { id } }
        }`,
       {
         docId: options.driveId,
@@ -281,8 +281,8 @@ export async function createFolderRemote(options: {
   const id = crypto.randomUUID();
   await gqlRequest(
     resolveReactorEndpoint(),
-    `mutation VaultAddFolder($docId: PHID!, $input: DocumentDrive_AddFolderInput!) {
-       DocumentDrive { addFolder(docId: $docId, input: $input) { id } }
+    `mutation VaultAddFolder($docId: String!, $input: DocumentDrive_AddFolderInput!) {
+       DocumentDrive { addFolder(documentIdOrSlug: $docId, input: $input) { id } }
      }`,
     {
       docId: options.driveId,
@@ -307,7 +307,7 @@ export async function deleteDocumentRemote(
 ): Promise<void> {
   await gqlRequest(
     resolveReactorReadEndpoint(),
-    `mutation VaultDelete($id: String!) { deleteDocument(identifier: $id) }`,
+    `mutation VaultDelete($id: String!) { deleteDocument(idOrSlug: $id) }`,
     { id: documentId },
   );
   announceDocumentDeleted(documentId);

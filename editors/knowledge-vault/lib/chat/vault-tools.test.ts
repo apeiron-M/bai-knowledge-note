@@ -944,7 +944,7 @@ describe("recent_changes — every document in the vault by last edit", () => {
       "listed the 4 most recently edited documents of 4 (1 more has no recorded edit time); newest: liberuum.eth — Status changed to CANONICAL",
     );
     // Membership came from the tree, times from the two listings.
-    expect(requestAt(0).body.query).toContain("document(identifier");
+    expect(requestAt(0).body.query).toContain("document(idOrSlug");
     expect(requestAt(1).body.variables).toEqual({ parentId: "d1" });
     expect(requestAt(2).body.query).toContain("knowledgeGraphRecent");
   });

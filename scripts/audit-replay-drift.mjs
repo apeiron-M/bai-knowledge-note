@@ -62,7 +62,7 @@ console.log(`drive ${DRIVE} · ${docs.length} replayable documents (${[...new Se
 
 const results = await pool(docs, CONCURRENCY, async (d) => {
   try {
-    const data = await gql(`query($id: String!) { document(identifier: $id) { document { state operations(filter: {scopes: ["global"]}) { items { index error action { id type input scope timestampUtcMs } } } } } }`, { id: d.id });
+    const data = await gql(`query($id: String!) { document(idOrSlug: $id) { document { state operations(filter: {scopes: ["global"]}) { items { index error action { id type input scope timestampUtcMs } } } } } }`, { id: d.id });
     const doc = data.document.document; const stored = doc.state?.global ?? doc.state;
     const ops = doc.operations.items.sort((a, b) => a.index - b.index);
     const model = byType.get(d.type);
