@@ -6,13 +6,15 @@
  *
  *  - `noteType` was a free `String` and is now the `NoteType` enum. Real drives
  *    held `concept`, `CONCEPT`, `bug-pattern` and `BUG-PATTERN` for the same
- *    field, so the value is normalized the same way `scripts/migrate-note-type.mjs`
- *    does it: trim, upper-case, and collapse `-`/whitespace runs to `_`. A value
+ *    field, so the value is normalized the same way the (since retired)
+ *    `scripts/migrate-note-type.mjs` did it: trim, upper-case, and collapse
+ *    `-`/whitespace runs to `_`. A value
  *    that still is not a `NoteType` becomes `null` rather than being carried
  *    through — `noteType` is nullable, and an un-representable string would fail
  *    the generated zod schema and break the editor, which is the whole reason
- *    this migration exists. Run `scripts/migrate-note-type.mjs` first if you
- *    want to decide those cases explicitly instead of losing them.
+ *    this migration exists. (Every known drive was normalised before the
+ *    script was retired on 2026-10-06; it is in git history if a drive that
+ *    predates the enum ever turns up.)
  *
  *  - `updatedAt` was added; it is nullable and has no meaningful value for a
  *    note written before it existed, so it is seeded null.
@@ -40,7 +42,7 @@ const NOTE_TYPES = [
 type NoteTypeV1 = StateV1["global"]["noteType"];
 type NoteTypeV2 = StateV2["global"]["noteType"];
 
-/** Same normalization as scripts/migrate-note-type.mjs; unmappable -> null. */
+/** Trim, upper-case, `-`/whitespace -> `_`; unmappable -> null. */
 function canonicalNoteType(raw: NoteTypeV1): NoteTypeV2 {
   if (raw === null || raw === undefined) return null;
   const norm = raw.trim().toUpperCase().replace(/[-\s]+/g, "_");

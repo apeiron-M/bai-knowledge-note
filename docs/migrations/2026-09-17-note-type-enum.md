@@ -1,6 +1,6 @@
 # Migration: `noteType` becomes the `NoteType` enum
 
-**Model:** `bai/knowledge-note` · **Script:** [`scripts/migrate-note-type.mjs`](../../scripts/migrate-note-type.mjs)
+**Model:** `bai/knowledge-note` · **Script:** `scripts/migrate-note-type.mjs` (retired 2026-10-06 once every known drive was canonical — in git history)
 
 ## What changed
 

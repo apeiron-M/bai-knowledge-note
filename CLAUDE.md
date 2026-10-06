@@ -43,29 +43,21 @@ this project twice — a new subgraph "wouldn't register", and an authorization
 wrapper "stopped working" — and both were the same cause. If a subgraph change
 seems to have no effect, check `dist/` before debugging the code.
 
-## `ph reactor` and ordinal holes in the operation index
+## Ordinal holes in the operation index — resolved upstream
 
 `operation_index_operations.ordinal` is a Postgres `serial`; a rolled-back write
-consumes a number that never gets a row, which is normal. On stacks **before
-`6.2.3-dev.4`** the attachment reference read model
-(`@powerhousedao/reactor-attachments`) refused to replay across such a hole:
-it stalled at run time and the **next restart crashed** with
-`read model cannot advance past missing ordinal N`. Fixed upstream in
-`6.2.3-dev.4` (PR #3017) — the read model now parks its cursor at the gap and
-re-probes it, so `bun run vetra` no longer runs a repair first.
+consumes a number that never gets a row, which is normal. Before `6.2.3-dev.4`
+the attachment reference read model crashed the next boot on such a hole
+(`read model cannot advance past missing ordinal N`); `dev.4` parked it at the
+gap; since **`6.2.3-dev.33`** read models move a contiguous cursor and a
+*settled watermark* recognises a permanent hole and moves past it, so nothing
+stalls and nothing re-reads the tail. The repair scripts
+(`repair-ordinal-gap.mjs`, `repair-read-model-checkpoint.mjs`) edited the old
+checkpoint and were removed on 2026-10-06 — do not resurrect them from git
+history against a dev.33+ store.
 
-What remains: a *permanent* hole makes every boot re-read the tail after it
-(bounded, linear). If that gets slow, move the checkpoint past the hole, with
-the reactor stopped:
-
-```bash
-cp -a .ph/reactor-storage .ph/reactor-storage.bak-$(date +%Y%m%d-%H%M%S)   # always
-node scripts/repair-read-model-checkpoint.mjs           # dry run: shows the hole
-node scripts/repair-read-model-checkpoint.mjs --apply   # moves the checkpoint to just before the next real ordinal
-```
-
-History and verification: `docs/upstream-bugs-6.2.2-dev.85.md` (#6 and the
-`dev.4` status section).
+History: `docs/upstream-bugs-6.2.2-dev.85.md` (#6 and the `dev.4` status
+section); the upstream change is `ae8859131` (read-model contiguous catch-up).
 
 ## Core Concepts
 

@@ -499,7 +499,7 @@ The folder *rule* lives in `subgraphs/http/lib/vault-folders.ts`; the folder **i
 | `editors/` | The drive-app, eleven document editors, `shared/` building blocks |
 | `processors/graph-indexer/` | Projection, migrations, embedder, query helpers, automation |
 | `subgraphs/` | `knowledge-graph`, `access`, `http` |
-| `scripts/` | `atlas-sync/`, `drive-sync/`, `lead-import/`, `reactor-repair/`, plus `check-index-drift.mjs`, `repair-ordinal-gap.mjs`, `repair-read-model-checkpoint.mjs`, `fetch-model.mjs`, `copy-runtime-assets.mjs`, `cors-proxy.mjs`, `sync-opencode-agent.mjs` |
+| `scripts/` | `atlas-sync/`, `drive-sync/`, `lead-import/`, `reactor-repair/`, plus `check-index-drift.mjs`, `fetch-model.mjs`, `copy-runtime-assets.mjs`, `cors-proxy.mjs`, `sync-opencode-agent.mjs` |
 | `tests/` | `unit/`, `processor/`, `integration/`, `helpers/` |
 | `docs/` | `http-api.md`, `plans/`, `superpowers/` (specs and plans), `upstream-bugs-*.md` |
 | `docker/` | Switchboard and Connect container entrypoints |
