@@ -75,7 +75,6 @@ query DocState($id: String!, $cursor: String) {
         }
         hasNextPage
         cursor
-        totalCount
       }
     }
   }

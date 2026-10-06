@@ -1,8 +1,11 @@
 # drive-sync — upload, download, reindex, repair a Powerhouse knowledge vault
 
 This folder holds the canonical scripts and a committed dataset
-(`data/knowledge-vault/`, 543 docs, plus the 2026-09 remote snapshot in `data/powerhouse-knowledge/` — see *Datasets*) so anyone with a fresh clone can
-recreate the vault on a clean local reactor in one command.
+(`data/knowledge-vault/`, 543 docs) so anyone with a fresh clone can
+recreate the vault on a clean local reactor in one command. A full snapshot
+of the production vault goes in `data/powerhouse-knowledge/`, which is
+**gitignored**: the repo is public and the vault holds internal content, so
+each person downloads it themselves (see *Datasets*).
 
 
 ## Authentication
@@ -219,9 +222,28 @@ full refresh.
 | Directory | Source | Snapshot | Contents |
 |---|---|---|---|
 | `data/knowledge-vault/` | the original local vault | 2026-05 | 543 docs, 2,211 cross-refs — the historical baseline |
-| `data/powerhouse-knowledge/` | **the remote vault** `powerhouse-knowledge` (`c5893e1b-854b-49b1-b8aa-6b133ab87969` on `light-colt-c497cfbd-switchboard.vetra.io`) | **2026-09-03**; the scope of work and both demo WBS refreshed 2026-09-08 | 1,467 docs: 982 notes, 403 sources, 58 MoCs, 13 tensions, 3 retired projects, **4 WBS**, **1 scope of work**, 3 singletons; 12 folders; **4,718 edges, 843 with a reason** |
+| `data/powerhouse-knowledge/` | **the remote vault** `powerhouse-knowledge` (`c5893e1b-854b-49b1-b8aa-6b133ab87969` on `switchboard.knowledge-vault.vetra.io`) | **2026-10-06** (verified: `verify-backup.py`, 0 mismatches) | 2,842 docs: 2,051 notes, 674 sources, 85 MoCs, 16 tensions, **9 WBS**, **4 scopes of work**, 3 singletons; 15 folders; **8,623 edges, 3,603 with a reason** |
 
-The second snapshot exists so a full copy of the production vault can be
+The second snapshot is **not committed** (`.gitignore`): the repository is
+public and the production vault holds internal content such as meeting notes.
+Download it yourself — this needs a READ grant on the drive and your own
+Renown bearer:
+
+```bash
+export PH_ACCESS_TOKEN="$(ph access-token | tail -1)"
+python3 scripts/drive-sync/download.py \
+    --endpoint https://switchboard.knowledge-vault.vetra.io/graphql/r \
+    --drive c5893e1b-854b-49b1-b8aa-6b133ab87969 \
+    --out scripts/drive-sync/data/powerhouse-knowledge --concurrency 4
+python3 scripts/drive-sync/verify-backup.py \
+    --data scripts/drive-sync/data/powerhouse-knowledge \
+    --endpoint https://switchboard.knowledge-vault.vetra.io/graphql/r --sample 12
+```
+
+About 7 minutes for the 2026-10-06 size. `download.py` skips documents it
+already has, so delete the directory first for a full refresh.
+
+It exists so a full copy of the production vault can be
 stood up on a local reactor — first use: **testing Switchboard authorization**
 (`AUTH_ENABLED`, `DOCUMENT_PERMISSIONS_ENABLED`, `ADMINS`, …) against real
 data before touching the remote. Verified against the live drive at download
@@ -241,18 +263,18 @@ mismatches).
   without the knowledgeGraph subgraph. The dump is a projection, so
   `verify-backup.py` spot-checks it against the table.
 - **`auth.json`** — `{docId: state.auth}` for every document: the access
-  policy in the document's own auth scope. All 1,465 are uninitialized
+  policy in the document's own auth scope. All 2,842 are uninitialized
   (`version: 0`) today; after an authorization experiment, diffing this file
   shows exactly which documents gained a policy.
 
 ### Restoring it locally — what comes back and what does not
 
 `upload.py` restores everything it has a handler for: notes, MoCs, sources
-and the three singletons (1,446 docs) with their topics, provenance,
+and the three singletons with their topics, provenance,
 metadata and **articulated edges** — a link carrying `reason`/`confidence`
 is dispatched as an `ADD_RELATIONSHIP` action with `metadata`, which is how
 `switchboard docs link --reason` writes it; the native `addRelationship`
-mutation has no metadata argument and would silently drop all 843 reasons.
+mutation has no metadata argument and would silently drop all 3,603 reasons.
 
 A `powerhouse/scopeofwork` restores too, via `handlers/scope_of_work.py`:
 the document's own fields, contributors, deliverables (with key results,
@@ -288,8 +310,10 @@ auto-creation. Restoring into a drive that **already** holds indexer-created
 tensions duplicates the overlapping pairs — match on title and skip, as the
 2026-09-08 restore did (7 of 13 skipped, 6 restored).
 
-**Not restored yet:** the 3 retired `bai/project` documents. `upload.py`
-skips unknown types rather than failing.
+Every document type in the 2026-10-06 snapshot has a handler, so the whole
+vault restores. (The 3 retired `bai/project` documents of the September
+snapshot are gone from the vault.) `upload.py` skips unknown types rather
+than failing.
 
 ### Verify a snapshot
 
