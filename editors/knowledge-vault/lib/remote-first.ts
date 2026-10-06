@@ -56,6 +56,7 @@ import { getBearerToken } from "../../shared/authed-fetch.js";
 import { notifyRequestError } from "../../shared/notify.js";
 import {
   GraphQLReactorClient,
+  isGraphQLReactorClient,
   makeAuthMiddleware,
   addPromiseState,
   setDocumentCache,
@@ -736,17 +737,8 @@ const REROUTED_METHODS = [
 /** Write-shaped methods that must announce the mutation to the cache. */
 const ANNOUNCING_METHODS = new Set(["execute", "deleteDocument"]);
 
-export function enableRemoteFirst(options: {
-  endpoint: string;
-  driveId: string;
-  driveSlug?: string;
-}): RemoteFirstHandle {
-  // Re-entrant per drive: React StrictMode double-mounts effects, and
-  // an editor remount must not stack proxies on top of proxies.
-  if (active?.driveId === options.driveId) return active.handle;
-  active?.handle.restore();
-
-  suppressSentryWebVitalsNoise();
+/** The vault's own Switchboard client, authenticated per request with the Renown bearer. */
+function buildVaultClient(endpoint: string): GraphQLReactorClient {
   // Every read and push this client makes must carry the caller's identity.
   // GraphQLReactorClient signs the *actions* it pushes with the Renown user's
   // key, but that is provenance on the payload, not authentication of the
@@ -760,7 +752,7 @@ export function enableRemoteFirst(options: {
   // runs first so the request is authenticated; reporting wraps it so a
   // rejection is announced before it propagates.
   const withAuth = makeAuthMiddleware(getBearerToken);
-  const sdk = createClient(options.endpoint, async (action, op, type, vars) => {
+  const sdk = createClient(endpoint, async (action, op, type, vars) => {
     try {
       return await withAuth(action, op, type, vars);
     } catch (err) {
@@ -768,16 +760,34 @@ export function enableRemoteFirst(options: {
       throw err;
     }
   });
-  const remoteClient = new GraphQLReactorClient({
-    url: options.endpoint,
+  return new GraphQLReactorClient({
+    url: endpoint,
     graphqlClient: sdk,
     documentModels: VAULT_DOCUMENT_MODELS,
   });
+}
 
+export function enableRemoteFirst(options: {
+  endpoint: string;
+  driveId: string;
+  driveSlug?: string;
+}): RemoteFirstHandle {
+  // Re-entrant per drive: React StrictMode double-mounts effects, and
+  // an editor remount must not stack proxies on top of proxies.
+  if (active?.driveId === options.driveId) return active.handle;
+  active?.handle.restore();
+
+  suppressSentryWebVitalsNoise();
   const previousClient = phSlots().reactorClient;
   const previousCache = phSlots().documentCache;
-
-  if (previousClient) {
+  // A host that already installed a Switchboard-backed client — the desktop
+  // app — owns its auth and realtime. Reuse it: a second client would mean two
+  // sockets and one client routed through another for nothing.
+  const hostClient = isGraphQLReactorClient(previousClient)
+    ? previousClient
+    : undefined;
+  const remoteClient = hostClient ?? buildVaultClient(options.endpoint);
+  if (previousClient && !hostClient) {
     const worker = previousClient as unknown as AnyClient;
     const remote = remoteClient as unknown as AnyClient;
 
