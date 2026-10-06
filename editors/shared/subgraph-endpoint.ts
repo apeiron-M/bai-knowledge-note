@@ -5,6 +5,7 @@
  * client wrapping).
  *
  * Priority:
+ *   0. A declared host configuration (the desktop app) — see host-config.ts
  *   1. `VITE_SUBGRAPH_URL` env override (escape hatch for unusual deploys)
  *   2. Explicit Connect → Switchboard mappings (`DOMAIN_MAP`)
  *   3. Vetra host patterns (see `resolveSwitchboardOrigin` for all three)
@@ -14,6 +15,8 @@
  *      like 26045 — the IDE typically auto-forwards 4001 too).
  *   5. Same-origin (production where the subgraph is co-hosted)
  */
+
+import { getHostConfig } from "./host-config.js";
 
 const SUBGRAPH_PATH = "/graphql/knowledgeGraph";
 
@@ -43,6 +46,9 @@ const DOMAIN_MAP: Record<string, string> = {
  * the first request comes back as Connect's HTML.
  */
 export function resolveSwitchboardOrigin(): string | null {
+  // A host that declared itself (the desktop app) is never guessed at.
+  const declared = getHostConfig();
+  if (declared) return declared.switchboardOrigin;
   const hostname = globalThis.window?.location?.hostname;
   if (!hostname) return null;
 
@@ -91,6 +97,8 @@ export function resolveAuthEndpoint(): string {
 }
 
 export function resolveKnowledgeGraphEndpoint(): string {
+  const declared = getHostConfig();
+  if (declared) return `${declared.switchboardOrigin}${SUBGRAPH_PATH}`;
   const envUrl =
     typeof import.meta !== "undefined" &&
     (import.meta as { env?: Record<string, string> }).env?.VITE_SUBGRAPH_URL;

@@ -5,6 +5,7 @@ import {
   resolveReactorEndpoint,
   resolveSwitchboardOrigin,
 } from "./subgraph-endpoint.js";
+import { setHostConfig } from "./host-config.js";
 
 /**
  * Every Switchboard call in the vault — GraphQL, the REST package routes, the
@@ -85,5 +86,34 @@ describe("endpoints built on the origin", () => {
     onHost("vault.example.com");
     expect(resolveReactorEndpoint()).toBe("/graphql");
     expect(resolveAuthEndpoint()).toBe("/graphql/auth");
+  });
+});
+
+describe("declared host configuration", () => {
+  afterEach(() => setHostConfig(undefined));
+
+  it("wins over the hostname heuristics", () => {
+    onHost("localhost"); // would otherwise map to http://localhost:4001
+    setHostConfig({ kind: "desktop", switchboardOrigin: "http://127.0.0.1:4201" });
+    expect(resolveSwitchboardOrigin()).toBe("http://127.0.0.1:4201");
+    expect(resolveReactorEndpoint()).toBe("http://127.0.0.1:4201/graphql");
+    expect(resolveAuthEndpoint()).toBe("http://127.0.0.1:4201/graphql/auth");
+    expect(resolveKnowledgeGraphEndpoint()).toBe(
+      "http://127.0.0.1:4201/graphql/knowledgeGraph",
+    );
+  });
+
+  it("wins over the VITE_SUBGRAPH_URL escape hatch", () => {
+    vi.stubEnv("VITE_SUBGRAPH_URL", "https://elsewhere.example/graphql/knowledgeGraph");
+    setHostConfig({ kind: "desktop", switchboardOrigin: "http://127.0.0.1:4201" });
+    expect(resolveKnowledgeGraphEndpoint()).toBe(
+      "http://127.0.0.1:4201/graphql/knowledgeGraph",
+    );
+    vi.unstubAllEnvs();
+  });
+
+  it("leaves Connect behaviour untouched when no host is declared", () => {
+    onHost("knowledge-vault.vetra.io");
+    expect(resolveSwitchboardOrigin()).toBe("https://switchboard.knowledge-vault.vetra.io");
   });
 });
