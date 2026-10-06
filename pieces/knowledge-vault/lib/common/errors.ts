@@ -45,6 +45,12 @@ export class KnowledgeVaultApiError extends Error {
   }
 }
 
+// Piece bundles are minified since reactor-workflow 6.2.3-dev.40 (no
+// keepNames), which renames this class (`H`), and the piece worker names a
+// serialized error by `error.constructor.name` before `error.name`. Pin the
+// class's own name so a step's error still reads KnowledgeVaultApiError.
+Object.defineProperty(KnowledgeVaultApiError, "name", { value: "KnowledgeVaultApiError" });
+
 /**
  * The vault's error codes (subgraphs/http/lib/respond.ts and the routes) in
  * terms an operator can act on. A code wins over the status: the same 502

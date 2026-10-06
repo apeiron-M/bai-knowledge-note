@@ -29,6 +29,11 @@ export const knowledgeVault = createPiece({
   triggers: [newPipelineTaskTrigger],
 });
 
+// The runtime's loader identifies a piece by `constructor.name === "Piece"`
+// (Activepieces' own check) before falling back to its shape. Minified (since
+// 6.2.3-dev.40), the inlined framework's Piece class is renamed; pin it.
+Object.defineProperty(knowledgeVault.constructor, "name", { value: "Piece" });
+
 export { knowledgeVaultAuth };
 
 export default knowledgeVault;
