@@ -1,4 +1,4 @@
-import { useState, useMemo, useCallback, useRef, useEffect } from "react";
+import { useState, useMemo, useCallback, useRef, useEffect, useLayoutEffect } from "react";
 import {
   isFileNodeKind,
   setSelectedNode,
@@ -59,6 +59,17 @@ const SIDEBAR_NOTE_TYPE_COLORS: Record<string, { bg: string; color: string }> = 
 };
 const MAX_WIDTH = 480;
 const DEFAULT_WIDTH = 256;
+
+/**
+ * The note tree while a graph selection shows its connections. Where the
+ * browser has `content-visibility` (Chrome/Edge 85+, Firefox 125+, Safari
+ * 18+) its rows keep their rendering state, so bringing them back costs
+ * nothing; elsewhere it is simply not displayed.
+ */
+const HIDDEN_TREE_STYLE =
+  typeof CSS !== "undefined" && CSS.supports("content-visibility", "hidden")
+    ? ({ contentVisibility: "hidden" } as const)
+    : ({ display: "none" } as const);
 
 const SELECTED_ROW_STYLE = {
   backgroundColor: "var(--bai-hover)",
@@ -290,6 +301,368 @@ export function VaultSidebar({
   const selectedConnectionTitle =
     connectionItems.find((i) => i.isSelected)?.title ?? "Selected node";
 
+  // A graph selection shows its connections from the top; clearing it puts
+  // the note tree back where the reader had scrolled it.
+  const contentRef = useRef<HTMLDivElement>(null);
+  const treeScrollTop = useRef(0);
+  const focused = !!graphFocus;
+  useLayoutEffect(() => {
+    const el = contentRef.current;
+    if (el) el.scrollTop = focused ? 0 : treeScrollTop.current;
+  }, [focused]);
+
+  // The note tree is the heaviest part of the sidebar: a row per note, ~2,000 in a
+  // large vault. Memoised, and kept mounted (hidden) while the graph shows a
+  // selection's connections, so a graph click neither rebuilds nor remounts it —
+  // that remount used to freeze the page for a third of a second or more.
+  const treeContent = useMemo(
+    () => (
+      <>
+        {section === "notes" && showNotesSkeleton && (
+          <SidebarSkeleton label="Loading notes…" />
+        )}
+
+        {section === "notes" && !showNotesSkeleton && (
+          <>
+            {notes.length === 0 && (
+              <div className="px-2 py-6 text-center">
+                <p
+                  className="text-xs"
+                  style={{ color: "var(--bai-text-muted)" }}
+                >
+                  No knowledge notes yet
+                </p>
+                <p
+                  className="mt-1 text-[10px]"
+                  style={{ color: "var(--bai-text-faint)" }}
+                >
+                  Add a source to start the extraction pipeline
+                </p>
+              </div>
+            )}
+            {notes.length > 0 && filtered.length === 0 && (
+              <p
+                className="px-2 py-4 text-center text-xs"
+                style={{ color: "var(--bai-text-faint)" }}
+              >
+                No notes match “{search}”
+              </p>
+            )}
+            {STATUS_ORDER.map((status) => {
+              const groupNotes = grouped[status];
+              if (groupNotes.length === 0) return null;
+              const isCollapsed = collapsed[status] ?? status === "ARCHIVED";
+              return (
+                <div key={status} className="mb-1">
+                  <button
+                    type="button"
+                    onClick={() =>
+                      setCollapsed((c) => ({
+                        ...c,
+                        [status]: !isCollapsed,
+                      }))
+                    }
+                    className="sidebar-row flex w-full items-center gap-2 rounded px-2 py-1.5 text-xs"
+                    style={{ color: "var(--bai-text-muted)" }}
+                  >
+                    <span
+                      className={`h-2 w-2 rounded-full ${STATUS_COLORS[status]}`}
+                    />
+                    <span className="flex-1 text-left font-medium">
+                      {STATUS_LABELS[status]}
+                    </span>
+                    <span style={{ color: "var(--bai-text-faint)" }}>
+                      {groupNotes.length}
+                    </span>
+                    <svg
+                      className={`h-3 w-3 transition-transform ${isCollapsed ? "" : "rotate-90"}`}
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth="2"
+                    >
+                      <path d="M9 18l6-6-6-6" />
+                    </svg>
+                  </button>
+                  {!isCollapsed && (
+                    <div className="ml-1 space-y-px">
+                      {groupNotes.map((note) => (
+                        <button
+                          key={note.id}
+                          type="button"
+                          onClick={() => setSelectedNode(note.id)}
+                          {...prefetchOnHover(note.id)}
+                          className="sidebar-row group flex w-full flex-col gap-0.5 rounded-md px-2 py-1.5 text-left transition-colors"
+                          data-sidebar-active={selectedId === note.id ? "true" : undefined}
+                          aria-current={selectedId === note.id ? "page" : undefined}
+                          style={
+                            selectedId === note.id ? SELECTED_ROW_STYLE : undefined
+                          }
+                        >
+                          <span
+                            className="sidebar-note-title truncate text-xs font-medium"
+                            style={{
+                              color:
+                                selectedId === note.id
+                                  ? "var(--bai-accent)"
+                                  : "var(--bai-text-secondary)",
+                            }}
+                          >
+                            {note.title ?? note.name}
+                          </span>
+                          <div className="flex items-center gap-1.5">
+                            {note.noteType && (
+                              <span
+                                className="rounded px-1.5 py-0.5 text-[10px] font-medium"
+                                style={{
+                                  backgroundColor:
+                                    SIDEBAR_NOTE_TYPE_COLORS[note.noteType]?.bg ??
+                                    "var(--bai-hover)",
+                                  color:
+                                    SIDEBAR_NOTE_TYPE_COLORS[note.noteType]?.color ??
+                                    "var(--bai-text-tertiary)",
+                                }}
+                              >
+                                {note.noteType}
+                              </span>
+                            )}
+                            {note.topics.slice(0, 2).map((t) => (
+                              <span
+                                key={t.id}
+                                className="text-[10px]"
+                                style={{
+                                  color: "var(--bai-accent)",
+                                  opacity: 0.6,
+                                }}
+                              >
+                                #{t.name}
+                              </span>
+                            ))}
+                          </div>
+                        </button>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              );
+            })}
+          </>
+        )}
+
+        {section === "mocs" && (
+          <div className="space-y-1">
+            {showMocsSkeleton ? (
+              <SidebarSkeleton label="Loading MOCs…" rows={4} />
+            ) : mocs.length === 0 ? (
+              <p
+                className="px-2 py-4 text-center text-xs"
+                style={{ color: "var(--bai-text-faint)" }}
+              >
+                No MOCs yet
+              </p>
+            ) : filteredMocs.length === 0 ? (
+              <p
+                className="px-2 py-4 text-center text-xs"
+                style={{ color: "var(--bai-text-faint)" }}
+              >
+                No MOCs match “{search}”
+              </p>
+            ) : (
+              <>
+                {(["HUB", "DOMAIN", "TOPIC"] as const).map((tier) => {
+                  const tierMocs = filteredMocs.filter((m) => m.tier === tier);
+                  if (tierMocs.length === 0) return null;
+                  return (
+                    <div key={tier}>
+                      <p
+                        className="px-2 py-1 text-[10px] font-semibold uppercase tracking-wider"
+                        style={{ color: "var(--bai-text-faint)" }}
+                      >
+                        {tier}
+                      </p>
+                      {tierMocs.map((moc) => (
+                        <MocRow
+                          key={moc.id}
+                          moc={moc}
+                          selected={selectedId === moc.id}
+                        />
+                      ))}
+                    </div>
+                  );
+                })}
+                {(() => {
+                  const untiered = filteredMocs.filter((m) => m.tier === null);
+                  if (untiered.length === 0) return null;
+                  return (
+                    <div key="untiered">
+                      <p
+                        className="px-2 py-1 text-[10px] font-semibold uppercase tracking-wider"
+                        style={{ color: "var(--bai-text-faint)" }}
+                      >
+                        Untiered
+                      </p>
+                      {untiered.map((moc) => (
+                        <MocRow
+                          key={moc.id}
+                          moc={moc}
+                          selected={selectedId === moc.id}
+                        />
+                      ))}
+                    </div>
+                  );
+                })()}
+              </>
+            )}
+          </div>
+        )}
+
+        {section === "signals" && (
+          <div className="space-y-3">
+            {filteredObservations.length > 0 && (
+              <div>
+                <p
+                  className="px-2 py-1 text-[10px] font-semibold uppercase tracking-wider"
+                  style={{ color: "var(--bai-text-faint)" }}
+                >
+                  Observations ({filteredObservations.length})
+                </p>
+                {filteredObservations.map((obs) => (
+                  <button
+                    key={obs.id}
+                    type="button"
+                    onClick={() => setSelectedNode(obs.id)}
+                    className="sidebar-row group flex w-full items-center gap-2 rounded-md px-2 py-1.5 text-left"
+                    data-sidebar-active={selectedId === obs.id ? "true" : undefined}
+                    aria-current={selectedId === obs.id ? "page" : undefined}
+                    style={
+                      selectedId === obs.id ? SELECTED_ROW_STYLE : undefined
+                    }
+                  >
+                    <span className="h-2 w-2 shrink-0 rounded-full bg-amber-400" />
+                    <span
+                      className="sidebar-note-title truncate text-xs"
+                      style={{
+                        color:
+                          selectedId === obs.id
+                            ? "var(--bai-accent)"
+                            : "var(--bai-text-secondary)",
+                      }}
+                    >
+                      {obs.title}
+                    </span>
+                    {obs.category && (
+                      <span
+                        className="rounded px-1 py-0.5 text-[10px]"
+                        style={{
+                          backgroundColor: "var(--bai-hover)",
+                          color: "var(--bai-text-muted)",
+                        }}
+                      >
+                        {obs.category}
+                      </span>
+                    )}
+                  </button>
+                ))}
+              </div>
+            )}
+            {filteredTensions.length > 0 && (
+              <div>
+                <p
+                  className="px-2 py-1 text-[10px] font-semibold uppercase tracking-wider"
+                  style={{ color: "var(--bai-text-faint)" }}
+                >
+                  Tensions ({filteredTensions.length})
+                </p>
+                {filteredTensions.map((ten) => (
+                  <button
+                    key={ten.id}
+                    type="button"
+                    onClick={() => setSelectedNode(ten.id)}
+                    className="sidebar-row group flex w-full items-center gap-2 rounded-md px-2 py-1.5 text-left"
+                    data-sidebar-active={selectedId === ten.id ? "true" : undefined}
+                    aria-current={selectedId === ten.id ? "page" : undefined}
+                    style={
+                      selectedId === ten.id ? SELECTED_ROW_STYLE : undefined
+                    }
+                  >
+                    <span className="h-2 w-2 shrink-0 rounded-full bg-red-400" />
+                    <span
+                      className="sidebar-note-title truncate text-xs"
+                      style={{
+                        color:
+                          selectedId === ten.id
+                            ? "var(--bai-accent)"
+                            : "var(--bai-text-secondary)",
+                      }}
+                    >
+                      {ten.title}
+                    </span>
+                  </button>
+                ))}
+              </div>
+            )}
+            {showSignalsSkeleton && (
+              <LoadingLine label="Loading signals…" />
+            )}
+            {!showSignalsSkeleton &&
+              observations.length === 0 &&
+              tensions.length === 0 && (
+                <p
+                  className="px-2 py-4 text-center text-xs"
+                  style={{ color: "var(--bai-text-faint)" }}
+                >
+                  No pending signals
+                </p>
+              )}
+            {!showSignalsSkeleton &&
+              (observations.length > 0 || tensions.length > 0) &&
+              filteredObservations.length === 0 &&
+              filteredTensions.length === 0 && (
+                <p
+                  className="px-2 py-4 text-center text-xs"
+                  style={{ color: "var(--bai-text-faint)" }}
+                >
+                  No signals match “{search}”
+                </p>
+              )}
+          </div>
+        )}
+
+        {section === "folders" &&
+          (showTreeSkeleton ? (
+            <LoadingLine label="Loading drive tree…" />
+          ) : (
+            <FolderTreeView
+              nodes={allNodes ?? []}
+              query={q}
+              selectedId={selectedId}
+            />
+          ))}
+      </>
+    ),
+    [
+      section,
+      showNotesSkeleton,
+      showMocsSkeleton,
+      showSignalsSkeleton,
+      showTreeSkeleton,
+      search,
+      q,
+      filtered,
+      grouped,
+      collapsed,
+      selectedId,
+      filteredMocs,
+      filteredTensions,
+      filteredObservations,
+      tensions,
+      observations,
+      allNodes,
+      notes,
+      mocs,
+    ],
+  );
+
   // Collapsed: just the re-open button, floating over the content.
   //
   // This used to render a full-height `w-10` strip (its own background +
@@ -479,8 +852,14 @@ export function VaultSidebar({
       )}
 
       {/* Content */}
-      <div className="flex-1 overflow-y-auto px-2 pb-4">
-        {graphFocus ? (
+      <div
+        ref={contentRef}
+        onScroll={(e) => {
+          if (!graphFocus) treeScrollTop.current = e.currentTarget.scrollTop;
+        }}
+        className="flex-1 overflow-y-auto px-2 pb-4"
+      >
+        {graphFocus && (
           <div className="space-y-1">
             <div className="mb-1 flex items-start gap-2 px-2 py-1.5">
               <div className="min-w-0 flex-1">
@@ -616,330 +995,18 @@ export function VaultSidebar({
               </button>
             ))}
           </div>
-        ) : (
-          <>
-            {section === "notes" && showNotesSkeleton && (
-              <SidebarSkeleton label="Loading notes…" />
-            )}
-
-            {section === "notes" && !showNotesSkeleton && (
-              <>
-                {notes.length === 0 && (
-                  <div className="px-2 py-6 text-center">
-                    <p
-                      className="text-xs"
-                      style={{ color: "var(--bai-text-muted)" }}
-                    >
-                      No knowledge notes yet
-                    </p>
-                    <p
-                      className="mt-1 text-[10px]"
-                      style={{ color: "var(--bai-text-faint)" }}
-                    >
-                      Add a source to start the extraction pipeline
-                    </p>
-                  </div>
-                )}
-                {notes.length > 0 && filtered.length === 0 && (
-                  <p
-                    className="px-2 py-4 text-center text-xs"
-                    style={{ color: "var(--bai-text-faint)" }}
-                  >
-                    No notes match “{search}”
-                  </p>
-                )}
-                {STATUS_ORDER.map((status) => {
-                  const groupNotes = grouped[status];
-                  if (groupNotes.length === 0) return null;
-                  const isCollapsed = collapsed[status] ?? status === "ARCHIVED";
-                  return (
-                    <div key={status} className="mb-1">
-                      <button
-                        type="button"
-                        onClick={() =>
-                          setCollapsed((c) => ({
-                            ...c,
-                            [status]: !isCollapsed,
-                          }))
-                        }
-                        className="sidebar-row flex w-full items-center gap-2 rounded px-2 py-1.5 text-xs"
-                        style={{ color: "var(--bai-text-muted)" }}
-                      >
-                        <span
-                          className={`h-2 w-2 rounded-full ${STATUS_COLORS[status]}`}
-                        />
-                        <span className="flex-1 text-left font-medium">
-                          {STATUS_LABELS[status]}
-                        </span>
-                        <span style={{ color: "var(--bai-text-faint)" }}>
-                          {groupNotes.length}
-                        </span>
-                        <svg
-                          className={`h-3 w-3 transition-transform ${isCollapsed ? "" : "rotate-90"}`}
-                          viewBox="0 0 24 24"
-                          fill="none"
-                          stroke="currentColor"
-                          strokeWidth="2"
-                        >
-                          <path d="M9 18l6-6-6-6" />
-                        </svg>
-                      </button>
-                      {!isCollapsed && (
-                        <div className="ml-1 space-y-px">
-                          {groupNotes.map((note) => (
-                            <button
-                              key={note.id}
-                              type="button"
-                              onClick={() => setSelectedNode(note.id)}
-                              {...prefetchOnHover(note.id)}
-                              className="sidebar-row group flex w-full flex-col gap-0.5 rounded-md px-2 py-1.5 text-left transition-colors"
-                              data-sidebar-active={selectedId === note.id ? "true" : undefined}
-                              aria-current={selectedId === note.id ? "page" : undefined}
-                              style={
-                                selectedId === note.id ? SELECTED_ROW_STYLE : undefined
-                              }
-                            >
-                              <span
-                                className="sidebar-note-title truncate text-xs font-medium"
-                                style={{
-                                  color:
-                                    selectedId === note.id
-                                      ? "var(--bai-accent)"
-                                      : "var(--bai-text-secondary)",
-                                }}
-                              >
-                                {note.title ?? note.name}
-                              </span>
-                              <div className="flex items-center gap-1.5">
-                                {note.noteType && (
-                                  <span
-                                    className="rounded px-1.5 py-0.5 text-[10px] font-medium"
-                                    style={{
-                                      backgroundColor:
-                                        SIDEBAR_NOTE_TYPE_COLORS[note.noteType]?.bg ??
-                                        "var(--bai-hover)",
-                                      color:
-                                        SIDEBAR_NOTE_TYPE_COLORS[note.noteType]?.color ??
-                                        "var(--bai-text-tertiary)",
-                                    }}
-                                  >
-                                    {note.noteType}
-                                  </span>
-                                )}
-                                {note.topics.slice(0, 2).map((t) => (
-                                  <span
-                                    key={t.id}
-                                    className="text-[10px]"
-                                    style={{
-                                      color: "var(--bai-accent)",
-                                      opacity: 0.6,
-                                    }}
-                                  >
-                                    #{t.name}
-                                  </span>
-                                ))}
-                              </div>
-                            </button>
-                          ))}
-                        </div>
-                      )}
-                    </div>
-                  );
-                })}
-              </>
-            )}
-
-            {section === "mocs" && (
-              <div className="space-y-1">
-                {showMocsSkeleton ? (
-                  <SidebarSkeleton label="Loading MOCs…" rows={4} />
-                ) : mocs.length === 0 ? (
-                  <p
-                    className="px-2 py-4 text-center text-xs"
-                    style={{ color: "var(--bai-text-faint)" }}
-                  >
-                    No MOCs yet
-                  </p>
-                ) : filteredMocs.length === 0 ? (
-                  <p
-                    className="px-2 py-4 text-center text-xs"
-                    style={{ color: "var(--bai-text-faint)" }}
-                  >
-                    No MOCs match “{search}”
-                  </p>
-                ) : (
-                  <>
-                    {(["HUB", "DOMAIN", "TOPIC"] as const).map((tier) => {
-                      const tierMocs = filteredMocs.filter((m) => m.tier === tier);
-                      if (tierMocs.length === 0) return null;
-                      return (
-                        <div key={tier}>
-                          <p
-                            className="px-2 py-1 text-[10px] font-semibold uppercase tracking-wider"
-                            style={{ color: "var(--bai-text-faint)" }}
-                          >
-                            {tier}
-                          </p>
-                          {tierMocs.map((moc) => (
-                            <MocRow
-                              key={moc.id}
-                              moc={moc}
-                              selected={selectedId === moc.id}
-                            />
-                          ))}
-                        </div>
-                      );
-                    })}
-                    {(() => {
-                      const untiered = filteredMocs.filter((m) => m.tier === null);
-                      if (untiered.length === 0) return null;
-                      return (
-                        <div key="untiered">
-                          <p
-                            className="px-2 py-1 text-[10px] font-semibold uppercase tracking-wider"
-                            style={{ color: "var(--bai-text-faint)" }}
-                          >
-                            Untiered
-                          </p>
-                          {untiered.map((moc) => (
-                            <MocRow
-                              key={moc.id}
-                              moc={moc}
-                              selected={selectedId === moc.id}
-                            />
-                          ))}
-                        </div>
-                      );
-                    })()}
-                  </>
-                )}
-              </div>
-            )}
-
-            {section === "signals" && (
-              <div className="space-y-3">
-                {filteredObservations.length > 0 && (
-                  <div>
-                    <p
-                      className="px-2 py-1 text-[10px] font-semibold uppercase tracking-wider"
-                      style={{ color: "var(--bai-text-faint)" }}
-                    >
-                      Observations ({filteredObservations.length})
-                    </p>
-                    {filteredObservations.map((obs) => (
-                      <button
-                        key={obs.id}
-                        type="button"
-                        onClick={() => setSelectedNode(obs.id)}
-                        className="sidebar-row group flex w-full items-center gap-2 rounded-md px-2 py-1.5 text-left"
-                        data-sidebar-active={selectedId === obs.id ? "true" : undefined}
-                        aria-current={selectedId === obs.id ? "page" : undefined}
-                        style={
-                          selectedId === obs.id ? SELECTED_ROW_STYLE : undefined
-                        }
-                      >
-                        <span className="h-2 w-2 shrink-0 rounded-full bg-amber-400" />
-                        <span
-                          className="sidebar-note-title truncate text-xs"
-                          style={{
-                            color:
-                              selectedId === obs.id
-                                ? "var(--bai-accent)"
-                                : "var(--bai-text-secondary)",
-                          }}
-                        >
-                          {obs.title}
-                        </span>
-                        {obs.category && (
-                          <span
-                            className="rounded px-1 py-0.5 text-[10px]"
-                            style={{
-                              backgroundColor: "var(--bai-hover)",
-                              color: "var(--bai-text-muted)",
-                            }}
-                          >
-                            {obs.category}
-                          </span>
-                        )}
-                      </button>
-                    ))}
-                  </div>
-                )}
-                {filteredTensions.length > 0 && (
-                  <div>
-                    <p
-                      className="px-2 py-1 text-[10px] font-semibold uppercase tracking-wider"
-                      style={{ color: "var(--bai-text-faint)" }}
-                    >
-                      Tensions ({filteredTensions.length})
-                    </p>
-                    {filteredTensions.map((ten) => (
-                      <button
-                        key={ten.id}
-                        type="button"
-                        onClick={() => setSelectedNode(ten.id)}
-                        className="sidebar-row group flex w-full items-center gap-2 rounded-md px-2 py-1.5 text-left"
-                        data-sidebar-active={selectedId === ten.id ? "true" : undefined}
-                        aria-current={selectedId === ten.id ? "page" : undefined}
-                        style={
-                          selectedId === ten.id ? SELECTED_ROW_STYLE : undefined
-                        }
-                      >
-                        <span className="h-2 w-2 shrink-0 rounded-full bg-red-400" />
-                        <span
-                          className="sidebar-note-title truncate text-xs"
-                          style={{
-                            color:
-                              selectedId === ten.id
-                                ? "var(--bai-accent)"
-                                : "var(--bai-text-secondary)",
-                          }}
-                        >
-                          {ten.title}
-                        </span>
-                      </button>
-                    ))}
-                  </div>
-                )}
-                {showSignalsSkeleton && (
-                  <LoadingLine label="Loading signals…" />
-                )}
-                {!showSignalsSkeleton &&
-                  observations.length === 0 &&
-                  tensions.length === 0 && (
-                    <p
-                      className="px-2 py-4 text-center text-xs"
-                      style={{ color: "var(--bai-text-faint)" }}
-                    >
-                      No pending signals
-                    </p>
-                  )}
-                {!showSignalsSkeleton &&
-                  (observations.length > 0 || tensions.length > 0) &&
-                  filteredObservations.length === 0 &&
-                  filteredTensions.length === 0 && (
-                    <p
-                      className="px-2 py-4 text-center text-xs"
-                      style={{ color: "var(--bai-text-faint)" }}
-                    >
-                      No signals match “{search}”
-                    </p>
-                  )}
-              </div>
-            )}
-
-            {section === "folders" &&
-              (showTreeSkeleton ? (
-                <LoadingLine label="Loading drive tree…" />
-              ) : (
-                <FolderTreeView
-                  nodes={allNodes ?? []}
-                  query={q}
-                  selectedId={selectedId}
-                />
-              ))}
-          </>
         )}
+        {/* Kept mounted while a graph selection shows its connections, and
+            memoised: selecting or clearing a node never rebuilds the note rows
+            (see HIDDEN_TREE_STYLE); inert keeps them out of the tab order and
+            the accessibility tree meanwhile. */}
+        <div
+          inert={!!graphFocus}
+          aria-hidden={graphFocus ? true : undefined}
+          style={graphFocus ? HIDDEN_TREE_STYLE : undefined}
+        >
+          {treeContent}
+        </div>
       </div>
 
       <style aria-hidden="true">{`

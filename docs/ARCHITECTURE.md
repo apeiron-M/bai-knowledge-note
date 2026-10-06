@@ -607,7 +607,10 @@ Behaviour, kept from the Pixi view as it was at `ea60a66`:
   packed into a blob (measured: spread 798 instead of 1,339).
 - **A click paints first.** The selection highlight is drawn by the graph
   itself; the sidebar hears of it as a React transition, so the vault's
-  re-render cannot hold the highlight back.
+  re-render cannot hold the highlight back. The sidebar keeps its note tree
+  mounted (memoised, hidden with `content-visibility` while a selection's
+  connections show) instead of rebuilding ~2,000 rows on every select and
+  clear, which froze the page for up to 0.4 s, and restores its scroll.
 
 Measured in Chromium on an RX 6800 (main thread, first layout and drag): 60 fps
 at 2,000, 20,000, 50,000, 100,000 and 250,000 nodes on WebGL2 (drawing
