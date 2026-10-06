@@ -72,7 +72,7 @@ export type ConvertedFile = {
   /** Which OCR engine read the file, when one did. */
   ocr?: "tesseract" | "docling" | null;
   /** Which rung produced the text; `pdfjs` = the text layer without layout. */
-  textSource?: "docling" | "pdfjs" | "tesseract" | "docling-ocr";
+  textSource?: "docling" | "pdfjs" | "tesseract" | "docling-ocr" | "text";
   /** OCR is needed but over the service's budget: no sections yet; the user decides. */
   needsOcr?: {
     via: "tesseract" | "docling-ocr";

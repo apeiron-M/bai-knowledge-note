@@ -36,7 +36,7 @@ type ConvertSummary = {
   plan?: Partial<SectionPlanSummary>;
   markdown?: string;
   ocr?: "tesseract" | "docling" | null;
-  textSource?: "docling" | "pdfjs" | "tesseract" | "docling-ocr";
+  textSource?: "docling" | "pdfjs" | "tesseract" | "docling-ocr" | "text";
   needsOcr?: {
     via: "tesseract" | "docling-ocr";
     estimateSeconds: number;

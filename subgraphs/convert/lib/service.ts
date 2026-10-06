@@ -16,7 +16,7 @@ export interface ConversionResult {
   /** Which OCR engine read the file, when one did. */
   ocr?: "tesseract" | "docling" | null;
   /** Which rung produced the text — `pdfjs` means the text layer, without layout. */
-  textSource?: "docling" | "pdfjs" | "tesseract" | "docling-ocr";
+  textSource?: "docling" | "pdfjs" | "tesseract" | "docling-ocr" | "text";
   /** Set when OCR is needed but over the budget: the caller may re-request with `ocr: true`. */
   needsOcr?: {
     via: "tesseract" | "docling-ocr";
@@ -225,7 +225,7 @@ export function createHttpConversionService(options: {
         format?: string;
         timings?: Record<string, unknown>;
         ocr?: "tesseract" | "docling" | null;
-        textSource?: "docling" | "pdfjs" | "tesseract" | "docling-ocr";
+        textSource?: "docling" | "pdfjs" | "tesseract" | "docling-ocr" | "text";
         needsOcr?: {
           via: "tesseract" | "docling-ocr";
           estimateSeconds: number;
