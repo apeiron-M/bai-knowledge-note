@@ -1,1138 +1,956 @@
-import { useRef, useState, useEffect, useCallback, useMemo } from "react";
-import cytoscape from "cytoscape";
-
-// @ts-expect-error - no types available for cytoscape-fcose
-import fcose from "cytoscape-fcose";
+import {
+  startTransition,
+  useEffect,
+  useRef,
+  useState,
+  type ReactNode,
+} from "react";
 import { setSelectedNode } from "@powerhousedao/reactor-browser";
 import type { KnowledgeNoteInfo } from "../hooks/use-knowledge-notes.js";
 import type { MocInfo } from "../hooks/use-knowledge-mocs.js";
+import type { Heat, LayoutFrame } from "./graph/layout-core.js";
+import {
+  createLayoutEngine,
+  type LayoutEngine,
+} from "./graph/layout-engine.js";
+import { layoutStore, type LayoutStore } from "./graph/layout-store.js";
+import {
+  applyHighlight,
+  buildGraphModel,
+  easeFactor,
+  easeTowards,
+  edgeAttributes,
+  fitView,
+  hitTest,
+  indexGraph,
+  LINK_TYPE_COLOR_HEX,
+  mergePositions,
+  MOC_COLOR_HEX,
+  neighbourhood,
+  nodeAttributes,
+  packGraph,
+  sameStructure,
+  STATUS_COLOR_HEX,
+  type IndexedGraph,
+  type Point,
+} from "./graph/model.js";
+import {
+  createRenderer,
+  type GraphRenderer,
+  type RenderGraph,
+  type RendererKind,
+  type RenderView,
+} from "./graph/renderer.js";
 
-// Register the fcose layout once
-// eslint-disable-next-line @typescript-eslint/no-unsafe-argument
-cytoscape.use(fcose);
+/*
+ * The knowledge graph.
+ *
+ * Built to stay smooth from a few hundred nodes to 100,000 and more, on any
+ * machine and in any browser:
+ * - The layout (graph/force-layout.ts, d3-force's simulation over typed
+ *   arrays) runs in a Web Worker, so a slow step never holds up a frame;
+ *   where a worker cannot start it runs on the main thread instead.
+ * - Drawing is WebGL2, else WebGL1, else Canvas 2D (graph/renderer.ts): two
+ *   instanced draws a frame on a GPU, whatever the size.
+ * - Positions are typed arrays; a frame is a few array passes.
+ *
+ * It behaves as the graph always has: grab a node and it follows the pointer
+ * while everything linked to it swings after it on its springs, then the
+ * layout cools down when you let go; hover or click a node to highlight its
+ * neighbourhood; the click card opens the document. A data refresh is merged
+ * into the layout on screen, and the layout is remembered per drive.
+ */
 
 /* ------------------------------------------------------------------ */
-/*  Types                                                             */
+/*  Types                                                               */
 /* ------------------------------------------------------------------ */
 
 type PersistedGraphState = {
   nodes: {
-    id: string;
     documentId: string;
-    title?: string | null;
-    noteType?: string | null;
-    status?: string | null;
+    [k: string]: unknown;
   }[];
   edges: {
-    id: string;
     sourceDocumentId: string;
     targetDocumentId: string;
     linkType?: string | null;
-    /** The edge's articulation, when recorded. */
-    reason?: string | null;
   }[];
-  lastSyncedAt?: string | null;
 } | null;
 
-type TensionInfo = {
-  id: string;
-  title: string;
-  status: string | null;
-  involvedRefs: string[];
+/** Selected node + its direct neighbors — same set the graph highlights. */
+export type GraphFocus = {
+  selectedId: string;
+  focusedIds: string[];
 };
 
 type GraphViewProps = {
   notes: KnowledgeNoteInfo[];
   graphState?: PersistedGraphState;
   mocs?: MocInfo[];
-  tensions?: TensionInfo[];
+  tensions?: Array<{
+    id: string;
+    title: string;
+    status: string | null;
+    involvedRefs: string[];
+  }>;
+  /** Fires when a node is selected/deselected so the sidebar can mirror the highlight set. */
+  onGraphFocusChange?: (focus: GraphFocus | null) => void;
+  /** Incremented by the parent to force-clear selection (e.g. sidebar ✕). */
+  clearFocusNonce?: number;
+  /** Remembers the layout per key (the drive id) so a reload starts settled. */
+  layoutKey?: string;
+  /** Start from this renderer instead of the best available (to try a fallback). */
+  renderer?: RendererKind;
+  /** Lay out on the main thread instead of a worker (to try the fallback). */
+  inlineLayout?: boolean;
 };
 
-type NodeDetail = {
+type HoverInfo = {
   id: string;
   label: string;
-  status: string;
-  noteType: string | null;
-  description: string | null;
-  topics: { id: string; name: string }[];
+  type: string;
+  meta: string;
+  x: number;
+  y: number;
+};
+
+type SelectedDetail = {
+  id: string;
+  label: string;
+  type: string;
+  tier: string | null;
   linkCount: number;
-  neighbors: {
-    id: string;
-    label: string;
-    edgeType: string | null;
-    /** Why the two notes connect, from the edge's metadata. */
-    reason: string | null;
-  }[];
+  x: number;
+  y: number;
+};
+
+type DragState = {
+  index: number;
+  /** World offset from the pointer to the node's centre, kept while dragging. */
+  dx: number;
+  dy: number;
+  startX: number;
+  startY: number;
+  moved: boolean;
+};
+
+type PanState = {
+  x: number;
+  y: number;
+  vx: number;
+  vy: number;
+  moved: boolean;
+};
+
+/** Everything the frame loop and the pointer handlers share. Lives in a ref, never in React state. */
+type Scene = {
+  host: HTMLDivElement;
+  renderer: GraphRenderer;
+  engine: LayoutEngine;
+  store: LayoutStore;
+  /** The layout's centre, fixed at mount so a resize never shifts the graph. */
+  center: [number, number];
+  view: RenderView;
+  width: number;
+  height: number;
+  graph: IndexedGraph | null;
+  draw: RenderGraph | null;
+  edgePrimary: Uint8Array;
+  highlight: Uint8Array;
+  nodeIds: Set<string>;
+  linkIds: Set<string>;
+  /** Bumped with every graph sent to the layout; frames of an older graph are dropped. */
+  version: number;
+  /** The layout's latest positions; the drawn ones (draw.pos) ease toward them. */
+  target: Float32Array;
+  easing: boolean;
+  /** Smoothed time between layout frames, ms. */
+  frameInterval: number;
+  lastFrameAt: number;
+  /** The node held by a drag, or -1. */
+  held: number;
+  /** The saved layout for the current key: undefined while it loads. */
+  saved: Map<string, Point> | null | undefined;
+  loaded: boolean;
+  fitted: boolean;
+  /** The layout on screen was started from scratch in this session (no saved one, or Re-layout). */
+  fromScratch: boolean;
+  /** It has come to rest at least once. */
+  settledOnce: boolean;
+  /** The user has dragged a node since it started. */
+  userDragged: boolean;
+  /** While the first layout spreads out, the view eases toward a fit of it (until the user takes over). */
+  fitTarget: RenderView | null;
+  lastFitAt: number;
+  dirty: boolean;
+  positionsDirty: boolean;
+  dragDirty: boolean;
+  hovered: number;
+  hoverSet: number[] | null;
+  selectedSet: number[] | null;
+  pendingHover: Point | null;
+  drag: DragState | null;
+  pan: PanState | null;
+  raf: number;
+  lastTime: number;
 };
 
 /* ------------------------------------------------------------------ */
-/*  Constants                                                         */
+/*  Constants                                                           */
 /* ------------------------------------------------------------------ */
-
-const STATUS_NODE_COLORS: Record<string, string> = {
-  DRAFT: "#f59e0b",
-  IN_REVIEW: "#3b82f6",
-  CANONICAL: "#10b981",
-  ARCHIVED: "#6b7280",
-  // Sentinel statuses of the indexed execution documents.
-  SCOPE: "#f472b6",
-  WBS: "#14b8a6",
-};
-
-const LINK_TYPE_COLORS: Record<string, string> = {
-  RELATES_TO: "#64748b",
-  BUILDS_ON: "#0ea5e9",
-  CONTRADICTS: "#ef4444",
-  SUPERSEDES: "#a855f7",
-  DERIVED_FROM: "#f59e0b",
-  // Derived from scope-of-work state: a project citing a note / its WBS.
-  CITES: "#f472b6",
-  DELIVERED_BY: "#14b8a6",
-};
-
-const MOC_NODE_COLOR = "#cba6f7";
-const MOC_EDGE_COLOR = "#cba6f7";
-const TENSION_NODE_COLOR = "#ef4444";
-const TENSION_EDGE_COLOR = "#ef4444";
-const DEFAULT_NODE_COLOR = "#6b7280";
-const DEFAULT_EDGE_COLOR = "#64748b";
-
-/* ------------------------------------------------------------------ */
-/*  Position persistence                                              */
-/* ------------------------------------------------------------------ */
-
-const POSITIONS_STORAGE_KEY = "bai-graph-positions";
-type StoredPositions = Record<string, { x: number; y: number }>;
-
-function loadPositions(): StoredPositions | null {
-  try {
-    const raw = localStorage.getItem(POSITIONS_STORAGE_KEY);
-    return raw ? (JSON.parse(raw) as StoredPositions) : null;
-  } catch {
-    return null;
-  }
-}
-
-function savePositions(cy: cytoscape.Core): void {
-  try {
-    const positions: StoredPositions = {};
-    cy.nodes().forEach((node) => {
-      const pos = node.position();
-      positions[node.id()] = { x: pos.x, y: pos.y };
-    });
-    localStorage.setItem(POSITIONS_STORAGE_KEY, JSON.stringify(positions));
-  } catch {
-    // localStorage unavailable or full — silently fail
-  }
-}
-
-function clearStoredPositions(): void {
-  try {
-    localStorage.removeItem(POSITIONS_STORAGE_KEY);
-  } catch {
-    // ignore
-  }
-}
-
-/* ------------------------------------------------------------------ */
-/*  Build cytoscape elements from data                                */
-/* ------------------------------------------------------------------ */
-
-function buildElements(
-  notes: KnowledgeNoteInfo[],
-  graphState: PersistedGraphState,
-  mocs?: MocInfo[],
-  tensions?: TensionInfo[],
-) {
-  const elements: cytoscape.ElementDefinition[] = [];
-  const noteMap = new Map(notes.map((n) => [n.id, n]));
-
-  // Build MOC membership: note → primary MOC id
-  const noteToMoc = new Map<string, string>();
-  if (mocs?.length) {
-    const refCounts = new Map<string, Map<string, number>>();
-    for (const moc of mocs) {
-      for (const idea of moc.coreIdeas) {
-        if (!refCounts.has(idea.noteRef))
-          refCounts.set(idea.noteRef, new Map());
-        const counts = refCounts.get(idea.noteRef)!;
-        counts.set(moc.id, (counts.get(moc.id) ?? 0) + 1);
-      }
-    }
-    for (const [noteId, counts] of refCounts) {
-      let bestMoc = "";
-      let bestCount = 0;
-      for (const [mocId, count] of counts) {
-        if (count > bestCount) {
-          bestMoc = mocId;
-          bestCount = count;
-        }
-      }
-      if (bestMoc) noteToMoc.set(noteId, bestMoc);
-    }
-  }
-
-  // Helper: check if an edge crosses MOC cluster boundaries
-  const isCrossCluster = (sourceId: string, targetId: string): boolean => {
-    const sMoc = noteToMoc.get(sourceId);
-    const tMoc = noteToMoc.get(targetId);
-    if (!sMoc && !tMoc) return false; // both orphans — not cross-cluster
-    return sMoc !== tMoc;
-  };
-
-  if (graphState?.nodes.length) {
-    const linkCounts = new Map<string, number>();
-    for (const edge of graphState.edges) {
-      linkCounts.set(
-        edge.sourceDocumentId,
-        (linkCounts.get(edge.sourceDocumentId) ?? 0) + 1,
-      );
-      linkCounts.set(
-        edge.targetDocumentId,
-        (linkCounts.get(edge.targetDocumentId) ?? 0) + 1,
-      );
-    }
-
-    for (const node of graphState.nodes) {
-      const note = noteMap.get(node.documentId);
-      elements.push({
-        data: {
-          id: node.documentId,
-          label: node.title ?? node.documentId.slice(0, 8),
-          status: node.status ?? "DRAFT",
-          noteType: note?.noteType ?? node.noteType ?? null,
-          description: note?.description ?? null,
-          topics: note?.topics ?? [],
-          linkCount: linkCounts.get(node.documentId) ?? 0,
-          color:
-            STATUS_NODE_COLORS[node.status ?? "DRAFT"] ?? DEFAULT_NODE_COLOR,
-          layer: 3,
-        },
-      });
-    }
-
-    for (const edge of graphState.edges) {
-      elements.push({
-        data: {
-          id: edge.id,
-          source: edge.sourceDocumentId,
-          target: edge.targetDocumentId,
-          linkType: edge.linkType ?? null,
-          reason: edge.reason ?? null,
-          crossCluster: isCrossCluster(
-            edge.sourceDocumentId,
-            edge.targetDocumentId,
-          ),
-          color: LINK_TYPE_COLORS[edge.linkType ?? ""] ?? DEFAULT_EDGE_COLOR,
-        },
-      });
-    }
-  } else {
-    const nodeIds = new Set(notes.map((n) => n.id));
-    const edgeList: {
-      source: string;
-      target: string;
-      linkType: string | null;
-      reason: string | null;
-    }[] = [];
-
-    for (const note of notes) {
-      for (const link of note.links) {
-        if (link.targetDocumentId && nodeIds.has(link.targetDocumentId)) {
-          edgeList.push({
-            source: note.id,
-            target: link.targetDocumentId,
-            linkType: link.linkType,
-            reason: link.reason,
-          });
-        }
-      }
-    }
-
-    const linkCounts = new Map<string, number>();
-    for (const edge of edgeList) {
-      linkCounts.set(edge.source, (linkCounts.get(edge.source) ?? 0) + 1);
-      linkCounts.set(edge.target, (linkCounts.get(edge.target) ?? 0) + 1);
-    }
-
-    for (const note of notes) {
-      elements.push({
-        data: {
-          id: note.id,
-          label: note.title ?? note.name,
-          status: note.status ?? "DRAFT",
-          noteType: note.noteType ?? null,
-          description: note.description ?? null,
-          topics: note.topics,
-          linkCount: linkCounts.get(note.id) ?? 0,
-          color:
-            STATUS_NODE_COLORS[note.status ?? "DRAFT"] ?? DEFAULT_NODE_COLOR,
-          layer: 3,
-        },
-      });
-    }
-
-    edgeList.forEach((edge, i) => {
-      elements.push({
-        data: {
-          id: `e-${i}`,
-          source: edge.source,
-          target: edge.target,
-          linkType: edge.linkType ?? null,
-          reason: edge.reason,
-          crossCluster: isCrossCluster(edge.source, edge.target),
-          color: LINK_TYPE_COLORS[edge.linkType ?? ""] ?? DEFAULT_EDGE_COLOR,
-        },
-      });
-    });
-  }
-
-  // Track existing node IDs for MOC + tension edge targets
-  const existingNodeIds = new Set(
-    elements.filter((e) => !e.data.source).map((e) => e.data.id),
-  );
-
-  // Add MOC nodes + edges (coreIdeas → notes, childRefs → child MOCs)
-  if (mocs?.length) {
-    // Pre-register MOC IDs so childRef edges between MOCs can resolve
-    for (const moc of mocs) {
-      existingNodeIds.add(moc.id);
-    }
-
-    // First-parent-wins: record which MoC first claims each note as a coreIdea
-    const firstParentByNote = new Map<string, string>();
-    for (const moc of mocs) {
-      for (const idea of moc.coreIdeas) {
-        if (!firstParentByNote.has(idea.noteRef)) {
-          firstParentByNote.set(idea.noteRef, moc.id);
-        }
-      }
-    }
-
-    const tierToLayer: Record<string, number> = { HUB: 0, DOMAIN: 1, TOPIC: 2 };
-
-    for (const moc of mocs) {
-      const layer = tierToLayer[moc.tier ?? "TOPIC"] ?? 2;
-      elements.push({
-        data: {
-          id: moc.id,
-          label: moc.title,
-          status: "MOC",
-          noteType: `MOC (${moc.tier ?? "TOPIC"})`,
-          description: null,
-          topics: [],
-          linkCount: moc.coreIdeas.length + moc.childRefs.length,
-          color: MOC_NODE_COLOR,
-          isMoc: true,
-          layer,
-        },
-      });
-
-      for (const idea of moc.coreIdeas) {
-        if (existingNodeIds.has(idea.noteRef)) {
-          elements.push({
-            data: {
-              id: `moc-${moc.id}-${idea.noteRef}`,
-              source: moc.id,
-              target: idea.noteRef,
-              linkType: "CORE_IDEA",
-              color: MOC_EDGE_COLOR,
-              isPrimaryParent: firstParentByNote.get(idea.noteRef) === moc.id,
-            },
-          });
-        }
-      }
-
-      for (const childRef of moc.childRefs) {
-        if (existingNodeIds.has(childRef)) {
-          elements.push({
-            data: {
-              id: `moc-child-${moc.id}-${childRef}`,
-              source: moc.id,
-              target: childRef,
-              linkType: "CORE_IDEA",
-              color: MOC_EDGE_COLOR,
-              isPrimaryParent: true,
-            },
-          });
-        }
-      }
-    }
-  }
-
-  // Add tension nodes and edges to involved notes
-  if (tensions?.length) {
-    for (const tension of tensions) {
-      if (tension.status === "OPEN") {
-        elements.push({
-          data: {
-            id: tension.id,
-            label: tension.title,
-            status: "TENSION",
-            noteType: `Tension (${tension.status})`,
-            description: null,
-            topics: [],
-            linkCount: tension.involvedRefs.length,
-            color: TENSION_NODE_COLOR,
-            isTension: true,
-          },
-        });
-
-        for (const ref of tension.involvedRefs) {
-          if (existingNodeIds.has(ref)) {
-            elements.push({
-              data: {
-                id: `ten-${tension.id}-${ref}`,
-                source: tension.id,
-                target: ref,
-                linkType: "INVOLVES",
-                color: TENSION_EDGE_COLOR,
-              },
-            });
-          }
-        }
-      }
-    }
-  }
-
-  return elements;
-}
-
-/* ------------------------------------------------------------------ */
-/*  Cytoscape stylesheet                                              */
-/* ------------------------------------------------------------------ */
-
-const cyStylesheet: cytoscape.StylesheetStyle[] = [
-  {
-    selector: "node",
-    style: {
-      "background-color": "data(color)",
-      label: "data(label)",
-      color: "#a6adc8",
-      "font-size": "10px",
-      "text-valign": "bottom",
-      "text-margin-y": 6,
-      "text-max-width": "100px",
-      "text-wrap": "ellipsis",
-      "text-overflow-wrap": "anywhere",
-      width: "mapData(linkCount, 0, 10, 16, 40)",
-      height: "mapData(linkCount, 0, 10, 16, 40)",
-      "border-width": 0,
-      "border-color": "#fff",
-      "overlay-padding": 4,
-      "transition-property":
-        "background-color, border-width, width, height, opacity",
-      "transition-duration": 150,
-    } as cytoscape.Css.Node,
-  },
-  {
-    selector: "edge",
-    style: {
-      "line-color": "data(color)",
-      "target-arrow-color": "data(color)",
-      "target-arrow-shape": "triangle",
-      "curve-style": "bezier",
-      width: 1.5,
-      opacity: 0.4,
-      "transition-property": "opacity, width, line-color",
-      "transition-duration": 150,
-    } as cytoscape.Css.Edge,
-  },
-  // MOC nodes — diamond, prominent cluster anchors
-  {
-    selector: "node[?isMoc]",
-    style: {
-      shape: "diamond",
-      width: 45,
-      height: 45,
-      "font-size": "12px",
-      "font-weight": "bold",
-      "border-width": 2.5,
-      "border-color": "#cba6f7",
-      "border-opacity": 0.7,
-      "text-max-width": "140px",
-    } as cytoscape.Css.Node,
-  },
-  // Tension nodes — triangle shape, red
-  {
-    selector: "node[?isTension]",
-    style: {
-      shape: "triangle",
-      width: 30,
-      height: 30,
-      "font-size": "10px",
-      "font-weight": "bold",
-      "border-width": 2,
-      "border-color": "#ef4444",
-      "border-opacity": 0.5,
-    } as cytoscape.Css.Node,
-  },
-  // Cross-cluster edges — very faint, don't distract from clusters
-  {
-    selector: "edge[?crossCluster]",
-    style: {
-      opacity: 0.15,
-      width: 0.8,
-      "line-style": "dotted",
-      "line-dash-pattern": [2, 4],
-    } as cytoscape.Css.Edge,
-  },
-  // MOC edges — dashed (primary parent edges)
-  {
-    selector: "edge[linkType = 'CORE_IDEA']",
-    style: {
-      "line-style": "dashed",
-      "line-dash-pattern": [6, 3],
-      opacity: 0.6,
-      width: 1,
-    } as cytoscape.Css.Edge,
-  },
-  // Secondary parent edges — hidden by default.
-  // Scoped to CORE_IDEA edges with isPrimaryParent explicitly false.
-  // [!isPrimaryParent] matches falsy values (false, 0, undefined);
-  // scoping to CORE_IDEA prevents accidentally hiding note→note edges
-  // which have no isPrimaryParent field (undefined is also falsy).
-  // But note→note edges don't have linkType = 'CORE_IDEA', so they
-  // are never matched here regardless.
-  {
-    selector: "edge[linkType = 'CORE_IDEA'][!isPrimaryParent]",
-    style: {
-      opacity: 0.0,
-      events: "no",
-    } as cytoscape.Css.Edge,
-  },
-  // Secondary parent edges — visible (dashed) when their endpoint is a neighbor
-  {
-    selector: "edge[linkType = 'CORE_IDEA'][!isPrimaryParent].neighbor",
-    style: {
-      opacity: 0.55,
-      events: "yes",
-      "line-style": "dashed",
-      "line-dash-pattern": [6, 4],
-    } as cytoscape.Css.Edge,
-  },
-  // Highlighted node (hovered or selected)
-  {
-    selector: "node.highlighted",
-    style: {
-      "border-width": 3,
-      "border-color": "#cba6f7",
-      "background-opacity": 1,
-      "z-index": 10,
-    } as cytoscape.Css.Node,
-  },
-  // Neighbor of highlighted
-  {
-    selector: "node.neighbor",
-    style: {
-      "background-opacity": 1,
-      "z-index": 5,
-    } as cytoscape.Css.Node,
-  },
-  // Dimmed (not highlighted or neighbor)
-  {
-    selector: "node.dimmed",
-    style: {
-      opacity: 0.12,
-    } as cytoscape.Css.Node,
-  },
-  // Highlighted edge
-  {
-    selector: "edge.highlighted",
-    style: {
-      opacity: 0.85,
-      width: 2.5,
-    } as cytoscape.Css.Edge,
-  },
-  // Dimmed edge
-  {
-    selector: "edge.dimmed",
-    style: {
-      opacity: 0.06,
-    } as cytoscape.Css.Edge,
-  },
-  // Selected node
-  {
-    selector: "node:selected",
-    style: {
-      "border-width": 3,
-      "border-color": "#cba6f7",
-    } as cytoscape.Css.Node,
-  },
-];
-
-/* ------------------------------------------------------------------ */
-/*  Layout options                                                    */
-/* ------------------------------------------------------------------ */
-
-function getLayoutOptions(opts?: {
-  savedPositions?: StoredPositions | null;
-  newNodeIds?: Set<string>;
-}): cytoscape.LayoutOptions {
-  const saved = opts?.savedPositions;
-  const hasPositions = saved && Object.keys(saved).length > 0;
-
-  // All nodes have saved positions — instant preset layout
-  if (hasPositions && !opts?.newNodeIds?.size) {
-    return {
-      name: "preset",
-      positions: (node: cytoscape.NodeSingular) => {
-        const id = node.id();
-        return saved[id] ?? { x: 0, y: 0 };
-      },
-      fit: false,
-      padding: 60,
-    } as cytoscape.LayoutOptions;
-  }
-
-  // First load: force-directed (fcose). Layered/tree layouts for this
-  // graph created strict tier ladders that hid the cluster structure
-  // the user wants to see — knowledge graphs are not trees, and notes
-  // commonly link across tiers. Force layout reveals clusters by edge
-  // density. MoCs naturally float above their notes via the CORE_IDEA
-  // edges, but nothing is locked into a row.
-  //
-  // At >300 nodes, randomized init + high repulsion overflows fcose's
-  // calcGrid array. Lower numIter and repulsion keep the bounding rect
-  // from blowing up before convergence. fcose constraint:
-  // `randomize: false` requires `quality: "default" | "proof"`. Only
-  // switch to "draft" when randomizing (i.e. on the first layout for a
-  // fresh drive); otherwise fcose throws and falls through to cose.
-  // Tuned to mimic Obsidian's knowledge graph "no stacking" feel: high
-  // repulsion + large nodeSeparation force nodes apart during the force
-  // pass; a post-layout deoverlap sweep (see resolveOverlaps) handles
-  // any residual overlap fcose leaves behind. Together they guarantee
-  // no two nodes share the same screen pixels on first paint.
-  const nodeCount = currentNodeCount();
-  const isLarge = nodeCount > 300;
-  const randomize = !hasPositions;
-  const quality = randomize && isLarge ? "draft" : "default";
-  return {
-    name: "fcose",
-    animate: false,
-    quality,
-    randomize,
-    nodeRepulsion: isLarge ? 18000 : 22000,
-    nodeSeparation: 120,
-    idealEdgeLength: isLarge ? 240 : 200,
-    edgeElasticity: 0.1,
-    nestingFactor: 0.1,
-    gravity: 0.02,
-    gravityRangeCompound: 1.5,
-    numIter: isLarge ? 2500 : 1500,
-    tile: true,
-    tilingPaddingVertical: 80,
-    tilingPaddingHorizontal: 80,
-    packComponents: true,
-    fit: false,
-    padding: 80,
-  } as cytoscape.LayoutOptions;
-}
 
 /**
- * Post-layout overlap resolution. Pushes pairs of nodes apart until
- * none overlap. O(n²) per pass; with n=375 and a few passes this is
- * a couple ms — invisible to the user. fcose with strong repulsion
- * normally settles before this is needed, but on dense clusters or
- * when the user re-runs layout from a tight starting position there
- * can still be touching nodes. This is the deterministic backstop.
+ * How far outside a node the pointer still grabs it: 4 world units, as
+ * always, but never less than 6 screen pixels — zoomed out over a large
+ * vault, a node is a dot a pixel or two wide.
  */
-function resolveOverlaps(cy: cytoscape.Core, padding = 12, maxPasses = 12) {
-  const nodes = cy.nodes().toArray();
-  for (let pass = 0; pass < maxPasses; pass++) {
-    let movedAny = false;
-    for (let i = 0; i < nodes.length; i++) {
-      const a = nodes[i];
-      const pa = a.position();
-      const ra = Math.max(a.width(), a.height()) / 2;
-      for (let j = i + 1; j < nodes.length; j++) {
-        const b = nodes[j];
-        const pb = b.position();
-        const rb = Math.max(b.width(), b.height()) / 2;
-        const dx = pb.x - pa.x;
-        const dy = pb.y - pa.y;
-        const minDist = ra + rb + padding;
-        const distSq = dx * dx + dy * dy;
-        if (distSq >= minDist * minDist) continue;
-        const dist = Math.sqrt(distSq) || 0.0001;
-        const overlap = (minDist - dist) / 2;
-        const ux = dx / dist;
-        const uy = dy / dist;
-        a.position({ x: pa.x - ux * overlap, y: pa.y - uy * overlap });
-        b.position({ x: pb.x + ux * overlap, y: pb.y + uy * overlap });
-        pa.x -= ux * overlap;
-        pa.y -= uy * overlap;
-        movedAny = true;
+function hitPad(view: RenderView): number {
+  return Math.max(4, 6 / view.scale);
+}
+
+/** A pointer that moves less than this (squared, in px) is a click, not a drag. */
+const DRAG_THRESHOLD_SQ = 16;
+/** The layout's cooling rate, as it has always been. */
+const LAYOUT_DECAY = 0.02;
+/** After a refresh or a remembered layout: a short, gentle settle. */
+const SETTLE_DECAY = 0.05;
+/**
+ * Share of nodes and links that must change before a settled layout this
+ * session made from scratch is laid out again instead of nudged.
+ */
+const RESTART_CHANGE = 0.05;
+const MAX_ZOOM = 4;
+/** Zoom out at most to 0.1×, or to half the fit of a graph larger than that. */
+const MIN_ZOOM = 0.1;
+
+/* ------------------------------------------------------------------ */
+/*  Component                                                           */
+/* ------------------------------------------------------------------ */
+
+export default function GraphView(props: GraphViewProps) {
+  const containerRef = useRef<HTMLDivElement | null>(null);
+  const sceneRef = useRef<Scene | null>(null);
+  const [ready, setReady] = useState(false);
+  /** Bumped when a saved layout has loaded, to merge the data into it. */
+  const [layoutToken, setLayoutToken] = useState(0);
+
+  const selectedIdRef = useRef<string | null>(null);
+  const recenterRef = useRef<(() => void) | null>(null);
+  const zoomByRef = useRef<((factor: number) => void) | null>(null);
+  const relayoutRef = useRef<(() => void) | null>(null);
+  // True once the user pans/zooms/drags — turns OFF the auto-fit-on-cool
+  // behaviour so we don't yank the view out from under them.
+  const userInteractedRef = useRef(false);
+  // Latest props for handlers that live as long as the scene.
+  const onGraphFocusChangeRef = useRef(props.onGraphFocusChange);
+  onGraphFocusChangeRef.current = props.onGraphFocusChange;
+  const layoutKeyRef = useRef(props.layoutKey);
+  layoutKeyRef.current = props.layoutKey;
+
+  // Tooltip and selection card are React state (HTML overlays); they change
+  // only when the hovered or selected node changes, never per frame.
+  const [hoverInfo, setHoverInfo] = useState<HoverInfo | null>(null);
+  const [selectedDetail, setSelectedDetail] = useState<SelectedDetail | null>(
+    null,
+  );
+
+  /** Select node `i` (or nothing), update the highlight, and tell the sidebar. */
+  /**
+   * Tell the parent (the sidebar's connection list) about a selection — as a
+   * transition, so however long the vault takes to re-render, the graph's own
+   * highlight is painted first and the page stays responsive meanwhile.
+   */
+  function notifyFocus(focus: GraphFocus | null) {
+    startTransition(() => onGraphFocusChangeRef.current?.(focus));
+  }
+
+  function select(i: number, at: Point | null, notify = true) {
+    const scene = sceneRef.current;
+    const g = scene?.graph;
+    if (i < 0 || !scene || !g) {
+      selectedIdRef.current = null;
+      setSelectedDetail(null);
+      if (scene) {
+        scene.selectedSet = null;
+        refreshHighlight(scene);
       }
+      if (notify) notifyFocus(null);
+      return;
     }
-    if (!movedAny) return;
-  }
-}
-
-// Snapshot of the most recent element count, set in the init effect.
-// Used by getLayoutOptions to scale fcose params without breaking signature.
-let lastNodeCount = 0;
-function currentNodeCount() {
-  return lastNodeCount;
-}
-
-/**
- * Run a layout, falling back through fcose → cose → grid.
- * fcose is the primary first-load layout (force-directed, reveals
- * cluster structure). Falls back to cose if fcose fails, then grid as
- * a last resort so the graph always renders.
- * Returns the name of the layout that ran so callers can skip persisting
- * grid positions (only "fcose" and "cose" positions are worth persisting).
- */
-function runLayoutWithFallback(
-  cy: cytoscape.Core,
-  options: cytoscape.LayoutOptions,
-): "fcose" | "cose" | "grid" | "none" {
-  const layoutName = (options as { name: string }).name;
-  try {
-    cy.layout(options).run();
-    // preset counts as "fcose" for persistence purposes (positions already saved)
-    return layoutName === "preset"
-      ? "fcose"
-      : (layoutName as "fcose" | "cose" | "grid");
-  } catch (err) {
-    console.warn("[GraphView] fcose failed, retrying with cose:", err);
-  }
-
-  try {
-    cy.layout({
-      name: "cose",
-      animate: false,
-      randomize: true,
-      // Match the dispersion goals from fcose: stronger repulsion, longer
-      // edges, weaker gravity so clusters don't collapse together.
-      nodeRepulsion: () => 8000,
-      idealEdgeLength: () => 150,
-      edgeElasticity: () => 16,
-      nestingFactor: 1.2,
-      gravity: 0.4,
-      numIter: 1500,
-      fit: false,
-      padding: 60,
-    } as cytoscape.LayoutOptions).run();
-    return "cose";
-  } catch (err) {
-    console.warn("[GraphView] cose failed, falling back to grid:", err);
-  }
-  try {
-    cy.layout({
-      name: "grid",
-      fit: false,
-      padding: 60,
-    } as cytoscape.LayoutOptions).run();
-    return "grid";
-  } catch (err) {
-    console.error("[GraphView] grid layout also failed:", err);
-    return "none";
-  }
-}
-
-/**
- * Heuristic: detect grid-aligned saved positions so we can ignore them on
- * load. Force-directed layouts give every node a unique y; a grid layout
- * collapses them onto ~sqrt(N) rows. Ratio of unique-y to node count
- * below 0.15 is well clear of any real force-directed render.
- */
-function looksLikeGrid(positions: StoredPositions): boolean {
-  const values = Object.values(positions);
-  if (values.length < 30) return false;
-  const ys = new Set(values.map((p) => Math.round(p.y / 5) * 5));
-  return ys.size / values.length < 0.15;
-}
-
-/* ------------------------------------------------------------------ */
-/*  Component                                                         */
-/* ------------------------------------------------------------------ */
-
-export function GraphView({
-  notes,
-  graphState,
-  mocs,
-  tensions,
-}: GraphViewProps) {
-  const containerRef = useRef<HTMLDivElement>(null);
-  const cyRef = useRef<cytoscape.Core | null>(null);
-  const [selectedDetail, setSelectedDetail] = useState<NodeDetail | null>(null);
-  const [zoomLevel, setZoomLevel] = useState(1);
-  // Tensions are an opt-in layer, OFF by default. A vault with hundreds of
-  // notes is already dense; a reader who wants to see where the graph
-  // disagrees with itself turns the layer on, and only OPEN tensions are
-  // drawn — a resolved one is history, not structure.
-  const [showTensions, setShowTensions] = useState(false);
-  const openTensionCount = useMemo(
-    () => (tensions ?? []).filter((t) => t.status === "OPEN").length,
-    [tensions],
-  );
-  const [hoverInfo, setHoverInfo] = useState<{
-    node: NodeDetail;
-    x: number;
-    y: number;
-  } | null>(null);
-
-  // Build elements from data
-  const elements = useMemo(
-    () =>
-      buildElements(
-        notes,
-        graphState ?? null,
-        mocs,
-        showTensions ? tensions : undefined,
-      ),
-    [notes, graphState, mocs, tensions, showTensions],
-  );
-
-  // Gather neighbor info for the detail panel
-  const getNodeDetail = useCallback((nodeId: string): NodeDetail | null => {
-    const cy = cyRef.current;
-    if (!cy) return null;
-    const node = cy.getElementById(nodeId);
-    if (!node.length) return null;
-
-    const neighborhood = node.neighborhood();
-    const neighborNodes = neighborhood.nodes();
-    const connectedEdges = node.connectedEdges();
-
-    const neighbors: NodeDetail["neighbors"] = [];
-    neighborNodes.forEach((n) => {
-      const connectingEdge = connectedEdges.filter(
-        (e) =>
-          (e.source().id() === nodeId && e.target().id() === n.id()) ||
-          (e.target().id() === nodeId && e.source().id() === n.id()),
-      );
-      const reasonData: unknown = connectingEdge.length
-        ? connectingEdge.first().data("reason")
-        : null;
-      neighbors.push({
-        id: n.id(),
-        label: String(n.data("label") ?? ""),
-        edgeType: connectingEdge.length
-          ? String(connectingEdge.first().data("linkType") ?? "") || null
-          : null,
-        reason: typeof reasonData === "string" && reasonData ? reasonData : null,
+    const node = g.nodes[i];
+    selectedIdRef.current = node.id;
+    const focused = neighbourhood(g, i);
+    scene.selectedSet = focused;
+    refreshHighlight(scene);
+    setSelectedDetail({
+      id: node.id,
+      label: node.label,
+      type: node.isMoc ? "MoC" : "Note",
+      tier: node.tier ?? null,
+      linkCount: node.linkCount,
+      x: at?.x ?? 0,
+      y: at?.y ?? 0,
+    });
+    if (notify) {
+      notifyFocus({
+        selectedId: node.id,
+        focusedIds: focused.map((k) => g.nodes[k].id),
       });
-    });
+    }
+  }
 
-    type NodeData = {
-      label: string;
-      status: string;
-      noteType: string | null;
-      description: string | null;
-      topics: NodeDetail["topics"];
-      linkCount: number;
-    };
-    const d = node.data() as NodeData;
-    return {
-      id: nodeId,
-      label: d.label,
-      status: d.status,
-      noteType: d.noteType,
-      description: d.description,
-      topics: d.topics,
-      linkCount: d.linkCount,
-      neighbors,
-    };
-  }, []);
+  function clearGraphSelection() {
+    select(-1, null);
+  }
 
-  // Highlight a node and its neighborhood, dim the rest
-  const highlightNode = useCallback((cy: cytoscape.Core, nodeId: string) => {
-    const node = cy.getElementById(nodeId);
-    if (!node.length) return;
-
-    const neighborhood = node.closedNeighborhood();
-    // Also collect secondary-parent edges that touch any node in the neighborhood
-    // (these are invisible by default and need the .neighbor class to fade in)
-    const secondaryEdgesInNeighborhood = neighborhood
-      .nodes()
-      .connectedEdges("edge[linkType = 'CORE_IDEA'][!isPrimaryParent]");
-
-    cy.batch(() => {
-      cy.elements().removeClass("highlighted neighbor dimmed");
-      cy.elements().not(neighborhood).addClass("dimmed");
-      neighborhood.edges().addClass("highlighted");
-      neighborhood.nodes().not(node).addClass("neighbor");
-      node.addClass("highlighted");
-      // Fade in secondary-parent edges for neighboring nodes
-      secondaryEdgesInNeighborhood.addClass("neighbor");
-    });
-  }, []);
-
-  const clearHighlight = useCallback((cy: cytoscape.Core) => {
-    cy.batch(() => {
-      cy.elements().removeClass("highlighted neighbor dimmed");
-    });
-  }, []);
-
-  // Initialize Cytoscape
+  // Parent asked to clear (sidebar ✕) — drop metacard + highlight without
+  // re-notifying (parent already nulled graphFocus).
   useEffect(() => {
-    if (!containerRef.current) return;
+    if (!props.clearFocusNonce) return;
+    select(-1, null, false);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [props.clearFocusNonce]);
 
-    // Detect which nodes are new vs have saved positions.
-    // Discard stored positions that look like a grid render — they come
-    // from a previous failed fcose run that fell through to the grid
-    // fallback, and we don't want to lock the user into that view.
-    let savedPositions = loadPositions();
-    if (savedPositions && looksLikeGrid(savedPositions)) {
-      console.warn("[GraphView] discarding grid-shaped saved positions");
-      clearStoredPositions();
-      savedPositions = null;
+  /* ---------------------------------------------------------------- */
+  /*  Scene: built once per mount                                      */
+  /* ---------------------------------------------------------------- */
+  useEffect(() => {
+    const host = containerRef.current;
+    if (!host) return;
+
+    const renderer = createRenderer(props.renderer);
+    const canvas = renderer.canvas;
+    canvas.style.position = "absolute";
+    canvas.style.inset = "0";
+    canvas.style.display = "block";
+    canvas.style.width = "100%";
+    canvas.style.height = "100%";
+    host.insertBefore(canvas, host.firstChild);
+    host.dataset.graphRenderer = renderer.kind;
+
+    const onFrame = (frame: LayoutFrame) => {
+      const s = sceneRef.current;
+      if (!s) return;
+      if (
+        frame.version === s.version &&
+        frame.positions.length === s.target.length
+      ) {
+        const now = performance.now();
+        if (s.lastFrameAt > 0)
+          s.frameInterval = s.frameInterval * 0.7 + (now - s.lastFrameAt) * 0.3;
+        s.lastFrameAt = frame.settled ? 0 : now;
+        s.target.set(frame.positions);
+        s.easing = true;
+        // Every node now has a position (the layout places them all).
+        if (s.draw && !s.draw.placed) s.draw.placed = true;
+        if (frame.settled && s.draw) {
+          // At rest: land exactly on the final layout, then remember it.
+          easeTowards(s.draw.pos, s.target, s.held, 1);
+          s.positionsDirty = true;
+          s.easing = false;
+          onLayoutEnd(s);
+        }
+      }
+      s.engine.send({ type: "recycle", buffer: frame.positions });
+    };
+
+    const rect = host.getBoundingClientRect();
+    const scene: Scene = {
+      host,
+      renderer,
+      engine: createLayoutEngine(onFrame, { inline: props.inlineLayout }),
+      store: layoutStore(),
+      center: [(rect.width || 800) / 2, (rect.height || 600) / 2],
+      view: { scale: 1, x: 0, y: 0 },
+      width: rect.width || 800,
+      height: rect.height || 600,
+      graph: null,
+      draw: null,
+      edgePrimary: new Uint8Array(0),
+      highlight: new Uint8Array(0),
+      nodeIds: new Set(),
+      linkIds: new Set(),
+      version: 0,
+      target: new Float32Array(0),
+      easing: false,
+      frameInterval: 16,
+      lastFrameAt: 0,
+      held: -1,
+      saved: undefined,
+      loaded: false,
+      fitted: false,
+      fromScratch: false,
+      settledOnce: false,
+      userDragged: false,
+      fitTarget: null,
+      lastFitAt: 0,
+      dirty: true,
+      positionsDirty: false,
+      dragDirty: false,
+      hovered: -1,
+      hoverSet: null,
+      selectedSet: null,
+      pendingHover: null,
+      drag: null,
+      pan: null,
+      raf: 0,
+      lastTime: 0,
+    };
+    sceneRef.current = scene;
+    host.dataset.graphLayout = scene.engine.kind;
+
+    const resize = () => {
+      const r = host.getBoundingClientRect();
+      scene.width = r.width || scene.width;
+      scene.height = r.height || scene.height;
+      renderer.resize(
+        scene.width,
+        scene.height,
+        Math.min(globalThis.devicePixelRatio || 1, 2),
+      );
+      scene.dirty = true;
+    };
+    resize();
+    const observer =
+      typeof ResizeObserver !== "undefined" ? new ResizeObserver(resize) : null;
+    observer?.observe(host);
+    if (!observer) globalThis.addEventListener("resize", resize);
+
+    const recenter = () => {
+      const g = scene.graph;
+      if (!g || !scene.draw) return;
+      const fit = fitView(g, scene.draw.pos, scene.width, scene.height);
+      if (!fit) return;
+      scene.view = fit;
+      scene.dirty = true;
+    };
+    recenterRef.current = recenter;
+
+    /** The layout came to rest: remember it, and frame it the first time. */
+    function onLayoutEnd(s: Scene) {
+      s.settledOnce = true;
+      const key = layoutKeyRef.current;
+      if (key && s.graph && s.draw)
+        s.store.save(
+          key,
+          s.graph.nodes.map((n) => n.id),
+          s.draw.pos,
+        );
+      if (!userInteractedRef.current && !s.fitted) {
+        recenter();
+        s.fitted = true;
+      }
     }
-    const savedNodeIds = savedPositions
-      ? new Set(Object.keys(savedPositions))
-      : new Set<string>();
-    const currentNodeIds = new Set(
-      elements.filter((e) => !e.data.source).map((e) => e.data.id as string),
-    );
-    const newNodeIds = new Set(
-      [...currentNodeIds].filter((id) => !savedNodeIds.has(id)),
-    );
 
-    const cy = cytoscape({
-      container: containerRef.current,
-      elements,
-      style: cyStylesheet,
-      // Layout is run manually below so we can catch fcose grid overflows
-      // (RangeError at calcGrid) and fall back to a grid layout.
-      layout: { name: "preset" },
-      zoom: 1,
-      minZoom: 0.1,
-      maxZoom: 5,
-      boxSelectionEnabled: false,
+    /* ---- Frame loop: ease toward the layout, then draw if anything changed ---- */
+    const frame = (time: number) => {
+      scene.raf = requestAnimationFrame(frame);
+      const dt = scene.lastTime ? Math.min(100, time - scene.lastTime) : 16;
+      scene.lastTime = time;
+      scene.engine.pump(); // steps the layout only when it runs inline
+      const draw = scene.draw;
+      const g = scene.graph;
+      if (draw && g) {
+        if (scene.pendingHover) {
+          const at = scene.pendingHover;
+          scene.pendingHover = null;
+          const p = toWorld(at);
+          setHover(hitTest(g, draw.pos, p.x, p.y, hitPad(scene.view)), at);
+        }
+        if (scene.easing) {
+          const k = easeFactor(dt, scene.frameInterval);
+          if (k >= 1) {
+            // Frames as fast as the screen: take the layout's positions in one copy.
+            const h = scene.held;
+            const hx = h >= 0 ? draw.pos[h * 2] : 0;
+            const hy = h >= 0 ? draw.pos[h * 2 + 1] : 0;
+            draw.pos.set(scene.target);
+            if (h >= 0) {
+              draw.pos[h * 2] = hx;
+              draw.pos[h * 2 + 1] = hy;
+            }
+            scene.easing = false;
+          } else {
+            scene.easing = easeTowards(draw.pos, scene.target, scene.held, k);
+          }
+          scene.positionsDirty = true;
+        }
+        if (scene.dragDirty && scene.held >= 0) {
+          const h = scene.held;
+          scene.engine.send({
+            type: "drag",
+            index: h,
+            x: draw.pos[h * 2],
+            y: draw.pos[h * 2 + 1],
+          });
+          scene.dragDirty = false;
+        }
+        if (scene.positionsDirty) {
+          renderer.markPositions();
+          scene.positionsDirty = false;
+          scene.dirty = true;
+        }
+      }
+      // Keep a first layout in view as it spreads out, until the user takes over.
+      if (
+        draw &&
+        g &&
+        !scene.fitted &&
+        !userInteractedRef.current &&
+        scene.loaded
+      ) {
+        if (time - scene.lastFitAt > 500) {
+          scene.fitTarget = fitView(g, draw.pos, scene.width, scene.height);
+          scene.lastFitAt = time;
+        }
+        const t = scene.fitTarget;
+        if (t) {
+          const k = 1 - Math.exp(-dt / 250);
+          const v = scene.view;
+          scene.view = {
+            scale: v.scale + (t.scale - v.scale) * k,
+            x: v.x + (t.x - v.x) * k,
+            y: v.y + (t.y - v.y) * k,
+          };
+          scene.dirty = true;
+        }
+      }
+      if (scene.dirty) {
+        renderer.render(scene.view);
+        scene.dirty = false;
+      }
+    };
+    scene.raf = requestAnimationFrame(frame);
+
+    /* ---- Pointer input ---- */
+    const toScreen = (e: { clientX: number; clientY: number }): Point => {
+      const r = canvas.getBoundingClientRect();
+      return { x: e.clientX - r.left, y: e.clientY - r.top };
+    };
+    const toWorld = (p: Point): Point => ({
+      x: (p.x - scene.view.x) / scene.view.scale,
+      y: (p.y - scene.view.y) / scene.view.scale,
     });
 
-    cyRef.current = cy;
+    const setHover = (i: number, at: Point) => {
+      if (i === scene.hovered) return;
+      const g = scene.graph;
+      scene.hovered = i;
+      scene.hoverSet = i >= 0 && g ? neighbourhood(g, i) : null;
+      refreshHighlight(scene);
+      canvas.style.cursor = i >= 0 ? "pointer" : "default";
+      if (i < 0 || !g) {
+        setHoverInfo(null);
+        return;
+      }
+      const node = g.nodes[i];
+      setHoverInfo({
+        id: node.id,
+        label: node.label,
+        type: node.isMoc ? "MoC" : "Note",
+        meta: node.tier
+          ? node.tier
+          : `${node.linkCount} link${node.linkCount !== 1 ? "s" : ""}`,
+        x: at.x,
+        y: at.y,
+      });
+    };
 
-    lastNodeCount = currentNodeIds.size;
-    const ranLayout = runLayoutWithFallback(
-      cy,
-      getLayoutOptions({
-        savedPositions,
-        newNodeIds: newNodeIds.size > 0 ? newNodeIds : undefined,
-      }),
-    );
-    const shouldPersist = ranLayout === "fcose" || ranLayout === "cose";
-
-    // After layout settles, save positions and center view.
-    const centerGraph = () => {
+    const onPointerDown = (e: PointerEvent) => {
+      if (e.button !== 0) return;
+      const g = scene.graph;
+      const draw = scene.draw;
+      if (!g || !draw) return;
       try {
-        if (!cyRef.current || cy.destroyed()) return;
-        cy.fit(cy.elements(), 60);
-        if (cy.zoom() > 0.8) cy.zoom(0.8);
-        cy.center();
+        // Keep receiving the drag when the pointer leaves the canvas.
+        canvas.setPointerCapture(e.pointerId);
       } catch {
-        // renderer not ready — ignore
+        // Not every pointer can be captured (synthetic events, some pens); the drag still works inside the canvas.
+      }
+      const at = toScreen(e);
+      const p = toWorld(at);
+      const hit = hitTest(g, draw.pos, p.x, p.y, hitPad(scene.view));
+      if (hit >= 0) {
+        scene.drag = {
+          index: hit,
+          dx: draw.pos[hit * 2] - p.x,
+          dy: draw.pos[hit * 2 + 1] - p.y,
+          startX: at.x,
+          startY: at.y,
+          moved: false,
+        };
+      } else {
+        scene.pan = {
+          x: at.x,
+          y: at.y,
+          vx: scene.view.x,
+          vy: scene.view.y,
+          moved: false,
+        };
       }
     };
 
-    cy.one("layoutstop", () => {
-      // Geometric deoverlap pass — guarantees no two nodes share screen
-      // pixels even if fcose convergence left some touching. Skip for
-      // preset layout (positions are already user-curated/persisted).
-      if (shouldPersist) {
-        resolveOverlaps(cy);
-        savePositions(cy);
+    const onPointerMove = (e: PointerEvent) => {
+      const at = toScreen(e);
+      const drag = scene.drag;
+      const draw = scene.draw;
+      if (drag && draw) {
+        if (!drag.moved) {
+          const dx = at.x - drag.startX;
+          const dy = at.y - drag.startY;
+          if (dx * dx + dy * dy <= DRAG_THRESHOLD_SQ) return;
+          drag.moved = true;
+          userInteractedRef.current = true;
+          scene.held = drag.index;
+          scene.userDragged = true;
+          setHoverInfo(null); // the tooltip would stay behind; the highlight stays on
+        }
+        // The grabbed node follows the pointer in this very frame; the layout
+        // hears of it once per frame and swings its neighbours after it.
+        const p = toWorld(at);
+        draw.pos[drag.index * 2] = p.x + drag.dx;
+        draw.pos[drag.index * 2 + 1] = p.y + drag.dy;
+        scene.positionsDirty = true;
+        scene.dragDirty = true;
+        return;
       }
-      centerGraph();
-    });
-
-    // For preset layout, also center immediately since layoutstop
-    // fires synchronously before the viewport may have adjusted.
-    requestAnimationFrame(() => centerGraph());
-
-    // Drag MOC nodes with their cluster children
-    const mocDragState = new Map<string, { x: number; y: number }>();
-
-    cy.on("grab", "node[?isMoc]", (evt) => {
-      const node = evt.target as cytoscape.NodeSingular;
-      const pos = node.position();
-      mocDragState.set(node.id(), { x: pos.x, y: pos.y });
-    });
-
-    cy.on("drag", "node[?isMoc]", (evt) => {
-      const moc = evt.target as cytoscape.NodeSingular;
-      const prev = mocDragState.get(moc.id());
-      if (!prev) return;
-      const curr = moc.position();
-      const dx = curr.x - prev.x;
-      const dy = curr.y - prev.y;
-      mocDragState.set(moc.id(), { x: curr.x, y: curr.y });
-
-      // Move CORE_IDEA-connected notes along with the MOC,
-      // but skip MOC-to-MOC connections (parent ↔ child MOCs move independently)
-      moc.connectedEdges().forEach((edge) => {
-        if (edge.data("linkType") !== "CORE_IDEA") return;
-        const other =
-          edge.source().id() === moc.id() ? edge.target() : edge.source();
-        if (other.grabbed()) return;
-        if (other.data("isMoc")) return; // don't drag other MOCs
-        other.shift({ x: dx, y: dy });
-      });
-    });
-
-    // Persist position after manual drag
-    cy.on("dragfree", "node", () => {
-      savePositions(cy);
-    });
-
-    // Track zoom level for UI
-    cy.on("zoom", () => {
-      setZoomLevel(cy.zoom());
-    });
-
-    // Click node: select it in reactor + show detail
-    cy.on("tap", "node", (evt) => {
-      const nodeId = String((evt.target as cytoscape.NodeSingular).id());
-      setSelectedNode(nodeId);
-      highlightNode(cy, nodeId);
-      setSelectedDetail(getNodeDetail(nodeId));
-    });
-
-    // Hover node: highlight neighborhood + show tooltip
-    cy.on("mouseover", "node", (evt) => {
-      const node = evt.target as cytoscape.NodeSingular;
-      const nodeId = String(node.id());
-      highlightNode(cy, nodeId);
-      containerRef.current!.style.cursor = "pointer";
-
-      const detail = getNodeDetail(nodeId);
-      if (detail) {
-        const pos = node.renderedPosition();
-        setHoverInfo({ node: detail, x: pos.x, y: pos.y });
+      const pan = scene.pan;
+      if (pan) {
+        const dx = at.x - pan.x;
+        const dy = at.y - pan.y;
+        if (!pan.moved && dx * dx + dy * dy > DRAG_THRESHOLD_SQ) {
+          pan.moved = true;
+          userInteractedRef.current = true;
+        }
+        scene.view = { ...scene.view, x: pan.vx + dx, y: pan.vy + dy };
+        scene.dirty = true;
+        return;
       }
-    });
+      scene.pendingHover = at;
+    };
 
-    cy.on("mouseout", "node", () => {
-      setHoverInfo(null);
-      // Only clear if no node is selected in detail panel
-      if (!cyRef.current?.$(":selected").length) {
-        clearHighlight(cy);
+    const endPointer = (e: PointerEvent, cancelled: boolean) => {
+      try {
+        if (canvas.hasPointerCapture(e.pointerId))
+          canvas.releasePointerCapture(e.pointerId);
+      } catch {
+        // already released
       }
-      containerRef.current!.style.cursor = "default";
-    });
-
-    // Click background: deselect
-    cy.on("tap", (evt) => {
-      if (evt.target === cy) {
-        clearHighlight(cy);
-        setSelectedDetail(null);
+      const at = toScreen(e);
+      const drag = scene.drag;
+      if (drag) {
+        scene.drag = null;
+        if (drag.moved) {
+          const draw = scene.draw;
+          const h = scene.held;
+          if (draw && h >= 0) {
+            scene.engine.send({
+              type: "drag",
+              index: h,
+              x: draw.pos[h * 2],
+              y: draw.pos[h * 2 + 1],
+            });
+            // Until the layout's next frame, its target is where it was dropped.
+            scene.target[h * 2] = draw.pos[h * 2];
+            scene.target[h * 2 + 1] = draw.pos[h * 2 + 1];
+          }
+          scene.engine.send({ type: "drop" });
+          scene.held = -1;
+          scene.dragDirty = false;
+        } else if (!cancelled) {
+          const id = scene.graph?.nodes[drag.index]?.id;
+          if (id && selectedIdRef.current === id) select(-1, null);
+          else select(drag.index, at);
+        }
+        return;
       }
-    });
+      const pan = scene.pan;
+      if (pan) {
+        scene.pan = null;
+        // A click on empty canvas (no pan) clears the selection.
+        if (!cancelled && !pan.moved && selectedIdRef.current) select(-1, null);
+      }
+    };
+    const onPointerUp = (e: PointerEvent) => endPointer(e, false);
+    const onPointerCancel = (e: PointerEvent) => endPointer(e, true);
+    const onPointerLeave = () => {
+      if (!scene.drag) {
+        scene.pendingHover = null;
+        setHover(-1, { x: 0, y: 0 });
+      }
+    };
 
-    setZoomLevel(cy.zoom());
+    const zoomAround = (factor: number, cx: number, cy: number) => {
+      userInteractedRef.current = true;
+      const g = scene.graph;
+      const fit =
+        g && scene.draw
+          ? fitView(g, scene.draw.pos, scene.width, scene.height)
+          : null;
+      const min = Math.min(MIN_ZOOM, fit ? fit.scale / 2 : MIN_ZOOM);
+      const { scale, x, y } = scene.view;
+      const next = Math.max(min, Math.min(MAX_ZOOM, scale * factor));
+      const wx = (cx - x) / scale;
+      const wy = (cy - y) / scale;
+      scene.view = { scale: next, x: cx - wx * next, y: cy - wy * next };
+      scene.dirty = true;
+    };
+    const onWheel = (ev: WheelEvent) => {
+      ev.preventDefault();
+      const at = toScreen(ev);
+      zoomAround(ev.deltaY < 0 ? 1.1 : 0.9, at.x, at.y);
+    };
+    zoomByRef.current = (factor: number) =>
+      zoomAround(factor, scene.width / 2, scene.height / 2);
+
+    relayoutRef.current = () => {
+      const key = layoutKeyRef.current;
+      if (key) scene.store.clear(key);
+      userInteractedRef.current = false;
+      startFromScratch(scene);
+    };
+
+    canvas.addEventListener("pointerdown", onPointerDown);
+    canvas.addEventListener("pointermove", onPointerMove);
+    canvas.addEventListener("pointerup", onPointerUp);
+    canvas.addEventListener("pointercancel", onPointerCancel);
+    canvas.addEventListener("pointerleave", onPointerLeave);
+    host.addEventListener("wheel", onWheel, { passive: false });
+
+    setReady(true);
 
     return () => {
-      cy.destroy();
-      cyRef.current = null;
+      cancelAnimationFrame(scene.raf);
+      observer?.disconnect();
+      if (!observer) globalThis.removeEventListener("resize", resize);
+      canvas.removeEventListener("pointerdown", onPointerDown);
+      canvas.removeEventListener("pointermove", onPointerMove);
+      canvas.removeEventListener("pointerup", onPointerUp);
+      canvas.removeEventListener("pointercancel", onPointerCancel);
+      canvas.removeEventListener("pointerleave", onPointerLeave);
+      host.removeEventListener("wheel", onWheel);
+      recenterRef.current = null;
+      zoomByRef.current = null;
+      relayoutRef.current = null;
+      // Graph unmounting (e.g. open a document) — restore default sidebar.
+      onGraphFocusChangeRef.current?.(null);
+      sceneRef.current = null;
+      scene.engine.dispose();
+      const key = layoutKeyRef.current;
+      if (key && scene.loaded && scene.graph && scene.draw) {
+        scene.store.save(
+          key,
+          scene.graph.nodes.map((n) => n.id),
+          scene.draw.pos,
+        );
+      }
+      renderer.destroy();
+      canvas.remove();
+      setReady(false);
     };
-  }, [elements, highlightNode, clearHighlight, getNodeDetail]);
-
-  // Zoom controls
-  const handleZoomIn = useCallback(() => {
-    const cy = cyRef.current;
-    if (!cy) return;
-    cy.animate(
-      {
-        zoom: {
-          level: cy.zoom() * 1.4,
-          renderedPosition: { x: cy.width() / 2, y: cy.height() / 2 },
-        },
-      },
-      { duration: 200 },
-    );
+    // The renderer and layout options are read once, at mount.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  const handleZoomOut = useCallback(() => {
-    const cy = cyRef.current;
-    if (!cy) return;
-    cy.animate(
-      {
-        zoom: {
-          level: cy.zoom() / 1.4,
-          renderedPosition: { x: cy.width() / 2, y: cy.height() / 2 },
-        },
-      },
-      { duration: 200 },
-    );
-  }, []);
-
-  const handleFit = useCallback(() => {
-    const cy = cyRef.current;
-    if (!cy) return;
-    cy.animate(
-      { fit: { eles: cy.elements(), padding: 40 } },
-      { duration: 300 },
-    );
-    setSelectedDetail(null);
-    clearHighlight(cy);
-  }, [clearHighlight]);
-
-  // Focus on selected node — zoom in and center
-  const handleFocusNode = useCallback(
-    (nodeId: string) => {
-      const cy = cyRef.current;
-      if (!cy) return;
-      const node = cy.getElementById(nodeId);
-      if (!node.length) return;
-      cy.animate(
-        {
-          center: { eles: node },
-          zoom: { level: 2.5, position: node.position() },
-        },
-        { duration: 300 },
-      );
-      highlightNode(cy, nodeId);
-      setSelectedDetail(getNodeDetail(nodeId));
-    },
-    [highlightNode, getNodeDetail],
-  );
-
-  // Re-run layout
-  const handleRelayout = useCallback(() => {
-    const cy = cyRef.current;
-    if (!cy) return;
-    clearStoredPositions();
-    lastNodeCount = cy.nodes().length;
-    runLayoutWithFallback(cy, getLayoutOptions());
-    cy.one("layoutstop", () => {
-      savePositions(cy);
+  /* ---------------------------------------------------------------- */
+  /*  Saved layout: loaded per key before the first data merge         */
+  /* ---------------------------------------------------------------- */
+  useEffect(() => {
+    const scene = sceneRef.current;
+    if (!ready || !scene) return;
+    const key = props.layoutKey;
+    scene.loaded = false;
+    scene.fitted = false;
+    if (!key) {
+      scene.saved = null;
+      setLayoutToken((t) => t + 1);
+      return;
+    }
+    scene.saved = undefined;
+    let current = true;
+    void scene.store.load(key).then((saved) => {
+      if (!current || sceneRef.current !== scene) return;
+      scene.saved = saved;
+      setLayoutToken((t) => t + 1);
     });
-  }, []);
+    return () => {
+      current = false;
+    };
+  }, [ready, props.layoutKey]);
 
-  if (notes.length === 0) {
-    return (
-      <div className="flex h-full items-center justify-center">
-        <p style={{ color: "var(--bai-text-muted)" }}>
-          No notes to display in graph
-        </p>
-      </div>
+  /* ---------------------------------------------------------------- */
+  /*  Data: merged into the running layout, never a rebuild            */
+  /* ---------------------------------------------------------------- */
+  useEffect(() => {
+    const scene = sceneRef.current;
+    if (!ready || !scene || scene.saved === undefined) return;
+    const model = buildGraphModel(props.notes, props.mocs ?? []);
+    const prev = scene.graph;
+
+    if (
+      scene.loaded &&
+      prev &&
+      scene.draw &&
+      sameStructure(scene.nodeIds, scene.linkIds, model)
+    ) {
+      // Same nodes and edges: only labels, statuses or sizes can differ.
+      let resized = false;
+      for (const spec of model.nodes) {
+        const i = prev.index.get(spec.id);
+        if (i === undefined) continue;
+        if (prev.radius[i] !== spec.radius) resized = true;
+        prev.nodes[i] = spec;
+        prev.radius[i] = spec.radius;
+        scene.draw.meta[i * 2] = spec.radius;
+        scene.draw.nodeColor[i * 4] = (spec.color >> 16) & 0xff;
+        scene.draw.nodeColor[i * 4 + 1] = (spec.color >> 8) & 0xff;
+        scene.draw.nodeColor[i * 4 + 2] = spec.color & 0xff;
+      }
+      if (resized) {
+        // A new radius changes collisions: tell the layout, and redraw sizes.
+        scene.renderer.setGraph(scene.draw);
+        sendGraph(scene, null);
+      } else {
+        scene.renderer.markStyles();
+      }
+      scene.dirty = true;
+      return;
+    }
+
+    const first = !scene.loaded;
+    // Remembered positions serve nodes that arrive later too (in Connect the
+    // MoCs land a moment after the notes).
+    const saved = scene.saved;
+    const g = indexGraph(model);
+    const merged = mergePositions(
+      prev && scene.draw && !first
+        ? { index: prev.index, pos: scene.draw.pos }
+        : null,
+      g,
+      saved,
     );
-  }
+    const nodeAttrs = nodeAttributes(g);
+    const edgeAttrs = edgeAttributes(g);
+    const heldId =
+      scene.held >= 0 && prev ? prev.nodes[scene.held]?.id : undefined;
+
+    scene.graph = g;
+    scene.draw = {
+      pos: merged.pos,
+      placed: merged.pos.every(Number.isFinite),
+      meta: nodeAttrs.meta,
+      nodeColor: nodeAttrs.color,
+      src: g.src,
+      dst: g.dst,
+      edgeColor: edgeAttrs.color,
+      edgeWidth: edgeAttrs.width,
+    };
+    scene.edgePrimary = edgeAttrs.primary;
+    scene.highlight = new Uint8Array(g.nodes.length);
+    scene.nodeIds = new Set(g.nodes.map((n) => n.id));
+    const linkIds = new Set(model.links.map((l) => l.id));
+    let linkDelta = 0;
+    if (!first) {
+      for (const id of linkIds) if (!scene.linkIds.has(id)) linkDelta++;
+      for (const id of scene.linkIds) if (!linkIds.has(id)) linkDelta++;
+    }
+    scene.linkIds = linkIds;
+
+    // Keep selection, hover and drag pointing at the same nodes, if they remain.
+    const selected = selectedIdRef.current;
+    const selectedIndex = selected ? g.index.get(selected) : undefined;
+    if (selected && selectedIndex === undefined) select(-1, null);
+    scene.selectedSet =
+      selectedIndex !== undefined ? neighbourhood(g, selectedIndex) : null;
+    scene.hovered = -1;
+    scene.hoverSet = null;
+    setHoverInfo(null);
+    const heldIndex = heldId ? g.index.get(heldId) : undefined;
+    scene.held = heldIndex ?? -1;
+    if (scene.drag) {
+      if (heldIndex === undefined && scene.drag.moved) scene.drag = null;
+      else if (heldIndex !== undefined) scene.drag.index = heldIndex;
+      else {
+        const dragId = prev?.nodes[scene.drag.index]?.id;
+        const di = dragId ? g.index.get(dragId) : undefined;
+        if (di === undefined) scene.drag = null;
+        else scene.drag.index = di;
+      }
+    }
+
+    scene.renderer.setGraph(scene.draw);
+    refreshHighlight(scene);
+
+    let heat: Heat | null;
+    let restart = false;
+    if (first) {
+      scene.loaded = true;
+      scene.settledOnce = false;
+      scene.userDragged = false;
+      if (
+        saved &&
+        g.nodes.length > 0 &&
+        merged.restored >= g.nodes.length * 0.9
+      ) {
+        // A remembered layout opens exactly as it was left. Only nodes it
+        // does not know need room: then a short, gentle settle.
+        scene.fromScratch = false;
+        heat =
+          merged.restored < g.nodes.length
+            ? { alpha: 0.05, decay: SETTLE_DECAY, target: 0 }
+            : null;
+        if (!userInteractedRef.current) {
+          const fit = fitView(g, merged.pos, scene.width, scene.height);
+          if (fit) scene.view = fit;
+          scene.fitted = true;
+        }
+      } else {
+        scene.fromScratch = true;
+        heat = { alpha: 1, decay: LAYOUT_DECAY, target: 0, fast: true };
+      }
+    } else {
+      const change =
+        (merged.added + merged.removed) / Math.max(1, g.nodes.length) +
+        linkDelta / Math.max(1, g.links.length);
+      if (
+        scene.fromScratch &&
+        !scene.userDragged &&
+        (!scene.settledOnce || change > RESTART_CHANGE)
+      ) {
+        // The layout this session started from scratch, untouched, and the
+        // graph has changed under it — in Connect the links and MoCs arrive
+        // after the notes. Lay the whole graph out again, as Re-layout does,
+        // rather than nudging a layout made for a different graph.
+        restart = true;
+        heat = null;
+      } else if (merged.added - merged.restored + merged.removed > 0) {
+        // New nodes with no remembered place, or nodes gone: make room.
+        heat = { alpha: 0.12, decay: 0.04, target: 0 };
+      } else if (linkDelta > 0 && scene.fromScratch) {
+        heat = { alpha: 0.05, decay: SETTLE_DECAY, target: 0 };
+      } else {
+        // Nothing new to place: links a remembered layout already reflects,
+        // or nodes returning to their remembered places.
+        heat = null;
+      }
+    }
+    sendGraph(scene, heat);
+    if (restart) startFromScratch(scene);
+    if (scene.held >= 0) scene.dragDirty = true; // the layout re-learns the drag
+    scene.positionsDirty = true;
+    scene.dirty = true;
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [ready, layoutToken, props.notes, props.mocs]);
 
   return (
     <div
+      ref={containerRef}
       className="relative h-full w-full overflow-hidden"
-      style={{ backgroundColor: "var(--bai-deep)" }}
+      style={{ touchAction: "none" }}
     >
-      {/* Cytoscape container */}
-      <div ref={containerRef} className="h-full w-full" />
-
-      {/* Zoom controls */}
-      <div className="absolute right-4 top-4 flex flex-col gap-1">
-        <button
-          type="button"
-          onClick={handleZoomIn}
-          className="flex h-8 w-8 items-center justify-center rounded-md backdrop-blur-sm transition-colors"
-          style={{
-            backgroundColor:
-              "color-mix(in srgb, var(--bai-bg) 90%, transparent)",
-            color: "var(--bai-text-secondary)",
-          }}
-          title="Zoom in"
-        >
+      {/* Toolbar: zoom in/out + fit + re-layout */}
+      <div className="absolute right-3 top-3 z-10 flex flex-col gap-1.5">
+        <ToolbarButton title="Zoom in" onClick={() => zoomByRef.current?.(1.2)}>
           <svg
             className="h-4 w-4"
             viewBox="0 0 24 24"
@@ -1140,19 +958,13 @@ export function GraphView({
             stroke="currentColor"
             strokeWidth="2"
           >
-            <path d="M12 5v14M5 12h14" />
+            <circle cx="11" cy="11" r="7" />
+            <path d="M11 8v6M8 11h6M21 21l-4.35-4.35" />
           </svg>
-        </button>
-        <button
-          type="button"
-          onClick={handleZoomOut}
-          className="flex h-8 w-8 items-center justify-center rounded-md backdrop-blur-sm transition-colors"
-          style={{
-            backgroundColor:
-              "color-mix(in srgb, var(--bai-bg) 90%, transparent)",
-            color: "var(--bai-text-secondary)",
-          }}
+        </ToolbarButton>
+        <ToolbarButton
           title="Zoom out"
+          onClick={() => zoomByRef.current?.(0.83)}
         >
           <svg
             className="h-4 w-4"
@@ -1161,19 +973,13 @@ export function GraphView({
             stroke="currentColor"
             strokeWidth="2"
           >
-            <path d="M5 12h14" />
+            <circle cx="11" cy="11" r="7" />
+            <path d="M8 11h6M21 21l-4.35-4.35" />
           </svg>
-        </button>
-        <button
-          type="button"
-          onClick={handleFit}
-          className="flex h-8 w-8 items-center justify-center rounded-md backdrop-blur-sm transition-colors"
-          style={{
-            backgroundColor:
-              "color-mix(in srgb, var(--bai-bg) 90%, transparent)",
-            color: "var(--bai-text-secondary)",
-          }}
+        </ToolbarButton>
+        <ToolbarButton
           title="Fit to screen"
+          onClick={() => recenterRef.current?.()}
         >
           <svg
             className="h-4 w-4"
@@ -1184,17 +990,10 @@ export function GraphView({
           >
             <path d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7" />
           </svg>
-        </button>
-        <button
-          type="button"
-          onClick={handleRelayout}
-          className="flex h-8 w-8 items-center justify-center rounded-md backdrop-blur-sm transition-colors"
-          style={{
-            backgroundColor:
-              "color-mix(in srgb, var(--bai-bg) 90%, transparent)",
-            color: "var(--bai-text-secondary)",
-          }}
-          title="Re-run layout"
+        </ToolbarButton>
+        <ToolbarButton
+          title="Re-layout (forget the saved positions)"
+          onClick={() => relayoutRef.current?.()}
         >
           <svg
             className="h-4 w-4"
@@ -1203,73 +1002,29 @@ export function GraphView({
             stroke="currentColor"
             strokeWidth="2"
           >
-            <path d="M1 4v6h6M23 20v-6h-6" />
-            <path d="M20.49 9A9 9 0 005.64 5.64L1 10m22 4l-4.64 4.36A9 9 0 013.51 15" />
+            <path d="M21 12a9 9 0 1 1-2.64-6.36M21 3v6h-6" />
           </svg>
-        </button>
-        <button
-          type="button"
-          onClick={() => setShowTensions((v) => !v)}
-          className="flex h-8 items-center justify-center gap-1.5 rounded-md px-2 backdrop-blur-sm transition-colors"
-          style={{
-            backgroundColor: showTensions
-              ? "color-mix(in srgb, #ef4444 22%, var(--bai-bg))"
-              : "color-mix(in srgb, var(--bai-bg) 90%, transparent)",
-            color: showTensions ? "#fca5a5" : "var(--bai-text-secondary)",
-          }}
-          title={
-            showTensions
-              ? "Hide tensions"
-              : openTensionCount > 0
-                ? `Show ${openTensionCount} open tension${openTensionCount === 1 ? "" : "s"}`
-                : "Show tensions (none open)"
-          }
-          aria-pressed={showTensions}
-        >
-          <svg
-            className="h-4 w-4"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="2"
-          >
-            <path d="M12 3 2 21h20L12 3zM12 10v4M12 17v.5" />
-          </svg>
-          {openTensionCount > 0 && (
-            <span className="text-[10px] font-semibold tabular-nums">
-              {openTensionCount}
-            </span>
-          )}
-        </button>
-        <div
-          className="mt-1 rounded-md px-1.5 py-1 text-center text-[9px] backdrop-blur-sm"
-          style={{
-            backgroundColor:
-              "color-mix(in srgb, var(--bai-bg) 90%, transparent)",
-            color: "var(--bai-text-muted)",
-          }}
-        >
-          {Math.round(zoomLevel * 100)}%
-        </div>
+        </ToolbarButton>
       </div>
 
       {/* Legend */}
       <div
-        className="absolute bottom-4 left-4 flex flex-col gap-2 rounded-lg px-3 py-2.5 text-[10px] backdrop-blur-sm"
+        className="absolute bottom-4 left-4 z-10 flex flex-col gap-2 rounded-lg px-3 py-2.5 text-[10px] backdrop-blur-sm"
         style={{
-          backgroundColor: "color-mix(in srgb, var(--bai-bg) 90%, transparent)",
-          border: "1px solid var(--bai-border)",
+          backgroundColor:
+            "color-mix(in srgb, var(--bai-bg, #11111b) 90%, transparent)",
+          border: "1px solid var(--bai-border, rgba(255,255,255,0.1))",
         }}
       >
         {/* Node types */}
-        <div className="flex items-center gap-3">
-          {Object.entries(STATUS_NODE_COLORS).map(([status, color]) => (
+        <div className="flex flex-wrap items-center gap-3">
+          {Object.entries(STATUS_COLOR_HEX).map(([status, color]) => (
             <div key={status} className="flex items-center gap-1.5">
               <span
                 className="inline-block h-2.5 w-2.5 rounded-full"
                 style={{ backgroundColor: color }}
               />
-              <span style={{ color: "var(--bai-text-tertiary)" }}>
+              <span style={{ color: "var(--bai-text-tertiary, #9ca3af)" }}>
                 {status.replace("_", " ")}
               </span>
             </div>
@@ -1278,306 +1033,182 @@ export function GraphView({
             <span
               className="inline-block h-3 w-3"
               style={{
-                backgroundColor: MOC_NODE_COLOR,
+                backgroundColor: MOC_COLOR_HEX,
                 clipPath: "polygon(50% 0%, 100% 50%, 50% 100%, 0% 50%)",
               }}
             />
-            <span style={{ color: "var(--bai-text-tertiary)" }}>MOC</span>
+            <span style={{ color: "var(--bai-text-tertiary, #9ca3af)" }}>
+              MOC
+            </span>
           </div>
-          {showTensions && (
-            <div className="flex items-center gap-1.5">
-              <span
-                className="inline-block h-3 w-3"
-                style={{
-                  backgroundColor: TENSION_NODE_COLOR,
-                  clipPath: "polygon(50% 0%, 100% 100%, 0% 100%)",
-                }}
-              />
-              <span style={{ color: "var(--bai-text-tertiary)" }}>
-                Tension
-              </span>
-            </div>
-          )}
         </div>
         {/* Edge types */}
-        <div className="flex items-center gap-3">
-          {Object.entries(LINK_TYPE_COLORS).map(([type, color]) => (
+        <div className="flex flex-wrap items-center gap-3">
+          {Object.entries(LINK_TYPE_COLOR_HEX).map(([type, color]) => (
             <div key={type} className="flex items-center gap-1.5">
               <span
                 className="inline-block h-0 w-3 border-t-2"
                 style={{ borderColor: color }}
               />
-              <span style={{ color: "var(--bai-text-muted)" }}>
+              <span style={{ color: "var(--bai-text-muted, #6b7280)" }}>
                 {type.replace(/_/g, " ").toLowerCase()}
               </span>
             </div>
           ))}
           <div className="flex items-center gap-1.5">
             <span
-              className="inline-block h-0 w-3 border-t-2 border-dashed"
-              style={{ borderColor: MOC_EDGE_COLOR }}
+              className="inline-block h-0 w-3 border-t-2"
+              style={{ borderColor: MOC_COLOR_HEX }}
             />
-            <span style={{ color: "var(--bai-text-muted)" }}>core idea</span>
+            <span style={{ color: "var(--bai-text-muted, #6b7280)" }}>
+              core idea
+            </span>
           </div>
         </div>
       </div>
 
-      {/* Hover tooltip */}
+      {/* Hover tooltip — only when nothing is selected (the metacard
+          covers that role for selected nodes) */}
       {hoverInfo && !selectedDetail && (
         <div
-          className="pointer-events-none absolute z-30 w-96 rounded-lg border p-5 shadow-xl backdrop-blur-sm"
+          className="pointer-events-none absolute z-20 rounded-md px-2 py-1.5 text-[11px] shadow-lg"
           style={{
-            left: Math.min(
-              hoverInfo.x + 16,
-              (containerRef.current?.offsetWidth ?? 800) - 410,
-            ),
-            top: Math.max(8, hoverInfo.y - 20),
-            backgroundColor:
-              "color-mix(in srgb, var(--bai-bg) 95%, transparent)",
-            borderColor: "var(--bai-border)",
+            left: hoverInfo.x + 12,
+            top: hoverInfo.y + 12,
+            backgroundColor: "var(--bai-surface, #181825)",
+            color: "var(--bai-text, #e4e4e7)",
+            border: "1px solid var(--bai-border, rgba(255,255,255,0.1))",
+            maxWidth: 320,
           }}
         >
-          <div className="mb-2 flex items-center gap-2">
-            <span
-              className="inline-block h-3 w-3 flex-shrink-0 rounded-full"
-              style={{
-                backgroundColor:
-                  STATUS_NODE_COLORS[hoverInfo.node.status] ??
-                  DEFAULT_NODE_COLOR,
-              }}
-            />
-            <span
-              className="truncate text-base font-semibold"
-              style={{ color: "var(--bai-text)" }}
-            >
-              {hoverInfo.node.label}
-            </span>
+          <div className="font-medium">{hoverInfo.label}</div>
+          <div className="text-[10px] opacity-70">
+            {hoverInfo.type}
+            {hoverInfo.meta ? ` · ${hoverInfo.meta}` : ""}
           </div>
-
-          <div className="mb-2 flex flex-wrap items-center gap-2">
-            <span
-              className="rounded px-2 py-0.5 text-[11px]"
-              style={{
-                backgroundColor: "var(--bai-hover)",
-                color: "var(--bai-text-tertiary)",
-              }}
-            >
-              {hoverInfo.node.status.replace("_", " ")}
-            </span>
-            {hoverInfo.node.noteType && (
-              <span
-                className="rounded px-2 py-0.5 text-[11px]"
-                style={{
-                  backgroundColor: "var(--bai-accent-soft)",
-                  color: "var(--bai-accent)",
-                }}
-              >
-                {hoverInfo.node.noteType}
-              </span>
-            )}
-            {hoverInfo.node.linkCount > 0 && (
-              <span
-                className="text-[11px]"
-                style={{ color: "var(--bai-text-muted)" }}
-              >
-                {hoverInfo.node.linkCount} connection
-                {hoverInfo.node.linkCount !== 1 ? "s" : ""}
-              </span>
-            )}
-          </div>
-
-          {hoverInfo.node.description && (
-            <p
-              className="mb-2.5 line-clamp-5 text-sm leading-relaxed"
-              style={{ color: "var(--bai-text-tertiary)" }}
-            >
-              {hoverInfo.node.description}
-            </p>
-          )}
-
-          {hoverInfo.node.topics.length > 0 && (
-            <div className="flex flex-wrap gap-1.5">
-              {hoverInfo.node.topics.map((topic) => (
-                <span
-                  key={topic.id}
-                  className="rounded-full px-2 py-0.5 text-[11px]"
-                  style={{
-                    backgroundColor: "var(--bai-hover)",
-                    color: "var(--bai-text-muted)",
-                  }}
-                >
-                  {topic.name}
-                </span>
-              ))}
-            </div>
-          )}
         </div>
       )}
 
-      {/* Detail panel */}
+      {/* Selection metacard — appears on click. Has Open button so a
+          drag-then-release doesn't open the doc by accident. */}
       {selectedDetail && (
         <div
-          className="absolute right-14 top-4 w-72 rounded-lg border p-4 shadow-xl backdrop-blur-sm"
+          className="absolute z-30 w-72 rounded-lg border p-3 shadow-xl"
           style={{
-            backgroundColor:
-              "color-mix(in srgb, var(--bai-bg) 95%, transparent)",
-            borderColor: "var(--bai-border)",
+            left: Math.min(
+              selectedDetail.x + 14,
+              (containerRef.current?.offsetWidth ?? 800) - 300,
+            ),
+            top: Math.max(8, selectedDetail.y - 20),
+            backgroundColor: "var(--bai-surface, #181825)",
+            color: "var(--bai-text, #e4e4e7)",
+            borderColor: "var(--bai-border, rgba(255,255,255,0.1))",
           }}
         >
-          {/* Header */}
-          <div className="mb-3 flex items-start justify-between">
-            <div className="min-w-0 flex-1">
-              <h3
-                className="truncate text-sm font-semibold"
-                style={{ color: "var(--bai-text)" }}
-              >
-                {selectedDetail.label}
-              </h3>
-              <div className="mt-1 flex items-center gap-2">
-                <span
-                  className="inline-block h-2 w-2 rounded-full"
-                  style={{
-                    backgroundColor:
-                      STATUS_NODE_COLORS[selectedDetail.status] ??
-                      DEFAULT_NODE_COLOR,
-                  }}
-                />
-                <span
-                  className="text-[10px]"
-                  style={{ color: "var(--bai-text-tertiary)" }}
-                >
-                  {selectedDetail.status}
-                </span>
-                {selectedDetail.noteType && (
-                  <span
-                    className="rounded px-1.5 py-0.5 text-[10px]"
-                    style={{
-                      backgroundColor: "var(--bai-hover)",
-                      color: "var(--bai-text-muted)",
-                    }}
-                  >
-                    {selectedDetail.noteType}
-                  </span>
-                )}
-              </div>
+          <div className="mb-1 flex items-start justify-between gap-2">
+            <div className="text-sm font-medium leading-tight">
+              {selectedDetail.label}
             </div>
             <button
               type="button"
-              onClick={() => {
-                setSelectedDetail(null);
-                if (cyRef.current) clearHighlight(cyRef.current);
-              }}
-              className="ml-2"
-              style={{ color: "var(--bai-text-muted)" }}
+              onClick={clearGraphSelection}
+              className="shrink-0 text-xs opacity-60 hover:opacity-100"
+              title="Close"
             >
-              <svg
-                className="h-4 w-4"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="2"
-              >
-                <path d="M18 6L6 18M6 6l12 12" />
-              </svg>
+              ✕
             </button>
           </div>
-
-          {/* Description */}
-          {selectedDetail.description && (
-            <p
-              className="mb-3 line-clamp-3 text-xs leading-relaxed"
-              style={{ color: "var(--bai-text-tertiary)" }}
-            >
-              {selectedDetail.description}
-            </p>
-          )}
-
-          {/* Topics */}
-          {selectedDetail.topics.length > 0 && (
-            <div className="mb-3 flex flex-wrap gap-1">
-              {selectedDetail.topics.map((topic) => (
-                <span
-                  key={topic.id}
-                  className="rounded-full px-2 py-0.5 text-[10px]"
-                  style={{
-                    backgroundColor: "var(--bai-accent-soft)",
-                    color: "var(--bai-accent)",
-                  }}
-                >
-                  {topic.name}
-                </span>
-              ))}
-            </div>
-          )}
-
-          {/* Connections */}
-          {selectedDetail.neighbors.length > 0 && (
-            <div>
-              <h4
-                className="mb-1.5 text-[10px] font-medium uppercase tracking-wider"
-                style={{ color: "var(--bai-text-muted)" }}
-              >
-                Connections ({selectedDetail.neighbors.length})
-              </h4>
-              <div className="max-h-40 space-y-1 overflow-y-auto">
-                {selectedDetail.neighbors.map((neighbor) => (
-                  <button
-                    key={neighbor.id}
-                    type="button"
-                    onClick={() => handleFocusNode(neighbor.id)}
-                    className="flex w-full flex-col gap-0.5 rounded px-2 py-1 text-left text-xs transition-colors"
-                    style={{ color: "var(--bai-text-secondary)" }}
-                    title={neighbor.reason ?? undefined}
-                  >
-                    <span className="flex w-full items-center gap-2">
-                      <span
-                        className="h-1.5 w-1.5 flex-shrink-0 rounded-full"
-                        style={{
-                          backgroundColor:
-                            LINK_TYPE_COLORS[neighbor.edgeType ?? ""] ??
-                            DEFAULT_EDGE_COLOR,
-                        }}
-                      />
-                      <span className="min-w-0 flex-1 truncate">
-                        {neighbor.label}
-                      </span>
-                      <span
-                        className="flex-shrink-0 text-[9px]"
-                        style={{ color: "var(--bai-text-faint)" }}
-                      >
-                        {(neighbor.edgeType ?? "untyped")
-                          .replace(/_/g, " ")
-                          .toLowerCase()}
-                      </span>
-                    </span>
-                    {neighbor.reason && (
-                      <span
-                        className="line-clamp-2 pl-3.5 text-[10px] italic leading-snug"
-                        style={{ color: "var(--bai-text-faint)" }}
-                      >
-                        {neighbor.reason}
-                      </span>
-                    )}
-                  </button>
-                ))}
-              </div>
-            </div>
-          )}
-
-          {/* Open button */}
+          <div
+            className="mb-3 text-[11px]"
+            style={{ color: "var(--bai-text-muted, #9ca3af)" }}
+          >
+            {selectedDetail.type}
+            {selectedDetail.tier ? ` · ${selectedDetail.tier}` : ""}
+            {` · ${selectedDetail.linkCount} link${selectedDetail.linkCount !== 1 ? "s" : ""}`}
+          </div>
           <button
             type="button"
-            onClick={() => setSelectedNode(selectedDetail.id)}
-            className="mt-3 w-full rounded-md py-1.5 text-xs font-medium transition-colors hover:opacity-80"
+            onClick={() => {
+              setSelectedNode(selectedDetail.id);
+            }}
+            className="w-full rounded-md px-3 py-1.5 text-xs font-medium transition-colors"
             style={{
-              backgroundColor: "var(--bai-accent-soft)",
-              color: "var(--bai-accent)",
+              backgroundColor: "var(--bai-accent, #cba6f7)",
+              color: "var(--bai-accent-text, #1e1e2e)",
             }}
           >
-            Open Note
+            Open document
           </button>
         </div>
       )}
     </div>
+  );
+}
+
+/** Lay the graph out from scratch (Re-layout, or a graph that changed under a fresh layout). */
+function startFromScratch(scene: Scene) {
+  scene.fromScratch = true;
+  scene.settledOnce = false;
+  scene.userDragged = false;
+  scene.fitted = false;
+  scene.engine.send({
+    type: "relayout",
+    heat: { alpha: 1, decay: LAYOUT_DECAY, target: 0, fast: true },
+  });
+}
+
+/** Send the scene's graph to the layout as a new version. */
+function sendGraph(scene: Scene, heat: Heat | null) {
+  const g = scene.graph;
+  const draw = scene.draw;
+  if (!g || !draw) return;
+  scene.version++;
+  const cmd = packGraph(g, draw.pos, scene.version, scene.center, heat);
+  scene.target = draw.pos.slice();
+  scene.easing = false;
+  scene.lastFrameAt = 0;
+  scene.engine.send(cmd);
+}
+
+/** Recompute what is highlighted (hover wins over selection) into the colours' alpha. */
+function refreshHighlight(scene: Scene) {
+  const g = scene.graph;
+  const draw = scene.draw;
+  if (!g || !draw) return;
+  const set = scene.hoverSet ?? scene.selectedSet;
+  const flags = scene.highlight;
+  flags.fill(0);
+  if (set) for (const i of set) flags[i] = 1;
+  applyHighlight(
+    g,
+    set ? flags : null,
+    draw.nodeColor,
+    draw.edgeColor,
+    scene.edgePrimary,
+  );
+  scene.renderer.markStyles();
+  scene.dirty = true;
+}
+
+function ToolbarButton(props: {
+  title: string;
+  onClick: () => void;
+  children: ReactNode;
+}) {
+  return (
+    <button
+      type="button"
+      onClick={props.onClick}
+      title={props.title}
+      className="flex h-8 w-8 items-center justify-center rounded-md backdrop-blur-sm transition-colors"
+      style={{
+        backgroundColor:
+          "color-mix(in srgb, var(--bai-bg, #11111b) 90%, transparent)",
+        color: "var(--bai-text-secondary, #d4d4d8)",
+        border: "1px solid var(--bai-border, rgba(255,255,255,0.1))",
+      }}
+    >
+      {props.children}
+    </button>
   );
 }

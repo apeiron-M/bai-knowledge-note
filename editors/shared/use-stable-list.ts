@@ -7,8 +7,8 @@
  * about the drive changed. Anything downstream that lists it in a dependency
  * array is then invalidated on every render, and in this app the tail of that
  * chain is expensive: `fileNodes` → `knowledgeFileNodes` → `notes` (one fresh
- * object per note, ~1,500 of them) → `noteMap` → the ~550-line `useEffect`
- * in `GraphViewPixi` that rebuilds the entire graph scene.
+ * object per note, ~1,500 of them) → `noteMap` → the `useEffect`
+ * in `GraphView` that merges the data into the graph.
  *
  * This hook breaks the chain at the source. It compares element-wise with a
  * caller-supplied predicate and returns the PREVIOUS array whenever the two

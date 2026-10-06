@@ -21,7 +21,7 @@ import { VaultSidebar } from "./VaultSidebar.js";
 import { DebugErrorBoundary } from "./DebugErrorBoundary.js";
 import { Delayed, LoadingLine } from "./LoadingStates.js";
 import { CreateDocumentDialog } from "./CreateDocumentDialog.js";
-import GraphViewPixi, { type GraphFocus } from "./GraphViewPixi.js";
+import GraphView, { type GraphFocus } from "./GraphView.js";
 import { NoteList } from "./NoteList.js";
 import { SourceList } from "./SourceList.js";
 import { ProjectsView } from "./ProjectsView.js";
@@ -565,12 +565,13 @@ export function DriveExplorer({ children }: EditorProps) {
               </DebugErrorBoundary>
             </div>
           ) : viewMode === "graph" ? (
-            <GraphViewPixi
+            <GraphView
               notes={notes}
               mocs={mocs}
               tensions={tensions}
               onGraphFocusChange={handleGraphFocusChange}
               clearFocusNonce={graphClearNonce}
+              layoutKey={driveId ?? undefined}
             />
           ) : viewMode === "chat" ? (
             <ChatView initialDraft={chatReturnDraft} notes={notes} />

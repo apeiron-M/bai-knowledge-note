@@ -11,7 +11,7 @@ import { useVaultName } from "../hooks/use-vault-name.js";
 import type { Node } from "@powerhousedao/shared/document-drive";
 import type { KnowledgeNoteInfo } from "../hooks/use-knowledge-notes.js";
 import type { MocInfo } from "../hooks/use-knowledge-mocs.js";
-import type { GraphFocus } from "./GraphViewPixi.js";
+import type { GraphFocus } from "./GraphView.js";
 import { LoadingLine, SidebarSkeleton, Spinner } from "./LoadingStates.js";
 
 type VaultSidebarProps = {

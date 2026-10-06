@@ -566,15 +566,58 @@ The package declares five config vars (`powerhouse.manifest.json`), which a depl
 
 ## Graph View
 
-The knowledge graph visualization uses `cytoscape-fcose` (force-directed layout) with semantic clustering:
+`GraphView.tsx` draws the knowledge graph: notes are discs coloured by lifecycle
+status, MoCs are diamonds sized by tier, edges are coloured by link type.
+Hovering or selecting a node highlights its neighbourhood; the click card opens
+the document. It is built to stay smooth from a few hundred nodes to 100,000 and
+beyond, on any machine and in any browser. The parts live in
+`components/graph/`:
 
-- **MOC hubs** act as cluster anchors with higher repulsion, pulling their CORE_IDEA-linked notes into visible topic neighborhoods
-- **Cross-cluster edges** have weak elasticity and long ideal lengths, preventing topic groups from collapsing together
-- **Position persistence** via localStorage — positions survive tab switches and page reloads. New nodes are placed by fcose while existing nodes stay pinned
-- **MOC group drag** — dragging a MOC diamond moves its entire cluster of connected notes
-- **Re-layout button** clears cached positions and recomputes a fresh layout
+| File | What it does |
+| --- | --- |
+| `force-layout.ts` | d3-force's simulation (many-body, links, centre, x/y pull, collision ×2) re-implemented over typed arrays. Same quadtree, same walk order, same random stream: `force-layout.test.ts` holds it to d3's own results below 5,000 nodes, and to d3's layout statistics above. ~3 ms a step at 2,000 nodes, ~250 ms at 100,000 (d3: ~30 ms and ~2.5 s). |
+| `layout-core.ts` | The layout as commands (`graph`, `drag`, `drop`, `heat`, `relayout`) and frames of positions, so it runs anywhere. |
+| `layout-worker-entry.ts` → `layout-worker.generated.ts` | The layout in a Web Worker, started from a Blob URL of a generated string (`node scripts/build-graph-worker.mjs`; a test fails while it is stale). A string because `ph-cli build` (tsdown) does not emit worker files, and a Blob worker needs no extra file wherever the package is served. |
+| `layout-engine.ts` | Starts the worker; where a Content Security Policy blocks `blob:` workers, runs the same core on the main thread instead. |
+| `renderer.ts`, `gl-renderer.ts`, `canvas-renderer.ts` | Drawing: WebGL2, else WebGL1 (with `ANGLE_instanced_arrays`), else Canvas 2D. On WebGL two instanced draws a frame; on WebGL2 positions are one float texture the shaders read (`texelFetch`), so a frame uploads 8 bytes a node and nothing per edge. Survives a lost GPU context. |
+| `model.ts` | The pure rules — model, refresh merge, hit testing, highlight, fit — over typed arrays (unit-tested). |
+| `layout-store.ts` | The layout saved per drive in IndexedDB (a 100k-node layout is ~5 MB, all of localStorage's quota); in memory where IndexedDB is unavailable. |
 
-`GraphViewPixi.tsx` is the large-graph renderer alongside the cytoscape view.
+Behaviour, kept from the Pixi view as it was at `ea60a66`:
+
+- **Dragging.** The grabbed node follows the pointer; the layout warms toward
+  `alphaTarget(0.3)` without a jump and keeps running, so whatever is linked to
+  the node swings after it on its springs; on release the layout cools down.
+  Same forces and parameters as before. When a full step is too slow for that
+  to look live (from ~20,000 nodes on a fast machine), the drag simulates only
+  the grabbed node's neighbourhood — three hops of links plus the crowd around
+  it, gathered afresh as it travels — against the rest frozen: same motion,
+  ~1 ms a step at any size.
+- **Refreshes are merged** into the layout on screen (new nodes start beside a
+  neighbour, or at their remembered place); a remembered layout opens exactly
+  as it was left. While a first layout spreads out, the view eases to keep it
+  in frame until you pan, zoom or drag. The toolbar's **Re-layout** forgets the
+  saved layout.
+- **A layout started from scratch follows the data in.** Connect hands the graph
+  the drive's notes first and their links and MoCs a moment later, from the
+  metadata query. While the layout on screen is one this session started from
+  scratch and nobody has dragged it, a structural change before it settles (or
+  a change to over 5 % of nodes and links after) lays the graph out again from
+  scratch, as Re-layout does — otherwise the unlinked first pass leaves it
+  packed into a blob (measured: spread 798 instead of 1,339).
+- **A click paints first.** The selection highlight is drawn by the graph
+  itself; the sidebar hears of it as a React transition, so the vault's
+  re-render cannot hold the highlight back.
+
+Measured in Chromium on an RX 6800 (main thread, first layout and drag): 60 fps
+at 2,000, 20,000, 50,000, 100,000 and 250,000 nodes on WebGL2 (drawing
+0.1–0.5 ms a frame); 60 fps at 100,000 on WebGL1; ~38 fps at 50,000 on the
+Canvas 2D fallback. Same results in Firefox. What still scales with size is how
+long a *first* layout takes to settle — ~2.5 s at 2,000 nodes, ~15 s at 20,000,
+minutes beyond 100,000 — while the view stays smooth throughout; a saved layout
+skips it.
+
+(The Cytoscape/fcose view was removed on 2026-10-06, and PixiJS with it.)
 
 ## Chat: choose where the model runs
 
