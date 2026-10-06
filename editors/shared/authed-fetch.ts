@@ -20,6 +20,7 @@
  *   error.
  */
 import { ambientRenownTokenProvider } from "@powerhousedao/reactor-browser";
+import { getHostConfig } from "./host-config.js";
 
 export type TokenProvider = () => Promise<string | undefined>;
 
@@ -28,6 +29,18 @@ export type TokenProvider = () => Promise<string | undefined>;
  * happens after module load is picked up without a reload.
  */
 export const getBearerToken: TokenProvider = async () => {
+  // A desktop host holds the sign-in itself (host-config.ts); Connect's ambient
+  // session never exists there, so it is not consulted — an open local engine
+  // gets no header, which is the anonymous caller it expects.
+  const host = getHostConfig();
+  if (host?.kind === "desktop") {
+    if (!host.bearer) return undefined;
+    try {
+      return await host.bearer();
+    } catch {
+      return undefined;
+    }
+  }
   try {
     return await ambientRenownTokenProvider();
   } catch {

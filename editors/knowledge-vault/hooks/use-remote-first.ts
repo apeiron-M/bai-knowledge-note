@@ -54,13 +54,13 @@ import {
   setDrives,
   subscriptionsUrlFromGraphqlUrl,
   useDrives,
-  useRenownAuth,
   useSelectedDrive,
   useSelectedNode,
   useSync,
 } from "@powerhousedao/reactor-browser";
 import type { IDocumentCache } from "@powerhousedao/reactor-browser";
 import { createClient as createWsClient } from "graphql-ws";
+import { useVaultIdentity } from "../../shared/use-vault-identity.js";
 import { resolveReactorEndpoint } from "./subgraph-endpoint.js";
 import { enableRemoteFirst, withTransientRetry } from "../lib/remote-first.js";
 import { registerVaultHydrator } from "../../shared/vault-pull.js";
@@ -159,7 +159,7 @@ export function useRemoteFirst(): void {
   // dependency of the live-feed effect: a refused tokenless handshake is
   // never retried by graphql-ws, so the socket has to be re-created — not
   // reconnected — when a session appears, changes, or ends.
-  const { address } = useRenownAuth();
+  const { address } = useVaultIdentity();
   const drivesRef = useRef(drives);
   drivesRef.current = drives;
   /** Step 3's hydrator, for step 5 to call on structural events. */

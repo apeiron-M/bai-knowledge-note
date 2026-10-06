@@ -9,11 +9,28 @@
  */
 export type KnowledgeVaultHostKind = "connect" | "desktop";
 
+/** Who the host is signed in as (its own Renown session, held outside the webview). */
+export type KnowledgeVaultHostIdentity = {
+  address: string;
+  did?: string;
+  ensName?: string;
+};
+
 export type KnowledgeVaultHostConfig = {
   kind: KnowledgeVaultHostKind;
   /** Origin every vault call goes to, e.g. "http://127.0.0.1:4201". No path, no trailing slash. */
   switchboardOrigin: string;
+  /**
+   * The bearer for that origin, resolved per request. Absent on an open local
+   * engine: a missing header is an anonymous caller, which is exactly right there.
+   */
+  bearer?: () => Promise<string | undefined>;
+  /** Absent when nobody is signed in. */
+  identity?: KnowledgeVaultHostIdentity;
 };
+
+/** Dispatched on `globalThis` whenever the declaration changes; `useHostConfig` subscribes to it. */
+export const HOST_CHANGED_EVENT = "knowledge-vault-host:changed";
 
 const SLOT = "__knowledgeVaultHost";
 type HostGlobal = typeof globalThis & { [SLOT]?: KnowledgeVaultHostConfig };
@@ -29,6 +46,7 @@ export function setHostConfig(
   const g = globalThis as HostGlobal;
   if (config === undefined) {
     delete g[SLOT];
+    notifyHostChanged();
     return;
   }
   if (!ORIGIN.test(config.switchboardOrigin)) {
@@ -36,7 +54,38 @@ export function setHostConfig(
       `switchboardOrigin must be an origin without a path, got "${config.switchboardOrigin}"`,
     );
   }
-  g[SLOT] = { kind: config.kind, switchboardOrigin: config.switchboardOrigin };
+  g[SLOT] = {
+    kind: config.kind,
+    switchboardOrigin: config.switchboardOrigin,
+    ...(config.bearer ? { bearer: config.bearer } : {}),
+    ...(config.identity ? { identity: { ...config.identity } } : {}),
+  };
+  notifyHostChanged();
+}
+
+const listeners = new Set<() => void>();
+
+/**
+ * Called by `setHostConfig`. A host that writes the slot directly (it loads
+ * before this module) dispatches `HOST_CHANGED_EVENT` on `globalThis` instead;
+ * subscribers hear both, each change exactly once.
+ */
+function notifyHostChanged(): void {
+  for (const listener of [...listeners]) listener();
+}
+
+export function subscribeHostConfig(onChange: () => void): () => void {
+  listeners.add(onChange);
+  const g = globalThis as typeof globalThis & {
+    addEventListener?: (type: string, cb: () => void) => void;
+    removeEventListener?: (type: string, cb: () => void) => void;
+  };
+  const dom = typeof g.addEventListener === "function" && typeof g.removeEventListener === "function";
+  if (dom) g.addEventListener(HOST_CHANGED_EVENT, onChange);
+  return () => {
+    listeners.delete(onChange);
+    if (dom) g.removeEventListener(HOST_CHANGED_EVENT, onChange);
+  };
 }
 
 export function isDesktopHost(): boolean {

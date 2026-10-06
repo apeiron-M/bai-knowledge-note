@@ -31,10 +31,10 @@
 import { useCallback, useEffect, useState } from "react";
 import {
   RenownAuthButton,
-  useRenownAuth,
   useSelectedDriveId,
 } from "@powerhousedao/reactor-browser";
 import { authHeaders } from "../../shared/authed-fetch.js";
+import { useVaultIdentity } from "../../shared/use-vault-identity.js";
 import { notifyUnauthorized } from "../../shared/notify.js";
 import { resolveReactorEndpoint } from "../../shared/subgraph-endpoint.js";
 
@@ -97,9 +97,10 @@ async function probeDrive(driveId: string): Promise<Verdict> {
 
 export function AuthGate({ children }: { children: React.ReactNode }) {
   const driveId = useSelectedDriveId();
-  // `RenownAuth` exposes the address directly; there is no `isAuthenticated`,
-  // and the presence of an address is the same question.
-  const { address: renownAddress, ensName } = useRenownAuth();
+  // The identity exposes the address directly; there is no `isAuthenticated`,
+  // and the presence of an address is the same question. Under a desktop host
+  // the address is the host's (signed in from the app's Settings).
+  const { address: renownAddress, ensName, hosted } = useVaultIdentity();
   const [verdict, setVerdict] = useState<Verdict>({ kind: "checking" });
   const [copied, setCopied] = useState(false);
 
@@ -170,7 +171,13 @@ export function AuthGate({ children }: { children: React.ReactNode }) {
               address.
             </p>
             <div className="mt-4">
-              <RenownAuthButton />
+              {hosted ? (
+                <p className="text-sm opacity-80">
+                  Sign in from the app's Settings › Identity, then come back to this vault.
+                </p>
+              ) : (
+                <RenownAuthButton />
+              )}
             </div>
           </>
         ) : verdict.kind === "unauthorized" ? (

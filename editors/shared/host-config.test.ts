@@ -3,6 +3,7 @@ import {
   getHostConfig,
   isDesktopHost,
   setHostConfig,
+  subscribeHostConfig,
 } from "./host-config.js";
 
 afterEach(() => setHostConfig(undefined));
@@ -41,5 +42,25 @@ describe("host-config", () => {
     setHostConfig({ kind: "connect", switchboardOrigin: "http://localhost:4001" });
     setHostConfig(undefined);
     expect(getHostConfig()).toBeUndefined();
+  });
+});
+
+describe("host-config: identity and bearer (the desktop host holds the sign-in)", () => {
+  it("stores the host's bearer provider and identity and notifies subscribers of every change", async () => {
+    const seen: number[] = [];
+    const unsubscribe = subscribeHostConfig(() => seen.push(seen.length));
+    setHostConfig({
+      kind: "desktop",
+      switchboardOrigin: "https://switchboard.example.com",
+      bearer: () => Promise.resolve("token-1"),
+      identity: { address: "0xabc", did: "did:pkh:eip155:1:0xabc" },
+    });
+    expect(await getHostConfig()?.bearer?.()).toBe("token-1");
+    expect(getHostConfig()?.identity).toEqual({ address: "0xabc", did: "did:pkh:eip155:1:0xabc" });
+    setHostConfig(undefined);
+    expect(seen).toEqual([0, 1]);
+    unsubscribe();
+    setHostConfig({ kind: "desktop", switchboardOrigin: "http://127.0.0.1:4201" });
+    expect(seen).toEqual([0, 1]);
   });
 });

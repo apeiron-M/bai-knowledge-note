@@ -14,7 +14,8 @@
  * be misclassified by any local check.
  */
 import { useCallback, useEffect, useState } from "react";
-import { useRenownAuth, useSelectedDriveId } from "@powerhousedao/reactor-browser";
+import { useSelectedDriveId } from "@powerhousedao/reactor-browser";
+import { useVaultIdentity } from "../../../shared/use-vault-identity.js";
 import { AddressChip, Card, Hint, INHERIT_NOTE, Notice } from "./parts.js";
 import { describeAddress, seedEns } from "./use-ens.js";
 import { ExposureTab } from "./ExposureTab.js";
@@ -50,7 +51,7 @@ const TABS: { key: Tab; label: string; hint: string }[] = [
 
 export function AccessView() {
   const driveId = useSelectedDriveId();
-  const { address, ensName } = useRenownAuth();
+  const { address, ensName } = useVaultIdentity();
 
   const [tab, setTab] = useState<Tab>("exposure");
   const [loading, setLoading] = useState(true);
