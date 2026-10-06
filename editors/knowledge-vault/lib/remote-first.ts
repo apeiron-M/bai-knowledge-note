@@ -64,6 +64,7 @@ import {
   createClient,
   IDLE_OPERATIONS_ENTRY,
 } from "@powerhousedao/reactor-browser";
+import { isDesktopHost } from "../../shared/host-config.js";
 import type {
   IDocumentCache,
   IOperationCache,
@@ -782,10 +783,15 @@ export function enableRemoteFirst(options: {
   const previousCache = phSlots().documentCache;
   // A host that already installed a Switchboard-backed client — the desktop
   // app — owns its auth and realtime. Reuse it: a second client would mean two
-  // sockets and one client routed through another for nothing.
-  const hostClient = isGraphQLReactorClient(previousClient)
-    ? previousClient
-    : undefined;
+  // sockets and one client routed through another for nothing. Only a host
+  // that declared itself (shared/host-config.ts) qualifies: a
+  // GraphQLReactorClient found in the slot without a declaration keeps the
+  // Connect path below, so the vault's own auth middleware and error
+  // reporting (buildVaultClient) stay in front of it.
+  const hostClient =
+    isDesktopHost() && isGraphQLReactorClient(previousClient)
+      ? previousClient
+      : undefined;
   const remoteClient = hostClient ?? buildVaultClient(options.endpoint);
   if (previousClient && !hostClient) {
     const worker = previousClient as unknown as AnyClient;

@@ -275,4 +275,24 @@ describe("startRemoteFirstBoot / adopt", () => {
     expect(attempts).toBeGreaterThanOrEqual(3);
     expect(attempts).toBeLessThanOrEqual(5);
   });
+
+  it("LATE DESKTOP HOST: a host declared after boot stops the running sweep", async () => {
+    stubVaultLookup(VAULT_APP);
+    const sync = makeSync(makeRemote([]));
+    await bootWith(sync);
+    await vi.advanceTimersByTimeAsync(1_000);
+    const before = sync.list.mock.calls.length;
+    expect(before).toBeGreaterThan(0);
+    (globalThis as Record<string, unknown>).__knowledgeVaultHost = {
+      kind: "desktop",
+      switchboardOrigin: "http://127.0.0.1:4201",
+    };
+    try {
+      // The next tick sees the host and clears the interval before listing anything.
+      await vi.advanceTimersByTimeAsync(5_000);
+      expect(sync.list.mock.calls.length).toBe(before);
+    } finally {
+      delete (globalThis as Record<string, unknown>).__knowledgeVaultHost;
+    }
+  });
 });
