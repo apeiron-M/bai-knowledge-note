@@ -86,6 +86,34 @@ describe("createHttpConversionService — failure mapping", () => {
     expect(error.code).toBe("CONVERT_UNAVAILABLE");
     expect(error.message).toContain("socket closed");
   });
+
+  it("passes a 415 through with the service's code and remedy, for the intake to show", async () => {
+    const { impl } = fakeFetch(() =>
+      json(
+        {
+          error:
+            "cannot convert docx without the docling.rs binding — install the converter",
+          code: "BINDING_REQUIRED",
+          hint: "Install the converter, or point the vault at a conversion service.",
+          binding: false,
+        },
+        415,
+      ),
+    );
+
+    const error = (await conversionError(impl)) as {
+      status: number;
+      code: string;
+      message: string;
+      details?: { hint?: string; binding?: boolean };
+    };
+
+    expect(error.status).toBe(415);
+    expect(error.code).toBe("BINDING_REQUIRED");
+    expect(error.message).toContain("install the converter");
+    expect(error.details?.hint).toContain("Install the converter");
+    expect(error.details?.binding).toBe(false);
+  });
 });
 
 describe("createHttpConversionService", () => {
@@ -171,10 +199,10 @@ describe("createHttpConversionService", () => {
     ).rejects.toMatchObject({ code: "CONVERT_UNAVAILABLE", status: 502 });
   });
 
-  it("keeps the service's own detail in the message", async () => {
+  it("keeps the service's own detail — a 415 passes through with its sentence and `missing[]`", async () => {
     // The service answers 415 with a `missing[]` list when models are absent;
-    // that has to survive the mapping, or the UI cannot tell the user what to
-    // fetch.
+    // that has to survive the mapping as the 415 it is, or the UI cannot tell
+    // the user what to fetch.
     const { impl } = fakeFetch(() =>
       json(
         {
@@ -188,9 +216,16 @@ describe("createHttpConversionService", () => {
       baseUrl: "http://convert.test",
       fetchImpl: impl,
     });
-    await expect(
-      service.convert({ filename: "a.pdf", bytes: new Uint8Array([1]) }),
-    ).rejects.toThrow(/415[\s\S]*docling models/);
+    const error = await service
+      .convert({ filename: "a.pdf", bytes: new Uint8Array([1]) })
+      .then(() => null)
+      .catch((thrown: unknown) => thrown);
+    expect(error).toMatchObject({
+      status: 415,
+      code: "CONVERT_UNSUPPORTED",
+      details: { missing: ["pdfium"] },
+    });
+    expect((error as Error).message).toContain("docling models");
   });
 
   it("raises CONVERT_UNAVAILABLE when the service is unreachable", async () => {
@@ -297,8 +332,9 @@ describe("createHttpConversionService", () => {
       .then(() => null)
       .catch((thrown: unknown) => thrown);
 
-    expect(error).toMatchObject({ status: 502, code: "CONVERT_UNAVAILABLE" });
-    expect((error as Error).message).toContain("415");
+    // A deferred 415 is still the service's own refusal: its code and sentence survive.
+    expect(error).toMatchObject({ status: 415, code: "PDF_UNREADABLE" });
+    expect((error as Error).message).toContain("no text layer");
   });
 
   it("keeps the busy distinction when it arrives deferred", async () => {

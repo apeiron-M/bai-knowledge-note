@@ -1,4 +1,4 @@
-import { describe, expect, it, vi } from "vitest";
+import { afterEach, describe, expect, it, vi } from "vitest";
 import type { PHDocument } from "document-model";
 import type { RouteContext } from "@powerhousedao/shared/processors";
 import { createFakeReactorClient } from "../../../tests/helpers/fake-reactor-client.js";
@@ -376,5 +376,46 @@ describe("executeWrite read-back scope arithmetic", () => {
     expect(result.operations).toEqual([]);
     expect(result.readBack).toBe("unconfirmed");
     expect(result.jobId).toBe("job-1");
+  });
+});
+
+describe("executeWrite in open mode", () => {
+  afterEach(() => vi.unstubAllEnvs());
+
+  it("accepts an action signed by another identity — the owner declared, the signer attributed", async () => {
+    vi.stubEnv("KNOWLEDGE_VAULT_OPEN_MODE", "1");
+    vi.stubEnv("KNOWLEDGE_VAULT_OPEN_MODE_ADDRESS", "did:key:z6MkEngine");
+    const executeAsync = vi.fn(async () => ({ id: "job-1" }));
+    const d = deps({
+      reactorClient: createFakeReactorClient({ executeAsync } as never),
+    });
+    const result = await executeWrite(d, {
+      documentId: "doc",
+      document: sourceDocument,
+      actions: [
+        {
+          ...validAction,
+          context: { signer: { user: { address: "0xagent" } } },
+        },
+      ],
+      ctx: { ...ctx, user: undefined, authEnabled: false } as unknown as RouteContext,
+      wait: false,
+    });
+    expect(result.jobId).toBe("job-1");
+    expect(executeAsync).toHaveBeenCalledTimes(1);
+  });
+
+  it("still refuses a foreign signer when the host authenticates callers", async () => {
+    vi.stubEnv("KNOWLEDGE_VAULT_OPEN_MODE", "1"); // the declaration alone changes nothing with auth on
+    const d = deps();
+    await expect(
+      executeWrite(d, {
+        documentId: "doc",
+        document: sourceDocument,
+        actions: [{ ...validAction, context: { signer: { user: { address: "0xother" } } } }],
+        ctx,
+        wait: true,
+      }),
+    ).rejects.toMatchObject({ status: 403, code: "FORBIDDEN" });
   });
 });

@@ -1,4 +1,5 @@
 import type { RouteContext } from "@powerhousedao/shared/processors";
+import { requireUser } from "../lib/authorize.js";
 import { canonicalForWrite } from "../lib/authorize.js";
 import type { HttpRouteDeps } from "../lib/deps.js";
 import { findDocumentInDrive } from "../lib/drive-tree.js";
@@ -38,6 +39,7 @@ export function createClaimRoute(deps: HttpRouteDeps) {
           `No pipeline queue in drive ${drive}`,
         );
       }
+      const actor = requireUser(ctx);
       const canonicalQueueId = await canonicalForWrite(deps, queueId, ctx);
       const queue = await deps.reactorClient.get(canonicalQueueId);
 
@@ -49,7 +51,7 @@ export function createClaimRoute(deps: HttpRouteDeps) {
             type: "ASSIGN_TASK",
             input: {
               taskId,
-              assignedTo: body.assignedTo ?? ctx.user?.address ?? "",
+              assignedTo: body.assignedTo ?? actor.address,
               updatedAt: deps.now().toISOString(),
             },
           },
@@ -74,7 +76,7 @@ export function createClaimRoute(deps: HttpRouteDeps) {
       }
 
       return Response.json(
-        { taskId, assignedTo: body.assignedTo ?? ctx.user?.address ?? null },
+        { taskId, assignedTo: body.assignedTo ?? actor.address },
         { headers: OK_CACHE },
       );
     } catch (error) {

@@ -1,3 +1,4 @@
+import { currentUser } from "./lib/authorize.js";
 import { BaseSubgraph } from "@powerhousedao/reactor-api";
 import type { DocumentNode } from "graphql";
 import { getQuery } from "../knowledge-graph/helpers/db.js";
@@ -33,7 +34,7 @@ export class HttpSubgraph extends BaseSubgraph {
         Response.json({
           ok: true,
           subgraph: "http",
-          user: ctx.user?.address ?? null,
+          user: currentUser(ctx)?.address ?? null,
         }),
       ));
       this.http.get("drives", { auth: "renown" }, createDrivesRoute(deps));

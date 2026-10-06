@@ -162,7 +162,11 @@ export function createHttpConversionService(options: {
    * arrive two ways: as a status code, or — when the service had already begun
    * heartbeating — inside a `200` body.
    */
-  function conversionFailure(status: number, detail: string): HttpError {
+  function conversionFailure(
+    status: number,
+    detail: string,
+    parsed?: Record<string, unknown>,
+  ): HttpError {
     // The service runs one conversion at a time and says so; that is a
     // retry-later, not an outage, and the client must be able to tell.
     if (status === 503 && detail.includes("CONVERSION_BUSY")) {
@@ -172,11 +176,43 @@ export function createHttpConversionService(options: {
         `The conversion service is busy: ${detail.slice(0, 300)}`,
       );
     }
+    // 415 is the service saying what it cannot read *and why* — a missing
+    // binding, missing models, a scan without text. That sentence and its
+    // code are the remedy the intake shows; burying them in a 502 reads as an
+    // outage.
+    if (status === 415) {
+      const body = parsed ?? tryJson(detail);
+      const code =
+        body && typeof body.code === "string" ? body.code : "CONVERT_UNSUPPORTED";
+      const message =
+        body && typeof body.error === "string"
+          ? body.error
+          : `The conversion service cannot read this file: ${detail.slice(0, 200)}`;
+      const details = body
+        ? Object.fromEntries(
+            ["hint", "needsOcr", "binding", "missing", "pages", "words"]
+              .filter((key) => body[key] !== undefined)
+              .map((key) => [key, body[key]]),
+          )
+        : undefined;
+      return new HttpError(415, code, message, details);
+    }
     return new HttpError(
       502,
       "CONVERT_UNAVAILABLE",
       `Conversion service answered ${status}: ${detail.slice(0, 300)}`,
     );
+  }
+
+  function tryJson(text: string): Record<string, unknown> | undefined {
+    try {
+      const value: unknown = JSON.parse(text);
+      return value && typeof value === "object" && !Array.isArray(value)
+        ? (value as Record<string, unknown>)
+        : undefined;
+    } catch {
+      return undefined;
+    }
   }
 
   async function readJson<T>(response: Response): Promise<T> {
@@ -203,7 +239,11 @@ export function createHttpConversionService(options: {
       ]
         .filter(Boolean)
         .join(" ");
-      throw conversionFailure(body.deferredStatus, detail || JSON.stringify(body));
+      throw conversionFailure(
+        body.deferredStatus,
+        detail || JSON.stringify(body),
+        body as Record<string, unknown>,
+      );
     }
 
     return body as T;

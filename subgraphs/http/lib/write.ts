@@ -119,7 +119,12 @@ export async function executeWrite(
 
   for (const [index, action] of stamped.entries()) {
     const signer = signerAddressOf(action);
+    // With authentication on, a bearer may only submit actions it signed. In
+    // open mode (auth off, declared by the host) the caller is the engine's
+    // owner by declaration; agents on the same computer sign with their own
+    // keys, and the operation keeps that attribution.
     if (
+      options.ctx.authEnabled &&
       signer &&
       signer !== user.address &&
       !deps.authorization.isSupremeAdmin(user.address)

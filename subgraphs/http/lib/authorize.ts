@@ -23,6 +23,11 @@ function openModeUser(ctx: RouteContext): RouteContext["user"] {
   return { address, chainId: 0, networkId: "local", appKey: "desktop-knowledge-vault" };
 }
 
+/** The caller as the guard sees it — a real user, the open-mode owner, or nobody — without refusing. */
+export function currentUser(ctx: RouteContext): RouteContext["user"] {
+  return ctx.user ?? openModeUser(ctx);
+}
+
 export function requireUser(
   ctx: RouteContext,
 ): NonNullable<RouteContext["user"]> {
