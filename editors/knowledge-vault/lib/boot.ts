@@ -63,7 +63,16 @@ import { resolveReactorEndpoint } from "../hooks/subgraph-endpoint.js";
  */
 const SYNC_NOTHING = "remote-first-sync-nothing";
 
+import { isDesktopHost } from "../../shared/host-config.js";
+
 const POLL_MS = 400;
+/** A failed adoption is retried after 1 s, 2 s, 4 s … capped at 30 s — not on the next tick. */
+const RETRY_BASE_MS = 1_000;
+const RETRY_MAX_MS = 30_000;
+/** Earliest time (ms since epoch) a drive may be adopted again, by driveId. */
+const retryAt = new Map<string, number>();
+/** Consecutive failures per drive, for the backoff exponent. */
+const failures = new Map<string, number>();
 /** Refresh the drive snapshot on this cadence until the editor takes over. */
 /**
  * How often the drive snapshot is re-read as a safety net.
@@ -641,6 +650,11 @@ function scheduleSessionRecovery(): void {
 }
 
 function sweep(startedAt: number, timer: ReturnType<typeof setInterval>): void {
+  // A declared desktop host has no sync manager and owns the client itself.
+  if (isDesktopHost()) {
+    clearInterval(timer);
+    return;
+  }
   // Boot-time adoption is a bounded job: `useRemoteFirst` neutralises the
   // channel for any drive the user selects later. The deadline used to apply
   // only to the "no sync manager yet" branch, so as soon as a manager
@@ -665,15 +679,27 @@ function sweep(startedAt: number, timer: ReturnType<typeof setInterval>): void {
   for (const remote of remotes) {
     const driveId = remote?.meta?.collectionId?.driveId;
     if (!driveId || claimed.has(driveId)) continue;
+    if ((retryAt.get(driveId) ?? 0) > Date.now()) continue;
     // Claim before awaiting so a slow header lookup cannot be started twice.
     claimed.add(driveId);
-    void adopt(driveId, remote, sync).catch((error) => {
-      claimed.delete(driveId);
-      console.warn(
-        `[RemoteFirst] Could not neutralise drive ${driveId.slice(0, 8)} at boot:`,
-        error,
-      );
-    });
+    void adopt(driveId, remote, sync)
+      .then(() => {
+        failures.delete(driveId);
+        retryAt.delete(driveId);
+      })
+      .catch((error) => {
+        claimed.delete(driveId);
+        const n = (failures.get(driveId) ?? 0) + 1;
+        failures.set(driveId, n);
+        retryAt.set(
+          driveId,
+          Date.now() + Math.min(RETRY_MAX_MS, RETRY_BASE_MS * 2 ** (n - 1)),
+        );
+        console.warn(
+          `[RemoteFirst] Could not neutralise drive ${driveId.slice(0, 8)} at boot (attempt ${n}):`,
+          error,
+        );
+      });
   }
 }
 
@@ -684,6 +710,7 @@ function sweep(startedAt: number, timer: ReturnType<typeof setInterval>): void {
 export function startRemoteFirstBoot(): void {
   if (started) return;
   if (typeof window === "undefined") return;
+  if (isDesktopHost()) return;
   started = true;
   // A logout/login does not reload the page, and the sweep below is bounded to
   // MAX_WAIT_MS; this re-reads the drives when the session changes, however

@@ -244,4 +244,35 @@ describe("startRemoteFirstBoot / adopt", () => {
     expect(sync.add).not.toHaveBeenCalled();
     expect(setDrivesMock).not.toHaveBeenCalled();
   });
+  it("DESKTOP HOST: does nothing — no sync listing, no Switchboard probe", async () => {
+    (globalThis as Record<string, unknown>).__knowledgeVaultHost = {
+      kind: "desktop",
+      switchboardOrigin: "http://127.0.0.1:4201",
+    };
+    try {
+      stubVaultLookup(VAULT_APP);
+      const sync = makeSync(makeRemote([]));
+      await bootWith(sync);
+      await vi.advanceTimersByTimeAsync(2_000);
+      expect(sync.list).not.toHaveBeenCalled();
+      expect(fetch).not.toHaveBeenCalled();
+      expect(enableRemoteFirstMock).not.toHaveBeenCalled();
+    } finally {
+      delete (globalThis as Record<string, unknown>).__knowledgeVaultHost;
+    }
+  });
+
+  it("BACKOFF: an unreachable Switchboard is probed with exponential delay, not every tick", async () => {
+    vi.stubGlobal(
+      "fetch",
+      vi.fn(() => Promise.reject(new Error("ECONNREFUSED"))),
+    );
+    const sync = makeSync(makeRemote([]));
+    await bootWith(sync);
+    // 400 ms polling would make ~25 attempts in 10 s; backoff (0, 1, 3, 7 s) makes 4.
+    await vi.advanceTimersByTimeAsync(10_000);
+    const attempts = (fetch as unknown as { mock: { calls: unknown[] } }).mock.calls.length;
+    expect(attempts).toBeGreaterThanOrEqual(3);
+    expect(attempts).toBeLessThanOrEqual(5);
+  });
 });
