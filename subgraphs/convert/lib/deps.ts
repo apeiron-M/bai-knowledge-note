@@ -8,4 +8,6 @@ export interface ConvertRouteDeps {
    * `POST convert` refuses — with `503 CONVERT_NOT_CONFIGURED`.
    */
   service?: ConversionService;
+  /** Where the service came from: the environment at setup, or the runtime setter (lib/runtime.ts). Absent when unconfigured. */
+  source?: "env" | "runtime";
 }

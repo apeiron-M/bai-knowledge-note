@@ -11,6 +11,7 @@ const unconfiguredHealth = {
   missing: [],
   formats: [],
   configured: false,
+  source: null,
 };
 
 /** The body of a health answer when the service is configured but unreachable. */
@@ -43,12 +44,15 @@ export function createHealthRoute(deps: ConvertRouteDeps) {
       try {
         const health = await deps.service.health();
         return Response.json(
-          { ...health, configured: true },
+          { ...health, configured: true, source: deps.source ?? null },
           { headers: OK_CACHE },
         );
       } catch {
         // Configured but unreachable is a *state*, not a failed request.
-        return Response.json(unreachableHealth, { headers: OK_CACHE });
+        return Response.json(
+          { ...unreachableHealth, source: deps.source ?? null },
+          { headers: OK_CACHE },
+        );
       }
     } catch (error) {
       return jsonError(error);

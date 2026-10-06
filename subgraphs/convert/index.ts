@@ -2,6 +2,7 @@ import { BaseSubgraph } from "@powerhousedao/reactor-api";
 import type { DocumentNode } from "graphql";
 import { connectConversionService } from "./lib/probe.js";
 import type { ConvertRouteDeps } from "./lib/deps.js";
+import { bindRuntimeDeps } from "./lib/runtime.js";
 import { createHttpConversionService } from "./lib/service.js";
 import { getResolvers, registerConvertRoutes } from "./resolvers.js";
 import { schema } from "./schema.js";
@@ -57,30 +58,39 @@ export class ConvertSubgraph extends BaseSubgraph {
       isEnabled(process.env.CONVERT_SERVICE_AUTOSTART);
     const url = configuredUrl ?? (useLocalDefault ? DEFAULT_SERVICE_URL : undefined);
 
-    if (!url) {
-      this.routeDeps = {};
-      registerConvertRoutes(this.http, this.routeDeps);
-      return;
+    // One deps object for the life of the process: the routes captured it at
+    // their once-per-scope registration (resolvers.ts), the resolvers read it,
+    // and the runtime setter (lib/runtime.ts) swaps its service. So a reload
+    // configures in place — bindRuntimeDeps returns the live object — instead
+    // of assigning a fresh one the routes would never see.
+    const deps: ConvertRouteDeps = {};
+    if (url) {
+      if (apiKey) {
+        // An authenticated service is a managed one: it is somebody's deployment,
+        // so probing it at boot to print a warning earns nothing.
+        deps.service = createHttpConversionService({ baseUrl: url, apiKey });
+      } else {
+        const { service } = await connectConversionService({
+          url,
+          log: console.log,
+        });
+        deps.service = service;
+      }
+      deps.source = "env";
     }
-
-    if (apiKey) {
-      // An authenticated service is a managed one: it is somebody's deployment,
-      // so probing it at boot to print a warning earns nothing.
-      this.routeDeps = {
-        service: createHttpConversionService({ baseUrl: url, apiKey }),
-      };
-    } else {
-      const { service } = await connectConversionService({
-        url,
-        log: console.log,
-      });
-      this.routeDeps = { service };
-    }
-
+    this.routeDeps = bindRuntimeDeps(deps);
     registerConvertRoutes(this.http, this.routeDeps);
   }
 
 }
+
+export {
+  CONVERT_REGISTRY,
+  type ConvertRegistry,
+  getConversionServiceUrl,
+  resetConversionRuntime,
+  setConversionServiceUrl,
+} from "./lib/runtime.js";
 
 /** `true`/`1`/`yes` enable a flag; anything else (including unset) leaves it off. */
 function isEnabled(value: string | undefined): boolean {
