@@ -2,7 +2,7 @@ import type { PHDocument } from "document-model";
 import type { Action } from "document-model";
 import type { CanonicalDocumentId } from "@powerhousedao/reactor-api";
 import type { RouteContext } from "@powerhousedao/shared/processors";
-import { requireUser } from "./authorize.js";
+import { isOpenModeActor, requireUser } from "./authorize.js";
 import type { HttpRouteDeps } from "./deps.js";
 import { stampActions, type RawAction } from "./envelope.js";
 import { lintActions } from "./lint/index.js";
@@ -119,12 +119,13 @@ export async function executeWrite(
 
   for (const [index, action] of stamped.entries()) {
     const signer = signerAddressOf(action);
-    // With authentication on, a bearer may only submit actions it signed. In
-    // open mode (auth off, declared by the host) the caller is the engine's
-    // owner by declaration; agents on the same computer sign with their own
-    // keys, and the operation keeps that attribution.
+    // A resolved identity may only submit actions it signed. The one exception
+    // is the open-mode owner — no bearer, the host declared open mode: agents
+    // on the same computer sign with their own keys and the operation keeps
+    // that attribution. A bearer resolved under an auth-off host
+    // (RESOLVE_CALLER_IDENTITY) is still held to its own signature.
     if (
-      options.ctx.authEnabled &&
+      !isOpenModeActor(options.ctx) &&
       signer &&
       signer !== user.address &&
       !deps.authorization.isSupremeAdmin(user.address)

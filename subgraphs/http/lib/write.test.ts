@@ -405,6 +405,22 @@ describe("executeWrite in open mode", () => {
     expect(executeAsync).toHaveBeenCalledTimes(1);
   });
 
+  it("holds a resolved identity to its own signature even with authentication off", async () => {
+    // RESOLVE_CALLER_IDENTITY can hand a route a user while AUTH_ENABLED is false;
+    // that caller is not the open-mode owner and keeps the usual rule.
+    vi.stubEnv("KNOWLEDGE_VAULT_OPEN_MODE", "1");
+    const d = deps();
+    await expect(
+      executeWrite(d, {
+        documentId: "doc",
+        document: sourceDocument,
+        actions: [{ ...validAction, context: { signer: { user: { address: "0xother" } } } }],
+        ctx: { ...ctx, authEnabled: false } as unknown as RouteContext,
+        wait: true,
+      }),
+    ).rejects.toMatchObject({ status: 403, code: "FORBIDDEN" });
+  });
+
   it("still refuses a foreign signer when the host authenticates callers", async () => {
     vi.stubEnv("KNOWLEDGE_VAULT_OPEN_MODE", "1"); // the declaration alone changes nothing with auth on
     const d = deps();

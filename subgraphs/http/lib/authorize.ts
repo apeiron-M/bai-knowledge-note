@@ -23,6 +23,11 @@ function openModeUser(ctx: RouteContext): RouteContext["user"] {
   return { address, chainId: 0, networkId: "local", appKey: "desktop-knowledge-vault" };
 }
 
+/** The caller is the open-mode owner: no bearer resolved, and the host declared open mode. */
+export function isOpenModeActor(ctx: RouteContext): boolean {
+  return !ctx.user && openModeUser(ctx) !== undefined;
+}
+
 /** The caller as the guard sees it — a real user, the open-mode owner, or nobody — without refusing. */
 export function currentUser(ctx: RouteContext): RouteContext["user"] {
   return ctx.user ?? openModeUser(ctx);
