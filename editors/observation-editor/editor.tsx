@@ -5,6 +5,7 @@ import {
   actions,
 } from "document-models/observation";
 import { MarkdownPreview } from "../shared/markdown-preview.js";
+import { PromoteForm } from "./promote-form.js";
 import { TOOLBAR_CLASS } from "../shared/theme-context.js";
 
 const CATEGORIES = [
@@ -33,6 +34,8 @@ function ts() {
 
 export default function Editor() {
   const [document, dispatch] = useSelectedObservationDocument();
+  /** The promote field's text while it is open; null when closed. */
+  const [promoting, setPromoting] = useState<string | null>(null);
   const state = document.state.global;
   const initialized = !!state.title;
 
@@ -121,20 +124,22 @@ export default function Editor() {
               className="flex gap-2 pt-2"
               style={{ borderTop: "1px solid var(--bai-border)" }}
             >
-              {state.status === "PENDING" && (
+              {state.status === "PENDING" && promoting !== null && (
+                <PromoteForm
+                  value={promoting}
+                  onChange={setPromoting}
+                  onCancel={() => setPromoting(null)}
+                  onSubmit={(ref) => {
+                    dispatch(actions.promoteObservation({ promotedTo: ref, promotedAt: ts() }));
+                    setPromoting(null);
+                  }}
+                />
+              )}
+              {state.status === "PENDING" && promoting === null && (
                 <>
                   <button
                     type="button"
-                    onClick={() => {
-                      const ref = prompt("Promoted to note ID:");
-                      if (ref)
-                        dispatch(
-                          actions.promoteObservation({
-                            promotedTo: ref,
-                            promotedAt: ts(),
-                          }),
-                        );
-                    }}
+                    onClick={() => setPromoting("")}
                     className="rounded bg-blue-600 px-3 py-1 text-xs font-medium text-white hover:bg-blue-700"
                   >
                     Promote

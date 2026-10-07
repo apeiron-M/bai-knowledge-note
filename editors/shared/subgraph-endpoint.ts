@@ -96,6 +96,11 @@ export function resolveAuthEndpoint(): string {
   return origin ? `${origin}/graphql/auth` : "/graphql/auth";
 }
 
+/** Where an agent's MCP client connects: the engine this app talks to (the desktop app declares its own). */
+export function resolveMcpEndpoint(): string {
+  return `${resolveSwitchboardOrigin() ?? "http://localhost:4001"}/mcp`;
+}
+
 export function resolveKnowledgeGraphEndpoint(): string {
   const declared = getHostConfig();
   if (declared) return `${declared.switchboardOrigin}${SUBGRAPH_PATH}`;
