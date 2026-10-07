@@ -1,5 +1,5 @@
 import type { RouteContext } from "@powerhousedao/shared/processors";
-import { canonicalForRead } from "../lib/authorize.js";
+import { canonicalForRead, currentUser } from "../lib/authorize.js";
 import type { GraphQuery, HttpRouteDeps } from "../lib/deps.js";
 import { renderLlmsFull, renderLlmsTxt } from "../lib/llms.js";
 import { HttpError, jsonError, OK_CACHE } from "../lib/respond.js";
@@ -19,7 +19,9 @@ export function createLlmsRoute(deps: LlmsRouteDeps, full: boolean) {
       if (!drive) throw new HttpError(400, "BAD_REQUEST", "drive is required");
       const base = `${ctx.transport.baseUrl}/api/@powerhousedao/knowledge-note`;
 
-      if (ctx.user) {
+      // The caller as the guard sees it: a verified bearer, or — when the host declared open
+      // mode (the desktop's local engine) — the engine's owner. Only a true nobody is anonymous.
+      if (currentUser(ctx)) {
         await canonicalForRead(deps, drive, ctx);
       } else {
         const canonical = await deps.resolveCanonicalDocumentId(drive, ctx);

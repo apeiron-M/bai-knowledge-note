@@ -92,6 +92,18 @@ describe("llms routes", () => {
     expect(await res.text()).toContain("h1.md?drive=d");
   });
 
+  it("serves the full index to the open-mode owner — an anonymous caller once the host declared open mode", async () => {
+    vi.stubEnv("KNOWLEDGE_VAULT_OPEN_MODE", "1");
+    vi.stubEnv("KNOWLEDGE_VAULT_OPEN_MODE_ADDRESS", "did:key:z6MkEngine");
+    try {
+      const open = { ...ctx(false), authEnabled: false } as unknown as RouteContext;
+      const res = await createLlmsRoute(deps(), true)(new Request("http://h/llms-full.txt?drive=d"), open);
+      expect(res.status).toBe(200);
+      expect(await res.text()).toContain("A claim"); // the full index renders the notes, as it does for a signed-in reader
+    } finally {
+      vi.unstubAllEnvs();
+    }
+  });
   it("refuses the full index anonymously", async () => {
     const res = await createLlmsRoute(deps(), true)(
       new Request("http://h/llms-full.txt?drive=d"),
