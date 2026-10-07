@@ -297,16 +297,24 @@ describe("synthesize", () => {
   });
   it("creates the HUB first when a new MoC hangs from it, then the MoC under it", async () => {
     let n = 0;
-    const v = vault({ notes: () => ({ notes: [{ id: ++n === 1 ? "hub-1" : "moc-1", operations: [{ type: "CREATE_MOC", error: null }] }] }), relationships: {} });
+    const v = vault({ "notes/d": { name: "moc-check", state: { global: { name: "MoC check", nodes: [] } } }, notes: () => ({ notes: [{ id: ++n === 1 ? "hub-1" : "moc-1", operations: [{ type: "CREATE_MOC", error: null }] }] }), relationships: {} });
     const out = await writePlacementsStage(v.client, { drive: "d", placements: NOTES3.map((x) => ({ note: x.id, moc: "new:1" })), newMocs: [{ key: "new:1", title: "Euro markets", description: "d", orientation: "o", parent: "new:hub" }], coreIdeas: new Set(), now: at });
-    const hub = v.requests[0].json as { notes: { actions: { input: Record<string, unknown> }[] }[] };
-    expect(hub.notes[0].actions[0].input).toMatchObject({ tier: "HUB" });
-    const topic = v.requests[1].json as { notes: { actions: { input: Record<string, unknown> }[] }[] };
+    expect(v.requests[0].path).toBe("notes/d");
+    const hub = v.requests[1].json as { notes: { actions: { input: Record<string, unknown> }[] }[] };
+    expect(hub.notes[0].actions[0].input).toMatchObject({ tier: "HUB", title: "MoC check" });
+    const topic = v.requests[2].json as { notes: { actions: { input: Record<string, unknown> }[] }[] };
     expect(topic.notes[0].actions[0].input).toMatchObject({ tier: "TOPIC", parentRef: "hub-1" });
-    expect(v.requests[2].json).toEqual({ source: "hub-1", target: "moc-1", type: "CHILD_MOC" });
+    expect(v.requests[3].json).toEqual({ source: "hub-1", target: "moc-1", type: "CHILD_MOC" });
     expect(out.created_mocs).toEqual(["hub-1", "moc-1"]);
     expect(out.linked).toBe(3);
     expect(out.summary).toBe("Added 3 notes to their MoCs; created the vault's HUB and 1 TOPIC MoC, each attached to its parent.");
+  });
+  it("names the HUB 'Hub' when the vault's name cannot be read", async () => {
+    let n = 0;
+    const v = vault({ "notes/d": () => { throw new Error("down"); }, notes: () => ({ notes: [{ id: ++n === 1 ? "hub-1" : "moc-1", operations: [{ type: "CREATE_MOC", error: null }] }] }), relationships: {} });
+    await writePlacementsStage(v.client, { drive: "d", placements: NOTES3.map((x) => ({ note: x.id, moc: "new:1" })), newMocs: [{ key: "new:1", title: "T", description: "d", orientation: "o", parent: "new:hub" }], coreIdeas: new Set(), now: at });
+    const hub = v.requests.find((r) => (r.json as { notes?: { actions: { input: { tier?: string } }[] }[] } | undefined)?.notes?.[0]?.actions[0]?.input.tier === "HUB")!.json as { notes: { actions: { input: Record<string, unknown> }[] }[] };
+    expect(hub.notes[0].actions[0].input).toMatchObject({ title: "Hub" });
   });
   it("reports a MoC the vault rejected and a parent link that failed", async () => {
     const v = vault({ notes: { notes: [{ id: "m9", operations: [{ type: "CREATE_MOC", error: "tier invalid" }] }] }, relationships: () => { throw new Error("down"); } });

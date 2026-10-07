@@ -125,6 +125,11 @@ export async function writePlacementsStage(
   let hubId: string | undefined;
   if (args.newMocs.some((m) => m.parent === NEW_HUB)) {
     // The vault's first MoC: its HUB comes first, so the new MoC has a parent and stays reachable.
+    // It is named after the vault (MoC titles are set once, at creation); "Hub" if the name cannot be read.
+    const vaultName = await client
+      .request<{ name?: string; state?: { global?: { name?: string } } }>({ path: `notes/${args.drive}`, query: { drive: args.drive } })
+      .then((d) => (d.state?.global?.name ?? d.name ?? "").trim())
+      .catch(() => "");
     const body = await client.request<{ notes: { id: string; operations: { type: string; error?: string | null }[] }[] }>({
       method: "POST",
       path: "notes",
@@ -139,7 +144,7 @@ export async function writePlacementsStage(
               {
                 type: "CREATE_MOC",
                 input: {
-                  title: "Hub",
+                  title: vaultName || "Hub",
                   description: "The vault's entry point: every domain and topic map hangs from here.",
                   orientation: "Start here. Each map below collects the notes on one theme; open the one closest to your question.",
                   tier: "HUB",
