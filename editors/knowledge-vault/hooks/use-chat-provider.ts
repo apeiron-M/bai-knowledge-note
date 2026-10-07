@@ -9,10 +9,12 @@
  * the server lists, no fallbacks, no billing heuristics.
  */
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { getHostConfig } from "../../shared/host-config.js";
 import {
   beginOAuth,
   clearKey,
   completeOAuthFromUrl,
+  connectThroughHost,
   getStoredKey,
   storeKey,
   takeInterruptedAttempt,
@@ -193,9 +195,21 @@ export function useChatProvider(): UseChatProvider {
     };
   }, [endpoint]);
 
+  // A host that runs sign-ins outside the page (the desktop app) gets the flow handed to it:
+  // a desktop window cannot take the system browser's redirect back. Elsewhere, the redirect.
   const connectOpenRouter = useCallback(
-    (intent: { driveId: string; draft: string }) => beginOAuth(intent),
-    [],
+    async (intent: { driveId: string; draft: string }) => {
+      const signIn = getHostConfig()?.externalSignIn;
+      if (!signIn) return beginOAuth(intent);
+      setCompleting(true);
+      try {
+        const r = await connectThroughHost(signIn);
+        if (r) save({ ...readSavedProviders(), openrouter: { key: r.key }, active: "openrouter" });
+      } finally {
+        setCompleting(false);
+      }
+    },
+    [save],
   );
 
   const connectWithOpenRouterKey = useCallback(async (candidate: string) => {

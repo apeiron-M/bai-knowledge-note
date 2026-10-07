@@ -4,6 +4,7 @@ import {
   beginOAuth,
   clearKey,
   completeOAuthFromUrl,
+  connectThroughHost,
   getStoredKey,
   pkceChallenge,
   readReturnIntent,
@@ -207,5 +208,35 @@ describe("interrupted attempt", () => {
     expect(takeInterruptedAttempt()).toBe(false);
     // and the flag survives, so it can still be cleared by the exchange
     expect(sessionStorage.getItem("bai-chat:oauth-pending:v1")).not.toBeNull();
+  });
+});
+
+describe("connectThroughHost", () => {
+  it("lets the host run the sign-in with its own callback, then exchanges the code here — no page redirect", async () => {
+    resetLocation("http://127.0.0.1:46420/");
+    let builtUrl = "";
+    const signIn = vi.fn((build: (callback: string) => string) => {
+      builtUrl = build("http://localhost:4202/oauth/callback/nonce1");
+      return Promise.resolve("code-from-browser");
+    });
+    globalThis.fetch = vi.fn().mockResolvedValue({ ok: true, json: () => Promise.resolve({ key: "sk-or-v1-desk" }) }) as unknown as typeof fetch;
+    expect(await connectThroughHost(signIn)).toEqual({ key: "sk-or-v1-desk" });
+    expect(getStoredKey()).toBe("sk-or-v1-desk");
+    const auth = new URL(builtUrl);
+    expect(auth.origin + auth.pathname).toBe("https://openrouter.ai/auth");
+    expect(auth.searchParams.get("callback_url")).toBe("http://localhost:4202/oauth/callback/nonce1");
+    expect(auth.searchParams.get("code_challenge_method")).toBe("S256");
+    const [, init] = (globalThis.fetch as ReturnType<typeof vi.fn>).mock.calls[0] as [string, RequestInit];
+    const body = JSON.parse(init.body as string) as { code: string; code_verifier: string };
+    expect(body.code).toBe("code-from-browser");
+    expect(await pkceChallenge(body.code_verifier)).toBe(auth.searchParams.get("code_challenge")); // the verifier never left this page
+    expect(location.href).toBe("http://127.0.0.1:46420/"); // nothing navigated
+    expect(sessionStorage.length).toBe(0);
+  });
+  it("returns null when the host's sign-in fails or the exchange is refused", async () => {
+    expect(await connectThroughHost(() => Promise.reject(new Error("cancelled")))).toBeNull();
+    globalThis.fetch = vi.fn().mockResolvedValue({ ok: false, json: () => Promise.resolve({}) }) as unknown as typeof fetch;
+    expect(await connectThroughHost(() => Promise.resolve("code"))).toBeNull();
+    expect(getStoredKey()).toBeNull();
   });
 });

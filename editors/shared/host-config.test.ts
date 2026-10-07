@@ -63,4 +63,10 @@ describe("host-config: identity and bearer (the desktop host holds the sign-in)"
     setHostConfig({ kind: "desktop", switchboardOrigin: "http://127.0.0.1:4201" });
     expect(seen).toEqual([0, 1]);
   });
+  it("keeps the host's external sign-in, so the chat can hand an OAuth flow to it", () => {
+    const externalSignIn = () => Promise.resolve("code");
+    setHostConfig({ kind: "desktop", switchboardOrigin: "http://127.0.0.1:4201", externalSignIn });
+    expect(getHostConfig()?.externalSignIn).toBe(externalSignIn);
+    setHostConfig(undefined);
+  });
 });
