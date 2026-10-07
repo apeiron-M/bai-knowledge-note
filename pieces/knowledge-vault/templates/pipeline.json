@@ -1,0 +1,292 @@
+{
+  "version": 1,
+  "exportedAt": "2026-10-07T07:29:56.505Z",
+  "placeholders": [
+    "{{CONNECTION_ID}}",
+    "{{CONNECTION_NAME}}",
+    "{{DRIVE_ID}}",
+    "{{LLM_BASE_URL}}",
+    "{{LLM_MODEL}}",
+    "{{LLM_SECRET_REF}}",
+    "{{NOW}}",
+    "{{PIECE_VERSION}}",
+    "{{SWITCHBOARD_ORIGIN}}",
+    "{{TOKEN_SECRET_REF}}",
+    "{{WORKFLOW_NAME}}"
+  ],
+  "connection": {
+    "documentType": "powerhouse/connection",
+    "operations": [
+      {
+        "type": "SET_CONNECTION_NAME",
+        "input": {
+          "name": "{{CONNECTION_NAME}}"
+        }
+      },
+      {
+        "type": "SET_CONNECTOR",
+        "input": {
+          "authType": "CUSTOM_AUTH",
+          "connectorId": "@powerhousedao/piece-knowledge-vault#knowledge-vault"
+        }
+      },
+      {
+        "type": "SET_CONFIG",
+        "input": {
+          "config": {
+            "base_url": "{{SWITCHBOARD_ORIGIN}}",
+            "llm_default_model": "{{LLM_MODEL}}",
+            "llm_base_url": "{{LLM_BASE_URL}}"
+          }
+        }
+      },
+      {
+        "type": "SET_SECRET_REF",
+        "input": {
+          "id": "bccb0805-39b4-4f3c-9362-9d821a27bde1",
+          "ref": "{{TOKEN_SECRET_REF}}",
+          "name": "token"
+        }
+      },
+      {
+        "type": "SET_SECRET_REF",
+        "input": {
+          "id": "64919e07-233c-4593-a28d-e917f05baac0",
+          "ref": "{{LLM_SECRET_REF}}",
+          "name": "llm_api_key"
+        }
+      }
+    ]
+  },
+  "workflow": {
+    "documentType": "powerhouse/workflow",
+    "operations": [
+      {
+        "type": "SET_WORKFLOW_NAME",
+        "input": {
+          "name": "{{WORKFLOW_NAME}}"
+        }
+      },
+      {
+        "type": "SET_WORKFLOW_DESCRIPTION",
+        "input": {
+          "description": "Every source queued for extraction runs extract → connect → place → verify, then waits at verify for review."
+        }
+      },
+      {
+        "type": "SET_TRIGGER",
+        "input": {
+          "id": "d463769c-2d39-4516-a762-b6201d46ff6f",
+          "config": {
+            "drive": "{{DRIVE_ID}}",
+            "phase": "create",
+            "per_poll": 1,
+            "include_backlog": false
+          },
+          "pieceName": "@powerhousedao/piece-knowledge-vault",
+          "triggerName": "new-pipeline-task",
+          "connectionId": "{{CONNECTION_ID}}",
+          "pieceVersion": "{{PIECE_VERSION}}"
+        }
+      },
+      {
+        "type": "ADD_STEP",
+        "input": {
+          "id": "e285059b-ab29-40e3-9bd4-ffeca9b43b1c",
+          "key": "extract",
+          "name": "Extract claims",
+          "config": {
+            "mode": "write",
+            "drive": "{{DRIVE_ID}}",
+            "model": "{{LLM_MODEL}}",
+            "source_id": "{{trigger.payload.source_id}}"
+          },
+          "position": {
+            "x": 320,
+            "y": 0
+          },
+          "pieceName": "@powerhousedao/piece-knowledge-vault",
+          "actionName": "extract-claims",
+          "connectionId": "{{CONNECTION_ID}}",
+          "pieceVersion": "{{PIECE_VERSION}}",
+          "timeoutSeconds": 300,
+          "propertySettings": [
+            {
+              "mode": "EXPRESSION",
+              "prop": "source_id"
+            }
+          ]
+        }
+      },
+      {
+        "type": "ADD_STEP",
+        "input": {
+          "id": "b78d05f3-a6ff-436e-b6ff-1392b6e56b50",
+          "key": "connect",
+          "name": "Connect notes",
+          "config": {
+            "mode": "write",
+            "drive": "{{DRIVE_ID}}",
+            "model": "{{LLM_MODEL}}",
+            "source_id": "{{trigger.payload.source_id}}"
+          },
+          "position": {
+            "x": 640,
+            "y": 0
+          },
+          "pieceName": "@powerhousedao/piece-knowledge-vault",
+          "actionName": "connect-notes",
+          "connectionId": "{{CONNECTION_ID}}",
+          "pieceVersion": "{{PIECE_VERSION}}",
+          "timeoutSeconds": 300,
+          "propertySettings": [
+            {
+              "mode": "EXPRESSION",
+              "prop": "source_id"
+            }
+          ]
+        }
+      },
+      {
+        "type": "ADD_STEP",
+        "input": {
+          "id": "8a99e985-5276-4e7b-8e6c-ea5f53769dfe",
+          "key": "place",
+          "name": "Place notes in MoCs",
+          "config": {
+            "mode": "write",
+            "drive": "{{DRIVE_ID}}",
+            "model": "{{LLM_MODEL}}",
+            "source_id": "{{trigger.payload.source_id}}"
+          },
+          "position": {
+            "x": 960,
+            "y": 0
+          },
+          "pieceName": "@powerhousedao/piece-knowledge-vault",
+          "actionName": "place-in-mocs",
+          "connectionId": "{{CONNECTION_ID}}",
+          "pieceVersion": "{{PIECE_VERSION}}",
+          "timeoutSeconds": 300,
+          "propertySettings": [
+            {
+              "mode": "EXPRESSION",
+              "prop": "source_id"
+            }
+          ]
+        }
+      },
+      {
+        "type": "ADD_STEP",
+        "input": {
+          "id": "157bb02c-c33a-4eea-9eeb-5f5b02609229",
+          "key": "verify",
+          "name": "Verify notes",
+          "config": {
+            "mode": "write",
+            "drive": "{{DRIVE_ID}}",
+            "model": "{{LLM_MODEL}}",
+            "source_id": "{{trigger.payload.source_id}}"
+          },
+          "position": {
+            "x": 1280,
+            "y": 0
+          },
+          "pieceName": "@powerhousedao/piece-knowledge-vault",
+          "actionName": "verify-notes",
+          "connectionId": "{{CONNECTION_ID}}",
+          "pieceVersion": "{{PIECE_VERSION}}",
+          "timeoutSeconds": 300,
+          "propertySettings": [
+            {
+              "mode": "EXPRESSION",
+              "prop": "source_id"
+            }
+          ]
+        }
+      },
+      {
+        "type": "ADD_EDGE",
+        "input": {
+          "id": "4a9002dc-64b1-44c6-91ea-731491e27fb5",
+          "to": "e285059b-ab29-40e3-9bd4-ffeca9b43b1c",
+          "from": "d463769c-2d39-4516-a762-b6201d46ff6f",
+          "port": "next"
+        }
+      },
+      {
+        "type": "ADD_EDGE",
+        "input": {
+          "id": "4d9ecf66-e23a-4ccf-bf1e-08026d343ecf",
+          "to": "b78d05f3-a6ff-436e-b6ff-1392b6e56b50",
+          "from": "e285059b-ab29-40e3-9bd4-ffeca9b43b1c",
+          "port": "next"
+        }
+      },
+      {
+        "type": "ADD_EDGE",
+        "input": {
+          "id": "0a14a7b3-fb40-4ca5-83e1-a3e7e5eb4db9",
+          "to": "8a99e985-5276-4e7b-8e6c-ea5f53769dfe",
+          "from": "b78d05f3-a6ff-436e-b6ff-1392b6e56b50",
+          "port": "next"
+        }
+      },
+      {
+        "type": "ADD_EDGE",
+        "input": {
+          "id": "0ff0b5aa-2485-427c-8551-2befeec637cc",
+          "to": "157bb02c-c33a-4eea-9eeb-5f5b02609229",
+          "from": "8a99e985-5276-4e7b-8e6c-ea5f53769dfe",
+          "port": "next"
+        }
+      },
+      {
+        "type": "PUBLISH_WORKFLOW",
+        "input": {
+          "publishedAt": "{{NOW}}"
+        }
+      },
+      {
+        "type": "SET_TRIGGER",
+        "input": {
+          "id": "d463769c-2d39-4516-a762-b6201d46ff6f",
+          "config": {
+            "drive": "{{DRIVE_ID}}",
+            "phase": "create",
+            "per_poll": 1,
+            "include_backlog": true
+          },
+          "pieceName": "@powerhousedao/piece-knowledge-vault",
+          "triggerName": "new-pipeline-task",
+          "connectionId": "{{CONNECTION_ID}}",
+          "pieceVersion": "{{PIECE_VERSION}}",
+          "propertySettings": [
+            {
+              "mode": "MANUAL",
+              "prop": "include_backlog",
+              "schema": null
+            }
+          ]
+        }
+      },
+      {
+        "type": "PUBLISH_WORKFLOW",
+        "input": {
+          "publishedAt": "{{NOW}}"
+        }
+      },
+      {
+        "type": "SET_WORKFLOW_STATUS",
+        "input": {
+          "status": "ENABLED"
+        }
+      }
+    ]
+  },
+  "source": {
+    "switchboard": "https://switchboard.knowledge-vault.vetra.io",
+    "workflowId": "D08x67E0Nsojko6uUQlqszFjyiBwaUKdUbSTczDT1Jk",
+    "connectionId": "w7URVnjZgl-msYAd3DgQxJDf8dpCy_Iah3XlwoJGZrQ"
+  }
+}
