@@ -547,3 +547,21 @@ html[data-bai-toast-theme] .Toastify__bounce-exit--bottom-center {
 [data-bai-theme="light"] input[type="checkbox"] {
   accent-color: var(--bai-accent);
 }
+
+/*
+ * Native selects inside the vault: the chevron is drawn here, so every engine shows the same
+ * control. Without it each browser draws its own — WebKitGTK (the desktop app's window) renders
+ * a tall GTK combobox with a solid triangle where Chrome shows a slim chevron.
+ */
+.bai-theme select:not([multiple]):not([size]) {
+  -webkit-appearance: none;
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='none' stroke='%23a1a1aa' stroke-width='1.6' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M4 6l4 4 4-4'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 0.6rem center;
+  background-size: 0.8rem;
+  padding-right: 2rem;
+}
+[data-bai-theme="light"] select:not([multiple]):not([size]) {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='none' stroke='%2352525b' stroke-width='1.6' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M4 6l4 4 4-4'/%3E%3C/svg%3E");
+}
