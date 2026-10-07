@@ -57,29 +57,34 @@ type PhWindow = {
 const phWindow = (): PhWindow | undefined =>
   typeof window === "undefined" ? undefined : (window as unknown as PhWindow);
 
-/** The service this module created, if Connect had not provided one. */
+/** The service this module created, if Connect had not provided one, and the engine it talks to. */
 let ownService: IAttachmentService | null = null;
+let ownOrigin: string | null = null;
+
+/**
+ * The bearer every attachment request carries: the vault's own provider — the desktop host's
+ * sign-in, or Connect's Renown session. Not Connect's client alone: a desktop window has none,
+ * and a protected local engine refused every upload (401) while the source kept the refs.
+ */
+const attachmentBearer = (): Promise<string | undefined> => getBearerToken();
 
 /**
  * The service to use right now: Connect's if it has one, otherwise ours —
- * created on first need and also announced through `setAttachmentService` so
- * the rest of the app (previews, the reactor's own hooks) sees the same one.
- * Returns `null` only off a known host, where there is nothing to point at.
+ * created on first need, and again whenever the engine this vault talks to
+ * changes (the desktop app opens local and remote vaults in one page), and
+ * announced through `setAttachmentService` so the rest of the app (previews,
+ * the reactor's own hooks) sees the same one. Returns `null` only off a known
+ * host, where there is nothing to point at.
  */
 export function getAttachmentService(): IAttachmentService | null {
   const ph = phWindow()?.ph;
-  if (ph?.attachmentService) return ph.attachmentService;
-  if (ownService) return ownService;
+  // Connect's own service — anything we did not put there ourselves.
+  if (ph?.attachmentService && ph.attachmentService !== ownService) return ph.attachmentService;
   const origin = resolveSwitchboardOrigin();
-  if (!origin) return null;
-  ownService = createRemoteAttachmentService({
-    remoteUrl: origin,
-    jwtHandler: async () => {
-      const renown = phWindow()?.ph?.renown;
-      if (!renown?.user) return undefined;
-      return renown.getBearerToken({ expiresIn: 10 });
-    },
-  });
+  if (!origin) return ownService;
+  if (ownService && ownOrigin === origin) return ownService;
+  ownService = createRemoteAttachmentService({ remoteUrl: origin, jwtHandler: attachmentBearer });
+  ownOrigin = origin;
   setAttachmentService(ownService);
   return ownService;
 }
@@ -93,18 +98,13 @@ export function getAttachmentService(): IAttachmentService | null {
  * through `setAttachmentService`: it is a second opinion, not the app's service.
  */
 let remoteReader: IAttachmentService | null = null;
+let readerOrigin: string | null = null;
 export function getRemoteAttachmentReader(): IAttachmentService | null {
-  if (remoteReader) return remoteReader;
   const origin = resolveSwitchboardOrigin();
-  if (!origin) return null;
-  remoteReader = createRemoteAttachmentService({
-    remoteUrl: origin,
-    jwtHandler: async () => {
-      const renown = phWindow()?.ph?.renown;
-      if (!renown?.user) return undefined;
-      return renown.getBearerToken({ expiresIn: 10 });
-    },
-  });
+  if (!origin) return remoteReader;
+  if (remoteReader && readerOrigin === origin) return remoteReader;
+  remoteReader = createRemoteAttachmentService({ remoteUrl: origin, jwtHandler: attachmentBearer });
+  readerOrigin = origin;
   return remoteReader;
 }
 
@@ -225,6 +225,11 @@ export function useAttachmentPort(): AttachmentPort {
  * the attachment is answered 404. Optional so a host on an older stack, which
  * needs no anchor, keeps working unchanged.
  */
+/** The engine refused the request (no or wrong sign-in, no grant) — unlike a 404, waiting will not help. */
+function refused(error: unknown): boolean {
+  return /status (401|403)\b|\b(401|403)\b.*(Unauthorized|Forbidden|Authentication)/i.test(error instanceof Error ? error.message : String(error));
+}
+
 export function useAttachmentLoader(documentId?: string) {
   useEffect(() => {
     ensureAttachmentService();
@@ -257,7 +262,8 @@ export function useAttachmentLoader(documentId?: string) {
               // fall through to the retry below
             }
           }
-          if (attempt >= delays.length) throw error;
+          // A refusal will not change by waiting — say so now, not after forty seconds.
+          if (refused(error) || attempt >= delays.length) throw error;
           await new Promise((resolve) => setTimeout(resolve, delays[attempt]));
         }
       }
@@ -268,7 +274,7 @@ export function useAttachmentLoader(documentId?: string) {
         mimeType,
       };
     },
-    [],
+    [documentId],
   );
 }
 
