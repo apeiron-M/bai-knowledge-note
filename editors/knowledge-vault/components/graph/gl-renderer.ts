@@ -253,7 +253,13 @@ export class GlRenderer implements GraphRenderer {
       depth: false,
       stencil: false,
       premultipliedAlpha: true,
-      preserveDrawingBuffer: false,
+      // Kept between frames. The graph draws only when something changes, and
+      // WebKitGTK (the desktop app's webview, on its non-DMA-BUF path) does
+      // not hold on to the last frame otherwise: captured on screen, the
+      // graph showed for one frame, vanished, and came back only when the
+      // next change redrew it — 4 s after opening, and on every hover.
+      // Preserved, it is on screen ~150 ms after opening and stays there.
+      preserveDrawingBuffer: true,
       powerPreference: "high-performance",
     };
     const gl = canvas.getContext(
