@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { resolveSource } from "../lib/common/props.js";
-import { newPipelineTaskTrigger, pollTasks, toItem } from "../lib/triggers/new-pipeline-task.js";
+import { newPipelineTaskTrigger, oneAtATimeFor, pollTasks, toItem } from "../lib/triggers/new-pipeline-task.js";
 import type { KnowledgeVaultClient, RequestOptions } from "../lib/common/client.js";
 
 const task = (id: string, extra: Record<string, unknown> = {}) => ({ id, taskType: "claim", status: "PENDING", documentRef: `src-${id}`, target: `Source ${id}`, currentPhase: "create", createdAt: "2026-09-28T10:00:00Z", ...extra });
@@ -17,25 +17,68 @@ function vault(tasks: unknown[], queue = true) {
   } as unknown as KnowledgeVaultClient;
   return { client, requests };
 }
-function memoryStore(initial?: unknown) {
-  let value = initial;
-  return { get: async () => value, put: async (_k: string, v: unknown) => { value = v; return v; }, peek: () => value };
+/** A keyed store, like the runtime's; `peek` reads what the trigger has seen. */
+function memoryStore(initialSeen?: unknown) {
+  const values = new Map<string, unknown>([["knowledge-vault:new-pipeline-task:seen", initialSeen]]);
+  return {
+    get: async (k: string) => values.get(k),
+    put: async (k: string, v: unknown) => { values.set(k, v); return v; },
+    peek: () => values.get("knowledge-vault:new-pipeline-task:seen"),
+  };
 }
 
 describe("the new-pipeline-task trigger", () => {
-  it("fires once per task at the phase, a few per poll, and again when the task reaches it later", async () => {
-    const tasks = [task("t1"), task("t2"), task("t3"), task("t4", { status: "DONE" }), task("t5", { currentPhase: "reflect" }), task("t6", { taskType: "enrichment" }), task("t7", { documentRef: null })];
+  it("with a local model, starts one task at a time: the next only once the last one was claimed and nothing is in progress", async () => {
+    const tasks = [task("t1"), task("t2"), task("t4", { status: "DONE" }), task("t5", { currentPhase: "reflect" }), task("t6", { taskType: "enrichment" }), task("t7", { documentRef: null })];
+    const store = memoryStore();
+    let clock = 1_000_000;
+    const now = () => clock;
+    const v = vault(tasks);
+    const first = await pollTasks(v.client, store, { drive: "d", phase: "create", per_poll: 5, oneAtATime: true }, now);
+    expect(first).toEqual([{ task_id: "t1", source_id: "src-t1", source_title: "Source t1", phase: "create", queued_at: "2026-09-28T10:00:00Z", _dedupe_key: "t1@create" }]);
+    // started but not claimed yet: nothing else starts
+    clock += 60_000;
+    expect(await pollTasks(v.client, store, { drive: "d", phase: "create", per_poll: 5, oneAtATime: true }, now)).toEqual([]);
+    // claimed (in progress): still nothing
+    tasks[0] = task("t1", { status: "IN_PROGRESS" });
+    expect(await pollTasks(v.client, store, { drive: "d", phase: "create", per_poll: 5, oneAtATime: true }, now)).toEqual([]);
+    // done: the next one starts
+    tasks[0] = task("t1", { status: "DONE" });
+    expect((await pollTasks(v.client, store, { drive: "d", phase: "create", per_poll: 5, oneAtATime: true }, now)).map((i) => i.task_id)).toEqual(["t2"]);
+    expect(await pollTasks(vault([], false).client, memoryStore("junk"), { drive: "d", phase: "create", per_poll: 3, oneAtATime: true }, now)).toEqual([]);
+    expect(toItem({ id: "x", taskType: "claim", status: "PENDING" })).toMatchObject({ source_id: "", source_title: "", phase: "", queued_at: null });
+  });
+
+  it("does not let a run that died before claiming hold the queue for ever", async () => {
+    const tasks = [task("t1"), task("t2")];
+    const store = memoryStore();
+    let clock = 1_000_000;
+    const v = vault(tasks);
+    expect((await pollTasks(v.client, store, { drive: "d", phase: "create", per_poll: 1, oneAtATime: true }, () => clock)).map((i) => i.task_id)).toEqual(["t1"]);
+    clock += 11 * 60_000; // t1 still pending: its run failed on the way
+    expect((await pollTasks(v.client, store, { drive: "d", phase: "create", per_poll: 1, oneAtATime: true }, () => clock)).map((i) => i.task_id)).toEqual(["t2"]);
+  });
+
+  it("with a hosted model, starts up to per_poll at once, as before", async () => {
+    const tasks = [task("t1"), task("t2"), task("t3"), task("t4", { status: "IN_PROGRESS" })];
     const store = memoryStore();
     const v = vault(tasks);
-    const first = await pollTasks(v.client, store, { drive: "d", phase: "create", per_poll: 2 });
-    expect(first.map((i) => i.task_id)).toEqual(["t1", "t2"]);
-    expect(first[0]).toEqual({ task_id: "t1", source_id: "src-t1", source_title: "Source t1", phase: "create", queued_at: "2026-09-28T10:00:00Z", _dedupe_key: "t1@create" });
+    expect((await pollTasks(v.client, store, { drive: "d", phase: "create", per_poll: 2 })).map((i) => i.task_id)).toEqual(["t1", "t2"]);
     expect((await pollTasks(v.client, store, { drive: "d", phase: "create", per_poll: 2 })).map((i) => i.task_id)).toEqual(["t3"]);
-    expect(await pollTasks(v.client, store, { drive: "d", phase: "create", per_poll: 2 })).toEqual([]);
-    const reflect = await pollTasks(v.client, store, { drive: "d", phase: "reflect", per_poll: 5 });
-    expect(reflect.map((i) => i._dedupe_key)).toEqual(["t5@reflect"]);
-    expect(await pollTasks(vault([], false).client, memoryStore("junk"), { drive: "d", phase: "create", per_poll: 3 })).toEqual([]);
-    expect(toItem({ id: "x", taskType: "claim", status: "PENDING" })).toMatchObject({ source_id: "", source_title: "", phase: "", queued_at: null });
+  });
+
+  it("knows a local model from its connection's address", () => {
+    const auth = (llm_base_url: string) => ({ props: { base_url: "http://127.0.0.1:4201", token: "t", llm_api_key: "k", llm_base_url, llm_default_model: "m" } });
+    expect(oneAtATimeFor(auth("http://127.0.0.1:8083/v1"))).toBe(true);
+    expect(oneAtATimeFor(auth("http://192.168.1.20:11434/v1"))).toBe(true);
+    expect(oneAtATimeFor(auth("https://openrouter.ai/api/v1"))).toBe(false);
+    expect(oneAtATimeFor({})).toBe(false);
+  });
+
+  it("starts a task at a later phase when it reaches it", async () => {
+    const tasks = [task("t5", { currentPhase: "reflect" })];
+    const out = await pollTasks(vault(tasks).client, memoryStore(), { drive: "d", phase: "reflect", per_poll: 5 });
+    expect(out.map((i) => i._dedupe_key)).toEqual(["t5@reflect"]);
   });
 
   it("skips a task whose source was deleted: its run would fail on the first read", async () => {

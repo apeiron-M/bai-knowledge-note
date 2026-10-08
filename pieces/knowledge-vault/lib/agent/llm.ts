@@ -38,6 +38,29 @@ const CHAT_TIMEOUT_MS = 180_000;
  * taking the whole step down.
  */
 export const JSON_CALL_TIMEOUT_MS = 120_000;
+/**
+ * A model on this computer or the local network (llama.cpp, Ollama, LM Studio): slow but free, and
+ * often one request at a time. Its calls get ten minutes; the pipeline's steps allow for that
+ * (templates/pipeline.json). A hosted provider keeps the 120 s that catches a hung service.
+ */
+export const LOCAL_CALL_TIMEOUT_MS = 600_000;
+
+export function isLocalModelEndpoint(baseUrl: string): boolean {
+  let host: string;
+  try {
+    host = new URL(baseUrl).hostname.replace(/^\[|\]$/g, "").toLowerCase();
+  } catch {
+    return false;
+  }
+  if (host === "localhost" || host === "::1" || host.startsWith("127.")) return true;
+  const m = /^(\d+)\.(\d+)\.\d+\.\d+$/.exec(host);
+  if (!m) return /^f[cd][0-9a-f]{2}:/.test(host);
+  const [a, b] = [Number(m[1]), Number(m[2])];
+  return a === 10 || (a === 172 && b >= 16 && b <= 31) || (a === 192 && b === 168);
+}
+
+/** How long one model call may take: ten minutes on this computer or the local network, else 120 s. */
+export const callTimeoutFor = (baseUrl: string) => (isLocalModelEndpoint(baseUrl) ? LOCAL_CALL_TIMEOUT_MS : JSON_CALL_TIMEOUT_MS);
 
 export class LlmClient {
   constructor(
@@ -128,7 +151,7 @@ export async function completeJson(
   const { baseUrl, apiKey } = client.credentials;
   const usage: Usage = { prompt_tokens: 0, completion_tokens: 0, cost: 0 };
   let budget = request.maxTokens ?? 32_000;
-  const timeoutMs = request.timeoutMs ?? JSON_CALL_TIMEOUT_MS;
+  const timeoutMs = request.timeoutMs ?? callTimeoutFor(baseUrl);
   for (let attempt = 1; ; attempt++) {
     // A hang, or a connection dropped before or while the answer arrives, gets one more try.
     const retryable = (error: unknown) => attempt < 2 && (isTimeout(error) || isDroppedConnection(error));

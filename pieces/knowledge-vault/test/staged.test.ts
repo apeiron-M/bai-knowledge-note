@@ -392,3 +392,17 @@ describe("the quality fixes", () => {
     expect(bodies[2].reasoning).toBeUndefined();
   });
 });
+
+describe("how long a model call may take", () => {
+  it("gives a model on this computer or the local network ten minutes, a hosted provider 120 s", async () => {
+    const { callTimeoutFor, isLocalModelEndpoint } = await import("../lib/agent/llm.js");
+    for (const u of ["http://127.0.0.1:8083/v1", "http://localhost:11434/v1", "http://[::1]:8080/v1", "http://192.168.1.20:11434/v1", "http://10.0.0.5:1234/v1"]) {
+      expect(isLocalModelEndpoint(u)).toBe(true);
+      expect(callTimeoutFor(u)).toBe(600_000);
+    }
+    for (const u of ["https://openrouter.ai/api/v1", "https://api.openai.com/v1", "not a url"]) {
+      expect(isLocalModelEndpoint(u)).toBe(false);
+      expect(callTimeoutFor(u)).toBe(120_000);
+    }
+  });
+});
