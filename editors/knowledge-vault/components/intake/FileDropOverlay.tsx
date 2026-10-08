@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState, type DragEvent } from "react";
+import { dragCarriesFiles, droppedFiles } from "./drop-files.js";
 
 /**
  * Drop files anywhere in the vault: the whole window becomes the drop target
@@ -12,8 +13,7 @@ import { useEffect, useRef, useState, type DragEvent } from "react";
  * drop) is left alone.
  */
 
-const hasFiles = (e: DragEvent) =>
-  Array.from(e.dataTransfer.types).includes("Files");
+const hasFiles = (e: DragEvent) => dragCarriesFiles(e.dataTransfer);
 
 /** The drag is over someone else's file drop — a hosted editor that takes files itself. */
 function ownedElsewhere(e: DragEvent): boolean {
@@ -79,7 +79,10 @@ export function useVaultFileDrop({
         if (!hasFiles(e) || e.defaultPrevented || ownedElsewhere(e)) return;
         e.preventDefault();
         end();
-        if (ready) onDrop(Array.from(e.dataTransfer.files));
+        if (ready)
+          void droppedFiles(e.dataTransfer).then((files) => {
+            if (files.length > 0) onDrop(files);
+          });
       },
     },
     /** For the overlay: it is the only hit target while shown, so leaving it is leaving the window. */

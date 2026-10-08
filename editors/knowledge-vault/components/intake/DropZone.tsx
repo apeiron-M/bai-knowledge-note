@@ -1,4 +1,5 @@
 import { useRef, useState } from "react";
+import { dragCarriesFiles, droppedFiles } from "./drop-files.js";
 
 /**
  * The picker, with a drop target of its own — always present while a batch
@@ -23,7 +24,7 @@ export function DropZone({
   const inputRef = useRef<HTMLInputElement>(null);
   const [over, setOver] = useState(false);
 
-  function take(list: FileList | null) {
+  function take(list: FileList | readonly File[] | null) {
     // Copied before the input is cleared: clearing empties its FileList.
     const files = list ? Array.from(list) : [];
     if (inputRef.current) inputRef.current.value = "";
@@ -36,17 +37,17 @@ export function DropZone({
     <div style={hero ? { width: "100%" } : { width: 224, flex: "none" }}>
       <div
         onDragOver={(e) => {
-          if (!e.dataTransfer.types.includes("Files")) return;
+          if (!dragCarriesFiles(e.dataTransfer)) return;
           e.preventDefault();
           if (!disabled) setOver(true);
         }}
         onDragLeave={() => setOver(false)}
         onDrop={(e) => {
-          if (!e.dataTransfer.types.includes("Files")) return;
+          if (!dragCarriesFiles(e.dataTransfer)) return;
           // Handled here: the vault-wide drop target leaves a prevented drop alone.
           e.preventDefault();
           setOver(false);
-          take(e.dataTransfer.files);
+          void droppedFiles(e.dataTransfer).then(take);
         }}
         className={`intake-drop flex flex-col items-center justify-center gap-2 rounded-xl text-center ${
           hero ? "px-6 py-10" : "px-3 py-3"

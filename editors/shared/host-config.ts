@@ -69,6 +69,11 @@ export type KnowledgeVaultHostConfig = {
    * overview opens the vault where the person asked to go. null or unknown: the vault's own default.
    */
   takeOpenView?: (driveId: string) => string | null;
+  /**
+   * Reads files a drop carried only by address (`text/uri-list`): WebKitGTK, the Linux desktop window, hands a
+   * page the addresses of files dragged from a file manager, never the files. The host can read them.
+   */
+  readDroppedFiles?: (uriList: string) => Promise<File[]>;
 };
 
 /** Dispatched on `globalThis` whenever the declaration changes; `useHostConfig` subscribes to it. */
@@ -112,6 +117,7 @@ export function setHostConfig(
       ? { takeIntakeFiles: config.takeIntakeFiles }
       : {}),
     ...(config.takeOpenView ? { takeOpenView: config.takeOpenView } : {}),
+    ...(config.readDroppedFiles ? { readDroppedFiles: config.readDroppedFiles } : {}),
   };
   notifyHostChanged();
 }
