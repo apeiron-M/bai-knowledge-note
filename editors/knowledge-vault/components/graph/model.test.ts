@@ -255,6 +255,26 @@ describe("fitView", () => {
     ).toBeNull();
   });
 
+  it("keeps clear of per-side insets, centred in what is left, at a share of the tight fit", () => {
+    // 200 world units wide in a 400 × 400 canvas, 100 px reserved on the right.
+    const fit = fitView(
+      g,
+      xy([0, 0], [182, 0]),
+      400,
+      400,
+      { top: 0, right: 100, bottom: 0, left: 20 },
+      2,
+      0.8,
+    )!;
+    // (400 − 20 − 100) / 200 = 1.4, × 0.8 = 1.12
+    expect(fit.scale).toBeCloseTo(1.12);
+    // 224 px of graph centred in the 280 px between the insets: starts at 20 + 28.
+    expect(fit.x - 9 * fit.scale).toBeCloseTo(48);
+    expect(fit.x + 191 * fit.scale).toBeLessThanOrEqual(300);
+    // A canvas smaller than its insets still yields a usable view.
+    const tiny = fitView(g, xy([0, 0], [182, 0]), 50, 50, 40)!;
+    expect(tiny.scale).toBeGreaterThan(0);
+  });
 });
 
 describe("packGraph", () => {

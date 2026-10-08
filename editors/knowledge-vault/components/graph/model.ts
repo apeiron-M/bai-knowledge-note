@@ -406,18 +406,28 @@ export function hitTest(
   return inside >= 0 ? inside : near;
 }
 
+/** Screen pixels to keep clear on each side of a fit: controls drawn over the canvas, and margin. */
+export type FitInsets = {
+  top: number;
+  right: number;
+  bottom: number;
+  left: number;
+};
+
 /**
- * The view that fits every placed node with at least `padding` px around it,
- * centred, at most `maxScale`: screen = world × scale + (x, y). Null when
- * nothing is placed.
+ * The view that fits every placed node inside the canvas less `padding` (px on
+ * every side, or per side), centred in what is left, at `room` of the tightest
+ * such fit (1 = edge to edge, less leaves air around the graph), and at most
+ * `maxScale`: screen = world × scale + (x, y). Null when nothing is placed.
  */
 export function fitView(
   g: IndexedGraph,
   pos: Float32Array,
   width: number,
   height: number,
-  padding = 40,
+  padding: number | FitInsets = 40,
   maxScale = 2,
+  room = 1,
 ): { scale: number; x: number; y: number } | null {
   let minX = Infinity;
   let maxX = -Infinity;
@@ -434,16 +444,23 @@ export function fitView(
     if (y + r > maxY) maxY = y + r;
   }
   if (!Number.isFinite(minX)) return null;
+  const inset =
+    typeof padding === "number"
+      ? { top: padding, right: padding, bottom: padding, left: padding }
+      : padding;
+  // A canvas smaller than its insets still gets a view, not a negative one.
+  const w = Math.max(1, width - inset.left - inset.right);
+  const h = Math.max(1, height - inset.top - inset.bottom);
   const scale = Math.min(
-    (width - padding * 2) / Math.max(1e-6, maxX - minX),
-    (height - padding * 2) / Math.max(1e-6, maxY - minY),
+    Math.min(w / Math.max(1e-6, maxX - minX), h / Math.max(1e-6, maxY - minY)) *
+      room,
     maxScale,
   );
-  // Centred both ways (the narrower side gets the slack).
+  // Centred both ways in the area inside the insets (the narrower side gets the slack).
   return {
     scale,
-    x: (width - (maxX - minX) * scale) / 2 - minX * scale,
-    y: (height - (maxY - minY) * scale) / 2 - minY * scale,
+    x: inset.left + (w - (maxX - minX) * scale) / 2 - minX * scale,
+    y: inset.top + (h - (maxY - minY) * scale) / 2 - minY * scale,
   };
 }
 

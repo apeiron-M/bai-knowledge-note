@@ -233,6 +233,26 @@ const SETTLE_DECAY = 0.05;
  */
 const RESTART_CHANGE = 0.05;
 const MAX_ZOOM = 4;
+/**
+ * The first view, and "Fit to screen": the whole graph with air around it.
+ * Clear of the zoom buttons drawn over the top right and the legend over the
+ * bottom left, at 88 % of an edge-to-edge fit, and never closer than 1.5× —
+ * a small vault at 2× was a few huge nodes. It reads as a map to explore
+ * rather than a wall of nodes to scroll.
+ */
+const FIT_INSETS = { top: 40, right: 72, bottom: 96, left: 40 };
+const FIT_ROOM = 0.88;
+const FIT_MAX_SCALE = 1.5;
+
+/** The fitted view for the drawn positions in a canvas of this size. */
+function fitFor(
+  g: IndexedGraph,
+  pos: Float32Array,
+  width: number,
+  height: number,
+): RenderView | null {
+  return fitView(g, pos, width, height, FIT_INSETS, FIT_MAX_SCALE, FIT_ROOM);
+}
 /** Zoom out at most to 0.1×, or to half the fit of a graph larger than that. */
 const MIN_ZOOM = 0.1;
 
@@ -425,6 +445,9 @@ export default function GraphView(props: GraphViewProps) {
         Math.min(globalThis.devicePixelRatio || 1, 2),
       );
       scene.dirty = true;
+      // The window was resized or re-tiled after the graph was framed: frame
+      // it again, unless the user has since panned, zoomed or dragged.
+      if (scene.fitted && !userInteractedRef.current) recenterRef.current?.();
     };
     resize();
     const observer =
@@ -435,7 +458,7 @@ export default function GraphView(props: GraphViewProps) {
     const recenter = () => {
       const g = scene.graph;
       if (!g || !scene.draw) return;
-      const fit = fitView(g, scene.draw.pos, scene.width, scene.height);
+      const fit = fitFor(g, scene.draw.pos, scene.width, scene.height);
       if (!fit) return;
       scene.view = fit;
       scene.dirty = true;
@@ -519,7 +542,7 @@ export default function GraphView(props: GraphViewProps) {
         scene.loaded
       ) {
         if (time - scene.lastFitAt > 500) {
-          scene.fitTarget = fitView(g, draw.pos, scene.width, scene.height);
+          scene.fitTarget = fitFor(g, draw.pos, scene.width, scene.height);
           scene.lastFitAt = time;
         }
         const t = scene.fitTarget;
@@ -732,7 +755,7 @@ export default function GraphView(props: GraphViewProps) {
       const g = scene.graph;
       const fit =
         g && scene.draw
-          ? fitView(g, scene.draw.pos, scene.width, scene.height)
+          ? fitFor(g, scene.draw.pos, scene.width, scene.height)
           : null;
       const min = Math.min(MIN_ZOOM, fit ? fit.scale / 2 : MIN_ZOOM);
       const { scale, x, y } = scene.view;
@@ -950,7 +973,7 @@ export default function GraphView(props: GraphViewProps) {
             ? { alpha: 0.05, decay: SETTLE_DECAY, target: 0 }
             : null;
         if (!userInteractedRef.current) {
-          const fit = fitView(g, merged.pos, scene.width, scene.height);
+          const fit = fitFor(g, merged.pos, scene.width, scene.height);
           if (fit) scene.view = fit;
           scene.fitted = true;
         }
