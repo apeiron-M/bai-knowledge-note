@@ -13,6 +13,7 @@ import { createLlmsRoute } from "./routes/llms.js";
 import { createNotesRoute } from "./routes/notes.js";
 import { createRelationshipRoute } from "./routes/relationships.js";
 import { createNotesRoute as createNotesBatchRoute } from "./routes/create.js";
+import { createHubRoute } from "./routes/hub.js";
 import { createIngestSourceRoute } from "./routes/sources.js";
 import { createSourceFolderRoute } from "./routes/source-folders.js";
 import { registerStructureRoutes } from "./routes/structure.js";
@@ -141,6 +142,8 @@ export class HttpSubgraph extends BaseSubgraph {
         { auth: "renown", body: "parsed" },
         timedRoute("DELETE relationships", createRelationshipRoute(deps, "DELETE")),
       );
+      // The vault's one HUB: created if missing, duplicates merged — under a per-vault lock (routes/hub.ts).
+      this.http.post("hub", { auth: "renown", body: "parsed" }, timedRoute("POST hub", createHubRoute(deps)));
       this.http.post(
         "tasks/:id/claim",
         { auth: "renown", body: "parsed" },

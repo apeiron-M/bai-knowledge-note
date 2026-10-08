@@ -295,26 +295,33 @@ describe("synthesize", () => {
     expect(m.users[0]).toMatch(/- new:hub \[HUB\] .*created with the first MoC/);
     expect(out.new_mocs).toHaveLength(1);
   });
-  it("creates the HUB first when a new MoC hangs from it, then the MoC under it", async () => {
-    let n = 0;
-    const v = vault({ "notes/d": { name: "moc-check", state: { global: { name: "MoC check", nodes: [] } } }, notes: () => ({ notes: [{ id: ++n === 1 ? "hub-1" : "moc-1", operations: [{ type: "CREATE_MOC", error: null }] }] }), relationships: {} });
+  it("asks the vault for its one HUB when a new MoC hangs from it, then creates the MoC under it", async () => {
+    const v = vault({ hub: { id: "hub-1", created: true, merged: [] }, notes: { notes: [{ id: "moc-1", operations: [{ type: "CREATE_MOC", error: null }] }] }, relationships: {} });
     const out = await writePlacementsStage(v.client, { drive: "d", placements: NOTES3.map((x) => ({ note: x.id, moc: "new:1" })), newMocs: [{ key: "new:1", title: "Euro markets", description: "d", orientation: "o", parent: "new:hub" }], coreIdeas: new Set(), now: at });
-    expect(v.requests[0].path).toBe("notes/d");
-    const hub = v.requests[1].json as { notes: { actions: { input: Record<string, unknown> }[] }[] };
-    expect(hub.notes[0].actions[0].input).toMatchObject({ tier: "HUB", title: "MoC check" });
-    const topic = v.requests[2].json as { notes: { actions: { input: Record<string, unknown> }[] }[] };
+    expect(v.requests[0]).toMatchObject({ method: "POST", path: "hub", query: { drive: "d" } });
+    const topic = v.requests[1].json as { notes: { actions: { input: Record<string, unknown> }[] }[] };
     expect(topic.notes[0].actions[0].input).toMatchObject({ tier: "TOPIC", parentRef: "hub-1" });
-    expect(v.requests[3].json).toEqual({ source: "hub-1", target: "moc-1", type: "CHILD_MOC" });
+    expect(v.requests[2].json).toEqual({ source: "hub-1", target: "moc-1", type: "CHILD_MOC" });
     expect(out.created_mocs).toEqual(["hub-1", "moc-1"]);
     expect(out.linked).toBe(3);
     expect(out.summary).toBe("Added 3 notes to their MoCs; created the vault's HUB and 1 TOPIC MoC, each attached to its parent.");
   });
-  it("names the HUB 'Hub' when the vault's name cannot be read", async () => {
-    let n = 0;
-    const v = vault({ "notes/d": () => { throw new Error("down"); }, notes: () => ({ notes: [{ id: ++n === 1 ? "hub-1" : "moc-1", operations: [{ type: "CREATE_MOC", error: null }] }] }), relationships: {} });
-    await writePlacementsStage(v.client, { drive: "d", placements: NOTES3.map((x) => ({ note: x.id, moc: "new:1" })), newMocs: [{ key: "new:1", title: "T", description: "d", orientation: "o", parent: "new:hub" }], coreIdeas: new Set(), now: at });
-    const hub = v.requests.find((r) => (r.json as { notes?: { actions: { input: { tier?: string } }[] }[] } | undefined)?.notes?.[0]?.actions[0]?.input.tier === "HUB")!.json as { notes: { actions: { input: Record<string, unknown> }[] }[] };
-    expect(hub.notes[0].actions[0].input).toMatchObject({ title: "Hub" });
+  it("uses the HUB another run made meanwhile and never creates a second (overlapping runs)", async () => {
+    const v = vault({ hub: { id: "hub-0", created: false, merged: [] }, notes: { notes: [{ id: "moc-1", operations: [{ type: "CREATE_MOC", error: null }] }] }, relationships: {} });
+    const out = await writePlacementsStage(v.client, { drive: "d", placements: NOTES3.map((x) => ({ note: x.id, moc: "new:1" })), newMocs: [{ key: "new:1", title: "T", description: "d", orientation: "o", parent: "new:hub" }], coreIdeas: new Set(), now: at });
+    expect(v.requests.filter((r) => (r.json as { notes?: { actions: { input: { tier?: string } }[] }[] } | undefined)?.notes?.[0]?.actions[0]?.input.tier === "HUB")).toEqual([]);
+    expect((v.requests[1].json as { notes: { actions: { input: Record<string, unknown> }[] }[] }).notes[0].actions[0].input).toMatchObject({ parentRef: "hub-0" });
+    expect(out.created_mocs).toEqual(["moc-1"]);
+    expect(out.summary).toBe("Added 3 notes to their MoCs; created 1 TOPIC MoC, each attached to its parent.");
+  });
+  it("has the vault merge duplicate HUBs before planning, and plans against the one left", async () => {
+    let reads = 0;
+    const twoHubs = { nodes: [{ documentId: "hubA", noteType: "MOC (HUB)", status: "MOC" }, { documentId: "hubB", noteType: "MOC (HUB)", status: "MOC" }, { documentId: "t1", title: "Topic", status: "MOC" }], edges: [{ linkType: "CHILD_MOC", sourceDocumentId: "hubB", targetDocumentId: "t1" }] };
+    const v = vault({ "graph.json": () => (++reads, twoHubs), hub: { id: "hubA", created: false, merged: ["hubB"] } });
+    const { mocs } = await readMocs(v.client, "d");
+    expect(v.requests.some((r) => r.path === "hub" && r.method === "POST")).toBe(true);
+    expect(reads).toBe(2);
+    expect(mocs.filter((m) => m.tier === "HUB").map((m) => m.id)).toEqual(["hubA"]);
   });
   it("reports a MoC the vault rejected and a parent link that failed", async () => {
     const v = vault({ notes: { notes: [{ id: "m9", operations: [{ type: "CREATE_MOC", error: "tier invalid" }] }] }, relationships: () => { throw new Error("down"); } });

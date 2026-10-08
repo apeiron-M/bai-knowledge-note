@@ -24,7 +24,17 @@ const arr = (v: unknown): unknown[] => (Array.isArray(v) ? v : []);
 const rec = (v: unknown): Record<string, unknown> => (typeof v === "object" && v !== null && !Array.isArray(v) ? (v as Record<string, unknown>) : {});
 
 export async function readMocs(client: KnowledgeVaultClient, drive: string): Promise<{ mocs: MocInfo[]; coreIdeas: Set<string> }> {
-  const graph = await client.request<{ nodes: GraphNode[]; edges: GraphEdge[] }>({ path: "graph.json", query: { drive }, timeoutMs: 60_000 });
+  let graph = await client.request<{ nodes: GraphNode[]; edges: GraphEdge[] }>({ path: "graph.json", query: { drive }, timeoutMs: 60_000 });
+  // More than one HUB (overlapping runs made them before `POST hub` existed): the vault merges them, then is read again.
+  if (graph.nodes.filter((n) => n.status === "MOC" && /HUB/.test(n.noteType ?? "")).length > 1) {
+    const merged = await client.request<{ merged?: string[] }>({ method: "POST", path: "hub", query: { drive }, timeoutMs: 120_000 }).catch(() => ({ merged: [] }));
+    if (merged.merged?.length) {
+      const gone = new Set(merged.merged);
+      graph = await client.request<{ nodes: GraphNode[]; edges: GraphEdge[] }>({ path: "graph.json", query: { drive }, timeoutMs: 60_000 });
+      // The index catches up asynchronously: drop what the vault just deleted.
+      graph = { nodes: graph.nodes.filter((n) => !gone.has(n.documentId)), edges: graph.edges.filter((e) => !gone.has(e.sourceDocumentId) && !gone.has(e.targetDocumentId)) };
+    }
+  }
   const titles = new Map(graph.nodes.map((n) => [n.documentId, n.title ?? ""]));
   const mocs = graph.nodes.filter((n) => n.status === "MOC").map((n): MocInfo => {
     const tier = /HUB/.test(n.noteType ?? "") ? "HUB" : /DOMAIN/.test(n.noteType ?? "") ? "DOMAIN" : "TOPIC";
@@ -123,43 +133,17 @@ export async function writePlacementsStage(
   const problems: string[] = [];
   const slug = (title: string) => title.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "").slice(0, 60) || "moc";
   let hubId: string | undefined;
+  let createdHub = false;
   if (args.newMocs.some((m) => m.parent === NEW_HUB)) {
-    // The vault's first MoC: its HUB comes first, so the new MoC has a parent and stays reachable.
-    // It is named after the vault (MoC titles are set once, at creation); "Hub" if the name cannot be read.
-    const vaultName = await client
-      .request<{ name?: string; state?: { global?: { name?: string } } }>({ path: `notes/${args.drive}`, query: { drive: args.drive } })
-      .then((d) => (d.state?.global?.name ?? d.name ?? "").trim())
-      .catch(() => "");
-    const body = await client.request<{ notes: { id: string; operations: { type: string; error?: string | null }[] }[] }>({
-      method: "POST",
-      path: "notes",
-      timeoutMs: 120_000,
-      json: {
-        drive: args.drive,
-        documentType: "bai/moc",
-        notes: [
-          {
-            name: "hub",
-            actions: [
-              {
-                type: "CREATE_MOC",
-                input: {
-                  title: vaultName || "Hub",
-                  description: "The vault's entry point: every domain and topic map hangs from here.",
-                  orientation: "Start here. Each map below collects the notes on one theme; open the one closest to your question.",
-                  tier: "HUB",
-                  createdAt: at,
-                },
-              },
-            ],
-          },
-        ],
-      },
-    });
-    const doc = body.notes[0];
-    const failed = doc?.operations.find((o) => o.error);
-    if (!doc || failed) problems.push(`the vault's HUB: ${failed?.error ?? "not created"}`);
-    else hubId = doc.id;
+    // The vault's first MoC needs its HUB. The vault makes it — or hands back the one another run made
+    // meanwhile: `POST hub` holds a per-vault lock, so overlapping runs never create two.
+    try {
+      const hub = await client.request<{ id: string; created: boolean }>({ method: "POST", path: "hub", query: { drive: args.drive }, timeoutMs: 120_000 });
+      hubId = hub.id;
+      if (hub.created) createdHub = true;
+    } catch (error) {
+      problems.push(`the vault's HUB: ${errorMessage(error)}`);
+    }
   }
   const parentOf = (m: NewMoc) => (m.parent === NEW_HUB ? hubId : m.parent);
   const writable = args.newMocs.filter((m) => parentOf(m));
@@ -208,8 +192,8 @@ export async function writePlacementsStage(
     }
   }
   return {
-    summary: `Added ${linked} note${linked === 1 ? "" : "s"} to their MoCs${already ? ` (${already} already there)` : ""}${created.size ? `; created ${hubId ? "the vault's HUB and " : ""}${created.size} TOPIC MoC${created.size === 1 ? "" : "s"}, each attached to its parent` : ""}${problems.length ? `; ${problems.length} problem${problems.length === 1 ? "" : "s"}` : ""}.`,
-    created_mocs: [...(hubId ? [hubId] : []), ...created.values()],
+    summary: `Added ${linked} note${linked === 1 ? "" : "s"} to their MoCs${already ? ` (${already} already there)` : ""}${created.size ? `; created ${createdHub ? "the vault's HUB and " : ""}${created.size} TOPIC MoC${created.size === 1 ? "" : "s"}, each attached to its parent` : ""}${problems.length ? `; ${problems.length} problem${problems.length === 1 ? "" : "s"}` : ""}.`,
+    created_mocs: [...(createdHub && hubId ? [hubId] : []), ...created.values()],
     linked,
     problems,
   };
