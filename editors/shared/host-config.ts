@@ -27,6 +27,13 @@ export type KnowledgeVaultHostConfig = {
   bearer?: () => Promise<string | undefined>;
   /** Absent when nobody is signed in. */
   identity?: KnowledgeVaultHostIdentity;
+  /**
+   * Runs an OAuth sign-in outside this page and resolves with the returned `code`. The host
+   * supplies the callback URL (`buildUrl(callback)` gives the provider URL to open) and receives
+   * the redirect itself. A desktop window cannot take a full-page redirect back from the system
+   * browser; when this is declared, the chat's OpenRouter connect uses it instead of redirecting.
+   */
+  externalSignIn?: (buildUrl: (callbackUrl: string) => string) => Promise<string>;
 };
 
 /** Dispatched on `globalThis` whenever the declaration changes; `useHostConfig` subscribes to it. */
@@ -59,6 +66,7 @@ export function setHostConfig(
     switchboardOrigin: config.switchboardOrigin,
     ...(config.bearer ? { bearer: config.bearer } : {}),
     ...(config.identity ? { identity: { ...config.identity } } : {}),
+    ...(config.externalSignIn ? { externalSignIn: config.externalSignIn } : {}),
   };
   notifyHostChanged();
 }

@@ -283,6 +283,39 @@ describe("synthesize", () => {
     expect(out).toMatchObject({ created_mocs: ["moc-new"], linked: 1, problems: ["CORE_IDEA top → n2: refused"] });
     expect(out.summary).toBe("Added 1 note to their MoCs (1 already there); created 1 TOPIC MoC, each attached to its parent; 1 problem.");
   });
+  it("in a vault with no HUB yet, offers one to be created with the first MoC (else no MoC could ever be made)", async () => {
+    const empty: MocInfo[] = [];
+    const plan = checkPlan({ placements: NOTES3.map((n) => ({ note: n.id, moc: "new:1" })), new_mocs: [{ key: "new:1", title: "Euro markets", description: "d", orientation: "o", parent: "new:hub" }] }, NOTES3, empty);
+    expect(plan.problems).toEqual([]);
+    expect(plan.newMocs[0]).toMatchObject({ parent: "new:hub" });
+    // With a HUB in place, the existing one is the parent, never a second.
+    expect(checkPlan({ placements: NOTES3.map((n) => ({ note: n.id, moc: "new:1" })), new_mocs: [{ key: "new:1", title: "X", parent: "new:hub" }] }, NOTES3, MOCS).problems).toContain('new MoC "X" needs an existing DOMAIN or the HUB as parent, not "new:hub"');
+    const m = modelSays(JSON.stringify({ placements: NOTES3.map((n) => ({ note: n.id, moc: "new:1" })), new_mocs: [{ key: "new:1", title: "Euro markets", description: "d", orientation: "o", parent: "new:hub" }] }));
+    const out = await planStage(m.llm, "m", NOTES3, empty, m.fetchImpl);
+    expect(m.users[0]).toMatch(/- new:hub \[HUB\] .*created with the first MoC/);
+    expect(out.new_mocs).toHaveLength(1);
+  });
+  it("creates the HUB first when a new MoC hangs from it, then the MoC under it", async () => {
+    let n = 0;
+    const v = vault({ "notes/d": { name: "moc-check", state: { global: { name: "MoC check", nodes: [] } } }, notes: () => ({ notes: [{ id: ++n === 1 ? "hub-1" : "moc-1", operations: [{ type: "CREATE_MOC", error: null }] }] }), relationships: {} });
+    const out = await writePlacementsStage(v.client, { drive: "d", placements: NOTES3.map((x) => ({ note: x.id, moc: "new:1" })), newMocs: [{ key: "new:1", title: "Euro markets", description: "d", orientation: "o", parent: "new:hub" }], coreIdeas: new Set(), now: at });
+    expect(v.requests[0].path).toBe("notes/d");
+    const hub = v.requests[1].json as { notes: { actions: { input: Record<string, unknown> }[] }[] };
+    expect(hub.notes[0].actions[0].input).toMatchObject({ tier: "HUB", title: "MoC check" });
+    const topic = v.requests[2].json as { notes: { actions: { input: Record<string, unknown> }[] }[] };
+    expect(topic.notes[0].actions[0].input).toMatchObject({ tier: "TOPIC", parentRef: "hub-1" });
+    expect(v.requests[3].json).toEqual({ source: "hub-1", target: "moc-1", type: "CHILD_MOC" });
+    expect(out.created_mocs).toEqual(["hub-1", "moc-1"]);
+    expect(out.linked).toBe(3);
+    expect(out.summary).toBe("Added 3 notes to their MoCs; created the vault's HUB and 1 TOPIC MoC, each attached to its parent.");
+  });
+  it("names the HUB 'Hub' when the vault's name cannot be read", async () => {
+    let n = 0;
+    const v = vault({ "notes/d": () => { throw new Error("down"); }, notes: () => ({ notes: [{ id: ++n === 1 ? "hub-1" : "moc-1", operations: [{ type: "CREATE_MOC", error: null }] }] }), relationships: {} });
+    await writePlacementsStage(v.client, { drive: "d", placements: NOTES3.map((x) => ({ note: x.id, moc: "new:1" })), newMocs: [{ key: "new:1", title: "T", description: "d", orientation: "o", parent: "new:hub" }], coreIdeas: new Set(), now: at });
+    const hub = v.requests.find((r) => (r.json as { notes?: { actions: { input: { tier?: string } }[] }[] } | undefined)?.notes?.[0]?.actions[0]?.input.tier === "HUB")!.json as { notes: { actions: { input: Record<string, unknown> }[] }[] };
+    expect(hub.notes[0].actions[0].input).toMatchObject({ title: "Hub" });
+  });
   it("reports a MoC the vault rejected and a parent link that failed", async () => {
     const v = vault({ notes: { notes: [{ id: "m9", operations: [{ type: "CREATE_MOC", error: "tier invalid" }] }] }, relationships: () => { throw new Error("down"); } });
     const out = await writePlacementsStage(v.client, { drive: "d", placements: [{ note: "n1", moc: "new:1" }, { note: "n2", moc: "new:1" }], newMocs: [{ key: "new:1", title: "!!!", description: "", orientation: "", parent: "hub" }], coreIdeas: new Set() });

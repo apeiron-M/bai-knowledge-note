@@ -1,4 +1,6 @@
 import { useState } from "react";
+import { isDesktopHost } from "../../shared/host-config.js";
+import { resolveMcpEndpoint } from "../../shared/subgraph-endpoint.js";
 
 export function GettingStartedButton() {
   const [open, setOpen] = useState(false);
@@ -603,10 +605,17 @@ function PluginSection() {
       </P>
 
       <H>Setup — Local</H>
-      <Step n={1} title="Start the reactor locally">
-        Run ph vetra --watch in your project directory. MCP is served at
-        http://localhost:4001/mcp
-      </Step>
+      {isDesktopHost() ? (
+        <Step n={1} title="Use the app's engine">
+          Knowledge Vault runs the engine for you while it is open. MCP is
+          served at {resolveMcpEndpoint()} (Settings › Diagnostics shows it too).
+        </Step>
+      ) : (
+        <Step n={1} title="Start the reactor locally">
+          Run ph vetra --watch in your project directory. MCP is served at{" "}
+          {resolveMcpEndpoint()}
+        </Step>
+      )}
       <Step n={2} title="Open Claude Code with the plugin">
         claude --plugin-dir ~/path/to/powerhouse-knowledge
       </Step>

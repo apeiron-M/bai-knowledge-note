@@ -2,6 +2,7 @@ import { afterEach, describe, expect, it, vi } from "vitest";
 import {
   resolveAuthEndpoint,
   resolveKnowledgeGraphEndpoint,
+  resolveMcpEndpoint,
   resolveReactorEndpoint,
   resolveSwitchboardOrigin,
 } from "./subgraph-endpoint.js";
@@ -115,5 +116,18 @@ describe("declared host configuration", () => {
   it("leaves Connect behaviour untouched when no host is declared", () => {
     onHost("knowledge-vault.vetra.io");
     expect(resolveSwitchboardOrigin()).toBe("https://switchboard.knowledge-vault.vetra.io");
+  });
+});
+
+describe("resolveMcpEndpoint", () => {
+  afterEach(() => setHostConfig(undefined));
+  it("names the engine the host declared — the desktop app's port, not Vetra's 4001", () => {
+    setHostConfig({ kind: "desktop", switchboardOrigin: "http://127.0.0.1:4203" });
+    expect(resolveMcpEndpoint()).toBe("http://127.0.0.1:4203/mcp");
+  });
+  it("falls back to the local Vetra engine when nothing is declared and no origin is known", () => {
+    vi.stubGlobal("window", undefined);
+    expect(resolveMcpEndpoint()).toBe("http://localhost:4001/mcp");
+    vi.unstubAllGlobals();
   });
 });

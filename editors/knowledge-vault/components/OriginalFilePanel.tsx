@@ -1,5 +1,8 @@
 import { useRef, useEffect, useState } from "react";
 import { formatFileSize, isBrowserRenderable } from "../lib/mime.js";
+import { originalKind } from "../lib/pdf-inline.js";
+import { PdfPages } from "./PdfPages.js";
+import { TextOriginal } from "./TextOriginal.js";
 
 type OriginalSource = {
   originalFile?: string | null;
@@ -271,7 +274,9 @@ export function OriginalFileViewer({
         <style>{LINK_STYLE}</style>
       </p>
     );
-  if (state.mimeType.includes("pdf"))
+  const kind = originalKind(state.mimeType);
+  if (kind === "pdf-pages") return <PdfPages url={state.url} name={name} />;
+  if (kind === "pdf-frame")
     return (
       <iframe
         title={name}
@@ -280,7 +285,7 @@ export function OriginalFileViewer({
         style={{ height: "70vh", border: 0 }}
       />
     );
-  if (state.mimeType.startsWith("image/"))
+  if (kind === "image")
     return (
       <img
         alt={name}
@@ -289,6 +294,10 @@ export function OriginalFileViewer({
         style={{ maxHeight: "70vh" }}
       />
     );
+  if (kind === "audio") return <audio controls src={state.url} className="w-full" aria-label={name} />;
+  if (kind === "video")
+    return <video controls src={state.url} className="mx-auto rounded" style={{ maxHeight: "70vh", maxWidth: "100%" }} aria-label={name} />;
+  if (kind === "markdown" || kind === "text") return <TextOriginal url={state.url} markdown={kind === "markdown"} />;
   return (
     <a
       href={state.url}

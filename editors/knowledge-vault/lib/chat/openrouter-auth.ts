@@ -51,6 +51,52 @@ function randomVerifier(): string {
   return base64Url(crypto.getRandomValues(new Uint8Array(64)));
 }
 
+function authUrl(callback: string, challenge: string): string {
+  return (
+    `${AUTH_URL}?callback_url=${encodeURIComponent(callback)}` +
+    `&code_challenge=${encodeURIComponent(challenge)}` +
+    `&code_challenge_method=S256`
+  );
+}
+
+/** Trade a returned code for a key; null when OpenRouter refuses or answers without one. */
+async function exchangeCode(code: string, verifier: string): Promise<string | null> {
+  try {
+    const res = await fetch(TOKEN_URL, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ code, code_verifier: verifier, code_challenge_method: "S256" }),
+    });
+    if (!res.ok) return null;
+    const body = (await res.json()) as { key?: unknown };
+    return typeof body.key === "string" && body.key ? body.key : null;
+  } catch {
+    return null;
+  }
+}
+
+/**
+ * The flow for a host that runs sign-ins outside the page (the desktop app: the system
+ * browser returns to the host's own callback, not to this window). The verifier stays in
+ * memory here — it never leaves the page — and nothing navigates.
+ */
+export async function connectThroughHost(
+  signIn: (buildUrl: (callbackUrl: string) => string) => Promise<string>,
+): Promise<{ key: string } | null> {
+  const verifier = randomVerifier();
+  const challenge = await pkceChallenge(verifier);
+  let code: string;
+  try {
+    code = await signIn((callback) => authUrl(callback, challenge));
+  } catch {
+    return null;
+  }
+  const key = await exchangeCode(code, verifier);
+  if (!key) return null;
+  storeKey(key);
+  return { key };
+}
+
 /** Persist where to come back to, then hand the tab to OpenRouter. */
 export async function beginOAuth(intent: ReturnIntent): Promise<void> {
   const verifier = randomVerifier();
@@ -60,11 +106,7 @@ export async function beginOAuth(intent: ReturnIntent): Promise<void> {
 
   // The callback must be this exact page so the app remounts where it left.
   const callback = `${location.origin}${location.pathname}${location.search}`;
-  const url =
-    `${AUTH_URL}?callback_url=${encodeURIComponent(callback)}` +
-    `&code_challenge=${encodeURIComponent(await pkceChallenge(verifier))}` +
-    `&code_challenge_method=S256`;
-  location.assign(url);
+  location.assign(authUrl(callback, await pkceChallenge(verifier)));
 }
 
 /** Read the post-redirect intent exactly once; subsequent reads are null. */
@@ -109,24 +151,10 @@ export async function completeOAuthFromUrl(): Promise<{ key: string } | null> {
   stripCodeFromUrl();
   if (!verifier) return null;
 
-  try {
-    const res = await fetch(TOKEN_URL, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        code,
-        code_verifier: verifier,
-        code_challenge_method: "S256",
-      }),
-    });
-    if (!res.ok) return null;
-    const body = (await res.json()) as { key?: unknown };
-    if (typeof body.key !== "string" || !body.key) return null;
-    storeKey(body.key);
-    return { key: body.key };
-  } catch {
-    return null;
-  }
+  const key = await exchangeCode(code, verifier);
+  if (!key) return null;
+  storeKey(key);
+  return { key };
 }
 
 /**

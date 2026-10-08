@@ -7,8 +7,13 @@ import { completeJson, type LlmClient } from "./llm.js";
  * Place a source's notes in the MoC hierarchy: each note becomes a CORE_IDEA
  * of a TOPIC or DOMAIN MoC. A new TOPIC MoC is created only when three or
  * more of the notes share a theme no MoC covers, and it is attached under a
- * DOMAIN or the HUB in the same run, so no MoC is left unreachable.
+ * DOMAIN or the HUB in the same run, so no MoC is left unreachable. A vault
+ * with no HUB yet (a new one) gets it created with its first MoC — otherwise no
+ * MoC could ever be made there.
  */
+
+/** The parent a new MoC names when the vault has no HUB yet: the HUB, created in the same run. */
+export const NEW_HUB = "new:hub";
 
 export type MocInfo = { id: string; title: string; description: string; tier: "HUB" | "DOMAIN" | "TOPIC"; members: number; samples: string[]; parent: string | null };
 type GraphNode = { documentId: string; title?: string; description?: string; noteType?: string; status?: string };
@@ -35,7 +40,7 @@ export const PLACE_SYSTEM = `You place atomic notes into a knowledge vault's Map
 
 MoCs form a tree: one HUB, DOMAIN MoCs under it, TOPIC MoCs (3-9 notes each) under a DOMAIN or the HUB.
 For each note choose the TOPIC or DOMAIN MoC whose theme it belongs to. Judge by what the MoC's description and sample notes are about, not by shared words.
-Only when three or more of these notes share a theme that no existing MoC covers, propose ONE new TOPIC MoC for them, with a parent that is an existing DOMAIN, or the HUB when no domain fits. Never place a note in the HUB itself.
+Only when three or more of these notes share a theme that no existing MoC covers, propose ONE new TOPIC MoC for them, with a parent that is an existing DOMAIN, or the HUB when no domain fits. When the list offers "new:hub" (the vault has no HUB yet), use "new:hub" as that parent: the HUB is created with the first MoC. Never place a note in the HUB itself.
 A new MoC needs: title (the theme, plainly), description (what it covers, one or two sentences), orientation (how to read it: what the notes argue together and where to start).
 
 Answer: {"placements":[{"note":"<note id>","moc":"<moc id or new:1>"}],"new_mocs":[{"key":"new:1","title":"...","description":"...","orientation":"...","parent":"<DOMAIN or HUB id>"}]}`;
@@ -46,12 +51,14 @@ export type NewMoc = { key: string; title: string; description: string; orientat
 export function checkPlan(value: unknown, notes: NoteSummary[], mocs: MocInfo[]) {
   const noteIds = new Set(notes.map((n) => n.id));
   const byId = new Map(mocs.map((m) => [m.id, m]));
+  const hubToCreate = !mocs.some((m) => m.tier === "HUB");
   const problems: string[] = [];
   const newMocs: NewMoc[] = [];
   for (const m of arr(rec(value).new_mocs).map(rec)) {
     const parent = byId.get(str(m.parent));
-    if (!str(m.key).startsWith("new:") || !str(m.title).trim()) problems.push(`new MoC "${str(m.title)}" needs a key like new:1 and a title`);
-    else if (!parent || parent.tier === "TOPIC") problems.push(`new MoC "${str(m.title)}" needs an existing DOMAIN or the HUB as parent, not "${str(m.parent)}"`);
+    const underNewHub = hubToCreate && str(m.parent) === NEW_HUB;
+    if (!str(m.key).startsWith("new:") || str(m.key) === NEW_HUB || !str(m.title).trim()) problems.push(`new MoC "${str(m.title)}" needs a key like new:1 and a title`);
+    else if (!underNewHub && (!parent || parent.tier === "TOPIC")) problems.push(`new MoC "${str(m.title)}" needs an existing DOMAIN or the HUB as parent, not "${str(m.parent)}"`);
     else newMocs.push({ key: str(m.key), title: str(m.title).trim(), description: str(m.description).trim(), orientation: str(m.orientation).trim(), parent: str(m.parent) });
   }
   const newKeys = new Set(newMocs.map((m) => m.key));
@@ -75,6 +82,7 @@ export async function planStage(llm: LlmClient, model: string, notes: NoteSummar
   const listing = [
     "MoCs:",
     ...mocs.map((m) => `- ${m.id} [${m.tier}${m.parent ? `, under ${m.parent}` : ""}] ${m.title} (${m.members} notes): ${m.description}${m.samples.length ? ` e.g. ${m.samples.map((t) => `"${t}"`).join("; ")}` : ""}`),
+    ...(mocs.some((m) => m.tier === "HUB") ? [] : [`- ${NEW_HUB} [HUB] the vault's entry point, created with the first MoC (no notes are placed in it)`]),
     "",
     "Notes to place:",
     ...notes.map((n) => `- ${n.id}: ${n.title} — ${n.description}`),
@@ -113,7 +121,15 @@ export async function writePlacementsStage(
   const at = (args.now ?? (() => new Date()))().toISOString();
   const created = new Map<string, string>();
   const problems: string[] = [];
-  if (args.newMocs.length) {
+  const slug = (title: string) => title.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "").slice(0, 60) || "moc";
+  let hubId: string | undefined;
+  if (args.newMocs.some((m) => m.parent === NEW_HUB)) {
+    // The vault's first MoC: its HUB comes first, so the new MoC has a parent and stays reachable.
+    // It is named after the vault (MoC titles are set once, at creation); "Hub" if the name cannot be read.
+    const vaultName = await client
+      .request<{ name?: string; state?: { global?: { name?: string } } }>({ path: `notes/${args.drive}`, query: { drive: args.drive } })
+      .then((d) => (d.state?.global?.name ?? d.name ?? "").trim())
+      .catch(() => "");
     const body = await client.request<{ notes: { id: string; operations: { type: string; error?: string | null }[] }[] }>({
       method: "POST",
       path: "notes",
@@ -121,23 +137,57 @@ export async function writePlacementsStage(
       json: {
         drive: args.drive,
         documentType: "bai/moc",
-        notes: args.newMocs.map((m) => ({
-          name: m.title.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "").slice(0, 60) || "moc",
-          actions: [{ type: "CREATE_MOC", input: { title: m.title, description: m.description, orientation: m.orientation, tier: "TOPIC", parentRef: m.parent, createdAt: at } }],
+        notes: [
+          {
+            name: "hub",
+            actions: [
+              {
+                type: "CREATE_MOC",
+                input: {
+                  title: vaultName || "Hub",
+                  description: "The vault's entry point: every domain and topic map hangs from here.",
+                  orientation: "Start here. Each map below collects the notes on one theme; open the one closest to your question.",
+                  tier: "HUB",
+                  createdAt: at,
+                },
+              },
+            ],
+          },
+        ],
+      },
+    });
+    const doc = body.notes[0];
+    const failed = doc?.operations.find((o) => o.error);
+    if (!doc || failed) problems.push(`the vault's HUB: ${failed?.error ?? "not created"}`);
+    else hubId = doc.id;
+  }
+  const parentOf = (m: NewMoc) => (m.parent === NEW_HUB ? hubId : m.parent);
+  const writable = args.newMocs.filter((m) => parentOf(m));
+  if (writable.length) {
+    const body = await client.request<{ notes: { id: string; operations: { type: string; error?: string | null }[] }[] }>({
+      method: "POST",
+      path: "notes",
+      timeoutMs: 120_000,
+      json: {
+        drive: args.drive,
+        documentType: "bai/moc",
+        notes: writable.map((m) => ({
+          name: slug(m.title),
+          actions: [{ type: "CREATE_MOC", input: { title: m.title, description: m.description, orientation: m.orientation, tier: "TOPIC", parentRef: parentOf(m), createdAt: at } }],
         })),
       },
     });
     body.notes.forEach((doc, i) => {
-      const m = args.newMocs[i];
+      const m = writable[i];
       const failed = doc.operations.find((o) => o.error);
       if (failed) problems.push(`MoC "${m.title}": ${failed.error}`);
       created.set(m.key, doc.id);
     });
-    for (const m of args.newMocs) {
+    for (const m of writable) {
       const id = created.get(m.key);
       if (!id) continue;
       await client
-        .request({ method: "POST", path: "relationships", json: { source: m.parent, target: id, type: "CHILD_MOC" } })
+        .request({ method: "POST", path: "relationships", json: { source: parentOf(m), target: id, type: "CHILD_MOC" } })
         .catch((error: unknown) => problems.push(`attach "${m.title}" under its parent: ${errorMessage(error)}`));
     }
   }
@@ -158,8 +208,8 @@ export async function writePlacementsStage(
     }
   }
   return {
-    summary: `Added ${linked} note${linked === 1 ? "" : "s"} to their MoCs${already ? ` (${already} already there)` : ""}${created.size ? `; created ${created.size} TOPIC MoC${created.size === 1 ? "" : "s"}, each attached to its parent` : ""}${problems.length ? `; ${problems.length} problem${problems.length === 1 ? "" : "s"}` : ""}.`,
-    created_mocs: [...created.values()],
+    summary: `Added ${linked} note${linked === 1 ? "" : "s"} to their MoCs${already ? ` (${already} already there)` : ""}${created.size ? `; created ${hubId ? "the vault's HUB and " : ""}${created.size} TOPIC MoC${created.size === 1 ? "" : "s"}, each attached to its parent` : ""}${problems.length ? `; ${problems.length} problem${problems.length === 1 ? "" : "s"}` : ""}.`,
+    created_mocs: [...(hubId ? [hubId] : []), ...created.values()],
     linked,
     problems,
   };
