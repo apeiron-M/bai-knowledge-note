@@ -232,6 +232,15 @@ const SETTLE_DECAY = 0.05;
  * session made from scratch is laid out again instead of nudged.
  */
 const RESTART_CHANGE = 0.05;
+/**
+ * Share of the graph a remembered layout must already place to be reused. A
+ * vault being filled by the pipeline grows between visits — 20 notes to 48 in
+ * an afternoon — and at the old 90 % nearly every visit threw its layout away
+ * and laid the whole graph out again: a second of spreading on every open, and
+ * a different picture each time. From half known, the known nodes open where
+ * they were left and the new ones settle in beside their neighbours.
+ */
+const RESTORE_SHARE = 0.5;
 const MAX_ZOOM = 4;
 /**
  * The first view, and "Fit to screen": the whole graph with air around it.
@@ -963,19 +972,28 @@ export default function GraphView(props: GraphViewProps) {
       if (
         saved &&
         g.nodes.length > 0 &&
-        merged.restored >= g.nodes.length * 0.9
+        merged.restored >= g.nodes.length * RESTORE_SHARE
       ) {
         // A remembered layout opens exactly as it was left. Only nodes it
-        // does not know need room: then a short, gentle settle.
+        // does not know need room — they start beside a neighbour — and the
+        // settle is as warm as the share of them: a few new notes barely
+        // stir it, a third new makes real room.
         scene.fromScratch = false;
+        const fresh = (g.nodes.length - merged.restored) / g.nodes.length;
         heat =
-          merged.restored < g.nodes.length
-            ? { alpha: 0.05, decay: SETTLE_DECAY, target: 0 }
+          fresh > 0
+            ? {
+                alpha: Math.min(0.5, 0.05 + fresh),
+                decay: SETTLE_DECAY,
+                target: 0,
+              }
             : null;
         if (!userInteractedRef.current) {
           const fit = fitFor(g, merged.pos, scene.width, scene.height);
           if (fit) scene.view = fit;
-          scene.fitted = true;
+          // Framed at once; while new nodes settle the view keeps them in
+          // frame, and the end of the settle frames the result.
+          scene.fitted = fresh === 0;
         }
       } else {
         scene.fromScratch = true;
