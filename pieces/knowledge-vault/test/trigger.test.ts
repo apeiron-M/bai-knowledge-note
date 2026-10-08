@@ -75,6 +75,12 @@ describe("the new-pipeline-task trigger", () => {
     expect(oneAtATimeFor({})).toBe(false);
   });
 
+  it("one at a time follows the connection's locality", () => {
+    const auth = (locality?: string) => ({ base_url: "http://127.0.0.1:4201", token: "t", llm_api_key: "k", llm_base_url: "http://127.0.0.1:4202/llm/v1", ...(locality ? { llm_locality: locality } : {}) });
+    expect(oneAtATimeFor(auth("hosted"))).toBe(false);
+    expect(oneAtATimeFor(auth("local"))).toBe(true);
+  });
+
   it("starts a task at a later phase when it reaches it", async () => {
     const tasks = [task("t5", { currentPhase: "reflect" })];
     const out = await pollTasks(vault(tasks).client, memoryStore(), { drive: "d", phase: "reflect", per_poll: 5 });

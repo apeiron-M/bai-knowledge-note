@@ -4,7 +4,7 @@ import { knowledgeVaultAuth } from "../auth.js";
 import type { KnowledgeVaultClient } from "../common/client.js";
 import { clientFor, type StoreLike } from "../common/context.js";
 import { readAuth } from "../common/auth-value.js";
-import { isLocalModelEndpoint } from "../agent/llm.js";
+import { isLocalModel } from "../agent/llm.js";
 import { driveProp } from "../common/props.js";
 
 /**
@@ -97,7 +97,7 @@ export async function pollTasks(
 export function oneAtATimeFor(auth: unknown): boolean {
   try {
     const llm = readAuth(auth).llm;
-    return llm ? isLocalModelEndpoint(llm.baseUrl) : false;
+    return llm ? isLocalModel(llm) : false;
   } catch {
     return false;
   }

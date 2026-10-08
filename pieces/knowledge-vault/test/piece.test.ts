@@ -160,6 +160,17 @@ describe("a pasted token", () => {
   });
 });
 
+describe("where the model runs, from the connection", () => {
+  it("reads where the model runs from the connection", () => {
+    const base = { base_url: "http://127.0.0.1:4201", token: "t", llm_api_key: "k", llm_base_url: "http://127.0.0.1:4202/llm/v1" };
+    expect(readAuth({ ...base, llm_locality: "hosted" }).llm?.locality).toBe("hosted");
+    expect(readAuth({ ...base, llm_locality: "local" }).llm?.locality).toBe("local");
+    expect(readAuth({ ...base, llm_locality: "elsewhere" }).llm?.locality).toBeUndefined();
+    // Studio's positional form: the sixth prop
+    expect(readAuth({ "0": "http://127.0.0.1:4201", "1": "t", "2": "k", "3": "http://127.0.0.1:4202/llm/v1", "4": "m", "5": "hosted" }).llm?.locality).toBe("hosted");
+  });
+});
+
 describe("a connection made in Studio on dev.28", () => {
   it("stores fields by position; they are read back by name", () => {
     const credentials = readAuth({ props: { "0": "https://v.test", "1": "Bearer eyJa.b.c", "2": "sk-or-1", "4": "m/x" } });

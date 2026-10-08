@@ -5,6 +5,8 @@ export interface LlmCredentials {
   baseUrl: string;
   apiKey: string;
   defaultModel?: string;
+  /** Where the model runs, when the desktop app says so. Absent: the address decides. */
+  locality?: "local" | "hosted";
 }
 
 export interface KnowledgeVaultCredentials {
@@ -76,7 +78,7 @@ export function cleanToken(value: unknown): string {
  * walks them with Object.entries, so a connection made in Studio stores
  * base_url as "0", token as "1", and so on. Mapped back here by position.
  */
-export const AUTH_PROP_ORDER = ["base_url", "token", "llm_api_key", "llm_base_url", "llm_default_model"] as const;
+export const AUTH_PROP_ORDER = ["base_url", "token", "llm_api_key", "llm_base_url", "llm_default_model", "llm_locality"] as const;
 
 function byName(props: Record<string, unknown>): Record<string, unknown> {
   if ("base_url" in props || "token" in props || !("0" in props || "1" in props)) return props;
@@ -107,10 +109,12 @@ export function readAuth(auth: unknown): KnowledgeVaultCredentials {
   if (apiKey) {
     const rawBase = typeof source.llm_base_url === "string" ? source.llm_base_url.trim() : "";
     const model = typeof source.llm_default_model === "string" ? source.llm_default_model.trim() : "";
+    const locality = source.llm_locality === "local" || source.llm_locality === "hosted" ? source.llm_locality : undefined;
     credentials.llm = {
       baseUrl: (rawBase || DEFAULT_LLM_BASE_URL).replace(/\/+$/, ""),
       apiKey,
       ...(model ? { defaultModel: model } : {}),
+      ...(locality ? { locality } : {}),
     };
   }
   return credentials;

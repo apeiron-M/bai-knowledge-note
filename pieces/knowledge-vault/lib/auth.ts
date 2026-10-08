@@ -44,6 +44,11 @@ export const knowledgeVaultAuth = PieceAuth.CustomAuth({
       required: false,
       description: "Used when an agent step leaves its model empty, e.g. deepseek/deepseek-v4.1-flash",
     }),
+    llm_locality: Property.ShortText({
+      displayName: "Where the model runs (optional)",
+      required: false,
+      description: "local or hosted — set by the desktop app. Empty: decided from the LLM provider URL.",
+    }),
   },
   // `auth` here is the flat property value, not the envelope ctx.auth carries.
   validate: async ({ auth }) => {

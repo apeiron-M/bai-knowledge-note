@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { extractClaimsAction } from "../lib/actions/extract-claims.js";
-import { completeJson, LlmClient, parseJsonAnswer, retryDelayMs } from "../lib/agent/llm.js";
+import { callTimeoutFor, completeJson, isLocalModel, isLocalModelEndpoint, JSON_CALL_TIMEOUT_MS, LlmClient, LOCAL_CALL_TIMEOUT_MS, parseJsonAnswer, retryDelayMs } from "../lib/agent/llm.js";
 import { asObject, candidatesStage, checkVaultStage, containsVerbatim, draftStage, mapLimit, readSourceStage, reportStage } from "../lib/agent/staged.js";
 import type { KnowledgeVaultClient } from "../lib/common/client.js";
 
@@ -394,15 +394,22 @@ describe("the quality fixes", () => {
 });
 
 describe("how long a model call may take", () => {
-  it("gives a model on this computer or the local network ten minutes, a hosted provider 120 s", async () => {
-    const { callTimeoutFor, isLocalModelEndpoint } = await import("../lib/agent/llm.js");
+  it("a gateway on loopback that says hosted gets the hosted limits", () => {
+    const gw = { baseUrl: "http://127.0.0.1:4202/llm/v1", apiKey: "k" };
+    expect(isLocalModel({ ...gw, locality: "hosted" })).toBe(false);
+    expect(callTimeoutFor({ ...gw, locality: "hosted" })).toBe(JSON_CALL_TIMEOUT_MS);
+    expect(callTimeoutFor({ ...gw, locality: "local" })).toBe(LOCAL_CALL_TIMEOUT_MS);
+    expect(isLocalModel(gw)).toBe(true); // no locality: decided from the address, as before
+  });
+
+  it("gives a model on this computer or the local network ten minutes, a hosted provider 120 s", () => {
     for (const u of ["http://127.0.0.1:8083/v1", "http://localhost:11434/v1", "http://[::1]:8080/v1", "http://192.168.1.20:11434/v1", "http://10.0.0.5:1234/v1"]) {
       expect(isLocalModelEndpoint(u)).toBe(true);
-      expect(callTimeoutFor(u)).toBe(600_000);
+      expect(callTimeoutFor({ baseUrl: u })).toBe(600_000);
     }
     for (const u of ["https://openrouter.ai/api/v1", "https://api.openai.com/v1", "not a url"]) {
       expect(isLocalModelEndpoint(u)).toBe(false);
-      expect(callTimeoutFor(u)).toBe(120_000);
+      expect(callTimeoutFor({ baseUrl: u })).toBe(120_000);
     }
   });
 });

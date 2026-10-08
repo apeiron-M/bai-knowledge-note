@@ -59,8 +59,12 @@ export function isLocalModelEndpoint(baseUrl: string): boolean {
   return a === 10 || (a === 172 && b >= 16 && b <= 31) || (a === 192 && b === 168);
 }
 
+/** Where the model runs: the connection says so when the desktop app set it up; otherwise its address decides. */
+export function isLocalModel(llm: Pick<LlmCredentials, "baseUrl" | "locality">): boolean {
+  return llm.locality ? llm.locality === "local" : isLocalModelEndpoint(llm.baseUrl);
+}
 /** How long one model call may take: ten minutes on this computer or the local network, else 120 s. */
-export const callTimeoutFor = (baseUrl: string) => (isLocalModelEndpoint(baseUrl) ? LOCAL_CALL_TIMEOUT_MS : JSON_CALL_TIMEOUT_MS);
+export const callTimeoutFor = (llm: Pick<LlmCredentials, "baseUrl" | "locality">) => (isLocalModel(llm) ? LOCAL_CALL_TIMEOUT_MS : JSON_CALL_TIMEOUT_MS);
 
 export class LlmClient {
   constructor(
@@ -151,7 +155,7 @@ export async function completeJson(
   const { baseUrl, apiKey } = client.credentials;
   const usage: Usage = { prompt_tokens: 0, completion_tokens: 0, cost: 0 };
   let budget = request.maxTokens ?? 32_000;
-  const timeoutMs = request.timeoutMs ?? callTimeoutFor(baseUrl);
+  const timeoutMs = request.timeoutMs ?? callTimeoutFor(client.credentials);
   for (let attempt = 1; ; attempt++) {
     // A hang, or a connection dropped before or while the answer arrives, gets one more try.
     const retryable = (error: unknown) => attempt < 2 && (isTimeout(error) || isDroppedConnection(error));
