@@ -9,6 +9,8 @@ import type { IntakeBatch } from "../hooks/use-intake-batch.js";
 import { useVaultName } from "../hooks/use-vault-name.js";
 import { IntakeLanding } from "./intake/IntakeLanding.js";
 import { IntakePanel } from "./intake/IntakePanel.js";
+import { SourceFolderBar } from "./SourceFolderBar.js";
+import { isHexAddress, shortAddress } from "../../shared/identity.js";
 import { useKnowledgeNotes } from "../hooks/use-knowledge-notes.js";
 import {
   useReactorDocsWithRefetch,
@@ -159,6 +161,16 @@ function DeleteModal({
   );
 }
 
+/** `BOOK_CHAPTER` → "Book chapter": the reader's word, not the schema's enum. */
+const typeLabel = (sourceType: string) => {
+  const words = sourceType.toLowerCase().replace(/_/g, " ");
+  return words.charAt(0).toUpperCase() + words.slice(1);
+};
+
+/** A signer address is noise at full length; six and four characters identify it, the tooltip has the rest. */
+const byLabel = (createdBy: string) =>
+  isHexAddress(createdBy) ? shortAddress(createdBy) : createdBy;
+
 const STATUS_COLORS: Record<string, string> = {
   INBOX: "bg-amber-500/20 text-amber-300 border-amber-500/30",
   EXTRACTING: "bg-blue-500/20 text-blue-300 border-blue-500/30",
@@ -166,15 +178,32 @@ const STATUS_COLORS: Record<string, string> = {
   ARCHIVED: "bg-gray-500/20 text-gray-400 border-gray-500/30",
 };
 
+/** The nearest scrolling ancestor — the explorer's content pane — so a folder change can start at the top. */
+function scrollParentOf(el: HTMLElement | null): HTMLElement | null {
+  for (let p = el?.parentElement ?? null; p; p = p.parentElement) {
+    const overflow = getComputedStyle(p).overflowY;
+    if (overflow === "auto" || overflow === "scroll") return p;
+  }
+  return null;
+}
+
 export function SourceList({
   intake,
   convert,
+  homeSignal = 0,
 }: {
   /** The batch, owned by `DriveExplorer` so it survives a tab switch. */
   intake: IntakeBatch;
   convert: ReturnType<typeof useConvertHealth>;
+  /**
+   * Bumped when the Sources tab is clicked while this list is already open:
+   * like the tab bars people know from their phones, clicking the tab you are
+   * on takes you back to its top level.
+   */
+  homeSignal?: number;
 }) {
   const vaultName = useVaultName();
+  const rootRef = useRef<HTMLDivElement>(null);
   const [createOpen, setCreateOpen] = useState(false);
   const [deleteTarget, setDeleteTarget] = useState<DeleteTarget>(null);
   const [query, setQuery] = useState("");
@@ -280,6 +309,15 @@ export function SourceList({
     setFolderIdState(id);
     writeOpenFolder(id);
   }, []);
+  // Every move between folders starts at the top of the new one; otherwise a
+  // click on a folder far down the list lands mid-way into its contents.
+  const navigate = useCallback(
+    (id: string | null) => {
+      setFolderId(id);
+      scrollParentOf(rootRef.current)?.scrollTo({ top: 0 });
+    },
+    [setFolderId],
+  );
   // "Open in Sources" from the intake: land on the folder a document became.
   const openFolderByName = useCallback(
     (folderName: string) => {
@@ -287,9 +325,9 @@ export function SourceList({
         (n) => n.kind === "folder" && n.name === folderName,
       );
       setQuery("");
-      setFolderId(folder ? folder.id : null);
+      navigate(folder ? folder.id : null);
     },
-    [serverAllNodes, setFolderId],
+    [serverAllNodes, navigate],
   );
   const view = useMemo(
     () =>
@@ -297,6 +335,40 @@ export function SourceList({
     [matching, serverAllNodes, folderId, searching],
   );
   const visible = view.sources;
+
+  // One level up: the back button's destination, also reachable with Alt+↑,
+  // the "up" key of the desktop file managers.
+  const parentId =
+    view.breadcrumb.length > 1
+      ? view.breadcrumb[view.breadcrumb.length - 2].id
+      : undefined;
+  useEffect(() => {
+    if (parentId === undefined) return;
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key !== "ArrowUp" || !e.altKey || e.metaKey || e.ctrlKey) return;
+      const t = e.target as HTMLElement | null;
+      if (
+        t &&
+        (t.tagName === "INPUT" ||
+          t.tagName === "TEXTAREA" ||
+          t.isContentEditable)
+      )
+        return;
+      e.preventDefault();
+      navigate(parentId);
+    };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [parentId, navigate]);
+
+  // The Sources tab clicked while already here: back to the top level.
+  const seenHome = useRef(homeSignal);
+  useEffect(() => {
+    if (homeSignal === seenHome.current) return;
+    seenHome.current = homeSignal;
+    setQuery("");
+    navigate(null);
+  }, [homeSignal, navigate]);
 
   const grouped = useMemo(() => {
     const groups: Record<string, typeof sources> = {
@@ -313,14 +385,14 @@ export function SourceList({
   }, [visible]);
 
   return (
-    <div className="p-4 space-y-4">
+    <div ref={rootRef} className="p-4 space-y-4">
       {/* Header with create button */}
       <div className="flex items-center justify-between">
         <h2
           className="text-sm font-semibold"
           style={{ color: "var(--bai-text-tertiary)" }}
         >
-          Sources ({view.total})
+          Sources ({sources.length})
         </h2>
         <div className="flex items-center gap-2">
           <button
@@ -487,40 +559,13 @@ export function SourceList({
         </div>
       ) : (
         <>
-          {/* Breadcrumb — only once there is somewhere to go back to. */}
+          {/* Inside a folder: where you are, and the way back out. */}
           {view.breadcrumb.length > 1 && (
-            <nav
-              className="flex flex-wrap items-center gap-1 text-xs"
-              aria-label="Source folders"
-            >
-              {view.breadcrumb.map((crumb, i) => {
-                const last = i === view.breadcrumb.length - 1;
-                return (
-                  <span
-                    key={crumb.id ?? "root"}
-                    className="flex items-center gap-1"
-                  >
-                    {i > 0 && (
-                      <span style={{ color: "var(--bai-text-faint)" }}>/</span>
-                    )}
-                    {last ? (
-                      <span style={{ color: "var(--bai-text)" }}>
-                        {crumb.name}
-                      </span>
-                    ) : (
-                      <button
-                        type="button"
-                        onClick={() => setFolderId(crumb.id)}
-                        className="rounded px-1 py-0.5 transition-colors hover:underline"
-                        style={{ color: "var(--bai-text-muted)" }}
-                      >
-                        {crumb.name}
-                      </button>
-                    )}
-                  </span>
-                );
-              })}
-            </nav>
+            <SourceFolderBar
+              trail={view.breadcrumb}
+              total={view.total}
+              onNavigate={navigate}
+            />
           )}
 
           {/* Folders first: a book is one row, not twenty chapters. */}
@@ -538,7 +583,7 @@ export function SourceList({
             >
               <button
                 type="button"
-                onClick={() => setFolderId(folder.id)}
+                onClick={() => navigate(folder.id)}
                 className="flex flex-1 items-center gap-2 text-left min-w-0"
                 aria-label={`Open folder ${folder.name}`}
               >
@@ -690,34 +735,41 @@ export function SourceList({
                               >
                                 {source.title}
                               </p>
-                              <div className="flex items-center gap-2 mt-0.5">
+                              {/* Secondary, not faint: these are read, not
+                                  decoration — both pass AA on the card in
+                                  either theme. */}
+                              <div className="mt-1 flex min-w-0 items-center gap-2">
                                 {source.sourceType && (
                                   <span
-                                    className="rounded px-1.5 py-0.5 text-[10px]"
+                                    className="shrink-0 rounded px-1.5 py-0.5 text-[11px] font-medium"
                                     style={{
                                       backgroundColor: "var(--bai-hover)",
-                                      color: "var(--bai-text-muted)",
+                                      color: "var(--bai-text-secondary)",
                                     }}
                                   >
-                                    {source.sourceType}
+                                    {typeLabel(source.sourceType)}
                                   </span>
                                 )}
                                 {source.createdBy && (
                                   <span
-                                    className="text-[10px]"
-                                    style={{ color: "var(--bai-text-faint)" }}
+                                    className="truncate text-[11px]"
+                                    style={{
+                                      color: "var(--bai-text-tertiary)",
+                                    }}
+                                    title={`Added by ${source.createdBy}`}
                                   >
-                                    by {source.createdBy}
+                                    Added by {byLabel(source.createdBy)}
                                   </span>
                                 )}
                               </div>
                             </div>
                             {source.claimCount > 0 && (
                               <span
-                                className="text-[10px]"
-                                style={{ color: "var(--bai-text-faint)" }}
+                                className="shrink-0 text-[11px]"
+                                style={{ color: "var(--bai-text-tertiary)" }}
                               >
-                                {source.claimCount} claims
+                                {source.claimCount}{" "}
+                                {source.claimCount === 1 ? "claim" : "claims"}
                               </span>
                             )}
                             <span

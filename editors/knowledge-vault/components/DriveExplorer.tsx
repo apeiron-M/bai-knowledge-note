@@ -91,6 +91,7 @@ export function DriveExplorer({ children }: EditorProps) {
   }, [driveId]);
   const [graphFocus, setGraphFocus] = useState<GraphFocus | null>(null);
   const [graphClearNonce, setGraphClearNonce] = useState(0);
+  const [sourcesHome, setSourcesHome] = useState(0);
   // `notesLoading` is true until the first metadata fetch settles. It has
   // to be threaded into every note-derived view: without it they render
   // their "empty vault" state during the several seconds the fetch takes,
@@ -244,6 +245,9 @@ export function DriveExplorer({ children }: EditorProps) {
     if (mode !== "graph") {
       setGraphFocus(null);
     }
+    // The Sources tab clicked while its list is showing: back to all sources.
+    if (mode === "sources" && viewMode === "sources" && !showDocumentEditor)
+      setSourcesHome((n) => n + 1);
     // For list/custom views, deselect any open doc
     if (showDocumentEditor) setSelectedNode(undefined);
     setViewMode(mode);
@@ -255,7 +259,9 @@ export function DriveExplorer({ children }: EditorProps) {
     ready: convert.configured,
     onDrop: (files) => {
       intake.onFiles(files);
-      handleSwitchView("sources");
+      // Already on the Sources list: stay in the folder you are in.
+      if (viewMode !== "sources" || showDocumentEditor)
+        handleSwitchView("sources");
     },
   });
 
@@ -602,7 +608,11 @@ export function DriveExplorer({ children }: EditorProps) {
           ) : viewMode === "activity" ? (
             <ActivityView />
           ) : viewMode === "sources" ? (
-            <SourceList intake={intake} convert={convert} />
+            <SourceList
+              intake={intake}
+              convert={convert}
+              homeSignal={sourcesHome}
+            />
           ) : viewMode === "scope" ? (
             <ScopeOfWorkView />
           ) : viewMode === "projects" ? (
