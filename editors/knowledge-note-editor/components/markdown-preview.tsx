@@ -133,6 +133,9 @@ function inlineFormat(text: string): string {
 
 export function MarkdownPreview({ content }: MarkdownPreviewProps) {
   const html = useMemo(() => renderMarkdown(content), [content]);
+  // One `{ __html }` object per `html`: React 19 rewrites the DOM whenever the
+  // object is new, even with the same string (see editors/shared/markdown-preview).
+  const innerHtml = useMemo(() => ({ __html: html }), [html]);
 
   return (
     <>
@@ -156,7 +159,7 @@ export function MarkdownPreview({ content }: MarkdownPreviewProps) {
       `}</style>
       <div
         className="md-preview text-sm leading-relaxed"
-        dangerouslySetInnerHTML={{ __html: html }}
+        dangerouslySetInnerHTML={innerHtml}
       />
     </>
   );

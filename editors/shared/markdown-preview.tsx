@@ -310,6 +310,14 @@ export function MarkdownPreview({
     // eslint-disable-next-line react-hooks/exhaustive-deps
     [content, attachmentsVersion],
   );
+  // React 19 re-applies `dangerouslySetInnerHTML` whenever the `{ __html }`
+  // object is a new one, even with the same string (React 18 compared the
+  // strings). A fresh object per render rewrote the whole preview on every
+  // parent re-render — the source editor's scroll-progress bar re-renders on
+  // each scroll event — re-creating every <img> and re-decoding its data URL:
+  // the picture vanished, the page jumped, the view flickered. One object per
+  // `html` keeps the DOM untouched until the content really changes.
+  const innerHtml = useMemo(() => ({ __html: html }), [html]);
   const root = useRef<HTMLDivElement>(null);
 
   // Start the fetch for every image that has no bytes yet. Nothing here
@@ -387,7 +395,7 @@ export function MarkdownPreview({
             ? "md-preview md-reading"
             : "md-preview text-sm leading-relaxed"
         }
-        dangerouslySetInnerHTML={{ __html: html }}
+        dangerouslySetInnerHTML={innerHtml}
       />
     </>
   );
