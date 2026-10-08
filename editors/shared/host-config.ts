@@ -26,7 +26,10 @@ export type KnowledgeVaultHostModel = {
   model: string;
   /** Shown in the chat header, e.g. "gpt-oss-20b on this computer". */
   label: string;
-  /** Per-request headers (the host's bearer for its gateway). */
+  /**
+   * The host's bearer for its gateway. Read once per declaration, not per request: the host
+   * re-declares when they change. Must not throw.
+   */
   headers?: () => Record<string, string>;
 };
 

@@ -189,9 +189,15 @@ export function useChatProvider(): UseChatProvider {
     setSaved(next);
   }, []);
   const [isCompletingOAuth, setCompleting] = useState(false);
-  // Read once at mount; the flag is consumed by reading it.
+  // Read once at mount; the flag is consumed by reading it. The desktop app
+  // starts no OpenRouter sign-in from the chat, so there the flag is not ours
+  // to read or clear.
   const [interruptedAttempt] = useState(
-    () => !getStoredKey() && !activeProvider(readSavedProviders()) && takeInterruptedAttempt(),
+    () =>
+      !hostManaged &&
+      !getStoredKey() &&
+      !activeProvider(readSavedProviders()) &&
+      takeInterruptedAttempt(),
   );
   const [models, setModels] = useState<ModelInfo[]>([]);
   const [modelsLoading, setModelsLoading] = useState(false);

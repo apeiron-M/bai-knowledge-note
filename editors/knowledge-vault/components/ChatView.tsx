@@ -17,9 +17,18 @@
  *
  * Inside the desktop app the model is the app's: the connect screen and the
  * header's connection controls give way to the app's model (and a way back to
- * its settings), because there is nothing here to connect.
+ * its settings), because there is nothing here to connect. A failed turn
+ * points at those settings too, never at a key to reconnect or a menu to pick
+ * from.
  */
-import { useEffect, useMemo, useRef, useState, type ReactNode } from "react";
+import {
+  useEffect,
+  useId,
+  useMemo,
+  useRef,
+  useState,
+  type ReactNode,
+} from "react";
 import { useSelectedDriveId } from "@powerhousedao/reactor-browser";
 import { useVaultName } from "../hooks/use-vault-name.js";
 import { useChatProvider } from "../hooks/use-chat-provider.js";
@@ -104,6 +113,8 @@ export function ChatView({
   const driveId = useSelectedDriveId();
   const vaultName = useVaultName();
   const prov = useChatProvider();
+  // Ties the header's "Change in Settings" button to the model label it changes.
+  const modelChipId = useId();
   const orientation = useOrientation(driveId, prov.isConnected);
   // The composer's draft survives the chat view being replaced by a note
   // editor. Tab-scoped like the current-thread pointer; the OAuth return
@@ -253,15 +264,17 @@ export function ChatView({
           {prov.hostManaged ? (
             <>
               <span
+                id={modelChipId}
                 className="max-w-[240px] truncate rounded-md px-2 py-1 text-xs"
                 style={{ color: "var(--bai-text-tertiary)" }}
-                title="The AI model set in the app's Settings › Models"
+                title={`${prov.providerLabel}. The AI model set in the app's Settings › Models`}
               >
                 {prov.providerLabel}
               </span>
               {prov.openModelSettings && (
                 <button
                   type="button"
+                  aria-describedby={modelChipId}
                   onClick={() => prov.openModelSettings?.()}
                   className="whitespace-nowrap rounded-md px-2 py-1.5 text-xs transition-colors hover:bg-[var(--bai-hover)] focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-[color:var(--bai-accent)]"
                   style={{ color: "var(--bai-text-tertiary)" }}
@@ -334,6 +347,8 @@ export function ChatView({
                   modelIsExplicit={prov.modelIsExplicit}
                   nextModel={prov.model}
                   modelName={prov.modelName}
+                  hostManaged={prov.hostManaged}
+                  openModelSettings={prov.openModelSettings}
                 />
               )}
             </div>
@@ -420,6 +435,8 @@ function FailureNotice({
   modelIsExplicit,
   nextModel,
   modelName,
+  hostManaged,
+  openModelSettings,
 }: {
   failure: ChatFailure;
   /** OpenRouter's billing and quota advice only makes sense on OpenRouter. */
@@ -430,7 +447,20 @@ function FailureNotice({
   /** The model the next turn will use (already re-resolved after a skip). */
   nextModel: string;
   modelName: (id: string) => string;
+  /** Inside the desktop app: no connection to reset and no model menu, whatever the advice below says. */
+  hostManaged: boolean;
+  /** Opens the app's model settings; null when the app gave the chat no way to. */
+  openModelSettings: (() => void) | null;
 }) {
+  if (hostManaged) {
+    return (
+      <HostFailureNotice
+        failure={failure}
+        openModelSettings={openModelSettings}
+      />
+    );
+  }
+
   let next: ReactNode = null;
   switch (failure.kind) {
     case "auth":
@@ -494,6 +524,70 @@ function FailureNotice({
   }
 
   return (
+    <NoticeFrame>
+      <p>{failure.message}</p>
+      {next && <p className="mt-1.5 opacity-80">{next}</p>}
+    </NoticeFrame>
+  );
+}
+
+/**
+ * The notice for a failed turn inside the desktop app. The model is the app's,
+ * so there is no key to reconnect, no model to pick and no server to allow:
+ * whatever went wrong, the one place to fix it is the app's model settings.
+ *
+ * The gateway's own sentence says what happened and names the provider, so it
+ * leads. When the request never got an answer there is no such sentence, and
+ * the classifier's stand-in is advice about browser access to a server the
+ * user named, which is not what happened here; the notice says it in the app's
+ * terms instead.
+ *
+ * What happened stays in the notice's red; what to do is in the page's own text
+ * colour, because it is the one instruction here and must read clearly (the
+ * red, dimmed as the browser's second line is, would not).
+ */
+function HostFailureNotice({
+  failure,
+  openModelSettings,
+}: {
+  failure: ChatFailure;
+  openModelSettings: (() => void) | null;
+}) {
+  return (
+    <NoticeFrame>
+      <p>
+        {failure.kind === "unreachable"
+          ? "The app's AI model service did not answer."
+          : failure.message}
+      </p>
+      <p className="mt-1.5">
+        <span style={{ color: "var(--bai-text-secondary)" }}>
+          Check the AI model in the app&apos;s Settings › Models.
+        </span>
+        {openModelSettings && (
+          <>
+            {" "}
+            <button
+              type="button"
+              onClick={() => openModelSettings()}
+              className="ml-1 inline-block rounded-md px-2 py-1 font-medium transition-colors hover:bg-[rgba(239,68,68,0.12)] focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-[color:var(--bai-accent)]"
+              style={{
+                color: "var(--bai-text)",
+                border: "1px solid rgba(239,68,68,0.35)",
+              }}
+            >
+              Open Settings
+            </button>
+          </>
+        )}
+      </p>
+    </NoticeFrame>
+  );
+}
+
+/** The red alert box every failure notice sits in. */
+function NoticeFrame({ children }: { children: ReactNode }) {
+  return (
     <div
       className="rounded-lg px-3 py-2 text-xs"
       style={{
@@ -503,8 +597,7 @@ function FailureNotice({
       }}
       role="alert"
     >
-      <p>{failure.message}</p>
-      {next && <p className="mt-1.5 opacity-80">{next}</p>}
+      {children}
     </div>
   );
 }

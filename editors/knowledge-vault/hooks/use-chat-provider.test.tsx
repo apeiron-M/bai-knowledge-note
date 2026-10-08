@@ -74,6 +74,31 @@ describe("useChatProvider in a browser or Connect (the host declares no model)",
   });
 });
 
+describe("the flag a started-but-not-finished OpenRouter sign-in leaves in the tab", () => {
+  // Written by beginOAuth, consumed by the read that reports it.
+  const PENDING = "bai-chat:oauth-pending:v1";
+
+  it("is reported once in a browser, and consumed by being read", () => {
+    sessionStorage.setItem(PENDING, "1");
+    expect(renderChat().interruptedAttempt).toBe(true);
+    expect(sessionStorage.getItem(PENDING)).toBeNull();
+  });
+
+  it("is not read in the desktop app, which never starts that sign-in from the chat: it stays where it was", () => {
+    sessionStorage.setItem(PENDING, "1");
+    declare({ model: GATEWAY });
+    expect(renderChat().interruptedAttempt).toBe(false);
+    expect(sessionStorage.getItem(PENDING)).toBe("1");
+  });
+
+  it("is not read either when the app has no model set up", () => {
+    sessionStorage.setItem(PENDING, "1");
+    declare({ model: null });
+    expect(renderChat().interruptedAttempt).toBe(false);
+    expect(sessionStorage.getItem(PENDING)).toBe("1");
+  });
+});
+
 describe("useChatProvider in the desktop app (the host declares its model)", () => {
   it("uses the declared model through the app's gateway, pinned", () => {
     const openModelSettings = () => {};

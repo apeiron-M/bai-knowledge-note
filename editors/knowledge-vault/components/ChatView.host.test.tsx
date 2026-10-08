@@ -28,12 +28,25 @@ describe("ChatView in the desktop app", () => {
     declare({ model: GATEWAY, openModelSettings: () => {} });
     const html = renderToStaticMarkup(<ChatView />);
     expect(html).toContain("gpt-oss-20b on this computer");
-    expect(html).toContain("The AI model set in the app&#x27;s Settings › Models");
+    // The label is in the tooltip too, so a label cut short in a narrow window can still be read.
+    expect(html).toContain(
+      'title="gpt-oss-20b on this computer. The AI model set in the app&#x27;s Settings › Models"',
+    );
     expect(html).toMatch(/<button[^>]*>Change in Settings<\/button>/);
     expect(html).not.toContain("Disconnect");
     expect(html).not.toContain("aria-haspopup");
     expect(html).not.toContain("Connect with OpenRouter");
     expect(html).toContain("Ask Research anything");
+  });
+
+  it("tells a screen reader which model 'Change in Settings' changes", () => {
+    declare({ model: GATEWAY, openModelSettings: () => {} });
+    const html = renderToStaticMarkup(<ChatView />);
+    const chip = /<span([^>]*)>gpt-oss-20b on this computer<\/span>/.exec(html);
+    const chipId = chip && /\bid="([^"]+)"/.exec(chip[1])?.[1];
+    expect(chipId).toBeTruthy();
+    const button = /<button([^>]*)>Change in Settings<\/button>/.exec(html);
+    expect(button?.[1]).toContain(`aria-describedby="${chipId}"`);
   });
 
   it("offers no settings button when the app gave the chat no way to open them", () => {
