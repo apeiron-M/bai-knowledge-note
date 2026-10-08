@@ -189,6 +189,26 @@ async function preprocessBytes(file: {
  * `file.name` as the attachment's `fileName` and falls back to the literal
  * string "attachment" for a nameless Blob.
  */
+/**
+ * The attachment port without React — for intake a host drives itself (the desktop app's setup guide keeps each
+ * dropped file's original, as the Sources view does).
+ */
+export function attachmentPort(): AttachmentPort {
+  ensureAttachmentService();
+  return {
+    async prepare(file) {
+      clientOrThrow();
+      const result = await preprocessBytes(file);
+      return { ref: result.ref, result };
+    },
+    async upload(prepared) {
+      const { result } = prepared as { result?: PreprocessResult };
+      if (!result) throw new Error("upload() needs the result of prepare()");
+      await clientOrThrow().upload({ preprocessed: result });
+    },
+  };
+}
+
 export function useAttachmentPort(): AttachmentPort {
   useEffect(() => {
     ensureAttachmentService();

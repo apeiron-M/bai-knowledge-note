@@ -14,6 +14,8 @@ export { startRemoteFirstBoot } from "./editors/knowledge-vault/lib/boot.js";
 // like the boot export above: codegen's template for this file does not know
 // about it, so restore both if a regeneration ever rewrites the file.
 export { aiTools } from "./editors/knowledge-vault/lib/chat/ai-tools.js";
+// Hand-added too: a host's own intake (the desktop app's setup guide converts and files sources itself).
+export { hostIntake } from "./editors/knowledge-vault/lib/host-intake.js";
 export const manifest = manifestJson as Manifest;
 
 // Engage remote-first as soon as the package is loaded, before Connect tries to

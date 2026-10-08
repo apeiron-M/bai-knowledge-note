@@ -48,6 +48,9 @@ import {
 import { useKnowledgeMocs } from "../hooks/use-knowledge-mocs.js";
 import { useKnowledgeTensions } from "../hooks/use-knowledge-tensions.js";
 
+/** Views a host may open a vault on (`takeOpenView`). */
+const OPENABLE_VIEWS = new Set<string>(["chat", "notes", "graph", "search", "sources"]);
+
 type ViewMode =
   | "chat"
   | "notes"
@@ -267,7 +270,7 @@ export function DriveExplorer({ children }: EditorProps) {
   });
 
   // Files the host collected before this vault opened (the desktop app's setup
-  // guide) join the batch once, when conversion is ready — exactly as a drop.
+  // guide) join the batch once — exactly as a drop.
   const handedOver = useRef<string | null>(null);
   // The latest render's intake and view switch; the effect runs once per drive.
   const takeHandedFiles = useRef<(id: string) => void>(() => undefined);
@@ -277,12 +280,23 @@ export function DriveExplorer({ children }: EditorProps) {
     intake.onFiles(files);
     handleSwitchView("sources");
   };
+  // Taken once conversion is ready — or once it has stopped waiting for it, so the
+  // intake shows each file with its reason instead of the files going nowhere.
+  const canTake = convert.configured || (convert.settled && !convert.checking);
   useEffect(() => {
-    if (!driveId || !convert.configured || handedOver.current === driveId)
-      return;
+    if (!driveId || !canTake || handedOver.current === driveId) return;
     handedOver.current = driveId;
     takeHandedFiles.current(driveId);
-  }, [driveId, convert.configured]);
+  }, [driveId, canTake]);
+
+  // The view the host asked this vault to open on (the setup guide's overview), once per drive.
+  const openedView = useRef<string | null>(null);
+  useEffect(() => {
+    if (!driveId || openedView.current === driveId) return;
+    openedView.current = driveId;
+    const view = getHostConfig()?.takeOpenView?.(driveId);
+    if (view && OPENABLE_VIEWS.has(view)) setViewMode(view as ViewMode);
+  }, [driveId]);
 
   const TABS: {
     key: ViewMode;

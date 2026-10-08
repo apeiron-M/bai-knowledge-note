@@ -25,25 +25,40 @@ export type ConvertHealth = {
 export function useConvertHealth() {
   const [health, setHealth] = useState<ConvertHealth | null>(null);
   const [settled, setSettled] = useState(false);
+  const [checking, setChecking] = useState(true);
 
   useEffect(() => {
     const api = createVaultApi();
     let cancelled = false;
-    void api
-      .get<ConvertHealth>("/convert/health")
-      .catch(() => null)
-      .then((result) => {
-        if (cancelled) return;
-        setHealth(result);
-        setSettled(true);
-      });
+    let timer: ReturnType<typeof setTimeout> | undefined;
+    let attempts = 0;
+    // A converter still starting (the desktop app installs it at first launch) answers "not configured"
+    // or not at all: ask again for a while, so a vault opened early still reads files once it is ready.
+    const check = () => {
+      void api
+        .get<ConvertHealth>("/convert/health")
+        .catch(() => null)
+        .then((result) => {
+          if (cancelled) return;
+          setHealth(result);
+          setSettled(true);
+          attempts += 1;
+          const ready = result?.configured === true && result.ok;
+          if (!ready && attempts < 40) timer = setTimeout(check, 3000);
+          else setChecking(false);
+        });
+    };
+    check();
     return () => {
       cancelled = true;
+      if (timer) clearTimeout(timer);
     };
   }, []);
 
   return {
     settled,
+    /** Still asking again: the converter may yet become ready. */
+    checking,
     /** A backend is configured and answered. */
     configured: health?.configured === true && health.ok,
     /** Its models are present, so PDFs and images convert too. */

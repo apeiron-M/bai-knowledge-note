@@ -64,6 +64,11 @@ export type KnowledgeVaultHostConfig = {
    * Returns [] when there is nothing for this drive; must not throw.
    */
   takeIntakeFiles?: (driveId: string) => File[];
+  /**
+   * The view a vault opens on, once ("chat", "notes", "graph", "search", "sources") — the setup guide's
+   * overview opens the vault where the person asked to go. null or unknown: the vault's own default.
+   */
+  takeOpenView?: (driveId: string) => string | null;
 };
 
 /** Dispatched on `globalThis` whenever the declaration changes; `useHostConfig` subscribes to it. */
@@ -106,6 +111,7 @@ export function setHostConfig(
     ...(config.takeIntakeFiles
       ? { takeIntakeFiles: config.takeIntakeFiles }
       : {}),
+    ...(config.takeOpenView ? { takeOpenView: config.takeOpenView } : {}),
   };
   notifyHostChanged();
 }
