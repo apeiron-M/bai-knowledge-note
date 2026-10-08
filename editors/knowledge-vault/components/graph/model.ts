@@ -355,12 +355,19 @@ export function jitter(id: string, spread = 40): Point {
 }
 
 /**
- * The node under a world-space point, or -1. A node the point is inside wins,
- * a MoC over a note (MoCs are drawn on top), else the nearest centre. Failing
- * that, the node whose edge is nearest, within `pad` — which the view sets to
- * a few screen pixels, so a dot in a zoomed-out vault can still be grabbed
- * without a MoC nearby stealing it. A linear scan: well under a millisecond at
- * 100,000 nodes, and exact for varying radii.
+ * The node under a world-space point, or -1 — judged against the shapes as they
+ * are drawn: a note is a disc of its radius, a MoC a diamond whose corners are
+ * at its radius (`|x| + |y| ≤ r`, the renderers' own test). Measuring a MoC as
+ * a circle made its hit area reach ~40 % past its edges along the diagonals —
+ * up to 20 world units of empty canvas around the HUB — and because a MoC wins
+ * over a note, the notes in that area could not be hovered at all.
+ *
+ * A node the point is inside wins, a MoC over a note (MoCs are drawn on top),
+ * else the nearest centre. Failing that, the node whose outline is nearest,
+ * within `pad` — which the view sets to a few screen pixels, so a dot in a
+ * zoomed-out vault can still be grabbed without a MoC nearby stealing it. A
+ * linear scan: well under a millisecond at 100,000 nodes, and exact for
+ * varying radii.
  */
 export function hitTest(
   g: IndexedGraph,
@@ -377,18 +384,23 @@ export function hitTest(
   for (let i = 0; i < radius.length; i++) {
     const dx = pos[i * 2] - x;
     const dy = pos[i * 2 + 1] - y;
-    const d = Math.sqrt(dx * dx + dy * dy);
     const r = radius[i];
-    if (!(d <= r + pad)) continue; // also skips unplaced (NaN) nodes
-    if (d <= r) {
+    // Distance from the point to the drawn outline; negative inside. For the
+    // diamond this is the distance to the nearest edge, as the shader has it.
+    const gap = isMoc[i]
+      ? (Math.abs(dx) + Math.abs(dy) - r) * Math.SQRT1_2
+      : Math.sqrt(dx * dx + dy * dy) - r;
+    if (!(gap <= pad)) continue; // also skips unplaced (NaN) nodes
+    if (gap <= 0) {
+      const d = dx * dx + dy * dy;
       if (inside >= 0 && isMoc[inside] && !isMoc[i]) continue;
       if (inside < 0 || (!isMoc[inside] && isMoc[i]) || d < insideDist) {
         inside = i;
         insideDist = d;
       }
-    } else if (d - r < nearGap) {
+    } else if (gap < nearGap) {
       near = i;
-      nearGap = d - r;
+      nearGap = gap;
     }
   }
   return inside >= 0 ? inside : near;

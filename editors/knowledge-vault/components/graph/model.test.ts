@@ -214,6 +214,30 @@ describe("hitTest", () => {
     expect(hitTest(g, spread, -12, 0, 200)).toBe(0);
     expect(hitTest(g, spread, 50, 0, 200)).toBe(3); // inside m
   });
+
+  it("measures a MoC as the diamond it is drawn as, not a circle", () => {
+    // m (radius 22) alone at the origin: its corners are 22 out, its edges 22/√2 ≈ 15.6.
+    const alone = xy(
+      [Number.NaN, Number.NaN],
+      [Number.NaN, Number.NaN],
+      [Number.NaN, Number.NaN],
+      [0, 0],
+    );
+    expect(hitTest(g, alone, 21, 0, 0)).toBe(3); // just inside a corner
+    expect(hitTest(g, alone, 14, 14, 0)).toBe(-1); // inside the circle, outside the diamond
+    expect(hitTest(g, alone, 10, 10, 0)).toBe(3); // inside the diamond
+    // Within the pad of its nearest edge: (14,14) is (28 - 22)/√2 ≈ 4.2 from it.
+    expect(hitTest(g, alone, 14, 14, 5)).toBe(3);
+    expect(hitTest(g, alone, 14, 14, 4)).toBe(-1);
+  });
+
+  it("lets a note beside a MoC be hovered where the MoC is not drawn", () => {
+    // Note a sits off m's diagonal, in the area a circular MoC used to claim.
+    const beside = xy([16, 16], [Number.NaN, Number.NaN], [500, 500], [0, 0]);
+    // (15,15) is inside m's old circle (21.2 < 22) but outside its diamond, and on a.
+    expect(hitTest(g, beside, 15, 15, 0)).toBe(0);
+    expect(hitTest(g, beside, 5, 5, 0)).toBe(3); // over the diamond, the MoC still wins
+  });
 });
 
 describe("fitView", () => {
@@ -230,6 +254,7 @@ describe("fitView", () => {
       fitView(g, xy([Number.NaN, 0], [Number.NaN, 0]), 400, 400),
     ).toBeNull();
   });
+
 });
 
 describe("packGraph", () => {

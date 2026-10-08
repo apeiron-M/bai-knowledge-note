@@ -189,6 +189,17 @@ type Scene = {
   hoverSet: number[] | null;
   selectedSet: number[] | null;
   pendingHover: Point | null;
+  /**
+   * Where the pointer rests over the canvas (screen px), or null once it has
+   * left. Hover is tested again whenever the nodes or the view move under it —
+   * not only when the pointer moves — so a highlight never stays on a node the
+   * layout or a zoom has carried away, and a node that arrives under a still
+   * pointer lights up.
+   */
+  pointer: Point | null;
+  /** The view and positions hover was last tested against. */
+  hoverView: RenderView | null;
+  hoverStale: boolean;
   drag: DragState | null;
   pan: PanState | null;
   raf: number;
@@ -200,12 +211,14 @@ type Scene = {
 /* ------------------------------------------------------------------ */
 
 /**
- * How far outside a node the pointer still grabs it: 4 world units, as
- * always, but never less than 6 screen pixels — zoomed out over a large
- * vault, a node is a dot a pixel or two wide.
+ * How far outside a node's outline the pointer still finds it: 5 screen
+ * pixels at every zoom. Zoomed out over a large vault a node is a dot a pixel
+ * or two wide and this is what makes it reachable; zoomed in, it stays a
+ * hair's breadth rather than growing with the zoom (the old floor of 4 world
+ * units was 16 px at 4×, so nodes lit up with the pointer visibly beside them).
  */
 function hitPad(view: RenderView): number {
-  return Math.max(4, 6 / view.scale);
+  return 5 / view.scale;
 }
 
 /** A pointer that moves less than this (squared, in px) is a click, not a drag. */
@@ -391,6 +404,9 @@ export default function GraphView(props: GraphViewProps) {
       hoverSet: null,
       selectedSet: null,
       pendingHover: null,
+      pointer: null,
+      hoverView: null,
+      hoverStale: false,
       drag: null,
       pan: null,
       raf: 0,
@@ -456,6 +472,8 @@ export default function GraphView(props: GraphViewProps) {
           scene.pendingHover = null;
           const p = toWorld(at);
           setHover(hitTest(g, draw.pos, p.x, p.y, hitPad(scene.view)), at);
+          scene.hoverView = scene.view;
+          scene.hoverStale = false;
         }
         if (scene.easing) {
           const k = easeFactor(dt, scene.frameInterval);
@@ -489,6 +507,7 @@ export default function GraphView(props: GraphViewProps) {
           renderer.markPositions();
           scene.positionsDirty = false;
           scene.dirty = true;
+          scene.hoverStale = true;
         }
       }
       // Keep a first layout in view as it spreads out, until the user takes over.
@@ -514,6 +533,29 @@ export default function GraphView(props: GraphViewProps) {
           };
           scene.dirty = true;
         }
+      }
+      // The nodes or the view moved under a pointer that did not: test again.
+      // Not while dragging (the held node is the highlight) or panning (the
+      // graph moves with the pointer); both re-test when they end.
+      if (
+        draw &&
+        g &&
+        scene.pointer &&
+        !scene.drag &&
+        !scene.pan &&
+        (scene.hoverStale || scene.hoverView !== scene.view)
+      ) {
+        const at = scene.pointer;
+        const over =
+          at.x >= 0 && at.y >= 0 && at.x <= scene.width && at.y <= scene.height;
+        const p = toWorld(at);
+        // A drag can end with the pointer outside the canvas: nothing there is hovered.
+        setHover(
+          over ? hitTest(g, draw.pos, p.x, p.y, hitPad(scene.view)) : -1,
+          at,
+        );
+        scene.hoverView = scene.view;
+        scene.hoverStale = false;
       }
       if (scene.dirty) {
         renderer.render(scene.view);
@@ -592,6 +634,7 @@ export default function GraphView(props: GraphViewProps) {
 
     const onPointerMove = (e: PointerEvent) => {
       const at = toScreen(e);
+      scene.pointer = at;
       const drag = scene.drag;
       const draw = scene.draw;
       if (drag && draw) {
@@ -637,6 +680,9 @@ export default function GraphView(props: GraphViewProps) {
         // already released
       }
       const at = toScreen(e);
+      // Whatever ended — a click, a drag, a pan — what is under the pointer now
+      // is tested on the next frame.
+      scene.hoverStale = true;
       const drag = scene.drag;
       if (drag) {
         scene.drag = null;
@@ -675,6 +721,7 @@ export default function GraphView(props: GraphViewProps) {
     const onPointerCancel = (e: PointerEvent) => endPointer(e, true);
     const onPointerLeave = () => {
       if (!scene.drag) {
+        scene.pointer = null;
         scene.pendingHover = null;
         setHover(-1, { x: 0, y: 0 });
       }
@@ -865,6 +912,9 @@ export default function GraphView(props: GraphViewProps) {
     scene.hovered = -1;
     scene.hoverSet = null;
     setHoverInfo(null);
+    scene.renderer.canvas.style.cursor = "default";
+    // Indices have changed: what is under a resting pointer is found again next frame.
+    scene.hoverStale = true;
     const heldIndex = heldId ? g.index.get(heldId) : undefined;
     scene.held = heldIndex ?? -1;
     if (scene.drag) {
