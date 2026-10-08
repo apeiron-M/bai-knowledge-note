@@ -11,6 +11,7 @@ import { formatFileSize } from "../../lib/mime.js";
 import { MarkdownPreview } from "../../../shared/markdown-preview.js";
 import { JourneyStrip } from "./JourneyStrip.js";
 import { SectionReader } from "./SectionReader.js";
+import { SplitExplainer, useSplitExplainer } from "./SplitExplainer.js";
 
 /**
  * Step 3 of 4: what this file would become.
@@ -68,6 +69,7 @@ export function SectionReview({
   const published = file.publishedIds !== undefined;
   const [open, setOpen] = useState<Set<number>>(() => new Set());
   const [reader, setReader] = useState<number | null>(null);
+  const explainer = useSplitExplainer();
 
   const toggleOpen = (i: number) =>
     setOpen((current) => {
@@ -133,6 +135,19 @@ export function SectionReview({
               ? ` (${plan.mergedSections} small ones folded into their neighbours)`
               : ""}
             . Each ticked part becomes one source.
+            {!explainer.open && (
+              <>
+                {" "}
+                <button
+                  type="button"
+                  onClick={explainer.show}
+                  className="review-link"
+                  style={{ color: "var(--bai-accent)" }}
+                >
+                  Why parts?
+                </button>
+              </>
+            )}
             {file.converted?.ocr
               ? ` This file's own text was unreadable, so it was read by OCR (${file.converted.ocr === "tesseract" ? "Tesseract" : "docling"}) — check names and numbers.`
               : file.converted?.textSource === "pdfjs"
@@ -163,6 +178,14 @@ export function SectionReview({
                 </>
               )}
           </p>
+        )}
+        {plan && explainer.open && (
+          <SplitExplainer
+            fileName={file.name}
+            parts={sections.length}
+            folderName={file.folderName}
+            onDismiss={explainer.dismiss}
+          />
         )}
         <div className="mt-2.5 flex flex-wrap items-center gap-3">
           <label

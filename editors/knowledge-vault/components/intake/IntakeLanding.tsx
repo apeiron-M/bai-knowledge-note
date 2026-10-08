@@ -7,7 +7,7 @@ import { JOURNEY_STEPS } from "./JourneyStrip.js";
 const PATH_HINTS = [
   "pick one file or twenty",
   "we read it — seconds for a page, minutes for a book",
-  "tick the parts that should be sources",
+  "a long file is cut at its chapters — keep the parts you want",
   "sources in /sources/, queued for extraction",
 ];
 
