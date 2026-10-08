@@ -6,6 +6,7 @@ import {
   needsOcrDecision,
   type IntakeFile,
 } from "../../lib/intake-model.js";
+import { backgroundNote } from "./background-note.js";
 import { CompletionCard } from "./CompletionCard.js";
 import { ConfirmDialog } from "./ConfirmDialog.js";
 import { DropZone } from "./DropZone.js";
@@ -25,7 +26,7 @@ export function IntakePanel({
   onOpenFolder,
 }: {
   batch: IntakeBatch;
-  formats: string[];
+  formats: readonly string[];
   configured: boolean;
   onOpenFolder?: (folderName: string) => void;
 }) {
@@ -248,6 +249,29 @@ export function IntakePanel({
               would become, and nothing is written until you approve.
             </p>
           )}
+          {batch.refused.length > 0 && (
+            <div className="mt-2">
+              <p
+                className="text-[11px] font-medium"
+                style={{ color: "var(--bai-warn)" }}
+              >
+                {batch.refused.length === 1
+                  ? "1 file was not added:"
+                  : `${batch.refused.length} files were not added:`}
+              </p>
+              <ul className="mt-0.5 space-y-0.5">
+                {batch.refused.map((line) => (
+                  <li
+                    key={line}
+                    className="text-[11px]"
+                    style={{ color: "var(--bai-text-tertiary)" }}
+                  >
+                    {line}
+                  </li>
+                ))}
+              </ul>
+            </div>
+          )}
           {batch.notice && (
             <p
               className="mt-2 text-[11px]"
@@ -288,9 +312,8 @@ export function IntakePanel({
                 className="mt-3 text-[11px]"
                 style={{ color: "var(--bai-text-muted)" }}
               >
-                Keep this tab open while files convert — the work lives here
-                until it is in the vault. Switching to Chat or Notes and back is
-                fine.
+                {backgroundNote()} Add more files any time; they wait their
+                turn.
               </p>
             )}
           </div>

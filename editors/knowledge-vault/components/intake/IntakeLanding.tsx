@@ -1,6 +1,6 @@
 import { useRef } from "react";
 import { LandingStage } from "../chat/LandingStage.js";
-import type { IncomingFile } from "../../hooks/use-intake-batch.js";
+import { backgroundNote } from "./background-note.js";
 import { DropZone } from "./DropZone.js";
 import { JOURNEY_STEPS } from "./JourneyStrip.js";
 
@@ -39,12 +39,12 @@ export function IntakeLanding({
   onFiles,
 }: {
   vaultName: string;
-  formats: string[];
+  formats: readonly string[];
   configured: boolean;
   settled: boolean;
   /** From the service's health: `tesseract` fast, `docling` slow, `null` unavailable. */
   ocrEngine?: "tesseract" | "docling" | null;
-  onFiles: (files: IncomingFile[]) => void;
+  onFiles: (files: File[]) => void;
 }) {
   const anchorRef = useRef<HTMLDivElement>(null);
   return (
@@ -123,8 +123,7 @@ export function IntakeLanding({
           </p>
         )}
         <p className="text-[11px]" style={{ color: "var(--bai-text-muted)" }}>
-          Keep the tab open while a file converts — the work lives here until
-          step 4.
+          {backgroundNote()}
         </p>
       </div>
     </LandingStage>

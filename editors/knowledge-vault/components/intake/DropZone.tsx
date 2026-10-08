@@ -1,14 +1,13 @@
 import { useRef, useState } from "react";
-import { validateFile } from "../../lib/intake-model.js";
-import type { IncomingFile } from "../../hooks/use-intake-batch.js";
 
 /**
- * The picker and its drop zone — always present while a batch runs, so file
- * N+1 has somewhere to go.
+ * The picker, with a drop target of its own — always present while a batch
+ * runs, so file N+1 has an obvious door. The whole vault is a drop target too
+ * (`FileDropOverlay`); this box is where the eye goes first.
  *
- * `accept` is built from the server's own `formats` rather than a copy of them,
- * and the size/extension check runs here so a file the service would refuse
- * never costs an upload.
+ * It only hands over `File`s. Checking them against the converter's formats
+ * and reading their bytes happen in the batch, so a pick of twenty files shows
+ * twenty rows at once instead of waiting for every one to be read.
  */
 export function DropZone({
   formats,
@@ -16,38 +15,20 @@ export function DropZone({
   variant = "compact",
   disabled = false,
 }: {
-  formats: string[];
-  onFiles: (files: IncomingFile[]) => void;
+  formats: readonly string[];
+  onFiles: (files: File[]) => void;
   variant?: "compact" | "hero";
   disabled?: boolean;
 }) {
   const inputRef = useRef<HTMLInputElement>(null);
-  const [refused, setRefused] = useState<string[]>([]);
   const [over, setOver] = useState(false);
 
-  async function accept(list: FileList | null) {
-    if (!list || disabled) return;
-    const accepted: IncomingFile[] = [];
-    const rejected: string[] = [];
-    for (const file of Array.from(list)) {
-      const verdict = validateFile(
-        { name: file.name, size: file.size },
-        formats,
-      );
-      if (!verdict.ok) {
-        rejected.push(`${file.name}: ${verdict.reason}`);
-        continue;
-      }
-      accepted.push({
-        name: file.name,
-        size: file.size,
-        mimeType: file.type || "application/octet-stream",
-        data: new Uint8Array(await file.arrayBuffer()),
-      });
-    }
-    setRefused(rejected);
-    if (accepted.length > 0) onFiles(accepted);
+  function take(list: FileList | null) {
+    // Copied before the input is cleared: clearing empties its FileList.
+    const files = list ? Array.from(list) : [];
     if (inputRef.current) inputRef.current.value = "";
+    if (disabled || files.length === 0) return;
+    onFiles(files);
   }
 
   const hero = variant === "hero";
@@ -55,14 +36,17 @@ export function DropZone({
     <div style={hero ? { width: "100%" } : { width: 224, flex: "none" }}>
       <div
         onDragOver={(e) => {
+          if (!e.dataTransfer.types.includes("Files")) return;
           e.preventDefault();
           if (!disabled) setOver(true);
         }}
         onDragLeave={() => setOver(false)}
         onDrop={(e) => {
+          if (!e.dataTransfer.types.includes("Files")) return;
+          // Handled here: the vault-wide drop target leaves a prevented drop alone.
           e.preventDefault();
           setOver(false);
-          void accept(e.dataTransfer.files);
+          take(e.dataTransfer.files);
         }}
         className={`intake-drop flex flex-col items-center justify-center gap-2 rounded-xl text-center ${
           hero ? "px-6 py-10" : "px-3 py-3"
@@ -72,12 +56,14 @@ export function DropZone({
           backgroundColor: "var(--bai-surface)",
         }}
       >
-        <span
-          className={hero ? "text-sm" : "text-xs"}
-          style={{ color: "var(--bai-text-secondary)" }}
-        >
-          {hero ? "Drop files here" : "Drop more files"}
-        </span>
+        {hero && (
+          <span
+            className="text-sm"
+            style={{ color: "var(--bai-text-secondary)" }}
+          >
+            Drop files here, or anywhere in the vault
+          </span>
+        )}
         <button
           type="button"
           disabled={disabled}
@@ -85,7 +71,7 @@ export function DropZone({
           className={
             hero
               ? "rounded-lg px-4 py-2 text-sm font-semibold transition-opacity hover:opacity-90 disabled:opacity-40"
-              : "intake-link text-[11px] font-medium"
+              : "rounded-md px-3 py-1.5 text-xs font-semibold transition-opacity hover:opacity-90 disabled:opacity-40"
           }
           style={
             hero
@@ -93,18 +79,22 @@ export function DropZone({
                   backgroundColor: "var(--bai-accent)",
                   color: "var(--bai-accent-text)",
                 }
-              : { color: "var(--bai-accent)" }
+              : {
+                  color: "var(--bai-accent)",
+                  border:
+                    "1px solid color-mix(in srgb, var(--bai-accent) 45%, var(--bai-border))",
+                }
           }
         >
-          {hero ? "Choose files" : "or choose"}
+          {hero ? "Choose files" : "Add more files"}
         </button>
         <span
           className="text-[10px]"
           style={{ color: "var(--bai-text-faint)" }}
         >
-          {formats.length > 0 ? `${formats.length} formats · ` : ""}up to 30 MB
-          each
-          {hero ? " · several at once is fine" : ""}
+          {hero
+            ? `${formats.length > 0 ? `${formats.length} formats, ` : ""}up to 30 MB each. Several at once is fine.`
+            : "or drop them anywhere in the vault"}
         </span>
         <input
           ref={inputRef}
@@ -112,22 +102,9 @@ export function DropZone({
           multiple
           hidden
           accept={formats.map((f) => `.${f}`).join(",")}
-          onChange={(e) => void accept(e.target.files)}
+          onChange={(e) => take(e.target.files)}
         />
       </div>
-      {refused.length > 0 && (
-        <ul className="mt-2 space-y-0.5">
-          {refused.map((line) => (
-            <li
-              key={line}
-              className="text-[11px]"
-              style={{ color: "var(--bai-warn)" }}
-            >
-              {line}
-            </li>
-          ))}
-        </ul>
-      )}
       <style>{`
         .intake-drop { transition: border-color 120ms ease; }
         .intake-link:hover { text-decoration: underline; }

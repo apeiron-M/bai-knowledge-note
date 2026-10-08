@@ -35,6 +35,7 @@ import { GettingStartedButton } from "./GettingStarted.js";
 import { useKnowledgeNotes } from "../hooks/use-knowledge-notes.js";
 import { useConvertHealth } from "../hooks/use-convert-health.js";
 import { useIntakeBatch } from "../hooks/use-intake-batch.js";
+import { FileDropOverlay, useVaultFileDrop } from "./intake/FileDropOverlay.js";
 import { useAttachmentPort } from "../lib/attachments.js";
 import { useVaultDocIndex } from "../../shared/use-vault-doc-index.js";
 import { sameDriveNode, useStableList } from "../../shared/use-stable-list.js";
@@ -98,8 +99,8 @@ export function DriveExplorer({ children }: EditorProps) {
   // The intake batch lives here, above the view switch, so a tab switch never
   // unmounts a conversion in flight and the Sources tab badge can read it.
   const attachments = useAttachmentPort();
-  const intake = useIntakeBatch({ attachments });
   const convert = useConvertHealth();
+  const intake = useIntakeBatch({ attachments, formats: convert.formats });
   // Pre-warm the shared doc-title index (module-level TTL cache) so the
   // first document editor the user opens finds it hot instead of paying
   // the two index round-trips itself.
@@ -248,6 +249,16 @@ export function DriveExplorer({ children }: EditorProps) {
     setViewMode(mode);
   }
 
+  // Files dragged in anywhere join the batch, and the view moves to Sources,
+  // where the batch is — the overlay says so before the drop.
+  const fileDrop = useVaultFileDrop({
+    ready: convert.configured,
+    onDrop: (files) => {
+      intake.onFiles(files);
+      handleSwitchView("sources");
+    },
+  });
+
   const TABS: {
     key: ViewMode;
     label: string;
@@ -386,7 +397,18 @@ export function DriveExplorer({ children }: EditorProps) {
   ];
 
   return (
-    <div className="flex h-full relative">
+    <div className="flex h-full relative" {...fileDrop.rootProps}>
+      {fileDrop.active && (
+        <FileDropOverlay
+          ready={convert.configured}
+          settled={convert.settled}
+          formats={convert.formats}
+          inBatch={
+            intake.files.filter((f) => f.publishedIds === undefined).length
+          }
+          onLeave={fileDrop.onLeave}
+        />
+      )}
       {!editorOwnsSidebar && (
         <VaultSidebar
           notes={notes}

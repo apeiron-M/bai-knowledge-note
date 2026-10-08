@@ -1,3 +1,4 @@
+import { useEffect, useState } from "react";
 import type { IntakeFile } from "../../lib/intake-model.js";
 import {
   isReviewReady,
@@ -16,6 +17,21 @@ const elapsed = (from: number | undefined, to: number | undefined) => {
     ? `${s} s`
     : `${Math.floor(s / 60)} m ${String(s % 60).padStart(2, "0")} s`;
 };
+
+/**
+ * Re-render once a second while `active`, so a converting row's elapsed time
+ * moves. The row ticks itself: the batch lives outside React and only changes
+ * when something happens, and a whole-explorer re-render per second to move
+ * one number was the old cost of this clock.
+ */
+function useSecondTick(active: boolean) {
+  const [, setTick] = useState(0);
+  useEffect(() => {
+    if (!active) return;
+    const id = setInterval(() => setTick((t) => t + 1), 1000);
+    return () => clearInterval(id);
+  }, [active]);
+}
 
 /** Where a row sits on the journey strip. */
 function journeyOf(file: IntakeFile): {
@@ -65,6 +81,7 @@ export function FileRow({
   onRemove: () => void;
   onOpenSources?: () => void;
 }) {
+  useSecondTick(file.state === "converting");
   const j = journeyOf(file);
   const ready = isReviewReady(file);
   const pendingOcr = needsOcrDecision(file);
@@ -132,13 +149,17 @@ export function FileRow({
         style={{ color: "var(--bai-text-faint)" }}
       >
         <Spinner className="h-3 w-3" /> {phase} ·{" "}
-        {elapsed(file.startedAt, undefined)} · keep this tab open
+        {elapsed(file.startedAt, undefined)}
       </span>
     );
   } else if (file.state === "queued") {
     line = (
-      <span style={{ color: "var(--bai-text-faint)" }}>
+      <span
+        style={{ color: "var(--bai-text-faint)" }}
+        title={file.error ?? undefined}
+      >
         Waiting{position ? ` · ${position}` : ""}
+        {file.error ? ` · ${file.error}` : ""}
       </span>
     );
   } else {

@@ -12,7 +12,7 @@ export function CompletionCard({
   onAddMore,
   onOpenSources,
 }: {
-  files: IntakeFile[];
+  files: readonly IntakeFile[];
   onFinish: () => void;
   onAddMore: () => void;
   onOpenSources?: () => void;
