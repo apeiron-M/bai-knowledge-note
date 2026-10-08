@@ -14,6 +14,10 @@
  * OpenAI-compatible endpoint the user names (see lib/chat/provider.ts), the
  * data via the same Switchboard endpoints the search field uses. Nothing here
  * can write.
+ *
+ * Inside the desktop app the model is the app's: the connect screen and the
+ * header's connection controls give way to the app's model (and a way back to
+ * its settings), because there is nothing here to connect.
  */
 import { useEffect, useMemo, useRef, useState, type ReactNode } from "react";
 import { useSelectedDriveId } from "@powerhousedao/reactor-browser";
@@ -35,6 +39,7 @@ import type { KnowledgeNoteInfo } from "../hooks/use-knowledge-notes.js";
 import { ModelPicker } from "./chat/ModelPicker.js";
 import { EndpointPicker } from "./chat/EndpointPicker.js";
 import { LandingStage } from "./chat/LandingStage.js";
+import { HostModelMissing } from "./chat/HostModelMissing.js";
 
 interface Orientation {
   stats: {
@@ -171,6 +176,15 @@ export function ChatView({
 
   if (!driveId) return null;
 
+  if (prov.hostManaged && !prov.isConnected) {
+    return (
+      <HostModelMissing
+        vaultName={vaultName}
+        onOpenSettings={prov.openModelSettings}
+      />
+    );
+  }
+
   if (!prov.isConnected) {
     return (
       <div className="flex h-full flex-col">
@@ -236,32 +250,56 @@ export function ChatView({
           </button>
         )}
         <div className="ml-auto flex items-center gap-1">
-          <EndpointPicker
-            active={prov.provider?.kind ?? null}
-            label={prov.providerLabel}
-            saved={prov.saved}
-            onSwitch={prov.switchTo}
-            onAdd={prov.addAnother}
-            thinkingDisabled={prov.thinkingDisabled}
-            onToggleThinking={prov.setThinking}
-          />
-          <ModelPicker
-            model={prov.model}
-            models={prov.models}
-            loading={prov.modelsLoading}
-            fellBack={prov.modelFellBack}
-            onChange={prov.setModel}
-            allowCustomId={!openRouter}
-          />
-          <button
-            type="button"
-            onClick={prov.disconnect}
-            className="rounded-md px-2 py-1.5 text-xs transition-colors hover:bg-[var(--bai-hover)]"
-            style={{ color: "var(--bai-text-muted)" }}
-            title={`Forget the ${prov.providerLabel} connection in this browser`}
-          >
-            Disconnect
-          </button>
+          {prov.hostManaged ? (
+            <>
+              <span
+                className="max-w-[240px] truncate rounded-md px-2 py-1 text-xs"
+                style={{ color: "var(--bai-text-tertiary)" }}
+                title="The AI model set in the app's Settings › Models"
+              >
+                {prov.providerLabel}
+              </span>
+              {prov.openModelSettings && (
+                <button
+                  type="button"
+                  onClick={() => prov.openModelSettings?.()}
+                  className="whitespace-nowrap rounded-md px-2 py-1.5 text-xs transition-colors hover:bg-[var(--bai-hover)] focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-[color:var(--bai-accent)]"
+                  style={{ color: "var(--bai-text-tertiary)" }}
+                >
+                  Change in Settings
+                </button>
+              )}
+            </>
+          ) : (
+            <>
+              <EndpointPicker
+                active={prov.provider?.kind ?? null}
+                label={prov.providerLabel}
+                saved={prov.saved}
+                onSwitch={prov.switchTo}
+                onAdd={prov.addAnother}
+                thinkingDisabled={prov.thinkingDisabled}
+                onToggleThinking={prov.setThinking}
+              />
+              <ModelPicker
+                model={prov.model}
+                models={prov.models}
+                loading={prov.modelsLoading}
+                fellBack={prov.modelFellBack}
+                onChange={prov.setModel}
+                allowCustomId={!openRouter}
+              />
+              <button
+                type="button"
+                onClick={prov.disconnect}
+                className="rounded-md px-2 py-1.5 text-xs transition-colors hover:bg-[var(--bai-hover)]"
+                style={{ color: "var(--bai-text-muted)" }}
+                title={`Forget the ${prov.providerLabel} connection in this browser`}
+              >
+                Disconnect
+              </button>
+            </>
+          )}
         </div>
       </div>
 

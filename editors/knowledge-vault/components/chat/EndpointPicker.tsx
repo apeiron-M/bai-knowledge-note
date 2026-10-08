@@ -1,6 +1,6 @@
 import { useState } from "react";
 import type { SavedConnection } from "../../hooks/use-chat-provider.js";
-import type { ProviderKind } from "../../lib/chat/provider.js";
+import type { ProviderKind, SavedProviderKind } from "../../lib/chat/provider.js";
 
 /**
  * Which connection answers: a small menu in the chat header listing every
@@ -20,7 +20,7 @@ export function EndpointPicker({
   active: ProviderKind | null;
   label: string;
   saved: SavedConnection[];
-  onSwitch: (kind: ProviderKind) => void;
+  onSwitch: (kind: SavedProviderKind) => void;
   onAdd: () => void;
   /** For a named server: whether its thinking is switched off; null when not applicable. */
   thinkingDisabled?: boolean | null;

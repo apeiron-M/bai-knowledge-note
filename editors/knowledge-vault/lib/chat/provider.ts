@@ -16,7 +16,13 @@
  * All three connections are remembered at once (`SavedProviders`), with one
  * active: someone who runs a local model by day and falls back to OpenRouter
  * when the laptop is closed switches in the chat header, not by reconnecting.
+ *
+ * A fourth kind, `host`, exists only inside the desktop app. The app declares
+ * its own model (`hostProvider`) and owns the connection, so nothing about it
+ * is remembered here: it is read from the declaration each time and never
+ * saved.
  */
+import type { KnowledgeVaultHostConfig } from "../../../shared/host-config.js";
 import { getStoredKey } from "./openrouter-auth.js";
 
 /** A server the user named: any OpenAI-compatible API. */
@@ -39,9 +45,20 @@ export type ChatProvider =
   | { kind: "openrouter"; key: string }
   | ({ kind: "custom" } & CustomProvider)
   /** Connect's own AI-assistant settings, read live from localStorage. */
-  | { kind: "connect" };
+  | { kind: "connect" }
+  /** The desktop app's model, through its gateway: no key in the page, the model pinned. */
+  | {
+      kind: "host";
+      baseUrl: string;
+      model: string;
+      label: string;
+      headers: Record<string, string>;
+    };
 
 export type ProviderKind = ChatProvider["kind"];
+
+/** The kinds a browser remembers. `host` is declared by the app each time and never saved. */
+export type SavedProviderKind = Exclude<ProviderKind, "host">;
 
 export interface ChatEndpoint {
   completionsUrl: string;
@@ -62,7 +79,7 @@ export interface ChatEndpoint {
  * flag rather than a record because Connect's settings are read live.
  */
 export interface SavedProviders {
-  active: ProviderKind | null;
+  active: SavedProviderKind | null;
   openrouter: { key: string } | null;
   custom: CustomProvider | null;
   connect: boolean;
@@ -206,7 +223,39 @@ export function endpointFor(p: ChatProvider): ChatEndpoint | null {
         s.model,
       );
     }
+    case "host": {
+      const base = normalizeBaseUrl(p.baseUrl);
+      if (!base) return null;
+      return {
+        completionsUrl: `${base}/chat/completions`,
+        modelsUrl: `${base}/models`,
+        headers: { ...p.headers, "x-kv-priority": "interactive" },
+        openRouter: false,
+        label: p.label,
+        pinnedModel: p.model,
+        extraBody: null,
+      };
+    }
   }
+}
+
+/**
+ * The model the host declares, as a provider.
+ * undefined: the host declares none, so the chat manages its own connections.
+ * null: the host manages models and none is set up.
+ */
+export function hostProvider(
+  config: KnowledgeVaultHostConfig | undefined,
+): ChatProvider | null | undefined {
+  if (!config || config.model === undefined) return undefined;
+  if (config.model === null) return null;
+  return {
+    kind: "host",
+    baseUrl: config.model.baseUrl,
+    model: config.model.model,
+    label: config.model.label,
+    headers: config.model.headers?.() ?? {},
+  };
 }
 
 function str(v: unknown): string | null {
@@ -274,7 +323,7 @@ export function writeSavedProviders(s: SavedProviders): void {
 }
 
 /** The saved connection of one kind, as a provider. */
-export function providerOf(s: SavedProviders, kind: ProviderKind): ChatProvider | null {
+export function providerOf(s: SavedProviders, kind: SavedProviderKind): ChatProvider | null {
   switch (kind) {
     case "openrouter":
       return s.openrouter ? { kind: "openrouter", key: s.openrouter.key } : null;
@@ -291,8 +340,8 @@ export function activeProvider(s: SavedProviders): ChatProvider | null {
 }
 
 /** Kinds with a saved connection, in the order the UI lists them. */
-export function savedKinds(s: SavedProviders): ProviderKind[] {
-  const out: ProviderKind[] = [];
+export function savedKinds(s: SavedProviders): SavedProviderKind[] {
+  const out: SavedProviderKind[] = [];
   if (s.custom) out.push("custom");
   if (s.openrouter) out.push("openrouter");
   if (s.connect) out.push("connect");

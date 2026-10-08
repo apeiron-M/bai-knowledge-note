@@ -16,6 +16,20 @@ export type KnowledgeVaultHostIdentity = {
   ensName?: string;
 };
 
+/**
+ * The model the host runs the chat on, through its own OpenAI-compatible
+ * gateway. The page holds no key and picks no model: the host decides both.
+ */
+export type KnowledgeVaultHostModel = {
+  /** The host's OpenAI-compatible gateway, e.g. "http://127.0.0.1:4202/llm/v1". */
+  baseUrl: string;
+  model: string;
+  /** Shown in the chat header, e.g. "gpt-oss-20b on this computer". */
+  label: string;
+  /** Per-request headers (the host's bearer for its gateway). */
+  headers?: () => Record<string, string>;
+};
+
 export type KnowledgeVaultHostConfig = {
   kind: KnowledgeVaultHostKind;
   /** Origin every vault call goes to, e.g. "http://127.0.0.1:4201". No path, no trailing slash. */
@@ -34,6 +48,13 @@ export type KnowledgeVaultHostConfig = {
    * browser; when this is declared, the chat's OpenRouter connect uses it instead of redirecting.
    */
   externalSignIn?: (buildUrl: (callbackUrl: string) => string) => Promise<string>;
+  /**
+   * undefined: the chat manages its own connection (browser, Connect).
+   * null: the host manages models but none is set up.
+   */
+  model?: KnowledgeVaultHostModel | null;
+  /** Opens the host's model settings. */
+  openModelSettings?: () => void;
 };
 
 /** Dispatched on `globalThis` whenever the declaration changes; `useHostConfig` subscribes to it. */
@@ -67,6 +88,12 @@ export function setHostConfig(
     ...(config.bearer ? { bearer: config.bearer } : {}),
     ...(config.identity ? { identity: { ...config.identity } } : {}),
     ...(config.externalSignIn ? { externalSignIn: config.externalSignIn } : {}),
+    ...(config.model !== undefined
+      ? { model: config.model === null ? null : { ...config.model } }
+      : {}),
+    ...(config.openModelSettings
+      ? { openModelSettings: config.openModelSettings }
+      : {}),
   };
   notifyHostChanged();
 }

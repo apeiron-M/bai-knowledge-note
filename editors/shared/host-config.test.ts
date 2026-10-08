@@ -70,3 +70,16 @@ describe("host-config: identity and bearer (the desktop host holds the sign-in)"
     setHostConfig(undefined);
   });
 });
+
+describe("host-config: the model the host manages", () => {
+  it("carries a declared model and the settings opener; null means managed but not set up", () => {
+    const openModelSettings = () => {};
+    setHostConfig({ kind: "desktop", switchboardOrigin: "http://127.0.0.1:4201", model: { baseUrl: "http://127.0.0.1:4202/llm/v1", model: "gpt-oss-20b", label: "gpt-oss-20b on this computer" }, openModelSettings });
+    expect(getHostConfig()?.model).toEqual({ baseUrl: "http://127.0.0.1:4202/llm/v1", model: "gpt-oss-20b", label: "gpt-oss-20b on this computer" });
+    expect(getHostConfig()?.openModelSettings).toBe(openModelSettings);
+    setHostConfig({ kind: "desktop", switchboardOrigin: "http://127.0.0.1:4201", model: null });
+    expect(getHostConfig()?.model).toBeNull();
+    setHostConfig({ kind: "desktop", switchboardOrigin: "http://127.0.0.1:4201" });
+    expect(getHostConfig()?.model).toBeUndefined();
+  });
+});

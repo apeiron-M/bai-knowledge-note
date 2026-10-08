@@ -8,6 +8,7 @@ import {
   connectAiSettings,
   endpointFor,
   fetchEndpointModels,
+  hostProvider,
   isLocalEndpoint,
   normalizeBaseUrl,
   readSavedProviders,
@@ -194,5 +195,35 @@ describe("thinking switch", () => {
     expect(off.temperature).toBe(0.7);
     expect(off.chat_template_kwargs).toEqual({ reasoning_effort: "low", enable_thinking: false });
     expect(withThinking(off, true)).toEqual(mine);
+  });
+});
+
+describe("the host's model", () => {
+  const host = (model: unknown) => ({ kind: "desktop" as const, switchboardOrigin: "http://127.0.0.1:4201", model: model as never, });
+  it("no declaration: the chat keeps its own connections", () => {
+    expect(hostProvider(undefined)).toBeUndefined();
+    expect(hostProvider(host(undefined))).toBeUndefined();
+  });
+  it("declared but not set up: managed, nothing to call", () => {
+    expect(hostProvider(host(null))).toBeNull();
+  });
+  it("a declared model becomes an endpoint with the model pinned and the host's headers", () => {
+    const p = hostProvider({ ...host({ baseUrl: "http://127.0.0.1:4202/llm/v1/", model: "gpt-oss-20b", label: "gpt-oss-20b on this computer", headers: () => ({ authorization: "Bearer ctl" }) }) });
+    expect(endpointFor(p!)).toEqual({
+      completionsUrl: "http://127.0.0.1:4202/llm/v1/chat/completions",
+      modelsUrl: "http://127.0.0.1:4202/llm/v1/models",
+      headers: { authorization: "Bearer ctl", "x-kv-priority": "interactive" },
+      openRouter: false,
+      label: "gpt-oss-20b on this computer",
+      pinnedModel: "gpt-oss-20b",
+      extraBody: null,
+    });
+  });
+  it("a host model with no usable address is not an endpoint", () => {
+    expect(endpointFor({ kind: "host", baseUrl: "  ", model: "m", label: "l", headers: {} })).toBeNull();
+  });
+  it("is never a saved connection: a stored 'host' reads back as none", () => {
+    writeSavedProviders({ active: "host" as never, openrouter: null, custom: null, connect: false });
+    expect(readSavedProviders().active).toBeNull();
   });
 });

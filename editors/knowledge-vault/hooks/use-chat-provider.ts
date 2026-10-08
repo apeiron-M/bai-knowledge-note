@@ -7,9 +7,16 @@
  * in-request fallbacks) are what `useOpenRouter` did; other endpoints get the
  * simpler treatment they warrant: the model the user typed or the first one
  * the server lists, no fallbacks, no billing heuristics.
+ *
+ * Inside the desktop app none of that applies. The app declares one model
+ * (`hostProvider`); this hook reports it as the pinned connection with
+ * `hostManaged: true`, and every action that would change a connection in this
+ * browser does nothing. Where the host declares no model, everything above
+ * runs exactly as it always has.
  */
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { getHostConfig } from "../../shared/host-config.js";
+import { useHostConfig } from "../../shared/use-host-config.js";
 import {
   beginOAuth,
   clearKey,
@@ -25,6 +32,7 @@ import {
   connectAiSettings,
   endpointFor,
   fetchEndpointModels,
+  hostProvider,
   normalizeBaseUrl,
   readSavedProviders,
   savedKinds,
@@ -33,7 +41,7 @@ import {
   writeSavedProviders,
   type ChatEndpoint,
   type ChatProvider,
-  type ProviderKind,
+  type SavedProviderKind,
   type SavedProviders,
 } from "../lib/chat/provider.js";
 import { classifyFailure } from "../lib/chat/failure.js";
@@ -71,7 +79,7 @@ export interface CustomEndpointInput {
 
 /** A saved connection as the UI lists it. */
 export interface SavedConnection {
-  kind: ProviderKind;
+  kind: SavedProviderKind;
   label: string;
   /** The model it will use, when known without a catalog. */
   model: string | null;
@@ -92,7 +100,7 @@ export interface UseChatProvider {
   /** Every connection this browser remembers — the active one included. */
   saved: SavedConnection[];
   /** Make a remembered connection the active one. */
-  switchTo: (kind: ProviderKind) => void;
+  switchTo: (kind: SavedProviderKind) => void;
   /** Show the connect screen to add a connection, keeping the saved ones. */
   addAnother: () => void;
   /** Whether the active named server is asked not to think; null when not applicable. */
@@ -119,11 +127,63 @@ export interface UseChatProvider {
   useConnectSettings: () => boolean;
   /** Forget the active connection; falls back to another saved one if any. */
   disconnect: () => void;
+  /** The desktop app owns the model: the chat shows it, and nothing here can change it. */
+  hostManaged: boolean;
+  /** Opens the app's model settings; null outside the desktop app, or when it gave no way to. */
+  openModelSettings: (() => void) | null;
 }
 
+const nothing = () => {};
+
+/**
+ * What the chat is given of the browser's own connection machinery while the
+ * desktop app owns the model: nothing saved, nothing to pick, nothing to sign
+ * in to. One shared object, so these values are stable from render to render.
+ */
+const HOST_MANAGED = {
+  isCompletingOAuth: false,
+  interruptedAttempt: false,
+  connectSettings: null,
+  saved: [],
+  switchTo: nothing,
+  addAnother: nothing,
+  thinkingDisabled: null,
+  setThinking: nothing,
+  modelsLoading: false,
+  modelFellBack: false,
+  modelIsFree: false,
+  modelIsExplicit: true,
+  fallbackModels: [],
+  skipModel: nothing,
+  modelName: (id: string) => id,
+  setModel: nothing,
+  connectOpenRouter: () => Promise.resolve(),
+  connectWithOpenRouterKey: () => Promise.resolve(false),
+  connectCustom: () =>
+    Promise.resolve("The desktop app sets the model in Settings › Models."),
+  useConnectSettings: () => false,
+  disconnect: nothing,
+} satisfies Partial<UseChatProvider>;
+
 export function useChatProvider(): UseChatProvider {
+  const hostConfig = useHostConfig();
+  // undefined: the chat manages its own connections. null: the desktop app
+  // manages models and none is set up. Memoised so `provider`, and the
+  // endpoint derived from it, keep one identity until the host re-declares.
+  const managed = useMemo(() => hostProvider(hostConfig), [hostConfig]);
+  const hostManaged = managed !== undefined;
+  const hostModels = useMemo<ModelInfo[]>(
+    () =>
+      managed?.kind === "host"
+        ? [plainModel({ id: managed.model, name: managed.model })]
+        : [],
+    [managed],
+  );
   const [saved, setSaved] = useState<SavedProviders>(() => readSavedProviders());
-  const provider: ChatProvider | null = useMemo(() => activeProvider(saved), [saved]);
+  const provider: ChatProvider | null = useMemo(
+    () => (hostManaged ? managed : activeProvider(saved)),
+    [hostManaged, managed, saved],
+  );
   const save = useCallback((next: SavedProviders) => {
     writeSavedProviders(next);
     setSaved(next);
@@ -152,6 +212,9 @@ export function useChatProvider(): UseChatProvider {
   // Finish an OpenRouter redirect exactly once per mount. A no-op when there
   // is no ?code=, so this is safe on every load.
   useEffect(() => {
+    // The desktop app has no OpenRouter sign-in here, and a `code` in its URL
+    // is not ours to exchange or strip.
+    if (hostManaged) return;
     if (completedRef.current) return;
     completedRef.current = true;
     if (!new URL(location.href).searchParams.has("code")) return;
@@ -162,7 +225,7 @@ export function useChatProvider(): UseChatProvider {
         save({ ...readSavedProviders(), openrouter: { key: r.key }, active: "openrouter" });
       })
       .finally(() => setCompleting(false));
-  }, [save]);
+  }, [save, hostManaged]);
 
   const endpoint = useMemo(
     () => (provider ? endpointFor(provider) : null),
@@ -174,6 +237,8 @@ export function useChatProvider(): UseChatProvider {
   // The catalog is only useful once connected; fetching it earlier would be
   // a network call on behalf of a user who never opens the chat.
   useEffect(() => {
+    // The desktop app pins its model: no catalog to fetch, nothing to pick.
+    if (hostManaged) return;
     if (!endpoint) {
       setModels([]);
       return;
@@ -193,7 +258,7 @@ export function useChatProvider(): UseChatProvider {
     return () => {
       cancelled = true;
     };
-  }, [endpoint]);
+  }, [endpoint, hostManaged]);
 
   // A host that runs sign-ins outside the page (the desktop app) gets the flow handed to it:
   // a desktop window cannot take the system browser's redirect back. Elsewhere, the redirect.
@@ -272,7 +337,7 @@ export function useChatProvider(): UseChatProvider {
   }, [save]);
 
   const switchTo = useCallback(
-    (kind: ProviderKind) => {
+    (kind: SavedProviderKind) => {
       const current = readSavedProviders();
       if (!savedKinds(current).includes(kind)) return;
       save({ ...current, active: kind });
@@ -425,6 +490,20 @@ export function useChatProvider(): UseChatProvider {
     [saved, settingsTick],
   );
 
+  if (hostManaged) {
+    return {
+      ...HOST_MANAGED,
+      provider,
+      endpoint,
+      isConnected: endpoint !== null,
+      providerLabel: endpoint?.label ?? "",
+      model: managed?.kind === "host" ? managed.model : "",
+      models: hostModels,
+      hostManaged: true,
+      openModelSettings: hostConfig?.openModelSettings ?? null,
+    };
+  }
+
   return {
     provider,
     endpoint,
@@ -454,5 +533,7 @@ export function useChatProvider(): UseChatProvider {
     connectCustom,
     useConnectSettings,
     disconnect,
+    hostManaged: false,
+    openModelSettings: null,
   };
 }

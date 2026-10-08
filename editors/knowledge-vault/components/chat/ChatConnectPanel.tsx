@@ -5,7 +5,7 @@ import type {
   CustomEndpointInput,
   SavedConnection,
 } from "../../hooks/use-chat-provider.js";
-import type { ProviderKind } from "../../lib/chat/provider.js";
+import type { SavedProviderKind } from "../../lib/chat/provider.js";
 import { Spinner } from "../LoadingStates.js";
 import { LandingStage } from "./LandingStage.js";
 
@@ -53,7 +53,7 @@ export function ChatConnectPanel({
   onUseConnectSettings: () => void;
   /** Connections this browser remembers; one click reactivates one. */
   saved?: SavedConnection[];
-  onUseSaved?: (kind: ProviderKind) => void;
+  onUseSaved?: (kind: SavedProviderKind) => void;
 }) {
   const anchorRef = useRef<HTMLDivElement>(null);
   const [showKey, setShowKey] = useState(false);
