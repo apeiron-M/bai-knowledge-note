@@ -58,6 +58,12 @@ export type KnowledgeVaultHostConfig = {
   model?: KnowledgeVaultHostModel | null;
   /** Opens the host's model settings. */
   openModelSettings?: () => void;
+  /**
+   * Files the host collected for this vault before it opened (the desktop app's setup guide). The vault takes
+   * them once, on opening, into its own intake — conversion, splitting and review happen there, as for a drop.
+   * Returns [] when there is nothing for this drive; must not throw.
+   */
+  takeIntakeFiles?: (driveId: string) => File[];
 };
 
 /** Dispatched on `globalThis` whenever the declaration changes; `useHostConfig` subscribes to it. */
@@ -96,6 +102,9 @@ export function setHostConfig(
       : {}),
     ...(config.openModelSettings
       ? { openModelSettings: config.openModelSettings }
+      : {}),
+    ...(config.takeIntakeFiles
+      ? { takeIntakeFiles: config.takeIntakeFiles }
       : {}),
   };
   notifyHostChanged();

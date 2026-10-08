@@ -33,6 +33,7 @@ import { readReturnIntent } from "../lib/chat/openrouter-auth.js";
 import { ActivityView } from "./ActivityView.js";
 import { GettingStartedButton } from "./GettingStarted.js";
 import { useKnowledgeNotes } from "../hooks/use-knowledge-notes.js";
+import { getHostConfig } from "../../shared/host-config.js";
 import { useConvertHealth } from "../hooks/use-convert-health.js";
 import { useIntakeBatch } from "../hooks/use-intake-batch.js";
 import { FileDropOverlay, useVaultFileDrop } from "./intake/FileDropOverlay.js";
@@ -264,6 +265,24 @@ export function DriveExplorer({ children }: EditorProps) {
         handleSwitchView("sources");
     },
   });
+
+  // Files the host collected before this vault opened (the desktop app's setup
+  // guide) join the batch once, when conversion is ready — exactly as a drop.
+  const handedOver = useRef<string | null>(null);
+  // The latest render's intake and view switch; the effect runs once per drive.
+  const takeHandedFiles = useRef<(id: string) => void>(() => undefined);
+  takeHandedFiles.current = (id) => {
+    const files = getHostConfig()?.takeIntakeFiles?.(id) ?? [];
+    if (files.length === 0) return;
+    intake.onFiles(files);
+    handleSwitchView("sources");
+  };
+  useEffect(() => {
+    if (!driveId || !convert.configured || handedOver.current === driveId)
+      return;
+    handedOver.current = driveId;
+    takeHandedFiles.current(driveId);
+  }, [driveId, convert.configured]);
 
   const TABS: {
     key: ViewMode;
