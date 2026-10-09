@@ -70,8 +70,9 @@ export type KnowledgeVaultHostConfig = {
    */
   takeOpenView?: (driveId: string) => string | null;
   /**
-   * Reads files a drop carried only by address (`text/uri-list`): WebKitGTK, the Linux desktop window, hands a
-   * page the addresses of files dragged from a file manager, never the files. The host can read them.
+   * Reads the files of a drop that held none: WebKitGTK, the Linux desktop window, gives a page no files for a
+   * drag from a file manager, and shows only the first file's address. `uriList` holds the addresses the page
+   * could see (possibly none); the host reads the drop's whole list from the window itself when it can.
    */
   readDroppedFiles?: (uriList: string) => Promise<File[]>;
 };

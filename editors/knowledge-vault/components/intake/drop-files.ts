@@ -15,12 +15,21 @@ export function dragCarriesFiles(dt: DataTransfer): boolean {
  */
 export async function droppedFiles(dt: DataTransfer): Promise<File[]> {
   const listed = Array.from(dt.files);
-  if (listed.length > 0) return listed;
-  const uris = dt.getData("text/uri-list");
+  if (listed.length > 0) return listed; // Windows, macOS, browsers: the drop holds the files themselves
   const read = getHostConfig()?.readDroppedFiles;
-  if (!read || !/^file:/m.test(uris)) return [];
+  if (!read) return [];
+  // WebKitGTK leaves text/uri-list empty and shows only the first file's address, in a text/html link: the
+  // addresses the page can see go to the host, which reads the drop's whole list from the window itself.
+  const shown = ["text/uri-list", "text/html", "text/plain"].map((type) => {
+    try {
+      return dt.getData(type);
+    } catch {
+      return "";
+    }
+  });
+  const uris = [...new Set([...shown.join("\n").matchAll(/file:\/\/[^\s"'<>]+/g)].map((m) => m[0].replace(/&amp;/g, "&")))];
   try {
-    return await read(uris);
+    return await read(uris.join("\n"));
   } catch {
     return [];
   }
