@@ -565,3 +565,15 @@ html[data-bai-toast-theme] .Toastify__bounce-exit--bottom-center {
 [data-bai-theme="light"] select:not([multiple]):not([size]) {
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='none' stroke='%2352525b' stroke-width='1.6' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M4 6l4 4 4-4'/%3E%3C/svg%3E");
 }
+
+/* The vault's tab row scrolls sideways when even its icons do not fit (menu-bar.ts); no scrollbar over the tabs. */
+.bai-theme .kv-tab-row {
+  scrollbar-width: none;
+  /* A fade at the right edge says there is more to scroll to; the row is wider than its tabs otherwise, so the
+     fade falls on empty space when everything fits. */
+  -webkit-mask-image: linear-gradient(to right, #000 calc(100% - 28px), transparent);
+  mask-image: linear-gradient(to right, #000 calc(100% - 28px), transparent);
+}
+.bai-theme .kv-tab-row::-webkit-scrollbar {
+  display: none;
+}

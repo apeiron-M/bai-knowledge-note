@@ -32,6 +32,7 @@ import { ChatView } from "./ChatView.js";
 import { readReturnIntent } from "../lib/chat/openrouter-auth.js";
 import { ActivityView } from "./ActivityView.js";
 import { GettingStartedButton } from "./GettingStarted.js";
+import { compactTabs } from "./menu-bar.js";
 import { useKnowledgeNotes } from "../hooks/use-knowledge-notes.js";
 import { getHostConfig } from "../../shared/host-config.js";
 import { useConvertHealth } from "../hooks/use-convert-health.js";
@@ -154,6 +155,22 @@ export function DriveExplorer({ children }: EditorProps) {
   // Published to the hosted editor as `--vault-topbar-h` so its grid can
   // reserve a matching top row. Our own element, so measuring it is safe.
   const topBarHeight = useMeasuredHeight(topBarRef, editorOwnsSidebar);
+  // The bar's width decides whether the tabs keep their labels (menu-bar.ts): in a narrow window the actions
+  // (help, New, settings) must stay on screen, so the tabs give way — icons first, then a sideways scroll.
+  const [barWidth, setBarWidth] = useState(0);
+  useEffect(() => {
+    const el = topBarRef.current;
+    if (!el || typeof ResizeObserver === "undefined") return;
+    const observer = new ResizeObserver((entries) => setBarWidth(entries[0]?.contentRect.width ?? 0));
+    observer.observe(el);
+    return () => observer.disconnect();
+  }, []);
+  const compact = compactTabs(barWidth);
+  const tabRowRef = useRef<HTMLDivElement>(null);
+  useEffect(() => {
+    const active = tabRowRef.current?.querySelector<HTMLElement>('[aria-current="page"]');
+    if (active && typeof active.scrollIntoView === "function") active.scrollIntoView({ inline: "nearest", block: "nearest" });
+  }, [viewMode, compact]);
 
   const handleGraphFocusChange = useCallback((focus: GraphFocus | null) => {
     setGraphFocus(focus);
@@ -481,7 +498,7 @@ export function DriveExplorer({ children }: EditorProps) {
         {/* Top bar */}
         <div
           ref={topBarRef}
-          className="flex items-center justify-between px-4 py-2"
+          className="flex items-center justify-between gap-2 px-4 py-2"
           style={{
             borderBottom: "1px solid var(--bai-border)",
             backgroundColor: "var(--bai-surface)",
@@ -496,13 +513,16 @@ export function DriveExplorer({ children }: EditorProps) {
               : null),
           }}
         >
-          <div className="flex items-center gap-1">
+          <div ref={tabRowRef} className="kv-tab-row flex min-w-0 flex-1 items-center gap-1 overflow-x-auto">
             {TABS.map((tab) => (
               <button
                 key={tab.key}
                 type="button"
                 onClick={() => handleSwitchView(tab.key)}
-                className="flex items-center gap-1.5 rounded-md px-3 py-1.5 text-xs font-medium transition-colors"
+                aria-label={tab.label}
+                title={compact ? tab.label : undefined}
+                aria-current={viewMode === tab.key && !showDocumentEditor ? "page" : undefined}
+                className={`flex shrink-0 items-center gap-1.5 whitespace-nowrap rounded-md ${compact ? "px-2" : "px-3"} py-1.5 text-xs font-medium transition-colors`}
                 style={{
                   backgroundColor:
                     viewMode === tab.key && !showDocumentEditor
@@ -515,7 +535,7 @@ export function DriveExplorer({ children }: EditorProps) {
                 }}
               >
                 {tab.icon}
-                {tab.label}
+                {!compact && tab.label}
                 {tab.badge !== undefined && (
                   <span
                     className="rounded-full px-1.5 py-0.5 text-[10px]"
@@ -544,7 +564,8 @@ export function DriveExplorer({ children }: EditorProps) {
             ))}
             {showDocumentEditor && (
               <span
-                className="flex items-center gap-1.5 rounded-md px-3 py-1.5 text-xs font-medium"
+                className={`flex shrink-0 items-center gap-1.5 whitespace-nowrap rounded-md ${compact ? "px-2" : "px-3"} py-1.5 text-xs font-medium`}
+                title={compact ? "Editing" : undefined}
                 style={{
                   backgroundColor: "var(--bai-hover)",
                   color: "var(--bai-accent)",
@@ -560,11 +581,11 @@ export function DriveExplorer({ children }: EditorProps) {
                   <path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7" />
                   <path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z" />
                 </svg>
-                Editing
+                {!compact && "Editing"}
               </span>
             )}
           </div>
-          <div className="flex items-center gap-3">
+          <div className="flex shrink-0 items-center gap-3">
             <GettingStartedButton />
             <CreateMenu />
             <SettingsMenu
