@@ -308,10 +308,54 @@ describe("the extract-claims action", () => {
     modelCalls = 0;
     const extracted = (u: string) => (u.includes("/notes/s1") ? json({ name: "s1", state: { global: { title: "Src", content: SOURCE, extractedClaims: ["n1", "n2"] } } }) : answers(u));
     await withFetch(extracted, async () => {
-      await expect(run({ auth: auth(), propsValue: { drive: "d", source: "s1", mode: "write" } })).rejects.toThrow(/Stage "read" failed: "Src" already has 2 extracted notes/);
+      await expect(run({ auth: auth(), propsValue: { drive: "d", source: "s1", mode: "write" } })).rejects.toThrow(/Stage "pipeline check" failed: "Src" already has 2 extracted notes/);
       expect(modelCalls).toBe(0);
       const dry = await run({ auth: auth(), propsValue: { drive: "d", source: "s1", mode: "dry_run" } });
       expect(String(dry.summary)).toMatch(/^Dry run: /);
+    });
+  });
+  it("passes through a source the vault already holds the extraction of, once the queue has caught up, without a model call", async () => {
+    let modelCalls = 0;
+    let task: Record<string, unknown> = { id: "t1", taskType: "claim", status: "PENDING", documentRef: "s1", currentPhase: "create" };
+    let source: Record<string, unknown> = { title: "Src", content: SOURCE, status: "EXTRACTED", extractedClaims: ["n1", "n2"], extractionStats: { claimCount: 2 } };
+    let caughtUpTo: Record<string, unknown> = { currentPhase: "reflect" };
+    let queue = true;
+    const serve = (u: string) => {
+      if (u.startsWith("https://llm.test")) {
+        modelCalls++;
+        return json({ choices: [{ message: { content: model } }], usage: { cost: 0.001 } });
+      }
+      if (u.includes("/tasks/reconcile")) {
+        task = { ...task, ...caughtUpTo };
+        return json({ advanced: [{ taskId: "t1", phases: ["create"], to: "reflect", status: task.status, phase: task.currentPhase }] });
+      }
+      if (u.includes("/notes/d")) return json({ state: { global: { nodes: queue ? [{ id: "q1", documentType: "bai/pipeline-queue" }] : [] } } });
+      if (u.includes("/notes/q1")) return json({ state: { global: { tasks: [task] } } });
+      if (u.includes("/notes/s1")) return json({ name: "s1", state: { global: source } });
+      if (u.includes("/notes") && !u.includes("/notes/")) return json({ notes: [{ id: "new1", name: "x", readBack: "confirmed", operations: [] }] }, 201);
+      if (u.includes("/relationships") || u.includes("/actions")) return json({ operations: [] });
+      return vaultAnswers(u);
+    };
+    await withFetch(serve, async () => {
+      const out = await run({ auth: auth(), propsValue: { drive: "d", source: "s1", mode: "write" } });
+      expect(out).toMatchObject({ passed_through: true, note_ids: [], existing_count: 2, pipeline: { task_id: "t1", to: "reflect" } });
+      expect(String(out.summary)).toMatch(/^"Src" is already extracted \(2 notes\); nothing was written\. Caught the pipeline task up from the vault: create recorded, now at reflect\. The source's pipeline task is already past create \(at reflect\); this step has nothing left to do\. \d+ s\.$/);
+      expect((out.stages as string[]).map((x) => x.split(" · ")[0])).toEqual(["read", "pipeline check"]);
+      expect(modelCalls).toBe(0);
+
+      // an extraction that found nothing, its task closed by the catch-up: passes through too
+      task = { id: "t1", taskType: "claim", status: "PENDING", documentRef: "s1", currentPhase: "reflect" };
+      source = { title: "Contacts", content: SOURCE, status: "EXTRACTED", extractedClaims: [], extractionStats: { claimCount: 0 } };
+      caughtUpTo = { status: "DONE", currentPhase: null };
+      const empty = await run({ auth: auth(), propsValue: { drive: "d", source: "s1", mode: "write" } });
+      expect(String(empty.summary)).toMatch(/^"Contacts" is already extracted \(no claims found\); nothing was written\. .* The source's pipeline task is already complete; create has nothing left to do\./);
+      expect(modelCalls).toBe(0);
+
+      // ...but with no pipeline around it, an empty extraction may be tried again (a better model, say)
+      queue = false;
+      const again = await run({ auth: auth(), propsValue: { drive: "d", source: "s1", mode: "write" } });
+      expect(again.passed_through).toBeUndefined();
+      expect(modelCalls).toBeGreaterThan(0);
     });
   });
   it("needs an LLM key and a model", async () => {

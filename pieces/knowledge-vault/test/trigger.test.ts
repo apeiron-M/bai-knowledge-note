@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { resolveSource } from "../lib/common/props.js";
-import { newPipelineTaskTrigger, oneAtATimeFor, pollTasks, toItem } from "../lib/triggers/new-pipeline-task.js";
+import { HELD_TOO_LONG_MS, MAX_ATTEMPTS, newPipelineTaskTrigger, oneAtATimeFor, pollTasks, RESUME_AFTER_MS, toItem } from "../lib/triggers/new-pipeline-task.js";
 import type { KnowledgeVaultClient, RequestOptions } from "../lib/common/client.js";
 
 const task = (id: string, extra: Record<string, unknown> = {}) => ({ id, taskType: "claim", status: "PENDING", documentRef: `src-${id}`, target: `Source ${id}`, currentPhase: "create", createdAt: "2026-09-28T10:00:00Z", ...extra });
@@ -85,6 +85,68 @@ describe("the new-pipeline-task trigger", () => {
     const tasks = [task("t5", { currentPhase: "reflect" })];
     const out = await pollTasks(vault(tasks).client, memoryStore(), { drive: "d", phase: "reflect", per_poll: 5 });
     expect(out.map((i) => i._dedupe_key)).toEqual(["t5@reflect"]);
+  });
+
+  describe("resuming a task that stopped on the way", () => {
+    const T0 = Date.parse("2026-10-08T21:00:00Z");
+    const at = (ms: number) => new Date(T0 + ms).toISOString();
+    const keys = (items: { _dedupe_key: string }[]) => items.map((i) => i._dedupe_key);
+
+    it("starts a task again at a later phase it stopped at, once nothing has touched it for a while", async () => {
+      const tasks = [task("t5", { currentPhase: "reflect", updatedAt: at(0) })];
+      const store = memoryStore();
+      const poll = (ms: number) => pollTasks(vault(tasks).client, store, { drive: "d", phase: "create", per_poll: 5 }, () => T0 + ms);
+      expect(await poll(RESUME_AFTER_MS - 1)).toEqual([]); // may still be on its way between two steps
+      expect(keys(await poll(RESUME_AFTER_MS))).toEqual(["t5@reflect"]);
+      expect(await poll(RESUME_AFTER_MS + 60_000)).toEqual([]); // just started again: give that run its time
+      expect(keys(await poll(2 * RESUME_AFTER_MS))).toEqual(["t5@reflect#2"]);
+      expect(keys(await poll(3 * RESUME_AFTER_MS))).toEqual(["t5@reflect#3"]);
+      expect(await poll(10 * RESUME_AFTER_MS)).toEqual([]); // MAX_ATTEMPTS: a source failing every time stops costing runs
+      expect(MAX_ATTEMPTS).toBe(3);
+      // moved on to the next phase: a new key, a fresh count
+      tasks[0] = task("t5", { currentPhase: "reweave", updatedAt: at(10 * RESUME_AFTER_MS) });
+      expect(keys(await poll(11 * RESUME_AFTER_MS))).toEqual(["t5@reweave"]);
+    });
+
+    it("starts a task again at its own phase only when this trigger started it there before", async () => {
+      const tasks = [task("t1", { updatedAt: at(0) }), task("t2", { updatedAt: at(0) })];
+      const store = memoryStore(["t2@create"]); // t2: backlog the trigger was told to skip
+      const poll = (ms: number) => pollTasks(vault(tasks).client, store, { drive: "d", phase: "create", per_poll: 5 }, () => T0 + ms);
+      expect(keys(await poll(0))).toEqual(["t1@create"]);
+      expect(await poll(RESUME_AFTER_MS - 1)).toEqual([]);
+      expect(keys(await poll(RESUME_AFTER_MS))).toEqual(["t1@create#2"]); // its run died before it took the task
+      tasks[0] = task("t1", { status: "IN_PROGRESS", updatedAt: at(RESUME_AFTER_MS) });
+      expect(await poll(3 * RESUME_AFTER_MS)).toEqual([]); // taken: no longer ours to start
+    });
+
+    it("leaves the backlog alone when switched on, at every phase", async () => {
+      const real = globalThis.fetch;
+      const tasks = [task("t1"), task("t5", { currentPhase: "reflect" }), task("t6", { currentPhase: "verify" })];
+      globalThis.fetch = (async (url: string) => new Response(JSON.stringify(String(url).includes("/notes/q1") ? { state: { global: { tasks } } } : { state: { global: { nodes: [{ id: "q1", documentType: "bai/pipeline-queue" }, ...sources, { id: "src-t5", documentType: "bai/source" }, { id: "src-t6", documentType: "bai/source" }] } } }), { status: 200, headers: { "content-type": "application/json" } })) as typeof fetch;
+      try {
+        const store = memoryStore();
+        await (newPipelineTaskTrigger as unknown as { onEnable(c: unknown): Promise<void> }).onEnable({ auth: { props: { base_url: "http://127.0.0.1:1", token: "t" } }, store, propsValue: { drive: "d" } });
+        expect(store.peek()).toEqual(["t1@create", "t5@reflect", "t6@verify"]);
+      } finally {
+        globalThis.fetch = real;
+      }
+    });
+
+    it("one at a time: a task held far longer than any step runs no longer holds the queue", async () => {
+      const tasks = [task("t1", { status: "IN_PROGRESS", updatedAt: at(0) }), task("t2", { updatedAt: at(0) })];
+      const poll = (ms: number) => pollTasks(vault(tasks).client, memoryStore(), { drive: "d", phase: "create", per_poll: 1, oneAtATime: true }, () => T0 + ms);
+      expect(await poll(HELD_TOO_LONG_MS - 1)).toEqual([]);
+      expect(keys(await poll(HELD_TOO_LONG_MS))).toEqual(["t2@create"]);
+    });
+
+    it("keeps its record to open tasks, and survives a store that holds something else", async () => {
+      const store = memoryStore();
+      await store.put("knowledge-vault:new-pipeline-task:fired", { "gone@create": { n: 1, at: 0 }, "t1@create": { n: "x" }, junk: null });
+      await pollTasks(vault([task("t1", { updatedAt: at(0) })]).client, store, { drive: "d", phase: "create", per_poll: 5 }, () => T0);
+      expect(await store.get("knowledge-vault:new-pipeline-task:fired")).toEqual({ "t1@create": { n: 1, at: T0 } });
+      await store.put("knowledge-vault:new-pipeline-task:fired", ["not", "a", "record"]);
+      expect(keys(await pollTasks(vault([task("t5", { currentPhase: "reweave", updatedAt: at(0) })]).client, store, { drive: "d", phase: "create", per_poll: 5 }, () => T0 + RESUME_AFTER_MS))).toEqual(["t5@reweave"]);
+    });
   });
 
   it("skips a task whose source was deleted: its run would fail on the first read", async () => {

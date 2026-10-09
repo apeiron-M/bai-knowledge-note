@@ -141,8 +141,28 @@ describe("the verify-notes action", () => {
   let claims = ["n1", "n2", "n3"];
   let answer: unknown[] = [{ id: "n1", verdict: "pass" }, { id: "n2", verdict: "flag", problems: ["a restated figure"] }, { id: "n3", verdict: "pass", duplicate_of: "x1", duplicate_reason: "same finding" }];
   let rejectFails = false;
+  /** The queue around the source: none (the step runs on its own), or a task at a phase. */
+  let task: Record<string, unknown> | null = null;
+  const advanced: unknown[] = [];
+  let modelCalls = 0;
   const serve = (u: string, init?: RequestInit) => {
+    if (task) {
+      if (u.includes("/notes/d?") || u.endsWith("/notes/d")) return json({ state: { global: { nodes: [{ id: "q1", documentType: "bai/pipeline-queue" }] } } });
+      if (u.includes("/notes/q1")) return json({ state: { global: { tasks: [task] } } });
+      if (u.includes("/tasks/t1/claim")) {
+        task = { ...task, status: "IN_PROGRESS", assignedTo: "0xme" };
+        return json({ taskId: "t1", assignedTo: "0xme" });
+      }
+      if (u.includes("/ping")) return json({ ok: true, user: "0xme" });
+      const sent = typeof init?.body === "string" ? init.body : "";
+      if (u.includes("/actions") && sent.includes("ADVANCE_PHASE")) {
+        advanced.push(JSON.parse(sent));
+        task = { ...task, status: "DONE", currentPhase: null };
+        return json({ operations: [{ type: "ADVANCE_PHASE", error: null }] });
+      }
+    }
     if (u.startsWith("https://llm.test")) {
+      modelCalls++;
       return json({ choices: [{ message: { content: JSON.stringify({ notes: answer }) } }], usage: { cost: 0.002 } });
     }
     if (u.includes("/actions") && rejectFails) return json({ operations: [{ type: "REJECT_NOTE", error: "Can only reject from IN_REVIEW status" }] });
@@ -171,12 +191,43 @@ describe("the verify-notes action", () => {
   it("reports pass, check and duplicate per note; write retires the duplicate", async () => {
     await withFetch(async () => {
       const dry = await run({ drive: "d", source: "src", mode: "dry_run" });
-      expect(String(dry.summary)).toMatch(/^Dry run: 1 note ready to approve, 1 to check, 1 duplicate would be retired\. The task waits at verify for your review\./);
+      expect(String(dry.summary)).toMatch(/^Dry run: 1 note ready to approve, 1 to check, 1 duplicate would be retired\. Write mode would complete the pipeline task\./);
       expect((dry.notes as { result: string }[]).map((n) => n.result)).toEqual(["pass", "check", "duplicate (would retire)"]);
       expect(dry.flagged_count).toBe(1);
       const wrote = await run({ drive: "d", source: "src", mode: "write" });
       expect(String(wrote.summary)).toMatch(/^1 note ready to approve, 1 to check, 1 duplicate retired\./);
       expect((wrote.notes as { result: string; duplicate_of?: string }[])[2]).toMatchObject({ result: "retired as duplicate", duplicate_of: "Old" });
+    });
+  });
+  it("in write mode completes the source's pipeline task: verify is its last phase", async () => {
+    await withFetch(async () => {
+      task = { id: "t1", taskType: "claim", status: "PENDING", documentRef: "src", currentPhase: "verify" };
+      advanced.length = 0;
+      const wrote = await run({ drive: "d", source: "src", mode: "write" });
+      expect(String(wrote.summary)).toMatch(/^1 note ready to approve, 1 to check, 1 duplicate retired\. Pipeline task complete: verify was the last phase\./);
+      expect(wrote.pipeline).toMatchObject({ task_id: "t1", from: "verify", to: "done" });
+      const handoff = (advanced[0] as { actions: { input: { handoff: { phase: string; workDone: string; completedBy: string } } }[] }).actions[0].input.handoff;
+      expect(handoff).toMatchObject({ phase: "verify", completedBy: "verify-notes · m/default" });
+      expect(handoff.workDone).toBe("Verified 3 notes: 2 pass the recite test, 1 flagged for the reviewer, 1 duplicate retired. The notes stay in review for approval.");
+
+      // already complete when a resumed run gets here: works on its own, nothing to advance
+      const again = await run({ drive: "d", source: "src", mode: "write" });
+      expect(String(again.summary)).toMatch(/This source has no open pipeline task; nothing to advance\./);
+
+      // a task still before verify is left where it is; one past it (none exists) cannot be
+      task = { id: "t1", taskType: "claim", status: "PENDING", documentRef: "src", currentPhase: "reweave" };
+      const early = await run({ drive: "d", source: "src", mode: "write" });
+      expect(early.stages).toEqual(expect.arrayContaining([expect.stringMatching(/^pipeline check · .* · The pipeline task already matches the vault\. The pipeline task is still at reweave; this step runs and leaves it there\.$/) as unknown as string]));
+
+      // nothing to verify: the task still completes
+      task = { id: "t1", taskType: "claim", status: "PENDING", documentRef: "src", currentPhase: "verify" };
+      claims = [];
+      modelCalls = 0;
+      const empty = await run({ drive: "d", source: "src", mode: "write" });
+      expect(String(empty.summary)).toMatch(/^"Tech" has no notes to verify\. Pipeline task complete: verify was the last phase\./);
+      expect(modelCalls).toBe(0);
+      claims = ["n1", "n2", "n3"];
+      task = null;
     });
   });
   it("says so when a source has nothing to verify", async () => {

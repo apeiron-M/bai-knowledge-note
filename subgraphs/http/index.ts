@@ -18,6 +18,7 @@ import { createIngestSourceRoute } from "./routes/sources.js";
 import { createSourceFolderRoute } from "./routes/source-folders.js";
 import { registerStructureRoutes } from "./routes/structure.js";
 import { createClaimRoute } from "./routes/tasks.js";
+import { createReconcileRoute } from "./routes/reconcile.js";
 import { createSearchRoute } from "./routes/search.js";
 import { timedRoute } from "./lib/slow.js";
 import { schema } from "./schema.js";
@@ -144,6 +145,15 @@ export class HttpSubgraph extends BaseSubgraph {
       );
       // The vault's one HUB: created if missing, duplicates merged — under a per-vault lock (routes/hub.ts).
       this.http.post("hub", { auth: "renown", body: "parsed" }, timedRoute("POST hub", createHubRoute(deps)));
+      // The queue caught up with what the vault already holds (lib/reconcile.ts).
+      this.http.post(
+        "tasks/reconcile",
+        { auth: "renown", body: "parsed" },
+        timedRoute(
+          "POST tasks/reconcile",
+          createReconcileRoute({ ...deps, graph: (driveId: string) => getQuery(this, driveId) }),
+        ),
+      );
       this.http.post(
         "tasks/:id/claim",
         { auth: "renown", body: "parsed" },

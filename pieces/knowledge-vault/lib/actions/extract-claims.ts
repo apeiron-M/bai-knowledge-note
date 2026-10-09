@@ -1,5 +1,5 @@
 import { createAction, Property } from "@powerhousedao/pieces-framework";
-import { advancePipeline, claimPhase } from "../agent/pipeline.js";
+import { advancePipeline, catchUp, claimPhase, passThrough, taskPosition } from "../agent/pipeline.js";
 import { llmFor, stageRunner } from "../agent/runner.js";
 import { candidatesStage, checkVaultStage, draftStage, readSourceStage, reportStage } from "../agent/staged.js";
 import { assertWritable, writeStage } from "../agent/write.js";
@@ -63,12 +63,58 @@ export const extractClaimsAction = createAction({
     const { stage, finish } = stageRunner(context);
 
     const write = p.mode === "write";
-    const read = await stage("read", async () => {
-      const bundle = await readSourceStage(client, drive, resolveSource(p));
-      // Checked before any model call: a rerun would duplicate the notes.
-      if (write) assertWritable(bundle);
-      return bundle;
-    });
+    const read = await stage("read", () => readSourceStage(client, drive, resolveSource(p)));
+    if (write) {
+      // Checked before any model call: a rerun would duplicate the notes. A source the vault already
+      // holds the extraction of is the queue lagging, not a request to extract again: the task is
+      // caught up from the vault and, once it is past create, this step passes through.
+      const existing = Math.max(read.extracted_claims, read.derived_notes);
+      const ranEmpty = existing === 0 && read.status === "EXTRACTED" && read.stats_recorded === true;
+      if (existing > 0 || ranEmpty) {
+        const checked = await stage("pipeline check", async () => {
+          const caught = await catchUp(client, { drive, sourceId: read.source_id, by: "extract-claims" });
+          const position = await taskPosition(client, { drive, sourceId: read.source_id, phase: "create" });
+          const past = position.position === "ahead" || position.position === "done";
+          // Not past create: refused as before, unless the earlier extraction found nothing (that may be tried again).
+          if (!past && existing > 0) assertWritable(read);
+          return { past, position, summary: past ? `${caught.summary} ${passThrough(position, "create")}` : caught.summary };
+        });
+        if (checked.past) {
+          const { stages, seconds } = await finish();
+          const what = existing > 0 ? `${existing} note${existing === 1 ? "" : "s"}` : "no claims found";
+          return {
+            summary: `"${read.title}" is already extracted (${what}); nothing was written. ${checked.summary} ${seconds} s.`,
+            stages,
+            pipeline: { task_id: checked.position.task_id, from: null, to: checked.position.phase ?? "done", summary: checked.summary },
+            passed_through: true,
+            report: "",
+            dry_run: false,
+            written: [],
+            note_ids: [],
+            source_updated: false,
+            source_id: read.source_id,
+            source_title: read.title,
+            model,
+            proposed_count: 0,
+            skipped_count: 0,
+            existing_count: existing,
+            skip_rate: 0,
+            cost_usd: 0,
+            seconds,
+            new_topics: [],
+            proposed: [],
+            skipped: [],
+            existing: [],
+            rejected: [],
+            overlaps: [],
+            restatement_count: 0,
+            non_claim_count: 0,
+          };
+        }
+      } else {
+        assertWritable(read);
+      }
+    }
     // Taken before the model runs, so nobody else starts on this source meanwhile.
     if (write) await stage("claim", () => claimPhase(client, { drive, sourceId: read.source_id, phase: "create" }));
     const candidates = await stage("candidates", () => candidatesStage(llm, model, read));

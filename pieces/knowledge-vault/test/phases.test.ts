@@ -3,7 +3,7 @@ import { connectNotesAction } from "../lib/actions/connect-notes.js";
 import { placeInMocsAction } from "../lib/actions/place-in-mocs.js";
 import { checkLink, gatherCandidates, proposeLinksStage, sourceNotes, writeLinksStage } from "../lib/agent/connect.js";
 import { LlmClient } from "../lib/agent/llm.js";
-import { advancePipeline, claimPhase, findQueue } from "../lib/agent/pipeline.js";
+import { advancePipeline, catchUp, claimPhase, findQueue, gateStep, passThrough, taskPosition } from "../lib/agent/pipeline.js";
 import { llmFor, stageRunner } from "../lib/agent/runner.js";
 import { checkPlan, planStage, readMocs, writePlacementsStage, type MocInfo } from "../lib/agent/synthesize.js";
 import type { KnowledgeVaultClient, RequestOptions } from "../lib/common/client.js";
@@ -100,6 +100,80 @@ describe("claiming a phase before the work", () => {
     expect((await claimPhase(vault({ "notes/d": { state: { global: { nodes: [] } } } }).client, a)).summary).toMatch(/No pipeline queue/);
     expect((await claimPhase(vault({ "notes/d": drive, "notes/q1": queue([]) }).client, a)).summary).toMatch(/no open pipeline task/);
     expect((await claimPhase(vault({ "notes/d": drive, "notes/q1": queue([task({ currentPhase: "reflect" })]) }).client, a)).summary).toMatch(/is at "reflect", not "create"/);
+  });
+});
+
+describe("keeping the queue in step with the vault", () => {
+  const drive = { state: { global: { nodes: [{ id: "q1", documentType: "bai/pipeline-queue" }] } } };
+  const queue = (tasks: unknown[]) => ({ state: { global: { tasks } } });
+  const task = (extra: Record<string, unknown>) => ({ id: "t1", taskType: "claim", status: "PENDING", documentRef: "s1", currentPhase: "reflect", ...extra });
+  const a = { drive: "d", sourceId: "s1", phase: "reflect" as const };
+
+  it("says where the source's task stands against a step", async () => {
+    const at = (tasks: unknown[]) => taskPosition(vault({ "notes/d": drive, "notes/q1": queue(tasks) }).client, a);
+    expect(await at([task({})])).toEqual({ task_id: "t1", position: "at", phase: "reflect", status: "PENDING", assignedTo: null });
+    expect((await at([task({ currentPhase: "verify" })])).position).toBe("ahead");
+    expect((await at([task({ currentPhase: "create", status: "IN_PROGRESS", assignedTo: "0xme" })])).position).toBe("behind");
+    expect((await at([task({ status: "DONE", currentPhase: null })])).position).toBe("done");
+    expect((await at([task({ status: "FAILED" })])).position).toBe("none");
+    expect((await at([task({ currentPhase: "enrich" })])).position).toBe("unknown");
+    expect((await at([task({ currentPhase: null })])).position).toBe("unknown");
+    expect((await taskPosition(vault({ "notes/d": { state: { global: { nodes: [] } } } }).client, a)).position).toBe("unknown");
+  });
+
+  it("asks the vault to catch the task up, and never throws", async () => {
+    const asked = vault({ "tasks/reconcile": { advanced: [{ taskId: "t1", phases: ["create", "reflect"], to: "reweave", status: "PENDING", phase: "reweave" }], sources: [{ addedClaims: 2, closed: true }] } });
+    const out = await catchUp(asked.client, { drive: "d", sourceId: "s1", by: "connect-notes" });
+    expect(out.summary).toBe("Caught the pipeline task up from the vault: create, reflect recorded, now at reweave. The source was brought up to date with its notes.");
+    expect(asked.requests[0]).toMatchObject({ method: "POST", path: "tasks/reconcile", json: { drive: "d", source: "s1", by: "connect-notes" } });
+    const closed = await catchUp(vault({ "tasks/reconcile": { advanced: [{ taskId: "t1", phases: ["reflect", "reweave", "verify"], to: "done", status: "DONE", phase: null }] } }).client, { drive: "d", sourceId: "s1", by: "x" });
+    expect(closed.summary).toBe("Caught the pipeline task up from the vault: reflect, reweave, verify recorded, now complete.");
+    const fallback = await catchUp(vault({ "tasks/reconcile": { advanced: [{ taskId: "t1", phases: ["create"], to: "reflect" }] } }).client, { drive: "d", sourceId: "s1", by: "x" });
+    expect(fallback.advanced[0].to).toBe("reflect");
+    expect((await catchUp(vault({ "tasks/reconcile": { left: [{ reason: "2 notes not connected yet" }] } }).client, { drive: "d", sourceId: "s1", by: "x" })).summary).toBe("The pipeline task already matches the vault (2 notes not connected yet).");
+    expect((await catchUp(vault({ "tasks/reconcile": {} }).client, { drive: "d", sourceId: "s1", by: "x" })).summary).toBe("The pipeline task already matches the vault.");
+    expect((await catchUp(vault({}).client, { drive: "d", sourceId: "s1", by: "x" })).summary).toMatch(/predates tasks\/reconcile/);
+    const old = vault({ "tasks/reconcile": () => { throw new KnowledgeVaultApiError("Not found", { category: "not_found", status: 404 }); } });
+    expect((await catchUp(old.client, { drive: "d", sourceId: "s1", by: "x" })).summary).toMatch(/predates tasks\/reconcile/);
+    const noQueue = vault({ "tasks/reconcile": () => { throw new KnowledgeVaultApiError("No pipeline queue in drive d", { category: "not_found", status: 404 }); } });
+    expect((await catchUp(noQueue.client, { drive: "d", sourceId: "s1", by: "x" })).summary).toBe("The pipeline task could not be caught up: No pipeline queue in drive d");
+    const refused = vault({ "tasks/reconcile": () => { throw new KnowledgeVaultApiError("No write access to d", { category: "permission", status: 403 }); } });
+    expect((await catchUp(refused.client, { drive: "d", sourceId: "s1", by: "x" })).summary).toBe("The pipeline task could not be caught up: No write access to d");
+  });
+
+  it("lets a step pass through what the queue shows done, catching a lagging task up first", async () => {
+    let tasks = [task({ currentPhase: "create" })];
+    const v = vault({
+      "notes/d": drive,
+      "notes/q1": () => queue(tasks),
+      "tasks/reconcile": () => {
+        tasks = [task({ currentPhase: "reweave" })];
+        return { advanced: [{ taskId: "t1", phases: ["create", "reflect"], to: "reweave", status: "PENDING", phase: "reweave" }] };
+      },
+    });
+    const gate = await gateStep(v.client, { ...a, by: "connect-notes" });
+    expect(gate).toMatchObject({ skip: true, position: { position: "ahead", phase: "reweave" } });
+    expect(gate.summary).toBe("Caught the pipeline task up from the vault: create, reflect recorded, now at reweave. The source's pipeline task is already past reflect (at reweave); this step has nothing left to do.");
+    // at its phase: no catch-up, the step works
+    const here = vault({ "notes/d": drive, "notes/q1": queue([task({})]) });
+    expect(await gateStep(here.client, { ...a, by: "x" })).toMatchObject({ skip: false, summary: "The pipeline task is at reflect." });
+    expect(here.requests.some((r) => r.path === "tasks/reconcile")).toBe(false);
+    // still behind after the catch-up: the step works and says so
+    const behind = vault({ "notes/d": drive, "notes/q1": queue([task({ currentPhase: "create" })]), "tasks/reconcile": { left: [{ reason: "the source has not been extracted yet" }] } });
+    expect((await gateStep(behind.client, { ...a, by: "x" })).summary).toBe("The pipeline task already matches the vault (the source has not been extracted yet). The pipeline task is still at create; this step runs and leaves it there.");
+    const said = async (tasks: unknown[], nodes = true) => (await gateStep(vault({ "notes/d": nodes ? drive : { state: { global: { nodes: [] } } }, "notes/q1": queue(tasks) }).client, { ...a, by: "x" })).summary;
+    expect(await said([task({ status: "DONE" })])).toBe("The source's pipeline task is already complete; this step runs on its own.");
+    expect(await said([])).toBe("This source has no pipeline task; this step runs on its own.");
+    expect(await said([], false)).toBe("No pipeline queue in this vault.");
+    expect(await said([task({ currentPhase: "enrich" })])).toBe('The pipeline task is at "enrich", which this step does not know.');
+    expect(passThrough({ task_id: "t1", position: "done", phase: null, status: "DONE", assignedTo: null }, "create")).toBe("The source's pipeline task is already complete; create has nothing left to do.");
+  });
+
+  it("completes the task when the Verify step advances it", async () => {
+    const v = vault({ "notes/d": drive, "notes/q1": queue([task({ currentPhase: "verify", status: "IN_PROGRESS", assignedTo: "0xme" })]), ping: { user: "0xme" }, actions: { operations: [] } });
+    const out = await advancePipeline(v.client, { drive: "d", sourceId: "s1", phase: "verify", workDone: "Verified", filesModified: [], completedBy: "me", now: at });
+    expect(out).toEqual({ task_id: "t1", from: "verify", to: "done", summary: "Pipeline task complete: verify was the last phase." });
+    expect((v.requests[v.requests.length - 1].json as { actions: { input: { handoff: { phase: string } } }[] }).actions[0].input.handoff.phase).toBe("verify");
   });
 });
 
@@ -404,6 +478,27 @@ describe("the connect and place actions", () => {
     });
   });
 
+  it("pass through a phase the queue already shows done, without a model call", async () => {
+    let modelCalls = 0;
+    const real = globalThis.fetch;
+    globalThis.fetch = (async (url: string, init?: RequestInit) => {
+      if (String(url).startsWith("https://llm.test")) modelCalls++;
+      return serve(String(url), init);
+    }) as typeof fetch;
+    try {
+      phase = "verify";
+      const c = await run(connectNotesAction, { drive: "d", source: "s1", mode: "write" });
+      expect(c).toMatchObject({ passed_through: true, links: [], pipeline: { task_id: "t1", to: "verify" } });
+      expect(String(c.summary)).toMatch(/^The source's pipeline task is already past reflect \(at verify\); this step has nothing left to do\. \d+ s\.$/);
+      const pl = await run(placeInMocsAction, { drive: "d", source: "s1", mode: "write" });
+      expect(pl).toMatchObject({ passed_through: true, placements: [] });
+      expect(String(pl.summary)).toMatch(/already past reweave \(at verify\)/);
+      expect(modelCalls).toBe(0);
+    } finally {
+      globalThis.fetch = real;
+      phase = "reflect";
+    }
+  });
   it("finish cleanly on a source that yielded no notes, and still move the task on", async () => {
     await withFetch(async () => {
       variant = "none";

@@ -28,6 +28,8 @@ export type SourceBundle = {
   extracted_claims: number;
   /** Live (not archived) notes linked to it with DERIVED_FROM: set even when a stopped step never recorded them. */
   derived_notes: number;
+  /** An extraction recorded its stats on the source: it ran to the end, even when it found no claims. */
+  stats_recorded?: boolean;
   topics: string[];
   /** The most used topics, each with one note title, so the model knows what a name covers here. */
   topic_examples: TopicInfo[];
@@ -76,7 +78,7 @@ const arr = (v: unknown): unknown[] => (Array.isArray(v) ? v : []);
 // ── 1. read ──────────────────────────────────────────────────────────────
 
 export async function readSourceStage(client: KnowledgeVaultClient, drive: string, sourceId: string): Promise<SourceBundle & { summary: string }> {
-  const doc = await client.request<{ name: string; edges?: { direction?: string; documentId?: string; linkType?: string }[]; state?: { global?: { title?: string; content?: string; sourceType?: string; status?: string; attachments?: unknown[]; extractedClaims?: unknown[] } } }>({ path: `notes/${encodeURIComponent(sourceId)}`, query: { drive } });
+  const doc = await client.request<{ name: string; edges?: { direction?: string; documentId?: string; linkType?: string }[]; state?: { global?: { title?: string; content?: string; sourceType?: string; status?: string; attachments?: unknown[]; extractedClaims?: unknown[]; extractionStats?: unknown } } }>({ path: `notes/${encodeURIComponent(sourceId)}`, query: { drive } });
   const derivedIds = [...new Set((doc.edges ?? []).filter((e) => e.linkType === "DERIVED_FROM" && e.direction === "in" && e.documentId).map((e) => str(e.documentId)))];
   const derivedStatus = await mapLimit(derivedIds, 8, (id) =>
     client.request<{ state?: { global?: { status?: string } } }>({ path: `notes/${encodeURIComponent(id)}`, query: { drive } }).then((d) => d.state?.global?.status ?? null, () => null),
@@ -110,6 +112,7 @@ export async function readSourceStage(client: KnowledgeVaultClient, drive: strin
     figures,
     extracted_claims: arr(g.extractedClaims).length,
     derived_notes,
+    stats_recorded: !!g.extractionStats,
     topics,
     topic_examples,
   };

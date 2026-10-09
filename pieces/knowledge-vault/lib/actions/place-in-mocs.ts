@@ -1,6 +1,6 @@
 import { createAction } from "@powerhousedao/pieces-framework";
 import { sourceNotes } from "../agent/connect.js";
-import { advancePipeline, claimPhase } from "../agent/pipeline.js";
+import { advancePipeline, claimPhase, gateStep } from "../agent/pipeline.js";
 import { llmFor, stageRunner } from "../agent/runner.js";
 import { planStage, readMocs, writePlacementsStage } from "../agent/synthesize.js";
 import { knowledgeVaultAuth } from "../auth.js";
@@ -40,7 +40,14 @@ export const placeInMocsAction = createAction({
       const hub = tree.mocs.filter((m) => m.tier === "HUB").length;
       return { ...notes, ...tree, summary: `${notes.notes.length} notes from "${notes.sourceTitle}"; the vault has ${tree.mocs.length} MoCs (${hub} HUB).` };
     });
-    if (write) await stage("claim", () => claimPhase(client, { drive, sourceId, phase: "reweave" }));
+    if (write) {
+      const gate = await stage("pipeline check", () => gateStep(client, { drive, sourceId, phase: "reweave", by: "place-in-mocs" }));
+      if (gate.skip) {
+        const { stages, seconds } = await finish();
+        return { summary: `${gate.summary} ${seconds} s.`, stages, dry_run: false, passed_through: true, model, placements: [], new_mocs: [], unplaced: [], created_mocs: [], problems: [], pipeline: { task_id: gate.position.task_id, from: null, to: gate.position.phase, summary: gate.summary }, cost_usd: 0, seconds };
+      }
+      await stage("claim", () => claimPhase(client, { drive, sourceId, phase: "reweave" }));
+    }
     if (read.notes.length === 0) {
       const pipeline = write
         ? await stage("pipeline", () => advancePipeline(client, { drive, sourceId, phase: "reweave", workDone: "The source yielded no notes, so there was nothing to place. Ready for review.", filesModified: [], completedBy: `place-in-mocs · ${model}` }))

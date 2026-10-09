@@ -1,6 +1,6 @@
 import { createAction } from "@powerhousedao/pieces-framework";
 import { gatherCandidates, proposeLinksStage, sourceNotes, writeLinksStage } from "../agent/connect.js";
-import { advancePipeline, claimPhase } from "../agent/pipeline.js";
+import { advancePipeline, claimPhase, gateStep } from "../agent/pipeline.js";
 import { llmFor, stageRunner } from "../agent/runner.js";
 import { knowledgeVaultAuth } from "../auth.js";
 import { clientForContext } from "../common/context.js";
@@ -38,7 +38,14 @@ export const connectNotesAction = createAction({
       const r = await sourceNotes(client, drive, sourceId);
       return { ...r, summary: `"${r.sourceTitle}" has ${r.notes.length} note${r.notes.length === 1 ? "" : "s"} to connect.` };
     });
-    if (write) await stage("claim", () => claimPhase(client, { drive, sourceId, phase: "reflect" }));
+    if (write) {
+      const gate = await stage("pipeline check", () => gateStep(client, { drive, sourceId, phase: "reflect", by: "connect-notes" }));
+      if (gate.skip) {
+        const { stages, seconds } = await finish();
+        return { summary: `${gate.summary} ${seconds} s.`, stages, dry_run: false, passed_through: true, model, links: [], dropped: [], thin: [], failed: [], pipeline: { task_id: gate.position.task_id, from: null, to: gate.position.phase, summary: gate.summary }, cost_usd: 0, seconds };
+      }
+      await stage("claim", () => claimPhase(client, { drive, sourceId, phase: "reflect" }));
+    }
     if (read.notes.length === 0) {
       // Nothing extracted, nothing to connect: close the phase so the task still reaches verify.
       const pipeline = write

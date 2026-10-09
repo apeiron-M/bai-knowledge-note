@@ -16,12 +16,35 @@ import { driveProp } from "../common/props.js";
  * Tasks already waiting when the trigger is switched on are not replayed
  * unless asked: a vault with a backlog of 146 queued sources would otherwise
  * start 146 runs at once.
+ *
+ * A task that stops on the way is started again: one left waiting at this
+ * phase after its run (the run died before it took the task) or at a later
+ * one (a step failed, or ran on its own), once nothing has touched it for
+ * RESUME_AFTER_MS, at most MAX_ATTEMPTS times per phase. The steps catch the
+ * task up from the vault and pass through what is already done, so the run
+ * resumes where the work stopped.
  */
 
 type Task = { id: string; taskType: string; status: string; documentRef?: string | null; target?: string; currentPhase?: string | null; createdAt?: string; updatedAt?: string | null };
 
 const SEEN_KEY = "knowledge-vault:new-pipeline-task:seen";
 const MAX_SEEN = 5000;
+/** task@phase → how often this trigger started it there, and when last. */
+const FIRED_KEY = "knowledge-vault:new-pipeline-task:fired";
+type Fired = Partial<Record<string, { n: number; at: number }>>;
+/** A task untouched this long after its run started is taken to have stopped. */
+export const RESUME_AFTER_MS = 10 * 60_000;
+/** Starts per task and phase, the first included: a source that fails every time stops costing runs. */
+export const MAX_ATTEMPTS = 3;
+/** A step runs for an hour at most (the template's timeout); a task held far longer has lost its run. */
+export const HELD_TOO_LONG_MS = 2 * 60 * 60_000;
+const CLAIM_PHASES = ["create", "reflect", "reweave", "verify"];
+/** The phases after `phase` in the claim pipeline: where a task this trigger started can stop. */
+const laterThan = (phase: string) => {
+  const i = CLAIM_PHASES.indexOf(phase);
+  return i < 0 ? [] : CLAIM_PHASES.slice(i + 1);
+};
+const touchedAt = (t: Task) => Date.parse(t.updatedAt ?? t.createdAt ?? "");
 
 export type TaskItem = { task_id: string; source_id: string; source_title: string; phase: string; queued_at: string | null; _dedupe_key: string };
 
@@ -54,6 +77,17 @@ async function readSeen(store: StoreLike): Promise<string[]> {
   return Array.isArray(value) ? value.filter((v): v is string => typeof v === "string") : [];
 }
 
+async function readFired(store: StoreLike): Promise<Fired> {
+  const value = await store.get(FIRED_KEY);
+  if (!value || typeof value !== "object" || Array.isArray(value)) return {};
+  const out: Fired = {};
+  for (const [k, v] of Object.entries(value as Record<string, unknown>)) {
+    const r = v as { n?: unknown; at?: unknown } | null;
+    if (r && typeof r.n === "number" && typeof r.at === "number") out[k] = { n: r.n, at: r.at };
+  }
+  return out;
+}
+
 /** The task this trigger last started, until its run claims it. */
 const STARTED_KEY = "knowledge-vault:new-pipeline-task:started";
 /** A started task its run never claimed (it failed before) stops holding the queue after this long. */
@@ -72,25 +106,49 @@ export async function pollTasks(
   props: { drive: string; phase: string; per_poll: number; oneAtATime?: boolean },
   now: () => number = Date.now,
 ): Promise<TaskItem[]> {
+  const t0 = now();
   const tasks = await liveTasks(client, props.drive);
   const seen = await readSeen(store);
   const known = new Set(seen);
+  const fired = await readFired(store);
+  const later = laterThan(props.phase);
   const waiting = tasks.filter((t) => t.status === "PENDING" && t.currentPhase === props.phase && !known.has(seenKey(t)));
+  // Stopped on the way: waiting where this trigger left it, or at a later phase nothing went on from.
+  const quiet = (t: Task) => !(t0 - touchedAt(t) < RESUME_AFTER_MS);
+  const mayRetry = (k: string) => {
+    const f = fired[k];
+    return !f || (f.n < MAX_ATTEMPTS && t0 - f.at >= RESUME_AFTER_MS);
+  };
+  const stalled = tasks.filter((t) => {
+    if (t.status !== "PENDING" || !quiet(t) || !mayRetry(seenKey(t))) return false;
+    const k = seenKey(t);
+    if (t.currentPhase === props.phase) return !!fired[k];
+    return later.includes(t.currentPhase ?? "") && (!!fired[k] || !known.has(k));
+  });
+  const record = async (picked: Task[]) => {
+    const open = new Set(tasks.filter((t) => t.status === "PENDING" || t.status === "IN_PROGRESS").map(seenKey));
+    const next: Fired = Object.fromEntries(Object.entries(fired).filter(([k]) => open.has(k)));
+    const counts = picked.map((t) => ({ t, n: (fired[seenKey(t)]?.n ?? 0) + 1 }));
+    for (const { t, n } of counts) next[seenKey(t)] = { n, at: t0 };
+    await store.put(SEEN_KEY, [...seen, ...picked.map(seenKey).filter((k) => !known.has(k))].slice(-MAX_SEEN));
+    await store.put(FIRED_KEY, next);
+    return counts.map(({ t, n }) => (n > 1 ? { ...toItem(t), _dedupe_key: `${seenKey(t)}#${n}` } : toItem(t)));
+  };
+  const candidates = [...waiting, ...stalled];
   if (!props.oneAtATime) {
-    const fresh = waiting.slice(0, props.per_poll);
-    if (fresh.length) await store.put(SEEN_KEY, [...seen, ...fresh.map(seenKey)].slice(-MAX_SEEN));
-    return fresh.map(toItem);
+    const picked = candidates.slice(0, props.per_poll);
+    return picked.length ? record(picked) : [];
   }
-  if (tasks.some((t) => t.status === "IN_PROGRESS")) return [];
+  // One at a time: a task in progress holds the queue, unless it has been held far longer than any step runs.
+  if (tasks.some((t) => t.status === "IN_PROGRESS" && t0 - touchedAt(t) < HELD_TOO_LONG_MS)) return [];
   const started = (await store.get(STARTED_KEY)) as { key?: string; at?: number } | undefined;
-  if (started?.key && typeof started.at === "number" && now() - started.at < UNCLAIMED_HOLD_MS) {
+  if (started?.key && typeof started.at === "number" && t0 - started.at < UNCLAIMED_HOLD_MS) {
     if (tasks.some((t) => t.status === "PENDING" && seenKey(t) === started.key)) return [];
   }
-  const next = waiting[0];
+  const next = candidates.at(0);
   if (!next) return [];
-  await store.put(SEEN_KEY, [...seen, seenKey(next)].slice(-MAX_SEEN));
-  await store.put(STARTED_KEY, { key: seenKey(next), at: now() });
-  return [toItem(next)];
+  await store.put(STARTED_KEY, { key: seenKey(next), at: t0 });
+  return record([next]);
 }
 
 /** One at a time when the connection's model is on this computer or the local network. */
@@ -166,12 +224,15 @@ export const newPipelineTaskTrigger = createTrigger({
       return;
     }
     const phase = phaseOf(p.phase);
-    const tasks = (await liveTasks(clientFor(context.auth), p.drive)).filter((t) => t.status === "PENDING" && t.currentPhase === phase);
+    // The backlog is everything waiting now, at this phase or a later one: none of it is replayed.
+    const backlog = [phase, ...laterThan(phase)];
+    const tasks = (await liveTasks(clientFor(context.auth), p.drive)).filter((t) => t.status === "PENDING" && backlog.includes(t.currentPhase ?? ""));
     await context.store.put(SEEN_KEY, tasks.map(seenKey).slice(-MAX_SEEN));
   },
   async onDisable(context) {
     await context.store.put(SEEN_KEY, null);
     await context.store.put(STARTED_KEY, null);
+    await context.store.put(FIRED_KEY, null);
   },
   async run(context) {
     const p = context.propsValue as { drive: string; phase: string; per_poll?: unknown };

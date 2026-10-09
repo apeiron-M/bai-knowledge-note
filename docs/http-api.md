@@ -30,6 +30,7 @@ route that reads the index takes `drive` (a document UUID).
 | `PATCH` | `relationships` | `renown` | same body; replaces the stored `reason`/`confidence` | same |
 | `DELETE` | `relationships` | `renown` | body `{ source, target, type }` | same |
 | `POST` | `tasks/:id/claim` | `renown` | `drive` (required); body `{ assignedTo? }` (defaults to the caller) | `{ taskId, assignedTo }`; `409` when already assigned, `404` unknown task, `503` when the read-back cannot confirm |
+| `POST` | `tasks/reconcile` | `renown` | body `{ drive, source?, dryRun?, by? }` (`drive` may also be a query parameter); **requires `canWrite`** | `{ advanced[], sources[], left[], rejected[] }` — the pipeline queue caught up with what the vault already holds; see [Catching the queue up](#catching-the-queue-up) |
 | `GET` | `stats` / `density` / `topics` | `renown` | `drive` (required) | the graph aggregate, as `createGraphQuery` produces it |
 | `GET` | `topics/:name` | `renown` | `drive` | notes tagged with the topic |
 | `GET` | `orphans` / `triangles?limit=` / `graph.json` | `renown` | `drive`; `triangles` defaults 20, max 100 | nodes with no incoming edge / synthesis opportunities / `{ nodes, edges }` |
@@ -76,8 +77,30 @@ says `Rollback INCOMPLETE` and lists the stranded ids in
 vault is clean.
 
 Routes that only mutate existing documents (`POST actions`, the relationship
-verbs, `tasks/:id/claim`, `admin/reindex`) create nothing and cannot strand
+verbs, `tasks/:id/claim`, `tasks/reconcile`, `admin/reindex`) create nothing and cannot strand
 anything; operations are append-only and their errors are reported per action.
+
+#### Catching the queue up
+
+A pipeline step does its work, then reports it to the queue with `ADVANCE_PHASE`. When that report is
+lost — a run cut off, an advance refused, a step run on its own — the vault holds the work and the queue
+still says the task waits for it. `POST tasks/reconcile` reads the evidence and advances each `PENDING`
+claim task past every phase it proves, one handoff per phase (`completedBy: "pipeline catch-up · <by>"`,
+`workDone` naming the evidence):
+
+| phase | proven when |
+|---|---|
+| `create` | the source is `EXTRACTED` with notes or recorded extraction stats (a 0-claim extraction is a result); or notes derive from it (`DERIVED_FROM`) while it still says `EXTRACTING` with no stats — the write was cut off: the source is repaired first (`ADD_EXTRACTED_CLAIM` for each note, then `EXTRACTED`), its stats are not invented |
+| `reflect` | no notes, or every live note carries a `RELATES_TO` / `BUILDS_ON` / `CONTRADICTS` / `SUPERSEDES` edge |
+| `reweave` | no notes, or every live note is a `CORE_IDEA` of a MoC |
+| `verify` | no notes; otherwise only the Verify step completes the task |
+
+It stops at the first phase it cannot prove. A task held (`IN_PROGRESS`) belongs to its holder unless it
+has been held for more than two hours — longer than any step runs — and a note the graph index has not
+seen yet counts as unconnected and unplaced, so missing evidence never proves more than is there. One
+run per vault at a time; `dryRun: true` returns the plan without writing; the response reports where each
+task really is after the write (`status`, `phase`) and every action the reactor refused (`rejected`).
+The pipeline piece's steps call it for their source when the queue lags their own phase (Extract: when the source is already extracted), and pass through a phase it shows done.
 
 #### Placement is the API's job
 
