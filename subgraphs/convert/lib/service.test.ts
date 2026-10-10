@@ -394,3 +394,131 @@ describe("createHttpConversionService", () => {
     expect(health.missing).toEqual(["pdfium"]);
   });
 });
+
+describe("createHttpConversionService — cancellation, progress and lanes (contract v2)", () => {
+  const service = (fetchImpl: typeof fetch, apiKey?: string) =>
+    createHttpConversionService({
+      baseUrl: "http://convert.test/",
+      fetchImpl,
+      ...(apiKey ? { apiKey } : {}),
+    });
+
+  it("sends DELETE /convert/:job with the api key, and answers true when the job was running", async () => {
+    const { calls, impl } = fakeFetch(() => json({ cancelled: true }));
+
+    await expect(service(impl, "secret").cancel("job-1")).resolves.toBe(true);
+
+    expect(calls).toHaveLength(1);
+    expect(calls[0].url).toBe("http://convert.test/convert/job-1");
+    expect(calls[0].init.method).toBe("DELETE");
+    expect((calls[0].init.headers as Record<string, string>)["x-api-key"]).toBe(
+      "secret",
+    );
+  });
+
+  it("encodes the job id into the path", async () => {
+    const { calls, impl } = fakeFetch(() => json({ cancelled: true }));
+    await service(impl).cancel("a b/c");
+    expect(calls[0].url).toBe("http://convert.test/convert/a%20b%2Fc");
+  });
+
+  it("answers false when no such job is running — finished, or never started", async () => {
+    const { impl } = fakeFetch(() => json({ cancelled: false }, 404));
+    await expect(service(impl).cancel("job-1")).resolves.toBe(false);
+  });
+
+  it("raises CONVERT_UNAVAILABLE for any other status, with the status in the message", async () => {
+    const { impl } = fakeFetch(() => json({ error: "bad job id" }, 400));
+    const error = await service(impl)
+      .cancel("job-1")
+      .then(() => null)
+      .catch((thrown: unknown) => thrown);
+    expect(error).toMatchObject({ status: 502, code: "CONVERT_UNAVAILABLE" });
+    expect((error as Error).message).toContain("400");
+  });
+
+  it("raises CONVERT_UNAVAILABLE when the service is unreachable", async () => {
+    const { impl } = fakeFetch(() => {
+      throw new Error("ECONNREFUSED");
+    });
+    await expect(service(impl).cancel("job-1")).rejects.toMatchObject({
+      status: 502,
+      code: "CONVERT_UNAVAILABLE",
+    });
+  });
+
+  it("maps the service's 409 CONVERSION_CANCELLED to CONVERT_CANCELLED", async () => {
+    const { impl } = fakeFetch(() =>
+      json(
+        { error: "the conversion was cancelled", code: "CONVERSION_CANCELLED" },
+        409,
+      ),
+    );
+    const error = await conversionError(impl);
+    expect(error).toMatchObject({
+      status: 409,
+      code: "CONVERT_CANCELLED",
+      message: "The conversion was cancelled.",
+    });
+  });
+
+  // After the first heartbeat the status is already 200, so the cancellation
+  // travels in the body like every other late failure.
+  it("maps a deferred 409 CONVERSION_CANCELLED the same way", async () => {
+    const { impl } = fakeFetch(() =>
+      json({
+        error: "the conversion was cancelled",
+        code: "CONVERSION_CANCELLED",
+        deferredStatus: 409,
+      }),
+    );
+    const error = await conversionError(impl);
+    expect(error).toMatchObject({ status: 409, code: "CONVERT_CANCELLED" });
+  });
+
+  it("does not read some other 409 as a cancellation", async () => {
+    const { impl } = fakeFetch(() => json({ error: "conflict" }, 409));
+    const error = await conversionError(impl);
+    expect(error).toMatchObject({ status: 502, code: "CONVERT_UNAVAILABLE" });
+    expect(error.message).toContain("409");
+  });
+
+  it("reads a job's progress, phases like `cancelled` included, and null once the service has forgotten it", async () => {
+    const { calls, impl } = fakeFetch((call) =>
+      call.url.endsWith("/progress/job-1")
+        ? json({ phase: "cancelled", pages: 23, pagesDone: 0, elapsedMs: 900 })
+        : json({ error: "no such job" }, 404),
+    );
+    const svc = service(impl);
+    await expect(svc.progress("job-1")).resolves.toEqual({
+      phase: "cancelled",
+      pages: 23,
+      pagesDone: 0,
+      elapsedMs: 900,
+    });
+    await expect(svc.progress("gone")).resolves.toBeNull();
+    expect(calls[0].url).toBe("http://convert.test/progress/job-1");
+  });
+
+  it("passes the lanes through with the health, verbatim", async () => {
+    const { impl } = fakeFetch(() =>
+      json({
+        ok: true,
+        backend: "docling.rs",
+        ready: true,
+        missing: [],
+        formats: ["md", "pdf"],
+        slots: { models: 1, other: 2, busyModels: 1, busyOther: 0 },
+        modelExtensions: ["pdf", "png"],
+      }),
+    );
+    const health = await service(impl).health();
+    expect(health.slots).toEqual({
+      models: 1,
+      other: 2,
+      busyModels: 1,
+      busyOther: 0,
+    });
+    expect(health.modelExtensions).toEqual(["pdf", "png"]);
+  });
+});

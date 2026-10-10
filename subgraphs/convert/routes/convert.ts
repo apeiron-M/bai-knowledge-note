@@ -53,7 +53,8 @@ function readMinSectionChars(url: URL): number | undefined {
   return value;
 }
 
-const notConfigured = () =>
+/** The refusal of a vault with no conversion service — shared with `DELETE convert/:job`. */
+export const notConfigured = () =>
   new HttpError(
     503,
     "CONVERT_NOT_CONFIGURED",
@@ -95,6 +96,15 @@ export function createConvertRoute(deps: ConvertRouteDeps) {
       const minSectionChars = readMinSectionChars(url);
       if (!deps.service) throw notConfigured();
 
+      // `ctx.signal` is deliberately NOT forwarded to the service. reactor-api
+      // (6.2.3-dev.44 … dev.52, `#serve`) arms it with
+      // `req.once("close", () => controller.abort())`, and on Node 16+ an
+      // IncomingMessage emits "close" as soon as its body has been read — which
+      // for a `body: "raw"` route happens before this handler is called. The
+      // signal arrives already aborted, so forwarding it would cancel every
+      // conversion the moment it started. A client that no longer wants the
+      // file says so explicitly instead: `DELETE convert/:job`
+      // (routes/cancel.ts), which calls the service's `DELETE /convert/:job`.
       const result = await deps.service.convert({
         filename,
         bytes,

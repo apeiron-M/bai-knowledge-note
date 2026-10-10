@@ -12,6 +12,7 @@ import {
 export type { IncomingFile } from "../lib/intake-store.js";
 
 const NO_FORMATS: readonly string[] = [];
+const NO_EXTENSIONS: readonly string[] = [];
 
 /**
  * The intake batch for the selected drive, as the views read it.
@@ -26,12 +27,18 @@ export function useIntakeBatch({
   attachments,
   formats = NO_FORMATS,
   maxUploadBytes,
+  slots,
+  modelExtensions = NO_EXTENSIONS,
 }: {
   attachments?: AttachmentPort;
   /** What the converter reads (`convert/health`); a pick or a drop is checked against it. */
   formats?: readonly string[];
   /** The vault's cap for one file (`convert/health`), checked before any upload. */
   maxUploadBytes?: number;
+  /** The converter's lanes (`convert/health`); absent from an older service, which takes one file at a time. */
+  slots?: { models: number; other: number };
+  /** The extensions that convert in the models lane (`convert/health`). */
+  modelExtensions?: readonly string[];
 }) {
   const driveId = useSelectedDriveId();
   const store = intakeStoreFor(driveId ?? "");
@@ -47,6 +54,17 @@ export function useIntakeBatch({
   useEffect(() => {
     store.bindApi(pinnedVaultApi());
   }, [store, host]);
+
+  // Tell the batch how many files the converter takes at once, per lane. Not
+  // told — an older service, or health not read yet — it sends one at a time.
+  useEffect(() => {
+    if (!slots) return;
+    store.configure({
+      models: slots.models,
+      other: slots.other,
+      modelExtensions,
+    });
+  }, [store, slots, modelExtensions]);
 
   const onFiles = useCallback(
     (files: readonly File[]) => {

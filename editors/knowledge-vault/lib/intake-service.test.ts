@@ -700,3 +700,90 @@ describe("publishFile", () => {
     });
   });
 });
+
+// ---------------------------------------------------------------------------
+// Withdrawing a conversion: the request's signal, and the service's job
+// ---------------------------------------------------------------------------
+
+import { cancelConversion } from "./intake-service.js";
+import { VaultApiFailure } from "./vault-api.js";
+
+describe("convertFile — withdrawing the request", () => {
+  function signalApi() {
+    const seen: { signal?: AbortSignal }[] = [];
+    const api = {
+      postRaw: (
+        _path: string,
+        _bytes: Uint8Array,
+        options?: { contentType?: string; signal?: AbortSignal },
+      ) => {
+        seen.push({ signal: options?.signal });
+        return Promise.resolve(summary);
+      },
+    } as unknown as VaultApi;
+    return { api, seen };
+  }
+
+  it("hands the caller's signal to the upload, so removing the file stops it", async () => {
+    const { api, seen } = signalApi();
+    const controller = new AbortController();
+    await convertFile(
+      { name: "a.pdf", bytes: new Uint8Array([1]) },
+      { api, signal: controller.signal },
+    );
+    expect(seen[0].signal).toBe(controller.signal);
+  });
+
+  it("sends no signal when the caller has none", async () => {
+    const { api, seen } = signalApi();
+    await convertFile({ name: "a.pdf", bytes: new Uint8Array([1]) }, { api });
+    expect(seen[0].signal).toBeUndefined();
+  });
+});
+
+describe("cancelConversion", () => {
+  function deletingApi(answer: () => Promise<unknown>) {
+    const paths: string[] = [];
+    const api = {
+      delete: (path: string) => {
+        paths.push(path);
+        return answer();
+      },
+    } as unknown as VaultApi;
+    return { api, paths };
+  }
+
+  it("asks the vault to stop the job, and says it was running", async () => {
+    const { api, paths } = deletingApi(() =>
+      Promise.resolve({ cancelled: true }),
+    );
+    await expect(cancelConversion(api, "job-1")).resolves.toBe(true);
+    expect(paths).toEqual(["/convert/job-1"]);
+  });
+
+  it("encodes the job id into the path", async () => {
+    const { api, paths } = deletingApi(() =>
+      Promise.resolve({ cancelled: true }),
+    );
+    await cancelConversion(api, "a b");
+    expect(paths).toEqual(["/convert/a%20b"]);
+  });
+
+  it("treats 404 — finished already, or never started — as nothing left to stop", async () => {
+    const { api } = deletingApi(() =>
+      Promise.reject(
+        new VaultApiFailure(404, "UNKNOWN", "The vault refused the request (404)."),
+      ),
+    );
+    await expect(cancelConversion(api, "job-1")).resolves.toBe(false);
+  });
+
+  it("lets any other failure through, for the caller to decide", async () => {
+    const { api } = deletingApi(() =>
+      Promise.reject(new VaultApiFailure(0, "UNREACHABLE", "Could not reach the vault")),
+    );
+    await expect(cancelConversion(api, "job-1")).rejects.toMatchObject({
+      code: "UNREACHABLE",
+    });
+  });
+});

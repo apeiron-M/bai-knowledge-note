@@ -28,11 +28,17 @@ export class VaultApiFailure extends Error {
 export type VaultApi = {
   get<T>(path: string): Promise<T>;
   post<T>(path: string, body: unknown): Promise<T>;
-  /** A raw body — a file's bytes for `POST convert` — with exactly one content type. */
+  /** A bodiless `DELETE` — `convert/:job` stops a conversion. */
+  delete<T>(path: string): Promise<T>;
+  /**
+   * A raw body — a file's bytes for `POST convert` — with exactly one content
+   * type. Aborting `signal` stops the upload and the wait; the call then fails
+   * with code `ABORTED`, never `UNREACHABLE`.
+   */
   postRaw<T>(
     path: string,
     bytes: Uint8Array,
-    options?: { contentType?: string },
+    options?: { contentType?: string; signal?: AbortSignal },
   ): Promise<T>;
 };
 
@@ -47,6 +53,19 @@ export type VaultApiOptions = {
 const PACKAGE = "@powerhousedao/knowledge-note";
 
 const trimSlashes = (s: string) => s.replace(/\/+$/, "");
+
+/**
+ * The caller withdrew the request: its signal fired. Its own code, because the
+ * caller asked for it — reporting "could not reach the vault" for a file the
+ * user just removed would be a false alarm. Decided by the caller's signal, not
+ * by the error's name, so `ABORTED` never means anything but that.
+ */
+const aborted = () =>
+  new VaultApiFailure(
+    0,
+    "ABORTED",
+    "The request was cancelled before the vault answered.",
+  );
 
 export function createVaultApi(options: VaultApiOptions = {}): VaultApi {
   const doFetch = options.fetchImpl ?? fetch;
@@ -74,6 +93,7 @@ export function createVaultApi(options: VaultApiOptions = {}): VaultApi {
     try {
       response = await doFetch(fullUrl, init);
     } catch (error) {
+      if (init.signal?.aborted) throw aborted();
       throw new VaultApiFailure(
         0,
         "UNREACHABLE",
@@ -93,7 +113,13 @@ export function createVaultApi(options: VaultApiOptions = {}): VaultApi {
       }
       throw new VaultApiFailure(response.status, code, message);
     }
-    return (await response.json()) as T;
+    try {
+      return (await response.json()) as T;
+    } catch (error) {
+      // An abort can also land while the answer's body is still arriving.
+      if (init.signal?.aborted) throw aborted();
+      throw error;
+    }
   }
 
   const headers = () => authHeaders(options.tokenProvider);
@@ -122,10 +148,13 @@ export function createVaultApi(options: VaultApiOptions = {}): VaultApi {
         body: JSON.stringify(body),
       });
     },
+    async delete<T>(path: string): Promise<T> {
+      return send<T>(path, { method: "DELETE", headers: await headers() });
+    },
     async postRaw<T>(
       path: string,
       bytes: Uint8Array,
-      opts: { contentType?: string } = {},
+      opts: { contentType?: string; signal?: AbortSignal } = {},
     ): Promise<T> {
       return send<T>(path, {
         method: "POST",
@@ -133,6 +162,7 @@ export function createVaultApi(options: VaultApiOptions = {}): VaultApi {
           opts.contentType ?? "application/octet-stream",
         ),
         body: bytes as unknown as BodyInit,
+        ...(opts.signal ? { signal: opts.signal } : {}),
       });
     },
   };

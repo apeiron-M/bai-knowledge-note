@@ -25,6 +25,7 @@ const fakeHttp = () => {
   const scope = {
     get: record("GET"),
     post: record("POST"),
+    delete: record("DELETE"),
   } as unknown as IHttpScope;
   return { routes, scope };
 };
@@ -34,6 +35,7 @@ const stubService = (
 ): ConversionService => ({
   convert: async () => ({ markdown: "", chunks: [] }),
   progress: async () => null,
+  cancel: () => Promise.resolve(false),
   health: async () => ({
     ok: true,
     backend: "docling.rs",
@@ -65,6 +67,26 @@ describe("registerConvertRoutes", () => {
     expect(convert?.options?.maxBodyBytes).toBe(30 * 1024 * 1024);
   });
 
+  it("registers cancellation as an authenticated DELETE on the job", () => {
+    // The convert route cannot follow its caller hanging up, so a client that
+    // gives up on a file stops it with this call instead.
+    const { routes, scope } = fakeHttp();
+    registerConvertRoutes(scope, { service: stubService() });
+
+    const cancel = routes.find((r) => r.method === "DELETE");
+
+    expect(cancel?.path).toBe("convert/:job");
+    expect(cancel?.options?.auth).toBe("renown");
+    // No body: the job id is the whole request.
+    expect(cancel?.options?.body).toBeUndefined();
+    expect(routes.map((r) => `${r.method} ${r.path}`)).toEqual([
+      "GET convert/health",
+      "GET convert/progress/:job",
+      "POST convert",
+      "DELETE convert/:job",
+    ]);
+  });
+
   it("registers the host's cap as the body limit when the setup read one", () => {
     const { routes, scope } = fakeHttp();
     registerConvertRoutes(scope, { service: stubService(), maxUploadBytes: 100 * 1024 * 1024 });
@@ -80,7 +102,7 @@ describe("registerConvertRoutes", () => {
     expect(() =>
       registerConvertRoutes(scope, { service: stubService() }),
     ).not.toThrow();
-    expect(routes).toHaveLength(3);
+    expect(routes).toHaveLength(4);
   });
 
   it("registers on a fresh scope, so a real reload still gets its routes", () => {
@@ -88,8 +110,8 @@ describe("registerConvertRoutes", () => {
     const second = fakeHttp();
     registerConvertRoutes(first.scope, { service: stubService() });
     registerConvertRoutes(second.scope, { service: stubService() });
-    expect(first.routes).toHaveLength(3);
-    expect(second.routes).toHaveLength(3);
+    expect(first.routes).toHaveLength(4);
+    expect(second.routes).toHaveLength(4);
   });
 
   it("does not crash when the scope reports the route as already registered", () => {

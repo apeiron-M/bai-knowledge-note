@@ -159,11 +159,71 @@ export type ConversionProgress = {
     | "ocr"
     | "figures"
     | "done"
-    | "failed";
+    | "failed"
+    | "cancelled";
+  /** The document's page count, when the service knows it. */
   pages: number | null;
+  /**
+   * Pages finished. A service that reads the whole document in one pass holds
+   * this at 0 while `reading`: it knows how many pages there are, not how far
+   * it has got. An older service that streams counts them as they finish.
+   */
   pagesDone: number;
   elapsedMs: number;
 };
+
+/**
+ * What a converting row says it is doing, in the vault's words. Its numbers
+ * are the service's own — the page count, pages finished — never projected:
+ * reading in one pass, the service knows the pages but not how far it is, and
+ * the row says just that ("reading 23 pages") rather than "page 0 of 23".
+ */
+export function progressLabel(progress: ConversionProgress | undefined): string {
+  if (!progress) return "converting";
+  const { pages, pagesDone } = progress;
+  switch (progress.phase) {
+    case "reading":
+      if (!pages) return "converting";
+      return pagesDone > 0
+        ? `reading page ${pagesDone} of ${pages}`
+        : `reading ${pages} page${pages === 1 ? "" : "s"}`;
+    case "structuring":
+      return "structuring the text";
+    case "text-layer":
+      return "reading the text layer";
+    case "ocr":
+      return "recognising text (OCR)";
+    case "figures":
+      return `cutting out figures${pagesDone ? ` · ${pagesDone}` : ""}`;
+    case "cancelled":
+      return "cancelled";
+    default:
+      return "converting";
+  }
+}
+
+/**
+ * The bar under a converting row. `measured`: pages finished over pages in the
+ * file. `indeterminate`: the service is reading a document whose page count it
+ * knows but whose progress it does not count — the bar moves to show work
+ * happening and claims no share of it, so it is not an estimate either.
+ */
+export type ProgressBar =
+  | { kind: "measured"; fraction: number }
+  | { kind: "indeterminate" };
+
+/** Only the reading phase has a page signal; the later phases show no bar rather than invent one. */
+export function progressBar(
+  progress: ConversionProgress | undefined,
+): ProgressBar | null {
+  if (progress?.phase !== "reading" || !progress.pages) return null;
+  return progress.pagesDone > 0
+    ? {
+        kind: "measured",
+        fraction: Math.min(1, progress.pagesDone / progress.pages),
+      }
+    : { kind: "indeterminate" };
+}
 
 export type FileState = "queued" | "converting" | "converted" | "failed";
 
@@ -191,7 +251,11 @@ export type IntakeFile = {
   attachError?: string;
   /** The user asked for OCR regardless of cost; the next conversion sends `?ocr=1`. */
   forceOcr?: boolean;
-  /** Live progress while converting — measured pages, never an estimate. */
+  /**
+   * Live progress while converting: the service's phase and its page counts,
+   * never an estimate. Reading in one pass, it knows the pages but not how far
+   * it is — the row then shows an indeterminate bar, which claims nothing.
+   */
   progress?: ConversionProgress;
   startedAt?: number;
   finishedAt?: number;
@@ -234,7 +298,8 @@ export function folderNameFor(fileName: string): string {
   return stem.trim() || "Untitled";
 }
 
-const extensionOf = (fileName: string): string => {
+/** Lower-case, no dot: how the converter names a format (`formats`, `modelExtensions`). */
+export const extensionOf = (fileName: string): string => {
   const base = fileName.replace(/^.*[\\/]/, "");
   const dot = base.lastIndexOf(".");
   return dot > 0 ? base.slice(dot + 1).toLowerCase() : "";

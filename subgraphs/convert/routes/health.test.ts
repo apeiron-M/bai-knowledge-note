@@ -15,6 +15,7 @@ const stubService = (
 ): ConversionService => ({
   convert: async () => ({ markdown: "", chunks: [] }),
   progress: async () => null,
+  cancel: () => Promise.resolve(false),
   health: async () => ({
     ok: true,
     backend: "docling.rs",

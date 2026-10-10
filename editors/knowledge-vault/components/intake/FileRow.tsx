@@ -4,6 +4,8 @@ import {
   isReviewReady,
   formatEstimate,
   needsOcrDecision,
+  progressBar,
+  progressLabel,
   selectedCount,
 } from "../../lib/intake-model.js";
 import { formatFileSize } from "../../lib/mime.js";
@@ -83,6 +85,7 @@ export function FileRow({
 }) {
   useSecondTick(file.state === "converting");
   const j = journeyOf(file);
+  const bar = file.state === "converting" ? progressBar(file.progress) : null;
   const ready = isReviewReady(file);
   const pendingOcr = needsOcrDecision(file);
   const estimate = file.converted?.needsOcr?.estimateSeconds ?? 0;
@@ -130,25 +133,12 @@ export function FileRow({
       </span>
     );
   } else if (file.state === "converting") {
-    const p = file.progress;
-    const phase =
-      p?.phase === "reading" && p.pages
-        ? `reading page ${Math.max(1, p.pagesDone)} of ${p.pages}`
-        : p?.phase === "structuring"
-          ? "structuring the text"
-          : p?.phase === "text-layer"
-            ? "reading the text layer"
-            : p?.phase === "ocr"
-              ? "recognising text (OCR)"
-              : p?.phase === "figures"
-                ? `cutting out figures${p.pagesDone ? ` · ${p.pagesDone}` : ""}`
-                : "converting";
     line = (
       <span
         className="inline-flex items-center gap-1.5"
         style={{ color: "var(--bai-text-faint)" }}
       >
-        <Spinner className="h-3 w-3" /> {phase} ·{" "}
+        <Spinner className="h-3 w-3" /> {progressLabel(file.progress)} ·{" "}
         {elapsed(file.startedAt, undefined)}
       </span>
     );
@@ -279,6 +269,19 @@ export function FileRow({
             Remove
           </button>
         )}
+        {file.state === "converting" && (
+          // Removing stops the conversion on the service too, freeing its
+          // slot for the next file.
+          <button
+            type="button"
+            onClick={onRemove}
+            className="intake-link shrink-0 text-[11px]"
+            style={{ color: "var(--bai-text-muted)" }}
+            title="Stop converting and drop this file — nothing from it has been written"
+          >
+            Remove
+          </button>
+        )}
         {file.publishedIds && file.attachError && onRetryAttach && (
           <button
             type="button"
@@ -315,28 +318,55 @@ export function FileRow({
           {line}
         </span>
       </div>
-      {file.state === "converting" &&
-      file.progress?.phase === "reading" &&
-      file.progress.pages ? (
-        // Measured: pages finished over pages in the file. The chunking phase
-        // that follows has no page signal, so the bar stops at full and the
-        // line says "structuring" rather than inventing a second bar.
+      {bar ? (
+        // Measured: pages finished over pages in the file. Reading in one
+        // pass, the service knows the page count but not how far it is, so the
+        // bar moves without claiming a share: indeterminate, not an estimate.
+        // The later phases have no page signal; the bar goes and the line says
+        // what is happening rather than inventing a second bar.
         <div
-          className="ml-[18px] h-1 overflow-hidden rounded-full"
+          className="relative ml-[18px] h-1 overflow-hidden rounded-full"
           style={{ backgroundColor: "var(--bai-hover)" }}
+          role="progressbar"
+          aria-label={progressLabel(file.progress)}
+          {...(bar.kind === "measured"
+            ? {
+                "aria-valuemin": 0,
+                "aria-valuemax": 100,
+                "aria-valuenow": Math.round(bar.fraction * 100),
+              }
+            : {})}
         >
-          <div
-            className="h-full rounded-full transition-[width] duration-500"
-            style={{
-              width: `${Math.min(100, (file.progress.pagesDone / file.progress.pages) * 100)}%`,
-              backgroundColor: "var(--bai-accent)",
-            }}
-          />
+          {bar.kind === "measured" ? (
+            <div
+              className="h-full rounded-full transition-[width] duration-500"
+              style={{
+                width: `${bar.fraction * 100}%`,
+                backgroundColor: "var(--bai-accent)",
+              }}
+            />
+          ) : (
+            <div
+              className="intake-bar-indeterminate rounded-full"
+              style={{ backgroundColor: "var(--bai-accent)" }}
+            />
+          )}
         </div>
       ) : null}
       <style>{`
         .intake-row:hover { background-color: var(--bai-hover) !important; }
         .intake-link:hover { text-decoration: underline; }
+        .intake-bar-indeterminate {
+          position: absolute; top: 0; bottom: 0; left: 0; width: 35%;
+          animation: intake-bar-slide 1.4s ease-in-out infinite;
+        }
+        @keyframes intake-bar-slide {
+          from { transform: translateX(-100%); }
+          to { transform: translateX(290%); }
+        }
+        @media (prefers-reduced-motion: reduce) {
+          .intake-bar-indeterminate { animation: none; left: 32.5%; opacity: 0.6; }
+        }
       `}</style>
     </div>
   );

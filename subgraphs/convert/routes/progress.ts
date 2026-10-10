@@ -6,10 +6,12 @@ import { HttpError, jsonError, OK_CACHE } from "../lib/respond.js";
 /**
  * `GET convert/progress/:job` — where a conversion started with `?job=` is.
  *
- * The service streams the plain pass and counts pages as they finish; the
- * chunking pass has no page signal and is reported as a phase. A job the
- * service has forgotten (it keeps them a minute after completion) is a 404,
- * so a poller knows to stop rather than read a stale bar.
+ * The service converts in one pass: while `reading` it reports the document's
+ * page count with `pagesDone` held at 0 (an older service that streams counts
+ * pages as they finish); the later passes have no page signal and are
+ * reported as phases, `cancelled` among them. A job the service has forgotten
+ * (it keeps them a minute after completion) is a 404, so a poller knows to
+ * stop rather than read a stale bar.
  */
 export function createProgressRoute(deps: ConvertRouteDeps) {
   return async function handleConvertProgress(

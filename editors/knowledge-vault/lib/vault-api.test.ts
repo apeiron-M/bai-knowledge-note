@@ -224,3 +224,137 @@ describe("createVaultApi — raw bodies", () => {
     ).toBe("application/octet-stream");
   });
 });
+
+describe("createVaultApi — DELETE and aborts", () => {
+  it("sends a DELETE with the bearer and no body", async () => {
+    // `DELETE convert/:job` is how a removed file's conversion is stopped.
+    const { calls, fetchImpl } = recording(() => ok({ cancelled: true }));
+    const answer = await createVaultApi({
+      fetchImpl,
+      origin: "http://localhost:4001",
+      tokenProvider: token,
+    }).delete<{ cancelled: boolean }>("/convert/job-1");
+    expect(answer).toEqual({ cancelled: true });
+    expect(calls[0].url).toBe(
+      "http://localhost:4001/api/@powerhousedao/knowledge-note/convert/job-1",
+    );
+    expect(calls[0].init.method).toBe("DELETE");
+    expect(calls[0].init.body).toBeUndefined();
+    expect(
+      (calls[0].init.headers as Record<string, string>).Authorization,
+    ).toBe("Bearer t0k3n");
+  });
+
+  it("turns a DELETE refusal into a typed failure with its status", async () => {
+    const { fetchImpl } = recording(
+      () =>
+        new Response(JSON.stringify({ cancelled: false }), {
+          status: 404,
+          headers: { "content-type": "application/json" },
+        }),
+    );
+    const failure = await failureOf(
+      createVaultApi({
+        fetchImpl,
+        origin: "http://localhost:4001",
+        tokenProvider: token,
+      }).delete("/convert/job-1"),
+    );
+    expect(failure).toBeInstanceOf(VaultApiFailure);
+    expect(failure.status).toBe(404);
+  });
+
+  it("hands the caller's signal to fetch with a raw upload", async () => {
+    const { calls, fetchImpl } = recording(() => ok({}));
+    const controller = new AbortController();
+    await createVaultApi({
+      fetchImpl,
+      origin: "http://localhost:4001",
+      tokenProvider: token,
+    }).postRaw("/convert?filename=a.md", new Uint8Array([1]), {
+      signal: controller.signal,
+    });
+    expect(calls[0].init.signal).toBe(controller.signal);
+  });
+
+  it("reports an aborted upload as ABORTED, not as an unreachable vault", async () => {
+    // A fetch that hangs until its signal fires, then rejects the way a
+    // browser does: with the signal's reason, a DOMException named AbortError.
+    const fetchImpl = ((_url: string, init: RequestInit) =>
+      new Promise<Response>((_resolve, reject) => {
+        init.signal?.addEventListener("abort", () =>
+          reject(new DOMException("The operation was aborted.", "AbortError")),
+        );
+      })) as unknown as typeof fetch;
+    const controller = new AbortController();
+    const call = createVaultApi({
+      fetchImpl,
+      origin: "http://localhost:4001",
+      tokenProvider: token,
+    }).postRaw("/convert?filename=a.pdf", new Uint8Array([1]), {
+      signal: controller.signal,
+    });
+    // Let the bearer resolve and the fetch start before the user gives up.
+    await new Promise((resolve) => setTimeout(resolve, 0));
+    controller.abort();
+
+    const failure = await failureOf(call);
+    expect(failure).toBeInstanceOf(VaultApiFailure);
+    expect(failure).toMatchObject({ status: 0, code: "ABORTED" });
+  });
+
+  it("reports an abort that lands while the answer is still arriving as ABORTED", async () => {
+    const controller = new AbortController();
+    const fetchImpl = (() => {
+      controller.abort();
+      return Promise.resolve({
+        ok: true,
+        status: 200,
+        json: () =>
+          Promise.reject(new DOMException("The operation was aborted.", "AbortError")),
+      } as unknown as Response);
+    }) as unknown as typeof fetch;
+    const failure = await failureOf(
+      createVaultApi({
+        fetchImpl,
+        origin: "http://localhost:4001",
+        tokenProvider: token,
+      }).postRaw("/convert?filename=a.pdf", new Uint8Array([1]), {
+        signal: controller.signal,
+      }),
+    );
+    expect(failure).toMatchObject({ code: "ABORTED" });
+  });
+
+  it("keeps ABORTED for the caller's own abort: a fetch aborted from elsewhere is UNREACHABLE", async () => {
+    const fetchImpl = (() =>
+      Promise.reject(
+        new DOMException("The operation was aborted.", "AbortError"),
+      )) as unknown as typeof fetch;
+    const failure = await failureOf(
+      createVaultApi({
+        fetchImpl,
+        origin: "http://localhost:4001",
+        tokenProvider: token,
+      }).postRaw("/convert?filename=a.pdf", new Uint8Array([1]), {
+        signal: new AbortController().signal,
+      }),
+    );
+    expect(failure).toMatchObject({ code: "UNREACHABLE" });
+  });
+
+  it("still lets a body that is not JSON fail as itself", async () => {
+    const { fetchImpl } = recording(
+      () => new Response("<html>ok</html>", { status: 200 }),
+    );
+    const failure = await failureOf(
+      createVaultApi({
+        fetchImpl,
+        origin: "http://localhost:4001",
+        tokenProvider: token,
+      }).get("/convert/health"),
+    );
+    expect(failure).not.toBeInstanceOf(VaultApiFailure);
+    expect((failure as Error).name).toBe("SyntaxError");
+  });
+});

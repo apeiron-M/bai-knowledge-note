@@ -22,6 +22,7 @@ const service = (
     formats: [],
   }),
   progress,
+  cancel: () => Promise.resolve(false),
 });
 
 const GET = () => new Request("http://vault.test/x/convert/progress/abc");

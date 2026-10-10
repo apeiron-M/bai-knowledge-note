@@ -2,6 +2,7 @@ import { getHostConfig } from "../../shared/host-config.js";
 import {
   addFiles,
   discardUnpublished,
+  extensionOf,
   isReviewReady,
   markPublished,
   removeFile,
@@ -16,6 +17,7 @@ import {
 } from "./intake-model.js";
 import {
   attachOriginal,
+  cancelConversion,
   conversionProgress,
   convertFile,
   publishFile,
@@ -36,11 +38,22 @@ import { createVaultApi, VaultApiFailure, type VaultApi } from "./vault-api.js";
  * and its scheduler live outside React: conversion carries on while no view
  * shows it, and the next mount reads it back.
  *
- * Still one file at a time, on purpose. The service's warm pipeline is
- * single-threaded and answers a second caller `CONVERT_BUSY`, so converting in
- * parallel would only reorder work inside the engine while making the per-file
- * progress a lie. Adding files never waits for it: a file joins the queue the
- * moment it is chosen or dropped, and its bytes are read in the background.
+ * How many files convert at once is the service's to say. Its health reports
+ * two lanes (`slots`): conversions that need the AI models (PDFs, images) and
+ * everything else, each with its own number of slots, and which extensions go
+ * to the models lane (`modelExtensions`). The batch fills each lane up to its
+ * slots — so a twelve-second Word file is not stuck behind a five-minute book
+ * — taking files in drop order within a lane, never by size. Sending more than
+ * a lane holds would only reorder work inside the engine while making the
+ * per-file progress a lie; the service answers the extra caller `CONVERT_BUSY`.
+ * A service that reports no lanes runs ONE conversion in total, and so does
+ * the batch until `configure` tells it otherwise. Adding files never waits: a
+ * file joins the queue the moment it is chosen or dropped, and its bytes are
+ * read in the background.
+ *
+ * Removing a file, Cancel and Finish stop its conversion for real: the request
+ * is aborted and the service is asked to stop the job (`DELETE convert/:job`),
+ * which frees its slot for the next file.
  *
  * What it cannot outlive is the page: a reload or a closed tab loses the files
  * that are not in the vault yet.
@@ -68,6 +81,19 @@ export type IntakeSnapshot = {
   refused: readonly string[];
 };
 
+/** Which of the service's lanes a file converts in. */
+export type ConversionLane = "models" | "other";
+
+/** The service's lanes, as its `convert/health` reports them. */
+export type LaneConfig = {
+  /** Conversions that use the AI models (PDFs, images) that may run at once. */
+  models: number;
+  /** Conversions of everything else that may run at once, beside the models lane. */
+  other: number;
+  /** Lower-case extensions, no dot, that go to the models lane; everything else is "other". */
+  modelExtensions: readonly string[];
+};
+
 export type IntakeDeps = {
   convert: (
     input: {
@@ -78,8 +104,12 @@ export type IntakeDeps = {
       figures: boolean;
     },
     api: VaultApi,
+    /** Aborted when the batch no longer wants the file; the call then fails with `ABORTED`. */
+    signal: AbortSignal,
   ) => Promise<ConvertedFile>;
   progress: (job: string, api: VaultApi) => Promise<ConversionProgress | null>;
+  /** Ask the service to stop `job` (`DELETE convert/:job`); the answer is not waited on by the file. */
+  cancel: (job: string, api: VaultApi) => Promise<unknown>;
   publish: (
     file: IntakeFile,
     bytes: Uint8Array,
@@ -101,10 +131,15 @@ export type IntakeDeps = {
 
 export type IntakeStore = ReturnType<typeof createIntakeStore>;
 
-/** How long to leave a busy converter alone before asking again. */
+/** How long to leave a busy lane alone before asking again. */
 export const BUSY_RETRY_MS = 8_000;
-/** The service counts pages as they finish; asked once a second while a file converts. */
+/** The service reports its phase and pages; asked once a second while a file converts. */
 export const PROGRESS_POLL_MS = 1_000;
+/**
+ * The longest a stopped conversion keeps its slot while the service hears the
+ * cancel. Usually the answer comes first; this only bounds a cancel that hangs.
+ */
+export const CANCEL_GRACE_MS = 5_000;
 
 const BUSY_MESSAGE =
   "the converter is busy with another file — trying again shortly";
@@ -173,14 +208,61 @@ export function createIntakeStore({
   /** Files whose bytes have not been read yet (or failed to read, for a retry). */
   const blobs = new Map<string, Blob>();
   const reading = new Set<string>();
-  /** The file being converted; single-flight by this, never by a render. */
-  let converting: string | null = null;
-  /** The converter said it is busy; nothing is sent before this time. */
-  let busyUntil = 0;
-  let busyTimer: ReturnType<typeof setTimeout> | null = null;
+  /**
+   * Conversions sent and not yet seen to end, by file — the scheduler counts
+   * these, never a render. A stopped one stays until the service has heard its
+   * cancel (`stop`), so its slot is not handed on while the service still
+   * counts it busy.
+   */
+  const inFlight = new Map<
+    string,
+    {
+      job: string;
+      controller: AbortController;
+      lane: ConversionLane;
+      /** The api it was sent with: its cancel must reach the same vault. */
+      api: VaultApi;
+    }
+  >();
+  /** The service's lanes; null until told (`configure`) — then ONE conversion in total. */
+  let lanes: {
+    models: number;
+    other: number;
+    modelExtensions: ReadonlySet<string>;
+  } | null = null;
+  /** A lane's converter said it is busy; nothing is sent to that lane before this time. */
+  const busyUntil: Record<ConversionLane, number> = { models: 0, other: 0 };
+  const busyTimers: Record<
+    ConversionLane,
+    ReturnType<typeof setTimeout> | null
+  > = { models: null, other: null };
   let release: (() => void) | null = null;
 
   const has = (id: string) => state.files.some((f) => f.id === id);
+
+  /** Unconfigured, every file is "other": one lane, one slot — the old service's rule. */
+  const laneOf = (name: string): ConversionLane =>
+    lanes?.modelExtensions.has(extensionOf(name)) ? "models" : "other";
+
+  /** Whether a file of this lane may be sent now. */
+  function hasRoom(lane: ConversionLane): boolean {
+    if (deps.now() < busyUntil[lane]) return false;
+    if (!lanes) return inFlight.size === 0;
+    let used = 0;
+    for (const flight of inFlight.values()) if (flight.lane === lane) used += 1;
+    return used < lanes[lane];
+  }
+
+  /** The lane is full on the service's side (another tab, an agent): leave it alone, then ask again. */
+  function waitOutBusy(lane: ConversionLane) {
+    busyUntil[lane] = deps.now() + BUSY_RETRY_MS;
+    const timer = busyTimers[lane];
+    if (timer) clearTimeout(timer);
+    busyTimers[lane] = setTimeout(() => {
+      busyTimers[lane] = null;
+      pump();
+    }, BUSY_RETRY_MS);
+  }
 
   /** When nothing is open for review, the first file that becomes ready opens itself. */
   function settleOpen(next: IntakeSnapshot): IntakeSnapshot {
@@ -191,10 +273,10 @@ export function createIntakeStore({
     return openId === next.openId ? next : { ...next, openId };
   }
 
-  /** Hold the page awake while anything is queued, reading, converting or publishing. */
+  /** Hold the page awake while anything is queued, reading, in flight or publishing. */
   function syncKeepAlive() {
     const working =
-      converting !== null ||
+      inFlight.size > 0 ||
       reading.size > 0 ||
       state.publishing ||
       state.files.some((f) => f.state === "queued");
@@ -241,21 +323,37 @@ export function createIntakeStore({
     );
   }
 
-  /** Take the next queued file whose bytes are here; start reading the ones that are not. */
+  /**
+   * Start every queued file whose bytes are here, as far as its lane has room,
+   * in drop order; start reading the bytes of the ones that could go next.
+   * One file per pass, each pass re-reading the batch and the lanes, so a
+   * listener that adds or removes a file mid-pump cannot start one twice.
+   */
   function pump() {
-    if (converting !== null) return;
-    if (deps.now() < busyUntil) return;
     const lost: string[] = [];
-    let next: { file: IntakeFile; data: Uint8Array } | null = null;
-    for (const file of state.files) {
-      if (file.state !== "queued") continue;
-      const data = bytes.get(file.id);
-      if (data) {
-        next = { file, data };
-        break;
+    for (;;) {
+      let next: {
+        file: IntakeFile;
+        data: Uint8Array;
+        lane: ConversionLane;
+      } | null = null;
+      for (const file of state.files) {
+        if (file.state !== "queued" || inFlight.has(file.id)) continue;
+        const data = bytes.get(file.id);
+        if (!data && !blobs.has(file.id)) {
+          if (!lost.includes(file.id)) lost.push(file.id);
+          continue;
+        }
+        const lane = laneOf(file.name);
+        if (!hasRoom(lane)) continue;
+        if (data) {
+          next = { file, data, lane };
+          break;
+        }
+        read(file.id);
       }
-      if (blobs.has(file.id)) read(file.id);
-      else lost.push(file.id);
+      if (!next) break;
+      start(next.file, next.data, next.lane);
     }
     if (lost.length > 0) {
       updateFiles((files) =>
@@ -270,14 +368,15 @@ export function createIntakeStore({
         ),
       );
     }
-    if (next) start(next.file, next.data);
   }
 
-  function start(file: IntakeFile, data: Uint8Array) {
+  function start(file: IntakeFile, data: Uint8Array, lane: ConversionLane) {
     const id = file.id;
     const callApi = api;
     const job = deps.jobId();
-    converting = id;
+    const controller = new AbortController();
+    const flight = { job, controller, lane, api: callApi };
+    inFlight.set(id, flight);
     updateFiles((files) =>
       setState(files, id, {
         state: "converting",
@@ -287,14 +386,19 @@ export function createIntakeStore({
       }),
     );
 
-    // Watch the conversion: the service counts pages as they finish, so the
-    // row can show "page 12 of 23" — measured, never estimated.
+    /** This conversion is still the one its row waits on: not stopped, not replaced. */
+    const current = () =>
+      inFlight.get(id) === flight && !controller.signal.aborted;
+
+    // Watch the conversion: the service reports its phase and the document's
+    // pages — pages finished, when it counts them — so the row shows what is
+    // happening, never an estimate.
     const poll = setInterval(() => {
       if (deps.isHidden()) return;
       deps
         .progress(job, callApi)
         .then((progress) => {
-          if (!progress) return;
+          if (!progress || !current()) return;
           if (!state.files.some((f) => f.id === id && f.state === "converting"))
             return;
           updateFiles((files) => setState(files, id, { progress }));
@@ -313,29 +417,33 @@ export function createIntakeStore({
           figures: true,
         },
         callApi,
+        controller.signal,
       )
       .then(
-        (converted) =>
+        (converted) => {
+          // Removed, or the batch cancelled, while it converted: nobody waits for it.
+          if (!current()) return;
           updateFiles((files) =>
             setState(files, id, {
               state: "converted",
               converted,
               finishedAt: deps.now(),
             }),
-          ),
+          );
+        },
         (error: unknown) => {
-          // The service converts one file at a time and says so: not a failure
-          // of this file. Another tab or an agent is using it; wait, then ask again.
+          // Stopped on purpose — the file was removed, or the batch cancelled
+          // or finished. Its `ABORTED`, or the service's `CONVERT_CANCELLED`,
+          // is the stop we asked for: nothing failed, and there is no row left
+          // to say so on.
+          if (!current() || !has(id)) return;
+          // The file's lane is full on the service's side: not a failure of
+          // this file. Another tab or an agent is using it; wait, then ask again.
           if (
             error instanceof VaultApiFailure &&
             error.code === "CONVERT_BUSY"
           ) {
-            busyUntil = deps.now() + BUSY_RETRY_MS;
-            if (busyTimer) clearTimeout(busyTimer);
-            busyTimer = setTimeout(() => {
-              busyTimer = null;
-              pump();
-            }, BUSY_RETRY_MS);
+            waitOutBusy(lane);
             updateFiles((files) =>
               setState(files, id, {
                 state: "queued",
@@ -345,6 +453,8 @@ export function createIntakeStore({
             );
             return;
           }
+          // Anything else fails the file — including a `CONVERT_CANCELLED` this
+          // batch did not ask for (the file is still here): Retry sends it again.
           updateFiles((files) =>
             setState(files, id, {
               state: "failed",
@@ -356,10 +466,36 @@ export function createIntakeStore({
       )
       .finally(() => {
         clearInterval(poll);
-        converting = null;
+        // A stopped conversion keeps its slot until the service has heard the
+        // cancel; `stop` frees it.
+        if (inFlight.get(id) === flight && !controller.signal.aborted)
+          inFlight.delete(id);
         syncKeepAlive();
         pump();
       });
+  }
+
+  /**
+   * Withdraw a file's conversion, if it has one in flight: abort the request,
+   * and ask the service to stop the job — fire-and-forget, errors swallowed,
+   * since the file is leaving the batch either way. The slot stays booked
+   * until the service has answered (at most `CANCEL_GRACE_MS`): handing it to
+   * the next file sooner would send that file into a lane the service still
+   * counts as busy, and it would wait out `BUSY_RETRY_MS` for nothing.
+   */
+  function stop(id: string) {
+    const flight = inFlight.get(id);
+    if (!flight || flight.controller.signal.aborted) return;
+    flight.controller.abort();
+    const free = () => {
+      clearTimeout(grace);
+      if (inFlight.get(id) !== flight) return;
+      inFlight.delete(id);
+      syncKeepAlive();
+      pump();
+    };
+    const grace = setTimeout(free, CANCEL_GRACE_MS);
+    void deps.cancel(flight.job, flight.api).then(free, free);
   }
 
   function forget(id: string) {
@@ -378,6 +514,32 @@ export function createIntakeStore({
     /** The api every later call uses; re-bound on mount, so a fresh sign-in reaches a running batch. */
     bindApi: (next: VaultApi) => {
       api = next;
+    },
+
+    /**
+     * The service's lanes, from its `convert/health` (`slots`, `modelExtensions`).
+     * Until this is called the batch sends ONE file at a time — right for a
+     * service that reports no lanes. A lane is never closed from here: a count
+     * below one is read as one, since a file queued for a lane with no slots
+     * would wait without a word, while sent it gets the service's own answer.
+     */
+    configure: (next: LaneConfig) => {
+      const slotsOf = (n: number) =>
+        Number.isFinite(n) && n >= 1 ? Math.floor(n) : 1;
+      lanes = {
+        models: slotsOf(next.models),
+        other: slotsOf(next.other),
+        modelExtensions: new Set(
+          next.modelExtensions.map((ext) => ext.toLowerCase().replace(/^\./, "")),
+        ),
+      };
+      // A conversion that started before the lanes were known was booked as
+      // "other"; book it to its real lane, or the models lane would look free.
+      for (const [id, flight] of inFlight) {
+        const file = state.files.find((f) => f.id === id);
+        if (file) flight.lane = laneOf(file.name);
+      }
+      pump();
     },
 
     /** Files join the batch at once; their bytes are read in the background. */
@@ -421,7 +583,9 @@ export function createIntakeStore({
       );
       pump();
     },
+    /** Drop a file; a conversion in flight is stopped, on the service too. */
     remove: (id: string) => {
+      stop(id);
       forget(id);
       updateFiles((files) => removeFile(files, id));
     },
@@ -544,12 +708,16 @@ export function createIntakeStore({
     /**
      * "Cancel": drop every file that is not in the vault. With nothing published
      * the panel closes; with some published, what remains is complete and the
-     * panel shows the summary with Finish. A conversion in flight is abandoned —
-     * its result lands on an id that no longer exists and is ignored.
+     * panel shows the summary with Finish. A conversion in flight is stopped,
+     * on the service too; should its result still arrive, it lands on an id
+     * that no longer exists and is ignored.
      */
     cancel: () => {
-      for (const f of state.files)
-        if (f.publishedIds === undefined) forget(f.id);
+      for (const f of state.files) {
+        if (f.publishedIds !== undefined) continue;
+        stop(f.id);
+        forget(f.id);
+      }
       const kept = discardUnpublished(state.files);
       commit({
         files: kept,
@@ -562,6 +730,7 @@ export function createIntakeStore({
 
     /** "Finish": the batch is over, the panel closes, the sources are already in the vault. */
     reset: () => {
+      for (const id of [...inFlight.keys()]) stop(id);
       bytes.clear();
       blobs.clear();
       commit({
@@ -632,8 +801,9 @@ export function holdWebLock(): () => void {
 }
 
 const browserDeps: IntakeDeps = {
-  convert: (input, api) => convertFile(input, { api }),
+  convert: (input, api, signal) => convertFile(input, { api, signal }),
   progress: (job, api) => conversionProgress(job, { api }),
+  cancel: (job, api) => cancelConversion(api, job),
   publish: (file, data, deps) => publishFile(file, data, deps),
   attach: (file, data, sourceIds, deps) =>
     attachOriginal(file, data, sourceIds, deps),

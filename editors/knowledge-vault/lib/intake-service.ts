@@ -54,6 +54,10 @@ type ConvertSummary = {
  * section's `markdownRange` is the slice that becomes its `content`. The whole
  * markdown is dropped once the sections have their slices — only the slices
  * are kept, so a 400 000-character book does not sit in memory twice.
+ *
+ * `signal` withdraws the request — the upload and the wait — and the call then
+ * fails with `ABORTED`. It does not stop the service: the vault cannot follow
+ * its caller hanging up, so the job is stopped with `cancelConversion`.
  */
 export async function convertFile(
   input: {
@@ -63,7 +67,7 @@ export async function convertFile(
     job?: string;
     figures?: boolean;
   },
-  deps: { api: VaultApi },
+  deps: { api: VaultApi; signal?: AbortSignal },
 ): Promise<ConvertedFile> {
   const path =
     `/convert?filename=${encodeURIComponent(input.name)}&markdown=1` +
@@ -71,6 +75,7 @@ export async function convertFile(
     `${input.figures ? "&figures=1" : ""}`;
   const body = await deps.api.postRaw<ConvertSummary>(path, input.bytes, {
     contentType: "application/octet-stream",
+    ...(deps.signal ? { signal: deps.signal } : {}),
   });
 
   if (!Array.isArray(body.sections)) {
@@ -471,6 +476,28 @@ export async function conversionProgress(
     );
   } catch (error) {
     if (error instanceof VaultApiFailure && error.status === 404) return null;
+    throw error;
+  }
+}
+
+/**
+ * Stop a conversion started with `job` (`DELETE convert/:job`): the service
+ * stops the worker and frees the file's lane. True when it was running; false
+ * when it was not — finished already, or never started — which is not a
+ * failure: there is nothing left to stop. Anything else is thrown; the intake
+ * swallows it, since the file is leaving the batch either way.
+ */
+export async function cancelConversion(
+  api: VaultApi,
+  job: string,
+): Promise<boolean> {
+  try {
+    const answer = await api.delete<{ cancelled?: boolean }>(
+      `/convert/${encodeURIComponent(job)}`,
+    );
+    return answer.cancelled === true;
+  } catch (error) {
+    if (error instanceof VaultApiFailure && error.status === 404) return false;
     throw error;
   }
 }

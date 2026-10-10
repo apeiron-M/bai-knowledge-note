@@ -15,7 +15,23 @@ export type ConvertHealth = {
   capabilities?: Record<string, unknown>;
   /** This vault's cap for one upload (a vault on this computer allows more); absent from older servers. */
   maxUploadBytes?: number;
+  /**
+   * How many conversions may run at once, per lane: `models` for the formats
+   * in `modelExtensions`, `other` beside it. Absent from an older service,
+   * which runs one conversion in total.
+   */
+  slots?: {
+    models: number;
+    other: number;
+    busyModels: number;
+    busyOther: number;
+  };
+  /** Lower-case extensions, no dot, that convert in the models lane. */
+  modelExtensions?: string[];
 };
+
+/** One stable empty list, so a consumer's effect does not re-run on every render. */
+const NO_EXTENSIONS: readonly string[] = [];
 
 /**
  * What the conversion service can do, read once per mount.
@@ -77,5 +93,9 @@ export function useConvertHealth() {
      */
     ocrEngine: health?.ocrEngine ?? null,
     autoOcrBudgetSeconds: health?.autoOcrBudgetSeconds ?? 60,
+    /** The service's lanes; undefined from an older service — the intake then sends one file at a time. */
+    slots: health?.slots,
+    /** The extensions that convert in the models lane. */
+    modelExtensions: health?.modelExtensions ?? NO_EXTENSIONS,
   };
 }

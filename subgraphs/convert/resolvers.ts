@@ -1,5 +1,6 @@
 import type { IHttpScope } from "@powerhousedao/shared/processors";
 import type { ConvertSubgraph } from "./index.js";
+import { createCancelRoute } from "./routes/cancel.js";
 import { createConvertRoute, DEFAULT_MAX_UPLOAD_BYTES } from "./routes/convert.js";
 import { createHealthRoute } from "./routes/health.js";
 import { createProgressRoute } from "./routes/progress.js";
@@ -30,8 +31,11 @@ export function registerConvertRoutes(
   if (registeredScopes.has(http)) return;
   registeredScopes.add(http);
 
-  // Registered in this order because routes match in registration order across
-  // the package's single namespace; neither path can shadow the other.
+  // Routes match per method, in registration order, across the package's single
+  // namespace (subgraphs/http registers into it too). The two GETs cannot shadow
+  // each other, and `convert/:job` is the namespace's only two-segment DELETE
+  // (the other is the one-segment `relationships`), so it shadows nothing and
+  // nothing shadows it.
   try {
     http.get("convert/health", { auth: "renown" }, createHealthRoute(deps));
     http.get(
@@ -45,6 +49,9 @@ export function registerConvertRoutes(
       { auth: "renown", body: "raw", maxBodyBytes: deps.maxUploadBytes ?? DEFAULT_MAX_UPLOAD_BYTES },
       createConvertRoute(deps),
     );
+    // Cancellation is explicit: the convert route cannot follow its caller
+    // hanging up (routes/convert.ts says why).
+    http.delete("convert/:job", { auth: "renown" }, createCancelRoute(deps));
   } catch (error) {
     // Last-resort guard: if a reload handed us a new scope object backed by the
     // same registration map, the first route throws "already registered". That

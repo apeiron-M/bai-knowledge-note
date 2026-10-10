@@ -43,6 +43,7 @@ const stubService = (
     format: "md",
   }),
   progress: async () => null,
+  cancel: () => Promise.resolve(false),
   health: async () => ({
     ok: true,
     backend: "docling.rs",

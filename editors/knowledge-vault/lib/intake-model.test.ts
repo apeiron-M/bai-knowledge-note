@@ -5,11 +5,14 @@ import {
   canPublish,
   defaultSourceType,
   discardUnpublished,
+  extensionOf,
   folderNameFor,
   isLikelyFurniture,
   markPublished,
   needsUser,
   nextQueued,
+  progressBar,
+  progressLabel,
   removeFile,
   selectedCount,
   setAllSections,
@@ -17,6 +20,7 @@ import {
   toggleSection,
   totalSelected,
   validateFile,
+  type ConversionProgress,
   type Section,
 } from "./intake-model.js";
 
@@ -401,5 +405,71 @@ describe("isLikelyFurniture", () => {
     ]) {
       expect(isLikelyFurniture(title), title).toBe(false);
     }
+  });
+});
+
+describe("progress — what a converting row says", () => {
+  const at = (
+    phase: ConversionProgress["phase"],
+    pages: number | null,
+    pagesDone: number,
+  ): ConversionProgress => ({ phase, pages, pagesDone, elapsedMs: 1000 });
+
+  it("says how many pages it is reading when the service converts in one pass", () => {
+    // One pass: the page count is known, how far the pass has got is not.
+    expect(progressLabel(at("reading", 23, 0))).toBe("reading 23 pages");
+    expect(progressLabel(at("reading", 1, 0))).toBe("reading 1 page");
+    expect(progressBar(at("reading", 23, 0))).toEqual({ kind: "indeterminate" });
+  });
+
+  it("keeps the measured page count from a service that counts pages as they finish", () => {
+    expect(progressLabel(at("reading", 23, 12))).toBe("reading page 12 of 23");
+    expect(progressBar(at("reading", 23, 12))).toEqual({
+      kind: "measured",
+      fraction: 12 / 23,
+    });
+    // Never past full, whatever the service reports.
+    expect(progressBar(at("reading", 23, 30))).toEqual({
+      kind: "measured",
+      fraction: 1,
+    });
+  });
+
+  it("names the later phases, and shows no bar for them", () => {
+    expect(progressLabel(at("structuring", 23, 23))).toBe("structuring the text");
+    expect(progressLabel(at("text-layer", null, 0))).toBe(
+      "reading the text layer",
+    );
+    expect(progressLabel(at("ocr", 4, 0))).toBe("recognising text (OCR)");
+    expect(progressLabel(at("figures", 23, 0))).toBe("cutting out figures");
+    expect(progressLabel(at("figures", 23, 7))).toBe("cutting out figures · 7");
+    expect(progressLabel(at("cancelled", 23, 0))).toBe("cancelled");
+    for (const phase of [
+      "structuring",
+      "text-layer",
+      "ocr",
+      "figures",
+      "cancelled",
+    ] as const) {
+      expect(progressBar(at(phase, 23, 5))).toBeNull();
+    }
+  });
+
+  it("says only \"converting\" when there is nothing more to say", () => {
+    expect(progressLabel(undefined)).toBe("converting");
+    expect(progressLabel(at("starting", null, 0))).toBe("converting");
+    // Reading, but the page count is not known: no number to show.
+    expect(progressLabel(at("reading", null, 0))).toBe("converting");
+    expect(progressBar(at("reading", null, 0))).toBeNull();
+    expect(progressBar(undefined)).toBeNull();
+  });
+});
+
+describe("extensionOf", () => {
+  it("names a format the way the converter does: lower-case, no dot", () => {
+    expect(extensionOf("Report.PDF")).toBe("pdf");
+    expect(extensionOf("dir/archive.tar.gz")).toBe("gz");
+    expect(extensionOf(".hidden")).toBe("");
+    expect(extensionOf("README")).toBe("");
   });
 });

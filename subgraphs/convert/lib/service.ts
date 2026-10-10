@@ -65,14 +65,20 @@ export interface ConversionFigure {
 }
 
 export interface ConversionProgress {
+  /**
+   * With one conversion pass, `reading` keeps `pagesDone` at 0 while `pages`
+   * is the document's page count; an older service that streams advances it.
+   */
   phase:
     | "starting"
     | "reading"
     | "structuring"
     | "text-layer"
     | "ocr"
+    | "figures"
     | "done"
-    | "failed";
+    | "failed"
+    | "cancelled";
   pages: number | null;
   pagesDone: number;
   elapsedMs: number;
@@ -84,6 +90,19 @@ export interface ConversionHealth {
   ready: boolean;
   missing: string[];
   formats: string[];
+  /**
+   * How many conversions may run at once, per lane: `models` for the formats
+   * that need the AI models (`modelExtensions`), `other` for everything else.
+   * Absent from an older service, which runs ONE conversion in total.
+   */
+  slots?: {
+    models: number;
+    other: number;
+    busyModels: number;
+    busyOther: number;
+  };
+  /** Lower-case extensions, no dot, that go to the models lane. */
+  modelExtensions?: string[];
 }
 
 export interface ConversionService {
@@ -92,13 +111,18 @@ export interface ConversionService {
     bytes: Uint8Array;
     /** Ask the service to OCR regardless of its budget. */
     ocr?: boolean;
-    /** A caller-chosen id to watch this conversion through `progress()`. */
+    /** A caller-chosen id to watch this conversion through `progress()`, and to stop it with `cancel()`. */
     job?: string;
     /** Ask for the pictures and display formulas as images (PDF only; costs a second docling pass). */
     figures?: boolean;
   }): Promise<ConversionResult>;
   /** Live progress of a conversion started with `job`; null once the service has forgotten it. */
   progress(job: string): Promise<ConversionProgress | null>;
+  /**
+   * Stop a conversion started with `job`: true when it was running (its worker
+   * is stopped and its slot freed), false when no such job is running.
+   */
+  cancel(job: string): Promise<boolean>;
   health(): Promise<ConversionHealth>;
 }
 
@@ -167,13 +191,23 @@ export function createHttpConversionService(options: {
     detail: string,
     parsed?: Record<string, unknown>,
   ): HttpError {
-    // The service runs one conversion at a time and says so; that is a
-    // retry-later, not an outage, and the client must be able to tell.
+    // The file's lane is full and the service says so; that is a retry-later,
+    // not an outage, and the client must be able to tell.
     if (status === 503 && detail.includes("CONVERSION_BUSY")) {
       return new HttpError(
         503,
         "CONVERT_BUSY",
         `The conversion service is busy: ${detail.slice(0, 300)}`,
+      );
+    }
+    // The job was stopped while it ran — `DELETE /convert/:job`, or its caller
+    // going away. Somebody asked for that; it is neither an outage nor the
+    // file's fault, so it keeps its own code.
+    if (status === 409 && detail.includes("CONVERSION_CANCELLED")) {
+      return new HttpError(
+        409,
+        "CONVERT_CANCELLED",
+        "The conversion was cancelled.",
       );
     }
     // 415 is the service saying what it cannot read *and why* — a missing
@@ -305,6 +339,20 @@ export function createHttpConversionService(options: {
       });
       if (response.status === 404) return null;
       return readJson<ConversionProgress>(response);
+    },
+
+    async cancel(job) {
+      const response = await request(`/convert/${encodeURIComponent(job)}`, {
+        method: "DELETE",
+      });
+      // Not running — finished already, or never started — is an answer, not
+      // a failure: there is nothing left to stop.
+      if (response.status === 404) return false;
+      // The status is the answer (`{ cancelled: true }` adds nothing), but the
+      // body is read either way so the connection is released.
+      const text = await response.text().catch(() => "");
+      if (!response.ok) throw conversionFailure(response.status, text);
+      return true;
     },
 
     async health() {

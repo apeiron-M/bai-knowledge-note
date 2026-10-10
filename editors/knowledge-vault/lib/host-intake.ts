@@ -1,8 +1,18 @@
 import { attachmentPort } from "./attachments.js";
-import { intakeStoreFor, type IntakeSnapshot } from "./intake-store.js";
+import {
+  intakeStoreFor,
+  pinnedVaultApi,
+  type IntakeSnapshot,
+} from "./intake-store.js";
 
 export type { IntakeSnapshot };
 export type { IntakeFile } from "./intake-model.js";
+
+/** The part of `convert/health` that says how many files convert at once; absent from an older service. */
+type LaneHealth = {
+  slots?: { models: number; other: number };
+  modelExtensions?: string[];
+};
 
 /**
  * Intake for a host that shows its own progress instead of the vault's panel — the desktop app's setup guide.
@@ -12,6 +22,19 @@ export type { IntakeFile } from "./intake-model.js";
 export function hostIntake(driveId: string) {
   const store = intakeStoreFor(driveId);
   const port = attachmentPort();
+  // The converter's lanes, read once and best effort: no view here reads the health for the batch. Without
+  // an answer — an older service, or a converter still starting — the batch sends one file at a time.
+  void pinnedVaultApi()
+    .get<LaneHealth>("/convert/health")
+    .then((health) => {
+      if (!health.slots) return;
+      store.configure({
+        models: health.slots.models,
+        other: health.slots.other,
+        modelExtensions: health.modelExtensions ?? [],
+      });
+    })
+    .catch(() => {});
   let inFlight = false;
   const publishNext = () => {
     if (inFlight || store.getSnapshot().publishing) return;
