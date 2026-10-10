@@ -1,6 +1,6 @@
 import type { IHttpScope } from "@powerhousedao/shared/processors";
 import type { ConvertSubgraph } from "./index.js";
-import { createConvertRoute, MAX_UPLOAD_BYTES } from "./routes/convert.js";
+import { createConvertRoute, DEFAULT_MAX_UPLOAD_BYTES } from "./routes/convert.js";
 import { createHealthRoute } from "./routes/health.js";
 import { createProgressRoute } from "./routes/progress.js";
 import type { ConvertRouteDeps } from "./lib/deps.js";
@@ -41,7 +41,8 @@ export function registerConvertRoutes(
     );
     http.post(
       "convert",
-      { auth: "renown", body: "raw", maxBodyBytes: MAX_UPLOAD_BYTES },
+      // Read once, at registration: the cap is the environment's at setup.
+      { auth: "renown", body: "raw", maxBodyBytes: deps.maxUploadBytes ?? DEFAULT_MAX_UPLOAD_BYTES },
       createConvertRoute(deps),
     );
   } catch (error) {

@@ -5,7 +5,9 @@ import type { ConversionService } from "../lib/service.js";
 import {
   createConvertRoute,
   MAX_MIN_SECTION_CHARS,
-  MAX_UPLOAD_BYTES,
+  DEFAULT_MAX_UPLOAD_BYTES,
+  maxUploadBytes,
+  UPLOAD_CEILING_BYTES,
 } from "./convert.js";
 
 const ctx = (rawBody?: Buffer, user = true) =>
@@ -345,7 +347,17 @@ describe("createConvertRoute", () => {
     // The cap is enforced by the host from `maxBodyBytes`; what this asserts is
     // that the exported bound is the one Task 4 registers, and that it is
     // deliberately not the 2 MB house default.
-    expect(MAX_UPLOAD_BYTES).toBe(30 * 1024 * 1024);
-    expect(MAX_UPLOAD_BYTES).toBeGreaterThan(17_387_337);
+    expect(DEFAULT_MAX_UPLOAD_BYTES).toBe(30 * 1024 * 1024);
+    expect(DEFAULT_MAX_UPLOAD_BYTES).toBeGreaterThan(17_387_337);
+  });
+
+  it("takes a host's larger cap from CONVERT_MAX_UPLOAD_MB, never above the service's own", () => {
+    expect(maxUploadBytes({})).toBe(DEFAULT_MAX_UPLOAD_BYTES);
+    expect(maxUploadBytes({ CONVERT_MAX_UPLOAD_MB: "100" })).toBe(100 * 1024 * 1024);
+    expect(maxUploadBytes({ CONVERT_MAX_UPLOAD_MB: " 12.5 " })).toBe(Math.floor(12.5 * 1024 * 1024));
+    expect(maxUploadBytes({ CONVERT_MAX_UPLOAD_MB: "4096" })).toBe(UPLOAD_CEILING_BYTES);
+    for (const junk of ["", "0", "-5", "lots", "NaN"]) {
+      expect(maxUploadBytes({ CONVERT_MAX_UPLOAD_MB: junk })).toBe(DEFAULT_MAX_UPLOAD_BYTES);
+    }
   });
 });

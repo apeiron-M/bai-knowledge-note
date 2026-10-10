@@ -2,6 +2,7 @@ import type { RouteContext } from "@powerhousedao/shared/processors";
 import { requireUser } from "../lib/authorize.js";
 import type { ConvertRouteDeps } from "../lib/deps.js";
 import { jsonError, OK_CACHE } from "../lib/respond.js";
+import { DEFAULT_MAX_UPLOAD_BYTES } from "./convert.js";
 
 /** The body of a health answer for a vault that has no conversion service. */
 const unconfiguredHealth = {
@@ -38,19 +39,24 @@ export function createHealthRoute(deps: ConvertRouteDeps) {
   ): Promise<Response> {
     try {
       requireUser(ctx);
+      // The vault's own cap, not the service's: a client checks a file against it before uploading.
+      const maxUploadBytes = deps.maxUploadBytes ?? DEFAULT_MAX_UPLOAD_BYTES;
       if (!deps.service) {
-        return Response.json(unconfiguredHealth, { headers: OK_CACHE });
+        return Response.json(
+          { ...unconfiguredHealth, maxUploadBytes },
+          { headers: OK_CACHE },
+        );
       }
       try {
         const health = await deps.service.health();
         return Response.json(
-          { ...health, configured: true, source: deps.source ?? null },
+          { ...health, configured: true, source: deps.source ?? null, maxUploadBytes },
           { headers: OK_CACHE },
         );
       } catch {
         // Configured but unreachable is a *state*, not a failed request.
         return Response.json(
-          { ...unreachableHealth, source: deps.source ?? null },
+          { ...unreachableHealth, source: deps.source ?? null, maxUploadBytes },
           { headers: OK_CACHE },
         );
       }

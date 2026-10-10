@@ -1,5 +1,6 @@
 import { useRef, useState } from "react";
 import { dragCarriesFiles, droppedFiles } from "./drop-files.js";
+import { DEFAULT_MAX_UPLOAD_BYTES, formatUploadLimit } from "../../lib/intake-model.js";
 
 /**
  * The picker, with a drop target of its own — always present while a batch
@@ -12,11 +13,14 @@ import { dragCarriesFiles, droppedFiles } from "./drop-files.js";
  */
 export function DropZone({
   formats,
+  maxUploadBytes = DEFAULT_MAX_UPLOAD_BYTES,
   onFiles,
   variant = "compact",
   disabled = false,
 }: {
   formats: readonly string[];
+  /** This vault's cap for one file (`convert/health`). */
+  maxUploadBytes?: number;
   onFiles: (files: File[]) => void;
   variant?: "compact" | "hero";
   disabled?: boolean;
@@ -94,7 +98,7 @@ export function DropZone({
           style={{ color: "var(--bai-text-faint)" }}
         >
           {hero
-            ? `${formats.length > 0 ? `${formats.length} formats, ` : ""}up to 30 MB each. Several at once is fine.`
+            ? `${formats.length > 0 ? `${formats.length} formats, ` : ""}up to ${formatUploadLimit(maxUploadBytes)} each. Several at once is fine.`
             : "or drop them anywhere in the vault"}
         </span>
         <input

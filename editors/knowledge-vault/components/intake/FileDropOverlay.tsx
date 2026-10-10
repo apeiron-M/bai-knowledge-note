@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState, type DragEvent } from "react";
 import { dragCarriesFiles, droppedFiles } from "./drop-files.js";
+import { DEFAULT_MAX_UPLOAD_BYTES, formatUploadLimit } from "../../lib/intake-model.js";
 
 /**
  * Drop files anywhere in the vault: the whole window becomes the drop target
@@ -95,27 +96,31 @@ export function useVaultFileDrop({
 /** The extensions people recognise first, in that order; the rest are counted. */
 const FAMILIAR = ["pdf", "docx", "html", "md", "epub", "pptx", "txt"];
 
-function formatsLine(formats: readonly string[]): string {
+function formatsLine(formats: readonly string[], maxUploadBytes: number): string {
   const known = new Set(formats.map((f) => f.toLowerCase()));
   const named = FAMILIAR.filter((f) => known.has(f)).slice(0, 4);
   const rest = known.size - named.length;
   const list = named.map((f) => f.toUpperCase()).join(", ");
-  if (named.length === 0) return `${known.size} formats, up to 30 MB a file.`;
+  const cap = `up to ${formatUploadLimit(maxUploadBytes)} a file.`;
+  if (named.length === 0) return `${known.size} formats, ${cap}`;
   return rest > 0
-    ? `${list} and ${rest} more format${rest === 1 ? "" : "s"}, up to 30 MB a file.`
-    : `${list}, up to 30 MB a file.`;
+    ? `${list} and ${rest} more format${rest === 1 ? "" : "s"}, ${cap}`
+    : `${list}, ${cap}`;
 }
 
 export function FileDropOverlay({
   ready,
   settled,
   formats,
+  maxUploadBytes = DEFAULT_MAX_UPLOAD_BYTES,
   inBatch,
   onLeave,
 }: {
   ready: boolean;
   settled: boolean;
   formats: readonly string[];
+  /** This vault's cap for one file (`convert/health`). */
+  maxUploadBytes?: number;
   /** Files already in the batch and not yet in the vault. */
   inBatch: number;
   onLeave: (e: DragEvent) => void;
@@ -199,7 +204,7 @@ export function FileDropOverlay({
         </p>
         {ready && formats.length > 0 && (
           <p className="text-[11px]" style={{ color: "var(--bai-text-muted)" }}>
-            {formatsLine(formats)}
+            {formatsLine(formats, maxUploadBytes)}
           </p>
         )}
       </div>

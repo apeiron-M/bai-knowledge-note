@@ -106,7 +106,7 @@ export function DriveExplorer({ children }: EditorProps) {
   // unmounts a conversion in flight and the Sources tab badge can read it.
   const attachments = useAttachmentPort();
   const convert = useConvertHealth();
-  const intake = useIntakeBatch({ attachments, formats: convert.formats });
+  const intake = useIntakeBatch({ attachments, formats: convert.formats, maxUploadBytes: convert.maxUploadBytes });
   // Pre-warm the shared doc-title index (module-level TTL cache) so the
   // first document editor the user opens finds it hot instead of paying
   // the two index round-trips itself.
@@ -459,6 +459,7 @@ export function DriveExplorer({ children }: EditorProps) {
           ready={convert.configured}
           settled={convert.settled}
           formats={convert.formats}
+          maxUploadBytes={convert.maxUploadBytes}
           inBatch={
             intake.files.filter((f) => f.publishedIds === undefined).length
           }

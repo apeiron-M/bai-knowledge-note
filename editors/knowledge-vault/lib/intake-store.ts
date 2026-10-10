@@ -12,6 +12,7 @@ import {
   type ConversionProgress,
   type ConvertedFile,
   type IntakeFile,
+  DEFAULT_MAX_UPLOAD_BYTES,
 } from "./intake-model.js";
 import {
   attachOriginal,
@@ -121,12 +122,13 @@ export function sortOffered(
   files: readonly File[],
   formats: readonly string[],
   batch: readonly IntakeFile[] = [],
+  maxBytes: number = DEFAULT_MAX_UPLOAD_BYTES,
 ): { accepted: IncomingFile[]; refused: string[] } {
   const accepted: IncomingFile[] = [];
   const refused: string[] = [];
   const seen = new Set(batch.map((f) => `${f.name}\u0000${f.size}`));
   for (const file of files) {
-    const verdict = validateFile({ name: file.name, size: file.size }, formats);
+    const verdict = validateFile({ name: file.name, size: file.size }, formats, maxBytes);
     if (!verdict.ok) {
       refused.push(`${file.name}: ${verdict.reason}`);
       continue;

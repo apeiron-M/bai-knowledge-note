@@ -65,6 +65,12 @@ describe("registerConvertRoutes", () => {
     expect(convert?.options?.maxBodyBytes).toBe(30 * 1024 * 1024);
   });
 
+  it("registers the host's cap as the body limit when the setup read one", () => {
+    const { routes, scope } = fakeHttp();
+    registerConvertRoutes(scope, { service: stubService(), maxUploadBytes: 100 * 1024 * 1024 });
+    expect(routes.find((r) => r.path === "convert")?.options?.maxBodyBytes).toBe(100 * 1024 * 1024);
+  });
+
   it("is idempotent per scope, because onSetup runs again on a reload", () => {
     // The framework replaces subgraph instances in place and re-runs onSetup.
     // The http scope throws on a duplicate path — which crashed the whole

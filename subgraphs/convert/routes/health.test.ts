@@ -65,6 +65,19 @@ describe("createHealthRoute", () => {
     expect(body.ok).toBe(false);
   });
 
+  it("reports the vault's upload cap in every state, so a client checks a file before sending it", async () => {
+    type Cap = { configured: boolean; ok: boolean; maxUploadBytes: number };
+    const read = async (res: Response) => (await res.json()) as Cap;
+    const big = 100 * 1024 * 1024;
+    const up = await read(await createHealthRoute({ service: stubService(), maxUploadBytes: big })(GET(), ctx()));
+    expect(up.maxUploadBytes).toBe(big);
+    const none = await read(await createHealthRoute({ maxUploadBytes: big })(GET(), ctx()));
+    expect(none).toMatchObject({ configured: false, maxUploadBytes: big });
+    const unreachable = stubService({ health: () => Promise.reject(new Error("ECONNREFUSED")) });
+    const down = await read(await createHealthRoute({ service: unreachable })(GET(), ctx()));
+    expect(down).toMatchObject({ configured: true, ok: false, maxUploadBytes: 30 * 1024 * 1024 });
+  });
+
   it("requires a verified caller", async () => {
     const handler = createHealthRoute({ service: stubService() });
     const res = await handler(GET(), ctx(false));

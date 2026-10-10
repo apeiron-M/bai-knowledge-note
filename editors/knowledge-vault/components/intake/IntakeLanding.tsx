@@ -33,6 +33,7 @@ function scanLine(
 export function IntakeLanding({
   vaultName,
   formats,
+  maxUploadBytes,
   configured,
   settled,
   ocrEngine,
@@ -40,6 +41,8 @@ export function IntakeLanding({
 }: {
   vaultName: string;
   formats: readonly string[];
+  /** This vault's cap for one file (`convert/health`). */
+  maxUploadBytes?: number;
   configured: boolean;
   settled: boolean;
   /** From the service's health: `tesseract` fast, `docling` slow, `null` unavailable. */
@@ -95,7 +98,7 @@ export function IntakeLanding({
         </p>
         <div ref={anchorRef} className="mt-2 w-full">
           {configured ? (
-            <DropZone formats={formats} onFiles={onFiles} variant="hero" />
+            <DropZone formats={formats} maxUploadBytes={maxUploadBytes} onFiles={onFiles} variant="hero" />
           ) : (
             <div
               className="rounded-xl px-6 py-8 text-sm"

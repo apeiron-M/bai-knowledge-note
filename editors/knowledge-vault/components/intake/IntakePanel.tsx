@@ -22,11 +22,14 @@ import { SectionReview } from "./SectionReview.js";
 export function IntakePanel({
   batch,
   formats,
+  maxUploadBytes,
   configured,
   onOpenFolder,
 }: {
   batch: IntakeBatch;
   formats: readonly string[];
+  /** This vault's cap for one file (`convert/health`). */
+  maxUploadBytes?: number;
   configured: boolean;
   onOpenFolder?: (folderName: string) => void;
 }) {
@@ -288,6 +291,7 @@ export function IntakePanel({
         </div>
         <DropZone
           formats={formats}
+          maxUploadBytes={maxUploadBytes}
           onFiles={batch.onFiles}
           variant={files.length === 0 ? "hero" : "compact"}
           disabled={!configured}

@@ -436,6 +436,7 @@ export function SourceList({
         <IntakePanel
           batch={intake}
           formats={convert.formats}
+          maxUploadBytes={convert.maxUploadBytes}
           configured={convert.configured}
           onOpenFolder={openFolderByName}
         />
@@ -517,6 +518,7 @@ export function SourceList({
             <IntakeLanding
               vaultName={vaultName}
               formats={convert.formats}
+              maxUploadBytes={convert.maxUploadBytes}
               configured={convert.configured}
               settled={convert.settled}
               ocrEngine={convert.ocrEngine}

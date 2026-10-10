@@ -11,8 +11,24 @@ import { deriveSections } from "../lib/sections.js";
  * room, and stays a bound an operator can hold; the body is buffered per
  * request in the Switchboard, which is why it is not larger. The service's own
  * cap (`CONVERT_MAX_BYTES`, 256 MB) is higher on purpose: last line, not policy.
+ *
+ * That is the default for a vault the file reaches over the network. A vault on
+ * the person's own computer has no network in between — a 39 MB report is a
+ * local copy — so its host raises the cap with `CONVERT_MAX_UPLOAD_MB` (the
+ * desktop app's engine sets 100). Never above the service's last line.
  */
-export const MAX_UPLOAD_BYTES = 30 * 1024 * 1024;
+export const DEFAULT_MAX_UPLOAD_BYTES = 30 * 1024 * 1024;
+export const UPLOAD_CEILING_BYTES = 256 * 1024 * 1024;
+
+/** The upload cap for this process: `CONVERT_MAX_UPLOAD_MB` when set to a positive number, else the default. */
+export function maxUploadBytes(
+  env: Record<string, string | undefined> = process.env,
+): number {
+  const raw = env.CONVERT_MAX_UPLOAD_MB?.trim();
+  const mb = raw ? Number(raw) : Number.NaN;
+  if (!Number.isFinite(mb) || mb <= 0) return DEFAULT_MAX_UPLOAD_BYTES;
+  return Math.min(Math.floor(mb * 1024 * 1024), UPLOAD_CEILING_BYTES);
+}
 
 /**
  * The floor is a *granularity* dial, not a quality one — measured on a

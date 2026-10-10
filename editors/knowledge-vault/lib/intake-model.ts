@@ -4,7 +4,13 @@
  * the flow is decided, so this is where the tests are.
  */
 
-export const MAX_UPLOAD_BYTES = 30 * 1024 * 1024;
+/** A vault's cap when its health does not say (an older server); the server's own number wins. */
+export const DEFAULT_MAX_UPLOAD_BYTES = 30 * 1024 * 1024;
+
+/** "30 MB", "100 MB": the cap as a person reads it. */
+export function formatUploadLimit(bytes: number): string {
+  return `${Math.round(bytes / (1024 * 1024))} MB`;
+}
 
 /**
  * The model's own `SourceType` enum, copied once so the review's select cannot
@@ -267,16 +273,16 @@ const MB = 1024 * 1024;
 export function validateFile(
   file: { name: string; size: number },
   formats: readonly string[],
+  maxBytes: number = DEFAULT_MAX_UPLOAD_BYTES,
 ): { ok: true } | { ok: false; reason: string } {
   if (file.size <= 0) {
     return { ok: false, reason: `“${file.name}” is empty.` };
   }
-  if (file.size > MAX_UPLOAD_BYTES) {
-    const limit = Math.round(MAX_UPLOAD_BYTES / MB);
+  if (file.size > maxBytes) {
     const size = (file.size / MB).toFixed(1);
     return {
       ok: false,
-      reason: `${size} MB is over the ${limit} MB limit for one document.`,
+      reason: `${size} MB is over the ${formatUploadLimit(maxBytes)} limit for one document.`,
     };
   }
   const ext = extensionOf(file.name);

@@ -25,10 +25,13 @@ const NO_FORMATS: readonly string[] = [];
 export function useIntakeBatch({
   attachments,
   formats = NO_FORMATS,
+  maxUploadBytes,
 }: {
   attachments?: AttachmentPort;
   /** What the converter reads (`convert/health`); a pick or a drop is checked against it. */
   formats?: readonly string[];
+  /** The vault's cap for one file (`convert/health`), checked before any upload. */
+  maxUploadBytes?: number;
 }) {
   const driveId = useSelectedDriveId();
   const store = intakeStoreFor(driveId ?? "");
@@ -51,10 +54,11 @@ export function useIntakeBatch({
         files,
         formats,
         store.getSnapshot().files,
+        maxUploadBytes,
       );
       store.add(accepted, refused);
     },
-    [store, formats],
+    [store, formats, maxUploadBytes],
   );
   const onPublish = useCallback(
     (id: string) => store.publish(id, attachments),

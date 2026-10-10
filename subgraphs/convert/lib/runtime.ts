@@ -34,6 +34,7 @@ export function bindRuntimeDeps(deps: ConvertRouteDeps): ConvertRouteDeps {
     else delete live.service;
     if (deps.source) live.source = deps.source;
     else delete live.source;
+    if (deps.maxUploadBytes !== undefined) live.maxUploadBytes = deps.maxUploadBytes;
   } else {
     live = deps;
   }

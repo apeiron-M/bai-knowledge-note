@@ -4,6 +4,7 @@ import { connectConversionService } from "./lib/probe.js";
 import type { ConvertRouteDeps } from "./lib/deps.js";
 import { bindRuntimeDeps } from "./lib/runtime.js";
 import { createHttpConversionService } from "./lib/service.js";
+import { maxUploadBytes } from "./routes/convert.js";
 import { getResolvers, registerConvertRoutes } from "./resolvers.js";
 import { schema } from "./schema.js";
 
@@ -63,7 +64,7 @@ export class ConvertSubgraph extends BaseSubgraph {
     // and the runtime setter (lib/runtime.ts) swaps its service. So a reload
     // configures in place — bindRuntimeDeps returns the live object — instead
     // of assigning a fresh one the routes would never see.
-    const deps: ConvertRouteDeps = {};
+    const deps: ConvertRouteDeps = { maxUploadBytes: maxUploadBytes() };
     if (url) {
       if (apiKey) {
         // An authenticated service is a managed one: it is somebody's deployment,

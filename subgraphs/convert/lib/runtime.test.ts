@@ -86,6 +86,13 @@ describe("runtime conversion service", () => {
     expect(deps.service).not.toBe(envService());
   });
 
+  it("carries a reload's upload cap onto the live deps the routes captured", () => {
+    const first: ConvertRouteDeps = { maxUploadBytes: 30 * 1024 * 1024 };
+    const live = bindRuntimeDeps(first);
+    expect(bindRuntimeDeps({ maxUploadBytes: 100 * 1024 * 1024 })).toBe(live);
+    expect(live.maxUploadBytes).toBe(100 * 1024 * 1024);
+  });
+
   it("publishes a same-process registry for the host", () => {
     const deps: ConvertRouteDeps = {};
     bindRuntimeDeps(deps);

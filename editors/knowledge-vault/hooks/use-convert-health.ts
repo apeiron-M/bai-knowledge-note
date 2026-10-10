@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { DEFAULT_MAX_UPLOAD_BYTES } from "../lib/intake-model.js";
 import { createVaultApi } from "../lib/vault-api.js";
 
 export type ConvertHealth = {
@@ -12,6 +13,8 @@ export type ConvertHealth = {
   ocrEngine?: "tesseract" | "docling" | null;
   autoOcrBudgetSeconds?: number;
   capabilities?: Record<string, unknown>;
+  /** This vault's cap for one upload (a vault on this computer allows more); absent from older servers. */
+  maxUploadBytes?: number;
 };
 
 /**
@@ -65,6 +68,8 @@ export function useConvertHealth() {
     ready: health?.ready === true,
     formats: health?.formats ?? [],
     missing: health?.missing ?? [],
+    /** The largest file this vault converts. */
+    maxUploadBytes: health?.maxUploadBytes ?? DEFAULT_MAX_UPLOAD_BYTES,
     /**
      * `tesseract`: scans read fast. `docling`: scans read slowly (offered above
      * the budget). `null`: a scan cannot be read here; the landing says what

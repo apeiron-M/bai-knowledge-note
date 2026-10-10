@@ -10,4 +10,10 @@ export interface ConvertRouteDeps {
   service?: ConversionService;
   /** Where the service came from: the environment at setup, or the runtime setter (lib/runtime.ts). Absent when unconfigured. */
   source?: "env" | "runtime";
+  /**
+   * The largest upload `POST convert` takes, read from the environment at
+   * setup (routes/convert.ts `maxUploadBytes`); health reports it so a client
+   * checks a file against this vault's cap, not a guess. Absent: the default.
+   */
+  maxUploadBytes?: number;
 }

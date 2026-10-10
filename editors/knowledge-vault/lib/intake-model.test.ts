@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import {
-  MAX_UPLOAD_BYTES,
+  DEFAULT_MAX_UPLOAD_BYTES,
   addFiles,
   canPublish,
   defaultSourceType,
@@ -49,16 +49,25 @@ describe("validateFile", () => {
 
   it("refuses an over-size file and names the limit", () => {
     const result = validateFile(
-      { name: "book.pdf", size: MAX_UPLOAD_BYTES + 1 },
+      { name: "book.pdf", size: DEFAULT_MAX_UPLOAD_BYTES + 1 },
       formats,
     );
     expect(result.ok).toBe(false);
     if (!result.ok) expect(result.reason).toContain("30 MB");
   });
 
+  it("checks against the vault's own cap when it reports one (a vault on this computer takes 100 MB)", () => {
+    const report = { name: "State-of-AI-Report-2026.pdf", size: 38.9 * 1024 * 1024 };
+    expect(validateFile(report, formats).ok).toBe(false);
+    expect(validateFile(report, formats, 100 * 1024 * 1024).ok).toBe(true);
+    const over = validateFile({ name: "atlas.pdf", size: 120 * 1024 * 1024 }, formats, 100 * 1024 * 1024);
+    expect(over.ok).toBe(false);
+    if (!over.ok) expect(over.reason).toBe("120.0 MB is over the 100 MB limit for one document.");
+  });
+
   it("accepts exactly the cap", () => {
     expect(
-      validateFile({ name: "book.pdf", size: MAX_UPLOAD_BYTES }, formats).ok,
+      validateFile({ name: "book.pdf", size: DEFAULT_MAX_UPLOAD_BYTES }, formats).ok,
     ).toBe(true);
   });
 
