@@ -346,6 +346,11 @@ export const SOW_CSS = `
 .sow .danger button:disabled{color:var(--ink-3);cursor:not-allowed;font-weight:400}
 .sow .spend{display:grid;grid-template-columns:1fr 1fr minmax(0,2fr);gap:14px;align-items:end}
 .sow .insp-body .col{min-width:0}
+/* .sow is isolated so the host's menus paint over its buttons, which also kept every modal under
+   the vault's tab bar. While a modal is open nothing in the bar can be used, so the isolation lifts
+   and the modal covers the bar too: the deliverable and goal modals (.sow-scrim, z 40) and the
+   confirmation (.sow-confirm, z 60), all above the bar's z 5. */
+.sow:has(.sow-scrim,.sow-confirm){isolation:auto}
 .sow-scrim{position:fixed;inset:0;z-index:40;background:color-mix(in srgb,#11111b 45%,transparent);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);display:flex;align-items:flex-start;justify-content:center;padding:6vh 24px}
 .sow-modal{width:min(1040px,100%);max-height:88vh;overflow:auto;background:var(--panel);border:1px solid var(--rule);border-radius:14px;box-shadow:0 30px 80px rgba(0,0,0,.25);color:var(--ink);font:14px/1.45 var(--ui)}
 .sow-modal .insp-hd{border-radius:14px 14px 0 0}
