@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { resolveSource } from "../lib/common/props.js";
-import { HELD_TOO_LONG_MS, MAX_ATTEMPTS, newPipelineTaskTrigger, oneAtATimeFor, pollTasks, RESUME_AFTER_MS, toItem } from "../lib/triggers/new-pipeline-task.js";
+import { HELD_TOO_LONG_MS, HOSTED_IN_PROGRESS_MAX, MAX_ATTEMPTS, newPipelineTaskTrigger, oneAtATimeFor, pollTasks, RESUME_AFTER_MS, toItem } from "../lib/triggers/new-pipeline-task.js";
 import type { KnowledgeVaultClient, RequestOptions } from "../lib/common/client.js";
 
 const task = (id: string, extra: Record<string, unknown> = {}) => ({ id, taskType: "claim", status: "PENDING", documentRef: `src-${id}`, target: `Source ${id}`, currentPhase: "create", createdAt: "2026-09-28T10:00:00Z", ...extra });
@@ -67,6 +67,18 @@ describe("the new-pipeline-task trigger", () => {
     expect((await pollTasks(v.client, store, { drive: "d", phase: "create", per_poll: 2 })).map((i) => i.task_id)).toEqual(["t3"]);
   });
 
+  it("with a hosted model, works on at most HOSTED_IN_PROGRESS_MAX sources at once (it checks every 15 s)", async () => {
+    const at = Date.parse("2026-10-10T18:00:00Z");
+    const busy = (id: string) => task(id, { status: "IN_PROGRESS", updatedAt: "2026-10-10T17:59:00Z" });
+    const tasks = [busy("t1"), busy("t2"), busy("t3"), task("t4"), task("t5")];
+    expect(HOSTED_IN_PROGRESS_MAX).toBe(3);
+    const store = memoryStore();
+    expect(await pollTasks(vault(tasks).client, store, { drive: "d", phase: "create", per_poll: 5 }, () => at)).toEqual([]);
+    tasks[0] = task("t1", { status: "DONE" }); // one finished: one slot
+    expect((await pollTasks(vault(tasks).client, store, { drive: "d", phase: "create", per_poll: 5 }, () => at)).map((i) => i.task_id)).toEqual(["t4"]);
+    // t4 is started but not claimed yet: it holds its slot.
+    expect(await pollTasks(vault(tasks).client, store, { drive: "d", phase: "create", per_poll: 5 }, () => at + 15_000)).toEqual([]);
+  });
   it("knows a local model from its connection's address", () => {
     const auth = (llm_base_url: string) => ({ props: { base_url: "http://127.0.0.1:4201", token: "t", llm_api_key: "k", llm_base_url, llm_default_model: "m" } });
     expect(oneAtATimeFor(auth("http://127.0.0.1:8083/v1"))).toBe(true);

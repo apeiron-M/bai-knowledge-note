@@ -92,6 +92,12 @@ async function readFired(store: StoreLike): Promise<Fired> {
 const STARTED_KEY = "knowledge-vault:new-pipeline-task:started";
 /** A started task its run never claimed (it failed before) stops holding the queue after this long. */
 export const UNCLAIMED_HOLD_MS = 10 * 60_000;
+/**
+ * With a hosted model, at most this many sources are worked on at once. The pipeline checks the queue
+ * every 15 s (its trigger's pollEverySeconds, on the runtime's 15 s wake-ups), so a backlog would otherwise start four runs a minute,
+ * more than the app's gateway serves a hosted provider at a time (four requests).
+ */
+export const HOSTED_IN_PROGRESS_MAX = 3;
 
 /**
  * With a model on this computer or the local network, one source at a time per vault: such a server
@@ -136,7 +142,12 @@ export async function pollTasks(
   };
   const candidates = [...waiting, ...stalled];
   if (!props.oneAtATime) {
-    const picked = candidates.slice(0, props.per_poll);
+    // Being worked on: claimed by a run (not held far longer than any step runs), or started here at
+    // this phase and not yet claimed — its run takes it within seconds.
+    const running = tasks.filter((t) => t.status === "IN_PROGRESS" && t0 - touchedAt(t) < HELD_TOO_LONG_MS).length;
+    const starting = tasks.filter((t) => t.status === "PENDING" && t.currentPhase === props.phase && t0 - (fired[seenKey(t)]?.at ?? -Infinity) < UNCLAIMED_HOLD_MS).length;
+    const room = Math.max(0, HOSTED_IN_PROGRESS_MAX - running - starting);
+    const picked = candidates.slice(0, Math.min(props.per_poll, room));
     return picked.length ? record(picked) : [];
   }
   // One at a time: a task in progress holds the queue, unless it has been held far longer than any step runs.
@@ -201,7 +212,7 @@ export const newPipelineTaskTrigger = createTrigger({
     }),
     per_poll: Property.Number({
       displayName: "Runs per poll",
-      description: "At most this many runs start per check (1–20, default 3), so a backlog drains gradually. With a model on this computer or the local network, sources start one at a time whatever this says",
+      description: "At most this many runs start per check (1–20, default 3), so a backlog drains gradually; with a hosted model at most 3 sources are worked on at once. With a model on this computer or the local network, sources start one at a time whatever this says",
       required: false,
       defaultValue: 3,
     }),

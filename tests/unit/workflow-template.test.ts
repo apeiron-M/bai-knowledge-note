@@ -1,5 +1,6 @@
 import { describe, expect, it } from "vitest";
-import { deriveIds, templatize } from "../../scripts/lib/workflow-template.mjs";
+import { readFileSync } from "node:fs";
+import { deriveIds, RUN_POLICY, templatize, TRIGGER_POLL_SECONDS } from "../../scripts/lib/workflow-template.mjs";
 
 const ORIGIN = "https://switchboard.knowledge-vault.vetra.io";
 const DRIVE = "c5893e1b-854b-49b1-b8aa-6b133ab87969";
@@ -58,8 +59,28 @@ describe("templatize", () => {
   });
   it("keeps what builds the documents, in order, and drops history", () => {
     expect(t.connection.operations.map((o) => o.type)).toEqual(["SET_CONNECTION_NAME", "SET_CONNECTOR", "SET_CONFIG", "SET_SECRET_REF", "SET_SECRET_REF"]);
-    expect(t.workflow.operations.map((o) => o.type)).toEqual(["SET_WORKFLOW_NAME", "SET_WORKFLOW_DESCRIPTION", "SET_TRIGGER", "ADD_STEP", "ADD_EDGE", "PUBLISH_WORKFLOW", "SET_TRIGGER", "PUBLISH_WORKFLOW", "SET_WORKFLOW_STATUS"]);
+    expect(t.workflow.operations.map((o) => o.type)).toEqual(["SET_WORKFLOW_NAME", "SET_WORKFLOW_DESCRIPTION", "SET_TRIGGER", "ADD_STEP", "ADD_EDGE", "SET_POLICY", "PUBLISH_WORKFLOW", "SET_TRIGGER", "PUBLISH_WORKFLOW", "SET_WORKFLOW_STATUS"]);
     expect(t.workflow.operations.at(-1)!.input).toEqual({ status: "ENABLED" }); // the final status once, at the end; the rejected duplicate is gone
+  });
+  it("publishes with our run policy, replacing a policy the source carried, and the committed template agrees", () => {
+    // Since 6.2.3-dev.50 the runtime enforces the policy; a new workflow starts as QUEUE / 3600 s / PARK.
+    const fromSource = templatize({ workflow: [...workflow.slice(0, 7), { type: "SET_POLICY", input: { concurrency: "QUEUE", onFailure: "PARK" } }, ...workflow.slice(7)], connection });
+    for (const ops of [fromSource.workflow.operations, t.workflow.operations]) {
+      expect(ops.filter((o) => o.type === "SET_POLICY")).toEqual([{ type: "SET_POLICY", input: RUN_POLICY }]);
+      expect(ops[ops.findIndex((o) => o.type === "PUBLISH_WORKFLOW") - 1].type).toBe("SET_POLICY");
+    }
+    const committed = JSON.parse(readFileSync(new URL("../../pieces/knowledge-vault/templates/pipeline.json", import.meta.url), "utf8")) as { workflow: { operations: { type: string; input: unknown }[] } };
+    const ops = committed.workflow.operations;
+    expect(ops.filter((o) => o.type === "SET_POLICY").map((o) => o.input)).toEqual([RUN_POLICY]);
+    expect(ops[ops.findIndex((o) => o.type === "PUBLISH_WORKFLOW") - 1].type).toBe("SET_POLICY");
+  });
+  it("has the trigger check the queue on every 15 s wake-up of the runtime, in the builder's output and the committed template", () => {
+    const committed = JSON.parse(readFileSync(new URL("../../pieces/knowledge-vault/templates/pipeline.json", import.meta.url), "utf8")) as { workflow: { operations: { type: string; input: { config?: { pollEverySeconds?: unknown } } }[] } };
+    for (const ops of [t.workflow.operations, committed.workflow.operations] as { type: string; input: unknown }[][]) {
+      const triggers = ops.filter((o) => o.type === "SET_TRIGGER").map((o) => (o.input as { config: { pollEverySeconds?: unknown } }).config.pollEverySeconds);
+      expect(triggers.length).toBeGreaterThan(0);
+      expect(triggers.every((s) => s === TRIGGER_POLL_SECONDS)).toBe(true);
+    }
   });
   it("substitutes placeholders where the concrete values were, and adds the LLM provider URL", () => {
     expect(t.connection.operations[0].input).toEqual({ name: "{{CONNECTION_NAME}}" });
@@ -73,7 +94,7 @@ describe("templatize", () => {
     expect(trigger.pieceVersion).toBe("{{PIECE_VERSION}}");
     const step = t.workflow.operations[3].input as { config: { model: string; drive: string }; connectionId: string };
     expect(step.config).toMatchObject({ model: "{{LLM_MODEL}}", drive: "{{DRIVE_ID}}" });
-    expect(t.workflow.operations[5].input).toEqual({ publishedAt: "{{NOW}}" });
+    expect(t.workflow.operations[6].input).toEqual({ publishedAt: "{{NOW}}" });
     expect(t.placeholders).toEqual(["{{CONNECTION_ID}}", "{{CONNECTION_NAME}}", "{{DRIVE_ID}}", "{{LLM_BASE_URL}}", "{{LLM_MODEL}}", "{{LLM_SECRET_REF}}", "{{NOW}}", "{{PIECE_VERSION}}", "{{SWITCHBOARD_ORIGIN}}", "{{TOKEN_SECRET_REF}}", "{{WORKFLOW_NAME}}"]);
     expect(t.version).toBe(1);
     expect(t.connection.documentType).toBe("powerhouse/connection");

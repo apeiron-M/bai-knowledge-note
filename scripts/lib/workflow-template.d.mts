@@ -16,5 +16,7 @@ export type PipelineTemplate = {
   workflow: { documentType: "powerhouse/workflow"; operations: TemplateOp[] };
   source?: { switchboard: string; workflowId: string; connectionId: string };
 };
+export const TRIGGER_POLL_SECONDS: 10;
+export const RUN_POLICY: Readonly<{ concurrency: "PARALLEL"; runTimeoutSeconds: 0; onFailure: "NOTIFY" }>;
 export function deriveIds(docs: { workflow: HistoryOp[]; connection: HistoryOp[] }): TemplateIds;
 export function templatize(docs: { workflow: HistoryOp[]; connection: HistoryOp[] }, ids?: TemplateIds): PipelineTemplate;

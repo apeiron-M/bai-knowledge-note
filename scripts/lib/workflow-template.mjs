@@ -13,6 +13,27 @@ const HISTORY = new Set([
   "SET_ACCOUNT_LABEL", // derived by the runtime from a check
 ]);
 
+/**
+ * The run policy every pipeline publishes with. Since Powerhouse 6.2.3-dev.50 the
+ * workflow runtime enforces the policy, and a new workflow document starts as
+ * QUEUE / runTimeoutSeconds 3600 / onFailure PARK: hosted runs would wait in line,
+ * a firing that waited an hour would be cancelled, and the first failed run would
+ * park the pipeline until it is published again. Our trigger paces runs itself (one
+ * source at a time with a local model, `per_poll` per check with a hosted one), so
+ * the template keeps the behaviour from before enforcement: runs in parallel, no
+ * deadline (0), and a failed run is logged (NOTIFY), never parked.
+ */
+export const RUN_POLICY = Object.freeze({ concurrency: "PARALLEL", runTimeoutSeconds: 0, onFailure: "NOTIFY" });
+
+/**
+ * How often the pipeline's trigger checks the vault's queue, in seconds; the runtime's default is 60.
+ * Its supervisor wakes every 15 s and polls what is due, so 15 itself lands a hair after a wake-up and
+ * waits for the next: checks came every 30 s. 10 is due by every wake-up, so the queue is checked every
+ * 15 s and a source queued in the vault starts within about 15 s. The runtime lifts it out of the
+ * trigger's config before the piece sees it; Workflow Studio shows it as the trigger's interval.
+ */
+export const TRIGGER_POLL_SECONDS = 10;
+
 /** Every concrete value the template must not carry, read from the documents themselves. */
 export function deriveIds(docs) {
   const by = (ops, type) => ops.filter((o) => o.type === type && !o.error).map((o) => o.input);
@@ -68,6 +89,7 @@ export function templatize(docs, ids = deriveIds(docs)) {
   let status;
   const workflow = clean(docs.workflow, pairs)
     .filter((o) => {
+      if (o.type === "SET_POLICY") return false; // the template's policy is RUN_POLICY, placed below
       if (o.type !== "SET_WORKFLOW_STATUS") return true;
       status = o.input; // the toggles collapse to the final one, placed after everything else
       return false;
@@ -75,8 +97,12 @@ export function templatize(docs, ids = deriveIds(docs)) {
     .map((o) => {
       if (o.type === "SET_WORKFLOW_NAME") return { type: o.type, input: { ...o.input, name: "{{WORKFLOW_NAME}}" } };
       if (o.type === "PUBLISH_WORKFLOW") return { type: o.type, input: { ...o.input, publishedAt: "{{NOW}}" } };
+      if (o.type === "SET_TRIGGER") return { type: o.type, input: { ...o.input, config: { ...o.input.config, pollEverySeconds: TRIGGER_POLL_SECONDS } } };
       return o;
     });
+  // The runtime reads the policy from the published snapshot, so it goes before the first publish.
+  const firstPublish = workflow.findIndex((o) => o.type === "PUBLISH_WORKFLOW");
+  workflow.splice(firstPublish === -1 ? workflow.length : firstPublish, 0, { type: "SET_POLICY", input: { ...RUN_POLICY } });
   if (status) workflow.push({ type: "SET_WORKFLOW_STATUS", input: status });
 
   const template = {

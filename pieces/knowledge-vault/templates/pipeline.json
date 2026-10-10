@@ -81,7 +81,8 @@
             "drive": "{{DRIVE_ID}}",
             "phase": "create",
             "per_poll": 1,
-            "include_backlog": false
+            "include_backlog": false,
+            "pollEverySeconds": 10
           },
           "pieceName": "@powerhousedao/piece-knowledge-vault",
           "triggerName": "new-pipeline-task",
@@ -242,6 +243,14 @@
         }
       },
       {
+        "type": "SET_POLICY",
+        "input": {
+          "concurrency": "PARALLEL",
+          "runTimeoutSeconds": 0,
+          "onFailure": "NOTIFY"
+        }
+      },
+      {
         "type": "PUBLISH_WORKFLOW",
         "input": {
           "publishedAt": "{{NOW}}"
@@ -255,7 +264,8 @@
             "drive": "{{DRIVE_ID}}",
             "phase": "create",
             "per_poll": 1,
-            "include_backlog": true
+            "include_backlog": true,
+            "pollEverySeconds": 10
           },
           "pieceName": "@powerhousedao/piece-knowledge-vault",
           "triggerName": "new-pipeline-task",
