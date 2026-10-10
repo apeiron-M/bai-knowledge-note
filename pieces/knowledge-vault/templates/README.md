@@ -29,3 +29,26 @@ node scripts/export-workflow-template.mjs --profile remote-powerhouse-knowledge 
 The script refuses to write a template in which a concrete value survived. Importable from the package as
 `@powerhousedao/knowledge-note/pieces/knowledge-vault/templates/pipeline.json` (copied into `dist/` by
 `scripts/copy-runtime-assets.mjs`).
+
+# Reweave template
+
+`reweave.json` is the *Reweave notes* workflow, written by hand in the same replayable format (no live
+workflow to export it from): the **Unwoven notes** trigger, polling every 5 minutes, into one **Reweave
+notes** step. It has no connection of its own — the desktop app instantiates it per vault with the vault
+pipeline's connection (`{{CONNECTION_ID}}`), so it runs on the same model and key.
+
+The pipeline runs each source once. A note extracted before its neighbours existed (the first section of a
+long report, connected while the vault held nothing like it) or one a run cut off between its steps left
+behind stays alone; this workflow gives such notes a second pass. While the pipeline is idle, the trigger
+picks up to 6 notes the graph has as orphans — in no Map of Content, linked from nothing — at least 10 minutes
+old, oldest first; the step links each one with fewer than 2 links to its semantic neighbours today, places
+each one no MoC holds (a new TOPIC MoC only when three or more share a theme), and catches up any pipeline
+task their source left open. A note is tried again only an hour later and once the vault holds 5 more notes,
+at most 3 times. "Also notes with no links" on the trigger widens it to notes in a MoC with no links of their
+own.
+
+Policy: `QUEUE` (one run at a time; nothing is dropped), no deadline, `NOTIFY` on failure. Placeholders:
+`{{DRIVE_ID}}`, `{{CONNECTION_ID}}`, `{{LLM_MODEL}}` (left empty in the step so the connection's model
+applies), `{{PIECE_VERSION}}`, `{{WORKFLOW_NAME}}`, `{{NOW}}`. On a hosted vault, build the same two blocks
+in Workflow Studio: trigger *Unwoven notes*, step *Reweave notes* with Note ids
+`{{trigger.payload.note_ids}}` and Mode *Write*.

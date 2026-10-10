@@ -51,8 +51,8 @@ describe.skipIf(!ready)("built piece conformance", () => {
   it("describes into the descriptor Studio draws its forms from", async () => {
     const { piece } = await loadPieceFromDir(bundleDir);
     const descriptor = buildDescriptor(piece, { packageName: PIECE, version: VERSION });
-    expect(descriptor.actions.map((a) => a.name)).toEqual(["search", "ingest-source", "extract-claims", "connect-notes", "place-in-mocs", "verify-notes"]);
-    expect(descriptor.triggers.map((t) => t.name)).toEqual(["new-pipeline-task"]);
+    expect(descriptor.actions.map((a) => a.name)).toEqual(["search", "ingest-source", "extract-claims", "connect-notes", "place-in-mocs", "verify-notes", "reweave-notes"]);
+    expect(descriptor.triggers.map((t) => t.name)).toEqual(["new-pipeline-task", "unwoven-notes"]);
     expect(descriptor.auth).toMatchObject({ type: "CUSTOM_AUTH" });
     const drive = descriptor.actions[0]?.props.find((p) => p.name === "drive");
     expect(drive?.type).toBe("DROPDOWN");

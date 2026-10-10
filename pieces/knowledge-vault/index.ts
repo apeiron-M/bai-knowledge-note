@@ -3,10 +3,12 @@ import { connectNotesAction } from "./lib/actions/connect-notes.js";
 import { extractClaimsAction } from "./lib/actions/extract-claims.js";
 import { ingestSourceAction } from "./lib/actions/ingest-source.js";
 import { placeInMocsAction } from "./lib/actions/place-in-mocs.js";
+import { reweaveNotesAction } from "./lib/actions/reweave-notes.js";
 import { verifyNotesAction } from "./lib/actions/verify-notes.js";
 import { searchAction } from "./lib/actions/search.js";
 import { knowledgeVaultAuth } from "./lib/auth.js";
 import { newPipelineTaskTrigger } from "./lib/triggers/new-pipeline-task.js";
+import { unwovenNotesTrigger } from "./lib/triggers/unwoven-notes.js";
 import { KNOWLEDGE_VAULT_LOGO } from "./lib/logo.js";
 
 /**
@@ -25,8 +27,8 @@ export const knowledgeVault = createPiece({
   categories: [PieceCategory.PRODUCTIVITY],
   minimumSupportedRelease: "0.30.0",
   auth: knowledgeVaultAuth,
-  actions: [searchAction, ingestSourceAction, extractClaimsAction, connectNotesAction, placeInMocsAction, verifyNotesAction],
-  triggers: [newPipelineTaskTrigger],
+  actions: [searchAction, ingestSourceAction, extractClaimsAction, connectNotesAction, placeInMocsAction, verifyNotesAction, reweaveNotesAction],
+  triggers: [newPipelineTaskTrigger, unwovenNotesTrigger],
 });
 
 // The runtime's loader identifies a piece by `constructor.name === "Piece"`
