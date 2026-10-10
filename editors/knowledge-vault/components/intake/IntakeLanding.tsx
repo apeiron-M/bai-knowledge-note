@@ -1,133 +1,91 @@
 import { useRef } from "react";
+import { formatsSentence } from "../../lib/intake-model.js";
 import { LandingStage } from "../chat/LandingStage.js";
-import { backgroundNote } from "./background-note.js";
 import { DropZone } from "./DropZone.js";
-import { JOURNEY_STEPS } from "./JourneyStrip.js";
-
-const PATH_HINTS = [
-  "pick one file or twenty",
-  "we read it — seconds for a page, minutes for a book",
-  "a long file is cut at its chapters — keep the parts you want",
-  "sources in /sources/, queued for extraction",
-];
+import { IntakeStyles } from "./intake-styles.js";
 
 /**
- * The empty Sources view is the landing: the promise, the drop zone, and the
- * four-step path drawn before the first file, so the user knows the whole way
- * before they start. On the chat's `LandingStage`, because two different
- * centrepieces in one app is how a product starts to look assembled.
+ * The empty Sources view: one promise, one place to drop, one line about what
+ * the vault reads. The drop area draws a file becoming sections, so the idea is
+ * seen before it is explained. On the chat's `LandingStage`, because two
+ * different centrepieces in one app is how a product starts to look assembled.
  */
-function scanLine(
-  ocrEngine: "tesseract" | "docling" | null | undefined,
-): string {
-  switch (ocrEngine) {
-    case "tesseract":
-      return "Scanned PDFs are read too — a few seconds per page — and Tesseract stands in for the ones the built-in reader gets wrong.";
-    case "docling":
-      return "Scanned PDFs are read too — a few seconds per page. When a file needs a full OCR pass that would take more than about a minute, you are asked first.";
-    default:
-      return "Scanned PDFs cannot be read on this machine (no OCR models); PDFs with real text are fine.";
-  }
-}
-
 export function IntakeLanding({
-  vaultName,
-  formats,
+  accept,
   maxUploadBytes,
   configured,
   settled,
   ocrEngine,
   onFiles,
 }: {
-  vaultName: string;
-  formats: readonly string[];
+  /** Extensions the converter reads. */
+  accept: readonly string[];
   /** This vault's cap for one file (`convert/health`). */
   maxUploadBytes?: number;
   configured: boolean;
   settled: boolean;
-  /** From the service's health: `tesseract` fast, `docling` slow, `null` unavailable. */
+  /** From the service's health: `null` when scans can't be read on this machine. */
   ocrEngine?: "tesseract" | "docling" | null;
   onFiles: (files: File[]) => void;
 }) {
   const anchorRef = useRef<HTMLDivElement>(null);
+  const formats = formatsSentence(accept);
   return (
-    <LandingStage
-      anchorRef={anchorRef}
-      tail={
-        <div className="mx-auto mt-6 flex w-full max-w-2xl justify-center gap-2">
-          {JOURNEY_STEPS.map((step, i) => (
-            <div key={step} className="flex-1 px-2 text-center">
-              <i
-                className="mx-auto mb-2 block h-2 w-2 rounded-full"
-                style={{
-                  backgroundColor:
-                    i === 0 ? "var(--bai-accent)" : "var(--bai-text-faint)",
-                }}
-              />
-              <b
-                className="block text-xs font-medium"
-                style={{ color: "var(--bai-text-secondary)" }}
-              >
-                {i + 1} · {step}
-              </b>
-              <span
-                className="block text-[11px]"
-                style={{ color: "var(--bai-text-tertiary)" }}
-              >
-                {PATH_HINTS[i]}
-              </span>
-            </div>
-          ))}
-        </div>
-      }
-    >
-      <div className="flex w-full max-w-2xl flex-col items-center gap-3 text-center">
+    <LandingStage anchorRef={anchorRef}>
+      <div className="bai-intake flex w-full max-w-2xl flex-col items-center text-center">
+        <IntakeStyles />
         <h1
           className="text-2xl font-semibold"
-          style={{ color: "var(--bai-text)" }}
+          style={{ color: "var(--bai-text)", letterSpacing: "-0.01em" }}
         >
-          {vaultName} has no sources yet
+          Add your first sources
         </h1>
         <p
-          className="max-w-md text-sm"
+          className="mt-2.5 max-w-md text-sm leading-relaxed"
           style={{ color: "var(--bai-text-tertiary)" }}
         >
-          Bring in a PDF, a Word file, a web page, a book. The vault converts
-          it, shows you the sources it would become, and writes nothing until
-          you approve.
+          Bring in reports, papers, books and web pages. Each file is read and
+          split at its chapters, and you choose what goes into the vault.
         </p>
-        <div ref={anchorRef} className="mt-2 w-full">
+        <div ref={anchorRef} className="mt-6 w-full">
           {configured ? (
-            <DropZone formats={formats} maxUploadBytes={maxUploadBytes} onFiles={onFiles} variant="hero" />
+            <DropZone
+              accept={accept}
+              maxUploadBytes={maxUploadBytes}
+              onFiles={onFiles}
+              variant="hero"
+            />
           ) : (
             <div
-              className="rounded-xl px-6 py-8 text-sm"
+              className="rounded-2xl px-6 py-8 text-sm"
               style={{
-                border: "1px dashed var(--bai-border)",
-                color: "var(--bai-text-muted)",
+                border: "1.5px dashed var(--bai-border)",
+                color: "var(--bai-text-tertiary)",
               }}
             >
               {settled ? (
                 <>
-                  Conversion is not available on this vault yet — set{" "}
+                  This vault can't read files yet. Set{" "}
                   <code>CONVERT_SERVICE_URL</code> (or{" "}
                   <code>CONVERT_SERVICE_AUTOSTART</code>) and restart the
-                  Switchboard. You can still paste text with “Paste text”.
+                  Switchboard. You can still use Paste text.
                 </>
               ) : (
-                "Checking what this vault can convert…"
+                "Checking what this vault can read…"
               )}
             </div>
           )}
         </div>
-        {configured && (
-          <p className="text-[11px]" style={{ color: "var(--bai-text-faint)" }}>
-            {scanLine(ocrEngine)}
+        {configured && formats && (
+          <p
+            className="mt-3.5 text-[12.5px]"
+            style={{ color: "var(--bai-text-tertiary)" }}
+          >
+            {formats}.
+            {ocrEngine === null &&
+              " Scans can't be read on this computer; PDFs with real text are fine."}
           </p>
         )}
-        <p className="text-[11px]" style={{ color: "var(--bai-text-muted)" }}>
-          {backgroundNote()}
-        </p>
       </div>
     </LandingStage>
   );

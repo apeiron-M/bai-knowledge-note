@@ -3,8 +3,10 @@ import {
   addFiles,
   discardUnpublished,
   extensionOf,
+  freeFolderName,
   isReviewReady,
   markPublished,
+  selectedCount,
   removeFile,
   setAllSections,
   setState,
@@ -13,6 +15,8 @@ import {
   type ConversionProgress,
   type ConvertedFile,
   type IntakeFile,
+  type KnownOriginal,
+  type VaultIndex,
   DEFAULT_MAX_UPLOAD_BYTES,
 } from "./intake-model.js";
 import {
@@ -25,6 +29,7 @@ import {
   type AttachmentPort,
   type PublishResult,
 } from "./intake-service.js";
+import { originalRefOf } from "./original-ref.js";
 import { createVaultApi, VaultApiFailure, type VaultApi } from "./vault-api.js";
 
 /**
@@ -67,18 +72,21 @@ export type IncomingFile = {
   data: Uint8Array | Blob;
 };
 
-export type IntakeNotice = { kind: "ok" | "error"; text: string };
-
 export type IntakeSnapshot = {
   files: readonly IntakeFile[];
   /** The user asked for the panel ("Add sources"); it also shows while the batch is non-empty. */
   requested: boolean;
+  /** Hidden by the person: the panel folds to one line while the batch carries on. */
+  collapsed: boolean;
+  /** The file open for review — only ever because the person opened it. */
   openId: string | null;
   publishing: boolean;
-  /** One line of feedback under the goal header: what landed, or what failed. */
-  notice: IntakeNotice | null;
+  /** The file being added right now; one at a time. */
+  publishingId: string | null;
   /** Files the last pick or drop could not take, each with the reason. */
   refused: readonly string[];
+  /** Files are checked against what the vault already holds before they are read. */
+  checking: boolean;
 };
 
 /** Which of the service's lanes a file converts in. */
@@ -127,6 +135,8 @@ export type IntakeDeps = {
   isHidden: () => boolean;
   /** Ask the browser not to freeze the page while work is in flight; returns the release. */
   keepAlive: () => () => void;
+  /** The ref a source records as its original (`attachment://v1:<sha-256>`), for these bytes. */
+  originalRef: (bytes: Uint8Array) => Promise<string>;
 };
 
 export type IntakeStore = ReturnType<typeof createIntakeStore>;
@@ -140,9 +150,15 @@ export const PROGRESS_POLL_MS = 1_000;
  * cancel. Usually the answer comes first; this only bounds a cancel that hangs.
  */
 export const CANCEL_GRACE_MS = 5_000;
+/**
+ * The longest a dropped file waits for the vault to say what it already holds
+ * (the Sources view loads that). Past it, the file is read unchecked rather
+ * than held without end.
+ */
+export const CHECK_WAIT_MS = 15_000;
 
 const BUSY_MESSAGE =
-  "the converter is busy with another file — trying again shortly";
+  "The reader is busy with another file, so it will try again shortly.";
 
 const message = (error: unknown) =>
   error instanceof Error ? error.message : String(error);
@@ -170,7 +186,7 @@ export function sortOffered(
     }
     const key = `${file.name}\u0000${file.size}`;
     if (seen.has(key)) {
-      refused.push(`${file.name}: already in this batch.`);
+      refused.push(`${file.name}: it's already in this batch.`);
       continue;
     }
     seen.add(key);
@@ -197,12 +213,32 @@ export function createIntakeStore({
   let state: IntakeSnapshot = {
     files: [],
     requested: false,
+    collapsed: false,
     openId: null,
     publishing: false,
-    notice: null,
+    publishingId: null,
     refused: [],
+    checking: false,
   };
   const listeners = new Set<() => void>();
+  /**
+   * What the vault already holds, as the Sources view reported it. `none`: no
+   * view will say — files are read at once, unchecked, as before. `waiting`:
+   * a view will say; files wait for it, at most `CHECK_WAIT_MS` from `since`.
+   */
+  let vault:
+    | { status: "none" }
+    | { status: "waiting"; since: number }
+    | { status: "ready"; index: VaultIndex } = { status: "none" };
+  /** Files whose bytes are being hashed; one at a time. */
+  const hashing = new Set<string>();
+  let checkTimer: ReturnType<typeof setTimeout> | null = null;
+  /**
+   * What this page has added, by content ref. Outlives Done: the vault's own
+   * list catches up a little later, and a file dropped again in that gap is
+   * still recognised.
+   */
+  const addedThisSession = new Map<string, KnownOriginal>();
   /** Bytes ready to convert and to attach as the original. */
   const bytes = new Map<string, Uint8Array>();
   /** Files whose bytes have not been read yet (or failed to read, for a retry). */
@@ -264,13 +300,16 @@ export function createIntakeStore({
     }, BUSY_RETRY_MS);
   }
 
-  /** When nothing is open for review, the first file that becomes ready opens itself. */
+  /**
+   * The review stays open only while its file is still waiting for a decision:
+   * once the file is added, removed or sent back to be read again, the review
+   * closes and the row says what happened. Nothing opens it but the person —
+   * it covers the screen, so it never appears unasked.
+   */
   function settleOpen(next: IntakeSnapshot): IntakeSnapshot {
-    if (next.openId && next.files.some((f) => f.id === next.openId))
-      return next;
-    const ready = next.files.find(isReviewReady);
-    const openId = ready ? ready.id : null;
-    return openId === next.openId ? next : { ...next, openId };
+    if (!next.openId) return next;
+    const open = next.files.find((f) => f.id === next.openId);
+    return open && isReviewReady(open) ? next : { ...next, openId: null };
   }
 
   /** Hold the page awake while anything is queued, reading, in flight or publishing. */
@@ -278,6 +317,7 @@ export function createIntakeStore({
     const working =
       inFlight.size > 0 ||
       reading.size > 0 ||
+      hashing.size > 0 ||
       state.publishing ||
       state.files.some((f) => f.state === "queued");
     if (working && !release) release = deps.keepAlive();
@@ -323,6 +363,117 @@ export function createIntakeStore({
     );
   }
 
+  /** Wake the check when the wait for the vault's answer runs out. */
+  function scheduleCheckTimeout() {
+    if (checkTimer) clearTimeout(checkTimer);
+    checkTimer = null;
+    if (vault.status !== "waiting") return;
+    const wait = Math.max(0, vault.since + CHECK_WAIT_MS - deps.now());
+    checkTimer = setTimeout(() => {
+      checkTimer = null;
+      pump();
+    }, wait);
+  }
+
+  /**
+   * Whether the vault (or this batch) already holds the file — by its content,
+   * whatever it is called now. A match is held as `duplicate`, unread, until
+   * the person removes it or adds it again; anything else is `clear`, in a
+   * folder whose name nothing else in /sources or in this batch is using.
+   */
+  function decide(
+    file: IntakeFile,
+    files: readonly IntakeFile[],
+    index: VaultIndex | null,
+  ): Partial<IntakeFile> {
+    const ref = file.originalRef;
+    if (ref && !file.addAgain) {
+      const inVault = index?.originals.get(ref) ?? addedThisSession.get(ref);
+      if (inVault) return { state: "duplicate", known: inVault };
+      const position = files.findIndex((f) => f.id === file.id);
+      const twin = files.slice(0, position).find((f) => f.originalRef === ref);
+      if (twin)
+        return {
+          state: "duplicate",
+          known: {
+            folderName: twin.publishedIds ? twin.folderName : null,
+            sources: twin.publishedIds?.length ?? 0,
+            addedAt: null,
+            inBatch: twin.name,
+          },
+        };
+    }
+    // Folders are matched by name (`POST sources/folders`): a name already in
+    // use would put these sources beside another file's.
+    const taken = new Set<string>(index?.folders ?? []);
+    for (const f of files) {
+      if (f.id === file.id || f.state === "duplicate") continue;
+      if (f.check || f.state !== "queued") taken.add(f.folderName);
+    }
+    const check = index ? "clear" : "skipped";
+    if (!taken.has(file.folderName)) return { check };
+    return {
+      check,
+      folderName: freeFolderName(file.folderName, taken),
+      renamedFrom: file.folderName,
+    };
+  }
+
+  /** Hash one file's bytes for the check. The bytes are not kept: they are read again when the file's turn comes. */
+  function hash(id: string) {
+    const data = bytes.get(id);
+    const blob = blobs.get(id);
+    const source = data
+      ? Promise.resolve(data)
+      : blob
+        ? blob.arrayBuffer().then((buffer) => new Uint8Array(buffer))
+        : null;
+    if (!source) return;
+    hashing.add(id);
+    syncKeepAlive();
+    source
+      .then((buffer) => deps.originalRef(buffer))
+      .then(
+        (ref) => {
+          if (has(id))
+            updateFiles((files) => setState(files, id, { originalRef: ref }));
+        },
+        () => {
+          // A file that cannot be hashed cannot be recognised either; it is
+          // read as usual rather than held for that.
+          if (has(id))
+            updateFiles((files) => setState(files, id, { check: "skipped" }));
+        },
+      )
+      .finally(() => {
+        hashing.delete(id);
+        syncKeepAlive();
+        pump();
+      });
+  }
+
+  /** Decide every hashed file the vault's answer allows, then hash the next one. */
+  function checkFiles() {
+    if (vault.status === "none") return;
+    const index = vault.status === "ready" ? vault.index : null;
+    const timedOut =
+      vault.status === "waiting" && deps.now() - vault.since >= CHECK_WAIT_MS;
+    if (index || timedOut) {
+      let files = state.files;
+      for (const file of state.files) {
+        if (file.state !== "queued" || file.check || !file.originalRef) continue;
+        // Decided in order, each seeing the folders the ones before it took.
+        files = setState(files, file.id, decide(file, files, index));
+      }
+      if (files !== state.files) commit({ files });
+    }
+    if (hashing.size > 0) return;
+    const next = state.files.find(
+      (f) => f.state === "queued" && !f.check && !f.originalRef,
+    );
+    if (next) hash(next.id);
+  }
+
   /**
    * Start every queued file whose bytes are here, as far as its lane has room,
    * in drop order; start reading the bytes of the ones that could go next.
@@ -330,6 +481,7 @@ export function createIntakeStore({
    * listener that adds or removes a file mid-pump cannot start one twice.
    */
   function pump() {
+    checkFiles();
     const lost: string[] = [];
     for (;;) {
       let next: {
@@ -339,6 +491,8 @@ export function createIntakeStore({
       } | null = null;
       for (const file of state.files) {
         if (file.state !== "queued" || inFlight.has(file.id)) continue;
+        // Not read before the vault has said whether it already holds it.
+        if (vault.status !== "none" && !file.check) continue;
         const data = bytes.get(file.id);
         if (!data && !blobs.has(file.id)) {
           if (!lost.includes(file.id)) lost.push(file.id);
@@ -503,6 +657,69 @@ export function createIntakeStore({
     blobs.delete(id);
   }
 
+  /**
+   * Add one file's kept sections to the vault. A failure stays on the file's
+   * row (`publishError`), where the person adds it again; what partly landed is
+   * recorded so a second try cannot write it twice.
+   */
+  async function publishOne(
+    id: string,
+    attachments?: AttachmentPort,
+  ): Promise<boolean> {
+    const file = state.files.find((f) => f.id === id);
+    const data = bytes.get(id);
+    // A published row stays visible for its message but never publishes twice:
+    // `POST sources` is not idempotent on content.
+    if (!file || !data || !driveId || file.publishedIds || state.publishing)
+      return false;
+
+    commit({ publishing: true, publishingId: id });
+    try {
+      const result = await deps.publish(file, data, {
+        api,
+        attachments,
+        driveId,
+      });
+      updateFiles((files) =>
+        setState(markPublished(files, id, result.sourceIds), id, {
+          attachError: result.attached ? undefined : result.attachError,
+          publishError: undefined,
+        }),
+      );
+      if (file.originalRef)
+        addedThisSession.set(file.originalRef, {
+          folderName: file.folderName,
+          sources: result.sourceIds.length,
+          addedAt: new Date(deps.now()).toISOString(),
+        });
+      if (!result.attached && result.attachError) {
+        // Loud on purpose: a source without its original is a degraded state.
+        console.error("[intake] original not attached:", result.attachError, {
+          file: file.name,
+          sourceIds: result.sourceIds,
+        });
+      }
+      return true;
+    } catch (error) {
+      if (error instanceof PublishPartialFailure) {
+        // What landed is recorded on the row so a retry cannot duplicate it.
+        const kept = file.selected.filter(Boolean).length;
+        updateFiles((files) =>
+          setState(markPublished(files, id, error.partial.sourceIds), id, {
+            publishError: `Only ${error.partial.sourceIds.length} of ${kept} sections were added before it stopped: ${error.message}`,
+          }),
+        );
+      } else {
+        updateFiles((files) =>
+          setState(files, id, { publishError: message(error) }),
+        );
+      }
+      return false;
+    } finally {
+      commit({ publishing: false, publishingId: null });
+    }
+  }
+
   return {
     subscribe: (listener: () => void): (() => void) => {
       listeners.add(listener);
@@ -558,11 +775,62 @@ export function createIntakeStore({
         if (data instanceof Uint8Array) bytes.set(file.id, data);
         else blobs.set(file.id, data);
       });
-      commit({ files, requested: true, notice: null, refused: [...refused] });
+      // New files get the full wait for the vault's answer.
+      if (vault.status === "waiting") {
+        vault = { status: "waiting", since: deps.now() };
+        scheduleCheckTimeout();
+      }
+      // New files are worth seeing: a hidden panel opens again.
+      commit({ files, requested: true, collapsed: false, refused: [...refused] });
       pump();
     },
-    open: () => commit({ requested: true }),
+
+    /**
+     * A view will say what the vault holds (`setVault`): from now on files
+     * wait for that answer — at most `CHECK_WAIT_MS` — before they are read.
+     */
+    expectVault: () => {
+      if (vault.status !== "none") return;
+      vault = { status: "waiting", since: deps.now() };
+      scheduleCheckTimeout();
+      commit({ checking: true });
+    },
+
+    /**
+     * What the vault holds now, from the Sources view; null while it is still
+     * loading. A later answer replaces an earlier one; an index once known is
+     * kept while a fresh one loads.
+     */
+    setVault: (index: VaultIndex | null) => {
+      if (index) {
+        vault = { status: "ready", index };
+        scheduleCheckTimeout();
+      } else if (vault.status === "none") {
+        vault = { status: "waiting", since: deps.now() };
+        scheduleCheckTimeout();
+      }
+      commit({ checking: true });
+      pump();
+    },
+
+    /** Read and add a file the vault already holds — a second copy, in a folder of its own. */
+    addAgain: (id: string) => {
+      updateFiles((files) =>
+        setState(files, id, {
+          state: "queued",
+          addAgain: true,
+          check: undefined,
+        }),
+      );
+      pump();
+    },
+    open: () => commit({ requested: true, collapsed: false }),
     close: () => commit({ requested: false }),
+    /** "Hide": fold the panel to one line; the batch carries on. */
+    collapse: () => commit({ collapsed: true }),
+    expand: () => commit({ collapsed: false }),
+    /** The person has read why some files were not taken. */
+    dismissRefused: () => commit({ refused: [] }),
     setOpenId: (openId: string | null) => commit({ openId }),
 
     /** The user accepts the OCR cost the service would not spend unasked. */
@@ -579,7 +847,11 @@ export function createIntakeStore({
     },
     retry: (id: string) => {
       updateFiles((files) =>
-        setState(files, id, { state: "queued", error: undefined }),
+        setState(files, id, {
+          state: "queued",
+          error: undefined,
+          publishError: undefined,
+        }),
       );
       pump();
     },
@@ -598,75 +870,24 @@ export function createIntakeStore({
     folderName: (id: string, folderName: string) =>
       updateFiles((files) => setState(files, id, { folderName })),
 
-    publish: async (
-      id: string,
-      attachments?: AttachmentPort,
-    ): Promise<void> => {
-      const file = state.files.find((f) => f.id === id);
-      const data = bytes.get(id);
-      // A published row stays visible for its message but never publishes twice:
-      // `POST sources` is not idempotent on content.
-      if (!file || !data || !driveId || file.publishedIds || state.publishing)
-        return;
+    publish: (id: string, attachments?: AttachmentPort) =>
+      publishOne(id, attachments),
 
-      commit({ publishing: true });
-      try {
-        const result = await deps.publish(file, data, {
-          api,
-          attachments,
-          driveId,
-        });
-        updateFiles((files) =>
-          setState(markPublished(files, id, result.sourceIds), id, {
-            attachError: result.attached ? undefined : result.attachError,
-          }),
-        );
-        if (!result.attached && result.attachError) {
-          // Loud on purpose: a source without its original is a degraded state,
-          // and the notice below disappears with the batch.
-          console.error("[intake] original not attached:", result.attachError, {
-            file: file.name,
-            sourceIds: result.sourceIds,
-          });
-        }
-        const n = result.sourceIds.length;
-        commit({
-          notice: {
-            kind: result.attachError ? "error" : "ok",
-            text:
-              `${n} source${n === 1 ? "" : "s"} added to /sources/${file.folderName}/, queued for extraction` +
-              (result.skipped > 0
-                ? ` · ${result.skipped} empty part${result.skipped === 1 ? "" : "s"} skipped`
-                : "") +
-              (result.attached
-                ? " · original attached"
-                : result.attachError
-                  ? ` · the original could not be attached: ${result.attachError}`
-                  : ""),
-          },
-        });
-      } catch (error) {
-        if (error instanceof PublishPartialFailure) {
-          // What landed is recorded on the row so a retry cannot duplicate it.
-          updateFiles((files) =>
-            markPublished(files, id, error.partial.sourceIds),
-          );
-          commit({
-            notice: {
-              kind: "error",
-              text: `${error.partial.sourceIds.length} of ${file.selected.filter(Boolean).length} sources were created before it failed — ${error.message}`,
-            },
-          });
-        } else {
-          commit({
-            notice: {
-              kind: "error",
-              text: `Could not add the sources: ${message(error)}`,
-            },
-          });
-        }
-      } finally {
-        commit({ publishing: false });
+    /**
+     * "Add N ready files": every file waiting for a decision, as it is, in the
+     * order they were added — one at a time, as `publish` always is. A file
+     * with nothing kept is left for the person; one that fails says so on its
+     * row and the rest still go.
+     */
+    publishAll: async (attachments?: AttachmentPort): Promise<void> => {
+      const ids = state.files
+        .filter((f) => isReviewReady(f) && selectedCount(f) > 0)
+        .map((f) => f.id);
+      for (const id of ids) {
+        const file = state.files.find((f) => f.id === id);
+        // Removed, or added from its review, while an earlier one was adding.
+        if (!file || !isReviewReady(file)) continue;
+        await publishOne(id, attachments);
       }
     },
 
@@ -722,8 +943,8 @@ export function createIntakeStore({
       commit({
         files: kept,
         requested: kept.length === 0 ? false : state.requested,
+        collapsed: false,
         openId: null,
-        notice: null,
         refused: [],
       });
     },
@@ -736,8 +957,8 @@ export function createIntakeStore({
       commit({
         files: [],
         requested: false,
+        collapsed: false,
         openId: null,
-        notice: null,
         refused: [],
       });
     },
@@ -812,6 +1033,7 @@ const browserDeps: IntakeDeps = {
   isHidden: () =>
     typeof document !== "undefined" && document.visibilityState === "hidden",
   keepAlive: holdWebLock,
+  originalRef: originalRefOf,
 };
 
 const stores = new Map<string, IntakeStore>();

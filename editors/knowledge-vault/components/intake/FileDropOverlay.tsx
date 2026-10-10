@@ -128,15 +128,15 @@ export function FileDropOverlay({
   const headline = ready
     ? "Drop to add sources"
     : settled
-      ? "This vault can't convert files yet"
-      : "Checking what this vault can convert…";
+      ? "This vault can't read files yet"
+      : "Checking what this vault can read…";
   const body = ready
     ? inBatch > 0
-      ? `Dropped files join the ${inBatch} already in the batch and convert in turn, in the background.`
-      : "Each file converts in the background. You choose which parts become sources; nothing is written before you approve."
+      ? `They join the ${inBatch} file${inBatch === 1 ? "" : "s"} already being added, and are read in turn while you work.`
+      : "Each file is read in the background and split into sections. Nothing is added until you say so."
     : settled
-      ? "Conversion isn't set up for this vault. You can still paste text from Sources."
-      : "One moment — then drop again.";
+      ? "This vault can't read files yet. You can still paste text in Sources."
+      : "One moment, then drop again.";
 
   return (
     <div

@@ -1,119 +1,147 @@
-import { useRef, useState } from "react";
+import { useRef, useState, type DragEvent, type ReactNode } from "react";
 import { dragCarriesFiles, droppedFiles } from "./drop-files.js";
-import { DEFAULT_MAX_UPLOAD_BYTES, formatUploadLimit } from "../../lib/intake-model.js";
+import {
+  DEFAULT_MAX_UPLOAD_BYTES,
+  formatUploadLimit,
+} from "../../lib/intake-model.js";
+import { FileIcon, PlusIcon } from "./intake-icons.js";
+import { SectionStrip } from "./SectionStrip.js";
 
 /**
- * The picker, with a drop target of its own — always present while a batch
- * runs, so file N+1 has an obvious door. The whole vault is a drop target too
- * (`FileDropOverlay`); this box is where the eye goes first.
+ * The system file picker, for any button that adds files. Several at once is
+ * always allowed; `accept` is what the converter reads.
+ */
+export function useFilePicker(
+  accept: readonly string[],
+  onFiles: (files: File[]) => void,
+): { open: () => void; input: ReactNode } {
+  const ref = useRef<HTMLInputElement>(null);
+  const input = (
+    <input
+      ref={ref}
+      type="file"
+      multiple
+      hidden
+      accept={accept.map((f) => `.${f}`).join(",")}
+      onChange={(e) => {
+        // Copied before the input is cleared: clearing empties its FileList.
+        const files = Array.from(e.target.files ?? []);
+        e.target.value = "";
+        if (files.length > 0) onFiles(files);
+      }}
+    />
+  );
+  return { open: () => ref.current?.click(), input };
+}
+
+/** Drag-over state and handlers for a target that takes files itself. */
+function useDropTarget(disabled: boolean, onFiles: (files: File[]) => void) {
+  const [over, setOver] = useState(false);
+  return {
+    over,
+    props: {
+      onDragOver: (e: DragEvent) => {
+        if (!dragCarriesFiles(e.dataTransfer)) return;
+        e.preventDefault();
+        if (!disabled) setOver(true);
+      },
+      onDragLeave: () => setOver(false),
+      onDrop: (e: DragEvent) => {
+        if (!dragCarriesFiles(e.dataTransfer)) return;
+        // Handled here: the vault-wide drop target leaves a prevented drop alone.
+        e.preventDefault();
+        setOver(false);
+        if (disabled) return;
+        void droppedFiles(e.dataTransfer).then((files) => {
+          if (files.length > 0) onFiles(files);
+        });
+      },
+    },
+  };
+}
+
+/** The drawing in the drop area: a file, and the sections it becomes — one left out. */
+const DEMO_WEIGHTS = [3, 9, 7, 12, 8, 6, 10];
+const DEMO_KEPT = [false, true, true, true, true, true, true];
+
+/**
+ * Where files come in. `hero` is the drop area of an empty Sources view and an
+ * empty panel: a drawing of a file becoming sections, the drop line, the
+ * picker and the limit. `row` is the last line of the file list — the door for
+ * file N+1 — saying what is also true: a drop anywhere in the vault works.
  *
- * It only hands over `File`s. Checking them against the converter's formats
- * and reading their bytes happen in the batch, so a pick of twenty files shows
- * twenty rows at once instead of waiting for every one to be read.
+ * It only hands over `File`s. Checking them and reading their bytes happen in
+ * the batch, so a pick of twenty files shows twenty rows at once.
  */
 export function DropZone({
-  formats,
+  accept,
   maxUploadBytes = DEFAULT_MAX_UPLOAD_BYTES,
   onFiles,
-  variant = "compact",
+  variant,
   disabled = false,
 }: {
-  formats: readonly string[];
+  /** Extensions the converter reads (no dots). */
+  accept: readonly string[];
   /** This vault's cap for one file (`convert/health`). */
   maxUploadBytes?: number;
   onFiles: (files: File[]) => void;
-  variant?: "compact" | "hero";
+  variant: "hero" | "row";
   disabled?: boolean;
 }) {
-  const inputRef = useRef<HTMLInputElement>(null);
-  const [over, setOver] = useState(false);
+  const picker = useFilePicker(accept, onFiles);
+  const drop = useDropTarget(disabled, onFiles);
 
-  function take(list: FileList | readonly File[] | null) {
-    // Copied before the input is cleared: clearing empties its FileList.
-    const files = list ? Array.from(list) : [];
-    if (inputRef.current) inputRef.current.value = "";
-    if (disabled || files.length === 0) return;
-    onFiles(files);
+  if (variant === "row") {
+    return (
+      <div
+        className="ik-addrow"
+        data-over={drop.over ? "" : undefined}
+        {...drop.props}
+      >
+        <span className="ik-plus" aria-hidden="true">
+          <PlusIcon />
+        </span>
+        <span>
+          <button
+            type="button"
+            className="ik-link"
+            onClick={picker.open}
+            disabled={disabled}
+          >
+            Add more files
+          </button>
+          , or drop them anywhere in the vault
+        </span>
+        {picker.input}
+      </div>
+    );
   }
 
-  const hero = variant === "hero";
   return (
-    <div style={hero ? { width: "100%" } : { width: 224, flex: "none" }}>
-      <div
-        onDragOver={(e) => {
-          if (!dragCarriesFiles(e.dataTransfer)) return;
-          e.preventDefault();
-          if (!disabled) setOver(true);
-        }}
-        onDragLeave={() => setOver(false)}
-        onDrop={(e) => {
-          if (!dragCarriesFiles(e.dataTransfer)) return;
-          // Handled here: the vault-wide drop target leaves a prevented drop alone.
-          e.preventDefault();
-          setOver(false);
-          void droppedFiles(e.dataTransfer).then(take);
-        }}
-        className={`intake-drop flex flex-col items-center justify-center gap-2 rounded-xl text-center ${
-          hero ? "px-6 py-10" : "px-3 py-3"
-        } ${disabled ? "opacity-50" : ""}`}
-        style={{
-          border: `1px dashed ${over ? "var(--bai-accent)" : "var(--bai-border)"}`,
-          backgroundColor: "var(--bai-surface)",
-        }}
-      >
-        {hero && (
-          <span
-            className="text-sm"
-            style={{ color: "var(--bai-text-secondary)" }}
-          >
-            Drop files here, or anywhere in the vault
-          </span>
-        )}
-        <button
-          type="button"
-          disabled={disabled}
-          onClick={() => inputRef.current?.click()}
-          className={
-            hero
-              ? "rounded-lg px-4 py-2 text-sm font-semibold transition-opacity hover:opacity-90 disabled:opacity-40"
-              : "rounded-md px-3 py-1.5 text-xs font-semibold transition-opacity hover:opacity-90 disabled:opacity-40"
-          }
-          style={
-            hero
-              ? {
-                  backgroundColor: "var(--bai-accent)",
-                  color: "var(--bai-accent-text)",
-                }
-              : {
-                  color: "var(--bai-accent)",
-                  border:
-                    "1px solid color-mix(in srgb, var(--bai-accent) 45%, var(--bai-border))",
-                }
-          }
-        >
-          {hero ? "Choose files" : "Add more files"}
-        </button>
-        <span
-          className="text-[10px]"
-          style={{ color: "var(--bai-text-faint)" }}
-        >
-          {hero
-            ? `${formats.length > 0 ? `${formats.length} formats, ` : ""}up to ${formatUploadLimit(maxUploadBytes)} each. Several at once is fine.`
-            : "or drop them anywhere in the vault"}
-        </span>
-        <input
-          ref={inputRef}
-          type="file"
-          multiple
-          hidden
-          accept={formats.map((f) => `.${f}`).join(",")}
-          onChange={(e) => take(e.target.files)}
-        />
+    <div
+      className="ik-drop"
+      data-over={drop.over ? "" : undefined}
+      data-disabled={disabled ? "" : undefined}
+      {...drop.props}
+    >
+      <div className="ik-drop-demo" aria-hidden="true">
+        <FileIcon label="PDF" size="hero" />
+        <span className="ik-drop-arrow" />
+        <SectionStrip weights={DEMO_WEIGHTS} kept={DEMO_KEPT} />
       </div>
-      <style>{`
-        .intake-drop { transition: border-color 120ms ease; }
-        .intake-link:hover { text-decoration: underline; }
-      `}</style>
+      <div className="ik-drop-title">Drop files here</div>
+      <button
+        type="button"
+        className="ik-btn ik-btn-primary ik-btn-big"
+        onClick={picker.open}
+        disabled={disabled}
+      >
+        Choose files
+      </button>
+      <div className="ik-drop-small">
+        Up to {formatUploadLimit(maxUploadBytes)} each. Several at once is fine.
+      </div>
+      {picker.input}
     </div>
   );
 }

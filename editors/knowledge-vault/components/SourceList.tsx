@@ -6,7 +6,6 @@ import {
 import { CreateDocumentDialog } from "./CreateDocumentDialog.js";
 import type { useConvertHealth } from "../hooks/use-convert-health.js";
 import type { IntakeBatch } from "../hooks/use-intake-batch.js";
-import { useVaultName } from "../hooks/use-vault-name.js";
 import { IntakeLanding } from "./intake/IntakeLanding.js";
 import { IntakePanel } from "./intake/IntakePanel.js";
 import { SourceFolderBar } from "./SourceFolderBar.js";
@@ -24,6 +23,7 @@ import {
 import { prefetchOnHover } from "../lib/prefetch.js";
 import { triggerVaultPull } from "../hooks/use-remote-first.js";
 import { filterSources, toSourceRow } from "../lib/source-search.js";
+import { vaultIndexOf } from "../lib/intake-model.js";
 import {
   describeStatuses,
   folderContents,
@@ -203,7 +203,6 @@ export function SourceList({
    */
   homeSignal?: number;
 }) {
-  const vaultName = useVaultName();
   const rootRef = useRef<HTMLDivElement>(null);
   const [createOpen, setCreateOpen] = useState(false);
   const [deleteTarget, setDeleteTarget] = useState<DeleteTarget>(null);
@@ -286,6 +285,45 @@ export function SourceList({
         ),
     [documents],
   );
+
+  // What the vault already holds, for the intake: each original by its content
+  // ref, where its sources are and when it came in, and the folder names under
+  // /sources. A file dropped again is recognised before it is read; null while
+  // the sources are still loading, so a drop waits for the answer.
+  const vaultIndex = useMemo(() => {
+    if (isLoading) return null;
+    const byId = new Map(serverAllNodes.map((n) => [n.id, n]));
+    const root = serverAllNodes.find(
+      (n) => n.kind === "folder" && !n.parentFolder && n.name === "sources",
+    );
+    const folderOf = (id: string) => {
+      const parent = byId.get(byId.get(id)?.parentFolder ?? "");
+      return parent && parent.id !== root?.id ? parent.name : null;
+    };
+    const text = (value: unknown) => (typeof value === "string" ? value : null);
+    return vaultIndexOf(
+      documents
+        .filter((d) => d.header.documentType === "bai/source")
+        .map((d) => {
+          const global = (d.state as unknown as { global: Record<string, unknown> })
+            .global;
+          return {
+            originalRef: text(global.originalFile),
+            folderName: folderOf(d.header.id),
+            addedAt: text(global.originalAttachedAt) ?? text(global.createdAt),
+          };
+        }),
+      root
+        ? serverAllNodes
+            .filter((n) => n.kind === "folder" && n.parentFolder === root.id)
+            .map((n) => n.name)
+        : [],
+    );
+  }, [documents, serverAllNodes, isLoading]);
+  const { setVault } = intake;
+  useEffect(() => {
+    setVault(vaultIndex);
+  }, [setVault, vaultIndex]);
 
   // The filter narrows what the groups show; an active query also opens
   // every group, because a match hidden behind a collapsed header is a
@@ -435,7 +473,6 @@ export function SourceList({
       {intake.visible && (
         <IntakePanel
           batch={intake}
-          formats={convert.formats}
           maxUploadBytes={convert.maxUploadBytes}
           configured={convert.configured}
           onOpenFolder={openFolderByName}
@@ -516,8 +553,7 @@ export function SourceList({
         intake.visible ? null : (
           <div className="min-h-[60vh]">
             <IntakeLanding
-              vaultName={vaultName}
-              formats={convert.formats}
+              accept={intake.accepts}
               maxUploadBytes={convert.maxUploadBytes}
               configured={convert.configured}
               settled={convert.settled}

@@ -6,6 +6,6 @@ import { isDesktopHost } from "../../../shared/host-config.js";
  */
 export function backgroundNote(): string {
   return isDesktopHost()
-    ? "Converting carries on in the background while you switch views, vaults or windows. Quitting the app stops it."
-    : "Converting carries on in the background while you switch views, drives or windows. Closing or reloading this tab stops it.";
+    ? "Reading carries on while you switch views, vaults or windows. Quitting the app stops it."
+    : "Reading carries on while you switch views, drives or windows. Closing or reloading this tab stops it.";
 }

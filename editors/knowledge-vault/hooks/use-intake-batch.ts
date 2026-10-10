@@ -1,7 +1,11 @@
 import { useSelectedDriveId } from "@powerhousedao/reactor-browser";
-import { useCallback, useEffect, useSyncExternalStore } from "react";
+import { useCallback, useEffect, useMemo, useSyncExternalStore } from "react";
 import { useHostConfig } from "../../shared/use-host-config.js";
-import { needsUser as countNeedsUser } from "../lib/intake-model.js";
+import {
+  acceptedExtensions,
+  extensionOf,
+  needsUser as countNeedsUser,
+} from "../lib/intake-model.js";
 import type { AttachmentPort } from "../lib/intake-service.js";
 import {
   intakeStoreFor,
@@ -55,6 +59,12 @@ export function useIntakeBatch({
     store.bindApi(pinnedVaultApi());
   }, [store, host]);
 
+  // The Sources view says what the vault already holds (`setVault`), so a file
+  // added before is recognised before it is read; until it has, files wait.
+  useEffect(() => {
+    store.expectVault();
+  }, [store]);
+
   // Tell the batch how many files the converter takes at once, per lane. Not
   // told — an older service, or health not read yet — it sends one at a time.
   useEffect(() => {
@@ -66,21 +76,37 @@ export function useIntakeBatch({
     });
   }, [store, slots, modelExtensions]);
 
+  // What a pick or a drop may hold: the converter's formats and the
+  // extensions it reads with its models (an image is `png`, not `image`).
+  const accepts = useMemo(
+    () => acceptedExtensions(formats, modelExtensions),
+    [formats, modelExtensions],
+  );
   const onFiles = useCallback(
     (files: readonly File[]) => {
       const { accepted, refused } = sortOffered(
         files,
-        formats,
+        accepts,
         store.getSnapshot().files,
         maxUploadBytes,
       );
       store.add(accepted, refused);
     },
-    [store, formats, maxUploadBytes],
+    [store, accepts, maxUploadBytes],
   );
   const onPublish = useCallback(
     (id: string) => store.publish(id, attachments),
     [store, attachments],
+  );
+  const onPublishAll = useCallback(
+    () => store.publishAll(attachments),
+    [store, attachments],
+  );
+  /** Which of the converter's lanes a file reads in: the models (PDFs, images) or the rest. */
+  const laneOf = useCallback(
+    (name: string): "models" | "other" =>
+      modelExtensions.includes(extensionOf(name)) ? "models" : "other",
+    [modelExtensions],
   );
   const onRetryAttach = useCallback(
     (id: string) => store.retryAttach(id, attachments),
@@ -98,9 +124,23 @@ export function useIntakeBatch({
     openId: snapshot.openId,
     setOpenId: store.setOpenId,
     publishing: snapshot.publishing,
-    notice: snapshot.notice,
+    publishingId: snapshot.publishingId,
+    /** Folded to one line by "Hide"; the batch carries on. */
+    collapsed: snapshot.collapsed,
+    collapse: store.collapse,
+    expand: store.expand,
     /** Files the last pick or drop could not take, each with its reason. */
     refused: snapshot.refused,
+    dismissRefused: store.dismissRefused,
+    /** The extensions a pick or a drop may hold — the picker's `accept`. */
+    accepts,
+    laneOf,
+    /** Files are checked against what the vault holds before they are read. */
+    checking: snapshot.checking,
+    /** What the vault holds now (the Sources view); null while it loads. */
+    setVault: store.setVault,
+    /** Read and add a file the vault already holds, as a second copy. */
+    addAgain: store.addAgain,
     needsUser: countNeedsUser(files),
     publishedCount: files.filter((f) => f.publishedIds !== undefined).length,
     isComplete:
@@ -121,6 +161,7 @@ export function useIntakeBatch({
     onType: store.type,
     onFolderName: store.folderName,
     onPublish,
+    onPublishAll,
     onRetryAttach,
     cancel: store.cancel,
     reset: store.reset,

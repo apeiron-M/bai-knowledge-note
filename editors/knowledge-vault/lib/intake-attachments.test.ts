@@ -8,6 +8,7 @@ import {
   PICTURE_PLACEHOLDER,
   replaceNth,
   rewriteWithAttachments,
+  sectionPieces,
 } from "./intake-attachments.js";
 import type { ConversionFigure } from "./intake-model.js";
 
@@ -130,5 +131,46 @@ describe("helpers", () => {
       height: 4,
       attachedAt: "2026-09-18T14:00:00.000Z",
     });
+  });
+});
+
+describe("sectionPieces — the review shows each figure where the source will carry it", () => {
+  const shape = (pieces: ReturnType<typeof sectionPieces>) =>
+    pieces.map((p) => (p.kind === "text" ? `text:${p.markdown.trim()}` : `figure:${p.figure.id}`));
+
+  it("cuts the text at each placed figure, in reading order", () => {
+    expect(shape(sectionPieces(first, all))).toEqual([
+      "text:Intro",
+      "figure:formula-1",
+      "text:then",
+      "figure:formula-2",
+      "figure:picture-1",
+    ]);
+    // The second slice's figures are its own, counted from its base.
+    expect(shape(sectionPieces(second, all))).toEqual([
+      "text:More",
+      "figure:formula-3",
+      "figure:picture-2",
+    ]);
+  });
+
+  it("places a figure exactly where the publish writes it", () => {
+    const written = rewriteWithAttachments(first, all, (f) => `att:${f.id}`);
+    const pieces = sectionPieces(first, all);
+    expect(written.attached.map((f) => f.id)).toEqual(
+      pieces.flatMap((p) => (p.kind === "figure" ? [p.figure.id] : [])),
+    );
+  });
+
+  it("leaves the text whole when there is nothing to place", () => {
+    expect(sectionPieces(first, [])).toEqual([{ kind: "text", markdown: first.content }]);
+    // No markdown range: its placeholders stay, and the preview says what is missing.
+    const unplaced = { content: `Text\n\n${PICTURE_PLACEHOLDER}`, placeholderBase: null };
+    expect(sectionPieces(unplaced, all)).toEqual([
+      { kind: "text", markdown: unplaced.content },
+    ]);
+    expect(sectionPieces({ content: "", placeholderBase: null }, all)).toEqual([
+      { kind: "text", markdown: "" },
+    ]);
   });
 });

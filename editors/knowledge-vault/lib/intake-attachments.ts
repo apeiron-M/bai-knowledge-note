@@ -159,3 +159,44 @@ export function addAttachmentInput(
     attachedAt,
   };
 }
+
+/** A section cut where its placed figures go: runs of text, and the figures between them. */
+export type SectionPiece =
+  | { kind: "text"; markdown: string }
+  | { kind: "figure"; figure: ConversionFigure };
+
+/**
+ * The section as the review shows it: its text, with each placed figure where
+ * the source will carry it. The placement is `rewriteWithAttachments`'s own —
+ * the same local index, the same offset — so what is read before adding is what
+ * is added. A placeholder with no figure stays in the text, where the preview
+ * says what is missing.
+ */
+export function sectionPieces(
+  section: Pick<Section, "content" | "placeholderBase">,
+  figures: readonly ConversionFigure[],
+): SectionPiece[] {
+  const placed = figuresInSection(section, figures)
+    .map((p) => ({
+      figure: p.figure,
+      at: nthOffset(
+        section.content,
+        placeholderFor(p.figure.kind),
+        p.localIndex,
+      ),
+    }))
+    .filter((p) => p.at >= 0)
+    .sort((a, b) => a.at - b.at);
+  const pieces: SectionPiece[] = [];
+  let from = 0;
+  for (const { figure, at } of placed) {
+    const text = section.content.slice(from, at);
+    if (text.trim()) pieces.push({ kind: "text", markdown: text });
+    pieces.push({ kind: "figure", figure });
+    from = at + placeholderFor(figure.kind).length;
+  }
+  const rest = section.content.slice(from);
+  if (rest.trim() || pieces.length === 0)
+    pieces.push({ kind: "text", markdown: rest });
+  return pieces;
+}
