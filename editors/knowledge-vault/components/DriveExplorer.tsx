@@ -19,7 +19,7 @@ import {
 } from "@powerhousedao/reactor-browser";
 import { VaultSidebar } from "./VaultSidebar.js";
 import { DebugErrorBoundary } from "./DebugErrorBoundary.js";
-import { Delayed, LoadingLine } from "./LoadingStates.js";
+import { VaultLoader } from "../../shared/vault-loader.js";
 import { CreateDocumentDialog } from "./CreateDocumentDialog.js";
 import GraphView, { type GraphFocus } from "./GraphView.js";
 import { NoteList } from "./NoteList.js";
@@ -631,15 +631,13 @@ export function DriveExplorer({ children }: EditorProps) {
               */}
               <DebugErrorBoundary
                 key={selectedNode?.id}
-                retryLabel="Loading document…"
+                retryLabel="Opening document…"
               >
                 <Suspense
                   fallback={
-                    <Delayed>
-                      <div className="flex h-full items-center justify-center">
-                        <LoadingLine label="Opening document…" />
-                      </div>
-                    </Delayed>
+                    <div className="flex h-full">
+                      <VaultLoader label="Opening document…" />
+                    </div>
                   }
                 >
                   {children}

@@ -77,6 +77,7 @@ import { resolveKnowledgeGraphEndpoint } from "../hooks/subgraph-endpoint.js";
 import { SignerBadge } from "../../shared/signer-badge.js";
 import { debounced, onVaultRemoteChange } from "../../shared/vault-live.js";
 import { useSignatureVerification } from "../../shared/use-signature-verification.js";
+import { VaultLoader } from "../../shared/vault-loader.js";
 import type { VerificationResult } from "../../shared/verify-signature.js";
 
 const ACTIVITY_QUERY = `
@@ -172,11 +173,8 @@ export function ActivityView() {
 
   if (loading) {
     return (
-      <div
-        className="flex h-full items-center justify-center text-sm"
-        style={{ color: "var(--bai-text-muted)" }}
-      >
-        Loading activity...
+      <div className="flex h-full">
+        <VaultLoader label="Loading activity…" />
       </div>
     );
   }

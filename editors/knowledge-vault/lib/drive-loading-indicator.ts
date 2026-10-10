@@ -16,7 +16,7 @@
  */
 
 let element: HTMLElement | null = null;
-let spin: Animation | null = null;
+let glows: Animation[] = [];
 let openCount = 0;
 
 export function showDriveLoading(): void {
@@ -46,34 +46,83 @@ export function showDriveLoading(): void {
     pointerEvents: "none",
   } satisfies Partial<CSSStyleDeclaration>);
 
-  const spinner = document.createElement("span");
-  Object.assign(spinner.style, {
-    display: "inline-block",
-    width: "1rem",
-    height: "1rem",
-    border: "2px solid currentColor",
-    borderTopColor: "transparent",
-    borderRadius: "9999px",
-    opacity: "0.85",
-  } satisfies Partial<CSSStyleDeclaration>);
-
+  const mark = vaultMark();
   const label = document.createElement("span");
   label.textContent = "Loading Drive…";
 
-  host.append(spinner, label);
+  host.append(mark.svg, label);
   document.body.appendChild(host);
   element = host;
-  spin = spinner.animate(
-    [{ transform: "rotate(0deg)" }, { transform: "rotate(360deg)" }],
-    { duration: 800, iterations: Number.POSITIVE_INFINITY },
-  );
+  // The vault loader's mark: the three notes light in turn. Still under reduced motion.
+  const still = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  if (!still) {
+    glows = mark.notes.map((note, i) =>
+      note.animate(
+        [{ opacity: 0.3 }, { opacity: 1, offset: 0.3 }, { opacity: 0.3 }],
+        {
+          duration: 1200,
+          delay: i * 400,
+          iterations: Number.POSITIVE_INFINITY,
+          easing: "ease-in-out",
+        },
+      ),
+    );
+  }
+}
+
+/**
+ * The vault loader's three-node mark (shared/vault-loader.tsx), drawn in the
+ * pill's text colour: Connect's tokens, not the vault's, live here.
+ */
+function vaultMark(): { svg: SVGSVGElement; notes: SVGCircleElement[] } {
+  const ns = "http://www.w3.org/2000/svg";
+  const svg = document.createElementNS(ns, "svg");
+  svg.setAttribute("viewBox", "0 0 16 16");
+  svg.setAttribute("width", "16");
+  svg.setAttribute("height", "16");
+  svg.setAttribute("aria-hidden", "true");
+  svg.style.overflow = "visible";
+  const points: [number, number][] = [
+    [8, 2.4],
+    [13.4, 12],
+    [2.6, 12],
+  ];
+  for (const [x, y] of points) {
+    const line = document.createElementNS(ns, "line");
+    line.setAttribute("x1", "8");
+    line.setAttribute("y1", "8.6");
+    line.setAttribute("x2", String(x));
+    line.setAttribute("y2", String(y));
+    line.setAttribute("stroke", "currentColor");
+    line.setAttribute("stroke-opacity", "0.35");
+    line.setAttribute("stroke-width", "1.2");
+    line.setAttribute("stroke-linecap", "round");
+    svg.append(line);
+  }
+  const hub = document.createElementNS(ns, "circle");
+  hub.setAttribute("cx", "8");
+  hub.setAttribute("cy", "8.6");
+  hub.setAttribute("r", "2.4");
+  hub.setAttribute("fill", "currentColor");
+  svg.append(hub);
+  const notes = points.map(([x, y]) => {
+    const note = document.createElementNS(ns, "circle");
+    note.setAttribute("cx", String(x));
+    note.setAttribute("cy", String(y));
+    note.setAttribute("r", "1.7");
+    note.setAttribute("fill", "currentColor");
+    note.style.opacity = "0.7";
+    svg.append(note);
+    return note;
+  });
+  return { svg, notes };
 }
 
 export function hideDriveLoading(): void {
   openCount = Math.max(0, openCount - 1);
   if (openCount > 0) return;
-  spin?.cancel();
-  spin = null;
+  for (const glow of glows) glow.cancel();
+  glows = [];
   element?.remove();
   element = null;
 }

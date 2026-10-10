@@ -1,4 +1,5 @@
 import { memo, useMemo, useState } from "react";
+import { LoadingPanel } from "./LoadingStates.js";
 import { setSelectedNode, useSelectedDriveId } from "@powerhousedao/reactor-browser";
 import { useKnowledgeNotes } from "../hooks/use-knowledge-notes.js";
 import {
@@ -276,14 +277,7 @@ export function ScopeOfWorkView() {
       </div>
 
       {isLoading && sows.length === 0 ? (
-        <div
-          className="flex h-64 items-center justify-center rounded-xl"
-          style={{ backgroundColor: "var(--bai-surface)", border: "1px solid var(--bai-border)" }}
-        >
-          <p className="text-sm" style={{ color: "var(--bai-text-muted)" }}>
-            Loading scopes…
-          </p>
-        </div>
+        <LoadingPanel label="Loading scopes…" />
       ) : sows.length === 0 ? (
         <div
           className="flex h-64 flex-col items-center justify-center gap-3 rounded-xl"

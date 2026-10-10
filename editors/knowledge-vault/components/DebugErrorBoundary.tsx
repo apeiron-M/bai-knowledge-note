@@ -1,4 +1,5 @@
 import { Component, type ErrorInfo, type ReactNode } from "react";
+import { VaultLoader } from "../../shared/vault-loader.js";
 
 /**
  * Boundary around the knowledge-vault drive-app.
@@ -82,19 +83,13 @@ export class DebugErrorBoundary extends Component<Props, State> {
 
     const isSyncRace = isSyncRaceError(this.state.err.message);
     if (isSyncRace && this.state.retries < MAX_RETRIES) {
+      // Each retry remounts this loader; it carries on rather than restarting.
       return (
-        <div
-          className="flex h-full items-center justify-center"
-          style={{ color: "var(--bai-text-muted)" }}
-        >
-          <div style={{ textAlign: "center" }}>
-            <div style={{ marginBottom: 8 }}>
-              {this.props.retryLabel ?? "Loading vault…"}
-            </div>
-            <div style={{ fontSize: 12, opacity: 0.7 }}>
-              syncing documents from reactor (attempt {this.state.retries + 1})
-            </div>
-          </div>
+        <div className="flex h-full">
+          <VaultLoader
+            label={this.props.retryLabel ?? "Opening the vault…"}
+            {...(this.state.retries >= 3 ? { detail: "Still waiting for its documents to arrive." } : {})}
+          />
         </div>
       );
     }

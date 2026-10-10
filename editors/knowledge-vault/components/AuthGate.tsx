@@ -32,7 +32,9 @@ import { useCallback, useEffect, useState } from "react";
 import {
   RenownAuthButton,
   useSelectedDriveId,
+  useSelectedDriveSafe,
 } from "@powerhousedao/reactor-browser";
+import { VaultLoader } from "../../shared/vault-loader.js";
 import { authHeaders } from "../../shared/authed-fetch.js";
 import { useVaultIdentity } from "../../shared/use-vault-identity.js";
 import { notifyUnauthorized } from "../../shared/notify.js";
@@ -97,6 +99,9 @@ async function probeDrive(driveId: string): Promise<Verdict> {
 
 export function AuthGate({ children }: { children: React.ReactNode }) {
   const driveId = useSelectedDriveId();
+  const [drive] = useSelectedDriveSafe();
+  // The vault's own name, as the desktop app's loader said it a moment ago.
+  const driveName = (drive?.state as { global?: { name?: string } } | undefined)?.global?.name || drive?.header.name;
   // The identity exposes the address directly; there is no `isAuthenticated`,
   // and the presence of an address is the same question. Under a desktop host
   // the address is the host's (signed in from the app's Settings).
@@ -142,12 +147,8 @@ export function AuthGate({ children }: { children: React.ReactNode }) {
 
   if (verdict.kind === "checking") {
     return (
-      <div className="flex h-full items-center justify-center p-8">
-        <span
-          role="status"
-          aria-label="Checking access"
-          className="h-6 w-6 animate-spin rounded-full border-2 border-current border-t-transparent opacity-40"
-        />
+      <div className="flex h-full">
+        <VaultLoader label={driveName ? `Opening ${driveName}…` : "Opening the vault…"} slow="Still checking that you can open this vault." />
       </div>
     );
   }

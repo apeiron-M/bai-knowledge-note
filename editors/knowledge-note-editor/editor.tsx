@@ -32,6 +32,7 @@ import { useGraphMetadata } from "../knowledge-vault/hooks/use-graph-metadata.js
 import { neighbourhood } from "./lib/neighbourhood.js";
 import { IncomingLinks, WhereThisSits } from "./components/graph-position.js";
 import { TOOLBAR_CLASS } from "../shared/theme-context.js";
+import { VaultLoader } from "../shared/vault-loader.js";
 import { useKnowledgeNotes } from "../knowledge-vault/hooks/use-knowledge-notes.js";
 
 type NoteLinkLite = {
@@ -264,17 +265,8 @@ export default function Editor() {
   // instead of crashing the render with the error boundary.
   if (!document || !dispatch) {
     return (
-      <div
-        className="flex h-full items-center justify-center"
-        style={{ color: "var(--bai-text-faint)" }}
-      >
-        <div className="text-center text-sm">
-          <div>Loading note…</div>
-          <div className="mt-1 text-[11px]">
-            If this persists, the document may not have synced from the reactor
-            yet — try refreshing.
-          </div>
-        </div>
+      <div className="flex h-full">
+        <VaultLoader label="Opening note…" slow="If this goes on, the note may not have reached this vault yet. Try reloading." />
       </div>
     );
   }

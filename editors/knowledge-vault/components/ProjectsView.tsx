@@ -9,6 +9,7 @@ import {
 import { mutateDocumentRemote } from "../lib/remote-reactor.js";
 import { triggerVaultPull } from "../hooks/use-remote-first.js";
 import { writeSowIntent } from "../../shared/sow-intent.js";
+import { LoadingPanel } from "./LoadingStates.js";
 import { rollupDeliverables } from "../../../processors/graph-indexer/work-outline.js";
 import type { Deliverable } from "document-models/scope-of-work";
 
@@ -437,14 +438,7 @@ export function ProjectsView() {
       </div>
 
       {isLoading && envelopeGroups.length === 0 ? (
-        <div
-          className="flex h-64 items-center justify-center rounded-xl"
-          style={{ backgroundColor: "var(--bai-surface)", border: "1px solid var(--bai-border)" }}
-        >
-          <p className="text-sm" style={{ color: "var(--bai-text-muted)" }}>
-            Loading projects…
-          </p>
-        </div>
+        <LoadingPanel label="Loading projects…" />
       ) : total === 0 ? (
         <div
           className="flex h-64 flex-col items-center justify-center gap-3 rounded-xl"

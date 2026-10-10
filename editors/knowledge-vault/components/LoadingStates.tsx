@@ -10,11 +10,14 @@
  * one of these instead, and keeps its real empty state for the case
  * where loading finished and there genuinely is nothing.
  *
- * `LoadingPanel` intentionally mirrors the panels already used by the
- * Sources / Projects views so the whole app speaks one language.
+ * They all draw the vault loader (shared/vault-loader.tsx): the graph in a
+ * panel, its three-node mark beside a line, so a load looks the same
+ * wherever it happens. `Spinner` stays for busy buttons and rows — a control
+ * at work, not content on its way.
  */
 
 import { useEffect, useState, type ReactNode } from "react";
+import { VaultLoader, VaultLoaderMark } from "../../shared/vault-loader.js";
 
 /**
  * Renders nothing for `ms`, then its children. For a fallback that usually
@@ -51,7 +54,7 @@ export function Spinner({ className = "h-4 w-4" }: { className?: string }) {
   );
 }
 
-/** Centred spinner panel — matches the Sources / Projects loading panels. */
+/** A card holding the vault loader while a list loads — Notes, Sources, Projects, Scopes, Search. */
 export function LoadingPanel({
   label,
   heightClass = "h-64",
@@ -67,21 +70,16 @@ export function LoadingPanel({
         border: "1px solid var(--bai-border)",
       }}
     >
-      <div className="flex items-center gap-2">
-        <Spinner />
-        <p className="text-sm" style={{ color: "var(--bai-text-muted)" }}>
-          {label}
-        </p>
-      </div>
+      <VaultLoader size="panel" label={label} />
     </div>
   );
 }
 
-/** Inline spinner + label, for tight spots where a panel would be too heavy. */
+/** Inline mark + label, for tight spots where a panel would be too heavy. */
 export function LoadingLine({ label }: { label: string }) {
   return (
-    <div className="flex items-center justify-center gap-2 py-4">
-      <Spinner className="h-3.5 w-3.5" />
+    <div className="flex items-center justify-center gap-2 py-4" role="status">
+      <VaultLoaderMark size={14} />
       <span className="text-xs" style={{ color: "var(--bai-text-muted)" }}>
         {label}
       </span>
@@ -108,7 +106,7 @@ export function SidebarSkeleton({
   return (
     <div aria-busy="true" aria-live="polite">
       <div className="flex items-center gap-2 px-2 py-1.5">
-        <Spinner className="h-3 w-3" />
+        <VaultLoaderMark size={12} />
         <span className="text-[11px]" style={{ color: "var(--bai-text-muted)" }}>
           {label}
         </span>

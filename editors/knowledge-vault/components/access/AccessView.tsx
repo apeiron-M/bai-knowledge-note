@@ -16,6 +16,7 @@
 import { useCallback, useEffect, useState } from "react";
 import { useSelectedDriveId } from "@powerhousedao/reactor-browser";
 import { useVaultIdentity } from "../../../shared/use-vault-identity.js";
+import { VaultLoader } from "../../../shared/vault-loader.js";
 import { AddressChip, Card, Hint, INHERIT_NOTE, Notice } from "./parts.js";
 import { describeAddress, seedEns } from "./use-ens.js";
 import { ExposureTab } from "./ExposureTab.js";
@@ -144,12 +145,8 @@ export function AccessView() {
 
   if (loading && isAdmin === null) {
     return (
-      <div className="flex h-full items-center justify-center p-8">
-        <span
-          role="status"
-          aria-label="Loading access settings"
-          className="h-6 w-6 animate-spin rounded-full border-2 border-current border-t-transparent opacity-40"
-        />
+      <div className="flex h-full">
+        <VaultLoader label="Loading who has access…" />
       </div>
     );
   }
