@@ -44,6 +44,7 @@ import {
 } from "../lib/prefs.js";
 import { OutlineRail } from "./OutlineRail.js";
 import { ConfirmDialog, Toast } from "./ui.js";
+import { plainError } from "../../shared/plain-error.js";
 
 const FONTS_ID = "sow-editor-fonts";
 const FONTS_HREF =
@@ -419,7 +420,7 @@ export function Shell({
           />
         )}
         {error && (
-          <Toast message={error} error onClose={() => setError(null)} />
+          <Toast message={plainError(error)} error onClose={() => setError(null)} />
         )}
       </div>
     </EditorContext.Provider>

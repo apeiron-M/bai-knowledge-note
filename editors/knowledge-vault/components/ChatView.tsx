@@ -49,6 +49,7 @@ import { ModelPicker } from "./chat/ModelPicker.js";
 import { EndpointPicker } from "./chat/EndpointPicker.js";
 import { LandingStage } from "./chat/LandingStage.js";
 import { HostModelMissing } from "./chat/HostModelMissing.js";
+import { plainError } from "../../shared/plain-error.js";
 
 interface Orientation {
   stats: {
@@ -525,7 +526,7 @@ function FailureNotice({
 
   return (
     <NoticeFrame>
-      <p>{failure.message}</p>
+      <p>{plainError(failure.message)}</p>
       {next && <p className="mt-1.5 opacity-80">{next}</p>}
     </NoticeFrame>
   );

@@ -8,6 +8,7 @@ import {
 } from "../hooks/use-graph-search.js";
 import type { CSSProperties } from "react";
 import { LoadingLine, LoadingPanel } from "./LoadingStates.js";
+import { plainError } from "../../shared/plain-error.js";
 
 /* ------------------------------------------------------------------ */
 /*  Constants                                                         */
@@ -192,7 +193,7 @@ export function SearchView({ isLoading = false }: { isLoading?: boolean }) {
               )}
             </>
           )}
-          {error && <span style={{ color: "#ef4444" }}>{error}</span>}
+          {error && <span style={{ color: "#ef4444" }}>{plainError(error)}</span>}
         </div>
       )}
 

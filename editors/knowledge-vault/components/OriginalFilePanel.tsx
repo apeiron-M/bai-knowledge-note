@@ -3,6 +3,7 @@ import { formatFileSize, isBrowserRenderable } from "../lib/mime.js";
 import { originalKind } from "../lib/pdf-inline.js";
 import { PdfPages } from "./PdfPages.js";
 import { TextOriginal } from "./TextOriginal.js";
+import { plainError } from "../../shared/plain-error.js";
 
 type OriginalSource = {
   originalFile?: string | null;
@@ -190,7 +191,7 @@ export function OriginalFileRow({
           className="mt-2 text-[11.5px]"
           style={{ color: "var(--bai-text-muted)" }}
         >
-          The original could not be fetched: {failure}
+          The original could not be fetched: {plainError(failure)}
         </p>
       )}
       <style>{LINK_STYLE}</style>

@@ -18,6 +18,7 @@ import { triggerVaultPull } from "../../../shared/vault-pull.js";
 import { Bar } from "../../components/ui.js";
 import { useEditor } from "../../lib/context.js";
 import { LinkedWbsReader } from "../../lib/linked-wbs.js";
+import { plainError } from "../../../shared/plain-error.js";
 
 /*
  * The three sections that make a SoW envelope carry what bai/project used to:
@@ -146,7 +147,7 @@ export function WbsSection({ p }: { p: Project }) {
                   </button>
                 </div>
                 {picking && <WbsPicker options={existingWbs} onPick={(id) => void linkExisting(id)} />}
-                {error && <div className="hint err">{error}</div>}
+                {error && <div className="hint err">{plainError(error)}</div>}
               </div>
             );
           }
@@ -168,7 +169,7 @@ export function WbsSection({ p }: { p: Project }) {
                   )}
                 </div>
                 {picking && <WbsPicker options={existingWbs} onPick={(id) => void linkExisting(id)} />}
-                {error && <div className="hint err">{error}</div>}
+                {error && <div className="hint err">{plainError(error)}</div>}
               </div>
             );
           }

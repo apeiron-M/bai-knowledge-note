@@ -8,6 +8,7 @@ import type {
 import type { SavedProviderKind } from "../../lib/chat/provider.js";
 import { Spinner } from "../LoadingStates.js";
 import { LandingStage } from "./LandingStage.js";
+import { plainError } from "../../../shared/plain-error.js";
 
 const inputClass =
   "w-full rounded-lg px-3 py-2 text-sm outline-none focus:border-[var(--bai-accent)]";
@@ -191,7 +192,7 @@ export function ChatConnectPanel({
           </div>
           {error && (
             <p className="text-left text-xs" style={{ color: "#ef4444" }}>
-              {error}
+              {plainError(error)}
             </p>
           )}
         </div>
@@ -339,7 +340,7 @@ export function ChatConnectPanel({
           </button>
           {customError && (
             <p className="text-xs leading-relaxed" role="alert" style={{ color: "#ef4444" }}>
-              {customError}
+              {plainError(customError)}
             </p>
           )}
           <p className="text-[11px] leading-relaxed" style={{ color: "var(--bai-text-faint)" }}>

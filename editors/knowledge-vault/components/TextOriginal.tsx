@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { MarkdownPreview } from "../../shared/markdown-preview.js";
+import { plainError } from "../../shared/plain-error.js";
 
 /** Characters shown inline; a longer file says so (Download has all of it). */
 const MAX_CHARS = 2_000_000;
@@ -27,7 +28,7 @@ export function TextOriginal({ url, markdown }: { url: string; markdown: boolean
   if (error)
     return (
       <p className="text-[12.5px]" style={{ color: "var(--bai-text-muted)" }}>
-        This file could not be read here: {error}. Download it to open it.
+        This file could not be read here: {plainError(error).replace(/\.$/, "")}. Download it to open it.
       </p>
     );
   if (text === null)

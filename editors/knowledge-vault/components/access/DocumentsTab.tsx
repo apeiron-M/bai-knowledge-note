@@ -51,6 +51,7 @@ import {
   type OperationGrant,
   type Protection,
 } from "./use-auth-api.js";
+import { plainError } from "../../../shared/plain-error.js";
 
 type Selected = { id: string; name: string; documentType?: string | null };
 
@@ -311,7 +312,7 @@ function DocumentPanel({
 
       {error ? (
         <p className="text-xs" style={{ color: "var(--bai-status-archived)" }}>
-          {error}
+          {plainError(error)}
         </p>
       ) : null}
 
