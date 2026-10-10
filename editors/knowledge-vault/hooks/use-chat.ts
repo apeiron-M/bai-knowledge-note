@@ -12,7 +12,8 @@
  */
 import type { ChatEndpoint } from "../lib/chat/provider.js";
 import { collectEvidence, parseMarker } from "../lib/chat/evidence.js";
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState, useSyncExternalStore } from "react";
+import { chatRun, clearChatRun, endChatRun, runFor, startChatRun, stopChatRun, subscribeChatRun, updateChatRun } from "./chat-runs.js";
 import {
   streamChat as realStreamChat,
   type ChatMessage,
@@ -886,24 +887,21 @@ export function useChat(o: UseChatOptions): UseChat {
   const { driveId, endpoint, model, fallbackModels, modelName, systemPrompt } = o;
   const [threads, setThreads] = useState<Thread[]>([]);
   const [thread, setThread] = useState<Thread | null>(null);
-  const [streamingText, setStreamingText] = useState("");
-  const [trail, setTrail] = useState<TrailEntry[]>([]);
-  const [isStreaming, setIsStreaming] = useState(false);
-  const [failure, setFailure] = useState<ChatFailure | null>(null);
-  const [routedFrom, setRoutedFrom] = useState<string | null>(null);
-  const abortRef = useRef<AbortController | null>(null);
-  // Mirrors `streamingText` so the abort path can read the partial answer
-  // synchronously — a setState callback would only run on the next render.
-  const streamedRef = useRef("");
+  // The answer in progress lives outside this hook (chat-runs.ts): leaving the chat for another
+  // view unmounts it, and the answer keeps arriving there, to be shown again on return.
+  const subscribe = useCallback((listener: () => void) => subscribeChatRun(driveId, listener), [driveId]);
+  const run = useSyncExternalStore(subscribe, () => chatRun(driveId), () => undefined);
+  const active = runFor(run, thread?.id);
+  // An answer that finished while the chat was closed is in the run, not yet in `thread`.
+  const shown = active ? active.thread : thread;
 
-  // Load history when the drive changes; drop any in-flight stream. Reopen
-  // the thread that was current in this tab, so leaving the chat to read a
-  // cited note and coming back lands in the same conversation.
+  // Load history when the drive changes. Reopen the thread that was current in this tab, so
+  // leaving the chat to read a cited note and coming back lands in the same conversation — with
+  // its answer still streaming if it was. Moving to another vault stops this one's answer.
+  const previousDrive = useRef(driveId);
   useEffect(() => {
-    abortRef.current?.abort();
-    setStreamingText("");
-    setTrail([]);
-    setFailure(null);
+    if (previousDrive.current && previousDrive.current !== driveId) stopChatRun(previousDrive.current);
+    previousDrive.current = driveId;
     const loaded = driveId ? loadThreads(driveId) : [];
     setThreads(loaded);
     const currentId = driveId ? readCurrentThreadId(driveId) : null;
@@ -927,10 +925,10 @@ export function useChat(o: UseChatOptions): UseChat {
   const send = useCallback(
     async (text: string) => {
       const content = text.trim();
-      if (!content || !driveId || !endpoint || isStreaming) return;
+      if (!content || !driveId || !endpoint || chatRun(driveId)?.isStreaming) return;
 
       const now = new Date().toISOString();
-      const current: Thread = thread ?? {
+      const current: Thread = shown ?? {
         id: newId(),
         title: threadTitleFrom(content),
         updatedAt: now,
@@ -945,13 +943,10 @@ export function useChat(o: UseChatOptions): UseChat {
       writeCurrentThreadId(driveId, withUser.id);
       persist(withUser);
 
-      setStreamingText("");
-      streamedRef.current = "";
-      setTrail([]);
-      setFailure(null);
-      setIsStreaming(true);
-      const ctrl = new AbortController();
-      abortRef.current = ctrl;
+      const ctrl = startChatRun(driveId, withUser);
+      const update = (patch: Parameters<typeof updateChatRun>[2]) => updateChatRun(driveId, ctrl, patch);
+      // The partial answer, read synchronously when the user stops it.
+      let streamed = "";
 
       const history: ChatMessage[] = [
         { role: "system", content: systemPrompt },
@@ -963,7 +958,6 @@ export function useChat(o: UseChatOptions): UseChat {
 
       let finalText = "";
       const collected: TrailEntry[] = [];
-      setRoutedFrom(null);
       // Every answer starts from fresh data. The listing cache exists so
       // that several tool calls within one answer are free, not so that a
       // later question is answered from an earlier minute's vault.
@@ -978,33 +972,30 @@ export function useChat(o: UseChatOptions): UseChat {
           messages: history,
           signal: ctrl.signal,
           onText: (d) => {
-            streamedRef.current += d;
-            setStreamingText(streamedRef.current);
+            streamed += d;
+            update({ streamingText: streamed });
           },
           // Each round starts with a clean slate: whatever the model said
           // while asking for tools (or the template it wrote them in) is
           // not part of the answer.
           onRound: () => {
-            streamedRef.current = "";
-            setStreamingText("");
+            streamed = "";
+            update({ streamingText: "" });
           },
           onTrail: (e) => {
             collected.push(e);
-            setTrail((t) => [...t, e]);
+            update({ trail: [...collected] });
           },
         });
         finalText = r.text;
-        if (r.answeredBy && r.answeredBy !== model) setRoutedFrom(model);
+        if (r.answeredBy && r.answeredBy !== model) update({ routedFrom: model });
       } catch (err) {
         if (ctrl.signal.aborted) {
           // Keep whatever streamed; the user asked for it to stop.
-          finalText = streamedRef.current;
+          finalText = streamed;
         } else {
-          setFailure({ ...classifyFailure(err, endpoint), model });
+          update({ failure: { ...classifyFailure(err, endpoint), model } });
         }
-      } finally {
-        setIsStreaming(false);
-        abortRef.current = null;
       }
 
       // Persist the turn if anything came back — a partial answer after Stop,
@@ -1024,7 +1015,6 @@ export function useChat(o: UseChatOptions): UseChat {
             error: "invented document id",
           };
           collected.push(entry);
-          setTrail((t) => [...t, entry]);
         }
         const consulted = consultedDocuments(collected, resolved.citations);
         // The passage behind each marker, from the documents the tools
@@ -1044,8 +1034,11 @@ export function useChat(o: UseChatOptions): UseChat {
         };
         setThread(done);
         persist(done);
-        setStreamingText("");
+        update({ thread: done, streamingText: "", trail: [...collected], isStreaming: false });
+      } else {
+        update({ isStreaming: false });
       }
+      endChatRun(driveId, ctrl);
     },
     [
       driveId,
@@ -1054,33 +1047,26 @@ export function useChat(o: UseChatOptions): UseChat {
       fallbackModels,
       modelName,
       systemPrompt,
-      thread,
-      isStreaming,
+      shown,
       persist,
     ],
   );
 
-  const stop = useCallback(() => abortRef.current?.abort(), []);
+  const stop = useCallback(() => stopChatRun(driveId), [driveId]);
 
   const newThread = useCallback(() => {
-    abortRef.current?.abort();
+    stopChatRun(driveId);
     setThread(null);
     if (driveId) writeCurrentThreadId(driveId, null);
-    setStreamingText("");
-    setTrail([]);
-    setFailure(null);
   }, [driveId]);
 
   const openThread = useCallback(
     (id: string) => {
       const t = threads.find((x) => x.id === id);
       if (!t) return;
-      abortRef.current?.abort();
+      if (chatRun(driveId)?.thread.id !== id) stopChatRun(driveId);
       setThread(t);
       if (driveId) writeCurrentThreadId(driveId, id);
-      setStreamingText("");
-      setTrail([]);
-      setFailure(null);
     },
     [threads, driveId],
   );
@@ -1088,6 +1074,7 @@ export function useChat(o: UseChatOptions): UseChat {
   const removeThread = useCallback(
     (id: string) => {
       if (!driveId) return;
+      if (chatRun(driveId)?.thread.id === id) clearChatRun(driveId);
       deleteThread(driveId, id);
       setThreads(loadThreads(driveId));
       if (thread?.id === id) setThread(null);
@@ -1095,17 +1082,17 @@ export function useChat(o: UseChatOptions): UseChat {
     [driveId, thread],
   );
 
-  const messages = useMemo(() => thread?.messages ?? [], [thread]);
+  const messages = useMemo(() => shown?.messages ?? [], [shown]);
 
   return {
     threads,
-    thread,
+    thread: shown,
     messages,
-    streamingText,
-    trail,
-    isStreaming,
-    failure,
-    routedFrom,
+    streamingText: active?.streamingText ?? "",
+    trail: active?.trail ?? NO_TRAIL,
+    isStreaming: active?.isStreaming ?? false,
+    failure: active?.failure ?? null,
+    routedFrom: active?.routedFrom ?? null,
     send,
     stop,
     newThread,
@@ -1113,3 +1100,6 @@ export function useChat(o: UseChatOptions): UseChat {
     removeThread,
   };
 }
+
+/** One empty trail, so a conversation without a run does not get a new array every render. */
+const NO_TRAIL: TrailEntry[] = [];
