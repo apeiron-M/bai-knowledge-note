@@ -129,6 +129,7 @@ If the `reactor-mcp` server is unavailable, ask the user to run `ph vetra` on a 
 After doing changes to the code, or after creating a new document model or a new editor, _YOU MUST RUN_ the following commands to check for errors in your implementation:
 
 - **TypeScript Check**: Run `bun run tsc` to validate type safety
+  - While iterating, `bun run check` (`bun check`) gives the same answer in about a quarter of the time. It is TypeScript 7's checker and this repo pins 5.9, so `bun run tsc` stays the check of record: run it before calling the work done.
 - **Lint Check**: Run `bun run lint:fix` to check for errors with oxlint (type-aware rules plus TypeScript type checking)
 - **Reducer Test Coverage**: Run `bun run test:coverage` after any change to a document model reducer. Document model reducers are pure synchronous functions and **MUST** stay at or above **95%** coverage on lines, branches, functions, and statements. If coverage drops below the threshold, add tests in `document-models/<name>/v<n>/tests/` until the threshold is restored — **DO NOT** lower the threshold or exclude files to make the check pass. Cover the happy path _and_ every error code defined via `ADD_OPERATION_ERROR` (each error is a branch that needs explicit test coverage). Push toward 100% by following the strategy below.
 
