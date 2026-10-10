@@ -10,11 +10,11 @@ import { MocEditor } from "./moc-editor/module.js";
 import { ObservationEditor } from "./observation-editor/module.js";
 import { PipelineQueueEditor } from "./pipeline-queue-editor/module.js";
 import { ResearchClaimEditor } from "./research-claim-editor/module.js";
+import { ScopeOfWork } from "./scope-of-work/module.js";
 import { SourceEditor } from "./source-editor/module.js";
 import { TensionEditor } from "./tension-editor/module.js";
 import { VaultConfigEditor } from "./vault-config-editor/module.js";
 import { WbsEditor } from "./wbs-editor/module.js";
-import { ScopeOfWork } from "./scope-of-work/module.js";
 
 export const editors: EditorModule[] = [
   HealthReportEditor,

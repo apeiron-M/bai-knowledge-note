@@ -1,7 +1,5 @@
-import { PGlite } from "@electric-sql/pglite";
-import { AtomicNodeFs } from "@powerhousedao/pglite-fs";
-const db = new PGlite({ fs: new AtomicNodeFs("./.ph/reactor-storage") });
-await db.waitReady;
+import { openStore } from "../lib/open-store.mjs";
+const db = await openStore("./.ph/reactor-storage");
 const t = await db.query(`
   SELECT table_schema, table_name FROM information_schema.tables
    WHERE table_schema NOT IN ('pg_catalog','information_schema')

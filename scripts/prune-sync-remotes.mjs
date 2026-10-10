@@ -27,8 +27,7 @@
  */
 import { resolve } from "node:path";
 import { createConnection } from "node:net";
-import { PGlite } from "@electric-sql/pglite";
-import { AtomicNodeFs } from "@powerhousedao/pglite-fs";
+import { openStore } from "./lib/open-store.mjs";
 
 const args = process.argv.slice(2);
 const flag = (name, fallback) => {
@@ -56,8 +55,7 @@ if (listening && apply) {
   process.exit(1);
 }
 
-const db = new PGlite({ fs: new AtomicNodeFs(store, {}) });
-await db.waitReady;
+const db = await openStore(store);
 const rows = async (sql, params) => (await db.query(sql, params)).rows;
 try {
   const all = await rows(`
@@ -104,5 +102,5 @@ try {
     console.log(`applied — removed ${names.length} remote(s) and orphan cursors; ${left} remote(s) remain.`);
   }
 } finally {
-  await db.close(); // AtomicNodeFs writes the snapshot atomically on close
+  await db.close(); // a clean close leaves the store checkpointed
 }

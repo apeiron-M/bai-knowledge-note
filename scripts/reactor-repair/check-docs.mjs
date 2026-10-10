@@ -1,10 +1,8 @@
 /** Read-only forensic check: do these documents exist in a given store? */
-import { PGlite } from "@electric-sql/pglite";
-import { AtomicNodeFs } from "@powerhousedao/pglite-fs";
+import { openStore } from "../lib/open-store.mjs";
 const dir = process.argv[2];
 const ids = process.argv.slice(3);
-const db = new PGlite({ fs: new AtomicNodeFs(dir) });
-await db.waitReady;
+const db = await openStore(dir);
 await db.query(`SET search_path TO reactor, public`);
 console.log(`\n=== ${dir} ===`);
 for (const id of ids) {

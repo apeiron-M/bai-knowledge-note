@@ -163,10 +163,19 @@ async function findModelPath(moduleDir: string): Promise<string | null> {
   return candidates.find((p) => existsSync(path.join(p, probe))) ?? null;
 }
 
+/** The native-backed transformers package, loaded by name at run time (see loadNative). */
+const TRANSFORMERS_PACKAGE = "@huggingface/transformers";
+
 async function loadNative(
   modelPath: string | null,
 ): Promise<FeatureExtractionPipeline> {
-  const transformers = await import("@huggingface/transformers");
+  // A variable specifier on purpose. Built with ph-cli >= 6.2.3-dev.51, a literal import of this
+  // native-backed package is listed in the manifest's externalDependencies, and a Switchboard >= dev.51
+  // that loads the package from a registry (no node_modules) then refuses every subgraph and processor
+  // when it cannot resolve it. Native onnxruntime is optional here (loadWasm takes over when this
+  // throws), so it must not become a hard dependency; at run time it resolves like any import.
+  const specifier = TRANSFORMERS_PACKAGE;
+  const transformers = (await import(/* @vite-ignore */ specifier)) as typeof TransformersModule;
   if (modelPath) {
     transformers.env.allowLocalModels = true;
     transformers.env.localModelPath = modelPath;
