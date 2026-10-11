@@ -103,4 +103,70 @@ describe("enableRemoteFirst under a host-provided client", () => {
     expect(setReactorClientMock).toHaveBeenCalledTimes(1);
     expect(handle.remoteClient).not.toBe(workerClient);
   });
+
+  describe("restore", () => {
+    // The setters write the slots the way reactor-browser's event handlers do,
+    // so restore can see what the window holds when it runs.
+    function writeSlots() {
+      const ph = (window as unknown as { ph: Record<string, unknown> }).ph;
+      setReactorClientMock.mockImplementation((c: unknown) => {
+        ph.reactorClient = c;
+      });
+      setDocumentCacheMock.mockImplementation((c: unknown) => {
+        ph.documentCache = c;
+      });
+      return ph;
+    }
+
+    it("leaves the slots alone once the host moved the window to another server", async () => {
+      declareDesktopHost();
+      const serverClient = { __hostClient: true, get: vi.fn(), getOperations: vi.fn() };
+      const serverCache = { name: "server cache" };
+      stubWindow({ reactorClient: serverClient, documentCache: serverCache });
+      const ph = writeSlots();
+      const { enableRemoteFirst } = await import("./remote-first.js");
+      const handle = enableRemoteFirst({ endpoint: "https://vault.example/graphql", driveId: "d1" });
+      // Leaving a vault on a server: the host switches back to its local engine first…
+      const localClient = { __hostClient: true, get: vi.fn() };
+      const localCache = { name: "local cache" };
+      ph.reactorClient = localClient;
+      ph.documentCache = localCache;
+      setReactorClientMock.mockClear();
+      setDocumentCacheMock.mockClear();
+      // …then the vault app unmounts.
+      handle.restore();
+      expect(setReactorClientMock).not.toHaveBeenCalled();
+      expect(setDocumentCacheMock).not.toHaveBeenCalled();
+      expect(ph.reactorClient).toBe(localClient);
+      expect(ph.documentCache).toBe(localCache);
+    });
+
+    it("hands back the cache it still holds, and never touches the reused host client", async () => {
+      declareDesktopHost();
+      const hostClient = { __hostClient: true, get: vi.fn(), getOperations: vi.fn() };
+      const hostCache = { name: "host cache" };
+      stubWindow({ reactorClient: hostClient, documentCache: hostCache });
+      const ph = writeSlots();
+      const { enableRemoteFirst } = await import("./remote-first.js");
+      const handle = enableRemoteFirst({ endpoint: "http://127.0.0.1:4201/graphql", driveId: "d1" });
+      expect(ph.documentCache).not.toBe(hostCache);
+      handle.restore();
+      expect(setReactorClientMock).not.toHaveBeenCalled();
+      expect(ph.documentCache).toBe(hostCache);
+      expect(ph.reactorClient).toBe(hostClient);
+    });
+
+    it("under Connect, hands back both the worker client and the cache it replaced", async () => {
+      const workerClient = { get: vi.fn(), getOperations: vi.fn(), execute: vi.fn() };
+      const workerCache = { name: "worker cache" };
+      stubWindow({ reactorClient: workerClient, documentCache: workerCache });
+      const ph = writeSlots();
+      const { enableRemoteFirst } = await import("./remote-first.js");
+      const handle = enableRemoteFirst({ endpoint: "http://localhost:4001/graphql", driveId: "d1" });
+      expect(ph.reactorClient).not.toBe(workerClient);
+      handle.restore();
+      expect(ph.reactorClient).toBe(workerClient);
+      expect(ph.documentCache).toBe(workerCache);
+    });
+  });
 });

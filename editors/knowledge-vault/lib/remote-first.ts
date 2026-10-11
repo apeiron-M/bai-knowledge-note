@@ -793,6 +793,9 @@ export function enableRemoteFirst(options: {
       ? previousClient
       : undefined;
   const remoteClient = hostClient ?? buildVaultClient(options.endpoint);
+  // What this vault put in the client slot, if anything: restore hands the
+  // slot back only while it still holds this.
+  let installedClient: unknown;
   if (previousClient && !hostClient) {
     const worker = previousClient as unknown as AnyClient;
     const remote = remoteClient as unknown as AnyClient;
@@ -832,6 +835,7 @@ export function enableRemoteFirst(options: {
       },
     });
 
+    installedClient = hybrid;
     setReactorClient(hybrid as never);
   }
 
@@ -863,8 +867,23 @@ export function enableRemoteFirst(options: {
       // Silence this cache before handing the slot back, or it keeps
       // revalidating from the window events it is still subscribed to.
       vaultCache.dispose();
-      if (previousClient) setReactorClient(previousClient);
-      if (previousCache) setDocumentCache(previousCache);
+      // Hand a slot back only while it still holds what this vault put there.
+      // The host may have moved the window on since: the desktop app switches
+      // back to its local engine when a vault on a server closes, before this
+      // app unmounts, and restoring over that would leave every later read
+      // asking the server this vault came from. A reused host client was
+      // never replaced, so it is never restored.
+      const slots = phSlots();
+      if (
+        previousClient &&
+        installedClient !== undefined &&
+        slots.reactorClient === installedClient
+      ) {
+        setReactorClient(previousClient);
+      }
+      if (previousCache && slots.documentCache === vaultCache) {
+        setDocumentCache(previousCache);
+      }
       if (active?.driveId === options.driveId) active = null;
     },
   };
