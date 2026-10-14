@@ -60,14 +60,32 @@ const STATUS_LABELS: Record<string, string> = {
 
 type SidebarSection = "notes" | "mocs" | "signals" | "folders";
 
-/** The place bodies that are drawn by the section code below. */
-const PLACE_BODY_SECTION: Partial<
-  Record<(typeof PLACE_SECTION)[VaultPlaceId], SidebarSection>
-> = {
-  notes: "notes",
-  topics: "mocs",
-  contradictions: "signals",
-};
+/** What the sidebar body can be: a place's body, the tree, or connections. */
+type SidebarBody =
+  | (typeof PLACE_SECTION)[VaultPlaceId]
+  | "folders"
+  | "connections";
+
+/** The bodies that are drawn by the section code below. */
+export const PLACE_BODY_SECTION: Partial<Record<SidebarBody, SidebarSection>> =
+  {
+    notes: "notes",
+    topics: "mocs",
+    contradictions: "signals",
+    folders: "folders",
+  };
+
+/**
+ * The one place that decides what the sidebar body shows. A graph selection's
+ * connections win, then the drive tree while it is open, then the place's body.
+ */
+export function sidebarBody(
+  graphFocus: GraphFocus | null,
+  treeOpen: boolean,
+  place: VaultPlaceId,
+): SidebarBody {
+  return graphFocus ? "connections" : treeOpen ? "folders" : PLACE_SECTION[place];
+}
 
 const MIN_WIDTH = 200;
 
@@ -191,16 +209,10 @@ export function VaultSidebar({
 
   const q = search.trim().toLowerCase();
 
-  // The one place that decides what the body shows: a graph selection's
-  // connections, otherwise whatever the place owns.
-  const body = graphFocus ? "connections" : PLACE_SECTION[place];
+  const body = sidebarBody(graphFocus, treeOpen, place);
   const showConnections = body === "connections";
-  const showTree = treeOpen && !showConnections;
-  const shownSection = showTree
-    ? "folders"
-    : body === "connections"
-      ? undefined
-      : PLACE_BODY_SECTION[body];
+  const shownSection =
+    body === "connections" ? undefined : PLACE_BODY_SECTION[body];
 
   const filtered = useMemo(() => {
     if (!q) return notes;
@@ -827,7 +839,7 @@ export function VaultSidebar({
         }}
         onOpenSettings={() => onOpenSettings?.()}
         tree={{
-          active: showTree,
+          active: body === "folders",
           onOpen: () => {
             if (graphFocus) onClearGraphFocus?.();
             setTreeOpen(true);

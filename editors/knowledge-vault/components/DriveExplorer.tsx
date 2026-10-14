@@ -7,6 +7,7 @@ import {
   useMemo,
   useRef,
   useState,
+  type ReactNode,
 } from "react";
 import type { EditorProps } from "document-model";
 import {
@@ -123,6 +124,31 @@ export function buildPlaces(counts: PlaceCounts): VaultPlace[] {
     },
   ];
   return all.filter((p) => PLACE_VIEW[p.id] !== undefined);
+}
+
+/**
+ * Every view mode the content area renders. Views not listed here (pipeline,
+ * config) fall back to `notes`. A place can only be listed if its view is
+ * here (`buildPlaces`), and the content record in the component must have an
+ * entry for each of these (tsc enforces both).
+ */
+export const RENDERED_VIEWS = [
+  "notes",
+  "graph",
+  "chat",
+  "search",
+  "activity",
+  "sources",
+  "scope",
+  "projects",
+  "access",
+  "health",
+] as const satisfies readonly ViewMode[];
+
+type RenderedView = (typeof RENDERED_VIEWS)[number];
+
+function isRenderedView(mode: ViewMode): mode is RenderedView {
+  return RENDERED_VIEWS.some((view) => view === mode);
 }
 
 /** The place a view belongs to; `notes` is split in two by `notesPlace`. */
@@ -504,6 +530,30 @@ export function DriveExplorer({ children }: EditorProps) {
     },
   ];
 
+  const renderedViews: Record<RenderedView, ReactNode> = {
+    notes: <NoteList notes={notes} isLoading={notesLoading} />,
+    graph: (
+      <GraphView
+        notes={notes}
+        mocs={mocs}
+        tensions={tensions}
+        onGraphFocusChange={handleGraphFocusChange}
+        clearFocusNonce={graphClearNonce}
+        layoutKey={driveId ?? undefined}
+      />
+    ),
+    chat: <ChatView initialDraft={chatReturnDraft} notes={notes} />,
+    search: <SearchView isLoading={notesLoading} />,
+    activity: <ActivityView />,
+    sources: (
+      <SourceList intake={intake} convert={convert} homeSignal={sourcesHome} />
+    ),
+    scope: <ScopeOfWorkView />,
+    projects: <ProjectsView />,
+    access: <AccessView />,
+    health: <HealthDashboard />,
+  };
+
   return (
     <VaultShell
       title={vaultName}
@@ -660,37 +710,10 @@ export function DriveExplorer({ children }: EditorProps) {
             </Suspense>
           </DebugErrorBoundary>
         </div>
-      ) : viewMode === "graph" ? (
-        <GraphView
-          notes={notes}
-          mocs={mocs}
-          tensions={tensions}
-          onGraphFocusChange={handleGraphFocusChange}
-          clearFocusNonce={graphClearNonce}
-          layoutKey={driveId ?? undefined}
-        />
-      ) : viewMode === "chat" ? (
-        <ChatView initialDraft={chatReturnDraft} notes={notes} />
-      ) : viewMode === "search" ? (
-        <SearchView isLoading={notesLoading} />
-      ) : viewMode === "activity" ? (
-        <ActivityView />
-      ) : viewMode === "sources" ? (
-        <SourceList
-          intake={intake}
-          convert={convert}
-          homeSignal={sourcesHome}
-        />
-      ) : viewMode === "scope" ? (
-        <ScopeOfWorkView />
-      ) : viewMode === "projects" ? (
-        <ProjectsView />
-      ) : viewMode === "access" ? (
-        <AccessView />
-      ) : viewMode === "health" ? (
-        <HealthDashboard />
+      ) : isRenderedView(viewMode) ? (
+        renderedViews[viewMode]
       ) : (
-        <NoteList notes={notes} isLoading={notesLoading} />
+        renderedViews.notes
       )}
     </VaultShell>
   );

@@ -1,21 +1,11 @@
 import { renderToStaticMarkup } from "react-dom/server";
 import { describe, expect, it } from "vitest";
-import { buildPlaces, PLACE_VIEW } from "./DriveExplorer.js";
+import { buildPlaces, PLACE_VIEW, RENDERED_VIEWS } from "./DriveExplorer.js";
 import { PLACE_SECTION, VaultPlaces } from "./VaultPlaces.js";
-
-/** The view modes DriveExplorer's render chain has a branch for. */
-const RENDERED_VIEWS = [
-  "chat",
-  "notes",
-  "graph",
-  "search",
-  "activity",
-  "sources",
-  "scope",
-  "projects",
-  "access",
-  "health",
-];
+import {
+  PLACE_BODY_SECTION,
+  sidebarBody,
+} from "./VaultSidebar.js";
 
 describe("VaultPlaces", () => {
   it("lists the places in the design's order, with the vault's words", () => {
@@ -123,6 +113,22 @@ describe("VaultPlaces", () => {
       expect(view).toBeDefined();
       expect(RENDERED_VIEWS).toContain(view);
     }
+  });
+
+  it("decides the sidebar body in one place: graph, then tree, then place", () => {
+    const focus = { selectedId: "n1", focusedIds: [] };
+    expect(sidebarBody(focus, true, "notes")).toBe("connections");
+    expect(sidebarBody(null, true, "notes")).toBe("folders");
+    expect(sidebarBody(null, true, "contradictions")).toBe("folders");
+    expect(sidebarBody(null, false, "notes")).toBe("notes");
+    expect(sidebarBody(null, false, "ask")).toBe("none");
+  });
+
+  it("draws the folders body while the tree is open", () => {
+    expect(PLACE_BODY_SECTION[sidebarBody(null, true, "topics")]).toBe(
+      "folders",
+    );
+    expect(PLACE_BODY_SECTION[sidebarBody(null, false, "topics")]).toBe("mocs");
   });
 
   it("keeps the drive tree reachable from the sidebar", () => {
