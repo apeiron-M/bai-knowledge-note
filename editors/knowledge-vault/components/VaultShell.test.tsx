@@ -31,6 +31,18 @@ describe("VaultShell", () => {
     expect(owned).not.toContain("--vault-sidebar-w");
   });
 
+  it("leaves the untouched sidebar width to CSS: 256px, and the breakpoint stays live", () => {
+    const html = renderToStaticMarkup(
+      <VaultShell title="V" sidebar={<nav>rail</nav>}>
+        <p>c</p>
+      </VaultShell>,
+    );
+    // No inline property: a stylesheet rule on .vault-frame (the 220px
+    // breakpoint) can only win while the inline one is absent.
+    expect(html).not.toMatch(/--vault-sidebar-w:\d/);
+    expect(html).toContain("grid-template-columns:var(--vault-sidebar-w, 256px) minmax(0, 1fr)");
+  });
+
   it("gives the hosted editor's rail its own column and top row", () => {
     const html = renderToStaticMarkup(
       <VaultShell title="V" sidebar={<nav>rail</nav>} sidebarHidden>

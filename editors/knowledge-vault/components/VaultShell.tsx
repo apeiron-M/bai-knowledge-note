@@ -66,7 +66,7 @@ export function VaultShell({
         "--vault-topbar-h": `${topBarHeight}px`,
       } as CSSProperties)
     : ({
-        gridTemplateColumns: "var(--vault-sidebar-w, 236px) minmax(0, 1fr)",
+        gridTemplateColumns: "var(--vault-sidebar-w, 256px) minmax(0, 1fr)",
         gridTemplateRows: "auto minmax(0, 1fr)",
         // The sidebar owns its width and publishes it here.
         ...(sidebarWidth !== undefined
