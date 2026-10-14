@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { filterSources, normalizeQuery, toSourceRow, matchesSource } from "./source-search.js";
+import { filterSources, normalizeQuery, toSourceRow, matchesSource, sortSources } from "./source-search.js";
 
 const sources = [
   { id: "a", title: "Reactor authorization deep dive", description: "Policies at boot", author: "Anna", url: "https://docs.powerhouse.io/auth", sourceType: "DOCUMENTATION", status: "EXTRACTED", createdBy: "liberuum" },
@@ -71,5 +71,41 @@ describe("toSourceRow", () => {
 
   it("counts extracted claims", () => {
     expect(toSourceRow(header, { extractedClaims: ["a", "b"] }).claimCount).toBe(2);
+  });
+});
+
+describe("sortSources", () => {
+  const rows = [
+    toSourceRow({ id: "one", name: "zzz" }, { title: "Zulu", sourceType: "PAPER", status: "INBOX", createdAt: "2024-01-20", extractionStats: { extractedAt: null }, provenance: { publishedAt: "2020-01-01" }, originalAttachedAt: "2024-02-01", originalSizeBytes: 2000, createdBy: "zeta", extractedClaims: ["a"] }),
+    toSourceRow({ id: "two", name: "aaa" }, { title: "Apple", sourceType: "ARTICLE", status: "EXTRACTED", createdAt: "2024-01-10", extractionStats: { extractedAt: "2024-03-01" }, provenance: { publishedAt: "2024-04-01" }, originalAttachedAt: "2024-01-15", originalSizeBytes: 100, createdBy: "alpha", extractedClaims: ["a", "b"] }),
+    toSourceRow({ id: "three", name: "mid" }, { title: "Middle", status: "ARCHIVED", createdBy: null }),
+  ];
+
+  it("sorts titles alphabetically", () => {
+    expect(sortSources(rows, "title", "asc").map((r) => r.title)).toEqual(["Apple", "Middle", "Zulu"]);
+  });
+
+  it("puts new ingestion first by default", () => {
+    expect(sortSources(rows, "created", "desc").map((r) => r.title)).toEqual(["Zulu", "Apple", "Middle"]);
+  });
+
+  it("keeps missing dates last in either direction", () => {
+    const asc = sortSources(rows, "created", "asc").map((r) => r.id);
+    const desc = sortSources(rows, "created", "desc").map((r) => r.id);
+    expect(asc[2]).toBe("three");
+    expect(desc[2]).toBe("three");
+  });
+
+  it("sorts numeric claims descending and ascending", () => {
+    expect(sortSources(rows, "claims", "desc").map((r) => r.id)).toEqual(["two", "one", "three"]);
+    expect(sortSources(rows, "claims", "asc").map((r) => r.id)).toEqual(["three", "one", "two"]);
+  });
+
+  it("sorts modified dates and does not mutate the input", () => {
+    const before = rows.map((r) => r.id);
+    const result = sortSources(rows, "modified", "desc");
+    expect(rows.map((r) => r.id)).toEqual(before);
+    // `three` has no extracted/modified timestamps, so it should sort last.
+    expect(result[result.length - 1].id).toBe("three");
   });
 });

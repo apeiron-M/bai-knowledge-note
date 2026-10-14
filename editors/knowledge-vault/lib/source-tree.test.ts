@@ -20,6 +20,12 @@ const row = (id: string, status = "INBOX", title = id): SourceRow => ({
   status,
   claimCount: 0,
   createdBy: null,
+  createdAt: null,
+  updatedAt: null,
+  extractedAt: null,
+  publishedAt: null,
+  originalAttachedAt: null,
+  originalSizeBytes: null,
 });
 
 const NODES: TreeNode[] = [

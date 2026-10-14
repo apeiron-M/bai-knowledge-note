@@ -22,7 +22,7 @@ import {
 } from "../lib/remote-reactor.js";
 import { prefetchOnHover } from "../lib/prefetch.js";
 import { triggerVaultPull } from "../hooks/use-remote-first.js";
-import { filterSources, toSourceRow } from "../lib/source-search.js";
+import { filterSources, toSourceRow, SOURCE_SORT_OPTIONS, sortSources } from "../lib/source-search.js";
 import { vaultIndexOf } from "../lib/intake-model.js";
 import {
   describeStatuses,
@@ -207,6 +207,7 @@ export function SourceList({
   const [createOpen, setCreateOpen] = useState(false);
   const [deleteTarget, setDeleteTarget] = useState<DeleteTarget>(null);
   const [query, setQuery] = useState("");
+  const [sort, setSort] = useState("pipeline");
   const searchRef = useRef<HTMLInputElement>(null);
   // "/" focuses the filter from anywhere in the list, like GitHub.
   useEffect(() => {
@@ -333,6 +334,9 @@ export function SourceList({
     () => filterSources(sources, query),
     [sources, query],
   );
+  const sortOption =
+    SOURCE_SORT_OPTIONS.find((option) => option.value === sort) ??
+    SOURCE_SORT_OPTIONS[0];
 
   // Which folder is open; null is /sources itself. A search flattens the
   // view for the same reason it opens every status group.
@@ -409,6 +413,10 @@ export function SourceList({
     navigate(null);
   }, [homeSignal, navigate]);
 
+  const sortedVisible = useMemo(() => {
+    if (sortOption.field === "pipeline") return visible;
+    return sortSources(visible, sortOption.field, sortOption.direction);
+  }, [visible, sortOption]);
   const grouped = useMemo(() => {
     const groups: Record<string, typeof sources> = {
       INBOX: [],
@@ -416,12 +424,12 @@ export function SourceList({
       EXTRACTED: [],
       ARCHIVED: [],
     };
-    for (const s of visible) {
+    for (const s of sortedVisible) {
       const bucket = groups[s.status] ?? groups.INBOX;
       bucket.push(s);
     }
     return groups;
-  }, [visible]);
+  }, [sortedVisible]);
 
   return (
     <div ref={rootRef} className="p-4 space-y-4">
@@ -481,15 +489,16 @@ export function SourceList({
 
       {/* Filter */}
       {sources.length > 0 && (
-        <div className="relative">
-          <svg
-            className="pointer-events-none absolute left-3 top-1/2 h-3.5 w-3.5 -translate-y-1/2"
-            style={{ color: "var(--bai-text-faint)" }}
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="2"
-          >
+        <div className="flex items-center gap-2">
+          <div className="relative flex-1">
+            <svg
+              className="pointer-events-none absolute left-3 top-1/2 h-3.5 w-3.5 -translate-y-1/2"
+              style={{ color: "var(--bai-text-faint)" }}
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+            >
             <circle cx="11" cy="11" r="7" />
             <path d="M20 20l-3.5-3.5" />
           </svg>
@@ -542,6 +551,27 @@ export function SourceList({
               </button>
             </div>
           )}
+          </div>
+          <select
+            value={sort}
+            onChange={(e) => setSort(e.target.value)}
+            aria-label="Sort sources"
+            className="h-[38px] shrink-0 rounded-lg text-xs outline-none"
+            style={{
+              backgroundColor: "var(--bai-surface)",
+              color: "var(--bai-text)",
+              border: "1px solid var(--bai-border)",
+              padding: "0 28px 0 12px",
+              minWidth: 180,
+              boxSizing: "border-box",
+            }}
+          >
+            {SOURCE_SORT_OPTIONS.map((option) => (
+              <option key={option.value} value={option.value}>
+                {option.label}
+              </option>
+            ))}
+          </select>
         </div>
       )}
 
