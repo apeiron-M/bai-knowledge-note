@@ -152,6 +152,7 @@ async function preprocessBytes(file: {
     },
     data: stream(),
     stream,
+    blob: new Blob([file.bytes as BlobPart], { type: file.mimeType }),
   };
 }
 
