@@ -61,7 +61,6 @@ type ViewMode =
   | "projects"
   | "scope"
   | "search"
-  | "tensions"
   | "activity"
   | "pipeline"
   | "health"
@@ -80,16 +79,51 @@ type ViewMode =
  */
 const EDITORS_WITH_OWN_SIDEBAR = new Set<string>(["powerhouse/scopeofwork"]);
 
-/** The view each place opens. The places list never sees a view mode. */
-const PLACE_VIEW: Record<VaultPlaceId, ViewMode> = {
+/**
+ * The view each place opens. The places list never sees a view mode.
+ *
+ * A place with no entry is not listed (`buildPlaces`). `contradictions` is
+ * withheld on purpose: the vault has no tensions view yet, so a row would land
+ * on the notes list. The task that adds that view lights the place up with
+ * one line here (`contradictions: "<its view>"`).
+ */
+export const PLACE_VIEW: Partial<Record<VaultPlaceId, ViewMode>> = {
   ask: "chat",
   notes: "notes",
   topics: "notes",
   sources: "sources",
   work: "projects",
   graph: "graph",
-  contradictions: "tensions",
 };
+
+export type PlaceCounts = {
+  notes: number;
+  topics: number;
+  sources: number;
+  work: number;
+  contradictions: number;
+};
+
+/** The places the sidebar lists, in the design's order. */
+export function buildPlaces(counts: PlaceCounts): VaultPlace[] {
+  // No count while it is 0 (or still loading): a bare "0" would be a false count.
+  const shown = (n: number) => (n > 0 ? n : undefined);
+  const all: VaultPlace[] = [
+    { id: "ask", label: "Ask" },
+    { id: "notes", label: "Notes", count: shown(counts.notes) },
+    { id: "topics", label: "Topics", count: shown(counts.topics) },
+    { id: "sources", label: "Sources", count: shown(counts.sources) },
+    { id: "work", label: "Work", count: shown(counts.work) },
+    { id: "graph", label: "Graph" },
+    {
+      id: "contradictions",
+      label: "Contradictions",
+      count: shown(counts.contradictions),
+      tone: "warn",
+    },
+  ];
+  return all.filter((p) => PLACE_VIEW[p.id] !== undefined);
+}
 
 /** The place a view belongs to; `notes` is split in two by `notesPlace`. */
 const VIEW_PLACE: Partial<Record<ViewMode, VaultPlaceId>> = {
@@ -98,7 +132,6 @@ const VIEW_PLACE: Partial<Record<ViewMode, VaultPlaceId>> = {
   projects: "work",
   scope: "work",
   graph: "graph",
-  tensions: "contradictions",
 };
 
 /** The place an open document sits in, so the sidebar follows it. */
@@ -342,22 +375,13 @@ export function DriveExplorer({ children }: EditorProps) {
     if (view && OPENABLE_VIEWS.has(view)) setViewMode(view as ViewMode);
   }, [driveId]);
 
-  // No count while it is 0 (or still loading): a bare "0" would be a false count.
-  const shown = (n: number) => (n > 0 ? n : undefined);
-  const places: VaultPlace[] = [
-    { id: "ask", label: "Ask" },
-    { id: "notes", label: "Notes", count: shown(notes.length) },
-    { id: "topics", label: "Topics", count: shown(mocs.length) },
-    { id: "sources", label: "Sources", count: shown(sourceCount) },
-    { id: "work", label: "Work", count: shown(projectCount) },
-    { id: "graph", label: "Graph" },
-    {
-      id: "contradictions",
-      label: "Contradictions",
-      count: shown(tensions.length),
-      tone: "warn",
-    },
-  ];
+  const places = buildPlaces({
+    notes: notes.length,
+    topics: mocs.length,
+    sources: sourceCount,
+    work: projectCount,
+    contradictions: tensions.length,
+  });
 
   const viewPlace: VaultPlaceId | undefined =
     viewMode === "notes" ? notesPlace : VIEW_PLACE[viewMode];
@@ -372,7 +396,8 @@ export function DriveExplorer({ children }: EditorProps) {
 
   function handleSelectPlace(id: VaultPlaceId) {
     if (id === "notes" || id === "topics") setNotesPlace(id);
-    handleSwitchView(PLACE_VIEW[id]);
+    const view = PLACE_VIEW[id];
+    if (view) handleSwitchView(view);
   }
 
   const TABS: {

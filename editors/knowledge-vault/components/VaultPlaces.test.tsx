@@ -1,6 +1,21 @@
 import { renderToStaticMarkup } from "react-dom/server";
 import { describe, expect, it } from "vitest";
+import { buildPlaces, PLACE_VIEW } from "./DriveExplorer.js";
 import { PLACE_SECTION, VaultPlaces } from "./VaultPlaces.js";
+
+/** The view modes DriveExplorer's render chain has a branch for. */
+const RENDERED_VIEWS = [
+  "chat",
+  "notes",
+  "graph",
+  "search",
+  "activity",
+  "sources",
+  "scope",
+  "projects",
+  "access",
+  "health",
+];
 
 describe("VaultPlaces", () => {
   it("lists the places in the design's order, with the vault's words", () => {
@@ -85,5 +100,67 @@ describe("VaultPlaces", () => {
       graph: "graph",
       contradictions: "contradictions",
     });
+  });
+
+  it("builds no place that points at a view with no render branch", () => {
+    const places = buildPlaces({
+      notes: 1,
+      topics: 1,
+      sources: 1,
+      work: 1,
+      contradictions: 1,
+    });
+    expect(places.map((p) => p.id)).toEqual([
+      "ask",
+      "notes",
+      "topics",
+      "sources",
+      "work",
+      "graph",
+    ]);
+    for (const place of places) {
+      const view = PLACE_VIEW[place.id];
+      expect(view).toBeDefined();
+      expect(RENDERED_VIEWS).toContain(view);
+    }
+  });
+
+  it("keeps the drive tree reachable from the sidebar", () => {
+    const html = renderToStaticMarkup(
+      <VaultPlaces
+        places={[]}
+        active="ask"
+        onSelect={() => {}}
+        onOpenSettings={() => {}}
+        tree={{ active: false, onOpen: () => {} }}
+      />,
+    );
+    expect(html).toContain("data-tree");
+    expect(html).toContain(">Tree<");
+  });
+
+  it("marks the tree row current while the tree is open", () => {
+    const html = renderToStaticMarkup(
+      <VaultPlaces
+        places={[]}
+        active="ask"
+        onSelect={() => {}}
+        onOpenSettings={() => {}}
+        tree={{ active: true, onOpen: () => {} }}
+      />,
+    );
+    expect(html).toMatch(/data-tree[^>]*aria-current="page"/);
+  });
+
+  it("shows no tree row unless the sidebar passes one", () => {
+    const html = renderToStaticMarkup(
+      <VaultPlaces
+        places={[]}
+        active="ask"
+        onSelect={() => {}}
+        onOpenSettings={() => {}}
+      />,
+    );
+    expect(html).not.toContain("data-tree");
   });
 });

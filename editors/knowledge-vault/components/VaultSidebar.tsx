@@ -113,6 +113,7 @@ export function VaultSidebar({
 }: VaultSidebarProps) {
   const [search, setSearch] = useState("");
   const [section, setSection] = useState<SidebarSection>("notes");
+  const [treeOpen, setTreeOpen] = useState(false);
   const selectedNode = useSelectedNode();
   const selectedId = selectedNode?.id;
   const [collapsed, setCollapsed] = useState<Record<string, boolean>>({
@@ -194,8 +195,12 @@ export function VaultSidebar({
   // connections, otherwise whatever the place owns.
   const body = graphFocus ? "connections" : PLACE_SECTION[place];
   const showConnections = body === "connections";
-  const shownSection =
-    body === "connections" ? undefined : PLACE_BODY_SECTION[body];
+  const showTree = treeOpen && !showConnections;
+  const shownSection = showTree
+    ? "folders"
+    : body === "connections"
+      ? undefined
+      : PLACE_BODY_SECTION[body];
 
   const filtered = useMemo(() => {
     if (!q) return notes;
@@ -817,9 +822,17 @@ export function VaultSidebar({
         active={place}
         onSelect={(id) => {
           if (graphFocus) onClearGraphFocus?.();
+          setTreeOpen(false);
           onSelectPlace?.(id);
         }}
         onOpenSettings={() => onOpenSettings?.()}
+        tree={{
+          active: showTree,
+          onOpen: () => {
+            if (graphFocus) onClearGraphFocus?.();
+            setTreeOpen(true);
+          },
+        }}
       />
 
       {/* Refreshing hint: data is on screen but may be a cached snapshot. */}

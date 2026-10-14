@@ -22,6 +22,11 @@ export type VaultPlacesProps = {
   active: VaultPlaceId;
   onSelect: (id: VaultPlaceId) => void;
   onOpenSettings: () => void;
+  /**
+   * The drive tree is not a place. It sits below the places until
+   * "Vault settings › Files" lands; remove this row then.
+   */
+  tree?: { active: boolean; onOpen: () => void };
 };
 
 /** place id → the sidebar body that shows when no context overrides it. */
@@ -48,6 +53,7 @@ export function VaultPlaces({
   active,
   onSelect,
   onOpenSettings,
+  tree,
 }: VaultPlacesProps) {
   return (
     <nav
@@ -86,6 +92,21 @@ export function VaultPlaces({
           </button>
         );
       })}
+      {tree && (
+        <button
+          type="button"
+          data-tree
+          aria-current={tree.active ? "page" : undefined}
+          onClick={tree.onOpen}
+          className="vault-place flex w-full items-center gap-2 px-2.5 text-left text-xs font-medium transition-colors"
+          style={{
+            ...ROW_STYLE,
+            color: "var(--bai-text-secondary)",
+          }}
+        >
+          <span className="min-w-0 flex-1 truncate">Tree</span>
+        </button>
+      )}
       <button
         type="button"
         onClick={onOpenSettings}
