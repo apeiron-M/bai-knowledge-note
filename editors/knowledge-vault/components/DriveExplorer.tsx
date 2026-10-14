@@ -18,6 +18,7 @@ import {
 } from "@powerhousedao/reactor-browser";
 import { VaultSidebar } from "./VaultSidebar.js";
 import { VaultShell } from "./VaultShell.js";
+import type { VaultPlace, VaultPlaceId } from "./VaultPlaces.js";
 import { DebugErrorBoundary } from "./DebugErrorBoundary.js";
 import { VaultLoader } from "../../shared/vault-loader.js";
 import { CreateDocumentDialog } from "./CreateDocumentDialog.js";
@@ -60,6 +61,7 @@ type ViewMode =
   | "projects"
   | "scope"
   | "search"
+  | "tensions"
   | "activity"
   | "pipeline"
   | "health"
@@ -78,6 +80,37 @@ type ViewMode =
  */
 const EDITORS_WITH_OWN_SIDEBAR = new Set<string>(["powerhouse/scopeofwork"]);
 
+/** The view each place opens. The places list never sees a view mode. */
+const PLACE_VIEW: Record<VaultPlaceId, ViewMode> = {
+  ask: "chat",
+  notes: "notes",
+  topics: "notes",
+  sources: "sources",
+  work: "projects",
+  graph: "graph",
+  contradictions: "tensions",
+};
+
+/** The place a view belongs to; `notes` is split in two by `notesPlace`. */
+const VIEW_PLACE: Partial<Record<ViewMode, VaultPlaceId>> = {
+  chat: "ask",
+  sources: "sources",
+  projects: "work",
+  scope: "work",
+  graph: "graph",
+  tensions: "contradictions",
+};
+
+/** The place an open document sits in, so the sidebar follows it. */
+const DOCUMENT_PLACE: Record<string, VaultPlaceId> = {
+  "bai/knowledge-note": "notes",
+  "bai/moc": "topics",
+  "bai/observation": "contradictions",
+  "bai/tension": "contradictions",
+  "bai/source": "sources",
+  "powerhouse/scopeofwork": "work",
+};
+
 export function DriveExplorer({ children }: EditorProps) {
   const [viewMode, setViewMode] = useState<ViewMode>("chat");
   const driveId = useSelectedDriveId();
@@ -94,6 +127,8 @@ export function DriveExplorer({ children }: EditorProps) {
       setViewMode("chat");
     }
   }, [driveId]);
+  const [notesPlace, setNotesPlace] = useState<"notes" | "topics">("notes");
+  const lastPlace = useRef<VaultPlaceId>("ask");
   const [graphFocus, setGraphFocus] = useState<GraphFocus | null>(null);
   const [graphClearNonce, setGraphClearNonce] = useState(0);
   const [sourcesHome, setSourcesHome] = useState(0);
@@ -307,6 +342,39 @@ export function DriveExplorer({ children }: EditorProps) {
     if (view && OPENABLE_VIEWS.has(view)) setViewMode(view as ViewMode);
   }, [driveId]);
 
+  // No count while it is 0 (or still loading): a bare "0" would be a false count.
+  const shown = (n: number) => (n > 0 ? n : undefined);
+  const places: VaultPlace[] = [
+    { id: "ask", label: "Ask" },
+    { id: "notes", label: "Notes", count: shown(notes.length) },
+    { id: "topics", label: "Topics", count: shown(mocs.length) },
+    { id: "sources", label: "Sources", count: shown(sourceCount) },
+    { id: "work", label: "Work", count: shown(projectCount) },
+    { id: "graph", label: "Graph" },
+    {
+      id: "contradictions",
+      label: "Contradictions",
+      count: shown(tensions.length),
+      tone: "warn",
+    },
+  ];
+
+  const viewPlace: VaultPlaceId | undefined =
+    viewMode === "notes" ? notesPlace : VIEW_PLACE[viewMode];
+  const documentPlace = showDocumentEditor
+    ? DOCUMENT_PLACE[selectedDocumentType ?? ""]
+    : undefined;
+  // The views that report on the vault (activity, health, …) belong to no
+  // place: the list keeps showing the one you were last in.
+  const currentPlace = documentPlace ?? viewPlace;
+  if (currentPlace) lastPlace.current = currentPlace;
+  const place = currentPlace ?? lastPlace.current;
+
+  function handleSelectPlace(id: VaultPlaceId) {
+    if (id === "notes" || id === "topics") setNotesPlace(id);
+    handleSwitchView(PLACE_VIEW[id]);
+  }
+
   const TABS: {
     key: ViewMode;
     label: string;
@@ -328,39 +396,6 @@ export function DriveExplorer({ children }: EditorProps) {
         >
           <path d="M21 11.5a8.38 8.38 0 01-.9 3.8 8.5 8.5 0 01-7.6 4.7 8.38 8.38 0 01-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 01-.9-3.8 8.5 8.5 0 014.7-7.6 8.38 8.38 0 013.8-.9h.5a8.48 8.48 0 018 8v.5z" />
           <path d="M9 12h.01M12 12h.01M15 12h.01" />
-        </svg>
-      ),
-    },
-    {
-      key: "search",
-      label: "Search",
-      icon: (
-        <svg
-          className="h-4 w-4"
-          viewBox="0 0 24 24"
-          fill="none"
-          stroke="currentColor"
-          strokeWidth="2"
-        >
-          <circle cx="11" cy="11" r="8" />
-          <path d="m21 21-4.35-4.35" />
-        </svg>
-      ),
-    },
-    {
-      key: "notes",
-      label: "Notes",
-      // No badge while loading — a "0" here would be a false count.
-      badge: notes.length > 0 ? notes.length : undefined,
-      icon: (
-        <svg
-          className="h-4 w-4"
-          viewBox="0 0 24 24"
-          fill="none"
-          stroke="currentColor"
-          strokeWidth="2"
-        >
-          <path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
         </svg>
       ),
     },
@@ -475,6 +510,10 @@ export function DriveExplorer({ children }: EditorProps) {
           graphFocus={graphFocus}
           onClearGraphFocus={handleClearGraphFocus}
           onWidthChange={setSidebarWidth}
+          place={place}
+          places={places}
+          onSelectPlace={handleSelectPlace}
+          onOpenSettings={() => setSettingsOpen(true)}
         />
       }
       tabs={

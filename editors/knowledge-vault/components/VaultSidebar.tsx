@@ -12,6 +12,12 @@ import type { KnowledgeNoteInfo } from "../hooks/use-knowledge-notes.js";
 import type { MocInfo } from "../hooks/use-knowledge-mocs.js";
 import type { GraphFocus } from "./GraphView.js";
 import { LoadingLine, SidebarSkeleton, Spinner } from "./LoadingStates.js";
+import {
+  PLACE_SECTION,
+  VaultPlaces,
+  type VaultPlace,
+  type VaultPlaceId,
+} from "./VaultPlaces.js";
 
 type VaultSidebarProps = {
   notes: KnowledgeNoteInfo[];
@@ -31,6 +37,11 @@ type VaultSidebarProps = {
    * applies. 0 while collapsed, so the column closes with the sidebar.
    */
   onWidthChange?: (px: number | undefined) => void;
+  /** The place the sidebar is showing; the body below the list follows it. */
+  place?: VaultPlaceId;
+  places?: VaultPlace[];
+  onSelectPlace?: (id: VaultPlaceId) => void;
+  onOpenSettings?: () => void;
 };
 
 const STATUS_ORDER = ["CANONICAL", "IN_REVIEW", "DRAFT", "ARCHIVED"] as const;
@@ -48,6 +59,15 @@ const STATUS_LABELS: Record<string, string> = {
 };
 
 type SidebarSection = "notes" | "mocs" | "signals" | "folders";
+
+/** The place bodies that are drawn by the section code below. */
+const PLACE_BODY_SECTION: Partial<
+  Record<(typeof PLACE_SECTION)[VaultPlaceId], SidebarSection>
+> = {
+  notes: "notes",
+  topics: "mocs",
+  contradictions: "signals",
+};
 
 const MIN_WIDTH = 200;
 
@@ -86,6 +106,10 @@ export function VaultSidebar({
   graphFocus = null,
   onClearGraphFocus,
   onWidthChange,
+  place = "notes",
+  places = [],
+  onSelectPlace,
+  onOpenSettings,
 }: VaultSidebarProps) {
   const [search, setSearch] = useState("");
   const [section, setSection] = useState<SidebarSection>("notes");
@@ -165,6 +189,13 @@ export function VaultSidebar({
   }, [fileNodes]);
 
   const q = search.trim().toLowerCase();
+
+  // The one place that decides what the body shows: a graph selection's
+  // connections, otherwise whatever the place owns.
+  const body = graphFocus ? "connections" : PLACE_SECTION[place];
+  const showConnections = body === "connections";
+  const shownSection =
+    body === "connections" ? undefined : PLACE_BODY_SECTION[body];
 
   const filtered = useMemo(() => {
     if (!q) return notes;
@@ -315,7 +346,7 @@ export function VaultSidebar({
   // the note tree back where the reader had scrolled it.
   const contentRef = useRef<HTMLDivElement>(null);
   const treeScrollTop = useRef(0);
-  const focused = !!graphFocus;
+  const focused = showConnections;
   useLayoutEffect(() => {
     const el = contentRef.current;
     if (el) el.scrollTop = focused ? 0 : treeScrollTop.current;
@@ -328,11 +359,11 @@ export function VaultSidebar({
   const treeContent = useMemo(
     () => (
       <>
-        {section === "notes" && showNotesSkeleton && (
+        {shownSection === "notes" && showNotesSkeleton && (
           <SidebarSkeleton label="Loading notes…" />
         )}
 
-        {section === "notes" && !showNotesSkeleton && (
+        {shownSection === "notes" && !showNotesSkeleton && (
           <>
             {notes.length === 0 && (
               <div className="px-2 py-6 text-center">
@@ -459,7 +490,7 @@ export function VaultSidebar({
           </>
         )}
 
-        {section === "mocs" && (
+        {shownSection === "mocs" && (
           <div className="space-y-1">
             {showMocsSkeleton ? (
               <SidebarSkeleton label="Loading MOCs…" rows={4} />
@@ -526,7 +557,7 @@ export function VaultSidebar({
           </div>
         )}
 
-        {section === "signals" && (
+        {shownSection === "signals" && (
           <div className="space-y-3">
             {filteredObservations.length > 0 && (
               <div>
@@ -638,7 +669,7 @@ export function VaultSidebar({
           </div>
         )}
 
-        {section === "folders" &&
+        {shownSection === "folders" &&
           (showTreeSkeleton ? (
             <LoadingLine label="Loading drive tree…" />
           ) : (
@@ -651,7 +682,7 @@ export function VaultSidebar({
       </>
     ),
     [
-      section,
+      shownSection,
       showNotesSkeleton,
       showMocsSkeleton,
       showSignalsSkeleton,
@@ -781,64 +812,15 @@ export function VaultSidebar({
         />
       </div>
 
-      {/* Section tabs — min height so the four labels stay clickable;
-          at text-[10px] py-1 they were a ~24px strip and pointer clicks
-          on MOCs/Signals/Tree never landed. */}
-      <div className="flex gap-1 px-2 pb-1">
-        {(
-          [
-            ["notes", "Notes"],
-            ["mocs", "MOCs"],
-            ["signals", "Signals"],
-            ["folders", "Tree"],
-          ] as const
-        ).map(([key, label]) => (
-          <button
-            key={key}
-            type="button"
-            aria-pressed={section === key}
-            aria-label={
-              key === "notes"
-                ? `Notes, ${notes.length}`
-                : key === "mocs"
-                  ? `MOCs, ${mocs.length}`
-                  : key === "signals"
-                    ? `Signals, ${observations.length + tensions.length}`
-                    : "Tree"
-            }
-            onClick={() => {
-              if (graphFocus) onClearGraphFocus?.();
-              setSection(key);
-            }}
-            className="sidebar-tab flex min-h-8 flex-1 items-center justify-center rounded-md px-1 py-1.5 text-[11px] font-medium transition-colors"
-            style={
-              section === key
-                ? {
-                    backgroundColor: "var(--bai-hover)",
-                    color: "var(--bai-accent)",
-                  }
-                : { color: "var(--bai-text-faint)" }
-            }
-          >
-            {label}
-            {key === "notes" && notes.length > 0 && (
-              <span className="ml-1" style={{ color: "var(--bai-text-faint)" }}>
-                {notes.length}
-              </span>
-            )}
-            {key === "mocs" && mocs.length > 0 && (
-              <span className="ml-1" style={{ color: "var(--bai-text-faint)" }}>
-                {mocs.length}
-              </span>
-            )}
-            {key === "signals" && observations.length + tensions.length > 0 && (
-              <span className="ml-1 text-amber-400">
-                {observations.length + tensions.length}
-              </span>
-            )}
-          </button>
-        ))}
-      </div>
+      <VaultPlaces
+        places={places}
+        active={place}
+        onSelect={(id) => {
+          if (graphFocus) onClearGraphFocus?.();
+          onSelectPlace?.(id);
+        }}
+        onOpenSettings={() => onOpenSettings?.()}
+      />
 
       {/* Refreshing hint: data is on screen but may be a cached snapshot. */}
       {isRefreshing && (
@@ -857,11 +839,11 @@ export function VaultSidebar({
       <div
         ref={contentRef}
         onScroll={(e) => {
-          if (!graphFocus) treeScrollTop.current = e.currentTarget.scrollTop;
+          if (!showConnections) treeScrollTop.current = e.currentTarget.scrollTop;
         }}
         className="flex-1 overflow-y-auto px-2 pb-4"
       >
-        {graphFocus && (
+        {showConnections && (
           <div className="space-y-1">
             <div className="mb-1 flex items-start gap-2 px-2 py-1.5">
               <div className="min-w-0 flex-1">
@@ -1003,9 +985,9 @@ export function VaultSidebar({
             (see HIDDEN_TREE_STYLE); inert keeps them out of the tab order and
             the accessibility tree meanwhile. */}
         <div
-          inert={!!graphFocus}
-          aria-hidden={graphFocus ? true : undefined}
-          style={graphFocus ? HIDDEN_TREE_STYLE : undefined}
+          inert={showConnections}
+          aria-hidden={showConnections ? true : undefined}
+          style={showConnections ? HIDDEN_TREE_STYLE : undefined}
         >
           {treeContent}
         </div>
@@ -1017,7 +999,7 @@ export function VaultSidebar({
           color: var(--bai-accent);
         }
         .sidebar-search-input::placeholder {
-          color: var(--bai-text-faint);
+          color: var(--bai-text-muted);
         }
         .sidebar-search-input:focus {
           border-color: var(--bai-accent);
