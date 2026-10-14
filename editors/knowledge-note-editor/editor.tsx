@@ -31,7 +31,7 @@ import { MarkdownPreview } from "../shared/markdown-preview.js";
 import { useGraphMetadata } from "../knowledge-vault/hooks/use-graph-metadata.js";
 import { neighbourhood } from "./lib/neighbourhood.js";
 import { IncomingLinks, WhereThisSits } from "./components/graph-position.js";
-import { TOOLBAR_CLASS } from "../shared/theme-context.js";
+import { ThemeProvider, TOOLBAR_CLASS } from "../shared/theme-context.js";
 import { VaultLoader } from "../shared/vault-loader.js";
 import { useKnowledgeNotes } from "../knowledge-vault/hooks/use-knowledge-notes.js";
 
@@ -277,7 +277,8 @@ export default function Editor() {
   const described = descLen ?? (state.description ?? "").length;
 
   return (
-    <div className="note-ed" data-view={view}>
+    <ThemeProvider>
+      <div className="note-ed" data-view={view}>
       <style aria-hidden="true">{STYLES}</style>
       <DocumentToolbar toolbarClassName={TOOLBAR_CLASS} />
       <div className="ne-body">
@@ -678,5 +679,6 @@ export default function Editor() {
         </main>
       </div>
     </div>
+    </ThemeProvider>
   );
 }

@@ -96,13 +96,44 @@ export const MOC_COLOR = 0xcba6f7;
 export const DEFAULT_NODE_COLOR = 0x6b7280;
 export const DEFAULT_EDGE_COLOR = 0x64748b;
 export const MOC_EDGE_COLOR = 0xcba6f7;
-export const BG_COLOR = 0x11111b; // catppuccin mocha base
+export const BG_COLOR = 0x11111b; // catppuccin mocha base, kept for the dark theme
 /** The canvas background as RGB in 0–1, for the renderers. */
 export const BACKGROUND: [number, number, number] = [
   ((BG_COLOR >> 16) & 0xff) / 255,
   ((BG_COLOR >> 8) & 0xff) / 255,
   (BG_COLOR & 0xff) / 255,
 ];
+
+/** Read the active BAI theme (dark by default), so the graph can match the shell. */
+export function isLightGraphTheme(): boolean {
+  if (typeof document === "undefined") return false;
+  const el =
+    document.querySelector(".bai-theme, [data-bai-theme]") ??
+    document.documentElement;
+  return el.getAttribute("data-bai-theme") === "light";
+}
+
+/** Theme-aware canvas background, for the renderers. */
+export function graphBackgroundColor(): [number, number, number] {
+  const hex = isLightGraphTheme() ? 0xf8f9fc : BG_COLOR;
+  return [((hex >> 16) & 0xff) / 255, ((hex >> 8) & 0xff) / 255, (hex & 0xff) / 255];
+}
+
+/** Theme-aware node outline colour: light on a dark canvas, dark on a light one. */
+export function graphOutlineColor(): string {
+  return isLightGraphTheme() ? "rgb(31, 41, 55)" : "rgb(250, 245, 255)";
+}
+
+export const GRAPH_OUTLINE_LIGHT: [number, number, number] = [31 / 255, 41 / 255, 55 / 255];
+export const GRAPH_OUTLINE_DARK: [number, number, number] = [
+  250 / 255,
+  245 / 255,
+  255 / 255,
+];
+
+export function graphOutlineRgb(): [number, number, number] {
+  return isLightGraphTheme() ? GRAPH_OUTLINE_LIGHT : GRAPH_OUTLINE_DARK;
+}
 
 /* ------------------------------------------------------------------ */
 /*  Model                                                               */

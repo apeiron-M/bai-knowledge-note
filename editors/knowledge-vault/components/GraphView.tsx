@@ -8,6 +8,7 @@ import {
 import { setSelectedNode } from "@powerhousedao/reactor-browser";
 import type { KnowledgeNoteInfo } from "../hooks/use-knowledge-notes.js";
 import type { MocInfo } from "../hooks/use-knowledge-mocs.js";
+import { useTheme } from "../../shared/theme-context.js";
 import type { Heat, LayoutFrame } from "./graph/layout-core.js";
 import {
   createLayoutEngine,
@@ -272,6 +273,7 @@ const MIN_ZOOM = 0.1;
 export default function GraphView(props: GraphViewProps) {
   const containerRef = useRef<HTMLDivElement | null>(null);
   const sceneRef = useRef<Scene | null>(null);
+  const { theme } = useTheme();
   const [ready, setReady] = useState(false);
   /** Bumped when a saved layout has loaded, to merge the data into it. */
   const [layoutToken, setLayoutToken] = useState(0);
@@ -288,6 +290,13 @@ export default function GraphView(props: GraphViewProps) {
   onGraphFocusChangeRef.current = props.onGraphFocusChange;
   const layoutKeyRef = useRef(props.layoutKey);
   layoutKeyRef.current = props.layoutKey;
+
+  useEffect(() => {
+    const scene = sceneRef.current;
+    if (!scene) return;
+    scene.dirty = true;
+    scene.renderer.markStyles();
+  }, [theme]);
 
   // Tooltip and selection card are React state (HTML overlays); they change
   // only when the hovered or selected node changes, never per frame.

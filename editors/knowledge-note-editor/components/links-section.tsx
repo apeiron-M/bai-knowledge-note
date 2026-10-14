@@ -42,9 +42,9 @@ type LinksSectionProps = {
 };
 
 const CONFIDENCE_COLORS: Record<EdgeConfidence, string> = {
-  grounded: "text-emerald-300/80",
-  established: "text-sky-300/80",
-  speculative: "text-amber-300/80",
+  grounded: "text-[var(--bai-ok)]/80",
+  established: "text-[var(--bai-status-review)]/80",
+  speculative: "text-[var(--bai-warn)]/80",
 };
 
 const LINK_TYPES: LinkType[] = [
@@ -62,11 +62,12 @@ const LINK_TYPE_LABELS: Record<LinkType, string> = {
   DERIVED_FROM: "Derived from",
 };
 const LINK_TYPE_COLORS: Record<LinkType, string> = {
-  RELATES_TO: "bg-slate-500/20 text-slate-300",
-  BUILDS_ON: "bg-sky-500/20 text-sky-300",
-  CONTRADICTS: "bg-red-500/20 text-red-300",
-  SUPERSEDES: "bg-purple-500/20 text-purple-300",
-  DERIVED_FROM: "bg-amber-500/20 text-amber-300",
+  RELATES_TO: "bg-[var(--bai-hover)] text-[var(--bai-text-muted)]",
+  BUILDS_ON:
+    "bg-[var(--bai-status-review)]/15 text-[var(--bai-status-review)]",
+  CONTRADICTS: "bg-[var(--bai-danger-soft)] text-[var(--bai-danger)]",
+  SUPERSEDES: "bg-[var(--bai-accent-soft)] text-[var(--bai-accent)]",
+  DERIVED_FROM: "bg-[var(--bai-warn-soft)] text-[var(--bai-warn)]",
 };
 
 type DocOption = { id: string; title: string };
@@ -142,12 +143,12 @@ export function LinksSection({
 
   if (links.length === 0 && !isAdding) {
     return (
-      <div className="rounded-lg border border-dashed border-white/10 p-4 text-center">
-        <p className="mb-2 text-sm text-gray-500">No linked notes yet</p>
+      <div className="rounded-lg border border-dashed border-[var(--bai-border)] p-4 text-center">
+        <p className="mb-2 text-sm text-[var(--bai-text-muted)]">No linked notes yet</p>
         <button
           type="button"
           onClick={() => setIsAdding(true)}
-          className="text-sm font-medium text-[#cba6f7] hover:text-[#cba6f7]/80"
+          className="text-sm font-medium text-[var(--bai-accent)] hover:text-[var(--bai-accent)]/80"
         >
           + Add link
         </button>
@@ -196,7 +197,7 @@ export function LinksSection({
         <button
           type="button"
           onClick={() => setIsAdding(true)}
-          className="mt-3 w-full rounded-lg border border-dashed border-white/10 py-2.5 text-xs text-gray-500 hover:border-[#cba6f7]/30 hover:text-[#cba6f7]"
+          className="mt-3 w-full rounded-lg border border-dashed border-[var(--bai-border)] py-2.5 text-xs text-[var(--bai-text-muted)] hover:border-[var(--bai-accent)]/30 hover:text-[var(--bai-accent)]"
         >
           + Add link
         </button>
@@ -251,9 +252,9 @@ function LinkCard({
     return (
       <div
         ref={editRef}
-        className="rounded-lg border border-[#cba6f7]/20 bg-[#cba6f7]/5 p-2"
+        className="rounded-lg border border-[var(--bai-accent)]/20 bg-[var(--bai-accent-soft)] p-2"
       >
-        <p className="mb-1.5 text-[10px] font-medium uppercase text-gray-500">
+        <p className="mb-1.5 text-[10px] font-medium uppercase text-[var(--bai-text-muted)]">
           Change target document
         </p>
         <DocumentSearch
@@ -269,13 +270,13 @@ function LinkCard({
   const confidence = isEdgeConfidence(link.confidence) ? link.confidence : null;
 
   return (
-    <div className="group rounded-lg border border-white/5 bg-[#1e1e2e] px-3 py-2">
+    <div className="group rounded-lg border border-[var(--bai-border)] bg-[var(--bai-deep)] px-3 py-2">
     <div className="flex items-center gap-2">
       <select
         value={link.linkType ?? "RELATES_TO"}
         aria-label={`Link type, ${LINK_TYPE_LABELS[(link.linkType ?? "RELATES_TO") as LinkType]}`}
         onChange={(e) => onUpdateLinkType(link.id, e.target.value as LinkType)}
-        className={`rounded-md border-0 px-2 py-0.5 text-xs font-medium ${LINK_TYPE_COLORS[(link.linkType ?? "RELATES_TO") as LinkType] ?? ""} bg-transparent`}
+        className={`rounded-md border border-[var(--bai-border)] px-2 py-0.5 text-xs font-medium ${LINK_TYPE_COLORS[(link.linkType ?? "RELATES_TO") as LinkType] ?? ""} bg-transparent`}
       >
         {LINK_TYPES.map((lt) => (
           <option key={lt} value={lt}>
@@ -288,11 +289,11 @@ function LinkCard({
         onClick={() => {
           if (link.targetDocumentId) setSelectedNode(link.targetDocumentId);
         }}
-        className="flex-1 truncate text-left text-sm text-gray-300 hover:text-[#cba6f7] hover:underline"
+        className="flex-1 truncate text-left text-sm text-[var(--bai-text-secondary)] hover:text-[var(--bai-accent)] hover:underline"
         title={`Open: ${resolved.title}${resolved.kind ? ` (${resolved.kind})` : ""}`}
       >
         {resolved.kind && (
-          <span className="mr-1.5 rounded bg-white/5 px-1 py-px text-[9px] font-medium uppercase tracking-wide text-gray-400">
+          <span className="mr-1.5 rounded bg-[var(--bai-hover)] px-1 py-px text-[9px] font-medium uppercase tracking-wide text-[var(--bai-text-tertiary)]">
             {resolved.kind}
           </span>
         )}{" "}
@@ -312,7 +313,7 @@ function LinkCard({
       <button
         type="button"
         onClick={onStartEdit}
-        className="text-gray-600 opacity-0 transition-opacity hover:text-[#cba6f7] group-hover:opacity-100"
+        className="text-[var(--bai-text-faint)] opacity-0 transition-opacity hover:text-[var(--bai-accent)] group-hover:opacity-100"
         aria-label="Change target"
         title="Change target document"
       >
@@ -330,7 +331,7 @@ function LinkCard({
       <button
         type="button"
         onClick={() => onRemoveLink(link.id)}
-        className="text-gray-600 opacity-0 transition-opacity hover:text-red-400 group-hover:opacity-100"
+        className="text-[var(--bai-text-faint)] opacity-0 transition-opacity hover:text-[var(--bai-danger)] group-hover:opacity-100"
         aria-label="Remove link"
       >
         &times;
@@ -356,8 +357,8 @@ function LinkCard({
         className="mt-1 flex w-full items-start gap-1.5 text-left"
         title="Edit why this link exists"
       >
-        <span className="mt-px shrink-0 text-[10px] text-gray-600">because</span>
-        <span className="flex-1 text-xs italic leading-snug text-gray-400 group-hover:text-gray-300">
+        <span className="mt-px shrink-0 text-[10px] text-[var(--bai-text-tertiary)]">because</span>
+        <span className="flex-1 text-xs italic leading-snug text-[var(--bai-text-secondary)] group-hover:text-[var(--bai-text)]">
           {link.reason}
         </span>
         {confidence && (
@@ -373,7 +374,7 @@ function LinkCard({
       <button
         type="button"
         onClick={() => setIsArticulating(true)}
-        className="mt-1 text-[10px] text-amber-400/60 hover:text-amber-300"
+        className="mt-1 text-[10px] text-[var(--bai-warn)]/60 hover:text-[var(--bai-warn)]"
         title="This link has no recorded reason. Say why it exists — the articulation test."
       >
         + why does this link exist?
@@ -405,7 +406,7 @@ function ArticulationForm({
   );
   const canSubmit = reason.trim().length > 0;
   return (
-    <div className="mt-2 space-y-1.5 rounded border border-[#cba6f7]/20 bg-[#cba6f7]/5 p-2">
+    <div className="mt-2 space-y-1.5 rounded border border-[var(--bai-accent)]/20 bg-[var(--bai-accent-soft)] p-2">
       <textarea
         value={reason}
         onChange={(e) => setReason(e.target.value)}
@@ -417,7 +418,7 @@ function ArticulationForm({
             onSubmit({ reason: reason.trim(), confidence });
         }}
         placeholder="This note connects to that one because…"
-        className="w-full resize-none rounded border border-white/10 bg-[#1e1e2e] px-2 py-1 text-xs text-gray-300 outline-none placeholder:text-gray-600 focus:border-[#cba6f7]/50"
+        className="w-full resize-none rounded border border-[var(--bai-border)] bg-[var(--bai-deep)] px-2 py-1 text-xs text-[var(--bai-text-secondary)] outline-none placeholder:text-[var(--bai-text-faint)] focus:border-[var(--bai-accent)]/50"
       />
       <div className="flex items-center gap-2">
         <select
@@ -427,7 +428,7 @@ function ArticulationForm({
               isEdgeConfidence(e.target.value) ? e.target.value : null,
             )
           }
-          className="rounded border border-white/10 bg-[#1e1e2e] px-2 py-1 text-[11px] text-gray-300"
+          className="rounded border border-[var(--bai-border)] bg-[var(--bai-deep)] px-2 py-1 text-[11px] text-[var(--bai-text-secondary)]"
           title="How well-founded is this link?"
         >
           <option value="">confidence…</option>
@@ -441,7 +442,7 @@ function ArticulationForm({
         <button
           type="button"
           onClick={onCancel}
-          className="rounded px-2 py-1 text-[11px] text-gray-500 hover:bg-white/5"
+          className="rounded px-2 py-1 text-[11px] text-[var(--bai-text-muted)] hover:bg-[var(--bai-hover)]"
         >
           Cancel
         </button>
@@ -449,7 +450,7 @@ function ArticulationForm({
           type="button"
           disabled={!canSubmit}
           onClick={() => onSubmit({ reason: reason.trim(), confidence })}
-          className="rounded bg-[#cba6f7] px-2 py-1 text-[11px] font-medium text-[#1e1e2e] hover:bg-[#cba6f7]/80 disabled:opacity-40"
+          className="rounded bg-[var(--bai-accent)] px-2 py-1 text-[11px] font-medium text-[var(--bai-accent-text)] hover:bg-[var(--bai-accent)]/80 disabled:opacity-40"
         >
           {submitLabel}
         </button>
@@ -495,20 +496,20 @@ function AddLinkForm({
   const hasValue = hasTarget && reason.trim().length > 0;
 
   return (
-    <div className="space-y-2 rounded-lg border border-[#cba6f7]/20 bg-[#cba6f7]/5 p-3">
+    <div className="space-y-2 rounded-lg border border-[var(--bai-accent)]/20 bg-[var(--bai-accent-soft)] p-3">
       {/* Mode toggle */}
       <div className="flex gap-1">
         <button
           type="button"
           onClick={() => setMode("search")}
-          className={`rounded px-2 py-0.5 text-[10px] font-medium ${mode === "search" ? "bg-[#313244] text-[#cba6f7]" : "text-gray-500"}`}
+          className={`rounded px-2 py-0.5 text-[10px] font-medium ${mode === "search" ? "bg-[var(--bai-hover)] text-[var(--bai-accent)]" : "text-[var(--bai-text-muted)]"}`}
         >
           Search drive
         </button>
         <button
           type="button"
           onClick={() => setMode("manual")}
-          className={`rounded px-2 py-0.5 text-[10px] font-medium ${mode === "manual" ? "bg-[#313244] text-[#cba6f7]" : "text-gray-500"}`}
+          className={`rounded px-2 py-0.5 text-[10px] font-medium ${mode === "manual" ? "bg-[var(--bai-hover)] text-[var(--bai-accent)]" : "text-[var(--bai-text-muted)]"}`}
         >
           Manual entry
         </button>
@@ -517,17 +518,17 @@ function AddLinkForm({
       {mode === "search" ? (
         <div>
           {selectedDoc ? (
-            <div className="flex items-center gap-2 rounded border border-white/10 bg-[#1e1e2e] px-3 py-1.5">
-              <span className="flex-1 truncate text-sm text-gray-300">
+            <div className="flex items-center gap-2 rounded border border-[var(--bai-border)] bg-[var(--bai-deep)] px-3 py-1.5">
+              <span className="flex-1 truncate text-sm text-[var(--bai-text-secondary)]">
                 {selectedDoc.title}
               </span>
-              <span className="text-[10px] font-mono text-gray-600">
+              <span className="text-[10px] font-mono text-[var(--bai-text-tertiary)]">
                 {selectedDoc.id.slice(0, 8)}
               </span>
               <button
                 type="button"
                 onClick={() => setSelectedDoc(null)}
-                className="text-gray-500 hover:text-red-400"
+                className="text-[var(--bai-text-muted)] hover:text-[var(--bai-danger)]"
               >
                 &times;
               </button>
@@ -549,14 +550,14 @@ function AddLinkForm({
             onChange={(e) => setManualTitle(e.target.value)}
             placeholder="Link title..."
             autoFocus
-            className="w-full rounded border border-white/10 bg-[#1e1e2e] px-3 py-1.5 text-sm text-gray-300 outline-none focus:border-[#cba6f7]/50"
+            className="w-full rounded border border-[var(--bai-border)] bg-[var(--bai-deep)] px-3 py-1.5 text-sm text-[var(--bai-text-secondary)] outline-none focus:border-[var(--bai-accent)]/50"
           />
           <input
             type="text"
             value={manualId}
             onChange={(e) => setManualId(e.target.value)}
             placeholder="Document PHID (optional)"
-            className="w-full rounded border border-white/10 bg-[#1e1e2e] px-3 py-1.5 text-sm font-mono text-gray-400 outline-none focus:border-[#cba6f7]/50"
+            className="w-full rounded border border-[var(--bai-border)] bg-[var(--bai-deep)] px-3 py-1.5 text-sm font-mono text-[var(--bai-text-tertiary)] outline-none focus:border-[var(--bai-accent)]/50"
           />
         </>
       )}
@@ -567,14 +568,14 @@ function AddLinkForm({
         rows={2}
         placeholder="Why does this link exist? — this note connects to that one because…"
         title="The articulation test: a link without a reason is an address-book entry, not knowledge."
-        className="w-full resize-none rounded border border-white/10 bg-[#1e1e2e] px-3 py-1.5 text-xs text-gray-300 outline-none placeholder:text-gray-600 focus:border-[#cba6f7]/50"
+        className="w-full resize-none rounded border border-[var(--bai-border)] bg-[var(--bai-deep)] px-3 py-1.5 text-xs text-[var(--bai-text-secondary)] outline-none placeholder:text-[var(--bai-text-faint)] focus:border-[var(--bai-accent)]/50"
       />
 
       <div className="flex items-center gap-2">
         <select
           value={linkType}
           onChange={(e) => setLinkType(e.target.value as LinkType)}
-          className="rounded border border-white/10 bg-[#1e1e2e] px-2 py-1.5 text-sm text-gray-300"
+          className="rounded border border-[var(--bai-border)] bg-[var(--bai-deep)] px-2 py-1.5 text-sm text-[var(--bai-text-secondary)]"
         >
           {LINK_TYPES.map((lt) => (
             <option key={lt} value={lt}>
@@ -589,7 +590,7 @@ function AddLinkForm({
               isEdgeConfidence(e.target.value) ? e.target.value : null,
             )
           }
-          className="rounded border border-white/10 bg-[#1e1e2e] px-2 py-1.5 text-xs text-gray-300"
+          className="rounded border border-[var(--bai-border)] bg-[var(--bai-deep)] px-2 py-1.5 text-xs text-[var(--bai-text-secondary)]"
           title="How well-founded is this link?"
         >
           <option value="">confidence…</option>
@@ -603,7 +604,7 @@ function AddLinkForm({
         <button
           type="button"
           onClick={onCancel}
-          className="rounded px-3 py-1 text-xs text-gray-500 hover:bg-white/5"
+          className="rounded px-3 py-1 text-xs text-[var(--bai-text-muted)] hover:bg-[var(--bai-hover)]"
         >
           Cancel
         </button>
@@ -616,7 +617,7 @@ function AddLinkForm({
               ? "Say why this link exists first"
               : undefined
           }
-          className="rounded bg-[#cba6f7] px-3 py-1 text-xs font-medium text-[#1e1e2e] hover:bg-[#cba6f7]/80 disabled:opacity-40"
+          className="rounded bg-[var(--bai-accent)] px-3 py-1 text-xs font-medium text-[var(--bai-accent-text)] hover:bg-[var(--bai-accent)]/80 disabled:opacity-40"
         >
           Add
         </button>
@@ -684,11 +685,11 @@ function DocumentSearch({
           if (e.key === "Escape") onCancel();
         }}
         placeholder="Search notes by title..."
-        className="w-full rounded border border-white/10 bg-[#1e1e2e] px-3 py-1.5 text-sm text-gray-300 outline-none focus:border-[#cba6f7]/50"
+        className="w-full rounded border border-[var(--bai-border)] bg-[var(--bai-deep)] px-3 py-1.5 text-sm text-[var(--bai-text-secondary)] outline-none focus:border-[var(--bai-accent)]/50"
       />
 
       {isOpen && filtered.length > 0 && (
-        <div className="absolute z-10 mt-1 max-h-48 w-full overflow-y-auto rounded-lg border border-white/10 bg-[#181825] shadow-xl">
+        <div className="absolute z-10 mt-1 max-h-48 w-full overflow-y-auto rounded-lg border border-[var(--bai-border)] bg-[var(--bai-surface)] shadow-xl">
           {filtered.map((doc) => (
             <button
               key={doc.id}
@@ -698,12 +699,12 @@ function DocumentSearch({
                 setIsOpen(false);
                 setQuery("");
               }}
-              className="flex w-full items-center gap-2 px-3 py-2 text-left transition-colors hover:bg-[#313244]"
+              className="flex w-full items-center gap-2 px-3 py-2 text-left transition-colors hover:bg-[var(--bai-hover)]"
             >
-              <span className="flex-1 truncate text-sm text-gray-300">
+              <span className="flex-1 truncate text-sm text-[var(--bai-text-secondary)]">
                 {doc.title}
               </span>
-              <span className="shrink-0 text-[10px] font-mono text-gray-600">
+              <span className="shrink-0 text-[10px] font-mono text-[var(--bai-text-tertiary)]">
                 {doc.id.slice(0, 8)}
               </span>
             </button>
@@ -712,8 +713,8 @@ function DocumentSearch({
       )}
 
       {isOpen && query.trim() && filtered.length === 0 && (
-        <div className="absolute z-10 mt-1 w-full rounded-lg border border-white/10 bg-[#181825] px-3 py-2 shadow-xl">
-          <p className="text-xs text-gray-500">No matching notes found</p>
+        <div className="absolute z-10 mt-1 w-full rounded-lg border border-[var(--bai-border)] bg-[var(--bai-surface)] px-3 py-2 shadow-xl">
+          <p className="text-xs text-[var(--bai-text-muted)]">No matching notes found</p>
         </div>
       )}
     </div>

@@ -17,7 +17,7 @@
  * Antialiasing is done in the shaders (no MSAA): cheaper on weak GPUs and the
  * same at every zoom.
  */
-import { BACKGROUND } from "./model.js";
+import { graphBackgroundColor, graphOutlineRgb } from "./model.js";
 import type {
   GraphRenderer,
   RenderGraph,
@@ -89,7 +89,7 @@ varying vec2 vLocal;
 varying vec4 vColor;
 varying float vRadius;
 varying float vKind;
-const vec3 OUTLINE = vec3(0.980, 0.961, 1.0);
+uniform vec3 uOutline;
 // Coverage of a shape at signed distance d (world units, negative inside), one device pixel soft.
 float cover(float d) { return clamp(0.5 - d / uPx, 0.0, 1.0); }
 void main() {
@@ -99,7 +99,7 @@ void main() {
     float d = length(vLocal) - vRadius;
     float ring = cover(abs(d) - 0.3) * 0.4;
     c = vec4(vColor.rgb, 1.0) * cover(d);
-    c = vec4(OUTLINE, 1.0) * ring + c * (1.0 - ring);
+    c = vec4(uOutline, 1.0) * ring + c * (1.0 - ring);
   } else {
     // A MoC: a diamond with a soft halo 6 out at 15 % and a 2-wide outline at 95 %.
     float l1 = abs(vLocal.x) + abs(vLocal.y);
@@ -109,7 +109,7 @@ void main() {
     float ring = cover(abs(d) - 1.0) * 0.95;
     c = vec4(vColor.rgb, 1.0) * halo;
     c = vec4(vColor.rgb, 1.0) * fill + c * (1.0 - fill);
-    c = vec4(OUTLINE, 1.0) * ring + c * (1.0 - ring);
+    c = vec4(uOutline, 1.0) * ring + c * (1.0 - ring);
   }
   gl_FragColor = c * vColor.a;
 }
@@ -194,6 +194,7 @@ type Program = {
   attribs: Record<string, number>;
   uView: WebGLUniformLocation | null;
   uPx: WebGLUniformLocation | null;
+  uOutline: WebGLUniformLocation | null;
   uPos: WebGLUniformLocation | null;
   uPosWidth: WebGLUniformLocation | null;
 };
@@ -349,7 +350,8 @@ export class GlRenderer implements GraphRenderer {
     if (this.lost || gl.isContextLost()) return;
     const g = this.graph;
     gl.viewport(0, 0, this.canvas.width, this.canvas.height);
-    gl.clearColor(BACKGROUND[0], BACKGROUND[1], BACKGROUND[2], 1);
+    const [br, bg, bb] = graphBackgroundColor();
+    gl.clearColor(br, bg, bb, 1);
     gl.clear(gl.COLOR_BUFFER_BIT);
     if (!g) return;
     const n = g.meta.length / 2;
@@ -429,6 +431,10 @@ export class GlRenderer implements GraphRenderer {
     gl.useProgram(p.program);
     gl.uniform4f(p.uView, sx, sy, ox, oy);
     gl.uniform1f(p.uPx, px);
+    if (p.uOutline) {
+      const [or, og, ob] = graphOutlineRgb();
+      gl.uniform3f(p.uOutline, or, og, ob);
+    }
     if (p.uPos && this.res.posTexture) {
       gl.activeTexture(gl.TEXTURE0);
       gl.bindTexture(gl.TEXTURE_2D, this.res.posTexture);
@@ -740,6 +746,7 @@ export class GlRenderer implements GraphRenderer {
       attribs: locs,
       uView: gl.getUniformLocation(program, "uView"),
       uPx: gl.getUniformLocation(program, "uPx"),
+      uOutline: gl.getUniformLocation(program, "uOutline"),
       uPos: gl.getUniformLocation(program, "uPos"),
       uPosWidth: gl.getUniformLocation(program, "uPosWidth"),
     };

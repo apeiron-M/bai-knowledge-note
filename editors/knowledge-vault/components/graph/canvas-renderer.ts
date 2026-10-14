@@ -5,13 +5,16 @@
  * it stays usable into the tens of thousands of nodes; past that it slows down
  * but keeps working.
  */
-import { BACKGROUND } from "./model.js";
+import { graphBackgroundColor, graphOutlineColor } from "./model.js";
 import type { GraphRenderer, RenderGraph, RenderView } from "./renderer.js";
 
 type Bucket = { color: string; alpha: number; width: number; items: number[] };
 
-const OUTLINE = "rgb(250,245,255)";
-const BG = `rgb(${BACKGROUND.map((c) => Math.round(c * 255)).join(",")})`;
+const outlineColor = () => graphOutlineColor();
+const bgColor = () =>
+  `rgb(${graphBackgroundColor()
+    .map((c) => Math.round(c * 255))
+    .join(",")})`;
 
 export class CanvasRenderer implements GraphRenderer {
   readonly kind = "canvas";
@@ -58,7 +61,7 @@ export class CanvasRenderer implements GraphRenderer {
     const ctx = this.ctx;
     ctx.setTransform(1, 0, 0, 1, 0, 0);
     ctx.globalAlpha = 1;
-    ctx.fillStyle = BG;
+    ctx.fillStyle = bgColor();
     ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
     const g = this.graph;
     if (!g) return;
@@ -131,7 +134,7 @@ export class CanvasRenderer implements GraphRenderer {
       ctx.fill();
       if (outlined && 0.6 > px * 0.25) {
         ctx.globalAlpha = b.alpha * 0.4;
-        ctx.strokeStyle = OUTLINE;
+        ctx.strokeStyle = outlineColor();
         ctx.lineWidth = 0.6;
         ctx.stroke();
       }
@@ -153,7 +156,7 @@ export class CanvasRenderer implements GraphRenderer {
       diamond(ctx, x, y, r);
       ctx.fill();
       ctx.globalAlpha = alpha * 0.95;
-      ctx.strokeStyle = OUTLINE;
+      ctx.strokeStyle = outlineColor();
       ctx.lineWidth = 2;
       ctx.stroke();
     }
