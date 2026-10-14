@@ -17,10 +17,9 @@ const CONFIG = {
   WEBHOOK_URL: '',
   WEBHOOK_TOKEN: '',
   TITLE_MATCH: 'Notes by Gemini',
-  TAB_NAME: 'Quick notes',
-  // Older notes (before Gemini split them into tabs) have no Quick notes tab:
-  // send their first tab that is not a transcript instead. false: skip them.
-  FALLBACK_TO_NOTES_TAB: true,
+  TAB_NAME: 'Full notes',
+  // Pulls the full notes/transcript instead of the Quick notes summary.
+  FALLBACK_TO_NOTES_TAB: false,
   // Apps Script stops a run after 6 minutes; stop sending well before that.
   MAX_RUNTIME_MS: 5 * 60 * 1000,
 };
