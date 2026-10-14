@@ -42,7 +42,7 @@ html[data-bai-toast-theme="dark"] {
   --bai-text: #e4e4e7;
   --bai-text-secondary: #d4d4d8;
   --bai-text-tertiary: #9ca3af;
-  --bai-text-muted: #6b7280;
+  --bai-text-muted: #979da8;
   --bai-text-faint: #4b5563;
   --bai-accent: #cba6f7;
   --bai-accent-text: #1e1e2e;
@@ -64,36 +64,78 @@ html[data-bai-toast-theme="dark"] {
   --bai-ok-soft: rgba(166, 227, 161, 0.12);
 }
 
+/* Layering roles. Dark resolves every role to today's value, so nothing moves. */
+.bai-theme,
+[data-bai-theme="dark"],
+html[data-bai-toast-theme="dark"] {
+  --v-rail: var(--bai-deep);
+  --v-rail-hover: color-mix(in srgb, var(--bai-hover) 65%, transparent);
+  --v-rail-current: var(--bai-hover);
+  --v-rail-current-soft: color-mix(in srgb, var(--bai-hover) 55%, transparent);
+  --v-rail-current-shadow: none;
+  --v-raise: none;
+  --v-input: var(--bai-bg);
+  --v-panel: color-mix(in srgb, var(--bai-surface) 50%, var(--bai-bg));
+  --v-read: var(--bai-deep);
+  --v-note: #89b4fa;
+  --v-map: #cba6f7;
+  --v-line: rgba(205, 214, 244, 0.14);
+  --v-review: #89b4fa;
+  --v-field: #7a7d99;
+  --v-sky: 0.5;
+}
+
 [data-bai-theme="light"],
 html[data-bai-toast-theme="light"] {
-  --bai-bg: #f8f9fc;
+  --bai-bg: #edf0f5;
   --bai-surface: #ffffff;
-  --bai-deep: #f1f3f8;
-  --bai-hover: #e8eaf0;
+  --bai-deep: #ffffff;
+  --bai-hover: #e4e8ef;
   --bai-overlay: #ffffff;
   --bai-overlay-hover: #e8eaf0;
-  --bai-border: #e2e4e9;
+  --bai-border: #d7dbe3;
   --bai-ring: #e2e4e9;
   --bai-text: #1f2937;
   --bai-text-secondary: #374151;
-  --bai-text-tertiary: #6b7280;
-  --bai-text-muted: #9ca3af;
+  --bai-text-tertiary: #565c69;
+  --bai-text-muted: #5b6270;
   --bai-text-faint: #d1d5db;
-  --bai-accent: #7c3aed;
+  --bai-accent: #732dec;
   --bai-accent-text: #ffffff;
-  --bai-accent-soft: rgba(124, 58, 237, 0.08);
+  --bai-accent-soft: rgba(124, 58, 237, 0.105);
   --bai-accent-hover: rgba(124, 58, 237, 0.85);
   --bai-status-draft: #d97706;
   --bai-status-review: #2563eb;
   --bai-status-canonical: #059669;
   --bai-status-archived: #6b7280;
 
-  --bai-danger: #dc2626;
+  --bai-danger: #c01d1d;
   --bai-danger-soft: rgba(220, 38, 38, 0.08);
-  --bai-warn: #d97706;
-  --bai-warn-soft: rgba(217, 119, 6, 0.08);
-  --bai-ok: #059669;
-  --bai-ok-soft: rgba(5, 150, 105, 0.08);
+  --bai-warn: #945104;
+  --bai-warn-soft: rgba(217, 119, 6, 0.15);
+  --bai-ok: #04704e;
+  --bai-ok-soft: rgba(5, 150, 105, 0.13);
+}
+
+/* Layering roles. Light separates the three surfaces the eye navigates by —
+   canvas, raised card, rail — each ≥5 L* from what it sits on. */
+[data-bai-theme="light"],
+html[data-bai-toast-theme="light"] {
+  --v-rail: #dbe0ea;
+  --v-rail-hover: rgba(255, 255, 255, 0.6);
+  --v-rail-current: #ffffff;
+  --v-rail-current-soft: #ffffff;
+  --v-rail-current-shadow: var(--v-raise);
+  --v-raise: 0 1px 2px rgba(16, 24, 40, 0.06), 0 1px 3px rgba(16, 24, 40, 0.07);
+  --v-input: #ffffff;
+  --v-panel: #ffffff;
+  --v-read: #e4e8ef;
+  --v-note: #275cc5;
+  --v-map: #7c3aed;
+  --v-line: rgba(31, 41, 55, 0.16);
+  --v-review: #1555e2;
+  --v-field: #747d95;
+  --v-sky: 0.32;
 }
 
 /*
