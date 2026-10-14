@@ -1,4 +1,3 @@
-import type { CSSProperties } from "react";
 import { AccessView } from "./access/AccessView.js";
 import { useIsVaultAdmin } from "./access/use-is-admin.js";
 import {
@@ -18,6 +17,7 @@ import {
   useSelectedNode,
 } from "@powerhousedao/reactor-browser";
 import { VaultSidebar } from "./VaultSidebar.js";
+import { VaultShell } from "./VaultShell.js";
 import { DebugErrorBoundary } from "./DebugErrorBoundary.js";
 import { VaultLoader } from "../../shared/vault-loader.js";
 import { CreateDocumentDialog } from "./CreateDocumentDialog.js";
@@ -41,7 +41,7 @@ import { FileDropOverlay, useVaultFileDrop } from "./intake/FileDropOverlay.js";
 import { useAttachmentPort } from "../lib/attachments.js";
 import { useVaultDocIndex } from "../../shared/use-vault-doc-index.js";
 import { sameDriveNode, useStableList } from "../../shared/use-stable-list.js";
-import { useMeasuredHeight } from "../../shared/use-measured.js";
+import { useVaultName } from "../hooks/use-vault-name.js";
 import {
   useReactorDocsWithRefetch,
   type ReactorDocSpec,
@@ -128,6 +128,9 @@ export function DriveExplorer({ children }: EditorProps) {
   ).length;
   const showDocumentEditor = !!children;
   const [settingsOpen, setSettingsOpen] = useState(false);
+  const vaultName = useVaultName();
+  // Published by the sidebar, which owns its width; the shell only reads it.
+  const [sidebarWidth, setSidebarWidth] = useState<number | undefined>();
   // `useSelectedNode` can hand back a folder, which carries no documentType.
   const selectedNode = useSelectedNode();
   const selectedDocumentType =
@@ -139,29 +142,11 @@ export function DriveExplorer({ children }: EditorProps) {
     selectedDocumentType !== undefined &&
     EDITORS_WITH_OWN_SIDEBAR.has(selectedDocumentType);
 
-  // A hosted editor draws its own sidebar. Placed naively that sidebar lands
-  // BELOW the vault's tab bar while the tab bar slides left to the window
-  // edge — so opening a scope of work moved every tab and the settings menu
-  // several hundred pixels, and the editor's sidebar started halfway down the
-  // window while the vault's own sidebar starts at the top.
-  //
-  // Instead the shell reserves a left column exactly as wide as the hosted
-  // editor's sidebar and lets the editor span the full height, with the tab
-  // bar occupying only the column beside it. The tab bar keeps the x-offset
-  // it has next to the vault sidebar, and the hosted sidebar reaches the top.
-  //
-  // The width is DECLARED, not measured. The editor that owns the sidebar
-  // defines `--sow-rail-w` on this wrapper from its own stylesheet — by
-  // breakpoint, and as 0 while it mirrors a collapsed rail onto
-  // `data-sow-rail="closed"` — so this column can only ever disagree with the
-  // rail by being read at the wrong moment, which CSS cannot do. (Measuring it
-  // from here with a ResizeObserver on the lazily-mounted subtree read 0 in
-  // the live app.) With no such editor mounted the variable is undefined and
-  // the fallback of 0 is the truthful width.
+  // A hosted editor draws its own sidebar; `VaultShell` gives it the left
+  // column and the top row (see `sidebarHidden` there).
+  // The shell's host bar. The shell measures it for the hosted editor's top
+  // row (`--vault-topbar-h`); here its width decides the tab labels.
   const topBarRef = useRef<HTMLDivElement>(null);
-  // Published to the hosted editor as `--vault-topbar-h` so its grid can
-  // reserve a matching top row. Our own element, so measuring it is safe.
-  const topBarHeight = useMeasuredHeight(topBarRef, editorOwnsSidebar);
   // The bar's width decides whether the tabs keep their labels (menu-bar.ts): in a narrow window the actions
   // (help, New, settings) must stay on screen, so the tabs give way — icons first, then a sideways scroll.
   const [barWidth, setBarWidth] = useState(0);
@@ -460,233 +445,190 @@ export function DriveExplorer({ children }: EditorProps) {
   ];
 
   return (
-    <div className="flex h-full relative" {...fileDrop.rootProps}>
-      {fileDrop.active && (
-        <FileDropOverlay
-          ready={convert.configured}
-          settled={convert.settled}
-          formats={convert.formats}
-          maxUploadBytes={convert.maxUploadBytes}
-          inBatch={
-            intake.files.filter((f) => f.publishedIds === undefined).length
-          }
-          onLeave={fileDrop.onLeave}
-        />
-      )}
-      {!editorOwnsSidebar && (
+    <VaultShell
+      title={vaultName}
+      onTitleClick={() => setSelectedNode(undefined)}
+      sidebarHidden={editorOwnsSidebar}
+      sidebarWidth={sidebarWidth}
+      settingsOpen={settingsOpen}
+      barRef={topBarRef}
+      fileDrop={{
+        rootProps: fileDrop.rootProps,
+        overlay: fileDrop.active && (
+          <FileDropOverlay
+            ready={convert.configured}
+            settled={convert.settled}
+            formats={convert.formats}
+            maxUploadBytes={convert.maxUploadBytes}
+            inBatch={
+              intake.files.filter((f) => f.publishedIds === undefined).length
+            }
+            onLeave={fileDrop.onLeave}
+          />
+        ),
+      }}
+      sidebar={
         <VaultSidebar
           notes={notes}
           mocs={mocs}
           isLoading={notesLoading}
           graphFocus={graphFocus}
           onClearGraphFocus={handleClearGraphFocus}
+          onWidthChange={setSidebarWidth}
         />
-      )}
-
-      <div
-        data-vault-hosts-editor={editorOwnsSidebar ? "" : undefined}
-        className={
-          editorOwnsSidebar
-            ? "grid flex-1 overflow-hidden"
-            : "flex flex-1 flex-col overflow-hidden"
-        }
-        style={
-          editorOwnsSidebar
-            ? ({
-                // Defined by the hosted editor's stylesheet; see above.
-                gridTemplateColumns: "var(--sow-rail-w, 0px) minmax(0, 1fr)",
-                gridTemplateRows: "auto minmax(0, 1fr)",
-                // Read by the hosted editor's stylesheet, which reserves a
-                // matching top row so its canvas starts below the bar.
-                "--vault-topbar-h": `${topBarHeight}px`,
-              } as CSSProperties)
-            : undefined
-        }
-      >
-        {/* Top bar */}
-        <div
-          ref={topBarRef}
-          className="flex items-center justify-between gap-2 px-4 py-2"
-          style={{
-            borderBottom: "1px solid var(--bai-border)",
-            backgroundColor: "var(--bai-surface)",
-            // Column 2 only, so the hosted sidebar in column 1 runs to the
-            // top. z-index 5 sits within the hosted editor's scale: over
-            // sticky table headers (1-4), under drawer handles (6) so the
-            // rail toggle can overhang the bar. While the settings menu is
-            // open the bar jumps above that scale so the dropdown is not
-            // trapped under the editor's close/handle layer.
-            ...(editorOwnsSidebar
-              ? { gridColumn: 2, gridRow: 1, zIndex: settingsOpen ? 40 : 5 }
-              : null),
-          }}
-        >
-          <div ref={tabRowRef} className="kv-tab-row flex min-w-0 flex-1 items-center gap-1 overflow-x-auto">
-            {TABS.map((tab) => (
-              <button
-                key={tab.key}
-                type="button"
-                onClick={() => handleSwitchView(tab.key)}
-                aria-label={tab.label}
-                title={compact ? tab.label : undefined}
-                aria-current={viewMode === tab.key && !showDocumentEditor ? "page" : undefined}
-                className={`flex shrink-0 items-center gap-1.5 whitespace-nowrap rounded-md ${compact ? "px-2" : "px-3"} py-1.5 text-xs font-medium transition-colors`}
-                style={{
-                  backgroundColor:
-                    viewMode === tab.key && !showDocumentEditor
-                      ? "var(--bai-hover)"
-                      : "transparent",
-                  color:
-                    viewMode === tab.key && !showDocumentEditor
-                      ? "var(--bai-accent)"
-                      : "var(--bai-text-tertiary)",
-                }}
-              >
-                {tab.icon}
-                {!compact && tab.label}
-                {tab.badge !== undefined && (
-                  <span
-                    className="rounded-full px-1.5 py-0.5 text-[10px]"
-                    title={
-                      tab.badgeTone === "warn"
-                        ? `${tab.badge} file${tab.badge === 1 ? "" : "s"} waiting for your review`
-                        : undefined
-                    }
-                    style={
-                      tab.badgeTone === "warn"
-                        ? {
-                            backgroundColor: "var(--bai-warn)",
-                            color: "var(--bai-accent-text)",
-                            fontWeight: 600,
-                          }
-                        : {
-                            backgroundColor: "var(--bai-hover)",
-                            color: "var(--bai-text-muted)",
-                          }
-                    }
-                  >
-                    {tab.badge}
-                  </span>
-                )}
-              </button>
-            ))}
-            {showDocumentEditor && (
-              <span
-                className={`flex shrink-0 items-center gap-1.5 whitespace-nowrap rounded-md ${compact ? "px-2" : "px-3"} py-1.5 text-xs font-medium`}
-                title={compact ? "Editing" : undefined}
-                style={{
-                  backgroundColor: "var(--bai-hover)",
-                  color: "var(--bai-accent)",
-                }}
-              >
-                <svg
-                  className="h-4 w-4"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="2"
-                >
-                  <path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7" />
-                  <path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z" />
-                </svg>
-                {!compact && "Editing"}
-              </span>
-            )}
-          </div>
-          <div className="flex shrink-0 items-center gap-3">
-            <GettingStartedButton />
-            <CreateMenu />
-            <SettingsMenu
-              activeView={viewMode}
-              isActive={!showDocumentEditor}
-              open={settingsOpen}
-              onOpenChange={setSettingsOpen}
-              onSelect={handleSwitchView}
-            />
-          </div>
-        </div>
-
-        {/* Content */}
-        <div
-          className={
-            editorOwnsSidebar
-              ? "relative min-w-0 overflow-hidden"
-              : "flex-1 overflow-auto"
-          }
-          style={
-            // Deliberately no z-index: it would open a stacking context and
-            // cap everything inside below the bar, toggle included.
-            editorOwnsSidebar
-              ? { gridColumn: "1 / -1", gridRow: "1 / -1" }
-              : undefined
-          }
-        >
-          {showDocumentEditor ? (
-            <div className="h-full">
-              {/*
-                The editor pane waits and fails on its own. `children` is
-                Connect's DocumentEditorContainer, whose useSelectedDocument()
-                suspends while an uncached document is fetched and throws
-                "There is no selected document" in a sync race. Without these
-                two, the nearest catchers were Connect's Suspense around the
-                whole app and the DebugErrorBoundary around this component —
-                so opening a document replaced the entire vault with a loader
-                and then mounted it again from scratch, taking the sidebar's
-                tab, search, open tree folders and width with it.
-
-                Keyed by document so a failure in one does not stick to the
-                next one opened from the (still usable) sidebar.
-              */}
-              <DebugErrorBoundary
-                key={selectedNode?.id}
-                retryLabel="Opening document…"
-              >
-                <Suspense
-                  fallback={
-                    <div className="flex h-full">
-                      <VaultLoader label="Opening document…" />
-                    </div>
+      }
+      tabs={
+        <div ref={tabRowRef} className="kv-tab-row flex min-w-0 flex-1 items-center gap-1 overflow-x-auto">
+          {TABS.map((tab) => (
+            <button
+              key={tab.key}
+              type="button"
+              onClick={() => handleSwitchView(tab.key)}
+              aria-label={tab.label}
+              title={compact ? tab.label : undefined}
+              aria-current={viewMode === tab.key && !showDocumentEditor ? "page" : undefined}
+              className={`flex shrink-0 items-center gap-1.5 whitespace-nowrap rounded-md ${compact ? "px-2" : "px-3"} py-1.5 text-xs font-medium transition-colors`}
+              style={{
+                backgroundColor:
+                  viewMode === tab.key && !showDocumentEditor
+                    ? "var(--bai-hover)"
+                    : "transparent",
+                color:
+                  viewMode === tab.key && !showDocumentEditor
+                    ? "var(--bai-accent)"
+                    : "var(--bai-text-tertiary)",
+              }}
+            >
+              {tab.icon}
+              {!compact && tab.label}
+              {tab.badge !== undefined && (
+                <span
+                  className="rounded-full px-1.5 py-0.5 text-[10px]"
+                  title={
+                    tab.badgeTone === "warn"
+                      ? `${tab.badge} file${tab.badge === 1 ? "" : "s"} waiting for your review`
+                      : undefined
+                  }
+                  style={
+                    tab.badgeTone === "warn"
+                      ? {
+                          backgroundColor: "var(--bai-warn)",
+                          color: "var(--bai-accent-text)",
+                          fontWeight: 600,
+                        }
+                      : {
+                          backgroundColor: "var(--bai-hover)",
+                          color: "var(--bai-text-muted)",
+                        }
                   }
                 >
-                  {children}
-                </Suspense>
-              </DebugErrorBoundary>
-            </div>
-          ) : viewMode === "graph" ? (
-            <GraphView
-              notes={notes}
-              mocs={mocs}
-              tensions={tensions}
-              onGraphFocusChange={handleGraphFocusChange}
-              clearFocusNonce={graphClearNonce}
-              layoutKey={driveId ?? undefined}
-            />
-          ) : viewMode === "chat" ? (
-            <ChatView initialDraft={chatReturnDraft} notes={notes} />
-          ) : viewMode === "search" ? (
-            <SearchView isLoading={notesLoading} />
-          ) : viewMode === "activity" ? (
-            <ActivityView />
-          ) : viewMode === "sources" ? (
-            <SourceList
-              intake={intake}
-              convert={convert}
-              homeSignal={sourcesHome}
-            />
-          ) : viewMode === "scope" ? (
-            <ScopeOfWorkView />
-          ) : viewMode === "projects" ? (
-            <ProjectsView />
-          ) : viewMode === "access" ? (
-            <AccessView />
-          ) : viewMode === "health" ? (
-            <HealthDashboard />
-          ) : (
-            <NoteList notes={notes} isLoading={notesLoading} />
+                  {tab.badge}
+                </span>
+              )}
+            </button>
+          ))}
+          {showDocumentEditor && (
+            <span
+              className={`flex shrink-0 items-center gap-1.5 whitespace-nowrap rounded-md ${compact ? "px-2" : "px-3"} py-1.5 text-xs font-medium`}
+              title={compact ? "Editing" : undefined}
+              style={{
+                backgroundColor: "var(--bai-hover)",
+                color: "var(--bai-accent)",
+              }}
+            >
+              <svg
+                className="h-4 w-4"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+              >
+                <path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7" />
+                <path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z" />
+              </svg>
+              {!compact && "Editing"}
+            </span>
           )}
         </div>
-      </div>
-    </div>
+      }
+      barControls={
+        <>
+          <GettingStartedButton />
+          <CreateMenu />
+          <SettingsMenu
+            activeView={viewMode}
+            isActive={!showDocumentEditor}
+            open={settingsOpen}
+            onOpenChange={setSettingsOpen}
+            onSelect={handleSwitchView}
+          />
+        </>
+      }
+    >
+      {showDocumentEditor ? (
+        <div className="h-full">
+          {/*
+            The editor pane waits and fails on its own. `children` is
+            Connect's DocumentEditorContainer, whose useSelectedDocument()
+            suspends while an uncached document is fetched and throws
+            "There is no selected document" in a sync race. Without these
+            two, the nearest catchers were Connect's Suspense around the
+            whole app and the DebugErrorBoundary around this component —
+            so opening a document replaced the entire vault with a loader
+            and then mounted it again from scratch, taking the sidebar's
+            tab, search, open tree folders and width with it.
+
+            Keyed by document so a failure in one does not stick to the
+            next one opened from the (still usable) sidebar.
+          */}
+          <DebugErrorBoundary
+            key={selectedNode?.id}
+            retryLabel="Opening document…"
+          >
+            <Suspense
+              fallback={
+                <div className="flex h-full">
+                  <VaultLoader label="Opening document…" />
+                </div>
+              }
+            >
+              {children}
+            </Suspense>
+          </DebugErrorBoundary>
+        </div>
+      ) : viewMode === "graph" ? (
+        <GraphView
+          notes={notes}
+          mocs={mocs}
+          tensions={tensions}
+          onGraphFocusChange={handleGraphFocusChange}
+          clearFocusNonce={graphClearNonce}
+          layoutKey={driveId ?? undefined}
+        />
+      ) : viewMode === "chat" ? (
+        <ChatView initialDraft={chatReturnDraft} notes={notes} />
+      ) : viewMode === "search" ? (
+        <SearchView isLoading={notesLoading} />
+      ) : viewMode === "activity" ? (
+        <ActivityView />
+      ) : viewMode === "sources" ? (
+        <SourceList
+          intake={intake}
+          convert={convert}
+          homeSignal={sourcesHome}
+        />
+      ) : viewMode === "scope" ? (
+        <ScopeOfWorkView />
+      ) : viewMode === "projects" ? (
+        <ProjectsView />
+      ) : viewMode === "access" ? (
+        <AccessView />
+      ) : viewMode === "health" ? (
+        <HealthDashboard />
+      ) : (
+        <NoteList notes={notes} isLoading={notesLoading} />
+      )}
+    </VaultShell>
   );
 }
 

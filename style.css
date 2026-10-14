@@ -619,3 +619,7 @@ html[data-bai-toast-theme] .Toastify__bounce-exit--bottom-center {
 .bai-theme .kv-tab-row::-webkit-scrollbar {
   display: none;
 }
+
+/* The shell frame (VaultShell). */
+@media (min-width: 900px) and (max-width: 1179px) { .vault-frame { --vault-sidebar-w: 220px; } }
+.vault-frame :is(.vault-hostbar, .vault-sidebar, .vault-card) { box-shadow: var(--v-raise); }

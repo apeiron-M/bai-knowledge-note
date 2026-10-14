@@ -7,7 +7,6 @@ import {
 } from "@powerhousedao/reactor-browser";
 import { prefetchOnHover } from "../lib/prefetch.js";
 import { ancestorFolderIds } from "../lib/folder-path.js";
-import { useVaultName } from "../hooks/use-vault-name.js";
 import type { Node } from "@powerhousedao/shared/document-drive";
 import type { KnowledgeNoteInfo } from "../hooks/use-knowledge-notes.js";
 import type { MocInfo } from "../hooks/use-knowledge-mocs.js";
@@ -26,6 +25,12 @@ type VaultSidebarProps = {
   /** When set, sidebar content is replaced by the graph highlight neighborhood. */
   graphFocus?: GraphFocus | null;
   onClearGraphFocus?: () => void;
+  /**
+   * The sidebar owns its width and tells the shell, whose first column
+   * follows it. `undefined` means "no width chosen": the shell's own default
+   * applies. 0 while collapsed, so the column closes with the sidebar.
+   */
+  onWidthChange?: (px: number | undefined) => void;
 };
 
 const STATUS_ORDER = ["CANONICAL", "IN_REVIEW", "DRAFT", "ARCHIVED"] as const;
@@ -58,7 +63,6 @@ const SIDEBAR_NOTE_TYPE_COLORS: Record<string, { bg: string; color: string }> = 
   WORKFLOW: { bg: "rgba(59,130,246,0.15)", color: "rgba(96,165,250,1)" },
 };
 const MAX_WIDTH = 480;
-const DEFAULT_WIDTH = 256;
 
 /**
  * The note tree while a graph selection shows its connections. Where the
@@ -81,6 +85,7 @@ export function VaultSidebar({
   isLoading = false,
   graphFocus = null,
   onClearGraphFocus,
+  onWidthChange,
 }: VaultSidebarProps) {
   const [search, setSearch] = useState("");
   const [section, setSection] = useState<SidebarSection>("notes");
@@ -90,8 +95,14 @@ export function VaultSidebar({
     ARCHIVED: true,
   });
   const [sidebarOpen, setSidebarOpen] = useState(true);
-  const [sidebarWidth, setSidebarWidth] = useState(DEFAULT_WIDTH);
+  // Null until the user drags: the shell's column (and its breakpoints) set
+  // the width until then.
+  const [sidebarWidth, setSidebarWidth] = useState<number | null>(null);
+  const rootRef = useRef<HTMLDivElement>(null);
   const resizing = useRef(false);
+  useLayoutEffect(() => {
+    onWidthChange?.(sidebarOpen ? (sidebarWidth ?? undefined) : 0);
+  }, [onWidthChange, sidebarOpen, sidebarWidth]);
   // File nodes only — no doc state fetch. `useDocumentsInSelectedDrive`
   // would suspend-and-throw on any orphan id missing from the cache,
   // freezing the whole drive editor in retry-loops.
@@ -110,7 +121,8 @@ export function VaultSidebar({
       e.preventDefault();
       resizing.current = true;
       const startX = e.clientX;
-      const startWidth = sidebarWidth;
+      const startWidth =
+        rootRef.current?.getBoundingClientRect().width ?? MIN_WIDTH;
 
       function onMouseMove(ev: MouseEvent) {
         if (!resizing.current) return;
@@ -128,10 +140,8 @@ export function VaultSidebar({
       document.addEventListener("mousemove", onMouseMove);
       document.addEventListener("mouseup", onMouseUp);
     },
-    [sidebarWidth],
+    [],
   );
-
-  const vaultName = useVaultName();
 
   const observations = useMemo(() => {
     return fileNodes
@@ -673,14 +683,14 @@ export function VaultSidebar({
   // against it rather than some ancestor. A translucent background keeps
   // the glyph legible over whatever it floats above.
   //
-  // `top-[31px]` straddles the top bar's bottom border instead of sitting
-  // inside the bar (where it overlapped the Search tab). The wrapper and
-  // DriveExplorer's top bar are siblings in the same flex row, so they
-  // share a y origin: the bar is 44px tall (`py-2` = 8+8, around a
-  // `py-1.5 text-xs` tab of 6+16+6 = 28) and its border sits at y=44-45.
-  // This button is 26px tall (16px icon + `p-1` 4+4 + 1px border each
-  // side), so 44.5 - 13 = ~31 centres it on that line. Revisit if the top
-  // bar's padding, the tab size, or this button's own padding changes.
+  // `-top-4` straddles the host bar's bottom border instead of sitting inside
+  // the bar (where it overlapped the Search tab). The wrapper is the sidebar
+  // cell, which starts at that border, so a negative offset lifts the button
+  // back across it: the bar is ~45px tall (`py-2` = 8+8, around a `py-1.5
+  // text-xs` tab of 6+16+6 = 28, plus the 1px border) and this button is 26px
+  // tall, so the 28px it used to sit at from the window top is 28 - 45 = ~-16.
+  // Revisit if the bar's padding, the tab size, or this button's own padding
+  // changes.
   //
   // Round (`rounded-full`) rather than a rounded square: the circle pulls
   // its corners away from the adjacent Search tab, so the two read as
@@ -691,7 +701,7 @@ export function VaultSidebar({
         <button
           type="button"
           onClick={() => setSidebarOpen(true)}
-          className="sidebar-collapse-btn absolute left-0.09 top-[28px] z-20 rounded-full p-1 backdrop-blur transition-colors"
+          className="sidebar-collapse-btn absolute left-0.09 -top-4 z-20 rounded-full p-1 backdrop-blur transition-colors"
           style={{
             color: "var(--bai-text-muted)",
             backgroundColor: "var(--bai-surface)",
@@ -715,9 +725,10 @@ export function VaultSidebar({
 
   return (
     <div
-      className="relative flex h-full shrink-0 flex-col border-r"
+      ref={rootRef}
+      className="vault-sidebar relative flex h-full flex-col border-r"
       style={{
-        width: sidebarWidth,
+        width: "100%",
         backgroundColor: "var(--bai-deep)",
         borderColor: "var(--bai-border)",
       }}
@@ -750,15 +761,6 @@ export function VaultSidebar({
             >
               <path d="M11 17l-5-5 5-5M18 17l-5-5 5-5" />
             </svg>
-          </button>
-          <button
-            type="button"
-            onClick={() => setSelectedNode(undefined)}
-            className="sidebar-vault-name flex-1 text-left text-sm font-semibold transition-colors truncate min-w-0"
-            style={{ color: "var(--bai-text)" }}
-            title="Back to vault overview"
-          >
-            {vaultName}
           </button>
         </div>
       </div>
@@ -1012,9 +1014,6 @@ export function VaultSidebar({
       <style aria-hidden="true">{`
         .sidebar-collapse-btn:hover {
           background-color: var(--bai-hover);
-          color: var(--bai-accent);
-        }
-        .sidebar-vault-name:hover {
           color: var(--bai-accent);
         }
         .sidebar-search-input::placeholder {
