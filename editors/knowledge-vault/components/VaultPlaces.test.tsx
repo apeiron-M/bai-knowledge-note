@@ -2,10 +2,7 @@ import { renderToStaticMarkup } from "react-dom/server";
 import { describe, expect, it } from "vitest";
 import { buildPlaces, PLACE_VIEW, RENDERED_VIEWS } from "./DriveExplorer.js";
 import { PLACE_SECTION, VaultPlaces } from "./VaultPlaces.js";
-import {
-  PLACE_BODY_SECTION,
-  sidebarBody,
-} from "./VaultSidebar.js";
+import { sidebarBody } from "./VaultSidebar.js";
 
 describe("VaultPlaces", () => {
   it("lists the places in the design's order, with the vault's words", () => {
@@ -115,20 +112,11 @@ describe("VaultPlaces", () => {
     }
   });
 
-  it("decides the sidebar body in one place: graph, then tree, then place", () => {
-    const focus = { selectedId: "n1", focusedIds: [] };
-    expect(sidebarBody(focus, true, "notes")).toBe("connections");
-    expect(sidebarBody(null, true, "notes")).toBe("folders");
-    expect(sidebarBody(null, true, "contradictions")).toBe("folders");
-    expect(sidebarBody(null, false, "notes")).toBe("notes");
-    expect(sidebarBody(null, false, "ask")).toBe("none");
-  });
-
-  it("draws the folders body while the tree is open", () => {
-    expect(PLACE_BODY_SECTION[sidebarBody(null, true, "topics")]).toBe(
-      "folders",
-    );
-    expect(PLACE_BODY_SECTION[sidebarBody(null, false, "topics")]).toBe("mocs");
+  it("decides the sidebar body in one place: context, then tree, then the places alone", () => {
+    expect(sidebarBody(true, true)).toBe("context");
+    expect(sidebarBody(true, false)).toBe("context");
+    expect(sidebarBody(false, true)).toBe("folders");
+    expect(sidebarBody(false, false)).toBe("places");
   });
 
   it("keeps the drive tree reachable from the sidebar", () => {

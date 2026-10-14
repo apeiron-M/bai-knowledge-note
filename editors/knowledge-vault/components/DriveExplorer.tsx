@@ -14,10 +14,12 @@ import {
   isFileNodeKind,
   setSelectedNode,
   useFileNodesInSelectedDrive,
+  useNodesInSelectedDrive,
   useSelectedDriveId,
   useSelectedNode,
 } from "@powerhousedao/reactor-browser";
 import { VaultSidebar } from "./VaultSidebar.js";
+import { buildSidebarContext } from "../lib/sidebar-context.js";
 import { VaultShell } from "./VaultShell.js";
 import type { VaultPlace, VaultPlaceId } from "./VaultPlaces.js";
 import { DebugErrorBoundary } from "./DebugErrorBoundary.js";
@@ -216,6 +218,8 @@ export function DriveExplorer({ children }: EditorProps) {
   // re-`filter()`s every render, which invalidated `allFiles` →
   // `projectSpecs` → the whole scope-of-work document fetch below.
   const fileNodes = useStableList(useFileNodesInSelectedDrive(), sameDriveNode);
+  // Every node, folders included: a source folder's list is titled by its name.
+  const allNodes = useNodesInSelectedDrive();
   // Tree-only count, like sources: no document reads just to draw a badge.
   const sowCount = fileNodes.filter(
     (n) => n.documentType === "powerhouse/scopeofwork",
@@ -426,6 +430,32 @@ export function DriveExplorer({ children }: EditorProps) {
     if (view) handleSwitchView(view);
   }
 
+  const openDocument = useCallback((id: string) => setSelectedNode(id), []);
+  const closeDocument = useCallback(() => setSelectedNode(undefined), []);
+  const sidebarContext = useMemo(
+    () =>
+      buildSidebarContext({
+        nodes: allNodes ?? [],
+        notes,
+        mocs,
+        selected: selectedNode,
+        graphFocus,
+        open: openDocument,
+        close: closeDocument,
+        clearGraph: handleClearGraphFocus,
+      }),
+    [
+      allNodes,
+      notes,
+      mocs,
+      selectedNode,
+      graphFocus,
+      openDocument,
+      closeDocument,
+      handleClearGraphFocus,
+    ],
+  );
+
   const TABS: {
     key: ViewMode;
     label: string;
@@ -580,10 +610,8 @@ export function DriveExplorer({ children }: EditorProps) {
       sidebar={
         <VaultSidebar
           notes={notes}
-          mocs={mocs}
           isLoading={notesLoading}
-          graphFocus={graphFocus}
-          onClearGraphFocus={handleClearGraphFocus}
+          context={sidebarContext}
           onWidthChange={setSidebarWidth}
           place={place}
           places={places}

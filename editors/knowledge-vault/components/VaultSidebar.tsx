@@ -1,112 +1,71 @@
 import { useState, useMemo, useCallback, useRef, useEffect, useLayoutEffect } from "react";
 import {
-  isFileNodeKind,
   setSelectedNode,
   useNodesInSelectedDrive,
   useSelectedNode,
 } from "@powerhousedao/reactor-browser";
-import { prefetchOnHover } from "../lib/prefetch.js";
 import { ancestorFolderIds } from "../lib/folder-path.js";
 import type { Node } from "@powerhousedao/shared/document-drive";
 import type { KnowledgeNoteInfo } from "../hooks/use-knowledge-notes.js";
-import type { MocInfo } from "../hooks/use-knowledge-mocs.js";
-import type { GraphFocus } from "./GraphView.js";
-import { LoadingLine, SidebarSkeleton, Spinner } from "./LoadingStates.js";
+import { LoadingLine, Spinner } from "./LoadingStates.js";
 import {
-  PLACE_SECTION,
   VaultPlaces,
   type VaultPlace,
   type VaultPlaceId,
 } from "./VaultPlaces.js";
+import {
+  altStepDelta,
+  stepId,
+  VaultContextList,
+  type VaultContextListProps,
+} from "./VaultContextList.js";
 
 type VaultSidebarProps = {
+  /** Only to tell a background refresh from a first load. */
   notes: KnowledgeNoteInfo[];
-  mocs: MocInfo[];
   /**
    * True until the first vault metadata fetch settles. Drives the
    * skeletons below: without it the sidebar renders zero-count groups
    * and "nothing here" copy while the data is still in flight.
    */
   isLoading?: boolean;
-  /** When set, sidebar content is replaced by the graph highlight neighborhood. */
-  graphFocus?: GraphFocus | null;
-  onClearGraphFocus?: () => void;
+  /**
+   * The list of what you are in (a source folder, a topic map, a graph
+   * selection). While it is set it replaces the places rail and the tree.
+   */
+  context?: VaultContextListProps;
   /**
    * The sidebar owns its width and tells the shell, whose first column
    * follows it. `undefined` means "no width chosen": the shell's own default
    * applies. 0 while collapsed, so the column closes with the sidebar.
    */
   onWidthChange?: (px: number | undefined) => void;
-  /** The place the sidebar is showing; the body below the list follows it. */
+  /** The place the sidebar is showing. */
   place?: VaultPlaceId;
   places?: VaultPlace[];
   onSelectPlace?: (id: VaultPlaceId) => void;
   onOpenSettings?: () => void;
 };
 
-const STATUS_ORDER = ["CANONICAL", "IN_REVIEW", "DRAFT", "ARCHIVED"] as const;
-const STATUS_COLORS: Record<string, string> = {
-  DRAFT: "bg-amber-400",
-  IN_REVIEW: "bg-blue-400",
-  CANONICAL: "bg-emerald-400",
-  ARCHIVED: "bg-gray-500",
-};
-const STATUS_LABELS: Record<string, string> = {
-  DRAFT: "Drafts",
-  IN_REVIEW: "In Review",
-  CANONICAL: "Canonical",
-  ARCHIVED: "Archived",
-};
-
-type SidebarSection = "notes" | "mocs" | "signals" | "folders";
-
-/** What the sidebar body can be: a place's body, the tree, or connections. */
-type SidebarBody =
-  | (typeof PLACE_SECTION)[VaultPlaceId]
-  | "folders"
-  | "connections";
-
-/** The bodies that are drawn by the section code below. */
-export const PLACE_BODY_SECTION: Partial<Record<SidebarBody, SidebarSection>> =
-  {
-    notes: "notes",
-    topics: "mocs",
-    contradictions: "signals",
-    folders: "folders",
-  };
+/** What the sidebar body shows: a context's list, the drive tree, or nothing but the places. */
+export type SidebarBody = "context" | "folders" | "places";
 
 /**
- * The one place that decides what the sidebar body shows. A graph selection's
- * connections win, then the drive tree while it is open, then the place's body.
+ * The one place that decides what the sidebar body shows. A context wins,
+ * then the drive tree while it is open, then the places alone.
  */
-export function sidebarBody(
-  graphFocus: GraphFocus | null,
-  treeOpen: boolean,
-  place: VaultPlaceId,
-): SidebarBody {
-  return graphFocus ? "connections" : treeOpen ? "folders" : PLACE_SECTION[place];
+export function sidebarBody(hasContext: boolean, treeOpen: boolean): SidebarBody {
+  return hasContext ? "context" : treeOpen ? "folders" : "places";
 }
 
 const MIN_WIDTH = 200;
-
-const SIDEBAR_NOTE_TYPE_COLORS: Record<string, { bg: string; color: string }> = {
-  CONCEPT: { bg: "rgba(139,92,246,0.15)", color: "rgba(167,139,250,1)" },
-  DECISION: { bg: "rgba(239,68,68,0.12)", color: "rgba(248,113,113,1)" },
-  PATTERN: { bg: "rgba(16,185,129,0.15)", color: "rgba(52,211,153,1)" },
-  PROCEDURE: { bg: "rgba(59,130,246,0.15)", color: "rgba(96,165,250,1)" },
-  REFERENCE: { bg: "rgba(245,158,11,0.15)", color: "rgba(252,211,77,1)" },
-  BUG_PATTERN: { bg: "rgba(239,68,68,0.15)", color: "rgba(248,113,113,1)" },
-  OBSERVATION: { bg: "rgba(244,114,182,0.15)", color: "rgba(243,156,185,1)" },
-  INTEGRATION: { bg: "rgba(16,185,129,0.15)", color: "rgba(52,211,153,1)" },
-  WORKFLOW: { bg: "rgba(59,130,246,0.15)", color: "rgba(96,165,250,1)" },
-};
 const MAX_WIDTH = 480;
 
 /**
- * The note tree while a graph selection shows its connections. Where the
- * browser has `content-visibility` (Chrome/Edge 85+, Firefox 125+, Safari
- * 18+) its rows keep their rendering state, so bringing them back costs
- * nothing; elsewhere it is simply not displayed.
+ * The note tree while a context shows its list. Where the browser has
+ * `content-visibility` (Chrome/Edge 85+, Firefox 125+, Safari 18+) its rows
+ * keep their rendering state, so bringing them back costs nothing; elsewhere
+ * it is simply not displayed.
  */
 const HIDDEN_TREE_STYLE =
   typeof CSS !== "undefined" && CSS.supports("content-visibility", "hidden")
@@ -119,10 +78,8 @@ const SELECTED_ROW_STYLE = {
 
 export function VaultSidebar({
   notes,
-  mocs,
   isLoading = false,
-  graphFocus = null,
-  onClearGraphFocus,
+  context,
   onWidthChange,
   place = "notes",
   places = [],
@@ -130,13 +87,9 @@ export function VaultSidebar({
   onOpenSettings,
 }: VaultSidebarProps) {
   const [search, setSearch] = useState("");
-  const [section, setSection] = useState<SidebarSection>("notes");
   const [treeOpen, setTreeOpen] = useState(false);
   const selectedNode = useSelectedNode();
   const selectedId = selectedNode?.id;
-  const [collapsed, setCollapsed] = useState<Record<string, boolean>>({
-    ARCHIVED: true,
-  });
   const [sidebarOpen, setSidebarOpen] = useState(true);
   // Null until the user drags: the shell's column (and its breakpoints) set
   // the width until then.
@@ -150,14 +103,6 @@ export function VaultSidebar({
   // would suspend-and-throw on any orphan id missing from the cache,
   // freezing the whole drive editor in retry-loops.
   const allNodes: Node[] | undefined = useNodesInSelectedDrive();
-  const fileNodes = useMemo(
-    () =>
-      (allNodes ?? []).filter(
-        (n): n is Node & { kind: "file"; documentType: string } =>
-          isFileNodeKind(n),
-      ),
-    [allNodes],
-  );
 
   const handleMouseDown = useCallback(
     (e: React.MouseEvent) => {
@@ -186,540 +131,76 @@ export function VaultSidebar({
     [],
   );
 
-  const observations = useMemo(() => {
-    return fileNodes
-      .filter((n) => n.documentType === "bai/observation")
-      .map((n) => ({
-        id: n.id,
-        title: n.name,
-        category: null as string | null,
-        status: "PENDING" as const,
-      }));
-  }, [fileNodes]);
-
-  const tensions = useMemo(() => {
-    return fileNodes
-      .filter((n) => n.documentType === "bai/tension")
-      .map((n) => ({
-        id: n.id,
-        title: n.name,
-        status: "OPEN" as const,
-      }));
-  }, [fileNodes]);
-
   const q = search.trim().toLowerCase();
 
-  const body = sidebarBody(graphFocus, treeOpen, place);
-  const showConnections = body === "connections";
-  const shownSection =
-    body === "connections" ? undefined : PLACE_BODY_SECTION[body];
+  const hasContext = context !== undefined;
+  const body = sidebarBody(hasContext, treeOpen);
 
-  const filtered = useMemo(() => {
-    if (!q) return notes;
-    return notes.filter(
-      (n) =>
-        (n.title ?? n.name).toLowerCase().includes(q) ||
-        (n.noteType ?? "").toLowerCase().includes(q) ||
-        n.topics.some((t) => t.name.toLowerCase().includes(q)),
-    );
-  }, [notes, q]);
-
-  const filteredMocs = useMemo(() => {
-    if (!q) return mocs;
-    return mocs.filter(
-      (m) =>
-        m.title.toLowerCase().includes(q) ||
-        (m.tier ?? "").toLowerCase().includes(q),
-    );
-  }, [mocs, q]);
-
-  const filteredObservations = useMemo(() => {
-    if (!q) return observations;
-    return observations.filter((o) => o.title.toLowerCase().includes(q));
-  }, [observations, q]);
-
-  const filteredTensions = useMemo(() => {
-    if (!q) return tensions;
-    return tensions.filter((t) => t.title.toLowerCase().includes(q));
-  }, [tensions, q]);
-
-  const grouped = useMemo(() => {
-    const groups: Record<string, KnowledgeNoteInfo[]> = {};
-    for (const s of STATUS_ORDER) groups[s] = [];
-    for (const note of filtered) {
-      const status = note.status ?? "DRAFT";
-      (groups[status] ?? groups.DRAFT).push(note);
-    }
-    return groups;
-  }, [filtered]);
-
+  // Alt+ArrowUp / Alt+ArrowDown hop along the context's list, unless the
+  // reader is typing somewhere.
   useEffect(() => {
-    if (!selectedId || !selectedNode || !isFileNodeKind(selectedNode)) return;
-    const docType = selectedNode.documentType;
-    if (docType === "bai/knowledge-note") setSection("notes");
-    else if (docType === "bai/moc") setSection("mocs");
-    else if (docType === "bai/observation" || docType === "bai/tension")
-      setSection("signals");
-    else setSection("folders");
-    const note = notes.find((n) => n.id === selectedId);
-    if (note) {
-      const status = note.status ?? "DRAFT";
-      setCollapsed((c) => (c[status] ? { ...c, [status]: false } : c));
-    }
-  }, [selectedId, selectedNode, notes]);
+    const ctx = context;
+    if (!ctx) return;
+    const onKey = (e: KeyboardEvent) => {
+      const target = e.target;
+      const typing =
+        target instanceof HTMLElement &&
+        (target.isContentEditable ||
+          target.tagName === "INPUT" ||
+          target.tagName === "TEXTAREA");
+      const delta = altStepDelta(e.key, e.altKey, typing);
+      if (delta === undefined) return;
+      const next = stepId(
+        ctx.items.map((item) => item.id),
+        ctx.activeId,
+        delta,
+      );
+      if (next === undefined) return;
+      e.preventDefault();
+      ctx.onOpen(next);
+    };
+    document.addEventListener("keydown", onKey);
+    return () => document.removeEventListener("keydown", onKey);
+  }, [context]);
 
   useEffect(() => {
     if (!selectedId) return;
     document
       .querySelector("[data-sidebar-active=\"true\"]")
       ?.scrollIntoView({ block: "nearest" });
-  }, [selectedId, section]);
+  }, [selectedId, body]);
 
   // A loading state is only honest while there is nothing to show. Once
   // any data has arrived — including a cached snapshot that the live fetch
   // will replace — we render it and show a quieter refresh hint instead.
-  const showNotesSkeleton = isLoading && notes.length === 0;
-  const showMocsSkeleton = isLoading && mocs.length === 0;
-  const showSignalsSkeleton =
-    isLoading && observations.length === 0 && tensions.length === 0;
   const showTreeSkeleton = isLoading && (allNodes?.length ?? 0) === 0;
   const isRefreshing = isLoading && notes.length > 0;
 
-  const noteMap = useMemo(() => {
-    const map = new Map<string, KnowledgeNoteInfo>();
-    for (const n of notes) map.set(n.id, n);
-    return map;
-  }, [notes]);
+  // The note tree is the heaviest part of the sidebar: a row per node, ~2,000 in a
+  // large vault. Memoised, and kept mounted (hidden) while a context's list is
+  // up, so going back to the tree neither rebuilds nor remounts it.
+  const treeContent = useMemo(
+    () =>
+      showTreeSkeleton ? (
+        <LoadingLine label="Loading drive tree…" />
+      ) : (
+        <FolderTreeView
+          nodes={allNodes ?? []}
+          query={q}
+          selectedId={selectedId}
+        />
+      ),
+    [showTreeSkeleton, allNodes, q, selectedId],
+  );
 
-  const mocMap = useMemo(() => {
-    const map = new Map<string, MocInfo>();
-    for (const m of mocs) map.set(m.id, m);
-    return map;
-  }, [mocs]);
-
-  const connectionItems = useMemo(() => {
-    if (!graphFocus) return [];
-    const selectedId = graphFocus.selectedId;
-    // Selected node first, then neighbors in stable focusedIds order.
-    const ordered = [
-      selectedId,
-      ...graphFocus.focusedIds.filter((id) => id !== selectedId),
-    ];
-    // The edge between the selected note and a neighbour, either
-    // direction, with its articulation when one was recorded — so the
-    // list says not just WHAT is connected but WHY.
-    const selectedNote = noteMap.get(selectedId);
-    const edgeTo = (
-      id: string,
-    ): { linkType: string | null; reason: string | null; direction: "out" | "in" } | null => {
-      const out = selectedNote?.links.find((l) => l.targetDocumentId === id);
-      if (out) return { linkType: out.linkType, reason: out.reason, direction: "out" };
-      const back = noteMap.get(id)?.links.find((l) => l.targetDocumentId === selectedId);
-      if (back) return { linkType: back.linkType, reason: back.reason, direction: "in" };
-      return null;
-    };
-    return ordered.map((id) => {
-      const edge = id === selectedId ? null : edgeTo(id);
-      const note = noteMap.get(id);
-      if (note) {
-        return {
-          id,
-          title: note.title ?? note.name,
-          kind: "Note" as const,
-          meta: note.noteType,
-          topics: note.topics,
-          isSelected: id === selectedId,
-          edge,
-        };
-      }
-      const moc = mocMap.get(id);
-      if (moc) {
-        return {
-          id,
-          title: moc.title,
-          kind: "MoC" as const,
-          meta: moc.tier,
-          topics: [] as { id: string; name: string }[],
-          isSelected: id === selectedId,
-          edge,
-        };
-      }
-      return {
-        id,
-        title: id.slice(0, 12),
-        kind: "Unknown" as const,
-        meta: null as string | null,
-        topics: [] as { id: string; name: string }[],
-        isSelected: id === selectedId,
-        edge,
-      };
-    });
-  }, [graphFocus, noteMap, mocMap]);
-
-  const selectedConnectionTitle =
-    connectionItems.find((i) => i.isSelected)?.title ?? "Selected node";
-
-  // A graph selection shows its connections from the top; clearing it puts
-  // the note tree back where the reader had scrolled it.
+  // A context's list shows from the top; clearing it puts the tree back
+  // where the reader had scrolled it.
   const contentRef = useRef<HTMLDivElement>(null);
   const treeScrollTop = useRef(0);
-  const focused = showConnections;
   useLayoutEffect(() => {
     const el = contentRef.current;
-    if (el) el.scrollTop = focused ? 0 : treeScrollTop.current;
-  }, [focused]);
-
-  // The note tree is the heaviest part of the sidebar: a row per note, ~2,000 in a
-  // large vault. Memoised, and kept mounted (hidden) while the graph shows a
-  // selection's connections, so a graph click neither rebuilds nor remounts it —
-  // that remount used to freeze the page for a third of a second or more.
-  const treeContent = useMemo(
-    () => (
-      <>
-        {shownSection === "notes" && showNotesSkeleton && (
-          <SidebarSkeleton label="Loading notes…" />
-        )}
-
-        {shownSection === "notes" && !showNotesSkeleton && (
-          <>
-            {notes.length === 0 && (
-              <div className="px-2 py-6 text-center">
-                <p
-                  className="text-xs"
-                  style={{ color: "var(--bai-text-muted)" }}
-                >
-                  No knowledge notes yet
-                </p>
-                <p
-                  className="mt-1 text-[10px]"
-                  style={{ color: "var(--bai-text-faint)" }}
-                >
-                  Add a source to start the extraction pipeline
-                </p>
-              </div>
-            )}
-            {notes.length > 0 && filtered.length === 0 && (
-              <p
-                className="px-2 py-4 text-center text-xs"
-                style={{ color: "var(--bai-text-faint)" }}
-              >
-                No notes match “{search}”
-              </p>
-            )}
-            {STATUS_ORDER.map((status) => {
-              const groupNotes = grouped[status];
-              if (groupNotes.length === 0) return null;
-              const isCollapsed = collapsed[status] ?? status === "ARCHIVED";
-              return (
-                <div key={status} className="mb-1">
-                  <button
-                    type="button"
-                    onClick={() =>
-                      setCollapsed((c) => ({
-                        ...c,
-                        [status]: !isCollapsed,
-                      }))
-                    }
-                    className="sidebar-row flex w-full items-center gap-2 rounded px-2 py-1.5 text-xs"
-                    style={{ color: "var(--bai-text-muted)" }}
-                  >
-                    <span
-                      className={`h-2 w-2 rounded-full ${STATUS_COLORS[status]}`}
-                    />
-                    <span className="flex-1 text-left font-medium">
-                      {STATUS_LABELS[status]}
-                    </span>
-                    <span style={{ color: "var(--bai-text-faint)" }}>
-                      {groupNotes.length}
-                    </span>
-                    <svg
-                      className={`h-3 w-3 transition-transform ${isCollapsed ? "" : "rotate-90"}`}
-                      viewBox="0 0 24 24"
-                      fill="none"
-                      stroke="currentColor"
-                      strokeWidth="2"
-                    >
-                      <path d="M9 18l6-6-6-6" />
-                    </svg>
-                  </button>
-                  {!isCollapsed && (
-                    <div className="ml-1 space-y-px">
-                      {groupNotes.map((note) => (
-                        <button
-                          key={note.id}
-                          type="button"
-                          onClick={() => setSelectedNode(note.id)}
-                          {...prefetchOnHover(note.id)}
-                          className="sidebar-row group flex w-full flex-col gap-0.5 rounded-md px-2 py-1.5 text-left transition-colors"
-                          data-sidebar-active={selectedId === note.id ? "true" : undefined}
-                          aria-current={selectedId === note.id ? "page" : undefined}
-                          style={
-                            selectedId === note.id ? SELECTED_ROW_STYLE : undefined
-                          }
-                        >
-                          <span
-                            className="sidebar-note-title truncate text-xs font-medium"
-                            style={{
-                              color:
-                                selectedId === note.id
-                                  ? "var(--bai-accent)"
-                                  : "var(--bai-text-secondary)",
-                            }}
-                          >
-                            {note.title ?? note.name}
-                          </span>
-                          <div className="flex items-center gap-1.5">
-                            {note.noteType && (
-                              <span
-                                className="rounded px-1.5 py-0.5 text-[10px] font-medium"
-                                style={{
-                                  backgroundColor:
-                                    SIDEBAR_NOTE_TYPE_COLORS[note.noteType]?.bg ??
-                                    "var(--bai-hover)",
-                                  color:
-                                    SIDEBAR_NOTE_TYPE_COLORS[note.noteType]?.color ??
-                                    "var(--bai-text-tertiary)",
-                                }}
-                              >
-                                {note.noteType}
-                              </span>
-                            )}
-                            {note.topics.slice(0, 2).map((t) => (
-                              <span
-                                key={t.id}
-                                className="text-[10px]"
-                                style={{
-                                  color: "var(--bai-accent)",
-                                  opacity: 0.6,
-                                }}
-                              >
-                                #{t.name}
-                              </span>
-                            ))}
-                          </div>
-                        </button>
-                      ))}
-                    </div>
-                  )}
-                </div>
-              );
-            })}
-          </>
-        )}
-
-        {shownSection === "mocs" && (
-          <div className="space-y-1">
-            {showMocsSkeleton ? (
-              <SidebarSkeleton label="Loading MOCs…" rows={4} />
-            ) : mocs.length === 0 ? (
-              <p
-                className="px-2 py-4 text-center text-xs"
-                style={{ color: "var(--bai-text-faint)" }}
-              >
-                No MOCs yet
-              </p>
-            ) : filteredMocs.length === 0 ? (
-              <p
-                className="px-2 py-4 text-center text-xs"
-                style={{ color: "var(--bai-text-faint)" }}
-              >
-                No MOCs match “{search}”
-              </p>
-            ) : (
-              <>
-                {(["HUB", "DOMAIN", "TOPIC"] as const).map((tier) => {
-                  const tierMocs = filteredMocs.filter((m) => m.tier === tier);
-                  if (tierMocs.length === 0) return null;
-                  return (
-                    <div key={tier}>
-                      <p
-                        className="px-2 py-1 text-[10px] font-semibold uppercase tracking-wider"
-                        style={{ color: "var(--bai-text-faint)" }}
-                      >
-                        {tier}
-                      </p>
-                      {tierMocs.map((moc) => (
-                        <MocRow
-                          key={moc.id}
-                          moc={moc}
-                          selected={selectedId === moc.id}
-                        />
-                      ))}
-                    </div>
-                  );
-                })}
-                {(() => {
-                  const untiered = filteredMocs.filter((m) => m.tier === null);
-                  if (untiered.length === 0) return null;
-                  return (
-                    <div key="untiered">
-                      <p
-                        className="px-2 py-1 text-[10px] font-semibold uppercase tracking-wider"
-                        style={{ color: "var(--bai-text-faint)" }}
-                      >
-                        Untiered
-                      </p>
-                      {untiered.map((moc) => (
-                        <MocRow
-                          key={moc.id}
-                          moc={moc}
-                          selected={selectedId === moc.id}
-                        />
-                      ))}
-                    </div>
-                  );
-                })()}
-              </>
-            )}
-          </div>
-        )}
-
-        {shownSection === "signals" && (
-          <div className="space-y-3">
-            {filteredObservations.length > 0 && (
-              <div>
-                <p
-                  className="px-2 py-1 text-[10px] font-semibold uppercase tracking-wider"
-                  style={{ color: "var(--bai-text-faint)" }}
-                >
-                  Observations ({filteredObservations.length})
-                </p>
-                {filteredObservations.map((obs) => (
-                  <button
-                    key={obs.id}
-                    type="button"
-                    onClick={() => setSelectedNode(obs.id)}
-                    className="sidebar-row group flex w-full items-center gap-2 rounded-md px-2 py-1.5 text-left"
-                    data-sidebar-active={selectedId === obs.id ? "true" : undefined}
-                    aria-current={selectedId === obs.id ? "page" : undefined}
-                    style={
-                      selectedId === obs.id ? SELECTED_ROW_STYLE : undefined
-                    }
-                  >
-                    <span className="h-2 w-2 shrink-0 rounded-full bg-amber-400" />
-                    <span
-                      className="sidebar-note-title truncate text-xs"
-                      style={{
-                        color:
-                          selectedId === obs.id
-                            ? "var(--bai-accent)"
-                            : "var(--bai-text-secondary)",
-                      }}
-                    >
-                      {obs.title}
-                    </span>
-                    {obs.category && (
-                      <span
-                        className="rounded px-1 py-0.5 text-[10px]"
-                        style={{
-                          backgroundColor: "var(--bai-hover)",
-                          color: "var(--bai-text-muted)",
-                        }}
-                      >
-                        {obs.category}
-                      </span>
-                    )}
-                  </button>
-                ))}
-              </div>
-            )}
-            {filteredTensions.length > 0 && (
-              <div>
-                <p
-                  className="px-2 py-1 text-[10px] font-semibold uppercase tracking-wider"
-                  style={{ color: "var(--bai-text-faint)" }}
-                >
-                  Tensions ({filteredTensions.length})
-                </p>
-                {filteredTensions.map((ten) => (
-                  <button
-                    key={ten.id}
-                    type="button"
-                    onClick={() => setSelectedNode(ten.id)}
-                    className="sidebar-row group flex w-full items-center gap-2 rounded-md px-2 py-1.5 text-left"
-                    data-sidebar-active={selectedId === ten.id ? "true" : undefined}
-                    aria-current={selectedId === ten.id ? "page" : undefined}
-                    style={
-                      selectedId === ten.id ? SELECTED_ROW_STYLE : undefined
-                    }
-                  >
-                    <span className="h-2 w-2 shrink-0 rounded-full bg-red-400" />
-                    <span
-                      className="sidebar-note-title truncate text-xs"
-                      style={{
-                        color:
-                          selectedId === ten.id
-                            ? "var(--bai-accent)"
-                            : "var(--bai-text-secondary)",
-                      }}
-                    >
-                      {ten.title}
-                    </span>
-                  </button>
-                ))}
-              </div>
-            )}
-            {showSignalsSkeleton && (
-              <LoadingLine label="Loading signals…" />
-            )}
-            {!showSignalsSkeleton &&
-              observations.length === 0 &&
-              tensions.length === 0 && (
-                <p
-                  className="px-2 py-4 text-center text-xs"
-                  style={{ color: "var(--bai-text-faint)" }}
-                >
-                  No pending signals
-                </p>
-              )}
-            {!showSignalsSkeleton &&
-              (observations.length > 0 || tensions.length > 0) &&
-              filteredObservations.length === 0 &&
-              filteredTensions.length === 0 && (
-                <p
-                  className="px-2 py-4 text-center text-xs"
-                  style={{ color: "var(--bai-text-faint)" }}
-                >
-                  No signals match “{search}”
-                </p>
-              )}
-          </div>
-        )}
-
-        {shownSection === "folders" &&
-          (showTreeSkeleton ? (
-            <LoadingLine label="Loading drive tree…" />
-          ) : (
-            <FolderTreeView
-              nodes={allNodes ?? []}
-              query={q}
-              selectedId={selectedId}
-            />
-          ))}
-      </>
-    ),
-    [
-      shownSection,
-      showNotesSkeleton,
-      showMocsSkeleton,
-      showSignalsSkeleton,
-      showTreeSkeleton,
-      search,
-      q,
-      filtered,
-      grouped,
-      collapsed,
-      selectedId,
-      filteredMocs,
-      filteredTensions,
-      filteredObservations,
-      tensions,
-      observations,
-      allNodes,
-      notes,
-      mocs,
-    ],
-  );
+    if (el) el.scrollTop = hasContext ? 0 : treeScrollTop.current;
+  }, [hasContext]);
 
   // Collapsed: just the re-open button, floating over the content.
   //
@@ -813,42 +294,42 @@ export function VaultSidebar({
         </div>
       </div>
 
-      {/* Search */}
-      <div className="px-3 py-2">
-        <input
-          type="text"
-          value={search}
-          onChange={(e) => setSearch(e.target.value)}
-          placeholder="Filter this list…"
-          className="sidebar-search-input w-full rounded-md border px-3 py-1.5 text-xs outline-none"
-          style={{
-            borderColor: "var(--bai-border)",
-            backgroundColor: "var(--bai-bg)",
-            color: "var(--bai-text-secondary)",
+      {/* Filter: narrows the drive tree, the only list it is shown over. */}
+      {body === "folders" && (
+        <div className="px-3 py-2">
+          <input
+            type="text"
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            placeholder="Filter this list…"
+            className="sidebar-search-input w-full rounded-md border px-3 py-1.5 text-xs outline-none"
+            style={{
+              borderColor: "var(--bai-border)",
+              backgroundColor: "var(--bai-bg)",
+              color: "var(--bai-text-secondary)",
+            }}
+          />
+        </div>
+      )}
+
+      {body !== "context" && (
+        <VaultPlaces
+          places={places}
+          active={place}
+          onSelect={(id) => {
+            setTreeOpen(false);
+            onSelectPlace?.(id);
+          }}
+          onOpenSettings={() => onOpenSettings?.()}
+          tree={{
+            active: body === "folders",
+            onOpen: () => setTreeOpen(true),
           }}
         />
-      </div>
-
-      <VaultPlaces
-        places={places}
-        active={place}
-        onSelect={(id) => {
-          if (graphFocus) onClearGraphFocus?.();
-          setTreeOpen(false);
-          onSelectPlace?.(id);
-        }}
-        onOpenSettings={() => onOpenSettings?.()}
-        tree={{
-          active: body === "folders",
-          onOpen: () => {
-            if (graphFocus) onClearGraphFocus?.();
-            setTreeOpen(true);
-          },
-        }}
-      />
+      )}
 
       {/* Refreshing hint: data is on screen but may be a cached snapshot. */}
-      {isRefreshing && (
+      {body !== "context" && isRefreshing && (
         <div className="flex items-center gap-1.5 px-3 pb-1">
           <Spinner className="h-2.5 w-2.5" />
           <span
@@ -864,158 +345,23 @@ export function VaultSidebar({
       <div
         ref={contentRef}
         onScroll={(e) => {
-          if (!showConnections) treeScrollTop.current = e.currentTarget.scrollTop;
+          if (!hasContext) treeScrollTop.current = e.currentTarget.scrollTop;
         }}
         className="flex-1 overflow-y-auto px-2 pb-4"
       >
-        {showConnections && (
-          <div className="space-y-1">
-            <div className="mb-1 flex items-start gap-2 px-2 py-1.5">
-              <div className="min-w-0 flex-1">
-                <p
-                  className="text-[10px] font-semibold uppercase tracking-wider"
-                  style={{ color: "var(--bai-text-faint)" }}
-                >
-                  Connections ({connectionItems.length})
-                </p>
-                <p
-                  className="truncate text-xs font-medium"
-                  style={{ color: "var(--bai-text-secondary)" }}
-                  title={selectedConnectionTitle}
-                >
-                  {selectedConnectionTitle}
-                </p>
-              </div>
-              <button
-                type="button"
-                onClick={() => onClearGraphFocus?.()}
-                className="sidebar-collapse-btn shrink-0 rounded p-1 transition-colors"
-                style={{ color: "var(--bai-text-faint)" }}
-                title="Clear selection"
-              >
-                <svg
-                  className="h-3.5 w-3.5"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="2"
-                >
-                  <path d="M18 6L6 18M6 6l12 12" />
-                </svg>
-              </button>
-            </div>
-            {connectionItems.map((item) => (
-              <button
-                key={item.id}
-                type="button"
-                onClick={() => setSelectedNode(item.id)}
-                {...prefetchOnHover(item.id)}
-                className="sidebar-row group flex w-full flex-col gap-0.5 rounded-md px-2 py-1.5 text-left transition-colors"
-                data-sidebar-active={item.isSelected ? "true" : undefined}
-                aria-current={item.isSelected ? "page" : undefined}
-                style={item.isSelected ? SELECTED_ROW_STYLE : undefined}
-              >
-                <span
-                  className="sidebar-note-title truncate text-xs font-medium"
-                  style={{
-                    color: item.isSelected
-                      ? "var(--bai-accent)"
-                      : "var(--bai-text-secondary)",
-                  }}
-                >
-                  {item.isSelected ? "● " : ""}
-                  {item.title}
-                </span>
-                <div className="flex items-center gap-1.5">
-                  {item.kind === "Note" && item.meta && (
-                    <span
-                      className="rounded px-1.5 py-0.5 text-[10px] font-medium"
-                      style={{
-                        backgroundColor:
-                          SIDEBAR_NOTE_TYPE_COLORS[item.meta]?.bg ?? "var(--bai-hover)",
-                        color:
-                          SIDEBAR_NOTE_TYPE_COLORS[item.meta]?.color ?? "var(--bai-text-tertiary)",
-                      }}
-                    >
-                      {item.meta}
-                    </span>
-                  )}
-                  {item.kind !== "Note" && item.meta && (
-                    <span
-                      className="rounded px-1.5 py-0.5 text-[10px]"
-                      style={{
-                        backgroundColor: "var(--bai-hover)",
-                        color: "var(--bai-text-tertiary)",
-                      }}
-                    >
-                      {item.kind}
-                      {item.meta ? ` · ${item.meta}` : ""}
-                    </span>
-                  )}
-                  {item.kind === "Note" && !item.meta && (
-                    <span
-                      className="rounded px-1.5 py-0.5 text-[10px]"
-                      style={{
-                        backgroundColor: "var(--bai-hover)",
-                        color: "var(--bai-text-tertiary)",
-                      }}
-                    >
-                      {item.kind}
-                    </span>
-                  )}
-                  {item.topics.slice(0, 2).map((t) => (
-                    <span
-                      key={t.id}
-                      className="text-[10px]"
-                      style={{
-                        color: "var(--bai-accent)",
-                        opacity: 0.6,
-                      }}
-                    >
-                      #{t.name}
-                    </span>
-                  ))}
-                  {item.edge && (
-                    <span
-                      className="ml-auto shrink-0 text-[10px]"
-                      style={{ color: "var(--bai-text-faint)" }}
-                      title={
-                        item.edge.direction === "out"
-                          ? `${selectedConnectionTitle} → ${item.title}`
-                          : `${item.title} → ${selectedConnectionTitle}`
-                      }
-                    >
-                      {item.edge.direction === "out" ? "→ " : "← "}
-                      {(item.edge.linkType ?? "linked")
-                        .replace(/_/g, " ")
-                        .toLowerCase()}
-                    </span>
-                  )}
-                </div>
-                {item.edge?.reason && (
-                  <span
-                    className="line-clamp-2 text-[10px] italic leading-snug"
-                    style={{ color: "var(--bai-text-faint)" }}
-                    title={item.edge.reason}
-                  >
-                    {item.edge.reason}
-                  </span>
-                )}
-              </button>
-            ))}
+        {context && <VaultContextList {...context} />}
+        {/* Kept mounted once opened, and hidden while a context's list shows
+            (see HIDDEN_TREE_STYLE); inert keeps its rows out of the tab order
+            and the accessibility tree meanwhile. */}
+        {treeOpen && (
+          <div
+            inert={hasContext}
+            aria-hidden={hasContext ? true : undefined}
+            style={hasContext ? HIDDEN_TREE_STYLE : undefined}
+          >
+            {treeContent}
           </div>
         )}
-        {/* Kept mounted while a graph selection shows its connections, and
-            memoised: selecting or clearing a node never rebuilds the note rows
-            (see HIDDEN_TREE_STYLE); inert keeps them out of the tab order and
-            the accessibility tree meanwhile. */}
-        <div
-          inert={showConnections}
-          aria-hidden={showConnections ? true : undefined}
-          style={showConnections ? HIDDEN_TREE_STYLE : undefined}
-        >
-          {treeContent}
-        </div>
       </div>
 
       <style aria-hidden="true">{`
@@ -1046,50 +392,6 @@ export function VaultSidebar({
         }
       `}</style>
     </div>
-  );
-}
-
-function MocRow({ moc, selected }: { moc: MocInfo; selected: boolean }) {
-  return (
-    <button
-      type="button"
-      onClick={() => setSelectedNode(moc.id)}
-      className="sidebar-row group flex w-full items-center gap-2 rounded-md px-2 py-1.5 text-left"
-      data-sidebar-active={selected ? "true" : undefined}
-      aria-current={selected ? "page" : undefined}
-      style={selected ? SELECTED_ROW_STYLE : undefined}
-    >
-      <svg
-        className="h-3.5 w-3.5 shrink-0"
-        style={{
-          color: "var(--bai-accent)",
-          opacity: 0.6,
-        }}
-        viewBox="0 0 24 24"
-        fill="none"
-        stroke="currentColor"
-        strokeWidth="2"
-      >
-        <circle cx="12" cy="12" r="10" />
-        <path d="M12 6v6l4 2" />
-      </svg>
-      <span
-        className="sidebar-note-title truncate text-xs"
-        style={{
-          color: selected ? "var(--bai-accent)" : "var(--bai-text-secondary)",
-        }}
-      >
-        {moc.title}
-      </span>
-      {moc.noteCount + moc.childRefs.length > 0 && (
-        <span
-          className="ml-auto text-[10px]"
-          style={{ color: "var(--bai-text-faint)" }}
-        >
-          {moc.noteCount + moc.childRefs.length}
-        </span>
-      )}
-    </button>
   );
 }
 
