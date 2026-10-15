@@ -43,11 +43,11 @@ describe("runAgentLoop", () => {
     expect(r.trail).toEqual([]);
     expect(r.iterations).toBe(1);
     expect(executeTool).not.toHaveBeenCalled();
-    // Tools are always offered so the model can choose: the vault's nineteen
-    // plus search_web, ens_lookup and read_url.
+    // Tools are always offered so the model can choose: the vault's nineteen,
+    // the two for proposing changes to work, and search_web, ens_lookup, read_url.
     expect(
       (streamChat.mock.calls[0][0] as { tools: unknown[] }).tools.length,
-    ).toBe(22);
+    ).toBe(24);
   });
 
   it("executes a tool call and feeds the result back keyed to the call id", async () => {

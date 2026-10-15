@@ -6,7 +6,9 @@ import {
   useReactorDocsWithRefetch,
   type ReactorDocSpec,
 } from "../hooks/use-reactor-docs.js";
-import { createDocumentRemote } from "../lib/remote-reactor.js";
+import { createDocumentRemote, deleteDocumentRemote } from "../lib/remote-reactor.js";
+import { writeErrorText } from "../../shared/use-doc-write.js";
+import { TrashIcon, TypeToConfirmDialog } from "./TypeToConfirmDialog.js";
 import { triggerVaultPull } from "../hooks/use-remote-first.js";
 import { useFolderMap } from "../hooks/use-drive-init.js";
 import { formatLastModified } from "../lib/format-time.js";
@@ -17,6 +19,10 @@ import { formatLastModified } from "../lib/format-time.js";
  * roadmaps — and there can be one per team, programme or client. Clicking a
  * card opens its editor full-width: the SoW brings its own left rail, so the
  * vault sidebar steps aside (EDITORS_WITH_OWN_SIDEBAR in DriveExplorer).
+ *
+ * Each card can delete its scope of work — the whole document, so the person
+ * types its title to confirm (TypeToConfirmDialog). The work breakdowns of its
+ * projects are documents of their own and stay; the dialog says so.
  */
 
 // A scope of work carries its own lifecycle, unrelated to ProjectStatus.
@@ -40,11 +46,13 @@ type SowRow = {
   delivered: number;
   milestones: number;
   contributors: number;
+  /** Projects linked to a work breakdown — breakdowns that stay when the scope goes. */
+  breakdowns: number;
   lastModified: string;
 };
 
 
-const SowCard = memo(function SowCard({ sow }: { sow: SowRow }) {
+const SowCard = memo(function SowCard({ sow, onDelete }: { sow: SowRow; onDelete: (sow: SowRow) => void }) {
   const meta = SOW_STATUS_META[sow.status] ?? {
     label: sow.status,
     fg: "var(--bai-text-muted)",
@@ -55,10 +63,12 @@ const SowCard = memo(function SowCard({ sow }: { sow: SowRow }) {
       ? Math.round((sow.delivered / sow.deliverables) * 100)
       : 0;
   return (
+    // Two buttons side by side, not one inside the other: opening and deleting are separate acts.
+    <div className="group relative">
     <button
       type="button"
       onClick={() => setSelectedNode(sow.id)}
-      className="w-full rounded-xl border border-[var(--bai-border)] bg-[var(--bai-surface)] px-4 py-3 text-left transition-colors hover:border-[var(--bai-accent)] hover:bg-[var(--bai-hover)]"
+      className="w-full rounded-xl border border-[var(--bai-border)] bg-[var(--bai-surface)] py-3 pl-4 pr-12 text-left transition-colors hover:border-[var(--bai-accent)] hover:bg-[var(--bai-hover)]"
     >
       <div className="flex items-center gap-2">
         <p
@@ -114,8 +124,38 @@ const SowCard = memo(function SowCard({ sow }: { sow: SowRow }) {
         </div>
       )}
     </button>
+    <button
+      type="button"
+      onClick={() => onDelete(sow)}
+      aria-label={`Delete scope of work “${sow.title}”`}
+      title="Delete scope of work"
+      className="absolute right-2 top-2.5 rounded-md p-1.5 opacity-60 transition-colors hover:bg-[var(--bai-danger-soft)] hover:text-[var(--bai-danger)] hover:opacity-100 focus-visible:opacity-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--bai-danger)] group-hover:opacity-100"
+      style={{ color: "var(--bai-text-muted)" }}
+    >
+      <TrashIcon />
+    </button>
+    </div>
   );
 });
+
+/** What goes with a scope of work, and what stays — the dialog's body. */
+function DeleteScopeBody({ sow }: { sow: SowRow }) {
+  return (
+    <>
+      <p>
+        This deletes the whole scope of work — its envelopes, deliverables,
+        milestones and contributors. It cannot be undone.
+      </p>
+      {sow.breakdowns > 0 && (
+        <p style={{ color: "var(--bai-text-muted)" }}>
+          {sow.breakdowns === 1
+            ? "Its project's work breakdown stays, as a document of its own."
+            : `The work breakdowns of its ${sow.breakdowns} projects stay, as documents of their own.`}
+        </p>
+      )}
+    </>
+  );
+}
 
 
 function NewScopeDialog({
@@ -218,6 +258,11 @@ function NewScopeDialog({
 
 export function ScopeOfWorkView() {
   const [createOpen, setCreateOpen] = useState(false);
+  // The scope being deleted, while the dialog is open; and the ones gone, kept out of the list until the tree catches up.
+  const [deleting, setDeleting] = useState<SowRow | null>(null);
+  const [deleteBusy, setDeleteBusy] = useState(false);
+  const [deleteError, setDeleteError] = useState<string | null>(null);
+  const [gone, setGone] = useState<ReadonlySet<string>>(() => new Set());
   const driveId = useSelectedDriveId();
   const projectsFolderId = useFolderMap().get("projects");
   const { serverFileNodes, isLoading: treeLoading } = useKnowledgeNotes();
@@ -250,11 +295,30 @@ export function ScopeOfWorkView() {
           delivered: deliverables.filter((x) => x.status === "DELIVERED").length,
           milestones: roadmaps.reduce((n, r) => n + (r.milestones?.length ?? 0), 0),
           contributors: ((g.contributors as unknown[] | undefined) ?? []).length,
+          breakdowns: ((g.projects as { wbsRef?: string | null }[] | undefined) ?? []).filter((p) => p.wbsRef).length,
           lastModified: d.header.lastModifiedAtUtcIso,
         };
       })
+      .filter((row) => !gone.has(row.id))
       .sort((a, b) => a.title.localeCompare(b.title));
-  }, [docs]);
+  }, [docs, gone]);
+
+  const confirmDelete = async () => {
+    if (!deleting || !driveId || deleteBusy) return;
+    setDeleteBusy(true);
+    setDeleteError(null);
+    try {
+      await deleteDocumentRemote(deleting.id, driveId);
+      const id = deleting.id;
+      setGone((prev) => new Set(prev).add(id));
+      setDeleting(null);
+      triggerVaultPull();
+    } catch (err) {
+      setDeleteError(writeErrorText([err]));
+    } finally {
+      setDeleteBusy(false);
+    }
+  };
 
   const newButton = (
     <button
@@ -296,7 +360,14 @@ export function ScopeOfWorkView() {
       ) : (
         <div className="space-y-1">
           {sows.map((sow) => (
-            <SowCard key={sow.id} sow={sow} />
+            <SowCard
+              key={sow.id}
+              sow={sow}
+              onDelete={(row) => {
+                setDeleteError(null);
+                setDeleting(row);
+              }}
+            />
           ))}
         </div>
       )}
@@ -307,6 +378,22 @@ export function ScopeOfWorkView() {
         projectsFolderId={projectsFolderId}
         onClose={() => setCreateOpen(false)}
       />
+
+      {deleting && (
+        <TypeToConfirmDialog
+          title={`Delete “${deleting.title}”?`}
+          name={deleting.title}
+          nameLabel="the scope's title"
+          confirmLabel="Delete scope of work"
+          busyLabel="Deleting…"
+          busy={deleteBusy}
+          error={deleteError}
+          onConfirm={() => void confirmDelete()}
+          onCancel={() => setDeleting(null)}
+        >
+          <DeleteScopeBody sow={deleting} />
+        </TypeToConfirmDialog>
+      )}
     </div>
   );
 }

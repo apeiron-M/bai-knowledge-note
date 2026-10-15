@@ -383,6 +383,8 @@ export interface EnvelopeSummary {
 
 export interface MilestoneSummary {
   id: string;
+  /** The roadmap holding it: ADD_MILESTONE and REMOVE_MILESTONE need it. */
+  roadmapId: string;
   code: string;
   title: string;
   target: string;
@@ -407,6 +409,8 @@ export interface ScopeRendering {
     unfundedDeliverables: DeliverableSummary[];
     deliverables: { delivered: number; total: number };
     milestones: MilestoneSummary[];
+    /** Each roadmap's id, which milestone operations need. */
+    roadmaps: { id: string; title: string; milestones: number }[];
     contributors: { id: string; name: string; description: string | null }[];
   };
 }
@@ -634,6 +638,7 @@ export function renderScope(o: {
       );
       milestones.push({
         id: m.id,
+        roadmapId: r.id,
         code: m.sequenceCode,
         title: m.title,
         target: m.deliveryTarget,
@@ -668,6 +673,7 @@ export function renderScope(o: {
         total: g.deliverables.length,
       },
       milestones,
+      roadmaps: g.roadmaps.map((r) => ({ id: r.id, title: r.title, milestones: r.milestones.length })),
       contributors: g.contributors.map((c) => ({
         id: c.id,
         name: c.name,

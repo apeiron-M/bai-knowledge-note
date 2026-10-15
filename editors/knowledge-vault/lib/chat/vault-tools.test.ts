@@ -5,6 +5,7 @@ import {
   DOCUMENT_TYPES,
   VAULT_TOOLS,
   WEB_TOOLS,
+  WORK_TOOLS,
   executeTool,
   resetVaultDocumentListing,
 } from "./vault-tools.js";
@@ -97,11 +98,13 @@ describe("VAULT_TOOLS", () => {
     ]);
   });
 
-  it("adds the outside-the-vault tools to the chat's set, but not to what the vault offers Connect", () => {
+  it("adds the web and work tools to the chat's set, but not to what the vault offers Connect", () => {
     expect(WEB_TOOLS.map((t) => t.function.name)).toEqual(["search_web", "ens_lookup", "read_url"]);
-    expect(CHAT_TOOLS).toHaveLength(VAULT_TOOLS.length + WEB_TOOLS.length);
-    // aiTools (Connect's assistant) is built from VAULT_TOOLS alone.
-    expect(VAULT_TOOLS.some((t) => t.function.name.includes("web"))).toBe(false);
+    expect(WORK_TOOLS.map((t) => t.function.name)).toEqual(["work_operations", "propose_work_changes"]);
+    expect(CHAT_TOOLS).toHaveLength(VAULT_TOOLS.length + WORK_TOOLS.length + WEB_TOOLS.length);
+    // aiTools (Connect's assistant) is built from VAULT_TOOLS alone: it has
+    // no card to confirm a proposal on, so it never gets the work tools.
+    expect(VAULT_TOOLS.some((t) => t.function.name.includes("web") || t.function.name.includes("work"))).toBe(false);
   });
 
   it("declares no mutation anywhere", () => {
@@ -1877,8 +1880,21 @@ describe("tool definitions every kind of model accepts", () => {
       expect(Object.keys(p.properties ?? {}).length, `${name} has no parameters`).toBeGreaterThan(0);
       for (const [key, prop] of Object.entries(p.properties ?? {})) {
         expect(["string", "integer", "number", "boolean", "array"], `${name}.${key}`).toContain(prop.type);
-        // A list is a list of strings, its item type stated — Gemini requires `items`.
-        if (prop.type === "array") expect((prop as { items?: { type?: string } }).items?.type, `${name}.${key}`).toBe("string");
+        // A list states its items — Gemini requires `items`: strings, or
+        // objects whose own fields follow the same rules.
+        if (prop.type === "array") {
+          const items = (prop as { items?: { type?: string; properties?: Record<string, { type?: string; enum?: unknown[]; items?: { type?: string } }> } }).items;
+          expect(["string", "object"], `${name}.${key}`).toContain(items?.type);
+          if (items?.type === "object") {
+            expect(Object.keys(items.properties ?? {}).length, `${name}.${key} items`).toBeGreaterThan(0);
+            for (const [k2, p2] of Object.entries(items.properties ?? {})) {
+              // Scalars — or, one level down, a list of strings with its item type stated (a milestone's deliverables).
+              expect(["string", "integer", "number", "boolean", "array"], `${name}.${key}.${k2}`).toContain(p2.type);
+              if (p2.type === "array") expect(p2.items?.type, `${name}.${key}.${k2} items`).toBe("string");
+              if (p2.enum) expect(p2.type).toBe("string");
+            }
+          }
+        }
         // Gemini takes enums on strings only.
         if (prop.enum) {
           expect(prop.type, `${name}.${key}`).toBe("string");

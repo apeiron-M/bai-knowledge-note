@@ -17,6 +17,7 @@ import {
 } from "./ChatCitation.js";
 import { ChatToolTrail } from "./ChatToolTrail.js";
 import { WaitingNote } from "./WaitingNote.js";
+import { WorkProposalCard } from "./WorkProposalCard.js";
 
 export { numberCitations } from "../../lib/chat/inline-citations.js";
 
@@ -224,6 +225,9 @@ function AssistantTurn({
           <WaitingNote />
         )
       ) : null}
+      {/* Changes the answer proposed to scopes of work and work breakdowns:
+          a card each, applied or cancelled by the person. */}
+      {!streaming && message.proposals?.map((p) => <WorkProposalCard key={p.id} proposal={p} />)}
       {streaming && body && (
         <span
           className="ml-0.5 inline-block h-4 w-[2px] animate-pulse align-text-bottom"

@@ -45,6 +45,7 @@ import {
 } from "../../../../processors/graph-indexer/work-outline.js";
 import type { ScopeOfWorkState } from "document-models/scope-of-work";
 import type { TreeNode } from "../source-tree.js";
+import { WBS_TYPE, checkProposal, formToChanges, isNewRef, workCatalog, type CheckResult, type LoadedDocument } from "./work-changes.js";
 import {
   buildTopicMap,
   findMatch,
@@ -67,7 +68,8 @@ import {
 } from "./source-library.js";
 
 export type ToolResult =
-  | { ok: true; data: unknown; summary: string }
+  /** `forModel`, when set, is what the model reads instead of `data` — a short account of something the UI keeps whole. */
+  | { ok: true; data: unknown; summary: string; forModel?: unknown }
   | { ok: false; error: string };
 
 export interface ToolContext {
@@ -869,8 +871,242 @@ const TOOL_ALIASES: Record<string, string> = {
   open_url: "read_url",
 };
 
-/** Everything the vault's own chat may call: the vault, plus the web. */
-export const CHAT_TOOLS: ToolSchema[] = [...VAULT_TOOLS, ...WEB_TOOLS];
+/**
+ * Changing work: scopes of work, their projects, and the work breakdowns that
+ * deliver them. Proposals only — the chat shows them as a card and the person
+ * applies them (work-changes.ts, use-work-proposal.ts). Kept out of
+ * VAULT_TOOLS: Connect's own assistant has no card to confirm on.
+ */
+export const WORK_TOOLS: ToolSchema[] = [
+  {
+    type: "function",
+    function: {
+      name: "work_operations",
+      description:
+        "What you can change in scopes of work, their projects (envelopes) and work breakdowns: the four kinds of change propose_work_changes takes, and every operation with its input fields and allowed values, read from the document models. Call it before proposing changes.",
+      parameters: {
+        type: "object",
+        properties: {
+          area: {
+            type: "string",
+            enum: ["scope", "wbs", "all"],
+            description: "scope: scopes and projects; wbs: work breakdowns and goals. Default all.",
+          },
+        },
+      },
+    },
+  },
+  {
+    type: "function",
+    function: {
+      name: "propose_work_changes",
+      description:
+        'Propose changes to scopes of work, projects and work breakdowns — create, change or delete — as a form: one list per kind of change, applied in the order below. Nothing is written: the person sees the changes as a card under your answer and applies or cancels them. Every change is checked first; one with a problem comes back with what to fix. Read existing work first (list_projects, read_document) for the ids that exist; give anything new a ref new:<name> and use that ref wherever its id is needed. A complete scope: a project, its breakdown and goals, a deliverable, and a roadmap whose milestone schedules it: {"summary":"Set up Operations 2027","scopes":[{"ref":"new:ops","title":"Operations 2027"}],"projects":[{"scope":"new:ops","ref":"new:infra","code":"INF","title":"Infrastructure","owner":"Bob","budgetType":"OPEX","currency":"EUR"}],"breakdowns":[{"ref":"new:plan","name":"Infrastructure plan","scope":"new:ops","project":"new:infra"}],"goals":[{"wbs":"new:plan","ref":"new:servers","description":"Provision servers"},{"wbs":"new:plan","description":"Point the domain","parent":"new:servers"}],"deliverables":[{"scope":"new:ops","project":"new:infra","ref":"new:live","code":"INF-1","title":"Servers in production"}],"roadmaps":[{"scope":"new:ops","ref":"new:launch","title":"2027 launch"}],"milestones":[{"roadmap":"new:launch","code":"M1","title":"Servers live","target":"2027-03-31","deliverables":["new:live"]}]}',
+      parameters: {
+        type: "object",
+        properties: {
+          summary: { type: "string", description: "One sentence: what these changes do, for the person." },
+          scopes: {
+            type: "array",
+            description: "New scopes of work. Only when no existing scope fits — one per team or programme.",
+            items: {
+              type: "object",
+              properties: {
+                ref: { type: "string", description: "new:<name>, to refer to it below." },
+                title: { type: "string", description: "The scope's title." },
+                description: { type: "string", description: "What it scopes." },
+              },
+              required: ["title"],
+            },
+          },
+          projects: {
+            type: "array",
+            description: "Projects (envelopes), each inside a scope.",
+            items: {
+              type: "object",
+              properties: {
+                scope: { type: "string", description: "The scope: its documentId, or its new:<name> from scopes." },
+                ref: { type: "string", description: "new:<name>, to refer to this project below." },
+                code: { type: "string", description: "A short code, e.g. INF." },
+                title: { type: "string", description: "The project's name." },
+                owner: { type: "string", description: "Who owns it, by name." },
+                budgetType: { type: "string", enum: ["OPEX", "CAPEX", "CONTINGENCY", "OVERHEAD"] },
+                currency: { type: "string", enum: ["USD", "EUR", "DAI", "USDS"] },
+                budget: { type: "number", description: "A fixed budget. Omit to derive it from the deliverables' quotes." },
+              },
+              required: ["scope", "code", "title"],
+            },
+          },
+          breakdowns: {
+            type: "array",
+            description: "Work breakdowns: the goal tree that delivers one project. A goal is not a breakdown — goals go in goals.",
+            items: {
+              type: "object",
+              properties: {
+                ref: { type: "string", description: "new:<name>, to refer to it in goals." },
+                name: { type: "string", description: "Its name." },
+                scope: { type: "string", description: "The scope holding the project: documentId or new:<name>." },
+                project: { type: "string", description: "The project it delivers: its id in the scope, or its new:<name> from projects." },
+                owner: { type: "string", description: "Who owns the work, by name." },
+              },
+              required: ["name"],
+            },
+          },
+          goals: {
+            type: "array",
+            description: "Goals in a work breakdown, parents before children.",
+            items: {
+              type: "object",
+              properties: {
+                wbs: { type: "string", description: "The work breakdown: its documentId, or its new:<name> from breakdowns." },
+                ref: { type: "string", description: "new:<name>, to put another goal under this one." },
+                description: { type: "string", description: "The goal itself, in a sentence." },
+                parent: { type: "string", description: "The goal it sits under: its id or new:<name>. Omit for a top-level goal." },
+                assignee: { type: "string", description: "Who works on it, by name." },
+              },
+              required: ["wbs", "description"],
+            },
+          },
+          deliverables: {
+            type: "array",
+            description: "Deliverables a project funds.",
+            items: {
+              type: "object",
+              properties: {
+                scope: { type: "string", description: "The scope: documentId or new:<name>." },
+                project: { type: "string", description: "The project: its id in the scope, or its new:<name> from projects." },
+                ref: { type: "string", description: "new:<name>, to refer to it in operations." },
+                title: { type: "string", description: "What is delivered." },
+                code: { type: "string", description: "A short code, e.g. INF-1." },
+                description: { type: "string", description: "What it covers." },
+                owner: { type: "string", description: "Who owns it, by name." },
+                status: { type: "string", enum: ["DRAFT", "TODO", "IN_PROGRESS", "BLOCKED", "DELIVERED", "CANCELED", "WONT_DO"] },
+              },
+              required: ["scope", "project", "title"],
+            },
+          },
+          roadmaps: {
+            type: "array",
+            description: "Roadmaps in a scope: the schedule its milestones sit on.",
+            items: {
+              type: "object",
+              properties: {
+                scope: { type: "string", description: "The scope: documentId or new:<name>." },
+                ref: { type: "string", description: "new:<name>, to put milestones on it." },
+                title: { type: "string", description: "Its name, e.g. 2027 launch." },
+                description: { type: "string", description: "What it plans." },
+              },
+              required: ["scope", "title"],
+            },
+          },
+          milestones: {
+            type: "array",
+            description: "Milestones on a roadmap, in order, each scheduling the deliverables due by it.",
+            items: {
+              type: "object",
+              properties: {
+                roadmap: { type: "string", description: "The roadmap: its id, or its new:<name> from roadmaps." },
+                scope: { type: "string", description: "The scope, when the roadmap already exists: its documentId." },
+                ref: { type: "string", description: "new:<name>, to refer to it in operations." },
+                code: { type: "string", description: "A short code, e.g. M1." },
+                title: { type: "string", description: "What is reached, e.g. Servers live." },
+                target: { type: "string", description: "Its date, YYYY-MM-DD." },
+                description: { type: "string", description: "What it means to reach it." },
+                coordinator: { type: "string", description: "Who coordinates it, by name." },
+                deliverables: { type: "array", items: { type: "string" }, description: "The deliverables it schedules: refs, ids, codes or titles." },
+              },
+              required: ["roadmap", "title"],
+            },
+          },
+          operations: {
+            type: "array",
+            description: "Anything else — edits, statuses, key results, removals: one model operation each (work_operations lists them with their inputs).",
+            items: {
+              type: "object",
+              properties: {
+                document: { type: "string", description: "The scope or work breakdown: documentId or new:<name>." },
+                type: { type: "string", description: "The operation, e.g. EDIT_DELIVERABLE." },
+                input: { type: "string", description: 'Its input as a JSON object, e.g. {"id":"d1","status":"IN_PROGRESS"}.' },
+              },
+              required: ["document", "type", "input"],
+            },
+          },
+          deletions: {
+            type: "array",
+            description: "Whole scopes of work or work breakdowns to delete. Only when the person asks.",
+            items: {
+              type: "object",
+              properties: { document: { type: "string", description: "Its documentId." } },
+              required: ["document"],
+            },
+          },
+        },
+        required: ["summary"],
+      },
+    },
+  },
+];
+
+/**
+ * A proposal of changes to work, checked: the documents its form names read
+ * from the vault — and the scope holding any breakdown it deletes — then the
+ * form checked and rehearsed against them. What propose_work_changes runs on
+ * the model's form, and what the card runs again on the person's edit of it,
+ * so an edit is held to the same rules. `keep` keeps an edited proposal's
+ * identity: its id, when it was made, which entries the person changed.
+ */
+export async function checkWorkProposal(
+  form: Record<string, unknown>,
+  driveId: string,
+  keep?: { id: string; createdAt: string; edited?: readonly string[] },
+): Promise<CheckResult> {
+  const changes = formToChanges(form);
+  // The documents the proposal names, read for their names and current
+  // contents: the card says "project KV “Knowledge Vault”", and a deletion
+  // says what else it takes with it.
+  const members = await driveMembers(driveId);
+  const wanted = new Set<string>();
+  for (const c of changes) {
+    for (const key of ["document", "scope", "wbs"] as const) {
+      const v = typeof c[key] === "string" ? (c[key] as string).trim() : "";
+      if (v && !isNewRef(v)) wanted.add(v);
+    }
+  }
+  const docs = new Map<string, LoadedDocument>();
+  const load = (ids: Iterable<string>) =>
+    Promise.all(
+      [...ids].map(async (id) => {
+        const member = members?.get(id);
+        // Not in the vault's tree: deleted, or another drive's — never offered.
+        if (members && !member) return;
+        const read = await readDoc(id);
+        if ("error" in read) return;
+        docs.set(id, {
+          documentId: id,
+          documentType: read.doc.documentType ?? member?.documentType ?? "",
+          name: read.doc.name ?? member?.name ?? null,
+          state: ((read.doc.state as { global?: unknown }).global ?? null) as Record<string, unknown> | null,
+        });
+      }),
+    );
+  await load(wanted);
+  // A breakdown to delete is unlinked from its project first: read the scope that holds it.
+  const holders = new Set<string>();
+  for (const c of changes) {
+    const d = c.kind === "delete_document" && typeof c.document === "string" ? docs.get(c.document.trim()) : undefined;
+    const sowRef = (d?.state as { sowRef?: unknown } | null | undefined)?.sowRef;
+    if (d?.documentType === WBS_TYPE && typeof sowRef === "string" && !docs.has(sowRef)) holders.add(sowRef);
+  }
+  if (holders.size) await load(holders);
+  const checked = keep
+    ? checkProposal({ summary: form.summary, changes }, docs, () => keep.createdAt, () => keep.id, keep.edited ?? [])
+    : checkProposal({ summary: form.summary, changes }, docs);
+  if (!checked.ok) return checked;
+  return { ok: true, proposal: { ...checked.proposal, form, ...(keep?.edited?.length ? { edited: [...keep.edited] } : {}) } };
+}
+
+/** Everything the vault's own chat may call: the vault, its work, and the web. */
+export const CHAT_TOOLS: ToolSchema[] = [...VAULT_TOOLS, ...WORK_TOOLS, ...WEB_TOOLS];
 
 /* ------------------------------------------------------------------ */
 /*  Every document in the vault, by last edit                          */
@@ -1553,6 +1789,29 @@ export async function executeTool(
             ? `, ${contested.length} CONTESTED — read the contradiction before answering`
             : ""),
       );
+    }
+
+    case "work_operations": {
+      const area = str(args, "area");
+      const catalog = workCatalog(area === "scope" || area === "wbs" ? area : "all");
+      return ok(catalog, `listed ${catalog.operations.length} operations on scopes of work and work breakdowns`);
+    }
+
+    case "propose_work_changes": {
+      const checked = await checkWorkProposal(args, driveId);
+      if (!checked.ok) {
+        return fail(`Nothing was proposed. Fix these and propose again: ${checked.errors.join(" ")}`);
+      }
+      const p = checked.proposal;
+      const shown =
+        "The person now sees these changes as a card under your answer, with Apply and Cancel, and can edit them first. Nothing has changed yet — say what you proposed in a sentence or two; do not repeat the list.";
+      return {
+        ok: true,
+        data: { proposal: p, shown },
+        // The model reads what it proposed in words; the card keeps the whole proposal, its form included.
+        forModel: { proposed: p.changes.map((c) => c.says), shown },
+        summary: `proposed ${p.changes.length} change${p.changes.length === 1 ? "" : "s"}${p.deletions ? ` (${p.deletions} removing something)` : ""}: ${p.changes.map((c) => c.says).join("; ").slice(0, 300)}`,
+      };
     }
 
     case "keyword_search": {

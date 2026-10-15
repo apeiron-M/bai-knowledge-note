@@ -10,6 +10,7 @@
  * payloads. Re-running a search costs ~0.4s; storing full note bodies would
  * exhaust the ~5MB budget within a few conversations.
  */
+import type { WorkProposal } from "./work-changes.js";
 
 export const MAX_THREADS = 20;
 const TITLE_MAX = 60;
@@ -48,6 +49,12 @@ export interface StoredMessage {
    * discipline was on the day.
    */
   consulted?: Citation[];
+  /**
+   * Changes to scopes of work and work breakdowns the answer proposed — shown
+   * as a card the person applies or cancels (work-changes.ts). What became of
+   * each is kept apart, by proposal id (use-work-proposal.ts).
+   */
+  proposals?: WorkProposal[];
 }
 
 export interface Thread {

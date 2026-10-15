@@ -27,6 +27,8 @@ import {
   resetVaultDocumentListing,
 } from "../lib/chat/vault-tools.js";
 import { classifyFailure, type Failure } from "../lib/chat/failure.js";
+import { outcomeNote } from "../lib/chat/proposal-outcomes.js";
+import type { WorkProposal } from "../lib/chat/work-changes.js";
 import {
   hasToolCallMarkup,
   parseTextToolCalls,
@@ -780,7 +782,7 @@ export async function runAgentLoop(o: LoopOptions): Promise<LoopResult> {
             : { tool: "read_notes", summary: `read_notes: ${r.error}`, ok: false, error: r.error };
           record(entry);
           results.set(call.id, { round: iterations, entry });
-          messages.push({ role: "tool", tool_call_id: call.id, content: JSON.stringify(r.ok ? r.data : { error: r.error }) });
+          messages.push({ role: "tool", tool_call_id: call.id, content: JSON.stringify(r.ok ? (r.forModel ?? r.data) : { error: r.error }) });
         }
         messages.push({ role: "system", content: ANSWER_FROM_VAULT({ ...thin, draft: text, readForYou: toRead.length > 0 }) });
         continue;
@@ -871,7 +873,7 @@ export async function runAgentLoop(o: LoopOptions): Promise<LoopResult> {
         const r = await deps.executeTool(name, args, { driveId: o.driveId });
         if (r.ok) {
           entry = { tool: name, summary: r.summary, ok: true, data: r.data };
-          content = JSON.stringify(r.data);
+          content = JSON.stringify(r.forModel ?? r.data);
         } else {
           entry = {
             tool: name,
@@ -1261,6 +1263,28 @@ export function consultedDocuments(
   return out;
 }
 
+/**
+ * A stored message as the model is sent it again. Under an answer that
+ * proposed changes to work goes what the person did with them — applied,
+ * stopped partway, cancelled, or not yet — so a later "is it done?" is
+ * answered from what happened, not from the proposal.
+ */
+export function sentContent(m: Pick<StoredMessage, "role" | "content" | "proposals">): string {
+  if (m.role !== "assistant" || !m.proposals?.length) return m.content;
+  return [m.content, ...m.proposals.map(outcomeNote).filter((n): n is string => n !== null)].join("\n\n");
+}
+
+/** The last proposal of changes to work the turn made, checked — or null. */
+export function latestProposal(trail: readonly TrailEntry[]): WorkProposal | null {
+  for (let i = trail.length - 1; i >= 0; i--) {
+    const e = trail[i];
+    if (!e.ok || e.tool !== "propose_work_changes") continue;
+    const p = (e.data as { proposal?: WorkProposal } | undefined)?.proposal;
+    if (p && Array.isArray(p.changes)) return p;
+  }
+  return null;
+}
+
 /** Citations only — see `resolveCitations` for the text rewrite. */
 export function extractCitations(
   text: string,
@@ -1379,10 +1403,7 @@ export function useChat(o: UseChatOptions): UseChat {
 
       const history: ChatMessage[] = [
         { role: "system", content: systemPrompt },
-        ...withUser.messages.map<ChatMessage>((m) => ({
-          role: m.role,
-          content: m.content,
-        })),
+        ...withUser.messages.map<ChatMessage>((m) => ({ role: m.role, content: sentContent(m) })),
       ];
 
       let finalText = "";
@@ -1450,9 +1471,12 @@ export function useChat(o: UseChatOptions): UseChat {
         // The passage behind each marker, from the documents the tools
         // returned this turn — the only moment their text is at hand.
         const evidence = collectEvidence(resolved.text, collected);
+        // The turn's proposal, if it made one — the last, when it revised.
+        const proposal = latestProposal(collected);
         const assistant: StoredMessage = {
           role: "assistant",
           content: resolved.text,
+          ...(proposal ? { proposals: [proposal] } : {}),
           citations: resolved.citations,
           ...(evidence.length > 0 ? { evidence } : {}),
           ...(consulted.length > 0 ? { consulted } : {}),

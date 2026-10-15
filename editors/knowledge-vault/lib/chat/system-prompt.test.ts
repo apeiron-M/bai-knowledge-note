@@ -20,10 +20,15 @@ describe("buildSystemPrompt", () => {
     expect(p).toContain("leads");
   });
 
-  it("states that it cannot write", () => {
-    expect(buildSystemPrompt(base).toLowerCase()).toMatch(
-      /read-only|cannot (modify|write|create|delete)/,
-    );
+  it("changes nothing but work, and work only by proposing what the person applies", () => {
+    const p = buildSystemPrompt(base);
+    expect(p).toContain("You change nothing in it except scopes of work, their projects and work breakdowns — and those only by proposing changes the person applies");
+    expect(p).toMatch(/If asked to change anything else — notes, maps, sources, links — say plainly that you cannot/);
+    expect(p).toContain("## Managing work");
+    expect(p).toMatch(/nothing changes before that, so never say a change is made until they have applied it/);
+    // Asked to organise work it knows nothing about, it asks — and never fills the gaps with placeholders.
+    expect(p).toContain("Ask before proposing when you do not yet know what the work is");
+    expect(p).toMatch(/Never put a placeholder in a proposal/);
   });
 
   it("requires grounding and documentId citations", () => {
