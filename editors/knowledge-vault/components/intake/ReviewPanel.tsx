@@ -299,10 +299,17 @@ export function ReviewSheet({
                   aria-current={i === index ? "true" : undefined}
                 >
                   {titleOf(s, i)}
-                  {!on && isLikelyFurniture(s.title) && (
+                  {!on && file.alreadyIn?.[i] === true ? (
                     <span className="ik-why">
-                      Usually skipped, so it starts left out
+                      Already in the vault, so it starts left out
                     </span>
+                  ) : (
+                    !on &&
+                    isLikelyFurniture(s.title) && (
+                      <span className="ik-why">
+                        Usually skipped, so it starts left out
+                      </span>
+                    )
                   )}
                 </button>
                 <span className="ik-sec-time">

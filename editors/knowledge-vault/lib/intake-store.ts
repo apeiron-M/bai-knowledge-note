@@ -22,6 +22,7 @@ import {
 import {
   attachOriginal,
   cancelConversion,
+  continuePublish,
   conversionProgress,
   convertFile,
   publishFile,
@@ -29,7 +30,14 @@ import {
   type AttachmentPort,
   type PublishResult,
 } from "./intake-service.js";
+import {
+  pageJournal,
+  readFolderTitles,
+  type JournalEntry,
+  type PublishJournal,
+} from "./publish-journal.js";
 import { originalRefOf } from "./original-ref.js";
+import { continuation } from "./intake-publish.js";
 import { createVaultApi, VaultApiFailure, type VaultApi } from "./vault-api.js";
 
 /**
@@ -87,6 +95,28 @@ export type IntakeSnapshot = {
   refused: readonly string[];
   /** Files are checked against what the vault already holds before they are read. */
   checking: boolean;
+  /** How far the file being added is: sources in the vault, of how many. */
+  progress: { done: number; total: number } | null;
+  /** Adds from an earlier visit that the page did not live to finish, carried on here. */
+  carrying: readonly CarryOn[];
+};
+
+/**
+ * An add the page did not live to finish — a reload, the app quitting —
+ * carried on the next time the vault opens (publish-journal.ts).
+ */
+export type CarryOn = {
+  id: string;
+  fileName: string;
+  folderName: string;
+  total: number;
+  done: number;
+  /**
+   * `waiting` for its turn, `adding`, `stopped` because the vault refused a
+   * source (it waits for the person), or `done`.
+   */
+  status: "waiting" | "adding" | "stopped" | "done";
+  error?: string;
 };
 
 /** Which of the service's lanes a file converts in. */
@@ -121,7 +151,13 @@ export type IntakeDeps = {
   publish: (
     file: IntakeFile,
     bytes: Uint8Array,
-    deps: { api: VaultApi; attachments?: AttachmentPort; driveId: string },
+    deps: {
+      api: VaultApi;
+      attachments?: AttachmentPort;
+      driveId: string;
+      journal?: PublishJournal;
+      onProgress?: (done: number, total: number) => void;
+    },
   ) => Promise<PublishResult>;
   attach: (
     file: IntakeFile,
@@ -137,6 +173,10 @@ export type IntakeDeps = {
   keepAlive: () => () => void;
   /** The ref a source records as its original (`attachment://v1:<sha-256>`), for these bytes. */
   originalRef: (bytes: Uint8Array) => Promise<string>;
+  /** Where an add is written down as it goes, so one cut off carries on (publish-journal.ts). */
+  journal?: PublishJournal;
+  /** The titles of the sources in a folder, read from the vault: what carrying on checks first. */
+  folderTitles?: (driveId: string, folderId: string) => Promise<string[]>;
 };
 
 export type IntakeStore = ReturnType<typeof createIntakeStore>;
@@ -219,6 +259,8 @@ export function createIntakeStore({
     publishingId: null,
     refused: [],
     checking: false,
+    progress: null,
+    carrying: [],
   };
   const listeners = new Set<() => void>();
   /**
@@ -319,6 +361,7 @@ export function createIntakeStore({
       reading.size > 0 ||
       hashing.size > 0 ||
       state.publishing ||
+      state.carrying.some((c) => c.status === "waiting" || c.status === "adding") ||
       state.files.some((f) => f.state === "queued");
     if (working && !release) release = deps.keepAlive();
     else if (!working && release) {
@@ -577,13 +620,19 @@ export function createIntakeStore({
         (converted) => {
           // Removed, or the batch cancelled, while it converted: nobody waits for it.
           if (!current()) return;
-          updateFiles((files) =>
-            setState(files, id, {
+          updateFiles((files) => {
+            const next = setState(files, id, {
               state: "converted",
               converted,
               finishedAt: deps.now(),
-            }),
-          );
+            });
+            // Its folder may already hold some of these sections — an earlier
+            // add cut short: those start left out and the rest goes beside them.
+            const read = next.find((f) => f.id === id);
+            const index = vault.status === "ready" ? vault.index : null;
+            const going = read ? continuation(read, index?.titles) : null;
+            return going ? setState(next, id, going) : next;
+          });
         },
         (error: unknown) => {
           // Stopped on purpose — the file was removed, or the batch cancelled
@@ -673,12 +722,14 @@ export function createIntakeStore({
     if (!file || !data || !driveId || file.publishedIds || state.publishing)
       return false;
 
-    commit({ publishing: true, publishingId: id });
+    commit({ publishing: true, publishingId: id, progress: null });
     try {
       const result = await deps.publish(file, data, {
         api,
         attachments,
         driveId,
+        journal: deps.journal,
+        onProgress: reportProgress,
       });
       updateFiles((files) =>
         setState(markPublished(files, id, result.sourceIds), id, {
@@ -716,6 +767,90 @@ export function createIntakeStore({
       }
       return false;
     } finally {
+      commit({ publishing: false, publishingId: null, progress: null });
+    }
+  }
+
+  /** Progress, at most a few times a second: a 900-section add would otherwise redraw the panel 900 times. */
+  let lastProgress = 0;
+  function reportProgress(done: number, total: number) {
+    const at = deps.now();
+    if (done < total && at - lastProgress < 200) return;
+    lastProgress = at;
+    commit({ progress: { done, total } });
+  }
+
+  const carryView = (entry: JournalEntry): CarryOn => ({
+    id: entry.id,
+    fileName: entry.fileName,
+    folderName: entry.folderName,
+    total: entry.total,
+    done: entry.done,
+    status: entry.error ? "stopped" : "waiting",
+    ...(entry.error ? { error: entry.error } : {}),
+  });
+  function updateCarry(id: string, patch: Partial<CarryOn>) {
+    commit({ carrying: state.carrying.map((c) => (c.id === id ? { ...c, ...patch } : c)) });
+  }
+
+  /**
+   * Adds this vault started in an earlier visit and did not finish: read once,
+   * when the page first reaches the vault, and carried on one at a time — each
+   * in its turn with this page's own adds, never beside them. One the vault
+   * refused waits for the person (`carryOn`).
+   */
+  let carryRead = false;
+  async function readCarried() {
+    if (carryRead || !deps.journal || !driveId) return;
+    carryRead = true;
+    let entries: JournalEntry[];
+    try {
+      entries = await deps.journal.entries(driveId);
+    } catch {
+      return;
+    }
+    if (entries.length === 0) return;
+    commit({ carrying: entries.map(carryView) });
+    for (const entry of entries) {
+      if (!entry.error) await runCarried(entry.id);
+    }
+  }
+
+  async function runCarried(id: string) {
+    const journal = deps.journal;
+    const folderTitles = deps.folderTitles;
+    if (!journal || !folderTitles) return;
+    // Its turn comes after any add already under way.
+    while (state.publishing) await new Promise((resolve) => setTimeout(resolve, 500));
+    const entry = (await journal.entries(driveId).catch(() => [] as JournalEntry[])).find((e) => e.id === id);
+    if (!entry) {
+      commit({ carrying: state.carrying.filter((c) => c.id !== id) });
+      return;
+    }
+    // Marked as the add under way, so every row's Add waits its turn rather than doing nothing.
+    commit({ publishing: true, publishingId: `carry:${id}` });
+    updateCarry(id, { status: "adding", error: undefined, done: entry.done });
+    try {
+      const result = await continuePublish(entry, {
+        api,
+        journal,
+        folderTitles,
+        onProgress: (done) => {
+          const at = deps.now();
+          if (done < entry.total && at - lastProgress < 200) return;
+          lastProgress = at;
+          updateCarry(id, { done });
+        },
+      });
+      if (result === null) {
+        // Another window of this vault is carrying it on.
+        commit({ carrying: state.carrying.filter((c) => c.id !== id) });
+      } else {
+        updateCarry(id, { status: "done", done: entry.total });
+      }
+    } catch (error) {
+      updateCarry(id, { status: "stopped", error: message(error) });
+    } finally {
       commit({ publishing: false, publishingId: null });
     }
   }
@@ -731,6 +866,22 @@ export function createIntakeStore({
     /** The api every later call uses; re-bound on mount, so a fresh sign-in reaches a running batch. */
     bindApi: (next: VaultApi) => {
       api = next;
+      // The first time the page reaches the vault, carry on what an earlier visit left unfinished.
+      void readCarried();
+    },
+    /** Try a stopped add again, from where it stopped. */
+    carryOn: (id: string) => {
+      const view = state.carrying.find((c) => c.id === id);
+      if (!view || view.status === "adding" || view.status === "waiting") return;
+      updateCarry(id, { status: "waiting" });
+      void runCarried(id);
+    },
+    /** Forget an add left unfinished — or clear one that is done — from the panel and the journal. */
+    forgetCarried: (id: string) => {
+      const view = state.carrying.find((c) => c.id === id);
+      if (!view || view.status === "adding") return;
+      commit({ carrying: state.carrying.filter((c) => c.id !== id) });
+      if (view.status !== "done") void deps.journal?.finish(id).catch(() => {});
     },
 
     /**
@@ -1034,6 +1185,8 @@ const browserDeps: IntakeDeps = {
     typeof document !== "undefined" && document.visibilityState === "hidden",
   keepAlive: holdWebLock,
   originalRef: originalRefOf,
+  journal: pageJournal(),
+  folderTitles: readFolderTitles,
 };
 
 const stores = new Map<string, IntakeStore>();
@@ -1042,12 +1195,62 @@ const stores = new Map<string, IntakeStore>();
 export function intakeStoreFor(driveId: string): IntakeStore {
   let store = stores.get(driveId);
   if (!store) {
-    store = createIntakeStore({
+    const created = createIntakeStore({
       driveId,
       api: pinnedVaultApi(),
       deps: browserDeps,
     });
-    stores.set(driveId, store);
+    created.subscribe(() => reportAdding(driveId, isAdding(created.getSnapshot())));
+    stores.set(driveId, created);
+    store = created;
   }
   return store;
+}
+
+/**
+ * Sources are being added right now: this visit's add, or one carried on from
+ * an earlier visit. What quitting would cut short — the rest carries on the
+ * next time the vault opens, but not while the app is closed.
+ */
+export function isAdding(snapshot: IntakeSnapshot): boolean {
+  return (
+    snapshot.publishing ||
+    snapshot.carrying.some((c) => c.status === "adding" || c.status === "waiting")
+  );
+}
+
+/** The drives of this page with sources being added. */
+const addingIn = new Set<string>();
+let stopAskingToLeave: (() => void) | null = null;
+
+/**
+ * Tell whoever would end the page that an add is under way, once it starts
+ * and once the last one ends — from here rather than a view, because an add
+ * runs on after the person leaves the vault. The desktop app asks before it
+ * quits (host-config `setBusy`); a browser asks before the page is left.
+ */
+function reportAdding(driveId: string, adding: boolean) {
+  const before = addingIn.size > 0;
+  if (adding) addingIn.add(driveId);
+  else addingIn.delete(driveId);
+  const now = addingIn.size > 0;
+  if (before === now) return;
+  const host = getHostConfig();
+  if (host?.setBusy) {
+    host.setBusy(now ? "Sources are still being added." : null);
+    return;
+  }
+  if (typeof window === "undefined") return;
+  if (now) {
+    const ask = (event: BeforeUnloadEvent) => {
+      event.preventDefault();
+      // Older browsers ask only when this is set.
+      event.returnValue = "";
+    };
+    window.addEventListener("beforeunload", ask);
+    stopAskingToLeave = () => window.removeEventListener("beforeunload", ask);
+  } else {
+    stopAskingToLeave?.();
+    stopAskingToLeave = null;
+  }
 }

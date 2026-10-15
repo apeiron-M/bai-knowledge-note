@@ -11,6 +11,7 @@ import {
 import { backgroundNote } from "./background-note.js";
 import { ConfirmDialog } from "./ConfirmDialog.js";
 import { DropZone, useFilePicker } from "./DropZone.js";
+import { CarryRow } from "./CarryRow.js";
 import { FileRow } from "./FileRow.js";
 import {
   BatchMark,
@@ -147,6 +148,17 @@ export function IntakePanel({
   const doneTitle =
     files.length === 1 ? "1 file added" : `All ${files.length} files added`;
   const doneLine = `${plural(sources, "new source")}, queued to become notes.`;
+
+  // Adds from an earlier visit, carried on: above the files, in either state of the panel.
+  const carryRows = batch.carrying.map((c) => (
+    <CarryRow
+      key={c.id}
+      carry={c}
+      onCarryOn={() => batch.onCarryOn(c.id)}
+      onForget={() => batch.onForgetCarried(c.id)}
+      onOpenSources={onOpenFolder ? () => onOpenFolder(c.folderName) : undefined}
+    />
+  ));
 
   if (batch.collapsed && files.length > 0) {
     return (
@@ -311,18 +323,23 @@ export function IntakePanel({
       )}
 
       {files.length === 0 ? (
-        <div style={{ padding: "0 18px 18px" }}>
-          <DropZone
-            accept={batch.accepts}
-            maxUploadBytes={maxUploadBytes}
-            onFiles={batch.onFiles}
-            variant="hero"
-            disabled={!configured}
-          />
-        </div>
+        <>
+          {/* An add carried on from an earlier visit shows even before anything new is dropped. */}
+          {carryRows.length > 0 && <ul className="ik-rows">{carryRows}</ul>}
+          <div style={{ padding: "0 18px 18px" }}>
+            <DropZone
+              accept={batch.accepts}
+              maxUploadBytes={maxUploadBytes}
+              onFiles={batch.onFiles}
+              variant="hero"
+              disabled={!configured}
+            />
+          </div>
+        </>
       ) : (
         <>
           <ul className="ik-rows">
+            {carryRows}
             {files.map((f) => (
               <FileRow
                 key={f.id}
@@ -333,6 +350,7 @@ export function IntakePanel({
                     : undefined
                 }
                 publishingId={batch.publishingId}
+                progress={batch.progress}
                 onReview={() => batch.setOpenId(f.id)}
                 onAdd={() => void batch.onPublish(f.id)}
                 onRetry={() => batch.onRetry(f.id)}

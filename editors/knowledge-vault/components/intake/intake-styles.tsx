@@ -75,12 +75,20 @@ const CSS = `
 
 /* the bar that becomes the sections */
 .bai-intake .ik-strip, .bai-intake .ik-track { flex: none; width: min(100%, 380px); height: 6px; }
-.bai-intake .ik-strip { display: flex; gap: 2px; }
+.bai-intake .ik-strip { display: flex; gap: 2px; min-width: 0; overflow: hidden; }
+/* A long file's runs of sections: thin enough that the bar never outgrows its width. */
+.bai-intake .ik-strip[data-grouped] > * { min-width: 2px; }
+/* A run where only some sections are kept: half filled. */
+.bai-intake .ik-strip > .ik-mixed { background: linear-gradient(to top, var(--bai-accent) 50%, transparent 50%); box-shadow: inset 0 0 0 1px var(--bai-accent); }
+.bai-intake .ik-strip[data-tone="added"] > .ik-mixed { background: linear-gradient(to top, var(--bai-ok) 50%, transparent 50%); box-shadow: inset 0 0 0 1px var(--bai-ok); }
 .bai-intake .ik-strip > * { display: block; flex-basis: 0; min-width: 8px; height: 100%; border: 0; padding: 0; border-radius: 2px; background: var(--bai-accent); }
 .bai-intake .ik-strip > .ik-off { background: transparent; box-shadow: inset 0 0 0 1px var(--bai-text-faint); }
 .bai-intake .ik-strip[data-tone="added"] > :not(.ik-off) { background: var(--bai-ok); opacity: .8; }
+/* Already in the vault, from an earlier add: drawn as added. */
+.bai-intake .ik-strip > .ik-in { background: var(--bai-ok); opacity: .55; }
 .bai-intake .ik-strip[data-size="map"] { width: 100%; height: 8px; gap: 3px; }
 .bai-intake .ik-strip[data-size="map"] > * { min-width: 12px; opacity: .4; cursor: pointer; }
+.bai-intake .ik-strip[data-size="map"][data-grouped] > * { min-width: 3px; }
 .bai-intake .ik-strip[data-size="map"] > .ik-here { opacity: 1; }
 .bai-intake .ik-strip[data-size="map"] > .ik-off { opacity: .8; }
 .bai-intake .ik-strip[data-split] { animation: ik-crack 450ms cubic-bezier(.2,.8,.2,1); }

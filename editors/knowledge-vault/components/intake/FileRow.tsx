@@ -48,6 +48,7 @@ export function FileRow({
   file,
   waiting,
   publishingId,
+  progress,
   onReview,
   onAdd,
   onRetry,
@@ -62,6 +63,8 @@ export function FileRow({
   waiting?: string;
   /** The file being added right now — one at a time, so every other Add waits. */
   publishingId: string | null;
+  /** How far the file being added is: sources in the vault, of how many. */
+  progress?: { done: number; total: number } | null;
   onReview: () => void;
   onAdd: () => void;
   onRetry: () => void;
@@ -193,7 +196,7 @@ export function FileRow({
             type="button"
             className="ik-btn ik-btn-secondary"
             onClick={onAddAgain}
-            title="Read it and add a second copy, in a folder of its own"
+            title="Read it again: sections already in the vault start left out, and the rest goes beside them"
           >
             Add again
           </button>
@@ -203,18 +206,30 @@ export function FileRow({
     removeTitle = "Remove it. Nothing from it will be added.";
   } else if (isReviewReady(file)) {
     const kept = selectedCount(file);
-    const left = sections.length - kept;
+    const present = file.alreadyIn?.filter(Boolean).length ?? 0;
+    const left = sections.length - kept - present;
     const notes = reviewNotes(file);
     const warning = notes.find((n) => n.tone === "warn");
     // A warning leads; otherwise what is worth knowing (a folder of its own).
     const note = warning ?? notes.at(0);
     visual = (
-      <SectionStrip weights={weights} kept={file.selected} split={split} />
+      <SectionStrip weights={weights} kept={file.selected} present={file.alreadyIn} split={split} />
     );
-    caption = (
+    caption = adding && progress ? (
+      <span className="ik-cap">
+        Adding {progress.done} of {plural(progress.total, "source")}…
+      </span>
+    ) : (
       <span className="ik-cap">
         {plural(sections.length, "section")}
-        {kept === 0 ? ", none kept" : left > 0 ? `, ${left} left out` : ""}
+        {present > 0 ? `, ${present} already in the vault` : ""}
+        {kept === 0
+          ? present === sections.length
+            ? ""
+            : ", none kept"
+          : left > 0
+            ? `, ${left} left out`
+            : ""}
         {file.publishError ? (
           <>
             <span className="ik-sep" />

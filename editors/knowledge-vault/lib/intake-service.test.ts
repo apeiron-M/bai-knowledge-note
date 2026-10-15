@@ -304,9 +304,10 @@ describe("publishFile", () => {
     expect(result.sourceIds).toHaveLength(1);
   });
 
-  it("dispatches the attachment ref before uploading the bytes, once per document", async () => {
-    // The store is content-addressed, so the ref is known before the upload;
-    // uploading per source would be N copies of the same bytes.
+  it("uploads the original once, before any source exists, then gives each source its ref as it is created", async () => {
+    // The store is content-addressed, so one upload serves every source. Up
+    // front, so no source ever names a file the store does not hold, and an
+    // add cut off part-way can carry on without the file's bytes.
     const { api, calls } = publishApi();
     const order: string[] = [];
     const attachments: AttachmentPort = {
@@ -336,9 +337,9 @@ describe("publishFile", () => {
     expect(order[0]).toBe("prepare");
     expect(order.filter((o) => o === "attach")).toHaveLength(2);
     expect(order.filter((o) => o === "upload")).toHaveLength(1);
-    expect(order.indexOf("upload")).toBeGreaterThan(
-      order.lastIndexOf("attach"),
-    );
+    expect(order.indexOf("upload")).toBeLessThan(order.indexOf("/sources"));
+    // Each source is given its original right after it is created.
+    expect(order.slice(order.indexOf("/sources"))).toEqual(["/sources", "attach", "/sources", "attach"]);
     expect(result.attached).toBe(true);
 
     const attachBodies = calls

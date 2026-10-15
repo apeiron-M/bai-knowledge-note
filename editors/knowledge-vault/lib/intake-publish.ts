@@ -29,6 +29,49 @@ export function sectionTitle(
   return `${documentName} · part ${index + 1}`.slice(0, MAX_NAME);
 }
 
+/** A title as the vault keeps it on the source's node: trimmed, its spaces collapsed. */
+export function titleKey(title: string): string {
+  return title.trim().replace(/\s+/g, " ").toLowerCase();
+}
+
+/**
+ * A file whose folder already holds its sections — an earlier add of it that
+ * was cut short, or the same file added again — continues there: the sections
+ * already in the folder (matched by title, each once) start left out, and the
+ * rest goes in beside them rather than into a renamed folder.
+ *
+ * Only when what the folder holds is mostly this file's sections: a folder
+ * that merely shares a name with another document keeps today's rename.
+ * `null` when nothing changes.
+ */
+export function continuation(
+  file: IntakeFile,
+  titlesInFolder: ReadonlyMap<string, readonly string[]> | undefined,
+): Pick<IntakeFile, "folderName" | "renamedFrom" | "alreadyIn" | "selected"> | null {
+  const sections = file.converted?.sections ?? [];
+  if (sections.length === 0 || !titlesInFolder) return null;
+  const folder = file.renamedFrom ?? file.folderName;
+  const titles = titlesInFolder.get(folder);
+  if (!titles || titles.length === 0) return null;
+  const left = new Map<string, number>();
+  for (const title of titles) left.set(titleKey(title), (left.get(titleKey(title)) ?? 0) + 1);
+  const alreadyIn = sections.map((section, index) => {
+    const key = titleKey(sectionTitle(section, index, folder));
+    const n = left.get(key) ?? 0;
+    if (n === 0) return false;
+    left.set(key, n - 1);
+    return true;
+  });
+  const present = alreadyIn.filter(Boolean).length;
+  if (present === 0 || present * 2 < titles.length) return null;
+  return {
+    folderName: folder,
+    renamedFrom: undefined,
+    alreadyIn,
+    selected: file.selected.map((on, index) => on && !alreadyIn[index]),
+  };
+}
+
 export type PublishPlan = {
   folderName: string;
   sources: {

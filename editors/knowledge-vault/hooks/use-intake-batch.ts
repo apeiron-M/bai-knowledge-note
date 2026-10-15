@@ -8,6 +8,7 @@ import {
 } from "../lib/intake-model.js";
 import type { AttachmentPort } from "../lib/intake-service.js";
 import {
+  isAdding,
   intakeStoreFor,
   pinnedVaultApi,
   sortOffered,
@@ -117,14 +118,25 @@ export function useIntakeBatch({
   return {
     files,
     driveId,
-    /** The panel is shown when asked for, or while a batch exists. */
-    visible: snapshot.requested || files.length > 0,
+    /** The panel is shown when asked for, while a batch exists, or while an earlier add carries on. */
+    visible: snapshot.requested || files.length > 0 || snapshot.carrying.length > 0,
     open: store.open,
     close: store.close,
     openId: snapshot.openId,
     setOpenId: store.setOpenId,
     publishing: snapshot.publishing,
     publishingId: snapshot.publishingId,
+    /** How far the file being added is: sources in the vault, of how many. */
+    progress: snapshot.progress,
+    /** Adds from an earlier visit that did not finish, carried on here. */
+    carrying: snapshot.carrying,
+    onCarryOn: store.carryOn,
+    onForgetCarried: store.forgetCarried,
+    /**
+     * Sources are being added right now — this page's add or an earlier one
+     * carried on. What a quit asks about: cut off, it carries on next time.
+     */
+    adding: isAdding(snapshot),
     /** Folded to one line by "Hide"; the batch carries on. */
     collapsed: snapshot.collapsed,
     collapse: store.collapse,
@@ -148,10 +160,10 @@ export function useIntakeBatch({
       files.every(
         (f) => f.state === "converted" && f.publishedIds !== undefined,
       ),
-    /** Anything converting or waiting to — the work that runs in the background. */
-    working: files.some(
-      (f) => f.state === "queued" || f.state === "converting",
-    ),
+    /** Anything converting or waiting to, or being added — the work that runs in the background. */
+    working:
+      files.some((f) => f.state === "queued" || f.state === "converting") ||
+      snapshot.carrying.some((c) => c.status === "adding" || c.status === "waiting"),
     onFiles,
     onRetry: store.retry,
     onRunOcr: store.runOcr,

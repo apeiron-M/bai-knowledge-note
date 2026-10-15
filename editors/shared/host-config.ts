@@ -75,6 +75,12 @@ export type KnowledgeVaultHostConfig = {
    * could see (possibly none); the host reads the drop's whole list from the window itself when it can.
    */
   readDroppedFiles?: (uriList: string) => Promise<File[]>;
+  /**
+   * What the vault is in the middle of that quitting would cut short (sources
+   * being added), or `null` once it is done: the desktop asks before it quits.
+   * Without a host the vault asks the browser instead (`beforeunload`).
+   */
+  setBusy?: (reason: string | null) => void;
 };
 
 /** Dispatched on `globalThis` whenever the declaration changes; `useHostConfig` subscribes to it. */
@@ -119,6 +125,7 @@ export function setHostConfig(
       : {}),
     ...(config.takeOpenView ? { takeOpenView: config.takeOpenView } : {}),
     ...(config.readDroppedFiles ? { readDroppedFiles: config.readDroppedFiles } : {}),
+    ...(config.setBusy ? { setBusy: config.setBusy } : {}),
   };
   notifyHostChanged();
 }

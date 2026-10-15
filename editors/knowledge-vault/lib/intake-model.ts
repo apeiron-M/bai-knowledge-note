@@ -254,6 +254,11 @@ export type KnownOriginal = {
 export type VaultIndex = {
   originals: ReadonlyMap<string, KnownOriginal>;
   folders: ReadonlySet<string>;
+  /**
+   * The titles of the sources in each of those folders, by folder name: what
+   * lets a file added again find which of its sections are already there.
+   */
+  titles?: ReadonlyMap<string, readonly string[]>;
 };
 
 export type IntakeFile = {
@@ -301,6 +306,12 @@ export type IntakeFile = {
   addAgain?: boolean;
   /** The folder name it would have had, when a folder of that name already holds other sources. */
   renamedFrom?: string;
+  /**
+   * One flag per section: a source of that title is already in its folder —
+   * an earlier add of this file that was cut short, or added before. These
+   * start left out, and the rest goes into the same folder.
+   */
+  alreadyIn?: boolean[];
   /** The user asked for OCR regardless of cost; the next conversion sends `?ocr=1`. */
   forceOcr?: boolean;
   /**
@@ -647,6 +658,17 @@ export function reviewNotes(file: IntakeFile): ReviewNote[] {
       long: "This file is a scan, so its text was recognised from the page images. Check names and numbers before adding.",
     });
   }
+  const present = file.alreadyIn?.filter(Boolean).length ?? 0;
+  if (present > 0) {
+    const all = present === file.alreadyIn?.length;
+    notes.push({
+      tone: "info",
+      short: all ? "Already in the vault" : `${present} already in the vault`,
+      long: all
+        ? `Every section of this file is already in Sources › ${file.folderName}, so nothing new is ticked. Tick a section to add it again.`
+        : `${present} of these sections are already in Sources › ${file.folderName}, from an earlier add of this file, so they start left out. Adding puts the other ${file.alreadyIn!.length - present} in the same folder.`,
+    });
+  }
   if (file.renamedFrom) {
     notes.push({
       tone: "info",
@@ -728,6 +750,18 @@ const FAMILIES: readonly { name: string; exts: readonly string[] }[] = [
   { name: "Markdown", exts: ["md"] },
   { name: "EPUB", exts: ["epub"] },
 ];
+
+/**
+ * The family a file belongs to by its extension — "PDF", "Word", "web pages"
+ * — or null when it is none of the named ones. The intake's own names, so a
+ * source's original reads the same in the chat as in the drop zone.
+ */
+export function fileFamilyOf(fileName: string): string | null {
+  const dot = fileName.lastIndexOf(".");
+  if (dot < 0 || dot === fileName.length - 1) return null;
+  const ext = fileName.slice(dot + 1).toLowerCase();
+  return FAMILIES.find((family) => family.exts.includes(ext))?.name ?? null;
+}
 
 /** "PDF, Word, PowerPoint, Excel, web pages, images, Markdown and more": what the vault reads, named, never counted wrong. */
 export function formatsSentence(accepted: readonly string[]): string {
@@ -867,9 +901,18 @@ export function vaultIndexOf(
     originalRef: string | null;
     folderName: string | null;
     addedAt: string | null;
+    /** The source's title, for the folder's list of titles. */
+    title?: string | null;
   }[],
   folders: readonly string[],
 ): VaultIndex {
+  const titles = new Map<string, string[]>();
+  for (const source of sources) {
+    if (!source.folderName || !source.title) continue;
+    const list = titles.get(source.folderName) ?? [];
+    list.push(source.title);
+    titles.set(source.folderName, list);
+  }
   const grouped = new Map<
     string,
     { count: number; addedAt: string | null; folders: Map<string | null, number> }
@@ -892,5 +935,5 @@ export function vaultIndexOf(
     const [folderName] = [...entry.folders.entries()].sort((a, b) => b[1] - a[1])[0];
     originals.set(ref, { folderName, sources: entry.count, addedAt: entry.addedAt });
   }
-  return { originals, folders: new Set(folders) };
+  return { originals, folders: new Set(folders), titles };
 }

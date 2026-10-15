@@ -137,7 +137,15 @@ export async function convertFile(
 // ---------------------------------------------------------------------------
 
 import type { IntakeFile } from "./intake-model.js";
-import { publishPlan } from "./intake-publish.js";
+import { publishPlan, titleKey } from "./intake-publish.js";
+import {
+  holdingJournal,
+  ifJournalFree,
+  type JournalAction,
+  type JournalEntry,
+  type JournalItem,
+  type PublishJournal,
+} from "./publish-journal.js";
 
 export type AttachmentPort = {
   /** Content-addressed: resolves to a ref without sending the bytes. */
@@ -187,19 +195,22 @@ export class PublishPartialFailure extends Error {
 const CONVERT_TOOL = "docling.rs";
 const CONVERT_METHOD = "converted";
 
+const message = (error: unknown): string => (error instanceof Error ? error.message : String(error));
+
 /**
- * Two calls per file plus one per source, all against routes that already
- * enforce the rules — `POST sources` resolves `/sources`, keeps `parentFolder`
- * inside it, verifies containment by reading it back, rolls back if it did not
- * land, and queues by default. Reimplementing that here would be a second set
- * of rules with its own way to leave orphans.
+ * Order, so an add can be cut off and carry on: hash the original and its
+ * figures → upload them → the folder → the journal → every source, created and
+ * at once given its original and figures, written down as it lands.
  *
- * Order: ref → folder → sources → attach to each → upload once. The ref is
- * hashed first, before anything is written, because the store is
- * content-addressed: every source can point at the original while 30 MB is
- * still streaming (convert spec §12.1), and uploading per source would be N
- * copies of the same bytes. A failure to hash does not block the publish — the
- * sources are created without an original and the result says why.
+ * Uploading first means no source ever names a file the store does not hold,
+ * and what is left of an add needs only what the journal keeps — never the
+ * file's bytes. The ref is content-addressed (convert spec §12.1), so every
+ * source points at one stored original. The routes enforce the rules — `POST
+ * sources` resolves `/sources`, keeps `parentFolder` inside it, verifies
+ * containment by reading it back, rolls back if it did not land, and queues by
+ * default; reimplementing that here would be a second set of rules with its
+ * own way to leave orphans. A failure to hash or upload does not block the add:
+ * the sources are created without what failed, and the result says why.
  */
 export async function publishFile(
   file: IntakeFile,
@@ -209,6 +220,10 @@ export async function publishFile(
     attachments?: AttachmentPort;
     driveId: string;
     now?: () => Date;
+    /** Written as it goes, so an add that is cut off carries on later (`continuePublish`). */
+    journal?: PublishJournal;
+    /** Sources in the vault so far, of how many. */
+    onProgress?: (done: number, total: number) => void;
   },
 ): Promise<PublishResult> {
   const plan = publishPlan(file);
@@ -224,9 +239,9 @@ export async function publishFile(
     };
   }
 
-  // Hash first: the ref is known before a single document exists.
+  // Hash first: the refs are known before anything is written.
   let prepared: { ref: string } | null = null;
-  let attachError: string | undefined;
+  let hashError: string | undefined;
   if (deps.attachments) {
     try {
       prepared = await deps.attachments.prepare({
@@ -235,20 +250,19 @@ export async function publishFile(
         bytes,
       });
     } catch (error) {
-      attachError = error instanceof Error ? error.message : String(error);
+      hashError = message(error);
     }
   }
-
-  // Figures the same way: hashed now, uploaded once at the end, referenced from
-  // the content as ![alt](attachment://…) and claimed with ADD_ATTACHMENT. A
-  // figure that cannot be hashed keeps its placeholder; the publish goes on.
+  // Figures the same way, referenced from the content as ![alt](attachment://…)
+  // and claimed with ADD_ATTACHMENT. One that cannot be hashed keeps its
+  // placeholder; the add goes on.
   const figures = file.converted?.figures ?? [];
-  const figureRefs = new Map<string, { ref: string }>();
+  const hashed = new Map<string, { ref: string }>();
   let attachmentErrors = 0;
   if (deps.attachments) {
     for (const figure of figures) {
       try {
-        figureRefs.set(
+        hashed.set(
           figure.id,
           await deps.attachments.prepare({
             name: `${figure.id}.png`,
@@ -261,13 +275,82 @@ export async function publishFile(
       }
     }
   }
+
+  // Uploaded before any source exists. Each upload stands alone: when one
+  // shared a try with the rest, the original's failure (2026-09-28: a dev.28
+  // Switchboard answered 500 instead of 409 to re-reserving a stored PDF)
+  // skipped every figure, leaving content that named images the store never
+  // received. A failure now costs only that file, and is reported.
+  let uploadError: string | undefined;
+  let originalStored = false;
+  if (prepared !== null && deps.attachments) {
+    try {
+      await deps.attachments.upload(prepared);
+      originalStored = true;
+    } catch (error) {
+      uploadError = message(error);
+    }
+  }
+  // Figures a few at a time; only the ones the store now holds are named.
+  const stored = new Map<string, { ref: string }>();
+  const queue = [...hashed.entries()];
+  let figureErrors = 0;
+  let firstFigureError: string | undefined;
+  await Promise.all(
+    Array.from({ length: Math.min(4, queue.length) }, async () => {
+      for (let next = queue.shift(); next !== undefined; next = queue.shift()) {
+        const [figureId, ref] = next;
+        try {
+          await deps.attachments!.upload(ref);
+          stored.set(figureId, ref);
+        } catch (error) {
+          figureErrors += 1;
+          firstFigureError ??= message(error);
+        }
+      }
+    }),
+  );
+
   const sections = file.converted?.sections ?? [];
-  const refOf = (figure: ConversionFigure) => figureRefs.get(figure.id)?.ref;
-  const rewritten = plan.sources.map((source) => {
-    const section = sections[source.sectionIndex];
-    return section
+  const refOf = (figure: ConversionFigure) => stored.get(figure.id)?.ref;
+  const attachedAt = (deps.now ?? (() => new Date()))().toISOString();
+  let claimed = 0;
+  const items: JournalItem[] = plan.sources.map((source) => {
+    const section = sections.at(source.sectionIndex);
+    const rewritten = section
       ? rewriteWithAttachments(section, figures, refOf)
       : { content: source.content, attached: [] };
+    const actions: JournalAction[] = [];
+    if (prepared !== null && originalStored) {
+      actions.push({
+        type: "ATTACH_ORIGINAL_FILE",
+        scope: "global",
+        input: {
+          originalFile: prepared.ref,
+          originalFileName: file.name,
+          originalMimeType: file.mimeType,
+          originalSizeBytes: file.size,
+          convertedBy: CONVERT_TOOL,
+          attachedAt,
+        },
+      });
+    }
+    for (const figure of rewritten.attached) {
+      const ref = refOf(figure);
+      if (ref === undefined) continue;
+      actions.push({
+        type: "ADD_ATTACHMENT",
+        scope: "global",
+        input: addAttachmentInput(figure, ref, attachedAt),
+      });
+      claimed += 1;
+    }
+    return {
+      title: source.title,
+      content: rewritten.content,
+      sourceType: source.sourceType,
+      actions,
+    };
   });
 
   const folder = await deps.api.post<{ id: string; created: boolean }>(
@@ -278,137 +361,192 @@ export async function publishFile(
     },
   );
 
+  // Written down before the first source. No room to write it (a full
+  // storage quota) costs only the carrying on: the add goes ahead as it
+  // always did.
+  let jobId: string | null = null;
+  if (deps.journal) {
+    try {
+      jobId = await deps.journal.start(
+        {
+          driveId: deps.driveId,
+          fileName: file.name,
+          folderId: folder.id,
+          folderName: plan.folderName,
+        },
+        items,
+      );
+    } catch {
+      jobId = null;
+    }
+  }
+
+  const create = () =>
+    createSources(items, 0, {
+      api: deps.api,
+      driveId: deps.driveId,
+      folderId: folder.id,
+      journal: jobId === null ? undefined : deps.journal,
+      jobId,
+      onProgress: deps.onProgress,
+    });
+  const run = jobId === null ? await create() : await holdingJournal(jobId, create);
+  if (jobId !== null) await deps.journal?.finish(jobId).catch(() => {});
+
+  const problems = [
+    uploadError ? `original: ${uploadError}` : undefined,
+    figureErrors
+      ? `${figureErrors} figure${figureErrors === 1 ? "" : "s"}: ${firstFigureError}`
+      : undefined,
+  ].filter(Boolean);
+  const attachError = problems.length
+    ? `Upload failed for ${problems.join("; ")}`
+    : (hashError ?? run.attachError);
+  return {
+    folderId: folder.id,
+    folderCreated: folder.created,
+    sourceIds: run.sourceIds,
+    skipped: plan.skipped,
+    attached: prepared !== null && originalStored && run.attachError === undefined,
+    attachments: claimed,
+    attachmentErrors: attachmentErrors + figureErrors,
+    ...(attachError ? { attachError } : {}),
+  };
+}
+
+/**
+ * Create sources in order from `from`, each at once given its original and
+ * figures, written down as it lands. A source the vault refuses stops the add
+ * where it is — `PublishPartialFailure` names what landed, and the journal keeps
+ * the rest for the person to try again; a request that never got an answer (the
+ * page going away) is not a refusal, and leaves the add to carry on by itself.
+ * `skip` holds titles already in the folder, each taken once: carrying on, the
+ * source created as the page went away is not made twice.
+ */
+async function createSources(
+  items: readonly JournalItem[],
+  from: number,
+  ctx: {
+    api: VaultApi;
+    driveId: string;
+    folderId: string;
+    journal?: PublishJournal;
+    jobId: string | null;
+    onProgress?: (done: number, total: number) => void;
+    skip?: Map<string, number>;
+  },
+): Promise<{ sourceIds: string[]; attachError?: string }> {
   const sourceIds: string[] = [];
-  for (const [index, source] of plan.sources.entries()) {
+  let attachFailures = 0;
+  let firstAttachError: string | undefined;
+  const journal = ctx.jobId === null ? undefined : ctx.journal;
+  for (let index = from; index < items.length; index++) {
+    const item = items[index];
+    const key = titleKey(item.title);
+    const already = ctx.skip?.get(key) ?? 0;
+    if (already > 0) {
+      ctx.skip!.set(key, already - 1);
+      if (journal) await journal.advance(ctx.jobId!, null).catch(() => {});
+      ctx.onProgress?.(index + 1, items.length);
+      continue;
+    }
     let created: { id: string };
     try {
-      created = await deps.api.post<{ id: string }>("/sources", {
-        drive: deps.driveId,
-        title: source.title,
-        content: rewritten[index]?.content ?? source.content,
-        sourceType: source.sourceType,
-        parentFolder: folder.id,
+      created = await ctx.api.post<{ id: string }>("/sources", {
+        drive: ctx.driveId,
+        title: item.title,
+        content: item.content,
+        sourceType: item.sourceType,
+        parentFolder: ctx.folderId,
         queue: true,
         method: CONVERT_METHOD,
         tool: CONVERT_TOOL,
       });
     } catch (error) {
-      throw new PublishPartialFailure(
-        `Could not create source ${index + 1} of ${plan.sources.length} (“${source.title}”): ${
-          error instanceof Error ? error.message : String(error)
-        }`,
-        { folderId: folder.id, sourceIds, failedAt: index },
-      );
+      const why = `Could not create source ${index + 1} of ${items.length} (“${item.title}”): ${message(error)}`;
+      // Only a refusal waits for the person; a request with no answer carries on by itself.
+      if (journal && error instanceof VaultApiFailure) await journal.fail(ctx.jobId!, why).catch(() => {});
+      throw new PublishPartialFailure(why, {
+        folderId: ctx.folderId,
+        sourceIds,
+        failedAt: index,
+      });
     }
     sourceIds.push(created.id);
-  }
-
-  const base: PublishResult = {
-    folderId: folder.id,
-    folderCreated: folder.created,
-    sourceIds,
-    skipped: plan.skipped,
-    attached: false,
-    attachments: 0,
-    attachmentErrors,
-  };
-
-  // No attachment port, or hashing failed: publish the content anyway. A source
-  // with no original is a degraded state the vault already supports; failing the
-  // publish over it would throw away a conversion that may have taken minutes.
-  if (!deps.attachments || (prepared === null && figureRefs.size === 0)) {
-    return attachError === undefined ? base : { ...base, attachError };
-  }
-
-  try {
-    const attachedAt = (deps.now ?? (() => new Date()))().toISOString();
-    let claimed = 0;
-    for (const [index, documentId] of sourceIds.entries()) {
-      const actions: { type: string; scope: "global"; input: unknown }[] = [];
-      if (prepared !== null) {
-        actions.push({
-          type: "ATTACH_ORIGINAL_FILE",
-          scope: "global",
-          input: {
-            originalFile: prepared.ref,
-            originalFileName: file.name,
-            originalMimeType: file.mimeType,
-            originalSizeBytes: file.size,
-            convertedBy: CONVERT_TOOL,
-            attachedAt,
-          },
-        });
-      }
-      for (const figure of rewritten[index]?.attached ?? []) {
-        const ref = refOf(figure);
-        if (ref === undefined) continue;
-        actions.push({
-          type: "ADD_ATTACHMENT",
-          scope: "global",
-          input: addAttachmentInput(figure, ref, attachedAt),
-        });
-        claimed += 1;
-      }
-      if (actions.length === 0) continue;
-      // `POST actions` is keyed by document alone — the route rejects any
-      // other field (a stray `drive` here cost every UI publish its attachment).
-      await deps.api.post("/actions", { documentId, actions });
-    }
-    // Each upload stands alone. They used to share this try: when the
-    // original's upload threw, every figure upload was skipped, leaving sources
-    // whose content and ADD_ATTACHMENT entries named 36 images the store never
-    // received (2026-09-28: a dev.28 Switchboard answered 500 instead of 409 to
-    // re-reserving an already-stored PDF). A failure now costs only that file,
-    // and is reported.
-    let originalError: string | undefined;
-    if (prepared !== null) {
+    if (item.actions.length > 0) {
       try {
-        await deps.attachments.upload(prepared);
+        // `POST actions` is keyed by document alone — the route rejects any
+        // other field (a stray `drive` here cost every UI publish its attachment).
+        await ctx.api.post("/actions", { documentId: created.id, actions: item.actions });
       } catch (error) {
-        originalError = error instanceof Error ? error.message : String(error);
+        attachFailures += 1;
+        firstAttachError ??= message(error);
       }
     }
-    // Figures a few at a time: 73 sequential PUTs left a window in which an
-    // opened source showed 404s for images its content already named.
-    const queue = [...figureRefs.values()];
-    let figureErrors = 0;
-    let firstFigureError: string | undefined;
-    await Promise.all(
-      Array.from({ length: Math.min(4, queue.length) }, async () => {
-        for (
-          let next = queue.shift();
-          next !== undefined;
-          next = queue.shift()
-        ) {
-          try {
-            await deps.attachments!.upload(next);
-          } catch (error) {
-            figureErrors += 1;
-            firstFigureError ??= error instanceof Error ? error.message : String(error);
-          }
-        }
-      }),
-    );
-    const problems = [
-      originalError ? `original: ${originalError}` : undefined,
-      figureErrors ? `${figureErrors} figure${figureErrors === 1 ? "" : "s"}: ${firstFigureError}` : undefined,
-    ].filter(Boolean);
-    return {
-      ...base,
-      attached: prepared !== null && originalError === undefined,
-      attachments: claimed,
-      attachmentErrors: attachmentErrors + figureErrors,
-      ...(problems.length ? { attachError: `Upload failed for ${problems.join("; ")}` } : {}),
-    };
-  } catch (error) {
-    // The sources exist and are queued; only the attachments are missing. Say
-    // so rather than fail a publish that already succeeded.
-    return {
-      ...base,
-      attached: false,
-      attachError: error instanceof Error ? error.message : String(error),
-    };
+    if (journal) await journal.advance(ctx.jobId!, created.id).catch(() => {});
+    ctx.onProgress?.(index + 1, items.length);
   }
+  return {
+    sourceIds,
+    ...(attachFailures
+      ? {
+          attachError: `${attachFailures} source${attachFailures === 1 ? "" : "s"} could not take ${attachFailures === 1 ? "its" : "their"} original: ${firstAttachError}`,
+        }
+      : {}),
+  };
+}
+
+/**
+ * Carry on an add the page did not live to finish — `publishFile` wrote it
+ * down. The folder is read first, so what is already in it (every source
+ * counted as done, and the one created as the page went away, which is not)
+ * is not made twice.
+ */
+export async function continuePublish(
+  entry: JournalEntry,
+  deps: {
+    api: VaultApi;
+    journal: PublishJournal;
+    folderTitles: (driveId: string, folderId: string) => Promise<string[]>;
+    onProgress?: (done: number, total: number) => void;
+  },
+): Promise<{ sourceIds: string[]; attachError?: string } | null> {
+  // Another window of this vault is carrying it on: leave it to that one.
+  return ifJournalFree(entry.id, () => carryOn(entry, deps));
+}
+
+async function carryOn(
+  entry: JournalEntry,
+  deps: Parameters<typeof continuePublish>[1],
+): Promise<{ sourceIds: string[]; attachError?: string }> {
+  const items = await deps.journal.items(entry.id);
+  if (items.length === 0) {
+    await deps.journal.finish(entry.id);
+    return { sourceIds: entry.sourceIds };
+  }
+  if (entry.error) await deps.journal.clearError(entry.id);
+  const skip = new Map<string, number>();
+  for (const title of await deps.folderTitles(entry.driveId, entry.folderId)) {
+    const key = titleKey(title);
+    skip.set(key, (skip.get(key) ?? 0) + 1);
+  }
+  // The sources counted as done are in the folder: only what is there beyond them is skipped.
+  for (const item of items.slice(0, entry.done)) {
+    const key = titleKey(item.title);
+    const n = skip.get(key) ?? 0;
+    if (n > 0) skip.set(key, n - 1);
+  }
+  const run = await createSources(items, entry.done, {
+    api: deps.api,
+    driveId: entry.driveId,
+    folderId: entry.folderId,
+    journal: deps.journal,
+    jobId: entry.id,
+    onProgress: deps.onProgress,
+    skip,
+  });
+  await deps.journal.finish(entry.id).catch(() => {});
+  return { sourceIds: [...entry.sourceIds, ...run.sourceIds], ...(run.attachError ? { attachError: run.attachError } : {}) };
 }
 
 /**
