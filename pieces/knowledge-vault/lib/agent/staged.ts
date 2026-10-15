@@ -431,7 +431,7 @@ export async function draftStage(llm: LlmClient, model: string, bundle: Record<s
         ...topicLines(bundle),
         "",
         "Claims:",
-        ...pending.map((c) => `- ${str(c.id)}: ${str(c.claim)}\n  locus: ${str(c.locus)}\n  evidence: ${str(c.evidence)}\n  vault matches: ${arr(c.matches).map(asRecord).map((m) => `${str(m.id)} "${str(m.title)}" (${str(m.similarity)})`).join("; ") || "none"}`),
+        ...pending.map((c) => `- ${str(c.id)}: ${str(c.claim)}\n  locus: ${str(c.locus)}\n  evidence: ${str(c.evidence)}\n  vault matches: ${arr(c.matches).map(asRecord).map((m) => `${str(m.id)} "${str(m.title)}" (${str(m.similarity)}${m.eligible === true ? "" : ", cannot be linked: archived, replaced or not close enough"})`).join("; ") || "none"}`),
         feedback,
         "",
         "Source text for evidence and conditions:",

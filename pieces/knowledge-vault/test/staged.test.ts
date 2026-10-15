@@ -348,6 +348,13 @@ describe("4. draft", () => {
     expect(out.summary).toBe("Drafted 1 note, 1 already in the vault, 1 merged into others, 1 still failing the vault's rules after 2 rounds; new topics: fresh.");
     expect(out.repair_rounds).toBe(1);
   });
+  it("marks only the vault matches drafting cannot link", async () => {
+    const m = modelSays(JSON.stringify({ notes: [note("c2", "One", { topics: ["operations"] })] }), '{"same":[]}');
+    await draftStage(m.llm, "m", bundle, { candidates: [{ id: "c2", claim: "B", matches: [{ id: "n1", title: "Good", similarity: 0.9, eligible: true }, { id: "n2", title: "Bad", similarity: 0.5, eligible: false }] }] }, m.fetchImpl);
+    expect(m.calls[0].user).toMatch(/n1 "Good" \(0\.9\)/);
+    expect(m.calls[0].user).toMatch(/n2 "Bad" \(0\.5, cannot be linked: archived, replaced or not close enough\)/);
+    expect(m.calls[0].user.match(/cannot be linked/g)).toHaveLength(1);
+  });
   it("stops after one round when every draft passes, and skips the model with nothing to draft", async () => {
     const m = modelSays(JSON.stringify({ notes: [note("c2", "One", { topics: ["operations"] }), note("c3", "Two", { topics: ["operations"] })] }), '{"same":[]}');
     const out = await draftStage(m.llm, "m", bundle, { candidates: [{ id: "c2" }, { id: "c3" }] }, m.fetchImpl);
