@@ -28,6 +28,10 @@ type Operation = { index: number; type: string; error?: string | null };
 type CreatedNote = { id: string; name: string; readBack: string; operations: Operation[] };
 
 const BATCH = 25;
+/** Stats this extractor writes carry its mark, so the desktop app's one-time re-run can tell them from the old extractor's. */
+export const EXTRACTOR_MARK = "extract-claims 2";
+/** A claim the vault already holds as a note: it is linked to this source too. */
+export type LinkedClaim = { note_id: string; title: string; locus: string; evidence: string };
 
 /** A readable, collision-tolerant document name; the drive renames on collision. */
 export function slugFor(title: string): string {
@@ -57,7 +61,7 @@ export function assertWritable(bundle: { title: string; status: string | null; e
 
 export async function writeStage(
   client: KnowledgeVaultClient,
-  args: { drive: string; sourceId: string; sourceTitle: string; sourceStatus?: string | null; model: string; notes: NoteToWrite[]; rejectedCount: number; skipRate: number; now?: () => Date },
+  args: { drive: string; sourceId: string; sourceTitle: string; sourceStatus?: string | null; model: string; notes: NoteToWrite[]; rejectedCount: number; skipRate: number; existing?: LinkedClaim[]; archiveReason?: string | null; now?: () => Date },
 ) {
   const now = () => (args.now ?? (() => new Date()))().toISOString();
   const author = `extract-claims · ${args.model}`;
@@ -116,7 +120,25 @@ export async function writeStage(
     }
   }
 
-  // The source's side: which notes it produced, the stats, and its status.
+  // A claim the vault already holds: the existing note gains this source too. Its text is not touched.
+  const linkedExisting: string[] = [];
+  const existingProblems: string[] = [];
+  for (const e of args.existing ?? []) {
+    try {
+      await client.request({
+        method: "POST",
+        path: "relationships",
+        json: { source: e.note_id, target: args.sourceId, type: "DERIVED_FROM", reason: `Also argued in "${args.sourceTitle}" (${e.locus || "the source"})${e.evidence ? `: "${e.evidence}"` : ""}`.slice(0, 900), confidence: "grounded" },
+      });
+      linkedExisting.push(e.note_id);
+    } catch (error) {
+      existingProblems.push(`${e.title || e.note_id}: ${errorMessage(error)}`);
+    }
+  }
+
+  // The source's side: every claim it makes (new notes and linked ones), the stats, and its status.
+  const claims = [...written.map((n) => n.id), ...linkedExisting];
+  const archive = !!args.archiveReason && claims.length === 0;
   const at = now();
   let sourceUpdated = true;
   let sourceProblem: string | null = null;
@@ -128,11 +150,12 @@ export async function writeStage(
       json: {
         documentId: args.sourceId,
         actions: [
-          ...written.map((n) => ({ type: "ADD_EXTRACTED_CLAIM", input: { claimRef: n.id } })),
+          // Listed before the stats: the source refuses a claim count its list does not match.
+          ...claims.map((claimRef) => ({ type: "ADD_EXTRACTED_CLAIM", input: { claimRef } })),
           // A source that was never queued is still in INBOX, which cannot move straight to EXTRACTED.
           ...(args.sourceStatus === null || args.sourceStatus === "INBOX" ? [{ type: "SET_SOURCE_STATUS", input: { status: "EXTRACTING" } }] : []),
-          { type: "RECORD_EXTRACTION_STATS", input: { claimCount: written.length, skippedCount: args.rejectedCount, skipRate: args.skipRate, extractedAt: at, extractedBy: author } },
-          { type: "SET_SOURCE_STATUS", input: { status: "EXTRACTED" } },
+          { type: "RECORD_EXTRACTION_STATS", input: { claimCount: claims.length, skippedCount: args.rejectedCount, skipRate: args.skipRate, extractedAt: at, extractedBy: `${EXTRACTOR_MARK} · ${args.model}` } },
+          { type: "SET_SOURCE_STATUS", input: { status: archive ? "ARCHIVED" : "EXTRACTED" } },
         ],
       },
     });
@@ -154,15 +177,21 @@ export async function writeStage(
     : linked < written.length
       ? `${written.length - linked} note${written.length - linked === 1 ? " is" : "s are"} not linked to the source`
       : null;
+  const status = archive ? `the source is archived: ${args.archiveReason}` : "the source is marked EXTRACTED";
+  const also = linkedExisting.length ? `; ${linkedExisting.length} note${linkedExisting.length === 1 ? "" : "s"} already in the vault now also link${linkedExisting.length === 1 ? "s" : ""} to it` : "";
   return {
     incomplete,
     summary:
-      `Wrote ${written.length} note${written.length === 1 ? "" : "s"} to /knowledge/notes, submitted for review, ${linked} linked to the source` +
-      (sourceUpdated ? "; the source is marked EXTRACTED." : `; the source was NOT updated (${sourceProblem}).`) +
-      (withProblems.length ? ` ${withProblems.length} note${withProblems.length === 1 ? " has" : "s have"} problems: see written.` : ""),
+      (archive ? `Nothing in "${args.sourceTitle}" is knowledge` : `Wrote ${written.length} note${written.length === 1 ? "" : "s"} to /knowledge/notes, submitted for review, ${linked} linked to the source${also}`) +
+      (sourceUpdated ? `; ${status}.` : `; the source was NOT updated (${sourceProblem}).`) +
+      (withProblems.length ? ` ${withProblems.length} note${withProblems.length === 1 ? " has" : "s have"} problems: see written.` : "") +
+      (existingProblems.length ? ` ${existingProblems.length} existing note${existingProblems.length === 1 ? "" : "s"} could not be linked: ${existingProblems.join("; ")}.` : ""),
     written,
     note_ids: written.map((n) => n.id),
     linked_count: linked,
+    linked_existing: linkedExisting,
+    existing_problems: existingProblems,
+    archived: archive && sourceUpdated,
     source_updated: sourceUpdated,
     source_problem: sourceProblem,
     problem_count: withProblems.length,

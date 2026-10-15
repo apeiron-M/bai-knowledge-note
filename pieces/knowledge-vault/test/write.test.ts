@@ -110,3 +110,40 @@ describe("write mode", () => {
     expect(slugFor("Légacy systems — and more words than fit in the name of a single document in a drive")).toBe("legacy-systems-and-more-words-than-fit-in-the-name-of-a-single-document");
   });
 });
+
+describe("a claim from two sources, and a source with no knowledge", () => {
+  type Sent = { actions: { type: string; input: Record<string, unknown> }[] };
+  it("links a claim the vault already holds to this source, lists it, and counts it", async () => {
+    const { client, requests } = recordingVault();
+    const out = await writeStage(client, { ...args([note(1)]), existing: [{ note_id: "old7", title: "Old", locus: "p2", evidence: "the passage" }] });
+    const links = requests.filter((r) => r.path === "relationships").map((r) => r.json);
+    expect(links[1]).toEqual({ source: "old7", target: "src", type: "DERIVED_FROM", reason: 'Also argued in "Tech" (p2): "the passage"', confidence: "grounded" });
+    const last = requests.at(-1)!.json as Sent;
+    expect(last.actions.map((a) => [a.type, a.input.claimRef ?? a.input.status ?? a.input.claimCount])).toEqual([
+      ["ADD_EXTRACTED_CLAIM", "n1"], ["ADD_EXTRACTED_CLAIM", "old7"], ["RECORD_EXTRACTION_STATS", 2], ["SET_SOURCE_STATUS", "EXTRACTED"],
+    ]);
+    expect(last.actions[2].input.extractedBy).toBe("extract-claims 2 · m/x");
+    expect(out.linked_existing).toEqual(["old7"]);
+    expect(out.summary).toBe("Wrote 1 note to /knowledge/notes, submitted for review, 1 linked to the source; 1 note already in the vault now also links to it; the source is marked EXTRACTED.");
+  });
+  it("archives a source that holds no knowledge, and only when no claim was found", async () => {
+    const empty = recordingVault();
+    const out = await writeStage(empty.client, { ...args([]), archiveReason: "a list of references" });
+    const actions = (empty.requests.at(-1)!.json as Sent).actions;
+    expect(actions.map((a) => a.type)).toEqual(["RECORD_EXTRACTION_STATS", "SET_SOURCE_STATUS"]);
+    expect(actions[1].input).toEqual({ status: "ARCHIVED" });
+    expect(out).toMatchObject({ archived: true, summary: 'Nothing in "Tech" is knowledge; the source is archived: a list of references.' });
+    const linked = recordingVault();
+    await writeStage(linked.client, { ...args([]), archiveReason: "a list of references", existing: [{ note_id: "old7", title: "Old", locus: "", evidence: "" }] });
+    expect((linked.requests.at(-1)!.json as Sent).actions.at(-1)!.input).toEqual({ status: "EXTRACTED" });
+    expect((linked.requests.find((r) => r.path === "relationships")!.json as { reason: string }).reason).toBe('Also argued in "Tech" (the source)');
+  });
+  it("leaves an existing note off the source's list when its link fails, and says so", async () => {
+    const { client, requests } = recordingVault({ relationships: (i) => { if (i === 1) throw new KnowledgeVaultApiError("400: reason too short", { category: "validation" }); return { operations: [] }; } });
+    const out = await writeStage(client, { ...args([note(1)]), existing: [{ note_id: "old7", title: "Old", locus: "p", evidence: "e" }] });
+    const actions = (requests.at(-1)!.json as Sent).actions;
+    expect(actions.filter((a) => a.type === "ADD_EXTRACTED_CLAIM").map((a) => a.input.claimRef)).toEqual(["n1"]);
+    expect(out.existing_problems).toEqual(["Old: 400: reason too short"]);
+    expect(out.summary).toMatch(/1 existing note could not be linked: Old: 400: reason too short\./);
+  });
+});
