@@ -78,8 +78,12 @@ export class WindowCursor {
     return this.queue.length === 0;
   }
 
-  /** The next window of at most `size` characters, or null when the text is used up. */
-  next(size: number): TextWindow | null {
+  /**
+   * The next window of at most `size` characters, or null when the text is used up. With `fill`, the
+   * paragraph that straddles the end is cut at a sentence end so the window comes out close to `size`
+   * (used when halving a window that failed); otherwise a window ends at a paragraph.
+   */
+  next(size: number, fill = false): TextWindow | null {
     if (this.queue.length === 0) return null;
     const taken: Unit[] = [];
     let length = 0;
@@ -95,7 +99,7 @@ export class WindowCursor {
       // Too long for what is left: cut it at sentences and take what fits, when the window is
       // empty or holds only the heading this text belongs under.
       const room = size - length - (taken.length ? 2 : 0);
-      if (taken.length === 0 || (taken.length === 1 && taken[0].heading && room >= MIN_WINDOW_CHARS / 2)) {
+      if (taken.length === 0 || (taken.length === 1 && taken[0].heading && room >= MIN_WINDOW_CHARS / 2) || (fill && !unit.heading && room >= MIN_WINDOW_CHARS / 4)) {
         const [first, ...rest] = splitLong(unit.text, room);
         this.queue.splice(0, 1, ...rest.map((text) => ({ text, heading: false })));
         taken.push({ text: first, heading: false });
@@ -119,11 +123,11 @@ export class WindowCursor {
   }
 }
 
-/** A window cut in two near its middle, at a paragraph or a sentence; null when a half would be under the minimum. */
+/** A window cut in two near its middle, at a paragraph or at a sentence end inside the paragraph that straddles it; null when a half would be under the minimum. */
 export function splitInHalf(w: TextWindow): [TextWindow, TextWindow] | null {
   if (w.text.length < 2 * MIN_WINDOW_CHARS) return null;
   const cursor = new WindowCursor(w.text, `${w.id}.`);
-  const first = cursor.next(Math.ceil(w.text.length / 2));
+  const first = cursor.next(Math.ceil(w.text.length / 2), true);
   const second = cursor.rest();
   if (!first || !second) return null;
   return [

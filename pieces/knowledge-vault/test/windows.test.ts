@@ -86,4 +86,14 @@ describe("cutting windows", () => {
     expect(`${halves[0].text}\n\n${halves[1].text}`).toBe(text);
     expect(splitInHalf({ id: "w1", heading: null, text: "x".repeat(2 * MIN_WINDOW_CHARS - 1) })).toBeNull();
   });
+  it("halves a window near its middle even when one paragraph holds most of it", () => {
+    const big = Array.from({ length: 160 }, (_, i) => `Sentence ${i} says something about memory.`).join(" ");
+    const text = `Short intro sentence.\n\n${big}`;
+    const halves = splitInHalf({ id: "w2", heading: null, text })!;
+    expect(halves.map((h) => h.id)).toEqual(["w2.1", "w2.2"]);
+    expect(Math.min(...halves.map((h) => h.text.length))).toBeGreaterThanOrEqual(MIN_WINDOW_CHARS);
+    expect(Math.abs(halves[0].text.length - halves[1].text.length)).toBeLessThan(text.length * 0.2);
+    expect(halves[0].text.endsWith(".")).toBe(true);
+    expect(halves.map((h) => h.text).join(" ").replace(/\s+/g, " ")).toBe(text.replace(/\s+/g, " "));
+  });
 });
