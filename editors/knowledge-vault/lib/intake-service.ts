@@ -473,6 +473,15 @@ export async function publishFile(
  * `skip` holds titles already in the folder, each taken once: carrying on, the
  * source created as the page went away is not made twice.
  */
+/**
+ * How many sources are created at once. Each is several reactor jobs behind
+ * one request — create, place, write, queue, each read back — mostly waiting
+ * rather than work, so a few in flight overlap the waits. One at a time, a
+ * 920-section book took about six minutes to add. The drive and the queue
+ * take their operations in order whatever arrives together.
+ */
+export const ADD_CONCURRENCY = 4;
+
 async function createSources(
   items: readonly JournalItem[],
   from: number,
@@ -486,61 +495,118 @@ async function createSources(
     skip?: Map<string, number>;
   },
 ): Promise<{ sourceIds: string[]; attachError?: string }> {
-  const sourceIds: string[] = [];
-  let attachFailures = 0;
-  let firstAttachError: string | undefined;
   const journal = ctx.jobId === null ? undefined : ctx.journal;
+  // Which items are already in the folder, decided up front and in order:
+  // each title found there is taken once, as when they went one by one.
+  const plan: { index: number; skip: boolean }[] = [];
   for (let index = from; index < items.length; index++) {
-    const item = items[index];
-    const key = titleKey(item.title);
+    const key = titleKey(items[index].title);
     const already = ctx.skip?.get(key) ?? 0;
-    if (already > 0) {
-      ctx.skip!.set(key, already - 1);
-      if (journal) await journal.advance(ctx.jobId!, null).catch(() => {});
-      ctx.onProgress?.(index + 1, items.length);
-      continue;
-    }
-    let created: { id: string };
-    try {
-      created = await ctx.api.post<{ id: string }>("/sources", {
-        drive: ctx.driveId,
-        title: item.title,
-        content: item.content,
-        sourceType: item.sourceType,
-        parentFolder: ctx.folderId,
-        queue: true,
-        method: CONVERT_METHOD,
-        tool: CONVERT_TOOL,
-      });
-    } catch (error) {
-      const why = `Could not create source ${index + 1} of ${items.length} (“${item.title}”): ${message(error)}`;
-      // Only a refusal waits for the person; a request with no answer carries on by itself.
-      if (journal && error instanceof VaultApiFailure) await journal.fail(ctx.jobId!, why).catch(() => {});
-      throw new PublishPartialFailure(why, {
-        folderId: ctx.folderId,
-        sourceIds,
-        failedAt: index,
-      });
-    }
-    sourceIds.push(created.id);
-    if (item.actions.length > 0) {
-      try {
-        // `POST actions` is keyed by document alone — the route rejects any
-        // other field (a stray `drive` here cost every UI publish its attachment).
-        await ctx.api.post("/actions", { documentId: created.id, actions: item.actions });
-      } catch (error) {
-        attachFailures += 1;
-        firstAttachError ??= message(error);
+    if (already > 0) ctx.skip?.set(key, already - 1);
+    plan.push({ index, skip: already > 0 });
+  }
+
+  /** What each item became: its new source, or null when it was already there. */
+  const made = new Map<number, string | null>();
+  const run: {
+    failure: { index: number; why: string; refusal: boolean } | null;
+    attachFailures: number;
+    firstAttachError?: string;
+    finished: number;
+    next: number;
+  } = { failure: null, attachFailures: 0, finished: 0, next: 0 };
+  // Read through a call: another worker may have set it across an await.
+  const failureSoFar = () => run.failure;
+
+  // The journal counts items from the first, in order — what an add cut short
+  // carries on from. With several in flight they finish out of order, so it
+  // moves on only over a run of finished ones; one made past that point is
+  // found by its title when the add carries on, and not made twice.
+  let journaled = from;
+  let journalWrites: Promise<void> = Promise.resolve();
+  const advanceJournal = (): Promise<void> => {
+    journalWrites = journalWrites.then(async () => {
+      while (made.has(journaled)) {
+        const id = made.get(journaled) ?? null;
+        journaled += 1;
+        if (journal) await journal.advance(ctx.jobId!, id).catch(() => {});
       }
+    });
+    return journalWrites;
+  };
+
+  const worker = async (): Promise<void> => {
+    // A failure stops new items; those already in flight finish.
+    while (run.failure === null && run.next < plan.length) {
+      const { index, skip } = plan[run.next];
+      run.next += 1;
+      const item = items[index];
+      if (skip) {
+        made.set(index, null);
+      } else {
+        let created: { id: string };
+        try {
+          created = await ctx.api.post<{ id: string }>("/sources", {
+            drive: ctx.driveId,
+            title: item.title,
+            content: item.content,
+            sourceType: item.sourceType,
+            parentFolder: ctx.folderId,
+            queue: true,
+            method: CONVERT_METHOD,
+            tool: CONVERT_TOOL,
+          });
+        } catch (error) {
+          const prior = failureSoFar();
+          if (prior === null || index < prior.index) {
+            run.failure = {
+              index,
+              why: `Could not create source ${index + 1} of ${items.length} (“${item.title}”): ${message(error)}`,
+              // Only a refusal waits for the person; a request with no answer carries on by itself.
+              refusal: error instanceof VaultApiFailure,
+            };
+          }
+          return;
+        }
+        if (item.actions.length > 0) {
+          try {
+            // `POST actions` is keyed by document alone — the route rejects any
+            // other field (a stray `drive` here cost every UI publish its attachment).
+            await ctx.api.post("/actions", { documentId: created.id, actions: item.actions });
+          } catch (error) {
+            run.attachFailures += 1;
+            run.firstAttachError ??= message(error);
+          }
+        }
+        made.set(index, created.id);
+      }
+      run.finished += 1;
+      ctx.onProgress?.(from + run.finished, items.length);
+      void advanceJournal();
     }
-    if (journal) await journal.advance(ctx.jobId!, created.id).catch(() => {});
-    ctx.onProgress?.(index + 1, items.length);
+  };
+  await Promise.all(
+    Array.from({ length: Math.min(ADD_CONCURRENCY, plan.length) }, () => worker()),
+  );
+  await advanceJournal();
+
+  const sourceIds = [...made.entries()]
+    .filter((entry): entry is [number, string] => entry[1] !== null)
+    .sort((a, b) => a[0] - b[0])
+    .map(([, id]) => id);
+  if (run.failure) {
+    if (journal && run.failure.refusal) await journal.fail(ctx.jobId!, run.failure.why).catch(() => {});
+    throw new PublishPartialFailure(run.failure.why, {
+      folderId: ctx.folderId,
+      sourceIds,
+      failedAt: run.failure.index,
+    });
   }
   return {
     sourceIds,
-    ...(attachFailures
+    ...(run.attachFailures
       ? {
-          attachError: `${attachFailures} source${attachFailures === 1 ? "" : "s"} could not take ${attachFailures === 1 ? "its" : "their"} original: ${firstAttachError}`,
+          attachError: `${run.attachFailures} source${run.attachFailures === 1 ? "" : "s"} could not take ${run.attachFailures === 1 ? "its" : "their"} original: ${run.firstAttachError}`,
         }
       : {}),
   };

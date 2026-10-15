@@ -338,8 +338,14 @@ describe("publishFile", () => {
     expect(order.filter((o) => o === "attach")).toHaveLength(2);
     expect(order.filter((o) => o === "upload")).toHaveLength(1);
     expect(order.indexOf("upload")).toBeLessThan(order.indexOf("/sources"));
-    // Each source is given its original right after it is created.
-    expect(order.slice(order.indexOf("/sources"))).toEqual(["/sources", "attach", "/sources", "attach"]);
+    // Each source is given its original right after it is created — several
+    // are made at once, so an attach never runs ahead of the creates.
+    const fromFirst = order.slice(order.indexOf("/sources"));
+    expect(fromFirst.filter((o) => o === "/sources")).toHaveLength(2);
+    fromFirst.forEach((_, i) => {
+      const seen = fromFirst.slice(0, i + 1);
+      expect(seen.filter((o) => o === "attach").length).toBeLessThanOrEqual(seen.filter((o) => o === "/sources").length);
+    });
     expect(result.attached).toBe(true);
 
     const attachBodies = calls

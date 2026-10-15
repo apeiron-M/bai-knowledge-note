@@ -62,9 +62,63 @@ describe("adding a file whose sections are partly in the vault already", () => {
       folderTitles: () => Promise.resolve(["s1", "s2", "s3"]),
     });
     expect(posts.filter((p) => p.path === "/sources").map((p) => p.body.title)).toEqual(["s4", "s5"]);
-    // Each new source is given its original at once.
-    expect(posts.map((p) => p.path)).toEqual(["/sources", "/actions", "/sources", "/actions"]);
+    // Each new source is given its original at once, by its own id.
+    expect(posts.filter((p) => p.path === "/actions").map((p) => p.body.documentId ?? "").sort((a, b) => a.localeCompare(b))).toEqual(["src-4", "src-5"]);
     expect(result?.sourceIds).toEqual(["src-1", "src-2", "src-4", "src-5"]);
     expect(await journal.entries("d")).toEqual([]);
+  });
+});
+
+describe("adding several sources at once", () => {
+  it("keeps four in flight and writes the journal down only over a run of finished ones", async () => {
+    const journal = memoryJournal();
+    const items: JournalItem[] = ["s1", "s2", "s3", "s4", "s5", "s6"].map((title) => ({
+      title,
+      content: `${title} text`,
+      sourceType: "BOOK_CHAPTER",
+      actions: [],
+    }));
+    const id = await journal.start({ driveId: "d", fileName: "Book.pdf", folderId: "folder", folderName: "Book" }, items);
+    const waiting = new Map<string, () => void>();
+    let inFlight = 0;
+    let most = 0;
+    const api = {
+      post: (path: string, body: { title?: string }) => {
+        if (path !== "/sources") return Promise.resolve({});
+        inFlight += 1;
+        most = Math.max(most, inFlight);
+        return new Promise((resolve) =>
+          waiting.set(body.title!, () => {
+            inFlight -= 1;
+            resolve({ id: `src-${body.title!.slice(1)}` });
+          }),
+        );
+      },
+    } as unknown as VaultApi;
+    const [entry] = await journal.entries("d");
+    const settle = () => new Promise((resolve) => setTimeout(resolve, 0));
+    const done = async () => (await journal.entries("d"))[0]?.done;
+    const adding = continuePublish(entry, { api, journal, folderTitles: () => Promise.resolve([]) });
+    await settle();
+    expect([...waiting.keys()]).toEqual(["s1", "s2", "s3", "s4"]);
+    // The third and second finish first: nothing before them is done, so the journal stays at the start.
+    waiting.get("s3")!();
+    waiting.get("s2")!();
+    await settle();
+    expect(await done()).toBe(0);
+    // The first finishes: the run 1–3 is written down at once.
+    waiting.get("s1")!();
+    await settle();
+    expect(await done()).toBe(3);
+    for (const title of ["s4", "s5", "s6"]) {
+      await settle();
+      waiting.get(title)!();
+    }
+    const result = await adding;
+    expect(most).toBe(4);
+    expect(result?.sourceIds).toEqual(["src-1", "src-2", "src-3", "src-4", "src-5", "src-6"]);
+    // Finished: the add is no longer in the journal.
+    expect(await journal.entries("d")).toEqual([]);
+    expect(id).toBeTruthy();
   });
 });
