@@ -1068,7 +1068,7 @@ export async function checkWorkProposal(
   const wanted = new Set<string>();
   for (const c of changes) {
     for (const key of ["document", "scope", "wbs"] as const) {
-      const v = typeof c[key] === "string" ? (c[key] as string).trim() : "";
+      const v = typeof c[key] === "string" ? c[key].trim() : "";
       if (v && !isNewRef(v)) wanted.add(v);
     }
   }
