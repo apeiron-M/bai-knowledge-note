@@ -442,6 +442,24 @@ describe("5. report", () => {
     expect(out.proposed).toEqual([{ title: "T", description: "D", note_type: "PATTERN", topics: ["x"] }]);
     expect(reportStage("", {}, {}, {}, {})).toMatchObject({ skip_rate: 0, proposed_count: 0, cost_usd: 0 });
   });
+
+  it("archives a source with no knowledge, and names the parts that yielded nothing or could not be read", () => {
+    const out = reportStage("m", { title: "Reading list" }, {
+      source_kind: "not_knowledge", source_kind_reason: "a list of references", window_count: 3,
+      empty_parts: ['"Notes" (w2)'], unreadable_parts: ["w3"], other_gate_count: 2,
+      skipped: [{ candidate: "x", gate: "other", reason: "?" }, { candidate: "y", gate: "other", reason: "?" }],
+    }, {}, {});
+    expect(out.archive_reason).toBe("a list of references");
+    expect(out.summary).toMatch(/ Archived: a list of references\.$/);
+    expect(out.report).toMatch(/\*\*Not knowledge:\*\* a list of references/);
+    expect(out.report).toMatch(/2 rejected on a gate \(2 for a reason outside the gates\)/);
+    expect(out.report).toMatch(/read in 3 parts/);
+    expect(out.report).toMatch(/Parts that yielded nothing: "Notes" \(w2\)\./);
+    expect(out.report).toMatch(/Parts the model could not read: w3\./);
+    // A claim kept, or one found in the vault, means the source holds knowledge after all.
+    expect(reportStage("m", {}, { source_kind: "not_knowledge" }, {}, { existing: [{ title: "Old", note_id: "n1" }] }).archive_reason).toBeNull();
+    expect(reportStage("m", {}, {}, {}, {}).archive_reason).toBeNull();
+  });
 });
 
 describe("the extract-claims action", () => {

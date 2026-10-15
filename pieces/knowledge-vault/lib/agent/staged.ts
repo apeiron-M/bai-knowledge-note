@@ -562,24 +562,33 @@ export function reportStage(model: string, read: Record<string, unknown>, candid
   const skipRate = total ? skipped.length / total : 0;
   const cost = round4(Number(candidates.cost_usd ?? 0) + Number(draft.cost_usd ?? 0));
   const newTopics = arr(draft.new_topics).map(str);
+  const otherGate = Number(candidates.other_gate_count ?? 0);
+  const windowCount = Number(candidates.window_count ?? 0);
+  const emptyParts = arr(candidates.empty_parts).map(str);
+  const unreadableParts = arr(candidates.unreadable_parts).map(str);
+  // Archived only when nothing survived, nothing was found in the vault, and every part said it holds no knowledge.
+  const archiveReason = proposed.length === 0 && existing.length === 0 && str(candidates.source_kind) === "not_knowledge" ? str(candidates.source_kind_reason) || "it holds no claims by its nature" : null;
   const lines = [
     `## Extract — ${str(read.title)}`,
     "",
-    `**${proposed.length} proposed** · ${skipped.length} rejected on a gate · ${existing.length} already in the vault${rejected.length ? ` · ${rejected.length} failed the rules` : ""}${overlaps ? ` · ${overlaps} dropped as duplicates of another draft` : ""} · skip rate ${Math.round(skipRate * 100)}%`,
+    `**${proposed.length} proposed** · ${skipped.length} rejected on a gate${otherGate ? ` (${otherGate} for a reason outside the gates)` : ""} · ${existing.length} already in the vault${rejected.length ? ` · ${rejected.length} failed the rules` : ""}${overlaps ? ` · ${overlaps} dropped as duplicates of another draft` : ""} · skip rate ${Math.round(skipRate * 100)}%`,
     `Also set aside: ${restatements} restatement${restatements === 1 ? "" : "s"} of kept claims, ${nonClaims} non-claim${nonClaims === 1 ? "" : "s"} (headings, captions, bare statistics). Neither counts in the skip rate.`,
-    `Model \`${model}\` · $${cost.toFixed(4)} · ${Number(checked.checked_count ?? 0)} vault searches`,
+    `Model \`${model}\` · $${cost.toFixed(4)} · ${Number(checked.checked_count ?? 0)} vault searches${windowCount > 1 ? ` · read in ${windowCount} parts` : ""}`,
     "",
   ];
+  if (archiveReason) lines.push(`**Not knowledge:** ${archiveReason}. The source is archived rather than marked extracted.`, "");
+  if (emptyParts.length) lines.push(`Parts that yielded nothing: ${emptyParts.join(", ")}.`, "");
+  if (unreadableParts.length) lines.push(`Parts the model could not read: ${unreadableParts.join(", ")}.`, "");
   if (proposed.length) {
     lines.push("### Proposed notes", "");
     proposed.forEach((n, i) => lines.push(`${i + 1}. **${str(n.title)}** — _${str(n.note_type).toLowerCase()}, ${str(n.confidence)}_`, `   ${str(n.description)}`, `   Topics: ${arr(n.topics).map(str).join(", ")} · From: ${str(n.locus)}`));
     lines.push("");
   }
-  if (existing.length) lines.push("### Already in the vault", "", ...existing.map((e) => `- ${str(e.title)} (\`${str(e.note_id)}\`) — ${str(e.reason)}`), "");
+  if (existing.length) lines.push("### Already in the vault (now also linked to this source)", "", ...existing.map((e) => `- ${str(e.title)} (\`${str(e.note_id)}\`) — ${str(e.reason)}`), "");
   if (skipped.length) lines.push("### Rejected on a gate", "", "| Candidate | Gate | Why |", "|---|---|---|", ...skipped.map((s) => `| ${cell(str(s.candidate))} | ${str(s.gate)} | ${cell(str(s.reason))} |`), "");
   if (newTopics.length) lines.push(`New topics not in the vault's vocabulary: ${newTopics.join(", ")} — review before writing.`, "");
   return {
-    summary: `${proposed.length} notes proposed, ${skipped.length} rejected, ${existing.length} already in the vault, skip rate ${Math.round(skipRate * 100)}% (plus ${restatements} restatements and ${nonClaims} non-claims set aside), $${cost.toFixed(4)}.`,
+    summary: `${proposed.length} notes proposed, ${skipped.length} rejected, ${existing.length} already in the vault, skip rate ${Math.round(skipRate * 100)}% (plus ${restatements} restatements and ${nonClaims} non-claims set aside), $${cost.toFixed(4)}.${archiveReason ? ` Archived: ${archiveReason}.` : ""}`,
     report: lines.join("\n"),
     dry_run: true,
     source_id: str(read.source_id),
@@ -591,6 +600,11 @@ export function reportStage(model: string, read: Record<string, unknown>, candid
     skip_rate: Math.round(skipRate * 100) / 100,
     cost_usd: cost,
     new_topics: newTopics,
+    other_gate_count: otherGate,
+    window_count: windowCount,
+    empty_parts: emptyParts,
+    unreadable_parts: unreadableParts,
+    archive_reason: archiveReason,
     proposed: proposed.map((n) => ({ title: str(n.title), description: str(n.description), note_type: str(n.note_type), topics: arr(n.topics).map(str) })),
   };
 }
