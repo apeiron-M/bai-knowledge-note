@@ -24,6 +24,8 @@ type MarkdownPreviewProps = {
    * its read gate on dev.26+ hosts; without it they cannot be served there.
    */
   documentId?: string;
+  /** Opens a document the text links to (see `linkDocRefs`); without it those links do nothing. */
+  onOpenDoc?: (id: string) => void;
 };
 
 function escapeHtml(text: string): string {
@@ -237,6 +239,12 @@ function inlineFormat(text: string): string {
     /\[\[cite:(\d+):(\d+)\]\]/g,
     '<button type="button" class="md-cite" data-cite="$1" data-occurrence="$2" aria-label="Source $1">$1</button>',
   );
+  // A document named by id, rewritten by `linkDocRefs` into `[[doc:id|title]]`: the title, as a link the
+  // preview opens through `onOpenDoc`. The title was escaped with the rest of the line above.
+  out = out.replace(
+    /\[\[doc:([A-Za-z0-9_-]+)\|([^\]|]+)\]\]/g,
+    '<button type="button" class="md-doc" data-doc-id="$1" title="Open this note">$2</button>',
+  );
   // Inline code
   out = out.replace(/`([^`]+)`/g, '<code class="md-inline-code">$1</code>');
   // Bold
@@ -296,6 +304,7 @@ export function MarkdownPreview({
   content,
   scale = "compact",
   documentId,
+  onOpenDoc,
 }: MarkdownPreviewProps) {
   // Re-render whenever an attachment arrives or fails anywhere on the page:
   // the renderer then writes the picture (or the reason) into the HTML.
@@ -387,6 +396,8 @@ export function MarkdownPreview({
         .md-preview.md-reading .md-table td { padding: 8px 12px 8px 0; }
         .md-preview.md-reading .md-img { margin: 24px auto; }
         .md-preview.md-reading .md-hr { margin: 28px 0; }
+        .md-preview .md-doc { display: inline; padding: 0; border: 0; background: none; font: inherit; color: var(--bai-accent); text-decoration: underline; text-decoration-thickness: 1px; text-underline-offset: 2px; cursor: pointer; text-align: inherit; }
+        .md-preview .md-doc:hover { text-decoration-thickness: 2px; }
       `}</style>
       <div
         ref={root}
@@ -396,6 +407,10 @@ export function MarkdownPreview({
             : "md-preview text-sm leading-relaxed"
         }
         dangerouslySetInnerHTML={innerHtml}
+        onClick={(event) => {
+          const link = (event.target as HTMLElement).closest<HTMLElement>("[data-doc-id]");
+          if (link?.dataset.docId && onOpenDoc) onOpenDoc(link.dataset.docId);
+        }}
       />
     </>
   );

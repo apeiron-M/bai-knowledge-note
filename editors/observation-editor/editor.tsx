@@ -7,6 +7,10 @@ import {
 import { MarkdownPreview } from "../shared/markdown-preview.js";
 import { PromoteForm } from "./promote-form.js";
 import { TOOLBAR_CLASS } from "../shared/theme-context.js";
+import { setSelectedNode } from "@powerhousedao/reactor-browser";
+import { useVaultDocIndex } from "../shared/use-vault-doc-index.js";
+import { useDocWrite } from "../shared/use-doc-write.js";
+import { linkDocRefs } from "../shared/doc-refs.js";
 
 const CATEGORIES = [
   "METHODOLOGY",
@@ -34,10 +38,13 @@ function ts() {
 
 export default function Editor() {
   const [document, dispatch] = useSelectedObservationDocument();
-  /** The promote field's text while it is open; null when closed. */
-  const [promoting, setPromoting] = useState<string | null>(null);
+  /** Whether the promote form is open. */
+  const [promoting, setPromoting] = useState(false);
+  const { byId, knowledgeDocs } = useVaultDocIndex();
+  const { busy, error, write, clearError } = useDocWrite(dispatch);
   const state = document.state.global;
   const initialized = !!state.title;
+  const status = state.status ?? "PENDING";
 
   if (!initialized) {
     return <CreateForm dispatch={dispatch} />;
@@ -108,63 +115,100 @@ export default function Editor() {
                   border: "1px solid var(--bai-border)",
                 }}
               >
-                <MarkdownPreview content={state.content} />
+                <MarkdownPreview
+                  content={linkDocRefs(state.content, (id) => byId.get(id)?.title)}
+                  onOpenDoc={(id) => setSelectedNode(id)}
+                />
               </div>
             )}
 
             {state.promotedTo && (
-              <div className="flex items-center gap-2 rounded-lg bg-blue-500/10 px-3 py-2 text-xs text-blue-300">
-                Promoted to:{" "}
-                <span className="font-mono">{state.promotedTo}</span>
+              <div
+                className="flex flex-wrap items-center gap-2 rounded-lg px-3 py-2 text-xs"
+                style={{ border: "1px solid var(--bai-border)", color: "var(--bai-text-secondary)" }}
+              >
+                Promoted to
+                {byId.get(state.promotedTo) ? (
+                  <button
+                    type="button"
+                    className="text-sm underline"
+                    style={{ color: "var(--bai-accent)" }}
+                    onClick={() => setSelectedNode(state.promotedTo as string)}
+                  >
+                    {byId.get(state.promotedTo)?.title}
+                  </button>
+                ) : (
+                  <span className="font-mono">{state.promotedTo}</span>
+                )}
               </div>
             )}
 
-            {/* Actions */}
+            {/* Actions: what the lifecycle allows from here — PENDING → PROMOTED → IMPLEMENTED,
+                or ARCHIVED from any state but ARCHIVED (observation-management reducer). */}
             <div
-              className="flex gap-2 pt-2"
+              className="flex flex-wrap items-center gap-2 pt-3"
               style={{ borderTop: "1px solid var(--bai-border)" }}
             >
-              {state.status === "PENDING" && promoting !== null && (
+              {status === "PENDING" && promoting ? (
                 <PromoteForm
-                  value={promoting}
-                  onChange={setPromoting}
-                  onCancel={() => setPromoting(null)}
-                  onSubmit={(ref) => {
-                    dispatch(actions.promoteObservation({ promotedTo: ref, promotedAt: ts() }));
-                    setPromoting(null);
+                  docs={knowledgeDocs.filter((d) => d.documentType === "bai/knowledge-note")}
+                  busy={busy === "promote"}
+                  onCancel={() => {
+                    setPromoting(false);
+                    clearError();
                   }}
+                  onSubmit={(ref) =>
+                    write("promote", actions.promoteObservation({ promotedTo: ref, promotedAt: ts() }), () =>
+                      setPromoting(false),
+                    )
+                  }
                 />
-              )}
-              {state.status === "PENDING" && promoting === null && (
+              ) : (
                 <>
-                  <button
-                    type="button"
-                    onClick={() => setPromoting("")}
-                    className="rounded bg-blue-600 px-3 py-1 text-xs font-medium text-white hover:bg-blue-700"
-                  >
-                    Promote
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() =>
-                      dispatch(
-                        actions.implementObservation({ updatedAt: ts() }),
-                      )
-                    }
-                    className="rounded bg-emerald-600 px-3 py-1 text-xs font-medium text-white hover:bg-emerald-700"
-                  >
-                    Implement
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() =>
-                      dispatch(actions.archiveObservation({ updatedAt: ts() }))
-                    }
-                    className="rounded bg-gray-600 px-3 py-1 text-xs font-medium text-white hover:bg-gray-700"
-                  >
-                    Archive
-                  </button>
+                  {status === "PENDING" && (
+                    <button
+                      type="button"
+                      disabled={busy !== null}
+                      onClick={() => {
+                        clearError();
+                        setPromoting(true);
+                      }}
+                      className="rounded bg-blue-600 px-3 py-1 text-xs font-medium text-white hover:bg-blue-700 disabled:opacity-40"
+                    >
+                      Promote…
+                    </button>
+                  )}
+                  {status === "PROMOTED" && (
+                    <button
+                      type="button"
+                      disabled={busy !== null}
+                      onClick={() => write("implement", actions.implementObservation({ updatedAt: ts() }))}
+                      className="rounded bg-emerald-600 px-3 py-1 text-xs font-medium text-white hover:bg-emerald-700 disabled:opacity-40"
+                    >
+                      {busy === "implement" ? "Saving…" : "Mark implemented"}
+                    </button>
+                  )}
+                  {status !== "ARCHIVED" && (
+                    <button
+                      type="button"
+                      disabled={busy !== null}
+                      onClick={() => write("archive", actions.archiveObservation({ updatedAt: ts() }))}
+                      className="rounded bg-gray-600 px-3 py-1 text-xs font-medium text-white hover:bg-gray-700 disabled:opacity-40"
+                    >
+                      {busy === "archive" ? "Archiving…" : "Archive"}
+                    </button>
+                  )}
+                  {status === "ARCHIVED" && (
+                    <span className="text-xs" style={{ color: "var(--bai-text-tertiary)" }}>
+                      Archived. An archived observation has nothing left to do.
+                    </span>
+                  )}
                 </>
+              )}
+              {error && busy === null && (
+                <p role="alert" className="w-full text-xs" style={{ color: "var(--bai-danger)" }}>
+                  {error}
+                </p>
               )}
             </div>
           </div>

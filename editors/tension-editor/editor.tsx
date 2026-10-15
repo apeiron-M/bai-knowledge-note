@@ -6,6 +6,11 @@ import { useVaultDocIndex } from "../shared/use-vault-doc-index.js";
 import { MarkdownPreview } from "../shared/markdown-preview.js";
 import { TOOLBAR_CLASS } from "../shared/theme-context.js";
 import { clearTensionClose, pendingTensionClose } from "../shared/tension-intent.js";
+import { useDocWrite } from "../shared/use-doc-write.js";
+import { NoteFinder } from "../shared/note-finder.js";
+import { mentionParts } from "../shared/mentions.js";
+import { linkDocRefs } from "../shared/doc-refs.js";
+import type { VaultDocSummary } from "../shared/vault-doc-index-store.js";
 
 type View = "analysis" | "details";
 type CloseKind = "resolve" | "dissolve";
@@ -55,16 +60,19 @@ const STYLES = `
 .ten-ed .claim:hover { border-color: var(--bai-accent); color: var(--bai-text); }
 .ten-ed .claim .meta { display: block; margin-top: 3px; font-size: 11px; color: var(--bai-text-faint); }
 .ten-ed .claim.dead { cursor: default; color: var(--bai-text-muted); }
-.ten-ed .add { display: flex; gap: 8px; margin-top: 12px; }
-.ten-ed .add input, .ten-ed .add textarea { flex: 1; min-width: 0; padding: 6px 9px; border-radius: 8px; background: var(--bai-surface); border: 1px solid var(--bai-border); color: var(--bai-text); font: inherit; font-size: 12.5px; }
-.ten-ed .add input:focus, .ten-ed .add textarea:focus { outline: none; border-color: var(--bai-accent); }
-.ten-ed .add button { padding: 6px 12px; border-radius: 8px; background: var(--bai-accent); border: 1px solid var(--bai-accent); color: var(--bai-accent-text); font-size: 12.5px; font-weight: 600; cursor: pointer; }
-.ten-ed .add button.ghost { background: var(--bai-surface); border-color: var(--bai-border); color: var(--bai-text-tertiary); font-weight: 500; }
 .ten-ed .closebox { margin-top: 22px; padding: 16px; border-radius: 10px; background: var(--bai-deep); border: 1px solid var(--bai-border); }
 .ten-ed .closebox textarea { width: 100%; min-height: 88px; resize: vertical; padding: 8px 10px; border-radius: 8px; background: var(--bai-surface); border: 1px solid var(--bai-border); color: var(--bai-text); font: inherit; font-size: 13px; line-height: 1.5; }
 .ten-ed .closebox textarea:focus { outline: none; border-color: var(--bai-accent); }
 .ten-ed .closebox .foot { display: flex; align-items: center; gap: 8px; margin-top: 10px; }
 .ten-ed .closebox .hint { flex: 1; font-size: 11.5px; color: var(--bai-text-muted); line-height: 1.5; }
+.ten-ed .hbtn:disabled { opacity: .55; cursor: default; filter: none; }
+.ten-ed .mention { display: inline; padding: 0; border: 0; background: none; font: inherit; color: var(--bai-accent); text-decoration: underline; text-decoration-thickness: 1px; text-underline-offset: 2px; cursor: pointer; }
+.ten-ed .mention:hover { text-decoration-thickness: 2px; }
+.ten-ed .werr { margin: 10px 0 0; font-size: 12.5px; line-height: 1.5; color: var(--bai-danger); }
+.ten-ed .find { display: flex; margin-top: 12px; }
+.ten-ed .confirm { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; margin-top: 12px; padding: 10px 12px; border-radius: 10px; border: 1px solid var(--bai-border); background: var(--bai-surface); font-size: 13px; color: var(--bai-text-secondary); }
+.ten-ed .confirm span { flex: 1; min-width: 200px; }
+.ten-ed .confirm b { color: var(--bai-text); font-weight: 600; }
 
 .ten-ed .detailsview { max-width: 64rem; margin: 0 auto; border: 1px solid var(--bai-border); border-top: 0; border-radius: 0 0 14px 14px; background: var(--bai-surface); padding: 22px 20px 40px; }
 .ten-ed .row { display: flex; justify-content: space-between; gap: 12px; padding: 7px 0; border-bottom: 1px solid var(--bai-border); font-size: 12.5px; }
@@ -100,13 +108,15 @@ function formatWhen(value?: string | null): string | null {
 export default function Editor() {
   const [document, dispatch] = useSelectedTensionDocument();
   const state = document.state.global;
-  const { byId } = useVaultDocIndex();
+  const { byId, knowledgeDocs } = useVaultDocIndex();
   const initialized = !!state.title;
 
   const [view, setView] = useState<View>("analysis");
   const [closing, setClosing] = useState<CloseKind | null>(null);
   const [resolution, setResolution] = useState("");
-  const [newRef, setNewRef] = useState("");
+  /** A note found to add to the contradiction, waiting for confirmation (it cannot be removed later). */
+  const [pickRef, setPickRef] = useState<VaultDocSummary | null>(null);
+  const { busy, error, write, clearError } = useDocWrite(dispatch);
   const [progress, setProgress] = useState(0);
   const reader = useRef<HTMLDivElement>(null);
 
@@ -117,7 +127,9 @@ export default function Editor() {
     setView(asked ? "details" : "analysis");
     setClosing(asked);
     setResolution("");
-  }, [document.header.id]);
+    setPickRef(null);
+    clearError();
+  }, [document.header.id, clearError]);
   // Once an open form closes (used, cancelled, Esc), the request is spent:
   // coming back opens the analysis. Only a form that was open counts, so the
   // first render — where nothing is open yet — never spends it.
@@ -135,13 +147,14 @@ export default function Editor() {
       if (tag === "INPUT" || tag === "TEXTAREA" || tag === "SELECT") return;
       if (closing) {
         setClosing(null);
+        clearError();
         return;
       }
       setView("analysis");
     };
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
-  }, [closing]);
+  }, [closing, clearError]);
 
   if (!initialized) {
     return <CreateForm dispatch={dispatch} />;
@@ -175,14 +188,27 @@ export default function Editor() {
     go("details");
   };
 
+  // The form stays open until the vault answers: a refused or failed write is
+  // said here, where the person acted, instead of the form closing on nothing.
   const confirmClose = () => {
-    if (!resolution.trim()) return;
-    const payload = { resolution: resolution.trim(), resolvedAt: ts() };
-    if (closing === "dissolve") dispatch(actions.dissolveTension(payload));
-    else dispatch(actions.resolveTension(payload));
-    setClosing(null);
-    setResolution("");
+    const text = resolution.trim();
+    if (!text || busy) return;
+    const payload = { resolution: text, resolvedAt: ts() };
+    const action = closing === "dissolve" ? actions.dissolveTension(payload) : actions.resolveTension(payload);
+    write("close", action, () => {
+      setClosing(null);
+      setResolution("");
+    });
   };
+
+  const addRef = (doc: VaultDocSummary) => {
+    if (busy) return;
+    write("add", actions.addInvolvedRef({ ref: doc.id }), () => setPickRef(null));
+  };
+
+  const involvedIds = new Set(state.involvedRefs);
+  const noteDocs = knowledgeDocs.filter((d) => d.documentType === "bai/knowledge-note");
+  const mentionable = involved.filter((n) => n.exists && n.title).map((n) => ({ id: n.ref, title: n.title as string }));
 
   return (
     <div className="ten-ed" data-view={view}>
@@ -233,7 +259,23 @@ export default function Editor() {
 
               <h1>{state.title}</h1>
               {state.description ? (
-                <p className="lede">{state.description}</p>
+                <p className="lede">
+                  {mentionParts(state.description, mentionable).map((part, i) =>
+                    typeof part === "string" ? (
+                      part
+                    ) : (
+                      <button
+                        key={`${part.id}-${i}`}
+                        type="button"
+                        className="mention"
+                        title="Open this note"
+                        onClick={() => setSelectedNode(part.id)}
+                      >
+                        {part.text}
+                      </button>
+                    ),
+                  )}
+                </p>
               ) : null}
 
               <div className="tabs">
@@ -258,7 +300,11 @@ export default function Editor() {
             {view === "analysis" && (
               <div className="ten-sheet">
                 {state.content ? (
-                  <MarkdownPreview content={state.content} scale="reading" />
+                  <MarkdownPreview
+                    content={linkDocRefs(state.content, (id) => byId.get(id)?.title)}
+                    scale="reading"
+                    onOpenDoc={(id) => setSelectedNode(id)}
+                  />
                 ) : (
                   <p className="empty">No analysis written for this tension.</p>
                 )}
@@ -271,7 +317,7 @@ export default function Editor() {
                   <p className="plbl">Notes in conflict</p>
                   {involved.length === 0 && (
                     <p className="narr" style={{ marginTop: 0 }}>
-                      No notes linked yet. Paste a note id to attach one.
+                      No notes linked yet. Find one below to attach it.
                     </p>
                   )}
                   {involved.map((note) =>
@@ -295,26 +341,36 @@ export default function Editor() {
                       </div>
                     ),
                   )}
-                  {status === "OPEN" && (
-                    <form
-                      className="add"
-                      onSubmit={(e) => {
-                        e.preventDefault();
-                        if (!newRef.trim()) return;
-                        dispatch(actions.addInvolvedRef({ ref: newRef.trim() }));
-                        setNewRef("");
-                      }}
-                    >
-                      <input
-                        value={newRef}
-                        onChange={(e) => setNewRef(e.target.value)}
-                        placeholder="Note ID"
-                        aria-label="Note ID"
-                      />
-                      <button type="submit" aria-label="Add involved note">
-                        Add
-                      </button>
-                    </form>
+                  {status === "OPEN" &&
+                    (pickRef ? (
+                      <div className="confirm" role="group" aria-label="Add a note to this contradiction">
+                        <span>
+                          Add <b>{pickRef.title}</b> to this contradiction? A note can't be removed from it later.
+                        </span>
+                        <button type="button" className="hbtn" disabled={busy === "add"} onClick={() => { setPickRef(null); clearError(); }}>
+                          Cancel
+                        </button>
+                        <button type="button" className="hbtn primary" disabled={busy === "add"} onClick={() => addRef(pickRef)}>
+                          {busy === "add" ? "Adding…" : "Add note"}
+                        </button>
+                      </div>
+                    ) : (
+                      <div className="find">
+                        <NoteFinder
+                          docs={noteDocs}
+                          exclude={involvedIds}
+                          label="Find a note to add"
+                          placeholder="Add a note: find it by its title"
+                          disabled={busy !== null}
+                          onPick={(doc) => {
+                            clearError();
+                            setPickRef(doc);
+                          }}
+                        />
+                      </div>
+                    ))}
+                  {error && busy === null && !closing && (
+                    <p className="werr" role="alert">{error}</p>
                   )}
                 </div>
 
@@ -344,6 +400,7 @@ export default function Editor() {
                     </p>
                     <textarea
                       value={resolution}
+                      disabled={busy === "close"}
                       onChange={(e) => setResolution(e.target.value)}
                       placeholder={
                         closing === "dissolve"
@@ -359,19 +416,28 @@ export default function Editor() {
                       <button
                         type="button"
                         className="hbtn"
-                        onClick={() => setClosing(null)}
+                        disabled={busy === "close"}
+                        onClick={() => {
+                          setClosing(null);
+                          clearError();
+                        }}
                       >
                         Cancel
                       </button>
                       <button
                         type="button"
                         className="hbtn primary"
-                        disabled={!resolution.trim()}
+                        disabled={!resolution.trim() || busy === "close"}
                         onClick={confirmClose}
                       >
-                        {closing === "dissolve" ? "Dissolve" : "Resolve"}
+                        {busy === "close"
+                          ? closing === "dissolve" ? "Dissolving…" : "Resolving…"
+                          : closing === "dissolve" ? "Dissolve" : "Resolve"}
                       </button>
                     </div>
+                    {error && busy === null && (
+                      <p className="werr" role="alert">{error}</p>
+                    )}
                   </div>
                 )}
 
