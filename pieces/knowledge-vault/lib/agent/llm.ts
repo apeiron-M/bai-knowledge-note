@@ -70,6 +70,8 @@ export const callTimeoutFor = (llm: Pick<LlmCredentials, "baseUrl" | "locality">
 export type ActiveModel = { model: string | null; locality: "local" | "hosted"; contextTokens: number | null; fromGateway: boolean };
 /** How long the gateway's answer is trusted: windows and calls ask again after this. */
 export const ACTIVE_TTL_MS = 5_000;
+/** How long one ask of the gateway's /active may take. */
+const ACTIVE_ASK_TIMEOUT_MS = 5_000;
 const timeoutForLocality = (locality: ActiveModel["locality"]) => (locality === "local" ? LOCAL_CALL_TIMEOUT_MS : JSON_CALL_TIMEOUT_MS);
 
 export class LlmClient {
@@ -118,16 +120,18 @@ export class LlmClient {
     if (!this.credentials.locality) return { ...fallback, contextTokens: await this.providerContext(fetchImpl) };
     if (this.noGateway) return fallback;
     if (!fresh && this.activeCache && Date.now() - this.activeCache.at < ACTIVE_TTL_MS) return this.activeCache.value;
+    // A failed ask answers for itself only: the last gateway answer when there is one, else the connection's settings.
+    const failed = this.activeCache ? this.activeCache.value : fallback;
     try {
-      const response = await (fetchImpl ?? this.fetchImpl)(`${this.credentials.baseUrl}/active`, { headers: this.headers(), signal: AbortSignal.timeout(5_000) });
-      if (response.status >= 400 && response.status < 500) {
-        // Not the desktop gateway, or one from before /active: its settings stand for the rest of the run.
+      const response = await (fetchImpl ?? this.fetchImpl)(`${this.credentials.baseUrl}/active`, { headers: this.headers(), signal: AbortSignal.timeout(ACTIVE_ASK_TIMEOUT_MS) });
+      if ([404, 405, 410].includes(response.status) && this.activeCache === null) {
+        // An endpoint with no /active (OpenRouter, a gateway from before it): its settings stand for the rest of the run.
         this.noGateway = true;
         return fallback;
       }
-      if (!response.ok) return fallback;
+      if (!response.ok) return failed;
       const body = (await response.json()) as { model?: unknown; locality?: unknown; contextTokens?: unknown };
-      if (body.locality !== "local" && body.locality !== "hosted") return fallback;
+      if (body.locality !== "local" && body.locality !== "hosted") return failed;
       const value: ActiveModel = {
         model: typeof body.model === "string" && body.model.trim() ? body.model : fallback.model,
         locality: body.locality,
@@ -137,7 +141,7 @@ export class LlmClient {
       this.activeCache = { at: Date.now(), value };
       return value;
     } catch {
-      return fallback;
+      return failed;
     }
   }
 

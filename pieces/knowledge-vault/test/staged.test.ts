@@ -493,6 +493,30 @@ describe("the model in charge", () => {
     await llm.active(undefined, true);
     expect(lists).toBe(1);
   });
+  it("keeps following the gateway through a restart: a failed ask after an answer reuses the last answer", async () => {
+    const answers: Response[] = [
+      json({ model: "gpt-6.1-sol", locality: "hosted", contextTokens: null }),
+      new Response("restarting", { status: 404 }),
+      new Response("busy", { status: 503 }),
+      json({ model: "local-20b", locality: "local", contextTokens: 32_768 }),
+    ];
+    let asks = 0;
+    const f = (async () => answers[asks++]) as unknown as typeof fetch;
+    const llm = new LlmClient(GATEWAY, f);
+    expect((await llm.active(undefined, true)).model).toBe("gpt-6.1-sol");
+    expect(await llm.active(undefined, true)).toEqual({ model: "gpt-6.1-sol", locality: "hosted", contextTokens: null, fromGateway: true });
+    expect((await llm.active(undefined, true)).model).toBe("gpt-6.1-sol");
+    expect(await llm.active(undefined, true)).toEqual({ model: "local-20b", locality: "local", contextTokens: 32_768, fromGateway: true });
+    expect(asks).toBe(4); // the 404 after an answer did not switch the gateway off
+  });
+  it("treats only a missing route before any answer as no gateway; other refusals are tried again", async () => {
+    let asks = 0;
+    const f = (async () => { asks++; return new Response("slow down", { status: 429 }); }) as unknown as typeof fetch;
+    const llm = new LlmClient(GATEWAY, f);
+    expect(await llm.active(undefined, true)).toMatchObject({ locality: "local", fromGateway: false });
+    await llm.active(undefined, true);
+    expect(asks).toBe(2);
+  });
   it("carries on with the connection's settings when the gateway stops answering", async () => {
     const llm = new LlmClient(GATEWAY, (async () => { throw new TypeError("fetch failed"); }) as unknown as typeof fetch);
     expect(await llm.active()).toMatchObject({ locality: "local", fromGateway: false });
