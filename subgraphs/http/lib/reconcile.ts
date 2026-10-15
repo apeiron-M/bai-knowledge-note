@@ -94,6 +94,9 @@ function extraction(e: SourceEvidence): { done: false; reason: string } | { done
       repair: repair(false),
     };
   }
+  if (e.status === "ARCHIVED" && e.statsRecorded) {
+    return { done: true, workDone: "Found in the vault: the extraction archived the source as holding no knowledge.", repair: null };
+  }
   if (e.status === "EXTRACTING" && n > 0 && !e.statsRecorded) {
     return {
       done: true,

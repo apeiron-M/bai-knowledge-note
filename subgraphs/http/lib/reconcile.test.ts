@@ -118,4 +118,12 @@ describe("catching the queue up with the vault", () => {
     const unprovable = planReconcile([held("2026-10-08T20:00:00.000Z", { currentPhase: "verify" })], new Map([["s1", source({ notes: [note("n1")] })]]), { now });
     expect(unprovable.left[0].reason).toMatch(/^held by 0xme since .*, and the Verify step closes the task/);
   });
+
+  it("counts a source archived as holding no knowledge as extracted, with nothing to connect, place or verify", () => {
+    const out = plan([task()], source({ status: "ARCHIVED", statsRecorded: true, notes: [] }));
+    expect(out.tasks[0]).toMatchObject({ from: "create", to: "done" });
+    expect(out.tasks[0].handoffs[0].workDone).toBe("Found in the vault: the extraction archived the source as holding no knowledge.");
+    // Archived by hand, with no extraction's stats, proves nothing.
+    expect(plan([task()], source({ status: "ARCHIVED", statsRecorded: false })).tasks).toEqual([]);
+  });
 });
