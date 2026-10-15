@@ -146,4 +146,23 @@ describe("a claim from two sources, and a source with no knowledge", () => {
     expect(out.existing_problems).toEqual(["Old: 400: reason too short"]);
     expect(out.summary).toMatch(/1 existing note could not be linked: Old: 400: reason too short\./);
   });
+  it("links an existing note once when two claims found it, so the count matches the list", async () => {
+    const { client, requests } = recordingVault();
+    const out = await writeStage(client, { ...args([note(1)]), existing: [{ note_id: "old7", title: "Old", locus: "p2", evidence: "a" }, { note_id: "old7", title: "Old", locus: "p5", evidence: "b" }] });
+    expect(requests.filter((r) => r.path === "relationships" && (r.json as { source: string }).source === "old7")).toHaveLength(1);
+    const actions = (requests.at(-1)!.json as Sent).actions;
+    expect(actions.filter((a) => a.type === "ADD_EXTRACTED_CLAIM").map((a) => a.input.claimRef)).toEqual(["n1", "old7"]);
+    expect(actions.find((a) => a.type === "RECORD_EXTRACTION_STATS")!.input.claimCount).toBe(2);
+    expect(out.linked_existing).toEqual(["old7"]);
+  });
+  it("says the step is incomplete, and does not archive, when a claim found in the vault could not be linked", async () => {
+    const failing = () => recordingVault({ relationships: () => { throw new KnowledgeVaultApiError("400: reason too short", { category: "validation" }); } });
+    const linked = failing();
+    const out = await writeStage(linked.client, { ...args([]), existing: [{ note_id: "old7", title: "Old", locus: "p", evidence: "e" }] });
+    expect(out.incomplete).toBe("1 note already in the vault could not be linked to the source");
+    const archived = failing();
+    const out2 = await writeStage(archived.client, { ...args([]), archiveReason: "a list of references", existing: [{ note_id: "old7", title: "Old", locus: "p", evidence: "e" }] });
+    expect((archived.requests.at(-1)!.json as Sent).actions.at(-1)!.input).toEqual({ status: "EXTRACTED" });
+    expect(out2.archived).toBe(false);
+  });
 });

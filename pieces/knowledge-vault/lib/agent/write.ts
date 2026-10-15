@@ -123,7 +123,10 @@ export async function writeStage(
   // A claim the vault already holds: the existing note gains this source too. Its text is not touched.
   const linkedExisting: string[] = [];
   const existingProblems: string[] = [];
+  const handled = new Set<string>(written.map((n) => n.id));
   for (const e of args.existing ?? []) {
+    if (handled.has(e.note_id)) continue;
+    handled.add(e.note_id);
     try {
       await client.request({
         method: "POST",
@@ -138,7 +141,7 @@ export async function writeStage(
 
   // The source's side: every claim it makes (new notes and linked ones), the stats, and its status.
   const claims = [...written.map((n) => n.id), ...linkedExisting];
-  const archive = !!args.archiveReason && claims.length === 0;
+  const archive = !!args.archiveReason && claims.length === 0 && existingProblems.length === 0;
   const at = now();
   let sourceUpdated = true;
   let sourceProblem: string | null = null;
@@ -176,7 +179,9 @@ export async function writeStage(
     ? "the source was not updated"
     : linked < written.length
       ? `${written.length - linked} note${written.length - linked === 1 ? " is" : "s are"} not linked to the source`
-      : null;
+      : existingProblems.length
+        ? `${existingProblems.length} note${existingProblems.length === 1 ? "" : "s"} already in the vault could not be linked to the source`
+        : null;
   const status = archive ? `the source is archived: ${args.archiveReason}` : "the source is marked EXTRACTED";
   const also = linkedExisting.length ? `; ${linkedExisting.length} note${linkedExisting.length === 1 ? "" : "s"} already in the vault now also link${linkedExisting.length === 1 ? "s" : ""} to it` : "";
   return {
