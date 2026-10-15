@@ -747,6 +747,9 @@ const FAMILIES: readonly { name: string; exts: readonly string[] }[] = [
   { name: "Excel", exts: ["xlsx", "xls", "ods"] },
   { name: "web pages", exts: ["html", "htm", "mhtml"] },
   { name: "images", exts: ["png", "jpg", "jpeg", "tif", "tiff", "webp"] },
+  // Recordings and videos are transcribed (Whisper): they become Transcript sources.
+  { name: "audio", exts: ["mp3", "wav", "m4a", "aac", "ogg", "flac"] },
+  { name: "video", exts: ["mp4", "mov", "mkv", "webm"] },
   { name: "Markdown", exts: ["md"] },
   { name: "EPUB", exts: ["epub"] },
 ];
