@@ -1,7 +1,7 @@
 import { describe, expect, it, vi } from "vitest";
 import { extractClaimsAction } from "../lib/actions/extract-claims.js";
 import { callTimeoutFor, completeJson, isLocalModel, isLocalModelEndpoint, JSON_CALL_TIMEOUT_MS, LlmClient, LOCAL_CALL_TIMEOUT_MS, parseJsonAnswer, retryDelayMs } from "../lib/agent/llm.js";
-import { asObject, candidatesStage, checkVaultStage, containsVerbatim, draftStage, mapLimit, readSourceStage, reportStage } from "../lib/agent/staged.js";
+import { asObject, CANDIDATES_SYSTEM, candidatesStage, checkVaultStage, containsVerbatim, draftStage, mapLimit, readSourceStage, reportStage } from "../lib/agent/staged.js";
 import type { KnowledgeVaultClient } from "../lib/common/client.js";
 
 const LLM = { baseUrl: "https://llm.test/v1", apiKey: "k" };
@@ -162,13 +162,112 @@ describe("2. candidates", () => {
     };
     const m = modelSays(JSON.stringify(answer));
     const out = await candidatesStage(m.llm, "m", bundle, m.fetchImpl);
-    expect(out.kept).toEqual([{ id: "c1", claim: "Budget stops separating organizations once spend is routine", locus: "p1", evidence: "e" }]);
+    expect(out.kept).toEqual([{ id: "c1", claim: "Budget stops separating organizations once spend is routine", locus: "p1", evidence: "e", window: "w1" }]);
     // Rejected on a gate: the claim nobody could dispute, the copied sentence, the unknown gate.
-    expect(out.skipped.map((s) => s.gate)).toEqual(["falsifiability", "sentence", "coherence"]);
+    expect(out.skipped.map((s) => s.gate)).toEqual(["falsifiability", "sentence", "other"]);
     // Set aside: the bare statistic and the heading are not claims.
     expect(out.non_claims.map((s) => s.candidate)).toEqual(["74 percent of firms invest over $50m", "A heading"]);
-    expect(out.summary).toBe("4 distinct claims: 1 kept, 3 rejected on a gate; 4 non-claims (headings, captions, bare statistics).");
+    expect(out.summary).toBe("4 distinct claims: 1 kept, 3 rejected on a gate (1 for a reason outside the gates); 4 non-claims (headings, captions, bare statistics).");
     expect(m.calls[0].user).toMatch(/Source title: Tech/);
+  });
+  /** A gateway that says which model is live (`live`), and answers each chat call with the next answer. */
+  function gateway(answers: string[], live: { locality: string; model: string; contextTokens?: number | null } = { locality: "local", model: "local-20b" }) {
+    let i = 0;
+    let running = 0;
+    const seen: { user: string }[] = [];
+    const peak = { n: 0 };
+    const fetchImpl = (async (u: string, init?: RequestInit) => {
+      if (u.endsWith("/active")) return json({ contextTokens: null, ...live });
+      const body = JSON.parse(init?.body as string) as { messages: { content: string }[] };
+      seen.push({ user: body.messages[1].content });
+      peak.n = Math.max(peak.n, ++running);
+      await new Promise((r) => setTimeout(r, 2));
+      running--;
+      return json({ choices: [{ message: { content: answers[Math.min(i++, answers.length - 1)] } }] });
+    }) as unknown as typeof fetch;
+    const llm = new LlmClient({ baseUrl: "http://127.0.0.1:4202/llm/v1", apiKey: "k", locality: "local" }, fetchImpl);
+    return { llm, fetchImpl, seen, peak, live };
+  }
+  const claimAnswer = (claim: string) => JSON.stringify({ source_kind: "knowledge", non_claims: 0, kept: [{ claim, locus: "p", evidence: "e", disagreement: "someone would argue otherwise" }], skipped: [] });
+  const section = (name: string, n: number) => [`# ${name}`, ...Array.from({ length: n }, (_, k) => `${name} paragraph ${k} ${"z".repeat(980)}.`)].join("\n\n");
+
+  it("reads a long source window by window, with each window's heading, and numbers the claims across them", async () => {
+    const text = [section("Hardware", 6), section("Memory", 6)].join("\n\n");
+    const g = gateway([claimAnswer("GPUs set the cost of inference"), claimAnswer("Bandwidth limits decoding speed")]);
+    const out = await candidatesStage(g.llm, "m", { title: "Book", text }, g.fetchImpl, { windowChars: 7_000 });
+    expect(out.window_count).toBe(2);
+    expect(out.kept.map((c) => [c.id, c.window])).toEqual([["c1", "w1"], ["c2", "w2"]]);
+    expect(g.seen[0].user).toMatch(/^Source title: Book\nSection: Hardware\n\n# Hardware/);
+    expect(g.seen[1].user).toMatch(/Section: Memory/);
+    expect(out.summary).toMatch(/^2 distinct claims from 2 parts: 2 kept, 0 rejected on a gate\.$/);
+  });
+  it("runs one window at a time on a local model, and three at once on a hosted one", async () => {
+    const text = section("A", 30);
+    const local = gateway([claimAnswer("x claim one")]);
+    await candidatesStage(local.llm, "m", { title: "T", text }, local.fetchImpl, { windowChars: 4_000 });
+    expect(local.peak.n).toBe(1);
+    const hosted = gateway([claimAnswer("x claim one")], { locality: "hosted", model: "gpt-6.1-sol" });
+    await candidatesStage(hosted.llm, "m", { title: "T", text }, hosted.fetchImpl, { windowChars: 4_000 });
+    expect(hosted.peak.n).toBe(3);
+  });
+  it("sizes the windows still to come for a model switched mid-source", async () => {
+    const text = section("A", 120); // about 120,000 characters: three hosted windows, then more
+    const g = gateway([claimAnswer("x claim one")], { locality: "hosted", model: "gpt-6.1-sol" });
+    const sizes: number[] = [];
+    const watching = (async (u: string, init?: RequestInit) => {
+      const r = await g.fetchImpl(u, init);
+      if (!u.endsWith("/active")) {
+        sizes.push((JSON.parse(init?.body as string) as { messages: { content: string }[] }).messages[1].content.length);
+        // After the first batch of three, the user switches to this computer's model.
+        if (sizes.length === 3) Object.assign(g.live, { locality: "local", model: "local-20b" });
+      }
+      return r;
+    }) as unknown as typeof fetch;
+    const llm = new LlmClient({ baseUrl: "http://127.0.0.1:4202/llm/v1", apiKey: "k", locality: "local" }, watching);
+    await candidatesStage(llm, "m", { title: "T", text }, watching);
+    expect(sizes.length).toBeGreaterThan(3);
+    expect(Math.max(...sizes.slice(0, 3))).toBeGreaterThan(9_000);
+    expect(Math.max(...sizes.slice(3))).toBeLessThanOrEqual(8_100);
+  });
+  it("asks once more after an empty answer, then splits the window in two", async () => {
+    const text = section("A", 6); // one window of about 6,000 characters
+    const g = gateway(["{}", "{}", claimAnswer("first half claim"), claimAnswer("second half claim")]);
+    const out = await candidatesStage(g.llm, "m", { title: "T", text }, g.fetchImpl);
+    expect(g.seen).toHaveLength(4);
+    expect(out.kept.map((c) => c.window)).toEqual(["w1.1", "w1.2"]);
+    expect(out.empty_parts).toEqual([]);
+  });
+  it("reports a part that stays empty at the smallest size", async () => {
+    const text = section("A", 3); // about 3,000 characters: too small to split
+    const g = gateway(["{}", "{}"]);
+    const out = await candidatesStage(g.llm, "m", { title: "T", text }, g.fetchImpl);
+    expect(out.empty_parts).toEqual(['"A" (w1)']);
+    expect(out.summary).toMatch(/1 part yielded nothing/);
+  });
+  it("splits a window the model cannot answer in JSON, and fails the stage when nothing could be read", async () => {
+    const text = section("A", 6);
+    const g = gateway(["not json", "not json", claimAnswer("half one"), claimAnswer("half two")]);
+    expect((await candidatesStage(g.llm, "m", { title: "T", text }, g.fetchImpl)).kept).toHaveLength(2);
+    const never = gateway(["not json"]);
+    await expect(candidatesStage(never.llm, "m", { title: "T", text: section("A", 3) }, never.fetchImpl)).rejects.toThrow(/did not answer with JSON/);
+  });
+  it("says a source holds no knowledge only when every part says so, and never when the model leaves it out", async () => {
+    const references = JSON.stringify({ source_kind: "not_knowledge", source_kind_reason: "a list of references", kept: [], skipped: [], non_claims: 0 });
+    const g = gateway([references]);
+    const out = await candidatesStage(g.llm, "m", { title: "T", text: section("Further reading", 3) }, g.fetchImpl);
+    expect([out.source_kind, out.source_kind_reason]).toEqual(["not_knowledge", "a list of references"]);
+    expect(g.seen).toHaveLength(1); // a not-knowledge answer is an answer, not an empty one
+    const silent = gateway([JSON.stringify({ kept: [], skipped: [{ candidate: "A heading", gate: "sentence", reason: "label" }], non_claims: 0 })]);
+    expect((await candidatesStage(silent.llm, "m", { title: "T", text: section("A", 3) }, silent.fetchImpl)).source_kind).toBe("knowledge");
+    const mixed = gateway([references, claimAnswer("a real claim here")]);
+    expect((await candidatesStage(mixed.llm, "m", { title: "T", text: [section("Refs", 6), section("Body", 6)].join("\n\n") }, mixed.fetchImpl, { windowChars: 7_000 })).source_kind).toBe("knowledge");
+  });
+  it("offers the model only the six gates and duplicate, and tells it every subject is in scope", () => {
+    expect(CANDIDATES_SYSTEM).not.toMatch(/out_of_scope/);
+    expect(CANDIDATES_SYSTEM).toMatch(/"gate":"sentence\|transclusion\|falsifiability\|coherence\|independence\|non_attribution\|duplicate"/);
+    expect(CANDIDATES_SYSTEM).toMatch(/Every subject the source covers is in scope/);
+    expect(CANDIDATES_SYSTEM).toMatch(/Never strike a statement only because it is descriptive, practical or technical/);
+    expect(CANDIDATES_SYSTEM).toMatch(/"source_kind":"knowledge"/);
   });
   it("reports zero survivors plainly", async () => {
     const m = modelSays("{}");

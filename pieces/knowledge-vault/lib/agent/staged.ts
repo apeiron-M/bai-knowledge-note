@@ -1,7 +1,8 @@
 import type { KnowledgeVaultClient } from "../common/client.js";
 import { KnowledgeVaultApiError } from "../common/errors.js";
-import { checkProposal, CONFIDENCE, GATES, NOTE_TYPES, type ProposedNote, type SkippedCandidate } from "./extract.js";
+import { checkProposal, CONFIDENCE, GATES, NOTE_TYPES, OTHER_GATE, type ProposedNote, type SkippedCandidate } from "./extract.js";
 import { completeJson, type LlmClient, type Usage } from "./llm.js";
+import { MIN_WINDOW_CHARS, paceFor, splitInHalf, windowSize, WindowCursor, type TextWindow } from "./windows.js";
 
 /**
  * The extract job as five workflow steps, so Studio shows each one finish
@@ -120,9 +121,9 @@ export async function readSourceStage(client: KnowledgeVaultClient, drive: strin
 
 // ── 2. candidates ────────────────────────────────────────────────────────
 
-export const CANDIDATES_SYSTEM = `You find atomic knowledge claims in ONE source for a knowledge vault. Answer with JSON only.
+export const CANDIDATES_SYSTEM = `You find atomic knowledge claims in ONE part of a source (the whole source when it is short) for a knowledge vault. Answer with JSON only.
 
-List every candidate claim in the source, in your own words, then run six gates on each. A claim passes only if all six hold:
+List every candidate claim in the text, in your own words, then run six gates on each. A claim passes only if all six hold:
 1 sentence: completes "This note argues that ...". Not a label, heading or caption.
 2 transclusion: works as a clause: "Since [claim], it follows that ...". Not a question.
 3 falsifiability: a competent practitioner could disagree. "Quality matters" fails.
@@ -131,6 +132,8 @@ List every candidate claim in the source, in your own words, then run six gates 
 6 non_attribution: asserts what is TRUE, not what someone said.
 Not claims: excerpts, summaries, headings, captions, anecdotes (they are evidence), bare numbers, restated structure, definitions with no stake.
 Conditions travel inside the claim ("X improves Y only when Z").
+A claim may describe how something works or what usually happens ("most inference runs on rented cloud GPUs", "memory bandwidth, not compute, limits decoding speed"): keep it when a practitioner could reasonably say otherwise. Never strike a statement only because it is descriptive, practical or technical.
+Every subject the source covers is in scope, including subjects the vault has no notes on yet.
 Two candidates that make the same assertion: keep one, strike the other as "duplicate".
 
 Zero survivors is a valid answer for a foreword or glossary; a high skip rate is a finding.
@@ -140,47 +143,151 @@ For each kept claim, say what a competent practitioner who disagrees would argue
 
 List only statements. Leave out headings, survey questions, figure captions and name credits entirely; count them in "non_claims".
 
-Answer: {"non_claims":0,"kept":[{"claim":"...","locus":"section and paragraph","evidence":"the source's own words that support it","disagreement":"what a practitioner who disagrees would argue"}],"skipped":[{"candidate":"...","gate":"${GATES.join("|")}","reason":"..."}]}`;
+Say what kind of text this is: "source_kind" is "not_knowledge" only when the text holds no claims by its nature (a list of references, an index, a glossary of terms, front matter, contact details), with the reason in a few words in "source_kind_reason"; otherwise "knowledge".
 
-export async function candidatesStage(llm: LlmClient, model: string, bundle: Record<string, unknown>, fetchImpl?: typeof fetch) {
+Answer: {"source_kind":"knowledge","source_kind_reason":"","non_claims":0,"kept":[{"claim":"...","locus":"section and paragraph","evidence":"the source's own words that support it","disagreement":"what a practitioner who disagrees would argue"}],"skipped":[{"candidate":"...","gate":"${GATES.join("|")}","reason":"..."}]}`;
+
+export type WindowCandidates = {
+  window: TextWindow;
+  kept: (Candidate & { window: string })[];
+  skipped: SkippedCandidate[];
+  nonClaimsCounted: number;
+  sourceKind: "knowledge" | "not_knowledge";
+  sourceKindReason: string;
+  /** Nothing kept, nothing struck, no non-claims, and not judged to hold no knowledge: no answer at all. */
+  empty: boolean;
+  usage: Usage;
+};
+
+/** One window through the candidate prompt: its claims, its rejections, and whether it holds knowledge at all. */
+export async function candidatesForWindow(llm: LlmClient, model: string, title: string, window: TextWindow, wholeSource: string, fetchImpl?: typeof fetch): Promise<WindowCandidates> {
   const { value, usage } = await completeJson(llm, {
     model,
     system: CANDIDATES_SYSTEM,
-    user: `Source title: ${str(bundle.title)}\n\n${str(bundle.text)}`,
+    user: `Source title: ${title}${window.heading ? `\nSection: ${window.heading}` : ""}\n\n${window.text}`,
     // Listing candidates needs little deliberation; unbounded reasoning took 45-180 s here.
     reasoningEffort: "low",
   }, fetchImpl);
   const answer = asObject(value, "The model's answer");
+  const kept: (Candidate & { window: string })[] = [];
   const skipped: SkippedCandidate[] = [];
-  const kept: Candidate[] = [];
   for (const c of arr(answer.kept).map((x) => asRecord(x))) {
     const claim = str(c.claim).trim();
     if (!claim) continue;
     // The gates the model tends to wave through, enforced here.
     if (BARE_STATISTIC.test(claim)) skipped.push({ candidate: claim, gate: "falsifiability", reason: "A bare statistic: evidence for a claim, not a claim (struck by the harness)" });
     else if (!str(c.disagreement).trim()) skipped.push({ candidate: claim, gate: "falsifiability", reason: "No position a practitioner could take against it (struck by the harness)" });
-    else if (containsVerbatim(str(bundle.text), claim)) skipped.push({ candidate: claim, gate: "sentence", reason: "Copied from the source rather than stated as the inference it supports (struck by the harness)" });
-    else kept.push({ id: `c${kept.length + 1}`, claim, locus: str(c.locus), evidence: str(c.evidence) });
+    else if (containsVerbatim(wholeSource, claim)) skipped.push({ candidate: claim, gate: "sentence", reason: "Copied from the source rather than stated as the inference it supports (struck by the harness)" });
+    else kept.push({ id: "", claim, locus: str(c.locus), evidence: str(c.evidence), window: window.id });
   }
   skipped.push(...arr(answer.skipped)
     .map((c) => asRecord(c))
     .filter((c) => str(c.candidate).trim())
-    .map((c) => ({ candidate: str(c.candidate), gate: (GATES as readonly string[]).includes(str(c.gate)) ? (str(c.gate) as SkippedCandidate["gate"]) : "coherence", reason: str(c.reason) })));
-  const breakdown = classifySkips(skipped);
-  const nonClaims = Math.max(0, Math.round(Number(answer.non_claims) || 0)) + breakdown.not_a_claim.length;
-  const distinct = kept.length + breakdown.rejected.length;
+    .map((c) => ({ candidate: str(c.candidate), gate: (GATES as readonly string[]).includes(str(c.gate)) ? (str(c.gate) as SkippedCandidate["gate"]) : OTHER_GATE, reason: str(c.reason) })));
+  const nonClaimsCounted = Math.max(0, Math.round(Number(answer.non_claims) || 0));
+  const notKnowledge = str(answer.source_kind).trim().toLowerCase() === "not_knowledge";
   return {
-    summary: `${distinct} distinct claim${distinct === 1 ? "" : "s"}: ${kept.length} kept, ${breakdown.rejected.length} rejected on a gate${breakdown.restatement.length ? `; ${breakdown.restatement.length} restatements of kept claims` : ""}${nonClaims ? `; ${nonClaims} non-claims (headings, captions, bare statistics)` : ""}.`,
+    window,
+    kept,
+    skipped,
+    nonClaimsCounted,
+    sourceKind: notKnowledge ? "not_knowledge" : "knowledge",
+    sourceKindReason: notKnowledge ? str(answer.source_kind_reason).trim() : "",
+    empty: !notKnowledge && arr(answer.kept).length === 0 && arr(answer.skipped).length === 0 && nonClaimsCounted === 0,
+    usage,
+  };
+}
+
+/** An answer the model could not give in JSON, after completeJson's own second try. */
+const isUnreadableAnswer = (error: unknown) => error instanceof KnowledgeVaultApiError && /did not answer with JSON|malformed JSON|gave no answer twice|empty response twice/.test(error.message);
+const describePart = (w: TextWindow) => (w.heading ? `"${w.heading}" (${w.id})` : w.id);
+const plural = (n: number, one: string, many = `${one}s`) => `${n} ${n === 1 ? one : many}`;
+
+export async function candidatesStage(llm: LlmClient, model: string, bundle: Record<string, unknown>, fetchImpl?: typeof fetch, opts: { windowChars?: number | null } = {}) {
+  const text = str(bundle.text);
+  const title = str(bundle.title);
+  const cursor = new WindowCursor(text);
+  const redo: TextWindow[] = [];
+  const results: WindowCandidates[] = [];
+  const emptyParts: TextWindow[] = [];
+  const unreadable: TextWindow[] = [];
+  let lastError: unknown = null;
+
+  type Outcome = { kind: "read"; out: WindowCandidates } | { kind: "empty"; window: TextWindow } | { kind: "unreadable"; window: TextWindow; error: unknown };
+  async function readWindow(w: TextWindow): Promise<Outcome> {
+    for (let ask = 1; ask <= 2; ask++) {
+      let out: WindowCandidates;
+      try {
+        out = await candidatesForWindow(llm, model, title, w, text, fetchImpl);
+      } catch (error) {
+        if (isUnreadableAnswer(error)) return { kind: "unreadable", window: w, error };
+        throw error;
+      }
+      // An empty answer for a window this long is asked once more; a short one is taken as it is.
+      if (!out.empty || w.text.length < MIN_WINDOW_CHARS) return { kind: "read", out };
+    }
+    return { kind: "empty", window: w };
+  }
+
+  while (redo.length || !cursor.done) {
+    // Asked afresh before every batch (one local call): the windows still to come are sized and paced
+    // for the model in charge now, even when the user switched a moment ago.
+    const live = await llm.active(fetchImpl, true);
+    const size = windowSize({ locality: live.locality, contextTokens: live.contextTokens, override: opts.windowChars });
+    const batch: TextWindow[] = [];
+    while (batch.length < paceFor(live.locality)) {
+      const next = redo.shift() ?? cursor.next(size);
+      if (!next) break;
+      batch.push(next);
+    }
+    const outcomes = await mapLimit(batch, batch.length, readWindow);
+    for (const o of outcomes) {
+      if (o.kind === "read") {
+        results.push(o.out);
+        continue;
+      }
+      if (o.kind === "unreadable") lastError = o.error;
+      const halves = splitInHalf(o.window);
+      if (halves) redo.unshift(...halves);
+      else (o.kind === "empty" ? emptyParts : unreadable).push(o.window);
+    }
+  }
+  if (results.length === 0 && unreadable.length) throw lastError;
+
+  let n = 0;
+  const kept = results.flatMap((r) => r.kept).map((c) => ({ ...c, id: `c${++n}` }));
+  const breakdown = classifySkips(results.flatMap((r) => r.skipped));
+  const nonClaims = results.reduce((sum, r) => sum + r.nonClaimsCounted, 0) + breakdown.not_a_claim.length;
+  const other = breakdown.rejected.filter((s) => s.gate === OTHER_GATE).length;
+  const distinct = kept.length + breakdown.rejected.length;
+  const parts = results.length + emptyParts.length + unreadable.length;
+  const notKnowledge = results.length > 0 && results.every((r) => r.sourceKind === "not_knowledge");
+  const usage = results.reduce((u, r) => ({ cost: u.cost + r.usage.cost, tokens: u.tokens + r.usage.prompt_tokens + r.usage.completion_tokens }), { cost: 0, tokens: 0 });
+  return {
+    summary:
+      `${plural(distinct, "distinct claim")}${parts > 1 ? ` from ${parts} parts` : ""}: ${kept.length} kept, ${breakdown.rejected.length} rejected on a gate` +
+      `${other ? ` (${other} for a reason outside the gates)` : ""}` +
+      `${breakdown.restatement.length ? `; ${breakdown.restatement.length} restatements of kept claims` : ""}` +
+      `${nonClaims ? `; ${nonClaims} non-claims (headings, captions, bare statistics)` : ""}` +
+      `${emptyParts.length ? `; ${plural(emptyParts.length, "part")} yielded nothing` : ""}` +
+      `${unreadable.length ? `; ${plural(unreadable.length, "part")} could not be read` : ""}.`,
     kept_count: kept.length,
     skipped_count: breakdown.rejected.length,
     restatement_count: breakdown.restatement.length,
     non_claim_count: nonClaims,
+    other_gate_count: other,
     kept,
     skipped: breakdown.rejected,
     restatements: breakdown.restatement,
     non_claims: breakdown.not_a_claim,
+    windows: results.map((r) => r.window),
+    window_count: parts,
+    empty_parts: emptyParts.map(describePart),
+    unreadable_parts: unreadable.map(describePart),
+    source_kind: notKnowledge ? ("not_knowledge" as const) : ("knowledge" as const),
+    source_kind_reason: notKnowledge ? results.find((r) => r.sourceKindReason)?.sourceKindReason || "it holds no claims by its nature" : "",
     cost_usd: round4(usage.cost),
-    tokens: usage.prompt_tokens + usage.completion_tokens,
+    tokens: usage.tokens,
   };
 }
 /** "74 percent of …", "83% report …", "US$50m …": a number leading the sentence is a finding. */

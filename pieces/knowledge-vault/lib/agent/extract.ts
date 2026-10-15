@@ -8,7 +8,10 @@
 /** The v2 `NoteType` enum (document-models/knowledge-note/v2); a test pins them equal. */
 export const NOTE_TYPES = ["ARCHITECTURE", "BUG_PATTERN", "CONCEPT", "DECISION", "INTEGRATION", "OBSERVATION", "PATTERN", "PROCEDURE", "REFERENCE", "WORKFLOW"] as const;
 export const CONFIDENCE = ["grounded", "established", "speculative"] as const;
-export const GATES = ["sentence", "transclusion", "falsifiability", "coherence", "independence", "non_attribution", "out_of_scope", "duplicate"] as const;
+/** The gates the candidate prompt offers the model: its six, plus "duplicate" for a restatement of another candidate. */
+export const GATES = ["sentence", "transclusion", "falsifiability", "coherence", "independence", "non_attribution", "duplicate"] as const;
+/** A rejection that named a gate outside the list: still a rejection, reported apart. */
+export const OTHER_GATE = "other" as const;
 
 export type ProposedNote = {
   title: string;
@@ -19,7 +22,7 @@ export type ProposedNote = {
   confidence: (typeof CONFIDENCE)[number];
   locus: string;
 };
-export type SkippedCandidate = { candidate: string; gate: (typeof GATES)[number]; reason: string };
+export type SkippedCandidate = { candidate: string; gate: (typeof GATES)[number] | typeof OTHER_GATE; reason: string };
 export type ExistingMatch = { note_id: string; title: string; locus: string; reason: string };
 
 /** The vault's own rules, checked before a proposal is accepted. */
