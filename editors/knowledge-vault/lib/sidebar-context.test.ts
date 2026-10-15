@@ -1,7 +1,7 @@
 import type { Node } from "@powerhousedao/shared/document-drive";
 import { describe, expect, it, vi } from "vitest";
-import type { KnowledgeNoteInfo } from "../hooks/use-knowledge-notes.js";
-import type { MocInfo } from "../hooks/use-knowledge-mocs.js";
+import { indexNotes, type KnowledgeNoteInfo } from "../hooks/use-knowledge-notes.js";
+import { indexMocs, type MocInfo } from "../hooks/use-knowledge-mocs.js";
 import { buildSidebarContext, type SidebarContextInput } from "./sidebar-context.js";
 
 function file(id: string, name: string, documentType: string, parentFolder: string | null = null): Node {
@@ -31,11 +31,17 @@ const nodes: Node[] = [
   file("n1", "A note", "bai/knowledge-note", "f1"),
 ];
 
-function input(overrides: Partial<SidebarContextInput>): SidebarContextInput {
+/** The input the shell builds: the notes and topics as the hooks index them. */
+function input({
+  notes = [],
+  mocs = [],
+  ...overrides
+}: Partial<Omit<SidebarContextInput, "noteMap" | "mocMap">> & { notes?: KnowledgeNoteInfo[] }): SidebarContextInput {
   return {
     nodes,
-    notes: [],
-    mocs: [],
+    noteMap: indexNotes(notes),
+    mocs,
+    mocMap: indexMocs(mocs),
     selected: undefined,
     graphFocus: null,
     open: () => {},
@@ -65,11 +71,13 @@ describe("buildSidebarContext", () => {
     expect(ctx?.items.map((i) => i.id)).toEqual(["s3"]);
   });
 
-  it("builds a topics context: every map, overview tier first, with note counts", () => {
+  it("builds a topics context: every map in the Topics list's order, with note counts", () => {
+    // In the order useKnowledgeMocs hands them over (the overview tier first);
+    // the context keeps it rather than sorting a second time.
     const mocs = [
-      moc("m1", "Topic leaf", "TOPIC", 3),
       moc("m2", "Hub", "HUB", 40),
       moc("m3", "Domain", "DOMAIN", 9),
+      moc("m1", "Topic leaf", "TOPIC", 3),
     ];
     const selected = file("m1", "Topic leaf", "bai/moc");
     const ctx = buildSidebarContext(input({ mocs, selected }));

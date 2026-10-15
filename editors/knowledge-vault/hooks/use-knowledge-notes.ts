@@ -61,6 +61,13 @@ export type UseKnowledgeNotesResult = {
   refetch: () => void;
 };
 
+/** Notes by id. The hook's map and every consumer that needs one use this. */
+export function indexNotes(notes: KnowledgeNoteInfo[]): Map<string, KnowledgeNoteInfo> {
+  const m = new Map<string, KnowledgeNoteInfo>();
+  for (const n of notes) m.set(n.id, n);
+  return m;
+}
+
 export function useKnowledgeNotes(): UseKnowledgeNotesResult {
   // Connect's local drive-document cache can be stale (we've observed
   // server having 398 file nodes while the cache reports 2). The
@@ -159,11 +166,7 @@ export function useKnowledgeNotes(): UseKnowledgeNotesResult {
     });
   }, [knowledgeFileNodes, nodeMap, linksBySource]);
 
-  const noteMap = useMemo(() => {
-    const m = new Map<string, KnowledgeNoteInfo>();
-    for (const n of notes) m.set(n.id, n);
-    return m;
-  }, [notes]);
+  const noteMap = useMemo(() => indexNotes(notes), [notes]);
 
   return {
     notes,

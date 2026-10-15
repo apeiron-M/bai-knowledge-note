@@ -608,18 +608,11 @@ html[data-bai-toast-theme] .Toastify__bounce-exit--bottom-center {
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='none' stroke='%2352525b' stroke-width='1.6' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M4 6l4 4 4-4'/%3E%3C/svg%3E");
 }
 
-/* The vault's tab row scrolls sideways when even its icons do not fit (menu-bar.ts); no scrollbar over the tabs. */
-.bai-theme .kv-tab-row {
-  scrollbar-width: none;
-  /* A fade at the right edge says there is more to scroll to; the row is wider than its tabs otherwise, so the
-     fade falls on empty space when everything fits. */
-  -webkit-mask-image: linear-gradient(to right, #000 calc(100% - 28px), transparent);
-  mask-image: linear-gradient(to right, #000 calc(100% - 28px), transparent);
-}
-.bai-theme .kv-tab-row::-webkit-scrollbar {
-  display: none;
-}
-
-/* The shell frame (VaultShell). */
-@media (min-width: 900px) and (max-width: 1179px) { .vault-frame { --vault-sidebar-w: 220px; } }
-.vault-frame :is(.vault-hostbar, .vault-sidebar, .vault-card) { box-shadow: var(--v-raise); }
+/* The shell frame (VaultShell): no bar over the content; the sidebar column takes its width from
+   --vault-sidebar-w — published by the sidebar once dragged or folded to its rail, CSS until then.
+   The breakpoint follows the frame, not the window: Connect's own sidebar takes room too. */
+.vault-frame { container: vault-frame / inline-size; }
+.vault-sidebar-col { width: var(--vault-sidebar-w, 256px); }
+@container vault-frame (max-width: 1179px) { .vault-sidebar-col { --vault-sidebar-w: 220px; } }
+/* The rail is part of the canvas (design: 5.5 L* below it), never raised; cards are. */
+.vault-frame .vault-card { box-shadow: var(--v-raise); }

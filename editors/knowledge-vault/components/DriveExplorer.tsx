@@ -35,8 +35,8 @@ import { SearchView } from "./SearchView.js";
 import { ChatView } from "./ChatView.js";
 import { readReturnIntent } from "../lib/chat/openrouter-auth.js";
 import { ActivityView } from "./ActivityView.js";
-import { GettingStartedButton } from "./GettingStarted.js";
-import { compactTabs } from "./menu-bar.js";
+import { GettingStartedModal } from "./GettingStarted.js";
+import type { VaultMenuItem } from "./VaultMenu.js";
 import { useKnowledgeNotes } from "../hooks/use-knowledge-notes.js";
 import { getHostConfig } from "../../shared/host-config.js";
 import { useConvertHealth } from "../hooks/use-convert-health.js";
@@ -95,7 +95,8 @@ export const PLACE_VIEW: Partial<Record<VaultPlaceId, ViewMode>> = {
   notes: "notes",
   topics: "notes",
   sources: "sources",
-  work: "projects",
+  // Scopes of work first: a project lives inside one ("Create a scope of work first").
+  work: "scope",
   graph: "graph",
 };
 
@@ -105,6 +106,10 @@ export type PlaceCounts = {
   sources: number;
   work: number;
   contradictions: number;
+  /** Files the intake holds for the reader (ready for review, or failed). */
+  sourcesWaiting?: number;
+  /** Files are converting. */
+  sourcesBusy?: boolean;
 };
 
 /** The places the sidebar lists, in the design's order. */
@@ -115,7 +120,18 @@ export function buildPlaces(counts: PlaceCounts): VaultPlace[] {
     { id: "ask", label: "Ask" },
     { id: "notes", label: "Notes", count: shown(counts.notes) },
     { id: "topics", label: "Topics", count: shown(counts.topics) },
-    { id: "sources", label: "Sources", count: shown(counts.sources) },
+    // Files waiting for the reader outrank the plain count: a book can
+    // convert while the reader is in Ask, and the warning colour calls them back.
+    counts.sourcesWaiting
+      ? {
+          id: "sources",
+          label: "Sources",
+          count: counts.sourcesWaiting,
+          tone: "warn",
+          countTitle: `${counts.sourcesWaiting} file${counts.sourcesWaiting === 1 ? "" : "s"} waiting for your review`,
+          busy: counts.sourcesBusy,
+        }
+      : { id: "sources", label: "Sources", count: shown(counts.sources), busy: counts.sourcesBusy },
     { id: "work", label: "Work", count: shown(counts.work) },
     { id: "graph", label: "Graph" },
     {
@@ -162,6 +178,9 @@ const VIEW_PLACE: Partial<Record<ViewMode, VaultPlaceId>> = {
   graph: "graph",
 };
 
+/** The vault's own documents, whose editors Vault settings opens: while one is open, it is the current entry. */
+const SETTINGS_DOCUMENTS = new Set<string>(["bai/pipeline-queue", "bai/health-report", "bai/vault-config"]);
+
 /** The place an open document sits in, so the sidebar follows it. */
 const DOCUMENT_PLACE: Record<string, VaultPlaceId> = {
   "bai/knowledge-note": "notes",
@@ -189,7 +208,6 @@ export function DriveExplorer({ children }: EditorProps) {
     }
   }, [driveId]);
   const [notesPlace, setNotesPlace] = useState<"notes" | "topics">("notes");
-  const lastPlace = useRef<VaultPlaceId>("ask");
   const [graphFocus, setGraphFocus] = useState<GraphFocus | null>(null);
   const [graphClearNonce, setGraphClearNonce] = useState(0);
   const [sourcesHome, setSourcesHome] = useState(0);
@@ -197,7 +215,7 @@ export function DriveExplorer({ children }: EditorProps) {
   // to be threaded into every note-derived view: without it they render
   // their "empty vault" state during the several seconds the fetch takes,
   // which reads as "there is nothing here" rather than "not yet loaded".
-  const { notes, isLoading: notesLoading } = useKnowledgeNotes();
+  const { notes, noteMap, isLoading: notesLoading } = useKnowledgeNotes();
   // The intake batch lives here, above the view switch, so a tab switch never
   // unmounts a conversion in flight and the Sources tab badge can read it.
   const attachments = useAttachmentPort();
@@ -225,7 +243,9 @@ export function DriveExplorer({ children }: EditorProps) {
     (n) => n.documentType === "powerhouse/scopeofwork",
   ).length;
   const showDocumentEditor = !!children;
-  const [settingsOpen, setSettingsOpen] = useState(false);
+  const [guideOpen, setGuideOpen] = useState(false);
+  /** The kind of document "Add to the vault" is creating, while its dialog is open. */
+  const [creating, setCreating] = useState<(typeof CREATE_ITEMS)[number] | null>(null);
   const vaultName = useVaultName();
   // Published by the sidebar, which owns its width; the shell only reads it.
   const [sidebarWidth, setSidebarWidth] = useState<number | undefined>();
@@ -239,28 +259,6 @@ export function DriveExplorer({ children }: EditorProps) {
     showDocumentEditor &&
     selectedDocumentType !== undefined &&
     EDITORS_WITH_OWN_SIDEBAR.has(selectedDocumentType);
-
-  // A hosted editor draws its own sidebar; `VaultShell` gives it the left
-  // column and the top row (see `sidebarHidden` there).
-  // The shell's host bar. The shell measures it for the hosted editor's top
-  // row (`--vault-topbar-h`); here its width decides the tab labels.
-  const topBarRef = useRef<HTMLDivElement>(null);
-  // The bar's width decides whether the tabs keep their labels (menu-bar.ts): in a narrow window the actions
-  // (help, New, settings) must stay on screen, so the tabs give way — icons first, then a sideways scroll.
-  const [barWidth, setBarWidth] = useState(0);
-  useEffect(() => {
-    const el = topBarRef.current;
-    if (!el || typeof ResizeObserver === "undefined") return;
-    const observer = new ResizeObserver((entries) => setBarWidth(entries[0]?.contentRect.width ?? 0));
-    observer.observe(el);
-    return () => observer.disconnect();
-  }, []);
-  const compact = compactTabs(barWidth);
-  const tabRowRef = useRef<HTMLDivElement>(null);
-  useEffect(() => {
-    const active = tabRowRef.current?.querySelector<HTMLElement>('[aria-current="page"]');
-    if (active && typeof active.scrollIntoView === "function") active.scrollIntoView({ inline: "nearest", block: "nearest" });
-  }, [viewMode, compact]);
 
   const handleGraphFocusChange = useCallback((focus: GraphFocus | null) => {
     setGraphFocus(focus);
@@ -276,7 +274,7 @@ export function DriveExplorer({ children }: EditorProps) {
   // The graph-indexer indexes bai/tension with one INVOLVES edge per
   // involved note; the graph view draws them only when the reader turns the
   // layer on.
-  const { mocs } = useKnowledgeMocs();
+  const { mocs, mocMap } = useKnowledgeMocs();
   const { tensions } = useKnowledgeTensions();
 
   // Count doc types
@@ -411,6 +409,8 @@ export function DriveExplorer({ children }: EditorProps) {
     sources: sourceCount,
     work: projectCount,
     contradictions: tensions.length,
+    sourcesWaiting: intake.needsUser,
+    sourcesBusy: intake.working,
   });
 
   const viewPlace: VaultPlaceId | undefined =
@@ -418,11 +418,14 @@ export function DriveExplorer({ children }: EditorProps) {
   const documentPlace = showDocumentEditor
     ? DOCUMENT_PLACE[selectedDocumentType ?? ""]
     : undefined;
-  // The views that report on the vault (activity, health, …) belong to no
-  // place: the list keeps showing the one you were last in.
+  // The place you are in: the open document's, else the view's.
   const currentPlace = documentPlace ?? viewPlace;
-  if (currentPlace) lastPlace.current = currentPlace;
-  const place = currentPlace ?? lastPlace.current;
+  // The views that report on the vault (search, activity, access, health)
+  // belong to no place: no place reads as current while one shows. The
+  // settings among them light up Vault settings at the sidebar's foot.
+  const settingsActive = showDocumentEditor
+    ? SETTINGS_DOCUMENTS.has(selectedDocumentType ?? "")
+    : viewMode === "access" || viewMode === "activity" || viewMode === "health";
 
   function handleSelectPlace(id: VaultPlaceId) {
     if (id === "notes" || id === "topics") setNotesPlace(id);
@@ -436,8 +439,9 @@ export function DriveExplorer({ children }: EditorProps) {
     () =>
       buildSidebarContext({
         nodes: allNodes ?? [],
-        notes,
+        noteMap,
         mocs,
+        mocMap,
         selected: selectedNode,
         graphFocus,
         open: openDocument,
@@ -446,8 +450,9 @@ export function DriveExplorer({ children }: EditorProps) {
       }),
     [
       allNodes,
-      notes,
+      noteMap,
       mocs,
+      mocMap,
       selectedNode,
       graphFocus,
       openDocument,
@@ -456,110 +461,46 @@ export function DriveExplorer({ children }: EditorProps) {
     ],
   );
 
-  const TABS: {
-    key: ViewMode;
-    label: string;
-    badge?: number;
-    /** `warn`: the badge is a call to act ("needs you"), not a count. */
-    badgeTone?: "warn";
-    icon: React.ReactNode;
-  }[] = [
-    {
-      key: "chat",
-      label: "Chat",
-      icon: (
-        <svg
-          className="h-4 w-4"
-          viewBox="0 0 24 24"
-          fill="none"
-          stroke="currentColor"
-          strokeWidth="2"
-        >
-          <path d="M21 11.5a8.38 8.38 0 01-.9 3.8 8.5 8.5 0 01-7.6 4.7 8.38 8.38 0 01-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 01-.9-3.8 8.5 8.5 0 014.7-7.6 8.38 8.38 0 013.8-.9h.5a8.48 8.48 0 018 8v.5z" />
-          <path d="M9 12h.01M12 12h.01M15 12h.01" />
-        </svg>
-      ),
-    },
-    {
-      key: "graph",
-      label: "Graph",
-      icon: (
-        <svg
-          className="h-4 w-4"
-          viewBox="0 0 24 24"
-          fill="none"
-          stroke="currentColor"
-          strokeWidth="2"
-        >
-          <circle cx="6" cy="6" r="3" />
-          <circle cx="18" cy="18" r="3" />
-          <circle cx="18" cy="6" r="3" />
-          <path d="M8.5 7.5l7 7M8.5 6h7" />
-        </svg>
-      ),
-    },
-    {
-      key: "sources",
-      label: "Sources",
-      // Files waiting for the user (ready for review, or failed) outrank the
-      // plain count: a book can convert while the user is in Chat and the
-      // badge calls them back.
-      badge:
-        intake.needsUser > 0
-          ? intake.needsUser
-          : sourceCount > 0
-            ? sourceCount
-            : undefined,
-      badgeTone: intake.needsUser > 0 ? "warn" : undefined,
-      icon: (
-        <svg
-          className="h-4 w-4"
-          viewBox="0 0 24 24"
-          fill="none"
-          stroke="currentColor"
-          strokeWidth="2"
-        >
-          <path d="M4 19.5A2.5 2.5 0 016.5 17H20" />
-          <path d="M6.5 2H20v20H6.5A2.5 2.5 0 014 19.5v-15A2.5 2.5 0 016.5 2z" />
-        </svg>
-      ),
-    },
-    {
-      key: "projects",
-      label: "Projects",
-      badge: projectCount > 0 ? projectCount : undefined,
-      icon: (
-        <svg
-          className="h-4 w-4"
-          viewBox="0 0 24 24"
-          fill="none"
-          stroke="currentColor"
-          strokeWidth="2"
-        >
-          <rect x="2" y="7" width="20" height="14" rx="2" ry="2" />
-          <path d="M16 21V5a2 2 0 00-2-2h-4a2 2 0 00-2 2v16" />
-        </svg>
-      ),
-    },
-    {
-      key: "scope",
-      label: "Scope",
-      badge: sowCount > 0 ? sowCount : undefined,
-      icon: (
-        <svg
-          className="h-4 w-4"
-          viewBox="0 0 24 24"
-          fill="none"
-          stroke="currentColor"
-          strokeWidth="2"
-        >
-          <path d="M3 6h18M3 12h12M3 18h6" />
-          <circle cx="19" cy="17" r="3" />
-        </svg>
-      ),
-    },
-  ];
+  // Ctrl K (⌘ K) searches the vault from anywhere in it.
+  const openSearch = useRef<() => void>(() => undefined);
+  openSearch.current = () => handleSwitchView("search");
+  useEffect(() => {
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key.toLowerCase() !== "k" || !(e.ctrlKey || e.metaKey) || e.altKey || e.shiftKey) return;
+      e.preventDefault();
+      openSearch.current();
+    };
+    document.addEventListener("keydown", onKey);
+    return () => document.removeEventListener("keydown", onKey);
+  }, []);
 
+  // "Who has access" administers authorization, so it is offered only to
+  // those who can use it. The server refuses a non-admin regardless — hiding
+  // the entry means they are not invited into a dead end. `null`
+  // (undetermined) hides it too, rather than flashing an entry about to go.
+  const isVaultAdmin = useIsVaultAdmin(driveId);
+  const vaultMenuItems = VAULT_MENU.filter(
+    (item) => item.key !== "access" || isVaultAdmin === true,
+  );
+  // The glyph beside the vault's name: its largest topics.
+  const glyphSeeds = useMemo(
+    () =>
+      [...mocs]
+        .filter((m) => m.tier !== "HUB")
+        .sort((a, b) => b.noteCount - a.noteCount)
+        .slice(0, 6)
+        .map((m) => m.id),
+    [mocs],
+  );
+
+  const workTabs = (
+    <WorkTabs
+      active={viewMode === "scope" ? "scope" : "projects"}
+      projects={projectCount}
+      scopes={sowCount}
+      onSelect={handleSwitchView}
+    />
+  );
   const renderedViews: Record<RenderedView, ReactNode> = {
     notes: <NoteList notes={notes} isLoading={notesLoading} />,
     graph: (
@@ -578,20 +519,26 @@ export function DriveExplorer({ children }: EditorProps) {
     sources: (
       <SourceList intake={intake} convert={convert} homeSignal={sourcesHome} />
     ),
-    scope: <ScopeOfWorkView />,
-    projects: <ProjectsView />,
+    scope: (
+      <>
+        {workTabs}
+        <ScopeOfWorkView />
+      </>
+    ),
+    projects: (
+      <>
+        {workTabs}
+        <ProjectsView />
+      </>
+    ),
     access: <AccessView />,
     health: <HealthDashboard />,
   };
 
   return (
     <VaultShell
-      title={vaultName}
-      onTitleClick={() => setSelectedNode(undefined)}
       sidebarHidden={editorOwnsSidebar}
       sidebarWidth={sidebarWidth}
-      settingsOpen={settingsOpen}
-      barRef={topBarRef}
       fileDrop={{
         rootProps: fileDrop.rootProps,
         overlay: fileDrop.active && (
@@ -613,98 +560,24 @@ export function DriveExplorer({ children }: EditorProps) {
           isLoading={notesLoading}
           context={sidebarContext}
           onWidthChange={setSidebarWidth}
-          place={place}
+          place={currentPlace}
+          settingsActive={settingsActive}
           places={places}
           onSelectPlace={handleSelectPlace}
-          onOpenSettings={() => setSettingsOpen(true)}
+          vaultName={vaultName}
+          glyphSeeds={glyphSeeds}
+          menuItems={vaultMenuItems}
+          onMenuSelect={(key) => handleSwitchView(key as ViewMode)}
+          onSearch={() => handleSwitchView("search")}
+          searchActive={viewMode === "search" && !showDocumentEditor}
+          onAddSources={() => {
+            intake.open();
+            handleSwitchView("sources");
+          }}
+          createItems={CREATE_ITEMS.map(({ key, label, icon }) => ({ key, label, icon }))}
+          onCreate={(key) => setCreating(CREATE_ITEMS.find((i) => i.key === key) ?? null)}
+          onGettingStarted={() => setGuideOpen(true)}
         />
-      }
-      tabs={
-        <div ref={tabRowRef} className="kv-tab-row flex min-w-0 flex-1 items-center gap-1 overflow-x-auto">
-          {TABS.map((tab) => (
-            <button
-              key={tab.key}
-              type="button"
-              onClick={() => handleSwitchView(tab.key)}
-              aria-label={tab.label}
-              title={compact ? tab.label : undefined}
-              aria-current={viewMode === tab.key && !showDocumentEditor ? "page" : undefined}
-              className={`flex shrink-0 items-center gap-1.5 whitespace-nowrap rounded-md ${compact ? "px-2" : "px-3"} py-1.5 text-xs font-medium transition-colors`}
-              style={{
-                backgroundColor:
-                  viewMode === tab.key && !showDocumentEditor
-                    ? "var(--bai-hover)"
-                    : "transparent",
-                color:
-                  viewMode === tab.key && !showDocumentEditor
-                    ? "var(--bai-accent)"
-                    : "var(--bai-text-tertiary)",
-              }}
-            >
-              {tab.icon}
-              {!compact && tab.label}
-              {tab.badge !== undefined && (
-                <span
-                  className="rounded-full px-1.5 py-0.5 text-[10px]"
-                  title={
-                    tab.badgeTone === "warn"
-                      ? `${tab.badge} file${tab.badge === 1 ? "" : "s"} waiting for your review`
-                      : undefined
-                  }
-                  style={
-                    tab.badgeTone === "warn"
-                      ? {
-                          backgroundColor: "var(--bai-warn)",
-                          color: "var(--bai-accent-text)",
-                          fontWeight: 600,
-                        }
-                      : {
-                          backgroundColor: "var(--bai-hover)",
-                          color: "var(--bai-text-muted)",
-                        }
-                  }
-                >
-                  {tab.badge}
-                </span>
-              )}
-            </button>
-          ))}
-          {showDocumentEditor && (
-            <span
-              className={`flex shrink-0 items-center gap-1.5 whitespace-nowrap rounded-md ${compact ? "px-2" : "px-3"} py-1.5 text-xs font-medium`}
-              title={compact ? "Editing" : undefined}
-              style={{
-                backgroundColor: "var(--bai-hover)",
-                color: "var(--bai-accent)",
-              }}
-            >
-              <svg
-                className="h-4 w-4"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="2"
-              >
-                <path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7" />
-                <path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z" />
-              </svg>
-              {!compact && "Editing"}
-            </span>
-          )}
-        </div>
-      }
-      barControls={
-        <>
-          <GettingStartedButton />
-          <CreateMenu />
-          <SettingsMenu
-            activeView={viewMode}
-            isActive={!showDocumentEditor}
-            open={settingsOpen}
-            onOpenChange={setSettingsOpen}
-            onSelect={handleSwitchView}
-          />
-        </>
       }
     >
       {showDocumentEditor ? (
@@ -743,338 +616,112 @@ export function DriveExplorer({ children }: EditorProps) {
       ) : (
         renderedViews.notes
       )}
+      {guideOpen && <GettingStartedModal onClose={() => setGuideOpen(false)} />}
+      <CreateDocumentDialog
+        open={creating !== null}
+        documentType={creating?.type ?? ""}
+        documentTypeLabel={creating?.dialogLabel ?? ""}
+        onClose={() => setCreating(null)}
+      />
     </VaultShell>
   );
 }
 
 /**
- * Views that report on the vault rather than hold its content: what has
- * happened, what is queued, how healthy it is, and how it is configured. They
- * sit behind a single gear so the tab row stays about the knowledge itself.
- *
- * `hint` says what each one answers, since a label alone does not distinguish
- * "Activity" from "Pipeline".
+ * "This vault": the menu under the vault's name and behind Vault settings at
+ * the sidebar's foot (design: the vault menu). Each key is a view mode the
+ * vault opens, except `files`, which the sidebar answers itself with the
+ * drive tree. The pipeline, health and config entries open their singleton
+ * documents' editors, as the gear menu did.
  */
-/**
- * Gear menu for the vault's reporting views.
- *
- * Mirrors `CreateMenu`: same dropdown shape, same click-catcher so an outside
- * click closes it. Takes the active view so the gear can show when one of its
- * items is the current one — otherwise collapsing four tabs into an icon would
- * lose the "you are here" the tab row used to give.
- */
-function SettingsMenu({
-  activeView,
-  isActive,
-  open,
-  onOpenChange,
-  onSelect,
-}: {
-  activeView: ViewMode;
-  /** False while a document editor covers the view, matching the tab row. */
-  isActive: boolean;
-  open: boolean;
-  onOpenChange: (open: boolean) => void;
-  onSelect: (mode: ViewMode) => void;
-}) {
-  // Access administers authorization, so it is offered only to those who can
-  // use it. The server refuses a non-admin regardless — hiding the entry means
-  // they are not invited into a dead end. `null` (undetermined) hides it too,
-  // to avoid flashing an item that is about to disappear.
-  const driveId = useSelectedDriveId();
-  const isVaultAdmin = useIsVaultAdmin(driveId);
-  const items = SETTINGS_ITEMS.filter(
-    (i) => i.key !== "access" || isVaultAdmin === true,
-  );
-  const showingSettingsView =
-    isActive && items.some((i) => i.key === activeView);
-
-  return (
-    <div className="relative">
-      <button
-        type="button"
-        onClick={() => onOpenChange(!open)}
-        className="flex items-center gap-1.5 rounded-md px-2 py-1.5 text-xs font-medium transition-colors"
-        style={{
-          backgroundColor: showingSettingsView
-            ? "var(--bai-hover)"
-            : "transparent",
-          color: showingSettingsView
-            ? "var(--bai-accent)"
-            : "var(--bai-text-tertiary)",
-        }}
-        title="Vault reports and settings"
-        aria-label="Vault reports and settings"
-        aria-expanded={open}
-      >
-        <svg
-          className="h-4 w-4"
-          viewBox="0 0 24 24"
-          fill="none"
-          stroke="currentColor"
-          strokeWidth="2"
-        >
-          <path d="M12.22 2h-.44a2 2 0 00-2 2v.18a2 2 0 01-1 1.73l-.43.25a2 2 0 01-2 0l-.15-.08a2 2 0 00-2.73.73l-.22.38a2 2 0 00.73 2.73l.15.1a2 2 0 011 1.72v.51a2 2 0 01-1 1.74l-.15.09a2 2 0 00-.73 2.73l.22.38a2 2 0 002.73.73l.15-.08a2 2 0 012 0l.43.25a2 2 0 011 1.73V20a2 2 0 002 2h.44a2 2 0 002-2v-.18a2 2 0 011-1.73l.43-.25a2 2 0 012 0l.15.08a2 2 0 002.73-.73l.22-.39a2 2 0 00-.73-2.73l-.15-.08a2 2 0 01-1-1.74v-.5a2 2 0 011-1.74l.15-.09a2 2 0 00.73-2.73l-.22-.38a2 2 0 00-2.73-.73l-.15.08a2 2 0 01-2 0l-.43-.25a2 2 0 01-1-1.73V4a2 2 0 00-2-2z" />
-          <circle cx="12" cy="12" r="3" />
-        </svg>
-      </button>
-
-      {open && (
-        <>
-          <div className="fixed inset-0 z-10" onClick={() => onOpenChange(false)} />
-          <div
-            className="absolute right-0 z-20 mt-1 w-56 rounded-lg py-1 shadow-xl"
-            style={{
-              border: "1px solid var(--bai-border)",
-              backgroundColor: "var(--bai-surface)",
-            }}
-          >
-            {items.map((item) => {
-              const current = isActive && activeView === item.key;
-              return (
-                <button
-                  key={item.key}
-                  type="button"
-                  onClick={() => {
-                    onSelect(item.key);
-                    onOpenChange(false);
-                  }}
-                  className="flex w-full items-center gap-2 px-3 py-2 text-left hover:bg-white/5"
-                  style={{
-                    color: current
-                      ? "var(--bai-accent)"
-                      : "var(--bai-text-secondary)",
-                  }}
-                >
-                  <span className="shrink-0">{item.icon}</span>
-                  <span className="min-w-0 flex-1">
-                    <span className="block text-xs">{item.label}</span>
-                    <span
-                      className="block text-[10px]"
-                      style={{ color: "var(--bai-text-faint)" }}
-                    >
-                      {item.hint}
-                    </span>
-                  </span>
-                </button>
-              );
-            })}
-          </div>
-        </>
-      )}
-    </div>
-  );
-}
-
-const SETTINGS_ITEMS: {
-  key: ViewMode;
-  label: string;
-  hint: string;
-  icon: React.ReactNode;
-}[] = [
-  {
-    key: "access",
-    hint: "Who can read and write this vault",
-    label: "Access",
-    icon: (
-      <svg
-        className="h-4 w-4"
-        viewBox="0 0 24 24"
-        fill="none"
-        stroke="currentColor"
-        strokeWidth="2"
-      >
-        <rect x="3" y="11" width="18" height="11" rx="2" />
-        <path d="M7 11V7a5 5 0 0 1 10 0v4" />
-      </svg>
-    ),
-  },
-  {
-    key: "activity",
-    hint: "Recent writes across the vault",
-    label: "Activity",
-    icon: (
-      <svg
-        className="h-4 w-4"
-        viewBox="0 0 24 24"
-        fill="none"
-        stroke="currentColor"
-        strokeWidth="2"
-      >
-        <circle cx="12" cy="12" r="10" />
-        <path d="M12 6v6l4 2" />
-      </svg>
-    ),
-  },
-  {
-    key: "pipeline",
-    hint: "Queued and in-flight processing tasks",
-    label: "Pipeline",
-    icon: (
-      <svg
-        className="h-4 w-4"
-        viewBox="0 0 24 24"
-        fill="none"
-        stroke="currentColor"
-        strokeWidth="2"
-      >
-        <path d="M22 12h-4l-3 9L9 3l-3 9H2" />
-      </svg>
-    ),
-  },
-  {
-    key: "health",
-    hint: "Diagnostics from the last check",
-    label: "Health",
-    icon: (
-      <svg
-        className="h-4 w-4"
-        viewBox="0 0 24 24"
-        fill="none"
-        stroke="currentColor"
-        strokeWidth="2"
-      >
-        <path d="M22 12h-6l-2 3-4-6-2 3H2" />
-      </svg>
-    ),
-  },
-  {
-    key: "config",
-    hint: "How this vault is set up",
-    label: "Config",
-    icon: (
-      <svg
-        className="h-4 w-4"
-        viewBox="0 0 24 24"
-        fill="none"
-        stroke="currentColor"
-        strokeWidth="2"
-      >
-        <path d="M12.22 2h-.44a2 2 0 00-2 2v.18a2 2 0 01-1 1.73l-.43.25a2 2 0 01-2 0l-.15-.08a2 2 0 00-2.73.73l-.22.38a2 2 0 00.73 2.73l.15.1a2 2 0 011 1.72v.51a2 2 0 01-1 1.74l-.15.09a2 2 0 00-.73 2.73l.22.38a2 2 0 002.73.73l.15-.08a2 2 0 012 0l.43.25a2 2 0 011 1.73V20a2 2 0 002 2h.44a2 2 0 002-2v-.18a2 2 0 011-1.73l.43-.25a2 2 0 012 0l.15.08a2 2 0 002.73-.73l.22-.39a2 2 0 00-.73-2.73l-.15-.08a2 2 0 01-1-1.74v-.5a2 2 0 011-1.74l.15-.09a2 2 0 00.73-2.73l-.22-.38a2 2 0 00-2.73-.73l-.15.08a2 2 0 01-2 0l-.43-.25a2 2 0 01-1-1.73V4a2 2 0 00-2-2z" />
-        <circle cx="12" cy="12" r="3" />
-      </svg>
-    ),
-  },
+export const VAULT_MENU: VaultMenuItem[] = [
+  { key: "config", label: "Vault settings", hint: "name, processing", icon: "gear" },
+  { key: "access", label: "Who has access", icon: "users" },
+  { key: "pipeline", label: "Processing queue", icon: "queue" },
+  { key: "activity", label: "Activity", hint: "recent changes", icon: "clock" },
+  { key: "health", label: "Health check", icon: "pulse" },
+  { key: "files", label: "Files and folders", icon: "folder" },
 ];
 
+/**
+ * Beside "Add sources": the other things a person adds by hand. Files go
+ * through Add sources itself (the intake); these open the create dialog.
+ */
 const CREATE_ITEMS = [
   {
-    label: "Add Source",
-    type: "bai/source",
-    primary: true,
-    hint: "Paste content for AI processing",
-  },
-  {
-    label: "Knowledge Note",
+    key: "note",
+    label: "Write a note",
+    icon: "pencil",
     type: "bai/knowledge-note",
-    primary: false,
-    hint: "Direct atomic claim",
+    dialogLabel: "Knowledge Note",
   },
   {
-    label: "Map of Content",
+    key: "topic",
+    label: "New topic",
+    icon: "newTopic",
     type: "bai/moc",
-    primary: false,
-    hint: "Organize notes by topic",
+    dialogLabel: "Map of Content",
   },
-];
+  {
+    key: "paste",
+    label: "Paste text as a source",
+    icon: "sources",
+    type: "bai/source",
+    dialogLabel: "Add Source",
+  },
+] as const satisfies ReadonlyArray<
+  VaultMenuItem & { type: string; dialogLabel: string }
+>;
 
-function CreateMenu() {
-  const [menuOpen, setMenuOpen] = useState(false);
-  const [dialogItem, setDialogItem] = useState<{
-    label: string;
-    type: string;
-  } | null>(null);
-
+/**
+ * Work holds two lists over the same documents (design finding 14): the
+ * scopes of work — what is priced and scheduled — and the projects they fund.
+ * One place in the sidebar, two tabs here.
+ */
+function WorkTabs({
+  active,
+  projects,
+  scopes,
+  onSelect,
+}: {
+  active: "projects" | "scope";
+  projects: number;
+  scopes: number;
+  onSelect: (mode: ViewMode) => void;
+}) {
+  const tabs: { key: "projects" | "scope"; label: string; count: number }[] = [
+    { key: "scope", label: "Scopes of work", count: scopes },
+    { key: "projects", label: "Projects", count: projects },
+  ];
   return (
-    <>
-      <div className="relative">
-        <button
-          type="button"
-          onClick={() => setMenuOpen(!menuOpen)}
-          className="flex items-center gap-1.5 rounded-md px-3 py-1.5 text-xs font-medium transition-colors"
-          style={{
-            backgroundColor: "var(--bai-accent)",
-            color: "var(--bai-accent-text)",
-          }}
-        >
-          <svg
-            className="h-3.5 w-3.5"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="2.5"
+    <nav
+      className="vault-work-tabs flex items-center gap-1 px-4 pt-3"
+      aria-label="Work"
+    >
+      {tabs.map((tab) => {
+        const current = tab.key === active;
+        return (
+          <button
+            key={tab.key}
+            type="button"
+            aria-current={current ? "page" : undefined}
+            onClick={() => onSelect(tab.key)}
+            className="flex items-center gap-2 rounded-md px-3 py-1.5 text-[13px] transition-colors"
+            style={{
+              backgroundColor: current ? "var(--bai-hover)" : "transparent",
+              color: current ? "var(--bai-text)" : "var(--bai-text-tertiary)",
+              fontWeight: current ? 600 : 500,
+            }}
           >
-            <path d="M12 5v14M5 12h14" />
-          </svg>
-          New
-        </button>
-        {menuOpen && (
-          <>
-            {/*
-              Click-catcher behind the menu: a click anywhere else lands here
-              and closes it, so the dropdown does not sit open while the user
-              works elsewhere. Same approach as the status menus in
-              a document editor — no document-level listener to leak, and it
-              stays below the menu's own z-index so the items remain
-              clickable.
-            */}
-            <div
-              className="fixed inset-0 z-10"
-              onClick={() => setMenuOpen(false)}
-            />
-            <div
-              className="absolute right-0 z-20 mt-1 w-56 rounded-lg py-1 shadow-xl"
-              style={{
-                border: "1px solid var(--bai-border)",
-                backgroundColor: "var(--bai-surface)",
-              }}
-            >
-              {CREATE_ITEMS.map((item) => (
-                <button
-                  key={item.type}
-                  type="button"
-                  onClick={() => {
-                    setDialogItem(item);
-                    setMenuOpen(false);
-                  }}
-                  className="flex w-full flex-col px-3 py-2 text-left"
-                  style={{
-                    borderBottom: item.primary
-                      ? "1px solid var(--bai-border)"
-                      : undefined,
-                  }}
-                >
-                  <span
-                    className="text-xs"
-                    style={{
-                      color: item.primary
-                        ? "var(--bai-accent)"
-                        : "var(--bai-text-secondary)",
-                      fontWeight: item.primary ? 600 : 400,
-                    }}
-                  >
-                    {item.label}
-                  </span>
-                  {item.hint && (
-                    <span
-                      className="text-[10px]"
-                      style={{ color: "var(--bai-text-faint)" }}
-                    >
-                      {item.hint}
-                    </span>
-                  )}
-                </button>
-              ))}
-            </div>
-          </>
-        )}
-      </div>
-      <CreateDocumentDialog
-        open={!!dialogItem}
-        documentType={dialogItem?.type ?? ""}
-        documentTypeLabel={dialogItem?.label ?? ""}
-        onClose={() => setDialogItem(null)}
-      />
-    </>
+            {tab.label}
+            {tab.count > 0 && (
+              <span style={{ color: "var(--bai-text-tertiary)", fontWeight: 400 }}>
+                {tab.count}
+              </span>
+            )}
+          </button>
+        );
+      })}
+    </nav>
   );
 }

@@ -1,6 +1,7 @@
 import type { ReactNode } from "react";
 import { prefetchOnHover } from "../lib/prefetch.js";
 import type { VaultPlaceId } from "./VaultPlaces.js";
+import { VaultIcon } from "./vault-icons.js";
 
 export type VaultContextItem = { id: string; label: string; detail?: string };
 
@@ -67,53 +68,44 @@ export function VaultContextList({
     if (next !== undefined) onOpen(next);
   };
   return (
-    <div className="space-y-1">
-      <button
-        type="button"
-        onClick={onBack}
-        className="sidebar-row flex w-full items-center gap-1 rounded px-2 py-1 text-left text-xs"
-        style={{ color: "var(--bai-text-muted)" }}
-      >
-        ‹ {BACK_LABEL[place]}
-      </button>
-      <div className="mb-1 flex items-start gap-2 px-2 py-1.5">
-        <div className="min-w-0 flex-1">
-          <p
-            className="truncate text-xs font-medium"
-            style={{ color: "var(--bai-text-secondary)" }}
-            title={title}
-          >
-            {title}
-          </p>
-          <p className="text-[10px]" style={{ color: "var(--bai-text-faint)" }}>
-            {subtitle}
-          </p>
+    <div className="vs-ctx">
+      <div className="vs-ctx-head">
+        <button
+          type="button"
+          onClick={onBack}
+          className="vs-iconbtn"
+          title={BACK_LABEL[place]}
+          aria-label={BACK_LABEL[place]}
+        >
+          <VaultIcon name="back" />
+        </button>
+        <div className="vs-ctx-title">
+          <b title={title}>{title}</b>
+          <small>{subtitle}</small>
         </div>
-        <div className="flex shrink-0 items-center">
+        <div className="vs-ctx-step">
           <button
             type="button"
             aria-label="Previous"
+            title="Previous (Alt+↑)"
             onClick={() => step(-1)}
             disabled={items.length === 0}
-            className="sidebar-collapse-btn rounded p-1"
-            style={{ color: "var(--bai-text-faint)" }}
           >
-            ↑
+            <VaultIcon name="up" size={14} />
           </button>
           <button
             type="button"
             aria-label="Next"
+            title="Next (Alt+↓)"
             onClick={() => step(1)}
             disabled={items.length === 0}
-            className="sidebar-collapse-btn rounded p-1"
-            style={{ color: "var(--bai-text-faint)" }}
           >
-            ↓
+            <VaultIcon name="arrowDown" size={14} />
           </button>
         </div>
       </div>
       {header}
-      <div role="listbox" aria-label={title} className="space-y-px">
+      <div role="listbox" aria-label={title} className="vs-ctx-list">
         {items.map((item) => {
           const active = item.id === activeId;
           return (
@@ -126,25 +118,10 @@ export function VaultContextList({
               data-sidebar-active={active ? "true" : undefined}
               onClick={() => onOpen(item.id)}
               {...prefetchOnHover(item.id)}
-              className="sidebar-row flex w-full flex-col gap-0.5 rounded-md px-2 py-1.5 text-left"
-              style={active ? { backgroundColor: "var(--bai-hover)" } : undefined}
+              className="vs-ctx-row"
             >
-              <span
-                className="sidebar-note-title truncate text-xs font-medium"
-                style={{
-                  color: active ? "var(--bai-accent)" : "var(--bai-text-secondary)",
-                }}
-              >
-                {item.label}
-              </span>
-              {item.detail && (
-                <span
-                  className="truncate text-[10px]"
-                  style={{ color: "var(--bai-text-faint)" }}
-                >
-                  {item.detail}
-                </span>
-              )}
+              <span className="vs-ctx-label">{item.label}</span>
+              {item.detail && <span className="vs-ctx-detail">{item.detail}</span>}
             </button>
           );
         })}

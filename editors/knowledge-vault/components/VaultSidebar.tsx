@@ -19,6 +19,11 @@ import {
   VaultContextList,
   type VaultContextListProps,
 } from "./VaultContextList.js";
+import { VaultMenu, type VaultMenuItem } from "./VaultMenu.js";
+import { VaultGlyph } from "./VaultGlyph.js";
+import { VaultIcon } from "./vault-icons.js";
+import { SIDEBAR_CSS } from "./sidebar-css.js";
+import { useFrameWidth } from "./VaultShell.js";
 
 type VaultSidebarProps = {
   /** Only to tell a background refresh from a first load. */
@@ -31,23 +36,44 @@ type VaultSidebarProps = {
   isLoading?: boolean;
   /**
    * The list of what you are in (a source folder, a topic map, a graph
-   * selection). While it is set it replaces the places rail and the tree.
+   * selection). While it is set it takes the sidebar's height; the places
+   * fold into one row of icons above it.
    */
   context?: VaultContextListProps;
   /**
    * The sidebar owns its width and tells the shell, whose first column
-   * follows it. `undefined` means "no width chosen": the shell's own default
-   * applies. 0 while collapsed, so the column closes with the sidebar.
+   * follows it: a dragged width, the rail's, or `undefined` for the shell's
+   * own default.
    */
   onWidthChange?: (px: number | undefined) => void;
-  /** The place the sidebar is showing. */
+  /** The place you are in; none while a view that belongs to no place shows (search, activity…). */
   place?: VaultPlaceId;
+  /** A Vault settings view or document is showing: its row at the foot is the current one. */
+  settingsActive?: boolean;
   places?: VaultPlace[];
   onSelectPlace?: (id: VaultPlaceId) => void;
-  onOpenSettings?: () => void;
+  /** The vault's name, at the top of the sidebar. */
+  vaultName?: string;
+  /** Ids of the vault's largest topics: its glyph beside the name. */
+  glyphSeeds?: string[];
+  /**
+   * "This vault": the menu under the name and behind Vault settings. The
+   * `files` entry opens the drive tree here; every other key goes to
+   * `onMenuSelect`.
+   */
+  menuItems?: VaultMenuItem[];
+  onMenuSelect?: (key: string) => void;
+  onSearch?: () => void;
+  /** The search view is the one showing. */
+  searchActive?: boolean;
+  onAddSources?: () => void;
+  /** Beside Add sources: the other things a person can add (a note, a topic, pasted text). */
+  createItems?: VaultMenuItem[];
+  onCreate?: (key: string) => void;
+  onGettingStarted?: () => void;
 };
 
-/** What the sidebar body shows: a context's list, the drive tree, or nothing but the places. */
+/** What the sidebar body shows: a context's list, the drive tree, or the places. */
 export type SidebarBody = "context" | "folders" | "places";
 
 /**
@@ -58,8 +84,28 @@ export function sidebarBody(hasContext: boolean, treeOpen: boolean): SidebarBody
   return hasContext ? "context" : treeOpen ? "folders" : "places";
 }
 
+/** Below this frame width the sidebar is the icon rail (design: 720–899 px). */
+export const RAIL_BELOW = 900;
+/** The labelled icon rail's width (design: 78 px). */
+export const RAIL_WIDTH = 78;
+
+/**
+ * Full sidebar or labelled icon rail. The rail when the reader collapsed the
+ * sidebar, or when the frame is too narrow for both columns. An unmeasured
+ * frame (0) keeps the full sidebar.
+ */
+export function sidebarMode(frameWidth: number, collapsed: boolean): "full" | "rail" {
+  return collapsed || (frameWidth > 0 && frameWidth < RAIL_BELOW) ? "rail" : "full";
+}
+
 const MIN_WIDTH = 200;
 const MAX_WIDTH = 480;
+
+/** "⌘ K" on a Mac, "Ctrl K" elsewhere. */
+function searchShortcut(): string {
+  const platform = typeof navigator === "undefined" ? "" : navigator.platform;
+  return /mac/i.test(platform) ? "⌘ K" : "Ctrl K";
+}
 
 /**
  * The note tree while a context shows its list. Where the browser has
@@ -76,29 +122,53 @@ const SELECTED_ROW_STYLE = {
   backgroundColor: "var(--bai-hover)",
 } as const;
 
+type OpenMenu = "head" | "add" | "foot" | null;
+
+/**
+ * The vault's one navigation column. Top to bottom: the vault (its menu),
+ * search and adding, the places — or, while you are in something, that
+ * thing's list under a row of the places' icons — and at the foot this
+ * vault's settings and the guide. There is no bar above the content: the
+ * sidebar holds everything (design: docs/design/vault-view).
+ */
 export function VaultSidebar({
   notes,
   isLoading = false,
   context,
   onWidthChange,
-  place = "notes",
+  place,
+  settingsActive = false,
   places = [],
   onSelectPlace,
-  onOpenSettings,
+  vaultName = "",
+  glyphSeeds = [],
+  menuItems = [],
+  onMenuSelect,
+  onSearch,
+  searchActive = false,
+  onAddSources,
+  createItems = [],
+  onCreate,
+  onGettingStarted,
 }: VaultSidebarProps) {
   const [search, setSearch] = useState("");
   const [treeOpen, setTreeOpen] = useState(false);
+  const [menu, setMenu] = useState<OpenMenu>(null);
+  const closeMenu = useCallback(() => setMenu(null), []);
   const selectedNode = useSelectedNode();
   const selectedId = selectedNode?.id;
-  const [sidebarOpen, setSidebarOpen] = useState(true);
+  const [collapsed, setCollapsed] = useState(false);
+  const frameWidth = useFrameWidth();
+  const mode = sidebarMode(frameWidth, collapsed);
+  const forcedRail = mode === "rail" && !collapsed;
   // Null until the user drags: the shell's column (and its breakpoints) set
   // the width until then.
   const [sidebarWidth, setSidebarWidth] = useState<number | null>(null);
-  const rootRef = useRef<HTMLDivElement>(null);
+  const rootRef = useRef<HTMLElement>(null);
   const resizing = useRef(false);
   useLayoutEffect(() => {
-    onWidthChange?.(sidebarOpen ? (sidebarWidth ?? undefined) : 0);
-  }, [onWidthChange, sidebarOpen, sidebarWidth]);
+    onWidthChange?.(mode === "rail" ? RAIL_WIDTH : (sidebarWidth ?? undefined));
+  }, [onWidthChange, mode, sidebarWidth]);
   // File nodes only — no doc state fetch. `useDocumentsInSelectedDrive`
   // would suspend-and-throw on any orphan id missing from the cache,
   // freezing the whole drive editor in retry-loops.
@@ -176,7 +246,7 @@ export function VaultSidebar({
   const showTreeSkeleton = isLoading && (allNodes?.length ?? 0) === 0;
   const isRefreshing = isLoading && notes.length > 0;
 
-  // The note tree is the heaviest part of the sidebar: a row per node, ~2,000 in a
+  // The drive tree is the heaviest part of the sidebar: a row per node, ~2,000 in a
   // large vault. Memoised, and kept mounted (hidden) while a context's list is
   // up, so going back to the tree neither rebuilds nor remounts it.
   const treeContent = useMemo(
@@ -202,158 +272,186 @@ export function VaultSidebar({
     if (el) el.scrollTop = hasContext ? 0 : treeScrollTop.current;
   }, [hasContext]);
 
-  // Collapsed: just the re-open button, floating over the content.
-  //
-  // This used to render a full-height `w-10` strip (its own background +
-  // right border), which kept taking horizontal space from the content
-  // after collapsing — the point of collapsing. `absolute` takes the
-  // button out of flow so the panel to the right reclaims the full width,
-  // and the zero-width wrapper is `relative` only so the button positions
-  // against it rather than some ancestor. A translucent background keeps
-  // the glyph legible over whatever it floats above.
-  //
-  // `-top-4` straddles the host bar's bottom border instead of sitting inside
-  // the bar (where it overlapped the Search tab). The wrapper is the sidebar
-  // cell, which starts at that border, so a negative offset lifts the button
-  // back across it: the bar is ~45px tall (`py-2` = 8+8, around a `py-1.5
-  // text-xs` tab of 6+16+6 = 28, plus the 1px border) and this button is 26px
-  // tall, so the 28px it used to sit at from the window top is 28 - 45 = ~-16.
-  // Revisit if the bar's padding, the tab size, or this button's own padding
-  // changes.
-  //
-  // Round (`rounded-full`) rather than a rounded square: the circle pulls
-  // its corners away from the adjacent Search tab, so the two read as
-  // separate controls even where they come close.
-  if (!sidebarOpen) {
-    return (
-      <div className="relative h-full w-0 shrink-0">
-        <button
-          type="button"
-          onClick={() => setSidebarOpen(true)}
-          className="sidebar-collapse-btn absolute left-0.09 -top-4 z-20 rounded-full p-1 backdrop-blur transition-colors"
-          style={{
-            color: "var(--bai-text-muted)",
-            backgroundColor: "var(--bai-surface)",
-            border: "1px solid var(--bai-border)",
-          }}
-          title="Open sidebar"
-        >
-          <svg
-            className="h-4 w-4"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="2"
-          >
-            <path d="M13 17l5-5-5-5M6 17l5-5-5-5" />
-          </svg>
-        </button>
-      </div>
-    );
-  }
+  const selectPlace = (id: VaultPlaceId) => {
+    setTreeOpen(false);
+    onSelectPlace?.(id);
+  };
+  const selectMenu = (key: string) => {
+    if (key === "files") {
+      setCollapsed(false);
+      setTreeOpen(true);
+      return;
+    }
+    onMenuSelect?.(key);
+  };
+  // The rail has no room for the drive tree: its entry waits for a wider frame.
+  const vaultMenuItems = forcedRail ? menuItems.filter((i) => i.key !== "files") : menuItems;
+  const vaultMenu = (placement: "below" | "above") => (
+    <VaultMenu
+      label={vaultName ? `${vaultName}: this vault` : "This vault"}
+      heading="This vault"
+      items={vaultMenuItems}
+      placement={placement}
+      onSelect={selectMenu}
+      onClose={closeMenu}
+    />
+  );
+  const rail = mode === "rail";
 
   return (
-    <div
+    <aside
       ref={rootRef}
-      className="vault-sidebar relative flex h-full flex-col border-r"
-      style={{
-        width: "100%",
-        backgroundColor: "var(--bai-deep)",
-        borderColor: "var(--bai-border)",
-      }}
+      className="vault-sidebar"
+      data-mode={mode}
+      aria-label={vaultName ? `Vault ${vaultName}` : "Vault"}
     >
-      {/* Resize handle */}
-      <div
-        className="sidebar-resize-handle absolute right-0 top-0 z-10 h-full w-1 cursor-col-resize"
-        onMouseDown={handleMouseDown}
-      />
-
-      {/* Header */}
-      <div
-        className="border-b px-3 py-3"
-        style={{ borderColor: "var(--bai-border)" }}
-      >
-        <div className="flex items-center gap-2">
-          <button
-            type="button"
-            onClick={() => setSidebarOpen(false)}
-            className="sidebar-collapse-btn shrink-0 rounded p-1 transition-colors"
-            style={{ color: "var(--bai-text-faint)" }}
-            title="Collapse sidebar"
-          >
-            <svg
-              className="h-4 w-4"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="2"
-            >
-              <path d="M11 17l-5-5 5-5M18 17l-5-5 5-5" />
-            </svg>
-          </button>
-        </div>
-      </div>
-
-      {/* Filter: narrows the drive tree, the only list it is shown over. */}
-      {body === "folders" && (
-        <div className="px-3 py-2">
-          <input
-            type="text"
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
-            placeholder="Filter this list…"
-            className="sidebar-search-input w-full rounded-md border px-3 py-1.5 text-xs outline-none"
-            style={{
-              borderColor: "var(--bai-border)",
-              backgroundColor: "var(--bai-bg)",
-              color: "var(--bai-text-secondary)",
-            }}
-          />
-        </div>
-      )}
-
-      {body !== "context" && (
-        <VaultPlaces
-          places={places}
-          active={place}
-          onSelect={(id) => {
-            setTreeOpen(false);
-            onSelectPlace?.(id);
-          }}
-          onOpenSettings={() => onOpenSettings?.()}
-          tree={{
-            active: body === "folders",
-            onOpen: () => setTreeOpen(true),
-          }}
+      <style aria-hidden="true">{SIDEBAR_CSS}</style>
+      {!rail && (
+        <div
+          className="sidebar-resize-handle absolute right-0 top-0 z-10 h-full w-1 cursor-col-resize"
+          onMouseDown={handleMouseDown}
+          aria-hidden="true"
         />
       )}
 
-      {/* Refreshing hint: data is on screen but may be a cached snapshot. */}
-      {body !== "context" && isRefreshing && (
-        <div className="flex items-center gap-1.5 px-3 pb-1">
-          <Spinner className="h-2.5 w-2.5" />
-          <span
-            className="text-[10px]"
-            style={{ color: "var(--bai-text-faint)" }}
+      {/* The vault: its name opens this vault's menu. */}
+      <div className="vs-head">
+        <div className="vs-anchor" style={{ flex: 1, minWidth: 0, width: rail ? "100%" : undefined }}>
+          <button
+            type="button"
+            className="vs-ident"
+            title={vaultName}
+            aria-haspopup="menu"
+            aria-expanded={menu === "head"}
+            onClick={() => setMenu(menu === "head" ? null : "head")}
           >
-            Refreshing…
-          </span>
+            <VaultGlyph seeds={glyphSeeds} />
+            <span className="vs-name">{vaultName}</span>
+            <span className="vs-chev">
+              <VaultIcon name="down" size={14} />
+            </span>
+          </button>
+          {menu === "head" && vaultMenu("below")}
+        </div>
+        {!forcedRail && (
+          <button
+            type="button"
+            className="vs-iconbtn"
+            onClick={() => setCollapsed((c) => !c)}
+            title={collapsed ? "Expand the sidebar" : "Collapse the sidebar"}
+            aria-label={collapsed ? "Expand the sidebar" : "Collapse the sidebar"}
+          >
+            <VaultIcon name={collapsed ? "expand" : "collapse"} />
+          </button>
+        )}
+      </div>
+
+      {onSearch && (
+        <button
+          type="button"
+          className="vs-search"
+          onClick={onSearch}
+          aria-current={searchActive ? "page" : undefined}
+          title={`Search the vault (${searchShortcut()})`}
+        >
+          <VaultIcon name="search" />
+          <span className="lbl">Search</span>
+          <kbd>{searchShortcut()}</kbd>
+        </button>
+      )}
+
+      {onAddSources && (
+        <div className="vs-add vs-anchor">
+          <button
+            type="button"
+            className="vs-add-main"
+            data-split={createItems.length > 0 ? "" : undefined}
+            onClick={onAddSources}
+            title="Add sources"
+          >
+            <VaultIcon name="plus" />
+            <span className="lbl">Add sources</span>
+          </button>
+          {createItems.length > 0 && (
+            <button
+              type="button"
+              className="vs-add-more"
+              aria-label="More to add"
+              title="Write a note, start a topic, paste text"
+              aria-haspopup="menu"
+              aria-expanded={menu === "add"}
+              onClick={() => setMenu(menu === "add" ? null : "add")}
+            >
+              <VaultIcon name="down" size={14} />
+            </button>
+          )}
+          {menu === "add" && (
+            <VaultMenu
+              label="Add to the vault"
+              heading="Add to the vault"
+              items={createItems}
+              placement="below"
+              onSelect={(key) => onCreate?.(key)}
+              onClose={closeMenu}
+            />
+          )}
         </div>
       )}
 
-      {/* Content */}
       <div
         ref={contentRef}
+        className="vs-body"
         onScroll={(e) => {
           if (!hasContext) treeScrollTop.current = e.currentTarget.scrollTop;
         }}
-        className="flex-1 overflow-y-auto px-2 pb-4"
       >
-        {context && <VaultContextList {...context} />}
+        {rail || body === "places" ? (
+          <VaultPlaces places={places} active={place} onSelect={selectPlace} />
+        ) : (
+          <VaultPlaces places={places} active={place} onSelect={selectPlace} variant="icons" />
+        )}
+
+        {/* Refreshing hint: data is on screen but may be a cached snapshot. */}
+        {!rail && body !== "context" && isRefreshing && (
+          <div className="flex items-center gap-1.5 px-2">
+            <Spinner className="h-2.5 w-2.5" />
+            <span className="text-[11px]" style={{ color: "var(--bai-text-tertiary)" }}>
+              Refreshing…
+            </span>
+          </div>
+        )}
+
+        {!rail && context && <VaultContextList {...context} />}
+
+        {!rail && body === "folders" && (
+          <div className="flex flex-col gap-2">
+            <div className="vs-list-head">
+              <button
+                type="button"
+                className="vs-iconbtn"
+                onClick={() => setTreeOpen(false)}
+                title="Back to the places"
+                aria-label="Back to the places"
+              >
+                <VaultIcon name="back" />
+              </button>
+              <b>Files and folders</b>
+            </div>
+            <input
+              type="text"
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              placeholder="Filter this list…"
+              aria-label="Filter the files"
+              className="sidebar-search-input w-full rounded-md border px-3 py-1.5 text-xs outline-none"
+              style={{ color: "var(--bai-text-secondary)" }}
+            />
+          </div>
+        )}
         {/* Kept mounted once opened, and hidden while a context's list shows
             (see HIDDEN_TREE_STYLE); inert keeps its rows out of the tab order
             and the accessibility tree meanwhile. */}
-        {treeOpen && (
+        {!rail && treeOpen && (
           <div
             inert={hasContext}
             aria-hidden={hasContext ? true : undefined}
@@ -364,34 +462,51 @@ export function VaultSidebar({
         )}
       </div>
 
+      {/* This vault's settings and the guide, at the foot. */}
+      <div className="vs-foot">
+        <div className="vs-anchor">
+          <button
+            type="button"
+            className="vs-row"
+            title="Vault settings"
+            aria-current={settingsActive ? "page" : undefined}
+            aria-haspopup="menu"
+            aria-expanded={menu === "foot"}
+            onClick={() => setMenu(menu === "foot" ? null : "foot")}
+          >
+            <VaultIcon name="gear" />
+            <span className="lbl">Vault settings</span>
+          </button>
+          {menu === "foot" && vaultMenu("above")}
+        </div>
+        {onGettingStarted && (
+          <button
+            type="button"
+            className="vs-row"
+            title="Getting started"
+            onClick={onGettingStarted}
+          >
+            <VaultIcon name="help" />
+            <span className="lbl">Getting started</span>
+          </button>
+        )}
+      </div>
+
       <style aria-hidden="true">{`
-        .sidebar-collapse-btn:hover {
-          background-color: var(--bai-hover);
-          color: var(--bai-accent);
-        }
         .sidebar-search-input::placeholder {
           color: var(--bai-text-muted);
         }
         .sidebar-search-input:focus {
           border-color: var(--bai-accent);
         }
-        .sidebar-tab:hover {
-          color: var(--bai-text-tertiary);
-        }
         .sidebar-row:hover {
-          background-color: var(--bai-hover);
+          background-color: var(--v-rail-hover);
         }
         .sidebar-row:hover .sidebar-note-title {
           color: var(--bai-accent);
         }
-        .sidebar-resize-handle:hover {
-          background-color: color-mix(in srgb, var(--bai-accent) 30%, transparent);
-        }
-        .sidebar-resize-handle:active {
-          background-color: color-mix(in srgb, var(--bai-accent) 50%, transparent);
-        }
       `}</style>
-    </div>
+    </aside>
   );
 }
 

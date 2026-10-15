@@ -1,7 +1,7 @@
 import { renderToStaticMarkup } from "react-dom/server";
 import { describe, expect, it, vi } from "vitest";
 import type { VaultContextListProps } from "./VaultContextList.js";
-import { VaultSidebar } from "./VaultSidebar.js";
+import { RAIL_BELOW, sidebarMode, VaultSidebar } from "./VaultSidebar.js";
 
 vi.mock("@powerhousedao/reactor-browser", () => ({
   isFileNodeKind: () => false,
@@ -39,27 +39,56 @@ function render(ctx?: VaultContextListProps) {
       place="sources"
       context={ctx}
       onSelectPlace={() => {}}
-      onOpenSettings={() => {}}
+      vaultName="Liberuum"
+      glyphSeeds={["t1", "t2"]}
+      menuItems={[{ key: "config", label: "Vault settings", icon: "gear" }]}
+      onMenuSelect={() => {}}
+      onSearch={() => {}}
+      onAddSources={() => {}}
+      createItems={[{ key: "note", label: "Write a note", icon: "pencil" }]}
+      onCreate={() => {}}
+      onGettingStarted={() => {}}
     />,
   );
 }
 
-describe("VaultSidebar body", () => {
+describe("VaultSidebar", () => {
+  it("holds what the bar above the content used to: the vault, search, adding, settings and the guide", () => {
+    const html = render();
+    expect(html).toContain("Liberuum");
+    expect(html).toContain("vault-glyph");
+    expect(html).toContain(">Search<");
+    expect(html).toContain(">Add sources<");
+    expect(html).toContain('aria-label="More to add"');
+    expect(html).toContain(">Vault settings<");
+    expect(html).toContain(">Getting started<");
+    expect(html).toContain('data-mode="full"');
+  });
+
   it.each(["sources", "topics", "graph"] as const)(
-    "shows a %s context as the list, in place of the places rail",
+    "shows a %s context as the list, with the places folded into one row of icons above it",
     (place) => {
       const html = render(context(place));
       expect(html).toContain('role="listbox"');
       expect(html).toContain("First");
-      expect(html).not.toContain("data-place=");
+      expect(html).toContain('data-place-icon="sources"');
+      expect(html).not.toMatch(/<button[^>]*\sdata-place="/);
     },
   );
 
-  it("draws no legacy body once there is no context: the places rail alone", () => {
+  it("shows the labelled places alone once there is no context", () => {
     const html = render(undefined);
-    expect(html).toContain('data-place="sources"');
+    expect(html).toMatch(/<button[^>]*\sdata-place="sources"/);
+    expect(html).not.toMatch(/<button[^>]*\sdata-place-icon=/);
     expect(html).not.toContain('role="listbox"');
-    expect(html).not.toMatch(/class="[^"]*sidebar-row/);
-    expect(html).not.toContain("No knowledge notes yet");
+  });
+
+  it("is the icon rail when collapsed, or when the frame is too narrow for two columns", () => {
+    expect(sidebarMode(1400, false)).toBe("full");
+    expect(sidebarMode(1400, true)).toBe("rail");
+    expect(sidebarMode(RAIL_BELOW - 1, false)).toBe("rail");
+    expect(sidebarMode(RAIL_BELOW, false)).toBe("full");
+    // Not measured yet (or nothing laid out): the full sidebar.
+    expect(sidebarMode(0, false)).toBe("full");
   });
 });

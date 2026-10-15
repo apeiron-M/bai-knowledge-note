@@ -1,4 +1,4 @@
-import { role } from "../lib/theme.js";
+import { VaultIcon, type VaultIconName } from "./vault-icons.js";
 
 export type VaultPlaceId =
   | "ask"
@@ -14,19 +14,25 @@ export type VaultPlace = {
   label: string;
   /** Rendered right-aligned. Omit rather than passing 0. */
   count?: number;
+  /** `warn`: the count is a call to act (files waiting for review, open contradictions). */
   tone?: "warn";
+  /** What the count means, when the number alone does not say. */
+  countTitle?: string;
+  /** Something is under way here (files converting): a small ring before the count. */
+  busy?: boolean;
 };
 
 export type VaultPlacesProps = {
   places: VaultPlace[];
-  active: VaultPlaceId;
+  /** The current place; none while a view that belongs to no place shows. */
+  active?: VaultPlaceId;
   onSelect: (id: VaultPlaceId) => void;
-  onOpenSettings: () => void;
   /**
-   * The drive tree is not a place. It sits below the places until
-   * "Vault settings › Files" lands; remove this row then.
+   * `list`: the labelled places. `icons`: one compact row, kept above a
+   * context's list so every place stays one click away while the list
+   * takes the height (design: "The sidebar follows what you're in").
    */
-  tree?: { active: boolean; onOpen: () => void };
+  variant?: "list" | "icons";
 };
 
 /** place id → the sidebar body that shows when no context overrides it. */
@@ -43,48 +49,72 @@ export const PLACE_SECTION: Record<
   contradictions: "contradictions",
 };
 
-const ROW_STYLE = {
-  height: 34,
-  borderRadius: 8,
-} as const;
+export const PLACE_ICON: Record<VaultPlaceId, VaultIconName> = {
+  ask: "ask",
+  notes: "notes",
+  topics: "topics",
+  sources: "sources",
+  work: "work",
+  graph: "graph",
+  contradictions: "contradictions",
+};
 
 export function VaultPlaces({
   places,
   active,
   onSelect,
-  onOpenSettings,
-  tree,
+  variant = "list",
 }: VaultPlacesProps) {
+  if (variant === "icons") {
+    return (
+      <nav className="vault-place-icons" aria-label="Places in this vault">
+        {places.map((place) => (
+          <button
+            key={place.id}
+            type="button"
+            data-place-icon={place.id}
+            data-tone={place.tone}
+            title={place.label}
+            aria-label={place.label}
+            aria-current={place.id === active ? "page" : undefined}
+            onClick={() => onSelect(place.id)}
+          >
+            <VaultIcon name={PLACE_ICON[place.id]} />
+          </button>
+        ))}
+      </nav>
+    );
+  }
   return (
-    <nav
-      className="vault-places flex flex-col px-2 pb-1"
-      aria-label="Places in this vault"
-    >
+    <nav className="vault-places" aria-label="Places in this vault">
       {places.map((place) => {
         const current = place.id === active;
+        const counted = place.count !== undefined && place.count > 0;
         return (
           <button
             key={place.id}
             type="button"
             data-place={place.id}
+            title={place.label}
             aria-current={current ? "page" : undefined}
             onClick={() => onSelect(place.id)}
-            className="vault-place flex w-full items-center gap-2 px-2.5 text-left text-xs font-medium transition-colors"
-            style={{
-              ...ROW_STYLE,
-              color: "var(--bai-text-secondary)",
-            }}
+            className="vault-place"
           >
-            <span className="min-w-0 flex-1 truncate">{place.label}</span>
-            {place.count !== undefined && place.count > 0 && (
+            <VaultIcon name={PLACE_ICON[place.id]} />
+            <span className="vault-place-label">{place.label}</span>
+            {place.busy && (
+              <span className="vault-place-busy" title="Working on it">
+                <svg viewBox="0 0 16 16" width={14} height={14} aria-hidden="true">
+                  <circle className="track" cx="8" cy="8" r="6" />
+                  <circle className="arc" cx="8" cy="8" r="6" pathLength="100" strokeDasharray="44 100" />
+                </svg>
+              </span>
+            )}
+            {counted && (
               <span
-                className="shrink-0 text-[11px]"
-                style={{
-                  color:
-                    place.tone === "warn"
-                      ? "var(--bai-warn)"
-                      : "var(--bai-text-muted)",
-                }}
+                className="vault-place-count"
+                data-tone={place.tone}
+                title={place.countTitle}
               >
                 {place.count}
               </span>
@@ -92,54 +122,6 @@ export function VaultPlaces({
           </button>
         );
       })}
-      {tree && (
-        <button
-          type="button"
-          data-tree
-          aria-current={tree.active ? "page" : undefined}
-          onClick={tree.onOpen}
-          className="vault-place flex w-full items-center gap-2 px-2.5 text-left text-xs font-medium transition-colors"
-          style={{
-            ...ROW_STYLE,
-            color: "var(--bai-text-secondary)",
-          }}
-        >
-          <span className="min-w-0 flex-1 truncate">Tree</span>
-        </button>
-      )}
-      <button
-        type="button"
-        onClick={onOpenSettings}
-        className="vault-place mt-1 flex w-full items-center gap-2 border-t px-2.5 pt-1 text-left text-xs font-medium transition-colors"
-        style={{
-          ...ROW_STYLE,
-          borderColor: "var(--bai-border)",
-          color: "var(--bai-text-secondary)",
-        }}
-      >
-        <svg
-          className="h-4 w-4 shrink-0"
-          viewBox="0 0 24 24"
-          fill="none"
-          stroke="currentColor"
-          strokeWidth="2"
-          aria-hidden="true"
-        >
-          <path d="M12.22 2h-.44a2 2 0 00-2 2v.18a2 2 0 01-1 1.73l-.43.25a2 2 0 01-2 0l-.15-.08a2 2 0 00-2.73.73l-.22.38a2 2 0 00.73 2.73l.15.1a2 2 0 011 1.72v.51a2 2 0 01-1 1.74l-.15.09a2 2 0 00-.73 2.73l.22.38a2 2 0 002.73.73l.15-.08a2 2 0 012 0l.43.25a2 2 0 011 1.73V20a2 2 0 002 2h.44a2 2 0 002-2v-.18a2 2 0 011-1.73l.43-.25a2 2 0 012 0l.15.08a2 2 0 002.73-.73l.22-.39a2 2 0 00-.73-2.73l-.15-.08a2 2 0 01-1-1.74v-.5a2 2 0 011-1.74l.15-.09a2 2 0 00.73-2.73l-.22-.38a2 2 0 00-2.73-.73l-.15.08a2 2 0 01-2 0l-.43-.25a2 2 0 01-1-1.73V4a2 2 0 00-2-2z" />
-          <circle cx="12" cy="12" r="3" />
-        </svg>
-        Vault settings
-      </button>
-      <style aria-hidden="true">{`
-        .vault-place:hover {
-          background-color: ${role("railHover")};
-        }
-        .vault-place[aria-current="page"] {
-          background-color: ${role("railCurrent")};
-          color: var(--bai-text);
-          box-shadow: ${role("railCurrentShadow")};
-        }
-      `}</style>
     </nav>
   );
 }

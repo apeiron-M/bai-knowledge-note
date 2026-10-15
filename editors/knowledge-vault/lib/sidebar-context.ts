@@ -7,24 +7,17 @@ import type { MocInfo } from "../hooks/use-knowledge-mocs.js";
 export type SidebarContextInput = {
   /** Every node in the drive: sources and the folders they sit in. */
   nodes: Node[];
-  notes: KnowledgeNoteInfo[];
+  /** From `useKnowledgeNotes`, the same map its consumers read. */
+  noteMap: Map<string, KnowledgeNoteInfo>;
+  /** From `useKnowledgeMocs`, already in the order the Topics list shows. */
   mocs: MocInfo[];
+  mocMap: Map<string, MocInfo>;
   selected: Node | undefined;
   graphFocus: GraphFocus | null;
   open: (id: string) => void;
   close: () => void;
   clearGraph: () => void;
 };
-
-export function buildNoteMap(notes: KnowledgeNoteInfo[]): Map<string, KnowledgeNoteInfo> {
-  return new Map(notes.map((n) => [n.id, n]));
-}
-
-export function buildMocMap(mocs: MocInfo[]): Map<string, MocInfo> {
-  return new Map(mocs.map((m) => [m.id, m]));
-}
-
-const MOC_TIER_RANK: Record<string, number> = { HUB: 0, DOMAIN: 1, TOPIC: 2 };
 
 function plural(n: number, word: string): string {
   return `${n} ${word}${n === 1 ? "" : "s"}`;
@@ -53,8 +46,7 @@ function graphContext(
   input: SidebarContextInput,
   focus: GraphFocus,
 ): VaultContextListProps {
-  const noteMap = buildNoteMap(input.notes);
-  const mocMap = buildMocMap(input.mocs);
+  const { noteMap, mocMap } = input;
   const { selectedId, focusedIds } = focus;
   const selectedNote = noteMap.get(selectedId);
   // The edge between the selected note and a neighbour, either direction,
@@ -88,12 +80,17 @@ function graphContext(
       detail: [`${arrow} ${type}`, edge.reason].filter(Boolean).join(" · "),
     };
   });
+  // The reader's current document, once stepping has moved it onto a
+  // neighbour; the graph's own node until then.
+  const current = input.selected?.id;
+  const activeId =
+    current !== undefined && items.some((i) => i.id === current) ? current : selectedId;
   return {
     place: "graph",
     title: items.find((i) => i.id === selectedId)?.label ?? "Selected node",
     subtitle: plural(items.length - 1, "connection"),
     items,
-    activeId: selectedId,
+    activeId,
     onOpen: input.open,
     onBack: input.clearGraph,
   };
@@ -103,14 +100,12 @@ function topicContext(
   input: SidebarContextInput,
   selected: Node,
 ): VaultContextListProps {
-  const rank = (m: MocInfo) => (m.tier ? (MOC_TIER_RANK[m.tier] ?? 3) : 3);
-  const ordered = [...input.mocs].sort((a, b) => rank(a) - rank(b));
-  const current = input.mocs.find((m) => m.id === selected.id);
+  const current = input.mocMap.get(selected.id);
   return {
     place: "topics",
     title: current?.title ?? selected.name,
     subtitle: plural(input.mocs.length, "topic"),
-    items: ordered.map((m) => ({ id: m.id, label: m.title, detail: plural(m.noteCount, "note") })),
+    items: input.mocs.map((m) => ({ id: m.id, label: m.title, detail: plural(m.noteCount, "note") })),
     activeId: selected.id,
     onOpen: input.open,
     onBack: input.close,

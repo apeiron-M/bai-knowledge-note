@@ -31,7 +31,14 @@ type ThemeContextValue = {
 // nesting can no longer produce a stale copy the way it used to.
 const ThemeContext = createContext<ThemeContextValue | null>(null);
 
-export function ThemeProvider({ children }: { children: ReactNode }) {
+export function ThemeProvider({
+  children,
+  fill = false,
+}: {
+  children: ReactNode;
+  /** The wrapper takes its parent's height (the drive app); editors leave it to their content. */
+  fill?: boolean;
+}) {
   const parent = useContext(ThemeContext);
   const { theme } = useConnectTheme();
   const outermost = parent === null;
@@ -47,7 +54,8 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
 
   return (
     <ThemeContext.Provider value={{ theme }}>
-      <div data-bai-theme={theme} className="bai-theme">
+      {/* `fill`: the vault's drive app sizes itself from this box (editor.tsx). */}
+      <div data-bai-theme={theme} className="bai-theme" style={fill ? { height: "100%" } : undefined}>
         {children}
       </div>
     </ThemeContext.Provider>

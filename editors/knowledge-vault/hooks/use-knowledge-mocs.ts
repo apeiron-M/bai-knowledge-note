@@ -30,6 +30,13 @@ const UNTIERED_RANK = 99;
 
 const MOC_NOTE_TYPE_RE = /^MOC \((HUB|DOMAIN|TOPIC)\)$/;
 
+/** MoCs by id. The hook's map and every consumer that needs one use this. */
+export function indexMocs(mocs: MocInfo[]): Map<string, MocInfo> {
+  const m = new Map<string, MocInfo>();
+  for (const moc of mocs) m.set(moc.id, moc);
+  return m;
+}
+
 /**
  * Sidebar/GraphView source for MoC documents.
  *
@@ -128,9 +135,6 @@ export function useKnowledgeMocs(): UseKnowledgeMocsResult {
       return a.title.localeCompare(b.title);
     });
 
-    const mocMap = new Map<string, MocInfo>();
-    for (const moc of mocs) mocMap.set(moc.id, moc);
-
-    return { mocs, mocMap };
+    return { mocs, mocMap: indexMocs(mocs) };
   }, [nodeMap, edges]);
 }

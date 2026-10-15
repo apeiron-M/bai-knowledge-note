@@ -2,36 +2,8 @@ import { useState } from "react";
 import { isDesktopHost } from "../../shared/host-config.js";
 import { resolveMcpEndpoint } from "../../shared/subgraph-endpoint.js";
 
-export function GettingStartedButton() {
-  const [open, setOpen] = useState(false);
-
-  return (
-    <>
-      <button
-        type="button"
-        onClick={() => setOpen(true)}
-        className="rounded-md px-2 py-1.5 text-xs transition-colors"
-        style={{ color: "var(--bai-text-muted)" }}
-        title="Getting started guide"
-      >
-        <svg
-          className="h-4 w-4"
-          viewBox="0 0 24 24"
-          fill="none"
-          stroke="currentColor"
-          strokeWidth="2"
-        >
-          <circle cx="12" cy="12" r="10" />
-          <path d="M9.09 9a3 3 0 015.83 1c0 2-3 3-3 3" />
-          <path d="M12 17h.01" />
-        </svg>
-      </button>
-      {open && <GettingStartedModal onClose={() => setOpen(false)} />}
-    </>
-  );
-}
-
-function GettingStartedModal({ onClose }: { onClose: () => void }) {
+/** The guide, opened from the sidebar's foot ("Getting started"). */
+export function GettingStartedModal({ onClose }: { onClose: () => void }) {
   const [activeSection, setActiveSection] = useState<string>("overview");
 
   const sections = [
