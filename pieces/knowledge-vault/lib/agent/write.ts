@@ -2,6 +2,9 @@ import { randomUUID } from "node:crypto";
 import type { KnowledgeVaultClient } from "../common/client.js";
 import { errorMessage, KnowledgeVaultApiError } from "../common/errors.js";
 
+/** The start of the reason a convergence link carries; Connect, Place and Verify tell a converged note by it. */
+export const CONVERGENCE_REASON_PREFIX = "Also argued in";
+
 /**
  * Write mode for extract-claims: the drafted notes are created in
  * /knowledge/notes and submitted for review (IN_REVIEW), each linked to its
@@ -131,7 +134,7 @@ export async function writeStage(
       await client.request({
         method: "POST",
         path: "relationships",
-        json: { source: e.note_id, target: args.sourceId, type: "DERIVED_FROM", reason: `Also argued in "${args.sourceTitle}" (${e.locus || "the source"})${e.evidence ? `: "${e.evidence}"` : ""}`.slice(0, 900), confidence: "grounded" },
+        json: { source: e.note_id, target: args.sourceId, type: "DERIVED_FROM", reason: `${CONVERGENCE_REASON_PREFIX} "${args.sourceTitle}" (${e.locus || "the source"})${e.evidence ? `: "${e.evidence}"` : ""}`.slice(0, 900), confidence: "grounded" },
       });
       linkedExisting.push(e.note_id);
     } catch (error) {

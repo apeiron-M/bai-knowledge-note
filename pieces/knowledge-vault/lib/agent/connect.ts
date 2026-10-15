@@ -1,5 +1,6 @@
 import type { KnowledgeVaultClient } from "../common/client.js";
 import { errorMessage, KnowledgeVaultApiError } from "../common/errors.js";
+import { CONVERGENCE_REASON_PREFIX } from "./write.js";
 import { completeJson, type LlmClient } from "./llm.js";
 
 /**
@@ -21,15 +22,15 @@ const str = (v: unknown): string => (typeof v === "string" ? v : v == null ? "" 
 const arr = (v: unknown): unknown[] => (Array.isArray(v) ? v : []);
 const rec = (v: unknown): Record<string, unknown> => (typeof v === "object" && v !== null && !Array.isArray(v) ? (v as Record<string, unknown>) : {});
 
-type NoteDoc = { name?: string; state?: { global?: { title?: string; description?: string; status?: string } }; edges?: { direction?: string; documentId?: string; linkType?: string }[] };
+type NoteDoc = { name?: string; state?: { global?: { title?: string; description?: string; status?: string } }; edges?: { direction?: string; documentId?: string; linkType?: string; reason?: string | null }[] };
 
 /**
- * True when every source this note derives from is `sourceId`. A note that also derives from another
- * source was linked, placed and checked when that source made it; a later source that finds the same
- * claim only lists it (convergence), so Connect, Place and Verify leave it alone.
+ * False only when this note's DERIVED_FROM link to `sourceId` is a convergence link (its reason starts
+ * with the prefix write mode gives one): the note was made by an earlier source and this one only lists
+ * it. Any other link, however many other sources the note also derives from, means this source made it.
  */
-export function madeBySource(edges: { direction?: string; documentId?: string; linkType?: string }[] | undefined, sourceId: string): boolean {
-  return !(edges ?? []).some((e) => e.linkType === "DERIVED_FROM" && e.direction === "out" && !!e.documentId && e.documentId !== sourceId);
+export function madeBySource(edges: { direction?: string; documentId?: string; linkType?: string; reason?: string | null }[] | undefined, sourceId: string): boolean {
+  return !(edges ?? []).some((e) => e.linkType === "DERIVED_FROM" && e.direction === "out" && e.documentId === sourceId && typeof e.reason === "string" && e.reason.startsWith(CONVERGENCE_REASON_PREFIX));
 }
 
 /** The notes a source produced, read from the source's own record of them. */
