@@ -576,6 +576,53 @@ describe("the extract-claims action", () => {
     await expect(run({ auth: { props: { base_url: "http://127.0.0.1:1", token: "t" } }, propsValue: {} })).rejects.toMatchObject({ category: "credential" });
     await expect(run({ auth: auth({ llm_default_model: "" }), propsValue: { model: " " } })).rejects.toMatchObject({ category: "validation" });
   });
+  it("archives a source the model finds holds no knowledge", async () => {
+    const references = JSON.stringify({ source_kind: "not_knowledge", source_kind_reason: "a list of references", kept: [], skipped: [], non_claims: 0 });
+    const sent: Record<string, unknown>[] = [];
+    await withFetch((u, body) => {
+      if (u.startsWith("https://llm.test")) return json({ choices: [{ message: { content: references } }] });
+      if (u.includes("/actions") || u.includes("/relationships")) {
+        sent.push(JSON.parse(body) as Record<string, unknown>);
+        return json({ operations: [] });
+      }
+      return vaultAnswers(u);
+    }, async () => {
+      const out = await run({ auth: auth(), propsValue: { drive: "d", source: "s1", mode: "write" } });
+      expect(out).toMatchObject({ archived: true, note_ids: [] });
+      expect(String(out.summary)).toMatch(/^Nothing in "Src" is knowledge; the source is archived: a list of references\./);
+      const sourceWrite = sent.find((b) => b.documentId === "s1" && JSON.stringify(b).includes("RECORD_EXTRACTION_STATS")) as { actions: { type: string; input: { status?: string } }[] };
+      expect(sourceWrite.actions.at(-1)).toEqual({ type: "SET_SOURCE_STATUS", input: { status: "ARCHIVED" } });
+    });
+  });
+  it("passes an archived source through like an extracted one, and refuses to extract it again by hand", async () => {
+    let task: Record<string, unknown> = { id: "t1", taskType: "claim", status: "PENDING", documentRef: "s1", currentPhase: "reflect" };
+    let queue = true;
+    let modelCalls = 0;
+    const source = { title: "Further reading", content: SOURCE, status: "ARCHIVED", extractedClaims: [], extractionStats: { claimCount: 0 } };
+    const serve = (u: string) => {
+      if (u.startsWith("https://llm.test")) { modelCalls++; return json({ choices: [{ message: { content: model } }] }); }
+      if (u.includes("/tasks/reconcile")) { task = { ...task, status: "DONE", currentPhase: null }; return json({ advanced: [{ taskId: "t1", phases: ["reflect", "reweave", "verify"], to: "done", status: "DONE", phase: null }] }); }
+      if (u.includes("/notes/d")) return json({ state: { global: { nodes: queue ? [{ id: "q1", documentType: "bai/pipeline-queue" }] : [] } } });
+      if (u.includes("/notes/q1")) return json({ state: { global: { tasks: [task] } } });
+      if (u.includes("/notes/s1")) return json({ name: "s1", state: { global: source } });
+      if (u.includes("/relationships") || u.includes("/actions")) return json({ operations: [] });
+      return vaultAnswers(u);
+    };
+    await withFetch(serve, async () => {
+      const out = await run({ auth: auth(), propsValue: { drive: "d", source: "s1", mode: "write" } });
+      expect(String(out.summary)).toMatch(/^"Further reading" is already extracted \(archived: no knowledge\); nothing was written\./);
+      queue = false;
+      await expect(run({ auth: auth(), propsValue: { drive: "d", source: "s1", mode: "write" } })).rejects.toThrow(/"Further reading" is archived/);
+      expect(modelCalls).toBe(0);
+    });
+  });
+  it("reads a long source in parts of the size asked for", async () => {
+    const long = Array.from({ length: 12 }, (_, i) => `Paragraph ${i} ${"q".repeat(980)}.`).join("\n\n");
+    await withFetch((u) => (u.startsWith("https://llm.test") ? json({ choices: [{ message: { content: model } }] }) : u.includes("/notes/s1") ? json({ name: "s1", state: { global: { title: "Long", content: long } } }) : vaultAnswers(u)), async () => {
+      const out = await run({ auth: auth(), propsValue: { drive: "d", source: "s1", window_chars: 4_000 } });
+      expect(out.window_count).toBe(3); // twelve ~993-character paragraphs, four to a part
+    });
+  });
 });
 
 describe("the quality fixes", () => {
