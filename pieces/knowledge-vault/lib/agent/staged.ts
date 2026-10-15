@@ -455,7 +455,9 @@ export async function draftStage(llm: LlmClient, model: string, bundle: Record<s
           done.add(id);
         } else failed.push({ candidate_id: id, issues: [NOT_A_MATCH] });
       }
+      const inBatch = new Set(batch.map((c) => str(c.id)));
       for (const raw of arr(answer.notes).map(asRecord)) {
+        if (!inBatch.has(str(raw.candidate_id)) || done.has(str(raw.candidate_id))) continue;
         const note: Record<string, unknown> = { ...raw, note_type: str(raw.note_type).toUpperCase().replace(/-/g, "_") };
         const issues = checkProposal(note, accepted);
         if (/\d\s*(%|percent)|us\$|\$\s?\d/i.test(str(note.title))) issues.push("the title carries a statistic; state the claim the numbers support, and put the numbers in the description and content");
@@ -472,7 +474,7 @@ export async function draftStage(llm: LlmClient, model: string, bundle: Record<s
           new_topics: topics.filter((t) => !vocabulary.has(t)),
         });
         done.add(str(raw.candidate_id));
-        for (const merged of arr(raw.merged_ids).map(str)) done.add(merged);
+        for (const merged of arr(raw.merged_ids).map(str)) if (inBatch.has(merged)) done.add(merged);
       }
       const retry = new Set(failed.map((r) => r.candidate_id));
       pending = batch.filter((c) => retry.has(str(c.id)) && !done.has(str(c.id)));
@@ -480,6 +482,8 @@ export async function draftStage(llm: LlmClient, model: string, bundle: Record<s
     }
     rounds = Math.max(rounds, batchRounds);
     rejected.push(...failed.filter((r) => !done.has(r.candidate_id)));
+    const reported = new Set(failed.map((r) => r.candidate_id));
+    for (const c of batch) if (!done.has(str(c.id)) && !reported.has(str(c.id))) rejected.push({ candidate_id: str(c.id), issues: ["the model did not draft it"] });
   }
 
   // Each window's claims are drafted from that window's text alone, a batch at a time, so every call stays small.

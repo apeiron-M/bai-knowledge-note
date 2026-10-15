@@ -400,6 +400,30 @@ describe("4. draft", () => {
     expect(out.proposed.map((n) => n.candidate_id)).toEqual(["c1"]);
     expect(out.overlaps).toEqual([{ kept: "c1", dropped: "c2", reason: "one assertion" }]);
   });
+  it("reports a claim the model left out instead of counting it as merged", async () => {
+    const m = modelSays(JSON.stringify({ notes: [note("c1", "Memory bandwidth limits decoding speed", { topics: ["operations"] })] }));
+    const out = await draftStage(m.llm, "m", bundle, { candidates: [{ id: "c1", claim: "x" }, { id: "c2", claim: "y" }] }, m.fetchImpl);
+    expect(out.proposed.map((n) => n.candidate_id)).toEqual(["c1"]);
+    expect(out.rejected).toEqual([{ candidate_id: "c2", issues: ["the model did not draft it"] }]);
+    expect(out.summary).not.toMatch(/merged/);
+  });
+  it("never writes a claim it also linked to an existing note, and ignores claims from outside the batch", async () => {
+    const m = modelSays(JSON.stringify({
+      existing: [{ candidate_id: "c1", note_id: "n9", title: "Old", reason: "same" }],
+      notes: [
+        note("c1", "Written anyway although it is in the vault", { topics: ["operations"] }),
+        note("c2", "Kernels decide throughput on one GPU", { topics: ["operations"], merged_ids: ["c7"] }),
+        note("c9", "A claim nobody asked about", { topics: ["operations"] }),
+      ],
+    }));
+    const out = await draftStage(m.llm, "m", bundle, { candidates: [
+      { id: "c1", claim: "A", matches: [{ id: "n9", title: "Old", similarity: 0.9, eligible: true }] },
+      { id: "c2", claim: "B" },
+    ] }, m.fetchImpl);
+    expect(out.existing.map((e) => e.candidate_id)).toEqual(["c1"]);
+    expect(out.proposed.map((n) => n.candidate_id)).toEqual(["c2"]);
+    expect(out.rejected).toEqual([]);
+  });
 });
 
 describe("5. report", () => {
