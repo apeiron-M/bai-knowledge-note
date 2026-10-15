@@ -66,6 +66,12 @@ export function isLocalModel(llm: Pick<LlmCredentials, "baseUrl" | "locality">):
 /** How long one model call may take: ten minutes on this computer or the local network, else 120 s. */
 export const callTimeoutFor = (llm: Pick<LlmCredentials, "baseUrl" | "locality">) => (isLocalModel(llm) ? LOCAL_CALL_TIMEOUT_MS : JSON_CALL_TIMEOUT_MS);
 
+/** The model a request will reach right now, where it runs, and its context size when known. */
+export type ActiveModel = { model: string | null; locality: "local" | "hosted"; contextTokens: number | null; fromGateway: boolean };
+/** How long the gateway's answer is trusted: windows and calls ask again after this. */
+export const ACTIVE_TTL_MS = 5_000;
+const timeoutForLocality = (locality: ActiveModel["locality"]) => (locality === "local" ? LOCAL_CALL_TIMEOUT_MS : JSON_CALL_TIMEOUT_MS);
+
 export class LlmClient {
   constructor(
     readonly credentials: LlmCredentials,
@@ -80,6 +86,59 @@ export class LlmClient {
       "HTTP-Referer": "https://powerhouse.inc",
       "X-Title": "Powerhouse Knowledge Vault",
     };
+  }
+
+  private activeCache: { at: number; value: ActiveModel } | null = null;
+  private noGateway = false;
+  private providerContextCache: number | null | undefined;
+
+  /** A hosted model's context size from OpenRouter's model list, read once per run; null for any other provider. */
+  private async providerContext(fetchImpl?: typeof fetch): Promise<number | null> {
+    if (this.providerContextCache !== undefined) return this.providerContextCache;
+    this.providerContextCache = null;
+    const model = this.credentials.defaultModel;
+    if (!model || !/openrouter\.ai/i.test(this.credentials.baseUrl)) return null;
+    try {
+      const models = await new LlmClient(this.credentials, fetchImpl ?? this.fetchImpl).listModels(false);
+      this.providerContextCache = models.find((m) => m.id === model)?.contextLength ?? null;
+    } catch {
+      this.providerContextCache = null;
+    }
+    return this.providerContextCache;
+  }
+
+  /**
+   * The model the endpoint answers with now. The desktop app's gateway says so (GET /active) and
+   * follows the user's model switches; only connections the app set up carry a locality, so only
+   * they ask. Any other endpoint, or an ask that fails, gets the connection's own settings.
+   */
+  async active(fetchImpl?: typeof fetch, fresh = false): Promise<ActiveModel> {
+    const fallback: ActiveModel = { model: this.credentials.defaultModel ?? null, locality: isLocalModel(this.credentials) ? "local" : "hosted", contextTokens: null, fromGateway: false };
+    // A connection the desktop app did not set up has no gateway behind it; OpenRouter still says how big its model's context is.
+    if (!this.credentials.locality) return { ...fallback, contextTokens: await this.providerContext(fetchImpl) };
+    if (this.noGateway) return fallback;
+    if (!fresh && this.activeCache && Date.now() - this.activeCache.at < ACTIVE_TTL_MS) return this.activeCache.value;
+    try {
+      const response = await (fetchImpl ?? this.fetchImpl)(`${this.credentials.baseUrl}/active`, { headers: this.headers(), signal: AbortSignal.timeout(5_000) });
+      if (response.status >= 400 && response.status < 500) {
+        // Not the desktop gateway, or one from before /active: its settings stand for the rest of the run.
+        this.noGateway = true;
+        return fallback;
+      }
+      if (!response.ok) return fallback;
+      const body = (await response.json()) as { model?: unknown; locality?: unknown; contextTokens?: unknown };
+      if (body.locality !== "local" && body.locality !== "hosted") return fallback;
+      const value: ActiveModel = {
+        model: typeof body.model === "string" && body.model.trim() ? body.model : fallback.model,
+        locality: body.locality,
+        contextTokens: typeof body.contextTokens === "number" && body.contextTokens > 0 ? body.contextTokens : null,
+        fromGateway: true,
+      };
+      this.activeCache = { at: Date.now(), value };
+      return value;
+    } catch {
+      return fallback;
+    }
   }
 
   /** Tool-capable models first-class: the agent jobs cannot run without tools. */
@@ -155,13 +214,25 @@ export async function completeJson(
   const { baseUrl, apiKey } = client.credentials;
   const usage: Usage = { prompt_tokens: 0, completion_tokens: 0, cost: 0 };
   let budget = request.maxTokens ?? 32_000;
-  const timeoutMs = request.timeoutMs ?? callTimeoutFor(client.credentials);
+  let resentAfterSwitch = false;
   for (let attempt = 1; ; attempt++) {
+    // Asked before every call: a model switched mid-run gets its own timeout from the next call on.
+    const sentWith = await client.active(fetchImpl);
+    const timeoutMs = request.timeoutMs ?? timeoutForLocality(sentWith.locality);
     // A hang, or a connection dropped before or while the answer arrives, gets one more try.
     const retryable = (error: unknown) => attempt < 2 && (isTimeout(error) || isDroppedConnection(error));
     const fail = (error: unknown): never => {
       if (isTimeout(error)) throw new KnowledgeVaultApiError(`${request.model} did not answer within ${Math.round(timeoutMs / 1000)} s, twice. Run the step again, or choose a faster model.`, { category: "timeout", retryable: true });
       throw error;
+    };
+    // A call that timed out after the user switched models is sent once more under the new model's timeout.
+    const resendAfterSwitch = async (error: unknown): Promise<boolean> => {
+      if (resentAfterSwitch || !isTimeout(error)) return false;
+      const now = await client.active(fetchImpl, true);
+      if (now.model === sentWith.model && now.locality === sentWith.locality) return false;
+      resentAfterSwitch = true;
+      attempt--;
+      return true;
     };
     let response: Response;
     try {
@@ -180,6 +251,7 @@ export async function completeJson(
         signal: AbortSignal.timeout(timeoutMs),
       });
     } catch (error) {
+      if (await resendAfterSwitch(error)) continue;
       if (retryable(error)) continue;
       return fail(error);
     }
@@ -196,6 +268,7 @@ export async function completeJson(
     try {
       body = (await response.json()) as typeof body;
     } catch (error) {
+      if (await resendAfterSwitch(error)) continue;
       if (retryable(error)) continue;
       return fail(error);
     }

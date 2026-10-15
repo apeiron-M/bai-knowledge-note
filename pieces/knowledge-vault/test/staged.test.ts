@@ -1,4 +1,4 @@
-import { describe, expect, it } from "vitest";
+import { describe, expect, it, vi } from "vitest";
 import { extractClaimsAction } from "../lib/actions/extract-claims.js";
 import { callTimeoutFor, completeJson, isLocalModel, isLocalModelEndpoint, JSON_CALL_TIMEOUT_MS, LlmClient, LOCAL_CALL_TIMEOUT_MS, parseJsonAnswer, retryDelayMs } from "../lib/agent/llm.js";
 import { asObject, candidatesStage, checkVaultStage, containsVerbatim, draftStage, mapLimit, readSourceStage, reportStage } from "../lib/agent/staged.js";
@@ -11,6 +11,7 @@ function modelSays(...answers: (string | { content: string; finish?: string })[]
   let i = 0;
   const calls: { max_tokens: number; user: string }[] = [];
   const fetchImpl = (async (_u: string, init?: RequestInit) => {
+    if (_u.endsWith("/active")) return new Response("no gateway", { status: 404 });
     const body = JSON.parse(init?.body as string) as { max_tokens: number; messages: { content: string }[] };
     calls.push({ max_tokens: body.max_tokens, user: body.messages[1].content });
     const a = answers[Math.min(i++, answers.length - 1)];
@@ -455,5 +456,64 @@ describe("how long a model call may take", () => {
       expect(isLocalModelEndpoint(u)).toBe(false);
       expect(callTimeoutFor({ baseUrl: u })).toBe(120_000);
     }
+  });
+});
+
+describe("the model in charge", () => {
+  const GATEWAY = { baseUrl: "http://127.0.0.1:4202/llm/v1", apiKey: "k", locality: "local" as const, defaultModel: "local-20b" };
+  it("asks the desktop gateway which model is live, and keeps the answer for a few seconds", async () => {
+    let asks = 0;
+    const f = (async () => { asks++; return json({ model: "gpt-6.1-sol", locality: "hosted", contextTokens: null }); }) as unknown as typeof fetch;
+    const llm = new LlmClient(GATEWAY, f);
+    expect(await llm.active()).toEqual({ model: "gpt-6.1-sol", locality: "hosted", contextTokens: null, fromGateway: true });
+    await llm.active();
+    expect(asks).toBe(1);
+    await llm.active(undefined, true);
+    expect(asks).toBe(2);
+  });
+  it("uses the connection's settings without a gateway, and never asks for a connection the app did not set up", async () => {
+    let asks = 0;
+    const f = (async () => { asks++; return new Response("no", { status: 404 }); }) as unknown as typeof fetch;
+    const llm = new LlmClient(GATEWAY, f);
+    expect(await llm.active()).toEqual({ model: "local-20b", locality: "local", contextTokens: null, fromGateway: false });
+    await llm.active(undefined, true);
+    expect(asks).toBe(1); // a 404 means no gateway for the rest of the run
+    const plain = new LlmClient({ baseUrl: "https://openrouter.ai/api/v1", apiKey: "k" }, f);
+    expect((await plain.active()).locality).toBe("hosted");
+    expect(asks).toBe(1);
+  });
+  it("reads a hosted model's context from OpenRouter's model list, once", async () => {
+    let lists = 0;
+    const f = (async (u: string) => {
+      if (u.includes("/models")) { lists++; return json({ data: [{ id: "deepseek/v4", name: "DeepSeek V4", context_length: 16_000 }] }); }
+      return new Response("no", { status: 404 });
+    }) as unknown as typeof fetch;
+    const llm = new LlmClient({ baseUrl: "https://openrouter.ai/api/v1", apiKey: "k", defaultModel: "deepseek/v4" }, f);
+    expect(await llm.active()).toEqual({ model: "deepseek/v4", locality: "hosted", contextTokens: 16_000, fromGateway: false });
+    await llm.active(undefined, true);
+    expect(lists).toBe(1);
+  });
+  it("carries on with the connection's settings when the gateway stops answering", async () => {
+    const llm = new LlmClient(GATEWAY, (async () => { throw new TypeError("fetch failed"); }) as unknown as typeof fetch);
+    expect(await llm.active()).toMatchObject({ locality: "local", fromGateway: false });
+  });
+  it("gives each call the live model's timeout, and sends a call again once when the model changed while it hung", async () => {
+    let live = { model: "gpt-6.1-sol", locality: "hosted" };
+    let chats = 0;
+    const timeouts = vi.spyOn(AbortSignal, "timeout");
+    const f = (async (u: string) => {
+      if (u.endsWith("/active")) return json({ ...live, contextTokens: null });
+      chats++;
+      if (chats === 1) {
+        live = { model: "local-20b", locality: "local" };
+        throw Object.assign(new Error("The operation was aborted due to timeout"), { name: "TimeoutError" });
+      }
+      return json({ choices: [{ message: { content: '{"ok":1}' } }] });
+    }) as unknown as typeof fetch;
+    const out = await completeJson(new LlmClient(GATEWAY, f), { model: "m", system: "s", user: "u" }, f);
+    expect(out.value).toEqual({ ok: 1 });
+    expect(chats).toBe(2);
+    expect(timeouts.mock.calls.map((c) => c[0]).filter((ms) => ms !== 5_000)).toEqual([JSON_CALL_TIMEOUT_MS, LOCAL_CALL_TIMEOUT_MS]);
+    timeouts.mockRestore();
   });
 });
