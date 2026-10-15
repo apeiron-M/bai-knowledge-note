@@ -12,8 +12,12 @@
  *
  * Everything runs in the browser: the model through OpenRouter or any
  * OpenAI-compatible endpoint the user names (see lib/chat/provider.ts), the
- * data via the same Switchboard endpoints the search field uses. Nothing here
- * can write.
+ * data via the same Switchboard endpoints the search field uses. It writes
+ * nothing by itself: changes to work come as a card the person applies.
+ *
+ * What it can do is shown where the person decides what to ask: task cards
+ * under the empty composer, and the whole list on demand from the header's
+ * "?" (chat/ChatStarters.tsx).
  *
  * Inside the desktop app the model is the app's: the connect screen and the
  * header's connection controls give way to the app's model (and a way back to
@@ -47,6 +51,8 @@ import { ChatConnectPanel } from "./chat/ChatConnectPanel.js";
 import { ChatHistoryMenu } from "./chat/ChatHistoryMenu.js";
 import { ChatMessage } from "./chat/ChatMessage.js";
 import { SaveAnswer } from "./chat/SaveAnswer.js";
+import { ChatHelpDialog, ChatStarters, useChatHelp } from "./chat/ChatStarters.js";
+import { VaultIcon } from "./vault-icons.js";
 import { currencyLookup } from "../lib/supersession.js";
 import type { KnowledgeNoteInfo } from "../hooks/use-knowledge-notes.js";
 import { ModelPicker } from "./chat/ModelPicker.js";
@@ -131,6 +137,9 @@ export function ChatView({
   // Ties the header's "Change in Settings" button to the model label it changes.
   const modelChipId = useId();
   const orientation = useOrientation(driveId, prov.isConnected);
+  // What the chat can do: the panel's open state, and whether it was ever opened here.
+  const help = useChatHelp();
+  const topTopic = orientation.topics[0]?.name ?? null;
   // The composer's draft survives the chat view being replaced by a note
   // editor. Tab-scoped like the current-thread pointer; the OAuth return
   // intent takes precedence when both exist.
@@ -360,8 +369,27 @@ export function ChatView({
               </button>
             </>
           )}
+          <button
+            type="button"
+            onClick={help.show}
+            className="vault-btn"
+            aria-label="What the chat can do"
+            title="What the chat can do"
+          >
+            <VaultIcon name="help" size={16} />
+          </button>
         </div>
       </div>
+      {help.open && (
+        <ChatHelpDialog
+          topic={topTopic}
+          onAsk={(q) => {
+            help.hide();
+            void chat.send(q);
+          }}
+          onClose={help.hide}
+        />
+      )}
 
       {inConversation ? (
         <>
@@ -430,25 +458,27 @@ export function ChatView({
         <LandingStage
           anchorRef={composerAnchorRef}
           tail={
-            <div className="flex w-full flex-wrap justify-center gap-2 pt-6">
-              {!orientation.loaded && (
-                <LoadingLine label="Reading the vault's topics…" />
-              )}
-              {orientation.topics.slice(0, 8).map((t) => (
-                <button
-                  key={t.name}
-                  type="button"
-                  onClick={() =>
-                    void chat.send(`What does the vault say about ${t.name}?`)
-                  }
-                  className="vault-chip"
-                  data-tone="accent"
-                  title={`${t.noteCount} notes`}
-                >
-                  #{t.name}
-                </button>
-              ))}
-            </div>
+            <ChatStarters topic={topTopic} onAsk={(q) => void chat.send(q)} onHelp={help.show} seen={help.seen}>
+              <div className="flex w-full flex-wrap justify-center gap-2" role="group" aria-label="Topics in this vault">
+                {!orientation.loaded && (
+                  <LoadingLine label="Reading the vault's topics…" />
+                )}
+                {orientation.topics.slice(0, 6).map((t) => (
+                  <button
+                    key={t.name}
+                    type="button"
+                    onClick={() =>
+                      void chat.send(`What does the vault say about ${t.name}?`)
+                    }
+                    className="vault-chip"
+                    data-tone="accent"
+                    title={`${t.noteCount} notes`}
+                  >
+                    #{t.name}
+                  </button>
+                ))}
+              </div>
+            </ChatStarters>
           }
         >
           <h1
@@ -468,7 +498,7 @@ export function ChatView({
             style={{ color: "var(--bai-text-muted)" }}
           >
             {orientation.stats
-              ? `${(orientation.stats.noteCount ?? orientation.stats.nodeCount).toLocaleString()} notes · ${orientation.stats.edgeCount.toLocaleString()} links${orientation.stats.openTensionCount ? ` · ${orientation.stats.openTensionCount} open tension${orientation.stats.openTensionCount === 1 ? "" : "s"}` : ""} · read-only`
+              ? `${(orientation.stats.noteCount ?? orientation.stats.nodeCount).toLocaleString()} notes · ${orientation.stats.edgeCount.toLocaleString()} links${orientation.stats.openTensionCount ? ` · ${orientation.stats.openTensionCount} open tension${orientation.stats.openTensionCount === 1 ? "" : "s"}` : ""}`
               : "Answers come from the vault's own notes, with citations you can open."}
           </p>
           <div ref={composerAnchorRef} className="mt-8 w-full">
