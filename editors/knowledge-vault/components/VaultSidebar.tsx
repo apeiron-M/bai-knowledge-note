@@ -263,13 +263,14 @@ export function VaultSidebar({
     [showTreeSkeleton, allNodes, q, selectedId],
   );
 
-  // A context's list shows from the top; clearing it puts the tree back
+  // The tree scrolls under its header in its own box; while a context's list
+  // hides it, its position is kept, and clearing the context puts it back
   // where the reader had scrolled it.
-  const contentRef = useRef<HTMLDivElement>(null);
+  const treeRef = useRef<HTMLDivElement>(null);
   const treeScrollTop = useRef(0);
   useLayoutEffect(() => {
-    const el = contentRef.current;
-    if (el) el.scrollTop = hasContext ? 0 : treeScrollTop.current;
+    const el = treeRef.current;
+    if (el && !hasContext) el.scrollTop = treeScrollTop.current;
   }, [hasContext]);
 
   const selectPlace = (id: VaultPlaceId) => {
@@ -398,13 +399,9 @@ export function VaultSidebar({
         </div>
       )}
 
-      <div
-        ref={contentRef}
-        className="vs-body"
-        onScroll={(e) => {
-          if (!hasContext) treeScrollTop.current = e.currentTarget.scrollTop;
-        }}
-      >
+      {/* A context's list and the tree scroll on their own, under the places'
+          icons and their header; the places alone scroll as one list. */}
+      <div className="vs-body" data-scroll={!rail && body !== "places" ? "inner" : undefined}>
         {rail || body === "places" ? (
           <VaultPlaces places={places} active={place} onSelect={selectPlace} />
         ) : (
@@ -453,6 +450,11 @@ export function VaultSidebar({
             and the accessibility tree meanwhile. */}
         {!rail && treeOpen && (
           <div
+            ref={treeRef}
+            className="vs-tree"
+            onScroll={(e) => {
+              if (!hasContext) treeScrollTop.current = e.currentTarget.scrollTop;
+            }}
             inert={hasContext}
             aria-hidden={hasContext ? true : undefined}
             style={hasContext ? HIDDEN_TREE_STYLE : undefined}

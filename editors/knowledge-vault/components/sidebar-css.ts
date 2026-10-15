@@ -116,6 +116,9 @@ export const SIDEBAR_CSS = `
 .vault-sidebar .sidebar-search-input { border-color: ${role("field")}; background: ${role("input")}; }
 
 .vault-sidebar .vs-ctx { display: flex; flex-direction: column; gap: 6px; min-height: 0; }
+.vault-sidebar .vs-body[data-scroll="inner"] { overflow: hidden; }
+.vault-sidebar .vs-body[data-scroll="inner"] > .vs-ctx { flex: 1; }
+.vault-sidebar .vs-body[data-scroll="inner"] > .vs-tree { flex: 1; min-height: 0; overflow-y: auto; }
 .vault-sidebar .vs-ctx-head { display: grid; grid-template-columns: auto minmax(0, 1fr) auto; align-items: start; gap: 6px; padding: 2px 2px 4px; }
 .vault-sidebar .vs-ctx-head .vs-iconbtn { width: 26px; height: 26px; }
 .vault-sidebar .vs-ctx-title b {
@@ -127,7 +130,7 @@ export const SIDEBAR_CSS = `
 .vault-sidebar .vs-ctx-step button { width: 24px; height: 24px; display: grid; place-items: center; border-radius: 6px; }
 .vault-sidebar .vs-ctx-step button:hover:not(:disabled) { background: var(--bai-hover); }
 .vault-sidebar .vs-ctx-step button:hover:not(:disabled) .vault-i { color: var(--bai-text); }
-.vault-sidebar .vs-ctx-list { display: flex; flex-direction: column; gap: 1px; }
+.vault-sidebar .vs-ctx-list { display: flex; flex-direction: column; gap: 1px; flex: 1; min-height: 0; overflow-y: auto; margin: 0 -4px; padding: 0 4px 8px; }
 .vault-sidebar .vs-ctx-row {
   display: flex; flex-direction: column; gap: 2px; width: 100%; padding: 7px 10px; border-radius: 8px; text-align: left;
 }

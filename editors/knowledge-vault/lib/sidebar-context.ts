@@ -12,12 +12,34 @@ export type SidebarContextInput = {
   /** From `useKnowledgeMocs`, already in the order the Topics list shows. */
   mocs: MocInfo[];
   mocMap: Map<string, MocInfo>;
+  /**
+   * Source titles by id (`sourceTitleMap`): the tree knows only file names
+   * ("07-ch05-language-i-told-you-so"); the title is in the document. A
+   * source not in the map yet shows its name.
+   */
+  sourceTitles?: Map<string, string>;
   selected: Node | undefined;
   graphFocus: GraphFocus | null;
   open: (id: string) => void;
   close: () => void;
   clearGraph: () => void;
 };
+
+/** Titles from source documents, by id; documents without one are left out. */
+export function sourceTitleMap(
+  docs: ReadonlyArray<{ header: { id: string }; state: unknown }>,
+): Map<string, string> {
+  const titles = new Map<string, string>();
+  for (const doc of docs) {
+    const title = (doc.state as { global?: { title?: unknown } } | null)?.global?.title;
+    if (typeof title === "string" && title.trim()) titles.set(doc.header.id, title.trim());
+  }
+  return titles;
+}
+
+/** File order: by name, numbers as numbers, so "02-…" comes before "10-…". */
+const byFileName = (a: Node, b: Node) =>
+  a.name.localeCompare(b.name, undefined, { numeric: true, sensitivity: "base" });
 
 function plural(n: number, word: string): string {
   return `${n} ${word}${n === 1 ? "" : "s"}`;
@@ -118,14 +140,14 @@ function sourceContext(
 ): VaultContextListProps {
   const folderId = selected.parentFolder ?? null;
   const folder = folderId ? input.nodes.find((n) => n.id === folderId) : undefined;
-  const sources = input.nodes.filter(
-    (n) => documentTypeOf(n) === "bai/source" && (n.parentFolder ?? null) === folderId,
-  );
+  const sources = input.nodes
+    .filter((n) => documentTypeOf(n) === "bai/source" && (n.parentFolder ?? null) === folderId)
+    .sort(byFileName);
   return {
     place: "sources",
     title: folder?.name ?? "Sources",
     subtitle: plural(sources.length, "source"),
-    items: sources.map((n) => ({ id: n.id, label: n.name })),
+    items: sources.map((n) => ({ id: n.id, label: input.sourceTitles?.get(n.id) ?? n.name })),
     activeId: selected.id,
     onOpen: input.open,
     onBack: input.close,

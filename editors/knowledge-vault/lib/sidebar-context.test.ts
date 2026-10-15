@@ -2,7 +2,7 @@ import type { Node } from "@powerhousedao/shared/document-drive";
 import { describe, expect, it, vi } from "vitest";
 import { indexNotes, type KnowledgeNoteInfo } from "../hooks/use-knowledge-notes.js";
 import { indexMocs, type MocInfo } from "../hooks/use-knowledge-mocs.js";
-import { buildSidebarContext, type SidebarContextInput } from "./sidebar-context.js";
+import { buildSidebarContext, sourceTitleMap, type SidebarContextInput } from "./sidebar-context.js";
 
 function file(id: string, name: string, documentType: string, parentFolder: string | null = null): Node {
   return { kind: "file", id, name, documentType, parentFolder } as unknown as Node;
@@ -63,6 +63,28 @@ describe("buildSidebarContext", () => {
     expect(ctx?.title).toBe("State of AI Report 2026");
     expect(ctx?.items.map((i) => i.id)).toEqual(["s1", "s2"]);
     expect(ctx?.activeId).toBe("s1");
+  });
+
+  it("labels each source by its title, in file order; a source not read yet shows its file name", () => {
+    const chapters: Node[] = [
+      folder("book", "Design for How People Think"),
+      file("c10", "10-ch08-user-research", "bai/source", "book"),
+      file("c2", "02-part-i-rethinking", "bai/source", "book"),
+      file("c7", "07-ch05-language-i-told-you-so", "bai/source", "book"),
+    ];
+    const titles = sourceTitleMap([
+      { header: { id: "c7" }, state: { global: { title: "Design for How People Think - Ch. 05: Language: I Told You So" } } },
+      { header: { id: "c2" }, state: { global: { title: "  Part I: Rethinking the Experience " } } },
+      { header: { id: "c10" }, state: { global: { title: "" } } },
+    ]);
+    const ctx = buildSidebarContext(input({ nodes: chapters, selected: chapters[3], sourceTitles: titles }));
+    expect(ctx?.title).toBe("Design for How People Think");
+    expect(ctx?.items.map((i) => i.label)).toEqual([
+      "Part I: Rethinking the Experience",
+      "Design for How People Think - Ch. 05: Language: I Told You So",
+      "10-ch08-user-research",
+    ]);
+    expect(ctx?.activeId).toBe("c7");
   });
 
   it("titles a root-level source list as Sources", () => {

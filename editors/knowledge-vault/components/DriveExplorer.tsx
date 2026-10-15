@@ -19,7 +19,7 @@ import {
   useSelectedNode,
 } from "@powerhousedao/reactor-browser";
 import { VaultSidebar } from "./VaultSidebar.js";
-import { buildSidebarContext } from "../lib/sidebar-context.js";
+import { buildSidebarContext, sourceTitleMap } from "../lib/sidebar-context.js";
 import { VaultShell } from "./VaultShell.js";
 import type { VaultPlace, VaultPlaceId } from "./VaultPlaces.js";
 import { DebugErrorBoundary } from "./DebugErrorBoundary.js";
@@ -433,6 +433,20 @@ export function DriveExplorer({ children }: EditorProps) {
     if (view) handleSwitchView(view);
   }
 
+  // The open source's folder, by title. The tree knows file names only; the
+  // title is in each source, read through the per-document cache the Sources
+  // view shares — arriving from it, the list paints at once. Only that folder,
+  // and only while a source is open.
+  const sourceSiblingSpecs = useMemo<ReactorDocSpec[]>(() => {
+    if (!showDocumentEditor || selectedDocumentType !== "bai/source" || !selectedNode) return [];
+    const folderId = selectedNode.parentFolder ?? null;
+    return fileNodes
+      .filter((n) => n.documentType === "bai/source" && (n.parentFolder ?? null) === folderId)
+      .map((n) => ({ id: n.id, documentType: n.documentType, name: n.name }));
+  }, [showDocumentEditor, selectedDocumentType, selectedNode, fileNodes]);
+  const { docs: siblingSources } = useReactorDocsWithRefetch(sourceSiblingSpecs);
+  const sourceTitles = useMemo(() => sourceTitleMap(siblingSources), [siblingSources]);
+
   const openDocument = useCallback((id: string) => setSelectedNode(id), []);
   const closeDocument = useCallback(() => setSelectedNode(undefined), []);
   const sidebarContext = useMemo(
@@ -442,6 +456,7 @@ export function DriveExplorer({ children }: EditorProps) {
         noteMap,
         mocs,
         mocMap,
+        sourceTitles,
         selected: selectedNode,
         graphFocus,
         open: openDocument,
@@ -453,6 +468,7 @@ export function DriveExplorer({ children }: EditorProps) {
       noteMap,
       mocs,
       mocMap,
+      sourceTitles,
       selectedNode,
       graphFocus,
       openDocument,
